@@ -532,4 +532,19 @@
     <string name="action_mark_as_watched">標記為已觀看</string>
     <string name="no">否』</string>
     <string name="apk_installer_legacy">傳統』</string>
+    <string name="pref_category_player_features">播放器功能</string>
+    <string name="pref_category_subtitles">字幕</string>
+    <string name="play_trailer_button">播放預告片</string>
+    <string name="redo_setup_process">重設設定過程</string>
+    <string name="pref_category_links">連結</string>
+    <string name="pref_category_app_updates">應用程式更新</string>
+    <string name="pref_category_backup">備份</string>
+    <string name="pref_category_extensions">擴充功能</string>
+    <string name="pref_category_actions">動作</string>
+    <string name="pref_category_cache">快取</string>
+    <string name="pref_category_gestures">手勢</string>
+    <string name="pref_category_player_layout">版面</string>
+    <string name="pref_category_defaults">預設</string>
+    <string name="pref_category_looks">外觀</string>
+    <string name="pref_category_ui_features">功能</string>
 </resources>

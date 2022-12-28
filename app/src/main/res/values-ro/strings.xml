@@ -386,4 +386,6 @@
     <!--<string name="subtitles_remove_bloat">Remove bloat from subtitles</string>-->
     <!--<string name="extras">Extra</string>-->
     <string name="trailer">Trailer</string>
+    <string name="history">Istoric</string>
+    <string name="action_mark_as_watched">Marcare ca vizionat</string>
 </resources>

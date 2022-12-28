@@ -137,7 +137,7 @@
     <string name="backup_settings">Cadangkan data</string>
     <string name="restore_success">File cadangan termuat</string>
     <string name="restore_failed_format" formatted="true">Gagal untuk memulihkan data dari file %s</string>
-    <string name="backup_success">Data berhasil disimpan</string>
+    <string name="backup_success">Data tersimpan</string>
     <string name="backup_failed">Izin penyimpanan tidak ditemukan, mohon coba lagi</string>
     <string name="backup_failed_error_format">Error saat mencadang %s</string>
     <string name="search">Cari</string>
@@ -250,8 +250,8 @@
     <string name="video_buffer_length_settings">Panjang buffer video</string>
     <string name="video_buffer_disk_settings">Cache video di disk</string>
     <string name="video_buffer_clear_settings">Membersihkan cache video dan gambar</string>
-    <string name="video_ram_description">Akan menyebabkan crash acak jika disetel terlalu tinggi. Jangan diubah jika anda memiliki jumlah ram yang rendah seperti TV Android atau ponsel lama</string>
-    <string name="video_disk_description">Dapat menyebabkan masalah pada sistem dengan ruang penyimpanan yang rendah seperti perangkat Android TV jika anda menyetelnya terlalu tinggi</string>
+    <string name="video_ram_description">Dapat menyebabkan crash jika resolusi terlalu tinggi di RAM yang rendah, seperti TV Android atau ponsel lama.</string>
+    <string name="video_disk_description">Dapat bermasalah pada sistem dengan ruang penyimpanan rendah, seperti Android TV, jika diatur terlalu tinggi.</string>
     <string name="dns_pref">DNS melalui HTTPS</string>
     <string name="dns_pref_summary">Berguna untuk melewati blok ISP</string>
     <string name="download_path_pref">Jalur download</string>
@@ -303,8 +303,8 @@
     -->
     <string name="login_format" formatted="true">%s %s</string>
     <string name="account">akun</string>
-    <string name="logout">Logout</string>
-    <string name="login">Login</string>
+    <string name="logout">Keluar</string>
+    <string name="login">Masuk</string>
     <string name="switch_account">Ganti akun</string>
     <string name="add_account">Tambah akun</string>
     <string name="add_sync">Tambah pelacak</string>
@@ -314,8 +314,8 @@
     <string name="sync_score_format" formatted="true">%d / 10</string>
     <string name="sync_total_episodes_none">/??</string>
     <string name="sync_total_episodes_some" formatted="true">/%d</string>
-    <string name="authenticated_user" formatted="true">%s Diautentikasikan</string>
-    <string name="authenticated_user_fail" formatted="true">Gagal untuk mengautentikasi ke %s</string>
+    <string name="authenticated_user" formatted="true">%s terautentikasi</string>
+    <string name="authenticated_user_fail" formatted="true">Gagal masuk ke %s</string>
     <!-- ============ -->
     <string name="none">Tidak Ada</string>
     <string name="normal">Normal</string>
@@ -327,10 +327,10 @@
     <string name="subtitles_shadow">Bayangan</string>
     <string name="subtitles_raised">Menonjol</string>
     <string name="subtitle_offset">Sinkronisasi sub</string>
-    <string name="subtitle_offset_hint">1000ms</string>
+    <string name="subtitle_offset_hint">1000 ms</string>
     <string name="subtitle_offset_title">Penundaan subtitle</string>
-    <string name="subtitle_offset_extra_hint_later_format">Gunakan ini jika subtitle ditampilkan %dms terlalu cepat</string>
-    <string name="subtitle_offset_extra_hint_before_format">Gunakan ini jika subtitle ditampilkan %dms terlalu lambat</string>
+    <string name="subtitle_offset_extra_hint_later_format">Gunakan ini jika subtitle ditampilkan %d ms terlalu cepat</string>
+    <string name="subtitle_offset_extra_hint_before_format">Gunakan ini jika subtitle ditampilkan %d ms terlalu lambat</string>
     <string name="subtitle_offset_extra_hint_none_format">Tidak ada penundaan subtitle</string>
     <!--
     Example text (pangram) can optionally be translated; if you do, include all the letters in the alphabet,
@@ -356,7 +356,7 @@
     <string name="quality_hd">HD</string>
     <string name="quality_ts">TS</string>
     <string name="quality_tc">TC</string>
-    <string name="quality_blueray">BlueRay</string>
+    <string name="quality_blueray">Blu-ray</string>
     <string name="quality_workprint">WP</string>
     <string name="quality_dvd">DVD</string>
     <string name="quality_4k">4K</string>
@@ -370,4 +370,120 @@
     <string name="resolution_and_title">Resolusi dan judul</string>
     <string name="title">Judul</string>
     <string name="resolution">Resolusi</string>
+    <string name="next_episode_time_hour_format" formatted="true">%dh %dm</string>
+    <string name="next_episode_time_min_format" formatted="true">%dm</string>
+    <string name="next_episode_format" formatted="true">Episode %d akan dirilis tanggal</string>
+    <string name="next_episode_time_day_format" formatted="true">%dd %dh %dm</string>
+    <string name="automatic_plugin_updates">Pembaruan otomatis plugin</string>
+    <string name="automatic_plugin_download">Unduh plugins secara otomatis</string>
+    <string name="kitsu_settings">Tampilkan poster dari Kitsu</string>
+    <string name="automatic_plugin_download_summary">Pasang otomatis semua plugins yang belum terpasang, dari repositori yang telah ditambahkan.</string>
+    <string name="live_singular">Siaran langsung</string>
+    <string name="nsfw_singular">17+</string>
+    <string name="example_password">password123</string>
+    <string name="category_providers">Penyedia</string>
+    <string name="pref_category_cache">Cache</string>
+    <string name="pref_category_player_features">Fitur Pemutar</string>
+    <string name="pref_category_subtitles">Bahasa</string>
+    <string name="pref_category_player_layout">Tampilan</string>
+    <string name="pref_category_defaults">Bawaan</string>
+    <string name="pref_category_looks">Tampilan</string>
+    <string name="pref_category_ui_features">Fitur</string>
+    <string name="enable_nsfw_on_providers">Tampilkan konten 17+</string>
+    <string name="play_trailer_button">Putar Cuplikan</string>
+    <string name="play_livestream_button">Putar Siaran</string>
+    <string name="stream">Siaran</string>
+    <string name="subs_subtitle_languages">Bahasa Subtitel</string>
+    <string name="autoplay_next_settings">Putar otomatis episode selanjutnya</string>
+    <string name="autoplay_next_settings_des">Putar episode selanjutnya, setelah ini berakhir</string>
+    <string name="show_trailers_settings">Tampilkan cuplikan</string>
+    <string name="redo_setup_process">Ulang proses pemasangan</string>
+    <string name="episodes_range">%d-%d</string>
+    <string name="episode_format" formatted="true">%d %s</string>
+    <string name="nsfw">17+</string>
+    <string name="others">Lainnya</string>
+    <string name="other_singular">Vidio</string>
+    <string name="add_site_pref">Duplikasi Website</string>
+    <string name="add_site_summary">Duplikasi website yang telah ada, dengan alamat berbeda</string>
+    <string name="pref_category_links">Tautan</string>
+    <string name="pref_category_app_updates">Perbarui Aplikasi</string>
+    <string name="pref_category_backup">Cadangkan</string>
+    <string name="pref_category_extensions">Fitur Tambahan</string>
+    <string name="play_with_app_name">Putar di CloudStream</string>
+    <string name="pref_filter_search_quality">Sembunyikan kualitas vidio terpilih di pencarian</string>
+    <string name="season_format">%s %d%s</string>
+    <string name="livestreams">Siaran langsung</string>
+    <string name="remove_site_pref">Hapus Website</string>
+    <string name="example_username">UsernameKeren</string>
+    <string name="example_email">contoh@email.com</string>
+    <string name="example_ip">127.0.0.1</string>
+    <string name="example_site_name">Websiteku</string>
+    <string name="example_site_url">contoh.com</string>
+    <string name="extras">Ekstra</string>
+    <string name="preferred_media_subtext">Apa yang ingin anda lihat</string>
+    <string name="plugin_deleted">Plugin terhapus</string>
+    <string name="plugins_updated" formatted="true">%d plugin diperbarui</string>
+    <string name="view_public_repositories_button">Lihat Repositori dari Group</string>
+    <string name="view_public_repositories_button_short">List Umum</string>
+    <string name="blank_repo_message">CloudStream tidak memiliki sumber video secara bawaan. Kamu harus menginstall dari repositori.
+\n
+\nKarena banyak laporan dari banyak pihak berwajib, kami tidak dapat memberikannya secara langsung.
+\n
+\nGabung dengan group Discord atau cari di internet.</string>
+    <string name="repository_url_hint">Alamat Repositori</string>
+    <string name="create_account">Buat Akun</string>
+    <string name="error">Error</string>
+    <string name="subtitles_filter_lang">Urutkan berdasarkan bahasa terpilih</string>
+    <string name="trailer">Cuplikan</string>
+    <string name="plugin_loaded">Plugin terpasang</string>
+    <string name="plugin_load_fail" formatted="true">Plugin %s gagal diambil</string>
+    <string name="is_adult">18+</string>
+    <string name="repository_name_hint">Nama Repositori</string>
+    <string name="plugin_singular">plugin</string>
+    <string name="batch_download_nothing_to_download_format" formatted="true">Semua %s telah terunduh</string>
+    <string name="batch_download">Unduh bersamaan</string>
+    <string name="plugin">plugins</string>
+    <string name="plugins_disabled" formatted="true">Tidak aktif: %d</string>
+    <string name="uppercase_all_subtitles">Ganti subtitle jadi huruf besar semua</string>
+    <string name="plugins_downloaded" formatted="true">Terunduh: %d</string>
+    <string name="plugins_not_downloaded" formatted="true">Tidak terunduh: %d</string>
+    <string name="download_all_plugins_from_repo">Unduh semua plugin dari repositori ini\?</string>
+    <string name="safe_mode_title">Semua Umur</string>
+    <string name="single_plugin_disabled" formatted="true">%s (Tidak aktif)</string>
+    <string name="tracks">Tracks</string>
+    <string name="apply_on_restart">Terapkan saat Restart</string>
+    <string name="extension_description">Keterangan</string>
+    <string name="extension_version">Versi</string>
+    <string name="extension_status">Status</string>
+    <string name="safe_mode_crash_info">Lihat log crash</string>
+    <string name="extension_rating" formatted="true">Peringkat: %s</string>
+    <string name="extension_authors">Pembuat</string>
+    <string name="extension_language">Bahasa</string>
+    <string name="player_pref">Pemutar vidio utama</string>
+    <string name="player_settings_play_in_app">Pemutar Bawaan</string>
+    <string name="player_settings_play_in_vlc">VLC</string>
+    <string name="player_settings_play_in_mpv">MPV</string>
+    <string name="batch_download_finish_format" formatted="true">Terunduh %d %s</string>
+    <string name="batch_download_start_format" formatted="true">"Memulai mengunduh  %d %s…"</string>
+    <string name="safe_mode_description">Semua fitur tambahkan dimatikan karena crash, untuk memudahkanmu mencari penyebab crash.</string>
+    <string name="example_lang_name">Kode bahasa (en)</string>
+    <string name="player_load_subtitles_online">ambil dari internet</string>
+    <string name="provider_languages_tip">Putar vidio di bahasa ini</string>
+    <string name="add_repository">Tambah Repositori</string>
+    <string name="delete_repository_plugins">Pilih ini untuk menghapus semua repositori plugin</string>
+    <string name="skip_setup">Lewati pengaturan</string>
+    <string name="error_invalid_url">alamat salah</string>
+    <string name="network_adress_example">"Alamat  streaming"</string>
+    <string name="next">Selanjutnya</string>
+    <string name="previous">Sebelumnya</string>
+    <string name="app_layout_subtext">Ubah tampilan aplikasi</string>
+    <string name="crash_reporting_title">Laporkan Crash</string>
+    <string name="setup_done">Selesai</string>
+    <string name="extensions">Fitur Tambahan</string>
+    <string name="delete_repository">Hapus Repositori</string>
+    <string name="setup_extensions_subtext">Unduh semua situs yang ingin digunakan</string>
+    <string name="extension_size">Ukuran</string>
+    <string name="error_invalid_id">ID salah</string>
+    <string name="history">Riwayat</string>
+    <string name="action_mark_as_watched">Tandai ditonton</string>
 </resources>

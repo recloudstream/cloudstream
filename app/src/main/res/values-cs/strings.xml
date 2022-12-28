@@ -385,4 +385,6 @@
     <string name="subtitles_remove_captions">Odstranit skryté titulky z titulků</string>
     <string name="subtitles_remove_bloat">Odstranit nadbytečné titulky</string>
     <string name="extras">Extra</string>
+    <string name="action_mark_as_watched">Označit jako zhlédnuté</string>
+    <string name="history">Historie</string>
 </resources>
