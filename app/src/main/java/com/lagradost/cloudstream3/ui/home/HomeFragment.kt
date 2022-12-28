@@ -4,9 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.DialogInterface
-import android.content.Intent
 import android.content.res.Configuration
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -33,7 +31,6 @@ import com.google.android.material.button.MaterialButton
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import com.lagradost.cloudstream3.*
-import com.lagradost.cloudstream3.APIHolder.apis
 import com.lagradost.cloudstream3.APIHolder.filterProviderByPreferredMedia
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
 import com.lagradost.cloudstream3.APIHolder.getApiProviderLangSettings
@@ -79,7 +76,6 @@ import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbarView
 import com.lagradost.cloudstream3.utils.UIHelper.getResourceColor
 import com.lagradost.cloudstream3.utils.UIHelper.getSpanCount
-import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIconsAndNoStringRes
 import com.lagradost.cloudstream3.utils.UIHelper.setImage
 import com.lagradost.cloudstream3.utils.UIHelper.setImageBlur
 import com.lagradost.cloudstream3.utils.USER_SELECTED_HOMEPAGE_API
@@ -88,18 +84,11 @@ import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.android.synthetic.main.fragment_home.home_api_fab
 import kotlinx.android.synthetic.main.fragment_home.home_bookmarked_child_recyclerview
 import kotlinx.android.synthetic.main.fragment_home.home_bookmarked_holder
-import kotlinx.android.synthetic.main.fragment_home.home_change_api_loading
 import kotlinx.android.synthetic.main.fragment_home.home_loaded
-import kotlinx.android.synthetic.main.fragment_home.home_loading
-import kotlinx.android.synthetic.main.fragment_home.home_loading_error
-import kotlinx.android.synthetic.main.fragment_home.home_loading_shimmer
-import kotlinx.android.synthetic.main.fragment_home.home_loading_statusbar
 import kotlinx.android.synthetic.main.fragment_home.home_master_recycler
 import kotlinx.android.synthetic.main.fragment_home.home_plan_to_watch_btt
 import kotlinx.android.synthetic.main.fragment_home.home_provider_meta_info
 import kotlinx.android.synthetic.main.fragment_home.home_provider_name
-import kotlinx.android.synthetic.main.fragment_home.home_reload_connection_open_in_browser
-import kotlinx.android.synthetic.main.fragment_home.home_reload_connectionerror
 import kotlinx.android.synthetic.main.fragment_home.home_type_completed_btt
 import kotlinx.android.synthetic.main.fragment_home.home_type_dropped_btt
 import kotlinx.android.synthetic.main.fragment_home.home_type_on_hold_btt
@@ -107,7 +96,6 @@ import kotlinx.android.synthetic.main.fragment_home.home_type_watching_btt
 import kotlinx.android.synthetic.main.fragment_home.home_watch_child_recyclerview
 import kotlinx.android.synthetic.main.fragment_home.home_watch_holder
 import kotlinx.android.synthetic.main.fragment_home.home_watch_parent_item_title
-import kotlinx.android.synthetic.main.fragment_home.result_error_text
 import kotlinx.android.synthetic.main.fragment_home_tv.*
 import kotlinx.android.synthetic.main.fragment_search.*
 import kotlinx.android.synthetic.main.home_episodes_expanded.*
@@ -538,7 +526,6 @@ class HomeFragment : Fragment() {
         fixGrid()
 
         home_change_api?.setOnClickListener(apiChangeClickListener)
-        home_change_api_loading?.setOnClickListener(apiChangeClickListener)
         home_api_fab?.setOnClickListener(apiChangeClickListener)
         home_random?.setOnClickListener {
             if (listHomepageItems.isNotEmpty()) {
@@ -763,7 +750,7 @@ class HomeFragment : Fragment() {
         observe(homeViewModel.page) { data ->
             when (data) {
                 is Resource.Success -> {
-                    home_loading_shimmer?.stopShimmer()
+                    removeLoadingStatusFragment()
 
                     val d = data.value
                     val mutableListOfResponse = mutableListOf<SearchResponse>()
@@ -775,8 +762,6 @@ class HomeFragment : Fragment() {
                         home_master_recycler
                     )
 
-                    home_loading?.isVisible = false
-                    home_loading_error?.isVisible = false
                     home_loaded?.isVisible = true
                     if (toggleRandomButton) {
                         //Flatten list
@@ -790,40 +775,12 @@ class HomeFragment : Fragment() {
                     }
                 }
                 is Resource.Failure -> {
-                    home_loading_shimmer?.stopShimmer()
-
-                    result_error_text.text = data.errorString
-
-                    home_reload_connectionerror.setOnClickListener(apiChangeClickListener)
-
-                    home_reload_connection_open_in_browser.setOnClickListener { view ->
-                        val validAPIs = apis//.filter { api -> api.hasMainPage }
-
-                        view.popupMenuNoIconsAndNoStringRes(validAPIs.mapIndexed { index, api ->
-                            Pair(
-                                index,
-                                api.name
-                            )
-                        }) {
-                            try {
-                                val i = Intent(Intent.ACTION_VIEW)
-                                i.data = Uri.parse(validAPIs[itemId].mainUrl)
-                                startActivity(i)
-                            } catch (e: Exception) {
-                                logError(e)
-                            }
-                        }
-                    }
-
-                    home_loading?.isVisible = false
-                    home_loading_error?.isVisible = true
+                    showLoadFailedFragment()
                     home_loaded?.isVisible = false
                 }
                 is Resource.Loading -> {
+                    showLoadingFragment()
                     (home_master_recycler?.adapter as? ParentItemAdapter?)?.updateList(listOf())
-                    home_loading_shimmer?.startShimmer()
-                    home_loading?.isVisible = true
-                    home_loading_error?.isVisible = false
                     home_loaded?.isVisible = false
                 }
             }
@@ -1101,7 +1058,6 @@ class HomeFragment : Fragment() {
 
         //context?.fixPaddingStatusbarView(home_statusbar)
         context?.fixPaddingStatusbar(home_padding)
-        context?.fixPaddingStatusbar(home_loading_statusbar)
 
         home_master_recycler.adapter =
             ParentItemAdapter(mutableListOf(), { callback ->
@@ -1144,9 +1100,6 @@ class HomeFragment : Fragment() {
             home_api_fab?.isVisible = false
             home_change_api?.isVisible = true
             if (isTrueTvSettings()) {
-                home_change_api_loading?.isVisible = true
-                home_change_api_loading?.isFocusable = true
-                home_change_api_loading?.isFocusableInTouchMode = true
                 home_change_api?.isFocusable = true
                 home_change_api?.isFocusableInTouchMode = true
             }
@@ -1155,7 +1108,6 @@ class HomeFragment : Fragment() {
         } else {
             home_api_fab?.isVisible = true
             home_change_api?.isVisible = false
-            home_change_api_loading?.isVisible = false
         }
 
         for (syncApi in OAuth2Apis) {
@@ -1170,5 +1122,27 @@ class HomeFragment : Fragment() {
                 break
             }
         }
+    }
+
+    private fun showLoadingFragment() {
+        showFragment(HomeLoadingFragment::class.java)
+    }
+
+    private fun showLoadFailedFragment() {
+        showFragment(HomeLoadFailedFragment::class.java)
+    }
+
+    private fun removeLoadingStatusFragment() {
+        childFragmentManager.findFragmentById(R.id.home_load_status_holder)?.let {
+            childFragmentManager.beginTransaction()
+                .remove(it)
+                .commitNow()
+        }
+    }
+
+    private fun showFragment(fragmentClass: Class<out Fragment>) {
+        childFragmentManager.beginTransaction()
+            .replace(R.id.home_load_status_holder, fragmentClass, null, null)
+            .commit()
     }
 }

@@ -76,6 +76,8 @@ class HomeViewModel : ViewModel() {
 
     private val _apiName = MutableLiveData<String>()
     val apiName: LiveData<String> = _apiName
+    
+    val apiNameString: String? get() = apiName.value
 
     private val _randomItems = MutableLiveData<List<SearchResponse>?>(null)
     val randomItems: LiveData<List<SearchResponse>?> = _randomItems
