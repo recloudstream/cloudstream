@@ -40,8 +40,6 @@ import com.lagradost.cloudstream3.ui.APIRepository.Companion.randomApi
 import com.lagradost.cloudstream3.ui.AutofitRecyclerView
 import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.quicksearch.QuickSearchFragment
-import com.lagradost.cloudstream3.ui.result.START_ACTION_RESUME_LATEST
-import com.lagradost.cloudstream3.ui.result.setLinearListLayout
 import com.lagradost.cloudstream3.ui.search.*
 import com.lagradost.cloudstream3.ui.search.SearchHelper.handleSearchClickCallback
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTrueTvSettings
@@ -54,10 +52,7 @@ import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStore.setKey
 import com.lagradost.cloudstream3.utils.DataStoreHelper
-import com.lagradost.cloudstream3.utils.DataStoreHelper.removeLastWatched
-import com.lagradost.cloudstream3.utils.DataStoreHelper.setResultWatchState
 import com.lagradost.cloudstream3.utils.Event
-import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showOptionSelectStringRes
 import com.lagradost.cloudstream3.utils.SubtitleHelper.getFlagFromIso
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
@@ -76,7 +71,6 @@ import kotlinx.android.synthetic.main.fragment_home.home_master_recycler
 import kotlinx.android.synthetic.main.fragment_home.home_reload_connection_open_in_browser
 import kotlinx.android.synthetic.main.fragment_home.home_reload_connectionerror
 import kotlinx.android.synthetic.main.fragment_home.result_error_text
-import kotlinx.android.synthetic.main.fragment_home_head_tv.*
 import kotlinx.android.synthetic.main.fragment_home_tv.*
 import kotlinx.android.synthetic.main.fragment_result.*
 import kotlinx.android.synthetic.main.fragment_search.*
@@ -476,21 +470,9 @@ class HomeFragment : Fragment() {
         }
     }
 
-    /*private fun handleBack(poppedFragment: Boolean) {
-        if (poppedFragment) {
-            reloadStored()
-        }
-    }*/
-
-    private fun focusCallback(card: SearchResponse) {
-        // home_focus_text?.text = card.name
-        // home_blur_poster?.setImageBlur(card.posterUrl, 50, headers = card.posterHeaders)
-        // home_bg_poster?.setImage(card.posterUrl,headers =card.posterHeaders)
-    }
-
     private fun homeHandleSearch(callback: SearchClickCallback) {
         if (callback.action == SEARCH_ACTION_FOCUSED) {
-            focusCallback(callback.card)
+            //focusCallback(callback.card)
         } else {
             handleSearchClickCallback(activity, callback)
         }
@@ -505,7 +487,6 @@ class HomeFragment : Fragment() {
         fixGrid()
 
         home_change_api_loading?.setOnClickListener(apiChangeClickListener)
-        home_preview_change_api?.setOnClickListener(apiChangeClickListener)
         home_api_fab?.setOnClickListener(apiChangeClickListener)
         home_random?.setOnClickListener {
             if (listHomepageItems.isNotEmpty()) {
@@ -522,137 +503,15 @@ class HomeFragment : Fragment() {
         }
 
         observe(homeViewModel.preview) { preview ->
-            // Always reset the padding, otherwise the will move lower and lower
-            // home_fix_padding?.setPadding(0, 0, 0, 0)
-            //home_fix_padding?.let { v ->
-            //    val params = v.layoutParams
-            //    params.height = 0
-            //    v.layoutParams = params
-            //}
-
             (home_master_recycler?.adapter as? HomeParentItemAdapterPreview?)?.setPreviewData(
                 preview
             )
-
-            //when (preview) {
-            //    is Resource.Success -> {
-            //        home_preview?.isVisible = true
-            //        (home_preview_viewpager?.adapter as? HomeScrollAdapter)?.apply {
-            //            if (!setItems(preview.value.second, preview.value.first)) {
-            //                home_preview_viewpager?.setCurrentItem(0, false)
-            //            }
-            //            // home_preview_viewpager?.setCurrentItem(1000, false)
-            //        }
-//
-            //        //.also {
-            //        //home_preview_viewpager?.adapter =
-            //        //}
-            //    }
-            //    else -> {
-            //        (home_preview_viewpager?.adapter as? HomeScrollAdapter)?.setItems(
-            //            listOf(),
-            //            false
-            //        )
-            //        home_preview?.isVisible = false
-            //        context?.fixPaddingStatusbarView(home_fix_padding)
-            //    }
-            //}
         }
-
-        //val searchText =
-        //    home_search?.findViewById<SearchView.SearchAutoComplete>(androidx.appcompat.R.id.search_src_text)
-        //searchText?.context?.getResourceColor(R.attr.white)?.let { color ->
-        //    searchText.setTextColor(color)
-        //    searchText.setHintTextColor(color)
-        //}
 
         observe(homeViewModel.apiName) { apiName ->
             currentApiName = apiName
-            // setKey(USER_SELECTED_HOMEPAGE_API, apiName)
             home_api_fab?.text = apiName
-            //home_provider_name?.text = apiName
-            // try {
-            //     home_search?.queryHint = getString(R.string.search_hint_site).format(apiName)
-            // } catch (e: Exception) {
-            //     logError(e)
-            // }
-            //home_provider_meta_info?.isVisible = false
-
-            //getApiFromNameNull(apiName)?.let { currentApi ->
-            //    val typeChoices = listOf(
-            //        Pair(R.string.movies, listOf(TvType.Movie)),
-            //        Pair(R.string.tv_series, listOf(TvType.TvSeries)),
-            //        Pair(R.string.documentaries, listOf(TvType.Documentary)),
-            //        Pair(R.string.cartoons, listOf(TvType.Cartoon)),
-            //        Pair(R.string.anime, listOf(TvType.Anime, TvType.OVA, TvType.AnimeMovie)),
-            //        Pair(R.string.torrent, listOf(TvType.Torrent)),
-            //        Pair(R.string.asian_drama, listOf(TvType.AsianDrama)),
-            //    ).filter { item -> currentApi.supportedTypes.any { type -> item.second.contains(type) } }
-            //    home_provider_meta_info?.text =
-            //        typeChoices.joinToString(separator = ", ") { getString(it.first) }
-            //    home_provider_meta_info?.isVisible = true
-            //}
         }
-
-        //home_main_poster_recyclerview?.adapter =
-        //    HomeChildItemAdapter(
-        //        mutableListOf(),
-        //        R.layout.home_result_big_grid,
-        //        nextFocusUp = home_main_poster_recyclerview?.nextFocusUpId,
-        //        nextFocusDown = home_main_poster_recyclerview?.nextFocusDownId
-        //    ) { callback ->
-        //        homeHandleSearch(callback)
-        //    }
-        //home_main_poster_recyclerview?.setLinearListLayout()
-        //observe(homeViewModel.randomItems) { items ->
-        //    if (items.isNullOrEmpty()) {
-        //        toggleMainVisibility(false)
-        //    } else {
-        //        val tempAdapter = home_main_poster_recyclerview?.adapter as? HomeChildItemAdapter?
-        //        // no need to reload if it has the same data
-        //        if (tempAdapter != null && tempAdapter.cardList == items) {
-        //            toggleMainVisibility(true)
-        //            return@observe
-        //        }
-//
-        //        val randomSize = items.size
-        //        tempAdapter?.updateList(items)
-        //        if (!isTvSettings()) {
-        //            home_main_poster_recyclerview?.post {
-        //                (home_main_poster_recyclerview?.layoutManager as CenterZoomLayoutManager?)?.let { manager ->
-        //                    manager.updateSize(forceUpdate = true)
-        //                    if (randomSize > 2) {
-        //                        manager.scrollToPosition(randomSize / 2)
-        //                        manager.snap { dx ->
-        //                            home_main_poster_recyclerview?.post {
-        //                                // this is the best I can do, fuck android for not including instant scroll
-        //                                home_main_poster_recyclerview?.smoothScrollBy(dx, 0)
-        //                            }
-        //                        }
-        //                    }
-        //                }
-        //            }
-        //        } else {
-        //            items.firstOrNull()?.let {
-        //                focusCallback(it)
-        //            }
-        //        }
-        //        toggleMainVisibility(true)
-        //    }
-        //}
-
-        //home_search?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-        //    override fun onQueryTextSubmit(query: String): Boolean {
-        //        QuickSearchFragment.pushSearch(activity, query, currentApiName?.let { arrayOf(it) })
-//
-        //        return true
-        //    }
-//
-        //    override fun onQueryTextChange(newText: String): Boolean {
-        //        //searchViewModel.quickSearch(newText)
-        //        return true
-        //    }
-        //})
 
         observe(homeViewModel.page) { data ->
             when (data) {
@@ -732,55 +591,18 @@ class HomeFragment : Fragment() {
             (home_master_recycler?.adapter as? HomeParentItemAdapterPreview?)?.setAvailableWatchStatusTypes(
                 availableWatchStatusTypes
             )
-
-
-            /*home_bookmark_select?.setOnClickListener {
-                it.popupMenuNoIcons(availableWatchStatusTypes.second.map { type ->
-                    Pair(
-                        type.internalId,
-                        type.stringRes
-                    )
-                }) {
-                    homeViewModel.loadStoredData(it.context, WatchType.fromInternalId(this.itemId))
-                }
-            }
-            home_bookmarked_parent_item_title?.text = getString(availableWatchStatusTypes.first.stringRes)*/
         }
 
-        //TODO REMAKE
         observe(homeViewModel.bookmarks) { data ->
             (home_master_recycler?.adapter as? HomeParentItemAdapterPreview?)?.setBookmarkData(
                 data
             )
-
-            //(home_bookmarked_child_recyclerview?.adapter as? HomeChildItemAdapter?)?.updateList(
-            //    bookmarks
-            //)
-//
-            //    home_bookmarked_child_more_info?.setOnClickListener {
-            //        activity?.loadHomepageList(
-            //            HomePageList(
-            //                getString(R.string.error_bookmarks_text), //home_bookmarked_parent_item_title?.text?.toString() ?: getString(R.string.error_bookmarks_text),
-            //                bookmarks
-            //            )
-            //        ) {
-            //            deleteAllBookmarkedData()
-            //            homeViewModel.loadStoredData(null)
-            //        }
-            //    }
         }
 
         observe(homeViewModel.resumeWatching) { resumeWatching ->
             (home_master_recycler?.adapter as? HomeParentItemAdapterPreview?)?.setResumeWatchingData(
                 resumeWatching
             )
-
-
-            //home_watch_holder?.isVisible = resumeWatching.isNotEmpty()
-            //(home_watch_child_recyclerview?.adapter as? HomeChildItemAdapter?)?.updateList(
-            //    resumeWatching
-            //)
-
             if (isTrueTvSettings()) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     ioSafe {
@@ -788,155 +610,8 @@ class HomeFragment : Fragment() {
                     }
                 }
             }
-
-            //home_watch_child_more_info?.setOnClickListener {
-            //    activity?.loadHomepageList(
-            //        HomePageList(
-            //            home_watch_parent_item_title?.text?.toString()
-            //                ?: getString(R.string.continue_watching),
-            //            resumeWatching
-            //        )
-            //    ) {
-            //        deleteAllResumeStateIds()
-            //        homeViewModel.loadResumeWatching()
-            //    }
-            //}
         }
 
-        home_bookmarked_child_recyclerview?.adapter = HomeChildItemAdapter(
-            ArrayList(),
-            nextFocusUp = home_bookmarked_child_recyclerview?.nextFocusUpId,
-            nextFocusDown = home_bookmarked_child_recyclerview?.nextFocusDownId
-        ) { callback ->
-            if (callback.action == SEARCH_ACTION_SHOW_METADATA) {
-                activity?.showOptionSelectStringRes(
-                    callback.view,
-                    callback.card.posterUrl,
-                    listOf(
-                        R.string.action_open_watching,
-                        R.string.action_remove_from_bookmarks,
-                    ),
-                    listOf(
-                        R.string.action_open_play,
-                        R.string.action_open_watching,
-                        R.string.action_remove_from_bookmarks
-                    )
-                ) { (isTv, actionId) ->
-                    fun play() {
-                        activity.loadSearchResult(callback.card, START_ACTION_RESUME_LATEST)
-                        reloadStored()
-                    }
-
-                    fun remove() {
-                        setResultWatchState(callback.card.id, WatchType.NONE.internalId)
-                        reloadStored()
-                    }
-
-                    fun info() {
-                        handleSearchClickCallback(
-                            activity,
-                            SearchClickCallback(
-                                SEARCH_ACTION_LOAD,
-                                callback.view,
-                                -1,
-                                callback.card
-                            )
-                        )
-                        reloadStored()
-                    }
-
-                    when (actionId) {
-                        0 -> {
-                            play()
-                        }
-                        1 -> {
-                            info()
-                        }
-                        2 -> {
-                            remove()
-                        }
-                    }
-                }
-            } else {
-                homeHandleSearch(callback)
-            }
-        }
-        home_watch_child_recyclerview?.setLinearListLayout()
-        home_bookmarked_child_recyclerview?.setLinearListLayout()
-
-        home_watch_child_recyclerview?.adapter = HomeChildItemAdapter(
-            ArrayList(),
-            nextFocusUp = home_watch_child_recyclerview?.nextFocusUpId,
-            nextFocusDown = home_watch_child_recyclerview?.nextFocusDownId
-        ) { callback ->
-            if (callback.action == SEARCH_ACTION_SHOW_METADATA) {
-                activity?.showOptionSelectStringRes(
-                    callback.view,
-                    callback.card.posterUrl,
-                    listOf(
-                        R.string.action_open_watching,
-                        R.string.action_remove_watching
-                    ),
-                    listOf(
-                        R.string.action_open_play,
-                        R.string.action_open_watching,
-                        R.string.action_remove_watching
-                    )
-                ) { (isTv, actionId) ->
-                    fun play() {
-                        activity.loadSearchResult(callback.card, START_ACTION_RESUME_LATEST)
-                        reloadStored()
-                    }
-
-                    fun remove() {
-                        val card = callback.card
-                        if (card is DataStoreHelper.ResumeWatchingResult) {
-                            removeLastWatched(card.parentId)
-                            reloadStored()
-                        }
-                    }
-
-                    fun info() {
-                        handleSearchClickCallback(
-                            activity,
-                            SearchClickCallback(
-                                SEARCH_ACTION_LOAD,
-                                callback.view,
-                                -1,
-                                callback.card
-                            )
-                        )
-                        reloadStored()
-                    }
-
-                    if (isTv) {
-                        when (actionId) {
-                            0 -> {
-                                play()
-                            }
-                            1 -> {
-                                info()
-                            }
-                            2 -> {
-                                remove()
-                            }
-                        }
-                    } else {
-                        when (actionId) {
-                            0 -> {
-                                info()
-                            }
-                            1 -> {
-                                remove()
-                            }
-                        }
-                    }
-
-                }
-            } else {
-                homeHandleSearch(callback)
-            }
-        }
 
         //context?.fixPaddingStatusbarView(home_statusbar)
         //context?.fixPaddingStatusbar(home_padding)
@@ -969,14 +644,6 @@ class HomeFragment : Fragment() {
                         currentApiName?.let { arrayOf(it) })
                 }
             })
-        //home_master_recycler.setLinearListLayout()
-
-        //home_master_recycler?.setMaxViewPoolSize(0, 4)
-        //home_master_recycler.layoutManager = object : LinearLayoutManager(context) {
-        //    override fun supportsPredictiveItemAnimations(): Boolean {
-        //        return false
-        //    }
-        //} // GridLayoutManager(context, 1).also { it.supportsPredictiveItemAnimations() }
 
         reloadStored()
         loadHomePage(false)
@@ -991,7 +658,7 @@ class HomeFragment : Fragment() {
                         home_random?.extend()
                     }
                 }
-                
+
                 super.onScrolled(recyclerView, dx, dy)
             }
         })
@@ -1012,7 +679,7 @@ class HomeFragment : Fragment() {
             home_api_fab?.isVisible = true
             home_change_api_loading?.isVisible = false
         }
-
+        //TODO READD THIS
         /*for (syncApi in OAuth2Apis) {
             val login = syncApi.loginInfo()
             val pic = login?.profilePicture
