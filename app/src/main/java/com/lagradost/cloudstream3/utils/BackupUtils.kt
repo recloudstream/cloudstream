@@ -268,6 +268,7 @@ object BackupUtils {
                         "application/json",
                         "unknown/unknown",
                         "content/unknown",
+                        "application/octet-stream",
                     )
                 )
             } catch (e: Exception) {
