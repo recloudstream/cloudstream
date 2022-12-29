@@ -9,6 +9,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <View
+        android:id="@+id/home_none_padding"
+        android:layout_width="match_parent"
+        android:layout_height="0dp" />
+
     <FrameLayout
         android:id="@+id/home_preview"
         android:layout_width="match_parent"

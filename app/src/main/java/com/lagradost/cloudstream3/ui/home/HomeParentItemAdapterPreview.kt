@@ -4,7 +4,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
-import android.widget.LinearLayout
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
 import androidx.core.view.isGone
@@ -14,34 +13,30 @@ import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipDrawable
 import com.lagradost.cloudstream3.APIHolder.getId
-import com.lagradost.cloudstream3.AcraApplication
 import com.lagradost.cloudstream3.AcraApplication.Companion.getActivity
 import com.lagradost.cloudstream3.LoadResponse
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.SearchResponse
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.ui.WatchType
-import com.lagradost.cloudstream3.ui.quicksearch.QuickSearchFragment
 import com.lagradost.cloudstream3.ui.result.ResultViewModel2
 import com.lagradost.cloudstream3.ui.result.START_ACTION_RESUME_LATEST
 import com.lagradost.cloudstream3.ui.search.SEARCH_ACTION_LOAD
 import com.lagradost.cloudstream3.ui.search.SEARCH_ACTION_SHOW_METADATA
 import com.lagradost.cloudstream3.ui.search.SearchClickCallback
-import com.lagradost.cloudstream3.ui.search.SearchHelper
-import com.lagradost.cloudstream3.ui.settings.SettingsFragment
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
-import com.lagradost.cloudstream3.utils.AppUtils.loadSearchResult
 import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showOptionSelectStringRes
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
+import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbarView
 import com.lagradost.cloudstream3.utils.UIHelper.setImage
 import kotlinx.android.synthetic.main.activity_main_tv.view.*
 import kotlinx.android.synthetic.main.fragment_home_head.view.*
 import kotlinx.android.synthetic.main.fragment_home_head.view.home_bookmarked_child_recyclerview
-import kotlinx.android.synthetic.main.fragment_home_head.view.home_header
 import kotlinx.android.synthetic.main.fragment_home_head_tv.view.*
 import kotlinx.android.synthetic.main.fragment_home_head_tv.view.home_bookmarked_holder
+import kotlinx.android.synthetic.main.fragment_home_head_tv.view.home_none_padding
 import kotlinx.android.synthetic.main.fragment_home_head_tv.view.home_plan_to_watch_btt
 import kotlinx.android.synthetic.main.fragment_home_head_tv.view.home_preview
 import kotlinx.android.synthetic.main.fragment_home_head_tv.view.home_preview_viewpager
@@ -51,8 +46,6 @@ import kotlinx.android.synthetic.main.fragment_home_head_tv.view.home_type_on_ho
 import kotlinx.android.synthetic.main.fragment_home_head_tv.view.home_type_watching_btt
 import kotlinx.android.synthetic.main.fragment_home_head_tv.view.home_watch_child_recyclerview
 import kotlinx.android.synthetic.main.fragment_home_head_tv.view.home_watch_holder
-import kotlinx.android.synthetic.main.fragment_setup_media.*
-import java.util.ArrayList
 
 class HomeParentItemAdapterPreview(
     items: MutableList<HomeViewModel.ExpandableHomepageList>,
@@ -95,13 +88,11 @@ class HomeParentItemAdapterPreview(
     fun setPreviewData(preview: Resource<Pair<Boolean, List<LoadResponse>>>) {
         previewData = preview
         holder?.updatePreview(preview)
-        //notifyItemChanged(0)
     }
 
     fun setApiName(name: String) {
         apiName = name
         holder?.updateApiName(name)
-        //notifyItemChanged(0)
     }
 
     fun setBookmarkData(data: Pair<Boolean, List<SearchResponse>>) {
@@ -131,6 +122,7 @@ class HomeParentItemAdapterPreview(
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        println("onCreateViewHolder $viewType")
         return when (viewType) {
             VIEW_TYPE_HEADER -> HeaderViewHolder(
                 LayoutInflater.from(parent.context).inflate(
@@ -380,10 +372,10 @@ class HomeParentItemAdapterPreview(
             }
 
             previewViewpager?.apply {
-                if (!isTvSettings())
-                    setPageTransformer(HomeScrollTransformer())
-                else
-                    setPageTransformer(null)
+                //if (!isTvSettings())
+                setPageTransformer(HomeScrollTransformer())
+                //else
+                //    setPageTransformer(null)
 
                 if (adapter == null)
                     adapter = HomeScrollAdapter(
@@ -392,7 +384,7 @@ class HomeParentItemAdapterPreview(
                     )
             }
             previewAdapter = previewViewpager?.adapter as? HomeScrollAdapter?
-            previewViewpager?.registerOnPageChangeCallback(previewCallback)
+            // previewViewpager?.registerOnPageChangeCallback(previewCallback)
 
             if (resumeAdapter == null) {
                 resumeRecyclerView?.adapter = HomeChildItemAdapter(
@@ -557,27 +549,41 @@ class HomeParentItemAdapterPreview(
         }
 
         fun updatePreview(preview: Resource<Pair<Boolean, List<LoadResponse>>>) {
-            itemView.home_header?.isGone = preview is Resource.Loading
             itemView.home_preview_change_api2?.isGone = preview is Resource.Success
-
+            if (preview is Resource.Success) {
+                itemView.home_none_padding?.apply {
+                    val params = layoutParams
+                    params.height = 0
+                    layoutParams = params
+                }
+            } else {
+                itemView.home_none_padding?.context?.fixPaddingStatusbarView(itemView.home_none_padding)
+            }
             when (preview) {
                 is Resource.Success -> {
-                    previewHeader?.isVisible = true
                     if (true != previewAdapter?.setItems(
                             preview.value.second,
                             preview.value.first
                         )
                     ) {
+                        // this might seam weird and useless, however this prevents a very weird andrid bug were the viewpager is not rendered properly
+                        // I have no idea why that happens, but this is my ducktape solution
                         previewViewpager?.setCurrentItem(0, false)
+                        previewViewpager?.beginFakeDrag()
+                        previewViewpager?.fakeDragBy(1f)
+                        previewViewpager?.endFakeDrag()
+                        previewCallback.onPageSelected(0)
+                        previewHeader?.isVisible = true
                     }
                 }
                 else -> {
-                    previewHeader?.isVisible = false
-
                     previewAdapter?.setItems(listOf(), false)
                     previewViewpager?.setCurrentItem(0, false)
+                    previewHeader?.isVisible = false
                 }
             }
+            // previewViewpager?.postDelayed({ previewViewpager?.scr(100, 0) }, 1000)
+            //previewViewpager?.postInvalidate()
         }
 
         fun updateResume(resumeWatching: List<SearchResponse>) {
@@ -586,22 +592,17 @@ class HomeParentItemAdapterPreview(
         }
 
         fun updateBookmarks(data: Pair<Boolean, List<SearchResponse>>) {
-            bookmarkHolder?.isVisible = true // data.first
+            bookmarkHolder?.isVisible = data.first
             bookmarkAdapter?.updateList(data.second)
         }
 
         fun setAvailableWatchStatusTypes(availableWatchStatusTypes: Pair<Set<WatchType>, Set<WatchType>>) {
-            var anyVisible = false
             for ((chip, watch) in toggleList) {
                 chip?.apply {
-                    isVisible = availableWatchStatusTypes.second.contains(watch).also {
-                        anyVisible = anyVisible || it
-                    }
-                    
+                    isVisible = availableWatchStatusTypes.second.contains(watch)
                     isChecked = availableWatchStatusTypes.first.contains(watch)
                 }
             }
-            itemView.home_bookmarked_holder?.isVisible = anyVisible
         }
     }
 }

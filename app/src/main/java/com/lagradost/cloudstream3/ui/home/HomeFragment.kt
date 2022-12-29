@@ -404,7 +404,6 @@ class HomeFragment : Fragment() {
         return inflater.inflate(layout, container, false)
     }
 
-    @SuppressLint("NotifyDataSetChanged") // we need to notify to change poster
     private fun fixGrid() {
         activity?.getSpanCount()?.let {
             currentSpan = it

@@ -115,29 +115,29 @@ open class ParentItemAdapter(
         items.clear()
         items.addAll(new)
 
-        val mAdapter = this
+        //val mAdapter = this
+        val delta = if (this@ParentItemAdapter is HomeParentItemAdapterPreview) {
+            headItems
+        } else {
+            0
+        }
+
         diffResult.dispatchUpdatesTo(object : ListUpdateCallback {
             override fun onInserted(position: Int, count: Int) {
-                mAdapter.notifyItemRangeChanged(
-                    position,
-                    count
-                )//notifyItemRangeInserted(position, count)
+                //notifyItemRangeChanged(position + delta, count)
+                notifyItemRangeInserted(position + delta, count)
             }
 
             override fun onRemoved(position: Int, count: Int) {
-                mAdapter.notifyItemRangeRemoved(position, count)
+                notifyItemRangeRemoved(position + delta, count)
             }
 
             override fun onMoved(fromPosition: Int, toPosition: Int) {
-                mAdapter.notifyItemMoved(fromPosition, toPosition)
+                notifyItemMoved(fromPosition + delta, toPosition + delta)
             }
 
             override fun onChanged(_position: Int, count: Int, payload: Any?) {
-                val delta = if (this@ParentItemAdapter is HomeParentItemAdapterPreview) {
-                    headItems
-                } else {
-                    0
-                }
+
                 val position = _position + delta
 
                 // I know kinda messy, what this does is using the update or bind instead of onCreateViewHolder -> bind
@@ -164,11 +164,11 @@ open class ParentItemAdapter(
 
                     // just in case some item did not get updated
                     for (i in missingUpdates) {
-                        mAdapter.notifyItemChanged(i, payload)
+                        notifyItemChanged(i, payload)
                     }
                 } ?: run {
                     // in case we don't have a nice
-                    mAdapter.notifyItemRangeChanged(position, count, payload)
+                    notifyItemRangeChanged(position, count, payload)
                 }
             }
         })
