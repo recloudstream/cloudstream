@@ -138,7 +138,7 @@
     <string name="restore_success">File cadangan termuat</string>
     <string name="restore_failed_format" formatted="true">Gagal untuk memulihkan data dari file %s</string>
     <string name="backup_success">Data tersimpan</string>
-    <string name="backup_failed">Izin penyimpanan tidak ditemukan, mohon coba lagi</string>
+    <string name="backup_failed">Izin penyimpanan tidak ditemukan, mohon coba lagi.</string>
     <string name="backup_failed_error_format">Error saat mencadang %s</string>
     <string name="search">Cari</string>
     <string name="category_account">Kredit dan akun</string>
@@ -464,7 +464,7 @@
     <string name="player_settings_play_in_vlc">VLC</string>
     <string name="player_settings_play_in_mpv">MPV</string>
     <string name="batch_download_finish_format" formatted="true">Terunduh %d %s</string>
-    <string name="batch_download_start_format" formatted="true">"Memulai mengunduh  %d %s…"</string>
+    <string name="batch_download_start_format" formatted="true">Memulai mengunduh %d %s…</string>
     <string name="safe_mode_description">Semua fitur tambahkan dimatikan karena crash, untuk memudahkanmu mencari penyebab crash.</string>
     <string name="example_lang_name">Kode bahasa (en)</string>
     <string name="player_load_subtitles_online">Ambil dari internet</string>
@@ -473,7 +473,7 @@
     <string name="delete_repository_plugins">Pilih ini untuk menghapus semua repositori plugin</string>
     <string name="skip_setup">Lewati pengaturan</string>
     <string name="error_invalid_url">Alamat salah</string>
-    <string name="network_adress_example">"Alamat  streaming"</string>
+    <string name="network_adress_example">Alamat streaming</string>
     <string name="next">Selanjutnya</string>
     <string name="previous">Sebelumnya</string>
     <string name="app_layout_subtext">Ubah tampilan aplikasi</string>
@@ -485,7 +485,7 @@
     <string name="extension_size">Ukuran</string>
     <string name="error_invalid_id">ID salah</string>
     <string name="history">Riwayat</string>
-    <string name="action_mark_as_watched">Tandai ditonton</string>
+    <string name="action_mark_as_watched">Telah ditonton</string>
     <string name="error_invalid_data">Data salah</string>
     <string name="subtitles_remove_captions">Hapus teks tertutup dari subtitel</string>
     <string name="subtitles_remove_bloat">Hapus karakter sampah dari subtitel</string>
@@ -499,4 +499,28 @@
     <string name="apk_installer_settings_des">Beberapa perangkat tidak mendukung penginstal paket mode baru. Coba mode lama jika pembaruan tidak dapat diinstal.</string>
     <string name="pref_category_actions">Aksi</string>
     <string name="referer">Sumber</string>
+    <string name="yes">Ya</string>
+    <string name="extension_install_first">Pasang dulu fitur tambahan</string>
+    <string name="all_languages_preference">Semua Bahasa</string>
+    <string name="skip_type_format" formatted="true">Lewati %s</string>
+    <string name="skip_type_op">Pembuka</string>
+    <string name="skip_type_ed">Sesi Akhir</string>
+    <string name="skip_type_recap">Sinopsis</string>
+    <string name="skip_type_mixed_ed">Sesi akhir ganda</string>
+    <string name="skip_type_creddits">Sesi Kredit</string>
+    <string name="skip_type_intro">Sesi Intro</string>
+    <string name="clipboard_too_large">Terlalu banyak karakter, tidak dapat menyimpan di clipboard.</string>
+    <string name="confirm_exit_dialog">Yakin ingin keluar\?</string>
+    <string name="no">Tidak</string>
+    <string name="update_notification_installing">Memasang pembaruan…</string>
+    <string name="update_notification_failed">Tidak dapat memasang versi terbaru</string>
+    <string name="player_settings_play_in_browser">Web browser</string>
+    <string name="app_not_found_error">Aplikasi tidak ditemukan</string>
+    <string name="player_settings_play_in_web">Web Video Cast</string>
+    <string name="clear_history">Hapus Riwayat</string>
+    <string name="enable_skip_op_from_database_des">Tampilkan popup untuk skip sesi pembuka/akhir</string>
+    <string name="update_notification_downloading">Mengunduh pembaruan…</string>
+    <string name="apk_installer_legacy">Versi lama</string>
+    <string name="skip_type_mixed_op">Sesi pembuka ganda</string>
+    <string name="apk_installer_package_installer">Penginstal Paket</string>
 </resources>
