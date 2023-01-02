@@ -76,12 +76,12 @@ open class Cda: ExtractorApi() {
         return if (a.contains("/upstream")) "https://" + a.replace("/upstream", ".mp4/upstream")
             else "https://${a}.mp4"
     }
-    
+
     private fun getFile(a: String) = when {
         a.startsWith("uggc") -> cdaUggc(a)
         !a.startsWith("http") -> cdaDecrypt(a)
         else -> a
-    }    
+    }
 
     data class VideoPlayerData(
         val file: String,
