@@ -357,11 +357,11 @@ class InAppUpdater {
             }
             return false
         }
-        
+
         fun isMiUi(): Boolean {
             return !TextUtils.isEmpty(getSystemProperty("ro.miui.ui.version.name"))
         }
-        
+
         fun getSystemProperty(propName: String): String? {
             var line: String? = null
             var input: BufferedReader? = null
