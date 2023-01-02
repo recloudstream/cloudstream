@@ -62,7 +62,7 @@ open class Cda: ExtractorApi() {
             .replace("_Q5", "")
             .replace("_IKSDE", "")
         a = URLDecoder.decode(a, "UTF-8")
-        a = a.split("").map { char ->
+        a = a.map { char ->
             if (32 < char.toInt() && char.toInt() < 127) {
                 return@map String.format("%c", 33 + (char.toInt() + 14) % 94)
             } else {
