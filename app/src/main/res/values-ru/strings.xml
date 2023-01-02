@@ -1,2 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="history">История</string>
+    <string name="no">Нет</string>
+    <string name="yes">Да</string>
+    <string name="tracks">Треки</string>
+    <string name="queued">в очереди</string>
+    <string name="resize_zoom">Приблизить</string>
+    <string name="download">Скачать</string>
+    <string name="search">Поиск</string>
+    <string name="resize_fill">Заполнить</string>
+    <string name="download_failed">Ошибка загрузки</string>
+    <string name="resize_fit">Подогнать</string>
+    <string name="delete">Удалить</string>
+    <string name="all">Всё</string>
+    <string name="pause">Пауза</string>
+</resources>

@@ -398,4 +398,5 @@
     <string name="setup_done">Klaar</string>
     <string name="action_mark_as_watched">Markeer als bekeken</string>
     <string name="history">Geschiedenis</string>
+    <string name="play_trailer_button">Speel Trailer</string>
 </resources>
