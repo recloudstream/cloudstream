@@ -156,11 +156,11 @@
     <string name="episode_sync_settings">İzleme ilerlemesini güncelle</string>
     <string name="episode_sync_settings_des">Mevcut bölüm ilerlemesini otomatik güncelle</string>
     <string name="restore_settings">Yedekten geri yükle</string>
-    <string name="backup_settings">Yedekle</string>
+    <string name="backup_settings">Verileri yedekleyin</string>
     <string name="restore_success">Yedek dosyası yüklendi</string>
     <string name="restore_failed_format" formatted="true">Geri yükleme başarısız oldu: %s</string>
     <string name="backup_success">Başarıyla yedeklendi</string>
-    <string name="backup_failed">Depolama izinleri eksik, lütfen tekrar deneyin</string>
+    <string name="backup_failed">Depolama izinleri eksik. Lütfen tekrar deneyin.</string>
     <string name="backup_failed_error_format">%s yedeklenirken hata</string>
     <string name="search">Ara</string>
     <string name="category_account">Hesaplar</string>
@@ -502,4 +502,8 @@
     <string name="app_not_found_error">Uygulama bulunamadı</string>
     <string name="history">Geçmiş</string>
     <string name="action_mark_as_watched">İzlendi olarak imle</string>
+    <string name="update_notification_installing">Uygulama güncellemesi yükleniyor…</string>
+    <string name="redo_setup_process">Kurulum işlemini tekrarla</string>
+    <string name="play_trailer_button">Fragmanı oynat</string>
+    <string name="automatic_plugin_download_summary">Eklenen depolardan henüz yüklenmemiş tüm eklentileri otomatik olarak yükleyin.</string>
 </resources>

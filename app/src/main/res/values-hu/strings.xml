@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="cast_format" formatted="true">Stáblista: %s</string>
+    <string name="next_episode_time_day_format" formatted="true">%dn %dó%dp</string>
+    <string name="next_episode_time_hour_format" formatted="true">%dó%dp</string>
+    <string name="next_episode_time_min_format" formatted="true">%dp</string>
+    <string name="episode_poster_img_des">Epizód Plakát</string>
+    <string name="home_main_poster_img_des">Fő Plakát</string>
+    <string name="go_back_img_des">Vissza</string>
+    <string name="home_change_provider_img_des">Szolgáltató Váltás</string>
+    <string name="player_speed_text_format" formatted="true">Sebesség (%.2fx)</string>
+    <string name="rated_format" formatted="true">Értékelés: %.1f</string>
+    <string name="new_update_format" formatted="true">Új frissítés található!
+\n%s -&gt; %s</string>
+    <string name="duration_format" formatted="true">%d perc</string>
+    <string name="app_dub_sub_episode_text_format" formatted="true">%sEp%d</string>
+    <string name="app_name">CloudStream</string>
+    <string name="preview_background_img_des">Háttér Előnézet</string>
+    <string name="download_failed">Letöltés sikertelen</string>
+    <string name="download">Letöltés</string>
+    <string name="search">Keresés</string>
+    <string name="delete">Törlés</string>
+    <string name="pause">Szüneteltetés</string>
+    <string name="queued">sorba állítva</string>
+    <string name="resize_fit">Igazítás</string>
+    <string name="resize_fill">Kitöltés</string>
+    <string name="resize_zoom">Nagyítás</string>
+    <string name="all">Összes</string>
+    <string name="tracks">Zeneszámok</string>
+    <string name="home_next_random_img_des">Következő random</string>
+</resources>
