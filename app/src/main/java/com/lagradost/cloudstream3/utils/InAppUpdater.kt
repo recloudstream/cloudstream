@@ -22,6 +22,10 @@ import okio.BufferedSink
 import okio.buffer
 import okio.sink
 import java.io.File
+import android.text.TextUtils
+import java.io.BufferedReader
+import java.io.IOException
+import java.io.InputStreamReader
 
 
 class InAppUpdater {
@@ -294,6 +298,12 @@ class InAppUpdater {
                                 setPositiveButton(R.string.update) { _, _ ->
                                     showToast(context, R.string.download_started, Toast.LENGTH_LONG)
 
+                                    // Check if the setting hasn't been changed
+                                    if (settingsManager.getInt(getString(R.string.apk_installer_key), -1) == -1) {
+                                        if (isMiUi()) // Set to legacy if using miui
+                                            settingsManager.edit().putInt(getString(R.string.apk_installer_key), 1).apply()
+                                    }
+
                                     val currentInstaller =
                                         settingsManager.getInt(
                                             getString(R.string.apk_installer_key),
@@ -346,6 +356,32 @@ class InAppUpdater {
                 return false
             }
             return false
+        }
+
+        fun isMiUi(): Boolean {
+            return !TextUtils.isEmpty(getSystemProperty("ro.miui.ui.version.name"))
+        }
+
+        fun getSystemProperty(propName: String): String? {
+            var line: String? = null
+            var input: BufferedReader? = null
+            try {
+                val p = Runtime.getRuntime().exec("getprop $propName")
+                input = BufferedReader(InputStreamReader(p.inputStream), 1024)
+                line = input.readLine()
+                input.close()
+            } catch (ex: IOException) {
+                return null
+            } finally {
+                if (input != null) {
+                    try {
+                        input.close()
+                    } catch (e: IOException) {
+                        e.printStackTrace()
+                    }
+                }
+            }
+            return line
         }
     }
 }
