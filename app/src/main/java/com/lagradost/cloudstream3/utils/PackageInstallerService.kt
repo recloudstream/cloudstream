@@ -187,7 +187,7 @@ class PackageInstallerService : Service() {
         const val UPDATE_CHANNEL_ID = "cloudstream3.updates"
         const val UPDATE_CHANNEL_NAME = "App Updates"
         const val UPDATE_CHANNEL_DESCRIPTION = "App updates notification channel"
-        const val UPDATE_NOTIFICATION_ID = -68454136
+        const val UPDATE_NOTIFICATION_ID = -68454136 // Random unique
 
         fun getIntent(
             context: Context,

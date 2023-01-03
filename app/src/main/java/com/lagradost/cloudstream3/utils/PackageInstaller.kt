@@ -5,15 +5,42 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.IntentSender
 import android.content.pm.PackageInstaller
 import android.os.Build
+import android.widget.Toast
+import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError
+import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
+import com.lagradost.cloudstream3.utils.Coroutines.main
 import java.io.InputStream
 
 const val INSTALL_ACTION = "ApkInstaller.INSTALL_ACTION"
 
 
 class ApkInstaller(private val service: PackageInstallerService) {
+
+    companion object {
+        /**
+         * Used for postponed installations
+         **/
+        var delayedInstaller: DelayedInstaller? = null
+    }
+
+    inner class DelayedInstaller(
+        private val session: PackageInstaller.Session,
+        private val intent: IntentSender
+    ) {
+        fun startInstallation(): Boolean {
+            return try {
+                session.commit(intent)
+                true
+            } catch (e: Exception) {
+                false
+            }.also { delayedInstaller = null }
+        }
+    }
+
     private val packageInstaller = service.packageManager.packageInstaller
 
     enum class InstallProgressStatus {
@@ -76,7 +103,6 @@ class ApkInstaller(private val service: PackageInstallerService) {
                     inputStream.close()
                 }
 
-            installProgressStatus.invoke(InstallProgressStatus.Installing)
 
             val intentSender = PendingIntent.getBroadcast(
                 service,
@@ -85,7 +111,22 @@ class ApkInstaller(private val service: PackageInstallerService) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) PendingIntent.FLAG_MUTABLE else 0,
             ).intentSender
 
-            session.commit(intentSender)
+            // Use delayed installations on android 13 and only if "allow from unknown sources" is enabled
+            // if the app lacks installation permission it cannot ask for the permission when it's closed.
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S &&
+                context.packageManager.canRequestPackageInstalls()
+            ) {
+                // Save for later installation since it's more jarring to have the app exit abruptly
+                delayedInstaller = DelayedInstaller(session, intentSender)
+                main {
+                    // Use real toast since it should show even if app is exited
+                    Toast.makeText(context, R.string.delayed_update_notice, Toast.LENGTH_LONG)
+                        .show()
+                }
+            } else {
+                installProgressStatus.invoke(InstallProgressStatus.Installing)
+                session.commit(intentSender)
+            }
         } catch (e: Exception) {
             logError(e)
 
