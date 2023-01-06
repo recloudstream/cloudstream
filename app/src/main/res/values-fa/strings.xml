@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="delete">حذف</string>
+    <string name="pause">مکث</string>
+    <string name="queued">در صف</string>
+    <string name="download">بارگیری</string>
+    <string name="download_failed">بارگیری ناموفق بود</string>
+    <string name="search">جست‌وجو</string>
+    <string name="resize_fit">اندازه‌کردن</string>
+    <string name="resize_fill">پر کردن</string>
+    <string name="resize_zoom">بزرگ‌نمایی</string>
+    <string name="all">همه</string>
+    <string name="tracks">قطعه‌ها</string>
+    <string name="status">وضعیت</string>
+    <string name="loading">درحال بارگیری…</string>
+    <string name="show_title">عنوان منبع</string>
+    <string name="logout">خروج</string>
+    <string name="login">ورود</string>
+    <string name="none">هیچ‌کدام</string>
+    <string name="title">عنوان</string>
+    <string name="history">تاریخچه</string>
+</resources>

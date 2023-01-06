@@ -526,4 +526,6 @@
     <string name="skip_type_op">Otvaranje</string>
     <string name="apk_installer_package_installer">PackageInstaller</string>
     <string name="season_format">%s %d%s</string>
+    <string name="update_started">Aktualiziranje započeto</string>
+    <string name="delayed_update_notice">Program če se aktualizirati tijekom zatvaranja programa</string>
 </resources>
