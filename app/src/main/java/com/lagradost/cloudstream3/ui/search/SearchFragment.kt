@@ -45,6 +45,7 @@ import com.lagradost.cloudstream3.ui.home.HomeFragment.Companion.updateChips
 import com.lagradost.cloudstream3.ui.home.ParentItemAdapter
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTrueTvSettings
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
+import com.lagradost.cloudstream3.utils.AppUtils.ownShow
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStore.setKey
@@ -85,6 +86,7 @@ class SearchFragment : Fragment() {
     }
 
     private val searchViewModel: SearchViewModel by activityViewModels()
+    private var bottomSheetDialog: BottomSheetDialog? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -94,6 +96,7 @@ class SearchFragment : Fragment() {
         activity?.window?.setSoftInputMode(
             WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE
         )
+        bottomSheetDialog?.ownShow()
         return inflater.inflate(
             if (isTvSettings()) R.layout.fragment_search_tv else R.layout.fragment_search,
             container,
@@ -473,7 +476,9 @@ class SearchFragment : Fragment() {
             ParentItemAdapter(mutableListOf(), { callback ->
                 SearchHelper.handleSearchClickCallback(activity, callback)
             }, { item ->
-                activity?.loadHomepageList(item)
+                bottomSheetDialog = activity?.loadHomepageList(item, dismissCallback = {
+                    bottomSheetDialog = null
+                })
             })
 
         val historyAdapter = SearchHistoryAdaptor(mutableListOf()) { click ->
