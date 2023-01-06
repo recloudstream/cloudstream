@@ -485,4 +485,6 @@
     <string name="skip_type_intro">Intro</string>
     <string name="enable_skip_op_from_database_des">Muestrar botones emergentes para saltar apertura/finalización del video</string>
     <string name="yes">Si</string>
+    <string name="delayed_update_notice">La aplicación se actualizará al salir</string>
+    <string name="update_started">Actualización iniciada</string>
 </resources>

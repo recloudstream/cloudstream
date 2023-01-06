@@ -410,7 +410,7 @@
     <string name="delete_repository">Repository löschen</string>
     <string name="setup_extensions_subtext">Lade eine Liste der Websiten herunter, welche du verwenden möchtest</string>
     <string name="plugins_downloaded" formatted="true">Heruntergeladen: %d</string>
-    <string name="plugins_disabled" formatted="true">Heruntergeladen: %d</string>
+    <string name="plugins_disabled" formatted="true">Deaktiviert: %d</string>
     <string name="plugins_not_downloaded" formatted="true">Nicht heruntergeladen: %d</string>
     <string name="blank_repo_message">CloudStream hat standardmäßig keine Websites installiert. Websites müssen aus Repositories installiert werden.
 \n
@@ -427,7 +427,7 @@
     <string name="video_tracks">Videospuren</string>
     <string name="apply_on_restart">Bei Neustart anwenden</string>
     <string name="safe_mode_title">Abgesicherter Modus aktiviert</string>
-    <string name="safe_mode_description">Ein nicht behebbarer Absturz ist aufgetreten, und wir haben automatisch alle Erweiterungen deaktiviert, damit du die Erweiterung finden und entfernen kannst, die das Problem verursacht.</string>
+    <string name="safe_mode_description">Alle Erweiterungen wurden aufgrund eines Absturzes deaktiviert, damit Sie diejenige finden können, die Probleme verursacht.</string>
     <string name="safe_mode_crash_info">Absturzinfo ansehen</string>
     <string name="extension_rating" formatted="true">Bewertung: %s</string>
     <string name="extension_description">Beschreibung</string>
@@ -476,7 +476,7 @@
     <string name="pref_category_looks">Aussehen</string>
     <string name="pref_category_ui_features">Funktionen</string>
     <string name="plugins_updated" formatted="true">%d Plugins aktualisiert</string>
-    <string name="action_mark_as_watched">Als beobachtet markieren</string>
+    <string name="action_mark_as_watched">Als gesehen markieren</string>
     <string name="confirm_exit_dialog">Sind Sie sicher, dass Sie die App beenden möchten\?</string>
     <string name="yes">Ja</string>
     <string name="no">Nein</string>
@@ -485,4 +485,6 @@
     <string name="update_notification_failed">Konnte die neue Version der App nicht installieren</string>
     <string name="apk_installer_legacy">Legacy</string>
     <string name="apk_installer_package_installer">PackageInstaller</string>
+    <string name="update_started">Aktualisierung gestartet</string>
+    <string name="delayed_update_notice">Die Anwendung wird beim Beenden aktualisiert</string>
 </resources>
