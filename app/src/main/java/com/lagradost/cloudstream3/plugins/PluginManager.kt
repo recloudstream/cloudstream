@@ -255,11 +255,12 @@ object PluginManager {
                 //updatedPlugins.add(activity.getString(R.string.single_plugin_disabled, pluginData.onlineData.second.name))
                 unloadPlugin(pluginData.savedData.filePath)
             } else if (pluginData.isOutdated) {
-                downloadAndLoadPlugin(
+                downloadPlugin(
                     activity,
                     pluginData.onlineData.second.url,
                     pluginData.savedData.internalName,
-                    File(pluginData.savedData.filePath)
+                    File(pluginData.savedData.filePath),
+                    true
                 ).let { success ->
                     if (success)
                         updatedPlugins.add(pluginData.onlineData.second.name)
@@ -341,11 +342,12 @@ object PluginManager {
         //Log.i(TAG, "notDownloadedPlugins => ${notDownloadedPlugins.toJson()}")
 
         notDownloadedPlugins.apmap { pluginData ->
-            downloadAndLoadPlugin(
+            downloadPlugin(
                 activity,
                 pluginData.onlineData.second.url,
                 pluginData.savedData.internalName,
-                pluginData.onlineData.first
+                pluginData.onlineData.first,
+                !pluginData.isDisabled
             ).let { success ->
                 if (success)
                     newDownloadPlugins.add(pluginData.onlineData.second.name)
@@ -496,7 +498,7 @@ object PluginManager {
         }
     }
 
-    private fun unloadPlugin(absolutePath: String) {
+    fun unloadPlugin(absolutePath: String) {
         Log.i(TAG, "Unloading plugin: $absolutePath")
         val plugin = plugins[absolutePath]
         if (plugin == null) {
@@ -547,49 +549,48 @@ object PluginManager {
         return File("${context.filesDir}/${ONLINE_PLUGINS_FOLDER}/${folderName}/$fileName.cs3")
     }
 
-    /**
-     * Used for fresh installs
-     * */
-    suspend fun downloadAndLoadPlugin(
+    suspend fun downloadPlugin(
         activity: Activity,
         pluginUrl: String,
         internalName: String,
-        repositoryUrl: String
+        repositoryUrl: String,
+        loadPlugin: Boolean
     ): Boolean {
         val file = getPluginPath(activity, internalName, repositoryUrl)
-        downloadAndLoadPlugin(activity, pluginUrl, internalName, file)
-        return true
+        return downloadPlugin(activity, pluginUrl, internalName, file, loadPlugin)
     }
 
-    /**
-     * Used for updates.
-     *
-     * Uses a file instead of repository url, as extensions can get moved it is better to directly
-     * update the files instead of getting the filepath from repo url.
-     * */
-    private suspend fun downloadAndLoadPlugin(
+    suspend fun downloadPlugin(
         activity: Activity,
         pluginUrl: String,
         internalName: String,
         file: File,
+        loadPlugin: Boolean
     ): Boolean {
         try {
-            unloadPlugin(file.absolutePath)
-
             Log.d(TAG, "Downloading plugin: $pluginUrl to ${file.absolutePath}")
             // The plugin file needs to be salted with the repository url hash as to allow multiple repositories with the same internal plugin names
-            val newFile = downloadPluginToFile(pluginUrl, file)
-            return loadPlugin(
-                activity,
-                newFile ?: return false,
-                PluginData(
-                    internalName,
-                    pluginUrl,
-                    true,
-                    newFile.absolutePath,
-                    PLUGIN_VERSION_NOT_SET
-                )
+            val newFile = downloadPluginToFile(pluginUrl, file) ?: return false
+
+            val data = PluginData(
+                internalName,
+                pluginUrl,
+                true,
+                newFile.absolutePath,
+                PLUGIN_VERSION_NOT_SET
             )
+
+            return if (loadPlugin) {
+                unloadPlugin(file.absolutePath)
+                loadPlugin(
+                    activity,
+                    newFile,
+                    data
+                )
+            } else {
+                setPluginData(data)
+                true
+            }
         } catch (e: Exception) {
             logError(e)
             return false

@@ -7,8 +7,10 @@ import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.amap
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.mvvm.logError
+import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.mvvm.suspendSafeApiCall
 import com.lagradost.cloudstream3.plugins.PluginManager.getPluginSanitizedFileName
+import com.lagradost.cloudstream3.plugins.PluginManager.unloadPlugin
 import com.lagradost.cloudstream3.ui.settings.extensions.REPOSITORIES_KEY
 import com.lagradost.cloudstream3.ui.settings.extensions.RepositoryData
 import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
@@ -77,7 +79,7 @@ object RepositoryManager {
         } else if (fixedUrl.contains("^(cloudstreamrepo://)|(https://cs\\.repo/\\??)".toRegex())) {
             fixedUrl.replace("^(cloudstreamrepo://)|(https://cs\\.repo/\\??)".toRegex(), "").let {
                 return@let if (!it.contains("^https?://".toRegex()))
-                     "https://${it}"
+                    "https://${it}"
                 else fixedUrl
             }
         } else if (fixedUrl.matches("^[a-zA-Z0-9!_-]+$".toRegex())) {
@@ -132,40 +134,14 @@ object RepositoryManager {
             file.mkdirs()
 
             // Overwrite if exists
-            if (file.exists()) { file.delete() }
+            if (file.exists()) {
+                file.delete()
+            }
             file.createNewFile()
 
             val body = app.get(pluginUrl).okhttpResponse.body
             write(body.byteStream(), file.outputStream())
             file
-        }
-    }
-
-    suspend fun downloadPluginToFile(
-        context: Context,
-        pluginUrl: String,
-        /** Filename without .cs3 */
-        fileName: String,
-        folder: String
-    ): File? {
-        return suspendSafeApiCall {
-            val extensionsDir = File(context.filesDir, ONLINE_PLUGINS_FOLDER)
-            if (!extensionsDir.exists())
-                extensionsDir.mkdirs()
-
-            val newDir = File(extensionsDir, folder)
-            newDir.mkdirs()
-
-            val newFile = File(newDir, "${fileName}.cs3")
-            // Overwrite if exists
-            if (newFile.exists()) {
-                newFile.delete()
-            }
-            newFile.createNewFile()
-
-            val body = app.get(pluginUrl).okhttpResponse.body
-            write(body.byteStream(), newFile.outputStream())
-            newFile
         }
     }
 
@@ -200,9 +176,17 @@ object RepositoryManager {
             extensionsDir,
             getPluginSanitizedFileName(repository.url)
         )
-        PluginManager.deleteRepositoryData(file.absolutePath)
 
-        file.delete()
+        // Unload all plugins, not using deletePlugin since we
+        // delete all data and files in deleteRepositoryData
+        normalSafeApiCall {
+            file.listFiles { plugin: File ->
+                unloadPlugin(plugin.absolutePath)
+                false
+            }
+        }
+
+        PluginManager.deleteRepositoryData(file.absolutePath)
     }
 
     private fun write(stream: InputStream, output: OutputStream) {

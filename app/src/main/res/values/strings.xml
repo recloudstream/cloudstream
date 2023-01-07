@@ -539,6 +539,7 @@
     <string name="repository_name_hint">Repository name</string>
     <string name="repository_url_hint">Repository URL</string>
     <string name="plugin_loaded">Plugin Loaded</string>
+    <string name="plugin_downloaded">Plugin Downloaded</string>
     <string name="plugin_deleted">Plugin Deleted</string>
     <string name="plugin_load_fail" formatted="true">Could not load %s</string>
     <string name="is_adult">18+</string>
