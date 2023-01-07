@@ -549,4 +549,6 @@
     <string name="pref_category_player_features">播放器功能</string>
     <string name="pref_category_actions">行为</string>
     <string name="pref_category_looks">外观</string>
+    <string name="update_started">更新开始</string>
+    <string name="delayed_update_notice">应用退出后将会更新</string>
 </resources>

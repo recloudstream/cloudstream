@@ -294,7 +294,7 @@
     <string name="login_format" formatted="true">%s %s</string>
     <string name="account">konto</string>
     <string name="logout">Wyloguj się</string>
-    <string name="login">Logowanie</string>
+    <string name="login">Zaloguj się</string>
     <string name="switch_account">Przełącz konto</string>
     <string name="add_account">Dodaj konto</string>
     <string name="create_account">Utwórz konto</string>
@@ -308,7 +308,7 @@
     <!-- ============ -->
     <string name="none">Brak</string>
     <string name="normal">Normalne</string>
-    <string name="all">Wszystkie</string>
+    <string name="all">Wszystko</string>
     <string name="max">Maks</string>
     <string name="min">Min</string>
     <string name="subtitles_outline">Kontur</string>
@@ -485,4 +485,6 @@
     <string name="pref_category_player_layout">Układ</string>
     <string name="pref_category_looks">Wygląd</string>
     <string name="play_trailer_button">Odtwórz zwiastun</string>
+    <string name="delayed_update_notice">Aplikacja zostanie zaktualizowana po wyjściu</string>
+    <string name="update_started">Aktualizacja rozpoczęta</string>
 </resources>

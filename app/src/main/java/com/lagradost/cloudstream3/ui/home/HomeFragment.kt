@@ -18,6 +18,7 @@ import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.*
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -48,6 +49,8 @@ import com.lagradost.cloudstream3.utils.AppUtils.addProgramsToContinueWatching
 import com.lagradost.cloudstream3.utils.AppUtils.isRecyclerScrollable
 import com.lagradost.cloudstream3.utils.AppUtils.loadResult
 import com.lagradost.cloudstream3.utils.AppUtils.loadSearchResult
+import com.lagradost.cloudstream3.utils.AppUtils.ownHide
+import com.lagradost.cloudstream3.utils.AppUtils.ownShow
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStore.setKey
@@ -104,26 +107,32 @@ class HomeFragment : Fragment() {
 
         val errorProfilePic = errorProfilePics.random()
 
-        fun Activity.loadHomepageList(
-            item: HomePageList,
-            deleteCallback: (() -> Unit)? = null,
-        ) {
-            loadHomepageList(
-                expand = HomeViewModel.ExpandableHomepageList(item, 1, false),
-                deleteCallback = deleteCallback,
-                expandCallback = null
-            )
-        }
+        //fun Activity.loadHomepageList(
+        //    item: HomePageList,
+        //    deleteCallback: (() -> Unit)? = null,
+        //) {
+        //    loadHomepageList(
+        //        expand = HomeViewModel.ExpandableHomepageList(item, 1, false),
+        //        deleteCallback = deleteCallback,
+        //        expandCallback = null
+        //    )
+        //}
 
+        // returns a BottomSheetDialog that will be hidden with OwnHidden upon hide, and must be saved to be able call ownShow in onCreateView
         fun Activity.loadHomepageList(
             expand: HomeViewModel.ExpandableHomepageList,
             deleteCallback: (() -> Unit)? = null,
-            expandCallback: (suspend (String) -> HomeViewModel.ExpandableHomepageList?)? = null
-        ) {
+            expandCallback: (suspend (String) -> HomeViewModel.ExpandableHomepageList?)? = null,
+            dismissCallback : (() -> Unit),
+        ): BottomSheetDialog {
             val context = this
             val bottomSheetDialogBuilder = BottomSheetDialog(context)
+
             bottomSheetDialogBuilder.setContentView(R.layout.home_episodes_expanded)
             val title = bottomSheetDialogBuilder.findViewById<TextView>(R.id.home_expanded_text)!!
+
+            //title.findViewTreeLifecycleOwner().lifecycle.addObserver()
+
             val item = expand.list
             title.text = item.name
             val recycle =
@@ -131,6 +140,23 @@ class HomeFragment : Fragment() {
             val titleHolder =
                 bottomSheetDialogBuilder.findViewById<FrameLayout>(R.id.home_expanded_drag_down)!!
 
+            // main {
+            //(bottomSheetDialogBuilder.ownerActivity as androidx.fragment.app.FragmentActivity?)?.supportFragmentManager?.fragments?.lastOrNull()?.viewLifecycleOwner?.apply {
+            //    println("GOT LIFE: lifecycle $this")
+            //    this.lifecycle.addObserver(object : DefaultLifecycleObserver {
+            //        override fun onResume(owner: LifecycleOwner) {
+            //            super.onResume(owner)
+            //            println("onResume!!!!")
+            //            bottomSheetDialogBuilder?.ownShow()
+            //        }
+
+            //        override fun onStop(owner: LifecycleOwner) {
+            //            super.onStop(owner)
+            //            bottomSheetDialogBuilder?.ownHide()
+            //        }
+            //    })
+            //}
+            // }
             val delete = bottomSheetDialogBuilder.home_expanded_delete
             delete.isGone = deleteCallback == null
             if (deleteCallback != null) {
@@ -175,7 +201,8 @@ class HomeFragment : Fragment() {
             recycle.adapter = SearchAdapter(item.list.toMutableList(), recycle) { callback ->
                 handleSearchClickCallback(this, callback)
                 if (callback.action == SEARCH_ACTION_LOAD || callback.action == SEARCH_ACTION_PLAY_FILE) {
-                    bottomSheetDialogBuilder.dismissSafe(this)
+                    bottomSheetDialogBuilder.ownHide() // we hide here because we want to resume it later
+                    //bottomSheetDialogBuilder.dismissSafe(this)
                 }
             }.apply {
                 hasNext = expand.hasNext
@@ -216,12 +243,14 @@ class HomeFragment : Fragment() {
             configEvent += spanListener
 
             bottomSheetDialogBuilder.setOnDismissListener {
+                dismissCallback.invoke()
                 configEvent -= spanListener
             }
 
             //(recycle.adapter as SearchAdapter).notifyDataSetChanged()
 
             bottomSheetDialogBuilder.show()
+            return bottomSheetDialogBuilder
         }
 
         fun getPairList(
@@ -399,6 +428,7 @@ class HomeFragment : Fragment() {
     ): View? {
         //homeViewModel =
         //     ViewModelProvider(this).get(HomeViewModel::class.java)
+        bottomSheetDialog?.ownShow()
         val layout =
             if (isTvSettings()) R.layout.fragment_home_tv else R.layout.fragment_home
         return inflater.inflate(layout, container, false)
@@ -479,6 +509,8 @@ class HomeFragment : Fragment() {
 
     private var currentApiName: String? = null
     private var toggleRandomButton = false
+
+    private var bottomSheetDialog: BottomSheetDialog? = null
 
     @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -626,8 +658,10 @@ class HomeFragment : Fragment() {
             HomeParentItemAdapterPreview(mutableListOf(), { callback ->
                 homeHandleSearch(callback)
             }, { item ->
-                activity?.loadHomepageList(item, expandCallback = {
+                bottomSheetDialog = activity?.loadHomepageList(item, expandCallback = {
                     homeViewModel.expandAndReturn(it)
+                }, dismissCallback = {
+                    bottomSheetDialog = null
                 })
             }, { name ->
                 homeViewModel.expand(name)

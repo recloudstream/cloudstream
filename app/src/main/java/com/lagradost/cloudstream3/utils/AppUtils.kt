@@ -13,9 +13,7 @@ import android.media.tv.TvContract.Channels.COLUMN_INTERNAL_PROVIDER_ID
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.net.Uri
-import android.os.Build
-import android.os.Environment
-import android.os.ParcelFileDescriptor
+import android.os.*
 import android.provider.MediaStore
 import android.text.Spanned
 import android.util.Log
@@ -40,6 +38,7 @@ import com.google.android.gms.cast.framework.CastState
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.common.wrappers.Wrappers
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.MainActivity.Companion.afterRepositoryLoadedEvent
@@ -77,6 +76,19 @@ object AppUtils {
             this.layoutManager as? LinearLayoutManager?
         val adapter = adapter
         return if (layoutManager == null || adapter == null) false else layoutManager.findLastCompletelyVisibleItemPosition() < adapter.itemCount - 7 // bit more than 1 to make it more seamless
+    }
+
+    fun BottomSheetDialog?.ownHide() {
+        this?.hide()
+    }
+
+    fun BottomSheetDialog?.ownShow() {
+        // the reason for this is because show has a shitty animation we don't want
+        this?.window?.setWindowAnimations(-1)
+        this?.show()
+        Handler(Looper.getMainLooper()).postDelayed({
+            this?.window?.setWindowAnimations(R.style.Animation_Design_BottomSheetDialog)
+        },200)
     }
 
     //fun Context.deleteFavorite(data: SearchResponse) {

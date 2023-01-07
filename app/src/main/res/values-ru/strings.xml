@@ -14,4 +14,12 @@
     <string name="delete">Удалить</string>
     <string name="all">Всё</string>
     <string name="pause">Пауза</string>
+    <string name="cast_format" formatted="true">В ролях: %s</string>
+    <string name="show_title">Название источника</string>
+    <string name="login">Вход</string>
+    <string name="none">Нет</string>
+    <string name="title">Название</string>
+    <string name="loading">Загрузка…</string>
+    <string name="status">Статус</string>
+    <string name="logout">Выйти</string>
 </resources>

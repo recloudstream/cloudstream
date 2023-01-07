@@ -122,4 +122,11 @@
     <string name="no">לא</string>
     <string name="yes">כן</string>
     <string name="action_mark_as_watched">סימון כנצפה</string>
+    <string name="status">סטטוס</string>
+    <string name="logout">התנתק</string>
+    <string name="login">התחברות</string>
+    <string name="show_title">כותרת</string>
+    <string name="none">אין</string>
+    <string name="all">הכל</string>
+    <string name="title">כותרת</string>
 </resources>

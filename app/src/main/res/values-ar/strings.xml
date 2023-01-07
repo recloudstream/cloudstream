@@ -530,4 +530,6 @@
     <string name="pref_category_ui_features">المميزات</string>
     <string name="pref_category_looks">المظهر</string>
     <string name="play_trailer_button">تشغيل المقطع الدعائي</string>
+    <string name="delayed_update_notice">سيتم تحديث التطبيق عند الخروج</string>
+    <string name="update_started">بدأ التحديث</string>
 </resources>

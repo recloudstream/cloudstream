@@ -504,4 +504,6 @@
     <string name="pref_category_defaults">Predefiniti</string>
     <string name="pref_category_looks">Aspetto</string>
     <string name="pref_category_ui_features">Funzionalità</string>
+    <string name="delayed_update_notice">L\'app verrà aggiornata all\'uscita</string>
+    <string name="update_started">Aggiornamento avviato</string>
 </resources>
