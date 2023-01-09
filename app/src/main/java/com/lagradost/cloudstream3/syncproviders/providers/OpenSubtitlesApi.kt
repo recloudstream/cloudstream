@@ -206,7 +206,7 @@ class OpenSubtitlesApi(index: Int) : InAppAuthAPIManager(index), AbstractSubApi 
                 }
                 //Use any valid name/title in hierarchy
                 val name = filename ?: featureDetails?.movieName ?: featureDetails?.title
-                ?: featureDetails?.parentTitle ?: attr.release ?: ""
+                ?: featureDetails?.parentTitle ?: attr.release ?: query.query
                 val lang = fixLanguageReverse(attr.language)?: ""
                 val resEpNum = featureDetails?.episodeNumber ?: query.epNumber
                 val resSeasonNum = featureDetails?.seasonNumber ?: query.seasonNumber
