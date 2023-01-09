@@ -438,6 +438,7 @@ abstract class ExtractorApi {
     abstract val name: String
     abstract val mainUrl: String
     abstract val requiresReferer: Boolean
+    open var domainUrl: String = mainUrl
 
     /** Determines which plugin a given extractor is from */
     var sourcePlugin: String? = null
