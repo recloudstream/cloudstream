@@ -268,11 +268,23 @@ class HomeParentItemAdapterPreview(
                                     )
                                 )
                             }
+
+                            // This makes the hidden next buttons only available when on the info button
+                            // Otherwise you might be able to go to the next item without being at the info button
+                            itemView.home_preview_info_btt?.setOnFocusChangeListener { _, hasFocus ->
+                                itemView.home_preview_hidden_next_focus?.isFocusable = hasFocus
+                            }
+                            itemView.home_preview_play_btt?.setOnFocusChangeListener { _, hasFocus ->
+                                itemView.home_preview_hidden_prev_focus?.isFocusable = hasFocus
+                            }
+
+
                             itemView.home_preview_info_btt?.setOnClickListener { view ->
                                 clickCallback?.invoke(
                                     LoadClickCallback(0, view, position, this)
                                 )
                             }
+
                             itemView.home_preview_hidden_next_focus?.setOnFocusChangeListener { _, hasFocus ->
                                 if (hasFocus) {
                                     previewViewpager?.apply {
@@ -281,6 +293,7 @@ class HomeParentItemAdapterPreview(
                                     itemView.home_preview_info_btt?.requestFocus()
                                 }
                             }
+
                             itemView.home_preview_hidden_prev_focus?.setOnFocusChangeListener { _, hasFocus ->
                                 if (hasFocus) {
                                     previewViewpager?.apply {

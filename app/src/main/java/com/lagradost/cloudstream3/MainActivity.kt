@@ -1,6 +1,7 @@
 package com.lagradost.cloudstream3
 
 import android.content.ComponentName
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.content.res.Configuration
@@ -102,6 +103,7 @@ import java.net.URI
 import java.net.URLDecoder
 import java.nio.charset.Charset
 import kotlin.reflect.KClass
+import kotlin.system.exitProcess
 
 
 //https://github.com/videolan/vlc-android/blob/3706c4be2da6800b3d26344fc04fab03ffa4b860/application/vlc-android/src/org/videolan/vlc/gui/video/VideoPlayerActivity.kt#L1898
@@ -505,10 +507,13 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         val builder: AlertDialog.Builder = AlertDialog.Builder(this)
         builder.setTitle(R.string.confirm_exit_dialog)
         builder.apply {
-            setPositiveButton(R.string.yes) { _, _ -> super.onBackPressed() }
+            // Forceful exit since back button can actually go back to setup
+            setPositiveButton(R.string.yes) { _, _ -> exitProcess(0) }
             setNegativeButton(R.string.no) { _, _ -> }
         }
-        builder.show()
+        builder.show().also {
+            it.getButton(DialogInterface.BUTTON_NEGATIVE).requestFocus()
+        }
     }
 
     private fun backPressed() {

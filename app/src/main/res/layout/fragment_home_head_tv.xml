@@ -20,6 +20,7 @@
         android:layout_height="wrap_content">
 
         <androidx.viewpager2.widget.ViewPager2
+            android:descendantFocusability="blocksDescendants"
             android:id="@+id/home_preview_viewpager"
             android:layout_width="match_parent"
             android:layout_height="400dp"
@@ -87,7 +88,7 @@
                     android:id="@+id/home_preview_hidden_prev_focus"
                     android:layout_width="1dp"
                     android:layout_height="1dp"
-                    android:focusable="true" />
+                    android:focusable="false" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/home_preview_play_btt"
@@ -119,7 +120,7 @@
                     android:id="@+id/home_preview_hidden_next_focus"
                     android:layout_width="1dp"
                     android:layout_height="1dp"
-                    android:focusable="true" />
+                    android:focusable="false" />
             </LinearLayout>
         </LinearLayout>
     </FrameLayout>
