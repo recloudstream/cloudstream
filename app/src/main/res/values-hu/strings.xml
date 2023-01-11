@@ -261,4 +261,18 @@
     <string name="apk_installer_settings">APK Telepítő</string>
     <string name="apk_installer_settings_des">Egyes telefonok nem támogatják az új csomag telepítőt. Ha a frissítések nem települnek, próbálja meg a régi opciót.</string>
     <string name="benene_des">Banán adva</string>
+    <string name="poster_ui_settings">A felhasználói felület elemeinek bekapcsolása a poszteren</string>
+    <string name="no_update_found">Nem található frissítés</string>
+    <string name="check_for_update">Frissítés keresése</string>
+    <string name="video_lock">Zárolás</string>
+    <string name="video_aspect_ratio_resize">Átméretezés</string>
+    <string name="video_source">Forrás</string>
+    <string name="video_skip_op">Bevezető intro átugrása</string>
+    <string name="dont_show_again">Ne mutasd újra</string>
+    <string name="next_episode_format" formatted="true">Az %d epizód ekkor jelenik meg:</string>
+    <string name="type_on_hold">Szüneteltetve</string>
+    <string name="type_dropped">Elvetve</string>
+    <string name="show_hd">Minőségi jelzés</string>
+    <string name="show_dub">Szinkroncímke</string>
+    <string name="show_sub">Alcímke</string>
 </resources>
