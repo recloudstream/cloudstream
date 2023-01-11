@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="search_poster_img_des">\@string/result_poster_img_des</string>
+    <string name="episode_poster_img_des">Постер епізоду</string>
+    <string name="download_canceled">Завантаження скасовано</string>
+    <string name="home_change_provider_img_des">Змінити постачальника</string>
+    <string name="go_back_img_des">Назад</string>
+    <string name="rated_format" formatted="true">Рейтинг: %.1f</string>
+    <string name="cast_format" formatted="true">Актори: %s</string>
+    <string name="next_episode_format" formatted="true">Епізод %d буде випущено в</string>
+    <string name="result_poster_img_des">Poster</string>
+    <string name="app_dub_sub_episode_text_format" formatted="true">%s Еп. %d</string>
+    <string name="next_episode_time_day_format" formatted="true">%dд %dгод %dхв</string>
+    <string name="next_episode_time_hour_format" formatted="true">%dгод %dхв</string>
+    <string name="next_episode_time_min_format" formatted="true">%dхв</string>
+    <string name="home_main_poster_img_des">Головний постер</string>
+    <string name="home_next_random_img_des">Наступний випадковий</string>
+    <string name="preview_background_img_des">Перегляд фону</string>
+    <string name="player_speed_text_format" formatted="true">Швидкість (%.2fx)</string>
+    <string name="new_update_format" formatted="true">Нове оновлення знайдено!
+\n%s -&gt; %s</string>
+    <string name="title_search">Пошук</string>
+    <string name="title_downloads">Завантаження</string>
+    <string name="duration_format" formatted="true">%d хв</string>
+    <string name="title_settings">Налаштування</string>
+    <string name="search_hint">Пошук…</string>
+    <string name="search_hint_site" formatted="true">Пошук %s…</string>
+    <string name="no_data">Дані відсутні</string>
+    <string name="episode_more_options_des">Більше опцій</string>
+    <string name="next_episode">Наступний епізод</string>
+    <string name="result_tags">Жанри</string>
+    <string name="result_open_in_browser">Відкрити в браузері</string>
+    <string name="skip_loading">Пропустити завантаження</string>
+    <string name="loading">Завантаження…</string>
+    <string name="type_completed">Завершено</string>
+    <string name="type_plan_to_watch">Заплановано</string>
+    <string name="type_dropped">Покинуто</string>
+    <string name="play_movie_button">Відтворити фільм</string>
+    <string name="play_trailer_button">Відтворити трейлер</string>
+    <string name="play_torrent_button">Відтворити торрент</string>
+    <string name="reload_error">Повторити підключення…</string>
+    <string name="go_back">Назад</string>
+    <string name="play_episode">Відтворити епізод</string>
+    <string name="downloaded">Завантажено</string>
+    <string name="downloading">Завантаження</string>
+    <string name="download_done">Завантаження завершено</string>
+    <string name="app_dubbed_text">Дубляж</string>
+    <string name="app_subbed_text">Субтитри</string>
+    <string name="popup_delete_file">Видалити файл</string>
+    <string name="popup_resume_download">Відновити завантаження</string>
+    <string name="pref_disable_acra">Вимкнути відправку повідомлень про помилки</string>
+    <string name="home_expanded_hide">Сховати</string>
+    <string name="home_play">Відтворити</string>
+    <string name="home_info">Інформація</string>
+    <string name="error_bookmarks_text">Закладки</string>
+    <string name="action_remove_from_bookmarks">Вилучити</string>
+    <string name="action_add_to_bookmarks">Змінити статус перегляду</string>
+    <string name="sort_apply">Застосувати</string>
+    <string name="sort_copy">Скопіювати</string>
+    <string name="sort_close">Закрити</string>
+    <string name="sort_save">Зберегти</string>
+    <string name="player_speed">Швидкість програвача</string>
+    <string name="subs_window_color">Колір вікна</string>
+    <string name="subs_edge_type">Тип краю</string>
+    <string name="subs_font">Шрифт</string>
+    <string name="subs_font_size">Розмір шрифту</string>
+    <string name="search_provider_text_providers">Пошук за допомогою постачальників</string>
+    <string name="search_provider_text_types">Пошук за типами</string>
+    <string name="benene_count_text_none">Бананів немає</string>
+    <string name="subs_auto_select_language">Автовибір мови</string>
+    <string name="subs_download_languages">Завантажити мови</string>
+    <string name="subs_subtitle_languages">Мова субтитрів</string>
+    <string name="subs_hold_to_reset_to_default">Утримуйте для скидання до налаштувань за замовчанням</string>
+    <string name="subs_import_text" formatted="true">Імпортуйте шрифти, помістивши їх у %s</string>
+    <string name="continue_watching">Продовжити перегляд</string>
+    <string name="action_remove_watching">Вилучити</string>
+    <string name="action_open_watching">Детальніше</string>
+    <string name="vpn_torrent">Цей постачальник є торрентом, рекомендується VPN</string>
+    <string name="torrent_plot">Опис</string>
+    <string name="normal_no_plot">Сюжет не знайдено</string>
+    <string name="torrent_no_plot">Опис не знайдено</string>
+    <string name="show_log_cat">Показати Logcat 🐈</string>
+    <string name="picture_in_picture_des">Продовження відтворення в мініатюрному плеєрі поверх інших програм</string>
+    <string name="player_size_settings_des">Прибирає чорні рамки</string>
+    <string name="player_subtitles_settings">Субтитри</string>
+    <string name="chromecast_subtitles_settings">Субтитри Chromecast</string>
+    <string name="chromecast_subtitles_settings_des">Налаштування субтитрів Chromecast</string>
+    <string name="eigengraumode_settings">Режим Eigengravy</string>
+    <string name="swipe_to_change_settings">Проведіть пальцем, щоб змінити налаштування</string>
+    <string name="swipe_to_change_settings_des">Проведіть пальцем ліворуч або праворуч, щоб змінити яскравість або гучність</string>
+    <string name="autoplay_next_settings_des">Відтворення наступного епізоду після закінчення поточного</string>
+    <string name="title_home">Головна</string>
+    <string name="app_name">CloudStream</string>
+    <string name="filler" formatted="true">Філер</string>
+    <string name="play_with_app_name">Програти в CloudStream</string>
+    <string name="stream">Потік</string>
+    <string name="type_watching">Переглянуто</string>
+    <string name="result_share">Поділитися</string>
+    <string name="type_on_hold">Призупинено</string>
+    <string name="type_re_watching">Повторний перегляд</string>
+    <string name="download">Завантажити</string>
+    <string name="play_livestream_button">Відтворити трансляцію</string>
+    <string name="pick_source">Джерела</string>
+    <string name="pick_subtitle">Субтитри</string>
+    <string name="download_storage_text">Внутрішнє сховище</string>
+    <string name="download_paused">Завантаження призупинено</string>
+    <string name="download_started">Завантаження розпочато</string>
+    <string name="download_failed">Помилка завантаження</string>
+    <string name="update_started">Оновлення розпочато</string>
+    <string name="error_loading_links_toast">Помилка завантаження посилань</string>
+    <string name="popup_pause_download">Призупинити завантаження</string>
+    <string name="popup_play_file">Відтворити файл</string>
+    <string name="home_more_info">Детальніше</string>
+    <string name="filter_bookmarks">Фільтр закладок</string>
+    <string name="type_none">Нічого</string>
+    <string name="sort_cancel">Скасувати</string>
+    <string name="sort_clear">Очистити</string>
+    <string name="subtitles_settings">Налаштування субтитрів</string>
+    <string name="subs_background_color">Колір фону</string>
+    <string name="subs_subtitle_elevation">Висота субтитрів</string>
+    <string name="subs_text_color">Колір тексту</string>
+    <string name="subs_outline_color">Колір контуру</string>
+    <string name="autoplay_next_settings">Автовідтворення наступного епізоду</string>
+    <string name="swipe_to_seek_settings_des">Проведіть пальцем ліворуч або праворуч, щоб керувати часом у відеоплеєрі</string>
+    <string name="benene_count_text">%d Бананів для розробників</string>
+    <string name="player_size_settings">Кнопка зміни розміру плеєра</string>
+    <string name="action_open_play">\@string/home_play</string>
+    <string name="vpn_might_be_needed">Для коректної роботи цього постачальника може знадобитися VPN</string>
+    <string name="provider_info_meta">Метадані не надаються сайтом, завантаження відео не відбудеться, якщо їх немає на сайті.</string>
+    <string name="picture_in_picture">Картинка в картинці</string>
+    <string name="player_subtitles_settings_des">Налаштування субтитрів плеєра</string>
+    <string name="eigengraumode_settings_des">Додає опцію швидкості в плеєрі</string>
+    <string name="swipe_to_seek_settings">Проведіть пальцем, щоб переглянути</string>
+</resources>

@@ -22,4 +22,7 @@
     <string name="loading">Загрузка…</string>
     <string name="status">Статус</string>
     <string name="logout">Выйти</string>
+    <string name="next_episode_format" formatted="true">Эпизод будет выпущен в</string>
+    <string name="result_poster_img_des">Плакат</string>
+    <string name="search_poster_img_des">\@нить/результат_плокат_картинка_</string>
 </resources>

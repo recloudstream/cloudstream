@@ -115,7 +115,7 @@
     <string name="subs_subtitle_languages">Jezik titlova</string>
     <string name="subs_hold_to_reset_to_default">Držite za vraćanje na zadane postavke</string>
     <string name="subs_import_text" formatted="true">Uvezi fontove tako da ih postavite u %s</string>
-    <string name="continue_watching">Nastavi gledati</string>
+    <string name="continue_watching">Nastavite s gledanjem</string>
     <string name="action_remove_watching">Makni</string>
     <string name="action_open_watching">Više informacija</string>
     <string name="action_open_play">@string/home_play </string>
@@ -218,7 +218,7 @@
     <string name="site">Stranica</string>
     <string name="synopsis">Sinopsis</string>
     <string name="queued">u redu čekanja</string>
-    <string name="no_subtitles">Nema titlova</string>
+    <string name="no_subtitles">Bez titlova</string>
     <string name="default_subtitles">Zadano</string>
     <string name="free_storage">Slobodno</string>
     <string name="used_storage">Iskorišteno</string>
@@ -380,7 +380,7 @@
     <string name="subtitles_example_text">The quick brown fox jumps over the lazy dog</string>
     <string name="recommended">Preporučeno</string>
     <string name="player_loaded_subtitles" formatted="true">Učitano %s</string>
-    <string name="player_load_subtitles">Učitaj iz datoteke</string>
+    <string name="player_load_subtitles">Učitaj datoteku titlova</string>
     <string name="player_load_subtitles_online">Učitaj sa interneta</string>
     <string name="downloaded_file">Preuzeta datoteka</string>
     <string name="actor_main">Glavno</string>
@@ -528,4 +528,5 @@
     <string name="season_format">%s %d%s</string>
     <string name="update_started">Aktualiziranje započeto</string>
     <string name="delayed_update_notice">Program če se aktualizirati tijekom zatvaranja programa</string>
+    <string name="plugin_downloaded">Dodatak preuzet</string>
 </resources>

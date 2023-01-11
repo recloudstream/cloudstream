@@ -487,4 +487,5 @@
     <string name="yes">Si</string>
     <string name="delayed_update_notice">La aplicación se actualizará al salir</string>
     <string name="update_started">Actualización iniciada</string>
+    <string name="plugin_downloaded">Complemento descargado</string>
 </resources>
