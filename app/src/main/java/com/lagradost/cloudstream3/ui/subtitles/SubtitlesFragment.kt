@@ -418,6 +418,11 @@ class SubtitlesFragment : Fragment() {
         }
 
         subtitles_disable_subs?.isChecked = state.removeSubs
+
+        /*
+         * If the toggle is checked, store the current language and then set the subtitle language to none
+         * If the toggle is unchecked, set the current language to the language that was stored when the toggle was checked
+         */
         subtitles_disable_subs?.setOnCheckedChangeListener { _, b ->
             state.removeSubs = b
             if (b) {
