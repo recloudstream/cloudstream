@@ -140,8 +140,21 @@
             android:nextFocusRight="@id/cancel_btt"
 
             android:nextFocusUp="@id/subs_auto_select_language"
-            android:nextFocusDown="@id/subtitles_remove_bloat"
+            android:nextFocusDown="@id/subtitles_disable_subs"
             android:text="@string/subs_download_languages" />
+
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/subtitles_disable_subs"
+            style="@style/SettingsItem"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fontFamily="@font/google_sans"
+            android:nextFocusLeft="@id/apply_btt"
+            android:nextFocusRight="@id/cancel_btt"
+            android:nextFocusUp="@id/subs_download_languages"
+            android:nextFocusDown="@id/subtitles_remove_bloat"
+            android:text="@string/subtitles_disable_subs"
+            app:drawableEndCompat="@null" />
 
         <com.google.android.material.switchmaterial.SwitchMaterial
             android:id="@+id/subtitles_remove_bloat"
@@ -151,7 +164,7 @@
             android:fontFamily="@font/google_sans"
             android:nextFocusLeft="@id/apply_btt"
             android:nextFocusRight="@id/cancel_btt"
-            android:nextFocusUp="@id/subs_download_languages"
+            android:nextFocusUp="@id/subtitles_disable_subs"
             android:nextFocusDown="@id/subtitles_remove_captions"
             android:text="@string/subtitles_remove_bloat"
             app:drawableEndCompat="@null" />

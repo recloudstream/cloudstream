@@ -44,6 +44,7 @@ import java.io.File
 const val SUBTITLE_KEY = "subtitle_settings"
 const val SUBTITLE_AUTO_SELECT_KEY = "subs_auto_select"
 const val SUBTITLE_DOWNLOAD_KEY = "subs_auto_download"
+const val PRIOR_SUB_LANGUAGE = "prior_sub_language"
 
 data class SaveCaptionStyle(
     @JsonProperty("foregroundColor") var foregroundColor: Int,
@@ -60,6 +61,7 @@ data class SaveCaptionStyle(
     @JsonProperty("fixedTextSize") var fixedTextSize: Float?,
     @JsonProperty("removeCaptions") var removeCaptions: Boolean = false,
     @JsonProperty("removeBloat") var removeBloat: Boolean = true,
+    @JsonProperty("removeSubs") var removeSubs: Boolean = false,
     /** Apply caps lock to the text **/
     @JsonProperty("upperCase") var upperCase: Boolean = false,
 )
@@ -412,6 +414,23 @@ class SubtitlesFragment : Fragment() {
             ) { index ->
                 state.fixedTextSize = fontSizes.map { it.first }[index]
                 //textView.context.updateState() // font size not changed
+            }
+        }
+
+        subtitles_disable_subs?.isChecked = state.removeSubs
+        subtitles_disable_subs?.setOnCheckedChangeListener { _, b ->
+            state.removeSubs = b
+            if (b) {
+                setKey(
+                    PRIOR_SUB_LANGUAGE,
+                    getKey(SUBTITLE_AUTO_SELECT_KEY) ?: "en"
+                )
+                setKey(SUBTITLE_AUTO_SELECT_KEY, "")
+            } else {
+                setKey(
+                    SUBTITLE_AUTO_SELECT_KEY,
+                    getKey(PRIOR_SUB_LANGUAGE) ?: "en"
+                )
             }
         }
 
