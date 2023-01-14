@@ -9,12 +9,12 @@
     <string name="download">Скачать</string>
     <string name="search">Поиск</string>
     <string name="resize_fill">Заполнить</string>
-    <string name="download_failed">Ошибка загрузки</string>
+    <string name="download_failed">Скачать Неудачный</string>
     <string name="resize_fit">Подогнать</string>
     <string name="delete">Удалить</string>
     <string name="all">Всё</string>
     <string name="pause">Пауза</string>
-    <string name="cast_format" formatted="true">В ролях: %s</string>
+    <string name="cast_format" formatted="true">Актёрский состав: %s</string>
     <string name="show_title">Название источника</string>
     <string name="login">Вход</string>
     <string name="none">Нет</string>
@@ -22,4 +22,63 @@
     <string name="loading">Загрузка…</string>
     <string name="status">Статус</string>
     <string name="logout">Выйти</string>
+    <string name="next_episode_format" formatted="true">Эпизод %d будет выпущен в</string>
+    <string name="result_poster_img_des">Плакат</string>
+    <string name="search_poster_img_des">\@нить/результат_плокат_картинка_</string>
+    <string name="episode_poster_img_des">Эпизод Плакат</string>
+    <string name="home_main_poster_img_des">Главный Плакат</string>
+    <string name="home_next_random_img_des">Следующий Случайный</string>
+    <string name="go_back_img_des">Возвращаться</string>
+    <string name="home_change_provider_img_des">Смена Провайдер</string>
+    <string name="preview_background_img_des">Предпросмотр Фон</string>
+    <string name="player_speed_text_format" formatted="true">Скорость (%.2fx)</string>
+    <string name="rated_format" formatted="true">Оценили: %.1f</string>
+    <string name="new_update_format" formatted="true">Новое обновление найдено!
+\n%s -&gt; %s</string>
+    <string name="filler" formatted="true">Заполнитель</string>
+    <string name="app_name">ОблакоПоток</string>
+    <string name="action_remove_from_bookmarks">Убирать</string>
+    <string name="app_dub_sub_episode_text_format" formatted="true">%s Ep %d</string>
+    <string name="play_with_app_name">Проиграть с ОблакоПоток</string>
+    <string name="title_home">Главная</string>
+    <string name="title_search">Поиск</string>
+    <string name="title_downloads">Загрузки</string>
+    <string name="title_settings">Настройки</string>
+    <string name="search_hint">Поиск…</string>
+    <string name="search_hint_site" formatted="true">Поиск %s…</string>
+    <string name="no_data">Нет Данных</string>
+    <string name="episode_more_options_des">Дополнительные Опции</string>
+    <string name="next_episode">Следующий эпизод</string>
+    <string name="result_tags">Жанры</string>
+    <string name="result_share">Делиться</string>
+    <string name="result_open_in_browser">Открывать В Браузер</string>
+    <string name="skip_loading">Скип Загрузка</string>
+    <string name="type_watching">Смотрю</string>
+    <string name="type_on_hold">Приостановленный</string>
+    <string name="type_completed">Завершено</string>
+    <string name="type_dropped">Брошенный</string>
+    <string name="type_plan_to_watch">План по Смотреть</string>
+    <string name="type_none">Никто</string>
+    <string name="type_re_watching">Пересмотрю</string>
+    <string name="play_movie_button">Проиграть Фильм</string>
+    <string name="play_trailer_button">Проиграть Трейлер</string>
+    <string name="play_livestream_button">Проиграть Livestream</string>
+    <string name="pick_source">Источники</string>
+    <string name="pick_subtitle">Субтитры</string>
+    <string name="play_episode">Проиграть Эпизод</string>
+    <string name="reload_error">Повторная попытка подключение…</string>
+    <string name="go_back">Вернуться</string>
+    <string name="downloaded">Скачали</string>
+    <string name="downloading">Скачивание</string>
+    <string name="download_paused">Скачать Приостановленный</string>
+    <string name="download_started">Скачать Начатый</string>
+    <string name="download_canceled">Скачать Отменено</string>
+    <string name="download_done">Скачать Выполнено</string>
+    <string name="home_info">Инфо</string>
+    <string name="update_started">Обновление Начатый</string>
+    <string name="home_expanded_hide">Прятать</string>
+    <string name="home_play">Проиграть</string>
+    <string name="home_more_info">Подробнее Инфо</string>
+    <string name="filter_bookmarks">Фильтр Закладки</string>
+    <string name="error_bookmarks_text">Закладки</string>
 </resources>

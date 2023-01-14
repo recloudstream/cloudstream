@@ -487,4 +487,7 @@
     <string name="pref_category_actions">Actions</string>
     <string name="pref_category_cache">Cache</string>
     <string name="redo_setup_process">Refaire le processus d\'installation</string>
+    <string name="update_started">Mise à jour commencée</string>
+    <string name="delayed_update_notice">L\'application sera mise à jour dès la fin de la session</string>
+    <string name="plugin_downloaded">Plugin Téléchargé</string>
 </resources>
