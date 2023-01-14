@@ -357,7 +357,8 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     PlayLtXyz(),
     AStreamHub(),
 
-    Cda()
+    Cda(),
+    Dailymotion(),
 )
 
 
