@@ -13,6 +13,7 @@ open class Dailymotion : ExtractorApi() {
     override val mainUrl = "https://www.dailymotion.com"
     override val name = "Dailymotion"
     override val requiresReferer = false
+
     @Suppress("RegExpSimplifiable")
     private val videoIdRegex = "^[kx][a-zA-Z0-9]+\$".toRegex()
 
@@ -42,16 +43,18 @@ open class Dailymotion : ExtractorApi() {
         val metaData = app.get(metaDataUrl, referer = embedUrl, cookies = cookies)
             .parsedSafe<MetaData>() ?: return
         metaData.qualities.forEach { (key, video) ->
-            video.map {
-                ExtractorLink(
-                    name,
-                    "$name $key",
-                    it.url,
-                    "",
-                    Qualities.Unknown.value,
-                    true
+            video.forEach {
+                callback.invoke(
+                    ExtractorLink(
+                        name,
+                        "$name $key",
+                        it.url,
+                        "",
+                        Qualities.Unknown.value,
+                        true
+                    )
                 )
-            }.forEach(callback)
+            }
         }
     }
 
