@@ -523,4 +523,7 @@
     <string name="apk_installer_legacy">Versi lama</string>
     <string name="skip_type_mixed_op">Sesi pembuka ganda</string>
     <string name="apk_installer_package_installer">Penginstal Paket</string>
+    <string name="plugin_downloaded">Plugin Terunduh</string>
+    <string name="delayed_update_notice">Aplikasi akan diperbaharui pada saat keluar</string>
+    <string name="update_started">Pembaharuan Dimulai</string>
 </resources>

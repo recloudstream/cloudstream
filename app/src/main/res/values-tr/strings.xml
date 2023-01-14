@@ -125,7 +125,7 @@
     <string name="action_open_play">@string/home_play </string>
     <string name="vpn_might_be_needed">Bu sağlayıcının düzgün çalışması için bir VPN gerekebilir</string>
     <string name="vpn_torrent">Bu sağlayıcı bir torrent. VPN önerilir</string>
-    <string name="provider_info_meta">Metadata verisi site tarafından sağlanmadı, video yüklemesi eğer sitede bulunmuyorsa oynatma başarısız olacak</string>
+    <string name="provider_info_meta">Metadata site tarafından sağlanmamış, veri site\'de bulunmuyorsa video yüklenmesi başarısız olacak.</string>
     <string name="torrent_plot">Açıklama</string>
     <string name="normal_no_plot">Konu bulunamadı</string>
     <string name="torrent_no_plot">Açıklama bulunamadı</string>
@@ -173,7 +173,7 @@
     <string name="show_fillers_settings">Anime için filler bölümleri gösterir</string>
     <string name="show_trailers_settings">Fragmanları göster</string>
     <string name="kitsu_settings">Kitsu\'dan posterleri göster</string>
-    <string name="pref_filter_search_quality">Arama sonuçlarında seçilen video kalitelerini gizle</string>
+    <string name="pref_filter_search_quality">Seçilen video kalitelerini arama sonuçlarında gizle</string>
     <string name="automatic_plugin_updates">Otomatik eklenti güncellemeleri</string>
     <string name="updates_settings">Uygulama güncellemelerini göster</string>
     <string name="updates_settings_des">Başlangıçta yeni güncellemeleri otomatik olarak ara</string>
@@ -289,15 +289,15 @@
     <string name="video_buffer_length_settings">Video arabelleği uzunluğu</string>
     <string name="video_buffer_disk_settings">Diskteki video önbelleği</string>
     <string name="video_buffer_clear_settings">Video ve resim önbelleğini temizle</string>
-    <string name="video_ram_description">Çok yükseğe ayarlanırsa rastgele çökmelere neden olur. Android TV veya eski bir telefon gibi ram miktarı düşük cihazlarda değiştirmeyin</string>
-    <string name="video_disk_description">Çok yükseğe ayarlanırsa, Android TV cihazları gibi düşük depolama alanına sahip sistemlerde sorunlara neden olabilir</string>
+    <string name="video_ram_description">Android TV gibi düşük belleğe sahip cihazlarda çok yükseğe ayarlanırsa çökmelere neden olur.</string>
+    <string name="video_disk_description">Çok yükseğe ayarlanırsa, Android TV cihazları gibi düşük depolama alanına sahip sistemlerde sorunlara neden olabilir.</string>
     <string name="dns_pref">HTTPS üzerinden DNS</string>
     <string name="dns_pref_summary">ISP bloklarını atlatmak için kullanışlıdır</string>
     <string name="add_site_pref">Klon site</string>
     <string name="remove_site_pref">Siteyi kaldır</string>
     <string name="add_site_summary">Farklı bir URL ile mevcut bir sitenin klonunu ekleyin</string>
     <string name="download_path_pref">İndirme konumu</string>
-    <string name="nginx_url_pref">Nginx sunucu URL\'i</string>
+    <string name="nginx_url_pref">NGINX sunucu URL\'si</string>
     <string name="display_subbed_dubbed_settings">Dublajlı/Alt yazılı animeleri göster</string>
     <string name="resize_fit">Ekrana sığdır</string>
     <string name="resize_fill">Uzat</string>
@@ -506,4 +506,19 @@
     <string name="redo_setup_process">Kurulum işlemini tekrarla</string>
     <string name="play_trailer_button">Fragmanı oynat</string>
     <string name="automatic_plugin_download_summary">Eklenen depolardan henüz yüklenmemiş tüm eklentileri otomatik olarak yükleyin.</string>
+    <string name="update_started">Güncelleme başladı</string>
+    <string name="apk_installer_settings_des">Bazı cihazlar yeni paket yükleyiciyi desteklemez.. Güncellemele yüklenmezse eski seçeneği deneyin.</string>
+    <string name="automatic_plugin_download">Eklentileri otomatik olarak indir</string>
+    <string name="apk_installer_settings">APK indirici</string>
+    <string name="pref_category_links">Linkler</string>
+    <string name="pref_category_app_updates">Uygulama güncellemeleri</string>
+    <string name="pref_category_backup">Yedek</string>
+    <string name="pref_category_player_features">Oynatıcı özellikleri</string>
+    <string name="pref_category_subtitles">Altyazılar</string>
+    <string name="pref_category_player_layout">Düzen</string>
+    <string name="pref_category_defaults">Varsayılanlar</string>
+    <string name="pref_category_extensions">Eklentiler</string>
+    <string name="pref_category_cache">Önbellek</string>
+    <string name="pref_category_looks">Görünüm</string>
+    <string name="pref_category_ui_features">Özellikler</string>
 </resources>

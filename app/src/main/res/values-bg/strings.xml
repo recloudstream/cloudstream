@@ -493,4 +493,7 @@
     <string name="pref_category_cache">Кеш</string>
     <string name="pref_category_gestures">Жестове</string>
     <string name="pref_category_player_layout">Шаблон</string>
+    <string name="plugin_downloaded">Приставката е изтеглена</string>
+    <string name="delayed_update_notice">Приложението ще се актуализира при изход от него</string>
+    <string name="update_started">Започна Актуализация</string>
 </resources>
