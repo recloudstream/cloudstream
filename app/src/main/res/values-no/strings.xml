@@ -19,7 +19,7 @@
     <string name="title_downloads">Nedlastinger</string>
     <string name="title_settings">Innstillinger</string>
     <string name="search_hint">Søk…</string>
-    <string name="no_data">Nei informasjon</string>
+    <string name="no_data">Ingen data tilgjengelig</string>
     <string name="episode_more_options_des">Flere valg</string>
     <string name="next_episode">Neste episode</string>
     <string name="result_tags">Sjangere</string>
@@ -90,7 +90,7 @@
     <string name="vpn_might_be_needed">En VPN kan være nødvendig for at denne leverandøren skal fungere</string>
     <string name="vpn_torrent">Denne leverandøren er en torrent, en VPN anbefales</string>
     <string name="torrent_plot">Beskrivelse</string>
-    <string name="normal_no_plot">Fant ikke tomt</string>
+    <string name="normal_no_plot">Fant ingen handling</string>
     <string name="torrent_no_plot">Ingen beskrivelse funnet</string>
     <string name="picture_in_picture">Bilde-i-bilde</string>
     <string name="picture_in_picture_des">Fortsetter avspilling i en miniatyr spiller på toppen av andre apper</string>
@@ -502,4 +502,5 @@
     <string name="pref_category_backup">Sikkerhetskopi</string>
     <string name="apk_installer_settings">APK-installatør</string>
     <string name="apk_installer_settings_des">Noen enheter støtter ikke den nye pakkeinstallatøren. Prøv gammeldags alternativ hvis ting ikke installeres.</string>
+    <string name="update_started">Oppdatering startet</string>
 </resources>
