@@ -1,6 +1,7 @@
 name: Update locale lists
 
 on:
+  workflow_dispatch:
   push:
     paths:
       - '**.xml'
