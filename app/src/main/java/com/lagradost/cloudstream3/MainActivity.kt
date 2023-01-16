@@ -948,8 +948,9 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
 //        Used to check current focus for TV
 //        main {
 //            while (true) {
-//                delay(1000)
+//                delay(5000)
 //                println("Current focus: $currentFocus")
+//                showToast(this, currentFocus.toString(), Toast.LENGTH_LONG)
 //            }
 //        }
 
