@@ -28,19 +28,13 @@ import com.hippo.unifile.UniFile
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
 import com.lagradost.cloudstream3.CommonActivity.showToast
-import com.lagradost.cloudstream3.mvvm.Resource
-import com.lagradost.cloudstream3.mvvm.logError
-import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
-import com.lagradost.cloudstream3.mvvm.observe
+import com.lagradost.cloudstream3.mvvm.*
 import com.lagradost.cloudstream3.subtitles.AbstractSubtitleEntities
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.subtitleProviders
 import com.lagradost.cloudstream3.ui.player.CS3IPlayer.Companion.preferredAudioTrackLanguage
 import com.lagradost.cloudstream3.ui.player.CustomDecoder.Companion.updateForcedEncoding
 import com.lagradost.cloudstream3.ui.player.PlayerSubtitleHelper.Companion.toSubtitleMimeType
-import com.lagradost.cloudstream3.ui.result.ResultEpisode
-import com.lagradost.cloudstream3.ui.result.ResultFragment
-import com.lagradost.cloudstream3.ui.result.SyncViewModel
-import com.lagradost.cloudstream3.ui.result.setText
+import com.lagradost.cloudstream3.ui.result.*
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment.Companion.getAutoSelectLanguageISO639_1
 import com.lagradost.cloudstream3.utils.*
@@ -63,6 +57,9 @@ import kotlinx.android.synthetic.main.player_select_source_and_subs.*
 import kotlinx.android.synthetic.main.player_select_source_and_subs.subtitles_click_settings
 import kotlinx.android.synthetic.main.player_select_tracks.*
 import kotlinx.coroutines.Job
+import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 class GeneratorPlayer : FullScreenPlayer() {
     companion object {
@@ -332,28 +329,54 @@ class GeneratorPlayer : FullScreenPlayer() {
         dialog.search_loading_bar.progressTintList = color
         dialog.search_loading_bar.indeterminateTintList = color
 
-        //Automatically search after entering Year
-        dialog.subtitles_search_year.setOnEditorActionListener(OnEditorActionListener { v, actionId, event ->
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                dialog.subtitles_search.setQuery(dialog.subtitles_search.query, true)
-                return@OnEditorActionListener true
+        observeNullable(viewModel.currentSubtitleYear) {
+            // When year is changed search again
+            dialog.subtitles_search.setQuery(dialog.subtitles_search.query, true)
+            dialog.year_btt.text = it?.toString() ?: txt(R.string.none).asString(context)
+        }
+
+        dialog.year_btt?.setOnClickListener {
+            val none = txt(R.string.none).asString(context)
+            val currentYear = Calendar.getInstance().get(Calendar.YEAR)
+            val earliestYear = 1900
+
+            val years = (currentYear downTo earliestYear).toList()
+            val options = listOf(none) + years.map {
+                it.toString()
             }
-            false
-        })
+
+            val selectedIndex = viewModel.currentSubtitleYear.value
+                ?.let {
+                    // + 1 since none also takes a space
+                    years.indexOf(it) + 1
+                }
+                ?.takeIf { it >= 0 } ?: 0
+
+            activity?.showDialog(
+                options,
+                selectedIndex,
+                txt(R.string.year).asString(context),
+                true, {
+                }, { index ->
+                    viewModel.setSubtitleYear(years.getOrNull(index - 1))
+                }
+            )
+        }
 
         dialog.subtitles_search.setOnQueryTextListener(object :
             androidx.appcompat.widget.SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 dialog.search_loading_bar?.show()
                 ioSafe {
-                    val year = dialog.subtitles_search_year?.text?.toString()?.toIntOrNull()
                     val search =
-                        AbstractSubtitleEntities.SubtitleSearch(query = query ?: return@ioSafe,
+                        AbstractSubtitleEntities.SubtitleSearch(
+                            query = query ?: return@ioSafe,
                             imdb = imdbId,
                             epNumber = currentTempMeta.episode,
                             seasonNumber = currentTempMeta.season,
                             lang = currentLanguageTwoLetters.ifBlank { null },
-                            year = year)
+                            year = viewModel.currentSubtitleYear.value
+                        )
                     val results = providers.amap {
                         try {
                             it.search(search)
@@ -361,7 +384,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                             null
                         }
                     }.filterNotNull()
-                    val max = results.map { it.size }.maxOrNull() ?: return@ioSafe
+                    val max = results.maxOfOrNull { it.size } ?: return@ioSafe
 
                     // very ugly
                     val items = ArrayList<AbstractSubtitleEntities.SubtitleEntity>()

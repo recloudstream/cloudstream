@@ -35,6 +35,13 @@ class PlayerGeneratorViewModel : ViewModel() {
     private val _currentStamps = MutableLiveData<List<EpisodeSkip.SkipStamp>>(emptyList())
     val currentStamps: LiveData<List<EpisodeSkip.SkipStamp>> = _currentStamps
 
+    private val _currentSubtitleYear = MutableLiveData<Int?>(null)
+    val currentSubtitleYear: LiveData<Int?> = _currentSubtitleYear
+
+    fun setSubtitleYear(year: Int?) {
+        _currentSubtitleYear.postValue(year)
+    }
+
     fun getId(): Int? {
         return generator?.getCurrentId()
     }
