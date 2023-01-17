@@ -99,6 +99,25 @@
 
             </LinearLayout>
 
+            <LinearLayout
+                android:id="@+id/LinearLayout02"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_margin="10dp">
+                <EditText
+                    android:id="@+id/subtitles_search_year"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textSize="18sp"
+                    android:hint="@string/year"
+                    android:gravity="start|center_vertical"
+                    android:textAlignment="gravity"
+                    android:maxLines="1"
+                    android:inputType="numberSigned"
+                    android:imeOptions="actionDone"/>
+            </LinearLayout>
+
             <ListView
                     android:id="@+id/subtitle_adapter"
                     android:layout_width="match_parent"
