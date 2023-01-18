@@ -486,4 +486,7 @@
     <string name="action_mark_as_watched">Σημείωσε το ως πλήρως παρακολουθημένο</string>
     <string name="confirm_exit_dialog">Είστε σίγουροι πως θέλετε να βγείτε;</string>
     <string name="redo_setup_process">Επανάληψη διαδικασίας διαμόρφωσης της εφαρμογής</string>
+    <string name="plugin_downloaded">Το πρόσθετο κατέβει</string>
+    <string name="update_started">Ενημέρωση ξεκίνησε</string>
+    <string name="delayed_update_notice">Η εφαρμογή θα ενημερωθεί κατά την έξοδο</string>
 </resources>

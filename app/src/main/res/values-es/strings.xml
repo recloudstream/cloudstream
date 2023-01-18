@@ -288,9 +288,9 @@
     <string name="extension_language">Idioma</string>
     <string name="apk_installer_legacy">Legacy (método antiguo)</string>
     <string name="apk_installer_package_installer">Instalador de paquetes</string>
-    <string name="blank_repo_message">CloudStream no tiene sitios instalados de forma predeterminada. Necesita instalalos desde los repositorios.
+    <string name="blank_repo_message">CloudStream no tiene sitios instalados de forma predeterminada. Necesita instalarlos desde repositorios.
 \n
-\nDebido a la eliminación sin sentido de DMCA por parte de Sky UK Limited 🤮, no podemos vincular el sitio del repositorio en la aplicación.
+\nDebido a que dieron de baja el proyecto de manera arbitraria por infracción a la lay de derechos de autor (DMCA) de parte de Sky UK Limited 🤮, no podemos vincular el sitio del repositorio en la aplicación.
 \n
 \nÚnete a nuestro Discord o busca en línea.</string>
     <string name="download_all_plugins_from_repo">Descarga todos los plugins desde este repositorio\?</string>
