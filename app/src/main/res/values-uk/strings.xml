@@ -393,4 +393,99 @@
     <string name="trailer">Трейлер</string>
     <string name="extras">Додатково</string>
     <string name="network_adress_example">Посилання на трансляцію</string>
+    <string name="quality_cam">Cam</string>
+    <string name="quality_cam_rip">Cam</string>
+    <string name="quality_cam_hd">Cam</string>
+    <string name="quality_hq">HQ</string>
+    <string name="quality_hd">HD</string>
+    <string name="quality_ts">TS</string>
+    <string name="quality_tc">TC</string>
+    <string name="subtitles_remove_bloat">Прибрати здуття субтитрів</string>
+    <string name="referer">Реферер</string>
+    <string name="next">Далі</string>
+    <string name="provider_languages_tip">Дивіться відео на цих мовах</string>
+    <string name="skip_setup">Пропустити налаштування</string>
+    <string name="crash_reporting_title">Звіт про збої</string>
+    <string name="preferred_media_subtext">Що ви хочете побачити</string>
+    <string name="setup_done">Готово</string>
+    <string name="extensions">Розширення</string>
+    <string name="add_repository">Додати репозиторій</string>
+    <string name="repository_name_hint">Назва репозиторію</string>
+    <string name="repository_url_hint">URL-адреса репозиторію</string>
+    <string name="plugin_loaded">Плагін завантажено</string>
+    <string name="plugin_downloaded">Плагін завантажено</string>
+    <string name="plugin_load_fail" formatted="true">Не вдалося завантажити %s</string>
+    <string name="batch_download_start_format" formatted="true">Почалося завантаження %d %s…</string>
+    <string name="batch_download_finish_format" formatted="true">Завантажено %d %s</string>
+    <string name="batch_download_nothing_to_download_format" formatted="true">Всі %s вже завантажено</string>
+    <string name="batch_download">Пакетне завантаження</string>
+    <string name="plugin_singular">плагін</string>
+    <string name="plugin">плагіни</string>
+    <string name="delete_repository">Видалити репозиторій</string>
+    <string name="setup_extensions_subtext">Завантажте список сайтів, які ви бажаєте використовувати</string>
+    <string name="plugins_downloaded" formatted="true">Завантажено: %d</string>
+    <string name="plugins_disabled" formatted="true">Вимкнено: %d</string>
+    <string name="plugins_not_downloaded" formatted="true">Не завантажено: %d</string>
+    <string name="plugins_updated" formatted="true">Оновлено %d плагіни</string>
+    <string name="blank_repo_message">За замовчуванням в CloudStream не встановлені сайти. Вам потрібно встановити сайти з репозиторіїв.
+\n
+\nЧерез безмозкий DMCA від Sky UK Limited 🤮 ми не можемо прив\'язати сайт репозиторію в додатку.
+\n
+\nПриєднуйтесь до нашого Discord або шукайте в інтернеті.</string>
+    <string name="view_public_repositories_button">Переглянути репозиторії спільноти</string>
+    <string name="view_public_repositories_button_short">Публічний список</string>
+    <string name="uppercase_all_subtitles">Усі субтитри у верхньому регістрі</string>
+    <string name="single_plugin_disabled" formatted="true">%s (Вимкнено)</string>
+    <string name="video_tracks">Відео доріжки</string>
+    <string name="apply_on_restart">Застосувати при перезавантаженні</string>
+    <string name="safe_mode_crash_info">Переглянути інформацію про збій</string>
+    <string name="extension_rating" formatted="true">Рейтинг: %s</string>
+    <string name="extension_description">Опис</string>
+    <string name="extension_version">Версія</string>
+    <string name="extension_status">Статус</string>
+    <string name="extension_size">Розмір</string>
+    <string name="extension_types">Підтримується</string>
+    <string name="extension_language">Мова</string>
+    <string name="extension_install_first">Спочатку встановіть розширення</string>
+    <string name="hls_playlist">Список відтворення HLS</string>
+    <string name="player_settings_play_in_app">Вбудований плеєр</string>
+    <string name="player_settings_play_in_vlc">VLC</string>
+    <string name="player_settings_play_in_mpv">MPV</string>
+    <string name="player_settings_play_in_web">Відтворення веб-відео</string>
+    <string name="player_settings_play_in_browser">Веб-браузер</string>
+    <string name="skip_type_ed">Кінець</string>
+    <string name="skip_type_recap">Коротке повторення</string>
+    <string name="skip_type_format" formatted="true">Пропустити %s</string>
+    <string name="skip_type_mixed_ed">Змішаний кінець</string>
+    <string name="skip_type_creddits">Подяки</string>
+    <string name="skip_type_op">Опенінг</string>
+    <string name="skip_type_intro">Вступ</string>
+    <string name="clear_history">Очистити історію</string>
+    <string name="history">Історія</string>
+    <string name="enable_skip_op_from_database_des">Показувати спливаючі вікна для опенінгу/кінця</string>
+    <string name="clipboard_too_large">Забагато тексту. Не вдалося зберегти в буфер обміну.</string>
+    <string name="action_mark_as_watched">Позначити як переглянуте</string>
+    <string name="confirm_exit_dialog">Ви впевнені що хочете вийти\?</string>
+    <string name="yes">Так</string>
+    <string name="no">Ні</string>
+    <string name="update_notification_installing">Установлення оновлення програми…</string>
+    <string name="update_notification_failed">Не вдалося встановити нову версію програми</string>
+    <string name="apk_installer_legacy">Старий</string>
+    <string name="apk_installer_package_installer">Інсталятор пакетів</string>
+    <string name="delayed_update_notice">Програму буде оновлено після виходу</string>
+    <string name="delete_repository_plugins">Це також призведе до видалення всіх плагінів репозиторію</string>
+    <string name="all_languages_preference">Всі мови</string>
+    <string name="previous">Попередня</string>
+    <string name="app_layout_subtext">Змініть вигляд додатку відповідно до вашого пристрою</string>
+    <string name="plugin_deleted">Плагін видалено</string>
+    <string name="is_adult">18+</string>
+    <string name="audio_tracks">Аудіо доріжки</string>
+    <string name="download_all_plugins_from_repo">Завантажити всі плагіни з цього репозиторію\?</string>
+    <string name="player_pref">Бажаний відеоплеєр</string>
+    <string name="safe_mode_title">Увімкнено безпечний режим</string>
+    <string name="extension_authors">Автори</string>
+    <string name="update_notification_downloading">Завантаження оновлення програми…</string>
+    <string name="safe_mode_description">Усі розширення вимкнено через збій, щоб допомогти вам знайти те, що спричиняє проблеми.</string>
+    <string name="app_not_found_error">Програму не знайдено</string>
+    <string name="skip_type_mixed_op">Змішаний опенінг</string>
 </resources>
