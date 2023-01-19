@@ -27,7 +27,6 @@ open class Acefile : ExtractorApi() {
                                 res.substringAfter("\"file\":\"").substringBefore("\","),
                                 "$mainUrl/",
                                 Qualities.Unknown.value,
-                                headers = mapOf("range" to "bytes=0-")
                             )
                         )
                     }

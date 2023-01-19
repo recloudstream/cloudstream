@@ -4,7 +4,6 @@ import android.util.Log
 import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.imdbUrlToIdNullable
-import com.lagradost.cloudstream3.network.CloudflareKiller
 import com.lagradost.cloudstream3.subtitles.AbstractSubApi
 import com.lagradost.cloudstream3.subtitles.AbstractSubtitleEntities
 import com.lagradost.cloudstream3.utils.SubtitleHelper
@@ -22,7 +21,7 @@ class IndexSubtitleApi : AbstractSubApi {
 
 
     companion object {
-        const val host = "https://subscene.cyou"
+        const val host = "https://indexsubtitle.com"
         const val TAG = "INDEXSUBS"
     }
 
@@ -242,7 +241,7 @@ class IndexSubtitleApi : AbstractSubApi {
                     document.selectFirst("div.my-3.p-3 div.media a")!!.attr("href")
                 )
             } else {
-                document.select("div.my-3.p-3 div.media").mapNotNull { block ->
+                document.select("div.my-3.p-3 div.media").firstNotNullOf { block ->
                     val name =
                         block.selectFirst("strong.d-block")?.text()?.trim().toString()
                     if (seasonNum!! > 0) {
@@ -254,7 +253,7 @@ class IndexSubtitleApi : AbstractSubApi {
                     } else {
                         fixUrl(block.selectFirst("a")!!.attr("href"))
                     }
-                }.first()
+                }
             }
             return link
         }
