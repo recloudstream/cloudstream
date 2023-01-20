@@ -79,6 +79,7 @@ import com.lagradost.cloudstream3.utils.AppUtils.loadCache
 import com.lagradost.cloudstream3.utils.AppUtils.loadRepository
 import com.lagradost.cloudstream3.utils.AppUtils.loadResult
 import com.lagradost.cloudstream3.utils.AppUtils.loadSearchResult
+import com.lagradost.cloudstream3.utils.AppUtils.setDefaultFocus
 import com.lagradost.cloudstream3.utils.BackupUtils.setUpBackup
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.DataStore.getKey
@@ -511,9 +512,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             setPositiveButton(R.string.yes) { _, _ -> exitProcess(0) }
             setNegativeButton(R.string.no) { _, _ -> }
         }
-        builder.show().also {
-            it.getButton(DialogInterface.BUTTON_NEGATIVE).requestFocus()
-        }
+        builder.show().setDefaultFocus()
     }
 
     private fun backPressed() {
@@ -706,7 +705,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
 
                 setNegativeButton("Ok") { _, _ -> }
             }
-            builder.show()
+            builder.show().setDefaultFocus()
         }
 
 

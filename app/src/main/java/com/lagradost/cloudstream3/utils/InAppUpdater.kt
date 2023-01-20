@@ -23,6 +23,7 @@ import okio.buffer
 import okio.sink
 import java.io.File
 import android.text.TextUtils
+import com.lagradost.cloudstream3.utils.AppUtils.setDefaultFocus
 import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStreamReader
@@ -355,7 +356,7 @@ class InAppUpdater {
                                     }
                                 }
                             }
-                            builder.show()
+                            builder.show().setDefaultFocus()
                         } catch (e: Exception) {
                             logError(e)
                         }

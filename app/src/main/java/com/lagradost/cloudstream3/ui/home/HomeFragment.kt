@@ -51,6 +51,7 @@ import com.lagradost.cloudstream3.utils.AppUtils.loadResult
 import com.lagradost.cloudstream3.utils.AppUtils.loadSearchResult
 import com.lagradost.cloudstream3.utils.AppUtils.ownHide
 import com.lagradost.cloudstream3.utils.AppUtils.ownShow
+import com.lagradost.cloudstream3.utils.AppUtils.setDefaultFocus
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStore.setKey
@@ -182,7 +183,7 @@ class HomeFragment : Fragment() {
                             )
                             .setPositiveButton(R.string.delete, dialogClickListener)
                             .setNegativeButton(R.string.cancel, dialogClickListener)
-                            .show()
+                            .show().setDefaultFocus()
                     } catch (e: Exception) {
                         logError(e)
                         // ye you somehow fucked up formatting did you?

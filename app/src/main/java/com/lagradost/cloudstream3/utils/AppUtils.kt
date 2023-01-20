@@ -49,6 +49,7 @@ import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.appStri
 import com.lagradost.cloudstream3.ui.WebviewFragment
 import com.lagradost.cloudstream3.ui.result.ResultFragment
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTrueTvSettings
+import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
 import com.lagradost.cloudstream3.ui.settings.extensions.PluginsViewModel.Companion.downloadAll
 import com.lagradost.cloudstream3.ui.settings.extensions.RepositoryData
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
@@ -88,7 +89,7 @@ object AppUtils {
         this?.show()
         Handler(Looper.getMainLooper()).postDelayed({
             this?.window?.setWindowAnimations(R.style.Animation_Design_BottomSheetDialog)
-        },200)
+        }, 200)
     }
 
     //fun Context.deleteFavorite(data: SearchResponse) {
@@ -345,7 +346,7 @@ object AppUtils {
 
                 setNegativeButton(R.string.no) { _, _ -> }
             }
-            builder.show()
+            builder.show().setDefaultFocus()
         }
     }
 
@@ -566,6 +567,17 @@ object AppUtils {
             }
         }
         return false
+    }
+
+    /**
+     * Sets the focus to the negative button when in TV and Emulator layout.
+     **/
+    fun AlertDialog.setDefaultFocus(buttonFocus: Int = DialogInterface.BUTTON_NEGATIVE) {
+        if (!isTvSettings()) return
+        this.getButton(buttonFocus).run {
+            isFocusableInTouchMode = true
+            requestFocus()
+        }
     }
 
     // Copied from https://github.com/videolan/vlc-android/blob/master/application/vlc-android/src/org/videolan/vlc/util/FileUtils.kt

@@ -46,6 +46,7 @@ import com.lagradost.cloudstream3.ui.home.ParentItemAdapter
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTrueTvSettings
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
 import com.lagradost.cloudstream3.utils.AppUtils.ownShow
+import com.lagradost.cloudstream3.utils.AppUtils.setDefaultFocus
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStore.setKey
@@ -395,7 +396,7 @@ class SearchFragment : Fragment() {
                     )
                         .setPositiveButton(R.string.sort_clear, dialogClickListener)
                         .setNegativeButton(R.string.cancel, dialogClickListener)
-                        .show()
+                        .show().setDefaultFocus()
                 } catch (e: Exception) {
                     logError(e)
                     // ye you somehow fucked up formatting did you?
