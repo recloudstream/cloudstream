@@ -218,10 +218,18 @@ class EpisodeAdapter(
                 name//if(card.isFiller == true) episodeText.context.getString(R.string.filler).format(name) else name
             episodeText.isSelected = true // is needed for text repeating
 
-            val displayPos = card.getDisplayPosition()
-            episodeProgress?.max = (card.duration / 1000).toInt()
-            episodeProgress?.progress = (displayPos / 1000).toInt()
-            episodeProgress?.isVisible = displayPos > 0L
+            if (card.videoWatchState == VideoWatchState.Watched) {
+                // This cannot be done in getDisplayPosition() as when you have not watched something
+                // the duration and position is 0
+                episodeProgress?.max = 1
+                episodeProgress?.progress = 1
+                episodeProgress?.isVisible = true
+            } else {
+                val displayPos = card.getDisplayPosition()
+                episodeProgress?.max = (card.duration / 1000).toInt()
+                episodeProgress?.progress = (displayPos / 1000).toInt()
+                episodeProgress?.isVisible = displayPos > 0L
+            }
 
             episodePoster?.isVisible = episodePoster?.setImage(card.poster) == true
 

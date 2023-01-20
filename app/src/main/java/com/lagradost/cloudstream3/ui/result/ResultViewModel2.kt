@@ -406,6 +406,9 @@ class ResultViewModel2 : ViewModel() {
         MutableLiveData(Some.None)
     val resumeWatching: LiveData<Some<ResumeWatchingStatus>> = _resumeWatching
 
+    private val _episodeSynopsis: MutableLiveData<String?> = MutableLiveData(null)
+    val episodeSynopsis: LiveData<String?> = _episodeSynopsis
+
     companion object {
         const val TAG = "RVM2"
         private const val EPISODE_RANGE_SIZE = 20
@@ -1113,6 +1116,10 @@ class ResultViewModel2 : ViewModel() {
         )
     )
 
+    fun releaseEpisodeSynopsis() {
+        _episodeSynopsis.postValue(null)
+    }
+
     private suspend fun handleEpisodeClickEvent(activity: Activity?, click: EpisodeClickEvent) {
         when (click.action) {
             ACTION_SHOW_OPTIONS -> {
@@ -1146,9 +1153,19 @@ class ResultViewModel2 : ViewModel() {
                         txt(R.string.episode_action_download_mirror) to ACTION_DOWNLOAD_MIRROR,
                         txt(R.string.episode_action_download_subtitle) to ACTION_DOWNLOAD_EPISODE_SUBTITLE_MIRROR,
                         txt(R.string.episode_action_reload_links) to ACTION_RELOAD_EPISODE,
-//                        txt(R.string.action_mark_as_watched) to ACTION_MARK_AS_WATCHED,
                     )
                 )
+
+                // Do not add mark as watched on movies
+                if (!listOf(TvType.Movie, TvType.AnimeMovie).contains(click.data.tvType)) {
+                    val isWatched =
+                        DataStoreHelper.getVideoWatchState(click.data.id) == VideoWatchState.Watched
+
+                    val watchedText = if (isWatched) R.string.action_remove_from_watched
+                    else R.string.action_mark_as_watched
+
+                    options.add(txt(watchedText) to ACTION_MARK_AS_WATCHED)
+                }
 
                 postPopup(
                     txt(
@@ -1182,6 +1199,10 @@ class ResultViewModel2 : ViewModel() {
                     }
                 }
             }
+            ACTION_SHOW_DESCRIPTION -> {
+                _episodeSynopsis.postValue(click.data.description)
+            }
+
             /* not implemented, not used
             ACTION_DOWNLOAD_EPISODE_SUBTITLE -> {
                 loadLinks(click.data, isVisible =  false, isCasting = false) { links ->
@@ -1378,8 +1399,17 @@ class ResultViewModel2 : ViewModel() {
                 )
             }
             ACTION_MARK_AS_WATCHED -> {
-                // TODO FIX
-//                DataStoreHelper.setViewPos(click.data.id, 1, 1)
+                val isWatched =
+                    DataStoreHelper.getVideoWatchState(click.data.id) == VideoWatchState.Watched
+
+                if (isWatched) {
+                    DataStoreHelper.setVideoWatchState(click.data.id, VideoWatchState.None)
+                } else {
+                    DataStoreHelper.setVideoWatchState(click.data.id, VideoWatchState.Watched)
+                }
+
+                // Kinda dirty to reload all episodes :(
+                reloadEpisodes()
             }
         }
     }
@@ -1529,7 +1559,13 @@ class ResultViewModel2 : ViewModel() {
                 val end = minOf(list.size, start + length)
                 list.subList(start, end).map {
                     val posDur = getViewPos(it.id)
-                    it.copy(position = posDur?.position ?: 0, duration = posDur?.duration ?: 0)
+                    val watchState =
+                        DataStoreHelper.getVideoWatchState(it.id) ?: VideoWatchState.None
+                    it.copy(
+                        position = posDur?.position ?: 0,
+                        duration = posDur?.duration ?: 0,
+                        videoWatchState = watchState
+                    )
                 }
             }
             ?: emptyList()
