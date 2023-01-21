@@ -55,7 +55,6 @@ import com.lagradost.cloudstream3.utils.DataStoreHelper.setResultSeason
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import kotlinx.coroutines.*
 import java.io.File
-import java.lang.Math.abs
 import java.util.concurrent.TimeUnit
 
 
@@ -314,6 +313,11 @@ data class ExtractedTrailerData(
 class ResultViewModel2 : ViewModel() {
     private var currentResponse: LoadResponse? = null
 
+    fun clear() {
+        currentResponse = null
+        _page.postValue(null)
+    }
+
     data class EpisodeIndexer(
         val dubStatus: DubStatus,
         val season: Int,
@@ -340,9 +344,9 @@ class ResultViewModel2 : ViewModel() {
     //private val currentHeaderName get() = currentResponse?.name
 
 
-    private val _page: MutableLiveData<Resource<ResultData>> =
-        MutableLiveData(Resource.Loading())
-    val page: LiveData<Resource<ResultData>> = _page
+    private val _page: MutableLiveData<Resource<ResultData>?> =
+        MutableLiveData(null)
+    val page: LiveData<Resource<ResultData>?> = _page
 
     private val _episodes: MutableLiveData<ResourceSome<List<ResultEpisode>>> =
         MutableLiveData(ResourceSome.Loading())
@@ -397,7 +401,6 @@ class ResultViewModel2 : ViewModel() {
 
     private val _selectedDubStatusIndex: MutableLiveData<Int> = MutableLiveData(-1)
     val selectedDubStatusIndex: LiveData<Int> = _selectedDubStatusIndex
-
 
     private val _loadedLinks: MutableLiveData<Some<LinkProgress>> = MutableLiveData(Some.None)
     val loadedLinks: LiveData<Some<LinkProgress>> = _loadedLinks
@@ -1627,10 +1630,11 @@ class ResultViewModel2 : ViewModel() {
         if (ranges?.contains(range) != true) {
             // if the current ranges does not include the range then select the range with the closest matching start episode
             // this usually happends when dub has less episodes then sub -> the range does not exist
-            ranges?.minByOrNull { kotlin.math.abs(it.startEpisode - range.startEpisode) }?.let { r ->
-                postEpisodeRange(indexer, r)
-                return
-            }
+            ranges?.minByOrNull { kotlin.math.abs(it.startEpisode - range.startEpisode) }
+                ?.let { r ->
+                    postEpisodeRange(indexer, r)
+                    return
+                }
         }
 
         val isMovie = currentResponse?.isMovie() == true
@@ -2111,6 +2115,7 @@ class ResultViewModel2 : ViewModel() {
         showFillers: Boolean,
         dubStatus: DubStatus,
         autostart: AutoResume?,
+        loadTrailers: Boolean = true,
     ) =
         viewModelScope.launchSafe {
             _page.postValue(Resource.Loading(url))
@@ -2189,8 +2194,8 @@ class ResultViewModel2 : ViewModel() {
                             System.currentTimeMillis(),
                         )
                     )
-
-                    loadTrailers(data.value)
+                    if (loadTrailers)
+                        loadTrailers(data.value)
                     postSuccessful(
                         data.value,
                         updateEpisodes = true,

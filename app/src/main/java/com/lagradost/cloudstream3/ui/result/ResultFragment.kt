@@ -850,6 +850,7 @@ open class ResultFragment : ResultTrailerPlayer() {
         }
 
         observe(viewModel.page) { data ->
+            if(data == null) return@observe
             when (data) {
                 is Resource.Success -> {
                     val d = data.value

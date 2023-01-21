@@ -1,16 +1,14 @@
 package com.lagradost.cloudstream3
 
 import android.content.ComponentName
-import android.content.DialogInterface
+import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.content.res.Configuration
 import android.os.Bundle
+import android.util.AttributeSet
 import android.util.Log
-import android.view.KeyEvent
-import android.view.Menu
-import android.view.MenuItem
-import android.view.WindowManager
+import android.view.*
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.annotation.IdRes
@@ -19,6 +17,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
@@ -31,6 +30,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.google.android.gms.cast.framework.*
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.navigationrail.NavigationRailView
 import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
 import com.lagradost.cloudstream3.APIHolder.allProviders
@@ -46,8 +46,7 @@ import com.lagradost.cloudstream3.CommonActivity.onDialogDismissedEvent
 import com.lagradost.cloudstream3.CommonActivity.onUserLeaveHint
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.CommonActivity.updateLocale
-import com.lagradost.cloudstream3.mvvm.logError
-import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
+import com.lagradost.cloudstream3.mvvm.*
 import com.lagradost.cloudstream3.network.initClient
 import com.lagradost.cloudstream3.plugins.PluginManager
 import com.lagradost.cloudstream3.plugins.PluginManager.loadAllOnlinePlugins
@@ -61,9 +60,13 @@ import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.appStri
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.appStringSearch
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.inAppAuths
 import com.lagradost.cloudstream3.ui.APIRepository
+import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_NAVIGATE_TO
 import com.lagradost.cloudstream3.ui.home.HomeViewModel
+import com.lagradost.cloudstream3.ui.result.ResultViewModel2
 import com.lagradost.cloudstream3.ui.result.START_ACTION_RESUME_LATEST
+import com.lagradost.cloudstream3.ui.result.setImage
+import com.lagradost.cloudstream3.ui.result.setText
 import com.lagradost.cloudstream3.ui.search.SearchFragment
 import com.lagradost.cloudstream3.ui.search.SearchResultBuilder
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isEmulatorSettings
@@ -74,6 +77,7 @@ import com.lagradost.cloudstream3.ui.settings.SettingsGeneral
 import com.lagradost.cloudstream3.ui.setup.HAS_DONE_SETUP_KEY
 import com.lagradost.cloudstream3.ui.setup.SetupFragmentExtensions
 import com.lagradost.cloudstream3.utils.*
+import com.lagradost.cloudstream3.utils.AppUtils.html
 import com.lagradost.cloudstream3.utils.AppUtils.isCastApiAvailable
 import com.lagradost.cloudstream3.utils.AppUtils.loadCache
 import com.lagradost.cloudstream3.utils.AppUtils.loadRepository
@@ -86,9 +90,11 @@ import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStore.setKey
 import com.lagradost.cloudstream3.utils.DataStoreHelper.migrateResumeWatching
 import com.lagradost.cloudstream3.utils.InAppUpdater.Companion.runAutoUpdate
+import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.UIHelper.changeStatusBarState
 import com.lagradost.cloudstream3.utils.UIHelper.checkWrite
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
+import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.getResourceColor
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
@@ -96,6 +102,7 @@ import com.lagradost.cloudstream3.utils.UIHelper.requestRW
 import com.lagradost.nicehttp.Requests
 import com.lagradost.nicehttp.ResponseParser
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.bottom_resultview_preview.*
 import kotlinx.android.synthetic.main.fragment_result_swipe.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -244,6 +251,10 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             Event<Boolean>() // homepage api, used to speed up time to load for homepage
         val afterRepositoryLoadedEvent = Event<Boolean>()
 
+        // kinda shitty solution, but cant com main->home otherwise for popups
+        val bookmarksUpdatedEvent = Event<Boolean>()
+
+
         /**
          * @return true if the str has launched an app task (be it successful or not)
          * @param isWebview does not handle providers and opening download page if true. Can still add repos and login.
@@ -334,6 +345,16 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                 }
                 return false
             }
+    }
+
+    var lastPopup : SearchResponse? = null
+    fun loadPopup(result: SearchResponse) {
+        lastPopup = result
+        viewModel.load(
+            this, result.url, result.apiName, false, if (getApiDubstatusSettings()
+                    .contains(DubStatus.Dubbed)
+            ) DubStatus.Dubbed else DubStatus.Subbed, null
+        )
     }
 
     override fun onColorSelected(dialogId: Int, color: Int) {
@@ -619,6 +640,37 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         }
     }
 
+    lateinit var viewModel: ResultViewModel2
+
+    override fun onCreateView(name: String, context: Context, attrs: AttributeSet): View? {
+        viewModel =
+            ViewModelProvider(this)[ResultViewModel2::class.java]
+
+        return super.onCreateView(name, context, attrs)
+    }
+
+    private fun hidePreviewPopupDialog() {
+        viewModel.clear()
+        bottomPreviewPopup.dismissSafe(this)
+    }
+
+    var bottomPreviewPopup: BottomSheetDialog? = null
+    private fun showPreviewPopupDialog(): BottomSheetDialog {
+        val ret = (bottomPreviewPopup ?: run {
+            val builder =
+                BottomSheetDialog(this)
+            builder.setContentView(R.layout.bottom_resultview_preview)
+            builder.setOnDismissListener {
+                bottomPreviewPopup = null
+                viewModel.clear()
+            }
+            builder.setCanceledOnTouchOutside(true)
+            builder.show()
+            builder
+        })
+        bottomPreviewPopup = ret
+        return ret
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         app.initClient(this)
@@ -708,6 +760,78 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             builder.show().setDefaultFocus()
         }
 
+        observeNullable(viewModel.page) { resource ->
+            if (resource == null) {
+                bottomPreviewPopup.dismissSafe(this)
+                return@observeNullable
+            }
+            when (resource) {
+                is Resource.Failure -> {
+                    showToast(this, R.string.error)
+                    hidePreviewPopupDialog()
+                }
+                is Resource.Loading -> {
+                    showPreviewPopupDialog().apply {
+                        resultview_preview_loading?.isVisible = true
+                        resultview_preview_result?.isVisible = false
+                        resultview_preview_loading_shimmer?.startShimmer()
+                    }
+                }
+                is Resource.Success -> {
+                    val d = resource.value
+                    showPreviewPopupDialog().apply {
+                        resultview_preview_loading?.isVisible = false
+                        resultview_preview_result?.isVisible = true
+                        resultview_preview_loading_shimmer?.stopShimmer()
+
+                        resultview_preview_title?.text = d.title
+
+                        resultview_preview_meta_type.setText(d.typeText)
+                        resultview_preview_meta_year.setText(d.yearText)
+                        resultview_preview_meta_duration.setText(d.durationText)
+                        resultview_preview_meta_rating.setText(d.ratingText)
+
+                        resultview_preview_description?.setText(d.plotText)
+                        resultview_preview_poster?.setImage(
+                            d.posterImage ?: d.posterBackgroundImage
+                        )
+
+                        resultview_preview_poster?.setOnClickListener {
+                            //viewModel.updateWatchStatus(WatchType.PLANTOWATCH)
+                            val value = viewModel.watchStatus.value ?: WatchType.NONE
+
+                            this@MainActivity.showBottomDialog(
+                                WatchType.values().map { getString(it.stringRes) }.toList(),
+                                value.ordinal,
+                                this@MainActivity.getString(R.string.action_add_to_bookmarks),
+                                showApply = false,
+                                {}) {
+                                viewModel.updateWatchStatus(WatchType.values()[it])
+                                bookmarksUpdatedEvent(true)
+                            }
+                        }
+
+                        if (!isTvSettings()) // dont want this clickable on tv layout
+                            resultview_preview_description?.setOnClickListener { view ->
+                                view.context?.let { ctx ->
+                                    val builder: AlertDialog.Builder =
+                                        AlertDialog.Builder(ctx, R.style.AlertDialogCustom)
+                                    builder.setMessage(d.plotText.asString(ctx).html())
+                                        .setTitle(d.plotHeaderText.asString(ctx))
+                                        .show()
+                                }
+                            }
+
+                        resultview_preview_more_info?.setOnClickListener {
+                            hidePreviewPopupDialog()
+                            lastPopup?.let {
+                                loadSearchResult(it)
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
 //        ioSafe {
 //            val plugins =
