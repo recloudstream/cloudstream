@@ -11,7 +11,7 @@ data class Okrulinkdata (
     @JsonProperty("url"    ) var url    : String? = null
 )
 
-class Okrulink: ExtractorApi() {
+open class Okrulink: ExtractorApi() {
     override var mainUrl = "https://okru.link"
     override var name = "Okrulink"
     override val requiresReferer = false

@@ -8,7 +8,7 @@ import com.lagradost.cloudstream3.utils.M3u8Helper.Companion.generateM3u8
 import com.lagradost.cloudstream3.utils.getAndUnpack
 import org.jsoup.nodes.Document
 
-class Fastream: ExtractorApi() {
+open class Fastream: ExtractorApi() {
     override var mainUrl = "https://fastream.to"
     override var name = "Fastream"
     override val requiresReferer = false
