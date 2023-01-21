@@ -277,18 +277,14 @@ object AppUtils {
         }
 
         fun updateList(newList: List<T>) {
-            val time = measureTimeMillis {
+            val diffResult = DiffUtil.calculateDiff(
+                GenericDiffCallback(this.items, newList)
+            )
 
-                val diffResult = DiffUtil.calculateDiff(
-                    GenericDiffCallback(this.items, newList)
-                )
+            items.clear()
+            items.addAll(newList)
 
-                items.clear()
-                items.addAll(newList)
-
-                diffResult.dispatchUpdatesTo(this)
-            }
-            println("TIME TAKEn  $time")
+            diffResult.dispatchUpdatesTo(this)
         }
 
         inner class GenericDiffCallback(

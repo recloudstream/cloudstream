@@ -1,10 +1,12 @@
 package com.lagradost.cloudstream3.syncproviders.providers
 
+import com.lagradost.cloudstream3.AcraApplication
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.syncproviders.AuthAPI
 import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.syncproviders.SyncIdName
-import com.lagradost.cloudstream3.ui.library.LibraryItem
+import com.lagradost.cloudstream3.ui.WatchType
+import com.lagradost.cloudstream3.ui.result.txt
 import com.lagradost.cloudstream3.utils.Coroutines.ioWork
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getAllWatchStateIds
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getBookmarkedData
@@ -17,8 +19,12 @@ class LocalList : SyncAPI {
     override val createAccountUrl: Nothing? = null
     override val idPrefix = "local"
 
-    override fun loginInfo(): AuthAPI.LoginInfo? {
-        return null
+    override fun loginInfo(): AuthAPI.LoginInfo {
+        return AuthAPI.LoginInfo(
+            null,
+            null,
+            0
+        )
     }
 
     override fun logOut() {
@@ -52,18 +58,29 @@ class LocalList : SyncAPI {
         return null
     }
 
-    override suspend fun getPersonalLibrary(): List<LibraryItem> {
+    override suspend fun getPersonalLibrary(): SyncAPI.LibraryMetadata? {
         val watchStatusIds = ioWork {
             getAllWatchStateIds()?.map { id ->
                 Pair(id, getResultWatchState(id))
             }
-        }?.distinctBy { it.first } ?: return emptyList()
+        }?.distinctBy { it.first } ?: return null
 
-        return ioWork {
+        val list = ioWork {
             watchStatusIds.mapNotNull {
                 getBookmarkedData(it.first)?.toLibraryItem(it.second)
             }
         }
+
+        return SyncAPI.LibraryMetadata(
+            WatchType.values().mapNotNull {
+                // None is not something to display
+                if (it == WatchType.NONE) return@mapNotNull null
+
+                // Dirty hack for context!
+                txt(it.stringRes).asStringNull(AcraApplication.context)
+            },
+            list
+        )
     }
 
     override fun getIdFromUrl(url: String): String {

@@ -11,7 +11,6 @@ import com.lagradost.cloudstream3.syncproviders.AccountManager
 import com.lagradost.cloudstream3.syncproviders.AuthAPI
 import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.syncproviders.SyncIdName
-import com.lagradost.cloudstream3.ui.library.LibraryItem
 import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 import com.lagradost.cloudstream3.utils.AppUtils.splitQuery
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
@@ -598,8 +597,8 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
         @JsonProperty("private") val private: Boolean,
         @JsonProperty("media") val media: Media
     ) {
-        fun toLibraryItem(listName: String?): LibraryItem? {
-            return LibraryItem(
+        fun toLibraryItem(listName: String?): SyncAPI.LibraryItem? {
+            return SyncAPI.LibraryItem(
                 // English title first
                 this.media.title.english ?: this.media.title.romaji
                 ?: this.media.synonyms.firstOrNull()
@@ -612,7 +611,8 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
                 this.score,
                 "AniList",
                 TvType.Anime,
-                this.media.coverImage.extraLarge ?: this.media.coverImage.large ?: this.media.coverImage.medium,
+                this.media.coverImage.extraLarge ?: this.media.coverImage.large
+                ?: this.media.coverImage.medium,
                 null,
                 null,
                 null
@@ -653,14 +653,17 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
         }
     }
 
-    override suspend fun getPersonalLibrary(): List<LibraryItem>? {
-        return getAniListAnimeListSmart()?.map {
-            it.entries.mapNotNull { entry ->
-                entry.toLibraryItem(
-                    entry.status ?: it.status
-                )
-            }
-        }?.flatten()
+    override suspend fun getPersonalLibrary(): SyncAPI.LibraryMetadata {
+        return SyncAPI.LibraryMetadata(
+            emptyList(),
+            getAniListAnimeListSmart()?.map {
+                it.entries.mapNotNull { entry ->
+                    entry.toLibraryItem(
+                        entry.status ?: it.status
+                    )
+                }
+            }?.flatten() ?: emptyList()
+        )
     }
 
     private suspend fun getFullAniListList(): FullAnilistList? {

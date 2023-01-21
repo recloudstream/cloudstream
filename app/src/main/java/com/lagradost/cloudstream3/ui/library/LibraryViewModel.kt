@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.SyncApis
+import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 
 enum class ListSorting(@StringRes val stringRes: Int) {
@@ -20,8 +21,8 @@ enum class ListSorting(@StringRes val stringRes: Int) {
 }
 
 class LibraryViewModel : ViewModel() {
-    private val _pages: MutableLiveData<List<Page>> = MutableLiveData(emptyList())
-    val pages: LiveData<List<Page>> = _pages
+    private val _pages: MutableLiveData<List<SyncAPI.Page>> = MutableLiveData(emptyList())
+    val pages: LiveData<List<SyncAPI.Page>> = _pages
 
     private val _currentApiName: MutableLiveData<String> = MutableLiveData("")
     val currentApiName: LiveData<String> = _currentApiName
@@ -65,15 +66,22 @@ class LibraryViewModel : ViewModel() {
     fun loadPages() {
         ioSafe {
             currentSyncApi?.let { repo ->
-                val list = (repo.getPersonalLibrary() as? Resource.Success)?.value
-                val pages = (list ?: emptyList()).groupBy { it.listName }.map {
-                    Page(
+                _currentApiName.postValue(repo.name)
+                val library = (repo.getPersonalLibrary() as? Resource.Success)?.value ?: return@let
+
+                val listSubset = library.allLibraryItems.groupBy { it.listName }
+                val allLists = library.allListNames.associateWith { emptyList<SyncAPI.LibraryItem>() }
+
+                val filledLists = allLists + listSubset
+
+                val pages = filledLists.map {
+                    SyncAPI.Page(
                         it.key,
                         it.value
                     )
                 }
+                println("PAGES $pages")
                 _pages.postValue(pages)
-                _currentApiName.postValue(repo.name)
             }
         }
     }

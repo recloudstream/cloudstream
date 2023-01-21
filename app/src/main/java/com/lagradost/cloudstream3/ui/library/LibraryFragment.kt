@@ -15,6 +15,7 @@ import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.debugAssert
 import com.lagradost.cloudstream3.mvvm.observe
+import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.syncproviders.SyncIdName
 import com.lagradost.cloudstream3.ui.result.txt
 import com.lagradost.cloudstream3.ui.search.SEARCH_ACTION_LOAD
@@ -126,7 +127,8 @@ class LibraryFragment : Fragment() {
                     // If provider
                     savedSelection.openType == LibraryOpenerType.Provider
                             && savedSelection.providerData?.apiName != null -> {
-                        availableProviders.indexOf(savedSelection.providerData.apiName).takeIf { it != -1 }
+                        availableProviders.indexOf(savedSelection.providerData.apiName)
+                            .takeIf { it != -1 }
                             ?.plus(baseOptions.size) ?: -1
                     }
                     // Else base option
@@ -167,7 +169,7 @@ class LibraryFragment : Fragment() {
 
         viewpager?.setPageTransformer(LibraryScrollTransformer())
         viewpager?.adapter =
-            viewpager.adapter ?: ViewpagerAdapter(emptyList(), { isScrollingDown: Boolean ->
+            viewpager.adapter ?: ViewpagerAdapter(mutableListOf(), { isScrollingDown: Boolean ->
                 if (isScrollingDown) {
                     sort_fab?.shrink()
                 } else {
@@ -177,11 +179,11 @@ class LibraryFragment : Fragment() {
 
                 // To prevent future accidents
                 debugAssert({
-                    searchClickCallback.card !is LibraryItem
+                    searchClickCallback.card !is SyncAPI.LibraryItem
                 }, {
                     "searchClickCallback ${searchClickCallback.card} is not a LibraryItem"
                 })
-                val syncId = (searchClickCallback.card as LibraryItem).syncId
+                val syncId = (searchClickCallback.card as SyncAPI.LibraryItem).syncId
 
                 println("SEARCH CLICK $searchClickCallback")
                 when (searchClickCallback.action) {
@@ -200,7 +202,8 @@ class LibraryFragment : Fragment() {
 
         observe(libraryViewModel.pages) { pages ->
             (viewpager.adapter as? ViewpagerAdapter)?.pages = pages
-            viewpager.adapter?.notifyItemChanged(viewpager?.currentItem ?: 0)
+            // Using notifyItemRangeChanged keeps the animations when sorting
+            viewpager.adapter?.notifyItemRangeChanged(0, viewpager.adapter?.itemCount ?: 0)
 
             TabLayoutMediator(
                 library_tab_layout,

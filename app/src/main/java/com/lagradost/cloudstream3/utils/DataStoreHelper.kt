@@ -11,10 +11,8 @@ import com.lagradost.cloudstream3.DubStatus
 import com.lagradost.cloudstream3.SearchQuality
 import com.lagradost.cloudstream3.SearchResponse
 import com.lagradost.cloudstream3.TvType
-import com.lagradost.cloudstream3.syncproviders.SyncIdName
-import com.lagradost.cloudstream3.syncproviders.providers.LocalList
+import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.ui.WatchType
-import com.lagradost.cloudstream3.ui.library.LibraryItem
 
 const val VIDEO_POS_DUR = "video_pos_dur"
 const val RESULT_WATCH_STATE = "result_watch_state"
@@ -54,8 +52,8 @@ object DataStoreHelper {
         @JsonProperty("quality") override var quality: SearchQuality? = null,
         @JsonProperty("posterHeaders") override var posterHeaders: Map<String, String>? = null,
     ) : SearchResponse {
-        fun toLibraryItem(state: WatchType): LibraryItem {
-            return LibraryItem(
+        fun toLibraryItem(state: WatchType): SyncAPI.LibraryItem {
+            return SyncAPI.LibraryItem(
                 name,
                 url,
                 url,
@@ -86,6 +84,9 @@ object DataStoreHelper {
         @JsonProperty("posterHeaders") override var posterHeaders: Map<String, String>? = null,
     ) : SearchResponse
 
+    /**
+     * A datastore wide account for future implementations of a multiple account system
+     **/
     private var currentAccount: String = "0" //TODO ACCOUNT IMPLEMENTATION
 
     fun getAllWatchStateIds(): List<Int>? {

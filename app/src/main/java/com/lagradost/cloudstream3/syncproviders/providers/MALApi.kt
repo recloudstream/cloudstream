@@ -14,7 +14,6 @@ import com.lagradost.cloudstream3.syncproviders.AccountManager
 import com.lagradost.cloudstream3.syncproviders.AuthAPI
 import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.syncproviders.SyncIdName
-import com.lagradost.cloudstream3.ui.library.LibraryItem
 import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 import com.lagradost.cloudstream3.utils.AppUtils.splitQuery
 import com.lagradost.cloudstream3.utils.DataStore.toKotlinObject
@@ -386,8 +385,8 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
         @JsonProperty("node") val node: Node,
         @JsonProperty("list_status") val list_status: ListStatus?,
     ) {
-        fun toLibraryItem(): LibraryItem {
-            return LibraryItem(
+        fun toLibraryItem(): SyncAPI.LibraryItem {
+            return SyncAPI.LibraryItem(
                 this.node.title,
                 "https://myanimelist.net/anime/${this.node.id}/",
                 this.node.id.toString(),
@@ -445,8 +444,11 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
         }
     }
 
-    override suspend fun getPersonalLibrary(): List<LibraryItem>? {
-        return getMalAnimeListSmart()?.map { it.toLibraryItem() }
+    override suspend fun getPersonalLibrary(): SyncAPI.LibraryMetadata {
+        return SyncAPI.LibraryMetadata(
+            emptyList(),
+            getMalAnimeListSmart()?.map { it.toLibraryItem() } ?: emptyList()
+        )
     }
 
     private suspend fun getMalAnimeList(): Array<Data> {

@@ -4,7 +4,6 @@ import com.lagradost.cloudstream3.ErrorLoadingException
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.mvvm.safeApiCall
-import com.lagradost.cloudstream3.ui.library.LibraryItem
 
 class SyncRepo(private val repo: SyncAPI) {
     val idPrefix = repo.idPrefix
@@ -30,7 +29,7 @@ class SyncRepo(private val repo: SyncAPI) {
         return safeApiCall { repo.search(query) ?: throw ErrorLoadingException() }
     }
 
-    suspend fun getPersonalLibrary(): Resource<List<LibraryItem>> {
+    suspend fun getPersonalLibrary(): Resource<SyncAPI.LibraryMetadata> {
         return safeApiCall { repo.getPersonalLibrary() ?: throw ErrorLoadingException() }
     }
 

@@ -4,62 +4,16 @@ import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.widget.NestedScrollView
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.OnFlingListener
-import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import com.lagradost.cloudstream3.R
-import com.lagradost.cloudstream3.SearchQuality
-import com.lagradost.cloudstream3.SearchResponse
-import com.lagradost.cloudstream3.TvType
+import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.ui.search.SearchClickCallback
 import com.lagradost.cloudstream3.utils.UIHelper.getSpanCount
 import kotlinx.android.synthetic.main.library_viewpager_page.view.*
-import me.xdrop.fuzzywuzzy.FuzzySearch
-
-data class Page(
-    val title: String, var items: List<LibraryItem>
-) {
-    fun sort(method: ListSorting?, query: String? = null) {
-        items = when (method) {
-            ListSorting.Query ->
-                if (query != null) {
-                    items.sortedBy {
-                        -FuzzySearch.partialRatio(
-                            query.lowercase(), it.name.lowercase()
-                        )
-                    }
-                } else items
-            ListSorting.RatingHigh -> items.sortedBy { -(it.personalRating ?: 0) }
-            ListSorting.RatingLow -> items.sortedBy { (it.personalRating ?: 0) }
-            ListSorting.AlphabeticalA -> items.sortedBy { it.name }
-            ListSorting.AlphabeticalZ -> items.sortedBy { it.name }.reversed()
-            else -> items
-        }
-    }
-}
-
-data class LibraryItem(
-    override val name: String,
-    override val url: String,
-    /** Unique unchanging string used for data storage */
-    val syncId: String,
-    val listName: String,
-    val episodesCompleted: Int?,
-    val episodesTotal: Int?,
-    /** Out of 100 */
-    val personalRating: Int?,
-    override val apiName: String,
-    override var type: TvType?,
-    override var posterUrl: String?,
-    override var posterHeaders: Map<String, String>?,
-    override var quality: SearchQuality?,
-    override var id: Int? = null,
-) : SearchResponse
-
 
 class ViewpagerAdapter(
-    var pages: List<Page>,
+    var pages: List<SyncAPI.Page>,
     val scrollCallback: (isScrollingDown: Boolean) -> Unit,
     val clickCallback: (SearchClickCallback) -> Unit
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -80,7 +34,7 @@ class ViewpagerAdapter(
 
     inner class PageViewHolder(private val itemViewTest: View) :
         RecyclerView.ViewHolder(itemViewTest) {
-        fun bind(page: Page) {
+        fun bind(page: SyncAPI.Page) {
             if (itemViewTest.page_recyclerview?.adapter == null) {
                 itemViewTest.page_recyclerview?.adapter = PageAdapter(page.items.toMutableList(), clickCallback)
                 itemView.page_recyclerview?.spanCount =
