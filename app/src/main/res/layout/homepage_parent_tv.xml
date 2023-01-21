@@ -8,7 +8,7 @@
 
     <TextView
         android:layout_marginStart="@dimen/navbar_width"
-        android:id="@+id/home_parent_item_title"
+        android:id="@+id/home_child_more_info"
         android:padding="12dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

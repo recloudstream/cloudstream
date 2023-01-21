@@ -14,6 +14,7 @@ import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipDrawable
 import com.lagradost.cloudstream3.APIHolder.getId
 import com.lagradost.cloudstream3.AcraApplication.Companion.getActivity
+import com.lagradost.cloudstream3.HomePageList
 import com.lagradost.cloudstream3.LoadResponse
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.SearchResponse
@@ -31,9 +32,10 @@ import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showOptionSelectSt
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbarView
 import com.lagradost.cloudstream3.utils.UIHelper.setImage
-import kotlinx.android.synthetic.main.activity_main_tv.view.*
+import kotlinx.android.synthetic.main.activity_main.view.*
 import kotlinx.android.synthetic.main.fragment_home_head.view.*
 import kotlinx.android.synthetic.main.fragment_home_head.view.home_bookmarked_child_recyclerview
+import kotlinx.android.synthetic.main.fragment_home_head.view.home_watch_parent_item_title
 import kotlinx.android.synthetic.main.fragment_home_head_tv.view.*
 import kotlinx.android.synthetic.main.fragment_home_head_tv.view.home_bookmarked_holder
 import kotlinx.android.synthetic.main.fragment_home_head_tv.view.home_none_padding
@@ -46,11 +48,12 @@ import kotlinx.android.synthetic.main.fragment_home_head_tv.view.home_type_on_ho
 import kotlinx.android.synthetic.main.fragment_home_head_tv.view.home_type_watching_btt
 import kotlinx.android.synthetic.main.fragment_home_head_tv.view.home_watch_child_recyclerview
 import kotlinx.android.synthetic.main.fragment_home_head_tv.view.home_watch_holder
+import kotlinx.android.synthetic.main.toast.view.*
 
 class HomeParentItemAdapterPreview(
     items: MutableList<HomeViewModel.ExpandableHomepageList>,
     val clickCallback: (SearchClickCallback) -> Unit,
-    moreInfoClickCallback: (HomeViewModel.ExpandableHomepageList) -> Unit,
+    private val moreInfoClickCallback: (HomeViewModel.ExpandableHomepageList) -> Unit,
     expandCallback: ((String) -> Unit)? = null,
     private val loadCallback: (LoadClickCallback) -> Unit,
     private val loadMoreCallback: (() -> Unit),
@@ -136,7 +139,8 @@ class HomeParentItemAdapterPreview(
                 clickCallback,
                 reloadStored,
                 loadStoredData,
-                searchQueryCallback
+                searchQueryCallback,
+                moreInfoClickCallback
             ).also {
                 this.holder = it
             }
@@ -182,7 +186,8 @@ class HomeParentItemAdapterPreview(
         private val searchClickCallback: (SearchClickCallback) -> Unit,
         private val reloadStored: () -> Unit,
         private val loadStoredData: ((Set<WatchType>) -> Unit),
-        private val searchQueryCallback: ((Pair<Boolean, String>) -> Unit)
+        private val searchQueryCallback: ((Pair<Boolean, String>) -> Unit),
+        private val moreInfoClickCallback: (HomeViewModel.ExpandableHomepageList) -> Unit
     ) : RecyclerView.ViewHolder(itemView) {
         private var previewAdapter: HomeScrollAdapter? = null
         private val previewViewpager: ViewPager2? = itemView.home_preview_viewpager
@@ -602,11 +607,43 @@ class HomeParentItemAdapterPreview(
         fun updateResume(resumeWatching: List<SearchResponse>) {
             resumeHolder?.isVisible = resumeWatching.isNotEmpty()
             resumeAdapter?.updateList(resumeWatching)
+
+            if (!isTvSettings()) {
+                itemView.home_watch_parent_item_title?.setOnClickListener {
+                    moreInfoClickCallback.invoke(
+                        HomeViewModel.ExpandableHomepageList(
+                            HomePageList(
+                                itemView.home_watch_parent_item_title?.text.toString(),
+                                resumeWatching,
+                                false
+                            ), 1, false
+                        )
+                    )
+                }
+            }
         }
 
         fun updateBookmarks(data: Pair<Boolean, List<SearchResponse>>) {
             bookmarkHolder?.isVisible = data.first
             bookmarkAdapter?.updateList(data.second)
+            if (!isTvSettings()) {
+                itemView.home_bookmark_parent_item_title?.setOnClickListener {
+                    val items = toggleList.mapNotNull { it.first }.filter { it.isChecked }
+                    if (items.isEmpty()) return@setOnClickListener // we don't want to show an empty dialog
+                    val textSum = items
+                        .mapNotNull { it.text }.joinToString()
+
+                    moreInfoClickCallback.invoke(
+                        HomeViewModel.ExpandableHomepageList(
+                            HomePageList(
+                                textSum,
+                                data.second,
+                                false
+                            ), 1, false
+                        )
+                    )
+                }
+            }
         }
 
         fun setAvailableWatchStatusTypes(availableWatchStatusTypes: Pair<Set<WatchType>, Set<WatchType>>) {

@@ -421,7 +421,6 @@ class ResultViewModel2 : ViewModel() {
 
         fun updateWatchStatus(currentResponse: LoadResponse, status: WatchType) {
             val currentId = currentResponse.getId()
-            val resultPage = currentResponse
 
             DataStoreHelper.setResultWatchState(currentId, status.internalId)
             val current = DataStoreHelper.getBookmarkedData(currentId)
@@ -432,12 +431,12 @@ class ResultViewModel2 : ViewModel() {
                     currentId,
                     current?.bookmarkedTime ?: currentTime,
                     currentTime,
-                    resultPage.name,
-                    resultPage.url,
-                    resultPage.apiName,
-                    resultPage.type,
-                    resultPage.posterUrl,
-                    resultPage.year
+                    currentResponse.name,
+                    currentResponse.url,
+                    currentResponse.apiName,
+                    currentResponse.type,
+                    currentResponse.posterUrl,
+                    currentResponse.year
                 )
             )
         }
@@ -1628,7 +1627,7 @@ class ResultViewModel2 : ViewModel() {
         if (ranges?.contains(range) != true) {
             // if the current ranges does not include the range then select the range with the closest matching start episode
             // this usually happends when dub has less episodes then sub -> the range does not exist
-            ranges?.minByOrNull { abs(it.startEpisode - range.startEpisode) }?.let { r ->
+            ranges?.minByOrNull { kotlin.math.abs(it.startEpisode - range.startEpisode) }?.let { r ->
                 postEpisodeRange(indexer, r)
                 return
             }
