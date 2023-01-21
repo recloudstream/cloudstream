@@ -4,7 +4,7 @@
     <string name="next_episode_time_day_format" formatted="true">%dm %ds %dd</string>
     <string name="next_episode_time_hour_format" formatted="true">%ds %dd</string>
     <string name="next_episode_time_min_format" formatted="true">%dd</string>
-    <string name="app_dub_sub_episode_text_format" formatted="true">Xlq</string>
+    <string name="app_dub_sub_episode_text_format" formatted="true">%s Ep %d</string>
     <string name="next_episode_format" formatted="true">Xalqadda %d waxa lasoo deyn doonaa</string>
     <string name="download">Daji</string>
     <string name="download_failed">Dajintii ma guulaysan</string>
