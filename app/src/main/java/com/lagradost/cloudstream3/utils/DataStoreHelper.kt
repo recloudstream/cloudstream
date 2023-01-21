@@ -1,6 +1,7 @@
 package com.lagradost.cloudstream3.utils
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.lagradost.cloudstream3.APIHolder.capitalize
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKeys
 import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
@@ -10,7 +11,10 @@ import com.lagradost.cloudstream3.DubStatus
 import com.lagradost.cloudstream3.SearchQuality
 import com.lagradost.cloudstream3.SearchResponse
 import com.lagradost.cloudstream3.TvType
+import com.lagradost.cloudstream3.syncproviders.SyncIdName
+import com.lagradost.cloudstream3.syncproviders.providers.LocalList
 import com.lagradost.cloudstream3.ui.WatchType
+import com.lagradost.cloudstream3.ui.library.LibraryItem
 
 const val VIDEO_POS_DUR = "video_pos_dur"
 const val RESULT_WATCH_STATE = "result_watch_state"
@@ -49,7 +53,20 @@ object DataStoreHelper {
         @JsonProperty("year") val year: Int?,
         @JsonProperty("quality") override var quality: SearchQuality? = null,
         @JsonProperty("posterHeaders") override var posterHeaders: Map<String, String>? = null,
-    ) : SearchResponse
+    ) : SearchResponse {
+        fun toLibraryItem(state: WatchType): LibraryItem {
+            return LibraryItem(
+                name,
+                url,
+                url,
+                state.name.lowercase().capitalize(),
+                null,
+                null,
+                null,
+                apiName, type, posterUrl, posterHeaders, quality, id
+            )
+        }
+    }
 
     data class ResumeWatchingResult(
         @JsonProperty("name") override val name: String,

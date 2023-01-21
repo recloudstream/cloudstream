@@ -42,6 +42,7 @@ data class Page(
 data class LibraryItem(
     override val name: String,
     override val url: String,
+    /** Unique unchanging string used for data storage */
     val syncId: String,
     val listName: String,
     val episodesCompleted: Int?,

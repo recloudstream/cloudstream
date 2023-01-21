@@ -33,9 +33,13 @@ enum class LibraryOpenerType {
 }
 
 /** Used to store how the user wants to open said poster */
-class LibraryOpener(
+data class LibraryOpener(
     val openType: LibraryOpenerType,
-    val data: String?,
+    val providerData: ProviderLibraryData?,
+)
+
+data class ProviderLibraryData(
+    val apiName: String
 )
 
 class LibraryFragment : Fragment() {
@@ -121,8 +125,8 @@ class LibraryFragment : Fragment() {
                     savedSelection == null -> -1
                     // If provider
                     savedSelection.openType == LibraryOpenerType.Provider
-                            && savedSelection.data != null -> {
-                        availableProviders.indexOf(savedSelection.data).takeIf { it != -1 }
+                            && savedSelection.providerData?.apiName != null -> {
+                        availableProviders.indexOf(savedSelection.providerData.apiName).takeIf { it != -1 }
                             ?.plus(baseOptions.size) ?: -1
                     }
                     // Else base option
@@ -144,7 +148,7 @@ class LibraryFragment : Fragment() {
                 } else {
                     LibraryOpener(
                         LibraryOpenerType.Provider,
-                        items[it]
+                        ProviderLibraryData(items[it])
                     )
                 }
 

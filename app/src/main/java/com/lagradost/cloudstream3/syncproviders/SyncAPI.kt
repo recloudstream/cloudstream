@@ -7,12 +7,17 @@ enum class SyncIdName {
     Anilist,
     MyAnimeList,
     Trakt,
-    Imdb
+    Imdb,
+    LocalList
 }
 
 interface SyncAPI : OAuth2API {
     val mainUrl: String
 
+    /**
+     * Allows certain providers to open pages from
+     * library links.
+     **/
     val syncIdName: SyncIdName
 
     /**
