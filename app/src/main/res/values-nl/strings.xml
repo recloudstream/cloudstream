@@ -143,8 +143,8 @@
     <string name="backup_settings">Back-up gegevens</string>
     <string name="restore_success">Geladen back-up bestand</string>
     <string name="restore_failed_format" formatted="true">Kan gegevens uit bestand niet herstellen %s</string>
-    <string name="backup_success">Gegevens succesvol opgeslagen</string>
-    <string name="backup_failed">Opslagrechten ontbreken, probeer het opnieuw</string>
+    <string name="backup_success">De gegevens zijn opgeslagen</string>
+    <string name="backup_failed">Opslagrechten ontbreken. Probeer het opnieuw.</string>
     <string name="backup_failed_error_format">Fout bij het maken van een back-up %s</string>
     <string name="search">Zoeken</string>
     <string name="category_account">Accounts</string>
@@ -156,7 +156,7 @@
     <string name="bug_report_settings_on">Verstuurt geen gegevens</string>
     <string name="show_fillers_settings">Toon filler episode voor anime</string>
     <string name="show_trailers_settings">Toon trailers</string>
-    <string name="kitsu_settings">Toon posters van kitsu</string>
+    <string name="kitsu_settings">Toon posters van Kitsu</string>
     <string name="updates_settings">App-updates tonen</string>
     <string name="updates_settings_des">Automatisch zoeken naar nieuwe updates bij het opstarten</string>
     <string name="uprereleases_settings">Update naar pre-releases</string>
@@ -399,4 +399,7 @@
     <string name="action_mark_as_watched">Markeer als bekeken</string>
     <string name="history">Geschiedenis</string>
     <string name="play_trailer_button">Speel Trailer</string>
+    <string name="autoplay_next_settings_des">Start de volgende episode wanneer deze afgelopen is</string>
+    <string name="autoplay_next_settings">Volgende episode automatisch afspelen</string>
+    <string name="update_started">De update is gestart</string>
 </resources>
