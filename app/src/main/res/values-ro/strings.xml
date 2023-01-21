@@ -388,4 +388,8 @@
     <string name="trailer">Trailer</string>
     <string name="history">Istoric</string>
     <string name="action_mark_as_watched">Marcare ca vizionat</string>
+    <string name="autoplay_next_settings">Redă automat următorul episod</string>
+    <string name="app_name">CloudStream</string>
+    <string name="play_trailer_button">Vizionează trailerul</string>
+    <string name="update_started">Actualizarea a început</string>
 </resources>

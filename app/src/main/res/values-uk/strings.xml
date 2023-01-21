@@ -22,7 +22,7 @@
     <string name="title_search">Пошук</string>
     <string name="title_downloads">Завантаження</string>
     <string name="duration_format" formatted="true">%d хв</string>
-    <string name="title_settings">Налаштування</string>
+    <string name="title_settings">Параметри</string>
     <string name="search_hint">Пошук…</string>
     <string name="search_hint_site" formatted="true">Пошук %s…</string>
     <string name="no_data">Дані відсутні</string>
@@ -44,8 +44,8 @@
     <string name="downloaded">Завантажено</string>
     <string name="downloading">Завантаження</string>
     <string name="download_done">Завантаження завершено</string>
-    <string name="app_dubbed_text">Дубляж</string>
-    <string name="app_subbed_text">Субтитри</string>
+    <string name="app_dubbed_text">Дуб.</string>
+    <string name="app_subbed_text">Суб.</string>
     <string name="popup_delete_file">Видалити файл</string>
     <string name="popup_resume_download">Відновити завантаження</string>
     <string name="pref_disable_acra">Вимкнути відправку повідомлень про помилки</string>
@@ -61,7 +61,7 @@
     <string name="sort_save">Зберегти</string>
     <string name="player_speed">Швидкість програвача</string>
     <string name="subs_window_color">Колір вікна</string>
-    <string name="subs_edge_type">Тип краю</string>
+    <string name="subs_edge_type">Тип контуру</string>
     <string name="subs_font">Шрифт</string>
     <string name="subs_font_size">Розмір шрифту</string>
     <string name="search_provider_text_providers">Пошук за допомогою постачальників</string>
@@ -159,8 +159,8 @@
     <string name="uprereleases_settings_des">Пошук лише попередніх оновлень, а не повних релізів</string>
     <string name="apk_installer_settings">Встановлювач APK</string>
     <string name="github">Github</string>
-    <string name="lightnovel">Легкий додаток для новел від тих же розробників</string>
-    <string name="anim">Додаток для аніме від тих же розробників</string>
+    <string name="lightnovel">Застосунок для легких новел від тих же розробників</string>
+    <string name="anim">Застосунок для аніме від тих же розробників</string>
     <string name="benene">Дайте бананів розробникам</string>
     <string name="app_language">Мова програми</string>
     <string name="no_chromecast_support_toast">Цей постачальник не має підтримки Chromecast</string>
@@ -187,8 +187,8 @@
     <string name="queued">у черзі</string>
     <string name="no_subtitles">Без субтитрів</string>
     <string name="default_subtitles">За замовчуванням</string>
-    <string name="free_storage">Вільне</string>
-    <string name="used_storage">Використовується</string>
+    <string name="free_storage">Вільно</string>
+    <string name="used_storage">Зайнято</string>
     <string name="app_storage">Програма</string>
     <string name="tv_series">Телесеріали</string>
     <string name="cartoons">Мультфільми</string>
@@ -197,9 +197,9 @@
     <string name="asian_drama">Азіатські драми</string>
     <string name="livestreams">Прямі трансляції</string>
     <string name="others">Інше</string>
-    <string name="tv_series_singular">Серія</string>
+    <string name="tv_series_singular">Серіал</string>
     <string name="cartoons_singular">Мультфільм</string>
-    <string name="anime_singular">\@string/anime</string>
+    <string name="anime_singular">Аніме</string>
     <string name="documentaries_singular">Документальний фільм</string>
     <string name="asian_drama_singular">Азіатська драма</string>
     <string name="live_singular">Пряма трансляція</string>
@@ -238,7 +238,7 @@
     <string name="benene_des">Дано бананів</string>
     <string name="year">Рік</string>
     <string name="go_forward_30">+30</string>
-    <string name="acra_report_toast">Вибачте, у додатку стався збій. Анонімне повідомлення про помилку буде відправлено розробникам</string>
+    <string name="acra_report_toast">Вибачте, у застосунку стався збій. Анонімне повідомлення про помилку буде відправлено розробникам</string>
     <string name="season_format">%s %d%s</string>
     <string name="episode">Епізод</string>
     <string name="episodes_range">%d-%d</string>
@@ -353,7 +353,7 @@
     <string name="video_disk_description">Спричиняє збої, якщо встановлено занадто високе значення на пристроях із малим об\'ємом вільної пам\'яті, наприклад Android TV.</string>
     <string name="dns_pref">DNS через HTTPS</string>
     <string name="download_path_pref">Шлях завантаження</string>
-    <string name="add_site_summary">Додати клон існуючого сайту, з іншою URL-адресою</string>
+    <string name="add_site_summary">Додайте клон існуючого сайту, з іншою URL-адресою</string>
     <string name="display_subbed_dubbed_settings">Відображати Дубляж/Субтитри аніме</string>
     <string name="legal_notice">Застереження</string>
     <string name="pref_category_extensions">Розширення</string>
@@ -374,7 +374,7 @@
     <string name="sync_score">Оцінений</string>
     <string name="player_load_subtitles">Завантажити з файлу</string>
     <string name="max">Макс.</string>
-    <string name="subtitles_example_text">Гей, хлопці, не вспію - на ґанку ваша файна їжа знищується бурундучком</string>
+    <string name="subtitles_example_text">Щастям б\'єш жук їх глицю в фон й ґедзь пріч</string>
     <string name="subtitle_offset_hint">1000 мс</string>
     <string name="subtitle_offset_extra_hint_later_format">Використовуйте цей параметр, якщо субтитри з\'являються на %d мс занадто рано</string>
     <string name="subtitle_offset_extra_hint_before_format">Використовуйте це, якщо субтитри з\'являються із запізненням на %d мс</string>
@@ -400,7 +400,7 @@
     <string name="quality_hd">HD</string>
     <string name="quality_ts">TS</string>
     <string name="quality_tc">TC</string>
-    <string name="subtitles_remove_bloat">Прибрати здуття субтитрів</string>
+    <string name="subtitles_remove_bloat">Видалити роздуття субтитрів</string>
     <string name="referer">Реферер</string>
     <string name="next">Далі</string>
     <string name="provider_languages_tip">Дивіться відео на цих мовах</string>
@@ -429,7 +429,7 @@
     <string name="plugins_updated" formatted="true">Оновлено %d плагіни</string>
     <string name="blank_repo_message">За замовчуванням в CloudStream не встановлені сайти. Вам потрібно встановити сайти з репозиторіїв.
 \n
-\nЧерез безмозкий DMCA від Sky UK Limited 🤮 ми не можемо прив\'язати сайт репозиторію в додатку.
+\nЧерез безмозкий DMCA від Sky UK Limited 🤮 ми не можемо прив\'язати сайт репозиторію в застосунку.
 \n
 \nПриєднуйтесь до нашого Discord або шукайте в інтернеті.</string>
     <string name="view_public_repositories_button">Переглянути репозиторії спільноти</string>
@@ -475,8 +475,8 @@
     <string name="delayed_update_notice">Програму буде оновлено після виходу</string>
     <string name="delete_repository_plugins">Це також призведе до видалення всіх плагінів репозиторію</string>
     <string name="all_languages_preference">Всі мови</string>
-    <string name="previous">Попередня</string>
-    <string name="app_layout_subtext">Змініть вигляд додатку відповідно до вашого пристрою</string>
+    <string name="previous">Назад</string>
+    <string name="app_layout_subtext">Змініть вигляд застосунку відповідно до вашого пристрою</string>
     <string name="plugin_deleted">Плагін видалено</string>
     <string name="is_adult">18+</string>
     <string name="audio_tracks">Аудіо доріжки</string>
@@ -488,4 +488,5 @@
     <string name="safe_mode_description">Усі розширення вимкнено через збій, щоб допомогти вам знайти те, що спричиняє проблеми.</string>
     <string name="app_not_found_error">Програму не знайдено</string>
     <string name="skip_type_mixed_op">Змішаний опенінг</string>
+    <string name="action_remove_from_watched">Видалити з переглянутого</string>
 </resources>

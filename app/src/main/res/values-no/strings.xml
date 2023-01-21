@@ -503,4 +503,6 @@
     <string name="apk_installer_settings">APK-installatør</string>
     <string name="apk_installer_settings_des">Noen enheter støtter ikke den nye pakkeinstallatøren. Prøv gammeldags alternativ hvis ting ikke installeres.</string>
     <string name="update_started">Oppdatering startet</string>
+    <string name="plugin_downloaded">Programtillegg nedlastet</string>
+    <string name="delayed_update_notice">Programmet vil oppgraderes når du avslutter det</string>
 </resources>

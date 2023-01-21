@@ -20,11 +20,11 @@
     <!-- IS NOT NEEDED TO TRANSLATE AS THEY ARE ONLY USED FOR SCREEN READERS AND WONT SHOW UP TO NORMAL USERS -->
     <string name="result_poster_img_des">Poster</string>
     <string name="search_poster_img_des">@string/result_poster_img_des</string>
-    <string name="episode_poster_img_des">Episode Poster</string>
-    <string name="home_main_poster_img_des">Main Poster</string>
-    <string name="home_next_random_img_des">Next Random</string>
+    <string name="episode_poster_img_des">Bölüm Posteri</string>
+    <string name="home_main_poster_img_des">Ana Poster</string>
+    <string name="home_next_random_img_des">Sonraki Rastgele</string>
     <string name="episode_play_img_des" translatable="false">@string/play_episode</string>
-    <string name="go_back_img_des">Go back</string>
+    <string name="go_back_img_des">Geri git</string>
     <string name="change_providers_img_des" translatable="false">@string/home_change_provider_img_des</string>
     <string name="home_change_provider_img_des">Change Provider</string>
     <string name="preview_background_img_des">Preview Background</string>
@@ -386,10 +386,10 @@
     <string name="subtitles_shadow">Gölge</string>
     <string name="subtitles_raised">Yükseltilmiş</string>
     <string name="subtitle_offset">Alt yazı senkronu</string>
-    <string name="subtitle_offset_hint">1000ms</string>
+    <string name="subtitle_offset_hint">1000 ms</string>
     <string name="subtitle_offset_title">Alt yazı gecikmesi</string>
-    <string name="subtitle_offset_extra_hint_later_format">Alt yazılar %dms erken gözüküyorsa bunu kullanın</string>
-    <string name="subtitle_offset_extra_hint_before_format">Alt yazılar %dms geç gözüküyorsa bunu kullanın</string>
+    <string name="subtitle_offset_extra_hint_later_format">Alt yazılar %d ms erken gözüküyorsa bunu kullanın</string>
+    <string name="subtitle_offset_extra_hint_before_format">Alt yazılar %d ms geç gözüküyorsa bunu kullanın</string>
     <string name="subtitle_offset_extra_hint_none_format">Alt yazı gecikmesi yok</string>
     <!--
     Example text (pangram) can optionally be translated; if you do, include all the letters in the alphabet,
@@ -480,8 +480,8 @@
     <string name="audio_tracks">Ses parçaları</string>
     <string name="video_tracks">Video parçaları</string>
     <string name="apply_on_restart">Yeniden başlatmada uygula</string>
-    <string name="safe_mode_title">Güvenli mod etkin</string>
-    <string name="safe_mode_description">Kurtarılamaz bir çökme meydana geldi ve soruna neden olan eklentiyi bulup kaldırabilmeniz için tüm eklentileri otomatik olarak devre dışı bıraktık.</string>
+    <string name="safe_mode_title">Güvenli mod açık</string>
+    <string name="safe_mode_description">Çöküşe neden olan eklentiyi bulmaya yardımcı olabilmek için tüm eklentiler kapatıldı.</string>
     <string name="safe_mode_crash_info">Çökme bilgisini göster</string>
     <string name="extension_rating" formatted="true">Puan: %s</string>
     <string name="extension_description">Açıklama</string>
@@ -498,7 +498,7 @@
     <string name="player_settings_play_in_vlc">VLC</string>
     <string name="player_settings_play_in_mpv">MPV</string>
     <string name="player_settings_play_in_web">Web Video Yayını</string>
-    <string name="player_settings_play_in_browser">Tarayıcı</string>
+    <string name="player_settings_play_in_browser">İnternet tarayıcısı</string>
     <string name="app_not_found_error">Uygulama bulunamadı</string>
     <string name="history">Geçmiş</string>
     <string name="action_mark_as_watched">İzlendi olarak imle</string>
@@ -521,4 +521,19 @@
     <string name="pref_category_cache">Önbellek</string>
     <string name="pref_category_looks">Görünüm</string>
     <string name="pref_category_ui_features">Özellikler</string>
+    <string name="delayed_update_notice">Uygulama çıkışta güncellenecektir</string>
+    <string name="skip_type_ed">Bitiş</string>
+    <string name="skip_type_op">Açılış</string>
+    <string name="no">Hayır</string>
+    <string name="skip_type_recap">Özet</string>
+    <string name="confirm_exit_dialog">Çıkmak istediğine emin misin\?</string>
+    <string name="yes">Evet</string>
+    <string name="update_notification_downloading">Uygulama güncellemesi indiriliyor…</string>
+    <string name="update_notification_failed">Uygulamanın yeni sürümü yüklenemedi.</string>
+    <string name="clear_history">Geçmişi temizle</string>
+    <string name="apk_installer_package_installer">Paket yükleyici</string>
+    <string name="apk_installer_legacy">Eski</string>
+    <string name="pref_category_gestures">Hareketler</string>
+    <string name="all_languages_preference">Tüm diller</string>
+    <string name="skip_type_format" formatted="true">Geç %s</string>
 </resources>
