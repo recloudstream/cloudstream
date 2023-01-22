@@ -44,22 +44,19 @@ class LibraryViewModel : ViewModel() {
         ListSorting.AlphabeticalZ,
     )
 
-    var currentSortingMethod: ListSorting = sortingMethods.first().also {
-        println("SET SORTING METHOD $it")
-    }
+    var currentSortingMethod: ListSorting = sortingMethods.first()
         private set
 
     fun switchList(name: String) {
         currentSyncApi = availableSyncApis[availableApiNames.indexOf(name)]
         _currentApiName.postValue(currentSyncApi?.name)
-
         reloadPages(true)
     }
 
     fun sort(method: ListSorting, query: String? = null) {
         val currentList = pages.value ?: return
         currentSortingMethod = method
-        currentList.forEachIndexed { index, page ->
+        currentList.forEachIndexed { _, page ->
             page.sort(method, query)
         }
         _pages.postValue(currentList)

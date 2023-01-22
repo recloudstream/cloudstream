@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.SearchResponse
 import com.lagradost.cloudstream3.ui.AutofitRecyclerView
+import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.UIHelper.IsBottomLayout
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import kotlinx.android.synthetic.main.search_result_compact.view.*
@@ -17,6 +18,7 @@ import kotlin.math.roundToInt
 
 /** Click */
 const val SEARCH_ACTION_LOAD = 0
+
 /** Long press */
 const val SEARCH_ACTION_SHOW_METADATA = 1
 const val SEARCH_ACTION_PLAY_FILE = 2
@@ -66,7 +68,9 @@ class SearchAdapter(
         cardList.clear()
         cardList.addAll(newList)
 
-        diffResult.dispatchUpdatesTo(this)
+        main {
+            diffResult.dispatchUpdatesTo(this)
+        }
     }
 
     class CardViewHolder

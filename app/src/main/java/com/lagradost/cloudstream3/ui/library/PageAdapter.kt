@@ -56,6 +56,7 @@ class PageAdapter(
 
             // See searchAdaptor for this, it basically fixes the height
             if (!compactView) {
+//                println("HEIGHT $coverHeight")
                 cardView.apply {
                     layoutParams = FrameLayout.LayoutParams(
                         ViewGroup.LayoutParams.MATCH_PARENT,
@@ -64,15 +65,15 @@ class PageAdapter(
                 }
             }
 
-            // Set watch progress bar
-//            val showProgress = item.episodesCompleted != null && item.episodesTotal != null
-//            itemView.watchProgress.isVisible = showProgress
-//
-//            if (showProgress) {
-//                itemView.watchProgress.max = item.episodesTotal!!
-//                itemView.watchProgress.progress = item.episodesCompleted!!
-//            }
+            val showProgress = item.episodesCompleted != null && item.episodesTotal != null
+            itemView.watchProgress.isVisible = showProgress
+            if (showProgress) {
+                itemView.watchProgress.max = item.episodesTotal!!
+                itemView.watchProgress.progress = item.episodesCompleted!!
+            }
+
             itemView.imageText.text = item.name
+
             val showRating = (item.personalRating ?: 0) != 0
             itemView.text_rating.isVisible = showRating
             if (showRating) {

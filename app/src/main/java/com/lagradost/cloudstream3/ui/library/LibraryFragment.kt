@@ -21,7 +21,6 @@ import com.lagradost.cloudstream3.mvvm.debugAssert
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.syncproviders.SyncIdName
-import com.lagradost.cloudstream3.ui.result.UiText
 import com.lagradost.cloudstream3.ui.result.txt
 import com.lagradost.cloudstream3.ui.search.SEARCH_ACTION_LOAD
 import com.lagradost.cloudstream3.ui.search.SEARCH_ACTION_SHOW_METADATA
@@ -52,9 +51,12 @@ data class ProviderLibraryData(
 )
 
 class LibraryFragment : Fragment() {
-
     companion object {
         fun newInstance() = LibraryFragment()
+        /**
+         * Store which page was last seen when exiting the fragment and returning
+         **/
+        const val VIEWPAGER_ITEM_KEY = "viewpager_item"
     }
 
     private val libraryViewModel: LibraryViewModel by activityViewModels()
@@ -63,6 +65,13 @@ class LibraryFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         return inflater.inflate(R.layout.fragment_library, container, false)
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        viewpager?.currentItem?.let { currentItem ->
+            outState.putInt(VIEWPAGER_ITEM_KEY, currentItem)
+        }
+        super.onSaveInstanceState(outState)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -91,7 +100,16 @@ class LibraryFragment : Fragment() {
                 return true
             }
 
+            // This is required to prevent the first text change
+            // When this is attached it'll immediately send a onQueryTextChange("")
+            // Which we do not want
+            var hasInitialized = false
             override fun onQueryTextChange(newText: String?): Boolean {
+                if (!hasInitialized) {
+                    hasInitialized = true
+                    return true
+                }
+
                 libraryViewModel.sort(ListSorting.Query, newText)
                 return true
             }
@@ -244,12 +262,18 @@ class LibraryFragment : Fragment() {
                     }
                 }
             }
+
         viewpager?.offscreenPageLimit = 2
 
         observe(libraryViewModel.pages) { pages ->
             (viewpager.adapter as? ViewpagerAdapter)?.pages = pages
             // Using notifyItemRangeChanged keeps the animations when sorting
             viewpager.adapter?.notifyItemRangeChanged(0, viewpager.adapter?.itemCount ?: 0)
+
+            savedInstanceState?.getInt(VIEWPAGER_ITEM_KEY)?.let { currentPos ->
+                viewpager?.setCurrentItem(currentPos, false)
+                savedInstanceState.remove(VIEWPAGER_ITEM_KEY)
+            }
 
             TabLayoutMediator(
                 library_tab_layout,
