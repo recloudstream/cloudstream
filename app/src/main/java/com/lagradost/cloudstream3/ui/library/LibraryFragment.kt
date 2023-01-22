@@ -21,6 +21,7 @@ import com.lagradost.cloudstream3.mvvm.debugAssert
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.syncproviders.SyncIdName
+import com.lagradost.cloudstream3.ui.result.UiText
 import com.lagradost.cloudstream3.ui.result.txt
 import com.lagradost.cloudstream3.ui.search.SEARCH_ACTION_LOAD
 import com.lagradost.cloudstream3.ui.search.SEARCH_ACTION_SHOW_METADATA
@@ -70,14 +71,12 @@ class LibraryFragment : Fragment() {
 
         sort_fab?.setOnClickListener {
             val methods = libraryViewModel.sortingMethods.map {
-                txt(it.stringRes).asString(
-                    context ?: view.context
-                )
+                txt(it.stringRes).asString(view.context)
             }
 
             activity?.showBottomDialog(methods,
                 libraryViewModel.sortingMethods.indexOf(libraryViewModel.currentSortingMethod),
-                "Sort by",
+                txt(R.string.sort_by).asString(view.context),
                 false,
                 {},
                 {
@@ -98,7 +97,7 @@ class LibraryFragment : Fragment() {
             }
         })
 
-        libraryViewModel.loadPages()
+        libraryViewModel.reloadPages(false)
 
         list_selector?.setOnClickListener {
             val items = libraryViewModel.availableApiNames
@@ -106,10 +105,10 @@ class LibraryFragment : Fragment() {
 
             activity?.showBottomDialog(items,
                 items.indexOf(currentItem),
-                "Select library",
+                txt(R.string.select_library).asString(it.context),
                 false,
-                {}) {
-                val selectedItem = items.getOrNull(it) ?: return@showBottomDialog
+                {}) { index ->
+                val selectedItem = items.getOrNull(index) ?: return@showBottomDialog
                 libraryViewModel.switchList(selectedItem)
             }
         }
@@ -155,7 +154,7 @@ class LibraryFragment : Fragment() {
             this.showBottomDialog(
                 items,
                 selectedIndex,
-                "Open with",
+                txt(R.string.open_with).asString(this),
                 true,
                 {},
             ) {

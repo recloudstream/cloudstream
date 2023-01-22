@@ -617,10 +617,13 @@
     <string name="safe_mode_title">Safe Mode enabled</string>
     <string name="safe_mode_description">An unrecoverable crash occurred and we\'ve automatically disabled all extensions, so you can find and remove the extension which is causing trouble.</string>
     <string name="safe_mode_crash_info">View crash info</string>
+    <string name="sort_by">Sort by</string>
     <string name="sort_rating_desc">Rating (High to Low)</string>
     <string name="sort_rating_asc">Rating (Low to High)</string>
     <string name="sort_updated_new">Updated (New to Old)</string>
     <string name="sort_updated_old">Updated (Old to New)</string>
     <string name="sort_alphabetical_a">Alphabetical (A to Z)</string>
     <string name="sort_alphabetical_z">Alphabetical (Z to A)</string>
+    <string name="select_library">Select Library</string>
+    <string name="open_with">Open with</string>
 </resources>

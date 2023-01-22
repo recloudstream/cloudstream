@@ -44,14 +44,16 @@ class LibraryViewModel : ViewModel() {
         ListSorting.AlphabeticalZ,
     )
 
-    var currentSortingMethod: ListSorting = sortingMethods.first()
+    var currentSortingMethod: ListSorting = sortingMethods.first().also {
+        println("SET SORTING METHOD $it")
+    }
         private set
 
     fun switchList(name: String) {
         currentSyncApi = availableSyncApis[availableApiNames.indexOf(name)]
         _currentApiName.postValue(currentSyncApi?.name)
 
-        loadPages()
+        reloadPages(true)
     }
 
     fun sort(method: ListSorting, query: String? = null) {
@@ -63,7 +65,10 @@ class LibraryViewModel : ViewModel() {
         _pages.postValue(currentList)
     }
 
-    fun loadPages() {
+    fun reloadPages(forceReload: Boolean) {
+        // Only skip loading if its not forced and pages is not empty
+        if (!forceReload && pages.value?.isNotEmpty() == true) return
+
         ioSafe {
             currentSyncApi?.let { repo ->
                 _currentApiName.postValue(repo.name)
@@ -80,7 +85,6 @@ class LibraryViewModel : ViewModel() {
                         it.value
                     )
                 }
-                println("PAGES $pages")
                 _pages.postValue(pages)
             }
         }
