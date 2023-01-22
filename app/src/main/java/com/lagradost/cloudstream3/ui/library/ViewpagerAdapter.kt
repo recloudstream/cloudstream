@@ -36,7 +36,11 @@ class ViewpagerAdapter(
         RecyclerView.ViewHolder(itemViewTest) {
         fun bind(page: SyncAPI.Page) {
             if (itemViewTest.page_recyclerview?.adapter == null) {
-                itemViewTest.page_recyclerview?.adapter = PageAdapter(page.items.toMutableList(), clickCallback)
+                itemViewTest.page_recyclerview?.adapter = PageAdapter(
+                    page.items.toMutableList(),
+                    itemViewTest.page_recyclerview,
+                    clickCallback
+                )
                 itemView.page_recyclerview?.spanCount =
                     this@PageViewHolder.itemView.context.getSpanCount() ?: 3
             } else {

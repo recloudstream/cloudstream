@@ -90,11 +90,13 @@
         <item name="android:fontFamily">@font/google_sans</item>
         <item name="chipMinTouchTargetSize">0dp</item>
     </style>
+
     <style name="ChipFilledSemiTransparent" parent="@style/ChipFilled">
         <item name="chipBackgroundColor">@color/transparent</item>
         <item name="chipSurfaceColor">@color/semiWhite</item>
         <item name="backgroundColor">@color/transparent</item>
     </style>
+
     <style name="ChipParent">
         <item name="chipSpacingVertical">5dp</item>
         <item name="chipSpacingHorizontal">5dp</item>
@@ -121,6 +123,11 @@
         <item name="android:background">@drawable/sub_bg_color</item>
         <item name="android:text">@string/app_subbed_text</item>
         <item name="android:textColor">@color/subColorText</item>
+    </style>
+
+    <style name="RatingButton" parent="@style/SearchBox">
+        <item name="android:background">@drawable/rating_bg_color</item>
+        <item name="drawableStartCompat">@drawable/ic_baseline_star_24</item>
     </style>
 
     <style name="TypeButton" parent="@style/SearchBox">

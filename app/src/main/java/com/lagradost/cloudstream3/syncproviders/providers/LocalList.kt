@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.syncproviders.providers
 
+import androidx.fragment.app.FragmentActivity
 import com.lagradost.cloudstream3.AcraApplication
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.syncproviders.AuthAPI
@@ -37,7 +38,7 @@ class LocalList : SyncAPI {
         return true
     }
 
-    override fun authenticate() {
+    override fun authenticate(activity: FragmentActivity?) {
     }
 
     override val mainUrl = ""

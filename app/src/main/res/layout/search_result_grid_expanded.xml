@@ -23,7 +23,6 @@
         <ImageView
             android:id="@+id/imageView"
             android:layout_width="match_parent"
-
             android:layout_height="match_parent"
             android:contentDescription="@string/search_poster_img_des"
             android:duplicateParentState="true"
@@ -47,6 +46,12 @@
             <TextView
                 android:id="@+id/text_is_sub"
                 style="@style/SubButton"
+                android:layout_gravity="end" />
+
+            <TextView
+                android:id="@+id/text_rating"
+                style="@style/RatingButton"
+                tools:text="7.7"
                 android:layout_gravity="end" />
 
             <TextView
