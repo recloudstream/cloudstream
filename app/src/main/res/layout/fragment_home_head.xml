@@ -16,10 +16,8 @@
 
     <FrameLayout
         android:id="@+id/home_preview"
-
         android:layout_width="match_parent"
-        android:layout_height="500dp"
-        tools:visibility="gone">
+        android:layout_height="500dp">
 
         <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/home_preview_viewpager"
@@ -47,7 +45,7 @@
             <androidx.appcompat.widget.SearchView
                 android:id="@+id/home_search"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="60dp"
                 android:layout_gravity="start"
                 android:editTextColor="@color/white"
                 android:gravity="start"
@@ -58,7 +56,6 @@
                 app:iconifiedByDefault="true"
                 app:queryBackground="@color/transparent"
                 app:queryHint="@string/search_hint"
-
                 app:searchIcon="@drawable/search_icon"
                 tools:ignore="RtlSymmetry" />
         </LinearLayout>
