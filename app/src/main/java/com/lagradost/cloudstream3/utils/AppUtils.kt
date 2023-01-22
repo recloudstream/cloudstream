@@ -457,7 +457,7 @@ object AppUtils {
         }
     }
 
-    fun AppCompatActivity.loadResult(
+    fun Activity.loadResult(
         url: String,
         apiName: String,
         startAction: Int = 0,
