@@ -7,13 +7,12 @@ import android.net.Uri
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.preference.PreferenceManager
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.lagradost.cloudstream3.BuildConfig
+import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.CommonActivity.showToast
-import com.lagradost.cloudstream3.R
-import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
@@ -23,6 +22,11 @@ import okio.BufferedSink
 import okio.buffer
 import okio.sink
 import java.io.File
+import android.text.TextUtils
+import com.lagradost.cloudstream3.utils.AppUtils.setDefaultFocus
+import java.io.BufferedReader
+import java.io.IOException
+import java.io.InputStreamReader
 
 
 class InAppUpdater {
@@ -116,6 +120,7 @@ class InAppUpdater {
                             )?.groupValues?.get(2)
                         }
                 }).toList().lastOrNull()
+
             val foundAsset = found?.assets?.getOrNull(0)
             val currentVersion = packageName?.let {
                 packageManager.getPackageInfo(
@@ -200,16 +205,23 @@ class InAppUpdater {
         private suspend fun Activity.downloadUpdate(url: String): Boolean {
             try {
                 Log.d(LOG_TAG, "Downloading update: $url")
+                val appUpdateName = "CloudStream"
+                val appUpdateSuffix = "apk"
 
-                val localContext = this
+                // Delete all old updates
+                this.cacheDir.listFiles()?.filter {
+                    it.name.startsWith(appUpdateName) && it.extension == appUpdateSuffix
+                }?.forEach {
+                    it.deleteOnExit()
+                }
 
-                val downloadedFile = File.createTempFile("CloudStream", ".apk")
+                val downloadedFile = File.createTempFile(appUpdateName, ".$appUpdateSuffix")
                 val sink: BufferedSink = downloadedFile.sink().buffer()
 
                 updateLock.withLock {
                     sink.writeAll(app.get(url).body.source())
                     sink.close()
-                    openApk(localContext, Uri.fromFile(downloadedFile))
+                    openApk(this, Uri.fromFile(downloadedFile))
                 }
                 return true
             } catch (e: Exception) {
@@ -238,6 +250,9 @@ class InAppUpdater {
             }
         }
 
+        /**
+         * @param checkAutoUpdate if the update check was launched automatically
+         **/
         suspend fun Activity.runAutoUpdate(checkAutoUpdate: Boolean = true): Boolean {
             val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
 
@@ -247,13 +262,20 @@ class InAppUpdater {
                 )
             ) {
                 val update = getAppUpdate()
-                if (update.shouldUpdate && update.updateURL != null) {
-                    //Check if update should be skipped
+                if (
+                    update.shouldUpdate &&
+                        update.updateURL != null) {
+
+                    // Check if update should be skipped
                     val updateNodeId =
                         settingsManager.getString(getString(R.string.skip_update_key), "")
-                    if (update.updateNodeId.equals(updateNodeId)) {
+
+                    // Skips the update if its an automatic update and the update is skipped
+                    // This allows updating manually
+                    if (update.updateNodeId.equals(updateNodeId) && checkAutoUpdate) {
                         return false
                     }
+
                     runOnUiThread {
                         try {
                             val currentVersion = packageName?.let {
@@ -275,16 +297,51 @@ class InAppUpdater {
                             val context = this
                             builder.apply {
                                 setPositiveButton(R.string.update) { _, _ ->
+                                    // Forcefully start any delayed installations
+                                    if (ApkInstaller.delayedInstaller?.startInstallation() == true) return@setPositiveButton
+
                                     showToast(context, R.string.download_started, Toast.LENGTH_LONG)
-                                    ioSafe {
-                                        if (!downloadUpdate(update.updateURL))
-                                            runOnUiThread {
-                                                showToast(
-                                                    context,
-                                                    R.string.download_failed,
-                                                    Toast.LENGTH_LONG
-                                                )
+
+                                    // Check if the setting hasn't been changed
+                                    if (settingsManager.getInt(
+                                            getString(R.string.apk_installer_key),
+                                            -1
+                                        ) == -1
+                                    ) {
+                                        if (isMiUi()) // Set to legacy if using miui
+                                            settingsManager.edit()
+                                                .putInt(getString(R.string.apk_installer_key), 1)
+                                                .apply()
+                                    }
+
+                                    val currentInstaller =
+                                        settingsManager.getInt(
+                                            getString(R.string.apk_installer_key),
+                                            0
+                                        )
+
+                                    when (currentInstaller) {
+                                        // New method
+                                        0 -> {
+                                            val intent = PackageInstallerService.getIntent(
+                                                context,
+                                                update.updateURL
+                                            )
+                                            ContextCompat.startForegroundService(context, intent)
+                                        }
+                                        // Legacy
+                                        1 -> {
+                                            ioSafe {
+                                                if (!downloadUpdate(update.updateURL))
+                                                    runOnUiThread {
+                                                        showToast(
+                                                            context,
+                                                            R.string.download_failed,
+                                                            Toast.LENGTH_LONG
+                                                        )
+                                                    }
                                             }
+                                        }
                                     }
                                 }
 
@@ -295,12 +352,11 @@ class InAppUpdater {
                                         settingsManager.edit().putString(
                                             getString(R.string.skip_update_key),
                                             update.updateNodeId ?: ""
-                                        )
-                                            .apply()
+                                        ).apply()
                                     }
                                 }
                             }
-                            builder.show()
+                            builder.show().setDefaultFocus()
                         } catch (e: Exception) {
                             logError(e)
                         }
@@ -310,6 +366,21 @@ class InAppUpdater {
                 return false
             }
             return false
+        }
+
+        private fun isMiUi(): Boolean {
+            return !TextUtils.isEmpty(getSystemProperty("ro.miui.ui.version.name"))
+        }
+
+        private fun getSystemProperty(propName: String): String? {
+            return try {
+                val p = Runtime.getRuntime().exec("getprop $propName")
+                BufferedReader(InputStreamReader(p.inputStream), 1024).use {
+                    it.readLine()
+                }
+            } catch (ex: IOException) {
+                null
+            }
         }
     }
 }

@@ -49,8 +49,7 @@ data class SaveCaptionStyle(
     @JsonProperty("foregroundColor") var foregroundColor: Int,
     @JsonProperty("backgroundColor") var backgroundColor: Int,
     @JsonProperty("windowColor") var windowColor: Int,
-    @CaptionStyleCompat.EdgeType
-    @JsonProperty("edgeType") var edgeType: Int,
+    @JsonProperty("edgeType") var edgeType: @CaptionStyleCompat.EdgeType Int,
     @JsonProperty("edgeColor") var edgeColor: Int,
     @FontRes
     @JsonProperty("typeface") var typeface: Int?,
@@ -135,7 +134,8 @@ class SubtitlesFragment : Fragment() {
                 it.mkdir()
             }
             return fontDir.list()?.mapNotNull {
-                if (it.endsWith(".ttf")) {
+                // No idea which formats are supported, but these should be.
+                if (it.endsWith(".ttf") || it.endsWith(".otf")) {
                     File(fontDir.absolutePath + "/" + it)
                 } else null
             } ?: listOf()

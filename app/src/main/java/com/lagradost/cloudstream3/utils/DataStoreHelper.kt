@@ -13,8 +13,10 @@ import com.lagradost.cloudstream3.SearchResponse
 import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.ui.WatchType
+import com.lagradost.cloudstream3.ui.result.VideoWatchState
 
 const val VIDEO_POS_DUR = "video_pos_dur"
+const val VIDEO_WATCH_STATE = "video_watch_state"
 const val RESULT_WATCH_STATE = "result_watch_state"
 const val RESULT_WATCH_STATE_DATA = "result_watch_state_data"
 const val RESULT_RESUME_WATCHING = "result_resume_watching_2" // changed due to id changes
@@ -209,6 +211,22 @@ object DataStoreHelper {
     fun getViewPos(id: Int?): PosDur? {
         if (id == null) return null
         return getKey("$currentAccount/$VIDEO_POS_DUR", id.toString(), null)
+    }
+
+    fun getVideoWatchState(id: Int?): VideoWatchState? {
+        if (id == null) return null
+        return getKey("$currentAccount/$VIDEO_WATCH_STATE", id.toString(), null)
+    }
+
+    fun setVideoWatchState(id: Int?, watchState: VideoWatchState) {
+        if (id == null) return
+
+        // None == No key
+        if (watchState == VideoWatchState.None) {
+            removeKey("$currentAccount/$VIDEO_WATCH_STATE", id.toString())
+        } else {
+            setKey("$currentAccount/$VIDEO_WATCH_STATE", id.toString(), watchState)
+        }
     }
 
     fun getDub(id: Int): DubStatus? {

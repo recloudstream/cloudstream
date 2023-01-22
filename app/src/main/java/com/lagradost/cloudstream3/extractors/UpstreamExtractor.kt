@@ -1,19 +1,23 @@
 package com.lagradost.cloudstream3.extractors
 
+import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
-import com.lagradost.cloudstream3.utils.Qualities
+import com.lagradost.cloudstream3.utils.M3u8Helper
 
-class UpstreamExtractor: ExtractorApi() {
-    override val name: String = "Upstream.to"
+open class UpstreamExtractor : ExtractorApi() {
+    override val name: String = "Upstream"
     override val mainUrl: String = "https://upstream.to"
     override val requiresReferer = true
 
-    override suspend fun getUrl(url: String, referer: String?): List<ExtractorLink> {
-        // WIP: m3u8 link fetched but sometimes not playing
+    override suspend fun getUrl(
+        url: String,
+        referer: String?,
+        subtitleCallback: (SubtitleFile) -> Unit,
+        callback: (ExtractorLink) -> Unit
+    ) {
         //Log.i(this.name, "Result => (no extractor) ${url}")
-        val sources: MutableList<ExtractorLink> = mutableListOf()
         val doc = app.get(url, referer = referer).text
         if (doc.isNotBlank()) {
             var reg = Regex("(?<=master)(.*)(?=hls)")
@@ -30,7 +34,9 @@ class UpstreamExtractor: ExtractorApi() {
                             domName = "${part}.${domName}"
                         }
                         domName.trimEnd('.')
-                    } else { "" }
+                    } else {
+                        ""
+                    }
                 }
                 false -> ""
             }
@@ -42,18 +48,13 @@ class UpstreamExtractor: ExtractorApi() {
 
             result?.forEach {
                 val linkUrl = "https://${domain}/hls/${it}/master.m3u8"
-                sources.add(
-                    ExtractorLink(
-                    name = "Upstream m3u8",
-                    source = this.name,
-                    url = linkUrl,
-                    quality = Qualities.Unknown.value,
-                    referer = referer ?: linkUrl,
-                    isM3u8 = true
-                    )
-                )
+                M3u8Helper.generateM3u8(
+                    this.name,
+                    linkUrl,
+                    "$mainUrl/",
+                    headers = mapOf("Origin" to mainUrl)
+                ).forEach(callback)
             }
         }
-        return sources
     }
 }

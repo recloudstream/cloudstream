@@ -1,0 +1,327 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:backgroundTint="?attr/primaryGrayBackground"
+    android:clipToPadding="false"
+    android:orientation="vertical"
+    tools:context=".ui.settings.extensions.PluginDetailsFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:padding="20dp"
+        android:visibility="visible">
+
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            app:cardCornerRadius="25dp">
+
+            <ImageView
+                android:id="@+id/plugin_icon"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:ignore="ContentDescription" />
+        </androidx.cardview.widget.CardView>
+
+        <TextView
+            android:id="@+id/plugin_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:textColor="?attr/textColor"
+            android:textSize="20sp"
+            android:textStyle="normal"
+            tools:text="Hello world" />
+
+        <ImageView
+            android:id="@+id/action_settings"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="16dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/title_settings"
+            android:visibility="gone"
+            app:srcCompat="@drawable/ic_baseline_tune_24"
+            tools:visibility="visible" />
+
+        <ImageView
+            android:id="@+id/github_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|end"
+            android:layout_marginStart="16dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_github_logo" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:foreground="?android:attr/selectableItemBackgroundBorderless"
+            android:padding="8dp">
+
+            <!--marquee_forever-->
+            <com.google.android.material.button.MaterialButton
+                style="@style/SmallBlackButton"
+                android:layout_gravity="center"
+                android:layout_marginStart="10dp"
+                android:text="@string/extension_description" />
+
+            <TextView
+                android:id="@+id/plugin_description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+
+                android:ellipsize="none"
+
+                android:gravity="center_vertical"
+                android:singleLine="false"
+                android:textColor="?attr/textColor"
+                tools:text="Lolem ipsum kek Lolem ipsum kek Lolem ipsum kek Lolem ipsum kek " />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:foreground="?android:attr/selectableItemBackgroundBorderless"
+            android:padding="8dp">
+
+            <!--marquee_forever-->
+            <com.google.android.material.button.MaterialButton
+                style="@style/SmallBlackButton"
+                android:layout_gravity="center"
+                android:layout_marginStart="10dp"
+                android:text="@string/extension_authors" />
+
+            <TextView
+                android:id="@+id/plugin_author"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="10dp"
+                android:ellipsize="marquee"
+
+                android:gravity="center_vertical"
+
+                android:singleLine="false"
+
+                android:textColor="?attr/textColor"
+                tools:text="Lolem ipsum kek" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:foreground="?android:attr/selectableItemBackgroundBorderless"
+            android:padding="8dp">
+
+            <!--marquee_forever-->
+            <com.google.android.material.button.MaterialButton
+                style="@style/SmallBlackButton"
+                android:layout_gravity="center"
+                android:layout_marginStart="10dp"
+                android:text="@string/extension_version" />
+
+            <TextView
+                android:id="@+id/plugin_version"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="10dp"
+                android:ellipsize="marquee"
+
+                android:gravity="center_vertical"
+
+                android:singleLine="true"
+
+                android:textColor="?attr/textColor"
+                tools:text="Lolem ipsum kek" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:foreground="?android:attr/selectableItemBackgroundBorderless"
+            android:padding="8dp">
+
+            <!--marquee_forever-->
+            <com.google.android.material.button.MaterialButton
+                style="@style/SmallBlackButton"
+                android:layout_gravity="center"
+                android:layout_marginStart="10dp"
+                android:text="@string/extension_status" />
+
+            <TextView
+                android:id="@+id/plugin_status"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="10dp"
+                android:ellipsize="marquee"
+
+                android:gravity="center_vertical"
+
+                android:singleLine="true"
+
+                android:textColor="?attr/textColor"
+                tools:text="Lolem ipsum kek" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:foreground="?android:attr/selectableItemBackgroundBorderless"
+            android:padding="8dp">
+
+            <!--marquee_forever-->
+            <com.google.android.material.button.MaterialButton
+                style="@style/SmallBlackButton"
+                android:layout_gravity="center"
+                android:layout_marginStart="10dp"
+                android:text="@string/extension_size" />
+
+            <TextView
+                android:id="@+id/plugin_size"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="10dp"
+                android:ellipsize="marquee"
+
+                android:gravity="center_vertical"
+
+                android:singleLine="true"
+
+                android:textColor="?attr/textColor"
+                tools:text="Lolem ipsum kek" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:foreground="?android:attr/selectableItemBackgroundBorderless"
+            android:padding="8dp">
+
+            <!--marquee_forever-->
+
+            <com.google.android.material.button.MaterialButton
+                style="@style/SmallBlackButton"
+                android:layout_gravity="center"
+                android:layout_marginStart="10dp"
+                android:text="@string/extension_types" />
+
+            <TextView
+                android:id="@+id/plugin_types"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="10dp"
+                android:ellipsize="marquee"
+
+                android:gravity="center_vertical"
+
+                android:singleLine="false"
+
+                android:textColor="?attr/textColor"
+                tools:text="Lolem ipsum kek" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:foreground="?android:attr/selectableItemBackgroundBorderless"
+            android:padding="8dp">
+
+            <!--marquee_forever-->
+
+            <com.google.android.material.button.MaterialButton
+                style="@style/SmallBlackButton"
+                android:layout_gravity="center"
+                android:layout_marginStart="10dp"
+                android:text="@string/extension_language" />
+
+            <TextView
+                android:id="@+id/plugin_lang"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="10dp"
+                android:ellipsize="marquee"
+
+                android:gravity="center_vertical"
+
+                android:singleLine="false"
+
+                android:textColor="?attr/textColor"
+                tools:text="Lolem ipsum kek" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center_horizontal|center_vertical">
+
+        <ImageView
+            android:id="@+id/downvote"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_baseline_thumb_down_24"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/plugin_votes"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/plugin_votes"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="32dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="32dp"
+            android:gravity="center_horizontal|center_vertical"
+            android:text="0"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/upvote"
+            app:layout_constraintStart_toEndOf="@+id/downvote"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/upvote"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="32dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_baseline_thumb_up_24"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/plugin_votes"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</LinearLayout>

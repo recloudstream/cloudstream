@@ -4,12 +4,14 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.os.Bundle
+import android.os.TransactionTooLargeException
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceFragmentCompat
-import com.lagradost.cloudstream3.CommonActivity
+import androidx.preference.PreferenceManager
+import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.getPref
@@ -19,6 +21,7 @@ import com.lagradost.cloudstream3.utils.BackupUtils.backup
 import com.lagradost.cloudstream3.utils.BackupUtils.restorePrompt
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.InAppUpdater.Companion.runAutoUpdate
+import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.utils.VideoDownloadManager
@@ -81,12 +84,17 @@ class SettingsUpdates : PreferenceFragmentCompat() {
             dialog.text1?.text = text
 
             dialog.copy_btt?.setOnClickListener {
-                val serviceClipboard =
-                    (activity?.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager?)
-                        ?: return@setOnClickListener
-                val clip = ClipData.newPlainText("logcat", text)
-                serviceClipboard.setPrimaryClip(clip)
-                dialog.dismissSafe(activity)
+                // Can crash on too much text
+                try {
+                    val serviceClipboard =
+                        (activity?.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager?)
+                            ?: return@setOnClickListener
+                    val clip = ClipData.newPlainText("logcat", text)
+                    serviceClipboard.setPrimaryClip(clip)
+                    dialog.dismissSafe(activity)
+                } catch (e: TransactionTooLargeException) {
+                    showToast(activity, R.string.clipboard_too_large)
+                }
             }
             dialog.clear_btt?.setOnClickListener {
                 Runtime.getRuntime().exec("logcat -c")
@@ -117,11 +125,37 @@ class SettingsUpdates : PreferenceFragmentCompat() {
             return@setOnPreferenceClickListener true
         }
 
+        getPref(R.string.apk_installer_key)?.setOnPreferenceClickListener {
+            val settingsManager = PreferenceManager.getDefaultSharedPreferences(it.context)
+
+            val prefNames = resources.getStringArray(R.array.apk_installer_pref)
+            val prefValues = resources.getIntArray(R.array.apk_installer_values)
+
+            val currentInstaller =
+                settingsManager.getInt(getString(R.string.apk_installer_key), 0)
+
+            activity?.showBottomDialog(
+                prefNames.toList(),
+                prefValues.indexOf(currentInstaller),
+                getString(R.string.apk_installer_settings),
+                true,
+                {}) {
+                try {
+                    settingsManager.edit()
+                        .putInt(getString(R.string.apk_installer_key), prefValues[it])
+                        .apply()
+                } catch (e: Exception) {
+                    logError(e)
+                }
+            }
+            return@setOnPreferenceClickListener true
+        }
+
         getPref(R.string.manual_check_update_key)?.setOnPreferenceClickListener {
             ioSafe {
                 if (activity?.runAutoUpdate(false) == false) {
                     activity?.runOnUiThread {
-                        CommonActivity.showToast(
+                        showToast(
                             activity,
                             R.string.no_update_found,
                             Toast.LENGTH_SHORT

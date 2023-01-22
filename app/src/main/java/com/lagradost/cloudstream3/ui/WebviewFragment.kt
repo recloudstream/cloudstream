@@ -4,17 +4,19 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.webkit.JavascriptInterface
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import androidx.navigation.fragment.findNavController
+import com.lagradost.cloudstream3.MainActivity
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.USER_AGENT
 import com.lagradost.cloudstream3.network.WebViewResolver
-import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.appStringRepo
 import com.lagradost.cloudstream3.utils.AppUtils.loadRepository
 import kotlinx.android.synthetic.main.fragment_webview.*
-import java.net.URI
 
 class WebviewFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -29,16 +31,8 @@ class WebviewFragment : Fragment() {
                 request: WebResourceRequest?
             ): Boolean {
                 val requestUrl = request?.url.toString()
-                val repoUrl = if (requestUrl.startsWith("https://cs.repo")) {
-                    "https://" + requestUrl.substringAfter("?")
-                } else if (URI(requestUrl).scheme == appStringRepo) {
-                    requestUrl.replaceFirst(appStringRepo, "https")
-                } else {
-                    null
-                }
-
-                if (repoUrl != null) {
-                    activity?.loadRepository(repoUrl)
+                val performedAction = MainActivity.handleAppIntentUrl(activity, requestUrl, true)
+                if (performedAction) {
                     findNavController().popBackStack()
                     return true
                 }
@@ -46,11 +40,15 @@ class WebviewFragment : Fragment() {
                 return super.shouldOverrideUrlLoading(view, request)
             }
         }
-        web_view.settings.javaScriptEnabled = true
-        web_view.settings.domStorageEnabled = true
 
         WebViewResolver.webViewUserAgent = web_view.settings.userAgentString
-//        web_view.settings.userAgentString = USER_AGENT
+
+        web_view.addJavascriptInterface(RepoApi(activity), "RepoApi")
+        web_view.settings.javaScriptEnabled = true
+        web_view.settings.userAgentString = USER_AGENT
+        web_view.settings.domStorageEnabled = true
+//        WebView.setWebContentsDebuggingEnabled(true)
+
         web_view.loadUrl(url)
     }
 
@@ -68,5 +66,12 @@ class WebviewFragment : Fragment() {
             Bundle().apply {
                 putString(WEBVIEW_URL, webViewUrl)
             }
+    }
+
+    private class RepoApi(val activity: FragmentActivity?) {
+        @JavascriptInterface
+         fun installRepo(repoUrl: String) {
+            activity?.loadRepository(repoUrl)
+        }
     }
 }

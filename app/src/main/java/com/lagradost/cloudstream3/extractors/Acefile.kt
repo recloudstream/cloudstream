@@ -4,7 +4,7 @@ import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.base64Decode
 import com.lagradost.cloudstream3.utils.*
 
-class Acefile : ExtractorApi() {
+open class Acefile : ExtractorApi() {
     override val name = "Acefile"
     override val mainUrl = "https://acefile.co"
     override val requiresReferer = false
@@ -27,7 +27,6 @@ class Acefile : ExtractorApi() {
                                 res.substringAfter("\"file\":\"").substringBefore("\","),
                                 "$mainUrl/",
                                 Qualities.Unknown.value,
-                                headers = mapOf("range" to "bytes=0-")
                             )
                         )
                     }

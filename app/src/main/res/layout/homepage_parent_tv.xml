@@ -1,32 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
 
     <TextView
-            android:id="@+id/home_parent_item_title"
-            android:padding="12dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            style="@style/WatchHeaderText"
-            android:layout_marginEnd="0dp"
-            tools:text="Trending">
-    </TextView>
+        android:layout_marginStart="@dimen/navbar_width"
+        android:id="@+id/home_child_more_info"
+        android:padding="12dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@style/WatchHeaderText"
+        android:layout_marginEnd="0dp"
+        tools:text="Trending" />
 
     <androidx.recyclerview.widget.RecyclerView
-            android:nextFocusUp="@id/home_child_more_info"
-            android:paddingHorizontal="5dp"
-            android:clipToPadding="false"
+        android:nextFocusUp="@id/home_child_more_info"
 
-            android:descendantFocusability="afterDescendants"
+        android:paddingEnd="5dp"
+        android:paddingStart="@dimen/navbar_width"
+        android:clipToPadding="false"
 
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            android:id="@+id/home_child_recyclerview"
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            tools:listitem="@layout/home_result_grid" />
+        android:descendantFocusability="afterDescendants"
+
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        android:id="@+id/home_child_recyclerview"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:listitem="@layout/home_result_grid" />
 </LinearLayout>

@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/searchRoot"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginTop="@dimen/navbar_height"
+    android:background="?attr/primaryGrayBackground"
+    android:orientation="vertical"
+    tools:context=".ui.search.SearchFragment">
+
+    <LinearLayout
+        android:layout_marginStart="@dimen/navbar_width"
+        android:paddingBottom="10dp"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_margin="10dp"
+            android:background="@drawable/search_background"
+            android:visibility="visible">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginEnd="30dp">
+
+                <androidx.appcompat.widget.SearchView
+                    android:id="@+id/main_search"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+
+                    android:iconifiedByDefault="false"
+                    android:imeOptions="actionSearch"
+
+                    android:inputType="text"
+                    android:nextFocusLeft="@id/nav_rail_view"
+
+                    android:nextFocusRight="@id/search_filter"
+                    android:nextFocusUp="@id/nav_rail_view"
+                    android:nextFocusDown="@id/search_autofit_results"
+                    android:paddingStart="-10dp"
+                    app:iconifiedByDefault="false"
+                    app:queryBackground="@color/transparent"
+                    app:queryHint="@string/search_hint"
+                    app:searchIcon="@drawable/search_icon"
+                    tools:ignore="RtlSymmetry">
+
+                    <requestFocus />
+
+                    <androidx.core.widget.ContentLoadingProgressBar
+                        android:id="@+id/search_loading_bar"
+                        style="@style/Widget.AppCompat.ProgressBar"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_gravity="center"
+                        android:layout_marginStart="-35dp"
+                        android:foregroundTint="@color/white"
+                        android:progressTint="@color/white">
+
+                    </androidx.core.widget.ContentLoadingProgressBar>
+                    <!--app:queryHint="@string/search_hint"
+                     android:background="@color/grayBackground" @color/itemBackground
+                                app:searchHintIcon="@drawable/search_white"
+                                -->
+                </androidx.appcompat.widget.SearchView>
+            </FrameLayout>
+
+            <ImageView
+                android:id="@+id/search_filter"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_gravity="end|center_vertical"
+
+                android:layout_margin="10dp"
+                android:background="?selectableItemBackgroundBorderless"
+                android:contentDescription="@string/change_providers_img_des"
+                android:nextFocusLeft="@id/main_search"
+                android:nextFocusRight="@id/main_search"
+                android:nextFocusUp="@id/nav_rail_view"
+                android:nextFocusDown="@id/search_autofit_results"
+                android:src="@drawable/ic_baseline_tune_24"
+                app:tint="?attr/textColor" />
+        </FrameLayout>
+
+        <include layout="@layout/tvtypes_chips_scroll" />
+    </LinearLayout>
+
+
+    <com.lagradost.cloudstream3.ui.AutofitRecyclerView
+        android:id="@+id/search_autofit_results"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+
+        android:background="?attr/primaryBlackBackground"
+        android:clipToPadding="false"
+        android:descendantFocusability="afterDescendants"
+        android:nextFocusLeft="@id/nav_rail_view"
+        android:orientation="vertical"
+        android:paddingStart="8dp"
+        android:paddingTop="5dp"
+        android:paddingEnd="8dp"
+        android:visibility="gone"
+        app:spanCount="3"
+        tools:listitem="@layout/search_result_grid" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/search_master_recycler"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+
+        android:background="?attr/primaryBlackBackground"
+        android:descendantFocusability="afterDescendants"
+        android:nextFocusLeft="@id/nav_rail_view"
+        android:visibility="gone"
+        tools:listitem="@layout/homepage_parent" />
+
+    <FrameLayout
+        android:id="@+id/search_history_holder"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:paddingStart="@dimen/navbar_width"
+            android:id="@+id/search_history_recycler"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+
+            android:background="?attr/primaryBlackBackground"
+            android:descendantFocusability="afterDescendants"
+            android:nextFocusLeft="@id/nav_rail_view"
+            android:visibility="visible"
+            android:paddingBottom="50dp"
+            tools:listitem="@layout/search_history_item" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/search_clear_call_history"
+            style="@style/BlackButton"
+            android:layout_gravity="bottom"
+            android:padding="0dp"
+            app:cornerRadius="0dp"
+            android:layout_margin="0dp"
+            android:text="@string/clear_history"
+            app:icon="@drawable/delete_all"
+            android:layout_width="match_parent"
+            android:layout_height="50dp" />
+    </FrameLayout>
+</LinearLayout>

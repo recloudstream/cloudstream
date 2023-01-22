@@ -11,12 +11,12 @@
     <include layout="@layout/standard_toolbar" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:nextFocusUp="@id/settings_toolbar"
-        android:nextFocusDown="@id/plugin_storage_appbar"
         android:id="@+id/repo_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginBottom="80dp"
+        android:nextFocusUp="@id/settings_toolbar"
+        android:nextFocusDown="@id/plugin_storage_appbar"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         app:layout_constraintBottom_toTopOf="@id/download_storage_appbar"
@@ -47,31 +47,32 @@
             android:text="@string/blank_repo_message"
             android:textSize="16sp" />
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/list_repositories"
-            style="@style/WhiteButton"
-            android:layout_width="wrap_content"
-            android:nextFocusDown="@id/add_repo_button"
-            android:text="@string/view_public_repositories_button" />
+        <!--        <com.google.android.material.button.MaterialButton-->
+        <!--            android:id="@+id/list_repositories"-->
+        <!--            style="@style/WhiteButton"-->
+        <!--            android:layout_width="wrap_content"-->
+        <!--            android:nextFocusDown="@id/add_repo_button"-->
+        <!--            android:text="@string/view_public_repositories_button" />-->
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/plugin_storage_appbar"
-        android:nextFocusRight="@id/add_repo_button_imageview"
         android:layout_width="match_parent"
         android:layout_height="80dp"
         android:layout_gravity="bottom"
         android:background="?attr/primaryGrayBackground"
+        android:focusable="true"
         android:foreground="@drawable/outline_drawable"
+        android:nextFocusRight="@id/add_repo_button_imageview"
+        android:orientation="horizontal"
         android:padding="10dp"
-        android:visibility="visible"
 
-        android:orientation="horizontal">
+        android:visibility="visible">
 
         <LinearLayout
-            android:layout_weight="1"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
 
             android:orientation="vertical">
 
@@ -82,33 +83,42 @@
                 android:text="@string/extensions"
                 android:textColor="?attr/textColor" />
 
-            <LinearLayout
+            <androidx.cardview.widget.CardView
+                app:cardElevation="0dp"
+                android:elevation="0dp"
+                app:cardMaxElevation="0dp"
                 android:layout_width="fill_parent"
                 android:layout_height="12dp"
                 android:layout_marginBottom="5dp"
-                android:orientation="horizontal">
+                app:cardCornerRadius="@dimen/storage_radius">
 
-                <View
-                    android:id="@+id/plugin_download"
-                    android:layout_width="0dp"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="?attr/white"
-                    tools:layout_weight="0.5" />
+                    android:orientation="horizontal">
 
-                <View
-                    android:id="@+id/plugin_disabled"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:background="?attr/colorPrimary"
-                    tools:layout_weight="0.10" />
+                    <View
+                        android:id="@+id/plugin_download"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/storage_bar_left"
+                        tools:layout_weight="0.5" />
 
-                <View
-                    android:id="@+id/plugin_not_downloaded"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:background="?attr/grayTextColor"
-                    tools:layout_weight="0.10" />
-            </LinearLayout>
+                    <View
+                        android:id="@+id/plugin_disabled"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/storage_bar_mid"
+                        tools:layout_weight="0.10" />
+
+                    <View
+                        android:id="@+id/plugin_not_downloaded"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/storage_bar_right"
+                        tools:layout_weight="0.10" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -122,7 +132,7 @@
                     android:layout_marginTop="5dp"
                     android:layout_marginEnd="5dp"
                     android:layout_marginBottom="5dp"
-                    android:background="?attr/white" />
+                    android:background="@drawable/storage_bar_left_box" />
 
                 <TextView
                     android:id="@+id/plugin_download_txt"
@@ -138,7 +148,7 @@
                     android:layout_height="10dp"
                     android:layout_gravity="center_vertical"
                     android:layout_margin="5dp"
-                    android:background="?attr/colorPrimary" />
+                    android:background="@drawable/storage_bar_mid_box" />
 
                 <TextView
                     android:id="@+id/plugin_disabled_txt"
@@ -154,7 +164,7 @@
                     android:layout_height="10dp"
                     android:layout_gravity="center_vertical"
                     android:layout_margin="5dp"
-                    android:background="?attr/grayTextColor" />
+                    android:background="@drawable/storage_bar_right_box" />
 
                 <TextView
                     android:id="@+id/plugin_not_downloaded_txt"
@@ -166,33 +176,35 @@
                     tools:text="Not downloaded 3" />
             </LinearLayout>
         </LinearLayout>
+
         <LinearLayout
             android:id="@+id/add_repo_button_imageview_holder"
-            android:paddingStart="10dp"
-            android:paddingEnd="10dp"
-            android:orientation="vertical"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp">
 
             <TextView
-                android:textColor="?attr/textColor"
-                android:layout_gravity="center"
-
-                android:text="@string/add_repository"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-            <ImageView
-                android:background="@drawable/outline_drawable"
-                android:nextFocusLeft="@id/plugin_storage_appbar"
-                android:layout_gravity="center"
+                android:layout_height="wrap_content"
 
+                android:layout_gravity="center"
+                android:text="@string/add_repository"
+                android:textColor="?attr/textColor" />
+
+            <ImageView
                 android:id="@+id/add_repo_button_imageview"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:src="@drawable/ic_baseline_add_24"
+                android:layout_gravity="center"
+
+                android:background="@drawable/outline_drawable"
                 android:contentDescription="@string/add_repository"
-                app:tint="?attr/textColor">
-            </ImageView>
+                android:focusable="true"
+                android:nextFocusLeft="@id/plugin_storage_appbar"
+                android:src="@drawable/ic_baseline_add_24"
+                app:tint="?attr/textColor" />
         </LinearLayout>
 
     </LinearLayout>

@@ -22,17 +22,23 @@ const val SEARCH_ACTION_SHOW_METADATA = 1
 const val SEARCH_ACTION_PLAY_FILE = 2
 const val SEARCH_ACTION_FOCUSED = 4
 
-class SearchClickCallback(val action: Int, val view: View, val position : Int, val card: SearchResponse)
+class SearchClickCallback(
+    val action: Int,
+    val view: View,
+    val position: Int,
+    val card: SearchResponse
+)
 
 class SearchAdapter(
     private val cardList: MutableList<SearchResponse>,
     private val resView: AutofitRecyclerView,
     private val clickCallback: (SearchClickCallback) -> Unit,
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-    var hasNext : Boolean = false
+    var hasNext: Boolean = false
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        val layout = if(parent.context.IsBottomLayout()) R.layout.search_result_grid_expanded else R.layout.search_result_grid
+        val layout =
+            if (parent.context.IsBottomLayout()) R.layout.search_result_grid_expanded else R.layout.search_result_grid
         return CardViewHolder(
             LayoutInflater.from(parent.context).inflate(layout, parent, false),
             clickCallback,
@@ -73,7 +79,8 @@ class SearchAdapter(
         val cardView: ImageView = itemView.imageView
 
         private val compactView = false//itemView.context.getGridIsCompact()
-        private val coverHeight: Int = if (compactView) 80.toPx else (resView.itemWidth / 0.68).roundToInt()
+        private val coverHeight: Int =
+            if (compactView) 80.toPx else (resView.itemWidth / 0.68).roundToInt()
 
         fun bind(card: SearchResponse, position: Int) {
             if (!compactView) {
@@ -90,7 +97,10 @@ class SearchAdapter(
     }
 }
 
-class SearchResponseDiffCallback(private val oldList: List<SearchResponse>, private val newList: List<SearchResponse>) :
+class SearchResponseDiffCallback(
+    private val oldList: List<SearchResponse>,
+    private val newList: List<SearchResponse>
+) :
     DiffUtil.Callback() {
     override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int) =
         oldList[oldItemPosition].name == newList[newItemPosition].name

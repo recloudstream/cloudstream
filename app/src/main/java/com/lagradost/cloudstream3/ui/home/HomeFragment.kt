@@ -7,99 +7,83 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.content.res.Configuration
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.widget.SearchView
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
-import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.*
 import androidx.preference.PreferenceManager
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.button.MaterialButton
+import com.google.android.material.chip.Chip
+import com.google.android.material.chip.ChipGroup
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.APIHolder.apis
 import com.lagradost.cloudstream3.APIHolder.filterProviderByPreferredMedia
-import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
 import com.lagradost.cloudstream3.APIHolder.getApiProviderLangSettings
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.MainActivity.Companion.afterPluginsLoadedEvent
+import com.lagradost.cloudstream3.MainActivity.Companion.bookmarksUpdatedEvent
 import com.lagradost.cloudstream3.MainActivity.Companion.mainPluginsLoadedEvent
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.observe
-import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.OAuth2Apis
 import com.lagradost.cloudstream3.ui.APIRepository.Companion.noneApi
 import com.lagradost.cloudstream3.ui.APIRepository.Companion.randomApi
 import com.lagradost.cloudstream3.ui.AutofitRecyclerView
 import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.quicksearch.QuickSearchFragment
-import com.lagradost.cloudstream3.ui.result.START_ACTION_RESUME_LATEST
-import com.lagradost.cloudstream3.ui.result.setLinearListLayout
 import com.lagradost.cloudstream3.ui.search.*
 import com.lagradost.cloudstream3.ui.search.SearchHelper.handleSearchClickCallback
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTrueTvSettings
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
+import com.lagradost.cloudstream3.utils.AppUtils.addProgramsToContinueWatching
 import com.lagradost.cloudstream3.utils.AppUtils.isRecyclerScrollable
+import com.lagradost.cloudstream3.utils.AppUtils.loadResult
 import com.lagradost.cloudstream3.utils.AppUtils.loadSearchResult
-import com.lagradost.cloudstream3.utils.AppUtils.setMaxViewPoolSize
+import com.lagradost.cloudstream3.utils.AppUtils.ownHide
+import com.lagradost.cloudstream3.utils.AppUtils.ownShow
+import com.lagradost.cloudstream3.utils.AppUtils.setDefaultFocus
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStore.setKey
 import com.lagradost.cloudstream3.utils.DataStoreHelper
-import com.lagradost.cloudstream3.utils.DataStoreHelper.deleteAllBookmarkedData
-import com.lagradost.cloudstream3.utils.DataStoreHelper.deleteAllResumeStateIds
-import com.lagradost.cloudstream3.utils.DataStoreHelper.removeLastWatched
-import com.lagradost.cloudstream3.utils.DataStoreHelper.setResultWatchState
 import com.lagradost.cloudstream3.utils.Event
-import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showOptionSelectStringRes
 import com.lagradost.cloudstream3.utils.SubtitleHelper.getFlagFromIso
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
-import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbarView
 import com.lagradost.cloudstream3.utils.UIHelper.getSpanCount
 import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIconsAndNoStringRes
-import com.lagradost.cloudstream3.utils.UIHelper.setImage
-import com.lagradost.cloudstream3.utils.UIHelper.setImageBlur
 import com.lagradost.cloudstream3.utils.USER_SELECTED_HOMEPAGE_API
-import com.lagradost.cloudstream3.widget.CenterZoomLayoutManager
+import kotlinx.android.synthetic.main.activity_main_tv.*
 import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.android.synthetic.main.fragment_home.home_api_fab
-import kotlinx.android.synthetic.main.fragment_home.home_bookmarked_child_recyclerview
-import kotlinx.android.synthetic.main.fragment_home.home_bookmarked_holder
 import kotlinx.android.synthetic.main.fragment_home.home_change_api_loading
-import kotlinx.android.synthetic.main.fragment_home.home_loaded
 import kotlinx.android.synthetic.main.fragment_home.home_loading
 import kotlinx.android.synthetic.main.fragment_home.home_loading_error
 import kotlinx.android.synthetic.main.fragment_home.home_loading_shimmer
 import kotlinx.android.synthetic.main.fragment_home.home_loading_statusbar
-import kotlinx.android.synthetic.main.fragment_home.home_main_poster_recyclerview
 import kotlinx.android.synthetic.main.fragment_home.home_master_recycler
-import kotlinx.android.synthetic.main.fragment_home.home_plan_to_watch_btt
-import kotlinx.android.synthetic.main.fragment_home.home_provider_meta_info
-import kotlinx.android.synthetic.main.fragment_home.home_provider_name
 import kotlinx.android.synthetic.main.fragment_home.home_reload_connection_open_in_browser
 import kotlinx.android.synthetic.main.fragment_home.home_reload_connectionerror
-import kotlinx.android.synthetic.main.fragment_home.home_statusbar
-import kotlinx.android.synthetic.main.fragment_home.home_type_completed_btt
-import kotlinx.android.synthetic.main.fragment_home.home_type_dropped_btt
-import kotlinx.android.synthetic.main.fragment_home.home_type_on_hold_btt
-import kotlinx.android.synthetic.main.fragment_home.home_type_watching_btt
-import kotlinx.android.synthetic.main.fragment_home.home_watch_child_recyclerview
-import kotlinx.android.synthetic.main.fragment_home.home_watch_holder
-import kotlinx.android.synthetic.main.fragment_home.home_watch_parent_item_title
 import kotlinx.android.synthetic.main.fragment_home.result_error_text
 import kotlinx.android.synthetic.main.fragment_home_tv.*
+import kotlinx.android.synthetic.main.fragment_result.*
+import kotlinx.android.synthetic.main.fragment_search.*
 import kotlinx.android.synthetic.main.home_episodes_expanded.*
+import kotlinx.android.synthetic.main.tvtypes_chips.*
+import kotlinx.android.synthetic.main.tvtypes_chips.view.*
 import java.util.*
+
 
 const val HOME_BOOKMARK_VALUE_LIST = "home_bookmarked_last_list"
 const val HOME_PREF_HOMEPAGE = "home_pref_homepage"
@@ -125,26 +109,32 @@ class HomeFragment : Fragment() {
 
         val errorProfilePic = errorProfilePics.random()
 
-        fun Activity.loadHomepageList(
-            item: HomePageList,
-            deleteCallback: (() -> Unit)? = null,
-        ) {
-            loadHomepageList(
-                expand = HomeViewModel.ExpandableHomepageList(item, 1, false),
-                deleteCallback = deleteCallback,
-                expandCallback = null
-            )
-        }
+        //fun Activity.loadHomepageList(
+        //    item: HomePageList,
+        //    deleteCallback: (() -> Unit)? = null,
+        //) {
+        //    loadHomepageList(
+        //        expand = HomeViewModel.ExpandableHomepageList(item, 1, false),
+        //        deleteCallback = deleteCallback,
+        //        expandCallback = null
+        //    )
+        //}
 
+        // returns a BottomSheetDialog that will be hidden with OwnHidden upon hide, and must be saved to be able call ownShow in onCreateView
         fun Activity.loadHomepageList(
             expand: HomeViewModel.ExpandableHomepageList,
             deleteCallback: (() -> Unit)? = null,
-            expandCallback: (suspend (String) -> HomeViewModel.ExpandableHomepageList?)? = null
-        ) {
+            expandCallback: (suspend (String) -> HomeViewModel.ExpandableHomepageList?)? = null,
+            dismissCallback : (() -> Unit),
+        ): BottomSheetDialog {
             val context = this
             val bottomSheetDialogBuilder = BottomSheetDialog(context)
+
             bottomSheetDialogBuilder.setContentView(R.layout.home_episodes_expanded)
             val title = bottomSheetDialogBuilder.findViewById<TextView>(R.id.home_expanded_text)!!
+
+            //title.findViewTreeLifecycleOwner().lifecycle.addObserver()
+
             val item = expand.list
             title.text = item.name
             val recycle =
@@ -152,6 +142,23 @@ class HomeFragment : Fragment() {
             val titleHolder =
                 bottomSheetDialogBuilder.findViewById<FrameLayout>(R.id.home_expanded_drag_down)!!
 
+            // main {
+            //(bottomSheetDialogBuilder.ownerActivity as androidx.fragment.app.FragmentActivity?)?.supportFragmentManager?.fragments?.lastOrNull()?.viewLifecycleOwner?.apply {
+            //    println("GOT LIFE: lifecycle $this")
+            //    this.lifecycle.addObserver(object : DefaultLifecycleObserver {
+            //        override fun onResume(owner: LifecycleOwner) {
+            //            super.onResume(owner)
+            //            println("onResume!!!!")
+            //            bottomSheetDialogBuilder?.ownShow()
+            //        }
+
+            //        override fun onStop(owner: LifecycleOwner) {
+            //            super.onStop(owner)
+            //            bottomSheetDialogBuilder?.ownHide()
+            //        }
+            //    })
+            //}
+            // }
             val delete = bottomSheetDialogBuilder.home_expanded_delete
             delete.isGone = deleteCallback == null
             if (deleteCallback != null) {
@@ -177,7 +184,7 @@ class HomeFragment : Fragment() {
                             )
                             .setPositiveButton(R.string.delete, dialogClickListener)
                             .setNegativeButton(R.string.cancel, dialogClickListener)
-                            .show()
+                            .show().setDefaultFocus()
                     } catch (e: Exception) {
                         logError(e)
                         // ye you somehow fucked up formatting did you?
@@ -196,7 +203,8 @@ class HomeFragment : Fragment() {
             recycle.adapter = SearchAdapter(item.list.toMutableList(), recycle) { callback ->
                 handleSearchClickCallback(this, callback)
                 if (callback.action == SEARCH_ACTION_LOAD || callback.action == SEARCH_ACTION_PLAY_FILE) {
-                    bottomSheetDialogBuilder.dismissSafe(this)
+                    bottomSheetDialogBuilder.ownHide() // we hide here because we want to resume it later
+                    //bottomSheetDialogBuilder.dismissSafe(this)
                 }
             }.apply {
                 hasNext = expand.hasNext
@@ -237,36 +245,92 @@ class HomeFragment : Fragment() {
             configEvent += spanListener
 
             bottomSheetDialogBuilder.setOnDismissListener {
+                dismissCallback.invoke()
                 configEvent -= spanListener
             }
 
             //(recycle.adapter as SearchAdapter).notifyDataSetChanged()
 
             bottomSheetDialogBuilder.show()
+            return bottomSheetDialogBuilder
         }
 
         fun getPairList(
-            anime: MaterialButton?,
-            cartoons: MaterialButton?,
-            tvs: MaterialButton?,
-            docs: MaterialButton?,
-            movies: MaterialButton?,
-            asian: MaterialButton?,
-            livestream: MaterialButton?,
-            nsfw: MaterialButton?,
-            others: MaterialButton?,
-        ): List<Pair<MaterialButton?, List<TvType>>> {
+            anime: Chip?,
+            cartoons: Chip?,
+            tvs: Chip?,
+            docs: Chip?,
+            movies: Chip?,
+            asian: Chip?,
+            livestream: Chip?,
+            nsfw: Chip?,
+            others: Chip?,
+        ): List<Pair<Chip?, List<TvType>>> {
+            // This list should be same order as home screen to aid navigation
             return listOf(
-                Pair(anime, listOf(TvType.Anime, TvType.OVA, TvType.AnimeMovie)),
-                Pair(cartoons, listOf(TvType.Cartoon)),
-                Pair(tvs, listOf(TvType.TvSeries)),
-                Pair(docs, listOf(TvType.Documentary)),
                 Pair(movies, listOf(TvType.Movie, TvType.Torrent)),
+                Pair(tvs, listOf(TvType.TvSeries)),
+                Pair(anime, listOf(TvType.Anime, TvType.OVA, TvType.AnimeMovie)),
                 Pair(asian, listOf(TvType.AsianDrama)),
+                Pair(cartoons, listOf(TvType.Cartoon)),
+                Pair(docs, listOf(TvType.Documentary)),
                 Pair(livestream, listOf(TvType.Live)),
                 Pair(nsfw, listOf(TvType.NSFW)),
                 Pair(others, listOf(TvType.Others)),
             )
+        }
+
+        private fun getPairList(header: ChipGroup) = getPairList(
+            header.home_select_anime,
+            header.home_select_cartoons,
+            header.home_select_tv_series,
+            header.home_select_documentaries,
+            header.home_select_movies,
+            header.home_select_asian,
+            header.home_select_livestreams,
+            header.home_select_nsfw,
+            header.home_select_others
+        )
+
+        fun validateChips(header: ChipGroup?, validTypes: List<TvType>) {
+            if (header == null) return
+            val pairList = getPairList(header)
+            for ((button, types) in pairList) {
+                val isValid = validTypes.any { types.contains(it) }
+                button?.isVisible = isValid
+            }
+        }
+
+        fun updateChips(header: ChipGroup?, selectedTypes: List<TvType>) {
+            if (header == null) return
+            val pairList = getPairList(header)
+            for ((button, types) in pairList) {
+                button?.isChecked =
+                    button?.isVisible == true && selectedTypes.any { types.contains(it) }
+            }
+        }
+
+        fun bindChips(
+            header: ChipGroup?,
+            selectedTypes: List<TvType>,
+            validTypes: List<TvType>,
+            callback: (List<TvType>) -> Unit
+        ) {
+            if (header == null) return
+            val pairList = getPairList(header)
+            for ((button, types) in pairList) {
+                val isValid = validTypes.any { types.contains(it) }
+                button?.isVisible = isValid
+                button?.isChecked = isValid && selectedTypes.any { types.contains(it) }
+                button?.setOnCheckedChangeListener { _, _ ->
+                    val list = ArrayList<TvType>()
+                    for ((sbutton, vvalidTypes) in pairList) {
+                        if (sbutton?.isChecked == true)
+                            list.addAll(vvalidTypes)
+                    }
+                    callback(list)
+                }
+            }
         }
 
         fun Context.selectHomepage(selectedApiName: String?, callback: (String) -> Unit) {
@@ -279,10 +343,13 @@ class HomeFragment : Fragment() {
             val builder =
                 BottomSheetDialog(this)
 
+            builder.behavior.state = BottomSheetBehavior.STATE_EXPANDED
             builder.setContentView(R.layout.home_select_mainpage)
             builder.show()
             builder.let { dialog ->
-                val isMultiLang = getApiProviderLangSettings().size > 1
+                val isMultiLang = getApiProviderLangSettings().let { set ->
+                    set.size > 1 || set.contains(AllLanguagesName)
+                }
                 //dialog.window?.setGravity(Gravity.BOTTOM)
 
                 var currentApiName = selectedApiName
@@ -293,20 +360,8 @@ class HomeFragment : Fragment() {
                     ?.toMutableList()
                     ?: mutableListOf(TvType.Movie, TvType.TvSeries)
 
-                val anime = dialog.findViewById<MaterialButton>(R.id.home_select_anime)
-                val cartoons = dialog.findViewById<MaterialButton>(R.id.home_select_cartoons)
-                val tvs = dialog.findViewById<MaterialButton>(R.id.home_select_tv_series)
-                val docs = dialog.findViewById<MaterialButton>(R.id.home_select_documentaries)
-                val movies = dialog.findViewById<MaterialButton>(R.id.home_select_movies)
-                val asian = dialog.findViewById<MaterialButton>(R.id.home_select_asian)
-                val livestream = dialog.findViewById<MaterialButton>(R.id.home_select_livestreams)
-                val nsfw = dialog.findViewById<MaterialButton>(R.id.home_select_nsfw)
-                val others = dialog.findViewById<MaterialButton>(R.id.home_select_others)
                 val cancelBtt = dialog.findViewById<MaterialButton>(R.id.cancel_btt)
                 val applyBtt = dialog.findViewById<MaterialButton>(R.id.apply_btt)
-
-                val pairList =
-                    getPairList(anime, cartoons, tvs, docs, movies, asian, livestream, nsfw, others)
 
                 cancelBtt?.setOnClickListener {
                     dialog.dismissSafe()
@@ -352,38 +407,14 @@ class HomeFragment : Fragment() {
                     arrayAdapter.notifyDataSetChanged()
                 }
 
-                for ((button, validTypes) in pairList) {
-                    val isValid =
-                        validAPIs.any { api -> validTypes.any { api.supportedTypes.contains(it) } }
-                    button?.isVisible = isValid
-                    if (isValid) {
-                        fun buttonContains(): Boolean {
-                            return preSelectedTypes.any { validTypes.contains(it) }
-                        }
-
-                        button?.isSelected = buttonContains()
-                        button?.setOnClickListener {
-                            preSelectedTypes.clear()
-                            preSelectedTypes.addAll(validTypes)
-                            for ((otherButton, _) in pairList) {
-                                otherButton?.isSelected = false
-                            }
-                            button.isSelected = true
-                            updateList()
-                        }
-
-                        button?.setOnLongClickListener {
-                            if (!buttonContains()) {
-                                button.isSelected = true
-                                preSelectedTypes.addAll(validTypes)
-                            } else {
-                                button.isSelected = false
-                                preSelectedTypes.removeAll(validTypes)
-                            }
-                            updateList()
-                            return@setOnLongClickListener true
-                        }
-                    }
+                bindChips(
+                    dialog.home_select_group,
+                    preSelectedTypes,
+                    validAPIs.flatMap { it.supportedTypes }.distinct()
+                ) { list ->
+                    preSelectedTypes.clear()
+                    preSelectedTypes.addAll(list)
+                    updateList()
                 }
                 updateList()
             }
@@ -399,14 +430,15 @@ class HomeFragment : Fragment() {
     ): View? {
         //homeViewModel =
         //     ViewModelProvider(this).get(HomeViewModel::class.java)
+        bottomSheetDialog?.ownShow()
         val layout =
             if (isTvSettings()) R.layout.fragment_home_tv else R.layout.fragment_home
         return inflater.inflate(layout, container, false)
     }
 
-    private fun toggleMainVisibility(visible: Boolean) {
-        home_main_holder?.isVisible = visible
-        home_main_poster_recyclerview?.isVisible = visible
+    override fun onDestroyView() {
+        bottomSheetDialog?.ownHide()
+        super.onDestroyView()
     }
 
     private fun fixGrid() {
@@ -431,19 +463,26 @@ class HomeFragment : Fragment() {
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
+        //(home_preview_viewpager?.adapter as? HomeScrollAdapter)?.notifyDataSetChanged()
         fixGrid()
+    }
+
+    fun bookmarksUpdated(_data : Boolean) {
+        reloadStored()
     }
 
     override fun onResume() {
         super.onResume()
         reloadStored()
-        afterPluginsLoadedEvent += ::firstLoadHomePage
-        mainPluginsLoadedEvent += ::firstLoadHomePage
+        bookmarksUpdatedEvent += ::bookmarksUpdated
+        afterPluginsLoadedEvent += ::afterPluginsLoaded
+        mainPluginsLoadedEvent += ::afterMainPluginsLoaded
     }
 
     override fun onStop() {
-        afterPluginsLoadedEvent -= ::firstLoadHomePage
-        mainPluginsLoadedEvent -= ::firstLoadHomePage
+        bookmarksUpdatedEvent -= ::bookmarksUpdated
+        afterPluginsLoadedEvent -= ::afterPluginsLoaded
+        mainPluginsLoadedEvent -= ::afterMainPluginsLoaded
         super.onStop()
     }
 
@@ -456,34 +495,26 @@ class HomeFragment : Fragment() {
         homeViewModel.loadStoredData(list)
     }
 
-    private fun firstLoadHomePage(successful: Boolean = false) {
-        // dirty hack to make it only load once
+    private fun afterMainPluginsLoaded(unused: Boolean = false) {
         loadHomePage(false)
     }
 
-    private fun loadHomePage(forceReload: Boolean = true) {
+    private fun afterPluginsLoaded(forceReload: Boolean) {
+        loadHomePage(forceReload)
+    }
+
+    private fun loadHomePage(forceReload: Boolean) {
         val apiName = context?.getKey<String>(USER_SELECTED_HOMEPAGE_API)
 
-        if (homeViewModel.apiName.value != apiName || apiName == null) {
+        if (homeViewModel.apiName.value != apiName || apiName == null || forceReload) {
             //println("Caught home: " + homeViewModel.apiName.value + " at " + apiName)
             homeViewModel.loadAndCancel(apiName, forceReload)
         }
     }
 
-    /*private fun handleBack(poppedFragment: Boolean) {
-        if (poppedFragment) {
-            reloadStored()
-        }
-    }*/
-
-    private fun focusCallback(card: SearchResponse) {
-        home_focus_text?.text = card.name
-        home_blur_poster?.setImageBlur(card.posterUrl, 50)
-    }
-
     private fun homeHandleSearch(callback: SearchClickCallback) {
         if (callback.action == SEARCH_ACTION_FOCUSED) {
-            focusCallback(callback.card)
+            //focusCallback(callback.card)
         } else {
             handleSearchClickCallback(activity, callback)
         }
@@ -492,12 +523,13 @@ class HomeFragment : Fragment() {
     private var currentApiName: String? = null
     private var toggleRandomButton = false
 
+    private var bottomSheetDialog: BottomSheetDialog? = null
+
     @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         fixGrid()
 
-        home_change_api?.setOnClickListener(apiChangeClickListener)
         home_change_api_loading?.setOnClickListener(apiChangeClickListener)
         home_api_fab?.setOnClickListener(apiChangeClickListener)
         home_random?.setOnClickListener {
@@ -506,104 +538,27 @@ class HomeFragment : Fragment() {
             }
         }
 
-        //Disable Random button, if its toggled off on settings
+        //Load value for toggling Random button. Hide at startup
         context?.let {
             val settingsManager = PreferenceManager.getDefaultSharedPreferences(it)
             toggleRandomButton =
                 settingsManager.getBoolean(getString(R.string.random_button_key), false)
-            home_random?.isVisible = toggleRandomButton
-            if (!toggleRandomButton) {
-                home_random?.visibility = View.GONE
-            }
+            home_random?.visibility = View.GONE
+        }
+
+        observe(homeViewModel.preview) { preview ->
+            (home_master_recycler?.adapter as? HomeParentItemAdapterPreview?)?.setPreviewData(
+                preview
+            )
         }
 
         observe(homeViewModel.apiName) { apiName ->
             currentApiName = apiName
-            // setKey(USER_SELECTED_HOMEPAGE_API, apiName)
             home_api_fab?.text = apiName
-            home_provider_name?.text = apiName
-            try {
-                home_search?.queryHint = getString(R.string.search_hint_site).format(apiName)
-            } catch (e: Exception) {
-                logError(e)
-            }
-            home_provider_meta_info?.isVisible = false
-
-            getApiFromNameNull(apiName)?.let { currentApi ->
-                val typeChoices = listOf(
-                    Pair(R.string.movies, listOf(TvType.Movie)),
-                    Pair(R.string.tv_series, listOf(TvType.TvSeries)),
-                    Pair(R.string.documentaries, listOf(TvType.Documentary)),
-                    Pair(R.string.cartoons, listOf(TvType.Cartoon)),
-                    Pair(R.string.anime, listOf(TvType.Anime, TvType.OVA, TvType.AnimeMovie)),
-                    Pair(R.string.torrent, listOf(TvType.Torrent)),
-                    Pair(R.string.asian_drama, listOf(TvType.AsianDrama)),
-                ).filter { item -> currentApi.supportedTypes.any { type -> item.second.contains(type) } }
-                home_provider_meta_info?.text =
-                    typeChoices.joinToString(separator = ", ") { getString(it.first) }
-                home_provider_meta_info?.isVisible = true
-            }
+            (home_master_recycler?.adapter as? HomeParentItemAdapterPreview?)?.setApiName(
+                apiName
+            )
         }
-
-        home_main_poster_recyclerview?.adapter =
-            HomeChildItemAdapter(
-                mutableListOf(),
-                R.layout.home_result_big_grid,
-                nextFocusUp = home_main_poster_recyclerview.nextFocusUpId,
-                nextFocusDown = home_main_poster_recyclerview.nextFocusDownId
-            ) { callback ->
-                homeHandleSearch(callback)
-            }
-        home_main_poster_recyclerview.setLinearListLayout()
-        observe(homeViewModel.randomItems) { items ->
-            if (items.isNullOrEmpty()) {
-                toggleMainVisibility(false)
-            } else {
-                val tempAdapter = home_main_poster_recyclerview.adapter as HomeChildItemAdapter?
-                // no need to reload if it has the same data
-                if (tempAdapter != null && tempAdapter.cardList == items) {
-                    toggleMainVisibility(true)
-                    return@observe
-                }
-
-                val randomSize = items.size
-                tempAdapter?.updateList(items)
-                if (!isTvSettings()) {
-                    home_main_poster_recyclerview?.post {
-                        (home_main_poster_recyclerview?.layoutManager as CenterZoomLayoutManager?)?.let { manager ->
-                            manager.updateSize(forceUpdate = true)
-                            if (randomSize > 2) {
-                                manager.scrollToPosition(randomSize / 2)
-                                manager.snap { dx ->
-                                    home_main_poster_recyclerview?.post {
-                                        // this is the best I can do, fuck android for not including instant scroll
-                                        home_main_poster_recyclerview?.smoothScrollBy(dx, 0)
-                                    }
-                                }
-                            }
-                        }
-                    }
-                } else {
-                    items.firstOrNull()?.let {
-                        focusCallback(it)
-                    }
-                }
-                toggleMainVisibility(true)
-            }
-        }
-
-        home_search?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String): Boolean {
-                QuickSearchFragment.pushSearch(activity, query, currentApiName?.let { arrayOf(it) })
-
-                return true
-            }
-
-            override fun onQueryTextChange(newText: String): Boolean {
-                //searchViewModel.quickSearch(newText)
-                return true
-            }
-        })
 
         observe(homeViewModel.page) { data ->
             when (data) {
@@ -611,9 +566,9 @@ class HomeFragment : Fragment() {
                     home_loading_shimmer?.stopShimmer()
 
                     val d = data.value
+                    val mutableListOfResponse = mutableListOf<SearchResponse>()
                     listHomepageItems.clear()
 
-                    // println("ITEMCOUNT: ${d.values.size} ${home_master_recycler?.adapter?.itemCount}")
                     (home_master_recycler?.adapter as? ParentItemAdapter?)?.updateList(
                         d.values.toMutableList(),
                         home_master_recycler
@@ -621,8 +576,14 @@ class HomeFragment : Fragment() {
 
                     home_loading?.isVisible = false
                     home_loading_error?.isVisible = false
-                    home_loaded?.isVisible = true
+                    home_master_recycler?.isVisible = true
+                    //home_loaded?.isVisible = true
                     if (toggleRandomButton) {
+                        //Flatten list
+                        d.values.forEach { dlist ->
+                            mutableListOfResponse.addAll(dlist.list.list)
+                        }
+                        listHomepageItems.addAll(mutableListOfResponse.distinctBy { it.url })
                         home_random?.isVisible = listHomepageItems.isNotEmpty()
                     } else {
                         home_random?.isGone = true
@@ -656,354 +617,122 @@ class HomeFragment : Fragment() {
 
                     home_loading?.isVisible = false
                     home_loading_error?.isVisible = true
-                    home_loaded?.isVisible = false
+                    home_master_recycler?.isVisible = false
+                    //home_loaded?.isVisible = false
                 }
                 is Resource.Loading -> {
                     (home_master_recycler?.adapter as? ParentItemAdapter?)?.updateList(listOf())
                     home_loading_shimmer?.startShimmer()
                     home_loading?.isVisible = true
                     home_loading_error?.isVisible = false
-                    home_loaded?.isVisible = false
+                    home_master_recycler?.isVisible = false
+                    //home_loaded?.isVisible = false
                 }
             }
         }
 
-        val toggleList = listOf(
-            Pair(home_type_watching_btt, WatchType.WATCHING),
-            Pair(home_type_completed_btt, WatchType.COMPLETED),
-            Pair(home_type_dropped_btt, WatchType.DROPPED),
-            Pair(home_type_on_hold_btt, WatchType.ONHOLD),
-            Pair(home_plan_to_watch_btt, WatchType.PLANTOWATCH),
-        )
 
-        for (item in toggleList) {
-            val watch = item.second
-            item.first?.setOnClickListener {
-                homeViewModel.loadStoredData(EnumSet.of(watch))
-            }
-
-            item.first?.setOnLongClickListener { itemView ->
-                val list = EnumSet.noneOf(WatchType::class.java)
-                itemView.context.getKey<IntArray>(HOME_BOOKMARK_VALUE_LIST)
-                    ?.map { WatchType.fromInternalId(it) }?.let {
-                        list.addAll(it)
-                    }
-
-                if (list.contains(watch)) {
-                    list.remove(watch)
-                } else {
-                    list.add(watch)
-                }
-                homeViewModel.loadStoredData(list)
-                return@setOnLongClickListener true
-            }
-        }
 
         observe(homeViewModel.availableWatchStatusTypes) { availableWatchStatusTypes ->
             context?.setKey(
                 HOME_BOOKMARK_VALUE_LIST,
                 availableWatchStatusTypes.first.map { it.internalId }.toIntArray()
             )
-
-            for (item in toggleList) {
-                val watch = item.second
-                item.first?.apply {
-                    isVisible = availableWatchStatusTypes.second.contains(watch)
-                    isSelected = availableWatchStatusTypes.first.contains(watch)
-                }
-            }
-
-            /*home_bookmark_select?.setOnClickListener {
-                it.popupMenuNoIcons(availableWatchStatusTypes.second.map { type ->
-                    Pair(
-                        type.internalId,
-                        type.stringRes
-                    )
-                }) {
-                    homeViewModel.loadStoredData(it.context, WatchType.fromInternalId(this.itemId))
-                }
-            }
-            home_bookmarked_parent_item_title?.text = getString(availableWatchStatusTypes.first.stringRes)*/
+            (home_master_recycler?.adapter as? HomeParentItemAdapterPreview?)?.setAvailableWatchStatusTypes(
+                availableWatchStatusTypes
+            )
         }
 
-        observe(homeViewModel.bookmarks) { (isVis, bookmarks) ->
-            home_bookmarked_holder.isVisible = isVis
-
-            (home_bookmarked_child_recyclerview?.adapter as? HomeChildItemAdapter?)?.updateList(
-                bookmarks
+        observe(homeViewModel.bookmarks) { data ->
+            (home_master_recycler?.adapter as? HomeParentItemAdapterPreview?)?.setBookmarkData(
+                data
             )
-
-            home_bookmarked_child_more_info?.setOnClickListener {
-                activity?.loadHomepageList(
-                    HomePageList(
-                        getString(R.string.error_bookmarks_text), //home_bookmarked_parent_item_title?.text?.toString() ?: getString(R.string.error_bookmarks_text),
-                        bookmarks
-                    )
-                ) {
-                    deleteAllBookmarkedData()
-                    homeViewModel.loadStoredData(null)
-                }
-            }
         }
 
         observe(homeViewModel.resumeWatching) { resumeWatching ->
-            home_watch_holder?.isVisible = resumeWatching.isNotEmpty()
-            (home_watch_child_recyclerview?.adapter as? HomeChildItemAdapter?)?.updateList(
+            (home_master_recycler?.adapter as? HomeParentItemAdapterPreview?)?.setResumeWatchingData(
                 resumeWatching
             )
-
-            //if (context?.isTvSettings() == true) {
-            //    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            //        context?.addProgramsToContinueWatching(resumeWatching.mapNotNull { it as? DataStoreHelper.ResumeWatchingResult })
-            //    }
-            //}
-
-            home_watch_child_more_info?.setOnClickListener {
-                activity?.loadHomepageList(
-                    HomePageList(
-                        home_watch_parent_item_title?.text?.toString()
-                            ?: getString(R.string.continue_watching),
-                        resumeWatching
-                    )
-                ) {
-                    deleteAllResumeStateIds()
-                    homeViewModel.loadResumeWatching()
+            if (isTrueTvSettings()) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    ioSafe {
+                        activity?.addProgramsToContinueWatching(resumeWatching.mapNotNull { it as? DataStoreHelper.ResumeWatchingResult })
+                    }
                 }
             }
         }
 
-        home_bookmarked_child_recyclerview.adapter = HomeChildItemAdapter(
-            ArrayList(),
-            nextFocusUp = home_bookmarked_child_recyclerview?.nextFocusUpId,
-            nextFocusDown = home_bookmarked_child_recyclerview?.nextFocusDownId
-        ) { callback ->
-            if (callback.action == SEARCH_ACTION_SHOW_METADATA) {
-                activity?.showOptionSelectStringRes(
-                    callback.view,
-                    callback.card.posterUrl,
-                    listOf(
-                        R.string.action_open_watching,
-                        R.string.action_remove_from_bookmarks,
-                    ),
-                    listOf(
-                        R.string.action_open_play,
-                        R.string.action_open_watching,
-                        R.string.action_remove_from_bookmarks
-                    )
-                ) { (isTv, actionId) ->
-                    fun play() {
-                        activity.loadSearchResult(callback.card, START_ACTION_RESUME_LATEST)
-                        reloadStored()
-                    }
 
-                    fun remove() {
-                        setResultWatchState(callback.card.id, WatchType.NONE.internalId)
-                        reloadStored()
-                    }
-
-                    fun info() {
-                        handleSearchClickCallback(
-                            activity,
-                            SearchClickCallback(
-                                SEARCH_ACTION_LOAD,
-                                callback.view,
-                                -1,
-                                callback.card
-                            )
-                        )
-                        reloadStored()
-                    }
-
-                    if (isTv) {
-                        when (actionId) {
-                            0 -> {
-                                play()
-                            }
-                            1 -> {
-                                info()
-                            }
-                            2 -> {
-                                remove()
-                            }
-                        }
-                    } else {
-                        when (actionId) {
-                            0 -> {
-                                info()
-                            }
-                            1 -> {
-                                remove()
-                            }
-                        }
-                    }
-                }
-            } else {
-                homeHandleSearch(callback)
-            }
-        }
-        home_watch_child_recyclerview.setLinearListLayout()
-        home_bookmarked_child_recyclerview.setLinearListLayout()
-
-        home_watch_child_recyclerview?.adapter = HomeChildItemAdapter(
-            ArrayList(),
-            nextFocusUp = home_watch_child_recyclerview?.nextFocusUpId,
-            nextFocusDown = home_watch_child_recyclerview?.nextFocusDownId
-        ) { callback ->
-            if (callback.action == SEARCH_ACTION_SHOW_METADATA) {
-                activity?.showOptionSelectStringRes(
-                    callback.view,
-                    callback.card.posterUrl,
-                    listOf(
-                        R.string.action_open_watching,
-                        R.string.action_remove_watching
-                    ),
-                    listOf(
-                        R.string.action_open_play,
-                        R.string.action_open_watching,
-                        R.string.action_remove_watching
-                    )
-                ) { (isTv, actionId) ->
-                    fun play() {
-                        activity.loadSearchResult(callback.card, START_ACTION_RESUME_LATEST)
-                        reloadStored()
-                    }
-
-                    fun remove() {
-                        val card = callback.card
-                        if (card is DataStoreHelper.ResumeWatchingResult) {
-                            removeLastWatched(card.parentId)
-                            reloadStored()
-                        }
-                    }
-
-                    fun info() {
-                        handleSearchClickCallback(
-                            activity,
-                            SearchClickCallback(
-                                SEARCH_ACTION_LOAD,
-                                callback.view,
-                                -1,
-                                callback.card
-                            )
-                        )
-                        reloadStored()
-                    }
-
-                    if (isTv) {
-                        when (actionId) {
-                            0 -> {
-                                play()
-                            }
-                            1 -> {
-                                info()
-                            }
-                            2 -> {
-                                remove()
-                            }
-                        }
-                    } else {
-                        when (actionId) {
-                            0 -> {
-                                info()
-                            }
-                            1 -> {
-                                remove()
-                            }
-                        }
-                    }
-
-                }
-            } else {
-                homeHandleSearch(callback)
-            }
-        }
-
-        context?.fixPaddingStatusbarView(home_statusbar)
+        //context?.fixPaddingStatusbarView(home_statusbar)
+        //context?.fixPaddingStatusbar(home_padding)
         context?.fixPaddingStatusbar(home_loading_statusbar)
 
-        home_master_recycler.adapter =
-            ParentItemAdapter(mutableListOf(), { callback ->
+        home_master_recycler?.adapter =
+            HomeParentItemAdapterPreview(mutableListOf(), { callback ->
                 homeHandleSearch(callback)
             }, { item ->
-                activity?.loadHomepageList(item, expandCallback = {
+                bottomSheetDialog = activity?.loadHomepageList(item, expandCallback = {
                     homeViewModel.expandAndReturn(it)
+                }, dismissCallback = {
+                    bottomSheetDialog = null
                 })
             }, { name ->
                 homeViewModel.expand(name)
-            })
-        home_master_recycler.setLinearListLayout()
-        home_master_recycler?.setMaxViewPoolSize(0, Int.MAX_VALUE)
-        home_master_recycler.layoutManager = object : LinearLayoutManager(context) {
-            override fun supportsPredictiveItemAnimations(): Boolean {
-                return false
-            }
-        } // GridLayoutManager(context, 1).also { it.supportsPredictiveItemAnimations() }
-
-        if (!isTvSettings()) {
-            LinearSnapHelper().attachToRecyclerView(home_main_poster_recyclerview) // snap
-            val centerLayoutManager =
-                CenterZoomLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-            centerLayoutManager.setOnSizeListener { index ->
-                (home_main_poster_recyclerview?.adapter as HomeChildItemAdapter?)?.cardList?.get(
-                    index
-                )?.let { random ->
-                    home_main_play?.setOnClickListener {
-                        activity.loadSearchResult(random, START_ACTION_RESUME_LATEST)
-                    }
-                    home_main_info?.setOnClickListener {
-                        activity.loadSearchResult(random)
-                    }
-
-                    home_main_text?.text =
-                        random.name + if (random is AnimeSearchResponse && !random.dubStatus.isNullOrEmpty()) {
-                            random.dubStatus?.joinToString(
-                                prefix = " • ",
-                                separator = " | "
-                            ) { it.name }
-                        } else ""
+            }, { load ->
+                activity?.loadResult(load.response.url, load.response.apiName, load.action)
+            }, {
+                homeViewModel.loadMoreHomeScrollResponses()
+            }, {
+                apiChangeClickListener.onClick(it)
+            }, reloadStored = {
+                reloadStored()
+            }, loadStoredData = {
+                homeViewModel.loadStoredData(it)
+            }, { (isQuickSearch, text) ->
+                if (!isQuickSearch) {
+                    QuickSearchFragment.pushSearch(
+                        activity,
+                        text,
+                        currentApiName?.let { arrayOf(it) })
                 }
-            }
-            home_main_poster_recyclerview?.layoutManager = centerLayoutManager  // scale
-        }
+            })
 
         reloadStored()
-        loadHomePage()
-
-        home_loaded.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { v, _, scrollY, _, oldScrollY ->
-            val dy = scrollY - oldScrollY
-            if (dy > 0) { //check for scroll down
-                home_api_fab?.shrink() // hide
-                home_random?.shrink()
-            } else if (dy < -5) {
-                if (!isTvSettings()) {
-                    home_api_fab?.extend() // show
-                    home_random?.extend()
+        loadHomePage(false)
+        home_master_recycler?.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                if (dy > 0) { //check for scroll down
+                    home_api_fab?.shrink() // hide
+                    home_random?.shrink()
+                } else if (dy < -5) {
+                    if (!isTvSettings()) {
+                        home_api_fab?.extend() // show
+                        home_random?.extend()
+                    }
                 }
+
+                super.onScrolled(recyclerView, dx, dy)
             }
         })
 
         // nice profile pic on homepage
-        home_profile_picture_holder?.isVisible = false
+        //home_profile_picture_holder?.isVisible = false
         // just in case
         if (isTvSettings()) {
             home_api_fab?.isVisible = false
-            home_change_api?.isVisible = true
             if (isTrueTvSettings()) {
                 home_change_api_loading?.isVisible = true
                 home_change_api_loading?.isFocusable = true
                 home_change_api_loading?.isFocusableInTouchMode = true
-                home_change_api?.isFocusable = true
-                home_change_api?.isFocusableInTouchMode = true
             }
             // home_bookmark_select?.isFocusable = true
             // home_bookmark_select?.isFocusableInTouchMode = true
         } else {
             home_api_fab?.isVisible = true
-            home_change_api?.isVisible = false
             home_change_api_loading?.isVisible = false
         }
-
-        for (syncApi in OAuth2Apis) {
+        //TODO READD THIS
+        /*for (syncApi in OAuth2Apis) {
             val login = syncApi.loginInfo()
             val pic = login?.profilePicture
             if (home_profile_picture?.setImage(
@@ -1014,6 +743,6 @@ class HomeFragment : Fragment() {
                 home_profile_picture_holder?.isVisible = true
                 break
             }
-        }
+        }*/
     }
 }

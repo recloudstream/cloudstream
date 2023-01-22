@@ -20,6 +20,8 @@
         <item>Cloudflare</item>
         <!--        <item>OpenDns</item>-->
         <item>AdGuard</item>
+        <item>DNS.WATCH</item>
+        <item>Quad9</item>
     </array>
     <array name="dns_pref_values">
         <item>0</item>
@@ -27,6 +29,34 @@
         <item>2</item>
         <!--        <item>3</item>-->
         <item>4</item>
+        <item>5</item>
+        <item>6</item>
+    </array>
+
+    <array name="apk_installer_pref">
+        <item>@string/apk_installer_package_installer</item>
+        <item>@string/apk_installer_legacy</item>
+    </array>
+    <array name="apk_installer_values">
+        <item>0</item>
+        <item>1</item>
+    </array>
+
+
+    <array name="player_pref_names">
+        <item>@string/player_settings_play_in_app</item>
+        <item>@string/player_settings_play_in_vlc</item>
+        <item>@string/player_settings_play_in_mpv</item>
+        <item>@string/player_settings_play_in_web</item>
+        <item>@string/player_settings_play_in_browser</item>
+    </array>
+
+    <array name="player_pref_values">
+        <item>1</item>
+        <item>2</item>
+        <item>5</item>
+        <item>4</item>
+        <item>3</item>
     </array>
 
     <array name="limit_title_rez_pref_names">
@@ -171,7 +201,7 @@
         <item>@string/episode_action_chromecast_episode</item>
         <item>@string/episode_action_chromecast_mirror</item>
         <item>@string/episode_action_play_in_app</item>
-        <item>@string/episode_action_play_in_vlc</item>
+        <item>@string/episode_action_play_in_format</item>
         <item>@string/episode_action_play_in_browser</item>
         <item>@string/episode_action_copy_link</item>
         <item>@string/episode_action_auto_download</item>
@@ -224,6 +254,8 @@
         <item>Banana</item>
         <item>Party</item>
         <item>Pink Pain</item>
+        <item>Material You</item>
+        <item>Material You (Secondary)</item>
     </string-array>
     <string-array name="themes_overlay_names_values">
         <item>Normal</item>
@@ -242,6 +274,8 @@
         <item>Banana</item>
         <item>Party</item>
         <item>Pink</item>
+        <item>Monet</item>
+        <item>Monet2</item>
     </string-array>
 
     <string-array name="themes_names">
@@ -249,12 +283,22 @@
         <item>Gray</item>
         <item>Amoled</item>
         <item>Flashbang</item>
+        <item>Material You</item>
     </string-array>
     <string-array name="themes_names_values">
         <item>AmoledLight</item>
         <item>Black</item>
         <item>Amoled</item>
         <item>Light</item>
+        <item>Monet</item>
+    </string-array>
+
+    <string-array name="extension_statuses">
+        <item>Down</item>
+        <!-- "Ok" is usually capitalized as "OK". Ok android studio 🤓-->
+        <item>Ok</item>
+        <item>Slow</item>
+        <item>Beta</item>
     </string-array>
 
     <!--https://github.com/videolan/vlc-android/blob/72ccfb93db027b49855760001d1a930fa657c5a8/application/resources/src/main/res/values/arrays.xml#L266-->

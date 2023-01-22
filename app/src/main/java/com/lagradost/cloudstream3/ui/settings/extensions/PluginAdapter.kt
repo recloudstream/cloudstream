@@ -5,24 +5,31 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.lagradost.cloudstream3.AcraApplication.Companion.getActivity
 import com.lagradost.cloudstream3.PROVIDER_STATUS_DOWN
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.plugins.PluginManager
+import com.lagradost.cloudstream3.plugins.VotingApi.getVotes
 import com.lagradost.cloudstream3.ui.result.setText
 import com.lagradost.cloudstream3.ui.result.txt
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTrueTvSettings
 import com.lagradost.cloudstream3.utils.AppUtils.html
+import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
+import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.GlideApp
 import com.lagradost.cloudstream3.utils.SubtitleHelper.fromTwoLettersToLanguage
+import com.lagradost.cloudstream3.utils.SubtitleHelper.getFlagFromIso
 import com.lagradost.cloudstream3.utils.UIHelper.setImage
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import kotlinx.android.synthetic.main.repository_item.view.*
 import org.junit.Assert
 import org.junit.Test
+import java.text.DecimalFormat
 
 
 data class PluginViewData(
@@ -101,6 +108,23 @@ class PluginAdapter(
         private val iconSize by lazy {
             findClosestBase2(iconSizeExact, 16, 512)
         }
+
+        fun prettyCount(number: Number): String? {
+            val suffix = charArrayOf(' ', 'k', 'M', 'B', 'T', 'P', 'E')
+            val numValue = number.toLong()
+            val value = Math.floor(Math.log10(numValue.toDouble())).toInt()
+            val base = value / 3
+            return if (value >= 3 && base < suffix.size) {
+                DecimalFormat("#0.00").format(
+                    numValue / Math.pow(
+                        10.0,
+                        (base * 3).toDouble()
+                    )
+                ) + suffix[base]
+            } else {
+                DecimalFormat().format(numValue)
+            }
+        }
     }
 
     inner class PluginViewHolder(itemView: View) :
@@ -111,7 +135,9 @@ class PluginAdapter(
         ) {
             val metadata = data.plugin.second
             val disabled = metadata.status == PROVIDER_STATUS_DOWN
+            val name = metadata.name.removeSuffix("Provider")
             val alpha = if (disabled) 0.6f else 1f
+            val isLocal = !data.plugin.second.url.startsWith("http")
             itemView.main_text?.alpha = alpha
             itemView.sub_text?.alpha = alpha
 
@@ -124,6 +150,13 @@ class PluginAdapter(
 
             itemView.action_button?.setOnClickListener {
                 iconClickCallback.invoke(data.plugin)
+            }
+            itemView.setOnClickListener {
+                if (isLocal) return@setOnClickListener
+
+                val sheet = PluginDetailsFragment(data)
+                val activity = itemView.context.getActivity() as AppCompatActivity
+                sheet.show(activity.supportFragmentManager, "PluginDetails")
             }
             //if (itemView.context?.isTrueTvSettings() == false) {
             //    val siteUrl = metadata.repositoryUrl
@@ -145,12 +178,11 @@ class PluginAdapter(
                         } catch (e: Throwable) {
                             Log.e(
                                 "PluginAdapter",
-                                "Failed to open ${metadata.name} settings: ${
+                                "Failed to open $name settings: ${
                                     Log.getStackTraceString(e)
                                 }"
                             )
                         }
-
                     }
                 } else {
                     itemView.action_settings?.isVisible = false
@@ -181,8 +213,17 @@ class PluginAdapter(
                 itemView.lang_icon?.isVisible = false
             } else {
                 itemView.lang_icon?.isVisible = true
-                //itemView.lang_icon.text = getFlagFromIso(metadata.language)
-                itemView.lang_icon.text = fromTwoLettersToLanguage(metadata.language)
+                itemView.lang_icon.text = "${getFlagFromIso(metadata.language)} ${fromTwoLettersToLanguage(metadata.language)}"
+            }
+
+            itemView.ext_votes?.isVisible = false
+            if (!isLocal) {
+                ioSafe {
+                    metadata.getVotes().main {
+                        itemView.ext_votes?.setText(txt(R.string.extension_rating, prettyCount(it)))
+                        itemView.ext_votes?.isVisible = true
+                    }
+                }
             }
 
 
@@ -192,7 +233,7 @@ class PluginAdapter(
             } else {
                 itemView.ext_filesize?.isVisible = false
             }
-            itemView.main_text.setText(if(disabled) txt(R.string.single_plugin_disabled, metadata.name) else txt(metadata.name))
+            itemView.main_text.setText(if(disabled) txt(R.string.single_plugin_disabled, name) else txt(name))
             itemView.sub_text?.isGone = metadata.description.isNullOrBlank()
             itemView.sub_text?.text = metadata.description.html()
         }

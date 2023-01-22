@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="?attr/grayTextColor" />
+    <corners
+        android:bottomRightRadius="@dimen/storage_radius"
+        android:topRightRadius="@dimen/storage_radius" />
+</shape>

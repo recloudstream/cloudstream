@@ -1,11 +1,25 @@
 package com.lagradost.cloudstream3.extractors
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.app
-import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.M3u8Helper
+
+class Sbspeed : StreamSB() {
+    override var name = "Sbspeed"
+    override var mainUrl = "https://sbspeed.com"
+}
+
+class Streamsss : StreamSB() {
+    override var mainUrl = "https://streamsss.net"
+}
+
+class Sbflix : StreamSB() {
+    override var mainUrl = "https://sbflix.xyz"
+    override var name = "Sbflix"
+}
 
 class Vidgomunime : StreamSB() {
     override var mainUrl = "https://vidgomunime.xyz"
@@ -84,15 +98,15 @@ open class StreamSB : ExtractorApi() {
     }
 
     data class Subs (
-        @JsonProperty("file") val file: String,
-        @JsonProperty("label") val label: String,
+        @JsonProperty("file") val file: String? = null,
+        @JsonProperty("label") val label: String? = null,
     )
 
     data class StreamData (
         @JsonProperty("file") val file: String,
         @JsonProperty("cdn_img") val cdnImg: String,
         @JsonProperty("hash") val hash: String,
-        @JsonProperty("subs") val subs: List<Subs>?,
+        @JsonProperty("subs") val subs: ArrayList<Subs>? = arrayListOf(),
         @JsonProperty("length") val length: String,
         @JsonProperty("id") val id: String,
         @JsonProperty("title") val title: String,
@@ -104,31 +118,42 @@ open class StreamSB : ExtractorApi() {
         @JsonProperty("status_code") val statusCode: Int,
     )
 
-    override suspend fun getUrl(url: String, referer: String?): List<ExtractorLink>? {
-        val regexID = Regex("(embed-[a-zA-Z0-9]{0,8}[a-zA-Z0-9_-]+|\\/e\\/[a-zA-Z0-9]{0,8}[a-zA-Z0-9_-]+)")
+    override suspend fun getUrl(
+        url: String,
+        referer: String?,
+        subtitleCallback: (SubtitleFile) -> Unit,
+        callback: (ExtractorLink) -> Unit
+    ) {
+        val regexID =
+            Regex("(embed-[a-zA-Z0-9]{0,8}[a-zA-Z0-9_-]+|/e/[a-zA-Z0-9]{0,8}[a-zA-Z0-9_-]+)")
         val id = regexID.findAll(url).map {
-            it.value.replace(Regex("(embed-|\\/e\\/)"),"")
+            it.value.replace(Regex("(embed-|/e/)"), "")
         }.first()
-        val bytes = id.toByteArray()
-        val bytesToHex = bytesToHex(bytes)
-        val master = "$mainUrl/sources43/6d6144797752744a454267617c7c${bytesToHex.lowercase()}7c7c4e61755a56456f34385243727c7c73747265616d7362/6b4a33767968506e4e71374f7c7c343837323439333133333462353935333633373836643638376337633462333634663539343137373761333635313533333835333763376333393636363133393635366136323733343435323332376137633763373337343732363536313664373336327c7c504d754478413835306633797c7c73747265616d7362"
+//        val master = "$mainUrl/sources48/6d6144797752744a454267617c7c${bytesToHex.lowercase()}7c7c4e61755a56456f34385243727c7c73747265616d7362/6b4a33767968506e4e71374f7c7c343837323439333133333462353935333633373836643638376337633462333634663539343137373761333635313533333835333763376333393636363133393635366136323733343435323332376137633763373337343732363536313664373336327c7c504d754478413835306633797c7c73747265616d7362"
+        val master = "$mainUrl/sources50/" + bytesToHex("||$id||||streamsb".toByteArray()) + "/"
         val headers = mapOf(
-            "watchsb" to "streamsb",
-            )
-        val urltext = app.get(master,
+            "watchsb" to "sbstream",
+        )
+        val mapped = app.get(
+            master.lowercase(),
             headers = headers,
-            allowRedirects = false
-        ).text
-        val mapped = urltext.let { parseJson<Main>(it) }
-        val testurl = app.get(mapped.streamData.file, headers = headers).text
+            referer = url,
+        ).parsedSafe<Main>()
         // val urlmain = mapped.streamData.file.substringBefore("/hls/")
-        if (urltext.contains("m3u8") && testurl.contains("EXTM3U"))
-            return M3u8Helper.generateM3u8(
-                name,
-                mapped.streamData.file,
-                url,
-                headers = headers
+        M3u8Helper.generateM3u8(
+            name,
+            mapped?.streamData?.file ?: return,
+            url,
+            headers = headers
+        ).forEach(callback)
+
+        mapped.streamData.subs?.map {sub ->
+            subtitleCallback.invoke(
+                SubtitleFile(
+                    sub.label.toString(),
+                    sub.file ?: return@map null,
+                )
             )
-        return null
+        }
     }
 }

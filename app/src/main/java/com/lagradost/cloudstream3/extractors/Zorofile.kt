@@ -10,7 +10,7 @@ import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.M3u8Helper
 
-class Zorofile : ExtractorApi() {
+open class Zorofile : ExtractorApi() {
     override val name = "Zorofile"
     override val mainUrl = "https://zorofile.com"
     override val requiresReferer = true

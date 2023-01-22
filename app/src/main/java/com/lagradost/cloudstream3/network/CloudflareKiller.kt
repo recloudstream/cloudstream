@@ -5,6 +5,7 @@ import android.webkit.CookieManager
 import androidx.annotation.AnyThread
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.mvvm.debugWarning
+import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.nicehttp.Requests.Companion.await
 import com.lagradost.nicehttp.cookies
 import kotlinx.coroutines.runBlocking
@@ -26,7 +27,10 @@ class CloudflareKiller : Interceptor {
 
     init {
         // Needs to clear cookies between sessions to generate new cookies.
-        CookieManager.getInstance().removeAllCookies(null)
+        normalSafeApiCall {
+            // This can throw an exception on unsupported devices :(
+            CookieManager.getInstance().removeAllCookies(null)
+        }
     }
 
     val savedCookies: MutableMap<String, Map<String, String>> = mutableMapOf()
@@ -35,7 +39,7 @@ class CloudflareKiller : Interceptor {
      * Gets the headers with cookies, webview user agent included!
      * */
     fun getCookieHeaders(url: String): Headers {
-        val userAgentHeaders =  WebViewResolver.webViewUserAgent?.let {
+        val userAgentHeaders = WebViewResolver.webViewUserAgent?.let {
             mapOf("user-agent" to it)
         } ?: emptyMap()
 

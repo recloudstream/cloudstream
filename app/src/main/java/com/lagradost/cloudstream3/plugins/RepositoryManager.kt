@@ -4,11 +4,13 @@ import android.content.Context
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
-import com.lagradost.cloudstream3.apmap
+import com.lagradost.cloudstream3.amap
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.mvvm.logError
+import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.mvvm.suspendSafeApiCall
 import com.lagradost.cloudstream3.plugins.PluginManager.getPluginSanitizedFileName
+import com.lagradost.cloudstream3.plugins.PluginManager.unloadPlugin
 import com.lagradost.cloudstream3.ui.settings.extensions.REPOSITORIES_KEY
 import com.lagradost.cloudstream3.ui.settings.extensions.RepositoryData
 import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
@@ -70,6 +72,28 @@ object RepositoryManager {
         getKey("PREBUILT_REPOSITORIES") ?: emptyArray()
     }
 
+    suspend fun parseRepoUrl(url: String): String? {
+        val fixedUrl = url.trim()
+        return if (fixedUrl.contains("^https?://".toRegex())) {
+            fixedUrl
+        } else if (fixedUrl.contains("^(cloudstreamrepo://)|(https://cs\\.repo/\\??)".toRegex())) {
+            fixedUrl.replace("^(cloudstreamrepo://)|(https://cs\\.repo/\\??)".toRegex(), "").let {
+                return@let if (!it.contains("^https?://".toRegex()))
+                    "https://${it}"
+                else fixedUrl
+            }
+        } else if (fixedUrl.matches("^[a-zA-Z0-9!_-]+$".toRegex())) {
+            suspendSafeApiCall {
+                app.get("https://l.cloudstream.cf/${fixedUrl}").let {
+                    return@let if (it.isSuccessful && !it.url.startsWith("https://cutt.ly/branded-domains")) it.url
+                    else app.get("https://cutt.ly/${fixedUrl}").let let2@{ it2 ->
+                        return@let2 if (it2.isSuccessful) it2.url else null
+                    }
+                }
+            }
+        } else null
+    }
+
     suspend fun parseRepository(url: String): Repository? {
         return suspendSafeApiCall {
             // Take manifestVersion and such into account later
@@ -84,7 +108,7 @@ object RepositoryManager {
             // Normal parsed function not working?
             // return response.parsedSafe()
             tryParseJson<Array<SitePlugin>>(response.text)?.toList() ?: emptyList()
-        } catch (t : Throwable) {
+        } catch (t: Throwable) {
             logError(t)
             emptyList()
         }
@@ -95,7 +119,7 @@ object RepositoryManager {
      * */
     suspend fun getRepoPlugins(repositoryUrl: String): List<Pair<String, SitePlugin>>? {
         val repo = parseRepository(repositoryUrl) ?: return null
-        return repo.pluginLists.apmap { url ->
+        return repo.pluginLists.amap { url ->
             parsePlugins(url).map {
                 repositoryUrl to it
             }
@@ -103,29 +127,21 @@ object RepositoryManager {
     }
 
     suspend fun downloadPluginToFile(
-        context: Context,
         pluginUrl: String,
-        fileName: String,
-        folder: String
+        file: File
     ): File? {
         return suspendSafeApiCall {
-            val extensionsDir = File(context.filesDir, ONLINE_PLUGINS_FOLDER)
-            if (!extensionsDir.exists())
-                extensionsDir.mkdirs()
+            file.mkdirs()
 
-            val newDir = File(extensionsDir, folder)
-            newDir.mkdirs()
-
-            val newFile = File(newDir, "${fileName}.cs3")
             // Overwrite if exists
-            if (newFile.exists()) {
-                newFile.delete()
+            if (file.exists()) {
+                file.delete()
             }
-            newFile.createNewFile()
+            file.createNewFile()
 
             val body = app.get(pluginUrl).okhttpResponse.body
-            write(body.byteStream(), newFile.outputStream())
-            newFile
+            write(body.byteStream(), file.outputStream())
+            file
         }
     }
 
@@ -160,9 +176,17 @@ object RepositoryManager {
             extensionsDir,
             getPluginSanitizedFileName(repository.url)
         )
-        PluginManager.deleteRepositoryData(file.absolutePath)
 
-        file.delete()
+        // Unload all plugins, not using deletePlugin since we
+        // delete all data and files in deleteRepositoryData
+        normalSafeApiCall {
+            file.listFiles { plugin: File ->
+                unloadPlugin(plugin.absolutePath)
+                false
+            }
+        }
+
+        PluginManager.deleteRepositoryData(file.absolutePath)
     }
 
     private fun write(stream: InputStream, output: OutputStream) {

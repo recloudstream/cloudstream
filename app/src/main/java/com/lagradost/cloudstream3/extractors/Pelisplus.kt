@@ -1,7 +1,7 @@
 package com.lagradost.cloudstream3.extractors
 
 import com.lagradost.cloudstream3.SubtitleFile
-import com.lagradost.cloudstream3.apmap
+import com.lagradost.cloudstream3.amap
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.mvvm.suspendSafeApiCall
 import com.lagradost.cloudstream3.utils.ExtractorLink
@@ -14,7 +14,7 @@ import org.jsoup.Jsoup
  * overrideMainUrl is necessary for for other vidstream clones like vidembed.cc
  * If they diverge it'd be better to make them separate.
  * */
-class Pelisplus(val mainUrl: String) {
+open class Pelisplus(val mainUrl: String) {
     val name: String = "Vidstream"
 
     private fun getExtractorUrl(id: String): String {
@@ -35,7 +35,7 @@ class Pelisplus(val mainUrl: String) {
         callback: (ExtractorLink) -> Unit
     ): Boolean {
         try {
-            normalApis.apmap { api ->
+            normalApis.amap { api ->
                 val url = api.getExtractorUrl(id)
                 api.getSafeUrl(url, subtitleCallback = subtitleCallback, callback = callback)
             }
@@ -51,8 +51,8 @@ class Pelisplus(val mainUrl: String) {
                 val qualityRegex = Regex("(\\d+)P")
 
                 //a[download]
-                pageDoc.select(".dowload > a")?.apmap { element ->
-                    val href = element.attr("href") ?: return@apmap
+                pageDoc.select(".dowload > a")?.amap { element ->
+                    val href = element.attr("href") ?: return@amap
                     val qual = if (element.text()
                             .contains("HDP")
                     ) "1080" else qualityRegex.find(element.text())?.destructured?.component1()
@@ -84,7 +84,7 @@ class Pelisplus(val mainUrl: String) {
                     //val name = element.text()
 
                     // Matches vidstream links with extractors
-                    extractorApis.filter { !it.requiresReferer || !isCasting }.apmap { api ->
+                    extractorApis.filter { !it.requiresReferer || !isCasting }.amap { api ->
                         if (link.startsWith(api.mainUrl)) {
                             api.getSafeUrl(link, extractorUrl, subtitleCallback, callback)
                         }

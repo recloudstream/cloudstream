@@ -19,6 +19,7 @@ class IndexSubtitleApi : AbstractSubApi {
 
     override fun logOut() {}
 
+
     companion object {
         const val host = "https://indexsubtitle.com"
         const val TAG = "INDEXSUBS"
@@ -122,7 +123,7 @@ class IndexSubtitleApi : AbstractSubApi {
                     type = if (seasonNum > 0) TvType.TvSeries else TvType.Movie,
                     epNumber = epNum,
                     seasonNumber = seasonNum,
-                    year = yearNum
+                    year = yearNum,
                 )
             )
         }
@@ -131,7 +132,7 @@ class IndexSubtitleApi : AbstractSubApi {
 
         document.select("div.my-3.p-3 div.media").map { block ->
             if (seasonNum > 0) {
-                val name = block.select("strong.text-primary").text().trim()
+                val name = block.select("strong.text-primary, strong.text-info").text().trim()
                 val season = getOrdinal(seasonNum)
                 if ((block.selectFirst("a")?.attr("href")
                         ?.contains(
@@ -205,7 +206,7 @@ class IndexSubtitleApi : AbstractSubApi {
                             .trim()
                             .contains("$queryLang")
                     ) {
-                        var name = block.select("strong.text-primary").text().trim()
+                        var name = block.select("strong.text-primary, strong.text-info").text().trim()
                         val link = fixUrl(block.selectFirst("a")!!.attr("href"))
                         if (seasonNum > 0) {
                             when {
@@ -240,9 +241,9 @@ class IndexSubtitleApi : AbstractSubApi {
                     document.selectFirst("div.my-3.p-3 div.media a")!!.attr("href")
                 )
             } else {
-                document.select("div.my-3.p-3 div.media").mapNotNull { block ->
+                document.select("div.my-3.p-3 div.media").firstNotNullOf { block ->
                     val name =
-                        block.selectFirst("strong.d-block.text-primary")?.text()?.trim().toString()
+                        block.selectFirst("strong.d-block")?.text()?.trim().toString()
                     if (seasonNum!! > 0) {
                         if (isRightEps(name, seasonNum, epNum)) {
                             fixUrl(block.selectFirst("a")!!.attr("href"))
@@ -252,7 +253,7 @@ class IndexSubtitleApi : AbstractSubApi {
                     } else {
                         fixUrl(block.selectFirst("a")!!.attr("href"))
                     }
-                }.first()
+                }
             }
             return link
         }

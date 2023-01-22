@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -10,136 +10,47 @@
         android:id="@+id/listview1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-
         android:layout_rowWeight="1"
         android:layout_marginTop="10dp"
         android:layout_marginBottom="60dp"
         android:clipToPadding="false"
         android:minHeight="0dp"
+        android:nestedScrollingEnabled="true"
         android:nextFocusLeft="@id/apply_btt"
         android:nextFocusRight="@id/cancel_btt"
         android:requiresFadingEdge="vertical"
         tools:listitem="@layout/sort_bottom_single_choice" />
 
-    <HorizontalScrollView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="-60dp"
-        android:clipToPadding="true"
-        android:fadingEdge="horizontal"
-        android:paddingStart="10dp"
-        android:paddingEnd="10dp"
-        android:requiresFadingEdge="horizontal">
-
-<!--        Man what the fuck we need a recyclerview -->
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <!--  android:minWidth="0dp"
-                    app:iconTint="?attr/textColor"
-                    android:insetLeft="0dp"
-                    android:insetTop="0dp"
-                    android:insetRight="0dp"
-                    android:insetBottom="0dp"
-                    app:iconGravity="textStart"
-                    app:iconPadding="0dp"
-                    android:layout_height="35dp"-->
-            <!-- <com.google.android.material.button.MaterialButton
-                     android:nextFocusRight="@id/home_select_tv_series"
-                     app:icon="@drawable/ic_baseline_close_24"
-
-                     android:id="@+id/home_select_none"
-                     style="@style/RoundedSelectableButtonIcon"/>-->
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/home_select_movies"
-
-                style="@style/RoundedSelectableButton"
-                android:nextFocusRight="@id/home_select_tv_series"
-                android:text="@string/movies" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/home_select_tv_series"
-                style="@style/RoundedSelectableButton"
-
-                android:nextFocusLeft="@id/home_select_movies"
-                android:nextFocusRight="@id/home_select_anime"
-                android:text="@string/tv_series" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/home_select_anime"
-                style="@style/RoundedSelectableButton"
-
-                android:nextFocusLeft="@id/home_select_tv_series"
-                android:nextFocusRight="@id/home_select_asian"
-                android:text="@string/anime" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/home_select_asian"
-                style="@style/RoundedSelectableButton"
-
-                android:nextFocusLeft="@id/home_select_anime"
-                android:nextFocusRight="@id/home_select_cartoons"
-                android:text="@string/asian_drama" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/home_select_cartoons"
-                style="@style/RoundedSelectableButton"
-
-                android:nextFocusLeft="@id/home_select_asian"
-                android:nextFocusRight="@id/home_select_documentaries"
-                android:text="@string/cartoons" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/home_select_documentaries"
-
-                style="@style/RoundedSelectableButton"
-                android:nextFocusLeft="@id/home_select_cartoons"
-                android:text="@string/documentaries" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/home_select_livestreams"
-                style="@style/RoundedSelectableButton"
-                android:nextFocusLeft="@id/home_select_documentaries"
-                android:text="@string/livestreams" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/home_select_nsfw"
-                style="@style/RoundedSelectableButton"
-                android:nextFocusLeft="@id/home_select_livestreams"
-                android:text="@string/nsfw" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/home_select_others"
-                style="@style/RoundedSelectableButton"
-                android:nextFocusLeft="@id/home_select_nsfw"
-                android:text="@string/others" />
-
-        </LinearLayout>
-    </HorizontalScrollView>
-
     <LinearLayout
-        android:id="@+id/apply_btt_holder"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:orientation="vertical"
         android:layout_gravity="bottom"
-        android:gravity="bottom|end"
-        android:orientation="horizontal"
-        android:visibility="gone">
+        android:layout_width="match_parent"
+        android:layout_height="60dp">
+        <include layout="@layout/tvtypes_chips_scroll" />
+        <LinearLayout
+            android:id="@+id/apply_btt_holder"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginTop="-60dp"
+            android:layout_gravity="bottom"
+            android:gravity="bottom|end"
+            android:orientation="horizontal"
+            android:visibility="gone">
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/apply_btt"
-            style="@style/WhiteButton"
-            android:layout_width="wrap_content"
-            android:layout_gravity="center_vertical|end"
-            android:text="@string/sort_apply" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/apply_btt"
+                style="@style/WhiteButton"
+                android:layout_width="wrap_content"
+                android:layout_gravity="center_vertical|end"
+                android:text="@string/sort_apply" />
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/cancel_btt"
-            style="@style/BlackButton"
-            android:layout_width="wrap_content"
-            android:layout_gravity="center_vertical|end"
-            android:text="@string/sort_cancel" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/cancel_btt"
+                style="@style/BlackButton"
+                android:layout_width="wrap_content"
+                android:layout_gravity="center_vertical|end"
+                android:text="@string/sort_cancel" />
+        </LinearLayout>
     </LinearLayout>
-</LinearLayout>
+
+</FrameLayout>

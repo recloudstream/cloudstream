@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<HorizontalScrollView android:id="@+id/tv_types_scroll_view"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:fadingEdge="horizontal"
+    android:requiresFadingEdge="horizontal"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <include layout="@layout/tvtypes_chips" />
+</HorizontalScrollView>

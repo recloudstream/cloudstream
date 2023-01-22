@@ -22,7 +22,8 @@ import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
 import com.discord.panels.OverlappingPanelsLayout
-import com.google.android.material.button.MaterialButton
+import com.google.android.material.chip.Chip
+import com.google.android.material.chip.ChipDrawable
 import com.lagradost.cloudstream3.APIHolder.getApiDubstatusSettings
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
 import com.lagradost.cloudstream3.APIHolder.updateHasTrailers
@@ -38,6 +39,7 @@ import com.lagradost.cloudstream3.ui.download.DOWNLOAD_ACTION_DOWNLOAD
 import com.lagradost.cloudstream3.ui.download.DownloadButtonSetup.handleDownloadClick
 import com.lagradost.cloudstream3.ui.download.EasyDownloadButton
 import com.lagradost.cloudstream3.ui.quicksearch.QuickSearchFragment
+import com.lagradost.cloudstream3.ui.result.EpisodeAdapter.Companion.getPlayerAction
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTrueTvSettings
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
 import com.lagradost.cloudstream3.utils.*
@@ -47,6 +49,7 @@ import com.lagradost.cloudstream3.utils.AppUtils.loadCache
 import com.lagradost.cloudstream3.utils.AppUtils.openBrowser
 import com.lagradost.cloudstream3.utils.Coroutines.ioWorkSafe
 import com.lagradost.cloudstream3.utils.Coroutines.main
+import com.lagradost.cloudstream3.utils.DataStoreHelper.getVideoWatchState
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
@@ -81,6 +84,8 @@ import kotlinx.android.synthetic.main.fragment_result.result_next_airing
 import kotlinx.android.synthetic.main.fragment_result.result_next_airing_time
 import kotlinx.android.synthetic.main.fragment_result.result_no_episodes
 import kotlinx.android.synthetic.main.fragment_result.result_play_movie
+import kotlinx.android.synthetic.main.fragment_result.result_poster
+import kotlinx.android.synthetic.main.fragment_result.result_poster_holder
 import kotlinx.android.synthetic.main.fragment_result.result_reload_connection_open_in_browser
 import kotlinx.android.synthetic.main.fragment_result.result_reload_connectionerror
 import kotlinx.android.synthetic.main.fragment_result.result_resume_parent
@@ -95,11 +100,21 @@ import kotlinx.android.synthetic.main.fragment_result.result_vpn
 import kotlinx.android.synthetic.main.fragment_result_swipe.*
 import kotlinx.android.synthetic.main.fragment_result_tv.*
 import kotlinx.android.synthetic.main.result_sync.*
+import kotlinx.android.synthetic.main.trailer_custom_layout.*
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
-
 
 const val START_ACTION_RESUME_LATEST = 1
 const val START_ACTION_LOAD_EP = 2
+
+/**
+ * Future proofed way to mark episodes as watched
+ **/
+enum class VideoWatchState {
+    /** Default value when no key is set */
+    None,
+    Watched
+}
 
 data class ResultEpisode(
     val headerName: String,
@@ -119,6 +134,10 @@ data class ResultEpisode(
     val isFiller: Boolean?,
     val tvType: TvType,
     val parentId: Int,
+    /**
+     * Conveys if the episode itself is marked as watched
+     **/
+    val videoWatchState: VideoWatchState
 )
 
 fun ResultEpisode.getRealPosition(): Long {
@@ -155,6 +174,7 @@ fun buildResultEpisode(
     parentId: Int,
 ): ResultEpisode {
     val posDur = getViewPos(id)
+    val videoWatchState = getVideoWatchState(id) ?: VideoWatchState.None
     return ResultEpisode(
         headerName,
         name,
@@ -173,6 +193,7 @@ fun buildResultEpisode(
         isFiller,
         tvType,
         parentId,
+        videoWatchState
     )
 }
 
@@ -293,7 +314,7 @@ open class ResultFragment : ResultTrailerPlayer() {
                 result_reload_connection_open_in_browser?.isVisible = true
             }
             2 -> {
-                result_bookmark_fab?.isGone = isTvSettings()
+                result_bookmark_fab?.isGone = isTrueTvSettings()
                 result_bookmark_fab?.extend()
                 //if (result_bookmark_button?.context?.isTrueTvSettings() == true) {
                 //    when {
@@ -412,7 +433,39 @@ open class ResultFragment : ResultTrailerPlayer() {
             is ResourceSome.Success -> {
                 result_episodes?.isVisible = true
                 result_episode_loading?.isVisible = false
+
+                /*
+                 * Okay so what is this fuckery?
+                 * Basically Android TV will crash if you request a new focus while
+                 * the adapter gets updated.
+                 *
+                 * This means that if you load thumbnails and request a next focus at the same time
+                 * the app will crash without any way to catch it!
+                 *
+                 * How to bypass this?
+                 * This code basically steals the focus for 500ms and puts it in an inescapable view
+                 * then lets out the focus by requesting focus to result_episodes
+                 */
+
+                // Do not use this.isTv, that is the player
+                val isTv = isTvSettings()
+                val hasEpisodes =
+                    !(result_episodes?.adapter as? EpisodeAdapter?)?.cardList.isNullOrEmpty()
+
+                if (isTv && hasEpisodes) {
+                    // Make it impossible to focus anywhere else!
+                    temporary_no_focus?.isFocusable = true
+                    temporary_no_focus?.requestFocus()
+                }
+
                 (result_episodes?.adapter as? EpisodeAdapter?)?.updateList(episodes.value)
+
+                if (isTv && hasEpisodes) main {
+                    delay(500)
+                    temporary_no_focus?.isFocusable = false
+                    // This might make some people sad as it changes the focus when leaving an episode :(
+                    result_episodes?.requestFocus()
+                }
             }
         }
     }
@@ -422,7 +475,8 @@ open class ResultFragment : ResultTrailerPlayer() {
         val apiName: String,
         val showFillers: Boolean,
         val dubStatus: DubStatus,
-        val start: AutoResume?
+        val start: AutoResume?,
+        val playerAction: Int
     )
 
     private fun getStoredData(context: Context): StoredData? {
@@ -435,6 +489,8 @@ open class ResultFragment : ResultTrailerPlayer() {
                 .contains(DubStatus.Dubbed)
         ) DubStatus.Dubbed else DubStatus.Subbed
         val startAction = arguments?.getInt(START_ACTION_BUNDLE)
+
+        val playerAction = getPlayerAction(context)
 
         val start = startAction?.let { action ->
             val startValue = arguments?.getInt(START_VALUE_BUNDLE)
@@ -450,15 +506,21 @@ open class ResultFragment : ResultTrailerPlayer() {
                 season = resumeSeason
             )
         }
-        return StoredData(url, apiName, showFillers, dubStatus, start)
+        return StoredData(url, apiName, showFillers, dubStatus, start, playerAction)
     }
 
-    private fun reloadViewModel(success: Boolean = false) {
-        if (!viewModel.hasLoaded()) {
+    private fun reloadViewModel(forceReload: Boolean) {
+        if (!viewModel.hasLoaded() || forceReload) {
             val storedData = getStoredData(activity ?: context ?: return) ?: return
 
-            //viewModel.clear()
-            viewModel.load(activity, storedData.url ?: return, storedData.apiName, storedData.showFillers, storedData.dubStatus, storedData.start)
+            viewModel.load(
+                activity,
+                storedData.url ?: return,
+                storedData.apiName,
+                storedData.showFillers,
+                storedData.dubStatus,
+                storedData.start
+            )
         }
     }
 
@@ -512,6 +574,19 @@ open class ResultFragment : ResultTrailerPlayer() {
                 }
             )
 
+
+        observe(viewModel.episodeSynopsis) { description ->
+            view.context?.let { ctx ->
+                val builder: AlertDialog.Builder =
+                    AlertDialog.Builder(ctx, R.style.AlertDialogCustom)
+                builder.setMessage(description.html())
+                    .setTitle(R.string.synopsis)
+                    .setOnDismissListener {
+                        viewModel.releaseEpisodeSynopsis()
+                    }
+                    .show()
+            }
+        }
 
         observe(viewModel.watchStatus) { watchType ->
             result_bookmark_button?.text = getString(watchType.stringRes)
@@ -734,7 +809,8 @@ open class ResultFragment : ResultTrailerPlayer() {
                         viewModel.handleAction(
                             activity,
                             EpisodeClickEvent(
-                                ACTION_PLAY_EPISODE_IN_PLAYER, value.result
+                                storedData?.playerAction ?: ACTION_PLAY_EPISODE_IN_PLAYER,
+                                value.result
                             )
                         )
                     }
@@ -774,6 +850,7 @@ open class ResultFragment : ResultTrailerPlayer() {
         }
 
         observe(viewModel.page) { data ->
+            if(data == null) return@observe
             when (data) {
                 is Resource.Success -> {
                     val d = data.value
@@ -793,6 +870,8 @@ open class ResultFragment : ResultTrailerPlayer() {
                     result_next_airing.setText(d.nextAiringEpisode)
                     result_next_airing_time.setText(d.nextAiringDate)
                     result_poster.setImage(d.posterImage)
+                    result_poster_background.setImage(d.posterBackgroundImage)
+                    //result_trailer_thumbnail.setImage(d.posterBackgroundImage, fadeIn = false)
 
                     if (d.posterImage != null && !isTrueTvSettings())
                         result_poster_holder?.setOnClickListener {
@@ -872,8 +951,6 @@ open class ResultFragment : ResultTrailerPlayer() {
                         }
 
 
-                    result_tag?.removeAllViews()
-
                     d.comingSoon.let { soon ->
                         result_coming_soon?.isVisible = soon
                         result_data_holder?.isGone = soon
@@ -881,18 +958,39 @@ open class ResultFragment : ResultTrailerPlayer() {
 
                     val tags = d.tags
                     result_tag_holder?.isVisible = tags.isNotEmpty()
-                    if (tags.isNotEmpty()) {
-                        //result_tag_holder?.visibility = VISIBLE
-                        val isOnTv = isTrueTvSettings()
-                        for ((index, tag) in tags.withIndex()) {
+                    result_tag?.apply {
+                        removeAllViews()
+                        tags.forEach { tag ->
+                            val chip = Chip(context)
+                            val chipDrawable = ChipDrawable.createFromAttributes(
+                                context,
+                                null,
+                                0,
+                                R.style.ChipFilled
+                            )
+                            chip.setChipDrawable(chipDrawable)
+                            chip.text = tag
+                            chip.isChecked = false
+                            chip.isCheckable = false
+                            chip.isFocusable = false
+                            chip.isClickable = false
+                            addView(chip)
+                        }
+                    }
+                    // if (tags.isNotEmpty()) {
+                    //result_tag_holder?.visibility = VISIBLE
+                    //val isOnTv = isTrueTvSettings()
+
+
+                    /*for ((index, tag) in tags.withIndex()) {
                             val viewBtt = layoutInflater.inflate(R.layout.result_tag, null)
                             val btt = viewBtt.findViewById<MaterialButton>(R.id.result_tag_card)
                             btt.text = tag
                             btt.isFocusable = !isOnTv
                             btt.isClickable = !isOnTv
                             result_tag?.addView(viewBtt, index)
-                        }
-                    }
+                        }*/
+                    //}
                 }
                 is Resource.Failure -> {
                     result_error_text.text = storedData?.url?.plus("\n") + data.errorString
@@ -916,7 +1014,14 @@ open class ResultFragment : ResultTrailerPlayer() {
 
             if (storedData?.url != null) {
                 result_reload_connectionerror.setOnClickListener {
-                    viewModel.load(activity, storedData.url, storedData.apiName, storedData.showFillers, storedData.dubStatus, storedData.start)
+                    viewModel.load(
+                        activity,
+                        storedData.url,
+                        storedData.apiName,
+                        storedData.showFillers,
+                        storedData.dubStatus,
+                        storedData.start
+                    )
                 }
 
                 result_reload_connection_open_in_browser?.setOnClickListener {
@@ -952,7 +1057,14 @@ open class ResultFragment : ResultTrailerPlayer() {
 
                 if (restart || !viewModel.hasLoaded()) {
                     //viewModel.clear()
-                    viewModel.load(activity, storedData.url, storedData.apiName, storedData.showFillers, storedData.dubStatus, storedData.start)
+                    viewModel.load(
+                        activity,
+                        storedData.url,
+                        storedData.apiName,
+                        storedData.showFillers,
+                        storedData.dubStatus,
+                        storedData.start
+                    )
                 }
             }
         }

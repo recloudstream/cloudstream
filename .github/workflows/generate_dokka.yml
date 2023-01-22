@@ -39,9 +39,8 @@ jobs:
       
       - name: Clean old builds
         run: |
-          shopt -s extglob
           cd $GITHUB_WORKSPACE/dokka/
-          rm -rf !(.git)
+          rm -rf "./-cloudstream"
 
       - name: Setup JDK 11
         uses: actions/setup-java@v1

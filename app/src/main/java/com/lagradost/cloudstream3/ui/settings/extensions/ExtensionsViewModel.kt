@@ -3,21 +3,19 @@ package com.lagradost.cloudstream3.ui.settings.extensions
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.R
-import com.lagradost.cloudstream3.apmap
+import com.lagradost.cloudstream3.amap
 import com.lagradost.cloudstream3.mvvm.Some
 import com.lagradost.cloudstream3.mvvm.debugAssert
-import com.lagradost.cloudstream3.mvvm.launchSafe
 import com.lagradost.cloudstream3.plugins.PluginManager
 import com.lagradost.cloudstream3.plugins.PluginManager.getPluginsOnline
 import com.lagradost.cloudstream3.plugins.RepositoryManager
 import com.lagradost.cloudstream3.plugins.RepositoryManager.PREBUILT_REPOSITORIES
 import com.lagradost.cloudstream3.ui.result.UiText
 import com.lagradost.cloudstream3.ui.result.txt
-import kotlinx.coroutines.launch
+import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 
 data class RepositoryData(
     @JsonProperty("name") val name: String,
@@ -46,11 +44,12 @@ class ExtensionsViewModel : ViewModel() {
     val pluginStats: LiveData<Some<PluginStats>> = _pluginStats
 
     //TODO CACHE GET REQUESTS
-    fun loadStats() = viewModelScope.launchSafe {
+    // DO not use viewModelScope.launchSafe, it will ANR on slow internet
+    fun loadStats() = ioSafe {
         val urls = (getKey<Array<RepositoryData>>(REPOSITORIES_KEY)
             ?: emptyArray()) + PREBUILT_REPOSITORIES
 
-        val onlinePlugins = urls.toList().apmap {
+        val onlinePlugins = urls.toList().amap {
             RepositoryManager.getRepoPlugins(it.url)?.toList() ?: emptyList()
         }.flatten().distinctBy { it.second.url }
 
@@ -61,6 +60,7 @@ class ExtensionsViewModel : ViewModel() {
                     PluginManager.OnlinePluginData(savedData, onlineData)
                 }
         }.flatten().distinctBy { it.onlineData.second.url }
+
         val total = onlinePlugins.count()
         val disabled = outdatedPlugins.count { it.isDisabled }
         val downloadedTotal = outdatedPlugins.count()

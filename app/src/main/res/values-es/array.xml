@@ -14,34 +14,6 @@
         <item>@id/cast_button_type_forward_30_seconds</item>
     </array>
 
-    <array name="dns_pref">
-        <item>@string/none</item>
-        <item>Google</item>
-        <item>Cloudflare</item>
-        <!--        <item>OpenDns</item>-->
-        <item>AdGuard</item>
-    </array>
-    <array name="dns_pref_values">
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
-        <!--        <item>3</item>-->
-        <item>4</item>
-    </array>
-
-    <array name="media_type_pref">
-        <item>Todos</item>
-        <item>Películas y TV</item>
-        <item>Anime</item>
-        <item>Documental</item>
-    </array>
-    <array name="media_type_pref_values">
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-    </array>
-
     <array name="limit_title_rez_pref_names">
         <item>@string/resolution_and_title</item>
         <item>@string/title</item>
@@ -184,7 +156,7 @@
         <item>@string/episode_action_chromecast_episode</item>
         <item>@string/episode_action_chromecast_mirror</item>
         <item>@string/episode_action_play_in_app</item>
-        <item>@string/episode_action_play_in_vlc</item>
+        <item>@string/episode_action_play_in_format</item>
         <item>@string/episode_action_play_in_browser</item>
         <item>@string/episode_action_copy_link</item>
         <item>@string/episode_action_auto_download</item>
@@ -237,6 +209,8 @@
         <item>Banana</item>
         <item>Fiesta</item>
         <item>Dolor rosa</item>
+        <item>Material You</item>
+        <item>Material You (Secondary)</item>
     </string-array>
     <string-array name="themes_overlay_names_values">
         <item>Normal</item>
@@ -255,19 +229,24 @@
         <item>Banana</item>
         <item>Party</item>
         <item>Pink</item>
+        <item>Monet</item>
+        <item>Monet2</item>
     </string-array>
+
 
     <string-array name="themes_names">
         <item>Oscuro</item>
         <item>Gris</item>
         <item>Amoled</item>
         <item>Destello</item>
+        <item>Material You</item>
     </string-array>
     <string-array name="themes_names_values">
         <item>AmoledLight</item>
         <item>Black</item>
         <item>Amoled</item>
         <item>Light</item>
+        <item>Monet</item>
     </string-array>
 
     <!--https://github.com/videolan/vlc-android/blob/72ccfb93db027b49855760001d1a930fa657c5a8/application/resources/src/main/res/values/arrays.xml#L266-->

@@ -5,7 +5,7 @@ import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.utils.*
 import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
 
-class Filesim : ExtractorApi() {
+open class Filesim : ExtractorApi() {
     override val name = "Filesim"
     override val mainUrl = "https://files.im"
     override val requiresReferer = false

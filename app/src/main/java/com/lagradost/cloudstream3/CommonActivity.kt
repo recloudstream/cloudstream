@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3
 
+import android.Manifest
 import android.app.Activity
 import android.app.PictureInPictureParams
 import android.content.Context
@@ -10,16 +11,23 @@ import android.util.Log
 import android.view.*
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.ComponentActivity
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.MainThread
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
+import androidx.core.content.ContextCompat
 import androidx.preference.PreferenceManager
 import com.google.android.gms.cast.framework.CastSession
+import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
+import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.ui.player.PlayerEventType
+import com.lagradost.cloudstream3.ui.result.ResultFragment
 import com.lagradost.cloudstream3.ui.result.UiText
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.updateTv
+import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.Event
 import com.lagradost.cloudstream3.utils.UIHelper
 import com.lagradost.cloudstream3.utils.UIHelper.hasPIPPermission
@@ -33,6 +41,7 @@ object CommonActivity {
     fun Activity?.getCastSession(): CastSession? {
         return (this as MainActivity?)?.mSessionManager?.currentCastSession
     }
+
 
     var canEnterPipMode: Boolean = false
     var canShowPipMode: Boolean = false
@@ -54,7 +63,9 @@ object CommonActivity {
         }
     }
 
-    fun showToast(act: Activity?, @StringRes message: Int, duration: Int) {
+    /** duration is Toast.LENGTH_SHORT if null*/
+    @MainThread
+    fun showToast(act: Activity?, @StringRes message: Int, duration: Int? = null) {
         if (act == null) return
         showToast(act, act.getString(message), duration)
     }
@@ -62,6 +73,7 @@ object CommonActivity {
     const val TAG = "COMPACT"
 
     /** duration is Toast.LENGTH_SHORT if null*/
+    @MainThread
     fun showToast(act: Activity?, message: String?, duration: Int? = null) {
         if (act == null || message == null) {
             Log.w(TAG, "invalid showToast act = $act message = $message")
@@ -98,9 +110,18 @@ object CommonActivity {
         }
     }
 
+    /**
+     * Not all languages can be fetched from locale with a code.
+     * This map allows sidestepping the default Locale(languageCode)
+     * when setting the app language.
+     **/
+    val appLanguageExceptions = hashMapOf(
+        "zh-rTW" to Locale.TRADITIONAL_CHINESE
+    )
+
     fun setLocale(context: Context?, languageCode: String?) {
         if (context == null || languageCode == null) return
-        val locale = Locale(languageCode)
+        val locale = appLanguageExceptions[languageCode] ?: Locale(languageCode)
         val resources: Resources = context.resources
         val config = resources.configuration
         Locale.setDefault(locale)
@@ -117,7 +138,7 @@ object CommonActivity {
         setLocale(this, localeCode)
     }
 
-    fun init(act: Activity?) {
+    fun init(act: ComponentActivity?) {
         if (act == null) return
         //https://stackoverflow.com/questions/52594181/how-to-know-if-user-has-disabled-picture-in-picture-feature-permission
         //https://developer.android.com/guide/topics/ui/picture-in-picture
@@ -129,6 +150,39 @@ object CommonActivity {
         act.updateLocale()
         act.updateTv()
         NewPipe.init(DownloaderTestImpl.getInstance())
+
+        for (resumeApp in resumeApps) {
+            resumeApp.launcher =
+                act.registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+                    val resultCode = result.resultCode
+                    val data = result.data
+                    if (resultCode == AppCompatActivity.RESULT_OK && data != null && resumeApp.position != null && resumeApp.duration != null) {
+                        val pos = resumeApp.getPosition(data)
+                        val dur = resumeApp.getDuration(data)
+                        if (dur > 0L && pos > 0L)
+                            DataStoreHelper.setViewPos(getKey(resumeApp.lastId), pos, dur)
+                        removeKey(resumeApp.lastId)
+                        ResultFragment.updateUI()
+                    }
+                }
+        }
+
+        // Ask for notification permissions on Android 13
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+            ContextCompat.checkSelfPermission(
+                act,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            val requestPermissionLauncher = act.registerForActivityResult(
+                ActivityResultContracts.RequestPermission()
+            ) { isGranted: Boolean ->
+                Log.d(TAG, "Notification permission: $isGranted")
+            }
+            requestPermissionLauncher.launch(
+                Manifest.permission.POST_NOTIFICATIONS
+            )
+        }
     }
 
     private fun Activity.enterPIPMode() {
@@ -166,6 +220,8 @@ object CommonActivity {
                 "Light" -> R.style.LightMode
                 "Amoled" -> R.style.AmoledMode
                 "AmoledLight" -> R.style.AmoledModeLight
+                "Monet" -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
+                    R.style.MonetMode else R.style.AppTheme
                 else -> R.style.AppTheme
             }
 
@@ -186,6 +242,10 @@ object CommonActivity {
                 "Banana" -> R.style.OverlayPrimaryColorBanana
                 "Party" -> R.style.OverlayPrimaryColorParty
                 "Pink" -> R.style.OverlayPrimaryColorPink
+                "Monet" -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
+                    R.style.OverlayPrimaryColorMonet else R.style.OverlayPrimaryColorNormal
+                "Monet2" -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
+                    R.style.OverlayPrimaryColorMonetTwo else R.style.OverlayPrimaryColorNormal
                 else -> R.style.OverlayPrimaryColorNormal
             }
         act.theme.applyStyle(currentTheme, true)
@@ -283,7 +343,7 @@ object CommonActivity {
             KeyEvent.KEYCODE_MEDIA_PLAY, KeyEvent.KEYCODE_BUTTON_START -> {
                 PlayerEventType.Play
             }
-            KeyEvent.KEYCODE_L, KeyEvent.KEYCODE_NUMPAD_7 -> {
+            KeyEvent.KEYCODE_L, KeyEvent.KEYCODE_NUMPAD_7, KeyEvent.KEYCODE_7 -> {
                 PlayerEventType.Lock
             }
             KeyEvent.KEYCODE_H, KeyEvent.KEYCODE_MENU -> {
@@ -292,21 +352,24 @@ object CommonActivity {
             KeyEvent.KEYCODE_M, KeyEvent.KEYCODE_VOLUME_MUTE -> {
                 PlayerEventType.ToggleMute
             }
-            KeyEvent.KEYCODE_S, KeyEvent.KEYCODE_NUMPAD_9 -> {
+            KeyEvent.KEYCODE_S, KeyEvent.KEYCODE_NUMPAD_9, KeyEvent.KEYCODE_9 -> {
                 PlayerEventType.ShowMirrors
             }
             // OpenSubtitles shortcut
-            KeyEvent.KEYCODE_O, KeyEvent.KEYCODE_NUMPAD_8 -> {
+            KeyEvent.KEYCODE_O, KeyEvent.KEYCODE_NUMPAD_8, KeyEvent.KEYCODE_8 -> {
                 PlayerEventType.SearchSubtitlesOnline
             }
-            KeyEvent.KEYCODE_E, KeyEvent.KEYCODE_NUMPAD_3 -> {
+            KeyEvent.KEYCODE_E, KeyEvent.KEYCODE_NUMPAD_3, KeyEvent.KEYCODE_3 -> {
                 PlayerEventType.ShowSpeed
             }
-            KeyEvent.KEYCODE_R, KeyEvent.KEYCODE_NUMPAD_0 -> {
+            KeyEvent.KEYCODE_R, KeyEvent.KEYCODE_NUMPAD_0, KeyEvent.KEYCODE_0 -> {
                 PlayerEventType.Resize
             }
-            KeyEvent.KEYCODE_C, KeyEvent.KEYCODE_NUMPAD_4 -> {
+            KeyEvent.KEYCODE_C, KeyEvent.KEYCODE_NUMPAD_4, KeyEvent.KEYCODE_4 -> {
                 PlayerEventType.SkipOp
+            }
+            KeyEvent.KEYCODE_V, KeyEvent.KEYCODE_NUMPAD_5, KeyEvent.KEYCODE_5 -> {
+                PlayerEventType.SkipCurrentChapter
             }
             KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE, KeyEvent.KEYCODE_P, KeyEvent.KEYCODE_SPACE, KeyEvent.KEYCODE_NUMPAD_ENTER, KeyEvent.KEYCODE_ENTER -> { // space is not captured due to navigation
                 PlayerEventType.PlayPauseToggle

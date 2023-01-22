@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.chip.ChipGroup android:layout_width="match_parent"
+    style="@style/ChipParent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:paddingStart="8dp"
+    android:paddingEnd="8dp"
+    android:id="@+id/home_select_group"
+    app:singleSelection="false"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <com.google.android.material.chip.Chip
+        android:id="@+id/home_select_movies"
+        style="@style/ChipFilled"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/movies" />
+
+    <com.google.android.material.chip.Chip
+        android:id="@+id/home_select_tv_series"
+        style="@style/ChipFilled"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/tv_series" />
+
+    <com.google.android.material.chip.Chip
+        android:id="@+id/home_select_anime"
+        style="@style/ChipFilled"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/anime" />
+
+    <com.google.android.material.chip.Chip
+        android:id="@+id/home_select_asian"
+        style="@style/ChipFilled"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/asian_drama" />
+    <com.google.android.material.chip.Chip
+        android:id="@+id/home_select_cartoons"
+        style="@style/ChipFilled"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/cartoons" />
+    <com.google.android.material.chip.Chip
+        android:id="@+id/home_select_documentaries"
+        style="@style/ChipFilled"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/documentaries" />
+    <com.google.android.material.chip.Chip
+        android:id="@+id/home_select_livestreams"
+        style="@style/ChipFilled"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/livestreams" />
+    <com.google.android.material.chip.Chip
+        android:id="@+id/home_select_nsfw"
+        style="@style/ChipFilled"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/nsfw" />
+    <com.google.android.material.chip.Chip
+        android:id="@+id/home_select_others"
+        style="@style/ChipFilled"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/others" />
+</com.google.android.material.chip.ChipGroup>

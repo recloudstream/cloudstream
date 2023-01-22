@@ -76,7 +76,7 @@ class RepoAdapter(
                 imageClickCallback(repositoryData)
             }
 
-            itemView.setOnClickListener {
+            itemView.repository_item_root?.setOnClickListener {
                 clickCallback(repositoryData)
             }
             itemView.main_text?.text = repositoryData.name

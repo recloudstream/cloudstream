@@ -1,20 +1,10 @@
-<vector
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:name="vector"
-        android:width="24dp"
-        android:height="24dp"
-        android:viewportWidth="850"
-        android:viewportHeight="850">
-    <path
-            android:name="path"
-            android:pathData="M 425.2 172.91 C 363.2 172.91 303.676 197.566 259.836 241.406 C 215.996 285.246 191.34 344.77 191.34 406.77 C 191.34 468.77 215.996 528.294 259.836 572.134 C 303.676 615.974 363.2 640.63 425.2 640.63 C 487.2 640.63 546.724 615.974 590.564 572.134 C 634.404 528.294 659.06 468.77 659.06 406.77 C 659.06 344.77 634.404 285.246 590.564 241.406 C 546.724 197.566 487.2 172.91 425.2 172.91 Z"
-            android:strokeColor="?attr/white"
-            android:strokeWidth="60"
-            android:strokeMiterLimit="10"/>
-    <path
-            android:name="path_1"
-            android:pathData="M 599.86 562.28 L 719.87 682.29"
-            android:strokeColor="?attr/white"
-            android:strokeWidth="60"
-            android:strokeMiterLimit="10"/>
+<vector android:name="vector"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="850"
+    android:viewportHeight="850"
+    android:tint="?attr/white"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <path android:name="path" android:pathData="M 425.2 172.91 C 363.2 172.91 303.676 197.566 259.836 241.406 C 215.996 285.246 191.34 344.77 191.34 406.77 C 191.34 468.77 215.996 528.294 259.836 572.134 C 303.676 615.974 363.2 640.63 425.2 640.63 C 487.2 640.63 546.724 615.974 590.564 572.134 C 634.404 528.294 659.06 468.77 659.06 406.77 C 659.06 344.77 634.404 285.246 590.564 241.406 C 546.724 197.566 487.2 172.91 425.2 172.91 Z" android:strokeColor="#ffffff" android:strokeWidth="60" android:strokeMiterLimit="10"/>
+    <path android:name="path_1" android:pathData="M 583.631 547.663 L 583.624 547.67 C 587.388 543.906 592.078 541.198 597.22 539.82 C 602.363 538.442 607.778 538.442 612.92 539.82 C 618.063 541.198 622.752 543.906 626.517 547.67 L 719.049 640.202 C 722.813 643.966 725.521 648.656 726.899 653.798 C 728.277 658.941 728.277 664.356 726.899 669.498 C 725.521 674.641 722.813 679.331 719.049 683.095 L 719.056 683.088 C 713.37 688.774 705.65 691.971 697.609 691.971 C 689.568 691.971 681.849 688.774 676.163 683.088 L 583.631 590.556 C 577.945 584.87 574.747 577.15 574.747 569.109 C 574.747 561.068 577.945 553.349 583.631 547.663" android:fillColor="#ffffff" android:strokeWidth="1"/>
 </vector>

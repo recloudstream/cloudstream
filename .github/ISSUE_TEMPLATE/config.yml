@@ -1,8 +1,8 @@
 blank_issues_enabled: false
 contact_links:
-  - name: Report provider bug
+  - name: Request a new provider or report bug with an existing provider
     url: https://github.com/recloudstream
-    about: Please do not report any provider bugs here. This repository does not contain any providers. Please find the appropriate repository and report your issue there or join the discord.
+    about: Please do not report any provider bugs here or request new providers. This repository does not contain any providers. Please find the appropriate repository and report your issue there or join the discord.
   - name: Discord
     url: https://discord.gg/5Hus6fM
     about: Join our discord for faster support on smaller issues.

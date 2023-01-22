@@ -65,3 +65,23 @@ fun OkHttpClient.Builder.addAdGuardDns() = (
                 "94.140.14.141",
             )
         ))
+
+fun OkHttpClient.Builder.addDNSWatchDns() = (
+    addGenericDns(
+        "https://resolver2.dns.watch/dns-query",
+        // https://dns.watch/
+        listOf(
+            "84.200.69.80",
+            "84.200.70.40",
+        )
+    ))
+
+fun OkHttpClient.Builder.addQuad9Dns() = (
+    addGenericDns(
+        "https://dns.quad9.net/dns-query",
+        // https://www.quad9.net/service/service-addresses-and-features
+        listOf(
+            "9.9.9.9",
+            "149.112.112.112",
+        )
+    ))

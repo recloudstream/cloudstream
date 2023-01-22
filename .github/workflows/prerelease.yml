@@ -40,12 +40,10 @@ jobs:
         curl -H "Authorization: token ${{ steps.generate_token.outputs.token }}" -o "keystore_password.txt" "https://raw.githubusercontent.com/recloudstream/secrets/master/keystore_password.txt"
         KEY_PWD="$(cat keystore_password.txt)"
         echo "::add-mask::${KEY_PWD}"
-        echo "::set-output name=key_pwd::$KEY_PWD"
+        echo "key_pwd=$KEY_PWD" >> $GITHUB_OUTPUT
     - name: Run Gradle
       run: |
-        ./gradlew assemblePrerelease
-        ./gradlew androidSourcesJar
-        ./gradlew makeJar
+        ./gradlew assemblePrerelease makeJar androidSourcesJar
       env:
         SIGNING_KEY_ALIAS: "key0"
         SIGNING_KEY_PASSWORD: ${{ steps.fetch_keystore.outputs.key_pwd }}
@@ -55,9 +53,9 @@ jobs:
       with:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
         automatic_release_tag: "pre-release"
-        prerelease: false
+        prerelease: true
         title: "Pre-release Build"
         files: |
-          app/build/outputs/apk/prerelease/*.apk
+          app/build/outputs/apk/prerelease/release/*.apk
           app/build/libs/app-sources.jar
           app/build/classes.jar

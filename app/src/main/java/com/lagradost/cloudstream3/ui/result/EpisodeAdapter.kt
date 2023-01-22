@@ -1,16 +1,16 @@
 package com.lagradost.cloudstream3.ui.result
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.annotation.LayoutRes
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.core.widget.ContentLoadingProgressBar
+import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.button.MaterialButton
@@ -55,6 +55,11 @@ const val ACTION_SHOW_DESCRIPTION = 15
 const val ACTION_DOWNLOAD_EPISODE_SUBTITLE = 13
 const val ACTION_DOWNLOAD_EPISODE_SUBTITLE_MIRROR = 14
 
+const val ACTION_PLAY_EPISODE_IN_WEB_VIDEO = 16
+const val ACTION_PLAY_EPISODE_IN_MPV = 17
+
+const val ACTION_MARK_AS_WATCHED = 18
+
 data class EpisodeClickEvent(val action: Int, val data: ResultEpisode)
 
 class EpisodeAdapter(
@@ -62,7 +67,26 @@ class EpisodeAdapter(
     private val clickCallback: (EpisodeClickEvent) -> Unit,
     private val downloadClickCallback: (DownloadClickEvent) -> Unit,
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-    private var cardList: MutableList<ResultEpisode> = mutableListOf()
+    companion object {
+        /**
+         * @return ACTION_PLAY_EPISODE_IN_PLAYER, ACTION_PLAY_EPISODE_IN_BROWSER or ACTION_PLAY_EPISODE_IN_VLC_PLAYER depending on player settings.
+         * See array.xml/player_pref_values
+         **/
+        fun getPlayerAction(context: Context): Int {
+
+            val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
+            return when (settingsManager.getInt(context.getString(R.string.player_pref_key), 1)) {
+                1 -> ACTION_PLAY_EPISODE_IN_PLAYER
+                2 -> ACTION_PLAY_EPISODE_IN_VLC_PLAYER
+                3 -> ACTION_PLAY_EPISODE_IN_BROWSER
+                4 -> ACTION_PLAY_EPISODE_IN_WEB_VIDEO
+                5 -> ACTION_PLAY_EPISODE_IN_MPV
+                else -> ACTION_PLAY_EPISODE_IN_PLAYER
+            }
+        }
+    }
+
+    var cardList: MutableList<ResultEpisode> = mutableListOf()
 
     private val mBoundViewHolders: HashSet<DownloadButtonViewHolder> = HashSet()
     private fun getAllBoundViewHolders(): Set<DownloadButtonViewHolder?>? {
@@ -194,10 +218,18 @@ class EpisodeAdapter(
                 name//if(card.isFiller == true) episodeText.context.getString(R.string.filler).format(name) else name
             episodeText.isSelected = true // is needed for text repeating
 
-            val displayPos = card.getDisplayPosition()
-            episodeProgress?.max = (card.duration / 1000).toInt()
-            episodeProgress?.progress = (displayPos / 1000).toInt()
-            episodeProgress?.isVisible = displayPos > 0L
+            if (card.videoWatchState == VideoWatchState.Watched) {
+                // This cannot be done in getDisplayPosition() as when you have not watched something
+                // the duration and position is 0
+                episodeProgress?.max = 1
+                episodeProgress?.progress = 1
+                episodeProgress?.isVisible = true
+            } else {
+                val displayPos = card.getDisplayPosition()
+                episodeProgress?.max = (card.duration / 1000).toInt()
+                episodeProgress?.progress = (displayPos / 1000).toInt()
+                episodeProgress?.isVisible = displayPos > 0L
+            }
 
             episodePoster?.isVisible = episodePoster?.setImage(card.poster) == true
 
@@ -241,7 +273,6 @@ class EpisodeAdapter(
 
             itemView.setOnLongClickListener {
                 clickCallback.invoke(EpisodeClickEvent(ACTION_SHOW_OPTIONS, card))
-
                 return@setOnLongClickListener true
             }
 

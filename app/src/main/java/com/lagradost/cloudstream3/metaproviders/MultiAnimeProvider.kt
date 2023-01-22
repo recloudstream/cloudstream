@@ -45,7 +45,7 @@ class MultiAnimeProvider : MainAPI() {
 
     override suspend fun load(url: String): LoadResponse? {
         return syncApi.getResult(url)?.let { res ->
-            val data = SyncUtil.getUrlsFromId(res.id, syncUtilType).apmap { url ->
+            val data = SyncUtil.getUrlsFromId(res.id, syncUtilType).amap { url ->
                 validApis.firstOrNull { api -> url.startsWith(api.mainUrl) }?.load(url)
             }.filterNotNull()
 
