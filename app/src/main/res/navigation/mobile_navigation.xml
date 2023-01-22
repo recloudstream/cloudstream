@@ -145,6 +145,15 @@
         app:popExitAnim="@anim/exit_anim" />
 
     <fragment
+        android:id="@+id/navigation_library"
+        android:name="com.lagradost.cloudstream3.ui.library.LibraryFragment"
+        android:label="@string/library"
+        app:enterAnim="@anim/enter_anim"
+        app:exitAnim="@anim/exit_anim"
+        app:popEnterAnim="@anim/enter_anim"
+        app:popExitAnim="@anim/exit_anim" />
+
+    <fragment
         android:id="@+id/navigation_settings_general"
         android:name="com.lagradost.cloudstream3.ui.settings.SettingsGeneral"
         android:label="@string/title_settings"

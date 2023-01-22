@@ -3,8 +3,8 @@ package com.lagradost.cloudstream3.syncproviders.providers
 import androidx.fragment.app.FragmentActivity
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.*
+import com.lagradost.cloudstream3.APIHolder.capitalize
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
-import com.lagradost.cloudstream3.AcraApplication.Companion.getKeys
 import com.lagradost.cloudstream3.AcraApplication.Companion.openBrowser
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.mvvm.logError
@@ -12,6 +12,7 @@ import com.lagradost.cloudstream3.mvvm.suspendSafeApiCall
 import com.lagradost.cloudstream3.syncproviders.AccountManager
 import com.lagradost.cloudstream3.syncproviders.AuthAPI
 import com.lagradost.cloudstream3.syncproviders.SyncAPI
+import com.lagradost.cloudstream3.syncproviders.SyncIdName
 import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 import com.lagradost.cloudstream3.utils.AppUtils.splitQuery
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
@@ -31,6 +32,7 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
     override val icon = R.drawable.ic_anilist_icon
     override val requiresLogin = false
     override val createAccountUrl = "$mainUrl/signup"
+    override val syncIdName = SyncIdName.Anilist
 
     override fun loginInfo(): AuthAPI.LoginInfo? {
         // context.getUser(true)?.
@@ -140,7 +142,8 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
                     this.name,
                     recMedia.id?.toString() ?: return@mapNotNull null,
                     getUrlFromId(recMedia.id),
-                    recMedia.coverImage?.large ?: recMedia.coverImage?.medium
+                    recMedia.coverImage?.extraLarge ?: recMedia.coverImage?.large
+                    ?: recMedia.coverImage?.medium
                 )
             },
             trailers = when (season.trailer?.site?.lowercase()?.trim()) {
@@ -219,7 +222,7 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
                                             romaji
                                         }
                                         idMal
-                                        coverImage { medium large }
+                                        coverImage { medium large extraLarge }
                                         averageScore
                                     }
                                 }
@@ -232,7 +235,7 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
                                         format
                                         id
                                         idMal
-                                        coverImage { medium large }
+                                        coverImage { medium large extraLarge }
                                         averageScore
                                         title {
                                             english
@@ -575,7 +578,8 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
 
     data class CoverImage(
         @JsonProperty("medium") val medium: String?,
-        @JsonProperty("large") val large: String?
+        @JsonProperty("large") val large: String?,
+        @JsonProperty("extraLarge") val extraLarge: String?
     )
 
     data class Media(
@@ -602,7 +606,29 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
         @JsonProperty("score") val score: Int,
         @JsonProperty("private") val private: Boolean,
         @JsonProperty("media") val media: Media
-    )
+    ) {
+        fun toLibraryItem(listName: String?): SyncAPI.LibraryItem? {
+            return SyncAPI.LibraryItem(
+                // English title first
+                this.media.title.english ?: this.media.title.romaji
+                ?: this.media.synonyms.firstOrNull()
+                ?: "",
+                "https://anilist.co/anime/${this.media.id}/",
+                this.media.id.toString(),
+                listName?.lowercase()?.capitalize() ?: return null,
+                this.progress,
+                this.media.episodes,
+                this.score,
+                "AniList",
+                TvType.Anime,
+                this.media.coverImage.extraLarge ?: this.media.coverImage.large
+                ?: this.media.coverImage.medium,
+                null,
+                null,
+                null
+            )
+        }
+    }
 
     data class Lists(
         @JsonProperty("status") val status: String?,
@@ -617,40 +643,47 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
         @JsonProperty("MediaListCollection") val MediaListCollection: MediaListCollection
     )
 
-    fun getAnilistListCached(): Array<Lists>? {
+    private fun getAniListListCached(): Array<Lists>? {
         return getKey(ANILIST_CACHED_LIST) as? Array<Lists>
     }
 
-    suspend fun getAnilistAnimeListSmart(): Array<Lists>? {
+    private suspend fun getAniListAnimeListSmart(): Array<Lists>? {
         if (getAuth() == null) return null
 
         if (checkToken()) return null
         return if (getKey(ANILIST_SHOULD_UPDATE_LIST, true) == true) {
-            val list = getFullAnilistList()?.data?.MediaListCollection?.lists?.toTypedArray()
+            val list = getFullAniListList()?.data?.MediaListCollection?.lists?.toTypedArray()
             if (list != null) {
                 setKey(ANILIST_CACHED_LIST, list)
                 setKey(ANILIST_SHOULD_UPDATE_LIST, false)
             }
             list
         } else {
-            getAnilistListCached()
+            getAniListListCached()
         }
     }
 
-    private suspend fun getFullAnilistList(): FullAnilistList? {
-        var userID: Int? = null
-        /** WARNING ASSUMES ONE USER! **/
-        getKeys(ANILIST_USER_KEY)?.forEach { key ->
-            getKey<AniListUser>(key, null)?.let {
-                userID = it.id
-            }
-        }
+    override suspend fun getPersonalLibrary(): SyncAPI.LibraryMetadata {
+        return SyncAPI.LibraryMetadata(
+            emptyList(),
+            getAniListAnimeListSmart()?.map {
+                it.entries.mapNotNull { entry ->
+                    entry.toLibraryItem(
+                        entry.status ?: it.status
+                    )
+                }
+            }?.flatten() ?: emptyList()
+        )
+    }
 
-        val fixedUserID = userID ?: return null
+    private suspend fun getFullAniListList(): FullAnilistList? {
+        /** WARNING ASSUMES ONE USER! **/
+
+        val userID = getKey<AniListUser>(accountId, ANILIST_USER_KEY)?.id ?: return null
         val mediaType = "ANIME"
 
         val query = """
-                query (${'$'}userID: Int = $fixedUserID, ${'$'}MEDIA: MediaType = $mediaType) {
+                query (${'$'}userID: Int = $userID, ${'$'}MEDIA: MediaType = $mediaType) {
                     MediaListCollection (userId: ${'$'}userID, type: ${'$'}MEDIA) { 
                         lists {
                             status
@@ -677,7 +710,7 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
                                         english
                                         romaji
                                     }
-                                    coverImage { medium }
+                                    coverImage { extraLarge large medium }
                                     synonyms
                                     nextAiringEpisode {
                                         timeUntilAiring
@@ -689,7 +722,9 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
                     }
                     }
             """
-        val text = postApi(query)
+        val text = postApi(query).also {
+            println("REPONSE $it")
+        }
         return text?.toKotlinObject()
     }
 

@@ -13,6 +13,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lagradost.cloudstream3.*
+import com.lagradost.cloudstream3.APIHolder.apis
 import com.lagradost.cloudstream3.APIHolder.getId
 import com.lagradost.cloudstream3.APIHolder.unixTime
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
@@ -1443,12 +1444,18 @@ class ResultViewModel2 : ViewModel() {
 
             val realRecommendations = ArrayList<SearchResponse>()
             // TODO: fix
-            //val apiNames = listOf(GogoanimeProvider().name, NineAnimeProvider().name)
-            // meta.recommendations?.forEach { rec ->
-            //     apiNames.forEach { name ->
-            //         realRecommendations.add(rec.copy(apiName = name))
-            //     }
-            // }
+            val apiNames = apis.filter {
+                it.name.contains("gogoanime", true) ||
+                        it.name.contains("9anime", true)
+            }.map {
+                it.name
+            }
+
+            meta.recommendations?.forEach { rec ->
+                apiNames.forEach { name ->
+                    realRecommendations.add(rec.copy(apiName = name))
+                }
+            }
 
             recommendations = recommendations?.union(realRecommendations)?.toList()
                 ?: realRecommendations
@@ -2143,7 +2150,7 @@ class ResultViewModel2 : ViewModel() {
             val validUrlResource = safeApiCall {
                 SyncRedirector.redirect(
                     url,
-                    api.mainUrl
+                    api
                 )
             }
             // TODO: fix

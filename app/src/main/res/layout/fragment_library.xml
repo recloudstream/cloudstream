@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/library_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/search_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/primaryGrayBackground">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <ImageView
+                android:id="@+id/provider_selector"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_gravity="end|center_vertical"
+
+                android:layout_marginStart="10dp"
+                android:background="?selectableItemBackgroundBorderless"
+                android:contentDescription="@string/change_providers_img_des"
+                android:src="@drawable/ic_baseline_extension_24"
+                app:tint="?attr/textColor" />
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_margin="10dp"
+                android:background="@drawable/search_background"
+                android:visibility="visible"
+                app:layout_scrollFlags="scroll|enterAlways">
+
+                <androidx.appcompat.widget.SearchView
+                    android:id="@+id/main_search"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+
+                    android:iconifiedByDefault="false"
+                    android:imeOptions="actionSearch"
+
+                    android:inputType="text"
+                    android:nextFocusLeft="@id/nav_rail_view"
+
+                    android:nextFocusRight="@id/search_filter"
+                    android:paddingStart="-10dp"
+                    app:iconifiedByDefault="false"
+                    app:queryBackground="@color/transparent"
+                    app:queryHint="@string/search_hint"
+                    app:searchIcon="@drawable/search_icon"
+                    tools:ignore="RtlSymmetry">
+
+                </androidx.appcompat.widget.SearchView>
+
+
+                <ImageView
+                    android:id="@+id/list_selector"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_gravity="end|center_vertical"
+
+                    android:layout_margin="10dp"
+                    android:background="?selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/change_providers_img_des"
+                    android:nextFocusLeft="@id/main_search"
+                    android:nextFocusRight="@id/main_search"
+                    android:src="@drawable/ic_baseline_filter_list_24"
+                    app:tint="?attr/textColor" />
+
+            </FrameLayout>
+        </LinearLayout>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <!--    <RelativeLayout-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="match_parent"-->
+    <!--        android:nestedScrollingEnabled="true"-->
+    <!--        android:orientation="vertical"-->
+    <!--        app:layout_behavior="@string/appbar_scrolling_view_behavior">-->
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/viewpager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:paddingBottom="40dp"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        tools:listitem="@layout/library_viewpager_page">
+
+    </androidx.viewpager2.widget.ViewPager2>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="40dp">
+
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            android:id="@+id/sort_fab"
+            style="@style/ExtendedFloatingActionButton"
+            android:text="Sort"
+            android:textColor="?attr/textColor"
+            app:icon="@drawable/ic_baseline_sort_24"
+            tools:ignore="ContentDescription" />
+    </FrameLayout>
+
+    <!--    </com.google.android.material.appbar.AppBarLayout>-->
+
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/library_tab_layout"
+        style="@style/Theme.Widget.Tabs"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_gravity="bottom"
+        android:background="?attr/primaryGrayBackground"
+        android:descendantFocusability="blocksDescendants"
+        android:focusable="false"
+
+        android:paddingHorizontal="5dp"
+        app:layout_scrollFlags="noScroll"
+        app:tabBackground="?attr/primaryGrayBackground"
+        app:tabGravity="center"
+        app:tabIndicator="@drawable/indicator_background"
+        app:tabIndicatorColor="@color/textColor"
+        app:tabIndicatorGravity="center"
+        app:tabIndicatorHeight="30dp"
+        app:tabMode="scrollable"
+        app:tabSelectedTextColor="@color/lightTextColor"
+        app:tabTextAppearance="@style/TabNoCaps"
+        app:tabTextColor="@color/textColor" />
+    <!--    </RelativeLayout>-->
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

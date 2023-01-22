@@ -5,7 +5,6 @@
     android:id="@+id/search_result_root"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-
     android:clickable="true"
     android:focusable="true"
     android:foreground="@drawable/outline_drawable"

@@ -1,6 +1,7 @@
 package com.lagradost.cloudstream3.utils
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.lagradost.cloudstream3.APIHolder.capitalize
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKeys
 import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
@@ -10,6 +11,7 @@ import com.lagradost.cloudstream3.DubStatus
 import com.lagradost.cloudstream3.SearchQuality
 import com.lagradost.cloudstream3.SearchResponse
 import com.lagradost.cloudstream3.TvType
+import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.result.VideoWatchState
 
@@ -51,7 +53,20 @@ object DataStoreHelper {
         @JsonProperty("year") val year: Int?,
         @JsonProperty("quality") override var quality: SearchQuality? = null,
         @JsonProperty("posterHeaders") override var posterHeaders: Map<String, String>? = null,
-    ) : SearchResponse
+    ) : SearchResponse {
+        fun toLibraryItem(state: WatchType): SyncAPI.LibraryItem {
+            return SyncAPI.LibraryItem(
+                name,
+                url,
+                url,
+                state.name.lowercase().capitalize(),
+                null,
+                null,
+                null,
+                apiName, type, posterUrl, posterHeaders, quality, id
+            )
+        }
+    }
 
     data class ResumeWatchingResult(
         @JsonProperty("name") override val name: String,
@@ -71,6 +86,9 @@ object DataStoreHelper {
         @JsonProperty("posterHeaders") override var posterHeaders: Map<String, String>? = null,
     ) : SearchResponse
 
+    /**
+     * A datastore wide account for future implementations of a multiple account system
+     **/
     private var currentAccount: String = "0" //TODO ACCOUNT IMPLEMENTATION
 
     fun getAllWatchStateIds(): List<Int>? {

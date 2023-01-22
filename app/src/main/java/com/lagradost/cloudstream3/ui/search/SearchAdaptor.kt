@@ -15,7 +15,9 @@ import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import kotlinx.android.synthetic.main.search_result_compact.view.*
 import kotlin.math.roundToInt
 
+/** Click */
 const val SEARCH_ACTION_LOAD = 0
+/** Long press */
 const val SEARCH_ACTION_SHOW_METADATA = 1
 const val SEARCH_ACTION_PLAY_FILE = 2
 const val SEARCH_ACTION_FOCUSED = 4
