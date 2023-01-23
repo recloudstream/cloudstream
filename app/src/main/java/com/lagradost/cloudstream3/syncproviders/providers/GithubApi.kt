@@ -84,7 +84,7 @@ class GithubApi(index: Int) : InAppAuthAPIManager(index){
 
         if (repo?.isEmpty() == true){
             val backupData = context?.getBackup()
-            val gitresponse = app.post("https://api.github.com/gists",
+            val gitResponse = app.post("https://api.github.com/gists",
                 headers= mapOf(
                     Pair("Accept" , "application/vnd.github+json"),
                     Pair("Authorization", "token $githubToken"),
@@ -92,8 +92,8 @@ class GithubApi(index: Int) : InAppAuthAPIManager(index){
                 requestBody = GistRequestBody("Cloudstream private backup gist", false, FilesGist(ContentFilesGist(backupData?.toJson()))).toJson().toRequestBody(
                     RequestBodyTypes.JSON.toMediaTypeOrNull()))
 
-            if (!gitresponse.isSuccessful) {return false}
-            tryParseJson<GistsElements>(gitresponse.text).let {
+            if (!gitResponse.isSuccessful) {return false}
+            tryParseJson<GistsElements>(gitResponse.text).let {
                 setKey(accountId, GITHUB_USER_KEY, GithubOAuthEntity(
                     token = githubToken,
                     gistId = it?.gistId?: run {

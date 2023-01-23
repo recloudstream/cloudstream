@@ -33,6 +33,7 @@ import com.lagradost.cloudstream3.syncproviders.providers.MALApi.Companion.MAL_T
 import com.lagradost.cloudstream3.syncproviders.providers.MALApi.Companion.MAL_UNIXTIME_KEY
 import com.lagradost.cloudstream3.syncproviders.providers.MALApi.Companion.MAL_USER_KEY
 import com.lagradost.cloudstream3.syncproviders.providers.OpenSubtitlesApi.Companion.OPEN_SUBTITLES_USER_KEY
+import com.lagradost.cloudstream3.ui.home.HomeFragment
 import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
 
@@ -83,7 +84,7 @@ object BackupUtils {
 
     /** false if blacklisted key */
     private fun String.isTransferable(): Boolean {
-        return !nonTransferableKeys.contains(this)
+        return !nonTransferableKeys.contains(this) and !nonTransferableKeys.any { this.endsWith(it) }
     }
 
     private var restoreFileSelector: ActivityResultLauncher<Array<String>>? = null
@@ -300,7 +301,7 @@ object BackupUtils {
 
 
     fun FragmentActivity.backupGithub(){
-        val backup = this.getBackup()
+        val backup = this.getBackup().toJson()
 
         val gistId = githubApi.getLatestLoginData()?.server ?: throw IllegalArgumentException ("Requires Username")
         val token = githubApi.getLatestLoginData()?.password ?: throw IllegalArgumentException ("Requires Username")
@@ -314,7 +315,7 @@ object BackupUtils {
                 requestBody = GithubApi.GistRequestBody(
                     "Cloudstream private backup gist",
                     false,
-                    GithubApi.FilesGist(GithubApi.ContentFilesGist(backup.toJson())))
+                    GithubApi.FilesGist(GithubApi.ContentFilesGist(backup)))
                     .toJson()
                     .toRequestBody(RequestBodyTypes.JSON.toMediaTypeOrNull())
             )
@@ -327,15 +328,16 @@ object BackupUtils {
     }
     suspend fun Context.restorePromptGithub() {
         val gistId = githubApi.getLatestLoginData()?.server ?: throw IllegalAccessException()
-        val jsondata = app.get(" https://api.github.com/gists/$gistId").text
-        val dataraw =
-            parseJson<GithubApi.GistsElements>(jsondata ?: "").files.values.first().dataRaw
+        val jsonData = app.get("https://api.github.com/gists/$gistId").text
+        val dataRaw =
+            parseJson<GithubApi.GistsElements>(jsonData ?: "").files.values.first().dataRaw
                 ?: throw IllegalAccessException()
-        val data = parseJson<BackupFile>(dataraw)
+        val data = parseJson<BackupFile>(dataRaw)
         restore(
             data,
             restoreSettings = true,
             restoreDataStore = true
         )
+        HomeFragment.reloadStoredDataEvent.invoke(Unit)
     }
 }
