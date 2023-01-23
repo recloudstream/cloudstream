@@ -93,6 +93,7 @@ class HomeFragment : Fragment() {
         val configEvent = Event<Int>()
         var currentSpan = 1
         val listHomepageItems = mutableListOf<SearchResponse>()
+        val reloadStoredDataEvent = Event<Unit>()
 
         private val errorProfilePics = listOf(
             R.drawable.monke_benene,
@@ -477,13 +478,19 @@ class HomeFragment : Fragment() {
         bookmarksUpdatedEvent += ::bookmarksUpdated
         afterPluginsLoadedEvent += ::afterPluginsLoaded
         mainPluginsLoadedEvent += ::afterMainPluginsLoaded
+        reloadStoredDataEvent += ::reloadStoredEvent
     }
 
     override fun onStop() {
         bookmarksUpdatedEvent -= ::bookmarksUpdated
         afterPluginsLoadedEvent -= ::afterPluginsLoaded
         mainPluginsLoadedEvent -= ::afterMainPluginsLoaded
+        reloadStoredDataEvent -= ::reloadStoredEvent
         super.onStop()
+    }
+
+    private fun reloadStoredEvent(input: Unit) {
+        reloadStored()
     }
 
     private fun reloadStored() {

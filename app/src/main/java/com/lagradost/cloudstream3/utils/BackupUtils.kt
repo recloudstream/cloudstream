@@ -14,14 +14,18 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.plugins.PLUGINS_KEY
 import com.lagradost.cloudstream3.plugins.PLUGINS_KEY_LOCAL
+import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.githubApi
 import com.lagradost.cloudstream3.syncproviders.providers.AniListApi.Companion.ANILIST_CACHED_LIST
 import com.lagradost.cloudstream3.syncproviders.providers.AniListApi.Companion.ANILIST_SHOULD_UPDATE_LIST
 import com.lagradost.cloudstream3.syncproviders.providers.AniListApi.Companion.ANILIST_TOKEN_KEY
 import com.lagradost.cloudstream3.syncproviders.providers.AniListApi.Companion.ANILIST_UNIXTIME_KEY
 import com.lagradost.cloudstream3.syncproviders.providers.AniListApi.Companion.ANILIST_USER_KEY
+import com.lagradost.cloudstream3.syncproviders.providers.GithubApi
+import com.lagradost.cloudstream3.syncproviders.providers.GithubApi.Companion.GITHUB_USER_KEY
 import com.lagradost.cloudstream3.syncproviders.providers.MALApi.Companion.MAL_CACHED_LIST
 import com.lagradost.cloudstream3.syncproviders.providers.MALApi.Companion.MAL_REFRESH_TOKEN_KEY
 import com.lagradost.cloudstream3.syncproviders.providers.MALApi.Companion.MAL_SHOULD_UPDATE_LIST
@@ -29,6 +33,11 @@ import com.lagradost.cloudstream3.syncproviders.providers.MALApi.Companion.MAL_T
 import com.lagradost.cloudstream3.syncproviders.providers.MALApi.Companion.MAL_UNIXTIME_KEY
 import com.lagradost.cloudstream3.syncproviders.providers.MALApi.Companion.MAL_USER_KEY
 import com.lagradost.cloudstream3.syncproviders.providers.OpenSubtitlesApi.Companion.OPEN_SUBTITLES_USER_KEY
+import com.lagradost.cloudstream3.ui.home.HomeFragment
+import com.lagradost.cloudstream3.utils.AppUtils.parseJson
+import com.lagradost.cloudstream3.utils.AppUtils.toJson
+
+import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.DataStore.getDefaultSharedPrefs
 import com.lagradost.cloudstream3.utils.DataStore.getSharedPrefs
 import com.lagradost.cloudstream3.utils.DataStore.mapper
@@ -37,12 +46,14 @@ import com.lagradost.cloudstream3.utils.UIHelper.checkWrite
 import com.lagradost.cloudstream3.utils.UIHelper.requestRW
 import com.lagradost.cloudstream3.utils.VideoDownloadManager.getBasePath
 import com.lagradost.cloudstream3.utils.VideoDownloadManager.isDownloadDir
+import com.lagradost.nicehttp.RequestBodyTypes
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.IOException
 import java.io.PrintWriter
 import java.lang.System.currentTimeMillis
 import java.text.SimpleDateFormat
 import java.util.*
-
 object BackupUtils {
 
     /**
@@ -65,14 +76,15 @@ object BackupUtils {
         // The plugins themselves are not backed up
         PLUGINS_KEY,
         PLUGINS_KEY_LOCAL,
-
+        GITHUB_USER_KEY,
         OPEN_SUBTITLES_USER_KEY,
         "nginx_user", // Nginx user key
+
     )
 
     /** false if blacklisted key */
     private fun String.isTransferable(): Boolean {
-        return !nonTransferableKeys.contains(this)
+        return !nonTransferableKeys.contains(this) and !nonTransferableKeys.any { this.endsWith(it) }
     }
 
     private var restoreFileSelector: ActivityResultLauncher<Array<String>>? = null
@@ -285,5 +297,47 @@ object BackupUtils {
         map?.filter { it.key.isTransferable() }?.forEach {
             setKeyRaw(it.key, it.value, isEditingAppSettings)
         }
+    }
+
+
+    fun FragmentActivity.backupGithub(){
+        val backup = this.getBackup().toJson()
+
+        val gistId = githubApi.getLatestLoginData()?.server ?: throw IllegalArgumentException ("Requires Username")
+        val token = githubApi.getLatestLoginData()?.password ?: throw IllegalArgumentException ("Requires Username")
+
+        ioSafe {
+            app.patch("https://api.github.com/gists/$gistId",
+                headers= mapOf(
+                    Pair("Accept" , "application/vnd.github+json"),
+                    Pair("Authorization", "token $token"),
+                ),
+                requestBody = GithubApi.GistRequestBody(
+                    "Cloudstream private backup gist",
+                    false,
+                    GithubApi.FilesGist(GithubApi.ContentFilesGist(backup)))
+                    .toJson()
+                    .toRequestBody(RequestBodyTypes.JSON.toMediaTypeOrNull())
+            )
+        }
+        showToast(
+            this,
+            R.string.backup_success,
+            Toast.LENGTH_LONG
+        )
+    }
+    suspend fun Context.restorePromptGithub() {
+        val gistId = githubApi.getLatestLoginData()?.server ?: throw IllegalAccessException()
+        val jsonData = app.get("https://api.github.com/gists/$gistId").text
+        val dataRaw =
+            parseJson<GithubApi.GistsElements>(jsonData ?: "").files.values.first().dataRaw
+                ?: throw IllegalAccessException()
+        val data = parseJson<BackupFile>(dataRaw)
+        restore(
+            data,
+            restoreSettings = true,
+            restoreDataStore = true
+        )
+        HomeFragment.reloadStoredDataEvent.invoke(Unit)
     }
 }

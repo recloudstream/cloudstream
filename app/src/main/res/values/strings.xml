@@ -61,6 +61,8 @@
     <string name="pref_filter_search_quality_key" translatable="false">pref_filter_search_quality_key</string>
     <string name="enable_nsfw_on_providers_key" translatable="false">enable_nsfw_on_providers_key</string>
     <string name="enable_skip_op_from_database" translatable="false">enable_skip_op_from_database</string>
+    <string name="automatic_cloud_backups" translatable="false">automatic_cloud_backups</string>
+
     <!-- FORMAT MIGHT TRANSLATE, WILL CAUSE CRASH IF APPLIED WRONG -->
     <string name="extra_info_format" formatted="true" translatable="false">%d %s | %s</string>
     <string name="storage_size_format" formatted="true" translatable="false">%s • %s</string>
@@ -222,7 +224,12 @@
     <string name="episode_sync_settings">Update watch progress</string>
     <string name="episode_sync_settings_des">Automatically sync your current episode progress</string>
     <string name="restore_settings">Restore data from backup</string>
-    <string name="backup_settings">Back up data</string>
+    <string name="automatic_restore_settings">Automatic backup from Github</string>
+
+    <string name="cloud_backups_off">Cloud Backup deactivated</string>
+    <string name="cloud_backups_on">Cloud Backup enabled</string>
+
+    <string name="backup_settings">Backup data</string>
     <string name="restore_success">Loaded backup file</string>
     <string name="restore_failed_format" formatted="true">Failed to restore data from file %s</string>
     <string name="backup_success">Data stored</string>
@@ -428,6 +435,7 @@
     <string name="anilist_key" translatable="false">anilist_key</string>
     <string name="mal_key" translatable="false">mal_key</string>
     <string name="opensubtitles_key" translatable="false">opensubtitles_key</string>
+    <string name="github_key" translatable="false">github_key</string>
     <string name="nginx_key" translatable="false">nginx_key</string>
     <string name="example_password">password123</string>
     <string name="example_username">MyCoolUsername</string>
@@ -479,7 +487,7 @@
     <string name="subtitle_offset_extra_hint_none_format">No subtitle delay</string>
     <!--
     Example text (pangram) can optionally be translated; if you do, include all the letters in the alphabet,
-    see: 
+    see:
 	https://en.wikipedia.org/w/index.php?title=Pangram&oldid=225849300
 	https://en.wikipedia.org/wiki/The_quick_brown_fox_jumps_over_the_lazy_dog
     -->

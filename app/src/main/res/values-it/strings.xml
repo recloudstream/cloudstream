@@ -141,6 +141,8 @@
     <!--<string name="episode_sync_settings">Update watch progress</string>-->
     <string name="episode_sync_settings_des">Sincronizza automaticamente gli episodi guardati</string>
     <string name="restore_settings">Ripristinare i dati da backup</string>
+    <string name="automatic_restore_settings">Backup automatico su Github</string>
+
     <string name="backup_settings">Backup data</string>
     <string name="restore_success">File di backup caricato</string>
     <string name="restore_failed_format" formatted="true">Impossibile ripristinare i dati dal file %s</string>
@@ -343,7 +345,7 @@
     <string name="subtitle_offset_extra_hint_none_format">Nessun ritardo dei sottotitoli</string>
     <!--
     Example text (pangram) can optionally be translated; if you do, include all the letters in the alphabet,
-    see: 
+    see:
 	https://en.wikipedia.org/w/index.php?title=Pangram&oldid=225849300
 	https://en.wikipedia.org/wiki/The_quick_brown_fox_jumps_over_the_lazy_dog
     -->

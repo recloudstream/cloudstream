@@ -38,6 +38,7 @@ import com.lagradost.cloudstream3.APIHolder.apis
 import com.lagradost.cloudstream3.APIHolder.getApiDubstatusSettings
 import com.lagradost.cloudstream3.APIHolder.initAll
 import com.lagradost.cloudstream3.APIHolder.updateHasTrailers
+import com.lagradost.cloudstream3.AcraApplication.Companion.context
 import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.CommonActivity.loadThemes
@@ -58,6 +59,7 @@ import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.appStri
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.appStringRepo
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.appStringResumeWatching
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.appStringSearch
+import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.githubApi
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.inAppAuths
 import com.lagradost.cloudstream3.ui.APIRepository
 import com.lagradost.cloudstream3.ui.WatchType
@@ -84,6 +86,8 @@ import com.lagradost.cloudstream3.utils.AppUtils.loadRepository
 import com.lagradost.cloudstream3.utils.AppUtils.loadResult
 import com.lagradost.cloudstream3.utils.AppUtils.loadSearchResult
 import com.lagradost.cloudstream3.utils.AppUtils.setDefaultFocus
+import com.lagradost.cloudstream3.utils.BackupUtils.backupGithub
+import com.lagradost.cloudstream3.utils.BackupUtils.restorePromptGithub
 import com.lagradost.cloudstream3.utils.BackupUtils.setUpBackup
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.DataStore.getKey
@@ -443,6 +447,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
     //private var mCastSession: CastSession? = null
     lateinit var mSessionManager: SessionManager
     private val mSessionManagerListener: SessionManagerListener<Session> by lazy { SessionManagerListenerImpl() }
+    private val accountsLoginLock = Mutex()
 
     private inner class SessionManagerListenerImpl : SessionManagerListener<Session> {
         override fun onSessionStarting(session: Session) {
@@ -502,6 +507,10 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             }
         } catch (e: Exception) {
             logError(e)
+        }
+        val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
+        if (githubApi.getLatestLoginData() != null && settingsManager.getBoolean(getString(R.string.automatic_cloud_backups), true)) {
+            this@MainActivity.backupGithub()
         }
     }
 
@@ -640,36 +649,52 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         }
     }
 
-    lateinit var viewModel: ResultViewModel2
+lateinit var viewModel: ResultViewModel2
 
-    override fun onCreateView(name: String, context: Context, attrs: AttributeSet): View? {
-        viewModel =
-            ViewModelProvider(this)[ResultViewModel2::class.java]
+override fun onCreateView(name: String, context: Context, attrs: AttributeSet): View? {
+    viewModel =
+        ViewModelProvider(this)[ResultViewModel2::class.java]
 
-        return super.onCreateView(name, context, attrs)
-    }
+    return super.onCreateView(name, context, attrs)
+}
 
-    private fun hidePreviewPopupDialog() {
-        viewModel.clear()
-        bottomPreviewPopup.dismissSafe(this)
-    }
+private fun hidePreviewPopupDialog() {
+    viewModel.clear()
+    bottomPreviewPopup.dismissSafe(this)
+}
 
-    var bottomPreviewPopup: BottomSheetDialog? = null
-    private fun showPreviewPopupDialog(): BottomSheetDialog {
-        val ret = (bottomPreviewPopup ?: run {
-            val builder =
-                BottomSheetDialog(this)
-            builder.setContentView(R.layout.bottom_resultview_preview)
-            builder.setOnDismissListener {
-                bottomPreviewPopup = null
-                viewModel.clear()
+var bottomPreviewPopup: BottomSheetDialog? = null
+private fun showPreviewPopupDialog(): BottomSheetDialog {
+    val ret = (bottomPreviewPopup ?: run {
+        val builder =
+            BottomSheetDialog(this)
+        builder.setContentView(R.layout.bottom_resultview_preview)
+        builder.setOnDismissListener {
+            bottomPreviewPopup = null
+            viewModel.clear()
+        }
+        builder.setCanceledOnTouchOutside(true)
+        builder.show()
+        builder
+    })
+    bottomPreviewPopup = ret
+    return ret
+}
+
+    override fun onStart() {
+        val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
+        super.onStart()
+        ioSafe {
+            accountsLoginLock.withLock {
+                if (githubApi.getLatestLoginData() != null && settingsManager.getBoolean(
+                        getString(R.string.automatic_cloud_backups),
+                        true
+                    )
+                ) {
+                    context?.restorePromptGithub()
+                }
             }
-            builder.setCanceledOnTouchOutside(true)
-            builder.show()
-            builder
-        })
-        bottomPreviewPopup = ret
-        return ret
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -845,15 +870,17 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
 
         // init accounts
         ioSafe {
-            for (api in accountManagers) {
-                api.init()
-            }
+            accountsLoginLock.withLock{
+                for (api in accountManagers) {
+                    api.init()
+                }
 
-            inAppAuths.amap { api ->
-                try {
-                    api.initialize()
-                } catch (e: Exception) {
-                    logError(e)
+                inAppAuths.amap { api ->
+                    try {
+                        api.initialize()
+                    } catch (e: Exception) {
+                        logError(e)
+                    }
                 }
             }
         }
