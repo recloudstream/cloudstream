@@ -478,12 +478,14 @@ class HomeFragment : Fragment() {
         bookmarksUpdatedEvent += ::bookmarksUpdated
         afterPluginsLoadedEvent += ::afterPluginsLoaded
         mainPluginsLoadedEvent += ::afterMainPluginsLoaded
+        reloadStoredDataEvent += ::reloadStoredEvent
     }
 
     override fun onStop() {
         bookmarksUpdatedEvent -= ::bookmarksUpdated
         afterPluginsLoadedEvent -= ::afterPluginsLoaded
         mainPluginsLoadedEvent -= ::afterMainPluginsLoaded
+        reloadStoredDataEvent -= ::reloadStoredEvent
         super.onStop()
     }
 

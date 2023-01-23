@@ -60,7 +60,6 @@ import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.appStri
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.appStringResumeWatching
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.appStringSearch
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.githubApi
-import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.appStringSearch
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.inAppAuths
 import com.lagradost.cloudstream3.ui.APIRepository
 import com.lagradost.cloudstream3.ui.WatchType
@@ -680,6 +679,7 @@ private fun showPreviewPopupDialog(): BottomSheetDialog {
     })
     bottomPreviewPopup = ret
     return ret
+}
 
     override fun onStart() {
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
