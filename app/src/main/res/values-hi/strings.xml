@@ -1,27 +1,23 @@
-<!--https://newbedev.com/concatenate-multiple-strings-in-xml-->
-<resources>
+<?xml version="1.0" encoding="utf-8"?>
+<!--https://newbedev.com/concatenate-multiple-strings-in-xml--><resources>
     <!-- TRANSLATE, BUT DON'T FORGET FORMAT -->
     <string name="player_speed_text_format" formatted="true">रफ्तार (%.2fx)</string>
-    <string name="new_update_format" formatted="true">नया अपडेट आया है!\n%s -> %s</string>
-
+    <string name="new_update_format" formatted="true">नया अपडेट आया है!\n%s -&gt; %s</string>
     <string name="title_home">होम</string>
     <string name="title_search">खोजें</string>
     <string name="title_downloads">डाउनलोड</string>
     <string name="title_settings">सेटिंग</string>
-
     <string name="no_data">डेटा उपलब्ध नही है</string>
     <string name="episode_more_options_des">अन्य ऑप्शन</string>
     <string name="next_episode">अगला एपिसोड</string>
     <string name="result_tags">शैलियां</string>
     <string name="result_share">शेयर</string>
     <string name="result_open_in_browser">ब्राउज़र में खोलें</string>
-
     <string name="type_watching">देखा जा रहा है</string>
     <string name="type_on_hold">होल्ड पर</string>
     <string name="type_completed">पूरा देखा</string>
     <string name="type_dropped">अधूरा छोड़ा</string>
     <string name="type_plan_to_watch">देखने की योजना</string>
-
     <string name="play_movie_button">मूवी चलाये</string>
     <string name="play_torrent_button">टोरेंट चलाये</string>
     <string name="pick_source">सूत्र</string>
@@ -29,7 +25,6 @@
     <string name="go_back">वापिस जाए</string>
     <string name="play_episode">एपिसोड चलाये</string>
     <!--<string name="need_storage">Allow to download episodes</string>-->
-
     <string name="download">डाउनलोड</string>
     <string name="downloaded">डाउनलोड किया गया</string>
     <string name="downloading">डाउनलोड हो रहा</string>
@@ -38,15 +33,12 @@
     <string name="download_failed">डाउनलोड नही हो पाया</string>
     <string name="download_canceled">डाउनलोड रद्द</string>
     <string name="download_done">डाउनलोड पूरा हुआ</string>
-
     <string name="error_loading_links_toast">लिंक में गड़बड़ है</string>
     <string name="download_storage_text">अंदरूनी स्टोरेज</string>
-
     <string name="popup_delete_file">फ़ाइल डिलीट</string>
     <string name="popup_play_file">फ़ाइल चलाये</string>
     <string name="popup_resume_download">डाउनलोड फिर शुरू करे</string>
     <string name="popup_pause_download">डाउनलोड रोके</string>
-
     <string name="pref_disable_acra">स्वचालित त्रुटि रिपोर्ट रोकें</string>
     <string name="home_more_info">और जानकारी</string>
     <string name="home_expanded_hide">छिपाये</string>
@@ -58,25 +50,19 @@
     <string name="sort_apply">लागू करे</string>
     <string name="sort_cancel">रद्द करे</string>
     <string name="player_speed">प्लेयर की रफ्तार</string>
-
     <string name="search_provider_text_providers">सूत्रों से छांटे</string>
     <string name="search_provider_text_types">प्रकार से छांटे</string>
-
     <string name="benene_count_text">%d केले दिए गए</string>
     <string name="benene_count_text_none">कोई केले नही दिए गए</string>
-
     <string name="subs_hold_to_reset_to_default">रिसेट करने ले किये दबाये रखे</string>
     <string name="continue_watching">देखना जारी रखें</string>
-
     <string name="action_remove_watching">हटाएँ</string>
     <string name="action_open_watching">अधिक जानकारी</string>
-
     <string name="vpn_might_be_needed">इस सूत्र को इस्तेमाल करने के लिए एक VPN की ज़रूरत पड़ सकती है</string>
     <string name="vpn_torrent">यह सूत्र एक torrent है, एक VPN इस्तेमाल करने की सिफारिश की जाती है</string>
     <string name="torrent_plot">वर्णन</string>
     <string name="normal_no_plot">कोई विषय नही मिला</string>
     <string name="torrent_no_plot">कोई वर्णन नही मिला</string>
-
     <string name="picture_in_picture_des">आपकी वीडियो एक छोटे से डब्बे में चलाता है</string>
     <string name="player_size_settings_des">काले बॉर्डर को हटाता है</string>
     <string name="player_subtitles_settings_des">प्लेयर की subtitle सेटिंग्स</string>
@@ -97,23 +83,18 @@
     <string name="discord">Discord से जुड़िये</string>
     <string name="benene">इस प्रोग्राम के निर्माता को केला चढ़ाये</string>
     <string name="benene_des">केले दे दिए गए</string>
-
     <string name="app_language">एप्प की भाषा</string>
-
     <string name="no_chromecast_support_toast">यह सूत्र क्रोमकास्ट का समर्थन नही करता</string>
     <string name="no_links_found_toast">कोई लिंक नही मिले</string>
     <string name="copy_link_toast">लिंक को क्लिपबोर्ड पे कॉपी करदिया गया</string>
     <string name="play_episode_toast">चलाये</string>
     <string name="acra_report_toast">असुविधा के लिए खेद है, यह एप्प क्रैश हो गया है । एक गुमनाम रिपोर्ट निर्माताओं को भेज दी गयी है ।
     </string>
-
-
     <string name="delete_file">फ़ाइल डिलीट करें</string>
     <string name="delete">डिलीट</string>
     <string name="pause">रोके</string>
     <string name="resume">वापिस चलाये</string>
     <string name="delete_message">एज इस चीज़ को हमेशा के लिए नष्ट कर देगा %s\nक्या आपका निर्णय निश्चित है ?</string>
-
     <string name="status_ongoing">अभी चालू है</string>
     <string name="status_completed">खत्म हो गया है</string>
     <string name="status">स्तिथि</string>
@@ -122,17 +103,14 @@
     <string name="duration">अवधि</string>
     <string name="site">सूत्र</string>
     <string name="synopsis">Synopsis</string>
-
     <string name="free_storage">खाली</string>
     <string name="used_storage">इस्तेमाल में</string>
     <string name="app_storage">एप्प</string>
-
     <string name="movies">मूवी</string>
     <string name="tv_series">टीवी सीरियल</string>
     <string name="cartoons">कार्टून</string>
     <string name="anime">अनिमे</string>
     <string name="torrent">टोरेंट</string>
-
     <string name="episode_action_chromecast_episode">क्रोमकास्ट एपिसोड</string>
     <string name="episode_action_chromecast_mirror">कक्रोमकास्ट मिरर</string>
     <string name="episode_action_play_in_app">एप्प मैं चलाये</string>
@@ -142,15 +120,12 @@
     <string name="episode_action_auto_download">डाउनलोड करे</string>
     <string name="episode_action_download_mirror">मिरर डाउनलोड</string>
     <string name="episode_action_reload_links">लिंक फिरसे लोड करें</string>
-
     <string name="no_update_found">कोई अपडेट नही मिला</string>
     <string name="check_for_update">अपडेट के लिए खोजे</string>
-
     <string name="video_lock">ताला</string>
     <string name="video_aspect_ratio_resize">आकार</string>
     <string name="video_source">सूत्र</string>
     <string name="video_skip_op">OP स्किप करें</string>
-
     <string name="dont_show_again">फिरसे ना दिखाए</string>
     <string name="update">अपडेट</string>
     <string name="watch_quality_pref">पसंदीदा देखने की क्वालिटी</string>
@@ -158,13 +133,17 @@
     <string name="provider_lang_settings">सूत्र की भाषाएं</string>
     <string name="app_layout">ऐप का लेआउट</string>
     <string name="preferred_media_settings">पसंदीदा मीडिया </string>
-    
     <string name="download_path_pref"> डाउनलोड करने का मार्ग</string>
     <string name="display_subbed_dubbed_settings">Dubbed या Subbed Anime दिखाये</string>
-    
     <string name="tv_layout">टीवी लेआउट</string>
     <string name="phone_layout">फ़ोन लेआउट</string>
-
     <string name="primary_color_settings">मुख्य रंग</string>
     <string name="app_theme_settings">ऐप का रंग</string>
+    <string name="action_mark_as_watched">देखा हुआ चिह्नित करें</string>
+    <string name="history">इतिहास</string>
+    <string name="next_episode_format" formatted="true">भाग %d जारी होगा</string>
+    <string name="next_episode_time_day_format" formatted="true">%dd %dh %dm</string>
+    <string name="next_episode_time_hour_format" formatted="true">%dh %dm</string>
+    <string name="next_episode_time_min_format" formatted="true">%dm</string>
+    <string name="result_poster_img_des">विज्ञापन</string>
 </resources>

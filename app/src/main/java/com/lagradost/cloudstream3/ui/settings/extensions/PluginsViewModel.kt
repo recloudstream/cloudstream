@@ -9,6 +9,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lagradost.cloudstream3.CommonActivity.showToast
+import com.lagradost.cloudstream3.PROVIDER_STATUS_DOWN
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.amap
 import com.lagradost.cloudstream3.mvvm.launchSafe
@@ -102,11 +103,12 @@ class PluginsViewModel : ViewModel() {
                         )
                     }
                 }.amap { (repo, metadata) ->
-                    PluginManager.downloadAndLoadPlugin(
+                    PluginManager.downloadPlugin(
                         activity,
                         metadata.url,
                         metadata.internalName,
-                        repo
+                        repo,
+                        metadata.status != PROVIDER_STATUS_DOWN
                     )
                 }.main { list ->
                     if (list.any { it }) {
@@ -151,12 +153,15 @@ class PluginsViewModel : ViewModel() {
         val (success, message) = if (file.exists()) {
             PluginManager.deletePlugin(file) to R.string.plugin_deleted
         } else {
-            PluginManager.downloadAndLoadPlugin(
+            val isEnabled = plugin.second.status != PROVIDER_STATUS_DOWN
+            val message = if (isEnabled) R.string.plugin_loaded else R.string.plugin_downloaded
+            PluginManager.downloadPlugin(
                 activity,
                 metadata.url,
                 metadata.name,
-                repo
-            ) to R.string.plugin_loaded
+                repo,
+                isEnabled
+            ) to message
         }
 
         runOnMainThread {

@@ -11,6 +11,7 @@ import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.ui.player.DownloadFileGenerator
 import com.lagradost.cloudstream3.ui.player.GeneratorPlayer
 import com.lagradost.cloudstream3.utils.AppUtils.getNameFull
+import com.lagradost.cloudstream3.utils.AppUtils.setDefaultFocus
 import com.lagradost.cloudstream3.utils.DOWNLOAD_HEADER_CACHE
 import com.lagradost.cloudstream3.utils.ExtractorUri
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
@@ -49,7 +50,7 @@ object DownloadButtonSetup {
                             )
                             .setPositiveButton(R.string.delete, dialogClickListener)
                             .setNegativeButton(R.string.cancel, dialogClickListener)
-                            .show()
+                            .show().setDefaultFocus()
                     } catch (e: Exception) {
                         logError(e)
                         // ye you somehow fucked up formatting did you?

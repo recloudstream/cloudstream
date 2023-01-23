@@ -6,27 +6,18 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-    <FrameLayout
-            android:foreground="?android:attr/selectableItemBackgroundBorderless"
-            android:id="@+id/home_child_more_info"
-            android:padding="12dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-        <TextView
-                android:id="@+id/home_parent_item_title"
-                style="@style/WatchHeaderText"
-                tools:text="Trending" />
-
-        <ImageView
-                app:tint="?attr/textColor"
-                android:layout_marginEnd="5dp"
-                android:layout_gravity="end|center_vertical"
-                android:src="@drawable/ic_baseline_arrow_forward_24"
-                android:layout_width="30dp"
-                android:layout_height="match_parent"
-                android:contentDescription="@string/home_more_info" />
-    </FrameLayout>
+    <TextView
+        android:id="@+id/home_child_more_info"
+        style="@style/WatchHeaderText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="0dp"
+        android:padding="12dp"
+        tools:text="@string/continue_watching"
+        app:drawableRightCompat="@drawable/ic_baseline_arrow_forward_24"
+        app:drawableTint="?attr/white"
+        android:background="?android:attr/selectableItemBackground"
+        android:contentDescription="@string/home_more_info"/>
 
     <androidx.recyclerview.widget.RecyclerView
             android:nextFocusUp="@id/home_child_more_info"

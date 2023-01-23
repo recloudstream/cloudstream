@@ -15,6 +15,8 @@ import com.lagradost.cloudstream3.syncproviders.AuthAPI
 import com.lagradost.cloudstream3.syncproviders.InAppAuthAPI
 import com.lagradost.cloudstream3.syncproviders.InAppAuthAPIManager
 import com.lagradost.cloudstream3.utils.AppUtils
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 
 class OpenSubtitlesApi(index: Int) : InAppAuthAPIManager(index), AbstractSubApi {
     override val idPrefix = "opensubtitles"
@@ -164,7 +166,7 @@ class OpenSubtitlesApi(index: Int) : InAppAuthAPIManager(index), AbstractSubApi 
         val fixedLang = fixLanguage(query.lang)
 
         val imdbId = query.imdb ?: 0
-        val queryText = query.query.replace(" ", "+")
+        val queryText = query.query
         val epNum = query.epNumber ?: 0
         val seasonNum = query.seasonNumber ?: 0
         val yearNum = query.year ?: 0
@@ -175,7 +177,7 @@ class OpenSubtitlesApi(index: Int) : InAppAuthAPIManager(index), AbstractSubApi 
         val searchQueryUrl = when (imdbId > 0) {
             //Use imdb_id to search if its valid
             true -> "$host/subtitles?imdb_id=$imdbId&languages=${fixedLang}$yearQuery$epQuery$seasonQuery"
-            false -> "$host/subtitles?query=$queryText&languages=${fixedLang}$yearQuery$epQuery$seasonQuery"
+            false -> "$host/subtitles?query=${queryText}&languages=${fixedLang}$yearQuery$epQuery$seasonQuery"
         }
 
         val req = app.get(
@@ -198,9 +200,13 @@ class OpenSubtitlesApi(index: Int) : InAppAuthAPIManager(index), AbstractSubApi 
             it.data?.forEach { item ->
                 val attr = item.attributes ?: return@forEach
                 val featureDetails = attr.featDetails
+                //Use filename as name, if its valid
+                val filename = attr.files?.firstNotNullOfOrNull { subfile ->
+                    subfile.fileName
+                }
                 //Use any valid name/title in hierarchy
-                val name = featureDetails?.movieName ?: featureDetails?.title
-                ?: featureDetails?.parentTitle ?: attr.release ?: ""
+                val name = filename ?: featureDetails?.movieName ?: featureDetails?.title
+                ?: featureDetails?.parentTitle ?: attr.release ?: query.query
                 val lang = fixLanguageReverse(attr.language)?: ""
                 val resEpNum = featureDetails?.episodeNumber ?: query.epNumber
                 val resSeasonNum = featureDetails?.seasonNumber ?: query.seasonNumber

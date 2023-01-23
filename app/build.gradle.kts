@@ -39,16 +39,16 @@ android {
         }
     }
 
-    compileSdk = 31
+    compileSdk = 33
     buildToolsVersion = "30.0.3"
 
     defaultConfig {
         applicationId = "com.lagradost.cloudstream3"
         minSdk = 21
-        targetSdk = 30
+        targetSdk = 33
 
-        versionCode = 52
-        versionName = "3.1.6"
+        versionCode = 55
+        versionName = "3.4.0"
 
         resValue("string", "app_version", "${defaultConfig.versionName}${versionNameSuffix ?: ""}")
 
@@ -155,10 +155,10 @@ dependencies {
     // implementation("androidx.leanback:leanback-paging:1.1.0-alpha09")
 
     // Exoplayer
-    implementation("com.google.android.exoplayer:exoplayer:2.16.1")
-    implementation("com.google.android.exoplayer:extension-cast:2.16.1")
-    implementation("com.google.android.exoplayer:extension-mediasession:2.16.1")
-    implementation("com.google.android.exoplayer:extension-okhttp:2.16.1")
+    implementation("com.google.android.exoplayer:exoplayer:2.18.2")
+    implementation("com.google.android.exoplayer:extension-cast:2.18.2")
+    implementation("com.google.android.exoplayer:extension-mediasession:2.18.2")
+    implementation("com.google.android.exoplayer:extension-okhttp:2.18.2")
 
     //implementation("com.google.android.exoplayer:extension-leanback:2.14.0")
 
@@ -176,7 +176,9 @@ dependencies {
     implementation("com.jaredrummler:colorpicker:1.1.0")
 
     //run JS
-    implementation("org.mozilla:rhino:1.7.14")
+    // do not upgrade to 1.7.14, since in 1.7.14 Rhino uses the `SourceVersion` class, which is not
+    // available on Android (even when using desugaring), and `NoClassDefFoundError` is thrown
+    implementation("org.mozilla:rhino:1.7.13")
 
     // TorrentStream
     //implementation("com.github.TorrentStream:TorrentStream-Android:2.7.0")
@@ -188,8 +190,9 @@ dependencies {
     // Networking
 //    implementation("com.squareup.okhttp3:okhttp:4.9.2")
 //    implementation("com.squareup.okhttp3:okhttp-dnsoverhttps:4.9.1")
-    implementation("com.github.Blatzar:NiceHttp:0.3.3")
-
+    implementation("com.github.Blatzar:NiceHttp:0.4.1")
+    // To fix SSL fuckery on android 9
+    implementation("org.conscrypt:conscrypt-android:2.2.1")
     // Util to skip the URI file fuckery 🙏
     implementation("com.github.tachiyomiorg:unifile:17bec43")
 
@@ -211,9 +214,9 @@ dependencies {
     // slow af yt
     //implementation("com.github.HaarigerHarald:android-youtubeExtractor:master-SNAPSHOT")
 
-    // newpipe yt
-    implementation("com.github.TeamNewPipe:NewPipeExtractor:dev-SNAPSHOT")
-    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.1.5")
+    // newpipe yt taken from https://github.com/TeamNewPipe/NewPipe/blob/dev/app/build.gradle#L190
+    implementation("com.github.TeamNewPipe:NewPipeExtractor:9ffdd0948b2ecd82655f5ff2a3e127b2b7695d5b")
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.1.6")
 
     // Library/extensions searching with Levenshtein distance
     implementation("me.xdrop:fuzzywuzzy:1.4.0")

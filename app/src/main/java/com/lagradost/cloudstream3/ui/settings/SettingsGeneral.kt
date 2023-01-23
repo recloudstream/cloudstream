@@ -47,7 +47,7 @@ fun getCurrentLocale(context: Context): String {
     // Change locale settings in the app.
     // val dm = res.displayMetrics
     val conf = res.configuration
-    return conf?.locale?.language ?: "en"
+    return conf?.locale?.toString() ?: "en"
 }
 
 // idk, if you find a way of automating this it would be great
@@ -55,31 +55,47 @@ fun getCurrentLocale(context: Context): String {
 // Emoji Character Encoding Data --> C/C++/Java Src
 // https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes leave blank for auto
 val appLanguages = arrayListOf(
-    Triple("", "Spanish", "es"),
-    Triple("", "English", "en"),
-    Triple("", "Viet Nam", "vi"),
-    Triple("", "Dutch", "nl"),
-    Triple("", "French", "fr"),
-    Triple("", "Greek", "el"),
-    Triple("", "Swedish", "sv"),
-    Triple("", "Tagalog", "tl"),
-    Triple("", "Polish", "pl"),
-    Triple("", "Hindi", "hi"),
-    Triple("", "Malayalam", "ml"),
-    Triple("", "Norsk", "no"),
-    Triple("", "German", "de"),
+    /* begin language list */
     Triple("", "Arabic", "ar"),
-    Triple("", "Turkish", "tr"),
-    Triple("", "Macedonian", "mk"),
-    Triple("\uD83C\uDDF5\uD83C\uDDF9", "Portuguese", "pt"),
-    Triple("\uD83C\uDDE7\uD83C\uDDF7", "Brazilian Portuguese", "bp"),
-    Triple("", "Romanian", "ro"),
-    Triple("", "Italian", "it"),
-    Triple("", "Chinese", "zh"),
-    Triple("\uD83C\uDDEE\uD83C\uDDE9", "Indonesian", "in"),
-    Triple("", "Czech", "cs"),
-    Triple("", "Croatian", "hr"),
     Triple("", "Bulgarian", "bg"),
+    Triple("", "Bengali", "bn"),
+    Triple("\uD83C\uDDE7\uD83C\uDDF7", "Brazilian Portuguese", "bp"),
+    Triple("", "Czech", "cs"),
+    Triple("", "German", "de"),
+    Triple("", "Greek", "el"),
+    Triple("", "English", "en"),
+    Triple("", "Esperanto", "eo"),
+    Triple("", "Spanish", "es"),
+    Triple("", "Farsi", "fa"),
+    Triple("", "French", "fr"),
+    Triple("", "Hindi", "hi"),
+    Triple("", "Croatian", "hr"),
+    Triple("", "Hungarian", "hu"),
+    Triple("\uD83C\uDDEE\uD83C\uDDE9", "Indonesian", "in"),
+    Triple("", "Italian", "it"),
+    Triple("\uD83C\uDDEE\uD83C\uDDF1", "Hebrew", "iw"),
+    Triple("", "Kannada", "kn"),
+    Triple("", "Macedonian", "mk"),
+    Triple("", "Malayalam", "ml"),
+    Triple("", "Moldavian", "mo"),
+    Triple("", "Dutch", "nl"),
+    Triple("", "Norwegian Nynorsk", "nn"),
+    Triple("", "Norwegian", "no"),
+    Triple("", "Polish", "pl"),
+    Triple("\uD83C\uDDF5\uD83C\uDDF9", "Portuguese", "pt"),
+    Triple("", "Romanian", "ro"),
+    Triple("", "Russian", "ru"),
+    Triple("", "Somali", "so"),
+    Triple("", "Swedish", "sv"),
+    Triple("", "Tamil", "ta"),
+    Triple("", "Tagalog", "tl"),
+    Triple("", "Turkish", "tr"),
+    Triple("", "Ukrainian", "uk"),
+    Triple("", "Urdu", "ur"),
+    Triple("", "Viet Nam", "vi"),
+    Triple("", "Chinese Simplified", "zh"),
+    Triple("\uD83C\uDDF9\uD83C\uDDFC", "Chinese Traditional", "zh-rTW"),
+/* end language list */
 ).sortedBy { it.second } //ye, we go alphabetical, so ppl don't put their lang on top
 
 class SettingsGeneral : PreferenceFragmentCompat() {

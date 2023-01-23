@@ -1,131 +1,131 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal"
-        android:keepScreenOn="true"
-        android:id="@+id/player_background"
-        app:backgroundTint="@android:color/black"
-        android:background="@android:color/black"
-        android:screenOrientation="sensorLandscape"
-        app:surface_type="texture_view">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/player_background"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/black"
+    android:orientation="horizontal"
+    android:screenOrientation="sensorLandscape"
+    app:backgroundTint="@android:color/black"
+    app:surface_type="texture_view">
     <!--
           app:fastforward_increment="10000"
             app:rewind_increment="10000"-->
     <com.google.android.exoplayer2.ui.PlayerView
-            android:id="@+id/player_view"
-            app:show_timeout="0"
-            app:hide_on_touch="false"
-            app:auto_show="true"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:backgroundTint="@android:color/black"
-            android:background="@android:color/black"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:controller_layout_id="@layout/player_custom_layout" />
+        android:id="@+id/player_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/black"
+        android:focusable="false"
+        app:auto_show="true"
+        app:backgroundTint="@android:color/black"
+        app:controller_layout_id="@layout/player_custom_layout"
+        app:hide_on_touch="false"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:show_timeout="0" />
 
     <FrameLayout
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/player_loading_overlay"
-            android:background="@android:color/black"
-            android:backgroundTint="@android:color/black">
+        android:id="@+id/player_loading_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/black"
+        android:backgroundTint="@android:color/black"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <com.google.android.material.button.MaterialButton
-                tools:visibility="visible"
-                android:visibility="gone"
-                android:layout_marginTop="70dp"
-                android:layout_gravity="center"
-                app:cornerRadius="4dp"
-                android:id="@+id/overlay_loading_skip_button"
-                android:text="@string/skip_loading"
+            android:id="@+id/overlay_loading_skip_button"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="wrap_content"
+            android:layout_height="45dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="70dp"
+            android:backgroundTint="@color/transparent"
 
-                app:rippleColor="?attr/colorPrimary"
-                android:textColor="?attr/textColor"
-                app:iconTint="?attr/textColor"
-                android:textAllCaps="false"
-                app:icon="@drawable/ic_baseline_skip_next_24"
-                android:backgroundTint="@color/transparent"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                android:layout_width="wrap_content"
-                android:layout_height="45dp" />
+            android:text="@string/skip_loading"
+            android:textAllCaps="false"
+            android:textColor="?attr/textColor"
+            android:visibility="gone"
+            app:cornerRadius="4dp"
+            app:icon="@drawable/ic_baseline_skip_next_24"
+            app:iconTint="?attr/textColor"
+            app:rippleColor="?attr/colorPrimary"
+            tools:visibility="visible" />
 
         <ProgressBar
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_gravity="center"
-                android:id="@+id/main_load" />
+            android:id="@+id/main_load"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center" />
 
         <FrameLayout
-                android:id="@+id/video_go_back_holder_holder"
-                android:layout_margin="5dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+            android:id="@+id/video_go_back_holder_holder"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
             <ImageView
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_gravity="center"
-                    android:src="@drawable/ic_baseline_arrow_back_24"
-                    app:tint="@android:color/white"
-                    android:contentDescription="@string/go_back_img_des" />
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_gravity="center"
+                android:contentDescription="@string/go_back_img_des"
+                android:src="@drawable/ic_baseline_arrow_back_24"
+                app:tint="@android:color/white" />
 
             <ImageView
-                    android:id="@+id/player_loading_go_back"
-                    android:layout_width="70dp"
-                    android:layout_height="70dp"
-                    android:layout_gravity="center"
-                    android:focusable="true"
-                    android:clickable="true"
-                    android:background="@drawable/video_tap_button_always_white"
-                    android:contentDescription="@string/go_back_img_des" />
+                android:id="@+id/player_loading_go_back"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_gravity="center"
+                android:background="@drawable/video_tap_button_always_white"
+                android:clickable="true"
+                android:contentDescription="@string/go_back_img_des"
+                android:focusable="true" />
         </FrameLayout>
     </FrameLayout>
 
     <FrameLayout
-            android:visibility="gone"
-            android:paddingStart="20dp"
-            android:paddingEnd="20dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:id="@+id/player_torrent_info"
+        android:id="@+id/player_torrent_info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/video_torrent_progress"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:gravity="start"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="78% at 18kb/s" />
 
         <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintLeft_toLeftOf="parent"
-                android:gravity="start"
-                android:layout_marginTop="15dp"
-                android:textStyle="bold"
-                android:textColor="@color/white"
-                android:id="@+id/video_torrent_progress"
-                tools:text="78% at 18kb/s" />
-
-        <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:layout_constraintLeft_toLeftOf="parent"
-                android:gravity="start"
-                android:layout_marginTop="0dp"
-                android:textColor="@color/white"
-                android:id="@+id/video_torrent_seeders"
-                tools:text="17 seeders"
-                app:layout_constraintTop_toBottomOf="@+id/player_video_title" />
+            android:id="@+id/video_torrent_seeders"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="0dp"
+            android:gravity="start"
+            android:textColor="@color/white"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/player_video_title"
+            tools:text="17 seeders" />
     </FrameLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

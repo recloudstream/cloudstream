@@ -11,7 +11,7 @@ class VideovardSX : WcoStream() {
     override var mainUrl = "https://videovard.sx"
 }
 
-class VideoVard : ExtractorApi() {
+open class VideoVard : ExtractorApi() {
     override var name = "Videovard" // Cause works for animekisa and wco
     override var mainUrl = "https://videovard.to"
     override val requiresReferer = false

@@ -13,6 +13,7 @@
     <color name="boxItemBackground">#161616</color> <!-- 17171B 1B1B20-->
 
     <color name="textColor">#e9eaee</color> <!--FFF-->
+    <color name="semiWhite">#1AFFFFFF</color> <!--FFF-->
     <color name="grayTextColor">#9ba0a4</color> <!-- 5e5f62-->
     <color name="grayShimmer">#DCDCDC</color> <!-- 5e5f62-->
 
@@ -25,13 +26,15 @@
     <color name="whiteText">#FFF</color>
     <color name="blackText">#000</color>
 
-    <color name="dubColor">#3d50fa</color> <!--3b65f5 f18c82 8294F1-->
+    <color name="progressBackgroundColor">#1AFFFFFF</color>
+
+    <color name="dubColorText">#121950</color> <!--3b65f5 f18c82 8294F1-->
     <color name="amoledModeLight">#121213</color>
 
     <color name="dubColorBg">#3B65F5</color>
-    <color name="subColor">#F54A3B</color> <!--F53B66 FA3D79-->
+    <color name="subColorText">#571711</color> <!--F53B66 FA3D79-->
     <color name="subColorBg">#F53B66</color>
-    <color name="typeColor">#3BF585</color>
+    <color name="typeColorText">#BEC8FF</color>
     <color name="typeColorBg">?attr/colorPrimaryDark</color>
 
     <color name="adultColor">#FF6F63</color> <!-- same as sub color -->
@@ -41,6 +44,7 @@
 
     <color name="black_overlay">#66000000</color>
     <color name="darkBarTransparent">#C0121212</color>
+    <color name="skipOpTransparent">#4D121212</color>
     <color name="darkBar">#121212</color>
     <color name="videoProgress">#66B5B5B5</color> <!--66B5B5B5-->
     <!--<color name="videoCache">#663D50FA</color>--> <!--66B5B5B5-->

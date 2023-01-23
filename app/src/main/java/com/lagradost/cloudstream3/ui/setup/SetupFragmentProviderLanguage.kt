@@ -12,6 +12,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceManager
 import com.lagradost.cloudstream3.APIHolder
 import com.lagradost.cloudstream3.APIHolder.getApiProviderLangSettings
+import com.lagradost.cloudstream3.AllLanguagesName
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.utils.SubtitleHelper
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
@@ -39,14 +40,21 @@ class SetupFragmentProviderLanguage : Fragment() {
 
             val current = this.getApiProviderLangSettings()
             val langs = APIHolder.apis.map { it.lang }.toSet()
-                .sortedBy { SubtitleHelper.fromTwoLettersToLanguage(it) }
+                .sortedBy { SubtitleHelper.fromTwoLettersToLanguage(it) } + AllLanguagesName
 
-            val currentList = current.map { langs.indexOf(it) }.filter { it != -1 } // TODO LOOK INTO
+            val currentList =
+                current.map { langs.indexOf(it) }.filter { it != -1 } // TODO LOOK INTO
+
             val languageNames = langs.map {
-                val emoji = SubtitleHelper.getFlagFromIso(it)
-                val name = SubtitleHelper.fromTwoLettersToLanguage(it)
-                "$emoji $name"
+                if (it == AllLanguagesName) {
+                    getString(R.string.all_languages_preference)
+                } else {
+                    val emoji = SubtitleHelper.getFlagFromIso(it)
+                    val name = SubtitleHelper.fromTwoLettersToLanguage(it)
+                    "$emoji $name"
+                }
             }
+
             arrayAdapter.addAll(languageNames)
 
             listview1?.adapter = arrayAdapter

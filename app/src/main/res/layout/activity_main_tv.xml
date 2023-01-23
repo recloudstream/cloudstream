@@ -1,64 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/homeRoot"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:configChanges="orientation|screenSize|screenLayout|keyboardHidden|keyboard|navigation"
-        android:paddingTop="0dp">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/homeRoot"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:configChanges="orientation|screenSize|screenLayout|keyboardHidden|keyboard|navigation"
+    android:paddingTop="0dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_height="match_parent"
-            android:layout_width="match_parent">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
         <androidx.fragment.app.FragmentContainerView
-                android:id="@+id/nav_host_fragment"
-                android:name="androidx.navigation.fragment.NavHostFragment"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                app:defaultNavHost="true"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintLeft_toRightOf="parent"
-                app:layout_constraintBottom_toTopOf="@id/cast_mini_controller_holder"
-                app:navGraph="@navigation/mobile_navigation"
-                app:layout_constraintStart_toEndOf="@id/nav_rail_view"
-                app:layout_constraintEnd_toEndOf="parent" />
+            android:id="@+id/nav_host_fragment"
+            android:name="androidx.navigation.fragment.NavHostFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:defaultNavHost="true"
+            app:layout_constraintBottom_toTopOf="@id/cast_mini_controller_holder"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:navGraph="@navigation/mobile_navigation" />
 
         <com.google.android.material.navigationrail.NavigationRailView
-                android:layout_width="62dp"
-                android:layout_height="match_parent"
-                android:id="@+id/nav_rail_view"
-                android:background="?attr/primaryGrayBackground"
-                app:itemTextColor="@color/item_select_color"
-                app:itemIconTint="@color/item_select_color"
+            android:id="@+id/nav_rail_view"
+            android:layout_width="62dp"
+            
+            android:layout_height="match_parent"
+            android:background="?attr/primaryGrayBackground"
+            android:descendantFocusability="afterDescendants"
+            app:itemIconTint="@color/item_select_color"
+            app:itemTextColor="@color/item_select_color"
 
-                app:menuGravity="center"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:labelVisibilityMode="unlabeled"
-                app:menu="@menu/bottom_nav_menu">
+            app:labelVisibilityMode="unlabeled"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:menu="@menu/bottom_nav_menu"
+            app:menuGravity="center">
 
         </com.google.android.material.navigationrail.NavigationRailView>
 
         <LinearLayout
-                app:layout_constraintStart_toEndOf="@+id/nav_rail_view"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                tools:layout_height="100dp"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:id="@+id/cast_mini_controller_holder">
+            android:id="@+id/cast_mini_controller_holder"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/nav_rail_view"
+            tools:layout_height="100dp">
             <!--com.google.android.gms.cast.framework.media.widget.MiniControllerFragment-->
             <fragment
-                    app:customCastBackgroundColor="?attr/primaryGrayBackground"
-                    app:castControlButtons="@array/cast_mini_controller_control_buttons"
-                    android:id="@+id/cast_mini_controller"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:visibility="gone"
-                    class="com.lagradost.cloudstream3.ui.MyMiniControllerFragment"
-                    tools:ignore="FragmentTagUsage" />
+                android:id="@+id/cast_mini_controller"
+                class="com.lagradost.cloudstream3.ui.MyMiniControllerFragment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                app:castControlButtons="@array/cast_mini_controller_control_buttons"
+                app:customCastBackgroundColor="?attr/primaryGrayBackground"
+                tools:ignore="FragmentTagUsage" />
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>

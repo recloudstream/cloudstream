@@ -1,21 +1,23 @@
 package com.lagradost.cloudstream3
 
 import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.content.res.Configuration
 import android.os.Bundle
+import android.util.AttributeSet
 import android.util.Log
-import android.view.KeyEvent
-import android.view.Menu
-import android.view.MenuItem
-import android.view.WindowManager
+import android.view.*
+import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.annotation.IdRes
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
@@ -28,6 +30,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.google.android.gms.cast.framework.*
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.navigationrail.NavigationRailView
 import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
 import com.lagradost.cloudstream3.APIHolder.allProviders
@@ -44,29 +47,45 @@ import com.lagradost.cloudstream3.CommonActivity.onDialogDismissedEvent
 import com.lagradost.cloudstream3.CommonActivity.onUserLeaveHint
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.CommonActivity.updateLocale
-import com.lagradost.cloudstream3.mvvm.logError
+import com.lagradost.cloudstream3.mvvm.*
 import com.lagradost.cloudstream3.network.initClient
 import com.lagradost.cloudstream3.plugins.PluginManager
+import com.lagradost.cloudstream3.plugins.PluginManager.loadAllOnlinePlugins
 import com.lagradost.cloudstream3.plugins.PluginManager.loadSinglePlugin
 import com.lagradost.cloudstream3.receivers.VideoDownloadRestartReceiver
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.OAuth2Apis
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.accountManagers
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.appString
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.appStringRepo
+import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.appStringResumeWatching
+import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.appStringSearch
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.githubApi
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.inAppAuths
 import com.lagradost.cloudstream3.ui.APIRepository
+import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_NAVIGATE_TO
+import com.lagradost.cloudstream3.ui.home.HomeViewModel
+import com.lagradost.cloudstream3.ui.result.ResultViewModel2
+import com.lagradost.cloudstream3.ui.result.START_ACTION_RESUME_LATEST
+import com.lagradost.cloudstream3.ui.result.setImage
+import com.lagradost.cloudstream3.ui.result.setText
+import com.lagradost.cloudstream3.ui.search.SearchFragment
 import com.lagradost.cloudstream3.ui.search.SearchResultBuilder
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isEmulatorSettings
+import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTrueTvSettings
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
+import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.updateTv
 import com.lagradost.cloudstream3.ui.settings.SettingsGeneral
 import com.lagradost.cloudstream3.ui.setup.HAS_DONE_SETUP_KEY
 import com.lagradost.cloudstream3.ui.setup.SetupFragmentExtensions
+import com.lagradost.cloudstream3.utils.*
+import com.lagradost.cloudstream3.utils.AppUtils.html
 import com.lagradost.cloudstream3.utils.AppUtils.isCastApiAvailable
 import com.lagradost.cloudstream3.utils.AppUtils.loadCache
 import com.lagradost.cloudstream3.utils.AppUtils.loadRepository
 import com.lagradost.cloudstream3.utils.AppUtils.loadResult
+import com.lagradost.cloudstream3.utils.AppUtils.loadSearchResult
+import com.lagradost.cloudstream3.utils.AppUtils.setDefaultFocus
 import com.lagradost.cloudstream3.utils.BackupUtils.backupGithub
 import com.lagradost.cloudstream3.utils.BackupUtils.restorePromptGithub
 import com.lagradost.cloudstream3.utils.BackupUtils.setUpBackup
@@ -74,28 +93,29 @@ import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStore.setKey
 import com.lagradost.cloudstream3.utils.DataStoreHelper.migrateResumeWatching
-import com.lagradost.cloudstream3.utils.Event
-import com.lagradost.cloudstream3.utils.IOnBackPressed
 import com.lagradost.cloudstream3.utils.InAppUpdater.Companion.runAutoUpdate
+import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.UIHelper.changeStatusBarState
 import com.lagradost.cloudstream3.utils.UIHelper.checkWrite
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
+import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.getResourceColor
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.requestRW
-import com.lagradost.cloudstream3.utils.USER_PROVIDER_API
-import com.lagradost.cloudstream3.utils.USER_SELECTED_HOMEPAGE_API
 import com.lagradost.nicehttp.Requests
 import com.lagradost.nicehttp.ResponseParser
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.bottom_resultview_preview.*
 import kotlinx.android.synthetic.main.fragment_result_swipe.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import java.io.File
 import java.net.URI
+import java.net.URLDecoder
 import java.nio.charset.Charset
 import kotlin.reflect.KClass
+import kotlin.system.exitProcess
 
 
 //https://github.com/videolan/vlc-android/blob/3706c4be2da6800b3d26344fc04fab03ffa4b860/application/vlc-android/src/org/videolan/vlc/gui/video/VideoPlayerActivity.kt#L1898
@@ -116,13 +136,15 @@ val VLC_COMPONENT = ComponentName(VLC_PACKAGE, "$VLC_PACKAGE.gui.video.VideoPlay
 val MPV_COMPONENT = ComponentName(MPV_PACKAGE, "$MPV_PACKAGE.MPVActivity")
 
 //TODO REFACTOR AF
-data class ResultResume(
+open class ResultResume(
     val packageString: String,
     val action: String = Intent.ACTION_VIEW,
     val position: String? = null,
     val duration: String? = null,
     var launcher: ActivityResultLauncher<Intent>? = null,
 ) {
+    val defaultTime = -1L
+
     val lastId get() = "${packageString}_last_open_id"
     suspend fun launch(id: Int?, callback: suspend Intent.() -> Unit) {
         val intent = Intent(action)
@@ -136,21 +158,45 @@ data class ResultResume(
         callback.invoke(intent)
         launcher?.launch(intent)
     }
+
+    open fun getPosition(intent: Intent?): Long {
+        return defaultTime
+    }
+
+    open fun getDuration(intent: Intent?): Long {
+        return defaultTime
+    }
 }
 
-val VLC = ResultResume(
+val VLC = object : ResultResume(
     VLC_PACKAGE,
     "org.videolan.vlc.player.result",
     "extra_position",
     "extra_duration",
-)
+) {
+    override fun getPosition(intent: Intent?): Long {
+        return intent?.getLongExtra(this.position, defaultTime) ?: defaultTime
+    }
 
-val MPV = ResultResume(
+    override fun getDuration(intent: Intent?): Long {
+        return intent?.getLongExtra(this.duration, defaultTime) ?: defaultTime
+    }
+}
+
+val MPV = object : ResultResume(
     MPV_PACKAGE,
     //"is.xyz.mpv.MPVActivity.result", // resume not working :pensive:
-     position = "position",
+    position = "position",
     duration = "duration",
-)
+) {
+    override fun getPosition(intent: Intent?): Long {
+        return intent?.getIntExtra(this.position, defaultTime.toInt())?.toLong() ?: defaultTime
+    }
+
+    override fun getDuration(intent: Intent?): Long {
+        return intent?.getIntExtra(this.duration, defaultTime.toInt())?.toLong() ?: defaultTime
+    }
+}
 
 val WEB_VIDEO = ResultResume(WEB_VIDEO_CAST_PACKAGE)
 
@@ -190,12 +236,28 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         const val TAG = "MAINACT"
 
         /**
+         * Setting this will automatically enter the query in the search
+         * next time the search fragment is opened.
+         * This variable will clear itself after one use. Null does nothing.
+         *
+         * This is a very bad solution but I was unable to find a better one.
+         **/
+        private var nextSearchQuery: String? = null
+
+        /**
          * Fires every time a new batch of plugins have been loaded, no guarantee about how often this is run and on which thread
+         * Boolean signifies if stuff should be force reloaded (true if force reload, false if reload when necessary).
+         *
+         * The force reloading are used for plugin development to instantly reload the page on deployWithAdb
          * */
         val afterPluginsLoadedEvent = Event<Boolean>()
         val mainPluginsLoadedEvent =
             Event<Boolean>() // homepage api, used to speed up time to load for homepage
         val afterRepositoryLoadedEvent = Event<Boolean>()
+
+        // kinda shitty solution, but cant com main->home otherwise for popups
+        val bookmarksUpdatedEvent = Event<Boolean>()
+
 
         /**
          * @return true if the str has launched an app task (be it successful or not)
@@ -207,6 +269,9 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             isWebview: Boolean
         ): Boolean =
             with(activity) {
+                // Invalid URIs can crash
+                fun safeURI(uri: String) = normalSafeApiCall { URI(uri) }
+
                 if (str != null && this != null) {
                     if (str.startsWith("https://cs.repo")) {
                         val realUrl = "https://" + str.substringAfter("?")
@@ -242,10 +307,32 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                                 return true
                             }
                         }
-                    } else if (URI(str).scheme == appStringRepo) {
+                        // This specific intent is used for the gradle deployWithAdb
+                        // https://github.com/recloudstream/gradle/blob/master/src/main/kotlin/com/lagradost/cloudstream3/gradle/tasks/DeployWithAdbTask.kt#L46
+                        if (str == "$appString:") {
+                            PluginManager.hotReloadAllLocalPlugins(activity)
+                        }
+                    } else if (safeURI(str)?.scheme == appStringRepo) {
                         val url = str.replaceFirst(appStringRepo, "https")
                         loadRepository(url)
                         return true
+                    } else if (safeURI(str)?.scheme == appStringSearch) {
+                        nextSearchQuery =
+                            URLDecoder.decode(str.substringAfter("$appStringSearch://"), "UTF-8")
+                        nav_view.selectedItemId = R.id.navigation_search
+                    } else if (safeURI(str)?.scheme == appStringResumeWatching) {
+                        val id =
+                            str.substringAfter("$appStringResumeWatching://").toIntOrNull()
+                                ?: return false
+                        ioSafe {
+                            val resumeWatchingCard =
+                                HomeViewModel.getResumeWatching()?.firstOrNull { it.id == id }
+                                    ?: return@ioSafe
+                            activity.loadSearchResult(
+                                resumeWatchingCard,
+                                START_ACTION_RESUME_LATEST
+                            )
+                        }
                     } else if (!isWebview) {
                         if (str.startsWith(DOWNLOAD_NAVIGATE_TO)) {
                             this.navigate(R.id.navigation_downloads)
@@ -262,6 +349,16 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                 }
                 return false
             }
+    }
+
+    var lastPopup : SearchResponse? = null
+    fun loadPopup(result: SearchResponse) {
+        lastPopup = result
+        viewModel.load(
+            this, result.url, result.apiName, false, if (getApiDubstatusSettings()
+                    .contains(DubStatus.Dubbed)
+            ) DubStatus.Dubbed else DubStatus.Subbed, null
+        )
     }
 
     override fun onColorSelected(dialogId: Int, color: Int) {
@@ -309,6 +406,27 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             R.id.navigation_settings_extensions,
             R.id.navigation_settings_plugins,
         ).contains(destination.id)
+
+
+        val dontPush = listOf(
+            R.id.navigation_home,
+            R.id.navigation_search,
+            R.id.navigation_results_phone,
+            R.id.navigation_results_tv,
+            R.id.navigation_player,
+        ).contains(destination.id)
+
+        nav_host_fragment?.apply {
+            val params = layoutParams as ConstraintLayout.LayoutParams
+
+            params.setMargins(
+                if (!dontPush && isTvSettings()) resources.getDimensionPixelSize(R.dimen.navbar_width) else 0,
+                params.topMargin,
+                params.rightMargin,
+                params.bottomMargin
+            )
+            layoutParams = params
+        }
 
         val landscape = when (resources.configuration.orientation) {
             Configuration.ORIENTATION_LANDSCAPE -> {
@@ -376,6 +494,11 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
 
     override fun onPause() {
         super.onPause()
+
+        // Start any delayed updates
+        if (ApkInstaller.delayedInstaller?.startInstallation() == true) {
+            Toast.makeText(this, R.string.update_started, Toast.LENGTH_LONG).show()
+        }
         try {
             if (isCastApiAvailable()) {
                 mSessionManager.removeSessionManagerListener(mSessionManagerListener)
@@ -410,12 +533,34 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         onUserLeaveHint(this)
     }
 
+    private fun showConfirmExitDialog() {
+        val builder: AlertDialog.Builder = AlertDialog.Builder(this)
+        builder.setTitle(R.string.confirm_exit_dialog)
+        builder.apply {
+            // Forceful exit since back button can actually go back to setup
+            setPositiveButton(R.string.yes) { _, _ -> exitProcess(0) }
+            setNegativeButton(R.string.no) { _, _ -> }
+        }
+        builder.show().setDefaultFocus()
+    }
+
     private fun backPressed() {
         this.window?.navigationBarColor =
             this.colorFromAttribute(R.attr.primaryGrayBackground)
         this.updateLocale()
-        super.onBackPressed()
         this.updateLocale()
+
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as? NavHostFragment
+        val navController = navHostFragment?.navController
+        val isAtHome =
+            navController?.currentDestination?.matchDestination(R.id.navigation_home) == true
+
+        if (isAtHome && isTrueTvSettings()) {
+            showConfirmExitDialog()
+        } else {
+            super.onBackPressed()
+        }
     }
 
     override fun onBackPressed() {
@@ -503,6 +648,37 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         }
     }
 
+    lateinit var viewModel: ResultViewModel2
+
+    override fun onCreateView(name: String, context: Context, attrs: AttributeSet): View? {
+        viewModel =
+            ViewModelProvider(this)[ResultViewModel2::class.java]
+
+        return super.onCreateView(name, context, attrs)
+    }
+
+    private fun hidePreviewPopupDialog() {
+        viewModel.clear()
+        bottomPreviewPopup.dismissSafe(this)
+    }
+
+    var bottomPreviewPopup: BottomSheetDialog? = null
+    private fun showPreviewPopupDialog(): BottomSheetDialog {
+        val ret = (bottomPreviewPopup ?: run {
+            val builder =
+                BottomSheetDialog(this)
+            builder.setContentView(R.layout.bottom_resultview_preview)
+            builder.setOnDismissListener {
+                bottomPreviewPopup = null
+                viewModel.clear()
+            }
+            builder.setCanceledOnTouchOutside(true)
+            builder.show()
+            builder
+        })
+        bottomPreviewPopup = ret
+        return ret
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         app.initClient(this)
@@ -533,7 +709,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         }
 
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
-
+        updateTv()
         if (isTvSettings()) {
             setContentView(R.layout.activity_main_tv)
         } else {
@@ -558,12 +734,21 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                     ) {
                         PluginManager.updateAllOnlinePluginsAndLoadThem(this@MainActivity)
                     } else {
-                        PluginManager.loadAllOnlinePlugins(this@MainActivity)
+                        loadAllOnlinePlugins(this@MainActivity)
+                    }
+
+                    //Automatically download not existing plugins
+                    if (settingsManager.getBoolean(
+                            getString(R.string.auto_download_plugins_key),
+                            false
+                        )
+                    ) {
+                        PluginManager.downloadNotExistingPluginsAndLoad(this@MainActivity)
                     }
                 }
 
                 ioSafe {
-                    PluginManager.loadAllLocalPlugins(this@MainActivity)
+                    PluginManager.loadAllLocalPlugins(this@MainActivity, false)
                 }
             }
         } else {
@@ -580,9 +765,81 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
 
                 setNegativeButton("Ok") { _, _ -> }
             }
-            builder.show()
+            builder.show().setDefaultFocus()
         }
 
+        observeNullable(viewModel.page) { resource ->
+            if (resource == null) {
+                bottomPreviewPopup.dismissSafe(this)
+                return@observeNullable
+            }
+            when (resource) {
+                is Resource.Failure -> {
+                    showToast(this, R.string.error)
+                    hidePreviewPopupDialog()
+                }
+                is Resource.Loading -> {
+                    showPreviewPopupDialog().apply {
+                        resultview_preview_loading?.isVisible = true
+                        resultview_preview_result?.isVisible = false
+                        resultview_preview_loading_shimmer?.startShimmer()
+                    }
+                }
+                is Resource.Success -> {
+                    val d = resource.value
+                    showPreviewPopupDialog().apply {
+                        resultview_preview_loading?.isVisible = false
+                        resultview_preview_result?.isVisible = true
+                        resultview_preview_loading_shimmer?.stopShimmer()
+
+                        resultview_preview_title?.text = d.title
+
+                        resultview_preview_meta_type.setText(d.typeText)
+                        resultview_preview_meta_year.setText(d.yearText)
+                        resultview_preview_meta_duration.setText(d.durationText)
+                        resultview_preview_meta_rating.setText(d.ratingText)
+
+                        resultview_preview_description?.setText(d.plotText)
+                        resultview_preview_poster?.setImage(
+                            d.posterImage ?: d.posterBackgroundImage
+                        )
+
+                        resultview_preview_poster?.setOnClickListener {
+                            //viewModel.updateWatchStatus(WatchType.PLANTOWATCH)
+                            val value = viewModel.watchStatus.value ?: WatchType.NONE
+
+                            this@MainActivity.showBottomDialog(
+                                WatchType.values().map { getString(it.stringRes) }.toList(),
+                                value.ordinal,
+                                this@MainActivity.getString(R.string.action_add_to_bookmarks),
+                                showApply = false,
+                                {}) {
+                                viewModel.updateWatchStatus(WatchType.values()[it])
+                                bookmarksUpdatedEvent(true)
+                            }
+                        }
+
+                        if (!isTvSettings()) // dont want this clickable on tv layout
+                            resultview_preview_description?.setOnClickListener { view ->
+                                view.context?.let { ctx ->
+                                    val builder: AlertDialog.Builder =
+                                        AlertDialog.Builder(ctx, R.style.AlertDialogCustom)
+                                    builder.setMessage(d.plotText.asString(ctx).html())
+                                        .setTitle(d.plotHeaderText.asString(ctx))
+                                        .show()
+                                }
+                            }
+
+                        resultview_preview_more_info?.setOnClickListener {
+                            hidePreviewPopupDialog()
+                            lastPopup?.let {
+                                loadSearchResult(it)
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
 //        ioSafe {
 //            val plugins =
@@ -628,6 +885,17 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         val navController = navHostFragment.navController
+
+        navController.addOnDestinationChangedListener { _: NavController, navDestination: NavDestination, bundle: Bundle? ->
+            // Intercept search and add a query
+            if (navDestination.matchDestination(R.id.navigation_search) && !nextSearchQuery.isNullOrBlank()) {
+                bundle?.apply {
+                    this.putString(SearchFragment.SEARCH_QUERY, nextSearchQuery)
+                    nextSearchQuery = null
+                }
+            }
+        }
+
         //val navController = findNavController(R.id.nav_host_fragment)
 
         /*navOptions = NavOptions.Builder()
@@ -641,7 +909,12 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         nav_view?.setupWithNavController(navController)
         val nav_rail = findViewById<NavigationRailView?>(R.id.nav_rail_view)
         nav_rail?.setupWithNavController(navController)
+        if (isTvSettings()) {
+            nav_rail?.background?.alpha = 200
+        } else {
+            nav_rail?.background?.alpha = 255
 
+        }
         nav_rail?.setOnItemSelectedListener { item ->
             onNavDestinationSelected(
                 item,
@@ -810,8 +1083,9 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
 //        Used to check current focus for TV
 //        main {
 //            while (true) {
-//                delay(1000)
+//                delay(5000)
 //                println("Current focus: $currentFocus")
+//                showToast(this, currentFocus.toString(), Toast.LENGTH_LONG)
 //            }
 //        }
 

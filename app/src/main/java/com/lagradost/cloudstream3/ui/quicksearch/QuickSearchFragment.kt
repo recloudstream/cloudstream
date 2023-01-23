@@ -15,6 +15,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.lagradost.cloudstream3.APIHolder.filterProviderByPreferredMedia
 import com.lagradost.cloudstream3.APIHolder.filterSearchResultByFilmQuality
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
@@ -30,6 +31,7 @@ import com.lagradost.cloudstream3.ui.search.SearchAdapter
 import com.lagradost.cloudstream3.ui.search.SearchClickCallback
 import com.lagradost.cloudstream3.ui.search.SearchHelper
 import com.lagradost.cloudstream3.ui.search.SearchViewModel
+import com.lagradost.cloudstream3.utils.AppUtils.ownShow
 import com.lagradost.cloudstream3.utils.UIHelper
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
 import com.lagradost.cloudstream3.utils.UIHelper.getSpanCount
@@ -71,6 +73,8 @@ class QuickSearchFragment : Fragment() {
     private var providers: Set<String>? = null
     private lateinit var searchViewModel: SearchViewModel
 
+    private var bottomSheetDialog: BottomSheetDialog? = null
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -80,7 +84,7 @@ class QuickSearchFragment : Fragment() {
             WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE
         )
         searchViewModel = ViewModelProvider(this)[SearchViewModel::class.java]
-
+        bottomSheetDialog?.ownShow()
         return inflater.inflate(R.layout.quick_search, container, false)
     }
 
@@ -156,7 +160,9 @@ class QuickSearchFragment : Fragment() {
                     //    else -> SearchHelper.handleSearchClickCallback(activity, callback)
                     //}
                 }, { item ->
-                    activity?.loadHomepageList(item)
+                    bottomSheetDialog = activity?.loadHomepageList(item, dismissCallback = {
+                        bottomSheetDialog = null
+                    })
                 })
             quick_search_master_recycler?.layoutManager = GridLayoutManager(context, 1)
         }

@@ -2,15 +2,13 @@ package com.lagradost.cloudstream3.syncproviders.providers
 
 import androidx.fragment.app.FragmentActivity
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.fasterxml.jackson.databind.DeserializationFeature
-import com.fasterxml.jackson.databind.json.JsonMapper
-import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKeys
 import com.lagradost.cloudstream3.AcraApplication.Companion.openBrowser
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.mvvm.logError
+import com.lagradost.cloudstream3.mvvm.suspendSafeApiCall
 import com.lagradost.cloudstream3.syncproviders.AccountManager
 import com.lagradost.cloudstream3.syncproviders.AuthAPI
 import com.lagradost.cloudstream3.syncproviders.SyncAPI
@@ -21,6 +19,7 @@ import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.DataStore.toKotlinObject
 import java.net.URL
+import java.net.URLEncoder
 import java.util.*
 
 class AniListApi(index: Int) : AccountManager(index), SyncAPI {
@@ -522,19 +521,26 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
     }
 
     private suspend fun postApi(q: String, cache: Boolean = false): String? {
-        return if (!checkToken()) {
-            app.post(
-                "https://graphql.anilist.co/",
-                headers = mapOf(
-                    "Authorization" to "Bearer " + (getAuth() ?: return null),
-                    if (cache) "Cache-Control" to "max-stale=$maxStale" else "Cache-Control" to "no-cache"
-                ),
-                cacheTime = 0,
-                data = mapOf("query" to q),//(if (vars == null) mapOf("query" to q) else mapOf("query" to q, "variables" to vars))
-                timeout = 5 // REASONABLE TIMEOUT
-            ).text.replace("\\/", "/")
-        } else {
-            null
+        return suspendSafeApiCall {
+            if (!checkToken()) {
+                app.post(
+                    "https://graphql.anilist.co/",
+                    headers = mapOf(
+                        "Authorization" to "Bearer " + (getAuth() ?: return@suspendSafeApiCall null),
+                        if (cache) "Cache-Control" to "max-stale=$maxStale" else "Cache-Control" to "no-cache"
+                    ),
+                    cacheTime = 0,
+                    data = mapOf(
+                        "query" to URLEncoder.encode(
+                            q,
+                            "UTF-8"
+                        )
+                    ), //(if (vars == null) mapOf("query" to q) else mapOf("query" to q, "variables" to vars))
+                    timeout = 5 // REASONABLE TIMEOUT
+                ).text.replace("\\/", "/")
+            } else {
+                null
+            }
         }
     }
 

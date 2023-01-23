@@ -26,14 +26,13 @@ import com.lagradost.cloudstream3.ui.result.setText
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTrueTvSettings
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setUpToolbar
 import com.lagradost.cloudstream3.utils.AppUtils.downloadAllPluginsDialog
+import com.lagradost.cloudstream3.utils.AppUtils.setDefaultFocus
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.widget.LinearRecycleViewLayoutManager
 import kotlinx.android.synthetic.main.add_repo_input.*
 import kotlinx.android.synthetic.main.fragment_extensions.*
-
-const val PUBLIC_REPOSITORIES_LIST = "https://recloudstream.github.io/repos/"
 
 class ExtensionsFragment : Fragment() {
     override fun onCreateView(
@@ -109,7 +108,7 @@ class ExtensionsFragment : Fragment() {
                     )
                     .setPositiveButton(R.string.delete, dialogClickListener)
                     .setNegativeButton(R.string.cancel, dialogClickListener)
-                    .show()
+                    .show().setDefaultFocus()
             }
         })
 
@@ -186,15 +185,7 @@ class ExtensionsFragment : Fragment() {
             (activity?.getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager?)?.primaryClip?.getItemAt(
                 0
             )?.text?.toString()?.let { copy ->
-                // Fix our own repo links and only paste the text if it's a link.
-                if (copy.startsWith("http")) {
-                    val fixedUrl = if (copy.startsWith("https://cs.repo")) {
-                        "https://" + copy.substringAfter("?")
-                    } else {
-                        copy
-                    }
-                    dialog.repo_url_input?.setText(fixedUrl)
-                }
+                dialog.repo_url_input?.setText(copy)
             }
 
 //            dialog.list_repositories?.setOnClickListener {
@@ -206,21 +197,23 @@ class ExtensionsFragment : Fragment() {
 //            dialog.text2?.text = provider.name
             dialog.apply_btt?.setOnClickListener secondListener@{
                 val name = dialog.repo_name_input?.text?.toString()
-                val url = dialog.repo_url_input?.text?.toString()
-                if (url.isNullOrBlank()) {
-                    showToast(activity, R.string.error_invalid_data, Toast.LENGTH_SHORT)
-                    return@secondListener
-                }
-
                 ioSafe {
-                    val fixedName = if (!name.isNullOrBlank()) name
-                    else RepositoryManager.parseRepository(url)?.name ?: "No name"
+                    val url = dialog.repo_url_input?.text?.toString()
+                        ?.let { it1 -> RepositoryManager.parseRepoUrl(it1) }
+                    if (url.isNullOrBlank()) {
+                        main {
+                            showToast(activity, R.string.error_invalid_data, Toast.LENGTH_SHORT)
+                        }
+                    } else {
+                        val fixedName = if (!name.isNullOrBlank()) name
+                        else RepositoryManager.parseRepository(url)?.name ?: "No name"
 
-                    val newRepo = RepositoryData(fixedName, url)
-                    RepositoryManager.addRepository(newRepo)
-                    extensionViewModel.loadStats()
-                    extensionViewModel.loadRepositories()
-                    this@ExtensionsFragment.activity?.downloadAllPluginsDialog(url, fixedName)
+                        val newRepo = RepositoryData(fixedName, url)
+                        RepositoryManager.addRepository(newRepo)
+                        extensionViewModel.loadStats()
+                        extensionViewModel.loadRepositories()
+                        this@ExtensionsFragment.activity?.downloadAllPluginsDialog(url, fixedName)
+                    }
                 }
                 dialog.dismissSafe(activity)
             }

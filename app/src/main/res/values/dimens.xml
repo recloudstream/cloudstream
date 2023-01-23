@@ -16,5 +16,5 @@
     <integer name="loading_time">2000</integer>
 
     <dimen name="storage_radius">3dp</dimen>
-
+    <dimen name="navbar_width">62dp</dimen>
 </resources>

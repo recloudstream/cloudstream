@@ -5,7 +5,7 @@ import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.utils.*
 import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
 
-class Blogger : ExtractorApi() {
+open class Blogger : ExtractorApi() {
     override val name = "Blogger"
     override val mainUrl = "https://www.blogger.com"
     override val requiresReferer = false

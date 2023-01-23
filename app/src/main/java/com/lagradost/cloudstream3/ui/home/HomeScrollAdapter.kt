@@ -1,60 +1,103 @@
 package com.lagradost.cloudstream3.ui.home
 
+import android.content.res.Configuration
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import androidx.viewpager.widget.PagerAdapter
+import androidx.annotation.LayoutRes
+import androidx.core.view.isGone
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.RecyclerView
 import com.lagradost.cloudstream3.LoadResponse
+import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.utils.UIHelper.setImage
+import kotlinx.android.synthetic.main.fragment_home_head_tv.*
+import kotlinx.android.synthetic.main.fragment_home_head_tv.view.*
+import kotlinx.android.synthetic.main.home_scroll_view.view.*
 
 
-class HomeScrollAdapter(private val onPrimaryCallback: (LoadResponse) -> Unit) : PagerAdapter() {
-    private var items: List<LoadResponse> = listOf()
+class HomeScrollAdapter(
+    @LayoutRes val layout: Int = R.layout.home_scroll_view,
+    private val forceHorizontalPosters: Boolean? = null
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    private var items: MutableList<LoadResponse> = mutableListOf()
+    var hasMoreItems: Boolean = false
 
-    fun setItems(newItems: List<LoadResponse>) {
-        items = newItems
-
-        notifyDataSetChanged()
+    fun getItem(position: Int): LoadResponse? {
+        return items.getOrNull(position)
     }
 
-    override fun getCount(): Int {
-        return Int.MAX_VALUE//items.size
+    fun setItems(newItems: List<LoadResponse>, hasNext: Boolean): Boolean {
+        val isSame = newItems.firstOrNull()?.url == items.firstOrNull()?.url
+        hasMoreItems = hasNext
+
+        val diffResult = DiffUtil.calculateDiff(
+            HomeScrollDiffCallback(this.items, newItems)
+        )
+
+        items.clear()
+        items.addAll(newItems)
+
+
+        diffResult.dispatchUpdatesTo(this)
+
+        return isSame
     }
 
-    override fun getItemPosition(`object`: Any): Int {
-        return POSITION_NONE//super.getItemPosition(`object`)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        return CardViewHolder(
+            LayoutInflater.from(parent.context).inflate(layout, parent, false),
+            forceHorizontalPosters
+        )
     }
 
-    private fun getItemAtPosition(idx: Int): LoadResponse {
-        return items[idx % items.size]
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        when (holder) {
+            is CardViewHolder -> {
+                holder.bind(items[position])
+            }
+        }
     }
 
-    override fun setPrimaryItem(container: ViewGroup, position: Int, `object`: Any) {
-        super.setPrimaryItem(container, position, `object`)
-        onPrimaryCallback.invoke(getItemAtPosition(position))
+    class CardViewHolder
+    constructor(
+        itemView: View,
+        private val forceHorizontalPosters: Boolean? = null
+    ) :
+        RecyclerView.ViewHolder(itemView) {
+
+        fun bind(card: LoadResponse) {
+            card.apply {
+                val isHorizontal =
+                    (forceHorizontalPosters == true) || ((forceHorizontalPosters != false) && itemView.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE)
+
+                val posterUrl = if (isHorizontal) backgroundPosterUrl ?: posterUrl else posterUrl
+                    ?: backgroundPosterUrl
+                itemView.home_scroll_preview_tags?.text = tags?.joinToString(" • ") ?: ""
+                itemView.home_scroll_preview_tags?.isGone = tags.isNullOrEmpty()
+                itemView.home_scroll_preview?.setImage(posterUrl, posterHeaders)
+                itemView.home_scroll_preview_title?.text = name
+            }
+        }
     }
 
-    override fun instantiateItem(container: ViewGroup, position: Int): Any {
-        val image = ImageView(container.context)
-        val item = getItemAtPosition(position)
-        image.scaleType = ImageView.ScaleType.CENTER_CROP
-        image.setImage(item.posterUrl ?: item.backgroundPosterUrl, item.posterHeaders)
+    class HomeScrollDiffCallback(
+        private val oldList: List<LoadResponse>,
+        private val newList: List<LoadResponse>
+    ) :
+        DiffUtil.Callback() {
+        override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int) =
+            oldList[oldItemPosition].url == newList[newItemPosition].url
 
-        // val itemView: View = mLayoutInflater.inflate(R.layout.pager_item, container, false)
+        override fun getOldListSize() = oldList.size
 
-        // val imageView: ImageView = itemView.findViewById<View>(R.id.imageView) as ImageView
-        // imageView.setImageResource(mResources.get(position))
+        override fun getNewListSize() = newList.size
 
-        container.addView(image)
-
-        return image
+        override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int) =
+            oldList[oldItemPosition] == newList[newItemPosition]
     }
 
-    override fun destroyItem(container: ViewGroup, position: Int, `object`: Any) {
-        container.removeView(`object` as View)
-    }
-
-    override fun isViewFromObject(view: View, `object`: Any): Boolean {
-        return view === `object`
+    override fun getItemCount(): Int {
+        return items.size
     }
 }

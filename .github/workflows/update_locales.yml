@@ -1,0 +1,39 @@
+name: Update locale lists
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '**.xml'
+    branches:
+      - master
+
+concurrency: 
+  group: "locale-list"
+  cancel-in-progress: true
+
+jobs:
+  create:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Generate access token
+      id: generate_token
+      uses: tibdex/github-app-token@v1
+      with:
+        app_id: ${{ secrets.GH_APP_ID }}
+        private_key: ${{ secrets.GH_APP_KEY }}
+        repository: "recloudstream/cloudstream"
+    - uses: actions/checkout@v2
+      with:
+        token: ${{ steps.generate_token.outputs.token }}
+    - name: Edit files
+      run: |
+        python3 .github/locales.py
+    - name: Commit to the repo
+      run: |
+        git config --local user.email "111277985+recloudstream[bot]@users.noreply.github.com"
+        git config --local user.name "recloudstream[bot]"
+        git add .
+        # "echo" returns true so the build succeeds, even if no changed files
+        git commit -m 'update list of locales' || echo
+        git push

@@ -99,7 +99,8 @@ object SingleSelectionHelper {
         val textView = dialog.text1//.findViewById<TextView>(R.id.text1)!!
         val applyButton = dialog.apply_btt//.findViewById<TextView>(R.id.apply_btt)
         val cancelButton = dialog.cancel_btt//findViewById<TextView>(R.id.cancel_btt)
-        val applyHolder = dialog.apply_btt_holder//.findViewById<LinearLayout>(R.id.apply_btt_holder)
+        val applyHolder =
+            dialog.apply_btt_holder//.findViewById<LinearLayout>(R.id.apply_btt_holder)
 
         applyHolder?.isVisible = realShowApply
         if (!realShowApply) {
@@ -247,6 +248,17 @@ object SingleSelectionHelper {
             { if (it.isNotEmpty()) callback.invoke(it.first()) },
             dismissCallback
         )
+    }
+
+    fun showBottomDialog(
+        items: List<String>,
+        selectedIndex: Int,
+        name: String,
+        showApply: Boolean,
+        dismissCallback: () -> Unit,
+        callback: (Int) -> Unit,
+    ) {
+
     }
 
     /** Only for a low amount of items */

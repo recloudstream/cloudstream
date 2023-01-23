@@ -23,6 +23,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
 import com.discord.panels.OverlappingPanelsLayout
 import com.google.android.material.chip.Chip
+import com.google.android.material.chip.ChipDrawable
 import com.lagradost.cloudstream3.APIHolder.getApiDubstatusSettings
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
 import com.lagradost.cloudstream3.APIHolder.updateHasTrailers
@@ -48,6 +49,7 @@ import com.lagradost.cloudstream3.utils.AppUtils.loadCache
 import com.lagradost.cloudstream3.utils.AppUtils.openBrowser
 import com.lagradost.cloudstream3.utils.Coroutines.ioWorkSafe
 import com.lagradost.cloudstream3.utils.Coroutines.main
+import com.lagradost.cloudstream3.utils.DataStoreHelper.getVideoWatchState
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
@@ -82,6 +84,8 @@ import kotlinx.android.synthetic.main.fragment_result.result_next_airing
 import kotlinx.android.synthetic.main.fragment_result.result_next_airing_time
 import kotlinx.android.synthetic.main.fragment_result.result_no_episodes
 import kotlinx.android.synthetic.main.fragment_result.result_play_movie
+import kotlinx.android.synthetic.main.fragment_result.result_poster
+import kotlinx.android.synthetic.main.fragment_result.result_poster_holder
 import kotlinx.android.synthetic.main.fragment_result.result_reload_connection_open_in_browser
 import kotlinx.android.synthetic.main.fragment_result.result_reload_connectionerror
 import kotlinx.android.synthetic.main.fragment_result.result_resume_parent
@@ -96,13 +100,21 @@ import kotlinx.android.synthetic.main.fragment_result.result_vpn
 import kotlinx.android.synthetic.main.fragment_result_swipe.*
 import kotlinx.android.synthetic.main.fragment_result_tv.*
 import kotlinx.android.synthetic.main.result_sync.*
+import kotlinx.android.synthetic.main.trailer_custom_layout.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 
-import com.google.android.material.chip.ChipDrawable
-
 const val START_ACTION_RESUME_LATEST = 1
 const val START_ACTION_LOAD_EP = 2
+
+/**
+ * Future proofed way to mark episodes as watched
+ **/
+enum class VideoWatchState {
+    /** Default value when no key is set */
+    None,
+    Watched
+}
 
 data class ResultEpisode(
     val headerName: String,
@@ -122,6 +134,10 @@ data class ResultEpisode(
     val isFiller: Boolean?,
     val tvType: TvType,
     val parentId: Int,
+    /**
+     * Conveys if the episode itself is marked as watched
+     **/
+    val videoWatchState: VideoWatchState
 )
 
 fun ResultEpisode.getRealPosition(): Long {
@@ -158,6 +174,7 @@ fun buildResultEpisode(
     parentId: Int,
 ): ResultEpisode {
     val posDur = getViewPos(id)
+    val videoWatchState = getVideoWatchState(id) ?: VideoWatchState.None
     return ResultEpisode(
         headerName,
         name,
@@ -176,6 +193,7 @@ fun buildResultEpisode(
         isFiller,
         tvType,
         parentId,
+        videoWatchState
     )
 }
 
@@ -491,11 +509,10 @@ open class ResultFragment : ResultTrailerPlayer() {
         return StoredData(url, apiName, showFillers, dubStatus, start, playerAction)
     }
 
-    private fun reloadViewModel(success: Boolean = false) {
-        if (!viewModel.hasLoaded()) {
+    private fun reloadViewModel(forceReload: Boolean) {
+        if (!viewModel.hasLoaded() || forceReload) {
             val storedData = getStoredData(activity ?: context ?: return) ?: return
 
-            //viewModel.clear()
             viewModel.load(
                 activity,
                 storedData.url ?: return,
@@ -557,6 +574,19 @@ open class ResultFragment : ResultTrailerPlayer() {
                 }
             )
 
+
+        observe(viewModel.episodeSynopsis) { description ->
+            view.context?.let { ctx ->
+                val builder: AlertDialog.Builder =
+                    AlertDialog.Builder(ctx, R.style.AlertDialogCustom)
+                builder.setMessage(description.html())
+                    .setTitle(R.string.synopsis)
+                    .setOnDismissListener {
+                        viewModel.releaseEpisodeSynopsis()
+                    }
+                    .show()
+            }
+        }
 
         observe(viewModel.watchStatus) { watchType ->
             result_bookmark_button?.text = getString(watchType.stringRes)
@@ -820,6 +850,7 @@ open class ResultFragment : ResultTrailerPlayer() {
         }
 
         observe(viewModel.page) { data ->
+            if(data == null) return@observe
             when (data) {
                 is Resource.Success -> {
                     val d = data.value
@@ -839,6 +870,8 @@ open class ResultFragment : ResultTrailerPlayer() {
                     result_next_airing.setText(d.nextAiringEpisode)
                     result_next_airing_time.setText(d.nextAiringDate)
                     result_poster.setImage(d.posterImage)
+                    result_poster_background.setImage(d.posterBackgroundImage)
+                    //result_trailer_thumbnail.setImage(d.posterBackgroundImage, fadeIn = false)
 
                     if (d.posterImage != null && !isTrueTvSettings())
                         result_poster_holder?.setOnClickListener {
@@ -918,8 +951,6 @@ open class ResultFragment : ResultTrailerPlayer() {
                         }
 
 
-                    result_tag?.removeAllViews()
-
                     d.comingSoon.let { soon ->
                         result_coming_soon?.isVisible = soon
                         result_data_holder?.isGone = soon
@@ -928,6 +959,7 @@ open class ResultFragment : ResultTrailerPlayer() {
                     val tags = d.tags
                     result_tag_holder?.isVisible = tags.isNotEmpty()
                     result_tag?.apply {
+                        removeAllViews()
                         tags.forEach { tag ->
                             val chip = Chip(context)
                             val chipDrawable = ChipDrawable.createFromAttributes(

@@ -1,40 +1,44 @@
 package com.lagradost.cloudstream3.plugins
 
 import android.app.*
-import dalvik.system.PathClassLoader
-import com.google.gson.Gson
+import android.content.Context
 import android.content.res.AssetManager
 import android.content.res.Resources
-import android.os.Environment
-import android.widget.Toast
-import android.content.Context
 import android.os.Build
+import android.os.Environment
 import android.util.Log
+import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.fragment.app.FragmentActivity
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.google.gson.Gson
 import com.lagradost.cloudstream3.*
+import com.lagradost.cloudstream3.APIHolder.getApiProviderLangSettings
+import com.lagradost.cloudstream3.APIHolder.removePluginMapping
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
-import com.lagradost.cloudstream3.plugins.RepositoryManager.ONLINE_PLUGINS_FOLDER
-import com.lagradost.cloudstream3.plugins.RepositoryManager.downloadPluginToFile
 import com.lagradost.cloudstream3.CommonActivity.showToast
-import com.lagradost.cloudstream3.plugins.RepositoryManager.getRepoPlugins
-import com.lagradost.cloudstream3.ui.settings.extensions.REPOSITORIES_KEY
-import com.lagradost.cloudstream3.ui.settings.extensions.RepositoryData
-import com.lagradost.cloudstream3.utils.VideoDownloadManager.sanitizeFilename
-import com.lagradost.cloudstream3.APIHolder.removePluginMapping
+import com.lagradost.cloudstream3.MainAPI.Companion.settingsForProvider
 import com.lagradost.cloudstream3.MainActivity.Companion.afterPluginsLoadedEvent
 import com.lagradost.cloudstream3.mvvm.debugPrint
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
+import com.lagradost.cloudstream3.plugins.RepositoryManager.ONLINE_PLUGINS_FOLDER
 import com.lagradost.cloudstream3.plugins.RepositoryManager.PREBUILT_REPOSITORIES
-import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
+import com.lagradost.cloudstream3.plugins.RepositoryManager.downloadPluginToFile
+import com.lagradost.cloudstream3.plugins.RepositoryManager.getRepoPlugins
+import com.lagradost.cloudstream3.ui.result.UiText
+import com.lagradost.cloudstream3.ui.result.txt
+import com.lagradost.cloudstream3.ui.settings.extensions.REPOSITORIES_KEY
+import com.lagradost.cloudstream3.ui.settings.extensions.RepositoryData
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
+import com.lagradost.cloudstream3.utils.VideoDownloadManager.sanitizeFilename
 import com.lagradost.cloudstream3.utils.extractorApis
+import dalvik.system.PathClassLoader
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import java.io.File
@@ -217,17 +221,15 @@ object PluginManager {
      * 3. If outdated download and load the plugin
      * 4. Else load the plugin normally
      **/
-    fun updateAllOnlinePluginsAndLoadThem(activity: Activity) = ioSafe {
+    fun updateAllOnlinePluginsAndLoadThem(activity: Activity) {
         // Load all plugins as fast as possible!
         loadAllOnlinePlugins(activity)
-
-            afterPluginsLoadedEvent.invoke(true)
-
+        afterPluginsLoadedEvent.invoke(false)
 
         val urls = (getKey<Array<RepositoryData>>(REPOSITORIES_KEY)
             ?: emptyArray()) + PREBUILT_REPOSITORIES
 
-        val onlinePlugins = urls.toList().amap {
+        val onlinePlugins = urls.toList().apmap {
             getRepoPlugins(it.url)?.toList() ?: emptyList()
         }.flatten().distinctBy { it.second.url }
 
@@ -248,16 +250,17 @@ object PluginManager {
 
         val updatedPlugins = mutableListOf<String>()
 
-        outdatedPlugins.amap { pluginData ->
+        outdatedPlugins.apmap { pluginData ->
             if (pluginData.isDisabled) {
                 //updatedPlugins.add(activity.getString(R.string.single_plugin_disabled, pluginData.onlineData.second.name))
                 unloadPlugin(pluginData.savedData.filePath)
             } else if (pluginData.isOutdated) {
-                downloadAndLoadPlugin(
+                downloadPlugin(
                     activity,
                     pluginData.onlineData.second.url,
                     pluginData.savedData.internalName,
-                    File(pluginData.savedData.filePath)
+                    File(pluginData.savedData.filePath),
+                    true
                 ).let { success ->
                     if (success)
                         updatedPlugins.add(pluginData.onlineData.second.name)
@@ -266,22 +269,109 @@ object PluginManager {
         }
 
         main {
-            createNotification(activity, updatedPlugins)
+            val uitext = txt(R.string.plugins_updated, updatedPlugins.size)
+            createNotification(activity, uitext, updatedPlugins)
         }
 
-       // ioSafe {
-            afterPluginsLoadedEvent.invoke(true)
-       // }
+        // ioSafe {
+        afterPluginsLoadedEvent.invoke(false)
+        // }
 
         Log.i(TAG, "Plugin update done!")
     }
 
     /**
+     * Automatically download plugins not yet existing on local
+     * 1. Gets all online data from online plugins repo
+     * 2. Fetch all not downloaded plugins
+     * 3. Download them and reload plugins
+     **/
+    fun downloadNotExistingPluginsAndLoad(activity: Activity) {
+        val newDownloadPlugins = mutableListOf<String>()
+        val urls = (getKey<Array<RepositoryData>>(REPOSITORIES_KEY)
+            ?: emptyArray()) + PREBUILT_REPOSITORIES
+        val onlinePlugins = urls.toList().apmap {
+            getRepoPlugins(it.url)?.toList() ?: emptyList()
+        }.flatten().distinctBy { it.second.url }
+
+        val providerLang = activity.getApiProviderLangSettings()
+        //Log.i(TAG, "providerLang => ${providerLang.toJson()}")
+
+        // Iterate online repos and returns not downloaded plugins
+        val notDownloadedPlugins = onlinePlugins.mapNotNull { onlineData ->
+            val sitePlugin = onlineData.second
+            //Don't include empty urls
+            if (sitePlugin.url.isBlank()) {
+                return@mapNotNull null
+            }
+            if (sitePlugin.repositoryUrl.isNullOrBlank()) {
+                return@mapNotNull null
+            }
+
+            //Omit already existing plugins
+            if (getPluginPath(activity, sitePlugin.internalName, onlineData.first).exists()) {
+                Log.i(TAG, "Skip > ${sitePlugin.internalName}")
+                return@mapNotNull null
+            }
+
+            //Omit lang not selected on language setting
+            val lang = sitePlugin.language ?: return@mapNotNull null
+            //If set to 'universal', don't skip any language
+            if (!providerLang.contains(AllLanguagesName) && !providerLang.contains(lang)) {
+                return@mapNotNull null
+            }
+            //Log.i(TAG, "sitePlugin lang => $lang")
+
+            //Omit NSFW, if disabled
+            sitePlugin.tvTypes?.let { tvtypes ->
+                if (!settingsForProvider.enableAdult) {
+                    if (tvtypes.contains(TvType.NSFW.name)) {
+                        return@mapNotNull null
+                    }
+                }
+            }
+            val savedData = PluginData(
+                url = sitePlugin.url,
+                internalName = sitePlugin.internalName,
+                isOnline = true,
+                filePath = "",
+                version = sitePlugin.version
+            )
+            OnlinePluginData(savedData, onlineData)
+        }
+        //Log.i(TAG, "notDownloadedPlugins => ${notDownloadedPlugins.toJson()}")
+
+        notDownloadedPlugins.apmap { pluginData ->
+            downloadPlugin(
+                activity,
+                pluginData.onlineData.second.url,
+                pluginData.savedData.internalName,
+                pluginData.onlineData.first,
+                !pluginData.isDisabled
+            ).let { success ->
+                if (success)
+                    newDownloadPlugins.add(pluginData.onlineData.second.name)
+            }
+        }
+
+        main {
+            val uitext = txt(R.string.plugins_downloaded, newDownloadPlugins.size)
+            createNotification(activity, uitext, newDownloadPlugins)
+        }
+
+        // ioSafe {
+        afterPluginsLoadedEvent.invoke(false)
+        // }
+
+        Log.i(TAG, "Plugin download done!")
+    }
+
+    /**
      * Use updateAllOnlinePluginsAndLoadThem
      * */
-    fun loadAllOnlinePlugins(activity: Activity) = ioSafe {
+    fun loadAllOnlinePlugins(activity: Activity) {
         // Load all plugins as fast as possible!
-        (getPluginsOnline()).toList().amap { pluginData ->
+        (getPluginsOnline()).toList().apmap { pluginData ->
             loadPlugin(
                 activity,
                 File(pluginData.filePath),
@@ -290,7 +380,23 @@ object PluginManager {
         }
     }
 
-    fun loadAllLocalPlugins(activity: Activity) = ioSafe {
+    /**
+     * Reloads all local plugins and forces a page update, used for hot reloading with deployWithAdb
+     **/
+    fun hotReloadAllLocalPlugins(activity: FragmentActivity?) {
+        Log.d(TAG, "Reloading all local plugins!")
+        if (activity == null) return
+        getPluginsLocal().forEach {
+            unloadPlugin(it.filePath)
+        }
+        loadAllLocalPlugins(activity, true)
+    }
+
+    /**
+     * @param forceReload see afterPluginsLoadedEvent, basically a way to load all local plugins
+     * and reload all pages even if they are previously valid
+     **/
+    fun loadAllLocalPlugins(activity: Activity, forceReload: Boolean) {
         val dir = File(LOCAL_PLUGINS_PATH)
         removeKey(PLUGINS_KEY_LOCAL)
 
@@ -298,7 +404,7 @@ object PluginManager {
             val res = dir.mkdirs()
             if (!res) {
                 Log.w(TAG, "Failed to create local directories")
-                return@ioSafe
+                return
             }
         }
 
@@ -312,7 +418,7 @@ object PluginManager {
         }
 
         loadedLocalPlugins = true
-        afterPluginsLoadedEvent.invoke(true)
+        afterPluginsLoadedEvent.invoke(forceReload)
     }
 
     /**
@@ -392,7 +498,7 @@ object PluginManager {
         }
     }
 
-    private fun unloadPlugin(absolutePath: String) {
+    fun unloadPlugin(absolutePath: String) {
         Log.i(TAG, "Unloading plugin: $absolutePath")
         val plugin = plugins[absolutePath]
         if (plugin == null) {
@@ -443,49 +549,48 @@ object PluginManager {
         return File("${context.filesDir}/${ONLINE_PLUGINS_FOLDER}/${folderName}/$fileName.cs3")
     }
 
-    /**
-     * Used for fresh installs
-     * */
-    suspend fun downloadAndLoadPlugin(
+    suspend fun downloadPlugin(
         activity: Activity,
         pluginUrl: String,
         internalName: String,
-        repositoryUrl: String
+        repositoryUrl: String,
+        loadPlugin: Boolean
     ): Boolean {
         val file = getPluginPath(activity, internalName, repositoryUrl)
-        downloadAndLoadPlugin(activity, pluginUrl, internalName, file)
-        return true
+        return downloadPlugin(activity, pluginUrl, internalName, file, loadPlugin)
     }
 
-    /**
-     * Used for updates.
-     *
-     * Uses a file instead of repository url, as extensions can get moved it is better to directly
-     * update the files instead of getting the filepath from repo url.
-     * */
-    private suspend fun downloadAndLoadPlugin(
+    suspend fun downloadPlugin(
         activity: Activity,
         pluginUrl: String,
         internalName: String,
         file: File,
+        loadPlugin: Boolean
     ): Boolean {
         try {
-            unloadPlugin(file.absolutePath)
-
             Log.d(TAG, "Downloading plugin: $pluginUrl to ${file.absolutePath}")
             // The plugin file needs to be salted with the repository url hash as to allow multiple repositories with the same internal plugin names
-            val newFile = downloadPluginToFile(pluginUrl, file)
-            return loadPlugin(
-                activity,
-                newFile ?: return false,
-                PluginData(
-                    internalName,
-                    pluginUrl,
-                    true,
-                    newFile.absolutePath,
-                    PLUGIN_VERSION_NOT_SET
-                )
+            val newFile = downloadPluginToFile(pluginUrl, file) ?: return false
+
+            val data = PluginData(
+                internalName,
+                pluginUrl,
+                true,
+                newFile.absolutePath,
+                PLUGIN_VERSION_NOT_SET
             )
+
+            return if (loadPlugin) {
+                unloadPlugin(file.absolutePath)
+                loadPlugin(
+                    activity,
+                    newFile,
+                    data
+                )
+            } else {
+                setPluginData(data)
+                true
+            }
         } catch (e: Exception) {
             logError(e)
             return false
@@ -493,7 +598,8 @@ object PluginManager {
     }
 
     suspend fun deletePlugin(file: File): Boolean {
-        val list = (getPluginsLocal() + getPluginsOnline()).filter { it.filePath == file.absolutePath }
+        val list =
+            (getPluginsLocal() + getPluginsOnline()).filter { it.filePath == file.absolutePath }
 
         return try {
             if (File(file.absolutePath).delete()) {
@@ -528,12 +634,14 @@ object PluginManager {
 
     private fun createNotification(
         context: Context,
-        extensionNames: List<String>
+        uitext: UiText,
+        extensions: List<String>
     ): Notification? {
         try {
-            if (extensionNames.isEmpty()) return null
 
-            val content = extensionNames.joinToString(", ")
+            if (extensions.isEmpty()) return null
+
+            val content = extensions.joinToString(", ")
 //        main { // DON'T WANT TO SLOW IT DOWN
             val builder = NotificationCompat.Builder(context, EXTENSIONS_CHANNEL_ID)
                 .setAutoCancel(false)
@@ -542,7 +650,8 @@ object PluginManager {
                 .setSilent(true)
                 .setPriority(NotificationCompat.PRIORITY_LOW)
                 .setColor(context.colorFromAttribute(R.attr.colorPrimary))
-                .setContentTitle(context.getString(R.string.plugins_updated, extensionNames.size))
+                .setContentTitle(uitext.asString(context))
+                //.setContentTitle(context.getString(title, extensionNames.size))
                 .setSmallIcon(R.drawable.ic_baseline_extension_24)
                 .setStyle(
                     NotificationCompat.BigTextStyle()

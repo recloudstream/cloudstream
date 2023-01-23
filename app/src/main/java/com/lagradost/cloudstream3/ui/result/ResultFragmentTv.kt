@@ -3,30 +3,28 @@ package com.lagradost.cloudstream3.ui.result
 import android.app.Dialog
 import android.os.Bundle
 import android.view.View
-import android.widget.LinearLayout
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.lagradost.cloudstream3.APIHolder.updateHasTrailers
 import com.lagradost.cloudstream3.DubStatus
+import com.lagradost.cloudstream3.LoadResponse
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.SearchResponse
 import com.lagradost.cloudstream3.mvvm.ResourceSome
 import com.lagradost.cloudstream3.mvvm.Some
 import com.lagradost.cloudstream3.mvvm.observe
+import com.lagradost.cloudstream3.ui.player.ExtractorLinkGenerator
+import com.lagradost.cloudstream3.ui.player.GeneratorPlayer
 import com.lagradost.cloudstream3.ui.search.SearchAdapter
 import com.lagradost.cloudstream3.ui.search.SearchHelper
-import com.lagradost.cloudstream3.utils.AppUtils.setMaxViewPoolSize
+import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialogInstant
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
+import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.popCurrentPage
-import kotlinx.android.synthetic.main.fragment_home.*
-import kotlinx.android.synthetic.main.fragment_result.*
 import kotlinx.android.synthetic.main.fragment_result_tv.*
-import kotlinx.android.synthetic.main.fragment_result_tv.result_episodes
-import kotlinx.android.synthetic.main.fragment_result_tv.result_episodes_text
-import kotlinx.android.synthetic.main.fragment_result_tv.result_play_movie
-import kotlinx.android.synthetic.main.fragment_result_tv.result_root
 
 class ResultFragmentTv : ResultFragment() {
     override val resultLayout = R.layout.fragment_result_tv
@@ -85,6 +83,24 @@ class ResultFragmentTv : ResultFragment() {
         }
     }
 
+    override fun setTrailers(trailers: List<ExtractorLink>?) {
+        context?.updateHasTrailers()
+        if (!LoadResponse.isTrailersEnabled) return
+
+        result_play_trailer?.isGone = trailers.isNullOrEmpty()
+        result_play_trailer?.setOnClickListener {
+            if (trailers.isNullOrEmpty()) return@setOnClickListener
+            activity.navigate(
+                R.id.global_to_navigation_player, GeneratorPlayer.newInstance(
+                    ExtractorLinkGenerator(
+                        trailers,
+                        emptyList()
+                    )
+                )
+            )
+        }
+    }
+
     override fun setRecommendations(rec: List<SearchResponse>?, validApiName: String?) {
         currentRecommendations = rec ?: emptyList()
         val isInvalid = rec.isNullOrEmpty()
@@ -110,7 +126,7 @@ class ResultFragmentTv : ResultFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         result_episodes?.layoutManager =
-            //LinearListLayout(result_episodes ?: return, result_episodes?.context).apply {
+                //LinearListLayout(result_episodes ?: return, result_episodes?.context).apply {
             LinearListLayout(result_episodes?.context).apply {
                 setHorizontal()
             }

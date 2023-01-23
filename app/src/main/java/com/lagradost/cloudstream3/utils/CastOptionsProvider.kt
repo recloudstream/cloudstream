@@ -20,10 +20,13 @@ class CastOptionsProvider : OptionsProvider {
             MediaIntentReceiver.ACTION_FORWARD,
             MediaIntentReceiver.ACTION_STOP_CASTING
         )
+
+        val name = ControllerActivity::class.qualifiedName!!
+
         val compatButtonAction = intArrayOf(1, 3)
         val notificationOptions =
             NotificationOptions.Builder()
-                .setTargetActivityClassName(ControllerActivity::class.qualifiedName)
+                .setTargetActivityClassName(name)
                 .setActions(buttonActions, compatButtonAction)
                 .setForward30DrawableResId(R.drawable.go_forward_30)
                 .setRewind30DrawableResId(R.drawable.go_back_30)
@@ -32,7 +35,7 @@ class CastOptionsProvider : OptionsProvider {
 
         val mediaOptions = CastMediaOptions.Builder()
             .setNotificationOptions(notificationOptions)
-            .setExpandedControllerActivityClassName(ControllerActivity::class.qualifiedName)
+            .setExpandedControllerActivityClassName(name)
             .build()
 
         return CastOptions.Builder()
@@ -44,7 +47,7 @@ class CastOptionsProvider : OptionsProvider {
             .build()
     }
 
-    override fun getAdditionalSessionProviders(p0: Context?): MutableList<SessionProvider> {
+    override fun getAdditionalSessionProviders(p0: Context): MutableList<SessionProvider> {
         return Collections.emptyList()
     }
 }

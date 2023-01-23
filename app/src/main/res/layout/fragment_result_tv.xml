@@ -227,61 +227,91 @@
                                     tools:text="The Perfect Run The Perfect Run" />
                             </LinearLayout>
 
-
-                            <com.lagradost.cloudstream3.widget.FlowLayout
+                            <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                app:itemSpacing="10dp">
+                                android:orientation="horizontal">
 
-                                <com.google.android.material.button.MaterialButton
-                                    android:id="@+id/result_meta_site"
-                                    style="@style/SmallBlackButton"
-                                    android:layout_gravity="center_vertical"
-                                    tools:text="Gogoanime" />
+                                <androidx.cardview.widget.CardView
+                                    android:id="@+id/result_poster_holder"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginEnd="10dp"
+                                    app:cardCornerRadius="@dimen/rounded_image_radius">
 
-                                <TextView
-                                    android:id="@+id/result_meta_type"
-                                    style="@style/ResultInfoText"
-                                    tools:text="Movie" />
+                                    <ImageView
+                                        android:id="@+id/result_poster"
+                                        android:layout_width="100dp"
+                                        android:layout_height="140dp"
+                                        android:layout_gravity="bottom"
+                                        android:contentDescription="@string/result_poster_img_des"
+                                        android:foreground="@drawable/outline_drawable"
+                                        android:scaleType="centerCrop"
+                                        tools:src="@drawable/example_poster" />
+                                </androidx.cardview.widget.CardView>
 
-                                <TextView
-                                    android:id="@+id/result_meta_year"
-                                    style="@style/ResultInfoText"
-                                    tools:text="2022" />
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:orientation="vertical">
 
-                                <TextView
-                                    android:id="@+id/result_meta_rating"
-                                    style="@style/ResultInfoText"
-                                    tools:text="Rated: 8.5/10.0" />
+                                    <com.lagradost.cloudstream3.widget.FlowLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        app:itemSpacing="10dp">
 
-                                <TextView
-                                    android:id="@+id/result_meta_status"
-                                    style="@style/ResultInfoText"
-                                    tools:text="Ongoing" />
+                                        <com.google.android.material.button.MaterialButton
+                                            android:id="@+id/result_meta_site"
+                                            style="@style/SmallBlackButton"
+                                            android:layout_gravity="center_vertical"
+                                            tools:text="Gogoanime" />
 
-                                <TextView
-                                    android:id="@+id/result_meta_duration"
-                                    style="@style/ResultInfoText"
-                                    tools:text="121min" />
-                            </com.lagradost.cloudstream3.widget.FlowLayout>
+                                        <TextView
+                                            android:id="@+id/result_meta_type"
+                                            style="@style/ResultInfoText"
+                                            tools:text="Movie" />
 
-                            <!--
-                            This has half margin and half padding to make TV focus on description look better.
-                            The focus outline now settles between the poster and text.
-                            -->
-                            <TextView
-                                android:id="@+id/result_description"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:ellipsize="end"
-                                android:foreground="@drawable/outline_drawable"
-                                android:maxLength="1000"
-                                android:nextFocusUp="@id/result_back"
-                                android:nextFocusDown="@id/result_play_movie"
-                                android:padding="5dp"
-                                android:textColor="?attr/textColor"
-                                android:textSize="15sp"
-                                tools:text="Ryan Quicksave Romano is an eccentric adventurer with a strange power: he can create a save-point in time and redo his life whenever he dies. Arriving in New Rome, the glitzy capital of sin of a rebuilding Europe, he finds the city torn between mega-corporations, sponsored heroes, superpowered criminals, and true monsters. It's a time of chaos, where potions can grant the power to rule the world and dangers lurk everywhere. " />
+                                        <TextView
+                                            android:id="@+id/result_meta_year"
+                                            style="@style/ResultInfoText"
+                                            tools:text="2022" />
+
+                                        <TextView
+                                            android:id="@+id/result_meta_rating"
+                                            style="@style/ResultInfoText"
+                                            tools:text="Rated: 8.5/10.0" />
+
+                                        <TextView
+                                            android:id="@+id/result_meta_status"
+                                            style="@style/ResultInfoText"
+                                            tools:text="Ongoing" />
+
+                                        <TextView
+                                            android:id="@+id/result_meta_duration"
+                                            style="@style/ResultInfoText"
+                                            tools:text="121min" />
+                                    </com.lagradost.cloudstream3.widget.FlowLayout>
+                                    <!--
+                                    This has half margin and half padding to make TV focus on description look better.
+                                    The focus outline now settles between the poster and text.
+                                    -->
+                                    <TextView
+                                        android:id="@+id/result_description"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:ellipsize="end"
+                                        android:foreground="@drawable/outline_drawable"
+                                        android:maxLength="1000"
+                                        android:nextFocusUp="@id/result_back"
+                                        android:nextFocusDown="@id/result_play_movie"
+                                        android:padding="5dp"
+                                        android:textColor="?attr/textColor"
+                                        android:textSize="15sp"
+                                        tools:text="Ryan Quicksave Romano is an eccentric adventurer with a strange power: he can create a save-point in time and redo his life whenever he dies. Arriving in New Rome, the glitzy capital of sin of a rebuilding Europe, he finds the city torn between mega-corporations, sponsored heroes, superpowered criminals, and true monsters. It's a time of chaos, where potions can grant the power to rule the world and dangers lurk everywhere. " />
+                                </LinearLayout>
+                            </LinearLayout>
+
+
                         </LinearLayout>
                     </LinearLayout>
 
@@ -354,7 +384,8 @@
                         android:visibility="gone" />
 
 
-                  <com.google.android.material.chip.ChipGroup
+                    <com.google.android.material.chip.ChipGroup
+                        style="@style/ChipParent"
                         android:id="@+id/result_tag"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
@@ -392,6 +423,7 @@
 
 
                         <LinearLayout
+                            android:animateLayoutChanges="true"
                             android:id="@+id/result_movie_parent"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -409,7 +441,7 @@
                                 android:layout_marginBottom="10dp"
                                 android:layout_weight="1"
                                 android:minWidth="250dp"
-                                android:nextFocusRight="@id/result_download_movie"
+                                android:nextFocusRight="@id/result_play_trailer"
                                 android:nextFocusUp="@id/result_cast_items"
                                 android:nextFocusDown="@id/result_resume_series_button_play"
                                 android:text="@string/play_movie_button"
@@ -418,6 +450,22 @@
 
                             </com.google.android.material.button.MaterialButton>
 
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/result_play_trailer"
+                                style="@style/WhiteButton"
+                                android:layout_width="wrap_content"
+                                android:layout_marginStart="0dp"
+                                android:layout_marginEnd="5dp"
+                                android:layout_marginBottom="10dp"
+                                android:layout_weight="1"
+                                android:minWidth="250dp"
+                                android:nextFocusUp="@id/result_cast_items"
+                                android:nextFocusDown="@id/result_resume_series_button_play"
+                                android:text="@string/play_trailer_button"
+                                android:visibility="gone"
+                                app:icon="@drawable/ic_baseline_play_arrow_24">
+
+                            </com.google.android.material.button.MaterialButton>
 
                             <FrameLayout
                                 android:id="@+id/result_movie_progress_downloaded_holder"
@@ -440,7 +488,7 @@
                                     android:layout_marginEnd="0dp"
                                     android:clickable="true"
                                     android:focusable="true"
-                                    android:nextFocusLeft="@id/result_play_movie"
+                                    android:nextFocusLeft="@id/result_play_trailer"
                                     android:nextFocusUp="@id/result_cast_items"
                                     android:nextFocusDown="@id/result_resume_series_button_play"
 

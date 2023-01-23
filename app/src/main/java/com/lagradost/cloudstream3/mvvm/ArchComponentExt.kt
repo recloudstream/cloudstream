@@ -49,8 +49,12 @@ inline fun debugWarning(assert: () -> Boolean, message: () -> String) {
     }
 }
 
-fun <T> LifecycleOwner.observe(liveData: LiveData<T>, action: (t: T) -> Unit) {
+fun <T> LifecycleOwner.observe(liveData: LiveData<T>, action: (t:  T) -> Unit) {
     liveData.observe(this) { it?.let { t -> action(t) } }
+}
+
+fun <T> LifecycleOwner.observeNullable(liveData: LiveData<T>, action: (t: T) -> Unit) {
+    liveData.observe(this) { action(it) }
 }
 
 inline fun <reified T : Any> some(value: T?): Some<T> {

@@ -5,40 +5,19 @@
 
 [![Discord](https://invidget.switchblade.xyz/5Hus6fM)](https://discord.gg/5Hus6fM)
 
-***Features:***
+### Features:
 + **AdFree**, No ads whatsoever
 + No tracking/analytics
 + Bookmarks
 + Download and stream movies, tv-shows and anime
 + Chromecast
 
-***Screenshots:***
+### Screenshots:
 
 <img src="./.github/home.jpg" height="400"/><img src="./.github/search.jpg" height="400"/><img src="./.github/downloads.jpg" height="400"/><img src="./.github/results.jpg" height="400"/>
 <img src="./.github/player.jpg" height="200"/>
 
-***The list of supported languages:***
-* 🇱🇧 Arabic
-* 🇧🇬 Bulgarian
-* 🇭🇷 Croatian
-* 🇨🇿 Czech
-* 🇳🇱 Dutch
-* 🇬🇧 English
-* 🇫🇷 French
-* 🇩🇪 German
-* 🇬🇷 Greek
-* 🇮🇳 Hindi
-* 🇮🇩 Indonesian
-* 🇮🇹 Italian
-* 🇲🇰 Macedonian
-* 🇮🇳 Malayalam
-* 🇳🇴 Norsk
-* 🇵🇱 Polish
-* 🇧🇷 Portuguese (Brazil)
-* 🇷🇴 Romanian
-* 🇪🇸 Spanish
-* 🇸🇪 Swedish
-* 🇵🇭 Tagalog
-* 🇹🇷 Turkish
-* 🇻🇳 Vietnamese
-
+### Supported languages:
+<a href="https://hosted.weblate.org/engage/cloudstream/">
+  <img src="https://hosted.weblate.org/widgets/cloudstream/-/app/multi-auto.svg" alt="Translation status" />
+</a>

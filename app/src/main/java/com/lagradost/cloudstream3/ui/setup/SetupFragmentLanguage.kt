@@ -15,7 +15,6 @@ import com.lagradost.cloudstream3.CommonActivity
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.plugins.PluginManager
-import com.lagradost.cloudstream3.plugins.RepositoryManager.PREBUILT_REPOSITORIES
 import com.lagradost.cloudstream3.ui.settings.appLanguages
 import com.lagradost.cloudstream3.ui.settings.getCurrentLocale
 import com.lagradost.cloudstream3.utils.SubtitleHelper
@@ -85,7 +84,7 @@ class SetupFragmentLanguage : Fragment() {
                         && PluginManager.getPluginsLocal().isEmpty()
                     //&& PREBUILT_REPOSITORIES.isNotEmpty()
                     ) R.id.action_navigation_global_to_navigation_setup_extensions
-                    else R.id.action_navigation_setup_language_to_navigation_setup_media
+                    else R.id.action_navigation_setup_language_to_navigation_setup_provider_languages
 
                     findNavController().navigate(
                         nextDestination,

@@ -26,10 +26,7 @@
             android:contentDescription="@string/search_poster_img_des" />
 
     <TextView
-            tools:text="@string/quality_hd"
-            android:id="@+id/text_quality"
-            style="@style/SearchBox"
-            android:background="@drawable/type_bg_color" />
+            style="@style/TypeButton" />
     <!--
     <LinearLayout
             android:orientation="vertical"

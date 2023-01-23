@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3
 
+import android.Manifest
 import android.app.Activity
 import android.app.PictureInPictureParams
 import android.content.Context
@@ -16,6 +17,7 @@ import androidx.annotation.MainThread
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
+import androidx.core.content.ContextCompat
 import androidx.preference.PreferenceManager
 import com.google.android.gms.cast.framework.CastSession
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
@@ -61,7 +63,9 @@ object CommonActivity {
         }
     }
 
-    fun showToast(act: Activity?, @StringRes message: Int, duration: Int) {
+    /** duration is Toast.LENGTH_SHORT if null*/
+    @MainThread
+    fun showToast(act: Activity?, @StringRes message: Int, duration: Int? = null) {
         if (act == null) return
         showToast(act, act.getString(message), duration)
     }
@@ -69,6 +73,7 @@ object CommonActivity {
     const val TAG = "COMPACT"
 
     /** duration is Toast.LENGTH_SHORT if null*/
+    @MainThread
     fun showToast(act: Activity?, message: String?, duration: Int? = null) {
         if (act == null || message == null) {
             Log.w(TAG, "invalid showToast act = $act message = $message")
@@ -105,9 +110,18 @@ object CommonActivity {
         }
     }
 
+    /**
+     * Not all languages can be fetched from locale with a code.
+     * This map allows sidestepping the default Locale(languageCode)
+     * when setting the app language.
+     **/
+    val appLanguageExceptions = hashMapOf(
+        "zh-rTW" to Locale.TRADITIONAL_CHINESE
+    )
+
     fun setLocale(context: Context?, languageCode: String?) {
         if (context == null || languageCode == null) return
-        val locale = Locale(languageCode)
+        val locale = appLanguageExceptions[languageCode] ?: Locale(languageCode)
         val resources: Resources = context.resources
         val config = resources.configuration
         Locale.setDefault(locale)
@@ -143,14 +157,31 @@ object CommonActivity {
                     val resultCode = result.resultCode
                     val data = result.data
                     if (resultCode == AppCompatActivity.RESULT_OK && data != null && resumeApp.position != null && resumeApp.duration != null) {
-                        val pos = data.getLongExtra(resumeApp.position, -1L)
-                        val dur = data.getLongExtra(resumeApp.duration, -1L)
+                        val pos = resumeApp.getPosition(data)
+                        val dur = resumeApp.getDuration(data)
                         if (dur > 0L && pos > 0L)
                             DataStoreHelper.setViewPos(getKey(resumeApp.lastId), pos, dur)
                         removeKey(resumeApp.lastId)
                         ResultFragment.updateUI()
                     }
                 }
+        }
+
+        // Ask for notification permissions on Android 13
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+            ContextCompat.checkSelfPermission(
+                act,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            val requestPermissionLauncher = act.registerForActivityResult(
+                ActivityResultContracts.RequestPermission()
+            ) { isGranted: Boolean ->
+                Log.d(TAG, "Notification permission: $isGranted")
+            }
+            requestPermissionLauncher.launch(
+                Manifest.permission.POST_NOTIFICATIONS
+            )
         }
     }
 
@@ -336,6 +367,9 @@ object CommonActivity {
             }
             KeyEvent.KEYCODE_C, KeyEvent.KEYCODE_NUMPAD_4, KeyEvent.KEYCODE_4 -> {
                 PlayerEventType.SkipOp
+            }
+            KeyEvent.KEYCODE_V, KeyEvent.KEYCODE_NUMPAD_5, KeyEvent.KEYCODE_5 -> {
+                PlayerEventType.SkipCurrentChapter
             }
             KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE, KeyEvent.KEYCODE_P, KeyEvent.KEYCODE_SPACE, KeyEvent.KEYCODE_NUMPAD_ENTER, KeyEvent.KEYCODE_ENTER -> { // space is not captured due to navigation
                 PlayerEventType.PlayPauseToggle

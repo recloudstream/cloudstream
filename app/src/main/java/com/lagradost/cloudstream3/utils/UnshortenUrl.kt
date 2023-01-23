@@ -176,7 +176,7 @@ object ShortLink {
 
     suspend fun unshortenUprot(uri: String): String {
         val page = app.get(uri).text
-        Regex("""<a[^>]+href="([^"]+)""").findAll(page)
+        Regex("""<a[^>]+href="([^"]+)".*Continue""").findAll(page)
             .map { it.value.replace("""<a href="""", "") }
             .toList().forEach { link ->
                 if (link.contains("https://maxstream.video") || link.contains("https://uprot.net") && link != uri) {
