@@ -501,7 +501,7 @@
     <string name="player_settings_play_in_browser">İnternet tarayıcısı</string>
     <string name="app_not_found_error">Uygulama bulunamadı</string>
     <string name="history">Geçmiş</string>
-    <string name="action_mark_as_watched">İzlendi olarak imle</string>
+    <string name="action_mark_as_watched">İzlendi olarak işaretle</string>
     <string name="update_notification_installing">Uygulama güncellemesi yükleniyor…</string>
     <string name="redo_setup_process">Kurulum işlemini tekrarla</string>
     <string name="play_trailer_button">Fragmanı oynat</string>
@@ -529,11 +529,12 @@
     <string name="confirm_exit_dialog">Çıkmak istediğine emin misin\?</string>
     <string name="yes">Evet</string>
     <string name="update_notification_downloading">Uygulama güncellemesi indiriliyor…</string>
-    <string name="update_notification_failed">Uygulamanın yeni sürümü yüklenemedi.</string>
+    <string name="update_notification_failed">Uygulamanın yeni sürümü yüklenemedi</string>
     <string name="clear_history">Geçmişi temizle</string>
     <string name="apk_installer_package_installer">Paket yükleyici</string>
     <string name="apk_installer_legacy">Eski</string>
     <string name="pref_category_gestures">Hareketler</string>
     <string name="all_languages_preference">Tüm diller</string>
     <string name="skip_type_format" formatted="true">Geç %s</string>
+    <string name="action_remove_from_watched">İzlenenlerden kaldır</string>
 </resources>

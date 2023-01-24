@@ -507,4 +507,5 @@
     <string name="delayed_update_notice">L\'app verrà aggiornata all\'uscita</string>
     <string name="update_started">Aggiornamento avviato</string>
     <string name="plugin_downloaded">Plugin scaricato</string>
+    <string name="action_remove_from_watched">Rimuovi dai già visti</string>
 </resources>

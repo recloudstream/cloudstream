@@ -498,7 +498,7 @@
     <string name="pref_category_gestures">Gerakan</string>
     <string name="apk_installer_settings_des">Beberapa perangkat tidak mendukung penginstal paket mode baru. Coba mode lama jika pembaruan tidak dapat diinstal.</string>
     <string name="pref_category_actions">Aksi</string>
-    <string name="referer">Sumber</string>
+    <string name="referer">Referensi</string>
     <string name="yes">Ya</string>
     <string name="extension_install_first">Pasang dulu fitur tambahan</string>
     <string name="all_languages_preference">Semua Bahasa</string>
@@ -526,4 +526,5 @@
     <string name="plugin_downloaded">Plugin Terunduh</string>
     <string name="delayed_update_notice">Aplikasi akan diperbaharui pada saat keluar</string>
     <string name="update_started">Pembaharuan Dimulai</string>
+    <string name="action_remove_from_watched">Hapus dari tontonan</string>
 </resources>

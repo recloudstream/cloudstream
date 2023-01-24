@@ -552,4 +552,5 @@
     <string name="update_started">更新开始</string>
     <string name="delayed_update_notice">应用退出后将会更新</string>
     <string name="plugin_downloaded">插件已下载</string>
+    <string name="action_remove_from_watched">从已观看中移除</string>
 </resources>

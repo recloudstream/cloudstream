@@ -147,7 +147,7 @@
     <string name="restore_success">Đã tải dữ liệu sao lưu</string>
     <string name="restore_failed_format" formatted="true">Không thể khôi phục dữ liệu từ %s</string>
     <string name="backup_success">Khôi phục dữ liệu thành công</string>
-    <string name="backup_failed">Thiếu quyền truy cập bộ nhớ, hãy thử lại</string>
+    <string name="backup_failed">Thiếu quyền truy cập bộ nhớ, hãy thử lại.</string>
     <string name="backup_failed_error_format">Lỗi khi sao lưu %s</string>
     <string name="search">Tìm kiếm</string>
     <string name="category_account">Tài khoản</string>
@@ -160,7 +160,7 @@
     <string name="show_fillers_settings">Hiển thị tập phụ cho anime</string>
     <string name="show_trailers_settings">Hiển thị trailer</string>
     <string name="kitsu_settings">Hiển thị poster từ kitsu</string>
-    <string name="pref_filter_search_quality">Ẩn chất lượng Video khi tìm kiếm</string>
+    <string name="pref_filter_search_quality">Ẩn chất lượng video khi tìm kiếm</string>
     <string name="automatic_plugin_updates">Tự động cập nhật plugin</string>
     <string name="updates_settings">Hiển thị thông báo cập nhật App</string>
     <string name="updates_settings_des">Tự động tìm kiếm và thông báo khi có bản cập nhật mới</string>
@@ -435,4 +435,13 @@
     <string name="safe_mode_crash_info">Xem thông tin sự cố</string>
     <string name="history">Lịch sử</string>
     <string name="action_mark_as_watched">Đánh dấu là đã xem</string>
+    <string name="automatic_plugin_download">Tự động tải plugin</string>
+    <string name="redo_setup_process">Thiết lập lại</string>
+    <string name="apk_installer_settings">Bộ cài APK</string>
+    <string name="apk_installer_settings_des">Một số máy không hỗ trợ trình cài đặt gói mới. Hãy thử tùy chọn cũ nếu các bản cập nhật không cài đặt.</string>
+    <string name="season_format">%s %d%s</string>
+    <string name="play_trailer_button">Xem Trailer</string>
+    <string name="automatic_plugin_download_summary">Tự động tải plugins còn thiếu.</string>
+    <string name="update_started">Bắt đầu cập nhật</string>
+    <string name="pref_category_links">Liên kết</string>
 </resources>
