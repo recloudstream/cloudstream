@@ -12,6 +12,11 @@ class SyncRepo(private val repo: SyncAPI) {
     val mainUrl = repo.mainUrl
     val requiresLogin = repo.requiresLogin
     val syncIdName = repo.syncIdName
+    var requireLibraryRefresh: Boolean
+        get() = repo.requireLibraryRefresh
+        set(value) {
+            repo.requireLibraryRefresh = value
+        }
 
     suspend fun score(id: String, status: SyncAPI.SyncStatus): Resource<Boolean> {
         return safeApiCall { repo.score(id, status) }

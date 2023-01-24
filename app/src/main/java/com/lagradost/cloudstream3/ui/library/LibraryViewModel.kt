@@ -4,6 +4,8 @@ import androidx.annotation.StringRes
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
+import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.SyncApis
@@ -20,20 +22,29 @@ enum class ListSorting(@StringRes val stringRes: Int) {
     AlphabeticalZ(R.string.sort_alphabetical_z),
 }
 
+const val LAST_SYNC_API_KEY = "last_sync_api"
+
 class LibraryViewModel : ViewModel() {
-    private val _pages: MutableLiveData<List<SyncAPI.Page>> = MutableLiveData(emptyList())
+    private val _pages: MutableLiveData<List<SyncAPI.Page>> = MutableLiveData(null)
     val pages: LiveData<List<SyncAPI.Page>> = _pages
 
     private val _currentApiName: MutableLiveData<String> = MutableLiveData("")
     val currentApiName: LiveData<String> = _currentApiName
 
-    private val availableSyncApis = SyncApis.filter { it.hasAccount() }
+    private val availableSyncApis
+        get() = SyncApis.filter { it.hasAccount() }
 
-    // TODO REMEMBER SELECTION
-    var currentSyncApi = availableSyncApis.firstOrNull()
-        private set
+    var currentSyncApi = availableSyncApis.let { allApis ->
+        val lastSelection = getKey<String>(LAST_SYNC_API_KEY)
+        availableSyncApis.firstOrNull { it.name == lastSelection } ?: allApis.firstOrNull()
+    }
+        private set(value) {
+            field = value
+            setKey(LAST_SYNC_API_KEY, field?.name)
+        }
 
-    val availableApiNames: List<String> = availableSyncApis.map { it.name }
+    val availableApiNames: List<String>
+        get() = availableSyncApis.map { it.name }
 
     val sortingMethods = listOf(
         ListSorting.RatingHigh,
@@ -64,15 +75,19 @@ class LibraryViewModel : ViewModel() {
 
     fun reloadPages(forceReload: Boolean) {
         // Only skip loading if its not forced and pages is not empty
-        if (!forceReload && pages.value?.isNotEmpty() == true) return
+        if (!forceReload && pages.value?.isNotEmpty() == true &&
+            currentSyncApi?.requireLibraryRefresh != true
+        ) return
 
         ioSafe {
             currentSyncApi?.let { repo ->
                 _currentApiName.postValue(repo.name)
                 val library = (repo.getPersonalLibrary() as? Resource.Success)?.value ?: return@let
+                repo.requireLibraryRefresh = false
 
                 val listSubset = library.allLibraryItems.groupBy { it.listName }
-                val allLists = library.allListNames.associateWith { emptyList<SyncAPI.LibraryItem>() }
+                val allLists =
+                    library.allListNames.associateWith { emptyList<SyncAPI.LibraryItem>() }
 
                 val filledLists = allLists + listSubset
 

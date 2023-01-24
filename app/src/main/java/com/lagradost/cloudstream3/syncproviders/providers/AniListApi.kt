@@ -28,6 +28,7 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
     override val key = "6871"
     override val redirectUrl = "anilistlogin"
     override val idPrefix = "anilist"
+    override var requireLibraryRefresh = true
     override var mainUrl = "https://anilist.co"
     override val icon = R.drawable.ic_anilist_icon
     override val requiresLogin = false
@@ -47,6 +48,7 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
     }
 
     override fun logOut() {
+        requireLibraryRefresh = true
         removeAccountKeys()
     }
 
@@ -68,6 +70,7 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
         setKey(accountId, ANILIST_TOKEN_KEY, token)
         setKey(ANILIST_SHOULD_UPDATE_LIST, true)
         val user = getUser()
+        requireLibraryRefresh = true
         return user != null
     }
 
@@ -173,7 +176,9 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
             fromIntToAnimeStatus(status.status),
             status.score,
             status.watchedEpisodes
-        )
+        ).also {
+            requireLibraryRefresh = requireLibraryRefresh || it
+        }
     }
 
     companion object {
@@ -295,15 +300,13 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
             val shows = searchShows(name.replace(blackListRegex, ""))
 
             shows?.data?.Page?.media?.find {
-                malId ?: "NONE" == it.idMal.toString()
+                (malId ?: "NONE") == it.idMal.toString()
             }?.let { return it }
 
             val filtered =
                 shows?.data?.Page?.media?.filter {
-                    (
-                            it.startDate.year ?: year.toString() == year.toString()
-                                    || year == null
-                            )
+                    (((it.startDate.year ?: year.toString()) == year.toString()
+                            || year == null))
                 }
             filtered?.forEach {
                 it.title.romaji?.let { romaji ->
@@ -529,7 +532,8 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
                 app.post(
                     "https://graphql.anilist.co/",
                     headers = mapOf(
-                        "Authorization" to "Bearer " + (getAuth() ?: return@suspendSafeApiCall null),
+                        "Authorization" to "Bearer " + (getAuth()
+                            ?: return@suspendSafeApiCall null),
                         if (cache) "Cache-Control" to "max-stale=$maxStale" else "Cache-Control" to "no-cache"
                     ),
                     cacheTime = 0,
@@ -722,9 +726,7 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
                     }
                     }
             """
-        val text = postApi(query).also {
-            println("REPONSE $it")
-        }
+        val text = postApi(query)
         return text?.toKotlinObject()
     }
 

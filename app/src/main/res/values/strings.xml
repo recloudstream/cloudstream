@@ -627,4 +627,5 @@
     <string name="sort_alphabetical_z">Alphabetical (Z to A)</string>
     <string name="select_library">Select Library</string>
     <string name="open_with">Open with</string>
+    <string name="empty_library_message">Looks like your library is empty :(\nLogin to a library account or add shows to your local library</string>
 </resources>

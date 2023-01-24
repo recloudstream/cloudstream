@@ -33,14 +33,15 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
     override val redirectUrl = "mallogin"
     override val idPrefix = "mal"
     override var mainUrl = "https://myanimelist.net"
-    val apiUrl = "https://api.myanimelist.net"
+    private val apiUrl = "https://api.myanimelist.net"
     override val icon = R.drawable.mal_logo
     override val requiresLogin = false
     override val syncIdName = SyncIdName.MyAnimeList
-
+    override var requireLibraryRefresh = true
     override val createAccountUrl = "$mainUrl/register.php"
 
     override fun logOut() {
+        requireLibraryRefresh = true
         removeAccountKeys()
     }
 
@@ -93,7 +94,9 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
             fromIntToAnimeStatus(status.status),
             status.score,
             status.watchedEpisodes
-        )
+        ).also {
+            requireLibraryRefresh = requireLibraryRefresh || it
+        }
     }
 
     data class MalAnime(
@@ -311,9 +314,10 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
                 setKey(accountId, MAL_UNIXTIME_KEY, (token.expires_in + unixTime))
                 setKey(accountId, MAL_REFRESH_TOKEN_KEY, token.refresh_token)
                 setKey(accountId, MAL_TOKEN_KEY, token.access_token)
+                requireLibraryRefresh = true
             }
         } catch (e: Exception) {
-            e.printStackTrace()
+            logError(e)
         }
     }
 
@@ -332,7 +336,7 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
             ).text
             storeToken(res)
         } catch (e: Exception) {
-            e.printStackTrace()
+            logError(e)
         }
     }
 
@@ -433,7 +437,7 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
         return getKey(MAL_CACHED_LIST) as? Array<Data>
     }
 
-    suspend fun getMalAnimeListSmart(): Array<Data>? {
+    private suspend fun getMalAnimeListSmart(): Array<Data>? {
         if (getAuth() == null) return null
         return if (getKey(MAL_SHOULD_UPDATE_LIST, true) == true) {
             val list = getMalAnimeList()

@@ -11,6 +11,7 @@ import com.lagradost.cloudstream3.DubStatus
 import com.lagradost.cloudstream3.SearchQuality
 import com.lagradost.cloudstream3.SearchResponse
 import com.lagradost.cloudstream3.TvType
+import com.lagradost.cloudstream3.syncproviders.AccountManager
 import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.result.VideoWatchState
@@ -195,6 +196,7 @@ object DataStoreHelper {
     fun setBookmarkedData(id: Int?, data: BookmarkedData) {
         if (id == null) return
         setKey("$currentAccount/$RESULT_WATCH_STATE_DATA", id.toString(), data)
+        AccountManager.localListApi.requireLibraryRefresh = true
     }
 
     fun getBookmarkedData(id: Int?): BookmarkedData? {

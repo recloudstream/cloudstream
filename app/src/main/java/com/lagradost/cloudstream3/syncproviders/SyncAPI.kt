@@ -13,6 +13,10 @@ enum class SyncIdName {
 }
 
 interface SyncAPI : OAuth2API {
+    /**
+     * Set this to true if the user updates something on the list like watch status or score
+     **/
+    var requireLibraryRefresh: Boolean
     val mainUrl: String
 
     /**

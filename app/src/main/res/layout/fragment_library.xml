@@ -7,6 +7,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <TextView
+        android:id="@+id/empty_list_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="30dp"
+        android:gravity="center"
+        android:text="@string/empty_library_message"
+        android:visibility="gone"
+        tools:visibility="visible" />
+
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/search_bar"
         android:layout_width="match_parent"
@@ -16,13 +27,14 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            app:layout_scrollFlags="scroll|enterAlways">
+
             <ImageView
                 android:id="@+id/provider_selector"
                 android:layout_width="25dp"
                 android:layout_height="25dp"
                 android:layout_gravity="end|center_vertical"
-
                 android:layout_marginStart="10dp"
                 android:background="?selectableItemBackgroundBorderless"
                 android:contentDescription="@string/change_providers_img_des"
@@ -62,15 +74,14 @@
 
                 <ImageView
                     android:id="@+id/list_selector"
-                    android:layout_width="25dp"
-                    android:layout_height="25dp"
+                    android:layout_width="45dp"
+                    android:layout_height="45dp"
                     android:layout_gravity="end|center_vertical"
-
-                    android:layout_margin="10dp"
                     android:background="?selectableItemBackgroundBorderless"
                     android:contentDescription="@string/change_providers_img_des"
                     android:nextFocusLeft="@id/main_search"
                     android:nextFocusRight="@id/main_search"
+                    android:padding="10dp"
                     android:src="@drawable/ic_baseline_filter_list_24"
                     app:tint="?attr/textColor" />
 
@@ -123,10 +134,8 @@
         android:background="?attr/primaryGrayBackground"
         android:descendantFocusability="blocksDescendants"
         android:focusable="false"
-
         android:paddingHorizontal="5dp"
         app:layout_scrollFlags="noScroll"
-        app:tabBackground="?attr/primaryGrayBackground"
         app:tabGravity="center"
         app:tabIndicator="@drawable/indicator_background"
         app:tabIndicatorColor="@color/textColor"

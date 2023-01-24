@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.StringRes
 import androidx.appcompat.widget.SearchView
+import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import com.google.android.material.tabs.TabLayoutMediator
 import com.lagradost.cloudstream3.APIHolder
@@ -26,6 +27,7 @@ import com.lagradost.cloudstream3.ui.search.SEARCH_ACTION_LOAD
 import com.lagradost.cloudstream3.ui.search.SEARCH_ACTION_SHOW_METADATA
 import com.lagradost.cloudstream3.utils.AppUtils.loadResult
 import com.lagradost.cloudstream3.utils.AppUtils.loadSearchResult
+import com.lagradost.cloudstream3.utils.AppUtils.reduceDragSensitivity
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
 import kotlinx.android.synthetic.main.fragment_library.*
@@ -264,8 +266,11 @@ class LibraryFragment : Fragment() {
             }
 
         viewpager?.offscreenPageLimit = 2
+        viewpager?.reduceDragSensitivity()
 
         observe(libraryViewModel.pages) { pages ->
+            empty_list_textview?.isVisible = pages.all { it.items.isEmpty() }
+
             (viewpager.adapter as? ViewpagerAdapter)?.pages = pages
             // Using notifyItemRangeChanged keeps the animations when sorting
             viewpager.adapter?.notifyItemRangeChanged(0, viewpager.adapter?.itemCount ?: 0)
