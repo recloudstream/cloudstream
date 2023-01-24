@@ -19,19 +19,20 @@
     <string name="next_episode_time_min_format" formatted="true">%dm</string>
     <!-- IS NOT NEEDED TO TRANSLATE AS THEY ARE ONLY USED FOR SCREEN READERS AND WONT SHOW UP TO NORMAL USERS -->
     <string name="result_poster_img_des">封面</string>
-    <string name="search_poster_img_des">@string/result_poster_img_des</string>
+    <string name="search_poster_img_des">\@string/result_poster_img_des</string>
     <string name="episode_poster_img_des">劇集封面</string>
     <string name="home_main_poster_img_des">主封面</string>
     <string name="home_next_random_img_des">隨機下一個</string>
-    <string name="episode_play_img_des" translatable="false">@string/play_episode</string>
+    <string name="episode_play_img_des" translatable="false">\@string/play_episode</string>
     <string name="go_back_img_des">返回</string>
-    <string name="change_providers_img_des" translatable="false">@string/home_change_provider_img_des</string>
+    <string name="change_providers_img_des" translatable="false">\@string/home_change_provider_img_des</string>
     <string name="home_change_provider_img_des">更改片源</string>
     <string name="preview_background_img_des">預覽背景</string>
     <!-- TRANSLATE, BUT DON'T FORGET FORMAT -->
     <string name="player_speed_text_format" formatted="true">速度（%.2fx）</string>
     <string name="rated_format" formatted="true">評分：%.1f</string>
-    <string name="new_update_format" formatted="true">發現新版本！\n%s -&gt; %s</string>
+    <string name="new_update_format" formatted="true">發現新版本！
+\n%s -&gt; %s</string>
     <string name="filler" formatted="true">填充</string>
     <string name="duration_format" formatted="true">%d 分鐘</string>
     <string name="app_name">CloudStream</string>
@@ -45,7 +46,7 @@
     <string name="no_data">無資料</string>
     <string name="episode_more_options_des">更多選項</string>
     <string name="next_episode">下一集</string>
-    <string name="result_plot" translatable="false">@string/synopsis</string>
+    <string name="result_plot" translatable="false">\@string/synopsis</string>
     <string name="result_tags">類型</string>
     <string name="result_share">分享</string>
     <string name="result_open_in_browser">在瀏覽器中打開</string>
@@ -122,7 +123,7 @@
     <string name="continue_watching">繼續觀看</string>
     <string name="action_remove_watching">移除</string>
     <string name="action_open_watching">更多資訊</string>
-    <string name="action_open_play">@string/home_play </string>
+    <string name="action_open_play">\@string/home_play</string>
     <string name="vpn_might_be_needed">此片源可能需要 VPN 才能正常使用</string>
     <string name="vpn_torrent">此片源是種子，建議使用 VPN</string>
     <string name="provider_info_meta">站點不提供元數據，如果站點上不存在元數據，影片載入將失敗。</string>
@@ -149,8 +150,7 @@
     <string name="double_tap_to_seek_settings">輕按兩下以控制進度</string>
     <string name="double_tap_to_pause_settings">輕按兩下以暫停</string>
     <string name="double_tap_to_seek_amount_settings">輕按兩下以控制進度時間</string>
-    <string name="double_tap_to_seek_settings_des">在右側或左側輕按兩次以向前或向後快轉
-    </string>
+    <string name="double_tap_to_seek_settings_des">在右側或左側輕按兩次以向前或向後快轉</string>
     <string name="double_tap_to_pause_settings_des">輕按兩下中間以暫停</string>
     <string name="use_system_brightness_settings">使用系統亮度</string>
     <string name="use_system_brightness_settings_des">在應用程序播放器中使用系統亮度替代黑色遮罩</string>
@@ -205,12 +205,13 @@
     <string name="no_episodes_found">未找到劇集</string>
     <string name="delete_file">刪除文件</string>
     <string name="delete">刪除</string>
-    <string name="cancel" translatable="false">@string/sort_cancel</string>
+    <string name="cancel" translatable="false">\@string/sort_cancel</string>
     <string name="pause">暫停</string>
     <string name="resume">繼續</string>
     <string name="go_back_30">-30</string>
     <string name="go_forward_30">+30</string>
-    <string name="delete_message" formatted="true">這將永遠刪除 %s\n你確定嗎?</string>
+    <string name="delete_message" formatted="true">這將永遠刪除 %s
+\n你確定嗎\?</string>
     <string name="resume_time_left" formatted="true">%d 分鐘
 \n剩餘的</string>
     <string name="status_ongoing">連載中</string>
@@ -243,8 +244,8 @@
     <string name="movies_singular">電影</string>
     <string name="tv_series_singular">電視劇</string>
     <string name="cartoons_singular">卡通</string>
-    <string name="anime_singular">@string/anime</string>
-    <string name="ova_singular">@string/ova</string>
+    <string name="anime_singular">\@string/anime</string>
+    <string name="ova_singular">\@string/ova</string>
     <string name="torrent_singular">種子</string>
     <string name="documentaries_singular">紀錄片</string>
     <string name="asian_drama_singular">亞洲劇</string>
@@ -306,22 +307,7 @@
     <string name="resize_zoom">縮放</string>
     <string name="legal_notice">免責聲明</string>
     <string name="legal_notice_key" translatable="false">legal_notice_key</string>
-    <string name="legal_notice_text" translatable="false">Any legal issues regarding the content on this application
-        should be taken up with the actual file hosts and providers themselves as we are not affiliated with them.
-
-        In case of copyright infringement, please directly contact the responsible parties or the streaming websites.
-
-        The app is purely for educational and personal use.
-
-        CloudStream 3 does not host any content on the app, and has no control over what media is put up or taken down.
-        CloudStream 3 functions like any other search engine, such as Google. CloudStream 3 does not host, upload or
-        manage any videos, films or content. It simply crawls, aggregates and displayes links in a convenient,
-        user-friendly interface.
-
-        It merely scrapes 3rd-party websites that are publicly accessable via any regular web browser. It is the
-        responsibility of user to avoid any actions that might violate the laws governing his/her locality. Use
-        CloudStream 3 at your own risk.
-    </string>
+    <string name="legal_notice_text" translatable="false">Any legal issues regarding the content on this application should be taken up with the actual file hosts and providers themselves as we are not affiliated with them. In case of copyright infringement, please directly contact the responsible parties or the streaming websites. The app is purely for educational and personal use. CloudStream 3 does not host any content on the app, and has no control over what media is put up or taken down. CloudStream 3 functions like any other search engine, such as Google. CloudStream 3 does not host, upload or manage any videos, films or content. It simply crawls, aggregates and displayes links in a convenient, user-friendly interface. It merely scrapes 3rd-party websites that are publicly accessable via any regular web browser. It is the responsibility of user to avoid any actions that might violate the laws governing his/her locality. Use CloudStream 3 at your own risk.</string>
     <string name="category_general">通用</string>
     <string name="random_button_settings">隨機按鈕</string>
     <string name="random_button_settings_desc">在主頁中顯示隨機按鈕</string>
@@ -372,7 +358,7 @@
     <string name="upload_sync">同步</string>
     <string name="sync_score">評分</string>
     <string name="sync_score_format" formatted="true">%d / 10</string>
-    <string name="sync_total_episodes_none">/??</string>
+    <string name="sync_total_episodes_none">/\?\?</string>
     <string name="sync_total_episodes_some" formatted="true">/%d</string>
     <string name="authenticated_user" formatted="true">%s 已驗證</string>
     <string name="authenticated_user_fail" formatted="true">無法在 %s 登入</string>
@@ -382,7 +368,7 @@
     <string name="all">全部</string>
     <string name="max">最大</string>
     <string name="min">最小</string>
-    <string name="subtitles_none" translatable="false">@string/none</string>
+    <string name="subtitles_none" translatable="false">\@string/none</string>
     <string name="subtitles_outline">輪廓</string>
     <string name="subtitles_depressed">凹陷</string>
     <string name="subtitles_shadow">陰影</string>
