@@ -152,13 +152,13 @@ class LibraryFragment : Fragment() {
                     (APIHolder.getApiFromNameNull(apiName)?.let { listOf(it.name) } ?: emptyList())
 
             val baseOptions = listOf(
-                txt(LibraryOpenerType.Default.stringRes).asString(this),
-                txt(LibraryOpenerType.None.stringRes).asString(this),
-                txt(LibraryOpenerType.Browser.stringRes).asString(this),
-                txt(LibraryOpenerType.Search.stringRes).asString(this),
+                LibraryOpenerType.Default,
+                LibraryOpenerType.None,
+                LibraryOpenerType.Browser,
+                LibraryOpenerType.Search
             )
 
-            val items = baseOptions + availableProviders
+            val items = baseOptions.map { txt(it.stringRes).asString(this) } + availableProviders
 
             val savedSelection = getKey<LibraryOpener>(LIBRARY_FOLDER, key)
             val selectedIndex =
@@ -172,7 +172,7 @@ class LibraryFragment : Fragment() {
                             ?.plus(baseOptions.size) ?: 0
                     }
                     // Else base option
-                    else -> baseOptions.indexOf(savedSelection.openType.name)
+                    else -> baseOptions.indexOf(savedSelection.openType)
                 }
 
             this.showBottomDialog(
@@ -184,7 +184,7 @@ class LibraryFragment : Fragment() {
             ) {
                 val savedData = if (it < baseOptions.size) {
                     LibraryOpener(
-                        LibraryOpenerType.valueOf(baseOptions[it]),
+                        baseOptions[it],
                         null
                     )
                 } else {
