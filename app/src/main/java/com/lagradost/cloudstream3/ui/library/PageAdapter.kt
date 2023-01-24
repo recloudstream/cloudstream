@@ -56,7 +56,6 @@ class PageAdapter(
 
             // See searchAdaptor for this, it basically fixes the height
             if (!compactView) {
-//                println("HEIGHT $coverHeight")
                 cardView.apply {
                     layoutParams = FrameLayout.LayoutParams(
                         ViewGroup.LayoutParams.MATCH_PARENT,

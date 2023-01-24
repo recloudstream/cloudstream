@@ -4,6 +4,7 @@ import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.doOnAttach
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.OnFlingListener
 import com.lagradost.cloudstream3.R
@@ -36,13 +37,19 @@ class ViewpagerAdapter(
         RecyclerView.ViewHolder(itemViewTest) {
         fun bind(page: SyncAPI.Page) {
             if (itemViewTest.page_recyclerview?.adapter == null) {
-                itemViewTest.page_recyclerview?.adapter = PageAdapter(
-                    page.items.toMutableList(),
-                    itemViewTest.page_recyclerview,
-                    clickCallback
-                )
                 itemView.page_recyclerview?.spanCount =
                     this@PageViewHolder.itemView.context.getSpanCount() ?: 3
+
+                // Only add the items after it has been attached since the items rely on ItemWidth
+                // Which is only determined after the recyclerview is attached.
+                // If this fails then item height becomes 0 when there is only one item
+                itemViewTest.page_recyclerview?.doOnAttach {
+                    itemViewTest.page_recyclerview?.adapter = PageAdapter(
+                        page.items.toMutableList(),
+                        itemViewTest.page_recyclerview,
+                        clickCallback
+                    )
+                }
             } else {
                 (itemViewTest.page_recyclerview?.adapter as? PageAdapter)?.updateList(page.items)
                 itemViewTest.page_recyclerview?.scrollToPosition(0)
