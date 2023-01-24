@@ -3,7 +3,8 @@
     <!-- TRANSLATE, BUT DON'T FORGET FORMAT -->
     <string name="player_speed_text_format" formatted="true">വേഗം (%.2fx)</string>
     <string name="rated_format" formatted="true">റേറ്റിംഗ്: %.1f</string>
-    <string name="new_update_format" formatted="true">പുതിയ അപ്ഡേറ്റ്\n%s -&gt; %s</string>
+    <string name="new_update_format" formatted="true">പുതിയ അപ്ഡേറ്റ്
+\n%s -&gt; %s</string>
     <string name="app_name">CloudStream</string>
     <string name="title_home">ഹോം</string>
     <string name="title_search">തിരയുക</string>
@@ -66,14 +67,14 @@
     <string name="search_provider_text_providers">സ്രോതസ് അടിസ്ഥാനത്തിൽ തിരയുക</string>
     <string name="search_provider_text_types">തരം അടിസ്ഥാനത്തിൽ തിരയുക</string>
     <string name="benene_count_text">%d പഴം കൊടുത്തു</string>
-    <string name="benene_count_text_none">പഴം കൊടുത്തിട്ടില്ല </string>
+    <string name="benene_count_text_none">പഴം കൊടുത്തിട്ടില്ല</string>
     <!-- <string name="subs_auto_select_language">Auto Select Language</string>
     <string name="subs_download_languages">Download Languages</string> -->
     <string name="subs_hold_to_reset_to_default">റീസെറ് ചെയ്യാൻ അമർത്തിപ്പിടിക്കുക</string>
     <string name="continue_watching">തുടർന്നു കാണുക</string>
     <string name="action_remove_watching">നീക്കം ചെയ്യുക</string>
     <string name="action_open_watching">കൂടുതൽ വിവരം</string>
-    <string name="vpn_might_be_needed">ഈ സ്രോതസ് പ്രവൃത്തിക്കാൻ  VPN ഉപയോഗിക്കേണ്ടിവന്നേക്കാം</string>
+    <string name="vpn_might_be_needed">ഈ സ്രോതസ് പ്രവൃത്തിക്കാൻ VPN ഉപയോഗിക്കേണ്ടിവന്നേക്കാം</string>
     <string name="vpn_torrent">ഈ ടോറന്റ് സ്രോതസ് ഉപയോഗിക്കാൻ VPN ശുപാർശചെയ്യുന്നു</string>
     <string name="torrent_plot">വിവരണം</string>
     <string name="normal_no_plot">വിവരണം ലഭ്യമല്ല</string>
@@ -109,7 +110,7 @@
     <string name="benene">പഴം കൊടുക്കു</string>
     <string name="benene_des">പഴം കൊടുത്ത എണ്ണം</string>
     <string name="app_language">ആപ്പിന്റെ ഭാഷ</string>
-    <string name="no_chromecast_support_toast">ഈ സ്രോതസ് ക്രോംകാസ്റ് അനുവദിക്കുന്നില്ല </string>
+    <string name="no_chromecast_support_toast">ഈ സ്രോതസ് ക്രോംകാസ്റ് അനുവദിക്കുന്നില്ല</string>
     <string name="no_links_found_toast">ലിങ്കുകൾ ലഭ്യമല്ല</string>
     <string name="copy_link_toast">ലിങ്ക് പകർത്തിയിരിക്കുന്നു</string>
     <string name="play_episode_toast">എപ്പിസോഡ് പ്ലേയ് ചെയ്യുക</string>
@@ -122,7 +123,8 @@
     <string name="delete">ഡിലീറ്റ്</string>
     <string name="pause">നിർത്തുക</string>
     <string name="resume">തുടരുക</string>
-    <string name="delete_message">സ്ഥിരമായി %sനെ ഡിലീറ്റ് ചെയ്യുക\nഉറപ്പാണോ?</string>
+    <string name="delete_message">സ്ഥിരമായി %sനെ ഡിലീറ്റ് ചെയ്യുക
+\nഉറപ്പാണോ\?</string>
     <string name="status_ongoing">തുടരുന്നു</string>
     <string name="status_completed">പൂർത്തിയായി</string>
     <string name="status">അവസ്ഥ</string>
@@ -162,7 +164,7 @@
     <string name="video_aspect_ratio_resize">വലുപ്പം മാറ്റുക</string>
     <string name="video_source">സ്രോതസ്</string>
     <string name="video_skip_op">OP ഒഴിവാക്കു</string>
-    <string name="dont_show_again">ഇനിയും  കാണിക്കരുത്</string>
+    <string name="dont_show_again">ഇനിയും കാണിക്കരുത്</string>
     <string name="update">അപ്ഡേറ്റ്</string>
     <string name="watch_quality_pref">ഔചിത്യ വീഡിയോ ക്വാളിറ്റി</string>
     <string name="history">ചരിത്രം</string>

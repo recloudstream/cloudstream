@@ -4,7 +4,11 @@
     <string name="pause">مکث</string>
     <string name="queued">در صف</string>
     <string name="download">بارگیری</string>
+    <string name="downloading">در حال بارگیری</string>
+    <string name="download_done">اتمام بارگیری</string>
+    <string name="stream">پخش آنلاین</string>
     <string name="download_failed">بارگیری ناموفق بود</string>
+    <string name="filter_bookmarks">فیلتر کردن علاقه مندی ها</string>
     <string name="search">جست‌وجو</string>
     <string name="resize_fit">اندازه‌کردن</string>
     <string name="resize_fill">پر کردن</string>

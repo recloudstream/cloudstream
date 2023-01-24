@@ -2,7 +2,8 @@
 <!--https://newbedev.com/concatenate-multiple-strings-in-xml--><resources>
     <string name="rated_format">Betygsatt: %.1f</string>
     <string name="player_speed_text_format">Hastighet (%.2fx)</string>
-    <string name="new_update_format">Ny uppdatering hittad!\n%s -&gt; %s</string>
+    <string name="new_update_format">Ny uppdatering hittad!
+\n%s -&gt; %s</string>
     <string name="app_name">CloudStream</string>
     <string name="title_home">Hem</string>
     <string name="title_search">Sök</string>
@@ -32,7 +33,7 @@
     <string name="pick_subtitle">Undertexter</string>
     <string name="reload_error">Försök ansluta igen…</string>
     <string name="go_back">Gå tillbaka</string>
-    <string name="episode_poster_img_des">@string/result_poster_img_des</string>
+    <string name="episode_poster_img_des">\@string/result_poster_img_des</string>
     <string name="play_episode">Spela Avsnitt</string>
     <string name="download">Ladda ner</string>
     <string name="download_storage_text">Intern lagring</string>
@@ -43,7 +44,7 @@
     <string name="pref_disable_acra">Inaktivera automatisk felrapportering</string>
     <string name="home_more_info">Mer information</string>
     <string name="home_expanded_hide">Hide</string>
-    <string name="home_main_poster_img_des">@string/result_poster_img_des</string>
+    <string name="home_main_poster_img_des">\@string/result_poster_img_des</string>
     <string name="home_play">Spela upp</string>
     <string name="home_info">Info</string>
     <string name="home_next_random_img_des">Nästa</string>
@@ -124,7 +125,8 @@
     <string name="episode_short">A</string>
     <string name="delete_file">Ta bort nerladdad fil</string>
     <string name="delete">Ta bort</string>
-    <string name="delete_message">%s kommer att raderas permanent\nÄr du helt säker?</string>
+    <string name="delete_message">%s kommer att raderas permanent
+\nÄr du helt säker\?</string>
     <string name="status_ongoing">Pågående</string>
     <string name="status_completed">Färdig</string>
     <string name="status">Status</string>

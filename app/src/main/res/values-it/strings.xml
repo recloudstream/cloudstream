@@ -9,7 +9,7 @@
     <string name="next_episode_time_min_format" formatted="true">%d min</string>
     <!-- IS NOT NEEDED TO TRANSLATE AS THEY ARE ONLY USED FOR SCREEN READERS AND WONT SHOW UP TO NORMAL USERS -->
     <string name="result_poster_img_des">Poster</string>
-    <string name="search_poster_img_des">@string/result_poster_img_des</string>
+    <string name="search_poster_img_des">\@string/result_poster_img_des</string>
     <string name="episode_poster_img_des">Poster episodio</string>
     <string name="home_main_poster_img_des">Poster principale</string>
     <string name="home_next_random_img_des">Prossimo casuale</string>
@@ -19,7 +19,8 @@
     <!-- TRANSLATE, BUT DON'T FORGET FORMAT -->
     <string name="player_speed_text_format" formatted="true">Velocità (%.2fx)</string>
     <string name="rated_format" formatted="true">Valutato: %.1f</string>
-    <string name="new_update_format" formatted="true">Nuovo aggiornamento trovato!\n%s -&gt; %s</string>
+    <string name="new_update_format" formatted="true">Nuovo aggiornamento trovato!
+\n%s -&gt; %s</string>
     <string name="filler" formatted="true">Filler</string>
     <string name="duration_format" formatted="true">%d min</string>
     <!-- <string name="app_name">CloudStream</string> -->
@@ -107,7 +108,7 @@
     <string name="continue_watching">Continua a guardare</string>
     <string name="action_remove_watching">Rimuovi</string>
     <string name="action_open_watching">Più info</string>
-    <string name="action_open_play">@string/home_play</string>
+    <string name="action_open_play">\@string/home_play</string>
     <string name="vpn_might_be_needed">Potrebbe essere necessaria una VPN per far funzionare correttamente questo provider</string>
     <string name="vpn_torrent">Questo provider è un torrent, si raccomanda una VPN</string>
     <string name="provider_info_meta">I metadati non sono forniti dal sito, il caricamento del video fallirà se non esiste sul sito.</string>
@@ -193,8 +194,10 @@
     <string name="resume">Riprendi</string>
     <string name="go_back_30">-30</string>
     <string name="go_forward_30">+30</string>
-    <string name="delete_message" formatted="true">Stai per eliminare permanentemente %s\nSei sicuro?</string>
-    <string name="resume_time_left" formatted="true">%dm\nrimanenti</string>
+    <string name="delete_message" formatted="true">Stai per eliminare permanentemente %s
+\nSei sicuro\?</string>
+    <string name="resume_time_left" formatted="true">%dm
+\nrimanenti</string>
     <string name="status_ongoing">In corso</string>
     <string name="status_completed">Completato</string>
     <string name="status">Stato</string>
@@ -321,7 +324,7 @@
     <string name="upload_sync">Sincronizza</string>
     <string name="sync_score">Valutato</string>
     <string name="sync_score_format" formatted="true">%d / 10</string>
-    <string name="sync_total_episodes_none">/??</string>
+    <string name="sync_total_episodes_none">/\?\?</string>
     <string name="sync_total_episodes_some" formatted="true">/%d</string>
     <string name="authenticated_user" formatted="true">%s autenticato</string>
     <string name="authenticated_user_fail" formatted="true">Impossibile autenticarsi a %s</string>
@@ -428,7 +431,7 @@
     <string name="view_public_repositories_button">Vedi le repository della community</string>
     <string name="view_public_repositories_button_short">Lista pubblica</string>
     <string name="uppercase_all_subtitles">Tutti i sottotitoli in maiuscolo</string>
-    <string name="download_all_plugins_from_repo">Scaricare tutti i plugin da questa repository?</string>
+    <string name="download_all_plugins_from_repo">Scaricare tutti i plugin da questa repository\?</string>
     <string name="single_plugin_disabled" formatted="true">%s (Disabilitato)</string>
     <string name="tracks">Tracce</string>
     <string name="audio_tracks">Traccia audio</string>
@@ -507,4 +510,5 @@
     <string name="delayed_update_notice">L\'app verrà aggiornata all\'uscita</string>
     <string name="update_started">Aggiornamento avviato</string>
     <string name="plugin_downloaded">Plugin scaricato</string>
+    <string name="action_remove_from_watched">Rimuovi dai già visti</string>
 </resources>

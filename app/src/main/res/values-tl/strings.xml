@@ -5,7 +5,7 @@
     <string name="app_dub_sub_episode_text_format">%s Ep %d</string>
     <!-- IS NOT NEEDED TO TRANSLATE AS THEY ARE ONLY USED FOR SCREEN READERS AND WONT SHOW UP TO NORMAL USERS -->
     <string name="result_poster_img_des">Poster</string>
-    <string name="search_poster_img_des">@string/result_poster_img_des</string>
+    <string name="search_poster_img_des">\@string/result_poster_img_des</string>
     <string name="episode_poster_img_des">Episode Poster</string>
     <string name="home_main_poster_img_des">Main Poster</string>
     <string name="home_next_random_img_des">Next Random</string>
@@ -15,7 +15,8 @@
     <!-- TRANSLATE, BUT DON'T FORGET FORMAT -->
     <string name="player_speed_text_format" formatted="true">Bilis (%.2fx)</string>
     <string name="rated_format" formatted="true">Rated: %.1f</string>
-    <string name="new_update_format" formatted="true">Bagong update!\n%s -&gt; %s</string>
+    <string name="new_update_format" formatted="true">Bagong update!
+\n%s -&gt; %s</string>
     <string name="app_name">CloudStream</string>
     <string name="title_home">Home</string>
     <string name="title_search">Maghanap</string>
@@ -145,7 +146,8 @@
     <string name="delete">Tanggalin</string>
     <string name="pause">I-pause</string>
     <string name="resume">I-resume</string>
-    <string name="delete_message">This will permanently delete %s\nAre you sure?</string>
+    <string name="delete_message">This will permanently delete %s
+\nAre you sure\?</string>
     <string name="status_ongoing">Patuloy</string>
     <string name="status_completed">Tapos na</string>
     <string name="status">Katayuan</string>
