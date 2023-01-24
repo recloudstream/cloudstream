@@ -22,6 +22,7 @@ import com.lagradost.cloudstream3.mvvm.debugAssert
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.syncproviders.SyncIdName
+import com.lagradost.cloudstream3.ui.quicksearch.QuickSearchFragment
 import com.lagradost.cloudstream3.ui.result.txt
 import com.lagradost.cloudstream3.ui.search.SEARCH_ACTION_LOAD
 import com.lagradost.cloudstream3.ui.search.SEARCH_ACTION_SHOW_METADATA
@@ -39,6 +40,7 @@ enum class LibraryOpenerType(@StringRes val stringRes: Int) {
     Default(R.string.default_subtitles), // TODO FIX AFTER MERGE
     Provider(R.string.none),
     Browser(R.string.browser),
+    Search(R.string.search),
     None(R.string.none),
 }
 
@@ -55,6 +57,7 @@ data class ProviderLibraryData(
 class LibraryFragment : Fragment() {
     companion object {
         fun newInstance() = LibraryFragment()
+
         /**
          * Store which page was last seen when exiting the fragment and returning
          **/
@@ -152,6 +155,7 @@ class LibraryFragment : Fragment() {
                 txt(LibraryOpenerType.Default.stringRes).asString(this),
                 txt(LibraryOpenerType.None.stringRes).asString(this),
                 txt(LibraryOpenerType.Browser.stringRes).asString(this),
+                txt(LibraryOpenerType.Search.stringRes).asString(this),
             )
 
             val items = baseOptions + availableProviders
@@ -260,6 +264,12 @@ class LibraryFragment : Fragment() {
                                 }
                             LibraryOpenerType.Browser ->
                                 openBrowser(searchClickCallback.card.url)
+                            LibraryOpenerType.Search -> {
+                                QuickSearchFragment.pushSearch(
+                                    activity,
+                                    searchClickCallback.card.name
+                                )
+                            }
                         }
                     }
                 }
