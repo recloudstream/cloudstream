@@ -36,7 +36,8 @@
     <color name="subColorBg">#F53B66</color>
     <color name="typeColorText">#BEC8FF</color>
     <color name="typeColorBg">?attr/colorPrimaryDark</color>
-    <color name="ratingColorBg">#3F51B5</color>
+    <color name="ratingColor">#4C3115</color>
+    <color name="ratingColorBg">#FFA662</color>
 
     <color name="adultColor">#FF6F63</color> <!-- same as sub color -->
 

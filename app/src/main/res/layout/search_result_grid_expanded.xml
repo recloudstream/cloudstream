@@ -50,12 +50,29 @@
                 style="@style/SubButton"
                 android:layout_gravity="end" />
 
-            <TextView
-                android:visibility="gone"
-                android:id="@+id/text_rating"
-                style="@style/RatingButton"
+            <androidx.cardview.widget.CardView
+                android:id="@+id/text_rating_holder"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="@dimen/rounded_image_radius"
                 android:layout_gravity="end"
-                tools:text="7.7" />
+                android:visibility="gone"
+                tools:visibility="visible"
+                android:layout_margin="2dp"
+                android:elevation="0dp"
+                app:cardElevation="0dp"
+                android:backgroundTint="@color/ratingColorBg">
+
+                <TextView
+                    style="@style/SearchBox"
+                    android:minWidth="40dp"
+                    android:layout_margin="0dp"
+                    android:textColor="@color/ratingColor"
+                    android:id="@+id/text_rating"
+
+                    tools:text="★ 7.7" />
+            </androidx.cardview.widget.CardView>
+
 
             <TextView
                 android:id="@+id/text_flag"
@@ -74,12 +91,13 @@
             style="@android:style/Widget.Material.ProgressBar.Horizontal"
             android:layout_width="match_parent"
             android:layout_height="5dp"
-            android:visibility="gone"
             android:layout_gravity="bottom"
             android:layout_marginBottom="-1.5dp"
             android:progressBackgroundTint="?attr/colorPrimary"
             android:progressTint="?attr/colorPrimary"
-            tools:progress="50" />
+            android:visibility="gone"
+            tools:progress="50"
+            tools:visibility="visible" />
     </androidx.cardview.widget.CardView>
 
     <TextView
