@@ -68,7 +68,6 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
         switchToNewAccount()
         setKey(accountId, ANILIST_UNIXTIME_KEY, endTime)
         setKey(accountId, ANILIST_TOKEN_KEY, token)
-        setKey(ANILIST_SHOULD_UPDATE_LIST, true)
         val user = getUser()
         requireLibraryRefresh = true
         return user != null
@@ -189,7 +188,6 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
         const val ANILIST_TOKEN_KEY: String = "anilist_token" // anilist token for api
         const val ANILIST_USER_KEY: String = "anilist_user" // user data like profile
         const val ANILIST_CACHED_LIST: String = "anilist_cached_list"
-        const val ANILIST_SHOULD_UPDATE_LIST: String = "anilist_should_update_list"
 
         private fun fixName(name: String): String {
             return name.lowercase(Locale.ROOT).replace(" ", "")
@@ -655,11 +653,10 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
         if (getAuth() == null) return null
 
         if (checkToken()) return null
-        return if (getKey(ANILIST_SHOULD_UPDATE_LIST, true) == true) {
+        return if (requireLibraryRefresh) {
             val list = getFullAniListList()?.data?.MediaListCollection?.lists?.toTypedArray()
             if (list != null) {
                 setKey(ANILIST_CACHED_LIST, list)
-                setKey(ANILIST_SHOULD_UPDATE_LIST, false)
             }
             list
         } else {

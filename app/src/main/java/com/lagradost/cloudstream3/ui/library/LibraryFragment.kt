@@ -18,6 +18,7 @@ import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.openBrowser
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.debugAssert
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.syncproviders.SyncAPI
@@ -278,24 +279,37 @@ class LibraryFragment : Fragment() {
         viewpager?.offscreenPageLimit = 2
         viewpager?.reduceDragSensitivity()
 
-        observe(libraryViewModel.pages) { pages ->
-            empty_list_textview?.isVisible = pages.all { it.items.isEmpty() }
+        observe(libraryViewModel.pages) { resource ->
+            when (resource) {
+                is Resource.Success -> {
+                    val pages = resource.value
+                    empty_list_textview?.isVisible = pages.all { it.items.isEmpty() }
+                    (viewpager.adapter as? ViewpagerAdapter)?.pages = pages
+                    // Using notifyItemRangeChanged keeps the animations when sorting
+                    viewpager.adapter?.notifyItemRangeChanged(0, viewpager.adapter?.itemCount ?: 0)
 
-            (viewpager.adapter as? ViewpagerAdapter)?.pages = pages
-            // Using notifyItemRangeChanged keeps the animations when sorting
-            viewpager.adapter?.notifyItemRangeChanged(0, viewpager.adapter?.itemCount ?: 0)
+                    savedInstanceState?.getInt(VIEWPAGER_ITEM_KEY)?.let { currentPos ->
+                        viewpager?.setCurrentItem(currentPos, false)
+                        savedInstanceState.remove(VIEWPAGER_ITEM_KEY)
+                    }
 
-            savedInstanceState?.getInt(VIEWPAGER_ITEM_KEY)?.let { currentPos ->
-                viewpager?.setCurrentItem(currentPos, false)
-                savedInstanceState.remove(VIEWPAGER_ITEM_KEY)
+                    TabLayoutMediator(
+                        library_tab_layout,
+                        viewpager,
+                    ) { tab, position ->
+                        tab.text = pages.getOrNull(position)?.title
+                    }.attach()
+                    loading_indicator?.hide()
+                }
+                is Resource.Loading -> {
+                    loading_indicator?.show()
+                }
+                is Resource.Failure -> {
+                    // No user indication it failed :(
+                    // TODO
+                    loading_indicator?.hide()
+                }
             }
-
-            TabLayoutMediator(
-                library_tab_layout,
-                viewpager,
-            ) { tab, position ->
-                tab.text = pages.getOrNull(position)?.title
-            }.attach()
         }
     }
 }

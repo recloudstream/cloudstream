@@ -254,7 +254,6 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
 
         const val MAL_USER_KEY: String = "mal_user" // user data like profile
         const val MAL_CACHED_LIST: String = "mal_cached_list"
-        const val MAL_SHOULD_UPDATE_LIST: String = "mal_should_update_list"
         const val MAL_UNIXTIME_KEY: String = "mal_unixtime" // When token expires
         const val MAL_REFRESH_TOKEN_KEY: String = "mal_refresh_token" // refresh token
         const val MAL_TOKEN_KEY: String = "mal_token" // anilist token for api
@@ -281,7 +280,7 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
                 switchToNewAccount()
                 storeToken(res)
                 val user = getMalUser()
-                setKey(MAL_SHOULD_UPDATE_LIST, true)
+                requireLibraryRefresh = true
                 return user != null
             }
         }
@@ -439,10 +438,9 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
 
     private suspend fun getMalAnimeListSmart(): Array<Data>? {
         if (getAuth() == null) return null
-        return if (getKey(MAL_SHOULD_UPDATE_LIST, true) == true) {
+        return if (requireLibraryRefresh) {
             val list = getMalAnimeList()
             setKey(MAL_CACHED_LIST, list)
-            setKey(MAL_SHOULD_UPDATE_LIST, false)
             list
         } else {
             getMalAnimeListCached()

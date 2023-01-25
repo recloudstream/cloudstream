@@ -25,8 +25,8 @@ enum class ListSorting(@StringRes val stringRes: Int) {
 const val LAST_SYNC_API_KEY = "last_sync_api"
 
 class LibraryViewModel : ViewModel() {
-    private val _pages: MutableLiveData<List<SyncAPI.Page>> = MutableLiveData(null)
-    val pages: LiveData<List<SyncAPI.Page>> = _pages
+    private val _pages: MutableLiveData<Resource<List<SyncAPI.Page>>> = MutableLiveData(null)
+    val pages: LiveData<Resource<List<SyncAPI.Page>>> = _pages
 
     private val _currentApiName: MutableLiveData<String> = MutableLiveData("")
     val currentApiName: LiveData<String> = _currentApiName
@@ -67,7 +67,7 @@ class LibraryViewModel : ViewModel() {
     fun sort(method: ListSorting, query: String? = null) {
         val currentList = pages.value ?: return
         currentSortingMethod = method
-        currentList.forEachIndexed { _, page ->
+        (currentList as? Resource.Success)?.value?.forEachIndexed { _, page ->
             page.sort(method, query)
         }
         _pages.postValue(currentList)
@@ -75,14 +75,21 @@ class LibraryViewModel : ViewModel() {
 
     fun reloadPages(forceReload: Boolean) {
         // Only skip loading if its not forced and pages is not empty
-        if (!forceReload && pages.value?.isNotEmpty() == true &&
+        if (!forceReload && (pages.value as? Resource.Success)?.value?.isNotEmpty() == true &&
             currentSyncApi?.requireLibraryRefresh != true
         ) return
 
         ioSafe {
             currentSyncApi?.let { repo ->
                 _currentApiName.postValue(repo.name)
-                val library = (repo.getPersonalLibrary() as? Resource.Success)?.value ?: return@let
+                _pages.postValue(Resource.Loading())
+                val libraryResource = repo.getPersonalLibrary()
+                if (libraryResource is Resource.Failure) {
+                    _pages.postValue(libraryResource)
+                    return@let
+                }
+                val library = (libraryResource as? Resource.Success)?.value ?: return@let
+
                 repo.requireLibraryRefresh = false
 
                 val listSubset = library.allLibraryItems.groupBy { it.listName }
@@ -97,7 +104,7 @@ class LibraryViewModel : ViewModel() {
                         it.value
                     )
                 }
-                _pages.postValue(pages)
+                _pages.postValue(Resource.Success(pages))
             }
         }
     }

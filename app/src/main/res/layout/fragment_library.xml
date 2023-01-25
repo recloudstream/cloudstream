@@ -124,6 +124,19 @@
 
     <!--    </com.google.android.material.appbar.AppBarLayout>-->
 
+    <androidx.core.widget.ContentLoadingProgressBar
+        android:id="@+id/loading_indicator"
+        style="@android:style/Widget.Material.ProgressBar.Horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="33dp"
+        android:elevation="100dp"
+        android:indeterminate="true"
+        android:indeterminateTint="?attr/colorPrimary"
+        android:progressTint="?attr/colorPrimary">
+
+    </androidx.core.widget.ContentLoadingProgressBar>
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/library_tab_layout"
