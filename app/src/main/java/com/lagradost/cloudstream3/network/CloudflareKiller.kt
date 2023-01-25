@@ -64,7 +64,9 @@ class CloudflareKiller : Interceptor {
     }
 
     private fun getWebViewCookie(url: String): String? {
-        return CookieManager.getInstance()?.getCookie(url)
+        return normalSafeApiCall {
+            CookieManager.getInstance()?.getCookie(url)
+        }
     }
 
     /**
