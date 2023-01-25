@@ -1,9 +1,9 @@
 package com.lagradost.cloudstream3.syncproviders.providers
 
+import androidx.annotation.StringRes
 import androidx.fragment.app.FragmentActivity
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.*
-import com.lagradost.cloudstream3.APIHolder.capitalize
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.openBrowser
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
@@ -13,6 +13,7 @@ import com.lagradost.cloudstream3.syncproviders.AccountManager
 import com.lagradost.cloudstream3.syncproviders.AuthAPI
 import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.syncproviders.SyncIdName
+import com.lagradost.cloudstream3.ui.result.txt
 import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 import com.lagradost.cloudstream3.utils.AppUtils.splitQuery
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
@@ -316,14 +317,14 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
         }
 
         // Changing names of these will show up in UI
-        enum class AniListStatusType(var value: Int) {
-            Watching(0),
-            Completed(1),
-            Paused(2),
-            Dropped(3),
-            Planning(4),
-            ReWatching(5),
-            None(-1)
+        enum class AniListStatusType(var value: Int, @StringRes val stringRes: Int) {
+            Watching(0, R.string.type_watching),
+            Completed(1, R.string.type_completed),
+            Paused(2, R.string.type_on_hold),
+            Dropped(3, R.string.type_dropped),
+            Planning(4, R.string.type_plan_to_watch),
+            ReWatching(5, R.string.type_re_watching),
+            None(-1, R.string.none)
         }
 
         fun fromIntToAnimeStatus(inp: Int): AniListStatusType {//= AniListStatusType.values().first { it.value == inp }
@@ -339,7 +340,7 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
             }
         }
 
-        fun convertAnilistStringToStatus(string: String): AniListStatusType {
+        fun convertAniListStringToStatus(string: String): AniListStatusType {
             return fromIntToAnimeStatus(aniListStatusString.indexOf(string))
         }
 
@@ -609,7 +610,7 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
         @JsonProperty("private") val private: Boolean,
         @JsonProperty("media") val media: Media
     ) {
-        fun toLibraryItem(listName: String?): SyncAPI.LibraryItem? {
+        fun toLibraryItem(): SyncAPI.LibraryItem {
             return SyncAPI.LibraryItem(
                 // English title first
                 this.media.title.english ?: this.media.title.romaji
@@ -617,7 +618,6 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
                 ?: "",
                 "https://anilist.co/anime/${this.media.id}/",
                 this.media.id.toString(),
-                listName?.lowercase()?.capitalize() ?: return null,
                 this.progress,
                 this.media.episodes,
                 this.score,
@@ -665,15 +665,20 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
     }
 
     override suspend fun getPersonalLibrary(): SyncAPI.LibraryMetadata {
+        val list = getAniListAnimeListSmart()?.groupBy {
+            convertAniListStringToStatus(it.status ?: "").stringRes
+        }?.mapValues { group ->
+            group.value.map { it.entries.map { entry -> entry.toLibraryItem() } }.flatten()
+        } ?: emptyMap()
+
+        // To fill empty lists when AniList does not return them
+        val baseMap =
+            AniListStatusType.values().filter { it.value >= 0 }.associate {
+                it.stringRes to emptyList<SyncAPI.LibraryItem>()
+            }
+
         return SyncAPI.LibraryMetadata(
-            emptyList(),
-            getAniListAnimeListSmart()?.map {
-                it.entries.mapNotNull { entry ->
-                    entry.toLibraryItem(
-                        entry.status ?: it.status
-                    )
-                }
-            }?.flatten() ?: emptyList()
+            (baseMap + list).map { SyncAPI.LibraryList(txt(it.key), it.value) }
         )
     }
 
@@ -695,7 +700,7 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
                                 startedAt { year month day }
                                 updatedAt
                                 progress
-                                score
+                                score (format: POINT_100)
                                 private
                                 media
                                 {

@@ -49,10 +49,10 @@ class PageAdapter(
         return ColorUtils.calculateLuminance(color) < 0.5
     }
 
-    fun getDifferentColor(color: Int, ratio : Float = 0.7f) : Int {
-        return if(isDark(color)) {
+    fun getDifferentColor(color: Int, ratio: Float = 0.7f): Int {
+        return if (isDark(color)) {
             ColorUtils.blendARGB(color, Color.WHITE, ratio)
-        } else{
+        } else {
             ColorUtils.blendARGB(color, Color.BLACK, ratio)
         }
     }
@@ -74,7 +74,7 @@ class PageAdapter(
                 itemView,
                 colorCallback = { palette ->
                     AcraApplication.context?.let { ctx ->
-                        val defColor = ContextCompat.getColor(ctx,R.color.ratingColorBg)
+                        val defColor = ContextCompat.getColor(ctx, R.color.ratingColorBg)
                         var bg = palette.getDarkVibrantColor(defColor)
                         if (bg == defColor) {
                             bg = palette.getDarkMutedColor(defColor)
@@ -83,11 +83,12 @@ class PageAdapter(
                             bg = palette.getVibrantColor(defColor)
                         }
 
-                        val fg = getDifferentColor(bg)//palette.getVibrantColor(ContextCompat.getColor(ctx,R.color.ratingColor))
+                        val fg =
+                            getDifferentColor(bg)//palette.getVibrantColor(ContextCompat.getColor(ctx,R.color.ratingColor))
                         itemView.text_rating.apply {
                             setTextColor(ColorStateList.valueOf(fg))
                         }
-                        itemView.text_rating_holder?.backgroundTintList =ColorStateList.valueOf(bg)
+                        itemView.text_rating_holder?.backgroundTintList = ColorStateList.valueOf(bg)
                         itemView.watchProgress?.apply {
                             progressTintList = ColorStateList.valueOf(fg)
                             progressBackgroundTintList = ColorStateList.valueOf(bg)
@@ -118,7 +119,11 @@ class PageAdapter(
             val showRating = (item.personalRating ?: 0) != 0
             itemView.text_rating_holder.isVisible = showRating
             if (showRating) {
-                itemView.text_rating.text = "★ ${item.personalRating.toString()}"
+                // We want to show 8.5 but not 8.0 hence the replace
+                val rating = ((item.personalRating ?: 0).toDouble() / 10).toString()
+                    .replace(".0", "")
+
+                itemView.text_rating.text = "★ $rating"
             }
         }
     }

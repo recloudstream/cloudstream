@@ -1,7 +1,6 @@
 package com.lagradost.cloudstream3.syncproviders.providers
 
 import androidx.fragment.app.FragmentActivity
-import com.lagradost.cloudstream3.AcraApplication
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.syncproviders.AuthAPI
 import com.lagradost.cloudstream3.syncproviders.SyncAPI
@@ -68,20 +67,21 @@ class LocalList : SyncAPI {
         }?.distinctBy { it.first } ?: return null
 
         val list = ioWork {
-            watchStatusIds.mapNotNull {
-                getBookmarkedData(it.first)?.toLibraryItem(it.second)
+            watchStatusIds.groupBy {
+                it.second.stringRes
+            }.mapValues { group ->
+                group.value.mapNotNull {
+                    getBookmarkedData(it.first)?.toLibraryItem()
+                }
             }
         }
 
+        val baseMap = WatchType.values().filter { it != WatchType.NONE }.associate {
+            // None is not something to display
+            it.stringRes to emptyList<SyncAPI.LibraryItem>()
+        }
         return SyncAPI.LibraryMetadata(
-            WatchType.values().mapNotNull {
-                // None is not something to display
-                if (it == WatchType.NONE) return@mapNotNull null
-
-                // Dirty hack for context!
-                txt(it.stringRes).asStringNull(AcraApplication.context)
-            },
-            list
+            (baseMap + list).map { SyncAPI.LibraryList(txt(it.key), it.value) }
         )
     }
 

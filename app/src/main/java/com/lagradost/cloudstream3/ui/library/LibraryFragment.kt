@@ -297,7 +297,7 @@ class LibraryFragment : Fragment() {
                         library_tab_layout,
                         viewpager,
                     ) { tab, position ->
-                        tab.text = pages.getOrNull(position)?.title
+                        tab.text = pages.getOrNull(position)?.title?.asStringNull(context)
                     }.attach()
                     loading_indicator?.hide()
                 }

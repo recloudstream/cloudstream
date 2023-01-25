@@ -2,6 +2,7 @@ package com.lagradost.cloudstream3.syncproviders
 
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.ui.library.ListSorting
+import com.lagradost.cloudstream3.ui.result.UiText
 import me.xdrop.fuzzywuzzy.FuzzySearch
 
 enum class SyncIdName {
@@ -101,7 +102,7 @@ interface SyncAPI : OAuth2API {
 
 
     data class Page(
-        val title: String, var items: List<LibraryItem>
+        val title: UiText, var items: List<LibraryItem>
     ) {
         fun sort(method: ListSorting?, query: String? = null) {
             items = when (method) {
@@ -123,11 +124,12 @@ interface SyncAPI : OAuth2API {
     }
 
     data class LibraryMetadata(
-        /** List of all available pages, useful to show empty pages
-         * if the user has no entry on that page */
-        val allListNames: List<String>,
-        /** Not necessarily sorted list of all library items, will be grouped by listName */
-        val allLibraryItems: List<LibraryItem>
+        val allLibraryLists: List<LibraryList>
+    )
+
+    data class LibraryList(
+        val name: UiText,
+        val items: List<LibraryItem>
     )
 
     data class LibraryItem(
@@ -135,7 +137,6 @@ interface SyncAPI : OAuth2API {
         override val url: String,
         /** Unique unchanging string used for data storage */
         val syncId: String,
-        val listName: String,
         val episodesCompleted: Int?,
         val episodesTotal: Int?,
         /** Out of 100 */

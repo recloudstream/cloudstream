@@ -92,18 +92,13 @@ class LibraryViewModel : ViewModel() {
 
                 repo.requireLibraryRefresh = false
 
-                val listSubset = library.allLibraryItems.groupBy { it.listName }
-                val allLists =
-                    library.allListNames.associateWith { emptyList<SyncAPI.LibraryItem>() }
-
-                val filledLists = allLists + listSubset
-
-                val pages = filledLists.map {
+                val pages = library.allLibraryLists.map {
                     SyncAPI.Page(
-                        it.key,
-                        it.value
+                        it.name,
+                        it.items
                     )
                 }
+
                 _pages.postValue(Resource.Success(pages))
             }
         }
