@@ -14,7 +14,6 @@
         android:layout_gravity="center"
         android:layout_margin="30dp"
         android:gravity="center"
-        android:text="@string/empty_library_message"
         android:visibility="gone"
         tools:visibility="visible" />
 

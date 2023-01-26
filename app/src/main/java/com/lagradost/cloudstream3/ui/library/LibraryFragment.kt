@@ -253,6 +253,12 @@ class LibraryFragment : Fragment() {
                                     activity?.loadSearchResult(
                                         searchClickCallback.card
                                     )
+                                } else {
+                                    // Search when no provider can open
+                                    QuickSearchFragment.pushSearch(
+                                        activity,
+                                        searchClickCallback.card.name
+                                    )
                                 }
                             }
                             LibraryOpenerType.None -> {}
@@ -283,7 +289,16 @@ class LibraryFragment : Fragment() {
             when (resource) {
                 is Resource.Success -> {
                     val pages = resource.value
-                    empty_list_textview?.isVisible = pages.all { it.items.isEmpty() }
+                    val showNotice = pages.all { it.items.isEmpty() }
+                    empty_list_textview?.isVisible = showNotice
+                    if (showNotice) {
+                        if (libraryViewModel.availableApiNames.size > 1) {
+                            empty_list_textview?.setText(R.string.empty_library_logged_in_message)
+                        } else {
+                            empty_list_textview?.setText(R.string.empty_library_no_accounts_message)
+                        }
+                    }
+
                     (viewpager.adapter as? ViewpagerAdapter)?.pages = pages
                     // Using notifyItemRangeChanged keeps the animations when sorting
                     viewpager.adapter?.notifyItemRangeChanged(0, viewpager.adapter?.itemCount ?: 0)
@@ -303,6 +318,7 @@ class LibraryFragment : Fragment() {
                 }
                 is Resource.Loading -> {
                     loading_indicator?.show()
+                    empty_list_textview?.isVisible = false
                 }
                 is Resource.Failure -> {
                     // No user indication it failed :(
