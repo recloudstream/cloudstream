@@ -15,15 +15,17 @@ open class ByteShare : ExtractorApi() {
                 if (script.data().contains("'use strict';")) {
                     val data = script.data()
                         .substringAfter("sources: [").substringBefore("]")
-                        .replace(" ","")
+                        .replace(" ", "")
                         .substringAfter("src:\"").substringBefore("\",")
-                    sources.add(ExtractorLink(
-                        name,
-                        name,
-                        data,
-                        "",
-                        Qualities.Unknown.value
-                    ))
+                    sources.add(
+                        ExtractorLink(
+                            name,
+                            name,
+                            data,
+                            "",
+                            Qualities.Unknown.value
+                        )
+                    )
                 }
             }
         }
