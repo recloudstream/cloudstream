@@ -97,7 +97,6 @@ class LibraryViewModel : ViewModel() {
                     )
                 }
 
-                delay(5000)
                 _pages.postValue(Resource.Success(pages))
             }
         }

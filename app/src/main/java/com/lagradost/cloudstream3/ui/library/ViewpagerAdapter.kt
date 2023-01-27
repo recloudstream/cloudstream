@@ -28,18 +28,28 @@ class ViewpagerAdapter(
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
             is PageViewHolder -> {
-                holder.bind(pages[position])
+                holder.bind(pages[position], unbound.remove(position))
             }
         }
     }
 
+    private val unbound = mutableSetOf<Int>()
+    /**
+     * Used to mark all pages for re-binding and forces all items to be refreshed
+     * Without this the pages will still use the same adapters
+     **/
+    fun rebind() {
+        unbound.addAll(0..pages.size)
+        this.notifyItemRangeChanged(0, pages.size)
+    }
+
     inner class PageViewHolder(private val itemViewTest: View) :
         RecyclerView.ViewHolder(itemViewTest) {
-        fun bind(page: SyncAPI.Page) {
-            if (itemViewTest.page_recyclerview?.adapter == null) {
-                itemView.page_recyclerview?.spanCount =
-                    this@PageViewHolder.itemView.context.getSpanCount() ?: 3
+        fun bind(page: SyncAPI.Page, rebind: Boolean) {
+            itemView.page_recyclerview?.spanCount =
+                this@PageViewHolder.itemView.context.getSpanCount() ?: 3
 
+            if (itemViewTest.page_recyclerview?.adapter == null || rebind) {
                 // Only add the items after it has been attached since the items rely on ItemWidth
                 // Which is only determined after the recyclerview is attached.
                 // If this fails then item height becomes 0 when there is only one item

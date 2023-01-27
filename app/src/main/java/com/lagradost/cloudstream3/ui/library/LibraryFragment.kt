@@ -360,6 +360,7 @@ class LibraryFragment : Fragment() {
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
+        (viewpager.adapter as? ViewpagerAdapter)?.rebind()
         super.onConfigurationChanged(newConfig)
     }
 }
