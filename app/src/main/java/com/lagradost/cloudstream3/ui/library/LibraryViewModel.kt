@@ -11,6 +11,7 @@ import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.SyncApis
 import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
+import kotlinx.coroutines.delay
 
 enum class ListSorting(@StringRes val stringRes: Int) {
     Query(R.string.none),
@@ -96,6 +97,7 @@ class LibraryViewModel : ViewModel() {
                     )
                 }
 
+                delay(5000)
                 _pages.postValue(Resource.Success(pages))
             }
         }

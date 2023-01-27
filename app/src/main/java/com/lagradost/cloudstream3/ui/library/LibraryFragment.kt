@@ -2,13 +2,18 @@ package com.lagradost.cloudstream3.ui.library
 
 import android.app.Activity
 import android.content.Context
+import android.content.res.Configuration
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import androidx.annotation.StringRes
 import androidx.appcompat.widget.SearchView
+import androidx.core.os.postDelayed
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import com.google.android.material.tabs.TabLayoutMediator
@@ -20,6 +25,7 @@ import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.debugAssert
+import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.syncproviders.SyncIdName
@@ -32,7 +38,9 @@ import com.lagradost.cloudstream3.utils.AppUtils.loadSearchResult
 import com.lagradost.cloudstream3.utils.AppUtils.reduceDragSensitivity
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
+import com.lagradost.cloudstream3.utils.UIHelper.getSpanCount
 import kotlinx.android.synthetic.main.fragment_library.*
+import kotlinx.coroutines.delay
 
 const val LIBRARY_FOLDER = "library_folder"
 
@@ -285,9 +293,27 @@ class LibraryFragment : Fragment() {
         viewpager?.offscreenPageLimit = 2
         viewpager?.reduceDragSensitivity()
 
+        val startLoading = Runnable {
+            gridview?.numColumns = context?.getSpanCount() ?: 3
+            gridview?.adapter =
+                context?.let { LoadingPosterAdapter(it, 6 * 3) }
+            library_loading_overlay?.isVisible = true
+            library_loading_shimmer?.startShimmer()
+            empty_list_textview?.isVisible = false
+        }
+
+        val stopLoading = Runnable {
+            gridview?.adapter = null
+            library_loading_overlay?.isVisible = false
+            library_loading_shimmer?.stopShimmer()
+        }
+
+        val handler = Handler(Looper.getMainLooper())
+
         observe(libraryViewModel.pages) { resource ->
             when (resource) {
                 is Resource.Success -> {
+                    handler.removeCallbacks(startLoading)
                     val pages = resource.value
                     val showNotice = pages.all { it.items.isEmpty() }
                     empty_list_textview?.isVisible = showNotice
@@ -303,6 +329,11 @@ class LibraryFragment : Fragment() {
                     // Using notifyItemRangeChanged keeps the animations when sorting
                     viewpager.adapter?.notifyItemRangeChanged(0, viewpager.adapter?.itemCount ?: 0)
 
+                    // Only stop loading after 300ms to hide the fade effect the viewpager produces when updating
+                    // Without this there would be a flashing effect:
+                    // loading -> show old viewpager -> black screen -> show new viewpager
+                    handler.postDelayed(stopLoading, 300)
+
                     savedInstanceState?.getInt(VIEWPAGER_ITEM_KEY)?.let { currentPos ->
                         viewpager?.setCurrentItem(currentPos, false)
                         savedInstanceState.remove(VIEWPAGER_ITEM_KEY)
@@ -314,19 +345,22 @@ class LibraryFragment : Fragment() {
                     ) { tab, position ->
                         tab.text = pages.getOrNull(position)?.title?.asStringNull(context)
                     }.attach()
-                    loading_indicator?.hide()
                 }
                 is Resource.Loading -> {
-                    loading_indicator?.show()
-                    empty_list_textview?.isVisible = false
+                    // Only start loading after 200ms to prevent loading cached lists
+                    handler.postDelayed(startLoading, 200)
                 }
                 is Resource.Failure -> {
+                    stopLoading.run()
                     // No user indication it failed :(
                     // TODO
-                    loading_indicator?.hide()
                 }
             }
         }
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
     }
 }
 

@@ -277,7 +277,7 @@ open class ResultFragment : ResultTrailerPlayer() {
     private var downloadButton: EasyDownloadButton? = null
     override fun onDestroyView() {
         updateUIListener = null
-        (result_episodes?.adapter as EpisodeAdapter?)?.killAdapter()
+        (result_episodes?.adapter as? EpisodeAdapter)?.killAdapter()
         downloadButton?.dispose()
 
         super.onDestroyView()
@@ -458,7 +458,7 @@ open class ResultFragment : ResultTrailerPlayer() {
                     temporary_no_focus?.requestFocus()
                 }
 
-                (result_episodes?.adapter as? EpisodeAdapter?)?.updateList(episodes.value)
+                (result_episodes?.adapter as? EpisodeAdapter)?.updateList(episodes.value)
 
                 if (isTv && hasEpisodes) main {
                     delay(500)
@@ -687,7 +687,7 @@ open class ResultFragment : ResultTrailerPlayer() {
             val newList = list.filter { it.isSynced && it.hasAccount }
 
             result_mini_sync?.isVisible = newList.isNotEmpty()
-            (result_mini_sync?.adapter as? ImageAdapter?)?.updateList(newList.mapNotNull { it.icon })
+            (result_mini_sync?.adapter as? ImageAdapter)?.updateList(newList.mapNotNull { it.icon })
         }
 
         var currentSyncProgress = 0
@@ -900,7 +900,7 @@ open class ResultFragment : ResultTrailerPlayer() {
 
 
                     result_cast_items?.isVisible = d.actors != null
-                    (result_cast_items?.adapter as ActorAdaptor?)?.apply {
+                    (result_cast_items?.adapter as? ActorAdaptor)?.apply {
                         updateList(d.actors ?: emptyList())
                     }
 
