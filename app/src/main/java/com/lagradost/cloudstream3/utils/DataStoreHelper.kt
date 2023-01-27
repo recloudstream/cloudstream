@@ -63,6 +63,7 @@ object DataStoreHelper {
                 null,
                 null,
                 null,
+                null,
                 apiName, type, posterUrl, posterHeaders, quality, id
             )
         }

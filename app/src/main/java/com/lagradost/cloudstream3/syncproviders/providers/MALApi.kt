@@ -16,6 +16,7 @@ import com.lagradost.cloudstream3.syncproviders.AccountManager
 import com.lagradost.cloudstream3.syncproviders.AuthAPI
 import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.syncproviders.SyncIdName
+import com.lagradost.cloudstream3.ui.library.ListSorting
 import com.lagradost.cloudstream3.ui.result.txt
 import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 import com.lagradost.cloudstream3.utils.AppUtils.splitQuery
@@ -285,6 +286,16 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
                 else -> MalStatusType.None
             }
         }
+
+        private fun parseDateLong(string: String?): Long? {
+            return try {
+                SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").parse(
+                    string ?: return null
+                )?.time?.div(1000)
+            } catch (e: Exception) {
+                null
+            }
+        }
     }
 
     override suspend fun handleRedirect(url: String): Boolean {
@@ -425,6 +436,7 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
                 this.list_status?.num_episodes_watched,
                 this.node.num_episodes,
                 this.list_status?.score?.times(10),
+                parseDateLong(this.list_status?.updated_at),
                 "MAL",
                 TvType.Anime,
                 this.node.main_picture?.large ?: this.node.main_picture?.medium,
@@ -488,7 +500,15 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
             }
 
         return SyncAPI.LibraryMetadata(
-            (baseMap + list).map { SyncAPI.LibraryList(txt(it.key), it.value) }
+            (baseMap + list).map { SyncAPI.LibraryList(txt(it.key), it.value) },
+            setOf(
+                ListSorting.AlphabeticalA,
+                ListSorting.AlphabeticalZ,
+                ListSorting.UpdatedNew,
+                ListSorting.UpdatedOld,
+                ListSorting.RatingHigh,
+                ListSorting.RatingLow,
+            )
         )
     }
 

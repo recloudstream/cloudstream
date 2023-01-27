@@ -46,16 +46,10 @@ class LibraryViewModel : ViewModel() {
     val availableApiNames: List<String>
         get() = availableSyncApis.map { it.name }
 
-    val sortingMethods = listOf(
-        ListSorting.RatingHigh,
-        ListSorting.RatingLow,
-//        ListSorting.UpdatedNew,
-//        ListSorting.UpdatedOld,
-        ListSorting.AlphabeticalA,
-        ListSorting.AlphabeticalZ,
-    )
+    var sortingMethods = emptyList<ListSorting>()
+        private set
 
-    var currentSortingMethod: ListSorting = sortingMethods.first()
+    var currentSortingMethod: ListSorting? = sortingMethods.firstOrNull()
         private set
 
     fun switchList(name: String) {
@@ -89,6 +83,9 @@ class LibraryViewModel : ViewModel() {
                     return@let
                 }
                 val library = (libraryResource as? Resource.Success)?.value ?: return@let
+
+                sortingMethods = library.supportedListSorting.toList()
+                currentSortingMethod = null
 
                 repo.requireLibraryRefresh = false
 

@@ -6,6 +6,7 @@ import com.lagradost.cloudstream3.syncproviders.AuthAPI
 import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.syncproviders.SyncIdName
 import com.lagradost.cloudstream3.ui.WatchType
+import com.lagradost.cloudstream3.ui.library.ListSorting
 import com.lagradost.cloudstream3.ui.result.txt
 import com.lagradost.cloudstream3.utils.Coroutines.ioWork
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getAllWatchStateIds
@@ -81,7 +82,15 @@ class LocalList : SyncAPI {
             it.stringRes to emptyList<SyncAPI.LibraryItem>()
         }
         return SyncAPI.LibraryMetadata(
-            (baseMap + list).map { SyncAPI.LibraryList(txt(it.key), it.value) }
+            (baseMap + list).map { SyncAPI.LibraryList(txt(it.key), it.value) },
+            setOf(
+                ListSorting.AlphabeticalA,
+                ListSorting.AlphabeticalZ,
+//                ListSorting.UpdatedNew,
+//                ListSorting.UpdatedOld,
+//                ListSorting.RatingHigh,
+//                ListSorting.RatingLow,
+            )
         )
     }
 

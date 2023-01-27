@@ -118,13 +118,16 @@ interface SyncAPI : OAuth2API {
                 ListSorting.RatingLow -> items.sortedBy { (it.personalRating ?: 0) }
                 ListSorting.AlphabeticalA -> items.sortedBy { it.name }
                 ListSorting.AlphabeticalZ -> items.sortedBy { it.name }.reversed()
+                ListSorting.UpdatedNew -> items.sortedBy { it.lastUpdatedUnixTime?.times(-1) }
+                ListSorting.UpdatedOld -> items.sortedBy { it.lastUpdatedUnixTime }
                 else -> items
             }
         }
     }
 
     data class LibraryMetadata(
-        val allLibraryLists: List<LibraryList>
+        val allLibraryLists: List<LibraryList>,
+        val supportedListSorting: Set<ListSorting>
     )
 
     data class LibraryList(
@@ -141,6 +144,7 @@ interface SyncAPI : OAuth2API {
         val episodesTotal: Int?,
         /** Out of 100 */
         val personalRating: Int?,
+        val lastUpdatedUnixTime: Long?,
         override val apiName: String,
         override var type: TvType?,
         override var posterUrl: String?,

@@ -13,6 +13,7 @@ import com.lagradost.cloudstream3.syncproviders.AccountManager
 import com.lagradost.cloudstream3.syncproviders.AuthAPI
 import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.syncproviders.SyncIdName
+import com.lagradost.cloudstream3.ui.library.ListSorting
 import com.lagradost.cloudstream3.ui.result.txt
 import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 import com.lagradost.cloudstream3.utils.AppUtils.splitQuery
@@ -621,6 +622,7 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
                 this.progress,
                 this.media.episodes,
                 this.score,
+                this.updatedAt.toLong(),
                 "AniList",
                 TvType.Anime,
                 this.media.coverImage.extraLarge ?: this.media.coverImage.large
@@ -678,7 +680,15 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
             }
 
         return SyncAPI.LibraryMetadata(
-            (baseMap + list).map { SyncAPI.LibraryList(txt(it.key), it.value) }
+            (baseMap + list).map { SyncAPI.LibraryList(txt(it.key), it.value) },
+            setOf(
+                ListSorting.AlphabeticalA,
+                ListSorting.AlphabeticalZ,
+                ListSorting.UpdatedNew,
+                ListSorting.UpdatedOld,
+                ListSorting.RatingHigh,
+                ListSorting.RatingLow,
+            )
         )
     }
 

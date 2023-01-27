@@ -68,9 +68,7 @@ class SearchAdapter(
         cardList.clear()
         cardList.addAll(newList)
 
-        main {
-            diffResult.dispatchUpdatesTo(this)
-        }
+        diffResult.dispatchUpdatesTo(this)
     }
 
     class CardViewHolder
