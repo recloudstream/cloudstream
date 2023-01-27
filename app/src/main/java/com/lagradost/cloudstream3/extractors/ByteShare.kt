@@ -9,13 +9,11 @@ open class ByteShare : ExtractorApi() {
 
     override suspend fun getUrl(url: String, referer: String?): List<ExtractorLink> {
         val sources = mutableListOf<ExtractorLink>()
-        val srcIdRegex = Regex("""(?<=/embed/)(.*)(?=\?)""")
-        val srcId = srcIdRegex.find(url)?.groups?.get(1)?.value
         sources.add(
             ExtractorLink(
                 name,
                 name,
-                "$mainUrl/download/$srcId",
+                url.replace("/embed/", "/download/"),
                 "",
                 Qualities.Unknown.value,
             )
