@@ -1,6 +1,5 @@
 package com.lagradost.cloudstream3.extractors
 
-import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.utils.*
 
 open class ByteShare : ExtractorApi() {
@@ -10,26 +9,17 @@ open class ByteShare : ExtractorApi() {
 
     override suspend fun getUrl(url: String, referer: String?): List<ExtractorLink> {
         val sources = mutableListOf<ExtractorLink>()
-        with(app.get(url).document) {
-            this.select("script").map { script ->
-                if (script.data().contains("'use strict';")) {
-                    val data = script.data()
-                        .substringAfter("sources: [").substringBefore("]")
-                        .replace(" ", "")
-                        .substringAfter("src:\"").substringBefore("\",")
-                    sources.add(
-                        ExtractorLink(
-                            name,
-                            name,
-                            data,
-                            "",
-                            Qualities.Unknown.value
-                        )
-                    )
-                }
-            }
-        }
+        val srcIdRegex = Regex("""(?<=/embed/)(.*)(?=\?)""")
+        val srcId = srcIdRegex.find(url)?.groups?.get(1)?.value
+        sources.add(
+            ExtractorLink(
+                name,
+                name,
+                "$mainUrl/download/$srcId",
+                "",
+                Qualities.Unknown.value,
+            )
+        )
         return sources
     }
-
 }
