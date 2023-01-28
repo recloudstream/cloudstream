@@ -143,7 +143,7 @@ class PluginsFragment : Fragment() {
         }
 
         observe(pluginViewModel.filteredPlugins) { (scrollToTop, list) ->
-            (plugin_recycler_view?.adapter as? PluginAdapter?)?.updateList(list)
+            (plugin_recycler_view?.adapter as? PluginAdapter)?.updateList(list)
 
             if (scrollToTop)
                 plugin_recycler_view?.scrollToPosition(0)

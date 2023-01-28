@@ -110,6 +110,7 @@
     <string name="result_tags">Genres</string>
     <string name="result_share">Share</string>
     <string name="result_open_in_browser">Open In Browser</string>
+    <string name="browser">Browser</string>
     <string name="skip_loading">Skip Loading</string>
     <string name="loading">Loading…</string>
     <string name="type_watching">Watching</string>
@@ -229,6 +230,7 @@
     <string name="backup_failed">Storage permissions missing. Please try again.</string>
     <string name="backup_failed_error_format">Error backing up %s</string>
     <string name="search">Search</string>
+    <string name="library">Library</string>
     <string name="category_account">Accounts</string>
     <string name="category_updates">Updates and backup</string>
     <string name="settings_info">Info</string>
@@ -616,5 +618,16 @@
     <string name="apk_installer_legacy">Legacy</string>
     <string name="apk_installer_package_installer">PackageInstaller</string>
     <string name="delayed_update_notice">App will be updated upon exit</string>
-
+    <string name="sort_by">Sort by</string>
+    <string name="sort">Sort</string>
+    <string name="sort_rating_desc">Rating (High to Low)</string>
+    <string name="sort_rating_asc">Rating (Low to High)</string>
+    <string name="sort_updated_new">Updated (New to Old)</string>
+    <string name="sort_updated_old">Updated (Old to New)</string>
+    <string name="sort_alphabetical_a">Alphabetical (A to Z)</string>
+    <string name="sort_alphabetical_z">Alphabetical (Z to A)</string>
+    <string name="select_library">Select Library</string>
+    <string name="open_with">Open with</string>
+    <string name="empty_library_no_accounts_message">Looks like your library is empty :(\nLogin to a library account or add shows to your local library</string>
+    <string name="empty_library_logged_in_message">Looks like this list is empty, try switching to another one</string>
 </resources>

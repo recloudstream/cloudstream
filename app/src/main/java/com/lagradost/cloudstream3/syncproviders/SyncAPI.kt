@@ -1,9 +1,30 @@
 package com.lagradost.cloudstream3.syncproviders
 
 import com.lagradost.cloudstream3.*
+import com.lagradost.cloudstream3.ui.library.ListSorting
+import com.lagradost.cloudstream3.ui.result.UiText
+import me.xdrop.fuzzywuzzy.FuzzySearch
+
+enum class SyncIdName {
+    Anilist,
+    MyAnimeList,
+    Trakt,
+    Imdb,
+    LocalList
+}
 
 interface SyncAPI : OAuth2API {
+    /**
+     * Set this to true if the user updates something on the list like watch status or score
+     **/
+    var requireLibraryRefresh: Boolean
     val mainUrl: String
+
+    /**
+     * Allows certain providers to open pages from
+     * library links.
+     **/
+    val syncIdName: SyncIdName
 
     /**
     -1 -> None
@@ -22,7 +43,9 @@ interface SyncAPI : OAuth2API {
 
     suspend fun search(name: String): List<SyncSearchResult>?
 
-    fun getIdFromUrl(url : String) : String
+    suspend fun getPersonalLibrary(): LibraryMetadata?
+
+    fun getIdFromUrl(url: String): String
 
     data class SyncSearchResult(
         override val name: String,
@@ -42,7 +65,7 @@ interface SyncAPI : OAuth2API {
         val score: Int?,
         val watchedEpisodes: Int?,
         var isFavorite: Boolean? = null,
-        var maxEpisodes : Int? = null,
+        var maxEpisodes: Int? = null,
     )
 
     data class SyncResult(
@@ -63,9 +86,9 @@ interface SyncAPI : OAuth2API {
         var genres: List<String>? = null,
         var synonyms: List<String>? = null,
         var trailers: List<String>? = null,
-        var isAdult : Boolean? = null,
+        var isAdult: Boolean? = null,
         var posterUrl: String? = null,
-        var backgroundPosterUrl : String? = null,
+        var backgroundPosterUrl: String? = null,
 
         /** In unixtime */
         var startDate: Long? = null,
@@ -76,4 +99,61 @@ interface SyncAPI : OAuth2API {
         var prevSeason: SyncSearchResult? = null,
         var actors: List<ActorData>? = null,
     )
+
+
+    data class Page(
+        val title: UiText, var items: List<LibraryItem>
+    ) {
+        fun sort(method: ListSorting?, query: String? = null) {
+            items = when (method) {
+                ListSorting.Query ->
+                    if (query != null) {
+                        items.sortedBy {
+                            -FuzzySearch.partialRatio(
+                                query.lowercase(), it.name.lowercase()
+                            )
+                        }
+                    } else items
+                ListSorting.RatingHigh -> items.sortedBy { -(it.personalRating ?: 0) }
+                ListSorting.RatingLow -> items.sortedBy { (it.personalRating ?: 0) }
+                ListSorting.AlphabeticalA -> items.sortedBy { it.name }
+                ListSorting.AlphabeticalZ -> items.sortedBy { it.name }.reversed()
+                ListSorting.UpdatedNew -> items.sortedBy { it.lastUpdatedUnixTime?.times(-1) }
+                ListSorting.UpdatedOld -> items.sortedBy { it.lastUpdatedUnixTime }
+                else -> items
+            }
+        }
+    }
+
+    data class LibraryMetadata(
+        val allLibraryLists: List<LibraryList>,
+        val supportedListSorting: Set<ListSorting>
+    )
+
+    data class LibraryList(
+        val name: UiText,
+        val items: List<LibraryItem>
+    )
+
+    data class LibraryItem(
+        override val name: String,
+        override val url: String,
+        /**
+         * Unique unchanging string used for data storage.
+         * This should be the actual id when you change scores and status
+         * since score changes from library might get added in the future.
+         **/
+        val syncId: String,
+        val episodesCompleted: Int?,
+        val episodesTotal: Int?,
+        /** Out of 100 */
+        val personalRating: Int?,
+        val lastUpdatedUnixTime: Long?,
+        override val apiName: String,
+        override var type: TvType?,
+        override var posterUrl: String?,
+        override var posterHeaders: Map<String, String>?,
+        override var quality: SearchQuality?,
+        override var id: Int? = null,
+    ) : SearchResponse
 }

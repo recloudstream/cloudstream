@@ -220,6 +220,9 @@ dependencies {
 
     // Library/extensions searching with Levenshtein distance
     implementation("me.xdrop:fuzzywuzzy:1.4.0")
+
+    // color pallette for images -> colors
+    implementation("androidx.palette:palette-ktx:1.0.0")
 }
 
 tasks.register("androidSourcesJar", Jar::class) {
