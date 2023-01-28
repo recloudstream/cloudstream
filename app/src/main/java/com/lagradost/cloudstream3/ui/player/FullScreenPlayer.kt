@@ -1051,7 +1051,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                             }
                             KeyEvent.KEYCODE_DPAD_LEFT -> {
                                 if ((!isShowing && !isLocked) || player_pause_play?.isFocused == true) {
-                                    player.seekTime(fastForwardTime)
+                                    player.seekTime(-fastForwardTime)
                                     return true
                                 }
                             }
