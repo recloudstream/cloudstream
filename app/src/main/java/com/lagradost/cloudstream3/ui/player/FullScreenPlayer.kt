@@ -1050,20 +1050,14 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                                 }
                             }
                             KeyEvent.KEYCODE_DPAD_LEFT -> {
-                                if (!isShowing && !isLocked) {
-                                    player.seekTime(-10000L)
-                                    return true
-                                } else if (player_pause_play?.isFocused == true) {
-                                    player.seekTime(-30000L)
+                                if ((!isShowing && !isLocked) || player_pause_play?.isFocused == true) {
+                                    player.seekTime(fastForwardTime)
                                     return true
                                 }
                             }
                             KeyEvent.KEYCODE_DPAD_RIGHT -> {
-                                if (!isShowing && !isLocked) {
-                                    player.seekTime(10000L)
-                                    return true
-                                } else if (player_pause_play?.isFocused == true) {
-                                    player.seekTime(30000L)
+                                if ((!isShowing && !isLocked) || player_pause_play?.isFocused == true) {
+                                    player.seekTime(fastForwardTime)
                                     return true
                                 }
                             }
