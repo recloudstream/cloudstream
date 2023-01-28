@@ -497,4 +497,5 @@
     <string name="plugin_downloaded">Приставката е изтеглена</string>
     <string name="delayed_update_notice">Приложението ще се актуализира при изход от него</string>
     <string name="update_started">Започна Актуализация</string>
+    <string name="action_remove_from_watched">Премахване от гледани</string>
 </resources>

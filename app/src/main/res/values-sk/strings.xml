@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="new_update_format" formatted="true">Našla sa nová aktualizácia!
+\n%s -&gt; %s</string>
+    <string name="filler" formatted="true">Výplň</string>
+    <string name="next_episode_time_hour_format" formatted="true">%dh %dm</string>
+    <string name="next_episode_format" formatted="true">Epizóda %d bude vydaná za</string>
+    <string name="app_dub_sub_episode_text_format" formatted="true">%s Ep %d</string>
+    <string name="next_episode">Ďalšia epizóda</string>
+    <string name="result_tags">Žánre</string>
+    <string name="result_share">Zdielať</string>
+    <string name="result_open_in_browser">Otvoriť v prehliadači</string>
+    <string name="skip_loading">Preskočiť načítavanie</string>
+    <string name="cast_format" formatted="true">Hrajú: %s</string>
+    <string name="app_name">CloudStream</string>
+    <string name="result_poster_img_des">Plagát</string>
+    <string name="next_episode_time_day_format" formatted="true">%dd %dh %dm</string>
+    <string name="next_episode_time_min_format" formatted="true">%dm</string>
+    <string name="duration_format" formatted="true">%d min</string>
+    <string name="search_poster_img_des">\@string/result_poster_img_des</string>
+    <string name="episode_poster_img_des">Plagát epizódy</string>
+    <string name="home_main_poster_img_des">Hlavný plagát</string>
+    <string name="play_with_app_name">Prehrať s CloudStream</string>
+    <string name="title_settings">Nastavenia</string>
+    <string name="search_hint_site" formatted="true">Hľadať %s…</string>
+    <string name="popup_resume_download">Pokračovať v sťahovaní</string>
+    <string name="rated_format" formatted="true">Hodnotenie: %.1f</string>
+    <string name="go_back_img_des">Ísť späť</string>
+    <string name="player_speed_text_format" formatted="true">Rýchlosť (%.2fx)</string>
+    <string name="home_change_provider_img_des">Zmeniť poskytovateľa</string>
+    <string name="title_home">Domov</string>
+    <string name="title_search">Hľadať</string>
+    <string name="search_hint">Hľadať…</string>
+    <string name="title_downloads">Sťahovanie</string>
+    <string name="no_data">Žiadne dáta</string>
+    <string name="sort_cancel">Zrušiť</string>
+    <string name="sort_copy">Kopírovať</string>
+    <string name="sort_close">Zavrieť</string>
+    <string name="sort_save">Uložiť</string>
+    <string name="download">Stiahnuť</string>
+    <string name="downloaded">Stiahnuté</string>
+    <string name="episode_more_options_des">Ďalšie možnosti</string>
+    <string name="pick_source">Zdroje</string>
+    <string name="go_back">Ísť späť</string>
+    <string name="download_failed">Sťahovanie zlyhalo</string>
+    <string name="download_paused">Sťahovanie pozastavené</string>
+    <string name="download_done">Sťahovanie dokončené</string>
+    <string name="error_loading_links_toast">Chyba pri načítavaní odkazov</string>
+    <string name="update_started">Aktualizácia spustená</string>
+    <string name="download_storage_text">Interné úložisko</string>
+    <string name="loading">Načítavanie…</string>
+    <string name="type_completed">Dokončené</string>
+    <string name="type_plan_to_watch">Plánujem pozerať</string>
+    <string name="pref_disable_acra">Zakázať automatické nahlasovanie chýb</string>
+    <string name="home_more_info">Viac informácií</string>
+    <string name="error_bookmarks_text">Záložky</string>
+    <string name="play_movie_button">Prehrať film</string>
+    <string name="play_trailer_button">Prehrať upútavku</string>
+    <string name="downloading">Sťahovanie</string>
+    <string name="download_canceled">Sťahovanie zrušené</string>
+    <string name="app_dubbed_text">Dab</string>
+    <string name="popup_delete_file">Zmazať súbor</string>
+    <string name="type_none">Žiadny</string>
+    <string name="app_subbed_text">Tit</string>
+    <string name="type_re_watching">Opätovné sledovanie</string>
+    <string name="popup_play_file">Prehrať súbor</string>
+    <string name="home_info">Info</string>
+    <string name="play_livestream_button">Prehrať živý prenos</string>
+    <string name="pick_subtitle">Titulky</string>
+    <string name="play_episode">Prehrať epizódu</string>
+    <string name="popup_pause_download">Pozastaviť sťahovanie</string>
+    <string name="home_expanded_hide">Skryť</string>
+    <string name="filter_bookmarks">Filtrovať záložky</string>
+    <string name="action_remove_from_bookmarks">Odstrániť</string>
+    <string name="sort_apply">Použiť</string>
+    <string name="download_started">Sťahovanie spustené</string>
+    <string name="sort_clear">Vyčistiť</string>
+    <string name="home_play">Prehrať</string>
+    <string name="action_add_to_bookmarks">Nastaviť stav sledovania</string>
+    <string name="player_speed">Rýchlosť prehrávania</string>
+    <string name="subs_outline_color">Farba obrysu</string>
+    <string name="subs_window_color">Farba okna</string>
+    <string name="subs_edge_type">Typ hrany</string>
+    <string name="subtitles_settings">Nastavenia titulkov</string>
+    <string name="subs_background_color">Farba pozadia</string>
+    <string name="subs_text_color">Farba textu</string>
+    <string name="subs_subtitle_elevation">Vyvýšenie titulkov</string>
+    <string name="search_provider_text_providers">Hľadať pomocou poskytovateľov</string>
+    <string name="subs_font">Písmo</string>
+    <string name="search_provider_text_types">Hľadať pomocou typov</string>
+    <string name="subs_auto_select_language">Automaticky vybrať jazyk</string>
+    <string name="subs_subtitle_languages">Jazyk titulkov</string>
+    <string name="subs_font_size">Veľkosť písma</string>
+    <string name="benene_count_text_none">Nedarovali ste žiadne benény</string>
+    <string name="subs_hold_to_reset_to_default">Podržaním obnovíte predvolené nastavenia</string>
+    <string name="benene_count_text">%d benénov darovaných vývojárom</string>
+    <string name="subs_download_languages">Stiahnuť jazyky</string>
+    <string name="action_remove_watching">Odstrániť</string>
+    <string name="vpn_torrent">Tento poskytovateľ je torrent, odporúča sa VPN</string>
+    <string name="subs_import_text" formatted="true">Importovať písma ich umiestnením do %s</string>
+    <string name="action_open_watching">Viac informácií</string>
+    <string name="action_open_play">\@string/home_play</string>
+    <string name="continue_watching">Pokračovať v sledovaní</string>
+    <string name="vpn_might_be_needed">Na správne fungovanie tohto poskytovateľa môže byť potrebná VPN</string>
+    <string name="provider_info_meta">Stránka neposkytla žiadne metadáta, načítanie videa zlyhá, ak na stránke neexistuje.</string>
+    <string name="torrent_plot">Popis</string>
+</resources>

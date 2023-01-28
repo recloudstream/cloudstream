@@ -113,7 +113,6 @@
     <string name="action_open_play">\@string/home_play</string>
     <string name="vpn_might_be_needed">Bạn có thể sẽ cần sử dụng VPN để xem phim này</string>
     <string name="vpn_torrent">Phim này được chiếu dưới dạng Torrent. Hãy sử dụng VPN để xem</string>
-    <string name="provider_info_meta">Siêu dữ liệu không được cung cấp bởi trang web, quá trình tải video sẽ không thành công nếu nó không tồn tại trên trang web.</string>
     <string name="torrent_plot">Thông tin phim</string>
     <string name="normal_no_plot">Đang cập nhật</string>
     <string name="torrent_no_plot">Không tìm thấy thông tin</string>
@@ -447,4 +446,54 @@
     <string name="automatic_plugin_download_summary">Tự động tải plugins còn thiếu.</string>
     <string name="update_started">Bắt đầu cập nhật</string>
     <string name="pref_category_links">Liên kết</string>
+    <string name="hls_playlist">Danh sách HLS</string>
+    <string name="player_pref">Trình phát ưu tiên</string>
+    <string name="player_settings_play_in_app">Trình phát mặc địng</string>
+    <string name="extension_rating" formatted="true">Đánh giá: %s</string>
+    <string name="no">Không</string>
+    <string name="extension_version">Phiên bản</string>
+    <string name="extension_authors">Tác giả</string>
+    <string name="pref_category_app_updates">Cập nhật ứng dụng</string>
+    <string name="pref_category_backup">Sao lưu</string>
+    <string name="pref_category_extensions">Tiện ích</string>
+    <string name="pref_category_actions">Hành động</string>
+    <string name="pref_category_cache">Cache</string>
+    <string name="pref_category_gestures">Cử chỉ</string>
+    <string name="pref_category_player_features">Tính năng trình phát</string>
+    <string name="pref_category_subtitles">Phụ đề</string>
+    <string name="pref_category_player_layout">Bố cục</string>
+    <string name="pref_category_defaults">Mặc định</string>
+    <string name="pref_category_looks">Giao diện</string>
+    <string name="pref_category_ui_features">Tính năng</string>
+    <string name="plugins_updated" formatted="true">Đã cập nhật %d plugin</string>
+    <string name="extension_description">Mô tả</string>
+    <string name="extension_status">Trạng thái</string>
+    <string name="extension_size">Kích thước</string>
+    <string name="extension_types">Hỗ trợ</string>
+    <string name="extension_language">Ngôn ngữ</string>
+    <string name="extension_install_first">Cài đặt tiện ích trước</string>
+    <string name="player_settings_play_in_vlc">VLC</string>
+    <string name="player_settings_play_in_mpv">MPV</string>
+    <string name="player_settings_play_in_web">Web Video Cast</string>
+    <string name="player_settings_play_in_browser">Trình duyệt web</string>
+    <string name="app_not_found_error">Không thấy ứng dụng</string>
+    <string name="all_languages_preference">Tất cả ngôn ngữ</string>
+    <string name="skip_type_format" formatted="true">Tua %s</string>
+    <string name="skip_type_op">Mở đầu</string>
+    <string name="skip_type_ed">Kết thúc</string>
+    <string name="skip_type_recap">Tóm tắt</string>
+    <string name="skip_type_mixed_ed">Mở đầu tuỳ chọn</string>
+    <string name="skip_type_mixed_op">Kết thúc tuỳ chọn</string>
+    <string name="skip_type_creddits">Danh đề</string>
+    <string name="skip_type_intro">Giới thiệu</string>
+    <string name="clear_history">Xoá lịch sử</string>
+    <string name="enable_skip_op_from_database_des">Hiển thị cửa sổ tua cho mở đầu/kết thúc</string>
+    <string name="clipboard_too_large">Văn bản quá dài. Không thể lưu vào bộ nhớ tạm.</string>
+    <string name="action_remove_from_watched">Xoá khỏi đã xem</string>
+    <string name="confirm_exit_dialog">Bạn có chắc muốn thoát\?</string>
+    <string name="yes">Có</string>
+    <string name="update_notification_downloading">Đang tải bản cập nhật…</string>
+    <string name="update_notification_installing">Đang cài bản cập nhật…</string>
+    <string name="update_notification_failed">Không thể cài đặt phiên bản mới</string>
+    <string name="delayed_update_notice">Ứng dụng sẽ được cập nhật khi thoát</string>
 </resources>
