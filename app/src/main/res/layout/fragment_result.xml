@@ -129,9 +129,9 @@
         <androidx.core.widget.NestedScrollView
             android:id="@+id/result_scroll"
             android:layout_width="match_parent"
-
-            android:layout_height="wrap_content"
-            android:background="?attr/primaryGrayBackground">
+            android:paddingBottom="100dp"
+            android:clipToPadding="false"
+            android:layout_height="wrap_content">
 
             <LinearLayout
                 android:layout_width="match_parent"
