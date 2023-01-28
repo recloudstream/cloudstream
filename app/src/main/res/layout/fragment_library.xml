@@ -103,21 +103,19 @@
             tools:listitem="@layout/library_viewpager_page" />
 
         <LinearLayout
-            android:visibility="gone"
             android:id="@+id/library_loading_overlay"
             android:layout_width="match_parent"
-            tools:visibility="visible"
             android:layout_height="match_parent"
-            android:background="?attr/primaryBlackBackground">
+            android:background="?attr/primaryBlackBackground"
+            android:visibility="gone"
+            tools:visibility="visible">
 
             <com.facebook.shimmer.ShimmerFrameLayout
-                android:layout_margin="2dp"
                 android:id="@+id/library_loading_shimmer"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
-                android:elevation="100dp"
-                android:orientation="vertical"
+                android:layout_margin="2dp"
                 app:shimmer_auto_start="true"
                 app:shimmer_base_alpha="0.2"
                 app:shimmer_duration="@integer/loading_time"
@@ -127,10 +125,12 @@
                     android:id="@+id/gridview"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:clipToPadding="false"
                     android:gravity="center"
                     android:horizontalSpacing="10dp"
-                    android:verticalSpacing="10dp"
                     android:numColumns="3"
+                    android:paddingBottom="120dp"
+                    android:verticalSpacing="10dp"
                     tools:listitem="@layout/loading_poster_dynamic" />
             </com.facebook.shimmer.ShimmerFrameLayout>
         </LinearLayout>
