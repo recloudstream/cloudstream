@@ -2,7 +2,7 @@
 <resources>
     <!-- IS NOT NEEDED TO TRANSLATE AS THEY ARE ONLY USED FOR SCREEN READERS AND WONT SHOW UP TO NORMAL USERS -->
     <string name="result_poster_img_des">Plakat</string>
-    <string name="search_poster_img_des">@string/result_poster_img_des</string>
+    <string name="search_poster_img_des">\@string/result_poster_img_des</string>
     <string name="episode_poster_img_des">Episode Plakat</string>
     <string name="home_main_poster_img_des">Main Plakat</string>
     <string name="home_next_random_img_des">Neste tilfeldig</string>
@@ -12,7 +12,8 @@
     <!-- TRANSLATE, BUT DON'T FORGET FORMAT -->
     <string name="player_speed_text_format" formatted="true">Avspillingshastighet (%.2fx)</string>
     <string name="rated_format" formatted="true">Vurdert: %.1f</string>
-    <string name="new_update_format" formatted="true">Ny oppdatering funnet!\n%s -&gt; %s</string>
+    <string name="new_update_format" formatted="true">Ny oppdatering funnet!
+\n%s -&gt; %s</string>
     <string name="app_name">CloudStream</string>
     <string name="title_home">Hjem</string>
     <string name="title_search">Søk</string>
@@ -142,7 +143,8 @@
     <string name="delete">Slett</string>
     <string name="pause">Stopp</string>
     <string name="resume">Gjenoppta</string>
-    <string name="delete_message">Dette vil slette %s\nEr du sikker?</string>
+    <string name="delete_message">Dette vil slette %s
+\nEr du sikker\?</string>
     <string name="status_ongoing">Pågående</string>
     <string name="status_completed">Fullført</string>
     <string name="status">Posisjon</string>
@@ -201,22 +203,7 @@
     <string name="app_theme_settings">App Tema</string>
     <string name="preferred_media_settings">Foretrukket Videoinnhold</string>
     <string name="legal_notice" translatable="false">Disclaimer</string>
-    <string name="legal_notice_text" translatable="false">Any legal issues regarding the content on this application
-        should be taken up with the actual file hosts and providers themselves as we are not affiliated with them.
-
-        In case of copyright infringement, please directly contact the responsible parties or the streaming websites.
-
-        The app is purely for educational and personal use.
-
-        CloudStream 3 does not host any content on the app, and has no control over what media is put up or taken down.
-        CloudStream 3 functions like any other search engine, such as Google. CloudStream 3 does not host, upload or
-        manage any videos, films or content. It simply crawls, aggregates and displayes links in a convenient,
-        user-friendly interface.
-
-        It merely scrapes 3rd-party websites that are publicly accessable via any regular web browser. It is the
-        responsibility of user to avoid any actions that might violate the laws governing his/her locality. Use
-        CloudStream 3 at your own risk.
-    </string>
+    <string name="legal_notice_text" translatable="false">Any legal issues regarding the content on this application should be taken up with the actual file hosts and providers themselves as we are not affiliated with them. In case of copyright infringement, please directly contact the responsible parties or the streaming websites. The app is purely for educational and personal use. CloudStream 3 does not host any content on the app, and has no control over what media is put up or taken down. CloudStream 3 functions like any other search engine, such as Google. CloudStream 3 does not host, upload or manage any videos, films or content. It simply crawls, aggregates and displayes links in a convenient, user-friendly interface. It merely scrapes 3rd-party websites that are publicly accessable via any regular web browser. It is the responsibility of user to avoid any actions that might violate the laws governing his/her locality. Use CloudStream 3 at your own risk.</string>
     <string name="cast_format" formatted="true">Besetning: %s</string>
     <string name="next_episode_time_min_format" formatted="true">%dm</string>
     <string name="sort_clear">Tøm</string>

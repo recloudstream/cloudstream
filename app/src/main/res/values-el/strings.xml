@@ -159,7 +159,8 @@
     <string name="resume">Συνέχιση</string>
     <string name="delete_message" formatted="true">Αυτό θα διαγράψει μόνιμα το %s
 \nΕίστε σίγουροι πως θέλετε να προχωρήσετε;</string>
-    <string name="resume_time_left" formatted="true">%dm\nαπομένουν</string>
+    <string name="resume_time_left" formatted="true">%dm
+\nαπομένουν</string>
     <string name="status_ongoing">Σε εξέλιξη</string>
     <string name="status">Κατάσταση</string>
     <string name="year">Έτος</string>

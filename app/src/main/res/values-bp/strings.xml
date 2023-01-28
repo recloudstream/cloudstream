@@ -10,7 +10,7 @@
     <string name="next_episode_time_min_format" formatted="true">%dm</string>
     <!-- IS NOT NEEDED TO TRANSLATE AS THEY ARE ONLY USED FOR SCREEN READERS AND WONT SHOW UP TO NORMAL USERS -->
     <string name="result_poster_img_des">Poster</string>
-    <string name="search_poster_img_des">@string/result_poster_img_des</string>
+    <string name="search_poster_img_des">\@string/result_poster_img_des</string>
     <string name="episode_poster_img_des">Episode Poster</string>
     <string name="home_main_poster_img_des">Main Poster</string>
     <string name="home_next_random_img_des">Next Random</string>
@@ -20,7 +20,8 @@
     <!-- TRANSLATE, BUT DON'T FORGET FORMAT -->
     <string name="player_speed_text_format" formatted="true">Velocidade (%.2fx)</string>
     <string name="rated_format" formatted="true">Nota: %.1f</string>
-    <string name="new_update_format" formatted="true">Nova atualização encontrada!\n%s -&gt; %s</string>
+    <string name="new_update_format" formatted="true">Nova atualização encontrada!
+\n%s -&gt; %s</string>
     <string name="filler" formatted="true">Filler</string>
     <string name="duration_format" formatted="true">%d min</string>
     <string name="app_name">CloudStream</string>
@@ -107,7 +108,7 @@
     <string name="continue_watching">Continue Assistindo</string>
     <string name="action_remove_watching">Remover</string>
     <string name="action_open_watching">Mais Info</string>
-    <string name="action_open_play">@string/home_play </string>
+    <string name="action_open_play">\@string/home_play</string>
     <string name="vpn_might_be_needed">Uma VPN pode ser necessária para esse fornecedor funcionar corretamente</string>
     <string name="vpn_torrent">Esse fornecedor é um torrent, uma VPN é recomendada</string>
     <string name="provider_info_meta">Metadados não são oferecidas pelo site, o carregamento do video pode falhar se ele não existir no site.</string>
@@ -174,9 +175,7 @@
     <string name="copy_link_toast">Link copiado para área de transferência</string>
     <string name="play_episode_toast">Assistir Episódio</string>
     <string name="subs_default_reset_toast">Restaurar para o padrão</string>
-    <string name="acra_report_toast">Desculpe, a aplicação travou. Um relatório de erro anônimo será enviado para os
-       desenvolvedores
-    </string>
+    <string name="acra_report_toast">Desculpe, a aplicação travou. Um relatório de erro anônimo será enviado para os desenvolvedores</string>
     <string name="season">Temporada</string>
     <string name="no_season">Nenhuma Temporada</string>
     <string name="episode">Episódio</string>
@@ -190,8 +189,10 @@
     <string name="resume">Retomar</string>
     <string name="go_back_30">-30</string>
     <string name="go_forward_30">+30</string>
-    <string name="delete_message" formatted="true">Isso apagará %s permanentemente\nVocê tem certeza?</string>
-    <string name="resume_time_left" formatted="true">%dm\nsobrando</string>
+    <string name="delete_message" formatted="true">Isso apagará %s permanentemente
+\nVocê tem certeza\?</string>
+    <string name="resume_time_left" formatted="true">%dm
+\nsobrando</string>
     <string name="status_ongoing">Em andamento</string>
     <string name="status_completed">Concluído</string>
     <string name="status">Estado</string>
@@ -221,8 +222,8 @@
     <string name="movies_singular">Filme</string>
     <string name="tv_series_singular">Série</string>
     <string name="cartoons_singular">Desenho Animado</string>
-    <string name="anime_singular">@string/anime</string>
-    <string name="ova_singular">@string/ova</string>
+    <string name="anime_singular">\@string/anime</string>
+    <string name="ova_singular">\@string/ova</string>
     <string name="torrent_singular">Torrent</string>
     <string name="documentaries_singular">Documentário</string>
     <string name="asian_drama_singular">Drama Asiático</string>
@@ -277,22 +278,7 @@
     <string name="resize_fill">Esticar</string>
     <string name="resize_zoom">Zoom</string>
     <string name="legal_notice">Aviso Legal</string>
-    <string name="legal_notice_text" translatable="false">Any legal issues regarding the content on this application
-        should be taken up with the actual file hosts and providers themselves as we are not affiliated with them.
-
-        In case of copyright infringement, please directly contact the responsible parties or the streaming websites.
-
-        The app is purely for educational and personal use.
-
-        CloudStream 3 does not host any content on the app, and has no control over what media is put up or taken down.
-        CloudStream 3 functions like any other search engine, such as Google. CloudStream 3 does not host, upload or
-        manage any videos, films or content. It simply crawls, aggregates and displayes links in a convenient,
-        user-friendly interface.
-
-        It merely scrapes 3rd-party websites that are publicly accessable via any regular web browser. It is the
-        responsibility of user to avoid any actions that might violate the laws governing his/her locality. Use
-        CloudStream 3 at your own risk.
-    </string>
+    <string name="legal_notice_text" translatable="false">Any legal issues regarding the content on this application should be taken up with the actual file hosts and providers themselves as we are not affiliated with them. In case of copyright infringement, please directly contact the responsible parties or the streaming websites. The app is purely for educational and personal use. CloudStream 3 does not host any content on the app, and has no control over what media is put up or taken down. CloudStream 3 functions like any other search engine, such as Google. CloudStream 3 does not host, upload or manage any videos, films or content. It simply crawls, aggregates and displayes links in a convenient, user-friendly interface. It merely scrapes 3rd-party websites that are publicly accessable via any regular web browser. It is the responsibility of user to avoid any actions that might violate the laws governing his/her locality. Use CloudStream 3 at your own risk.</string>
     <string name="category_general">Geral</string>
     <string name="random_button_settings">Botão Aleatório</string>
     <string name="random_button_settings_desc">Mostra o botão Aleatório na página inicial</string>
@@ -337,7 +323,7 @@
     <string name="upload_sync">Sincronizar</string>
     <string name="sync_score">Nota</string>
     <string name="sync_score_format" formatted="true">%d / 10</string>
-    <string name="sync_total_episodes_none">/??</string>
+    <string name="sync_total_episodes_none">/\?\?</string>
     <string name="sync_total_episodes_some" formatted="true">/%d</string>
     <string name="authenticated_user" formatted="true">%s autenticado</string>
     <string name="authenticated_user_fail" formatted="true">Falha em autenticar para %s</string>
@@ -436,7 +422,7 @@
     <string name="view_public_repositories_button">Ver repositórios da comunidade</string>
     <string name="view_public_repositories_button_short">Lista pública</string>
     <string name="uppercase_all_subtitles">Todas as legendas em maiúsculas</string>
-    <string name="download_all_plugins_from_repo">Transferir todos os plugins deste repositório?</string>
+    <string name="download_all_plugins_from_repo">Transferir todos os plugins deste repositório\?</string>
     <string name="single_plugin_disabled" formatted="true">%s (Desativado)</string>
     <string name="autoplay_next_settings">Reproduzir automaticamente próximo episódio</string>
     <string name="autoplay_next_settings_des">Começa o próximo episódio quando o atual termina</string>

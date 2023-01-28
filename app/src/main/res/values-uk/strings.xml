@@ -94,9 +94,9 @@
     <string name="filler" formatted="true">Філер</string>
     <string name="play_with_app_name">Програти в CloudStream</string>
     <string name="stream">Потік</string>
-    <string name="type_watching">Переглянуто</string>
+    <string name="type_watching">Переглядаю</string>
     <string name="result_share">Поділитися</string>
-    <string name="type_on_hold">Призупинено</string>
+    <string name="type_on_hold">Відкладено</string>
     <string name="type_re_watching">Повторний перегляд</string>
     <string name="download">Завантажити</string>
     <string name="play_livestream_button">Відтворити трансляцію</string>
