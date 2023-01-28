@@ -138,7 +138,11 @@ interface SyncAPI : OAuth2API {
     data class LibraryItem(
         override val name: String,
         override val url: String,
-        /** Unique unchanging string used for data storage */
+        /**
+         * Unique unchanging string used for data storage.
+         * This should be the actual id when you change scores and status
+         * since score changes from library might get added in the future.
+         **/
         val syncId: String,
         val episodesCompleted: Int?,
         val episodesTotal: Int?,

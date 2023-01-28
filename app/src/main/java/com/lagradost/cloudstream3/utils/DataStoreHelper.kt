@@ -55,16 +55,16 @@ object DataStoreHelper {
         @JsonProperty("quality") override var quality: SearchQuality? = null,
         @JsonProperty("posterHeaders") override var posterHeaders: Map<String, String>? = null,
     ) : SearchResponse {
-        fun toLibraryItem(): SyncAPI.LibraryItem {
+        fun toLibraryItem(id: String): SyncAPI.LibraryItem {
             return SyncAPI.LibraryItem(
                 name,
                 url,
-                url,
+                id,
                 null,
                 null,
                 null,
                 null,
-                apiName, type, posterUrl, posterHeaders, quality, id
+                apiName, type, posterUrl, posterHeaders, quality, this.id
             )
         }
     }

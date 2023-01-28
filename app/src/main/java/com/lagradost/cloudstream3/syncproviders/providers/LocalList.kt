@@ -72,7 +72,7 @@ class LocalList : SyncAPI {
                 it.second.stringRes
             }.mapValues { group ->
                 group.value.mapNotNull {
-                    getBookmarkedData(it.first)?.toLibraryItem()
+                    getBookmarkedData(it.first)?.toLibraryItem(it.first.toString())
                 }
             }
         }
