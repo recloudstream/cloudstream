@@ -141,7 +141,7 @@
     <string name="backup_settings">Copie de rezervă a datelor</string>
     <string name="restore_success">Fișier de rezervă încărcat</string>
     <string name="restore_failed_format" formatted="true">Imposibilitatea de a restaura datele din %s</string>
-    <string name="backup_success">Datele au fost salvate cu succes</string>
+    <string name="backup_success">Date stocate</string>
     <string name="backup_failed">Permisiuni de arhivare lipsă, vă rugăm să încercați din nou</string>
     <string name="backup_failed_error_format">Eroare de backup %s</string>
     <string name="search">Căutare</string>
@@ -380,4 +380,8 @@
     <string name="app_name">CloudStream</string>
     <string name="play_trailer_button">Vizionează trailerul</string>
     <string name="update_started">Actualizarea a început</string>
+    <string name="episode_sync_settings">Actualizați progresul ceasului</string>
+    <string name="autoplay_next_settings_des">Începe următorul episod când se termină episodul curent</string>
+    <string name="pref_filter_search_quality">Ascundeți calitatea video selectată în rezultatele căutării</string>
+    <string name="play_livestream_button">Redare Livestream</string>
 </resources>
