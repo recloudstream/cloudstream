@@ -186,7 +186,7 @@ class LibraryFragment : Fragment() {
                 items,
                 selectedIndex,
                 txt(R.string.open_with).asString(this),
-                true,
+                false,
                 {},
             ) {
                 val savedData = if (it < baseOptions.size) {
