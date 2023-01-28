@@ -85,6 +85,7 @@ val appLanguages = arrayListOf(
     Triple("\uD83C\uDDF5\uD83C\uDDF9", "Portuguese", "pt"),
     Triple("", "Romanian", "ro"),
     Triple("", "Russian", "ru"),
+    Triple("", "Slovak", "sk"),
     Triple("", "Somali", "so"),
     Triple("", "Swedish", "sv"),
     Triple("", "Tamil", "ta"),
