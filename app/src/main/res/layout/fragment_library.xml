@@ -24,6 +24,7 @@
         android:background="?attr/primaryGrayBackground">
 
         <LinearLayout
+            android:id="@+id/search_status_bar_padding"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"

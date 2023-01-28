@@ -88,7 +88,7 @@ class LibraryFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        context?.fixPaddingStatusbar(library_root)
+        context?.fixPaddingStatusbar(search_status_bar_padding)
 
         sort_fab?.setOnClickListener {
             val methods = libraryViewModel.sortingMethods.map {
