@@ -35,9 +35,9 @@
                   -->
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/nav_view"
-            android:layout_height="wrap_content"
+            android:layout_height="70dp"
             android:layout_width="0dp"
-            app:labelVisibilityMode="labeled"
+            app:labelVisibilityMode="unlabeled"
             android:background="?attr/primaryGrayBackground"
 
             app:itemIconTint="@color/item_select_color"

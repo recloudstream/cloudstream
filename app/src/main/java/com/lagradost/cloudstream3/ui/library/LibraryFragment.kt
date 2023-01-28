@@ -10,10 +10,9 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
+import android.view.animation.AlphaAnimation
 import androidx.annotation.StringRes
 import androidx.appcompat.widget.SearchView
-import androidx.core.os.postDelayed
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import com.google.android.material.tabs.TabLayoutMediator
@@ -25,7 +24,6 @@ import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.debugAssert
-import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.syncproviders.SyncIdName
@@ -40,7 +38,7 @@ import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
 import com.lagradost.cloudstream3.utils.UIHelper.getSpanCount
 import kotlinx.android.synthetic.main.fragment_library.*
-import kotlinx.coroutines.delay
+import kotlin.math.abs
 
 const val LIBRARY_FOLDER = "library_folder"
 
@@ -339,11 +337,34 @@ class LibraryFragment : Fragment() {
                         savedInstanceState.remove(VIEWPAGER_ITEM_KEY)
                     }
 
+                    // Since the animation to scroll multiple items is so much its better to just hide
+                    // the viewpager a bit while the fastest animation is running
+                    fun hideViewpager(distance: Int) {
+                        if (distance < 3) return
+
+                        val hideAnimation = AlphaAnimation(1f, 0f).apply {
+                            duration = distance * 50L
+                            fillAfter = true
+                        }
+                        val showAnimation = AlphaAnimation(0f, 1f).apply {
+                            duration = distance * 50L
+                            startOffset = distance * 100L
+                            fillAfter = true
+                        }
+                        viewpager?.startAnimation(hideAnimation)
+                        viewpager?.startAnimation(showAnimation)
+                    }
+
                     TabLayoutMediator(
                         library_tab_layout,
                         viewpager,
                     ) { tab, position ->
                         tab.text = pages.getOrNull(position)?.title?.asStringNull(context)
+                        tab.view.setOnClickListener {
+                            val currentItem = viewpager?.currentItem ?: return@setOnClickListener
+                            val distance = abs(position - currentItem)
+                            hideViewpager(distance)
+                        }
                     }.attach()
                 }
                 is Resource.Loading -> {
