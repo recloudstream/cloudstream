@@ -86,7 +86,7 @@
     <string name="episode_action_reload_links">Recargar enlaces</string>
     <string name="sync_total_episodes_none">/\?\?</string>
     <string name="sync_total_episodes_some" formatted="true">/%d</string>
-    <string name="delete_message" formatted="true">Esto eliminará %s permanentemente 
+    <string name="delete_message" formatted="true">Esto eliminará %s permanentemente
 \nEstá seguro\?</string>
     <string name="confirm_exit_dialog">Está seguro que quiere salir\?</string>
     <string name="popup_resume_download">Continuar Descarga</string>

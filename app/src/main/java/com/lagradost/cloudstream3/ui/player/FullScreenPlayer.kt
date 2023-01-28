@@ -605,7 +605,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         player_top_holder?.isGone = isGone
         //player_episodes_button?.isVisible = !isGone && hasEpisodes
         player_video_title?.isGone = togglePlayerTitleGone
-        player_video_title_rez?.isGone = isGone
+//        player_video_title_rez?.isGone = isGone
         player_episode_filler?.isGone = isGone
         player_center_menu?.isGone = isGone
         player_lock?.isGone = !isShowing

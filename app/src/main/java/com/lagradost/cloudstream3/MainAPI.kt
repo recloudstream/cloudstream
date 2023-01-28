@@ -17,6 +17,7 @@ import com.lagradost.cloudstream3.syncproviders.SyncIdName
 import com.lagradost.cloudstream3.ui.player.SubtitleData
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
 import com.lagradost.cloudstream3.utils.*
+import com.lagradost.cloudstream3.ui.result.UiText
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
 import com.lagradost.cloudstream3.utils.Coroutines.threadSafeListOf
 import com.lagradost.cloudstream3.utils.ExtractorLink
@@ -83,7 +84,7 @@ object APIHolder {
         synchronized(allProviders) {
             initMap()
             return apiMap?.get(apiName)?.let { apis.getOrNull(it) }
-                // Leave the ?. null check, it can crash regardless
+            // Leave the ?. null check, it can crash regardless
                 ?: allProviders.firstOrNull { it?.name == apiName }
         }
     }
@@ -320,6 +321,57 @@ object APIHolder {
     }
 }
 
+/*
+// THIS IS WORK IN PROGRESS API
+interface ITag {
+    val name: UiText
+}
+
+data class SimpleTag(override val name: UiText, val data: String) : ITag
+
+enum class SelectType {
+    SingleSelect,
+    MultiSelect,
+    MultiSelectAndExclude,
+}
+
+enum class SelectValue {
+    Selected,
+    Excluded,
+}
+
+interface GenreSelector {
+    val title: UiText
+    val id : Int
+}
+
+data class TagSelector(
+    override val title: UiText,
+    override val id : Int,
+    val tags: Set<ITag>,
+    val defaultTags : Set<ITag> = setOf(),
+    val selectType: SelectType = SelectType.SingleSelect,
+) : GenreSelector
+
+data class BoolSelector(
+    override val title: UiText,
+    override val id : Int,
+
+    val defaultValue : Boolean = false,
+) : GenreSelector
+
+data class InputField(
+    override val title: UiText,
+    override val id : Int,
+
+    val hint : UiText? = null,
+) : GenreSelector
+
+// This response describes how a user might filter the homepage or search results
+data class GenreResponse(
+    val searchSelectors : List<GenreSelector>,
+    val filterSelectors: List<GenreSelector> = searchSelectors
+) */
 
 /*
 0 = Site not good

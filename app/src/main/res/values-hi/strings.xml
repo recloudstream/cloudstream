@@ -2,7 +2,8 @@
 <!--https://newbedev.com/concatenate-multiple-strings-in-xml--><resources>
     <!-- TRANSLATE, BUT DON'T FORGET FORMAT -->
     <string name="player_speed_text_format" formatted="true">रफ्तार (%.2fx)</string>
-    <string name="new_update_format" formatted="true">नया अपडेट आया है!\n%s -&gt; %s</string>
+    <string name="new_update_format" formatted="true">नया अपडेट आया है!
+\n%s -&gt; %s</string>
     <string name="title_home">होम</string>
     <string name="title_search">खोजें</string>
     <string name="title_downloads">डाउनलोड</string>
@@ -69,8 +70,7 @@
     <string name="eigengraumode_settings_des">प्लेयर में वीडियो की रफ्तार धिमी या तेज़ करता है</string>
     <string name="swipe_to_seek_settings_des">दाएं या बाएं तरफ स्वाइप करने से वीडियो को आगे पीछे करता है</string>
     <string name="swipe_to_change_settings_des">दाएं तरफ या बाएं तरफ स्वाइप करने से रोशिनी और आवाज़ को ऊपर नीचे करता है</string>
-    <string name="double_tap_to_seek_settings_des">दो बार दाएं या बाएं तरफ दबाने से वीडियो को आगे या पीछे करा जा सकता है
-    </string>
+    <string name="double_tap_to_seek_settings_des">दो बार दाएं या बाएं तरफ दबाने से वीडियो को आगे या पीछे करा जा सकता है</string>
     <string name="search">खोजें</string>
     <string name="settings_info">जानकारी</string>
     <string name="advanced_search_des">नतीजों को सूत्रों के हिसाब से बांटकर दिखता है</string>
@@ -88,13 +88,13 @@
     <string name="no_links_found_toast">कोई लिंक नही मिले</string>
     <string name="copy_link_toast">लिंक को क्लिपबोर्ड पे कॉपी करदिया गया</string>
     <string name="play_episode_toast">चलाये</string>
-    <string name="acra_report_toast">असुविधा के लिए खेद है, यह एप्प क्रैश हो गया है । एक गुमनाम रिपोर्ट निर्माताओं को भेज दी गयी है ।
-    </string>
+    <string name="acra_report_toast">असुविधा के लिए खेद है, यह एप्प क्रैश हो गया है । एक गुमनाम रिपोर्ट निर्माताओं को भेज दी गयी है ।</string>
     <string name="delete_file">फ़ाइल डिलीट करें</string>
     <string name="delete">डिलीट</string>
     <string name="pause">रोके</string>
     <string name="resume">वापिस चलाये</string>
-    <string name="delete_message">एज इस चीज़ को हमेशा के लिए नष्ट कर देगा %s\nक्या आपका निर्णय निश्चित है ?</string>
+    <string name="delete_message">एज इस चीज़ को हमेशा के लिए नष्ट कर देगा %s
+\nक्या आपका निर्णय निश्चित है \?</string>
     <string name="status_ongoing">अभी चालू है</string>
     <string name="status_completed">खत्म हो गया है</string>
     <string name="status">स्तिथि</string>
@@ -132,8 +132,8 @@
     <string name="dns_pref_summary">ISP ब्लॉक से छुटकारा पाएं</string>
     <string name="provider_lang_settings">सूत्र की भाषाएं</string>
     <string name="app_layout">ऐप का लेआउट</string>
-    <string name="preferred_media_settings">पसंदीदा मीडिया </string>
-    <string name="download_path_pref"> डाउनलोड करने का मार्ग</string>
+    <string name="preferred_media_settings">पसंदीदा मीडिया</string>
+    <string name="download_path_pref">डाउनलोड करने का मार्ग</string>
     <string name="display_subbed_dubbed_settings">Dubbed या Subbed Anime दिखाये</string>
     <string name="tv_layout">टीवी लेआउट</string>
     <string name="phone_layout">फ़ोन लेआउट</string>

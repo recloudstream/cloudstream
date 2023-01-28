@@ -17,7 +17,7 @@
     <string name="skip_type_intro">Intro</string>
     <string name="clear_history">Verlauf löschen</string>
     <string name="history">Verlauf</string>
-    <string name="enable_skip_op_from_database_des">Überspringen Button für Openings/Endings anzeigen</string>
+    <string name="enable_skip_op_from_database_des">Überspringen Knopf für Openings/Endings anzeigen</string>
     <string name="clipboard_too_large">Zu viel Text. Kann nicht in der Zwischenablage gespeichert werden.</string>
     <string name="episode_poster_img_des">Episodenvorschaubild</string>
     <string name="home_main_poster_img_des">Medienvorschaubild</string>

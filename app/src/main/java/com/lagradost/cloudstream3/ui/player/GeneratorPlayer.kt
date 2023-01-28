@@ -1149,13 +1149,15 @@ class GeneratorPlayer : FullScreenPlayer() {
 
         val source = currentSelectedLink?.first?.name ?: currentSelectedLink?.second?.name ?: "NULL"
 
-        player_video_title_rez?.text = when (titleRez) {
+         val title = when (titleRez) {
             0 -> ""
             1 -> extra
             2 -> source
             3 -> "$source - $extra"
             else -> ""
         }
+        player_video_title_rez?.text = title
+        player_video_title_rez?.isVisible = title.isNotBlank()
     }
 
     override fun playerDimensionsLoaded(widthHeight: Pair<Int, Int>) {

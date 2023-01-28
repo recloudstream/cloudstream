@@ -166,7 +166,7 @@ class OpenSubtitlesApi(index: Int) : InAppAuthAPIManager(index), AbstractSubApi 
         val fixedLang = fixLanguage(query.lang)
 
         val imdbId = query.imdb ?: 0
-        val queryText = query.query.replace(" ", "+")
+        val queryText = query.query
         val epNum = query.epNumber ?: 0
         val seasonNum = query.seasonNumber ?: 0
         val yearNum = query.year ?: 0
@@ -177,7 +177,7 @@ class OpenSubtitlesApi(index: Int) : InAppAuthAPIManager(index), AbstractSubApi 
         val searchQueryUrl = when (imdbId > 0) {
             //Use imdb_id to search if its valid
             true -> "$host/subtitles?imdb_id=$imdbId&languages=${fixedLang}$yearQuery$epQuery$seasonQuery"
-            false -> "$host/subtitles?query=${URLEncoder.encode(queryText.lowercase(), StandardCharsets.UTF_8.toString())}&languages=${fixedLang}$yearQuery$epQuery$seasonQuery"
+            false -> "$host/subtitles?query=${queryText}&languages=${fixedLang}$yearQuery$epQuery$seasonQuery"
         }
 
         val req = app.get(

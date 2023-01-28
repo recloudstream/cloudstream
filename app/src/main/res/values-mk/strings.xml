@@ -3,7 +3,8 @@
     <!-- TRANSLATE, BUT DON'T FORGET FORMAT -->
     <string name="player_speed_text_format" formatted="true">Брзина (%.2fx)</string>
     <string name="rated_format" formatted="true">Оценето: %.1f</string>
-    <string name="new_update_format" formatted="true">Пронајдена нова верзија на апликацијата!\n%s -&gt; %s</string>
+    <string name="new_update_format" formatted="true">Пронајдена нова верзија на апликацијата!
+\n%s -&gt; %s</string>
     <string name="filler" formatted="true">Филтер</string>
     <string name="app_name">CloudStream</string>
     <string name="title_home">Дома</string>
@@ -134,7 +135,8 @@
     <string name="delete">Избриши</string>
     <string name="pause">Паузирај</string>
     <string name="resume">Продолжи</string>
-    <string name="delete_message">Ова трајно ќе го избрише %s\nДали си сигурен?</string>
+    <string name="delete_message">Ова трајно ќе го избрише %s
+\nДали си сигурен\?</string>
     <string name="status_ongoing">Во тек</string>
     <string name="status_completed">Завршени</string>
     <string name="status">Статус</string>

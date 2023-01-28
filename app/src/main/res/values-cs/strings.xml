@@ -6,7 +6,7 @@
     <string name="cast_format" formatted="true">Hrají: %s</string>
     <!-- IS NOT NEEDED TO TRANSLATE AS THEY ARE ONLY USED FOR SCREEN READERS AND WONT SHOW UP TO NORMAL USERS -->
     <string name="result_poster_img_des">Plakát</string>
-    <string name="search_poster_img_des">@string/result_poster_img_des</string>
+    <string name="search_poster_img_des">\@string/result_poster_img_des</string>
     <string name="episode_poster_img_des">Episode Poster</string>
     <string name="home_main_poster_img_des">Main Poster</string>
     <string name="home_next_random_img_des">Next Random</string>
@@ -16,7 +16,8 @@
     <!-- TRANSLATE, BUT DON'T FORGET FORMAT -->
     <string name="player_speed_text_format" formatted="true">Rychlost (%.2fx)</string>
     <string name="rated_format" formatted="true">Hodnocení: %.1f</string>
-    <string name="new_update_format" formatted="true">Nalezena nová aktualizace!\n%s -&gt; %s</string>
+    <string name="new_update_format" formatted="true">Nalezena nová aktualizace!
+\n%s -&gt; %s</string>
     <string name="filler" formatted="true">Výplň</string>
     <string name="duration_format" formatted="true">%d min</string>
     <string name="app_name">CloudStream</string>
@@ -102,7 +103,7 @@
     <string name="continue_watching">Pokračovat ve sledování</string>
     <string name="action_remove_watching">Odebrat</string>
     <string name="action_open_watching">Další informace</string>
-    <string name="action_open_play">@string/home_play </string>
+    <string name="action_open_play">\@string/home_play</string>
     <string name="vpn_might_be_needed">Aby tento poskytovatel fungoval správně, budete možná potřebovat VPN</string>
     <string name="vpn_torrent">Tento poskytovatel je torrent, je doporučená VPN</string>
     <string name="provider_info_meta">Web neposkytnul žádná metadata, načítání videa selže, pokud na webu neexistuje.</string>
@@ -127,13 +128,10 @@
     <string name="double_tap_to_seek_settings">Dvojité klepnutí pro posun</string>
     <string name="double_tap_to_pause_settings">Dvojité klepnutí pro pozastavení</string>
     <string name="double_tap_to_seek_amount_settings">Množství času k posunu</string>
-    <string name="double_tap_to_seek_settings_des">Klepněte dvakrát vpravo nebo vlevo pro posun vpřed nebo vzad
-    </string>
+    <string name="double_tap_to_seek_settings_des">Klepněte dvakrát vpravo nebo vlevo pro posun vpřed nebo vzad</string>
     <string name="double_tap_to_pause_settings_des">Klepněte doprostřed pro pozastavení</string>
     <string name="use_system_brightness_settings">Použít systémový jas</string>
-    <string name="use_system_brightness_settings_des">V přehrávači použít systémov
-        překrytí
-    </string>
+    <string name="use_system_brightness_settings_des">V přehrávači použít systémov překrytí</string>
     <string name="episode_sync_settings">Aktualizovat postup sledování</string>
     <string name="episode_sync_settings_des">Automaticky synchronizovat postup sledování současné epizody</string>
     <string name="restore_settings">Obnovit data ze zálohy</string>
@@ -168,9 +166,7 @@
     <string name="copy_link_toast">Odkaz zkopírován do schránky</string>
     <string name="play_episode_toast">Přehrát epizodu</string>
     <string name="subs_default_reset_toast">Obnovit na výchozí hodnoty</string>
-    <string name="acra_report_toast">Omlouváme se, aplikace spadla. Vývojářům bude odesláno anonymní hlášení
-        o pádu
-    </string>
+    <string name="acra_report_toast">Omlouváme se, aplikace spadla. Vývojářům bude odesláno anonymní hlášení o pádu</string>
     <string name="season">Sezóna</string>
     <string name="no_season">Žádná sezóna</string>
     <string name="episode">Epizoda</string>
@@ -184,8 +180,10 @@
     <string name="resume">Pokračovat</string>
     <string name="go_back_30">-30</string>
     <string name="go_forward_30">+30</string>
-    <string name="delete_message" formatted="true">Toto nevratně smaže %s\nJste si jisti?</string>
-    <string name="resume_time_left" formatted="true">%dm\nzbývá</string>
+    <string name="delete_message" formatted="true">Toto nevratně smaže %s
+\nJste si jisti\?</string>
+    <string name="resume_time_left" formatted="true">%dm
+\nzbývá</string>
     <string name="status_ongoing">Probíhající</string>
     <string name="status_completed">Dokončena</string>
     <string name="status">Stav</string>
@@ -213,8 +211,8 @@
     <string name="movies_singular">Film</string>
     <string name="tv_series_singular">Seriál</string>
     <string name="cartoons_singular">Animovaný</string>
-    <string name="anime_singular">@string/anime</string>
-    <string name="ova_singular">@string/ova</string>
+    <string name="anime_singular">\@string/anime</string>
+    <string name="ova_singular">\@string/ova</string>
     <string name="torrent_singular">Torrent</string>
     <string name="documentaries_singular">Dokument</string>
     <string name="asian_drama_singular">Asijské drama</string>
@@ -265,22 +263,7 @@
     <string name="resize_fill">Roztáhnout</string>
     <string name="resize_zoom">Přiblížit</string>
     <string name="legal_notice">Odmítnutí odpovědnosti</string>
-    <string name="legal_notice_text" translatable="false">Jakékoli právní otázky týkající se obsahu této aplikace
-        je třeba řešit se samotnými hostiteli a poskytovateli souborů, protože s nimi nejsme nijak spojeni.
-
-        V případě porušení autorských práv se obraťte přímo na odpovědné strany nebo na webové stránky, na kterých se streamování odehrává.
-
-        Aplikace je určena výhradně pro vzdělávací a osobní účely.
-
-        CloudStream 3 v aplikaci nehostuje žádný obsah a nemá žádnou kontrolu nad tím, jaká média jsou v aplikaci umístěna nebo odstraněna.
-        CloudStream 3 funguje jako jakýkoli jiný vyhledávač, například Google. Služba CloudStream 3 nehostuje, nenahrává ani
-        nespravuje žádná videa, filmy ani obsah. Pouze vyhledává, agreguje a zobrazuje odkazy v pohodlném,
-        uživatelsky přívětivém rozhraní.
-
-        Pouze shromažďuje webové stránky třetích stran, které jsou veřejně přístupné prostřednictvím jakéhokoli běžného webového prohlížeče. Je
-        odpovědností uživatele, aby se vyvaroval jakýchkoli akcí, které by mohly porušovat zákony platné v jeho lokalitě. Použijte
-        CloudStream 3 na vlastní nebezpečí.
-    </string>
+    <string name="legal_notice_text" translatable="false">Jakékoli právní otázky týkající se obsahu této aplikace je třeba řešit se samotnými hostiteli a poskytovateli souborů, protože s nimi nejsme nijak spojeni. V případě porušení autorských práv se obraťte přímo na odpovědné strany nebo na webové stránky, na kterých se streamování odehrává. Aplikace je určena výhradně pro vzdělávací a osobní účely. CloudStream 3 v aplikaci nehostuje žádný obsah a nemá žádnou kontrolu nad tím, jaká média jsou v aplikaci umístěna nebo odstraněna. CloudStream 3 funguje jako jakýkoli jiný vyhledávač, například Google. Služba CloudStream 3 nehostuje, nenahrává ani nespravuje žádná videa, filmy ani obsah. Pouze vyhledává, agreguje a zobrazuje odkazy v pohodlném, uživatelsky přívětivém rozhraní. Pouze shromažďuje webové stránky třetích stran, které jsou veřejně přístupné prostřednictvím jakéhokoli běžného webového prohlížeče. Je odpovědností uživatele, aby se vyvaroval jakýchkoli akcí, které by mohly porušovat zákony platné v jeho lokalitě. Použijte CloudStream 3 na vlastní nebezpečí.</string>
     <string name="category_general">Obecné</string>
     <string name="random_button_settings">Náhodné tlačítko</string>
     <string name="random_button_settings_desc">Zobrazit na domovské stránce náhodné tlačítko</string>
@@ -322,7 +305,7 @@
     <string name="upload_sync">Synchronizovat</string>
     <string name="sync_score">Hodnoceno</string>
     <string name="sync_score_format" formatted="true">%d / 10</string>
-    <string name="sync_total_episodes_none">/??</string>
+    <string name="sync_total_episodes_none">/\?\?</string>
     <string name="sync_total_episodes_some" formatted="true">/%d</string>
     <string name="authenticated_user" formatted="true">Přihlášeno k %s</string>
     <string name="authenticated_user_fail" formatted="true">Nepodařilo se přihlásit k %s</string>
