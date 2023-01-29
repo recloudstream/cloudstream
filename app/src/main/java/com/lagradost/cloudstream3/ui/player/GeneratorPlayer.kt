@@ -11,9 +11,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.EditorInfo
 import android.widget.*
-import android.widget.TextView.OnEditorActionListener
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.core.animation.addListener
@@ -528,7 +526,7 @@ class GeneratorPlayer : FullScreenPlayer() {
             }
         }
 
-    var selectSourceDialog: AlertDialog? = null
+    var selectSourceDialog: Dialog? = null
 //    var selectTracksDialog: AlertDialog? = null
 
     override fun showMirrorsDialogue() {
@@ -540,10 +538,8 @@ class GeneratorPlayer : FullScreenPlayer() {
                 player.handleEvent(CSPlayerEvent.Pause)
                 val currentSubtitles = sortSubs(currentSubs)
 
-                val sourceBuilder = AlertDialog.Builder(ctx, R.style.AlertDialogCustomBlack)
-                    .setView(R.layout.player_select_source_and_subs)
-
-                val sourceDialog = sourceBuilder.create()
+                val sourceDialog = Dialog(ctx, R.style.AlertDialogCustomBlack)
+                sourceDialog.setContentView(R.layout.player_select_source_and_subs)
 
                 selectSourceDialog = sourceDialog
 

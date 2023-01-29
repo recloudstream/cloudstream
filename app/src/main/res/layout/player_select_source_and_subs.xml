@@ -44,6 +44,7 @@
                 android:nextFocusLeft="@id/sort_subtitles"
                 android:nextFocusRight="@id/apply_btt"
                 android:requiresFadingEdge="vertical"
+                tools:layout_height="100dp"
                 tools:listitem="@layout/sort_bottom_single_choice" />
         </LinearLayout>
 
@@ -117,6 +118,7 @@
                 android:nextFocusLeft="@id/sort_providers"
                 android:nextFocusRight="@id/cancel_btt"
                 android:requiresFadingEdge="vertical"
+                tools:layout_height="200dp"
                 tools:listfooter="@layout/sort_bottom_footer_add_choice"
                 tools:listitem="@layout/sort_bottom_single_choice" />
         </LinearLayout>
