@@ -428,12 +428,14 @@ object PluginManager {
      * @return true if safe mode file is present
      **/
     fun checkSafeModeFile(): Boolean {
-        val folder = File(CLOUD_STREAM_FOLDER)
-        if (!folder.exists()) return false
-        val files = folder.listFiles { _, name ->
-            name.equals("safe", ignoreCase = true)
-        }
-        return files?.any() ?: false
+        return normalSafeApiCall {
+            val folder = File(CLOUD_STREAM_FOLDER)
+            if (!folder.exists()) return@normalSafeApiCall false
+            val files = folder.listFiles { _, name ->
+                name.equals("safe", ignoreCase = true)
+            }
+            files?.any()
+        } ?: false
     }
 
     /**
