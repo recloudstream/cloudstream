@@ -347,7 +347,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             }
     }
 
-    var lastPopup : SearchResponse? = null
+    var lastPopup: SearchResponse? = null
     fun loadPopup(result: SearchResponse) {
         lastPopup = result
         viewModel.load(
@@ -716,7 +716,12 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
 
         changeStatusBarState(isEmulatorSettings())
 
-        if (lastError == null) {
+
+        if (PluginManager.checkSafeModeFile()) {
+            normalSafeApiCall {
+                showToast(this, R.string.safe_mode_file, Toast.LENGTH_LONG)
+            }
+        } else if (lastError == null) {
             ioSafe {
                 getKey<String>(USER_SELECTED_HOMEPAGE_API)?.let { homeApi ->
                     mainPluginsLoadedEvent.invoke(loadSinglePlugin(this@MainActivity, homeApi))

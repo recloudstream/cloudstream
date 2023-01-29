@@ -144,8 +144,10 @@ object PluginManager {
         return getKey(PLUGINS_KEY_LOCAL) ?: emptyArray()
     }
 
-    private val LOCAL_PLUGINS_PATH =
-        Environment.getExternalStorageDirectory().absolutePath + "/Cloudstream3/plugins"
+    private val CLOUD_STREAM_FOLDER =
+        Environment.getExternalStorageDirectory().absolutePath + "/Cloudstream3/"
+
+    private val LOCAL_PLUGINS_PATH = CLOUD_STREAM_FOLDER + "plugins"
 
     public var currentlyLoading: String? = null
 
@@ -419,6 +421,19 @@ object PluginManager {
 
         loadedLocalPlugins = true
         afterPluginsLoadedEvent.invoke(forceReload)
+    }
+
+    /**
+     * This can be used to override any extension loading to fix crashes!
+     * @return true if safe mode file is present
+     **/
+    fun checkSafeModeFile(): Boolean {
+        val folder = File(CLOUD_STREAM_FOLDER)
+        if (!folder.exists()) return false
+        val files = folder.listFiles { _, name ->
+            name.equals("safe", ignoreCase = true)
+        }
+        return files?.any() ?: false
     }
 
     /**
