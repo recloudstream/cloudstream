@@ -537,4 +537,21 @@
     <string name="delayed_update_notice">应用退出后将会更新</string>
     <string name="plugin_downloaded">插件已下载</string>
     <string name="action_remove_from_watched">从已观看中移除</string>
+    <string name="safe_mode_file">发现安全模式文件！
+\n启动时不加载任何扩展，直到文件被删除。</string>
+    <string name="browser">浏览器</string>
+    <string name="library">库</string>
+    <string name="sort_by">排序方式</string>
+    <string name="sort">排序</string>
+    <string name="sort_rating_desc">评分（从高到低）</string>
+    <string name="sort_rating_asc">评分（从低到高）</string>
+    <string name="sort_updated_new">更新（从新到旧）</string>
+    <string name="sort_updated_old">更新（从旧到新）</string>
+    <string name="sort_alphabetical_a">字母排序（从 A 到 Z）</string>
+    <string name="sort_alphabetical_z">字母排序（从 Z 到 A）</string>
+    <string name="select_library">选择库</string>
+    <string name="open_with">打开方式</string>
+    <string name="empty_library_no_accounts_message">看来您的库是空的 :(
+\n登录库账户或添加节目到您的本地库</string>
+    <string name="empty_library_logged_in_message">看来此列表是空的，请尝试切换到另一个</string>
 </resources>
