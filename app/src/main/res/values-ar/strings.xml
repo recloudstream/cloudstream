@@ -521,4 +521,21 @@
     <string name="update_started">بدأ التحديث</string>
     <string name="plugin_downloaded">تم تنزيل الإضافة</string>
     <string name="action_remove_from_watched">إزالة من المشاهدة</string>
+    <string name="sort_alphabetical_a">الترتيب الأبجدي (من الألف إلى الياء)</string>
+    <string name="select_library">اختر المكتبة</string>
+    <string name="browser">المتصفح</string>
+    <string name="sort_updated_new">محدث (من الأحدث إلى الأقدم)</string>
+    <string name="empty_library_logged_in_message">يبدو أن هذه القائمة فارغة ، حاول التبديل إلى قائمة أخرى</string>
+    <string name="sort_rating_desc">التقييم (من الأعلى إلى الأدنى)</string>
+    <string name="sort_rating_asc">التقييم (من الأدنى إلى الأعلى)</string>
+    <string name="sort_alphabetical_z">الترتيب الأبجدي (من ي إلى أ)</string>
+    <string name="empty_library_no_accounts_message">يبدو أن مكتبتك فارغة :(
+\nتسجيل الدخول إلى حساب مكتبة أو إضافة عروض إلى مكتبتك المحلية</string>
+    <string name="sort_updated_old">محدث (من القديم إلى الجديد)</string>
+    <string name="sort_by">فرز حسب</string>
+    <string name="sort">افرز</string>
+    <string name="open_with">فتح بواسطة</string>
+    <string name="library">المكتبة</string>
+    <string name="safe_mode_file">تم العثور على ملف الوضع الآمن!
+\nلا يتم تحميل أي ملحقات عند بدء التشغيل حتى تتم إزالة الملف.</string>
 </resources>

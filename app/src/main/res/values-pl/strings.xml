@@ -492,4 +492,21 @@
     <string name="update_started">Rozpoczęto aktualizację</string>
     <string name="plugin_downloaded">Pobrano rozszerzenie</string>
     <string name="action_remove_from_watched">Usuń z obejrzanych</string>
+    <string name="browser">Przeglądarka</string>
+    <string name="sort_updated_new">Data aktualizacji (od nowego do starego)</string>
+    <string name="sort_by">Sortuj według</string>
+    <string name="sort">Sortuj</string>
+    <string name="open_with">Otwórz za pomocą</string>
+    <string name="sort_rating_desc">Ocena (od najwyższej do najniższej)</string>
+    <string name="sort_rating_asc">Ocena (od najniższej do najwyższej)</string>
+    <string name="sort_updated_old">Data aktualizacji (od starego do nowego)</string>
+    <string name="sort_alphabetical_a">Alfabetycznie (od A do Z)</string>
+    <string name="sort_alphabetical_z">Alfabetycznie (od Z do A)</string>
+    <string name="select_library">Wybierz bibliotekę</string>
+    <string name="library">Biblioteka</string>
+    <string name="empty_library_no_accounts_message">Wygląda na to, że twoja biblioteka jest pusta :(
+\nZaloguj się na swoje konto lub dodaj programy do swojej lokalnej biblioteki</string>
+    <string name="empty_library_logged_in_message">Wygląda na to, że ta lista jest pusta, spróbuj przełączyć się na inną</string>
+    <string name="safe_mode_file">Znaleziono plik trybu bezpiecznego.
+\nRozszerzenia nie zostaną wczytane, dopóki plik nie zostanie usunięty.</string>
 </resources>
