@@ -1074,7 +1074,8 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                 }
 
                 when (keyCode) {
-                    // don't allow dpad move when hidde
+                    // don't allow dpad move when hidden
+
                     KeyEvent.KEYCODE_DPAD_DOWN,
                     KeyEvent.KEYCODE_DPAD_UP,
                     KeyEvent.KEYCODE_DPAD_DOWN_LEFT,
