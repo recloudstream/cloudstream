@@ -107,7 +107,7 @@ class ResultFragmentTv : ResultFragment() {
         result_recommendations?.isGone = isInvalid
         result_recommendations_holder?.isGone = isInvalid
         val matchAgainst = validApiName ?: rec?.firstOrNull()?.apiName
-        (result_recommendations?.adapter as SearchAdapter?)?.updateList(rec?.filter { it.apiName == matchAgainst }
+        (result_recommendations?.adapter as? SearchAdapter)?.updateList(rec?.filter { it.apiName == matchAgainst }
             ?: emptyList())
 
         rec?.map { it.apiName }?.distinct()?.let { apiNames ->

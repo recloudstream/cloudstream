@@ -347,7 +347,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             }
     }
 
-    var lastPopup : SearchResponse? = null
+    var lastPopup: SearchResponse? = null
     fun loadPopup(result: SearchResponse) {
         lastPopup = result
         viewModel.load(
@@ -388,6 +388,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         val isNavVisible = listOf(
             R.id.navigation_home,
             R.id.navigation_search,
+            R.id.navigation_library,
             R.id.navigation_downloads,
             R.id.navigation_settings,
             R.id.navigation_download_child,
@@ -438,6 +439,11 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
 
         nav_view?.isVisible = isNavVisible && !landscape
         nav_rail_view?.isVisible = isNavVisible && landscape
+
+        // Hide library on TV since it is not supported yet :(
+        val isTrueTv = isTrueTvSettings()
+        nav_view?.menu?.findItem(R.id.navigation_library)?.isVisible = !isTrueTv
+        nav_rail_view?.menu?.findItem(R.id.navigation_library)?.isVisible = !isTrueTv
     }
 
     //private var mCastSession: CastSession? = null
@@ -710,7 +716,12 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
 
         changeStatusBarState(isEmulatorSettings())
 
-        if (lastError == null) {
+
+        if (PluginManager.checkSafeModeFile()) {
+            normalSafeApiCall {
+                showToast(this, R.string.safe_mode_file, Toast.LENGTH_LONG)
+            }
+        } else if (lastError == null) {
             ioSafe {
                 getKey<String>(USER_SELECTED_HOMEPAGE_API)?.let { homeApi ->
                     mainPluginsLoadedEvent.invoke(loadSinglePlugin(this@MainActivity, homeApi))

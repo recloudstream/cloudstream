@@ -569,7 +569,7 @@ class HomeFragment : Fragment() {
                     val mutableListOfResponse = mutableListOf<SearchResponse>()
                     listHomepageItems.clear()
 
-                    (home_master_recycler?.adapter as? ParentItemAdapter?)?.updateList(
+                    (home_master_recycler?.adapter as? ParentItemAdapter)?.updateList(
                         d.values.toMutableList(),
                         home_master_recycler
                     )
@@ -621,7 +621,7 @@ class HomeFragment : Fragment() {
                     //home_loaded?.isVisible = false
                 }
                 is Resource.Loading -> {
-                    (home_master_recycler?.adapter as? ParentItemAdapter?)?.updateList(listOf())
+                    (home_master_recycler?.adapter as? ParentItemAdapter)?.updateList(listOf())
                     home_loading_shimmer?.startShimmer()
                     home_loading?.isVisible = true
                     home_loading_error?.isVisible = false

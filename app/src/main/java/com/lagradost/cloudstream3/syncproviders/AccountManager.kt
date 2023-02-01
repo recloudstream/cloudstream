@@ -13,6 +13,7 @@ abstract class AccountManager(private val defIndex: Int) : AuthAPI {
         val openSubtitlesApi = OpenSubtitlesApi(0)
         val indexSubtitlesApi = IndexSubtitleApi()
         val addic7ed = Addic7ed()
+        val localListApi = LocalList()
 
         // used to login via app intent
         val OAuth2Apis
@@ -29,7 +30,7 @@ abstract class AccountManager(private val defIndex: Int) : AuthAPI {
         // used for active syncing
         val SyncApis
             get() = listOf(
-                SyncRepo(malApi), SyncRepo(aniListApi)
+                SyncRepo(malApi), SyncRepo(aniListApi), SyncRepo(localListApi)
             )
 
         val inAppAuths

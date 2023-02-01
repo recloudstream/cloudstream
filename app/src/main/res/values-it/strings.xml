@@ -511,4 +511,21 @@
     <string name="update_started">Aggiornamento avviato</string>
     <string name="plugin_downloaded">Plugin scaricato</string>
     <string name="action_remove_from_watched">Rimuovi dai già visti</string>
+    <string name="browser">Browser</string>
+    <string name="sort_by">Ordina per</string>
+    <string name="sort_rating_desc">Punteggio (Decrescente)</string>
+    <string name="sort_rating_asc">Punteggio (Crescente)</string>
+    <string name="sort_updated_new">Aggiornato (Da nuovo a vecchio)</string>
+    <string name="sort_updated_old">Aggiornato (Da vecchio a nuovo)</string>
+    <string name="sort_alphabetical_a">Alfabetico (A - Z)</string>
+    <string name="sort_alphabetical_z">Alfabetico (Z - A)</string>
+    <string name="empty_library_no_accounts_message">Sembra che la tua libreria sia vuota :(
+\nAccedi a un account di libreria o aggiungi degli show alla tua libreria locale</string>
+    <string name="select_library">Seleziona libreria</string>
+    <string name="open_with">Apri con</string>
+    <string name="library">Libreria</string>
+    <string name="sort">Ordina</string>
+    <string name="empty_library_logged_in_message">Sembra che questa lista sia vuota, prova a passare a un\'altra</string>
+    <string name="safe_mode_file">File \"safe mode\" trovato!
+\nAll\'avvio non sarà caricata alcuna estensione finchè il file non verrà rimosso.</string>
 </resources>

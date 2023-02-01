@@ -7,7 +7,8 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlin.math.abs
 
-class GrdLayoutManager(val context: Context, _spanCount: Int) : GridLayoutManager(context, _spanCount) {
+class GrdLayoutManager(val context: Context, _spanCount: Int) :
+    GridLayoutManager(context, _spanCount) {
     override fun onFocusSearchFailed(
         focused: View,
         focusDirection: Int,
@@ -34,7 +35,7 @@ class GrdLayoutManager(val context: Context, _spanCount: Int) : GridLayoutManage
             val pos = maxOf(0, getPosition(focused!!) - 2)
             parent.scrollToPosition(pos)
             super.onRequestChildFocus(parent, state, child, focused)
-        } catch (e: Exception){
+        } catch (e: Exception) {
             false
         }
     }

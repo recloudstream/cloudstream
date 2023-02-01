@@ -18,13 +18,11 @@ import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.plugins.PLUGINS_KEY
 import com.lagradost.cloudstream3.plugins.PLUGINS_KEY_LOCAL
 import com.lagradost.cloudstream3.syncproviders.providers.AniListApi.Companion.ANILIST_CACHED_LIST
-import com.lagradost.cloudstream3.syncproviders.providers.AniListApi.Companion.ANILIST_SHOULD_UPDATE_LIST
 import com.lagradost.cloudstream3.syncproviders.providers.AniListApi.Companion.ANILIST_TOKEN_KEY
 import com.lagradost.cloudstream3.syncproviders.providers.AniListApi.Companion.ANILIST_UNIXTIME_KEY
 import com.lagradost.cloudstream3.syncproviders.providers.AniListApi.Companion.ANILIST_USER_KEY
 import com.lagradost.cloudstream3.syncproviders.providers.MALApi.Companion.MAL_CACHED_LIST
 import com.lagradost.cloudstream3.syncproviders.providers.MALApi.Companion.MAL_REFRESH_TOKEN_KEY
-import com.lagradost.cloudstream3.syncproviders.providers.MALApi.Companion.MAL_SHOULD_UPDATE_LIST
 import com.lagradost.cloudstream3.syncproviders.providers.MALApi.Companion.MAL_TOKEN_KEY
 import com.lagradost.cloudstream3.syncproviders.providers.MALApi.Companion.MAL_UNIXTIME_KEY
 import com.lagradost.cloudstream3.syncproviders.providers.MALApi.Companion.MAL_USER_KEY
@@ -52,12 +50,10 @@ object BackupUtils {
         // When sharing backup we do not want to transfer what is essentially the password
         ANILIST_TOKEN_KEY,
         ANILIST_CACHED_LIST,
-        ANILIST_SHOULD_UPDATE_LIST,
         ANILIST_UNIXTIME_KEY,
         ANILIST_USER_KEY,
         MAL_TOKEN_KEY,
         MAL_REFRESH_TOKEN_KEY,
-        MAL_SHOULD_UPDATE_LIST,
         MAL_CACHED_LIST,
         MAL_UNIXTIME_KEY,
         MAL_USER_KEY,

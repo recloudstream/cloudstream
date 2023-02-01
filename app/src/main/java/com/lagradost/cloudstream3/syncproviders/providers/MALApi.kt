@@ -1,6 +1,7 @@
 package com.lagradost.cloudstream3.syncproviders.providers
 
 import android.util.Base64
+import androidx.annotation.StringRes
 import androidx.fragment.app.FragmentActivity
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
@@ -8,11 +9,15 @@ import com.lagradost.cloudstream3.AcraApplication.Companion.openBrowser
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.ShowStatus
+import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.syncproviders.AccountManager
 import com.lagradost.cloudstream3.syncproviders.AuthAPI
 import com.lagradost.cloudstream3.syncproviders.SyncAPI
+import com.lagradost.cloudstream3.syncproviders.SyncIdName
+import com.lagradost.cloudstream3.ui.library.ListSorting
+import com.lagradost.cloudstream3.ui.result.txt
 import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 import com.lagradost.cloudstream3.utils.AppUtils.splitQuery
 import com.lagradost.cloudstream3.utils.DataStore.toKotlinObject
@@ -31,13 +36,15 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
     override val redirectUrl = "mallogin"
     override val idPrefix = "mal"
     override var mainUrl = "https://myanimelist.net"
-    val apiUrl = "https://api.myanimelist.net"
+    private val apiUrl = "https://api.myanimelist.net"
     override val icon = R.drawable.mal_logo
     override val requiresLogin = false
-
+    override val syncIdName = SyncIdName.MyAnimeList
+    override var requireLibraryRefresh = true
     override val createAccountUrl = "$mainUrl/register.php"
 
     override fun logOut() {
+        requireLibraryRefresh = true
         removeAccountKeys()
     }
 
@@ -90,7 +97,9 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
             fromIntToAnimeStatus(status.status),
             status.score,
             status.watchedEpisodes
-        )
+        ).also {
+            requireLibraryRefresh = requireLibraryRefresh || it
+        }
     }
 
     data class MalAnime(
@@ -248,10 +257,45 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
 
         const val MAL_USER_KEY: String = "mal_user" // user data like profile
         const val MAL_CACHED_LIST: String = "mal_cached_list"
-        const val MAL_SHOULD_UPDATE_LIST: String = "mal_should_update_list"
         const val MAL_UNIXTIME_KEY: String = "mal_unixtime" // When token expires
         const val MAL_REFRESH_TOKEN_KEY: String = "mal_refresh_token" // refresh token
         const val MAL_TOKEN_KEY: String = "mal_token" // anilist token for api
+
+        fun convertToStatus(string: String): MalStatusType {
+            return fromIntToAnimeStatus(malStatusAsString.indexOf(string))
+        }
+
+        enum class MalStatusType(var value: Int, @StringRes val stringRes: Int) {
+            Watching(0, R.string.type_watching),
+            Completed(1, R.string.type_completed),
+            OnHold(2, R.string.type_on_hold),
+            Dropped(3, R.string.type_dropped),
+            PlanToWatch(4, R.string.type_plan_to_watch),
+            None(-1, R.string.type_none)
+        }
+
+        private fun fromIntToAnimeStatus(inp: Int): MalStatusType {//= AniListStatusType.values().first { it.value == inp }
+            return when (inp) {
+                -1 -> MalStatusType.None
+                0 -> MalStatusType.Watching
+                1 -> MalStatusType.Completed
+                2 -> MalStatusType.OnHold
+                3 -> MalStatusType.Dropped
+                4 -> MalStatusType.PlanToWatch
+                5 -> MalStatusType.Watching
+                else -> MalStatusType.None
+            }
+        }
+
+        private fun parseDateLong(string: String?): Long? {
+            return try {
+                SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").parse(
+                    string ?: return null
+                )?.time?.div(1000)
+            } catch (e: Exception) {
+                null
+            }
+        }
     }
 
     override suspend fun handleRedirect(url: String): Boolean {
@@ -275,7 +319,7 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
                 switchToNewAccount()
                 storeToken(res)
                 val user = getMalUser()
-                setKey(MAL_SHOULD_UPDATE_LIST, true)
+                requireLibraryRefresh = true
                 return user != null
             }
         }
@@ -308,9 +352,10 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
                 setKey(accountId, MAL_UNIXTIME_KEY, (token.expires_in + unixTime))
                 setKey(accountId, MAL_REFRESH_TOKEN_KEY, token.refresh_token)
                 setKey(accountId, MAL_TOKEN_KEY, token.access_token)
+                requireLibraryRefresh = true
             }
         } catch (e: Exception) {
-            e.printStackTrace()
+            logError(e)
         }
     }
 
@@ -329,7 +374,7 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
             ).text
             storeToken(res)
         } catch (e: Exception) {
-            e.printStackTrace()
+            logError(e)
         }
     }
 
@@ -382,7 +427,24 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
     data class Data(
         @JsonProperty("node") val node: Node,
         @JsonProperty("list_status") val list_status: ListStatus?,
-    )
+    ) {
+        fun toLibraryItem(): SyncAPI.LibraryItem {
+            return SyncAPI.LibraryItem(
+                this.node.title,
+                "https://myanimelist.net/anime/${this.node.id}/",
+                this.node.id.toString(),
+                this.list_status?.num_episodes_watched,
+                this.node.num_episodes,
+                this.list_status?.score?.times(10),
+                parseDateLong(this.list_status?.updated_at),
+                "MAL",
+                TvType.Anime,
+                this.node.main_picture?.large ?: this.node.main_picture?.medium,
+                null,
+                null,
+            )
+        }
+    }
 
     data class Paging(
         @JsonProperty("next") val next: String?
@@ -413,16 +475,41 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
         return getKey(MAL_CACHED_LIST) as? Array<Data>
     }
 
-    suspend fun getMalAnimeListSmart(): Array<Data>? {
+    private suspend fun getMalAnimeListSmart(): Array<Data>? {
         if (getAuth() == null) return null
-        return if (getKey(MAL_SHOULD_UPDATE_LIST, true) == true) {
+        return if (requireLibraryRefresh) {
             val list = getMalAnimeList()
             setKey(MAL_CACHED_LIST, list)
-            setKey(MAL_SHOULD_UPDATE_LIST, false)
             list
         } else {
             getMalAnimeListCached()
         }
+    }
+
+    override suspend fun getPersonalLibrary(): SyncAPI.LibraryMetadata {
+        val list = getMalAnimeListSmart()?.groupBy {
+            convertToStatus(it.list_status?.status ?: "").stringRes
+        }?.mapValues { group ->
+            group.value.map { it.toLibraryItem() }
+        } ?: emptyMap()
+
+        // To fill empty lists when MAL does not return them
+        val baseMap =
+            MalStatusType.values().filter { it.value >= 0 }.associate {
+                it.stringRes to emptyList<SyncAPI.LibraryItem>()
+            }
+
+        return SyncAPI.LibraryMetadata(
+            (baseMap + list).map { SyncAPI.LibraryList(txt(it.key), it.value) },
+            setOf(
+                ListSorting.AlphabeticalA,
+                ListSorting.AlphabeticalZ,
+                ListSorting.UpdatedNew,
+                ListSorting.UpdatedOld,
+                ListSorting.RatingHigh,
+                ListSorting.RatingLow,
+            )
+        )
     }
 
     private suspend fun getMalAnimeList(): Array<Data> {
@@ -438,10 +525,6 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
                     ?: break
         }
         return fullList.toTypedArray()
-    }
-
-    fun convertToStatus(string: String): MalStatusType {
-        return fromIntToAnimeStatus(malStatusAsString.indexOf(string))
     }
 
     private suspend fun getMalAnimeListSlice(offset: Int = 0): MalList? {
@@ -555,28 +638,6 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
             registerAccount()
         }
         return user
-    }
-
-    enum class MalStatusType(var value: Int) {
-        Watching(0),
-        Completed(1),
-        OnHold(2),
-        Dropped(3),
-        PlanToWatch(4),
-        None(-1)
-    }
-
-    private fun fromIntToAnimeStatus(inp: Int): MalStatusType {//= AniListStatusType.values().first { it.value == inp }
-        return when (inp) {
-            -1 -> MalStatusType.None
-            0 -> MalStatusType.Watching
-            1 -> MalStatusType.Completed
-            2 -> MalStatusType.OnHold
-            3 -> MalStatusType.Dropped
-            4 -> MalStatusType.PlanToWatch
-            5 -> MalStatusType.Watching
-            else -> MalStatusType.None
-        }
     }
 
     private suspend fun setScoreRequest(

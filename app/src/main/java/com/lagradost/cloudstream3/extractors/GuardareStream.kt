@@ -6,6 +6,11 @@ import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.utils.*
 
+class Vanfem : GuardareStream() {
+    override var name = "Vanfem"
+    override var mainUrl = "https://vanfem.com/"
+}
+
 class CineGrabber : GuardareStream() {
     override var name = "CineGrabber"
     override var mainUrl = "https://cinegrabber.com"

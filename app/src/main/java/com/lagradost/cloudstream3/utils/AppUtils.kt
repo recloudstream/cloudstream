@@ -28,10 +28,12 @@ import androidx.core.text.toSpanned
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.tvprovider.media.tv.*
 import androidx.tvprovider.media.tv.WatchNextProgram.fromCursor
+import androidx.viewpager2.widget.ViewPager2
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.google.android.gms.cast.framework.CastContext
 import com.google.android.gms.cast.framework.CastState
@@ -65,6 +67,7 @@ import okhttp3.Cache
 import java.io.*
 import java.net.URL
 import java.net.URLDecoder
+import kotlin.system.measureTimeMillis
 
 object AppUtils {
     fun RecyclerView.setMaxViewPoolSize(maxViewTypeId: Int, maxPoolSize: Int) {
@@ -162,6 +165,18 @@ object AppUtils {
             }
 
         return builder.build()
+    }
+
+    // https://stackoverflow.com/a/67441735/13746422
+    fun ViewPager2.reduceDragSensitivity(f: Int = 4) {
+        val recyclerViewField = ViewPager2::class.java.getDeclaredField("mRecyclerView")
+        recyclerViewField.isAccessible = true
+        val recyclerView = recyclerViewField.get(this) as RecyclerView
+
+        val touchSlopField = RecyclerView::class.java.getDeclaredField("mTouchSlop")
+        touchSlopField.isAccessible = true
+        val touchSlop = touchSlopField.get(recyclerView) as Int
+        touchSlopField.set(recyclerView, touchSlop * f)       // "8" was obtained experimentally
     }
 
     @SuppressLint("RestrictedApi")
@@ -328,6 +343,46 @@ object AppUtils {
             downloadAllPluginsDialog(url, repo.name)
         }
     }
+
+    abstract class DiffAdapter<T>(
+        open val items: MutableList<T>,
+        val comparison: (first: T, second: T) -> Boolean = { first, second ->
+            first.hashCode() == second.hashCode()
+        }
+    ) :
+        RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+        override fun getItemCount(): Int {
+            return items.size
+        }
+
+        fun updateList(newList: List<T>) {
+            val diffResult = DiffUtil.calculateDiff(
+                GenericDiffCallback(this.items, newList)
+            )
+
+            items.clear()
+            items.addAll(newList)
+
+            diffResult.dispatchUpdatesTo(this)
+        }
+
+        inner class GenericDiffCallback(
+            private val oldList: List<T>,
+            private val newList: List<T>
+        ) :
+            DiffUtil.Callback() {
+            override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int) =
+                comparison(oldList[oldItemPosition], newList[newItemPosition])
+
+            override fun getOldListSize() = oldList.size
+
+            override fun getNewListSize() = newList.size
+
+            override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int) =
+                oldList[oldItemPosition] == newList[newItemPosition]
+        }
+    }
+
 
     fun Activity.downloadAllPluginsDialog(repositoryUrl: String, repositoryName: String) {
         runOnUiThread {

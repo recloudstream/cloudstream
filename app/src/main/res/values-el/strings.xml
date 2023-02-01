@@ -314,7 +314,7 @@
     <string name="crash_reporting_title">Αναφορά κατάρρευσης</string>
     <string name="preferred_media_subtext">Τι θα θέλατε να δείτε</string>
     <string name="setup_done">Έγινε</string>
-    <string name="extensions">Πρόσθετα</string>
+    <string name="extensions">Extensions</string>
     <string name="add_repository">Προσθήκη αποθετηρίου</string>
     <string name="repository_name_hint">Όνομα αποθετηρίου</string>
     <string name="repository_url_hint">Σύνδεσμος αποθετηρίου</string>
@@ -490,4 +490,22 @@
     <string name="plugin_downloaded">Το πρόσθετο κατέβει</string>
     <string name="update_started">Ενημέρωση ξεκίνησε</string>
     <string name="delayed_update_notice">Η εφαρμογή θα ενημερωθεί κατά την έξοδο</string>
+    <string name="sort_alphabetical_z">Αλφαβητικά (Ω προς Α)</string>
+    <string name="sort">Ταξινόμηση</string>
+    <string name="sort_rating_asc">Κριτική (Χαμηλή προς Υψηλή)</string>
+    <string name="sort_updated_new">Ενημερωμένο (Καινούριο προς παλιό)</string>
+    <string name="sort_updated_old">Ενημερωμένο (Παλιό προς Καινούργιο)</string>
+    <string name="library">Βιβλιοθήκη</string>
+    <string name="sort_rating_desc">Κριτική (Υψηλή προς χαμηλή)</string>
+    <string name="sort_by">Ταξινόμηση με βάση</string>
+    <string name="sort_alphabetical_a">Αλφαβητικά (Α προς Ω)</string>
+    <string name="select_library">Διάλεξε βιβλιοθήκη</string>
+    <string name="empty_library_logged_in_message">Φαίνεται πως η λίστα είναι άδεια, δοκίμασε να μεταβείς σε μία άλλη</string>
+    <string name="action_remove_from_watched">Αφαίρεση από παρακολουθημένα</string>
+    <string name="browser">Περιηγητής</string>
+    <string name="open_with">Άνοιγμα με</string>
+    <string name="empty_library_no_accounts_message">Φαίνεται πως η βιβλιοθήκη σου είναι άδεια :(
+\nΣυνδέσου σε έναν λογαριασμό που έχει βιβλιοθήκη, ή πρόσθεσε σειρές στην τοπική βιβλιοθήκη σου</string>
+    <string name="safe_mode_file">Βρέθηκε αρχείο Ασφαλούς Λειτουργίας!
+\nΔεν πρόκειται να φορτωθούν extensions κατά το ξεκίνημα μέχρι να διαγραφεί το αρχείο.</string>
 </resources>

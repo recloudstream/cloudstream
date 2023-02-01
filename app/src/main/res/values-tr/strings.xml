@@ -13,7 +13,7 @@
     <string name="year_format" formatted="true" translatable="false">%d</string>
     <string name="app_dub_sub_episode_text_format" formatted="true">%s Ep %d</string>
     <string name="cast_format" formatted="true">Cast: %s</string>
-    <string name="next_episode_format" formatted="true">Bölüm %d şu tarihte yayınlanacak:</string>
+    <string name="next_episode_format" formatted="true">Bölüm %d şu tarihte yayınlanacak</string>
     <string name="next_episode_time_day_format" formatted="true">%dd %dh %dm</string>
     <string name="next_episode_time_hour_format" formatted="true">%dh %dm</string>
     <string name="next_episode_time_min_format" formatted="true">%dm</string>
@@ -435,18 +435,18 @@
     <string name="skip_setup">Kurulumu atla</string>
     <string name="app_layout_subtext">Cihazınıza uygun görünümü seçin</string>
     <string name="crash_reporting_title">Çökme raporları</string>
-    <string name="preferred_media_subtext">Ne izlemek istiyorsunuz\?</string>
+    <string name="preferred_media_subtext">Ne izlemek istiyorsunuz</string>
     <string name="setup_done">Bitti</string>
     <string name="extensions">Eklentiler</string>
     <string name="add_repository">Depo ekle</string>
     <string name="repository_name_hint">Depo ismi</string>
-    <string name="repository_url_hint">Depo URL\'i</string>
+    <string name="repository_url_hint">Depo URL\'si</string>
     <string name="plugin_loaded">Eklenti yüklendi</string>
     <string name="plugin_deleted">Eklenti silindi</string>
     <string name="plugin_load_fail" formatted="true">%s yüklenemedi</string>
     <string name="is_adult">+18</string>
-    <string name="batch_download_start_format" formatted="true">%d %s indirilmeye başlandı</string>
-    <string name="batch_download_finish_format" formatted="true">%d %s başarıyla indirildi</string>
+    <string name="batch_download_start_format" formatted="true">%d %s … indirilmeye başlandı</string>
+    <string name="batch_download_finish_format" formatted="true">%d %s indirildi</string>
     <string name="batch_download_nothing_to_download_format" formatted="true">%s\'nin tamamı zaten indirildi</string>
     <string name="batch_download">Toplu indir</string>
     <string name="plugin_singular">eklenti</string>
@@ -458,7 +458,11 @@
     <string name="plugins_disabled" formatted="true">Devre dışı: %d</string>
     <string name="plugins_not_downloaded" formatted="true">İndirilmeyen: %d</string>
     <string name="plugins_updated" formatted="true">%d eklenti(ler) güncellendi</string>
-    <string name="blank_repo_message">Site eklentilerini yüklemek için bir depo ekleyin</string>
+    <string name="blank_repo_message">CloudStream\'in varsayılan olarak yüklü sitesi yoktur. Siteleri depolardan kurmanız gerekir.
+\n
+\nSky UK Limited tarafından beyinsiz bir DMCA yayından kaldırma 🤮 nedeniyle uygulama içinde depo linklerini bulunduramıyoruz.
+\n
+\nDiscord\'umuza katılın veya çevrimiçi arama yapın.</string>
     <string name="view_public_repositories_button">Topluluk depolarını görüntüle</string>
     <string name="view_public_repositories_button_short">Herkese açık liste</string>
     <string name="uppercase_all_subtitles">Tüm alt yazılar büyük harf</string>
@@ -525,4 +529,12 @@
     <string name="all_languages_preference">Tüm diller</string>
     <string name="skip_type_format" formatted="true">Geç %s</string>
     <string name="action_remove_from_watched">İzlenenlerden kaldır</string>
+    <string name="skip_type_mixed_ed">Karışık son</string>
+    <string name="skip_type_mixed_op">Karışık başlangıç</string>
+    <string name="skip_type_creddits">Kredi</string>
+    <string name="skip_type_intro">Giriş</string>
+    <string name="plugin_downloaded">Eklenti İndirildi</string>
+    <string name="pref_category_actions">Aksiyonlar</string>
+    <string name="enable_skip_op_from_database_des">Açma/bitiş için atlama açılır pencerelerini göster</string>
+    <string name="clipboard_too_large">Çok fazla metin. Panoya kaydedilemiyor.</string>
 </resources>

@@ -420,7 +420,7 @@ class SearchFragment : Fragment() {
                 is Resource.Success -> {
                     it.value.let { data ->
                         if (data.isNotEmpty()) {
-                            (search_autofit_results?.adapter as SearchAdapter?)?.updateList(data)
+                            (search_autofit_results?.adapter as? SearchAdapter)?.updateList(data)
                         }
                     }
                     searchExitIcon.alpha = 1f
