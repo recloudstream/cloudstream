@@ -149,4 +149,31 @@
             android:key="@string/video_buffer_clear_key"
             android:title="@string/video_buffer_clear_settings" />
     </PreferenceCategory>
+    <PreferenceCategory
+        android:title="@string/pref_category_android_tv">
+        <SeekBarPreference
+            android:defaultValue="10"
+            android:max="60"
+            android:title="@string/android_tv_interface_on_seek_settings"
+            android:summary="@string/android_tv_interface_on_seek_settings_summary"
+            app:adjustable="true"
+            app:defaultValue="30"
+            app:icon="@drawable/go_forward_30"
+            app:key="@string/android_tv_interface_on_seek_key"
+            app:min="5"
+            app:seekBarIncrement="5"
+            app:showSeekBarValue="true" />
+        <SeekBarPreference
+            android:defaultValue="10"
+            android:max="60"
+            android:title="@string/android_tv_interface_off_seek_settings"
+            android:summary="@string/android_tv_interface_off_seek_settings_summary"
+            app:adjustable="true"
+            app:defaultValue="10"
+            app:icon="@drawable/go_forward_30"
+            app:key="@string/android_tv_interface_off_seek_key"
+            app:min="5"
+            app:seekBarIncrement="5"
+            app:showSeekBarValue="true" />
+    </PreferenceCategory>
 </PreferenceScreen>

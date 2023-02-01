@@ -109,6 +109,8 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
     protected var currentPrefQuality =
         Qualities.P2160.value // preferred maximum quality, used for ppl w bad internet or on cell
     protected var fastForwardTime = 10000L
+    protected var androidTVInterfaceOffSeekTime = 10000L;
+    protected var androidTVInterfaceOnSeekTime = 30000L;
     protected var swipeHorizontalEnabled = false
     protected var swipeVerticalEnabled = false
     protected var playBackSpeedEnabled = false
@@ -1050,15 +1052,21 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                                 }
                             }
                             KeyEvent.KEYCODE_DPAD_LEFT -> {
-                                if ((!isShowing && !isLocked) || player_pause_play?.isFocused == true) {
-                                    player.seekTime(-fastForwardTime)
-                                    return true
+                                if (!isShowing && !isLocked) {
+                                    player.seekTime(-androidTVInterfaceOffSeekTime);
+                                    return true;
+                                } else if (player_pause_play?.isFocused == true) {
+                                    player.seekTime(-androidTVInterfaceOnSeekTime);
+                                    return true;
                                 }
                             }
                             KeyEvent.KEYCODE_DPAD_RIGHT -> {
-                                if ((!isShowing && !isLocked) || player_pause_play?.isFocused == true) {
-                                    player.seekTime(fastForwardTime)
-                                    return true
+                                if (!isShowing && !isLocked) {
+                                    player.seekTime(androidTVInterfaceOffSeekTime);
+                                    return true;
+                                } else if (player_pause_play?.isFocused == true) {
+                                    player.seekTime(androidTVInterfaceOnSeekTime);
+                                    return true;
                                 }
                             }
                         }
@@ -1066,8 +1074,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                 }
 
                 when (keyCode) {
-                    // don't allow dpad move when hidden
-
+                    // don't allow dpad move when hidde
                     KeyEvent.KEYCODE_DPAD_DOWN,
                     KeyEvent.KEYCODE_DPAD_UP,
                     KeyEvent.KEYCODE_DPAD_DOWN_LEFT,
@@ -1199,6 +1206,13 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
                 fastForwardTime =
                     settingsManager.getInt(ctx.getString(R.string.double_tap_seek_time_key), 10)
+                        .toLong() * 1000L
+
+                androidTVInterfaceOffSeekTime =
+                    settingsManager.getInt(ctx.getString(R.string.android_tv_interface_off_seek_key), 10)
+                        .toLong() * 1000L
+                androidTVInterfaceOnSeekTime =
+                    settingsManager.getInt(ctx.getString(R.string.android_tv_interface_on_seek_key), 10)
                         .toLong() * 1000L
 
                 navigationBarHeight = ctx.getNavigationBarHeight()
