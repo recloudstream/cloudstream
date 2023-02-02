@@ -333,8 +333,10 @@ class LibraryFragment : Fragment() {
                     handler.postDelayed(stopLoading, 300)
 
                     savedInstanceState?.getInt(VIEWPAGER_ITEM_KEY)?.let { currentPos ->
+                        if (currentPos < 0) return@let
                         viewpager?.setCurrentItem(currentPos, false)
-                        savedInstanceState.remove(VIEWPAGER_ITEM_KEY)
+                        // Using remove() sets the key to 0 instead of removing it
+                        savedInstanceState.putInt(VIEWPAGER_ITEM_KEY, -1)
                     }
 
                     // Since the animation to scroll multiple items is so much its better to just hide
