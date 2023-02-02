@@ -53,6 +53,18 @@ jobs:
             Please do not report any provider bugs here. This repository does not contain any providers. Please find the appropriate repository and report your issue there or join the [discord](https://discord.gg/5Hus6fM).
             
             Found provider name: `${{ steps.provider_check.outputs.name }}`
+      - name: Label if mentions provider
+        if: steps.provider_check.outputs.name != 'none'
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ steps.generate_token.outputs.token }}
+          script: |
+            github.rest.issues.addLabels({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: ["possible provider issue"]
+            })
       - name: Add eyes reaction to all issues
         uses: actions-cool/emoji-helper@v1.0.0
         with:

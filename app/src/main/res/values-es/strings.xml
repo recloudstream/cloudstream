@@ -489,4 +489,21 @@
     <string name="update_started">Actualización iniciada</string>
     <string name="plugin_downloaded">Complemento descargado</string>
     <string name="action_remove_from_watched">Quitar de visto</string>
+    <string name="sort_by">Ordenar por</string>
+    <string name="sort">Ordenar</string>
+    <string name="sort_rating_desc">Valoración (más a menos)</string>
+    <string name="sort_rating_asc">Valoración (menos a más)</string>
+    <string name="sort_updated_new">Actualizado (nuevo a viejo)</string>
+    <string name="sort_updated_old">Actualizado (viejo a nuevo)</string>
+    <string name="sort_alphabetical_a">Alfabéticamente (A a Z)</string>
+    <string name="browser">Navegador</string>
+    <string name="library">Biblioteca</string>
+    <string name="empty_library_logged_in_message">Parece que esta lista está vacía, intenta cambiar a otra</string>
+    <string name="sort_alphabetical_z">Alfabéticamente (Z a A)</string>
+    <string name="select_library">Seleccionar biblioteca</string>
+    <string name="open_with">Abrir con</string>
+    <string name="empty_library_no_accounts_message">Parece que tu biblioteca está vacía :(
+\nInicia sesión en una cuenta de biblioteca o añade series desde tu biblioteca local</string>
+    <string name="safe_mode_file">¡Se encontró un archivo en modo seguro!
+\nNo cargar ninguna extensión al inicio hasta que se elimine el archivo.</string>
 </resources>

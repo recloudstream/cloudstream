@@ -23,7 +23,7 @@
             android:elevation="10dp"
             app:cardBackgroundColor="?attr/primaryGrayBackground"
             app:cardCornerRadius="@dimen/rounded_image_radius"
-            app:layout_constraintDimensionRatio="1:1.414"
+            app:layout_constraintDimensionRatio="1:1.5"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">

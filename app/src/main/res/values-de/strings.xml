@@ -489,4 +489,21 @@
     <string name="delayed_update_notice">Die Anwendung wird beim Beenden aktualisiert</string>
     <string name="plugin_downloaded">Das Plugin wurde heruntergeladen</string>
     <string name="action_remove_from_watched">Von geschaut entfernen</string>
+    <string name="library">Bibliothek</string>
+    <string name="browser">Browser</string>
+    <string name="sort_by">Sortieren nach</string>
+    <string name="sort">Sortieren</string>
+    <string name="sort_rating_desc">Bewertung (gut bis schlecht)</string>
+    <string name="sort_rating_asc">Bewertung (schlecht bis gut)</string>
+    <string name="sort_updated_new">Aktualisiert (neu bis alt)</string>
+    <string name="sort_updated_old">Aktualisiert (alt bis neu)</string>
+    <string name="sort_alphabetical_a">Alphabetisch (A bis Z)</string>
+    <string name="sort_alphabetical_z">Alphabetisch (Z bis A)</string>
+    <string name="select_library">Bibliothek auswählen</string>
+    <string name="open_with">Öffnen mit</string>
+    <string name="empty_library_no_accounts_message">Sieht aus, als wäre deine Bibliothek leer :(
+\nMelde dich mit einem Bibliothekskonto an oder füge Titel zu deiner lokalen Bibliothek hinzu</string>
+    <string name="empty_library_logged_in_message">Diese Liste scheint leer zu sein. Versuche, zu einer anderen Liste zu wechseln.</string>
+    <string name="safe_mode_file">Datei für abgesicherten Modus gefunden!
+\nBeim Start werden keine Erweiterungen geladen, bis die Datei entfernt wird.</string>
 </resources>

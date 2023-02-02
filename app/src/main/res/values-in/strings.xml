@@ -453,7 +453,7 @@
     <string name="safe_mode_description">Semua fitur tambahkan dimatikan karena crash, untuk memudahkanmu mencari penyebab crash.</string>
     <string name="example_lang_name">Kode bahasa (en)</string>
     <string name="player_load_subtitles_online">Ambil dari internet</string>
-    <string name="provider_languages_tip">Putar vidio di bahasa ini</string>
+    <string name="provider_languages_tip">Putar video di bahasa ini</string>
     <string name="add_repository">Tambah Repositori</string>
     <string name="delete_repository_plugins">Pilih ini untuk menghapus semua repositori plugin</string>
     <string name="skip_setup">Lewati pengaturan</string>
@@ -483,7 +483,7 @@
     <string name="pref_category_gestures">Gerakan</string>
     <string name="apk_installer_settings_des">Beberapa perangkat tidak mendukung penginstal paket mode baru. Coba mode lama jika pembaruan tidak dapat diinstal.</string>
     <string name="pref_category_actions">Aksi</string>
-    <string name="referer">Referensi</string>
+    <string name="referer">Referer</string>
     <string name="yes">Ya</string>
     <string name="extension_install_first">Pasang dulu fitur tambahan</string>
     <string name="all_languages_preference">Semua Bahasa</string>
@@ -512,4 +512,21 @@
     <string name="delayed_update_notice">Aplikasi akan diperbaharui pada saat keluar</string>
     <string name="update_started">Pembaharuan Dimulai</string>
     <string name="action_remove_from_watched">Hapus dari tontonan</string>
+    <string name="browser">Browser</string>
+    <string name="select_library">Pilih pustaka</string>
+    <string name="empty_library_no_accounts_message">Yahh daftar pustaka kamu kosong :(
+\nMasuk ke akun pustaka atau tambah perlihatkan ke lokal pustaka kamu</string>
+    <string name="library">Pustaka</string>
+    <string name="sort_by">Urutkan berdasar</string>
+    <string name="sort">Urutkan</string>
+    <string name="sort_rating_asc">Peringkat (Rendah ke Tinggi)</string>
+    <string name="sort_updated_old">Update (Lama ke Terbaru)</string>
+    <string name="sort_rating_desc">Peringkat (Tinggi ke Rendah)</string>
+    <string name="sort_updated_new">Update (Terbaru ke Lama)</string>
+    <string name="sort_alphabetical_a">Abjad (A ke Z)</string>
+    <string name="sort_alphabetical_z">Abjad (Z ke A)</string>
+    <string name="open_with">Buka dengan</string>
+    <string name="empty_library_logged_in_message">Yahh daftar ini kosong, coba ganti ke yang lain</string>
+    <string name="safe_mode_file">Mode aman file ditemukan!
+\nTidak memuat ekstensi pada startup sampai berkas dihapus.</string>
 </resources>

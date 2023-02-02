@@ -974,6 +974,7 @@ open class ResultFragment : ResultTrailerPlayer() {
                             chip.isCheckable = false
                             chip.isFocusable = false
                             chip.isClickable = false
+                            chip.setTextColor(context.colorFromAttribute(R.attr.textColor))
                             addView(chip)
                         }
                     }

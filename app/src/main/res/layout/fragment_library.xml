@@ -166,12 +166,12 @@
         app:layout_scrollFlags="noScroll"
         app:tabGravity="center"
         app:tabIndicator="@drawable/indicator_background"
-        app:tabIndicatorColor="@color/textColor"
+        app:tabIndicatorColor="?attr/white"
         app:tabIndicatorGravity="center"
         app:tabIndicatorHeight="30dp"
         app:tabMode="scrollable"
-        app:tabSelectedTextColor="@color/lightTextColor"
+        app:tabSelectedTextColor="?attr/primaryBlackBackground"
         app:tabTextAppearance="@style/TabNoCaps"
-        app:tabTextColor="@color/textColor" />
+        app:tabTextColor="?attr/textColor" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
