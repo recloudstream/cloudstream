@@ -63,10 +63,7 @@ import com.lagradost.cloudstream3.ui.APIRepository
 import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_NAVIGATE_TO
 import com.lagradost.cloudstream3.ui.home.HomeViewModel
-import com.lagradost.cloudstream3.ui.result.ResultViewModel2
-import com.lagradost.cloudstream3.ui.result.START_ACTION_RESUME_LATEST
-import com.lagradost.cloudstream3.ui.result.setImage
-import com.lagradost.cloudstream3.ui.result.setText
+import com.lagradost.cloudstream3.ui.result.*
 import com.lagradost.cloudstream3.ui.search.SearchFragment
 import com.lagradost.cloudstream3.ui.search.SearchResultBuilder
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isEmulatorSettings
@@ -797,7 +794,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                         resultview_preview_meta_duration.setText(d.durationText)
                         resultview_preview_meta_rating.setText(d.ratingText)
 
-                        resultview_preview_description?.setText(d.plotText)
+                        resultview_preview_description?.setTextHtml(d.plotText)
                         resultview_preview_poster?.setImage(
                             d.posterImage ?: d.posterBackgroundImage
                         )
