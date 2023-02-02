@@ -6,6 +6,7 @@ import android.content.res.Configuration
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -101,6 +102,7 @@ class LibraryFragment : Fragment() {
                 false,
                 {},
                 {
+                    savedInstanceState?.putInt(VIEWPAGER_ITEM_KEY, viewpager.currentItem)
                     val method = libraryViewModel.sortingMethods[it]
                     libraryViewModel.sort(method)
                 })
@@ -333,6 +335,7 @@ class LibraryFragment : Fragment() {
                     handler.postDelayed(stopLoading, 300)
 
                     savedInstanceState?.getInt(VIEWPAGER_ITEM_KEY)?.let { currentPos ->
+                        Log.d("CurrentPosition", "Position: $currentPos")
                         viewpager?.setCurrentItem(currentPos, false)
                         savedInstanceState.remove(VIEWPAGER_ITEM_KEY)
                     }
