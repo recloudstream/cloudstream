@@ -1053,20 +1053,20 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                             }
                             KeyEvent.KEYCODE_DPAD_LEFT -> {
                                 if (!isShowing && !isLocked) {
-                                    player.seekTime(-androidTVInterfaceOffSeekTime);
-                                    return true;
+                                    player.seekTime(-androidTVInterfaceOffSeekTime)
+                                    return true
                                 } else if (player_pause_play?.isFocused == true) {
-                                    player.seekTime(-androidTVInterfaceOnSeekTime);
-                                    return true;
+                                    player.seekTime(-androidTVInterfaceOnSeekTime)
+                                    return true
                                 }
                             }
                             KeyEvent.KEYCODE_DPAD_RIGHT -> {
                                 if (!isShowing && !isLocked) {
-                                    player.seekTime(androidTVInterfaceOffSeekTime);
-                                    return true;
+                                    player.seekTime(androidTVInterfaceOffSeekTime)
+                                    return true
                                 } else if (player_pause_play?.isFocused == true) {
-                                    player.seekTime(androidTVInterfaceOnSeekTime);
-                                    return true;
+                                    player.seekTime(androidTVInterfaceOnSeekTime)
+                                    return true
                                 }
                             }
                         }
