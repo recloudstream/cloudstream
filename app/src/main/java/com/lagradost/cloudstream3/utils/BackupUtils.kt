@@ -9,6 +9,7 @@ import android.provider.MediaStore
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.WorkerThread
 import androidx.fragment.app.FragmentActivity
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.module.kotlin.readValue
@@ -27,6 +28,8 @@ import com.lagradost.cloudstream3.syncproviders.providers.MALApi.Companion.MAL_T
 import com.lagradost.cloudstream3.syncproviders.providers.MALApi.Companion.MAL_UNIXTIME_KEY
 import com.lagradost.cloudstream3.syncproviders.providers.MALApi.Companion.MAL_USER_KEY
 import com.lagradost.cloudstream3.syncproviders.providers.OpenSubtitlesApi.Companion.OPEN_SUBTITLES_USER_KEY
+import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
+import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.DataStore.getDefaultSharedPrefs
 import com.lagradost.cloudstream3.utils.DataStore.getSharedPrefs
 import com.lagradost.cloudstream3.utils.DataStore.mapper
@@ -117,6 +120,7 @@ object BackupUtils {
         )
     }
 
+    @WorkerThread
     fun Context.restore(
         backupFile: BackupFile,
         restoreSettings: Boolean,
@@ -219,31 +223,29 @@ object BackupUtils {
         try {
             restoreFileSelector =
                 registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri: Uri? ->
-                    this.let { activity ->
-                        uri?.let {
-                            try {
-                                val input =
-                                    activity.contentResolver.openInputStream(uri)
-                                        ?: return@registerForActivityResult
+                    if (uri == null) return@registerForActivityResult
+                    val activity = this
+                    ioSafe {
+                        try {
+                            val input = activity.contentResolver.openInputStream(uri)
+                                ?: return@ioSafe
 
-                                val restoredValue =
-                                    mapper.readValue<BackupFile>(input)
-                                activity.restore(
-                                    restoredValue,
-                                    restoreSettings = true,
-                                    restoreDataStore = true
+                            val restoredValue =
+                                mapper.readValue<BackupFile>(input)
+
+                            activity.restore(
+                                restoredValue,
+                                restoreSettings = true,
+                                restoreDataStore = true
+                            )
+                            activity.runOnUiThread { activity.recreate() }
+                        } catch (e: Exception) {
+                            logError(e)
+                            main { // smth can fail in .format
+                                showToast(
+                                    activity,
+                                    getString(R.string.restore_failed_format).format(e.toString())
                                 )
-                                activity.recreate()
-                            } catch (e: Exception) {
-                                logError(e)
-                                try { // smth can fail in .format
-                                    showToast(
-                                        activity,
-                                        getString(R.string.restore_failed_format).format(e.toString())
-                                    )
-                                } catch (e: Exception) {
-                                    logError(e)
-                                }
                             }
                         }
                     }
