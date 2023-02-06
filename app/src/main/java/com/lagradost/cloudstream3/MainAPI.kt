@@ -163,6 +163,18 @@ object APIHolder {
         return null
     }
 
+    private suspend fun getTracker(title: String?, type: String?, year: Int?): Tracker {
+        val res = app.get("https://api.consumet.org/meta/anilist/$title")
+            .parsedSafe<AniSearch>()?.results?.find { media ->
+                (media.title?.english.equals(title, true) || media.title?.romaji.equals(
+                    title,
+                    true
+                )) || (media.type.equals(type, true) && media.releaseDate == year)
+            }
+        return Tracker(res?.malId, res?.aniId, res?.image, res?.cover)
+    }
+
+
     fun Context.getApiSettings(): HashSet<String> {
         //val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
 
@@ -1590,3 +1602,30 @@ fun fetchUrls(text: String?): List<String> {
 
 fun String?.toRatingInt(): Int? =
     this?.replace(" ", "")?.trim()?.toDoubleOrNull()?.absoluteValue?.times(1000f)?.toInt()
+
+data class Tracker(
+    val malId: Int? = null,
+    val aniId: String? = null,
+    val image: String? = null,
+    val cover: String? = null,
+)
+
+data class Title(
+    @JsonProperty("romaji") val romaji: String? = null,
+    @JsonProperty("english") val english: String? = null,
+)
+
+data class Results(
+    @JsonProperty("id") val aniId: String? = null,
+    @JsonProperty("malId") val malId: Int? = null,
+    @JsonProperty("title") val title: Title? = null,
+    @JsonProperty("releaseDate") val releaseDate: Int? = null,
+    @JsonProperty("type") val type: String? = null,
+    @JsonProperty("image") val image: String? = null,
+    @JsonProperty("cover") val cover: String? = null,
+)
+
+data class AniSearch(
+    @JsonProperty("results") val results: ArrayList<Results>? = arrayListOf(),
+
+    )
