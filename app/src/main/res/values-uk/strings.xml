@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="search_poster_img_des">\@string/result_poster_img_des</string>
+    <string name="search_poster_img_des">Постер</string>
     <string name="episode_poster_img_des">Постер епізоду</string>
     <string name="download_canceled">Завантаження скасовано</string>
     <string name="home_change_provider_img_des">Змінити постачальника</string>
     <string name="go_back_img_des">Назад</string>
     <string name="rated_format" formatted="true">Рейтинг: %.1f</string>
     <string name="cast_format" formatted="true">Актори: %s</string>
-    <string name="next_episode_format" formatted="true">Епізод %d буде випущено в</string>
+    <string name="next_episode_format" formatted="true">Епізод %d буде випущено через</string>
     <string name="result_poster_img_des">Poster</string>
     <string name="app_dub_sub_episode_text_format" formatted="true">%s Еп. %d</string>
     <string name="next_episode_time_day_format" formatted="true">%dд %dгод %dхв</string>
@@ -35,12 +35,12 @@
     <string name="type_completed">Завершено</string>
     <string name="type_plan_to_watch">Заплановано</string>
     <string name="type_dropped">Покинуто</string>
-    <string name="play_movie_button">Відтворити фільм</string>
-    <string name="play_trailer_button">Відтворити трейлер</string>
-    <string name="play_torrent_button">Відтворити торрент</string>
+    <string name="play_movie_button">Переглянути фільм</string>
+    <string name="play_trailer_button">Переглянути трейлер</string>
+    <string name="play_torrent_button">Переглянути торрент</string>
     <string name="reload_error">Повторити підключення…</string>
     <string name="go_back">Назад</string>
-    <string name="play_episode">Відтворити епізод</string>
+    <string name="play_episode">Переглянути епізод</string>
     <string name="downloaded">Завантажено</string>
     <string name="downloading">Завантаження</string>
     <string name="download_done">Завантаження завершено</string>
@@ -50,8 +50,8 @@
     <string name="popup_resume_download">Відновити завантаження</string>
     <string name="pref_disable_acra">Вимкнути відправку повідомлень про помилки</string>
     <string name="home_expanded_hide">Сховати</string>
-    <string name="home_play">Відтворити</string>
-    <string name="home_info">Інформація</string>
+    <string name="home_play">Переглянути</string>
+    <string name="home_info">Інфо</string>
     <string name="error_bookmarks_text">Закладки</string>
     <string name="action_remove_from_bookmarks">Вилучити</string>
     <string name="action_add_to_bookmarks">Змінити статус перегляду</string>
@@ -99,7 +99,7 @@
     <string name="type_on_hold">Відкладено</string>
     <string name="type_re_watching">Повторний перегляд</string>
     <string name="download">Завантажити</string>
-    <string name="play_livestream_button">Відтворити трансляцію</string>
+    <string name="play_livestream_button">Переглянути трансляцію</string>
     <string name="pick_source">Джерела</string>
     <string name="pick_subtitle">Субтитри</string>
     <string name="download_storage_text">Внутрішнє сховище</string>
@@ -109,7 +109,7 @@
     <string name="update_started">Оновлення розпочато</string>
     <string name="error_loading_links_toast">Помилка завантаження посилань</string>
     <string name="popup_pause_download">Призупинити завантаження</string>
-    <string name="popup_play_file">Відтворити файл</string>
+    <string name="popup_play_file">Переглянути файл</string>
     <string name="home_more_info">Детальніше</string>
     <string name="filter_bookmarks">Фільтр закладок</string>
     <string name="type_none">Нічого</string>
@@ -165,10 +165,10 @@
     <string name="app_language">Мова програми</string>
     <string name="no_chromecast_support_toast">Цей постачальник не має підтримки Chromecast</string>
     <string name="no_links_found_toast">Посилань не знайдено</string>
-    <string name="play_episode_toast">Відтворити епізод</string>
+    <string name="play_episode_toast">Переглянути епізод</string>
     <string name="subs_default_reset_toast">Скинути до значення за замовчуванням</string>
     <string name="no_season">Немає сезону</string>
-    <string name="episodes">Епізоди</string>
+    <string name="episodes">епізодів</string>
     <string name="episode_format" formatted="true">%d %s</string>
     <string name="season_short">С</string>
     <string name="episode_short">Е</string>
@@ -208,8 +208,8 @@
     <string name="remote_error">Віддалена помилка</string>
     <string name="render_error">Помилка рендеринга</string>
     <string name="episode_action_chromecast_mirror">Дзеркало Chromecast</string>
-    <string name="episode_action_play_in_app">Відтворити в програмі</string>
-    <string name="episode_action_play_in_format">Відтворити в %s</string>
+    <string name="episode_action_play_in_app">Переглянути в програмі</string>
+    <string name="episode_action_play_in_format">Переглянути в %s</string>
     <string name="episode_action_auto_download">Автозавантаження</string>
     <string name="episode_action_download_mirror">Завантажити дзеркало</string>
     <string name="check_for_update">Перевірити наявність оновлень</string>
@@ -259,7 +259,7 @@
     <string name="torrent_singular">Торрент</string>
     <string name="show_hd">Мітка якості</string>
     <string name="nsfw_singular">NSFW</string>
-    <string name="episode_action_play_in_browser">Відтворити в браузері</string>
+    <string name="episode_action_play_in_browser">Переглянути в браузері</string>
     <string name="unexpected_error">Несподівана помилка плеєра</string>
     <string name="storage_error">Помилка завантаження, перевірте дозволи на зберігання</string>
     <string name="episode_action_chromecast_episode">Епізод Chromecast</string>
@@ -504,4 +504,6 @@
     <string name="open_with">Відкрити з</string>
     <string name="browser">Браузер</string>
     <string name="empty_library_logged_in_message">Схоже, цей список порожній, спробуйте перейти до іншого</string>
+    <string name="safe_mode_file">Файл безпечного режиму знайдено!
+\nРозширеня не завантажуються під час запуску, доки файл не буде видалено.</string>
 </resources>

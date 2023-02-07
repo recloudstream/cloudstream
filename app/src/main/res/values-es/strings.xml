@@ -94,7 +94,7 @@
     <string name="home_main_poster_img_des">Poster Principal</string>
     <string name="app_language">Idioma de la aplicación</string>
     <string name="provider_languages_tip">Ver videos en estos idiomas</string>
-    <string name="search_poster_img_des">\@string/result_poster_img_des</string>
+    <string name="search_poster_img_des">Cartel</string>
     <string name="home_next_random_img_des">Siguiente al azar</string>
     <string name="all_languages_preference">Todos los Idiomas</string>
     <string name="go_back_img_des">Volver</string>

@@ -19,7 +19,7 @@
     <string name="next_episode_time_min_format" formatted="true">%dm</string>
     <!-- IS NOT NEEDED TO TRANSLATE AS THEY ARE ONLY USED FOR SCREEN READERS AND WONT SHOW UP TO NORMAL USERS -->
     <string name="result_poster_img_des">封面</string>
-    <string name="search_poster_img_des">\@string/result_poster_img_des</string>
+    <string name="search_poster_img_des">封面</string>
     <string name="episode_poster_img_des">剧集封面</string>
     <string name="home_main_poster_img_des">主封面</string>
     <string name="home_next_random_img_des">随机下一个</string>

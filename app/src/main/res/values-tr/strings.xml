@@ -19,7 +19,7 @@
     <string name="next_episode_time_min_format" formatted="true">%dm</string>
     <!-- IS NOT NEEDED TO TRANSLATE AS THEY ARE ONLY USED FOR SCREEN READERS AND WONT SHOW UP TO NORMAL USERS -->
     <string name="result_poster_img_des">Poster</string>
-    <string name="search_poster_img_des">\@string/result_poster_img_des</string>
+    <string name="search_poster_img_des">Afiş</string>
     <string name="episode_poster_img_des">Bölüm Posteri</string>
     <string name="home_main_poster_img_des">Ana Poster</string>
     <string name="home_next_random_img_des">Sonraki Rastgele</string>
@@ -537,4 +537,21 @@
     <string name="pref_category_actions">Aksiyonlar</string>
     <string name="enable_skip_op_from_database_des">Açma/bitiş için atlama açılır pencerelerini göster</string>
     <string name="clipboard_too_large">Çok fazla metin. Panoya kaydedilemiyor.</string>
+    <string name="library">Kütüphane</string>
+    <string name="browser">Tarayıcı</string>
+    <string name="empty_library_no_accounts_message">Görünüşe göre kütüphaneniz boş :(
+\nBir kütüphane hesabına giriş yapın veya yerel kütüphanenize gösteri ekleyin</string>
+    <string name="safe_mode_file">Güvenli mod dosyası bulundu!
+\nDosya kaldırılana kadar başlangıçta herhangi bir uzantı yüklenmiyor.</string>
+    <string name="sort_by">Sırala</string>
+    <string name="sort">Sırala</string>
+    <string name="sort_updated_new">Güncel (Yeniden Eskiye)</string>
+    <string name="sort_updated_old">Güncel (Eskiden Yeniye)</string>
+    <string name="sort_alphabetical_a">Alfabetik (A\'dan Z’ye)</string>
+    <string name="sort_alphabetical_z">Alfabetik (Z - A)</string>
+    <string name="select_library">Kütüphane Seçin</string>
+    <string name="open_with">Şununla aç</string>
+    <string name="empty_library_logged_in_message">Görünüşe göre bu liste boş, başka bir listeye geçmeyi deneyin</string>
+    <string name="sort_rating_desc">Derecelendirme (Yüksekten Düşüğe)</string>
+    <string name="sort_rating_asc">Derecelendirme (Düşükten Yükseğe)</string>
 </resources>

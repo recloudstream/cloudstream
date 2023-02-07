@@ -24,7 +24,7 @@
     <string name="logout">Выйти</string>
     <string name="next_episode_format" formatted="true">Серия %d будет выпущен в</string>
     <string name="result_poster_img_des">Плакат</string>
-    <string name="search_poster_img_des">\@нить/результат_плокат_картинка_</string>
+    <string name="search_poster_img_des">Плакат</string>
     <string name="episode_poster_img_des">Постер Эпизода</string>
     <string name="home_main_poster_img_des">Главный постер</string>
     <string name="home_next_random_img_des">Следующий случайный</string>
@@ -58,7 +58,7 @@
     <string name="type_completed">Завершено</string>
     <string name="type_dropped">Брошенный</string>
     <string name="type_plan_to_watch">План посмотреть</string>
-    <string name="type_none">Никто</string>
+    <string name="type_none">Нет</string>
     <string name="type_re_watching">Пересмотрю</string>
     <string name="play_movie_button">Смотреть фильм</string>
     <string name="play_trailer_button">Воспроизвести трейлер</string>
@@ -70,7 +70,7 @@
     <string name="go_back">Вернуться</string>
     <string name="downloaded">Скачано</string>
     <string name="downloading">Скачивание</string>
-    <string name="download_paused">Скачать приостановленный</string>
+    <string name="download_paused">Скачать остановлена</string>
     <string name="download_started">Скачать начатый</string>
     <string name="download_canceled">Скачать отменённый</string>
     <string name="download_done">Скачать выполнено</string>
@@ -117,7 +117,7 @@
     <string name="popup_play_file">Проиграть файл</string>
     <string name="download_storage_text">Внутренняя память</string>
     <string name="popup_resume_download">Продолжить Скачать</string>
-    <string name="popup_pause_download">Приостановить скачивание</string>
+    <string name="popup_pause_download">Остановить скачивание</string>
     <string name="pref_disable_acra">Отключить автоматическое информирование об ошибках</string>
     <string name="subs_import_text" formatted="true">Импортируйте шрифты поместив их в %s</string>
     <string name="continue_watching">Продолжить смотреть</string>
@@ -169,7 +169,7 @@
     <string name="subs_default_reset_toast">Восстановить по умолчанию</string>
     <string name="acra_report_toast">Извините, приложение прекратило работу. Анонимный отчет об ошибке будет отправлен разработчикам</string>
     <string name="episode">Эпизод</string>
-    <string name="episodes">Эпизоды</string>
+    <string name="episodes">Эпизодов</string>
     <string name="season_short">С</string>
     <string name="episode_short">Э</string>
     <string name="no_episodes_found">Эпизоды не найдены</string>
@@ -179,7 +179,7 @@
     <string name="go_forward_30">+30</string>
     <string name="delete_message" formatted="true">Это будет удалено безвозвратно%s
 \nВы уверены\?</string>
-    <string name="resume_time_left" formatted="true">%dм
+    <string name="resume_time_left" formatted="true">%d мин.
 \nосталось</string>
     <string name="status_completed">Завершено</string>
     <string name="year">Год</string>
@@ -217,7 +217,7 @@
     <string name="torrent_singular">Торрент</string>
     <string name="documentaries_singular">Документальный</string>
     <string name="asian_drama_singular">Азиатская драма</string>
-    <string name="category_general">Основные</string>
+    <string name="category_general">Общие</string>
     <string name="category_providers">Провайдеры</string>
     <string name="category_ui">Макет</string>
     <string name="pref_category_extensions">Расширения</string>
@@ -249,7 +249,7 @@
     <string name="add_site_summary">Добавить клон существующего сайта с другим URL-адресом</string>
     <string name="dns_pref_summary">Используется для обхода блокировок интернет провайдера</string>
     <string name="download_path_pref">Путь скачивания</string>
-    <string name="benene_des">учитывая бенен</string>
+    <string name="benene_des">Давал бенен</string>
     <string name="update">Обновить</string>
     <string name="primary_color_settings">Основной цвет</string>
     <string name="provider_lang_settings">Языки поставщиков</string>
@@ -268,7 +268,7 @@
     <string name="plugin_deleted">Плагин удалён</string>
     <string name="extension_description">Описание</string>
     <string name="extension_version">Версия</string>
-    <string name="extension_status">Состояние</string>
+    <string name="extension_status">Статус</string>
     <string name="extension_size">Размер</string>
     <string name="extension_authors">Авторы</string>
     <string name="extension_types">Поддерживается</string>
@@ -302,7 +302,7 @@
     <string name="video_skip_op">Пропустить OP</string>
     <string name="dont_show_again">Больше не показывать</string>
     <string name="skip_update">Пропустить это обновление</string>
-    <string name="nginx_url_pref">URL-адрес NGINX-сервера</string>
+    <string name="nginx_url_pref">URL сервера NGINX</string>
     <string name="create_account">Создать учётную запись</string>
     <string name="add_sync">Добавить слежение</string>
     <string name="added_sync_format" formatted="true">Добавлено %s</string>
@@ -310,7 +310,7 @@
     <string name="sync_score">Оценено</string>
     <string name="sync_score_format" formatted="true">%d из 10</string>
     <string name="safe_mode_crash_info">Посмотреть информацию о сбое</string>
-    <string name="player_pref">Предпочитаемый видео-проигрыватель</string>
+    <string name="player_pref">Предпочитаемый видеоплеер</string>
     <string name="player_settings_play_in_browser">Веб-браузер</string>
     <string name="app_not_found_error">Приложение не найдено</string>
     <string name="all_languages_preference">Все языки</string>
@@ -328,7 +328,7 @@
     <string name="video_disk_description">Вызывает проблемы, если установлено слишком высокое значение на устройствах с небольшим объемом памяти, таких как Android TV.</string>
     <string name="lightnovel">Легкая новелла от тех же разработчиков</string>
     <string name="extension_language">Язык</string>
-    <string name="hls_playlist">HLS Плейлист</string>
+    <string name="hls_playlist">Плейлист HLS</string>
     <string name="extension_install_first">Сначала установить расширение</string>
     <string name="player_settings_play_in_app">Внутренний проигрыватель</string>
     <string name="synopsis">Синопсис</string>
@@ -340,7 +340,7 @@
     <string name="pref_category_player_features">Возможности плеера</string>
     <string name="pref_category_subtitles">Субтитры</string>
     <string name="bottom_title_settings">Расположение названия плаката</string>
-    <string name="tv_layout">TV</string>
+    <string name="tv_layout">ТV (телевидение)</string>
     <string name="phone_layout">Телефон</string>
     <string name="emulator_layout">Эмулятор</string>
     <string name="bottom_title_settings_des">Под плакатом</string>
@@ -364,7 +364,7 @@
     <string name="repository_url_hint">URL репозитория</string>
     <string name="plugin_loaded">Плагин загружен</string>
     <string name="action_open_play">\@string/home_play</string>
-    <string name="double_tap_to_seek_settings">Перемотка двойным касанием</string>
+    <string name="double_tap_to_seek_settings">Перемотка двойным нажатием</string>
     <string name="sync_total_episodes_none">/\?\?</string>
     <string name="sync_total_episodes_some" formatted="true">/%d</string>
     <string name="is_adult">18+</string>
@@ -395,16 +395,16 @@
     <string name="authenticated_user" formatted="true">%s аутентифицировано</string>
     <string name="authenticated_user_fail" formatted="true">Не удается логин на %s</string>
     <string name="max">Макс</string>
-    <string name="min">Минимум</string>
-    <string name="subtitles_outline">Очертание</string>
-    <string name="subtitles_shadow">Тень</string>
+    <string name="min">Мин</string>
+    <string name="subtitles_outline">Контурный</string>
+    <string name="subtitles_shadow">С тенью</string>
     <string name="subtitle_offset_hint">1000 мс</string>
     <string name="subtitle_offset_title">Задержка субтитров</string>
     <string name="subtitle_offset_extra_hint_none_format">Без задержки субтитров</string>
     <string name="subtitle_offset_extra_hint_later_format">Используйте, если субтитры отображаются на %d мс слишком рано</string>
     <string name="subtitle_offset_extra_hint_before_format">Используйте, если субтитры отображаются %d мс слишком поздно</string>
     <string name="normal">Нормально</string>
-    <string name="subtitles_raised">Поднятие</string>
+    <string name="subtitles_raised">Поднятые</string>
     <string name="subtitles_example_text">Съешь ещё этих мягких французских булок, да выпей же чаю</string>
     <string name="recommended">Рекомендуется</string>
     <string name="player_loaded_subtitles" formatted="true">Загружено %s</string>
@@ -435,8 +435,8 @@
     <string name="browser">Браузер</string>
     <string name="library">Библиотека</string>
     <string name="sort_updated_old">Обновленный (старый - новый)</string>
-    <string name="sort_alphabetical_a">Алфавитный (А - Я)</string>
-    <string name="sort_alphabetical_z">Алфавитный (Я - А)</string>
+    <string name="sort_alphabetical_a">Алфавитный (А до Я)</string>
+    <string name="sort_alphabetical_z">Алфавитный (Я до А)</string>
     <string name="select_library">Выбрать библиотеку</string>
     <string name="open_with">Открыть с</string>
     <string name="empty_library_no_accounts_message">Похоже, ваша библиотека пуста :(
@@ -495,4 +495,11 @@
     <string name="network_adress_example">Ссылка на стрим</string>
     <string name="random_button_settings_desc">Отображать рандомную кнопку на Главной странице</string>
     <string name="random_button_settings">Рандомная кнопка</string>
+    <string name="apk_installer_legacy">Legacy (старый)</string>
+    <string name="player_settings_play_in_web">Веб видеокаст</string>
+    <string name="bug_report_settings_on">Не отправляет данные</string>
+    <string name="episode_action_reload_links">Перезагрузить ссылки</string>
+    <string name="preferred_media_settings">Предпочтительные медиа</string>
+    <string name="subtitles_depressed">Опущенные</string>
+    <string name="double_tap_to_seek_amount_settings">Объем перемотки плеера</string>
 </resources>
