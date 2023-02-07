@@ -15,6 +15,7 @@ jobs:
           app_id: ${{ secrets.GH_APP_ID }}
           private_key: ${{ secrets.GH_APP_KEY }}
       - name: Similarity analysis
+        id: similarity
         uses: actions-cool/issues-similarity-analysis@v1
         with:
           token: ${{ steps.generate_token.outputs.token }}
@@ -24,6 +25,18 @@ jobs:
             ### Your issue looks similar to these issues:
             Please close if duplicate.
           comment-body: '${index}. ${similarity} #${number}'
+      - name: Label if possible duplicate
+        if: steps.similarity.outputs.similar-issues-found =='true'
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ steps.generate_token.outputs.token }}
+          script: |
+            github.rest.issues.addLabels({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: ["possible duplicate"]
+            })
       - uses: actions/checkout@v2
       - name: Automatically close issues that dont follow the issue template
         uses: lucasbento/auto-close-issues@v1.0.2
