@@ -64,7 +64,7 @@ val appLanguages = arrayListOf(
     Triple("", "Deutsch", "de"),
     Triple("", "ελληνικά", "el"),
     Triple("", "English", "en"),
-    Triple("🦍", "mmmm... monke", "en-rMO"),
+    Triple("🦍", "mmmm... monke", "qt"),
     Triple("", "Esperanto", "eo"),
     Triple("", "Español", "es"),
     Triple("", "فارسی", "fa"),
