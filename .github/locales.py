@@ -7,7 +7,7 @@ SETTINGS_PATH = "app/src/main/java/com/lagradost/cloudstream3/ui/settings/Settin
 START_MARKER = "/* begin language list */"
 END_MARKER = "/* end language list */"
 XML_NAME = "app/src/main/res/values-"
-ISO_MAP_URL = "https://gist.githubusercontent.com/Josantonius/b455e315bc7f790d14b136d61d9ae469/raw"
+ISO_MAP_URL = "https://raw.githubusercontent.com/haliaeetus/iso-639/master/data/iso_639-1.min.json"
 INDENT = " "*4
 
 iso_map = requests.get(ISO_MAP_URL, timeout=300).json()
@@ -27,7 +27,8 @@ for lang in re.finditer(r'Triple\("(.*)", "(.*)", "(.*)"\)', rest):
 for folder in glob.glob(f"{XML_NAME}*"):
     iso = folder[len(XML_NAME):]
     if iso not in languages.keys():
-        languages[iso] = ("", iso_map.get(iso.lower(),iso))
+        entry = iso_map.get(iso.lower(),{'nativeName':iso})
+        languages[iso] = ("", entry['nativeName'].split(',')[0])
 
 # Create triples
 triples = []
