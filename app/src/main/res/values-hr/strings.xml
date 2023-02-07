@@ -19,7 +19,7 @@
     <string name="next_episode_time_min_format" formatted="true">%dm</string>
     <!-- IS NOT NEEDED TO TRANSLATE AS THEY ARE ONLY USED FOR SCREEN READERS AND WONT SHOW UP TO NORMAL USERS -->
     <string name="result_poster_img_des">Poster</string>
-    <string name="search_poster_img_des">\@string/result_poster_img_des</string>
+    <string name="search_poster_img_des">Poster</string>
     <string name="episode_poster_img_des">Episode Poster</string>
     <string name="home_main_poster_img_des">Main Poster</string>
     <string name="home_next_random_img_des">Next Random</string>
@@ -514,4 +514,21 @@
     <string name="delayed_update_notice">Program če se aktualizirati tijekom zatvaranja programa</string>
     <string name="plugin_downloaded">Dodatak preuzet</string>
     <string name="action_remove_from_watched">Ukloni iz pogledanog</string>
+    <string name="browser">Preglednik</string>
+    <string name="library">Biblioteka</string>
+    <string name="sort_rating_desc">Ocjena (Veća do manje)</string>
+    <string name="sort_by">Sortiraj prema</string>
+    <string name="sort">Sortiraj</string>
+    <string name="sort_rating_asc">Ocjena (Manja do veće)</string>
+    <string name="sort_updated_new">Ažurirano (Od novog do starog)</string>
+    <string name="sort_updated_old">Ažurirano (Od starog do novog)</string>
+    <string name="sort_alphabetical_a">Abecedno (A do Ž)</string>
+    <string name="sort_alphabetical_z">Abecedno (Ž do A)</string>
+    <string name="select_library">Odaberite biblioteku</string>
+    <string name="open_with">Otvori sa</string>
+    <string name="empty_library_no_accounts_message">Čini se da vam je biblioteka prazna :(
+\nPrijavite se na račun biblioteke ili dodajte serije u svoju lokalnu biblioteku</string>
+    <string name="empty_library_logged_in_message">Čini se da je ova lista prazna, pokušajte se prebaciti na drugu</string>
+    <string name="safe_mode_file">Pronađena datoteka sigurnog načina rada!
+\nNe učitavaju se ekstenzije pri pokretanju dok se datoteka ne ukloni.</string>
 </resources>

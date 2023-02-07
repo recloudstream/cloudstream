@@ -4,7 +4,7 @@
     <string name="cast_format" formatted="true">Besetzung: %s</string>
     <string name="next_episode_format" formatted="true">Episode %d wird veröffentlicht in</string>
     <string name="result_poster_img_des">Vorschaubild</string>
-    <string name="search_poster_img_des">\@string/result_poster_img_des</string>
+    <string name="search_poster_img_des">Vorschaubild</string>
     <string name="subs_hold_to_reset_to_default">Halten, um auf die Standardeinstellungen zurückzusetzen</string>
     <string name="restore_failed_format" formatted="true">Wiederherstellung der Daten aus der Datei %s fehlgeschlagen</string>
     <string name="backup_success">Daten erfolgreich gesichert</string>
@@ -228,8 +228,8 @@
     <string name="movies_singular">Film</string>
     <string name="tv_series_singular">Serie</string>
     <string name="cartoons_singular">Trickfilm</string>
-    <string name="anime_singular">\@string/anime</string>
-    <string name="ova_singular">\@string/ova</string>
+    <string name="anime_singular">Anime</string>
+    <string name="ova_singular">OVA</string>
     <string name="torrent_singular">Torrent</string>
     <string name="documentaries_singular">Dokumentation</string>
     <string name="asian_drama_singular">Asiatisches Drama</string>
