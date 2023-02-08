@@ -163,12 +163,34 @@ object APIHolder {
         return null
     }
 
-    private suspend fun getTracker(title: String?, type: String?, year: Int?): Tracker {
-        val res = app.get("https://api.consumet.org/meta/anilist/$title")
+    /**
+     * Get anime tracker information based on title, year and type.
+     * Both titles are attempted to be matched with both Romaji and English title.
+     * Uses the consumet api.
+     *
+     * @param mainTitle Title to search by and match
+     * @param secondaryTitle Optional extra title if you have multiple titles and want extra guarantee to match.
+     * @param types Optional parameter to narrow down the scope to Movies, TV, etc. See TrackerType.getTypes()
+     * @param year Optional parameter to only get anime with a specific year
+     **/
+    suspend fun getTracker(
+        mainTitle: String,
+        secondaryTitle: String?,
+        types: Set<TrackerType>?,
+        year: Int?
+    ): Tracker {
+        val res = app.get("https://api.consumet.org/meta/anilist/$mainTitle")
             .parsedSafe<AniSearch>()?.results?.find { media ->
-                media.title?.english.equals(title, true) || media.title?.romaji.equals( title, true )
-                        || media.type.equals(type, true) && media.releaseDate == year
+                val matchingYears = year == null || media.releaseDate == year
+                val matchingTitles =
+                    (media.title?.isMatchingTitles(mainTitle) == true || media.title?.isMatchingTitles(
+                        secondaryTitle
+                    ) == true)
+
+                val matchingTypes = types?.any { it.name.equals(media.type, true) } == true
+                matchingTitles && matchingTypes && matchingYears
             }
+
         return Tracker(res?.malId, res?.aniId, res?.image, res?.cover)
     }
 
@@ -1611,7 +1633,12 @@ data class Tracker(
 data class Title(
     @JsonProperty("romaji") val romaji: String? = null,
     @JsonProperty("english") val english: String? = null,
-)
+) {
+    fun isMatchingTitles(title: String?): Boolean {
+        if (title == null) return false
+        return english.equals(title, true) || romaji.equals(title, true)
+    }
+}
 
 data class Results(
     @JsonProperty("id") val aniId: String? = null,
@@ -1624,6 +1651,32 @@ data class Results(
 )
 
 data class AniSearch(
-    @JsonProperty("results") val results: ArrayList<Results>? = arrayListOf(),
+    @JsonProperty("results") val results: ArrayList<Results>? = arrayListOf()
+)
 
-    )
+/**
+ * used for the getTracker() method
+ **/
+enum class TrackerType {
+    MOVIE,
+    TV,
+    TV_SHORT,
+    ONA,
+    OVA,
+    SPECIAL,
+    MUSIC;
+
+    companion object {
+        fun getTypes(type: TvType): Set<TrackerType> {
+            return when (type) {
+                TvType.Movie -> setOf(MOVIE)
+                TvType.AnimeMovie -> setOf(MOVIE)
+                TvType.TvSeries -> setOf(TV, TV_SHORT)
+                TvType.Anime -> setOf(TV, TV_SHORT, ONA, OVA)
+                TvType.OVA -> setOf(OVA, SPECIAL, ONA)
+                TvType.Others -> setOf(MUSIC)
+                else -> emptySet()
+            }
+        }
+    }
+}
