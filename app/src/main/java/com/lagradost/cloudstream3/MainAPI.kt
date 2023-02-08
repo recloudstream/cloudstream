@@ -15,12 +15,9 @@ import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.aniList
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.malApi
 import com.lagradost.cloudstream3.syncproviders.SyncIdName
 import com.lagradost.cloudstream3.ui.player.SubtitleData
-import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
 import com.lagradost.cloudstream3.utils.*
-import com.lagradost.cloudstream3.ui.result.UiText
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
 import com.lagradost.cloudstream3.utils.Coroutines.threadSafeListOf
-import com.lagradost.cloudstream3.utils.ExtractorLink
 import okhttp3.Interceptor
 import java.text.SimpleDateFormat
 import java.util.*
@@ -163,35 +160,50 @@ object APIHolder {
         return null
     }
 
+    private var trackerCache: HashMap<String, AniSearch> = hashMapOf()
+
     /**
      * Get anime tracker information based on title, year and type.
      * Both titles are attempted to be matched with both Romaji and English title.
      * Uses the consumet api.
      *
-     * @param mainTitle Title to search by and match
-     * @param secondaryTitle Optional extra title if you have multiple titles and want extra guarantee to match.
+     * @param titles uses first index to search, but if you have multiple titles and want extra guarantee to match you can also have that
      * @param types Optional parameter to narrow down the scope to Movies, TV, etc. See TrackerType.getTypes()
      * @param year Optional parameter to only get anime with a specific year
      **/
     suspend fun getTracker(
-        mainTitle: String,
-        secondaryTitle: String?,
+        titles: List<String>,
         types: Set<TrackerType>?,
         year: Int?
-    ): Tracker {
-        val res = app.get("https://api.consumet.org/meta/anilist/$mainTitle")
-            .parsedSafe<AniSearch>()?.results?.find { media ->
+    ): Tracker? {
+        return try {
+            require(titles.isNotEmpty()) { "titles must no be empty when calling getTracker" }
+
+            val mainTitle = titles[0]
+            val search =
+                trackerCache[mainTitle]
+                    ?: app.get("https://api.consumet.org/meta/anilist/$mainTitle")
+                        .parsedSafe<AniSearch>()?.also {
+                            trackerCache[mainTitle] = it
+                        } ?: return null
+
+            val res = search.results?.find { media ->
                 val matchingYears = year == null || media.releaseDate == year
-                val matchingTitles =
-                    media.title?.isMatchingTitles(mainTitle) == true || media.title?.isMatchingTitles(
-                        secondaryTitle
-                    ) == true
+                val matchingTitles = media.title?.let { title ->
+                    titles.any { userTitle ->
+                        title.isMatchingTitles(userTitle)
+                    }
+                } ?: false
 
                 val matchingTypes = types?.any { it.name.equals(media.type, true) } == true
                 matchingTitles && matchingTypes && matchingYears
-            }
+            } ?: return null
 
-        return Tracker(res?.malId, res?.aniId, res?.image, res?.cover)
+            Tracker(res.malId, res.aniId, res.image, res.cover)
+        } catch (t: Throwable) {
+            logError(t)
+            null
+        }
     }
 
 
