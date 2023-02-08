@@ -183,9 +183,9 @@ object APIHolder {
             .parsedSafe<AniSearch>()?.results?.find { media ->
                 val matchingYears = year == null || media.releaseDate == year
                 val matchingTitles =
-                    (media.title?.isMatchingTitles(mainTitle) == true || media.title?.isMatchingTitles(
+                    media.title?.isMatchingTitles(mainTitle) == true || media.title?.isMatchingTitles(
                         secondaryTitle
-                    ) == true)
+                    ) == true
 
                 val matchingTypes = types?.any { it.name.equals(media.type, true) } == true
                 matchingTitles && matchingTypes && matchingYears
