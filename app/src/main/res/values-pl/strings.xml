@@ -450,7 +450,7 @@
     <string name="sync_total_episodes_some" formatted="true">/%d</string>
     <string name="cast_format" formatted="true">Obsada: %s</string>
     <string name="automatic_plugin_download_summary">Automatycznie instaluj wszystkie jeszcze niezainstalowane wtyczki z dodanych repozytoriów.</string>
-    <string name="search_poster_img_des">\@string/result_poster_img_des</string>
+    <string name="search_poster_img_des">Poster</string>
     <string name="skip_type_recap">Podsumowanie</string>
     <string name="apk_installer_settings">Instalator APK</string>
     <string name="apk_installer_settings_des">Niektóre telefony nie obsługują nowego instalatora pakietów. Wypróbuj tryb legacy, jeśli aktualizacje nie zostaną zainstalowane.</string>

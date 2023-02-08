@@ -122,7 +122,7 @@
     <string name="episode_short">A</string>
     <string name="delete_file">ooha ohahaaahoooa ahahooo</string>
     <string name="delete">oooooah</string>
-    <string name="delete_message">aahhaaaaaahooo aauuh aaahhuaooo-ahahoooohh aoouuhoohoohooo-ahah</string>
+    <string name="delete_message">aahhaaaaaahooo aauuh aaahhuaooo-ahahoooohh aoouuhoohoohooo-ahah %s</string>
     <string name="status_ongoing">aaaghhaaaaa</string>
     <string name="status_completed">aauuhaauuh</string>
     <string name="status">ahhhaaaaa</string>
@@ -145,7 +145,7 @@
     <string name="episode_action_chromecast_episode">aauugghhooo-ahah ohaaauugghh</string>
     <string name="episode_action_chromecast_mirror">aoohaaahhu ahouuhhh</string>
     <string name="episode_action_play_in_app">ooo-ahahaauuh aaahhu</string>
-    <string name="episode_action_play_in_format">ooo-ahah ohaauuh</string>
+    <string name="episode_action_play_in_format">ooo-ahah ohaauuh %s</string>
     <string name="episode_action_play_in_browser">ahoha ooo-ahahohoohah oooohh</string>
     <string name="episode_action_copy_link">aauugghhahhaauugghh</string>
     <string name="episode_action_auto_download">aaaghhoooohh aaahhu ahooo</string>
@@ -195,5 +195,5 @@
     <string name="phone_layout">u ooah uo ahauao huhuu hauu h</string>
     <string name="primary_color_settings">a ou oh ouhuouhoaaha</string>
     <string name="show_fillers_settings">aaooohhouhhha hauauuu</string>
-    <string name="new_update_format">aaaaaaa uuuuuu\n%s -> %s</string>
+    <string name="new_update_format">aaaaaaa uuuuuu\n%s -&gt; %s</string>
 </resources>

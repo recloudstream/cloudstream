@@ -8,7 +8,6 @@
     <string formatted="true" name="next_episode_time_hour_format">%dh %dm</string>
     <string formatted="true" name="next_episode_time_min_format">%dm</string>
     <string name="result_poster_img_des">Poster</string>
-    <string name="search_poster_img_des">\@string/result_poster_img_des</string>
     <string name="episode_poster_img_des">Episode Poster</string>
     <string name="home_main_poster_img_des">Main Poster</string>
     <string name="home_next_random_img_des">Следващ произволен</string>
