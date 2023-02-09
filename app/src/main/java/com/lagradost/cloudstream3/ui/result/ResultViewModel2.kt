@@ -1465,12 +1465,17 @@ class ResultViewModel2 : ViewModel() {
             argamap(
                 {
                     if (this !is AnimeLoadResponse) return@argamap
+                    // already exist, no need to run getTracker
+                    if (this.getAniListId() != null && this.getMalId() != null) return@argamap
+
                     val res = APIHolder.getTracker(
                         listOfNotNull(
                             this.engName,
                             this.name,
                             this.japName
-                        ).distinct(), TrackerType.getTypes(this.type), this.year
+                        ).filter { it.length > 2 }.distinct(), // the reason why we filter is due to not wanting smth like " " or "?"
+                        TrackerType.getTypes(this.type),
+                        this.year
                     )
 
                     val ids = arrayOf(
@@ -1499,7 +1504,7 @@ class ResultViewModel2 : ViewModel() {
                     backgroundPosterUrl = backgroundPosterUrl ?: res?.cover
                 },
                 {
-                    if(meta == null) return@argamap
+                    if (meta == null) return@argamap
                     addTrailer(meta.trailers)
                 }, {
                     if (this !is AnimeLoadResponse) return@argamap
@@ -2162,7 +2167,7 @@ class ResultViewModel2 : ViewModel() {
         autostart: AutoResume?,
         loadTrailers: Boolean = true,
     ) =
-        viewModelScope.launchSafe {
+        ioSafe {
             _page.postValue(Resource.Loading(url))
             _episodes.postValue(ResourceSome.Loading())
 
@@ -2180,7 +2185,7 @@ class ResultViewModel2 : ViewModel() {
                         "This provider does not exist"
                     )
                 )
-                return@launchSafe
+                return@ioSafe
             }
 
 
@@ -2191,21 +2196,15 @@ class ResultViewModel2 : ViewModel() {
                     api
                 )
             }
-            // TODO: fix
-            // val validUrlResource = safeApiCall {
-            //     SyncRedirector.redirect(
-            //         url,
-            //         api.mainUrl.replace(NineAnimeProvider().mainUrl, "9anime")
-            //             .replace(GogoanimeProvider().mainUrl, "gogoanime")
-            //     )
-            // }
+
             if (validUrlResource !is Resource.Success) {
                 if (validUrlResource is Resource.Failure) {
                     _page.postValue(validUrlResource)
                 }
 
-                return@launchSafe
+                return@ioSafe
             }
+
             val validUrl = validUrlResource.value
             val repo = APIRepository(api)
             currentRepo = repo
@@ -2215,11 +2214,11 @@ class ResultViewModel2 : ViewModel() {
                     _page.postValue(data)
                 }
                 is Resource.Success -> {
-                    if (!isActive) return@launchSafe
+                    if (!isActive) return@ioSafe
                     val loadResponse = ioWork {
                         applyMeta(data.value, currentMeta, currentSync).first
                     }
-                    if (!isActive) return@launchSafe
+                    if (!isActive) return@ioSafe
                     val mainId = loadResponse.getId()
 
                     preferDubStatus = getDub(mainId) ?: preferDubStatus
@@ -2247,7 +2246,7 @@ class ResultViewModel2 : ViewModel() {
                         updateFillers = showFillers,
                         apiRepository = repo
                     )
-                    if (!isActive) return@launchSafe
+                    if (!isActive) return@ioSafe
                     handleAutoStart(activity, autostart)
                 }
                 is Resource.Loading -> {

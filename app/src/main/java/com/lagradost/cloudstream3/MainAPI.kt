@@ -82,7 +82,7 @@ object APIHolder {
             initMap()
             return apiMap?.get(apiName)?.let { apis.getOrNull(it) }
             // Leave the ?. null check, it can crash regardless
-                ?: allProviders.firstOrNull { it?.name == apiName }
+                ?: allProviders.firstOrNull { it.name == apiName }
         }
     }
 
