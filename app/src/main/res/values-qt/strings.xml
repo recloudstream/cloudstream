@@ -4,12 +4,12 @@
     <string name="app_name">aauugghhaauuh</string>
     <string name="title_home">ooh</string>
     <string name="title_search">oouuh</string>
-    <string name="title_downloads">ouuhhhooh ooh</string>
+    <string name="title_downloads">ouuhhuhooh ooh</string>
     <string name="title_settings">aaaghhoh aauugghh</string>
-    <string name="search_hint">haaooh</string>
+    <string name="search_hint">haaooh ooo</string>
     <string name="search_poster_img_des">aaaaaah</string>
     <string name="no_data">oooohhoouuh</string>
-    <string name="episode_more_options_des">aaaaaoouuhahhh ahh</string>
+    <string name="episode_more_options_des">aaaaoouuuhahhh ahh</string>
     <string name="go_back_img_des">oooohh aauuh</string>
     <string name="next_episode">ahhhaaaghh aaaaa</string>
     <string name="result_poster_img_des">ahaauugghh</string>
@@ -196,4 +196,26 @@
     <string name="primary_color_settings">a ou oh ouhuouhoaaha</string>
     <string name="show_fillers_settings">aaooohhouhhha hauauuu</string>
     <string name="new_update_format">aaaaaaa uuuuuu\n%s -&gt; %s</string>
+    <string name="app_dub_sub_episode_text_format" formatted="true">%s aaou %d</string>
+    <string name="cast_format" formatted="true">oouaaahh %s</string>
+    <string name="next_episode_format" formatted="true">aaaaaaugh ouh %d uuoogahaaah ooua-h-ha</string>
+    <string name="next_episode_time_day_format" formatted="true">%daaa %duuu %dhhhg</string>
+    <string name="next_episode_time_hour_format" formatted="true">%daaaaaaauuhh %doouuahaaha</string>
+    <string name="next_episode_time_min_format" formatted="true">%dmmmm...</string>
+    <string name="player_speed_text_format" formatted="true">aaaaaaaaaaaaahh (%.2foouo)</string>
+    <string name="rated_format" formatted="true">aghaaaooo-ough %.1f</string>
+    <string name="filler" formatted="true">aaaaaaaaaaaaaaaaaaaaaaaaaaaaaooooohhuhuhuhuhuhhuhuhhhaaagaha-agagaoooo</string>
+    <string name="duration_format" formatted="true">%d ooaaaugha</string>
+    <string name="play_with_app_name">oooooh aaah aauuuggghauuh</string>
+    <string name="search_hint_site" formatted="true">aaoohhu %s aoouu</string>
+    <string name="browser">oooaaaauhgaaaa</string>
+    <string name="type_re_watching">aaaaaah-ooooooooouuagh</string>
+    <string name="action_add_to_bookmarks">auugggguuuuuuhhh uuuu hhhhhhhhuhggghggg</string>
+    <string name="play_trailer_button">ggaaaahhhhhhh gaauuuuuuuaaaau</string>
+    <string name="play_livestream_button">aaauuuuggggguu</string>
+    <string name="update_started">ooo aagg hhhh</string>
+    <string name="stream">ooo aagg hhhh</string>
+    <string name="sort_copy">uuuuhhhoouuooog ooaaahhhh</string>
+    <string name="sort_close">uuu ugggg</string>
+    <string name="sort_clear">ooo guggg ooh</string>
 </resources>

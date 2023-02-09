@@ -506,4 +506,5 @@
     <string name="empty_library_logged_in_message">Схоже, цей список порожній, спробуйте перейти до іншого</string>
     <string name="safe_mode_file">Файл безпечного режиму знайдено!
 \nРозширеня не завантажуються під час запуску, доки файл не буде видалено.</string>
+    <string name="pref_category_android_tv">Android TV</string>
 </resources>
