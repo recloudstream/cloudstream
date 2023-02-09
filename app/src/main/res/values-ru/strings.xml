@@ -25,8 +25,8 @@
     <string name="next_episode_format" formatted="true">Серия %d будет выпущен в</string>
     <string name="result_poster_img_des">Плакат</string>
     <string name="search_poster_img_des">Плакат</string>
-    <string name="episode_poster_img_des">Постер Эпизода</string>
-    <string name="home_main_poster_img_des">Главный постер</string>
+    <string name="episode_poster_img_des">Плакат эпизода</string>
+    <string name="home_main_poster_img_des">Главный плакат</string>
     <string name="home_next_random_img_des">Следующий случайный</string>
     <string name="go_back_img_des">Вернуться</string>
     <string name="home_change_provider_img_des">Изменить поставщика</string>
@@ -61,11 +61,11 @@
     <string name="type_none">Нет</string>
     <string name="type_re_watching">Пересмотрю</string>
     <string name="play_movie_button">Смотреть фильм</string>
-    <string name="play_trailer_button">Воспроизвести трейлер</string>
-    <string name="play_livestream_button">Воспроизвести Livestream</string>
+    <string name="play_trailer_button">Смотреть трейлер</string>
+    <string name="play_livestream_button">Смотреть Livestream</string>
     <string name="pick_source">Источники</string>
     <string name="pick_subtitle">Субтитры</string>
-    <string name="play_episode">Воспроизвести эпизод</string>
+    <string name="play_episode">Смотреть эпизод</string>
     <string name="reload_error">Повторная попытка подключение…</string>
     <string name="go_back">Вернуться</string>
     <string name="downloaded">Скачано</string>
@@ -90,7 +90,7 @@
     <string name="player_speed">Скорость проигрыватель</string>
     <string name="play_episode_toast">Воспроизвести Эпизод</string>
     <string name="next_episode_time_day_format" formatted="true">%dд %dч %dм</string>
-    <string name="duration_format" formatted="true">%d мин</string>
+    <string name="duration_format" formatted="true">%d мин.</string>
     <string name="app_dubbed_text">Dub</string>
     <string name="app_subbed_text">Sub</string>
     <string name="action_add_to_bookmarks">Установите смотреть состояние</string>
@@ -114,7 +114,7 @@
     <string name="subs_font">Шрифт</string>
     <string name="subs_font_size">Размер шрифта</string>
     <string name="popup_delete_file">Удалить файл</string>
-    <string name="popup_play_file">Проиграть файл</string>
+    <string name="popup_play_file">Воспроизвести файл</string>
     <string name="download_storage_text">Внутренняя память</string>
     <string name="popup_resume_download">Продолжить Скачать</string>
     <string name="popup_pause_download">Остановить скачивание</string>
@@ -213,7 +213,7 @@
     <string name="nsfw">NSFW</string>
     <string name="nsfw_singular">NSFW</string>
     <string name="movies_singular">Фильм</string>
-    <string name="tv_series_singular">Серия</string>
+    <string name="tv_series_singular">Сериал</string>
     <string name="torrent_singular">Торрент</string>
     <string name="documentaries_singular">Документальный</string>
     <string name="asian_drama_singular">Азиатская драма</string>
@@ -472,7 +472,7 @@
     <string name="setup_extensions_subtext">Скачайте список сайтов, который вы хотите использовать</string>
     <string name="display_subbed_dubbed_settings">Отображать Аниме с Дубляжом/Субтитрами</string>
     <string name="enable_nsfw_on_providers">Включить NSFW на поддерживаемых провайдерах</string>
-    <string name="subtitles_remove_captions">Убрать скрытые субтитры из субтитров</string>
+    <string name="subtitles_remove_captions">Удалять скрытые субтитры из субтитров</string>
     <string name="extras">Дополнительно</string>
     <string name="app_layout_subtext">Изменить вид интерфейса, чтобы соответствовать устройству</string>
     <string name="audio_tracks">Аудио дорожки</string>
@@ -502,4 +502,8 @@
     <string name="preferred_media_settings">Предпочтительные медиа</string>
     <string name="subtitles_depressed">Опущенные</string>
     <string name="double_tap_to_seek_amount_settings">Объем перемотки плеера</string>
+    <string name="android_tv_interface_on_seek_settings_summary">Объем перемотка, используемый, когда плеер виден</string>
+    <string name="android_tv_interface_on_seek_settings">Плеер показан - Перемотки объем</string>
+    <string name="android_tv_interface_off_seek_settings">Плеер спрятан - Перемотки объем</string>
+    <string name="subtitles_remove_bloat">Удалять лишнее из субтитров</string>
 </resources>

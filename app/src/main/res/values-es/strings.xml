@@ -509,5 +509,6 @@
     <string name="android_tv_interface_on_seek_settings">Jugadora mostrada - buscar cantidad</string>
     <string name="android_tv_interface_off_seek_settings">Jugadora oculta - buscar cantidad</string>
     <string name="pref_category_android_tv">Android TV</string>
-    <string name="android_tv_interface_on_seek_settings_summary">La cantidad de búsqueda utilizada cuando la jugadora es visible.</string>
+    <string name="android_tv_interface_on_seek_settings_summary">La cantidad de búsqueda utilizada cuando la jugadora es visible</string>
+    <string name="android_tv_interface_off_seek_settings_summary">La cantidad de búsqueda utilizada cuando el jugador está oculto</string>
 </resources>

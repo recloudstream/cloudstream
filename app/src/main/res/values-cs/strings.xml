@@ -530,4 +530,9 @@
     <string name="delete_repository">Odstranit repozitář</string>
     <string name="plugins_not_downloaded" formatted="true">Nestaženo: %d</string>
     <string name="no">Ne</string>
+    <string name="android_tv_interface_off_seek_settings">Skrytý přehrávač - doba hledání</string>
+    <string name="android_tv_interface_off_seek_settings_summary">Množství vyhledávané doby při skrytém přehrávači</string>
+    <string name="android_tv_interface_on_seek_settings">Zobrazený přehrávač - doba hledání</string>
+    <string name="pref_category_android_tv">Android TV</string>
+    <string name="android_tv_interface_on_seek_settings_summary">Množství vyhledávané doby při zobrazeném přehrávači</string>
 </resources>

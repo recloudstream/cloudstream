@@ -538,4 +538,9 @@
     <string name="library">المكتبة</string>
     <string name="safe_mode_file">تم العثور على ملف الوضع الآمن!
 \nلا يتم تحميل أي ملحقات عند بدء التشغيل حتى تتم إزالة الملف.</string>
+    <string name="android_tv_interface_off_seek_settings_summary">مدة التقديم عنما يكون المشغل مخفيا</string>
+    <string name="android_tv_interface_off_seek_settings">مدة التقديم - المشغل مخفي</string>
+    <string name="pref_category_android_tv">تلفزيون أندرويد</string>
+    <string name="android_tv_interface_on_seek_settings_summary">مدة التقديم عنما يكون المشغل مرئيا</string>
+    <string name="android_tv_interface_on_seek_settings">مدة التقديم- المشغل المرئي</string>
 </resources>
