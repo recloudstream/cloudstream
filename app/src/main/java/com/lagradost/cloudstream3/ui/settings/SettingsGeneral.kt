@@ -74,6 +74,7 @@ val appLanguages = arrayListOf(
     Triple("", "magyar", "hu"),
     Triple("\uD83C\uDDEE\uD83C\uDDE9", "Bahasa Indonesia", "in"),
     Triple("", "italiano", "it"),
+    Triple("", "iw", "iw"),
     Triple("", "ಕನ್ನಡ", "kn"),
     Triple("", "македонски", "mk"),
     Triple("", "മലയാളം", "ml"),
