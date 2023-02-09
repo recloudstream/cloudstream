@@ -25,6 +25,7 @@ import com.lagradost.cloudstream3.LoadResponse.Companion.getMalId
 import com.lagradost.cloudstream3.LoadResponse.Companion.isMovie
 import com.lagradost.cloudstream3.metaproviders.SyncRedirector
 import com.lagradost.cloudstream3.mvvm.*
+import com.lagradost.cloudstream3.syncproviders.AccountManager
 import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.syncproviders.providers.Kitsu
 import com.lagradost.cloudstream3.ui.APIRepository
@@ -1422,85 +1423,122 @@ class ResultViewModel2 : ViewModel() {
         meta: SyncAPI.SyncResult?,
         syncs: Map<String, String>? = null
     ): Pair<LoadResponse, Boolean> {
-        if (meta == null) return resp to false
+        //if (meta == null) return resp to false
         var updateEpisodes = false
         val out = resp.apply {
             Log.i(TAG, "applyMeta")
 
-            duration = duration ?: meta.duration
-            rating = rating ?: meta.publicScore
-            tags = tags ?: meta.genres
-            plot = if (plot.isNullOrBlank()) meta.synopsis else plot
-            posterUrl = posterUrl ?: meta.posterUrl ?: meta.backgroundPosterUrl
-            actors = actors ?: meta.actors
+            if (meta != null) {
+                duration = duration ?: meta.duration
+                rating = rating ?: meta.publicScore
+                tags = tags ?: meta.genres
+                plot = if (plot.isNullOrBlank()) meta.synopsis else plot
+                posterUrl = posterUrl ?: meta.posterUrl ?: meta.backgroundPosterUrl
+                actors = actors ?: meta.actors
 
-            if (this is EpisodeResponse) {
-                nextAiring = nextAiring ?: meta.nextAiring
+                if (this is EpisodeResponse) {
+                    nextAiring = nextAiring ?: meta.nextAiring
+                }
+
+                val realRecommendations = ArrayList<SearchResponse>()
+                val apiNames = apis.filter {
+                    it.name.contains("gogoanime", true) ||
+                            it.name.contains("9anime", true)
+                }.map {
+                    it.name
+                }
+
+                meta.recommendations?.forEach { rec ->
+                    apiNames.forEach { name ->
+                        realRecommendations.add(rec.copy(apiName = name))
+                    }
+                }
+
+                recommendations = recommendations?.union(realRecommendations)?.toList()
+                    ?: realRecommendations
             }
 
             for ((k, v) in syncs ?: emptyMap()) {
                 syncData[k] = v
             }
 
-            val realRecommendations = ArrayList<SearchResponse>()
-            // TODO: fix
-            val apiNames = apis.filter {
-                it.name.contains("gogoanime", true) ||
-                        it.name.contains("9anime", true)
-            }.map {
-                it.name
-            }
-
-            meta.recommendations?.forEach { rec ->
-                apiNames.forEach { name ->
-                    realRecommendations.add(rec.copy(apiName = name))
-                }
-            }
-
-            recommendations = recommendations?.union(realRecommendations)?.toList()
-                ?: realRecommendations
-
-            argamap({
-                addTrailer(meta.trailers)
-            }, {
-                if (this !is AnimeLoadResponse) return@argamap
-                val map =
-                    Kitsu.getEpisodesDetails(
-                        getMalId(),
-                        getAniListId(),
-                        isResponseRequired = false
+            argamap(
+                {
+                    if (this !is AnimeLoadResponse) return@argamap
+                    val res = APIHolder.getTracker(
+                        listOfNotNull(
+                            this.engName,
+                            this.name,
+                            this.japName
+                        ).distinct(), TrackerType.getTypes(this.type), this.year
                     )
-                if (map.isNullOrEmpty()) return@argamap
-                updateEpisodes = DubStatus.values().map { dubStatus ->
-                    val current =
-                        this.episodes[dubStatus]?.mapIndexed { index, episode ->
-                            episode.apply {
-                                this.episode = this.episode ?: (index + 1)
-                            }
-                        }?.sortedBy { it.episode ?: 0 }?.toMutableList()
-                    if (current.isNullOrEmpty()) return@map false
-                    val episodeNumbers = current.map { ep -> ep.episode!! }
-                    var updateCount = 0
-                    map.forEach { (episode, node) ->
-                        episodeNumbers.binarySearch(episode).let { index ->
-                            current.getOrNull(index)?.let { currentEp ->
-                                current[index] = currentEp.apply {
-                                    updateCount++
-                                    val currentBack = this
-                                    this.description = this.description ?: node.description?.en
-                                    this.name = this.name ?: node.titles?.canonical
-                                    this.episode =
-                                        this.episode ?: node.num ?: episodeNumbers[index]
-                                    this.posterUrl =
-                                        this.posterUrl ?: node.thumbnail?.original?.url
+
+                    val ids = arrayOf(
+                        AccountManager.malApi.idPrefix to res?.malId?.toString(),
+                        AccountManager.aniListApi.idPrefix to res?.aniId
+                    )
+
+                    if (ids.any { (id, new) ->
+                            val current = syncData[id]
+                            new != null && current != null && current != new
+                        }
+                    ) {
+                        // getTracker fucked up as it conflicts with current implementation
+                        return@argamap
+                    }
+
+                    // set all the new data, prioritise old correct data
+                    ids.forEach { (id, new) ->
+                        new?.let {
+                            syncData[id] = syncData[id] ?: it
+                        }
+                    }
+
+                    // set posters, might fuck up due to headers idk
+                    posterUrl = posterUrl ?: res?.image
+                    backgroundPosterUrl = backgroundPosterUrl ?: res?.cover
+                },
+                {
+                    if(meta == null) return@argamap
+                    addTrailer(meta.trailers)
+                }, {
+                    if (this !is AnimeLoadResponse) return@argamap
+                    val map =
+                        Kitsu.getEpisodesDetails(
+                            getMalId(),
+                            getAniListId(),
+                            isResponseRequired = false
+                        )
+                    if (map.isNullOrEmpty()) return@argamap
+                    updateEpisodes = DubStatus.values().map { dubStatus ->
+                        val current =
+                            this.episodes[dubStatus]?.mapIndexed { index, episode ->
+                                episode.apply {
+                                    this.episode = this.episode ?: (index + 1)
+                                }
+                            }?.sortedBy { it.episode ?: 0 }?.toMutableList()
+                        if (current.isNullOrEmpty()) return@map false
+                        val episodeNumbers = current.map { ep -> ep.episode!! }
+                        var updateCount = 0
+                        map.forEach { (episode, node) ->
+                            episodeNumbers.binarySearch(episode).let { index ->
+                                current.getOrNull(index)?.let { currentEp ->
+                                    current[index] = currentEp.apply {
+                                        updateCount++
+                                        this.description = this.description ?: node.description?.en
+                                        this.name = this.name ?: node.titles?.canonical
+                                        this.episode =
+                                            this.episode ?: node.num ?: episodeNumbers[index]
+                                        this.posterUrl =
+                                            this.posterUrl ?: node.thumbnail?.original?.url
+                                    }
                                 }
                             }
                         }
-                    }
-                    this.episodes[dubStatus] = current
-                    updateCount > 0
-                }.any { it }
-            })
+                        this.episodes[dubStatus] = current
+                        updateCount > 0
+                    }.any { it }
+                })
         }
         return out to updateEpisodes
     }
