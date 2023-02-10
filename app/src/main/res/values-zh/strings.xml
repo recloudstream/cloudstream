@@ -19,19 +19,20 @@
     <string name="next_episode_time_min_format" formatted="true">%dm</string>
     <!-- IS NOT NEEDED TO TRANSLATE AS THEY ARE ONLY USED FOR SCREEN READERS AND WONT SHOW UP TO NORMAL USERS -->
     <string name="result_poster_img_des">封面</string>
-    <string name="search_poster_img_des">@string/result_poster_img_des</string>
+    <string name="search_poster_img_des">封面</string>
     <string name="episode_poster_img_des">剧集封面</string>
     <string name="home_main_poster_img_des">主封面</string>
     <string name="home_next_random_img_des">随机下一个</string>
-    <string name="episode_play_img_des" translatable="false">@string/play_episode</string>
+    <string name="episode_play_img_des" translatable="false">\@string/play_episode</string>
     <string name="go_back_img_des">返回</string>
-    <string name="change_providers_img_des" translatable="false">@string/home_change_provider_img_des</string>
+    <string name="change_providers_img_des" translatable="false">\@string/home_change_provider_img_des</string>
     <string name="home_change_provider_img_des">更改片源</string>
     <string name="preview_background_img_des">预览背景</string>
     <!-- TRANSLATE, BUT DON'T FORGET FORMAT -->
     <string name="player_speed_text_format" formatted="true">速度（%.2fx）</string>
     <string name="rated_format" formatted="true">评分：%.1f</string>
-    <string name="new_update_format" formatted="true">发现新版本！\n%s -&gt; %s</string>
+    <string name="new_update_format" formatted="true">发现新版本！
+\n%s -&gt; %s</string>
     <string name="filler" formatted="true">填充</string>
     <string name="duration_format" formatted="true">%d 分钟</string>
     <string name="app_name">CloudStream</string>
@@ -45,7 +46,7 @@
     <string name="no_data">无数据</string>
     <string name="episode_more_options_des">更多选项</string>
     <string name="next_episode">下一集</string>
-    <string name="result_plot" translatable="false">@string/synopsis</string>
+    <string name="result_plot" translatable="false">\@string/synopsis</string>
     <string name="result_tags">类型</string>
     <string name="result_share">分享</string>
     <string name="result_open_in_browser">在浏览器中打开</string>
@@ -122,7 +123,7 @@
     <string name="continue_watching">继续观看</string>
     <string name="action_remove_watching">移除</string>
     <string name="action_open_watching">更多信息</string>
-    <string name="action_open_play">@string/home_play </string>
+    <string name="action_open_play">\@string/home_play</string>
     <string name="vpn_might_be_needed">此片源可能需要 VPN 才能正常使用</string>
     <string name="vpn_torrent">此片源为种子文件，建议使用 VPN</string>
     <string name="provider_info_meta">站点不提供元数据，如果站点上不存在元数据，视频加载将失败。</string>
@@ -149,12 +150,10 @@
     <string name="double_tap_to_seek_settings">双击控制进度</string>
     <string name="double_tap_to_pause_settings">双击暂停</string>
     <string name="double_tap_to_seek_amount_settings">双击控制进度时间</string>
-    <string name="double_tap_to_seek_settings_des">在左右侧双击快进或快退
-    </string>
+    <string name="double_tap_to_seek_settings_des">在左右侧双击快进或快退</string>
     <string name="double_tap_to_pause_settings_des">双击中间暂停</string>
     <string name="use_system_brightness_settings">使用系统亮度</string>
-    <string name="use_system_brightness_settings_des">在应用播放器中使用系统亮度替代黑色遮罩
-    </string>
+    <string name="use_system_brightness_settings_des">在应用播放器中使用系统亮度替代黑色遮罩</string>
     <string name="episode_sync_settings">更新观看进度</string>
     <string name="episode_sync_settings_des">自动同步当前剧集进度</string>
     <string name="restore_settings">从备份中恢复数据</string>
@@ -194,8 +193,7 @@
     <string name="copy_link_toast">链接已复制到剪贴板</string>
     <string name="play_episode_toast">播放剧集</string>
     <string name="subs_default_reset_toast">重置为默认值</string>
-    <string name="acra_report_toast">抱歉，应用崩溃了，将发送一份匿名错误报告给开发者
-    </string>
+    <string name="acra_report_toast">抱歉，应用崩溃了，将发送一份匿名错误报告给开发者</string>
     <string name="season">季</string>
     <string name="season_format">%s %d%s</string>
     <string name="no_season">无季</string>
@@ -208,12 +206,13 @@
     <string name="no_episodes_found">未找到剧集</string>
     <string name="delete_file">删除文件</string>
     <string name="delete">删除</string>
-    <string name="cancel" translatable="false">@string/sort_cancel</string>
+    <string name="cancel" translatable="false">\@string/sort_cancel</string>
     <string name="pause">暂停</string>
     <string name="resume">继续</string>
     <string name="go_back_30">-30</string>
     <string name="go_forward_30">+30</string>
-    <string name="delete_message" formatted="true">这将永久删除 %s\n您确定吗?</string>
+    <string name="delete_message" formatted="true">这将永久删除 %s
+\n您确定吗\?</string>
     <string name="resume_time_left" formatted="true">%d 分钟
 \n剩余</string>
     <string name="status_ongoing">连载中</string>
@@ -246,8 +245,8 @@
     <string name="movies_singular">电影</string>
     <string name="tv_series_singular">电视剧</string>
     <string name="cartoons_singular">卡通</string>
-    <string name="anime_singular">@string/anime</string>
-    <string name="ova_singular">@string/ova</string>
+    <string name="anime_singular">\@string/anime</string>
+    <string name="ova_singular">\@string/ova</string>
     <string name="torrent_singular">种子</string>
     <string name="documentaries_singular">纪录片</string>
     <string name="asian_drama_singular">亚洲剧</string>
@@ -309,22 +308,7 @@
     <string name="resize_zoom">缩放</string>
     <string name="legal_notice">免责声明</string>
     <string name="legal_notice_key" translatable="false">legal_notice_key</string>
-    <string name="legal_notice_text" translatable="false">Any legal issues regarding the content on this application
-        should be taken up with the actual file hosts and providers themselves as we are not affiliated with them.
-
-        In case of copyright infringement, please directly contact the responsible parties or the streaming websites.
-
-        The app is purely for educational and personal use.
-
-        CloudStream 3 does not host any content on the app, and has no control over what media is put up or taken down.
-        CloudStream 3 functions like any other search engine, such as Google. CloudStream 3 does not host, upload or
-        manage any videos, films or content. It simply crawls, aggregates and displayes links in a convenient,
-        user-friendly interface.
-
-        It merely scrapes 3rd-party websites that are publicly accessable via any regular web browser. It is the
-        responsibility of user to avoid any actions that might violate the laws governing his/her locality. Use
-        CloudStream 3 at your own risk.
-    </string>
+    <string name="legal_notice_text" translatable="false">Any legal issues regarding the content on this application should be taken up with the actual file hosts and providers themselves as we are not affiliated with them. In case of copyright infringement, please directly contact the responsible parties or the streaming websites. The app is purely for educational and personal use. CloudStream 3 does not host any content on the app, and has no control over what media is put up or taken down. CloudStream 3 functions like any other search engine, such as Google. CloudStream 3 does not host, upload or manage any videos, films or content. It simply crawls, aggregates and displayes links in a convenient, user-friendly interface. It merely scrapes 3rd-party websites that are publicly accessable via any regular web browser. It is the responsibility of user to avoid any actions that might violate the laws governing his/her locality. Use CloudStream 3 at your own risk.</string>
     <string name="category_general">通用</string>
     <string name="random_button_settings">随机按钮</string>
     <string name="random_button_settings_desc">在主页中显示随机按钮</string>
@@ -375,7 +359,7 @@
     <string name="upload_sync">同步</string>
     <string name="sync_score">评分</string>
     <string name="sync_score_format" formatted="true">%d / 10</string>
-    <string name="sync_total_episodes_none">/??</string>
+    <string name="sync_total_episodes_none">/\?\?</string>
     <string name="sync_total_episodes_some" formatted="true">/%d</string>
     <string name="authenticated_user" formatted="true">已验证 %s</string>
     <string name="authenticated_user_fail" formatted="true">无法登录到 %s</string>
@@ -385,7 +369,7 @@
     <string name="all">全部</string>
     <string name="max">最大</string>
     <string name="min">最小</string>
-    <string name="subtitles_none" translatable="false">@string/none</string>
+    <string name="subtitles_none" translatable="false">\@string/none</string>
     <string name="subtitles_outline">轮廓</string>
     <string name="subtitles_depressed">凹陷</string>
     <string name="subtitles_shadow">阴影</string>
@@ -552,4 +536,22 @@
     <string name="update_started">更新开始</string>
     <string name="delayed_update_notice">应用退出后将会更新</string>
     <string name="plugin_downloaded">插件已下载</string>
+    <string name="action_remove_from_watched">从已观看中移除</string>
+    <string name="safe_mode_file">发现安全模式文件！
+\n启动时不加载任何扩展，直到文件被删除。</string>
+    <string name="browser">浏览器</string>
+    <string name="library">库</string>
+    <string name="sort_by">排序方式</string>
+    <string name="sort">排序</string>
+    <string name="sort_rating_desc">评分（从高到低）</string>
+    <string name="sort_rating_asc">评分（从低到高）</string>
+    <string name="sort_updated_new">更新（从新到旧）</string>
+    <string name="sort_updated_old">更新（从旧到新）</string>
+    <string name="sort_alphabetical_a">字母排序（从 A 到 Z）</string>
+    <string name="sort_alphabetical_z">字母排序（从 Z 到 A）</string>
+    <string name="select_library">选择库</string>
+    <string name="open_with">打开方式</string>
+    <string name="empty_library_no_accounts_message">看来您的库是空的 :(
+\n登录库账户或添加节目到您的本地库</string>
+    <string name="empty_library_logged_in_message">看来此列表是空的，请尝试切换到另一个</string>
 </resources>

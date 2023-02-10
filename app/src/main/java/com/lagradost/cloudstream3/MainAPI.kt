@@ -13,11 +13,11 @@ import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.aniListApi
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.malApi
+import com.lagradost.cloudstream3.syncproviders.SyncIdName
 import com.lagradost.cloudstream3.ui.player.SubtitleData
-import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
+import com.lagradost.cloudstream3.utils.*
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
 import com.lagradost.cloudstream3.utils.Coroutines.threadSafeListOf
-import com.lagradost.cloudstream3.utils.ExtractorLink
 import okhttp3.Interceptor
 import java.text.SimpleDateFormat
 import java.util.*
@@ -81,8 +81,8 @@ object APIHolder {
         synchronized(allProviders) {
             initMap()
             return apiMap?.get(apiName)?.let { apis.getOrNull(it) }
-                // Leave the ?. null check, it can crash regardless
-                ?: allProviders.firstOrNull { it?.name == apiName }
+            // Leave the ?. null check, it can crash regardless
+                ?: allProviders.firstOrNull { it.name == apiName }
         }
     }
 
@@ -159,6 +159,53 @@ object APIHolder {
         }
         return null
     }
+
+    private var trackerCache: HashMap<String, AniSearch> = hashMapOf()
+
+    /**
+     * Get anime tracker information based on title, year and type.
+     * Both titles are attempted to be matched with both Romaji and English title.
+     * Uses the consumet api.
+     *
+     * @param titles uses first index to search, but if you have multiple titles and want extra guarantee to match you can also have that
+     * @param types Optional parameter to narrow down the scope to Movies, TV, etc. See TrackerType.getTypes()
+     * @param year Optional parameter to only get anime with a specific year
+     **/
+    suspend fun getTracker(
+        titles: List<String>,
+        types: Set<TrackerType>?,
+        year: Int?
+    ): Tracker? {
+        return try {
+            require(titles.isNotEmpty()) { "titles must no be empty when calling getTracker" }
+
+            val mainTitle = titles[0]
+            val search =
+                trackerCache[mainTitle]
+                    ?: app.get("https://api.consumet.org/meta/anilist/$mainTitle")
+                        .parsedSafe<AniSearch>()?.also {
+                            trackerCache[mainTitle] = it
+                        } ?: return null
+
+            val res = search.results?.find { media ->
+                val matchingYears = year == null || media.releaseDate == year
+                val matchingTitles = media.title?.let { title ->
+                    titles.any { userTitle ->
+                        title.isMatchingTitles(userTitle)
+                    }
+                } ?: false
+
+                val matchingTypes = types?.any { it.name.equals(media.type, true) } == true
+                matchingTitles && matchingTypes && matchingYears
+            } ?: return null
+
+            Tracker(res.malId, res.aniId, res.image, res.cover)
+        } catch (t: Throwable) {
+            logError(t)
+            null
+        }
+    }
+
 
     fun Context.getApiSettings(): HashSet<String> {
         //val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
@@ -318,6 +365,57 @@ object APIHolder {
     }
 }
 
+/*
+// THIS IS WORK IN PROGRESS API
+interface ITag {
+    val name: UiText
+}
+
+data class SimpleTag(override val name: UiText, val data: String) : ITag
+
+enum class SelectType {
+    SingleSelect,
+    MultiSelect,
+    MultiSelectAndExclude,
+}
+
+enum class SelectValue {
+    Selected,
+    Excluded,
+}
+
+interface GenreSelector {
+    val title: UiText
+    val id : Int
+}
+
+data class TagSelector(
+    override val title: UiText,
+    override val id : Int,
+    val tags: Set<ITag>,
+    val defaultTags : Set<ITag> = setOf(),
+    val selectType: SelectType = SelectType.SingleSelect,
+) : GenreSelector
+
+data class BoolSelector(
+    override val title: UiText,
+    override val id : Int,
+
+    val defaultValue : Boolean = false,
+) : GenreSelector
+
+data class InputField(
+    override val title: UiText,
+    override val id : Int,
+
+    val hint : UiText? = null,
+) : GenreSelector
+
+// This response describes how a user might filter the homepage or search results
+data class GenreResponse(
+    val searchSelectors : List<GenreSelector>,
+    val filterSelectors: List<GenreSelector> = searchSelectors
+) */
 
 /*
 0 = Site not good
@@ -459,6 +557,20 @@ abstract class MainAPI {
     open val hasMainPage = false
     open val hasQuickSearch = false
 
+    /**
+     * A set of which ids the provider can open with getLoadUrl()
+     * If the set contains SyncIdName.Imdb then getLoadUrl() can be started with
+     * an Imdb class which inherits from SyncId.
+     *
+     * getLoadUrl() is then used to get page url based on that ID.
+     *
+     * Example:
+     * "tt6723592" -> getLoadUrl(ImdbSyncId("tt6723592")) -> "mainUrl/imdb/tt6723592" -> load("mainUrl/imdb/tt6723592")
+     *
+     * This is used to launch pages from personal lists or recommendations using IDs.
+     **/
+    open val supportedSyncNames = setOf<SyncIdName>()
+
     open val supportedTypes = setOf(
         TvType.Movie,
         TvType.TvSeries,
@@ -527,6 +639,14 @@ abstract class MainAPI {
 
     /** An okhttp interceptor for used in OkHttpDataSource */
     open fun getVideoInterceptor(extractorLink: ExtractorLink): Interceptor? {
+        return null
+    }
+
+    /**
+     * Get the load() url based on a sync ID like IMDb or MAL.
+     * Only contains SyncIds based on supportedSyncUrls.
+     **/
+    open suspend fun getLoadUrl(name: SyncIdName, id: String): String? {
         return null
     }
 }
@@ -1514,3 +1634,61 @@ fun fetchUrls(text: String?): List<String> {
 
 fun String?.toRatingInt(): Int? =
     this?.replace(" ", "")?.trim()?.toDoubleOrNull()?.absoluteValue?.times(1000f)?.toInt()
+
+data class Tracker(
+    val malId: Int? = null,
+    val aniId: String? = null,
+    val image: String? = null,
+    val cover: String? = null,
+)
+
+data class Title(
+    @JsonProperty("romaji") val romaji: String? = null,
+    @JsonProperty("english") val english: String? = null,
+) {
+    fun isMatchingTitles(title: String?): Boolean {
+        if (title == null) return false
+        return english.equals(title, true) || romaji.equals(title, true)
+    }
+}
+
+data class Results(
+    @JsonProperty("id") val aniId: String? = null,
+    @JsonProperty("malId") val malId: Int? = null,
+    @JsonProperty("title") val title: Title? = null,
+    @JsonProperty("releaseDate") val releaseDate: Int? = null,
+    @JsonProperty("type") val type: String? = null,
+    @JsonProperty("image") val image: String? = null,
+    @JsonProperty("cover") val cover: String? = null,
+)
+
+data class AniSearch(
+    @JsonProperty("results") val results: ArrayList<Results>? = arrayListOf()
+)
+
+/**
+ * used for the getTracker() method
+ **/
+enum class TrackerType {
+    MOVIE,
+    TV,
+    TV_SHORT,
+    ONA,
+    OVA,
+    SPECIAL,
+    MUSIC;
+
+    companion object {
+        fun getTypes(type: TvType): Set<TrackerType> {
+            return when (type) {
+                TvType.Movie -> setOf(MOVIE)
+                TvType.AnimeMovie -> setOf(MOVIE)
+                TvType.TvSeries -> setOf(TV, TV_SHORT)
+                TvType.Anime -> setOf(TV, TV_SHORT, ONA, OVA)
+                TvType.OVA -> setOf(OVA, SPECIAL, ONA)
+                TvType.Others -> setOf(MUSIC)
+                else -> emptySet()
+            }
+        }
+    }
+}

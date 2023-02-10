@@ -32,6 +32,7 @@ import com.lagradost.cloudstream3.APIHolder.filterProviderByPreferredMedia
 import com.lagradost.cloudstream3.APIHolder.getApiProviderLangSettings
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.MainActivity.Companion.afterPluginsLoadedEvent
+import com.lagradost.cloudstream3.MainActivity.Companion.bookmarksUpdatedEvent
 import com.lagradost.cloudstream3.MainActivity.Companion.mainPluginsLoadedEvent
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.logError
@@ -435,6 +436,11 @@ class HomeFragment : Fragment() {
         return inflater.inflate(layout, container, false)
     }
 
+    override fun onDestroyView() {
+        bottomSheetDialog?.ownHide()
+        super.onDestroyView()
+    }
+
     private fun fixGrid() {
         activity?.getSpanCount()?.let {
             currentSpan = it
@@ -461,14 +467,20 @@ class HomeFragment : Fragment() {
         fixGrid()
     }
 
+    fun bookmarksUpdated(_data : Boolean) {
+        reloadStored()
+    }
+
     override fun onResume() {
         super.onResume()
         reloadStored()
+        bookmarksUpdatedEvent += ::bookmarksUpdated
         afterPluginsLoadedEvent += ::afterPluginsLoaded
         mainPluginsLoadedEvent += ::afterMainPluginsLoaded
     }
 
     override fun onStop() {
+        bookmarksUpdatedEvent -= ::bookmarksUpdated
         afterPluginsLoadedEvent -= ::afterPluginsLoaded
         mainPluginsLoadedEvent -= ::afterMainPluginsLoaded
         super.onStop()
@@ -557,7 +569,7 @@ class HomeFragment : Fragment() {
                     val mutableListOfResponse = mutableListOf<SearchResponse>()
                     listHomepageItems.clear()
 
-                    (home_master_recycler?.adapter as? ParentItemAdapter?)?.updateList(
+                    (home_master_recycler?.adapter as? ParentItemAdapter)?.updateList(
                         d.values.toMutableList(),
                         home_master_recycler
                     )
@@ -609,7 +621,7 @@ class HomeFragment : Fragment() {
                     //home_loaded?.isVisible = false
                 }
                 is Resource.Loading -> {
-                    (home_master_recycler?.adapter as? ParentItemAdapter?)?.updateList(listOf())
+                    (home_master_recycler?.adapter as? ParentItemAdapter)?.updateList(listOf())
                     home_loading_shimmer?.startShimmer()
                     home_loading?.isVisible = true
                     home_loading_error?.isVisible = false

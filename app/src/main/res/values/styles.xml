@@ -90,14 +90,17 @@
         <item name="android:fontFamily">@font/google_sans</item>
         <item name="chipMinTouchTargetSize">0dp</item>
     </style>
+
     <style name="ChipFilledSemiTransparent" parent="@style/ChipFilled">
         <item name="chipBackgroundColor">@color/transparent</item>
         <item name="chipSurfaceColor">@color/semiWhite</item>
         <item name="backgroundColor">@color/transparent</item>
     </style>
+
     <style name="ChipParent">
         <item name="chipSpacingVertical">5dp</item>
         <item name="chipSpacingHorizontal">5dp</item>
+        <item name="textColor">?attr/textColor</item>
     </style>
 
     <style name="AmoledMode">
@@ -121,6 +124,14 @@
         <item name="android:background">@drawable/sub_bg_color</item>
         <item name="android:text">@string/app_subbed_text</item>
         <item name="android:textColor">@color/subColorText</item>
+    </style>
+
+    <style name="RatingButton" parent="@style/SearchBox">
+        <item name="android:minWidth">30dp</item>
+        <item name="android:background">@drawable/rating_bg_color</item>
+        <item name="drawableTint">@color/ratingColor</item>
+        <item name="android:textColor">@color/ratingColor</item>
+        <item name="drawableStartCompat">@drawable/ic_baseline_star_24</item>
     </style>
 
     <style name="TypeButton" parent="@style/SearchBox">
@@ -373,6 +384,11 @@
         <item name="android:windowMinWidthMinor">@android:dimen/dialog_min_width_minor</item>
         <item name="android:windowBackground">@drawable/dialog__window_background</item>
         <item name="textAllCaps">false</item>
+    </style>
+
+    <style name="TabNoCaps" parent="TextAppearance.Design.Tab">
+        <item name="textAllCaps">false</item>
+        <item name="fontFamily">@font/google_sans</item>
     </style>
 
     <style name="AppTextViewStyle" parent="android:Widget.TextView">

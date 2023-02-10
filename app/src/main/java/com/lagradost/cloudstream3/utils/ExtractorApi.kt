@@ -265,8 +265,6 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     OkRu(),
     OkRuHttps(),
     Okrulink(),
-    Sendvid(),
-    SendvidHttps(),
 
     // dood extractors
     DoodCxExtractor(),
@@ -293,6 +291,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     Supervideo(),
     GuardareStream(),
     CineGrabber(),
+    Vanfem(),
 
     // StreamSB.kt works
     //  SBPlay(),
@@ -323,6 +322,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     DesuDrive(),
 
     Filesim(),
+    FileMoon(),
     Linkbox(),
     Acefile(),
     SpeedoStream(),
@@ -363,6 +363,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
 
     Cda(),
     Dailymotion(),
+    ByteShare(),
 )
 
 

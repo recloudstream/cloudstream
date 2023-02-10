@@ -96,33 +96,36 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <TextView
-                android:id="@+id/player_video_title"
+            <LinearLayout
+                android:clipToPadding="false"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="80dp"
-                android:layout_marginTop="35dp"
+                android:paddingTop="20dp"
                 android:layout_marginEnd="80dp"
-                android:gravity="center"
-                android:textColor="@color/white"
-                android:textStyle="bold"
-                android:visibility="visible"
+                android:orientation="vertical"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:text="Hello world" />
+                app:layout_constraintTop_toTopOf="parent">
 
-            <TextView
-                android:id="@+id/player_video_title_rez"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="80dp"
-                android:layout_marginTop="20dp"
-                android:layout_marginEnd="80dp"
-                android:gravity="center"
-                android:textColor="@color/white"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/player_video_title"
-                tools:text="1920x1080" />
+                <TextView
+                    android:id="@+id/player_video_title_rez"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="2.5dp"
+                    android:gravity="center"
+                    android:textColor="@color/white"
+                    tools:text="1920x1080" />
+
+                <TextView
+                    android:id="@+id/player_video_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:textColor="@color/white"
+                    android:textStyle="bold"
+                    android:visibility="visible"
+                    tools:text="Hello world" />
+            </LinearLayout>
 
 
             <!-- Removed as it has no use anymore-->
@@ -319,23 +322,23 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <com.google.android.material.button.MaterialButton
-            tools:visibility="visible"
             android:id="@+id/skip_chapter_button"
             style="@style/NiceButton"
             android:layout_width="150dp"
             android:layout_height="40dp"
             android:layout_marginEnd="100dp"
-            android:visibility="gone"
-            android:maxLines="1"
             android:backgroundTint="@color/skipOpTransparent"
+            android:maxLines="1"
             android:padding="10dp"
             android:textColor="@color/white"
+            android:visibility="gone"
             app:cornerRadius="@dimen/rounded_button_radius"
             app:layout_constraintBottom_toTopOf="@+id/bottom_player_bar"
             app:layout_constraintEnd_toEndOf="parent"
             app:strokeColor="@color/white"
             app:strokeWidth="1dp"
-            tools:text="Skip Opening" />
+            tools:text="Skip Opening"
+            tools:visibility="visible" />
 
         <LinearLayout
             android:layout_width="match_parent"

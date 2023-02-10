@@ -67,7 +67,7 @@ class SetupFragmentLayout : Fragment() {
                 crash_reporting_text?.text = getText(text)
             }
 
-            val enableCrashReporting = !settingsManager.getBoolean(ACRA.PREF_DISABLE_ACRA, false)
+            val enableCrashReporting = !settingsManager.getBoolean(ACRA.PREF_DISABLE_ACRA, true)
             acra_switch.isChecked = enableCrashReporting
             crash_reporting_text.text =
                 getText(

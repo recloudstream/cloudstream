@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--https://newbedev.com/concatenate-multiple-strings-in-xml-->
-<resources>
+<!--https://newbedev.com/concatenate-multiple-strings-in-xml--><resources>
     <!-- KEYS DON'T TRANSLATE -->
     <string name="search_providers_list_key" translatable="false">search_providers_list</string>
     <string name="locale_key" translatable="false">app_locale</string>
@@ -32,6 +31,8 @@
     <string name="double_tap_enabled_key" translatable="false">double_tap_enabled_key</string>
     <string name="double_tap_pause_enabled_key" translatable="false">double_tap_pause_enabled_key</string>
     <string name="double_tap_seek_time_key" translatable="false">double_tap_seek_time_key2</string>
+    <string name="android_tv_interface_off_seek_key" translatable="false">android_tv_interface_off_seek_key</string>
+    <string name="android_tv_interface_on_seek_key" translatable="false">android_tv_interface_on_seek_key</string>
     <string name="swipe_vertical_enabled_key" translatable="false">swipe_vertical_enabled_key</string>
     <string name="autoplay_next_key" translatable="false">autoplay_next_key</string>
     <string name="display_sub_key" translatable="false">display_sub_key</string>
@@ -80,7 +81,7 @@
     <string name="next_episode_time_min_format" formatted="true">%dm</string>
     <!-- IS NOT NEEDED TO TRANSLATE AS THEY ARE ONLY USED FOR SCREEN READERS AND WONT SHOW UP TO NORMAL USERS -->
     <string name="result_poster_img_des">Poster</string>
-    <string name="search_poster_img_des">@string/result_poster_img_des</string>
+    <string name="search_poster_img_des">Poster</string>
     <string name="episode_poster_img_des">Episode Poster</string>
     <string name="home_main_poster_img_des">Main Poster</string>
     <string name="home_next_random_img_des">Next Random</string>
@@ -110,6 +111,7 @@
     <string name="result_tags">Genres</string>
     <string name="result_share">Share</string>
     <string name="result_open_in_browser">Open In Browser</string>
+    <string name="browser">Browser</string>
     <string name="skip_loading">Skip Loading</string>
     <string name="loading">Loading…</string>
     <string name="type_watching">Watching</string>
@@ -229,6 +231,7 @@
     <string name="backup_failed">Storage permissions missing. Please try again.</string>
     <string name="backup_failed_error_format">Error backing up %s</string>
     <string name="search">Search</string>
+    <string name="library">Library</string>
     <string name="category_account">Accounts</string>
     <string name="category_updates">Updates and backup</string>
     <string name="settings_info">Info</string>
@@ -362,6 +365,10 @@
     <string name="video_buffer_length_settings">Video buffer length</string>
     <string name="video_buffer_disk_settings">Video cache on disk</string>
     <string name="video_buffer_clear_settings">Clear video and image cache</string>
+    <string name="android_tv_interface_on_seek_settings">Player Shown - Seek Amount</string>
+    <string name="android_tv_interface_on_seek_settings_summary">The seek amount used when the player is visible</string>
+    <string name="android_tv_interface_off_seek_settings">Player Hidden - Seek Amount</string>
+    <string name="android_tv_interface_off_seek_settings_summary">The seek amount used when the player is hidden</string>
     <string name="video_ram_description">Causes crashes if set too high on devices with low memory, such as Android TV.</string>
     <string name="video_disk_description">Causes problems if set too high on devices with low storage space, such as Android TV.</string>
     <string name="dns_pref">DNS over HTTPS</string>
@@ -399,6 +406,7 @@
     <string name="pref_category_extensions">Extensions</string>
     <string name="pref_category_actions">Actions</string>
     <string name="pref_category_cache">Cache</string>
+    <string name="pref_category_android_tv">Android TV</string>
     <string name="pref_category_gestures">Gestures</string>
     <string name="pref_category_player_features">Player features</string>
     <string name="pref_category_subtitles">Subtitles</string>
@@ -612,9 +620,20 @@
     <string name="update_notification_downloading">Downloading app update…</string>
     <string name="update_notification_installing">Installing app update…</string>
     <string name="update_notification_failed">Could not install the new version of the app</string>
-
     <string name="apk_installer_legacy">Legacy</string>
     <string name="apk_installer_package_installer">PackageInstaller</string>
     <string name="delayed_update_notice">App will be updated upon exit</string>
-
+    <string name="sort_by">Sort by</string>
+    <string name="sort">Sort</string>
+    <string name="sort_rating_desc">Rating (High to Low)</string>
+    <string name="sort_rating_asc">Rating (Low to High)</string>
+    <string name="sort_updated_new">Updated (New to Old)</string>
+    <string name="sort_updated_old">Updated (Old to New)</string>
+    <string name="sort_alphabetical_a">Alphabetical (A to Z)</string>
+    <string name="sort_alphabetical_z">Alphabetical (Z to A)</string>
+    <string name="select_library">Select Library</string>
+    <string name="open_with">Open with</string>
+    <string name="empty_library_no_accounts_message">Looks like your library is empty :(\nLogin to a library account or add shows to your local library</string>
+    <string name="empty_library_logged_in_message">Looks like this list is empty, try switching to another one</string>
+    <string name="safe_mode_file">Safe mode file found!\nNot loading any extensions on startup until file is removed.</string>
 </resources>

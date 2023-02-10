@@ -184,9 +184,8 @@ open class ParentItemAdapter(
         private val expandCallback: ((String) -> Unit)? = null,
     ) :
         RecyclerView.ViewHolder(itemView) {
-        val title: TextView = itemView.home_parent_item_title
+        val title: TextView = itemView.home_child_more_info
         val recyclerView: RecyclerView = itemView.home_child_recyclerview
-        private val moreInfo: FrameLayout? = itemView.home_child_more_info
 
         fun update(expand: HomeViewModel.ExpandableHomepageList) {
             val info = expand.list
@@ -248,9 +247,10 @@ open class ParentItemAdapter(
             })
 
             //(recyclerView.adapter as HomeChildItemAdapter).notifyDataSetChanged()
-
-            moreInfo?.setOnClickListener {
-                moreInfoClickCallback.invoke(expand)
+            if (!isTvSettings()) {
+                title.setOnClickListener {
+                    moreInfoClickCallback.invoke(expand)
+                }
             }
         }
     }

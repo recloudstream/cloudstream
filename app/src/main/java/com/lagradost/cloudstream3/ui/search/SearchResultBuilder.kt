@@ -1,12 +1,14 @@
 package com.lagradost.cloudstream3.ui.search
 
 import android.content.Context
+import android.graphics.drawable.Drawable
 import android.view.View
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.core.view.isVisible
+import androidx.palette.graphics.Palette
 import androidx.preference.PreferenceManager
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTrueTvSettings
@@ -41,6 +43,7 @@ object SearchResultBuilder {
         nextFocusBehavior: Boolean? = null,
         nextFocusUp: Int? = null,
         nextFocusDown: Int? = null,
+        colorCallback : ((Palette) -> Unit)? = null
     ) {
         val cardView: ImageView = itemView.imageView
         val cardText: TextView? = itemView.imageText
@@ -100,7 +103,7 @@ object SearchResultBuilder {
         cardText?.isVisible = showTitle
         cardView.isVisible = true
 
-        if (!cardView.setImage(card.posterUrl, card.posterHeaders)) {
+        if (!cardView.setImage(card.posterUrl, card.posterHeaders, colorCallback = colorCallback)) {
             cardView.setImageResource(R.drawable.default_cover)
         }
 

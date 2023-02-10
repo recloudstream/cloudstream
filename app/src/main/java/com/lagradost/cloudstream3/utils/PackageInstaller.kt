@@ -91,7 +91,7 @@ class ApkInstaller(private val service: PackageInstallerService) {
 
             session.openWrite(context.packageName, 0, size)
                 .use { outputStream ->
-                    val buffer = ByteArray(1024)
+                    val buffer = ByteArray(4 * 1024)
                     var bytesRead = inputStream.read(buffer)
 
                     while (bytesRead >= 0) {
@@ -100,6 +100,7 @@ class ApkInstaller(private val service: PackageInstallerService) {
                         installProgress.invoke(bytesRead)
                     }
 
+                    session.fsync(outputStream)
                     inputStream.close()
                 }
 

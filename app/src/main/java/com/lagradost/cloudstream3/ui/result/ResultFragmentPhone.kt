@@ -485,7 +485,7 @@ class ResultFragmentPhone : ResultFragment() {
 
         result_recommendations?.post {
             rec?.let { list ->
-                (result_recommendations?.adapter as SearchAdapter?)?.updateList(list.filter { it.apiName == matchAgainst })
+                (result_recommendations?.adapter as? SearchAdapter)?.updateList(list.filter { it.apiName == matchAgainst })
             }
         }
     }

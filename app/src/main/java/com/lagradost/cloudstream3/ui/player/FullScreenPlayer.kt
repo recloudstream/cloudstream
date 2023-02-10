@@ -109,6 +109,8 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
     protected var currentPrefQuality =
         Qualities.P2160.value // preferred maximum quality, used for ppl w bad internet or on cell
     protected var fastForwardTime = 10000L
+    protected var androidTVInterfaceOffSeekTime = 10000L;
+    protected var androidTVInterfaceOnSeekTime = 30000L;
     protected var swipeHorizontalEnabled = false
     protected var swipeVerticalEnabled = false
     protected var playBackSpeedEnabled = false
@@ -605,7 +607,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         player_top_holder?.isGone = isGone
         //player_episodes_button?.isVisible = !isGone && hasEpisodes
         player_video_title?.isGone = togglePlayerTitleGone
-        player_video_title_rez?.isGone = isGone
+//        player_video_title_rez?.isGone = isGone
         player_episode_filler?.isGone = isGone
         player_center_menu?.isGone = isGone
         player_lock?.isGone = !isShowing
@@ -1051,19 +1053,19 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                             }
                             KeyEvent.KEYCODE_DPAD_LEFT -> {
                                 if (!isShowing && !isLocked) {
-                                    player.seekTime(-10000L)
+                                    player.seekTime(-androidTVInterfaceOffSeekTime)
                                     return true
                                 } else if (player_pause_play?.isFocused == true) {
-                                    player.seekTime(-30000L)
+                                    player.seekTime(-androidTVInterfaceOnSeekTime)
                                     return true
                                 }
                             }
                             KeyEvent.KEYCODE_DPAD_RIGHT -> {
                                 if (!isShowing && !isLocked) {
-                                    player.seekTime(10000L)
+                                    player.seekTime(androidTVInterfaceOffSeekTime)
                                     return true
                                 } else if (player_pause_play?.isFocused == true) {
-                                    player.seekTime(30000L)
+                                    player.seekTime(androidTVInterfaceOnSeekTime)
                                     return true
                                 }
                             }
@@ -1205,6 +1207,13 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
                 fastForwardTime =
                     settingsManager.getInt(ctx.getString(R.string.double_tap_seek_time_key), 10)
+                        .toLong() * 1000L
+
+                androidTVInterfaceOffSeekTime =
+                    settingsManager.getInt(ctx.getString(R.string.android_tv_interface_off_seek_key), 10)
+                        .toLong() * 1000L
+                androidTVInterfaceOnSeekTime =
+                    settingsManager.getInt(ctx.getString(R.string.android_tv_interface_on_seek_key), 10)
                         .toLong() * 1000L
 
                 navigationBarHeight = ctx.getNavigationBarHeight()

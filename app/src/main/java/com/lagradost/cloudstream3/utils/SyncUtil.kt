@@ -4,6 +4,7 @@ package com.lagradost.cloudstream3.utils
 
 import android.util.Log
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.lagradost.cloudstream3.APIHolder.apis
 //import com.lagradost.cloudstream3.animeproviders.AniflixProvider
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.mvvm.logError
@@ -78,17 +79,21 @@ object SyncUtil {
         return null
     }
 
-    suspend fun getUrlsFromId(id: String, type: String = "anilist") : List<String> {
-        return arrayListOf()
-        // val url =
-        //     "https://raw.githubusercontent.com/MALSync/MAL-Sync-Backup/master/data/$type/anime/$id.json"
-        // val response = app.get(url, cacheTime = 1, cacheUnit = TimeUnit.DAYS).parsed<SyncPage>()
-        // val pages = response.pages ?: return emptyList()
-        // val current = pages.gogoanime.values.union(pages.nineanime.values).union(pages.twistmoe.values).mapNotNull { it.url }.toMutableList()
-        // if(type == "anilist") { // TODO MAKE BETTER
-        //     current.add("${AniflixProvider().mainUrl}/anime/$id")
-        // }
-        // return current
+    suspend fun getUrlsFromId(id: String, type: String = "anilist"): List<String> {
+        val url =
+            "https://raw.githubusercontent.com/MALSync/MAL-Sync-Backup/master/data/$type/anime/$id.json"
+        val response = app.get(url, cacheTime = 1, cacheUnit = TimeUnit.DAYS).parsed<SyncPage>()
+        val pages = response.pages ?: return emptyList()
+        val current =
+            pages.gogoanime.values.union(pages.nineanime.values).union(pages.twistmoe.values)
+                .mapNotNull { it.url }.toMutableList()
+
+        if (type == "anilist") { // TODO MAKE BETTER
+            apis.filter { it.name.contains("Aniflix", ignoreCase = true) }.forEach {
+                current.add("${it.mainUrl}/anime/$id")
+            }
+        }
+        return current
     }
 
     data class SyncPage(

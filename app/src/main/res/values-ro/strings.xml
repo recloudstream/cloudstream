@@ -9,7 +9,7 @@
     <string name="next_episode_time_min_format" formatted="true">%dm</string>
     <!-- IS NOT NEEDED TO TRANSLATE AS THEY ARE ONLY USED FOR SCREEN READERS AND WONT SHOW UP TO NORMAL USERS -->
     <string name="result_poster_img_des">Poster</string>
-    <string name="search_poster_img_des">@string/result_poster_img_des</string>
+    <string name="search_poster_img_des">\@string/result_poster_img_des</string>
     <string name="episode_poster_img_des">Poster Episod</string>
     <string name="home_main_poster_img_des">Poster Principal</string>
     <string name="home_next_random_img_des">Următorul la Întâmplare</string>
@@ -19,7 +19,8 @@
     <!-- TRANSLATE, BUT DON'T FORGET FORMAT -->
     <string name="player_speed_text_format" formatted="true">Viteză (%.2fx)</string>
     <string name="rated_format" formatted="true">Evaluare: %.1f</string>
-    <string name="new_update_format" formatted="true">Actualizare nouă găsită!\n%s -&gt; %s</string>
+    <string name="new_update_format" formatted="true">Actualizare nouă găsită!
+\n%s -&gt; %s</string>
     <string name="filler" formatted="true">Filler</string>
     <string name="duration_format" formatted="true">%d min</string>
     <!-- <string name="app_name">CloudStream</string> -->
@@ -105,7 +106,7 @@
     <string name="continue_watching">Continuați să urmăriți</string>
     <string name="action_remove_watching">Eliminați</string>
     <string name="action_open_watching">Mai multe informații</string>
-    <string name="action_open_play">@string/home_play</string>
+    <string name="action_open_play">\@string/home_play</string>
     <string name="vpn_might_be_needed">Există probabilitatea necesitații unui VPN pentru ca acest furnizor să funcționeze corespunzător</string>
     <string name="vpn_torrent">Acest furnizor este un torrent, se recomandă un VPN</string>
     <string name="provider_info_meta">Metadatele nu sunt furnizate de către site, există posibilitatea ca încărcarea videoclipului să eșueze.</string>
@@ -140,7 +141,7 @@
     <string name="backup_settings">Copie de rezervă a datelor</string>
     <string name="restore_success">Fișier de rezervă încărcat</string>
     <string name="restore_failed_format" formatted="true">Imposibilitatea de a restaura datele din %s</string>
-    <string name="backup_success">Datele au fost salvate cu succes</string>
+    <string name="backup_success">Date stocate</string>
     <string name="backup_failed">Permisiuni de arhivare lipsă, vă rugăm să încercați din nou</string>
     <string name="backup_failed_error_format">Eroare de backup %s</string>
     <string name="search">Căutare</string>
@@ -184,8 +185,10 @@
     <string name="resume">Continuă</string>
     <string name="go_back_30">-30</string>
     <string name="go_forward_30">+30</string>
-    <string name="delete_message" formatted="true">Sunteți pe cale să ștergeți definitiv %s\nSunteți sigur?</string>
-    <string name="resume_time_left" formatted="true">%dm\nrămas</string>
+    <string name="delete_message" formatted="true">Sunteți pe cale să ștergeți definitiv %s
+\nSunteți sigur\?</string>
+    <string name="resume_time_left" formatted="true">%dm
+\nrămas</string>
     <string name="status_ongoing">În curs de desfășurare</string>
     <string name="status_completed">Finalizat</string>
     <string name="status">Status</string>
@@ -268,22 +271,7 @@
     <string name="resize_fill">Întindere</string>
     <string name="resize_zoom">Mărire</string>
     <string name="legal_notice">Aviz juridic (declinarea responsabilității și drepturi de autor)</string>
-    <string name="legal_notice_text">Orice probleme legale privind conținutul acestei aplicații ar trebui
-        să fie rezolvate cu furnizorii și gazdele actuale de fișiere, întrucât noi nu suntem afiliați cu aceștia.
-	    
-        În caz de încălcare a drepturilor de autor, vă rugăm să contactați direct părțile responsabile sau site-urile de streaming.
-
-        Aplicația este destinată exclusiv utilizării educaționale și personale.
-
-        CloudStream 3 nu găzduiește niciun fel de conținut în aplicație și nu are niciun control asupra conținutului media care este pus sau retras.
-        CloudStream 3 funcționează ca orice alt motor de căutare, cum ar fi Google. CloudStream 3 nu găzduiește, nu încarcă și
-        nu gestionează niciun videoclip, film sau conținut. Pur și simplu navighează, adună și afișează linkuri într-o interfață convenabilă
-        și ușor de utilizat.
-
-        Pur și simplu, acesta extrage paginile web ale unor terțe părți care sunt accesibile publicului prin intermediul oricărui browser web obișnuit.  Este
-        responsabilitatea utilizatorului de a evita orice acțiune care ar putea încălca legile care guvernează locația sa. Utilizați 
-        CloudStream 3 pe propria răspundere.
-    </string>
+    <string name="legal_notice_text">Orice probleme legale privind conținutul acestei aplicații ar trebui să fie rezolvate cu furnizorii și gazdele actuale de fișiere, întrucât noi nu suntem afiliați cu aceștia. În caz de încălcare a drepturilor de autor, vă rugăm să contactați direct părțile responsabile sau site-urile de streaming. Aplicația este destinată exclusiv utilizării educaționale și personale. CloudStream 3 nu găzduiește niciun fel de conținut în aplicație și nu are niciun control asupra conținutului media care este pus sau retras. CloudStream 3 funcționează ca orice alt motor de căutare, cum ar fi Google. CloudStream 3 nu găzduiește, nu încarcă și nu gestionează niciun videoclip, film sau conținut. Pur și simplu navighează, adună și afișează linkuri într-o interfață convenabilă și ușor de utilizat. Pur și simplu, acesta extrage paginile web ale unor terțe părți care sunt accesibile publicului prin intermediul oricărui browser web obișnuit. Este responsabilitatea utilizatorului de a evita orice acțiune care ar putea încălca legile care guvernează locația sa. Utilizați CloudStream 3 pe propria răspundere.</string>
     <string name="category_general">General</string>
     <string name="random_button_settings">Aleatoriu</string>
     <string name="random_button_settings_desc">Afișați butonul Aleatoriu pe pagina de start</string>
@@ -320,7 +308,7 @@
     <string name="upload_sync">Sincronizare</string>
     <string name="sync_score">Recenzie</string>
     <string name="sync_score_format" formatted="true">%d / 10</string>
-    <string name="sync_total_episodes_none">/??</string>
+    <string name="sync_total_episodes_none">/\?\?</string>
     <string name="sync_total_episodes_some" formatted="true">/%d</string>
     <string name="authenticated_user" formatted="true">%s autentificat</string>
     <string name="authenticated_user_fail" formatted="true">Imposibil de autentificat la %s</string>
@@ -388,4 +376,12 @@
     <string name="trailer">Trailer</string>
     <string name="history">Istoric</string>
     <string name="action_mark_as_watched">Marcare ca vizionat</string>
+    <string name="autoplay_next_settings">Redă automat următorul episod</string>
+    <string name="app_name">CloudStream</string>
+    <string name="play_trailer_button">Vizionează trailerul</string>
+    <string name="update_started">Actualizarea a început</string>
+    <string name="episode_sync_settings">Actualizați progresul ceasului</string>
+    <string name="autoplay_next_settings_des">Începe următorul episod când se termină episodul curent</string>
+    <string name="pref_filter_search_quality">Ascundeți calitatea video selectată în rezultatele căutării</string>
+    <string name="play_livestream_button">Redare Livestream</string>
 </resources>

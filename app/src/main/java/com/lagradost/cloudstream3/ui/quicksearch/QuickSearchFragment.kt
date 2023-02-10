@@ -220,7 +220,7 @@ class QuickSearchFragment : Fragment() {
             when (it) {
                 is Resource.Success -> {
                     it.value.let { data ->
-                        (quick_search_autofit_results?.adapter as? SearchAdapter?)?.updateList(
+                        (quick_search_autofit_results?.adapter as? SearchAdapter)?.updateList(
                             context?.filterSearchResultByFilmQuality(data) ?: data
                         )
                     }

@@ -59,8 +59,8 @@ open class VidSrcExtractor : ExtractorApi() {
                 if (datahash.isNotBlank()) {
                     val links = try {
                         app.get(
-                            "$absoluteUrl/src/$datahash",
-                            referer = "https://source.vidsrc.me/"
+                            "$absoluteUrl/srcrcp/$datahash",
+                            referer = "https://rcp.vidsrc.me/"
                         ).url
                     } catch (e: Exception) {
                         ""
@@ -71,7 +71,7 @@ open class VidSrcExtractor : ExtractorApi() {
 
         serverslist.amap { server ->
             val linkfixed = server.replace("https://vidsrc.xyz/", "https://embedsito.com/")
-            if (linkfixed.contains("/pro")) {
+            if (linkfixed.contains("/prorcp")) {
                 val srcresponse = app.get(server, referer = absoluteUrl).text
                 val m3u8Regex = Regex("((https:|http:)//.*\\.m3u8)")
                 val srcm3u8 = m3u8Regex.find(srcresponse)?.value ?: return@amap

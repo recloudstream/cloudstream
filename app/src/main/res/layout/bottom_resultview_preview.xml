@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <LinearLayout
+        android:id="@+id/resultview_preview_result"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="12dp">
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="@dimen/rounded_image_radius">
+
+                <ImageView
+                    android:id="@+id/resultview_preview_poster"
+                    android:layout_width="88dp"
+                    android:layout_height="138dp"
+                    android:contentDescription="@string/poster_image"
+                    android:scaleType="centerCrop"
+                    tools:src="@drawable/example_poster" />
+            </androidx.cardview.widget.CardView>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="138dp"
+                android:layout_marginStart="10dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/resultview_preview_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="?attr/textColor"
+                    android:textSize="16sp"
+
+                    android:textStyle="bold"
+                    tools:text="The Perfect Run">
+
+                </TextView>
+
+                <com.lagradost.cloudstream3.widget.FlowLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:itemSpacing="10dp">
+
+                    <TextView
+                        android:id="@+id/resultview_preview_meta_type"
+                        style="@style/ResultInfoText"
+                        tools:text="Movie" />
+
+                    <TextView
+                        android:id="@+id/resultview_preview_meta_year"
+                        style="@style/ResultInfoText"
+                        tools:text="2022" />
+
+                    <TextView
+                        android:id="@+id/resultview_preview_meta_rating"
+                        style="@style/ResultInfoText"
+                        tools:text="Rated: 8.5/10.0" />
+
+                    <TextView
+                        android:id="@+id/resultview_preview_meta_status"
+                        style="@style/ResultInfoText"
+                        tools:text="Ongoing" />
+
+                    <TextView
+                        android:id="@+id/resultview_preview_meta_duration"
+                        style="@style/ResultInfoText"
+                        tools:text="121min" />
+                </com.lagradost.cloudstream3.widget.FlowLayout>
+
+                <!-- <TextView
+                     android:id="@+id/resultview_preview_year"
+                     android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
+
+                     android:textColor="?attr/grayTextColor"
+                     tools:text="2023" />-->
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:id="@+id/resultview_preview_description"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+
+                        android:ellipsize="end"
+                        android:textColor="?attr/textColor"
+                        tools:text="Ryan Quicksave Romano is an eccentric adventurer with a strange power: he can create a save-point in time and redo his life whenever he dies. Arriving in New Rome, the glitzy capital of sin of a rebuilding Europe, he finds the city torn between mega-corporations, sponsored heroes, superpowered criminals, and true monsters. It's a time of chaos, where potions can grant the power to rule the world and dangers lurk everywhere. " />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="20dp"
+                        android:layout_gravity="bottom"
+                        android:background="@drawable/background_shadow" />
+                </FrameLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/resultview_preview_more_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?android:attr/selectableItemBackground"
+            android:gravity="start|center_vertical"
+            android:padding="12dp"
+            android:text="@string/home_more_info"
+            android:textColor="?attr/textColor"
+            app:drawableRightCompat="@drawable/ic_baseline_arrow_forward_24"
+            app:drawableTint="?attr/white" />
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/resultview_preview_loading"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <com.facebook.shimmer.ShimmerFrameLayout
+            android:id="@+id/resultview_preview_loading_shimmer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:orientation="vertical"
+            app:shimmer_auto_start="true"
+            app:shimmer_base_alpha="0.2"
+            app:shimmer_duration="@integer/loading_time"
+            app:shimmer_highlight_alpha="0.3">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/result_padding"
+                    android:layout_marginTop="@dimen/result_padding"
+
+                    android:layout_marginEnd="@dimen/result_padding"
+                    android:orientation="horizontal">
+
+                    <include layout="@layout/loading_poster" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:paddingStart="10dp"
+                        android:paddingEnd="10dp">
+
+                        <include layout="@layout/loading_line" />
+
+                        <include layout="@layout/loading_line_short" />
+
+                        <include layout="@layout/loading_line" />
+
+                        <include layout="@layout/loading_line" />
+
+                        <include layout="@layout/loading_line" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="26dp"
+                    android:layout_margin="@dimen/result_padding"
+                    android:layout_marginBottom="@dimen/loading_margin"
+                    android:background="@color/grayShimmer"
+                    app:cardCornerRadius="@dimen/loading_radius"
+                    tools:ignore="ContentDescription" />
+            </LinearLayout>
+        </com.facebook.shimmer.ShimmerFrameLayout>
+    </FrameLayout>
+</FrameLayout>
+
+
+

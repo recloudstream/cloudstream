@@ -5,7 +5,7 @@
     <string name="cast_format" formatted="true">Pemeran: %s</string>
     <!-- IS NOT NEEDED TO TRANSLATE AS THEY ARE ONLY USED FOR SCREEN READERS AND WONT SHOW UP TO NORMAL USERS -->
     <string name="result_poster_img_des">Poster</string>
-    <string name="search_poster_img_des">@string/result_poster_img_des</string>
+    <string name="search_poster_img_des">Poster</string>
     <string name="episode_poster_img_des">Episode Poster</string>
     <string name="home_main_poster_img_des">Main Poster</string>
     <string name="home_next_random_img_des">Next Random</string>
@@ -15,7 +15,8 @@
     <!-- TRANSLATE, BUT DON'T FORGET FORMAT -->
     <string name="player_speed_text_format" formatted="true">Kecepatan (%.2fx)</string>
     <string name="rated_format" formatted="true">Dinilai: %.1f</string>
-    <string name="new_update_format" formatted="true">Update baru ditemukan!\n%s -&gt; %s</string>
+    <string name="new_update_format" formatted="true">Update baru ditemukan!
+\n%s -&gt; %s</string>
     <string name="filler" formatted="true">Filler</string>
     <string name="duration_format" formatted="true">%d mnt</string>
     <string name="app_name">CloudStream</string>
@@ -100,7 +101,7 @@
     <string name="continue_watching">Lanjutkan Menonton</string>
     <string name="action_remove_watching">Hapus</string>
     <string name="action_open_watching">Info lebih lanjut</string>
-    <string name="action_open_play">@string/home_play </string>
+    <string name="action_open_play">\@string/home_play</string>
     <string name="vpn_might_be_needed">Sebuah VPN mungkin diperlukan agar provider ini bisa bekerja dengan benar</string>
     <string name="vpn_torrent">Provider ini adalah sebuah torrent, VPN direkomendasikan</string>
     <string name="provider_info_meta">Metadata tidak disediakan oleh situs, loading video akan gagal jika tidak ada di situs.</string>
@@ -125,12 +126,10 @@
     <string name="double_tap_to_seek_settings">Tekan dua kali untuk mengubah waktu</string>
     <string name="double_tap_to_pause_settings">Tekan dua kali untuk menjeda</string>
     <string name="double_tap_to_seek_amount_settings">Jumlah pengubah waktu pemutar</string>
-    <string name="double_tap_to_seek_settings_des">Tekan dua kali di sisi kanan atau kiri untuk mengubah waktu ke depan atau ke belakang
-    </string>
+    <string name="double_tap_to_seek_settings_des">Tekan dua kali di sisi kanan atau kiri untuk mengubah waktu ke depan atau ke belakang</string>
     <string name="double_tap_to_pause_settings_des">Tekan di tengah untuk menjeda</string>
     <string name="use_system_brightness_settings">Gunakan pencerahan sistem</string>
-    <string name="use_system_brightness_settings_des">Gunakan pencerahan sistem di pemutar aplikasi dari pada hamparan gelap
-    </string>
+    <string name="use_system_brightness_settings_des">Gunakan pencerahan sistem di pemutar aplikasi dari pada hamparan gelap</string>
     <string name="episode_sync_settings">Update progres tontonan</string>
     <string name="episode_sync_settings_des">Sinkronisasikan progres episode saat ini secara otomatis</string>
     <string name="restore_settings">Pulihkan data dari cadangan</string>
@@ -165,8 +164,7 @@
     <string name="copy_link_toast">Tautan disalin ke papan klip</string>
     <string name="play_episode_toast">Putar Episode</string>
     <string name="subs_default_reset_toast">Ulang ke pengaturan default</string>
-    <string name="acra_report_toast">Maaf, aplikasi ngecrash. Laporan bug anonim akan dikirim ke developer
-    </string>
+    <string name="acra_report_toast">Maaf, aplikasi ngecrash. Laporan bug anonim akan dikirim ke developer</string>
     <string name="season">Season</string>
     <string name="no_season">Tidak Ada Season</string>
     <string name="episode">Episode</string>
@@ -180,8 +178,10 @@
     <string name="resume">Lanjutkan</string>
     <string name="go_back_30">-30</string>
     <string name="go_forward_30">+30</string>
-    <string name="delete_message" formatted="true">Ini akan secara permanen menghapus %s\nApakah anda yakin?</string>
-    <string name="resume_time_left" formatted="true">%dm\ntersisa</string>
+    <string name="delete_message" formatted="true">Ini akan secara permanen menghapus %s
+\nApakah anda yakin\?</string>
+    <string name="resume_time_left" formatted="true">%dm
+\ntersisa</string>
     <string name="status_ongoing">Masih Berlanjut</string>
     <string name="status_completed">Tamat</string>
     <string name="status">Status</string>
@@ -209,8 +209,8 @@
     <string name="movies_singular">Movie</string>
     <string name="tv_series_singular">Seri</string>
     <string name="cartoons_singular">Kartun</string>
-    <string name="anime_singular">@string/anime</string>
-    <string name="ova_singular">@string/ova</string>
+    <string name="anime_singular">\@string/anime</string>
+    <string name="ova_singular">\@string/ova</string>
     <string name="torrent_singular">Torrent</string>
     <string name="documentaries_singular">Film Dokumenter</string>
     <string name="asian_drama_singular">Drama Asia</string>
@@ -261,22 +261,7 @@
     <string name="resize_fill">Regang</string>
     <string name="resize_zoom">Zoom</string>
     <string name="legal_notice">Peringatan</string>
-    <string name="legal_notice_text" translatable="false">Any legal issues regarding the content on this application
-        should be taken up with the actual file hosts and providers themselves as we are not affiliated with them.
-
-        In case of copyright infringement, please directly contact the responsible parties or the streaming websites.
-
-        The app is purely for educational and personal use.
-
-        CloudStream 3 does not host any content on the app, and has no control over what media is put up or taken down.
-        CloudStream 3 functions like any other search engine, such as Google. CloudStream 3 does not host, upload or
-        manage any videos, films or content. It simply crawls, aggregates and displayes links in a convenient,
-        user-friendly interface.
-
-        It merely scrapes 3rd-party websites that are publicly accessable via any regular web browser. It is the
-        responsibility of user to avoid any actions that might violate the laws governing his/her locality. Use
-        CloudStream 3 at your own risk.
-    </string>
+    <string name="legal_notice_text" translatable="false">Any legal issues regarding the content on this application should be taken up with the actual file hosts and providers themselves as we are not affiliated with them. In case of copyright infringement, please directly contact the responsible parties or the streaming websites. The app is purely for educational and personal use. CloudStream 3 does not host any content on the app, and has no control over what media is put up or taken down. CloudStream 3 functions like any other search engine, such as Google. CloudStream 3 does not host, upload or manage any videos, films or content. It simply crawls, aggregates and displayes links in a convenient, user-friendly interface. It merely scrapes 3rd-party websites that are publicly accessable via any regular web browser. It is the responsibility of user to avoid any actions that might violate the laws governing his/her locality. Use CloudStream 3 at your own risk.</string>
     <string name="category_general">Umum</string>
     <string name="random_button_settings">Tombol Acak</string>
     <string name="random_button_settings_desc">Tampilkan tombol acak di Beranda</string>
@@ -312,7 +297,7 @@
     <string name="upload_sync">Sinkronisasi</string>
     <string name="sync_score">Skor</string>
     <string name="sync_score_format" formatted="true">%d / 10</string>
-    <string name="sync_total_episodes_none">/??</string>
+    <string name="sync_total_episodes_none">/\?\?</string>
     <string name="sync_total_episodes_some" formatted="true">/%d</string>
     <string name="authenticated_user" formatted="true">%s terautentikasi</string>
     <string name="authenticated_user_fail" formatted="true">Gagal masuk ke %s</string>
@@ -468,7 +453,7 @@
     <string name="safe_mode_description">Semua fitur tambahkan dimatikan karena crash, untuk memudahkanmu mencari penyebab crash.</string>
     <string name="example_lang_name">Kode bahasa (en)</string>
     <string name="player_load_subtitles_online">Ambil dari internet</string>
-    <string name="provider_languages_tip">Putar vidio di bahasa ini</string>
+    <string name="provider_languages_tip">Putar video di bahasa ini</string>
     <string name="add_repository">Tambah Repositori</string>
     <string name="delete_repository_plugins">Pilih ini untuk menghapus semua repositori plugin</string>
     <string name="skip_setup">Lewati pengaturan</string>
@@ -498,7 +483,7 @@
     <string name="pref_category_gestures">Gerakan</string>
     <string name="apk_installer_settings_des">Beberapa perangkat tidak mendukung penginstal paket mode baru. Coba mode lama jika pembaruan tidak dapat diinstal.</string>
     <string name="pref_category_actions">Aksi</string>
-    <string name="referer">Sumber</string>
+    <string name="referer">Referer</string>
     <string name="yes">Ya</string>
     <string name="extension_install_first">Pasang dulu fitur tambahan</string>
     <string name="all_languages_preference">Semua Bahasa</string>
@@ -526,4 +511,22 @@
     <string name="plugin_downloaded">Plugin Terunduh</string>
     <string name="delayed_update_notice">Aplikasi akan diperbaharui pada saat keluar</string>
     <string name="update_started">Pembaharuan Dimulai</string>
+    <string name="action_remove_from_watched">Hapus dari tontonan</string>
+    <string name="browser">Browser</string>
+    <string name="select_library">Pilih pustaka</string>
+    <string name="empty_library_no_accounts_message">Yahh daftar pustaka kamu kosong :(
+\nMasuk ke akun pustaka atau tambah perlihatkan ke lokal pustaka kamu</string>
+    <string name="library">Pustaka</string>
+    <string name="sort_by">Urutkan berdasar</string>
+    <string name="sort">Urutkan</string>
+    <string name="sort_rating_asc">Peringkat (Rendah ke Tinggi)</string>
+    <string name="sort_updated_old">Update (Lama ke Terbaru)</string>
+    <string name="sort_rating_desc">Peringkat (Tinggi ke Rendah)</string>
+    <string name="sort_updated_new">Update (Terbaru ke Lama)</string>
+    <string name="sort_alphabetical_a">Abjad (A ke Z)</string>
+    <string name="sort_alphabetical_z">Abjad (Z ke A)</string>
+    <string name="open_with">Buka dengan</string>
+    <string name="empty_library_logged_in_message">Yahh daftar ini kosong, coba ganti ke yang lain</string>
+    <string name="safe_mode_file">Mode aman file ditemukan!
+\nTidak memuat ekstensi pada startup sampai berkas dihapus.</string>
 </resources>

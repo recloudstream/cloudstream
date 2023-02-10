@@ -10,7 +10,7 @@
     <string name="next_episode_time_min_format" formatted="true">%dm</string>
     <!-- IS NOT NEEDED TO TRANSLATE AS THEY ARE ONLY USED FOR SCREEN READERS AND WONT SHOW UP TO NORMAL USERS -->
     <string name="result_poster_img_des">Poster</string>
-    <string name="search_poster_img_des">@string/result_poster_img_des</string>
+    <string name="search_poster_img_des">\@string/result_poster_img_des</string>
     <string name="episode_poster_img_des">Episode Poster</string>
     <string name="home_main_poster_img_des">Main Poster</string>
     <string name="home_next_random_img_des">Next Random</string>
@@ -20,7 +20,8 @@
     <!-- TRANSLATE, BUT DON'T FORGET FORMAT -->
     <string name="player_speed_text_format" formatted="true">Tốc độ (%.2fx)</string>
     <string name="rated_format" formatted="true">Đánh giá: %.1f</string>
-    <string name="new_update_format" formatted="true">Đã có bản cập nhật mới!\n%s -&gt; %s</string>
+    <string name="new_update_format" formatted="true">Đã có bản cập nhật mới!
+\n%s -&gt; %s</string>
     <string name="filler" formatted="true">Bộ lọc</string>
     <string name="duration_format" formatted="true">%d phút</string>
     <string name="app_name">CloudStream</string>
@@ -65,7 +66,7 @@
     <string name="download_done">Tải thành công</string>
     <string name="stream">Trực tiếp</string>
     <string name="error_loading_links_toast">Đã có lỗi xảy ra</string>
-    <string name="download_storage_text">Bộ nhớ máy</string>
+    <string name="download_storage_text">Bộ nhớ trong</string>
     <string name="app_dubbed_text">Lồng Tiếng</string>
     <string name="app_subbed_text">Phụ Đề</string>
     <string name="popup_delete_file">Xóa Tệp</string>
@@ -109,16 +110,15 @@
     <string name="continue_watching">Tiếp tục xem</string>
     <string name="action_remove_watching">Loại bỏ</string>
     <string name="action_open_watching">Thông tin thêm</string>
-    <string name="action_open_play">@string/home_play</string>
+    <string name="action_open_play">\@string/home_play</string>
     <string name="vpn_might_be_needed">Bạn có thể sẽ cần sử dụng VPN để xem phim này</string>
     <string name="vpn_torrent">Phim này được chiếu dưới dạng Torrent. Hãy sử dụng VPN để xem</string>
-    <string name="provider_info_meta">Siêu dữ liệu không được cung cấp bởi trang web, quá trình tải video sẽ không thành công nếu nó không tồn tại trên trang web.</string>
     <string name="torrent_plot">Thông tin phim</string>
     <string name="normal_no_plot">Đang cập nhật</string>
     <string name="torrent_no_plot">Không tìm thấy thông tin</string>
     <string name="show_log_cat">Hiển thị Logcat 🐈</string>
     <string name="picture_in_picture">Chế độ cửa sổ nhỏ</string>
-    <string name="picture_in_picture_des">Tiếp tục xem phim khi thoát app hoặc đang tìm kiếm</string>
+    <string name="picture_in_picture_des">Tiếp tục xem phim khi thoát ứng dụng hoặc khi tìm kiếm</string>
     <string name="player_size_settings">Bật nút thu phóng khi xem</string>
     <string name="player_size_settings_des">Xóa khoảng đen của phim</string>
     <string name="player_subtitles_settings">Phụ đề</string>
@@ -147,7 +147,7 @@
     <string name="restore_success">Đã tải dữ liệu sao lưu</string>
     <string name="restore_failed_format" formatted="true">Không thể khôi phục dữ liệu từ %s</string>
     <string name="backup_success">Khôi phục dữ liệu thành công</string>
-    <string name="backup_failed">Thiếu quyền truy cập bộ nhớ, hãy thử lại</string>
+    <string name="backup_failed">Thiếu quyền truy cập bộ nhớ, hãy thử lại.</string>
     <string name="backup_failed_error_format">Lỗi khi sao lưu %s</string>
     <string name="search">Tìm kiếm</string>
     <string name="category_account">Tài khoản</string>
@@ -159,8 +159,8 @@
     <string name="bug_report_settings_on">Không gửi dữ liệu</string>
     <string name="show_fillers_settings">Hiển thị tập phụ cho anime</string>
     <string name="show_trailers_settings">Hiển thị trailer</string>
-    <string name="kitsu_settings">Hiển thị poster từ kitsu</string>
-    <string name="pref_filter_search_quality">Ẩn chất lượng Video khi tìm kiếm</string>
+    <string name="kitsu_settings">Hiển thị poster từ Kitsu</string>
+    <string name="pref_filter_search_quality">Ẩn chất lượng video khi tìm kiếm</string>
     <string name="automatic_plugin_updates">Tự động cập nhật plugin</string>
     <string name="updates_settings">Hiển thị thông báo cập nhật App</string>
     <string name="updates_settings_des">Tự động tìm kiếm và thông báo khi có bản cập nhật mới</string>
@@ -194,8 +194,10 @@
     <string name="resume">Tiếp Tục</string>
     <string name="go_back_30">-30</string>
     <string name="go_forward_30">+30</string>
-    <string name="delete_message">%s sẽ bị xoá vĩnh viễn\nBạn có chắc chắn muốn xóa?</string>
-    <string name="resume_time_left" formatted="true">%dm\ncòn lại</string>
+    <string name="delete_message">%s sẽ bị xoá vĩnh viễn
+\nBạn có chắc chắn muốn xóa\?</string>
+    <string name="resume_time_left" formatted="true">%dm
+\ncòn lại</string>
     <string name="status_ongoing">Đang Chiếu</string>
     <string name="status_completed">Hoàn Thành</string>
     <string name="status">Trạng Thái</string>
@@ -208,7 +210,7 @@
     <string name="no_subtitles">Không có phụ đề</string>
     <string name="default_subtitles">Mặc Định</string>
     <string name="free_storage">Còn trống</string>
-    <string name="used_storage">Đã dùng</string>
+    <string name="used_storage">Đã sử dụng</string>
     <string name="app_storage">App</string>
     <!--plural-->
     <string name="movies">Phim Lẻ</string>
@@ -226,8 +228,8 @@
     <string name="movies_singular">Phim Lẻ</string>
     <string name="tv_series_singular">Phim Bộ</string>
     <string name="cartoons_singular">Hoạt Hình</string>
-    <string name="anime_singular">@string/anime</string>
-    <string name="ova_singular">@string/ova</string>
+    <string name="anime_singular">Anime</string>
+    <string name="ova_singular">\@string/ova</string>
     <string name="torrent_singular">Torrent</string>
     <string name="documentaries_singular">Phim Tài Liệu</string>
     <string name="asian_drama_singular">Truyền Hình Châu Á</string>
@@ -259,7 +261,7 @@
     <string name="video_lock">Khóa</string>
     <string name="video_aspect_ratio_resize">Thu Phóng</string>
     <string name="video_source">Tuỳ chọn</string>
-    <string name="video_skip_op">Tập tiếp</string>
+    <string name="video_skip_op">Tua nhanh</string>
     <string name="dont_show_again">Không hiện lại</string>
     <string name="skip_update">Bỏ qua</string>
     <string name="update">Cập nhật</string>
@@ -270,8 +272,8 @@
     <string name="video_buffer_length_settings">Thời lượng bộ nhớ đệm</string>
     <string name="video_buffer_disk_settings">Dung lượng video cache</string>
     <string name="video_buffer_clear_settings">Xoá hình ảnh và video</string>
-    <string name="video_ram_description">Sẽ gây lỗi nếu đặt quá cao. Không thay đổi nếu máy có dung lượng ram thấp, chẳng hạn như Android TV hoặc điện thoại cũ</string>
-    <string name="video_disk_description">Sẽ thể gây lỗi trên các máy có dung lượng lưu trữ thấp, chẳng hạn như thiết bị Android TV nếu bạn đặt nó quá cao</string>
+    <string name="video_ram_description">Sẽ gây lỗi nếu đặt quá cao trên máy có dung lượng ram thấp như Android TV.</string>
+    <string name="video_disk_description">Sẽ gây lỗi nếu đặt quá cao trên máy có dung lượng lưu trữ thấp như Android TV.</string>
     <string name="dns_pref">DNS over HTTPS</string>
     <string name="dns_pref_summary">Rất hữu ích để bỏ chặn ISP</string>
     <string name="add_site_pref">Sao chép trang web</string>
@@ -322,7 +324,7 @@
     <string name="upload_sync">Đồng bộ</string>
     <string name="sync_score">Đánh giá</string>
     <string name="sync_score_format" formatted="true">%d / 10</string>
-    <string name="sync_total_episodes_none">/??</string>
+    <string name="sync_total_episodes_none">/\?\?</string>
     <string name="sync_total_episodes_some" formatted="true">/%d</string>
     <string name="authenticated_user" formatted="true">Đã xác thực %s</string>
     <string name="authenticated_user_fail" formatted="true">Không thể xác thực %s</string>
@@ -408,7 +410,7 @@
     <string name="plugin_deleted">Đã xoá plugin</string>
     <string name="plugin_load_fail" formatted="true">Không tải được %s</string>
     <string name="is_adult">18+</string>
-    <string name="batch_download_start_format" formatted="true">Bắt đầu tải %d %s</string>
+    <string name="batch_download_start_format" formatted="true">Bắt đầu tải %d %s…</string>
     <string name="batch_download_finish_format" formatted="true">Tải xuống %d %s thành công</string>
     <string name="batch_download_nothing_to_download_format" formatted="true">Toàn bộ %s đã được tải xuống</string>
     <string name="batch_download">Tải hàng loạt</string>
@@ -420,11 +422,15 @@
     <string name="plugins_downloaded" formatted="true">Đã tải: %d</string>
     <string name="plugins_disabled" formatted="true">Đã vô hiệu: %d</string>
     <string name="plugins_not_downloaded" formatted="true">Không tải: %d</string>
-    <string name="blank_repo_message">Thêm kho lưu trữ để cài tiện ích</string>
+    <string name="blank_repo_message">CloudStream không có sẵn trang web nào. Bạn cần cài đặt các trang web từ kho lưu trữ.
+\n
+\nDo Sky UK Limited đã gỡ xuống theo DMCA một cách thiếu suy nghĩ 🤮 chúng tôi không thể cài sẵn trang web.
+\n
+\nHãy tham gia Discord của chúng tôi hoặc tìm kiếm trực tuyến.</string>
     <string name="view_public_repositories_button">Xem kho lưu trữ của cộng đồng</string>
     <string name="view_public_repositories_button_short">Danh sách công khai</string>
     <string name="uppercase_all_subtitles">In hoa toàn bộ phụ đề</string>
-    <string name="download_all_plugins_from_repo">Tải toàn bộ plugin từ kho lưu trữ này?</string>
+    <string name="download_all_plugins_from_repo">Tải toàn bộ plugin từ kho lưu trữ này\?</string>
     <string name="single_plugin_disabled" formatted="true">%s (Đã vô hiệu)</string>
     <string name="tracks">Thêm</string>
     <string name="audio_tracks">Âm thanh</string>
@@ -435,4 +441,82 @@
     <string name="safe_mode_crash_info">Xem thông tin sự cố</string>
     <string name="history">Lịch sử</string>
     <string name="action_mark_as_watched">Đánh dấu là đã xem</string>
+    <string name="automatic_plugin_download">Tự động tải xuống plugin</string>
+    <string name="redo_setup_process">Thiết lập lại</string>
+    <string name="apk_installer_settings">Bộ cài APK</string>
+    <string name="apk_installer_settings_des">Một số máy không hỗ trợ trình cài đặt gói mới. Hãy thử tùy chọn cũ nếu các bản cập nhật không cài đặt.</string>
+    <string name="season_format">%s %d%s</string>
+    <string name="play_trailer_button">Xem giới thiệu</string>
+    <string name="automatic_plugin_download_summary">Tự động tải plugin còn thiếu.</string>
+    <string name="update_started">Bắt đầu cập nhật</string>
+    <string name="pref_category_links">Liên kết</string>
+    <string name="hls_playlist">Danh sách HLS</string>
+    <string name="player_pref">Trình phát ưu tiên</string>
+    <string name="player_settings_play_in_app">Trình phát mặc định</string>
+    <string name="extension_rating" formatted="true">Đánh giá: %s</string>
+    <string name="no">Không</string>
+    <string name="extension_version">Phiên bản</string>
+    <string name="extension_authors">Tác giả</string>
+    <string name="pref_category_app_updates">Cập nhật ứng dụng</string>
+    <string name="pref_category_backup">Sao lưu</string>
+    <string name="pref_category_extensions">Tiện ích</string>
+    <string name="pref_category_actions">Hành động</string>
+    <string name="pref_category_cache">Cache</string>
+    <string name="pref_category_gestures">Cử chỉ</string>
+    <string name="pref_category_player_features">Tính năng trình phát</string>
+    <string name="pref_category_subtitles">Phụ đề</string>
+    <string name="pref_category_player_layout">Bố cục</string>
+    <string name="pref_category_defaults">Mặc định</string>
+    <string name="pref_category_looks">Giao diện</string>
+    <string name="pref_category_ui_features">Tính năng</string>
+    <string name="plugins_updated" formatted="true">Đã cập nhật %d plugin</string>
+    <string name="extension_description">Mô tả</string>
+    <string name="extension_status">Trạng thái</string>
+    <string name="extension_size">Kích thước</string>
+    <string name="extension_types">Hỗ trợ</string>
+    <string name="extension_language">Ngôn ngữ</string>
+    <string name="extension_install_first">Cài đặt tiện ích trước</string>
+    <string name="player_settings_play_in_vlc">VLC</string>
+    <string name="player_settings_play_in_mpv">MPV</string>
+    <string name="player_settings_play_in_web">Web Video Cast</string>
+    <string name="player_settings_play_in_browser">Trình duyệt web</string>
+    <string name="app_not_found_error">Không thấy ứng dụng</string>
+    <string name="all_languages_preference">Tất cả ngôn ngữ</string>
+    <string name="skip_type_format" formatted="true">Tua %s</string>
+    <string name="skip_type_op">Mở đầu</string>
+    <string name="skip_type_ed">Kết thúc</string>
+    <string name="skip_type_recap">Tóm tắt</string>
+    <string name="skip_type_mixed_ed">Mở đầu tuỳ chọn</string>
+    <string name="skip_type_mixed_op">Kết thúc tuỳ chọn</string>
+    <string name="skip_type_creddits">Danh đề</string>
+    <string name="skip_type_intro">Giới thiệu</string>
+    <string name="clear_history">Xoá lịch sử</string>
+    <string name="enable_skip_op_from_database_des">Hiển thị nút tua nhanh cho mở đầu/kết thúc</string>
+    <string name="clipboard_too_large">Văn bản quá dài. Không thể lưu vào bộ nhớ tạm.</string>
+    <string name="action_remove_from_watched">Xoá khỏi đã xem</string>
+    <string name="confirm_exit_dialog">Bạn có chắc muốn thoát\?</string>
+    <string name="yes">Có</string>
+    <string name="update_notification_downloading">Đang tải bản cập nhật…</string>
+    <string name="update_notification_installing">Đang cài bản cập nhật…</string>
+    <string name="update_notification_failed">Không thể cài đặt phiên bản mới</string>
+    <string name="delayed_update_notice">Ứng dụng sẽ được cập nhật khi thoát</string>
+    <string name="library">Thư viện</string>
+    <string name="browser">Trình duyệt</string>
+    <string name="plugin_downloaded">Plugin đã tải</string>
+    <string name="apk_installer_legacy">Mặc định</string>
+    <string name="sort_updated_new">Tải lên (Mới đến Cũ)</string>
+    <string name="sort_updated_old">Tải lên (Cũ đến Mới)</string>
+    <string name="empty_library_no_accounts_message">Thư viện của bạn đang trống :(
+\nHãy đăng nhập vào thư viện hoặc thêm phim vào thư viện cục bộ</string>
+    <string name="open_with">Mở với</string>
+    <string name="provider_info_meta">Siêu dữ liệu không có sẵn, video sẽ không được tải nếu nó không tồn tại trên trang web.</string>
+    <string name="apk_installer_package_installer">PackageInstaller</string>
+    <string name="sort">Sắp xếp</string>
+    <string name="sort_rating_desc">Xếp hạng (Cao đến Thấp)</string>
+    <string name="sort_rating_asc">Xếp hạng (Thấp đến Cao)</string>
+    <string name="sort_alphabetical_z">Chữ cái (Z đến A)</string>
+    <string name="sort_by">Sắp xếp</string>
+    <string name="empty_library_logged_in_message">Có vẻ như danh sách này trống, hãy thử chuyển sang danh sách khác</string>
+    <string name="sort_alphabetical_a">Chữ cái (A đến Z)</string>
+    <string name="select_library">Chọn Thư viện</string>
 </resources>
