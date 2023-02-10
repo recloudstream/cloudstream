@@ -23,7 +23,7 @@ open class Sendvid : ExtractorApi() {
                     urlString,
                     mainUrl,
                     headers = app.get(url).headers.toMap()
-                ).forEach { link ->
+                ).forEach {link ->
                     sources.add(link)
                 }
         }
