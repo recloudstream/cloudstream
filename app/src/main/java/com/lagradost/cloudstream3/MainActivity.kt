@@ -32,6 +32,7 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.google.android.gms.cast.framework.*
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.navigationrail.NavigationRailView
+import com.google.android.material.snackbar.Snackbar
 import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.APIHolder.allProviders
@@ -719,9 +720,23 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
 
         // Automatically enable jsdelivr if cant connect to raw.githubusercontent.com
         if (!settingsManager.contains("jsdelivr_proxy_key")) {
-            settingsManager.edit()
-                .putBool("jsdelivr_proxy_key", !checkGithubConnectivity())
-                .apply()
+            runBlocking {
+                if (checkGithubConnectivity()) {
+                    setKey("jsdelivr_proxy_key", false)
+                } else {
+                    setKey("jsdelivr_proxy_key", true)
+                    val parentView = findViewById(android.R.id.content)
+                    Snackbar.make(parentView, getString(R.string.jsdelivr_enabled), Snackbar.LENGTH_LONG)
+                        .setAction("Revert", v -> {
+                            setKey("jsdelivr_proxy_key", false)
+                        })
+                        .setBackgroundTint(0xffffbb33)
+                        .setTextColor(Color.BLACK)
+                        .setActionTextColor(Color.BLACK)
+                        .show()
+                }
+                
+            }
         }
 
 

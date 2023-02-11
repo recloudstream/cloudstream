@@ -374,6 +374,7 @@
     <string name="dns_pref">DNS over HTTPS</string>
     <string name="dns_pref_summary">Useful for bypassing ISP blocks</string>
     <string name="jsdelivr_proxy">raw.githubusercontent.com Proxy</string>
+    <string name="jsdelivr_enabled">Failed to reach GitHub, enabling jsdelivr proxy.</string>
     <string name="jsdelivr_proxy_summary">Bypasses blocking of GitHub using jsdelivr, may cause updates to be delayed by few days.</string>
     <string name="add_site_pref">Clone site</string>
     <string name="remove_site_pref">Remove site</string>
