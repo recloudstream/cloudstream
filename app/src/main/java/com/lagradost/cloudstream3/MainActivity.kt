@@ -735,7 +735,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                         .setActionTextColor(Color.BLACK)
                         .show()
                 }
-                
+
             }
         }
 
