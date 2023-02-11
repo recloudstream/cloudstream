@@ -2,6 +2,7 @@ package com.lagradost.cloudstream3
 
 import android.content.ComponentName
 import android.content.Context
+import android.graphics.Color;
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.content.res.Configuration
