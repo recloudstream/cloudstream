@@ -33,6 +33,7 @@ import com.google.android.gms.cast.framework.*
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.navigationrail.NavigationRailView
 import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
+import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.APIHolder.allProviders
 import com.lagradost.cloudstream3.APIHolder.apis
 import com.lagradost.cloudstream3.APIHolder.getApiDubstatusSettings
@@ -716,6 +717,13 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
 
         changeStatusBarState(isEmulatorSettings())
 
+        // Automatically enable jsdelivr if cant connect to raw.githubusercontent.com
+        if (!settingsManager.contains("jsdelivr_proxy_key")) {
+            settingsManager.edit()
+                .putBool("jsdelivr_proxy_key", !checkGithubConnectivity())
+                .apply()
+        }
+
 
         if (PluginManager.checkSafeModeFile()) {
             normalSafeApiCall {
@@ -1088,5 +1096,13 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
 //            }
 //        }
 
+    }
+
+    suspend fun checkGithubConnectivity(): Boolean {
+        return try {
+            app.get("https://raw.githubusercontent.com/recloudstream/.github/master/connectivitycheck").text == "ok"
+        } catch (t: Throwable) {
+            false
+        }
     }
 }
