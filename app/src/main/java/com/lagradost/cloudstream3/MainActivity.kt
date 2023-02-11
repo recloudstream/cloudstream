@@ -82,6 +82,7 @@ import com.lagradost.cloudstream3.ui.setup.SetupFragmentExtensions
 import com.lagradost.cloudstream3.utils.*
 import com.lagradost.cloudstream3.utils.AppUtils.html
 import com.lagradost.cloudstream3.utils.AppUtils.isCastApiAvailable
+import com.lagradost.cloudstream3.utils.AppUtils.isNetworkAvailable
 import com.lagradost.cloudstream3.utils.AppUtils.loadCache
 import com.lagradost.cloudstream3.utils.AppUtils.loadRepository
 import com.lagradost.cloudstream3.utils.AppUtils.loadResult
@@ -720,15 +721,15 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         changeStatusBarState(isEmulatorSettings())
 
         // Automatically enable jsdelivr if cant connect to raw.githubusercontent.com
-        if (!settingsManager.contains("jsdelivr_proxy_key")) {
+        if (!settingsManager.contains("jsdelivr_proxy_key") && isNetworkAvailable()) {
             runBlocking {
                 if (checkGithubConnectivity()) {
                     setKey("jsdelivr_proxy_key", false)
                 } else {
                     setKey("jsdelivr_proxy_key", true)
                     val parentView = findViewById(android.R.id.content)
-                    Snackbar.make(parentView, getString(R.string.jsdelivr_enabled), Snackbar.LENGTH_LONG)
-                        .setAction("Revert", v -> {
+                    Snackbar.make(parentView, R.string.jsdelivr_enabled, Snackbar.LENGTH_LONG)
+                        .setAction(R.string.revert, v -> {
                             setKey("jsdelivr_proxy_key", false)
                         })
                         .setBackgroundTint(ContextCompat.getColor(this@MainActivity, R.color.primaryGrayBackground))

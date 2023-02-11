@@ -640,4 +640,5 @@
     <string name="empty_library_no_accounts_message">Looks like your library is empty :(\nLogin to a library account or add shows to your local library</string>
     <string name="empty_library_logged_in_message">Looks like this list is empty, try switching to another one</string>
     <string name="safe_mode_file">Safe mode file found!\nNot loading any extensions on startup until file is removed.</string>
+    <string name="revert">Revert</string>
 </resources>
