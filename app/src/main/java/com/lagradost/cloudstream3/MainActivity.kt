@@ -2,7 +2,6 @@ package com.lagradost.cloudstream3
 
 import android.content.ComponentName
 import android.content.Context
-import android.graphics.Color;
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.content.res.Configuration
@@ -17,6 +16,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
@@ -731,9 +731,9 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                         .setAction("Revert", v -> {
                             setKey("jsdelivr_proxy_key", false)
                         })
-                        .setBackgroundTint(0xffffbb33)
-                        .setTextColor(Color.BLACK)
-                        .setActionTextColor(Color.BLACK)
+                        .setBackgroundTint(ContextCompat.getColor(this@MainActivity, R.color.primaryGrayBackground))
+                        .setTextColor(ContextCompat.getColor(this@MainActivity, R.color.textColor))
+                        .setActionTextColor(ContextCompat.getColor(this@MainActivity, R.color.colorPrimary))
                         .show()
                 }
 
