@@ -89,6 +89,7 @@ import com.lagradost.cloudstream3.utils.AppUtils.loadSearchResult
 import com.lagradost.cloudstream3.utils.AppUtils.setDefaultFocus
 import com.lagradost.cloudstream3.utils.BackupUtils.setUpBackup
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
+import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStore.setKey
 import com.lagradost.cloudstream3.utils.DataStoreHelper.migrateResumeWatching
@@ -109,7 +110,6 @@ import kotlinx.android.synthetic.main.bottom_resultview_preview.*
 import kotlinx.android.synthetic.main.fragment_result_swipe.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import kotlinx.coroutines.runBlocking
 import java.io.File
 import java.net.URI
 import java.net.URLDecoder
@@ -722,11 +722,11 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
 
         // Automatically enable jsdelivr if cant connect to raw.githubusercontent.com
         if (!settingsManager.contains("jsdelivr_proxy_key") && isNetworkAvailable()) {
-            runBlocking {
+            main {
                 if (checkGithubConnectivity()) {
-                    setKey("jsdelivr_proxy_key", false)
+                    this.setKey("jsdelivr_proxy_key", false)
                 } else {
-                    setKey("jsdelivr_proxy_key", true)
+                    this.setKey("jsdelivr_proxy_key", true)
                     val parentView: View = findViewById(android.R.id.content)
                     Snackbar.make(parentView, R.string.jsdelivr_enabled, Snackbar.LENGTH_LONG).let { snackbar ->
                         snackbar.setAction(R.string.revert) { v ->
