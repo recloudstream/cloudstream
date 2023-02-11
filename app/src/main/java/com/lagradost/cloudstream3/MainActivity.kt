@@ -727,14 +727,15 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                 } else {
                     setKey("jsdelivr_proxy_key", true)
                     val parentView = findViewById(android.R.id.content)
-                    Snackbar.make(parentView, R.string.jsdelivr_enabled, Snackbar.LENGTH_LONG)
-                        .setAction(R.string.revert, v -> {
+                    Snackbar.make(parentView, R.string.jsdelivr_enabled, Snackbar.LENGTH_LONG).let { snackbar ->
+                        snackbar.setAction(R.string.revert) { v ->
                             setKey("jsdelivr_proxy_key", false)
-                        })
-                        .setBackgroundTint(colorFromAttribute(R.attr.primaryGrayBackground))
-                        .setTextColor(colorFromAttribute(R.attr.textColor))
-                        .setActionTextColor(colorFromAttribute(R.attr.colorPrimary))
-                        .show()
+                        }
+                        snackbar.setBackgroundTint(colorFromAttribute(R.attr.primaryGrayBackground))
+                        snackbar.setTextColor(colorFromAttribute(R.attr.textColor))
+                        snackbar.setActionTextColor(colorFromAttribute(R.attr.colorPrimary))
+                        snackbar.show()
+                    }
                 }
 
             }
