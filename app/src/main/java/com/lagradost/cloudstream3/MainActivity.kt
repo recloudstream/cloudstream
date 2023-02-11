@@ -1118,7 +1118,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
 
     suspend fun checkGithubConnectivity(): Boolean {
         return try {
-            app.get("https://raw.githubusercontent.com/recloudstream/.github/master/connectivitycheck").text == "ok"
+            app.get("https://raw.githubusercontent.com/recloudstream/.github/master/connectivitycheck").text.trim() == "ok"
         } catch (t: Throwable) {
             false
         }
