@@ -73,7 +73,9 @@ object RepositoryManager {
     }
     val GH_REGEX = Regex("^https://raw.githubusercontent.com/([A-Za-z0-9-]+)/([A-Za-z0-9_.-]+)/(.*)$")
 
+    /* Convert raw.githubusercontent.com urls to cdn.jsdelivr.net if enabled in settings */
     fun convertRawGitUrl(url: String): String {
+        if (!(getKey<Boolean>("jsdelivr_proxy_key") ?: false)) return url
         val match = GH_REGEX.find(url) ?: return url
         val (user, repo, rest) = match.destructured
         return "https://cdn.jsdelivr.net/gh/$user/$repo@$rest"
