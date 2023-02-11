@@ -109,6 +109,7 @@ import kotlinx.android.synthetic.main.bottom_resultview_preview.*
 import kotlinx.android.synthetic.main.fragment_result_swipe.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.runBlocking
 import java.io.File
 import java.net.URI
 import java.net.URLDecoder
@@ -726,7 +727,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                     setKey("jsdelivr_proxy_key", false)
                 } else {
                     setKey("jsdelivr_proxy_key", true)
-                    val parentView = findViewById(android.R.id.content)
+                    val parentView: View = findViewById(android.R.id.content)
                     Snackbar.make(parentView, R.string.jsdelivr_enabled, Snackbar.LENGTH_LONG).let { snackbar ->
                         snackbar.setAction(R.string.revert) { v ->
                             setKey("jsdelivr_proxy_key", false)
