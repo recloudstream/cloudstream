@@ -16,7 +16,6 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
@@ -732,9 +731,9 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                         .setAction(R.string.revert, v -> {
                             setKey("jsdelivr_proxy_key", false)
                         })
-                        .setBackgroundTint(ContextCompat.getColor(this@MainActivity, R.color.primaryGrayBackground))
-                        .setTextColor(ContextCompat.getColor(this@MainActivity, R.color.textColor))
-                        .setActionTextColor(ContextCompat.getColor(this@MainActivity, R.color.colorPrimary))
+                        .setBackgroundTint(colorFromAttribute(R.attr.primaryGrayBackground))
+                        .setTextColor(colorFromAttribute(R.attr.textColor))
+                        .setActionTextColor(colorFromAttribute(R.attr.colorPrimary))
                         .show()
                 }
 
