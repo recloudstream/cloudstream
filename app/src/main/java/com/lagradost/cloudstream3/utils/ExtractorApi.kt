@@ -266,7 +266,6 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     OkRuHttps(),
     Okrulink(),
     Sendvid(),
-    SendvidHttps(),
 
     // dood extractors
     DoodCxExtractor(),
