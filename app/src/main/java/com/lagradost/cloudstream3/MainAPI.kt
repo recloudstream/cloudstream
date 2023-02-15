@@ -17,8 +17,10 @@ import com.lagradost.cloudstream3.syncproviders.SyncIdName
 import com.lagradost.cloudstream3.ui.player.SubtitleData
 import com.lagradost.cloudstream3.utils.*
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
+import com.lagradost.cloudstream3.utils.Coroutines.mainWork
 import com.lagradost.cloudstream3.utils.Coroutines.threadSafeListOf
 import okhttp3.Interceptor
+import org.mozilla.javascript.Scriptable
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.absoluteValue
@@ -732,6 +734,19 @@ fun fixTitle(str: String): String {
     return str.split(" ").joinToString(" ") {
         it.lowercase()
             .replaceFirstChar { char -> if (char.isLowerCase()) char.titlecase(Locale.getDefault()) else it }
+    }
+}
+/**
+ * Get rhino context in a safe way as it needs to be initialized on the main thread.
+ * Make sure you get the scope using: val scope: Scriptable = rhino.initSafeStandardObjects()
+ * Use like the following: rhino.evaluateString(scope, js, "JavaScript", 1, null)
+ **/
+suspend fun getRhinoContext(): org.mozilla.javascript.Context {
+    return Coroutines.mainWork {
+        val rhino = org.mozilla.javascript.Context.enter()
+        rhino.initSafeStandardObjects()
+        rhino.optimizationLevel = -1
+        rhino
     }
 }
 

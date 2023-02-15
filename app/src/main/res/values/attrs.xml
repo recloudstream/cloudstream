@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="FlowLayout_Layout">
-        <attr format="dimension" name="itemSpacing" />
+        <attr name="itemSpacing" format="dimension" />
     </declare-styleable>
     <declare-styleable name="FlowLayout_Layout_layout_space" />
 
@@ -12,6 +12,10 @@
     <style name="customCastDefColor">
         <item name="customCastBackgroundColor">?attr/colorPrimary</item>
     </style>
+
+    <declare-styleable name="TestView">
+        <attr name="header_text" format="string" />
+    </declare-styleable>
 
     <declare-styleable name="MainColors">
         <attr name="colorPrimary" format="color" />
