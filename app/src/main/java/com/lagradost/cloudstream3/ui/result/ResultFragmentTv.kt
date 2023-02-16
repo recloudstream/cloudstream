@@ -176,8 +176,7 @@ class ResultFragmentTv : ResultFragment() {
                         loadingDialog = null
                     }
                     loadingDialog = loadingDialog ?: context?.let { ctx ->
-                        val builder =
-                            BottomSheetDialog(ctx)
+                        val builder = BottomSheetDialog(ctx)
                         builder.setContentView(R.layout.bottom_loading)
                         builder.setOnDismissListener {
                             loadingDialog = null
@@ -187,9 +186,7 @@ class ResultFragmentTv : ResultFragment() {
                         //    it?.dismiss()
                         //}
                         builder.setCanceledOnTouchOutside(true)
-
                         builder.show()
-
                         builder
                     }
                 }

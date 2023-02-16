@@ -1,34 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <TextView
-            android:id="@+id/text1"
-            android:paddingStart="?android:attr/listPreferredItemPaddingStart"
-            android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
-            android:layout_marginTop="20dp"
-            android:layout_marginBottom="10dp"
-            android:textStyle="bold"
-            android:textSize="20sp"
-            android:textColor="?attr/textColor"
-            android:layout_width="match_parent"
-            android:layout_rowWeight="1"
-            tools:text="Test"
-            android:layout_height="wrap_content" />
+        android:id="@+id/text1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_rowWeight="1"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="10dp"
+        android:paddingStart="?android:attr/listPreferredItemPaddingStart"
+        android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
+        android:textColor="?attr/textColor"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        tools:text="Test" />
 
     <ListView
-            android:nextFocusRight="@id/cancel_btt"
-            android:nextFocusLeft="@id/apply_btt"
-
-            android:id="@+id/listview1"
-            android:layout_marginBottom="60dp"
-            android:paddingTop="10dp"
-            android:requiresFadingEdge="vertical"
-            tools:listitem="@layout/sort_bottom_single_choice_no_checkmark"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_rowWeight="1" />
+        android:id="@+id/listview1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_rowWeight="1"
+        android:layout_marginBottom="60dp"
+        android:nestedScrollingEnabled="true"
+        android:nextFocusLeft="@id/apply_btt"
+        android:nextFocusRight="@id/cancel_btt"
+        android:paddingTop="10dp"
+        android:requiresFadingEdge="vertical"
+        tools:listitem="@layout/sort_bottom_single_choice_no_checkmark" />
 </LinearLayout>

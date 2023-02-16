@@ -759,6 +759,11 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
         return data != ""
     }
 
+    /** Used to query a saved MediaItem on the list to get the id for removal */
+    data class MediaListItemRoot(@JsonProperty("data") val data: MediaListItem? = null)
+    data class MediaListItem(@JsonProperty("MediaList") val MediaList: MediaListId? = null)
+    data class MediaListId(@JsonProperty("id") val id: Long? = null)
+
     private suspend fun postDataAboutId(
         id: Int,
         type: AniListStatusType,
@@ -766,19 +771,43 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
         progress: Int?
     ): Boolean {
         val q =
-            """mutation (${'$'}id: Int = $id, ${'$'}status: MediaListStatus = ${
-                aniListStatusString[maxOf(
-                    0,
-                    type.value
-                )]
-            }, ${if (score != null) "${'$'}scoreRaw: Int = ${score * 10}" else ""} , ${if (progress != null) "${'$'}progress: Int = $progress" else ""}) {
-                SaveMediaListEntry (mediaId: ${'$'}id, status: ${'$'}status, scoreRaw: ${'$'}scoreRaw, progress: ${'$'}progress) {
-                    id
-                    status
-                    progress
-                    score
-                }
+            // Delete item if status type is None
+            if (type == AniListStatusType.None) {
+                val userID = getKey<AniListUser>(accountId, ANILIST_USER_KEY)?.id ?: return false
+                // Get list ID for deletion
+                val idQuery = """
+                  query MediaList(${'$'}userId: Int = $userID, ${'$'}mediaId: Int = $id) {
+                    MediaList(userId: ${'$'}userId, mediaId: ${'$'}mediaId) {
+                      id
+                    }
+                  }
+                """
+                val response = postApi(idQuery)
+                val listId =
+                    tryParseJson<MediaListItemRoot>(response)?.data?.MediaList?.id ?: return false
+                """
+                    mutation(${'$'}id: Int = $listId) {
+                        DeleteMediaListEntry(id: ${'$'}id) {
+                            deleted
+                        }
+                    }
+                """
+            } else {
+                """mutation (${'$'}id: Int = $id, ${'$'}status: MediaListStatus = ${
+                    aniListStatusString[maxOf(
+                        0,
+                        type.value
+                    )]
+                }, ${if (score != null) "${'$'}scoreRaw: Int = ${score * 10}" else ""} , ${if (progress != null) "${'$'}progress: Int = $progress" else ""}) {
+                    SaveMediaListEntry (mediaId: ${'$'}id, status: ${'$'}status, scoreRaw: ${'$'}scoreRaw, progress: ${'$'}progress) {
+                        id
+                        status
+                        progress
+                        score
+                    }
                 }"""
+            }
+
         val data = postApi(q)
         return data != ""
     }
