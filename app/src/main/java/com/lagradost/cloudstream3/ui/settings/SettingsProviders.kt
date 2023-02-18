@@ -2,6 +2,8 @@ package com.lagradost.cloudstream3.ui.settings
 
 import android.os.Bundle
 import android.view.View
+import androidx.navigation.NavOptions
+import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
 import com.lagradost.cloudstream3.*
@@ -16,6 +18,7 @@ import com.lagradost.cloudstream3.utils.USER_SELECTED_HOMEPAGE_API
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showMultiDialog
 import com.lagradost.cloudstream3.utils.SubtitleHelper
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
+import com.lagradost.cloudstream3.utils.UIHelper.navigate
 
 class SettingsProviders : PreferenceFragmentCompat() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -54,6 +57,20 @@ class SettingsProviders : PreferenceFragmentCompat() {
             }
 
             return@setOnPreferenceClickListener true
+        }
+
+        getPref(R.string.test_providers_key)?.setOnPreferenceClickListener {
+            // Somehow animations do not work without this.
+            val options = NavOptions.Builder()
+                .setEnterAnim(R.anim.enter_anim)
+                .setExitAnim(R.anim.exit_anim)
+                .setPopEnterAnim(R.anim.pop_enter)
+                .setPopExitAnim(R.anim.pop_exit)
+                .build()
+
+            this@SettingsProviders.findNavController()
+                .navigate(R.id.navigation_test_providers, null, options)
+            true
         }
 
         getPref(R.string.prefer_media_type_key)?.setOnPreferenceClickListener {

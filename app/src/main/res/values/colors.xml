@@ -82,4 +82,7 @@
     <color name="colorPrimaryGrey">#515151</color>
     <color name="colorPrimaryWhite">#FFFFFF</color>
     <color name="colorPrimaryBrown">#622C00</color>
+
+    <color name="colorTestPass">#48E484</color>
+    <color name="colorTestFail">#ea596e</color>
 </resources>

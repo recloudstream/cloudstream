@@ -1,24 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <Preference
-            android:icon="@drawable/ic_baseline_language_24"
-            android:key="@string/provider_lang_key"
-            android:title="@string/provider_lang_settings" />
+        android:icon="@drawable/ic_baseline_language_24"
+        android:key="@string/provider_lang_key"
+        android:title="@string/provider_lang_settings" />
 
     <Preference
-            android:key="@string/prefer_media_type_key"
-            android:title="@string/preferred_media_settings"
-            android:icon="@drawable/ic_baseline_play_arrow_24" />
+        android:icon="@drawable/ic_baseline_play_arrow_24"
+        android:key="@string/prefer_media_type_key"
+        android:title="@string/preferred_media_settings" />
     <Preference
-            android:key="@string/display_sub_key"
-            android:title="@string/display_subbed_dubbed_settings"
-            android:icon="@drawable/ic_outline_voice_over_off_24" />
+        android:icon="@drawable/ic_outline_voice_over_off_24"
+        android:key="@string/display_sub_key"
+        android:title="@string/display_subbed_dubbed_settings" />
 
     <SwitchPreference
-            android:key="@string/enable_nsfw_on_providers_key"
-            android:title="@string/enable_nsfw_on_providers"
-            android:icon="@drawable/ic_baseline_extension_24"
-            android:summary="@string/apply_on_restart"
-            app:defaultValue="false"/>
+        android:icon="@drawable/ic_baseline_extension_24"
+        android:key="@string/enable_nsfw_on_providers_key"
+        android:summary="@string/apply_on_restart"
+        android:title="@string/enable_nsfw_on_providers"
+        app:defaultValue="false" />
+
+    <Preference
+        android:icon="@drawable/baseline_network_ping_24"
+        android:key="@string/test_providers_key"
+        android:title="Test all providers" />
+
 </PreferenceScreen>

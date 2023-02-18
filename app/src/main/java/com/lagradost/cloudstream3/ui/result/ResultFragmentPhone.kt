@@ -322,9 +322,7 @@ class ResultFragmentPhone : ResultFragment() {
                         //    it?.dismiss()
                         //}
                         builder.setCanceledOnTouchOutside(true)
-
                         builder.show()
-
                         builder
                     }
                 }

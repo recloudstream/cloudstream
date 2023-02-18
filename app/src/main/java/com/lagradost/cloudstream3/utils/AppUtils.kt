@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.utils
 
+import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Activity.RESULT_CANCELED
@@ -17,6 +18,7 @@ import android.os.*
 import android.provider.MediaStore
 import android.text.Spanned
 import android.util.Log
+import android.view.animation.DecelerateInterpolator
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
@@ -25,6 +27,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
 import androidx.core.text.toSpanned
+import androidx.core.widget.ContentLoadingProgressBar
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.navigation.fragment.findNavController
@@ -177,6 +180,20 @@ object AppUtils {
         touchSlopField.isAccessible = true
         val touchSlop = touchSlopField.get(recyclerView) as Int
         touchSlopField.set(recyclerView, touchSlop * f)       // "8" was obtained experimentally
+    }
+
+    fun ContentLoadingProgressBar?.animateProgressTo(to: Int) {
+        if (this == null) return
+        val animation: ObjectAnimator = ObjectAnimator.ofInt(
+            this,
+            "progress",
+            this.progress,
+            to
+        )
+        animation.duration = 500
+        animation.setAutoCancel(true)
+        animation.interpolator = DecelerateInterpolator()
+        animation.start()
     }
 
     @SuppressLint("RestrictedApi")
