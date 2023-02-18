@@ -7,10 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
-import android.widget.AbsListView
-import android.widget.ArrayAdapter
-import android.widget.ImageView
-import android.widget.ListView
+import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.isVisible
@@ -228,6 +225,10 @@ class SearchFragment : Fragment() {
                 SEARCH_PREF_PROVIDERS,
                 defVal = validAPIs.map { it.name }
             )!!.toMutableSet()
+        }
+
+        clear_SearchView.setOnClickListener {
+            main_search.setQuery("", false)
         }
 
         search_filter.setOnClickListener { searchView ->

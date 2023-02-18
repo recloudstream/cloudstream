@@ -41,7 +41,7 @@
                     android:inputType="text"
                     android:nextFocusLeft="@id/nav_rail_view"
 
-                    android:nextFocusRight="@id/search_filter"
+                    android:nextFocusRight="@id/clear_SearchView"
                     android:nextFocusUp="@id/nav_rail_view"
                     android:nextFocusDown="@id/search_autofit_results"
                     android:paddingStart="-10dp"
@@ -59,7 +59,7 @@
                         android:layout_width="20dp"
                         android:layout_height="20dp"
                         android:layout_gravity="center"
-                        android:layout_marginStart="-35dp"
+                        android:layout_marginStart="-60dp"
                         android:foregroundTint="@color/white"
                         android:progressTint="@color/white">
 
@@ -72,6 +72,24 @@
             </FrameLayout>
 
             <ImageView
+                android:id="@+id/clear_SearchView"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_gravity="center_vertical|end"
+                android:layout_margin="40dp"
+
+                android:nextFocusLeft="@id/main_search"
+                android:nextFocusRight="@id/search_filter"
+                android:nextFocusUp="@id/nav_rail_view"
+                android:nextFocusDown="@id/search_autofit_results"
+
+                android:background="@drawable/outline_drawable_less"
+                android:foreground="?android:attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_baseline_close_24"
+                app:tint="?attr/white"
+                tools:ignore="ContentDescription" />
+
+            <ImageView
                 android:id="@+id/search_filter"
                 android:layout_width="25dp"
                 android:layout_height="25dp"
@@ -80,7 +98,7 @@
                 android:layout_margin="10dp"
                 android:background="?selectableItemBackgroundBorderless"
                 android:contentDescription="@string/change_providers_img_des"
-                android:nextFocusLeft="@id/main_search"
+                android:nextFocusLeft="@id/clear_SearchView"
                 android:nextFocusRight="@id/main_search"
                 android:nextFocusUp="@id/nav_rail_view"
                 android:nextFocusDown="@id/search_autofit_results"
