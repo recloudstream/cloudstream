@@ -129,9 +129,9 @@
         <androidx.core.widget.NestedScrollView
             android:id="@+id/result_scroll"
             android:layout_width="match_parent"
-            android:paddingBottom="100dp"
+            android:layout_height="wrap_content"
             android:clipToPadding="false"
-            android:layout_height="wrap_content">
+            android:paddingBottom="100dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -326,13 +326,12 @@
 
                             <ImageView
                                 android:id="@+id/result_poster"
-
                                 android:layout_width="100dp"
                                 android:layout_height="140dp"
+                                android:layout_gravity="bottom"
                                 android:contentDescription="@string/result_poster_img_des"
                                 android:foreground="@drawable/outline_drawable"
                                 android:scaleType="centerCrop"
-                                android:layout_gravity="bottom"
                                 tools:src="@drawable/example_poster" />
                         </androidx.cardview.widget.CardView>
 
@@ -516,8 +515,8 @@
                         android:visibility="gone" />
 
                     <com.google.android.material.chip.ChipGroup
-                        style="@style/ChipParent"
                         android:id="@+id/result_tag"
+                        style="@style/ChipParent"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
                     <!--<com.lagradost.cloudstream3.widget.FlowLayout
@@ -818,10 +817,13 @@
                                     android:layout_gravity="center_vertical"
                                     android:layout_marginStart="0dp"
                                     android:layout_marginEnd="10dp"
+                                    android:drawableEnd="@drawable/ic_baseline_keyboard_arrow_down_24"
                                     android:nextFocusLeft="@id/result_episode_select"
                                     android:nextFocusRight="@id/result_episode_select"
                                     android:nextFocusUp="@id/result_description"
                                     android:nextFocusDown="@id/result_episodes"
+                                    android:paddingStart="10dp"
+                                    android:paddingEnd="5dp"
                                     android:visibility="gone"
                                     tools:text="Season 1"
                                     tools:visibility="visible" />
@@ -829,16 +831,16 @@
                                 <com.google.android.material.button.MaterialButton
                                     android:id="@+id/result_episode_select"
                                     style="@style/MultiSelectButton"
-
                                     android:layout_gravity="center_vertical"
                                     android:layout_marginStart="0dp"
                                     android:layout_marginEnd="10dp"
-
+                                    android:drawableEnd="@drawable/ic_baseline_keyboard_arrow_down_24"
                                     android:nextFocusLeft="@id/result_season_button"
                                     android:nextFocusRight="@id/result_season_button"
-
                                     android:nextFocusUp="@id/result_description"
                                     android:nextFocusDown="@id/result_episodes"
+                                    android:paddingStart="10dp"
+                                    android:paddingEnd="5dp"
                                     android:visibility="gone"
                                     tools:text="50-100"
                                     tools:visibility="visible" />
@@ -846,15 +848,16 @@
                                 <com.google.android.material.button.MaterialButton
                                     android:id="@+id/result_dub_select"
                                     style="@style/MultiSelectButton"
-
                                     android:layout_gravity="center_vertical"
                                     android:layout_marginStart="0dp"
                                     android:layout_marginEnd="10dp"
+                                    android:drawableEnd="@drawable/ic_baseline_keyboard_arrow_down_24"
                                     android:nextFocusLeft="@id/result_season_button"
                                     android:nextFocusRight="@id/result_season_button"
-
                                     android:nextFocusUp="@id/result_description"
                                     android:nextFocusDown="@id/result_episodes"
+                                    android:paddingStart="10dp"
+                                    android:paddingEnd="5dp"
                                     android:visibility="gone"
                                     tools:text="Dubbed"
                                     tools:visibility="visible" />
