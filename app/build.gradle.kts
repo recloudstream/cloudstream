@@ -184,8 +184,8 @@ dependencies {
     //implementation("com.github.TorrentStream:TorrentStream-Android:2.7.0")
 
     // Downloading
-    implementation("androidx.work:work-runtime:2.7.1")
-    implementation("androidx.work:work-runtime-ktx:2.7.1")
+    implementation("androidx.work:work-runtime:2.8.0")
+    implementation("androidx.work:work-runtime-ktx:2.8.0")
 
     // Networking
 //    implementation("com.squareup.okhttp3:okhttp:4.9.2")
