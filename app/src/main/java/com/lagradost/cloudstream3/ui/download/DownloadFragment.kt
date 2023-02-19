@@ -24,7 +24,6 @@ import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.ui.download.DownloadButtonSetup.handleDownloadClick
 import com.lagradost.cloudstream3.ui.player.GeneratorPlayer
 import com.lagradost.cloudstream3.ui.player.LinkGenerator
-import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
 import com.lagradost.cloudstream3.utils.AppUtils.loadResult
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.DOWNLOAD_EPISODE_CACHE
@@ -58,10 +57,19 @@ class DownloadFragment : Fragment() {
         this.layoutParams = param
     }
 
+//    private fun setList(list: List<VisualDownloadHeaderCached>) {
+//        main {
+//            (download_list?.adapter as DownloadHeaderAdapter?)?.cardList = list
+//            download_list?.adapter?.notifyDataSetChanged()
+//        }
+//    }
     private fun setList(list: List<VisualDownloadHeaderCached>) {
         main {
-            (download_list?.adapter as DownloadHeaderAdapter?)?.cardList = list
-            download_list?.adapter?.notifyDataSetChanged()
+            val adapter = download_list?.adapter as DownloadHeaderAdapter?
+            if (adapter != null) {
+                adapter.cardList = list
+                adapter.notifyItemRangeChanged(0, list.size)
+            }
         }
     }
 

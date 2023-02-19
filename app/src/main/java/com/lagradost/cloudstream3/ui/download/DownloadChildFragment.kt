@@ -18,6 +18,7 @@ import com.lagradost.cloudstream3.utils.VideoDownloadManager
 import kotlinx.android.synthetic.main.fragment_child_downloads.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlin.math.min
 
 class DownloadChildFragment : Fragment() {
     companion object {
@@ -39,6 +40,7 @@ class DownloadChildFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_child_downloads, container, false)
     }
 
+
     private fun updateList(folder: String) = main {
         context?.let { ctx ->
             val data = withContext(Dispatchers.IO) { ctx.getKeys(folder) }
@@ -50,16 +52,38 @@ class DownloadChildFragment : Fragment() {
                         ?: return@mapNotNull null
                     VisualDownloadChildCached(info.fileLength, info.totalBytes, it)
                 }
-            }.sortedBy { it.data.episode + (it.data.season?: 0)*100000 }
+            }.sortedBy { it.data.episode + (it.data.season ?: 0) * 100000 }
             if (eps.isEmpty()) {
-                activity?.onBackPressed()
+                requireActivity().onBackPressedDispatcher.onBackPressed()
                 return@main
             }
-
-            (download_child_list?.adapter as DownloadChildAdapter? ?: return@main).cardList = eps
-            download_child_list?.adapter?.notifyDataSetChanged()
+            val adapter = download_child_list?.adapter as DownloadChildAdapter? ?: return@main
+            val oldSize = adapter.cardList.size
+            adapter.cardList = eps
+            adapter.notifyItemRangeChanged(0, min(oldSize,eps.size))
         }
     }
+//    private fun updateList(folder: String) = main {
+//        context?.let { ctx ->
+//            val data = withContext(Dispatchers.IO) { ctx.getKeys(folder) }
+//            val eps = withContext(Dispatchers.IO) {
+//                data.mapNotNull { key ->
+//                    context?.getKey<VideoDownloadHelper.DownloadEpisodeCached>(key)
+//                }.mapNotNull {
+//                    val info = VideoDownloadManager.getDownloadFileInfoAndUpdateSettings(ctx, it.id)
+//                        ?: return@mapNotNull null
+//                    VisualDownloadChildCached(info.fileLength, info.totalBytes, it)
+//                }
+//            }.sortedBy { it.data.episode + (it.data.season?: 0)*100000 }
+//            if (eps.isEmpty()) {
+//                activity?.onBackPressed()
+//                return@main
+//            }
+//
+//            (download_child_list?.adapter as DownloadChildAdapter? ?: return@main).cardList = eps
+//            download_child_list?.adapter?.notifyDataSetChanged()
+//        }
+//    }
 
     private var downloadDeleteEventListener: ((Int) -> Unit)? = null
 
@@ -69,7 +93,7 @@ class DownloadChildFragment : Fragment() {
         val folder = arguments?.getString("folder")
         val name = arguments?.getString("name")
         if (folder == null) {
-            activity?.onBackPressed() // TODO FIX
+            requireActivity().onBackPressedDispatcher.onBackPressed()
             return
         }
         context?.fixPaddingStatusbar(download_child_root)
@@ -77,7 +101,7 @@ class DownloadChildFragment : Fragment() {
         download_child_toolbar.title = name
         download_child_toolbar.setNavigationIcon(R.drawable.ic_baseline_arrow_back_24)
         download_child_toolbar.setNavigationOnClickListener {
-            activity?.onBackPressed()
+            requireActivity().onBackPressedDispatcher.onBackPressed()
         }
 
         val adapter: RecyclerView.Adapter<RecyclerView.ViewHolder> =

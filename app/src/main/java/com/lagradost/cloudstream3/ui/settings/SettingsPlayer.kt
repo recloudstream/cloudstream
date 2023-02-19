@@ -112,7 +112,6 @@ class SettingsPlayer : PreferenceFragmentCompat() {
             }
             return@setOnPreferenceClickListener true
         }
-
         getPref(R.string.player_pref_key)?.setOnPreferenceClickListener {
             val prefNames = resources.getStringArray(R.array.player_pref_names)
             val prefValues = resources.getIntArray(R.array.player_pref_values)
