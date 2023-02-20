@@ -644,4 +644,9 @@
     <string name="empty_library_no_accounts_message">Looks like your library is empty :(\nLogin to a library account or add shows to your local library</string>
     <string name="empty_library_logged_in_message">Looks like this list is empty, try switching to another one</string>
     <string name="safe_mode_file">Safe mode file found!\nNot loading any extensions on startup until file is removed.</string>
+    <string name="subscription_in_progress_notification">Updating subscribed shows</string>
+    <string name="subscription_list_name">Subscribed</string>
+    <string name="subscription_new">Subscribed to %s</string>
+    <string name="subscription_deleted">Unsubscribed from %s</string>
+    <string name="subscription_episode_released">Episode %d released!</string>
 </resources>
