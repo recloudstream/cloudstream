@@ -17,8 +17,10 @@ import com.lagradost.cloudstream3.syncproviders.SyncIdName
 import com.lagradost.cloudstream3.ui.player.SubtitleData
 import com.lagradost.cloudstream3.utils.*
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
+import com.lagradost.cloudstream3.utils.Coroutines.mainWork
 import com.lagradost.cloudstream3.utils.Coroutines.threadSafeListOf
 import okhttp3.Interceptor
+import org.mozilla.javascript.Scriptable
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.absoluteValue
@@ -734,6 +736,19 @@ fun fixTitle(str: String): String {
             .replaceFirstChar { char -> if (char.isLowerCase()) char.titlecase(Locale.getDefault()) else it }
     }
 }
+/**
+ * Get rhino context in a safe way as it needs to be initialized on the main thread.
+ * Make sure you get the scope using: val scope: Scriptable = rhino.initSafeStandardObjects()
+ * Use like the following: rhino.evaluateString(scope, js, "JavaScript", 1, null)
+ **/
+suspend fun getRhinoContext(): org.mozilla.javascript.Context {
+    return Coroutines.mainWork {
+        val rhino = org.mozilla.javascript.Context.enter()
+        rhino.initSafeStandardObjects()
+        rhino.optimizationLevel = -1
+        rhino
+    }
+}
 
 /** https://www.imdb.com/title/tt2861424/ -> tt2861424 */
 fun imdbUrlToId(url: String): String? {
@@ -1312,7 +1327,7 @@ fun LoadResponse?.isAnimeBased(): Boolean {
 
 fun TvType?.isEpisodeBased(): Boolean {
     if (this == null) return false
-    return (this == TvType.TvSeries || this == TvType.Anime)
+    return (this == TvType.TvSeries || this == TvType.Anime || this == TvType.AsianDrama)
 }
 
 
@@ -1336,6 +1351,7 @@ interface EpisodeResponse {
     var showStatus: ShowStatus?
     var nextAiring: NextAiring?
     var seasonNames: List<SeasonData>?
+    fun getLatestEpisodes(): Map<DubStatus, Int?>
 }
 
 @JvmName("addSeasonNamesString")
@@ -1404,7 +1420,18 @@ data class AnimeLoadResponse(
     override var nextAiring: NextAiring? = null,
     override var seasonNames: List<SeasonData>? = null,
     override var backgroundPosterUrl: String? = null,
-) : LoadResponse, EpisodeResponse
+) : LoadResponse, EpisodeResponse {
+    override fun getLatestEpisodes(): Map<DubStatus, Int?> {
+        return episodes.map { (status, episodes) ->
+            val maxSeason = episodes.maxOfOrNull { it.season ?: Int.MIN_VALUE }
+                .takeUnless { it == Int.MIN_VALUE }
+            status to episodes
+                .filter { it.season == maxSeason }
+                .maxOfOrNull { it.episode ?: Int.MIN_VALUE }
+                .takeUnless { it == Int.MIN_VALUE }
+        }.toMap()
+    }
+}
 
 /**
  * If episodes already exist appends the list.
@@ -1602,7 +1629,17 @@ data class TvSeriesLoadResponse(
     override var nextAiring: NextAiring? = null,
     override var seasonNames: List<SeasonData>? = null,
     override var backgroundPosterUrl: String? = null,
-) : LoadResponse, EpisodeResponse
+) : LoadResponse, EpisodeResponse {
+    override fun getLatestEpisodes(): Map<DubStatus, Int?> {
+        val maxSeason =
+            episodes.maxOfOrNull { it.season ?: Int.MIN_VALUE }.takeUnless { it == Int.MIN_VALUE }
+        val max = episodes
+            .filter { it.season == maxSeason }
+            .maxOfOrNull { it.episode ?: Int.MIN_VALUE }
+            .takeUnless { it == Int.MIN_VALUE }
+        return mapOf(DubStatus.None to max)
+    }
+}
 
 suspend fun MainAPI.newTvSeriesLoadResponse(
     name: String,

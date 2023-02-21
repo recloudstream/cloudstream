@@ -16,6 +16,7 @@ import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.APIHolder.apis
 import com.lagradost.cloudstream3.APIHolder.getId
 import com.lagradost.cloudstream3.APIHolder.unixTime
+import com.lagradost.cloudstream3.APIHolder.unixTimeMS
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.CommonActivity.getCastSession
 import com.lagradost.cloudstream3.CommonActivity.showToast
@@ -413,6 +414,9 @@ class ResultViewModel2 : ViewModel() {
 
     private val _episodeSynopsis: MutableLiveData<String?> = MutableLiveData(null)
     val episodeSynopsis: LiveData<String?> = _episodeSynopsis
+
+    private val _subscribeStatus: MutableLiveData<Boolean?> = MutableLiveData(null)
+    val subscribeStatus: LiveData<Boolean?> = _subscribeStatus
 
     companion object {
         const val TAG = "RVM2"
@@ -813,6 +817,42 @@ class ResultViewModel2 : ViewModel() {
         loadLinks(result, isVisible = isVisible, isCasting = true) { data ->
             startChromecast(activity, result, data.links, data.subs, 0)
         }
+    }
+
+    /**
+     * @return true if the new status is Subscribed, false if not. Null if not possible to subscribe.
+     **/
+    fun toggleSubscriptionStatus(): Boolean? {
+        val isSubscribed = _subscribeStatus.value ?: return null
+        val response = currentResponse ?: return null
+        if (response !is EpisodeResponse) return null
+
+        val currentId = response.getId()
+
+        if (isSubscribed) {
+            DataStoreHelper.removeSubscribedData(currentId)
+        } else {
+            val current = DataStoreHelper.getSubscribedData(currentId)
+
+            DataStoreHelper.setSubscribedData(
+                currentId,
+                DataStoreHelper.SubscribedData(
+                    currentId,
+                    current?.bookmarkedTime ?: unixTimeMS,
+                    unixTimeMS,
+                    response.getLatestEpisodes(),
+                    response.name,
+                    response.url,
+                    response.apiName,
+                    response.type,
+                    response.posterUrl,
+                    response.year
+                )
+            )
+        }
+
+        _subscribeStatus.postValue(!isSubscribed)
+        return !isSubscribed
     }
 
     private fun startChromecast(
@@ -1473,7 +1513,8 @@ class ResultViewModel2 : ViewModel() {
                             this.engName,
                             this.name,
                             this.japName
-                        ).filter { it.length > 2 }.distinct(), // the reason why we filter is due to not wanting smth like " " or "?"
+                        ).filter { it.length > 2 }
+                            .distinct(), // the reason why we filter is due to not wanting smth like " " or "?"
                         TrackerType.getTypes(this.type),
                         this.year
                     )
@@ -1670,6 +1711,16 @@ class ResultViewModel2 : ViewModel() {
         postResume()
     }
 
+    private fun postSubscription(loadResponse: LoadResponse) {
+        if (loadResponse.isEpisodeBased()) {
+            val id = loadResponse.getId()
+            val data = DataStoreHelper.getSubscribedData(id)
+            DataStoreHelper.updateSubscribedData(id, data, loadResponse as? EpisodeResponse)
+            val isSubscribed = data != null
+            _subscribeStatus.postValue(isSubscribed)
+        }
+    }
+
     private fun postEpisodeRange(indexer: EpisodeIndexer?, range: EpisodeRange?) {
         if (range == null || indexer == null) {
             return
@@ -1806,6 +1857,7 @@ class ResultViewModel2 : ViewModel() {
     ) {
         currentResponse = loadResponse
         postPage(loadResponse, apiRepository)
+        postSubscription(loadResponse)
         if (updateEpisodes)
             postEpisodes(loadResponse, updateFillers)
     }

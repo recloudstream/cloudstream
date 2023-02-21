@@ -13,6 +13,7 @@
     <string name="fast_forward_button_time_key" translatable="false">fast_forward_button_time</string>
     <string name="benene_count" translatable="false">benene_count</string>
     <string name="subtitle_settings_key" translatable="false">subtitle_settings_key</string>
+    <string name="test_providers_key" translatable="false">test_providers_key</string>
     <string name="subtitle_settings_chromecast_key" translatable="false">subtitle_settings_chromecast_key</string>
     <string name="quality_pref_key" translatable="false">quality_pref_key</string>
     <string name="player_pref_key" translatable="false">player_pref_key</string>
@@ -196,6 +197,7 @@
     <string name="normal_no_plot">No Plot Found</string>
     <string name="torrent_no_plot">No Description Found</string>
     <string name="show_log_cat">Show Logcat 🐈</string>
+    <string name="test_log">Log</string>
     <string name="picture_in_picture">Picture-in-picture</string>
     <string name="picture_in_picture_des">Continues playback in a miniature player on top of other apps</string>
     <string name="player_size_settings">Player resize button</string>
@@ -283,6 +285,9 @@
     <string name="delete">Delete</string>
     <string name="cancel" translatable="false">@string/sort_cancel</string>
     <string name="pause">Pause</string>
+    <string name="start">Start</string>
+    <string name="test_failed">Failed</string>
+    <string name="test_passed">Passed</string>
     <string name="resume">Resume</string>
     <string name="go_back_30">-30</string>
     <string name="go_forward_30">+30</string>
@@ -428,6 +433,7 @@
     <string name="enable_nsfw_on_providers">Enable NSFW on supported providers</string>
     <string name="subtitles_encoding">Subtitle encoding</string>
     <string name="category_providers">Providers</string>
+    <string name="category_provider_test">Provider test</string>
     <string name="category_ui">Layout</string>
     <string name="automatic">Auto</string>
     <string name="tv_layout">TV layout</string>
@@ -584,6 +590,8 @@
     <string name="audio_tracks">Audio tracks</string>
     <string name="video_tracks">Video tracks</string>
     <string name="apply_on_restart">Apply on Restart</string>
+    <string name="restart">Restart</string>
+    <string name="stop">Stop</string>
     <string name="safe_mode_title">Safe mode on</string>
     <string name="safe_mode_description">All extensions were turned off due to a crash to help you find the one causing trouble.</string>
     <string name="safe_mode_crash_info">View crash info</string>
@@ -642,4 +650,9 @@
     <string name="empty_library_logged_in_message">Looks like this list is empty, try switching to another one</string>
     <string name="safe_mode_file">Safe mode file found!\nNot loading any extensions on startup until file is removed.</string>
     <string name="revert">Revert</string>
+    <string name="subscription_in_progress_notification">Updating subscribed shows</string>
+    <string name="subscription_list_name">Subscribed</string>
+    <string name="subscription_new">Subscribed to %s</string>
+    <string name="subscription_deleted">Unsubscribed from %s</string>
+    <string name="subscription_episode_released">Episode %d released!</string>
 </resources>

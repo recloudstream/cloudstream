@@ -57,6 +57,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:id="@+id/media_route_button_holder"
+                android:animateLayoutChanges="true"
                 android:layout_gravity="center_vertical|end">
 
             <androidx.mediarouter.app.MediaRouteButton
@@ -69,15 +70,35 @@
                     app:mediaRouteButtonTint="?attr/textColor" />
 
             <ImageView
+                    android:visibility="gone"
                     android:nextFocusUp="@id/result_back"
                     android:nextFocusDown="@id/result_description"
                     android:nextFocusLeft="@id/result_add_sync"
+                    android:nextFocusRight="@id/result_share"
+
+                    tools:visibility="visible"
+
+                    android:id="@+id/result_subscribe"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_margin="5dp"
+                    android:elevation="10dp"
+
+                    android:background="?android:attr/selectableItemBackgroundBorderless"
+                    android:src="@drawable/baseline_notifications_none_24"
+                    android:layout_gravity="end|center_vertical"
+                    app:tint="?attr/textColor" />
+
+            <ImageView
+                    android:nextFocusUp="@id/result_back"
+                    android:nextFocusDown="@id/result_description"
+                    android:nextFocusLeft="@id/result_subscribe"
                     android:nextFocusRight="@id/result_open_in_browser"
 
                     android:id="@+id/result_share"
                     android:layout_width="25dp"
                     android:layout_height="25dp"
-                    android:layout_marginEnd="10dp"
+                    android:layout_margin="5dp"
                     android:elevation="10dp"
 
                     android:background="?android:attr/selectableItemBackgroundBorderless"

@@ -406,6 +406,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             R.id.navigation_settings_general,
             R.id.navigation_settings_extensions,
             R.id.navigation_settings_plugins,
+            R.id.navigation_test_providers,
         ).contains(destination.id)
 
 
