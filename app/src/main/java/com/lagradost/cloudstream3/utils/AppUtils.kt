@@ -491,6 +491,12 @@ object AppUtils {
         }
     }
 
+    fun Context.isNetworkAvailable(): Boolean {
+        val manager = this.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val activeNetworkInfo = manager.activeNetworkInfo
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected || manager.allNetworkInfo?.any { it.isConnected } ?: false
+    }
+
     fun splitQuery(url: URL): Map<String, String> {
         val queryPairs: MutableMap<String, String> = LinkedHashMap()
         val query: String = url.query
