@@ -2,8 +2,10 @@ package com.lagradost.cloudstream3.plugins
 
 import android.content.Context
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.lagradost.cloudstream3.AcraApplication.Companion.context
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
+import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.amap
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.mvvm.logError
@@ -71,6 +73,15 @@ object RepositoryManager {
     val PREBUILT_REPOSITORIES: Array<RepositoryData> by lazy {
         getKey("PREBUILT_REPOSITORIES") ?: emptyArray()
     }
+    val GH_REGEX = Regex("^https://raw.githubusercontent.com/([A-Za-z0-9-]+)/([A-Za-z0-9_.-]+)/(.*)$")
+
+    /* Convert raw.githubusercontent.com urls to cdn.jsdelivr.net if enabled in settings */
+    fun convertRawGitUrl(url: String): String {
+        if (getKey<Boolean>(context!!.getString(R.string.jsdelivr_proxy_key)) != true) return url
+        val match = GH_REGEX.find(url) ?: return url
+        val (user, repo, rest) = match.destructured
+        return "https://cdn.jsdelivr.net/gh/$user/$repo@$rest"
+    }
 
     suspend fun parseRepoUrl(url: String): String? {
         val fixedUrl = url.trim()
@@ -84,10 +95,15 @@ object RepositoryManager {
             }
         } else if (fixedUrl.matches("^[a-zA-Z0-9!_-]+$".toRegex())) {
             suspendSafeApiCall {
-                app.get("https://l.cloudstream.cf/${fixedUrl}").let {
-                    return@let if (it.isSuccessful && !it.url.startsWith("https://cutt.ly/branded-domains")) it.url
-                    else app.get("https://cutt.ly/${fixedUrl}").let let2@{ it2 ->
-                        return@let2 if (it2.isSuccessful) it2.url else null
+                app.get("https://l.cloudstream.cf/${fixedUrl}", allowRedirects = false).let {
+                    it.headers["Location"]?.let { url ->
+                        return@suspendSafeApiCall if (!url.startsWith("https://cutt.ly/branded-domains")) url
+                        else null
+                    }
+                    app.get("https://cutt.ly/${fixedUrl}", allowRedirects = false).let { it2 ->
+                        it2.headers["Location"]?.let { url ->
+                            return@suspendSafeApiCall if (url.startsWith("https://cutt.ly/404")) url else null
+                        }
                     }
                 }
             }
@@ -97,14 +113,14 @@ object RepositoryManager {
     suspend fun parseRepository(url: String): Repository? {
         return suspendSafeApiCall {
             // Take manifestVersion and such into account later
-            app.get(url).parsedSafe()
+            app.get(convertRawGitUrl(url)).parsedSafe()
         }
     }
 
     private suspend fun parsePlugins(pluginUrls: String): List<SitePlugin> {
         // Take manifestVersion and such into account later
         return try {
-            val response = app.get(pluginUrls)
+            val response = app.get(convertRawGitUrl(pluginUrls))
             // Normal parsed function not working?
             // return response.parsedSafe()
             tryParseJson<Array<SitePlugin>>(response.text)?.toList() ?: emptyList()
@@ -139,7 +155,7 @@ object RepositoryManager {
             }
             file.createNewFile()
 
-            val body = app.get(pluginUrl).okhttpResponse.body
+            val body = app.get(convertRawGitUrl(pluginUrl)).okhttpResponse.body
             write(body.byteStream(), file.outputStream())
             file
         }
