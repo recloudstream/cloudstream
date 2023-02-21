@@ -35,7 +35,7 @@
     <string name="skip_loading">Skip Loading</string>
     <string name="loading">Loading…</string>
     <string name="type_watching">Sedang Menonton</string>
-    <string name="type_on_hold">Tertahan</string>
+    <string name="type_on_hold">Tertunda</string>
     <string name="type_completed">Selesai</string>
     <string name="type_dropped">Dihentikan</string>
     <string name="type_plan_to_watch">Rencana untuk Menonton</string>
@@ -387,7 +387,7 @@
     <string name="episode_format" formatted="true">%d %s</string>
     <string name="nsfw">17+</string>
     <string name="others">Lainnya</string>
-    <string name="other_singular">Vidio</string>
+    <string name="other_singular">Video</string>
     <string name="add_site_pref">Duplikasi Website</string>
     <string name="add_site_summary">Duplikasi website yang telah ada, dengan alamat berbeda</string>
     <string name="pref_category_links">Tautan</string>
@@ -395,7 +395,7 @@
     <string name="pref_category_backup">Cadangkan</string>
     <string name="pref_category_extensions">Fitur Tambahan</string>
     <string name="play_with_app_name">Putar di CloudStream</string>
-    <string name="pref_filter_search_quality">Sembunyikan kualitas vidio terpilih di pencarian</string>
+    <string name="pref_filter_search_quality">Sembunyikan kualitas video terpilih di pencarian</string>
     <string name="season_format">%s %d%s</string>
     <string name="livestreams">Siaran langsung</string>
     <string name="remove_site_pref">Hapus Website</string>
@@ -444,7 +444,7 @@
     <string name="extension_rating" formatted="true">Peringkat: %s</string>
     <string name="extension_authors">Pembuat</string>
     <string name="extension_language">Bahasa</string>
-    <string name="player_pref">Pemutar vidio utama</string>
+    <string name="player_pref">Pemutar video utama</string>
     <string name="player_settings_play_in_app">Pemutar Bawaan</string>
     <string name="player_settings_play_in_vlc">VLC</string>
     <string name="player_settings_play_in_mpv">MPV</string>
@@ -475,7 +475,7 @@
     <string name="subtitles_remove_captions">Hapus teks tertutup dari subtitel</string>
     <string name="subtitles_remove_bloat">Hapus karakter sampah dari subtitel</string>
     <string name="audio_tracks">Audio Trek</string>
-    <string name="video_tracks">Vidio Trek</string>
+    <string name="video_tracks">Video Trek</string>
     <string name="extension_types">Dukungan</string>
     <string name="hls_playlist">Daftar putar HLS</string>
     <string name="apk_installer_settings">Penginstal APK</string>
@@ -529,4 +529,21 @@
     <string name="empty_library_logged_in_message">Yahh daftar ini kosong, coba ganti ke yang lain</string>
     <string name="safe_mode_file">Mode aman file ditemukan!
 \nTidak memuat ekstensi pada startup sampai berkas dihapus.</string>
+    <string name="android_tv_interface_off_seek_settings">Sembunyikan Pemutaran - Geser</string>
+    <string name="android_tv_interface_on_seek_settings">Pemutar terlihat - Geser</string>
+    <string name="android_tv_interface_on_seek_settings_summary">Geser untuk menghilangkan</string>
+    <string name="android_tv_interface_off_seek_settings_summary">Geser untuk menghilangkan</string>
+    <string name="pref_category_android_tv">Android TV</string>
+    <string name="test_log">Log</string>
+    <string name="test_passed">Berhasil</string>
+    <string name="category_provider_test">Tes provider</string>
+    <string name="stop">Berhenti</string>
+    <string name="start">Mulai</string>
+    <string name="restart">Mulai lagi</string>
+    <string name="test_failed">Gagal</string>
+    <string name="subscription_in_progress_notification">Memperbarui acara langganan</string>
+    <string name="subscription_list_name">Berlangganan</string>
+    <string name="subscription_new">Berlangganan ke %s</string>
+    <string name="subscription_deleted">Berhenti berlangganan di %s</string>
+    <string name="subscription_episode_released">Episode %d telah rilis!</string>
 </resources>

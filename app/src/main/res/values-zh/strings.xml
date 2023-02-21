@@ -554,4 +554,21 @@
     <string name="empty_library_no_accounts_message">看来您的库是空的 :(
 \n登录库账户或添加节目到您的本地库</string>
     <string name="empty_library_logged_in_message">看来此列表是空的，请尝试切换到另一个</string>
+    <string name="android_tv_interface_on_seek_settings">播放器显示 - 快进快退秒数</string>
+    <string name="android_tv_interface_on_seek_settings_summary">播放器可见时使用的快进快退秒数</string>
+    <string name="android_tv_interface_off_seek_settings">播放器隐藏 - 快进快退秒数</string>
+    <string name="android_tv_interface_off_seek_settings_summary">播放器隐藏时使用的快进快退秒数</string>
+    <string name="pref_category_android_tv">Android TV</string>
+    <string name="test_failed">失败</string>
+    <string name="category_provider_test">片源测试</string>
+    <string name="restart">重启</string>
+    <string name="stop">停止</string>
+    <string name="subscription_in_progress_notification">正在更新订阅节目</string>
+    <string name="subscription_list_name">已订阅</string>
+    <string name="subscription_new">已订阅 %s</string>
+    <string name="subscription_deleted">已取消订阅 %s</string>
+    <string name="start">开始</string>
+    <string name="subscription_episode_released">第 %d 集已发布！</string>
+    <string name="test_passed">成功</string>
+    <string name="test_log">日志</string>
 </resources>
