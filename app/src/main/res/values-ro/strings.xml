@@ -9,7 +9,7 @@
     <string name="next_episode_time_min_format" formatted="true">%dm</string>
     <!-- IS NOT NEEDED TO TRANSLATE AS THEY ARE ONLY USED FOR SCREEN READERS AND WONT SHOW UP TO NORMAL USERS -->
     <string name="result_poster_img_des">Poster</string>
-    <string name="search_poster_img_des">\@string/result_poster_img_des</string>
+    <string name="search_poster_img_des">Poster</string>
     <string name="episode_poster_img_des">Poster Episod</string>
     <string name="home_main_poster_img_des">Poster Principal</string>
     <string name="home_next_random_img_des">Următorul la Întâmplare</string>
@@ -142,7 +142,7 @@
     <string name="restore_success">Fișier de rezervă încărcat</string>
     <string name="restore_failed_format" formatted="true">Imposibilitatea de a restaura datele din %s</string>
     <string name="backup_success">Date stocate</string>
-    <string name="backup_failed">Permisiuni de arhivare lipsă, vă rugăm să încercați din nou</string>
+    <string name="backup_failed">Permisiunea de arhivare lipșe, vă rugăm să încercați din nou.</string>
     <string name="backup_failed_error_format">Eroare de backup %s</string>
     <string name="search">Căutare</string>
     <string name="category_account">Conturi și credite</string>
@@ -154,7 +154,7 @@
     <string name="bug_report_settings_on">Nu trimiteți niciun fel de date</string>
     <string name="show_fillers_settings">Afișează etichetele [filler] pentru anime</string>
     <string name="show_trailers_settings">Arată trailerul</string>
-    <string name="kitsu_settings">Arată posterele de la Kitsu</string>
+    <string name="kitsu_settings">Arată afișele de la Kitsu</string>
     <string name="updates_settings">Afișați actualizările aplicației</string>
     <string name="updates_settings_des">Căutați automat noi actualizări la pornire</string>
     <string name="uprereleases_settings">Actualizați la prerelease</string>
@@ -384,4 +384,8 @@
     <string name="autoplay_next_settings_des">Începe următorul episod când se termină episodul curent</string>
     <string name="pref_filter_search_quality">Ascundeți calitatea video selectată în rezultatele căutării</string>
     <string name="play_livestream_button">Redare Livestream</string>
+    <string name="library">Librărie</string>
+    <string name="test_log">Log</string>
+    <string name="browser">Browser</string>
+    <string name="play_with_app_name">Joacă cu CloudStream</string>
 </resources>

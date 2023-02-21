@@ -71,6 +71,13 @@ object RepositoryManager {
     val PREBUILT_REPOSITORIES: Array<RepositoryData> by lazy {
         getKey("PREBUILT_REPOSITORIES") ?: emptyArray()
     }
+    val GH_REGEX = Regex("^https://raw.githubusercontent.com/([A-Za-z0-9-]+)/([A-Za-z0-9_.-]+)/(.*)$")
+
+    fun convertRawGitUrl(url: String): String {
+        val match = GH_REGEX.find(url) ?: return url
+        val (user, repo, rest) = match.destructured
+        return "https://cdn.jsdelivr.net/gh/$user/$repo@$rest"
+    }
 
     suspend fun parseRepoUrl(url: String): String? {
         val fixedUrl = url.trim()
@@ -97,14 +104,14 @@ object RepositoryManager {
     suspend fun parseRepository(url: String): Repository? {
         return suspendSafeApiCall {
             // Take manifestVersion and such into account later
-            app.get(url).parsedSafe()
+            app.get(convertRawGitUrl(url)).parsedSafe()
         }
     }
 
     private suspend fun parsePlugins(pluginUrls: String): List<SitePlugin> {
         // Take manifestVersion and such into account later
         return try {
-            val response = app.get(pluginUrls)
+            val response = app.get(convertRawGitUrl(pluginUrls))
             // Normal parsed function not working?
             // return response.parsedSafe()
             tryParseJson<Array<SitePlugin>>(response.text)?.toList() ?: emptyList()
@@ -139,7 +146,7 @@ object RepositoryManager {
             }
             file.createNewFile()
 
-            val body = app.get(pluginUrl).okhttpResponse.body
+            val body = app.get(convertRawGitUrl(pluginUrl)).okhttpResponse.body
             write(body.byteStream(), file.outputStream())
             file
         }

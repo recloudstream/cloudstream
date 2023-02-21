@@ -373,7 +373,7 @@
     <string name="skip_setup">Pomiń setup</string>
     <string name="app_layout_subtext">Dostosuj wygląd aplikacji do urządzenia</string>
     <string name="crash_reporting_title">Zgłaszanie błędów</string>
-    <string name="preferred_media_subtext">Co chciałbyś obejrzeć\?</string>
+    <string name="preferred_media_subtext">Co chciałbyś obejrzeć</string>
     <string name="setup_done">Gotowe</string>
     <string name="extensions">Rozszerzenia</string>
     <string name="add_repository">Dodaj repozytorium</string>
@@ -509,4 +509,9 @@
     <string name="empty_library_logged_in_message">Wygląda na to, że ta lista jest pusta, spróbuj przełączyć się na inną</string>
     <string name="safe_mode_file">Znaleziono plik trybu bezpiecznego.
 \nRozszerzenia nie zostaną wczytane, dopóki plik nie zostanie usunięty.</string>
+    <string name="android_tv_interface_on_seek_settings_summary">Używana ilość przewijania, gdy widoczny jest odtwarzacz</string>
+    <string name="android_tv_interface_off_seek_settings">Ukryty odtwarzacz - ilość przewijania</string>
+    <string name="pref_category_android_tv">Android TV</string>
+    <string name="android_tv_interface_on_seek_settings">Pokazany odtwarzacz — ilość przewijania</string>
+    <string name="android_tv_interface_off_seek_settings_summary">Używana ilość przewijania, gdy ukryty jest odtwarzacz</string>
 </resources>
