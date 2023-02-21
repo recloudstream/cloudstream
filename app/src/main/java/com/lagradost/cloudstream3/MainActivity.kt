@@ -721,16 +721,16 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         changeStatusBarState(isEmulatorSettings())
 
         // Automatically enable jsdelivr if cant connect to raw.githubusercontent.com
-        if (!settingsManager.contains("jsdelivr_proxy_key") && isNetworkAvailable()) {
+        if (this.getKey<Boolean>(getString(R.string.jsdelivr_proxy_key)) == null && isNetworkAvailable()) {
             main {
                 if (checkGithubConnectivity()) {
-                    this.setKey("jsdelivr_proxy_key", false)
+                    this.setKey(getString(R.string.jsdelivr_proxy_key), false)
                 } else {
-                    this.setKey("jsdelivr_proxy_key", true)
+                    this.setKey(getString(R.string.jsdelivr_proxy_key), true)
                     val parentView: View = findViewById(android.R.id.content)
                     Snackbar.make(parentView, R.string.jsdelivr_enabled, Snackbar.LENGTH_LONG).let { snackbar ->
-                        snackbar.setAction(R.string.revert) { v ->
-                            setKey("jsdelivr_proxy_key", false)
+                        snackbar.setAction(R.string.revert) {
+                            setKey(getString(R.string.jsdelivr_proxy_key), false)
                         }
                         snackbar.setBackgroundTint(colorFromAttribute(R.attr.primaryGrayBackground))
                         snackbar.setTextColor(colorFromAttribute(R.attr.textColor))

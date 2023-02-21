@@ -40,7 +40,7 @@
         <SwitchPreference
                 android:defaultValue="false"
                 android:icon="@drawable/ic_github_logo"
-                android:key="jsdelivr_proxy_key"
+                android:key="@string/jsdelivr_proxy_key"
                 android:title="@string/jsdelivr_proxy"
                 android:summary="@string/jsdelivr_proxy_summary" />
 

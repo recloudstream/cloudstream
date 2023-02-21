@@ -42,6 +42,7 @@
     <string name="random_button_key" translatable="false">random_button_key</string>
     <string name="provider_lang_key" translatable="false">provider_lang_key</string>
     <string name="dns_key" translatable="false">dns_key</string>
+    <string name="jsdelivr_proxy_key" translatable="false">jsdelivr_proxy_key</string>
     <string name="download_path_key" translatable="false">download_path_key</string>
     <string name="app_name_download_path" translatable="false">Cloudstream</string>
     <string name="app_layout_key" translatable="false">app_layout_key</string>
