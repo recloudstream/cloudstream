@@ -93,10 +93,15 @@ object RepositoryManager {
             }
         } else if (fixedUrl.matches("^[a-zA-Z0-9!_-]+$".toRegex())) {
             suspendSafeApiCall {
-                app.get("https://l.cloudstream.cf/${fixedUrl}").let {
-                    return@let if (it.isSuccessful && !it.url.startsWith("https://cutt.ly/branded-domains")) it.url
-                    else app.get("https://cutt.ly/${fixedUrl}").let let2@{ it2 ->
-                        return@let2 if (it2.isSuccessful) it2.url else null
+                app.get("https://l.cloudstream.cf/${fixedUrl}", allowRedirects = false).let {
+                    it.headers["Location"]?.let { url ->
+                        return@suspendSafeApiCall if (!url.startsWith("https://cutt.ly/branded-domains")) url
+                        else null
+                    }
+                    app.get("https://cutt.ly/${fixedUrl}", allowRedirects = false).let { it2 ->
+                        it2.headers["Location"]?.let { url ->
+                            return@suspendSafeApiCall if (url.startsWith("https://cutt.ly/404")) url else null
+                        }
                     }
                 }
             }
