@@ -15,6 +15,10 @@
             android:icon="@drawable/ic_baseline_hd_24"
             android:key="@string/quality_pref_key"
             android:title="@string/watch_quality_pref" />
+        <Preference
+            android:icon="@drawable/ic_baseline_hd_24"
+            android:key="@string/quality_pref_mobile_data_key"
+            android:title="@string/watch_quality_pref_data" />
 
         <Preference
             android:icon="@drawable/netflix_play"

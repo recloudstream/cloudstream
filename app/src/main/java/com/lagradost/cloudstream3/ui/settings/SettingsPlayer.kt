@@ -113,6 +113,30 @@ class SettingsPlayer : PreferenceFragmentCompat() {
             return@setOnPreferenceClickListener true
         }
 
+        getPref(R.string.quality_pref_mobile_data_key)?.setOnPreferenceClickListener {
+            val prefValues = Qualities.values().map { it.value }.reversed().toMutableList()
+            prefValues.remove(Qualities.Unknown.value)
+
+            val prefNames = prefValues.map { Qualities.getStringByInt(it) }
+
+            val currentQuality =
+                settingsManager.getInt(
+                    getString(R.string.quality_pref_mobile_data_key),
+                    Qualities.values().last().value
+                )
+
+            activity?.showBottomDialog(
+                prefNames.toList(),
+                prefValues.indexOf(currentQuality),
+                getString(R.string.watch_quality_pref_data),
+                true,
+                {}) {
+                settingsManager.edit().putInt(getString(R.string.quality_pref_mobile_data_key), prefValues[it])
+                    .apply()
+            }
+            return@setOnPreferenceClickListener true
+        }
+
         getPref(R.string.player_pref_key)?.setOnPreferenceClickListener {
             val prefNames = resources.getStringArray(R.array.player_pref_names)
             val prefValues = resources.getIntArray(R.array.player_pref_values)
