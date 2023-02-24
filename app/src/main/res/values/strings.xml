@@ -365,7 +365,7 @@
     <string name="dont_show_again">Don\'t show again</string>
     <string name="skip_update">Skip this Update</string>
     <string name="update">Update</string>
-    <string name="watch_quality_pref">Preferred watch quality (Wifi)</string>
+    <string name="watch_quality_pref">Preferred watch quality (WiFi)</string>
     <string name="watch_quality_pref_data">Preferred watch quality (Mobile Data)</string>
     <string name="limit_title">Video player title max chars</string>
     <string name="limit_title_rez">Video player resolution</string>
