@@ -40,6 +40,7 @@ import com.lagradost.cloudstream3.utils.ExtractorLinkPlayList
 import com.lagradost.cloudstream3.utils.ExtractorUri
 import com.lagradost.cloudstream3.utils.SubtitleHelper.fromTwoLettersToLanguage
 import java.io.File
+import java.time.Duration
 import javax.net.ssl.HttpsURLConnection
 import javax.net.ssl.SSLContext
 import javax.net.ssl.SSLSession
@@ -535,15 +536,16 @@ class CS3IPlayer : IPlayer {
                 OkHttpDataSource.Factory(client).setUserAgent(USER_AGENT)
             }
 
+            // Do no include empty referer, if the provider wants those they can use the header map.
+            val refererMap = if (link.referer.isBlank()) emptyMap() else mapOf("referer" to link.referer)
             val headers = mapOf(
-                "referer" to link.referer,
                 "accept" to "*/*",
                 "sec-ch-ua" to "\"Chromium\";v=\"91\", \" Not;A Brand\";v=\"99\"",
                 "sec-ch-ua-mobile" to "?0",
                 "sec-fetch-user" to "?1",
                 "sec-fetch-mode" to "navigate",
                 "sec-fetch-dest" to "video"
-            ) + link.headers // Adds the headers from the provider, e.g Authorization
+            ) + refererMap + link.headers // Adds the headers from the provider, e.g Authorization
 
             return source.apply {
                 setDefaultRequestProperties(headers)
