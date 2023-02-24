@@ -4,6 +4,8 @@ import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Activity.RESULT_CANCELED
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.*
 import android.content.pm.PackageManager
 import android.database.Cursor
@@ -194,6 +196,22 @@ object AppUtils {
         animation.setAutoCancel(true)
         animation.interpolator = DecelerateInterpolator()
         animation.start()
+    }
+
+    fun Context.createNotificationChannel(channelId: String, channelName: String, description: String) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val importance = NotificationManager.IMPORTANCE_DEFAULT
+            val channel =
+                NotificationChannel(channelId, channelName, importance).apply {
+                    this.description = description
+                }
+
+            // Register the channel with the system.
+            val notificationManager: NotificationManager =
+                this.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+            notificationManager.createNotificationChannel(channel)
+        }
     }
 
     @SuppressLint("RestrictedApi")
@@ -471,6 +489,12 @@ object AppUtils {
                 openWebView(fragment, url)
             }
         }
+    }
+
+    fun Context.isNetworkAvailable(): Boolean {
+        val manager = this.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val activeNetworkInfo = manager.activeNetworkInfo
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected || manager.allNetworkInfo?.any { it.isConnected } ?: false
     }
 
     fun splitQuery(url: URL): Map<String, String> {

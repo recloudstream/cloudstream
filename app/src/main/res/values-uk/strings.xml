@@ -507,4 +507,20 @@
     <string name="safe_mode_file">Файл безпечного режиму знайдено!
 \nРозширеня не завантажуються під час запуску, доки файл не буде видалено.</string>
     <string name="pref_category_android_tv">Android TV</string>
+    <string name="android_tv_interface_off_seek_settings">Плеєр сховано - обсяг пошуку</string>
+    <string name="android_tv_interface_on_seek_settings">Плеєр показано - обсяг пошуку</string>
+    <string name="android_tv_interface_on_seek_settings_summary">Обсяг пошуку, який використовується, коли плеєр видимий</string>
+    <string name="android_tv_interface_off_seek_settings_summary">Обсяг пошуку, який використовується, коли гравець прихований</string>
+    <string name="test_failed">Не вдалося</string>
+    <string name="test_passed">Пройдено</string>
+    <string name="restart">Перезапуск</string>
+    <string name="test_log">Журнал</string>
+    <string name="start">Старт</string>
+    <string name="stop">Стоп</string>
+    <string name="category_provider_test">Тест постачальника</string>
+    <string name="subscription_in_progress_notification">Оновлення підписаних шоу</string>
+    <string name="subscription_list_name">Підписано</string>
+    <string name="subscription_new">Підписано на %s</string>
+    <string name="subscription_deleted">Відписатися від %s</string>
+    <string name="subscription_episode_released">Епізод %d випущено!</string>
 </resources>

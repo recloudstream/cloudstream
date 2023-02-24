@@ -103,7 +103,7 @@
     <string name="action_open_watching">مزيد من المعلومات</string>
     <string name="vpn_might_be_needed">قد تكون هناك حاجة إلى VPN لكي يعمل هذا المزود بشكل صحيح</string>
     <string name="vpn_torrent">هذا المزود هو تورنت ، يوصى باستخدام شبكة ظاهرية خاصة</string>
-    <string name="provider_info_meta">لا يتم توفير البيانات الوصفية بواسطة الموقع ، وسيفشل تحميل الفيديو إذا لم يكن موجودًا في الموقع.</string>
+    <string name="provider_info_meta">لا يتم توفير البيانات الوصفية بواسطة الموقع، وسيفشل تحميل الفيديو إذا لم يكن موجودًا في الموقع.</string>
     <string name="torrent_plot">الوصف</string>
     <string name="normal_no_plot">لم يتم العثور على وصف</string>
     <string name="torrent_no_plot">لم يتم العثور على وصف</string>
@@ -170,7 +170,7 @@
     <string name="copy_link_toast">تم نسخ الرابط إلى الحافظة</string>
     <string name="play_episode_toast">تشغيل الحلقة</string>
     <string name="subs_default_reset_toast">إعادة التعيين إلى القيمة الافتراضية</string>
-    <string name="acra_report_toast">عذرا ، تعطل التطبيق. سيتم إرسال تقرير خطأ مجهول إلى المطورين</string>
+    <string name="acra_report_toast">عذرا، تعطل التطبيق. سيتم إرسال تقرير خطأ مجهول إلى المطورين</string>
     <string name="season">موسم</string>
     <string name="no_season">لا موسم</string>
     <string name="episode">حلقة</string>
@@ -266,8 +266,8 @@
     <string name="video_buffer_length_settings">طول التخزين المؤقت</string>
     <string name="video_buffer_disk_settings">التخزين المؤقت للفيديو على القرص</string>
     <string name="video_buffer_clear_settings">مسح التخزين المؤقت للصورة والفيديو</string>
-    <string name="video_ram_description">يتسبب في حدوث أعطال إذا تم ضبطه على مستوى مرتفع جدا على الأجهزة ذات الذاكرة المنخفضة ، مثل Android TV.</string>
-    <string name="video_disk_description">يسبب مشاكل إذا تم ضبطه على مستوى مرتفع جدا على الأجهزة ذات مساحة التخزين المنخفضة ، مثل Android TV.</string>
+    <string name="video_ram_description">يتسبب في حدوث أعطال إذا تم ضبطه على مستوى مرتفع جدا على الأجهزة ذات الذاكرة المنخفضة، مثل تلفزيون أندرويد.</string>
+    <string name="video_disk_description">يسبب مشاكل إذا تم ضبطه على مستوى مرتفع جدا على الأجهزة ذات مساحة التخزين المنخفضة، مثل تلفزيون أندرويد.</string>
     <string name="dns_pref">إستخدام DNS بدلا من HTTPS</string>
     <string name="dns_pref_summary">مفيد لتجاوز حجب مزود خدمة الإنترنت</string>
     <string name="add_site_pref">موقع بديل (نسخة)</string>
@@ -360,7 +360,7 @@
 	https://en.wikipedia.org/wiki/The_quick_brown_fox_jumps_over_the_lazy_dog
     -->
     <string name="subtitles_example_text">نصٌّ حكيمٌ لهُ سِرٌّ قاطِعٌ وَذُو شَأنٍ عَظيمٍ مكتوبٌ على ثوبٍ أخضرَ ومُغلفٌ بجلدٍ أزرق</string>
-    <string name="recommended">مُوصي به</string>
+    <string name="recommended">مُوصى به</string>
     <string name="player_loaded_subtitles" formatted="true">تم تحميل %s</string>
     <string name="player_load_subtitles">إختيار ملف</string>
     <string name="player_load_subtitles_online">تحميل من الانترنت</string>
@@ -543,4 +543,16 @@
     <string name="pref_category_android_tv">تلفزيون أندرويد</string>
     <string name="android_tv_interface_on_seek_settings_summary">مدة التقديم عنما يكون المشغل مرئيا</string>
     <string name="android_tv_interface_on_seek_settings">مدة التقديم- المشغل المرئي</string>
+    <string name="test_failed">فشل</string>
+    <string name="test_passed">نجح</string>
+    <string name="category_provider_test">إختبار المزود</string>
+    <string name="restart">إعادة التشغيل</string>
+    <string name="test_log">سجل</string>
+    <string name="start">بَدأ</string>
+    <string name="stop">إيقاف</string>
+    <string name="subscription_in_progress_notification">تحديث العروض التي تم الاشتراك فيها</string>
+    <string name="subscription_deleted">إلغاء الاشتراك من %s</string>
+    <string name="subscription_episode_released">تم إصدار الحلقة %d!</string>
+    <string name="subscription_list_name">مشترك</string>
+    <string name="subscription_new">مشترك في %s</string>
 </resources>

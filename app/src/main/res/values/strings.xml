@@ -44,6 +44,7 @@
     <string name="random_button_key" translatable="false">random_button_key</string>
     <string name="provider_lang_key" translatable="false">provider_lang_key</string>
     <string name="dns_key" translatable="false">dns_key</string>
+    <string name="jsdelivr_proxy_key" translatable="false">jsdelivr_proxy_key</string>
     <string name="download_path_key" translatable="false">download_path_key</string>
     <string name="app_name_download_path" translatable="false">Cloudstream</string>
     <string name="app_layout_key" translatable="false">app_layout_key</string>
@@ -380,6 +381,9 @@
     <string name="video_disk_description">Causes problems if set too high on devices with low storage space, such as Android TV.</string>
     <string name="dns_pref">DNS over HTTPS</string>
     <string name="dns_pref_summary">Useful for bypassing ISP blocks</string>
+    <string name="jsdelivr_proxy">raw.githubusercontent.com Proxy</string>
+    <string name="jsdelivr_enabled">Failed to reach GitHub, enabling jsdelivr proxy.</string>
+    <string name="jsdelivr_proxy_summary">Bypasses blocking of GitHub using jsdelivr, may cause updates to be delayed by few days.</string>
     <string name="add_site_pref">Clone site</string>
     <string name="remove_site_pref">Remove site</string>
     <string name="add_site_summary">Add a clone of an existing site, with a different URL</string>
@@ -407,6 +411,7 @@
         responsibility of user to avoid any actions that might violate the laws governing his/her locality. Use
         CloudStream 3 at your own risk.
     </string>
+    <string name="pref_category_bypass">ISP Bypasses</string>
     <string name="pref_category_links">Links</string>
     <string name="pref_category_app_updates">App updates</string>
     <string name="pref_category_backup">Backup</string>
@@ -646,4 +651,10 @@
     <string name="empty_library_no_accounts_message">Looks like your library is empty :(\nLogin to a library account or add shows to your local library</string>
     <string name="empty_library_logged_in_message">Looks like this list is empty, try switching to another one</string>
     <string name="safe_mode_file">Safe mode file found!\nNot loading any extensions on startup until file is removed.</string>
+    <string name="revert">Revert</string>
+    <string name="subscription_in_progress_notification">Updating subscribed shows</string>
+    <string name="subscription_list_name">Subscribed</string>
+    <string name="subscription_new">Subscribed to %s</string>
+    <string name="subscription_deleted">Unsubscribed from %s</string>
+    <string name="subscription_episode_released">Episode %d released!</string>
 </resources>

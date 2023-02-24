@@ -17,7 +17,7 @@
     <string name="next_episode_time_day_format" formatted="true">%dd %dh %dm</string>
     <string name="next_episode_time_min_format" formatted="true">%dm</string>
     <string name="duration_format" formatted="true">%d min</string>
-    <string name="search_poster_img_des">\@string/result_poster_img_des</string>
+    <string name="search_poster_img_des">Plagát</string>
     <string name="episode_poster_img_des">Plagát epizódy</string>
     <string name="home_main_poster_img_des">Hlavný plagát</string>
     <string name="play_with_app_name">Prehrať s CloudStream</string>

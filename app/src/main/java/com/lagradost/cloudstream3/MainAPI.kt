@@ -1327,7 +1327,7 @@ fun LoadResponse?.isAnimeBased(): Boolean {
 
 fun TvType?.isEpisodeBased(): Boolean {
     if (this == null) return false
-    return (this == TvType.TvSeries || this == TvType.Anime)
+    return (this == TvType.TvSeries || this == TvType.Anime || this == TvType.AsianDrama)
 }
 
 
@@ -1351,6 +1351,7 @@ interface EpisodeResponse {
     var showStatus: ShowStatus?
     var nextAiring: NextAiring?
     var seasonNames: List<SeasonData>?
+    fun getLatestEpisodes(): Map<DubStatus, Int?>
 }
 
 @JvmName("addSeasonNamesString")
@@ -1419,7 +1420,18 @@ data class AnimeLoadResponse(
     override var nextAiring: NextAiring? = null,
     override var seasonNames: List<SeasonData>? = null,
     override var backgroundPosterUrl: String? = null,
-) : LoadResponse, EpisodeResponse
+) : LoadResponse, EpisodeResponse {
+    override fun getLatestEpisodes(): Map<DubStatus, Int?> {
+        return episodes.map { (status, episodes) ->
+            val maxSeason = episodes.maxOfOrNull { it.season ?: Int.MIN_VALUE }
+                .takeUnless { it == Int.MIN_VALUE }
+            status to episodes
+                .filter { it.season == maxSeason }
+                .maxOfOrNull { it.episode ?: Int.MIN_VALUE }
+                .takeUnless { it == Int.MIN_VALUE }
+        }.toMap()
+    }
+}
 
 /**
  * If episodes already exist appends the list.
@@ -1617,7 +1629,17 @@ data class TvSeriesLoadResponse(
     override var nextAiring: NextAiring? = null,
     override var seasonNames: List<SeasonData>? = null,
     override var backgroundPosterUrl: String? = null,
-) : LoadResponse, EpisodeResponse
+) : LoadResponse, EpisodeResponse {
+    override fun getLatestEpisodes(): Map<DubStatus, Int?> {
+        val maxSeason =
+            episodes.maxOfOrNull { it.season ?: Int.MIN_VALUE }.takeUnless { it == Int.MIN_VALUE }
+        val max = episodes
+            .filter { it.season == maxSeason }
+            .maxOfOrNull { it.episode ?: Int.MIN_VALUE }
+            .takeUnless { it == Int.MIN_VALUE }
+        return mapOf(DubStatus.None to max)
+    }
+}
 
 suspend fun MainAPI.newTvSeriesLoadResponse(
     name: String,

@@ -150,7 +150,7 @@
     <string name="episodes">Επεισόδια</string>
     <string name="episodes_range">%d-%d</string>
     <string name="episode_format" formatted="true">%d %s</string>
-    <string name="season_short">Κ</string>
+    <string name="season_short">Σ</string>
     <string name="episode_short">E</string>
     <string name="no_episodes_found">Δεν βρέθηκαν επεισόδια</string>
     <string name="delete_file">Διαγραφή αρχείου</string>

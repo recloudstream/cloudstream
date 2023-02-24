@@ -531,4 +531,21 @@
     <string name="empty_library_logged_in_message">Čini se da je ova lista prazna, pokušajte se prebaciti na drugu</string>
     <string name="safe_mode_file">Pronađena datoteka sigurnog načina rada!
 \nNe učitavaju se ekstenzije pri pokretanju dok se datoteka ne ukloni.</string>
+    <string name="android_tv_interface_on_seek_settings">Prikazan player- iznos preskakanja</string>
+    <string name="android_tv_interface_on_seek_settings_summary">Količina preskakanja koja se koristi kada je player vidljiv</string>
+    <string name="android_tv_interface_off_seek_settings">Player skriven - Količina preskakanja</string>
+    <string name="android_tv_interface_off_seek_settings_summary">Količina preskakanja koja se koristi kada je player skriven</string>
+    <string name="pref_category_android_tv">Android TV</string>
+    <string name="test_passed">Prošlo</string>
+    <string name="restart">Restart</string>
+    <string name="test_log">Log</string>
+    <string name="start">Početak</string>
+    <string name="test_failed">Neuspješno</string>
+    <string name="stop">Stop</string>
+    <string name="category_provider_test">Test pružatelja usluga</string>
+    <string name="subscription_in_progress_notification">Ažuriram pretplaćene serije</string>
+    <string name="subscription_episode_released">Epizoda %d izbačena!</string>
+    <string name="subscription_list_name">Pretplaćeno</string>
+    <string name="subscription_new">Pretplaćen na %s</string>
+    <string name="subscription_deleted">Otkazana pretplata sa %s</string>
 </resources>

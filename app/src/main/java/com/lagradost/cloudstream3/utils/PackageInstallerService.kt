@@ -14,6 +14,7 @@ import androidx.core.app.NotificationCompat
 import com.lagradost.cloudstream3.MainActivity
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.app
+import com.lagradost.cloudstream3.utils.AppUtils.createNotificationChannel
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
 import kotlinx.coroutines.delay
@@ -47,24 +48,12 @@ class PackageInstallerService : Service() {
             .setSmallIcon(R.drawable.rdload)
     }
 
-    private fun createNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val importance = NotificationManager.IMPORTANCE_DEFAULT
-            val channel =
-                NotificationChannel(UPDATE_CHANNEL_ID, UPDATE_CHANNEL_NAME, importance).apply {
-                    description = UPDATE_CHANNEL_DESCRIPTION
-                }
-
-            // Register the channel with the system
-            val notificationManager: NotificationManager =
-                this.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-
-            notificationManager.createNotificationChannel(channel)
-        }
-    }
-
     override fun onCreate() {
-        createNotificationChannel()
+        this.createNotificationChannel(
+            UPDATE_CHANNEL_ID,
+            UPDATE_CHANNEL_NAME,
+            UPDATE_CHANNEL_DESCRIPTION
+        )
         startForeground(UPDATE_NOTIFICATION_ID, baseNotification.build())
     }
 

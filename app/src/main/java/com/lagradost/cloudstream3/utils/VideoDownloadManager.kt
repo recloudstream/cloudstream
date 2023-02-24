@@ -20,6 +20,7 @@ import androidx.work.Data
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
+import com.bumptech.glide.load.model.GlideUrl
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.hippo.unifile.UniFile
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
@@ -213,7 +214,7 @@ object VideoDownloadManager {
     }
 
     private val cachedBitmaps = hashMapOf<String, Bitmap>()
-    private fun Context.getImageBitmapFromUrl(url: String): Bitmap? {
+    fun Context.getImageBitmapFromUrl(url: String, headers: Map<String, String>? = null): Bitmap? {
         try {
             if (cachedBitmaps.containsKey(url)) {
                 return cachedBitmaps[url]
@@ -221,12 +222,14 @@ object VideoDownloadManager {
 
             val bitmap = GlideApp.with(this)
                 .asBitmap()
-                .load(url).into(720, 720)
+                .load(GlideUrl(url) { headers ?: emptyMap() })
+                .into(720, 720)
                 .get()
+
             if (bitmap != null) {
                 cachedBitmaps[url] = bitmap
             }
-            return null
+            return bitmap
         } catch (e: Exception) {
             logError(e)
             return null
@@ -426,7 +429,7 @@ object VideoDownloadManager {
     }
 
     private const val reservedChars = "|\\?*<\":>+[]/\'"
-    fun sanitizeFilename(name: String, removeSpaces: Boolean= false): String {
+    fun sanitizeFilename(name: String, removeSpaces: Boolean = false): String {
         var tempName = name
         for (c in reservedChars) {
             tempName = tempName.replace(c, ' ')
@@ -1612,7 +1615,7 @@ object VideoDownloadManager {
                     .mapIndexed { index, any -> DownloadQueueResumePackage(index, any) }
                     .toTypedArray()
             setKey(KEY_RESUME_QUEUE_PACKAGES, dQueue)
-        } catch (t : Throwable) {
+        } catch (t: Throwable) {
             logError(t)
         }
     }

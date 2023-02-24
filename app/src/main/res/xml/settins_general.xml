@@ -7,18 +7,6 @@
         android:icon="@drawable/ic_baseline_language_24" />
 
     <Preference
-            android:key="@string/override_site_key"
-            android:title="@string/add_site_pref"
-            android:summary="@string/add_site_summary"
-            android:icon="@drawable/ic_baseline_add_24" />
-
-    <Preference
-            android:key="@string/dns_key"
-            android:title="@string/dns_pref"
-            android:summary="@string/dns_pref_summary"
-            android:icon="@drawable/ic_baseline_dns_24" />
-
-    <Preference
             android:key="@string/download_path_key"
             android:title="@string/download_path_pref"
             android:icon="@drawable/netflix_download" />
@@ -33,6 +21,30 @@
         android:title="@string/benene"
         android:icon="@drawable/benene"
         app:summary="@string/benene_des" />
+
+    <PreferenceCategory
+            android:title="@string/pref_category_bypass">
+
+        <Preference
+                android:key="@string/override_site_key"
+                android:title="@string/add_site_pref"
+                android:summary="@string/add_site_summary"
+                android:icon="@drawable/ic_baseline_add_24" />
+
+        <Preference
+                android:key="@string/dns_key"
+                android:title="@string/dns_pref"
+                android:summary="@string/dns_pref_summary"
+                android:icon="@drawable/ic_baseline_dns_24" />
+
+        <SwitchPreference
+                android:defaultValue="false"
+                android:icon="@drawable/ic_github_logo"
+                android:key="@string/jsdelivr_proxy_key"
+                android:title="@string/jsdelivr_proxy"
+                android:summary="@string/jsdelivr_proxy_summary" />
+
+    </PreferenceCategory>
 
     <PreferenceCategory
             android:title="@string/pref_category_links">

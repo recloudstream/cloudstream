@@ -1,3 +1,128 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    </resources>
+    <string name="app_dub_sub_episode_text_format" formatted="true">%sಎಪಿ%d</string>
+    <string name="cast_format" formatted="true">ಕ್ಯಾಸ್ಟ್:%s</string>
+    <string name="go_back_img_des">ಹಿಂದೆ ಹೋಗು</string>
+    <string name="filler" formatted="true">ಫಿಲ್ಲರ್</string>
+    <string name="title_search">ಹುಡುಕು</string>
+    <string name="title_downloads">ಡೌನ್ಲೋಡ್</string>
+    <string name="subs_font">ಫಾಂಟ್</string>
+    <string name="search_provider_text_providers">ಪೂರೈಕೆದಾರರನ್ನು ಬಳಸಿಕೊಂಡು ಹುಡುಕಿ</string>
+    <string name="search_provider_text_types">ಪ್ರಕಾರಗಳನ್ನು ಬಳಸಿಕೊಂಡು ಹುಡುಕಿ</string>
+    <string name="benene_count_text_none">ಯಾವುದೇ ಬೆನೆನ್ಸ್ ನೀಡಿಲ್ಲ</string>
+    <string name="subs_auto_select_language">ಸ್ವಯಂ-ಆಯ್ಕೆ ಭಾಷೆ</string>
+    <string name="action_open_watching">ಹೆಚ್ಚಿನ ಮಾಹಿತಿ</string>
+    <string name="action_open_play">\@ಸ್ಟ್ರಿಂಗ್/ಹೋಮ್_ಪ್ಲೇ</string>
+    <string name="vpn_might_be_needed">ಈ ಪೂರೈಕೆದಾರರು ಸರಿಯಾಗಿ ಕೆಲಸ ಮಾಡಲು VPN ಬೇಕಾಗಬಹುದು</string>
+    <string name="player_size_settings_des">ಕಪ್ಪು ಗಡಿಗಳನ್ನು ತೆಗೆದುಹಾಕಿ</string>
+    <string name="next_episode_format" formatted="true">ಸಂಚಿಕೆ%d ಬಿಡುಗಡೆಯಾಗಲಿದೆ</string>
+    <string name="next_episode_time_hour_format" formatted="true">%dh %dm</string>
+    <string name="result_poster_img_des">ಪೋಸ್ಟರ್</string>
+    <string name="search_poster_img_des">ಪೋಸ್ಟರ್</string>
+    <string name="episode_poster_img_des">ಸಂಚಿಕೆ ಪೋಸ್ಟರ್</string>
+    <string name="home_main_poster_img_des">ಮೇನ್ ಪೋಸ್ಟರ್</string>
+    <string name="update_started">ಅಪ್ಡೇಟ್ ಪ್ರಾರಂಭವಾಗಿದೆ</string>
+    <string name="error_loading_links_toast">ಲೋಡಿಂಗ್ ಲಿಂಕ್ ಎರರ್ ಬಂದಿದೆ</string>
+    <string name="download_storage_text">ಇಂಟರ್ನಲ್ ಸ್ಟೋರೇಜ್</string>
+    <string name="app_dubbed_text">ಡಬ್</string>
+    <string name="app_subbed_text">ಸಬ್</string>
+    <string name="pref_disable_acra">ಸ್ವಯಂಚಾಲಿತ ದೋಷ ವರದಿಯನ್ನು ನಿಷ್ಕ್ರಿಯಗೊಳಿಸಿ</string>
+    <string name="home_expanded_hide">ಹೈಡ್</string>
+    <string name="home_play">ಪ್ಲೇ</string>
+    <string name="home_info">ಮಾಹಿತಿ</string>
+    <string name="action_add_to_bookmarks">ಸೆಟ್ ವಾಚ್ ಸ್ಟೇಟಸ್</string>
+    <string name="sort_apply">ಅನ್ವಯಿಸು</string>
+    <string name="sort_cancel">ರದ್ದುಮಾಡು</string>
+    <string name="subs_subtitle_elevation">ಸಬ್ ಟೈಟಲ್ಸ್ ಎಲೆವಷನ್</string>
+    <string name="subs_font_size">ಫಾಂಟ್ ಸೈಜ್</string>
+    <string name="subs_subtitle_languages">ಸಬ್ ಟೈಟಲ್ಸ್ ಭಾಷೆ</string>
+    <string name="action_remove_watching">ತೆಗೆದುಹಾಕಿ</string>
+    <string name="vpn_torrent">ಈ ಪೂರೈಕೆದಾರರು ಟೊರೆಂಟ್ ಆಗಿದೆ, VPN ಅನ್ನು ಶಿಫಾರಸು ಮಾಡಲಾಗಿದೆ</string>
+    <string name="normal_no_plot">ಯಾವುದೇ ಪ್ಲಾಟ್ ಕಂಡುಬಂದಿಲ್ಲ</string>
+    <string name="show_log_cat">ಲಾಗ್‌ಕ್ಯಾಟ್ 🐈 ತೋರಿಸಿ</string>
+    <string name="test_log">ಲಾಗ್</string>
+    <string name="picture_in_picture">ಚಿತ್ರದಲ್ಲಿ-ಚಿತ್ರದಲ್ಲಿ</string>
+    <string name="player_size_settings">ಪ್ಲೇಯರ್ ಮರುಗಾತ್ರಗೊಳಿಸಿ ಬಟನ್</string>
+    <string name="player_subtitles_settings">ಸಬ್ ಟೈಟಲ್ಸ್</string>
+    <string name="player_subtitles_settings_des">ಪ್ಲೇಯರ್ ಸಬ್ ಟೈಟಲ್ಸ್ ಸೆಟ್ಟಿಂಗ್‌ಗಳು</string>
+    <string name="chromecast_subtitles_settings_des">ಕ್ರೋಮ್ ಕ್ಯಾಸ್ಟ್ ಸಬ್ ಟೈಟಲ್ಸ್ ಸೆಟ್ಟಿಂಗ್ಸ್</string>
+    <string name="go_back">ಹಿಂದೆ ಹೋಗು</string>
+    <string name="popup_pause_download">ಡೌನ್‌ಲೋಡ್ ವಿರಾಮಗೊಳಿಸಿ</string>
+    <string name="error_bookmarks_text">ಬುಕ್‌ಮಾರ್ಕ್‌</string>
+    <string name="subs_background_color">ಬ್ಯಾಕ್ ಗ್ರೌಂಡ್ ಕಲರ್</string>
+    <string name="benene_count_text">%d ಡೇವ್‌ಗಳಿಗೆ ಬೆನೆನೆಸ್ ನೀಡಲಾಗಿದೆ</string>
+    <string name="subs_hold_to_reset_to_default">ಡೀಫಾಲ್ಟ್‌ಗೆ ಮರುಹೊಂದಿಸಲು ಹಿಡಿದುಕೊಳ್ಳಿ</string>
+    <string name="provider_info_meta">ಸೈಟ್‌ನಿಂದ ಮೆಟಾಡೇಟಾವನ್ನು ಒದಗಿಸಲಾಗಿಲ್ಲ, ಅದು ಸೈಟ್‌ನಲ್ಲಿ ಅಸ್ತಿತ್ವದಲ್ಲಿಲ್ಲದಿದ್ದರೆ ವೀಡಿಯೊ ಲೋಡಿಂಗ್ ವಿಫಲಗೊಳ್ಳುತ್ತದೆ.</string>
+    <string name="picture_in_picture_des">ಇತರ ಅಪ್ಲಿಕೇಶನ್‌ಗಳ ಮೇಲೆ ಚಿಕಣಿ ಪ್ಲೇಯರ್‌ನಲ್ಲಿ ಪ್ಲೇಬ್ಯಾಕ್ ಅನ್ನು ಮುಂದುವರಿಸುತ್ತದೆ</string>
+    <string name="chromecast_subtitles_settings">ಕ್ರೋಮ್ ಕ್ಯಾಸ್ಟ್ ಸಬ್ ಟೈಟಲ್ಸ್</string>
+    <string name="rated_format" formatted="true">ರೇಟೆಡ್:%.1f</string>
+    <string name="action_remove_from_bookmarks">ತೆಗೆದುಹಾಕಿ</string>
+    <string name="popup_resume_download">ಡೌನ್‌ಲೋಡ್ ಅನ್ನು ಪುನರಾರಂಭಿಸಿ</string>
+    <string name="sort_close">ಕ್ಲೋಸ್</string>
+    <string name="sort_clear">ಕ್ಲಿಯರ್</string>
+    <string name="sort_save">ಸೇವ್</string>
+    <string name="subtitles_settings">ಸಬ್ ಟೈಟಲ್ಸ್ ಸೆಟ್ಟಿಂಗ್ಸ್</string>
+    <string name="popup_play_file">ಫೈಲ್ ಪ್ಲೇ</string>
+    <string name="subs_text_color">ಟೆಕ್ಸ್ಟ್ ಕಲರ್</string>
+    <string name="subs_outline_color">ಔಟ್ ಲೈನ್ ಕಲರ್</string>
+    <string name="subs_window_color">ವಿಂಡೋ ಕಲರ್</string>
+    <string name="subs_edge_type">ಎಡ್ಜ್ ಟೈಪ್</string>
+    <string name="home_change_provider_img_des">ಪ್ರೊವೈಡರ್ ಬದಲಾಯಿಸಿ</string>
+    <string name="duration_format" formatted="true">%dಮಿನ</string>
+    <string name="torrent_plot">ವಿವರಣೆ</string>
+    <string name="player_speed_text_format" formatted="true">ಸ್ಪೀಡ್(%.2fx)</string>
+    <string name="title_home">ಹೋಂ</string>
+    <string name="pick_subtitle">ಸಬ್ ಟೈಟಲ್ಸ್</string>
+    <string name="title_settings">ಸೆಟ್ಟಿಂಗ್ಸ್</string>
+    <string name="filter_bookmarks">ಬುಕ್‌ಮಾರ್ಕ್‌ಗಳನ್ನು ಫಿಲ್ಟರ್ ಮಾಡಿ</string>
+    <string name="search_hint">ಹುಡುಕು…</string>
+    <string name="play_movie_button">ಚಲನಚಿತ್ರವನ್ನು ಪ್ಲೇ ಮಾಡಿ</string>
+    <string name="preview_background_img_des">ಪ್ರಿವ್ಯೂ ಹಿನ್ನೆಲೆ</string>
+    <string name="next_episode">ಮುಂದಿನ ಸಂಚಿಕೆ</string>
+    <string name="app_name">ಕ್ಲೌಡ್ ಸ್ಟ್ರೀಮ್</string>
+    <string name="downloading">ಡೌನ್‌ಲೋಡ್ ಮಾಡಲಾಗುತ್ತಿದೆ</string>
+    <string name="stream">ಸ್ಟ್ರೀಮ್</string>
+    <string name="result_share">ಶೇರ್</string>
+    <string name="popup_delete_file">ಫೈಲ್ ಅಳಿಸಿ</string>
+    <string name="home_more_info">ಹೆಚ್ಚಿನ ಮಾಹಿತಿ</string>
+    <string name="new_update_format" formatted="true">ಹೊಸ ಅಪ್ಡೇಟ್ ಬಂದಿದೆ 
+\n%s-%s</string>
+    <string name="loading">ಲೋಡಿಂಗ್…</string>
+    <string name="subs_download_languages">ಡೌನ್‌ಲೋಡ್ ಭಾಷೆಗಳನ್ನು ಮಾಡಿ</string>
+    <string name="play_livestream_button">ಲೈವ್‌ಸ್ಟ್ರೀಮ್ ಪ್ಲೇ ಮಾಡಿ</string>
+    <string name="play_with_app_name">ಕ್ಲೌಡ್ ಸ್ಟ್ರೀಮ್ ಇದರೊಂದಿಗೆ ಪ್ಲೇ ಮಾಡಿ</string>
+    <string name="type_plan_to_watch">ವೀಕ್ಷಿಸಲು ಯೋಜನೆ</string>
+    <string name="play_episode">ಸಂಚಿಕೆಯನ್ನು ಪ್ಲೇ ಮಾಡಿ</string>
+    <string name="continue_watching">ಕಂಟಿನ್ಯೂ ವಾಟಚಿಂಗ್</string>
+    <string name="torrent_no_plot">ಯಾವುದೇ ವಿವರಣೆ ಕಂಡುಬಂದಿಲ್ಲ</string>
+    <string name="play_torrent_button">ಸ್ಟ್ರೀಮ್ ಟೊರೆಂಟ್</string>
+    <string name="download">ಡೌನ್‌ಲೋಡ್</string>
+    <string name="sort_copy">ಕಾಪಿ</string>
+    <string name="no_data">ನೋ ಡೇಟಾ</string>
+    <string name="player_speed">ಪ್ಲೇಯರ್ ಸ್ಪೀಡ್</string>
+    <string name="next_episode_time_day_format" formatted="true">%d %dh %dm</string>
+    <string name="search_hint_site" formatted="true">ಹುಡುಕು %s…</string>
+    <string name="episode_more_options_des">ಹೆಚ್ಚಿನ ಆಯ್ಕೆ</string>
+    <string name="subs_import_text" formatted="true">ಫಾಂಟ್‌ಗಳನ್ನು ಇರಿಸುವ ಮೂಲಕ ಆಮದು ಮಾಡಿ %s</string>
+    <string name="next_episode_time_min_format" formatted="true">%dm</string>
+    <string name="result_tags">ಪ್ರಕಾರಗಳು</string>
+    <string name="result_open_in_browser">ಬ್ರೌಸರ್ ತೆರೆಯಿರಿ</string>
+    <string name="type_on_hold">ಆನ್-ಹೋಲ್ಡ್</string>
+    <string name="type_none">ನನ್</string>
+    <string name="reload_error">ಸಂಪರ್ಕವನ್ನು ಮರುಪ್ರಯತ್ನಿಸಿ…</string>
+    <string name="download_paused">ಡೌನ್‌ಲೋಡ್ ವಿರಾಮಗೊಳಿಸಲಾಗಿದೆ</string>
+    <string name="download_failed">ಡೌನ್‌ಲೋಡ್ ವಿಫಲವಾಗಿದೆ</string>
+    <string name="download_done">ಡೌನ್‌ಲೋಡ್ ಮುಗಿದಿದೆ</string>
+    <string name="browser">ಬ್ರೌಸರ್</string>
+    <string name="skip_loading">ಸ್ಕಿಪ್ ಲೋಡಿಂಗ್</string>
+    <string name="type_watching">ವಾಚಿಂಗ್</string>
+    <string name="type_completed">ಪೂರ್ಣಗೊಂಡಿದೆ</string>
+    <string name="type_dropped">ಕೈಬಿಡಲಾಯಿತು</string>
+    <string name="type_re_watching">ಪುನಃ ವೀಕ್ಷಿಸುತ್ತಿದೆ</string>
+    <string name="play_trailer_button">ಟ್ರೈಲರ್ ಪ್ಲೇ ಮಾಡಿ</string>
+    <string name="pick_source">ಮೂಲಗಳು</string>
+    <string name="downloaded">ಡೌನ್‌ಲೋಡ್ ಮಾಡಲಾಗಿದೆ</string>
+    <string name="download_started">ಡೌನ್‌ಲೋಡ್ ಪ್ರಾರಂಭವಾಗಿದೆ</string>
+    <string name="download_canceled">ಡೌನ್‌ಲೋಡ್ ರದ್ದುಗೊಳಿಸಲಾಗಿದೆ</string>
+    <string name="home_next_random_img_des">ಮುಂದಿನ ರಾಂಡಮ್</string>
+</resources>
