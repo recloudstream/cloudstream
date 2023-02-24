@@ -752,8 +752,13 @@ object AppUtils {
         return networkInfo.any {
             conManager.getNetworkCapabilities(it)
                 ?.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) == true
+                    } &&
+                !networkInfo.any {
+                    conManager.getNetworkCapabilities(it)
+                        ?.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) == true
+                }
         }
-    }
+
 
     private fun Activity?.cacheClass(clazz: String?) {
         clazz?.let { c ->
