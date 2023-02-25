@@ -77,6 +77,10 @@ class StreamSB10 : StreamSB() {
     override var mainUrl = "https://sbplay2.xyz"
 }
 
+class StreamSB11 : StreamSB() {
+    override var mainUrl = "https://sbbrisk.com"
+}
+
 // This is a modified version of https://github.com/jmir1/aniyomi-extensions/blob/master/src/en/genoanime/src/eu/kanade/tachiyomi/animeextension/en/genoanime/extractors/StreamSBExtractor.kt
 // The following code is under the Apache License 2.0 https://github.com/jmir1/aniyomi-extensions/blob/master/LICENSE
 open class StreamSB : ExtractorApi() {

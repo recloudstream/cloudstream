@@ -7,6 +7,10 @@ class Uqload1 : Uqload() {
     override var mainUrl = "https://uqload.com"
 }
 
+class Uqload2 : Uqload() {
+    override var mainUrl = "https://uqload.co"
+}
+
 open class Uqload : ExtractorApi() {
     override val name: String = "Uqload"
     override val mainUrl: String = "https://www.uqload.com"
@@ -15,30 +19,14 @@ open class Uqload : ExtractorApi() {
 
 
     override suspend fun getUrl(url: String, referer: String?): List<ExtractorLink>? {
-        val lang = url.substring(0, 2)
-        val flag =
-            if (lang == "vo") {
-                " \uD83C\uDDEC\uD83C\uDDE7"
-            }
-            else if (lang == "vf"){
-                " \uD83C\uDDE8\uD83C\uDDF5"
-            } else {
-                ""
-            }
-
-        val cleaned_url = if (lang == "ht") {  // if url doesn't contain a flag and the url starts with http://
-            url
-        } else {
-            url.substring(2, url.length)
-        }
-        with(app.get(cleaned_url)) {  // raised error ERROR_CODE_PARSING_CONTAINER_UNSUPPORTED (3003) is due to the response: "error_nofile"
+        with(app.get(url)) {  // raised error ERROR_CODE_PARSING_CONTAINER_UNSUPPORTED (3003) is due to the response: "error_nofile"
             srcRegex.find(this.text)?.groupValues?.get(1)?.replace("\"", "")?.let { link ->
                 return listOf(
                     ExtractorLink(
                         name,
-                        name + flag,
+                        name,
                         link,
-                        cleaned_url,
+                        url,
                         Qualities.Unknown.value,
                     )
                 )
