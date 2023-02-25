@@ -172,30 +172,31 @@
     <string name="resume">oouuh haa</string>
     <string name="double_tap_to_seek_settings_des">oohahaha hahha ooooohaha</string>
     <string name="storage_error">oohahaha hahha ooooohaha haaoou</string>
-    <string name="use_system_brightness_settings">u ahhu uuuh hau  uaohuau</string>
+    <string name="use_system_brightness_settings">u ahhu uuuh hau uaohuau</string>
     <string name="use_system_brightness_settings_des">aahuuouhh ouh hhhah hhaohuhha</string>
     <string name="subs_font_size">a auoo ohauh</string>
-    <string name="source_error">uhaauauau  ahuuouaha</string>
+    <string name="source_error">uhaauauau ahuuouaha</string>
     <string name="remote_error">auuuha h a ahuhaaaa</string>
-    <string name="render_error">uaoh   uhu uahaaaaoo</string>
-    <string name="unexpected_error">uauhah u  aao u oah</string>
-    <string name="watch_quality_pref">h u   ahahh aoou  ha</string>
+    <string name="render_error">uaoh uhu uahaaaaoo</string>
+    <string name="unexpected_error">uauhah u aao u oah</string>
+    <string name="watch_quality_pref">h u ahahh aoou ha</string>
     <string name="dns_pref">haoooo aaoou uou ah</string>
     <string name="dns_pref_summary">oahuouooaouoa ouuhh</string>
     <string name="display_subbed_dubbed_settings">o ouou uhauuuoaah h</string>
     <string name="resize_fit">ou aouhouo aaooao hh</string>
-    <string name="resize_fill">hhauhohhuu  au aaohu</string>
-    <string name="resize_zoom">uhuoh o   a ohahuhohoa hah</string>
+    <string name="resize_fill">hhauhohhuu au aaohu</string>
+    <string name="resize_zoom">uhuoh o a ohahuhohoa hah</string>
     <string name="provider_lang_settings">ua hu ouo o aoau hah ah</string>
-    <string name="legal_notice">ah huu  oouhhau aoaoaaohoo ha</string>
-    <string name="category_general">a ahu uoo uoahuo   uo</string>
+    <string name="legal_notice">ah huu oouhhau aoaoaaohoo ha</string>
+    <string name="category_general">a ahu uoo uoahuo uo</string>
     <string name="app_layout">uo u ohouao</string>
     <string name="automatic">uuoouhh hhuhuuh ouhoaao hau aouo</string>
-    <string name="tv_layout">uha uh  huo uooaah u</string>
+    <string name="tv_layout">uha uh huo uooaah u</string>
     <string name="phone_layout">u ooah uo ahauao huhuu hauu h</string>
     <string name="primary_color_settings">a ou oh ouhuouhoaaha</string>
     <string name="show_fillers_settings">aaooohhouhhha hauauuu</string>
-    <string name="new_update_format">aaaaaaa uuuuuu\n%s -&gt; %s</string>
+    <string name="new_update_format">aaaaaaa uuuuuu
+\n%s -&gt; %s</string>
     <string name="app_dub_sub_episode_text_format" formatted="true">%s aaou %d</string>
     <string name="cast_format" formatted="true">oouaaahh %s</string>
     <string name="next_episode_format" formatted="true">aaaaaaugh ouh %d uuoogahaaah ooua-h-ha</string>

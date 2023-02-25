@@ -514,4 +514,21 @@
     <string name="pref_category_android_tv">Android TV</string>
     <string name="android_tv_interface_on_seek_settings">Pokazany odtwarzacz — ilość przewijania</string>
     <string name="android_tv_interface_off_seek_settings_summary">Używana ilość przewijania, gdy ukryty jest odtwarzacz</string>
+    <string name="test_log">Dziennik</string>
+    <string name="restart">Uruchom ponownie</string>
+    <string name="start">Rozpocznij</string>
+    <string name="test_failed">Nie powiodło się</string>
+    <string name="test_passed">Ukończone powodzeniem</string>
+    <string name="jsdelivr_proxy">Serwer pośredniczący raw.githubusercontent.com</string>
+    <string name="pref_category_bypass">Obejścia ISP</string>
+    <string name="category_provider_test">Test dostawcy</string>
+    <string name="stop">Zatrzymaj</string>
+    <string name="revert">Przywróć</string>
+    <string name="subscription_in_progress_notification">Aktualizowanie subskrybowanych programów</string>
+    <string name="subscription_list_name">Zasubskrybowano</string>
+    <string name="subscription_new">Zasubskrybowano %s</string>
+    <string name="subscription_deleted">Anulowano subskrypcję %s</string>
+    <string name="subscription_episode_released">Został wydany odcinek %d!</string>
+    <string name="jsdelivr_proxy_summary">Obchodzi blokadę GitHuba za pomocą jsdelivr, może spowodować opóźnienie aktualizacji o kilka dni.</string>
+    <string name="jsdelivr_enabled">Nie udało się połączyć z GitHub, włączono serwer pośredniczący jsdelivr.</string>
 </resources>

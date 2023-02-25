@@ -546,4 +546,9 @@
     <string name="subscription_new">Berlangganan ke %s</string>
     <string name="subscription_deleted">Berhenti berlangganan di %s</string>
     <string name="subscription_episode_released">Episode %d telah rilis!</string>
+    <string name="jsdelivr_proxy">raw.githubusercontent.com Proksi</string>
+    <string name="jsdelivr_enabled">Gagal mencapai GitHub, mengaktifkan proksi jsdelivr.</string>
+    <string name="jsdelivr_proxy_summary">Bypass pemblokiran Github menggunakan JSDeliVR, dapat menyebabkan pembaruan tertunda beberapa hari.</string>
+    <string name="pref_category_bypass">Bypass ISP</string>
+    <string name="revert">Pulihkan</string>
 </resources>

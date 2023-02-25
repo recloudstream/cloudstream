@@ -263,7 +263,7 @@
     <string name="dont_show_again">Nicht mehr anzeigen</string>
     <string name="skip_update">Update ignorieren</string>
     <string name="update">Update</string>
-    <string name="watch_quality_pref">Bevorzugte Auflösung</string>
+    <string name="watch_quality_pref">Bevorzugte Videoqualität (WLAN)</string>
     <string name="limit_title">Videoplayertitel max. Zeichen</string>
     <string name="limit_title_rez">Videoplayer Auflösung</string>
     <string name="video_buffer_size_settings">Videopuffergröße</string>
@@ -518,4 +518,15 @@
     <string name="test_log">Log</string>
     <string name="start">Start</string>
     <string name="restart">Neustarten</string>
+    <string name="watch_quality_pref_data">Bevorzugte Videoqualität (mobile Daten)</string>
+    <string name="jsdelivr_proxy_summary">Umgehung der GitHub Sperre mit jsdelivr, kann zu einigen Tagen Verzögerung bei Updates führen.</string>
+    <string name="subscription_new">%s abonniert</string>
+    <string name="subscription_deleted">%s deabonniert</string>
+    <string name="subscription_episode_released">Episode %d erschienen!</string>
+    <string name="jsdelivr_proxy">raw.githubusercontent.com Proxy</string>
+    <string name="jsdelivr_enabled">GitHub kann nicht erreicht werden, der jsdelivr-Proxy wird aktiviert.</string>
+    <string name="subscription_in_progress_notification">Aktualisierung abonnierter Sendungen</string>
+    <string name="revert">Rückgängig</string>
+    <string name="subscription_list_name">Abonniert</string>
+    <string name="pref_category_bypass">ISP-Umgehungen</string>
 </resources>
