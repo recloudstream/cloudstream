@@ -13,6 +13,11 @@ class FileMoon : Filesim() {
     override val name = "FileMoon"
 }
 
+class FileMoonSx : Filesim() {
+    override val mainUrl = "https://filemoon.sx"
+    override val name = "FileMoonSx"
+}
+
 open class Filesim : ExtractorApi() {
     override val name = "Filesim"
     override val mainUrl = "https://files.im"

@@ -16,26 +16,7 @@ open class Evoload : ExtractorApi() {
 
 
     override suspend fun getUrl(url: String, referer: String?): List<ExtractorLink> {
-        val lang = url.substring(0, 2)
-        val flag =
-            if (lang == "vo") {
-                " \uD83C\uDDEC\uD83C\uDDE7"
-            }
-            else if (lang == "vf"){
-                " \uD83C\uDDE8\uD83C\uDDF5"
-            } else {
-                ""
-            }
-
-        val cleaned_url = if (lang == "ht") {  // if url doesn't contain a flag and the url starts with http://
-            url
-        } else {
-            url.substring(2, url.length)
-        }
-	//println(lang)
-        //println(cleaned_url)
-
-        val id = cleaned_url.replace("https://evoload.io/e/", "")  // wanted media id
+        val id = url.replace("https://evoload.io/e/", "")  // wanted media id
         val csrv_token = app.get("https://csrv.evosrv.com/captcha?m412548=").text  // whatever that is
         val captchaPass = app.get("https://cd2.evosrv.com/html/jsx/e.jsx").text.take(300).split("captcha_pass = '")[1].split("\'")[0]  //extract the captcha pass from the js response (located in the 300 first chars)
         val payload = mapOf("code" to id, "csrv_token" to csrv_token, "pass" to captchaPass)
@@ -44,9 +25,9 @@ open class Evoload : ExtractorApi() {
         return listOf(
             ExtractorLink(
                 name,
-                name + flag,
+                name,
                 link,
-                cleaned_url,
+                url,
                 Qualities.Unknown.value,
             )
         )
