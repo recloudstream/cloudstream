@@ -12,18 +12,7 @@ class Vido : ExtractorApi() {
     override val requiresReferer = true
 
     override suspend fun getUrl(url: String, referer: String?): List<ExtractorLink>? {
-        val methode = if (url.contains("embed")) {
-            app.get(url) // french stream
-        } else {
-            val code = url.substringAfterLast("/")
-            val data = mapOf(
-                "op" to "embed",
-                "file_code" to code,
-                "&auto" to "1"
-
-            )
-            app.post("https://vido.lol/dl", referer = url, data = data) // wiflix
-        }
+        val methode = app.get(url.replace("/e/", "/embed-")) // fix wiflix and mesfilms
         with(methode) {
             if (!methode.isSuccessful) return null
             //val quality = unpackedText.lowercase().substringAfter(" height=").substringBefore(" ").toIntOrNull()
