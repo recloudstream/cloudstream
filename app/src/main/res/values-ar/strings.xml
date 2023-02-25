@@ -259,7 +259,7 @@
     <string name="dont_show_again">لا تظهر مرة أخرى</string>
     <string name="skip_update">تخطي هذا التحديث</string>
     <string name="update">تحديث</string>
-    <string name="watch_quality_pref">جودة المشاهدة المفضلة</string>
+    <string name="watch_quality_pref">جودة المشاهدة المفضلة (WiFi)</string>
     <string name="limit_title">أقصى عدد لحروف عنوان مُشغل الفيديو</string>
     <string name="limit_title_rez">أبعاد مُشغل الفيديو</string>
     <string name="video_buffer_size_settings">حجم ذاكرة التخزين المؤقت للفيديو</string>
@@ -555,4 +555,10 @@
     <string name="subscription_episode_released">تم إصدار الحلقة %d!</string>
     <string name="subscription_list_name">مشترك</string>
     <string name="subscription_new">مشترك في %s</string>
+    <string name="pref_category_bypass">تجاوز مزود خدمة الإنترنت</string>
+    <string name="revert">استرجاع</string>
+    <string name="jsdelivr_enabled">فشل الوصول إلى GitHub ، وتمكين وكيل jsdelivr.</string>
+    <string name="jsdelivr_proxy_summary">تجاوز حظر GitHub باستخدام jsdelivr ، قد يتسبب في تأخير التحديثات لبضعة أيام.</string>
+    <string name="jsdelivr_proxy">وكيل raw.githubusercontent.com</string>
+    <string name="watch_quality_pref_data">جودة المشاهدة المفضلة (بيانات الجوال)</string>
 </resources>

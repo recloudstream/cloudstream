@@ -245,7 +245,7 @@
     <string name="dont_show_again">Již nezobrazovat</string>
     <string name="skip_update">Přeskočit tuto aktualizace</string>
     <string name="update">Aktualizovat</string>
-    <string name="watch_quality_pref">Upřednostněná kvalita sledování</string>
+    <string name="watch_quality_pref">Upřednostněná kvalita sledování (WiFi)</string>
     <string name="limit_title">Maximální počet znaků v názvu přehrávače</string>
     <string name="limit_title_rez">Rozlišení přehrávače</string>
     <string name="video_buffer_size_settings">Velikost vyrovnávací paměti videa</string>
@@ -547,4 +547,10 @@
     <string name="subscription_deleted">Odhlášen odběr od %s</string>
     <string name="subscription_episode_released">Byla vydána epizoda %d!</string>
     <string name="subscription_list_name">Odebíráno</string>
+    <string name="jsdelivr_proxy">Proxy raw.githubusercontent.com</string>
+    <string name="jsdelivr_enabled">Nepodařilo se připojit ke GitHubu, povolování proxy jsdelivr.</string>
+    <string name="watch_quality_pref_data">Upřednostněná kvalita sledování (mobilní data)</string>
+    <string name="revert">Vrátit zpět</string>
+    <string name="jsdelivr_proxy_summary">Obchází blokování GitHubu pomocí jsdelivr, může způsobit zpoždění aktualizací o několik dní.</string>
+    <string name="pref_category_bypass">Obcházení ISP</string>
 </resources>

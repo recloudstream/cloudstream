@@ -85,7 +85,7 @@
     <string name="result_share">ಶೇರ್</string>
     <string name="popup_delete_file">ಫೈಲ್ ಅಳಿಸಿ</string>
     <string name="home_more_info">ಹೆಚ್ಚಿನ ಮಾಹಿತಿ</string>
-    <string name="new_update_format" formatted="true">ಹೊಸ ಅಪ್ಡೇಟ್ ಬಂದಿದೆ 
+    <string name="new_update_format" formatted="true">ಹೊಸ ಅಪ್ಡೇಟ್ ಬಂದಿದೆ
 \n%s-%s</string>
     <string name="loading">ಲೋಡಿಂಗ್…</string>
     <string name="subs_download_languages">ಡೌನ್‌ಲೋಡ್ ಭಾಷೆಗಳನ್ನು ಮಾಡಿ</string>

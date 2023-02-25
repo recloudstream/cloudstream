@@ -217,7 +217,7 @@
     <string name="video_skip_op">Пропустити OP</string>
     <string name="dont_show_again">Не показувати знову</string>
     <string name="update">Оновити</string>
-    <string name="watch_quality_pref">Бажана якість перегляду</string>
+    <string name="watch_quality_pref">Бажана якість перегляду (WiFi)</string>
     <string name="show_title">Заголовок</string>
     <string name="poster_ui_settings">Перемикання елементів інтерфейсу на плакаті</string>
     <string name="no_update_found">Оновлення не знайдено</string>
@@ -523,4 +523,11 @@
     <string name="subscription_new">Підписано на %s</string>
     <string name="subscription_deleted">Відписатися від %s</string>
     <string name="subscription_episode_released">Епізод %d випущено!</string>
+    <string name="revert">Повернути</string>
+    <string name="jsdelivr_proxy">raw.githubusercontent.com
+\nProxy</string>
+    <string name="jsdelivr_enabled">Не вдалося зв\'язатися з GitHub, увімкнувши проксі-сервер jsdelivr.</string>
+    <string name="pref_category_bypass">Обходи ISP</string>
+    <string name="jsdelivr_proxy_summary">Обходити блокування GitHub з використанням jsdlitr, може викликати затримку оновлень на кілька днів.</string>
+    <string name="watch_quality_pref_data">Бажана якість перегляду (Мобільні дані)</string>
 </resources>

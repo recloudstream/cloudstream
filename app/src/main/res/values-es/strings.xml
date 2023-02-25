@@ -24,7 +24,7 @@
     <string name="pref_filter_search_quality">Ocultar la calidad de video en los resultados de búsqueda</string>
     <string name="pref_category_player_layout">Diseño</string>
     <string name="category_ui">Diseño</string>
-    <string name="watch_quality_pref">Calidad de visualización preferida</string>
+    <string name="watch_quality_pref">Calidad de visualización preferida (WiFi)</string>
     <string name="player_pref">Reproductor de video preferido</string>
     <string name="emulator_layout">Diseño para emulador</string>
     <string name="app_layout">Diseño de la aplicación</string>
@@ -523,4 +523,10 @@
     <string name="subscription_deleted">Darse de baja de %s</string>
     <string name="subscription_in_progress_notification">Actualizando los programas suscritos</string>
     <string name="subscription_episode_released">¡Episodio %d publicado!</string>
+    <string name="jsdelivr_proxy">Proxy raw.githubusercontent.com</string>
+    <string name="jsdelivr_enabled">No se ha podido acceder a GitHub, activando el proxy jsdelivr.</string>
+    <string name="jsdelivr_proxy_summary">Evita el bloqueo de GitHub usando jsdelivr, puede causar que las actualizaciones se retrasen unos días.</string>
+    <string name="revert">Revertir</string>
+    <string name="pref_category_bypass">ISP Bypasses</string>
+    <string name="watch_quality_pref_data">Calidad de visualización preferida (Datos móviles)</string>
 </resources>

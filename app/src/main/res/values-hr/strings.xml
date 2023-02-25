@@ -548,4 +548,9 @@
     <string name="subscription_list_name">Pretplaćeno</string>
     <string name="subscription_new">Pretplaćen na %s</string>
     <string name="subscription_deleted">Otkazana pretplata sa %s</string>
+    <string name="revert">Vraćanje</string>
+    <string name="pref_category_bypass">ISP zaobilaznice</string>
+    <string name="jsdelivr_proxy">raw.githubusercontent.com Proxy</string>
+    <string name="jsdelivr_enabled">Neuspješno dohvaćanje GitHuba, omogućavanje jsdelivr proxyja.</string>
+    <string name="jsdelivr_proxy_summary">Zaobilazi blokiranje GitHuba pomoću jsdelivr, može uzrokovati odgode ažuriranja za nekoliko dana.</string>
 </resources>
