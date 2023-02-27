@@ -74,6 +74,7 @@ val appLanguages = arrayListOf(
     Triple("\uD83C\uDDEE\uD83C\uDDE9", "Bahasa Indonesia", "in"),
     Triple("", "italiano", "it"),
     Triple("\uD83C\uDDEE\uD83C\uDDF1", "עברית", "iw"),
+    Triple("", "日本語 (にほんご)", "ja"),
     Triple("", "ಕನ್ನಡ", "kn"),
     Triple("", "македонски", "mk"),
     Triple("", "മലയാളം", "ml"),
@@ -82,7 +83,7 @@ val appLanguages = arrayListOf(
     Triple("", "norsk bokmål", "no"),
     Triple("", "polski", "pl"),
     Triple("\uD83C\uDDF5\uD83C\uDDF9", "português", "pt"),
-    Triple("🦍", "mmmm... monke", "qt"),
+    Triple("\uD83E\uDD8D", "mmmm... monke", "qt"),
     Triple("", "română", "ro"),
     Triple("", "русский", "ru"),
     Triple("", "slovenčina", "sk"),
@@ -97,7 +98,7 @@ val appLanguages = arrayListOf(
     Triple("", "中文", "zh"),
     Triple("\uD83C\uDDF9\uD83C\uDDFC", "文言", "zh-rTW"),
 /* end language list */
-).sortedBy { it.second?.toLowerCase() } //ye, we go alphabetical, so ppl don't put their lang on top
+).sortedBy { it.second.lowercase() } //ye, we go alphabetical, so ppl don't put their lang on top
 
 class SettingsGeneral : PreferenceFragmentCompat() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -157,9 +158,6 @@ class SettingsGeneral : PreferenceFragmentCompat() {
 
         getPref(R.string.locale_key)?.setOnPreferenceClickListener { pref ->
             val tempLangs = appLanguages.toMutableList()
-            //if (beneneCount > 100) {
-            //    tempLangs.add(Triple("\uD83E\uDD8D", "mmmm... monke", "mo"))
-            //}
             val current = getCurrentLocale(pref.context)
             val languageCodes = tempLangs.map { (_, _, iso) -> iso }
             val languageNames = tempLangs.map { (emoji, name, iso) ->
@@ -314,6 +312,12 @@ class SettingsGeneral : PreferenceFragmentCompat() {
                     first
                 }).filterNotNull().distinct()
             } ?: emptyList()
+        }
+
+        settingsManager.edit().putBoolean(getString(R.string.jsdelivr_proxy_key), getKey(getString(R.string.jsdelivr_proxy_key), false) ?: false).apply()
+        getPref(R.string.jsdelivr_proxy_key)?.setOnPreferenceChangeListener { _, newValue ->
+            setKey(getString(R.string.jsdelivr_proxy_key), newValue)
+            return@setOnPreferenceChangeListener true
         }
 
         getPref(R.string.download_path_key)?.setOnPreferenceClickListener {

@@ -6,12 +6,12 @@
     <string name="next_episode_format" formatted="true">Episódio %d será lançado em</string>
     <string name="result_poster_img_des">Poster</string>
     <string name="episode_poster_img_des">Capa do Episódio</string>
-    <string name="search_poster_img_des">\@string/result_poster_img_des</string>
+    <string name="search_poster_img_des">Poster</string>
     <string name="home_main_poster_img_des">Capa Principal</string>
     <string name="home_next_random_img_des">Próximo Aleatório</string>
     <string name="go_back_img_des">Voltar</string>
     <string name="home_change_provider_img_des">Trocar Provedor</string>
-    <string name="next_episode_time_day_format" formatted="true">%dd %dh %dm</string>
+    <string name="next_episode_time_day_format" formatted="true">%d dia(s), %d hora(s) e %d mese(s)</string>
     <string name="home_source">Fonte</string>
     <string name="resolution">Resolução</string>
     <string name="extras">Extras</string>
@@ -381,4 +381,31 @@
     <string name="uppercase_all_subtitles">Todas as legendas em maiúsculas</string>
     <string name="download_all_plugins_from_repo">Transferir todos os plugins deste repositório\?</string>
     <string name="single_plugin_disabled" formatted="true">%s (Desativado)</string>
+    <string name="apk_installer_settings">Instalador APK</string>
+    <string name="duration_format" formatted="true">%d minuto(s)</string>
+    <string name="play_trailer_button">Reproduzir trailer</string>
+    <string name="action_add_to_bookmarks">Marcar como visto/não visto</string>
+    <string name="action_open_play">Reproduzir</string>
+    <string name="automatic_plugin_download_summary">Instalar automaticamente todas as extensões dos repositórios cadastrados.</string>
+    <string name="automatic_plugin_download">Baixar extensões automaticamente</string>
+    <string name="redo_setup_process">Refazer o processo de configuração</string>
+    <string name="go_back_30">-30</string>
+    <string name="other_singular">Vídeo</string>
+    <string name="go_forward_30">+30</string>
+    <string name="season_format">%s %d%s</string>
+    <string name="cast_format" formatted="true">Elenco: %s</string>
+    <string name="update_started">Atualização em andamento</string>
+    <string name="test_log">Log</string>
+    <string name="apk_installer_settings_des">Alguns aparelhos não possuem suporte para o novo instalador de pacotes. Use a opção legado caso não esteja conseguindo atualizar.</string>
+    <string name="episodes_range">%d-%d</string>
+    <string name="episode_format" formatted="true">%d %s</string>
+    <string name="start">Iniciar</string>
+    <string name="test_failed">Falha</string>
+    <string name="test_passed">Sucesso</string>
+    <string name="library">Biblioteca</string>
+    <string name="browser">Navegar</string>
+    <string name="anim">Aplicativo de Anime pelos mesmos desenvolvedores</string>
+    <string name="ova_singular">Ova</string>
+    <string name="anime_singular">Anime</string>
+    <string name="android_tv_interface_on_seek_settings">Player visível - Procurar valor</string>
 </resources>

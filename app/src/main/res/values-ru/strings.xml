@@ -506,4 +506,16 @@
     <string name="android_tv_interface_on_seek_settings">Плеер показан - Перемотки объем</string>
     <string name="android_tv_interface_off_seek_settings">Плеер спрятан - Перемотки объем</string>
     <string name="subtitles_remove_bloat">Удалять лишнее из субтитров</string>
+    <string name="android_tv_interface_off_seek_settings_summary">Местоположение ползунка, когда игрок скрыт</string>
+    <string name="pref_category_android_tv">Android TV</string>
+    <string name="actor_supporting">Второго планa</string>
+    <string name="skip_type_mixed_op">Смешанный опенинг</string>
+    <string name="skip_type_mixed_ed">Смешанный конец</string>
+    <string name="category_provider_test">Тест провайдер</string>
+    <string name="test_log">Журнал</string>
+    <string name="start">Запустить</string>
+    <string name="test_passed">Выполнено</string>
+    <string name="test_failed">Неудачный</string>
+    <string name="stop">Прекратить</string>
+    <string name="restart">Перезапустить</string>
 </resources>

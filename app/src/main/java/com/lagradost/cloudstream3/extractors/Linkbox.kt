@@ -18,31 +18,36 @@ open class Linkbox : ExtractorApi() {
         subtitleCallback: (SubtitleFile) -> Unit,
         callback: (ExtractorLink) -> Unit
     ) {
-        val id = Regex("""(/file/|id=)(\S+)[&/?]""").find(url)?.groupValues?.get(2)
-        app.get("$mainUrl/api/open/get_url?itemId=$id", referer=url).parsedSafe<Responses>()?.data?.rList?.map { link ->
-            callback.invoke(
-                ExtractorLink(
-                    name,
-                    name,
-                    link.url,
-                    url,
-                    getQualityFromName(link.resolution)
+        val id = Regex("""(?:/f/|/file/|\?id=)(\w+)""").find(url)?.groupValues?.get(1)
+        app.get("$mainUrl/api/file/detail?itemId=$id", referer = url)
+            .parsedSafe<Responses>()?.data?.itemInfo?.resolutionList?.map { link ->
+                callback.invoke(
+                    ExtractorLink(
+                        name,
+                        name,
+                        link.url ?: return@map null,
+                        url,
+                        getQualityFromName(link.resolution)
+                    )
                 )
-            )
-        }
+            }
     }
 
-    data class RList(
-        @JsonProperty("url") val url: String,
-        @JsonProperty("resolution") val resolution: String?,
+    data class Resolutions(
+        @JsonProperty("url") val url: String? = null,
+        @JsonProperty("resolution") val resolution: String? = null,
+    )
+
+    data class ItemInfo(
+        @JsonProperty("resolutionList") val resolutionList: ArrayList<Resolutions>? = arrayListOf(),
     )
 
     data class Data(
-        @JsonProperty("rList") val rList: List<RList>?,
+        @JsonProperty("itemInfo") val itemInfo: ItemInfo? = null,
     )
 
     data class Responses(
-        @JsonProperty("data") val data: Data?,
+        @JsonProperty("data") val data: Data? = null,
     )
 
 }

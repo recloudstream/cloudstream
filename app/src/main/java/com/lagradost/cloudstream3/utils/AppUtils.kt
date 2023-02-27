@@ -491,6 +491,12 @@ object AppUtils {
         }
     }
 
+    fun Context.isNetworkAvailable(): Boolean {
+        val manager = this.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val activeNetworkInfo = manager.activeNetworkInfo
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected || manager.allNetworkInfo?.any { it.isConnected } ?: false
+    }
+
     fun splitQuery(url: URL): Map<String, String> {
         val queryPairs: MutableMap<String, String> = LinkedHashMap()
         val query: String = url.query
@@ -770,8 +776,13 @@ object AppUtils {
         return networkInfo.any {
             conManager.getNetworkCapabilities(it)
                 ?.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) == true
+                    } &&
+                !networkInfo.any {
+                    conManager.getNetworkCapabilities(it)
+                        ?.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) == true
+                }
         }
-    }
+
 
     private fun Activity?.cacheClass(clazz: String?) {
         clazz?.let { c ->
