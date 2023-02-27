@@ -370,6 +370,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     Cda(),
     Dailymotion(),
     ByteShare(),
+    Ztreamhub()
 )
 
 
