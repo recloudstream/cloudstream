@@ -3,10 +3,9 @@ package com.lagradost.cloudstream3.extractors
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.app
-import com.lagradost.cloudstream3.mvvm.safeApiCall
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
-import com.lagradost.cloudstream3.utils.Qualities
+import com.lagradost.cloudstream3.utils.M3u8Helper
 
 class Sbspeed : StreamSB() {
     override var name = "Sbspeed"
@@ -145,22 +144,14 @@ open class StreamSB : ExtractorApi() {
             referer = url,
         ).parsedSafe<Main>()
         // val urlmain = mapped.streamData.file.substringBefore("/hls/")
+        M3u8Helper.generateM3u8(
+            name,
+            mapped?.streamData?.file ?: return,
+            url,
+            headers = headers
+        ).forEach(callback)
 
-        safeApiCall {
-            callback.invoke(
-                ExtractorLink(
-                    name,
-                    name,
-                    mapped?.streamData?.file ?: return@safeApiCall,
-                    url,
-                    Qualities.Unknown.value,
-                    true,
-                    headers
-                )
-            )
-        }
-
-        mapped?.streamData?.subs?.map {sub ->
+        mapped.streamData.subs?.map {sub ->
             subtitleCallback.invoke(
                 SubtitleFile(
                     sub.label.toString(),
