@@ -62,6 +62,7 @@ open class ExtractorLink(
     override val headers: Map<String, String> = mapOf(),
     /** Used for getExtractorVerifierJob() */
     open val extractorData: String? = null,
+    open val isDash: Boolean = false,
 ) : VideoDownloadManager.IDownloadableMinimum {
     override fun toString(): String {
         return "ExtractorLink(name=$name, url=$url, referer=$referer, isM3u8=$isM3u8)"
