@@ -319,7 +319,11 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                     } else if (safeURI(str)?.scheme == appStringSearch) {
                         nextSearchQuery =
                             URLDecoder.decode(str.substringAfter("$appStringSearch://"), "UTF-8")
-                        nav_view.selectedItemId = R.id.navigation_search
+
+                        // Use both navigation views to support both layouts.
+                        // It might be better to use the QuickSearch.
+                        nav_view?.selectedItemId = R.id.navigation_search
+                        nav_rail_view?.selectedItemId = R.id.navigation_search
                     } else if (safeURI(str)?.scheme == appStringResumeWatching) {
                         val id =
                             str.substringAfter("$appStringResumeWatching://").toIntOrNull()
