@@ -53,7 +53,7 @@
     <string name="type_dropped">Abgebrochen</string>
     <string name="type_plan_to_watch">Geplant</string>
     <string name="type_none">Nichts</string>
-    <string name="type_re_watching">Erneut anschauen</string>
+    <string name="type_re_watching">Erneut schauen</string>
     <string name="play_movie_button">Film abspielen</string>
     <string name="play_livestream_button">Livestream abspielen</string>
     <string name="play_torrent_button">Torrent streamen</string>
@@ -212,7 +212,7 @@
     <string name="no_subtitles">Keine Untertitel</string>
     <string name="default_subtitles">Standard</string>
     <string name="free_storage">Frei</string>
-    <string name="used_storage">Benutzt</string>
+    <string name="used_storage">Belegt</string>
     <string name="app_storage">App</string>
     <string name="movies">Filme</string>
     <string name="tv_series">TV-Serien</string>
@@ -263,7 +263,7 @@
     <string name="dont_show_again">Nicht mehr anzeigen</string>
     <string name="skip_update">Update ignorieren</string>
     <string name="update">Update</string>
-    <string name="watch_quality_pref">Bevorzugte Auflösung</string>
+    <string name="watch_quality_pref">Bevorzugte Videoqualität (WLAN)</string>
     <string name="limit_title">Videoplayertitel max. Zeichen</string>
     <string name="limit_title_rez">Videoplayer Auflösung</string>
     <string name="video_buffer_size_settings">Videopuffergröße</string>
@@ -284,7 +284,7 @@
     <string name="resize_fill">Strecken</string>
     <string name="resize_zoom">Vergrößern</string>
     <string name="legal_notice">Haftungsausschluss</string>
-    <string name="category_general">General</string>
+    <string name="category_general">Allgemein</string>
     <string name="random_button_settings">Zufalls-Button</string>
     <string name="random_button_settings_desc">Zufallsbutton auf der Startseite anzeigen</string>
     <string name="provider_lang_settings">Anbieter-Sprachen</string>
@@ -460,11 +460,11 @@
     <string name="automatic_plugin_download_summary">Automatische Installation aller noch nicht installierten Plugins aus hinzugefügten Repositories.</string>
     <string name="redo_setup_process">Einrichtungsvorgang wiederholen</string>
     <string name="apk_installer_settings">APK-Installer</string>
-    <string name="apk_installer_settings_des">Einige Telefone unterstützen das neue Installationsprogramm für Pakete nicht. Benutze die Legacy-Option, wenn sich die Updates nicht installieren lassen.</string>
+    <string name="apk_installer_settings_des">Einige Telefone unterstützen den neuen Package-Installer nicht. Benutze die Legacy-Option, wenn sich die Updates nicht installieren lassen.</string>
     <string name="season_format">%s %d%s</string>
     <string name="pref_category_links">Links</string>
     <string name="pref_category_app_updates">App-Updates</string>
-    <string name="pref_category_backup">Back-Up</string>
+    <string name="pref_category_backup">Sicherung</string>
     <string name="pref_category_extensions">Erweiterungen</string>
     <string name="pref_category_actions">Wartung</string>
     <string name="pref_category_cache">Cache</string>
@@ -506,4 +506,27 @@
     <string name="empty_library_logged_in_message">Diese Liste scheint leer zu sein. Versuche, zu einer anderen Liste zu wechseln.</string>
     <string name="safe_mode_file">Datei für abgesicherten Modus gefunden!
 \nBeim Start werden keine Erweiterungen geladen, bis die Datei entfernt wird.</string>
+    <string name="android_tv_interface_off_seek_settings">Player ausgeblendet - Betrag zum vor- und zurückspulen</string>
+    <string name="android_tv_interface_on_seek_settings_summary">Der Betrag, welcher verwendet wird, wenn der Player eingeblendet ist</string>
+    <string name="android_tv_interface_off_seek_settings_summary">Der Betrag, welcher verwendet wird, wenn der Player ausgeblendet ist</string>
+    <string name="pref_category_android_tv">Android-TV</string>
+    <string name="android_tv_interface_on_seek_settings">Player eingeblendet - Betrag zum vor- und zurückspulen</string>
+    <string name="test_failed">Fehlgeschlagen</string>
+    <string name="test_passed">Erfolgreich</string>
+    <string name="category_provider_test">Anbieter-Test</string>
+    <string name="stop">Stopp</string>
+    <string name="test_log">Log</string>
+    <string name="start">Start</string>
+    <string name="restart">Neustarten</string>
+    <string name="watch_quality_pref_data">Bevorzugte Videoqualität (mobile Daten)</string>
+    <string name="jsdelivr_proxy_summary">Umgehung der GitHub Sperre mit jsdelivr, kann zu einigen Tagen Verzögerung bei Updates führen.</string>
+    <string name="subscription_new">%s abonniert</string>
+    <string name="subscription_deleted">%s deabonniert</string>
+    <string name="subscription_episode_released">Episode %d erschienen!</string>
+    <string name="jsdelivr_proxy">raw.githubusercontent.com Proxy</string>
+    <string name="jsdelivr_enabled">GitHub kann nicht erreicht werden, der jsdelivr-Proxy wird aktiviert.</string>
+    <string name="subscription_in_progress_notification">Aktualisierung abonnierter Sendungen</string>
+    <string name="revert">Rückgängig</string>
+    <string name="subscription_list_name">Abonniert</string>
+    <string name="pref_category_bypass">ISP-Umgehungen</string>
 </resources>

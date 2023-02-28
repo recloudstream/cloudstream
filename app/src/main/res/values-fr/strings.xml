@@ -6,12 +6,12 @@
     <string name="title_downloads">Téléchargements</string>
     <string name="title_settings">Paramètres</string>
     <string name="search_hint">Rechercher…</string>
-    <string name="search_poster_img_des">Miniature</string>
+    <string name="search_poster_img_des">Affiche</string>
     <string name="no_data">Aucune Donnée</string>
     <string name="episode_more_options_des">Plus d\'options</string>
     <string name="go_back_img_des">Retour</string>
     <string name="next_episode">Épisode suivant</string>
-    <string name="result_poster_img_des">Miniature</string>
+    <string name="result_poster_img_des">Affiche</string>
     <string name="result_tags">Genres</string>
     <string name="result_share">Partager</string>
     <string name="result_open_in_browser">Ouvrir dans le navigateur</string>
@@ -29,7 +29,7 @@
     <string name="pick_subtitle">Sous-titres</string>
     <string name="reload_error">Réessayer la connection…</string>
     <string name="go_back">Retour</string>
-    <string name="episode_poster_img_des">Miniature de l\'Épisode</string>
+    <string name="episode_poster_img_des">Affiche de l\'épisode</string>
     <string name="play_episode">Lire l\'Épisode</string>
     <!--<string name="need_storage">Permet de télécharger les épisodes</string>-->
     <string name="download">Télécharger</string>
@@ -51,10 +51,10 @@
     <string name="pref_disable_acra">Désactiver le rapport de bug automatique</string>
     <string name="home_more_info">Plus d\'informations</string>
     <string name="home_expanded_hide">Cacher</string>
-    <string name="home_main_poster_img_des">Poster principal</string>
+    <string name="home_main_poster_img_des">Affiche principale</string>
     <string name="home_play">Lecture</string>
-    <string name="home_info">Info</string>
-    <string name="home_next_random_img_des">Suivant Aléatoire</string>
+    <string name="home_info">Infos</string>
+    <string name="home_next_random_img_des">Aléatoire suivant</string>
     <string name="home_change_provider_img_des">Changer le fournisseur</string>
     <string name="filter_bookmarks">Filtrer les marques-pages</string>
     <string name="error_bookmarks_text">Marque-pages</string>
@@ -211,7 +211,7 @@
     <string name="actor_background">Arrière plan</string>
     <string name="home_source">Source</string>
     <string name="home_random">Aléatoire</string>
-    <string name="coming_soon">À venir …</string>
+    <string name="coming_soon">Bientôt disponible…</string>
     <string name="poster_image">Image de l\'affiche</string>
     <string name="authenticated_user">%s Connecté</string>
     <string name="action_add_to_bookmarks">Définir le statut de visionage</string>
@@ -490,4 +490,22 @@
     <string name="delayed_update_notice">L\'application sera mise à jour dès la fin de la session</string>
     <string name="plugin_downloaded">Plugin Téléchargé</string>
     <string name="action_remove_from_watched">Retirer de la vue</string>
+    <string name="library">Bibliothèque</string>
+    <string name="browser">Navigateur</string>
+    <string name="sort">Trier</string>
+    <string name="sort_rating_asc">Note (basse à haute)</string>
+    <string name="sort_rating_desc">Note (haut à bas)</string>
+    <string name="sort_alphabetical_a">Alphabétique (A à Z)</string>
+    <string name="empty_library_no_accounts_message">On dirait que votre bibliothèque est vide :(
+\nConnectez-vous à un compte ou ajoutez des séries à votre bibliothèque locale</string>
+    <string name="empty_library_logged_in_message">Il semble que cette liste soit vide, essayez d\'en choisir une autre</string>
+    <string name="pref_category_android_tv">Android TV</string>
+    <string name="sort_by">Trié par</string>
+    <string name="sort_alphabetical_z">Alphabétique (Z à A)</string>
+    <string name="select_library">Sélectionnez la bibliothèque</string>
+    <string name="open_with">Ouvrir avec</string>
+    <string name="sort_updated_new">Mis à jour (Nouveau vers ancien)</string>
+    <string name="sort_updated_old">Mis à jour (ancien vers nouveau)</string>
+    <string name="safe_mode_file">Fichier du mode sans échec trouvé !
+\nAucune extension ne sera chargée au démarrage avant que le fichier ne soit enlevé.</string>
 </resources>

@@ -40,6 +40,7 @@ import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.ui.player.GeneratorPlayer.Companion.subsProvidersIsActive
 import com.lagradost.cloudstream3.utils.Qualities
+import com.lagradost.cloudstream3.utils.AppUtils.isUsingMobileData
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showDialog
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
@@ -1246,9 +1247,8 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                         ctx.getString(R.string.double_tap_pause_enabled_key),
                         false
                     )
-
                 currentPrefQuality = settingsManager.getInt(
-                    ctx.getString(R.string.quality_pref_key),
+                    ctx.getString(if (ctx.isUsingMobileData()) R.string.quality_pref_mobile_data_key else R.string.quality_pref_key),
                     currentPrefQuality
                 )
                 // useSystemBrightness =

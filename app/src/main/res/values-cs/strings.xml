@@ -245,7 +245,7 @@
     <string name="dont_show_again">Již nezobrazovat</string>
     <string name="skip_update">Přeskočit tuto aktualizace</string>
     <string name="update">Aktualizovat</string>
-    <string name="watch_quality_pref">Upřednostněná kvalita sledování</string>
+    <string name="watch_quality_pref">Upřednostněná kvalita sledování (WiFi)</string>
     <string name="limit_title">Maximální počet znaků v názvu přehrávače</string>
     <string name="limit_title_rez">Rozlišení přehrávače</string>
     <string name="video_buffer_size_settings">Velikost vyrovnávací paměti videa</string>
@@ -535,4 +535,22 @@
     <string name="android_tv_interface_on_seek_settings">Zobrazený přehrávač - doba hledání</string>
     <string name="pref_category_android_tv">Android TV</string>
     <string name="android_tv_interface_on_seek_settings_summary">Množství vyhledávané doby při zobrazeném přehrávači</string>
+    <string name="test_log">Protokol</string>
+    <string name="category_provider_test">Test poskytovatele</string>
+    <string name="test_failed">Neúspěšné</string>
+    <string name="test_passed">Úspěšné</string>
+    <string name="restart">Restart</string>
+    <string name="start">Spustit</string>
+    <string name="stop">Zastavit</string>
+    <string name="subscription_in_progress_notification">Aktualizace odebíraných pořadů</string>
+    <string name="subscription_new">Přihlášeno k odběru %s</string>
+    <string name="subscription_deleted">Odhlášen odběr od %s</string>
+    <string name="subscription_episode_released">Byla vydána epizoda %d!</string>
+    <string name="subscription_list_name">Odebíráno</string>
+    <string name="jsdelivr_proxy">Proxy raw.githubusercontent.com</string>
+    <string name="jsdelivr_enabled">Nepodařilo se připojit ke GitHubu, povolování proxy jsdelivr.</string>
+    <string name="watch_quality_pref_data">Upřednostněná kvalita sledování (mobilní data)</string>
+    <string name="revert">Vrátit zpět</string>
+    <string name="jsdelivr_proxy_summary">Obchází blokování GitHubu pomocí jsdelivr, může způsobit zpoždění aktualizací o několik dní.</string>
+    <string name="pref_category_bypass">Obcházení ISP</string>
 </resources>

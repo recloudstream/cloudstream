@@ -32,7 +32,9 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.google.android.gms.cast.framework.*
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.navigationrail.NavigationRailView
+import com.google.android.material.snackbar.Snackbar
 import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
+import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.APIHolder.allProviders
 import com.lagradost.cloudstream3.APIHolder.apis
 import com.lagradost.cloudstream3.APIHolder.getApiDubstatusSettings
@@ -79,6 +81,7 @@ import com.lagradost.cloudstream3.ui.setup.SetupFragmentExtensions
 import com.lagradost.cloudstream3.utils.*
 import com.lagradost.cloudstream3.utils.AppUtils.html
 import com.lagradost.cloudstream3.utils.AppUtils.isCastApiAvailable
+import com.lagradost.cloudstream3.utils.AppUtils.isNetworkAvailable
 import com.lagradost.cloudstream3.utils.AppUtils.loadCache
 import com.lagradost.cloudstream3.utils.AppUtils.loadRepository
 import com.lagradost.cloudstream3.utils.AppUtils.loadResult
@@ -86,6 +89,7 @@ import com.lagradost.cloudstream3.utils.AppUtils.loadSearchResult
 import com.lagradost.cloudstream3.utils.AppUtils.setDefaultFocus
 import com.lagradost.cloudstream3.utils.BackupUtils.setUpBackup
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
+import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStore.setKey
 import com.lagradost.cloudstream3.utils.DataStoreHelper.migrateResumeWatching
@@ -315,7 +319,11 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                     } else if (safeURI(str)?.scheme == appStringSearch) {
                         nextSearchQuery =
                             URLDecoder.decode(str.substringAfter("$appStringSearch://"), "UTF-8")
-                        nav_view.selectedItemId = R.id.navigation_search
+
+                        // Use both navigation views to support both layouts.
+                        // It might be better to use the QuickSearch.
+                        nav_view?.selectedItemId = R.id.navigation_search
+                        nav_rail_view?.selectedItemId = R.id.navigation_search
                     } else if (safeURI(str)?.scheme == appStringResumeWatching) {
                         val id =
                             str.substringAfter("$appStringResumeWatching://").toIntOrNull()
@@ -717,6 +725,28 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
 
         changeStatusBarState(isEmulatorSettings())
 
+        // Automatically enable jsdelivr if cant connect to raw.githubusercontent.com
+        if (this.getKey<Boolean>(getString(R.string.jsdelivr_proxy_key)) == null && isNetworkAvailable()) {
+            main {
+                if (checkGithubConnectivity()) {
+                    this.setKey(getString(R.string.jsdelivr_proxy_key), false)
+                } else {
+                    this.setKey(getString(R.string.jsdelivr_proxy_key), true)
+                    val parentView: View = findViewById(android.R.id.content)
+                    Snackbar.make(parentView, R.string.jsdelivr_enabled, Snackbar.LENGTH_LONG).let { snackbar ->
+                        snackbar.setAction(R.string.revert) {
+                            setKey(getString(R.string.jsdelivr_proxy_key), false)
+                        }
+                        snackbar.setBackgroundTint(colorFromAttribute(R.attr.primaryGrayBackground))
+                        snackbar.setTextColor(colorFromAttribute(R.attr.textColor))
+                        snackbar.setActionTextColor(colorFromAttribute(R.attr.colorPrimary))
+                        snackbar.show()
+                    }
+                }
+
+            }
+        }
+
 
         if (PluginManager.checkSafeModeFile()) {
             normalSafeApiCall {
@@ -1089,5 +1119,13 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
 //            }
 //        }
 
+    }
+
+    suspend fun checkGithubConnectivity(): Boolean {
+        return try {
+            app.get("https://raw.githubusercontent.com/recloudstream/.github/master/connectivitycheck", timeout = 5).text.trim() == "ok"
+        } catch (t: Throwable) {
+            false
+        }
     }
 }

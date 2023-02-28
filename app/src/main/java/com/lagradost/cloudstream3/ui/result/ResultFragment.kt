@@ -15,6 +15,7 @@ import android.view.ViewGroup
 import android.widget.AbsListView
 import android.widget.ArrayAdapter
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
@@ -27,12 +28,14 @@ import com.google.android.material.chip.ChipDrawable
 import com.lagradost.cloudstream3.APIHolder.getApiDubstatusSettings
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
 import com.lagradost.cloudstream3.APIHolder.updateHasTrailers
+import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.DubStatus
 import com.lagradost.cloudstream3.MainActivity.Companion.afterPluginsLoadedEvent
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.SearchResponse
 import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.mvvm.*
+import com.lagradost.cloudstream3.services.SubscriptionWorkManager
 import com.lagradost.cloudstream3.syncproviders.providers.Kitsu
 import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_ACTION_DOWNLOAD
@@ -850,7 +853,7 @@ open class ResultFragment : ResultTrailerPlayer() {
         }
 
         observe(viewModel.page) { data ->
-            if(data == null) return@observe
+            if (data == null) return@observe
             when (data) {
                 is Resource.Success -> {
                     val d = data.value
@@ -902,6 +905,36 @@ open class ResultFragment : ResultTrailerPlayer() {
                     result_cast_items?.isVisible = d.actors != null
                     (result_cast_items?.adapter as? ActorAdaptor)?.apply {
                         updateList(d.actors ?: emptyList())
+                    }
+
+                    observeNullable(viewModel.subscribeStatus) { isSubscribed ->
+                        result_subscribe?.isVisible = isSubscribed != null
+                        if (isSubscribed == null) return@observeNullable
+
+                        val drawable = if (isSubscribed) {
+                            R.drawable.ic_baseline_notifications_active_24
+                        } else {
+                            R.drawable.baseline_notifications_none_24
+                        }
+
+                        result_subscribe?.setImageResource(drawable)
+                    }
+
+                    result_subscribe?.setOnClickListener {
+                        val isSubscribed =
+                            viewModel.toggleSubscriptionStatus() ?: return@setOnClickListener
+
+                        val message = if (isSubscribed) {
+                            // Kinda icky to have this here, but it works.
+                            SubscriptionWorkManager.enqueuePeriodicWork(context)
+                            R.string.subscription_new
+                        } else {
+                            R.string.subscription_deleted
+                        }
+
+                        val name = (viewModel.page.value as? Resource.Success)?.value?.title
+                            ?: txt(R.string.no_data).asStringNull(context) ?: ""
+                        showToast(activity, txt(message, name), Toast.LENGTH_SHORT)
                     }
 
                     result_open_in_browser?.isVisible = d.url.startsWith("http")
