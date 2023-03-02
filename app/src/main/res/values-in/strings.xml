@@ -243,7 +243,7 @@
     <string name="dont_show_again">Jangan tunjukkan lagi</string>
     <string name="skip_update">Skip Update ini</string>
     <string name="update">Update</string>
-    <string name="watch_quality_pref">Kualitas tontonan yang lebih diinginkan</string>
+    <string name="watch_quality_pref">Kualitas tontonan yang lebih diinginkan (WIFI)</string>
     <string name="limit_title">Karakter maksimal judul pemutar video</string>
     <string name="limit_title_rez">Resolusi pemutar video</string>
     <string name="video_buffer_size_settings">Ukuran buffer video</string>
@@ -551,4 +551,5 @@
     <string name="jsdelivr_proxy_summary">Bypass pemblokiran Github menggunakan JSDeliVR, dapat menyebabkan pembaruan tertunda beberapa hari.</string>
     <string name="pref_category_bypass">Bypass ISP</string>
     <string name="revert">Pulihkan</string>
+    <string name="watch_quality_pref_data">Nonton dengan kualitas yang di inginkan (Data Seluler)</string>
 </resources>

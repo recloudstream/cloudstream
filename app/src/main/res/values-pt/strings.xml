@@ -3,63 +3,63 @@
     <string name="app_dub_sub_episode_text_format" formatted="true">%s Ep %d</string>
     <string name="next_episode_time_hour_format" formatted="true">%dh %dm</string>
     <string name="next_episode_time_min_format" formatted="true">%dm</string>
-    <string name="next_episode_format" formatted="true">Episódio %d será lançado em</string>
+    <string name="next_episode_format" formatted="true">O episódio %d será lançado em</string>
     <string name="result_poster_img_des">Poster</string>
-    <string name="episode_poster_img_des">Capa do Episódio</string>
+    <string name="episode_poster_img_des">Pôster do episódio</string>
     <string name="search_poster_img_des">Poster</string>
-    <string name="home_main_poster_img_des">Capa Principal</string>
+    <string name="home_main_poster_img_des">Pôster Principal</string>
     <string name="home_next_random_img_des">Próximo Aleatório</string>
     <string name="go_back_img_des">Voltar</string>
-    <string name="home_change_provider_img_des">Trocar Provedor</string>
-    <string name="next_episode_time_day_format" formatted="true">%d dia(s), %d hora(s) e %d mese(s)</string>
+    <string name="home_change_provider_img_des">Alterar Provedor</string>
+    <string name="next_episode_time_day_format" formatted="true">%dd %dh %dm</string>
     <string name="home_source">Fonte</string>
     <string name="resolution">Resolução</string>
     <string name="extras">Extras</string>
-    <string name="preview_background_img_des">Preview Background</string>
+    <string name="preview_background_img_des">Visualizar plano de fundo</string>
     <string name="player_speed_text_format" formatted="true">Velocidade (%.2fx)</string>
     <string name="rated_format" formatted="true">Classificado: %.1f</string>
     <string name="new_update_format" formatted="true">Nova atualização encontrada!
 \n%s -&gt; %s</string>
-    <string name="filler" formatted="true">Enchimento</string>
+    <string name="filler" formatted="true">Preenchimento</string>
     <string name="app_name">CloudStream</string>
-    <string name="play_with_app_name">Reproduzir com CloudStream</string>
+    <string name="play_with_app_name">Assistir com o CloudStream</string>
     <string name="title_home">Início</string>
-    <string name="title_search">Pesquisa</string>
-    <string name="title_downloads">Transferências</string>
-    <string name="title_settings">Opções</string>
+    <string name="title_search">Pesquisar</string>
+    <string name="title_downloads">Downloads</string>
+    <string name="title_settings">Configurações</string>
     <string name="search_hint">Procurar…</string>
-    <string name="search_hint_site" formatted="true">Procurar em %s…</string>
-    <string name="no_data">Sem Dados</string>
-    <string name="episode_more_options_des">Mais Opções</string>
+    <string name="search_hint_site" formatted="true">Pesquisar %s…</string>
+    <string name="no_data">Sem dados</string>
+    <string name="episode_more_options_des">Mais opções</string>
     <string name="next_episode">Próximo episódio</string>
-    <string name="result_tags">Géneros</string>
-    <string name="result_share">Partilhar</string>
-    <string name="result_open_in_browser">Abrir no Navegador</string>
-    <string name="skip_loading">Saltar Carga</string>
+    <string name="result_tags">Gêneros</string>
+    <string name="result_share">Compartilhar</string>
+    <string name="result_open_in_browser">Abrir no navegador</string>
+    <string name="skip_loading">Pular carregamento</string>
     <string name="loading">Carregando…</string>
     <string name="type_watching">Assistindo</string>
-    <string name="type_on_hold">Em Espera</string>
+    <string name="type_on_hold">Em espera</string>
     <string name="type_completed">Concluído</string>
-    <string name="type_dropped">Abandonado</string>
-    <string name="type_plan_to_watch">Planeio Assistir</string>
-    <string name="type_none">Nenhuma</string>
-    <string name="type_re_watching">Assistindo de Novo</string>
-    <string name="play_movie_button">Reproduzir Filme</string>
-    <string name="play_livestream_button">Reproduzir Livestream</string>
+    <string name="type_dropped">Desistido</string>
+    <string name="type_plan_to_watch">Pretendo assistir</string>
+    <string name="type_none">Nenhum</string>
+    <string name="type_re_watching">Reassistindo</string>
+    <string name="play_movie_button">Reproduzir filme</string>
+    <string name="play_livestream_button">Reproduzir transmissão ao vivo</string>
     <string name="play_torrent_button">Transmitir Torrent</string>
     <string name="pick_source">Fontes</string>
     <string name="pick_subtitle">Legendas</string>
-    <string name="reload_error">Voltar a tentar ligação…</string>
-    <string name="go_back">Voltar Atrás</string>
-    <string name="play_episode">Reproduzir Episódio</string>
-    <string name="download">Transferir</string>
-    <string name="downloaded">Transferido</string>
-    <string name="downloading">A Transferir</string>
-    <string name="download_paused">Transferência em Pausa</string>
-    <string name="download_started">Transferência Iniciada</string>
-    <string name="download_failed">Transferência Falhou</string>
-    <string name="download_canceled">Transferência Cancelada</string>
-    <string name="download_done">Transferência Completa</string>
+    <string name="reload_error">Tentar conexão novamente…</string>
+    <string name="go_back">Voltar</string>
+    <string name="play_episode">Reproduzir episódio</string>
+    <string name="download">Download</string>
+    <string name="downloaded">Baixado</string>
+    <string name="downloading">Baixando</string>
+    <string name="download_paused">Download Pausado</string>
+    <string name="download_started">Download Iniciado</string>
+    <string name="download_failed">Falha no Download</string>
+    <string name="download_canceled">Download cancelado</string>
+    <string name="download_done">Download concluído</string>
     <string name="stream">Stream</string>
     <string name="error_loading_links_toast">Erro a Carregar Links</string>
     <string name="download_storage_text">Armazenamento Interno</string>
@@ -142,7 +142,7 @@
     <string name="restore_success">Arquivo de backup carregado</string>
     <string name="restore_failed_format" formatted="true">Falha ao restaurar dados do ficheiro %s</string>
     <string name="backup_success">Dados guardados com sucesso</string>
-    <string name="backup_failed">Permissões de armazenamento em falta, por favor tente de novo</string>
+    <string name="backup_failed">Permissão de armazenamento não encontrada, por favor tente novamente.</string>
     <string name="backup_failed_error_format">Erro no backup de %s</string>
     <string name="search">Procurar</string>
     <string name="category_account">Contas</string>
@@ -250,15 +250,15 @@
     <string name="dont_show_again">Não mostrar de novo</string>
     <string name="skip_update">Saltar esta Atualização</string>
     <string name="update">Atualizar</string>
-    <string name="watch_quality_pref">Qualidade Preferida</string>
-    <string name="limit_title">Máximo de caracteres do título de vídeos</string>
+    <string name="watch_quality_pref">Qualidade Preferida (WiFi)</string>
+    <string name="limit_title">Máximo de caracteres do título no player de video</string>
     <string name="limit_title_rez">Resolução do player de vídeo</string>
     <string name="video_buffer_size_settings">Tamanho do buffer do vídeo</string>
     <string name="video_buffer_length_settings">Comprimento do buffer do vídeo</string>
     <string name="video_buffer_disk_settings">Cache do vídeo em disco</string>
     <string name="video_buffer_clear_settings">Limpar cache de vídeo e imagem</string>
-    <string name="video_ram_description">Causará travamentos aleatórios se definido muito alto. Não mude se tiver pouca memória RAM, como um Android TV ou um telefone antigo</string>
-    <string name="video_disk_description">Pode causar problemas em sistemas com pouco espaço de armazenamento se definido muito alto, como em dispositivos Android TV</string>
+    <string name="video_ram_description">Causará travamentos em dispositivos com pouca memória se definido muito alto , como uma Android TV.</string>
+    <string name="video_disk_description">Pode causar problemas em sistemas com pouco espaço de armazenamento se definido muito alto, como uma Android TV.</string>
     <string name="dns_pref">DNS sobre HTTPS</string>
     <string name="dns_pref_summary">Útil para contornar bloqueios do fornecedor de internet</string>
     <string name="add_site_pref">Clonar site</string>
@@ -363,7 +363,7 @@
     <string name="plugin_loaded">Plugin Carregado</string>
     <string name="plugin_deleted">Plugin Apagado</string>
     <string name="plugin_load_fail" formatted="true">Falha ao carregar %s</string>
-    <string name="batch_download_start_format" formatted="true">Iniciada a transferência %d %s</string>
+    <string name="batch_download_start_format" formatted="true">Download iniciado %d %s…</string>
     <string name="batch_download_finish_format" formatted="true">Transferido %d %s com sucesso</string>
     <string name="batch_download_nothing_to_download_format" formatted="true">Tudo %s já transferido</string>
     <string name="batch_download">Transferência em batch</string>
@@ -375,18 +375,22 @@
     <string name="plugins_downloaded" formatted="true">Transferido: %d</string>
     <string name="plugins_disabled" formatted="true">Desativado: %d</string>
     <string name="plugins_not_downloaded" formatted="true">Não transferido: %d</string>
-    <string name="blank_repo_message">Adicionar um repositório para instalar extensões de sites</string>
+    <string name="blank_repo_message">O CloudStream não possui sites instalados por padrão. Você precisa instalar os sites a partir de repositórios.
+\n
+\nDevido a uma restrição sem sentido de direitos autorais (DMCA) pela Sky UK Limited 🤮 não podemos vincular o site do repositório no aplicativo.
+\n
+\nJunte-se ao nosso Discord ou pesquise online.</string>
     <string name="view_public_repositories_button">Ver repositórios da comunidade</string>
     <string name="view_public_repositories_button_short">Lista pública</string>
     <string name="uppercase_all_subtitles">Todas as legendas em maiúsculas</string>
     <string name="download_all_plugins_from_repo">Transferir todos os plugins deste repositório\?</string>
     <string name="single_plugin_disabled" formatted="true">%s (Desativado)</string>
     <string name="apk_installer_settings">Instalador APK</string>
-    <string name="duration_format" formatted="true">%d minuto(s)</string>
-    <string name="play_trailer_button">Reproduzir trailer</string>
+    <string name="duration_format" formatted="true">%d min</string>
+    <string name="play_trailer_button">Assistir Trailer</string>
     <string name="action_add_to_bookmarks">Marcar como visto/não visto</string>
     <string name="action_open_play">Reproduzir</string>
-    <string name="automatic_plugin_download_summary">Instalar automaticamente todas as extensões dos repositórios cadastrados.</string>
+    <string name="automatic_plugin_download_summary">Instalar automaticamente todos os plugins ainda não instalados dos repositórios adicionados.</string>
     <string name="automatic_plugin_download">Baixar extensões automaticamente</string>
     <string name="redo_setup_process">Refazer o processo de configuração</string>
     <string name="go_back_30">-30</string>
@@ -394,9 +398,9 @@
     <string name="go_forward_30">+30</string>
     <string name="season_format">%s %d%s</string>
     <string name="cast_format" formatted="true">Elenco: %s</string>
-    <string name="update_started">Atualização em andamento</string>
+    <string name="update_started">Atualização iniciada</string>
     <string name="test_log">Log</string>
-    <string name="apk_installer_settings_des">Alguns aparelhos não possuem suporte para o novo instalador de pacotes. Use a opção legado caso não esteja conseguindo atualizar.</string>
+    <string name="apk_installer_settings_des">Alguns aparelhos não suportam o novo instalador de pacotes. Use a opção legado caso não esteja conseguindo atualizar.</string>
     <string name="episodes_range">%d-%d</string>
     <string name="episode_format" formatted="true">%d %s</string>
     <string name="start">Iniciar</string>
@@ -408,4 +412,121 @@
     <string name="ova_singular">Ova</string>
     <string name="anime_singular">Anime</string>
     <string name="android_tv_interface_on_seek_settings">Player visível - Procurar valor</string>
+    <string name="update_notification_installing">Instalando atualização do app…</string>
+    <string name="confirm_exit_dialog">Você tem certeza que deseja sair\?</string>
+    <string name="extension_version">Versão</string>
+    <string name="skip_type_ed">Encerramento</string>
+    <string name="clear_history">Limpar histórico</string>
+    <string name="skip_type_op">Abertura</string>
+    <string name="no">Não</string>
+    <string name="sort_by">Ordenar por</string>
+    <string name="yes">Sim</string>
+    <string name="update_notification_downloading">Baixando atualização do app…</string>
+    <string name="subscription_episode_released">Episódio %d lançado!</string>
+    <string name="skip_type_creddits">Créditos</string>
+    <string name="extension_description">Descrição</string>
+    <string name="extension_size">Tamanho</string>
+    <string name="stop">Parar</string>
+    <string name="safe_mode_title">Modo seguro ligado</string>
+    <string name="history">Histórico</string>
+    <string name="sort">Ordenar</string>
+    <string name="player_settings_play_in_app">Player interno</string>
+    <string name="extension_authors">Autores</string>
+    <string name="extension_types">Suportado</string>
+    <string name="extension_language">Idioma</string>
+    <string name="extension_install_first">Instalar a extensão primeiro</string>
+    <string name="hls_playlist">Playlist HLS</string>
+    <string name="player_pref">Player de vídeo preferido</string>
+    <string name="extension_status">Estado</string>
+    <string name="pref_category_gestures">Gestos</string>
+    <string name="tracks">Faixas</string>
+    <string name="quality_workprint">WP</string>
+    <string name="quality_cam">Cam</string>
+    <string name="skip_type_intro">Abertura</string>
+    <string name="select_library">Selecionar Biblioteca</string>
+    <string name="jsdelivr_proxy_summary">Contorna o bloqueio do GitHub ao usar jsdelivr, pode atrasar atualizações em alguns dias.</string>
+    <string name="player_settings_play_in_vlc">VLC</string>
+    <string name="all_languages_preference">Todas as linguagens</string>
+    <string name="sort_updated_new">Atualizado (Novo para Antigo)</string>
+    <string name="subscription_list_name">Inscrito</string>
+    <string name="quality_hdr">HDR</string>
+    <string name="restart">Reiniciar</string>
+    <string name="player_settings_play_in_browser">Navegador Web</string>
+    <string name="sort_updated_old">Atualizado (Antigo para Novo)</string>
+    <string name="player_settings_play_in_web">Web Video Cast</string>
+    <string name="quality_dvd">DVD</string>
+    <string name="apk_installer_package_installer">Instalador de pacotes</string>
+    <string name="player_settings_play_in_mpv">MPV</string>
+    <string name="action_remove_from_watched">Remover dos assistidos</string>
+    <string name="update_notification_failed">Não foi possível instalar a nova versão do aplicativo</string>
+    <string name="subscription_deleted">Inscrição cancelada em %s</string>
+    <string name="skip_type_mixed_ed">Final misto</string>
+    <string name="sort_rating_desc">Avaliações (Decrescente)</string>
+    <string name="apply_on_restart">Aplicar ao reiniciar</string>
+    <string name="referer">Referente</string>
+    <string name="android_tv_interface_off_seek_settings">Player oculto - Quantidade de Busca</string>
+    <string name="jsdelivr_proxy">raw.githubusercontent.com Proxy</string>
+    <string name="quality_blueray">Blu-ray</string>
+    <string name="pref_category_looks">Aparência</string>
+    <string name="subtitle_offset_hint">1000 ms</string>
+    <string name="quality_sdr">SDR</string>
+    <string name="is_adult">18+</string>
+    <string name="open_with">Abrir com</string>
+    <string name="category_provider_test">Teste de provedor</string>
+    <string name="quality_uhd">UHD</string>
+    <string name="safe_mode_crash_info">Ver informações sobre falha</string>
+    <string name="app_not_found_error">Aplicativo não encontrado</string>
+    <string name="revert">Reverter</string>
+    <string name="network_adress_example">Link para transmitir</string>
+    <string name="plugin_downloaded">Plugins baixados</string>
+    <string name="plugins_updated" formatted="true">%d plugins atualizados</string>
+    <string name="skip_type_format" formatted="true">Pular %s</string>
+    <string name="skip_type_mixed_op">Abertura mista</string>
+    <string name="sort_alphabetical_z">Alfabético (Z a A)</string>
+    <string name="empty_library_logged_in_message">Parece que esta lista está vazia, tente trocar para outra</string>
+    <string name="subscription_new">Inscrito em %s</string>
+    <string name="quality_4k">4K</string>
+    <string name="video_tracks">Faixas de vídeo</string>
+    <string name="delayed_update_notice">O aplicativo será atualizado ao sair</string>
+    <string name="subscription_in_progress_notification">Atualizando shows inscritos</string>
+    <string name="sort_alphabetical_a">Alfabético (A a Z)</string>
+    <string name="sort_rating_asc">Avaliações (Crescente)</string>
+    <string name="empty_library_no_accounts_message">Parece que a sua biblioteca está vazia :(
+\nFaça login em uma conta de biblioteca ou adicione shows à sua biblioteca local</string>
+    <string name="safe_mode_file">Arquivo de modo de segurança encontrado!
+\nNenhuma extensão será carregada na inicialização do app até que o arquivo seja removido.</string>
+    <string name="pref_category_bypass">Contorno do provedor de serviço de internet (ISP)</string>
+    <string name="pref_category_links">Links</string>
+    <string name="pref_category_player_features">Recursos do Player</string>
+    <string name="pref_category_ui_features">Recursos</string>
+    <string name="pref_category_app_updates">Atualizações de aplicativos</string>
+    <string name="watch_quality_pref_data">Qualidade Preferida (Dados Móveis)</string>
+    <string name="android_tv_interface_on_seek_settings_summary">Quantidade de busca (em segundos) usada quando o player de video está visível</string>
+    <string name="android_tv_interface_off_seek_settings_summary">Quantidade de busca (em segundos) usada quando o player de video está oculto</string>
+    <string name="jsdelivr_enabled">Falha ao conectar com GitHub, ativando proxy jsdelivr.</string>
+    <string name="pref_category_cache">Cache</string>
+    <string name="pref_category_android_tv">Android TV</string>
+    <string name="pref_category_subtitles">Legendas</string>
+    <string name="login_format" formatted="true">%s %s</string>
+    <string name="quality_ts">TS</string>
+    <string name="quality_cam_rip">Cam</string>
+    <string name="quality_cam_hd">Cam</string>
+    <string name="quality_hq">HQ</string>
+    <string name="quality_hd">HD</string>
+    <string name="quality_tc">TC</string>
+    <string name="quality_webrip">Web</string>
+    <string name="extension_rating" formatted="true">Nota: %s</string>
+    <string name="apk_installer_legacy">Legado</string>
+    <string name="safe_mode_description">Todas as extensões foram desativadas devido a uma falha para ajudá-lo a encontrar a que está causando o problema.</string>
+    <string name="skip_type_recap">Recapitular</string>
+    <string name="enable_skip_op_from_database_des">Mostrar pop-ups para pular abertura/encerramento</string>
+    <string name="clipboard_too_large">Muito texto. Não é possível salvar na área de transferência.</string>
+    <string name="action_mark_as_watched">Marcar como assistido</string>
+    <string name="pref_category_backup">Backup</string>
+    <string name="pref_category_extensions">Extensões</string>
+    <string name="pref_category_actions">Ações</string>
+    <string name="pref_category_player_layout">Layout</string>
+    <string name="pref_category_defaults">Configurações padrão</string>
+    <string name="quality_sd">SD</string>
+    <string name="audio_tracks">Faixas de áudio</string>
 </resources>

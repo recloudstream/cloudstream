@@ -318,7 +318,7 @@
     <string name="skip_type_creddits">Титры</string>
     <string name="action_mark_as_watched">Отметить как просмотренное</string>
     <string name="limit_title_rez">Разрешение видеоплеера</string>
-    <string name="watch_quality_pref">Желаемое качество видео</string>
+    <string name="watch_quality_pref">Предпочтительное качество видео (WiFi)</string>
     <string name="limit_title">Максимум символов</string>
     <string name="video_buffer_length_settings">Длинна буфера</string>
     <string name="video_buffer_disk_settings">Кеш видео на диске</string>
@@ -518,4 +518,15 @@
     <string name="test_failed">Неудачный</string>
     <string name="stop">Прекратить</string>
     <string name="restart">Перезапустить</string>
+    <string name="revert">Вернуться</string>
+    <string name="subscription_new">Подписался на %s</string>
+    <string name="watch_quality_pref_data">Предпочтительное качество видео (Мобильный интернет)</string>
+    <string name="jsdelivr_proxy">raw.githubusercontent.com Прокси-сервер</string>
+    <string name="jsdelivr_enabled">Не удалось подключиться к GitHub. Будет выполнен прокси jsdelivr.</string>
+    <string name="subscription_episode_released">Эпизод %d выпущен!</string>
+    <string name="pref_category_bypass">Обходы провайдера</string>
+    <string name="subscription_in_progress_notification">Обновление подписки на фильмы и сериалы</string>
+    <string name="jsdelivr_proxy_summary">Обход ограничения доступа к GitHub с помощью jsdelivr может задержать обновления на несколько дней.</string>
+    <string name="subscription_list_name">Подписные</string>
+    <string name="subscription_deleted">Отказались от подписки на %s</string>
 </resources>
