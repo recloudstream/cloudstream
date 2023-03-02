@@ -286,7 +286,7 @@
     <string name="dont_show_again">不再显示</string>
     <string name="skip_update">跳过此更新</string>
     <string name="update">更新</string>
-    <string name="watch_quality_pref">首选播放画质</string>
+    <string name="watch_quality_pref">首选播放画质（WiFi）</string>
     <string name="limit_title">视频播放器标题最多字符</string>
     <string name="limit_title_rez">视频播放器标题</string>
     <string name="video_buffer_size_settings">视频缓冲大小</string>
@@ -576,4 +576,5 @@
     <string name="jsdelivr_proxy_summary">使用 jsdelivr 绕过对 Github 的封锁，可能导致更新延迟几天。</string>
     <string name="pref_category_bypass">ISP 绕过</string>
     <string name="revert">还原</string>
+    <string name="watch_quality_pref_data">首选播放画质（移动数据）</string>
 </resources>

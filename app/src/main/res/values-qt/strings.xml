@@ -219,4 +219,33 @@
     <string name="sort_copy">uuuuhhhoouuooog ooaaahhhh</string>
     <string name="sort_close">uuu ugggg</string>
     <string name="sort_clear">ooo guggg ooh</string>
+    <string name="tracks">auuuooohaaaaagh</string>
+    <string name="library">uuuuuuuh aaaoo o</string>
+    <string name="category_updates">ooooooouuuua aa aaagh agh</string>
+    <string name="ova">AAAAUUUOH</string>
+    <string name="subscription_list_name">aoughoooaaaa</string>
+    <string name="movies_singular">oooouuuh</string>
+    <string name="category_player">ahaough aaouuuuh-h</string>
+    <string name="tv_series_singular">auughooo</string>
+    <string name="pref_category_player_layout">ooooooa aauoh</string>
+    <string name="subs_subtitle_languages">aaaaagh oouoo aaaaaaa</string>
+    <string name="category_account">aaaaaagh uuohuoh</string>
+    <string name="extensions">aaaaaauo agghhhhhhaoouu</string>
+    <string name="others">uuuuuuuuh</string>
+    <string name="test_log">ouaaahh</string>
+    <string name="subs_import_text" formatted="true">ooough aaoough aooou %s aaaa</string>
+    <string name="documentaries">ouooooouuuu oooooo</string>
+    <string name="livestreams">aaaaaaaaaaahhhgh-aooohoooo</string>
+    <string name="pref_category_extensions">aau aooooghaao</string>
+    <string name="provider_info_meta">aagh aaaaaaaaaaaa oooh, aaough, ooga oguuu aaaaaaaaaaa ooooooohghh a-a-aaauo</string>
+    <string name="resume_time_left" formatted="true">%dmmmmmm..
+\naaaaooughugh</string>
+    <string name="asian_drama">aooohuohaaaa ooooagh</string>
+    <string name="subtitle_offset">oooooogh-aaaaaogh</string>
+    <string name="trailer">guuuaaaahhhhhhhaaa</string>
+    <string name="show_log_cat">woooaaahh ahahaaaauu 🦍</string>
+    <string name="nsfw">AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAOOOGGAGHAGHAAA</string>
+    <string name="clear_history">aoaaaaaoooghhh</string>
+    <string name="sort_save">oooooh uuaagh</string>
+    <string name="action_open_play">\@string/home_play</string>
 </resources>

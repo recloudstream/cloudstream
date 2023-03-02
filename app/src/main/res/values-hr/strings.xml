@@ -553,4 +553,5 @@
     <string name="jsdelivr_proxy">raw.githubusercontent.com Proxy</string>
     <string name="jsdelivr_enabled">Neuspješno dohvaćanje GitHuba, omogućavanje jsdelivr proxyja.</string>
     <string name="jsdelivr_proxy_summary">Zaobilazi blokiranje GitHuba pomoću jsdelivr, može uzrokovati odgode ažuriranja za nekoliko dana.</string>
+    <string name="watch_quality_pref_data">Preferirana kvaliteta gledanja (podatkovna mobilna mreža)</string>
 </resources>

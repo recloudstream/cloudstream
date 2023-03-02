@@ -506,11 +506,11 @@
 \nInicia sesión en una cuenta de biblioteca o añade series desde tu biblioteca local</string>
     <string name="safe_mode_file">¡Se encontró un archivo en modo seguro!
 \nNo cargar ninguna extensión al inicio hasta que se elimine el archivo.</string>
-    <string name="android_tv_interface_on_seek_settings">Jugadora mostrada - buscar cantidad</string>
-    <string name="android_tv_interface_off_seek_settings">Jugadora oculta - buscar cantidad</string>
+    <string name="android_tv_interface_on_seek_settings">Reproductor visible - buscar cantidad</string>
+    <string name="android_tv_interface_off_seek_settings">Reproductor oculto - buscar cantidad</string>
     <string name="pref_category_android_tv">Android TV</string>
-    <string name="android_tv_interface_on_seek_settings_summary">La cantidad de búsqueda utilizada cuando la jugadora es visible</string>
-    <string name="android_tv_interface_off_seek_settings_summary">La cantidad de búsqueda utilizada cuando el jugador está oculto</string>
+    <string name="android_tv_interface_on_seek_settings_summary">Tiempo de búsqueda usado (en segundos) cuando el reproductor está visible</string>
+    <string name="android_tv_interface_off_seek_settings_summary">Tiempo de búsqueda usado (en segundos) cuando el reproductor está oculto</string>
     <string name="stop">Parar</string>
     <string name="test_failed">Falló</string>
     <string name="test_log">Registro</string>
