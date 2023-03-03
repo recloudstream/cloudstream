@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/home_header"
     android:layout_width="match_parent"
@@ -86,7 +85,6 @@
             android:gravity="center"
             android:orientation="vertical">
 
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -115,7 +113,6 @@
                     style="@style/WhiteButton"
                     android:layout_width="wrap_content"
                     android:layout_gravity="center"
-
                     android:text="@string/home_play"
                     app:icon="@drawable/ic_baseline_play_arrow_24" />
 
@@ -148,17 +145,16 @@
 
         <TextView
             android:id="@+id/home_watch_parent_item_title"
-
             style="@style/WatchHeaderText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginEnd="0dp"
+            android:background="?android:attr/selectableItemBackground"
+            android:contentDescription="@string/home_more_info"
             android:padding="12dp"
             android:text="@string/continue_watching"
             app:drawableRightCompat="@drawable/ic_baseline_arrow_forward_24"
-            app:drawableTint="?attr/white"
-            android:background="?android:attr/selectableItemBackground"
-            android:contentDescription="@string/home_more_info"/>
+            app:drawableTint="?attr/white" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/home_watch_child_recyclerview"
@@ -167,7 +163,7 @@
             android:clipToPadding="false"
             android:descendantFocusability="afterDescendants"
             android:orientation="horizontal"
-            android:paddingEnd="5dp"
+            android:paddingHorizontal="5dp"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             tools:listitem="@layout/home_result_grid" />
 
@@ -184,9 +180,9 @@
         <FrameLayout
             android:id="@+id/home_bookmark_parent_item_title"
 
-            android:background="?android:attr/selectableItemBackground"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:background="?android:attr/selectableItemBackground">
 
             <HorizontalScrollView
                 android:layout_width="match_parent"
@@ -262,14 +258,13 @@
             </HorizontalScrollView>
 
             <ImageView
-                android:layout_marginEnd="12dp"
-                android:layout_gravity="end"
-
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
+                android:layout_gravity="end"
+                android:layout_marginEnd="12dp"
+                android:contentDescription="@string/home_more_info"
                 android:src="@drawable/ic_baseline_arrow_forward_24"
-                app:drawableTint="?attr/white"
-                android:contentDescription="@string/home_more_info"/>
+                app:drawableTint="?attr/white" />
         </FrameLayout>
 
         <androidx.recyclerview.widget.RecyclerView
@@ -277,10 +272,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:clipToPadding="false"
-
             android:descendantFocusability="afterDescendants"
             android:orientation="horizontal"
-            android:paddingEnd="5dp"
+            android:paddingHorizontal="5dp"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             tools:listitem="@layout/home_result_grid" />
     </LinearLayout>

@@ -23,9 +23,7 @@
             android:nextFocusUp="@id/home_child_more_info"
             android:paddingHorizontal="5dp"
             android:clipToPadding="false"
-
             android:descendantFocusability="afterDescendants"
-
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             android:id="@+id/home_child_recyclerview"
             android:orientation="horizontal"

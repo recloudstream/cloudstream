@@ -84,6 +84,7 @@ const val HORIZONTAL_MULTIPLIER = 2.0f
 const val DOUBLE_TAB_MAXIMUM_HOLD_TIME = 200L
 const val DOUBLE_TAB_MINIMUM_TIME_BETWEEN = 200L    // this also affects the UI show response time
 const val DOUBLE_TAB_PAUSE_PERCENTAGE = 0.15        // in both directions
+private const val SUBTITLE_DELAY_BUNDLE_KEY = "subtitle_delay"
 
 // All the UI Logic for the player
 open class FullScreenPlayer : AbstractPlayerFragment() {
@@ -1120,11 +1121,20 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         resetRewindText()
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        // As this is video specific it is better to not do any setKey/getKey
+        outState.putLong(SUBTITLE_DELAY_BUNDLE_KEY, subtitleDelay)
+        super.onSaveInstanceState(outState)
+    }
+
     @SuppressLint("ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         // init variables
         setPlayBackSpeed(getKey(PLAYBACK_SPEED_KEY) ?: 1.0f)
+        savedInstanceState?.getLong(SUBTITLE_DELAY_BUNDLE_KEY)?.let {
+            subtitleDelay = it
+        }
 
         // handle tv controls
         playerEventListener = { eventType ->
