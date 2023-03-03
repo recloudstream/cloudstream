@@ -105,14 +105,12 @@ class SubscriptionWorkManager(val context: Context, workerParams: WorkerParamete
             SUBSCRIPTION_CHANNEL_DESCRIPTION
         )
 
-        safeApiCall {
-            setForeground(
-                ForegroundInfo(
-                    SUBSCRIPTION_NOTIFICATION_ID,
-                    progressNotificationBuilder.build()
-                )
+        setForeground(
+            ForegroundInfo(
+                SUBSCRIPTION_NOTIFICATION_ID,
+                progressNotificationBuilder.build()
             )
-        }
+        )
 
         val subscriptions = getAllSubscriptions()
 
@@ -196,7 +194,15 @@ class SubscriptionWorkManager(val context: Context, workerParams: WorkerParamete
                             PendingIntent.getActivity(context, 0, intent, 0)
                         }
 
-                    val poster = ioWork { savedData.posterUrl?.let { url -> context.getImageBitmapFromUrl(url, savedData.posterHeaders) } }
+                    val poster = ioWork {
+                        savedData.posterUrl?.let { url ->
+                            context.getImageBitmapFromUrl(
+                                url,
+                                savedData.posterHeaders
+                            )
+                        }
+                    }
+
                     val updateNotification =
                         updateNotificationBuilder.setContentTitle(updateHeader)
                             .setContentText(updateDescription)
