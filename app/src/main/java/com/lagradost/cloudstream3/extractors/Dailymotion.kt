@@ -6,6 +6,7 @@ import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
+import com.lagradost.cloudstream3.utils.M3u8Helper.Companion.generateM3u8
 import com.lagradost.cloudstream3.utils.Qualities
 import java.net.URL
 
@@ -42,18 +43,9 @@ open class Dailymotion : ExtractorApi() {
         )
         val metaData = app.get(metaDataUrl, referer = embedUrl, cookies = cookies)
             .parsedSafe<MetaData>() ?: return
-        metaData.qualities.forEach { (key, video) ->
+        metaData.qualities.forEach { (_, video) ->
             video.forEach {
-                callback.invoke(
-                    ExtractorLink(
-                        name,
-                        "$name $key",
-                        it.url,
-                        "",
-                        Qualities.Unknown.value,
-                        true
-                    )
-                )
+                getStream(it.url, this.name, callback)
             }
         }
     }
@@ -75,6 +67,17 @@ open class Dailymotion : ExtractorApi() {
         return null
     }
 
+    private suspend fun getStream(
+        streamLink: String,
+        name: String,
+        callback: (ExtractorLink) -> Unit
+    )  {
+        return generateM3u8(
+            name,
+            streamLink,
+            "",
+        ).forEach(callback)
+    }
     data class Config(
         val context: Context,
         val dmInternalData: InternalData
