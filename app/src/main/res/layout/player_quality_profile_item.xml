@@ -25,7 +25,7 @@
         android:layout_height="wrap_content"
         android:textSize="16sp"
         android:padding="10dp"
-        tools:text="Mobile data" />
+        tools:text="@string/mobile_data" />
 
     <TextView
         android:id="@+id/text_is_wifi"
