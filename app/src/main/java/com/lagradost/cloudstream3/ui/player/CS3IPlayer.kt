@@ -1196,10 +1196,10 @@ class CS3IPlayer : IPlayer {
                 HttpsURLConnection.setDefaultSSLSocketFactory(sslContext.socketFactory)
             }
 
-            val mime = if (link.isM3u8) {
-                MimeTypes.APPLICATION_M3U8
-            } else {
-                MimeTypes.VIDEO_MP4
+            val mime = when {
+                link.isM3u8 -> MimeTypes.APPLICATION_M3U8
+                link.isDash -> MimeTypes.APPLICATION_MPD
+                else -> MimeTypes.VIDEO_MP4
             }
 
             val mediaItems = if (link is ExtractorLinkPlayList) {
