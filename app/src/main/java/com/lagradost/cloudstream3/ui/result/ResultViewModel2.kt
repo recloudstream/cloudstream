@@ -3,6 +3,7 @@ package com.lagradost.cloudstream3.ui.result
 import android.app.Activity
 import android.content.*
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -1125,7 +1126,12 @@ class ResultViewModel2 : ViewModel() {
             1L
         }
 
-        component = VLC_COMPONENT
+        // Component no longer safe to use in A13 for VLC
+        // https://code.videolan.org/videolan/vlc-android/-/issues/2776
+        // This will likely need to be updated once VLC fixes their documentation.
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+            component = VLC_COMPONENT
+        }
 
         putExtra("from_start", !resume)
         putExtra("position", position)
