@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="search_poster_img_des">Постер</string>
-    <string name="episode_poster_img_des">Постер епізоду</string>
+    <string name="episode_poster_img_des">Постер до епізоду</string>
     <string name="download_canceled">Завантаження скасовано</string>
     <string name="home_change_provider_img_des">Змінити постачальника</string>
     <string name="go_back_img_des">Назад</string>
     <string name="rated_format" formatted="true">Рейтинг: %.1f</string>
     <string name="cast_format" formatted="true">Актори: %s</string>
-    <string name="next_episode_format" formatted="true">Епізод %d буде випущено через</string>
+    <string name="next_episode_format" formatted="true">Епізод %d вийде через</string>
     <string name="result_poster_img_des">Poster</string>
     <string name="app_dub_sub_episode_text_format" formatted="true">%s Еп. %d</string>
     <string name="next_episode_time_day_format" formatted="true">%dд %dгод %dхв</string>
@@ -15,16 +15,16 @@
     <string name="next_episode_time_min_format" formatted="true">%dхв</string>
     <string name="home_main_poster_img_des">Головний постер</string>
     <string name="home_next_random_img_des">Наступний випадковий</string>
-    <string name="preview_background_img_des">Перегляд фону</string>
+    <string name="preview_background_img_des">Попередній перегляд фону</string>
     <string name="player_speed_text_format" formatted="true">Швидкість (%.2fx)</string>
-    <string name="new_update_format" formatted="true">Нове оновлення знайдено!
+    <string name="new_update_format" formatted="true">Знайдено нове оновлення!
 \n%s -&gt; %s</string>
     <string name="title_search">Пошук</string>
     <string name="title_downloads">Завантаження</string>
     <string name="duration_format" formatted="true">%d хв</string>
     <string name="title_settings">Параметри</string>
     <string name="search_hint">Пошук…</string>
-    <string name="search_hint_site" formatted="true">Пошук %s…</string>
+    <string name="search_hint_site" formatted="true">Пошук на %s…</string>
     <string name="no_data">Дані відсутні</string>
     <string name="episode_more_options_des">Більше опцій</string>
     <string name="next_episode">Наступний епізод</string>
@@ -37,7 +37,7 @@
     <string name="type_dropped">Покинуто</string>
     <string name="play_movie_button">Переглянути фільм</string>
     <string name="play_trailer_button">Переглянути трейлер</string>
-    <string name="play_torrent_button">Переглянути торрент</string>
+    <string name="play_torrent_button">Трансляція через торрент</string>
     <string name="reload_error">Повторити підключення…</string>
     <string name="go_back">Назад</string>
     <string name="play_episode">Переглянути епізод</string>
@@ -87,13 +87,13 @@
     <string name="chromecast_subtitles_settings_des">Налаштування субтитрів Chromecast</string>
     <string name="eigengraumode_settings">Режим Eigengravy</string>
     <string name="swipe_to_change_settings">Проведіть пальцем, щоб змінити налаштування</string>
-    <string name="swipe_to_change_settings_des">Проведіть пальцем ліворуч або праворуч, щоб змінити яскравість або гучність</string>
+    <string name="swipe_to_change_settings_des">Проведіть пальцем вгору або вниз ліворуч або праворуч, щоб змінити яскравість або гучність</string>
     <string name="autoplay_next_settings_des">Відтворення наступного епізоду після закінчення поточного</string>
     <string name="title_home">Головна</string>
     <string name="app_name">CloudStream</string>
     <string name="filler" formatted="true">Філер</string>
     <string name="play_with_app_name">Програти в CloudStream</string>
-    <string name="stream">Потік</string>
+    <string name="stream">Трансляція</string>
     <string name="type_watching">Переглядаю</string>
     <string name="result_share">Поділитися</string>
     <string name="type_on_hold">Відкладено</string>
@@ -121,7 +121,7 @@
     <string name="subs_text_color">Колір тексту</string>
     <string name="subs_outline_color">Колір контуру</string>
     <string name="autoplay_next_settings">Автовідтворення наступного епізоду</string>
-    <string name="swipe_to_seek_settings_des">Проведіть пальцем ліворуч або праворуч, щоб керувати часом у відеоплеєрі</string>
+    <string name="swipe_to_seek_settings_des">Проведіть пальцем з боку в бік, щоб керувати своїм положенням у відео</string>
     <string name="benene_count_text">%d Бананів для розробників</string>
     <string name="player_size_settings">Кнопка зміни розміру плеєра</string>
     <string name="action_open_play">\@string/home_play</string>
@@ -133,8 +133,8 @@
     <string name="swipe_to_seek_settings">Проведіть пальцем, щоб перемотати</string>
     <string name="double_tap_to_seek_settings">Двічі торкніться, щоб перемотати</string>
     <string name="double_tap_to_pause_settings">Двічі торкніться для паузи</string>
-    <string name="double_tap_to_seek_amount_settings">Крок перемотки</string>
-    <string name="double_tap_to_pause_settings_des">Натисніть посередині, щоб поставити на паузу</string>
+    <string name="double_tap_to_seek_amount_settings">Крок перемотки (Секунди)</string>
+    <string name="double_tap_to_pause_settings_des">Натисніть двічі посередині, щоб призупинити</string>
     <string name="use_system_brightness_settings">Використовувати яскравість системи</string>
     <string name="episode_sync_settings">Оновити прогрес перегляду</string>
     <string name="restore_settings">Відновлення даних з резервної копії</string>
@@ -230,7 +230,7 @@
     <string name="kitsu_settings">Показати постери від Kitsu</string>
     <string name="automatic_plugin_updates">Автоматичне оновлення плагінів</string>
     <string name="automatic_plugin_download_summary">Автоматично встановлювати всі ще не встановлені плагіни з доданих репозиторіїв.</string>
-    <string name="updates_settings_des">Автоматичний пошук нових оновлень при запуску</string>
+    <string name="updates_settings_des">Автоматично шукати нові оновлення після запуску застосунку.</string>
     <string name="uprereleases_settings">Оновлення до бета-версій</string>
     <string name="copy_link_toast">Посилання скопійовано в буфер обміну</string>
     <string name="apk_installer_settings_des">Деякі телефони не підтримують новий інсталятор пакетів. Спробуйте стару версію, якщо оновлення не встановлюються.</string>
@@ -255,7 +255,7 @@
     <string name="documentaries">Документальні фільми</string>
     <string name="nsfw">NSFW</string>
     <string name="movies_singular">Фільм</string>
-    <string name="ova_singular">\@string/ova</string>
+    <string name="ova_singular">OVA</string>
     <string name="torrent_singular">Торрент</string>
     <string name="show_hd">Мітка якості</string>
     <string name="nsfw_singular">NSFW</string>
@@ -283,7 +283,7 @@
     <string name="pref_category_ui_features">Особливості</string>
     <string name="category_general">Загальне</string>
     <string name="random_button_settings">Випадкова кнопка</string>
-    <string name="random_button_settings_desc">Показати випадкову кнопку на Головній сторінці</string>
+    <string name="random_button_settings_desc">Показує кнопку на Головній сторінці, яка може вибрати випадковий фільм або серіал на Головній сторінці</string>
     <string name="provider_lang_settings">Мови постачальника</string>
     <string name="app_layout">Макет програми</string>
     <string name="preferred_media_settings">Бажані медіа</string>
@@ -524,10 +524,9 @@
     <string name="subscription_deleted">Відписатися від %s</string>
     <string name="subscription_episode_released">Епізод %d випущено!</string>
     <string name="revert">Повернути</string>
-    <string name="jsdelivr_proxy">raw.githubusercontent.com
-\nProxy</string>
+    <string name="jsdelivr_proxy">raw.githubusercontent.com Proxy</string>
     <string name="jsdelivr_enabled">Не вдалося зв\'язатися з GitHub, увімкнувши проксі-сервер jsdelivr.</string>
     <string name="pref_category_bypass">Обходи ISP</string>
-    <string name="jsdelivr_proxy_summary">Обходити блокування GitHub з використанням jsdlitr, може викликати затримку оновлень на кілька днів.</string>
+    <string name="jsdelivr_proxy_summary">За допомогою jsdelivr можна обійти блокування GitHub. Можлива затримка оновлень на кілька днів.</string>
     <string name="watch_quality_pref_data">Бажана якість перегляду (Мобільні дані)</string>
 </resources>

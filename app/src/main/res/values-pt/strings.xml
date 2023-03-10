@@ -123,16 +123,16 @@
     <string name="eigengraumode_settings">Modo Eigengravy</string>
     <string name="eigengraumode_settings_des">Acrescenta uma opção de velocidade no player</string>
     <string name="swipe_to_seek_settings">Deslize para andar</string>
-    <string name="swipe_to_seek_settings_des">Deslize para a esq. ou dir. para controlar o tempo no player</string>
+    <string name="swipe_to_seek_settings_des">Deslize para os lados para controlar a posição em um vídeo</string>
     <string name="swipe_to_change_settings">Deslize para mudar as configurações</string>
-    <string name="swipe_to_change_settings_des">Deslize do lado esq. ou dir. para ajustar brilho ou volume</string>
+    <string name="swipe_to_change_settings_des">Deslize para cima ou para baixo, no lado esquerdo ou direito, para ajustar brilho ou volume</string>
     <string name="autoplay_next_settings">Reproduzir automaticamente próximo episódio</string>
     <string name="autoplay_next_settings_des">Começa o próximo episódio quando o atual termina</string>
     <string name="double_tap_to_seek_settings">Toque duplo para avançar</string>
     <string name="double_tap_to_pause_settings">Toque duplo para pôr em pausa</string>
-    <string name="double_tap_to_seek_amount_settings">Segundos avançados no player</string>
+    <string name="double_tap_to_seek_amount_settings">Tempo de busca no player (Segundos)</string>
     <string name="double_tap_to_seek_settings_des">Toque duplo no lado esq. ou dir. para andar para trás ou para a frente</string>
-    <string name="double_tap_to_pause_settings_des">Toque no meio para pôr em pausa</string>
+    <string name="double_tap_to_pause_settings_des">Toque duas vezes no meio para pausar</string>
     <string name="use_system_brightness_settings">Usar brilho da sistema</string>
     <string name="use_system_brightness_settings_des">Usar brilho do sistema no player em vez de uma sobreposição escura</string>
     <string name="episode_sync_settings">Atualizar progresso</string>
@@ -158,7 +158,7 @@
     <string name="pref_filter_search_quality">Esconder qualidades de vídeo selecionadas nos resultados da Pesquisa</string>
     <string name="automatic_plugin_updates">Atualizações de plugin automáticas</string>
     <string name="updates_settings">Mostrar atualizações da app</string>
-    <string name="updates_settings_des">Procurar novas atualizações automaticamente ao iniciar</string>
+    <string name="updates_settings_des">Procurar automaticamente por novas atualizações depois de iniciar o app.</string>
     <string name="uprereleases_settings">Atualizar para pré-lançamentos</string>
     <string name="uprereleases_settings_des">Procura atualizações de pré-lançamento em vez de só lançamentos oficiais</string>
     <string name="github">Github</string>
@@ -273,7 +273,7 @@
     <string name="legal_notice">Aviso Legal</string>
     <string name="category_general">Geral</string>
     <string name="random_button_settings">Botão Aleatório</string>
-    <string name="random_button_settings_desc">Mostra o botão Aleatório na página inicial</string>
+    <string name="random_button_settings_desc">Mostra o botão Aleatório na página inicial, que pode escolher aleatoriamente um filme ou série</string>
     <string name="provider_lang_settings">Idioma dos fornecedores</string>
     <string name="app_layout">Layout da App</string>
     <string name="preferred_media_settings">Mídia preferida</string>
@@ -444,7 +444,7 @@
     <string name="quality_cam">Cam</string>
     <string name="skip_type_intro">Abertura</string>
     <string name="select_library">Selecionar Biblioteca</string>
-    <string name="jsdelivr_proxy_summary">Contorna o bloqueio do GitHub ao usar jsdelivr, pode atrasar atualizações em alguns dias.</string>
+    <string name="jsdelivr_proxy_summary">Usando jsdelivr o bloqueio do GitHub pode ser contornado. Pode atrasar atualizações em alguns dias.</string>
     <string name="player_settings_play_in_vlc">VLC</string>
     <string name="all_languages_preference">Todas as linguagens</string>
     <string name="sort_updated_new">Atualizado (Novo para Antigo)</string>

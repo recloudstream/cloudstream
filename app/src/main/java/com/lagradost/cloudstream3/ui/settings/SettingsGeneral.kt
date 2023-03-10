@@ -78,6 +78,7 @@ val appLanguages = arrayListOf(
     Triple("", "ಕನ್ನಡ", "kn"),
     Triple("", "македонски", "mk"),
     Triple("", "മലയാളം", "ml"),
+    Triple("", "bahasa Melayu", "ms"),
     Triple("", "Nederlands", "nl"),
     Triple("", "norsk nynorsk", "nn"),
     Triple("", "norsk bokmål", "no"),

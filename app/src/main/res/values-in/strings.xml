@@ -120,14 +120,14 @@
     <string name="eigengraumode_settings">Mode Eigengravy</string>
     <string name="eigengraumode_settings_des">Menambahkan opsi kecepatan di pemutar</string>
     <string name="swipe_to_seek_settings">Geser untuk mengubah waktu</string>
-    <string name="swipe_to_seek_settings_des">Geser ke kiri atau kanan untuk mengontrol waktu di pemutar video</string>
+    <string name="swipe_to_seek_settings_des">Geser dari sisi ke sisi untuk mengontrol posisi dalam video</string>
     <string name="swipe_to_change_settings">Geser untuk mengubah pengaturan</string>
-    <string name="swipe_to_change_settings_des">Geser ke sisi kiri atau kanan untuk mengubah pencerahan atau volume</string>
+    <string name="swipe_to_change_settings_des">Geser ke atas atau ke bawah di sisi kiri atau kanan untuk mengubah kecerahan atau volume</string>
     <string name="double_tap_to_seek_settings">Tekan dua kali untuk mengubah waktu</string>
     <string name="double_tap_to_pause_settings">Tekan dua kali untuk menjeda</string>
-    <string name="double_tap_to_seek_amount_settings">Jumlah pengubah waktu pemutar</string>
+    <string name="double_tap_to_seek_amount_settings">Jumlah pengubah waktu pemutar (Detik)</string>
     <string name="double_tap_to_seek_settings_des">Tekan dua kali di sisi kanan atau kiri untuk mengubah waktu ke depan atau ke belakang</string>
-    <string name="double_tap_to_pause_settings_des">Tekan di tengah untuk menjeda</string>
+    <string name="double_tap_to_pause_settings_des">Tekan dua kali di tengah untuk menjeda</string>
     <string name="use_system_brightness_settings">Gunakan pencerahan sistem</string>
     <string name="use_system_brightness_settings_des">Gunakan pencerahan sistem di pemutar aplikasi dari pada hamparan gelap</string>
     <string name="episode_sync_settings">Update progres tontonan</string>
@@ -149,7 +149,7 @@
     <string name="bug_report_settings_on">Tidak mengirim data</string>
     <string name="show_fillers_settings">Tampilkan episode filler untuk anime</string>
     <string name="updates_settings">Tampilkan update aplikasi</string>
-    <string name="updates_settings_des">Secara otomatis mencari update terbaru saat aplikasi dibuka</string>
+    <string name="updates_settings_des">Secara otomatis mencari update terbaru setelah aplikasi dibuka.</string>
     <string name="uprereleases_settings">Update ke prarilis</string>
     <string name="uprereleases_settings_des">Hanya mencari update prarilis daripada rilis penuh</string>
     <string name="github">Github</string>
@@ -209,8 +209,8 @@
     <string name="movies_singular">Movie</string>
     <string name="tv_series_singular">Seri</string>
     <string name="cartoons_singular">Kartun</string>
-    <string name="anime_singular">\@string/anime</string>
-    <string name="ova_singular">\@string/ova</string>
+    <string name="anime_singular">Anime</string>
+    <string name="ova_singular">OVA</string>
     <string name="torrent_singular">Torrent</string>
     <string name="documentaries_singular">Film Dokumenter</string>
     <string name="asian_drama_singular">Drama Asia</string>
@@ -264,7 +264,7 @@
     <string name="legal_notice_text" translatable="false">Any legal issues regarding the content on this application should be taken up with the actual file hosts and providers themselves as we are not affiliated with them. In case of copyright infringement, please directly contact the responsible parties or the streaming websites. The app is purely for educational and personal use. CloudStream 3 does not host any content on the app, and has no control over what media is put up or taken down. CloudStream 3 functions like any other search engine, such as Google. CloudStream 3 does not host, upload or manage any videos, films or content. It simply crawls, aggregates and displayes links in a convenient, user-friendly interface. It merely scrapes 3rd-party websites that are publicly accessable via any regular web browser. It is the responsibility of user to avoid any actions that might violate the laws governing his/her locality. Use CloudStream 3 at your own risk.</string>
     <string name="category_general">Umum</string>
     <string name="random_button_settings">Tombol Acak</string>
-    <string name="random_button_settings_desc">Tampilkan tombol acak di Beranda</string>
+    <string name="random_button_settings_desc">Tampilkan tombol di halaman utama yang dapat memilih seri film atau TV acak dari halaman utama</string>
     <string name="provider_lang_settings">Bahasa provider</string>
     <string name="app_layout">Tata Letak Aplikasi</string>
     <string name="preferred_media_settings">Media yang lebih diinginkan</string>
@@ -548,7 +548,7 @@
     <string name="subscription_episode_released">Episode %d telah rilis!</string>
     <string name="jsdelivr_proxy">raw.githubusercontent.com Proksi</string>
     <string name="jsdelivr_enabled">Gagal mencapai GitHub, mengaktifkan proksi jsdelivr.</string>
-    <string name="jsdelivr_proxy_summary">Bypass pemblokiran Github menggunakan JSDeliVR, dapat menyebabkan pembaruan tertunda beberapa hari.</string>
+    <string name="jsdelivr_proxy_summary">Mengunakan jsdelivers, bisa melewati pemblokiran GitHub. Mungkin dapat menyebabkan pembaruan tertunda dalam beberapa hari.</string>
     <string name="pref_category_bypass">Bypass ISP</string>
     <string name="revert">Pulihkan</string>
     <string name="watch_quality_pref_data">Nonton dengan kualitas yang di inginkan (Data Seluler)</string>
