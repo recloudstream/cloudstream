@@ -210,17 +210,17 @@
     <string name="eigengraumode_settings">Eigengravy Mode</string>
     <string name="eigengraumode_settings_des">Adds a speed option in the player</string>
     <string name="swipe_to_seek_settings">Swipe to seek</string>
-    <string name="swipe_to_seek_settings_des">Swipe left or right to control time in the videoplayer</string>
+    <string name="swipe_to_seek_settings_des">Swipe from side to side to control your position in a video</string>
     <string name="swipe_to_change_settings">Swipe to change settings</string>
-    <string name="swipe_to_change_settings_des">Swipe on the left or right side to change brightness or volume</string>
+    <string name="swipe_to_change_settings_des">Slide up or down on the left or right side to change brightness or volume</string>
     <string name="autoplay_next_settings">Autoplay next episode</string>
     <string name="autoplay_next_settings_des">Start the next episode when the current one ends</string>
     <string name="double_tap_to_seek_settings">Double tap to seek</string>
     <string name="double_tap_to_pause_settings">Double tap to pause</string>
-    <string name="double_tap_to_seek_amount_settings">Player seek amount</string>
+    <string name="double_tap_to_seek_amount_settings">Player seek amount (Seconds)</string>
     <string name="double_tap_to_seek_settings_des">Tap twice on the right or left side to seek forwards or backwards
     </string>
-    <string name="double_tap_to_pause_settings_des">Tap in the middle to pause</string>
+    <string name="double_tap_to_pause_settings_des">Tap twice in the middle to pause</string>
     <string name="use_system_brightness_settings">Use system brightness</string>
     <string name="use_system_brightness_settings_des">Use system brightness in the app player instead of a dark
         overlay
@@ -251,7 +251,7 @@
     <string name="automatic_plugin_download">Automatically download plugins</string>
     <string name="automatic_plugin_download_summary">Automatically install all not yet installed plugins from added repositories.</string>
     <string name="updates_settings">Show app updates</string>
-    <string name="updates_settings_des">Automatically search for new updates on start</string>
+    <string name="updates_settings_des">Automatically search for new updates after starting the app.</string>
     <string name="redo_setup_process">Redo setup process</string>
     <string name="uprereleases_settings">Update to prereleases</string>
     <string name="uprereleases_settings_des">Search for prerelease updates instead of full releases only</string>
@@ -324,8 +324,8 @@
     <string name="movies_singular">Movie</string>
     <string name="tv_series_singular">Series</string>
     <string name="cartoons_singular">Cartoon</string>
-    <string name="anime_singular">@string/anime</string>
-    <string name="ova_singular">@string/ova</string>
+    <string name="anime_singular">Anime</string>
+    <string name="ova_singular">OVA</string>
     <string name="torrent_singular">Torrent</string>
     <string name="documentaries_singular">Documentary</string>
     <string name="asian_drama_singular">Asian Drama</string>
@@ -383,7 +383,7 @@
     <string name="dns_pref_summary">Useful for bypassing ISP blocks</string>
     <string name="jsdelivr_proxy">raw.githubusercontent.com Proxy</string>
     <string name="jsdelivr_enabled">Failed to reach GitHub, enabling jsdelivr proxy.</string>
-    <string name="jsdelivr_proxy_summary">Bypasses blocking of GitHub using jsdelivr, may cause updates to be delayed by few days.</string>
+    <string name="jsdelivr_proxy_summary">Using jsdelivr, GitHub blocking can be bypassed. May delay updates by a few days.</string>
     <string name="add_site_pref">Clone site</string>
     <string name="remove_site_pref">Remove site</string>
     <string name="add_site_summary">Add a clone of an existing site, with a different URL</string>
@@ -428,7 +428,7 @@
     <string name="pref_category_ui_features">Features</string>
     <string name="category_general">General</string>
     <string name="random_button_settings">Random Button</string>
-    <string name="random_button_settings_desc">Show random button on Homepage</string>
+    <string name="random_button_settings_desc">Shows button on Homepage which can choose a random movie or TV series from the Homepage</string>
     <string name="provider_lang_settings">Provider languages</string>
     <string name="app_layout">App Layout</string>
     <string name="preferred_media_settings">Preferred media</string>

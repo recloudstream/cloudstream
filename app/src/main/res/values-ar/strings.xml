@@ -119,16 +119,16 @@
     <string name="eigengraumode_settings">وضع إيغنغرافي</string>
     <string name="eigengraumode_settings_des">يضيف خيار السرعة في المُشغل</string>
     <string name="swipe_to_seek_settings">السحب لتقديم</string>
-    <string name="swipe_to_seek_settings_des">إسحب إلى اليسار أو اليمين للتحكم في الوقت في مُشغل الفيديو</string>
+    <string name="swipe_to_seek_settings_des">اسحب من جانب إلى آخر للتحكم في موضعك في مقطع فيديو</string>
     <string name="swipe_to_change_settings">السحب لتغيير الإعدادات</string>
-    <string name="swipe_to_change_settings_des">إسحب على الجانب الأيسر أو الأيمن لتغيير السطوع أو مستوى الصوت</string>
+    <string name="swipe_to_change_settings_des">مرر لأعلى أو لأسفل على الجانب الأيسر أو الأيمن لتغيير السطوع أو مستوى الصوت</string>
     <string name="autoplay_next_settings">تشغيل الحلقة التالية تلقائيًا</string>
     <string name="autoplay_next_settings_des">تبدأ الحلقة التالية عندما تنتهي الحالية</string>
     <string name="double_tap_to_seek_settings">النقر مرتان للتقديم للأمام أو للخلف</string>
     <string name="double_tap_to_pause_settings">الضغط مرتان لإيقاف مؤقت</string>
-    <string name="double_tap_to_seek_amount_settings">التحكم في مدى تقديم المُشغل</string>
+    <string name="double_tap_to_seek_amount_settings">التحكم في مدى تقديم المُشغل(ثوان)</string>
     <string name="double_tap_to_seek_settings_des">إضغط مرتين على الجانب الأيمن أو الأيسر للتقديم للأمام أو للخلف</string>
-    <string name="double_tap_to_pause_settings_des">إضغط في الوسط لإيقاف مؤقت</string>
+    <string name="double_tap_to_pause_settings_des">اضغط مرتين في المنتصف للتوقف</string>
     <string name="use_system_brightness_settings">استخدم سطوع النظام</string>
     <string name="use_system_brightness_settings_des">استخدم سطوع النظام في مُشغل التطبيق بدلاً من التراكب الداكن</string>
     <string name="episode_sync_settings">تحديث تقدم المشاهدة</string>
@@ -155,7 +155,7 @@
     <string name="automatic_plugin_updates">تحديث الإضافات تلقائيًا</string>
     <string name="automatic_plugin_download">تنزيل الإضافات تلقائيًا</string>
     <string name="updates_settings">التحديث التلقائي</string>
-    <string name="updates_settings_des">البحث تلقائيًا عن التحديثات الجديدة عند البداية</string>
+    <string name="updates_settings_des">ابحث تلقائيا عن التحديثات الجديدة بعد بدء التطبيق.</string>
     <string name="uprereleases_settings">التحديث إلى الاصدارات التجريبية (بيتا)</string>
     <string name="uprereleases_settings_des">البحث عن التحديثات التجريبية بدلاً من الإصدارات الكاملة فقط</string>
     <string name="github">غيت هاب</string>
@@ -218,8 +218,8 @@
     <string name="movies_singular">فيلم</string>
     <string name="tv_series_singular">مسلسل</string>
     <string name="cartoons_singular">كرتون</string>
-    <string name="anime_singular">أنمي</string>
-    <string name="ova_singular">اوفا</string>
+    <string name="anime_singular">أنيمي</string>
+    <string name="ova_singular">أوفا</string>
     <string name="torrent_singular">تورنت</string>
     <string name="documentaries_singular">وثائقي</string>
     <string name="asian_drama_singular">دراما آسيوية</string>
@@ -284,7 +284,7 @@
     <string name="legal_notice_text" translatable="false">Any legal issues regarding the content on this application should be taken up with the actual file hosts and providers themselves as we are not affiliated with them. In case of copyright infringement, please directly contact the responsible parties or the streaming websites. The app is purely for educational and personal use. CloudStream 3 does not host any content on the app, and has no control over what media is put up or taken down. CloudStream 3 functions like any other search engine, such as Google. CloudStream 3 does not host, upload or manage any videos, films or content. It simply crawls, aggregates and displayes links in a convenient, user-friendly interface. It merely scrapes 3rd-party websites that are publicly accessable via any regular web browser. It is the responsibility of user to avoid any actions that might violate the laws governing his/her locality. Use CloudStream 3 at your own risk.</string>
     <string name="category_general">عام</string>
     <string name="random_button_settings">زر العشوائي</string>
-    <string name="random_button_settings_desc">إظهار زر العشوائي على الصفحة الرئيسية</string>
+    <string name="random_button_settings_desc">يظهر الزر على الصفحة الرئيسية والذي يمكنه اختيار فيلم عشوائي أو مسلسل تلفزيوني من الصفحة الرئيسية</string>
     <string name="provider_lang_settings">لغات المزود</string>
     <string name="app_layout">واجهة التطبيق</string>
     <string name="preferred_media_settings">المحتوى المفضل</string>
@@ -558,7 +558,7 @@
     <string name="pref_category_bypass">تجاوز مزود خدمة الإنترنت</string>
     <string name="revert">استرجاع</string>
     <string name="jsdelivr_enabled">فشل الوصول إلى GitHub ، وتمكين وكيل jsdelivr.</string>
-    <string name="jsdelivr_proxy_summary">تجاوز حظر GitHub باستخدام jsdelivr ، قد يتسبب في تأخير التحديثات لبضعة أيام.</string>
+    <string name="jsdelivr_proxy_summary">باستخدام jsdelivr ، يمكن تجاوز حظر GitHub. قد يؤخر التحديثات لبضعة أيام.</string>
     <string name="jsdelivr_proxy">وكيل raw.githubusercontent.com</string>
     <string name="watch_quality_pref_data">جودة المشاهدة المفضلة (بيانات الجوال)</string>
 </resources>

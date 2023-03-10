@@ -142,14 +142,14 @@
     <string name="eigengraumode_settings">倍速模式</string>
     <string name="eigengraumode_settings_des">在播放器中添加播放速度选项</string>
     <string name="swipe_to_seek_settings">滑动控制进度</string>
-    <string name="swipe_to_seek_settings_des">左右滑动控制播放进度</string>
+    <string name="swipe_to_seek_settings_des">左右滑动以控制视频中的位置</string>
     <string name="swipe_to_change_settings">滑动更改设置</string>
     <string name="swipe_to_change_settings_des">上下滑动修改亮度或音量</string>
     <string name="autoplay_next_settings">自动播放下一集</string>
     <string name="autoplay_next_settings_des">播放完毕后播放下一集</string>
     <string name="double_tap_to_seek_settings">双击控制进度</string>
     <string name="double_tap_to_pause_settings">双击暂停</string>
-    <string name="double_tap_to_seek_amount_settings">双击控制进度时间</string>
+    <string name="double_tap_to_seek_amount_settings">双击控制进度时间 （秒）</string>
     <string name="double_tap_to_seek_settings_des">在左右侧双击快进或快退</string>
     <string name="double_tap_to_pause_settings_des">双击中间暂停</string>
     <string name="use_system_brightness_settings">使用系统亮度</string>
@@ -178,7 +178,7 @@
     <string name="automatic_plugin_updates">自动更新插件</string>
     <string name="automatic_plugin_download">自动下载插件</string>
     <string name="updates_settings">显示应用更新</string>
-    <string name="updates_settings_des">启动时自动搜索更新</string>
+    <string name="updates_settings_des">启动应用后自动搜索更新。</string>
     <string name="uprereleases_settings">更新至预览版</string>
     <string name="uprereleases_settings_des">搜索预览版更新替代仅搜索完整版本</string>
     <string name="github">Github</string>
@@ -245,8 +245,8 @@
     <string name="movies_singular">电影</string>
     <string name="tv_series_singular">电视剧</string>
     <string name="cartoons_singular">卡通</string>
-    <string name="anime_singular">\@string/anime</string>
-    <string name="ova_singular">\@string/ova</string>
+    <string name="anime_singular">动漫</string>
+    <string name="ova_singular">OVA</string>
     <string name="torrent_singular">种子</string>
     <string name="documentaries_singular">纪录片</string>
     <string name="asian_drama_singular">亚洲剧</string>
@@ -311,7 +311,7 @@
     <string name="legal_notice_text" translatable="false">Any legal issues regarding the content on this application should be taken up with the actual file hosts and providers themselves as we are not affiliated with them. In case of copyright infringement, please directly contact the responsible parties or the streaming websites. The app is purely for educational and personal use. CloudStream 3 does not host any content on the app, and has no control over what media is put up or taken down. CloudStream 3 functions like any other search engine, such as Google. CloudStream 3 does not host, upload or manage any videos, films or content. It simply crawls, aggregates and displayes links in a convenient, user-friendly interface. It merely scrapes 3rd-party websites that are publicly accessable via any regular web browser. It is the responsibility of user to avoid any actions that might violate the laws governing his/her locality. Use CloudStream 3 at your own risk.</string>
     <string name="category_general">通用</string>
     <string name="random_button_settings">随机按钮</string>
-    <string name="random_button_settings_desc">在主页中显示随机按钮</string>
+    <string name="random_button_settings_desc">在主页上显示按钮，可以从主页上随机选择电影或电视剧</string>
     <string name="provider_lang_settings">片源语言</string>
     <string name="app_layout">应用布局</string>
     <string name="preferred_media_settings">首选类型</string>
@@ -573,7 +573,7 @@
     <string name="test_log">日志</string>
     <string name="jsdelivr_proxy">raw.githubusercontent.com 代理</string>
     <string name="jsdelivr_enabled">连接 Github 失败，正在启用 jsdelivr 代理。</string>
-    <string name="jsdelivr_proxy_summary">使用 jsdelivr 绕过对 Github 的封锁，可能导致更新延迟几天。</string>
+    <string name="jsdelivr_proxy_summary">使用jsdelivr，可以绕过GitHub的封锁。可能会延迟几天的更新。</string>
     <string name="pref_category_bypass">ISP 绕过</string>
     <string name="revert">还原</string>
     <string name="watch_quality_pref_data">首选播放画质（移动数据）</string>
