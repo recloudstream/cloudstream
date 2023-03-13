@@ -130,7 +130,7 @@
     <string name="new_update_format" formatted="true">Nouvelle mise à jour trouvée !
 \n%s -&gt; %s</string>
     <string name="filler" formatted="true">Épisode spécial</string>
-    <string name="watch_quality_pref">Qualité de visionnage préférée</string>
+    <string name="watch_quality_pref">Qualité de visionnage préférée (WiFi)</string>
     <string name="video_buffer_size_settings">Taille de la mémoire cache</string>
     <string name="resize_fill">Étendre</string>
     <string name="legal_notice">Non-responsabilité</string>
@@ -508,4 +508,19 @@
     <string name="sort_updated_old">Mis à jour (ancien vers nouveau)</string>
     <string name="safe_mode_file">Fichier du mode sans échec trouvé !
 \nAucune extension ne sera chargée au démarrage avant que le fichier ne soit enlevé.</string>
+    <string name="stop">Arrêter</string>
+    <string name="revert">Revenir à</string>
+    <string name="test_log">Enregistrer</string>
+    <string name="watch_quality_pref_data">Qualité de visionnage préférée (données mobiles)</string>
+    <string name="subscription_new">Abonné à %s</string>
+    <string name="start">Démarrer</string>
+    <string name="category_provider_test">Test des fournisseurs</string>
+    <string name="test_passed">Réussi</string>
+    <string name="subscription_deleted">Désabonné de %s</string>
+    <string name="restart">Redémarrer</string>
+    <string name="subscription_list_name">Abonné</string>
+    <string name="jsdelivr_proxy">raw.githubusercontent.com Proxy</string>
+    <string name="pref_category_bypass">Contournements de FAI</string>
+    <string name="subscription_episode_released">L\'épisode %d est sorti !</string>
+    <string name="test_failed">Échouer</string>
 </resources>

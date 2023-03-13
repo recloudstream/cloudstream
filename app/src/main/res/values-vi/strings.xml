@@ -10,7 +10,7 @@
     <string name="next_episode_time_min_format" formatted="true">%dm</string>
     <!-- IS NOT NEEDED TO TRANSLATE AS THEY ARE ONLY USED FOR SCREEN READERS AND WONT SHOW UP TO NORMAL USERS -->
     <string name="result_poster_img_des">Poster</string>
-    <string name="search_poster_img_des">\@string/result_poster_img_des</string>
+    <string name="search_poster_img_des">Ảnh bìa</string>
     <string name="episode_poster_img_des">Episode Poster</string>
     <string name="home_main_poster_img_des">Main Poster</string>
     <string name="home_next_random_img_des">Next Random</string>
@@ -260,18 +260,18 @@
     <string name="check_for_update">Kiểm tra cập nhật</string>
     <string name="video_lock">Khóa</string>
     <string name="video_aspect_ratio_resize">Thu Phóng</string>
-    <string name="video_source">Tuỳ chọn</string>
-    <string name="video_skip_op">Tua nhanh</string>
+    <string name="video_source">Nguồn</string>
+    <string name="video_skip_op">Bỏ qua OP</string>
     <string name="dont_show_again">Không hiện lại</string>
-    <string name="skip_update">Bỏ qua</string>
+    <string name="skip_update">Bỏ qua bản cập nhật này</string>
     <string name="update">Cập nhật</string>
-    <string name="watch_quality_pref">Tự động chọn chất lượng phim</string>
+    <string name="watch_quality_pref">Chất lượng xem ưu tiên (WiFi)</string>
     <string name="limit_title">Kí tự tối đa trên tiêu đề</string>
-    <string name="limit_title_rez">Định dạng trình phát</string>
-    <string name="video_buffer_size_settings">Dung lượng video cache</string>
+    <string name="limit_title_rez">Độ phân giải trình phát video</string>
+    <string name="video_buffer_size_settings">Kích thước bộ nhớ đệm video</string>
     <string name="video_buffer_length_settings">Thời lượng bộ nhớ đệm</string>
-    <string name="video_buffer_disk_settings">Dung lượng video cache</string>
-    <string name="video_buffer_clear_settings">Xoá hình ảnh và video</string>
+    <string name="video_buffer_disk_settings">Lưu bộ nhớ đệm video trên ổ cứng</string>
+    <string name="video_buffer_clear_settings">Xoá bộ nhớ đệm hình ảnh và video</string>
     <string name="video_ram_description">Sẽ gây lỗi nếu đặt quá cao trên máy có dung lượng ram thấp như Android TV.</string>
     <string name="video_disk_description">Sẽ gây lỗi nếu đặt quá cao trên máy có dung lượng lưu trữ thấp như Android TV.</string>
     <string name="dns_pref">DNS over HTTPS</string>
@@ -519,4 +519,9 @@
     <string name="empty_library_logged_in_message">Có vẻ như danh sách này trống, hãy thử chuyển sang danh sách khác</string>
     <string name="sort_alphabetical_a">Chữ cái (A đến Z)</string>
     <string name="select_library">Chọn Thư viện</string>
+    <string name="test_log">Nhật ký</string>
+    <string name="watch_quality_pref_data">Chất lượng xem ưu tiên (Dữ liệu di động)</string>
+    <string name="test_failed">Thất bại</string>
+    <string name="test_passed">Thành công</string>
+    <string name="start">Bắt đầu</string>
 </resources>

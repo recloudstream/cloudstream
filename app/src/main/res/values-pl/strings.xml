@@ -254,7 +254,7 @@
     <string name="dont_show_again">Nie pokazuj ponownie</string>
     <string name="skip_update">Pomiń tę aktualizację</string>
     <string name="update">Aktualizacja</string>
-    <string name="watch_quality_pref">Domyślna jakość</string>
+    <string name="watch_quality_pref">Domyślna jakość (WiFi)</string>
     <string name="limit_title">Maksymalna ilość znaków w tytule odtwarzacza</string>
     <string name="limit_title_rez">Rozdzielczość odtwarzacza wideo</string>
     <string name="video_buffer_size_settings">Rozmiar bufora wideo</string>
@@ -531,4 +531,5 @@
     <string name="subscription_episode_released">Został wydany odcinek %d!</string>
     <string name="jsdelivr_proxy_summary">Obchodzi blokadę GitHuba za pomocą jsdelivr, może spowodować opóźnienie aktualizacji o kilka dni.</string>
     <string name="jsdelivr_enabled">Nie udało się połączyć z GitHub, włączono serwer pośredniczący jsdelivr.</string>
+    <string name="watch_quality_pref_data">Domyślna jakość (dane mobilne)</string>
 </resources>

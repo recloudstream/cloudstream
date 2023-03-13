@@ -265,7 +265,7 @@
     <string name="dont_show_again">Non mostrare di nuovo</string>
     <string name="skip_update">Salta questo aggiornamento</string>
     <string name="update">Aggiorna</string>
-    <string name="watch_quality_pref">Risoluzione preferita</string>
+    <string name="watch_quality_pref">Qualità di visualizzazione preferita (WiFi)</string>
     <string name="limit_title">Limita i caratteri del titolo nel player</string>
     <string name="limit_title_rez">Risoluzione video player</string>
     <string name="video_buffer_size_settings">Dimensione cache video</string>
@@ -550,4 +550,5 @@
     <string name="revert">Ripristina</string>
     <string name="subscription_in_progress_notification">Aggiornando shows a cui sei iscritto</string>
     <string name="subscription_episode_released">L\'episodio %d è stato rilasciato!</string>
+    <string name="watch_quality_pref_data">Qualità di visualizzazione preferita (Dati mobili)</string>
 </resources>

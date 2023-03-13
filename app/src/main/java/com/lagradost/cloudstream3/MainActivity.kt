@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.content.res.Configuration
+import android.os.Build
 import android.os.Bundle
 import android.util.AttributeSet
 import android.util.Log
@@ -34,7 +35,6 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.navigationrail.NavigationRailView
 import com.google.android.material.snackbar.Snackbar
 import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
-import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.APIHolder.allProviders
 import com.lagradost.cloudstream3.APIHolder.apis
 import com.lagradost.cloudstream3.APIHolder.getApiDubstatusSettings
@@ -170,7 +170,12 @@ open class ResultResume(
 
 val VLC = object : ResultResume(
     VLC_PACKAGE,
-    "org.videolan.vlc.player.result",
+    // Android 13 intent restrictions fucks up specifically launching the VLC player
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+        "org.videolan.vlc.player.result"
+    } else {
+        Intent.ACTION_VIEW
+    },
     "extra_position",
     "extra_duration",
 ) {
@@ -733,15 +738,16 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                 } else {
                     this.setKey(getString(R.string.jsdelivr_proxy_key), true)
                     val parentView: View = findViewById(android.R.id.content)
-                    Snackbar.make(parentView, R.string.jsdelivr_enabled, Snackbar.LENGTH_LONG).let { snackbar ->
-                        snackbar.setAction(R.string.revert) {
-                            setKey(getString(R.string.jsdelivr_proxy_key), false)
+                    Snackbar.make(parentView, R.string.jsdelivr_enabled, Snackbar.LENGTH_LONG)
+                        .let { snackbar ->
+                            snackbar.setAction(R.string.revert) {
+                                setKey(getString(R.string.jsdelivr_proxy_key), false)
+                            }
+                            snackbar.setBackgroundTint(colorFromAttribute(R.attr.primaryGrayBackground))
+                            snackbar.setTextColor(colorFromAttribute(R.attr.textColor))
+                            snackbar.setActionTextColor(colorFromAttribute(R.attr.colorPrimary))
+                            snackbar.show()
                         }
-                        snackbar.setBackgroundTint(colorFromAttribute(R.attr.primaryGrayBackground))
-                        snackbar.setTextColor(colorFromAttribute(R.attr.textColor))
-                        snackbar.setActionTextColor(colorFromAttribute(R.attr.colorPrimary))
-                        snackbar.show()
-                    }
                 }
 
             }
@@ -1123,7 +1129,10 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
 
     suspend fun checkGithubConnectivity(): Boolean {
         return try {
-            app.get("https://raw.githubusercontent.com/recloudstream/.github/master/connectivitycheck", timeout = 5).text.trim() == "ok"
+            app.get(
+                "https://raw.githubusercontent.com/recloudstream/.github/master/connectivitycheck",
+                timeout = 5
+            ).text.trim() == "ok"
         } catch (t: Throwable) {
             false
         }

@@ -52,7 +52,7 @@ data class ExtractorLinkPlayList(
 )
 
 
-open class ExtractorLink(
+open class ExtractorLink constructor(
     open val source: String,
     open val name: String,
     override val url: String,
@@ -62,7 +62,24 @@ open class ExtractorLink(
     override val headers: Map<String, String> = mapOf(),
     /** Used for getExtractorVerifierJob() */
     open val extractorData: String? = null,
+    open val isDash: Boolean = false,
 ) : VideoDownloadManager.IDownloadableMinimum {
+    /**
+     * Old constructor without isDash, allows for backwards compatibility with extensions.
+     * Should be removed after all extensions have updated their cloudstream.jar
+     **/
+    constructor(
+        source: String,
+        name: String,
+        url: String,
+        referer: String,
+        quality: Int,
+        isM3u8: Boolean = false,
+        headers: Map<String, String> = mapOf(),
+        /** Used for getExtractorVerifierJob() */
+        extractorData: String? = null
+    ) : this(source, name, url, referer, quality, isM3u8, headers, extractorData, false)
+
     override fun toString(): String {
         return "ExtractorLink(name=$name, url=$url, referer=$referer, isM3u8=$isM3u8)"
     }

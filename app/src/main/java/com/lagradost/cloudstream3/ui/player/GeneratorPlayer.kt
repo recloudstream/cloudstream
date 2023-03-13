@@ -13,7 +13,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AlertDialog
 import androidx.core.animation.addListener
 import androidx.core.content.ContextCompat
 import androidx.core.view.isGone
@@ -734,19 +733,17 @@ class GeneratorPlayer : FullScreenPlayer() {
                 }
                 val currentAudioTracks = tracks.allAudioTracks
 
-                val trackBuilder = AlertDialog.Builder(ctx, R.style.AlertDialogCustomBlack)
-                    .setView(R.layout.player_select_tracks)
-
-                val tracksDialog = trackBuilder.create()
+                val trackDialog = Dialog(ctx, R.style.AlertDialogCustomBlack)
+                trackDialog.setContentView(R.layout.player_select_tracks)
+                trackDialog.show()
 
 //                selectTracksDialog = tracksDialog
 
-                tracksDialog.show()
-                val videosList = tracksDialog.video_tracks_list
-                val audioList = tracksDialog.auto_tracks_list
+                val videosList = trackDialog.video_tracks_list
+                val audioList = trackDialog.auto_tracks_list
 
-                tracksDialog.video_tracks_holder.isVisible = currentVideoTracks.size > 1
-                tracksDialog.audio_tracks_holder.isVisible = currentAudioTracks.size > 1
+                trackDialog.video_tracks_holder.isVisible = currentVideoTracks.size > 1
+                trackDialog.audio_tracks_holder.isVisible = currentAudioTracks.size > 1
 
                 fun dismiss() {
                     if (isPlaying) {
@@ -781,7 +778,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                     videosList.setItemChecked(which, true)
                 }
 
-                tracksDialog.setOnDismissListener {
+                trackDialog.setOnDismissListener {
                     dismiss()
 //                    selectTracksDialog = null
                 }
@@ -811,11 +808,11 @@ class GeneratorPlayer : FullScreenPlayer() {
                     audioList.setItemChecked(which, true)
                 }
 
-                tracksDialog.cancel_btt?.setOnClickListener {
-                    tracksDialog.dismissSafe(activity)
+                trackDialog.cancel_btt?.setOnClickListener {
+                    trackDialog.dismissSafe(activity)
                 }
 
-                tracksDialog.apply_btt?.setOnClickListener {
+                trackDialog.apply_btt?.setOnClickListener {
                     val currentTrack = currentAudioTracks.getOrNull(audioIndexStart)
                     player.setPreferredAudioTrack(
                         currentTrack?.language, currentTrack?.id
@@ -828,7 +825,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                         player.setMaxVideoSize(width, height, currentVideo?.id)
                     }
 
-                    tracksDialog.dismissSafe(activity)
+                    trackDialog.dismissSafe(activity)
                 }
             }
         } catch (e: Exception) {
@@ -1145,7 +1142,7 @@ class GeneratorPlayer : FullScreenPlayer() {
 
         val source = currentSelectedLink?.first?.name ?: currentSelectedLink?.second?.name ?: "NULL"
 
-         val title = when (titleRez) {
+        val title = when (titleRez) {
             0 -> ""
             1 -> extra
             2 -> source

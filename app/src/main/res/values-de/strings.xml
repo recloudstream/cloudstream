@@ -246,7 +246,7 @@
     <string name="episode_action_play_in_browser">In Browser wiedergeben</string>
     <string name="episode_action_copy_link">Link kopieren</string>
     <string name="episode_action_auto_download">Auto-Download</string>
-    <string name="episode_action_download_mirror">Download-Mirror</string>
+    <string name="episode_action_download_mirror">Alternativer Download</string>
     <string name="episode_action_reload_links">Links neu laden</string>
     <string name="episode_action_download_subtitle">Untertitel herunterladen</string>
     <string name="show_hd">Qualitätsanzeige</string>
