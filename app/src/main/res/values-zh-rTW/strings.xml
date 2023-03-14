@@ -23,9 +23,9 @@
     <string name="episode_poster_img_des">劇集封面</string>
     <string name="home_main_poster_img_des">主封面</string>
     <string name="home_next_random_img_des">隨機下一個</string>
-    <string name="episode_play_img_des" translatable="false">\@string/play_episode</string>
+    <string name="episode_play_img_des" translatable="false">@string/play_episode</string>
     <string name="go_back_img_des">返回</string>
-    <string name="change_providers_img_des" translatable="false">\@string/home_change_provider_img_des</string>
+    <string name="change_providers_img_des" translatable="false">@string/home_change_provider_img_des</string>
     <string name="home_change_provider_img_des">更改片源</string>
     <string name="preview_background_img_des">預覽背景</string>
     <!-- TRANSLATE, BUT DON'T FORGET FORMAT -->
@@ -46,7 +46,7 @@
     <string name="no_data">無資料</string>
     <string name="episode_more_options_des">更多選項</string>
     <string name="next_episode">下一集</string>
-    <string name="result_plot" translatable="false">\@string/synopsis</string>
+    <string name="result_plot" translatable="false">@string/synopsis</string>
     <string name="result_tags">類型</string>
     <string name="result_share">分享</string>
     <string name="result_open_in_browser">在瀏覽器中打開</string>
@@ -123,7 +123,7 @@
     <string name="continue_watching">繼續觀看</string>
     <string name="action_remove_watching">移除</string>
     <string name="action_open_watching">更多資訊</string>
-    <string name="action_open_play">\@string/home_play</string>
+    <string name="action_open_play">@string/home_play</string>
     <string name="vpn_might_be_needed">此片源可能需要 VPN 才能正常使用</string>
     <string name="vpn_torrent">此片源是種子，建議使用 VPN</string>
     <string name="provider_info_meta">站點不提供元數據，如果站點上不存在元數據，影片載入將失敗。</string>
@@ -205,7 +205,7 @@
     <string name="no_episodes_found">未找到劇集</string>
     <string name="delete_file">刪除文件</string>
     <string name="delete">刪除</string>
-    <string name="cancel" translatable="false">\@string/sort_cancel</string>
+    <string name="cancel" translatable="false">@string/sort_cancel</string>
     <string name="pause">暫停</string>
     <string name="resume">繼續</string>
     <string name="go_back_30">-30</string>
@@ -244,8 +244,8 @@
     <string name="movies_singular">電影</string>
     <string name="tv_series_singular">電視劇</string>
     <string name="cartoons_singular">卡通</string>
-    <string name="anime_singular">\@string/anime</string>
-    <string name="ova_singular">\@string/ova</string>
+    <string name="anime_singular">@string/anime</string>
+    <string name="ova_singular">@string/ova</string>
     <string name="torrent_singular">種子</string>
     <string name="documentaries_singular">紀錄片</string>
     <string name="asian_drama_singular">亞洲劇</string>
@@ -368,7 +368,7 @@
     <string name="all">全部</string>
     <string name="max">最大</string>
     <string name="min">最小</string>
-    <string name="subtitles_none" translatable="false">\@string/none</string>
+    <string name="subtitles_none" translatable="false">@string/none</string>
     <string name="subtitles_outline">輪廓</string>
     <string name="subtitles_depressed">凹陷</string>
     <string name="subtitles_shadow">陰影</string>

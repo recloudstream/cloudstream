@@ -105,7 +105,7 @@
     <string name="continue_watching">Продължете да гледате</string>
     <string name="action_remove_watching">Премахване</string>
     <string name="action_open_watching">Повече информация</string>
-    <string name="action_open_play">\@string/home_play</string>
+    <string name="action_open_play">@string/home_play</string>
     <string name="vpn_might_be_needed">Може да е необходим VPN, за да работи правилно този доставчик</string>
     <string name="vpn_torrent">Този доставчик е торент, препоръчва се VPN</string>
     <string name="provider_info_meta">Метаданните не се предоставят от сайта, зареждането на видео ще бъде неуспешно, ако не съществува на сайта.</string>
@@ -223,8 +223,8 @@
     <string name="movies_singular">Филм</string>
     <string name="tv_series_singular">Серия</string>
     <string name="cartoons_singular">Анимационен филм</string>
-    <string name="anime_singular">\@string/anime</string>
-    <string name="ova_singular">\@string/ova</string>
+    <string name="anime_singular">@string/anime</string>
+    <string name="ova_singular">@string/ova</string>
     <string name="torrent_singular">Торент</string>
     <string name="documentaries_singular">Документален филм</string>
     <string name="asian_drama_singular">Азиатска драма</string>

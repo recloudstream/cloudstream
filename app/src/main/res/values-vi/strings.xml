@@ -110,7 +110,7 @@
     <string name="continue_watching">Tiếp tục xem</string>
     <string name="action_remove_watching">Loại bỏ</string>
     <string name="action_open_watching">Thông tin thêm</string>
-    <string name="action_open_play">\@string/home_play</string>
+    <string name="action_open_play">@string/home_play</string>
     <string name="vpn_might_be_needed">Bạn có thể sẽ cần sử dụng VPN để xem phim này</string>
     <string name="vpn_torrent">Phim này được chiếu dưới dạng Torrent. Hãy sử dụng VPN để xem</string>
     <string name="torrent_plot">Thông tin phim</string>
@@ -229,7 +229,7 @@
     <string name="tv_series_singular">Phim Bộ</string>
     <string name="cartoons_singular">Hoạt Hình</string>
     <string name="anime_singular">Anime</string>
-    <string name="ova_singular">\@string/ova</string>
+    <string name="ova_singular">@string/ova</string>
     <string name="torrent_singular">Torrent</string>
     <string name="documentaries_singular">Phim Tài Liệu</string>
     <string name="asian_drama_singular">Truyền Hình Châu Á</string>

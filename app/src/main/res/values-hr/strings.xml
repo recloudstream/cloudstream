@@ -119,7 +119,7 @@
     <string name="continue_watching">Nastavite s gledanjem</string>
     <string name="action_remove_watching">Makni</string>
     <string name="action_open_watching">Više informacija</string>
-    <string name="action_open_play">\@string/home_play</string>
+    <string name="action_open_play">@string/home_play</string>
     <string name="vpn_might_be_needed">Za ispravan rad ovog pružatelja usluga može biti potreban VPN</string>
     <string name="vpn_torrent">Ovaj pružatelj usluga je torrent, preporučuje se VPN</string>
     <string name="provider_info_meta">Stranica ne daje metapodatke, učitavanje videozapisa neće uspjeti ako ne postoji na stranici.</string>
@@ -238,8 +238,8 @@
     <string name="movies_singular">Film</string>
     <string name="tv_series_singular">Serija</string>
     <string name="cartoons_singular">Crtić</string>
-    <string name="anime_singular">\@string/anime</string>
-    <string name="ova_singular">\@string/ova</string>
+    <string name="anime_singular">@string/anime</string>
+    <string name="ova_singular">@string/ova</string>
     <string name="torrent_singular">Torrent</string>
     <string name="documentaries_singular">Dokumentarac</string>
     <string name="asian_drama_singular">Azijska drama</string>

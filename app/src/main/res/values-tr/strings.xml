@@ -23,9 +23,9 @@
     <string name="episode_poster_img_des">Bölüm Posteri</string>
     <string name="home_main_poster_img_des">Ana Poster</string>
     <string name="home_next_random_img_des">Sonraki Rastgele</string>
-    <string name="episode_play_img_des" translatable="false">\@string/play_episode</string>
+    <string name="episode_play_img_des" translatable="false">@string/play_episode</string>
     <string name="go_back_img_des">Geri git</string>
-    <string name="change_providers_img_des" translatable="false">\@string/home_change_provider_img_des</string>
+    <string name="change_providers_img_des" translatable="false">@string/home_change_provider_img_des</string>
     <string name="home_change_provider_img_des">Change Provider</string>
     <string name="preview_background_img_des">Preview Background</string>
     <!-- TRANSLATE, BUT DON'T FORGET FORMAT -->
@@ -46,7 +46,7 @@
     <string name="no_data">Veri yok</string>
     <string name="episode_more_options_des">Daha fazla seçenek</string>
     <string name="next_episode">Sonraki bölüm</string>
-    <string name="result_plot" translatable="false">\@string/synopsis</string>
+    <string name="result_plot" translatable="false">@string/synopsis</string>
     <string name="result_tags">Türler</string>
     <string name="result_share">Paylaş</string>
     <string name="result_open_in_browser">Tarayıcıda aç</string>
@@ -123,7 +123,7 @@
     <string name="continue_watching">İzlemeye devam et</string>
     <string name="action_remove_watching">Kaldır</string>
     <string name="action_open_watching">Daha fazla bilgi</string>
-    <string name="action_open_play">\@string/home_play</string>
+    <string name="action_open_play">@string/home_play</string>
     <string name="vpn_might_be_needed">Bu sağlayıcının düzgün çalışması için bir VPN gerekebilir</string>
     <string name="vpn_torrent">Bu sağlayıcı torrent kullanıyor, bir VPN önerilir</string>
     <string name="provider_info_meta">Metadata site tarafından sağlanmamış, veri site\'de bulunmuyorsa video yüklenmesi başarısız olacak.</string>
@@ -205,7 +205,7 @@
     <string name="no_episodes_found">Bölüm bulunamadı</string>
     <string name="delete_file">Dosyayı sil</string>
     <string name="delete">Sil</string>
-    <string name="cancel" translatable="false">\@string/sort_cancel</string>
+    <string name="cancel" translatable="false">@string/sort_cancel</string>
     <string name="pause">Durdur</string>
     <string name="resume">Sürdür</string>
     <string name="go_back_30">-30</string>
@@ -244,8 +244,8 @@
     <string name="movies_singular">Film</string>
     <string name="tv_series_singular">Dizi</string>
     <string name="cartoons_singular">Çizgi film</string>
-    <string name="anime_singular">\@string/anime</string>
-    <string name="ova_singular">\@string/ova</string>
+    <string name="anime_singular">@string/anime</string>
+    <string name="ova_singular">@string/ova</string>
     <string name="torrent_singular">Torrent</string>
     <string name="documentaries_singular">Belgesel</string>
     <string name="asian_drama_singular">Asya dizisi</string>
@@ -368,7 +368,7 @@
     <string name="all">Hepsi</string>
     <string name="max">Maksimum</string>
     <string name="min">Minimum</string>
-    <string name="subtitles_none" translatable="false">\@string/none</string>
+    <string name="subtitles_none" translatable="false">@string/none</string>
     <string name="subtitles_outline">Dış hat</string>
     <string name="subtitles_depressed">Çökmüş</string>
     <string name="subtitles_shadow">Gölge</string>

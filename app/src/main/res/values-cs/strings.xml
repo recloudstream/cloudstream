@@ -103,7 +103,7 @@
     <string name="continue_watching">Pokračovat ve sledování</string>
     <string name="action_remove_watching">Odebrat</string>
     <string name="action_open_watching">Další informace</string>
-    <string name="action_open_play">\@string/home_play</string>
+    <string name="action_open_play">@string/home_play</string>
     <string name="vpn_might_be_needed">Aby tento poskytovatel fungoval správně, budete možná potřebovat VPN</string>
     <string name="vpn_torrent">Tento poskytovatel je torrent, je doporučená VPN</string>
     <string name="provider_info_meta">Web neposkytnul žádná metadata, načítání videa selže, pokud na webu neexistuje.</string>

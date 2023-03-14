@@ -194,7 +194,7 @@
     <string name="continue_watching">Continuar Viendo</string>
     <string name="action_remove_watching">Remover</string>
     <string name="action_open_watching">Más info</string>
-    <string name="action_open_play">\@string/home_play</string>
+    <string name="action_open_play">@string/home_play</string>
     <string name="vpn_might_be_needed">Una VPN puede ser necesaria para que este proveedor funcione correctamente</string>
     <string name="vpn_torrent">Este proveedor es un torrent, se recomienda una VPN</string>
     <string name="provider_info_meta">El sitio no proporciona los metadatos, la carga del video fallará si no existe en el sitio.</string>

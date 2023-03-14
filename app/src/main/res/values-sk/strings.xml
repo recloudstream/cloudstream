@@ -99,7 +99,7 @@
     <string name="vpn_torrent">Tento poskytovateľ je torrent, odporúča sa VPN</string>
     <string name="subs_import_text" formatted="true">Importovať písma ich umiestnením do %s</string>
     <string name="action_open_watching">Viac informácií</string>
-    <string name="action_open_play">\@string/home_play</string>
+    <string name="action_open_play">@string/home_play</string>
     <string name="continue_watching">Pokračovať v sledovaní</string>
     <string name="vpn_might_be_needed">Na správne fungovanie tohto poskytovateľa môže byť potrebná VPN</string>
     <string name="provider_info_meta">Stránka neposkytla žiadne metadáta, načítanie videa zlyhá, ak na stránke neexistuje.</string>

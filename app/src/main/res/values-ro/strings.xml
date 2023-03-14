@@ -106,7 +106,7 @@
     <string name="continue_watching">Continuați să urmăriți</string>
     <string name="action_remove_watching">Eliminați</string>
     <string name="action_open_watching">Mai multe informații</string>
-    <string name="action_open_play">\@string/home_play</string>
+    <string name="action_open_play">@string/home_play</string>
     <string name="vpn_might_be_needed">Există probabilitatea necesitații unui VPN pentru ca acest furnizor să funcționeze corespunzător</string>
     <string name="vpn_torrent">Acest furnizor este un torrent, se recomandă un VPN</string>
     <string name="provider_info_meta">Metadatele nu sunt furnizate de către site, există posibilitatea ca încărcarea videoclipului să eșueze.</string>

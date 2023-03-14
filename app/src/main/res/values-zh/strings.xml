@@ -23,9 +23,9 @@
     <string name="episode_poster_img_des">剧集封面</string>
     <string name="home_main_poster_img_des">主封面</string>
     <string name="home_next_random_img_des">随机下一个</string>
-    <string name="episode_play_img_des" translatable="false">\@string/play_episode</string>
+    <string name="episode_play_img_des" translatable="false">@string/play_episode</string>
     <string name="go_back_img_des">返回</string>
-    <string name="change_providers_img_des" translatable="false">\@string/home_change_provider_img_des</string>
+    <string name="change_providers_img_des" translatable="false">@string/home_change_provider_img_des</string>
     <string name="home_change_provider_img_des">更改片源</string>
     <string name="preview_background_img_des">预览背景</string>
     <!-- TRANSLATE, BUT DON'T FORGET FORMAT -->
@@ -46,7 +46,7 @@
     <string name="no_data">无数据</string>
     <string name="episode_more_options_des">更多选项</string>
     <string name="next_episode">下一集</string>
-    <string name="result_plot" translatable="false">\@string/synopsis</string>
+    <string name="result_plot" translatable="false">@string/synopsis</string>
     <string name="result_tags">类型</string>
     <string name="result_share">分享</string>
     <string name="result_open_in_browser">在浏览器中打开</string>
@@ -123,7 +123,7 @@
     <string name="continue_watching">继续观看</string>
     <string name="action_remove_watching">移除</string>
     <string name="action_open_watching">更多信息</string>
-    <string name="action_open_play">\@string/home_play</string>
+    <string name="action_open_play">@string/home_play</string>
     <string name="vpn_might_be_needed">此片源可能需要 VPN 才能正常使用</string>
     <string name="vpn_torrent">此片源为种子文件，建议使用 VPN</string>
     <string name="provider_info_meta">站点不提供元数据，如果站点上不存在元数据，视频加载将失败。</string>
@@ -206,7 +206,7 @@
     <string name="no_episodes_found">未找到剧集</string>
     <string name="delete_file">删除文件</string>
     <string name="delete">删除</string>
-    <string name="cancel" translatable="false">\@string/sort_cancel</string>
+    <string name="cancel" translatable="false">@string/sort_cancel</string>
     <string name="pause">暂停</string>
     <string name="resume">继续</string>
     <string name="go_back_30">-30</string>
@@ -369,7 +369,7 @@
     <string name="all">全部</string>
     <string name="max">最大</string>
     <string name="min">最小</string>
-    <string name="subtitles_none" translatable="false">\@string/none</string>
+    <string name="subtitles_none" translatable="false">@string/none</string>
     <string name="subtitles_outline">轮廓</string>
     <string name="subtitles_depressed">凹陷</string>
     <string name="subtitles_shadow">阴影</string>

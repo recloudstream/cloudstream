@@ -33,7 +33,7 @@
     <string name="pick_subtitle">Undertexter</string>
     <string name="reload_error">Försök ansluta igen…</string>
     <string name="go_back">Gå tillbaka</string>
-    <string name="episode_poster_img_des">\@string/result_poster_img_des</string>
+    <string name="episode_poster_img_des">@string/result_poster_img_des</string>
     <string name="play_episode">Spela Avsnitt</string>
     <string name="download">Ladda ner</string>
     <string name="download_storage_text">Intern lagring</string>
@@ -44,7 +44,7 @@
     <string name="pref_disable_acra">Inaktivera automatisk felrapportering</string>
     <string name="home_more_info">Mer information</string>
     <string name="home_expanded_hide">Hide</string>
-    <string name="home_main_poster_img_des">\@string/result_poster_img_des</string>
+    <string name="home_main_poster_img_des">@string/result_poster_img_des</string>
     <string name="home_play">Spela upp</string>
     <string name="home_info">Info</string>
     <string name="home_next_random_img_des">Nästa</string>
@@ -235,7 +235,7 @@
     <string name="next_episode_format" formatted="true">Episod %d kommer släppas om</string>
     <string name="duration_format" formatted="true">%d min</string>
     <string name="show_trailers_settings">Visa trailers</string>
-    <string name="action_open_play">\@string/home_play</string>
+    <string name="action_open_play">@string/home_play</string>
     <string name="ova">OVA</string>
     <string name="episodes_range">%d-%d</string>
     <string name="episode_format" formatted="true">%d %s</string>
@@ -244,7 +244,7 @@
     <string name="resume_time_left" formatted="true">%dm
 \nåterstår</string>
     <string name="nsfw">NSFW</string>
-    <string name="ova_singular">\@string/ova</string>
+    <string name="ova_singular">@string/ova</string>
     <string name="torrent_singular">Torrent</string>
     <string name="nsfw_singular">NSFW</string>
     <string name="go_forward_30">+30</string>
@@ -273,7 +273,7 @@
     <string name="asian_drama">Asiatiska draman</string>
     <string name="others">Andra</string>
     <string name="cartoons_singular">Tecknade serier</string>
-    <string name="anime_singular">\@string/anime</string>
+    <string name="anime_singular">@string/anime</string>
     <string name="documentaries_singular">Dokumentär</string>
     <string name="asian_drama_singular">Asiatisk drama</string>
     <string name="other_singular">Video</string>

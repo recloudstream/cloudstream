@@ -109,7 +109,7 @@
     <string name="continue_watching">Doorgaan met kijken</string>
     <string name="action_remove_watching">Verwijder</string>
     <string name="action_open_watching">Meer Info</string>
-    <string name="action_open_play">\@string/home_play</string>
+    <string name="action_open_play">@string/home_play</string>
     <string name="vpn_might_be_needed">Een VPN kan nodig zijn om deze provider correct te laten werken</string>
     <string name="vpn_torrent">Deze provider is een torrent, een VPN wordt aanbevolen</string>
     <string name="provider_info_meta">Metadata wordt niet geleverd door de site, het laden van video\'s zal mislukken als deze niet op de site bestaat.</string>
@@ -222,8 +222,8 @@
     <string name="movies_singular">Film</string>
     <string name="tv_series_singular">Serie</string>
     <string name="cartoons_singular">Tekenfilm</string>
-    <string name="anime_singular">\@string/anime</string>
-    <string name="ova_singular">\@string/ova</string>
+    <string name="anime_singular">@string/anime</string>
+    <string name="ova_singular">@string/ova</string>
     <string name="torrent_singular">Torrent</string>
     <string name="documentaries_singular">Documentaire</string>
     <string name="asian_drama_singular">Aziatisch drama</string>

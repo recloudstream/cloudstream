@@ -115,7 +115,7 @@
     <string name="continue_watching">Weiterschauen</string>
     <string name="action_remove_watching">Entfernen</string>
     <string name="action_open_watching">Mehr Infos</string>
-    <string name="action_open_play">\@string/home_play</string>
+    <string name="action_open_play">@string/home_play</string>
     <string name="vpn_might_be_needed">Damit dieser Anbieter korrekt funktioniert, ist möglicherweise ein VPN erforderlich</string>
     <string name="vpn_torrent">Dieser Anbieter bietet Torrents an, ein VPN wird dringend empfohlen</string>
     <string name="provider_info_meta">Metadaten werden nicht von der Website bereitgestellt, das Laden des Videos schlägt fehl, wenn sie auf der Website nicht vorhanden sind.</string>

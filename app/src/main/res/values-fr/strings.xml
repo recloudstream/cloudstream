@@ -240,7 +240,7 @@
     <string name="continue_watching">Continuer à regarder</string>
     <string name="action_remove_watching">Retirer</string>
     <string name="action_open_watching">Plus d\'informations</string>
-    <string name="action_open_play">\@string/home_play</string>
+    <string name="action_open_play">@string/home_play</string>
     <string name="vpn_might_be_needed">Un VPN peut être nécessaire pour que ce fournisseur fonctionne correctement</string>
     <string name="vpn_torrent">Ce fournisseur est un torrent, un VPN est recommandé</string>
     <string name="provider_info_meta">Les métadonnées ne sont pas fournies par le site, le chargement de la vidéo échouera si elles n\'existent pas sur le site.</string>
@@ -385,8 +385,8 @@
     <string name="quality_4k">4K</string>
     <string name="quality_webrip">Web</string>
     <string name="go_back_30">-30</string>
-    <string name="anime_singular">\@string/anime</string>
-    <string name="ova_singular">\@string/ova</string>
+    <string name="anime_singular">@string/anime</string>
+    <string name="ova_singular">@string/ova</string>
     <string name="nsfw_singular">NSFW</string>
     <string name="login_format" formatted="true">%s %s</string>
     <string name="subtitles_filter_lang">Filtrez par langue préférée</string>

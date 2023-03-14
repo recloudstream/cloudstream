@@ -57,7 +57,7 @@
     <string name="result_open_in_browser">Megnyitás böngészőben</string>
     <string name="skip_loading">Betöltés kihagyása</string>
     <string name="result_poster_img_des">Poster</string>
-    <string name="search_poster_img_des">\@string/result_poster_img_des</string>
+    <string name="search_poster_img_des">@string/result_poster_img_des</string>
     <string name="type_watching">Nézés</string>
     <string name="type_completed">Befejezve</string>
     <string name="type_plan_to_watch">Később megnézés</string>
@@ -111,7 +111,7 @@
     <string name="subs_import_text" formatted="true">Betűtípusok importálása %s</string>
     <string name="action_remove_watching">Eltávolítás</string>
     <string name="action_open_watching">Több információ</string>
-    <string name="action_open_play">\@string/home_play</string>
+    <string name="action_open_play">@string/home_play</string>
     <string name="vpn_might_be_needed">VPN szükséges lehet ehhez a szolgáltató megfelelő működéséhez</string>
     <string name="vpn_torrent">Ez a szolgáltató torrent, VPN ajánlott</string>
     <string name="torrent_plot">Leírás</string>
@@ -172,11 +172,11 @@
     <string name="ova">OVA</string>
     <string name="others">Egyebek</string>
     <string name="tv_series_singular">Sorozat</string>
-    <string name="anime_singular">\@string/anime</string>
+    <string name="anime_singular">@string/anime</string>
     <string name="source_error">Forráshiba</string>
     <string name="nsfw">NSFW</string>
     <string name="cartoons_singular">Rajzfilm</string>
-    <string name="ova_singular">\@string/ova</string>
+    <string name="ova_singular">@string/ova</string>
     <string name="live_singular">Élőadás</string>
     <string name="nsfw_singular">NSFW</string>
     <string name="other_singular">Videó</string>

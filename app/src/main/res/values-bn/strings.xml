@@ -143,8 +143,8 @@
     <string name="category_updates">হালনাগাদ ও ব্যাকআপ</string>
     <string name="updates_settings">অ্যাপ এর হালনাগাদ দেখান</string>
     <string name="swipe_to_seek_settings">খুঁজতে সোয়াইপ করুন</string>
-    <string name="search_poster_img_des">\@string/result_poster_img_des</string>
-    <string name="action_open_play">\@string/home_play</string>
+    <string name="search_poster_img_des">@string/result_poster_img_des</string>
+    <string name="action_open_play">@string/home_play</string>
     <string name="double_tap_to_seek_settings">আগাতে ডবল ট্যাপ করুন</string>
     <string name="eigengraumode_settings">আইজেনগ্রাভি মোড</string>
     <string name="update_started">আপডেট শুরু হয়েছে</string>
