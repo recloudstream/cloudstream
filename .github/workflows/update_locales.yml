@@ -1,4 +1,4 @@
-name: Update locale lists
+name: Fix locale issues
 
 on:
   workflow_dispatch:
@@ -9,7 +9,7 @@ on:
       - master
 
 concurrency: 
-  group: "locale-list"
+  group: "locale"
   cancel-in-progress: true
 
 jobs:
@@ -26,6 +26,9 @@ jobs:
     - uses: actions/checkout@v2
       with:
         token: ${{ steps.generate_token.outputs.token }}
+    - name: Install dependencies
+      run: |
+        pip3 install lxml
     - name: Edit files
       run: |
         python3 .github/locales.py
@@ -35,5 +38,5 @@ jobs:
         git config --local user.name "recloudstream[bot]"
         git add .
         # "echo" returns true so the build succeeds, even if no changed files
-        git commit -m 'update list of locales' || echo
+        git commit -m 'chore(locales): fix locale issues' || echo
         git push

@@ -1,6 +1,7 @@
 import re
 import glob
 import requests
+import lxml.etree as ET  # builtin library doesn't preserve comments
 
 
 SETTINGS_PATH = "app/src/main/java/com/lagradost/cloudstream3/ui/settings/SettingsGeneral.kt"
@@ -46,3 +47,15 @@ open(SETTINGS_PATH, "w+",encoding='utf-8').write(
     END_MARKER +
     after_src
 )
+
+# Go through each values.xml file and fix escaped \@string
+for file in glob.glob(f"{XML_NAME}*/strings.xml"):
+    try:
+        tree = ET.parse(file)
+        for child in tree.getroot():
+            if child.text.startswith("\\@string/"):
+                print(f"[{file}] fixing {child.attrib['name']}")
+                child.text = child.text.replace("\\@string/", "@string/")
+        tree.write(file, encoding="utf-8", method="xml", pretty_print=True, xml_declaration=True)
+    except ET.ParseError as ex:
+        print(f"[{file}] {ex}")
