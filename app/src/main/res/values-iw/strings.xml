@@ -164,8 +164,8 @@
     <string name="used_storage">משומש</string>
     <string name="tv_series">סדרת טלוויזיה</string>
     <string name="cartoons">סדרות/סרטים מצוירים</string>
-    <string name="anime_singular">@string/אנימה</string>
-    <string name="ova_singular">@string/אנימציית וידאו מקורית</string>
+    <string name="anime_singular">@string/anime</string>
+    <string name="ova_singular">@string/ova</string>
     <string name="asian_drama_singular">דרמה אסייתית</string>
     <string name="episode_action_chromecast_episode">כרומקאסט את הפרק</string>
     <string name="episode_action_chromecast_mirror">כרומקאסט את המראה</string>
