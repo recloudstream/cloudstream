@@ -4,13 +4,16 @@ import android.content.Context
 import android.util.Log
 import androidx.preference.PreferenceManager
 import com.google.android.exoplayer2.Format
-import com.google.android.exoplayer2.text.SubtitleDecoder
-import com.google.android.exoplayer2.text.SubtitleDecoderFactory
-import com.google.android.exoplayer2.text.SubtitleInputBuffer
-import com.google.android.exoplayer2.text.SubtitleOutputBuffer
+import com.google.android.exoplayer2.text.*
+import com.google.android.exoplayer2.text.cea.Cea608Decoder
+import com.google.android.exoplayer2.text.cea.Cea708Decoder
+import com.google.android.exoplayer2.text.dvb.DvbDecoder
+import com.google.android.exoplayer2.text.pgs.PgsDecoder
 import com.google.android.exoplayer2.text.ssa.SsaDecoder
 import com.google.android.exoplayer2.text.subrip.SubripDecoder
 import com.google.android.exoplayer2.text.ttml.TtmlDecoder
+import com.google.android.exoplayer2.text.tx3g.Tx3gDecoder
+import com.google.android.exoplayer2.text.webvtt.Mp4WebvttDecoder
 import com.google.android.exoplayer2.text.webvtt.WebvttDecoder
 import com.google.android.exoplayer2.util.MimeTypes
 import com.lagradost.cloudstream3.R
@@ -19,7 +22,11 @@ import org.mozilla.universalchardet.UniversalDetector
 import java.nio.ByteBuffer
 import java.nio.charset.Charset
 
-class CustomDecoder : SubtitleDecoder {
+/**
+ * @param fallbackFormat used to create a decoder based on mimetype if the subtitle string is not
+ * enough to identify the subtitle format.
+ **/
+class CustomDecoder(private val fallbackFormat: Format?) : SubtitleDecoder {
     companion object {
         fun updateForcedEncoding(context: Context) {
             val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
@@ -139,7 +146,7 @@ class CustomDecoder : SubtitleDecoder {
             val inputString = getStr(inputBuffer)
             if (realDecoder == null && !inputString.isNullOrBlank()) {
                 var str: String = inputString
-                // this way we read the subtitle file and decide what decoder to use instead of relying on mimetype
+                // this way we read the subtitle file and decide what decoder to use instead of relying fully on mimetype
                 Log.i(TAG, "Got data from queueInputBuffer")
                 //https://github.com/LagradOst/CloudStream-2/blob/ddd774ee66810137ff7bd65dae70bcf3ba2d2489/CloudStreamForms/CloudStreamForms/Script/MainChrome.cs#L388
                 realDecoder = when {
@@ -148,8 +155,31 @@ class CustomDecoder : SubtitleDecoder {
                     (str.startsWith(
                         "[Script Info]",
                         ignoreCase = true
-                    ) || str.startsWith("Title:", ignoreCase = true)) -> SsaDecoder()
+                    ) || str.startsWith("Title:", ignoreCase = true)) -> SsaDecoder(fallbackFormat?.initializationData)
                     str.startsWith("1", ignoreCase = true) -> SubripDecoder()
+                    fallbackFormat != null -> {
+                        when (val mimeType = fallbackFormat.sampleMimeType) {
+                            MimeTypes.TEXT_VTT -> WebvttDecoder()
+                            MimeTypes.TEXT_SSA -> SsaDecoder(fallbackFormat.initializationData)
+                            MimeTypes.APPLICATION_MP4VTT -> Mp4WebvttDecoder()
+                            MimeTypes.APPLICATION_TTML -> TtmlDecoder()
+                            MimeTypes.APPLICATION_SUBRIP -> SubripDecoder()
+                            MimeTypes.APPLICATION_TX3G -> Tx3gDecoder(fallbackFormat.initializationData)
+                            MimeTypes.APPLICATION_CEA608, MimeTypes.APPLICATION_MP4CEA608 -> Cea608Decoder(
+                                mimeType,
+                                fallbackFormat.accessibilityChannel,
+                                Cea608Decoder.MIN_DATA_CHANNEL_TIMEOUT_MS
+                            )
+                            MimeTypes.APPLICATION_CEA708 -> Cea708Decoder(
+                                fallbackFormat.accessibilityChannel,
+                                fallbackFormat.initializationData
+                            )
+                            MimeTypes.APPLICATION_DVBSUBS -> DvbDecoder(fallbackFormat.initializationData)
+                            MimeTypes.APPLICATION_PGS -> PgsDecoder()
+                            MimeTypes.TEXT_EXOPLAYER_CUES -> ExoplayerCuesDecoder()
+                            else -> null
+                        }
+                    }
                     else -> null
                 }
                 Log.i(
@@ -246,28 +276,6 @@ class CustomSubtitleDecoderFactory : SubtitleDecoderFactory {
     }
 
     override fun createDecoder(format: Format): SubtitleDecoder {
-        return CustomDecoder()
-        //return when (val mimeType = format.sampleMimeType) {
-        //    MimeTypes.TEXT_VTT -> WebvttDecoder()
-        //    MimeTypes.TEXT_SSA -> SsaDecoder(format.initializationData)
-        //    MimeTypes.APPLICATION_MP4VTT -> Mp4WebvttDecoder()
-        //    MimeTypes.APPLICATION_TTML -> TtmlDecoder()
-        //    MimeTypes.APPLICATION_SUBRIP -> SubripDecoder()
-        //    MimeTypes.APPLICATION_TX3G -> Tx3gDecoder(format.initializationData)
-        //    MimeTypes.APPLICATION_CEA608, MimeTypes.APPLICATION_MP4CEA608 -> return Cea608Decoder(
-        //        mimeType,
-        //        format.accessibilityChannel,
-        //        Cea608Decoder.MIN_DATA_CHANNEL_TIMEOUT_MS
-        //    )
-        //    MimeTypes.APPLICATION_CEA708 -> Cea708Decoder(
-        //        format.accessibilityChannel,
-        //        format.initializationData
-        //    )
-        //    MimeTypes.APPLICATION_DVBSUBS -> DvbDecoder(format.initializationData)
-        //    MimeTypes.APPLICATION_PGS -> PgsDecoder()
-        //    MimeTypes.TEXT_EXOPLAYER_CUES -> ExoplayerCuesDecoder()
-        //    // Default WebVttDecoder
-        //    else -> WebvttDecoder()
-        //}
+        return CustomDecoder(format)
     }
 }
