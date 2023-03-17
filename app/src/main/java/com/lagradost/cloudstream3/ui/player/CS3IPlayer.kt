@@ -9,8 +9,11 @@ import android.widget.FrameLayout
 import androidx.preference.PreferenceManager
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.C.*
+import com.google.android.exoplayer2.DefaultRenderersFactory.EXTENSION_RENDERER_MODE_ON
+import com.google.android.exoplayer2.DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER
 import com.google.android.exoplayer2.database.StandaloneDatabaseProvider
 import com.google.android.exoplayer2.ext.okhttp.OkHttpDataSource
+import com.google.android.exoplayer2.mediacodec.MediaCodecSelector
 import com.google.android.exoplayer2.source.*
 import com.google.android.exoplayer2.text.TextRenderer
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
@@ -538,7 +541,8 @@ class CS3IPlayer : IPlayer {
             }
 
             // Do no include empty referer, if the provider wants those they can use the header map.
-            val refererMap = if (link.referer.isBlank()) emptyMap() else mapOf("referer" to link.referer)
+            val refererMap =
+                if (link.referer.isBlank()) emptyMap() else mapOf("referer" to link.referer)
             val headers = mapOf(
                 "accept" to "*/*",
                 "sec-ch-ua" to "\"Chromium\";v=\"91\", \" Not;A Brand\";v=\"99\"",
@@ -669,23 +673,27 @@ class CS3IPlayer : IPlayer {
             val exoPlayerBuilder =
                 ExoPlayer.Builder(context)
                     .setRenderersFactory { eventHandler, videoRendererEventListener, audioRendererEventListener, textRendererOutput, metadataRendererOutput ->
-                        DefaultRenderersFactory(context).createRenderers(
-                            eventHandler,
-                            videoRendererEventListener,
-                            audioRendererEventListener,
-                            textRendererOutput,
-                            metadataRendererOutput
-                        ).map {
-                            if (it is TextRenderer) {
-                                currentTextRenderer = CustomTextRenderer(
-                                    subtitleOffset,
-                                    textRendererOutput,
-                                    eventHandler.looper,
-                                    CustomSubtitleDecoderFactory()
-                                )
-                                currentTextRenderer!!
-                            } else it
-                        }.toTypedArray()
+                        DefaultRenderersFactory(context).apply {
+                            setEnableDecoderFallback(true)
+                            // Enable Ffmpeg extension
+                            setExtensionRendererMode(EXTENSION_RENDERER_MODE_ON)
+                        }.createRenderers(
+                                eventHandler,
+                                videoRendererEventListener,
+                                audioRendererEventListener,
+                                textRendererOutput,
+                                metadataRendererOutput
+                            ).map {
+                                if (it is TextRenderer) {
+                                    currentTextRenderer = CustomTextRenderer(
+                                        subtitleOffset,
+                                        textRendererOutput,
+                                        eventHandler.looper,
+                                        CustomSubtitleDecoderFactory()
+                                    )
+                                    currentTextRenderer!!
+                                } else it
+                            }.toTypedArray()
                     }
                     .setTrackSelector(
                         trackSelector ?: getTrackSelector(
