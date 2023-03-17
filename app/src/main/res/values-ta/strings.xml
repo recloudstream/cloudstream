@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='UTF-8'?>
 <resources>
     <string name="search_hint">தேடுக</string>
     <string name="search_hint_site" formatted="true">தேடல் %s…</string>

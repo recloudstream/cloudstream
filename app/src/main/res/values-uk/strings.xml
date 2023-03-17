@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='UTF-8'?>
 <resources>
     <string name="search_poster_img_des">Постер</string>
     <string name="episode_poster_img_des">Постер до епізоду</string>

@@ -1,5 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--https://newbedev.com/concatenate-multiple-strings-in-xml--><resources>
+<?xml version='1.0' encoding='UTF-8'?>
+<!--https://newbedev.com/concatenate-multiple-strings-in-xml-->
+<resources>
     <string name="player_speed_text_format" formatted="true">Prędkość (%.2fx)</string>
     <string name="rated_format" formatted="true">Ocena: %.1f</string>
     <string name="new_update_format" formatted="true">Znaleziono nową aktualizację!

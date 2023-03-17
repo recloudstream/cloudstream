@@ -1,5 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--https://newbedev.com/concatenate-multiple-strings-in-xml--><resources>
+<?xml version='1.0' encoding='UTF-8'?>
+<!--https://newbedev.com/concatenate-multiple-strings-in-xml-->
+<resources>
     <!-- FORMAT MIGHT TRANSLATE, WILL CAUSE CRASH IF APPLIED WRONG -->
     <string formatted="true" name="app_dub_sub_episode_text_format">%s еп. %d</string>
     <string formatted="true" name="cast_format">Актьори: %s</string>

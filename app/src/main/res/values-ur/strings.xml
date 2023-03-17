@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='UTF-8'?>
 <resources>
     <string name="cast_format" formatted="true">کاسٹ: %s</string>
     <string name="next_episode_format" formatted="true">قسط %d جاری کیا جائے گا</string>
