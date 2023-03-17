@@ -1,5 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--https://newbedev.com/concatenate-multiple-strings-in-xml--><resources>
+<?xml version='1.0' encoding='UTF-8'?>
+<!--https://newbedev.com/concatenate-multiple-strings-in-xml-->
+<resources>
     <!-- FORMAT MIGHT TRANSLATE, WILL CAUSE CRASH IF APPLIED WRONG -->
     <string name="extra_info_format" formatted="true" translatable="false">%d %s | %s</string>
     <string name="storage_size_format" formatted="true" translatable="false">%s • %s</string>
@@ -573,7 +574,7 @@
     <string name="test_log">日志</string>
     <string name="jsdelivr_proxy">raw.githubusercontent.com 代理</string>
     <string name="jsdelivr_enabled">连接 Github 失败，正在启用 jsdelivr 代理。</string>
-    <string name="jsdelivr_proxy_summary">使用jsdelivr，可以绕过GitHub的封锁。可能会延迟几天的更新。</string>
+    <string name="jsdelivr_proxy_summary">使用 jsdelivr，可以绕过 GitHub 的封锁。可能会延迟几天的更新。</string>
     <string name="pref_category_bypass">ISP 绕过</string>
     <string name="revert">还原</string>
     <string name="watch_quality_pref_data">首选播放画质（移动数据）</string>

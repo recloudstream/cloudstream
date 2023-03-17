@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='UTF-8'?>
 <resources>
     <string name="app_dub_sub_episode_text_format" formatted="true">%s Ep %d</string>
     <string name="cast_format" formatted="true">Besetzung: %s</string>
@@ -41,7 +41,7 @@
     <string name="search_hint_site" formatted="true">Suche %s…</string>
     <string name="no_data">Keine Daten vorhanden</string>
     <string name="episode_more_options_des">Mehr Optionen</string>
-    <string name="next_episode">Nächste Epsisode</string>
+    <string name="next_episode">Nächste Episode</string>
     <string name="result_tags">Genres</string>
     <string name="result_share">Teilen</string>
     <string name="result_open_in_browser">In Browser öffnen</string>
@@ -136,14 +136,14 @@
     <string name="swipe_to_seek_settings">Wischen zum vor- und zurückspulen</string>
     <string name="swipe_to_seek_settings_des">Nach links oder rechts wischen, um die Zeit im Videoplayer zu steuern</string>
     <string name="swipe_to_change_settings">Wischen, um Einstellungen zu ändern</string>
-    <string name="swipe_to_change_settings_des">Links oder rechts wischen, um die Helligkeit oder Lautstärke zu ändern</string>
+    <string name="swipe_to_change_settings_des">Links oder rechts nach oben oder unten wischen, um die Helligkeit oder Lautstärke zu ändern</string>
     <string name="autoplay_next_settings">Nächste Episode automatisch abspielen</string>
     <string name="autoplay_next_settings_des">Nächste Episode wird gestartet, sobald die aktuelle Episode endet</string>
     <string name="double_tap_to_seek_settings">Doppeltippen zum vor- und zurückspulen</string>
     <string name="double_tap_to_pause_settings">Doppeltippen zum Pausieren</string>
-    <string name="double_tap_to_seek_amount_settings">Zeit für vor- und zurückspulen im Player</string>
+    <string name="double_tap_to_seek_amount_settings">Zeit für vor- und zurückspulen im Player (Sekunden)</string>
     <string name="double_tap_to_seek_settings_des">Zweimal auf die rechte oder linke Seite tippen, um vor- oder zurückzuspulen</string>
-    <string name="double_tap_to_pause_settings_des">In die Mitte tippen, um zu pausieren</string>
+    <string name="double_tap_to_pause_settings_des">Doppelt in die Mitte tippen, um zu pausieren</string>
     <string name="use_system_brightness_settings">Systemhelligkeit verwenden</string>
     <string name="use_system_brightness_settings_des">Systemhelligkeit anstelle eines dunklen Overlay im Player verwenden</string>
     <string name="episode_sync_settings">Episodenfortschritt aktualisieren</string>
@@ -166,7 +166,7 @@
     <string name="pref_filter_search_quality">Ausgewählte Videoqualität bei Suchergebnissen ausblenden</string>
     <string name="automatic_plugin_updates">Automatische Plugin-Updates</string>
     <string name="updates_settings">App-Updates anzeigen</string>
-    <string name="updates_settings_des">Automatisches Suchen nach neuen Updates beim Start</string>
+    <string name="updates_settings_des">Automatisches Suchen nach neuen Updates nach dem Start</string>
     <string name="uprereleases_settings">Auf Vorabversionen updaten</string>
     <string name="uprereleases_settings_des">Suche nach Vorabversionen statt nur nach Vollversionen</string>
     <string name="github">Github</string>
@@ -286,7 +286,7 @@
     <string name="legal_notice">Haftungsausschluss</string>
     <string name="category_general">Allgemein</string>
     <string name="random_button_settings">Zufalls-Button</string>
-    <string name="random_button_settings_desc">Zufallsbutton auf der Startseite anzeigen</string>
+    <string name="random_button_settings_desc">Zeigt einen Zufallsbutton auf der Startseite an, mit welchem eine Serie oder ein Film von der Website zufällig ausgewählt wird</string>
     <string name="provider_lang_settings">Anbieter-Sprachen</string>
     <string name="app_layout">App-Layout</string>
     <string name="preferred_media_settings">Bevorzugte Medien</string>
@@ -519,13 +519,13 @@
     <string name="start">Start</string>
     <string name="restart">Neustarten</string>
     <string name="watch_quality_pref_data">Bevorzugte Videoqualität (mobile Daten)</string>
-    <string name="jsdelivr_proxy_summary">Umgehung der GitHub Sperre mit jsdelivr, kann zu einigen Tagen Verzögerung bei Updates führen.</string>
+    <string name="jsdelivr_proxy_summary">Umgehung der GitHub Sperre mit jsdelivr. Kann zu einigen Tagen Verzögerung bei Updates führen.</string>
     <string name="subscription_new">%s abonniert</string>
     <string name="subscription_deleted">%s deabonniert</string>
     <string name="subscription_episode_released">Episode %d erschienen!</string>
     <string name="jsdelivr_proxy">raw.githubusercontent.com Proxy</string>
     <string name="jsdelivr_enabled">GitHub kann nicht erreicht werden, der jsdelivr-Proxy wird aktiviert.</string>
-    <string name="subscription_in_progress_notification">Aktualisierung abonnierter Sendungen</string>
+    <string name="subscription_in_progress_notification">Abonnierte Serien werden aktualisiert</string>
     <string name="revert">Rückgängig</string>
     <string name="subscription_list_name">Abonniert</string>
     <string name="pref_category_bypass">ISP-Umgehungen</string>

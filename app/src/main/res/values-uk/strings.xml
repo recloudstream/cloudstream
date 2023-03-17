@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='UTF-8'?>
 <resources>
     <string name="search_poster_img_des">Постер</string>
     <string name="episode_poster_img_des">Постер до епізоду</string>
@@ -22,7 +22,7 @@
     <string name="title_search">Пошук</string>
     <string name="title_downloads">Завантаження</string>
     <string name="duration_format" formatted="true">%d хв</string>
-    <string name="title_settings">Параметри</string>
+    <string name="title_settings">Налаштування</string>
     <string name="search_hint">Пошук…</string>
     <string name="search_hint_site" formatted="true">Пошук на %s…</string>
     <string name="no_data">Дані відсутні</string>

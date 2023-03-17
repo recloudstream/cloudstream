@@ -1,5 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--https://newbedev.com/concatenate-multiple-strings-in-xml--><resources>
+<?xml version='1.0' encoding='UTF-8'?>
+<!--https://newbedev.com/concatenate-multiple-strings-in-xml-->
+<resources>
     <!-- FORMAT MIGHT TRANSLATE, WILL CAUSE CRASH IF APPLIED WRONG -->
     <string name="extra_info_format" formatted="true" translatable="false">%d %s | %s</string>
     <string name="storage_size_format" formatted="true" translatable="false">%s • %s</string>
@@ -138,16 +139,16 @@
     <string name="eigengraumode_settings">Eigengravy način</string>
     <string name="eigengraumode_settings_des">Dodaje opciju brzine u playeru</string>
     <string name="swipe_to_seek_settings">Prijeđi prstom za traženje</string>
-    <string name="swipe_to_seek_settings_des">Prijeđi prstom ulijevo ili udesno za kontrolu vremena u videoplayeru</string>
+    <string name="swipe_to_seek_settings_des">Prijeđite prstom ulijevo ili udesno kako biste kontrolirali player</string>
     <string name="swipe_to_change_settings">Klizni za promjenu postavki</string>
-    <string name="swipe_to_change_settings_des">Prijeđi prstom ulijevo ili udesno za promjenu svjetline ili glasnoće</string>
+    <string name="swipe_to_change_settings_des">Kliznite prstom ulijevo ili udesno za promjenu svjetline ili glasnoće</string>
     <string name="autoplay_next_settings">Automatski započni sljedeću epizodu</string>
     <string name="autoplay_next_settings_des">Započne sljedeću epizodu kad trenutna završi</string>
     <string name="double_tap_to_seek_settings">Dodirni dvaput za traženje</string>
     <string name="double_tap_to_pause_settings">Dodirni dvaput za pauziranje</string>
-    <string name="double_tap_to_seek_amount_settings">Iznos preskakanja u playeru</string>
+    <string name="double_tap_to_seek_amount_settings">Iznos preskakanja u playeru (Sekunde)</string>
     <string name="double_tap_to_seek_settings_des">Dvaput dodirni desnu ili lijevu stranu ekrana za pomicanje naprijed ili natrag</string>
-    <string name="double_tap_to_pause_settings_des">Dodirni u sredinu zaslona za pauziranje</string>
+    <string name="double_tap_to_pause_settings_des">Dodirnite dvaput u sredinu zaslona za pauziranje</string>
     <string name="use_system_brightness_settings">Koristi svijetlinu u sustavu</string>
     <string name="use_system_brightness_settings_des">Koristi svjetlinu sustava u playeru aplikacija umjesto tamnog preklopa</string>
     <string name="episode_sync_settings">Ažuriraj napredak gledanja</string>
@@ -173,7 +174,7 @@
     <string name="pref_filter_search_quality">Sakrij odabranu kvalitetu videozapisa u rezultatima pretraživanja</string>
     <string name="automatic_plugin_updates">Automatsko ažuriranje dodataka</string>
     <string name="updates_settings">Prikaži ažuriranja aplikacije</string>
-    <string name="updates_settings_des">Automatski traži nova ažuriranja pri pokretanju aplikacije</string>
+    <string name="updates_settings_des">Automatski traži nova ažuriranja nakon pokretanja aplikacije</string>
     <string name="uprereleases_settings">Ažuriranje na predizdanja</string>
     <string name="uprereleases_settings_des">Tražite ažuriranja prije izdanja umjesto samo potpunih izdanja</string>
     <string name="github">Github</string>
@@ -238,8 +239,8 @@
     <string name="movies_singular">Film</string>
     <string name="tv_series_singular">Serija</string>
     <string name="cartoons_singular">Crtić</string>
-    <string name="anime_singular">@string/anime</string>
-    <string name="ova_singular">@string/ova</string>
+    <string name="anime_singular">Anime</string>
+    <string name="ova_singular">OVA</string>
     <string name="torrent_singular">Torrent</string>
     <string name="documentaries_singular">Dokumentarac</string>
     <string name="asian_drama_singular">Azijska drama</string>
@@ -299,7 +300,7 @@
     <string name="legal_notice_text" translatable="false">Any legal issues regarding the content on this application should be taken up with the actual file hosts and providers themselves as we are not affiliated with them. In case of copyright infringement, please directly contact the responsible parties or the streaming websites. The app is purely for educational and personal use. CloudStream 3 does not host any content on the app, and has no control over what media is put up or taken down. CloudStream 3 functions like any other search engine, such as Google. CloudStream 3 does not host, upload or manage any videos, films or content. It simply crawls, aggregates and displayes links in a convenient, user-friendly interface. It merely scrapes 3rd-party websites that are publicly accessable via any regular web browser. It is the responsibility of user to avoid any actions that might violate the laws governing his/her locality. Use CloudStream 3 at your own risk.</string>
     <string name="category_general">Općenito</string>
     <string name="random_button_settings">Random gumb</string>
-    <string name="random_button_settings_desc">Prikaži random gumb na početnoj stranici</string>
+    <string name="random_button_settings_desc">Prikazuje gumb na početnoj stranici koji može odabrati nasumični film ili TV seriju s početne stranice</string>
     <string name="provider_lang_settings">Jezici pružatelja usluga</string>
     <string name="app_layout">Izgled aplikacije</string>
     <string name="preferred_media_settings">Preferirani mediji</string>
@@ -552,6 +553,6 @@
     <string name="pref_category_bypass">ISP zaobilaznice</string>
     <string name="jsdelivr_proxy">raw.githubusercontent.com Proxy</string>
     <string name="jsdelivr_enabled">Neuspješno dohvaćanje GitHuba, omogućavanje jsdelivr proxyja.</string>
-    <string name="jsdelivr_proxy_summary">Zaobilazi blokiranje GitHuba pomoću jsdelivr, može uzrokovati odgode ažuriranja za nekoliko dana.</string>
+    <string name="jsdelivr_proxy_summary">Koristeći jsdelivr, GitHub blokiranje se može zaobići. Može odgoditi ažuriranja za nekoliko dana.</string>
     <string name="watch_quality_pref_data">Preferirana kvaliteta gledanja (podatkovna mobilna mreža)</string>
 </resources>
