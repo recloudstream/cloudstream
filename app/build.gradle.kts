@@ -160,7 +160,7 @@ dependencies {
     implementation("com.google.android.exoplayer:extension-mediasession:2.18.2")
     implementation("com.google.android.exoplayer:extension-okhttp:2.18.2")
     // Use the Jellyfin ffmpeg extension for easy ffmpeg audio decoding in exoplayer. Thank you Jellyfin <3
-    implementation("org.jellyfin.exoplayer:exoplayer-ffmpeg-extension:2.18.2+1")
+//    implementation("org.jellyfin.exoplayer:exoplayer-ffmpeg-extension:2.18.2+1")
 
     //implementation("com.google.android.exoplayer:extension-leanback:2.14.0")
 

@@ -674,9 +674,9 @@ class CS3IPlayer : IPlayer {
                 ExoPlayer.Builder(context)
                     .setRenderersFactory { eventHandler, videoRendererEventListener, audioRendererEventListener, textRendererOutput, metadataRendererOutput ->
                         DefaultRenderersFactory(context).apply {
-                            setEnableDecoderFallback(true)
+//                            setEnableDecoderFallback(true)
                             // Enable Ffmpeg extension
-                            setExtensionRendererMode(EXTENSION_RENDERER_MODE_ON)
+//                            setExtensionRendererMode(EXTENSION_RENDERER_MODE_ON)
                         }.createRenderers(
                                 eventHandler,
                                 videoRendererEventListener,
