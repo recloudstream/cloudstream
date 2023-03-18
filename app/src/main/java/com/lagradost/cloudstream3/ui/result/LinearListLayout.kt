@@ -7,13 +7,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.lagradost.cloudstream3.mvvm.logError
 
 fun RecyclerView?.setLinearListLayout(isHorizontal: Boolean = true) {
-    if(this == null) return
+    if (this == null) return
     this.layoutManager =
         this.context?.let { LinearListLayout(it).apply { if (isHorizontal) setHorizontal() else setVertical() } }
             ?: this.layoutManager
 }
 
-class LinearListLayout(context: Context?) :
+open class LinearListLayout(context: Context?) :
     LinearLayoutManager(context) {
 
     fun setHorizontal() {
@@ -24,7 +24,8 @@ class LinearListLayout(context: Context?) :
         orientation = VERTICAL
     }
 
-    private fun getCorrectParent(focused: View): View? {
+    private fun getCorrectParent(focused: View?): View? {
+        if (focused == null) return null
         var current: View? = focused
         val last: ArrayList<View> = arrayListOf(focused)
         while (current != null && current !is RecyclerView) {
@@ -54,10 +55,17 @@ class LinearListLayout(context: Context?) :
         linearSmoothScroller.targetPosition = position
         startSmoothScroll(linearSmoothScroller)
     }*/
-
     override fun onInterceptFocusSearch(focused: View, direction: Int): View? {
         val dir = if (orientation == HORIZONTAL) {
-            if (direction == View.FOCUS_DOWN || direction == View.FOCUS_UP) return null
+            if (direction == View.FOCUS_DOWN || direction == View.FOCUS_UP) {
+                // This scrolls the recyclerview before doing focus search, which
+                // allows the focus search to work better.
+
+                // Without this the recyclerview focus location on the screen
+                // would change when scrolling between recyclerviews.
+                (focused.parent as? RecyclerView)?.focusSearch(direction)
+                return null
+            }
             if (direction == View.FOCUS_RIGHT) 1 else -1
         } else {
             if (direction == View.FOCUS_RIGHT || direction == View.FOCUS_LEFT) return null

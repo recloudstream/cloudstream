@@ -22,6 +22,7 @@ import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
+import androidx.recyclerview.widget.RecyclerView
 import com.discord.panels.OverlappingPanelsLayout
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipDrawable
@@ -531,6 +532,25 @@ open class ResultFragment : ResultTrailerPlayer() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        result_cast_items?.layoutManager = object : LinearListLayout(view.context) {
+            override fun onRequestChildFocus(
+                parent: RecyclerView,
+                state: RecyclerView.State,
+                child: View,
+                focused: View?
+            ): Boolean {
+                // Make the cast always focus the first visible item when focused
+                // from somewhere else. Otherwise it jumps to the last item.
+                return if (parent.focusedChild == null) {
+                    scrollToPosition(this.findFirstCompletelyVisibleItemPosition())
+                    true
+                } else {
+                    super.onRequestChildFocus(parent, state, child, focused)
+                }
+            }
+        }.apply {
+            this.orientation = RecyclerView.HORIZONTAL
+        }
         result_cast_items?.adapter = ActorAdaptor()
 
         updateUIListener = ::updateUI
