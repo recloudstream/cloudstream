@@ -56,6 +56,8 @@ for file in glob.glob(f"{XML_NAME}*/strings.xml"):
             if child.text.startswith("\\@string/"):
                 print(f"[{file}] fixing {child.attrib['name']}")
                 child.text = child.text.replace("\\@string/", "@string/")
-        tree.write(file, encoding="utf-8", method="xml", pretty_print=True, xml_declaration=True)
+        with open(file, 'w') as fp:
+            fp.write('<?xml version="1.0" encoding="utf-8"?>\n')
+            tree.write(fp, encoding="utf-8", method="xml", pretty_print=True, xml_declaration=False)
     except ET.ParseError as ex:
         print(f"[{file}] {ex}")
