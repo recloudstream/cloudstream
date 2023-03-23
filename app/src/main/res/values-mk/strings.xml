@@ -1,217 +1,561 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<!--https://newbedev.com/concatenate-multiple-strings-in-xml-->
 <resources>
-    <!-- TRANSLATE, BUT DON'T FORGET FORMAT -->
-    <string name="player_speed_text_format" formatted="true">Брзина (%.2fx)</string>
-    <string name="rated_format" formatted="true">Оценето: %.1f</string>
-    <string name="new_update_format" formatted="true">Пронајдена нова верзија на апликацијата!
-\n%s -&gt; %s</string>
-    <string name="filler" formatted="true">Филтер</string>
-    <string name="app_name">CloudStream</string>
-    <string name="title_home">Дома</string>
-    <string name="title_search">Барај</string>
-    <string name="title_downloads">Превземања</string>
-    <string name="title_settings">Поставки</string>
-    <string name="search_hint">Барај…</string>
-    <string name="no_data">Нема податоци</string>
-    <string name="episode_more_options_des">Повеќе опции</string>
-    <string name="next_episode">Следна епизода</string>
-    <string name="result_tags">Жанрови</string>
-    <string name="result_share">Сподели</string>
-    <string name="result_open_in_browser">Отвори во прелистувач</string>
-    <string name="skip_loading">Прескокни вчитување</string>
-    <string name="loading">Вчитување…</string>
-    <string name="type_watching">Моментални гледања</string>
-    <string name="type_on_hold">Ставено на чекање</string>
-    <string name="type_completed">Завршени</string>
-    <string name="type_dropped">Отфрлени</string>
-    <string name="type_plan_to_watch">Планирани за гледање</string>
-    <string name="type_none">Ништо одбрано</string>
-    <string name="type_re_watching">Повторно гледање</string>
-    <string name="play_movie_button">Пушти филм</string>
-    <string name="play_torrent_button">Стримај торент</string>
-    <string name="pick_source">Извори</string>
-    <string name="pick_subtitle">Преводи</string>
-    <string name="reload_error">Повтори конекција…</string>
-    <string name="go_back">Оди назад</string>
-    <string name="play_episode">Пушти епизода</string>
-    <!--<string name="need_storage">Allow to download episodes</string>-->
-    <string name="download">Превземи</string>
-    <string name="downloaded">Превземено</string>
-    <string name="downloading">Се превзема</string>
-    <string name="download_paused">Превземањето е паузирано</string>
-    <string name="download_started">Превземањето започна</string>
-    <string name="download_failed">Превземањето е неуспешно</string>
-    <string name="download_canceled">Превземањето е откажано</string>
-    <string name="download_done">Превземањето е готово</string>
-    <string name="error_loading_links_toast">Грешка при вчитување на врската</string>
-    <string name="download_storage_text">Внатрешна меморија</string>
-    <string name="popup_delete_file">Избриши датотека</string>
-    <string name="popup_play_file">Пушти датотека</string>
-    <string name="popup_resume_download">Продолжи со преземање</string>
-    <string name="popup_pause_download">Паузирај со преземање</string>
-    <string name="pref_disable_acra">Оневозможи автоматско известување за грешки</string>
-    <string name="home_more_info">Повеќе информации</string>
-    <string name="home_expanded_hide">Скриј</string>
-    <string name="home_play">Пушти</string>
-    <string name="home_info">Информации</string>
-    <string name="filter_bookmarks">Филтрирајте ги обележувачите</string>
-    <string name="error_bookmarks_text">Обележувачи</string>
-    <string name="action_remove_from_bookmarks">Отстрани</string>
-    <string name="sort_apply">Активирај</string>
-    <string name="sort_cancel">Откажи</string>
-    <string name="player_speed">Брзина на плеер</string>
-    <string name="subtitles_settings">Поставки за преводи</string>
-    <string name="subs_text_color">Боја на текстот</string>
-    <string name="subs_outline_color">Боја на надворешна линија од текстот</string>
-    <string name="subs_background_color">Позадинска боја</string>
-    <string name="subs_window_color">Боја на прозорец</string>
-    <string name="subs_edge_type">Тип на раб</string>
-    <string name="subs_subtitle_elevation">Висина на титл</string>
-    <string name="subs_font">Фонт</string>
-    <string name="subs_font_size">Големина на фонт</string>
-    <string name="search_provider_text_providers">Пребарувај користејќи провајдери</string>
-    <string name="search_provider_text_types">Пребарувај користејќи типови</string>
-    <string name="benene_count_text">%d Крем банани дадени на девелоперите</string>
-    <string name="benene_count_text_none">Нема крем банани дадени</string>
-    <string name="subs_auto_select_language">Авто одбирање на јазик</string>
-    <string name="subs_download_languages">Превземи јазици</string>
-    <string name="subs_hold_to_reset_to_default">Држете за да се ресетира на стандардно</string>
-    <string name="continue_watching">Продолжи со гледање</string>
-    <string name="action_remove_watching">Избриши</string>
-    <string name="action_open_watching">Повеќе информации</string>
-    <string name="vpn_might_be_needed">Можеби ќе биде потребен VPN за да работи правилно овој провајдер</string>
-    <string name="vpn_torrent">Овој провајдер е торент, се препорачува VPN</string>
-    <string name="provider_info_meta">Метаподатоците не се обезбедени од страната, вчитувањето на видеото може да не успее.</string>
-    <string name="torrent_plot">Опис</string>
-    <string name="normal_no_plot">Не е пронајден заговор</string>
-    <string name="torrent_no_plot">Не е пронајден опис</string>
-    <string name="picture_in_picture">Слика-во-слика</string>
-    <string name="picture_in_picture_des">Продолжува со репродукција во минијатурен плеер над другите апликации</string>
-    <string name="player_size_settings">Копче за промена на големината на плеерот</string>
-    <string name="player_size_settings_des">Отстранете ги црните граници</string>
-    <string name="player_subtitles_settings">Преводи</string>
-    <string name="player_subtitles_settings_des">Поставки на плеерот за преводи</string>
-    <string name="eigengraumode_settings">Режим на Eigengravy</string>
-    <string name="eigengraumode_settings_des">Додава можност за брзина на снимка во плеерот</string>
-    <string name="swipe_to_seek_settings">Повлечете за да барате</string>
-    <string name="swipe_to_seek_settings_des">Повлечете лево или десно за да го контролирате времето во видеоплеерот</string>
-    <string name="swipe_to_change_settings">Повлечете за да ги промените поставките</string>
-    <string name="swipe_to_change_settings_des">Повлечете на левата или десната страна за да ја промените осветленоста или јачината на звукот</string>
-    <string name="double_tap_to_seek_settings">Допрете двапати за да барате</string>
-    <string name="double_tap_to_seek_settings_des">Допрете двапати на десната или левата страна за да барате напред или назад</string>
-    <string name="use_system_brightness_settings">Користете ја осветленоста на системот</string>
-    <string name="use_system_brightness_settings_des">Користете ја осветленоста на системот во плеерот наместо темната прекривка</string>
-    <string name="search">Барај</string>
-    <string name="settings_info">Информации</string>
-    <string name="advanced_search">Напредно пребарување</string>
-    <string name="advanced_search_des">Ви ги дава резултатите од пребарувањето одделени по провајдер</string>
-    <string name="bug_report_settings_off">Испраќа податоци само за падови на апликацијата</string>
-    <string name="bug_report_settings_on">Не испраќа податоци</string>
-    <string name="show_fillers_settings">Прикажи епизода за полнење за аниме</string>
-    <string name="updates_settings">Прикажи ажурирања на апликации</string>
-    <string name="updates_settings_des">Автоматски пребарувајте нови ажурирања на вклучување на апликацијата</string>
-    <string name="uprereleases_settings">Ажурирање на пред официјални верзии</string>
-    <string name="uprereleases_settings_des">Пребарајте пред официјални верзии наместо ажурирања на само официјални верзии</string>
-    <string name="github">Github</string>
-    <string name="lightnovel">Лесна нова апликација од истите развивачи</string>
-    <string name="anim">Апликација за аниме од истите развивачи</string>
-    <string name="discord">Придружете се на Discord</string>
-    <string name="benene">Дајте им крем банана на развивачите</string>
-    <string name="benene_des">Дадени крем банани</string>
-    <string name="app_language">Јазик на апликацијата</string>
-    <string name="no_chromecast_support_toast">Овој провајдер нема поддршка за Chromecast</string>
-    <string name="no_links_found_toast">Не се пронајдени врски</string>
-    <string name="copy_link_toast">Врската е копирана во таблата со исечоци</string>
-    <string name="play_episode_toast">Пушти ја епизодата</string>
-    <string name="subs_default_reset_toast">Ресетирање на стандардните вредности</string>
-    <string name="acra_report_toast">За жал, апликацијата падна. Ќе се испрати анонимен извештај за грешка до програмерите</string>
-    <string name="season">Сезона</string>
-    <string name="no_season">Нема сезона</string>
-    <string name="episode">Епизода</string>
-    <string name="episodes">Епизоди</string>
-    <string name="season_short">С</string>
-    <string name="episode_short">Е</string>
-    <string name="delete_file">Избриши датотека</string>
-    <string name="delete">Избриши</string>
-    <string name="pause">Паузирај</string>
-    <string name="resume">Продолжи</string>
-    <string name="delete_message">Ова трајно ќе го избрише %s
-\nДали си сигурен\?</string>
-    <string name="status_ongoing">Во тек</string>
-    <string name="status_completed">Завршени</string>
-    <string name="status">Статус</string>
-    <string name="year">Година</string>
-    <string name="rating">Рејтинг</string>
-    <string name="duration">Времетраење</string>
-    <string name="site">Извор</string>
-    <string name="synopsis">Крат</string>
-    <string name="queued">во редица</string>
-    <string name="no_subtitles">Нема преводи</string>
-    <string name="default_subtitles">Стандардно</string>
-    <string name="free_storage">Слободен простор</string>
-    <string name="used_storage">Искористен простор</string>
-    <string name="app_storage">Апликациски простор</string>
-    <string name="movies">Филмови</string>
-    <string name="tv_series">Серии</string>
-    <string name="cartoons">Цртани</string>
-    <string name="anime">Аниме</string>
-    <string name="torrent">Торент</string>
-    <string name="source_error">Извор на проблемот</string>
-    <string name="remote_error">Грешка</string>
-    <string name="render_error">Грешка</string>
-    <string name="unexpected_error">Неочекувана грешка со плеерот</string>
-    <string name="storage_error">Грешка при превземањето, проверете си ги дозволите за користење на простор</string>
-    <string name="episode_action_chromecast_episode">Епизода на Chromecast</string>
-    <string name="episode_action_chromecast_mirror">Огледало на Chromecastr</string>
-    <string name="episode_action_play_in_app">Пушти во апликацијата</string>
-    <string name="episode_action_play_in_format">Пушти на %s</string>
-    <string name="episode_action_play_in_browser">Пушти на прелистувач</string>
-    <string name="episode_action_copy_link">Копирај линк</string>
-    <string name="episode_action_auto_download">Авто превземање</string>
-    <string name="episode_action_download_mirror">Превземи Mirror</string>
-    <string name="episode_action_reload_links">Вчитај повторно врски</string>
-    <string name="no_update_found">Не е пронајдено ажурирање</string>
-    <string name="check_for_update">Проверете ажурирања</string>
-    <string name="video_lock">Заклучи</string>
-    <string name="video_aspect_ratio_resize">Променете ја големината</string>
-    <string name="video_source">Избор</string>
-    <string name="video_skip_op">Прескокни ОП</string>
-    <string name="dont_show_again">Не прикажувај повторно</string>
-    <string name="update">Ажурирај</string>
-    <string name="watch_quality_pref">Префериран квалитет на гледање</string>
-    <string name="dns_pref">DNS преку HTTPS</string>
-    <string name="dns_pref_summary">Корисно за заобиколување на блоковите на интернет провајдерите</string>
-    <string name="download_path_pref">Патека на превземање</string>
-    <string name="display_subbed_dubbed_settings">Прикажи синхронизирано/сублирано аниме</string>
-    <string name="resize_fit">Прилагоди на екранот</string>
-    <string name="resize_fill">Истегни</string>
-    <string name="resize_zoom">Зумирај</string>
-    <string name="legal_notice">Disclaimer</string>
-    <string name="category_general">Генерално</string>
-    <string name="provider_lang_settings">Јазици на провајдерите</string>
-    <string name="app_layout">Распоред на апликацијата</string>
-    <string name="preferred_media_settings">Претпочитани медиуми</string>
-    <string name="automatic">Автоматски</string>
-    <string name="tv_layout">Изглед за гледање на телевизор</string>
-    <string name="phone_layout">Изглед за гледање на телефон</string>
-    <string name="primary_color_settings">Примарна боја</string>
-    <string name="app_theme_settings">Тема на апликацијата</string>
-    <string name="login_format">%s %s</string>
-    <string name="account">Корисничко име</string>
-    <string name="logout">Одјавување</string>
-    <string name="login">Логирај Се</string>
-    <string name="switch_account">Промени корисничка сметка</string>
-    <string name="add_account">Додади корисничка сметка</string>
-    <!-- ============ -->
-    <string name="none">Ништо</string>
-    <string name="normal">Нормално</string>
-    <string name="all">Сите</string>
-    <string name="max">Максимум</string>
-    <string name="min">Минимум</string>
-    <string name="subtitles_outline">Надворешна линија</string>
-    <string name="subtitles_depressed">Депресиран</string>
-    <string name="subtitles_shadow">Сенка</string>
-    <string name="subtitles_raised">Подигнат</string>
-    <string name="history">Историја</string>
+     <string name="player_speed_text_format" formatted="true">Брзина (%.2fx)</string>
+     <string name="rated_format" formatted="true">Оценет: %.1f</string>
+     <string name="new_update_format" formatted="true">Најдено ново ажурирање!\n%s -&gt; %s</string>
+     <string name="filler" formatted="true">Филер</string>
+     <string name="duration_format" formatted="true">%d мин</string>
+     <string name="app_name">CloudStream</string>
+     <string name="play_with_app_name">Играј со CloudStream</string>
+     <string name="title_home">Дома</string>
+     <string name="title_search">Барај</string>
+     <string name="title_downloads">Преземања</string>
+     <string name="title_settings">Поставки</string>
+     <string name="search_hint">Барај...</string>
+     <string name="search_hint_site" formatted="true">Пребарај %s…</string>
+     <string name="no_data">Нема податоци</string>
+     <string name="episode_more_options_des">Повеќе опции</string>
+     <string name="next_episode">Следна епизода</string>
+     <string name="result_plot" translatable="false">@string/synopsis</string>
+     <string name="result_tags">Жанрови</string>
+     <string name="result_share">Сподели</string>
+     <string name="result_open_in_browser">Отвори во прелистувач</string>
+     <string name="browser">Прелистувач</string>
+     <string name="skip_loading">Прескокнете го вчитувањето</string>
+     <string name="loading">Се вчитува…</string>
+     <string name="type_watching">Гледање</string>
+     <string name="type_on_hold">На чекање</string>
+     <string name="type_completed">Завршено</string>
+     <string name="type_dropped">Паднат</string>
+     <string name="type_plan_to_watch">Планирајте да гледате</string>
+     <string name="type_none">Ниту еден</string>
+     <string name="type_re_watching">Повторно гледање</string>
+     <string name="play_movie_button">Пушти филм</string>
+     <string name="play_trailer_button">Пушти трејлер</string>
+     <string name="play_livestream_button">Пушти Livestream</string>
+     <string name="play_torrent_button">Стримај Торент</string>
+     <string name="pick_source">Извори</string>
+     <string name="pick_subtitle">Преводи</string>
+     <string name="reload_error">Обидете се повторно со поврзување…</string>
+     <string name="go_back">Одете назад</string>
+     <string name="play_episode">Пушти ја епизодата</string>
+     <!--<string name="need_storage">Дозволи преземање епизоди</string>-->
+     <string name="download">Преземи</string>
+     <string name="downloaded">Преземено</string>
+     <string name="downloading">Се презема</string>
+     <string name="download_paused">Преземањето е паузирано</string>
+     <string name="download_started">Преземањето започна</string>
+     <string name="download_failed">Преземањето не успеа</string>
+     <string name="download_cancelled">Преземањето е откажано</string>
+     <string name="download_done">Преземањето е завршено</string>
+     <string name="download_format" translatable="false">%s - %s</string>
+     <string name="update_started">Ажурирањето започна</string>
+     <string name="stream">Стрим</string>
+     <string name="error_loading_links_toast">Грешка при вчитување врски</string>
+     <string name="download_storage_text">Внатрешна меморија</string>
+     <string name="app_dubbed_text">Dub</string>
+     <string name="app_subbed_text">Sub</string>
+     <string name="popup_delete_file">Избриши датотека</string>
+     <string name="popup_play_file">Пушти датотека</string>
+     <string name="popup_resume_download">Продолжи со преземање</string>
+     <string name="popup_pause_download">Паузирајте го преземањето</string>
+     <string name="pref_disable_acra">Оневозможи автоматско известување за грешки</string>
+     <string name="home_more_info">Повеќе информации</string>
+     <string name="home_expanded_hide">Скриј</string>
+     <string name="home_play">Пушти</string>
+     <string name="home_info">Информации</string>
+     <string name="filter_bookmarks">Филтрирајте ги обележувачите</string>
+     <string name="error_bookmarks_text">Обележувачи</string>
+     <string name="action_remove_from_bookmarks">Отстрани</string>
+     <string name="action_add_to_bookmarks">Поставете статус на пратење</string>
+     <string name="sort_apply">Примени</string>
+     <string name="sort_cancel">Откажи</string>
+     <string name="sort_copy">Копирај</string>
+     <string name="sort_close">Затвори</string>
+     <string name="sort_clear">Исчисти</string>
+     <string name="sort_save">Зачувај</string>
+     <string name="player_speed">Брзина на плеер</string>
+     <string name="subtitles_settings">Поставки за титлови</string>
+     <string name="subs_text_color">Боја на текстот</string>
+     <string name="subs_outline_color">Боја на преглед</string>
+     <string name="subs_background_color">Боја на заднина</string>
+     <string name="subs_window_color">Боја на прозорецот</string>
+     <string name="subs_edge_type">Тип на раб</string>
+     <string name="subs_subtitle_elevation">Покачување на титлите</string>
+     <string name="subs_font">Фонт</string>
+     <string name="subs_font_size">Големина на фонтот</string>
+     <string name="search_provider_text_providers">Пребарај користејќи стројдери</string>
+     <string name="search_provider_text_types">Пребарај користејќи типови</string>
+     <string name="benene_count_text">%d бененови дадени на уредите</string>
+     <string name="benene_count_text_none">Не се дадени придобивки</string>
+     <string name="subs_auto_select_language">Автоматски избирај јазик</string>
+     <string name="subs_download_languages">Преземи јазици</string>
+     <string name="subs_subtitle_languages">Јазик на преводот</string>
+     <string name="subs_hold_to_reset_to_default">Држете за да се ресетирате на стандардно</string>
+     <string name="subs_import_text" formatted="true">Увезете фонтови ставајќи ги во %s</string>
+     <string name="continue_watching">Продолжи со гледање</string>
+     <string name="action_remove_watching">Отстрани</string>
+     <string name="action_open_watching">Повеќе информации</string>
+     <string name="action_open_play">@string/home_play </string>
+     <string name="vpn_might_be_needed">Можеби е потребен VPN за овој давател да работи правилно</string>
+     <string name="vpn_torrent">Овој провајдер е торент, се препорачува VPN</string>
+     <string name="provider_info_meta">Метаподатоците не се обезбедени од страницата, вчитувањето на видеото нема да успее ако не постои на локацијата.</string>
+     <string name="torrent_plot">Опис</string>
+     <string name="normal_no_plot">Не е пронајден опис</string>
+     <string name="torrent_no_plot">Не е пронајден опис</string>
+     <string name="show_log_cat">Прикажи Logcat 🐈</string>
+     <string name="test_log">Log</string>
+     <string name="picture_in_picture">Слика во слика</string>
+     <string name="picture_in_picture_des">Продолжува репродукцијата во минијатурен плеер над другите апликации</string>
+     <string name="player_size_settings">Копче за промена на големината на плеерот</string>
+     <string name="player_size_settings_des">Отстранете ги црните граници</string>
+     <string name="player_subtitles_settings">Преводи</string>
+     <string name="player_subtitles_settings_des">Поставки за преводи на плеер</string>
+     <string name="chromecast_subtitles_settings">Преводи на Chromecast</string>
+     <string name="chromecast_subtitles_settings_des">Поставки за преводи на Chromecast</string>
+     <string name="eigengraumode_settings">Режим на гравитација</string>
+     <string name="eigengraumode_settings_des">Додава опција за брзина во плеерот</string>
+     <string name="swipe_to_seek_settings">Повлечете за да барате</string>
+     <string name="swipe_to_seek_settings_des">Повлечете од страна на страна за да ја контролирате вашата позиција во видеото</string>
+     <string name="swipe_to_change_settings">Повлечете за да ги промените поставките</string>
+     <string name="swipe_to_change_settings_des">Лизгајте нагоре или надолу на левата или десната страна за да ја промените осветленоста или јачината на звукот</string>
+     <string name="autoplay_next_settings">Автоматска репродукција на следната епизода</string>
+     <string name="autoplay_next_settings_des">Започнете ја следната епизода кога ќе заврши тековната</string>
+     <string name="double_tap_to_seek_settings">Допрете двапати за да барате</string>
+     <string name="double_tap_to_pause_settings">Двоен допир за да паузирате</string>
+     <string name="double_tap_to_seek_amount_settings">Износ на бараниот плеер (секунди)</string>
+     <string name="double_tap_to_seek_settings_des">Допрете двапати на десната или левата страна за да барате напред или назад</string>
+     <string name="double_tap_to_pause_settings_des">Допрете двапати во средината за да паузирате</string>
+     <string name="use_system_brightness_settings">Користете ја осветленоста на системот</string>
+     <string name="use_system_brightness_settings_des">Користете ја осветленоста на системот во плеерот на апликацијата наместо темна преклопување</string>
+     <string name="episode_sync_settings">Ажурирајте го напредокот на часовникот</string>
+     <string name="episode_sync_settings_des">Автоматски синхронизирајте го напредокот на вашата тековна епизода</string>
+     <string name="restore_settings">Врати ги податоците од резервна копија</string>
+     <string name="backup_settings">Направете резервна копија од податоците</string>
+     <string name="restore_success">Вчитана резервна датотека</string>
+     <string name="restore_failed_format" formatted="true">Не успеа да ги врати податоците од датотеката %s</string>
+     <string name="backup_success">Зачувани податоци</string>
+     <string name="backup_failed">Недостасуваат дозволи за складирање. Обидете се повторно.</string>
+     <string name="backup_failed_error_format">Грешка при правење резервна копија на %s</string>
+     <string name="search">Барај</string>
+     <string name="library">Библиотека</string>
+     <string name="category_account">Сметки</string>
+     <string name="category_updates">Ажурирања и резервни копии</string>
+     <string name="settings_info">Информации</string>
+     <string name="advanced_search">Напредно пребарување</string>
+     <string name="advanced_search_des">Ви ги дава резултатите од пребарувањето одделени по провајдер</string>
+     <string name="bug_report_settings_off">Праќа податоци само при падови</string>
+     <string name="bug_report_settings_on">Не испраќа податоци</string>
+     <string name="show_fillers_settings">Прикажи епизода за полнење за аниме</string>
+     <string name="show_trailers_settings">Прикажи трејлери</string>
+     <string name="kitsu_settings">Прикажи постери од Kitsu</string>
+     <string name="pref_filter_search_quality">Сокриј го избраниот квалитет на видеото во резултатите од пребарувањето</string>
+     <string name="automatic_plugin_updates">Автоматски ажурирања на приклучоци</string>
+     <string name="automatic_plugin_download">Автоматско преземање приклучоци</string>
+     <string name="automatic_plugin_download_summary">Автоматски инсталирајте ги сите сè уште неинсталирани приклучоци од додадените складишта.</string>
+     <string name="updates_settings">Прикажи ажурирања на апликации</string>
+     <string name="updates_settings_des">Автоматски пребарувајте нови ажурирања откако ќе ја стартувате апликацијата.</string>
+     <string name="redo_setup_process">Повторете го процесот на поставување</string>
+     <string name="uprereleases_settings">Ажурирање на предизданија</string>
+     <string name="uprereleases_settings_des">Барајте ажурирања за предиздавање наместо само целосни изданија</string>
+     <string name="apk_installer_settings">Инсталатор на APK</string>
+     <string name="apk_installer_settings_des">Некои телефони не го поддржуваат новиот инсталатор на пакети. Испробајте ја наследната опција ако ажурирањата не се инсталираат.</string>
+     <string name="github">Github</string>
+     <string name="lightnovel">Апликација Light novel од истите развивачи</string>
+     <string name="anim">Апликација за аниме од истите уреди</string>
+     <string name="discord">Придружете се на Discord</string>
+     <string name="benene">Дајте бенене на развивачите</string>
+     <string name="benene_des">Со оглед на бенене</string>
+     <string name="app_language">Јазик на апликацијата</string>
+     <string name="no_chromecast_support_toast">Овој давател нема поддршка за Chromecast</string>
+     <string name="no_links_found_toast">Не се пронајдени врски</string>
+     <string name="copy_link_toast">Линкот е копиран во таблата со исечоци</string>
+     <string name="play_episode_toast">Пушти ја епизодата</string>
+     <string name="subs_default_reset_toast">Ресетирање на стандардната вредност</string>
+     <string name="acra_report_toast">За жал, апликацијата падна. Ќе биде испратен анонимен извештај за грешка до програмерите</string>
+     <string name="season">Сезона</string>
+     <string name="season_format">%s %d%s</string>
+     <string name="no_season">Нема сезона</string>
+     <string name="episode">Епизода</string>
+     <string name="episodes">Епизоди</string>
+     <string name="episodes_range">%d-%d</string>
+     <string name="episode_format" formatted="true">%d %s</string>
+     <string name="season_short">С</string>
+     <string name="episode_short">Е</string>
+     <string name="no_episodes_found">Не се пронајдени епизоди</string>
+     <string name="delete_file">Избриши датотека</string>
+     <string name="delete">Избриши</string>
+     <string name="cancel" translatable="false">@string/sort_cancel</string>
+     <string name="pause">Пауза</string>
+     <string name="start">Започни</string>
+     <string name="test_failed">Не успеа</string>
+     <string name="test_passed">Положен</string>
+     <string name="resume">Продолжи</string>
+     <string name="go_back_30">-30</string>
+     <string name="go_forward_30">+30</string>
+     <string name="delete_message" formatted="true">Ова трајно ќе го избрише %s\nДали сте сигурни?</string>
+     <string name="resume_time_left" formatted="true">%dm\nпреостанува</string>
+     <string name="status_ongoing">Во тек</string>
+     <string name="status_completed">Завршено</string>
+     <string name="status">Статус</string>
+     <string name="year">Година</string>
+     <string name="rating">Оцена</string>
+     <string name="duration">Времетраење</string>
+     <string name="site">Сајт</string>
+     <string name="synopsis">Синопсис</string>
+     <string name="queued">наредени</string>
+     <string name="no_subtitles">Нема преводи</string>
+     <string name="default_subtitles">Стандардно</string>
+     <string name="free_storage">Бесплатно</string>
+     <string name="used_storage">Користено</string>
+     <string name="app_storage">Апликација</string>
+    <!--plural-->
+     <string name="movies">Филмови</string>
+     <string name="tv_series">ТВ серии</string>
+     <string name="cartoons">Цртани филмови</string>
+     <string name="anime">Аниме</string>
+     <string name="torrent">Торенти</string>
+     <string name="documentaries">Документарни филмови</string>
+     <string name="ova">ОВА</string>
+     <string name="asian_drama">Азиски драми</string>
+     <string name="livestreams">Пренос во живо</string>
+     <string name="nsfw">NSFW</string>
+     <string name="others">Други</string>
+    <!--singular-->
+     <string name="movies_singular">Филм</string>
+     <string name="tv_series_singular">Серија</string>
+     <string name="cartoons_singular">Цртан филм</string>
+     <string name="anime_singular">Аниме</string>
+     <string name="ova_singular">ОВА</string>
+     <string name="torrent_singular">Торент</string>
+     <string name="documentaries_singular">Документарец</string>
+     <string name="asian_drama_singular">Азиска драма</string>
+     <string name="live_singular">Пренос во живо</string>
+     <string name="nsfw_singular">NSFW</string>
+     <string name="other_singular">Видео</string>
+     <string name="source_error">Изворна грешка</string>
+     <string name="remote_error">Грешка од далечина</string>
+     <string name="render_error">Изведувачка грешка</string>
+     <string name="unexpected_error">Неочекувана грешка на плеерот</string>
+     <string name="storage_error">Грешка при преземањето, проверете ги дозволите за складирање</string>
+     <string name="episode_action_chromecast_episode">Епизода на Chromecast</string>
+     <string name="episode_action_chromecast_mirror">Огледало на Chromecast</string>
+     <string name="episode_action_play_in_app">Пушти во апликација</string>
+     <string name="episode_action_play_in_format">Пушти во %s</string>
+     <string name="episode_action_play_in_browser">Пушти во прелистувач</string>
+     <string name="episode_action_copy_link">Копирај ја врската</string>
+     <string name="episode_action_auto_download">Автоматско преземање</string>
+     <string name="episode_action_download_mirror">Преземи</string>
+     <string name="episode_action_reload_links">Повторно вчитај врски</string>
+     <string name="episode_action_download_subtitle">Преземи преводи</string>
+     <string name="show_hd">Ознака за квалитет</string>
+     <string name="show_dub">Етикета за Dub</string>
+     <string name="show_sub">Подознака</string>
+     <string name="show_title">Наслов</string>
+     <string name="show_hd_key" translatable="false">show_hd_key</string>
+     <string name="show_dub_key" translatable="false">show_dub_key</string>
+     <string name="show_sub_key" translatable="false">show_sub_key</string>
+     <string name="show_title_key" translatable="false">show_title_key</string>
+     <string name="poster_ui_settings">Вклучете ги елементите на корисничкиот интерфејс на постерот</string>
+     <string name="no_update_found">Не е пронајдено ажурирање</string>
+     <string name="check_for_update">Проверете дали има ажурирање</string>
+     <string name="video_lock">Заклучи</string>
+     <string name="video_aspect_ratio_resize">Промена на големина</string>
+     <string name="video_source">Извор</string>
+     <string name="video_skip_op">Прескокни ОП</string>
+     <string name="dont_show_again">Не прикажувај повторно</string>
+     <string name="skip_update">Прескокнете го ова ажурирање</string>
+     <string name="update">Ажурирај</string>
+     <string name="watch_quality_pref">Префериран квалитет на гледање (WiFi)</string>
+     <string name="watch_quality_pref_data">Префериран квалитет на гледање (мобилни податоци)</string>
+     <string name="limit_title">Наслов на видео плеер максимални знаци</string>
+     <string name="limit_title_rez">Резолуција на видео плеер</string>
+     <string name="video_buffer_size_settings">Големина на видео баферот</string>
+     <string name="video_buffer_length_settings">Должина на видео баферот</string>
+     <string name="video_buffer_disk_settings">Видео кеш на дискот</string>
+     <string name="video_buffer_clear_settings">Исчистете го кешот на видео и слики</string>
+     <string name="android_tv_interface_on_seek_settings">Прикажан плеер - Барај износ</string>
+     <string name="android_tv_interface_on_seek_settings_summary">Износот на барањето што се користи кога плеерот е видлив</string>
+     <string name="android_tv_interface_off_seek_settings">Скриен плеер - Износ за пребарување</string>
+     <string name="android_tv_interface_off_seek_settings_summary">Износот на барањето што се користи кога плеерот е скриен</string>
+     <string name="video_ram_description">Предизвикува падови ако е превисоко поставено на уреди со слаба меморија, како што е Android TV.</string>
+     <string name="video_disk_description">Предизвикува проблеми ако е превисоко поставено на уреди со мал простор за складирање, како што е Android TV.</string>
+     <string name="dns_pref">DNS преку HTTPS</string>
+     <string name="dns_pref_summary">Корисно за заобиколување блокови на интернет провајдерите</string>
+     <string name="jsdelivr_proxy">прокси raw.githubusercontent.com</string>
+     <string name="jsdelivr_enabled">Не успеа да стигне до GitHub, овозможувајќи jsdelivr прокси.</string>
+     <string name="jsdelivr_proxy_summary">Користејќи jsdelivr, блокирањето на GitHub може да се заобиколи. Може да ги одложи ажурирањата за неколку дена.</string>
+     <string name="add_site_pref">Клонирајте ја страницата</string>
+     <string name="remove_site_pref">Отстранете ја страницата</string>
+     <string name="add_site_summary">Додајте клон на постоечка локација, со различна URL адреса</string>
+     <string name="download_path_pref">Патека за преземање</string>
+     <string name="nginx_url_pref">URL на серверот NGINX</string>
+     <string name="display_subbed_dubbed_settings">Прикажи синхронизирано/субблирано аниме</string>
+     <string name="resize_fit">Поставете се на екранот</string>
+     <string name="resize_fill">Рашири</string>
+     <string name="resize_zoom">Зумирајте</string>
+     <string name="legal_notice">Одрекување</string>
+     <string name="legal_notice_key" translatable="false">legal_notice_key</string>
+     <string name="legal_notice_text" translatable="false">Сите правни прашања во врска со содржината на оваа апликација
+         треба да се исконтактираат вистинските домаќини на датотеки и самите провајдери, бидејќи ние не сме поврзани со нив.
+
+         Во случај на прекршување на авторските права, ве молиме директно контактирајте ги одговорните страни или веб-страниците за стриминг.
+
+         Апликацијата е чисто за едукативна и за лична употреба.
+
+         CloudStream 3 не хостира никаква содржина на апликацијата и нема контрола врз тоа кој медиум се поставува или симнува.
+         CloudStream 3 функционира како и секој друг пребарувач, како што е Google. CloudStream 3 не хостира, не поставува или
+         управувајте со какви било видеа, филмови или содржини. Едноставно ползи, собира и прикажува врски на пригоден,
+         кориснички интерфејс.
+
+         Тоа само ги зима од веб-локациите од трета страна кои се јавно достапни преку кој било обичен веб-прелистувач. Тоа е
+         одговорност на корисникот да избегне какви било дејствија што би можеле да ги прекршат законите што го регулираат неговиот/нејзиниот локалитет. Користете
+         CloudStream 3 на ваш сопствен ризик.
+     </string>
+     <string name="pref_category_bypass">Бајпас на интернет провајдерот</string>
+     <string name="pref_category_links">Линкови</string>
+     <string name="pref_category_app_updates">Ажурирања на апликацијата</string>
+     <string name="pref_category_backup">Резервна копија</string>
+     <string name="pref_category_extensions">Екстензии</string>
+     <string name="pref_category_actions">Дејства</string>
+     <string name="pref_category_cache">Кеш меморија</string>
+     <string name="pref_category_android_tv">Андроид ТВ</string>
+     <string name="pref_category_gestures">Гестови</string>
+     <string name="pref_category_player_features">Функции на плеерот</string>
+     <string name="pref_category_subtitles">Преводи</string>
+     <string name="pref_category_player_layout"> Распоред</string>
+     <string name="pref_category_defaults">Стандардно</string>
+     <string name="pref_category_looks">Изглед</string>
+     <string name="pref_category_ui_features">Карактеристики</string>
+     <string name="category_general">Општо</string>
+     <string name="random_button_settings">Случајно копче</string>
+     <string name="random_button_settings_desc">Се прикажува копче на почетната страница што може да избере случаен филм или ТВ серија од почетната страница</string>
+     <string name="provider_lang_settings">Јазици на давателот</string>
+     <string name="app_layout">Изглед на апликација</string>
+     <string name="preferred_media_settings">Префериран медиум</string>
+     <string name="enable_nsfw_on_providers">Овозможете NSFW на поддржани провајдери</string>
+     <string name="subtitles_encoding">Енкодирање на превод</string>
+     <string name="category_providers">Провајдери</string>
+     <string name="category_provider_test">Тест на провајдер</string>
+     <string name="category_ui">Изглед</string>
+     <string name="automatic">Автоматски</string>
+     <string name="tv_layout">ТВ распоред</string>
+     <string name="phone_layout">Телефонски преглед</string>
+     <string name="emulator_layout">Изглед на емулатор</string>
+     <string name="primary_color_settings">Примарна боја</string>
+     <string name="app_theme_settings">Тема за апликација</string>
+     <string name="bottom_title_settings">Локација на насловот на постерот</string>
+     <string name="bottom_title_settings_des">Ставете го насловот под постерот</string>
+    <!-- account stuff -->
+    <string name="anilist_key" translatable="false">anilist_key</string>
+    <string name="mal_key" translatable="false">mal_key</string>
+    <string name="opensubtitles_key" translatable="false">opensubtitles_key</string>
+    <string name="nginx_key" translatable="false">nginx_key</string>
+    <string name="example_password">password123</string>
+    <string name="example_username">MyCoolUsername</string>
+    <string name="example_email">hello@world.com</string>
+    <string name="example_ip">127.0.0.1</string>
+    <string name="example_site_name">MyCoolSite</string>
+    <string name="example_site_url">example.com</string>
+     <string name="example_lang_name">Јазичен код (мк)</string>
+     <!--
+     <string name="mal_account_settings" translatable="false">MAL</string>
+     <string name="anilist_account_settings" translatable="false">AniList</string>
+     <string name="tmdb_account_settings" translatable="false">TMDB</string>
+     <string name="imdb_account_settings" translatable="false">IMDB</string>
+     <string name="kitsu_account_settings" translatable="false">Кицу</string>
+     <string name="trakt_account_settings" translatable="false">Тракт</string>
+     -->
+     <string name="login_format" formatted="true">%s %s</string>
+     <string name="account">сметка</string>
+     <string name="logout">Одјави се</string>
+     <string name="login">Најавете се</string>
+     <string name="switch_account">Најави се со друга корисничка сметка</string>
+     <string name="add_account">Додај сметка</string>
+     <string name="create_account">Креирај сметка</string>
+     <string name="add_sync">Додајте тракинг</string>
+     <string name="added_sync_format" formatted="true">Додаден %s</string>
+     <string name="upload_sync">Синхронизирај</string>
+     <string name="sync_score">Оценет</string>
+     <string name="sync_score_format" formatted="true">%d / 10</string>
+     <string name="sync_total_episodes_none">/??</string>
+     <string name="sync_total_episodes_some" formatted="true">/%d</string>
+     <string name="authenticated_user" formatted="true">%s е автентициран</string>
+     <string name="authenticated_user_fail" formatted="true">Не можев да се најавам на %s</string>
+     <!-- ============ -->
+     <string name="none">Никој</string>
+     <string name="normal">Нормално</string>
+     <string name="all">Сите</string>
+     <string name="max">Макс</string>
+     <string name="min">Мин</string>
+     <string name="subtitles_none" translatable="false">@string/none</string>
+     <string name="subtitles_outline">Приказ</string>
+     <string name="subtitles_depressed">Депресед</string>
+     <string name="subtitles_shadow">Сенка</string>
+     <string name="subtitles_raised">Подигнато</string>
+     <string name="subtitle_offset">Синхронизирај преводи</string>
+     <string name="subtitle_offset_hint">1000 ms</string>
+     <string name="subtitle_offset_title">Одложување на титловите</string>
+     <string name="subtitle_offset_extra_hint_later_format">Користете го ова ако преводите се прикажани %d ms премногу рано</string>
+     <string name="subtitle_offset_extra_hint_before_format">Користете го ова ако преводите се прикажуваат %d ms премногу доцна</string>
+     <string name="subtitle_offset_extra_hint_none_format">Без доцнење на титловите</string>
+     <!--
+     Example text (pangram) can optionally be translated; if you do, include all the letters in the alphabet,
+     see:
+ 	https://en.wikipedia.org/w/index.php?title=Pangram&oldid=225849300
+ 	https://en.wikipedia.org/wiki/The_quick_brown_fox_jumps_over_the_lazy_dog
+     -->
+     <string name="subtitles_example_text">Брзата кафеава лисица го прескокнува мрзливото куче</string>
+     <string name="recommended">Препорачано</string>
+     <string name="player_loaded_subtitles" formatted="true">Вчитан %s</string>
+     <string name="player_load_subtitles">Вчитај од датотека</string>
+     <string name="player_load_subtitles_online">Вчитај од Интернет</string>
+     <string name="downloaded_file">Преземена датотека</string>
+     <string name="actor_main">Главна</string>
+     <string name="actor_supporting">Поддршка</string>
+     <string name="actor_background">Позадина</string>
+     <string name="home_source">Извор</string>
+     <string name="home_random">Случајно</string>
+     <string name="coming_soon">Наскоро…</string>
+     <string name="quality_cam">Камера</string>
+     <string name="quality_cam_rip">Камера</string>
+     <string name="quality_cam_hd">Камера</string>
+     <string name="quality_hq">HQ</string>
+     <string name="quality_hd">HD</string>
+     <string name="quality_ts">TS</string>
+     <string name="quality_tc">TC</string>
+     <string name="quality_blueray">Blu-ray</string>
+     <string name="quality_workprint">WP</string>
+     <string name="quality_dvd">DVD</string>
+     <string name="quality_4k">4K</string>
+     <string name="quality_sd">SD</string>
+     <string name="quality_uhd">UHD</string>
+     <string name="quality_hdr">HDR</string>
+     <string name="quality_sdr">SDR</string>
+     <string name="quality_webrip">Web</string>
+     <string name="poster_image">Слика на постер</string>
+     <string name="category_player">Плеер</string>
+     <string name="resolution_and_title">Резолуција и наслов</string>
+     <string name="title">Наслов</string>
+     <string name="resolution">Резолуција</string>
+     <string name="error_invalid_id">Неважечки ID</string>
+     <string name="error_invalid_data">Неважечки податоци</string>
+     <string name="error_invalid_url">Неважечка URL адреса</string>
+     <string name="error">Грешка</string>
+     <string name="subtitles_remove_captions">Remove closed captions from subtitles</string>
+     <string name="subtitles_remove_bloat">Remove bloat from subtitles</string>
+     <string name="subtitles_filter_lang">Филтрирајте по претпочитан медиумски јазик</string>
+     <string name="extras">Додатоци</string>
+     <string name="trailer">Трејлер</string>
+     <string name="network_adress_example">Поврзување до пренос</string>
+     <string name="referer">Референт</string>
+     <string name="next">Следно</string>
+     <string name="provider_languages_tip">Гледајте видеа на овие јазици</string>
+     <string name="previous">Претходно</string>
+     <string name="skip_setup">Прескокнете го поставувањето</string>
+     <string name="app_layout_subtext">Променете го изгледот на апликацијата за да одговара на вашиот уред</string>
+     <string name="crash_reporting_title">Известување за пад</string>
+     <string name="preferred_media_subtext">Што сакате да видите</string>
+     <string name="setup_done">Готово</string>
+     <string name="extensions">Екстензии</string>
+     <string name="add_repository">Додај складиште</string>
+     <string name="repository_name_hint">Име на складиштето</string>
+     <string name="repository_url_hint">URL на складиштето</string>
+     <string name="plugin_loaded">Приклучокот е вчитан</string>
+     <string name="plugin_downloaded">Приклучокот е преземен</string>
+     <string name="plugin_deleted">Приклучокот е избришан</string>
+     <string name="plugin_load_fail" formatted="true">Не може да се вчита %s</string>
+     <string name="is_adult">18+</string>
+     <string name="batch_download_start_format" formatted="true">Почна да презема %d %s…</string>
+     <string name="batch_download_finish_format" formatted="true">Преземено %d %s</string>
+     <string name="batch_download_nothing_to_download_format" formatted="true">Сите %s веќе се преземени</string>
+     <string name="batch_download">Групно преземање</string>
+     <string name="plugin_singular">приклучок</string>
+     <string name="plugin">приклучоци</string>
+     <string name="delete_repository_plugins">Ова исто така ќе се избрише сите приклучоци за складиште</string>
+     <string name="delete_repository">Избриши складиште</string>
+     <string name="setup_extensions_subtext">Преземете ја листата на сајтови што сакате да ги користите</string>
+     <string name="plugins_downloaded" formatted="true">Преземено: %d</string>
+     <string name="plugins_disabled" formatted="true">Оневозможено: %d</string>
+     <string name="plugins_not_downloaded" formatted="true">Не е преземено: %d</string>
+     <string name="plugins_updated" formatted="true">Ажурирани %d приклучоци</string>
+     <string name="blank_repo_message">CloudStream нема стандардно инсталирани локации. Треба да ги инсталирате сајтовите од складиштата.
+\n
+\nПоради отстранување на DMCA без мозок од страна на Sky UK Limited 🤮 не можеме да ја поврземе локацијата на складиштето во апликацијата.
+\n
+\nПридружете се на нашиот Discord или барајте онлајн.</string>
+     <string name="view_public_repositories_button">Прикажи складишта на заедницата</string>
+     <string name="view_public_repositories_button_short">Јавна листа</string>
+     <string name="uppercase_all_subtitles">Голема буква на сите преводи</string>
+     <string name="download_all_plugins_from_repo">Да се преземат сите приклучоци од ова складиште?</string>
+     <string name="single_plugin_disabled" formatted="true">%s (оневозможено)</string>
+     <string name="tracks">Песни</string>
+     <string name="audio_tracks">Аудио песни</string>
+     <string name="video_tracks">Видео песни</string>
+     <string name="apply_on_restart">Примени при рестартирање</string>
+     <string name="restart">Рестартирај</string>
+     <string name="stop">Стоп</string>
+     <string name="safe_mode_title">Безбедниот режим е вклучен</string>
+     <string name="safe_mode_description">Сите екстензии беа исклучени поради пад за да ви помогнат да ја пронајдете онаа што предизвикува проблеми.</string>
+     <string name="safe_mode_crash_info">Прикажи информации за падот на апликацијата</string>
+     <string name="extension_rating" formatted="true">Оцена: %s</string>
+     <string name="extension_description">Опис</string>
+     <string name="extension_version">Верзија</string>
+     <string name="extension_status">Статус</string>
+     <string name="extension_size">Големина</string>
+     <string name="extension_authors">Автори</string>
+     <string name="extension_types">Поддржано</string>
+     <string name="extension_language">Јазик</string>
+     <string name="extension_install_first">Прво инсталирајте ја наставката</string>
+     <string name="hls_playlist">ХЛС плејлиста</string>
+     <string name="player_pref">Префериран видео плеер</string>
+     <string name="player_settings_play_in_app">Внатрешен плеер</string>
+     <string name="player_settings_play_in_vlc">VLC</string>
+     <string name="player_settings_play_in_mpv">MPV</string>
+     <string name="player_settings_play_in_web">Веб-видео Cast</string>
+     <string name="player_settings_play_in_browser">Веб-прелистувач</string>
+     <string name="app_not_found_error">Апликацијата не е пронајдена</string>
+     <string name="all_languages_preference">Сите јазици</string>
+     <string name="skip_type_format" formatted="true">Прескокни %s</string>
+     <string name="skip_type_op">Се отвора</string>
+     <string name="skip_type_ed">Завршува</string>
+     <string name="skip_type_recap">Повторување</string>
+     <string name="skip_type_mixed_ed">Измешан крај</string>
+     <string name="skip_type_mixed_op">Мешано отворање</string>
+     <string name="skip_type_creddits">Кредити</string>
+     <string name="skip_type_intro">Вовед</string>
+     <string name="clear_history">Исчисти историја</string>
+     <string name="history">Историја</string>
+     <string name="enable_skip_op_from_database_des">Прикажи скокачки прозорци за отворање/завршување</string>
+     <string name="clipboard_too_large">Премногу текст. Не може да се зачува во таблата со исечоци.</string>
+     <string name="action_mark_as_watched">Обележи како гледано</string>
+     <string name="action_remove_from_watched">Отстрани од гледаното</string>
+     <string name="confirm_exit_dialog">Дали сте сигурни дека сакате да излезете\?</string>
+     <string name="yes">Да</string>
+     <string name="no">Не</string>
+     <string name="update_notification_downloading">Се презема ажурирање на апликацијата…</string>
+     <string name="update_notification_installing">Се инсталира ажурирање на апликацијата…</string>
+     <string name="update_notification_failed">Не може да се инсталира новата верзија на апликацијата</string>
+     <string name="apk_installer_legacy">Легаси</string>
+     <string name="apk_installer_package_installer">Инсталатор на пакети</string>
+     <string name="delayed_update_notice">Апликацијата ќе се ажурира по излегувањето</string>
+     <string name="sort_by">Подреди по</string>
+     <string name="sort">Подреди</string>
+     <string name="sort_rating_desc">Оцена (висока до ниска)</string>
+     <string name="sort_rating_asc">Оцена (ниска до висока)</string>
+     <string name="sort_updated_new">Ажурирано (ново на старо)</string>
+     <string name="sort_updated_old">Ажурирано (старо во ново)</string>
+     <string name="sort_alphabetical_a">Азбучно (А до Ш)</string>
+     <string name="sort_alphabetical_z">Азбучно (Ш до А)</string>
+     <string name="select_library">Изберете библиотека</string>
+     <string name="open_with">Отвори со</string>
+     <string name="empty_library_no_accounts_message">Изгледа дека вашата библиотека е празна :(\nНајавете се на сметка на библиотеката или додајте серии во вашата локална библиотека</string>
+     <string name="empty_library_logged_in_message">Изгледа дека оваа листа е празна, обидете се да се префрлите на друга</string>
+     <string name="safe_mode_file">Најдена е датотека во безбеден режим!\nНе се вчитуваат екстензии при стартување додека датотеката не се отстрани.</string>
+     <string name="revert">Врати</string>
+     <string name="subscription_in_progress_notification">Ажурирање претплатени емисии</string>
+     <string name="subscription_list_name">Претплатени</string>
+     <string name="subscription_new">Претплатен на %s</string>
+     <string name="subscription_deleted">Отпишана е од %s</string>
+     <string name="subscription_episode_released">Епизодата %d е објавена!</string>
 </resources>
