@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--https://newbedev.com/concatenate-multiple-strings-in-xml--><resources>
+<!--https://newbedev.com/concatenate-multiple-strings-in-xml-->
+<resources>
     <!-- TRANSLATE, BUT DON'T FORGET FORMAT -->
     <string name="player_speed_text_format" formatted="true">Брзина (%.2fx)</string>
     <string name="rated_format" formatted="true">Оценето: %.1f</string>
@@ -354,7 +355,7 @@
     <string name="enable_nsfw_on_providers">Овозможете NSFW на поддржани провајдери</string>
     <string name="jsdelivr_enabled">Не успеа да стигне до GitHub, овозможувајќи jsdelivr прокси.</string>
     <string name="subtitles_filter_lang">Филтрирајте по претпочитан медиумски јазик</string>
-    <string name="action_open_play">\@string/home_play</string>
+    <string name="action_open_play">@string/home_play</string>
     <string name="movies_singular">Филм</string>
     <string name="added_sync_format" formatted="true">Додаден %s</string>
     <string name="plugin">приклучоци</string>

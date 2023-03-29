@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='UTF-8'?>
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="next_episode_time_min_format" formatted="true">%d分</string>
     <string name="title_downloads">ダウンロード</string>

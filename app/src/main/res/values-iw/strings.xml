@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='UTF-8'?>
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="preview_background_img_des">הרקע של ההצגה לפני</string>
     <string name="cast_format" formatted="true">צוות שחקנים: %s</string>

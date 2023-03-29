@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--https://newbedev.com/concatenate-multiple-strings-in-xml--><resources>
+<!--https://newbedev.com/concatenate-multiple-strings-in-xml-->
+<resources>
     <string name="player_speed_text_format" formatted="true">Prędkość (%.2fx)</string>
     <string name="rated_format" formatted="true">Ocena: %.1f</string>
     <string name="new_update_format" formatted="true">Znaleziono nową aktualizację!
@@ -455,7 +456,7 @@
     <string name="apk_installer_settings">Instalator APK</string>
     <string name="apk_installer_settings_des">Niektóre telefony nie obsługują nowego instalatora pakietów. Wypróbuj tryb legacy, jeśli aktualizacje nie zostaną zainstalowane.</string>
     <string name="example_password">password123</string>
-    <string name="ova_singular">\@string/ova</string>
+    <string name="ova_singular">@string/ova</string>
     <string name="example_site_name">MojaFajnaWitryna</string>
     <string name="example_username">MyCoolUsername</string>
     <string name="example_ip">127.0.0.1</string>
@@ -465,7 +466,7 @@
     <string name="apk_installer_package_installer">Instalator pakietów</string>
     <string name="action_open_play">@string/home_play</string>
     <string name="example_email">hello@world.com</string>
-    <string name="anime_singular">\@string/anime</string>
+    <string name="anime_singular">@string/anime</string>
     <string name="skip_type_op">Opening</string>
     <string name="skip_type_ed">Ending</string>
     <string name="skip_type_mixed_op">Mixed opening</string>
