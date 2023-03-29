@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='UTF-8'?>
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="pref_category_extensions">Extensiones</string>
     <string name="setup_extensions_subtext">Descargue la lista de sitios que quiera utilizar</string>
@@ -306,7 +306,7 @@
     <string name="pref_category_looks">Aspecto</string>
     <string name="pref_category_ui_features">Características</string>
     <string name="random_button_settings">Botón de Al azar</string>
-    <string name="random_button_settings_desc">Muestra un botón de reproducción \"al azar\" en la página de inicio para poelículas y series</string>
+    <string name="random_button_settings_desc">Mostrar el botón aleatorio en la página de inicio</string>
     <string name="account">cuenta</string>
     <string name="logout">Cerrar sesión</string>
     <string name="switch_account">Cambiar cuenta</string>
@@ -525,7 +525,7 @@
     <string name="subscription_episode_released">¡Episodio %d publicado!</string>
     <string name="jsdelivr_proxy">Proxy raw.githubusercontent.com</string>
     <string name="jsdelivr_enabled">No se ha podido acceder a GitHub, activando el proxy jsdelivr.</string>
-    <string name="jsdelivr_proxy_summary">Con jsdelivr, se puede omitir el bloqueo de GitHub. Puede retrasar las actualizaciones unos días.</string>
+    <string name="jsdelivr_proxy_summary">Omite el bloqueo de GitHub mediante jsdelivr, lo que puede provocar que las actualizaciones se retrasen unos días.</string>
     <string name="revert">Revertir</string>
     <string name="pref_category_bypass">ISP Bypasses</string>
     <string name="watch_quality_pref_data">Calidad de visualización preferida (Datos móviles)</string>

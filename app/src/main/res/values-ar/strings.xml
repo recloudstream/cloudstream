@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='UTF-8'?>
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- IS NOT NEEDED TO TRANSLATE AS THEY ARE ONLY USED FOR SCREEN READERS AND WONT SHOW UP TO NORMAL USERS -->
     <string name="result_poster_img_des">ملصق</string>
@@ -284,7 +284,7 @@
     <string name="legal_notice_text" translatable="false">Any legal issues regarding the content on this application should be taken up with the actual file hosts and providers themselves as we are not affiliated with them. In case of copyright infringement, please directly contact the responsible parties or the streaming websites. The app is purely for educational and personal use. CloudStream 3 does not host any content on the app, and has no control over what media is put up or taken down. CloudStream 3 functions like any other search engine, such as Google. CloudStream 3 does not host, upload or manage any videos, films or content. It simply crawls, aggregates and displayes links in a convenient, user-friendly interface. It merely scrapes 3rd-party websites that are publicly accessable via any regular web browser. It is the responsibility of user to avoid any actions that might violate the laws governing his/her locality. Use CloudStream 3 at your own risk.</string>
     <string name="category_general">عام</string>
     <string name="random_button_settings">زر العشوائي</string>
-    <string name="random_button_settings_desc">يظهر الزر على الصفحة الرئيسية والذي يمكنه اختيار فيلم عشوائي أو مسلسل تلفزيوني من الصفحة الرئيسية</string>
+    <string name="random_button_settings_desc">إظهار زر العشوائي على الصفحة الرئيسية</string>
     <string name="provider_lang_settings">لغات المزود</string>
     <string name="app_layout">واجهة التطبيق</string>
     <string name="preferred_media_settings">المحتوى المفضل</string>

@@ -1,6 +1,5 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<!--https://newbedev.com/concatenate-multiple-strings-in-xml-->
-<resources>
+<?xml version="1.0" encoding="utf-8"?>
+<!--https://newbedev.com/concatenate-multiple-strings-in-xml--><resources>
     <!-- FORMAT MIGHT TRANSLATE, WILL CAUSE CRASH IF APPLIED WRONG -->
     <string name="extra_info_format" formatted="true" translatable="false">%d %s | %s</string>
     <string name="storage_size_format" formatted="true" translatable="false">%s • %s</string>
@@ -300,7 +299,7 @@
     <string name="legal_notice_text" translatable="false">Any legal issues regarding the content on this application should be taken up with the actual file hosts and providers themselves as we are not affiliated with them. In case of copyright infringement, please directly contact the responsible parties or the streaming websites. The app is purely for educational and personal use. CloudStream 3 does not host any content on the app, and has no control over what media is put up or taken down. CloudStream 3 functions like any other search engine, such as Google. CloudStream 3 does not host, upload or manage any videos, films or content. It simply crawls, aggregates and displayes links in a convenient, user-friendly interface. It merely scrapes 3rd-party websites that are publicly accessable via any regular web browser. It is the responsibility of user to avoid any actions that might violate the laws governing his/her locality. Use CloudStream 3 at your own risk.</string>
     <string name="category_general">Općenito</string>
     <string name="random_button_settings">Random gumb</string>
-    <string name="random_button_settings_desc">Prikazuje gumb na početnoj stranici koji može odabrati nasumični film ili TV seriju s početne stranice</string>
+    <string name="random_button_settings_desc">Prikaži gumb za slučajni odabir reprodukcija na početnoj stranici</string>
     <string name="provider_lang_settings">Jezici pružatelja usluga</string>
     <string name="app_layout">Izgled aplikacije</string>
     <string name="preferred_media_settings">Preferirani mediji</string>
@@ -553,6 +552,6 @@
     <string name="pref_category_bypass">ISP zaobilaznice</string>
     <string name="jsdelivr_proxy">raw.githubusercontent.com Proxy</string>
     <string name="jsdelivr_enabled">Neuspješno dohvaćanje GitHuba, omogućavanje jsdelivr proxyja.</string>
-    <string name="jsdelivr_proxy_summary">Koristeći jsdelivr, GitHub blokiranje se može zaobići. Može odgoditi ažuriranja za nekoliko dana.</string>
+    <string name="jsdelivr_proxy_summary">Zaobilazi GitHub blokiranje koristeći jsdelivr. Može odgoditi ažuriranja za nekoliko dana.</string>
     <string name="watch_quality_pref_data">Preferirana kvaliteta gledanja (podatkovna mobilna mreža)</string>
 </resources>

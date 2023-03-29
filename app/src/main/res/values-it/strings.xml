@@ -1,6 +1,5 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<!--https://newbedev.com/concatenate-multiple-strings-in-xml-->
-<resources>
+<?xml version="1.0" encoding="utf-8"?>
+<!--https://newbedev.com/concatenate-multiple-strings-in-xml--><resources>
     <!-- FORMAT MIGHT TRANSLATE, WILL CAUSE CRASH IF APPLIED WRONG -->
     <string name="app_dub_sub_episode_text_format" formatted="true">%s Ep %d</string>
     <string name="cast_format" formatted="true">Cast: %s</string>
@@ -128,16 +127,16 @@
     <string name="eigengraumode_settings">Modalità Eigengravy</string>
     <string name="eigengraumode_settings_des">Aggiungi opzione velocità nel player</string>
     <string name="swipe_to_seek_settings">Scorri per mandare avanti/indietro</string>
-    <string name="swipe_to_seek_settings_des">Scorri a sinistra o a destra per controllare il tempo del video</string>
+    <string name="swipe_to_seek_settings_des">Scorri da un lato all\'altro per controllare la tua posizione in un video</string>
     <string name="swipe_to_change_settings">Scorri per cambiare le impostazioni</string>
-    <string name="swipe_to_change_settings_des">Passa il dito sul lato sinistro o destro per cambiare la luminosità o il volume</string>
+    <string name="swipe_to_change_settings_des">Scorri verso l\'alto o verso il basso sul lato sinistro o destro per modificare la luminosità o il volume</string>
     <string name="autoplay_next_settings">Riproduci automaticamente l\'episodio successivo</string>
     <string name="autoplay_next_settings_des">Avvia l\'episodio successivo al termine di quello in corso</string>
     <string name="double_tap_to_seek_settings">Doppio tocco per andare avanti/indietro</string>
     <string name="double_tap_to_pause_settings">Doppio tocco per mettere in pausa</string>
     <string name="double_tap_to_seek_settings_des">Tocca due volte il lato destro o sinistro dello schermo per mandare avanti o indietro il video</string>
-    <string name="double_tap_to_pause_settings_des">Tocca due volte il centro dello schermo per mettere in pausa il video</string>
-    <string name="double_tap_to_seek_amount_settings">Player seek</string>
+    <string name="double_tap_to_pause_settings_des">Tocca due volte al centro per mettere in pausa</string>
+    <string name="double_tap_to_seek_amount_settings">Intervallo di ricerca lettore (secondi)</string>
     <string name="use_system_brightness_settings">Utilizzare la luminosità del sistema</string>
     <string name="use_system_brightness_settings_des">Utilizzare la luminosità del sistema al posto di una sovrapposizione scura</string>
     <!--<string name="episode_sync_settings">Update watch progress</string>-->
@@ -163,7 +162,7 @@
     <string name="pref_filter_search_quality">Nascondi la qualità video selezionata dai risultati di ricerca</string>
     <string name="automatic_plugin_updates">Aggiorna automaticamente i plugin</string>
     <string name="updates_settings">Mostra gli aggiornamenti dell\'app</string>
-    <string name="updates_settings_des">Cerca automaticamente nuovi aggiornamenti all\'avvio</string>
+    <string name="updates_settings_des">Cerca automaticamente nuovi aggiornamenti dopo aver avviato l\'app.</string>
     <string name="uprereleases_settings">Aggiorna alle prerelease</string>
     <string name="uprereleases_settings_des">Cerca per aggiornamenti alle prerelease invice di cercare solo le release complete</string>
     <string name="github">GitHub</string>
@@ -546,7 +545,7 @@
     <string name="subscription_list_name">Iscritto</string>
     <string name="subscription_new">Iscritto a %s</string>
     <string name="jsdelivr_enabled">Impossibile contattare GitHub, abilitazione proxy jsdelivr avviata.</string>
-    <string name="jsdelivr_proxy_summary">Bypassa il blocco di GitHub utilizzando jsdelivr, potrebbe causare un ritardo di alcuni giorni.</string>
+    <string name="jsdelivr_proxy_summary">Ignora il blocco di GitHub utilizzando jsdelivr, può causare il ritardo degli aggiornamenti di alcuni giorni.</string>
     <string name="pref_category_bypass">Baypass ISP</string>
     <string name="revert">Ripristina</string>
     <string name="subscription_in_progress_notification">Aggiornando shows a cui sei iscritto</string>

@@ -1,6 +1,5 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<!--https://newbedev.com/concatenate-multiple-strings-in-xml-->
-<resources>
+<?xml version="1.0" encoding="utf-8"?>
+<!--https://newbedev.com/concatenate-multiple-strings-in-xml--><resources>
     <!-- KEYS DON'T TRANSLATE -->
     <!-- FORMAT MIGHT TRANSLATE, WILL CAUSE CRASH IF APPLIED WRONG -->
     <string name="app_dub_sub_episode_text_format" formatted="true">%s Ep %d</string>
@@ -267,7 +266,7 @@
     <string name="legal_notice_text" translatable="false">Jakékoli právní otázky týkající se obsahu této aplikace je třeba řešit se samotnými hostiteli a poskytovateli souborů, protože s nimi nejsme nijak spojeni. V případě porušení autorských práv se obraťte přímo na odpovědné strany nebo na webové stránky, na kterých se streamování odehrává. Aplikace je určena výhradně pro vzdělávací a osobní účely. CloudStream 3 v aplikaci nehostuje žádný obsah a nemá žádnou kontrolu nad tím, jaká média jsou v aplikaci umístěna nebo odstraněna. CloudStream 3 funguje jako jakýkoli jiný vyhledávač, například Google. Služba CloudStream 3 nehostuje, nenahrává ani nespravuje žádná videa, filmy ani obsah. Pouze vyhledává, agreguje a zobrazuje odkazy v pohodlném, uživatelsky přívětivém rozhraní. Pouze shromažďuje webové stránky třetích stran, které jsou veřejně přístupné prostřednictvím jakéhokoli běžného webového prohlížeče. Je odpovědností uživatele, aby se vyvaroval jakýchkoli akcí, které by mohly porušovat zákony platné v jeho lokalitě. Použijte CloudStream 3 na vlastní nebezpečí.</string>
     <string name="category_general">Obecné</string>
     <string name="random_button_settings">Náhodné tlačítko</string>
-    <string name="random_button_settings_desc">Zobrazit na domovské stránce tlačítko, kterým lze vybrat náhodný film nebo seriál z domovské stránky</string>
+    <string name="random_button_settings_desc">Zobrazit na domovské stránce náhodné tlačítko</string>
     <string name="provider_lang_settings">Jazyk poskytovatelů</string>
     <string name="app_layout">Rozložení aplikace</string>
     <string name="preferred_media_settings">Preferovaná média</string>
@@ -552,6 +551,6 @@
     <string name="jsdelivr_enabled">Nepodařilo se připojit ke GitHubu, povolování proxy jsdelivr.</string>
     <string name="watch_quality_pref_data">Upřednostněná kvalita sledování (mobilní data)</string>
     <string name="revert">Vrátit zpět</string>
-    <string name="jsdelivr_proxy_summary">Pomocí jsdelivr lze obejít blokování GitHubu. Může dojít ke zpoždění aktualizací o několik dní.</string>
+    <string name="jsdelivr_proxy_summary">Obchází blokování GitHubu pomocí jsdelivr, může způsobit zpoždění aktualizací o několik dní.</string>
     <string name="pref_category_bypass">Obcházení ISP</string>
 </resources>
