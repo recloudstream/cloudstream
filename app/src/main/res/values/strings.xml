@@ -383,7 +383,7 @@
     <string name="dns_pref_summary">Useful for bypassing ISP blocks</string>
     <string name="jsdelivr_proxy">raw.githubusercontent.com Proxy</string>
     <string name="jsdelivr_enabled">Failed to reach GitHub, enabling jsdelivr proxy.</string>
-    <string name="jsdelivr_proxy_summary">Using jsdelivr, GitHub blocking can be bypassed. May delay updates by a few days.</string>
+    <string name="jsdelivr_proxy_summary">Bypasses blocking of GitHub using jsdelivr, may cause updates to be delayed by few days.</string>
     <string name="add_site_pref">Clone site</string>
     <string name="remove_site_pref">Remove site</string>
     <string name="add_site_summary">Add a clone of an existing site, with a different URL</string>
@@ -428,7 +428,7 @@
     <string name="pref_category_ui_features">Features</string>
     <string name="category_general">General</string>
     <string name="random_button_settings">Random Button</string>
-    <string name="random_button_settings_desc">Shows button on Homepage which can choose a random movie or TV series from the Homepage</string>
+    <string name="random_button_settings_desc">Show random button on Homepage</string>
     <string name="provider_lang_settings">Provider languages</string>
     <string name="app_layout">App Layout</string>
     <string name="preferred_media_settings">Preferred media</string>

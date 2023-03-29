@@ -1,6 +1,5 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<!--https://newbedev.com/concatenate-multiple-strings-in-xml-->
-<resources>
+<?xml version="1.0" encoding="utf-8"?>
+<!--https://newbedev.com/concatenate-multiple-strings-in-xml--><resources>
     <!-- FORMAT MIGHT TRANSLATE, WILL CAUSE CRASH IF APPLIED WRONG -->
     <string name="app_dub_sub_episode_text_format" formatted="true">%s Ep %d</string>
     <string name="cast_format" formatted="true">Distribuție: %s</string>
@@ -389,4 +388,6 @@
     <string name="test_log">Log</string>
     <string name="browser">Browser</string>
     <string name="play_with_app_name">Joacă cu CloudStream</string>
+    <string name="automatic_plugin_updates">Actualizare plugin automată</string>
+    <string name="automatic_plugin_download">Descarcă plugin-uri automat</string>
 </resources>

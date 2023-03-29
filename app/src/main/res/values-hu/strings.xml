@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='UTF-8'?>
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="cast_format" formatted="true">Stáblista: %s</string>
     <string name="next_episode_time_day_format" formatted="true">%dn %dó%dp</string>
@@ -101,11 +101,11 @@
     <string name="subs_outline_color">Körvonal szín</string>
     <string name="subs_background_color">Háttér szín</string>
     <string name="subs_window_color">Ablak szín</string>
-    <string name="subs_edge_type">Edge típus</string>
+    <string name="subs_edge_type">Él típusa</string>
     <string name="subs_font">Betűtípus</string>
     <string name="search_provider_text_types">Keresés típusok szerint</string>
     <string name="search_provider_text_providers">Keresés szolgáltatók szerint</string>
-    <string name="benene_count_text">%d Banán a fejlesztőknek</string>
+    <string name="benene_count_text">%d Banán adva a fejlesztőknek</string>
     <string name="subs_download_languages">Nyelvek letöltése</string>
     <string name="subs_hold_to_reset_to_default">Tartsa lenyomva az alapértelmezett érték visszaállításához</string>
     <string name="subs_import_text" formatted="true">Betűtípusok importálása %s</string>
@@ -269,10 +269,230 @@
     <string name="video_source">Forrás</string>
     <string name="video_skip_op">Bevezető intro átugrása</string>
     <string name="dont_show_again">Ne mutasd újra</string>
-    <string name="next_episode_format" formatted="true">Az %d epizód ekkor jelenik meg:</string>
+    <string name="next_episode_format" formatted="true">A(z) %d epizód ekkor jelenik meg:</string>
     <string name="type_on_hold">Szüneteltetve</string>
     <string name="type_dropped">Elvetve</string>
     <string name="show_hd">Minőségi jelzés</string>
     <string name="show_dub">Szinkroncímke</string>
     <string name="show_sub">Alcímke</string>
+    <string name="pref_category_actions">Műveletek</string>
+    <string name="random_button_settings">Random gomb</string>
+    <string name="dns_pref">DNS HTTPS-en keresztül</string>
+    <string name="browser">Böngésző</string>
+    <string name="pref_category_android_tv">Android TV</string>
+    <string name="pref_category_gestures">kézmozdulatok</string>
+    <string name="skip_update">frissítés kihagyása</string>
+    <string name="pref_category_app_updates">Alkalmazásfrissítések</string>
+    <string name="category_providers">Szolgáltatók</string>
+    <string name="pref_category_ui_features">Funkciók</string>
+    <string name="watch_quality_pref_data">Előnyben részesített videóminőség (mobilinternet)</string>
+    <string name="limit_title">Videolejátszó cím max karakterek</string>
+    <string name="jsdelivr_enabled">Nem sikerült elérni a GitHubot, a jsdelivr proxy engedélyezése.</string>
+    <string name="pref_category_extensions">Bővítmények</string>
+    <string name="category_general">Általános</string>
+    <string name="subtitles_encoding">Felirat kódolása</string>
+    <string name="primary_color_settings">Elsődleges szín</string>
+    <string name="app_theme_settings">Alkalmazástéma</string>
+    <string name="category_provider_test">Szolgáltató teszt</string>
+    <string name="test_failed">Sikertelen</string>
+    <string name="video_disk_description">Problémákat okoz, ha túl magasra van állítva az alacsony tárhellyel rendelkező eszközökön, például az Android TV-n.</string>
+    <string name="enable_nsfw_on_providers">Korhatáros tartalmak engedélyezése a támogatott szolgáltatóknál</string>
+    <string name="category_ui">Elrendezés</string>
+    <string name="jsdelivr_proxy">raw.githubusercontent.com Proxy</string>
+    <string name="pref_category_player_features">A lejátszó funkciói</string>
+    <string name="watch_quality_pref">Előnyben részesített videóminőség (WiFi-n)</string>
+    <string name="dns_pref_summary">Hasznos az internetszolgáltató blokkjainak megkerüléséhez</string>
+    <string name="pref_category_player_layout">Elrendezés</string>
+    <string name="test_passed">Sikerült</string>
+    <string name="nginx_url_pref">NGINX szerver URL-címe</string>
+    <string name="display_subbed_dubbed_settings">Szinkronizált/feliratozott animék megjelenítése</string>
+    <string name="pref_category_defaults">Alapértelmezettek</string>
+    <string name="random_button_settings_desc">Megjelenít egy gombot a Kezdőlapon, amely egy véletlenszerű filmet vagy TV sorozatot választ a Kezdőlapról</string>
+    <string name="download_path_pref">Letöltési útvonal</string>
+    <string name="pref_category_cache">Gyorsítótár</string>
+    <string name="provider_lang_settings">Szolgáltatók nyelvei</string>
+    <string name="test_log">Napló</string>
+    <string name="library">Könyvtár</string>
+    <string name="pref_category_bypass">internetszolgáltató-kikerülések</string>
+    <string name="video_buffer_size_settings">Videó buffer méret</string>
+    <string name="video_buffer_length_settings">Videó buffer hossza</string>
+    <string name="limit_title_rez">Videolejátszó felbontása</string>
+    <string name="video_buffer_disk_settings">Videó gyorsítótár a lemezen</string>
+    <string name="pref_category_backup">Biztonsági mentés</string>
+    <string name="pref_category_subtitles">Feliratok</string>
+    <string name="preferred_media_settings">Előnyben részesített média</string>
+    <string name="pref_category_links">Hivatkozások</string>
+    <string name="video_buffer_clear_settings">Videó és kép gyorsítótár törlése</string>
+    <string name="jsdelivr_proxy_summary">A jsdelivr használatával a GitHub blokkolása megkerülhető. Néhány nappal késleltetheti a frissítéseket.</string>
+    <string name="video_ram_description">Összeomlást okoz, ha túl magasra van állítva a kevés memóriával rendelkező eszközökön, például az Android TV-n.</string>
+    <string name="player_load_subtitles_online">Betöltés az internetről</string>
+    <string name="video_tracks">Videósávok</string>
+    <string name="apply_on_restart">Alkalmazás újraindításkor</string>
+    <string name="safe_mode_description">Az összes bővítményt kikapcsoltuk egy összeomlás miatt, hogy segítsünk megtalálni a problémát okozót.</string>
+    <string name="extension_authors">Szerzők</string>
+    <string name="extension_types">Támogatott</string>
+    <string name="update_notification_downloading">Alkalmazásfrissítés letöltése…</string>
+    <string name="sort_updated_new">Frissítve (újabbtól a régebbihez)</string>
+    <string name="empty_library_no_accounts_message">Úgy tűnik, a könyvtárad üres :(
+\nJelentkezz be egy könyvtár fiókba, vagy adj hozzá műsorokat a helyi könyvtárodhoz</string>
+    <string name="empty_library_logged_in_message">Úgy tűnik, ez a lista üres, próbálj meg egy másikra váltani</string>
+    <string name="max">Max</string>
+    <string name="quality_4k">4K</string>
+    <string name="quality_sdr">SDR</string>
+    <string name="create_account">Fiók létrehozása</string>
+    <string name="example_site_url">pelda.com</string>
+    <string name="subtitle_offset">Feliratok szinkronizálása</string>
+    <string name="update_notification_installing">Alkalmazásfrissítés telepítése…</string>
+    <string name="clipboard_too_large">Túl sok szöveg. Nem lehet a vágólapra menteni.</string>
+    <string name="plugin_singular">bővítmény</string>
+    <string name="subtitle_offset_extra_hint_none_format">Nincs felirat késleltetés</string>
+    <string name="extension_description">Leírás</string>
+    <string name="update">Frissítés</string>
+    <string name="sync_total_episodes_none">/\?\?</string>
+    <string name="subtitles_shadow">Árnyék</string>
+    <string name="trailer">Filmelőzetes</string>
+    <string name="preferred_media_subtext">Mit szeretnél látni</string>
+    <string name="batch_download_nothing_to_download_format" formatted="true">Minden %s már letöltött</string>
+    <string name="extension_install_first">Először telepítse a bővítményt</string>
+    <string name="player_settings_play_in_browser">Webböngésző</string>
+    <string name="pref_category_looks">Kinézet</string>
+    <string name="app_layout">Alkalmazás elrendezés</string>
+    <string name="upload_sync">Szinkronizálás</string>
+    <string name="authenticated_user_fail" formatted="true">Nem sikerült bejelentkezni a következőként: %s</string>
+    <string name="min">Min</string>
+    <string name="subtitle_offset_hint">1000 ms</string>
+    <string name="recommended">Ajánlott</string>
+    <string name="actor_main">Fő</string>
+    <string name="error_invalid_data">Érvénytelen adatok</string>
+    <string name="network_adress_example">Link a streamhez</string>
+    <string name="plugin_load_fail" formatted="true">Nem sikerült betölteni: %s</string>
+    <string name="batch_download_start_format" formatted="true">Elkezdődött a(z) %d %s letöltése…</string>
+    <string name="download_all_plugins_from_repo">Töltse le az összes bővítményt ebből a tárolóból\?</string>
+    <string name="safe_mode_title">Biztonságos mód bekapcsolva</string>
+    <string name="extension_size">Méret</string>
+    <string name="player_settings_play_in_mpv">MPV</string>
+    <string name="app_not_found_error">Alkalmazás nem található</string>
+    <string name="apk_installer_package_installer">PackageInstaller</string>
+    <string name="sort_by">Rendezés e szerint:</string>
+    <string name="subscription_new">Feliratkozott a következőre: %s</string>
+    <string name="example_site_name">MenőWeboldalam</string>
+    <string name="quality_dvd">DVD</string>
+    <string name="plugins_updated" formatted="true">%d plugin frissítve</string>
+    <string name="extension_rating" formatted="true">Értékelés: %s</string>
+    <string name="clear_history">Előzmények törlése</string>
+    <string name="no">Nem</string>
+    <string name="subscription_list_name">Feliratkozva</string>
+    <string name="subtitle_offset_extra_hint_later_format">Használd ezt, ha a feliratok %d ms-sel korábban jelennek meg.</string>
+    <string name="category_player">Lejátszó</string>
+    <string name="resolution_and_title">Felbontás és cím</string>
+    <string name="player_pref">Előnyben részesített videolejátszó</string>
+    <string name="sort_rating_asc">Értékelés (alacsonyabbtól a magasabbig)</string>
+    <string name="subtitle_offset_title">Felirat késleltetése</string>
+    <string name="quality_blueray">Blu-ray</string>
+    <string name="error_invalid_id">Érvénytelen azonosító</string>
+    <string name="provider_languages_tip">Videók megtekintése ezeken a nyelveken</string>
+    <string name="previous">Előző</string>
+    <string name="batch_download_finish_format" formatted="true">%d%s letöltve</string>
+    <string name="batch_download">Batch letöltés</string>
+    <string name="plugin">bővítmények</string>
+    <string name="apk_installer_legacy">Legacy</string>
+    <string name="sort_rating_desc">Értékelés (magasabbtól az alacsonyig)</string>
+    <string name="subscription_in_progress_notification">Feliratkozott műsorok frissítése</string>
+    <string name="subscription_episode_released">Megjelent a(z) %d epizód!</string>
+    <string name="quality_sd">SD</string>
+    <string name="example_lang_name">Nyelvkód (hu)</string>
+    <string name="sync_total_episodes_some" formatted="true">/%d</string>
+    <string name="subtitles_raised">Emelt</string>
+    <string name="quality_hd">HD</string>
+    <string name="hls_playlist">HLS lejátszási lista</string>
+    <string name="player_settings_play_in_vlc">VLC</string>
+    <string name="update_notification_failed">Nem sikerült telepíteni az alkalmazás új verzióját</string>
+    <string name="authenticated_user" formatted="true">%s hitelesítve</string>
+    <string name="subtitles_outline">Körvonal</string>
+    <string name="player_load_subtitles">Betöltés fájlból</string>
+    <string name="quality_hdr">HDR</string>
+    <string name="app_layout_subtext">Az alkalmazás megjelenésének módosítása, hogy az megfeleljen az eszközödnek</string>
+    <string name="crash_reporting_title">Összeomlás jelentése</string>
+    <string name="view_public_repositories_button_short">Nyilvános lista</string>
+    <string name="extension_status">Állapot</string>
+    <string name="skip_type_recap">Összefoglaló</string>
+    <string name="sync_score_format" formatted="true">%d / 10</string>
+    <string name="open_with">Megnyitás a következővel</string>
+    <string name="uppercase_all_subtitles">Minden felirat nagybetűs</string>
+    <string name="skip_type_intro">Intro</string>
+    <string name="subscription_deleted">Leiratkozott a következőről: %s</string>
+    <string name="subtitles_remove_bloat">Bloat eltávolítása a feliratokról</string>
+    <string name="subtitles_filter_lang">Szűrés előnyben részesített médianyelv szerint</string>
+    <string name="confirm_exit_dialog">Biztos vagy benne, hogy ki akarsz lépni\?</string>
+    <string name="sort">Rendezés</string>
+    <string name="revert">Visszaállít</string>
+    <string name="error_invalid_url">Érvénytelen URL</string>
+    <string name="subtitles_remove_captions">Zárt feliratok eltávolítása a feliratokból</string>
+    <string name="is_adult">18+</string>
+    <string name="delete_repository_plugins">Ez az összes tároló bővítményt is törli</string>
+    <string name="blank_repo_message">A CloudStream alapértelmezés szerint nem telepített webhelyeket. A webhelyeket a tárolókból kell telepítenie.
+\n
+\nA Sky UK Limited agyatlan DMCA letiltása miatt 🤮 nem tudjuk az alkalmazásban linkelni az adattár oldalát.
+\n
+\nCsatlakozz a Discordunkhoz vagy keress online.</string>
+    <string name="extension_version">Verzió</string>
+    <string name="action_mark_as_watched">Megjelölés megtekintettként</string>
+    <string name="action_remove_from_watched">Eltávolítás a megnézettek közül</string>
+    <string name="quality_webrip">Web</string>
+    <string name="next">Következő</string>
+    <string name="quality_uhd">UHD</string>
+    <string name="resolution">Felbontás</string>
+    <string name="restart">Újraindítás</string>
+    <string name="stop">Stop</string>
+    <string name="plugins_not_downloaded" formatted="true">Nincs letöltve: %d</string>
+    <string name="error">Hiba</string>
+    <string name="remove_site_pref">Webhely eltávolítása</string>
+    <string name="example_email">hello@vilag.com</string>
+    <string name="setup_extensions_subtext">Töltse le a használni kívánt webhelyek listáját</string>
+    <string name="view_public_repositories_button">Közösségi tárolók megtekintése</string>
+    <string name="single_plugin_disabled" formatted="true">%s (Letiltva)</string>
+    <string name="audio_tracks">Hangsávok</string>
+    <string name="safe_mode_crash_info">Összeomlási információk megtekintése</string>
+    <string name="player_settings_play_in_app">Belső lejátszó</string>
+    <string name="all_languages_preference">Minden nyelv</string>
+    <string name="added_sync_format" formatted="true">%s hozzáadva</string>
+    <string name="plugin_deleted">Bővítmény törölve</string>
+    <string name="extension_language">Nyelv</string>
+    <string name="account">Fiók</string>
+    <string name="extras">Extrák</string>
+    <string name="delete_repository">Tároló törlése</string>
+    <string name="plugins_disabled" formatted="true">%d letiltva</string>
+    <string name="yes">Igen</string>
+    <string name="delayed_update_notice">Az alkalmazás kilépéskor frissül</string>
+    <string name="sort_alphabetical_a">Betűrendben (A-tól a Z-ig)</string>
+    <string name="sort_updated_old">Frissítve (régebbitől az újabbig)</string>
+    <string name="example_password">jelszó123</string>
+    <string name="example_username">AzÉnMenőFelhasználónevem</string>
+    <string name="example_ip">127.0.0.1</string>
+    <string name="switch_account">Fiókváltás</string>
+    <string name="add_account">Fiók hozzáadása</string>
+    <string name="subtitles_example_text">Árvíztűrő tükörfúrógép</string>
+    <string name="downloaded_file">Letöltött fájl</string>
+    <string name="actor_supporting">Támogató</string>
+    <string name="actor_background">Háttér</string>
+    <string name="home_source">Forrás</string>
+    <string name="home_random">Lepj meg</string>
+    <string name="coming_soon">Hamarosan…</string>
+    <string name="setup_done">Kész</string>
+    <string name="extensions">Bővítmények</string>
+    <string name="add_repository">Tároló hozzáadása</string>
+    <string name="repository_name_hint">Tároló neve</string>
+    <string name="repository_url_hint">Tárhely URL címe</string>
+    <string name="plugin_loaded">Bővítmény betöltve</string>
+    <string name="plugin_downloaded">Bővítmény letöltve</string>
+    <string name="skip_type_creddits">Közreműködők</string>
+    <string name="sort_alphabetical_z">Betűrendben (Z-től az A-ig)</string>
+    <string name="select_library">Könyvtár kiválasztása</string>
+    <string name="safe_mode_file">Biztonságos módú fájl található!
+\nNem tölt be semmilyen kiterjesztést indításkor, amíg a fájl el nem lesz távolítva.</string>
+    <string name="normal">Normál</string>
+    <string name="player_loaded_subtitles" formatted="true">%s betöltve</string>
+    <string name="skip_setup">Beállítás kihagyása</string>
+    <string name="quality_hq">HQ</string>
+    <string name="plugins_downloaded" formatted="true">%d letöltve</string>
 </resources>

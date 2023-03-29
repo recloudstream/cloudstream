@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='UTF-8'?>
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="search_poster_img_des">Постер</string>
     <string name="episode_poster_img_des">Постер до епізоду</string>
@@ -283,7 +283,7 @@
     <string name="pref_category_ui_features">Особливості</string>
     <string name="category_general">Загальне</string>
     <string name="random_button_settings">Випадкова кнопка</string>
-    <string name="random_button_settings_desc">Показує кнопку на Головній сторінці, яка може вибрати випадковий фільм або серіал на Головній сторінці</string>
+    <string name="random_button_settings_desc">Показати випадкову кнопку на Головній сторінці</string>
     <string name="provider_lang_settings">Мови постачальника</string>
     <string name="app_layout">Макет програми</string>
     <string name="preferred_media_settings">Бажані медіа</string>
@@ -527,6 +527,6 @@
     <string name="jsdelivr_proxy">raw.githubusercontent.com Proxy</string>
     <string name="jsdelivr_enabled">Не вдалося зв\'язатися з GitHub, увімкнувши проксі-сервер jsdelivr.</string>
     <string name="pref_category_bypass">Обходи ISP</string>
-    <string name="jsdelivr_proxy_summary">За допомогою jsdelivr можна обійти блокування GitHub. Можлива затримка оновлень на кілька днів.</string>
+    <string name="jsdelivr_proxy_summary">Обхід блокування GitHub за допомогою jsdelivr, може призвести до затримки оновлень на кілька днів.</string>
     <string name="watch_quality_pref_data">Бажана якість перегляду (Мобільні дані)</string>
 </resources>

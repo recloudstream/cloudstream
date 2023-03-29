@@ -1,6 +1,5 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<!--https://newbedev.com/concatenate-multiple-strings-in-xml-->
-<resources>
+<?xml version="1.0" encoding="utf-8"?>
+<!--https://newbedev.com/concatenate-multiple-strings-in-xml--><resources>
     <string name="player_speed_text_format" formatted="true">Prędkość (%.2fx)</string>
     <string name="rated_format" formatted="true">Ocena: %.1f</string>
     <string name="new_update_format" formatted="true">Znaleziono nową aktualizację!
@@ -118,16 +117,16 @@
     <string name="eigengraumode_settings">Tryb Eigengravy</string>
     <string name="eigengraumode_settings_des">Ustawienia prędkości</string>
     <string name="swipe_to_seek_settings">Przesuń aby przewinąć</string>
-    <string name="swipe_to_seek_settings_des">Przesuń w lewo lub prawo aby kontrolować czas</string>
+    <string name="swipe_to_seek_settings_des">Przesuwaj w lewo lub prawo, aby kontrolować czas filmu</string>
     <string name="swipe_to_change_settings">Przesuń aby zmienić ustawienia</string>
-    <string name="swipe_to_change_settings_des">Przesuń góra-dół z lewej lub prawej aby zmienić jasność i głośność</string>
+    <string name="swipe_to_change_settings_des">Przesuwaj góra-dół z lewej lub prawej strony ekranu aby zmienić jasność czy głośność</string>
     <string name="autoplay_next_settings">Autoodtwarzanie następnego odcinka</string>
     <string name="autoplay_next_settings_des">Rozpocznij następny odcinek po skończeniu bieżącego</string>
-    <string name="double_tap_to_seek_amount_settings">Czas przewinięcia przy podwójnym kliknięciu</string>
+    <string name="double_tap_to_seek_amount_settings">Czas przewinięcia przy podwójnym kliknięciu (w sekundach)</string>
     <string name="double_tap_to_seek_settings">Podwójne kliknięcie aby przewinąć</string>
     <string name="double_tap_to_seek_settings_des">Kliknij 2 razy z prawej lub lewej strony aby przewinąć</string>
     <string name="double_tap_to_pause_settings">Kliknij dwukrotnie aby wstrzymać</string>
-    <string name="double_tap_to_pause_settings_des">Kliknij na środku, aby zatrzymać wideo</string>
+    <string name="double_tap_to_pause_settings_des">Kliknij dwukrotnie na środku, aby zatrzymać wideo</string>
     <string name="use_system_brightness_settings">Użyj jasności systemowej</string>
     <string name="use_system_brightness_settings_des">Użyj jasności systemowej w odtwarzaczu aplikacji zamiast ciemnej nakładki</string>
     <string name="episode_sync_settings">Aktualizuj postęp oglądania</string>
@@ -154,7 +153,7 @@
     <string name="automatic_plugin_updates">Automatyczne aktualizacje rozszerzeń</string>
     <string name="automatic_plugin_download">Automatyczne pobieranie rozszerzeń</string>
     <string name="updates_settings">Pokazuj aktualizacje</string>
-    <string name="updates_settings_des">Automatycznie wyszukuj aktualizacje przy starcie</string>
+    <string name="updates_settings_des">Automatycznie wyszukuj aktualizacje przy starcie.</string>
     <string name="uprereleases_settings">Aktualizuj do wersji beta</string>
     <string name="uprereleases_settings_des">Wyszukuj wersji beta, zamiast oficjalnych wydań</string>
     <string name="github">Github</string>
@@ -456,7 +455,7 @@
     <string name="apk_installer_settings">Instalator APK</string>
     <string name="apk_installer_settings_des">Niektóre telefony nie obsługują nowego instalatora pakietów. Wypróbuj tryb legacy, jeśli aktualizacje nie zostaną zainstalowane.</string>
     <string name="example_password">password123</string>
-    <string name="ova_singular">@string/ova</string>
+    <string name="ova_singular">\@string/ova</string>
     <string name="example_site_name">MojaFajnaWitryna</string>
     <string name="example_username">MyCoolUsername</string>
     <string name="example_ip">127.0.0.1</string>
@@ -466,7 +465,7 @@
     <string name="apk_installer_package_installer">Instalator pakietów</string>
     <string name="action_open_play">@string/home_play</string>
     <string name="example_email">hello@world.com</string>
-    <string name="anime_singular">@string/anime</string>
+    <string name="anime_singular">\@string/anime</string>
     <string name="skip_type_op">Opening</string>
     <string name="skip_type_ed">Ending</string>
     <string name="skip_type_mixed_op">Mixed opening</string>

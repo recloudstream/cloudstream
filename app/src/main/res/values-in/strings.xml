@@ -1,6 +1,5 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<!--https://newbedev.com/concatenate-multiple-strings-in-xml-->
-<resources>
+<?xml version="1.0" encoding="utf-8"?>
+<!--https://newbedev.com/concatenate-multiple-strings-in-xml--><resources>
     <!-- FORMAT MIGHT TRANSLATE, WILL CAUSE CRASH IF APPLIED WRONG -->
     <string name="app_dub_sub_episode_text_format" formatted="true">%s Ep %d</string>
     <string name="cast_format" formatted="true">Pemeran: %s</string>
@@ -265,7 +264,7 @@
     <string name="legal_notice_text" translatable="false">Any legal issues regarding the content on this application should be taken up with the actual file hosts and providers themselves as we are not affiliated with them. In case of copyright infringement, please directly contact the responsible parties or the streaming websites. The app is purely for educational and personal use. CloudStream 3 does not host any content on the app, and has no control over what media is put up or taken down. CloudStream 3 functions like any other search engine, such as Google. CloudStream 3 does not host, upload or manage any videos, films or content. It simply crawls, aggregates and displayes links in a convenient, user-friendly interface. It merely scrapes 3rd-party websites that are publicly accessable via any regular web browser. It is the responsibility of user to avoid any actions that might violate the laws governing his/her locality. Use CloudStream 3 at your own risk.</string>
     <string name="category_general">Umum</string>
     <string name="random_button_settings">Tombol Acak</string>
-    <string name="random_button_settings_desc">Tampilkan tombol di halaman utama yang dapat memilih seri film atau TV acak dari halaman utama</string>
+    <string name="random_button_settings_desc">Tampilkan tombol acak di Beranda</string>
     <string name="provider_lang_settings">Bahasa provider</string>
     <string name="app_layout">Tata Letak Aplikasi</string>
     <string name="preferred_media_settings">Media yang lebih diinginkan</string>
@@ -549,7 +548,7 @@
     <string name="subscription_episode_released">Episode %d telah rilis!</string>
     <string name="jsdelivr_proxy">raw.githubusercontent.com Proksi</string>
     <string name="jsdelivr_enabled">Gagal mencapai GitHub, mengaktifkan proksi jsdelivr.</string>
-    <string name="jsdelivr_proxy_summary">Mengunakan jsdelivers, bisa melewati pemblokiran GitHub. Mungkin dapat menyebabkan pembaruan tertunda dalam beberapa hari.</string>
+    <string name="jsdelivr_proxy_summary">Bisa melewati pemblokiran GitHub mengunakan jsdelivers. Mungkin dapat menyebabkan tertunda dalam beberapa hari.</string>
     <string name="pref_category_bypass">Bypass ISP</string>
     <string name="revert">Pulihkan</string>
     <string name="watch_quality_pref_data">Nonton dengan kualitas yang di inginkan (Data Seluler)</string>

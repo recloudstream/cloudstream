@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='UTF-8'?>
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_dub_sub_episode_text_format" formatted="true">%s Ep %d</string>
     <string name="next_episode_time_hour_format" formatted="true">%dh %dm</string>
@@ -273,7 +273,7 @@
     <string name="legal_notice">Aviso Legal</string>
     <string name="category_general">Geral</string>
     <string name="random_button_settings">Botão Aleatório</string>
-    <string name="random_button_settings_desc">Mostra o botão Aleatório na página inicial, que pode escolher aleatoriamente um filme ou série</string>
+    <string name="random_button_settings_desc">Mostrar botão aleatório na página inicial</string>
     <string name="provider_lang_settings">Idioma dos fornecedores</string>
     <string name="app_layout">Layout da App</string>
     <string name="preferred_media_settings">Mídia preferida</string>
@@ -444,7 +444,7 @@
     <string name="quality_cam">Cam</string>
     <string name="skip_type_intro">Abertura</string>
     <string name="select_library">Selecionar Biblioteca</string>
-    <string name="jsdelivr_proxy_summary">Usando jsdelivr o bloqueio do GitHub pode ser contornado. Pode atrasar atualizações em alguns dias.</string>
+    <string name="jsdelivr_proxy_summary">Ignora o bloqueio do GitHub usando jsdelivr, pode fazer com que as atualizações sejam atrasadas em alguns dias.</string>
     <string name="player_settings_play_in_vlc">VLC</string>
     <string name="all_languages_preference">Todas as linguagens</string>
     <string name="sort_updated_new">Atualizado (Novo para Antigo)</string>
