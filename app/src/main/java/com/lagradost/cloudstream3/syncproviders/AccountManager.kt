@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.syncproviders
 
+import androidx.annotation.WorkerThread
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.removeKeys
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
@@ -11,6 +12,7 @@ abstract class AccountManager(private val defIndex: Int) : AuthAPI {
         val malApi = MALApi(0)
         val aniListApi = AniListApi(0)
         val openSubtitlesApi = OpenSubtitlesApi(0)
+        val googleDriveApi = GoogleDriveApi(0)
         val indexSubtitlesApi = IndexSubtitleApi()
         val addic7ed = Addic7ed()
         val localListApi = LocalList()
@@ -18,13 +20,13 @@ abstract class AccountManager(private val defIndex: Int) : AuthAPI {
         // used to login via app intent
         val OAuth2Apis
             get() = listOf<OAuth2API>(
-                malApi, aniListApi
+                malApi, aniListApi, googleDriveApi
             )
 
         // this needs init with context and can be accessed in settings
         val accountManagers
             get() = listOf(
-                malApi, aniListApi, openSubtitlesApi, //nginxApi
+                malApi, aniListApi, openSubtitlesApi, googleDriveApi //, nginxApi
             )
 
         // used for active syncing
@@ -33,8 +35,16 @@ abstract class AccountManager(private val defIndex: Int) : AuthAPI {
                 SyncRepo(malApi), SyncRepo(aniListApi), SyncRepo(localListApi)
             )
 
+        // used for active backup
+        val BackupApis
+            get() = listOf<BackupAPI<*>>(
+                googleDriveApi
+            )
+
         val inAppAuths
-            get() = listOf(openSubtitlesApi)//, nginxApi)
+            get() = listOf(
+                openSubtitlesApi, googleDriveApi//, nginxApi
+            )
 
         val subtitleProviders
             get() = listOf(
@@ -88,6 +98,12 @@ abstract class AccountManager(private val defIndex: Int) : AuthAPI {
 
     // int array of all accounts indexes
     private val accountsKey get() = "${idPrefix}_accounts"
+
+
+    // runs on startup
+    @WorkerThread
+    open suspend fun initialize() {
+    }
 
     protected fun removeAccountKeys() {
         removeKeys(accountId)

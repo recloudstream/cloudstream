@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.lagradost.cloudstream3.mvvm.logError
+import com.lagradost.cloudstream3.syncproviders.AccountManager
 
 const val DOWNLOAD_HEADER_CACHE = "download_header_cache"
 
@@ -20,7 +21,9 @@ const val PREFERENCES_NAME = "rebuild_preference"
 
 object DataStore {
     val mapper: JsonMapper = JsonMapper.builder().addModule(KotlinModule())
-        .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false).build()
+        .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+        .configure(DeserializationFeature.USE_LONG_FOR_INTS, true)
+        .build()
 
     private fun getPreferences(context: Context): SharedPreferences {
         return context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE)
@@ -80,6 +83,8 @@ object DataStore {
                 val editor: SharedPreferences.Editor = prefs.edit()
                 editor.remove(path)
                 editor.apply()
+
+                AccountManager.BackupApis.forEach { it.addToQueue() }
             }
         } catch (e: Exception) {
             logError(e)
@@ -99,6 +104,8 @@ object DataStore {
             val editor: SharedPreferences.Editor = getSharedPrefs().edit()
             editor.putString(path, mapper.writeValueAsString(value))
             editor.apply()
+
+            AccountManager.BackupApis.forEach { it.addToQueue() }
         } catch (e: Exception) {
             logError(e)
         }

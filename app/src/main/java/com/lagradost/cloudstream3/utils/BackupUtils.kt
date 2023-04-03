@@ -18,6 +18,7 @@ import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.plugins.PLUGINS_KEY
 import com.lagradost.cloudstream3.plugins.PLUGINS_KEY_LOCAL
+import com.lagradost.cloudstream3.syncproviders.InAppOAuth2APIManager
 import com.lagradost.cloudstream3.syncproviders.providers.AniListApi.Companion.ANILIST_CACHED_LIST
 import com.lagradost.cloudstream3.syncproviders.providers.AniListApi.Companion.ANILIST_TOKEN_KEY
 import com.lagradost.cloudstream3.syncproviders.providers.AniListApi.Companion.ANILIST_UNIXTIME_KEY
@@ -60,6 +61,7 @@ object BackupUtils {
         MAL_CACHED_LIST,
         MAL_UNIXTIME_KEY,
         MAL_USER_KEY,
+        InAppOAuth2APIManager.K.TOKEN.value,
 
         // The plugins themselves are not backed up
         PLUGINS_KEY,
@@ -71,7 +73,7 @@ object BackupUtils {
 
     /** false if blacklisted key */
     private fun String.isTransferable(): Boolean {
-        return !nonTransferableKeys.contains(this)
+        return !nonTransferableKeys.any { this.contains(it) }
     }
 
     private var restoreFileSelector: ActivityResultLauncher<Array<String>>? = null

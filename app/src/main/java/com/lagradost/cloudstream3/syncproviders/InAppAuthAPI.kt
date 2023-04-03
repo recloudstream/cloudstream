@@ -35,11 +35,6 @@ abstract class InAppAuthAPIManager(defIndex: Int) : AccountManager(defIndex), In
     override val storesPasswordInPlainText = true
     override val requiresLogin = true
 
-    // runs on startup
-    @WorkerThread
-    open suspend fun initialize() {
-    }
-
     override fun logOut() {
         throw NotImplementedError()
     }

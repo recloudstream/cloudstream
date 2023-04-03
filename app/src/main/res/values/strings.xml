@@ -446,9 +446,12 @@
     <string name="bottom_title_settings">Poster title location</string>
     <string name="bottom_title_settings_des">Put the title under the poster</string>
     <!-- account stuff -->
+    <string name="settings_category_plugins">Plugins</string>
+    <string name="settings_category_remote_sync">Remote Sync</string>
     <string name="anilist_key" translatable="false">anilist_key</string>
     <string name="mal_key" translatable="false">mal_key</string>
     <string name="opensubtitles_key" translatable="false">opensubtitles_key</string>
+    <string name="gdrive_key" translatable="false">gdrive_key</string>
     <string name="nginx_key" translatable="false">nginx_key</string>
     <string name="example_password">password123</string>
     <string name="example_username">MyCoolUsername</string>
@@ -457,6 +460,9 @@
     <string name="example_site_name">MyCoolSite</string>
     <string name="example_site_url">example.com</string>
     <string name="example_lang_name">Language code (en)</string>
+    <string name="example_login_file_name" translatable="false">cloudstreamapp-sync-file</string>
+    <string name="example_login_client_id">OAuth Client ID</string>
+    <string name="example_login_client_secret">OAuth Client Secret</string>
     <!--
     <string name="mal_account_settings" translatable="false">MAL</string>
     <string name="anilist_account_settings" translatable="false">AniList</string>
@@ -657,4 +663,9 @@
     <string name="subscription_new">Subscribed to %s</string>
     <string name="subscription_deleted">Unsubscribed from %s</string>
     <string name="subscription_episode_released">Episode %d released!</string>
+    <string name="example_login_client_confirmation_code">OAuth Confirmation Code</string>
+    <string name="confirm_next">Confirm</string>
+    <string name="example_login_file_name_full">Sync file name (optional)</string>
+    <string name="example_login_redirect_url_full">Oauth redirect url (optional)</string>
+    <string name="example_redirect_url">https://chiff.github.io/cloudstream-sync/google-drive</string>
 </resources>

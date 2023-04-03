@@ -2,6 +2,8 @@ import com.android.build.gradle.api.BaseVariantOutput
 import org.jetbrains.dokka.gradle.DokkaTask
 import java.io.ByteArrayOutputStream
 import java.net.URL
+import java.util.Properties
+import java.io.FileInputStream
 
 plugins {
     id("com.android.application")
@@ -19,10 +21,13 @@ fun String.execute() = ByteArrayOutputStream().use { baot ->
             workingDir = projectDir
             commandLine = this@execute.split(Regex("\\s"))
             standardOutput = baot
-    }.exitValue == 0)
+        }.exitValue == 0)
         String(baot.toByteArray()).trim()
     else null
 }
+
+val localProperties = Properties()
+localProperties.load(FileInputStream(rootProject.file("local.properties")))
 
 android {
     testOptions {
@@ -79,7 +84,20 @@ android {
         debug {
             isDebuggable = true
             applicationIdSuffix = ".debug"
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+            resValue(
+                "string",
+                "debug_gdrive_secret",
+                localProperties.getProperty("debug.gdrive.secret") ?: ""
+            )
+            resValue(
+                "string",
+                "debug_gdrive_clientId",
+                localProperties.getProperty("debug.gdrive.clientId") ?: ""
+            )
         }
     }
     flavorDimensions.add("state")
@@ -225,7 +243,25 @@ dependencies {
 
     // color pallette for images -> colors
     implementation("androidx.palette:palette-ktx:1.0.0")
+
+    implementation("androidx.browser:browser:1.4.0")
+    implementation("com.google.api-client:google-api-client:2.0.0") {
+        exclude(
+            group = "org.apache.httpcomponents",
+        )
+    }
+    implementation("com.google.oauth-client:google-oauth-client-jetty:1.34.1") {
+        exclude(
+            group = "org.apache.httpcomponents",
+        )
+    }
+    implementation("com.google.apis:google-api-services-drive:v3-rev20220815-2.0.0") {
+        exclude(
+            group = "org.apache.httpcomponents",
+        )
+    }
 }
+
 
 tasks.register("androidSourcesJar", Jar::class) {
     archiveClassifier.set("sources")
