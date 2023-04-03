@@ -38,7 +38,7 @@ import java.io.InputStream
 import java.util.*
 
 
-// TODO: improvements and ideas
+// improvements and ideas
 //  - add option to use proper oauth through google services one tap - would need google console project on behalf of cloudstream
 //  - encrypt data on drive
 //  - choose what should be synced
