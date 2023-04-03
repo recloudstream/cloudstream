@@ -27,11 +27,11 @@ fun String.execute() = ByteArrayOutputStream().use { baot ->
 }
 
 val localProperties = Properties()
-val localPropertiesEnabled = try {
+try {
     localProperties.load(FileInputStream(rootProject.file("local.properties")))
-    true
-} catch(_: Exception) {
-    false
+} catch (_: Exception) {
+    localProperties.setProperty("debug.gdrive.clientId", "")
+    localProperties.setProperty("debug.gdrive.secret", "")
 }
 
 
@@ -95,18 +95,16 @@ android {
                 "proguard-rules.pro"
             )
 
-            if (localPropertiesEnabled) {
-                resValue(
-                    "string",
-                    "debug_gdrive_secret",
-                    localProperties.getProperty("debug.gdrive.secret") ?: ""
-                )
-                resValue(
-                    "string",
-                    "debug_gdrive_clientId",
-                    localProperties.getProperty("debug.gdrive.clientId") ?: ""
-                )
-            }
+            resValue(
+                "string",
+                "debug_gdrive_secret",
+                localProperties.getProperty("debug.gdrive.secret") ?: ""
+            )
+            resValue(
+                "string",
+                "debug_gdrive_clientId",
+                localProperties.getProperty("debug.gdrive.clientId") ?: ""
+            )
         }
     }
     flavorDimensions.add("state")

@@ -663,9 +663,7 @@
     <string name="subscription_new">Subscribed to %s</string>
     <string name="subscription_deleted">Unsubscribed from %s</string>
     <string name="subscription_episode_released">Episode %d released!</string>
-    <string name="example_login_client_confirmation_code">OAuth Confirmation Code</string>
-    <string name="confirm_next">Confirm</string>
     <string name="example_login_file_name_full">Sync file name (optional)</string>
     <string name="example_login_redirect_url_full">Oauth redirect url (optional)</string>
-    <string name="example_redirect_url">https://chiff.github.io/cloudstream-sync/google-drive</string>
+    <string name="example_redirect_url" translatable="false">https://chiff.github.io/cloudstream-sync/google-drive</string>
 </resources>
