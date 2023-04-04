@@ -54,15 +54,13 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="center_vertical"
-
                     android:iconifiedByDefault="false"
                     android:imeOptions="actionSearch"
-
                     android:inputType="text"
                     android:nextFocusLeft="@id/nav_rail_view"
-
                     android:nextFocusRight="@id/search_filter"
                     android:paddingStart="-10dp"
+                    android:paddingEnd="45dp"
                     app:iconifiedByDefault="false"
                     app:queryBackground="@color/transparent"
                     app:queryHint="@string/search_hint"
