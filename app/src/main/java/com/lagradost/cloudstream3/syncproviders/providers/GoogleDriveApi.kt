@@ -38,9 +38,12 @@ import java.util.*
 
 // improvements and ideas
 //  - add option to use proper oauth through google services one tap - would need google console project on behalf of cloudstream
-//  - encrypt data on drive
+//  - encrypt data on drive - meh
 //  - choose what should be synced
-//  - having a button to run sync would be nice
+//  - having a button to run sync would be nice - its really just for user to feel "safe"
+//  - having two or more devices in use at same time results in racing conditions
+//  - restoring backup should update view models - maybe just first fragment is enough
+//  - move "https://chiff.github.io/cloudstream-sync/google-drive"  to cs3 repo
 class GoogleDriveApi(index: Int) :
     InAppOAuth2APIManager(index),
     BackupAPI<InAppOAuth2API.LoginData> {
@@ -58,8 +61,7 @@ class GoogleDriveApi(index: Int) :
     override val requiresSecret = true
     override val requiresClientId = true
     override val defaultFilenameValue = "cloudstreamapp-sync-file"
-    override val defaultRedirectUrl =
-        "https://chiff.github.io/cloudstream-sync/google-drive" // TODO: we should move this one to cs3 repo
+    override val defaultRedirectUrl =   "https://chiff.github.io/cloudstream-sync/google-drive"
 
     override var uploadJob: Job? = null
 
