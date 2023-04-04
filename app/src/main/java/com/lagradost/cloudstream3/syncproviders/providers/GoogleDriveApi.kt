@@ -28,8 +28,8 @@ import com.lagradost.cloudstream3.utils.AppUtils.toJson
 import com.lagradost.cloudstream3.utils.BackupUtils
 import com.lagradost.cloudstream3.utils.BackupUtils.getBackup
 import com.lagradost.cloudstream3.utils.BackupUtils.restore
+import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.DataStore
-import com.lagradost.cloudstream3.utils.DataStore.getSharedPrefs
 import com.lagradost.cloudstream3.utils.DataStore.removeKey
 import kotlinx.coroutines.Job
 import java.io.InputStream
@@ -100,7 +100,7 @@ class GoogleDriveApi(index: Int) :
         )
 
         storeValue(K.TOKEN, googleTokenResponse)
-        runDownloader()
+        runDownloader(true)
 
         tempAuthFlow = null
         return true
@@ -114,7 +114,9 @@ class GoogleDriveApi(index: Int) :
             return
         }
 
-        runDownloader()
+        ioSafe {
+            runDownloader(true)
+        }
     }
 
     override fun loginInfo(): AuthAPI.LoginInfo? {
@@ -203,7 +205,7 @@ class GoogleDriveApi(index: Int) :
         old.orEmpty().keys.subtract(new.orEmpty().keys).toTypedArray()
 
     override fun Context.createBackup(loginData: InAppOAuth2API.LoginData) {
-        val drive = getDriveService()!!
+        val drive = getDriveService() ?: return
 
         val fileName = loginData.fileName
         val syncFileId = loginData.syncFileId
@@ -219,7 +221,10 @@ class GoogleDriveApi(index: Int) :
         val fileId = getOrCreateSyncFileId(drive, loginData)
         if (fileId != null) {
             try {
-                val file = drive.files().update(fileId, fileMetadata, fileContent).execute()
+                val file = drive.files()
+                    .update(fileId, fileMetadata, fileContent)
+                    .setKeepRevisionForever(false)
+                    .execute()
                 loginData.syncFileId = file.id
             } catch (_: Exception) {
                 val file = drive.files().create(fileMetadata, fileContent).execute()
@@ -277,11 +282,15 @@ class GoogleDriveApi(index: Int) :
             ?.getOrNull(0)
             ?.id
 
-        if (existingFileId != null && loginData.syncFileId == null) {
-            loginData.syncFileId = existingFileId
-            storeValue(K.LOGIN_DATA, loginData)
+        if (loginData.syncFileId == null) {
+            if (existingFileId != null) {
+                loginData.syncFileId = existingFileId
+                storeValue(K.LOGIN_DATA, loginData)
 
-            return existingFileId
+                return existingFileId
+            }
+
+            return null
         }
 
         val verifyId = drive.files().get(existingFileId)
@@ -337,8 +346,13 @@ class GoogleDriveApi(index: Int) :
         }
     }
 
-    private fun runDownloader() {
-        continuousDownloader.work()
+    private fun runDownloader(runNow: Boolean = false) {
+        if (runNow) {
+            continuousDownloader.workNow()
+        } else {
+            continuousDownloader.work()
+
+        }
     }
 
     private fun getCredentialsFromStore(): Credential? {

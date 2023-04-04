@@ -83,6 +83,12 @@ interface BackupAPI<LOGIN_DATA> {
             throttle(input)
         }
 
+        fun workNow(input: INPUT? = null) {
+            Log.d("SYNC_API", "[$id] runs immediate")
+            stop()
+            onWork(input)
+        }
+
         fun stop() {
             runnable?.let {
                 handler.removeCallbacks(it)
