@@ -15,6 +15,7 @@ import com.lagradost.cloudstream3.CommonActivity
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.plugins.PluginManager
+import com.lagradost.cloudstream3.syncproviders.BackupAPI.Companion.attachListener
 import com.lagradost.cloudstream3.ui.settings.appLanguages
 import com.lagradost.cloudstream3.ui.settings.getCurrentLocale
 import com.lagradost.cloudstream3.utils.SubtitleHelper
@@ -42,7 +43,7 @@ class SetupFragmentLanguage : Fragment() {
         normalSafeApiCall {
             with(context) {
                 if (this == null) return@normalSafeApiCall
-                val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
+                val settingsManager = PreferenceManager.getDefaultSharedPreferences(this).attachListener().first
 
                 val arrayAdapter =
                     ArrayAdapter<String>(this, R.layout.sort_bottom_single_choice)

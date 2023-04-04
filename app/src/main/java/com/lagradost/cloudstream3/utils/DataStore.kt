@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.lagradost.cloudstream3.mvvm.logError
-import com.lagradost.cloudstream3.syncproviders.AccountManager
+import com.lagradost.cloudstream3.syncproviders.BackupAPI
 
 const val DOWNLOAD_HEADER_CACHE = "download_header_cache"
 
@@ -24,6 +24,8 @@ object DataStore {
         .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
         .configure(DeserializationFeature.USE_LONG_FOR_INTS, true)
         .build()
+
+    private val backupScheduler = BackupAPI.createBackupScheduler()
 
     private fun getPreferences(context: Context): SharedPreferences {
         return context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE)
@@ -83,8 +85,7 @@ object DataStore {
                 val editor: SharedPreferences.Editor = prefs.edit()
                 editor.remove(path)
                 editor.apply()
-
-                AccountManager.BackupApis.forEach { it.addToQueue() }
+                backupScheduler.work(Pair(path, false))
             }
         } catch (e: Exception) {
             logError(e)
@@ -104,8 +105,7 @@ object DataStore {
             val editor: SharedPreferences.Editor = getSharedPrefs().edit()
             editor.putString(path, mapper.writeValueAsString(value))
             editor.apply()
-
-            AccountManager.BackupApis.forEach { it.addToQueue() }
+            backupScheduler.work(Pair(path, false))
         } catch (e: Exception) {
             logError(e)
         }
@@ -114,6 +114,7 @@ object DataStore {
     fun <T> Context.setKey(folder: String, path: String, value: T) {
         setKey(getFolderName(folder, path), value)
     }
+
 
     inline fun <reified T : Any> String.toKotlinObject(): T {
         return mapper.readValue(this, T::class.java)

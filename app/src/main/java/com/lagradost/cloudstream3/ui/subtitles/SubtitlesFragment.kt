@@ -27,6 +27,7 @@ import com.lagradost.cloudstream3.CommonActivity.onColorSelectedEvent
 import com.lagradost.cloudstream3.CommonActivity.onDialogDismissedEvent
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.syncproviders.BackupAPI.Companion.attachListener
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTrueTvSettings
 import com.lagradost.cloudstream3.utils.DataStore.setKey
 import com.lagradost.cloudstream3.utils.Event
@@ -447,6 +448,7 @@ class SubtitlesFragment : Fragment() {
         subtitles_filter_sub_lang?.setOnCheckedChangeListener { _, b ->
             context?.let { ctx ->
                 PreferenceManager.getDefaultSharedPreferences(ctx)
+                    .attachListener().first
                     .edit()
                     .putBoolean(getString(R.string.filter_sub_lang_key), b)
                     .apply()

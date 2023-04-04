@@ -12,6 +12,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceManager
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.TvType
+import com.lagradost.cloudstream3.syncproviders.BackupAPI.Companion.attachListener
 import com.lagradost.cloudstream3.utils.DataStore.removeKey
 import com.lagradost.cloudstream3.utils.USER_SELECTED_HOMEPAGE_API
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
@@ -32,7 +33,7 @@ class SetupFragmentMedia : Fragment() {
 
         with(context) {
             if (this == null) return
-            val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
+            val settingsManager = PreferenceManager.getDefaultSharedPreferences(this).attachListener().first
 
             val arrayAdapter =
                 ArrayAdapter<String>(this, R.layout.sort_bottom_single_choice)

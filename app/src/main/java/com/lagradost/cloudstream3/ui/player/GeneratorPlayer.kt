@@ -28,6 +28,7 @@ import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.mvvm.*
 import com.lagradost.cloudstream3.subtitles.AbstractSubtitleEntities
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.subtitleProviders
+import com.lagradost.cloudstream3.syncproviders.BackupAPI.Companion.attachListener
 import com.lagradost.cloudstream3.ui.player.CS3IPlayer.Companion.preferredAudioTrackLanguage
 import com.lagradost.cloudstream3.ui.player.CustomDecoder.Companion.updateForcedEncoding
 import com.lagradost.cloudstream3.ui.player.PlayerSubtitleHelper.Companion.toSubtitleMimeType
@@ -664,7 +665,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                 }
 
                 sourceDialog.subtitles_click_settings?.setOnClickListener {
-                    val settingsManager = PreferenceManager.getDefaultSharedPreferences(ctx)
+                    val settingsManager = PreferenceManager.getDefaultSharedPreferences(ctx).attachListener().first
 
                     val prefNames = ctx.resources.getStringArray(R.array.subtitles_encoding_list)
                     val prefValues = ctx.resources.getStringArray(R.array.subtitles_encoding_values)

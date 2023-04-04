@@ -14,6 +14,7 @@ import androidx.preference.PreferenceManager
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError
+import com.lagradost.cloudstream3.syncproviders.BackupAPI.Companion.attachListener
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.getPref
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setPaddingBottom
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setUpToolbar
@@ -126,7 +127,7 @@ class SettingsUpdates : PreferenceFragmentCompat() {
         }
 
         getPref(R.string.apk_installer_key)?.setOnPreferenceClickListener {
-            val settingsManager = PreferenceManager.getDefaultSharedPreferences(it.context)
+            val settingsManager = PreferenceManager.getDefaultSharedPreferences(it.context).attachListener().first
 
             val prefNames = resources.getStringArray(R.array.apk_installer_pref)
             val prefValues = resources.getIntArray(R.array.apk_installer_values)

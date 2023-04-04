@@ -2,6 +2,7 @@ package com.lagradost.cloudstream3.syncproviders.providers
 
 import android.content.Context
 import android.net.Uri
+import android.util.Log
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.fragment.app.FragmentActivity
 import com.fasterxml.jackson.module.kotlin.readValue
@@ -19,7 +20,6 @@ import com.google.api.services.drive.model.File
 import com.lagradost.cloudstream3.AcraApplication
 import com.lagradost.cloudstream3.CommonActivity
 import com.lagradost.cloudstream3.R
-import com.lagradost.cloudstream3.mvvm.launchSafe
 import com.lagradost.cloudstream3.syncproviders.AuthAPI
 import com.lagradost.cloudstream3.syncproviders.BackupAPI
 import com.lagradost.cloudstream3.syncproviders.InAppOAuth2API
@@ -29,11 +29,9 @@ import com.lagradost.cloudstream3.utils.BackupUtils
 import com.lagradost.cloudstream3.utils.BackupUtils.getBackup
 import com.lagradost.cloudstream3.utils.BackupUtils.restore
 import com.lagradost.cloudstream3.utils.DataStore
+import com.lagradost.cloudstream3.utils.DataStore.getSharedPrefs
 import com.lagradost.cloudstream3.utils.DataStore.removeKey
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import java.io.InputStream
 import java.util.*
 
@@ -67,8 +65,6 @@ class GoogleDriveApi(index: Int) :
 
     var tempAuthFlow: AuthorizationCodeFlow? = null
     var lastBackupJson: String? = null
-
-    var continuousDownloadJob: Job? = null
 
     /////////////////////////////////////////
     /////////////////////////////////////////
@@ -104,7 +100,7 @@ class GoogleDriveApi(index: Int) :
         )
 
         storeValue(K.TOKEN, googleTokenResponse)
-        startContinuousDownload()
+        runDownloader()
 
         tempAuthFlow = null
         return true
@@ -118,22 +114,7 @@ class GoogleDriveApi(index: Int) :
             return
         }
 
-        startContinuousDownload()
-    }
-
-    private fun startContinuousDownload() {
-        continuousDownloadJob?.cancel()
-        continuousDownloadJob = CoroutineScope(Dispatchers.IO).launchSafe {
-            if (uploadJob?.isActive == true) {
-                uploadJob!!.invokeOnCompletion {
-                    startContinuousDownload()
-                }
-            } else {
-                downloadSyncData()
-                delay(1000 * 60)
-                startContinuousDownload()
-            }
-        }
+        runDownloader()
     }
 
     override fun loginInfo(): AuthAPI.LoginInfo? {
@@ -192,13 +173,11 @@ class GoogleDriveApi(index: Int) :
             removeKey(it)
         }
 
-
         restore(
             newData,
             restoreSettings = true,
             restoreDataStore = true
         )
-
     }
 
     // 🤮
@@ -227,6 +206,7 @@ class GoogleDriveApi(index: Int) :
         val drive = getDriveService()!!
 
         val fileName = loginData.fileName
+        val syncFileId = loginData.syncFileId
         val ioFile = java.io.File(AcraApplication.context?.cacheDir, fileName)
         lastBackupJson = getBackup().toJson()
         ioFile.writeText(lastBackupJson!!)
@@ -250,7 +230,10 @@ class GoogleDriveApi(index: Int) :
             loginData.syncFileId = file.id
         }
 
-        storeValue(K.LOGIN_DATA, loginData)
+        // in case we had to create new file
+        if (syncFileId != loginData.syncFileId) {
+            storeValue(K.LOGIN_DATA, loginData)
+        }
     }
 
     override fun downloadSyncData() {
@@ -273,11 +256,13 @@ class GoogleDriveApi(index: Int) :
             try {
                 val inputStream: InputStream = existingFile.executeMediaAsInputStream()
                 val content: String = inputStream.bufferedReader().use { it.readText() }
+                Log.d("SYNC_API", "downloadSyncData merging")
                 ctx.mergeBackup(content)
                 return
             } catch (_: Exception) {
             }
         } else {
+            Log.d("SYNC_API", "downloadSyncData file not exists")
             uploadSyncData()
         }
     }
@@ -310,12 +295,14 @@ class GoogleDriveApi(index: Int) :
     override fun uploadSyncData() {
         val ctx = AcraApplication.context ?: return
         val loginData = getLatestLoginData() ?: return
+        Log.d("SYNC_API", "uploadSyncData createBackup")
         ctx.createBackup(loginData)
     }
 
-    override fun shouldUpdate(): Boolean {
+    override fun shouldUpdate(changedKey: String, isSettings: Boolean): Boolean {
         val ctx = AcraApplication.context ?: return false
 
+        // would be smarter to check properties, but its called once in UPLOAD_THROTTLE seconds
         val newBackup = ctx.getBackup().toJson()
         return lastBackupJson != newBackup
     }
@@ -335,6 +322,25 @@ class GoogleDriveApi(index: Int) :
     /////////////////////////////////////////
     /////////////////////////////////////////
     // Internal
+    private val continuousDownloader = BackupAPI.Scheduler<Unit>(
+        BackupAPI.DOWNLOAD_THROTTLE.inWholeMilliseconds
+    ) {
+        if (uploadJob?.isActive == true) {
+            uploadJob!!.invokeOnCompletion {
+            Log.d("SYNC_API", "upload is running, reschedule download")
+                runDownloader()
+            }
+        } else {
+            Log.d("SYNC_API", "downloadSyncData will run")
+            downloadSyncData()
+            runDownloader()
+        }
+    }
+
+    private fun runDownloader() {
+        continuousDownloader.work()
+    }
+
     private fun getCredentialsFromStore(): Credential? {
         val LOGIN_DATA = getLatestLoginData()
         val TOKEN = getValue<TokenResponse>(K.TOKEN)

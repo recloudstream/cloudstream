@@ -25,6 +25,7 @@ import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.network.initClient
+import com.lagradost.cloudstream3.syncproviders.BackupAPI.Companion.attachListener
 import com.lagradost.cloudstream3.ui.EasterEggMonke
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.getPref
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setPaddingBottom
@@ -137,20 +138,26 @@ class SettingsGeneral : PreferenceFragmentCompat() {
             // Stores the real URI using download_path_key
             // Important that the URI is stored instead of filepath due to permissions.
             PreferenceManager.getDefaultSharedPreferences(context)
-                .edit().putString(getString(R.string.download_path_key), uri.toString()).apply()
+                .attachListener().first
+                .edit()
+                .putString(getString(R.string.download_path_key), uri.toString())
+                .apply()
 
             // From URI -> File path
             // File path here is purely for cosmetic purposes in settings
             (file.filePath ?: uri.toString()).let {
                 PreferenceManager.getDefaultSharedPreferences(context)
-                    .edit().putString(getString(R.string.download_path_pref), it).apply()
+                    .attachListener().first
+                    .edit()
+                    .putString(getString(R.string.download_path_pref), it)
+                    .apply()
             }
         }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         hideKeyboard()
         setPreferencesFromResource(R.xml.settins_general, rootKey)
-        val settingsManager = PreferenceManager.getDefaultSharedPreferences(requireContext())
+        val settingsManager = PreferenceManager.getDefaultSharedPreferences(requireContext()).attachListener().first
 
         fun getCurrent(): MutableList<CustomSite> {
             return getKey<Array<CustomSite>>(USER_PROVIDER_API)?.toMutableList()

@@ -23,6 +23,7 @@ import okio.buffer
 import okio.sink
 import java.io.File
 import android.text.TextUtils
+import com.lagradost.cloudstream3.syncproviders.BackupAPI.Companion.attachListener
 import com.lagradost.cloudstream3.utils.AppUtils.setDefaultFocus
 import java.io.BufferedReader
 import java.io.IOException
@@ -73,7 +74,7 @@ class InAppUpdater {
 
         private suspend fun Activity.getAppUpdate(): Update {
             return try {
-                val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
+                val settingsManager = PreferenceManager.getDefaultSharedPreferences(this).attachListener().first
                 if (settingsManager.getBoolean(
                         getString(R.string.prerelease_update_key),
                         resources.getBoolean(R.bool.is_prerelease)
@@ -254,7 +255,7 @@ class InAppUpdater {
          * @param checkAutoUpdate if the update check was launched automatically
          **/
         suspend fun Activity.runAutoUpdate(checkAutoUpdate: Boolean = true): Boolean {
-            val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
+            val settingsManager = PreferenceManager.getDefaultSharedPreferences(this).attachListener().first
 
             if (!checkAutoUpdate || settingsManager.getBoolean(
                     getString(R.string.auto_update_key),

@@ -14,6 +14,7 @@ import com.lagradost.cloudstream3.APIHolder
 import com.lagradost.cloudstream3.APIHolder.getApiProviderLangSettings
 import com.lagradost.cloudstream3.AllLanguagesName
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.syncproviders.BackupAPI.Companion.attachListener
 import com.lagradost.cloudstream3.utils.SubtitleHelper
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
 import kotlinx.android.synthetic.main.fragment_setup_media.*
@@ -33,7 +34,7 @@ class SetupFragmentProviderLanguage : Fragment() {
 
         with(context) {
             if (this == null) return
-            val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
+            val settingsManager = PreferenceManager.getDefaultSharedPreferences(this).attachListener().first
 
             val arrayAdapter =
                 ArrayAdapter<String>(this, R.layout.sort_bottom_single_choice)
