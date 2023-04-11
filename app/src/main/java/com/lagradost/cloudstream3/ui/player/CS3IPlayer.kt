@@ -712,6 +712,10 @@ class CS3IPlayer : IPlayer {
                                     if (cacheSize > Int.MAX_VALUE) Int.MAX_VALUE else cacheSize.toInt()
                                 }
                             )
+                            .setBackBuffer(
+                                30000,
+                                true
+                            )
                             .setBufferDurationsMs(
                                 DefaultLoadControl.DEFAULT_MIN_BUFFER_MS,
                                 if (videoBufferMs <= 0) {
