@@ -670,11 +670,6 @@ class CS3IPlayer : IPlayer {
              **/
             maxVideoHeight: Int? = null
         ): ExoPlayer {
-            val bufferDurationMs = if (videoBufferMs <= 0) {
-                DefaultLoadControl.DEFAULT_MAX_BUFFER_MS
-            } else {
-                videoBufferMs.toInt()
-            }
             val exoPlayerBuilder =
                 ExoPlayer.Builder(context)
                     .setRenderersFactory { eventHandler, videoRendererEventListener, audioRendererEventListener, textRendererOutput, metadataRendererOutput ->
@@ -718,12 +713,16 @@ class CS3IPlayer : IPlayer {
                                 }
                             )
                             .setBackBuffer(
-                                bufferDurationMs,
+                                30000,
                                 true
                             )
                             .setBufferDurationsMs(
                                 DefaultLoadControl.DEFAULT_MIN_BUFFER_MS,
-                                bufferDurationMs,
+                                if (videoBufferMs <= 0) {
+                                    DefaultLoadControl.DEFAULT_MAX_BUFFER_MS
+                                } else {
+                                    videoBufferMs.toInt()
+                                },
                                 DefaultLoadControl.DEFAULT_BUFFER_FOR_PLAYBACK_MS,
                                 DefaultLoadControl.DEFAULT_BUFFER_FOR_PLAYBACK_AFTER_REBUFFER_MS
                             ).build()
