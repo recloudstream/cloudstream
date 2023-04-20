@@ -182,4 +182,20 @@
     <string name="check_for_update">アップデートを確認</string>
     <string name="show_title">作品名</string>
     <string name="update_notification_installing">アプリのアップデートをインストール中…</string>
+    <string name="repository_url_hint">リポジトリURL</string>
+    <string name="subtitle_offset_title">字幕ディレイ</string>
+    <string name="subscription_list_name">登録済み</string>
+    <string name="network_adress_example">ストリームへのリンク</string>
+    <string name="subtitle_offset_extra_hint_none_format">字幕遅延なし</string>
+    <string name="delete_repository">リポジトリ削除</string>
+    <string name="download_all_plugins_from_repo">このリポジトリからすべてのプラグインをダウンロードしますか？</string>
+    <string name="action_add_to_bookmarks">視聴状態を設定</string>
+    <string name="subtitle_offset">字幕を同期</string>
+    <string name="add_repository">リポジトリを追加</string>
+    <string name="repository_name_hint">リポジトリ名</string>
+    <string name="blank_repo_message">CloudStreamはデフォルトでサイトがインストールされていません。リポジトリからサイトをインストールする必要があります。
+\n
+\nSky UK Limitedによる無脳なDMCAテイクダウンのため🤮、アプリ内でリポジトリサイトをリンクすることができません。
+\n
+\n私たちのDiscordに参加するか、オンラインで検索してください。</string>
 </resources>

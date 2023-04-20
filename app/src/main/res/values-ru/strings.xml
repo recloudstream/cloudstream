@@ -439,8 +439,8 @@
     <string name="sort_alphabetical_z">Алфавитный (Я до А)</string>
     <string name="select_library">Выбрать библиотеку</string>
     <string name="open_with">Открыть с</string>
-    <string name="empty_library_no_accounts_message">Похоже, ваша библиотека пуста :(
-\nВойдите в аккаунт с библиотекой или добавьте сериалы в локальную библиотеку</string>
+    <string name="empty_library_no_accounts_message">Ваша библиотека пуста :(
+\nВойдите в аккаунт с библиотекой или добавьте сериалы в локальную библиотеку.</string>
     <string name="sort">Сортировка</string>
     <string name="view_public_repositories_button_short">Открытый список</string>
     <string name="sort_rating_desc">Рейтинг (высокий - низкий)</string>
@@ -487,13 +487,13 @@
     <string name="safe_mode_file">Файл безопасного режима найден!
 \nНе загружаются никакие расширения при запуске, пока файл не будет удален.</string>
     <string name="delayed_update_notice">Приложение будет обновлено после выхода</string>
-    <string name="empty_library_logged_in_message">Похоже, этот список пуст, попробуйте переключиться на другой</string>
+    <string name="empty_library_logged_in_message">Этот список пуст, попробуйте переключиться на другой.</string>
     <string name="uppercase_all_subtitles">Все субтитры заглавными</string>
     <string name="enable_skip_op_from_database_des">Показывать всплывающие окна для пропуска вступления/заключения</string>
     <string name="subtitles_filter_lang">Фильтровать по предпочитаемому языку медиа</string>
     <string name="error_invalid_id">Неверный ID</string>
     <string name="network_adress_example">Ссылка на стрим</string>
-    <string name="random_button_settings_desc">Показывает кнопку на главной странице, с помощью которой можно выбрать случайный фильм или сериал с главной страницы</string>
+    <string name="random_button_settings_desc">Отображать рандомную кнопку на Главной странице</string>
     <string name="random_button_settings">Рандомная кнопка</string>
     <string name="apk_installer_legacy">Legacy (старый)</string>
     <string name="player_settings_play_in_web">Веб видеокаст</string>
@@ -522,11 +522,11 @@
     <string name="subscription_new">Подписался на %s</string>
     <string name="watch_quality_pref_data">Предпочтительное качество видео (Мобильный интернет)</string>
     <string name="jsdelivr_proxy">raw.githubusercontent.com Прокси-сервер</string>
-    <string name="jsdelivr_enabled">Не удалось подключиться к GitHub. Будет выполнен прокси jsdelivr.</string>
+    <string name="jsdelivr_enabled">Не удалось подключиться к GitHub. Включаем проксирование через jsdelivr…</string>
     <string name="subscription_episode_released">Эпизод %d выпущен!</string>
     <string name="pref_category_bypass">Обходы провайдера</string>
     <string name="subscription_in_progress_notification">Обновление подписки на фильмы и сериалы</string>
-    <string name="jsdelivr_proxy_summary">Обход ограничения доступа к GitHub с помощью jsdelivr может задержать обновления на несколько дней.</string>
+    <string name="jsdelivr_proxy_summary">Обход ограничения доступа к GitHub с помощью jsDelivr может задержать обновления на несколько дней.</string>
     <string name="subscription_list_name">Подписные</string>
     <string name="subscription_deleted">Отказались от подписки на %s</string>
 </resources>
