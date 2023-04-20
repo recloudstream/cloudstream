@@ -166,7 +166,7 @@
     <string name="pref_filter_search_quality">Ausgewählte Videoqualität bei Suchergebnissen ausblenden</string>
     <string name="automatic_plugin_updates">Automatische Plugin-Updates</string>
     <string name="updates_settings">App-Updates anzeigen</string>
-    <string name="updates_settings_des">Automatisches Suchen nach neuen Updates nach dem Start</string>
+    <string name="updates_settings_des">Automatisches Suchen nach neuen Updates nach dem Start.</string>
     <string name="uprereleases_settings">Auf Vorabversionen updaten</string>
     <string name="uprereleases_settings_des">Suche nach Vorabversionen statt nur nach Vollversionen</string>
     <string name="github">Github</string>
@@ -286,7 +286,7 @@
     <string name="legal_notice">Haftungsausschluss</string>
     <string name="category_general">Allgemein</string>
     <string name="random_button_settings">Zufalls-Button</string>
-    <string name="random_button_settings_desc">Zeigt einen Zufallsbutton auf der Startseite an, mit welchem eine Serie oder ein Film von der Website zufällig ausgewählt wird</string>
+    <string name="random_button_settings_desc">Zeige Zufallsgenerator Schaltfläche auf der Startseite</string>
     <string name="provider_lang_settings">Anbieter-Sprachen</string>
     <string name="app_layout">App-Layout</string>
     <string name="preferred_media_settings">Bevorzugte Medien</string>
@@ -501,9 +501,9 @@
     <string name="sort_alphabetical_z">Alphabetisch (Z bis A)</string>
     <string name="select_library">Bibliothek auswählen</string>
     <string name="open_with">Öffnen mit</string>
-    <string name="empty_library_no_accounts_message">Sieht aus, als wäre deine Bibliothek leer :(
-\nMelde dich mit einem Bibliothekskonto an oder füge Titel zu deiner lokalen Bibliothek hinzu</string>
-    <string name="empty_library_logged_in_message">Diese Liste scheint leer zu sein. Versuche, zu einer anderen Liste zu wechseln.</string>
+    <string name="empty_library_no_accounts_message">Deine Bibliothek ist leer :(
+\nMelde dich mit einem Bibliothekskonto an oder füge Titel zu deiner lokalen Bibliothek hinzu.</string>
+    <string name="empty_library_logged_in_message">Diese Liste ist leer. Versuche zu einer anderen Liste zu wechseln.</string>
     <string name="safe_mode_file">Datei für abgesicherten Modus gefunden!
 \nBeim Start werden keine Erweiterungen geladen, bis die Datei entfernt wird.</string>
     <string name="android_tv_interface_off_seek_settings">Player ausgeblendet - Betrag zum vor- und zurückspulen</string>
@@ -524,7 +524,7 @@
     <string name="subscription_deleted">%s deabonniert</string>
     <string name="subscription_episode_released">Episode %d erschienen!</string>
     <string name="jsdelivr_proxy">raw.githubusercontent.com Proxy</string>
-    <string name="jsdelivr_enabled">GitHub kann nicht erreicht werden, der jsdelivr-Proxy wird aktiviert.</string>
+    <string name="jsdelivr_enabled">GitHub konnte nicht erreicht werden. Der jsDelivr-Proxy wird aktiviert …</string>
     <string name="subscription_in_progress_notification">Abonnierte Serien werden aktualisiert</string>
     <string name="revert">Rückgängig</string>
     <string name="subscription_list_name">Abonniert</string>

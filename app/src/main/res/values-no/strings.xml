@@ -492,4 +492,45 @@
     <string name="update_started">Oppdatering startet</string>
     <string name="plugin_downloaded">Programtillegg nedlastet</string>
     <string name="delayed_update_notice">Programmet vil oppgraderes når du avslutter det</string>
+    <string name="android_tv_interface_on_seek_settings_summary">Blafringsmengde med synlig avspiller</string>
+    <string name="restart">Start på ny</string>
+    <string name="jsdelivr_proxy">raw.githubusercontent.com-mellomtjener</string>
+    <string name="sort_by">Sorter etter</string>
+    <string name="open_with">Åpne med …</string>
+    <string name="sort_rating_desc">Vurdering (høy til lav)</string>
+    <string name="start">Start</string>
+    <string name="sort_alphabetical_a">Alfabetisk (A-Å)</string>
+    <string name="jsdelivr_enabled">Kunne ikke nå GitHub. Skrur på jsDelivr-mellomtjener …</string>
+    <string name="category_provider_test">Tilbyder-test</string>
+    <string name="library">Bibliotek</string>
+    <string name="browser">Nettleser</string>
+    <string name="test_log">Logg</string>
+    <string name="sort_updated_new">Oppdatert (ny til gammel)</string>
+    <string name="android_tv_interface_off_seek_settings">Skjult avspiller — blafringsmengde</string>
+    <string name="subscription_list_name">Abonnert</string>
+    <string name="android_tv_interface_on_seek_settings">Vist avspiller — blafringsmengde</string>
+    <string name="sort_updated_old">Oppdatert (gammel til ny)</string>
+    <string name="test_passed">Vellykket</string>
+    <string name="subscription_episode_released">Episode %d sluppet.</string>
+    <string name="watch_quality_pref_data">Foretrukket visningskvalitet (mobildata)</string>
+    <string name="stop">Stopp</string>
+    <string name="action_remove_from_watched">Fjern fra sette</string>
+    <string name="subscription_deleted">Abonnement på %s opphevet</string>
+    <string name="pref_category_android_tv">Android TV</string>
+    <string name="revert">Angre</string>
+    <string name="subscription_in_progress_notification">Oppdatert abonnementer</string>
+    <string name="test_failed">Mislykket</string>
+    <string name="sort_alphabetical_z">Alfabetisk (Å-A)</string>
+    <string name="sort_rating_asc">Vurdering (lav til høy)</string>
+    <string name="subscription_new">Abonnerer på %s</string>
+    <string name="android_tv_interface_off_seek_settings_summary">Blafringsmengde med skjult avspiller</string>
+    <string name="select_library">Velg bibliotek</string>
+    <string name="jsdelivr_proxy_summary">Omgår blokkering av GitHub ved bruk av jsDelivr. Kan utsette oppdateringer et par dager.</string>
+    <string name="pref_category_bypass">ISP-omgåelser</string>
+    <string name="empty_library_logged_in_message">Denne listen er tom. Prøv å bytte til en annen.</string>
+    <string name="sort">Sorter</string>
+    <string name="safe_mode_file">Fant fil for trygt modus.
+\nLaster ikke inn noen utvidelser ved oppstart til filen er fjernet.</string>
+    <string name="empty_library_no_accounts_message">Biblioteket ditt er tomt :(
+\nLogg inn på en bibliotekkonto eller legg til programmer i ditt lokale bibliotek.</string>
 </resources>

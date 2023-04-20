@@ -366,7 +366,7 @@
     <string name="player_load_subtitles_online">تحميل من الانترنت</string>
     <string name="downloaded_file">الملف الذي تم تنزيله</string>
     <string name="actor_main">رئيسي</string>
-    <string name="actor_supporting">مساعد</string>
+    <string name="actor_supporting">ممثل مساعد</string>
     <string name="actor_background">الخلفية</string>
     <string name="home_source">مصدر</string>
     <string name="home_random">عشوائي</string>
@@ -525,12 +525,12 @@
     <string name="select_library">اختر المكتبة</string>
     <string name="browser">المتصفح</string>
     <string name="sort_updated_new">محدث (من الأحدث إلى الأقدم)</string>
-    <string name="empty_library_logged_in_message">يبدو أن هذه القائمة فارغة ، حاول التبديل إلى قائمة أخرى</string>
+    <string name="empty_library_logged_in_message">هذه القائمة فارغة ، حاول التبديل إلى قائمة أخرى.</string>
     <string name="sort_rating_desc">التقييم (من الأعلى إلى الأدنى)</string>
     <string name="sort_rating_asc">التقييم (من الأدنى إلى الأعلى)</string>
     <string name="sort_alphabetical_z">الترتيب الأبجدي (من ي إلى أ)</string>
-    <string name="empty_library_no_accounts_message">يبدو أن مكتبتك فارغة :(
-\nتسجيل الدخول إلى حساب مكتبة أو إضافة عروض إلى مكتبتك المحلية</string>
+    <string name="empty_library_no_accounts_message">مكتبتك فارغة :(
+\nقم بتسجيل الدخول على حساب مكتبة أو أضف عروضا إلى مكتبتك المحلية.</string>
     <string name="sort_updated_old">محدث (من القديم إلى الجديد)</string>
     <string name="sort_by">فرز حسب</string>
     <string name="sort">افرز</string>
@@ -557,8 +557,8 @@
     <string name="subscription_new">مشترك في %s</string>
     <string name="pref_category_bypass">تجاوز مزود خدمة الإنترنت</string>
     <string name="revert">استرجاع</string>
-    <string name="jsdelivr_enabled">فشل الوصول إلى GitHub ، وتمكين وكيل jsdelivr.</string>
-    <string name="jsdelivr_proxy_summary">باستخدام jsdelivr ، يمكن تجاوز حظر GitHub. قد يؤخر التحديثات لبضعة أيام.</string>
+    <string name="jsdelivr_enabled">تعذر الوصول إلى جيثب. تشغيل وكيل jsDelivr …</string>
+    <string name="jsdelivr_proxy_summary">تجاوز حظر GitHub باستخدام jsdelivr ، قد يتسبب في تأخير التحديثات لبضعة أيام.</string>
     <string name="jsdelivr_proxy">وكيل raw.githubusercontent.com</string>
     <string name="watch_quality_pref_data">جودة المشاهدة المفضلة (بيانات الجوال)</string>
 </resources>

@@ -382,8 +382,8 @@
     <string name="dns_pref">DNS over HTTPS</string>
     <string name="dns_pref_summary">Useful for bypassing ISP blocks</string>
     <string name="jsdelivr_proxy">raw.githubusercontent.com Proxy</string>
-    <string name="jsdelivr_enabled">Failed to reach GitHub, enabling jsdelivr proxy.</string>
-    <string name="jsdelivr_proxy_summary">Bypasses blocking of GitHub using jsdelivr, may cause updates to be delayed by few days.</string>
+    <string name="jsdelivr_enabled">Could not reach GitHub. Turning on jsDelivr proxy…</string>
+    <string name="jsdelivr_proxy_summary">Bypasses blocking of GitHub using jsDelivr. May cause updates to be delayed by few days.</string>
     <string name="add_site_pref">Clone site</string>
     <string name="remove_site_pref">Remove site</string>
     <string name="add_site_summary">Add a clone of an existing site, with a different URL</string>
@@ -648,8 +648,9 @@
     <string name="sort_alphabetical_z">Alphabetical (Z to A)</string>
     <string name="select_library">Select Library</string>
     <string name="open_with">Open with</string>
-    <string name="empty_library_no_accounts_message">Looks like your library is empty :(\nLogin to a library account or add shows to your local library</string>
-    <string name="empty_library_logged_in_message">Looks like this list is empty, try switching to another one</string>
+    <string name="empty_library_no_accounts_message">Your library is empty :(
+\nLog in on a library account or add shows to your local library.</string>
+    <string name="empty_library_logged_in_message">This list is empty. Try switching to another one.</string>
     <string name="safe_mode_file">Safe mode file found!\nNot loading any extensions on startup until file is removed.</string>
     <string name="revert">Revert</string>
     <string name="subscription_in_progress_notification">Updating subscribed shows</string>
