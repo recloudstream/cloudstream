@@ -1388,7 +1388,7 @@ object VideoDownloadManager {
             }
         }
 
-        if (link.isM3u8 || URI(link.url).path.endsWith(".m3u8")) {
+        if (link.isM3u8 || URL(link.url).path.endsWith(".m3u8")) {
             val startIndex = if (tryResume) {
                 context.getKey<DownloadedFileInfo>(
                     KEY_DOWNLOAD_INFO,
@@ -1474,6 +1474,8 @@ object VideoDownloadManager {
                         if (connectionResult != null && connectionResult > 0) { // SUCCESS
                             removeKey(KEY_RESUME_PACKAGES, id.toString())
                             break
+                        } else if (index == item.links.lastIndex) {
+                            downloadStatusEvent.invoke(Pair(id, DownloadType.IsFailed))
                         }
                     }
                 } catch (e: Exception) {

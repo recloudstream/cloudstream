@@ -516,7 +516,7 @@
     <string name="browser">Browser</string>
     <string name="select_library">Pilih pustaka</string>
     <string name="empty_library_no_accounts_message">Yahh daftar pustaka kamu kosong :(
-\nMasuk ke akun pustaka atau tambah perlihatkan ke lokal pustaka kamu</string>
+\nMasuk ke akun pustaka atau tambah perlihatkan ke lokal pustaka kamu.</string>
     <string name="library">Pustaka</string>
     <string name="sort_by">Urutkan berdasar</string>
     <string name="sort">Urutkan</string>
@@ -527,7 +527,7 @@
     <string name="sort_alphabetical_a">Abjad (A ke Z)</string>
     <string name="sort_alphabetical_z">Abjad (Z ke A)</string>
     <string name="open_with">Buka dengan</string>
-    <string name="empty_library_logged_in_message">Yahh daftar ini kosong, coba ganti ke yang lain</string>
+    <string name="empty_library_logged_in_message">Yahh daftar ini kosong. Coba ganti ke yang lain.</string>
     <string name="safe_mode_file">Mode aman file ditemukan!
 \nTidak memuat ekstensi pada startup sampai berkas dihapus.</string>
     <string name="android_tv_interface_off_seek_settings">Sembunyikan Pemutaran - Geser</string>
@@ -548,8 +548,8 @@
     <string name="subscription_deleted">Berhenti berlangganan di %s</string>
     <string name="subscription_episode_released">Episode %d telah rilis!</string>
     <string name="jsdelivr_proxy">raw.githubusercontent.com Proksi</string>
-    <string name="jsdelivr_enabled">Gagal mencapai GitHub, mengaktifkan proksi jsdelivr.</string>
-    <string name="jsdelivr_proxy_summary">Bisa melewati pemblokiran GitHub mengunakan jsdelivers. Mungkin dapat menyebabkan tertunda dalam beberapa hari.</string>
+    <string name="jsdelivr_enabled">Tidak dapat menjangkau GitHub. Mengaktifkan proksi jsDelivr…</string>
+    <string name="jsdelivr_proxy_summary">Melewati pemblokiran GitHub menggunakan jsDelivr. Dapat menyebabkan pembaruan tertunda beberapa hari.</string>
     <string name="pref_category_bypass">Bypass ISP</string>
     <string name="revert">Pulihkan</string>
     <string name="watch_quality_pref_data">Nonton dengan kualitas yang di inginkan (Data Seluler)</string>

@@ -170,4 +170,13 @@
     <string name="watch_quality_pref">ഔചിത്യ വീഡിയോ ക്വാളിറ്റി</string>
     <string name="history">ചരിത്രം</string>
     <string name="action_mark_as_watched">കണ്ടതാണെന്ന് അടയാളപ്പെടുത്തുക</string>
+    <string name="next_episode_time_day_format" formatted="true">%dd%</string>
+    <string name="next_episode_format" formatted="true">yg5t4r%dujyhtg</string>
+    <string name="next_episode_time_hour_format" formatted="true">qeWERT</string>
+    <string name="app_dub_sub_episode_text_format" formatted="true">%fghj%gf</string>
+    <string name="cast_format" formatted="true">rtf:%</string>
+    <string name="create_account">അക്കൗണ്ട് ഉണ്ടാക്കുക</string>
+    <string name="delayed_update_notice">പുറത്ത്പോകുന്നതോടുകൂടി ആപ് അപ്ഡേറ്റ് ആവുന്നതാണ്</string>
+    <string name="select_library">ലൈബ്രറി തിരഞ്ഞെടുക്കുക</string>
+    <string name="open_with">ഇത് ഉപയോഗിച്ച് തുറക്കുക</string>
 </resources>

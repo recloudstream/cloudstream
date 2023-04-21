@@ -142,7 +142,7 @@
     <string name="episode_sync_settings">Kijkvoortgang bijwerken</string>
     <string name="episode_sync_settings_des">Automatisch synchroniseren van je huidige episode vooruitgang</string>
     <string name="restore_settings">Gegevens herstellen vanaf back-up</string>
-    <string name="backup_settings">Back up gegevens</string>
+    <string name="backup_settings">Back-up gegevens</string>
     <string name="restore_success">Geladen back-up bestand</string>
     <string name="restore_failed_format" formatted="true">Kan gegevens uit bestand niet herstellen %s</string>
     <string name="backup_success">De gegevens zijn opgeslagen</string>
@@ -441,7 +441,7 @@
     <string name="extension_install_first">Installeer eerst de uitbreiding</string>
     <string name="all_languages_preference">Alle Talen</string>
     <string name="automatic_plugin_download_summary">Installeert automatisch alle nog niet geïnstalleerde plugins uit toegevoegde repositories.</string>
-    <string name="jsdelivr_enabled">Kan GitHub niet bereiken, schakel jsdelivr proxy in.</string>
+    <string name="jsdelivr_enabled">Kan GitHub niet bereiken, schakel jsDelivr proxy in…</string>
     <string name="apk_installer_settings">APK Installatie</string>
     <string name="automatic_plugin_download">Automatisch plugins downloaden</string>
     <string name="extensions">Uitbreidingen</string>
@@ -453,7 +453,7 @@
     <string name="repository_name_hint">Repository naam</string>
     <string name="plugin_downloaded">Plugin Gedownload</string>
     <string name="test_failed">Mislukt</string>
-    <string name="jsdelivr_proxy_summary">Omzeilt de blokkering van GitHub met behulp van jsdelivr, waardoor updates enkele dagen vertraging kunnen oplopen.</string>
+    <string name="jsdelivr_proxy_summary">Omzeilt de blokkering van GitHub met behulp van jsDelivr, waardoor updates enkele dagen vertraging kunnen oplopen.</string>
     <string name="repository_url_hint">Repository URL</string>
     <string name="batch_download_finish_format" formatted="true">Download %d %s voltooid</string>
     <string name="hls_playlist">HLS Afspeellijst</string>
@@ -494,7 +494,7 @@
     <string name="extension_rating" formatted="true">Beoordeling: %s</string>
     <string name="safe_mode_description">Alle extensies zijn uitgeschakeld door een crash om u te helpen degene te vinden die problemen veroorzaakt.</string>
     <string name="safe_mode_crash_info">Bekijk de crash info</string>
-    <string name="empty_library_logged_in_message">Deze lijst is blijkbaar leeg, probeer een andere lijst te kiezen</string>
+    <string name="empty_library_logged_in_message">Deze lijst is leeg. Probeer een andere.</string>
     <string name="sort_alphabetical_a">Alfabetisch (A tot Z)</string>
     <string name="confirm_exit_dialog">Weet je zeker dat je wilt afsluiten\?</string>
     <string name="sort_updated_old">Bijgewerkt (Oud naar Nieuw)</string>
@@ -509,8 +509,8 @@
     <string name="action_remove_from_watched">Verwijderen uit bekeken</string>
     <string name="delayed_update_notice">App wordt bijgewerkt bij afsluiten</string>
     <string name="sort">Gesorteerd</string>
-    <string name="empty_library_no_accounts_message">Het lijkt erop dat je bibliotheek leeg is :(
-\nLog in op een bibliotheekaccount of voeg voorstellingen toe aan uw lokale bibliotheek</string>
+    <string name="empty_library_no_accounts_message">Je bibliotheek is leeg :(
+\nLog in op een bibliotheekaccount of voeg voorstellingen toe aan uw lokale bibliotheek.</string>
     <string name="plugins_disabled" formatted="true">Uitgeschakeld: %d</string>
     <string name="stop">Stop</string>
     <string name="plugins_not_downloaded" formatted="true">Niet gedownload: %d</string>

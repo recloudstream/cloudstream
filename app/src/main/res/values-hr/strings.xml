@@ -174,7 +174,7 @@
     <string name="pref_filter_search_quality">Sakrij odabranu kvalitetu videozapisa u rezultatima pretraživanja</string>
     <string name="automatic_plugin_updates">Automatsko ažuriranje dodataka</string>
     <string name="updates_settings">Prikaži ažuriranja aplikacije</string>
-    <string name="updates_settings_des">Automatski traži nova ažuriranja nakon pokretanja aplikacije</string>
+    <string name="updates_settings_des">Automatski traži nova ažuriranja nakon pokretanja aplikacije.</string>
     <string name="uprereleases_settings">Ažuriranje na predizdanja</string>
     <string name="uprereleases_settings_des">Tražite ažuriranja prije izdanja umjesto samo potpunih izdanja</string>
     <string name="github">Github</string>
@@ -527,9 +527,9 @@
     <string name="sort_alphabetical_z">Abecedno (Ž do A)</string>
     <string name="select_library">Odaberite biblioteku</string>
     <string name="open_with">Otvori sa</string>
-    <string name="empty_library_no_accounts_message">Čini se da vam je biblioteka prazna :(
-\nPrijavite se na račun biblioteke ili dodajte serije u svoju lokalnu biblioteku</string>
-    <string name="empty_library_logged_in_message">Čini se da je ova lista prazna, pokušajte se prebaciti na drugu</string>
+    <string name="empty_library_no_accounts_message">Vaša je biblioteka prazna :(
+\nPrijavite se na račun biblioteke ili dodajte emisije u svoju lokalnu biblioteku.</string>
+    <string name="empty_library_logged_in_message">Ova je lista prazna. Pokušajte se prebaciti na jednu drugu listu.</string>
     <string name="safe_mode_file">Pronađena datoteka sigurnog načina rada!
 \nNe učitavaju se ekstenzije pri pokretanju dok se datoteka ne ukloni.</string>
     <string name="android_tv_interface_on_seek_settings">Prikazan player- iznos preskakanja</string>
@@ -544,7 +544,7 @@
     <string name="test_failed">Neuspješno</string>
     <string name="stop">Stop</string>
     <string name="category_provider_test">Test pružatelja usluga</string>
-    <string name="subscription_in_progress_notification">Ažuriram pretplaćene serije</string>
+    <string name="subscription_in_progress_notification">Ažuriranje pretplaćenih emisija</string>
     <string name="subscription_episode_released">Epizoda %d izbačena!</string>
     <string name="subscription_list_name">Pretplaćeno</string>
     <string name="subscription_new">Pretplaćen na %s</string>
@@ -552,7 +552,7 @@
     <string name="revert">Vraćanje</string>
     <string name="pref_category_bypass">ISP zaobilaznice</string>
     <string name="jsdelivr_proxy">raw.githubusercontent.com Proxy</string>
-    <string name="jsdelivr_enabled">Neuspješno dohvaćanje GitHuba, omogućavanje jsdelivr proxyja.</string>
-    <string name="jsdelivr_proxy_summary">Zaobilazi GitHub blokiranje koristeći jsdelivr. Može odgoditi ažuriranja za nekoliko dana.</string>
+    <string name="jsdelivr_enabled">Neuspješno dohvaćanje GitHuba. Uključuje se jsdelivr proxy …</string>
+    <string name="jsdelivr_proxy_summary">Zaobilazi blokiranje GitHuba koristeći jsdelivr. Može odgoditi ažuriranja za nekoliko dana.</string>
     <string name="watch_quality_pref_data">Preferirana kvaliteta gledanja (podatkovna mobilna mreža)</string>
 </resources>

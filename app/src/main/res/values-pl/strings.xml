@@ -505,9 +505,9 @@
     <string name="sort_alphabetical_z">Alfabetycznie (od Z do A)</string>
     <string name="select_library">Wybierz bibliotekę</string>
     <string name="library">Biblioteka</string>
-    <string name="empty_library_no_accounts_message">Wygląda na to, że twoja biblioteka jest pusta :(
-\nZaloguj się na swoje konto lub dodaj programy do swojej lokalnej biblioteki</string>
-    <string name="empty_library_logged_in_message">Wygląda na to, że ta lista jest pusta, spróbuj przełączyć się na inną</string>
+    <string name="empty_library_no_accounts_message">Twoja biblioteka jest pusta :(
+\nZaloguj się na swoje konto lub dodaj programy do swojej lokalnej biblioteki.</string>
+    <string name="empty_library_logged_in_message">Ta lista jest pusta. Spróbuj przełączyć się na inną.</string>
     <string name="safe_mode_file">Znaleziono plik trybu bezpiecznego.
 \nRozszerzenia nie zostaną wczytane, dopóki plik nie zostanie usunięty.</string>
     <string name="android_tv_interface_on_seek_settings_summary">Używana ilość przewijania, gdy widoczny jest odtwarzacz</string>
@@ -530,7 +530,7 @@
     <string name="subscription_new">Zasubskrybowano %s</string>
     <string name="subscription_deleted">Anulowano subskrypcję %s</string>
     <string name="subscription_episode_released">Został wydany odcinek %d!</string>
-    <string name="jsdelivr_proxy_summary">Obchodzi blokadę GitHuba za pomocą jsdelivr, może spowodować opóźnienie aktualizacji o kilka dni.</string>
-    <string name="jsdelivr_enabled">Nie udało się połączyć z GitHub, włączono serwer pośredniczący jsdelivr.</string>
+    <string name="jsdelivr_proxy_summary">Obchodzi blokadę GitHuba za pomocą jsDelivr. może spowodować opóźnienie aktualizacji o kilka dni.</string>
+    <string name="jsdelivr_enabled">Nie udało się połączyć z GitHub, włączono serwer pośredniczący jsDelivr…</string>
     <string name="watch_quality_pref_data">Domyślna jakość (dane mobilne)</string>
 </resources>

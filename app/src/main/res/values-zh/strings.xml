@@ -312,7 +312,7 @@
     <string name="legal_notice_text" translatable="false">Any legal issues regarding the content on this application should be taken up with the actual file hosts and providers themselves as we are not affiliated with them. In case of copyright infringement, please directly contact the responsible parties or the streaming websites. The app is purely for educational and personal use. CloudStream 3 does not host any content on the app, and has no control over what media is put up or taken down. CloudStream 3 functions like any other search engine, such as Google. CloudStream 3 does not host, upload or manage any videos, films or content. It simply crawls, aggregates and displayes links in a convenient, user-friendly interface. It merely scrapes 3rd-party websites that are publicly accessable via any regular web browser. It is the responsibility of user to avoid any actions that might violate the laws governing his/her locality. Use CloudStream 3 at your own risk.</string>
     <string name="category_general">通用</string>
     <string name="random_button_settings">随机按钮</string>
-    <string name="random_button_settings_desc">在主页上显示按钮，可以从主页上随机选择电影或电视剧</string>
+    <string name="random_button_settings_desc">在主页中显示随机按钮</string>
     <string name="provider_lang_settings">片源语言</string>
     <string name="app_layout">应用布局</string>
     <string name="preferred_media_settings">首选类型</string>
@@ -552,9 +552,9 @@
     <string name="sort_alphabetical_z">字母排序（从 Z 到 A）</string>
     <string name="select_library">选择库</string>
     <string name="open_with">打开方式</string>
-    <string name="empty_library_no_accounts_message">看来您的库是空的 :(
-\n登录库账户或添加节目到您的本地库</string>
-    <string name="empty_library_logged_in_message">看来此列表是空的，请尝试切换到另一个</string>
+    <string name="empty_library_no_accounts_message">您的库是空的 :(
+\n登录库账户或添加节目到您的本地库。</string>
+    <string name="empty_library_logged_in_message">此列表是空的，请尝试切换到另一个。</string>
     <string name="android_tv_interface_on_seek_settings">播放器显示 - 快进快退秒数</string>
     <string name="android_tv_interface_on_seek_settings_summary">播放器可见时使用的快进快退秒数</string>
     <string name="android_tv_interface_off_seek_settings">播放器隐藏 - 快进快退秒数</string>
@@ -573,8 +573,8 @@
     <string name="test_passed">成功</string>
     <string name="test_log">日志</string>
     <string name="jsdelivr_proxy">raw.githubusercontent.com 代理</string>
-    <string name="jsdelivr_enabled">连接 Github 失败，正在启用 jsdelivr 代理。</string>
-    <string name="jsdelivr_proxy_summary">使用 jsdelivr，可以绕过 GitHub 的封锁。可能会延迟几天的更新。</string>
+    <string name="jsdelivr_enabled">无法访问 GitHub。正在开启 jsDelivr 代理…</string>
+    <string name="jsdelivr_proxy_summary">使用 jsDelivr 绕过 GitHub 的封锁。可能会延迟几天的更新。</string>
     <string name="pref_category_bypass">ISP 绕过</string>
     <string name="revert">还原</string>
     <string name="watch_quality_pref_data">首选播放画质（移动数据）</string>

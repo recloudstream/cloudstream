@@ -473,15 +473,15 @@
     <string name="update_notification_failed">Nepodařilo se nainstalovat novou verzi aplikace</string>
     <string name="apk_installer_legacy">Původní</string>
     <string name="delayed_update_notice">Aplikace bude po ukončení aktualizována</string>
-    <string name="empty_library_no_accounts_message">Vypadá to, že vaše knihovna je prázdná :(
-\nPřihlaste se k účtu v knihovně nebo přidejte pořady do místní knihovny</string>
+    <string name="empty_library_no_accounts_message">Vaše knihovna je prázdná :(
+\nPřihlaste se k účtu v knihovně nebo přidejte pořady do místní knihovny.</string>
     <string name="select_library">Vybrat knihovnu</string>
     <string name="sort_rating_desc">Hodnocení (od nejvyššího)</string>
     <string name="sort_rating_asc">Hodnocení (od nejnižšího)</string>
     <string name="sort_alphabetical_z">Abecedně (od Z do A)</string>
     <string name="sort_by">Seřadit podle</string>
     <string name="sort">Řazení</string>
-    <string name="empty_library_logged_in_message">Vypadá to, že tento seznam je prázdný, zkuste přepnout na jiný</string>
+    <string name="empty_library_logged_in_message">Tento seznam je prázdný. Zkuste přepnout na jiný.</string>
     <string name="safe_mode_file">Nalezen soubor bezpečného režimu!
 \nDo odebrání souboru nebudeme načítat žádná rozšíření.</string>
     <string name="sort_updated_new">Aktualizováno (od nejnovějšího)</string>
@@ -549,9 +549,9 @@
     <string name="subscription_episode_released">Byla vydána epizoda %d!</string>
     <string name="subscription_list_name">Odebíráno</string>
     <string name="jsdelivr_proxy">Proxy raw.githubusercontent.com</string>
-    <string name="jsdelivr_enabled">Nepodařilo se připojit ke GitHubu, povolování proxy jsdelivr.</string>
+    <string name="jsdelivr_enabled">Nelze se připojit k serveru GitHub. Zapínání proxy jsDelivr…</string>
     <string name="watch_quality_pref_data">Upřednostněná kvalita sledování (mobilní data)</string>
     <string name="revert">Vrátit zpět</string>
-    <string name="jsdelivr_proxy_summary">Obchází blokování GitHubu pomocí jsdelivr, může způsobit zpoždění aktualizací o několik dní.</string>
+    <string name="jsdelivr_proxy_summary">Obchází blokování GitHubu pomocí jsDelivr. Může způsobit zpoždění aktualizací o několik dní.</string>
     <string name="pref_category_bypass">Obcházení ISP</string>
 </resources>

@@ -188,7 +188,7 @@
     <string name="resize_fill">Истегни</string>
     <string name="resize_zoom">Зумирај</string>
     <string name="legal_notice">Disclaimer</string>
-    <string name="category_general">Генерално</string>
+    <string name="category_general">Општи поставки</string>
     <string name="provider_lang_settings">Јазици на провајдерите</string>
     <string name="app_layout">Распоред на апликацијата</string>
     <string name="preferred_media_settings">Претпочитани медиуми</string>
@@ -303,8 +303,8 @@
     <string name="apk_installer_package_installer">Инсталатор на пакети</string>
     <string name="ova_singular">ОВА</string>
     <string name="category_updates">Ажурирања и резервни копии</string>
-    <string name="empty_library_no_accounts_message">Изгледа дека вашата библиотека е празна :(
-\nНајавете се на сметка на библиотеката или додајте серии во вашата локална библиотека</string>
+    <string name="empty_library_no_accounts_message">Вашата библиотека е празна :(
+\nНајавете се на корисничка сметка или додадете серии.</string>
     <string name="no_episodes_found">Не се пронајдени епизоди</string>
     <string name="subtitles_example_text">Брзата кафеава лисица го прескокнува мрзливото куче</string>
     <string name="poster_image">Слика на постер</string>
@@ -353,14 +353,14 @@
     <string name="skip_type_mixed_op">Мешано отворање</string>
     <string name="pref_category_extensions">Екстензии</string>
     <string name="enable_nsfw_on_providers">Овозможете NSFW на поддржани провајдери</string>
-    <string name="jsdelivr_enabled">Не успеа да стигне до GitHub, овозможувајќи jsdelivr прокси.</string>
+    <string name="jsdelivr_enabled">Не успеа да стигне до GitHub. Вклучувам jsDelivr прокси…</string>
     <string name="subtitles_filter_lang">Филтрирајте по претпочитан медиумски јазик</string>
     <string name="action_open_play">@string/home_play</string>
     <string name="movies_singular">Филм</string>
     <string name="added_sync_format" formatted="true">Додаден %s</string>
     <string name="plugin">приклучоци</string>
     <string name="sort_by">Подреди по</string>
-    <string name="empty_library_logged_in_message">Изгледа дека оваа листа е празна, обидете се да се префрлите на друга</string>
+    <string name="empty_library_logged_in_message">Оваа листа е празна, обидете се да се префрлите на друга.</string>
     <string name="anime_singular">Аниме</string>
     <string name="android_tv_interface_on_seek_settings_summary">Износот на барањето што се користи кога плеерот е видлив</string>
     <string name="app_dubbed_text">Dub</string>
@@ -384,7 +384,7 @@
     <string name="kitsu_settings">Прикажи постери од Kitsu</string>
     <string name="confirm_exit_dialog">Дали сте сигурни дека сакате да излезете\?</string>
     <string name="video_disk_description">Предизвикува проблеми ако е превисоко поставено на уреди со мал простор за складирање, како што е Android TV.</string>
-    <string name="jsdelivr_proxy_summary">Користејќи jsdelivr, блокирањето на GitHub може да се заобиколи. Може да ги одложи ажурирањата за неколку дена.</string>
+    <string name="jsdelivr_proxy_summary">Користејќи jsDelivr, блокирањето на GitHub може да се заобиколи. Може да ги одложи ажурирањата за неколку дена.</string>
     <string name="yes">Да</string>
     <string name="sort_alphabetical_z">Азбучно (Ш до А)</string>
     <string name="quality_workprint">WP</string>
@@ -519,4 +519,18 @@
     <string name="action_add_to_bookmarks">Поставете статус на пратење</string>
     <string name="play_livestream_button">Пушти Livestream</string>
     <string name="authenticated_user" formatted="true">%s е автентициран</string>
+    <string name="app_dub_sub_episode_text_format" formatted="true">%s Епизода %d</string>
+    <string name="next_episode_time_hour_format" formatted="true">%dч %dм</string>
+    <string name="next_episode_time_min_format" formatted="true">%dм</string>
+    <string name="home_next_random_img_des">Следен рандом</string>
+    <string name="result_poster_img_des">Постер</string>
+    <string name="search_poster_img_des">Постер</string>
+    <string name="next_episode_time_day_format" formatted="true">%dд %dч %dм</string>
+    <string name="home_main_poster_img_des">Главен постер</string>
+    <string name="next_episode_format" formatted="true">Епизодата %d ќе биде објавена на</string>
+    <string name="episode_poster_img_des">Постер за епизода</string>
+    <string name="preview_background_img_des">Прегледај позадина</string>
+    <string name="home_change_provider_img_des">Смени провајдер</string>
+    <string name="go_back_img_des">Оди назад</string>
+    <string name="cast_format" formatted="true">Актери: %s</string>
 </resources>

@@ -712,6 +712,10 @@ class CS3IPlayer : IPlayer {
                                     if (cacheSize > Int.MAX_VALUE) Int.MAX_VALUE else cacheSize.toInt()
                                 }
                             )
+                            .setBackBuffer(
+                                30000,
+                                true
+                            )
                             .setBufferDurationsMs(
                                 DefaultLoadControl.DEFAULT_MIN_BUFFER_MS,
                                 if (videoBufferMs <= 0) {
@@ -985,12 +989,19 @@ class CS3IPlayer : IPlayer {
                     // If the Network fails then ignore the exception if the duration is set.
                     // This is to switch mirrors automatically if the stream has not been fetched, but
                     // allow playing the buffer without internet as then the duration is fetched.
-                    if (error.errorCode == PlaybackException.ERROR_CODE_IO_NETWORK_CONNECTION_FAILED
-                        && exoPlayer?.duration != TIME_UNSET
-                    ) {
-                        exoPlayer?.prepare()
-                    } else {
-                        playerError?.invoke(error)
+                    when {
+                        error.errorCode == PlaybackException.ERROR_CODE_IO_NETWORK_CONNECTION_FAILED
+                                && exoPlayer?.duration != TIME_UNSET -> {
+                            exoPlayer?.prepare()
+                        }
+                        error.errorCode == PlaybackException.ERROR_CODE_BEHIND_LIVE_WINDOW -> {
+                            // Re-initialize player at the current live window default position.
+                            exoPlayer?.seekToDefaultPosition()
+                            exoPlayer?.prepare()
+                        }
+                        else -> {
+                            playerError?.invoke(error)
+                        }
                     }
 
                     super.onPlayerError(error)

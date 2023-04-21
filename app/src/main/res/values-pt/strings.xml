@@ -444,7 +444,7 @@
     <string name="quality_cam">Cam</string>
     <string name="skip_type_intro">Abertura</string>
     <string name="select_library">Selecionar Biblioteca</string>
-    <string name="jsdelivr_proxy_summary">Ignora o bloqueio do GitHub usando jsdelivr, pode fazer com que as atualizações sejam atrasadas em alguns dias.</string>
+    <string name="jsdelivr_proxy_summary">Ignora o bloqueio do GitHub usando jsDelivr. Pode fazer com que as actualizações sejam atrasadas por alguns dias.</string>
     <string name="player_settings_play_in_vlc">VLC</string>
     <string name="all_languages_preference">Todas as linguagens</string>
     <string name="sort_updated_new">Atualizado (Novo para Antigo)</string>
@@ -483,7 +483,7 @@
     <string name="skip_type_format" formatted="true">Pular %s</string>
     <string name="skip_type_mixed_op">Abertura mista</string>
     <string name="sort_alphabetical_z">Alfabético (Z a A)</string>
-    <string name="empty_library_logged_in_message">Parece que esta lista está vazia, tente trocar para outra</string>
+    <string name="empty_library_logged_in_message">Esta lista está vazia. Tente trocar para outra.</string>
     <string name="subscription_new">Inscrito em %s</string>
     <string name="quality_4k">4K</string>
     <string name="video_tracks">Faixas de vídeo</string>
@@ -491,8 +491,8 @@
     <string name="subscription_in_progress_notification">Atualizando shows inscritos</string>
     <string name="sort_alphabetical_a">Alfabético (A a Z)</string>
     <string name="sort_rating_asc">Avaliações (Crescente)</string>
-    <string name="empty_library_no_accounts_message">Parece que a sua biblioteca está vazia :(
-\nFaça login em uma conta de biblioteca ou adicione shows à sua biblioteca local</string>
+    <string name="empty_library_no_accounts_message">A sua biblioteca está vazia :(
+\nEntre numa conta da biblioteca ou adicione espectáculos à sua biblioteca local.</string>
     <string name="safe_mode_file">Arquivo de modo de segurança encontrado!
 \nNenhuma extensão será carregada na inicialização do app até que o arquivo seja removido.</string>
     <string name="pref_category_bypass">Contorno do provedor de serviço de internet (ISP)</string>
@@ -503,7 +503,7 @@
     <string name="watch_quality_pref_data">Qualidade Preferida (Dados Móveis)</string>
     <string name="android_tv_interface_on_seek_settings_summary">Quantidade de busca (em segundos) usada quando o player de video está visível</string>
     <string name="android_tv_interface_off_seek_settings_summary">Quantidade de busca (em segundos) usada quando o player de video está oculto</string>
-    <string name="jsdelivr_enabled">Falha ao conectar com GitHub, ativando proxy jsdelivr.</string>
+    <string name="jsdelivr_enabled">Não foi possível chegar ao GitHub. Ativando o proxy jsDelivr…</string>
     <string name="pref_category_cache">Cache</string>
     <string name="pref_category_android_tv">Android TV</string>
     <string name="pref_category_subtitles">Legendas</string>

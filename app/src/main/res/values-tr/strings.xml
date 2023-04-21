@@ -311,7 +311,7 @@
     <string name="legal_notice_text" translatable="false">Any legal issues regarding the content on this application should be taken up with the actual file hosts and providers themselves as we are not affiliated with them. In case of copyright infringement, please directly contact the responsible parties or the streaming websites. The app is purely for educational and personal use. CloudStream 3 does not host any content on the app, and has no control over what media is put up or taken down. CloudStream 3 functions like any other search engine, such as Google. CloudStream 3 does not host, upload or manage any videos, films or content. It simply crawls, aggregates and displayes links in a convenient, user-friendly interface. It merely scrapes 3rd-party websites that are publicly accessable via any regular web browser. It is the responsibility of user to avoid any actions that might violate the laws governing his/her locality. Use CloudStream 3 at your own risk.</string>
     <string name="category_general">Genel</string>
     <string name="random_button_settings">Rastgele İçerik</string>
-    <string name="random_button_settings_desc">Ana sayfada rastgele bir film veya dizi seçen bir tuş gösterir</string>
+    <string name="random_button_settings_desc">Ana sayfada rastgele bir film veya dizi seçen bir tuş göster</string>
     <string name="provider_lang_settings">Sağlayıcı dilleri</string>
     <string name="app_layout">Uygulama düzeni</string>
     <string name="preferred_media_settings">Tercih edilen medya</string>
@@ -565,7 +565,7 @@
     <string name="watch_quality_pref_data">Tercih edilen görüntü kalitesi (Mobil veri)</string>
     <string name="android_tv_interface_on_seek_settings">Oynatıcı görünürken atlanacak süre</string>
     <string name="android_tv_interface_off_seek_settings_summary">Oynatıcı gizli durumdayken atlanacak süre miktarı</string>
-    <string name="jsdelivr_proxy_summary">jsdelivr kullanarak GitHub kısıtlamasını aşar. Güncellemeler birkaç gün gecikebilir.</string>
+    <string name="jsdelivr_proxy_summary">jsdelivr kullanarak GitHub kısıtlamasını kaldırır, güncellemelerin birkaç gün gecikmesine neden olabilir.</string>
     <string name="pref_category_android_tv">Android TV</string>
     <string name="subscription_episode_released">Yeni bölüm %d yayınlandı!</string>
     <string name="category_provider_test">Sağlayıcıyı kontrol et</string>

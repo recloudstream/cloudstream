@@ -260,16 +260,16 @@
     <string name="eigengraumode_settings">Mode Eigengravy</string>
     <string name="eigengraumode_settings_des">Ajout d\'une option de vitesse dans le lecteur</string>
     <string name="swipe_to_seek_settings">Balayez pour chercher</string>
-    <string name="swipe_to_seek_settings_des">Balayez vers la gauche ou la droite pour contrôler le temps dans le lecteur vidéo</string>
+    <string name="swipe_to_seek_settings_des">Swipez d\'un côté à l\'autre pour contrôler votre position dans une vidéo</string>
     <string name="swipe_to_change_settings">Balayez pour modifier les paramètres</string>
     <string name="swipe_to_change_settings_des">Glissez sur le côté gauche ou droit pour modifier la luminosité ou le volume</string>
     <string name="autoplay_next_settings">Lecture automatique du prochain épisode</string>
     <string name="autoplay_next_settings_des">Démarrer l\'épisode suivant lorsque l\'épisode en cours se termine</string>
     <string name="double_tap_to_seek_settings">Double tape pour chercher</string>
     <string name="double_tap_to_pause_settings">Double tape pour mettre en pause</string>
-    <string name="double_tap_to_seek_amount_settings">Player seek amount</string>
+    <string name="double_tap_to_seek_amount_settings">Montant recherché par le joueur (Seconde)</string>
     <string name="double_tap_to_seek_settings_des">Tapez deux fois sur le côté droit ou gauche pour aller en avant ou en arrière</string>
-    <string name="double_tap_to_pause_settings_des">Tapez au milieu pour mettre en pause</string>
+    <string name="double_tap_to_pause_settings_des">Tapez deux fois au milieu pour mettre en pause</string>
     <string name="use_system_brightness_settings">Utiliser la luminosité du système</string>
     <string name="use_system_brightness_settings_des">Utiliser la luminosité du système dans le lecteur d\'applications au lieu du sombre</string>
     <string name="episode_sync_settings">Mise à jour de la progression de la veille</string>
@@ -387,7 +387,7 @@
     <string name="quality_webrip">Web</string>
     <string name="go_back_30">-30</string>
     <string name="anime_singular">@string/anime</string>
-    <string name="ova_singular">@string/ova</string>
+    <string name="ova_singular">OAV</string>
     <string name="nsfw_singular">NSFW</string>
     <string name="login_format" formatted="true">%s %s</string>
     <string name="subtitles_filter_lang">Filtrez par langue préférée</string>
@@ -497,9 +497,9 @@
     <string name="sort_rating_asc">Note (basse à haute)</string>
     <string name="sort_rating_desc">Note (haut à bas)</string>
     <string name="sort_alphabetical_a">Alphabétique (A à Z)</string>
-    <string name="empty_library_no_accounts_message">On dirait que votre bibliothèque est vide :(
-\nConnectez-vous à un compte ou ajoutez des séries à votre bibliothèque locale</string>
-    <string name="empty_library_logged_in_message">Il semble que cette liste soit vide, essayez d\'en choisir une autre</string>
+    <string name="empty_library_no_accounts_message">Votre bibliothèque est vide :(
+\nConnectez-vous sur un compte de bibliothèque ou ajoutez des spectacles à votre bibliothèque locale.</string>
+    <string name="empty_library_logged_in_message">Cette liste est vide. Essayez d\'en changer.</string>
     <string name="pref_category_android_tv">Android TV</string>
     <string name="sort_by">Trié par</string>
     <string name="sort_alphabetical_z">Alphabétique (Z à A)</string>
@@ -524,4 +524,11 @@
     <string name="pref_category_bypass">Contournements de FAI</string>
     <string name="subscription_episode_released">L\'épisode %d est sorti !</string>
     <string name="test_failed">Échouer</string>
+    <string name="android_tv_interface_off_seek_settings_summary">Le montant de la recherche utilisé lorsque le joueur est caché</string>
+    <string name="subscription_in_progress_notification">Updating subscribed shows</string>
+    <string name="jsdelivr_proxy_summary">Contourne le blocage de GitHub en utilisant jsDelivr. Les mises à jour peuvent être retardées de quelques jours.</string>
+    <string name="android_tv_interface_on_seek_settings_summary">La quantité de recherche utilisée lorsque le joueur est visible</string>
+    <string name="android_tv_interface_on_seek_settings">Joueur représenté - Montant de la recherche</string>
+    <string name="android_tv_interface_off_seek_settings">Joueur caché - Montant de la recherche</string>
+    <string name="jsdelivr_enabled">Impossible d\'accéder à GitHub. Activation du proxy jsDelivr…</string>
 </resources>

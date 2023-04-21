@@ -130,7 +130,7 @@
     <string name="swipe_to_seek_settings">Scorri per mandare avanti/indietro</string>
     <string name="swipe_to_seek_settings_des">Scorri da un lato all\'altro per controllare la tua posizione in un video</string>
     <string name="swipe_to_change_settings">Scorri per cambiare le impostazioni</string>
-    <string name="swipe_to_change_settings_des">Scorri verso l\'alto o verso il basso sul lato sinistro o destro per modificare la luminosità o il volume</string>
+    <string name="swipe_to_change_settings_des">Scorri il dito sul lato sinistro o destro per cambiare la luminosità o il volume</string>
     <string name="autoplay_next_settings">Riproduci automaticamente l\'episodio successivo</string>
     <string name="autoplay_next_settings_des">Avvia l\'episodio successivo al termine di quello in corso</string>
     <string name="double_tap_to_seek_settings">Doppio tocco per andare avanti/indietro</string>
@@ -520,13 +520,13 @@
     <string name="sort_updated_old">Aggiornato (Da vecchio a nuovo)</string>
     <string name="sort_alphabetical_a">Alfabetico (A - Z)</string>
     <string name="sort_alphabetical_z">Alfabetico (Z - A)</string>
-    <string name="empty_library_no_accounts_message">Sembra che la tua libreria sia vuota :(
-\nAccedi a un account di libreria o aggiungi degli show alla tua libreria locale</string>
+    <string name="empty_library_no_accounts_message">La tua libreria è vuota :(
+\nAccedi a un account di libreria o aggiungi degli show alla tua libreria locale.</string>
     <string name="select_library">Seleziona libreria</string>
     <string name="open_with">Apri con</string>
     <string name="library">Libreria</string>
     <string name="sort">Ordina</string>
-    <string name="empty_library_logged_in_message">Sembra che questa lista sia vuota, prova a passare a un\'altra</string>
+    <string name="empty_library_logged_in_message">Questo elenco è vuoto. Prova a passare a un altro.</string>
     <string name="safe_mode_file">File \"safe mode\" trovato!
 \nAll\'avvio non sarà caricata alcuna estensione finchè il file non verrà rimosso.</string>
     <string name="android_tv_interface_off_seek_settings_summary">Quantità di ricerca usata quando il player è nascosto</string>
@@ -545,8 +545,8 @@
     <string name="subscription_deleted">Disiscritto da %s</string>
     <string name="subscription_list_name">Iscritto</string>
     <string name="subscription_new">Iscritto a %s</string>
-    <string name="jsdelivr_enabled">Impossibile contattare GitHub, abilitazione proxy jsdelivr avviata.</string>
-    <string name="jsdelivr_proxy_summary">Ignora il blocco di GitHub utilizzando jsdelivr, può causare il ritardo degli aggiornamenti di alcuni giorni.</string>
+    <string name="jsdelivr_enabled">Impossibile raggiungere GitHub. Attivazione proxy jsDelivr…</string>
+    <string name="jsdelivr_proxy_summary">Aggira il blocco di GitHub usando jsDelivr. Potrebbe causare un ritardo degli aggiornamenti di alcuni giorni.</string>
     <string name="pref_category_bypass">Baypass ISP</string>
     <string name="revert">Ripristina</string>
     <string name="subscription_in_progress_notification">Aggiornando shows a cui sei iscritto</string>
