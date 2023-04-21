@@ -108,7 +108,7 @@
     <string name="continue_watching">Turpini skatīties</string>
     <string name="action_remove_watching">Noņemt</string>
     <string name="action_open_watching">Vairāk informācijas</string>
-    <string name="action_open_play">\@string/home_play</string>
+    <string name="action_open_play">@string/home_play</string>
     <string name="vpn_might_be_needed">VPNs varētu būt vajadzīgs lai šis devējs strādātu pareizi</string>
     <string name="vpn_torrent">Šis devējs ir Torrents vpn ir rekomendēts</string>
     <string name="provider_info_meta">Dati nav doti no saites, video lādēšanas neizdosies ja neiksestē saitē.</string>

@@ -57,6 +57,7 @@ fun getCurrentLocale(context: Context): String {
 val appLanguages = arrayListOf(
     /* begin language list */
     Triple("", "العربية", "ar"),
+    Triple("", "ars", "ars"),
     Triple("", "български", "bg"),
     Triple("", "বাংলা", "bn"),
     Triple("\uD83C\uDDE7\uD83C\uDDF7", "português brasileiro", "bp"),
@@ -76,6 +77,8 @@ val appLanguages = arrayListOf(
     Triple("\uD83C\uDDEE\uD83C\uDDF1", "עברית", "iw"),
     Triple("", "日本語 (にほんご)", "ja"),
     Triple("", "ಕನ್ನಡ", "kn"),
+    Triple("", "한국어", "ko"),
+    Triple("", "latviešu valoda", "lv"),
     Triple("", "македонски", "mk"),
     Triple("", "മലയാളം", "ml"),
     Triple("", "bahasa Melayu", "ms"),

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--https://newbedev.com/concatenate-multiple-strings-in-xml--><resources>
+<!--https://newbedev.com/concatenate-multiple-strings-in-xml-->
+<resources>
     <string name="app_name">CloudStream</string>
     <string name="title_home">Accueil</string>
     <string name="title_search">Rechercher</string>
@@ -385,7 +386,7 @@
     <string name="quality_4k">4K</string>
     <string name="quality_webrip">Web</string>
     <string name="go_back_30">-30</string>
-    <string name="anime_singular">\@string/anime</string>
+    <string name="anime_singular">@string/anime</string>
     <string name="ova_singular">OAV</string>
     <string name="nsfw_singular">NSFW</string>
     <string name="login_format" formatted="true">%s %s</string>
