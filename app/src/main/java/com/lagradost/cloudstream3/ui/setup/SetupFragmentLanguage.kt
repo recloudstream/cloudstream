@@ -15,12 +15,15 @@ import com.lagradost.cloudstream3.CommonActivity
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.plugins.PluginManager
-import com.lagradost.cloudstream3.syncproviders.BackupAPI.Companion.attachListener
+import com.lagradost.cloudstream3.syncproviders.BackupAPI.Companion.attachBackupListener
 import com.lagradost.cloudstream3.ui.settings.appLanguages
 import com.lagradost.cloudstream3.ui.settings.getCurrentLocale
+import com.lagradost.cloudstream3.utils.DataStore.getSyncPrefs
 import com.lagradost.cloudstream3.utils.SubtitleHelper
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
-import kotlinx.android.synthetic.main.fragment_setup_language.*
+import kotlinx.android.synthetic.main.fragment_setup_language.app_icon_image
+import kotlinx.android.synthetic.main.fragment_setup_language.setup_root
+import kotlinx.android.synthetic.main.fragment_setup_language.skip_btt
 import kotlinx.android.synthetic.main.fragment_setup_media.listview1
 import kotlinx.android.synthetic.main.fragment_setup_media.next_btt
 
@@ -43,7 +46,8 @@ class SetupFragmentLanguage : Fragment() {
         normalSafeApiCall {
             with(context) {
                 if (this == null) return@normalSafeApiCall
-                val settingsManager = PreferenceManager.getDefaultSharedPreferences(this).attachListener().first
+                val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
+                    .attachBackupListener(getSyncPrefs()).self
 
                 val arrayAdapter =
                     ArrayAdapter<String>(this, R.layout.sort_bottom_single_choice)

@@ -10,9 +10,11 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceManager
 import com.lagradost.cloudstream3.R
-import com.lagradost.cloudstream3.syncproviders.BackupAPI.Companion.attachListener
+import com.lagradost.cloudstream3.syncproviders.BackupAPI.Companion.attachBackupListener
+import com.lagradost.cloudstream3.utils.DataStore.getSyncPrefs
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
-import kotlinx.android.synthetic.main.fragment_setup_layout.*
+import kotlinx.android.synthetic.main.fragment_setup_layout.acra_switch
+import kotlinx.android.synthetic.main.fragment_setup_layout.crash_reporting_text
 import kotlinx.android.synthetic.main.fragment_setup_media.listview1
 import kotlinx.android.synthetic.main.fragment_setup_media.next_btt
 import kotlinx.android.synthetic.main.fragment_setup_media.prev_btt
@@ -34,7 +36,8 @@ class SetupFragmentLayout : Fragment() {
 
         with(context) {
             if (this == null) return
-            val settingsManager = PreferenceManager.getDefaultSharedPreferences(this).attachListener().first
+            val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
+                .attachBackupListener(getSyncPrefs()).self
 
             val prefNames = resources.getStringArray(R.array.app_layout)
             val prefValues = resources.getIntArray(R.array.app_layout_values)

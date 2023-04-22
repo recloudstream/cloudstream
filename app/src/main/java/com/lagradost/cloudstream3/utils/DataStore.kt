@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.syncproviders.BackupAPI
+import com.lagradost.cloudstream3.syncproviders.BackupAPI.Companion.logHistoryChanged
 
 const val DOWNLOAD_HEADER_CACHE = "download_header_cache"
 
@@ -18,6 +19,7 @@ const val USER_SELECTED_HOMEPAGE_API = "home_api_used"
 const val USER_PROVIDER_API = "user_custom_sites"
 
 const val PREFERENCES_NAME = "rebuild_preference"
+const val SYNC_PREFERENCES_NAME = "rebuild_sync_preference"
 
 object DataStore {
     val mapper: JsonMapper = JsonMapper.builder().addModule(KotlinModule())
@@ -31,6 +33,14 @@ object DataStore {
         return context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE)
     }
 
+    private fun getSyncPreferences(context: Context): SharedPreferences {
+        return context.getSharedPreferences(SYNC_PREFERENCES_NAME, Context.MODE_PRIVATE)
+    }
+
+    fun Context.getSyncPrefs(): SharedPreferences {
+        return getSyncPreferences(this)
+    }
+
     fun Context.getSharedPrefs(): SharedPreferences {
         return getPreferences(this)
     }
@@ -38,11 +48,14 @@ object DataStore {
     fun getFolderName(folder: String, path: String): String {
         return "${folder}/${path}"
     }
-
-    fun <T> Context.setKeyRaw(path: String, value: T, isEditingAppSettings: Boolean = false) {
+    fun <T> Context.setKeyRaw(path: String, value: T, restoreSource: BackupUtils.RestoreSource) {
         try {
-            val editor: SharedPreferences.Editor =
-                if (isEditingAppSettings) getDefaultSharedPrefs().edit() else getSharedPrefs().edit()
+            val editor = when (restoreSource) {
+                BackupUtils.RestoreSource.DATA -> getSharedPrefs().edit()
+                BackupUtils.RestoreSource.SETTINGS -> getDefaultSharedPrefs().edit()
+                BackupUtils.RestoreSource.SYNC -> getSyncPrefs().edit()
+            }
+
             when (value) {
                 is Boolean -> editor.putBoolean(path, value)
                 is Int -> editor.putInt(path, value)
@@ -52,6 +65,17 @@ object DataStore {
                 (value as? Set<String> != null) -> editor.putStringSet(path, value as Set<String>)
             }
             editor.apply()
+        } catch (e: Exception) {
+            logError(e)
+        }
+    }
+    fun Context.removeKeyRaw(path: String,  restoreSource: BackupUtils.RestoreSource) {
+        try {
+            when (restoreSource) {
+                BackupUtils.RestoreSource.DATA -> getSharedPrefs().edit()
+                BackupUtils.RestoreSource.SETTINGS -> getDefaultSharedPrefs().edit()
+                BackupUtils.RestoreSource.SYNC -> getSyncPrefs().edit()
+            }.remove(path).apply()
         } catch (e: Exception) {
             logError(e)
         }
@@ -85,7 +109,9 @@ object DataStore {
                 val editor: SharedPreferences.Editor = prefs.edit()
                 editor.remove(path)
                 editor.apply()
-                backupScheduler.work(Pair(path, false))
+
+                getSyncPrefs().logHistoryChanged(path, BackupUtils.RestoreSource.DATA)
+                backupScheduler.work(BackupAPI.PreferencesSchedulerData(path, false))
             }
         } catch (e: Exception) {
             logError(e)
@@ -105,7 +131,9 @@ object DataStore {
             val editor: SharedPreferences.Editor = getSharedPrefs().edit()
             editor.putString(path, mapper.writeValueAsString(value))
             editor.apply()
-            backupScheduler.work(Pair(path, false))
+
+            getSyncPrefs().logHistoryChanged(path, BackupUtils.RestoreSource.DATA)
+            backupScheduler.work(BackupAPI.PreferencesSchedulerData(path, false))
         } catch (e: Exception) {
             logError(e)
         }

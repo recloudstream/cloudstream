@@ -5,13 +5,13 @@ import android.net.Uri
 import android.util.Log
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.fragment.app.FragmentActivity
-import com.fasterxml.jackson.module.kotlin.readValue
 import com.google.api.client.auth.oauth2.AuthorizationCodeFlow
 import com.google.api.client.auth.oauth2.Credential
 import com.google.api.client.auth.oauth2.TokenResponse
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport
 import com.google.api.client.http.FileContent
+import com.google.api.client.http.javanet.NetHttpTransport
 import com.google.api.client.json.gson.GsonFactory
 import com.google.api.client.util.store.MemoryDataStoreFactory
 import com.google.api.services.drive.Drive
@@ -22,28 +22,33 @@ import com.lagradost.cloudstream3.CommonActivity
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.syncproviders.AuthAPI
 import com.lagradost.cloudstream3.syncproviders.BackupAPI
+import com.lagradost.cloudstream3.syncproviders.BackupAPI.Companion.LOG_KEY
 import com.lagradost.cloudstream3.syncproviders.InAppOAuth2API
 import com.lagradost.cloudstream3.syncproviders.InAppOAuth2APIManager
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
-import com.lagradost.cloudstream3.utils.BackupUtils
 import com.lagradost.cloudstream3.utils.BackupUtils.getBackup
-import com.lagradost.cloudstream3.utils.BackupUtils.restore
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
-import com.lagradost.cloudstream3.utils.DataStore
-import com.lagradost.cloudstream3.utils.DataStore.removeKey
 import kotlinx.coroutines.Job
 import java.io.InputStream
-import java.util.*
+import java.util.Date
 
 
-// improvements and ideas
-//  - add option to use proper oauth through google services one tap - would need google console project on behalf of cloudstream
-//  - encrypt data on drive - meh
-//  - choose what should be synced
-//  - having a button to run sync would be nice - its really just for user to feel "safe"
-//  - having two or more devices in use at same time results in racing conditions
-//  - restoring backup should update view models - maybe just first fragment is enough
-//  - move "https://chiff.github.io/cloudstream-sync/google-drive"  to cs3 repo
+/**
+ * ## Improvements and ideas
+ *
+ * | State    | Priority | Description
+ * |---------:|:--------:|---------------------------------------------------------------------
+ * | Progress | 2        | Restoring backup should update view models
+ * | Waiting  | 2        | Add button to manually trigger sync
+ * | Waiting  | 3        | Move "https://chiff.github.io/cloudstream-sync/google-drive"
+ * | Waiting  | 3        | We should check what keys should really be restored. If user has multiple
+ * |          |          | devices with different settings that they want to keep we should respect that
+ * | Waiting  | 4        | Implement backup before user quits application
+ * | Waiting  | 5        | Choose what should be synced
+ * | Someday  | 3        | Add option to use proper OAuth through Google Services One Tap
+ * | Someday  | 5        | Encrypt data on Drive (low priority)
+ * | Solved   | 1        | Racing conditions when multiple devices in use
+ */
 class GoogleDriveApi(index: Int) :
     InAppOAuth2APIManager(index),
     BackupAPI<InAppOAuth2API.LoginData> {
@@ -61,12 +66,12 @@ class GoogleDriveApi(index: Int) :
     override val requiresSecret = true
     override val requiresClientId = true
     override val defaultFilenameValue = "cloudstreamapp-sync-file"
-    override val defaultRedirectUrl =   "https://chiff.github.io/cloudstream-sync/google-drive"
+    override val defaultRedirectUrl = "https://chiff.github.io/cloudstream-sync/google-drive"
 
     override var uploadJob: Job? = null
 
-    var tempAuthFlow: AuthorizationCodeFlow? = null
-    var lastBackupJson: String? = null
+    private var tempAuthFlow: AuthorizationCodeFlow? = null
+    private var lastBackupJson: String? = null
 
     /////////////////////////////////////////
     /////////////////////////////////////////
@@ -163,49 +168,12 @@ class GoogleDriveApi(index: Int) :
     }
 
     override fun getLatestLoginData(): InAppOAuth2API.LoginData? {
-        return getValue<InAppOAuth2API.LoginData>(K.LOGIN_DATA)
+        return getValue(K.LOGIN_DATA)
     }
 
     /////////////////////////////////////////
     /////////////////////////////////////////
     // BackupAPI implementation
-    override fun Context.mergeBackup(incomingData: String) {
-        val currentData = getBackup()
-        val newData = DataStore.mapper.readValue<BackupUtils.BackupFile>(incomingData)
-
-        getRedundantKeys(currentData, newData).forEach {
-            removeKey(it)
-        }
-
-        restore(
-            newData,
-            restoreSettings = true,
-            restoreDataStore = true
-        )
-    }
-
-    // 🤮
-    private fun getRedundantKeys(
-        old: BackupUtils.BackupFile,
-        new: BackupUtils.BackupFile
-    ): List<String> = mutableListOf(
-        *getRedundant(old.settings._Bool, new.settings._Bool),
-        *getRedundant(old.settings._Long, new.settings._Long),
-        *getRedundant(old.settings._Float, new.settings._Float),
-        *getRedundant(old.settings._Int, new.settings._Int),
-        *getRedundant(old.settings._String, new.settings._String),
-        *getRedundant(old.settings._StringSet, new.settings._StringSet),
-        *getRedundant(old.datastore._Bool, new.datastore._Bool),
-        *getRedundant(old.datastore._Long, new.datastore._Long),
-        *getRedundant(old.datastore._Float, new.datastore._Float),
-        *getRedundant(old.datastore._Int, new.datastore._Int),
-        *getRedundant(old.datastore._String, new.datastore._String),
-        *getRedundant(old.datastore._StringSet, new.datastore._StringSet),
-    )
-
-    private fun getRedundant(old: Map<String, *>?, new: Map<String, *>?): Array<String> =
-        old.orEmpty().keys.subtract(new.orEmpty().keys).toTypedArray()
-
     override fun Context.createBackup(loginData: InAppOAuth2API.LoginData) {
         val drive = getDriveService() ?: return
 
@@ -263,13 +231,14 @@ class GoogleDriveApi(index: Int) :
             try {
                 val inputStream: InputStream = existingFile.executeMediaAsInputStream()
                 val content: String = inputStream.bufferedReader().use { it.readText() }
-                Log.d("SYNC_API", "downloadSyncData merging")
+                Log.d(LOG_KEY, "downloadSyncData merging")
                 ctx.mergeBackup(content)
                 return
-            } catch (_: Exception) {
+            } catch (e: Exception) {
+                Log.e(LOG_KEY,"download failed", e)
             }
         } else {
-            Log.d("SYNC_API", "downloadSyncData file not exists")
+            Log.d(LOG_KEY, "downloadSyncData file not exists")
             uploadSyncData()
         }
     }
@@ -306,16 +275,15 @@ class GoogleDriveApi(index: Int) :
     override fun uploadSyncData() {
         val ctx = AcraApplication.context ?: return
         val loginData = getLatestLoginData() ?: return
-        Log.d("SYNC_API", "uploadSyncData createBackup")
+        Log.d(LOG_KEY, "uploadSyncData createBackup")
         ctx.createBackup(loginData)
     }
 
     override fun shouldUpdate(changedKey: String, isSettings: Boolean): Boolean {
         val ctx = AcraApplication.context ?: return false
 
-        // would be smarter to check properties, but its called once in UPLOAD_THROTTLE seconds
         val newBackup = ctx.getBackup().toJson()
-        return lastBackupJson != newBackup
+        return compareJson(lastBackupJson ?: "", newBackup).failed
     }
 
     private fun getDriveService(): Drive? {
@@ -338,12 +306,14 @@ class GoogleDriveApi(index: Int) :
     ) {
         if (uploadJob?.isActive == true) {
             uploadJob!!.invokeOnCompletion {
-            Log.d("SYNC_API", "upload is running, reschedule download")
+                Log.d(LOG_KEY, "upload is running, reschedule download")
                 runDownloader()
             }
         } else {
-            Log.d("SYNC_API", "downloadSyncData will run")
-            downloadSyncData()
+            Log.d(LOG_KEY, "downloadSyncData will run")
+            ioSafe {
+                downloadSyncData()
+            }
             runDownloader()
         }
     }
@@ -358,11 +328,11 @@ class GoogleDriveApi(index: Int) :
     }
 
     private fun getCredentialsFromStore(): Credential? {
-        val LOGIN_DATA = getLatestLoginData()
-        val TOKEN = getValue<TokenResponse>(K.TOKEN)
+        val loginDate = getLatestLoginData()
+        val token = getValue<TokenResponse>(K.TOKEN)
 
-        val credential = if (LOGIN_DATA != null && TOKEN != null) {
-            GAPI.getCredentials(TOKEN, LOGIN_DATA)
+        val credential = if (loginDate != null && token != null) {
+            GAPI.getCredentials(token, loginDate)
         } else {
             return null
         }
@@ -385,8 +355,8 @@ class GoogleDriveApi(index: Int) :
     object GAPI {
         private const val DATA_STORE_ID = "gdrive_tokens"
         private val USED_SCOPES = listOf(DriveScopes.DRIVE_FILE)
-        val HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport()
-        val JSON_FACTORY = GsonFactory.getDefaultInstance()
+        val HTTP_TRANSPORT: NetHttpTransport = GoogleNetHttpTransport.newTrustedTransport()
+        val JSON_FACTORY: GsonFactory = GsonFactory.getDefaultInstance()
 
         fun createAuthFlow(clientId: String, clientSecret: String): GoogleAuthorizationCodeFlow =
             GoogleAuthorizationCodeFlow.Builder(

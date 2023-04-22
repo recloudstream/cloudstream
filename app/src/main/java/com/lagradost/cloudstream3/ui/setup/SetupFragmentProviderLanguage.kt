@@ -14,10 +14,14 @@ import com.lagradost.cloudstream3.APIHolder
 import com.lagradost.cloudstream3.APIHolder.getApiProviderLangSettings
 import com.lagradost.cloudstream3.AllLanguagesName
 import com.lagradost.cloudstream3.R
-import com.lagradost.cloudstream3.syncproviders.BackupAPI.Companion.attachListener
+import com.lagradost.cloudstream3.syncproviders.BackupAPI.Companion.attachBackupListener
+import com.lagradost.cloudstream3.utils.DataStore.getSyncPrefs
 import com.lagradost.cloudstream3.utils.SubtitleHelper
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
-import kotlinx.android.synthetic.main.fragment_setup_media.*
+import kotlinx.android.synthetic.main.fragment_setup_media.listview1
+import kotlinx.android.synthetic.main.fragment_setup_media.next_btt
+import kotlinx.android.synthetic.main.fragment_setup_media.prev_btt
+import kotlinx.android.synthetic.main.fragment_setup_media.setup_root
 
 class SetupFragmentProviderLanguage : Fragment() {
     override fun onCreateView(
@@ -34,7 +38,8 @@ class SetupFragmentProviderLanguage : Fragment() {
 
         with(context) {
             if (this == null) return
-            val settingsManager = PreferenceManager.getDefaultSharedPreferences(this).attachListener().first
+            val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
+                .attachBackupListener(getSyncPrefs()).self
 
             val arrayAdapter =
                 ArrayAdapter<String>(this, R.layout.sort_bottom_single_choice)

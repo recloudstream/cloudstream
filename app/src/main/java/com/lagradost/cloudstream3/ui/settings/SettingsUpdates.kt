@@ -14,19 +14,24 @@ import androidx.preference.PreferenceManager
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError
-import com.lagradost.cloudstream3.syncproviders.BackupAPI.Companion.attachListener
+import com.lagradost.cloudstream3.syncproviders.BackupAPI.Companion.attachBackupListener
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.getPref
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setPaddingBottom
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setUpToolbar
 import com.lagradost.cloudstream3.utils.BackupUtils.backup
 import com.lagradost.cloudstream3.utils.BackupUtils.restorePrompt
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
+import com.lagradost.cloudstream3.utils.DataStore.getSyncPrefs
 import com.lagradost.cloudstream3.utils.InAppUpdater.Companion.runAutoUpdate
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.utils.VideoDownloadManager
-import kotlinx.android.synthetic.main.logcat.*
+import kotlinx.android.synthetic.main.logcat.clear_btt
+import kotlinx.android.synthetic.main.logcat.close_btt
+import kotlinx.android.synthetic.main.logcat.copy_btt
+import kotlinx.android.synthetic.main.logcat.save_btt
+import kotlinx.android.synthetic.main.logcat.text1
 import okhttp3.internal.closeQuietly
 import java.io.BufferedReader
 import java.io.InputStreamReader
@@ -127,7 +132,8 @@ class SettingsUpdates : PreferenceFragmentCompat() {
         }
 
         getPref(R.string.apk_installer_key)?.setOnPreferenceClickListener {
-            val settingsManager = PreferenceManager.getDefaultSharedPreferences(it.context).attachListener().first
+            val settingsManager = PreferenceManager.getDefaultSharedPreferences(it.context)
+                .attachBackupListener(it.context.getSyncPrefs()).self
 
             val prefNames = resources.getStringArray(R.array.apk_installer_pref)
             val prefValues = resources.getIntArray(R.array.apk_installer_values)

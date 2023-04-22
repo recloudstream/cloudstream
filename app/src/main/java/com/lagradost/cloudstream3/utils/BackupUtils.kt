@@ -14,10 +14,12 @@ import androidx.fragment.app.FragmentActivity
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.CommonActivity.showToast
+import com.lagradost.cloudstream3.MainActivity.Companion.afterBackupRestoreEvent
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.plugins.PLUGINS_KEY
 import com.lagradost.cloudstream3.plugins.PLUGINS_KEY_LOCAL
+import com.lagradost.cloudstream3.syncproviders.BackupAPI
 import com.lagradost.cloudstream3.syncproviders.InAppOAuth2APIManager
 import com.lagradost.cloudstream3.syncproviders.providers.AniListApi.Companion.ANILIST_CACHED_LIST
 import com.lagradost.cloudstream3.syncproviders.providers.AniListApi.Companion.ANILIST_TOKEN_KEY
@@ -33,7 +35,9 @@ import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.DataStore.getDefaultSharedPrefs
 import com.lagradost.cloudstream3.utils.DataStore.getSharedPrefs
+import com.lagradost.cloudstream3.utils.DataStore.getSyncPrefs
 import com.lagradost.cloudstream3.utils.DataStore.mapper
+import com.lagradost.cloudstream3.utils.DataStore.removeKeyRaw
 import com.lagradost.cloudstream3.utils.DataStore.setKeyRaw
 import com.lagradost.cloudstream3.utils.UIHelper.checkWrite
 import com.lagradost.cloudstream3.utils.UIHelper.requestRW
@@ -46,6 +50,11 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 object BackupUtils {
+    enum class RestoreSource {
+        DATA, SETTINGS, SYNC;
+
+        val prefix = "$name/"
+    }
 
     /**
      * No sensitive or breaking data in the backup
@@ -90,13 +99,24 @@ object BackupUtils {
 
     data class BackupFile(
         @JsonProperty("datastore") val datastore: BackupVars,
-        @JsonProperty("settings") val settings: BackupVars
+        @JsonProperty("settings") val settings: BackupVars,
+        @JsonProperty("sync-meta") val syncMeta: BackupVars
     )
 
     @Suppress("UNCHECKED_CAST")
     fun Context.getBackup(): BackupFile {
+        val syncDataPrefs = getSyncPrefs().all.filter { it.key.isTransferable() }
         val allData = getSharedPrefs().all.filter { it.key.isTransferable() }
         val allSettings = getDefaultSharedPrefs().all.filter { it.key.isTransferable() }
+
+        val syncData = BackupVars(
+            syncDataPrefs.filter { it.value is Boolean } as? Map<String, Boolean>,
+            syncDataPrefs.filter { it.value is Int } as? Map<String, Int>,
+            syncDataPrefs.filter { it.value is String } as? Map<String, String>,
+            syncDataPrefs.filter { it.value is Float } as? Map<String, Float>,
+            syncDataPrefs.filter { it.value is Long } as? Map<String, Long>,
+            syncDataPrefs.filter { it.value as? Set<String> != null } as? Map<String, Set<String>>
+        )
 
         val allDataSorted = BackupVars(
             allData.filter { it.value is Boolean } as? Map<String, Boolean>,
@@ -118,32 +138,44 @@ object BackupUtils {
 
         return BackupFile(
             allDataSorted,
-            allSettingsSorted
+            allSettingsSorted,
+            syncData
         )
     }
 
     @WorkerThread
     fun Context.restore(
         backupFile: BackupFile,
+        restoreKeys: List<String>? = null,
         restoreSettings: Boolean,
-        restoreDataStore: Boolean
+        restoreDataStore: Boolean,
+        restoreSyncData: Boolean
     ) {
+        if (restoreSyncData) {
+            restoreMap(backupFile.syncMeta._Bool, RestoreSource.SYNC, restoreKeys)
+            restoreMap(backupFile.syncMeta._Int, RestoreSource.SYNC, restoreKeys)
+            restoreMap(backupFile.syncMeta._String, RestoreSource.SYNC, restoreKeys)
+            restoreMap(backupFile.syncMeta._Float, RestoreSource.SYNC, restoreKeys)
+            restoreMap(backupFile.syncMeta._Long, RestoreSource.SYNC, restoreKeys)
+            restoreMap(backupFile.syncMeta._StringSet, RestoreSource.SYNC, restoreKeys)
+        }
+
         if (restoreSettings) {
-            restoreMap(backupFile.settings._Bool, true)
-            restoreMap(backupFile.settings._Int, true)
-            restoreMap(backupFile.settings._String, true)
-            restoreMap(backupFile.settings._Float, true)
-            restoreMap(backupFile.settings._Long, true)
-            restoreMap(backupFile.settings._StringSet, true)
+            restoreMap(backupFile.settings._Bool, RestoreSource.SETTINGS, restoreKeys)
+            restoreMap(backupFile.settings._Int, RestoreSource.SETTINGS, restoreKeys)
+            restoreMap(backupFile.settings._String, RestoreSource.SETTINGS, restoreKeys)
+            restoreMap(backupFile.settings._Float, RestoreSource.SETTINGS, restoreKeys)
+            restoreMap(backupFile.settings._Long, RestoreSource.SETTINGS, restoreKeys)
+            restoreMap(backupFile.settings._StringSet, RestoreSource.SETTINGS, restoreKeys)
         }
 
         if (restoreDataStore) {
-            restoreMap(backupFile.datastore._Bool)
-            restoreMap(backupFile.datastore._Int)
-            restoreMap(backupFile.datastore._String)
-            restoreMap(backupFile.datastore._Float)
-            restoreMap(backupFile.datastore._Long)
-            restoreMap(backupFile.datastore._StringSet)
+            restoreMap(backupFile.datastore._Bool, RestoreSource.DATA, restoreKeys)
+            restoreMap(backupFile.datastore._Int, RestoreSource.DATA, restoreKeys)
+            restoreMap(backupFile.datastore._String, RestoreSource.DATA, restoreKeys)
+            restoreMap(backupFile.datastore._Float, RestoreSource.DATA, restoreKeys)
+            restoreMap(backupFile.datastore._Long, RestoreSource.DATA, restoreKeys)
+            restoreMap(backupFile.datastore._StringSet, RestoreSource.DATA, restoreKeys)
         }
     }
 
@@ -232,13 +264,11 @@ object BackupUtils {
                             val input = activity.contentResolver.openInputStream(uri)
                                 ?: return@ioSafe
 
-                            val restoredValue =
-                                mapper.readValue<BackupFile>(input)
-
                             activity.restore(
-                                restoredValue,
+                                mapper.readValue(input),
                                 restoreSettings = true,
-                                restoreDataStore = true
+                                restoreDataStore = true,
+                                restoreSyncData = true
                             )
                             activity.runOnUiThread { activity.recreate() }
                         } catch (e: Exception) {
@@ -280,10 +310,44 @@ object BackupUtils {
 
     private fun <T> Context.restoreMap(
         map: Map<String, T>?,
-        isEditingAppSettings: Boolean = false
+        restoreSource: RestoreSource,
+        restoreKeys: List<String>?
     ) {
-        map?.filter { it.key.isTransferable() }?.forEach {
-            setKeyRaw(it.key, it.value, isEditingAppSettings)
+        val restoreOnlyThese = mutableListOf<String>()
+        val successfulRestore = mutableListOf<String>()
+
+        if (!restoreKeys.isNullOrEmpty()) {
+            val prefixToMatch = "${BackupAPI.SYNC_HISTORY_PREFIX}${restoreSource.prefix}"
+
+            val restore = restoreKeys.filter {
+                it.startsWith(prefixToMatch)
+            }.map {
+                it.removePrefix(prefixToMatch)
+            }
+
+            restoreOnlyThese.addAll(restore)
+        }
+
+        map?.filter {
+            var isTransferable = it.key.isTransferable()
+            var canRestore = isTransferable
+            if (restoreOnlyThese.isNotEmpty()) {
+                canRestore = canRestore && restoreOnlyThese.contains(it.key)
+            }
+
+            if (isTransferable && canRestore) {
+                successfulRestore.add(it.key)
+            }
+
+            canRestore
+        }?.forEach {
+            setKeyRaw(it.key, it.value, restoreSource)
+        }
+
+        // we must remove keys that are not present
+        if (!restoreKeys.isNullOrEmpty()) {
+            var removedKeys = restoreOnlyThese - successfulRestore.toSet()
+            removedKeys.forEach { removeKeyRaw(it, restoreSource) }
         }
     }
 }
