@@ -31,6 +31,7 @@ import com.lagradost.cloudstream3.APIHolder.apis
 import com.lagradost.cloudstream3.APIHolder.filterProviderByPreferredMedia
 import com.lagradost.cloudstream3.APIHolder.getApiProviderLangSettings
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
+import com.lagradost.cloudstream3.MainActivity.Companion.afterBackupRestoreEvent
 import com.lagradost.cloudstream3.MainActivity.Companion.afterPluginsLoadedEvent
 import com.lagradost.cloudstream3.MainActivity.Companion.bookmarksUpdatedEvent
 import com.lagradost.cloudstream3.MainActivity.Companion.mainPluginsLoadedEvent
@@ -477,16 +478,18 @@ class HomeFragment : Fragment() {
         bookmarksUpdatedEvent += ::bookmarksUpdated
         afterPluginsLoadedEvent += ::afterPluginsLoaded
         mainPluginsLoadedEvent += ::afterMainPluginsLoaded
+        afterBackupRestoreEvent += ::reloadStored
     }
 
     override fun onStop() {
         bookmarksUpdatedEvent -= ::bookmarksUpdated
         afterPluginsLoadedEvent -= ::afterPluginsLoaded
         mainPluginsLoadedEvent -= ::afterMainPluginsLoaded
+        afterBackupRestoreEvent -= ::reloadStored
         super.onStop()
     }
 
-    private fun reloadStored() {
+    private fun reloadStored(unused: Unit = Unit) {
         homeViewModel.loadResumeWatching()
         val list = EnumSet.noneOf(WatchType::class.java)
         getKey<IntArray>(HOME_BOOKMARK_VALUE_LIST)?.map { WatchType.fromInternalId(it) }?.let {

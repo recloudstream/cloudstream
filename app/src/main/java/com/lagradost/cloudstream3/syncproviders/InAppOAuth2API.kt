@@ -35,7 +35,9 @@ interface InAppOAuth2API : OAuth2API {
 abstract class InAppOAuth2APIManager(defIndex: Int) : AccountManager(defIndex), InAppOAuth2API {
     enum class K {
         LOGIN_DATA,
-        TOKEN;
+        IS_READY,
+        TOKEN,
+        ;
 
         val value: String = "data_oauth2_$name"
     }

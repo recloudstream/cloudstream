@@ -27,7 +27,7 @@ object DataStore {
         .configure(DeserializationFeature.USE_LONG_FOR_INTS, true)
         .build()
 
-    private val backupScheduler = BackupAPI.createBackupScheduler()
+    private val backupScheduler = Scheduler.createBackupScheduler()
 
     private fun getPreferences(context: Context): SharedPreferences {
         return context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE)
@@ -110,8 +110,11 @@ object DataStore {
                 editor.remove(path)
                 editor.apply()
 
-                getSyncPrefs().logHistoryChanged(path, BackupUtils.RestoreSource.DATA)
-                backupScheduler.work(BackupAPI.PreferencesSchedulerData(path, false))
+                val success =
+                    backupScheduler.work(BackupAPI.PreferencesSchedulerData(prefs, path, false))
+                if (success) {
+                    getSyncPrefs().logHistoryChanged(path, BackupUtils.RestoreSource.DATA)
+                }
             }
         } catch (e: Exception) {
             logError(e)
@@ -128,12 +131,15 @@ object DataStore {
 
     fun <T> Context.setKey(path: String, value: T) {
         try {
-            val editor: SharedPreferences.Editor = getSharedPrefs().edit()
+            val prefs = getSharedPrefs()
+            val editor: SharedPreferences.Editor = prefs.edit()
             editor.putString(path, mapper.writeValueAsString(value))
             editor.apply()
 
-            getSyncPrefs().logHistoryChanged(path, BackupUtils.RestoreSource.DATA)
-            backupScheduler.work(BackupAPI.PreferencesSchedulerData(path, false))
+            val success = backupScheduler.work(BackupAPI.PreferencesSchedulerData(prefs,path, false))
+            if (success) {
+                getSyncPrefs().logHistoryChanged(path, BackupUtils.RestoreSource.DATA)
+            }
         } catch (e: Exception) {
             logError(e)
         }

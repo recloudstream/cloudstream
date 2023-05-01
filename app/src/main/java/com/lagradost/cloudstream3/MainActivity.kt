@@ -264,6 +264,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         val mainPluginsLoadedEvent =
             Event<Boolean>() // homepage api, used to speed up time to load for homepage
         val afterRepositoryLoadedEvent = Event<Boolean>()
+        val afterBackupRestoreEvent = Event<Unit>()
 
         // kinda shitty solution, but cant com main->home otherwise for popups
         val bookmarksUpdatedEvent = Event<Boolean>()

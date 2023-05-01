@@ -10,7 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceManager
 import com.lagradost.cloudstream3.R
-import com.lagradost.cloudstream3.syncproviders.BackupAPI.Companion.attachBackupListener
+import com.lagradost.cloudstream3.utils.Scheduler.Companion.attachBackupListener
 import com.lagradost.cloudstream3.utils.DataStore.getSyncPrefs
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
 import kotlinx.android.synthetic.main.fragment_setup_layout.acra_switch

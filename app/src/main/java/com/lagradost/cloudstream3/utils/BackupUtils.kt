@@ -6,6 +6,7 @@ import android.content.Context
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -14,6 +15,7 @@ import androidx.fragment.app.FragmentActivity
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.CommonActivity.showToast
+import com.lagradost.cloudstream3.MainActivity.Companion.afterBackupRestoreEvent
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.plugins.PLUGINS_KEY
@@ -70,6 +72,7 @@ object BackupUtils {
         MAL_UNIXTIME_KEY,
         MAL_USER_KEY,
         InAppOAuth2APIManager.K.TOKEN.value,
+        InAppOAuth2APIManager.K.IS_READY.value,
 
         // The plugins themselves are not backed up
         PLUGINS_KEY,
@@ -87,6 +90,16 @@ object BackupUtils {
     private var restoreFileSelector: ActivityResultLauncher<Array<String>>? = null
 
     // Kinda hack, but I couldn't think of a better way
+    data class RestoreMapData(
+        val wantToRestore: MutableSet<String> = mutableSetOf(),
+        val successfulRestore: MutableSet<String> = mutableSetOf()
+    ) {
+        fun addAll(data: RestoreMapData) {
+            wantToRestore.addAll(data.wantToRestore)
+            successfulRestore.addAll(data.successfulRestore)
+        }
+    }
+
     data class BackupVars(
         @JsonProperty("_Bool") val _Bool: Map<String, Boolean>?,
         @JsonProperty("_Int") val _Int: Map<String, Int>?,
@@ -99,8 +112,32 @@ object BackupUtils {
     data class BackupFile(
         @JsonProperty("datastore") val datastore: BackupVars,
         @JsonProperty("settings") val settings: BackupVars,
-        @JsonProperty("sync-meta") val syncMeta: BackupVars
-    )
+        @JsonProperty("sync-meta") val syncMeta: BackupVars,
+    ) {
+        fun restore(
+            ctx: Context,
+            source: RestoreSource,
+            restoreKeys: Set<String>? = null
+        ): RestoreMapData {
+            val data = getData(source)
+            val successfulRestore = RestoreMapData()
+
+            successfulRestore.addAll(ctx.restoreMap(data._Bool, source, restoreKeys))
+            successfulRestore.addAll(ctx.restoreMap(data._Int, source, restoreKeys))
+            successfulRestore.addAll(ctx.restoreMap(data._String, source, restoreKeys))
+            successfulRestore.addAll(ctx.restoreMap(data._Float, source, restoreKeys))
+            successfulRestore.addAll(ctx.restoreMap(data._Long, source, restoreKeys))
+            successfulRestore.addAll(ctx.restoreMap(data._StringSet, source, restoreKeys))
+
+            return successfulRestore
+        }
+
+        private fun getData(source: RestoreSource) = when (source) {
+            RestoreSource.SYNC -> syncMeta
+            RestoreSource.DATA -> datastore
+            RestoreSource.SETTINGS -> settings
+        }
+    }
 
     @Suppress("UNCHECKED_CAST")
     fun Context.getBackup(): BackupFile {
@@ -143,39 +180,37 @@ object BackupUtils {
     }
 
     @WorkerThread
+    fun Context.restore(backupFile: BackupFile, restoreKeys: Set<String>? = null) = restore(
+        backupFile,
+        restoreKeys,
+        RestoreSource.SYNC,
+        RestoreSource.DATA,
+        RestoreSource.SETTINGS
+    )
+
+    @WorkerThread
     fun Context.restore(
         backupFile: BackupFile,
-        restoreKeys: List<String>? = null,
-        restoreSettings: Boolean,
-        restoreDataStore: Boolean,
-        restoreSyncData: Boolean
+        restoreKeys: Set<String>? = null,
+        vararg restoreSources: RestoreSource
     ) {
-        if (restoreSyncData) {
-            restoreMap(backupFile.syncMeta._Bool, RestoreSource.SYNC, restoreKeys)
-            restoreMap(backupFile.syncMeta._Int, RestoreSource.SYNC, restoreKeys)
-            restoreMap(backupFile.syncMeta._String, RestoreSource.SYNC, restoreKeys)
-            restoreMap(backupFile.syncMeta._Float, RestoreSource.SYNC, restoreKeys)
-            restoreMap(backupFile.syncMeta._Long, RestoreSource.SYNC, restoreKeys)
-            restoreMap(backupFile.syncMeta._StringSet, RestoreSource.SYNC, restoreKeys)
+        for (restoreSource in restoreSources) {
+            val restoreData = RestoreMapData()
+
+            restoreData.addAll(backupFile.restore(this, restoreSource, restoreKeys))
+
+            // we must remove keys that are not present
+            if (!restoreKeys.isNullOrEmpty()) {
+                Log.d(BackupAPI.LOG_KEY, "successfulRestore for src=[${restoreSource.name}]: ${restoreData.successfulRestore}")
+                val removedKeys = restoreData.wantToRestore - restoreData.successfulRestore
+                Log.d(BackupAPI.LOG_KEY, "removed keys for src=[${restoreSource.name}]: $removedKeys")
+
+                removedKeys.forEach { removeKeyRaw(it, restoreSource) }
+            }
         }
 
-        if (restoreSettings) {
-            restoreMap(backupFile.settings._Bool, RestoreSource.SETTINGS, restoreKeys)
-            restoreMap(backupFile.settings._Int, RestoreSource.SETTINGS, restoreKeys)
-            restoreMap(backupFile.settings._String, RestoreSource.SETTINGS, restoreKeys)
-            restoreMap(backupFile.settings._Float, RestoreSource.SETTINGS, restoreKeys)
-            restoreMap(backupFile.settings._Long, RestoreSource.SETTINGS, restoreKeys)
-            restoreMap(backupFile.settings._StringSet, RestoreSource.SETTINGS, restoreKeys)
-        }
-
-        if (restoreDataStore) {
-            restoreMap(backupFile.datastore._Bool, RestoreSource.DATA, restoreKeys)
-            restoreMap(backupFile.datastore._Int, RestoreSource.DATA, restoreKeys)
-            restoreMap(backupFile.datastore._String, RestoreSource.DATA, restoreKeys)
-            restoreMap(backupFile.datastore._Float, RestoreSource.DATA, restoreKeys)
-            restoreMap(backupFile.datastore._Long, RestoreSource.DATA, restoreKeys)
-            restoreMap(backupFile.datastore._StringSet, RestoreSource.DATA, restoreKeys)
-        }
+        Log.d(BackupAPI.LOG_KEY, "restore on ui event fired")
+        afterBackupRestoreEvent.invoke(Unit)
     }
 
     @SuppressLint("SimpleDateFormat")
@@ -263,12 +298,7 @@ object BackupUtils {
                             val input = activity.contentResolver.openInputStream(uri)
                                 ?: return@ioSafe
 
-                            activity.restore(
-                                mapper.readValue(input),
-                                restoreSettings = true,
-                                restoreDataStore = true,
-                                restoreSyncData = true
-                            )
+                            activity.restore(mapper.readValue(input))
                             activity.runOnUiThread { activity.recreate() }
                         } catch (e: Exception) {
                             logError(e)
@@ -310,10 +340,10 @@ object BackupUtils {
     private fun <T> Context.restoreMap(
         map: Map<String, T>?,
         restoreSource: RestoreSource,
-        restoreKeys: List<String>?
-    ) {
-        val restoreOnlyThese = mutableListOf<String>()
-        val successfulRestore = mutableListOf<String>()
+        restoreKeys: Set<String>? = null
+    ): RestoreMapData {
+        val restoreOnlyThese = mutableSetOf<String>()
+        val successfulRestore = mutableSetOf<String>()
 
         if (!restoreKeys.isNullOrEmpty()) {
             val prefixToMatch = "${BackupAPI.SYNC_HISTORY_PREFIX}${restoreSource.prefix}"
@@ -327,26 +357,26 @@ object BackupUtils {
             restoreOnlyThese.addAll(restore)
         }
 
+
         map?.filter {
             var isTransferable = it.key.isTransferable()
-            var canRestore = isTransferable
-            if (restoreOnlyThese.isNotEmpty()) {
-                canRestore = canRestore && restoreOnlyThese.contains(it.key)
+
+            if (isTransferable && restoreOnlyThese.isNotEmpty()) {
+                isTransferable = restoreOnlyThese.contains(it.key)
             }
 
-            if (isTransferable && canRestore) {
+            if (isTransferable) {
                 successfulRestore.add(it.key)
             }
 
-            canRestore
+            isTransferable
         }?.forEach {
             setKeyRaw(it.key, it.value, restoreSource)
         }
 
-        // we must remove keys that are not present
-        if (!restoreKeys.isNullOrEmpty()) {
-            var removedKeys = restoreOnlyThese - successfulRestore.toSet()
-            removedKeys.forEach { removeKeyRaw(it, restoreSource) }
-        }
+        return RestoreMapData(
+            restoreOnlyThese,
+            successfulRestore
+        )
     }
 }

@@ -28,6 +28,7 @@ import com.lagradost.cloudstream3.syncproviders.InAppOAuth2APIManager
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
 import com.lagradost.cloudstream3.utils.BackupUtils.getBackup
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
+import com.lagradost.cloudstream3.utils.Scheduler
 import kotlinx.coroutines.Job
 import java.io.InputStream
 import java.util.Date
@@ -38,16 +39,16 @@ import java.util.Date
  *
  * | State    | Priority | Description
  * |---------:|:--------:|---------------------------------------------------------------------
- * | Progress | 2        | Restoring backup should update view models
+ * | Progress | 1        | Check if data was really changed when calling backupscheduler.work then
+ * |          |          | dont update sync meta if not needed
  * | Waiting  | 2        | Add button to manually trigger sync
  * | Waiting  | 3        | Move "https://chiff.github.io/cloudstream-sync/google-drive"
- * | Waiting  | 3        | We should check what keys should really be restored. If user has multiple
- * |          |          | devices with different settings that they want to keep we should respect that
  * | Waiting  | 4        | Implement backup before user quits application
- * | Waiting  | 5        | Choose what should be synced
+ * | Waiting  | 5        | Choose what should be synced and recheck `invalidKeys` in createBackupScheduler
  * | Someday  | 3        | Add option to use proper OAuth through Google Services One Tap
  * | Someday  | 5        | Encrypt data on Drive (low priority)
  * | Solved   | 1        | Racing conditions when multiple devices in use
+ * | Solved   | 2        | Restoring backup should update view models
  */
 class GoogleDriveApi(index: Int) :
     InAppOAuth2APIManager(index),
@@ -107,8 +108,9 @@ class GoogleDriveApi(index: Int) :
         )
 
         storeValue(K.TOKEN, googleTokenResponse)
-        runDownloader(true)
+        runDownloader(runNow = true, overwrite = true)
 
+        storeValue(K.IS_READY, true)
         tempAuthFlow = null
         return true
     }
@@ -147,6 +149,7 @@ class GoogleDriveApi(index: Int) :
             switchToNewAccount()
         }
 
+        storeValue(K.IS_READY, false)
         storeValue(K.LOGIN_DATA, data)
 
         val authFlow = GAPI.createAuthFlow(data.clientId, data.secret)
@@ -211,7 +214,7 @@ class GoogleDriveApi(index: Int) :
         }
     }
 
-    override fun downloadSyncData() {
+    override fun downloadSyncData(overwrite: Boolean) {
         val ctx = AcraApplication.context ?: return
         val drive = getDriveService() ?: return
         val loginData = getLatestLoginData() ?: return
@@ -220,7 +223,8 @@ class GoogleDriveApi(index: Int) :
         val existingFile = if (existingFileId != null) {
             try {
                 drive.files().get(existingFileId)
-            } catch (_: Exception) {
+            } catch (e: Exception) {
+                Log.e(LOG_KEY, "Could not find file for id $existingFileId", e)
                 null
             }
         } else {
@@ -232,19 +236,27 @@ class GoogleDriveApi(index: Int) :
                 val inputStream: InputStream = existingFile.executeMediaAsInputStream()
                 val content: String = inputStream.bufferedReader().use { it.readText() }
                 Log.d(LOG_KEY, "downloadSyncData merging")
-                ctx.mergeBackup(content)
+                ctx.mergeBackup(content, overwrite)
                 return
             } catch (e: Exception) {
-                Log.e(LOG_KEY,"download failed", e)
+                Log.e(LOG_KEY, "download failed", e)
             }
-        } else {
-            Log.d(LOG_KEY, "downloadSyncData file not exists")
-            uploadSyncData()
         }
+
+        // if failed
+        Log.d(LOG_KEY, "downloadSyncData file not exists")
+        uploadSyncData()
     }
 
     private fun getOrCreateSyncFileId(drive: Drive, loginData: InAppOAuth2API.LoginData): String? {
-        val existingFileId: String? = loginData.syncFileId ?: drive
+        if (loginData.syncFileId != null) {
+            val verified = drive.files().get(loginData.syncFileId)
+            if (verified != null) {
+                return loginData.syncFileId
+            }
+        }
+
+        val existingFileId: String? = drive
             .files()
             .list()
             .setQ("name='${loginData.fileName}' and trashed=false")
@@ -253,29 +265,38 @@ class GoogleDriveApi(index: Int) :
             ?.getOrNull(0)
             ?.id
 
-        if (loginData.syncFileId == null) {
-            if (existingFileId != null) {
-                loginData.syncFileId = existingFileId
-                storeValue(K.LOGIN_DATA, loginData)
+        if (existingFileId != null) {
+            loginData.syncFileId = existingFileId
+            storeValue(K.LOGIN_DATA, loginData)
 
-                return existingFileId
-            }
-
-            return null
+            return existingFileId
         }
 
-        val verifyId = drive.files().get(existingFileId)
-        return if (verifyId == null) {
-            return null
-        } else {
-            existingFileId
-        }
+        return null
     }
 
     override fun uploadSyncData() {
-        val ctx = AcraApplication.context ?: return
-        val loginData = getLatestLoginData() ?: return
-        Log.d(LOG_KEY, "uploadSyncData createBackup")
+        val canUpload = getValue<Boolean>(K.IS_READY)
+        if (canUpload != true) {
+            Log.d(LOG_KEY, "uploadSyncData is not ready yet")
+            return
+        }
+
+        val ctx = AcraApplication.context
+        val loginData = getLatestLoginData()
+
+        if (ctx == null) {
+            Log.d(LOG_KEY, "uploadSyncData cannot run (ctx)")
+            return
+        }
+
+
+        if (loginData == null) {
+            Log.d(LOG_KEY, "uploadSyncData cannot run (loginData)")
+            return
+        }
+
+        Log.d(LOG_KEY, "uploadSyncData will run")
         ctx.createBackup(loginData)
     }
 
@@ -301,29 +322,28 @@ class GoogleDriveApi(index: Int) :
     /////////////////////////////////////////
     /////////////////////////////////////////
     // Internal
-    private val continuousDownloader = BackupAPI.Scheduler<Unit>(
-        BackupAPI.DOWNLOAD_THROTTLE.inWholeMilliseconds
-    ) {
-        if (uploadJob?.isActive == true) {
-            uploadJob!!.invokeOnCompletion {
-                Log.d(LOG_KEY, "upload is running, reschedule download")
+    private val continuousDownloader = Scheduler<Boolean>(
+        BackupAPI.DOWNLOAD_THROTTLE.inWholeMilliseconds,
+        { overwrite ->
+            if (uploadJob?.isActive == true) {
+                uploadJob!!.invokeOnCompletion {
+                    Log.d(LOG_KEY, "upload is running, reschedule download")
+                    runDownloader(false, overwrite == true)
+                }
+            } else {
+                Log.d(LOG_KEY, "downloadSyncData will run")
+                ioSafe {
+                    downloadSyncData(overwrite == true)
+                }
                 runDownloader()
             }
-        } else {
-            Log.d(LOG_KEY, "downloadSyncData will run")
-            ioSafe {
-                downloadSyncData()
-            }
-            runDownloader()
-        }
-    }
+        })
 
-    private fun runDownloader(runNow: Boolean = false) {
+    private fun runDownloader(runNow: Boolean = false, overwrite: Boolean = false) {
         if (runNow) {
-            continuousDownloader.workNow()
+            continuousDownloader.workNow(overwrite)
         } else {
-            continuousDownloader.work()
-
+            continuousDownloader.work(overwrite)
         }
     }
 
