@@ -39,7 +39,7 @@
     <string name="play_torrent_button">Skatities Torrentu</string>
     <string name="pick_source">Devēji</string>
     <string name="pick_subtitle">Subtitri</string>
-    <string name="reload_error">Atkārtot connection</string>
+    <string name="reload_error">Atkārtot pieslēgumu…</string>
     <string name="go_back">Iet atpakaļ</string>
     <string name="play_episode">Palaist epizodi</string>
     <string name="download">Ieladēt</string>
@@ -56,7 +56,7 @@
     <string name="popup_delete_file">Dzēst failu</string>
     <string name="popup_play_file">Palaist failu</string>
     <string name="popup_resume_download">Atsākt ielādi</string>
-    <string name="popup_pause_download">"Pauzēt  ielādi"</string>
+    <string name="popup_pause_download">Pauzēt ielādi</string>
     <string name="pref_disable_acra">Atslēgt automātisko kļūdu ziņošanu</string>
     <string name="home_more_info">Vairāk informācijas</string>
     <string name="home_expanded_hide">Slēpt</string>
@@ -98,7 +98,7 @@
     <string name="sort_clear">Iztīrīt</string>
     <string name="subs_text_color">Teksta krāsa</string>
     <string name="subs_auto_select_language">Automātiski-iestādīt valodu</string>
-    <string name="next_episode_time_hour_format" formatted="true">%dd %dh %dm</string>
+    <string name="next_episode_time_hour_format" formatted="true">%dh %dm</string>
     <string name="next_episode_time_min_format" formatted="true">%dm</string>
     <string name="next_episode_time_day_format" formatted="true">%dd %dh %dm</string>
     <string name="subs_download_languages">Ielādēt valodas</string>
@@ -130,7 +130,7 @@
     <string name="swipe_to_seek_settings">Novelc lai paradītu</string>
     <string name="swipe_to_seek_settings_des">Novelc no māla lidz malai lai pozicionētu video</string>
     <string name="swipe_to_change_settings">Novēlu lai mainītu iestādījums</string>
-    <string name="swipe_to_change_settings_des">Novēlu uz augšu vai apakšu pa labi un pa kreisi lai lai nomainītu gaišumu un skaņu</string>
+    <string name="swipe_to_change_settings_des">Novēlu uz augšu vai apakšu pa labi un pa kreisi lai nomainītu gaišumu un skaņu</string>
     <string name="autoplay_next_settings">Automātiski nākamo epizodi</string>
     <string name="autoplay_next_settings_des">Sākt nākamo epizodi kad šis bridzas</string>
     <string name="double_tap_to_seek_settings">Divreiz uzpied lai paslēptu</string>
@@ -155,7 +155,7 @@
     <string name="category_updates">Atjaunināt un saglabāt</string>
     <string name="settings_info">Informācija</string>
     <string name="advanced_search">Advancēta meklēšana</string>
-    <string name="advanced_search_des">Dod tev meklēšanas rezultātus citus no devēja.</string>
+    <string name="advanced_search_des">Dod tev meklēšanas rezultātus citus no devēja</string>
     <string name="bug_report_settings_off">Tikai sūtīt datus no kļudām</string>
     <string name="bug_report_settings_on">Nesutīt datus</string>
     <string name="show_fillers_settings">Radīt fillera epizodi priekš animē</string>
@@ -164,9 +164,9 @@
     <string name="pref_filter_search_quality">Slēpt izvēlētos video kvalitāti meklēšanas rezultātus</string>
     <string name="automatic_plugin_updates">Automātiski papildinājumu atjauninājumi</string>
     <string name="automatic_plugin_download">Automātiski ielādēt papildinājumus</string>
-    <string name="automatic_plugin_download_summary">Automātiski instalēt visus neinstalētos papildinājumus no glabātavas</string>
+    <string name="automatic_plugin_download_summary">Automātiski instalēt visus neinstalētos papildinājumus no glabātavas.</string>
     <string name="updates_settings">Radīt aplikācijas atjauninājumus</string>
-    <string name="updates_settings_des">Automātiski meklēt jaunus atjauninājumus kad palaiž aplikāciju</string>
+    <string name="updates_settings_des">Automātiski meklēt jaunus atjauninājumus kad palaiž aplikāciju.</string>
     <string name="redo_setup_process">Atsākt uzstādīšanas procesu</string>
     <string name="uprereleases_settings">Atjaunināt uz priekšizlaišanu</string>
     <string name="apk_installer_settings_des">Dažu telefoni nepieņem jauno aplikāciju instaletāju. Meiģiniet veco opciju ja nevar stjaunināt.</string>
@@ -274,7 +274,7 @@
     <string name="video_ram_description">Izraisa avārijas, ja ierīcēs ar mazu atmiņu ir iestatīta pārāk augsta vērtība, piemēram, Android TV.</string>
     <string name="dns_pref_summary">Izdevīgs lai izlaistu ISO aizturi</string>
     <string name="jsdelivr_proxy">raw.githubusercontent.com Proxy</string>
-    <string name="jsdelivr_proxy_summary">Apiet GitHub bloķēšanu, izmantojot jsdelivr, tādēļ atjauninājumi var aizkavēties par dažām dienām.</string>
+    <string name="jsdelivr_proxy_summary">Apiet GitHub bloķēšanu, izmantojot jsdelivr. Tādēļ atjauninājumi var aizkavēties par dažām dienām.</string>
     <string name="add_site_pref">Klonēt saiti</string>
     <string name="remove_site_pref">Noņemt saiti</string>
     <string name="add_site_summary">Pievienojiet esošas vietnes klonu ar citu URL</string>
@@ -451,7 +451,7 @@
     <string name="clear_history">Notīrīt vēsturi</string>
     <string name="history">Vēsture</string>
     <string name="enable_skip_op_from_database_des">Rādīt izlaižamos uznirstošos logus atvēršanai/beigšanai</string>
-    <string name="clipboard_too_large">"Pārāk daudz teksta.  Nevar saglabāt starpliktuvē."</string>
+    <string name="clipboard_too_large">Pārāk daudz teksta. Nevar saglabāt starpliktuvē.</string>
     <string name="yes">Jā</string>
     <string name="no">Nē</string>
     <string name="update_notification_downloading">Notiek lietotnes atjauninājuma lejupielāde…</string>
@@ -470,7 +470,7 @@
     <string name="select_library">Atlasiet Bibliotēka</string>
     <string name="open_with">Atvērt ar</string>
     <string name="empty_library_no_accounts_message">Šķiet, ka jūsu bibliotēka ir tukša :(
-\n Piesakieties bibliotēkas kontā vai pievienojiet pārraides savai vietējai bibliotēkai</string>
+\nPiesakieties bibliotēkas kontā vai pievienojiet pārraides savai vietējai bibliotēkai.</string>
     <string name="revert">Atgriest</string>
     <string name="subscription_deleted">Anulēts %s abonements</string>
     <string name="subscription_episode_released">%d sērija izlaista!</string>
@@ -479,7 +479,7 @@
     <string name="github">Github</string>
     <string name="no_subtitles">Nav subtitru</string>
     <string name="play_episode_toast">Atskaņot epizodi</string>
-    <string name="acra_report_toast">Piedodiet, bet aplikācijā bija kļūda, anonīms kļūdas ziņojums tika aizsūtīts izstrādātājiem.</string>
+    <string name="acra_report_toast">Piedodiet, bet aplikācijā bija kļūda. Anonīms kļūdas ziņojums tika aizsūtīts izstrādātājiem</string>
     <string name="status_ongoing">Iet</string>
     <string name="free_storage">Bezmaksas</string>
     <string name="poster_ui_settings">Ieslēgt elementus uz plakātiem</string>
@@ -491,7 +491,7 @@
     <string name="android_tv_interface_off_seek_settings_summary">Meklēšanas summa, kas tiek izmantota, kad spēlētājs ir paslēpts</string>
     <string name="dns_pref">DNS virs HTTPS</string>
     <string name="resize_zoom">Tuvināt</string>
-    <string name="jsdelivr_enabled">Neizdevās sasniegt GitHub, iespējot jsdelivr starpniekserveri.</string>
+    <string name="jsdelivr_enabled">Neizdevās sasniegt GitHub. Pieslēdzas starpniekserverim caur jsDelivr…</string>
     <string name="resize_fill">Iztiept</string>
     <string name="primary_color_settings">Galvenā krāsa</string>
     <string name="login_format" formatted="true">%s %s</string>
@@ -504,7 +504,11 @@
     <string name="quality_webrip">Web</string>
     <string name="quality_sdr">SDR</string>
     <string name="resolution">Rezulūcija</string>
-    <string name="blank_repo_message">CloudStream pēc noklusējuma nav instalēta neviena vietne. Vietnes jāinstalē no krātuvēm. Sky UK Limited bezsmadzeņu DMCA noņemšanas dēļ mēs nevaram saistīt ar repozitorija vietni lietotnē. Pievienojieties mūsu Discord vai meklējiet tiešsaistē.</string>
+    <string name="blank_repo_message">CloudStream pēc noklusējuma nav instalēta neviena vietne. Vietnes jāinstalē no krātuvēm.
+\n
+\nSky UK Limited bezsmadzeņu DMCA noņemšanas dēļ mēs nevaram saistīt ar repozitorija vietni lietotnē.
+\n
+\nPievienojieties mūsu Discord vai meklējiet tiešsaistē.</string>
     <string name="batch_download_nothing_to_download_format" formatted="true">Viss %s jau ir lejupielādēts</string>
     <string name="repository_name_hint">Repozitorija nosaukums</string>
     <string name="plugin_downloaded">Plugin ielādēti</string>
@@ -518,7 +522,7 @@
     <string name="action_remove_from_watched">Noņemt no skatītajiem</string>
     <string name="action_mark_as_watched">Atzīmēt kā skatītu</string>
     <string name="confirm_exit_dialog">Vai tiešām vēlaties iziet\?</string>
-    <string name="empty_library_logged_in_message">Šķiet, ka šis saraksts ir tukšs, mēģiniet pārslēgties uz citu</string>
+    <string name="empty_library_logged_in_message">Šķiet, ka šis saraksts ir tukšs, mēģiniet pārslēgties uz citu.</string>
     <string name="safe_mode_file">Atrasts drošā režīma fails!
 \n Paplašinājumi netiek ielādēti startēšanas laikā, kamēr fails nav noņemts.</string>
     <string name="sort_rating_asc">Vērtējums (no zema līdz augstam)</string>
