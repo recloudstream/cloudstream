@@ -31,7 +31,7 @@ object GogoHelper {
         }
     }
 
-    // https://github.com/saikou-app/saikou/blob/3e756bd8e876ad7a9318b17110526880525a5cd3/app/src/main/java/ani/saikou/anime/source/extractors/GogoCDN.kt#L60
+    // https://github.com/saikou-app/saikou/blob/45d0a99b8a72665a29a1eadfb38c506b842a29d7/app/src/main/java/ani/saikou/parsers/anime/extractors/GogoCDN.kt#L97
     // No Licence on the function
     private fun cryptoHandler(
         string: String,
@@ -74,11 +74,6 @@ object GogoHelper {
         // If you don't want to re-fetch the document
         iframeDocument: Document? = null
     ) = safeApiCall {
-        // https://github.com/saikou-app/saikou/blob/3e756bd8e876ad7a9318b17110526880525a5cd3/app/src/main/java/ani/saikou/anime/source/extractors/GogoCDN.kt
-        // No Licence on the following code
-        // Also modified of https://github.com/jmir1/aniyomi-extensions/blob/master/src/en/gogoanime/src/eu/kanade/tachiyomi/animeextension/en/gogoanime/extractors/GogoCdnExtractor.kt
-        // License on the code above  https://github.com/jmir1/aniyomi-extensions/blob/master/LICENSE
-
         if ((iv == null || secretKey == null || secretDecryptKey == null) && !isUsingAdaptiveKeys)
             return@safeApiCall
 
@@ -152,9 +147,6 @@ object GogoHelper {
     data class GogoSources(
         @JsonProperty("source") val source: List<GogoSource>?,
         @JsonProperty("sourceBk") val sourceBk: List<GogoSource>?,
-        //val track: List<Any?>,
-        //val advertising: List<Any?>,
-        //val linkiframe: String
     )
 
     data class GogoSource(
