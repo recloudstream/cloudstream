@@ -7,7 +7,7 @@ import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.Qualities
 
-class Gofile : ExtractorApi() {
+open class Gofile : ExtractorApi() {
     override val name = "Gofile"
     override val mainUrl = "https://gofile.io"
     override val requiresReferer = false
@@ -19,10 +19,7 @@ class Gofile : ExtractorApi() {
         subtitleCallback: (SubtitleFile) -> Unit,
         callback: (ExtractorLink) -> Unit
     ) {
-        val id =
-            Regex("(?://|\\.)(gofile\\.io)/(?:\\?c=|d/)([\\da-zA-Z]+)").find(url)?.groupValues?.get(
-                2
-            )
+        val id = Regex("/(?:\\?c=|d/)([\\da-zA-Z]+)").find(url)?.groupValues?.get(1)
         val token = app.get("$mainApi/createAccount").parsedSafe<Account>()?.data?.get("token")
         app.get("$mainApi/getContent?contentId=$id&token=$token&websiteToken=12345")
             .parsedSafe<Source>()?.data?.contents?.forEach {
