@@ -8,7 +8,6 @@ import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.syncproviders.BackupAPI
-import com.lagradost.cloudstream3.syncproviders.BackupAPI.Companion.logHistoryChanged
 
 const val DOWNLOAD_HEADER_CACHE = "download_header_cache"
 
@@ -106,15 +105,21 @@ object DataStore {
         try {
             val prefs = getSharedPrefs()
             if (prefs.contains(path)) {
+                val oldValueExists = prefs.getString(path, null) != null
+
                 val editor: SharedPreferences.Editor = prefs.edit()
                 editor.remove(path)
                 editor.apply()
 
-                val success =
-                    backupScheduler.work(BackupAPI.PreferencesSchedulerData(prefs, path, false))
-                if (success) {
-                    getSyncPrefs().logHistoryChanged(path, BackupUtils.RestoreSource.DATA)
-                }
+                backupScheduler.work(
+                    BackupAPI.PreferencesSchedulerData(
+                        prefs,
+                        path,
+                        oldValueExists,
+                        false,
+                        BackupUtils.RestoreSource.DATA
+                    )
+                )
             }
         } catch (e: Exception) {
             logError(e)
@@ -132,14 +137,22 @@ object DataStore {
     fun <T> Context.setKey(path: String, value: T) {
         try {
             val prefs = getSharedPrefs()
+            val oldValue = prefs.getString(path, null)
+            val newValue = mapper.writeValueAsString(value)
+
             val editor: SharedPreferences.Editor = prefs.edit()
-            editor.putString(path, mapper.writeValueAsString(value))
+            editor.putString(path, newValue)
             editor.apply()
 
-            val success = backupScheduler.work(BackupAPI.PreferencesSchedulerData(prefs,path, false))
-            if (success) {
-                getSyncPrefs().logHistoryChanged(path, BackupUtils.RestoreSource.DATA)
-            }
+            backupScheduler.work(
+                BackupAPI.PreferencesSchedulerData(
+                    prefs,
+                    path,
+                    oldValue,
+                    newValue,
+                    BackupUtils.RestoreSource.DATA
+                )
+            )
         } catch (e: Exception) {
             logError(e)
         }

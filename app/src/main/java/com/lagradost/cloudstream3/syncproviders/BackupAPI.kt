@@ -25,15 +25,17 @@ interface BackupAPI<LOGIN_DATA> {
         val result: JSONCompareResult?
     )
 
-    data class PreferencesSchedulerData(
-        val prefs: SharedPreferences,
+    data class PreferencesSchedulerData<T>(
+        val syncPrefs: SharedPreferences,
         val storeKey: String,
-        val isSettings: Boolean
+        val oldValue: T,
+        val newValue: T,
+        val source: BackupUtils.RestoreSource
     )
 
     data class SharedPreferencesWithListener(
         val self: SharedPreferences,
-        val scheduler: Scheduler<PreferencesSchedulerData>
+        val scheduler: Scheduler<PreferencesSchedulerData<*>>
     )
 
     companion object {

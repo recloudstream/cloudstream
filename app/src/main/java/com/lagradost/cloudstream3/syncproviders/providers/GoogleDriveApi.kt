@@ -39,16 +39,16 @@ import java.util.Date
  *
  * | State    | Priority | Description
  * |---------:|:--------:|---------------------------------------------------------------------
- * | Progress | 1        | Check if data was really changed when calling backupscheduler.work then
- * |          |          | dont update sync meta if not needed
+ * | Progress | 4        | Implement backup before user quits application
  * | Waiting  | 2        | Add button to manually trigger sync
  * | Waiting  | 3        | Move "https://chiff.github.io/cloudstream-sync/google-drive"
- * | Waiting  | 4        | Implement backup before user quits application
  * | Waiting  | 5        | Choose what should be synced and recheck `invalidKeys` in createBackupScheduler
  * | Someday  | 3        | Add option to use proper OAuth through Google Services One Tap
  * | Someday  | 5        | Encrypt data on Drive (low priority)
  * | Solved   | 1        | Racing conditions when multiple devices in use
  * | Solved   | 2        | Restoring backup should update view models
+ * | Solved   | 1        | Check if data was really changed when calling backupscheduler.work then
+ * |          |          | dont update sync meta if not needed
  */
 class GoogleDriveApi(index: Int) :
     InAppOAuth2APIManager(index),

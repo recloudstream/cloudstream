@@ -7,6 +7,7 @@ import android.util.Log
 import com.lagradost.cloudstream3.syncproviders.AccountManager
 import com.lagradost.cloudstream3.syncproviders.BackupAPI
 import com.lagradost.cloudstream3.syncproviders.BackupAPI.Companion.logHistoryChanged
+import com.lagradost.cloudstream3.ui.home.HOME_BOOKMARK_VALUE_LIST
 import com.lagradost.cloudstream3.ui.player.PLAYBACK_SPEED_KEY
 import com.lagradost.cloudstream3.ui.player.RESIZE_MODE_KEY
 
@@ -18,17 +19,26 @@ class Scheduler<INPUT>(
     companion object {
         var SCHEDULER_ID = 1
 
-        fun createBackupScheduler() = Scheduler<BackupAPI.PreferencesSchedulerData>(
+        private val invalidSchedulerKeys = listOf(
+            VideoDownloadManager.KEY_DOWNLOAD_INFO,
+            PLAYBACK_SPEED_KEY,
+            HOME_BOOKMARK_VALUE_LIST,
+            RESIZE_MODE_KEY
+        )
+
+        fun createBackupScheduler() = Scheduler<BackupAPI.PreferencesSchedulerData<*>>(
             BackupAPI.UPLOAD_THROTTLE.inWholeMilliseconds,
             onWork = { input ->
                 if (input == null) {
                     throw IllegalStateException()
                 }
 
+                input.syncPrefs.logHistoryChanged(input.storeKey, input.source)
+
                 AccountManager.BackupApis.forEach {
                     it.addToQueue(
                         input.storeKey,
-                        input.isSettings
+                        input.source == BackupUtils.RestoreSource.SETTINGS
                     )
                 }
             },
@@ -37,13 +47,17 @@ class Scheduler<INPUT>(
                     throw IllegalStateException()
                 }
 
-                val invalidKeys = listOf(
-                    VideoDownloadManager.KEY_DOWNLOAD_INFO,
-                    PLAYBACK_SPEED_KEY,
-                    RESIZE_MODE_KEY
-                )
+                val hasInvalidKey = invalidSchedulerKeys.contains(input.storeKey)
+                if (hasInvalidKey) {
+                    return@Scheduler false
+                }
 
-                return@Scheduler !invalidKeys.contains(input.storeKey)
+                val valueDidNotChange = input.oldValue == input.newValue
+                if (valueDidNotChange) {
+                    return@Scheduler false
+                }
+
+                return@Scheduler true
             }
         )
 
@@ -51,30 +65,30 @@ class Scheduler<INPUT>(
         // which means it is mostly used for settings preferences, therefore we use `isSettings: Boolean = true`, be careful
         // if you need to directly access `context.getSharedPreferences` (without using DataStore) and dont forget to turn it off
         fun SharedPreferences.attachBackupListener(
-            isSettings: Boolean = true,
+            source: BackupUtils.RestoreSource = BackupUtils.RestoreSource.SETTINGS,
             syncPrefs: SharedPreferences
         ): BackupAPI.SharedPreferencesWithListener {
             val scheduler = createBackupScheduler()
-            registerOnSharedPreferenceChangeListener { _, storeKey ->
-                val success =
-                    scheduler.work(
-                        BackupAPI.PreferencesSchedulerData(
-                            syncPrefs,
-                            storeKey,
-                            isSettings
-                        )
-                    )
 
-                if (success) {
-                    syncPrefs.logHistoryChanged(storeKey, BackupUtils.RestoreSource.SETTINGS)
-                }
+            var lastValue = all
+            registerOnSharedPreferenceChangeListener { sharedPreferences, storeKey ->
+                scheduler.work(
+                    BackupAPI.PreferencesSchedulerData(
+                        syncPrefs,
+                        storeKey,
+                        lastValue[storeKey],
+                        sharedPreferences.all[storeKey],
+                        source
+                    )
+                )
+                lastValue = sharedPreferences.all
             }
 
             return BackupAPI.SharedPreferencesWithListener(this, scheduler)
         }
 
         fun SharedPreferences.attachBackupListener(syncPrefs: SharedPreferences): BackupAPI.SharedPreferencesWithListener {
-            return attachBackupListener(true, syncPrefs)
+            return attachBackupListener(BackupUtils.RestoreSource.SETTINGS, syncPrefs)
         }
     }
 
