@@ -344,6 +344,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
 
     Chillx(),
     Watchx(),
+    Bestx(),
     Keephealth(),
     Sbnet(),
     Sbasian(),
