@@ -7,6 +7,21 @@ import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.M3u8Helper
 
+class Sbasian : StreamSB() {
+    override var mainUrl = "https://sbasian.pro"
+    override var name = "Sbasian"
+}
+
+class Sbnet : StreamSB() {
+    override var name = "Sbnet"
+    override var mainUrl = "https://sbnet.one"
+}
+
+class Keephealth : StreamSB() {
+    override var name = "Keephealth"
+    override var mainUrl = "https://keephealth.info"
+}
+
 class Sbspeed : StreamSB() {
     override var name = "Sbspeed"
     override var mainUrl = "https://sbspeed.com"
