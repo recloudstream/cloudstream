@@ -129,16 +129,16 @@
     <string name="eigengraumode_settings">Chỉnh tốc độ phim</string>
     <string name="eigengraumode_settings_des">Có thể điều chỉnh tốc độ phát phim</string>
     <string name="swipe_to_seek_settings">Vuốt để tua nhanh</string>
-    <string name="swipe_to_seek_settings_des">Bạn có thể vuốt trái hoặc phải để tua nhanh khi xem phim</string>
+    <string name="swipe_to_seek_settings_des">Vuốt sang trái hoặc phải để tua video</string>
     <string name="swipe_to_change_settings">Vuốt để chỉnh độ sáng và âm lượng</string>
-    <string name="swipe_to_change_settings_des">Vuốt từ dưới lên trên ở bên trái hoặc phải đều điều chỉnh độ sáng và âm lượng</string>
+    <string name="swipe_to_change_settings_des">Vuốt lên hoặc vuốt xuống ở hai bên để điều chỉnh độ sáng và âm lượng</string>
     <string name="autoplay_next_settings">Tự động phát tập tiếp theo</string>
     <string name="autoplay_next_settings_des">Phát tập tiếp theo sau khi hết tập hiện tại</string>
     <string name="double_tap_to_seek_settings">Nhấn 2 lần để tua</string>
     <string name="double_tap_to_pause_settings">Nhấn 2 lần để tạm dừng</string>
-    <string name="double_tap_to_seek_amount_settings">Thời lượng tua</string>
+    <string name="double_tap_to_seek_amount_settings">Thời lượng tua (Giây)</string>
     <string name="double_tap_to_seek_settings_des">Nhấn 2 lần vào bên trái hoặc bên phải màn hình để tua trước hoặc sau</string>
-    <string name="double_tap_to_pause_settings_des">Nhấn vào giữa để tạm dừng</string>
+    <string name="double_tap_to_pause_settings_des">Nhấn vào giữa hai lần để tạm dừng</string>
     <string name="use_system_brightness_settings">Sử dụng độ sáng hệ thống</string>
     <string name="use_system_brightness_settings_des">Sử dụng độ sáng hệ thống trong trình phát ứng dụng</string>
     <string name="episode_sync_settings">Cập nhật tiến trình xem</string>
@@ -164,7 +164,7 @@
     <string name="pref_filter_search_quality">Ẩn chất lượng video khi tìm kiếm</string>
     <string name="automatic_plugin_updates">Tự động cập nhật plugin</string>
     <string name="updates_settings">Hiển thị thông báo cập nhật App</string>
-    <string name="updates_settings_des">Tự động tìm kiếm và thông báo khi có bản cập nhật mới</string>
+    <string name="updates_settings_des">Tự động tìm kiếm bản cập nhật mới sau khi khởi động app.</string>
     <string name="uprereleases_settings">Cập nhật phiên bản Beta</string>
     <string name="uprereleases_settings_des">Tìm kiếm các phiên bản Beta thay vì đợi bản cập nhật chính thức</string>
     <string name="github">Github</string>
@@ -230,7 +230,7 @@
     <string name="tv_series_singular">Phim Bộ</string>
     <string name="cartoons_singular">Hoạt Hình</string>
     <string name="anime_singular">Anime</string>
-    <string name="ova_singular">@string/ova</string>
+    <string name="ova_singular">OVA</string>
     <string name="torrent_singular">Torrent</string>
     <string name="documentaries_singular">Phim Tài Liệu</string>
     <string name="asian_drama_singular">Truyền Hình Châu Á</string>
@@ -508,7 +508,7 @@
     <string name="sort_updated_new">Tải lên (Mới đến Cũ)</string>
     <string name="sort_updated_old">Tải lên (Cũ đến Mới)</string>
     <string name="empty_library_no_accounts_message">Thư viện của bạn đang trống :(
-\nHãy đăng nhập vào thư viện hoặc thêm phim vào thư viện cục bộ</string>
+\nĐăng nhập vào tài khoản thư viện hoặc thêm phim vào thư viện cục bộ</string>
     <string name="open_with">Mở với</string>
     <string name="provider_info_meta">Siêu dữ liệu không có sẵn, video sẽ không được tải nếu nó không tồn tại trên trang web.</string>
     <string name="apk_installer_package_installer">PackageInstaller</string>
@@ -517,7 +517,7 @@
     <string name="sort_rating_asc">Xếp hạng (Thấp đến Cao)</string>
     <string name="sort_alphabetical_z">Chữ cái (Z đến A)</string>
     <string name="sort_by">Sắp xếp</string>
-    <string name="empty_library_logged_in_message">Có vẻ như danh sách này trống, hãy thử chuyển sang danh sách khác</string>
+    <string name="empty_library_logged_in_message">Danh sách này trống, hãy thử chuyển sang danh sách khác.</string>
     <string name="sort_alphabetical_a">Chữ cái (A đến Z)</string>
     <string name="select_library">Chọn Thư viện</string>
     <string name="test_log">Nhật ký</string>
@@ -525,4 +525,24 @@
     <string name="test_failed">Thất bại</string>
     <string name="test_passed">Thành công</string>
     <string name="start">Bắt đầu</string>
+    <string name="category_provider_test">Kiểm tra nguồn phim</string>
+    <string name="jsdelivr_proxy">raw.githubusercontent.com Proxy</string>
+    <string name="jsdelivr_enabled">Không thể kết nối được tới GitHub. Đang bật jsDelivr proxy…</string>
+    <string name="pref_category_android_tv">Android TV</string>
+    <string name="restart">Khởi động lại</string>
+    <string name="subscription_new">Đã đăng kí %s</string>
+    <string name="subscription_episode_released">Tập %d đã ra mắt!</string>
+    <string name="subscription_list_name">Đã đăng kí</string>
+    <string name="stop">Dừng</string>
+    <string name="pref_category_bypass">Bỏ qua ISP</string>
+    <string name="subscription_deleted">Đã bỏ đăng ký %s</string>
+    <string name="safe_mode_file">Tìm thấy tệp Safe mode!
+\nKhông tải bất cứ tiện ích nào khi khởi dộng cho đến khi tệp bị xoá</string>
+    <string name="revert">Trở lại</string>
+    <string name="subscription_in_progress_notification">Đang cập nhật các phim đã đăng kí</string>
+    <string name="jsdelivr_proxy_summary">Bỏ qua chặn GitHub bằng cách dùng jsDelivr. Có thể gây ra việc cập nhật bị chậm vài ngày</string>
+    <string name="android_tv_interface_off_seek_settings_summary">Lượng tua thêm được sử dụng khi trình phát ẩn</string>
+    <string name="android_tv_interface_off_seek_settings">Lượng tua thêm</string>
+    <string name="android_tv_interface_on_seek_settings_summary">Lượng tua thêm được sử dụng khi trình phát hiện lên</string>
+    <string name="android_tv_interface_on_seek_settings">Lượng tua thêm</string>
 </resources>
