@@ -101,7 +101,7 @@ val appLanguages = arrayListOf(
     Triple("", "اردو", "ur"),
     Triple("", "Tiếng Việt", "vi"),
     Triple("", "中文", "zh"),
-    Triple("\uD83C\uDDF9\uD83C\uDDFC", "文言", "zh-rTW"),
+    Triple("\uD83C\uDDF9\uD83C\uDDFC", "正體中文", "zh-rTW"),
 /* end language list */
 ).sortedBy { it.second.lowercase() } //ye, we go alphabetical, so ppl don't put their lang on top
 
