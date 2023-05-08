@@ -204,7 +204,7 @@ class GoogleDriveApi(index: Int) :
         fileMetadata.mimeType = "application/json"
         val fileContent = FileContent("application/json", ioFile)
 
-        val fileId = getOrCreateSyncFileId(drive, loginData)
+        val fileId = getOrFindExistingSyncFileId(drive, loginData)
         if (fileId != null) {
             try {
                 val file = drive.files()
@@ -232,7 +232,7 @@ class GoogleDriveApi(index: Int) :
         val drive = getDriveService() ?: return
         val loginData = getLatestLoginData() ?: return
 
-        val existingFileId = getOrCreateSyncFileId(drive, loginData)
+        val existingFileId = getOrFindExistingSyncFileId(drive, loginData)
         val existingFile = if (existingFileId != null) {
             try {
                 drive.files().get(existingFileId)
@@ -261,11 +261,15 @@ class GoogleDriveApi(index: Int) :
         uploadSyncData()
     }
 
-    private fun getOrCreateSyncFileId(drive: Drive, loginData: InAppOAuth2API.LoginData): String? {
+    private fun getOrFindExistingSyncFileId(
+        drive: Drive,
+        loginData: InAppOAuth2API.LoginData
+    ): String? {
         if (loginData.syncFileId != null) {
-            val verified = drive.files().get(loginData.syncFileId)
-            if (verified != null) {
-                return loginData.syncFileId
+            try {
+                val verified = drive.files().get(loginData.syncFileId).execute()
+                return verified.id
+            } catch (_: Exception) {
             }
         }
 
