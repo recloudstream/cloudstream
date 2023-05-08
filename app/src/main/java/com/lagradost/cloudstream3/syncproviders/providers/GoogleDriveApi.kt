@@ -39,11 +39,9 @@ import java.util.Date
  *
  * | State    | Priority | Description
  * |---------:|:--------:|---------------------------------------------------------------------
- * | Progress | 1        | When scheduler has queued upload job (but is not working in backupApi
- * |          |          | yet) we should postpone download and prioritize upload
- * | Waiting  | 2        | Add button to manually trigger sync
  * | Waiting  | 3        | Move "https://chiff.github.io/cloudstream-sync/google-drive"
- * | Waiting  | 5        | Choose what should be synced and recheck `invalidKeys` in createBackupScheduler
+ * | Someday  | 4        | Add button to manually trigger sync
+ * | Someday  | 5        | Choose what should be synced and recheck `invalidKeys` in createBackupScheduler
  * | Someday  | 3        | Add option to use proper OAuth through Google Services One Tap
  * | Someday  | 5        | Encrypt data on Drive (low priority)
  * | Solved   | 1        | Racing conditions when multiple devices in use
@@ -53,6 +51,8 @@ import java.util.Date
  * | Solved   | 4        | Implement backup before user quits application
  * | Solved   | 1        | Do not write sync meta when user is not syncing data
  * | Solved   | 1        | Fix sync/restore bugs
+ * | Solved   | 1        | When scheduler has queued upload job (but is not working in backupApi
+ * |          |          | yet) we should postpone download and prioritize upload
  */
 class GoogleDriveApi(index: Int) :
     InAppOAuth2APIManager(index),
@@ -74,6 +74,7 @@ class GoogleDriveApi(index: Int) :
     override val defaultRedirectUrl = "https://chiff.github.io/cloudstream-sync/google-drive"
 
     override var isActive: Boolean? = false
+    override var willQueueSoon: Boolean? = false
     override var uploadJob: Job? = null
 
     private var tempAuthFlow: AuthorizationCodeFlow? = null
@@ -344,8 +345,8 @@ class GoogleDriveApi(index: Int) :
     // Internal
     private val continuousDownloader = Scheduler<Boolean>(
         BackupAPI.DOWNLOAD_THROTTLE.inWholeMilliseconds,
-        { overwrite ->
-            if (uploadJob?.isActive == true) {
+        onWork = { overwrite ->
+            if (uploadJob?.isActive == true || willQueueSoon == true) {
                 uploadJob!!.invokeOnCompletion {
                     Log.d(LOG_KEY, "upload is running, reschedule download")
                     runDownloader(false, overwrite == true)
@@ -357,7 +358,8 @@ class GoogleDriveApi(index: Int) :
                 }
                 runDownloader()
             }
-        })
+        }
+    )
 
     private fun runDownloader(runNow: Boolean = false, overwrite: Boolean = false) {
         if (runNow) {

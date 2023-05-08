@@ -15,6 +15,7 @@ import com.lagradost.cloudstream3.utils.BackupUtils.nonTransferableKeys
 class Scheduler<INPUT>(
     private val throttleTimeMs: Long,
     private val onWork: (INPUT?) -> Unit,
+    private val beforeWork: ((INPUT?) -> Unit)? = null,
     private val canWork: ((INPUT?) -> Boolean)? = null
 ) {
     companion object {
@@ -42,6 +43,13 @@ class Scheduler<INPUT>(
                         input.storeKey,
                         input.source == BackupUtils.RestoreSource.SETTINGS
                     )
+                }
+            },
+            beforeWork = {
+                AccountManager.BackupApis.filter {
+                    it.isActive == true
+                }.forEach {
+                    it.willQueueSoon = true
                 }
             },
             canWork = { input ->
@@ -111,6 +119,7 @@ class Scheduler<INPUT>(
         }
 
         Log.d(BackupAPI.LOG_KEY, "[$id] wants to schedule [${input}]")
+        beforeWork?.invoke(input)
         throttle(input)
 
         return true
@@ -124,6 +133,7 @@ class Scheduler<INPUT>(
 
 
         Log.d(BackupAPI.LOG_KEY, "[$id] runs immediate [${input}]")
+        beforeWork?.invoke(input)
         stop()
         onWork(input)
 

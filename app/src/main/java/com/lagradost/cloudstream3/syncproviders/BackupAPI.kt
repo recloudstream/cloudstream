@@ -105,10 +105,13 @@ interface BackupAPI<LOGIN_DATA> {
         restore(newData, keysToUpdate)
     }
 
+    var willQueueSoon: Boolean?
     var uploadJob: Job?
     fun shouldUpdate(changedKey: String, isSettings: Boolean): Boolean
     fun addToQueue(changedKey: String, isSettings: Boolean) {
+
         if (!shouldUpdate(changedKey, isSettings)) {
+            willQueueSoon = false
             Log.d(LOG_KEY, "upload not required, data is same")
             return
         }
@@ -122,6 +125,7 @@ interface BackupAPI<LOGIN_DATA> {
         }
 
         uploadJob = ioScope.launchSafe {
+            willQueueSoon = false
             Log.d(LOG_KEY, "upload is running now")
             uploadSyncData()
         }
