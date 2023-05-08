@@ -29,6 +29,14 @@
             android:textStyle="bold"
             tools:text="Test" />
 
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/info_button"
+            style="@style/WhiteButton"
+            android:layout_width="wrap_content"
+            android:layout_gravity="center_vertical|end"
+            android:text="@string/info_button"
+            app:icon="@drawable/ic_outline_info_24" />
+
     </LinearLayout>
 
 

@@ -72,6 +72,7 @@ class GoogleDriveApi(index: Int) :
     override val requiresClientId = true
     override val defaultFilenameValue = "cloudstreamapp-sync-file"
     override val defaultRedirectUrl = "https://chiff.github.io/cloudstream-sync/google-drive"
+    override val infoUrl = "https://chiff.github.io/cloudstream-sync/google-drive/help.html"
 
     override var isActive: Boolean? = false
     override var willQueueSoon: Boolean? = false

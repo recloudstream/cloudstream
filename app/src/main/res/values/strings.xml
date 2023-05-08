@@ -667,4 +667,5 @@
     <string name="example_login_file_name_full">Sync file name (optional)</string>
     <string name="example_login_redirect_url_full">Oauth redirect url (optional)</string>
     <string name="example_redirect_url" translatable="false">https://chiff.github.io/cloudstream-sync/google-drive</string>
+    <string name="info_button">Info</string>
 </resources>

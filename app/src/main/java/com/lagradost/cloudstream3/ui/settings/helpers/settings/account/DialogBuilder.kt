@@ -23,13 +23,13 @@ abstract class DialogBuilder(
         private val btnApply: MaterialButton,
         private val btnCancel: MaterialButton,
         private val btnAccCreate: MaterialButton?,
-        private val btnConfirmOauth: MaterialButton?
+        private val btnInfo: MaterialButton?
     ) {
         fun getTitle() = dialog.getCommonItem(title)!!
         fun getBtnApply() = dialog.getCommonItem(btnApply)!!
         fun getBtnCancel() = dialog.getCommonItem(btnCancel)!!
         fun getBtnAccCreate() = dialog.getCommonItem(btnAccCreate)
-        fun getBtnConfirm() = dialog.getCommonItem(btnConfirmOauth)
+        fun getBtnInfo() = dialog.getCommonItem(btnInfo)
 
         private fun <T : View> AlertDialog.getCommonItem(view: T?): T? {
             return findViewById(view?.id ?: return null)
@@ -120,6 +120,12 @@ abstract class DialogBuilder(
             val createAccount = getCommonItems(dialog).getBtnAccCreate() ?: return@let
             createAccount.nextFocusDownId = it.id
             it.nextFocusUpId = createAccount.id
+        }
+
+        displayedItems.firstOrNull()?.let {
+            val infoButton = getCommonItems(dialog).getBtnInfo() ?: return@let
+            infoButton.nextFocusDownId = it.id
+            it.nextFocusUpId = infoButton.id
         }
 
         getCommonItems(dialog).getBtnApply().id.let {

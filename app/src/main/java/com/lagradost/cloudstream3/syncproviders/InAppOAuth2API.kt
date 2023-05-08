@@ -23,6 +23,7 @@ interface InAppOAuth2API : OAuth2API {
 
     val defaultFilenameValue: String
     val defaultRedirectUrl: String
+    val infoUrl: String?
 
 
     // should launch intent to acquire token
