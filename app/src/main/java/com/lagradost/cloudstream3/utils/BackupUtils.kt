@@ -55,12 +55,13 @@ object BackupUtils {
         DATA, SETTINGS, SYNC;
 
         val prefix = "$name/"
+        val syncPrefix = "${BackupAPI.SYNC_HISTORY_PREFIX}$prefix"
     }
 
     /**
      * No sensitive or breaking data in the backup
      * */
-    private val nonTransferableKeys = listOf(
+    val nonTransferableKeys = listOf(
         // When sharing backup we do not want to transfer what is essentially the password
         ANILIST_TOKEN_KEY,
         ANILIST_CACHED_LIST,
@@ -132,7 +133,7 @@ object BackupUtils {
             return successfulRestore
         }
 
-        private fun getData(source: RestoreSource) = when (source) {
+        fun getData(source: RestoreSource) = when (source) {
             RestoreSource.SYNC -> syncMeta
             RestoreSource.DATA -> datastore
             RestoreSource.SETTINGS -> settings
@@ -194,6 +195,8 @@ object BackupUtils {
         restoreKeys: Set<String>? = null,
         vararg restoreSources: RestoreSource
     ) {
+        Log.d(BackupAPI.LOG_KEY, "will restore keys = $restoreKeys")
+
         for (restoreSource in restoreSources) {
             val restoreData = RestoreMapData()
 
@@ -346,12 +349,18 @@ object BackupUtils {
         val successfulRestore = mutableSetOf<String>()
 
         if (!restoreKeys.isNullOrEmpty()) {
-            val prefixToMatch = "${BackupAPI.SYNC_HISTORY_PREFIX}${restoreSource.prefix}"
+            var prefixToMatch = restoreSource.syncPrefix
+            var prefixToRemove = prefixToMatch
+
+            if (restoreSource == RestoreSource.SYNC) {
+                prefixToMatch = BackupAPI.SYNC_HISTORY_PREFIX
+                prefixToRemove = ""
+            }
 
             val restore = restoreKeys.filter {
                 it.startsWith(prefixToMatch)
             }.map {
-                it.removePrefix(prefixToMatch)
+                it.removePrefix(prefixToRemove)
             }
 
             restoreOnlyThese.addAll(restore)
@@ -359,19 +368,19 @@ object BackupUtils {
 
 
         map?.filter {
-            var isTransferable = it.key.isTransferable()
+            var isTransferable = it.key.withoutPrefix(restoreSource).isTransferable()
 
             if (isTransferable && restoreOnlyThese.isNotEmpty()) {
-                isTransferable = restoreOnlyThese.contains(it.key)
+                isTransferable = restoreOnlyThese.contains(it.key.withoutPrefix(restoreSource))
             }
 
             if (isTransferable) {
-                successfulRestore.add(it.key)
+                successfulRestore.add(it.key.withoutPrefix(restoreSource))
             }
 
             isTransferable
         }?.forEach {
-            setKeyRaw(it.key, it.value, restoreSource)
+            setKeyRaw(it.key.withoutPrefix(restoreSource), it.value, restoreSource)
         }
 
         return RestoreMapData(
@@ -380,3 +389,7 @@ object BackupUtils {
         )
     }
 }
+
+private fun String.withoutPrefix(restoreSource: BackupUtils.RestoreSource) =
+    // will not remove sync prefix because it wont match (its not a bug its a feature ¯\_(ツ)_/¯ )
+    removePrefix(restoreSource.prefix)

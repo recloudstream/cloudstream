@@ -113,7 +113,7 @@ object DataStore {
 
                 backupScheduler.work(
                     BackupAPI.PreferencesSchedulerData(
-                        prefs,
+                        getSyncPrefs(),
                         path,
                         oldValueExists,
                         false,
@@ -146,7 +146,7 @@ object DataStore {
 
             backupScheduler.work(
                 BackupAPI.PreferencesSchedulerData(
-                    prefs,
+                    getSyncPrefs(),
                     path,
                     oldValue,
                     newValue,

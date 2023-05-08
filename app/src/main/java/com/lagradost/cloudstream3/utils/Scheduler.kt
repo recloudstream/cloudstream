@@ -10,6 +10,7 @@ import com.lagradost.cloudstream3.syncproviders.BackupAPI.Companion.logHistoryCh
 import com.lagradost.cloudstream3.ui.home.HOME_BOOKMARK_VALUE_LIST
 import com.lagradost.cloudstream3.ui.player.PLAYBACK_SPEED_KEY
 import com.lagradost.cloudstream3.ui.player.RESIZE_MODE_KEY
+import com.lagradost.cloudstream3.utils.BackupUtils.nonTransferableKeys
 
 class Scheduler<INPUT>(
     private val throttleTimeMs: Long,
@@ -19,8 +20,11 @@ class Scheduler<INPUT>(
     companion object {
         var SCHEDULER_ID = 1
 
-        private val invalidSchedulerKeys = listOf(
+        // these will not run upload scheduler, however only `nonTransferableKeys` are not stored
+        private val invalidUploadTriggerKeys = listOf(
+            *nonTransferableKeys.toTypedArray(),
             VideoDownloadManager.KEY_DOWNLOAD_INFO,
+            DOWNLOAD_HEADER_CACHE,
             PLAYBACK_SPEED_KEY,
             HOME_BOOKMARK_VALUE_LIST,
             RESIZE_MODE_KEY
@@ -32,8 +36,6 @@ class Scheduler<INPUT>(
                 if (input == null) {
                     throw IllegalStateException()
                 }
-
-                input.syncPrefs.logHistoryChanged(input.storeKey, input.source)
 
                 AccountManager.BackupApis.forEach {
                     it.addToQueue(
@@ -52,7 +54,7 @@ class Scheduler<INPUT>(
                     return@Scheduler false
                 }
 
-                val hasInvalidKey = invalidSchedulerKeys.contains(input.storeKey)
+                val hasInvalidKey = invalidUploadTriggerKeys.contains(input.storeKey)
                 if (hasInvalidKey) {
                     return@Scheduler false
                 }
@@ -62,6 +64,7 @@ class Scheduler<INPUT>(
                     return@Scheduler false
                 }
 
+                input.syncPrefs.logHistoryChanged(input.storeKey, input.source)
                 return@Scheduler true
             }
         )

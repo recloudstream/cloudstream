@@ -52,7 +52,7 @@ interface BackupAPI<LOGIN_DATA> {
         private val ioScope = CoroutineScope(Dispatchers.IO)
 
         fun SharedPreferences.logHistoryChanged(path: String, source: BackupUtils.RestoreSource) {
-            edit().putLong("$SYNC_HISTORY_PREFIX${source.prefix}$path", System.currentTimeMillis())
+            edit().putLong("${source.syncPrefix}$path", System.currentTimeMillis())
                 .apply()
         }
     }
@@ -132,7 +132,7 @@ interface BackupAPI<LOGIN_DATA> {
 
         val executionTime = measureTimeMillis {
             result = try {
-                JSONCompare.compareJSON(old, new, JSONCompareMode.LENIENT)
+                JSONCompare.compareJSON(old, new, JSONCompareMode.NON_EXTENSIBLE)
             } catch (e: Exception) {
                 null
             }
@@ -157,7 +157,7 @@ interface BackupAPI<LOGIN_DATA> {
         }.keys
 
         val onlyLocalKeys = currentSync.keys.filter { !newSync.containsKey(it) }
-        val missingKeys = getMissingKeys(currentData, newData)
+        val missingKeys = getAllMissingKeys(currentData, newData)
 
         return (missingKeys + onlyLocalKeys + changedKeys).toSet()
     }
@@ -166,26 +166,41 @@ interface BackupAPI<LOGIN_DATA> {
         data.syncMeta._Long.orEmpty().filter { it.key.startsWith(SYNC_HISTORY_PREFIX) }
 
 
-    // 🤮
-    private fun getMissingKeys(
+    private fun getAllMissingKeys(
         old: BackupUtils.BackupFile,
         new: BackupUtils.BackupFile
-    ): List<String> = mutableListOf(
-        *getMissing(old.settings._Bool, new.settings._Bool),
-        *getMissing(old.settings._Long, new.settings._Long),
-        *getMissing(old.settings._Float, new.settings._Float),
-        *getMissing(old.settings._Int, new.settings._Int),
-        *getMissing(old.settings._String, new.settings._String),
-        *getMissing(old.settings._StringSet, new.settings._StringSet),
-        *getMissing(old.datastore._Bool, new.datastore._Bool),
-        *getMissing(old.datastore._Long, new.datastore._Long),
-        *getMissing(old.datastore._Float, new.datastore._Float),
-        *getMissing(old.datastore._Int, new.datastore._Int),
-        *getMissing(old.datastore._String, new.datastore._String),
-        *getMissing(old.datastore._StringSet, new.datastore._StringSet),
-    )
+    ): List<String> = BackupUtils.RestoreSource
+        .values()
+        .filter { it != BackupUtils.RestoreSource.SYNC }
+        .fold(mutableListOf()) { acc, source ->
+            acc.addAll(getMissingKeysPrefixed(source, old, new))
+            acc
+        }
+
+    private fun getMissingKeysPrefixed(
+        restoreSource: BackupUtils.RestoreSource,
+        old: BackupUtils.BackupFile,
+        new: BackupUtils.BackupFile
+    ): List<String> {
+        val oldSource = old.getData(restoreSource)
+        val newSource = new.getData(restoreSource)
+        val prefixToMatch = restoreSource.syncPrefix
+
+        return listOf(
+            *getMissing(oldSource._Bool, newSource._Bool),
+            *getMissing(oldSource._Long, newSource._Long),
+            *getMissing(oldSource._Float, newSource._Float),
+            *getMissing(oldSource._Int, newSource._Int),
+            *getMissing(oldSource._String, newSource._String),
+            *getMissing(oldSource._StringSet, newSource._StringSet),
+        ).map {
+            prefixToMatch + it
+        }
+    }
+
 
     private fun getMissing(old: Map<String, *>?, new: Map<String, *>?): Array<String> =
-        new.orEmpty().keys.subtract(old.orEmpty().keys).toTypedArray()
+        (new.orEmpty().keys - old.orEmpty().keys)
+            .toTypedArray()
 
 }
