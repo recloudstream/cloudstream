@@ -39,7 +39,7 @@ import java.util.Date
  *
  * | State    | Priority | Description
  * |---------:|:--------:|---------------------------------------------------------------------
- * | Progress | 4        | Implement backup before user quits application
+ * | Progress | 1        | Do not write sync meta when user is not syncing data
  * | Waiting  | 2        | Add button to manually trigger sync
  * | Waiting  | 3        | Move "https://chiff.github.io/cloudstream-sync/google-drive"
  * | Waiting  | 5        | Choose what should be synced and recheck `invalidKeys` in createBackupScheduler
@@ -49,6 +49,7 @@ import java.util.Date
  * | Solved   | 2        | Restoring backup should update view models
  * | Solved   | 1        | Check if data was really changed when calling backupscheduler.work then
  * |          |          | dont update sync meta if not needed
+ * | Solved   | 4        | Implement backup before user quits application
  */
 class GoogleDriveApi(index: Int) :
     InAppOAuth2APIManager(index),

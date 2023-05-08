@@ -102,12 +102,14 @@ interface BackupAPI<LOGIN_DATA> {
             return
         }
 
+        addToQueueNow()
+    }
+    fun addToQueueNow() {
         if (uploadJob != null && uploadJob!!.isActive) {
             Log.d(LOG_KEY, "upload is canceled, scheduling new")
             uploadJob?.cancel()
         }
 
-        // we should ensure job will before app is closed
         uploadJob = ioScope.launchSafe {
             Log.d(LOG_KEY, "upload is running now")
             uploadSyncData()
