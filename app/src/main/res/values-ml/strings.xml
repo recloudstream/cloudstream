@@ -179,4 +179,26 @@
     <string name="delayed_update_notice">പുറത്ത്പോകുന്നതോടുകൂടി ആപ് അപ്ഡേറ്റ് ആവുന്നതാണ്</string>
     <string name="select_library">ലൈബ്രറി തിരഞ്ഞെടുക്കുക</string>
     <string name="open_with">ഇത് ഉപയോഗിച്ച് തുറക്കുക</string>
+    <string name="play_trailer_button">ട്രെയിലർ പ്ലേ ചെയ്യുക</string>
+    <string name="play_livestream_button">ലൈവ് സ്ട്രീം പ്ലേ ചെയ്യുക</string>
+    <string name="filler" formatted="true">ഫില്ലർ</string>
+    <string name="duration_format" formatted="true">%d min</string>
+    <string name="play_with_app_name">ക്ലൗഡ് സ്ട്രീം ഉപയോഗിച്ച് കളിക്കുക</string>
+    <string name="home_next_random_img_des">അടുത്ത ക്രമരഹിതമായ</string>
+    <string name="episode_poster_img_des">എപ്പിസോഡ് പോസ്റ്റർ</string>
+    <string name="update_started">അപ്ഡേറ്റ് ആരംഭിച്ചു</string>
+    <string name="home_main_poster_img_des">പ്രധാന പോസ്റ്റർ</string>
+    <string name="search_poster_img_des">പോസ്റ്റർ</string>
+    <string name="skip_loading">ലോഡിംഗ് ഒഴിവാക്കുക</string>
+    <string name="search_hint_site" formatted="true">തിരയുക %s…</string>
+    <string name="next_episode_time_min_format" formatted="true">%dm</string>
+    <string name="go_back_img_des">മടങ്ങിപ്പോവുക</string>
+    <string name="preview_background_img_des">പശ്ചാത്തല പ്രിവ്യൂ</string>
+    <string name="result_poster_img_des">പോസ്റ്റർ</string>
+    <string name="home_change_provider_img_des">ദാതാവിനെ മാറ്റുക</string>
+    <string name="loading">ലോഡിംഗ്…</string>
+    <string name="browser">ബ്രൗസർ</string>
+    <string name="type_none">ഒന്നുമില്ല</string>
+    <string name="type_re_watching">വീണ്ടും കാണുക</string>
+    <string name="stream">സ്ട്രീം</string>
 </resources>

@@ -57,7 +57,7 @@
     <string name="result_open_in_browser">Megnyitás böngészőben</string>
     <string name="skip_loading">Betöltés kihagyása</string>
     <string name="result_poster_img_des">Poster</string>
-    <string name="search_poster_img_des">@string/result_poster_img_des</string>
+    <string name="search_poster_img_des">Poszter</string>
     <string name="type_watching">Nézés</string>
     <string name="type_completed">Befejezve</string>
     <string name="type_plan_to_watch">Később megnézés</string>
@@ -495,4 +495,5 @@
     <string name="skip_setup">Beállítás kihagyása</string>
     <string name="quality_hq">HQ</string>
     <string name="plugins_downloaded" formatted="true">%d letöltve</string>
+    <string name="start">Start</string>
 </resources>
