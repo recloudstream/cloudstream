@@ -58,6 +58,17 @@ interface BackupAPI<LOGIN_DATA> {
     }
 
     /**
+     * isActive is recommended to be overridden to verifiy if BackupApi is being used. if manager
+     * is not set up it won't write sync data.
+     * @see Scheduler.Companion.createBackupScheduler
+     * @see SharedPreferences.logHistoryChanged
+     */
+    var isActive: Boolean?
+    fun updateApiActiveState() {
+        this.isActive = this.isActive()
+    }
+    fun isActive(): Boolean
+    /**
      * Should download data from API and call Context.mergeBackup(incomingData: String). If data
      * does not exist on the api uploadSyncData() is recommended to call. Should be called with
      * overwrite=true when user ads new account so it would accept changes from API

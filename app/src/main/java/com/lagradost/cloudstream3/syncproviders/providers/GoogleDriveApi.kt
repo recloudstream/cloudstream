@@ -39,7 +39,6 @@ import java.util.Date
  *
  * | State    | Priority | Description
  * |---------:|:--------:|---------------------------------------------------------------------
- * | Progress | 1        | Do not write sync meta when user is not syncing data
  * | Waiting  | 2        | Add button to manually trigger sync
  * | Waiting  | 3        | Move "https://chiff.github.io/cloudstream-sync/google-drive"
  * | Waiting  | 5        | Choose what should be synced and recheck `invalidKeys` in createBackupScheduler
@@ -50,6 +49,7 @@ import java.util.Date
  * | Solved   | 1        | Check if data was really changed when calling backupscheduler.work then
  * |          |          | dont update sync meta if not needed
  * | Solved   | 4        | Implement backup before user quits application
+ * | Solved   | 1        | Do not write sync meta when user is not syncing data
  */
 class GoogleDriveApi(index: Int) :
     InAppOAuth2APIManager(index),
@@ -70,6 +70,7 @@ class GoogleDriveApi(index: Int) :
     override val defaultFilenameValue = "cloudstreamapp-sync-file"
     override val defaultRedirectUrl = "https://chiff.github.io/cloudstream-sync/google-drive"
 
+    override var isActive: Boolean? = false
     override var uploadJob: Job? = null
 
     private var tempAuthFlow: AuthorizationCodeFlow? = null
@@ -109,9 +110,10 @@ class GoogleDriveApi(index: Int) :
         )
 
         storeValue(K.TOKEN, googleTokenResponse)
+        storeValue(K.IS_READY, true)
+        updateApiActiveState()
         runDownloader(runNow = true, overwrite = true)
 
-        storeValue(K.IS_READY, true)
         tempAuthFlow = null
         return true
     }
@@ -120,7 +122,8 @@ class GoogleDriveApi(index: Int) :
     /////////////////////////////////////////
     // InAppOAuth2APIManager implementation
     override suspend fun initialize() {
-        if (loginInfo() == null) {
+        updateApiActiveState()
+        if (isActive != true) {
             return
         }
 
@@ -157,6 +160,7 @@ class GoogleDriveApi(index: Int) :
         this.tempAuthFlow = authFlow
 
         try {
+            updateApiActiveState()
             registerAccount()
 
             val url = authFlow.newAuthorizationUrl().setRedirectUri(data.redirectUrl).build()
@@ -178,6 +182,14 @@ class GoogleDriveApi(index: Int) :
     /////////////////////////////////////////
     /////////////////////////////////////////
     // BackupAPI implementation
+    override fun isActive(): Boolean {
+        return getValue<Boolean>(K.IS_READY) == true &&
+                loginInfo() != null &&
+                getDriveService() != null &&
+                AcraApplication.context != null &&
+                getLatestLoginData() != null
+    }
+
     override fun Context.createBackup(loginData: InAppOAuth2API.LoginData) {
         val drive = getDriveService() ?: return
 

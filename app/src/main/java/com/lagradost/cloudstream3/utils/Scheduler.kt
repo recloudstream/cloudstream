@@ -47,6 +47,11 @@ class Scheduler<INPUT>(
                     throw IllegalStateException()
                 }
 
+                val hasSomeActiveManagers = AccountManager.BackupApis.any { it.isActive == true }
+                if (!hasSomeActiveManagers) {
+                    return@Scheduler false
+                }
+
                 val hasInvalidKey = invalidSchedulerKeys.contains(input.storeKey)
                 if (hasInvalidKey) {
                     return@Scheduler false
