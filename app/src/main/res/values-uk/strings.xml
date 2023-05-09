@@ -453,22 +453,22 @@
     <string name="player_settings_play_in_mpv">MPV</string>
     <string name="player_settings_play_in_web">Відтворення веб-відео</string>
     <string name="player_settings_play_in_browser">Веб-браузер</string>
-    <string name="skip_type_ed">Кінець</string>
+    <string name="skip_type_ed">Ендінґ</string>
     <string name="skip_type_recap">Коротке повторення</string>
     <string name="skip_type_format" formatted="true">Пропустити %s</string>
-    <string name="skip_type_mixed_ed">Змішаний кінець</string>
+    <string name="skip_type_mixed_ed">Змішаний ендінґ</string>
     <string name="skip_type_creddits">Подяки</string>
-    <string name="skip_type_op">Опенінг</string>
+    <string name="skip_type_op">Опенінґ</string>
     <string name="skip_type_intro">Вступ</string>
     <string name="clear_history">Очистити історію</string>
     <string name="history">Історія</string>
-    <string name="enable_skip_op_from_database_des">Показувати спливаючі вікна для опенінгу/кінця</string>
+    <string name="enable_skip_op_from_database_des">Показувати спливаючі вікна для опенінґу/кінця</string>
     <string name="clipboard_too_large">Забагато тексту. Не вдалося зберегти в буфер обміну.</string>
     <string name="action_mark_as_watched">Позначити як переглянуте</string>
     <string name="confirm_exit_dialog">Ви впевнені що хочете вийти\?</string>
     <string name="yes">Так</string>
     <string name="no">Ні</string>
-    <string name="update_notification_installing">Установлення оновлення програми…</string>
+    <string name="update_notification_installing">Встановлення оновлення програми…</string>
     <string name="update_notification_failed">Не вдалося встановити нову версію програми</string>
     <string name="apk_installer_legacy">Старий</string>
     <string name="apk_installer_package_installer">Інсталятор пакетів</string>
@@ -487,7 +487,7 @@
     <string name="update_notification_downloading">Завантаження оновлення програми…</string>
     <string name="safe_mode_description">Усі розширення були вимкнені через збій, щоб допомогти вам знайти те, що стало причиною проблеми.</string>
     <string name="app_not_found_error">Програму не знайдено</string>
-    <string name="skip_type_mixed_op">Змішаний опенінг</string>
+    <string name="skip_type_mixed_op">Змішаний опенінґ</string>
     <string name="action_remove_from_watched">Видалити з переглянутого</string>
     <string name="sort_updated_old">За оновленням (від старого до нового)</string>
     <string name="sort_updated_new">За оновленням (від нового до старого)</string>

@@ -1,2 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources/>
+<resources>
+    <string name="episode_more_options_des">ଅଧିକ ଵିକଳ୍ପ</string>
+    <string name="type_watching">ଦେଖୁଛନ୍ତି</string>
+    <string name="next_episode_time_day_format" formatted="true">%dଦି %dଘ %dମି</string>
+    <string name="next_episode_time_hour_format" formatted="true">%dଘ %dମି</string>
+    <string name="next_episode_time_min_format" formatted="true">%dମି</string>
+    <string name="type_re_watching">ପୁନଃଦେଖୁଛନ୍ତି</string>
+    <string name="home_expanded_hide">ଲୁଚାଅ</string>
+    <string name="home_play">ଚଲାଅ</string>
+    <string name="home_info">ସୂଚନା</string>
+    <string name="title_home">ଗୃହ</string>
+    <string name="title_search">ସନ୍ଧାନ</string>
+    <string name="result_tags">ଧରଣ</string>
+    <string name="type_on_hold">ସ୍ଥଗିତ</string>
+    <string name="type_completed">ସାରିଛନ୍ତି</string>
+    <string name="title_settings">ସେଟିଂ</string>
+    <string name="duration_format" formatted="true">%d ମିନିଟ୍</string>
+    <string name="player_speed_text_format" formatted="true">ଵେଗ (%.2fଗୁଣ)</string>
+    <string name="type_dropped">ତ୍ୟାଗିଛନ୍ତି</string>
+    <string name="type_plan_to_watch">ଦେଖିବା ପାଇଁ ଇଚ୍ଛୁକ</string>
+    <string name="type_none">କିଛି ନାହିଁ</string>
+    <string name="home_more_info">ଅଧିକ ସୂଚନା</string>
+    <string name="cast_format" formatted="true">ପାତ୍ର: %s</string>
+    <string name="result_poster_img_des">ପୋଷ୍ଟର୍</string>
+    <string name="search_poster_img_des">ପୋଷ୍ଟର୍</string>
+    <string name="play_episode_toast">ଅଧ୍ୟାୟ ଚଲାଅ</string>
+    <string name="no_episodes_found">କୌଣସି ଅଧ୍ୟାୟ ମିଳିଲା ନାହିଁ</string>
+    <string name="episodes">ଅଧ୍ୟାୟ</string>
+    <string name="episode">ଅଧ୍ୟାୟ</string>
+    <string name="episode_action_play_in_format">%s‌ରେ ଚଲାଅ</string>
+    <string name="episode_action_play_in_browser">ବ୍ରାଉଜର୍‌ରେ ଚଲାଅ</string>
+    <string name="episode_action_download_subtitle">ଉପଶୀର୍ଷକ ଡାଉନଲୋଡ୍ କରିବା</string>
+    <string name="sync_total_episodes_some" formatted="true">/%d</string>
+    <string name="sync_total_episodes_none">/\?\?</string>
+    <string name="subscription_episode_released">ଅଧ୍ୟାୟ %d ମୁକ୍ତିଲାଭ କଲା!</string>
+    <string name="episode_action_auto_download">ସ୍ୱତଃ ଡାଉନଲୋଡ୍</string>
+    <string name="episode_action_reload_links">ଲିଙ୍କ୍‌ଗୁଡ଼ିକୁ ପୁନଃଲୋଡ୍ କରିବା</string>
+    <string name="episode_action_copy_link">ଲିଙ୍କ୍ କପି କରିନେବା</string>
+    <string name="episode_action_play_in_app">ଆପ୍‌ରେ ଚଲାଅ</string>
+    <string name="episode_action_chromecast_episode">Chromecast ଅଧ୍ୟାୟ</string>
+    <string name="episode_short">ଅ</string>
+    <string name="episode_poster_img_des">ଅଧ୍ୟାୟର ପୋଷ୍ଟର୍</string>
+    <string name="home_main_poster_img_des">ମୁଖ୍ୟ ପୋଷ୍ଟର୍</string>
+    <string name="default_subtitles">ଡିଫଲ୍ଟ</string>
+</resources>
