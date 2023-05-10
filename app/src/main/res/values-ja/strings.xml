@@ -198,4 +198,7 @@
 \nSky UK Limitedによる無脳なDMCAテイクダウンのため🤮、アプリ内でリポジトリサイトをリンクすることができません。
 \n
 \n私たちのDiscordに参加するか、オンラインで検索してください。</string>
+    <string name="preview_background_img_des">バックグラウンドをプレビュー</string>
+    <string name="play_livestream_button">ライブストリームの再生</string>
+    <string name="home_change_provider_img_des">プロバイダーの変更</string>
 </resources>
