@@ -39,7 +39,6 @@ import java.util.Date
  *
  * | State    | Priority | Description
  * |---------:|:--------:|---------------------------------------------------------------------
- * | Waiting  | 3        | Move "https://chiff.github.io/cloudstream-sync/google-drive"
  * | Someday  | 4        | Add button to manually trigger sync
  * | Someday  | 5        | Choose what should be synced and recheck `invalidKeys` in createBackupScheduler
  * | Someday  | 3        | Add option to use proper OAuth through Google Services One Tap
@@ -53,6 +52,7 @@ import java.util.Date
  * | Solved   | 1        | Fix sync/restore bugs
  * | Solved   | 1        | When scheduler has queued upload job (but is not working in backupApi
  * |          |          | yet) we should postpone download and prioritize upload
+ * | Solved   | 3        | Move "https://chiff.github.io/cloudstream-sync/google-drive"
  */
 class GoogleDriveApi(index: Int) :
     InAppOAuth2APIManager(index),
@@ -71,8 +71,8 @@ class GoogleDriveApi(index: Int) :
     override val requiresSecret = true
     override val requiresClientId = true
     override val defaultFilenameValue = "cloudstreamapp-sync-file"
-    override val defaultRedirectUrl = "https://chiff.github.io/cloudstream-sync/google-drive"
-    override val infoUrl = "https://chiff.github.io/cloudstream-sync/google-drive/help.html"
+    override val defaultRedirectUrl = "https://recloudstream.github.io/cloudstream-sync/google-drive"
+    override val infoUrl = "https://recloudstream.github.io/cloudstream-sync/google-drive/help.html"
 
     override var isActive: Boolean? = false
     override var willQueueSoon: Boolean? = false
