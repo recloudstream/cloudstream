@@ -236,6 +236,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     XStreamCdn(),
 
     StreamSB(),
+    Vidgomunimesb(),
     StreamSB1(),
     StreamSB2(),
     StreamSB3(),
@@ -275,7 +276,6 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     Uqload2(),
     Evoload(),
     Evoload1(),
-    VoeExtractor(),
     UpstreamExtractor(),
 
     Tomatomatela(),
@@ -375,6 +375,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     Vidmoly(),
     Vidmolyme(),
     Voe(),
+    Tubeless(),
     Moviehab(),
     MoviehabNet(),
     Jeniusplay(),
