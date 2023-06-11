@@ -108,12 +108,21 @@ object BackupUtils {
         @JsonProperty("_Float") val _Float: Map<String, Float>?,
         @JsonProperty("_Long") val _Long: Map<String, Long>?,
         @JsonProperty("_StringSet") val _StringSet: Map<String, Set<String>?>?,
-    )
+    ) {
+        constructor() : this(
+            mapOf(),
+            mapOf(),
+            mapOf(),
+            mapOf(),
+            mapOf(),
+            mapOf(),
+        )
+    }
 
     data class BackupFile(
         @JsonProperty("datastore") val datastore: BackupVars,
         @JsonProperty("settings") val settings: BackupVars,
-        @JsonProperty("sync-meta") val syncMeta: BackupVars,
+        @JsonProperty("sync-meta") val syncMeta: BackupVars = BackupVars(),
     ) {
         fun restore(
             ctx: Context,
