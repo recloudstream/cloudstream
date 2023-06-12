@@ -26,7 +26,7 @@ object QualityDataHelper {
     /**
      * Must be higher than amount of QualityProfileTypes
      **/
-    private const val PROFILE_COUNT = 10
+    private const val PROFILE_COUNT = 7
 
     /**
      * Unique guarantees that there will always be one of this type in the profile list.

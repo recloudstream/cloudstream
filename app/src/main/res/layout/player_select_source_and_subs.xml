@@ -22,6 +22,7 @@
             android:orientation="vertical">
 
             <LinearLayout
+                android:id="@+id/profiles_click_settings"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_rowWeight="1"
@@ -49,8 +50,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
-                    android:background="@drawable/outline_drawable"
-                    android:foreground="?attr/selectableItemBackgroundBorderless"
                     android:drawablePadding="10dp"
                     android:gravity="center"
                     android:minWidth="140dp"

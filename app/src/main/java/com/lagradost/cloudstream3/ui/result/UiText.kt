@@ -72,7 +72,7 @@ sealed class UiImage {
 
 fun ImageView?.setImage(value: UiImage?, fadeIn: Boolean = true) {
     when (value) {
-        is UiImage.Image -> setImageImage(value,fadeIn)
+        is UiImage.Image -> setImageImage(value, fadeIn)
         is UiImage.Drawable -> setImageDrawable(value)
         null -> {
             this?.isVisible = false
@@ -88,7 +88,7 @@ fun ImageView?.setImageImage(value: UiImage.Image, fadeIn: Boolean = true) {
 fun ImageView?.setImageDrawable(value: UiImage.Drawable) {
     if (this == null) return
     this.isVisible = true
-    setImageResource(value.resId)
+    this.setImage(UiImage.Drawable(value.resId))
 }
 
 @JvmName("imgNull")

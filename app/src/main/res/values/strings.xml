@@ -675,4 +675,5 @@
         \n\nNOTE: If the sum is 10 or more the player will automatically skip loading when that link is loaded!
     </string>
     <string name="qualities">Qualities</string>
+    <string name="profile_background_des">Profile background</string>
 </resources>
