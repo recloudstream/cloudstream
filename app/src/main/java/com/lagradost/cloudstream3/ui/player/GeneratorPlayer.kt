@@ -684,7 +684,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                 }
                 setProfileName(currentQualityProfile)
 
-                sourceDialog.source_settings_btt.setOnClickListener {
+                sourceDialog.profiles_click_settings.setOnClickListener {
                     val activity = activity ?: return@setOnClickListener
                     QualityProfileDialog(
                         activity,

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -7,8 +7,10 @@
     android:orientation="vertical">
 
     <LinearLayout
+        android:id="@+id/profile_text_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
         android:orientation="horizontal">
 
         <TextView
@@ -43,14 +45,18 @@
         android:id="@+id/profiles_recyclerview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_above="@+id/profile_button_bar"
+        android:layout_below="@+id/profile_text_bar"
         android:orientation="horizontal"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         tools:itemCount="4"
         tools:listitem="@layout/player_quality_profile_item" />
 
     <LinearLayout
+        android:id="@+id/profile_button_bar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
         android:layout_margin="10dp"
         android:animateLayoutChanges="true"
         android:gravity="end|bottom"
@@ -60,8 +66,8 @@
             android:id="@+id/selected_item_holder"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:alpha="0.5"
-            android:layout_weight="1">
+            android:layout_weight="1"
+            android:alpha="0.5">
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/edit_btt"
@@ -96,4 +102,4 @@
     </LinearLayout>
 
 
-</LinearLayout>
+</RelativeLayout>

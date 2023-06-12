@@ -44,12 +44,13 @@ import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.load.model.GlideUrl
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.RequestOptions.bitmapTransform
 import com.bumptech.glide.request.target.Target
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError
+import com.lagradost.cloudstream3.ui.result.UiImage
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isEmulatorSettings
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
-import com.lagradost.cloudstream3.utils.GlideOptions.bitmapTransform
 import jp.wasabeef.glide.transformations.BlurTransformation
 import kotlin.math.roundToInt
 
@@ -188,11 +189,30 @@ object UIHelper {
         fadeIn: Boolean = true,
         colorCallback: ((Palette) -> Unit)? = null
     ): Boolean {
-        if (this == null || url.isNullOrBlank()) return false
+        if (url.isNullOrBlank()) return false
+        this.setImage(UiImage.Image(url, headers, errorImageDrawable), errorImageDrawable, fadeIn, colorCallback)
+        return true
+    }
+
+    fun ImageView?.setImage(
+        uiImage: UiImage?,
+        @DrawableRes
+        errorImageDrawable: Int? = null,
+        fadeIn: Boolean = true,
+        colorCallback: ((Palette) -> Unit)? = null
+    ): Boolean {
+        if (this == null || uiImage == null) return false
+
+        val (glideImage, identifier) =
+            (uiImage as? UiImage.Drawable)?.resId?.let {
+                it to it.toString()
+            } ?: (uiImage as? UiImage.Image)?.let { image ->
+                GlideUrl(image.url) { image.headers ?: emptyMap() } to image.url
+            } ?: return false
 
         return try {
             val builder = GlideApp.with(this)
-                .load(GlideUrl(url) { headers ?: emptyMap() })
+                .load(glideImage)
                 .skipMemoryCache(true)
                 .diskCacheStrategy(DiskCacheStrategy.ALL).let { req ->
                     if (fadeIn)
@@ -211,7 +231,13 @@ object UIHelper {
                         isFirstResource: Boolean
                     ): Boolean {
                         resource?.toBitmapOrNull()
-                            ?.let { bitmap -> createPaletteAsync(url, bitmap, colorCallback) }
+                            ?.let { bitmap ->
+                                createPaletteAsync(
+                                    identifier,
+                                    bitmap,
+                                    colorCallback
+                                )
+                            }
                         return false
                     }
 
