@@ -119,16 +119,16 @@
     <string name="eigengraumode_settings">وضع إيغنغرافي</string>
     <string name="eigengraumode_settings_des">يضيف خيار السرعة في المُشغل</string>
     <string name="swipe_to_seek_settings">السحب لتقديم</string>
-    <string name="swipe_to_seek_settings_des">إسحب إلى اليسار أو اليمين للتحكم في الوقت في مُشغل الفيديو</string>
+    <string name="swipe_to_seek_settings_des">اسحب من جانب إلى آخر للتحكم في موضعك في مقطع فيديو</string>
     <string name="swipe_to_change_settings">السحب لتغيير الإعدادات</string>
-    <string name="swipe_to_change_settings_des">إسحب على الجانب الأيسر أو الأيمن لتغيير السطوع أو مستوى الصوت</string>
+    <string name="swipe_to_change_settings_des">مرر لأعلى أو لأسفل على الجانب الأيسر أو الأيمن لتغيير السطوع أو مستوى الصوت</string>
     <string name="autoplay_next_settings">تشغيل الحلقة التالية تلقائيًا</string>
     <string name="autoplay_next_settings_des">تبدأ الحلقة التالية عندما تنتهي الحالية</string>
     <string name="double_tap_to_seek_settings">النقر مرتان للتقديم للأمام أو للخلف</string>
     <string name="double_tap_to_pause_settings">الضغط مرتان لإيقاف مؤقت</string>
-    <string name="double_tap_to_seek_amount_settings">التحكم في مدى تقديم المُشغل</string>
+    <string name="double_tap_to_seek_amount_settings">التحكم في مدى تقديم المُشغل(ثوان)</string>
     <string name="double_tap_to_seek_settings_des">إضغط مرتين على الجانب الأيمن أو الأيسر للتقديم للأمام أو للخلف</string>
-    <string name="double_tap_to_pause_settings_des">إضغط في الوسط لإيقاف مؤقت</string>
+    <string name="double_tap_to_pause_settings_des">اضغط مرتين في المنتصف للتوقف</string>
     <string name="use_system_brightness_settings">استخدم سطوع النظام</string>
     <string name="use_system_brightness_settings_des">استخدم سطوع النظام في مُشغل التطبيق بدلاً من التراكب الداكن</string>
     <string name="episode_sync_settings">تحديث تقدم المشاهدة</string>
@@ -155,7 +155,7 @@
     <string name="automatic_plugin_updates">تحديث الإضافات تلقائيًا</string>
     <string name="automatic_plugin_download">تنزيل الإضافات تلقائيًا</string>
     <string name="updates_settings">التحديث التلقائي</string>
-    <string name="updates_settings_des">البحث تلقائيًا عن التحديثات الجديدة عند البداية</string>
+    <string name="updates_settings_des">ابحث تلقائيا عن التحديثات الجديدة بعد بدء التطبيق.</string>
     <string name="uprereleases_settings">التحديث إلى الاصدارات التجريبية (بيتا)</string>
     <string name="uprereleases_settings_des">البحث عن التحديثات التجريبية بدلاً من الإصدارات الكاملة فقط</string>
     <string name="github">غيت هاب</string>
@@ -218,8 +218,8 @@
     <string name="movies_singular">فيلم</string>
     <string name="tv_series_singular">مسلسل</string>
     <string name="cartoons_singular">كرتون</string>
-    <string name="anime_singular">أنمي</string>
-    <string name="ova_singular">اوفا</string>
+    <string name="anime_singular">أنيمي</string>
+    <string name="ova_singular">أوفا</string>
     <string name="torrent_singular">تورنت</string>
     <string name="documentaries_singular">وثائقي</string>
     <string name="asian_drama_singular">دراما آسيوية</string>
@@ -342,7 +342,7 @@
     <string name="all">الكل</string>
     <string name="max">الحد الاقصي</string>
     <string name="min">الحد الأدنى</string>
-    <string name="subtitles_none" translatable="false">\@string/none</string>
+    <string name="subtitles_none" translatable="false">@string/none</string>
     <string name="subtitles_outline">الخطوط المحيطة</string>
     <string name="subtitles_depressed">النمط المنخفض</string>
     <string name="subtitles_shadow">ظل</string>
@@ -366,7 +366,7 @@
     <string name="player_load_subtitles_online">تحميل من الانترنت</string>
     <string name="downloaded_file">الملف الذي تم تنزيله</string>
     <string name="actor_main">رئيسي</string>
-    <string name="actor_supporting">مساعد</string>
+    <string name="actor_supporting">ممثل مساعد</string>
     <string name="actor_background">الخلفية</string>
     <string name="home_source">مصدر</string>
     <string name="home_random">عشوائي</string>
@@ -525,12 +525,12 @@
     <string name="select_library">اختر المكتبة</string>
     <string name="browser">المتصفح</string>
     <string name="sort_updated_new">محدث (من الأحدث إلى الأقدم)</string>
-    <string name="empty_library_logged_in_message">يبدو أن هذه القائمة فارغة ، حاول التبديل إلى قائمة أخرى</string>
+    <string name="empty_library_logged_in_message">هذه القائمة فارغة ، حاول التبديل إلى قائمة أخرى.</string>
     <string name="sort_rating_desc">التقييم (من الأعلى إلى الأدنى)</string>
     <string name="sort_rating_asc">التقييم (من الأدنى إلى الأعلى)</string>
     <string name="sort_alphabetical_z">الترتيب الأبجدي (من ي إلى أ)</string>
-    <string name="empty_library_no_accounts_message">يبدو أن مكتبتك فارغة :(
-\nتسجيل الدخول إلى حساب مكتبة أو إضافة عروض إلى مكتبتك المحلية</string>
+    <string name="empty_library_no_accounts_message">مكتبتك فارغة :(
+\nقم بتسجيل الدخول على حساب مكتبة أو أضف عروضا إلى مكتبتك المحلية.</string>
     <string name="sort_updated_old">محدث (من القديم إلى الجديد)</string>
     <string name="sort_by">فرز حسب</string>
     <string name="sort">افرز</string>
@@ -557,7 +557,7 @@
     <string name="subscription_new">مشترك في %s</string>
     <string name="pref_category_bypass">تجاوز مزود خدمة الإنترنت</string>
     <string name="revert">استرجاع</string>
-    <string name="jsdelivr_enabled">فشل الوصول إلى GitHub ، وتمكين وكيل jsdelivr.</string>
+    <string name="jsdelivr_enabled">تعذر الوصول إلى جيثب. تشغيل وكيل jsDelivr …</string>
     <string name="jsdelivr_proxy_summary">تجاوز حظر GitHub باستخدام jsdelivr ، قد يتسبب في تأخير التحديثات لبضعة أيام.</string>
     <string name="jsdelivr_proxy">وكيل raw.githubusercontent.com</string>
     <string name="watch_quality_pref_data">جودة المشاهدة المفضلة (بيانات الجوال)</string>

@@ -5,8 +5,15 @@ import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.utils.*
 import java.net.URI
 
+/**
+ * Used to open the player more easily with the LinkGenerator
+ **/
+data class BasicLink(
+    val url: String,
+    val name: String? = null,
+)
 class LinkGenerator(
-    private val links: List<String>,
+    private val links: List<BasicLink>,
     private val extract: Boolean = true,
     private val referer: String? = null,
     private val isM3u8: Boolean? = null
@@ -47,7 +54,7 @@ class LinkGenerator(
         offset: Int
     ): Boolean {
         links.amap { link ->
-            if (!extract || !loadExtractor(link, referer, {
+            if (!extract || !loadExtractor(link.url, referer, {
                     subtitleCallback(PlayerSubtitleHelper.getSubtitleData(it))
                 }) {
                     callback(it to null)
@@ -57,11 +64,11 @@ class LinkGenerator(
                 callback(
                     ExtractorLink(
                         "",
-                        link,
-                        unshortenLinkSafe(link), // unshorten because it might be a raw link
+                        link.name ?: link.url,
+                        unshortenLinkSafe(link.url), // unshorten because it might be a raw link
                         referer ?: "",
                         Qualities.Unknown.value, isM3u8 ?: normalSafeApiCall {
-                            URI(link).path?.substringAfterLast(".")?.contains("m3u")
+                            URI(link.url).path?.substringAfterLast(".")?.contains("m3u")
                         } ?: false
                     ) to null
                 )

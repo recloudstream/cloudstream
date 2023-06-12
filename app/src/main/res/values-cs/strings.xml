@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--https://newbedev.com/concatenate-multiple-strings-in-xml--><resources>
+<resources>
     <!-- KEYS DON'T TRANSLATE -->
     <!-- FORMAT MIGHT TRANSLATE, WILL CAUSE CRASH IF APPLIED WRONG -->
     <string name="app_dub_sub_episode_text_format" formatted="true">%s Ep %d</string>
@@ -103,7 +103,7 @@
     <string name="continue_watching">Pokračovat ve sledování</string>
     <string name="action_remove_watching">Odebrat</string>
     <string name="action_open_watching">Další informace</string>
-    <string name="action_open_play">\@string/home_play</string>
+    <string name="action_open_play">@string/home_play</string>
     <string name="vpn_might_be_needed">Aby tento poskytovatel fungoval správně, budete možná potřebovat VPN</string>
     <string name="vpn_torrent">Tento poskytovatel je torrent, je doporučená VPN</string>
     <string name="provider_info_meta">Web neposkytnul žádná metadata, načítání videa selže, pokud na webu neexistuje.</string>
@@ -122,16 +122,16 @@
     <string name="eigengraumode_settings">Rychlostní režim</string>
     <string name="eigengraumode_settings_des">Přidá do přehrávače možnost rychlosti</string>
     <string name="swipe_to_seek_settings">Přejet pro posun</string>
-    <string name="swipe_to_seek_settings_des">Přejeďte prstem vlevo nebo vpravo pro ovládání času v přehrávači</string>
+    <string name="swipe_to_seek_settings_des">Přejeďte prstem ze strany na stranu pro ovládání své pozice ve videu</string>
     <string name="swipe_to_change_settings">Přejet pro změnu nastavení</string>
-    <string name="swipe_to_change_settings_des">Přejeďte prstem na levé nebo pravé straně pro změnu jasu nebo hlasitosti</string>
+    <string name="swipe_to_change_settings_des">Přejeďte prstem nahoru nebo dolů na levé nebo pravé straně pro změnu jasu nebo hlasitosti</string>
     <string name="double_tap_to_seek_settings">Dvojité klepnutí pro posun</string>
     <string name="double_tap_to_pause_settings">Dvojité klepnutí pro pozastavení</string>
-    <string name="double_tap_to_seek_amount_settings">Množství času k posunu</string>
+    <string name="double_tap_to_seek_amount_settings">Množství času k posunu (sekundy)</string>
     <string name="double_tap_to_seek_settings_des">Klepněte dvakrát vpravo nebo vlevo pro posun vpřed nebo vzad</string>
-    <string name="double_tap_to_pause_settings_des">Klepněte doprostřed pro pozastavení</string>
+    <string name="double_tap_to_pause_settings_des">Klepněte dvakrát doprostřed pro pozastavení</string>
     <string name="use_system_brightness_settings">Použít systémový jas</string>
-    <string name="use_system_brightness_settings_des">V přehrávači použít systémov překrytí</string>
+    <string name="use_system_brightness_settings_des">V přehrávači použít systémový jas namísto tmavého překrytí</string>
     <string name="episode_sync_settings">Aktualizovat postup sledování</string>
     <string name="episode_sync_settings_des">Automaticky synchronizovat postup sledování současné epizody</string>
     <string name="restore_settings">Obnovit data ze zálohy</string>
@@ -151,7 +151,7 @@
     <string name="bug_report_settings_on">Nebude odesílat žádná data</string>
     <string name="show_fillers_settings">Zobrazit výplňové epizody u anime</string>
     <string name="updates_settings">Zobrazit aktualizace aplikace</string>
-    <string name="updates_settings_des">Při spuštění automaticky zkontrolovat nové aktualizace</string>
+    <string name="updates_settings_des">Při spuštění aplikace automaticky zkontrolovat nové aktualizace.</string>
     <string name="uprereleases_settings">Aktualizovat na předběžná vydání</string>
     <string name="uprereleases_settings_des">Kontrolovat aktualizace předběžných vydání, místo normálních plných vydání</string>
     <string name="github">GitHub</string>
@@ -211,8 +211,8 @@
     <string name="movies_singular">Film</string>
     <string name="tv_series_singular">Seriál</string>
     <string name="cartoons_singular">Animovaný</string>
-    <string name="anime_singular">\@string/anime</string>
-    <string name="ova_singular">\@string/ova</string>
+    <string name="anime_singular">Anime</string>
+    <string name="ova_singular">OVA</string>
     <string name="torrent_singular">Torrent</string>
     <string name="documentaries_singular">Dokument</string>
     <string name="asian_drama_singular">Asijské drama</string>
@@ -472,15 +472,15 @@
     <string name="update_notification_failed">Nepodařilo se nainstalovat novou verzi aplikace</string>
     <string name="apk_installer_legacy">Původní</string>
     <string name="delayed_update_notice">Aplikace bude po ukončení aktualizována</string>
-    <string name="empty_library_no_accounts_message">Vypadá to, že vaše knihovna je prázdná :(
-\nPřihlaste se k účtu v knihovně nebo přidejte pořady do místní knihovny</string>
+    <string name="empty_library_no_accounts_message">Vaše knihovna je prázdná :(
+\nPřihlaste se k účtu v knihovně nebo přidejte pořady do místní knihovny.</string>
     <string name="select_library">Vybrat knihovnu</string>
     <string name="sort_rating_desc">Hodnocení (od nejvyššího)</string>
     <string name="sort_rating_asc">Hodnocení (od nejnižšího)</string>
     <string name="sort_alphabetical_z">Abecedně (od Z do A)</string>
     <string name="sort_by">Seřadit podle</string>
     <string name="sort">Řazení</string>
-    <string name="empty_library_logged_in_message">Vypadá to, že tento seznam je prázdný, zkuste přepnout na jiný</string>
+    <string name="empty_library_logged_in_message">Tento seznam je prázdný. Zkuste přepnout na jiný.</string>
     <string name="safe_mode_file">Nalezen soubor bezpečného režimu!
 \nDo odebrání souboru nebudeme načítat žádná rozšíření.</string>
     <string name="sort_updated_new">Aktualizováno (od nejnovějšího)</string>
@@ -548,9 +548,9 @@
     <string name="subscription_episode_released">Byla vydána epizoda %d!</string>
     <string name="subscription_list_name">Odebíráno</string>
     <string name="jsdelivr_proxy">Proxy raw.githubusercontent.com</string>
-    <string name="jsdelivr_enabled">Nepodařilo se připojit ke GitHubu, povolování proxy jsdelivr.</string>
+    <string name="jsdelivr_enabled">Nelze se připojit k serveru GitHub. Zapínání proxy jsDelivr…</string>
     <string name="watch_quality_pref_data">Upřednostněná kvalita sledování (mobilní data)</string>
     <string name="revert">Vrátit zpět</string>
-    <string name="jsdelivr_proxy_summary">Obchází blokování GitHubu pomocí jsdelivr, může způsobit zpoždění aktualizací o několik dní.</string>
+    <string name="jsdelivr_proxy_summary">Obchází blokování GitHubu pomocí jsDelivr. Může způsobit zpoždění aktualizací o několik dní.</string>
     <string name="pref_category_bypass">Obcházení ISP</string>
 </resources>

@@ -185,7 +185,7 @@ open class ParentItemAdapter(
     ) :
         RecyclerView.ViewHolder(itemView) {
         val title: TextView = itemView.home_child_more_info
-        val recyclerView: RecyclerView = itemView.home_child_recyclerview
+        private val recyclerView: RecyclerView = itemView.home_child_recyclerview
 
         fun update(expand: HomeViewModel.ExpandableHomepageList) {
             val info = expand.list

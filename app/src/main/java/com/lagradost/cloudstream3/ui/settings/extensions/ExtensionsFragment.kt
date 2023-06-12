@@ -1,6 +1,5 @@
 package com.lagradost.cloudstream3.ui.settings.extensions
 
-import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.DialogInterface
