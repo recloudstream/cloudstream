@@ -157,6 +157,28 @@ class SettingsAccount : PreferenceFragmentCompat() {
                             )
                             dialog.dismissSafe()
                         }
+
+                        val displayedItems = listOf(
+                            dialog.login_username_input,
+                            dialog.login_email_input,
+                            dialog.login_server_input,
+                            dialog.login_password_input
+                        ).filter { it.isVisible }
+
+                        displayedItems.foldRight(displayedItems.firstOrNull()) { item, previous ->
+                            item?.id?.let { previous?.nextFocusDownId = it }
+                            previous?.id?.let { item?.nextFocusUpId = it }
+                            item
+                        }
+
+                        displayedItems.firstOrNull()?.let {
+                            dialog.create_account?.nextFocusDownId = it.id
+                            it.nextFocusUpId = dialog.create_account.id
+                        }
+                        dialog.apply_btt?.id?.let {
+                            displayedItems.lastOrNull()?.nextFocusDownId = it
+                        }
+
                         dialog.text1?.text = api.name
 
                         if (api.storesPasswordInPlainText) {

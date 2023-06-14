@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--https://newbedev.com/concatenate-multiple-strings-in-xml--><resources>
+<resources>
     <!-- FORMAT MIGHT TRANSLATE, WILL CAUSE CRASH IF APPLIED WRONG -->
     <string name="extra_info_format" formatted="true" translatable="false">%d %s | %s</string>
     <string name="storage_size_format" formatted="true" translatable="false">%s • %s</string>
@@ -119,7 +119,7 @@
     <string name="continue_watching">Nastavite s gledanjem</string>
     <string name="action_remove_watching">Makni</string>
     <string name="action_open_watching">Više informacija</string>
-    <string name="action_open_play">\@string/home_play</string>
+    <string name="action_open_play">@string/home_play</string>
     <string name="vpn_might_be_needed">Za ispravan rad ovog pružatelja usluga može biti potreban VPN</string>
     <string name="vpn_torrent">Ovaj pružatelj usluga je torrent, preporučuje se VPN</string>
     <string name="provider_info_meta">Stranica ne daje metapodatke, učitavanje videozapisa neće uspjeti ako ne postoji na stranici.</string>
@@ -138,16 +138,16 @@
     <string name="eigengraumode_settings">Eigengravy način</string>
     <string name="eigengraumode_settings_des">Dodaje opciju brzine u playeru</string>
     <string name="swipe_to_seek_settings">Prijeđi prstom za traženje</string>
-    <string name="swipe_to_seek_settings_des">Prijeđi prstom ulijevo ili udesno za kontrolu vremena u videoplayeru</string>
+    <string name="swipe_to_seek_settings_des">Prijeđite prstom ulijevo ili udesno kako biste kontrolirali player</string>
     <string name="swipe_to_change_settings">Klizni za promjenu postavki</string>
-    <string name="swipe_to_change_settings_des">Prijeđi prstom ulijevo ili udesno za promjenu svjetline ili glasnoće</string>
+    <string name="swipe_to_change_settings_des">Kliznite prstom ulijevo ili udesno za promjenu svjetline ili glasnoće</string>
     <string name="autoplay_next_settings">Automatski započni sljedeću epizodu</string>
     <string name="autoplay_next_settings_des">Započne sljedeću epizodu kad trenutna završi</string>
     <string name="double_tap_to_seek_settings">Dodirni dvaput za traženje</string>
     <string name="double_tap_to_pause_settings">Dodirni dvaput za pauziranje</string>
-    <string name="double_tap_to_seek_amount_settings">Iznos preskakanja u playeru</string>
+    <string name="double_tap_to_seek_amount_settings">Iznos preskakanja u playeru (Sekunde)</string>
     <string name="double_tap_to_seek_settings_des">Dvaput dodirni desnu ili lijevu stranu ekrana za pomicanje naprijed ili natrag</string>
-    <string name="double_tap_to_pause_settings_des">Dodirni u sredinu zaslona za pauziranje</string>
+    <string name="double_tap_to_pause_settings_des">Dodirnite dvaput u sredinu zaslona za pauziranje</string>
     <string name="use_system_brightness_settings">Koristi svijetlinu u sustavu</string>
     <string name="use_system_brightness_settings_des">Koristi svjetlinu sustava u playeru aplikacija umjesto tamnog preklopa</string>
     <string name="episode_sync_settings">Ažuriraj napredak gledanja</string>
@@ -173,7 +173,7 @@
     <string name="pref_filter_search_quality">Sakrij odabranu kvalitetu videozapisa u rezultatima pretraživanja</string>
     <string name="automatic_plugin_updates">Automatsko ažuriranje dodataka</string>
     <string name="updates_settings">Prikaži ažuriranja aplikacije</string>
-    <string name="updates_settings_des">Automatski traži nova ažuriranja pri pokretanju aplikacije</string>
+    <string name="updates_settings_des">Automatski traži nova ažuriranja nakon pokretanja aplikacije.</string>
     <string name="uprereleases_settings">Ažuriranje na predizdanja</string>
     <string name="uprereleases_settings_des">Tražite ažuriranja prije izdanja umjesto samo potpunih izdanja</string>
     <string name="github">Github</string>
@@ -238,8 +238,8 @@
     <string name="movies_singular">Film</string>
     <string name="tv_series_singular">Serija</string>
     <string name="cartoons_singular">Crtić</string>
-    <string name="anime_singular">\@string/anime</string>
-    <string name="ova_singular">\@string/ova</string>
+    <string name="anime_singular">Anime</string>
+    <string name="ova_singular">OVA</string>
     <string name="torrent_singular">Torrent</string>
     <string name="documentaries_singular">Dokumentarac</string>
     <string name="asian_drama_singular">Azijska drama</string>
@@ -299,7 +299,7 @@
     <string name="legal_notice_text" translatable="false">Any legal issues regarding the content on this application should be taken up with the actual file hosts and providers themselves as we are not affiliated with them. In case of copyright infringement, please directly contact the responsible parties or the streaming websites. The app is purely for educational and personal use. CloudStream 3 does not host any content on the app, and has no control over what media is put up or taken down. CloudStream 3 functions like any other search engine, such as Google. CloudStream 3 does not host, upload or manage any videos, films or content. It simply crawls, aggregates and displayes links in a convenient, user-friendly interface. It merely scrapes 3rd-party websites that are publicly accessable via any regular web browser. It is the responsibility of user to avoid any actions that might violate the laws governing his/her locality. Use CloudStream 3 at your own risk.</string>
     <string name="category_general">Općenito</string>
     <string name="random_button_settings">Random gumb</string>
-    <string name="random_button_settings_desc">Prikaži random gumb na početnoj stranici</string>
+    <string name="random_button_settings_desc">Prikaži gumb za slučajni odabir reprodukcija na početnoj stranici</string>
     <string name="provider_lang_settings">Jezici pružatelja usluga</string>
     <string name="app_layout">Izgled aplikacije</string>
     <string name="preferred_media_settings">Preferirani mediji</string>
@@ -526,9 +526,9 @@
     <string name="sort_alphabetical_z">Abecedno (Ž do A)</string>
     <string name="select_library">Odaberite biblioteku</string>
     <string name="open_with">Otvori sa</string>
-    <string name="empty_library_no_accounts_message">Čini se da vam je biblioteka prazna :(
-\nPrijavite se na račun biblioteke ili dodajte serije u svoju lokalnu biblioteku</string>
-    <string name="empty_library_logged_in_message">Čini se da je ova lista prazna, pokušajte se prebaciti na drugu</string>
+    <string name="empty_library_no_accounts_message">Vaša je biblioteka prazna :(
+\nPrijavite se na račun biblioteke ili dodajte emisije u svoju lokalnu biblioteku.</string>
+    <string name="empty_library_logged_in_message">Ova je lista prazna. Pokušajte se prebaciti na jednu drugu listu.</string>
     <string name="safe_mode_file">Pronađena datoteka sigurnog načina rada!
 \nNe učitavaju se ekstenzije pri pokretanju dok se datoteka ne ukloni.</string>
     <string name="android_tv_interface_on_seek_settings">Prikazan player- iznos preskakanja</string>
@@ -543,7 +543,7 @@
     <string name="test_failed">Neuspješno</string>
     <string name="stop">Stop</string>
     <string name="category_provider_test">Test pružatelja usluga</string>
-    <string name="subscription_in_progress_notification">Ažuriram pretplaćene serije</string>
+    <string name="subscription_in_progress_notification">Ažuriranje pretplaćenih emisija</string>
     <string name="subscription_episode_released">Epizoda %d izbačena!</string>
     <string name="subscription_list_name">Pretplaćeno</string>
     <string name="subscription_new">Pretplaćen na %s</string>
@@ -551,6 +551,7 @@
     <string name="revert">Vraćanje</string>
     <string name="pref_category_bypass">ISP zaobilaznice</string>
     <string name="jsdelivr_proxy">raw.githubusercontent.com Proxy</string>
-    <string name="jsdelivr_enabled">Neuspješno dohvaćanje GitHuba, omogućavanje jsdelivr proxyja.</string>
-    <string name="jsdelivr_proxy_summary">Zaobilazi blokiranje GitHuba pomoću jsdelivr, može uzrokovati odgode ažuriranja za nekoliko dana.</string>
+    <string name="jsdelivr_enabled">Neuspješno dohvaćanje GitHuba. Uključuje se jsdelivr proxy …</string>
+    <string name="jsdelivr_proxy_summary">Zaobilazi blokiranje GitHuba koristeći jsdelivr. Može odgoditi ažuriranja za nekoliko dana.</string>
+    <string name="watch_quality_pref_data">Preferirana kvaliteta gledanja (podatkovna mobilna mreža)</string>
 </resources>

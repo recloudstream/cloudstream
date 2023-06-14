@@ -57,6 +57,7 @@ fun getCurrentLocale(context: Context): String {
 val appLanguages = arrayListOf(
     /* begin language list */
     Triple("", "العربية", "ar"),
+    Triple("", "ars", "ars"),
     Triple("", "български", "bg"),
     Triple("", "বাংলা", "bn"),
     Triple("\uD83C\uDDE7\uD83C\uDDF7", "português brasileiro", "bp"),
@@ -76,11 +77,15 @@ val appLanguages = arrayListOf(
     Triple("\uD83C\uDDEE\uD83C\uDDF1", "עברית", "iw"),
     Triple("", "日本語 (にほんご)", "ja"),
     Triple("", "ಕನ್ನಡ", "kn"),
+    Triple("", "한국어", "ko"),
+    Triple("", "latviešu valoda", "lv"),
     Triple("", "македонски", "mk"),
     Triple("", "മലയാളം", "ml"),
+    Triple("", "bahasa Melayu", "ms"),
     Triple("", "Nederlands", "nl"),
     Triple("", "norsk nynorsk", "nn"),
     Triple("", "norsk bokmål", "no"),
+    Triple("", "ଓଡ଼ିଆ", "or"),
     Triple("", "polski", "pl"),
     Triple("\uD83C\uDDF5\uD83C\uDDF9", "português", "pt"),
     Triple("\uD83E\uDD8D", "mmmm... monke", "qt"),
@@ -96,7 +101,7 @@ val appLanguages = arrayListOf(
     Triple("", "اردو", "ur"),
     Triple("", "Tiếng Việt", "vi"),
     Triple("", "中文", "zh"),
-    Triple("\uD83C\uDDF9\uD83C\uDDFC", "文言", "zh-rTW"),
+    Triple("\uD83C\uDDF9\uD83C\uDDFC", "正體中文(臺灣)", "zh-rTW"),
 /* end language list */
 ).sortedBy { it.second.lowercase() } //ye, we go alphabetical, so ppl don't put their lang on top
 

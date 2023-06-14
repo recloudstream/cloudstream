@@ -199,17 +199,13 @@
                                     android:id="@+id/result_back"
                                     android:layout_width="30dp"
                                     android:layout_height="30dp"
-
                                     android:layout_gravity="center_vertical"
                                     android:layout_marginEnd="10dp"
-
                                     android:background="?android:attr/selectableItemBackgroundBorderless"
                                     android:clickable="true"
                                     android:contentDescription="@string/go_back"
-
                                     android:focusable="true"
                                     android:gravity="center_vertical"
-
                                     android:nextFocusDown="@id/result_description"
                                     android:src="@drawable/ic_baseline_arrow_back_24"
                                     app:tint="?attr/white" />
@@ -385,8 +381,8 @@
 
 
                     <com.google.android.material.chip.ChipGroup
-                        style="@style/ChipParent"
                         android:id="@+id/result_tag"
+                        style="@style/ChipParent"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
 
@@ -423,11 +419,11 @@
 
 
                         <LinearLayout
-                            android:animateLayoutChanges="true"
                             android:id="@+id/result_movie_parent"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="5dp"
+                            android:animateLayoutChanges="true"
                             android:orientation="horizontal"
                             tools:visibility="visible">
 
@@ -568,6 +564,7 @@
                                 android:layout_weight="1"
                                 android:minWidth="250dp"
                                 android:nextFocusLeft="@id/result_movie_progress_downloaded_holder"
+                                android:nextFocusRight="@id/result_bookmark_button"
                                 android:nextFocusDown="@id/result_resume_series_button_play"
                                 android:text="@string/type_none"
                                 android:visibility="visible" />

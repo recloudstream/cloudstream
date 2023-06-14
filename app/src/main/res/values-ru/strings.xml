@@ -142,10 +142,10 @@
     <string name="eigengraumode_settings_des">Добавляет опцию скорости в проигрывателе</string>
     <string name="swipe_to_seek_settings">Проведите пальцем для поиска</string>
     <string name="swipe_to_change_settings">Проведите пальцем для изменения настроек</string>
-    <string name="swipe_to_change_settings_des">Проведите пальцем по левой или правой стороне для изменения яркости или громкости</string>
+    <string name="swipe_to_change_settings_des">Проведите вверх или вниз по левой или правой стороне, чтобы изменить яркость или громкость</string>
     <string name="autoplay_next_settings">Автопроиграть следующего серия</string>
     <string name="play_torrent_button">Поток торрент</string>
-    <string name="swipe_to_seek_settings_des">Проведите пальцем влево или вправо, чтобы управлять временем в видеоплеере</string>
+    <string name="swipe_to_seek_settings_des">Проведите пальцем из стороны в сторону, чтобы управлять свое место в видеоролике</string>
     <string name="autoplay_next_settings_des">Начните следующий серию, когда закончится текущий</string>
     <string name="restore_success">Загружена резервная копия</string>
     <string name="restore_failed_format" formatted="true">Не удалось восстановить данные из %s</string>
@@ -159,7 +159,7 @@
     <string name="automatic_plugin_updates">Автоматическое обновление плагинов</string>
     <string name="automatic_plugin_download">Автоматическая загрузка плагинов</string>
     <string name="updates_settings">Показать обновления приложения</string>
-    <string name="updates_settings_des">Автоматически проверять обновления при старте</string>
+    <string name="updates_settings_des">Автоматически проверять обновления при старте приложения.</string>
     <string name="uprereleases_settings">Обновится до пре-релиза</string>
     <string name="apk_installer_settings">APK установщик</string>
     <string name="github">Github</string>
@@ -227,7 +227,7 @@
     <string name="used_storage">Использовано</string>
     <string name="double_tap_to_pause_settings">Двойное нажатие для паузы</string>
     <string name="double_tap_to_seek_settings_des">Коснитесь дважды правой или левой стороны для поиска вперед или назад</string>
-    <string name="double_tap_to_pause_settings_des">Нажмите в центре для паузы</string>
+    <string name="double_tap_to_pause_settings_des">Нажмите дважды в центре, чтобы сделать паузу</string>
     <string name="use_system_brightness_settings">Использовать системную яркость</string>
     <string name="episode_sync_settings_des">Автоматически синхронизировать текущий прогресс эпизода</string>
     <string name="backup_failed_error_format">Ошибка резервного копирования %s</string>
@@ -318,7 +318,7 @@
     <string name="skip_type_creddits">Титры</string>
     <string name="action_mark_as_watched">Отметить как просмотренное</string>
     <string name="limit_title_rez">Разрешение видеоплеера</string>
-    <string name="watch_quality_pref">Желаемое качество видео</string>
+    <string name="watch_quality_pref">Предпочтительное качество видео (WiFi)</string>
     <string name="limit_title">Максимум символов</string>
     <string name="video_buffer_length_settings">Длинна буфера</string>
     <string name="video_buffer_disk_settings">Кеш видео на диске</string>
@@ -363,7 +363,7 @@
     <string name="extensions">Расширения</string>
     <string name="repository_url_hint">URL репозитория</string>
     <string name="plugin_loaded">Плагин загружен</string>
-    <string name="action_open_play">\@string/home_play</string>
+    <string name="action_open_play">@string/home_play</string>
     <string name="double_tap_to_seek_settings">Перемотка двойным нажатием</string>
     <string name="sync_total_episodes_none">/\?\?</string>
     <string name="sync_total_episodes_some" formatted="true">/%d</string>
@@ -408,8 +408,8 @@
     <string name="subtitles_example_text">Съешь ещё этих мягких французских булок, да выпей же чаю</string>
     <string name="recommended">Рекомендуется</string>
     <string name="player_loaded_subtitles" formatted="true">Загружено %s</string>
-    <string name="anime_singular">\@нить/аниме</string>
-    <string name="ova_singular">\@нить/ova</string>
+    <string name="anime_singular">Аниме</string>
+    <string name="ova_singular">OVA</string>
     <string name="show_dub">Этикетка Dub</string>
     <string name="site">Сайт</string>
     <string name="pref_category_ui_features">Функции</string>
@@ -439,8 +439,8 @@
     <string name="sort_alphabetical_z">Алфавитный (Я до А)</string>
     <string name="select_library">Выбрать библиотеку</string>
     <string name="open_with">Открыть с</string>
-    <string name="empty_library_no_accounts_message">Похоже, ваша библиотека пуста :(
-\nВойдите в аккаунт с библиотекой или добавьте сериалы в локальную библиотеку</string>
+    <string name="empty_library_no_accounts_message">Ваша библиотека пуста :(
+\nВойдите в аккаунт с библиотекой или добавьте сериалы в локальную библиотеку.</string>
     <string name="sort">Сортировка</string>
     <string name="view_public_repositories_button_short">Открытый список</string>
     <string name="sort_rating_desc">Рейтинг (высокий - низкий)</string>
@@ -487,7 +487,7 @@
     <string name="safe_mode_file">Файл безопасного режима найден!
 \nНе загружаются никакие расширения при запуске, пока файл не будет удален.</string>
     <string name="delayed_update_notice">Приложение будет обновлено после выхода</string>
-    <string name="empty_library_logged_in_message">Похоже, этот список пуст, попробуйте переключиться на другой</string>
+    <string name="empty_library_logged_in_message">Этот список пуст, попробуйте переключиться на другой.</string>
     <string name="uppercase_all_subtitles">Все субтитры заглавными</string>
     <string name="enable_skip_op_from_database_des">Показывать всплывающие окна для пропуска вступления/заключения</string>
     <string name="subtitles_filter_lang">Фильтровать по предпочитаемому языку медиа</string>
@@ -501,7 +501,7 @@
     <string name="episode_action_reload_links">Перезагрузить ссылки</string>
     <string name="preferred_media_settings">Предпочтительные медиа</string>
     <string name="subtitles_depressed">Опущенные</string>
-    <string name="double_tap_to_seek_amount_settings">Объем перемотки плеера</string>
+    <string name="double_tap_to_seek_amount_settings">Объем перемотки плеера (секундах)</string>
     <string name="android_tv_interface_on_seek_settings_summary">Объем перемотка, используемый, когда плеер виден</string>
     <string name="android_tv_interface_on_seek_settings">Плеер показан - Перемотки объем</string>
     <string name="android_tv_interface_off_seek_settings">Плеер спрятан - Перемотки объем</string>
@@ -518,4 +518,15 @@
     <string name="test_failed">Неудачный</string>
     <string name="stop">Прекратить</string>
     <string name="restart">Перезапустить</string>
+    <string name="revert">Вернуться</string>
+    <string name="subscription_new">Подписался на %s</string>
+    <string name="watch_quality_pref_data">Предпочтительное качество видео (Мобильный интернет)</string>
+    <string name="jsdelivr_proxy">raw.githubusercontent.com Прокси-сервер</string>
+    <string name="jsdelivr_enabled">Не удалось подключиться к GitHub. Включаем проксирование через jsdelivr…</string>
+    <string name="subscription_episode_released">Эпизод %d выпущен!</string>
+    <string name="pref_category_bypass">Обходы провайдера</string>
+    <string name="subscription_in_progress_notification">Обновление подписки на фильмы и сериалы</string>
+    <string name="jsdelivr_proxy_summary">Обход ограничения доступа к GitHub с помощью jsDelivr может задержать обновления на несколько дней.</string>
+    <string name="subscription_list_name">Подписные</string>
+    <string name="subscription_deleted">Отказались от подписки на %s</string>
 </resources>

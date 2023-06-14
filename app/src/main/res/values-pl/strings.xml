@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--https://newbedev.com/concatenate-multiple-strings-in-xml--><resources>
+<resources>
     <string name="player_speed_text_format" formatted="true">Prędkość (%.2fx)</string>
     <string name="rated_format" formatted="true">Ocena: %.1f</string>
     <string name="new_update_format" formatted="true">Znaleziono nową aktualizację!
@@ -117,16 +117,16 @@
     <string name="eigengraumode_settings">Tryb Eigengravy</string>
     <string name="eigengraumode_settings_des">Ustawienia prędkości</string>
     <string name="swipe_to_seek_settings">Przesuń aby przewinąć</string>
-    <string name="swipe_to_seek_settings_des">Przesuń w lewo lub prawo aby kontrolować czas</string>
+    <string name="swipe_to_seek_settings_des">Przesuwaj w lewo lub prawo, aby kontrolować czas filmu</string>
     <string name="swipe_to_change_settings">Przesuń aby zmienić ustawienia</string>
-    <string name="swipe_to_change_settings_des">Przesuń góra-dół z lewej lub prawej aby zmienić jasność i głośność</string>
+    <string name="swipe_to_change_settings_des">Przesuwaj góra-dół z lewej lub prawej strony ekranu aby zmienić jasność czy głośność</string>
     <string name="autoplay_next_settings">Autoodtwarzanie następnego odcinka</string>
     <string name="autoplay_next_settings_des">Rozpocznij następny odcinek po skończeniu bieżącego</string>
-    <string name="double_tap_to_seek_amount_settings">Czas przewinięcia przy podwójnym kliknięciu</string>
+    <string name="double_tap_to_seek_amount_settings">Czas przewinięcia przy podwójnym kliknięciu (w sekundach)</string>
     <string name="double_tap_to_seek_settings">Podwójne kliknięcie aby przewinąć</string>
     <string name="double_tap_to_seek_settings_des">Kliknij 2 razy z prawej lub lewej strony aby przewinąć</string>
     <string name="double_tap_to_pause_settings">Kliknij dwukrotnie aby wstrzymać</string>
-    <string name="double_tap_to_pause_settings_des">Kliknij na środku, aby zatrzymać wideo</string>
+    <string name="double_tap_to_pause_settings_des">Kliknij dwukrotnie na środku, aby zatrzymać wideo</string>
     <string name="use_system_brightness_settings">Użyj jasności systemowej</string>
     <string name="use_system_brightness_settings_des">Użyj jasności systemowej w odtwarzaczu aplikacji zamiast ciemnej nakładki</string>
     <string name="episode_sync_settings">Aktualizuj postęp oglądania</string>
@@ -153,7 +153,7 @@
     <string name="automatic_plugin_updates">Automatyczne aktualizacje rozszerzeń</string>
     <string name="automatic_plugin_download">Automatyczne pobieranie rozszerzeń</string>
     <string name="updates_settings">Pokazuj aktualizacje</string>
-    <string name="updates_settings_des">Automatycznie wyszukuj aktualizacje przy starcie</string>
+    <string name="updates_settings_des">Automatycznie wyszukuj aktualizacje przy starcie.</string>
     <string name="uprereleases_settings">Aktualizuj do wersji beta</string>
     <string name="uprereleases_settings_des">Wyszukuj wersji beta, zamiast oficjalnych wydań</string>
     <string name="github">Github</string>
@@ -254,7 +254,7 @@
     <string name="dont_show_again">Nie pokazuj ponownie</string>
     <string name="skip_update">Pomiń tę aktualizację</string>
     <string name="update">Aktualizacja</string>
-    <string name="watch_quality_pref">Domyślna jakość</string>
+    <string name="watch_quality_pref">Domyślna jakość (WiFi)</string>
     <string name="limit_title">Maksymalna ilość znaków w tytule odtwarzacza</string>
     <string name="limit_title_rez">Rozdzielczość odtwarzacza wideo</string>
     <string name="video_buffer_size_settings">Rozmiar bufora wideo</string>
@@ -455,7 +455,7 @@
     <string name="apk_installer_settings">Instalator APK</string>
     <string name="apk_installer_settings_des">Niektóre telefony nie obsługują nowego instalatora pakietów. Wypróbuj tryb legacy, jeśli aktualizacje nie zostaną zainstalowane.</string>
     <string name="example_password">password123</string>
-    <string name="ova_singular">\@string/ova</string>
+    <string name="ova_singular">@string/ova</string>
     <string name="example_site_name">MojaFajnaWitryna</string>
     <string name="example_username">MyCoolUsername</string>
     <string name="example_ip">127.0.0.1</string>
@@ -463,9 +463,9 @@
     <string name="example_site_url">przyklad.pl</string>
     <string name="sync_total_episodes_none">/\?\?</string>
     <string name="apk_installer_package_installer">Instalator pakietów</string>
-    <string name="action_open_play">\@string/home_play</string>
+    <string name="action_open_play">@string/home_play</string>
     <string name="example_email">hello@world.com</string>
-    <string name="anime_singular">\@string/anime</string>
+    <string name="anime_singular">@string/anime</string>
     <string name="skip_type_op">Opening</string>
     <string name="skip_type_ed">Ending</string>
     <string name="skip_type_mixed_op">Mixed opening</string>
@@ -504,9 +504,9 @@
     <string name="sort_alphabetical_z">Alfabetycznie (od Z do A)</string>
     <string name="select_library">Wybierz bibliotekę</string>
     <string name="library">Biblioteka</string>
-    <string name="empty_library_no_accounts_message">Wygląda na to, że twoja biblioteka jest pusta :(
-\nZaloguj się na swoje konto lub dodaj programy do swojej lokalnej biblioteki</string>
-    <string name="empty_library_logged_in_message">Wygląda na to, że ta lista jest pusta, spróbuj przełączyć się na inną</string>
+    <string name="empty_library_no_accounts_message">Twoja biblioteka jest pusta :(
+\nZaloguj się na swoje konto lub dodaj programy do swojej lokalnej biblioteki.</string>
+    <string name="empty_library_logged_in_message">Ta lista jest pusta. Spróbuj przełączyć się na inną.</string>
     <string name="safe_mode_file">Znaleziono plik trybu bezpiecznego.
 \nRozszerzenia nie zostaną wczytane, dopóki plik nie zostanie usunięty.</string>
     <string name="android_tv_interface_on_seek_settings_summary">Używana ilość przewijania, gdy widoczny jest odtwarzacz</string>
@@ -529,6 +529,7 @@
     <string name="subscription_new">Zasubskrybowano %s</string>
     <string name="subscription_deleted">Anulowano subskrypcję %s</string>
     <string name="subscription_episode_released">Został wydany odcinek %d!</string>
-    <string name="jsdelivr_proxy_summary">Obchodzi blokadę GitHuba za pomocą jsdelivr, może spowodować opóźnienie aktualizacji o kilka dni.</string>
-    <string name="jsdelivr_enabled">Nie udało się połączyć z GitHub, włączono serwer pośredniczący jsdelivr.</string>
+    <string name="jsdelivr_proxy_summary">Obchodzi blokadę GitHuba za pomocą jsDelivr. może spowodować opóźnienie aktualizacji o kilka dni.</string>
+    <string name="jsdelivr_enabled">Nie udało się połączyć z GitHub, włączono serwer pośredniczący jsDelivr…</string>
+    <string name="watch_quality_pref_data">Domyślna jakość (dane mobilne)</string>
 </resources>

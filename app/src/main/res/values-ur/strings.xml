@@ -230,7 +230,7 @@
     <string name="tv_series_singular">سلسلہ</string>
     <string name="cartoons_singular">کارٹون</string>
     <string name="anime_singular">انیمی</string>
-    <string name="ova_singular">\@string/اووا</string>
+    <string name="ova_singular">اووا</string>
     <string name="torrent_singular">ٹورینٹ</string>
     <string name="documentaries_singular">دستاویزی فلم</string>
     <string name="asian_drama_singular">ایشیائی ڈرامے</string>

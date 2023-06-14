@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="episode_more_options_des">ଅଧିକ ଵିକଳ୍ପ</string>
+    <string name="type_watching">ଦେଖୁଛନ୍ତି</string>
+    <string name="next_episode_time_day_format" formatted="true">%dଦି %dଘ %dମି</string>
+    <string name="next_episode_time_hour_format" formatted="true">%dଘ %dମି</string>
+    <string name="next_episode_time_min_format" formatted="true">%dମି</string>
+    <string name="type_re_watching">ପୁନଃଦେଖୁଛନ୍ତି</string>
+    <string name="home_expanded_hide">ଲୁଚାଅ</string>
+    <string name="home_play">ଚଲାଅ</string>
+    <string name="home_info">ସୂଚନା</string>
+    <string name="title_home">ଗୃହ</string>
+    <string name="title_search">ସନ୍ଧାନ</string>
+    <string name="result_tags">ଧରଣ</string>
+    <string name="type_on_hold">ସ୍ଥଗିତ</string>
+    <string name="type_completed">ସାରିଛନ୍ତି</string>
+    <string name="title_settings">ସେଟିଂ</string>
+    <string name="duration_format" formatted="true">%d ମିନିଟ୍</string>
+    <string name="player_speed_text_format" formatted="true">ଵେଗ (%.2fଗୁଣ)</string>
+    <string name="type_dropped">ତ୍ୟାଗିଛନ୍ତି</string>
+    <string name="type_plan_to_watch">ଦେଖିବା ପାଇଁ ଇଚ୍ଛୁକ</string>
+    <string name="type_none">କିଛି ନାହିଁ</string>
+    <string name="home_more_info">ଅଧିକ ସୂଚନା</string>
+    <string name="cast_format" formatted="true">ପାତ୍ର: %s</string>
+    <string name="result_poster_img_des">ପୋଷ୍ଟର୍</string>
+    <string name="search_poster_img_des">ପୋଷ୍ଟର୍</string>
+    <string name="play_episode_toast">ଅଧ୍ୟାୟ ଚଲାଅ</string>
+    <string name="no_episodes_found">କୌଣସି ଅଧ୍ୟାୟ ମିଳିଲା ନାହିଁ</string>
+    <string name="episodes">ଟି ଅଧ୍ୟାୟ</string>
+    <string name="episode">ଟିଏ ଅଧ୍ୟାୟ</string>
+    <string name="episode_action_play_in_format">%s‌ରେ ଚଲାଅ</string>
+    <string name="episode_action_play_in_browser">ବ୍ରାଉଜର୍‌ରେ ଚଲାଅ</string>
+    <string name="episode_action_download_subtitle">ଉପଶୀର୍ଷକ ଡାଉନଲୋଡ୍ କରିବା</string>
+    <string name="sync_total_episodes_some" formatted="true">/%d</string>
+    <string name="sync_total_episodes_none">/\?\?</string>
+    <string name="subscription_episode_released">ଅଧ୍ୟାୟ %d ମୁକ୍ତିଲାଭ କଲା!</string>
+    <string name="episode_action_auto_download">ସ୍ୱତଃ ଡାଉନଲୋଡ୍</string>
+    <string name="episode_action_reload_links">ଲିଙ୍କ୍‌ଗୁଡ଼ିକୁ ପୁନଃଲୋଡ୍ କରିବା</string>
+    <string name="episode_action_copy_link">ଲିଙ୍କ୍ କପି କରିନେବା</string>
+    <string name="episode_action_play_in_app">ଆପ୍‌ରେ ଚଲାଅ</string>
+    <string name="episode_action_chromecast_episode">Chromecast ଅଧ୍ୟାୟ</string>
+    <string name="episode_short">ଅ</string>
+    <string name="episode_poster_img_des">ଅଧ୍ୟାୟର ପୋଷ୍ଟର୍</string>
+    <string name="home_main_poster_img_des">ମୁଖ୍ୟ ପୋଷ୍ଟର୍</string>
+    <string name="default_subtitles">ଡିଫଲ୍ଟ</string>
+    <string name="extension_language">ଭାଷା</string>
+    <string name="no">ନାହିଁ</string>
+    <string name="extension_description">ଵର୍ଣ୍ଣନା</string>
+    <string name="yes">ହଁ</string>
+    <string name="library">ଲାଇବ୍ରେରୀ</string>
+    <string name="history">ଇତିଵୃତ୍ତି</string>
+    <string name="extension_authors">ଲେଖକ</string>
+    <string name="skip_type_format" formatted="true">%s ବାଦ୍ ଦିଅ</string>
+    <string name="subs_subtitle_languages">ଉପଶୀର୍ଷକ ଭାଷା</string>
+    <string name="single_plugin_disabled" formatted="true">%s (ଅକ୍ଷମ)</string>
+    <string name="extension_status">ସ୍ଥିତି</string>
+    <string name="extension_size">ଆକାର</string>
+    <string name="extension_types">ସମର୍ଥିତ</string>
+    <string name="hls_playlist">HLS ଚାଳନାତାଲିକା</string>
+    <string name="player_settings_play_in_app">ଅନ୍ତଃ-ଚାଳକ</string>
+    <string name="skip_type_op">ଆଦ୍ୟ</string>
+    <string name="skip_type_ed">ପ୍ରାନ୍ତ</string>
+    <string name="app_not_found_error">ଆପ୍ ମିଳିଲା ନାହିଁ</string>
+    <string name="all_languages_preference">ସବୁ ଭାଷା</string>
+    <string name="player_settings_play_in_vlc">VLC</string>
+    <string name="player_settings_play_in_mpv">MPV</string>
+    <string name="skip_type_mixed_ed">ମିଶ୍ରିତ ପ୍ରାନ୍ତ</string>
+    <string name="skip_type_mixed_op">ମିଶ୍ରିତ ଆଦ୍ୟ</string>
+    <string name="skip_type_creddits">ଶ୍ରେୟ</string>
+    <string name="skip_type_intro">ଉପକ୍ରମ</string>
+    <string name="provider_languages_tip">ଏହି ଭାଷାଗୁଡ଼ିକରେ ଵିଡ଼ିଓ ଦେଖନ୍ତୁ</string>
+    <string name="extension_version">ସଂସ୍କରଣ</string>
+    <string name="app_language">ଆପ୍ ଭାଷା</string>
+    <string name="play_episode">ଅଧ୍ୟାୟ ଚଲାଅ</string>
+    <string name="season_short">ଋ</string>
+    <string name="status_ongoing">ଚଳିତ</string>
+    <string name="copy_link_toast">ଲିଙ୍କ୍ କ୍ଲିପ୍‌ବୋର୍ଡରେ କପି କରିନିଆଗଲା</string>
+    <string name="movies">ଚଳଚ୍ଚିତ୍ର</string>
+    <string name="livestreams">ସିଧାପ୍ରସାରଣ</string>
+    <string name="video_source">ଉତ୍ସ</string>
+    <string name="no_update_found">କୌଣସି ଅଦ୍ୟତନ ମିଳିଲା ନାହିଁ</string>
+    <string name="category_general">ସାଧାରଣ</string>
+    <string name="dont_show_again">ପୁନଃ ଦେଖାଅନି</string>
+    <string name="automatic">ସ୍ୱତଃ</string>
+    <string name="error">ତ୍ରୁଟି</string>
+    <string name="restore_settings">ବ୍ୟାକଅପ୍‌ରୁ ତଥ୍ୟ ପୁନରୁଦ୍ଧାର କରିବା</string>
+    <string name="backup_failed">ଷ୍ଟୋରେଜ୍ ଅନୁମତି ଦିଆଯାଇ ନାହିଁ। ଦୟାକରି ପୁଣିଥରେ ଚେଷ୍ଟା କରନ୍ତୁ।</string>
+    <string name="category_updates">ଅଦ୍ୟତନ ଏଵଂ ବ୍ୟାକଅପ୍</string>
+    <string name="pref_category_backup">ବ୍ୟାକଅପ୍</string>
+    <string name="pref_category_android_tv">ଆଣ୍ଡ୍ରଏଡ୍ ଟିଵି</string>
+    <string name="pref_category_gestures">ଅଙ୍ଗଭଙ୍ଗୀ</string>
+    <string name="new_update_format" formatted="true">ନୂଆ ଅଦ୍ୟତନ ମିଳିଲା!
+\n%s -&gt; %s</string>
+    <string name="duration">ଅଵଧି</string>
+    <string name="app_storage">ଆପ୍</string>
+    <string name="restore_success">ବ୍ୟାକଅପ୍ ଫାଇଲ୍ ଧାରଣ ହେଲା</string>
+    <string name="backup_success">ତଥ୍ୟ ଗଚ୍ଛିତ ହୋଇଛି</string>
+    <string name="backup_failed_error_format">%s ବ୍ୟାକଅପ୍ ନେବାରେ ତ୍ରୁଟି ଘଟିଲା</string>
+    <string name="season">ଋତୁ</string>
+    <string name="no_season">କୌଣସି ଋତୁ ନାହିଁ</string>
+    <string name="delete_file">ଫାଇଲ୍ ଵିଲୋପ କରିବେ</string>
+    <string name="test_passed">ପାରିତ ହେଲା</string>
+    <string name="go_back_30">-୩୦</string>
+    <string name="status">ସ୍ଥିତି</string>
+    <string name="used_storage">ଵ୍ୟଵହୃତ</string>
+    <string name="tv_series">ଟିଵି ଧାରାଵାହିକ</string>
+    <string name="asian_drama">ଏସୀୟ ନାଟକ</string>
+    <string name="others">ଅନ୍ୟାନ୍ୟ</string>
+    <string name="other_singular">ଵିଡ଼ିଓ</string>
+    <string name="source_error">ଉତ୍ସ ତ୍ରୁଟି</string>
+    <string name="unexpected_error">ଅପ୍ରତ୍ୟାଶିତ ଚାଳକ ତ୍ରୁଟି</string>
+    <string name="show_title">ଆଖ୍ୟା</string>
+    <string name="check_for_update">ଅଦ୍ୟତନ ପାଇଁ ଯାଞ୍ଚ କରିବା</string>
+    <string name="video_lock">ତାଲା</string>
+    <string name="video_aspect_ratio_resize">ଆକାର ଠିକ୍ କରିବା</string>
+    <string name="skip_update">ଏହି ଅଦ୍ୟତନଟିକୁ ବାଦ୍ ଦିଅ</string>
+    <string name="pref_category_actions">କୃତ୍ୟ</string>
+    <string name="pref_category_subtitles">ଉପଶୀର୍ଷକ</string>
+    <string name="pref_category_ui_features">ଵୈଶିଷ୍ଟ୍ୟସବୁ</string>
+    <string name="pref_category_looks">ଵେଶ</string>
+    <string name="pref_category_defaults">ଡିଫଲ୍ଟଗୁଡ଼ା</string>
+    <string name="primary_color_settings">ପ୍ରାଥମିକ ରଙ୍ଗ</string>
+    <string name="added_sync_format" formatted="true">%s ଯୋଡ଼ାଗଲା</string>
+    <string name="title">ଆଖ୍ୟା</string>
+    <string name="setup_done">ହେଲା</string>
+    <string name="update_notification_downloading">ଆପ୍ ଅଦ୍ୟତନ ଡାଉନଲୋଡ୍ ଚାଲିଛି…</string>
+    <string name="update_notification_installing">ଆପ୍ ଅଦ୍ୟତନ ଅଧିସ୍ଥାପନ ଚାଲିଛି…</string>
+    <string name="update_notification_failed">ଆପ୍‌ର ନୂଆ ସଂସ୍କରଣ ଅଧିସ୍ଥାପନ କରିହେଲା ନାହିଁ</string>
+    <string name="test_failed">ଵିଫଳ ହେଲା</string>
+    <string name="category_player">ଚାଳକ</string>
+    <string name="backup_settings">ତଥ୍ୟର ବ୍ୟାକଅପ୍ ନେବା</string>
+    <string name="delete">ଵିଲୋପ କର</string>
+    <string name="documentaries">ଵୃତ୍ତଚିତ୍ର</string>
+    <string name="anime_singular">ଅନିମେ</string>
+    <string name="tv_series_singular">ଧାରାଵାହିକ</string>
+    <string name="movies_singular">ଚଳଚ୍ଚିତ୍ର</string>
+    <string name="documentaries_singular">ଵୃତ୍ତଚିତ୍ର</string>
+    <string name="asian_drama_singular">ଏସୀୟ ନାଟକ</string>
+    <string name="live_singular">ସିଧାପ୍ରସାରଣ</string>
+    <string name="show_hd">ଗୁଣଵତ୍ତା ଲେବଲ୍</string>
+    <string name="update">ଅଦ୍ୟତନ କରିବା</string>
+    <string name="pref_category_player_features">ଚାଳକ ଵୈଶିଷ୍ଟ୍ୟସବୁ</string>
+    <string name="app_theme_settings">ଆପ୍ ଥିମ୍</string>
+    <string name="subs_auto_select_language">ଭାଷା ସ୍ୱତଃ-ଚୟନ</string>
+    <string name="anime">ଅନିମେ</string>
+    <string name="player_subtitles_settings">ଉପଶୀର୍ଷକ</string>
+    <string name="go_forward_30">+୩୦</string>
+    <string name="year">ଵର୍ଷ</string>
+</resources>
