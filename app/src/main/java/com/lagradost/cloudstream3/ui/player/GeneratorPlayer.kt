@@ -238,6 +238,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                 }
                 meta.name = newMeta.headerName
             }
+
             is ExtractorUri -> {
                 if (newMeta.tvType?.isMovieType() == false) {
                     meta.episode = newMeta.episode
@@ -980,6 +981,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                 is ResultEpisode -> {
                     DataStoreHelper.removeLastWatched(newMeta.parentId)
                 }
+
                 is ExtractorUri -> {
                     DataStoreHelper.removeLastWatched(newMeta.parentId)
                 }
@@ -996,6 +998,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                         isFromDownload = false
                     )
                 }
+
                 is ExtractorUri -> {
                     DataStoreHelper.setLastWatched(
                         resumeMeta.parentId,
@@ -1127,6 +1130,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                 season = meta.season
                 tvType = meta.tvType
             }
+
             is ExtractorUri -> {
                 headerName = meta.headerName
                 subName = meta.name
@@ -1343,6 +1347,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                 is Resource.Loading -> {
                     startLoading()
                 }
+
                 is Resource.Success -> {
                     // provider returned false
                     //if (it.value != true) {
@@ -1350,6 +1355,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                     //}
                     startPlayer()
                 }
+
                 is Resource.Failure -> {
                     showToast(activity, it.errorString, Toast.LENGTH_LONG)
                     startPlayer()
@@ -1364,10 +1370,12 @@ class GeneratorPlayer : FullScreenPlayer() {
             overlay_loading_skip_button?.isVisible = turnVisible
 
             normalSafeApiCall {
-                currentLinks.lastOrNull()?.let { last ->
-                    if (getLinkPriority(currentQualityProfile, last) >= QualityDataHelper.AUTO_SKIP_PRIORITY) {
-                        startPlayer()
+                if (currentLinks.any { link ->
+                        getLinkPriority(currentQualityProfile, link) >=
+                                QualityDataHelper.AUTO_SKIP_PRIORITY
                     }
+                ) {
+                    startPlayer()
                 }
             }
 
