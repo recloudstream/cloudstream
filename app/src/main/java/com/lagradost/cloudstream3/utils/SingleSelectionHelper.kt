@@ -250,17 +250,6 @@ object SingleSelectionHelper {
         )
     }
 
-    fun showBottomDialog(
-        items: List<String>,
-        selectedIndex: Int,
-        name: String,
-        showApply: Boolean,
-        dismissCallback: () -> Unit,
-        callback: (Int) -> Unit,
-    ) {
-
-    }
-
     /** Only for a low amount of items */
     fun Activity?.showBottomDialog(
         items: List<String>,

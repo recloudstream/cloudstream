@@ -117,7 +117,7 @@ object DataStoreHelper {
     /**
      * A datastore wide account for future implementations of a multiple account system
      **/
-    private var currentAccount: String = "0" //TODO ACCOUNT IMPLEMENTATION
+    var currentAccount: String = "0" //TODO ACCOUNT IMPLEMENTATION
 
     fun getAllWatchStateIds(): List<Int>? {
         val folder = "$currentAccount/$RESULT_WATCH_STATE"

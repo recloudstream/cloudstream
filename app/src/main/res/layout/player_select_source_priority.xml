@@ -21,47 +21,22 @@
             android:layout_weight="50"
             android:orientation="vertical">
 
-            <LinearLayout
-                android:id="@+id/profiles_click_settings"
-                android:layout_width="match_parent"
+            <TextView
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_rowWeight="1"
                 android:layout_marginTop="10dp"
-                android:background="@drawable/outline_drawable_less"
-                android:foreground="?attr/selectableItemBackgroundBorderless"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
+                android:paddingStart="?android:attr/listPreferredItemPaddingStart"
+                android:paddingTop="10dp"
+                android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
+                android:paddingBottom="10dp"
+                android:text="@string/pick_source"
+                android:textColor="?attr/textColor"
+                android:textSize="20sp"
+                android:textStyle="bold" />
 
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:paddingStart="?android:attr/listPreferredItemPaddingStart"
-                    android:paddingTop="10dp"
-                    android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
-                    android:paddingBottom="10dp"
-                    android:text="@string/pick_source"
-                    android:textColor="?attr/textColor"
-                    android:textSize="20sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/source_settings_btt"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:drawablePadding="10dp"
-                    android:gravity="center"
-                    android:minWidth="140dp"
-                    android:paddingHorizontal="10dp"
-                    android:textColor="?attr/textColor"
-                    android:textSize="15sp"
-                    app:drawableEndCompat="@drawable/ic_outline_settings_24"
-                    tools:text="@string/profile_number" />
-            </LinearLayout>
-
-            <ListView
-                android:id="@+id/sort_providers"
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/sort_sources"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_rowWeight="1"
@@ -70,8 +45,9 @@
                 android:nextFocusLeft="@id/sort_subtitles"
                 android:nextFocusRight="@id/apply_btt"
                 android:requiresFadingEdge="vertical"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 tools:layout_height="100dp"
-                tools:listitem="@layout/sort_bottom_single_choice" />
+                tools:listitem="@layout/player_prioritize_item" />
         </LinearLayout>
 
         <LinearLayout
@@ -95,31 +71,30 @@
                     android:layout_height="wrap_content"
                     android:layout_rowWeight="1"
                     android:layout_marginTop="10dp"
-                    android:background="@drawable/outline_drawable_less"
-                    android:foreground="?attr/selectableItemBackgroundBorderless"
-                    android:orientation="horizontal"
-                    android:paddingTop="10dp"
-                    android:paddingBottom="10dp">
+                    android:orientation="horizontal">
 
                     <TextView
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:layout_weight="1"
                         android:paddingStart="?android:attr/listPreferredItemPaddingStart"
+                        android:paddingTop="10dp"
                         android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
-                        android:text="@string/pick_subtitle"
+                        android:paddingBottom="10dp"
+                        android:text="@string/qualities"
                         android:textColor="?attr/textColor"
                         android:textSize="20sp"
                         android:textStyle="bold" />
 
-                    <TextView
-                        android:id="@+id/subtitles_encoding_format"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:gravity="center"
-                        android:textColor="?attr/textColor"
-                        android:textSize="15sp"
-                        tools:text="Thai (TIS 620-2533/ISO 8859-11)" />
+                    <ImageView
+                        android:id="@+id/help_btt"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:padding="12dp"
+                        android:src="@drawable/baseline_help_outline_24"
+                        android:contentDescription="@string/help" />
+
                 </LinearLayout>
 
                 <ImageView
@@ -128,14 +103,13 @@
                     android:layout_gravity="end|center_vertical"
                     android:layout_marginTop="0dp"
                     android:layout_marginEnd="10dp"
-
                     android:contentDescription="@string/home_change_provider_img_des"
                     android:src="@drawable/ic_outline_settings_24"
                     android:visibility="gone" />
             </LinearLayout>
 
-            <ListView
-                android:id="@+id/sort_subtitles"
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/sort_qualities"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_rowWeight="1"
@@ -144,9 +118,10 @@
                 android:nextFocusLeft="@id/sort_providers"
                 android:nextFocusRight="@id/cancel_btt"
                 android:requiresFadingEdge="vertical"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 tools:layout_height="200dp"
                 tools:listfooter="@layout/sort_bottom_footer_add_choice"
-                tools:listitem="@layout/sort_bottom_single_choice" />
+                tools:listitem="@layout/player_prioritize_item" />
         </LinearLayout>
     </LinearLayout>
 
@@ -156,22 +131,49 @@
         android:layout_height="60dp"
         android:layout_gravity="bottom"
         android:layout_marginTop="-60dp"
-        android:gravity="bottom|end"
         android:orientation="horizontal">
 
+        <EditText
+            android:id="@+id/profile_text_editable"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:inputType="text"
+            android:maxLength="32"
+            android:layout_marginHorizontal="?android:attr/listPreferredItemPaddingStart"
+            android:paddingStart="?android:attr/listPreferredItemPaddingStart"
+            android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
+            android:textColor="?attr/textColor"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            tools:text="@string/profile_number"
+            android:autofillHints="username" />
+        <!--        <ImageView-->
+        <!--            android:layout_width="50dp"-->
+        <!--            android:layout_height="50dp"-->
+        <!--            android:padding="10dp"-->
+        <!--            android:layout_gravity="center"-->
+        <!--            android:src="@drawable/outline_edit_24" />-->
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+
+        </Space>
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/apply_btt"
+            android:id="@+id/save_btt"
             style="@style/WhiteButton"
             android:layout_width="wrap_content"
             android:layout_gravity="center_vertical|end"
-            android:text="@string/sort_apply" />
+            android:text="@string/sort_save" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/cancel_btt"
+            android:id="@+id/close_btt"
             style="@style/BlackButton"
             android:layout_width="wrap_content"
             android:layout_gravity="center_vertical|end"
-            android:text="@string/sort_cancel" />
+            android:text="@string/sort_close" />
     </LinearLayout>
 </LinearLayout>

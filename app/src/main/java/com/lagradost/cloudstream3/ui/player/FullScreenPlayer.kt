@@ -39,6 +39,7 @@ import com.lagradost.cloudstream3.CommonActivity.playerEventListener
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.ui.player.GeneratorPlayer.Companion.subsProvidersIsActive
+import com.lagradost.cloudstream3.ui.player.source_priority.QualityDataHelper
 import com.lagradost.cloudstream3.utils.Qualities
 import com.lagradost.cloudstream3.utils.AppUtils.isUsingMobileData
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showDialog
@@ -108,8 +109,15 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
     //    get() = episodes.isNotEmpty()
 
     // options for player
-    protected var currentPrefQuality =
-        Qualities.P2160.value // preferred maximum quality, used for ppl w bad internet or on cell
+
+    /**
+     * Default profile 1
+     * Decides how links should be sorted based on a priority system.
+     * This will be set in runtime based on settings.
+     **/
+    protected var currentQualityProfile = 1
+//    protected var currentPrefQuality =
+//        Qualities.P2160.value // preferred maximum quality, used for ppl w bad internet or on cell
     protected var fastForwardTime = 10000L
     protected var androidTVInterfaceOffSeekTime = 10000L;
     protected var androidTVInterfaceOnSeekTime = 30000L;
@@ -1221,10 +1229,16 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                         .toLong() * 1000L
 
                 androidTVInterfaceOffSeekTime =
-                    settingsManager.getInt(ctx.getString(R.string.android_tv_interface_off_seek_key), 10)
+                    settingsManager.getInt(
+                        ctx.getString(R.string.android_tv_interface_off_seek_key),
+                        10
+                    )
                         .toLong() * 1000L
                 androidTVInterfaceOnSeekTime =
-                    settingsManager.getInt(ctx.getString(R.string.android_tv_interface_on_seek_key), 10)
+                    settingsManager.getInt(
+                        ctx.getString(R.string.android_tv_interface_on_seek_key),
+                        10
+                    )
                         .toLong() * 1000L
 
                 navigationBarHeight = ctx.getNavigationBarHeight()
@@ -1257,10 +1271,20 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                         ctx.getString(R.string.double_tap_pause_enabled_key),
                         false
                     )
-                currentPrefQuality = settingsManager.getInt(
-                    ctx.getString(if (ctx.isUsingMobileData()) R.string.quality_pref_mobile_data_key else R.string.quality_pref_key),
-                    currentPrefQuality
-                )
+
+                val profiles = QualityDataHelper.getProfiles()
+                val type = if (ctx.isUsingMobileData())
+                    QualityDataHelper.QualityProfileType.Data
+                else QualityDataHelper.QualityProfileType.WiFi
+
+                currentQualityProfile =
+                    profiles.firstOrNull { it.type == type }?.id ?: profiles.firstOrNull()?.id
+                            ?: currentQualityProfile
+
+//                currentPrefQuality = settingsManager.getInt(
+//                    ctx.getString(if (ctx.isUsingMobileData()) R.string.quality_pref_mobile_data_key else R.string.quality_pref_key),
+//                    currentPrefQuality
+//                )
                 // useSystemBrightness =
                 //    settingsManager.getBoolean(ctx.getString(R.string.use_system_brightness_key), false)
             }
