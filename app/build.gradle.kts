@@ -47,8 +47,8 @@ android {
         minSdk = 21
         targetSdk = 33
 
-        versionCode = 57
-        versionName = "4.0.0"
+        versionCode = 59
+        versionName = "4.0.1"
 
         resValue("string", "app_version", "${defaultConfig.versionName}${versionNameSuffix ?: ""}")
 
@@ -159,6 +159,8 @@ dependencies {
     implementation("com.google.android.exoplayer:extension-cast:2.18.2")
     implementation("com.google.android.exoplayer:extension-mediasession:2.18.2")
     implementation("com.google.android.exoplayer:extension-okhttp:2.18.2")
+    // Use the Jellyfin ffmpeg extension for easy ffmpeg audio decoding in exoplayer. Thank you Jellyfin <3
+//    implementation("org.jellyfin.exoplayer:exoplayer-ffmpeg-extension:2.18.2+1")
 
     //implementation("com.google.android.exoplayer:extension-leanback:2.14.0")
 
@@ -214,8 +216,8 @@ dependencies {
     // slow af yt
     //implementation("com.github.HaarigerHarald:android-youtubeExtractor:master-SNAPSHOT")
 
-    // newpipe yt taken from https://github.com/TeamNewPipe/NewPipe/blob/dev/app/build.gradle#L190
-    implementation("com.github.TeamNewPipe:NewPipeExtractor:9ffdd0948b2ecd82655f5ff2a3e127b2b7695d5b")
+    // newpipe yt taken from https://github.com/TeamNewPipe/NewPipe/blob/dev/app/build.gradle#L204
+    implementation("com.github.TeamNewPipe:NewPipeExtractor:master-SNAPSHOT")
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.1.6")
 
     // Library/extensions searching with Levenshtein distance

@@ -9,8 +9,11 @@ import android.widget.FrameLayout
 import androidx.preference.PreferenceManager
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.C.*
+import com.google.android.exoplayer2.DefaultRenderersFactory.EXTENSION_RENDERER_MODE_ON
+import com.google.android.exoplayer2.DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER
 import com.google.android.exoplayer2.database.StandaloneDatabaseProvider
 import com.google.android.exoplayer2.ext.okhttp.OkHttpDataSource
+import com.google.android.exoplayer2.mediacodec.MediaCodecSelector
 import com.google.android.exoplayer2.source.*
 import com.google.android.exoplayer2.text.TextRenderer
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
@@ -538,7 +541,8 @@ class CS3IPlayer : IPlayer {
             }
 
             // Do no include empty referer, if the provider wants those they can use the header map.
-            val refererMap = if (link.referer.isBlank()) emptyMap() else mapOf("referer" to link.referer)
+            val refererMap =
+                if (link.referer.isBlank()) emptyMap() else mapOf("referer" to link.referer)
             val headers = mapOf(
                 "accept" to "*/*",
                 "sec-ch-ua" to "\"Chromium\";v=\"91\", \" Not;A Brand\";v=\"99\"",
@@ -669,23 +673,27 @@ class CS3IPlayer : IPlayer {
             val exoPlayerBuilder =
                 ExoPlayer.Builder(context)
                     .setRenderersFactory { eventHandler, videoRendererEventListener, audioRendererEventListener, textRendererOutput, metadataRendererOutput ->
-                        DefaultRenderersFactory(context).createRenderers(
-                            eventHandler,
-                            videoRendererEventListener,
-                            audioRendererEventListener,
-                            textRendererOutput,
-                            metadataRendererOutput
-                        ).map {
-                            if (it is TextRenderer) {
-                                currentTextRenderer = CustomTextRenderer(
-                                    subtitleOffset,
-                                    textRendererOutput,
-                                    eventHandler.looper,
-                                    CustomSubtitleDecoderFactory()
-                                )
-                                currentTextRenderer!!
-                            } else it
-                        }.toTypedArray()
+                        DefaultRenderersFactory(context).apply {
+//                            setEnableDecoderFallback(true)
+                            // Enable Ffmpeg extension
+//                            setExtensionRendererMode(EXTENSION_RENDERER_MODE_ON)
+                        }.createRenderers(
+                                eventHandler,
+                                videoRendererEventListener,
+                                audioRendererEventListener,
+                                textRendererOutput,
+                                metadataRendererOutput
+                            ).map {
+                                if (it is TextRenderer) {
+                                    currentTextRenderer = CustomTextRenderer(
+                                        subtitleOffset,
+                                        textRendererOutput,
+                                        eventHandler.looper,
+                                        CustomSubtitleDecoderFactory()
+                                    )
+                                    currentTextRenderer!!
+                                } else it
+                            }.toTypedArray()
                     }
                     .setTrackSelector(
                         trackSelector ?: getTrackSelector(
@@ -703,6 +711,10 @@ class CS3IPlayer : IPlayer {
                                 } else {
                                     if (cacheSize > Int.MAX_VALUE) Int.MAX_VALUE else cacheSize.toInt()
                                 }
+                            )
+                            .setBackBuffer(
+                                30000,
+                                true
                             )
                             .setBufferDurationsMs(
                                 DefaultLoadControl.DEFAULT_MIN_BUFFER_MS,
@@ -977,12 +989,19 @@ class CS3IPlayer : IPlayer {
                     // If the Network fails then ignore the exception if the duration is set.
                     // This is to switch mirrors automatically if the stream has not been fetched, but
                     // allow playing the buffer without internet as then the duration is fetched.
-                    if (error.errorCode == PlaybackException.ERROR_CODE_IO_NETWORK_CONNECTION_FAILED
-                        && exoPlayer?.duration != TIME_UNSET
-                    ) {
-                        exoPlayer?.prepare()
-                    } else {
-                        playerError?.invoke(error)
+                    when {
+                        error.errorCode == PlaybackException.ERROR_CODE_IO_NETWORK_CONNECTION_FAILED
+                                && exoPlayer?.duration != TIME_UNSET -> {
+                            exoPlayer?.prepare()
+                        }
+                        error.errorCode == PlaybackException.ERROR_CODE_BEHIND_LIVE_WINDOW -> {
+                            // Re-initialize player at the current live window default position.
+                            exoPlayer?.seekToDefaultPosition()
+                            exoPlayer?.prepare()
+                        }
+                        else -> {
+                            playerError?.invoke(error)
+                        }
                     }
 
                     super.onPlayerError(error)
@@ -1196,10 +1215,10 @@ class CS3IPlayer : IPlayer {
                 HttpsURLConnection.setDefaultSSLSocketFactory(sslContext.socketFactory)
             }
 
-            val mime = if (link.isM3u8) {
-                MimeTypes.APPLICATION_M3U8
-            } else {
-                MimeTypes.VIDEO_MP4
+            val mime = when {
+                link.isM3u8 -> MimeTypes.APPLICATION_M3U8
+                link.isDash -> MimeTypes.APPLICATION_MPD
+                else -> MimeTypes.VIDEO_MP4
             }
 
             val mediaItems = if (link is ExtractorLinkPlayList) {

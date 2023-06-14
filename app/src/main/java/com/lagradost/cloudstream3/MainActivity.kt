@@ -5,6 +5,8 @@ import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.content.res.Configuration
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.util.AttributeSet
 import android.util.Log
@@ -34,7 +36,6 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.navigationrail.NavigationRailView
 import com.google.android.material.snackbar.Snackbar
 import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
-import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.APIHolder.allProviders
 import com.lagradost.cloudstream3.APIHolder.apis
 import com.lagradost.cloudstream3.APIHolder.getApiDubstatusSettings
@@ -57,6 +58,7 @@ import com.lagradost.cloudstream3.receivers.VideoDownloadRestartReceiver
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.OAuth2Apis
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.accountManagers
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.appString
+import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.appStringPlayer
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.appStringRepo
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.appStringResumeWatching
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.appStringSearch
@@ -65,6 +67,9 @@ import com.lagradost.cloudstream3.ui.APIRepository
 import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_NAVIGATE_TO
 import com.lagradost.cloudstream3.ui.home.HomeViewModel
+import com.lagradost.cloudstream3.ui.player.BasicLink
+import com.lagradost.cloudstream3.ui.player.GeneratorPlayer
+import com.lagradost.cloudstream3.ui.player.LinkGenerator
 import com.lagradost.cloudstream3.ui.result.ResultViewModel2
 import com.lagradost.cloudstream3.ui.result.START_ACTION_RESUME_LATEST
 import com.lagradost.cloudstream3.ui.result.setImage
@@ -170,7 +175,12 @@ open class ResultResume(
 
 val VLC = object : ResultResume(
     VLC_PACKAGE,
-    "org.videolan.vlc.player.result",
+    // Android 13 intent restrictions fucks up specifically launching the VLC player
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+        "org.videolan.vlc.player.result"
+    } else {
+        Intent.ACTION_VIEW
+    },
     "extra_position",
     "extra_duration",
 ) {
@@ -269,6 +279,8 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             isWebview: Boolean
         ): Boolean =
             with(activity) {
+                // TODO MUCH BETTER HANDLING
+
                 // Invalid URIs can crash
                 fun safeURI(uri: String) = normalSafeApiCall { URI(uri) }
 
@@ -324,6 +336,20 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                         // It might be better to use the QuickSearch.
                         nav_view?.selectedItemId = R.id.navigation_search
                         nav_rail_view?.selectedItemId = R.id.navigation_search
+                    } else if (safeURI(str)?.scheme == appStringPlayer) {
+                        val uri = Uri.parse(str)
+                        val name = uri.getQueryParameter("name")
+                        val url = URLDecoder.decode(uri.authority, "UTF-8")
+
+                        navigate(
+                            R.id.global_to_navigation_player,
+                            GeneratorPlayer.newInstance(
+                                LinkGenerator(
+                                    listOf(BasicLink(url, name)),
+                                    extract = true,
+                                )
+                            )
+                        )
                     } else if (safeURI(str)?.scheme == appStringResumeWatching) {
                         val id =
                             str.substringAfter("$appStringResumeWatching://").toIntOrNull()
@@ -733,15 +759,16 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                 } else {
                     this.setKey(getString(R.string.jsdelivr_proxy_key), true)
                     val parentView: View = findViewById(android.R.id.content)
-                    Snackbar.make(parentView, R.string.jsdelivr_enabled, Snackbar.LENGTH_LONG).let { snackbar ->
-                        snackbar.setAction(R.string.revert) {
-                            setKey(getString(R.string.jsdelivr_proxy_key), false)
+                    Snackbar.make(parentView, R.string.jsdelivr_enabled, Snackbar.LENGTH_LONG)
+                        .let { snackbar ->
+                            snackbar.setAction(R.string.revert) {
+                                setKey(getString(R.string.jsdelivr_proxy_key), false)
+                            }
+                            snackbar.setBackgroundTint(colorFromAttribute(R.attr.primaryGrayBackground))
+                            snackbar.setTextColor(colorFromAttribute(R.attr.textColor))
+                            snackbar.setActionTextColor(colorFromAttribute(R.attr.colorPrimary))
+                            snackbar.show()
                         }
-                        snackbar.setBackgroundTint(colorFromAttribute(R.attr.primaryGrayBackground))
-                        snackbar.setTextColor(colorFromAttribute(R.attr.textColor))
-                        snackbar.setActionTextColor(colorFromAttribute(R.attr.colorPrimary))
-                        snackbar.show()
-                    }
                 }
 
             }
@@ -1123,7 +1150,10 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
 
     suspend fun checkGithubConnectivity(): Boolean {
         return try {
-            app.get("https://raw.githubusercontent.com/recloudstream/.github/master/connectivitycheck", timeout = 5).text.trim() == "ok"
+            app.get(
+                "https://raw.githubusercontent.com/recloudstream/.github/master/connectivitycheck",
+                timeout = 5
+            ).text.trim() == "ok"
         } catch (t: Throwable) {
             false
         }

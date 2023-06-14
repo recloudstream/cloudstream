@@ -184,7 +184,7 @@ abstract class AbstractPlayerFragment(
             isInPIPMode = isInPictureInPictureMode
             if (isInPictureInPictureMode) {
                 // Hide the full-screen UI (controls, etc.) while in picture-in-picture mode.
-                player_holder?.alpha = 0f
+                piphide?.isVisible = false
                 pipReceiver = object : BroadcastReceiver() {
                     override fun onReceive(
                         context: Context,
@@ -212,7 +212,7 @@ abstract class AbstractPlayerFragment(
                 updateIsPlaying(Pair(isPlayingValue, isPlayingValue))
             } else {
                 // Restore the full-screen UI.
-                player_holder?.alpha = 1f
+                piphide?.isVisible = true
                 exitedPipMode()
                 pipReceiver?.let {
                     activity?.unregisterReceiver(it)

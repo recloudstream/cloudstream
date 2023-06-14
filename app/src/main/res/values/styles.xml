@@ -40,7 +40,6 @@
         <!-- Preference -->
         <item name="android:textColor">?attr/textColor</item>
         <item name="android:textColorSecondary">?attr/grayTextColor</item>
-        <item name="android:icon">?attr/grayTextColor</item>
 
         <item name="android:textColorHint">?attr/grayTextColor</item>
         <item name="android:editTextColor">?attr/textColor</item>

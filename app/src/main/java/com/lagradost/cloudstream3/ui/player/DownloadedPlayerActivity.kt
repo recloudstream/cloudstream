@@ -42,7 +42,7 @@ class DownloadedPlayerActivity : AppCompatActivity() {
             R.id.global_to_navigation_player, GeneratorPlayer.newInstance(
                 LinkGenerator(
                     listOf(
-                        url
+                        BasicLink(url)
                     )
                 )
             )
