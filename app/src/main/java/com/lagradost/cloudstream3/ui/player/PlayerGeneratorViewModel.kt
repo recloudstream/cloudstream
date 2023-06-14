@@ -156,18 +156,19 @@ class PlayerGeneratorViewModel : ViewModel() {
             val currentSubs = mutableSetOf<SubtitleData>()
 
             // clear old data
-            _currentSubs.postValue(currentSubs)
-            _currentLinks.postValue(currentLinks)
+            _currentSubs.postValue(emptySet())
+            _currentLinks.postValue(emptySet())
 
             // load more data
             _loadingLinks.postValue(Resource.Loading())
             val loadingState = safeApiCall {
                 generator?.generateLinks(clearCache = clearCache, isCasting = isCasting, {
                     currentLinks.add(it)
-                    _currentLinks.postValue(currentLinks)
+                    // Clone to prevent ConcurrentModificationException
+                    _currentLinks.postValue(currentLinks.toSet())
                 }, {
                     currentSubs.add(it)
-                    // _currentSubs.postValue(currentSubs) // this causes ConcurrentModificationException, so fuck it
+                    _currentSubs.postValue(currentSubs.toSet())
                 })
             }
 
