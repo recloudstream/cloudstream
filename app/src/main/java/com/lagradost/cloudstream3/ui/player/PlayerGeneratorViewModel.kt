@@ -165,10 +165,15 @@ class PlayerGeneratorViewModel : ViewModel() {
                 generator?.generateLinks(clearCache = clearCache, isCasting = isCasting, {
                     currentLinks.add(it)
                     // Clone to prevent ConcurrentModificationException
-                    _currentLinks.postValue(currentLinks.toSet())
+                    normalSafeApiCall {
+                        // Extra normalSafeApiCall since .toSet() iterates.
+                        _currentLinks.postValue(currentLinks.toSet())
+                    }
                 }, {
                     currentSubs.add(it)
-                    _currentSubs.postValue(currentSubs.toSet())
+                    normalSafeApiCall {
+                        _currentSubs.postValue(currentSubs.toSet())
+                    }
                 })
             }
 
