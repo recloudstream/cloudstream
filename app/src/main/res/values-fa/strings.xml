@@ -33,4 +33,16 @@
     <string name="next_episode_time_hour_format" formatted="true">%dساعت %dدقیقه</string>
     <string name="next_episode_time_min_format" formatted="true">%dدقیقه</string>
     <string name="home_main_poster_img_des">پوستر اصلی</string>
+    <string name="torrent">تورنت</string>
+    <string name="free_storage">آزاد</string>
+    <string name="documentaries">مستند ها</string>
+    <string name="ova">انیمیشن ویدیویی اصلی</string>
+    <string name="max">حداکثر</string>
+    <string name="movies">فیلم‌ها</string>
+    <string name="tv_series">سریال های تلویزیونی</string>
+    <string name="asian_drama">درام های آسیایی</string>
+    <string name="anime">انیمه</string>
+    <string name="cartoons">کارتونها</string>
+    <string name="used_storage">استفاده شده</string>
+    <string name="app_storage">برنامه</string>
 </resources>

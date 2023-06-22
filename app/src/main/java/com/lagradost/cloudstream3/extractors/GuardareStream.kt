@@ -58,7 +58,7 @@ open class GuardareStream : ExtractorApi() {
         jsonVideoData.data.forEach {
             callback.invoke(
                 ExtractorLink(
-                    it.file + ".${it.type}",
+                    this.name,
                     this.name,
                     it.file + ".${it.type}",
                     mainUrl,

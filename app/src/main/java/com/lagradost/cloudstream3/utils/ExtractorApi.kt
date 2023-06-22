@@ -114,16 +114,16 @@ data class ExtractorSubtitleLink(
  */
 val schemaStripRegex = Regex("""^(https:|)//(www\.|)""")
 
-enum class Qualities(var value: Int) {
-    Unknown(400),
-    P144(144), // 144p
-    P240(240), // 240p
-    P360(360), // 360p
-    P480(480), // 480p
-    P720(720), // 720p
-    P1080(1080), // 1080p
-    P1440(1440), // 1440p
-    P2160(2160); // 4k or 2160p
+enum class Qualities(var value: Int, val defaultPriority: Int) {
+    Unknown(400, 4),
+    P144(144, 0), // 144p
+    P240(240, 2), // 240p
+    P360(360, 3), // 360p
+    P480(480, 4), // 480p
+    P720(720, 5), // 720p
+    P1080(1080, 6), // 1080p
+    P1440(1440, 7), // 1440p
+    P2160(2160, 8); // 4k or 2160p
 
     companion object {
         fun getStringByInt(qual: Int?): String {
@@ -133,6 +133,14 @@ enum class Qualities(var value: Int) {
                 P2160.value -> "4K"
                 null -> ""
                 else -> "${qual}p"
+            }
+        }
+        fun getStringByIntFull(quality: Int): String {
+            return when (quality) {
+                0 -> "Auto"
+                Unknown.value -> "Unknown"
+                P2160.value -> "4K"
+                else -> "${quality}p"
             }
         }
     }
@@ -236,6 +244,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     XStreamCdn(),
 
     StreamSB(),
+    Vidgomunimesb(),
     StreamSB1(),
     StreamSB2(),
     StreamSB3(),
@@ -275,7 +284,6 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     Uqload2(),
     Evoload(),
     Evoload1(),
-    VoeExtractor(),
     UpstreamExtractor(),
 
     Tomatomatela(),
@@ -342,6 +350,24 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     DesuOdvip(),
     DesuDrive(),
 
+    Chillx(),
+    Watchx(),
+    Bestx(),
+    Keephealth(),
+    Sbnet(),
+    Sbasian(),
+    Sblongvu(),
+    Fembed9hd(),
+    StreamM4u(),
+    Krakenfiles(),
+    Gofile(),
+    Vicloud(),
+    Uservideo(),
+
+    Movhide(),
+    StreamhideCom(),
+    FileMoonIn(),
+    Moviesm4u(),
     Filesim(),
     FileMoon(),
     FileMoonSx(),
@@ -357,6 +383,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     Vidmoly(),
     Vidmolyme(),
     Voe(),
+    Tubeless(),
     Moviehab(),
     MoviehabNet(),
     Jeniusplay(),

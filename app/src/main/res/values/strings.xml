@@ -664,6 +664,25 @@
     <string name="subscription_new">Subscribed to %s</string>
     <string name="subscription_deleted">Unsubscribed from %s</string>
     <string name="subscription_episode_released">Episode %d released!</string>
+    <string name="profile_number">Profile %d</string>
+    <string name="wifi">Wi-Fi</string>
+    <string name="mobile_data">Mobile data</string>
+    <string name="set_default">Set default</string>
+    <string name="use">Use</string>
+    <string name="edit">Edit</string>
+    <string name="profiles">Profiles</string>
+    <string name="help">Help</string>
+    <string name="quality_profile_help">
+        Here you can change how the sources are ordered. If a video has a higher priority it will appear higher in the source selection.
+        The sum of the source priority and the quality priority is the video priority.
+        \n\nSource A: 3
+        \nQuality B: 7
+        \nWill have a combined video priority of 10.
+
+        \n\nNOTE: If the sum is 10 or more the player will automatically skip loading when that link is loaded!
+    </string>
+    <string name="qualities">Qualities</string>
+    <string name="profile_background_des">Profile background</string>
     <string name="example_login_file_name_full">Sync file name (optional)</string>
     <string name="example_login_redirect_url_full">Oauth redirect url (optional)</string>
     <string name="example_redirect_url" translatable="false">https://recloudstream.github.io/cloudstream-sync/google-drive</string>

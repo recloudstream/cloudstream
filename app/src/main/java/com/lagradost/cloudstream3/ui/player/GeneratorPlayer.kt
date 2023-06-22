@@ -32,6 +32,10 @@ import com.lagradost.cloudstream3.utils.Scheduler.Companion.attachBackupListener
 import com.lagradost.cloudstream3.ui.player.CS3IPlayer.Companion.preferredAudioTrackLanguage
 import com.lagradost.cloudstream3.ui.player.CustomDecoder.Companion.updateForcedEncoding
 import com.lagradost.cloudstream3.ui.player.PlayerSubtitleHelper.Companion.toSubtitleMimeType
+import com.lagradost.cloudstream3.ui.player.source_priority.QualityDataHelper
+import com.lagradost.cloudstream3.ui.player.source_priority.QualityProfileDialog
+import com.lagradost.cloudstream3.ui.player.source_priority.SourcePriority
+import com.lagradost.cloudstream3.ui.player.source_priority.SourcePriorityDialog
 import com.lagradost.cloudstream3.ui.result.*
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment.Companion.getAutoSelectLanguageISO639_1
@@ -57,6 +61,9 @@ import kotlinx.android.synthetic.main.player_select_source_and_subs.subtitles_cl
 import kotlinx.android.synthetic.main.player_select_tracks.*
 import kotlinx.coroutines.Job
 import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
+import kotlin.math.abs
 
 class GeneratorPlayer : FullScreenPlayer() {
     companion object {
@@ -188,17 +195,31 @@ class GeneratorPlayer : FullScreenPlayer() {
             player.addTimeStamps(listOf()) // clear stamps
     }
 
-    private fun sortLinks(useQualitySettings: Boolean = true): List<Pair<ExtractorLink?, ExtractorUri?>> {
-        return currentLinks.sortedBy {
-            val (linkData, _) = it
-            var quality = linkData?.quality ?: Qualities.Unknown.value
+    private fun closestQuality(target: Int?): Qualities {
+        if (target == null) return Qualities.Unknown
+        return Qualities.values().minBy { abs(it.value - target) }
+    }
 
-            // we set all qualities above current max as reverse
-            if (useQualitySettings && quality > currentPrefQuality) {
-                quality = currentPrefQuality - quality - 1
-            }
-            // negative because we want to sort highest quality first
-            -(quality)
+    private fun getLinkPriority(
+        qualityProfile: Int,
+        link: Pair<ExtractorLink?, ExtractorUri?>
+    ): Int {
+        val (linkData, _) = link
+
+        val qualityPriority = QualityDataHelper.getQualityPriority(
+            qualityProfile,
+            closestQuality(linkData?.quality)
+        )
+        val sourcePriority =
+            QualityDataHelper.getSourcePriority(qualityProfile, linkData?.name)
+
+        // negative because we want to sort highest quality first
+        return qualityPriority + sourcePriority
+    }
+
+    private fun sortLinks(qualityProfile: Int): List<Pair<ExtractorLink?, ExtractorUri?>> {
+        return currentLinks.sortedBy {
+            -getLinkPriority(qualityProfile, it)
         }
     }
 
@@ -219,6 +240,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                 }
                 meta.name = newMeta.headerName
             }
+
             is ExtractorUri -> {
                 if (newMeta.tvType?.isMovieType() == false) {
                     meta.episode = newMeta.episode
@@ -584,32 +606,38 @@ class GeneratorPlayer : FullScreenPlayer() {
 
                 var sourceIndex = 0
                 var startSource = 0
+                var sortedUrls = emptyList<Pair<ExtractorLink?, ExtractorUri?>>()
 
-                val sortedUrls = sortLinks(useQualitySettings = false)
-                if (sortedUrls.isEmpty()) {
-                    sourceDialog.findViewById<LinearLayout>(R.id.sort_sources_holder)?.isGone = true
-                } else {
-                    startSource = sortedUrls.indexOf(currentSelectedLink)
-                    sourceIndex = startSource
+                fun refreshLinks(qualityProfile: Int) {
+                    sortedUrls = sortLinks(qualityProfile)
+                    if (sortedUrls.isEmpty()) {
+                        sourceDialog.findViewById<LinearLayout>(R.id.sort_sources_holder)?.isGone =
+                            true
+                    } else {
+                        startSource = sortedUrls.indexOf(currentSelectedLink)
+                        sourceIndex = startSource
 
-                    val sourcesArrayAdapter =
-                        ArrayAdapter<String>(ctx, R.layout.sort_bottom_single_choice)
+                        val sourcesArrayAdapter =
+                            ArrayAdapter<String>(ctx, R.layout.sort_bottom_single_choice)
 
-                    sourcesArrayAdapter.addAll(sortedUrls.map { (link, uri) ->
-                        val name = link?.name ?: uri?.name ?: "NULL"
-                        "$name ${Qualities.getStringByInt(link?.quality)}"
-                    })
+                        sourcesArrayAdapter.addAll(sortedUrls.map { (link, uri) ->
+                            val name = link?.name ?: uri?.name ?: "NULL"
+                            "$name ${Qualities.getStringByInt(link?.quality)}"
+                        })
 
-                    providerList.choiceMode = AbsListView.CHOICE_MODE_SINGLE
-                    providerList.adapter = sourcesArrayAdapter
-                    providerList.setSelection(sourceIndex)
-                    providerList.setItemChecked(sourceIndex, true)
+                        providerList.choiceMode = AbsListView.CHOICE_MODE_SINGLE
+                        providerList.adapter = sourcesArrayAdapter
+                        providerList.setSelection(sourceIndex)
+                        providerList.setItemChecked(sourceIndex, true)
 
-                    providerList.setOnItemClickListener { _, _, which, _ ->
-                        sourceIndex = which
-                        providerList.setItemChecked(which, true)
+                        providerList.setOnItemClickListener { _, _, which, _ ->
+                            sourceIndex = which
+                            providerList.setItemChecked(which, true)
+                        }
                     }
                 }
+
+                refreshLinks(currentQualityProfile)
 
                 sourceDialog.setOnDismissListener {
                     if (shouldDismiss) dismiss()
@@ -648,6 +676,29 @@ class GeneratorPlayer : FullScreenPlayer() {
 
                 sourceDialog.cancel_btt?.setOnClickListener {
                     sourceDialog.dismissSafe(activity)
+                }
+
+                fun setProfileName(profile: Int) {
+                    sourceDialog.source_settings_btt.setText(
+                        QualityDataHelper.getProfileName(
+                            profile
+                        )
+                    )
+                }
+                setProfileName(currentQualityProfile)
+
+                sourceDialog.profiles_click_settings.setOnClickListener {
+                    val activity = activity ?: return@setOnClickListener
+                    QualityProfileDialog(
+                        activity,
+                        R.style.AlertDialogCustomBlack,
+                        currentLinks.mapNotNull { it.first },
+                        currentQualityProfile
+                    ) { profile ->
+                        currentQualityProfile = profile.id
+                        setProfileName(profile.id)
+                        refreshLinks(profile.id)
+                    }.show()
                 }
 
                 sourceDialog.subtitles_encoding_format?.apply {
@@ -848,7 +899,7 @@ class GeneratorPlayer : FullScreenPlayer() {
     private fun startPlayer() {
         if (isActive) return // we don't want double load when you skip loading
 
-        val links = sortLinks()
+        val links = sortLinks(currentQualityProfile)
         if (links.isEmpty()) {
             noLinksFound()
             return
@@ -869,12 +920,12 @@ class GeneratorPlayer : FullScreenPlayer() {
     }
 
     override fun hasNextMirror(): Boolean {
-        val links = sortLinks()
+        val links = sortLinks(currentQualityProfile)
         return links.isNotEmpty() && links.indexOf(currentSelectedLink) + 1 < links.size
     }
 
     override fun nextMirror() {
-        val links = sortLinks()
+        val links = sortLinks(currentQualityProfile)
         if (links.isEmpty()) {
             noLinksFound()
             return
@@ -933,6 +984,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                 is ResultEpisode -> {
                     DataStoreHelper.removeLastWatched(newMeta.parentId)
                 }
+
                 is ExtractorUri -> {
                     DataStoreHelper.removeLastWatched(newMeta.parentId)
                 }
@@ -949,6 +1001,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                         isFromDownload = false
                     )
                 }
+
                 is ExtractorUri -> {
                     DataStoreHelper.setLastWatched(
                         resumeMeta.parentId,
@@ -1080,6 +1133,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                 season = meta.season
                 tvType = meta.tvType
             }
+
             is ExtractorUri -> {
                 headerName = meta.headerName
                 subName = meta.name
@@ -1296,6 +1350,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                 is Resource.Loading -> {
                     startLoading()
                 }
+
                 is Resource.Success -> {
                     // provider returned false
                     //if (it.value != true) {
@@ -1303,6 +1358,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                     //}
                     startPlayer()
                 }
+
                 is Resource.Failure -> {
                     showToast(activity, it.errorString, Toast.LENGTH_LONG)
                     startPlayer()
@@ -1315,6 +1371,17 @@ class GeneratorPlayer : FullScreenPlayer() {
             val turnVisible = it.isNotEmpty()
             val wasGone = overlay_loading_skip_button?.isGone == true
             overlay_loading_skip_button?.isVisible = turnVisible
+
+            normalSafeApiCall {
+                if (currentLinks.any { link ->
+                        getLinkPriority(currentQualityProfile, link) >=
+                                QualityDataHelper.AUTO_SKIP_PRIORITY
+                    }
+                ) {
+                    startPlayer()
+                }
+            }
+
             if (turnVisible && wasGone) {
                 overlay_loading_skip_button?.requestFocus()
             }

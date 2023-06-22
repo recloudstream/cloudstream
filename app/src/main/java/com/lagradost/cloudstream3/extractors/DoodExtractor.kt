@@ -58,7 +58,7 @@ open class DoodLaExtractor : ExtractorApi() {
         val quality = Regex("\\d{3,4}p").find(response0.substringAfter("<title>").substringBefore("</title>"))?.groupValues?.get(0)
         return listOf(
             ExtractorLink(
-                trueUrl,
+                this.name,
                 this.name,
                 trueUrl,
                 mainUrl,

@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--https://newbedev.com/concatenate-multiple-strings-in-xml-->
 <resources>
     <!-- FORMAT MIGHT TRANSLATE, WILL CAUSE CRASH IF APPLIED WRONG -->
     <string name="extra_info_format" formatted="true" translatable="false">%d %s | %s</string>
@@ -143,14 +142,14 @@
     <string name="eigengraumode_settings">播放速度</string>
     <string name="eigengraumode_settings_des">在播放器中添加播放速度選項</string>
     <string name="swipe_to_seek_settings">活動控制進度</string>
-    <string name="swipe_to_seek_settings_des">左右滑動控制播放進度</string>
+    <string name="swipe_to_seek_settings_des">從一側滑動到另一側以控制影片中的位置</string>
     <string name="swipe_to_change_settings">滑動更改設定</string>
     <string name="swipe_to_change_settings_des">上下滑動更改亮度或音量</string>
     <string name="autoplay_next_settings">自動播放下一集</string>
     <string name="autoplay_next_settings_des">播放完畢後播放下一集</string>
     <string name="double_tap_to_seek_settings">輕按兩下以控制進度</string>
     <string name="double_tap_to_pause_settings">輕按兩下以暫停</string>
-    <string name="double_tap_to_seek_amount_settings">輕按兩下以控制進度時間</string>
+    <string name="double_tap_to_seek_amount_settings">輕按兩下以控制進度時間（秒）</string>
     <string name="double_tap_to_seek_settings_des">在右側或左側輕按兩次以向前或向後快轉</string>
     <string name="double_tap_to_pause_settings_des">輕按兩下中間以暫停</string>
     <string name="use_system_brightness_settings">使用系統亮度</string>
@@ -178,7 +177,7 @@
     <string name="pref_filter_search_quality">在搜尋結果中隱藏選中的影片畫質</string>
     <string name="automatic_plugin_updates">自動更新外掛程式</string>
     <string name="updates_settings">顯示應用更新</string>
-    <string name="updates_settings_des">啟動時自動搜尋更新</string>
+    <string name="updates_settings_des">啟動應用程式後自動搜尋更新。</string>
     <string name="uprereleases_settings">更新至預覽版</string>
     <string name="uprereleases_settings_des">搜尋預覽版更新而不是僅搜尋正式版</string>
     <string name="github">Github</string>
@@ -245,8 +244,8 @@
     <string name="movies_singular">電影</string>
     <string name="tv_series_singular">電視劇</string>
     <string name="cartoons_singular">卡通</string>
-    <string name="anime_singular">@string/anime</string>
-    <string name="ova_singular">@string/ova</string>
+    <string name="anime_singular">動畫</string>
+    <string name="ova_singular">OVA</string>
     <string name="torrent_singular">種子</string>
     <string name="documentaries_singular">紀錄片</string>
     <string name="asian_drama_singular">亞洲劇</string>
@@ -286,7 +285,7 @@
     <string name="dont_show_again">不再顯示</string>
     <string name="skip_update">跳過此更新</string>
     <string name="update">更新</string>
-    <string name="watch_quality_pref">偏好播放畫質</string>
+    <string name="watch_quality_pref">偏好播放畫質 (WiFi)</string>
     <string name="limit_title">影片播放器標題最大字數</string>
     <string name="limit_title_rez">影片播放器標題</string>
     <string name="video_buffer_size_settings">影片緩衝大小</string>
@@ -535,4 +534,47 @@
     <string name="pref_category_looks">外觀</string>
     <string name="pref_category_ui_features">功能</string>
     <string name="browser">瀏覽器</string>
+    <string name="subscription_episode_released">第 %d 集已發行!</string>
+    <string name="library">媒體庫</string>
+    <string name="start">開始</string>
+    <string name="android_tv_interface_on_seek_settings">播放器顯示 - 快轉快退秒數</string>
+    <string name="open_with">開啟方式</string>
+    <string name="delayed_update_notice">應用程式將在關閉時更新</string>
+    <string name="sort_rating_asc">評分（從低到高）</string>
+    <string name="update_started">更新開始</string>
+    <string name="plugin_downloaded">外掛程式已下載</string>
+    <string name="action_remove_from_watched">從觀看中刪除</string>
+    <string name="sort_by">排序方式</string>
+    <string name="sort">排序</string>
+    <string name="sort_rating_desc">評分（從高到低）</string>
+    <string name="android_tv_interface_on_seek_settings_summary">播放器可見時使用的快轉快退秒數</string>
+    <string name="android_tv_interface_off_seek_settings">播放器隱藏 - 快轉快退秒數</string>
+    <string name="sort_updated_new">更新（從新到舊）</string>
+    <string name="sort_updated_old">更新（從舊到新）</string>
+    <string name="sort_alphabetical_a">按字母順序（A 到 Z）</string>
+    <string name="sort_alphabetical_z">按字母順序（Z 到 A）</string>
+    <string name="select_library">選擇媒體庫</string>
+    <string name="safe_mode_file">找到安全模式檔案！
+\n在刪除檔案之前不在啟動時載入任何擴充功能。</string>
+    <string name="test_log">日誌</string>
+    <string name="test_failed">失敗</string>
+    <string name="test_passed">通過</string>
+    <string name="android_tv_interface_off_seek_settings_summary">播放器隱藏時使用的快轉快退秒數</string>
+    <string name="pref_category_android_tv">Android TV</string>
+    <string name="category_provider_test">片源測試</string>
+    <string name="restart">重新啟動</string>
+    <string name="stop">停止</string>
+    <string name="subscription_list_name">訂閱</string>
+    <string name="subscription_new">已訂閱 %s</string>
+    <string name="subscription_deleted">已取消訂閱 %s</string>
+    <string name="watch_quality_pref_data">偏好播放畫質 (行動數據)</string>
+    <string name="jsdelivr_proxy">raw.githubusercontent.com Proxy</string>
+    <string name="pref_category_bypass">繞過 ISP</string>
+    <string name="revert">還原</string>
+    <string name="jsdelivr_enabled">無法訪問 GitHub。 正在開啟 jsDelivr proxy…</string>
+    <string name="jsdelivr_proxy_summary">使用 jsDelivr 繞過 GitHub 的阻擋。 可能導致更新延遲幾天。</string>
+    <string name="empty_library_no_accounts_message">您的媒體庫是空的:(
+\n登入媒體庫帳戶或將節目添加到您本機的媒體庫。</string>
+    <string name="empty_library_logged_in_message">此列表是空的。 嘗試切換到另一個。</string>
+    <string name="subscription_in_progress_notification">正在更新訂閱節目</string>
 </resources>

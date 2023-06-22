@@ -30,7 +30,7 @@ open class Tantifilm : ExtractorApi() {
         val jsonvideodata = parseJson<TantifilmJsonData>(response)
         return jsonvideodata.data.map {
             ExtractorLink(
-                it.file+".${it.type}",
+                this.name,
                 this.name,
                 it.file+".${it.type}",
                 mainUrl,
