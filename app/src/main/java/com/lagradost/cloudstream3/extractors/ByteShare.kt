@@ -4,7 +4,7 @@ import com.lagradost.cloudstream3.utils.*
 
 open class ByteShare : ExtractorApi() {
     override val name = "ByteShare"
-    override val mainUrl = "https://byteshare.net"
+    override val mainUrl = "https://byteshare.to/"
     override val requiresReferer = false
 
     override suspend fun getUrl(url: String, referer: String?): List<ExtractorLink> {
