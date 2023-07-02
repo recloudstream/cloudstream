@@ -9,7 +9,7 @@ import java.net.URI
 
 open class AsianLoad : ExtractorApi() {
     override var name = "AsianLoad"
-    override var mainUrl = "https://asianhdplay.pro/"
+    override var mainUrl = "https://asianhdplay.pro"
     override val requiresReferer = true
 
     private val sourceRegex = Regex("""sources:[\W\w]*?file:\s*?["'](.*?)["']""")
