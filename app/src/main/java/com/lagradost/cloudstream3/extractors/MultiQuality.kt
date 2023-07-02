@@ -9,7 +9,7 @@ import java.net.URI
 
 open class MultiQuality : ExtractorApi() {
     override var name = "MultiQuality"
-    override var mainUrl = "https://anihdplay.com/"
+    override var mainUrl = "https://anihdplay.com"
     private val sourceRegex = Regex("""file:\s*['"](.*?)['"],label:\s*['"](.*?)['"]""")
     private val m3u8Regex = Regex(""".*?(\d*).m3u8""")
     private val urlRegex = Regex("""(.*?)([^/]+$)""")
