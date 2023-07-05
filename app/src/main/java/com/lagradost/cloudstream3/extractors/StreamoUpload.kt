@@ -7,7 +7,7 @@ import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.M3u8Helper
 
-class StreamoUpload1 : StreamoUpload() {
+class StreamoUpload : StreamoUpload() {
     override val mainUrl = "https://streamoupload.xyz"
 }
 
