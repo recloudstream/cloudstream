@@ -553,4 +553,21 @@
     <string name="revert">Vrátit zpět</string>
     <string name="jsdelivr_proxy_summary">Obchází blokování GitHubu pomocí jsDelivr. Může způsobit zpoždění aktualizací o několik dní.</string>
     <string name="pref_category_bypass">Obcházení ISP</string>
+    <string name="profile_number">Profil %d</string>
+    <string name="wifi">Wi-Fi</string>
+    <string name="mobile_data">Mobilní data</string>
+    <string name="set_default">Nastavit jako výchozí</string>
+    <string name="use">Použít</string>
+    <string name="edit">Upravit</string>
+    <string name="profiles">Profily</string>
+    <string name="help">Nápověda</string>
+    <string name="qualities">Kvality</string>
+    <string name="profile_background_des">Pozadí profilu</string>
+    <string name="quality_profile_help">Zde můžete změnit pořadí zdrojů. Pokud má video vyšší prioritu, objeví se ve výběru zdrojů výše. Součet priority zdroje a priority kvality je priorita videa.
+\n
+\nZdroj A: 3
+\nKvalita B: 7
+\nBudou mít celkovou prioritu videa 10.
+\n
+\nPOZNÁMKA: Pokud je součet 10 nebo vyšší, přehrávač automaticky přeskočí načítání při načtení daného odkazu!</string>
 </resources>

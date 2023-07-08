@@ -7,7 +7,7 @@
     <string name="next_episode_time_day_format" formatted="true">%dদিন %dঘন্টা %dমিনিট</string>
     <string name="next_episode_time_hour_format" formatted="true">%dঘন্টা %dমিনিট</string>
     <string name="next_episode_time_min_format" formatted="true">%d মিনিট</string>
-    <string name="episode_poster_img_des">এপিসোড পোস্টার</string>
+    <string name="episode_poster_img_des">পর্বের পোস্টার</string>
     <string name="home_main_poster_img_des">মূল পোস্টার</string>
     <string name="home_next_random_img_des">পরবর্তী র‍্যান্ডম</string>
     <string name="go_back_img_des">ফিরে যান</string>
@@ -24,9 +24,9 @@
     <string name="title_downloads">ডাউনলোডসমূহ</string>
     <string name="title_settings">সেটিংস</string>
     <string name="app_dub_sub_episode_text_format" formatted="true">%s এপি %d</string>
-    <string name="next_episode_format" formatted="true">এপিসোড %d রিলিজ হবে</string>
+    <string name="next_episode_format" formatted="true">পর্ব %d মুক্তির তারিখ</string>
     <string name="result_share">শেয়ার</string>
-    <string name="result_open_in_browser">ব্রাঊজারে খুলুন</string>
+    <string name="result_open_in_browser">ব্রাউজারে খুলুন</string>
     <string name="result_tags">জনরা</string>
     <string name="search_hint">খুঁজুন…</string>
     <string name="search_hint_site" formatted="true">খুঁজুন %s…</string>
@@ -35,7 +35,7 @@
     <string name="go_back">পিছনে যান</string>
     <string name="no_data">কোন তথ্য নেই</string>
     <string name="episode_more_options_des">আরো অপশন</string>
-    <string name="next_episode">পরবর্তি এপিসোড</string>
+    <string name="next_episode">পরবর্তী পর্ব</string>
     <string name="skip_loading">লোডিং বাদ দিন</string>
     <string name="loading">লোডিং…</string>
     <string name="type_watching">দেখা হচ্ছে</string>
@@ -46,10 +46,10 @@
     <string name="type_none">কোন কিছুই না</string>
     <string name="type_re_watching">পুনরায় দেখা হচ্ছে</string>
     <string name="play_torrent_button">টরেন্ট স্ট্রিম করুন</string>
-    <string name="pick_source">সোর্সসমূহ</string>
+    <string name="pick_source">উৎসসমূহ</string>
     <string name="pick_subtitle">সাবটাইটেলসমূহ</string>
     <string name="reload_error">আবার সংযোগ দেওয়ার চেষ্টা করুন…</string>
-    <string name="play_episode">এপিসোড চালান</string>
+    <string name="play_episode">পর্ব চালান</string>
     <string name="download">ডাউনলোড</string>
     <string name="downloaded">ডাউনলোড হয়েছে</string>
     <string name="downloading">ডাউনলোড চলছে</string>
@@ -61,22 +61,22 @@
     <string name="error_loading_links_toast">লিংক লোডিং ব্যর্থ</string>
     <string name="app_dubbed_text">ডাব</string>
     <string name="app_subbed_text">সাব</string>
-    <string name="popup_play_file">ফাইল প্লে করুন</string>
+    <string name="popup_play_file">ফাইল চালান</string>
     <string name="popup_pause_download">ডাউনলোড থামান</string>
     <string name="pref_disable_acra">আটো বাগ রিপোর্ট বন্ধ করুন</string>
     <string name="home_more_info">আরো তথ্য</string>
     <string name="home_expanded_hide">বন্ধ করুন</string>
-    <string name="home_play">প্লে</string>
+    <string name="home_play">চালান</string>
     <string name="home_info">তথ্য</string>
     <string name="error_bookmarks_text">বুকমার্কসমূহ</string>
     <string name="action_remove_from_bookmarks">বাদ দিন</string>
     <string name="action_add_to_bookmarks">বুকমার্ক করুন</string>
-    <string name="sort_apply">এপ্লাই করুন</string>
+    <string name="sort_apply">প্রয়োগ করুন</string>
     <string name="sort_cancel">বাদ দিন</string>
     <string name="sort_copy">কপি করুন</string>
     <string name="sort_close">বন্ধ করুন</string>
     <string name="sort_clear">মুছুন</string>
-    <string name="sort_save">সেভ করুন</string>
+    <string name="sort_save">সংরক্ষণ করুন</string>
     <string name="player_speed">ভিডিও এর গতি</string>
     <string name="subs_outline_color">ফন্ট আউটলাইন কালার</string>
     <string name="subs_edge_type">সাবটাইটেল এজের ধরণ</string>
@@ -100,11 +100,11 @@
     <string name="download_failed">ডাউনলোড ব্যর্থ</string>
     <string name="download_storage_text">ইন্টারনাল স্টোরেজ</string>
     <string name="filter_bookmarks">বুকমার্ক ফিল্টার করুন</string>
-    <string name="popup_delete_file">ফাইল ডিলিট করুন</string>
+    <string name="popup_delete_file">ফাইল মুছুন</string>
     <string name="popup_resume_download">ডাউনলোড চালু করুন</string>
     <string name="subtitles_settings">সাবটাইটেল সেটিংস</string>
     <string name="subs_background_color">সাবটাইটেল ব্যাকগ্রাউন্ড কালার</string>
-    <string name="subs_text_color">ফন্ট কালার</string>
+    <string name="subs_text_color">লেখার রং</string>
     <string name="vpn_torrent">এটা একটি টরেন্ট প্রভাইডার, ভিপিএন ব্যবহার করা উচিৎ</string>
     <string name="subs_window_color">উইন্ডো কালার</string>
     <string name="subs_font_size">ফন্টের সাইজ</string>
@@ -130,8 +130,8 @@
     <string name="swipe_to_seek_settings_des">ভিডিওপ্লেয়ার এ সময় নিয়ন্ত্রণ করতে, ডানে অথবা বামে সোয়াইপ করুন</string>
     <string name="swipe_to_change_settings">সেটিংস পরিবর্তন করতে সোয়াইপ করুন</string>
     <string name="swipe_to_change_settings_des">উজ্জ্বলতা অথবা স্বরমাত্রা পরিবর্তন করতে যথাক্রমে বামে অথবা ডানে সোয়াইপ করুন</string>
-    <string name="autoplay_next_settings">স্বয়ংক্রিয়ভাবে পরবর্তী এপিসোড প্লে করুন</string>
-    <string name="autoplay_next_settings_des">পরবর্তী এপিসোডটি চালু করুন যখন চলতি এপিসোডটি শেষ হয়</string>
+    <string name="autoplay_next_settings">স্বয়ংক্রিয়ভাবে পরবর্তী পর্ব চালান</string>
+    <string name="autoplay_next_settings_des">বর্তমান পর্বটি শেষ হলে পরের পর্বটি চালান</string>
     <string name="double_tap_to_pause_settings">থামতে দুইবার চাপুন</string>
     <string name="backup_success">ডাটা জমা হয়েছে</string>
     <string name="backup_failed">স্টোরেজ এর অনুমতি অনুপস্থিত। দয়া করে আবার চেষ্টা করুন।</string>
@@ -148,4 +148,5 @@
     <string name="double_tap_to_seek_settings">আগাতে ডবল ট্যাপ করুন</string>
     <string name="eigengraumode_settings">আইজেনগ্রাভি মোড</string>
     <string name="update_started">আপডেট শুরু হয়েছে</string>
+    <string name="browser">ব্রাউজার</string>
 </resources>
