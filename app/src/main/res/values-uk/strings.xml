@@ -529,4 +529,21 @@
     <string name="pref_category_bypass">Обходи ISP</string>
     <string name="jsdelivr_proxy_summary">Обхід блокування GitHub за допомогою jsDelivr. Можлива затримка оновлень на кілька днів.</string>
     <string name="watch_quality_pref_data">Бажана якість перегляду (Мобільні дані)</string>
+    <string name="set_default">Встановити за замовчуванням</string>
+    <string name="profiles">Профілі</string>
+    <string name="help">Допомога</string>
+    <string name="quality_profile_help">Тут ви можете змінити порядок джерел. Якщо відео має вищий пріоритет, воно з\'явиться вище у списку джерел. Сума пріоритету джерела та пріоритету якості є пріоритетом відео.
+\n
+\nДжерело A: 3
+\nЯкість B: 7
+\nСумарний пріоритет відео дорівнюватиме 10.
+\n
+\nПРИМІТКА: Якщо сума пріоритетів дорівнює 10 або більше, плеєр автоматично пропустить завантаження при завантаженні цього посилання!</string>
+    <string name="profile_number">Профіль %d</string>
+    <string name="wifi">Wi-Fi</string>
+    <string name="mobile_data">Мобільні дані</string>
+    <string name="use">Використовувати</string>
+    <string name="edit">Редагувати</string>
+    <string name="qualities">Якості</string>
+    <string name="profile_background_des">Фон профілю</string>
 </resources>

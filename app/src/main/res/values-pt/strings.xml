@@ -529,4 +529,21 @@
     <string name="pref_category_defaults">Configurações padrão</string>
     <string name="quality_sd">SD</string>
     <string name="audio_tracks">Faixas de áudio</string>
+    <string name="profile_number">Perfil %d</string>
+    <string name="wifi">Wi-Fi</string>
+    <string name="mobile_data">Dados móveis</string>
+    <string name="set_default">Definir predefinição</string>
+    <string name="use">Utilização</string>
+    <string name="edit">Editar</string>
+    <string name="profiles">Perfis</string>
+    <string name="help">Ajuda</string>
+    <string name="qualities">Qualidades</string>
+    <string name="profile_background_des">Perfil de fundo</string>
+    <string name="quality_profile_help">Aqui pode alterar a forma como as fontes são ordenadas. Se um vídeo tiver uma prioridade mais elevada, aparecerá mais alto na seleção da fonte. A soma da prioridade da fonte com a prioridade da qualidade é a prioridade do vídeo.
+\n
+\nFonte A: 3
+\nQualidade B: 7
+\nTerá uma prioridade de vídeo combinada de 10.
+\n
+\nNOTA: Se a soma for 10 ou mais, o leitor saltará automaticamente o carregamento quando essa ligação for carregada!</string>
 </resources>

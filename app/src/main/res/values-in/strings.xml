@@ -552,4 +552,21 @@
     <string name="pref_category_bypass">Bypass ISP</string>
     <string name="revert">Pulihkan</string>
     <string name="watch_quality_pref_data">Nonton dengan kualitas yang di inginkan (Data Seluler)</string>
+    <string name="mobile_data">Data seluler</string>
+    <string name="help">Bantuan</string>
+    <string name="quality_profile_help">Di sini anda dapat mengubah sumber yang diurutkan. Jika video memiliki prioritas lebih tinggi, video tersebut akan muncul lebih tinggi dalam pemilihan sumber. Jumlah prioritas sumber dan prioritas kualitas adalah prioritas video.
+\n
+\nSumber A: 3
+\nKualitas B: 7
+\nAkan memiliki prioritas video yang digabung 10.
+\n
+\nCATATAN: Jika jumlahnya 10 atau lebih, pemain akan melewatkan pemuatan secara otomatis saat tautan dimuat!</string>
+    <string name="profile_number">Profil %d</string>
+    <string name="wifi">Wifi</string>
+    <string name="set_default">Pengaturan default</string>
+    <string name="use">Gunakan</string>
+    <string name="edit">Edit</string>
+    <string name="profiles">Profil</string>
+    <string name="qualities">Kualitas</string>
+    <string name="profile_background_des">Latar belakang profil</string>
 </resources>
