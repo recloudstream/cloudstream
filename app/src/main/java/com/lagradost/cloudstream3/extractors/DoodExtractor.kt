@@ -7,6 +7,10 @@ import com.lagradost.cloudstream3.utils.Qualities
 import com.lagradost.cloudstream3.utils.getQualityFromName
 import kotlinx.coroutines.delay
 
+class Dooood : DoodLaExtractor() {
+    override var mainUrl = "https://dooood.com"
+}
+
 class DoodWfExtractor : DoodLaExtractor() {
     override var mainUrl = "https://dood.wf"
 }
