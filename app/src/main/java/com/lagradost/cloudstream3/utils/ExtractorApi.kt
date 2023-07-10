@@ -244,6 +244,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     XStreamCdn(),
 
     StreamSB(),
+    Sblona(),
     Vidgomunimesb(),
     StreamSB1(),
     StreamSB2(),
@@ -265,6 +266,10 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     Sbflix(),
     Streamsss(),
     Sbspeed(),
+    Sbsonic(),
+    Sbface(),
+    Sbrapid(),
+    Lvturbo(),
 
     Fastream(),
 
@@ -300,6 +305,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     DoodToExtractor(),
     DoodSoExtractor(),
     DoodLaExtractor(),
+    Dooood(),
     DoodWsExtractor(),
     DoodShExtractor(),
     DoodWatchExtractor(),
@@ -366,9 +372,14 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
 
     Movhide(),
     StreamhideCom(),
+    StreamhideTo(),
+    Pixeldrain(),
+    Wibufile(),
     FileMoonIn(),
     Moviesm4u(),
     Filesim(),
+    Ahvsh(),
+    Guccihide(),
     FileMoon(),
     FileMoonSx(),
     Vido(),
