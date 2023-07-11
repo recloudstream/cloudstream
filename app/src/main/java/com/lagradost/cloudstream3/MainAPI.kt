@@ -199,6 +199,8 @@ object APIHolder {
 
                 val matchingTypes = types?.any { it.name.equals(media.type, true) } == true
                 matchingTitles && matchingTypes && matchingYears
+            } ?: search.results?.find { media ->
+                (year == null || media.releaseDate == year) && types?.any { it.name.equals(media.type, true) } == true
             } ?: return null
 
             Tracker(res.malId, res.aniId, res.image, res.cover)
