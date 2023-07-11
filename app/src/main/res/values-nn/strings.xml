@@ -183,4 +183,17 @@
     <string name="duration">Varigheit</string>
     <string name="livestreams">Direktesendingar</string>
     <string name="pref_category_app_updates">Programoppdateringar</string>
+    <string name="subs_hold_to_reset_to_default">Trykk og hold inne for å nullstille til standardinnstillinger</string>
+    <string name="search_provider_text_types">Søk ved bruk av typer</string>
+    <string name="subs_auto_select_language">Automatisk språkvalg</string>
+    <string name="subs_download_languages">Last ned språk</string>
+    <string name="subs_subtitle_languages">Undertekstspråk</string>
+    <string name="provider_info_meta">Metadata er ikke tilgjengelig fra nettsiden. Videoavspilling vil mislykkes hvis metadata ikke finnes på nettsiden.</string>
+    <string name="player_subtitles_settings_des">Innstillinger for avspilling av undertekster</string>
+    <string name="search_poster_img_des">Plakat</string>
+    <string name="vpn_torrent">Denne leverandøren er en torrent, og det anbefales å bruke en VPN-tjeneste.</string>
+    <string name="vpn_might_be_needed">For at denne leverandøren skal fungere korrekt, kan det være nødvendig å bruke en VPN-tjeneste</string>
+    <string name="picture_in_picture">Bilde i bilde</string>
+    <string name="continue_watching">Fortsett å sjå</string>
+    <string name="reload_error">Prøv tilkopling på nytt…</string>
 </resources>

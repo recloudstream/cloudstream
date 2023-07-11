@@ -529,4 +529,21 @@
     <string name="revert">Rückgängig</string>
     <string name="subscription_list_name">Abonniert</string>
     <string name="pref_category_bypass">ISP-Umgehungen</string>
+    <string name="profile_number">Profil %d</string>
+    <string name="wifi">Wi-Fi</string>
+    <string name="mobile_data">Mobile Daten</string>
+    <string name="set_default">Standard festlegen</string>
+    <string name="use">Verwenden</string>
+    <string name="edit">Bearbeiten</string>
+    <string name="profiles">Profile</string>
+    <string name="help">Hilfe</string>
+    <string name="qualities">Qualitäten</string>
+    <string name="profile_background_des">Profil-Hintergrund</string>
+    <string name="quality_profile_help">Hier kannst du verändern, wie die Quellen geordnet werden. Wenn ein Video eine höhere Priorität hat, wird es höher in der Quellenauswahl erscheinen. Die Summe der Quellenpriorität und der Qualitätspriorität ist die Videopriorität.
+\n
+\nQuelle A: 3
+\nQualität B: 7
+\nWerden eine kombinierte Videopriorität von 10 haben.
+\n
+\nHINWEIS: Wenn die Summe 10 oder mehr beträgt, überspringt der Player automatisch das Laden, wenn der Link geladen wird!</string>
 </resources>

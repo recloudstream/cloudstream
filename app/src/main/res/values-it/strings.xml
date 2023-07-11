@@ -551,4 +551,21 @@
     <string name="subscription_in_progress_notification">Aggiornando shows a cui sei iscritto</string>
     <string name="subscription_episode_released">L\'episodio %d è stato rilasciato!</string>
     <string name="watch_quality_pref_data">Qualità di visualizzazione preferita (Dati mobili)</string>
+    <string name="quality_profile_help">Qui puoi cambiare l\'ordine delle fonti. Se un video ha una priorità maggiore, apparirà più in alto nella selezione delle fonti. La somma tra la priorità della fonte e la priorità della qualità è la priorità video.
+\n
+\nFonte A: 3
+\nQualità B: 7
+\nAvranno una priorità video combinata di 10.
+\n
+\nNOTA: se la somma è pari o superiore a 10, il lettore salterà automaticamente il caricamento quando viene caricato quel link!</string>
+    <string name="profile_number">Profilo %d</string>
+    <string name="wifi">Wi-Fi</string>
+    <string name="set_default">Imposta predefinito</string>
+    <string name="use">Usa</string>
+    <string name="edit">Modifica</string>
+    <string name="profiles">Profili</string>
+    <string name="help">Aiuto</string>
+    <string name="mobile_data">Dati Mobili</string>
+    <string name="qualities">Qualità</string>
+    <string name="profile_background_des">Sfondo profilo</string>
 </resources>

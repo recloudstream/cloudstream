@@ -561,4 +561,21 @@
     <string name="jsdelivr_proxy_summary">تجاوز حظر GitHub باستخدام jsdelivr ، قد يتسبب في تأخير التحديثات لبضعة أيام.</string>
     <string name="jsdelivr_proxy">وكيل raw.githubusercontent.com</string>
     <string name="watch_quality_pref_data">جودة المشاهدة المفضلة (بيانات الجوال)</string>
+    <string name="profile_number">الملف الشخصي %d</string>
+    <string name="wifi">واي فاي</string>
+    <string name="mobile_data">بيانات الهاتف</string>
+    <string name="set_default">تعيين الافتراضي</string>
+    <string name="use">استخدام</string>
+    <string name="edit">تعديل</string>
+    <string name="profiles">الملفات التعريفية</string>
+    <string name="help">مساعدة</string>
+    <string name="quality_profile_help">‎‎هنا يمكنك تغيير طريقة ترتيب المصادر. إذا كان للفيديو أولوية أعلى ، فسيظهر في الأعلى في اختيار المصدر. يمثل مجموع أولوية المصدر وأولوية الجودة أولوية الفيديو.
+\n
+\nالمصدر أ: 3
+\nالجودة ب: 7
+\nسيكون لها أولوية فيديو مجمعة تبلغ 10.
+\n
+\nملاحظة: إذا كان المجموع 10 أو أكثر ، فسيتخطى المشغل التحميل تلقائيًا عند تحميل هذا الرابط!</string>
+    <string name="qualities">النوعيات</string>
+    <string name="profile_background_des">خلفية الملف الشخصي</string>
 </resources>

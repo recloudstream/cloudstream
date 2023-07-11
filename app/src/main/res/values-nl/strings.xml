@@ -551,4 +551,21 @@
 \nWord lid van onze Discord of zoek online.</string>
     <string name="audio_tracks">Audiosporen</string>
     <string name="sort_by">Gesorteerd op</string>
+    <string name="wifi">Wifi</string>
+    <string name="mobile_data">Mobiele data</string>
+    <string name="set_default">Maak standaard</string>
+    <string name="edit">Aanpassen</string>
+    <string name="profiles">Profielen</string>
+    <string name="help">Help</string>
+    <string name="qualities">Kwaliteiten</string>
+    <string name="profile_background_des">Profiel achtergrond</string>
+    <string name="use">Gebruik</string>
+    <string name="quality_profile_help">Hier kan je de volgorde van de bronnen veranderen. Als een video een hogere prioriteit heeft zal het hoger in de bronnenlijst staan. De som van de prioriteit van de bron en de prioriteit van de kwaliteit is de prioriteit van de video.
+\n
+\nBron A: 3
+\nKwaliteit B: 7
+\nHeeft een totale prioriteit van de video van 10.
+\n
+\nNOTITIE: Als de som 10 of hoger is zal de speler automatisch het laden overslaan wanneer die link is geladen!</string>
+    <string name="profile_number">Profiel %d</string>
 </resources>
