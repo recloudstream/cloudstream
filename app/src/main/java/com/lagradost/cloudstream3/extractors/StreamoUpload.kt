@@ -13,7 +13,7 @@ class StreamoUpload1 : StreamoUpload() {
 
 open class StreamoUpload : ExtractorApi() {
     override val name = "StreamoUpload"
-    override val mainUrl = "https://streamoupload.com"
+    override val mainUrl = "https://streamoupload.xyz"
     override val requiresReferer = true
 
     override suspend fun getUrl(url: String, referer: String?): List<ExtractorLink> {
