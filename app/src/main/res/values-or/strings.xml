@@ -27,7 +27,7 @@
     <string name="play_episode_toast">ଅଧ୍ୟାୟ ଚଲାଅ</string>
     <string name="no_episodes_found">କୌଣସି ଅଧ୍ୟାୟ ମିଳିଲା ନାହିଁ</string>
     <string name="episodes">ଟି ଅଧ୍ୟାୟ</string>
-    <string name="episode">ଟିଏ ଅଧ୍ୟାୟ</string>
+    <string name="episode">ଅଧ୍ୟାୟ</string>
     <string name="episode_action_play_in_format">%s‌ରେ ଚଲାଅ</string>
     <string name="episode_action_play_in_browser">ବ୍ରାଉଜର୍‌ରେ ଚଲାଅ</string>
     <string name="episode_action_download_subtitle">ଉପଶୀର୍ଷକ ଡାଉନଲୋଡ୍ କରିବା</string>
@@ -146,4 +146,11 @@
     <string name="player_subtitles_settings">ଉପଶୀର୍ଷକ</string>
     <string name="go_forward_30">+୩୦</string>
     <string name="year">ଵର୍ଷ</string>
+    <string name="download_storage_text">ଅନ୍ତଃ-ଷ୍ଟୋରେଜ୍</string>
+    <string name="home_change_provider_img_des">ପ୍ରଦାତା ବଦଳାଅ</string>
+    <string name="search_provider_text_providers">ପ୍ରଦାତା ଵ୍ୟଵହାର କରି ଖୋଜିବା</string>
+    <string name="coming_soon">ଶୀଘ୍ର ଆସୁଅଛି…</string>
+    <string name="updates_settings">ଆପ୍ ଅଦ୍ୟତନ ଦେଖାଇବା</string>
+    <string name="update_started">ଅଦ୍ୟତନ ଆରମ୍ଭ ହୋଇଛି</string>
+    <string name="search_hint">ସନ୍ଧାନ କରିବା…</string>
 </resources>

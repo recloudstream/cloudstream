@@ -532,4 +532,21 @@
     <string name="jsdelivr_proxy_summary">Obchodzi blokadę GitHuba za pomocą jsDelivr. może spowodować opóźnienie aktualizacji o kilka dni.</string>
     <string name="jsdelivr_enabled">Nie udało się połączyć z GitHub, włączono serwer pośredniczący jsDelivr…</string>
     <string name="watch_quality_pref_data">Domyślna jakość (dane mobilne)</string>
+    <string name="quality_profile_help">W tym miejscu można zmienić kolejność źródeł. Jeśli wideo ma wyższy priorytet, pojawi się wyżej w wyborze źródła. Priorytet wideo jest sumą priorytetu źródła i priorytetu jakości.
+\n
+\nŹródło A: 3
+\nJakość B: 7
+\nŁączny priorytet wideo będzie wynosił 10.
+\n
+\nUWAGA: Jeśli suma wynosi 10 lub więcej, odtwarzacz automatycznie pominie ładowanie po załadowaniu tego łącza!</string>
+    <string name="profile_number">Profil %d</string>
+    <string name="wifi">Wi-Fi</string>
+    <string name="mobile_data">Dane mobilne</string>
+    <string name="set_default">Ustaw domyślny</string>
+    <string name="use">Użyj</string>
+    <string name="edit">Edytuj</string>
+    <string name="profiles">Profile</string>
+    <string name="help">Pomoc</string>
+    <string name="qualities">Jakości</string>
+    <string name="profile_background_des">Tło profilu</string>
 </resources>

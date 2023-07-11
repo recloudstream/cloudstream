@@ -1,2 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources/>
+<resources>
+    <string name="all_languages_preference">Semua bahasa</string>
+    <string name="skip_type_format" formatted="true">Langkau %s</string>
+    <string name="player_settings_play_in_browser">Pelayar web</string>
+    <string name="history">Sejarah</string>
+    <string name="clear_history">Kosongkan sejarah</string>
+    <string name="skip_type_intro">Pengenalan</string>
+    <string name="skip_type_creddits">Kredit</string>
+    <string name="skip_type_mixed_op">Pembukaan bercampur</string>
+    <string name="skip_type_ed">Penamat</string>
+    <string name="skip_type_op">Pembukaan</string>
+    <string name="update_notification_installing">Memasang kemaskini aplikasi…</string>
+    <string name="update_notification_downloading">Memuat turun kemaskini aplikasi…</string>
+    <string name="no">Tidak</string>
+    <string name="yes">Ya</string>
+    <string name="confirm_exit_dialog">Adakah anda pasti anda ingin keluar\?</string>
+    <string name="action_remove_from_watched">Keluarkan daripada ditonton</string>
+    <string name="action_mark_as_watched">Tanda sebagai sudah ditonton</string>
+    <string name="enable_skip_op_from_database_des">Tunjukkan pop timbul yang dilangkau untuk pembukaan/pengakhiran</string>
+    <string name="update_notification_failed">Tidak dapat memasang versi aplikasi terkini</string>
+    <string name="clipboard_too_large">Terlalu banyak perkataan. Tidak dapat disimpan di papan klip.</string>
+    <string name="app_not_found_error">Aplikasi tidak ditemui</string>
+    <string name="skip_type_mixed_ed">Penamat bercampur</string>
+    <string name="skip_type_recap">Imbas kembali</string>
+    <string name="next_episode_format" formatted="true">Episod %d akan disiarkan dalam</string>
+    <string name="cast_format" formatted="true">Pelakon:%s</string>
+    <string name="safe_mode_title">Mod Selamat Hidup</string>
+    <string name="next_episode_time_day_format" formatted="true">%dd %dh %dm</string>
+    <string name="next_episode_time_hour_format" formatted="true">%dh %dm</string>
+    <string name="next_episode_time_min_format" formatted="true">%dm</string>
+    <string name="episode_poster_img_des">Poster Episod</string>
+    <string name="home_main_poster_img_des">Poster Utama</string>
+    <string name="go_back_img_des">Pergi Kembali</string>
+    <string name="home_next_random_img_des">Seterusnya Rawak</string>
+    <string name="home_change_provider_img_des">Tukar Pembekal</string>
+    <string name="player_speed_text_format" formatted="true">Kelajuan (%.2fx)</string>
+    <string name="result_poster_img_des">Poster</string>
+    <string name="search_poster_img_des">Poster</string>
+</resources>

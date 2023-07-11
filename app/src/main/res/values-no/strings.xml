@@ -2,7 +2,7 @@
 <resources>
     <!-- IS NOT NEEDED TO TRANSLATE AS THEY ARE ONLY USED FOR SCREEN READERS AND WONT SHOW UP TO NORMAL USERS -->
     <string name="result_poster_img_des">Plakat</string>
-    <string name="search_poster_img_des">@string/result_poster_img_des</string>
+    <string name="search_poster_img_des">Plakat</string>
     <string name="episode_poster_img_des">Episode Plakat</string>
     <string name="home_main_poster_img_des">Main Plakat</string>
     <string name="home_next_random_img_des">Neste tilfeldig</string>
@@ -104,7 +104,7 @@
     <string name="swipe_to_seek_settings">Sveip for å søke</string>
     <string name="swipe_to_seek_settings_des">Sveip til venstre eller høyre for å kontrollere tiden i videospilleren</string>
     <string name="swipe_to_change_settings">Sveip for å endre innstillinger</string>
-    <string name="swipe_to_change_settings_des">Sveip på venstre eller høyre side for å endre lysstyrke eller volum</string>
+    <string name="swipe_to_change_settings_des">Sveip opp eller ned på venstre eller høyre side for å endre lysstyrke eller volum</string>
     <string name="double_tap_to_seek_settings">Dobbelttrykk til å søke</string>
     <string name="double_tap_to_seek_settings_des">Trykk to ganger på høyre eller venstre for å søke fremover eller bakover</string>
     <string name="use_system_brightness_settings">Bruk systemets lysstyrke</string>
@@ -117,7 +117,7 @@
     <string name="bug_report_settings_on">Sender ingen rapportere</string>
     <string name="show_fillers_settings">Vis filler-episode til anime</string>
     <string name="updates_settings">Vis appoppdateringer</string>
-    <string name="updates_settings_des">Søk automatisk etter nye oppdateringer</string>
+    <string name="updates_settings_des">Søk automatisk etter nye oppdateringer etter at appen har startet.</string>
     <string name="uprereleases_settings">Oppdatering til forhåndsutgivelser</string>
     <string name="uprereleases_settings_des">Søk etter oppdateringer før utgivelse i stedet for fullstendige utgivelser</string>
     <string name="github">Github</string>
@@ -186,7 +186,7 @@
     <string name="video_skip_op">Hoppe OP</string>
     <string name="dont_show_again">Ikke vis igjen</string>
     <string name="update">Oppdater</string>
-    <string name="watch_quality_pref">Foretrukket klokkekvalitet</string>
+    <string name="watch_quality_pref">Foretrukket avspillingskvalitet (WiFi)</string>
     <string name="dns_pref">DNS rundt HTTPS</string>
     <string name="dns_pref_summary">Nyttig til omgå Internettleverandør hinder</string>
     <string name="display_subbed_dubbed_settings">Vis dubbet/subbed Anime</string>
@@ -296,7 +296,7 @@
     <string name="chromecast_subtitles_settings">Chromecast-undertekster</string>
     <string name="autoplay_next_settings">Autospill neste episode</string>
     <string name="history">Historikk</string>
-    <string name="double_tap_to_pause_settings_des">Trykk i midten for å sette på pause</string>
+    <string name="double_tap_to_pause_settings_des">Trykk to ganger midt på skjermen for å pause</string>
     <string name="no_episodes_found">Fant ingen episoder</string>
     <string name="filler" formatted="true">Fyllstoff</string>
     <string name="play_livestream_button">Spill direktestrøm</string>
@@ -323,7 +323,7 @@
     <string name="actor_main">Hovedrolle</string>
     <string name="actor_supporting">Støtterolle</string>
     <string name="next">Neste</string>
-    <string name="referer">Referent</string>
+    <string name="referer">Referanse</string>
     <string name="plugin_deleted">Programtillegg slettet</string>
     <string name="repository_name_hint">Pakkebrønnsnavn</string>
     <string name="repository_url_hint">Pakkebrønnsnettadresse</string>
@@ -364,7 +364,7 @@
     <string name="plugin_singular">programtillegg</string>
     <string name="safe_mode_title">Trygt modus påslått</string>
     <string name="action_add_to_bookmarks">Sett visningsstatus</string>
-    <string name="episode_sync_settings_des">Auto-synkroniser din nåværende episode-framdrift</string>
+    <string name="episode_sync_settings_des">Synkroniser automatisk fremdriften din for gjeldende episode</string>
     <string name="episodes_range">%d-%d</string>
     <string name="view_public_repositories_button_short">Offentlig liste</string>
     <string name="plugin">programtillegg</string>
@@ -399,7 +399,7 @@
     <string name="skip_type_creddits">Rulletekst</string>
     <string name="skip_type_intro">Introduksjon</string>
     <string name="backup_failed">Lagringstilgang mangler. Prøv igjen.</string>
-    <string name="show_trailers_settings">Vis forfilmer</string>
+    <string name="show_trailers_settings">Vis trailere</string>
     <string name="show_dub">Dubbingsetikett</string>
     <string name="show_sub">Undertekstetikett</string>
     <string name="video_buffer_size_settings">Videomellomlagringsstørrelse</string>
@@ -407,11 +407,11 @@
     <string name="video_buffer_disk_settings">Videohurtiglager på disk</string>
     <string name="video_buffer_clear_settings">Tøm video- og bildehurtiglager</string>
     <string name="add_site_summary">Legg til en klone av en eksisterende side, med en annen nettadresse</string>
-    <string name="automatic_plugin_download_summary">Installer alle programtillegg som ikke er installert enda fra de pakkebrønnene som er lagt til.</string>
+    <string name="automatic_plugin_download_summary">Installer automatisk alle plugins som ikke er installert fra de tilføyde depotene.</string>
     <string name="show_hd">Kvalitetsetikett</string>
     <string name="poster_ui_settings">Slå av/på grensesnittselementer på plakat</string>
     <string name="skip_update">Hopp over denne oppdateringen</string>
-    <string name="video_ram_description">Forårsaker tilfeldige krasj hvis satt for høyt. Ikke endre dette hvis du ikke har lite minne.</string>
+    <string name="video_ram_description">Kan forårsake krasj hvis satt for høyt på enheter med lite minne, for eksempel en Android TV.</string>
     <string name="action_open_play">@string/home_play</string>
     <string name="backup_settings">Sikkerhetskopier data</string>
     <string name="backup_success">Data lagret</string>
@@ -425,13 +425,13 @@
     <string name="anime_singular">@string/anime</string>
     <string name="pref_filter_search_quality">Skjul valgt videokvalitet i søkeresultater</string>
     <string name="restore_success">Lastet inn sikkerhetkopifil</string>
-    <string name="category_updates">Oppdateringer og sikkerhetskopi</string>
+    <string name="category_updates">Oppdateringer og sikkerhetskopier</string>
     <string name="ova_singular">@string/ova</string>
     <string name="confirm_exit_dialog">Avslutt\?</string>
     <string name="nsfw_singular">Sensurerbart</string>
     <string name="batch_download_nothing_to_download_format" formatted="true">Alle %s er allerede nedlastet</string>
     <string name="update_notification_failed">Kunne ikke installere den nye versjonen av programmet</string>
-    <string name="update_notification_installing">Installerer ny versjon av programmet …</string>
+    <string name="update_notification_installing">Installerer appoppdatering…</string>
     <string name="update_notification_downloading">Laster ned ny versjon av programmet …</string>
     <string name="upload_sync">Synkroniser</string>
     <string name="authenticated_user" formatted="true">%s innlogget</string>
@@ -449,7 +449,7 @@
     <string name="quality_ts">TS</string>
     <string name="quality_tc">TC</string>
     <string name="subtitles_remove_captions">Fjern døveteksting fra undertekster</string>
-    <string name="subtitles_remove_bloat">Minimale undertekster</string>
+    <string name="subtitles_remove_bloat">Fjern unødvendig informasjon fra undertekster</string>
     <string name="extras">Ekstra</string>
     <string name="subtitles_filter_lang">Filtrer etter foretrukket mediaspråk</string>
     <string name="player_settings_play_in_web">Vev-videosending</string>
@@ -488,7 +488,7 @@
     <string name="pref_category_subtitles">Undertekster</string>
     <string name="pref_category_backup">Sikkerhetskopi</string>
     <string name="apk_installer_settings">APK-installatør</string>
-    <string name="apk_installer_settings_des">Noen enheter støtter ikke den nye pakkeinstallatøren. Prøv gammeldags alternativ hvis ting ikke installeres.</string>
+    <string name="apk_installer_settings_des">Noen telefoner støtter ikke den nye pakkeinstallatøren. Prøv det eldre alternativet hvis oppdateringer ikke blir installert.</string>
     <string name="update_started">Oppdatering startet</string>
     <string name="plugin_downloaded">Programtillegg nedlastet</string>
     <string name="delayed_update_notice">Programmet vil oppgraderes når du avslutter det</string>
@@ -511,7 +511,7 @@
     <string name="android_tv_interface_on_seek_settings">Vist avspiller — blafringsmengde</string>
     <string name="sort_updated_old">Oppdatert (gammel til ny)</string>
     <string name="test_passed">Vellykket</string>
-    <string name="subscription_episode_released">Episode %d sluppet.</string>
+    <string name="subscription_episode_released">Episode %d sluppet!</string>
     <string name="watch_quality_pref_data">Foretrukket visningskvalitet (mobildata)</string>
     <string name="stop">Stopp</string>
     <string name="action_remove_from_watched">Fjern fra sette</string>
@@ -525,7 +525,7 @@
     <string name="subscription_new">Abonnerer på %s</string>
     <string name="android_tv_interface_off_seek_settings_summary">Blafringsmengde med skjult avspiller</string>
     <string name="select_library">Velg bibliotek</string>
-    <string name="jsdelivr_proxy_summary">Omgår blokkering av GitHub ved bruk av jsDelivr. Kan utsette oppdateringer et par dager.</string>
+    <string name="jsdelivr_proxy_summary">Omgår blokkering av GitHub ved hjelp av jsDelivr. Dette kan forårsake forsinkelser på oppdateringer med noen få dager.</string>
     <string name="pref_category_bypass">ISP-omgåelser</string>
     <string name="empty_library_logged_in_message">Denne listen er tom. Prøv å bytte til en annen.</string>
     <string name="sort">Sorter</string>

@@ -503,7 +503,7 @@
     <string name="select_library">Seleccionar biblioteca</string>
     <string name="open_with">Abrir con</string>
     <string name="empty_library_no_accounts_message">Tu biblioteca está vacía :(
-\nRegístrate con una cuenta en la biblioteca o agrega los títulos a tu biblioteca local.</string>
+\nInicia sesión en una cuenta de biblioteca o añade series desde tu biblioteca local.</string>
     <string name="safe_mode_file">¡Se encontró un archivo en modo seguro!
 \nNo cargar ninguna extensión al inicio hasta que se elimine el archivo.</string>
     <string name="android_tv_interface_on_seek_settings">Reproductor visible - buscar cantidad</string>
@@ -529,4 +529,21 @@
     <string name="revert">Revertir</string>
     <string name="pref_category_bypass">ISP Bypasses</string>
     <string name="watch_quality_pref_data">Calidad de visualización preferida (Datos móviles)</string>
+    <string name="help">Ayuda</string>
+    <string name="quality_profile_help">Aquí puedes cambiar el orden de las fuentes. Si un vídeo tiene una prioridad más alta, aparecerá más arriba en la selección de las fuentes. La suma de la prioridad de la fuente y la prioridad de la calidad es la prioridad del vídeo.
+\n
+\nFuente A: 3
+\nCalidad B: 7
+\nTendrá una prioridad en el vídeo combinada de 10.
+\n
+\nNOTA: ¡Si la suma es 10 o más el reproductor saltará automáticamente la carga cuando se cargue ese enlace!</string>
+    <string name="profile_number">Perfil %d</string>
+    <string name="wifi">Wifi</string>
+    <string name="edit">Editar</string>
+    <string name="profiles">Perfiles</string>
+    <string name="mobile_data">Datos móviles</string>
+    <string name="set_default">Establecer por defecto</string>
+    <string name="use">Usar</string>
+    <string name="qualities">Calidades</string>
+    <string name="profile_background_des">Perfil del fondo</string>
 </resources>

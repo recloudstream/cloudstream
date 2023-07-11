@@ -551,13 +551,13 @@
     <string name="sort_alphabetical_z">Alfabetik (Z - A)</string>
     <string name="select_library">Kütüphane Seçin</string>
     <string name="open_with">Şununla aç</string>
-    <string name="empty_library_logged_in_message">Görünüşe göre bu liste boş, başka bir listeye geçmeyi deneyin</string>
+    <string name="empty_library_logged_in_message">Görünüşe göre bu liste boş, başka bir listeye geçmeyi deneyin.</string>
     <string name="sort_rating_desc">Derecelendirme (Yüksekten Düşüğe)</string>
     <string name="sort_rating_asc">Derecelendirme (Düşükten Yükseğe)</string>
     <string name="restart">Yeniden başlat</string>
     <string name="android_tv_interface_off_seek_settings">Oynatıcı gizlenmişken atlanacak süre</string>
     <string name="pref_category_bypass">İSS Kısıtlamaları</string>
-    <string name="jsdelivr_enabled">GitHub\'a ulaşılamadı, jsdelivr vekil sunucusu etkinleştiriliyor.</string>
+    <string name="jsdelivr_enabled">GitHub\'a ulaşılamadı. jsDelivr vekil sunucusu etkinleştiriliyor…</string>
     <string name="start">Başlat</string>
     <string name="test_passed">Başarılı oldu</string>
     <string name="jsdelivr_proxy">raw.githubusercontent.com vekil sunucusu (proxy)</string>
@@ -577,4 +577,21 @@
     <string name="subscription_deleted">%s kanalı aboneliğinden çıkıldı</string>
     <string name="test_log">Günlük</string>
     <string name="android_tv_interface_on_seek_settings_summary">Oynatıcı görünür durumdayken atlanacak süre miktarı</string>
+    <string name="wifi">Wi-Fi</string>
+    <string name="profiles">Profiller</string>
+    <string name="help">Yardım</string>
+    <string name="profile_number">Profil %d</string>
+    <string name="use">Kullan</string>
+    <string name="mobile_data">Mobil veri</string>
+    <string name="set_default">Varsayılanı ayarla</string>
+    <string name="edit">Düzenle</string>
+    <string name="quality_profile_help">Burada kaynakların nasıl sıralandığını değiştirebilirsiniz. Bir video daha yüksek bir önceliğe sahipse, kaynak seçiminde daha yüksek görünecektir. Kaynak önceliği ve kalite önceliğinin toplamı video önceliğidir.
+\n
+\nKaynak A: 3
+\nKalite B: 7
+\nBirleştirilmiş video önceliği 10 olacaktır.
+\n
+\nNOT: Toplam 10 veya daha fazlaysa, bu bağlantı yüklendiğinde oynatıcı otomatik olarak yüklemeyi atlayacaktır!</string>
+    <string name="qualities">Kaliteler</string>
+    <string name="profile_background_des">Profil arkaplanı</string>
 </resources>
