@@ -10,14 +10,12 @@ import java.util.regex.Matcher
 import java.util.regex.Pattern
 
 class StreamoUpload1 : StreamoUpload() {
-    override val name: String = "StreamoUpload1"
-    override val mainUrl: String = "https://streamoupload.xyz"
+    override val mainUrl = "https://streamoupload.xyz"
 }
 
-open class StreamoUpload : ExtractorApi() {
-    override val name: String = "StreamoUpload"
-    override val mainUrl: String = "https://streamoupload.xyz"
-    override val requiresReferer: Boolean = true
+open class StreamoUpload : ExtractorApi(name = "StreamoUpload", url = "", referer = "", quality = "") {
+    override val mainUrl = "https://streamoupload.xyz"
+    override val requiresReferer = true
 
     override suspend fun getUrl(url: String, referer: String?): List<ExtractorLink> {
         val sources = mutableListOf<ExtractorLink>()
@@ -48,16 +46,4 @@ open class StreamoUpload : ExtractorApi() {
     private data class File(
         @JsonProperty("file") val file: String,
     )
-}
-
-fun main() {
-    val streamoUpload = StreamoUpload()
-    val url = "https://streamoupload.xyz" // Provide the actual URL to extract from
-    val referer = "https://streamoupload.xyz" // Provide the referer URL if required
-    val extractedLinks = runBlocking { streamoUpload.getUrl(url, referer) }
-
-    println("Extracted Links:")
-    for (link in extractedLinks) {
-        println(link.url)
-    }
 }
