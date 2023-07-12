@@ -12,6 +12,11 @@ import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.PBEKeySpec
 import javax.crypto.spec.SecretKeySpec
 
+class Moviesapi : Chillx() {
+    override val name = "Moviesapi"
+    override val mainUrl = "https://w1.moviesapi.club"
+}
+
 class Bestx : Chillx() {
     override val name = "Bestx"
     override val mainUrl = "https://bestx.stream"
@@ -27,7 +32,7 @@ open class Chillx : ExtractorApi() {
     override val requiresReferer = true
 
     companion object {
-        private const val KEY = "4VqE3#N7zt&HEP^a"
+        private const val KEY = "11x&W5UBrcqn\$9Yl"
     }
 
     override suspend fun getUrl(
@@ -45,7 +50,7 @@ open class Chillx : ExtractorApi() {
         val encData = AppUtils.tryParseJson<AESData>(base64Decode(master ?: return))
         val decrypt = cryptoAESHandler(encData ?: return, KEY, false)
 
-        val source = Regex("""sources:\s*\[\{"file":"([^"]+)""").find(decrypt)?.groupValues?.get(1)
+        val source = Regex(""""?file"?:\s*"([^"]+)""").find(decrypt)?.groupValues?.get(1)
         val tracks = Regex("""tracks:\s*\[(.+)]""").find(decrypt)?.groupValues?.get(1)
 
         // required
