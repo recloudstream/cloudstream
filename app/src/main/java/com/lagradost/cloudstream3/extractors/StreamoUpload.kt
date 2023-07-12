@@ -4,17 +4,20 @@ import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.M3u8Helper
+import kotlinx.coroutines.runBlocking
 import org.jsoup.select.Elements
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
 class StreamoUpload1 : StreamoUpload() {
-    override val mainUrl = "https://streamoupload.xyz"
+    override val name: String = "StreamoUpload1"
+    override val mainUrl: String = "https://streamoupload.xyz"
 }
 
-open class StreamoUpload : ExtractorApi(name = "StreamoUpload") {
-    override val mainUrl = "https://streamoupload.xyz"
-    override val requiresReferer = true
+open class StreamoUpload : ExtractorApi() {
+    override val name: String = "StreamoUpload"
+    override val mainUrl: String = "https://streamoupload.xyz"
+    override val requiresReferer: Boolean = true
 
     override suspend fun getUrl(url: String, referer: String?): List<ExtractorLink> {
         val sources = mutableListOf<ExtractorLink>()
@@ -58,10 +61,3 @@ fun main() {
         println(link.url)
     }
 }
-
-
-
-
-
-
-
