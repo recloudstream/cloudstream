@@ -8,11 +8,11 @@ import org.jsoup.select.Elements
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
-class StreamoUpload : StreamoUpload() {
+class StreamoUpload1 : StreamoUpload() {
     override val mainUrl = "https://streamoupload.xyz"
 }
 
-open class StreamoUpload1 : ExtractorApi(name = "StreamoUpload") {
+open class StreamoUpload : ExtractorApi(name = "StreamoUpload") {
     override val mainUrl = "https://streamoupload.xyz"
     override val requiresReferer = true
 
