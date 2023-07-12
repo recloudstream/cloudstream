@@ -65,27 +65,19 @@ open class Filesim : ExtractorApi() {
         subtitleCallback: (SubtitleFile) -> Unit,
         callback: (ExtractorLink) -> Unit
     ) {
-        val response = app.get(url, referer = referer).document
-        response.select("script[type=text/javascript]").map { script ->
-            if (script.data().contains(Regex("eval\\(function\\(p,a,c,k,e,[rd]"))) {
-                val unpackedscript = getAndUnpack(script.data())
-                val m3u8Regex = Regex("file.\"(.*?m3u8.*?)\"")
-                val m3u8 = m3u8Regex.find(unpackedscript)?.destructured?.component1() ?: ""
-                if (m3u8.isNotEmpty()) {
-                    generateM3u8(
-                        name,
-                        m3u8,
-                        mainUrl
-                    ).forEach(callback)
-                }
-            }
+        val response = app.get(url, referer = referer)
+        val script = if (!getPacked(response.text).isNullOrEmpty()) {
+            getAndUnpack(response.text)
+        } else {
+            response.document.selectFirst("script:containsData(sources:)")?.data()
         }
+        val m3u8 =
+            Regex("file:\\s*\"(.*?m3u8.*?)\"").find(script ?: return)?.groupValues?.getOrNull(1)
+        generateM3u8(
+            name,
+            m3u8 ?: return,
+            mainUrl
+        ).forEach(callback)
     }
-
-   /* private data class ResponseSource(
-        @JsonProperty("file") val file: String,
-        @JsonProperty("type") val type: String?,
-        @JsonProperty("label") val label: String?
-    ) */
 
 }
