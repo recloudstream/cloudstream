@@ -12,7 +12,7 @@ class StreamoUpload : StreamoUpload() {
     override val mainUrl = "https://streamoupload.xyz"
 }
 
-open class StreamoUpload : ExtractorApi(name = "StreamoUpload") {
+open class StreamoUpload1 : ExtractorApi(name = "StreamoUpload") {
     override val mainUrl = "https://streamoupload.xyz"
     override val requiresReferer = true
 
@@ -46,4 +46,22 @@ open class StreamoUpload : ExtractorApi(name = "StreamoUpload") {
         @JsonProperty("file") val file: String,
     )
 }
+
+fun main() {
+    val streamoUpload = StreamoUpload()
+    val url = "https://streamoupload.xyz" // Provide the actual URL to extract from
+    val referer = "https://streamoupload.xyz" // Provide the referer URL if required
+    val extractedLinks = runBlocking { streamoUpload.getUrl(url, referer) }
+
+    println("Extracted Links:")
+    for (link in extractedLinks) {
+        println(link.url)
+    }
+}
+
+
+
+
+
+
 
