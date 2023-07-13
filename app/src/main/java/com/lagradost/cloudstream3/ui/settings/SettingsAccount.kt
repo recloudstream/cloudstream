@@ -96,7 +96,7 @@ class SettingsAccount : PreferenceFragmentCompat() {
                 }
             }
             api.accountIndex = ogIndex
-            val adapter = AccountAdapter(items, R.layout.account_single) {
+            val adapter = AccountAdapter(items) {
                 dialog?.dismissSafe(activity)
                 api.changeAccount(it.card.accountIndex)
             }

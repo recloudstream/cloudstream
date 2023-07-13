@@ -397,21 +397,22 @@ object UIHelper {
         return result
     }
 
-    fun Context?.fixPaddingStatusbar(v: View?) {
-        if (v == null || this == null) return
+    fun fixPaddingStatusbar(v: View?) {
+        if (v == null) return
+        val ctx = v.context ?: return
         v.setPadding(
             v.paddingLeft,
-            v.paddingTop + getStatusBarHeight(),
+            v.paddingTop + ctx.getStatusBarHeight(),
             v.paddingRight,
             v.paddingBottom
         )
     }
 
-    fun Context.fixPaddingStatusbarView(v: View?) {
+    fun fixPaddingStatusbarView(v: View?) {
         if (v == null) return
-
+        val ctx = v.context ?: return
         val params = v.layoutParams
-        params.height = getStatusBarHeight()
+        params.height = ctx.getStatusBarHeight()
         v.layoutParams = params
     }
 

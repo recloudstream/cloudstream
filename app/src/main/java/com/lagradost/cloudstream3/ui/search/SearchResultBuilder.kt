@@ -1,7 +1,6 @@
 package com.lagradost.cloudstream3.ui.search
 
 import android.content.Context
-import android.graphics.drawable.Drawable
 import android.view.View
 import android.widget.ImageView
 import android.widget.ProgressBar
@@ -10,14 +9,29 @@ import androidx.cardview.widget.CardView
 import androidx.core.view.isVisible
 import androidx.palette.graphics.Palette
 import androidx.preference.PreferenceManager
-import com.lagradost.cloudstream3.*
+import com.lagradost.cloudstream3.AnimeSearchResponse
+import com.lagradost.cloudstream3.DubStatus
+import com.lagradost.cloudstream3.LiveSearchResponse
+import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.SearchQuality
+import com.lagradost.cloudstream3.SearchResponse
+import com.lagradost.cloudstream3.isMovieType
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTrueTvSettings
 import com.lagradost.cloudstream3.utils.AppUtils.getNameFull
 import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.DataStoreHelper.fixVisual
 import com.lagradost.cloudstream3.utils.SubtitleHelper
 import com.lagradost.cloudstream3.utils.UIHelper.setImage
-import kotlinx.android.synthetic.main.home_result_grid.view.*
+import kotlinx.android.synthetic.main.home_result_grid.view.background_card
+import kotlinx.android.synthetic.main.home_result_grid.view.imageText
+import kotlinx.android.synthetic.main.home_result_grid.view.imageView
+import kotlinx.android.synthetic.main.home_result_grid.view.search_item_download_play
+import kotlinx.android.synthetic.main.home_result_grid.view.text_flag
+import kotlinx.android.synthetic.main.home_result_grid.view.text_is_dub
+import kotlinx.android.synthetic.main.home_result_grid.view.text_is_sub
+import kotlinx.android.synthetic.main.home_result_grid.view.text_quality
+import kotlinx.android.synthetic.main.home_result_grid.view.title_shadow
+import kotlinx.android.synthetic.main.home_result_grid.view.watchProgress
 
 object SearchResultBuilder {
     private val showCache: MutableMap<String, Boolean> = mutableMapOf()

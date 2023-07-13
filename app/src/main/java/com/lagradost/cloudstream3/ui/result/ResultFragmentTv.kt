@@ -12,9 +12,9 @@ import com.lagradost.cloudstream3.DubStatus
 import com.lagradost.cloudstream3.LoadResponse
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.SearchResponse
-import com.lagradost.cloudstream3.mvvm.ResourceSome
-import com.lagradost.cloudstream3.mvvm.Some
+import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.observe
+import com.lagradost.cloudstream3.mvvm.observeNullable
 import com.lagradost.cloudstream3.ui.player.ExtractorLinkGenerator
 import com.lagradost.cloudstream3.ui.player.GeneratorPlayer
 import com.lagradost.cloudstream3.ui.search.SearchAdapter
@@ -69,16 +69,16 @@ class ResultFragmentTv : ResultFragment() {
         return focus == this.result_root
     }
 
-    override fun updateEpisodes(episodes: ResourceSome<List<ResultEpisode>>) {
+    override fun updateEpisodes(episodes: Resource<List<ResultEpisode>>?) {
         super.updateEpisodes(episodes)
-        if (episodes is ResourceSome.Success && hasNoFocus()) {
+        if (episodes is Resource.Success && hasNoFocus()) {
             result_episodes?.requestFocus()
         }
     }
 
-    override fun updateMovie(data: ResourceSome<Pair<UiText, ResultEpisode>>) {
+    override fun updateMovie(data: Resource<Pair<UiText, ResultEpisode>>?) {
         super.updateMovie(data)
-        if (data is ResourceSome.Success && hasNoFocus()) {
+        if (data is Resource.Success && hasNoFocus()) {
             result_play_movie?.requestFocus()
         }
     }
@@ -130,9 +130,9 @@ class ResultFragmentTv : ResultFragment() {
             LinearListLayout(result_episodes?.context).apply {
                 setHorizontal()
             }
-        (result_episodes?.adapter as EpisodeAdapter?)?.apply {
-            layout = R.layout.result_episode_both_tv
-        }
+       // (result_episodes?.adapter as EpisodeAdapter?)?.apply {
+      //      layout = R.layout.result_episode_both_tv
+      //  }
         //result_episodes?.setMaxViewPoolSize(0, Int.MAX_VALUE)
 
         result_season_selection.setAdapter()
@@ -140,37 +140,37 @@ class ResultFragmentTv : ResultFragment() {
         result_dub_selection.setAdapter()
         result_recommendations_filter_selection.setAdapter()
 
-        observe(viewModel.selectPopup) { popup ->
-            when (popup) {
-                is Some.Success -> {
-                    popupDialog?.dismissSafe(activity)
+        observeNullable(viewModel.selectPopup) { popup ->
+            if(popup == null) {
+                popupDialog?.dismissSafe(activity)
+                popupDialog = null
+                return@observeNullable
+            }
 
-                    popupDialog = activity?.let { act ->
-                        val pop = popup.value
-                        val options = pop.getOptions(act)
-                        val title = pop.getTitle(act)
+            popupDialog?.dismissSafe(activity)
 
-                        act.showBottomDialogInstant(
-                            options, title, {
-                                popupDialog = null
-                                pop.callback(null)
-                            }, {
-                                popupDialog = null
-                                pop.callback(it)
-                            }
-                        )
+            popupDialog = activity?.let { act ->
+                val options = popup.getOptions(act)
+                val title = popup.getTitle(act)
+
+                act.showBottomDialogInstant(
+                    options, title, {
+                        popupDialog = null
+                        popup.callback(null)
+                    }, {
+                        popupDialog = null
+                        popup.callback(it)
                     }
-                }
-                is Some.None -> {
-                    popupDialog?.dismissSafe(activity)
-                    popupDialog = null
-                }
+                )
             }
         }
 
-        observe(viewModel.loadedLinks) { load ->
-            when (load) {
-                is Some.Success -> {
+        observeNullable(viewModel.loadedLinks) { load ->
+            if(load == null) {
+                loadingDialog?.dismissSafe(activity)
+                loadingDialog = null
+                return@observeNullable
+            }
                     if (loadingDialog?.isShowing != true) {
                         loadingDialog?.dismissSafe(activity)
                         loadingDialog = null
@@ -189,16 +189,11 @@ class ResultFragmentTv : ResultFragment() {
                         builder.show()
                         builder
                     }
-                }
-                is Some.None -> {
-                    loadingDialog?.dismissSafe(activity)
-                    loadingDialog = null
-                }
-            }
+
         }
 
 
-        observe(viewModel.episodesCountText) { count ->
+        observeNullable(viewModel.episodesCountText) { count ->
             result_episodes_text.setText(count)
         }
 

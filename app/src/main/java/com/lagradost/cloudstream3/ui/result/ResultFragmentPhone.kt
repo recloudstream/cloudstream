@@ -20,9 +20,9 @@ import com.google.android.gms.cast.framework.CastState
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.APIHolder.updateHasTrailers
-import com.lagradost.cloudstream3.mvvm.Some
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.observe
+import com.lagradost.cloudstream3.mvvm.observeNullable
 import com.lagradost.cloudstream3.ui.player.CSPlayerEvent
 import com.lagradost.cloudstream3.ui.search.SearchAdapter
 import com.lagradost.cloudstream3.ui.search.SearchHelper
@@ -212,7 +212,6 @@ class ResultFragmentPhone : ResultFragment() {
         }*/
 
         result_mini_sync?.adapter = ImageAdapter(
-            R.layout.result_mini_image,
             nextFocusDown = R.id.result_sync_set_score,
             clickCallback = { action ->
                 if (action == IMAGE_CLICK || action == IMAGE_LONG_CLICK) {
@@ -271,73 +270,68 @@ class ResultFragmentPhone : ResultFragment() {
             }
         }
 
-        observe(viewModel.episodesCountText) { count ->
+        observeNullable(viewModel.episodesCountText) { count ->
             result_episodes_text.setText(count)
         }
 
-        observe(viewModel.selectPopup) { popup ->
-            when (popup) {
-                is Some.Success -> {
-                    popupDialog?.dismissSafe(activity)
-
-                    popupDialog = activity?.let { act ->
-                        val pop = popup.value
-                        val options = pop.getOptions(act)
-                        val title = pop.getTitle(act)
-
-                        act.showBottomDialogInstant(
-                            options, title, {
-                                popupDialog = null
-                                pop.callback(null)
-                            }, {
-                                popupDialog = null
-                                pop.callback(it)
-                            }
-                        )
-                    }
-                }
-                is Some.None -> {
-                    popupDialog?.dismissSafe(activity)
-                    popupDialog = null
-                }
+        observeNullable(viewModel.selectPopup) { popup ->
+            if (popup == null) {
+                popupDialog?.dismissSafe(activity)
+                popupDialog = null
+                return@observeNullable
             }
+            popupDialog?.dismissSafe(activity)
+
+            popupDialog = activity?.let { act ->
+                val options = popup.getOptions(act)
+                val title = popup.getTitle(act)
+
+                act.showBottomDialogInstant(
+                    options, title, {
+                        popupDialog = null
+                        popup.callback(null)
+                    }, {
+                        popupDialog = null
+                        popup.callback(it)
+                    }
+                )
+            }
+
+
         }
 
         observe(viewModel.loadedLinks) { load ->
-            when (load) {
-                is Some.Success -> {
-                    if (loadingDialog?.isShowing != true) {
-                        loadingDialog?.dismissSafe(activity)
-                        loadingDialog = null
-                    }
-                    loadingDialog = loadingDialog ?: context?.let { ctx ->
-                        val builder =
-                            BottomSheetDialog(ctx)
-                        builder.setContentView(R.layout.bottom_loading)
-                        builder.setOnDismissListener {
-                            loadingDialog = null
-                            viewModel.cancelLinks()
-                        }
-                        //builder.setOnCancelListener {
-                        //    it?.dismiss()
-                        //}
-                        builder.setCanceledOnTouchOutside(true)
-                        builder.show()
-                        builder
-                    }
-                }
-                is Some.None -> {
-                    loadingDialog?.dismissSafe(activity)
+            if (load == null) {
+                loadingDialog?.dismissSafe(activity)
+                loadingDialog = null
+                return@observe
+            }
+            if (loadingDialog?.isShowing != true) {
+                loadingDialog?.dismissSafe(activity)
+                loadingDialog = null
+            }
+            loadingDialog = loadingDialog ?: context?.let { ctx ->
+                val builder =
+                    BottomSheetDialog(ctx)
+                builder.setContentView(R.layout.bottom_loading)
+                builder.setOnDismissListener {
                     loadingDialog = null
+                    viewModel.cancelLinks()
                 }
+                //builder.setOnCancelListener {
+                //    it?.dismiss()
+                //}
+                builder.setCanceledOnTouchOutside(true)
+                builder.show()
+                builder
             }
         }
 
-        observe(viewModel.selectedSeason) { text ->
+        observeNullable(viewModel.selectedSeason) { text ->
             result_season_button.setText(text)
 
             selectSeason =
-                (if (text is Some.Success) text.value else null)?.asStringNull(result_season_button?.context)
+                text?.asStringNull(result_season_button?.context)
             // If the season button is visible the result season button will be next focus down
             if (result_season_button?.isVisible == true)
                 if (result_resume_parent?.isVisible == true)
@@ -346,7 +340,7 @@ class ResultFragmentPhone : ResultFragment() {
             //    setFocusUpAndDown(result_bookmark_button, result_season_button)
         }
 
-        observe(viewModel.selectedDubStatus) { status ->
+        observeNullable(viewModel.selectedDubStatus) { status ->
             result_dub_select?.setText(status)
 
             if (result_dub_select?.isVisible == true)
@@ -357,7 +351,7 @@ class ResultFragmentPhone : ResultFragment() {
                     //    setFocusUpAndDown(result_bookmark_button, result_dub_select)
                 }
         }
-        observe(viewModel.selectedRange) { range ->
+        observeNullable(viewModel.selectedRange) { range ->
             result_episode_select.setText(range)
 
             // If Season button is invisible then the bookmark button next focus is episode select

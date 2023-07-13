@@ -62,7 +62,7 @@ class SettingsFragment : Fragment() {
                     activity?.onBackPressed()
                 }
             }
-            context.fixPaddingStatusbar(settings_toolbar)
+            fixPaddingStatusbar(settings_toolbar)
         }
 
         fun Fragment?.setUpToolbar(@StringRes title: Int) {
@@ -74,7 +74,7 @@ class SettingsFragment : Fragment() {
                     activity?.onBackPressed()
                 }
             }
-            context.fixPaddingStatusbar(settings_toolbar)
+            fixPaddingStatusbar(settings_toolbar)
         }
 
         fun getFolderSize(dir: File): Long {

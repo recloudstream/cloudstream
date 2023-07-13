@@ -8,7 +8,6 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
-import com.lagradost.cloudstream3.mvvm.Some
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.utils.AppUtils.html
 import com.lagradost.cloudstream3.utils.UIHelper.setImage
@@ -161,12 +160,4 @@ fun TextView?.setTextHtml(text: UiText?) {
         this.isGone = str.isNullOrBlank()
         this.text = str.html()
     }
-}
-
-fun TextView?.setTextHtml(text: Some<UiText>?) {
-    setTextHtml(if (text is Some.Success) text.value else null)
-}
-
-fun TextView?.setText(text: Some<UiText>?) {
-    setText(if (text is Some.Success) text.value else null)
 }

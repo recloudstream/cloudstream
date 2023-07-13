@@ -310,6 +310,7 @@ open class ResultFragment : ResultTrailerPlayer() {
                 result_finish_loading?.isVisible = false
                 result_loading_error?.isVisible = false
             }
+
             1 -> {
                 result_bookmark_fab?.isGone = true
                 result_loading?.isVisible = false
@@ -317,6 +318,7 @@ open class ResultFragment : ResultTrailerPlayer() {
                 result_loading_error?.isVisible = true
                 result_reload_connection_open_in_browser?.isVisible = true
             }
+
             2 -> {
                 result_bookmark_fab?.isGone = isTrueTvSettings()
                 result_bookmark_fab?.extend()
@@ -350,9 +352,9 @@ open class ResultFragment : ResultTrailerPlayer() {
         viewModel.reloadEpisodes()
     }
 
-    open fun updateMovie(data: ResourceSome<Pair<UiText, ResultEpisode>>) {
+    open fun updateMovie(data: Resource<Pair<UiText, ResultEpisode>>?) {
         when (data) {
-            is ResourceSome.Success -> {
+            is Resource.Success -> {
                 data.value.let { (text, ep) ->
                     result_play_movie.setText(text)
                     result_play_movie?.setOnClickListener {
@@ -410,6 +412,7 @@ open class ResultFragment : ResultTrailerPlayer() {
                                         EpisodeClickEvent(ACTION_DOWNLOAD_EPISODE, ep)
                                     )
                                 }
+
                                 else -> handleDownloadClick(activity, click)
                             }
                         }
@@ -417,6 +420,7 @@ open class ResultFragment : ResultTrailerPlayer() {
                     }
                 }
             }
+
             else -> {
                 result_movie_progress_downloaded_holder?.isVisible = false
                 result_play_movie?.isVisible = false
@@ -424,17 +428,14 @@ open class ResultFragment : ResultTrailerPlayer() {
         }
     }
 
-    open fun updateEpisodes(episodes: ResourceSome<List<ResultEpisode>>) {
+    open fun updateEpisodes(episodes: Resource<List<ResultEpisode>>?) {
         when (episodes) {
-            is ResourceSome.None -> {
-                result_episode_loading?.isVisible = false
-                result_episodes?.isVisible = false
-            }
-            is ResourceSome.Loading -> {
+            is Resource.Loading -> {
                 result_episode_loading?.isVisible = true
                 result_episodes?.isVisible = false
             }
-            is ResourceSome.Success -> {
+
+            is Resource.Success -> {
                 result_episodes?.isVisible = true
                 result_episode_loading?.isVisible = false
 
@@ -470,6 +471,11 @@ open class ResultFragment : ResultTrailerPlayer() {
                     // This might make some people sad as it changes the focus when leaving an episode :(
                     result_episodes?.requestFocus()
                 }
+            }
+
+            else -> {
+                result_episode_loading?.isVisible = false
+                result_episodes?.isVisible = false
             }
         }
     }
@@ -565,7 +571,7 @@ open class ResultFragment : ResultTrailerPlayer() {
         context?.updateHasTrailers()
         activity?.loadCache()
 
-        activity?.fixPaddingStatusbar(result_top_bar)
+        fixPaddingStatusbar(result_top_bar)
         //activity?.fixPaddingStatusbar(result_barstatus)
 
         /* val backParameter = result_back.layoutParams as FrameLayout.LayoutParams
@@ -588,7 +594,7 @@ open class ResultFragment : ResultTrailerPlayer() {
 
         result_episodes?.adapter =
             EpisodeAdapter(
-                api?.hasDownloadSupport == true,
+                api?.hasDownloadSupport == true && !isTvSettings(),
                 { episodeClick ->
                     viewModel.handleAction(activity, episodeClick)
                 },
@@ -738,10 +744,12 @@ open class ResultFragment : ResultTrailerPlayer() {
 
                     viewModel.setMeta(d, syncModel.getSyncs())
                 }
+
                 is Resource.Loading -> {
                     result_sync_max_episodes?.text =
                         result_sync_max_episodes?.context?.getString(R.string.sync_total_episodes_none)
                 }
+
                 else -> {}
             }
         }
@@ -755,11 +763,13 @@ open class ResultFragment : ResultTrailerPlayer() {
                     result_sync_holder?.isVisible = false
                     closed = true
                 }
+
                 is Resource.Loading -> {
                     result_sync_loading_shimmer?.startShimmer()
                     result_sync_loading_shimmer?.isVisible = true
                     result_sync_holder?.isVisible = false
                 }
+
                 is Resource.Success -> {
                     result_sync_loading_shimmer?.stopShimmer()
                     result_sync_loading_shimmer?.isVisible = false
@@ -789,6 +799,7 @@ open class ResultFragment : ResultTrailerPlayer() {
                         }
                     }
                 }
+
                 null -> {
                     closed = false
                 }
@@ -796,58 +807,56 @@ open class ResultFragment : ResultTrailerPlayer() {
             result_overlapping_panels?.setStartPanelLockState(if (closed) OverlappingPanelsLayout.LockState.CLOSE else OverlappingPanelsLayout.LockState.UNLOCKED)
         }
 
-        observe(viewModel.resumeWatching) { resume ->
-            when (resume) {
-                is Some.Success -> {
-                    result_resume_parent?.isVisible = true
-                    val value = resume.value
-                    value.progress?.let { progress ->
-                        result_resume_series_title?.apply {
-                            isVisible = !value.isMovie
-                            text =
-                                if (value.isMovie) null else activity?.getNameFull(
-                                    value.result.name,
-                                    value.result.episode,
-                                    value.result.season
-                                )
-                        }
-                        result_resume_series_progress_text.setText(progress.progressLeft)
-                        result_resume_series_progress?.apply {
-                            isVisible = true
-                            this.max = progress.maxProgress
-                            this.progress = progress.progress
-                        }
-                        result_resume_progress_holder?.isVisible = true
-                    } ?: run {
-                        result_resume_progress_holder?.isVisible = false
-                        result_resume_series_progress?.isVisible = false
-                        result_resume_series_title?.isVisible = false
-                        result_resume_series_progress_text?.isVisible = false
-                    }
-
-                    result_resume_series_button?.isVisible = !value.isMovie
-                    result_resume_series_button_play?.isVisible = !value.isMovie
-
-                    val click = View.OnClickListener {
-                        viewModel.handleAction(
-                            activity,
-                            EpisodeClickEvent(
-                                storedData?.playerAction ?: ACTION_PLAY_EPISODE_IN_PLAYER,
-                                value.result
-                            )
-                        )
-                    }
-
-                    result_resume_series_button?.setOnClickListener(click)
-                    result_resume_series_button_play?.setOnClickListener(click)
-                }
-                is Some.None -> {
-                    result_resume_parent?.isVisible = false
-                }
+        observeNullable(viewModel.resumeWatching) { resume ->
+            if (resume == null) {
+                result_resume_parent?.isVisible = false
+                return@observeNullable
             }
+            result_resume_parent?.isVisible = true
+            resume.progress?.let { progress ->
+                result_resume_series_title?.apply {
+                    isVisible = !resume.isMovie
+                    text =
+                        if (resume.isMovie) null else activity?.getNameFull(
+                            resume.result.name,
+                            resume.result.episode,
+                            resume.result.season
+                        )
+                }
+                result_resume_series_progress_text?.setText(progress.progressLeft)
+                result_resume_series_progress?.apply {
+                    isVisible = true
+                    this.max = progress.maxProgress
+                    this.progress = progress.progress
+                }
+                result_resume_progress_holder?.isVisible = true
+            } ?: run {
+                result_resume_progress_holder?.isVisible = false
+                result_resume_series_progress?.isVisible = false
+                result_resume_series_title?.isVisible = false
+                result_resume_series_progress_text?.isVisible = false
+            }
+
+            result_resume_series_button?.isVisible = !resume.isMovie
+            result_resume_series_button_play?.isVisible = !resume.isMovie
+
+            val click = View.OnClickListener {
+                viewModel.handleAction(
+                    activity,
+                    EpisodeClickEvent(
+                        storedData?.playerAction ?: ACTION_PLAY_EPISODE_IN_PLAYER,
+                        resume.result
+                    )
+                )
+            }
+
+            result_resume_series_button?.setOnClickListener(click)
+            result_resume_series_button_play?.setOnClickListener(click)
         }
 
-        observe(viewModel.episodes) { episodes ->
+
+
+        observeNullable(viewModel.episodes) { episodes ->
             updateEpisodes(episodes)
         }
 
@@ -868,7 +877,7 @@ open class ResultFragment : ResultTrailerPlayer() {
             setRecommendations(recommendations, null)
         }
 
-        observe(viewModel.movie) { data ->
+        observeNullable(viewModel.movie) { data ->
             updateMovie(data)
         }
 
@@ -1046,10 +1055,12 @@ open class ResultFragment : ResultTrailerPlayer() {
                         }*/
                     //}
                 }
+
                 is Resource.Failure -> {
                     result_error_text.text = storedData?.url?.plus("\n") + data.errorString
                     updateVisStatus(1)
                 }
+
                 is Resource.Loading -> {
                     updateVisStatus(0)
                 }

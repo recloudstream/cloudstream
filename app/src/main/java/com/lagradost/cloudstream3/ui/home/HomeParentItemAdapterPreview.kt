@@ -544,7 +544,7 @@ class HomeParentItemAdapterPreview(
                 }
             }
 
-            itemView.home_search?.context?.fixPaddingStatusbar(itemView.home_search)
+            fixPaddingStatusbar(itemView.home_search)
 
             itemView.home_search?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
                 override fun onQueryTextSubmit(query: String): Boolean {
@@ -575,7 +575,7 @@ class HomeParentItemAdapterPreview(
                     layoutParams = params
                 }
             } else {
-                itemView.home_none_padding?.context?.fixPaddingStatusbarView(itemView.home_none_padding)
+                fixPaddingStatusbarView(itemView.home_none_padding)
             }
             when (preview) {
                 is Resource.Success -> {

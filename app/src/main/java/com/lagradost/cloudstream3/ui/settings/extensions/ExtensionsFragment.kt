@@ -18,8 +18,8 @@ import androidx.navigation.fragment.findNavController
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.MainActivity.Companion.afterRepositoryLoadedEvent
 import com.lagradost.cloudstream3.R
-import com.lagradost.cloudstream3.mvvm.Some
 import com.lagradost.cloudstream3.mvvm.observe
+import com.lagradost.cloudstream3.mvvm.observeNullable
 import com.lagradost.cloudstream3.plugins.RepositoryManager
 import com.lagradost.cloudstream3.ui.result.setText
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTrueTvSettings
@@ -97,6 +97,7 @@ class ExtensionsFragment : Fragment() {
                                     extensionViewModel.loadRepositories()
                                 }
                             }
+
                             DialogInterface.BUTTON_NEGATIVE -> {}
                         }
                     }
@@ -138,29 +139,26 @@ class ExtensionsFragment : Fragment() {
 //            }
 //        }
 
-        observe(extensionViewModel.pluginStats) {
-            when (it) {
-                is Some.Success -> {
-                    val value = it.value
+        observeNullable(extensionViewModel.pluginStats) { value ->
+            if (value == null) {
+                plugin_storage_appbar?.isVisible = false
 
-                    plugin_storage_appbar?.isVisible = true
-                    if (value.total == 0) {
-                        plugin_download?.setLayoutWidth(1)
-                        plugin_disabled?.setLayoutWidth(0)
-                        plugin_not_downloaded?.setLayoutWidth(0)
-                    } else {
-                        plugin_download?.setLayoutWidth(value.downloaded)
-                        plugin_disabled?.setLayoutWidth(value.disabled)
-                        plugin_not_downloaded?.setLayoutWidth(value.notDownloaded)
-                    }
-                    plugin_not_downloaded_txt.setText(value.notDownloadedText)
-                    plugin_disabled_txt.setText(value.disabledText)
-                    plugin_download_txt.setText(value.downloadedText)
-                }
-                is Some.None -> {
-                    plugin_storage_appbar?.isVisible = false
-                }
+                return@observeNullable
             }
+
+            plugin_storage_appbar?.isVisible = true
+            if (value.total == 0) {
+                plugin_download?.setLayoutWidth(1)
+                plugin_disabled?.setLayoutWidth(0)
+                plugin_not_downloaded?.setLayoutWidth(0)
+            } else {
+                plugin_download?.setLayoutWidth(value.downloaded)
+                plugin_disabled?.setLayoutWidth(value.disabled)
+                plugin_not_downloaded?.setLayoutWidth(value.notDownloaded)
+            }
+            plugin_not_downloaded_txt.setText(value.notDownloadedText)
+            plugin_disabled_txt.setText(value.disabledText)
+            plugin_download_txt.setText(value.downloadedText)
         }
 
         plugin_storage_appbar?.setOnClickListener {

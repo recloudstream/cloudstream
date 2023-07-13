@@ -28,6 +28,11 @@ android {
     testOptions {
         unitTests.isReturnDefaultValues = true
     }
+
+    viewBinding {
+        enable = true
+    }
+
     signingConfigs {
         create("prerelease") {
             if (prereleaseStoreFile != null) {

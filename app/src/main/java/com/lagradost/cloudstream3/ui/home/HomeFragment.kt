@@ -34,12 +34,15 @@ import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.MainActivity.Companion.afterPluginsLoadedEvent
 import com.lagradost.cloudstream3.MainActivity.Companion.bookmarksUpdatedEvent
 import com.lagradost.cloudstream3.MainActivity.Companion.mainPluginsLoadedEvent
+import com.lagradost.cloudstream3.databinding.FragmentHomeBinding
+import com.lagradost.cloudstream3.databinding.HomeEpisodesExpandedBinding
+import com.lagradost.cloudstream3.databinding.HomeSelectMainpageBinding
+import com.lagradost.cloudstream3.databinding.TvtypesChipsBinding
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.ui.APIRepository.Companion.noneApi
 import com.lagradost.cloudstream3.ui.APIRepository.Companion.randomApi
-import com.lagradost.cloudstream3.ui.AutofitRecyclerView
 import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.quicksearch.QuickSearchFragment
 import com.lagradost.cloudstream3.ui.search.*
@@ -64,24 +67,7 @@ import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
 import com.lagradost.cloudstream3.utils.UIHelper.getSpanCount
 import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIconsAndNoStringRes
 import com.lagradost.cloudstream3.utils.USER_SELECTED_HOMEPAGE_API
-import kotlinx.android.synthetic.main.activity_main_tv.*
-import kotlinx.android.synthetic.main.fragment_home.*
-import kotlinx.android.synthetic.main.fragment_home.home_api_fab
-import kotlinx.android.synthetic.main.fragment_home.home_change_api_loading
-import kotlinx.android.synthetic.main.fragment_home.home_loading
-import kotlinx.android.synthetic.main.fragment_home.home_loading_error
-import kotlinx.android.synthetic.main.fragment_home.home_loading_shimmer
-import kotlinx.android.synthetic.main.fragment_home.home_loading_statusbar
-import kotlinx.android.synthetic.main.fragment_home.home_master_recycler
-import kotlinx.android.synthetic.main.fragment_home.home_reload_connection_open_in_browser
-import kotlinx.android.synthetic.main.fragment_home.home_reload_connectionerror
-import kotlinx.android.synthetic.main.fragment_home.result_error_text
-import kotlinx.android.synthetic.main.fragment_home_tv.*
-import kotlinx.android.synthetic.main.fragment_result.*
-import kotlinx.android.synthetic.main.fragment_search.*
-import kotlinx.android.synthetic.main.home_episodes_expanded.*
-import kotlinx.android.synthetic.main.tvtypes_chips.*
-import kotlinx.android.synthetic.main.tvtypes_chips.view.*
+
 import java.util.*
 
 
@@ -125,22 +111,26 @@ class HomeFragment : Fragment() {
             expand: HomeViewModel.ExpandableHomepageList,
             deleteCallback: (() -> Unit)? = null,
             expandCallback: (suspend (String) -> HomeViewModel.ExpandableHomepageList?)? = null,
-            dismissCallback : (() -> Unit),
+            dismissCallback: (() -> Unit),
         ): BottomSheetDialog {
             val context = this
             val bottomSheetDialogBuilder = BottomSheetDialog(context)
-
-            bottomSheetDialogBuilder.setContentView(R.layout.home_episodes_expanded)
-            val title = bottomSheetDialogBuilder.findViewById<TextView>(R.id.home_expanded_text)!!
+            val binding: HomeEpisodesExpandedBinding = HomeEpisodesExpandedBinding.inflate(
+                bottomSheetDialogBuilder.layoutInflater,
+                null,
+                false
+            )
+            bottomSheetDialogBuilder.setContentView(binding.root)
+            //val title = bottomSheetDialogBuilder.findViewById<TextView>(R.id.home_expanded_text)!!
 
             //title.findViewTreeLifecycleOwner().lifecycle.addObserver()
 
             val item = expand.list
-            title.text = item.name
-            val recycle =
-                bottomSheetDialogBuilder.findViewById<AutofitRecyclerView>(R.id.home_expanded_recycler)!!
-            val titleHolder =
-                bottomSheetDialogBuilder.findViewById<FrameLayout>(R.id.home_expanded_drag_down)!!
+            binding.homeExpandedText.text = item.name
+            // val recycle =
+            //    bottomSheetDialogBuilder.findViewById<AutofitRecyclerView>(R.id.home_expanded_recycler)!!
+            //val titleHolder =
+            //    bottomSheetDialogBuilder.findViewById<FrameLayout>(R.id.home_expanded_drag_down)!!
 
             // main {
             //(bottomSheetDialogBuilder.ownerActivity as androidx.fragment.app.FragmentActivity?)?.supportFragmentManager?.fragments?.lastOrNull()?.viewLifecycleOwner?.apply {
@@ -159,10 +149,10 @@ class HomeFragment : Fragment() {
             //    })
             //}
             // }
-            val delete = bottomSheetDialogBuilder.home_expanded_delete
-            delete.isGone = deleteCallback == null
+            //val delete = bottomSheetDialogBuilder.home_expanded_delete
+            binding.homeExpandedDelete.isGone = deleteCallback == null
             if (deleteCallback != null) {
-                delete.setOnClickListener {
+                binding.homeExpandedDelete.setOnClickListener {
                     try {
                         val builder: AlertDialog.Builder = AlertDialog.Builder(context)
                         val dialogClickListener =
@@ -172,6 +162,7 @@ class HomeFragment : Fragment() {
                                         deleteCallback.invoke()
                                         bottomSheetDialogBuilder.dismissSafe(this)
                                     }
+
                                     DialogInterface.BUTTON_NEGATIVE -> {}
                                 }
                             }
@@ -191,26 +182,27 @@ class HomeFragment : Fragment() {
                     }
                 }
             }
-
-            titleHolder.setOnClickListener {
+            binding.homeExpandedDragDown.setOnClickListener {
                 bottomSheetDialogBuilder.dismissSafe(this)
             }
 
 
             // Span settings
-            recycle.spanCount = currentSpan
+            binding.homeExpandedRecycler.spanCount = currentSpan
 
-            recycle.adapter = SearchAdapter(item.list.toMutableList(), recycle) { callback ->
-                handleSearchClickCallback(this, callback)
-                if (callback.action == SEARCH_ACTION_LOAD || callback.action == SEARCH_ACTION_PLAY_FILE) {
-                    bottomSheetDialogBuilder.ownHide() // we hide here because we want to resume it later
-                    //bottomSheetDialogBuilder.dismissSafe(this)
+            binding.homeExpandedRecycler.adapter =
+                SearchAdapter(item.list.toMutableList(), binding.homeExpandedRecycler) { callback ->
+                    handleSearchClickCallback(this, callback)
+                    if (callback.action == SEARCH_ACTION_LOAD || callback.action == SEARCH_ACTION_PLAY_FILE) {
+                        bottomSheetDialogBuilder.ownHide() // we hide here because we want to resume it later
+                        //bottomSheetDialogBuilder.dismissSafe(this)
+                    }
+                }.apply {
+                    hasNext = expand.hasNext
                 }
-            }.apply {
-                hasNext = expand.hasNext
-            }
 
-            recycle.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            binding.homeExpandedRecycler.addOnScrollListener(object :
+                RecyclerView.OnScrollListener() {
                 var expandCount = 0
                 val name = expand.list.name
 
@@ -238,7 +230,7 @@ class HomeFragment : Fragment() {
             })
 
             val spanListener = { span: Int ->
-                recycle.spanCount = span
+                binding.homeExpandedRecycler.spanCount = span
                 //(recycle.adapter as SearchAdapter).notifyDataSetChanged()
             }
 
@@ -280,19 +272,19 @@ class HomeFragment : Fragment() {
             )
         }
 
-        private fun getPairList(header: ChipGroup) = getPairList(
-            header.home_select_anime,
-            header.home_select_cartoons,
-            header.home_select_tv_series,
-            header.home_select_documentaries,
-            header.home_select_movies,
-            header.home_select_asian,
-            header.home_select_livestreams,
-            header.home_select_nsfw,
-            header.home_select_others
+        private fun getPairList(header: TvtypesChipsBinding) = getPairList(
+            header.homeSelectAnime,
+            header.homeSelectCartoons,
+            header.homeSelectTvSeries,
+            header.homeSelectDocumentaries,
+            header.homeSelectMovies,
+            header.homeSelectAsian,
+            header.homeSelectLivestreams,
+            header.homeSelectNsfw,
+            header.homeSelectOthers
         )
 
-        fun validateChips(header: ChipGroup?, validTypes: List<TvType>) {
+        fun validateChips(header: TvtypesChipsBinding?, validTypes: List<TvType>) {
             if (header == null) return
             val pairList = getPairList(header)
             for ((button, types) in pairList) {
@@ -301,7 +293,7 @@ class HomeFragment : Fragment() {
             }
         }
 
-        fun updateChips(header: ChipGroup?, selectedTypes: List<TvType>) {
+        fun updateChips(header: TvtypesChipsBinding?, selectedTypes: List<TvType>) {
             if (header == null) return
             val pairList = getPairList(header)
             for ((button, types) in pairList) {
@@ -311,7 +303,7 @@ class HomeFragment : Fragment() {
         }
 
         fun bindChips(
-            header: ChipGroup?,
+            header: TvtypesChipsBinding?,
             selectedTypes: List<TvType>,
             validTypes: List<TvType>,
             callback: (List<TvType>) -> Unit
@@ -344,7 +336,13 @@ class HomeFragment : Fragment() {
                 BottomSheetDialog(this)
 
             builder.behavior.state = BottomSheetBehavior.STATE_EXPANDED
-            builder.setContentView(R.layout.home_select_mainpage)
+            val binding: HomeSelectMainpageBinding = HomeSelectMainpageBinding.inflate(
+                builder.layoutInflater,
+                null,
+                false
+            )
+
+            builder.setContentView(binding.root)
             builder.show()
             builder.let { dialog ->
                 val isMultiLang = getApiProviderLangSettings().let { set ->
@@ -408,7 +406,7 @@ class HomeFragment : Fragment() {
                 }
 
                 bindChips(
-                    dialog.home_select_group,
+                    binding.tvtypesChipsScroll.tvtypesChips,
                     preSelectedTypes,
                     validAPIs.flatMap { it.supportedTypes }.distinct()
                 ) { list ->
@@ -423,6 +421,9 @@ class HomeFragment : Fragment() {
 
     private val homeViewModel: HomeViewModel by activityViewModels()
 
+    var binding: FragmentHomeBinding? = null
+
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -433,11 +434,24 @@ class HomeFragment : Fragment() {
         bottomSheetDialog?.ownShow()
         val layout =
             if (isTvSettings()) R.layout.fragment_home_tv else R.layout.fragment_home
-        return inflater.inflate(layout, container, false)
+
+        /* val binding = FragmentHomeTvBinding.inflate(layout, container, false)
+         binding.homeLoadingError
+
+         val binding2 = FragmentHomeBinding.inflate(layout, container, false)
+         binding2.homeLoadingError*/
+        val root = inflater.inflate(layout, container, false)
+        binding = FragmentHomeBinding.bind(root)
+        //val localBinding = FragmentHomeBinding.inflate(inflater)
+        //binding = localBinding
+        return root
+
+        //return inflater.inflate(layout, container, false)
     }
 
     override fun onDestroyView() {
         bottomSheetDialog?.ownHide()
+        binding = null
         super.onDestroyView()
     }
 
@@ -467,7 +481,7 @@ class HomeFragment : Fragment() {
         fixGrid()
     }
 
-    fun bookmarksUpdated(_data : Boolean) {
+    fun bookmarksUpdated(_data: Boolean) {
         reloadStored()
     }
 
@@ -525,14 +539,18 @@ class HomeFragment : Fragment() {
 
     private var bottomSheetDialog: BottomSheetDialog? = null
 
+
     @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         fixGrid()
 
-        home_change_api_loading?.setOnClickListener(apiChangeClickListener)
-        home_api_fab?.setOnClickListener(apiChangeClickListener)
-        home_random?.setOnClickListener {
+        binding?.homeChangeApiLoading?.setOnClickListener(apiChangeClickListener)
+
+
+        binding?.homeChangeApiLoading?.setOnClickListener(apiChangeClickListener)
+        binding?.homeApiFab?.setOnClickListener(apiChangeClickListener)
+        binding?.homeRandom?.setOnClickListener {
             if (listHomepageItems.isNotEmpty()) {
                 activity.loadSearchResult(listHomepageItems.random())
             }
@@ -542,91 +560,100 @@ class HomeFragment : Fragment() {
         context?.let {
             val settingsManager = PreferenceManager.getDefaultSharedPreferences(it)
             toggleRandomButton =
-                settingsManager.getBoolean(getString(R.string.random_button_key), false)
-            home_random?.visibility = View.GONE
+                settingsManager.getBoolean(
+                    getString(R.string.random_button_key),
+                    false
+                ) && !isTvSettings()
+            binding?.homeRandom?.visibility = View.GONE
         }
 
         observe(homeViewModel.preview) { preview ->
-            (home_master_recycler?.adapter as? HomeParentItemAdapterPreview?)?.setPreviewData(
+            (binding?.homeMasterRecycler?.adapter as? HomeParentItemAdapterPreview?)?.setPreviewData(
                 preview
             )
         }
 
         observe(homeViewModel.apiName) { apiName ->
             currentApiName = apiName
-            home_api_fab?.text = apiName
-            (home_master_recycler?.adapter as? HomeParentItemAdapterPreview?)?.setApiName(
+            binding?.homeApiFab?.text = apiName
+            (binding?.homeMasterRecycler?.adapter as? HomeParentItemAdapterPreview?)?.setApiName(
                 apiName
             )
         }
 
         observe(homeViewModel.page) { data ->
-            when (data) {
-                is Resource.Success -> {
-                    home_loading_shimmer?.stopShimmer()
+            binding?.apply {
+                when (data) {
+                    is Resource.Success -> {
+                        homeLoadingShimmer.stopShimmer()
 
-                    val d = data.value
-                    val mutableListOfResponse = mutableListOf<SearchResponse>()
-                    listHomepageItems.clear()
+                        val d = data.value
+                        val mutableListOfResponse = mutableListOf<SearchResponse>()
+                        listHomepageItems.clear()
 
-                    (home_master_recycler?.adapter as? ParentItemAdapter)?.updateList(
-                        d.values.toMutableList(),
-                        home_master_recycler
-                    )
+                        (homeMasterRecycler.adapter as? ParentItemAdapter)?.updateList(
+                            d.values.toMutableList(),
+                            homeMasterRecycler
+                        )
 
-                    home_loading?.isVisible = false
-                    home_loading_error?.isVisible = false
-                    home_master_recycler?.isVisible = true
-                    //home_loaded?.isVisible = true
-                    if (toggleRandomButton) {
-                        //Flatten list
-                        d.values.forEach { dlist ->
-                            mutableListOfResponse.addAll(dlist.list.list)
+                        homeLoading.isVisible = false
+                        homeLoadingError.isVisible = false
+                        homeMasterRecycler.isVisible = true
+                        //home_loaded?.isVisible = true
+                        if (toggleRandomButton) {
+                            //Flatten list
+                            d.values.forEach { dlist ->
+                                mutableListOfResponse.addAll(dlist.list.list)
+                            }
+                            listHomepageItems.addAll(mutableListOfResponse.distinctBy { it.url })
+
+                            homeRandom.isVisible = listHomepageItems.isNotEmpty()
+                        } else {
+                            homeRandom.isGone = true
                         }
-                        listHomepageItems.addAll(mutableListOfResponse.distinctBy { it.url })
-                        home_random?.isVisible = listHomepageItems.isNotEmpty()
-                    } else {
-                        home_random?.isGone = true
                     }
-                }
-                is Resource.Failure -> {
-                    home_loading_shimmer?.stopShimmer()
 
-                    result_error_text.text = data.errorString
+                    is Resource.Failure -> {
 
-                    home_reload_connectionerror.setOnClickListener(apiChangeClickListener)
+                        homeLoadingShimmer.stopShimmer()
 
-                    home_reload_connection_open_in_browser.setOnClickListener { view ->
-                        val validAPIs = apis//.filter { api -> api.hasMainPage }
+                        resultErrorText.text = data.errorString
 
-                        view.popupMenuNoIconsAndNoStringRes(validAPIs.mapIndexed { index, api ->
-                            Pair(
-                                index,
-                                api.name
-                            )
-                        }) {
-                            try {
-                                val i = Intent(Intent.ACTION_VIEW)
-                                i.data = Uri.parse(validAPIs[itemId].mainUrl)
-                                startActivity(i)
-                            } catch (e: Exception) {
-                                logError(e)
+                        homeReloadConnectionerror.setOnClickListener(apiChangeClickListener)
+
+                        homeReloadConnectionOpenInBrowser.setOnClickListener { view ->
+                            val validAPIs = apis//.filter { api -> api.hasMainPage }
+
+                            view.popupMenuNoIconsAndNoStringRes(validAPIs.mapIndexed { index, api ->
+                                Pair(
+                                    index,
+                                    api.name
+                                )
+                            }) {
+                                try {
+                                    val i = Intent(Intent.ACTION_VIEW)
+                                    i.data = Uri.parse(validAPIs[itemId].mainUrl)
+                                    startActivity(i)
+                                } catch (e: Exception) {
+                                    logError(e)
+                                }
                             }
                         }
+
+                        homeLoading.isVisible = false
+                        homeLoadingError.isVisible = true
+                        homeMasterRecycler.isVisible = false
+                        //home_loaded?.isVisible = false
                     }
 
-                    home_loading?.isVisible = false
-                    home_loading_error?.isVisible = true
-                    home_master_recycler?.isVisible = false
-                    //home_loaded?.isVisible = false
-                }
-                is Resource.Loading -> {
-                    (home_master_recycler?.adapter as? ParentItemAdapter)?.updateList(listOf())
-                    home_loading_shimmer?.startShimmer()
-                    home_loading?.isVisible = true
-                    home_loading_error?.isVisible = false
-                    home_master_recycler?.isVisible = false
-                    //home_loaded?.isVisible = false
+                    is Resource.Loading -> {
+                        (homeMasterRecycler.adapter as? ParentItemAdapter)?.updateList(listOf())
+                        homeLoadingShimmer.startShimmer()
+                        homeLoading.isVisible = true
+                        homeLoadingError.isVisible = false
+                        homeMasterRecycler.isVisible = false
+                        //home_loaded?.isVisible = false
+                    }
                 }
             }
         }
@@ -638,19 +665,19 @@ class HomeFragment : Fragment() {
                 HOME_BOOKMARK_VALUE_LIST,
                 availableWatchStatusTypes.first.map { it.internalId }.toIntArray()
             )
-            (home_master_recycler?.adapter as? HomeParentItemAdapterPreview?)?.setAvailableWatchStatusTypes(
+            (binding?.homeMasterRecycler?.adapter as? HomeParentItemAdapterPreview?)?.setAvailableWatchStatusTypes(
                 availableWatchStatusTypes
             )
         }
 
         observe(homeViewModel.bookmarks) { data ->
-            (home_master_recycler?.adapter as? HomeParentItemAdapterPreview?)?.setBookmarkData(
+            (binding?.homeMasterRecycler?.adapter as? HomeParentItemAdapterPreview?)?.setBookmarkData(
                 data
             )
         }
 
         observe(homeViewModel.resumeWatching) { resumeWatching ->
-            (home_master_recycler?.adapter as? HomeParentItemAdapterPreview?)?.setResumeWatchingData(
+            (binding?.homeMasterRecycler?.adapter as? HomeParentItemAdapterPreview?)?.setResumeWatchingData(
                 resumeWatching
             )
             if (isTrueTvSettings()) {
@@ -665,9 +692,9 @@ class HomeFragment : Fragment() {
 
         //context?.fixPaddingStatusbarView(home_statusbar)
         //context?.fixPaddingStatusbar(home_padding)
-        context?.fixPaddingStatusbar(home_loading_statusbar)
+        fixPaddingStatusbar(binding?.homeLoadingStatusbar)
 
-        home_master_recycler?.adapter =
+        binding?.homeMasterRecycler?.adapter =
             HomeParentItemAdapterPreview(mutableListOf(), { callback ->
                 homeHandleSearch(callback)
             }, { item ->
@@ -699,17 +726,21 @@ class HomeFragment : Fragment() {
 
         reloadStored()
         loadHomePage(false)
-        home_master_recycler?.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+        binding?.homeMasterRecycler?.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                if (dy > 0) { //check for scroll down
-                    home_api_fab?.shrink() // hide
-                    home_random?.shrink()
-                } else if (dy < -5) {
-                    if (!isTvSettings()) {
-                        home_api_fab?.extend() // show
-                        home_random?.extend()
+
+                binding?.apply {
+                    if (dy > 0) { //check for scroll down
+                        homeApiFab.shrink() // hide
+                        homeRandom.shrink()
+                    } else if (dy < -5) {
+                        if (!isTvSettings()) {
+                            homeApiFab.extend() // show
+                            homeRandom.extend()
+                        }
                     }
                 }
+
 
                 super.onScrolled(recyclerView, dx, dy)
             }
@@ -718,18 +749,20 @@ class HomeFragment : Fragment() {
         // nice profile pic on homepage
         //home_profile_picture_holder?.isVisible = false
         // just in case
-        if (isTvSettings()) {
-            home_api_fab?.isVisible = false
-            if (isTrueTvSettings()) {
-                home_change_api_loading?.isVisible = true
-                home_change_api_loading?.isFocusable = true
-                home_change_api_loading?.isFocusableInTouchMode = true
+        binding?.apply {
+            if (isTvSettings()) {
+                homeApiFab.isVisible = false
+                if (isTrueTvSettings()) {
+                    homeChangeApiLoading.isVisible = true
+                    homeChangeApiLoading.isFocusable = true
+                    homeChangeApiLoading.isFocusableInTouchMode = true
+                }
+                // home_bookmark_select?.isFocusable = true
+                // home_bookmark_select?.isFocusableInTouchMode = true
+            } else {
+                homeApiFab.isVisible = true
+                homeChangeApiLoading.isVisible = false
             }
-            // home_bookmark_select?.isFocusable = true
-            // home_bookmark_select?.isFocusableInTouchMode = true
-        } else {
-            home_api_fab?.isVisible = true
-            home_change_api_loading?.isVisible = false
         }
         //TODO READD THIS
         /*for (syncApi in OAuth2Apis) {

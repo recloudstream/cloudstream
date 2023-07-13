@@ -78,7 +78,7 @@ class SearchAdapter(
         resView: AutofitRecyclerView
     ) :
         RecyclerView.ViewHolder(itemView) {
-        val cardView: ImageView = itemView.imageView
+        private val cardView: ImageView = itemView.imageView
 
         private val compactView = false//itemView.context.getGridIsCompact()
         private val coverHeight: Int =

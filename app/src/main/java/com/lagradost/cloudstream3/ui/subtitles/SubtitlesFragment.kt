@@ -238,7 +238,7 @@ class SubtitlesFragment : Fragment() {
             context?.getExternalFilesDir(null)?.absolutePath.toString() + "/Fonts"
         )
 
-        context?.fixPaddingStatusbar(subs_root)
+        fixPaddingStatusbar(subs_root)
 
         state = getCurrentSavedStyle()
         context?.updateState()
