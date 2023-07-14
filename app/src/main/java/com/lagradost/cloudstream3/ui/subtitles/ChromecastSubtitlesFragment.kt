@@ -14,7 +14,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.google.android.exoplayer2.text.Cue
+import androidx.media3.common.text.Cue
 import com.google.android.gms.cast.TextTrackStyle
 import com.google.android.gms.cast.TextTrackStyle.*
 import com.jaredrummler.android.colorpicker.ColorPickerDialog

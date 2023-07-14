@@ -4,8 +4,8 @@ import android.util.Log
 import android.util.TypedValue
 import android.view.ViewGroup
 import android.widget.FrameLayout
-import com.google.android.exoplayer2.ui.SubtitleView
-import com.google.android.exoplayer2.util.MimeTypes
+import androidx.media3.common.MimeTypes
+import androidx.media3.ui.SubtitleView
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.ui.player.CustomDecoder.Companion.regexSubtitlesToRemoveBloat
 import com.lagradost.cloudstream3.ui.player.CustomDecoder.Companion.regexSubtitlesToRemoveCaptions

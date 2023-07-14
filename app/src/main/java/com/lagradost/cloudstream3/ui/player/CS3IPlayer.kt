@@ -6,29 +6,40 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.widget.FrameLayout
+import androidx.media3.common.C
 import androidx.preference.PreferenceManager
-import com.google.android.exoplayer2.*
-import com.google.android.exoplayer2.C.*
-import com.google.android.exoplayer2.DefaultRenderersFactory.EXTENSION_RENDERER_MODE_ON
-import com.google.android.exoplayer2.DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER
-import com.google.android.exoplayer2.database.StandaloneDatabaseProvider
-import com.google.android.exoplayer2.ext.okhttp.OkHttpDataSource
-import com.google.android.exoplayer2.mediacodec.MediaCodecSelector
-import com.google.android.exoplayer2.source.*
-import com.google.android.exoplayer2.text.TextRenderer
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
-import com.google.android.exoplayer2.trackselection.TrackSelectionOverride
-import com.google.android.exoplayer2.trackselection.TrackSelector
-import com.google.android.exoplayer2.ui.SubtitleView
-import com.google.android.exoplayer2.upstream.DataSource
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
-import com.google.android.exoplayer2.upstream.DefaultHttpDataSource
-import com.google.android.exoplayer2.upstream.HttpDataSource
-import com.google.android.exoplayer2.upstream.cache.CacheDataSource
-import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvictor
-import com.google.android.exoplayer2.upstream.cache.SimpleCache
-import com.google.android.exoplayer2.util.MimeTypes
-import com.google.android.exoplayer2.video.VideoSize
+import androidx.media3.common.C.*
+import androidx.media3.common.Format
+import androidx.media3.common.MediaItem
+import androidx.media3.common.TrackSelectionOverride
+import androidx.media3.common.MimeTypes
+import androidx.media3.common.PlaybackException
+import androidx.media3.common.Player
+import androidx.media3.common.TrackGroup
+import androidx.media3.common.Tracks
+import androidx.media3.common.VideoSize
+import androidx.media3.database.StandaloneDatabaseProvider
+import androidx.media3.datasource.DataSource
+import androidx.media3.datasource.DefaultDataSourceFactory
+import androidx.media3.datasource.DefaultHttpDataSource
+import androidx.media3.datasource.HttpDataSource
+import androidx.media3.datasource.cache.CacheDataSource
+import androidx.media3.datasource.cache.LeastRecentlyUsedCacheEvictor
+import androidx.media3.datasource.cache.SimpleCache
+import androidx.media3.datasource.okhttp.OkHttpDataSource
+import androidx.media3.exoplayer.DefaultLoadControl
+import androidx.media3.exoplayer.DefaultRenderersFactory
+import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.SeekParameters
+import androidx.media3.exoplayer.source.ClippingMediaSource
+import androidx.media3.exoplayer.source.ConcatenatingMediaSource
+import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
+import androidx.media3.exoplayer.source.MergingMediaSource
+import androidx.media3.exoplayer.source.SingleSampleMediaSource
+import androidx.media3.exoplayer.text.TextRenderer
+import androidx.media3.exoplayer.trackselection.DefaultTrackSelector
+import androidx.media3.exoplayer.trackselection.TrackSelector
+import androidx.media3.ui.SubtitleView
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
@@ -44,7 +55,6 @@ import com.lagradost.cloudstream3.utils.ExtractorLinkPlayList
 import com.lagradost.cloudstream3.utils.ExtractorUri
 import com.lagradost.cloudstream3.utils.SubtitleHelper.fromTwoLettersToLanguage
 import java.io.File
-import java.time.Duration
 import javax.net.ssl.HttpsURLConnection
 import javax.net.ssl.SSLContext
 import javax.net.ssl.SSLSession
@@ -387,6 +397,7 @@ class CS3IPlayer : IPlayer {
                         Log.i(TAG, "setPreferredSubtitles REQUIRES_RELOAD")
                         return@let true
                     }
+
                     SubtitleStatus.IS_ACTIVE -> {
                         Log.i(TAG, "setPreferredSubtitles IS_ACTIVE")
 
@@ -412,6 +423,7 @@ class CS3IPlayer : IPlayer {
                         //    }, 1)
                         //}
                     }
+
                     SubtitleStatus.NOT_FOUND -> {
                         Log.i(TAG, "setPreferredSubtitles NOT_FOUND")
                         return@let true
@@ -678,22 +690,22 @@ class CS3IPlayer : IPlayer {
                             // Enable Ffmpeg extension
 //                            setExtensionRendererMode(EXTENSION_RENDERER_MODE_ON)
                         }.createRenderers(
-                                eventHandler,
-                                videoRendererEventListener,
-                                audioRendererEventListener,
-                                textRendererOutput,
-                                metadataRendererOutput
-                            ).map {
-                                if (it is TextRenderer) {
-                                    currentTextRenderer = CustomTextRenderer(
-                                        subtitleOffset,
-                                        textRendererOutput,
-                                        eventHandler.looper,
-                                        CustomSubtitleDecoderFactory()
-                                    )
-                                    currentTextRenderer!!
-                                } else it
-                            }.toTypedArray()
+                            eventHandler,
+                            videoRendererEventListener,
+                            audioRendererEventListener,
+                            textRendererOutput,
+                            metadataRendererOutput
+                        ).map {
+                            if (it is TextRenderer) {
+                                currentTextRenderer = CustomTextRenderer(
+                                    subtitleOffset,
+                                    textRendererOutput,
+                                    eventHandler.looper,
+                                    CustomSubtitleDecoderFactory()
+                                )
+                                currentTextRenderer!!
+                            } else it
+                        }.toTypedArray()
                     }
                     .setTrackSelector(
                         trackSelector ?: getTrackSelector(
@@ -810,9 +822,11 @@ class CS3IPlayer : IPlayer {
                     CSPlayerEvent.Play -> {
                         play()
                     }
+
                     CSPlayerEvent.Pause -> {
                         pause()
                     }
+
                     CSPlayerEvent.ToggleMute -> {
                         if (volume <= 0) {
                             //is muted
@@ -823,6 +837,7 @@ class CS3IPlayer : IPlayer {
                             volume = 0f
                         }
                     }
+
                     CSPlayerEvent.PlayPauseToggle -> {
                         if (isPlaying) {
                             pause()
@@ -830,6 +845,7 @@ class CS3IPlayer : IPlayer {
                             play()
                         }
                     }
+
                     CSPlayerEvent.SeekForward -> seekTime(seekActionTime)
                     CSPlayerEvent.SeekBack -> seekTime(-seekActionTime)
                     CSPlayerEvent.NextEpisode -> nextEpisode?.invoke()
@@ -954,6 +970,7 @@ class CS3IPlayer : IPlayer {
                         Player.STATE_READY -> {
                             onRenderFirst()
                         }
+
                         else -> {}
                     }
 
@@ -963,6 +980,7 @@ class CS3IPlayer : IPlayer {
                             Player.STATE_READY -> {
 
                             }
+
                             Player.STATE_ENDED -> {
                                 // Only play next episode if autoplay is on (default)
                                 if (PreferenceManager.getDefaultSharedPreferences(context)
@@ -974,12 +992,15 @@ class CS3IPlayer : IPlayer {
                                     handleEvent(CSPlayerEvent.NextEpisode)
                                 }
                             }
+
                             Player.STATE_BUFFERING -> {
                                 updatedTime()
                             }
+
                             Player.STATE_IDLE -> {
                                 // IDLE
                             }
+
                             else -> Unit
                         }
                     }
@@ -994,11 +1015,13 @@ class CS3IPlayer : IPlayer {
                                 && exoPlayer?.duration != TIME_UNSET -> {
                             exoPlayer?.prepare()
                         }
+
                         error.errorCode == PlaybackException.ERROR_CODE_BEHIND_LIVE_WINDOW -> {
                             // Re-initialize player at the current live window default position.
                             exoPlayer?.seekToDefaultPosition()
                             exoPlayer?.prepare()
                         }
+
                         else -> {
                             playerError?.invoke(error)
                         }
@@ -1025,6 +1048,7 @@ class CS3IPlayer : IPlayer {
                         Player.STATE_READY -> {
 
                         }
+
                         Player.STATE_ENDED -> {
                             // Only play next episode if autoplay is on (default)
                             if (PreferenceManager.getDefaultSharedPreferences(context)
@@ -1036,12 +1060,15 @@ class CS3IPlayer : IPlayer {
                                 handleEvent(CSPlayerEvent.NextEpisode)
                             }
                         }
+
                         Player.STATE_BUFFERING -> {
                             updatedTime()
                         }
+
                         Player.STATE_IDLE -> {
                             // IDLE
                         }
+
                         else -> Unit
                     }
                 }
@@ -1169,6 +1196,7 @@ class CS3IPlayer : IPlayer {
                         null
                     }
                 }
+
                 SubtitleOrigin.URL -> {
                     if (onlineSourceFactory != null) {
                         activeSubtitles.add(sub)
@@ -1181,6 +1209,7 @@ class CS3IPlayer : IPlayer {
                         null
                     }
                 }
+
                 SubtitleOrigin.EMBEDDED_IN_VIDEO -> {
                     if (offlineSourceFactory != null) {
                         activeSubtitles.add(sub)

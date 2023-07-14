@@ -10,7 +10,11 @@ import android.os.Build
 import android.os.Bundle
 import android.util.AttributeSet
 import android.util.Log
-import android.view.*
+import android.view.KeyEvent
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
+import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.annotation.IdRes
@@ -31,7 +35,11 @@ import androidx.preference.PreferenceManager
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.google.android.gms.cast.framework.*
+import com.google.android.gms.cast.framework.CastButtonFactory
+import com.google.android.gms.cast.framework.CastContext
+import com.google.android.gms.cast.framework.Session
+import com.google.android.gms.cast.framework.SessionManager
+import com.google.android.gms.cast.framework.SessionManagerListener
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.navigationrail.NavigationRailView
 import com.google.android.material.snackbar.Snackbar
@@ -49,7 +57,10 @@ import com.lagradost.cloudstream3.CommonActivity.onDialogDismissedEvent
 import com.lagradost.cloudstream3.CommonActivity.onUserLeaveHint
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.CommonActivity.updateLocale
-import com.lagradost.cloudstream3.mvvm.*
+import com.lagradost.cloudstream3.mvvm.Resource
+import com.lagradost.cloudstream3.mvvm.logError
+import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
+import com.lagradost.cloudstream3.mvvm.observeNullable
 import com.lagradost.cloudstream3.network.initClient
 import com.lagradost.cloudstream3.plugins.PluginManager
 import com.lagradost.cloudstream3.plugins.PluginManager.loadAllOnlinePlugins
@@ -83,7 +94,7 @@ import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.updateT
 import com.lagradost.cloudstream3.ui.settings.SettingsGeneral
 import com.lagradost.cloudstream3.ui.setup.HAS_DONE_SETUP_KEY
 import com.lagradost.cloudstream3.ui.setup.SetupFragmentExtensions
-import com.lagradost.cloudstream3.utils.*
+import com.lagradost.cloudstream3.utils.ApkInstaller
 import com.lagradost.cloudstream3.utils.AppUtils.html
 import com.lagradost.cloudstream3.utils.AppUtils.isCastApiAvailable
 import com.lagradost.cloudstream3.utils.AppUtils.isNetworkAvailable
@@ -98,6 +109,8 @@ import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStore.setKey
 import com.lagradost.cloudstream3.utils.DataStoreHelper.migrateResumeWatching
+import com.lagradost.cloudstream3.utils.Event
+import com.lagradost.cloudstream3.utils.IOnBackPressed
 import com.lagradost.cloudstream3.utils.InAppUpdater.Companion.runAutoUpdate
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.UIHelper.changeStatusBarState
@@ -108,11 +121,26 @@ import com.lagradost.cloudstream3.utils.UIHelper.getResourceColor
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.requestRW
+import com.lagradost.cloudstream3.utils.USER_PROVIDER_API
+import com.lagradost.cloudstream3.utils.USER_SELECTED_HOMEPAGE_API
 import com.lagradost.nicehttp.Requests
 import com.lagradost.nicehttp.ResponseParser
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.bottom_resultview_preview.*
-import kotlinx.android.synthetic.main.fragment_result_swipe.*
+import kotlinx.android.synthetic.main.activity_main.cast_mini_controller_holder
+import kotlinx.android.synthetic.main.activity_main.nav_host_fragment
+import kotlinx.android.synthetic.main.activity_main.nav_rail_view
+import kotlinx.android.synthetic.main.activity_main.nav_view
+import kotlinx.android.synthetic.main.bottom_resultview_preview.resultview_preview_description
+import kotlinx.android.synthetic.main.bottom_resultview_preview.resultview_preview_loading
+import kotlinx.android.synthetic.main.bottom_resultview_preview.resultview_preview_loading_shimmer
+import kotlinx.android.synthetic.main.bottom_resultview_preview.resultview_preview_meta_duration
+import kotlinx.android.synthetic.main.bottom_resultview_preview.resultview_preview_meta_rating
+import kotlinx.android.synthetic.main.bottom_resultview_preview.resultview_preview_meta_type
+import kotlinx.android.synthetic.main.bottom_resultview_preview.resultview_preview_meta_year
+import kotlinx.android.synthetic.main.bottom_resultview_preview.resultview_preview_more_info
+import kotlinx.android.synthetic.main.bottom_resultview_preview.resultview_preview_poster
+import kotlinx.android.synthetic.main.bottom_resultview_preview.resultview_preview_result
+import kotlinx.android.synthetic.main.bottom_resultview_preview.resultview_preview_title
+import kotlinx.android.synthetic.main.fragment_result_swipe.media_route_button
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import java.io.File
@@ -464,9 +492,11 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             Configuration.ORIENTATION_LANDSCAPE -> {
                 true
             }
+
             Configuration.ORIENTATION_PORTRAIT -> {
                 false
             }
+
             else -> {
                 false
             }
@@ -839,6 +869,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                     showToast(this, R.string.error)
                     hidePreviewPopupDialog()
                 }
+
                 is Resource.Loading -> {
                     showPreviewPopupDialog().apply {
                         resultview_preview_loading?.isVisible = true
@@ -846,6 +877,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                         resultview_preview_loading_shimmer?.startShimmer()
                     }
                 }
+
                 is Resource.Success -> {
                     val d = resource.value
                     showPreviewPopupDialog().apply {

@@ -26,7 +26,7 @@ class PlayerPipHelper {
                     activity,
                     code,
                     Intent("media_control").putExtra("control_type", code),
-                    0
+                    PendingIntent.FLAG_IMMUTABLE
                 )
             }
         }
@@ -88,7 +88,15 @@ class PlayerPipHelper {
                 )
             )
             activity.setPictureInPictureParams(
-                PictureInPictureParams.Builder().setActions(actions).build()
+                PictureInPictureParams.Builder()
+                    .apply {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                            setSeamlessResizeEnabled(true)
+                            setAutoEnterEnabled(isPlaying)
+                        }
+                    }
+                    .setActions(actions)
+                    .build()
             )
         }
     }
