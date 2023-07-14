@@ -5,9 +5,9 @@ import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
+import com.lagradost.cloudstream3.utils.getAndUnpack
+import com.lagradost.cloudstream3.utils.Qualities
 import com.lagradost.cloudstream3.utils.M3u8Helper
-import java.util.regex.Matcher
-import java.util.regex.Pattern
 import org.jsoup.select.Elements
 
 class StreamoUpload1 : StreamoUpload() {
@@ -21,27 +21,28 @@ open class StreamoUpload : ExtractorApi() {
 
     override suspend fun getUrl(url: String, referer: String?): List<ExtractorLink> {
         val sources = mutableListOf<ExtractorLink>()
-        val response = app.get(url, referer = referer)
-        val scriptElements: Elements = response.document.select("script")
-        val scriptPattern: Pattern = Pattern.compile("jwplayer\\(\"vplayer\"\\).setup\\((.*?)\\);", Pattern.DOTALL)
-        val filePattern: Pattern = Pattern.compile("\"file\"\\s*:\\s*\"(.*?)\"")
-
-        for (script in scriptElements) {
+        app.get(url, referer = referer).document.select("script").map {it.data() }
+        .filter { it.contains("eval(function(p,a,c,k,e,d)") }
+        .map { script ->
+            val unpacked = if (script.contains("m3u8")) getAndUnpack(script)
             if (script.data().contains("jwplayer(\"vplayer\").setup(")) {
-                val dataMatcher: Matcher = scriptPattern.matcher(script.data())
-                if (dataMatcher.find()) {
-                    val data = dataMatcher.group(1)
-                    val fileMatcher: Matcher = filePattern.matcher(data)
-
-                    while (fileMatcher.find()) {
-                        val fileUrl = fileMatcher.group(1)
-                        val extractorLink = ExtractorLink(fileUrl,  Qualities.Unknown.value,) 
-                        sources.add(extractorLink)
-                    }
+                val data = script.data().substringAfter("sources: [")
+                    .substringBefore("],").replace("file", "\"file\"").trim()
+                tryParseJson<File>(data)?.let {
+                    M3u8Helper.generateM3u8(
+                        name,
+                        it.file,
+                        "$mainUrl/",
+                    ).forEach { m3uData -> sources.add(m3uData) }
                 }
             }
         }
-
         return sources
     }
+
+    private data class File(
+        @JsonProperty("file") val file: String,
+    )
+
+
 }
