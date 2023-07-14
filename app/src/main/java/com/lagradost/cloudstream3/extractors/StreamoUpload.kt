@@ -35,7 +35,7 @@ open class StreamoUpload : ExtractorApi() {
 
                     while (fileMatcher.find()) {
                         val fileUrl = fileMatcher.group(1)
-                        val extractorLink = ExtractorLink(fileUrl, "", "", "") // Add appropriate values for quality, referer, and name
+                        val extractorLink = ExtractorLink(fileUrl,  Qualities.Unknown.value,) 
                         sources.add(extractorLink)
                     }
                 }
