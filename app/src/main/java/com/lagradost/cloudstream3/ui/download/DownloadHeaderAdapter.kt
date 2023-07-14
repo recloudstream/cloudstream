@@ -5,16 +5,12 @@ import android.text.format.Formatter.formatShortFileSize
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
-import androidx.cardview.widget.CardView
-import androidx.core.widget.ContentLoadingProgressBar
 import androidx.recyclerview.widget.RecyclerView
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.databinding.DownloadHeaderEpisodeBinding
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.utils.UIHelper.setImage
 import com.lagradost.cloudstream3.utils.VideoDownloadHelper
-import kotlinx.android.synthetic.main.download_header_episode.view.*
 import java.util.*
 
 data class VisualDownloadHeaderCached(
@@ -66,7 +62,7 @@ class DownloadHeaderAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return DownloadHeaderViewHolder(
-            LayoutInflater.from(parent.context).inflate(R.layout.download_header_episode, parent, false),
+            DownloadHeaderEpisodeBinding.inflate(LayoutInflater.from(parent.context),parent,false),
             clickCallback,
             movieClickCallback
         )
@@ -87,20 +83,20 @@ class DownloadHeaderAdapter(
 
     class DownloadHeaderViewHolder
     constructor(
-        itemView: View,
+        val binding: DownloadHeaderEpisodeBinding,
         private val clickCallback: (DownloadHeaderClickEvent) -> Unit,
         private val movieClickCallback: (DownloadClickEvent) -> Unit,
-    ) : RecyclerView.ViewHolder(itemView), DownloadButtonViewHolder {
+    ) : RecyclerView.ViewHolder(binding.root), DownloadButtonViewHolder {
         override var downloadButton = EasyDownloadButton()
 
-        private val poster: ImageView? = itemView.download_header_poster
+        /*private val poster: ImageView? = itemView.download_header_poster
         private val title: TextView = itemView.download_header_title
         private val extraInfo: TextView = itemView.download_header_info
         private val holder: CardView = itemView.episode_holder
 
         private val downloadBar: ContentLoadingProgressBar = itemView.download_header_progress_downloaded
         private val downloadImage: ImageView = itemView.download_header_episode_download
-        private val normalImage: ImageView = itemView.download_header_goto_child
+        private val normalImage: ImageView = itemView.download_header_goto_child*/
         private var localCard: VisualDownloadHeaderCached? = null
 
         @SuppressLint("SetTextI18n")
@@ -108,19 +104,24 @@ class DownloadHeaderAdapter(
             localCard = card
             val d = card.data
 
-            poster?.setImage(d.poster)
-            poster?.setOnClickListener {
-                clickCallback.invoke(DownloadHeaderClickEvent(1, d))
+            binding.downloadHeaderPoster.apply {
+                setImage(d.poster)
+                setOnClickListener {
+                    clickCallback.invoke(DownloadHeaderClickEvent(1, d))
+                }
             }
 
-            title.text = d.name
+            binding.apply {
+
+            binding.downloadHeaderTitle.text = d.name
             val mbString = formatShortFileSize(itemView.context, card.totalBytes)
 
             //val isMovie = d.type.isMovieType()
             if (card.child != null) {
-                downloadBar.visibility = View.VISIBLE
-                downloadImage.visibility = View.VISIBLE
-                normalImage.visibility = View.GONE
+                downloadHeaderProgressDownloaded.visibility = View.VISIBLE
+
+                downloadHeaderEpisodeDownload.visibility = View.VISIBLE
+                binding.downloadHeaderGotoChild.visibility = View.GONE
                 /*setUpButton(
                     card.currentBytes,
                     card.totalBytes,
@@ -131,33 +132,34 @@ class DownloadHeaderAdapter(
                     movieClickCallback
                 )*/
 
-                holder.setOnClickListener {
+                episodeHolder.setOnClickListener {
                     movieClickCallback.invoke(DownloadClickEvent(DOWNLOAD_ACTION_PLAY_FILE, card.child))
                 }
             } else {
-                downloadBar.visibility = View.GONE
-                downloadImage.visibility = View.GONE
-                normalImage.visibility = View.VISIBLE
+                downloadHeaderProgressDownloaded.visibility = View.GONE
+                downloadHeaderEpisodeDownload.visibility = View.GONE
+                binding.downloadHeaderGotoChild.visibility = View.VISIBLE
 
                 try {
-                    extraInfo.text =
-                        extraInfo.context.getString(R.string.extra_info_format).format(
+                    downloadHeaderInfo.text =
+                        downloadHeaderInfo.context.getString(R.string.extra_info_format).format(
                             card.totalDownloads,
-                            if (card.totalDownloads == 1) extraInfo.context.getString(R.string.episode) else extraInfo.context.getString(
+                            if (card.totalDownloads == 1) downloadHeaderInfo.context.getString(R.string.episode) else downloadHeaderInfo.context.getString(
                                 R.string.episodes
                             ),
                             mbString
                         )
                 } catch (t : Throwable) {
                     // you probably formatted incorrectly
-                    extraInfo.text = "Error"
+                    downloadHeaderInfo.text = "Error"
                     logError(t)
                 }
 
 
-                holder.setOnClickListener {
+                episodeHolder.setOnClickListener {
                     clickCallback.invoke(DownloadHeaderClickEvent(0, d))
                 }
+            }
             }
         }
 
@@ -168,9 +170,9 @@ class DownloadHeaderAdapter(
                 downloadButton.setUpButton(
                     card.currentBytes,
                     card.totalBytes,
-                    downloadBar,
-                    downloadImage,
-                    extraInfo,
+                    binding.downloadHeaderProgressDownloaded,
+                    binding.downloadHeaderEpisodeDownload,
+                    binding.downloadHeaderInfo,
                     card.child,
                     movieClickCallback
                 )

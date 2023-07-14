@@ -163,7 +163,7 @@ class GeneratorPlayer : FullScreenPlayer() {
         currentSelectedLink = link
         currentMeta = viewModel.getMeta()
         nextMeta = viewModel.getNextMeta()
-        setEpisodes(viewModel.getAllMeta() ?: emptyList())
+      //  setEpisodes(viewModel.getAllMeta() ?: emptyList())
         isActive = true
         setPlayerDimen(null)
         setTitle()

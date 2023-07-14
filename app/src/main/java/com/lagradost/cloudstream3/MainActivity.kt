@@ -743,6 +743,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
 
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
         updateTv()
+
         if (isTvSettings()) {
             setContentView(R.layout.activity_main_tv)
         } else {

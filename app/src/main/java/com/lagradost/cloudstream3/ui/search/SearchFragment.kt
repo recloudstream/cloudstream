@@ -104,6 +104,7 @@ class SearchFragment : Fragment() {
         val layout = if (isTvSettings()) R.layout.fragment_search_tv else R.layout.fragment_search
 
         val root = inflater.inflate(layout, container, false)
+        // TODO TRYCATCH
         binding = FragmentSearchBinding.bind(root)
 
         return root

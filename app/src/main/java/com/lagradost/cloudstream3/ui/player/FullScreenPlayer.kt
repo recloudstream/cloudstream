@@ -97,12 +97,6 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
     protected var isShowing = false
     protected var isLocked = false
 
-    //private var episodes: List<Any> = listOf()
-    protected fun setEpisodes(ep: List<Any>) {
-        //hasEpisodes = ep.size > 1 // if has 2 episodes or more because you dont want to switch to your current episode
-        //(player_episode_list?.adapter as? PlayerEpisodeAdapter?)?.updateList(ep)
-    }
-
     protected var hasEpisodes = false
         private set
     //protected val hasEpisodes

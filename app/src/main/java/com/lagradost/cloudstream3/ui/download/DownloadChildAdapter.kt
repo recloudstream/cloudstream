@@ -3,18 +3,13 @@ package com.lagradost.cloudstream3.ui.download
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
-import androidx.cardview.widget.CardView
-import androidx.core.widget.ContentLoadingProgressBar
 import androidx.recyclerview.widget.RecyclerView
-import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.databinding.DownloadChildEpisodeBinding
 import com.lagradost.cloudstream3.utils.AppUtils.getNameFull
 import com.lagradost.cloudstream3.utils.DataStoreHelper.fixVisual
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
 import com.lagradost.cloudstream3.utils.VideoDownloadHelper
-import kotlinx.android.synthetic.main.download_child_episode.view.*
-import java.util.*
+import java.util.Collections
 
 const val DOWNLOAD_ACTION_PLAY_FILE = 0
 const val DOWNLOAD_ACTION_DELETE_FILE = 1
@@ -68,7 +63,7 @@ class DownloadChildAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return DownloadChildViewHolder(
-            LayoutInflater.from(parent.context).inflate(R.layout.download_child_episode, parent, false),
+            DownloadChildEpisodeBinding.inflate(LayoutInflater.from(parent.context), parent, false),
             clickCallback
         )
     }
@@ -88,17 +83,17 @@ class DownloadChildAdapter(
 
     class DownloadChildViewHolder
     constructor(
-        itemView: View,
+        val binding: DownloadChildEpisodeBinding,
         private val clickCallback: (DownloadClickEvent) -> Unit,
-    ) : RecyclerView.ViewHolder(itemView), DownloadButtonViewHolder {
+    ) : RecyclerView.ViewHolder(binding.root), DownloadButtonViewHolder {
         override var downloadButton = EasyDownloadButton()
 
-        private val title: TextView = itemView.download_child_episode_text
+        /*private val title: TextView = itemView.download_child_episode_text
         private val extraInfo: TextView = itemView.download_child_episode_text_extra
         private val holder: CardView = itemView.download_child_episode_holder
         private val progressBar: ContentLoadingProgressBar = itemView.download_child_episode_progress
         private val progressBarDownload: ContentLoadingProgressBar = itemView.download_child_episode_progress_downloaded
-        private val downloadImage: ImageView = itemView.download_child_episode_download
+        private val downloadImage: ImageView = itemView.download_child_episode_download*/
 
         private var localCard: VisualDownloadChildCached? = null
 
@@ -107,29 +102,35 @@ class DownloadChildAdapter(
             val d = card.data
 
             val posDur = getViewPos(d.id)
-            if (posDur != null) {
-                val visualPos = posDur.fixVisual()
-                progressBar.max = (visualPos.duration / 1000).toInt()
-                progressBar.progress = (visualPos.position / 1000).toInt()
-                progressBar.visibility = View.VISIBLE
-            } else {
-                progressBar.visibility = View.GONE
+            binding.downloadChildEpisodeProgress.apply {
+                if (posDur != null) {
+                    val visualPos = posDur.fixVisual()
+                    max = (visualPos.duration / 1000).toInt()
+                    progress = (visualPos.position / 1000).toInt()
+                    visibility = View.VISIBLE
+                } else {
+                    visibility = View.GONE
+                }
             }
 
-            title.text = title.context.getNameFull(d.name, d.episode, d.season)
-            title.isSelected = true // is needed for text repeating
+
+            binding.downloadChildEpisodeText.apply {
+                text = context.getNameFull(d.name, d.episode, d.season)
+                isSelected = true // is needed for text repeating
+            }
+
 
             downloadButton.setUpButton(
                 card.currentBytes,
                 card.totalBytes,
-                progressBarDownload,
-                downloadImage,
-                extraInfo,
+                binding.downloadChildEpisodeProgressDownloaded,
+                binding.downloadChildEpisodeDownload,
+                binding.downloadChildEpisodeTextExtra,
                 card.data,
                 clickCallback
             )
 
-            holder.setOnClickListener {
+            binding.downloadChildEpisodeHolder.setOnClickListener {
                 clickCallback.invoke(DownloadClickEvent(DOWNLOAD_ACTION_PLAY_FILE, d))
             }
         }
@@ -141,9 +142,9 @@ class DownloadChildAdapter(
                 downloadButton.setUpButton(
                     card.currentBytes,
                     card.totalBytes,
-                    progressBarDownload,
-                    downloadImage,
-                    extraInfo,
+                    binding.downloadChildEpisodeProgressDownloaded,
+                    binding.downloadChildEpisodeDownload,
+                    binding.downloadChildEpisodeTextExtra,
                     card.data,
                     clickCallback
                 )
