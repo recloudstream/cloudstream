@@ -388,8 +388,6 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     Acefile(),
     SpeedoStream(),
     SpeedoStream1(),
-    StreamoUpload(),
-    StreamoUpload1(),
     Zorofile(),
     Embedgram(),
     Mvidoo(),
@@ -401,6 +399,8 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     Moviehab(),
     MoviehabNet(),
     Jeniusplay(),
+    StreamoUpload(),
+    StreamoUpload1(),
 
     Gdriveplayerapi(),
     Gdriveplayerapp(),
