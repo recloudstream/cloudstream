@@ -38,15 +38,15 @@ class SearchAdapter(
     var hasNext: Boolean = false
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-
+        val inflater = LayoutInflater.from(parent.context)
 
         val layout =
             if (parent.context.IsBottomLayout()) SearchResultGridExpandedBinding.inflate(
-                LayoutInflater.from(parent.context),
+                inflater,
                 parent,
                 false
             ) else SearchResultGridBinding.inflate(
-                LayoutInflater.from(parent.context),
+                inflater,
                 parent,
                 false
             ) //R.layout.search_result_grid_expanded else R.layout.search_result_grid
@@ -95,9 +95,15 @@ class SearchAdapter(
         private val coverHeight: Int =
             if (compactView) 80.toPx else (resView.itemWidth / 0.68).roundToInt()
 
+        private val cardView = when(binding) {
+            is SearchResultGridExpandedBinding -> binding.imageView
+            is SearchResultGridBinding -> binding.imageView
+            else -> null
+        }
+
         fun bind(card: SearchResponse, position: Int) {
             if (!compactView) {
-                binding.root.apply {
+                cardView?.apply {
                     layoutParams = FrameLayout.LayoutParams(
                         ViewGroup.LayoutParams.MATCH_PARENT,
                         coverHeight

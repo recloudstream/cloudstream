@@ -31,6 +31,7 @@ import com.lagradost.cloudstream3.APIHolder.apis
 import com.lagradost.cloudstream3.APIHolder.filterProviderByPreferredMedia
 import com.lagradost.cloudstream3.APIHolder.getApiProviderLangSettings
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
+import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.MainActivity.Companion.afterPluginsLoadedEvent
 import com.lagradost.cloudstream3.MainActivity.Companion.bookmarksUpdatedEvent
 import com.lagradost.cloudstream3.MainActivity.Companion.mainPluginsLoadedEvent
@@ -45,6 +46,7 @@ import com.lagradost.cloudstream3.ui.APIRepository.Companion.noneApi
 import com.lagradost.cloudstream3.ui.APIRepository.Companion.randomApi
 import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.quicksearch.QuickSearchFragment
+import com.lagradost.cloudstream3.ui.result.txt
 import com.lagradost.cloudstream3.ui.search.*
 import com.lagradost.cloudstream3.ui.search.SearchHelper.handleSearchClickCallback
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTrueTvSettings
@@ -431,22 +433,20 @@ class HomeFragment : Fragment() {
     ): View? {
         //homeViewModel =
         //     ViewModelProvider(this).get(HomeViewModel::class.java)
+
         bottomSheetDialog?.ownShow()
         val layout =
             if (isTvSettings()) R.layout.fragment_home_tv else R.layout.fragment_home
-
-        /* val binding = FragmentHomeTvBinding.inflate(layout, container, false)
-         binding.homeLoadingError
-
-         val binding2 = FragmentHomeBinding.inflate(layout, container, false)
-         binding2.homeLoadingError*/
         val root = inflater.inflate(layout, container, false)
-        binding = FragmentHomeBinding.bind(root)
-        //val localBinding = FragmentHomeBinding.inflate(inflater)
-        //binding = localBinding
-        return root
+        binding = try {
+            FragmentHomeBinding.bind(root)
+        } catch (t : Throwable) {
+            showToast(activity, txt(R.string.unable_to_inflate, t.message ?: ""), Toast.LENGTH_LONG)
+            logError(t)
+            null
+        }
 
-        //return inflater.inflate(layout, container, false)
+        return root
     }
 
     override fun onDestroyView() {

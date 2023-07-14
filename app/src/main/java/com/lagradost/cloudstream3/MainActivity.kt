@@ -32,6 +32,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.google.android.gms.cast.framework.*
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.navigationrail.NavigationRailView
 import com.google.android.material.snackbar.Snackbar
@@ -49,6 +50,9 @@ import com.lagradost.cloudstream3.CommonActivity.onDialogDismissedEvent
 import com.lagradost.cloudstream3.CommonActivity.onUserLeaveHint
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.CommonActivity.updateLocale
+import com.lagradost.cloudstream3.databinding.ActivityMainBinding
+import com.lagradost.cloudstream3.databinding.ActivityMainTvBinding
+import com.lagradost.cloudstream3.databinding.BottomResultviewPreviewBinding
 import com.lagradost.cloudstream3.mvvm.*
 import com.lagradost.cloudstream3.network.initClient
 import com.lagradost.cloudstream3.plugins.PluginManager
@@ -74,6 +78,7 @@ import com.lagradost.cloudstream3.ui.result.ResultViewModel2
 import com.lagradost.cloudstream3.ui.result.START_ACTION_RESUME_LATEST
 import com.lagradost.cloudstream3.ui.result.setImage
 import com.lagradost.cloudstream3.ui.result.setText
+import com.lagradost.cloudstream3.ui.result.txt
 import com.lagradost.cloudstream3.ui.search.SearchFragment
 import com.lagradost.cloudstream3.ui.search.SearchResultBuilder
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isEmulatorSettings
@@ -110,9 +115,6 @@ import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.requestRW
 import com.lagradost.nicehttp.Requests
 import com.lagradost.nicehttp.ResponseParser
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.bottom_resultview_preview.*
-import kotlinx.android.synthetic.main.fragment_result_swipe.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import java.io.File
@@ -334,8 +336,10 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
 
                         // Use both navigation views to support both layouts.
                         // It might be better to use the QuickSearch.
-                        nav_view?.selectedItemId = R.id.navigation_search
-                        nav_rail_view?.selectedItemId = R.id.navigation_search
+                        activity?.findViewById<BottomNavigationView>(R.id.nav_view)?.selectedItemId =
+                            R.id.navigation_search
+                        activity?.findViewById<NavigationRailView>(R.id.nav_rail_view)?.selectedItemId =
+                            R.id.navigation_search
                     } else if (safeURI(str)?.scheme == appStringPlayer) {
                         val uri = Uri.parse(str)
                         val name = uri.getQueryParameter("name")
@@ -412,7 +416,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         this.hideKeyboard()
 
         // Fucks up anime info layout since that has its own layout
-        cast_mini_controller_holder?.isVisible =
+        binding?.castMiniControllerHolder?.isVisible =
             !listOf(
                 R.id.navigation_results_phone,
                 R.id.navigation_results_tv,
@@ -448,7 +452,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             R.id.navigation_player,
         ).contains(destination.id)
 
-        nav_host_fragment?.apply {
+        binding?.navHostFragment?.apply {
             val params = layoutParams as ConstraintLayout.LayoutParams
 
             params.setMargins(
@@ -464,21 +468,24 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             Configuration.ORIENTATION_LANDSCAPE -> {
                 true
             }
+
             Configuration.ORIENTATION_PORTRAIT -> {
-                false
+                isTvSettings()
             }
+
             else -> {
                 false
             }
         }
+        binding?.apply {
+            navView.isVisible = isNavVisible && !landscape
+            navRailView.isVisible = isNavVisible && landscape
 
-        nav_view?.isVisible = isNavVisible && !landscape
-        nav_rail_view?.isVisible = isNavVisible && landscape
-
-        // Hide library on TV since it is not supported yet :(
-        val isTrueTv = isTrueTvSettings()
-        nav_view?.menu?.findItem(R.id.navigation_library)?.isVisible = !isTrueTv
-        nav_rail_view?.menu?.findItem(R.id.navigation_library)?.isVisible = !isTrueTv
+            // Hide library on TV since it is not supported yet :(
+            val isTrueTv = isTrueTvSettings()
+            navView.menu.findItem(R.id.navigation_library)?.isVisible = !isTrueTv
+            navRailView.menu.findItem(R.id.navigation_library)?.isVisible = !isTrueTv
+        }
     }
 
     //private var mCastSession: CastSession? = null
@@ -691,27 +698,36 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
     }
 
     private fun hidePreviewPopupDialog() {
-        viewModel.clear()
         bottomPreviewPopup.dismissSafe(this)
+        bottomPreviewPopup = null
+        bottomPreviewBinding = null
     }
 
-    var bottomPreviewPopup: BottomSheetDialog? = null
-    private fun showPreviewPopupDialog(): BottomSheetDialog {
-        val ret = (bottomPreviewPopup ?: run {
+    private var bottomPreviewPopup: BottomSheetDialog? = null
+    private var bottomPreviewBinding: BottomResultviewPreviewBinding? = null
+    private fun showPreviewPopupDialog(): BottomResultviewPreviewBinding {
+        val ret = (bottomPreviewBinding ?: run {
             val builder =
                 BottomSheetDialog(this)
-            builder.setContentView(R.layout.bottom_resultview_preview)
+            val binding: BottomResultviewPreviewBinding =
+                BottomResultviewPreviewBinding.inflate(builder.layoutInflater, null, false)
+            bottomPreviewBinding = binding
+            builder.setContentView(binding.root)
             builder.setOnDismissListener {
                 bottomPreviewPopup = null
+                bottomPreviewBinding = null
                 viewModel.clear()
             }
             builder.setCanceledOnTouchOutside(true)
             builder.show()
-            builder
+            bottomPreviewPopup = builder
+            binding
         })
-        bottomPreviewPopup = ret
+
         return ret
     }
+
+    var binding: ActivityMainBinding? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         app.initClient(this)
@@ -744,10 +760,20 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
         updateTv()
 
-        if (isTvSettings()) {
-            setContentView(R.layout.activity_main_tv)
-        } else {
-            setContentView(R.layout.activity_main)
+        // just in case, MAIN SHOULD *NEVER* BOOT LOOP CRASH
+        binding = try {
+            if (isTvSettings()) {
+                val newLocalBinding = ActivityMainTvBinding.inflate(layoutInflater, null, false)
+                setContentView(newLocalBinding.root)
+                ActivityMainBinding.bind(newLocalBinding.root) // this may crash
+            } else {
+                val newLocalBinding = ActivityMainBinding.inflate(layoutInflater, null, false)
+                setContentView(newLocalBinding.root)
+                newLocalBinding
+            }
+        } catch (t: Throwable) {
+            showToast(this, txt(R.string.unable_to_inflate, t.message ?: ""), Toast.LENGTH_LONG)
+            null
         }
 
         changeStatusBarState(isEmulatorSettings())
@@ -832,41 +858,44 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
 
         observeNullable(viewModel.page) { resource ->
             if (resource == null) {
-                bottomPreviewPopup.dismissSafe(this)
+                hidePreviewPopupDialog()
                 return@observeNullable
             }
             when (resource) {
                 is Resource.Failure -> {
                     showToast(this, R.string.error)
+                    viewModel.clear()
                     hidePreviewPopupDialog()
                 }
+
                 is Resource.Loading -> {
                     showPreviewPopupDialog().apply {
-                        resultview_preview_loading?.isVisible = true
-                        resultview_preview_result?.isVisible = false
-                        resultview_preview_loading_shimmer?.startShimmer()
+                        resultviewPreviewLoading.isVisible = true
+                        resultviewPreviewResult.isVisible = false
+                        resultviewPreviewLoadingShimmer.startShimmer()
                     }
                 }
+
                 is Resource.Success -> {
                     val d = resource.value
                     showPreviewPopupDialog().apply {
-                        resultview_preview_loading?.isVisible = false
-                        resultview_preview_result?.isVisible = true
-                        resultview_preview_loading_shimmer?.stopShimmer()
+                        resultviewPreviewLoading.isVisible = false
+                        resultviewPreviewResult.isVisible = true
+                        resultviewPreviewLoadingShimmer.stopShimmer()
 
-                        resultview_preview_title?.text = d.title
+                        resultviewPreviewTitle.text = d.title
 
-                        resultview_preview_meta_type.setText(d.typeText)
-                        resultview_preview_meta_year.setText(d.yearText)
-                        resultview_preview_meta_duration.setText(d.durationText)
-                        resultview_preview_meta_rating.setText(d.ratingText)
+                        resultviewPreviewMetaType.setText(d.typeText)
+                        resultviewPreviewMetaYear.setText(d.yearText)
+                        resultviewPreviewMetaDuration.setText(d.durationText)
+                        resultviewPreviewMetaRating.setText(d.ratingText)
 
-                        resultview_preview_description?.setText(d.plotText)
-                        resultview_preview_poster?.setImage(
+                        resultviewPreviewDescription.setText(d.plotText)
+                        resultviewPreviewPoster.setImage(
                             d.posterImage ?: d.posterBackgroundImage
                         )
 
-                        resultview_preview_poster?.setOnClickListener {
+                        resultviewPreviewPoster.setOnClickListener {
                             //viewModel.updateWatchStatus(WatchType.PLANTOWATCH)
                             val value = viewModel.watchStatus.value ?: WatchType.NONE
 
@@ -882,7 +911,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                         }
 
                         if (!isTvSettings()) // dont want this clickable on tv layout
-                            resultview_preview_description?.setOnClickListener { view ->
+                            resultviewPreviewDescription.setOnClickListener { view ->
                                 view.context?.let { ctx ->
                                     val builder: AlertDialog.Builder =
                                         AlertDialog.Builder(ctx, R.style.AlertDialogCustom)
@@ -892,7 +921,8 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                                 }
                             }
 
-                        resultview_preview_more_info?.setOnClickListener {
+                        resultviewPreviewMoreInfo.setOnClickListener {
+                            viewModel.clear()
                             hidePreviewPopupDialog()
                             lastPopup?.let {
                                 loadSearchResult(it)
@@ -964,22 +994,22 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             .setPopExitAnim(R.anim.nav_pop_exit)
             .setPopUpTo(navController.graph.startDestination, false)
             .build()*/
-        nav_view?.setupWithNavController(navController)
-        val nav_rail = findViewById<NavigationRailView?>(R.id.nav_rail_view)
-        nav_rail?.setupWithNavController(navController)
+        binding?.navView?.setupWithNavController(navController)
+        val navRail = findViewById<NavigationRailView?>(R.id.nav_rail_view)
+        navRail?.setupWithNavController(navController)
         if (isTvSettings()) {
-            nav_rail?.background?.alpha = 200
+            navRail?.background?.alpha = 200
         } else {
-            nav_rail?.background?.alpha = 255
+            navRail?.background?.alpha = 255
 
         }
-        nav_rail?.setOnItemSelectedListener { item ->
+        navRail?.setOnItemSelectedListener { item ->
             onNavDestinationSelected(
                 item,
                 navController
             )
         }
-        nav_view?.setOnItemSelectedListener { item ->
+        binding?.navView?.setOnItemSelectedListener { item ->
             onNavDestinationSelected(
                 item,
                 navController
@@ -1010,16 +1040,16 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         }*/
 
         val rippleColor = ColorStateList.valueOf(getResourceColor(R.attr.colorPrimary, 0.1f))
-        nav_view?.itemRippleColor = rippleColor
-        nav_rail?.itemRippleColor = rippleColor
-        nav_rail?.itemActiveIndicatorColor = rippleColor
-        nav_view?.itemActiveIndicatorColor = rippleColor
+        binding?.navView?.itemRippleColor = rippleColor
+        navRail?.itemRippleColor = rippleColor
+        navRail?.itemActiveIndicatorColor = rippleColor
+        binding?.navView?.itemActiveIndicatorColor = rippleColor
 
         if (!checkWrite()) {
             requestRW()
             if (checkWrite()) return
         }
-        CastButtonFactory.setUpMediaRouteButton(this, media_route_button)
+        //CastButtonFactory.setUpMediaRouteButton(this, media_route_button)
 
         // THIS IS CURRENTLY REMOVED BECAUSE HIGHER VERS OF ANDROID NEEDS A NOTIFICATION
         //if (!VideoDownloadManager.isMyServiceRunning(this, VideoDownloadKeepAliveService::class.java)) {

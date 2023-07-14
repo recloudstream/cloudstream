@@ -3,7 +3,6 @@ package com.lagradost.cloudstream3.ui.settings.extensions
 import android.text.format.Formatter.formatShortFileSize
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isGone
@@ -13,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.lagradost.cloudstream3.AcraApplication.Companion.getActivity
 import com.lagradost.cloudstream3.PROVIDER_STATUS_DOWN
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.databinding.RepositoryItemBinding
 import com.lagradost.cloudstream3.plugins.PluginManager
 import com.lagradost.cloudstream3.plugins.VotingApi.getVotes
 import com.lagradost.cloudstream3.ui.result.setText
@@ -26,10 +26,11 @@ import com.lagradost.cloudstream3.utils.SubtitleHelper.fromTwoLettersToLanguage
 import com.lagradost.cloudstream3.utils.SubtitleHelper.getFlagFromIso
 import com.lagradost.cloudstream3.utils.UIHelper.setImage
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
-import kotlinx.android.synthetic.main.repository_item.view.*
 import org.junit.Assert
 import org.junit.Test
 import java.text.DecimalFormat
+import kotlin.math.floor
+import kotlin.math.log10
 
 
 data class PluginViewData(
@@ -45,8 +46,10 @@ class PluginAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val layout = if(isTrueTvSettings()) R.layout.repository_item_tv else R.layout.repository_item
+        val inflated = LayoutInflater.from(parent.context).inflate(layout, parent, false)
+
         return PluginViewHolder(
-            LayoutInflater.from(parent.context).inflate(layout, parent, false)
+            RepositoryItemBinding.bind(inflated) // may crash
         )
     }
 
@@ -82,8 +85,10 @@ class PluginAdapter(
 
     // Clear glide image because setImageResource doesn't override
     override fun onViewRecycled(holder: RecyclerView.ViewHolder) {
-        holder.itemView.entry_icon?.let { pluginIcon ->
-            GlideApp.with(pluginIcon).clear(pluginIcon)
+        if (holder is PluginViewHolder) {
+            holder.binding.entryIcon.let { pluginIcon ->
+                GlideApp.with(pluginIcon).clear(pluginIcon)
+            }
         }
         super.onViewRecycled(holder)
     }
@@ -112,7 +117,7 @@ class PluginAdapter(
         fun prettyCount(number: Number): String? {
             val suffix = charArrayOf(' ', 'k', 'M', 'B', 'T', 'P', 'E')
             val numValue = number.toLong()
-            val value = Math.floor(Math.log10(numValue.toDouble())).toInt()
+            val value = floor(log10(numValue.toDouble())).toInt()
             val base = value / 3
             return if (value >= 3 && base < suffix.size) {
                 DecimalFormat("#0.00").format(
@@ -127,8 +132,8 @@ class PluginAdapter(
         }
     }
 
-    inner class PluginViewHolder(itemView: View) :
-        RecyclerView.ViewHolder(itemView) {
+    inner class PluginViewHolder(val binding: RepositoryItemBinding) :
+        RecyclerView.ViewHolder(binding.root) {
 
         fun bind(
             data: PluginViewData,
@@ -138,17 +143,17 @@ class PluginAdapter(
             val name = metadata.name.removeSuffix("Provider")
             val alpha = if (disabled) 0.6f else 1f
             val isLocal = !data.plugin.second.url.startsWith("http")
-            itemView.main_text?.alpha = alpha
-            itemView.sub_text?.alpha = alpha
+            binding.mainText.alpha = alpha
+            binding.subText.alpha = alpha
 
             val drawableInt = if (data.isDownloaded)
                 R.drawable.ic_baseline_delete_outline_24
             else R.drawable.netflix_download
 
-            itemView.nsfw_marker?.isVisible = metadata.tvTypes?.contains("NSFW") ?: false
-            itemView.action_button?.setImageResource(drawableInt)
+            binding.nsfwMarker.isVisible = metadata.tvTypes?.contains("NSFW") ?: false
+            binding.actionButton.setImageResource(drawableInt)
 
-            itemView.action_button?.setOnClickListener {
+            binding.actionButton.setOnClickListener {
                 iconClickCallback.invoke(data.plugin)
             }
             itemView.setOnClickListener {
@@ -169,10 +174,11 @@ class PluginAdapter(
 
             if (data.isDownloaded) {
                 // On local plugins page the filepath is provided instead of url.
-                val plugin = PluginManager.urlPlugins[metadata.url] ?: PluginManager.plugins[metadata.url]
+                val plugin =
+                    PluginManager.urlPlugins[metadata.url] ?: PluginManager.plugins[metadata.url]
                 if (plugin?.openSettings != null) {
-                    itemView.action_settings?.isVisible = true
-                    itemView.action_settings.setOnClickListener {
+                    binding.actionSettings.isVisible = true
+                    binding.actionSettings.setOnClickListener {
                         try {
                             plugin.openSettings!!.invoke(itemView.context)
                         } catch (e: Throwable) {
@@ -185,13 +191,13 @@ class PluginAdapter(
                         }
                     }
                 } else {
-                    itemView.action_settings?.isVisible = false
+                    binding.actionSettings.isVisible = false
                 }
             } else {
-                itemView.action_settings?.isVisible = false
+                binding.actionSettings.isVisible = false
             }
 
-            if (itemView.entry_icon?.setImage(//itemView.entry_icon?.height ?:
+            if (!binding.entryIcon.setImage(//itemView.entry_icon?.height ?:
                     metadata.iconUrl?.replace(
                         "%size%",
                         "$iconSize"
@@ -201,41 +207,47 @@ class PluginAdapter(
                     ),
                     null,
                     errorImageDrawable = R.drawable.ic_baseline_extension_24
-                ) != true
+                )
             ) {
-                itemView.entry_icon?.setImageResource(R.drawable.ic_baseline_extension_24)
+                binding.entryIcon.setImageResource(R.drawable.ic_baseline_extension_24)
             }
 
-            itemView.ext_version?.isVisible = true
-            itemView.ext_version?.text = "v${metadata.version}"
+            binding.extVersion.isVisible = true
+            binding.extVersion.text = "v${metadata.version}"
 
             if (metadata.language.isNullOrBlank()) {
-                itemView.lang_icon?.isVisible = false
+                binding.langIcon.isVisible = false
             } else {
-                itemView.lang_icon?.isVisible = true
-                itemView.lang_icon.text = "${getFlagFromIso(metadata.language)} ${fromTwoLettersToLanguage(metadata.language)}"
+                binding.langIcon.isVisible = true
+                binding.langIcon.text =
+                    "${getFlagFromIso(metadata.language)} ${fromTwoLettersToLanguage(metadata.language)}"
             }
 
-            itemView.ext_votes?.isVisible = false
+            binding.extVotes.isVisible = false
             if (!isLocal) {
                 ioSafe {
                     metadata.getVotes().main {
-                        itemView.ext_votes?.setText(txt(R.string.extension_rating, prettyCount(it)))
-                        itemView.ext_votes?.isVisible = true
+                        binding.extVotes.setText(txt(R.string.extension_rating, prettyCount(it)))
+                        binding.extVotes.isVisible = true
                     }
                 }
             }
 
 
             if (metadata.fileSize != null) {
-                itemView.ext_filesize?.isVisible = true
-                itemView.ext_filesize?.text = formatShortFileSize(itemView.context, metadata.fileSize)
+                binding.extFilesize.isVisible = true
+                binding.extFilesize.text = formatShortFileSize(itemView.context, metadata.fileSize)
             } else {
-                itemView.ext_filesize?.isVisible = false
+                binding.extFilesize.isVisible = false
             }
-            itemView.main_text.setText(if(disabled) txt(R.string.single_plugin_disabled, name) else txt(name))
-            itemView.sub_text?.isGone = metadata.description.isNullOrBlank()
-            itemView.sub_text?.text = metadata.description.html()
+            binding.mainText.setText(
+                if (disabled) txt(
+                    R.string.single_plugin_disabled,
+                    name
+                ) else txt(name)
+            )
+            binding.subText.isGone = metadata.description.isNullOrBlank()
+            binding.subText.text = metadata.description.html()
         }
     }
 }

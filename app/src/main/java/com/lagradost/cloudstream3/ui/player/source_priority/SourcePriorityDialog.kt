@@ -2,24 +2,18 @@ package com.lagradost.cloudstream3.ui.player.source_priority
 
 import android.app.Dialog
 import android.content.Context
-import android.view.View
-import android.widget.EditText
-import android.widget.TextView
+import android.view.LayoutInflater
 import androidx.annotation.StyleRes
 import androidx.appcompat.app.AlertDialog
-import androidx.fragment.app.FragmentActivity
-import androidx.recyclerview.widget.RecyclerView
-import androidx.work.impl.constraints.controllers.ConstraintController
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.databinding.PlayerSelectSourcePriorityBinding
 import com.lagradost.cloudstream3.ui.result.txt
-import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.Qualities
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
-import kotlinx.android.synthetic.main.player_select_source_priority.*
 
 class SourcePriorityDialog(
-    ctx: Context,
+    val ctx: Context,
     @StyleRes themeRes: Int,
     val links: List<ExtractorLink>,
     private val profile: QualityDataHelper.QualityProfile,
@@ -30,13 +24,14 @@ class SourcePriorityDialog(
     private val updatedCallback: () -> Unit
 ) : Dialog(ctx, themeRes) {
     override fun show() {
-        setContentView(R.layout.player_select_source_priority)
-        val sourcesRecyclerView: RecyclerView = sort_sources
-        val qualitiesRecyclerView: RecyclerView = sort_qualities
-        val profileText: EditText = profile_text_editable
-        val saveBtt: View = save_btt
-        val exitBtt: View = close_btt
-        val helpBtt: View = help_btt
+        val binding = PlayerSelectSourcePriorityBinding.inflate(LayoutInflater.from(ctx), null, false)
+        setContentView(binding.root)
+        val sourcesRecyclerView = binding.sortSources
+        val qualitiesRecyclerView = binding.sortQualities
+        val profileText = binding.profileTextEditable
+        val saveBtt = binding.saveBtt
+        val exitBtt = binding.closeBtt
+        val helpBtt = binding.helpBtt
 
         profileText.setText(QualityDataHelper.getProfileName(profile.id).asString(context))
         profileText.hint = txt(R.string.profile_number, profile.id).asString(context)

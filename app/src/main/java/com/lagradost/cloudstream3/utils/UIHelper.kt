@@ -181,6 +181,50 @@ object UIHelper {
         }
     }
 
+    /*inline fun <reified T : ViewBinding> bindViewBinding(
+        inflater: LayoutInflater?,
+        container: ViewGroup?,
+        layout: Int
+    ): Pair<T?, UiText?> {
+        return try {
+            val localInflater = inflater ?: container?.context?.let { LayoutInflater.from(it) }
+            ?: return null to txt(
+                R.string.unable_to_inflate,
+                "Requires inflater OR container"
+            )//throw IllegalArgumentException("Requires inflater OR container"))
+
+            //println("methods: ${T::class.java.methods.map { it.name }}")
+            val bind = T::class.java.methods.first { it.name == "bind" }
+            //val inflate = T::class.java.methods.first { it.name == "inflate" }
+            val root = localInflater.inflate(layout, container, false)
+            bind.invoke(null, root) as T to null
+        } catch (t: Throwable) {
+            logError(t)
+            val message = txt(R.string.unable_to_inflate, t.message ?: "Primary constructor")
+            // if the desired layout is not found then we inflate the casted layout
+            /*try {
+                val localInflater = inflater ?: container?.context?.let { LayoutInflater.from(it) }
+                ?: return null to txt(
+                    R.string.unable_to_inflate,
+                    "Requires inflater OR container"
+                )//throw IllegalArgumentException("Requires inflater OR container"))
+
+                // we don't know what method to use as there are 2, but first *should* always be true
+                return try {
+                    val inflate = T::class.java.methods.first { it.name == "inflate" }
+                    inflate.invoke(null, localInflater, container, false) as T
+                } catch (_: Throwable) {
+                    val inflate = T::class.java.methods.last { it.name == "inflate" }
+                    inflate.invoke(null, localInflater, container, false) as T
+                } to message
+            } catch (t: Throwable) {
+                logError(t)
+            }*/
+
+            null to message
+        }
+    }*/
+
     fun ImageView?.setImage(
         url: String?,
         headers: Map<String, String>? = null,
@@ -190,7 +234,12 @@ object UIHelper {
         colorCallback: ((Palette) -> Unit)? = null
     ): Boolean {
         if (url.isNullOrBlank()) return false
-        this.setImage(UiImage.Image(url, headers, errorImageDrawable), errorImageDrawable, fadeIn, colorCallback)
+        this.setImage(
+            UiImage.Image(url, headers, errorImageDrawable),
+            errorImageDrawable,
+            fadeIn,
+            colorCallback
+        )
         return true
     }
 

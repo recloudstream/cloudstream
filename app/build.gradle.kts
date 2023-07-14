@@ -208,7 +208,7 @@ dependencies {
 
     implementation("com.github.discord:OverlappingPanels:0.1.3")
     // debugImplementation because LeakCanary should only run in debug builds.
-    // debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.7'
+    // debugImplementation("com.squareup.leakcanary:leakcanary-android:2.7")
 
     // for shimmer when loading
     implementation("com.facebook.shimmer:shimmer:0.5.0")
@@ -228,7 +228,7 @@ dependencies {
     // Library/extensions searching with Levenshtein distance
     implementation("me.xdrop:fuzzywuzzy:1.4.0")
 
-    // color pallette for images -> colors
+    // color palette for images -> colors
     implementation("androidx.palette:palette-ktx:1.0.0")
 }
 
