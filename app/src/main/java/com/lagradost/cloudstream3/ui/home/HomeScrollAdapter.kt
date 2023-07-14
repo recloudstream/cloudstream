@@ -11,9 +11,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.lagradost.cloudstream3.LoadResponse
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.utils.UIHelper.setImage
-import kotlinx.android.synthetic.main.fragment_home_head_tv.*
-import kotlinx.android.synthetic.main.fragment_home_head_tv.view.*
-import kotlinx.android.synthetic.main.home_scroll_view.view.*
+import kotlinx.android.synthetic.main.home_scroll_view.view.home_scroll_preview
+import kotlinx.android.synthetic.main.home_scroll_view.view.home_scroll_preview_tags
+import kotlinx.android.synthetic.main.home_scroll_view.view.home_scroll_preview_title
 
 
 class HomeScrollAdapter(
