@@ -357,6 +357,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     DesuDrive(),
 
     Chillx(),
+    Moviesapi(),
     Watchx(),
     Bestx(),
     Keephealth(),
