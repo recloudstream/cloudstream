@@ -35,7 +35,8 @@ open class StreamoUpload : ExtractorApi() {
 
                     while (fileMatcher.find()) {
                         val fileUrl = fileMatcher.group(1)
-                        sources.add(ExtractorLink(fileUrl))
+                        val extractorLink = ExtractorLink(fileUrl, "", "", "") // Add appropriate values for quality, referer, and name
+                        sources.add(extractorLink)
                     }
                 }
             }
@@ -43,8 +44,4 @@ open class StreamoUpload : ExtractorApi() {
 
         return sources
     }
-
-    private data class File(
-        @JsonProperty("file") val file: String,
-    )
 }
