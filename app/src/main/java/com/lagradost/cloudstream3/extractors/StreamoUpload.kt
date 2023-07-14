@@ -1,3 +1,5 @@
+package com.lagradost.cloudstream3.extractors
+
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
