@@ -10,18 +10,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.lagradost.cloudstream3.HomePageList
 import com.lagradost.cloudstream3.LoadResponse
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.databinding.HomepageParentBinding
 import com.lagradost.cloudstream3.ui.result.setLinearListLayout
 import com.lagradost.cloudstream3.ui.search.SearchClickCallback
 import com.lagradost.cloudstream3.ui.search.SearchFragment.Companion.filterSearchResponse
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
 import com.lagradost.cloudstream3.utils.AppUtils.isRecyclerScrollable
-import kotlinx.android.synthetic.main.activity_main_tv.*
-import kotlinx.android.synthetic.main.activity_main_tv.view.*
-import kotlinx.android.synthetic.main.fragment_home.*
-import kotlinx.android.synthetic.main.fragment_home.view.*
-import kotlinx.android.synthetic.main.fragment_home_head_tv.*
-import kotlinx.android.synthetic.main.fragment_home_head_tv.view.*
-import kotlinx.android.synthetic.main.homepage_parent.view.*
 
 class LoadClickCallback(
     val action: Int = 0,
@@ -37,12 +31,17 @@ open class ParentItemAdapter(
     private val expandCallback: ((String) -> Unit)? = null,
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+
+        val root = LayoutInflater.from(parent.context).inflate(
+            if (isTvSettings()) R.layout.homepage_parent_tv else R.layout.homepage_parent,
+            parent,
+            false
+        )
+
+        val binding = HomepageParentBinding.bind(root)
+
         return ParentViewHolder(
-            LayoutInflater.from(parent.context).inflate(
-                if (isTvSettings()) R.layout.homepage_parent_tv else R.layout.homepage_parent,
-                parent,
-                false
-            ),
+            binding,
             clickCallback,
             moreInfoClickCallback,
             expandCallback
@@ -153,14 +152,14 @@ open class ParentItemAdapter(
 
     class ParentViewHolder
     constructor(
-        itemView: View,
+        val binding: HomepageParentBinding,
         private val clickCallback: (SearchClickCallback) -> Unit,
         private val moreInfoClickCallback: (HomeViewModel.ExpandableHomepageList) -> Unit,
         private val expandCallback: ((String) -> Unit)? = null,
     ) :
-        RecyclerView.ViewHolder(itemView) {
-        val title: TextView = itemView.home_child_more_info
-        private val recyclerView: RecyclerView = itemView.home_child_recyclerview
+        RecyclerView.ViewHolder(binding.root) {
+        val title: TextView = binding.homeChildMoreInfo
+        private val recyclerView: RecyclerView = binding.homeChildRecyclerview
 
         fun update(expand: HomeViewModel.ExpandableHomepageList) {
             val info = expand.list

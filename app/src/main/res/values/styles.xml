@@ -125,8 +125,13 @@
         <item name="android:textColor">@color/subColorText</item>
     </style>
 
+    <!--<style name="RatingButton" parent="@style/SearchBox">
+        <item name="android:background">@drawable/rating_bg_color</item>
+        <item name="android:textColor">@color/ratingColor</item>
+    </style>-->
+
     <style name="RatingButton" parent="@style/SearchBox">
-        <item name="android:minWidth">30dp</item>
+        <item name="android:minWidth">40dp</item>
         <item name="android:background">@drawable/rating_bg_color</item>
         <item name="drawableTint">@color/ratingColor</item>
         <item name="android:textColor">@color/ratingColor</item>

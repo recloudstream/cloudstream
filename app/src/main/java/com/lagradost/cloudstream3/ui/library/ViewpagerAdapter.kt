@@ -64,7 +64,7 @@ class ViewpagerAdapter(
                 }
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    setOnScrollChangeListener { v, scrollX, scrollY, oldScrollX, oldScrollY ->
+                    setOnScrollChangeListener { _, _, scrollY, _, oldScrollY ->
                         val diff = scrollY - oldScrollY
                         if (diff == 0) return@setOnScrollChangeListener
 

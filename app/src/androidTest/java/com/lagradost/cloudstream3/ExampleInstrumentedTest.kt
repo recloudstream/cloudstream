@@ -12,8 +12,14 @@ import com.lagradost.cloudstream3.databinding.FragmentHomeTvBinding
 import com.lagradost.cloudstream3.databinding.FragmentSearchBinding
 import com.lagradost.cloudstream3.databinding.FragmentSearchTvBinding
 import com.lagradost.cloudstream3.databinding.HomeResultGridBinding
+import com.lagradost.cloudstream3.databinding.HomeScrollViewBinding
+import com.lagradost.cloudstream3.databinding.HomeScrollViewTvBinding
+import com.lagradost.cloudstream3.databinding.HomepageParentBinding
+import com.lagradost.cloudstream3.databinding.HomepageParentTvBinding
 import com.lagradost.cloudstream3.databinding.RepositoryItemBinding
 import com.lagradost.cloudstream3.databinding.RepositoryItemTvBinding
+import com.lagradost.cloudstream3.databinding.SearchResultGridBinding
+import com.lagradost.cloudstream3.databinding.SearchResultGridExpandedBinding
 import com.lagradost.cloudstream3.utils.SubtitleHelper
 import com.lagradost.cloudstream3.utils.TestingUtils
 import kotlinx.coroutines.runBlocking
@@ -85,6 +91,17 @@ class ExampleInstrumentedTest {
 
                 testAllLayouts<HomeResultGridBinding>(activity, R.layout.home_result_grid_expanded, R.layout.home_result_grid)
                 //testAllLayouts<HomeResultGridExpandedBinding>(activity, R.layout.home_result_grid_expanded, R.layout.home_result_grid) ??? fails ???
+
+                testAllLayouts<SearchResultGridExpandedBinding>(activity, R.layout.search_result_grid, R.layout.search_result_grid_expanded)
+                testAllLayouts<SearchResultGridBinding>(activity, R.layout.search_result_grid, R.layout.search_result_grid_expanded)
+
+
+               // testAllLayouts<HomeScrollViewBinding>(activity, R.layout.home_scroll_view, R.layout.home_scroll_view_tv)
+               // testAllLayouts<HomeScrollViewTvBinding>(activity, R.layout.home_scroll_view, R.layout.home_scroll_view_tv)
+
+                testAllLayouts<HomepageParentTvBinding>(activity, R.layout.homepage_parent_tv, R.layout.homepage_parent)
+                testAllLayouts<HomepageParentBinding>(activity, R.layout.homepage_parent_tv, R.layout.homepage_parent)
+
             }
         }
     }

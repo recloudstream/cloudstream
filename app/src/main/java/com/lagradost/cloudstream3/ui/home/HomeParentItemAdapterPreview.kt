@@ -409,10 +409,7 @@ class HomeParentItemAdapterPreview(
                 //    setPageTransformer(null)
 
                 if (adapter == null)
-                    adapter = HomeScrollAdapter(
-                        if (isTvSettings()) R.layout.home_scroll_view_tv else R.layout.home_scroll_view,
-                        if (isTvSettings()) true else null
-                    )
+                    adapter = HomeScrollAdapter()
             }
             previewAdapter = previewViewpager?.adapter as? HomeScrollAdapter?
             // previewViewpager?.registerOnPageChangeCallback(previewCallback)

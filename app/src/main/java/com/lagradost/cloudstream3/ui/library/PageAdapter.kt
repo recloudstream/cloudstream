@@ -84,7 +84,7 @@ class PageAdapter(
                         binding.textRating.apply {
                             setTextColor(ColorStateList.valueOf(fg))
                         }
-                        binding.textRatingHolder.backgroundTintList = ColorStateList.valueOf(bg)
+                        binding.textRating.backgroundTintList = ColorStateList.valueOf(bg)
                         binding.watchProgress.apply {
                             progressTintList = ColorStateList.valueOf(fg)
                             progressBackgroundTintList = ColorStateList.valueOf(bg)
@@ -111,16 +111,6 @@ class PageAdapter(
             }
 
             binding.imageText.text = item.name
-
-            val showRating = (item.personalRating ?: 0) != 0
-            binding.textRatingHolder.isVisible = showRating
-            if (showRating) {
-                // We want to show 8.5 but not 8.0 hence the replace
-                val rating = ((item.personalRating ?: 0).toDouble() / 10).toString()
-                    .replace(".0", "")
-
-                binding.textRating.text = "★ $rating"
-            }
         }
     }
 }
