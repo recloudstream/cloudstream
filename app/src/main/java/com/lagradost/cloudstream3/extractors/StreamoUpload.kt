@@ -21,16 +21,10 @@ open class StreamoUpload : ExtractorApi() {
 
     override suspend fun getUrl(url: String, referer: String?): List<ExtractorLink> {
         val sources = mutableListOf<ExtractorLink>()
-        app.get(url, referer = referer).document.select("script").map { it.data() }
-            .filter { it.contains("eval(function(p,a,c,k,e,d)") }
-            .map { script ->
-                val unpacked = if (script.contains("m3u8")) {
-                    getAndUnpack(script)
-                } else {
-                    null
-                }
-                if (script.contains("jwplayer(\"vplayer\").setup(")) {
-                    val data = script.substringAfter("sources: [")
+        app.get(url, referer = referer).document.select("script").map { script ->
+            if (script.data().contains("eval(function(p,a,c,k,e,d)")) {
+                val subData =
+                    getAndUnpack(script.data()).substringAfter("sources: [")
                         .substringBefore("],").replace("file", "\"file\"").trim()
                     tryParseJson<File>(data)?.let {
                         M3u8Helper.generateM3u8(
