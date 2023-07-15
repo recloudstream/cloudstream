@@ -23,10 +23,10 @@ open class StreamoUpload : ExtractorApi() {
         val sources = mutableListOf<ExtractorLink>()
         app.get(url, referer = referer).document.select("script").map { script ->
             if (script.data().contains("eval(function(p,a,c,k,e,d)")) {
-                val subData =
+                val data =
                     getAndUnpack(script.data()).substringAfter("sources: [")
                         .substringBefore("],").replace("file", "\"file\"").trim()
-                tryParseJson<File>(subData)?.let {
+                tryParseJson<File>(data)?.let {
                     M3u8Helper.generateM3u8(
                         name,
                         it.file,
