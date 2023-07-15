@@ -30,7 +30,11 @@ class PageAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return LibraryItemViewHolder(
-            SearchResultGridExpandedBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            SearchResultGridExpandedBinding.inflate(
+                LayoutInflater.from(parent.context),
+                parent,
+                false
+            )
         )
     }
 
@@ -54,7 +58,8 @@ class PageAdapter(
         }
     }
 
-    inner class LibraryItemViewHolder(val binding : SearchResultGridExpandedBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class LibraryItemViewHolder(val binding: SearchResultGridExpandedBinding) :
+        RecyclerView.ViewHolder(binding.root) {
 
         private val compactView = false//itemView.context.getGridIsCompact()
         private val coverHeight: Int =
@@ -84,6 +89,7 @@ class PageAdapter(
                         binding.textRating.apply {
                             setTextColor(ColorStateList.valueOf(fg))
                         }
+                        binding.textRating.compoundDrawables.getOrNull(0)?.setTint(fg)
                         binding.textRating.backgroundTintList = ColorStateList.valueOf(bg)
                         binding.watchProgress.apply {
                             progressTintList = ColorStateList.valueOf(fg)

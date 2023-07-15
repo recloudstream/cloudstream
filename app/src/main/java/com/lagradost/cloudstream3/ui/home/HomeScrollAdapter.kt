@@ -40,10 +40,10 @@ class HomeScrollAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
-        val binding = if(isTvSettings()) {
-            HomeScrollViewBinding.inflate(inflater,parent,false)
+        val binding = if (isTvSettings()) {
+            HomeScrollViewTvBinding.inflate(inflater, parent, false)
         } else {
-            HomeScrollViewTvBinding.inflate(inflater,parent,false)
+            HomeScrollViewBinding.inflate(inflater, parent, false)
         }
 
         return CardViewHolder(
@@ -71,10 +71,11 @@ class HomeScrollAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             val isHorizontal =
                 binding is HomeScrollViewTvBinding || itemView.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 
-            val posterUrl = if (isHorizontal) card.backgroundPosterUrl ?: card.posterUrl else card.posterUrl
-                ?: card.backgroundPosterUrl
+            val posterUrl =
+                if (isHorizontal) card.backgroundPosterUrl ?: card.posterUrl else card.posterUrl
+                    ?: card.backgroundPosterUrl
 
-            when(binding) {
+            when (binding) {
                 is HomeScrollViewBinding -> {
                     binding.homeScrollPreview.setImage(posterUrl)
                     binding.homeScrollPreviewTags.apply {
@@ -83,6 +84,7 @@ class HomeScrollAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                     }
                     binding.homeScrollPreviewTitle.text = card.name
                 }
+
                 is HomeScrollViewTvBinding -> {
                     binding.homeScrollPreview.setImage(posterUrl)
                 }
