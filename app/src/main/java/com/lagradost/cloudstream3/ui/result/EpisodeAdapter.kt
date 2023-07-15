@@ -13,15 +13,12 @@ import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.ResultEpisodeBinding
 import com.lagradost.cloudstream3.databinding.ResultEpisodeLargeBinding
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_ACTION_DOWNLOAD
-import com.lagradost.cloudstream3.ui.download.DownloadButtonViewHolder
 import com.lagradost.cloudstream3.ui.download.DownloadClickEvent
-import com.lagradost.cloudstream3.ui.download.EasyDownloadButton
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTrueTvSettings
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
 import com.lagradost.cloudstream3.utils.AppUtils.html
 import com.lagradost.cloudstream3.utils.UIHelper.setImage
 import com.lagradost.cloudstream3.utils.VideoDownloadHelper
-import com.lagradost.cloudstream3.utils.VideoDownloadManager
 import java.util.*
 
 const val ACTION_PLAY_EPISODE_IN_PLAYER = 1
@@ -79,48 +76,9 @@ class EpisodeAdapter(
 
     var cardList: MutableList<ResultEpisode> = mutableListOf()
 
-    private val mBoundViewHolders: HashSet<DownloadButtonViewHolder> = HashSet()
-    private fun getAllBoundViewHolders(): Set<DownloadButtonViewHolder?>? {
-        return Collections.unmodifiableSet(mBoundViewHolders)
-    }
-
-    fun killAdapter() {
-        getAllBoundViewHolders()?.forEach { view ->
-            view?.downloadButton?.dispose()
-        }
-    }
-
     override fun onViewDetachedFromWindow(holder: RecyclerView.ViewHolder) {
         if (holder.itemView.hasFocus()) {
             holder.itemView.clearFocus()
-        }
-        //(holder.itemView as? FrameLayout?)?.descendantFocusability =
-        //    ViewGroup.FOCUS_BLOCK_DESCENDANTS
-
-        if (holder is DownloadButtonViewHolder) {
-            holder.downloadButton.dispose()
-        }
-    }
-
-    override fun onViewRecycled(holder: RecyclerView.ViewHolder) {
-        if (holder is DownloadButtonViewHolder) {
-            holder.downloadButton.dispose()
-            mBoundViewHolders.remove(holder)
-            //(holder.itemView as? FrameLayout?)?.descendantFocusability =
-            //    ViewGroup.FOCUS_BLOCK_DESCENDANTS
-        }
-    }
-
-    override fun onViewAttachedToWindow(holder: RecyclerView.ViewHolder) {
-        if (holder is DownloadButtonViewHolder) {
-            //println("onViewAttachedToWindow = ${holder.absoluteAdapterPosition}")
-            //holder.itemView.post {
-            //    if (holder.itemView.isAttachedToWindow)
-            //        (holder.itemView as? FrameLayout?)?.descendantFocusability =
-            //            ViewGroup.FOCUS_AFTER_DESCENDANTS
-            //}
-
-            holder.reattachDownloadButton()
         }
     }
 
@@ -135,7 +93,7 @@ class EpisodeAdapter(
         diffResult.dispatchUpdatesTo(this)
     }
 
-    fun getItem(position: Int) : ResultEpisode {
+    private fun getItem(position: Int) : ResultEpisode {
         return cardList[position]
     }
 
@@ -177,11 +135,9 @@ class EpisodeAdapter(
         when (holder) {
             is EpisodeCardViewHolderLarge -> {
                 holder.bind(getItem(position))
-                mBoundViewHolders.add(holder)
             }
             is EpisodeCardViewHolderSmall -> {
                 holder.bind(getItem(position))
-                mBoundViewHolders.add(holder)
             }
         }
     }
@@ -196,11 +152,7 @@ class EpisodeAdapter(
         private val hasDownloadSupport: Boolean,
         private val clickCallback: (EpisodeClickEvent) -> Unit,
         private val downloadClickCallback: (DownloadClickEvent) -> Unit,
-    ) : RecyclerView.ViewHolder(binding.root), DownloadButtonViewHolder {
-        override var downloadButton = EasyDownloadButton()
-
-        // TODO TV
-
+    ) : RecyclerView.ViewHolder(binding.root) {
         var localCard: ResultEpisode? = null
 
         @SuppressLint("SetTextI18n")
@@ -214,6 +166,24 @@ class EpisodeAdapter(
             val isTrueTv = isTrueTvSettings()
 
             binding.apply {
+                downloadButton.isVisible = hasDownloadSupport
+                downloadButton.setDefaultClickListener(VideoDownloadHelper.DownloadEpisodeCached(
+                    card.name,
+                    card.poster,
+                    card.episode,
+                    card.season,
+                    card.id,
+                    card.parentId,
+                    card.rating,
+                    card.description,
+                    System.currentTimeMillis(),
+                )) {
+                    if (it.action == DOWNLOAD_ACTION_DOWNLOAD) {
+                        clickCallback.invoke(EpisodeClickEvent(ACTION_DOWNLOAD_EPISODE, card))
+                    } else {
+                        downloadClickCallback.invoke(it)
+                    }
+                }
 
                 val name =
                     if (card.name == null) "${episodeText.context.getString(R.string.episode)} ${card.episode}" else "${card.episode}. ${card.name}"
@@ -280,45 +250,8 @@ class EpisodeAdapter(
                 return@setOnLongClickListener true
             }
 
-            binding.resultEpisodeDownload.isVisible = hasDownloadSupport
-            binding.resultEpisodeProgressDownloaded.isVisible = hasDownloadSupport
-            reattachDownloadButton()
-        }
-
-        override fun reattachDownloadButton() {
-            downloadButton.dispose()
-            val card = localCard
-            if (hasDownloadSupport && card != null) {
-                val downloadInfo = VideoDownloadManager.getDownloadFileInfoAndUpdateSettings(
-                    itemView.context,
-                    card.id
-                )
-
-                downloadButton.setUpButton(
-                    downloadInfo?.fileLength,
-                    downloadInfo?.totalBytes,
-                    binding.resultEpisodeProgressDownloaded,
-                    binding.resultEpisodeDownload,
-                    null,
-                    VideoDownloadHelper.DownloadEpisodeCached(
-                        card.name,
-                        card.poster,
-                        card.episode,
-                        card.season,
-                        card.id,
-                        card.parentId,
-                        card.rating,
-                        card.description,
-                        System.currentTimeMillis(),
-                    )
-                ) {
-                    if (it.action == DOWNLOAD_ACTION_DOWNLOAD) {
-                        clickCallback.invoke(EpisodeClickEvent(ACTION_DOWNLOAD_EPISODE, card))
-                    } else {
-                        downloadClickCallback.invoke(it)
-                    }
-                }
-            }
+            //binding.resultEpisodeDownload.isVisible = hasDownloadSupport
+            //binding.resultEpisodeProgressDownloaded.isVisible = hasDownloadSupport
         }
     }
 
@@ -328,15 +261,9 @@ class EpisodeAdapter(
         private val hasDownloadSupport: Boolean,
         private val clickCallback: (EpisodeClickEvent) -> Unit,
         private val downloadClickCallback: (DownloadClickEvent) -> Unit,
-    ) : RecyclerView.ViewHolder(binding.root), DownloadButtonViewHolder {
-        override var downloadButton = EasyDownloadButton()
-
-        var localCard: ResultEpisode? = null
-
+    ) : RecyclerView.ViewHolder(binding.root) {
         @SuppressLint("SetTextI18n")
         fun bind(card: ResultEpisode) {
-            localCard = card
-
             val isTrueTv = isTrueTvSettings()
 
             binding.episodeHolder.layoutParams.apply {
@@ -344,6 +271,25 @@ class EpisodeAdapter(
             }
 
             binding.apply {
+                downloadButton.isVisible = hasDownloadSupport
+                downloadButton.setDefaultClickListener(VideoDownloadHelper.DownloadEpisodeCached(
+                    card.name,
+                    card.poster,
+                    card.episode,
+                    card.season,
+                    card.id,
+                    card.parentId,
+                    card.rating,
+                    card.description,
+                    System.currentTimeMillis(),
+                )) {
+                    if (it.action == DOWNLOAD_ACTION_DOWNLOAD) {
+                        clickCallback.invoke(EpisodeClickEvent(ACTION_DOWNLOAD_EPISODE, card))
+                    } else {
+                        downloadClickCallback.invoke(it)
+                    }
+                }
+
                 val name =
                     if (card.name == null) "${episodeText.context.getString(R.string.episode)} ${card.episode}" else "${card.episode}. ${card.name}"
                 episodeFiller.isVisible = card.isFiller == true
@@ -379,46 +325,8 @@ class EpisodeAdapter(
                     return@setOnLongClickListener true
                 }
 
-                binding.resultEpisodeDownload.isVisible = hasDownloadSupport
-                binding.resultEpisodeProgressDownloaded.isVisible = hasDownloadSupport
-                reattachDownloadButton()
-            }
-        }
-
-        override fun reattachDownloadButton() {
-            downloadButton.dispose()
-            val card = localCard
-            if (hasDownloadSupport && card != null) {
-
-                val downloadInfo = VideoDownloadManager.getDownloadFileInfoAndUpdateSettings(
-                    itemView.context,
-                    card.id
-                )
-
-                downloadButton.setUpButton(
-                    downloadInfo?.fileLength,
-                    downloadInfo?.totalBytes,
-                    binding.resultEpisodeProgressDownloaded,
-                    binding.resultEpisodeDownload,
-                    null,
-                    VideoDownloadHelper.DownloadEpisodeCached(
-                        card.name,
-                        card.poster,
-                        card.episode,
-                        card.season,
-                        card.id,
-                        card.parentId,
-                        card.rating,
-                        card.description,
-                        System.currentTimeMillis(),
-                    )
-                ) {
-                    if (it.action == DOWNLOAD_ACTION_DOWNLOAD) {
-                        clickCallback.invoke(EpisodeClickEvent(ACTION_DOWNLOAD_EPISODE, card))
-                    } else {
-                        downloadClickCallback.invoke(it)
-                    }
-                }
+                //binding.resultEpisodeDownload.isVisible = hasDownloadSupport
+                //binding.resultEpisodeProgressDownloaded.isVisible = hasDownloadSupport
             }
         }
     }

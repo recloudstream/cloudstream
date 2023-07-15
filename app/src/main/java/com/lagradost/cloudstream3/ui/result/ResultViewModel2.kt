@@ -341,7 +341,7 @@ class ResultViewModel2 : ViewModel() {
     private var currentIndex: EpisodeIndexer? = null
     private var currentRange: EpisodeRange? = null
     private var currentShowFillers: Boolean = false
-    private var currentRepo: APIRepository? = null
+    var currentRepo: APIRepository? = null
     private var currentId: Int? = null
     private var fillers: Map<Int, Boolean> = emptyMap()
     private var generator: IGenerator? = null

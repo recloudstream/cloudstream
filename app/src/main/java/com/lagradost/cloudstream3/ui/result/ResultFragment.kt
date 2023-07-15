@@ -41,7 +41,6 @@ import com.lagradost.cloudstream3.syncproviders.providers.Kitsu
 import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_ACTION_DOWNLOAD
 import com.lagradost.cloudstream3.ui.download.DownloadButtonSetup.handleDownloadClick
-import com.lagradost.cloudstream3.ui.download.EasyDownloadButton
 import com.lagradost.cloudstream3.ui.quicksearch.QuickSearchFragment
 import com.lagradost.cloudstream3.ui.result.EpisodeAdapter.Companion.getPlayerAction
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTrueTvSettings
@@ -51,7 +50,6 @@ import com.lagradost.cloudstream3.utils.AppUtils.getNameFull
 import com.lagradost.cloudstream3.utils.AppUtils.html
 import com.lagradost.cloudstream3.utils.AppUtils.loadCache
 import com.lagradost.cloudstream3.utils.AppUtils.openBrowser
-import com.lagradost.cloudstream3.utils.Coroutines.ioWorkSafe
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getVideoWatchState
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
@@ -60,14 +58,15 @@ import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
-import kotlinx.android.synthetic.main.fragment_result.*
+import kotlinx.android.synthetic.main.fragment_result.download_button
 import kotlinx.android.synthetic.main.fragment_result.result_cast_items
 import kotlinx.android.synthetic.main.fragment_result.result_cast_text
 import kotlinx.android.synthetic.main.fragment_result.result_coming_soon
 import kotlinx.android.synthetic.main.fragment_result.result_data_holder
 import kotlinx.android.synthetic.main.fragment_result.result_description
-import kotlinx.android.synthetic.main.fragment_result.result_download_movie
+import kotlinx.android.synthetic.main.fragment_result.result_dub_select
 import kotlinx.android.synthetic.main.fragment_result.result_episode_loading
+import kotlinx.android.synthetic.main.fragment_result.result_episode_select
 import kotlinx.android.synthetic.main.fragment_result.result_episodes
 import kotlinx.android.synthetic.main.fragment_result.result_error_text
 import kotlinx.android.synthetic.main.fragment_result.result_finish_loading
@@ -79,24 +78,22 @@ import kotlinx.android.synthetic.main.fragment_result.result_meta_rating
 import kotlinx.android.synthetic.main.fragment_result.result_meta_site
 import kotlinx.android.synthetic.main.fragment_result.result_meta_type
 import kotlinx.android.synthetic.main.fragment_result.result_meta_year
-import kotlinx.android.synthetic.main.fragment_result.result_movie_download_icon
-import kotlinx.android.synthetic.main.fragment_result.result_movie_download_text
-import kotlinx.android.synthetic.main.fragment_result.result_movie_download_text_precentage
-import kotlinx.android.synthetic.main.fragment_result.result_movie_progress_downloaded
-import kotlinx.android.synthetic.main.fragment_result.result_movie_progress_downloaded_holder
 import kotlinx.android.synthetic.main.fragment_result.result_next_airing
 import kotlinx.android.synthetic.main.fragment_result.result_next_airing_time
 import kotlinx.android.synthetic.main.fragment_result.result_no_episodes
 import kotlinx.android.synthetic.main.fragment_result.result_play_movie
 import kotlinx.android.synthetic.main.fragment_result.result_poster
+import kotlinx.android.synthetic.main.fragment_result.result_poster_background
 import kotlinx.android.synthetic.main.fragment_result.result_poster_holder
 import kotlinx.android.synthetic.main.fragment_result.result_reload_connection_open_in_browser
 import kotlinx.android.synthetic.main.fragment_result.result_reload_connectionerror
 import kotlinx.android.synthetic.main.fragment_result.result_resume_parent
 import kotlinx.android.synthetic.main.fragment_result.result_resume_progress_holder
+import kotlinx.android.synthetic.main.fragment_result.result_resume_series_button
 import kotlinx.android.synthetic.main.fragment_result.result_resume_series_progress
 import kotlinx.android.synthetic.main.fragment_result.result_resume_series_progress_text
 import kotlinx.android.synthetic.main.fragment_result.result_resume_series_title
+import kotlinx.android.synthetic.main.fragment_result.result_season_button
 import kotlinx.android.synthetic.main.fragment_result.result_tag
 import kotlinx.android.synthetic.main.fragment_result.result_tag_holder
 import kotlinx.android.synthetic.main.fragment_result.result_title
@@ -278,12 +275,8 @@ open class ResultFragment : ResultTrailerPlayer() {
         return inflater.inflate(resultLayout, container, false)
     }
 
-    private var downloadButton: EasyDownloadButton? = null
     override fun onDestroyView() {
         updateUIListener = null
-        (result_episodes?.adapter as? EpisodeAdapter)?.killAdapter()
-        downloadButton?.dispose()
-
         super.onDestroyView()
     }
 
@@ -371,28 +364,9 @@ open class ResultFragment : ResultTrailerPlayer() {
                         return@setOnLongClickListener true
                     }
 
-                    main {
-                        val file =
-                            ioWorkSafe {
-                                context?.let {
-                                    VideoDownloadManager.getDownloadFileInfoAndUpdateSettings(
-                                        it,
-                                        ep.id
-                                    )
-                                }
-                            }
-
-                        downloadButton?.dispose()
-                        downloadButton = EasyDownloadButton()
-                        downloadButton?.setUpMoreButton(
-                            file?.fileLength,
-                            file?.totalBytes,
-                            result_movie_progress_downloaded ?: return@main,
-                            result_movie_download_icon ?: return@main,
-                            result_movie_download_text ?: return@main,
-                            result_movie_download_text_precentage ?: return@main,
-                            result_download_movie ?: return@main,
-                            true,
+                    val show = viewModel.currentRepo?.api?.hasDownloadSupport == true && !isTvSettings()
+                    if(show) {
+                        download_button?.setDefaultClickListener(
                             VideoDownloadHelper.DownloadEpisodeCached(
                                 ep.name,
                                 ep.poster,
@@ -405,6 +379,7 @@ open class ResultFragment : ResultTrailerPlayer() {
                                 System.currentTimeMillis(),
                             )
                         ) { click ->
+                            println("Click:$click")
                             when (click.action) {
                                 DOWNLOAD_ACTION_DOWNLOAD -> {
                                     viewModel.handleAction(
@@ -416,13 +391,14 @@ open class ResultFragment : ResultTrailerPlayer() {
                                 else -> handleDownloadClick(activity, click)
                             }
                         }
-                        result_movie_progress_downloaded_holder?.isVisible = true
                     }
+                    download_button?.isVisible = show
+
                 }
             }
 
             else -> {
-                result_movie_progress_downloaded_holder?.isVisible = false
+                download_button?.isVisible = false
                 result_play_movie?.isVisible = false
             }
         }

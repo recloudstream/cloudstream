@@ -70,7 +70,6 @@ class DownloadFragment : Fragment() {
             VideoDownloadManager.downloadDeleteEvent -= downloadDeleteEventListener!!
             downloadDeleteEventListener = null
         }
-        (binding?.downloadList?.adapter as DownloadHeaderAdapter?)?.killAdapter()
         binding = null
         super.onDestroyView()
     }

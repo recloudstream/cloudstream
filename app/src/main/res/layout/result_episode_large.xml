@@ -8,7 +8,7 @@
 
     android:layout_height="wrap_content"
     android:layout_marginBottom="10dp"
-    android:nextFocusRight="@id/result_episode_download"
+    android:nextFocusRight="@id/download_button"
     app:cardBackgroundColor="?attr/boxItemBackground"
 
     app:cardCornerRadius="@dimen/rounded_image_radius">
@@ -39,7 +39,7 @@
                     android:contentDescription="@string/episode_poster_img_des"
 
                     android:foreground="?android:attr/selectableItemBackgroundBorderless"
-                    android:nextFocusRight="@id/result_episode_download"
+                    android:nextFocusRight="@id/download_button"
                     android:scaleType="centerCrop"
                     tools:src="@drawable/example_poster" />
 
@@ -100,42 +100,14 @@
                     tools:text="Rated: 8.8" />
             </LinearLayout>
 
-            <FrameLayout
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_gravity="end"
-                android:layout_marginStart="-50dp">
-
-                <androidx.core.widget.ContentLoadingProgressBar
-                    android:id="@+id/result_episode_progress_downloaded"
-                    style="?android:attr/progressBarStyleHorizontal"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_gravity="end|center_vertical"
-                    android:layout_margin="5dp"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:background="@drawable/circle_shape"
-                    android:indeterminate="false"
-                    android:max="100"
-                    android:progress="0"
-                    android:progressDrawable="@drawable/circular_progress_bar"
-                    android:visibility="visible" />
-
-                <ImageView
-                    android:id="@+id/result_episode_download"
-                    android:layout_width="50dp"
-
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:background="?selectableItemBackgroundBorderless"
-                    android:contentDescription="@string/download"
-                    android:nextFocusLeft="@id/episode_poster"
-                    android:padding="10dp"
-                    android:src="@drawable/ic_baseline_play_arrow_24"
-                    android:visibility="visible"
-                    app:tint="?attr/white" />
-            </FrameLayout>
+            <com.lagradost.cloudstream3.ui.download.button.PieFetchButton
+                android:id="@+id/download_button"
+                android:layout_width="@dimen/download_size"
+                android:layout_height="@dimen/download_size"
+                android:layout_gravity="center_vertical|end"
+                android:layout_marginStart="-50dp"
+                android:background="?selectableItemBackgroundBorderless"
+                android:padding="10dp" />
         </LinearLayout>
 
         <TextView

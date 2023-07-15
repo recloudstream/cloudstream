@@ -65,6 +65,12 @@
         <item name="white">#FFF</item>
 
         <item name="preferenceTheme">@style/CustomPreferenceThemeOverlay</item>
+
+
+        <item name="download_icon_color">?attr/white</item>
+        <item name="download_fill_color">?attr/white</item>
+        <item name="download_outline_color">?attr/white</item>
+        <item name="download_icon_scale">1.0</item>
     </style>
 
     <style name="ListViewStyle" parent="Widget.AppCompat.ListView">

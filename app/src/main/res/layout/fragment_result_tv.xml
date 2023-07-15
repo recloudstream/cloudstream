@@ -455,6 +455,7 @@
                                 android:layout_marginBottom="10dp"
                                 android:layout_weight="1"
                                 android:minWidth="250dp"
+                                android:nextFocusRight="@id/download_button"
                                 android:nextFocusUp="@id/result_cast_items"
                                 android:nextFocusDown="@id/result_resume_series_button_play"
                                 android:text="@string/play_trailer_button"
@@ -463,95 +464,14 @@
 
                             </com.google.android.material.button.MaterialButton>
 
-                            <FrameLayout
-                                android:id="@+id/result_movie_progress_downloaded_holder"
+                            <com.lagradost.cloudstream3.ui.download.button.DownloadButton
+                                android:id="@+id/download_button"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginStart="5dp"
-                                android:layout_marginEnd="5dp"
                                 android:layout_weight="1"
                                 android:minWidth="250dp"
-                                android:nextFocusRight="@id/result_bookmark_button">
+                                app:download_layout="@layout/download_button_layout" />
 
-                                <com.google.android.material.button.MaterialButton
-                                    android:id="@+id/result_download_movie"
-                                    style="@style/BlackButton"
-                                    android:layout_width="match_parent"
-
-                                    android:layout_gravity="center_vertical"
-                                    android:layout_marginStart="0dp"
-
-                                    android:layout_marginEnd="0dp"
-                                    android:clickable="true"
-                                    android:focusable="true"
-                                    android:nextFocusLeft="@id/result_play_trailer"
-                                    android:nextFocusUp="@id/result_cast_items"
-                                    android:nextFocusDown="@id/result_resume_series_button_play"
-
-                                    android:visibility="visible" />
-
-                                <LinearLayout
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:layout_gravity="center"
-                                    android:gravity="center"
-                                    android:orientation="horizontal">
-
-                                    <androidx.core.widget.ContentLoadingProgressBar
-                                        android:id="@+id/result_movie_progress_downloaded"
-                                        style="?android:attr/progressBarStyleHorizontal"
-                                        android:layout_width="25dp"
-                                        android:layout_height="25dp"
-                                        android:layout_gravity="end|center_vertical"
-                                        android:layout_margin="5dp"
-                                        android:background="@drawable/circle_shape"
-                                        android:indeterminate="false"
-                                        android:max="100"
-                                        android:paddingStart="5dp"
-                                        android:paddingEnd="5dp"
-                                        android:progress="30"
-                                        android:progressDrawable="@drawable/circular_progress_bar_filled"
-                                        android:visibility="visible" />
-
-                                    <ImageView
-                                        android:id="@+id/result_movie_download_icon"
-                                        android:layout_width="30dp"
-                                        android:layout_height="wrap_content"
-                                        android:layout_gravity="center"
-                                        android:background="?selectableItemBackgroundBorderless"
-                                        android:contentDescription="@string/download"
-                                        android:src="@drawable/ic_baseline_play_arrow_24"
-                                        android:visibility="visible"
-                                        app:tint="?attr/white" />
-
-                                    <TextView
-                                        android:id="@+id/result_movie_download_text"
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="match_parent"
-                                        android:gravity="center"
-                                        android:letterSpacing="0.09"
-                                        android:textAllCaps="false"
-                                        android:textColor="?attr/textColor"
-                                        android:textSize="15sp"
-                                        android:textStyle="bold"
-                                        tools:text="Downloading" />
-
-                                    <TextView
-                                        android:id="@+id/result_movie_download_text_precentage"
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="match_parent"
-                                        android:gravity="center"
-                                        android:letterSpacing="0.09"
-                                        android:paddingStart="5dp"
-                                        android:paddingEnd="5dp"
-                                        android:textAllCaps="false"
-                                        android:textColor="?attr/textColor"
-                                        android:textSize="15sp"
-                                        android:textStyle="bold"
-                                        android:visibility="gone"
-                                        tools:text="68%" />
-                                </LinearLayout>
-                            </FrameLayout>
 
                             <com.google.android.material.button.MaterialButton
                                 android:id="@+id/result_bookmark_button"
@@ -563,7 +483,7 @@
                                 android:layout_marginBottom="10dp"
                                 android:layout_weight="1"
                                 android:minWidth="250dp"
-                                android:nextFocusLeft="@id/result_movie_progress_downloaded_holder"
+                                android:nextFocusLeft="@id/download_button"
                                 android:nextFocusRight="@id/result_bookmark_button"
                                 android:nextFocusDown="@id/result_resume_series_button_play"
                                 android:text="@string/type_none"
