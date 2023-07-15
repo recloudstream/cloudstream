@@ -764,7 +764,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         // backup when we update the app, I don't trust myself to not boot lock users, might want to make this a setting?
         try {
             val appVer = BuildConfig.VERSION_NAME
-            val lastAppAutoBackup = getKey<String>("VERSION_NAME") ?: 0
+            val lastAppAutoBackup : String = getKey("VERSION_NAME") ?: ""
             if (appVer != lastAppAutoBackup) {
                 setKey("VERSION_NAME", BuildConfig.VERSION_NAME)
                 backup()
