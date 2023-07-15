@@ -26,15 +26,15 @@ open class StreamoUpload : ExtractorApi() {
                 val subData =
                     getAndUnpack(script.data()).substringAfter("sources: [")
                         .substringBefore("],").replace("file", "\"file\"").trim()
-                    tryParseJson<File>(data)?.let {
-                        M3u8Helper.generateM3u8(
-                            name,
-                            it.file,
-                            "$mainUrl/",
-                        ).forEach { m3uData -> sources.add(m3uData) }
-                    }
+                tryParseJson<File>(subData)?.let {
+                    M3u8Helper.generateM3u8(
+                        name,
+                        it.file,
+                        "$mainUrl/",
+                    ).forEach { m3uData -> sources.add(m3uData) }
                 }
             }
+        }
         return sources
     }
 
