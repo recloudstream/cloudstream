@@ -209,7 +209,7 @@ class GeneratorPlayer : FullScreenPlayer() {
             closestQuality(linkData?.quality)
         )
         val sourcePriority =
-            QualityDataHelper.getSourcePriority(qualityProfile, linkData?.name)
+            QualityDataHelper.getSourcePriority(qualityProfile, linkData?.source)
 
         // negative because we want to sort highest quality first
         return qualityPriority + sourcePriority
