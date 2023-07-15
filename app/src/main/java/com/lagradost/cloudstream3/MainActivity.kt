@@ -97,6 +97,7 @@ import com.lagradost.cloudstream3.utils.AppUtils.loadRepository
 import com.lagradost.cloudstream3.utils.AppUtils.loadResult
 import com.lagradost.cloudstream3.utils.AppUtils.loadSearchResult
 import com.lagradost.cloudstream3.utils.AppUtils.setDefaultFocus
+import com.lagradost.cloudstream3.utils.BackupUtils.backup
 import com.lagradost.cloudstream3.utils.BackupUtils.setUpBackup
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.main
@@ -753,12 +754,24 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             if (isCastApiAvailable()) {
                 mSessionManager = CastContext.getSharedInstance(this).sessionManager
             }
-        } catch (e: Exception) {
-            logError(e)
+        } catch (t: Throwable) {
+            logError(t)
         }
 
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
         updateTv()
+
+        // backup when we update the app, I don't trust myself to not boot lock users, might want to make this a setting?
+        try {
+            val appVer = BuildConfig.VERSION_NAME
+            val lastAppAutoBackup = getKey<String>("VERSION_NAME") ?: 0
+            if (appVer != lastAppAutoBackup) {
+                setKey("VERSION_NAME", BuildConfig.VERSION_NAME)
+                backup()
+            }
+        } catch (t : Throwable) {
+            logError(t)
+        }
 
         // just in case, MAIN SHOULD *NEVER* BOOT LOOP CRASH
         binding = try {

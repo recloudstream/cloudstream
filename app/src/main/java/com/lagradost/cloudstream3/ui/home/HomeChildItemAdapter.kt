@@ -87,7 +87,7 @@ class HomeChildItemAdapter(
                 else -> null
             }
 
-            (itemView.image_holder ?: itemView.background_card)?.apply {
+            (itemView.background_card)?.apply {
                 val min = 114.toPx
                 val max = 180.toPx
 
