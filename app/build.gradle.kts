@@ -209,7 +209,7 @@ dependencies {
 
     implementation("com.github.discord:OverlappingPanels:0.1.3")
     // debugImplementation because LeakCanary should only run in debug builds.
-    // debugImplementation("com.squareup.leakcanary:leakcanary-android:2.7")
+    //debugImplementation("com.squareup.leakcanary:leakcanary-android:2.12")
 
     // for shimmer when loading
     implementation("com.facebook.shimmer:shimmer:0.5.0")

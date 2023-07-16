@@ -1122,7 +1122,7 @@ interface LoadResponse {
         var isTrailersEnabled = true
 
         fun LoadResponse.isMovie(): Boolean {
-            return this.type.isMovieType()
+            return this.type.isMovieType() || this is MovieLoadResponse
         }
 
         @JvmName("addActorNames")

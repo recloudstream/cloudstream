@@ -165,6 +165,8 @@ class SettingsFragment : Fragment() {
             activity?.navigate(id, Bundle())
         }
 
+        // used to debug leaks showToast(activity,"${VideoDownloadManager.downloadStatusEvent.size} : ${VideoDownloadManager.downloadProgressEvent.size}")
+
         val isTrueTv = isTrueTvSettings()
 
         for (syncApi in accountManagers) {

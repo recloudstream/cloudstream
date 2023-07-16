@@ -3,6 +3,8 @@ package com.lagradost.cloudstream3.utils
 class Event<T> {
     private val observers = mutableSetOf<(T) -> Unit>()
 
+    val size : Int get() = observers.size
+
     operator fun plusAssign(observer: (T) -> Unit) {
         observers.add(observer)
     }
