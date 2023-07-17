@@ -436,6 +436,8 @@ class ResultViewModel2 : ViewModel() {
         fun updateWatchStatus(currentResponse: LoadResponse, status: WatchType) {
             val currentId = currentResponse.getId()
 
+            val currentWatchType = getResultWatchState(currentId)
+
             DataStoreHelper.setResultWatchState(currentId, status.internalId)
             val current = DataStoreHelper.getBookmarkedData(currentId)
             val currentTime = System.currentTimeMillis()
@@ -453,6 +455,9 @@ class ResultViewModel2 : ViewModel() {
                     currentResponse.year
                 )
             )
+            if(currentWatchType != status) {
+                MainActivity.bookmarksUpdatedEvent(true)
+            }
         }
 
         private fun filterName(name: String?): String? {

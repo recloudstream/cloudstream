@@ -918,7 +918,6 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                                 showApply = false,
                                 {}) {
                                 viewModel.updateWatchStatus(WatchType.values()[it])
-                                bookmarksUpdatedEvent(true)
                             }
                         }
 
