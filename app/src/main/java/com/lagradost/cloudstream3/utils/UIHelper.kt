@@ -46,6 +46,7 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions.bitmapTransform
 import com.bumptech.glide.request.target.Target
+import com.lagradost.cloudstream3.CommonActivity.activity
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.ui.result.UiImage
@@ -554,7 +555,7 @@ object UIHelper {
     }
 
     fun Dialog?.dismissSafe() {
-        if (this?.isShowing == true) {
+        if (this?.isShowing == true && activity?.isFinishing != true) {
             this.dismiss()
         }
     }

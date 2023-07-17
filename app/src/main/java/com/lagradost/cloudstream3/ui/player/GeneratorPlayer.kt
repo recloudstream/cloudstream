@@ -509,7 +509,6 @@ class GeneratorPlayer : FullScreenPlayer() {
         selectSourceDialog?.dismissSafe()
 
         showToast(
-            activity,
             String.format(ctx.getString(R.string.player_loaded_subtitles), subtitleData.name),
             Toast.LENGTH_LONG
         )
@@ -889,7 +888,7 @@ class GeneratorPlayer : FullScreenPlayer() {
     }
 
     private fun noLinksFound() {
-        showToast(activity, R.string.no_links_found_toast, Toast.LENGTH_SHORT)
+        showToast(R.string.no_links_found_toast, Toast.LENGTH_SHORT)
         activity?.popCurrentPage()
     }
 
@@ -1357,7 +1356,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                 }
 
                 is Resource.Failure -> {
-                    showToast(activity, it.errorString, Toast.LENGTH_LONG)
+                    showToast(it.errorString, Toast.LENGTH_LONG)
                     startPlayer()
                 }
             }

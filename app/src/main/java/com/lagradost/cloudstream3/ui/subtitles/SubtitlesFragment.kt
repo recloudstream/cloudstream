@@ -272,7 +272,7 @@ class SubtitlesFragment : Fragment() {
 
             this.setOnLongClickListener {
                 it.context.setColor(id, null)
-                showToast(activity, R.string.subs_default_reset_toast, Toast.LENGTH_SHORT)
+                showToast(R.string.subs_default_reset_toast, Toast.LENGTH_SHORT)
                 return@setOnLongClickListener true
             }
         }
@@ -322,7 +322,7 @@ class SubtitlesFragment : Fragment() {
             subsSubtitleElevation.setOnLongClickListener {
                 state.elevation = DEF_SUBS_ELEVATION
                 it.context.updateState()
-                showToast(activity, R.string.subs_default_reset_toast, Toast.LENGTH_SHORT)
+                showToast(R.string.subs_default_reset_toast, Toast.LENGTH_SHORT)
                 return@setOnLongClickListener true
             }
 
@@ -367,7 +367,7 @@ class SubtitlesFragment : Fragment() {
             subsEdgeType.setOnLongClickListener {
                 state.edgeType = CaptionStyleCompat.EDGE_TYPE_OUTLINE
                 it.context.updateState()
-                showToast(activity, R.string.subs_default_reset_toast, Toast.LENGTH_SHORT)
+                showToast(R.string.subs_default_reset_toast, Toast.LENGTH_SHORT)
                 return@setOnLongClickListener true
             }
 

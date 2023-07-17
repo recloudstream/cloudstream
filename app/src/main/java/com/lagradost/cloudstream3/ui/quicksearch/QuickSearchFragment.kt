@@ -19,6 +19,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.lagradost.cloudstream3.APIHolder.filterProviderByPreferredMedia
 import com.lagradost.cloudstream3.APIHolder.filterSearchResultByFilmQuality
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
+import com.lagradost.cloudstream3.CommonActivity.activity
 import com.lagradost.cloudstream3.HomePageList
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.QuickSearchBinding
@@ -44,6 +45,13 @@ class QuickSearchFragment : Fragment() {
     companion object {
         const val AUTOSEARCH_KEY = "autosearch"
         const val PROVIDER_KEY = "providers"
+
+        fun pushSearch(
+            autoSearch: String? = null,
+            providers: Array<String>? = null
+        ) {
+            pushSearch(activity, autoSearch, providers)
+        }
 
         fun pushSearch(
             activity: Activity?,
@@ -151,19 +159,20 @@ class QuickSearchFragment : Fragment() {
                     ArrayList(),
                     this,
                 ) { callback ->
-                    SearchHelper.handleSearchClickCallback(activity, callback)
+                    SearchHelper.handleSearchClickCallback(callback)
                 }
             }
 
             try {
-                binding?.quickSearch?.queryHint = getString(R.string.search_hint_site).format(providers?.first())
+                binding?.quickSearch?.queryHint =
+                    getString(R.string.search_hint_site).format(providers?.first())
             } catch (e: Exception) {
                 logError(e)
             }
         } else {
             binding?.quickSearchMasterRecycler?.adapter =
                 ParentItemAdapter(mutableListOf(), { callback ->
-                    SearchHelper.handleSearchClickCallback(activity, callback)
+                    SearchHelper.handleSearchClickCallback(callback)
                     //when (callback.action) {
                     //SEARCH_ACTION_LOAD -> {
                     //    clickCallback?.invoke(callback)
@@ -235,11 +244,13 @@ class QuickSearchFragment : Fragment() {
                     searchExitIcon?.alpha = 1f
                     binding?.quickSearchLoadingBar?.alpha = 0f
                 }
+
                 is Resource.Failure -> {
                     // Toast.makeText(activity, "Server error", Toast.LENGTH_LONG).show()
                     searchExitIcon?.alpha = 1f
                     binding?.quickSearchLoadingBar?.alpha = 0f
                 }
+
                 is Resource.Loading -> {
                     searchExitIcon?.alpha = 0f
                     binding?.quickSearchLoadingBar?.alpha = 1f

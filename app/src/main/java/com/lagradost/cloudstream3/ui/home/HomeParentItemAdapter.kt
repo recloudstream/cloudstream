@@ -26,6 +26,7 @@ class LoadClickCallback(
 
 open class ParentItemAdapter(
     private var items: MutableList<HomeViewModel.ExpandableHomepageList>,
+    //private val viewModel: HomeViewModel,
     private val clickCallback: (SearchClickCallback) -> Unit,
     private val moreInfoClickCallback: (HomeViewModel.ExpandableHomepageList) -> Unit,
     private val expandCallback: ((String) -> Unit)? = null,
@@ -153,6 +154,7 @@ open class ParentItemAdapter(
     class ParentViewHolder
     constructor(
         val binding: HomepageParentBinding,
+       // val viewModel: HomeViewModel,
         private val clickCallback: (SearchClickCallback) -> Unit,
         private val moreInfoClickCallback: (HomeViewModel.ExpandableHomepageList) -> Unit,
         private val expandCallback: ((String) -> Unit)? = null,

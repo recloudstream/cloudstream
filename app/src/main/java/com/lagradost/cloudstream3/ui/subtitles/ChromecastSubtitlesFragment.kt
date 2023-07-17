@@ -194,7 +194,7 @@ class ChromecastSubtitlesFragment : Fragment() {
 
             this.setOnLongClickListener {
                 it.context.setColor(id, null)
-                showToast(activity, R.string.subs_default_reset_toast, Toast.LENGTH_SHORT)
+                showToast(R.string.subs_default_reset_toast, Toast.LENGTH_SHORT)
                 return@setOnLongClickListener true
             }
         }
@@ -252,7 +252,7 @@ class ChromecastSubtitlesFragment : Fragment() {
         binding?.subsEdgeType?.setOnLongClickListener {
             state.edgeType = defaultState.edgeType
             it.context.updateState()
-            showToast(activity, R.string.subs_default_reset_toast, Toast.LENGTH_SHORT)
+            showToast(R.string.subs_default_reset_toast, Toast.LENGTH_SHORT)
             return@setOnLongClickListener true
         }
 
@@ -293,7 +293,7 @@ class ChromecastSubtitlesFragment : Fragment() {
         binding?.subsFontSize?.setOnLongClickListener { _ ->
             state.fontScale = defaultState.fontScale
             //textView.context.updateState() // font size not changed
-            showToast(activity, R.string.subs_default_reset_toast, Toast.LENGTH_SHORT)
+            showToast(R.string.subs_default_reset_toast, Toast.LENGTH_SHORT)
             return@setOnLongClickListener true
         }
 

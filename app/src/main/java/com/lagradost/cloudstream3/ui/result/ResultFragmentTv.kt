@@ -226,7 +226,7 @@ class ResultFragmentTv : ResultFragment() {
                 ArrayList(),
                 result_recommendations,
             ) { callback ->
-                SearchHelper.handleSearchClickCallback(activity, callback)
+                SearchHelper.handleSearchClickCallback(callback)
             }
     }
 }

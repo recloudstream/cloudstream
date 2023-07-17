@@ -95,7 +95,7 @@ class SettingsUpdates : PreferenceFragmentCompat() {
                     serviceClipboard.setPrimaryClip(clip)
                     dialog.dismissSafe(activity)
                 } catch (e: TransactionTooLargeException) {
-                    showToast(activity, R.string.clipboard_too_large)
+                    showToast(R.string.clipboard_too_large)
                 }
             }
             binding.clearBtt.setOnClickListener {
@@ -158,7 +158,6 @@ class SettingsUpdates : PreferenceFragmentCompat() {
                 if (activity?.runAutoUpdate(false) == false) {
                     activity?.runOnUiThread {
                         showToast(
-                            activity,
                             R.string.no_update_found,
                             Toast.LENGTH_SHORT
                         )

@@ -214,7 +214,7 @@ class SearchFragment : Fragment() {
                     ArrayList(),
                     searchAutofitResults,
                 ) { callback ->
-                    SearchHelper.handleSearchClickCallback(activity, callback)
+                    SearchHelper.handleSearchClickCallback(callback)
                 }
 
 
@@ -491,7 +491,7 @@ class SearchFragment : Fragment() {
 
         val masterAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder> =
             ParentItemAdapter(mutableListOf(), { callback ->
-                SearchHelper.handleSearchClickCallback(activity, callback)
+                SearchHelper.handleSearchClickCallback(callback)
             }, { item ->
                 bottomSheetDialog = activity?.loadHomepageList(item, dismissCallback = {
                     bottomSheetDialog = null

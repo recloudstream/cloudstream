@@ -243,14 +243,12 @@ abstract class AbstractPlayerFragment(
         fun showToast(message: String, gotoNext: Boolean = false) {
             if (gotoNext && hasNextMirror()) {
                 showToast(
-                    activity,
                     message,
                     Toast.LENGTH_SHORT
                 )
                 nextMirror()
             } else {
                 showToast(
-                    activity,
                     context?.getString(R.string.no_links_found_toast) + "\n" + message,
                     Toast.LENGTH_LONG
                 )
@@ -461,7 +459,7 @@ abstract class AbstractPlayerFragment(
         player_view?.resizeMode = type
 
         if (showToast)
-            showToast(activity, resize.nameRes, Toast.LENGTH_SHORT)
+            showToast(resize.nameRes, Toast.LENGTH_SHORT)
     }
 
     override fun onStop() {

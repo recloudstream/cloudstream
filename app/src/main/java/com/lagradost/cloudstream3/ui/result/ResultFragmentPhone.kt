@@ -187,7 +187,7 @@ class ResultFragmentPhone : ResultFragment() {
                 ArrayList(),
                 result_recommendations,
             ) { callback ->
-                SearchHelper.handleSearchClickCallback(activity, callback)
+                SearchHelper.handleSearchClickCallback(callback)
             }
         PanelsChildGestureRegionObserver.Provider.get().addGestureRegionsUpdateListener(this)
 
@@ -246,7 +246,6 @@ class ResultFragmentPhone : ResultFragment() {
             if (!chromecastSupport) {
                 media_route_button?.setOnClickListener {
                     CommonActivity.showToast(
-                        activity,
                         R.string.no_chromecast_support_toast,
                         Toast.LENGTH_LONG
                     )

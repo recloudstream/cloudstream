@@ -748,7 +748,6 @@ class ResultViewModel2 : ViewModel() {
                 if (currentLinks.isEmpty()) {
                     main {
                         showToast(
-                            activity,
                             R.string.no_links_found_toast,
                             Toast.LENGTH_SHORT
                         )
@@ -757,7 +756,6 @@ class ResultViewModel2 : ViewModel() {
                 } else {
                     main {
                         showToast(
-                            activity,
                             R.string.download_started,
                             Toast.LENGTH_SHORT
                         )
@@ -1030,9 +1028,9 @@ class ResultViewModel2 : ViewModel() {
                 logError(t)
                 main {
                     if (t is ActivityNotFoundException) {
-                        showToast(activity, txt(R.string.app_not_found_error), Toast.LENGTH_LONG)
+                        showToast(txt(R.string.app_not_found_error), Toast.LENGTH_LONG)
                     } else {
-                        showToast(activity, t.toString(), Toast.LENGTH_LONG)
+                        showToast(t.toString(), Toast.LENGTH_LONG)
                     }
                 }
             }
@@ -1285,7 +1283,6 @@ class ResultViewModel2 : ViewModel() {
                         )
                     )
                     showToast(
-                        activity,
                         R.string.download_started,
                         Toast.LENGTH_SHORT
                     )
@@ -1293,7 +1290,7 @@ class ResultViewModel2 : ViewModel() {
             }
 
             ACTION_SHOW_TOAST -> {
-                showToast(activity, R.string.play_episode_toast, Toast.LENGTH_SHORT)
+                showToast(R.string.play_episode_toast, Toast.LENGTH_SHORT)
             }
 
             ACTION_DOWNLOAD_EPISODE -> {
@@ -1334,7 +1331,6 @@ class ResultViewModel2 : ViewModel() {
                         )
                     }
                     showToast(
-                        activity,
                         R.string.download_started,
                         Toast.LENGTH_SHORT
                     )
@@ -1389,7 +1385,7 @@ class ResultViewModel2 : ViewModel() {
                     val link = result.links[index]
                     val clip = ClipData.newPlainText(link.name, link.url)
                     serviceClipboard.setPrimaryClip(clip)
-                    showToast(act, R.string.copy_link_toast, Toast.LENGTH_SHORT)
+                    showToast(R.string.copy_link_toast, Toast.LENGTH_SHORT)
                 }
             }
 
@@ -1400,7 +1396,7 @@ class ResultViewModel2 : ViewModel() {
             ACTION_PLAY_EPISODE_IN_VLC_PLAYER -> {
                 loadLinks(click.data, isVisible = true, isCasting = true) { links ->
                     if (links.links.isEmpty()) {
-                        showToast(activity, R.string.no_links_found_toast, Toast.LENGTH_SHORT)
+                        showToast(R.string.no_links_found_toast, Toast.LENGTH_SHORT)
                         return@loadLinks
                     }
 

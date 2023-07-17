@@ -34,9 +34,18 @@ import com.lagradost.cloudstream3.utils.UIHelper.hasPIPPermission
 import com.lagradost.cloudstream3.utils.UIHelper.shouldShowPIPMode
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import org.schabi.newpipe.extractor.NewPipe
+import java.lang.ref.WeakReference
 import java.util.*
 
 object CommonActivity {
+
+    private var _activity: WeakReference<Activity>? = null
+    var activity
+        get() = _activity?.get()
+        private set(value) {
+            _activity = WeakReference(value)
+        }
+
     @MainThread
     fun Activity?.getCastSession(): CastSession? {
         return (this as MainActivity?)?.mSessionManager?.currentCastSession
@@ -56,6 +65,30 @@ object CommonActivity {
 
     var currentToast: Toast? = null
 
+    fun showToast(@StringRes message: Int, duration: Int? = null) {
+        val act = activity ?: return
+        act.runOnUiThread {
+            showToast(act, act.getString(message), duration)
+        }
+    }
+
+    fun showToast(message: String?, duration: Int? = null) {
+        val act = activity ?: return
+        act.runOnUiThread {
+            showToast(act, message, duration)
+        }
+    }
+
+    fun showToast(message: UiText?, duration: Int? = null) {
+        val act = activity ?: return
+        if (message == null) return
+        act.runOnUiThread {
+            showToast(act,  message.asString(act), duration)
+        }
+    }
+
+
+    @MainThread
     fun showToast(act: Activity?, text: UiText, duration: Int) {
         if (act == null) return
         text.asStringNull(act)?.let {
@@ -140,6 +173,7 @@ object CommonActivity {
 
     fun init(act: ComponentActivity?) {
         if (act == null) return
+        activity = act
         //https://stackoverflow.com/questions/52594181/how-to-know-if-user-has-disabled-picture-in-picture-feature-permission
         //https://developer.android.com/guide/topics/ui/picture-in-picture
         canShowPipMode =
@@ -222,6 +256,7 @@ object CommonActivity {
                 "AmoledLight" -> R.style.AmoledModeLight
                 "Monet" -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
                     R.style.MonetMode else R.style.AppTheme
+
                 else -> R.style.AppTheme
             }
 
@@ -244,8 +279,10 @@ object CommonActivity {
                 "Pink" -> R.style.OverlayPrimaryColorPink
                 "Monet" -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
                     R.style.OverlayPrimaryColorMonet else R.style.OverlayPrimaryColorNormal
+
                 "Monet2" -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
                     R.style.OverlayPrimaryColorMonetTwo else R.style.OverlayPrimaryColorNormal
+
                 else -> R.style.OverlayPrimaryColorNormal
             }
         act.theme.applyStyle(currentTheme, true)
@@ -271,12 +308,15 @@ object CommonActivity {
             FocusDirection.Left -> {
                 view.nextFocusLeftId
             }
+
             FocusDirection.Up -> {
                 view.nextFocusUpId
             }
+
             FocusDirection.Right -> {
                 view.nextFocusRightId
             }
+
             FocusDirection.Down -> {
                 view.nextFocusDownId
             }
@@ -328,30 +368,39 @@ object CommonActivity {
             KeyEvent.KEYCODE_FORWARD, KeyEvent.KEYCODE_D, KeyEvent.KEYCODE_MEDIA_SKIP_FORWARD, KeyEvent.KEYCODE_MEDIA_FAST_FORWARD -> {
                 PlayerEventType.SeekForward
             }
+
             KeyEvent.KEYCODE_A, KeyEvent.KEYCODE_MEDIA_SKIP_BACKWARD, KeyEvent.KEYCODE_MEDIA_REWIND -> {
                 PlayerEventType.SeekBack
             }
+
             KeyEvent.KEYCODE_MEDIA_NEXT, KeyEvent.KEYCODE_BUTTON_R1, KeyEvent.KEYCODE_N -> {
                 PlayerEventType.NextEpisode
             }
+
             KeyEvent.KEYCODE_MEDIA_PREVIOUS, KeyEvent.KEYCODE_BUTTON_L1, KeyEvent.KEYCODE_B -> {
                 PlayerEventType.PrevEpisode
             }
+
             KeyEvent.KEYCODE_MEDIA_PAUSE -> {
                 PlayerEventType.Pause
             }
+
             KeyEvent.KEYCODE_MEDIA_PLAY, KeyEvent.KEYCODE_BUTTON_START -> {
                 PlayerEventType.Play
             }
+
             KeyEvent.KEYCODE_L, KeyEvent.KEYCODE_NUMPAD_7, KeyEvent.KEYCODE_7 -> {
                 PlayerEventType.Lock
             }
+
             KeyEvent.KEYCODE_H, KeyEvent.KEYCODE_MENU -> {
                 PlayerEventType.ToggleHide
             }
+
             KeyEvent.KEYCODE_M, KeyEvent.KEYCODE_VOLUME_MUTE -> {
                 PlayerEventType.ToggleMute
             }
+
             KeyEvent.KEYCODE_S, KeyEvent.KEYCODE_NUMPAD_9, KeyEvent.KEYCODE_9 -> {
                 PlayerEventType.ShowMirrors
             }
@@ -359,21 +408,27 @@ object CommonActivity {
             KeyEvent.KEYCODE_O, KeyEvent.KEYCODE_NUMPAD_8, KeyEvent.KEYCODE_8 -> {
                 PlayerEventType.SearchSubtitlesOnline
             }
+
             KeyEvent.KEYCODE_E, KeyEvent.KEYCODE_NUMPAD_3, KeyEvent.KEYCODE_3 -> {
                 PlayerEventType.ShowSpeed
             }
+
             KeyEvent.KEYCODE_R, KeyEvent.KEYCODE_NUMPAD_0, KeyEvent.KEYCODE_0 -> {
                 PlayerEventType.Resize
             }
+
             KeyEvent.KEYCODE_C, KeyEvent.KEYCODE_NUMPAD_4, KeyEvent.KEYCODE_4 -> {
                 PlayerEventType.SkipOp
             }
+
             KeyEvent.KEYCODE_V, KeyEvent.KEYCODE_NUMPAD_5, KeyEvent.KEYCODE_5 -> {
                 PlayerEventType.SkipCurrentChapter
             }
+
             KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE, KeyEvent.KEYCODE_P, KeyEvent.KEYCODE_SPACE, KeyEvent.KEYCODE_NUMPAD_ENTER, KeyEvent.KEYCODE_ENTER -> { // space is not captured due to navigation
                 PlayerEventType.PlayPauseToggle
             }
+
             else -> null
         }?.let { playerEvent ->
             playerEventListener?.invoke(playerEvent)
@@ -398,16 +453,19 @@ object CommonActivity {
                                 act.currentFocus,
                                 FocusDirection.Left
                             )
+
                             KeyEvent.KEYCODE_DPAD_RIGHT -> getNextFocus(
                                 act,
                                 act.currentFocus,
                                 FocusDirection.Right
                             )
+
                             KeyEvent.KEYCODE_DPAD_UP -> getNextFocus(
                                 act,
                                 act.currentFocus,
                                 FocusDirection.Up
                             )
+
                             KeyEvent.KEYCODE_DPAD_DOWN -> getNextFocus(
                                 act,
                                 act.currentFocus,

@@ -211,7 +211,7 @@ class ExtensionsFragment : Fragment() {
                         ?.let { it1 -> RepositoryManager.parseRepoUrl(it1) }
                     if (url.isNullOrBlank()) {
                         main {
-                            showToast(activity, R.string.error_invalid_data, Toast.LENGTH_SHORT)
+                            showToast(R.string.error_invalid_data, Toast.LENGTH_SHORT)
                         }
                     } else {
                         val fixedName = if (!name.isNullOrBlank()) name

@@ -216,7 +216,6 @@ class SettingsAccount : PreferenceFragmentCompat() {
                                 activity.runOnUiThread {
                                     try {
                                         showToast(
-                                            activity,
                                             activity.getString(if (isSuccessful) R.string.authenticated_user else R.string.authenticated_user_fail)
                                                 .format(
                                                     api.name

@@ -42,6 +42,7 @@ import com.lagradost.cloudstream3.databinding.TvtypesChipsBinding
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.observe
+import com.lagradost.cloudstream3.mvvm.observeNullable
 import com.lagradost.cloudstream3.ui.APIRepository.Companion.noneApi
 import com.lagradost.cloudstream3.ui.APIRepository.Companion.randomApi
 import com.lagradost.cloudstream3.ui.WatchType
@@ -194,7 +195,7 @@ class HomeFragment : Fragment() {
 
             binding.homeExpandedRecycler.adapter =
                 SearchAdapter(item.list.toMutableList(), binding.homeExpandedRecycler) { callback ->
-                    handleSearchClickCallback(this, callback)
+                    handleSearchClickCallback(callback)
                     if (callback.action == SEARCH_ACTION_LOAD || callback.action == SEARCH_ACTION_PLAY_FILE) {
                         bottomSheetDialogBuilder.ownHide() // we hide here because we want to resume it later
                         //bottomSheetDialogBuilder.dismissSafe(this)
@@ -440,8 +441,8 @@ class HomeFragment : Fragment() {
         val root = inflater.inflate(layout, container, false)
         binding = try {
             FragmentHomeBinding.bind(root)
-        } catch (t : Throwable) {
-            showToast(activity, txt(R.string.unable_to_inflate, t.message ?: ""), Toast.LENGTH_LONG)
+        } catch (t: Throwable) {
+            showToast(txt(R.string.unable_to_inflate, t.message ?: ""), Toast.LENGTH_LONG)
             logError(t)
             null
         }
@@ -481,59 +482,6 @@ class HomeFragment : Fragment() {
         fixGrid()
     }
 
-    fun bookmarksUpdated(_data: Boolean) {
-        reloadStored()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        reloadStored()
-        bookmarksUpdatedEvent += ::bookmarksUpdated
-        afterPluginsLoadedEvent += ::afterPluginsLoaded
-        mainPluginsLoadedEvent += ::afterMainPluginsLoaded
-    }
-
-    override fun onStop() {
-        bookmarksUpdatedEvent -= ::bookmarksUpdated
-        afterPluginsLoadedEvent -= ::afterPluginsLoaded
-        mainPluginsLoadedEvent -= ::afterMainPluginsLoaded
-        super.onStop()
-    }
-
-    private fun reloadStored() {
-        homeViewModel.loadResumeWatching()
-        val list = EnumSet.noneOf(WatchType::class.java)
-        getKey<IntArray>(HOME_BOOKMARK_VALUE_LIST)?.map { WatchType.fromInternalId(it) }?.let {
-            list.addAll(it)
-        }
-        homeViewModel.loadStoredData(list)
-    }
-
-    private fun afterMainPluginsLoaded(unused: Boolean = false) {
-        loadHomePage(false)
-    }
-
-    private fun afterPluginsLoaded(forceReload: Boolean) {
-        loadHomePage(forceReload)
-    }
-
-    private fun loadHomePage(forceReload: Boolean) {
-        val apiName = context?.getKey<String>(USER_SELECTED_HOMEPAGE_API)
-
-        if (homeViewModel.apiName.value != apiName || apiName == null || forceReload) {
-            //println("Caught home: " + homeViewModel.apiName.value + " at " + apiName)
-            homeViewModel.loadAndCancel(apiName, forceReload)
-        }
-    }
-
-    private fun homeHandleSearch(callback: SearchClickCallback) {
-        if (callback.action == SEARCH_ACTION_FOCUSED) {
-            //focusCallback(callback.card)
-        } else {
-            handleSearchClickCallback(activity, callback)
-        }
-    }
-
     private var currentApiName: String? = null
     private var toggleRandomButton = false
 
@@ -546,8 +494,6 @@ class HomeFragment : Fragment() {
         fixGrid()
 
         binding?.homeChangeApiLoading?.setOnClickListener(apiChangeClickListener)
-
-
         binding?.homeChangeApiLoading?.setOnClickListener(apiChangeClickListener)
         binding?.homeApiFab?.setOnClickListener(apiChangeClickListener)
         binding?.homeRandom?.setOnClickListener {
@@ -567,18 +513,9 @@ class HomeFragment : Fragment() {
             binding?.homeRandom?.visibility = View.GONE
         }
 
-        observe(homeViewModel.preview) { preview ->
-            (binding?.homeMasterRecycler?.adapter as? HomeParentItemAdapterPreview?)?.setPreviewData(
-                preview
-            )
-        }
-
         observe(homeViewModel.apiName) { apiName ->
             currentApiName = apiName
             binding?.homeApiFab?.text = apiName
-            (binding?.homeMasterRecycler?.adapter as? HomeParentItemAdapterPreview?)?.setApiName(
-                apiName
-            )
         }
 
         observe(homeViewModel.page) { data ->
@@ -659,73 +596,38 @@ class HomeFragment : Fragment() {
         }
 
 
-
-        observe(homeViewModel.availableWatchStatusTypes) { availableWatchStatusTypes ->
-            context?.setKey(
-                HOME_BOOKMARK_VALUE_LIST,
-                availableWatchStatusTypes.first.map { it.internalId }.toIntArray()
-            )
-            (binding?.homeMasterRecycler?.adapter as? HomeParentItemAdapterPreview?)?.setAvailableWatchStatusTypes(
-                availableWatchStatusTypes
-            )
-        }
-
-        observe(homeViewModel.bookmarks) { data ->
-            (binding?.homeMasterRecycler?.adapter as? HomeParentItemAdapterPreview?)?.setBookmarkData(
-                data
-            )
-        }
-
-        observe(homeViewModel.resumeWatching) { resumeWatching ->
-            (binding?.homeMasterRecycler?.adapter as? HomeParentItemAdapterPreview?)?.setResumeWatchingData(
-                resumeWatching
-            )
-            if (isTrueTvSettings()) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    ioSafe {
-                        activity?.addProgramsToContinueWatching(resumeWatching.mapNotNull { it as? DataStoreHelper.ResumeWatchingResult })
-                    }
-                }
-            }
-        }
-
-
         //context?.fixPaddingStatusbarView(home_statusbar)
         //context?.fixPaddingStatusbar(home_padding)
         fixPaddingStatusbar(binding?.homeLoadingStatusbar)
 
-        binding?.homeMasterRecycler?.adapter =
-            HomeParentItemAdapterPreview(mutableListOf(), { callback ->
-                homeHandleSearch(callback)
-            }, { item ->
-                bottomSheetDialog = activity?.loadHomepageList(item, expandCallback = {
-                    homeViewModel.expandAndReturn(it)
-                }, dismissCallback = {
-                    bottomSheetDialog = null
-                })
-            }, { name ->
-                homeViewModel.expand(name)
-            }, { load ->
-                activity?.loadResult(load.response.url, load.response.apiName, load.action)
-            }, {
-                homeViewModel.loadMoreHomeScrollResponses()
-            }, {
-                apiChangeClickListener.onClick(it)
-            }, reloadStored = {
-                reloadStored()
-            }, loadStoredData = {
-                homeViewModel.loadStoredData(it)
-            }, { (isQuickSearch, text) ->
-                if (!isQuickSearch) {
-                    QuickSearchFragment.pushSearch(
-                        activity,
-                        text,
-                        currentApiName?.let { arrayOf(it) })
-                }
-            })
+        observeNullable(homeViewModel.popup) { item ->
+            if (item == null) {
+                bottomSheetDialog?.dismissSafe()
+                bottomSheetDialog = null
+                return@observeNullable
+            }
 
-        reloadStored()
-        loadHomePage(false)
+            // don't recreate
+            if (bottomSheetDialog != null) {
+                return@observeNullable
+            }
+
+            bottomSheetDialog = activity?.loadHomepageList(item, expandCallback = {
+                homeViewModel.expandAndReturn(it)
+            }, dismissCallback = {
+                homeViewModel.popup(null)
+                bottomSheetDialog = null
+            })
+        }
+
+        binding?.homeMasterRecycler?.adapter =
+            HomeParentItemAdapterPreview(
+                mutableListOf(),
+                homeViewModel
+            )
+
+        homeViewModel.reloadStored()
+        //loadHomePage(false)
         binding?.homeMasterRecycler?.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
 

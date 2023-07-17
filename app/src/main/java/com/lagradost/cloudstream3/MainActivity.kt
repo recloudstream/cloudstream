@@ -309,7 +309,6 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                                     this@with.runOnUiThread {
                                         try {
                                             showToast(
-                                                this@with,
                                                 getString(if (isSuccessful) R.string.authenticated_user else R.string.authenticated_user_fail).format(
                                                     api.name
                                                 )
@@ -785,7 +784,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                 newLocalBinding
             }
         } catch (t: Throwable) {
-            showToast(this, txt(R.string.unable_to_inflate, t.message ?: ""), Toast.LENGTH_LONG)
+            showToast(txt(R.string.unable_to_inflate, t.message ?: ""), Toast.LENGTH_LONG)
             null
         }
 
@@ -817,7 +816,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
 
         if (PluginManager.checkSafeModeFile()) {
             normalSafeApiCall {
-                showToast(this, R.string.safe_mode_file, Toast.LENGTH_LONG)
+                showToast( R.string.safe_mode_file, Toast.LENGTH_LONG)
             }
         } else if (lastError == null) {
             ioSafe {
@@ -876,7 +875,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             }
             when (resource) {
                 is Resource.Failure -> {
-                    showToast(this, R.string.error)
+                    showToast(R.string.error)
                     viewModel.clear()
                     hidePreviewPopupDialog()
                 }

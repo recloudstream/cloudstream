@@ -162,7 +162,7 @@ class DownloadFragment : Fragment() {
                 },
                 { downloadClickEvent ->
                     if (downloadClickEvent.data !is VideoDownloadHelper.DownloadEpisodeCached) return@DownloadHeaderAdapter
-                    handleDownloadClick(activity, downloadClickEvent)
+                    handleDownloadClick(downloadClickEvent)
                     if (downloadClickEvent.action == DOWNLOAD_ACTION_DELETE_FILE) {
                         context?.let { ctx ->
                             downloadsViewModel.updateList(ctx)
@@ -230,7 +230,7 @@ class DownloadFragment : Fragment() {
             binding.applyBtt.setOnClickListener {
                 val url = binding.streamUrl.text?.toString()
                 if (url.isNullOrEmpty()) {
-                    showToast(activity, R.string.error_invalid_url, Toast.LENGTH_SHORT)
+                    showToast(R.string.error_invalid_url, Toast.LENGTH_SHORT)
                 } else {
                     val referer = binding.streamReferer.text?.toString()
 

@@ -388,7 +388,7 @@ open class ResultFragment : ResultTrailerPlayer() {
                                     )
                                 }
 
-                                else -> handleDownloadClick(activity, click)
+                                else -> handleDownloadClick(click)
                             }
                         }
                     }
@@ -575,7 +575,7 @@ open class ResultFragment : ResultTrailerPlayer() {
                     viewModel.handleAction(activity, episodeClick)
                 },
                 { downloadClickEvent ->
-                    handleDownloadClick(activity, downloadClickEvent)
+                    handleDownloadClick(downloadClickEvent)
                 }
             )
 
@@ -939,7 +939,7 @@ open class ResultFragment : ResultTrailerPlayer() {
 
                         val name = (viewModel.page.value as? Resource.Success)?.value?.title
                             ?: txt(R.string.no_data).asStringNull(context) ?: ""
-                        showToast(activity, txt(message, name), Toast.LENGTH_SHORT)
+                        showToast(txt(message, name), Toast.LENGTH_SHORT)
                     }
 
                     result_open_in_browser?.isVisible = d.url.startsWith("http")

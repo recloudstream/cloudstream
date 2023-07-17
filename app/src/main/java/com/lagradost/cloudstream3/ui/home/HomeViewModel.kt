@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.ui.home
 
+import android.os.Build
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -13,13 +14,24 @@ import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
 import com.lagradost.cloudstream3.AcraApplication.Companion.context
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
+import com.lagradost.cloudstream3.CommonActivity.activity
 import com.lagradost.cloudstream3.mvvm.*
 import com.lagradost.cloudstream3.ui.APIRepository
 import com.lagradost.cloudstream3.ui.APIRepository.Companion.noneApi
 import com.lagradost.cloudstream3.ui.APIRepository.Companion.randomApi
 import com.lagradost.cloudstream3.ui.WatchType
+import com.lagradost.cloudstream3.ui.home.HomeFragment.Companion.loadHomepageList
+import com.lagradost.cloudstream3.ui.quicksearch.QuickSearchFragment
+import com.lagradost.cloudstream3.ui.search.SEARCH_ACTION_FOCUSED
+import com.lagradost.cloudstream3.ui.search.SearchClickCallback
+import com.lagradost.cloudstream3.ui.search.SearchHelper
+import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTrueTvSettings
+import com.lagradost.cloudstream3.utils.AppUtils.addProgramsToContinueWatching
+import com.lagradost.cloudstream3.utils.AppUtils.loadResult
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.DOWNLOAD_HEADER_CACHE
+import com.lagradost.cloudstream3.utils.DataStore.getKey
+import com.lagradost.cloudstream3.utils.DataStore.setKey
 import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getAllResumeStateIds
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getAllWatchStateIds
@@ -72,7 +84,7 @@ class HomeViewModel : ViewModel() {
         }
     }
 
-    private var repo: APIRepository? = null
+    var repo: APIRepository? = null
 
     private val _apiName = MutableLiveData<String>()
     val apiName: LiveData<String> = _apiName
@@ -101,8 +113,14 @@ class HomeViewModel : ViewModel() {
     val resumeWatching: LiveData<List<SearchResponse>> = _resumeWatching
     val preview: LiveData<Resource<Pair<Boolean, List<LoadResponse>>>> = _preview
 
-    fun loadResumeWatching() = viewModelScope.launchSafe {
+    private fun loadResumeWatching() = viewModelScope.launchSafe {
         val resumeWatchingResult = getResumeWatching()
+        if (isTrueTvSettings() && resumeWatchingResult != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            ioSafe {
+                // this WILL crash on non tvs, so keep this inside a try catch
+                activity?.addProgramsToContinueWatching(resumeWatchingResult)
+            }
+        }
         resumeWatchingResult?.let {
             _resumeWatching.postValue(it)
         }
@@ -128,6 +146,10 @@ class HomeViewModel : ViewModel() {
         currentWatchTypes.remove(WatchType.NONE)
 
         if (currentWatchTypes.size <= 0) {
+            setKey(
+                HOME_BOOKMARK_VALUE_LIST,
+                intArrayOf()
+            )
             _availableWatchStatusTypes.postValue(setOf<WatchType>() to setOf())
             _bookmarks.postValue(Pair(false, ArrayList()))
             return@launchSafe
@@ -135,7 +157,10 @@ class HomeViewModel : ViewModel() {
 
         val watchPrefNotNull = preferredWatchStatus ?: EnumSet.of(currentWatchTypes.first())
         //if (currentWatchTypes.any { watchPrefNotNull.contains(it) }) watchPrefNotNull else listOf(currentWatchTypes.first())
-
+        setKey(
+            HOME_BOOKMARK_VALUE_LIST,
+            watchPrefNotNull.map { it.internalId }.toIntArray()
+        )
         _availableWatchStatusTypes.postValue(
             Pair(
                 watchPrefNotNull,
@@ -337,12 +362,78 @@ class HomeViewModel : ViewModel() {
                     logError(e)
                 }
             }
+
             is Resource.Failure -> {
                 _page.postValue(data!!)
                 _preview.postValue(data!!)
             }
+
             else -> Unit
         }
+    }
+
+    fun click(callback: SearchClickCallback) {
+        if (callback.action == SEARCH_ACTION_FOCUSED) {
+            //focusCallback(callback.card)
+        } else {
+            SearchHelper.handleSearchClickCallback(callback)
+        }
+    }
+
+
+    private val _popup = MutableLiveData<ExpandableHomepageList?>(null)
+    val popup: LiveData<ExpandableHomepageList?> = _popup
+
+    fun popup(list: ExpandableHomepageList?) {
+        _popup.postValue(list)
+    }
+
+    private fun bookmarksUpdated(unused: Boolean) {
+        reloadStored()
+    }
+
+    private fun afterPluginsLoaded(forceReload: Boolean) {
+        loadAndCancel(getKey(USER_SELECTED_HOMEPAGE_API), forceReload)
+    }
+
+    private fun afterMainPluginsLoaded(unused: Boolean = false) {
+        loadAndCancel(getKey(USER_SELECTED_HOMEPAGE_API), false)
+    }
+
+    init {
+        MainActivity.bookmarksUpdatedEvent += ::bookmarksUpdated
+        MainActivity.afterPluginsLoadedEvent += ::afterPluginsLoaded
+        MainActivity.mainPluginsLoadedEvent += ::afterMainPluginsLoaded
+    }
+
+    override fun onCleared() {
+        MainActivity.bookmarksUpdatedEvent -= ::bookmarksUpdated
+        MainActivity.afterPluginsLoadedEvent -= ::afterPluginsLoaded
+        MainActivity.mainPluginsLoadedEvent -= ::afterMainPluginsLoaded
+        super.onCleared()
+    }
+
+    fun queryTextSubmit(query: String) {
+        QuickSearchFragment.pushSearch(
+            query,
+            repo?.name?.let { arrayOf(it) })
+    }
+
+    fun queryTextChange(newText: String) {
+        // do nothing
+    }
+
+    fun reloadStored() {
+        loadResumeWatching()
+        val list = EnumSet.noneOf(WatchType::class.java)
+        getKey<IntArray>(HOME_BOOKMARK_VALUE_LIST)?.map { WatchType.fromInternalId(it) }?.let {
+            list.addAll(it)
+        }
+        loadStoredData(list)
+    }
+
+    fun click(load: LoadClickCallback) {
+        loadResult(load.response.url, load.response.apiName, load.action)
     }
 
     fun loadAndCancel(preferredApiName: String?, forceReload: Boolean = true) =
