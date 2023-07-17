@@ -9,13 +9,15 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.viewbinding.ViewBinding
 import com.lagradost.cloudstream3.databinding.FragmentHomeBinding
 import com.lagradost.cloudstream3.databinding.FragmentHomeTvBinding
+import com.lagradost.cloudstream3.databinding.FragmentPlayerBinding
+import com.lagradost.cloudstream3.databinding.FragmentPlayerTvBinding
 import com.lagradost.cloudstream3.databinding.FragmentSearchBinding
 import com.lagradost.cloudstream3.databinding.FragmentSearchTvBinding
 import com.lagradost.cloudstream3.databinding.HomeResultGridBinding
-import com.lagradost.cloudstream3.databinding.HomeScrollViewBinding
-import com.lagradost.cloudstream3.databinding.HomeScrollViewTvBinding
 import com.lagradost.cloudstream3.databinding.HomepageParentBinding
 import com.lagradost.cloudstream3.databinding.HomepageParentTvBinding
+import com.lagradost.cloudstream3.databinding.PlayerCustomLayoutBinding
+import com.lagradost.cloudstream3.databinding.PlayerCustomLayoutTvBinding
 import com.lagradost.cloudstream3.databinding.RepositoryItemBinding
 import com.lagradost.cloudstream3.databinding.RepositoryItemTvBinding
 import com.lagradost.cloudstream3.databinding.SearchResultGridBinding
@@ -79,6 +81,15 @@ class ExampleInstrumentedTest {
                // testAllLayouts<ActivityMainTvBinding>(activity,R.layout.activity_main, R.layout.activity_main_tv)
                // testAllLayouts<ActivityMainBinding>(activity,R.layout.activity_main, R.layout.activity_main_tv)
                 //testAllLayouts<ActivityMainBinding>(activity, R.layout.activity_main_tv)
+
+                testAllLayouts<FragmentPlayerBinding>(activity, R.layout.fragment_player,R.layout.fragment_player_tv)
+                testAllLayouts<FragmentPlayerTvBinding>(activity, R.layout.fragment_player,R.layout.fragment_player_tv)
+
+                testAllLayouts<PlayerCustomLayoutBinding>(activity, R.layout.player_custom_layout,R.layout.player_custom_layout_tv)
+                testAllLayouts<PlayerCustomLayoutTvBinding>(activity, R.layout.player_custom_layout,R.layout.player_custom_layout_tv)
+
+                testAllLayouts<RepositoryItemBinding>(activity, R.layout.repository_item_tv, R.layout.repository_item)
+                testAllLayouts<RepositoryItemTvBinding>(activity, R.layout.repository_item_tv, R.layout.repository_item)
 
                 testAllLayouts<RepositoryItemBinding>(activity, R.layout.repository_item_tv, R.layout.repository_item)
                 testAllLayouts<RepositoryItemTvBinding>(activity, R.layout.repository_item_tv, R.layout.repository_item)

@@ -63,7 +63,6 @@ import kotlinx.android.synthetic.main.player_custom_layout.player_center_menu
 import kotlinx.android.synthetic.main.player_custom_layout.player_ffwd_holder
 import kotlinx.android.synthetic.main.player_custom_layout.player_holder
 import kotlinx.android.synthetic.main.player_custom_layout.player_pause_play
-import kotlinx.android.synthetic.main.player_custom_layout.player_pause_play_holder
 import kotlinx.android.synthetic.main.player_custom_layout.player_progressbar_left
 import kotlinx.android.synthetic.main.player_custom_layout.player_progressbar_left_holder
 import kotlinx.android.synthetic.main.player_custom_layout.player_progressbar_left_icon
@@ -605,7 +604,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         }
         player_lock_holder?.isGone = isGone
         player_video_bar?.isGone = isGone
-        player_pause_play_holder?.isGone = isGone
+
         player_pause_play?.isGone = isGone
         //player_buffering?.isGone = isGone
         player_top_holder?.isGone = isGone

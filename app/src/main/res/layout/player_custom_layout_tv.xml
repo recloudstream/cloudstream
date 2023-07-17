@@ -54,6 +54,118 @@
 
         </LinearLayout>
     -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layoutDirection="ltr"
+            android:orientation="horizontal">
+
+            <RelativeLayout
+                android:id="@+id/player_progressbar_left_holder"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:gravity="start"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toLeftOf="@+id/centerMenuView"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:alpha="1"
+                tools:visibility="visible">
+                <!--VERY hacky layout -->
+                <ImageView
+                    android:id="@+id/player_progressbar_left_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginBottom="220dp"
+                    android:src="@drawable/ic_baseline_volume_up_24"
+                    app:tint="@android:color/white"
+                    tools:ignore="ContentDescription">
+
+                </ImageView>
+
+                <ProgressBar
+                    android:id="@+id/player_progressbar_left"
+                    style="@android:style/Widget.Material.ProgressBar.Horizontal"
+                    android:layout_width="5dp"
+                    android:layout_height="150dp"
+                    android:layout_centerInParent="true"
+                    android:layout_gravity="end|center_vertical"
+                    android:layout_marginStart="40dp"
+                    android:indeterminate="false"
+                    android:max="100"
+                    android:progress="100"
+                    android:progressDrawable="@drawable/progress_drawable_vertical"
+                    tools:progress="30" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/player_progressbar_right_holder"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:gravity="right"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toRightOf="@+id/centerMenuView"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:alpha="1"
+                tools:ignore="RtlHardcoded"
+                tools:visibility="visible">
+
+                <ImageView
+                    android:id="@+id/player_progressbar_right_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginBottom="220dp"
+                    android:src="@drawable/ic_baseline_brightness_7_24"
+                    app:tint="@android:color/white"
+                    tools:ignore="ContentDescription">
+
+                </ImageView>
+
+                <ProgressBar
+                    android:id="@+id/player_progressbar_right"
+                    style="@android:style/Widget.Material.ProgressBar.Horizontal"
+                    android:layout_width="5dp"
+                    android:layout_height="150dp"
+                    android:layout_centerInParent="true"
+                    android:layout_gravity="end|center_vertical"
+                    android:layout_marginEnd="40dp"
+                    android:indeterminate="false"
+                    android:max="100"
+                    android:progress="100"
+                    android:progressDrawable="@drawable/progress_drawable_vertical" />
+            </RelativeLayout>
+        </LinearLayout>
+
+
+        <TextView
+            android:id="@+id/player_time_text"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:gravity="center"
+            android:shadowColor="@android:color/black"
+            android:shadowRadius="10.0"
+            android:textColor="@android:color/white"
+            android:textSize="30sp"
+            android:visibility="gone"
+            tools:text="+100"
+            tools:visibility="visible" />
+
+        <FrameLayout
+            android:id="@+id/player_pause_play_holder_holder"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/player_video_holder"
@@ -61,35 +173,70 @@
             android:layout_height="match_parent"
             android:padding="16dp">
 
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/skip_chapter_button"
+                style="@style/NiceButton"
+                android:layout_width="150dp"
+                android:layout_height="40dp"
+                android:layout_marginEnd="100dp"
+                android:backgroundTint="@color/skipOpTransparent"
+                android:maxLines="1"
+                android:padding="10dp"
+                android:textColor="@color/white"
+                android:visibility="gone"
+                app:cornerRadius="@dimen/rounded_button_radius"
+                app:layout_constraintBottom_toTopOf="@+id/bottom_player_bar"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:strokeColor="@color/white"
+                app:strokeWidth="1dp"
+                tools:text="Skip Opening"
+                tools:visibility="visible" />
+
             <FrameLayout
                 android:id="@+id/player_top_holder"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-                <TextView
-                    android:id="@+id/player_video_title"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="80dp"
                     android:layout_marginTop="20dp"
                     android:layout_marginEnd="32dp"
-                    android:gravity="end"
-                    android:textColor="@color/white"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    tools:text="Hello world" />
+                    android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/player_video_title_rez"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="80dp"
-                    android:layout_marginTop="40dp"
-                    android:layout_marginEnd="32dp"
-                    android:gravity="end"
-                    android:textColor="@color/white"
-                    android:textSize="16sp"
-                    tools:text="1920x1080" />
+                    <TextView
+                        android:id="@+id/player_video_title"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="end"
+                        android:textColor="@color/white"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        tools:text="Hello world" />
+
+                    <TextView
+                        android:id="@+id/player_video_title_rez"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="end"
+                        android:textColor="@color/white"
+                        android:textSize="16sp"
+                        tools:text="1920x1080" />
+
+                    <FrameLayout
+                        android:id="@+id/player_episode_filler_holder"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end"
+                        android:layout_marginTop="2dp">
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/player_episode_filler"
+                            style="@style/SmallBlackButton"
+                            android:text="@string/filler" />
+                    </FrameLayout>
+                </LinearLayout>
 
                 <!-- Removed as it has no use anymore-->
                 <!--<androidx.mediarouter.app.MediaRouteButton
@@ -130,6 +277,108 @@
                         android:focusable="true" />
                 </FrameLayout>
             </FrameLayout>
+
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/player_center_menu"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:layoutDirection="ltr"
+                android:orientation="horizontal"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:visibility="visible">
+
+                <FrameLayout
+                    android:visibility="gone"
+                    android:id="@+id/player_rew_holder"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical|start"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toLeftOf="@id/player_ffwd_holder"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintWidth_percent="0.5">
+
+                    <TextView
+                        android:id="@+id/exo_rew_text"
+                        android:layout_width="200dp"
+                        android:layout_height="40dp"
+                        android:layout_gravity="center"
+
+                        android:gravity="center"
+                        android:textColor="@color/white"
+                        android:textSize="19sp"
+
+                        android:textStyle="bold"
+                        tools:text="10" />
+
+                    <ImageButton
+                        android:id="@id/exo_rew"
+                        android:layout_width="70dp"
+                        android:layout_height="70dp"
+                        android:layout_gravity="center"
+
+                        android:background="@drawable/video_tap_button_skip"
+                        android:nextFocusLeft="@id/exo_rew"
+                        android:nextFocusUp="@id/player_go_back"
+                        android:nextFocusDown="@id/player_lock"
+                        android:padding="10dp"
+                        android:scaleType="fitCenter"
+                        android:scaleX="-1"
+                        android:src="@drawable/netflix_skip_forward"
+                        android:tintMode="src_in"
+                        app:tint="@color/white"
+                        tools:ignore="ContentDescription" />
+                </FrameLayout>
+
+                <FrameLayout
+                    android:visibility="gone"
+                    android:id="@+id/player_ffwd_holder"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical|end"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toRightOf="@id/player_rew_holder"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintWidth_percent="0.5">
+
+                    <TextView
+                        android:id="@+id/exo_ffwd_text"
+                        android:layout_width="200dp"
+                        android:layout_height="40dp"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:textColor="@color/white"
+                        android:textSize="19sp"
+                        android:textStyle="bold"
+                        tools:text="10" />
+
+                    <ImageButton
+                        android:id="@id/exo_ffwd"
+                        android:layout_width="70dp"
+                        android:layout_height="70dp"
+                        android:layout_gravity="center"
+
+                        android:background="@drawable/video_tap_button_skip"
+                        android:nextFocusRight="@id/exo_rew"
+                        android:nextFocusUp="@id/player_go_back"
+                        android:nextFocusDown="@id/player_lock"
+                        android:padding="10dp"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/netflix_skip_forward"
+                        android:tintMode="src_in"
+                        app:tint="@color/white"
+                        tools:ignore="ContentDescription" />
+                </FrameLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <!--use for thinner app:trackThickness="3dp" com.google.android.material.progressindicator.CircularProgressIndicator-->
             <ProgressBar
@@ -303,6 +552,22 @@
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:orientation="horizontal">
+
+                        <FrameLayout
+                            android:visibility="gone"
+                            android:layout_width="0dp"
+                            android:layout_height="0dp">
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/player_lock"
+                                style="@style/VideoButtonTV"
+                                android:nextFocusLeft="@id/player_skip_episode"
+
+                                android:nextFocusRight="@id/player_resize_btt"
+                                android:nextFocusUp="@id/player_pause_play"
+                                android:text="@string/video_lock"
+                                android:visibility="gone"
+                                app:icon="@drawable/video_locked" />
+                        </FrameLayout>
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/player_resize_btt"
