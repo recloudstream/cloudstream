@@ -5,7 +5,6 @@ import android.app.Dialog
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Rect
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.text.Editable
@@ -23,6 +22,8 @@ import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.core.widget.NestedScrollView
 import androidx.core.widget.doOnTextChanged
+import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.RecyclerView
 import com.discord.panels.OverlappingPanelsLayout
 import com.discord.panels.PanelsChildGestureRegionObserver
 import com.google.android.gms.cast.framework.CastButtonFactory
@@ -34,6 +35,7 @@ import com.lagradost.cloudstream3.APIHolder.updateHasTrailers
 import com.lagradost.cloudstream3.CommonActivity
 import com.lagradost.cloudstream3.DubStatus
 import com.lagradost.cloudstream3.LoadResponse
+import com.lagradost.cloudstream3.MainActivity.Companion.afterPluginsLoadedEvent
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.SearchResponse
 import com.lagradost.cloudstream3.databinding.FragmentResultBinding
@@ -50,11 +52,16 @@ import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_ACTION_DOWNLOAD
 import com.lagradost.cloudstream3.ui.download.DownloadButtonSetup
 import com.lagradost.cloudstream3.ui.player.CSPlayerEvent
+import com.lagradost.cloudstream3.ui.player.FullScreenPlayer
 import com.lagradost.cloudstream3.ui.quicksearch.QuickSearchFragment
+import com.lagradost.cloudstream3.ui.result.ResultFragment.getStoredData
+import com.lagradost.cloudstream3.ui.result.ResultFragment.updateUIEvent
 import com.lagradost.cloudstream3.ui.search.SearchAdapter
 import com.lagradost.cloudstream3.ui.search.SearchHelper
+import com.lagradost.cloudstream3.utils.AppUtils.getNameFull
 import com.lagradost.cloudstream3.utils.AppUtils.html
 import com.lagradost.cloudstream3.utils.AppUtils.isCastApiAvailable
+import com.lagradost.cloudstream3.utils.AppUtils.loadCache
 import com.lagradost.cloudstream3.utils.AppUtils.openBrowser
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
@@ -63,6 +70,7 @@ import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showDialog
 import com.lagradost.cloudstream3.utils.UIHelper
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
+import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.utils.UIHelper.popCurrentPage
 import com.lagradost.cloudstream3.utils.UIHelper.populateChips
 import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIconsAndNoStringRes
@@ -70,17 +78,29 @@ import com.lagradost.cloudstream3.utils.UIHelper.setImage
 import com.lagradost.cloudstream3.utils.VideoDownloadHelper
 
 
-open class ResultFragmentPhone : ResultFragment(),
+open class ResultFragmentPhone : FullScreenPlayer(),
     PanelsChildGestureRegionObserver.GestureRegionsListener {
+    protected lateinit var viewModel: ResultViewModel2
+    protected lateinit var syncModel: SyncViewModel
+
     protected var binding: FragmentResultSwipeBinding? = null
     protected var resultBinding: FragmentResultBinding? = null
     protected var recommendationBinding: ResultRecommendationsBinding? = null
     protected var syncBinding: ResultSyncBinding? = null
+
+    override var layout = R.layout.fragment_result_swipe
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        viewModel =
+            ViewModelProvider(this)[ResultViewModel2::class.java]
+        syncModel =
+            ViewModelProvider(this)[SyncViewModel::class.java]
+        updateUIEvent += ::updateUI
+
         val root = super.onCreateView(inflater, container, savedInstanceState) ?: return null
         FragmentResultSwipeBinding.bind(root).let { bind ->
             resultBinding =
@@ -180,7 +200,7 @@ open class ResultFragmentPhone : ResultFragment(),
 
     }
 
-    override fun setTrailers(trailers: List<ExtractorLink>?) {
+    private fun setTrailers(trailers: List<ExtractorLink>?) {
         context?.updateHasTrailers()
         if (!LoadResponse.isTrailersEnabled) return
         currentTrailers = trailers?.sortedBy { -it.quality } ?: emptyList()
@@ -196,6 +216,7 @@ open class ResultFragmentPhone : ResultFragment(),
             }
             obs.removeGestureRegionsUpdateListener(this)
         }
+        updateUIEvent -= ::updateUI
         binding = null
         resultBinding = null
         syncBinding = null
@@ -218,48 +239,128 @@ open class ResultFragmentPhone : ResultFragment(),
 
     var selectSeason: String? = null
 
-    private fun setUrl(url : String?) {
-        if(url == null) {
+    private fun setUrl(url: String?) {
+        if (url == null) {
             binding?.resultOpenInBrowser?.isVisible = false
             return
         }
 
+        val valid = url.startsWith("http")
+
         binding?.resultOpenInBrowser?.apply {
-            isVisible = url.startsWith("http")
+            isVisible = valid
             setOnClickListener {
-                val i = Intent(Intent.ACTION_VIEW)
-                i.data = Uri.parse(url)
-                try {
-                    startActivity(i)
-                } catch (e: Exception) {
-                    logError(e)
-                }
+                context?.openBrowser(url)
             }
         }
+
+        resultBinding?.resultReloadConnectionOpenInBrowser?.setOnClickListener {
+            view?.context?.openBrowser(url)
+        }
+
+        resultBinding?.resultMetaSite?.setOnClickListener {
+            view?.context?.openBrowser(url)
+        }
+    }
+
+    private fun reloadViewModel(forceReload: Boolean) {
+        if (!viewModel.hasLoaded() || forceReload) {
+            val storedData = getStoredData() ?: return
+            viewModel.load(
+                activity,
+                storedData.url,
+                storedData.apiName,
+                storedData.showFillers,
+                storedData.dubStatus,
+                storedData.start
+            )
+        }
+    }
+
+    override fun onResume() {
+        afterPluginsLoadedEvent += ::reloadViewModel
+        activity?.let {
+            it.window?.navigationBarColor =
+                it.colorFromAttribute(R.attr.primaryBlackBackground)
+        }
+        super.onResume()
+    }
+
+    override fun onStop() {
+        afterPluginsLoadedEvent -= ::reloadViewModel
+        super.onStop()
+    }
+
+    private fun updateUI(id : Int?) {
+        syncModel.updateUserData()
+        viewModel.reloadEpisodes()
     }
 
     @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        val apiName = arguments?.getString(API_NAME_BUNDLE) ?: return
-
         super.onViewCreated(view, savedInstanceState)
 
+        // ===== setup =====
         UIHelper.fixPaddingStatusbar(binding?.resultTopBar)
-        val storedData = (activity ?: context)?.let {
-            getStoredData(it)
-        }
+        val storedData = getStoredData() ?: return
+        activity?.window?.decorView?.clearFocus()
+        activity?.loadCache()
+        context?.updateHasTrailers()
+        hideKeyboard()
+        if (storedData.restart || !viewModel.hasLoaded())
+            viewModel.load(
+                activity,
+                storedData.url,
+                storedData.apiName,
+                storedData.showFillers,
+                storedData.dubStatus,
+                storedData.start
+            )
 
-        setUrl(storedData?.url)
-        syncModel.addFromUrl(storedData?.url)
-
-        val api = APIHolder.getApiFromNameNull(apiName)
+        setUrl(storedData.url)
+        syncModel.addFromUrl(storedData.url)
+        val api = APIHolder.getApiFromNameNull(storedData.apiName)
+        PanelsChildGestureRegionObserver.Provider.get().addGestureRegionsUpdateListener(this)
+        // ===== ===== =====
 
         resultBinding?.apply {
+            resultReloadConnectionerror.setOnClickListener {
+                viewModel.load(
+                    activity,
+                    storedData.url,
+                    storedData.apiName,
+                    storedData.showFillers,
+                    storedData.dubStatus,
+                    storedData.start
+                )
+            }
+
+            resultCastItems.layoutManager = object : LinearListLayout(view.context) {
+                override fun onRequestChildFocus(
+                    parent: RecyclerView,
+                    state: RecyclerView.State,
+                    child: View,
+                    focused: View?
+                ): Boolean {
+                    // Make the cast always focus the first visible item when focused
+                    // from somewhere else. Otherwise it jumps to the last item.
+                    return if (parent.focusedChild == null) {
+                        scrollToPosition(this.findFirstCompletelyVisibleItemPosition())
+                        true
+                    } else {
+                        super.onRequestChildFocus(parent, state, child, focused)
+                    }
+                }
+            }.apply {
+                this.orientation = RecyclerView.HORIZONTAL
+            }
+            resultCastItems.adapter = ActorAdaptor()
+
             resultEpisodes.adapter =
                 EpisodeAdapter(
                     api?.hasDownloadSupport == true,
                     { episodeClick ->
-                        viewModel.handleAction(activity, episodeClick)
+                        viewModel.handleAction(episodeClick)
                     },
                     { downloadClickEvent ->
                         DownloadButtonSetup.handleDownloadClick(downloadClickEvent)
@@ -291,6 +392,8 @@ open class ResultFragmentPhone : ResultFragment(),
             resultBack.setOnClickListener {
                 activity?.popCurrentPage()
             }
+
+
             resultMiniSync.adapter = ImageAdapter(
                 nextFocusDown = R.id.result_sync_set_score,
                 clickCallback = { action ->
@@ -368,7 +471,6 @@ open class ResultFragmentPhone : ResultFragment(),
             }
         }
 
-        PanelsChildGestureRegionObserver.Provider.get().addGestureRegionsUpdateListener(this)
 
         /*
         result_bookmark_button?.setOnClickListener {
@@ -380,6 +482,50 @@ open class ResultFragmentPhone : ResultFragment(),
                 viewModel.updateWatchStatus(WatchType.fromInternalId(this.itemId))
             }
         }*/
+
+        observeNullable(viewModel.resumeWatching) { resume ->
+            resultBinding?.apply {
+                if (resume == null) {
+                    resultResumeParent.isVisible = false
+                    return@observeNullable
+                }
+                resultResumeParent.isVisible = true
+                resume.progress?.let { progress ->
+                    resultResumeSeriesTitle.apply {
+                        isVisible = !resume.isMovie
+                        text =
+                            if (resume.isMovie) null else context?.getNameFull(
+                                resume.result.name,
+                                resume.result.episode,
+                                resume.result.season
+                            )
+                    }
+
+                    resultResumeSeriesProgressText.setText(progress.progressLeft)
+                    resultResumeSeriesProgress.apply {
+                        isVisible = true
+                        this.max = progress.maxProgress
+                        this.progress = progress.progress
+                    }
+                    resultResumeProgressHolder.isVisible = true
+                } ?: run {
+                    resultResumeProgressHolder.isVisible = false
+                    resultResumeSeriesProgress.isVisible = false
+                    resultResumeSeriesTitle.isVisible = false
+                    resultResumeSeriesProgressText.isVisible = false
+                }
+
+                resultResumeSeriesButton.isVisible = !resume.isMovie
+                resultResumeSeriesButton.setOnClickListener {
+                    viewModel.handleAction(
+                        EpisodeClickEvent(
+                            storedData.playerAction, //?: ACTION_PLAY_EPISODE_IN_PLAYER,
+                            resume.result
+                        )
+                    )
+                }
+            }
+        }
 
         observeNullable(viewModel.subscribeStatus) { isSubscribed ->
             binding?.resultSubscribe?.isVisible = isSubscribed != null
@@ -403,7 +549,7 @@ open class ResultFragmentPhone : ResultFragment(),
                 // no failure?
                 resultEpisodeLoading.isVisible = episodes is Resource.Loading
                 resultEpisodes.isVisible = episodes is Resource.Success
-                if(episodes is Resource.Success) {
+                if (episodes is Resource.Success) {
                     (resultEpisodes.adapter as? EpisodeAdapter)?.updateList(episodes.value)
                 }
             }
@@ -419,13 +565,11 @@ open class ResultFragmentPhone : ResultFragment(),
                     resultPlayMovie.setText(text)
                     resultPlayMovie.setOnClickListener {
                         viewModel.handleAction(
-                            activity,
                             EpisodeClickEvent(ACTION_CLICK_DEFAULT, ep)
                         )
                     }
                     resultPlayMovie.setOnLongClickListener {
                         viewModel.handleAction(
-                            activity,
                             EpisodeClickEvent(ACTION_SHOW_OPTIONS, ep)
                         )
                         return@setOnLongClickListener true
@@ -446,7 +590,6 @@ open class ResultFragmentPhone : ResultFragment(),
                         when (click.action) {
                             DOWNLOAD_ACTION_DOWNLOAD -> {
                                 viewModel.handleAction(
-                                    activity,
                                     EpisodeClickEvent(ACTION_DOWNLOAD_EPISODE, ep)
                                 )
                             }
@@ -529,7 +672,7 @@ open class ResultFragmentPhone : ResultFragment(),
                 }
 
                 (data as? Resource.Failure)?.let { data ->
-                    resultErrorText.text = (storedData?.url?.plus("\n") ?: "") + data.errorString
+                    resultErrorText.text = storedData.url.plus("\n") + data.errorString
                 }
 
                 binding?.resultBookmarkFab?.isVisible = data is Resource.Success

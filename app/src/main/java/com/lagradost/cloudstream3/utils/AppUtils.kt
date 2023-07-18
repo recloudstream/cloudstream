@@ -33,6 +33,7 @@ import androidx.core.widget.ContentLoadingProgressBar
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.navigation.fragment.findNavController
+import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -54,6 +55,7 @@ import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.plugins.RepositoryManager
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.appStringResumeWatching
+import com.lagradost.cloudstream3.syncproviders.providers.Kitsu
 import com.lagradost.cloudstream3.ui.WebviewFragment
 import com.lagradost.cloudstream3.ui.result.ResultFragment
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTrueTvSettings
@@ -597,6 +599,14 @@ object AppUtils {
         startAction: Int = 0,
         startValue: Int = 0
     ) {
+        try {
+            val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
+            Kitsu.isEnabled =
+                settingsManager.getBoolean(this.getString(R.string.show_kitsu_posters_key), true)
+        }catch (t : Throwable) {
+            logError(t)
+        }
+
         this.runOnUiThread {
             // viewModelStore.clear()
             this.navigate(

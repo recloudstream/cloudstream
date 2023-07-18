@@ -9,11 +9,14 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.lagradost.cloudstream3.APIHolder.updateHasTrailers
 import com.lagradost.cloudstream3.DubStatus
 import com.lagradost.cloudstream3.LoadResponse
+import com.lagradost.cloudstream3.MainActivity.Companion.afterPluginsLoadedEvent
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.SearchResponse
 import com.lagradost.cloudstream3.databinding.FragmentResultTvBinding
@@ -24,27 +27,32 @@ import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.download.DownloadButtonSetup
 import com.lagradost.cloudstream3.ui.player.ExtractorLinkGenerator
 import com.lagradost.cloudstream3.ui.player.GeneratorPlayer
+import com.lagradost.cloudstream3.ui.result.ResultFragment.getStoredData
+import com.lagradost.cloudstream3.ui.result.ResultFragment.updateUIEvent
 import com.lagradost.cloudstream3.ui.search.SearchAdapter
 import com.lagradost.cloudstream3.ui.search.SearchHelper
+import com.lagradost.cloudstream3.utils.AppUtils.getNameFull
 import com.lagradost.cloudstream3.utils.AppUtils.html
+import com.lagradost.cloudstream3.utils.AppUtils.loadCache
 import com.lagradost.cloudstream3.utils.Coroutines.main
-import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialogInstant
 import com.lagradost.cloudstream3.utils.UIHelper
+import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
+import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.popCurrentPage
 import com.lagradost.cloudstream3.utils.UIHelper.setImage
 import kotlinx.coroutines.delay
 
-class ResultFragmentTv : ResultFragment() {
-    override var layout = R.layout.fragment_result_tv
-
+class ResultFragmentTv : Fragment() {
+    protected lateinit var viewModel: ResultViewModel2
     private var binding: FragmentResultTvBinding? = null
 
     override fun onDestroyView() {
         binding = null
+        updateUIEvent -= ::updateUI
         super.onDestroyView()
     }
 
@@ -52,11 +60,18 @@ class ResultFragmentTv : ResultFragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        val root = super.onCreateView(inflater, container, savedInstanceState) ?: return null
-        binding = FragmentResultTvBinding.bind(root)
+    ): View {
+        viewModel =
+            ViewModelProvider(this)[ResultViewModel2::class.java]
+        updateUIEvent += ::updateUI
 
-        return root
+        val localBinding = FragmentResultTvBinding.inflate(inflater, container, false)
+        binding = localBinding
+        return localBinding.root
+    }
+
+    private fun updateUI(id : Int?) {
+        viewModel.reloadEpisodes()
     }
 
     private var currentRecommendations: List<SearchResponse> = emptyList()
@@ -102,25 +117,6 @@ class ResultFragmentTv : ResultFragment() {
         return focus == binding?.resultRoot
     }
 
-    override fun setTrailers(trailers: List<ExtractorLink>?) {
-        context?.updateHasTrailers()
-        if (!LoadResponse.isTrailersEnabled) return
-        binding?.resultPlayTrailer?.apply {
-            isGone = trailers.isNullOrEmpty()
-            setOnClickListener {
-                if (trailers.isNullOrEmpty()) return@setOnClickListener
-                activity.navigate(
-                    R.id.global_to_navigation_player, GeneratorPlayer.newInstance(
-                        ExtractorLinkGenerator(
-                            trailers,
-                            emptyList()
-                        )
-                    )
-                )
-            }
-        }
-    }
-
     private fun setRecommendations(rec: List<SearchResponse>?, validApiName: String?) {
         currentRecommendations = rec ?: emptyList()
         val isInvalid = rec.isNullOrEmpty()
@@ -145,14 +141,77 @@ class ResultFragmentTv : ResultFragment() {
     var loadingDialog: Dialog? = null
     var popupDialog: Dialog? = null
 
+    private fun reloadViewModel(forceReload : Boolean) {
+        if (!viewModel.hasLoaded() || forceReload) {
+            val storedData = getStoredData() ?: return
+            viewModel.load(
+                activity,
+                storedData.url,
+                storedData.apiName,
+                storedData.showFillers,
+                storedData.dubStatus,
+                storedData.start
+            )
+        }
+    }
+
+    override fun onResume() {
+        activity?.let {
+            it.window?.navigationBarColor =
+                it.colorFromAttribute(R.attr.primaryBlackBackground)
+        }
+        afterPluginsLoadedEvent += ::reloadViewModel
+        super.onResume()
+    }
+
+    override fun onStop() {
+        afterPluginsLoadedEvent -= ::reloadViewModel
+        super.onStop()
+    }
+
     @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // ===== setup =====
+        val storedData = getStoredData() ?: return
+        activity?.window?.decorView?.clearFocus()
+        activity?.loadCache()
+        hideKeyboard()
+        if (storedData.restart || !viewModel.hasLoaded())
+            viewModel.load(
+                activity,
+                storedData.url,
+                storedData.apiName,
+                storedData.showFillers,
+                storedData.dubStatus,
+                storedData.start
+            )
+        // ===== ===== =====
+
         binding?.apply {
             resultEpisodes.layoutManager =
                 LinearListLayout(resultEpisodes.context).apply {
                     setHorizontal()
                 }
+
+            resultReloadConnectionerror.setOnClickListener {
+                    viewModel.load(
+                        activity,
+                        storedData.url,
+                        storedData.apiName,
+                        storedData.showFillers,
+                        storedData.dubStatus,
+                        storedData.start
+                    )
+
+            }
+
+            resultMetaSite.isFocusable = false
+
+            //resultReloadConnectionOpenInBrowser.setOnClickListener {view ->
+            //    view.context?.openBrowser(storedData?.url ?: return@setOnClickListener, fallbackWebview = true)
+            //}
 
             resultSeasonSelection.setAdapter()
             resultRangeSelection.setAdapter()
@@ -180,12 +239,97 @@ class ResultFragmentTv : ResultFragment() {
                 EpisodeAdapter(
                     false,
                     { episodeClick ->
-                        viewModel.handleAction(activity, episodeClick)
+                        viewModel.handleAction(episodeClick)
                     },
                     { downloadClickEvent ->
                         DownloadButtonSetup.handleDownloadClick(downloadClickEvent)
                     }
                 )
+
+            resultCastItems.layoutManager = object : LinearListLayout(view.context) {
+                override fun onRequestChildFocus(
+                    parent: RecyclerView,
+                    state: RecyclerView.State,
+                    child: View,
+                    focused: View?
+                ): Boolean {
+                    // Make the cast always focus the first visible item when focused
+                    // from somewhere else. Otherwise it jumps to the last item.
+                    return if (parent.focusedChild == null) {
+                        scrollToPosition(this.findFirstCompletelyVisibleItemPosition())
+                        true
+                    } else {
+                        super.onRequestChildFocus(parent, state, child, focused)
+                    }
+                }
+            }.apply {
+                this.orientation = RecyclerView.HORIZONTAL
+            }
+            resultCastItems.adapter = ActorAdaptor()
+        }
+
+        observeNullable(viewModel.resumeWatching) { resume ->
+            binding?.apply {
+                if (resume == null) {
+                    resultResumeParent.isVisible = false
+                    return@observeNullable
+                }
+                resultResumeParent.isVisible = true
+                resume.progress?.let { progress ->
+                    resultResumeSeriesTitle.apply {
+                        isVisible = !resume.isMovie
+                        text =
+                            if (resume.isMovie) null else context?.getNameFull(
+                                resume.result.name,
+                                resume.result.episode,
+                                resume.result.season
+                            )
+                    }
+
+                    resultResumeSeriesProgressText.setText(progress.progressLeft)
+                    resultResumeSeriesProgress.apply {
+                        isVisible = true
+                        this.max = progress.maxProgress
+                        this.progress = progress.progress
+                    }
+                    resultResumeProgressHolder.isVisible = true
+                } ?: run {
+                    resultResumeProgressHolder.isVisible = false
+                    resultResumeSeriesProgress.isVisible = false
+                    resultResumeSeriesTitle.isVisible = false
+                    resultResumeSeriesProgressText.isVisible = false
+                }
+
+                resultResumeSeriesButton.isVisible = !resume.isMovie
+                resultResumeSeriesButton.setOnClickListener {
+                    viewModel.handleAction(
+                        EpisodeClickEvent(
+                            storedData.playerAction, //?: ACTION_PLAY_EPISODE_IN_PLAYER,
+                            resume.result
+                        )
+                    )
+                }
+            }
+        }
+
+        observe(viewModel.trailers) { trailersLinks ->
+            context?.updateHasTrailers()
+            if (!LoadResponse.isTrailersEnabled) return@observe
+            val trailers = trailersLinks.flatMap { it.mirros }
+            binding?.resultPlayTrailer?.apply {
+                isGone = trailers.isEmpty()
+                setOnClickListener {
+                    if (trailers.isEmpty()) return@setOnClickListener
+                    activity.navigate(
+                        R.id.global_to_navigation_player, GeneratorPlayer.newInstance(
+                            ExtractorLinkGenerator(
+                                trailers,
+                                emptyList()
+                            )
+                        )
+                    )
+                }
+            }
         }
 
         observe(viewModel.watchStatus) { watchType ->
@@ -211,13 +355,11 @@ class ResultFragmentTv : ResultFragment() {
                     resultPlayMovie.setText(text)
                     resultPlayMovie.setOnClickListener {
                         viewModel.handleAction(
-                            activity,
                             EpisodeClickEvent(ACTION_CLICK_DEFAULT, ep)
                         )
                     }
                     resultPlayMovie.setOnLongClickListener {
                         viewModel.handleAction(
-                            activity,
                             EpisodeClickEvent(ACTION_SHOW_OPTIONS, ep)
                         )
                         return@setOnLongClickListener true
@@ -397,8 +539,7 @@ class ResultFragmentTv : ResultFragment() {
 
                     is Resource.Failure -> {
                         resultErrorText.text =
-                            (this@ResultFragmentTv.context?.let { getStoredData(it) }?.url?.plus("\n")
-                                ?: "") + data.errorString
+                            storedData.url.plus("\n") + data.errorString
                     }
                 }
 
@@ -407,7 +548,7 @@ class ResultFragmentTv : ResultFragment() {
                 resultLoading.isVisible = data is Resource.Loading
 
                 resultLoadingError.isVisible = data is Resource.Failure
-                resultReloadConnectionOpenInBrowser.isVisible = data is Resource.Failure
+                //resultReloadConnectionOpenInBrowser.isVisible = data is Resource.Failure
             }
         }
     }

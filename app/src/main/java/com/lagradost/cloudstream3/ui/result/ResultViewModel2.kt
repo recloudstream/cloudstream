@@ -19,6 +19,7 @@ import com.lagradost.cloudstream3.APIHolder.getId
 import com.lagradost.cloudstream3.APIHolder.unixTime
 import com.lagradost.cloudstream3.APIHolder.unixTimeMS
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
+import com.lagradost.cloudstream3.CommonActivity.activity
 import com.lagradost.cloudstream3.CommonActivity.getCastSession
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.LoadResponse.Companion.addTrailer
@@ -1144,9 +1145,9 @@ class ResultViewModel2 : ViewModel() {
     }
 
 
-    fun handleAction(activity: Activity?, click: EpisodeClickEvent) =
+    fun handleAction(click: EpisodeClickEvent) =
         viewModelScope.launchSafe {
-            handleEpisodeClickEvent(activity, click)
+            handleEpisodeClickEvent(click)
         }
 
     data class ExternalApp(
@@ -1176,7 +1177,7 @@ class ResultViewModel2 : ViewModel() {
         _episodeSynopsis.postValue(null)
     }
 
-    private suspend fun handleEpisodeClickEvent(activity: Activity?, click: EpisodeClickEvent) {
+    private suspend fun handleEpisodeClickEvent(click: EpisodeClickEvent) {
         when (click.action) {
             ACTION_SHOW_OPTIONS -> {
                 val options = mutableListOf<Pair<UiText, Int>>()
@@ -1234,7 +1235,6 @@ class ResultViewModel2 : ViewModel() {
                     options
                 ) { result ->
                     handleEpisodeClickEvent(
-                        activity,
                         click.copy(action = result ?: return@postPopup)
                     )
                 }
@@ -1244,13 +1244,11 @@ class ResultViewModel2 : ViewModel() {
                 activity?.let { ctx ->
                     if (ctx.isConnectedToChromecast()) {
                         handleEpisodeClickEvent(
-                            activity,
                             click.copy(action = ACTION_CHROME_CAST_EPISODE)
                         )
                     } else {
                         val action = getPlayerAction(ctx)
                         handleEpisodeClickEvent(
-                            activity,
                             click.copy(action = action)
                         )
                     }
@@ -2210,7 +2208,6 @@ class ResultViewModel2 : ViewModel() {
                         for (ep in currentRange) {
                             if (ep.getWatchProgress() > 0.9) continue
                             handleAction(
-                                activity,
                                 EpisodeClickEvent(
                                     getPlayerAction(activity),
                                     ep
@@ -2231,7 +2228,6 @@ class ResultViewModel2 : ViewModel() {
                             }
                             ?: return@launchSafe
                     handleAction(
-                        activity,
                         EpisodeClickEvent(
                             getPlayerAction(activity),
                             episode

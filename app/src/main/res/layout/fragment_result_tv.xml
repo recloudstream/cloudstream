@@ -88,6 +88,7 @@
             android:text="@string/reload_error"
             app:icon="@drawable/ic_baseline_autorenew_24" />
 
+        <!--
         <com.google.android.material.button.MaterialButton
             android:id="@+id/result_reload_connection_open_in_browser"
             style="@style/BlackButton"
@@ -99,6 +100,7 @@
             android:minWidth="200dp"
             android:text="@string/result_open_in_browser"
             app:icon="@drawable/ic_baseline_public_24" />
+            -->
 
         <TextView
             android:id="@+id/result_error_text"
@@ -439,7 +441,7 @@
                                 android:minWidth="250dp"
                                 android:nextFocusRight="@id/result_play_trailer"
                                 android:nextFocusUp="@id/result_cast_items"
-                                android:nextFocusDown="@id/result_resume_series_button_play"
+                                android:nextFocusDown="@id/result_resume_series_button"
                                 android:text="@string/play_movie_button"
                                 android:visibility="visible"
                                 app:icon="@drawable/ic_baseline_play_arrow_24">
@@ -457,7 +459,7 @@
                                 android:minWidth="250dp"
                                 android:nextFocusRight="@id/download_button"
                                 android:nextFocusUp="@id/result_cast_items"
-                                android:nextFocusDown="@id/result_resume_series_button_play"
+                                android:nextFocusDown="@id/result_resume_series_button"
                                 android:text="@string/play_trailer_button"
                                 android:visibility="gone"
                                 app:icon="@drawable/ic_baseline_play_arrow_24">
@@ -486,7 +488,7 @@
                                 android:minWidth="250dp"
                                 android:nextFocusLeft="@id/download_button"
                                 android:nextFocusRight="@id/result_bookmark_button"
-                                android:nextFocusDown="@id/result_resume_series_button_play"
+                                android:nextFocusDown="@id/result_resume_series_button"
                                 android:text="@string/type_none"
                                 android:visibility="visible" />
                         </LinearLayout>
@@ -521,7 +523,7 @@
                                 android:orientation="horizontal">
 
                                 <ImageView
-                                    android:id="@+id/result_resume_series_button_play"
+                                    android:id="@+id/result_resume_series_button"
                                     android:layout_width="30dp"
                                     android:layout_height="30dp"
 
@@ -600,7 +602,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
 
-                                android:nextFocusUp="@id/result_resume_series_button_play"
+                                android:nextFocusUp="@id/result_resume_series_button"
                                 android:nextFocusDown="@id/result_range_selection"
                                 android:orientation="horizontal"
                                 android:paddingBottom="10dp"
