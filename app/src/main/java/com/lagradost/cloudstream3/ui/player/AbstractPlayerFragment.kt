@@ -172,7 +172,7 @@ abstract class AbstractPlayerFragment(
         canEnterPipMode = isPlayingRightNow && hasPipModeSupport
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             activity?.let { act ->
-                PlayerPipHelper.updatePIPModeActions(act, isPlayingRightNow)
+                PlayerPipHelper.updatePIPModeActions(act, isPlayingRightNow, player.getAspectRatio())
             }
         }
     }

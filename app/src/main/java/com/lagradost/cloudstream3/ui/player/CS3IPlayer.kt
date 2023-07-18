@@ -5,6 +5,7 @@ import android.net.Uri
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import android.util.Rational
 import android.widget.FrameLayout
 import androidx.media3.common.C
 import androidx.preference.PreferenceManager
@@ -450,6 +451,12 @@ class CS3IPlayer : IPlayer {
             playerSelectedSubtitleTracks.any { (id, isSelected) ->
                 isSelected && sub.getId() == id
             }
+        }
+    }
+
+    override fun getAspectRatio(): Rational? {
+        return exoPlayer?.videoFormat?.let { format ->
+            Rational(format.width, format.height)
         }
     }
 

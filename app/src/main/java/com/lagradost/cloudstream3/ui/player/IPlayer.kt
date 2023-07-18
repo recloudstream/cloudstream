@@ -1,6 +1,7 @@
 package com.lagradost.cloudstream3.ui.player
 
 import android.content.Context
+import android.util.Rational
 import com.lagradost.cloudstream3.ui.subtitles.SaveCaptionStyle
 import com.lagradost.cloudstream3.utils.EpisodeSkip
 import com.lagradost.cloudstream3.utils.ExtractorLink
@@ -166,6 +167,19 @@ interface IPlayer {
     fun isActive(): Boolean
 
     fun getVideoTracks(): CurrentTracks
+
+    /**
+     * Original video aspect ratio used for PiP mode
+     *
+     * Set using: Width, Height.
+     * Example: Rational(16, 9)
+     *
+     * If null will default to set no aspect ratio.
+     *
+     * PiP functions calling this needs to coerce this value between 0.418410 and 2.390000
+     * to prevent crashes.
+     */
+    fun getAspectRatio(): Rational?
 
     /** If no parameters are set it'll default to no set size, Specifying the id allows for track overrides to force the player to pick the quality. */
     fun setMaxVideoSize(width: Int = Int.MAX_VALUE, height: Int = Int.MAX_VALUE, id: String? = null)
