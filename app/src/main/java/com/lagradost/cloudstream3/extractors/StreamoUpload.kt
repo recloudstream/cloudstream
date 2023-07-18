@@ -26,11 +26,11 @@ open class StreamoUpload : ExtractorApi() {
         for (script in scriptElements) {
             if (script.data().contains("eval(function(p,a,c,k,e,d)")) {
                 val data = getAndUnpack(script.data()).substringAfter("sources: [")
-                     .substringBefore("],").replace("file", "\"file\"") .trim()                                      
-                tryParseJson<List<File>>(data)?.let  {
+                     .substringBefore("],").replace("file", "\"file\"").trim()                                      
+                tryParseJson<List<File>>(data)?.let {
                     M3u8Helper.generateM3u8(
                         name,
-                        it.file,
+                        it.map { file -> file.file },
                         "$mainUrl/",
                     ).forEach { m3uData -> sources.add(m3uData) }
                 }
@@ -42,6 +42,4 @@ open class StreamoUpload : ExtractorApi() {
     private data class File(
         @JsonProperty("file") val file: String,
     )
-
-
 }
