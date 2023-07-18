@@ -1,8 +1,11 @@
 package com.lagradost.cloudstream3.ui.result
 
 import android.app.Dialog
+import android.content.res.ColorStateList
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
@@ -12,22 +15,42 @@ import com.lagradost.cloudstream3.DubStatus
 import com.lagradost.cloudstream3.LoadResponse
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.SearchResponse
+import com.lagradost.cloudstream3.databinding.FragmentResultTvBinding
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.mvvm.observeNullable
+import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.player.ExtractorLinkGenerator
 import com.lagradost.cloudstream3.ui.player.GeneratorPlayer
 import com.lagradost.cloudstream3.ui.search.SearchAdapter
 import com.lagradost.cloudstream3.ui.search.SearchHelper
 import com.lagradost.cloudstream3.utils.ExtractorLink
+import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialogInstant
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.popCurrentPage
-import kotlinx.android.synthetic.main.fragment_result_tv.*
 
 class ResultFragmentTv : ResultFragment() {
     override val resultLayout = R.layout.fragment_result_tv
+
+    private var binding: FragmentResultTvBinding? = null
+
+    override fun onDestroyView() {
+        binding = null
+        super.onDestroyView()
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        val root = super.onCreateView(inflater, container, savedInstanceState) ?: return null
+        binding = FragmentResultTvBinding.bind(root)
+
+        return root
+    }
 
     private var currentRecommendations: List<SearchResponse> = emptyList()
 
@@ -36,12 +59,15 @@ class ResultFragmentTv : ResultFragment() {
             is EpisodeRange -> {
                 viewModel.changeRange(data)
             }
+
             is Int -> {
                 viewModel.changeSeason(data)
             }
+
             is DubStatus -> {
                 viewModel.changeDubStatus(data)
             }
+
             is String -> {
                 setRecommendations(currentRecommendations, data)
             }
@@ -66,57 +92,60 @@ class ResultFragmentTv : ResultFragment() {
     private fun hasNoFocus(): Boolean {
         val focus = activity?.currentFocus
         if (focus == null || !focus.isVisible) return true
-        return focus == this.result_root
+        return focus == binding?.resultRoot
     }
 
     override fun updateEpisodes(episodes: Resource<List<ResultEpisode>>?) {
         super.updateEpisodes(episodes)
         if (episodes is Resource.Success && hasNoFocus()) {
-            result_episodes?.requestFocus()
+            binding?.resultEpisodes?.requestFocus()
         }
     }
 
     override fun updateMovie(data: Resource<Pair<UiText, ResultEpisode>>?) {
         super.updateMovie(data)
         if (data is Resource.Success && hasNoFocus()) {
-            result_play_movie?.requestFocus()
+            binding?.resultPlayMovie?.requestFocus()
         }
     }
 
     override fun setTrailers(trailers: List<ExtractorLink>?) {
         context?.updateHasTrailers()
         if (!LoadResponse.isTrailersEnabled) return
-
-        result_play_trailer?.isGone = trailers.isNullOrEmpty()
-        result_play_trailer?.setOnClickListener {
-            if (trailers.isNullOrEmpty()) return@setOnClickListener
-            activity.navigate(
-                R.id.global_to_navigation_player, GeneratorPlayer.newInstance(
-                    ExtractorLinkGenerator(
-                        trailers,
-                        emptyList()
+        binding?.resultPlayTrailer?.apply {
+            isGone = trailers.isNullOrEmpty()
+            setOnClickListener {
+                if (trailers.isNullOrEmpty()) return@setOnClickListener
+                activity.navigate(
+                    R.id.global_to_navigation_player, GeneratorPlayer.newInstance(
+                        ExtractorLinkGenerator(
+                            trailers,
+                            emptyList()
+                        )
                     )
                 )
-            )
+            }
         }
     }
 
     override fun setRecommendations(rec: List<SearchResponse>?, validApiName: String?) {
         currentRecommendations = rec ?: emptyList()
         val isInvalid = rec.isNullOrEmpty()
-        result_recommendations?.isGone = isInvalid
-        result_recommendations_holder?.isGone = isInvalid
-        val matchAgainst = validApiName ?: rec?.firstOrNull()?.apiName
-        (result_recommendations?.adapter as? SearchAdapter)?.updateList(rec?.filter { it.apiName == matchAgainst }
-            ?: emptyList())
+        binding?.apply {
+            resultRecommendationsList.isGone = isInvalid
+            resultRecommendationsHolder.isGone = isInvalid
+            val matchAgainst = validApiName ?: rec?.firstOrNull()?.apiName
+            (resultRecommendationsList.adapter as? SearchAdapter)?.updateList(rec?.filter { it.apiName == matchAgainst }
+                ?: emptyList())
 
-        rec?.map { it.apiName }?.distinct()?.let { apiNames ->
-            // very dirty selection
-            result_recommendations_filter_selection?.isVisible = apiNames.size > 1
-            result_recommendations_filter_selection?.update(apiNames.map { txt(it) to it })
-            result_recommendations_filter_selection?.select(apiNames.indexOf(matchAgainst))
-        } ?: run {
-            result_recommendations_filter_selection?.isVisible = false
+            rec?.map { it.apiName }?.distinct()?.let { apiNames ->
+                // very dirty selection
+                resultRecommendationsFilterSelection.isVisible = apiNames.size > 1
+                resultRecommendationsFilterSelection.update(apiNames.map { txt(it) to it })
+                resultRecommendationsFilterSelection.select(apiNames.indexOf(matchAgainst))
+            } ?: run {
+                resultRecommendationsFilterSelection.isVisible = false
+            }
         }
     }
 
@@ -124,24 +153,37 @@ class ResultFragmentTv : ResultFragment() {
     var popupDialog: Dialog? = null
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding?.apply {
+            resultEpisodes.layoutManager =
+                LinearListLayout(resultEpisodes.context).apply {
+                    setHorizontal()
+                }
 
-        result_episodes?.layoutManager =
-                //LinearListLayout(result_episodes ?: return, result_episodes?.context).apply {
-            LinearListLayout(result_episodes?.context).apply {
-                setHorizontal()
+            resultSeasonSelection.setAdapter()
+            resultRangeSelection.setAdapter()
+            resultDubSelection.setAdapter()
+            resultRecommendationsFilterSelection.setAdapter()
+        }
+
+        observe(viewModel.watchStatus) { watchType ->
+            binding?.resultBookmarkButton?.apply {
+                setText(watchType.stringRes)
+                setOnClickListener { view ->
+                    activity?.showBottomDialog(
+                        WatchType.values().map { view.context.getString(it.stringRes) }.toList(),
+                        watchType.ordinal,
+                        view.context.getString(R.string.action_add_to_bookmarks),
+                        showApply = false,
+                        {}) {
+                        viewModel.updateWatchStatus(WatchType.values()[it])
+                    }
+                }
             }
-       // (result_episodes?.adapter as EpisodeAdapter?)?.apply {
-      //      layout = R.layout.result_episode_both_tv
-      //  }
-        //result_episodes?.setMaxViewPoolSize(0, Int.MAX_VALUE)
+        }
 
-        result_season_selection.setAdapter()
-        result_range_selection.setAdapter()
-        result_dub_selection.setAdapter()
-        result_recommendations_filter_selection.setAdapter()
 
         observeNullable(viewModel.selectPopup) { popup ->
-            if(popup == null) {
+            if (popup == null) {
                 popupDialog?.dismissSafe(activity)
                 popupDialog = null
                 return@observeNullable
@@ -166,67 +208,70 @@ class ResultFragmentTv : ResultFragment() {
         }
 
         observeNullable(viewModel.loadedLinks) { load ->
-            if(load == null) {
+            if (load == null) {
                 loadingDialog?.dismissSafe(activity)
                 loadingDialog = null
                 return@observeNullable
             }
-                    if (loadingDialog?.isShowing != true) {
-                        loadingDialog?.dismissSafe(activity)
-                        loadingDialog = null
-                    }
-                    loadingDialog = loadingDialog ?: context?.let { ctx ->
-                        val builder = BottomSheetDialog(ctx)
-                        builder.setContentView(R.layout.bottom_loading)
-                        builder.setOnDismissListener {
-                            loadingDialog = null
-                            viewModel.cancelLinks()
-                        }
-                        //builder.setOnCancelListener {
-                        //    it?.dismiss()
-                        //}
-                        builder.setCanceledOnTouchOutside(true)
-                        builder.show()
-                        builder
-                    }
+            if (loadingDialog?.isShowing != true) {
+                loadingDialog?.dismissSafe(activity)
+                loadingDialog = null
+            }
+            loadingDialog = loadingDialog ?: context?.let { ctx ->
+                val builder = BottomSheetDialog(ctx)
+                builder.setContentView(R.layout.bottom_loading)
+                builder.setOnDismissListener {
+                    loadingDialog = null
+                    viewModel.cancelLinks()
+                }
+                //builder.setOnCancelListener {
+                //    it?.dismiss()
+                //}
+                builder.setCanceledOnTouchOutside(true)
+                builder.show()
+                builder
+            }
 
         }
 
 
         observeNullable(viewModel.episodesCountText) { count ->
-            result_episodes_text.setText(count)
+            binding?.resultEpisodesText.setText(count)
         }
 
         observe(viewModel.selectedRangeIndex) { selected ->
-            result_range_selection.select(selected)
+            binding?.resultRangeSelection.select(selected)
         }
         observe(viewModel.selectedSeasonIndex) { selected ->
-            result_season_selection.select(selected)
+            binding?.resultSeasonSelection.select(selected)
         }
         observe(viewModel.selectedDubStatusIndex) { selected ->
-            result_dub_selection.select(selected)
+            binding?.resultDubSelection.select(selected)
         }
         observe(viewModel.rangeSelections) {
-            result_range_selection.update(it)
+            binding?.resultRangeSelection.update(it)
         }
         observe(viewModel.dubSubSelections) {
-            result_dub_selection.update(it)
+            binding?.resultDubSelection.update(it)
         }
         observe(viewModel.seasonSelections) {
-            result_season_selection.update(it)
+            binding?.resultSeasonSelection.update(it)
         }
 
-        result_back?.setOnClickListener {
-            activity?.popCurrentPage()
-        }
-
-        result_recommendations?.spanCount = 8
-        result_recommendations?.adapter =
-            SearchAdapter(
-                ArrayList(),
-                result_recommendations,
-            ) { callback ->
-                SearchHelper.handleSearchClickCallback(callback)
+        binding?.apply {
+            resultBack.setOnClickListener {
+                activity?.popCurrentPage()
             }
+
+            resultRecommendationsList.spanCount = 8
+            resultRecommendationsList.adapter =
+                SearchAdapter(
+                    ArrayList(),
+                    resultRecommendationsList,
+                ) { callback ->
+                    SearchHelper.handleSearchClickCallback(callback)
+                }
+        }
+
     }
 }

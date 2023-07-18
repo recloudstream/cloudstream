@@ -746,7 +746,7 @@
                             android:layout_marginEnd="10dp"
                             android:nextFocusUp="@id/result_episodes"
 
-                            android:nextFocusDown="@id/result_recommendations"
+                            android:nextFocusDown="@id/result_recommendations_list"
                             android:orientation="horizontal"
                             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                             tools:itemCount="2"
@@ -763,7 +763,7 @@
                     </LinearLayout>
 
                     <com.lagradost.cloudstream3.ui.AutofitRecyclerView
-                        android:id="@+id/result_recommendations"
+                        android:id="@+id/result_recommendations_list"
                         android:layout_width="match_parent"
 
                         android:layout_height="wrap_content"

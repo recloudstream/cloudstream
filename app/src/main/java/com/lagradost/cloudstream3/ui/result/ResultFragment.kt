@@ -4,26 +4,19 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.Intent.*
-import android.content.res.ColorStateList
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
-import android.text.Editable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AbsListView
-import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
-import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.RecyclerView
-import com.discord.panels.OverlappingPanelsLayout
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipDrawable
 import com.lagradost.cloudstream3.APIHolder.getApiDubstatusSettings
@@ -38,7 +31,6 @@ import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.mvvm.*
 import com.lagradost.cloudstream3.services.SubscriptionWorkManager
 import com.lagradost.cloudstream3.syncproviders.providers.Kitsu
-import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_ACTION_DOWNLOAD
 import com.lagradost.cloudstream3.ui.download.DownloadButtonSetup.handleDownloadClick
 import com.lagradost.cloudstream3.ui.quicksearch.QuickSearchFragment
@@ -53,7 +45,6 @@ import com.lagradost.cloudstream3.utils.AppUtils.openBrowser
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getVideoWatchState
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
-import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
@@ -364,8 +355,9 @@ open class ResultFragment : ResultTrailerPlayer() {
                         return@setOnLongClickListener true
                     }
 
-                    val show = viewModel.currentRepo?.api?.hasDownloadSupport == true && !isTvSettings()
-                    if(show) {
+                    val show =
+                        viewModel.currentRepo?.api?.hasDownloadSupport == true && !isTvSettings()
+                    if (show) {
                         download_button?.setDefaultClickListener(
                             VideoDownloadHelper.DownloadEpisodeCached(
                                 ep.name,
@@ -379,7 +371,6 @@ open class ResultFragment : ResultTrailerPlayer() {
                                 System.currentTimeMillis(),
                             )
                         ) { click ->
-                            println("Click:$click")
                             when (click.action) {
                                 DOWNLOAD_ACTION_DOWNLOAD -> {
                                     viewModel.handleAction(
@@ -393,7 +384,6 @@ open class ResultFragment : ResultTrailerPlayer() {
                         }
                     }
                     download_button?.isVisible = show
-
                 }
             }
 
@@ -593,42 +583,6 @@ open class ResultFragment : ResultTrailerPlayer() {
             }
         }
 
-        observe(viewModel.watchStatus) { watchType ->
-            result_bookmark_button?.text = getString(watchType.stringRes)
-            result_bookmark_fab?.text = getString(watchType.stringRes)
-
-            if (watchType == WatchType.NONE) {
-                result_bookmark_fab?.context?.colorFromAttribute(R.attr.white)
-            } else {
-                result_bookmark_fab?.context?.colorFromAttribute(R.attr.colorPrimary)
-            }?.let {
-                val colorState = ColorStateList.valueOf(it)
-                result_bookmark_fab?.iconTint = colorState
-                result_bookmark_fab?.setTextColor(colorState)
-            }
-
-            result_bookmark_fab?.setOnClickListener { fab ->
-                activity?.showBottomDialog(
-                    WatchType.values().map { fab.context.getString(it.stringRes) }.toList(),
-                    watchType.ordinal,
-                    fab.context.getString(R.string.action_add_to_bookmarks),
-                    showApply = false,
-                    {}) {
-                    viewModel.updateWatchStatus(WatchType.values()[it])
-                }
-            }
-
-            result_bookmark_button?.setOnClickListener { fab ->
-                activity?.showBottomDialog(
-                    WatchType.values().map { fab.context.getString(it.stringRes) }.toList(),
-                    watchType.ordinal,
-                    fab.context.getString(R.string.action_add_to_bookmarks),
-                    showApply = false,
-                    {}) {
-                    viewModel.updateWatchStatus(WatchType.values()[it])
-                }
-            }
-        }
 
         // This is to band-aid FireTV navigation
         val isTv = isTvSettings()
@@ -636,152 +590,6 @@ open class ResultFragment : ResultTrailerPlayer() {
         result_episode_select?.isFocusableInTouchMode = isTv
         result_dub_select?.isFocusableInTouchMode = isTv
 
-        context?.let { ctx ->
-            val arrayAdapter = ArrayAdapter<String>(ctx, R.layout.sort_bottom_single_choice)
-            /*
-            -1 -> None
-            0 -> Watching
-            1 -> Completed
-            2 -> OnHold
-            3 -> Dropped
-            4 -> PlanToWatch
-            5 -> ReWatching
-            */
-            val items = listOf(
-                R.string.none,
-                R.string.type_watching,
-                R.string.type_completed,
-                R.string.type_on_hold,
-                R.string.type_dropped,
-                R.string.type_plan_to_watch,
-                R.string.type_re_watching
-            ).map { ctx.getString(it) }
-            arrayAdapter.addAll(items)
-            result_sync_check?.choiceMode = AbsListView.CHOICE_MODE_SINGLE
-            result_sync_check?.adapter = arrayAdapter
-            UIHelper.setListViewHeightBasedOnItems(result_sync_check)
-
-            result_sync_check?.setOnItemClickListener { _, _, which, _ ->
-                syncModel.setStatus(which - 1)
-            }
-
-            result_sync_rating?.addOnChangeListener { _, value, _ ->
-                syncModel.setScore(value.toInt())
-            }
-
-            result_sync_add_episode?.setOnClickListener {
-                syncModel.setEpisodesDelta(1)
-            }
-
-            result_sync_sub_episode?.setOnClickListener {
-                syncModel.setEpisodesDelta(-1)
-            }
-
-            result_sync_current_episodes?.doOnTextChanged { text, _, before, count ->
-                if (count == before) return@doOnTextChanged
-                text?.toString()?.toIntOrNull()?.let { ep ->
-                    syncModel.setEpisodes(ep)
-                }
-            }
-        }
-
-        observe(syncModel.synced) { list ->
-            result_sync_names?.text =
-                list.filter { it.isSynced && it.hasAccount }.joinToString { it.name }
-
-            val newList = list.filter { it.isSynced && it.hasAccount }
-
-            result_mini_sync?.isVisible = newList.isNotEmpty()
-            (result_mini_sync?.adapter as? ImageAdapter)?.updateList(newList.mapNotNull { it.icon })
-        }
-
-        var currentSyncProgress = 0
-
-        fun setSyncMaxEpisodes(totalEpisodes: Int?) {
-            result_sync_episodes?.max = (totalEpisodes ?: 0) * 1000
-
-            normalSafeApiCall {
-                val ctx = result_sync_max_episodes?.context
-                result_sync_max_episodes?.text =
-                    totalEpisodes?.let { episodes ->
-                        ctx?.getString(R.string.sync_total_episodes_some)?.format(episodes)
-                    } ?: run {
-                        ctx?.getString(R.string.sync_total_episodes_none)
-                    }
-            }
-        }
-
-        observe(syncModel.metadata) { meta ->
-            when (meta) {
-                is Resource.Success -> {
-                    val d = meta.value
-                    result_sync_episodes?.progress = currentSyncProgress * 1000
-                    setSyncMaxEpisodes(d.totalEpisodes)
-
-                    viewModel.setMeta(d, syncModel.getSyncs())
-                }
-
-                is Resource.Loading -> {
-                    result_sync_max_episodes?.text =
-                        result_sync_max_episodes?.context?.getString(R.string.sync_total_episodes_none)
-                }
-
-                else -> {}
-            }
-        }
-
-        observe(syncModel.userData) { status ->
-            var closed = false
-            when (status) {
-                is Resource.Failure -> {
-                    result_sync_loading_shimmer?.stopShimmer()
-                    result_sync_loading_shimmer?.isVisible = false
-                    result_sync_holder?.isVisible = false
-                    closed = true
-                }
-
-                is Resource.Loading -> {
-                    result_sync_loading_shimmer?.startShimmer()
-                    result_sync_loading_shimmer?.isVisible = true
-                    result_sync_holder?.isVisible = false
-                }
-
-                is Resource.Success -> {
-                    result_sync_loading_shimmer?.stopShimmer()
-                    result_sync_loading_shimmer?.isVisible = false
-                    result_sync_holder?.isVisible = true
-
-                    val d = status.value
-                    result_sync_rating?.value = d.score?.toFloat() ?: 0.0f
-                    result_sync_check?.setItemChecked(d.status + 1, true)
-                    val watchedEpisodes = d.watchedEpisodes ?: 0
-                    currentSyncProgress = watchedEpisodes
-
-                    d.maxEpisodes?.let {
-                        // don't directly call it because we don't want to override metadata observe
-                        setSyncMaxEpisodes(it)
-                    }
-
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                        result_sync_episodes?.setProgress(watchedEpisodes * 1000, true)
-                    } else {
-                        result_sync_episodes?.progress = watchedEpisodes * 1000
-                    }
-                    result_sync_current_episodes?.text =
-                        Editable.Factory.getInstance()?.newEditable(watchedEpisodes.toString())
-                    normalSafeApiCall { // format might fail
-                        context?.getString(R.string.sync_score_format)?.format(d.score ?: 0)?.let {
-                            result_sync_score_text?.text = it
-                        }
-                    }
-                }
-
-                null -> {
-                    closed = false
-                }
-            }
-            result_overlapping_panels?.setStartPanelLockState(if (closed) OverlappingPanelsLayout.LockState.CLOSE else OverlappingPanelsLayout.LockState.UNLOCKED)
-        }
 
         observeNullable(viewModel.resumeWatching) { resume ->
             if (resume == null) {
@@ -839,10 +647,6 @@ open class ResultFragment : ResultTrailerPlayer() {
         result_cast_items?.setOnFocusChangeListener { _, hasFocus ->
             // Always escape focus
             if (hasFocus) result_bookmark_button?.requestFocus()
-        }
-
-        result_sync_set_score?.setOnClickListener {
-            syncModel.publishUserData()
         }
 
         observe(viewModel.trailers) { trailers ->

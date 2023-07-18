@@ -92,7 +92,6 @@ class GeneratorPlayer : FullScreenPlayer() {
     private var preferredAutoSelectSubtitles: String? = null // null means do nothing, "" means none
 
     private var binding: FragmentPlayerBinding? = null
-    private var playerBinding: PlayerCustomLayoutBinding? = null
 
     private fun startLoading() {
         player.release()
@@ -1236,15 +1235,11 @@ class GeneratorPlayer : FullScreenPlayer() {
         unwrapBundle(arguments)
 
         val root = super.onCreateView(inflater, container, savedInstanceState) ?: return null
-        binding = FragmentPlayerBinding.bind(root).also { b ->
-            playerBinding = PlayerCustomLayoutBinding.bind(b.playerView.findViewById(R.id.player_holder))
-        }
-
+        binding = FragmentPlayerBinding.bind(root)
         return root
     }
 
     override fun onDestroyView() {
-        playerBinding = null
         binding = null
         super.onDestroyView()
     }

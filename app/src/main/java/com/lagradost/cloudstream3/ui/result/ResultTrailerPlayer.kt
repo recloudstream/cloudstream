@@ -13,6 +13,7 @@ import androidx.core.view.isVisible
 import com.discord.panels.PanelsChildGestureRegionObserver
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.ui.player.CSPlayerEvent
+import com.lagradost.cloudstream3.ui.player.FullScreenPlayer
 import com.lagradost.cloudstream3.ui.player.SubtitleData
 import com.lagradost.cloudstream3.utils.IOnBackPressed
 import kotlinx.android.synthetic.main.fragment_result.*
@@ -20,10 +21,9 @@ import kotlinx.android.synthetic.main.fragment_result.result_smallscreen_holder
 import kotlinx.android.synthetic.main.fragment_result_swipe.*
 import kotlinx.android.synthetic.main.fragment_result_tv.*
 import kotlinx.android.synthetic.main.fragment_trailer.*
-import kotlinx.android.synthetic.main.trailer_custom_layout.*
 
 
-open class ResultTrailerPlayer : com.lagradost.cloudstream3.ui.player.FullScreenPlayer(),
+open class ResultTrailerPlayer : FullScreenPlayer(),
     PanelsChildGestureRegionObserver.GestureRegionsListener, IOnBackPressed {
 
     override var lockRotation = false
@@ -75,7 +75,7 @@ open class ResultTrailerPlayer : com.lagradost.cloudstream3.ui.player.FullScreen
                     )
             }
 
-            player_intro_play?.apply {
+            playerBinding?.playerIntroPlay?.apply {
                 layoutParams =
                     FrameLayout.LayoutParams(
                         FrameLayout.LayoutParams.MATCH_PARENT,
@@ -83,7 +83,7 @@ open class ResultTrailerPlayer : com.lagradost.cloudstream3.ui.player.FullScreen
                     )
             }
 
-            if (player_intro_play?.isGone == true) {
+            if (playerBinding?.playerIntroPlay?.isGone == true) {
                 result_top_holder?.apply {
 
                     val anim = ValueAnimator.ofInt(
@@ -131,7 +131,8 @@ open class ResultTrailerPlayer : com.lagradost.cloudstream3.ui.player.FullScreen
     private fun updateFullscreen(fullscreen: Boolean) {
         isFullScreenPlayer = fullscreen
         lockRotation = fullscreen
-        player_fullscreen?.setImageResource(if (fullscreen) R.drawable.baseline_fullscreen_exit_24 else R.drawable.baseline_fullscreen_24)
+
+        playerBinding?.playerFullscreen?.setImageResource(if (fullscreen) R.drawable.baseline_fullscreen_exit_24 else R.drawable.baseline_fullscreen_24)
         if (fullscreen) {
             enterFullscreen()
             result_top_bar?.isVisible = false
@@ -157,14 +158,14 @@ open class ResultTrailerPlayer : com.lagradost.cloudstream3.ui.player.FullScreen
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        player_fullscreen?.setOnClickListener {
+        playerBinding?.playerFullscreen?.setOnClickListener {
             updateFullscreen(!isFullScreenPlayer)
         }
         updateFullscreen(isFullScreenPlayer)
         uiReset()
 
-        player_intro_play?.setOnClickListener {
-            player_intro_play?.isGone = true
+        playerBinding?.playerIntroPlay?.setOnClickListener {
+            playerBinding?.playerIntroPlay?.isGone = true
             player.handleEvent(CSPlayerEvent.Play)
             updateUIVisibility()
             fixPlayerSize()
