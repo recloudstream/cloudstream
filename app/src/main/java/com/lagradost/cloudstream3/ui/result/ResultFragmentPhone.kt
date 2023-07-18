@@ -53,11 +53,9 @@ import com.lagradost.cloudstream3.ui.player.CSPlayerEvent
 import com.lagradost.cloudstream3.ui.quicksearch.QuickSearchFragment
 import com.lagradost.cloudstream3.ui.search.SearchAdapter
 import com.lagradost.cloudstream3.ui.search.SearchHelper
-import com.lagradost.cloudstream3.ui.settings.SettingsFragment
 import com.lagradost.cloudstream3.utils.AppUtils.html
 import com.lagradost.cloudstream3.utils.AppUtils.isCastApiAvailable
 import com.lagradost.cloudstream3.utils.AppUtils.openBrowser
-import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialogInstant
@@ -70,13 +68,6 @@ import com.lagradost.cloudstream3.utils.UIHelper.populateChips
 import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIconsAndNoStringRes
 import com.lagradost.cloudstream3.utils.UIHelper.setImage
 import com.lagradost.cloudstream3.utils.VideoDownloadHelper
-import kotlinx.android.synthetic.main.download_button.result_download_movie
-import kotlinx.android.synthetic.main.fragment_result.download_button
-import kotlinx.android.synthetic.main.fragment_result.result_episode_loading
-import kotlinx.android.synthetic.main.fragment_result.result_episodes
-import kotlinx.android.synthetic.main.fragment_result.result_play_movie
-import kotlinx.android.synthetic.main.fragment_result_tv.temporary_no_focus
-import kotlinx.coroutines.delay
 
 
 open class ResultFragmentPhone : ResultFragment(),

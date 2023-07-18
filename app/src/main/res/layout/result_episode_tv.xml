@@ -37,7 +37,7 @@
                 tools:visibility="visible"
                 android:gravity="center"
                 android:layout_gravity="center"
-                style="@style/SmallBlackButton"
+                style="@style/SmallWhiteButton"
                 android:text="@string/filler"
                 android:id="@+id/episode_filler" />
 

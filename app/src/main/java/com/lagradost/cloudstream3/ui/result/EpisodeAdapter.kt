@@ -159,9 +159,11 @@ class EpisodeAdapter(
         fun bind(card: ResultEpisode) {
             localCard = card
 
-            binding.episodeLinHolder.layoutParams.apply {
-                width = if(isTvSettings()) ViewGroup.LayoutParams.WRAP_CONTENT else ViewGroup.LayoutParams.MATCH_PARENT
-            }
+            val setWidth = if(isTvSettings()) ViewGroup.LayoutParams.WRAP_CONTENT else ViewGroup.LayoutParams.MATCH_PARENT
+
+            binding.episodeLinHolder.layoutParams.width = setWidth
+            binding.episodeHolderLarge.layoutParams.width = setWidth
+            binding.episodeHolder.layoutParams.width = setWidth
 
             val isTrueTv = isTrueTvSettings()
 

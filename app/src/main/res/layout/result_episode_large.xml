@@ -14,6 +14,7 @@
     app:cardCornerRadius="@dimen/rounded_image_radius">
 
     <LinearLayout
+        android:id="@+id/episode_holder"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:foreground="?android:attr/selectableItemBackgroundBorderless"
@@ -77,7 +78,7 @@
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/episode_filler"
-                        style="@style/SmallBlackButton"
+                        style="@style/SmallWhiteButton"
                         android:layout_gravity="start"
                         android:layout_marginEnd="10dp"
                         android:text="@string/filler" />

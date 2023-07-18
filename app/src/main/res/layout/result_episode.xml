@@ -67,7 +67,7 @@
         <!--marquee_forever-->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/episode_filler"
-            style="@style/SmallBlackButton"
+            style="@style/SmallWhiteButton"
             android:layout_gravity="center"
             android:text="@string/filler" />
 
