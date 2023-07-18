@@ -1,8 +1,11 @@
 package com.lagradost.cloudstream3.ui.result
 
+import android.annotation.SuppressLint
 import android.app.Dialog
+import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Rect
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.text.Editable
@@ -15,6 +18,7 @@ import android.view.animation.DecelerateInterpolator
 import android.widget.AbsListView
 import android.widget.ArrayAdapter
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.core.widget.NestedScrollView
@@ -41,12 +45,19 @@ import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.mvvm.observeNullable
+import com.lagradost.cloudstream3.services.SubscriptionWorkManager
 import com.lagradost.cloudstream3.ui.WatchType
+import com.lagradost.cloudstream3.ui.download.DOWNLOAD_ACTION_DOWNLOAD
+import com.lagradost.cloudstream3.ui.download.DownloadButtonSetup
 import com.lagradost.cloudstream3.ui.player.CSPlayerEvent
+import com.lagradost.cloudstream3.ui.quicksearch.QuickSearchFragment
 import com.lagradost.cloudstream3.ui.search.SearchAdapter
 import com.lagradost.cloudstream3.ui.search.SearchHelper
+import com.lagradost.cloudstream3.ui.settings.SettingsFragment
+import com.lagradost.cloudstream3.utils.AppUtils.html
 import com.lagradost.cloudstream3.utils.AppUtils.isCastApiAvailable
 import com.lagradost.cloudstream3.utils.AppUtils.openBrowser
+import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialogInstant
@@ -55,14 +66,25 @@ import com.lagradost.cloudstream3.utils.UIHelper
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.popCurrentPage
+import com.lagradost.cloudstream3.utils.UIHelper.populateChips
 import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIconsAndNoStringRes
+import com.lagradost.cloudstream3.utils.UIHelper.setImage
+import com.lagradost.cloudstream3.utils.VideoDownloadHelper
+import kotlinx.android.synthetic.main.download_button.result_download_movie
+import kotlinx.android.synthetic.main.fragment_result.download_button
+import kotlinx.android.synthetic.main.fragment_result.result_episode_loading
+import kotlinx.android.synthetic.main.fragment_result.result_episodes
+import kotlinx.android.synthetic.main.fragment_result.result_play_movie
+import kotlinx.android.synthetic.main.fragment_result_tv.temporary_no_focus
+import kotlinx.coroutines.delay
 
 
-class ResultFragmentPhone : ResultFragment() {
-    private var binding: FragmentResultSwipeBinding? = null
-    private var resultBinding: FragmentResultBinding? = null
-    private var recommendationBinding: ResultRecommendationsBinding? = null
-    private var syncBinding: ResultSyncBinding? = null
+open class ResultFragmentPhone : ResultFragment(),
+    PanelsChildGestureRegionObserver.GestureRegionsListener {
+    protected var binding: FragmentResultSwipeBinding? = null
+    protected var resultBinding: FragmentResultBinding? = null
+    protected var recommendationBinding: ResultRecommendationsBinding? = null
+    protected var syncBinding: ResultSyncBinding? = null
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -205,42 +227,157 @@ class ResultFragmentPhone : ResultFragment() {
 
     var selectSeason: String? = null
 
+    private fun setUrl(url : String?) {
+        if(url == null) {
+            binding?.resultOpenInBrowser?.isVisible = false
+            return
+        }
+
+        binding?.resultOpenInBrowser?.apply {
+            isVisible = url.startsWith("http")
+            setOnClickListener {
+                val i = Intent(Intent.ACTION_VIEW)
+                i.data = Uri.parse(url)
+                try {
+                    startActivity(i)
+                } catch (e: Exception) {
+                    logError(e)
+                }
+            }
+        }
+    }
+
+    @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val apiName = arguments?.getString(API_NAME_BUNDLE) ?: return
 
         super.onViewCreated(view, savedInstanceState)
 
+        UIHelper.fixPaddingStatusbar(binding?.resultTopBar)
+        val storedData = (activity ?: context)?.let {
+            getStoredData(it)
+        }
 
+        setUrl(storedData?.url)
+        syncModel.addFromUrl(storedData?.url)
 
-        playerBinding?.playerOpenSource?.setOnClickListener {
-            currentTrailers.getOrNull(currentTrailerIndex)?.let {
-                context?.openBrowser(it.url)
+        val api = APIHolder.getApiFromNameNull(apiName)
+
+        resultBinding?.apply {
+            resultEpisodes.adapter =
+                EpisodeAdapter(
+                    api?.hasDownloadSupport == true,
+                    { episodeClick ->
+                        viewModel.handleAction(activity, episodeClick)
+                    },
+                    { downloadClickEvent ->
+                        DownloadButtonSetup.handleDownloadClick(downloadClickEvent)
+                    }
+                )
+            resultCastItems.let {
+                PanelsChildGestureRegionObserver.Provider.get().register(it)
+            }
+            resultScroll.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { _, _, scrollY, _, oldScrollY ->
+                val dy = scrollY - oldScrollY
+                if (dy > 0) { //check for scroll down
+                    binding?.resultBookmarkFab?.shrink()
+                } else if (dy < -5) {
+                    binding?.resultBookmarkFab?.extend()
+                }
+                if (!isFullScreenPlayer && player.getIsPlaying()) {
+                    if (scrollY > (resultBinding?.fragmentTrailer?.playerBackground?.height
+                            ?: scrollY)
+                    ) {
+                        player.handleEvent(CSPlayerEvent.Pause)
+                    }
+                }
+            })
+        }
+
+        binding?.apply {
+            resultOverlappingPanels.setStartPanelLockState(OverlappingPanelsLayout.LockState.CLOSE)
+            resultOverlappingPanels.setEndPanelLockState(OverlappingPanelsLayout.LockState.CLOSE)
+            resultBack.setOnClickListener {
+                activity?.popCurrentPage()
+            }
+            resultMiniSync.adapter = ImageAdapter(
+                nextFocusDown = R.id.result_sync_set_score,
+                clickCallback = { action ->
+                    if (action == IMAGE_CLICK || action == IMAGE_LONG_CLICK) {
+                        if (binding?.resultOverlappingPanels?.getSelectedPanel()?.ordinal == 1) {
+                            binding?.resultOverlappingPanels?.openStartPanel()
+                        } else {
+                            binding?.resultOverlappingPanels?.closePanels()
+                        }
+                    }
+                })
+            resultSubscribe.setOnClickListener {
+                val isSubscribed =
+                    viewModel.toggleSubscriptionStatus() ?: return@setOnClickListener
+
+                val message = if (isSubscribed) {
+                    // Kinda icky to have this here, but it works.
+                    SubscriptionWorkManager.enqueuePeriodicWork(context)
+                    R.string.subscription_new
+                } else {
+                    R.string.subscription_deleted
+                }
+
+                val name = (viewModel.page.value as? Resource.Success)?.value?.title
+                    ?: txt(R.string.no_data).asStringNull(context) ?: ""
+                CommonActivity.showToast(txt(message, name), Toast.LENGTH_SHORT)
+            }
+            mediaRouteButton.apply {
+                val chromecastSupport = api?.hasChromecastSupport == true
+                alpha = if (chromecastSupport) 1f else 0.3f
+                if (!chromecastSupport) {
+                    setOnClickListener {
+                        CommonActivity.showToast(
+                            R.string.no_chromecast_support_toast,
+                            Toast.LENGTH_LONG
+                        )
+                    }
+                }
+                activity?.let { act ->
+                    if (act.isCastApiAvailable()) {
+                        try {
+                            CastButtonFactory.setUpMediaRouteButton(act, this)
+                            val castContext = CastContext.getSharedInstance(act.applicationContext)
+                            isGone = castContext.castState == CastState.NO_DEVICES_AVAILABLE
+                            // this shit leaks for some reason
+                            //castContext.addCastStateListener { state ->
+                            //    media_route_button?.isGone = state == CastState.NO_DEVICES_AVAILABLE
+                            //}
+                        } catch (e: Exception) {
+                            logError(e)
+                        }
+                    }
+                }
             }
         }
-        binding?.resultOverlappingPanels?.setStartPanelLockState(OverlappingPanelsLayout.LockState.CLOSE)
-        binding?.resultOverlappingPanels?.setEndPanelLockState(OverlappingPanelsLayout.LockState.CLOSE)
 
-        recommendationBinding?.resultRecommendationsList?.apply {
-            spanCount = 3
-            adapter =
-                SearchAdapter(
-                    ArrayList(),
-                    this,
-                ) { callback ->
-                    SearchHelper.handleSearchClickCallback(callback)
+        playerBinding?.apply {
+            playerOpenSource.setOnClickListener {
+                currentTrailers.getOrNull(currentTrailerIndex)?.let {
+                    context?.openBrowser(it.url)
                 }
+            }
+        }
+
+        recommendationBinding?.apply {
+            resultRecommendationsList.apply {
+                spanCount = 3
+                adapter =
+                    SearchAdapter(
+                        ArrayList(),
+                        this,
+                    ) { callback ->
+                        SearchHelper.handleSearchClickCallback(callback)
+                    }
+            }
         }
 
         PanelsChildGestureRegionObserver.Provider.get().addGestureRegionsUpdateListener(this)
-
-        resultBinding?.resultCastItems?.let {
-            PanelsChildGestureRegionObserver.Provider.get().register(it)
-        }
-
-
-        binding?.resultBack?.setOnClickListener {
-            activity?.popCurrentPage()
-        }
 
         /*
         result_bookmark_button?.setOnClickListener {
@@ -253,62 +390,165 @@ class ResultFragmentPhone : ResultFragment() {
             }
         }*/
 
-        binding?.resultMiniSync?.adapter = ImageAdapter(
-            nextFocusDown = R.id.result_sync_set_score,
-            clickCallback = { action ->
-                if (action == IMAGE_CLICK || action == IMAGE_LONG_CLICK) {
-                    if (binding?.resultOverlappingPanels?.getSelectedPanel()?.ordinal == 1) {
-                        binding?.resultOverlappingPanels?.openStartPanel()
+        observeNullable(viewModel.subscribeStatus) { isSubscribed ->
+            binding?.resultSubscribe?.isVisible = isSubscribed != null
+            if (isSubscribed == null) return@observeNullable
+
+            val drawable = if (isSubscribed) {
+                R.drawable.ic_baseline_notifications_active_24
+            } else {
+                R.drawable.baseline_notifications_none_24
+            }
+
+            binding?.resultSubscribe?.setImageResource(drawable)
+        }
+
+        observe(viewModel.trailers) { trailers ->
+            setTrailers(trailers.flatMap { it.mirros }) // I dont care about subtitles yet!
+        }
+
+        observeNullable(viewModel.episodes) { episodes ->
+            resultBinding?.apply {
+                // no failure?
+                resultEpisodeLoading.isVisible = episodes is Resource.Loading
+                resultEpisodes.isVisible = episodes is Resource.Success
+                if(episodes is Resource.Success) {
+                    (resultEpisodes.adapter as? EpisodeAdapter)?.updateList(episodes.value)
+                }
+            }
+        }
+
+        observeNullable(viewModel.movie) { data ->
+            resultBinding?.apply {
+                resultPlayMovie.isVisible = data is Resource.Success
+                downloadButton.isVisible =
+                    data is Resource.Success && viewModel.currentRepo?.api?.hasDownloadSupport == true
+
+                (data as? Resource.Success)?.value?.let { (text, ep) ->
+                    resultPlayMovie.setText(text)
+                    resultPlayMovie.setOnClickListener {
+                        viewModel.handleAction(
+                            activity,
+                            EpisodeClickEvent(ACTION_CLICK_DEFAULT, ep)
+                        )
+                    }
+                    resultPlayMovie.setOnLongClickListener {
+                        viewModel.handleAction(
+                            activity,
+                            EpisodeClickEvent(ACTION_SHOW_OPTIONS, ep)
+                        )
+                        return@setOnLongClickListener true
+                    }
+                    downloadButton.setDefaultClickListener(
+                        VideoDownloadHelper.DownloadEpisodeCached(
+                            ep.name,
+                            ep.poster,
+                            0,
+                            null,
+                            ep.id,
+                            ep.id,
+                            null,
+                            null,
+                            System.currentTimeMillis(),
+                        )
+                    ) { click ->
+                        when (click.action) {
+                            DOWNLOAD_ACTION_DOWNLOAD -> {
+                                viewModel.handleAction(
+                                    activity,
+                                    EpisodeClickEvent(ACTION_DOWNLOAD_EPISODE, ep)
+                                )
+                            }
+
+                            else -> DownloadButtonSetup.handleDownloadClick(click)
+                        }
+                    }
+                }
+            }
+        }
+
+        observe(viewModel.page) { data ->
+            if (data == null) return@observe
+            resultBinding?.apply {
+                (data as? Resource.Success)?.value?.let { d ->
+                    resultVpn.setText(d.vpnText)
+                    resultInfo.setText(d.metaText)
+                    resultNoEpisodes.setText(d.noEpisodesFoundText)
+                    resultTitle.setText(d.titleText)
+                    resultMetaSite.setText(d.apiName)
+                    resultMetaType.setText(d.typeText)
+                    resultMetaYear.setText(d.yearText)
+                    resultMetaDuration.setText(d.durationText)
+                    resultMetaRating.setText(d.ratingText)
+                    resultCastText.setText(d.actorsText)
+                    resultNextAiring.setText(d.nextAiringEpisode)
+                    resultNextAiringTime.setText(d.nextAiringDate)
+                    resultPoster.setImage(d.posterImage)
+                    resultPosterBackground.setImage(d.posterBackgroundImage)
+                    resultDescription.setTextHtml(d.plotText)
+                    resultDescription.setOnClickListener { view ->
+                        // todo bottom view?
+                        view.context?.let { ctx ->
+                            val builder: AlertDialog.Builder =
+                                AlertDialog.Builder(ctx, R.style.AlertDialogCustom)
+                            builder.setMessage(d.plotText.asString(ctx).html())
+                                .setTitle(d.plotHeaderText.asString(ctx))
+                                .show()
+                        }
+                    }
+
+                    populateChips(resultTag, d.tags)
+
+                    resultComingSoon.isVisible = d.comingSoon
+                    resultDataHolder.isGone = d.comingSoon
+
+                    resultCastItems.isGone = d.actors.isNullOrEmpty()
+                    (resultCastItems.adapter as? ActorAdaptor)?.updateList(d.actors ?: emptyList())
+
+                    if (syncModel.addSyncs(d.syncData)) {
+                        syncModel.updateMetaAndUser()
+                        syncModel.updateSynced()
                     } else {
-                        binding?.resultOverlappingPanels?.closePanels()
+                        syncModel.addFromUrl(d.url)
+                    }
+
+                    binding?.apply {
+                        resultSearch.setOnClickListener {
+                            QuickSearchFragment.pushSearch(activity, d.title)
+                        }
+
+                        resultShare.setOnClickListener {
+                            try {
+                                val i = Intent(Intent.ACTION_SEND)
+                                i.type = "text/plain"
+                                i.putExtra(Intent.EXTRA_SUBJECT, d.title)
+                                i.putExtra(Intent.EXTRA_TEXT, d.url)
+                                startActivity(Intent.createChooser(i, d.title))
+                            } catch (e: Exception) {
+                                logError(e)
+                            }
+                        }
+
+                        setUrl(d.url)
+                        resultBookmarkFab.apply {
+                            isVisible = true
+                            extend()
+                        }
                     }
                 }
-            })
 
+                (data as? Resource.Failure)?.let { data ->
+                    resultErrorText.text = (storedData?.url?.plus("\n") ?: "") + data.errorString
+                }
 
-        resultBinding?.resultScroll?.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { _, _, scrollY, _, oldScrollY ->
-            val dy = scrollY - oldScrollY
-            if (dy > 0) { //check for scroll down
-                binding?.resultBookmarkFab?.shrink()
-            } else if (dy < -5) {
-                binding?.resultBookmarkFab?.extend()
-            }
-            if (!isFullScreenPlayer && player.getIsPlaying()) {
-                if (scrollY > (resultBinding?.fragmentTrailer?.playerBackground?.height
-                        ?: scrollY)
-                ) {
-                    player.handleEvent(CSPlayerEvent.Pause)
-                }
-            }
-            //result_poster_blur_holder?.translationY = -scrollY.toFloat()
-        })
-        val api = APIHolder.getApiFromNameNull(apiName)
+                binding?.resultBookmarkFab?.isVisible = data is Resource.Success
+                resultFinishLoading.isVisible = data is Resource.Success
 
-        binding?.mediaRouteButton?.apply {
-            val chromecastSupport = api?.hasChromecastSupport == true
-            alpha = if (chromecastSupport) 1f else 0.3f
-            if (!chromecastSupport) {
-                setOnClickListener {
-                    CommonActivity.showToast(
-                        R.string.no_chromecast_support_toast,
-                        Toast.LENGTH_LONG
-                    )
-                }
-            }
-            activity?.let { act ->
-                if (act.isCastApiAvailable()) {
-                    try {
-                        CastButtonFactory.setUpMediaRouteButton(act, this)
-                        val castContext = CastContext.getSharedInstance(act.applicationContext)
-                        isGone = castContext.castState == CastState.NO_DEVICES_AVAILABLE
-                        // this shit leaks for some reason
-                        //castContext.addCastStateListener { state ->
-                        //    media_route_button?.isGone = state == CastState.NO_DEVICES_AVAILABLE
-                        //}
-                    } catch (e: Exception) {
-                        logError(e)
-                    }
-                }
+                resultLoading.isVisible = data is Resource.Loading
+
+                resultLoadingError.isVisible = data is Resource.Failure
+                resultErrorText.isVisible = data is Resource.Failure
+                resultReloadConnectionOpenInBrowser.isVisible = data is Resource.Failure
             }
         }
 
@@ -349,6 +589,7 @@ class ResultFragmentPhone : ResultFragment() {
             binding?.resultMiniSync?.isVisible = newList.isNotEmpty()
             (binding?.resultMiniSync?.adapter as? ImageAdapter)?.updateList(newList.mapNotNull { it.icon })
         }
+
 
         var currentSyncProgress = 0
         fun setSyncMaxEpisodes(totalEpisodes: Int?) {
@@ -439,7 +680,22 @@ class ResultFragmentPhone : ResultFragment() {
             }
             binding?.resultOverlappingPanels?.setStartPanelLockState(if (closed) OverlappingPanelsLayout.LockState.CLOSE else OverlappingPanelsLayout.LockState.UNLOCKED)
         }
-
+        observe(viewModel.recommendations) { recommendations ->
+            setRecommendations(recommendations, null)
+        }
+        observe(viewModel.episodeSynopsis) { description ->
+            // TODO bottom dialog
+            view.context?.let { ctx ->
+                val builder: AlertDialog.Builder =
+                    AlertDialog.Builder(ctx, R.style.AlertDialogCustom)
+                builder.setMessage(description.html())
+                    .setTitle(R.string.synopsis)
+                    .setOnDismissListener {
+                        viewModel.releaseEpisodeSynopsis()
+                    }
+                    .show()
+            }
+        }
         context?.let { ctx ->
             val arrayAdapter = ArrayAdapter<String>(ctx, R.layout.sort_bottom_single_choice)
             /*
@@ -653,7 +909,7 @@ class ResultFragmentPhone : ResultFragment() {
         binding?.resultOverlappingPanels?.setChildGestureRegions(gestureRegions)
     }
 
-    override fun setRecommendations(rec: List<SearchResponse>?, validApiName: String?) {
+    private fun setRecommendations(rec: List<SearchResponse>?, validApiName: String?) {
         val isInvalid = rec.isNullOrEmpty()
         val matchAgainst = validApiName ?: rec?.firstOrNull()?.apiName
 

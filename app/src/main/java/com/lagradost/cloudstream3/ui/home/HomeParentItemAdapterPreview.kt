@@ -401,7 +401,7 @@ class HomeParentItemAdapterPreview(
                 observe(viewModel.bookmarks) {
                     updateBookmarks(it)
                 }
-                observe(viewModel.availableWatchStatusTypes) { (visible, checked) ->
+                observe(viewModel.availableWatchStatusTypes) { (checked, visible) ->
                     for ((chip, watch) in toggleList) {
                         chip.apply {
                             isVisible = visible.contains(watch)

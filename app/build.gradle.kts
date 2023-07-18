@@ -223,7 +223,7 @@ dependencies {
     //implementation("com.github.HaarigerHarald:android-youtubeExtractor:master-SNAPSHOT")
 
     // newpipe yt taken from https://github.com/TeamNewPipe/NewPipe/blob/dev/app/build.gradle#L204
-    implementation("com.github.TeamNewPipe:NewPipeExtractor:master-SNAPSHOT")
+    implementation("com.github.TeamNewPipe:NewPipeExtractor:8495ad619e")
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.1.6")
 
     // Library/extensions searching with Levenshtein distance

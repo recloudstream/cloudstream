@@ -74,15 +74,15 @@ abstract class AbstractPlayerFragment(
     var isBuffering = true
     protected open var hasPipModeSupport = true
 
-    lateinit var playerPausePlayHolderHolder : FrameLayout
-    lateinit var playerPausePlay : ImageView
-    lateinit var playerBuffering : ProgressBar
+    var playerPausePlayHolderHolder : FrameLayout? = null
+    var playerPausePlay : ImageView? = null
+    var playerBuffering : ProgressBar? = null
     var playerView : PlayerView? = null
     var piphide : FrameLayout? = null
     var subtitleHolder : FrameLayout? = null
 
     @LayoutRes
-    protected var layout: Int = R.layout.fragment_player
+    protected open var layout: Int = R.layout.fragment_player
 
     open fun nextEpisode() {
         throw NotImplementedError()
@@ -141,15 +141,15 @@ abstract class AbstractPlayerFragment(
 
         isBuffering = CSPlayerLoading.IsBuffering == isPlaying
         if (isBuffering) {
-            playerPausePlayHolderHolder.isVisible = false
-            playerBuffering.isVisible = true
+            playerPausePlayHolderHolder?.isVisible = false
+            playerBuffering?.isVisible = true
         } else {
-            playerPausePlayHolderHolder.isVisible = true
-            playerBuffering.isVisible = false
+            playerPausePlayHolderHolder?.isVisible = true
+            playerBuffering?.isVisible = false
 
             if (wasPlaying != isPlaying) {
-                playerPausePlay.setImageResource(if (isPlayingRightNow) R.drawable.play_to_pause else R.drawable.pause_to_play)
-                val drawable = playerPausePlay.drawable
+                playerPausePlay?.setImageResource(if (isPlayingRightNow) R.drawable.play_to_pause else R.drawable.pause_to_play)
+                val drawable = playerPausePlay?.drawable
 
                 var startedAnimation = false
                 if (Build.VERSION.SDK_INT > Build.VERSION_CODES.P) {
@@ -171,10 +171,10 @@ abstract class AbstractPlayerFragment(
 
                 // somehow the phone is wacked
                 if (!startedAnimation) {
-                    playerPausePlay.setImageResource(if (isPlayingRightNow) R.drawable.netflix_pause else R.drawable.netflix_play)
+                    playerPausePlay?.setImageResource(if (isPlayingRightNow) R.drawable.netflix_pause else R.drawable.netflix_play)
                 }
             } else {
-                playerPausePlay.setImageResource(if (isPlayingRightNow) R.drawable.netflix_pause else R.drawable.netflix_play)
+                playerPausePlay?.setImageResource(if (isPlayingRightNow) R.drawable.netflix_pause else R.drawable.netflix_play)
             }
         }
 

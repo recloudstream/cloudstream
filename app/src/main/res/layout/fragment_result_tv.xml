@@ -465,6 +465,7 @@
                             </com.google.android.material.button.MaterialButton>
 
                             <com.lagradost.cloudstream3.ui.download.button.DownloadButton
+                                android:visibility="gone"
                                 android:id="@+id/download_button"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"

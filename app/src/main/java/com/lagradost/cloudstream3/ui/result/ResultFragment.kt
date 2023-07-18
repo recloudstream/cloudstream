@@ -10,7 +10,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
@@ -22,18 +21,16 @@ import com.google.android.material.chip.ChipDrawable
 import com.lagradost.cloudstream3.APIHolder.getApiDubstatusSettings
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
 import com.lagradost.cloudstream3.APIHolder.updateHasTrailers
-import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.DubStatus
 import com.lagradost.cloudstream3.MainActivity.Companion.afterPluginsLoadedEvent
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.SearchResponse
 import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.mvvm.*
-import com.lagradost.cloudstream3.services.SubscriptionWorkManager
 import com.lagradost.cloudstream3.syncproviders.providers.Kitsu
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_ACTION_DOWNLOAD
 import com.lagradost.cloudstream3.ui.download.DownloadButtonSetup.handleDownloadClick
-import com.lagradost.cloudstream3.ui.quicksearch.QuickSearchFragment
+import com.lagradost.cloudstream3.ui.player.FullScreenPlayer
 import com.lagradost.cloudstream3.ui.result.EpisodeAdapter.Companion.getPlayerAction
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTrueTvSettings
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
@@ -47,7 +44,6 @@ import com.lagradost.cloudstream3.utils.DataStoreHelper.getVideoWatchState
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
-import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import kotlinx.android.synthetic.main.fragment_result.download_button
 import kotlinx.android.synthetic.main.fragment_result.result_cast_items
@@ -89,10 +85,8 @@ import kotlinx.android.synthetic.main.fragment_result.result_tag
 import kotlinx.android.synthetic.main.fragment_result.result_tag_holder
 import kotlinx.android.synthetic.main.fragment_result.result_title
 import kotlinx.android.synthetic.main.fragment_result.result_vpn
-import kotlinx.android.synthetic.main.fragment_result_swipe.*
-import kotlinx.android.synthetic.main.fragment_result_tv.*
-import kotlinx.android.synthetic.main.result_sync.*
-import kotlinx.android.synthetic.main.trailer_custom_layout.*
+import kotlinx.android.synthetic.main.fragment_result_tv.result_resume_series_button_play
+import kotlinx.android.synthetic.main.fragment_result_tv.temporary_no_focus
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 
@@ -194,7 +188,7 @@ fun ResultEpisode.getWatchProgress(): Float {
     return (getDisplayPosition() / 1000).toFloat() / (duration / 1000).toFloat()
 }
 
-open class ResultFragment : ResultTrailerPlayer() {
+open class ResultFragment : FullScreenPlayer() {
     companion object {
         const val URL_BUNDLE = "url"
         const val API_NAME_BUNDLE = "apiName"
@@ -251,7 +245,9 @@ open class ResultFragment : ResultTrailerPlayer() {
 
     protected lateinit var viewModel: ResultViewModel2 //by activityViewModels()
     protected lateinit var syncModel: SyncViewModel
-    protected open val resultLayout = R.layout.fragment_result_swipe
+    //protected open val resultLayout = R.layout.fragment_result_swipe
+
+    override var layout = R.layout.fragment_result_swipe
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -263,7 +259,8 @@ open class ResultFragment : ResultTrailerPlayer() {
         syncModel =
             ViewModelProvider(this)[SyncViewModel::class.java]
 
-        return inflater.inflate(resultLayout, container, false)
+        return super.onCreateView(inflater, container, savedInstanceState)
+        //return inflater.inflate(resultLayout, container, false)
     }
 
     override fun onDestroyView() {
@@ -285,165 +282,10 @@ open class ResultFragment : ResultTrailerPlayer() {
         super.onDestroy()
     }
 
-    /// 0 = LOADING, 1 = ERROR LOADING, 2 = LOADED
-    private fun updateVisStatus(state: Int) {
-        when (state) {
-            0 -> {
-                result_bookmark_fab?.isGone = true
-                result_loading?.isVisible = true
-                result_finish_loading?.isVisible = false
-                result_loading_error?.isVisible = false
-            }
-
-            1 -> {
-                result_bookmark_fab?.isGone = true
-                result_loading?.isVisible = false
-                result_finish_loading?.isVisible = false
-                result_loading_error?.isVisible = true
-                result_reload_connection_open_in_browser?.isVisible = true
-            }
-
-            2 -> {
-                result_bookmark_fab?.isGone = isTrueTvSettings()
-                result_bookmark_fab?.extend()
-                //if (result_bookmark_button?.context?.isTrueTvSettings() == true) {
-                //    when {
-                //        result_play_movie?.isVisible == true -> {
-                //            result_play_movie?.requestFocus()
-                //        }
-                //        result_resume_series_button?.isVisible == true -> {
-                //            result_resume_series_button?.requestFocus()
-                //        }
-                //        else -> {
-                //            result_bookmark_button?.requestFocus()
-                //        }
-                //    }
-                //}
-
-                result_loading?.isVisible = false
-                result_finish_loading?.isVisible = true
-                result_loading_error?.isVisible = false
-            }
-        }
-    }
-
-    open fun setRecommendations(rec: List<SearchResponse>?, validApiName: String?) {
-
-    }
 
     private fun updateUI() {
         syncModel.updateUserData()
         viewModel.reloadEpisodes()
-    }
-
-    open fun updateMovie(data: Resource<Pair<UiText, ResultEpisode>>?) {
-        when (data) {
-            is Resource.Success -> {
-                data.value.let { (text, ep) ->
-                    result_play_movie.setText(text)
-                    result_play_movie?.setOnClickListener {
-                        viewModel.handleAction(
-                            activity,
-                            EpisodeClickEvent(ACTION_CLICK_DEFAULT, ep)
-                        )
-                    }
-                    result_play_movie?.setOnLongClickListener {
-                        viewModel.handleAction(
-                            activity,
-                            EpisodeClickEvent(ACTION_SHOW_OPTIONS, ep)
-                        )
-                        return@setOnLongClickListener true
-                    }
-
-                    val show =
-                        viewModel.currentRepo?.api?.hasDownloadSupport == true && !isTvSettings()
-                    if (show) {
-                        download_button?.setDefaultClickListener(
-                            VideoDownloadHelper.DownloadEpisodeCached(
-                                ep.name,
-                                ep.poster,
-                                0,
-                                null,
-                                ep.id,
-                                ep.id,
-                                null,
-                                null,
-                                System.currentTimeMillis(),
-                            )
-                        ) { click ->
-                            when (click.action) {
-                                DOWNLOAD_ACTION_DOWNLOAD -> {
-                                    viewModel.handleAction(
-                                        activity,
-                                        EpisodeClickEvent(ACTION_DOWNLOAD_EPISODE, ep)
-                                    )
-                                }
-
-                                else -> handleDownloadClick(click)
-                            }
-                        }
-                    }
-                    download_button?.isVisible = show
-                }
-            }
-
-            else -> {
-                download_button?.isVisible = false
-                result_play_movie?.isVisible = false
-            }
-        }
-    }
-
-    open fun updateEpisodes(episodes: Resource<List<ResultEpisode>>?) {
-        when (episodes) {
-            is Resource.Loading -> {
-                result_episode_loading?.isVisible = true
-                result_episodes?.isVisible = false
-            }
-
-            is Resource.Success -> {
-                result_episodes?.isVisible = true
-                result_episode_loading?.isVisible = false
-
-                /*
-                 * Okay so what is this fuckery?
-                 * Basically Android TV will crash if you request a new focus while
-                 * the adapter gets updated.
-                 *
-                 * This means that if you load thumbnails and request a next focus at the same time
-                 * the app will crash without any way to catch it!
-                 *
-                 * How to bypass this?
-                 * This code basically steals the focus for 500ms and puts it in an inescapable view
-                 * then lets out the focus by requesting focus to result_episodes
-                 */
-
-                // Do not use this.isTv, that is the player
-                val isTv = isTvSettings()
-                val hasEpisodes =
-                    !(result_episodes?.adapter as? EpisodeAdapter?)?.cardList.isNullOrEmpty()
-
-                if (isTv && hasEpisodes) {
-                    // Make it impossible to focus anywhere else!
-                    temporary_no_focus?.isFocusable = true
-                    temporary_no_focus?.requestFocus()
-                }
-
-                (result_episodes?.adapter as? EpisodeAdapter)?.updateList(episodes.value)
-
-                if (isTv && hasEpisodes) main {
-                    delay(500)
-                    temporary_no_focus?.isFocusable = false
-                    // This might make some people sad as it changes the focus when leaving an episode :(
-                    result_episodes?.requestFocus()
-                }
-            }
-
-            else -> {
-                result_episode_loading?.isVisible = false
-                result_episodes?.isVisible = false
-            }
-        }
     }
 
     data class StoredData(
@@ -455,7 +297,7 @@ open class ResultFragment : ResultTrailerPlayer() {
         val playerAction: Int
     )
 
-    private fun getStoredData(context: Context): StoredData? {
+    fun getStoredData(context: Context): StoredData? {
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
         val url = arguments?.getString(URL_BUNDLE)
         val apiName = arguments?.getString(API_NAME_BUNDLE) ?: return null
@@ -537,7 +379,6 @@ open class ResultFragment : ResultTrailerPlayer() {
         context?.updateHasTrailers()
         activity?.loadCache()
 
-        fixPaddingStatusbar(result_top_bar)
         //activity?.fixPaddingStatusbar(result_barstatus)
 
         /* val backParameter = result_back.layoutParams as FrameLayout.LayoutParams
@@ -554,35 +395,6 @@ open class ResultFragment : ResultTrailerPlayer() {
         val storedData = (activity ?: context)?.let {
             getStoredData(it)
         }
-        syncModel.addFromUrl(storedData?.url)
-
-        val api = getApiFromNameNull(storedData?.apiName)
-
-        result_episodes?.adapter =
-            EpisodeAdapter(
-                api?.hasDownloadSupport == true && !isTvSettings(),
-                { episodeClick ->
-                    viewModel.handleAction(activity, episodeClick)
-                },
-                { downloadClickEvent ->
-                    handleDownloadClick(downloadClickEvent)
-                }
-            )
-
-
-        observe(viewModel.episodeSynopsis) { description ->
-            view.context?.let { ctx ->
-                val builder: AlertDialog.Builder =
-                    AlertDialog.Builder(ctx, R.style.AlertDialogCustom)
-                builder.setMessage(description.html())
-                    .setTitle(R.string.synopsis)
-                    .setOnDismissListener {
-                        viewModel.releaseEpisodeSynopsis()
-                    }
-                    .show()
-            }
-        }
-
 
         // This is to band-aid FireTV navigation
         val isTv = isTvSettings()
@@ -638,215 +450,6 @@ open class ResultFragment : ResultTrailerPlayer() {
             result_resume_series_button_play?.setOnClickListener(click)
         }
 
-
-
-        observeNullable(viewModel.episodes) { episodes ->
-            updateEpisodes(episodes)
-        }
-
-        result_cast_items?.setOnFocusChangeListener { _, hasFocus ->
-            // Always escape focus
-            if (hasFocus) result_bookmark_button?.requestFocus()
-        }
-
-        observe(viewModel.trailers) { trailers ->
-            setTrailers(trailers.flatMap { it.mirros }) // I dont care about subtitles yet!
-        }
-
-        observe(viewModel.recommendations) { recommendations ->
-            setRecommendations(recommendations, null)
-        }
-
-        observeNullable(viewModel.movie) { data ->
-            updateMovie(data)
-        }
-
-        observe(viewModel.page) { data ->
-            if (data == null) return@observe
-            when (data) {
-                is Resource.Success -> {
-                    val d = data.value
-
-                    updateVisStatus(2)
-
-                    result_vpn.setText(d.vpnText)
-                    result_info.setText(d.metaText)
-                    result_no_episodes.setText(d.noEpisodesFoundText)
-                    result_title.setText(d.titleText)
-                    result_meta_site.setText(d.apiName)
-                    result_meta_type.setText(d.typeText)
-                    result_meta_year.setText(d.yearText)
-                    result_meta_duration.setText(d.durationText)
-                    result_meta_rating.setText(d.ratingText)
-                    result_cast_text.setText(d.actorsText)
-                    result_next_airing.setText(d.nextAiringEpisode)
-                    result_next_airing_time.setText(d.nextAiringDate)
-                    result_poster.setImage(d.posterImage)
-                    result_poster_background.setImage(d.posterBackgroundImage)
-                    //result_trailer_thumbnail.setImage(d.posterBackgroundImage, fadeIn = false)
-
-                    if (d.posterImage != null && !isTrueTvSettings())
-                        result_poster_holder?.setOnClickListener {
-                            try {
-                                context?.let { ctx ->
-                                    runBlocking {
-                                        val sourceBuilder = AlertDialog.Builder(ctx)
-                                        sourceBuilder.setView(R.layout.result_poster)
-
-                                        val sourceDialog = sourceBuilder.create()
-                                        sourceDialog.show()
-
-                                        sourceDialog.findViewById<ImageView?>(R.id.imgPoster)
-                                            ?.apply {
-                                                setImage(d.posterImage)
-                                                setOnClickListener {
-                                                    sourceDialog.dismissSafe()
-                                                }
-                                            }
-                                    }
-                                }
-                            } catch (e: Exception) {
-                                logError(e)
-                            }
-                        }
-
-
-                    result_cast_items?.isVisible = d.actors != null
-                    (result_cast_items?.adapter as? ActorAdaptor)?.apply {
-                        updateList(d.actors ?: emptyList())
-                    }
-
-                    observeNullable(viewModel.subscribeStatus) { isSubscribed ->
-                        result_subscribe?.isVisible = isSubscribed != null
-                        if (isSubscribed == null) return@observeNullable
-
-                        val drawable = if (isSubscribed) {
-                            R.drawable.ic_baseline_notifications_active_24
-                        } else {
-                            R.drawable.baseline_notifications_none_24
-                        }
-
-                        result_subscribe?.setImageResource(drawable)
-                    }
-
-                    result_subscribe?.setOnClickListener {
-                        val isSubscribed =
-                            viewModel.toggleSubscriptionStatus() ?: return@setOnClickListener
-
-                        val message = if (isSubscribed) {
-                            // Kinda icky to have this here, but it works.
-                            SubscriptionWorkManager.enqueuePeriodicWork(context)
-                            R.string.subscription_new
-                        } else {
-                            R.string.subscription_deleted
-                        }
-
-                        val name = (viewModel.page.value as? Resource.Success)?.value?.title
-                            ?: txt(R.string.no_data).asStringNull(context) ?: ""
-                        showToast(txt(message, name), Toast.LENGTH_SHORT)
-                    }
-
-                    result_open_in_browser?.isVisible = d.url.startsWith("http")
-                    result_open_in_browser?.setOnClickListener {
-                        val i = Intent(ACTION_VIEW)
-                        i.data = Uri.parse(d.url)
-                        try {
-                            startActivity(i)
-                        } catch (e: Exception) {
-                            logError(e)
-                        }
-                    }
-
-                    result_search?.setOnClickListener {
-                        QuickSearchFragment.pushSearch(activity, d.title)
-                    }
-
-                    result_share?.setOnClickListener {
-                        try {
-                            val i = Intent(ACTION_SEND)
-                            i.type = "text/plain"
-                            i.putExtra(EXTRA_SUBJECT, d.title)
-                            i.putExtra(EXTRA_TEXT, d.url)
-                            startActivity(createChooser(i, d.title))
-                        } catch (e: Exception) {
-                            logError(e)
-                        }
-                    }
-
-                    if (syncModel.addSyncs(d.syncData)) {
-                        syncModel.updateMetaAndUser()
-                        syncModel.updateSynced()
-                    } else {
-                        syncModel.addFromUrl(d.url)
-                    }
-
-                    result_description.setTextHtml(d.plotText)
-                    if (this !is ResultFragmentTv) // dont want this clickable on tv layout
-                        result_description?.setOnClickListener { view ->
-                            view.context?.let { ctx ->
-                                val builder: AlertDialog.Builder =
-                                    AlertDialog.Builder(ctx, R.style.AlertDialogCustom)
-                                builder.setMessage(d.plotText.asString(ctx).html())
-                                    .setTitle(d.plotHeaderText.asString(ctx))
-                                    .show()
-                            }
-                        }
-
-
-                    d.comingSoon.let { soon ->
-                        result_coming_soon?.isVisible = soon
-                        result_data_holder?.isGone = soon
-                    }
-
-                    val tags = d.tags
-                    result_tag_holder?.isVisible = tags.isNotEmpty()
-                    result_tag?.apply {
-                        removeAllViews()
-                        tags.forEach { tag ->
-                            val chip = Chip(context)
-                            val chipDrawable = ChipDrawable.createFromAttributes(
-                                context,
-                                null,
-                                0,
-                                R.style.ChipFilled
-                            )
-                            chip.setChipDrawable(chipDrawable)
-                            chip.text = tag
-                            chip.isChecked = false
-                            chip.isCheckable = false
-                            chip.isFocusable = false
-                            chip.isClickable = false
-                            chip.setTextColor(context.colorFromAttribute(R.attr.textColor))
-                            addView(chip)
-                        }
-                    }
-                    // if (tags.isNotEmpty()) {
-                    //result_tag_holder?.visibility = VISIBLE
-                    //val isOnTv = isTrueTvSettings()
-
-
-                    /*for ((index, tag) in tags.withIndex()) {
-                            val viewBtt = layoutInflater.inflate(R.layout.result_tag, null)
-                            val btt = viewBtt.findViewById<MaterialButton>(R.id.result_tag_card)
-                            btt.text = tag
-                            btt.isFocusable = !isOnTv
-                            btt.isClickable = !isOnTv
-                            result_tag?.addView(viewBtt, index)
-                        }*/
-                    //}
-                }
-
-                is Resource.Failure -> {
-                    result_error_text.text = storedData?.url?.plus("\n") + data.errorString
-                    updateVisStatus(1)
-                }
-
-                is Resource.Loading -> {
-                    updateVisStatus(0)
-                }
-            }
-        }
-
         context?.let { ctx ->
 
             //result_bookmark_button?.isVisible = ctx.isTvSettings()
@@ -870,17 +473,6 @@ open class ResultFragment : ResultTrailerPlayer() {
                 }
 
                 result_reload_connection_open_in_browser?.setOnClickListener {
-                    val i = Intent(ACTION_VIEW)
-                    i.data = Uri.parse(storedData.url)
-                    try {
-                        startActivity(i)
-                    } catch (e: Exception) {
-                        logError(e)
-                    }
-                }
-
-                result_open_in_browser?.isVisible = storedData.url.startsWith("http")
-                result_open_in_browser?.setOnClickListener {
                     val i = Intent(ACTION_VIEW)
                     i.data = Uri.parse(storedData.url)
                     try {

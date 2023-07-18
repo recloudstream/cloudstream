@@ -216,32 +216,6 @@
                 tools:visibility="visible" />
 
             <!-- This nested layout is necessary because of buffering and clicking-->
-            <FrameLayout
-                android:id="@+id/player_pause_play_holder_holder"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
-
-                <ImageView
-                    android:id="@+id/player_pause_play"
-                    android:layout_width="70dp"
-                    android:layout_height="70dp"
-                    android:layout_gravity="center"
-                    android:background="@drawable/video_tap_button"
-                    android:nextFocusLeft="@id/exo_rew"
-
-                    android:nextFocusRight="@id/exo_ffwd"
-
-                    android:nextFocusUp="@id/player_go_back"
-                    android:nextFocusDown="@id/player_lock"
-
-                    android:src="@drawable/netflix_pause"
-                    app:tint="@color/white"
-                    tools:ignore="ContentDescription" />
-            </FrameLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/player_center_menu"
@@ -298,7 +272,32 @@
                         app:tint="@color/white"
                         tools:ignore="ContentDescription" />
                 </FrameLayout>
+                <FrameLayout
+                    android:id="@+id/player_pause_play_holder_holder"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
 
+                    <ImageView
+                        android:id="@+id/player_pause_play"
+                        android:layout_width="70dp"
+                        android:layout_height="70dp"
+                        android:layout_gravity="center"
+                        android:background="@drawable/video_tap_button"
+                        android:nextFocusLeft="@id/exo_rew"
+
+                        android:nextFocusRight="@id/exo_ffwd"
+
+                        android:nextFocusUp="@id/player_go_back"
+                        android:nextFocusDown="@id/player_lock"
+
+                        android:src="@drawable/netflix_pause"
+                        app:tint="@color/white"
+                        tools:ignore="ContentDescription" />
+                </FrameLayout>
                 <FrameLayout
                     android:id="@+id/player_ffwd_holder"
                     android:layout_width="0dp"

@@ -1,11 +1,13 @@
 package com.lagradost.cloudstream3.ui.result
 
+import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
@@ -20,19 +22,32 @@ import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.mvvm.observeNullable
 import com.lagradost.cloudstream3.ui.WatchType
+import com.lagradost.cloudstream3.ui.download.DOWNLOAD_ACTION_DOWNLOAD
+import com.lagradost.cloudstream3.ui.download.DownloadButtonSetup
 import com.lagradost.cloudstream3.ui.player.ExtractorLinkGenerator
 import com.lagradost.cloudstream3.ui.player.GeneratorPlayer
 import com.lagradost.cloudstream3.ui.search.SearchAdapter
 import com.lagradost.cloudstream3.ui.search.SearchHelper
+import com.lagradost.cloudstream3.ui.settings.SettingsFragment
+import com.lagradost.cloudstream3.utils.AppUtils.html
+import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialogInstant
+import com.lagradost.cloudstream3.utils.UIHelper
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.popCurrentPage
+import com.lagradost.cloudstream3.utils.UIHelper.setImage
+import com.lagradost.cloudstream3.utils.VideoDownloadHelper
+import kotlinx.android.synthetic.main.fragment_result.download_button
+import kotlinx.android.synthetic.main.fragment_result.result_episodes
+import kotlinx.android.synthetic.main.fragment_result.result_play_movie
+import kotlinx.android.synthetic.main.fragment_result_tv.temporary_no_focus
+import kotlinx.coroutines.delay
 
 class ResultFragmentTv : ResultFragment() {
-    override val resultLayout = R.layout.fragment_result_tv
+    override var layout = R.layout.fragment_result_tv
 
     private var binding: FragmentResultTvBinding? = null
 
@@ -95,20 +110,6 @@ class ResultFragmentTv : ResultFragment() {
         return focus == binding?.resultRoot
     }
 
-    override fun updateEpisodes(episodes: Resource<List<ResultEpisode>>?) {
-        super.updateEpisodes(episodes)
-        if (episodes is Resource.Success && hasNoFocus()) {
-            binding?.resultEpisodes?.requestFocus()
-        }
-    }
-
-    override fun updateMovie(data: Resource<Pair<UiText, ResultEpisode>>?) {
-        super.updateMovie(data)
-        if (data is Resource.Success && hasNoFocus()) {
-            binding?.resultPlayMovie?.requestFocus()
-        }
-    }
-
     override fun setTrailers(trailers: List<ExtractorLink>?) {
         context?.updateHasTrailers()
         if (!LoadResponse.isTrailersEnabled) return
@@ -128,7 +129,7 @@ class ResultFragmentTv : ResultFragment() {
         }
     }
 
-    override fun setRecommendations(rec: List<SearchResponse>?, validApiName: String?) {
+    private fun setRecommendations(rec: List<SearchResponse>?, validApiName: String?) {
         currentRecommendations = rec ?: emptyList()
         val isInvalid = rec.isNullOrEmpty()
         binding?.apply {
@@ -151,6 +152,8 @@ class ResultFragmentTv : ResultFragment() {
 
     var loadingDialog: Dialog? = null
     var popupDialog: Dialog? = null
+
+    @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding?.apply {
@@ -163,6 +166,34 @@ class ResultFragmentTv : ResultFragment() {
             resultRangeSelection.setAdapter()
             resultDubSelection.setAdapter()
             resultRecommendationsFilterSelection.setAdapter()
+
+            resultCastItems.setOnFocusChangeListener { _, hasFocus ->
+                // Always escape focus
+                if (hasFocus) binding?.resultBookmarkButton?.requestFocus()
+            }
+            resultBack.setOnClickListener {
+                activity?.popCurrentPage()
+            }
+
+            resultRecommendationsList.spanCount = 8
+            resultRecommendationsList.adapter =
+                SearchAdapter(
+                    ArrayList(),
+                    resultRecommendationsList,
+                ) { callback ->
+                    SearchHelper.handleSearchClickCallback(callback)
+                }
+
+            resultEpisodes.adapter =
+                EpisodeAdapter(
+                    false,
+                    { episodeClick ->
+                        viewModel.handleAction(activity, episodeClick)
+                    },
+                    { downloadClickEvent ->
+                        DownloadButtonSetup.handleDownloadClick(downloadClickEvent)
+                    }
+                )
         }
 
         observe(viewModel.watchStatus) { watchType ->
@@ -181,6 +212,30 @@ class ResultFragmentTv : ResultFragment() {
             }
         }
 
+        observeNullable(viewModel.movie) { data ->
+            binding?.apply {
+                resultPlayMovie.isVisible = data is Resource.Success
+                (data as? Resource.Success)?.value?.let { (text, ep) ->
+                    resultPlayMovie.setText(text)
+                    resultPlayMovie.setOnClickListener {
+                        viewModel.handleAction(
+                            activity,
+                            EpisodeClickEvent(ACTION_CLICK_DEFAULT, ep)
+                        )
+                    }
+                    resultPlayMovie.setOnLongClickListener {
+                        viewModel.handleAction(
+                            activity,
+                            EpisodeClickEvent(ACTION_SHOW_OPTIONS, ep)
+                        )
+                        return@setOnLongClickListener true
+                    }
+                    if (hasNoFocus()) {
+                        resultPlayMovie.requestFocus()
+                    }
+                }
+            }
+        }
 
         observeNullable(viewModel.selectPopup) { popup ->
             if (popup == null) {
@@ -257,21 +312,111 @@ class ResultFragmentTv : ResultFragment() {
         observe(viewModel.seasonSelections) {
             binding?.resultSeasonSelection.update(it)
         }
-
-        binding?.apply {
-            resultBack.setOnClickListener {
-                activity?.popCurrentPage()
+        observe(viewModel.recommendations) { recommendations ->
+            setRecommendations(recommendations, null)
+        }
+        observe(viewModel.episodeSynopsis) { description ->
+            view.context?.let { ctx ->
+                val builder: AlertDialog.Builder =
+                    AlertDialog.Builder(ctx, R.style.AlertDialogCustom)
+                builder.setMessage(description.html())
+                    .setTitle(R.string.synopsis)
+                    .setOnDismissListener {
+                        viewModel.releaseEpisodeSynopsis()
+                    }
+                    .show()
             }
+        }
+        observeNullable(viewModel.episodes) { episodes ->
+            binding?.apply {
+                resultEpisodes.isVisible = episodes is Resource.Success
+                resultEpisodeLoading.isVisible = episodes is Resource.Loading
+                if (episodes is Resource.Success) {
+                    /*
+                     * Okay so what is this fuckery?
+                     * Basically Android TV will crash if you request a new focus while
+                     * the adapter gets updated.
+                     *
+                     * This means that if you load thumbnails and request a next focus at the same time
+                     * the app will crash without any way to catch it!
+                     *
+                     * How to bypass this?
+                     * This code basically steals the focus for 500ms and puts it in an inescapable view
+                     * then lets out the focus by requesting focus to result_episodes
+                     */
 
-            resultRecommendationsList.spanCount = 8
-            resultRecommendationsList.adapter =
-                SearchAdapter(
-                    ArrayList(),
-                    resultRecommendationsList,
-                ) { callback ->
-                    SearchHelper.handleSearchClickCallback(callback)
+                    val hasEpisodes =
+                        !(resultEpisodes.adapter as? EpisodeAdapter?)?.cardList.isNullOrEmpty()
+
+                    if (hasEpisodes) {
+                        // Make it impossible to focus anywhere else!
+                        temporaryNoFocus.isFocusable = true
+                        temporaryNoFocus.requestFocus()
+                    }
+
+                    (resultEpisodes.adapter as? EpisodeAdapter)?.updateList(episodes.value)
+
+                    if (hasEpisodes) main {
+                        delay(500)
+                        temporaryNoFocus.isFocusable = false
+                        // This might make some people sad as it changes the focus when leaving an episode :(
+                        temporaryNoFocus.requestFocus()
+                    }
+
+                    if (hasNoFocus())
+                        binding?.resultEpisodes?.requestFocus()
                 }
+            }
         }
 
+        observeNullable(viewModel.page) { data ->
+            if (data == null) return@observeNullable
+            binding?.apply {
+                when (data) {
+                    is Resource.Success -> {
+                        val d = data.value
+                        resultVpn.setText(d.vpnText)
+                        resultInfo.setText(d.metaText)
+                        resultNoEpisodes.setText(d.noEpisodesFoundText)
+                        resultTitle.setText(d.titleText)
+                        resultMetaSite.setText(d.apiName)
+                        resultMetaType.setText(d.typeText)
+                        resultMetaYear.setText(d.yearText)
+                        resultMetaDuration.setText(d.durationText)
+                        resultMetaRating.setText(d.ratingText)
+                        resultCastText.setText(d.actorsText)
+                        resultNextAiring.setText(d.nextAiringEpisode)
+                        resultNextAiringTime.setText(d.nextAiringDate)
+                        resultPoster.setImage(d.posterImage)
+                        resultDescription.setTextHtml(d.plotText)
+
+                        resultComingSoon.isVisible = d.comingSoon
+                        resultDataHolder.isGone = d.comingSoon
+                        UIHelper.populateChips(resultTag, d.tags)
+                        resultCastItems.isGone = d.actors.isNullOrEmpty()
+                        (resultCastItems.adapter as? ActorAdaptor)?.updateList(
+                            d.actors ?: emptyList()
+                        )
+                    }
+
+                    is Resource.Loading -> {
+
+                    }
+
+                    is Resource.Failure -> {
+                        resultErrorText.text =
+                            (this@ResultFragmentTv.context?.let { getStoredData(it) }?.url?.plus("\n")
+                                ?: "") + data.errorString
+                    }
+                }
+
+                resultFinishLoading.isVisible = data is Resource.Success
+
+                resultLoading.isVisible = data is Resource.Loading
+
+                resultLoadingError.isVisible = data is Resource.Failure
+                resultReloadConnectionOpenInBrowser.isVisible = data is Resource.Failure
+            }
+        }
     }
 }

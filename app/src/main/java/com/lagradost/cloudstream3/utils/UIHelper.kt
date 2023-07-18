@@ -46,12 +46,16 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions.bitmapTransform
 import com.bumptech.glide.request.target.Target
+import com.google.android.material.chip.Chip
+import com.google.android.material.chip.ChipDrawable
+import com.google.android.material.chip.ChipGroup
 import com.lagradost.cloudstream3.CommonActivity.activity
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.ui.result.UiImage
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isEmulatorSettings
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
+import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
 import jp.wasabeef.glide.transformations.BlurTransformation
 import kotlin.math.roundToInt
 
@@ -71,6 +75,30 @@ object UIHelper {
                 // Since Android 13, we can't request external storage permission,
                 // so don't check it.
                 || Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
+    }
+
+    fun populateChips(view: ChipGroup?, tags : List<String>) {
+        if(view == null) return
+        view.removeAllViews()
+        val context = view.context ?: return
+
+        tags.forEach { tag ->
+            val chip = Chip(context)
+            val chipDrawable = ChipDrawable.createFromAttributes(
+                context,
+                null,
+                0,
+                R.style.ChipFilled
+            )
+            chip.setChipDrawable(chipDrawable)
+            chip.text = tag
+            chip.isChecked = false
+            chip.isCheckable = false
+            chip.isFocusable = false
+            chip.isClickable = false
+            chip.setTextColor(context.colorFromAttribute(R.attr.textColor))
+            view.addView(chip)
+        }
     }
 
     fun Activity.requestRW() {

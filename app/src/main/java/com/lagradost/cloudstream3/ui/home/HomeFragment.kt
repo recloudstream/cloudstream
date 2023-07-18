@@ -361,14 +361,11 @@ class HomeFragment : Fragment() {
                     ?.toMutableList()
                     ?: mutableListOf(TvType.Movie, TvType.TvSeries)
 
-                val cancelBtt = dialog.findViewById<MaterialButton>(R.id.cancel_btt)
-                val applyBtt = dialog.findViewById<MaterialButton>(R.id.apply_btt)
-
-                cancelBtt?.setOnClickListener {
+                binding.cancelBtt.setOnClickListener {
                     dialog.dismissSafe()
                 }
 
-                applyBtt?.setOnClickListener {
+                binding.applyBtt.setOnClickListener {
                     if (currentApiName != selectedApiName) {
                         currentApiName?.let(callback)
                     }
@@ -493,14 +490,53 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         fixGrid()
 
-        binding?.homeChangeApiLoading?.setOnClickListener(apiChangeClickListener)
-        binding?.homeChangeApiLoading?.setOnClickListener(apiChangeClickListener)
-        binding?.homeApiFab?.setOnClickListener(apiChangeClickListener)
-        binding?.homeRandom?.setOnClickListener {
-            if (listHomepageItems.isNotEmpty()) {
-                activity.loadSearchResult(listHomepageItems.random())
+        binding?.apply {
+            homeChangeApiLoading.setOnClickListener(apiChangeClickListener)
+            //homeChangeApiLoading.setOnClickListener(apiChangeClickListener)
+            homeApiFab.setOnClickListener(apiChangeClickListener)
+            homeRandom.setOnClickListener {
+                if (listHomepageItems.isNotEmpty()) {
+                    activity.loadSearchResult(listHomepageItems.random())
+                }
             }
+
+            homeMasterRecycler.adapter =
+                HomeParentItemAdapterPreview(
+                    mutableListOf(),
+                    homeViewModel
+                )
+            fixPaddingStatusbar(homeLoadingStatusbar)
+
+            if (isTvSettings()) {
+                homeApiFab.isVisible = false
+                if (isTrueTvSettings()) {
+                    homeChangeApiLoading.isVisible = true
+                    homeChangeApiLoading.isFocusable = true
+                    homeChangeApiLoading.isFocusableInTouchMode = true
+                }
+                // home_bookmark_select?.isFocusable = true
+                // home_bookmark_select?.isFocusableInTouchMode = true
+            } else {
+                homeApiFab.isVisible = true
+                homeChangeApiLoading.isVisible = false
+            }
+
+            homeMasterRecycler.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    if (dy > 0) { //check for scroll down
+                        homeApiFab.shrink() // hide
+                        homeRandom.shrink()
+                    } else if (dy < -5) {
+                        if (!isTvSettings()) {
+                            homeApiFab.extend() // show
+                            homeRandom.extend()
+                        }
+                    }
+                    super.onScrolled(recyclerView, dx, dy)
+                }
+            })
         }
+
 
         //Load value for toggling Random button. Hide at startup
         context?.let {
@@ -551,13 +587,9 @@ class HomeFragment : Fragment() {
                     }
 
                     is Resource.Failure -> {
-
                         homeLoadingShimmer.stopShimmer()
-
                         resultErrorText.text = data.errorString
-
                         homeReloadConnectionerror.setOnClickListener(apiChangeClickListener)
-
                         homeReloadConnectionOpenInBrowser.setOnClickListener { view ->
                             val validAPIs = apis//.filter { api -> api.hasMainPage }
 
@@ -598,7 +630,6 @@ class HomeFragment : Fragment() {
 
         //context?.fixPaddingStatusbarView(home_statusbar)
         //context?.fixPaddingStatusbar(home_padding)
-        fixPaddingStatusbar(binding?.homeLoadingStatusbar)
 
         observeNullable(homeViewModel.popup) { item ->
             if (item == null) {
@@ -620,52 +651,13 @@ class HomeFragment : Fragment() {
             })
         }
 
-        binding?.homeMasterRecycler?.adapter =
-            HomeParentItemAdapterPreview(
-                mutableListOf(),
-                homeViewModel
-            )
-
         homeViewModel.reloadStored()
         //loadHomePage(false)
-        binding?.homeMasterRecycler?.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-
-                binding?.apply {
-                    if (dy > 0) { //check for scroll down
-                        homeApiFab.shrink() // hide
-                        homeRandom.shrink()
-                    } else if (dy < -5) {
-                        if (!isTvSettings()) {
-                            homeApiFab.extend() // show
-                            homeRandom.extend()
-                        }
-                    }
-                }
-
-
-                super.onScrolled(recyclerView, dx, dy)
-            }
-        })
 
         // nice profile pic on homepage
         //home_profile_picture_holder?.isVisible = false
         // just in case
-        binding?.apply {
-            if (isTvSettings()) {
-                homeApiFab.isVisible = false
-                if (isTrueTvSettings()) {
-                    homeChangeApiLoading.isVisible = true
-                    homeChangeApiLoading.isFocusable = true
-                    homeChangeApiLoading.isFocusableInTouchMode = true
-                }
-                // home_bookmark_select?.isFocusable = true
-                // home_bookmark_select?.isFocusableInTouchMode = true
-            } else {
-                homeApiFab.isVisible = true
-                homeChangeApiLoading.isVisible = false
-            }
-        }
+
         //TODO READD THIS
         /*for (syncApi in OAuth2Apis) {
             val login = syncApi.loginInfo()
