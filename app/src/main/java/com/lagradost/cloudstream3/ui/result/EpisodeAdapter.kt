@@ -13,6 +13,7 @@ import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.ResultEpisodeBinding
 import com.lagradost.cloudstream3.databinding.ResultEpisodeLargeBinding
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_ACTION_DOWNLOAD
+import com.lagradost.cloudstream3.ui.download.DOWNLOAD_ACTION_LONG_CLICK
 import com.lagradost.cloudstream3.ui.download.DownloadClickEvent
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTrueTvSettings
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
@@ -93,40 +94,50 @@ class EpisodeAdapter(
         diffResult.dispatchUpdatesTo(this)
     }
 
-    private fun getItem(position: Int) : ResultEpisode {
+    private fun getItem(position: Int): ResultEpisode {
         return cardList[position]
     }
 
     override fun getItemViewType(position: Int): Int {
         val item = getItem(position)
-        return if(item.poster.isNullOrBlank()) 0 else 1
+        return if (item.poster.isNullOrBlank()) 0 else 1
     }
 
 
-   // private val layout = R.layout.result_episode_both
+    // private val layout = R.layout.result_episode_both
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         /*val layout = if (cardList.filter { it.poster != null }.size >= cardList.size / 2)
             R.layout.result_episode_large
         else R.layout.result_episode*/
 
-        return when(viewType) {
+        return when (viewType) {
             0 -> {
                 EpisodeCardViewHolderSmall(
-                    ResultEpisodeBinding.inflate(LayoutInflater.from(parent.context), parent, false),
+                    ResultEpisodeBinding.inflate(
+                        LayoutInflater.from(parent.context),
+                        parent,
+                        false
+                    ),
                     hasDownloadSupport,
                     clickCallback,
                     downloadClickCallback
                 )
             }
+
             1 -> {
                 EpisodeCardViewHolderLarge(
-                    ResultEpisodeLargeBinding.inflate(LayoutInflater.from(parent.context), parent, false),
+                    ResultEpisodeLargeBinding.inflate(
+                        LayoutInflater.from(parent.context),
+                        parent,
+                        false
+                    ),
                     hasDownloadSupport,
                     clickCallback,
                     downloadClickCallback
                 )
             }
+
             else -> throw NotImplementedError()
         }
     }
@@ -136,6 +147,7 @@ class EpisodeAdapter(
             is EpisodeCardViewHolderLarge -> {
                 holder.bind(getItem(position))
             }
+
             is EpisodeCardViewHolderSmall -> {
                 holder.bind(getItem(position))
             }
@@ -148,7 +160,7 @@ class EpisodeAdapter(
 
     class EpisodeCardViewHolderLarge
     constructor(
-        val binding : ResultEpisodeLargeBinding,
+        val binding: ResultEpisodeLargeBinding,
         private val hasDownloadSupport: Boolean,
         private val clickCallback: (EpisodeClickEvent) -> Unit,
         private val downloadClickCallback: (DownloadClickEvent) -> Unit,
@@ -159,7 +171,8 @@ class EpisodeAdapter(
         fun bind(card: ResultEpisode) {
             localCard = card
 
-            val setWidth = if(isTvSettings()) ViewGroup.LayoutParams.WRAP_CONTENT else ViewGroup.LayoutParams.MATCH_PARENT
+            val setWidth =
+                if (isTvSettings()) ViewGroup.LayoutParams.WRAP_CONTENT else ViewGroup.LayoutParams.MATCH_PARENT
 
             binding.episodeLinHolder.layoutParams.width = setWidth
             binding.episodeHolderLarge.layoutParams.width = setWidth
@@ -169,21 +182,31 @@ class EpisodeAdapter(
 
             binding.apply {
                 downloadButton.isVisible = hasDownloadSupport
-                downloadButton.setDefaultClickListener(VideoDownloadHelper.DownloadEpisodeCached(
-                    card.name,
-                    card.poster,
-                    card.episode,
-                    card.season,
-                    card.id,
-                    card.parentId,
-                    card.rating,
-                    card.description,
-                    System.currentTimeMillis(),
-                ), null) {
-                    if (it.action == DOWNLOAD_ACTION_DOWNLOAD) {
-                        clickCallback.invoke(EpisodeClickEvent(ACTION_DOWNLOAD_EPISODE, card))
-                    } else {
-                        downloadClickCallback.invoke(it)
+                downloadButton.setDefaultClickListener(
+                    VideoDownloadHelper.DownloadEpisodeCached(
+                        card.name,
+                        card.poster,
+                        card.episode,
+                        card.season,
+                        card.id,
+                        card.parentId,
+                        card.rating,
+                        card.description,
+                        System.currentTimeMillis(),
+                    ), null
+                ) {
+                    when (it.action) {
+                        DOWNLOAD_ACTION_DOWNLOAD -> {
+                            clickCallback.invoke(EpisodeClickEvent(ACTION_DOWNLOAD_EPISODE, card))
+                        }
+
+                        DOWNLOAD_ACTION_LONG_CLICK -> {
+                            clickCallback.invoke(EpisodeClickEvent(ACTION_DOWNLOAD_MIRROR, card))
+                        }
+
+                        else -> {
+                            downloadClickCallback.invoke(it)
+                        }
                     }
                 }
 
@@ -259,7 +282,7 @@ class EpisodeAdapter(
 
     class EpisodeCardViewHolderSmall
     constructor(
-        val binding : ResultEpisodeBinding,
+        val binding: ResultEpisodeBinding,
         private val hasDownloadSupport: Boolean,
         private val clickCallback: (EpisodeClickEvent) -> Unit,
         private val downloadClickCallback: (DownloadClickEvent) -> Unit,
@@ -269,26 +292,37 @@ class EpisodeAdapter(
             val isTrueTv = isTrueTvSettings()
 
             binding.episodeHolder.layoutParams.apply {
-                width = if(isTvSettings()) ViewGroup.LayoutParams.WRAP_CONTENT else ViewGroup.LayoutParams.MATCH_PARENT
+                width =
+                    if (isTvSettings()) ViewGroup.LayoutParams.WRAP_CONTENT else ViewGroup.LayoutParams.MATCH_PARENT
             }
 
             binding.apply {
                 downloadButton.isVisible = hasDownloadSupport
-                downloadButton.setDefaultClickListener(VideoDownloadHelper.DownloadEpisodeCached(
-                    card.name,
-                    card.poster,
-                    card.episode,
-                    card.season,
-                    card.id,
-                    card.parentId,
-                    card.rating,
-                    card.description,
-                    System.currentTimeMillis(),
-                ), null) {
-                    if (it.action == DOWNLOAD_ACTION_DOWNLOAD) {
-                        clickCallback.invoke(EpisodeClickEvent(ACTION_DOWNLOAD_EPISODE, card))
-                    } else {
-                        downloadClickCallback.invoke(it)
+                downloadButton.setDefaultClickListener(
+                    VideoDownloadHelper.DownloadEpisodeCached(
+                        card.name,
+                        card.poster,
+                        card.episode,
+                        card.season,
+                        card.id,
+                        card.parentId,
+                        card.rating,
+                        card.description,
+                        System.currentTimeMillis(),
+                    ), null
+                ) {
+                    when (it.action) {
+                        DOWNLOAD_ACTION_DOWNLOAD -> {
+                            clickCallback.invoke(EpisodeClickEvent(ACTION_DOWNLOAD_EPISODE, card))
+                        }
+
+                        DOWNLOAD_ACTION_LONG_CLICK -> {
+                            clickCallback.invoke(EpisodeClickEvent(ACTION_DOWNLOAD_MIRROR, card))
+                        }
+
+                        else -> {
+                            downloadClickCallback.invoke(it)
+                        }
                     }
                 }
 

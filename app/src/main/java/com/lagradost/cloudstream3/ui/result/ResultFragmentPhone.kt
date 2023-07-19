@@ -50,6 +50,7 @@ import com.lagradost.cloudstream3.mvvm.observeNullable
 import com.lagradost.cloudstream3.services.SubscriptionWorkManager
 import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_ACTION_DOWNLOAD
+import com.lagradost.cloudstream3.ui.download.DOWNLOAD_ACTION_LONG_CLICK
 import com.lagradost.cloudstream3.ui.download.DownloadButtonSetup
 import com.lagradost.cloudstream3.ui.player.CSPlayerEvent
 import com.lagradost.cloudstream3.ui.player.FullScreenPlayer
@@ -594,6 +595,9 @@ open class ResultFragmentPhone : FullScreenPlayer(),
                                     EpisodeClickEvent(ACTION_DOWNLOAD_EPISODE, ep)
                                 )
                             }
+                            DOWNLOAD_ACTION_LONG_CLICK -> {
+                                viewModel.handleAction(EpisodeClickEvent(ACTION_DOWNLOAD_MIRROR, ep))
+                            }
 
                             else -> DownloadButtonSetup.handleDownloadClick(click)
                         }
@@ -912,11 +916,11 @@ open class ResultFragmentPhone : FullScreenPlayer(),
         }
 
 
-        observe(viewModel.loadedLinks) { load ->
+        observeNullable(viewModel.loadedLinks) { load ->
             if (load == null) {
                 loadingDialog?.dismissSafe(activity)
                 loadingDialog = null
-                return@observe
+                return@observeNullable
             }
             if (loadingDialog?.isShowing != true) {
                 loadingDialog?.dismissSafe(activity)
