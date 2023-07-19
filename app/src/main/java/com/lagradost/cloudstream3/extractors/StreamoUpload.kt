@@ -24,7 +24,7 @@ open class StreamoUpload : ExtractorApi() {
         val response = app.get(url, referer = referer)
         val scriptElements = response.document.select("script").map { script ->
               if (script.data().contains("eval(function(p,a,c,k,e,d)")) {
-                val data = getAndUnpack(script.data()).substringAfter("sources: [").substringBefore("],").replace("file", "\"file\"").trim()                                      
+                val data = getAndUnpack(script.data()).substringAfter("sources:[").substringBefore("],").replace("file", "\"file\"").trim()                                      
                 tryParseJson<File>(data)?.let {
                         M3u8Helper.generateM3u8(
                             name,
