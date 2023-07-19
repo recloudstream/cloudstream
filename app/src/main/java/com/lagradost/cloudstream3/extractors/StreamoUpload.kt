@@ -23,23 +23,25 @@ open class StreamoUpload : ExtractorApi() {
         val sources = mutableListOf<ExtractorLink>()
         val response = app.get(url, referer = referer)
         val scriptElements = response.document.select("script").map { script ->
-              if (script.data().contains("eval(function(p,a,c,k,e,d)")) {
-                val data = getAndUnpack(script.data()).substringAfter("sources:[").substringBefore("],").replace("file", "\"file\"").trim()                                      
+            if (script.data().contains("eval(function(p,a,c,k,e,d)")) {
+                val data = getAndUnpack(script.data())
+                    .substringAfter("sources:[")
+                    .substringBefore("],")
+                    .replace("file", "\"file\"")
+                    .trim()
                 tryParseJson<File>(data)?.let {
-                        M3u8Helper.generateM3u8(
-                            name,
-                            it.file,
-                            "$mainUrl/",
-                        ).forEach { m3uData -> sources.add(m3uData) }
-                    }
+                    M3u8Helper.generateM3u8(
+                        name,
+                        it.file,
+                        "$mainUrl/",
+                    ).forEach { m3uData -> sources.add(m3uData) }
                 }
             }
-            return sources
         }
-    
-        private data class File(
-            @JsonProperty("file") val file: String,
-        )
-    
-    
+        return sources
     }
+
+    private data class File(
+        @JsonProperty("file") val file: String,
+    )
+}
