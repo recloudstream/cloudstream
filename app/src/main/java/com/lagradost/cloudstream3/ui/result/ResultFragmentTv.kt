@@ -70,7 +70,7 @@ class ResultFragmentTv : Fragment() {
         return localBinding.root
     }
 
-    private fun updateUI(id : Int?) {
+    private fun updateUI(id: Int?) {
         viewModel.reloadEpisodes()
     }
 
@@ -141,7 +141,7 @@ class ResultFragmentTv : Fragment() {
     var loadingDialog: Dialog? = null
     var popupDialog: Dialog? = null
 
-    private fun reloadViewModel(forceReload : Boolean) {
+    private fun reloadViewModel(forceReload: Boolean) {
         if (!viewModel.hasLoaded() || forceReload) {
             val storedData = getStoredData() ?: return
             viewModel.load(
@@ -196,14 +196,14 @@ class ResultFragmentTv : Fragment() {
                 }
 
             resultReloadConnectionerror.setOnClickListener {
-                    viewModel.load(
-                        activity,
-                        storedData.url,
-                        storedData.apiName,
-                        storedData.showFillers,
-                        storedData.dubStatus,
-                        storedData.start
-                    )
+                viewModel.load(
+                    activity,
+                    storedData.url,
+                    storedData.apiName,
+                    storedData.showFillers,
+                    storedData.dubStatus,
+                    storedData.start
+                )
 
             }
 
@@ -270,22 +270,8 @@ class ResultFragmentTv : Fragment() {
 
         observeNullable(viewModel.resumeWatching) { resume ->
             binding?.apply {
-                if (resume == null) {
-                    resultResumeParent.isVisible = false
-                    return@observeNullable
-                }
-                resultResumeParent.isVisible = true
-                resume.progress?.let { progress ->
-                    resultResumeSeriesTitle.apply {
-                        isVisible = !resume.isMovie
-                        text =
-                            if (resume.isMovie) null else context?.getNameFull(
-                                resume.result.name,
-                                resume.result.episode,
-                                resume.result.season
-                            )
-                    }
-
+                // show progress no matter if series or movie
+                resume?.progress?.let { progress ->
                     resultResumeSeriesProgressText.setText(progress.progressLeft)
                     resultResumeSeriesProgress.apply {
                         isVisible = true
@@ -295,13 +281,41 @@ class ResultFragmentTv : Fragment() {
                     resultResumeProgressHolder.isVisible = true
                 } ?: run {
                     resultResumeProgressHolder.isVisible = false
-                    resultResumeSeriesProgress.isVisible = false
-                    resultResumeSeriesTitle.isVisible = false
-                    resultResumeSeriesProgressText.isVisible = false
                 }
 
-                resultResumeSeriesButton.isVisible = !resume.isMovie
-                resultResumeSeriesButton.setOnClickListener {
+                // if movie then hide both as movie button is
+                // always visible on movies, this is done in movie observe
+
+                if(resume?.isMovie == true) {
+                    resultPlaySeries.isVisible = false
+                    resultResumeSeries.isVisible = false
+                    return@observeNullable
+                }
+
+                // if series then
+                // > resultPlaySeries is visible when null
+                // > resultResumeSeries is visible when not null
+                if (resume == null) {
+                    resultPlaySeries.isVisible = true
+                    resultResumeSeries.isVisible = false
+                    return@observeNullable
+                }
+
+                resultPlaySeries.isVisible = false
+                resultResumeSeries.isVisible = true
+
+                if (hasNoFocus()) {
+                    resultResumeSeries.requestFocus()
+                }
+
+                resultResumeSeries.text =
+                    if (resume.isMovie) context?.getString(R.string.play_movie_button) else context?.getNameFull(
+                        null, // resume.result.name, we don't want episode title
+                        resume.result.episode,
+                        resume.result.season
+                    )
+
+                resultResumeSeries.setOnClickListener {
                     viewModel.handleAction(
                         EpisodeClickEvent(
                             storedData.playerAction, //?: ACTION_PLAY_EPISODE_IN_PLAYER,
@@ -309,6 +323,14 @@ class ResultFragmentTv : Fragment() {
                         )
                     )
                 }
+
+                resultResumeSeries.setOnLongClickListener {
+                    viewModel.handleAction(
+                        EpisodeClickEvent(ACTION_SHOW_OPTIONS, resume.result)
+                    )
+                    return@setOnLongClickListener true
+                }
+
             }
         }
 
@@ -351,6 +373,8 @@ class ResultFragmentTv : Fragment() {
         observeNullable(viewModel.movie) { data ->
             binding?.apply {
                 resultPlayMovie.isVisible = data is Resource.Success
+                seriesHolder.isVisible = data == null
+
                 (data as? Resource.Success)?.value?.let { (text, ep) ->
                     resultPlayMovie.setText(text)
                     resultPlayMovie.setOnClickListener {
@@ -466,6 +490,30 @@ class ResultFragmentTv : Fragment() {
                 resultEpisodes.isVisible = episodes is Resource.Success
                 resultEpisodeLoading.isVisible = episodes is Resource.Loading
                 if (episodes is Resource.Success) {
+                    val first = episodes.value.firstOrNull()
+                    if (first != null) {
+                        resultPlaySeries.text = context?.getNameFull(
+                            null, // resume.result.name, we don't want episode title
+                            first.episode,
+                            first.season
+                        )
+
+                        resultPlaySeries.setOnClickListener {
+                            viewModel.handleAction(
+                                EpisodeClickEvent(
+                                    ACTION_PLAY_EPISODE_IN_PLAYER,
+                                    first
+                                )
+                            )
+                        }
+                        resultPlaySeries.setOnLongClickListener {
+                            viewModel.handleAction(
+                                EpisodeClickEvent(ACTION_SHOW_OPTIONS, first)
+                            )
+                            return@setOnLongClickListener true
+                        }
+                    }
+
                     /*
                      * Okay so what is this fuckery?
                      * Basically Android TV will crash if you request a new focus while
@@ -523,6 +571,15 @@ class ResultFragmentTv : Fragment() {
                         resultNextAiringTime.setText(d.nextAiringDate)
                         resultPoster.setImage(d.posterImage)
                         resultDescription.setTextHtml(d.plotText)
+                        resultDescription.setOnClickListener { view ->
+                            view.context?.let { ctx ->
+                                val builder: AlertDialog.Builder =
+                                    AlertDialog.Builder(ctx, R.style.AlertDialogCustom)
+                                builder.setMessage(d.plotText.asString(ctx).html())
+                                    .setTitle(d.plotHeaderText.asString(ctx))
+                                    .show()
+                            }
+                        }
 
                         resultComingSoon.isVisible = d.comingSoon
                         resultDataHolder.isGone = d.comingSoon
