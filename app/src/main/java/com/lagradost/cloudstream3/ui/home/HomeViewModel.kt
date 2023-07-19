@@ -370,6 +370,7 @@ class HomeViewModel : ViewModel() {
 
             else -> Unit
         }
+        onGoingLoad = null
     }
 
     fun click(callback: SearchClickCallback) {
