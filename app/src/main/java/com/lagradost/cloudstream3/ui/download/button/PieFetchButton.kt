@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.View
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
@@ -155,8 +156,11 @@ open class PieFetchButton(context: Context, attributeSet: AttributeSet) :
         )
     }*/
 
-    protected fun setDefaultClickListener(view: View, card: VideoDownloadHelper.DownloadEpisodeCached,
-                                        callback: (DownloadClickEvent) -> Unit) {
+    protected fun setDefaultClickListener(
+        view: View, textView: TextView?, card: VideoDownloadHelper.DownloadEpisodeCached,
+        callback: (DownloadClickEvent) -> Unit
+    ) {
+        this.progressText = textView
         this.setPersistentId(card.id)
         view.setOnClickListener {
             if (isZeroBytes) {
@@ -203,9 +207,10 @@ open class PieFetchButton(context: Context, attributeSet: AttributeSet) :
 
     open fun setDefaultClickListener(
         card: VideoDownloadHelper.DownloadEpisodeCached,
+        textView: TextView?,
         callback: (DownloadClickEvent) -> Unit
     ) {
-        setDefaultClickListener(this,card,callback)
+        setDefaultClickListener(this, textView, card, callback)
     }
 
     /*open fun setDefaultClickListener(requestGetter: suspend BaseFetchButton.() -> List<UriRequest>) {

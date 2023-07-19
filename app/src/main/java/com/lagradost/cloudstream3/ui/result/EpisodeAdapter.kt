@@ -179,7 +179,7 @@ class EpisodeAdapter(
                     card.rating,
                     card.description,
                     System.currentTimeMillis(),
-                )) {
+                ), null) {
                     if (it.action == DOWNLOAD_ACTION_DOWNLOAD) {
                         clickCallback.invoke(EpisodeClickEvent(ACTION_DOWNLOAD_EPISODE, card))
                     } else {
@@ -284,7 +284,7 @@ class EpisodeAdapter(
                     card.rating,
                     card.description,
                     System.currentTimeMillis(),
-                )) {
+                ), null) {
                     if (it.action == DOWNLOAD_ACTION_DOWNLOAD) {
                         clickCallback.invoke(EpisodeClickEvent(ACTION_DOWNLOAD_EPISODE, card))
                     } else {

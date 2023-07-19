@@ -97,7 +97,7 @@ class DownloadHeaderAdapter(
                    // downloadHeaderEpisodeDownload.visibility = View.VISIBLE
                     binding.downloadHeaderGotoChild.visibility = View.GONE
 
-                    downloadButton.setDefaultClickListener(card.child, movieClickCallback)
+                    downloadButton.setDefaultClickListener(card.child, downloadHeaderInfo, movieClickCallback)
                     downloadButton.isVisible = true
                     /*setUpButton(
                         card.currentBytes,

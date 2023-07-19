@@ -1,10 +1,14 @@
 package com.lagradost.cloudstream3.ui.download.button
 
 import android.content.Context
+import android.text.format.Formatter
 import android.util.AttributeSet
 import android.widget.FrameLayout
+import android.widget.TextView
 import androidx.annotation.LayoutRes
+import androidx.core.view.isVisible
 import androidx.core.widget.ContentLoadingProgressBar
+import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.utils.VideoDownloadManager
 
 typealias DownloadStatusTell = VideoDownloadManager.DownloadType
@@ -15,7 +19,11 @@ data class DownloadMetadata(
     var totalLength: Long,
     var status: DownloadStatusTell? = null
 ) {
-    val progressPercentage : Long get() = if(downloadedLength < 1024) 0 else maxOf(0,minOf (100, (downloadedLength * 100L) / totalLength))
+    val progressPercentage: Long
+        get() = if (downloadedLength < 1024) 0 else maxOf(
+            0,
+            minOf(100, (downloadedLength * 100L) / totalLength)
+        )
 }
 
 abstract class BaseFetchButton(context: Context, attributeSet: AttributeSet) :
@@ -24,6 +32,7 @@ abstract class BaseFetchButton(context: Context, attributeSet: AttributeSet) :
     var persistentId: Int? = null // used to save sessions
 
     lateinit var progressBar: ContentLoadingProgressBar
+    var progressText: TextView? = null
 
     /*val gid: String? get() = sessionIdToGid[persistentId]
 
@@ -109,6 +118,20 @@ abstract class BaseFetchButton(context: Context, attributeSet: AttributeSet) :
                 else
                     0L
         }
+
+        if (isZeroBytes) {
+            progressText?.isVisible = false
+        } else {
+            progressText?.apply {
+                val currentMbString = Formatter.formatShortFileSize(context, downloadedBytes)
+                val totalMbString = Formatter.formatShortFileSize(context, totalBytes)
+                text =
+                        //if (isTextPercentage) "%d%%".format(setCurrentBytes * 100L / setTotalBytes) else
+                    context?.getString(R.string.download_size_format)
+                        ?.format(currentMbString, totalMbString)
+            }
+        }
+
         progressBar.startAnimation(animation)
     }
 

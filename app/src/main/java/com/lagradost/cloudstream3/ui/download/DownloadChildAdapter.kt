@@ -78,7 +78,7 @@ class DownloadChildAdapter(
                 }
             }
 
-            binding.downloadButton.setDefaultClickListener(card.data,clickCallback)
+            binding.downloadButton.setDefaultClickListener(card.data, binding.downloadChildEpisodeTextExtra, clickCallback)
 
             binding.downloadChildEpisodeText.apply {
                 text = context.getNameFull(d.name, d.episode, d.season)

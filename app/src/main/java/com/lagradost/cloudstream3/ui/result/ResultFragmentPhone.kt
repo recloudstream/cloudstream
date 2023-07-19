@@ -585,7 +585,8 @@ open class ResultFragmentPhone : FullScreenPlayer(),
                             null,
                             null,
                             System.currentTimeMillis(),
-                        )
+                        ),
+                        null
                     ) { click ->
                         when (click.action) {
                             DOWNLOAD_ACTION_DOWNLOAD -> {

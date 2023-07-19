@@ -13,7 +13,6 @@ import com.lagradost.cloudstream3.utils.VideoDownloadHelper
 class DownloadButton(context: Context, attributeSet: AttributeSet) :
     PieFetchButton(context, attributeSet) {
 
-    var progressText: TextView? = null
     var mainText: TextView? = null
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
@@ -34,10 +33,12 @@ class DownloadButton(context: Context, attributeSet: AttributeSet) :
 
     override fun setDefaultClickListener(
         card: VideoDownloadHelper.DownloadEpisodeCached,
+        textView: TextView?,
         callback: (DownloadClickEvent) -> Unit
     ) {
         this.setDefaultClickListener(
             this.findViewById<MaterialButton>(R.id.download_movie_button),
+            textView,
             card,
             callback
         )
