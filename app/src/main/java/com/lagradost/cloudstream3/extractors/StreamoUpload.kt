@@ -8,11 +8,6 @@ import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.getAndUnpack
 import com.lagradost.cloudstream3.utils.Qualities
 import com.lagradost.cloudstream3.utils.M3u8Helper
-import org.jsoup.select.Elements
-
-class StreamoUpload1 : StreamoUpload() {
-    override val mainUrl = "https://streamoupload.xyz"
-}
 
 open class StreamoUpload : ExtractorApi() {
     override val name = "StreamoUpload"
