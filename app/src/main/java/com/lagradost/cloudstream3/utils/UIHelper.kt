@@ -260,6 +260,8 @@ object UIHelper {
         @DrawableRes
         errorImageDrawable: Int? = null,
         fadeIn: Boolean = true,
+        radius: Int = 0,
+        sample: Int = 3,
         colorCallback: ((Palette) -> Unit)? = null
     ): Boolean {
         if (url.isNullOrBlank()) return false
@@ -267,6 +269,8 @@ object UIHelper {
             UiImage.Image(url, headers, errorImageDrawable),
             errorImageDrawable,
             fadeIn,
+            radius,
+            sample,
             colorCallback
         )
         return true
@@ -277,7 +281,9 @@ object UIHelper {
         @DrawableRes
         errorImageDrawable: Int? = null,
         fadeIn: Boolean = true,
-        colorCallback: ((Palette) -> Unit)? = null
+        radius: Int = 0,
+        sample: Int = 3,
+        colorCallback: ((Palette) -> Unit)? = null,
     ): Boolean {
         if (this == null || uiImage == null) return false
 
@@ -289,7 +295,7 @@ object UIHelper {
             } ?: return false
 
         return try {
-            val builder = GlideApp.with(this)
+            var builder = GlideApp.with(this)
                 .load(glideImage)
                 .skipMemoryCache(true)
                 .diskCacheStrategy(DiskCacheStrategy.ALL).let { req ->
@@ -298,8 +304,12 @@ object UIHelper {
                     else req
                 }
 
+            if(radius > 0) {
+                builder = builder.apply(bitmapTransform(BlurTransformation(radius, sample)))
+            }
+
             if (colorCallback != null) {
-                builder.listener(object : RequestListener<Drawable> {
+                builder = builder.listener(object : RequestListener<Drawable> {
                     @SuppressLint("CheckResult")
                     override fun onResourceReady(
                         resource: Drawable?,

@@ -44,6 +44,7 @@ import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.popCurrentPage
 import com.lagradost.cloudstream3.utils.UIHelper.setImage
+import com.lagradost.cloudstream3.utils.UIHelper.setImageBlur
 import kotlinx.coroutines.delay
 
 class ResultFragmentTv : Fragment() {
@@ -192,7 +193,7 @@ class ResultFragmentTv : Fragment() {
         binding?.apply {
             resultEpisodes.layoutManager =
                 LinearListLayout(resultEpisodes.context).apply {
-                    setHorizontal()
+                    setVertical()
                 }
 
             resultReloadConnectionerror.setOnClickListener {
@@ -222,9 +223,9 @@ class ResultFragmentTv : Fragment() {
                 // Always escape focus
                 if (hasFocus) binding?.resultBookmarkButton?.requestFocus()
             }
-            resultBack.setOnClickListener {
-                activity?.popCurrentPage()
-            }
+            //resultBack.setOnClickListener {
+            //    activity?.popCurrentPage()
+            //}
 
             resultRecommendationsList.spanCount = 8
             resultRecommendationsList.adapter =
@@ -580,6 +581,8 @@ class ResultFragmentTv : Fragment() {
                                     .show()
                             }
                         }
+
+                        backgroundPoster.setImage(d.posterBackgroundImage, radius = 10)
 
                         resultComingSoon.isVisible = d.comingSoon
                         resultDataHolder.isGone = d.comingSoon

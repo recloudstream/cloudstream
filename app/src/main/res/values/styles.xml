@@ -723,6 +723,11 @@
         <item name="strokeColor">@color/tag_stroke_color</item>
     </style>
 
+    <style name="ResultButtonTV" parent="@style/RegularButtonTV">
+        <item name="android:layout_width">250dp</item>
+        <item name="android:layout_marginBottom">5dp</item>
+    </style>
+
     <style name="RegularButtonTV">
         <item name="android:stateListAnimator">@null</item>
         <item name="strokeColor">@color/transparent</item>
@@ -734,15 +739,15 @@
         <item name="iconTint">@color/player_on_button_tv</item>
         <item name="textColor">@color/player_on_button_tv</item>
         <item name="android:textColor">@color/player_on_button_tv</item>
-        <item name="android:layout_width">200dp</item>
-        <item name="android:layout_height">30dp</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">40dp</item>
         <item name="iconSize">16dp</item>
         <item name="android:gravity">center</item>
         <item name="android:layout_gravity">center</item>
         <item name="android:baselineAligned">false</item>
         <item name="textAllCaps">false</item>
         <item name="android:textStyle">bold</item>
-        <item name="android:textSize">10sp</item>
+        <item name="android:textSize">14sp</item>
         <item name="android:layout_marginStart">4dp</item>
         <item name="android:layout_marginEnd">4dp</item>
         <item name="android:insetBottom">0dp</item>
