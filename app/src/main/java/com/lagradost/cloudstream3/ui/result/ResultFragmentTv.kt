@@ -170,6 +170,13 @@ class ResultFragmentTv : Fragment() {
         super.onStop()
     }
 
+    private fun toggleEpisodes(show: Boolean) {
+        binding?.apply {
+            episodeHolderTv.isVisible = show
+            leftLayout.isGone = show
+        }
+    }
+
     @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -191,6 +198,62 @@ class ResultFragmentTv : Fragment() {
         // ===== ===== =====
 
         binding?.apply {
+
+            val leftListener: View.OnFocusChangeListener =
+                View.OnFocusChangeListener { _, hasFocus ->
+                    if (!hasFocus) return@OnFocusChangeListener
+                    toggleEpisodes(false)
+                }
+
+            val rightListener: View.OnFocusChangeListener =
+                View.OnFocusChangeListener { _, hasFocus ->
+                    if (!hasFocus) return@OnFocusChangeListener
+                    toggleEpisodes(true)
+                }
+
+            resultPlayMovie.onFocusChangeListener = leftListener
+            resultPlaySeries.onFocusChangeListener = leftListener
+            resultResumeSeries.onFocusChangeListener = leftListener
+            resultPlayTrailer.onFocusChangeListener = leftListener
+            resultEpisodesShow.onFocusChangeListener = rightListener
+            resultDescription.onFocusChangeListener = leftListener
+            resultBookmarkButton.onFocusChangeListener = leftListener
+            redirectToPlay.setOnFocusChangeListener { _, hasFocus ->
+                if (!hasFocus) return@setOnFocusChangeListener
+                toggleEpisodes(false)
+
+                binding?.apply {
+                    val views = listOf(
+                        resultPlayMovie,
+                        resultPlaySeries,
+                        resultResumeSeries,
+                        resultPlayTrailer,
+                        resultBookmarkButton
+                    )
+                    for (requestView in views) {
+                        if (!requestView.isVisible) continue
+                        if (requestView.requestFocus()) break
+                    }
+                }
+            }
+            redirectToEpisodes.setOnFocusChangeListener { _, hasFocus ->
+                if (!hasFocus) return@setOnFocusChangeListener
+                toggleEpisodes(true)
+                binding?.apply {
+                    val views = listOf(
+                        resultSeasonSelection,
+                        resultRangeSelection,
+                        resultDubSelection,
+                        resultPlayTrailer,
+                        resultEpisodes
+                    )
+                    for (requestView in views) {
+                        if (!requestView.isVisible) continue
+                        if (requestView.requestFocus()) break
+                    }
+                }
+            }
+
             resultEpisodes.layoutManager =
                 LinearListLayout(resultEpisodes.context).apply {
                     setVertical()
@@ -287,7 +350,7 @@ class ResultFragmentTv : Fragment() {
                 // if movie then hide both as movie button is
                 // always visible on movies, this is done in movie observe
 
-                if(resume?.isMovie == true) {
+                if (resume?.isMovie == true) {
                     resultPlaySeries.isVisible = false
                     resultResumeSeries.isVisible = false
                     return@observeNullable
@@ -375,6 +438,7 @@ class ResultFragmentTv : Fragment() {
             binding?.apply {
                 resultPlayMovie.isVisible = data is Resource.Success
                 seriesHolder.isVisible = data == null
+                resultEpisodesShow.isVisible = data == null
 
                 (data as? Resource.Success)?.value?.let { (text, ep) ->
                     resultPlayMovie.setText(text)
@@ -489,7 +553,7 @@ class ResultFragmentTv : Fragment() {
         observeNullable(viewModel.episodes) { episodes ->
             binding?.apply {
                 resultEpisodes.isVisible = episodes is Resource.Success
-                resultEpisodeLoading.isVisible = episodes is Resource.Loading
+                //    resultEpisodeLoading.isVisible = episodes is Resource.Loading
                 if (episodes is Resource.Success) {
                     val first = episodes.value.firstOrNull()
                     if (first != null) {
@@ -530,24 +594,30 @@ class ResultFragmentTv : Fragment() {
 
                     val hasEpisodes =
                         !(resultEpisodes.adapter as? EpisodeAdapter?)?.cardList.isNullOrEmpty()
+                    /*val focus = activity?.currentFocus
 
                     if (hasEpisodes) {
                         // Make it impossible to focus anywhere else!
                         temporaryNoFocus.isFocusable = true
                         temporaryNoFocus.requestFocus()
-                    }
+                    }*/
 
                     (resultEpisodes.adapter as? EpisodeAdapter)?.updateList(episodes.value)
 
-                    if (hasEpisodes) main {
-                        delay(500)
-                        temporaryNoFocus.isFocusable = false
-                        // This might make some people sad as it changes the focus when leaving an episode :(
-                        temporaryNoFocus.requestFocus()
-                    }
+                    /* if (hasEpisodes) main {
 
-                    if (hasNoFocus())
-                        binding?.resultEpisodes?.requestFocus()
+                         delay(500)
+                         // This might make some people sad as it changes the focus when leaving an episode :(
+                         if(focus?.requestFocus() == true) {
+                             temporaryNoFocus.isFocusable = false
+                             return@main
+                         }
+                         temporaryNoFocus.isFocusable = false
+                         temporaryNoFocus.requestFocus()
+                     }
+
+                     if (hasNoFocus())
+                         binding?.resultEpisodes?.requestFocus()*/
                 }
             }
         }
@@ -582,7 +652,20 @@ class ResultFragmentTv : Fragment() {
                             }
                         }
 
-                        backgroundPoster.setImage(d.posterBackgroundImage, radius = 10)
+                        val error = listOf(
+                            R.drawable.profile_bg_dark_blue,
+                            R.drawable.profile_bg_blue,
+                            R.drawable.profile_bg_orange,
+                            R.drawable.profile_bg_pink,
+                            R.drawable.profile_bg_purple,
+                            R.drawable.profile_bg_red,
+                            R.drawable.profile_bg_teal
+                        ).random()
+                        backgroundPoster.setImage(
+                            d.posterBackgroundImage ?: UiImage.Drawable(error),
+                            radius = 0,
+                            errorImageDrawable = error
+                        )
 
                         resultComingSoon.isVisible = d.comingSoon
                         resultDataHolder.isGone = d.comingSoon

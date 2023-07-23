@@ -724,8 +724,12 @@
     </style>
 
     <style name="ResultButtonTV" parent="@style/RegularButtonTV">
+        <item name="iconGravity">start</item>
+        <item name="android:gravity">center_vertical</item>
         <item name="android:layout_width">250dp</item>
         <item name="android:layout_marginBottom">5dp</item>
+        <item name="android:layout_marginStart">0dp</item>
+        <item name="android:layout_marginEnd">0dp</item>
     </style>
 
     <style name="RegularButtonTV">
