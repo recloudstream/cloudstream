@@ -399,6 +399,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     Moviehab(),
     MoviehabNet(),
     Jeniusplay(),
+    StreamoUpload(),
 
     Gdriveplayerapi(),
     Gdriveplayerapp(),
