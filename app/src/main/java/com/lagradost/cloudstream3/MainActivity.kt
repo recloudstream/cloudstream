@@ -1,5 +1,7 @@
 package com.lagradost.cloudstream3
 
+import android.animation.ObjectAnimator
+import android.animation.ValueAnimator
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
@@ -11,12 +13,17 @@ import android.os.Bundle
 import android.util.AttributeSet
 import android.util.Log
 import android.view.*
+import android.view.animation.Animation
+import android.view.animation.AnimationSet
+import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.annotation.IdRes
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.doOnLayout
+import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProvider
@@ -28,12 +35,22 @@ import androidx.navigation.NavOptions
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import androidx.preference.PreferenceManager
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.transition.ChangeBounds
+import androidx.transition.ChangeTransform
+import androidx.transition.Scene
+import androidx.transition.TransitionManager
+import androidx.transition.TransitionManager.beginDelayedTransition
+import androidx.transition.TransitionSet
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.google.android.gms.cast.framework.*
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.navigationrail.NavigationRailView
 import com.google.android.material.snackbar.Snackbar
 import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
@@ -119,6 +136,7 @@ import com.lagradost.nicehttp.ResponseParser
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import java.io.File
+import java.lang.ref.WeakReference
 import java.net.URI
 import java.net.URLDecoder
 import java.nio.charset.Charset
@@ -553,7 +571,6 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         }
     }
 
-
     override fun dispatchKeyEvent(event: KeyEvent?): Boolean {
         CommonActivity.dispatchKeyEvent(this, event)?.let {
             return it
@@ -728,6 +745,68 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
     }
 
     var binding: ActivityMainBinding? = null
+    var focusOutline: WeakReference<View> = WeakReference(null)
+    var lastFocus: WeakReference<View> = WeakReference(null)
+    val layoutListener: View.OnLayoutChangeListener =
+        View.OnLayoutChangeListener { v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom ->
+            updateFocusView(
+                v
+            )
+        }
+
+    private fun updateFocusView(newFocus: View?) {
+        val focusOutline = focusOutline.get() ?: return
+        //lastFocus.get()?.removeOnLayoutChangeListener(layoutListener)
+        val wasGone = focusOutline.isGone
+        focusOutline.isVisible =
+            newFocus != null && newFocus.measuredHeight > 0 && newFocus.measuredWidth > 0 && newFocus.isVisible && newFocus !is MaterialButton
+
+        if (newFocus != null) {
+            lastFocus = WeakReference(newFocus)
+
+            val out = IntArray(2)
+            newFocus.getLocationInWindow(out)
+            val (x, y) = out
+            /*(newFocus.parent as? RecyclerView)?.let { recycle ->
+                println("PARET IS RECYLE")
+                val position = recycle.getChildAdapterPosition(newFocus)
+                recycle.scrollToPosition(position)
+
+                (recycle.layoutManager as? GridLayoutManager)?.let {
+                    if(it.orientation == LinearLayout.HORIZONTAL) {
+                        println("SCROLL")
+
+
+                    }
+                }
+
+            }*/
+            // newFocus.addOnLayoutChangeListener(layoutListener)
+
+
+            //  val set = AnimationSet(true)
+            if(!wasGone) {
+                (focusOutline.parent as? ViewGroup)?.let {
+                    TransitionManager.endTransitions(it)
+                    TransitionManager.beginDelayedTransition(
+                        it,
+                        TransitionSet().addTransition(ChangeBounds())
+                            .addTransition(ChangeTransform())
+                            .setDuration(100)
+                    )
+                }
+            }
+            // ObjectAnimator.ofFloat(focusOutline, "translationX",focusOutline.translationX, x.toFloat()
+
+
+            focusOutline.layoutParams = focusOutline.layoutParams?.apply {
+                width = newFocus.measuredWidth
+                height = newFocus.measuredHeight
+            }
+            focusOutline.translationX = x.toFloat()
+            focusOutline.translationY = y.toFloat()
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         app.initClient(this)
@@ -763,12 +842,12 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         // backup when we update the app, I don't trust myself to not boot lock users, might want to make this a setting?
         try {
             val appVer = BuildConfig.VERSION_NAME
-            val lastAppAutoBackup : String = getKey("VERSION_NAME") ?: ""
+            val lastAppAutoBackup: String = getKey("VERSION_NAME") ?: ""
             if (appVer != lastAppAutoBackup) {
                 setKey("VERSION_NAME", BuildConfig.VERSION_NAME)
                 backup()
             }
-        } catch (t : Throwable) {
+        } catch (t: Throwable) {
             logError(t)
         }
 
@@ -777,6 +856,15 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             if (isTvSettings()) {
                 val newLocalBinding = ActivityMainTvBinding.inflate(layoutInflater, null, false)
                 setContentView(newLocalBinding.root)
+                focusOutline = WeakReference(newLocalBinding.focusOutline)
+                newLocalBinding.root.viewTreeObserver.addOnGlobalFocusChangeListener { _, newFocus ->
+                    // println("refocus $oldFocus -> $newFocus")
+                    updateFocusView(newFocus)
+                }
+                newLocalBinding.root.viewTreeObserver.addOnScrollChangedListener {
+                    updateFocusView(lastFocus.get())
+                }
+
                 ActivityMainBinding.bind(newLocalBinding.root) // this may crash
             } else {
                 val newLocalBinding = ActivityMainBinding.inflate(layoutInflater, null, false)
@@ -816,7 +904,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
 
         if (PluginManager.checkSafeModeFile()) {
             normalSafeApiCall {
-                showToast( R.string.safe_mode_file, Toast.LENGTH_LONG)
+                showToast(R.string.safe_mode_file, Toast.LENGTH_LONG)
             }
         } else if (lastError == null) {
             ioSafe {

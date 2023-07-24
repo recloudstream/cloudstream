@@ -83,7 +83,7 @@ object CommonActivity {
         val act = activity ?: return
         if (message == null) return
         act.runOnUiThread {
-            showToast(act,  message.asString(act), duration)
+            showToast(act, message.asString(act), duration)
         }
     }
 
@@ -443,63 +443,58 @@ object CommonActivity {
 
     fun dispatchKeyEvent(act: Activity?, event: KeyEvent?): Boolean? {
         if (act == null) return null
+        val currentFocus = act.currentFocus
+
         event?.keyCode?.let { keyCode ->
-            when (event.action) {
-                KeyEvent.ACTION_DOWN -> {
-                    if (act.currentFocus != null) {
-                        val next = when (keyCode) {
-                            KeyEvent.KEYCODE_DPAD_LEFT -> getNextFocus(
-                                act,
-                                act.currentFocus,
-                                FocusDirection.Left
-                            )
+            if (currentFocus == null || event.action != KeyEvent.ACTION_DOWN) return@let
+            val next = when (keyCode) {
+                KeyEvent.KEYCODE_DPAD_LEFT -> getNextFocus(
+                    act,
+                    currentFocus,
+                    FocusDirection.Left
+                )
 
-                            KeyEvent.KEYCODE_DPAD_RIGHT -> getNextFocus(
-                                act,
-                                act.currentFocus,
-                                FocusDirection.Right
-                            )
+                KeyEvent.KEYCODE_DPAD_RIGHT -> getNextFocus(
+                    act,
+                    currentFocus,
+                    FocusDirection.Right
+                )
 
-                            KeyEvent.KEYCODE_DPAD_UP -> getNextFocus(
-                                act,
-                                act.currentFocus,
-                                FocusDirection.Up
-                            )
+                KeyEvent.KEYCODE_DPAD_UP -> getNextFocus(
+                    act,
+                    currentFocus,
+                    FocusDirection.Up
+                )
 
-                            KeyEvent.KEYCODE_DPAD_DOWN -> getNextFocus(
-                                act,
-                                act.currentFocus,
-                                FocusDirection.Down
-                            )
+                KeyEvent.KEYCODE_DPAD_DOWN -> getNextFocus(
+                    act,
+                    currentFocus,
+                    FocusDirection.Down
+                )
 
-                            else -> null
-                        }
+                else -> null
+            }
 
-                        if (next != null && next != -1) {
-                            val nextView = act.findViewById<View?>(next)
-                            if (nextView != null) {
-                                nextView.requestFocus()
-                                keyEventListener?.invoke(Pair(event, true))
-                                return true
-                            }
-                        }
-
-                        when (keyCode) {
-                            KeyEvent.KEYCODE_DPAD_CENTER -> {
-                                if (act.currentFocus is SearchView || act.currentFocus is SearchView.SearchAutoComplete) {
-                                    UIHelper.showInputMethod(act.currentFocus?.findFocus())
-                                }
-                            }
-                        }
-                    }
-                    //println("Keycode: $keyCode")
-                    //showToast(
-                    //    this,
-                    //    "Got Keycode $keyCode | ${KeyEvent.keyCodeToString(keyCode)} \n ${event?.action}",
-                    //    Toast.LENGTH_LONG
-                    //)
+            if (next != null && next != -1) {
+                val nextView = act.findViewById<View?>(next)
+                if (nextView != null) {
+                    nextView.requestFocus()
+                    keyEventListener?.invoke(Pair(event, true))
+                    return true
                 }
             }
+
+            if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER && (act.currentFocus is SearchView || act.currentFocus is SearchView.SearchAutoComplete)) {
+                UIHelper.showInputMethod(act.currentFocus?.findFocus())
+            }
+
+            //println("Keycode: $keyCode")
+            //showToast(
+            //    this,
+            //    "Got Keycode $keyCode | ${KeyEvent.keyCodeToString(keyCode)} \n ${event?.action}",
+            //    Toast.LENGTH_LONG
+            //)
+
         }
 
         if (keyEventListener?.invoke(Pair(event, false)) == true) {

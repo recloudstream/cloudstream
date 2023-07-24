@@ -85,7 +85,8 @@
 
     <style name="ChipFilled" parent="@style/Widget.Material3.Chip.Filter">
         <item name="chipBackgroundColor">@color/chip_color</item>
-        <item name="chipStrokeColor">@color/white_transparent_toggle</item>
+       <!-- <item name="chipStrokeColor">@color/white_transparent_toggle</item>-->
+        <item name="chipStrokeColor">@color/transparent</item>
         <item name="chipStrokeWidth">2dp</item>
         <item name="textColor">@color/chip_color_text</item>
         <item name="android:textColor">@color/chip_color_text</item>

@@ -35,11 +35,10 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/home_preview_change_api"
-                style="@style/BlackButton"
+                style="@style/RegularButtonTV"
                 android:layout_width="wrap_content"
                 android:layout_gravity="top|start"
                 android:layout_marginStart="@dimen/navbar_width"
-                android:backgroundTint="@color/semiWhite"
                 android:minWidth="150dp" />
         </FrameLayout>
 
@@ -92,7 +91,7 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/home_preview_play_btt"
-                    style="@style/WhiteButton"
+                    style="@style/RegularButtonTV"
                     android:layout_width="wrap_content"
                     android:layout_margin="0dp"
                     android:minWidth="150dp"
@@ -105,7 +104,7 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/home_preview_info_btt"
-                    style="@style/BlackButton"
+                    style="@style/RegularButtonTV"
                     android:layout_width="wrap_content"
                     android:minWidth="150dp"
 

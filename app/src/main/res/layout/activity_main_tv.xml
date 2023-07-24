@@ -77,4 +77,21 @@
                 tools:ignore="FragmentTagUsage" />
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:clickable="false"
+            android:visibility="gone"
+            android:id="@+id/focus_outline"
+            android:src="@drawable/outline"
+            android:layout_width="100dp"
+            android:layout_height="100dp">
+        </ImageView>
+    </FrameLayout>
+
 </FrameLayout>
