@@ -90,8 +90,8 @@
             android:id="@+id/focus_outline"
             android:src="@drawable/outline"
             android:layout_width="100dp"
-            android:layout_height="100dp">
+            android:layout_height="100dp"
+            android:importantForAccessibility="no">
         </ImageView>
     </FrameLayout>
-
 </FrameLayout>

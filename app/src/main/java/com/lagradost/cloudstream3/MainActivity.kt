@@ -744,23 +744,35 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         return ret
     }
 
-    var binding: ActivityMainBinding? = null
-    var focusOutline: WeakReference<View> = WeakReference(null)
-    var lastFocus: WeakReference<View> = WeakReference(null)
-    val layoutListener: View.OnLayoutChangeListener =
-        View.OnLayoutChangeListener { v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom ->
+    private var binding: ActivityMainBinding? = null
+    private var focusOutline: WeakReference<View> = WeakReference(null)
+    private var lastFocus: WeakReference<View> = WeakReference(null)
+    private val layoutListener: View.OnLayoutChangeListener =
+        View.OnLayoutChangeListener { v, _, _, _, _, _, _, _, _ ->
             updateFocusView(
                 v
             )
         }
+    private val attachListener : View.OnAttachStateChangeListener = object : View.OnAttachStateChangeListener {
+        override fun onViewAttachedToWindow(v: View) {
+            updateFocusView(v)
+        }
+
+        override fun onViewDetachedFromWindow(v: View) {
+            // removes the focus view but not the listener as updateFocusView(null) will remove the listener
+            focusOutline.get()?.isVisible = false
+        }
+    }
 
     private fun updateFocusView(newFocus: View?) {
         val focusOutline = focusOutline.get() ?: return
-        //lastFocus.get()?.removeOnLayoutChangeListener(layoutListener)
+        lastFocus.get()?.removeOnLayoutChangeListener(layoutListener)
+        lastFocus.get()?.removeOnAttachStateChangeListener(attachListener)
         val wasGone = focusOutline.isGone
-        focusOutline.isVisible =
-            newFocus != null && newFocus.measuredHeight > 0 && newFocus.measuredWidth > 0 && newFocus.isVisible && newFocus !is MaterialButton
 
+        val visible =
+            newFocus != null && newFocus.measuredHeight > 0 && newFocus.measuredWidth > 0 && newFocus.isVisible && newFocus.tag != "tv_no_focus_tag"
+        focusOutline.isVisible = visible
         if (newFocus != null) {
             lastFocus = WeakReference(newFocus)
 
@@ -781,8 +793,8 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                 }
 
             }*/
-            // newFocus.addOnLayoutChangeListener(layoutListener)
-
+            newFocus.addOnLayoutChangeListener(layoutListener)
+            newFocus.addOnAttachStateChangeListener(attachListener)
 
             //  val set = AnimationSet(true)
             if(!wasGone) {

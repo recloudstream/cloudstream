@@ -495,9 +495,10 @@
         <item name="android:paddingStart">20dp</item>
         <item name="android:paddingEnd">20dp</item>
         <item name="android:selectAllOnFocus">true</item>
-        <item name="android:background">@drawable/outline_drawable_less</item>
+       <!-- <item name="android:background">@drawable/outline_drawable_less</item>
+               <item name="android:foreground">?attr/selectableItemBackgroundBorderless</item>
+       -->
         <item name="android:textColor">?attr/textColor</item>
-        <item name="android:foreground">?attr/selectableItemBackgroundBorderless</item>
         <item name="android:textAppearance">?android:attr/textAppearanceListItemSmall</item>
         <item name="drawableEndCompat">@drawable/ic_baseline_keyboard_arrow_right_24</item>
     </style>
@@ -547,6 +548,7 @@
         <item name="android:insetTop">0dp</item>
         <item name="android:insetBottom">0dp</item>
         <item name="android:foreground">@drawable/outline_drawable_less</item>
+        <item name="android:tag">@string/tv_no_focus_tag</item>
     </style>
 
     <style name="WhiteButton" parent="NiceButton">
@@ -760,6 +762,7 @@
     </style>
 
     <style name="VideoButtonTV">
+        <item name="android:tag">@string/tv_no_focus_tag</item>
         <item name="android:stateListAnimator">@null</item>
         <item name="strokeColor">@color/transparent</item>
         <item name="backgroundTint">@null</item>
