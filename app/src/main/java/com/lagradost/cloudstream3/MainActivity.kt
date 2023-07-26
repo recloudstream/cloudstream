@@ -798,13 +798,10 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                         loadAllOnlinePlugins(this@MainActivity)
                     }
 
-                    //Automatically download not existing plugins
-                    if (settingsManager.getBoolean(
-                            getString(R.string.auto_download_plugins_key),
-                            false
-                        )
-                    ) {
-                        PluginManager.downloadNotExistingPluginsAndLoad(this@MainActivity)
+                    //Automatically download not existing plugins, using mode specified.
+                    val auto_download_plugin = AutoDownloadMode.getEnum(settingsManager.getInt(getString(R.string.auto_download_plugins_key), 0)) ?: AutoDownloadMode.Disable
+                    if (auto_download_plugin != AutoDownloadMode.Disable) {
+                        PluginManager.downloadNotExistingPluginsAndLoad(this@MainActivity, auto_download_plugin)
                     }
                 }
 
