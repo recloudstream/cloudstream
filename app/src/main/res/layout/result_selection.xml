@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     style="@style/RegularButtonTV"
     android:layout_gravity="start"
-    android:layout_marginStart="0dp"
-    android:layout_marginEnd="10dp"
-    tools:text="Season 1" />
+    android:layout_margin="2dp"
+    android:minWidth="115dp"
+    android:singleLine="true"
+    tools:text="1000-1000" />

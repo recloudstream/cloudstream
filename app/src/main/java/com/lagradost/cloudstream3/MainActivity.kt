@@ -771,7 +771,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         val wasGone = focusOutline.isGone
 
         val visible =
-            newFocus != null && newFocus.measuredHeight > 0 && newFocus.measuredWidth > 0 && newFocus.isVisible && newFocus.tag != "tv_no_focus_tag"
+            newFocus != null && newFocus.measuredHeight > 0 && newFocus.measuredWidth > 0 && newFocus.isShown && newFocus.tag != "tv_no_focus_tag"
         focusOutline.isVisible = visible
         if (newFocus != null) {
             lastFocus = WeakReference(newFocus)
@@ -779,6 +779,10 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             val out = IntArray(2)
             newFocus.getLocationInWindow(out)
             val (x, y) = out
+            // out of bounds = 0,0
+            if(x == 0 && y == 0) {
+                focusOutline.isVisible = false
+            }
             /*(newFocus.parent as? RecyclerView)?.let { recycle ->
                 println("PARET IS RECYLE")
                 val position = recycle.getChildAdapterPosition(newFocus)

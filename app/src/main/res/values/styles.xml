@@ -727,6 +727,7 @@
     </style>
 
     <style name="ResultButtonTV" parent="@style/RegularButtonTV">
+        <item name="android:tag">@string/tv_no_focus_tag</item>
         <item name="iconGravity">start</item>
         <item name="android:gravity">center_vertical</item>
         <item name="android:layout_width">250dp</item>
@@ -736,6 +737,7 @@
     </style>
 
     <style name="RegularButtonTV">
+        <item name="android:tag">@string/tv_no_focus_tag</item>
         <item name="android:stateListAnimator">@null</item>
         <item name="strokeColor">@color/transparent</item>
         <item name="backgroundTint">@null</item>

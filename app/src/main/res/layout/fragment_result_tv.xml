@@ -150,393 +150,492 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
 
     </FrameLayout>
 
-    <View
-        android:id="@+id/redirect_to_episodes"
-        android:layout_width="0dp"
-        android:layout_height="0dp"></View>
-
-
-    <View
-        android:id="@+id/redirect_to_play"
-        android:layout_width="0dp"
-        android:layout_height="0dp"></View>
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <LinearLayout
-            android:id="@+id/linearLayout2"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:gravity="center_vertical"
-            android:orientation="vertical"
-            android:padding="10dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <TextView
-                android:id="@+id/result_title"
-                android:layout_width="wrap_content"
-                android:layout_height="30dp"
-                android:gravity="center_vertical"
-                android:maxLines="1"
-                android:textColor="?attr/textColor"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                tools:text="The Perfect Run The Perfect Run" />
-
-            <LinearLayout
-                android:id="@+id/result_next_airing_holder"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="start"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/result_episodes_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginEnd="20dp"
-                    android:textColor="?attr/textColor"
-                    android:textSize="17sp"
-                    android:textStyle="normal"
-                    android:visibility="gone"
-                    tools:text="8 Episodes" />
-
-                <TextView
-                    android:id="@+id/result_next_airing"
-                    android:layout_width="match_parent"
-
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:gravity="center"
-                    android:textColor="?attr/grayTextColor"
-                    android:textSize="17sp"
-                    android:textStyle="normal"
-                    tools:text="Episode 1022 will be released in" />
-
-                <TextView
-                    android:id="@+id/result_next_airing_time"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:gravity="start"
-                    android:textColor="?attr/textColor"
-                    android:textSize="17sp"
-                    android:textStyle="normal"
-                    tools:text="5d 3h 30m" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/result_movie_parent"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="start"
-                android:layout_marginTop="10dp"
-                android:animateLayoutChanges="true"
-                android:orientation="vertical"
-                tools:visibility="visible">
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/result_play_movie"
-                    style="@style/ResultButtonTV"
-
-                    android:nextFocusRight="@id/redirect_to_episodes"
-                    android:nextFocusUp="@id/result_back"
-                    android:nextFocusDown="@id/result_play_series"
-                    android:text="@string/play_movie_button"
-                    android:visibility="visible"
-                    app:icon="@drawable/ic_baseline_play_arrow_24" />
-
-                <LinearLayout
-                    android:id="@+id/series_holder"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/result_play_series"
-                        style="@style/ResultButtonTV"
-
-                        android:nextFocusRight="@id/redirect_to_episodes"
-                        android:nextFocusUp="@id/result_play_movie"
-                        android:nextFocusDown="@id/result_resume_series"
-                        android:text="@string/play_episode"
-                        android:visibility="visible"
-                        app:icon="@drawable/ic_baseline_play_arrow_24"
-                        tools:visibility="gone" />
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/result_resume_series"
-                        style="@style/ResultButtonTV"
-
-                        android:nextFocusRight="@id/redirect_to_episodes"
-                        android:nextFocusUp="@id/result_play_series"
-                        android:nextFocusDown="@id/result_play_trailer"
-                        android:text="@string/resume"
-                        android:visibility="visible"
-                        app:icon="@drawable/ic_baseline_play_arrow_24"
-                        tools:visibility="gone" />
-                </LinearLayout>
-
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/result_play_trailer"
-                    style="@style/ResultButtonTV"
-
-                    android:nextFocusRight="@id/redirect_to_episodes"
-                    android:nextFocusUp="@id/result_resume_series"
-                    android:nextFocusDown="@id/result_bookmark_button"
-                    android:text="@string/play_trailer_button"
-                    android:visibility="gone"
-                    app:icon="@drawable/ic_baseline_play_arrow_24"
-                    tools:visibility="gone" />
-
-
-                <!--  <com.lagradost.cloudstream3.ui.download.button.DownloadButton
-                      android:visibility="gone"
-                      android:id="@+id/download_button"
-                      android:layout_width="wrap_content"
-                      android:layout_height="wrap_content"
-                      android:layout_weight="1"
-                      android:minWidth="250dp"
-                      app:download_layout="@layout/download_button_layout" />
-    -->
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/result_bookmark_button"
-                    style="@style/ResultButtonTV"
-                    android:nextFocusRight="@id/redirect_to_episodes"
-                    android:nextFocusUp="@id/result_play_trailer"
-
-                    android:nextFocusDown="@id/result_episodes_show"
-                    android:text="@string/type_none"
-                    android:visibility="visible"
-                    app:icon="@drawable/ic_baseline_bookmark_24" />
-
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/result_episodes_show"
-                    style="@style/ResultButtonTV"
-
-                    android:nextFocusRight="@id/redirect_to_episodes"
-                    android:nextFocusUp="@id/result_bookmark_button"
-                    android:text="@string/episodes"
-                    android:visibility="visible"
-                    app:icon="@drawable/ic_baseline_sort_24"
-                    tools:visibility="visible" />
-            </LinearLayout>
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/left_layout"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:orientation="vertical"
-            android:padding="10dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/linearLayout2"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <com.lagradost.cloudstream3.widget.FlowLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:itemSpacing="10dp">
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/result_meta_site"
-                    style="@style/SmallWhiteButton"
-                    android:layout_gravity="center_vertical"
-                    tools:text="Gogoanime" />
-
-                <TextView
-                    android:id="@+id/result_meta_type"
-                    style="@style/ResultInfoText"
-                    tools:text="Movie" />
-
-                <TextView
-                    android:id="@+id/result_meta_year"
-                    style="@style/ResultInfoText"
-                    tools:text="2022" />
-
-                <TextView
-                    android:id="@+id/result_meta_rating"
-                    style="@style/ResultInfoText"
-                    tools:text="Rated: 8.5/10.0" />
-
-                <TextView
-                    android:id="@+id/result_meta_status"
-                    style="@style/ResultInfoText"
-                    tools:text="Ongoing" />
-
-                <TextView
-                    android:id="@+id/result_meta_duration"
-                    style="@style/ResultInfoText"
-                    tools:text="121min" />
-            </com.lagradost.cloudstream3.widget.FlowLayout>
-
-
-            <TextView
-                android:id="@+id/result_description"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:fadingEdgeLength="30dp"
-                android:foreground="@drawable/outline_drawable"
-                android:maxLines="7"
-                android:nextFocusUp="@id/result_back"
-                android:nextFocusDown="@id/result_bookmark_button"
-                android:padding="5dp"
-                android:requiresFadingEdge="vertical"
-                android:textColor="?attr/textColor"
-                android:textSize="12sp"
-                tools:text="Ryan Quicksave Romano is an eccentric adventurer with a strange power: he can create a save-point in time and redo his life whenever he dies. Arriving in New Rome, the glitzy capital of sin of a rebuilding Europe, he finds the city torn between mega-corporations, sponsored heroes, superpowered criminals, and true monsters. It's a time of chaos, where potions can grant the power to rule the world and dangers lurk everywhere. " />
-
-            <com.google.android.material.chip.ChipGroup
-                android:id="@+id/result_tag"
-                style="@style/ChipParent"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-
-            <FrameLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:visibility="gone">
-
-                <LinearLayout
-                    android:id="@+id/result_resume_progress_holder"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="10dp"
-                    android:orientation="horizontal"
-                    android:visibility="gone"
-                    tools:visibility="visible">
-
-                    <androidx.core.widget.ContentLoadingProgressBar
-                        android:id="@+id/result_resume_series_progress"
-                        style="?android:attr/progressBarStyleHorizontal"
-                        android:layout_width="match_parent"
-                        android:layout_height="20dp"
-                        android:layout_gravity="end|center_vertical"
-                        android:layout_weight="1"
-                        android:indeterminate="false"
-                        android:max="100"
-
-                        android:paddingEnd="10dp"
-                        android:progress="0"
-                        android:progressBackgroundTint="?attr/colorPrimary"
-                        android:visibility="gone"
-                        tools:progress="50"
-                        tools:visibility="visible" />
-
-                    <TextView
-                        android:id="@+id/result_resume_series_progress_text"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_weight="0"
-                        android:gravity="center"
-                        android:maxLines="1"
-                        android:paddingEnd="5dp"
-                        android:textColor="?attr/grayTextColor"
-                        android:visibility="gone"
-                        tools:ignore="RtlSymmetry"
-                        tools:text="69m remaining" />
-                </LinearLayout>
-
-            </FrameLayout>
-
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/episode_holder_tv"
-            android:layout_width="500dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:orientation="horizontal"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:visibility="visible">
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/result_season_selection"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-
-                android:nextFocusLeft="@id/result_episodes_show"
-                android:nextFocusRight="@id/result_range_selection"
-                android:orientation="vertical"
-                android:paddingBottom="10dp"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                tools:listitem="@layout/result_selection" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/result_range_selection"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-
-                android:nextFocusLeft="@id/result_season_selection"
-                android:nextFocusRight="@id/result_dub_selection"
-                android:orientation="vertical"
-                android:paddingBottom="10dp"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                tools:listitem="@layout/result_selection" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/result_dub_selection"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-
-                android:nextFocusLeft="@id/result_range_selection"
-                android:nextFocusRight="@id/result_episodes"
-                android:orientation="vertical"
-                android:paddingBottom="10dp"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                tools:listitem="@layout/result_selection" />
-
-
-            <!--<androidx.core.widget.ContentLoadingProgressBar
-                    android:id="@+id/result_episode_loading"
-
-                    style="@style/Widget.AppCompat.ProgressBar"
-                    android:layout_gravity="center"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp" />-->
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/result_episodes"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:clipToPadding="false"
-                android:nextFocusLeft="@id/result_dub_selection"
-                android:nextFocusRight="@id/result_recommendations_filter_selection"
-                android:orientation="vertical"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                tools:listitem="@layout/result_episode" />
-
-            <View
-                android:id="@+id/temporary_no_focus"
-                android:layout_width="1dp"
-                android:layout_height="1dp"
-                android:focusable="false"
-                android:nextFocusLeft="@id/temporary_no_focus"
-                android:nextFocusRight="@id/temporary_no_focus"
-                android:nextFocusUp="@id/temporary_no_focus"
-                android:nextFocusDown="@id/temporary_no_focus" />
-        </LinearLayout>
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
 
     <androidx.core.widget.NestedScrollView
-        android:id="@+id/result_finish_loading"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+        <LinearLayout
+            android:id="@+id/result_finish_loading"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="@dimen/result_padding"
+            android:paddingEnd="@dimen/result_padding">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="100dp"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="250dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="10dp"
+                    android:layout_weight="0"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/result_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="marquee"
+                        android:gravity="center_vertical"
+                        android:singleLine="true"
+                        android:textColor="?attr/textColor"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        tools:text="The Perfect Run The Perfect Run" />
+
+                    <LinearLayout
+                        android:id="@+id/result_next_airing_holder"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/result_episodes_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginEnd="20dp"
+                            android:textColor="?attr/textColor"
+                            android:textSize="17sp"
+                            android:textStyle="normal"
+                            android:visibility="gone"
+                            tools:text="8 Episodes" />
+
+                        <TextView
+                            android:id="@+id/result_next_airing"
+                            android:layout_width="match_parent"
+
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:gravity="center"
+                            android:textColor="?attr/grayTextColor"
+                            android:textSize="17sp"
+                            android:textStyle="normal"
+                            tools:text="Episode 1022 will be released in" />
+
+                        <TextView
+                            android:id="@+id/result_next_airing_time"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:gravity="start"
+                            android:textColor="?attr/textColor"
+                            android:textSize="17sp"
+                            android:textStyle="normal"
+                            tools:text="5d 3h 30m" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/result_movie_parent"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start"
+                        android:layout_marginTop="10dp"
+                        android:animateLayoutChanges="true"
+                        android:orientation="vertical"
+                        tools:visibility="visible">
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/result_play_movie"
+                            style="@style/ResultButtonTV"
+
+                            android:nextFocusRight="@id/result_description"
+                            android:nextFocusDown="@id/result_play_series"
+                            android:text="@string/play_movie_button"
+                            android:visibility="visible"
+                            app:icon="@drawable/ic_baseline_play_arrow_24" />
+
+                        <LinearLayout
+                            android:id="@+id/series_holder"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/result_play_series"
+                                style="@style/ResultButtonTV"
+
+                                android:nextFocusRight="@id/result_description"
+                                android:nextFocusUp="@id/result_play_movie"
+                                android:nextFocusDown="@id/result_resume_series"
+                                android:text="@string/play_episode"
+                                android:visibility="visible"
+                                app:icon="@drawable/ic_baseline_play_arrow_24" />
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/result_resume_series"
+                                style="@style/ResultButtonTV"
+
+                                android:nextFocusRight="@id/result_description"
+                                android:nextFocusUp="@id/result_play_series"
+                                android:nextFocusDown="@id/result_play_trailer"
+                                android:text="@string/resume"
+                                android:visibility="visible"
+                                app:icon="@drawable/ic_baseline_play_arrow_24" />
+                        </LinearLayout>
+
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/result_play_trailer"
+                            style="@style/ResultButtonTV"
+
+                            android:nextFocusRight="@id/result_description"
+                            android:nextFocusUp="@id/result_resume_series"
+                            android:nextFocusDown="@id/result_bookmark_button"
+                            android:text="@string/play_trailer_button"
+                            android:visibility="gone"
+                            app:icon="@drawable/ic_baseline_play_arrow_24"
+                            tools:visibility="visible" />
+
+
+                        <!--  <com.lagradost.cloudstream3.ui.download.button.DownloadButton
+                              android:visibility="gone"
+                              android:id="@+id/download_button"
+                              android:layout_width="wrap_content"
+                              android:layout_height="wrap_content"
+                              android:layout_weight="1"
+                              android:minWidth="250dp"
+                              app:download_layout="@layout/download_button_layout" />
+            -->
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/result_bookmark_button"
+                            style="@style/ResultButtonTV"
+                            android:nextFocusRight="@id/result_description"
+                            android:nextFocusUp="@id/result_play_trailer"
+                            android:nextFocusDown="@id/result_episodes_show"
+
+                            android:text="@string/type_none"
+                            android:visibility="visible"
+                            app:icon="@drawable/ic_baseline_bookmark_24" />
+
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/result_episodes_show"
+                            style="@style/ResultButtonTV"
+
+                            android:nextFocusRight="@id/redirect_to_episodes"
+                            android:nextFocusUp="@id/result_bookmark_button"
+                            android:nextFocusDown="@id/result_cast_items"
+
+                            android:text="@string/episodes"
+                            android:visibility="visible"
+                            app:icon="@drawable/ic_baseline_sort_24"
+                            tools:visibility="visible" />
+
+                        <View
+                            android:id="@+id/redirect_to_episodes"
+                            android:layout_width="1dp"
+                            android:layout_height="1dp"
+                            android:focusable="true"
+                            android:focusableInTouchMode="true" />
+
+
+                        <View
+                            android:id="@+id/redirect_to_play"
+                            android:layout_width="1dp"
+                            android:layout_height="1dp"
+                            android:focusable="true"
+                            android:focusableInTouchMode="true" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/right_layout"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/linearLayout2"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <com.lagradost.cloudstream3.widget.FlowLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:itemSpacing="10dp">
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/result_meta_site"
+                            style="@style/SmallWhiteButton"
+                            android:layout_gravity="center_vertical"
+                            tools:text="Gogoanime" />
+
+                        <TextView
+                            android:id="@+id/result_meta_type"
+                            style="@style/ResultInfoText"
+                            tools:text="Movie" />
+
+                        <TextView
+                            android:id="@+id/result_meta_year"
+                            style="@style/ResultInfoText"
+                            tools:text="2022" />
+
+                        <TextView
+                            android:id="@+id/result_meta_rating"
+                            style="@style/ResultInfoText"
+                            tools:text="Rated: 8.5/10.0" />
+
+                        <TextView
+                            android:id="@+id/result_meta_status"
+                            style="@style/ResultInfoText"
+                            tools:text="Ongoing" />
+
+                        <TextView
+                            android:id="@+id/result_meta_duration"
+                            style="@style/ResultInfoText"
+                            tools:text="121min" />
+                    </com.lagradost.cloudstream3.widget.FlowLayout>
+
+
+                    <TextView
+                        android:id="@+id/result_description"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:fadingEdgeLength="30dp"
+                        android:foreground="@drawable/outline_drawable"
+                        android:maxLines="7"
+                        android:nextFocusUp="@id/result_back"
+                        android:nextFocusDown="@id/result_bookmark_button"
+                        android:padding="5dp"
+                        android:requiresFadingEdge="vertical"
+                        android:textColor="?attr/textColor"
+                        android:textSize="12sp"
+                        tools:text="Ryan Quicksave Romano is an eccentric adventurer with a strange power: he can create a save-point in time and redo his life whenever he dies. Arriving in New Rome, the glitzy capital of sin of a rebuilding Europe, he finds the city torn between mega-corporations, sponsored heroes, superpowered criminals, and true monsters. It's a time of chaos, where potions can grant the power to rule the world and dangers lurk everywhere. " />
+
+                    <com.google.android.material.chip.ChipGroup
+                        android:id="@+id/result_tag"
+                        style="@style/ChipParent"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                    <FrameLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone">
+
+                        <LinearLayout
+                            android:id="@+id/result_resume_progress_holder"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="10dp"
+                            android:orientation="horizontal"
+                            android:visibility="gone"
+                            tools:visibility="visible">
+
+                            <androidx.core.widget.ContentLoadingProgressBar
+                                android:id="@+id/result_resume_series_progress"
+                                style="?android:attr/progressBarStyleHorizontal"
+                                android:layout_width="match_parent"
+                                android:layout_height="20dp"
+                                android:layout_gravity="end|center_vertical"
+                                android:layout_weight="1"
+                                android:indeterminate="false"
+                                android:max="100"
+
+                                android:paddingEnd="10dp"
+                                android:progress="0"
+                                android:progressBackgroundTint="?attr/colorPrimary"
+                                android:visibility="gone"
+                                tools:progress="50"
+                                tools:visibility="visible" />
+
+                            <TextView
+                                android:id="@+id/result_resume_series_progress_text"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_weight="0"
+                                android:gravity="center"
+                                android:maxLines="1"
+                                android:paddingEnd="5dp"
+                                android:textColor="?attr/grayTextColor"
+                                android:visibility="gone"
+                                tools:ignore="RtlSymmetry"
+                                tools:text="69m remaining" />
+                        </LinearLayout>
+
+                    </FrameLayout>
+
+
+                </LinearLayout>
+            </LinearLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/result_cast_items"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:descendantFocusability="afterDescendants"
+
+                android:fadingEdge="horizontal"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:nextFocusUp="@id/result_back"
+                android:nextFocusDown="@id/result_play_movie"
+                android:orientation="horizontal"
+                android:paddingTop="5dp"
+                android:requiresFadingEdge="horizontal"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:itemCount="2"
+                tools:listitem="@layout/cast_item"
+                tools:visibility="visible" />
+
+            <LinearLayout
+                android:id="@+id/result_recommendations_holder"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/result_recommendations_filter_selection"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="10dp"
+                    android:nextFocusUp="@id/result_episodes"
+
+                    android:nextFocusDown="@id/result_recommendations_list"
+                    android:orientation="horizontal"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    tools:itemCount="2"
+                    tools:listitem="@layout/result_selection" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center_vertical"
+                    android:text="@string/recommended"
+                    android:textColor="?attr/textColor"
+                    android:textSize="17sp" />
+            </LinearLayout>
+
+            <com.lagradost.cloudstream3.ui.AutofitRecyclerView
+                android:id="@+id/result_recommendations_list"
+                android:layout_width="match_parent"
+
+                android:layout_height="wrap_content"
+                android:background="?attr/primaryBlackBackground"
+                android:clipToPadding="false"
+                android:descendantFocusability="afterDescendants"
+                android:nextFocusUp="@id/result_recommendations_filter_selection"
+                android:orientation="vertical"
+                app:spanCount="8"
+                tools:listitem="@layout/search_result_grid" />
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <ImageView
+        android:id="@+id/episodes_shadow"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clickable="false"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:importantForAccessibility="no"
+        android:src="@drawable/episodes_shadow"
+        android:visibility="gone"
+        tools:visibility="visible" />
+
+    <LinearLayout
+        android:id="@+id/episode_holder_tv"
+        android:layout_width="wrap_content"
+
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:orientation="horizontal"
+        android:paddingStart="@dimen/result_padding"
+        android:paddingEnd="@dimen/result_padding"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="RtlHardcoded"
+        tools:visibility="visible">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/result_season_selection"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:clipToPadding="false"
+            android:nextFocusLeft="@id/result_episodes_show"
+            android:nextFocusRight="@id/result_range_selection"
+            android:orientation="vertical"
+            android:paddingVertical="@dimen/result_padding"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/result_selection" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/result_range_selection"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clipToPadding="false"
+
+            android:nextFocusLeft="@id/result_season_selection"
+            android:nextFocusRight="@id/result_dub_selection"
+            android:orientation="vertical"
+            android:paddingVertical="@dimen/result_padding"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/result_selection"
+            tools:visibility="visible" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/result_dub_selection"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:clipToPadding="false"
+            android:nextFocusLeft="@id/result_range_selection"
+            android:nextFocusRight="@id/result_episodes"
+            android:orientation="vertical"
+            android:paddingVertical="@dimen/result_padding"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/result_selection" />
+
+
+        <!--<androidx.core.widget.ContentLoadingProgressBar
+                android:id="@+id/result_episode_loading"
+
+                style="@style/Widget.AppCompat.ProgressBar"
+                android:layout_gravity="center"
+                android:layout_width="50dp"
+                android:layout_height="50dp" />-->
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/result_episodes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clipToPadding="false"
+            android:nextFocusLeft="@id/result_dub_selection"
+            android:nextFocusRight="@id/result_recommendations_filter_selection"
+            android:orientation="vertical"
+            android:paddingVertical="@dimen/result_padding"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/result_episode" />
+
+        <View
+            android:id="@+id/temporary_no_focus"
+            android:layout_width="1dp"
+            android:layout_height="1dp"
+            android:focusable="false"
+            android:nextFocusLeft="@id/temporary_no_focus"
+            android:nextFocusRight="@id/temporary_no_focus"
+            android:nextFocusUp="@id/temporary_no_focus"
+            android:nextFocusDown="@id/temporary_no_focus" />
+    </LinearLayout>
+
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -956,75 +1055,7 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
                     </LinearLayout>
 
                 </LinearLayout>-->
-
-
             </LinearLayout>
-
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/result_cast_items"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:descendantFocusability="afterDescendants"
-
-                android:fadingEdge="horizontal"
-                android:focusable="false"
-                android:focusableInTouchMode="false"
-                android:nextFocusUp="@id/result_back"
-                android:nextFocusDown="@id/result_play_movie"
-                android:orientation="horizontal"
-                android:paddingTop="5dp"
-                android:requiresFadingEdge="horizontal"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                tools:itemCount="2"
-                tools:listitem="@layout/cast_item"
-                tools:visibility="visible" />
-
-            <LinearLayout
-                android:id="@+id/result_recommendations_holder"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingTop="10dp"
-                android:paddingBottom="10dp">
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/result_recommendations_filter_selection"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="10dp"
-                    android:nextFocusUp="@id/result_episodes"
-
-                    android:nextFocusDown="@id/result_recommendations_list"
-                    android:orientation="horizontal"
-                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    tools:itemCount="2"
-                    tools:listitem="@layout/result_selection" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:gravity="center_vertical"
-                    android:text="@string/recommended"
-                    android:textColor="?attr/textColor"
-                    android:textSize="17sp" />
-            </LinearLayout>
-
-            <com.lagradost.cloudstream3.ui.AutofitRecyclerView
-                android:id="@+id/result_recommendations_list"
-                android:layout_width="match_parent"
-
-                android:layout_height="wrap_content"
-                android:background="?attr/primaryBlackBackground"
-                android:clipToPadding="false"
-                android:descendantFocusability="afterDescendants"
-                android:nextFocusUp="@id/result_recommendations_filter_selection"
-                android:orientation="vertical"
-                app:spanCount="8"
-                tools:listitem="@layout/search_result_grid" />
         </LinearLayout>
-
-
     </androidx.core.widget.NestedScrollView>
 </FrameLayout>

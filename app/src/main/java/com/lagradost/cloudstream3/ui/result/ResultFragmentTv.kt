@@ -1,11 +1,16 @@
 package com.lagradost.cloudstream3.ui.result
 
+import android.animation.Animator
+import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.app.Dialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AlphaAnimation
+import android.view.animation.Animation
+import android.view.animation.DecelerateInterpolator
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
@@ -34,6 +39,7 @@ import com.lagradost.cloudstream3.ui.search.SearchHelper
 import com.lagradost.cloudstream3.utils.AppUtils.getNameFull
 import com.lagradost.cloudstream3.utils.AppUtils.html
 import com.lagradost.cloudstream3.utils.AppUtils.loadCache
+import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialogInstant
@@ -64,6 +70,7 @@ class ResultFragmentTv : Fragment() {
     ): View {
         viewModel =
             ViewModelProvider(this)[ResultViewModel2::class.java]
+        viewModel.EPISODE_RANGE_SIZE = 50
         updateUIEvent += ::updateUI
 
         val localBinding = FragmentResultTvBinding.inflate(inflater, container, false)
@@ -170,10 +177,39 @@ class ResultFragmentTv : Fragment() {
         super.onStop()
     }
 
+    private fun View.fade(turnVisible: Boolean) {
+        if (turnVisible) {
+            isVisible = true
+        }
+
+        this.animate().alpha(if (turnVisible) 1.0f else 0.0f).apply {
+            duration = 200
+            interpolator = DecelerateInterpolator()
+            setListener(object : Animator.AnimatorListener {
+                override fun onAnimationStart(animation: Animator) {
+                }
+
+                override fun onAnimationEnd(animation: Animator) {
+                    this@fade.isVisible = turnVisible
+                }
+
+                override fun onAnimationCancel(animation: Animator) {
+                }
+
+                override fun onAnimationRepeat(animation: Animator) {
+                }
+            })
+        }
+        this.animate().translationX(if (turnVisible) 0f else 100f).apply {
+            duration = 200
+            interpolator = DecelerateInterpolator()
+        }
+    }
+
     private fun toggleEpisodes(show: Boolean) {
         binding?.apply {
-            episodeHolderTv.isVisible = show
-            leftLayout.isGone = show
+            episodesShadow.fade(show)
+            episodeHolderTv.fade(show)
         }
     }
 
