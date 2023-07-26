@@ -801,6 +801,18 @@ enum class TvType(value: Int?) {
     Others(12)
 }
 
+public enum class AutoDownloadMode(val value: Int) {
+    Disable(0),
+    FilterByLang(1),
+    All(2),
+    NsfwOnly(3)
+    ;
+
+    companion object {
+        infix fun getEnum(value: Int): AutoDownloadMode? = AutoDownloadMode.values().firstOrNull { it.value == value }
+    }
+}
+
 // IN CASE OF FUTURE ANIME MOVIE OR SMTH
 fun TvType.isMovieType(): Boolean {
     return this == TvType.Movie || this == TvType.AnimeMovie || this == TvType.Torrent || this == TvType.Live
