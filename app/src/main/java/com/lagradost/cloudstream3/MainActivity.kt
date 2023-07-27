@@ -13,16 +13,15 @@ import android.os.Bundle
 import android.util.AttributeSet
 import android.util.Log
 import android.view.*
-import android.view.animation.Animation
-import android.view.animation.AnimationSet
-import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.annotation.IdRes
+import androidx.annotation.MainThread
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.view.doOnLayout
+import androidx.core.animation.addListener
+import androidx.core.view.ViewCompat
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentActivity
@@ -35,22 +34,12 @@ import androidx.navigation.NavOptions
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import androidx.preference.PreferenceManager
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import androidx.transition.ChangeBounds
-import androidx.transition.ChangeTransform
-import androidx.transition.Scene
-import androidx.transition.TransitionManager
-import androidx.transition.TransitionManager.beginDelayedTransition
-import androidx.transition.TransitionSet
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.google.android.gms.cast.framework.*
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.google.android.material.button.MaterialButton
 import com.google.android.material.navigationrail.NavigationRailView
 import com.google.android.material.snackbar.Snackbar
 import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
@@ -108,6 +97,7 @@ import com.lagradost.cloudstream3.ui.setup.SetupFragmentExtensions
 import com.lagradost.cloudstream3.utils.*
 import com.lagradost.cloudstream3.utils.AppUtils.html
 import com.lagradost.cloudstream3.utils.AppUtils.isCastApiAvailable
+import com.lagradost.cloudstream3.utils.AppUtils.isLtr
 import com.lagradost.cloudstream3.utils.AppUtils.isNetworkAvailable
 import com.lagradost.cloudstream3.utils.AppUtils.loadCache
 import com.lagradost.cloudstream3.utils.AppUtils.loadRepository
@@ -131,6 +121,7 @@ import com.lagradost.cloudstream3.utils.UIHelper.getResourceColor
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.requestRW
+import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import com.lagradost.nicehttp.Requests
 import com.lagradost.nicehttp.ResponseParser
 import kotlinx.coroutines.sync.Mutex
@@ -140,6 +131,7 @@ import java.lang.ref.WeakReference
 import java.net.URI
 import java.net.URLDecoder
 import java.nio.charset.Charset
+import kotlin.math.absoluteValue
 import kotlin.reflect.KClass
 import kotlin.system.exitProcess
 
@@ -472,13 +464,24 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
 
         binding?.navHostFragment?.apply {
             val params = layoutParams as ConstraintLayout.LayoutParams
+            val push = if (!dontPush && isTvSettings()) resources.getDimensionPixelSize(R.dimen.navbar_width) else 0
 
-            params.setMargins(
-                if (!dontPush && isTvSettings()) resources.getDimensionPixelSize(R.dimen.navbar_width) else 0,
-                params.topMargin,
-                params.rightMargin,
-                params.bottomMargin
-            )
+            if(!this.isLtr()) {
+                params.setMargins(
+                    params.leftMargin,
+                    params.topMargin,
+                    push,
+                    params.bottomMargin
+                )
+            } else {
+                params.setMargins(
+                    push,
+                    params.topMargin,
+                    params.rightMargin,
+                    params.bottomMargin
+                )
+            }
+
             layoutParams = params
         }
 
@@ -572,9 +575,22 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
     }
 
     override fun dispatchKeyEvent(event: KeyEvent?): Boolean {
-        CommonActivity.dispatchKeyEvent(this, event)?.let {
-            return it
+        val start = System.currentTimeMillis()
+        try {
+            val response = CommonActivity.dispatchKeyEvent(this, event)
+
+            if (response != null)
+                return response
+        } finally {
+            debugAssert({
+                val end = System.currentTimeMillis()
+                val delta = end - start
+                delta > 100
+            }) {
+                "Took over 100ms to navigate, smth is VERY wrong"
+            }
         }
+
         return super.dispatchKeyEvent(event)
     }
 
@@ -745,84 +761,185 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
     }
 
     private var binding: ActivityMainBinding? = null
-    private var focusOutline: WeakReference<View> = WeakReference(null)
-    private var lastFocus: WeakReference<View> = WeakReference(null)
-    private val layoutListener: View.OnLayoutChangeListener =
-        View.OnLayoutChangeListener { v, _, _, _, _, _, _, _, _ ->
-            updateFocusView(
-                v
-            )
-        }
-    private val attachListener : View.OnAttachStateChangeListener = object : View.OnAttachStateChangeListener {
-        override fun onViewAttachedToWindow(v: View) {
-            updateFocusView(v)
-        }
 
-        override fun onViewDetachedFromWindow(v: View) {
-            // removes the focus view but not the listener as updateFocusView(null) will remove the listener
-            focusOutline.get()?.isVisible = false
-        }
-    }
-
-    private fun updateFocusView(newFocus: View?) {
-        val focusOutline = focusOutline.get() ?: return
-        lastFocus.get()?.removeOnLayoutChangeListener(layoutListener)
-        lastFocus.get()?.removeOnAttachStateChangeListener(attachListener)
-        val wasGone = focusOutline.isGone
-
-        val visible =
-            newFocus != null && newFocus.measuredHeight > 0 && newFocus.measuredWidth > 0 && newFocus.isShown && newFocus.tag != "tv_no_focus_tag"
-        focusOutline.isVisible = visible
-        if (newFocus != null) {
-            lastFocus = WeakReference(newFocus)
-
-            val out = IntArray(2)
-            newFocus.getLocationInWindow(out)
-            val (x, y) = out
-            // out of bounds = 0,0
-            if(x == 0 && y == 0) {
-                focusOutline.isVisible = false
-            }
-            /*(newFocus.parent as? RecyclerView)?.let { recycle ->
-                println("PARET IS RECYLE")
-                val position = recycle.getChildAdapterPosition(newFocus)
-                recycle.scrollToPosition(position)
-
-                (recycle.layoutManager as? GridLayoutManager)?.let {
-                    if(it.orientation == LinearLayout.HORIZONTAL) {
-                        println("SCROLL")
-
-
-                    }
-                }
-
-            }*/
-            newFocus.addOnLayoutChangeListener(layoutListener)
-            newFocus.addOnAttachStateChangeListener(attachListener)
-
-            //  val set = AnimationSet(true)
-            if(!wasGone) {
-                (focusOutline.parent as? ViewGroup)?.let {
-                    TransitionManager.endTransitions(it)
-                    TransitionManager.beginDelayedTransition(
-                        it,
-                        TransitionSet().addTransition(ChangeBounds())
-                            .addTransition(ChangeTransform())
-                            .setDuration(100)
+    object TvFocus {
+        data class FocusTarget(
+            val width: Int,
+            val height: Int,
+            val x: Float,
+            val y: Float,
+        ) {
+            companion object {
+                fun lerp(a: FocusTarget, b: FocusTarget, lerp: Float): FocusTarget {
+                    val ilerp = 1 - lerp
+                    return FocusTarget(
+                        width = (a.width * ilerp + b.width * lerp).toInt(),
+                        height = (a.height * ilerp + b.height * lerp).toInt(),
+                        x = a.x * ilerp + b.x * lerp,
+                        y = a.y * ilerp + b.y * lerp
                     )
                 }
             }
-            // ObjectAnimator.ofFloat(focusOutline, "translationX",focusOutline.translationX, x.toFloat()
+        }
 
+        var last: FocusTarget = FocusTarget(0, 0, 0.0f, 0.0f)
+        var current: FocusTarget = FocusTarget(0, 0, 0.0f, 0.0f)
 
-            focusOutline.layoutParams = focusOutline.layoutParams?.apply {
-                width = newFocus.measuredWidth
-                height = newFocus.measuredHeight
+        var focusOutline: WeakReference<View> = WeakReference(null)
+        var lastFocus: WeakReference<View> = WeakReference(null)
+        private val layoutListener: View.OnLayoutChangeListener =
+            View.OnLayoutChangeListener { v, _, _, _, _, _, _, _, _ ->
+                updateFocusView(
+                    v, same = true
+                )
             }
-            focusOutline.translationX = x.toFloat()
-            focusOutline.translationY = y.toFloat()
+        private val attachListener: View.OnAttachStateChangeListener =
+            object : View.OnAttachStateChangeListener {
+                override fun onViewAttachedToWindow(v: View) {
+                    updateFocusView(v)
+                }
+
+                override fun onViewDetachedFromWindow(v: View) {
+                    // removes the focus view but not the listener as updateFocusView(null) will remove the listener
+                    focusOutline.get()?.isVisible = false
+                }
+            }
+
+        private fun setTargetPosition(target: FocusTarget) {
+            focusOutline.get()?.apply {
+                layoutParams = layoutParams?.apply {
+                    width = target.width
+                    height = target.height
+                }
+
+                translationX = target.x
+                translationY = target.y
+            }
+        }
+
+        private var animator: ValueAnimator? = null
+
+        @MainThread
+        fun updateFocusView(newFocus: View?, same: Boolean = false) {
+            val focusOutline = focusOutline.get() ?: return
+            lastFocus.get()?.apply {
+                removeOnLayoutChangeListener(layoutListener)
+                removeOnAttachStateChangeListener(attachListener)
+            }
+
+            val wasGone = focusOutline.isGone
+
+            val visible =
+                newFocus != null && newFocus.measuredHeight > 0 && newFocus.measuredWidth > 0 && newFocus.isShown && newFocus.tag != "tv_no_focus_tag"
+            focusOutline.isVisible = visible
+
+            if (newFocus != null) {
+                lastFocus = WeakReference(newFocus)
+
+                val out = IntArray(2)
+                newFocus.getLocationInWindow(out)
+                val (screenX, screenY) = out
+                var (x,y) = screenX.toFloat() to screenY.toFloat()
+                val (currentX, currentY) = focusOutline.translationX to focusOutline.translationY
+    //            println(">><<< $x $y $currentX $currentY")
+               if(!newFocus.isLtr()) {
+                    x = x - focusOutline.rootView.width + newFocus.measuredWidth
+                }
+
+                // out of bounds = 0,0
+                if (screenX == 0 && screenY == 0) {
+                    focusOutline.isVisible = false
+                }
+
+                newFocus.addOnLayoutChangeListener(layoutListener)
+                newFocus.addOnAttachStateChangeListener(attachListener)
+
+                val start = FocusTarget(
+                    x = currentX,
+                    y = currentY,
+                    width = focusOutline.measuredWidth,
+                    height = focusOutline.measuredHeight
+                )
+                val end = FocusTarget(
+                    x = x,
+                    y = y,
+                    width = newFocus.measuredWidth,
+                    height = newFocus.measuredHeight
+                )
+
+                // if they are the same within then snap, aka scrolling
+                val deltaMin = 50.toPx
+                if (start.width == end.width && start.height == end.height && (start.x - end.x).absoluteValue < deltaMin && (start.y - end.y).absoluteValue < deltaMin) {
+                    animator?.cancel()
+                    last = start
+                    current = end
+                    setTargetPosition(end)
+                    return
+                }
+
+                // if running then "reuse"
+                if (animator?.isRunning == true) {
+                    current = end
+                    return
+                } else {
+                    animator?.cancel()
+                }
+
+
+                last = start
+                current = end
+
+                // if previously gone, then tp
+                if (wasGone) {
+                    setTargetPosition(current)
+                    return
+                }
+
+                // animate between a and b
+                animator = ValueAnimator.ofFloat(0.0f, 1.0f).apply {
+                    startDelay = 0
+                    duration = 100
+                    addUpdateListener { animation ->
+                        val animatedValue = animation.animatedValue as Float
+                        val target = FocusTarget.lerp(last, current, minOf(animatedValue, 1.0f))
+                        setTargetPosition(target)
+                    }
+                    start()
+                }
+
+                // post check
+                if (!same) {
+                    newFocus.postDelayed({
+                        updateFocusView(lastFocus.get(), same = true)
+                    }, 200)
+                }
+
+                /*
+
+                the following is working, but somewhat bad code code
+
+                if (!wasGone) {
+                    (focusOutline.parent as? ViewGroup)?.let {
+                        TransitionManager.endTransitions(it)
+                        TransitionManager.beginDelayedTransition(
+                            it,
+                            TransitionSet().addTransition(ChangeBounds())
+                                .addTransition(ChangeTransform())
+                                .setDuration(100)
+                        )
+                    }
+                }
+
+                focusOutline.layoutParams = focusOutline.layoutParams?.apply {
+                    width = newFocus.measuredWidth
+                    height = newFocus.measuredHeight
+                }
+                focusOutline.translationX = x.toFloat()
+                focusOutline.translationY = y.toFloat()*/
+            }
         }
     }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         app.initClient(this)
@@ -872,13 +989,13 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             if (isTvSettings()) {
                 val newLocalBinding = ActivityMainTvBinding.inflate(layoutInflater, null, false)
                 setContentView(newLocalBinding.root)
-                focusOutline = WeakReference(newLocalBinding.focusOutline)
+                TvFocus.focusOutline = WeakReference(newLocalBinding.focusOutline)
                 newLocalBinding.root.viewTreeObserver.addOnGlobalFocusChangeListener { _, newFocus ->
                     // println("refocus $oldFocus -> $newFocus")
-                    updateFocusView(newFocus)
+                    TvFocus.updateFocusView(newFocus)
                 }
                 newLocalBinding.root.viewTreeObserver.addOnScrollChangedListener {
-                    updateFocusView(lastFocus.get())
+                    TvFocus.updateFocusView(TvFocus.lastFocus.get(), same = true)
                 }
 
                 ActivityMainBinding.bind(newLocalBinding.root) // this may crash
@@ -1230,16 +1347,21 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         }*/
 
         if (BuildConfig.DEBUG) {
-            var providersAndroidManifestString = "Current androidmanifest should be:\n"
-            for (api in allProviders) {
-                providersAndroidManifestString += "<data android:scheme=\"https\" android:host=\"${
-                    api.mainUrl.removePrefix(
-                        "https://"
-                    )
-                }\" android:pathPrefix=\"/\"/>\n"
+            try {
+                var providersAndroidManifestString = "Current androidmanifest should be:\n"
+                for (api in allProviders) {
+                    providersAndroidManifestString += "<data android:scheme=\"https\" android:host=\"${
+                        api.mainUrl.removePrefix(
+                            "https://"
+                        )
+                    }\" android:pathPrefix=\"/\"/>\n"
+                }
+                println(providersAndroidManifestString)
+
+            } catch (t: Throwable) {
+                logError(t)
             }
 
-            println(providersAndroidManifestString)
         }
 
         handleAppIntent(intent)

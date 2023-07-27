@@ -19,6 +19,7 @@ import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTrueT
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
 import com.lagradost.cloudstream3.utils.AppUtils.html
 import com.lagradost.cloudstream3.utils.UIHelper.setImage
+import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import com.lagradost.cloudstream3.utils.VideoDownloadHelper
 import java.util.*
 
@@ -48,7 +49,8 @@ const val ACTION_PLAY_EPISODE_IN_WEB_VIDEO = 16
 const val ACTION_PLAY_EPISODE_IN_MPV = 17
 
 const val ACTION_MARK_AS_WATCHED = 18
-
+const val TV_EP_SIZE_LARGE = 400
+const val TV_EP_SIZE_SMALL = 300
 data class EpisodeClickEvent(val action: Int, val data: ResultEpisode)
 
 class EpisodeAdapter(
@@ -172,7 +174,7 @@ class EpisodeAdapter(
             localCard = card
 
             val setWidth =
-                if (isTvSettings()) ViewGroup.LayoutParams.WRAP_CONTENT else ViewGroup.LayoutParams.MATCH_PARENT
+                if (isTvSettings()) TV_EP_SIZE_LARGE.toPx else ViewGroup.LayoutParams.MATCH_PARENT
 
             binding.episodeLinHolder.layoutParams.width = setWidth
             binding.episodeHolderLarge.layoutParams.width = setWidth
@@ -293,7 +295,7 @@ class EpisodeAdapter(
 
             binding.episodeHolder.layoutParams.apply {
                 width =
-                    if (isTvSettings()) ViewGroup.LayoutParams.WRAP_CONTENT else ViewGroup.LayoutParams.MATCH_PARENT
+                    if (isTvSettings()) TV_EP_SIZE_SMALL.toPx else ViewGroup.LayoutParams.MATCH_PARENT
             }
 
             binding.apply {

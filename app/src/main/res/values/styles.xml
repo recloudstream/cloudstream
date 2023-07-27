@@ -104,7 +104,7 @@
     </style>
 
     <style name="ChipParent">
-        <item name="chipSpacingVertical">5dp</item>
+        <item name="chipSpacingVertical">-5dp</item>
         <item name="chipSpacingHorizontal">5dp</item>
         <item name="textColor">?attr/textColor</item>
     </style>

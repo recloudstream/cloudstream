@@ -20,6 +20,9 @@ import android.os.*
 import android.provider.MediaStore
 import android.text.Spanned
 import android.util.Log
+import android.view.View
+import android.view.View.LAYOUT_DIRECTION_LTR
+import android.view.View.LAYOUT_DIRECTION_RTL
 import android.view.animation.DecelerateInterpolator
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -89,6 +92,9 @@ object AppUtils {
         val adapter = adapter
         return if (layoutManager == null || adapter == null) false else layoutManager.findLastCompletelyVisibleItemPosition() < adapter.itemCount - 7 // bit more than 1 to make it more seamless
     }
+
+    fun View.isLtr() = this.layoutDirection == LAYOUT_DIRECTION_LTR
+    fun View.isRtl() = this.layoutDirection == LAYOUT_DIRECTION_RTL
 
     fun BottomSheetDialog?.ownHide() {
         this?.hide()

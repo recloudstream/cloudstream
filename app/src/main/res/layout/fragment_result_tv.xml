@@ -126,6 +126,7 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
 
 
     <FrameLayout
+        android:id="@+id/background_poster_holder"
         android:layout_width="match_parent"
         android:layout_height="200dp"
         android:visibility="visible">
@@ -152,12 +153,12 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
 
 
     <androidx.core.widget.NestedScrollView
+        android:id="@+id/result_finish_loading"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
 
         <LinearLayout
-            android:id="@+id/result_finish_loading"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
@@ -415,6 +416,7 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
                     <com.google.android.material.chip.ChipGroup
                         android:id="@+id/result_tag"
                         style="@style/ChipParent"
+
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
 
@@ -479,8 +481,8 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
                 android:fadingEdge="horizontal"
                 android:focusable="false"
                 android:focusableInTouchMode="false"
-                android:nextFocusUp="@id/result_back"
-                android:nextFocusDown="@id/result_play_movie"
+                android:nextFocusUp="@id/result_episodes_show"
+                android:nextFocusDown="@id/result_recommendations_filter_selection"
                 android:orientation="horizontal"
                 android:paddingTop="5dp"
                 android:requiresFadingEdge="horizontal"
@@ -502,9 +504,9 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="10dp"
-                    android:nextFocusUp="@id/result_episodes"
-
+                    android:nextFocusUp="@id/result_cast_items"
                     android:nextFocusDown="@id/result_recommendations_list"
+
                     android:orientation="horizontal"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                     tools:itemCount="2"
@@ -525,7 +527,6 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
                 android:layout_width="match_parent"
 
                 android:layout_height="wrap_content"
-                android:background="?attr/primaryBlackBackground"
                 android:clipToPadding="false"
                 android:descendantFocusability="afterDescendants"
                 android:nextFocusUp="@id/result_recommendations_filter_selection"

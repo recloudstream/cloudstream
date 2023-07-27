@@ -14,6 +14,7 @@ import android.view.animation.DecelerateInterpolator
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
+import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
@@ -30,6 +31,7 @@ import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.mvvm.observeNullable
 import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.download.DownloadButtonSetup
+import com.lagradost.cloudstream3.ui.player.CSPlayerEvent
 import com.lagradost.cloudstream3.ui.player.ExtractorLinkGenerator
 import com.lagradost.cloudstream3.ui.player.GeneratorPlayer
 import com.lagradost.cloudstream3.ui.result.ResultFragment.getStoredData
@@ -38,6 +40,8 @@ import com.lagradost.cloudstream3.ui.search.SearchAdapter
 import com.lagradost.cloudstream3.ui.search.SearchHelper
 import com.lagradost.cloudstream3.utils.AppUtils.getNameFull
 import com.lagradost.cloudstream3.utils.AppUtils.html
+import com.lagradost.cloudstream3.utils.AppUtils.isLtr
+import com.lagradost.cloudstream3.utils.AppUtils.isRtl
 import com.lagradost.cloudstream3.utils.AppUtils.loadCache
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.main
@@ -254,6 +258,12 @@ class ResultFragmentTv : Fragment() {
             resultEpisodesShow.onFocusChangeListener = rightListener
             resultDescription.onFocusChangeListener = leftListener
             resultBookmarkButton.onFocusChangeListener = leftListener
+            resultEpisodesShow.setOnClickListener {
+                // toggle, to make it more touch accessable just in case someone thinks that a
+                // tv layout is better but is using a touch device
+                toggleEpisodes(!episodeHolderTv.isVisible)
+            }
+
             redirectToPlay.setOnFocusChangeListener { _, hasFocus ->
                 if (!hasFocus) return@setOnFocusChangeListener
                 toggleEpisodes(false)
@@ -272,6 +282,12 @@ class ResultFragmentTv : Fragment() {
                     }
                 }
             }
+
+            // parallax on background
+            resultFinishLoading.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { _, _, scrollY, _, oldScrollY ->
+                backgroundPosterHolder.translationY = -scrollY.toFloat() * 0.8f
+            })
+
             redirectToEpisodes.setOnFocusChangeListener { _, hasFocus ->
                 if (!hasFocus) return@setOnFocusChangeListener
                 toggleEpisodes(true)
@@ -290,10 +306,10 @@ class ResultFragmentTv : Fragment() {
                 }
             }
 
-            resultEpisodes.layoutManager =
-                LinearListLayout(resultEpisodes.context).apply {
+            resultEpisodes.setLinearListLayout(false)/*.layoutManager =
+                LinearListLayout(resultEpisodes.context, resultEpisodes.isRtl()).apply {
                     setVertical()
-                }
+                }*/
 
             resultReloadConnectionerror.setOnClickListener {
                 viewModel.load(
