@@ -2,19 +2,16 @@ package com.lagradost.cloudstream3.ui.result
 
 import android.content.Context
 import android.view.View
-import android.view.View.LAYOUT_DIRECTION_LTR
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.lagradost.cloudstream3.mvvm.logError
-import com.lagradost.cloudstream3.utils.AppUtils.isLtr
-import com.lagradost.cloudstream3.utils.AppUtils.isRtl
 
 fun RecyclerView?.setLinearListLayout(isHorizontal: Boolean = true) {
     if (this == null) return
 
     this.layoutManager =
         this.context?.let { LinearListLayout(it).apply { if (isHorizontal) setHorizontal() else setVertical() } }
-        //    ?: this.layoutManager
+    //    ?: this.layoutManager
 }
 
 open class LinearListLayout(context: Context?) :
@@ -60,7 +57,7 @@ open class LinearListLayout(context: Context?) :
         startSmoothScroll(linearSmoothScroller)
     }*/
     override fun onInterceptFocusSearch(focused: View, direction: Int): View? {
-        var dir = if (orientation == HORIZONTAL) {
+        val dir = if (orientation == HORIZONTAL) {
             if (direction == View.FOCUS_DOWN || direction == View.FOCUS_UP) {
                 // This scrolls the recyclerview before doing focus search, which
                 // allows the focus search to work better.
@@ -70,19 +67,28 @@ open class LinearListLayout(context: Context?) :
                 (focused.parent as? RecyclerView)?.focusSearch(direction)
                 return null
             }
-            if (direction == View.FOCUS_RIGHT) 1 else -1
+            var ret = if (direction == View.FOCUS_RIGHT) 1 else -1
+            // only flip on horizontal layout
+            if (this.isLayoutRTL) {
+                ret = -ret
+            }
+            ret
         } else {
             if (direction == View.FOCUS_RIGHT || direction == View.FOCUS_LEFT) return null
             if (direction == View.FOCUS_DOWN) 1 else -1
-        }
-        if(this.isLayoutRTL) {
-            dir = -dir
         }
 
         return try {
             getPosition(getCorrectParent(focused))?.let { position ->
                 val lookfor = dir + position
                 //clamp(dir + position, 0, recyclerView.adapter?.itemCount ?: return null)
+
+                // refocus on the same view if going out of bounds, note that we only do it
+                // for out of bounds one way as we may override the start where item == -1
+                if (lookfor >= itemCount) {
+                    return getViewFromPos(itemCount - 1) ?: focused
+                }
+
                 getViewFromPos(lookfor) ?: run {
                     scrollToPosition(lookfor)
                     null

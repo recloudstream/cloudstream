@@ -177,7 +177,7 @@ open class ParentItemAdapter(
                 ).apply {
                     isHorizontal = info.isHorizontalImages
                 }
-                //recyclerView.setLinearListLayout()
+                recyclerView.setLinearListLayout()
             }
         }
 
@@ -192,7 +192,7 @@ open class ParentItemAdapter(
                 isHorizontal = info.isHorizontalImages
                 hasNext = expand.hasNext
             }
-          // recyclerView.setLinearListLayout()
+            recyclerView.setLinearListLayout()
             title.text = info.name
 
             recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {

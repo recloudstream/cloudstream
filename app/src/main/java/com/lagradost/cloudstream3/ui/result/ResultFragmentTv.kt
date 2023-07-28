@@ -1,15 +1,12 @@
 package com.lagradost.cloudstream3.ui.result
 
 import android.animation.Animator
-import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.app.Dialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.AlphaAnimation
-import android.view.animation.Animation
 import android.view.animation.DecelerateInterpolator
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isGone
@@ -31,20 +28,17 @@ import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.mvvm.observeNullable
 import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.download.DownloadButtonSetup
-import com.lagradost.cloudstream3.ui.player.CSPlayerEvent
 import com.lagradost.cloudstream3.ui.player.ExtractorLinkGenerator
 import com.lagradost.cloudstream3.ui.player.GeneratorPlayer
 import com.lagradost.cloudstream3.ui.result.ResultFragment.getStoredData
 import com.lagradost.cloudstream3.ui.result.ResultFragment.updateUIEvent
+import com.lagradost.cloudstream3.ui.search.SEARCH_ACTION_FOCUSED
 import com.lagradost.cloudstream3.ui.search.SearchAdapter
 import com.lagradost.cloudstream3.ui.search.SearchHelper
 import com.lagradost.cloudstream3.utils.AppUtils.getNameFull
 import com.lagradost.cloudstream3.utils.AppUtils.html
-import com.lagradost.cloudstream3.utils.AppUtils.isLtr
 import com.lagradost.cloudstream3.utils.AppUtils.isRtl
 import com.lagradost.cloudstream3.utils.AppUtils.loadCache
-import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
-import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialogInstant
 import com.lagradost.cloudstream3.utils.UIHelper
@@ -52,10 +46,7 @@ import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
-import com.lagradost.cloudstream3.utils.UIHelper.popCurrentPage
 import com.lagradost.cloudstream3.utils.UIHelper.setImage
-import com.lagradost.cloudstream3.utils.UIHelper.setImageBlur
-import kotlinx.coroutines.delay
 
 class ResultFragmentTv : Fragment() {
     protected lateinit var viewModel: ResultViewModel2
@@ -204,7 +195,7 @@ class ResultFragmentTv : Fragment() {
                 }
             })
         }
-        this.animate().translationX(if (turnVisible) 0f else 100f).apply {
+        this.animate().translationX(if (turnVisible) 0f else if(isRtl()) -100.0f else 100f).apply {
             duration = 200
             interpolator = DecelerateInterpolator()
         }
@@ -214,6 +205,13 @@ class ResultFragmentTv : Fragment() {
         binding?.apply {
             episodesShadow.fade(show)
             episodeHolderTv.fade(show)
+            if(episodesShadow.isRtl()) {
+                episodesShadow.scaleX = -1.0f
+                episodesShadow.scaleY = -1.0f
+            } else {
+                episodesShadow.scaleX = 1.0f
+                episodesShadow.scaleY = 1.0f
+            }
         }
     }
 
@@ -238,6 +236,7 @@ class ResultFragmentTv : Fragment() {
         // ===== ===== =====
 
         binding?.apply {
+            //episodesShadow.rotationX = 180.0f//if(episodesShadow.isRtl()) 180.0f else 0.0f
 
             val leftListener: View.OnFocusChangeListener =
                 View.OnFocusChangeListener { _, hasFocus ->
@@ -263,6 +262,8 @@ class ResultFragmentTv : Fragment() {
                 // tv layout is better but is using a touch device
                 toggleEpisodes(!episodeHolderTv.isVisible)
             }
+
+          //  resultEpisodes.onFocusChangeListener = leftListener
 
             redirectToPlay.setOnFocusChangeListener { _, hasFocus ->
                 if (!hasFocus) return@setOnFocusChangeListener
@@ -306,7 +307,7 @@ class ResultFragmentTv : Fragment() {
                 }
             }
 
-            resultEpisodes.setLinearListLayout(false)/*.layoutManager =
+            resultEpisodes.setLinearListLayout(isHorizontal = false)/*.layoutManager =
                 LinearListLayout(resultEpisodes.context, resultEpisodes.isRtl()).apply {
                     setVertical()
                 }*/
@@ -348,7 +349,10 @@ class ResultFragmentTv : Fragment() {
                     ArrayList(),
                     resultRecommendationsList,
                 ) { callback ->
-                    SearchHelper.handleSearchClickCallback(callback)
+                    if(callback.action == SEARCH_ACTION_FOCUSED)
+                        toggleEpisodes(false)
+                    else
+                        SearchHelper.handleSearchClickCallback(callback)
                 }
 
             resultEpisodes.adapter =
@@ -381,7 +385,9 @@ class ResultFragmentTv : Fragment() {
             }.apply {
                 this.orientation = RecyclerView.HORIZONTAL
             }
-            resultCastItems.adapter = ActorAdaptor()
+            resultCastItems.adapter = ActorAdaptor {
+                toggleEpisodes(false)
+            }
         }
 
         observeNullable(viewModel.resumeWatching) { resume ->

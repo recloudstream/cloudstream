@@ -83,7 +83,6 @@
         android:layout_height="match_parent">
 
         <ImageView
-            android:elevation="999999999dp"
             android:focusable="false"
             android:focusableInTouchMode="false"
             android:clickable="false"

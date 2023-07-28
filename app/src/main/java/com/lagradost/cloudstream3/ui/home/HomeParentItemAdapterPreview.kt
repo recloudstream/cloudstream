@@ -30,6 +30,7 @@ import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.home.HomeFragment.Companion.selectHomepage
 import com.lagradost.cloudstream3.ui.result.ResultViewModel2
 import com.lagradost.cloudstream3.ui.result.START_ACTION_RESUME_LATEST
+import com.lagradost.cloudstream3.ui.result.setLinearListLayout
 import com.lagradost.cloudstream3.ui.search.SEARCH_ACTION_LOAD
 import com.lagradost.cloudstream3.ui.search.SEARCH_ACTION_SHOW_METADATA
 import com.lagradost.cloudstream3.ui.search.SearchClickCallback
@@ -426,6 +427,9 @@ class HomeParentItemAdapterPreview(
             previewViewpager.adapter = previewAdapter
             resumeRecyclerView.adapter = resumeAdapter
             bookmarkRecyclerView.adapter = bookmarkAdapter
+
+            resumeRecyclerView.setLinearListLayout()
+            bookmarkRecyclerView.setLinearListLayout()
 
             for ((chip, watch) in toggleList) {
                 chip.isChecked = false

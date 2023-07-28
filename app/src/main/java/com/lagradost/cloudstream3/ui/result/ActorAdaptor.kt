@@ -1,6 +1,7 @@
 package com.lagradost.cloudstream3.ui.result
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
@@ -11,7 +12,7 @@ import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.CastItemBinding
 import com.lagradost.cloudstream3.utils.UIHelper.setImage
 
-class ActorAdaptor : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class ActorAdaptor(private val focusCallback : (View?) -> Unit = {}) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     data class ActorMetaData(
         var isInverted: Boolean,
         val actor: ActorData,
@@ -21,7 +22,7 @@ class ActorAdaptor : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return CardViewHolder(
-            CastItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            CastItemBinding.inflate(LayoutInflater.from(parent.context), parent, false), focusCallback
         )
     }
 
@@ -66,6 +67,7 @@ class ActorAdaptor : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private class CardViewHolder
     constructor(
         val binding: CastItemBinding,
+        private val focusCallback : (View?) -> Unit = {}
     ) :
         RecyclerView.ViewHolder(binding.root) {
 
@@ -74,6 +76,12 @@ class ActorAdaptor : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 Pair(actor.actor.image, actor.voiceActor?.image)
             } else {
                 Pair(actor.voiceActor?.image, actor.actor.image)
+            }
+
+            itemView.setOnFocusChangeListener { v, hasFocus ->
+                if(hasFocus) {
+                    focusCallback(v)
+                }
             }
 
             itemView.setOnClickListener {

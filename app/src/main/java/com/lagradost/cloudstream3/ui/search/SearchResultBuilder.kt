@@ -162,15 +162,42 @@ object SearchResultBuilder {
             }
         }
 
-        bg.setOnClickListener {
-            click(it)
+        bg.isFocusable = false
+        bg.isFocusableInTouchMode = false
+        if(!isTrueTvSettings()) {
+            bg.setOnClickListener {
+                click(it)
+            }
+            bg.setOnLongClickListener {
+                longClick(it)
+                return@setOnLongClickListener true
+            }
         }
+        //
+       //
+        //
 
         itemView.setOnClickListener {
             click(it)
         }
-
         if (nextFocusUp != null) {
+            itemView.nextFocusUpId = nextFocusUp
+        }
+
+        if (nextFocusDown != null) {
+            itemView.nextFocusDownId = nextFocusDown
+        }
+
+        /*when (nextFocusBehavior) {
+            true -> itemView.nextFocusLeftId = bg.id
+            false -> itemView.nextFocusRightId = bg.id
+            null -> {
+                bg.nextFocusRightId = -1
+                bg.nextFocusLeftId = -1
+            }
+        }*/
+
+        /*if (nextFocusUp != null) {
             bg.nextFocusUpId = nextFocusUp
         }
 
@@ -178,36 +205,26 @@ object SearchResultBuilder {
             bg.nextFocusDownId = nextFocusDown
         }
 
-        when (nextFocusBehavior) {
-            true -> bg.nextFocusLeftId = bg.id
-            false -> bg.nextFocusRightId = bg.id
-            null -> {
-                bg.nextFocusRightId = -1
-                bg.nextFocusLeftId = -1
-            }
-        }
+        */
 
         if (isTrueTvSettings()) {
-            bg.isFocusable = true
-            bg.isFocusableInTouchMode = true
-            bg.touchscreenBlocksFocus = false
+           // bg.isFocusable = true
+           // bg.isFocusableInTouchMode = true
+           // bg.touchscreenBlocksFocus = false
             itemView.isFocusableInTouchMode = true
             itemView.isFocusable = true
         }
 
-        bg.setOnLongClickListener {
-            longClick(it)
-            return@setOnLongClickListener true
-        }
+        /**/
 
         itemView.setOnLongClickListener {
             longClick(it)
             return@setOnLongClickListener true
         }
 
-        bg.setOnFocusChangeListener { view, b ->
+        /*bg.setOnFocusChangeListener { view, b ->
             focus(view, b)
-        }
+        }*/
 
         itemView.setOnFocusChangeListener { view, b ->
             focus(view, b)

@@ -27,6 +27,7 @@ import com.lagradost.cloudstream3.ui.player.PlayerEventType
 import com.lagradost.cloudstream3.ui.result.ResultFragment
 import com.lagradost.cloudstream3.ui.result.UiText
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.updateTv
+import com.lagradost.cloudstream3.utils.AppUtils.isRtl
 import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.Event
 import com.lagradost.cloudstream3.utils.UIHelper
@@ -299,22 +300,29 @@ object CommonActivity {
         view: View?,
         direction: FocusDirection,
         depth: Int = 0
-    ): Int? {
+    ): View? {
+        // if input is invalid let android decide + depth test to not crash if loop is found
         if (view == null || depth >= 10 || act == null) {
             return null
         }
 
         val nextId = when (direction) {
-            FocusDirection.Left -> {
-                view.nextFocusLeftId
+            FocusDirection.Start -> {
+                if (view.isRtl())
+                    view.nextFocusRightId
+                else
+                    view.nextFocusLeftId
             }
 
             FocusDirection.Up -> {
                 view.nextFocusUpId
             }
 
-            FocusDirection.Right -> {
-                view.nextFocusRightId
+            FocusDirection.End -> {
+                if (view.isRtl())
+                    view.nextFocusLeftId
+                else
+                    view.nextFocusRightId
             }
 
             FocusDirection.Down -> {
@@ -322,27 +330,41 @@ object CommonActivity {
             }
         }
 
-        return if (nextId != -1) {
-            val next = act.findViewById<View?>(nextId)
-            //println("NAME: ${next.accessibilityClassName} | ${next?.isShown}" )
+        // if view not found then return
+        if (nextId == -1) return null
+        var next = act.findViewById<View?>(nextId) ?: return null
 
-            if (next?.isShown == false) {
-                getNextFocus(act, next, direction, depth + 1)
-            } else {
-                if (depth == 0) {
-                    null
-                } else {
-                    nextId
-                }
+        // because we want closes find, aka when multiple have the same id, we go to parent
+        // until the correct one is found
+        /*var currentLook: View = view
+        while (true) {
+            val tmpNext = currentLook.findViewById<View?>(nextId)
+            if (tmpNext != null) {
+                next = tmpNext
+                break
             }
-        } else {
-            null
+
+            currentLook = currentLook.parent as? View ?: break
+        }*/
+
+        var currentLook: View = view
+        while (currentLook.findViewById<View?>(nextId)?.also { next = it } == null) {
+            currentLook = (currentLook.parent as? View) ?: break
         }
+
+        // if cant focus but visible then break and let android decide
+        if (!next.isFocusable && next.isShown) return null
+
+        // if not shown then continue because we will "skip" over views to get to a replacement
+        if (!next.isShown) return getNextFocus(act, next, direction, depth + 1)
+
+        // nothing wrong with the view found, return it
+        return next
     }
 
     enum class FocusDirection {
-        Left,
-        Right,
+        Start,
+        End,
         Up,
         Down,
     }
@@ -447,17 +469,17 @@ object CommonActivity {
 
         event?.keyCode?.let { keyCode ->
             if (currentFocus == null || event.action != KeyEvent.ACTION_DOWN) return@let
-            val next = when (keyCode) {
+            val nextView = when (keyCode) {
                 KeyEvent.KEYCODE_DPAD_LEFT -> getNextFocus(
                     act,
                     currentFocus,
-                    FocusDirection.Left
+                    FocusDirection.Start
                 )
 
                 KeyEvent.KEYCODE_DPAD_RIGHT -> getNextFocus(
                     act,
                     currentFocus,
-                    FocusDirection.Right
+                    FocusDirection.End
                 )
 
                 KeyEvent.KEYCODE_DPAD_UP -> getNextFocus(
@@ -475,13 +497,10 @@ object CommonActivity {
                 else -> null
             }
 
-            if (next != null && next != -1) {
-                val nextView = act.findViewById<View?>(next)
-                if (nextView != null) {
-                    nextView.requestFocus()
-                    keyEventListener?.invoke(Pair(event, true))
-                    return true
-                }
+            if (nextView != null) {
+                nextView.requestFocus()
+                keyEventListener?.invoke(Pair(event, true))
+                return true
             }
 
             if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER && (act.currentFocus is SearchView || act.currentFocus is SearchView.SearchAutoComplete)) {

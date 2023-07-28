@@ -11,6 +11,7 @@ import com.lagradost.cloudstream3.databinding.HomeResultGridBinding
 import com.lagradost.cloudstream3.databinding.HomeResultGridExpandedBinding
 import com.lagradost.cloudstream3.ui.search.SearchClickCallback
 import com.lagradost.cloudstream3.ui.search.SearchResultBuilder
+import com.lagradost.cloudstream3.utils.AppUtils.isRtl
 import com.lagradost.cloudstream3.utils.UIHelper.IsBottomLayout
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
 
@@ -27,13 +28,17 @@ class HomeChildItemAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val expanded = parent.context.IsBottomLayout()
-       /* val layout = if (bottom) R.layout.home_result_grid_expanded else R.layout.home_result_grid
+        /* val layout = if (bottom) R.layout.home_result_grid_expanded else R.layout.home_result_grid
 
-        val root = LayoutInflater.from(parent.context).inflate(layout, parent, false)
-        val binding = HomeResultGridBinding.bind(root)*/
+         val root = LayoutInflater.from(parent.context).inflate(layout, parent, false)
+         val binding = HomeResultGridBinding.bind(root)*/
 
         val inflater = LayoutInflater.from(parent.context)
-        val binding = if(expanded) HomeResultGridExpandedBinding.inflate(inflater,parent,false) else HomeResultGridBinding.inflate(inflater,parent,false)
+        val binding = if (expanded) HomeResultGridExpandedBinding.inflate(
+            inflater,
+            parent,
+            false
+        ) else HomeResultGridBinding.inflate(inflater, parent, false)
 
 
         return CardViewHolder(
@@ -42,7 +47,8 @@ class HomeChildItemAdapter(
             itemCount,
             nextFocusUp,
             nextFocusDown,
-            isHorizontal
+            isHorizontal,
+            parent.isRtl()
         )
     }
 
@@ -81,7 +87,8 @@ class HomeChildItemAdapter(
         var itemCount: Int,
         private val nextFocusUp: Int? = null,
         private val nextFocusDown: Int? = null,
-        private val isHorizontal: Boolean = false
+        private val isHorizontal: Boolean = false,
+        private val isRtl : Boolean
     ) :
         RecyclerView.ViewHolder(binding.root) {
 
@@ -93,7 +100,23 @@ class HomeChildItemAdapter(
                 itemCount - 1 -> false
                 else -> null
             }
-            when(binding) {
+
+            if (position == 0) { // to fix tv
+                if (isRtl) {
+                    itemView.nextFocusRightId = R.id.nav_rail_view
+                    itemView.nextFocusLeftId = -1
+                }
+                else {
+                    itemView.nextFocusLeftId = R.id.nav_rail_view
+                    itemView.nextFocusRightId = -1
+                }
+            } else {
+                itemView.nextFocusRightId = -1
+                itemView.nextFocusLeftId = -1
+            }
+
+
+            when (binding) {
                 is HomeResultGridBinding -> {
                     binding.backgroundCard.apply {
                         val min = 114.toPx
@@ -114,10 +137,9 @@ class HomeChildItemAdapter(
                             }
                     }
 
-                    if (position == 0) { // to fix tv
-                        binding.backgroundCard.nextFocusLeftId = R.id.nav_rail_view
-                    }
+
                 }
+
                 is HomeResultGridExpandedBinding -> {
                     binding.backgroundCard.apply {
                         val min = 114.toPx
