@@ -5,15 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
-import android.widget.FrameLayout
-import android.widget.LinearLayout
-import android.widget.ListPopupWindow.MATCH_PARENT
-import android.widget.RelativeLayout
 import com.lagradost.cloudstream3.R
-import com.lagradost.cloudstream3.utils.UIHelper.toPx
-import kotlinx.android.synthetic.main.loading_poster_dynamic.view.*
-import kotlin.math.roundToInt
-import kotlin.math.sqrt
 
 class LoadingPosterAdapter(context: Context, private val itemCount: Int) :
     BaseAdapter() {

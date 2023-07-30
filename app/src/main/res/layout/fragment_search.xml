@@ -88,7 +88,7 @@
                 app:tint="?attr/textColor" />
         </FrameLayout>
 
-        <include layout="@layout/tvtypes_chips_scroll" />
+        <include layout="@layout/tvtypes_chips_scroll" android:id="@+id/tvtypes_chips_scroll" />
     </LinearLayout>
 
 

@@ -4,16 +4,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
-import android.widget.ImageView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.lagradost.cloudstream3.R
+import androidx.viewbinding.ViewBinding
 import com.lagradost.cloudstream3.SearchResponse
+import com.lagradost.cloudstream3.databinding.SearchResultGridBinding
+import com.lagradost.cloudstream3.databinding.SearchResultGridExpandedBinding
 import com.lagradost.cloudstream3.ui.AutofitRecyclerView
-import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.UIHelper.IsBottomLayout
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
-import kotlinx.android.synthetic.main.search_result_compact.view.*
 import kotlin.math.roundToInt
 
 /** Click */
@@ -39,10 +38,23 @@ class SearchAdapter(
     var hasNext: Boolean = false
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        val inflater = LayoutInflater.from(parent.context)
+
         val layout =
-            if (parent.context.IsBottomLayout()) R.layout.search_result_grid_expanded else R.layout.search_result_grid
+            if (parent.context.IsBottomLayout()) SearchResultGridExpandedBinding.inflate(
+                inflater,
+                parent,
+                false
+            ) else SearchResultGridBinding.inflate(
+                inflater,
+                parent,
+                false
+            ) //R.layout.search_result_grid_expanded else R.layout.search_result_grid
+
+
+
         return CardViewHolder(
-            LayoutInflater.from(parent.context).inflate(layout, parent, false),
+            layout,
             clickCallback,
             resView
         )
@@ -73,20 +85,25 @@ class SearchAdapter(
 
     class CardViewHolder
     constructor(
-        itemView: View,
+        val binding: ViewBinding,
         private val clickCallback: (SearchClickCallback) -> Unit,
         resView: AutofitRecyclerView
     ) :
-        RecyclerView.ViewHolder(itemView) {
-        val cardView: ImageView = itemView.imageView
+        RecyclerView.ViewHolder(binding.root) {
 
         private val compactView = false//itemView.context.getGridIsCompact()
         private val coverHeight: Int =
             if (compactView) 80.toPx else (resView.itemWidth / 0.68).roundToInt()
 
+        private val cardView = when(binding) {
+            is SearchResultGridExpandedBinding -> binding.imageView
+            is SearchResultGridBinding -> binding.imageView
+            else -> null
+        }
+
         fun bind(card: SearchResponse, position: Int) {
             if (!compactView) {
-                cardView.apply {
+                cardView?.apply {
                     layoutParams = FrameLayout.LayoutParams(
                         ViewGroup.LayoutParams.MATCH_PARENT,
                         coverHeight

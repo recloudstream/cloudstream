@@ -211,7 +211,7 @@ object TestingUtils {
 
     fun getDeferredProviderTests(
         scope: CoroutineScope,
-        providers: List<MainAPI>,
+        providers: Array<MainAPI>,
         logger: (String) -> Unit,
         callback: (MainAPI, TestResultProvider) -> Unit
     ) {

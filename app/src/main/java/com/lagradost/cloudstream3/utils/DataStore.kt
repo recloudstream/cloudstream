@@ -18,6 +18,8 @@ const val USER_PROVIDER_API = "user_custom_sites"
 
 const val PREFERENCES_NAME = "rebuild_preference"
 
+// TODO degelgate by value for get & set
+
 object DataStore {
     val mapper: JsonMapper = JsonMapper.builder().addModule(KotlinModule())
         .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false).build()

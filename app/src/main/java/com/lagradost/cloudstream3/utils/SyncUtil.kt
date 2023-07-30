@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit
 
 object SyncUtil {
     private val regexs = listOf(
-        Regex("""(9anime)\.(?:to|center|id)/watch/(?:.*?)\.([^/?]*)"""),
+        Regex("""(9anime)\.(?:to|center|id)/watch/.*?\.([^/?]*)"""),
         Regex("""(gogoanime|gogoanimes)\..*?/category/([^/?]*)"""),
         Regex("""(twist\.moe)/a/([^/?]*)"""),
     )
@@ -44,6 +44,13 @@ object SyncUtil {
                     matchList[site]?.let { realSite ->
                         getIdsFromSlug(slug, realSite)?.let {
                             return it
+                        } ?: kotlin.run {
+                            if (slug.endsWith("-dub")) {
+                                println("testing non -dub slug $slug")
+                                getIdsFromSlug(slug.removeSuffix("-dub"), realSite)?.let {
+                                    return it
+                                }
+                            }
                         }
                     }
                 }
@@ -89,8 +96,10 @@ object SyncUtil {
                 .mapNotNull { it.url }.toMutableList()
 
         if (type == "anilist") { // TODO MAKE BETTER
-            apis.filter { it.name.contains("Aniflix", ignoreCase = true) }.forEach {
-                current.add("${it.mainUrl}/anime/$id")
+            synchronized(apis) {
+                apis.filter { it.name.contains("Aniflix", ignoreCase = true) }.forEach {
+                    current.add("${it.mainUrl}/anime/$id")
+                }
             }
         }
         return current

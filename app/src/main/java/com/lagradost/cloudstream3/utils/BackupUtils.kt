@@ -149,7 +149,7 @@ object BackupUtils {
     fun FragmentActivity.backup() {
         try {
             if (!checkWrite()) {
-                showToast(this, getString(R.string.backup_failed), Toast.LENGTH_LONG)
+                showToast(getString(R.string.backup_failed), Toast.LENGTH_LONG)
                 requestRW()
                 return
             }
@@ -201,7 +201,6 @@ object BackupUtils {
             printStream.close()
 
             showToast(
-                this,
                 R.string.backup_success,
                 Toast.LENGTH_LONG
             )
@@ -209,7 +208,6 @@ object BackupUtils {
             logError(e)
             try {
                 showToast(
-                    this,
                     getString(R.string.backup_failed_error_format).format(e.toString()),
                     Toast.LENGTH_LONG
                 )
@@ -243,7 +241,6 @@ object BackupUtils {
                             logError(e)
                             main { // smth can fail in .format
                                 showToast(
-                                    activity,
                                     getString(R.string.restore_failed_format).format(e.toString())
                                 )
                             }
@@ -270,7 +267,7 @@ object BackupUtils {
                     )
                 )
             } catch (e: Exception) {
-                showToast(this, e.message)
+                showToast(e.message)
                 logError(e)
             }
         }

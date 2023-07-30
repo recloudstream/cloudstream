@@ -40,7 +40,6 @@
             android:foreground="@drawable/outline_drawable">
 
         <ImageView
-                android:nextFocusLeft="@id/result_episode_download"
                 android:nextFocusRight="@id/episode_holder"
 
                 android:id="@+id/episode_poster"
