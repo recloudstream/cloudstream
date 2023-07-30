@@ -189,7 +189,7 @@
                     android:layout_height="match_parent"
                     android:layout_gravity="start">
 
-                <include layout="@layout/result_sync"/>
+                <include layout="@layout/result_sync" android:id="@+id/result_sync"/>
             </FrameLayout>
 
             <FrameLayout
@@ -198,7 +198,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
 
-                <include layout="@layout/fragment_result" />
+                <include layout="@layout/fragment_result" android:id="@+id/fragment_result" />
 
             </FrameLayout>
 
@@ -209,7 +209,7 @@
                     android:layout_height="match_parent"
                     android:layout_gravity="end">
 
-                <include layout="@layout/result_recommendations" />
+                <include layout="@layout/result_recommendations" android:id="@+id/result_recommendations" />
             </FrameLayout>
         </com.discord.panels.OverlappingPanelsLayout>
 

@@ -65,11 +65,17 @@
         <item name="white">#FFF</item>
 
         <item name="preferenceTheme">@style/CustomPreferenceThemeOverlay</item>
+
+
+        <item name="download_icon_color">?attr/white</item>
+        <item name="download_fill_color">?attr/white</item>
+        <item name="download_outline_color">?attr/white</item>
+        <item name="download_icon_scale">1.0</item>
     </style>
 
     <style name="ListViewStyle" parent="Widget.AppCompat.ListView">
         <item name="android:divider">@null</item>
-        <item name="android:listSelector">@drawable/outline_drawable_less</item>
+        <item name="android:listSelector">@drawable/outline_drawable_forced</item>
         <item name="android:drawSelectorOnTop">false</item>
     </style>
 
@@ -79,7 +85,8 @@
 
     <style name="ChipFilled" parent="@style/Widget.Material3.Chip.Filter">
         <item name="chipBackgroundColor">@color/chip_color</item>
-        <item name="chipStrokeColor">@color/white_transparent_toggle</item>
+       <!-- <item name="chipStrokeColor">@color/white_transparent_toggle</item>-->
+        <item name="chipStrokeColor">@color/transparent</item>
         <item name="chipStrokeWidth">2dp</item>
         <item name="textColor">@color/chip_color_text</item>
         <item name="android:textColor">@color/chip_color_text</item>
@@ -97,7 +104,7 @@
     </style>
 
     <style name="ChipParent">
-        <item name="chipSpacingVertical">5dp</item>
+        <item name="chipSpacingVertical">-5dp</item>
         <item name="chipSpacingHorizontal">5dp</item>
         <item name="textColor">?attr/textColor</item>
     </style>
@@ -125,8 +132,13 @@
         <item name="android:textColor">@color/subColorText</item>
     </style>
 
+    <!--<style name="RatingButton" parent="@style/SearchBox">
+        <item name="android:background">@drawable/rating_bg_color</item>
+        <item name="android:textColor">@color/ratingColor</item>
+    </style>-->
+
     <style name="RatingButton" parent="@style/SearchBox">
-        <item name="android:minWidth">30dp</item>
+        <item name="android:minWidth">40dp</item>
         <item name="android:background">@drawable/rating_bg_color</item>
         <item name="drawableTint">@color/ratingColor</item>
         <item name="android:textColor">@color/ratingColor</item>
@@ -483,9 +495,10 @@
         <item name="android:paddingStart">20dp</item>
         <item name="android:paddingEnd">20dp</item>
         <item name="android:selectAllOnFocus">true</item>
-        <item name="android:background">@drawable/outline_drawable_less</item>
+       <!-- <item name="android:background">@drawable/outline_drawable_less</item>
+               <item name="android:foreground">?attr/selectableItemBackgroundBorderless</item>
+       -->
         <item name="android:textColor">?attr/textColor</item>
-        <item name="android:foreground">?attr/selectableItemBackgroundBorderless</item>
         <item name="android:textAppearance">?android:attr/textAppearanceListItemSmall</item>
         <item name="drawableEndCompat">@drawable/ic_baseline_keyboard_arrow_right_24</item>
     </style>
@@ -535,6 +548,7 @@
         <item name="android:insetTop">0dp</item>
         <item name="android:insetBottom">0dp</item>
         <item name="android:foreground">@drawable/outline_drawable_less</item>
+        <item name="android:tag">@string/tv_no_focus_tag</item>
     </style>
 
     <style name="WhiteButton" parent="NiceButton">
@@ -557,6 +571,7 @@
         <item name="android:checkMark">?android:attr/listChoiceIndicatorSingle</item>
         <item name="drawableStartCompat">@drawable/ic_baseline_check_24_listview</item>
     </style>
+
 
     <style name="NoCheckLabel" parent="@style/AppTextViewStyle">
         <item name="android:layout_width">match_parent</item>
@@ -583,6 +598,19 @@
     </style>
 
     <style name="SmallBlackButton" parent="BlackButton">
+        <item name="android:layout_height">24dp</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:layout_marginStart">0dp</item>
+        <item name="android:layout_marginEnd">0dp</item>
+        <item name="android:stateListAnimator">@null</item>
+        <item name="iconPadding">0dp</item>
+        <item name="android:paddingTop">0dp</item>
+        <item name="android:paddingBottom">0dp</item>
+        <item name="android:minWidth">0dp</item>
+    </style>
+
+    <style name="SmallWhiteButton" parent="WhiteButton">
         <item name="android:layout_height">24dp</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:textSize">12sp</item>
@@ -699,7 +727,45 @@
         <item name="strokeColor">@color/tag_stroke_color</item>
     </style>
 
+    <style name="ResultButtonTV" parent="@style/RegularButtonTV">
+        <item name="android:tag">@string/tv_no_focus_tag</item>
+        <item name="iconGravity">start</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:layout_width">250dp</item>
+        <item name="android:layout_marginBottom">5dp</item>
+        <item name="android:layout_marginStart">0dp</item>
+        <item name="android:layout_marginEnd">0dp</item>
+    </style>
+
+    <style name="RegularButtonTV">
+        <item name="android:tag">@string/tv_no_focus_tag</item>
+        <item name="android:stateListAnimator">@null</item>
+        <item name="strokeColor">@color/transparent</item>
+        <item name="backgroundTint">@null</item>
+        <item name="android:background">@drawable/player_button_tv</item>
+        <item name="rippleColor">@color/white</item>
+        <item name="android:shadowColor">@color/transparent</item>
+
+        <item name="iconTint">@color/player_on_button_tv</item>
+        <item name="textColor">@color/player_on_button_tv</item>
+        <item name="android:textColor">@color/player_on_button_tv</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">40dp</item>
+        <item name="iconSize">16dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:baselineAligned">false</item>
+        <item name="textAllCaps">false</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:layout_marginStart">4dp</item>
+        <item name="android:layout_marginEnd">4dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:insetTop">0dp</item>
+    </style>
+
     <style name="VideoButtonTV">
+        <item name="android:tag">@string/tv_no_focus_tag</item>
         <item name="android:stateListAnimator">@null</item>
         <item name="strokeColor">@color/transparent</item>
         <item name="backgroundTint">@null</item>

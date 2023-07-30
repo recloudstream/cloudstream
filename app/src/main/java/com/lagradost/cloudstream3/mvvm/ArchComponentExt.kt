@@ -57,32 +57,6 @@ fun <T> LifecycleOwner.observeNullable(liveData: LiveData<T>, action: (t: T) -> 
     liveData.observe(this) { action(it) }
 }
 
-inline fun <reified T : Any> some(value: T?): Some<T> {
-    return if (value == null) {
-        Some.None
-    } else {
-        Some.Success(value)
-    }
-}
-
-sealed class Some<out T> {
-    data class Success<out T>(val value: T) : Some<T>()
-    object None : Some<Nothing>()
-
-    override fun toString(): String {
-        return when (this) {
-            is None -> "None"
-            is Success -> "Some(${value.toString()})"
-        }
-    }
-}
-
-sealed class ResourceSome<out T> {
-    data class Success<out T>(val value: T) : ResourceSome<T>()
-    object None : ResourceSome<Nothing>()
-    data class Loading(val data: Any? = null) : ResourceSome<Nothing>()
-}
-
 sealed class Resource<out T> {
     data class Success<out T>(val value: T) : Resource<T>()
     data class Failure(
@@ -155,6 +129,70 @@ fun CoroutineScope.launchSafe(
     return this.launch(context, start, obj)
 }
 
+fun<T> throwAbleToResource(
+    throwable: Throwable
+): Resource<T> {
+    return when (throwable) {
+        is NullPointerException -> {
+            for (line in throwable.stackTrace) {
+                if (line?.fileName?.endsWith("provider.kt", ignoreCase = true) == true) {
+                    return Resource.Failure(
+                        false,
+                        null,
+                        null,
+                        "NullPointerException at ${line.fileName} ${line.lineNumber}\nSite might have updated or added Cloudflare/DDOS protection"
+                    )
+                }
+            }
+            safeFail(throwable)
+        }
+        is SocketTimeoutException, is InterruptedIOException -> {
+            Resource.Failure(
+                true,
+                null,
+                null,
+                "Connection Timeout\nPlease try again later."
+            )
+        }
+        is HttpException -> {
+            Resource.Failure(
+                false,
+                throwable.statusCode,
+                null,
+                throwable.message ?: "HttpException"
+            )
+        }
+        is UnknownHostException -> {
+            Resource.Failure(true, null, null, "Cannot connect to server, try again later.\n${throwable.message}")
+        }
+        is ErrorLoadingException -> {
+            Resource.Failure(
+                true,
+                null,
+                null,
+                throwable.message ?: "Error loading, try again later."
+            )
+        }
+        is NotImplementedError -> {
+            Resource.Failure(false, null, null, "This operation is not implemented.")
+        }
+        is SSLHandshakeException -> {
+            Resource.Failure(
+                true,
+                null,
+                null,
+                (throwable.message ?: "SSLHandshakeException") + "\nTry a VPN or DNS."
+            )
+        }
+        is CancellationException -> {
+            throwable.cause?.let {
+                throwAbleToResource(it)
+            } ?: safeFail(throwable)
+        }
+        else -> safeFail(throwable)
+    }
+}
+
 suspend fun <T> safeApiCall(
     apiCall: suspend () -> T,
 ): Resource<T> {
@@ -163,60 +201,7 @@ suspend fun <T> safeApiCall(
             Resource.Success(apiCall.invoke())
         } catch (throwable: Throwable) {
             logError(throwable)
-            when (throwable) {
-                is NullPointerException -> {
-                    for (line in throwable.stackTrace) {
-                        if (line?.fileName?.endsWith("provider.kt", ignoreCase = true) == true) {
-                            return@withContext Resource.Failure(
-                                false,
-                                null,
-                                null,
-                                "NullPointerException at ${line.fileName} ${line.lineNumber}\nSite might have updated or added Cloudflare/DDOS protection"
-                            )
-                        }
-                    }
-                    safeFail(throwable)
-                }
-                is SocketTimeoutException, is InterruptedIOException -> {
-                    Resource.Failure(
-                        true,
-                        null,
-                        null,
-                        "Connection Timeout\nPlease try again later."
-                    )
-                }
-                is HttpException -> {
-                    Resource.Failure(
-                        false,
-                        throwable.statusCode,
-                        null,
-                        throwable.message ?: "HttpException"
-                    )
-                }
-                is UnknownHostException -> {
-                    Resource.Failure(true, null, null, "Cannot connect to server, try again later.")
-                }
-                is ErrorLoadingException -> {
-                    Resource.Failure(
-                        true,
-                        null,
-                        null,
-                        throwable.message ?: "Error loading, try again later."
-                    )
-                }
-                is NotImplementedError -> {
-                    Resource.Failure(false, null, null, "This operation is not implemented.")
-                }
-                is SSLHandshakeException -> {
-                    Resource.Failure(
-                        true,
-                        null,
-                        null,
-                        (throwable.message ?: "SSLHandshakeException") + "\nTry a VPN or DNS."
-                    )
-                }
-                else -> safeFail(throwable)
-            }
+            throwAbleToResource(throwable)
         }
     }
 }

@@ -10,6 +10,7 @@ import com.lagradost.cloudstream3.utils.TestingUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
+import okhttp3.internal.toImmutableList
 
 class TestViewModel : ViewModel() {
     data class TestProgress(
@@ -81,15 +82,14 @@ class TestViewModel : ViewModel() {
     }
 
     fun init() {
-        val apis = APIHolder.allProviders
-        total = apis.size
+        total = synchronized(APIHolder.allProviders) { APIHolder.allProviders.size }
         updateProgress()
     }
 
     fun startTest() {
         scope = CoroutineScope(Dispatchers.Default)
 
-        val apis = APIHolder.allProviders
+        val apis = synchronized(APIHolder.allProviders) { APIHolder.allProviders.toTypedArray() }
         total = apis.size
         failed = 0
         passed = 0

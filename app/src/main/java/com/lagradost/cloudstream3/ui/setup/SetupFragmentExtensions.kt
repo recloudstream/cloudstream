@@ -8,21 +8,16 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.lagradost.cloudstream3.APIHolder.apis
-import com.lagradost.cloudstream3.APIHolder.getApiProviderLangSettings
-import com.lagradost.cloudstream3.AllLanguagesName
 import com.lagradost.cloudstream3.MainActivity.Companion.afterRepositoryLoadedEvent
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.databinding.FragmentSetupExtensionsBinding
+import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.plugins.RepositoryManager
 import com.lagradost.cloudstream3.plugins.RepositoryManager.PREBUILT_REPOSITORIES
 import com.lagradost.cloudstream3.ui.settings.extensions.PluginsViewModel
 import com.lagradost.cloudstream3.ui.settings.extensions.RepoAdapter
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
-import kotlinx.android.synthetic.main.fragment_extensions.blank_repo_screen
-import kotlinx.android.synthetic.main.fragment_extensions.repo_recycler_view
-import kotlinx.android.synthetic.main.fragment_setup_media.next_btt
-import kotlinx.android.synthetic.main.fragment_setup_media.prev_btt
-import kotlinx.android.synthetic.main.fragment_setup_media.setup_root
 
 
 class SetupFragmentExtensions : Fragment() {
@@ -39,12 +34,23 @@ class SetupFragmentExtensions : Fragment() {
         }
     }
 
+    var binding: FragmentSetupExtensionsBinding? = null
+
+    override fun onDestroyView() {
+        binding = null
+        super.onDestroyView()
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_setup_extensions, container, false)
+    ): View {
+        val localBinding = FragmentSetupExtensionsBinding.inflate(inflater, container, false)
+        binding = localBinding
+        return localBinding.root
+        //return inflater.inflate(R.layout.fragment_setup_extensions, container, false)
     }
+
 
     override fun onResume() {
         super.onResume()
@@ -60,12 +66,12 @@ class SetupFragmentExtensions : Fragment() {
         main {
             val repositories = RepositoryManager.getRepositories() + PREBUILT_REPOSITORIES
             val hasRepos = repositories.isNotEmpty()
-            repo_recycler_view?.isVisible = hasRepos
-            blank_repo_screen?.isVisible = !hasRepos
+            binding?.repoRecyclerView?.isVisible = hasRepos
+            binding?.blankRepoScreen?.isVisible = !hasRepos
 //            view_public_repositories_button?.isVisible = hasRepos
 
             if (hasRepos) {
-                repo_recycler_view?.adapter = RepoAdapter(true, {}, {
+                binding?.repoRecyclerView?.adapter = RepoAdapter(true, {}, {
                     PluginsViewModel.downloadAll(activity, it.url, null)
                 }).apply { updateList(repositories) }
             }
@@ -80,39 +86,40 @@ class SetupFragmentExtensions : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        context?.fixPaddingStatusbar(setup_root)
+        fixPaddingStatusbar(binding?.setupRoot)
         val isSetup = arguments?.getBoolean(SETUP_EXTENSION_BUNDLE_IS_SETUP) ?: false
 
 //        view_public_repositories_button?.setOnClickListener {
 //            openBrowser(PUBLIC_REPOSITORIES_LIST, isTvSettings(), this)
 //        }
 
-        with(context) {
-            if (this == null) return
+        normalSafeApiCall {
+           // val ctx = context ?: return@normalSafeApiCall
             setRepositories()
+            binding?.apply {
+                if (!isSetup) {
+                    nextBtt.setText(R.string.setup_done)
+                }
+                prevBtt.isVisible = isSetup
 
-            if (!isSetup) {
-                next_btt.setText(R.string.setup_done)
-            }
-            prev_btt?.isVisible = isSetup
+                nextBtt.setOnClickListener {
+                    // Continue setup
+                    if (isSetup)
+                        if (
+                        // If any available languages
+                            synchronized(apis) { apis.distinctBy { it.lang }.size > 1 }
+                        ) {
+                            findNavController().navigate(R.id.action_navigation_setup_extensions_to_navigation_setup_provider_languages)
+                        } else {
+                            findNavController().navigate(R.id.action_navigation_setup_extensions_to_navigation_setup_media)
+                        }
+                    else
+                        findNavController().navigate(R.id.navigation_home)
+                }
 
-            next_btt?.setOnClickListener {
-                // Continue setup
-                if (isSetup)
-                    if (
-                    // If any available languages
-                        apis.distinctBy { it.lang }.size > 1
-                    ) {
-                        findNavController().navigate(R.id.action_navigation_setup_extensions_to_navigation_setup_provider_languages)
-                    } else {
-                        findNavController().navigate(R.id.action_navigation_setup_extensions_to_navigation_setup_media)
-                    }
-                else
-                    findNavController().navigate(R.id.navigation_home)
-            }
-
-            prev_btt?.setOnClickListener {
-                findNavController().navigate(R.id.navigation_setup_language)
+                prevBtt.setOnClickListener {
+                    findNavController().navigate(R.id.navigation_setup_language)
+                }
             }
         }
     }

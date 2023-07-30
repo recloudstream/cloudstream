@@ -8,19 +8,13 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
-import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.databinding.PlayerQualityProfileItemBinding
 import com.lagradost.cloudstream3.ui.result.UiImage
 import com.lagradost.cloudstream3.utils.AppUtils
 import com.lagradost.cloudstream3.utils.UIHelper.setImage
-import kotlinx.android.synthetic.main.player_quality_profile_item.view.card_view
-import kotlinx.android.synthetic.main.player_quality_profile_item.view.outline
-import kotlinx.android.synthetic.main.player_quality_profile_item.view.profile_image_background
-import kotlinx.android.synthetic.main.player_quality_profile_item.view.profile_text
-import kotlinx.android.synthetic.main.player_quality_profile_item.view.text_is_mobile_data
-import kotlinx.android.synthetic.main.player_quality_profile_item.view.text_is_wifi
 
 class ProfilesAdapter(
     override val items: MutableList<QualityDataHelper.QualityProfile>,
@@ -34,8 +28,9 @@ class ProfilesAdapter(
         }) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return ProfilesViewHolder(
-            LayoutInflater.from(parent.context)
-                .inflate(R.layout.player_quality_profile_item, parent, false)
+            PlayerQualityProfileItemBinding.inflate(LayoutInflater.from(parent.context),parent,false)
+            //LayoutInflater.from(parent.context)
+            //    .inflate(R.layout.player_quality_profile_item, parent, false)
         )
     }
 
@@ -52,8 +47,8 @@ class ProfilesAdapter(
     }
 
     inner class ProfilesViewHolder(
-        itemView: View,
-    ) : RecyclerView.ViewHolder(itemView) {
+        val binding: PlayerQualityProfileItemBinding,
+    ) : RecyclerView.ViewHolder(binding.root) {
         private val art = listOf(
             R.drawable.profile_bg_teal,
             R.drawable.profile_bg_blue,
@@ -65,12 +60,12 @@ class ProfilesAdapter(
         )
 
         fun bind(item: QualityDataHelper.QualityProfile, index: Int) {
-            val priorityText: TextView = itemView.profile_text
-            val profileBg: ImageView = itemView.profile_image_background
-            val wifiText: TextView = itemView.text_is_wifi
-            val dataText: TextView = itemView.text_is_mobile_data
-            val outline: View = itemView.outline
-            val cardView: View = itemView.card_view
+            val priorityText: TextView = binding.profileText
+            val profileBg: ImageView = binding.profileImageBackground
+            val wifiText: TextView = binding.textIsWifi
+            val dataText: TextView = binding.textIsMobileData
+            val outline: View = binding.outline
+            val cardView: View = binding.cardView
 
             priorityText.text = item.name.asString(itemView.context)
             dataText.isVisible = item.type == QualityDataHelper.QualityProfileType.Data

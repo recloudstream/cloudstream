@@ -20,7 +20,7 @@
                 android:layout_marginBottom="10dp"
                 android:layout_marginStart="0dp"
                 android:layout_marginEnd="0dp"
-                app:layout_constraintBottom_toTopOf="@id/result_recommendations" />
+                app:layout_constraintBottom_toTopOf="@id/result_recommendations_list" />
 
         <com.lagradost.cloudstream3.ui.AutofitRecyclerView
                 android:descendantFocusability="afterDescendants"
@@ -30,7 +30,7 @@
                 android:layout_height="wrap_content"
                 android:clipToPadding="false"
                 app:spanCount="3"
-                android:id="@+id/result_recommendations"
+                android:id="@+id/result_recommendations_list"
                 tools:listitem="@layout/search_result_grid"
                 android:orientation="vertical" />
     </LinearLayout>

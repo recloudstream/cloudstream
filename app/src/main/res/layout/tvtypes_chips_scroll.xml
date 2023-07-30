@@ -6,5 +6,5 @@
     android:requiresFadingEdge="horizontal"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <include layout="@layout/tvtypes_chips" />
+    <include layout="@layout/tvtypes_chips" android:id="@+id/tvtypes_chips" />
 </HorizontalScrollView>

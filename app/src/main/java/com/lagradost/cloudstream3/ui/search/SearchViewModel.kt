@@ -37,7 +37,7 @@ class SearchViewModel : ViewModel() {
     private val _currentHistory: MutableLiveData<List<SearchHistoryItem>> = MutableLiveData()
     val currentHistory: LiveData<List<SearchHistoryItem>> get() = _currentHistory
 
-    private var repos = apis.map { APIRepository(it) }
+    private var repos = synchronized(apis) { apis.map { APIRepository(it) } }
 
     fun clearSearch() {
         _searchResponse.postValue(Resource.Success(ArrayList()))
@@ -48,7 +48,7 @@ class SearchViewModel : ViewModel() {
     private var onGoingSearch: Job? = null
 
     fun reloadRepos() {
-        repos = apis.map { APIRepository(it) }
+        repos = synchronized(apis) { apis.map { APIRepository(it) } }
     }
 
     fun searchAndCancel(

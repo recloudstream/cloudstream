@@ -8,9 +8,10 @@ import com.lagradost.cloudstream3.mvvm.logError
 
 fun RecyclerView?.setLinearListLayout(isHorizontal: Boolean = true) {
     if (this == null) return
+
     this.layoutManager =
         this.context?.let { LinearListLayout(it).apply { if (isHorizontal) setHorizontal() else setVertical() } }
-            ?: this.layoutManager
+    //    ?: this.layoutManager
 }
 
 open class LinearListLayout(context: Context?) :
@@ -66,7 +67,12 @@ open class LinearListLayout(context: Context?) :
                 (focused.parent as? RecyclerView)?.focusSearch(direction)
                 return null
             }
-            if (direction == View.FOCUS_RIGHT) 1 else -1
+            var ret = if (direction == View.FOCUS_RIGHT) 1 else -1
+            // only flip on horizontal layout
+            if (this.isLayoutRTL) {
+                ret = -ret
+            }
+            ret
         } else {
             if (direction == View.FOCUS_RIGHT || direction == View.FOCUS_LEFT) return null
             if (direction == View.FOCUS_DOWN) 1 else -1
@@ -76,6 +82,13 @@ open class LinearListLayout(context: Context?) :
             getPosition(getCorrectParent(focused))?.let { position ->
                 val lookfor = dir + position
                 //clamp(dir + position, 0, recyclerView.adapter?.itemCount ?: return null)
+
+                // refocus on the same view if going out of bounds, note that we only do it
+                // for out of bounds one way as we may override the start where item == -1
+                if (lookfor >= itemCount) {
+                    return getViewFromPos(itemCount - 1) ?: focused
+                }
+
                 getViewFromPos(lookfor) ?: run {
                     scrollToPosition(lookfor)
                     null

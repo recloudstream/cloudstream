@@ -25,7 +25,7 @@
             app:titleTextColor="?attr/textColor"
             tools:title="Overlord" />
 
-        <include layout="@layout/tvtypes_chips_scroll" />
+        <include layout="@layout/tvtypes_chips_scroll" android:id="@+id/tvtypes_chips_scroll" />
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.recyclerview.widget.RecyclerView

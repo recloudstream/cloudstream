@@ -7,7 +7,6 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.amap
-import com.lagradost.cloudstream3.mvvm.Some
 import com.lagradost.cloudstream3.mvvm.debugAssert
 import com.lagradost.cloudstream3.plugins.PluginManager
 import com.lagradost.cloudstream3.plugins.PluginManager.getPluginsOnline
@@ -40,8 +39,8 @@ class ExtensionsViewModel : ViewModel() {
     private val _repositories = MutableLiveData<Array<RepositoryData>>()
     val repositories: LiveData<Array<RepositoryData>> = _repositories
 
-    private val _pluginStats: MutableLiveData<Some<PluginStats>> = MutableLiveData(Some.None)
-    val pluginStats: LiveData<Some<PluginStats>> = _pluginStats
+    private val _pluginStats: MutableLiveData<PluginStats?> = MutableLiveData(null)
+    val pluginStats: LiveData<PluginStats?> = _pluginStats
 
     //TODO CACHE GET REQUESTS
     // DO not use viewModelScope.launchSafe, it will ANR on slow internet
@@ -78,7 +77,7 @@ class ExtensionsViewModel : ViewModel() {
         debugAssert({ stats.downloaded + stats.notDownloaded + stats.disabled != stats.total }) {
             "downloaded(${stats.downloaded}) + notDownloaded(${stats.notDownloaded}) + disabled(${stats.disabled}) != total(${stats.total})"
         }
-        _pluginStats.postValue(Some.Success(stats))
+        _pluginStats.postValue(stats)
     }
 
     private fun repos() = (getKey<Array<RepositoryData>>(REPOSITORIES_KEY)

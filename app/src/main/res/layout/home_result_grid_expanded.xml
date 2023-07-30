@@ -7,7 +7,7 @@
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/background_card"
+
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_margin="2dp"
@@ -16,13 +16,22 @@
     app:cardCornerRadius="@dimen/rounded_image_radius"
     app:cardElevation="0dp">
 
+    <ImageView
+        android:id="@+id/title_shadow"
+        android:visibility="gone"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_gravity="bottom"
+        android:clickable="false"
+        android:focusable="false"
+        tools:ignore="ContentDescription" />
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
         <androidx.cardview.widget.CardView
-            android:id="@+id/image_holder"
+            android:id="@+id/background_card"
             android:layout_width="114dp"
             android:layout_height="180dp"
             android:elevation="10dp"

@@ -24,7 +24,7 @@ class GrdLayoutManager(val context: Context, _spanCount: Int) :
         }
     }
 
-    override fun onRequestChildFocus(
+    /*override fun onRequestChildFocus(
         parent: RecyclerView,
         state: RecyclerView.State,
         child: View,
@@ -32,13 +32,17 @@ class GrdLayoutManager(val context: Context, _spanCount: Int) :
     ): Boolean {
         // android.widget.FrameLayout$LayoutParams cannot be cast to androidx.recyclerview.widget.RecyclerView$LayoutParams
         return try {
-            val pos = maxOf(0, getPosition(focused!!) - 2)
-            parent.scrollToPosition(pos)
+            if(focused != null) {
+              //  val pos = maxOf(0, getPosition(focused) - 2) // IDK WHY
+                val pos = getPosition(focused)
+                if(pos >= 0) parent.scrollToPosition(pos)
+            }
+
             super.onRequestChildFocus(parent, state, child, focused)
         } catch (e: Exception) {
             false
         }
-    }
+    }*/
 
     // Allows moving right and left with focus https://gist.github.com/vganin/8930b41f55820ec49e4d
     override fun onInterceptFocusSearch(focused: View, direction: Int): View? {
@@ -65,8 +69,17 @@ class GrdLayoutManager(val context: Context, _spanCount: Int) :
         val spanCount = this.spanCount
         val orientation = this.orientation
 
+        // fixes arabic by inverting left and right layout focus
+        val correctDirection = if(this.isLayoutRTL) {
+            when(direction) {
+                View.FOCUS_RIGHT -> View.FOCUS_LEFT
+                View.FOCUS_LEFT -> View.FOCUS_RIGHT
+                else -> direction
+            }
+        } else direction
+
         if (orientation == VERTICAL) {
-            when (direction) {
+            when (correctDirection) {
                 View.FOCUS_DOWN -> {
                     return spanCount
                 }
@@ -81,7 +94,7 @@ class GrdLayoutManager(val context: Context, _spanCount: Int) :
                 }
             }
         } else if (orientation == HORIZONTAL) {
-            when (direction) {
+            when (correctDirection) {
                 View.FOCUS_DOWN -> {
                     return 1
                 }

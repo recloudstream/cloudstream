@@ -20,8 +20,11 @@ import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.CommonActivity
 import com.lagradost.cloudstream3.CommonActivity.showToast
+import com.lagradost.cloudstream3.MainActivity
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.app
+import com.lagradost.cloudstream3.databinding.AddRemoveSitesBinding
+import com.lagradost.cloudstream3.databinding.AddSiteInputBinding
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.network.initClient
@@ -38,8 +41,6 @@ import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.utils.USER_PROVIDER_API
 import com.lagradost.cloudstream3.utils.VideoDownloadManager
 import com.lagradost.cloudstream3.utils.VideoDownloadManager.getBasePath
-import kotlinx.android.synthetic.main.add_remove_sites.*
-import kotlinx.android.synthetic.main.add_site_input.*
 import java.io.File
 
 fun getCurrentLocale(context: Context): String {
@@ -188,7 +189,7 @@ class SettingsGeneral : PreferenceFragmentCompat() {
 
 
         fun showAdd() {
-            val providers = allProviders.distinctBy { it.javaClass }.sortedBy { it.name }
+            val providers = synchronized(allProviders) { allProviders.distinctBy { it.javaClass }.sortedBy { it.name } }
             activity?.showDialog(
                 providers.map { "${it.name} (${it.mainUrl})" },
                 -1,
@@ -197,21 +198,23 @@ class SettingsGeneral : PreferenceFragmentCompat() {
                 {}) { selection ->
                 val provider = providers.getOrNull(selection) ?: return@showDialog
 
+                val binding : AddSiteInputBinding = AddSiteInputBinding.inflate(layoutInflater,null,false)
+
                 val builder =
                     AlertDialog.Builder(context ?: return@showDialog, R.style.AlertDialogCustom)
-                        .setView(R.layout.add_site_input)
+                        .setView(binding.root)
 
                 val dialog = builder.create()
                 dialog.show()
 
-                dialog.text2?.text = provider.name
-                dialog.apply_btt?.setOnClickListener {
-                    val name = dialog.site_name_input?.text?.toString()
-                    val url = dialog.site_url_input?.text?.toString()
-                    val lang = dialog.site_lang_input?.text?.toString()
+                binding.text2.text = provider.name
+                binding.applyBtt.setOnClickListener {
+                    val name = binding.siteNameInput.text?.toString()
+                    val url = binding.siteUrlInput.text?.toString()
+                    val lang = binding.siteLangInput.text?.toString()
                     val realLang = if (lang.isNullOrBlank()) provider.lang else lang
                     if (url.isNullOrBlank() || name.isNullOrBlank() || realLang.length != 2) {
-                        showToast(activity, R.string.error_invalid_data, Toast.LENGTH_SHORT)
+                        showToast(R.string.error_invalid_data, Toast.LENGTH_SHORT)
                         return@setOnClickListener
                     }
 
@@ -219,10 +222,12 @@ class SettingsGeneral : PreferenceFragmentCompat() {
                     val newSite = CustomSite(provider.javaClass.simpleName, name, url, realLang)
                     current.add(newSite)
                     setKey(USER_PROVIDER_API, current.toTypedArray())
+                    // reload apis
+                    MainActivity.afterPluginsLoadedEvent.invoke(false)
 
                     dialog.dismissSafe(activity)
                 }
-                dialog.cancel_btt?.setOnClickListener {
+                binding.cancelBtt.setOnClickListener {
                     dialog.dismissSafe(activity)
                 }
             }
@@ -242,18 +247,19 @@ class SettingsGeneral : PreferenceFragmentCompat() {
         }
 
         fun showAddOrDelete() {
+            val binding : AddRemoveSitesBinding = AddRemoveSitesBinding.inflate(layoutInflater,null,false)
             val builder =
                 AlertDialog.Builder(context ?: return, R.style.AlertDialogCustom)
-                    .setView(R.layout.add_remove_sites)
+                    .setView(binding.root)
 
             val dialog = builder.create()
             dialog.show()
 
-            dialog.add_site?.setOnClickListener {
+            binding.addSite.setOnClickListener {
                 showAdd()
                 dialog.dismissSafe(activity)
             }
-            dialog.remove_site?.setOnClickListener {
+            binding.removeSite.setOnClickListener {
                 showDelete()
                 dialog.dismissSafe(activity)
             }

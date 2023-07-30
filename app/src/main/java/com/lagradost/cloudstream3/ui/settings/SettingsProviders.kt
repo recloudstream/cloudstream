@@ -105,8 +105,10 @@ class SettingsProviders : PreferenceFragmentCompat() {
 
         getPref(R.string.provider_lang_key)?.setOnPreferenceClickListener {
             activity?.getApiProviderLangSettings()?.let { current ->
-                val languages = APIHolder.apis.map { it.lang }.toSet()
-                    .sortedBy { SubtitleHelper.fromTwoLettersToLanguage(it) } + AllLanguagesName
+                val languages = synchronized(APIHolder.apis) {
+                    APIHolder.apis.map { it.lang }.toSet()
+                        .sortedBy { SubtitleHelper.fromTwoLettersToLanguage(it) } + AllLanguagesName
+                }
 
                 val currentList = current.map {
                     languages.indexOf(it)

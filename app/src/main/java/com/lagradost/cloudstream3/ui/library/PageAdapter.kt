@@ -3,23 +3,21 @@ package com.lagradost.cloudstream3.ui.library
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
-import android.widget.ImageView
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.ColorUtils
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.lagradost.cloudstream3.AcraApplication
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.databinding.SearchResultGridExpandedBinding
 import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.ui.AutofitRecyclerView
 import com.lagradost.cloudstream3.ui.search.SearchClickCallback
 import com.lagradost.cloudstream3.ui.search.SearchResultBuilder
 import com.lagradost.cloudstream3.utils.AppUtils
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
-import kotlinx.android.synthetic.main.search_result_grid_expanded.view.*
 import kotlin.math.roundToInt
 
 
@@ -32,8 +30,11 @@ class PageAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return LibraryItemViewHolder(
-            LayoutInflater.from(parent.context)
-                .inflate(R.layout.search_result_grid_expanded, parent, false)
+            SearchResultGridExpandedBinding.inflate(
+                LayoutInflater.from(parent.context),
+                parent,
+                false
+            )
         )
     }
 
@@ -57,8 +58,8 @@ class PageAdapter(
         }
     }
 
-    inner class LibraryItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val cardView: ImageView = itemView.imageView
+    inner class LibraryItemViewHolder(val binding: SearchResultGridExpandedBinding) :
+        RecyclerView.ViewHolder(binding.root) {
 
         private val compactView = false//itemView.context.getGridIsCompact()
         private val coverHeight: Int =
@@ -85,11 +86,12 @@ class PageAdapter(
 
                         val fg =
                             getDifferentColor(bg)//palette.getVibrantColor(ContextCompat.getColor(ctx,R.color.ratingColor))
-                        itemView.text_rating.apply {
+                        binding.textRating.apply {
                             setTextColor(ColorStateList.valueOf(fg))
                         }
-                        itemView.text_rating_holder?.backgroundTintList = ColorStateList.valueOf(bg)
-                        itemView.watchProgress?.apply {
+                        binding.textRating.compoundDrawables.getOrNull(0)?.setTint(fg)
+                        binding.textRating.backgroundTintList = ColorStateList.valueOf(bg)
+                        binding.watchProgress.apply {
                             progressTintList = ColorStateList.valueOf(fg)
                             progressBackgroundTintList = ColorStateList.valueOf(bg)
                         }
@@ -99,7 +101,7 @@ class PageAdapter(
 
             // See searchAdaptor for this, it basically fixes the height
             if (!compactView) {
-                cardView.apply {
+                binding.imageView.apply {
                     layoutParams = FrameLayout.LayoutParams(
                         ViewGroup.LayoutParams.MATCH_PARENT,
                         coverHeight
@@ -108,23 +110,13 @@ class PageAdapter(
             }
 
             val showProgress = item.episodesCompleted != null && item.episodesTotal != null
-            itemView.watchProgress.isVisible = showProgress
+            binding.watchProgress.isVisible = showProgress
             if (showProgress) {
-                itemView.watchProgress.max = item.episodesTotal!!
-                itemView.watchProgress.progress = item.episodesCompleted!!
+                binding.watchProgress.max = item.episodesTotal!!
+                binding.watchProgress.progress = item.episodesCompleted!!
             }
 
-            itemView.imageText.text = item.name
-
-            val showRating = (item.personalRating ?: 0) != 0
-            itemView.text_rating_holder.isVisible = showRating
-            if (showRating) {
-                // We want to show 8.5 but not 8.0 hence the replace
-                val rating = ((item.personalRating ?: 0).toDouble() / 10).toString()
-                    .replace(".0", "")
-
-                itemView.text_rating.text = "★ $rating"
-            }
+            binding.imageText.text = item.name
         }
     }
 }
