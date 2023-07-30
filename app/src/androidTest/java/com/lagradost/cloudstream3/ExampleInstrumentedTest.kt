@@ -46,9 +46,9 @@ class TestApplication : Activity() {
 
 @RunWith(AndroidJUnit4::class)
 class ExampleInstrumentedTest {
-    private fun getAllProviders(): List<MainAPI> {
+    private fun getAllProviders(): Array<MainAPI> {
         println("Providers: ${APIHolder.allProviders.size}")
-        return APIHolder.allProviders //.filter { !it.usesWebView }
+        return APIHolder.allProviders.toTypedArray() //.filter { !it.usesWebView }
     }
 
     @Test
@@ -147,7 +147,7 @@ class ExampleInstrumentedTest {
     @Test
     fun providerCorrectHomepage() {
         runBlocking {
-            getAllProviders().amap { api ->
+            getAllProviders().toList().amap { api ->
                 TestingUtils.testHomepage(api, ::println)
             }
         }

@@ -52,7 +52,7 @@ android {
         targetSdk = 33
 
         versionCode = 59
-        versionName = "4.0.1"
+        versionName = "4.1.1"
 
         resValue("string", "app_version", "${defaultConfig.versionName}${versionNameSuffix ?: ""}")
 

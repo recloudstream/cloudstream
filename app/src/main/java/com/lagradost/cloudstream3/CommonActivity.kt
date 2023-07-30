@@ -9,6 +9,7 @@ import android.content.res.Resources
 import android.os.Build
 import android.util.Log
 import android.view.*
+import android.view.View.NO_ID
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -295,6 +296,30 @@ object CommonActivity {
         ) // THEME IS SET BEFORE VIEW IS CREATED TO APPLY THE THEME TO THE MAIN VIEW
     }
 
+    /** because we want closes find, aka when multiple have the same id, we go to parent
+    until the correct one is found */
+    private fun localLook(from: View, id: Int): View? {
+        if (id == NO_ID) return null
+        var currentLook: View = from
+        while (true) {
+            currentLook.findViewById<View?>(id)?.let { return it }
+            currentLook = (currentLook.parent as? View) ?: break
+        }
+        return null
+    }
+    /*var currentLook: View = view
+    while (true) {
+        val tmpNext = currentLook.findViewById<View?>(nextId)
+        if (tmpNext != null) {
+            next = tmpNext
+            break
+        }
+        currentLook = currentLook.parent as? View ?: break
+    }*/
+
+    /** recursively looks for a next focus up to a depth of 10,
+     * this is used to override the normal shit focus system
+     * because this application has a lot of invisible views that messes with some tv devices*/
     private fun getNextFocus(
         act: Activity?,
         view: View?,
@@ -306,7 +331,7 @@ object CommonActivity {
             return null
         }
 
-        val nextId = when (direction) {
+        var nextId = when (direction) {
             FocusDirection.Start -> {
                 if (view.isRtl())
                     view.nextFocusRightId
@@ -330,22 +355,16 @@ object CommonActivity {
             }
         }
 
-        // if view not found then return
-        if (nextId == -1) return null
+        if (nextId == NO_ID) {
+            // if not specified then use forward id
+            nextId = view.nextFocusForwardId
+            // if view is still not found to next focus then return and let android decide
+            if (nextId == NO_ID) return null
+        }
+
         var next = act.findViewById<View?>(nextId) ?: return null
 
-        // because we want closes find, aka when multiple have the same id, we go to parent
-        // until the correct one is found
-        /*var currentLook: View = view
-        while (true) {
-            val tmpNext = currentLook.findViewById<View?>(nextId)
-            if (tmpNext != null) {
-                next = tmpNext
-                break
-            }
-
-            currentLook = currentLook.parent as? View ?: break
-        }*/
+        next = localLook(view, nextId) ?: next
 
         var currentLook: View = view
         while (currentLook.findViewById<View?>(nextId)?.also { next = it } == null) {
@@ -362,7 +381,7 @@ object CommonActivity {
         return next
     }
 
-    enum class FocusDirection {
+    private enum class FocusDirection {
         Start,
         End,
         Up,
@@ -463,6 +482,7 @@ object CommonActivity {
         //}
     }
 
+    /** overrides focus and custom key events */
     fun dispatchKeyEvent(act: Activity?, event: KeyEvent?): Boolean? {
         if (act == null) return null
         val currentFocus = act.currentFocus
@@ -503,7 +523,9 @@ object CommonActivity {
                 return true
             }
 
-            if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER && (act.currentFocus is SearchView || act.currentFocus is SearchView.SearchAutoComplete)) {
+            if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER &&
+                (act.currentFocus is SearchView || act.currentFocus is SearchView.SearchAutoComplete)
+            ) {
                 UIHelper.showInputMethod(act.currentFocus?.findFocus())
             }
 
@@ -516,6 +538,8 @@ object CommonActivity {
 
         }
 
+        // if someone else want to override the focus then don't handle the event as it is already
+        // consumed. used in video player
         if (keyEventListener?.invoke(Pair(event, false)) == true) {
             return true
         }

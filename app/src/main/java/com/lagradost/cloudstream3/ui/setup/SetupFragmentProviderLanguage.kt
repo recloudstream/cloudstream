@@ -51,8 +51,8 @@ class SetupFragmentProviderLanguage : Fragment() {
                 ArrayAdapter<String>(ctx, R.layout.sort_bottom_single_choice)
 
             val current = ctx.getApiProviderLangSettings()
-            val langs = APIHolder.apis.map { it.lang }.toSet()
-                .sortedBy { SubtitleHelper.fromTwoLettersToLanguage(it) } + AllLanguagesName
+            val langs = synchronized(APIHolder.apis) { APIHolder.apis.map { it.lang }.toSet()
+                .sortedBy { SubtitleHelper.fromTwoLettersToLanguage(it) } + AllLanguagesName}
 
             val currentList =
                 current.map { langs.indexOf(it) }.filter { it != -1 } // TODO LOOK INTO

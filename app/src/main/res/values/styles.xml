@@ -75,7 +75,7 @@
 
     <style name="ListViewStyle" parent="Widget.AppCompat.ListView">
         <item name="android:divider">@null</item>
-        <item name="android:listSelector">@drawable/outline_drawable_less</item>
+        <item name="android:listSelector">@drawable/outline_drawable_forced</item>
         <item name="android:drawSelectorOnTop">false</item>
     </style>
 
@@ -571,6 +571,7 @@
         <item name="android:checkMark">?android:attr/listChoiceIndicatorSingle</item>
         <item name="drawableStartCompat">@drawable/ic_baseline_check_24_listview</item>
     </style>
+
 
     <style name="NoCheckLabel" parent="@style/AppTextViewStyle">
         <item name="android:layout_width">match_parent</item>

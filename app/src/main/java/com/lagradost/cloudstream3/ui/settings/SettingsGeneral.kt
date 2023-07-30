@@ -20,6 +20,7 @@ import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.CommonActivity
 import com.lagradost.cloudstream3.CommonActivity.showToast
+import com.lagradost.cloudstream3.MainActivity
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.databinding.AddRemoveSitesBinding
@@ -188,7 +189,7 @@ class SettingsGeneral : PreferenceFragmentCompat() {
 
 
         fun showAdd() {
-            val providers = allProviders.distinctBy { it.javaClass }.sortedBy { it.name }
+            val providers = synchronized(allProviders) { allProviders.distinctBy { it.javaClass }.sortedBy { it.name } }
             activity?.showDialog(
                 providers.map { "${it.name} (${it.mainUrl})" },
                 -1,
@@ -221,6 +222,8 @@ class SettingsGeneral : PreferenceFragmentCompat() {
                     val newSite = CustomSite(provider.javaClass.simpleName, name, url, realLang)
                     current.add(newSite)
                     setKey(USER_PROVIDER_API, current.toTypedArray())
+                    // reload apis
+                    MainActivity.afterPluginsLoadedEvent.invoke(false)
 
                     dialog.dismissSafe(activity)
                 }

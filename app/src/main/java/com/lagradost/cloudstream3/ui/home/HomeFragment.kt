@@ -462,7 +462,7 @@ class HomeFragment : Fragment() {
 
     private val apiChangeClickListener = View.OnClickListener { view ->
         view.context.selectHomepage(currentApiName) { api ->
-            homeViewModel.loadAndCancel(api)
+            homeViewModel.loadAndCancel(api, forceReload = true,fromUI = true)
         }
         /*val validAPIs = view.context?.filterProviderByPreferredMedia()?.toMutableList() ?: mutableListOf()
 
@@ -652,6 +652,7 @@ class HomeFragment : Fragment() {
         }
 
         homeViewModel.reloadStored()
+        homeViewModel.loadAndCancel(getKey(USER_SELECTED_HOMEPAGE_API), false)
         //loadHomePage(false)
 
         // nice profile pic on homepage

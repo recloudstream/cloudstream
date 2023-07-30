@@ -321,7 +321,7 @@ data class ExtractedTrailerData(
 
 class ResultViewModel2 : ViewModel() {
     private var currentResponse: LoadResponse? = null
-    var EPISODE_RANGE_SIZE : Int = 20
+    var EPISODE_RANGE_SIZE: Int = 20
     fun clear() {
         currentResponse = null
         _page.postValue(null)
@@ -456,7 +456,7 @@ class ResultViewModel2 : ViewModel() {
                     currentResponse.year
                 )
             )
-            if(currentWatchType != status) {
+            if (currentWatchType != status) {
                 MainActivity.bookmarksUpdatedEvent(true)
             }
         }
@@ -477,7 +477,10 @@ class ResultViewModel2 : ViewModel() {
                 )
             )
 
-        private fun getRanges(allEpisodes: Map<EpisodeIndexer, List<ResultEpisode>>, EPISODE_RANGE_SIZE : Int): Map<EpisodeIndexer, List<EpisodeRange>> {
+        private fun getRanges(
+            allEpisodes: Map<EpisodeIndexer, List<ResultEpisode>>,
+            EPISODE_RANGE_SIZE: Int
+        ): Map<EpisodeIndexer, List<EpisodeRange>> {
             return allEpisodes.keys.mapNotNull { index ->
                 val episodes =
                     allEpisodes[index] ?: return@mapNotNull null // this should never happened
@@ -1505,13 +1508,14 @@ class ResultViewModel2 : ViewModel() {
                 }
 
                 val realRecommendations = ArrayList<SearchResponse>()
-                val apiNames = apis.filter {
-                    it.name.contains("gogoanime", true) ||
-                            it.name.contains("9anime", true)
-                }.map {
-                    it.name
+                val apiNames = synchronized(apis) {
+                    apis.filter {
+                        it.name.contains("gogoanime", true) ||
+                                it.name.contains("9anime", true)
+                    }.map {
+                        it.name
+                    }
                 }
-
                 meta.recommendations?.forEach { rec ->
                     apiNames.forEach { name ->
                         realRecommendations.add(rec.copy(apiName = name))

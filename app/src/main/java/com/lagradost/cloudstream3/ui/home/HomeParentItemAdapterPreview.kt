@@ -447,12 +447,12 @@ class HomeParentItemAdapterPreview(
             (binding as? FragmentHomeHeadTvBinding)?.apply {
                 homePreviewChangeApi.setOnClickListener { view ->
                     view.context.selectHomepage(viewModel.repo?.name) { api ->
-                        viewModel.loadAndCancel(api)
+                        viewModel.loadAndCancel(api, forceReload = true, fromUI = true)
                     }
                 }
                 homePreviewChangeApi2.setOnClickListener { view ->
                     view.context.selectHomepage(viewModel.repo?.name) { api ->
-                        viewModel.loadAndCancel(api)
+                        viewModel.loadAndCancel(api, forceReload = true, fromUI = true)
                     }
                 }
 

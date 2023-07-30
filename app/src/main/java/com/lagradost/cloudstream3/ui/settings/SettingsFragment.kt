@@ -8,7 +8,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.annotation.StringRes
+import androidx.core.view.children
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.preference.Preference
@@ -74,6 +76,7 @@ class SettingsFragment : Fragment() {
             settingsToolbar.apply {
                 setTitle(title)
                 setNavigationIcon(R.drawable.ic_baseline_arrow_back_24)
+                children.firstOrNull { it is ImageView }?.tag = getString(R.string.tv_no_focus_tag)
                 setNavigationOnClickListener {
                     activity?.onBackPressed()
                 }

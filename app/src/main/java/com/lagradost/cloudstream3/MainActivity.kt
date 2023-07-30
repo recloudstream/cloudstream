@@ -382,10 +382,12 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                             this.navigate(R.id.navigation_downloads)
                             return true
                         } else {
-                            for (api in apis) {
-                                if (str.startsWith(api.mainUrl)) {
-                                    loadResult(str, api.name)
-                                    return true
+                            synchronized(apis) {
+                                for (api in apis) {
+                                    if (str.startsWith(api.mainUrl)) {
+                                        loadResult(str, api.name)
+                                        return true
+                                    }
                                 }
                             }
                         }
@@ -464,9 +466,10 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
 
         binding?.navHostFragment?.apply {
             val params = layoutParams as ConstraintLayout.LayoutParams
-            val push = if (!dontPush && isTvSettings()) resources.getDimensionPixelSize(R.dimen.navbar_width) else 0
+            val push =
+                if (!dontPush && isTvSettings()) resources.getDimensionPixelSize(R.dimen.navbar_width) else 0
 
-            if(!this.isLtr()) {
+            if (!this.isLtr()) {
                 params.setMargins(
                     params.leftMargin,
                     params.topMargin,
@@ -695,27 +698,29 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
     private fun onAllPluginsLoaded(success: Boolean = false) {
         ioSafe {
             pluginsLock.withLock {
-                // Load cloned sites after plugins have been loaded since clones depend on plugins.
-                try {
-                    getKey<Array<SettingsGeneral.CustomSite>>(USER_PROVIDER_API)?.let { list ->
-                        list.forEach { custom ->
-                            allProviders.firstOrNull { it.javaClass.simpleName == custom.parentJavaClass }
-                                ?.let {
-                                    allProviders.add(it.javaClass.newInstance().apply {
-                                        name = custom.name
-                                        lang = custom.lang
-                                        mainUrl = custom.url.trimEnd('/')
-                                        canBeOverridden = false
-                                    })
-                                }
+                synchronized(allProviders) {
+                    // Load cloned sites after plugins have been loaded since clones depend on plugins.
+                    try {
+                        getKey<Array<SettingsGeneral.CustomSite>>(USER_PROVIDER_API)?.let { list ->
+                            list.forEach { custom ->
+                                allProviders.firstOrNull { it.javaClass.simpleName == custom.parentJavaClass }
+                                    ?.let {
+                                        allProviders.add(it.javaClass.newInstance().apply {
+                                            name = custom.name
+                                            lang = custom.lang
+                                            mainUrl = custom.url.trimEnd('/')
+                                            canBeOverridden = false
+                                        })
+                                    }
+                            }
                         }
+                        // it.hashCode() is not enough to make sure they are distinct
+                        apis =
+                            allProviders.distinctBy { it.lang + it.name + it.mainUrl + it.javaClass.name }
+                        APIHolder.apiMap = null
+                    } catch (e: Exception) {
+                        logError(e)
                     }
-                    // it.hashCode() is not enough to make sure they are distinct
-                    apis =
-                        allProviders.distinctBy { it.lang + it.name + it.mainUrl + it.javaClass.name }
-                    APIHolder.apiMap = null
-                } catch (e: Exception) {
-                    logError(e)
                 }
             }
         }
@@ -814,6 +819,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
 
                 translationX = target.x
                 translationY = target.y
+                bringToFront()
             }
         }
 
@@ -839,10 +845,10 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                 val out = IntArray(2)
                 newFocus.getLocationInWindow(out)
                 val (screenX, screenY) = out
-                var (x,y) = screenX.toFloat() to screenY.toFloat()
+                var (x, y) = screenX.toFloat() to screenY.toFloat()
                 val (currentX, currentY) = focusOutline.translationX to focusOutline.translationY
-    //            println(">><<< $x $y $currentX $currentY")
-               if(!newFocus.isLtr()) {
+                //            println(">><<< $x $y $currentX $currentY")
+                if (!newFocus.isLtr()) {
                     x = x - focusOutline.rootView.width + newFocus.measuredWidth
                 }
 
@@ -1195,7 +1201,9 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         ioSafe {
             initAll()
             // No duplicates (which can happen by registerMainAPI)
-            apis = allProviders.distinctBy { it }
+            apis = synchronized(allProviders) {
+                allProviders.distinctBy { it }
+            }
         }
 
         //  val navView: BottomNavigationView = findViewById(R.id.nav_view)
@@ -1347,8 +1355,8 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         }*/
 
         if (BuildConfig.DEBUG) {
-            try {
-                var providersAndroidManifestString = "Current androidmanifest should be:\n"
+            var providersAndroidManifestString = "Current androidmanifest should be:\n"
+            synchronized(allProviders) {
                 for (api in allProviders) {
                     providersAndroidManifestString += "<data android:scheme=\"https\" android:host=\"${
                         api.mainUrl.removePrefix(
@@ -1356,12 +1364,8 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                         )
                     }\" android:pathPrefix=\"/\"/>\n"
                 }
-                println(providersAndroidManifestString)
-
-            } catch (t: Throwable) {
-                logError(t)
             }
-
+            println(providersAndroidManifestString)
         }
 
         handleAppIntent(intent)
