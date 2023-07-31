@@ -27,8 +27,7 @@
                 android:layout_height="wrap_content"
                 android:layout_rowWeight="1"
                 android:layout_marginTop="10dp"
-                android:background="@drawable/outline_drawable_less"
-                android:foreground="?attr/selectableItemBackgroundBorderless"
+                android:foreground="@drawable/outline_drawable_forced"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
 
@@ -66,7 +65,7 @@
                 android:layout_height="match_parent"
                 android:layout_rowWeight="1"
                 android:background="?attr/primaryBlackBackground"
-                android:listSelector="@drawable/outline_drawable_less"
+                android:listSelector="@drawable/outline_drawable_forced"
                 android:nextFocusLeft="@id/sort_subtitles"
                 android:nextFocusRight="@id/apply_btt"
                 android:requiresFadingEdge="vertical"
@@ -95,8 +94,7 @@
                     android:layout_height="wrap_content"
                     android:layout_rowWeight="1"
                     android:layout_marginTop="10dp"
-                    android:background="@drawable/outline_drawable_less"
-                    android:foreground="?attr/selectableItemBackgroundBorderless"
+                    android:foreground="@drawable/outline_drawable_forced"
                     android:orientation="horizontal"
                     android:paddingTop="10dp"
                     android:paddingBottom="10dp">
@@ -140,7 +138,7 @@
                 android:layout_height="match_parent"
                 android:layout_rowWeight="1"
                 android:background="?attr/primaryBlackBackground"
-                android:listSelector="@drawable/outline_drawable_less"
+                android:listSelector="@drawable/outline_drawable_forced"
                 android:nextFocusLeft="@id/sort_providers"
                 android:nextFocusRight="@id/cancel_btt"
                 android:requiresFadingEdge="vertical"
