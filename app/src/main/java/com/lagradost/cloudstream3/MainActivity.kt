@@ -67,7 +67,6 @@ import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.databinding.ActivityMainBinding
 import com.lagradost.cloudstream3.databinding.ActivityMainTvBinding
 import com.lagradost.cloudstream3.databinding.BottomResultviewPreviewBinding
-import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.debugAssert
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
@@ -80,7 +79,7 @@ import com.lagradost.cloudstream3.receivers.VideoDownloadRestartReceiver
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.OAuth2Apis
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.accountManagers
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.appString
-import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.appString
+import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.appStringPlayer
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.appStringRepo
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.appStringResumeWatching
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.appStringSearch
