@@ -566,6 +566,7 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
         tools:visibility="visible">
 
         <androidx.recyclerview.widget.RecyclerView
+            android:descendantFocusability="afterDescendants"
             android:id="@+id/result_season_selection"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -579,6 +580,7 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
             tools:listitem="@layout/result_selection" />
 
         <androidx.recyclerview.widget.RecyclerView
+            android:descendantFocusability="afterDescendants"
             android:id="@+id/result_range_selection"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -593,6 +595,7 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
             tools:visibility="visible" />
 
         <androidx.recyclerview.widget.RecyclerView
+            android:descendantFocusability="afterDescendants"
             android:id="@+id/result_dub_selection"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -615,6 +618,7 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
                 android:layout_height="50dp" />-->
 
         <androidx.recyclerview.widget.RecyclerView
+            android:descendantFocusability="afterDescendants"
             android:id="@+id/result_episodes"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

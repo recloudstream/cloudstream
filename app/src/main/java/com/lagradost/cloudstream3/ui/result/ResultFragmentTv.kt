@@ -301,8 +301,8 @@ class ResultFragmentTv : Fragment() {
                         resultEpisodes
                     )
                     for (requestView in views) {
-                        if (!requestView.isVisible) continue
-                        if (requestView.requestFocus()) break
+                        if (!requestView.isShown) continue
+                        if (requestView.requestFocus()) break // View.FOCUS_RIGHT
                     }
                 }
             }
