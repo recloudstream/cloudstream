@@ -18,7 +18,7 @@ fun String.execute() = ByteArrayOutputStream().use { baot ->
             workingDir = projectDir
             commandLine = this@execute.split(Regex("\\s"))
             standardOutput = baot
-    }.exitValue == 0)
+        }.exitValue == 0)
         String(baot.toByteArray()).trim()
     else null
 }
@@ -78,12 +78,18 @@ android {
             isDebuggable = false
             isMinifyEnabled = false
             isShrinkResources = false
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
         debug {
             isDebuggable = true
             applicationIdSuffix = ".debug"
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
     }
     flavorDimensions.add("state")
@@ -160,10 +166,16 @@ dependencies {
     // implementation("androidx.leanback:leanback-paging:1.1.0-alpha09")
 
     // Exoplayer
-    implementation("com.google.android.exoplayer:exoplayer:2.18.2")
-    implementation("com.google.android.exoplayer:extension-cast:2.18.2")
-    implementation("com.google.android.exoplayer:extension-mediasession:2.18.2")
-    implementation("com.google.android.exoplayer:extension-okhttp:2.18.2")
+    implementation("androidx.media3:media3-common:1.1.0")
+    implementation("androidx.media3:media3-exoplayer:1.1.0")
+    implementation("androidx.media3:media3-datasource-okhttp:1.1.0")
+    implementation("androidx.media3:media3-ui:1.1.0")
+    implementation("androidx.media3:media3-session:1.1.0")
+    implementation("androidx.media3:media3-cast:1.1.0")
+    implementation("androidx.media3:media3-exoplayer-hls:1.1.0")
+    implementation("androidx.media3:media3-exoplayer-dash:1.1.0")
+
+
     // Use the Jellyfin ffmpeg extension for easy ffmpeg audio decoding in exoplayer. Thank you Jellyfin <3
 //    implementation("org.jellyfin.exoplayer:exoplayer-ffmpeg-extension:2.18.2+1")
 
