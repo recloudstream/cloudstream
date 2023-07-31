@@ -6,7 +6,6 @@ import android.content.res.Configuration
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,6 +13,7 @@ import android.view.animation.AlphaAnimation
 import androidx.annotation.StringRes
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.google.android.material.tabs.TabLayoutMediator
 import com.lagradost.cloudstream3.APIHolder
@@ -22,6 +22,7 @@ import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.openBrowser
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.databinding.FragmentLibraryBinding
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.debugAssert
 import com.lagradost.cloudstream3.mvvm.observe
@@ -37,7 +38,6 @@ import com.lagradost.cloudstream3.utils.AppUtils.reduceDragSensitivity
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
 import com.lagradost.cloudstream3.utils.UIHelper.getSpanCount
-import kotlinx.android.synthetic.main.fragment_library.*
 import kotlin.math.abs
 
 const val LIBRARY_FOLDER = "library_folder"
@@ -73,14 +73,25 @@ class LibraryFragment : Fragment() {
 
     private val libraryViewModel: LibraryViewModel by activityViewModels()
 
+    var binding: FragmentLibraryBinding? = null
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_library, container, false)
+    ): View {
+        val localBinding = FragmentLibraryBinding.inflate(inflater, container, false)
+        binding = localBinding
+        return localBinding.root
+
+        //return inflater.inflate(R.layout.fragment_library, container, false)
+    }
+
+    override fun onDestroyView() {
+        binding = null
+        super.onDestroyView()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
-        viewpager?.currentItem?.let { currentItem ->
+        binding?.viewpager?.currentItem?.let { currentItem ->
             outState.putInt(VIEWPAGER_ITEM_KEY, currentItem)
         }
         super.onSaveInstanceState(outState)
@@ -88,9 +99,9 @@ class LibraryFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        context?.fixPaddingStatusbar(search_status_bar_padding)
+        fixPaddingStatusbar(binding?.searchStatusBarPadding)
 
-        sort_fab?.setOnClickListener {
+        binding?.sortFab?.setOnClickListener {
             val methods = libraryViewModel.sortingMethods.map {
                 txt(it.stringRes).asString(view.context)
             }
@@ -106,7 +117,7 @@ class LibraryFragment : Fragment() {
                 })
         }
 
-        main_search?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+        binding?.mainSearch?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 libraryViewModel.sort(ListSorting.Query, query)
                 return true
@@ -129,7 +140,7 @@ class LibraryFragment : Fragment() {
 
         libraryViewModel.reloadPages(false)
 
-        list_selector?.setOnClickListener {
+        binding?.listSelector?.setOnClickListener {
             val items = libraryViewModel.availableApiNames
             val currentItem = libraryViewModel.currentApiName.value
 
@@ -152,12 +163,14 @@ class LibraryFragment : Fragment() {
             syncId: SyncIdName,
             apiName: String? = null,
         ) {
-            val availableProviders = allProviders.filter {
-                it.supportedSyncNames.contains(syncId)
-            }.map { it.name } +
-                    // Add the api if it exists
-                    (APIHolder.getApiFromNameNull(apiName)?.let { listOf(it.name) } ?: emptyList())
-
+            val availableProviders = synchronized(allProviders) {
+                allProviders.filter {
+                    it.supportedSyncNames.contains(syncId)
+                }.map { it.name } +
+                        // Add the api if it exists
+                        (APIHolder.getApiFromNameNull(apiName)?.let { listOf(it.name) }
+                            ?: emptyList())
+            }
             val baseOptions = listOf(
                 LibraryOpenerType.Default,
                 LibraryOpenerType.None,
@@ -209,20 +222,22 @@ class LibraryFragment : Fragment() {
             }
         }
 
-        provider_selector?.setOnClickListener {
+        binding?.providerSelector?.setOnClickListener {
             val syncName = libraryViewModel.currentSyncApi?.syncIdName ?: return@setOnClickListener
             activity?.showPluginSelectionDialog(syncName.name, syncName)
         }
 
-        viewpager?.setPageTransformer(LibraryScrollTransformer())
-        viewpager?.adapter =
-            viewpager.adapter ?: ViewpagerAdapter(mutableListOf(), { isScrollingDown: Boolean ->
-                if (isScrollingDown) {
-                    sort_fab?.shrink()
-                } else {
-                    sort_fab?.extend()
-                }
-            }) callback@{ searchClickCallback ->
+        binding?.viewpager?.setPageTransformer(LibraryScrollTransformer())
+        binding?.viewpager?.adapter =
+            binding?.viewpager?.adapter ?: ViewpagerAdapter(
+                mutableListOf(),
+                { isScrollingDown: Boolean ->
+                    if (isScrollingDown) {
+                        binding?.sortFab?.shrink()
+                    } else {
+                        binding?.sortFab?.extend()
+                    }
+                }) callback@{ searchClickCallback ->
                 // To prevent future accidents
                 debugAssert({
                     searchClickCallback.card !is SyncAPI.LibraryItem
@@ -267,6 +282,7 @@ class LibraryFragment : Fragment() {
                                     )
                                 }
                             }
+
                             LibraryOpenerType.None -> {}
                             LibraryOpenerType.Provider ->
                                 savedSelection.providerData?.apiName?.let { apiName ->
@@ -275,8 +291,10 @@ class LibraryFragment : Fragment() {
                                         apiName,
                                     )
                                 }
+
                             LibraryOpenerType.Browser ->
                                 openBrowser(searchClickCallback.card.url)
+
                             LibraryOpenerType.Search -> {
                                 QuickSearchFragment.pushSearch(
                                     activity,
@@ -288,22 +306,28 @@ class LibraryFragment : Fragment() {
                 }
             }
 
-        viewpager?.offscreenPageLimit = 2
-        viewpager?.reduceDragSensitivity()
+        binding?.apply {
+            viewpager.offscreenPageLimit = 2
+            viewpager.reduceDragSensitivity()
+        }
 
         val startLoading = Runnable {
-            gridview?.numColumns = context?.getSpanCount() ?: 3
-            gridview?.adapter =
-                context?.let { LoadingPosterAdapter(it, 6 * 3) }
-            library_loading_overlay?.isVisible = true
-            library_loading_shimmer?.startShimmer()
-            empty_list_textview?.isVisible = false
+            binding?.apply {
+                gridview.numColumns = context?.getSpanCount() ?: 3
+                gridview.adapter =
+                    context?.let { LoadingPosterAdapter(it, 6 * 3) }
+                libraryLoadingOverlay.isVisible = true
+                libraryLoadingShimmer.startShimmer()
+                emptyListTextview.isVisible = false
+            }
         }
 
         val stopLoading = Runnable {
-            gridview?.adapter = null
-            library_loading_overlay?.isVisible = false
-            library_loading_shimmer?.stopShimmer()
+            binding?.apply {
+                gridview.adapter = null
+                libraryLoadingOverlay.isVisible = false
+                libraryLoadingShimmer.stopShimmer()
+            }
         }
 
         val handler = Handler(Looper.getMainLooper())
@@ -314,65 +338,75 @@ class LibraryFragment : Fragment() {
                     handler.removeCallbacks(startLoading)
                     val pages = resource.value
                     val showNotice = pages.all { it.items.isEmpty() }
-                    empty_list_textview?.isVisible = showNotice
-                    if (showNotice) {
-                        if (libraryViewModel.availableApiNames.size > 1) {
-                            empty_list_textview?.setText(R.string.empty_library_logged_in_message)
-                        } else {
-                            empty_list_textview?.setText(R.string.empty_library_no_accounts_message)
+
+
+                    binding?.apply {
+                        emptyListTextview.isVisible = showNotice
+                        if (showNotice) {
+                            if (libraryViewModel.availableApiNames.size > 1) {
+                                emptyListTextview.setText(R.string.empty_library_logged_in_message)
+                            } else {
+                                emptyListTextview.setText(R.string.empty_library_no_accounts_message)
+                            }
                         }
+
+                        (viewpager.adapter as? ViewpagerAdapter)?.pages = pages
+                        // Using notifyItemRangeChanged keeps the animations when sorting
+                        viewpager.adapter?.notifyItemRangeChanged(
+                            0,
+                            viewpager.adapter?.itemCount ?: 0
+                        )
+
+                        // Only stop loading after 300ms to hide the fade effect the viewpager produces when updating
+                        // Without this there would be a flashing effect:
+                        // loading -> show old viewpager -> black screen -> show new viewpager
+                        handler.postDelayed(stopLoading, 300)
+
+                        savedInstanceState?.getInt(VIEWPAGER_ITEM_KEY)?.let { currentPos ->
+                            if (currentPos < 0) return@let
+                            viewpager.setCurrentItem(currentPos, false)
+                            // Using remove() sets the key to 0 instead of removing it
+                            savedInstanceState.putInt(VIEWPAGER_ITEM_KEY, -1)
+                        }
+
+                        // Since the animation to scroll multiple items is so much its better to just hide
+                        // the viewpager a bit while the fastest animation is running
+                        fun hideViewpager(distance: Int) {
+                            if (distance < 3) return
+
+                            val hideAnimation = AlphaAnimation(1f, 0f).apply {
+                                duration = distance * 50L
+                                fillAfter = true
+                            }
+                            val showAnimation = AlphaAnimation(0f, 1f).apply {
+                                duration = distance * 50L
+                                startOffset = distance * 100L
+                                fillAfter = true
+                            }
+                            viewpager.startAnimation(hideAnimation)
+                            viewpager.startAnimation(showAnimation)
+                        }
+
+                        TabLayoutMediator(
+                            libraryTabLayout,
+                            viewpager,
+                        ) { tab, position ->
+                            tab.text = pages.getOrNull(position)?.title?.asStringNull(context)
+                            tab.view.setOnClickListener {
+                                val currentItem =
+                                    binding?.viewpager?.currentItem ?: return@setOnClickListener
+                                val distance = abs(position - currentItem)
+                                hideViewpager(distance)
+                            }
+                        }.attach()
                     }
-
-                    (viewpager.adapter as? ViewpagerAdapter)?.pages = pages
-                    // Using notifyItemRangeChanged keeps the animations when sorting
-                    viewpager.adapter?.notifyItemRangeChanged(0, viewpager.adapter?.itemCount ?: 0)
-
-                    // Only stop loading after 300ms to hide the fade effect the viewpager produces when updating
-                    // Without this there would be a flashing effect:
-                    // loading -> show old viewpager -> black screen -> show new viewpager
-                    handler.postDelayed(stopLoading, 300)
-
-                    savedInstanceState?.getInt(VIEWPAGER_ITEM_KEY)?.let { currentPos ->
-                        if (currentPos < 0) return@let
-                        viewpager?.setCurrentItem(currentPos, false)
-                        // Using remove() sets the key to 0 instead of removing it
-                        savedInstanceState.putInt(VIEWPAGER_ITEM_KEY, -1)
-                    }
-
-                    // Since the animation to scroll multiple items is so much its better to just hide
-                    // the viewpager a bit while the fastest animation is running
-                    fun hideViewpager(distance: Int) {
-                        if (distance < 3) return
-
-                        val hideAnimation = AlphaAnimation(1f, 0f).apply {
-                            duration = distance * 50L
-                            fillAfter = true
-                        }
-                        val showAnimation = AlphaAnimation(0f, 1f).apply {
-                            duration = distance * 50L
-                            startOffset = distance * 100L
-                            fillAfter = true
-                        }
-                        viewpager?.startAnimation(hideAnimation)
-                        viewpager?.startAnimation(showAnimation)
-                    }
-
-                    TabLayoutMediator(
-                        library_tab_layout,
-                        viewpager,
-                    ) { tab, position ->
-                        tab.text = pages.getOrNull(position)?.title?.asStringNull(context)
-                        tab.view.setOnClickListener {
-                            val currentItem = viewpager?.currentItem ?: return@setOnClickListener
-                            val distance = abs(position - currentItem)
-                            hideViewpager(distance)
-                        }
-                    }.attach()
                 }
+
                 is Resource.Loading -> {
                     // Only start loading after 200ms to prevent loading cached lists
                     handler.postDelayed(startLoading, 200)
                 }
+
                 is Resource.Failure -> {
                     stopLoading.run()
                     // No user indication it failed :(
@@ -383,7 +417,7 @@ class LibraryFragment : Fragment() {
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
-        (viewpager.adapter as? ViewpagerAdapter)?.rebind()
+        (binding?.viewpager?.adapter as? ViewpagerAdapter)?.rebind()
         super.onConfigurationChanged(newConfig)
     }
 }

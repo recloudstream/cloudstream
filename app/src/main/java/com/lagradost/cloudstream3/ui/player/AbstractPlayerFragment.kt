@@ -11,6 +11,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.widget.FrameLayout
+import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.annotation.LayoutRes
 import androidx.annotation.StringRes
@@ -41,8 +44,6 @@ import com.lagradost.cloudstream3.utils.EpisodeSkip
 import com.lagradost.cloudstream3.utils.UIHelper
 import com.lagradost.cloudstream3.utils.UIHelper.hideSystemUI
 import com.lagradost.cloudstream3.utils.UIHelper.popCurrentPage
-import kotlinx.android.synthetic.main.fragment_player.*
-import kotlinx.android.synthetic.main.player_custom_layout.*
 
 enum class PlayerResize(@StringRes val nameRes: Int) {
     Fit(R.string.resize_fit),
@@ -71,9 +72,15 @@ abstract class AbstractPlayerFragment(
     var isBuffering = true
     protected open var hasPipModeSupport = true
 
+    var playerPausePlayHolderHolder : FrameLayout? = null
+    var playerPausePlay : ImageView? = null
+    var playerBuffering : ProgressBar? = null
+    var playerView : PlayerView? = null
+    var piphide : FrameLayout? = null
+    var subtitleHolder : FrameLayout? = null
 
     @LayoutRes
-    protected var layout: Int = R.layout.fragment_player
+    protected open var layout: Int = R.layout.fragment_player
 
     open fun nextEpisode() {
         throw NotImplementedError()
@@ -132,15 +139,15 @@ abstract class AbstractPlayerFragment(
 
         isBuffering = CSPlayerLoading.IsBuffering == isPlaying
         if (isBuffering) {
-            player_pause_play_holder_holder?.isVisible = false
-            player_buffering?.isVisible = true
+            playerPausePlayHolderHolder?.isVisible = false
+            playerBuffering?.isVisible = true
         } else {
-            player_pause_play_holder_holder?.isVisible = true
-            player_buffering?.isVisible = false
+            playerPausePlayHolderHolder?.isVisible = true
+            playerBuffering?.isVisible = false
 
             if (wasPlaying != isPlaying) {
-                player_pause_play?.setImageResource(if (isPlayingRightNow) R.drawable.play_to_pause else R.drawable.pause_to_play)
-                val drawable = player_pause_play?.drawable
+                playerPausePlay?.setImageResource(if (isPlayingRightNow) R.drawable.play_to_pause else R.drawable.pause_to_play)
+                val drawable = playerPausePlay?.drawable
 
                 var startedAnimation = false
                 if (Build.VERSION.SDK_INT > Build.VERSION_CODES.P) {
@@ -162,10 +169,10 @@ abstract class AbstractPlayerFragment(
 
                 // somehow the phone is wacked
                 if (!startedAnimation) {
-                    player_pause_play?.setImageResource(if (isPlayingRightNow) R.drawable.netflix_pause else R.drawable.netflix_play)
+                    playerPausePlay?.setImageResource(if (isPlayingRightNow) R.drawable.netflix_pause else R.drawable.netflix_play)
                 }
             } else {
-                player_pause_play?.setImageResource(if (isPlayingRightNow) R.drawable.netflix_pause else R.drawable.netflix_play)
+                playerPausePlay?.setImageResource(if (isPlayingRightNow) R.drawable.netflix_pause else R.drawable.netflix_play)
             }
         }
 
@@ -244,14 +251,12 @@ abstract class AbstractPlayerFragment(
         fun showToast(message: String, gotoNext: Boolean = false) {
             if (gotoNext && hasNextMirror()) {
                 showToast(
-                    activity,
                     message,
                     Toast.LENGTH_SHORT
                 )
                 nextMirror()
             } else {
                 showToast(
-                    activity,
                     context?.getString(R.string.no_links_found_toast) + "\n" + message,
                     Toast.LENGTH_LONG
                 )
@@ -327,9 +332,9 @@ abstract class AbstractPlayerFragment(
             }
 
             // Necessary for multiple combined videos
-            player_view?.setShowMultiWindowTimeBar(true)
-            player_view?.player = player
-            player_view?.performClick()
+            playerView?.setShowMultiWindowTimeBar(true)
+            playerView?.player = player
+            playerView?.performClick()
         }
     }
 
@@ -386,9 +391,9 @@ abstract class AbstractPlayerFragment(
         )
 
         if (player is CS3IPlayer) {
-            subView = player_view?.findViewById(R.id.exo_subtitles)
+            subView = playerView?.findViewById(R.id.exo_subtitles)
             subStyle = SubtitlesFragment.getCurrentSavedStyle()
-            player.initSubtitles(subView, subtitle_holder, subStyle)
+            player.initSubtitles(subView, subtitleHolder, subStyle)
 
             SubtitlesFragment.applyStyleEvent += ::onSubStyleChanged
 
@@ -457,10 +462,10 @@ abstract class AbstractPlayerFragment(
             PlayerResize.Fit -> AspectRatioFrameLayout.RESIZE_MODE_FIT
             PlayerResize.Zoom -> AspectRatioFrameLayout.RESIZE_MODE_ZOOM
         }
-        player_view?.resizeMode = type
+        playerView?.resizeMode = type
 
         if (showToast)
-            showToast(activity, resize.nameRes, Toast.LENGTH_SHORT)
+            showToast(resize.nameRes, Toast.LENGTH_SHORT)
     }
 
     override fun onStop() {
@@ -481,6 +486,13 @@ abstract class AbstractPlayerFragment(
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(layout, container, false)
+        val root = inflater.inflate(layout, container, false)
+        playerPausePlayHolderHolder = root.findViewById(R.id.player_pause_play_holder_holder)
+        playerPausePlay = root.findViewById(R.id.player_pause_play)
+        playerBuffering = root.findViewById(R.id.player_buffering)
+        playerView = root.findViewById(R.id.player_view)
+        piphide = root.findViewById(R.id.piphide)
+        subtitleHolder = root.findViewById(R.id.subtitle_holder)
+        return root
     }
 }

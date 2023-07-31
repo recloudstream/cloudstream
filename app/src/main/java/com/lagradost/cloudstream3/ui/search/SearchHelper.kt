@@ -2,6 +2,7 @@ package com.lagradost.cloudstream3.ui.search
 
 import android.app.Activity
 import android.widget.Toast
+import com.lagradost.cloudstream3.CommonActivity.activity
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.MainActivity
 import com.lagradost.cloudstream3.R
@@ -15,21 +16,21 @@ import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.VideoDownloadHelper
 
 object SearchHelper {
-    fun handleSearchClickCallback(activity: Activity?, callback: SearchClickCallback) {
+    fun handleSearchClickCallback(callback: SearchClickCallback) {
         val card = callback.card
         when (callback.action) {
             SEARCH_ACTION_LOAD -> {
-                activity.loadSearchResult(card)
+                loadSearchResult(card)
             }
             SEARCH_ACTION_PLAY_FILE -> {
                 if (card is DataStoreHelper.ResumeWatchingResult) {
                     val id = card.id
                     if(id == null) {
-                        showToast(activity, R.string.error_invalid_id, Toast.LENGTH_SHORT)
+                        showToast(R.string.error_invalid_id, Toast.LENGTH_SHORT)
                     } else {
                         if (card.isFromDownload) {
                             handleDownloadClick(
-                                activity, DownloadClickEvent(
+                                DownloadClickEvent(
                                     DOWNLOAD_ACTION_PLAY_FILE,
                                     VideoDownloadHelper.DownloadEpisodeCached(
                                         card.name,
@@ -45,12 +46,11 @@ object SearchHelper {
                                 )
                             )
                         } else {
-                            activity.loadSearchResult(card, START_ACTION_LOAD_EP, id)
+                            loadSearchResult(card, START_ACTION_LOAD_EP, id)
                         }
                     }
                 } else {
                     handleSearchClickCallback(
-                        activity,
                         SearchClickCallback(SEARCH_ACTION_LOAD, callback.view, -1, callback.card)
                     )
                 }
@@ -60,10 +60,10 @@ object SearchHelper {
                     (activity as? MainActivity?)?.apply {
                         loadPopup(callback.card)
                     } ?: kotlin.run {
-                        showToast(activity, callback.card.name, Toast.LENGTH_SHORT)
+                        showToast(callback.card.name, Toast.LENGTH_SHORT)
                     }
                 } else {
-                    showToast(activity, callback.card.name, Toast.LENGTH_SHORT)
+                    showToast(callback.card.name, Toast.LENGTH_SHORT)
                 }
             }
         }

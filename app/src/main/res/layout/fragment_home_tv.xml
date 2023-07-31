@@ -172,4 +172,15 @@
         app:icon="@drawable/ic_baseline_filter_list_24"
         tools:ignore="ContentDescription"
         tools:visibility="visible" />
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/home_random"
+        style="@style/ExtendedFloatingActionButton"
+        android:layout_gravity="bottom|start"
+        android:text="@string/home_random"
+        android:textColor="?attr/textColor"
+        android:visibility="gone"
+        app:icon="@drawable/ic_baseline_play_arrow_24"
+        tools:ignore="ContentDescription"
+        tools:visibility="visible" />
 </FrameLayout>

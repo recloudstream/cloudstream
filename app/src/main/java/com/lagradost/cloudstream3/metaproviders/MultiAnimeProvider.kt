@@ -25,13 +25,16 @@ class MultiAnimeProvider : MainAPI() {
         }
     }
 
-    private val validApis by lazy {
-        APIHolder.apis.filter {
-            it.lang == this.lang && it::class.java != this::class.java && it.supportedTypes.contains(
-                TvType.Anime
-            )
-        }
-    }
+    private val validApis
+        get() =
+            synchronized(APIHolder.apis) {
+                APIHolder.apis.filter {
+                    it.lang == this.lang && it::class.java != this::class.java && it.supportedTypes.contains(
+                        TvType.Anime
+                    )
+                }
+            }
+
 
     private fun filterName(name: String): String {
         return Regex("""[^a-zA-Z0-9-]""").replace(name, "")

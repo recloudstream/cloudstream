@@ -2,24 +2,18 @@ package com.lagradost.cloudstream3.ui.home
 
 import android.content.res.Configuration
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import androidx.annotation.LayoutRes
 import androidx.core.view.isGone
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import androidx.viewbinding.ViewBinding
 import com.lagradost.cloudstream3.LoadResponse
-import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.databinding.HomeScrollViewBinding
+import com.lagradost.cloudstream3.databinding.HomeScrollViewTvBinding
+import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
 import com.lagradost.cloudstream3.utils.UIHelper.setImage
-import kotlinx.android.synthetic.main.fragment_home_head_tv.*
-import kotlinx.android.synthetic.main.fragment_home_head_tv.view.*
-import kotlinx.android.synthetic.main.home_scroll_view.view.*
 
-
-class HomeScrollAdapter(
-    @LayoutRes val layout: Int = R.layout.home_scroll_view,
-    private val forceHorizontalPosters: Boolean? = null
-) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class HomeScrollAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private var items: MutableList<LoadResponse> = mutableListOf()
     var hasMoreItems: Boolean = false
 
@@ -45,9 +39,16 @@ class HomeScrollAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        val inflater = LayoutInflater.from(parent.context)
+        val binding = if (isTvSettings()) {
+            HomeScrollViewTvBinding.inflate(inflater, parent, false)
+        } else {
+            HomeScrollViewBinding.inflate(inflater, parent, false)
+        }
+
         return CardViewHolder(
-            LayoutInflater.from(parent.context).inflate(layout, parent, false),
-            forceHorizontalPosters
+            binding,
+            //forceHorizontalPosters
         )
     }
 
@@ -61,22 +62,32 @@ class HomeScrollAdapter(
 
     class CardViewHolder
     constructor(
-        itemView: View,
-        private val forceHorizontalPosters: Boolean? = null
+        val binding: ViewBinding,
+        //private val forceHorizontalPosters: Boolean? = null
     ) :
-        RecyclerView.ViewHolder(itemView) {
+        RecyclerView.ViewHolder(binding.root) {
 
         fun bind(card: LoadResponse) {
-            card.apply {
-                val isHorizontal =
-                    (forceHorizontalPosters == true) || ((forceHorizontalPosters != false) && itemView.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE)
+            val isHorizontal =
+                binding is HomeScrollViewTvBinding || itemView.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 
-                val posterUrl = if (isHorizontal) backgroundPosterUrl ?: posterUrl else posterUrl
-                    ?: backgroundPosterUrl
-                itemView.home_scroll_preview_tags?.text = tags?.joinToString(" • ") ?: ""
-                itemView.home_scroll_preview_tags?.isGone = tags.isNullOrEmpty()
-                itemView.home_scroll_preview?.setImage(posterUrl, posterHeaders)
-                itemView.home_scroll_preview_title?.text = name
+            val posterUrl =
+                if (isHorizontal) card.backgroundPosterUrl ?: card.posterUrl else card.posterUrl
+                    ?: card.backgroundPosterUrl
+
+            when (binding) {
+                is HomeScrollViewBinding -> {
+                    binding.homeScrollPreview.setImage(posterUrl)
+                    binding.homeScrollPreviewTags.apply {
+                        text = card.tags?.joinToString(" • ") ?: ""
+                        isGone = card.tags.isNullOrEmpty()
+                    }
+                    binding.homeScrollPreviewTitle.text = card.name
+                }
+
+                is HomeScrollViewTvBinding -> {
+                    binding.homeScrollPreview.setImage(posterUrl)
+                }
             }
         }
     }

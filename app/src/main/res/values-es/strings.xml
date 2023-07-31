@@ -546,4 +546,5 @@
     <string name="use">Usar</string>
     <string name="qualities">Calidades</string>
     <string name="profile_background_des">Perfil del fondo</string>
+    <string name="unable_to_inflate">La interfaz de usuario no se ha podido crear correctamente, se trata de un GRAN BUG y debe ser reportado inmediatamente %s</string>
 </resources>

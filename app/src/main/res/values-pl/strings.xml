@@ -549,4 +549,5 @@
     <string name="help">Pomoc</string>
     <string name="qualities">Jakości</string>
     <string name="profile_background_des">Tło profilu</string>
+    <string name="unable_to_inflate">Nie można było poprawnie utworzyć interfejsu użytkownika, jest to POWAŻNY BŁĄD i należy go natychmiast zgłosić %s</string>
 </resources>

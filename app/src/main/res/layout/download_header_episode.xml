@@ -1,103 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:cardCornerRadius="@dimen/rounded_image_radius"
-        app:cardBackgroundColor="?attr/boxItemBackground"
-        android:id="@+id/episode_holder"
-        android:foreground="@drawable/outline_drawable"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginTop="10dp">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/episode_holder"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="10dp"
+    android:layout_marginTop="10dp"
+    android:layout_marginEnd="10dp"
+    android:foreground="@drawable/outline_drawable"
+    app:cardBackgroundColor="?attr/boxItemBackground"
+    app:cardCornerRadius="@dimen/rounded_image_radius">
 
     <LinearLayout
-            android:foreground="?android:attr/selectableItemBackgroundBorderless"
-            android:layout_width="match_parent"
-            android:orientation="horizontal"
-            android:layout_height="wrap_content">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:foreground="?android:attr/selectableItemBackgroundBorderless"
+        android:orientation="horizontal">
         <!--app:cardCornerRadius="@dimen/roundedImageRadius"-->
         <androidx.cardview.widget.CardView
-                android:layout_width="70dp"
-                android:layout_height="104dp">
+            android:layout_width="70dp"
+            android:layout_height="104dp">
 
             <ImageView
-                    android:id="@+id/download_header_poster"
-                    tools:src="@drawable/example_poster"
-                    android:scaleType="centerCrop"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:contentDescription="@string/episode_poster_img_des" />
+                android:id="@+id/download_header_poster"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:contentDescription="@string/episode_poster_img_des"
+                android:scaleType="centerCrop"
+                tools:src="@drawable/example_poster" />
         </androidx.cardview.widget.CardView>
 
         <LinearLayout
-                android:layout_marginStart="15dp"
-                android:orientation="vertical"
-                android:layout_gravity="center"
-                android:layout_width="match_parent"
-                android:layout_marginEnd="70dp"
-                android:layout_height="wrap_content">
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="70dp"
+            android:orientation="vertical">
 
             <TextView
-                    android:id="@+id/download_header_title"
-                    tools:text="Perfect Run"
-                    android:textStyle="bold"
-                    android:textColor="?attr/textColor"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                android:id="@+id/download_header_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="?attr/textColor"
+                android:textStyle="bold"
+                tools:text="Perfect Run" />
 
             <TextView
-                    android:id="@+id/download_header_info"
-                    tools:text="1 episode | 285MB"
-                    android:textColor="?attr/grayTextColor"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                android:id="@+id/download_header_info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="?attr/grayTextColor"
+                tools:text="1 episode | 285MB" />
         </LinearLayout>
 
         <ImageView
-                android:layout_marginStart="-50dp"
-                android:layout_height="match_parent"
-                android:padding="50dp"
-                android:layout_width="50dp"
-                android:id="@+id/download_header_goto_child"
-                android:layout_gravity="center_vertical|end"
-                android:src="@drawable/ic_baseline_keyboard_arrow_right_24"
-                android:contentDescription="@string/download" />
+            android:id="@+id/download_header_goto_child"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical|end"
+            android:layout_marginStart="-50dp"
+            android:contentDescription="@string/download"
+            android:padding="50dp"
+            android:src="@drawable/ic_baseline_keyboard_arrow_right_24" />
 
-        <FrameLayout
-                android:layout_marginStart="-50dp"
-                android:layout_gravity="end"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent">
-
-            <androidx.core.widget.ContentLoadingProgressBar
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginStart="10dp"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:id="@+id/download_header_progress_downloaded"
-                    android:indeterminate="false"
-                    android:progressDrawable="@drawable/circular_progress_bar"
-                    android:background="@drawable/circle_shape"
-                    style="?android:attr/progressBarStyleHorizontal"
-                    android:max="100"
-                    android:layout_margin="5dp"
-                    android:layout_gravity="center_vertical"
-                    android:progress="0"
-                    android:visibility="visible" />
-
-            <ImageView
-                    android:visibility="visible"
-                    android:layout_gravity="center_vertical"
-                    android:layout_height="wrap_content"
-                    android:padding="10dp"
-                    android:layout_width="50dp"
-                    android:id="@+id/download_header_episode_download"
-                    android:background="?selectableItemBackgroundBorderless"
-                    android:src="@drawable/ic_baseline_play_arrow_24"
-                    android:contentDescription="@string/download"
-                    app:tint="?attr/white" />
-        </FrameLayout>
+        <com.lagradost.cloudstream3.ui.download.button.PieFetchButton
+            android:id="@+id/download_button"
+            android:layout_width="@dimen/download_size"
+            android:layout_height="@dimen/download_size"
+            android:layout_gravity="center_vertical|end"
+            android:layout_marginStart="-50dp"
+            android:background="?selectableItemBackgroundBorderless"
+            android:padding="10dp" />
     </LinearLayout>
 </androidx.cardview.widget.CardView>

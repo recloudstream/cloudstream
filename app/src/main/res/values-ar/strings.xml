@@ -55,7 +55,7 @@
     <string name="download_failed">فشل التنزيل</string>
     <string name="download_canceled">تم إلغاء التنزيل</string>
     <string name="download_done">تم التنزيل</string>
-    <string name="stream">تشغيل</string>
+    <string name="stream">بث</string>
     <string name="error_loading_links_toast">خطأ في تحميل الرابط</string>
     <string name="download_storage_text">التخزين الداخلي</string>
     <string name="app_dubbed_text">مدبلج</string>
@@ -71,7 +71,7 @@
     <string name="home_info">معلومات</string>
     <string name="filter_bookmarks">تصفية الاشارات المرجعية</string>
     <string name="error_bookmarks_text">إشارات مرجعية</string>
-    <string name="action_remove_from_bookmarks">حذف</string>
+    <string name="action_remove_from_bookmarks">ازالة</string>
     <string name="action_add_to_bookmarks">إعداد حالة المشاهدة</string>
     <string name="sort_apply">تطبيق</string>
     <string name="sort_cancel">إلغاء</string>
@@ -578,4 +578,5 @@
 \nملاحظة: إذا كان المجموع 10 أو أكثر ، فسيتخطى المشغل التحميل تلقائيًا عند تحميل هذا الرابط!</string>
     <string name="qualities">النوعيات</string>
     <string name="profile_background_des">خلفية الملف الشخصي</string>
+    <string name="unable_to_inflate">تعذر إنشاء واجهة المستخدم بشكل صحيح ، وهذا خطأ كبير ويجب الإبلاغ عنه على الفور %s</string>
 </resources>

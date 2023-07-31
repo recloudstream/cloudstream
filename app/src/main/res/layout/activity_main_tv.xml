@@ -41,6 +41,22 @@
 
         </com.google.android.material.navigationrail.NavigationRailView>
 
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/nav_view"
+            android:layout_height="70dp"
+            android:layout_width="0dp"
+            app:labelVisibilityMode="unlabeled"
+            android:visibility="gone"
+            android:background="?attr/primaryGrayBackground"
+
+            app:itemIconTint="@color/item_select_color"
+            app:itemTextColor="@color/item_select_color"
+
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:menu="@menu/bottom_nav_menu" />
+
         <LinearLayout
             android:id="@+id/cast_mini_controller_holder"
             android:layout_width="0dp"
@@ -61,4 +77,21 @@
                 tools:ignore="FragmentTagUsage" />
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:clickable="false"
+            android:visibility="gone"
+            android:id="@+id/focus_outline"
+            android:src="@drawable/outline"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:importantForAccessibility="no">
+        </ImageView>
+    </FrameLayout>
 </FrameLayout>

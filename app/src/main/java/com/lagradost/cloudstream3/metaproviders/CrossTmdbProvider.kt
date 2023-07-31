@@ -21,10 +21,11 @@ class CrossTmdbProvider : TmdbProvider() {
         return Regex("""[^a-zA-Z0-9-]""").replace(name, "")
     }
 
-    private val validApis by lazy {
-        apis.filter { it.lang == this.lang && it::class.java != this::class.java }
-            //.distinctBy { it.uniqueId }
-    }
+    private val validApis
+        get() =
+            synchronized(apis) { apis.filter { it.lang == this.lang && it::class.java != this::class.java } }
+    //.distinctBy { it.uniqueId }
+
 
     data class CrossMetaData(
         @JsonProperty("isSuccess") val isSuccess: Boolean,
@@ -60,7 +61,8 @@ class CrossTmdbProvider : TmdbProvider() {
 
     override suspend fun load(url: String): LoadResponse? {
         val base = super.load(url)?.apply {
-            this.recommendations = this.recommendations?.filterIsInstance<MovieSearchResponse>() // TODO REMOVE
+            this.recommendations =
+                this.recommendations?.filterIsInstance<MovieSearchResponse>() // TODO REMOVE
             val matchName = filterName(this.name)
             when (this) {
                 is MovieLoadResponse -> {
@@ -98,6 +100,7 @@ class CrossTmdbProvider : TmdbProvider() {
                     this.dataUrl =
                         CrossMetaData(true, data.map { it.apiName to it.dataUrl }).toJson()
                 }
+
                 else -> {
                     throw ErrorLoadingException("Nothing besides movies are implemented for this provider")
                 }

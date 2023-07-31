@@ -19,6 +19,7 @@ import com.lagradost.cloudstream3.APIHolder.getId
 import com.lagradost.cloudstream3.APIHolder.unixTime
 import com.lagradost.cloudstream3.APIHolder.unixTimeMS
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
+import com.lagradost.cloudstream3.CommonActivity.activity
 import com.lagradost.cloudstream3.CommonActivity.getCastSession
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.LoadResponse.Companion.addTrailer
@@ -145,15 +146,18 @@ fun LoadResponse.toResultData(repo: APIRepository): ResultData {
                         minute
                     )
                 }
+
                 hours > 0 -> txt(
                     R.string.next_episode_time_hour_format,
                     hours,
                     minute
                 )
+
                 minute > 0 -> txt(
                     R.string.next_episode_time_min_format,
                     minute
                 )
+
                 else -> null
             }?.also {
                 nextAiringEpisode = txt(R.string.next_episode_format, airing.episode)
@@ -305,6 +309,7 @@ fun SelectPopup.getOptions(context: Context): List<String> {
         is SelectPopup.SelectArray -> {
             this.options.map { it.first.asString(context) }
         }
+
         is SelectPopup.SelectText -> options.map { it.asString(context) }
     }
 }
@@ -316,7 +321,7 @@ data class ExtractedTrailerData(
 
 class ResultViewModel2 : ViewModel() {
     private var currentResponse: LoadResponse? = null
-
+    var EPISODE_RANGE_SIZE: Int = 20
     fun clear() {
         currentResponse = null
         _page.postValue(null)
@@ -337,7 +342,7 @@ class ResultViewModel2 : ViewModel() {
     private var currentIndex: EpisodeIndexer? = null
     private var currentRange: EpisodeRange? = null
     private var currentShowFillers: Boolean = false
-    private var currentRepo: APIRepository? = null
+    var currentRepo: APIRepository? = null
     private var currentId: Int? = null
     private var fillers: Map<Int, Boolean> = emptyMap()
     private var generator: IGenerator? = null
@@ -352,17 +357,17 @@ class ResultViewModel2 : ViewModel() {
         MutableLiveData(null)
     val page: LiveData<Resource<ResultData>?> = _page
 
-    private val _episodes: MutableLiveData<ResourceSome<List<ResultEpisode>>> =
-        MutableLiveData(ResourceSome.Loading())
-    val episodes: LiveData<ResourceSome<List<ResultEpisode>>> = _episodes
+    private val _episodes: MutableLiveData<Resource<List<ResultEpisode>>?> =
+        MutableLiveData(Resource.Loading())
+    val episodes: LiveData<Resource<List<ResultEpisode>>?> = _episodes
 
-    private val _movie: MutableLiveData<ResourceSome<Pair<UiText, ResultEpisode>>> =
-        MutableLiveData(ResourceSome.None)
-    val movie: LiveData<ResourceSome<Pair<UiText, ResultEpisode>>> = _movie
+    private val _movie: MutableLiveData<Resource<Pair<UiText, ResultEpisode>>?> =
+        MutableLiveData(null)
+    val movie: LiveData<Resource<Pair<UiText, ResultEpisode>>?> = _movie
 
-    private val _episodesCountText: MutableLiveData<Some<UiText>> =
-        MutableLiveData(Some.None)
-    val episodesCountText: LiveData<Some<UiText>> = _episodesCountText
+    private val _episodesCountText: MutableLiveData<UiText?> =
+        MutableLiveData(null)
+    val episodesCountText: LiveData<UiText?> = _episodesCountText
 
     private val _trailers: MutableLiveData<List<ExtractedTrailerData>> =
         MutableLiveData(mutableListOf())
@@ -384,16 +389,16 @@ class ResultViewModel2 : ViewModel() {
         MutableLiveData(emptyList())
     val recommendations: LiveData<List<SearchResponse>> = _recommendations
 
-    private val _selectedRange: MutableLiveData<Some<UiText>> =
-        MutableLiveData(Some.None)
-    val selectedRange: LiveData<Some<UiText>> = _selectedRange
+    private val _selectedRange: MutableLiveData<UiText?> =
+        MutableLiveData(null)
+    val selectedRange: LiveData<UiText?> = _selectedRange
 
-    private val _selectedSeason: MutableLiveData<Some<UiText>> =
-        MutableLiveData(Some.None)
-    val selectedSeason: LiveData<Some<UiText>> = _selectedSeason
+    private val _selectedSeason: MutableLiveData<UiText?> =
+        MutableLiveData(null)
+    val selectedSeason: LiveData<UiText?> = _selectedSeason
 
-    private val _selectedDubStatus: MutableLiveData<Some<UiText>> = MutableLiveData(Some.None)
-    val selectedDubStatus: LiveData<Some<UiText>> = _selectedDubStatus
+    private val _selectedDubStatus: MutableLiveData<UiText?> = MutableLiveData(null)
+    val selectedDubStatus: LiveData<UiText?> = _selectedDubStatus
 
     private val _selectedRangeIndex: MutableLiveData<Int> =
         MutableLiveData(-1)
@@ -406,12 +411,12 @@ class ResultViewModel2 : ViewModel() {
     private val _selectedDubStatusIndex: MutableLiveData<Int> = MutableLiveData(-1)
     val selectedDubStatusIndex: LiveData<Int> = _selectedDubStatusIndex
 
-    private val _loadedLinks: MutableLiveData<Some<LinkProgress>> = MutableLiveData(Some.None)
-    val loadedLinks: LiveData<Some<LinkProgress>> = _loadedLinks
+    private val _loadedLinks: MutableLiveData<LinkProgress?> = MutableLiveData(null)
+    val loadedLinks: LiveData<LinkProgress?> = _loadedLinks
 
-    private val _resumeWatching: MutableLiveData<Some<ResumeWatchingStatus>> =
-        MutableLiveData(Some.None)
-    val resumeWatching: LiveData<Some<ResumeWatchingStatus>> = _resumeWatching
+    private val _resumeWatching: MutableLiveData<ResumeWatchingStatus?> =
+        MutableLiveData(null)
+    val resumeWatching: LiveData<ResumeWatchingStatus?> = _resumeWatching
 
     private val _episodeSynopsis: MutableLiveData<String?> = MutableLiveData(null)
     val episodeSynopsis: LiveData<String?> = _episodeSynopsis
@@ -421,8 +426,8 @@ class ResultViewModel2 : ViewModel() {
 
     companion object {
         const val TAG = "RVM2"
-        private const val EPISODE_RANGE_SIZE = 20
-        private const val EPISODE_RANGE_OVERLOAD = 30
+        //private const val EPISODE_RANGE_SIZE = 20
+        //private const val EPISODE_RANGE_OVERLOAD = 30
 
         private fun List<SeasonData>?.getSeason(season: Int?): SeasonData? {
             if (season == null) return null
@@ -431,6 +436,8 @@ class ResultViewModel2 : ViewModel() {
 
         fun updateWatchStatus(currentResponse: LoadResponse, status: WatchType) {
             val currentId = currentResponse.getId()
+
+            val currentWatchType = getResultWatchState(currentId)
 
             DataStoreHelper.setResultWatchState(currentId, status.internalId)
             val current = DataStoreHelper.getBookmarkedData(currentId)
@@ -449,6 +456,9 @@ class ResultViewModel2 : ViewModel() {
                     currentResponse.year
                 )
             )
+            if (currentWatchType != status) {
+                MainActivity.bookmarksUpdatedEvent(true)
+            }
         }
 
         private fun filterName(name: String?): String? {
@@ -467,12 +477,16 @@ class ResultViewModel2 : ViewModel() {
                 )
             )
 
-        private fun getRanges(allEpisodes: Map<EpisodeIndexer, List<ResultEpisode>>): Map<EpisodeIndexer, List<EpisodeRange>> {
+        private fun getRanges(
+            allEpisodes: Map<EpisodeIndexer, List<ResultEpisode>>,
+            EPISODE_RANGE_SIZE: Int
+        ): Map<EpisodeIndexer, List<EpisodeRange>> {
             return allEpisodes.keys.mapNotNull { index ->
                 val episodes =
                     allEpisodes[index] ?: return@mapNotNull null // this should never happened
 
                 // fast case
+                val EPISODE_RANGE_OVERLOAD = EPISODE_RANGE_SIZE + 10
                 if (episodes.size <= EPISODE_RANGE_OVERLOAD) {
                     return@mapNotNull index to listOf(
                         EpisodeRange(
@@ -744,7 +758,6 @@ class ResultViewModel2 : ViewModel() {
                 if (currentLinks.isEmpty()) {
                     main {
                         showToast(
-                            activity,
                             R.string.no_links_found_toast,
                             Toast.LENGTH_SHORT
                         )
@@ -753,7 +766,6 @@ class ResultViewModel2 : ViewModel() {
                 } else {
                     main {
                         showToast(
-                            activity,
                             R.string.download_started,
                             Toast.LENGTH_SHORT
                         )
@@ -800,8 +812,8 @@ class ResultViewModel2 : ViewModel() {
     private val _watchStatus: MutableLiveData<WatchType> = MutableLiveData(WatchType.NONE)
     val watchStatus: LiveData<WatchType> get() = _watchStatus
 
-    private val _selectPopup: MutableLiveData<Some<SelectPopup>> = MutableLiveData(Some.None)
-    val selectPopup: LiveData<Some<SelectPopup>> get() = _selectPopup
+    private val _selectPopup: MutableLiveData<SelectPopup?> = MutableLiveData(null)
+    val selectPopup: LiveData<SelectPopup?> = _selectPopup
 
 
     fun updateWatchStatus(status: WatchType) {
@@ -885,23 +897,22 @@ class ResultViewModel2 : ViewModel() {
     }
 
     fun cancelLinks() {
-        println("called::cancelLinks")
         currentLoadLinkJob?.cancel()
         currentLoadLinkJob = null
-        _loadedLinks.postValue(Some.None)
+        _loadedLinks.postValue(null)
     }
 
     private fun postPopup(text: UiText, options: List<UiText>, callback: suspend (Int?) -> Unit) {
         _selectPopup.postValue(
-            some(SelectPopup.SelectText(
+            SelectPopup.SelectText(
                 text,
                 options
             ) { value ->
                 viewModelScope.launchSafe {
-                    _selectPopup.postValue(Some.None)
+                    _selectPopup.postValue(null)
                     callback.invoke(value)
                 }
-            })
+            }
         )
     }
 
@@ -912,15 +923,15 @@ class ResultViewModel2 : ViewModel() {
         callback: suspend (Int?) -> Unit
     ) {
         _selectPopup.postValue(
-            some(SelectPopup.SelectArray(
+            SelectPopup.SelectArray(
                 text,
                 options,
             ) { value ->
                 viewModelScope.launchSafe {
-                    _selectPopup.value = Some.None
+                    _selectPopup.postValue(null)
                     callback.invoke(value)
                 }
-            })
+            }
         )
     }
 
@@ -988,7 +999,7 @@ class ResultViewModel2 : ViewModel() {
         val subs: MutableSet<SubtitleData> = mutableSetOf()
         fun updatePage() {
             if (isVisible && isActive) {
-                _loadedLinks.postValue(some(LinkProgress(links.size, subs.size)))
+                _loadedLinks.postValue(LinkProgress(links.size, subs.size))
             }
         }
         try {
@@ -1005,7 +1016,7 @@ class ResultViewModel2 : ViewModel() {
         } catch (e: Exception) {
             logError(e)
         } finally {
-            _loadedLinks.postValue(Some.None)
+            _loadedLinks.postValue(null)
         }
 
         return LinkLoadingResult(sortUrls(links), sortSubs(subs))
@@ -1027,9 +1038,9 @@ class ResultViewModel2 : ViewModel() {
                 logError(t)
                 main {
                     if (t is ActivityNotFoundException) {
-                        showToast(activity, txt(R.string.app_not_found_error), Toast.LENGTH_LONG)
+                        showToast(txt(R.string.app_not_found_error), Toast.LENGTH_LONG)
                     } else {
-                        showToast(activity, t.toString(), Toast.LENGTH_LONG)
+                        showToast(t.toString(), Toast.LENGTH_LONG)
                     }
                 }
             }
@@ -1138,9 +1149,9 @@ class ResultViewModel2 : ViewModel() {
     }
 
 
-    fun handleAction(activity: Activity?, click: EpisodeClickEvent) =
+    fun handleAction(click: EpisodeClickEvent) =
         viewModelScope.launchSafe {
-            handleEpisodeClickEvent(activity, click)
+            handleEpisodeClickEvent(click)
         }
 
     data class ExternalApp(
@@ -1170,7 +1181,7 @@ class ResultViewModel2 : ViewModel() {
         _episodeSynopsis.postValue(null)
     }
 
-    private suspend fun handleEpisodeClickEvent(activity: Activity?, click: EpisodeClickEvent) {
+    private suspend fun handleEpisodeClickEvent(click: EpisodeClickEvent) {
         when (click.action) {
             ACTION_SHOW_OPTIONS -> {
                 val options = mutableListOf<Pair<UiText, Int>>()
@@ -1228,27 +1239,26 @@ class ResultViewModel2 : ViewModel() {
                     options
                 ) { result ->
                     handleEpisodeClickEvent(
-                        activity,
                         click.copy(action = result ?: return@postPopup)
                     )
                 }
             }
+
             ACTION_CLICK_DEFAULT -> {
                 activity?.let { ctx ->
                     if (ctx.isConnectedToChromecast()) {
                         handleEpisodeClickEvent(
-                            activity,
                             click.copy(action = ACTION_CHROME_CAST_EPISODE)
                         )
                     } else {
                         val action = getPlayerAction(ctx)
                         handleEpisodeClickEvent(
-                            activity,
                             click.copy(action = action)
                         )
                     }
                 }
             }
+
             ACTION_SHOW_DESCRIPTION -> {
                 _episodeSynopsis.postValue(click.data.description)
             }
@@ -1280,15 +1290,16 @@ class ResultViewModel2 : ViewModel() {
                         )
                     )
                     showToast(
-                        activity,
                         R.string.download_started,
                         Toast.LENGTH_SHORT
                     )
                 }
             }
+
             ACTION_SHOW_TOAST -> {
-                showToast(activity, R.string.play_episode_toast, Toast.LENGTH_SHORT)
+                showToast(R.string.play_episode_toast, Toast.LENGTH_SHORT)
             }
+
             ACTION_DOWNLOAD_EPISODE -> {
                 val response = currentResponse ?: return
                 downloadEpisode(
@@ -1303,6 +1314,7 @@ class ResultViewModel2 : ViewModel() {
                     response.url
                 )
             }
+
             ACTION_DOWNLOAD_MIRROR -> {
                 val response = currentResponse ?: return
                 acquireSingleLink(
@@ -1326,12 +1338,12 @@ class ResultViewModel2 : ViewModel() {
                         )
                     }
                     showToast(
-                        activity,
                         R.string.download_started,
                         Toast.LENGTH_SHORT
                     )
                 }
             }
+
             ACTION_RELOAD_EPISODE -> {
                 ioSafe {
                     loadLinks(
@@ -1342,6 +1354,7 @@ class ResultViewModel2 : ViewModel() {
                     )
                 }
             }
+
             ACTION_CHROME_CAST_MIRROR -> {
                 acquireSingleLink(
                     click.data,
@@ -1351,6 +1364,7 @@ class ResultViewModel2 : ViewModel() {
                     startChromecast(activity, click.data, result.links, result.subs, index)
                 }
             }
+
             ACTION_PLAY_EPISODE_IN_BROWSER -> acquireSingleLink(
                 click.data,
                 isCasting = true,
@@ -1364,6 +1378,7 @@ class ResultViewModel2 : ViewModel() {
                     logError(e)
                 }
             }
+
             ACTION_COPY_LINK -> {
                 acquireSingleLink(
                     click.data,
@@ -1377,16 +1392,18 @@ class ResultViewModel2 : ViewModel() {
                     val link = result.links[index]
                     val clip = ClipData.newPlainText(link.name, link.url)
                     serviceClipboard.setPrimaryClip(clip)
-                    showToast(act, R.string.copy_link_toast, Toast.LENGTH_SHORT)
+                    showToast(R.string.copy_link_toast, Toast.LENGTH_SHORT)
                 }
             }
+
             ACTION_CHROME_CAST_EPISODE -> {
                 startChromecast(activity, click.data)
             }
+
             ACTION_PLAY_EPISODE_IN_VLC_PLAYER -> {
                 loadLinks(click.data, isVisible = true, isCasting = true) { links ->
                     if (links.links.isEmpty()) {
-                        showToast(activity, R.string.no_links_found_toast, Toast.LENGTH_SHORT)
+                        showToast(R.string.no_links_found_toast, Toast.LENGTH_SHORT)
                         return@loadLinks
                     }
 
@@ -1397,6 +1414,7 @@ class ResultViewModel2 : ViewModel() {
                     )
                 }
             }
+
             ACTION_PLAY_EPISODE_IN_WEB_VIDEO -> acquireSingleLink(
                 click.data,
                 isCasting = true,
@@ -1413,6 +1431,7 @@ class ResultViewModel2 : ViewModel() {
                     result.subs
                 )
             }
+
             ACTION_PLAY_EPISODE_IN_MPV -> acquireSingleLink(
                 click.data,
                 isCasting = true,
@@ -1428,6 +1447,7 @@ class ResultViewModel2 : ViewModel() {
                     result.subs
                 )
             }
+
             ACTION_PLAY_EPISODE_IN_PLAYER -> {
                 val data = currentResponse?.syncData?.toList() ?: emptyList()
                 val list =
@@ -1448,6 +1468,7 @@ class ResultViewModel2 : ViewModel() {
                     )
                 )
             }
+
             ACTION_MARK_AS_WATCHED -> {
                 val isWatched =
                     DataStoreHelper.getVideoWatchState(click.data.id) == VideoWatchState.Watched
@@ -1487,13 +1508,14 @@ class ResultViewModel2 : ViewModel() {
                 }
 
                 val realRecommendations = ArrayList<SearchResponse>()
-                val apiNames = apis.filter {
-                    it.name.contains("gogoanime", true) ||
-                            it.name.contains("9anime", true)
-                }.map {
-                    it.name
+                val apiNames = synchronized(apis) {
+                    apis.filter {
+                        it.name.contains("gogoanime", true) ||
+                                it.name.contains("9anime", true)
+                    }.map {
+                        it.name
+                    }
                 }
-
                 meta.recommendations?.forEach { rec ->
                     apiNames.forEach { name ->
                         realRecommendations.add(rec.copy(apiName = name))
@@ -1672,10 +1694,10 @@ class ResultViewModel2 : ViewModel() {
 
     private fun postMovie() {
         val response = currentResponse
-        _episodes.postValue(ResourceSome.None)
+        _episodes.postValue(null)
 
         if (response == null) {
-            _movie.postValue(ResourceSome.None)
+            _movie.postValue(null)
             return
         }
 
@@ -1692,11 +1714,11 @@ class ResultViewModel2 : ViewModel() {
             }
         )
         val data = getMovie()
-        _episodes.postValue(ResourceSome.None)
+        _episodes.postValue(null)
         if (text == null || data == null) {
-            _movie.postValue(ResourceSome.None)
+            _movie.postValue(null)
         } else {
-            _movie.postValue(ResourceSome.Success(text to data))
+            _movie.postValue(Resource.Success(text to data))
         }
     }
 
@@ -1705,14 +1727,14 @@ class ResultViewModel2 : ViewModel() {
             postMovie()
         } else {
             _episodes.postValue(
-                ResourceSome.Success(
+                Resource.Success(
                     getEpisodes(
                         currentIndex ?: return,
                         currentRange ?: return
                     )
                 )
             )
-            _movie.postValue(ResourceSome.None)
+            _movie.postValue(null)
         }
         postResume()
     }
@@ -1755,14 +1777,14 @@ class ResultViewModel2 : ViewModel() {
 
         val size = currentEpisodes[indexer]?.size
         _episodesCountText.postValue(
-            some(
-                if (isMovie) null else
-                    txt(
-                        R.string.episode_format,
-                        size,
-                        txt(if (size == 1) R.string.episode else R.string.episodes),
-                    )
-            )
+
+            if (isMovie) null else
+                txt(
+                    R.string.episode_format,
+                    size,
+                    txt(if (size == 1) R.string.episode else R.string.episodes),
+                )
+
         )
 
         _selectedSeasonIndex.postValue(
@@ -1770,29 +1792,29 @@ class ResultViewModel2 : ViewModel() {
         )
 
         _selectedSeason.postValue(
-            some(
-                if (isMovie || currentSeasons.size <= 1) null else
-                    when (indexer.season) {
-                        0 -> txt(R.string.no_season)
-                        else -> {
-                            val seasonNames = (currentResponse as? EpisodeResponse)?.seasonNames
-                            val seasonData = seasonNames.getSeason(indexer.season)
 
-                            // If displaySeason is null then only show the name!
-                            if (seasonData?.name != null && seasonData.displaySeason == null) {
-                                txt(seasonData.name)
-                            } else {
-                                val suffix = seasonData?.name?.let { " $it" } ?: ""
-                                txt(
-                                    R.string.season_format,
-                                    txt(R.string.season),
-                                    seasonData?.displaySeason ?: indexer.season,
-                                    suffix
-                                )
-                            }
+            if (isMovie || currentSeasons.size <= 1) null else
+                when (indexer.season) {
+                    0 -> txt(R.string.no_season)
+                    else -> {
+                        val seasonNames = (currentResponse as? EpisodeResponse)?.seasonNames
+                        val seasonData = seasonNames.getSeason(indexer.season)
+
+                        // If displaySeason is null then only show the name!
+                        if (seasonData?.name != null && seasonData.displaySeason == null) {
+                            txt(seasonData.name)
+                        } else {
+                            val suffix = seasonData?.name?.let { " $it" } ?: ""
+                            txt(
+                                R.string.season_format,
+                                txt(R.string.season),
+                                seasonData?.displaySeason ?: indexer.season,
+                                suffix
+                            )
                         }
                     }
-            )
+                }
+
         )
 
         _selectedRangeIndex.postValue(
@@ -1800,13 +1822,13 @@ class ResultViewModel2 : ViewModel() {
         )
 
         _selectedRange.postValue(
-            some(
-                if (isMovie) null else if ((currentRanges[indexer]?.size ?: 0) > 1) {
-                    txt(R.string.episodes_range, range.startEpisode, range.endEpisode)
-                } else {
-                    null
-                }
-            )
+
+            if (isMovie) null else if ((currentRanges[indexer]?.size ?: 0) > 1) {
+                txt(R.string.episodes_range, range.startEpisode, range.endEpisode)
+            } else {
+                null
+            }
+
         )
 
         _selectedDubStatusIndex.postValue(
@@ -1814,10 +1836,10 @@ class ResultViewModel2 : ViewModel() {
         )
 
         _selectedDubStatus.postValue(
-            some(
-                if (isMovie || currentDubStatus.size <= 1) null else
-                    txt(indexer.dubStatus)
-            )
+
+            if (isMovie || currentDubStatus.size <= 1) null else
+                txt(indexer.dubStatus)
+
         )
 
         currentId?.let { id ->
@@ -1851,7 +1873,7 @@ class ResultViewModel2 : ViewModel() {
 
                 }
             }*/
-            _episodes.postValue(ResourceSome.Success(ret))
+            _episodes.postValue(Resource.Success(ret))
         }
     }
 
@@ -1869,7 +1891,7 @@ class ResultViewModel2 : ViewModel() {
     }
 
     private suspend fun postEpisodes(loadResponse: LoadResponse, updateFillers: Boolean) {
-        _episodes.postValue(ResourceSome.Loading())
+        _episodes.postValue(Resource.Loading())
 
         val mainId = loadResponse.getId()
         currentId = mainId
@@ -1924,6 +1946,7 @@ class ResultViewModel2 : ViewModel() {
                 }
                 episodes
             }
+
             is TvSeriesLoadResponse -> {
                 val episodes: MutableMap<EpisodeIndexer, MutableList<ResultEpisode>> =
                     mutableMapOf()
@@ -1968,6 +1991,7 @@ class ResultViewModel2 : ViewModel() {
                 }
                 episodes
             }
+
             is MovieLoadResponse -> {
                 singleMap(
                     buildResultEpisode(
@@ -1989,6 +2013,7 @@ class ResultViewModel2 : ViewModel() {
                     )
                 )
             }
+
             is LiveStreamLoadResponse -> {
                 singleMap(
                     buildResultEpisode(
@@ -2010,6 +2035,7 @@ class ResultViewModel2 : ViewModel() {
                     )
                 )
             }
+
             is TorrentLoadResponse -> {
                 singleMap(
                     buildResultEpisode(
@@ -2031,6 +2057,7 @@ class ResultViewModel2 : ViewModel() {
                     )
                 )
             }
+
             else -> {
                 mapOf()
             }
@@ -2066,7 +2093,7 @@ class ResultViewModel2 : ViewModel() {
         }
 
         currentEpisodes = allEpisodes
-        val ranges = getRanges(allEpisodes)
+        val ranges = getRanges(allEpisodes, EPISODE_RANGE_SIZE)
         currentRanges = ranges
 
 
@@ -2088,7 +2115,7 @@ class ResultViewModel2 : ViewModel() {
     }
 
     fun postResume() {
-        _resumeWatching.postValue(some(resume()))
+        _resumeWatching.postValue(resume())
     }
 
     private fun resume(): ResumeWatchingStatus? {
@@ -2186,7 +2213,6 @@ class ResultViewModel2 : ViewModel() {
                         for (ep in currentRange) {
                             if (ep.getWatchProgress() > 0.9) continue
                             handleAction(
-                                activity,
                                 EpisodeClickEvent(
                                     getPlayerAction(activity),
                                     ep
@@ -2196,6 +2222,7 @@ class ResultViewModel2 : ViewModel() {
                         }
                     }
                 }
+
                 START_ACTION_LOAD_EP -> {
                     val all = currentEpisodes.values.flatten()
                     val episode =
@@ -2206,7 +2233,6 @@ class ResultViewModel2 : ViewModel() {
                             }
                             ?: return@launchSafe
                     handleAction(
-                        activity,
                         EpisodeClickEvent(
                             getPlayerAction(activity),
                             episode
@@ -2227,7 +2253,7 @@ class ResultViewModel2 : ViewModel() {
     ) =
         ioSafe {
             _page.postValue(Resource.Loading(url))
-            _episodes.postValue(ResourceSome.Loading())
+            _episodes.postValue(Resource.Loading())
 
             preferDubStatus = dubStatus
             currentShowFillers = showFillers
@@ -2271,6 +2297,7 @@ class ResultViewModel2 : ViewModel() {
                 is Resource.Failure -> {
                     _page.postValue(data)
                 }
+
                 is Resource.Success -> {
                     if (!isActive) return@ioSafe
                     val loadResponse = ioWork {
@@ -2307,6 +2334,7 @@ class ResultViewModel2 : ViewModel() {
                     if (!isActive) return@ioSafe
                     handleAutoStart(activity, autostart)
                 }
+
                 is Resource.Loading -> {
                     debugException { "Invalid load result" }
                 }

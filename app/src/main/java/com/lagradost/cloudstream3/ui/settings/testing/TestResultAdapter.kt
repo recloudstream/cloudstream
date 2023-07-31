@@ -10,19 +10,20 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.lagradost.cloudstream3.MainAPI
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.databinding.ProviderTestItemBinding
 import com.lagradost.cloudstream3.mvvm.getAllMessages
 import com.lagradost.cloudstream3.mvvm.getStackTracePretty
 import com.lagradost.cloudstream3.utils.AppUtils
 import com.lagradost.cloudstream3.utils.SubtitleHelper.getFlagFromIso
 import com.lagradost.cloudstream3.utils.TestingUtils
-import kotlinx.android.synthetic.main.provider_test_item.view.*
 
 class TestResultAdapter(override val items: MutableList<Pair<MainAPI, TestingUtils.TestResultProvider>>) :
     AppUtils.DiffAdapter<Pair<MainAPI, TestingUtils.TestResultProvider>>(items) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return ProviderTestViewHolder(
-            LayoutInflater.from(parent.context)
-                .inflate(R.layout.provider_test_item, parent, false),
+            ProviderTestItemBinding.inflate(LayoutInflater.from(parent.context), parent,false)
+            //LayoutInflater.from(parent.context)
+            //    .inflate(R.layout.provider_test_item, parent, false),
         )
     }
 
@@ -35,12 +36,12 @@ class TestResultAdapter(override val items: MutableList<Pair<MainAPI, TestingUti
         }
     }
 
-    inner class ProviderTestViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val languageText: TextView = itemView.lang_icon
-        private val providerTitle: TextView = itemView.main_text
-        private val statusText: TextView = itemView.passed_failed_marker
-        private val failDescription: TextView = itemView.fail_description
-        private val logButton: ImageView = itemView.action_button
+    inner class ProviderTestViewHolder(binding: ProviderTestItemBinding) : RecyclerView.ViewHolder(binding.root) {
+        private val languageText: TextView = binding.langIcon
+        private val providerTitle: TextView = binding.mainText
+        private val statusText: TextView = binding.passedFailedMarker
+        private val failDescription: TextView = binding.failDescription
+        private val logButton: ImageView = binding.actionButton
 
         private fun String.lastLine(): String? {
             return this.lines().lastOrNull { it.isNotBlank() }

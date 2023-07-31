@@ -3,18 +3,16 @@ package com.lagradost.cloudstream3.ui.result
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.lagradost.cloudstream3.ActorData
 import com.lagradost.cloudstream3.ActorRole
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.databinding.CastItemBinding
 import com.lagradost.cloudstream3.utils.UIHelper.setImage
-import kotlinx.android.synthetic.main.cast_item.view.*
 
-class ActorAdaptor() : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class ActorAdaptor(private val focusCallback : (View?) -> Unit = {}) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     data class ActorMetaData(
         var isInverted: Boolean,
         val actor: ActorData,
@@ -24,7 +22,7 @@ class ActorAdaptor() : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return CardViewHolder(
-            LayoutInflater.from(parent.context).inflate(R.layout.cast_item, parent, false),
+            CastItemBinding.inflate(LayoutInflater.from(parent.context), parent, false), focusCallback
         )
     }
 
@@ -68,15 +66,10 @@ class ActorAdaptor() : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private class CardViewHolder
     constructor(
-        itemView: View,
+        val binding: CastItemBinding,
+        private val focusCallback : (View?) -> Unit = {}
     ) :
-        RecyclerView.ViewHolder(itemView) {
-        private val actorImage: ImageView = itemView.actor_image
-        private val actorName: TextView = itemView.actor_name
-        private val actorExtra: TextView = itemView.actor_extra
-        private val voiceActorImage: ImageView = itemView.voice_actor_image
-        private val voiceActorImageHolder: View = itemView.voice_actor_image_holder
-        private val voiceActorName: TextView = itemView.voice_actor_name
+        RecyclerView.ViewHolder(binding.root) {
 
         fun bind(actor: ActorData, isInverted: Boolean, position: Int, callback: (Int) -> Unit) {
             val (mainImg, vaImage) = if (!isInverted || actor.voiceActor?.image.isNullOrBlank()) {
@@ -85,43 +78,53 @@ class ActorAdaptor() : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 Pair(actor.voiceActor?.image, actor.actor.image)
             }
 
+            itemView.setOnFocusChangeListener { v, hasFocus ->
+                if(hasFocus) {
+                    focusCallback(v)
+                }
+            }
+
             itemView.setOnClickListener {
                 callback(position)
             }
 
-            actorImage.setImage(mainImg)
+            binding.apply {
+                actorImage.setImage(mainImg)
 
-            actorName.text = actor.actor.name
-            actor.role?.let {
-                actorExtra.context?.getString(
-                    when (it) {
-                        ActorRole.Main -> {
-                            R.string.actor_main
+                actorName.text = actor.actor.name
+                actor.role?.let {
+                    actorExtra.context?.getString(
+                        when (it) {
+                            ActorRole.Main -> {
+                                R.string.actor_main
+                            }
+
+                            ActorRole.Supporting -> {
+                                R.string.actor_supporting
+                            }
+
+                            ActorRole.Background -> {
+                                R.string.actor_background
+                            }
                         }
-                        ActorRole.Supporting -> {
-                            R.string.actor_supporting
-                        }
-                        ActorRole.Background -> {
-                            R.string.actor_background
-                        }
+                    )?.let { text ->
+                        actorExtra.isVisible = true
+                        actorExtra.text = text
                     }
-                )?.let { text ->
+                } ?: actor.roleString?.let {
                     actorExtra.isVisible = true
-                    actorExtra.text = text
+                    actorExtra.text = it
+                } ?: run {
+                    actorExtra.isVisible = false
                 }
-            } ?: actor.roleString?.let {
-                actorExtra.isVisible = true
-                actorExtra.text = it
-            } ?: run {
-                actorExtra.isVisible = false
-            }
 
-            if (actor.voiceActor == null) {
-                voiceActorImageHolder.isVisible = false
-                voiceActorName.isVisible = false
-            } else {
-                voiceActorName.text = actor.voiceActor.name
-                voiceActorImageHolder.isVisible = voiceActorImage.setImage(vaImage)
+                if (actor.voiceActor == null) {
+                    voiceActorImageHolder.isVisible = false
+                    voiceActorName.isVisible = false
+                } else {
+                    voiceActorName.text = actor.voiceActor.name
+                    voiceActorImageHolder.isVisible = voiceActorImage.setImage(vaImage)
+                }
             }
         }
     }

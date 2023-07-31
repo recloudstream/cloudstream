@@ -12,20 +12,23 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.navigation.fragment.findNavController
 import com.lagradost.cloudstream3.MainActivity
-import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.USER_AGENT
+import com.lagradost.cloudstream3.databinding.FragmentWebviewBinding
 import com.lagradost.cloudstream3.network.WebViewResolver
 import com.lagradost.cloudstream3.utils.AppUtils.loadRepository
-import kotlinx.android.synthetic.main.fragment_webview.*
+
 
 class WebviewFragment : Fragment() {
+
+    var binding: FragmentWebviewBinding? = null
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val url = arguments?.getString(WEBVIEW_URL) ?: "".also {
             findNavController().popBackStack()
         }
 
-        web_view.webViewClient = object : WebViewClient() {
+        binding?.webView?.webViewClient = object : WebViewClient() {
             override fun shouldOverrideUrlLoading(
                 view: WebView?,
                 request: WebResourceRequest?
@@ -40,24 +43,28 @@ class WebviewFragment : Fragment() {
                 return super.shouldOverrideUrlLoading(view, request)
             }
         }
+        binding?.webView?.apply {
+            WebViewResolver.webViewUserAgent = settings.userAgentString
 
-        WebViewResolver.webViewUserAgent = web_view.settings.userAgentString
-
-        web_view.addJavascriptInterface(RepoApi(activity), "RepoApi")
-        web_view.settings.javaScriptEnabled = true
-        web_view.settings.userAgentString = USER_AGENT
-        web_view.settings.domStorageEnabled = true
+            addJavascriptInterface(RepoApi(activity), "RepoApi")
+            settings.javaScriptEnabled = true
+            settings.userAgentString = USER_AGENT
+            settings.domStorageEnabled = true
 //        WebView.setWebContentsDebuggingEnabled(true)
 
-        web_view.loadUrl(url)
+            loadUrl(url)
+        }
+
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
+        val localBinding = FragmentWebviewBinding.inflate(inflater, container, false)
+        binding = localBinding
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_webview, container, false)
+        return localBinding.root//inflater.inflate(R.layout.fragment_webview, container, false)
     }
 
     companion object {
@@ -70,7 +77,7 @@ class WebviewFragment : Fragment() {
 
     private class RepoApi(val activity: FragmentActivity?) {
         @JavascriptInterface
-         fun installRepo(repoUrl: String) {
+        fun installRepo(repoUrl: String) {
             activity?.loadRepository(repoUrl)
         }
     }

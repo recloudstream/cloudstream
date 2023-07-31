@@ -78,6 +78,7 @@
                 app:tint="@android:color/white" />
 
             <ImageView
+                android:tag="@string/tv_no_focus_tag"
                 android:id="@+id/player_loading_go_back"
                 android:layout_width="70dp"
                 android:layout_height="70dp"
@@ -92,7 +93,7 @@
         </FrameLayout>
     </FrameLayout>
 
-    <FrameLayout
+    <!--<FrameLayout
         android:id="@+id/player_torrent_info"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -126,5 +127,5 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/player_video_title"
             tools:text="17 seeders" />
-    </FrameLayout>
+    </FrameLayout>-->
 </androidx.constraintlayout.widget.ConstraintLayout>

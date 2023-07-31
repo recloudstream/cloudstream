@@ -1,10 +1,10 @@
 package com.lagradost.cloudstream3.ui.home
 
+import android.os.Build
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.APIHolder.apis
 import com.lagradost.cloudstream3.APIHolder.filterHomePageListByFilmQuality
 import com.lagradost.cloudstream3.APIHolder.filterProviderByPreferredMedia
@@ -13,11 +13,30 @@ import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
 import com.lagradost.cloudstream3.AcraApplication.Companion.context
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
-import com.lagradost.cloudstream3.mvvm.*
+import com.lagradost.cloudstream3.CommonActivity.activity
+import com.lagradost.cloudstream3.HomePageList
+import com.lagradost.cloudstream3.LoadResponse
+import com.lagradost.cloudstream3.MainAPI
+import com.lagradost.cloudstream3.MainActivity
+import com.lagradost.cloudstream3.SearchResponse
+import com.lagradost.cloudstream3.amap
+import com.lagradost.cloudstream3.mvvm.Resource
+import com.lagradost.cloudstream3.mvvm.debugAssert
+import com.lagradost.cloudstream3.mvvm.debugWarning
+import com.lagradost.cloudstream3.mvvm.launchSafe
+import com.lagradost.cloudstream3.mvvm.logError
+import com.lagradost.cloudstream3.plugins.PluginManager
 import com.lagradost.cloudstream3.ui.APIRepository
 import com.lagradost.cloudstream3.ui.APIRepository.Companion.noneApi
 import com.lagradost.cloudstream3.ui.APIRepository.Companion.randomApi
 import com.lagradost.cloudstream3.ui.WatchType
+import com.lagradost.cloudstream3.ui.quicksearch.QuickSearchFragment
+import com.lagradost.cloudstream3.ui.search.SEARCH_ACTION_FOCUSED
+import com.lagradost.cloudstream3.ui.search.SearchClickCallback
+import com.lagradost.cloudstream3.ui.search.SearchHelper
+import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTrueTvSettings
+import com.lagradost.cloudstream3.utils.AppUtils.addProgramsToContinueWatching
+import com.lagradost.cloudstream3.utils.AppUtils.loadResult
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.DOWNLOAD_HEADER_CACHE
 import com.lagradost.cloudstream3.utils.DataStoreHelper
@@ -32,7 +51,7 @@ import com.lagradost.cloudstream3.utils.VideoDownloadHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.withContext
-import java.util.*
+import java.util.EnumSet
 import kotlin.collections.set
 
 class HomeViewModel : ViewModel() {
@@ -72,7 +91,7 @@ class HomeViewModel : ViewModel() {
         }
     }
 
-    private var repo: APIRepository? = null
+    var repo: APIRepository? = null
 
     private val _apiName = MutableLiveData<String>()
     val apiName: LiveData<String> = _apiName
@@ -83,7 +102,7 @@ class HomeViewModel : ViewModel() {
     private var currentShuffledList: List<SearchResponse> = listOf()
 
     private fun autoloadRepo(): APIRepository {
-        return APIRepository(apis.first { it.hasMainPage })
+        return APIRepository(synchronized(apis) { apis.first { it.hasMainPage }})
     }
 
     private val _availableWatchStatusTypes =
@@ -101,8 +120,14 @@ class HomeViewModel : ViewModel() {
     val resumeWatching: LiveData<List<SearchResponse>> = _resumeWatching
     val preview: LiveData<Resource<Pair<Boolean, List<LoadResponse>>>> = _preview
 
-    fun loadResumeWatching() = viewModelScope.launchSafe {
+    private fun loadResumeWatching() = viewModelScope.launchSafe {
         val resumeWatchingResult = getResumeWatching()
+        if (isTrueTvSettings() && resumeWatchingResult != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            ioSafe {
+                // this WILL crash on non tvs, so keep this inside a try catch
+                activity?.addProgramsToContinueWatching(resumeWatchingResult)
+            }
+        }
         resumeWatchingResult?.let {
             _resumeWatching.postValue(it)
         }
@@ -128,6 +153,10 @@ class HomeViewModel : ViewModel() {
         currentWatchTypes.remove(WatchType.NONE)
 
         if (currentWatchTypes.size <= 0) {
+            setKey(
+                HOME_BOOKMARK_VALUE_LIST,
+                intArrayOf()
+            )
             _availableWatchStatusTypes.postValue(setOf<WatchType>() to setOf())
             _bookmarks.postValue(Pair(false, ArrayList()))
             return@launchSafe
@@ -135,7 +164,10 @@ class HomeViewModel : ViewModel() {
 
         val watchPrefNotNull = preferredWatchStatus ?: EnumSet.of(currentWatchTypes.first())
         //if (currentWatchTypes.any { watchPrefNotNull.contains(it) }) watchPrefNotNull else listOf(currentWatchTypes.first())
-
+        setKey(
+            HOME_BOOKMARK_VALUE_LIST,
+            watchPrefNotNull.map { it.internalId }.toIntArray()
+        )
         _availableWatchStatusTypes.postValue(
             Pair(
                 watchPrefNotNull,
@@ -152,8 +184,10 @@ class HomeViewModel : ViewModel() {
     }
 
     private var onGoingLoad: Job? = null
-    private fun loadAndCancel(api: MainAPI?) {
+    private var isCurrentlyLoadingName : String? = null
+    private fun loadAndCancel(api: MainAPI) {
         onGoingLoad?.cancel()
+        isCurrentlyLoadingName = api.name
         onGoingLoad = load(api)
     }
 
@@ -255,12 +289,12 @@ class HomeViewModel : ViewModel() {
         }
     }
 
-    private fun load(api: MainAPI?) = ioSafe {
-        repo = if (api != null) {
+    private fun load(api: MainAPI) : Job = ioSafe {
+        repo = //if (api != null) {
             APIRepository(api)
-        } else {
-            autoloadRepo()
-        }
+        //} else {
+        //    autoloadRepo()
+        //}
 
         _apiName.postValue(repo?.name)
         _randomItems.postValue(listOf())
@@ -274,6 +308,7 @@ class HomeViewModel : ViewModel() {
 
         _page.postValue(Resource.Loading())
         _preview.postValue(Resource.Loading())
+        // cancel the current preview expand as that is no longer relevant
         addJob?.cancel()
 
         when (val data = repo?.getMainPage(1, null)) {
@@ -337,41 +372,126 @@ class HomeViewModel : ViewModel() {
                     logError(e)
                 }
             }
+
             is Resource.Failure -> {
                 _page.postValue(data!!)
                 _preview.postValue(data!!)
             }
+
             else -> Unit
+        }
+        isCurrentlyLoadingName = null
+    }
+
+    fun click(callback: SearchClickCallback) {
+        if (callback.action == SEARCH_ACTION_FOCUSED) {
+            //focusCallback(callback.card)
+        } else {
+            SearchHelper.handleSearchClickCallback(callback)
         }
     }
 
-    fun loadAndCancel(preferredApiName: String?, forceReload: Boolean = true) =
-        viewModelScope.launchSafe {
+
+    private val _popup = MutableLiveData<ExpandableHomepageList?>(null)
+    val popup: LiveData<ExpandableHomepageList?> = _popup
+
+    fun popup(list: ExpandableHomepageList?) {
+        _popup.postValue(list)
+    }
+
+    private fun bookmarksUpdated(unused: Boolean) {
+        reloadStored()
+    }
+
+    private fun afterPluginsLoaded(forceReload: Boolean) {
+        loadAndCancel(getKey(USER_SELECTED_HOMEPAGE_API), forceReload)
+    }
+
+    private fun afterMainPluginsLoaded(unused: Boolean = false) {
+        loadAndCancel(getKey(USER_SELECTED_HOMEPAGE_API), false)
+    }
+
+    init {
+        MainActivity.bookmarksUpdatedEvent += ::bookmarksUpdated
+        MainActivity.afterPluginsLoadedEvent += ::afterPluginsLoaded
+        MainActivity.mainPluginsLoadedEvent += ::afterMainPluginsLoaded
+    }
+
+    override fun onCleared() {
+        MainActivity.bookmarksUpdatedEvent -= ::bookmarksUpdated
+        MainActivity.afterPluginsLoadedEvent -= ::afterPluginsLoaded
+        MainActivity.mainPluginsLoadedEvent -= ::afterMainPluginsLoaded
+        super.onCleared()
+    }
+
+    fun queryTextSubmit(query: String) {
+        QuickSearchFragment.pushSearch(
+            query,
+            repo?.name?.let { arrayOf(it) })
+    }
+
+    fun queryTextChange(newText: String) {
+        // do nothing
+    }
+
+    fun reloadStored() {
+        loadResumeWatching()
+        val list = EnumSet.noneOf(WatchType::class.java)
+        getKey<IntArray>(HOME_BOOKMARK_VALUE_LIST)?.map { WatchType.fromInternalId(it) }?.let {
+            list.addAll(it)
+        }
+        loadStoredData(list)
+    }
+
+    fun click(load: LoadClickCallback) {
+        loadResult(load.response.url, load.response.apiName, load.action)
+    }
+
+    // only save the key if it is from UI, as we don't want internal functions changing the setting
+    fun loadAndCancel(
+        preferredApiName: String?,
+        forceReload: Boolean = true,
+        fromUI: Boolean = false
+    ) =
+        ioSafe {
             // Since plugins are loaded in stages this function can get called multiple times.
             // The issue with this is that the homepage may be fetched multiple times while the first request is loading
             val api = getApiFromNameNull(preferredApiName)
-            if (!forceReload && api?.let { expandable[it.name]?.list?.list?.isNotEmpty() } == true) {
-                return@launchSafe
+            // api?.let { expandable[it.name]?.list?.list?.isNotEmpty() } == true
+            val currentPage = page.value
+
+            // if we don't need to reload and we have a valid homepage or currently loading the same thing then return
+            val currentLoading = isCurrentlyLoadingName
+            if (!forceReload && (currentPage is Resource.Success && currentPage.value.isNotEmpty() || (currentLoading != null && currentLoading == preferredApiName))) {
+                return@ioSafe
             }
 
             if (preferredApiName == noneApi.name) {
-                setKey(USER_SELECTED_HOMEPAGE_API, noneApi.name)
+                // just set to random
+                if (fromUI) setKey(USER_SELECTED_HOMEPAGE_API, noneApi.name)
                 loadAndCancel(noneApi)
             } else if (preferredApiName == randomApi.name) {
+                // randomize the api, if none exist like if not loaded or not installed
+                // then use nothing
                 val validAPIs = context?.filterProviderByPreferredMedia()
                 if (validAPIs.isNullOrEmpty()) {
-                    // Do not set USER_SELECTED_HOMEPAGE_API when there is no plugins loaded
                     loadAndCancel(noneApi)
                 } else {
                     val apiRandom = validAPIs.random()
                     loadAndCancel(apiRandom)
-                    setKey(USER_SELECTED_HOMEPAGE_API, apiRandom.name)
+                    if (fromUI) setKey(USER_SELECTED_HOMEPAGE_API, apiRandom.name)
                 }
-                // If the plugin isn't loaded yet. (Does not set the key)
             } else if (api == null) {
-                loadAndCancel(noneApi)
+                // API is not found aka not loaded or removed, post the loading
+                // progress if waiting for plugins, otherwise nothing
+                if(PluginManager.loadedLocalPlugins) {
+                    loadAndCancel(noneApi)
+                } else {
+                    _page.postValue(Resource.Loading())
+                }
             } else {
-                setKey(USER_SELECTED_HOMEPAGE_API, api.name)
+                // if the api is found, then set it to it and save key
+                if (fromUI) setKey(USER_SELECTED_HOMEPAGE_API, api.name)
                 loadAndCancel(api)
             }
         }

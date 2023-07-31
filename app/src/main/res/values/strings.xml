@@ -677,4 +677,8 @@
     </string>
     <string name="qualities">Qualities</string>
     <string name="profile_background_des">Profile background</string>
+    <string name="unable_to_inflate">UI was unable to be created correctly, this is a MAJOR BUG and should be reported immediately %s</string>
+
+
+    <string name="tv_no_focus_tag" translatable="false">tv_no_focus_tag</string>
 </resources>

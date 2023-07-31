@@ -89,7 +89,7 @@
                 app:tint="?attr/textColor" />
         </FrameLayout>
 
-        <include layout="@layout/tvtypes_chips_scroll" />
+        <include layout="@layout/tvtypes_chips_scroll" android:id="@+id/tvtypes_chips_scroll" />
     </LinearLayout>
 
 
@@ -122,18 +122,17 @@
         tools:listitem="@layout/homepage_parent" />
 
     <FrameLayout
+        android:background="?attr/primaryBlackBackground"
         android:id="@+id/search_history_holder"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-
         <androidx.recyclerview.widget.RecyclerView
-            android:paddingStart="@dimen/navbar_width"
+            android:layout_marginStart="@dimen/navbar_width"
             android:id="@+id/search_history_recycler"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
 
-            android:background="?attr/primaryBlackBackground"
             android:descendantFocusability="afterDescendants"
             android:nextFocusLeft="@id/nav_rail_view"
             android:visibility="visible"
@@ -141,6 +140,7 @@
             tools:listitem="@layout/search_history_item" />
 
         <com.google.android.material.button.MaterialButton
+            android:layout_marginStart="@dimen/navbar_width"
             android:id="@+id/search_clear_call_history"
             style="@style/BlackButton"
             android:layout_gravity="bottom"

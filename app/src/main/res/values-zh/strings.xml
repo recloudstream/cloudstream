@@ -577,4 +577,21 @@
     <string name="pref_category_bypass">ISP 绕过</string>
     <string name="revert">还原</string>
     <string name="watch_quality_pref_data">首选播放画质（移动数据）</string>
+    <string name="profile_number">简介 %d</string>
+    <string name="wifi">无线网络</string>
+    <string name="set_default">设为默认</string>
+    <string name="use">使用</string>
+    <string name="edit">编辑</string>
+    <string name="profiles">配置文件</string>
+    <string name="help">帮助</string>
+    <string name="mobile_data">移动流量</string>
+    <string name="quality_profile_help">在这里，您可以更改源的排序方式。如果视频具有更高的优先级，它将在源选择中显示得更高。源优先级和质量优先级的总和就是视频优先级。
+\n
+\n来源 A：3
+\n质量 B： 7
+\n组合视频优先级为 10。
+\n
+\n注意：如果总和为 10 或更多，则加载该链接时播放器将自动跳过加载！</string>
+    <string name="qualities">质量</string>
+    <string name="profile_background_des">个人资料背景</string>
 </resources>
