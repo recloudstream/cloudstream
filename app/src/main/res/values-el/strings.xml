@@ -7,7 +7,7 @@
     <string name="title_settings">Ρυθμίσεις</string>
     <string name="play_with_app_name">Άνοιγμα με CloudStream</string>
     <string name="search_hint">Αναζήτηση…</string>
-    <string name="search_poster_img_des">Πόστερ</string>
+    <string name="search_poster_img_des">Αφίσα</string>
     <string name="no_data">Χωρίς δεδομένα</string>
     <string name="episode_more_options_des">Περισσότερες Επιλογές</string>
     <string name="go_back_img_des">Πίσω</string>
@@ -96,9 +96,9 @@
     <string name="eigengraumode_settings">Eigengravy Mode</string>
     <string name="eigengraumode_settings_des">Προσθέτει την επιλογή ταχύτητας στο πρόγραμμα αναπαραγωγής</string>
     <string name="swipe_to_seek_settings">Σύρετε για αναζήτηση</string>
-    <string name="swipe_to_seek_settings_des">Σύρετε αριστερά ή δεξιά για να ελέγξετε τον χρόνο στην μπάρα του προγράμματος αναπαραγωγής</string>
+    <string name="swipe_to_seek_settings_des">Σύρετε από πλευρά σε πλευρά για να ελέγξετε το σημείο του βίντεο στο οποίο βρίσκεστε</string>
     <string name="swipe_to_change_settings">Σύρετε για να αλλάξετε ρυθμίσεις</string>
-    <string name="swipe_to_change_settings_des">Σύρετε αριστερά ή δεξιά για να αλλάξετε τη φωτεινότητα ή την ένταση</string>
+    <string name="swipe_to_change_settings_des">Σύρετε πάνω ή κάτω στην αριστερή ή στη δεξιά μεριά της οθόνης για να αλλάξετε τη φωτεινότητα ή την ένταση</string>
     <string name="double_tap_to_seek_settings">Διπλό πάτημα για αναζήτηση</string>
     <string name="double_tap_to_seek_settings_des">Διπλό πάτημα στα αριστερά ή δεξιά για αναζήτηση προς τα μπροστά ή πίσω</string>
     <string name="search">Αναζήτηση</string>
@@ -108,7 +108,7 @@
     <string name="bug_report_settings_off">Αποστέλλει δεδομένα μόνο για καταρρεύσεις</string>
     <string name="bug_report_settings_on">Δεν στέλνει δεδομένα</string>
     <string name="updates_settings">Εμφάνιση ενημερώσεων</string>
-    <string name="updates_settings_des">Αυτόματη αναζήτηση νέων ενημερώσεων</string>
+    <string name="updates_settings_des">Αυτόματη αναζήτηση νέων ενημερώσεων κατά την εκκίνηση της εφαρμογής.</string>
     <string name="uprereleases_settings">Ενημέρωση σε προ-εκδόσεις (beta)</string>
     <string name="uprereleases_settings_des">Αναζητήστε ενημερώσεις προ-εκδόσεων (beta) αντί για σταθερές εκδόσεις (stable)</string>
     <string name="github">GitHub</string>
@@ -121,7 +121,7 @@
     <string name="rated_format" formatted="true">Βαθμολογία: %.1f</string>
     <string name="new_update_format" formatted="true">Νέα διαθέσιμη ενημέρωση!
 \n%s -&gt; %s</string>
-    <string name="double_tap_to_pause_settings_des">Πάτημα στη μέση για παύση</string>
+    <string name="double_tap_to_pause_settings_des">Πατήστε δύο φορές στη μέση για παύση</string>
     <string name="use_system_brightness_settings">Χρήση φωτεινότητας συστήματος</string>
     <string name="use_system_brightness_settings_des">Χρήση φωτεινότητας συστήματος στο ενσωματωμένο πρόγραμμα αναπαραγωγής, αντί εφαρμογής προεπιλεγμένου σκούρου επικαλύμματος</string>
     <string name="episode_sync_settings">Ενημέρωση προόδου παρακολούθησης</string>
@@ -390,7 +390,7 @@
     <string name="action_open_play">@string/home_play</string>
     <string name="provider_info_meta">Δεν έχουν παρασχεθεί μεταδεδομένα από τον ιστότοπο, η φόρτωση του βίντεο θα αποτύχει αν δεν υπάρχει στον ιστότοπο.</string>
     <string name="double_tap_to_pause_settings">Διπλό πάτημα για παύση</string>
-    <string name="double_tap_to_seek_amount_settings">Μέγεθος αναζήτησης στο πρόγραμμα αναπαραγωγής</string>
+    <string name="double_tap_to_seek_amount_settings">Μέγεθος αναζήτησης στο πρόγραμμα αναπαραγωγής (σε δευτερόλεπτα)</string>
     <string name="automatic_plugin_updates">Αυτόματη ενημέρωση plugin</string>
     <string name="automatic_plugin_download">Αυτόματη λήψη plugin</string>
     <string name="dns_pref">DNS μέσω HTTPS</string>
@@ -464,7 +464,7 @@
     <string name="pref_category_defaults">Προεπιλεγμένα</string>
     <string name="login_format" formatted="true">%s %s</string>
     <string name="subs_font_size">Μέγεθος γραμματοσειράς</string>
-    <string name="anime_singular">@string/anime</string>
+    <string name="anime_singular">Άνιμε</string>
     <string name="pref_category_links">Σύνδεσμοι</string>
     <string name="pref_category_looks">Εμφάνιση</string>
     <string name="pref_category_ui_features">Χαρακτηριστικά</string>
@@ -508,4 +508,8 @@
 \nΣυνδέσου σε έναν λογαριασμό που έχει βιβλιοθήκη, ή πρόσθεσε σειρές στην τοπική βιβλιοθήκη σου</string>
     <string name="safe_mode_file">Βρέθηκε αρχείο Ασφαλούς Λειτουργίας!
 \nΔεν πρόκειται να φορτωθούν extensions κατά το ξεκίνημα μέχρι να διαγραφεί το αρχείο.</string>
+    <string name="test_log">Αρχείο Καταγραφής</string>
+    <string name="test_failed">Απέτυχε</string>
+    <string name="test_passed">Πέτυχε</string>
+    <string name="start">Εκκίνηση</string>
 </resources>

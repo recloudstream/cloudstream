@@ -1,105 +1,99 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
 
-        android:nextFocusLeft="@id/episode_poster"
-        android:nextFocusRight="@id/result_episode_download"
-        android:id="@+id/episode_holder"
-        app:cardElevation="0dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:cardCornerRadius="@dimen/rounded_image_radius"
-        app:cardBackgroundColor="@color/transparent"
+    android:id="@+id/episode_holder"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_margin="5dp"
+    android:foreground="@drawable/outline_drawable"
+    app:cardBackgroundColor="@color/transparent"
 
-        android:foreground="@drawable/outline_drawable"
-        android:layout_margin="5dp">
+    app:cardCornerRadius="@dimen/rounded_image_radius"
+    app:cardElevation="0dp">
+
     <LinearLayout
-            android:padding="5dp"
-            android:layout_width="100dp"
-            android:orientation="vertical"
-            android:layout_height="wrap_content">
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="5dp">
         <!--app:cardCornerRadius="@dimen/roundedImageRadius"-->
         <FrameLayout
-                android:layout_gravity="center_horizontal"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal">
 
             <androidx.cardview.widget.CardView
-                    app:cardCornerRadius="35dp"
-                    android:layout_width="70dp"
-                    android:layout_height="70dp"
-                    android:foreground="@drawable/outline_drawable">
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:foreground="@drawable/outline_drawable"
+                app:cardCornerRadius="35dp">
 
                 <ImageView
-                        android:nextFocusLeft="@id/result_episode_download"
-                        android:nextFocusRight="@id/episode_holder"
 
-                        android:id="@+id/actor_image"
-                        tools:src="@drawable/example_poster"
+                    android:id="@+id/actor_image"
+                    android:layout_width="match_parent"
 
-                        android:scaleType="centerCrop"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:contentDescription="@string/episode_poster_img_des" />
+                    android:layout_height="match_parent"
+                    android:contentDescription="@string/episode_poster_img_des"
+                    android:scaleType="centerCrop"
+                    tools:src="@drawable/example_poster" />
 
             </androidx.cardview.widget.CardView>
 
             <androidx.cardview.widget.CardView
-                    android:id="@+id/voice_actor_image_holder"
-                    android:layout_gravity="end|bottom"
-                    app:cardCornerRadius="20dp"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:foreground="@drawable/outline_drawable">
+                android:id="@+id/voice_actor_image_holder"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="end|bottom"
+                android:foreground="@drawable/outline_drawable"
+                app:cardCornerRadius="20dp">
 
                 <ImageView
-                        android:nextFocusLeft="@id/result_episode_download"
-                        android:nextFocusRight="@id/episode_holder"
+                    android:id="@+id/voice_actor_image"
+                    android:layout_width="match_parent"
 
-                        android:id="@+id/voice_actor_image"
-                        tools:src="@drawable/example_poster"
-
-                        android:scaleType="centerCrop"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:contentDescription="@string/episode_poster_img_des" />
+                    android:layout_height="match_parent"
+                    android:contentDescription="@string/episode_poster_img_des"
+                    android:scaleType="centerCrop"
+                    tools:src="@drawable/example_poster" />
             </androidx.cardview.widget.CardView>
         </FrameLayout>
 
         <LinearLayout
-                android:paddingTop="3dp"
-                android:paddingBottom="3dp"
-                android:orientation="vertical"
-                android:layout_gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:paddingTop="3dp"
+            android:paddingBottom="3dp">
+
+            <TextView
+                android:id="@+id/actor_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:textColor="?attr/textColor"
+                android:textStyle="bold"
+                tools:text="Ackerman, Mikasa" />
 
             <TextView
-                    android:gravity="center_horizontal"
-                    android:id="@+id/actor_name"
-                    tools:text="Ackerman, Mikasa"
-                    android:textStyle="bold"
-                    android:textColor="?attr/textColor"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                android:id="@+id/voice_actor_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:textColor="?attr/grayTextColor"
+                tools:text="voiceactor" />
 
             <TextView
-                    android:gravity="center_horizontal"
-                    android:id="@+id/voice_actor_name"
-                    tools:text="voiceactor"
-                    android:textColor="?attr/grayTextColor"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-
-            <TextView
-                    android:gravity="center_horizontal"
-                    android:id="@+id/actor_extra"
-                    tools:text="Main"
-                    android:textColor="?attr/grayTextColor"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                android:id="@+id/actor_extra"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:textColor="?attr/grayTextColor"
+                tools:text="Main" />
 
         </LinearLayout>
 

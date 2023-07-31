@@ -4,5 +4,6 @@
         style="@style/CheckLabel"
         android:id="@android:id/text1"
         tools:text="hello"
+        android:foreground="@drawable/outline_drawable_forced"
         app:drawableStartCompat="@drawable/ic_baseline_add_24"
         app:drawableTint="?attr/textColor" />

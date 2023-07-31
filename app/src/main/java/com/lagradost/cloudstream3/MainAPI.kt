@@ -50,8 +50,10 @@ object APIHolder {
     val allProviders = threadSafeListOf<MainAPI>()
 
     fun initAll() {
-        for (api in allProviders) {
-            api.init()
+        synchronized(allProviders) {
+            for (api in allProviders) {
+                api.init()
+            }
         }
         apiMap = null
     }
@@ -64,27 +66,35 @@ object APIHolder {
     var apiMap: Map<String, Int>? = null
 
     fun addPluginMapping(plugin: MainAPI) {
-        apis = apis + plugin
+        synchronized(apis) {
+            apis = apis + plugin
+        }
         initMap(true)
     }
 
     fun removePluginMapping(plugin: MainAPI) {
-        apis = apis.filter { it != plugin }
+        synchronized(apis) {
+            apis = apis.filter { it != plugin }
+        }
         initMap(true)
     }
 
     private fun initMap(forcedUpdate: Boolean = false) {
-        if (apiMap == null || forcedUpdate)
-            apiMap = apis.mapIndexed { index, api -> api.name to index }.toMap()
+        synchronized(apis) {
+            if (apiMap == null || forcedUpdate)
+                apiMap = apis.mapIndexed { index, api -> api.name to index }.toMap()
+        }
     }
 
     fun getApiFromNameNull(apiName: String?): MainAPI? {
         if (apiName == null) return null
         synchronized(allProviders) {
             initMap()
-            return apiMap?.get(apiName)?.let { apis.getOrNull(it) }
-            // Leave the ?. null check, it can crash regardless
-                ?: allProviders.firstOrNull { it.name == apiName }
+            synchronized(apis) {
+                return apiMap?.get(apiName)?.let { apis.getOrNull(it) }
+                // Leave the ?. null check, it can crash regardless
+                    ?: allProviders.firstOrNull { it.name == apiName }
+            }
         }
     }
 
@@ -215,7 +225,7 @@ object APIHolder {
         val hashSet = HashSet<String>()
         val activeLangs = getApiProviderLangSettings()
         val hasUniversal = activeLangs.contains(AllLanguagesName)
-        hashSet.addAll(apis.filter { hasUniversal || activeLangs.contains(it.lang) }
+        hashSet.addAll(synchronized(apis) { apis.filter { hasUniversal || activeLangs.contains(it.lang) } }
             .map { it.name })
 
         /*val set = settingsManager.getStringSet(
@@ -314,8 +324,9 @@ object APIHolder {
         } ?: default
         val langs = this.getApiProviderLangSettings()
         val hasUniversal = langs.contains(AllLanguagesName)
-        val allApis = apis.filter { hasUniversal || langs.contains(it.lang) }
-            .filter { api -> api.hasMainPage || !hasHomePageIsRequired }
+        val allApis = synchronized(apis) {
+            apis.filter { api -> (hasUniversal || langs.contains(api.lang)) && (api.hasMainPage || !hasHomePageIsRequired) }
+        }
         return if (currentPrefMedia.isEmpty()) {
             allApis
         } else {
@@ -736,6 +747,7 @@ fun fixTitle(str: String): String {
             .replaceFirstChar { char -> if (char.isLowerCase()) char.titlecase(Locale.getDefault()) else it }
     }
 }
+
 /**
  * Get rhino context in a safe way as it needs to be initialized on the main thread.
  * Make sure you get the scope using: val scope: Scriptable = rhino.initSafeStandardObjects()
@@ -1122,7 +1134,7 @@ interface LoadResponse {
         var isTrailersEnabled = true
 
         fun LoadResponse.isMovie(): Boolean {
-            return this.type.isMovieType()
+            return this.type.isMovieType() || this is MovieLoadResponse
         }
 
         @JvmName("addActorNames")

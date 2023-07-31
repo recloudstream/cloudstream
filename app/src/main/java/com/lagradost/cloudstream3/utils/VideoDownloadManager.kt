@@ -15,6 +15,8 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.net.toUri
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.MutableLiveData
 import androidx.preference.PreferenceManager
 import androidx.work.Data
 import androidx.work.ExistingWorkPolicy
@@ -37,8 +39,10 @@ import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStore.removeKey
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import okhttp3.internal.closeQuietly
@@ -88,12 +92,16 @@ object VideoDownloadManager {
     @DrawableRes
     const val pressToStopIcon = R.drawable.exo_icon_stop
 
+    private var updateCount : Int = 0
+    private val downloadDataUpdateCount = MutableLiveData<Int>()
+
     enum class DownloadType {
         IsPaused,
         IsDownloading,
         IsDone,
         IsFailed,
         IsStopped,
+        IsPending
     }
 
     enum class DownloadActionType {
@@ -271,6 +279,7 @@ object VideoDownloadManager {
                         DownloadType.IsPaused -> imgPaused
                         DownloadType.IsFailed -> imgError
                         DownloadType.IsStopped -> imgStopped
+                        DownloadType.IsPending -> imgDownloading
                     }
                 )
 

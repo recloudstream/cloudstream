@@ -7,7 +7,6 @@ plugins {
     id("com.android.application")
     id("kotlin-android")
     id("kotlin-kapt")
-    id("kotlin-android-extensions")
     id("org.jetbrains.dokka")
 }
 
@@ -28,6 +27,11 @@ android {
     testOptions {
         unitTests.isReturnDefaultValues = true
     }
+
+    viewBinding {
+        enable = true
+    }
+
     signingConfigs {
         create("prerelease") {
             if (prereleaseStoreFile != null) {
@@ -48,7 +52,7 @@ android {
         targetSdk = 33
 
         versionCode = 59
-        versionName = "4.0.1"
+        versionName = "4.1.1"
 
         resValue("string", "app_version", "${defaultConfig.versionName}${versionNameSuffix ?: ""}")
 
@@ -137,6 +141,7 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.3")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")
+    androidTestImplementation("androidx.test:core")
 
     //implementation("io.karn:khttp-android:0.1.2") //okhttp instead
 //    implementation("org.jsoup:jsoup:1.13.1")
@@ -203,7 +208,7 @@ dependencies {
 
     implementation("com.github.discord:OverlappingPanels:0.1.3")
     // debugImplementation because LeakCanary should only run in debug builds.
-    // debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.7'
+    //debugImplementation("com.squareup.leakcanary:leakcanary-android:2.12")
 
     // for shimmer when loading
     implementation("com.facebook.shimmer:shimmer:0.5.0")
@@ -217,13 +222,13 @@ dependencies {
     //implementation("com.github.HaarigerHarald:android-youtubeExtractor:master-SNAPSHOT")
 
     // newpipe yt taken from https://github.com/TeamNewPipe/NewPipe/blob/dev/app/build.gradle#L204
-    implementation("com.github.TeamNewPipe:NewPipeExtractor:master-SNAPSHOT")
+    implementation("com.github.TeamNewPipe:NewPipeExtractor:8495ad619e")
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.1.6")
 
     // Library/extensions searching with Levenshtein distance
     implementation("me.xdrop:fuzzywuzzy:1.4.0")
 
-    // color pallette for images -> colors
+    // color palette for images -> colors
     implementation("androidx.palette:palette-ktx:1.0.0")
 }
 
