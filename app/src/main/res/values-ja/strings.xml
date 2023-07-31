@@ -201,4 +201,7 @@
     <string name="preview_background_img_des">バックグラウンドをプレビュー</string>
     <string name="play_livestream_button">ライブストリームの再生</string>
     <string name="home_change_provider_img_des">プロバイダーの変更</string>
+    <string name="next_episode_format" formatted="true">エピソード %d は にリリースされます</string>
+    <string name="type_re_watching">再視聴</string>
+    <string name="play_torrent_button">ストリームトレント</string>
 </resources>
