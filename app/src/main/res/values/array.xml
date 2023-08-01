@@ -41,7 +41,14 @@
         <item>0</item>
         <item>1</item>
     </array>
-
+    
+    <!-- MainAPI enum: AutoDownloadMode -->
+    <array name="auto_download_plugin">
+        <item>@string/disable</item>
+        <item>@string/subtitles_filter_lang</item>
+        <item>@string/all</item>
+        <item>@string/nsfw</item>
+    </array>
 
     <array name="player_pref_names">
         <item>@string/player_settings_play_in_app</item>
