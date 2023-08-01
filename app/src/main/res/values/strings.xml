@@ -484,6 +484,7 @@
     <string name="authenticated_user" formatted="true">%s authenticated</string>
     <string name="authenticated_user_fail" formatted="true">Could not log in at %s</string>
     <!-- ============ -->
+    <string name="disable">Disable</string>
     <string name="none">None</string>
     <string name="normal">Normal</string>
     <string name="all">All</string>
