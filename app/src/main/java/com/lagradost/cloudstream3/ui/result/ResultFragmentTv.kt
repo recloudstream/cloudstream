@@ -624,7 +624,7 @@ class ResultFragmentTv : Fragment() {
                         resultPlaySeries.setOnClickListener {
                             viewModel.handleAction(
                                 EpisodeClickEvent(
-                                    ACTION_PLAY_EPISODE_IN_PLAYER,
+                                    ACTION_CLICK_DEFAULT,
                                     first
                                 )
                             )
