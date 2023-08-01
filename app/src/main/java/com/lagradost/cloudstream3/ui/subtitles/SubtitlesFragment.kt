@@ -18,8 +18,8 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceManager
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.google.android.exoplayer2.text.Cue
-import com.google.android.exoplayer2.ui.CaptionStyleCompat
+import androidx.media3.common.text.Cue
+import androidx.media3.ui.CaptionStyleCompat
 import com.jaredrummler.android.colorpicker.ColorPickerDialog
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey

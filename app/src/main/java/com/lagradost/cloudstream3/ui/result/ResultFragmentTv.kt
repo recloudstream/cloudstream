@@ -301,8 +301,8 @@ class ResultFragmentTv : Fragment() {
                         resultEpisodes
                     )
                     for (requestView in views) {
-                        if (!requestView.isVisible) continue
-                        if (requestView.requestFocus()) break
+                        if (!requestView.isShown) continue
+                        if (requestView.requestFocus()) break // View.FOCUS_RIGHT
                     }
                 }
             }
@@ -624,7 +624,7 @@ class ResultFragmentTv : Fragment() {
                         resultPlaySeries.setOnClickListener {
                             viewModel.handleAction(
                                 EpisodeClickEvent(
-                                    ACTION_PLAY_EPISODE_IN_PLAYER,
+                                    ACTION_CLICK_DEFAULT,
                                     first
                                 )
                             )

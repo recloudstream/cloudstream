@@ -1,6 +1,5 @@
 package com.lagradost.cloudstream3
 
-import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
 import android.content.ComponentName
 import android.content.Context
@@ -12,7 +11,12 @@ import android.os.Build
 import android.os.Bundle
 import android.util.AttributeSet
 import android.util.Log
-import android.view.*
+import android.view.KeyEvent
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.annotation.IdRes
@@ -20,8 +24,7 @@ import androidx.annotation.MainThread
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.animation.addListener
-import androidx.core.view.ViewCompat
+import androidx.core.view.children
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentActivity
@@ -34,10 +37,14 @@ import androidx.navigation.NavOptions
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import androidx.preference.PreferenceManager
+import androidx.recyclerview.widget.RecyclerView
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.google.android.gms.cast.framework.*
+import com.google.android.gms.cast.framework.CastContext
+import com.google.android.gms.cast.framework.Session
+import com.google.android.gms.cast.framework.SessionManager
+import com.google.android.gms.cast.framework.SessionManagerListener
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.navigationrail.NavigationRailView
@@ -59,7 +66,11 @@ import com.lagradost.cloudstream3.CommonActivity.updateLocale
 import com.lagradost.cloudstream3.databinding.ActivityMainBinding
 import com.lagradost.cloudstream3.databinding.ActivityMainTvBinding
 import com.lagradost.cloudstream3.databinding.BottomResultviewPreviewBinding
-import com.lagradost.cloudstream3.mvvm.*
+import com.lagradost.cloudstream3.mvvm.Resource
+import com.lagradost.cloudstream3.mvvm.debugAssert
+import com.lagradost.cloudstream3.mvvm.logError
+import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
+import com.lagradost.cloudstream3.mvvm.observeNullable
 import com.lagradost.cloudstream3.network.initClient
 import com.lagradost.cloudstream3.plugins.PluginManager
 import com.lagradost.cloudstream3.plugins.PluginManager.loadAllOnlinePlugins
@@ -94,7 +105,7 @@ import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.updateT
 import com.lagradost.cloudstream3.ui.settings.SettingsGeneral
 import com.lagradost.cloudstream3.ui.setup.HAS_DONE_SETUP_KEY
 import com.lagradost.cloudstream3.ui.setup.SetupFragmentExtensions
-import com.lagradost.cloudstream3.utils.*
+import com.lagradost.cloudstream3.utils.ApkInstaller
 import com.lagradost.cloudstream3.utils.AppUtils.html
 import com.lagradost.cloudstream3.utils.AppUtils.isCastApiAvailable
 import com.lagradost.cloudstream3.utils.AppUtils.isLtr
@@ -111,6 +122,8 @@ import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStore.setKey
 import com.lagradost.cloudstream3.utils.DataStoreHelper.migrateResumeWatching
+import com.lagradost.cloudstream3.utils.Event
+import com.lagradost.cloudstream3.utils.IOnBackPressed
 import com.lagradost.cloudstream3.utils.InAppUpdater.Companion.runAutoUpdate
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.UIHelper.changeStatusBarState
@@ -122,6 +135,8 @@ import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.requestRW
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
+import com.lagradost.cloudstream3.utils.USER_PROVIDER_API
+import com.lagradost.cloudstream3.utils.USER_SELECTED_HOMEPAGE_API
 import com.lagradost.nicehttp.Requests
 import com.lagradost.nicehttp.ResponseParser
 import kotlinx.coroutines.sync.Mutex
@@ -765,7 +780,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         return ret
     }
 
-    private var binding: ActivityMainBinding? = null
+    var binding: ActivityMainBinding? = null
 
     object TvFocus {
         data class FocusTarget(
@@ -793,10 +808,18 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         var focusOutline: WeakReference<View> = WeakReference(null)
         var lastFocus: WeakReference<View> = WeakReference(null)
         private val layoutListener: View.OnLayoutChangeListener =
-            View.OnLayoutChangeListener { v, _, _, _, _, _, _, _, _ ->
-                updateFocusView(
-                    v, same = true
-                )
+            View.OnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
+                // shitty fix for layouts
+                lastFocus.get()?.apply {
+                    updateFocusView(
+                        this, same = true
+                    )
+                    postDelayed({
+                        updateFocusView(
+                            lastFocus.get(), same = false
+                        )
+                    }, 300)
+                }
             }
         private val attachListener: View.OnAttachStateChangeListener =
             object : View.OnAttachStateChangeListener {
@@ -828,9 +851,12 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         @MainThread
         fun updateFocusView(newFocus: View?, same: Boolean = false) {
             val focusOutline = focusOutline.get() ?: return
-            lastFocus.get()?.apply {
-                removeOnLayoutChangeListener(layoutListener)
-                removeOnAttachStateChangeListener(attachListener)
+            val lastView = lastFocus.get()
+            val exactlyTheSame = lastView == newFocus && newFocus != null
+            if (!exactlyTheSame) {
+                lastView?.removeOnLayoutChangeListener(layoutListener)
+                lastView?.removeOnAttachStateChangeListener(attachListener)
+                (lastView?.parent as? RecyclerView)?.removeOnLayoutChangeListener(layoutListener)
             }
 
             val wasGone = focusOutline.isGone
@@ -841,6 +867,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
 
             if (newFocus != null) {
                 lastFocus = WeakReference(newFocus)
+
 
                 val out = IntArray(2)
                 newFocus.getLocationInWindow(out)
@@ -856,10 +883,11 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                 if (screenX == 0 && screenY == 0) {
                     focusOutline.isVisible = false
                 }
-
-                newFocus.addOnLayoutChangeListener(layoutListener)
-                newFocus.addOnAttachStateChangeListener(attachListener)
-
+                if (!exactlyTheSame) {
+                    (newFocus.parent as? RecyclerView)?.addOnLayoutChangeListener(layoutListener)
+                    newFocus.addOnLayoutChangeListener(layoutListener)
+                    newFocus.addOnAttachStateChangeListener(attachListener)
+                }
                 val start = FocusTarget(
                     x = currentX,
                     y = currentY,
@@ -1213,6 +1241,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
 
         navController.addOnDestinationChangedListener { _: NavController, navDestination: NavDestination, bundle: Bundle? ->
             // Intercept search and add a query
+            updateNavBar(navDestination)
             if (navDestination.matchDestination(R.id.navigation_search) && !nextSearchQuery.isNullOrBlank()) {
                 bundle?.apply {
                     this.putString(SearchFragment.SEARCH_QUERY, nextSearchQuery)
@@ -1231,29 +1260,47 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             .setPopExitAnim(R.anim.nav_pop_exit)
             .setPopUpTo(navController.graph.startDestination, false)
             .build()*/
-        binding?.navView?.setupWithNavController(navController)
-        val navRail = findViewById<NavigationRailView?>(R.id.nav_rail_view)
-        navRail?.setupWithNavController(navController)
-        if (isTvSettings()) {
-            navRail?.background?.alpha = 200
-        } else {
-            navRail?.background?.alpha = 255
 
+        val rippleColor = ColorStateList.valueOf(getResourceColor(R.attr.colorPrimary, 0.1f))
+
+        binding?.navView?.apply {
+            itemRippleColor = rippleColor
+            itemActiveIndicatorColor = rippleColor
+            setupWithNavController(navController)
+            setOnItemSelectedListener { item ->
+                onNavDestinationSelected(
+                    item,
+                    navController
+                )
+            }
         }
-        navRail?.setOnItemSelectedListener { item ->
-            onNavDestinationSelected(
-                item,
-                navController
-            )
-        }
-        binding?.navView?.setOnItemSelectedListener { item ->
-            onNavDestinationSelected(
-                item,
-                navController
-            )
-        }
-        navController.addOnDestinationChangedListener { _, destination, _ ->
-            updateNavBar(destination)
+
+        binding?.navRailView?.apply {
+            itemRippleColor = rippleColor
+            itemActiveIndicatorColor = rippleColor
+            setupWithNavController(navController)
+            if (isTvSettings()) {
+                background?.alpha = 200
+            } else {
+                background?.alpha = 255
+            }
+
+            setOnItemSelectedListener { item ->
+                onNavDestinationSelected(
+                    item,
+                    navController
+                )
+            }
+
+            fun noFocus(view: View) {
+                view.tag = view.context.getString(R.string.tv_no_focus_tag)
+                (view as? ViewGroup)?.let {
+                    for (child in it.children) {
+                        noFocus(child)
+                    }
+                }
+            }
+            noFocus(this)
         }
 
         loadCache()
@@ -1276,11 +1323,6 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             true
         }*/
 
-        val rippleColor = ColorStateList.valueOf(getResourceColor(R.attr.colorPrimary, 0.1f))
-        binding?.navView?.itemRippleColor = rippleColor
-        navRail?.itemRippleColor = rippleColor
-        navRail?.itemActiveIndicatorColor = rippleColor
-        binding?.navView?.itemActiveIndicatorColor = rippleColor
 
         if (!checkWrite()) {
             requestRW()

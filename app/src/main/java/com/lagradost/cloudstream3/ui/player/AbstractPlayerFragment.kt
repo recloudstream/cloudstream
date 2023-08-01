@@ -7,7 +7,6 @@ import android.graphics.drawable.AnimatedVectorDrawable
 import android.media.metrics.PlaybackErrorEvent
 import android.os.Build
 import android.os.Bundle
-import android.support.v4.media.session.MediaSessionCompat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,15 +19,14 @@ import androidx.annotation.LayoutRes
 import androidx.annotation.StringRes
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.media.session.MediaButtonReceiver
 import androidx.preference.PreferenceManager
 import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
-import com.google.android.exoplayer2.ExoPlayer
-import com.google.android.exoplayer2.PlaybackException
-import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector
-import com.google.android.exoplayer2.ui.AspectRatioFrameLayout
-import com.google.android.exoplayer2.ui.PlayerView
-import com.google.android.exoplayer2.ui.SubtitleView
+import androidx.media3.common.PlaybackException
+import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.session.MediaSession
+import androidx.media3.ui.AspectRatioFrameLayout
+import androidx.media3.ui.PlayerView
+import androidx.media3.ui.SubtitleView
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.CommonActivity.canEnterPipMode
@@ -38,6 +36,7 @@ import com.lagradost.cloudstream3.CommonActivity.playerEventListener
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError
+import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.ui.subtitles.SaveCaptionStyle
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment
 import com.lagradost.cloudstream3.utils.AppUtils
@@ -179,15 +178,16 @@ abstract class AbstractPlayerFragment(
         }
 
         canEnterPipMode = isPlayingRightNow && hasPipModeSupport
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && isInPIPMode) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             activity?.let { act ->
-                PlayerPipHelper.updatePIPModeActions(act, isPlayingRightNow)
+                PlayerPipHelper.updatePIPModeActions(act, isPlayingRightNow, player.getAspectRatio())
             }
         }
     }
 
     private var pipReceiver: BroadcastReceiver? = null
     override fun onPictureInPictureModeChanged(isInPictureInPictureMode: Boolean) {
+        super.onPictureInPictureModeChanged(isInPictureInPictureMode)
         try {
             isInPIPMode = isInPictureInPictureMode
             if (isInPictureInPictureMode) {
@@ -210,9 +210,7 @@ abstract class AbstractPlayerFragment(
                     }
                 }
                 val filter = IntentFilter()
-                filter.addAction(
-                    ACTION_MEDIA_CONTROL
-                )
+                filter.addAction(ACTION_MEDIA_CONTROL)
                 activity?.registerReceiver(pipReceiver, filter)
                 val isPlaying = player.getIsPlaying()
                 val isPlayingValue =
@@ -223,7 +221,10 @@ abstract class AbstractPlayerFragment(
                 piphide?.isVisible = true
                 exitedPipMode()
                 pipReceiver?.let {
-                    activity?.unregisterReceiver(it)
+                    // Prevents java.lang.IllegalArgumentException: Receiver not registered
+                    normalSafeApiCall {
+                        activity?.unregisterReceiver(it)
+                    }
                 }
                 activity?.hideSystemUI()
                 this.view?.let { UIHelper.hideKeyboard(it) }
@@ -276,18 +277,21 @@ abstract class AbstractPlayerFragment(
                             gotoNext = true
                         )
                     }
+
                     PlaybackException.ERROR_CODE_REMOTE_ERROR, PlaybackException.ERROR_CODE_IO_BAD_HTTP_STATUS, PlaybackException.ERROR_CODE_TIMEOUT, PlaybackException.ERROR_CODE_IO_NETWORK_CONNECTION_FAILED, PlaybackException.ERROR_CODE_IO_INVALID_HTTP_CONTENT_TYPE -> {
                         showToast(
                             "${ctx.getString(R.string.remote_error)}\n$errorName ($code)\n$msg",
                             gotoNext = true
                         )
                     }
+
                     PlaybackException.ERROR_CODE_DECODING_FAILED, PlaybackErrorEvent.ERROR_AUDIO_TRACK_INIT_FAILED, PlaybackErrorEvent.ERROR_AUDIO_TRACK_OTHER, PlaybackException.ERROR_CODE_AUDIO_TRACK_WRITE_FAILED, PlaybackException.ERROR_CODE_DECODER_INIT_FAILED, PlaybackException.ERROR_CODE_DECODER_QUERY_FAILED -> {
                         showToast(
                             "${ctx.getString(R.string.render_error)}\n$errorName ($code)\n$msg",
                             gotoNext = true
                         )
                     }
+
                     else -> {
                         showToast(
                             "${ctx.getString(R.string.unexpected_error)}\n$errorName ($code)\n$msg",
@@ -296,12 +300,14 @@ abstract class AbstractPlayerFragment(
                     }
                 }
             }
+
             is InvalidFileException -> {
                 showToast(
                     "${ctx.getString(R.string.source_error)}\n${exception.message}",
                     gotoNext = true
                 )
             }
+
             else -> {
                 exception.message?.let {
                     showToast(
@@ -322,15 +328,8 @@ abstract class AbstractPlayerFragment(
     private fun playerUpdated(player: Any?) {
         if (player is ExoPlayer) {
             context?.let { ctx ->
-                val mediaButtonReceiver = ComponentName(ctx, MediaButtonReceiver::class.java)
-                MediaSessionCompat(ctx, "Player", mediaButtonReceiver, null).let { media ->
-                    //media.setCallback(mMediaSessionCallback)
-                    //media.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS or MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS)
-                    val mediaSessionConnector = MediaSessionConnector(media)
-                    mediaSessionConnector.setPlayer(player)
-                    media.isActive = true
-                    mMediaSessionCompat = media
-                }
+                mMediaSession?.release()
+                mMediaSession = MediaSession.Builder(ctx, player).build()
             }
 
             // Necessary for multiple combined videos
@@ -340,8 +339,7 @@ abstract class AbstractPlayerFragment(
         }
     }
 
-    private var mediaSessionConnector: MediaSessionConnector? = null
-    private var mMediaSessionCompat: MediaSessionCompat? = null
+    private var mMediaSession: MediaSession? = null
 
     // this can be used in the future for players other than exoplayer
     //private val mMediaSessionCallback: MediaSessionCompat.Callback = object : MediaSessionCompat.Callback() {
@@ -442,6 +440,7 @@ abstract class AbstractPlayerFragment(
         playerEventListener = null
         keyEventListener = null
         canEnterPipMode = false
+        mMediaSession?.release()
         SubtitlesFragment.applyStyleEvent -= ::onSubStyleChanged
 
         keepScreenOn(false)

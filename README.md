@@ -9,8 +9,9 @@
 + **AdFree**, No ads whatsoever
 + No tracking/analytics
 + Bookmarks
-+ Download and stream movies, tv-shows and anime
++ Phone and TV support
 + Chromecast
++ Extension system for personal customization
 
 ### Supported languages:
 <a href="https://hosted.weblate.org/engage/cloudstream/">

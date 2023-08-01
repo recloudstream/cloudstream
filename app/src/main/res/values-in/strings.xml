@@ -193,7 +193,7 @@
     <string name="queued">antri</string>
     <string name="no_subtitles">Tidak Ada Subtitle</string>
     <string name="default_subtitles">Default</string>
-    <string name="free_storage">Bebas</string>
+    <string name="free_storage">Tersedia</string>
     <string name="used_storage">Terpakai</string>
     <string name="app_storage">Aplikasi</string>
     <!--plural-->
@@ -243,7 +243,7 @@
     <string name="dont_show_again">Jangan tunjukkan lagi</string>
     <string name="skip_update">Skip Update ini</string>
     <string name="update">Update</string>
-    <string name="watch_quality_pref">Kualitas tontonan yang lebih diinginkan (WIFI)</string>
+    <string name="watch_quality_pref">Kualitas nonton yang diinginkan (WiFi)</string>
     <string name="limit_title">Karakter maksimal judul pemutar video</string>
     <string name="limit_title_rez">Resolusi pemutar video</string>
     <string name="video_buffer_size_settings">Ukuran buffer video</string>
@@ -252,7 +252,7 @@
     <string name="video_buffer_clear_settings">Membersihkan cache video dan gambar</string>
     <string name="video_ram_description">Dapat menyebabkan crash jika disetel terlalu tinggi. Jangan diubah jika perangkat anda memiliki jumlah RAM yang rendah, seperti TV Android atau ponsel lama.</string>
     <string name="video_disk_description">Dapat bermasalah pada sistem dengan ruang penyimpanan rendah, seperti Android TV, jika diatur terlalu tinggi.</string>
-    <string name="dns_pref">DNS melalui HTTPS</string>
+    <string name="dns_pref">DNS over HTTPS</string>
     <string name="dns_pref_summary">Berguna untuk melewati blok ISP</string>
     <string name="download_path_pref">Jalur download</string>
     <string name="nginx_url_pref">NGINX server URL</string>
@@ -260,7 +260,7 @@
     <string name="resize_fit">Paskan dengan layar</string>
     <string name="resize_fill">Regang</string>
     <string name="resize_zoom">Zoom</string>
-    <string name="legal_notice">Peringatan</string>
+    <string name="legal_notice">Disclaimer</string>
     <string name="legal_notice_text" translatable="false">Any legal issues regarding the content on this application should be taken up with the actual file hosts and providers themselves as we are not affiliated with them. In case of copyright infringement, please directly contact the responsible parties or the streaming websites. The app is purely for educational and personal use. CloudStream 3 does not host any content on the app, and has no control over what media is put up or taken down. CloudStream 3 functions like any other search engine, such as Google. CloudStream 3 does not host, upload or manage any videos, films or content. It simply crawls, aggregates and displayes links in a convenient, user-friendly interface. It merely scrapes 3rd-party websites that are publicly accessable via any regular web browser. It is the responsibility of user to avoid any actions that might violate the laws governing his/her locality. Use CloudStream 3 at your own risk.</string>
     <string name="category_general">Umum</string>
     <string name="random_button_settings">Tombol Acak</string>
@@ -364,7 +364,7 @@
     <string name="kitsu_settings">Tampilkan poster dari Kitsu</string>
     <string name="automatic_plugin_download_summary">Pasang otomatis semua plugins yang belum terpasang, dari repositori yang telah ditambahkan.</string>
     <string name="live_singular">Siaran langsung</string>
-    <string name="nsfw_singular">17+</string>
+    <string name="nsfw_singular">NSFW</string>
     <string name="example_password">password123</string>
     <string name="category_providers">Penyedia</string>
     <string name="pref_category_cache">Cache</string>
@@ -374,7 +374,7 @@
     <string name="pref_category_defaults">Bawaan</string>
     <string name="pref_category_looks">Tampilan</string>
     <string name="pref_category_ui_features">Fitur</string>
-    <string name="enable_nsfw_on_providers">Tampilkan konten 17+</string>
+    <string name="enable_nsfw_on_providers">Tampilkan konten NSFW</string>
     <string name="play_trailer_button">Putar Cuplikan</string>
     <string name="play_livestream_button">Putar Siaran</string>
     <string name="stream">Siaran</string>
@@ -385,7 +385,7 @@
     <string name="redo_setup_process">Ulang proses pemasangan</string>
     <string name="episodes_range">%d-%d</string>
     <string name="episode_format" formatted="true">%d %s</string>
-    <string name="nsfw">17+</string>
+    <string name="nsfw">NSFW</string>
     <string name="others">Lainnya</string>
     <string name="other_singular">Video</string>
     <string name="add_site_pref">Duplikasi Website</string>
@@ -393,7 +393,7 @@
     <string name="pref_category_links">Tautan</string>
     <string name="pref_category_app_updates">Perbarui Aplikasi</string>
     <string name="pref_category_backup">Cadangkan</string>
-    <string name="pref_category_extensions">Fitur Tambahan</string>
+    <string name="pref_category_extensions">Ekstensi</string>
     <string name="play_with_app_name">Putar di CloudStream</string>
     <string name="pref_filter_search_quality">Sembunyikan kualitas video terpilih di pencarian</string>
     <string name="season_format">%s %d%s</string>
@@ -464,7 +464,7 @@
     <string name="app_layout_subtext">Ubah tampilan aplikasi</string>
     <string name="crash_reporting_title">Laporkan Crash</string>
     <string name="setup_done">Selesai</string>
-    <string name="extensions">Fitur Tambahan</string>
+    <string name="extensions">Ekstensi</string>
     <string name="delete_repository">Hapus Repositori</string>
     <string name="setup_extensions_subtext">Unduh semua situs yang ingin digunakan</string>
     <string name="extension_size">Ukuran</string>
@@ -485,7 +485,7 @@
     <string name="pref_category_actions">Aksi</string>
     <string name="referer">Referer</string>
     <string name="yes">Ya</string>
-    <string name="extension_install_first">Pasang dulu fitur tambahan</string>
+    <string name="extension_install_first">Install ekstensi terlebih dahulu</string>
     <string name="all_languages_preference">Semua Bahasa</string>
     <string name="skip_type_format" formatted="true">Lewati %s</string>
     <string name="skip_type_op">Pembuka</string>
@@ -546,12 +546,12 @@
     <string name="subscription_new">Berlangganan ke %s</string>
     <string name="subscription_deleted">Berhenti berlangganan di %s</string>
     <string name="subscription_episode_released">Episode %d telah rilis!</string>
-    <string name="jsdelivr_proxy">raw.githubusercontent.com Proksi</string>
-    <string name="jsdelivr_enabled">Tidak dapat menjangkau GitHub. Mengaktifkan proksi jsDelivr…</string>
+    <string name="jsdelivr_proxy">Proxy raw.githubusercontent.com</string>
+    <string name="jsdelivr_enabled">Tidak dapat menjangkau GitHub. Mengaktifkan proxy jsDelivr…</string>
     <string name="jsdelivr_proxy_summary">Melewati pemblokiran GitHub menggunakan jsDelivr. Dapat menyebabkan pembaruan tertunda beberapa hari.</string>
     <string name="pref_category_bypass">Bypass ISP</string>
     <string name="revert">Pulihkan</string>
-    <string name="watch_quality_pref_data">Nonton dengan kualitas yang di inginkan (Data Seluler)</string>
+    <string name="watch_quality_pref_data">Kualitas nonton yang diinginkan (Data Seluler)</string>
     <string name="mobile_data">Data seluler</string>
     <string name="help">Bantuan</string>
     <string name="quality_profile_help">Di sini anda dapat mengubah sumber yang diurutkan. Jika video memiliki prioritas lebih tinggi, video tersebut akan muncul lebih tinggi dalam pemilihan sumber. Jumlah prioritas sumber dan prioritas kualitas adalah prioritas video.
@@ -569,4 +569,5 @@
     <string name="profiles">Profil</string>
     <string name="qualities">Kualitas</string>
     <string name="profile_background_des">Latar belakang profil</string>
+    <string name="unable_to_inflate">UI tidak dapat dibuat dengan benar, ini adalah BUG UTAMA dan harus segera dilaporkan %s</string>
 </resources>

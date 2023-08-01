@@ -1,7 +1,7 @@
 package com.lagradost.cloudstream3.utils
 
 import android.net.Uri
-import com.google.android.exoplayer2.util.MimeTypes
+import androidx.media3.common.MimeTypes
 import com.google.android.gms.cast.*
 import com.google.android.gms.cast.framework.CastSession
 import com.google.android.gms.cast.framework.media.RemoteMediaClient

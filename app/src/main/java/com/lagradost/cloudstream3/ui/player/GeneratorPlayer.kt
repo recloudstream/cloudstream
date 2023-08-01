@@ -19,8 +19,8 @@ import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
-import com.google.android.exoplayer2.Format.NO_VALUE
-import com.google.android.exoplayer2.util.MimeTypes
+import androidx.media3.common.Format.NO_VALUE
+import androidx.media3.common.MimeTypes
 import com.hippo.unifile.UniFile
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull

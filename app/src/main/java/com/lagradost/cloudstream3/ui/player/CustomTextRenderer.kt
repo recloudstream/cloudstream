@@ -1,8 +1,8 @@
 package com.lagradost.cloudstream3.ui.player
 
 import android.os.Looper
-import com.google.android.exoplayer2.text.SubtitleDecoderFactory
-import com.google.android.exoplayer2.text.TextOutput
+import androidx.media3.exoplayer.text.SubtitleDecoderFactory
+import androidx.media3.exoplayer.text.TextOutput
 
 class CustomTextRenderer(
     offset: Long,

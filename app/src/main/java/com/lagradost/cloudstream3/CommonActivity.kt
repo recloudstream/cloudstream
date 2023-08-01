@@ -372,7 +372,11 @@ object CommonActivity {
         }
 
         // if cant focus but visible then break and let android decide
-        if (!next.isFocusable && next.isShown) return null
+        // the exception if is the view is a parent and has children that wants focus
+        val hasChildrenThatWantsFocus = (next as? ViewGroup)?.let { parent ->
+            parent.descendantFocusability == ViewGroup.FOCUS_AFTER_DESCENDANTS && parent.childCount > 0
+        } ?: false
+        if (!next.isFocusable && next.isShown && !hasChildrenThatWantsFocus) return null
 
         // if not shown then continue because we will "skip" over views to get to a replacement
         if (!next.isShown) return getNextFocus(act, next, direction, depth + 1)
