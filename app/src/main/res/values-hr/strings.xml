@@ -48,7 +48,7 @@
     <string name="result_share">Podijeli</string>
     <string name="result_open_in_browser">Otvori u pregledniku</string>
     <string name="skip_loading">Preskoči učitavanje</string>
-    <string name="loading">Učitavanje...</string>
+    <string name="loading">Učitavanje …</string>
     <string name="type_watching">Gledam</string>
     <string name="type_on_hold">Na čekanju</string>
     <string name="type_completed">Dovršeno</string>
@@ -306,7 +306,7 @@
     <string name="enable_nsfw_on_providers">Omogući NSFW na podržanim pružateljima usluga</string>
     <string name="subtitles_encoding">Kodiranje titlova</string>
     <string name="category_providers">Pružatelji usluga</string>
-    <string name="category_ui">Izgled</string>
+    <string name="category_ui">Respored</string>
     <string name="automatic">Auto</string>
     <string name="tv_layout">TV izgled</string>
     <string name="phone_layout">Izgled za telefone</string>
@@ -495,7 +495,7 @@
     <string name="pref_category_gestures">Geste</string>
     <string name="pref_category_player_features">Značajke playera</string>
     <string name="pref_category_subtitles">Titlovi</string>
-    <string name="pref_category_player_layout">Izgled</string>
+    <string name="pref_category_player_layout">Respored</string>
     <string name="pref_category_defaults">Zadane postavke</string>
     <string name="pref_category_looks">Izgled</string>
     <string name="pref_category_ui_features">Značajke</string>
@@ -554,4 +554,15 @@
     <string name="jsdelivr_enabled">Neuspješno dohvaćanje GitHuba. Uključuje se jsdelivr proxy …</string>
     <string name="jsdelivr_proxy_summary">Zaobilazi blokiranje GitHuba koristeći jsdelivr. Može odgoditi ažuriranja za nekoliko dana.</string>
     <string name="watch_quality_pref_data">Preferirana kvaliteta gledanja (podatkovna mobilna mreža)</string>
+    <string name="profile_number">Profil %d</string>
+    <string name="wifi">Wi-Fi</string>
+    <string name="mobile_data">Mobilni podaci</string>
+    <string name="set_default">Postavi standardnu vrijednost</string>
+    <string name="use">Koristi</string>
+    <string name="edit">Uredi</string>
+    <string name="profiles">Profili</string>
+    <string name="help">Pomoć</string>
+    <string name="qualities">Kvalitete</string>
+    <string name="profile_background_des">Pozadina profila</string>
+    <string name="unable_to_inflate">Nije bilo moguće ispravno izraditi korisničko sučelje. Ovo je ZNAČAJNA GREŠKA i treba se odmah prijaviti %s</string>
 </resources>
