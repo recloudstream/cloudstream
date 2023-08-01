@@ -44,10 +44,10 @@
     
     <!-- MainAPI enum: AutoDownloadMode -->
     <array name="auto_download_plugin">
-        <item>Disable</item>
-        <item>Filter by Preferred Language</item>
-        <item>All</item>
-        <item>NSFW Only</item>
+        <item>@string/disable</item>
+        <item>@string/subtitles_filter_lang</item>
+        <item>@string/all</item>
+        <item>@string/nsfw</item>
     </array>
 
     <array name="player_pref_names">
