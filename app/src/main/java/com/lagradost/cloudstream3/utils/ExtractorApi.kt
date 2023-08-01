@@ -370,6 +370,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     Gofile(),
     Vicloud(),
     Uservideo(),
+    Userscloud(),
 
     Movhide(),
     StreamhideCom(),
