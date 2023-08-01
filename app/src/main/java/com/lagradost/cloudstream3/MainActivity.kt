@@ -37,10 +37,10 @@ import androidx.navigation.NavOptions
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import androidx.preference.PreferenceManager
+import androidx.recyclerview.widget.RecyclerView
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.google.android.gms.cast.framework.CastButtonFactory
 import com.google.android.gms.cast.framework.CastContext
 import com.google.android.gms.cast.framework.Session
 import com.google.android.gms.cast.framework.SessionManager
@@ -63,10 +63,10 @@ import com.lagradost.cloudstream3.CommonActivity.onDialogDismissedEvent
 import com.lagradost.cloudstream3.CommonActivity.onUserLeaveHint
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.CommonActivity.updateLocale
-import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.databinding.ActivityMainBinding
 import com.lagradost.cloudstream3.databinding.ActivityMainTvBinding
 import com.lagradost.cloudstream3.databinding.BottomResultviewPreviewBinding
+import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.debugAssert
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
@@ -780,7 +780,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         return ret
     }
 
-    private var binding: ActivityMainBinding? = null
+    var binding: ActivityMainBinding? = null
 
     object TvFocus {
         data class FocusTarget(
@@ -808,10 +808,18 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         var focusOutline: WeakReference<View> = WeakReference(null)
         var lastFocus: WeakReference<View> = WeakReference(null)
         private val layoutListener: View.OnLayoutChangeListener =
-            View.OnLayoutChangeListener { v, _, _, _, _, _, _, _, _ ->
-                updateFocusView(
-                    v, same = true
-                )
+            View.OnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
+                // shitty fix for layouts
+                lastFocus.get()?.apply {
+                    updateFocusView(
+                        this, same = true
+                    )
+                    postDelayed({
+                        updateFocusView(
+                            lastFocus.get(), same = false
+                        )
+                    }, 300)
+                }
             }
         private val attachListener: View.OnAttachStateChangeListener =
             object : View.OnAttachStateChangeListener {
@@ -843,9 +851,12 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         @MainThread
         fun updateFocusView(newFocus: View?, same: Boolean = false) {
             val focusOutline = focusOutline.get() ?: return
-            lastFocus.get()?.apply {
-                removeOnLayoutChangeListener(layoutListener)
-                removeOnAttachStateChangeListener(attachListener)
+            val lastView = lastFocus.get()
+            val exactlyTheSame = lastView == newFocus && newFocus != null
+            if (!exactlyTheSame) {
+                lastView?.removeOnLayoutChangeListener(layoutListener)
+                lastView?.removeOnAttachStateChangeListener(attachListener)
+                (lastView?.parent as? RecyclerView)?.removeOnLayoutChangeListener(layoutListener)
             }
 
             val wasGone = focusOutline.isGone
@@ -856,6 +867,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
 
             if (newFocus != null) {
                 lastFocus = WeakReference(newFocus)
+
 
                 val out = IntArray(2)
                 newFocus.getLocationInWindow(out)
@@ -871,10 +883,11 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                 if (screenX == 0 && screenY == 0) {
                     focusOutline.isVisible = false
                 }
-
-                newFocus.addOnLayoutChangeListener(layoutListener)
-                newFocus.addOnAttachStateChangeListener(attachListener)
-
+                if (!exactlyTheSame) {
+                    (newFocus.parent as? RecyclerView)?.addOnLayoutChangeListener(layoutListener)
+                    newFocus.addOnLayoutChangeListener(layoutListener)
+                    newFocus.addOnAttachStateChangeListener(attachListener)
+                }
                 val start = FocusTarget(
                     x = currentX,
                     y = currentY,

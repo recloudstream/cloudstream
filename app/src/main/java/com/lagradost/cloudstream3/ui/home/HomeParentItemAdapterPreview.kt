@@ -14,11 +14,12 @@ import androidx.viewbinding.ViewBinding
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipDrawable
-import com.google.android.material.navigationrail.NavigationRailView
 import com.lagradost.cloudstream3.APIHolder.getId
 import com.lagradost.cloudstream3.AcraApplication.Companion.getActivity
+import com.lagradost.cloudstream3.CommonActivity.activity
 import com.lagradost.cloudstream3.HomePageList
 import com.lagradost.cloudstream3.LoadResponse
+import com.lagradost.cloudstream3.MainActivity
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.SearchResponse
 import com.lagradost.cloudstream3.databinding.FragmentHomeHeadBinding
@@ -467,24 +468,18 @@ class HomeParentItemAdapterPreview(
                 }
 
                 homePreviewHiddenNextFocus.setOnFocusChangeListener { _, hasFocus ->
-                    if (hasFocus) {
-                        previewViewpager.setCurrentItem(previewViewpager.currentItem + 1, true)
-                        homePreviewInfoBtt.requestFocus()
-                    }
+                    if (!hasFocus) return@setOnFocusChangeListener
+                    previewViewpager.setCurrentItem(previewViewpager.currentItem + 1, true)
+                    homePreviewInfoBtt.requestFocus()
                 }
 
                 homePreviewHiddenPrevFocus.setOnFocusChangeListener { _, hasFocus ->
-                    if (hasFocus) {
-                        previewViewpager.apply {
-                            if (currentItem <= 0) {
-                                findViewById<NavigationRailView?>(R.id.nav_rail_view)?.menu?.getItem(
-                                    0
-                                )?.actionView?.requestFocus()
-                            } else {
-                                setCurrentItem(currentItem - 1, true)
-                                binding.homePreviewPlayBtt.requestFocus()
-                            }
-                        }
+                    if (!hasFocus) return@setOnFocusChangeListener
+                    if (previewViewpager.currentItem <= 0) {
+                        (activity as? MainActivity)?.binding?.navRailView?.requestFocus()
+                    } else {
+                        previewViewpager.setCurrentItem(previewViewpager.currentItem - 1, true)
+                        binding.homePreviewPlayBtt.requestFocus()
                     }
                 }
             }
