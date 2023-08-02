@@ -37,6 +37,7 @@ import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
+import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.unixTimeMs
 import com.lagradost.cloudstream3.ui.subtitles.SaveCaptionStyle
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment
 import com.lagradost.cloudstream3.utils.AppUtils
@@ -329,7 +330,10 @@ abstract class AbstractPlayerFragment(
         if (player is ExoPlayer) {
             context?.let { ctx ->
                 mMediaSession?.release()
-                mMediaSession = MediaSession.Builder(ctx, player).build()
+                mMediaSession = MediaSession.Builder(ctx, player)
+                    // Ensure unique ID for concurrent players
+                    .setId(unixTimeMs.toString())
+                    .build()
             }
 
             // Necessary for multiple combined videos
@@ -441,6 +445,7 @@ abstract class AbstractPlayerFragment(
         keyEventListener = null
         canEnterPipMode = false
         mMediaSession?.release()
+        mMediaSession = null
         SubtitlesFragment.applyStyleEvent -= ::onSubStyleChanged
 
         keepScreenOn(false)
