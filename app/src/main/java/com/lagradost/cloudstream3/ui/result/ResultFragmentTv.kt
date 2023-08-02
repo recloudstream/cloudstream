@@ -195,7 +195,7 @@ class ResultFragmentTv : Fragment() {
                 }
             })
         }
-        this.animate().translationX(if (turnVisible) 0f else if(isRtl()) -100.0f else 100f).apply {
+        this.animate().translationX(if (turnVisible) 0f else if (isRtl()) -100.0f else 100f).apply {
             duration = 200
             interpolator = DecelerateInterpolator()
         }
@@ -205,7 +205,7 @@ class ResultFragmentTv : Fragment() {
         binding?.apply {
             episodesShadow.fade(show)
             episodeHolderTv.fade(show)
-            if(episodesShadow.isRtl()) {
+            if (episodesShadow.isRtl()) {
                 episodesShadow.scaleX = -1.0f
                 episodesShadow.scaleY = -1.0f
             } else {
@@ -263,7 +263,7 @@ class ResultFragmentTv : Fragment() {
                 toggleEpisodes(!episodeHolderTv.isVisible)
             }
 
-          //  resultEpisodes.onFocusChangeListener = leftListener
+            //  resultEpisodes.onFocusChangeListener = leftListener
 
             redirectToPlay.setOnFocusChangeListener { _, hasFocus ->
                 if (!hasFocus) return@setOnFocusChangeListener
@@ -297,8 +297,8 @@ class ResultFragmentTv : Fragment() {
                         resultSeasonSelection,
                         resultRangeSelection,
                         resultDubSelection,
+                        resultEpisodes,
                         resultPlayTrailer,
-                        resultEpisodes
                     )
                     for (requestView in views) {
                         if (!requestView.isShown) continue
@@ -349,7 +349,7 @@ class ResultFragmentTv : Fragment() {
                     ArrayList(),
                     resultRecommendationsList,
                 ) { callback ->
-                    if(callback.action == SEARCH_ACTION_FOCUSED)
+                    if (callback.action == SEARCH_ACTION_FOCUSED)
                         toggleEpisodes(false)
                     else
                         SearchHelper.handleSearchClickCallback(callback)
