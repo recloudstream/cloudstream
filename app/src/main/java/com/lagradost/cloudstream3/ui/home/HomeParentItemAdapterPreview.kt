@@ -14,6 +14,7 @@ import androidx.viewbinding.ViewBinding
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipDrawable
+import com.google.android.material.chip.ChipGroup
 import com.lagradost.cloudstream3.APIHolder.getId
 import com.lagradost.cloudstream3.AcraApplication.Companion.getActivity
 import com.lagradost.cloudstream3.CommonActivity.activity
@@ -416,6 +417,7 @@ class HomeParentItemAdapterPreview(
                             isChecked = checked.contains(watch)
                         }
                     }
+                    toggleListHolder?.isGone = visible.isEmpty()
                 }
             } ?: debugException { "Expected findViewTreeLifecycleOwner" }
         }
@@ -427,6 +429,8 @@ class HomeParentItemAdapterPreview(
             Pair(itemView.findViewById(R.id.home_type_on_hold_btt), WatchType.ONHOLD),
             Pair(itemView.findViewById(R.id.home_plan_to_watch_btt), WatchType.PLANTOWATCH),
         )
+
+        private val toggleListHolder : ChipGroup? = itemView.findViewById(R.id.home_type_holder)
 
         init {
             previewViewpager.setPageTransformer(HomeScrollTransformer())
