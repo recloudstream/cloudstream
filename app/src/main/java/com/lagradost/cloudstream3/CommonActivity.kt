@@ -301,7 +301,8 @@ object CommonActivity {
     private fun localLook(from: View, id: Int): View? {
         if (id == NO_ID) return null
         var currentLook: View = from
-        while (true) {
+        // limit to 15 look depth
+        for (i in 0..15) {
             currentLook.findViewById<View?>(id)?.let { return it }
             currentLook = (currentLook.parent as? View) ?: break
         }
@@ -359,17 +360,13 @@ object CommonActivity {
             // if not specified then use forward id
             nextId = view.nextFocusForwardId
             // if view is still not found to next focus then return and let android decide
-            if (nextId == NO_ID) return null
+            if (nextId == NO_ID)
+                return null
         }
 
         var next = act.findViewById<View?>(nextId) ?: return null
 
         next = localLook(view, nextId) ?: next
-
-        var currentLook: View = view
-        while (currentLook.findViewById<View?>(nextId)?.also { next = it } == null) {
-            currentLook = (currentLook.parent as? View) ?: break
-        }
 
         // if cant focus but visible then break and let android decide
         // the exception if is the view is a parent and has children that wants focus
@@ -520,7 +517,7 @@ object CommonActivity {
 
                 else -> null
             }
-
+           // println("NEXT FOCUS : $nextView")
             if (nextView != null) {
                 nextView.requestFocus()
                 keyEventListener?.invoke(Pair(event, true))
