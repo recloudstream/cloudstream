@@ -7,16 +7,14 @@ import android.os.Looper
 import android.util.Log
 import android.util.Rational
 import android.widget.FrameLayout
-import androidx.media3.common.C
-import androidx.preference.PreferenceManager
 import androidx.media3.common.C.*
 import androidx.media3.common.Format
 import androidx.media3.common.MediaItem
-import androidx.media3.common.TrackSelectionOverride
 import androidx.media3.common.MimeTypes
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.common.TrackGroup
+import androidx.media3.common.TrackSelectionOverride
 import androidx.media3.common.Tracks
 import androidx.media3.common.VideoSize
 import androidx.media3.database.StandaloneDatabaseProvider
@@ -30,6 +28,7 @@ import androidx.media3.datasource.cache.SimpleCache
 import androidx.media3.datasource.okhttp.OkHttpDataSource
 import androidx.media3.exoplayer.DefaultLoadControl
 import androidx.media3.exoplayer.DefaultRenderersFactory
+import androidx.media3.exoplayer.DefaultRenderersFactory.EXTENSION_RENDERER_MODE_ON
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.SeekParameters
 import androidx.media3.exoplayer.source.ClippingMediaSource
@@ -41,6 +40,7 @@ import androidx.media3.exoplayer.text.TextRenderer
 import androidx.media3.exoplayer.trackselection.DefaultTrackSelector
 import androidx.media3.exoplayer.trackselection.TrackSelector
 import androidx.media3.ui.SubtitleView
+import androidx.preference.PreferenceManager
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
@@ -49,8 +49,8 @@ import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.ui.subtitles.SaveCaptionStyle
-import com.lagradost.cloudstream3.utils.EpisodeSkip
 import com.lagradost.cloudstream3.utils.AppUtils.isUsingMobileData
+import com.lagradost.cloudstream3.utils.EpisodeSkip
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.ExtractorLinkPlayList
 import com.lagradost.cloudstream3.utils.ExtractorUri
@@ -397,7 +397,7 @@ class CS3IPlayer : IPlayer {
             if (subtitle == null) {
                 trackSelector.setParameters(
                     trackSelector.buildUponParameters()
-                        .setPreferredTextLanguage(null)
+                        .setTrackTypeDisabled(TRACK_TYPE_TEXT, true)
                         .clearOverridesOfType(TRACK_TYPE_TEXT)
                 )
             } else {
@@ -415,6 +415,7 @@ class CS3IPlayer : IPlayer {
                                 .apply {
                                     val track = getTextTrack(subtitle.getId())
                                     if (track != null) {
+                                        setTrackTypeDisabled(TRACK_TYPE_TEXT, false)
                                         setOverrideForType(
                                             TrackSelectionOverride(
                                                 track.first,
@@ -662,12 +663,7 @@ class CS3IPlayer : IPlayer {
 
         private fun getTrackSelector(context: Context, maxVideoHeight: Int?): TrackSelector {
             val trackSelector = DefaultTrackSelector(context)
-            trackSelector.parameters = DefaultTrackSelector.ParametersBuilder(context)
-                // .setRendererDisabled(C.TRACK_TYPE_VIDEO, true)
-                .setRendererDisabled(C.TRACK_TYPE_TEXT, true)
-                // Experimental, I think this causes issues with audio track init 5001
-//                .setTunnelingEnabled(true)
-                .setDisabledTextTrackSelectionFlags(C.TRACK_TYPE_TEXT)
+            trackSelector.parameters = trackSelector.buildUponParameters()
                 // This will not force higher quality videos to fail
                 // but will make the m3u8 pick the correct preferred
                 .setMaxVideoSize(Int.MAX_VALUE, maxVideoHeight ?: Int.MAX_VALUE)
@@ -701,9 +697,9 @@ class CS3IPlayer : IPlayer {
                 ExoPlayer.Builder(context)
                     .setRenderersFactory { eventHandler, videoRendererEventListener, audioRendererEventListener, textRendererOutput, metadataRendererOutput ->
                         DefaultRenderersFactory(context).apply {
-//                            setEnableDecoderFallback(true)
+                            setEnableDecoderFallback(true)
                             // Enable Ffmpeg extension
-//                            setExtensionRendererMode(EXTENSION_RENDERER_MODE_ON)
+                            setExtensionRendererMode(EXTENSION_RENDERER_MODE_ON)
                         }.createRenderers(
                             eventHandler,
                             videoRendererEventListener,
