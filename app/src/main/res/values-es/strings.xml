@@ -547,4 +547,7 @@
     <string name="qualities">Calidades</string>
     <string name="profile_background_des">Perfil del fondo</string>
     <string name="unable_to_inflate">La interfaz de usuario no se ha podido crear correctamente, se trata de un GRAN BUG y debe ser reportado inmediatamente %s</string>
+    <string name="automatic_plugin_download_mode_title">Selecciona el modo para filtrar la descarga de los plugins</string>
+    <string name="disable">Desactivar</string>
+    <string name="default_account">\@string/default_subtitles</string>
 </resources>
