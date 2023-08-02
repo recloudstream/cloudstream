@@ -165,7 +165,7 @@ dependencies {
 
     // implementation("androidx.leanback:leanback-paging:1.1.0-alpha09")
 
-    // Exoplayer
+    // Media 3
     implementation("androidx.media3:media3-common:1.1.0")
     implementation("androidx.media3:media3-exoplayer:1.1.0")
     implementation("androidx.media3:media3-datasource-okhttp:1.1.0")
@@ -174,10 +174,8 @@ dependencies {
     implementation("androidx.media3:media3-cast:1.1.0")
     implementation("androidx.media3:media3-exoplayer-hls:1.1.0")
     implementation("androidx.media3:media3-exoplayer-dash:1.1.0")
-
-
-    // Use the Jellyfin ffmpeg extension for easy ffmpeg audio decoding in exoplayer. Thank you Jellyfin <3
-//    implementation("org.jellyfin.exoplayer:exoplayer-ffmpeg-extension:2.18.2+1")
+    // Custom ffmpeg extension for audio codecs
+    implementation("com.github.recloudstream:media-ffmpeg:1.1.0")
 
     //implementation("com.google.android.exoplayer:extension-leanback:2.14.0")
 
