@@ -571,4 +571,6 @@
 \n
 \nPOZNÁMKA: Pokud je součet 10 nebo vyšší, přehrávač automaticky přeskočí načítání při načtení daného odkazu!</string>
     <string name="unable_to_inflate">Nepodařilo se správně vytvořit rozhraní. Toto je VÁŽNÁ CHYBA, kterou je potřeba ihned nahlásit %s</string>
+    <string name="disable">Zakázat</string>
+    <string name="automatic_plugin_download_mode_title">Výběr režimu pro filtrování stahování doplňků</string>
 </resources>

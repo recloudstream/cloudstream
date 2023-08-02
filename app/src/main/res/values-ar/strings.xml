@@ -579,4 +579,6 @@
     <string name="qualities">النوعيات</string>
     <string name="profile_background_des">خلفية الملف الشخصي</string>
     <string name="unable_to_inflate">تعذر إنشاء واجهة المستخدم بشكل صحيح ، وهذا خطأ كبير ويجب الإبلاغ عنه على الفور %s</string>
+    <string name="automatic_plugin_download_mode_title">حدد الوضع لتصفية تنزيل المكونات الإضافية</string>
+    <string name="disable">تعطيل</string>
 </resources>
