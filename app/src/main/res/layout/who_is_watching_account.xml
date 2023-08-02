@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/card_view"
+    android:layout_width="100dp"
+    android:layout_height="100dp"
+    android:animateLayoutChanges="true"
+    android:backgroundTint="?attr/primaryGrayBackground"
+    android:foreground="?attr/selectableItemBackgroundBorderless"
+    app:cardCornerRadius="@dimen/rounded_image_radius"
+    android:layout_margin="5dp"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintDimensionRatio="1"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintHeight_percent="0.4"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent">
+
+    <ImageView
+        android:id="@+id/profile_image_background"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:alpha="0.4"
+        android:contentDescription="@string/profile_background_des"
+        android:scaleType="centerCrop" />
+
+    <View
+        android:id="@+id/outline"
+        tools:visibility="visible"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/outline_card"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/profile_text"
+        tools:text="@string/mobile_data"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:padding="10dp"
+        android:textSize="16sp" />
+
+</androidx.cardview.widget.CardView>

@@ -1252,7 +1252,6 @@ class GeneratorPlayer : FullScreenPlayer() {
     private fun displayTimeStamp(show: Boolean) {
         if (timestampShowState == show) return
         skipIndex++
-        println("displayTimeStamp = $show")
         timestampShowState = show
         playerBinding?.skipChapterButton?.apply {
             val showWidth = 170.toPx
@@ -1294,7 +1293,6 @@ class GeneratorPlayer : FullScreenPlayer() {
 
     override fun onTimestamp(timestamp: EpisodeSkip.SkipStamp?) {
         if (timestamp != null) {
-            println("timestamp: $timestamp")
             playerBinding?.skipChapterButton?.setText(timestamp.uiText)
             displayTimeStamp(true)
             val currentIndex = skipIndex

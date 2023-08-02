@@ -40,6 +40,7 @@ import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showOptionSelectStringRes
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
+import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbarMargin
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbarView
 import com.lagradost.cloudstream3.utils.UIHelper.setImage
 
@@ -250,6 +251,11 @@ class HomeParentItemAdapterPreview(
         private var bookmarkRecyclerView: RecyclerView =
             itemView.findViewById(R.id.home_bookmarked_child_recyclerview)
 
+        private var homeAccount: View? =
+            itemView.findViewById(R.id.home_switch_account)
+
+        private var topPadding : View? = itemView.findViewById(R.id.home_padding)
+
         private val homeNonePadding: View = itemView.findViewById(R.id.home_none_padding)
 
         private val previewCallback: ViewPager2.OnPageChangeCallback =
@@ -432,6 +438,8 @@ class HomeParentItemAdapterPreview(
             resumeRecyclerView.setLinearListLayout()
             bookmarkRecyclerView.setLinearListLayout()
 
+            fixPaddingStatusbarMargin(topPadding)
+
             for ((chip, watch) in toggleList) {
                 chip.isChecked = false
                 chip.setOnCheckedChangeListener { _, isChecked ->
@@ -443,6 +451,10 @@ class HomeParentItemAdapterPreview(
                         viewModel.loadStoredData(emptySet())
                     }
                 }
+            }
+
+            homeAccount?.setOnClickListener { v ->
+                DataStoreHelper.showWhoIsWatching(v?.context ?: return@setOnClickListener)
             }
 
             (binding as? FragmentHomeHeadTvBinding)?.apply {
@@ -485,8 +497,6 @@ class HomeParentItemAdapterPreview(
             }
 
             (binding as? FragmentHomeHeadBinding)?.apply {
-                fixPaddingStatusbar(binding.homeSearch)
-
                 homeSearch.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
                     override fun onQueryTextSubmit(query: String): Boolean {
                         viewModel.queryTextSubmit(query)

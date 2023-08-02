@@ -1,6 +1,14 @@
 package com.lagradost.cloudstream3.utils
 
+import android.content.Context
+import android.content.DialogInterface
+import android.text.Editable
+import android.view.LayoutInflater
+import androidx.appcompat.app.AlertDialog
+import androidx.core.view.isGone
+import androidx.core.widget.doOnTextChanged
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.APIHolder.unixTimeMS
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
@@ -8,10 +16,20 @@ import com.lagradost.cloudstream3.AcraApplication.Companion.getKeys
 import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.removeKeys
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
+import com.lagradost.cloudstream3.CommonActivity.showToast
+import com.lagradost.cloudstream3.databinding.WhoIsWatchingAccountEditBinding
+import com.lagradost.cloudstream3.databinding.WhoIsWatchingBinding
+import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.syncproviders.AccountManager
 import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.ui.WatchType
+import com.lagradost.cloudstream3.ui.WhoIsWatchingAdapter
+import com.lagradost.cloudstream3.ui.result.UiImage
 import com.lagradost.cloudstream3.ui.result.VideoWatchState
+import com.lagradost.cloudstream3.ui.result.setImage
+import com.lagradost.cloudstream3.ui.result.setLinearListLayout
+import com.lagradost.cloudstream3.utils.AppUtils.setDefaultFocus
+import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 
 const val VIDEO_POS_DUR = "video_pos_dur"
 const val VIDEO_WATCH_STATE = "video_watch_state"
@@ -26,6 +44,197 @@ const val RESULT_SEASON = "result_season"
 const val RESULT_DUB = "result_dub"
 
 object DataStoreHelper {
+    // be aware, don't change the index of these as Account uses the index for the art
+    private val profileImages = arrayOf(
+        R.drawable.profile_bg_dark_blue,
+        R.drawable.profile_bg_blue,
+        R.drawable.profile_bg_orange,
+        R.drawable.profile_bg_pink,
+        R.drawable.profile_bg_purple,
+        R.drawable.profile_bg_red,
+        R.drawable.profile_bg_teal
+    )
+
+    data class Account(
+        @JsonProperty("keyIndex")
+        val keyIndex: Int,
+        @JsonProperty("name")
+        val name: String,
+        @JsonProperty("customImage")
+        val customImage: String? = null,
+        @JsonProperty("defaultImageIndex")
+        val defaultImageIndex: Int,
+    ) {
+        val image: UiImage
+            get() = customImage?.let { UiImage.Image(it) } ?: UiImage.Drawable(
+                profileImages.getOrNull(defaultImageIndex) ?: profileImages.first()
+            )
+    }
+
+    const val TAG = "data_store_helper"
+    private var accounts by PreferenceDelegate("$TAG/account", arrayOf<Account>())
+    var selectedKeyIndex by PreferenceDelegate("$TAG/account_key_index", 0)
+    val currentAccount: String get() = selectedKeyIndex.toString()
+
+    private fun setAccount(account: Account) {
+        selectedKeyIndex = account.keyIndex
+        showToast(account.name)
+        MainActivity.bookmarksUpdatedEvent(true)
+    }
+
+    private fun editAccount(context: Context, account: Account, isNewAccount: Boolean) {
+        val binding =
+            WhoIsWatchingAccountEditBinding.inflate(LayoutInflater.from(context), null, false)
+        val builder =
+            AlertDialog.Builder(context, R.style.AlertDialogCustom)
+                .setView(binding.root)
+
+        var currentEditAccount = account
+        val dialog = builder.show()
+        binding.accountName.text = Editable.Factory.getInstance()?.newEditable(account.name)
+        binding.accountName.doOnTextChanged { text, _, _, _ ->
+            currentEditAccount = currentEditAccount.copy(name = text?.toString() ?: "")
+        }
+
+        binding.deleteBtt.isGone = isNewAccount
+        binding.deleteBtt.setOnClickListener {
+            val dialogClickListener =
+                DialogInterface.OnClickListener { _, which ->
+                    when (which) {
+                        DialogInterface.BUTTON_POSITIVE -> {
+                            // remove all keys as well as the account, note that default wont get
+                            // deleted from currentAccounts, as it is not part of "accounts",
+                            // but the watch keys will
+                            removeKeys(account.keyIndex.toString())
+                            val currentAccounts = accounts.toMutableList()
+                            currentAccounts.removeIf { it.keyIndex == account.keyIndex }
+                            accounts = currentAccounts.toTypedArray()
+
+                            // update UI
+                            setAccount(getDefaultAccount(context))
+                            MainActivity.bookmarksUpdatedEvent(true)
+                            dialog?.dismissSafe()
+                        }
+
+                        DialogInterface.BUTTON_NEGATIVE -> {}
+                    }
+                }
+
+            try {
+                AlertDialog.Builder(context).setTitle(R.string.delete).setMessage(
+                    context.getString(R.string.delete_message).format(
+                        currentEditAccount.name
+                    )
+                )
+                    .setPositiveButton(R.string.delete, dialogClickListener)
+                    .setNegativeButton(R.string.cancel, dialogClickListener)
+                    .show().setDefaultFocus()
+            } catch (t: Throwable) {
+                logError(t)
+                // ye you somehow fucked up formatting did you?
+            }
+        }
+
+        binding.cancelBtt.setOnClickListener {
+            dialog?.dismissSafe()
+        }
+
+        binding.profilePic.setImage(account.image)
+        binding.profilePic.setOnClickListener {
+            // rolls the image forwards once
+            currentEditAccount =
+                currentEditAccount.copy(defaultImageIndex = (currentEditAccount.defaultImageIndex + 1) % profileImages.size)
+            binding.profilePic.setImage(currentEditAccount.image)
+        }
+
+        binding.applyBtt.setOnClickListener {
+            val currentAccounts = accounts.toMutableList()
+
+            val overrideIndex =
+                currentAccounts.indexOfFirst { it.keyIndex == currentEditAccount.keyIndex }
+
+            // if an account is found that has the same keyIndex then override that one, if not then append it
+            if (overrideIndex != -1) {
+                currentAccounts[overrideIndex] = currentEditAccount
+            } else {
+                currentAccounts.add(currentEditAccount)
+            }
+
+            // set the new default account as well as add the key for the new account
+            setAccount(currentEditAccount)
+            accounts = currentAccounts.toTypedArray()
+
+            dialog.dismissSafe()
+        }
+    }
+
+    private fun getDefaultAccount(context: Context): Account {
+        return accounts.let { currentAccounts ->
+            currentAccounts.getOrNull(currentAccounts.indexOfFirst { it.keyIndex == 0 }) ?: Account(
+                keyIndex = 0,
+                name = context.getString(R.string.default_account),
+                defaultImageIndex = 0
+            )
+        }
+    }
+
+    fun showWhoIsWatching(context: Context) {
+        val binding: WhoIsWatchingBinding = WhoIsWatchingBinding.inflate(
+            LayoutInflater.from(context)
+        )
+
+        val showAccount = accounts.toMutableList().apply {
+            val item = getDefaultAccount(context)
+            remove(item)
+            add(0, item)
+        }
+
+        val builder =
+            BottomSheetDialog(context)
+        builder.setContentView(binding.root)
+        val accountName = context.getString(R.string.account)
+
+        binding.profilesRecyclerview.setLinearListLayout(isHorizontal = true)
+        binding.profilesRecyclerview.adapter = WhoIsWatchingAdapter(
+            selectCallBack = { account ->
+                setAccount(account)
+                builder.dismissSafe()
+            },
+            addAccountCallback = {
+                val currentAccounts = accounts
+                val remainingImages =
+                    profileImages.toSet() - currentAccounts.filter { it.customImage == null }
+                        .mapNotNull { profileImages.getOrNull(it.defaultImageIndex) }.toSet()
+                val image =
+                    profileImages.indexOf(remainingImages.randomOrNull() ?: profileImages.random())
+                val keyIndex = (currentAccounts.maxOfOrNull { it.keyIndex } ?: 0) + 1
+
+                // create a new dummy account
+                editAccount(
+                    context,
+                    Account(
+                        keyIndex = keyIndex,
+                        name = "$accountName $keyIndex",
+                        customImage = null,
+                        defaultImageIndex = image
+                    ), isNewAccount = true
+                )
+                builder.dismissSafe()
+            },
+            editCallBack = { account ->
+                editAccount(
+                    context, account, isNewAccount = false
+                )
+                builder.dismissSafe()
+            }
+        ).apply {
+            submitList(showAccount)
+        }
+
+        builder.show()
+    }
+
+
     data class PosDur(
         @JsonProperty("position") val position: Long,
         @JsonProperty("duration") val duration: Long
@@ -117,7 +326,6 @@ object DataStoreHelper {
     /**
      * A datastore wide account for future implementations of a multiple account system
      **/
-    var currentAccount: String = "0" //TODO ACCOUNT IMPLEMENTATION
 
     fun getAllWatchStateIds(): List<Int>? {
         val folder = "$currentAccount/$RESULT_WATCH_STATE"

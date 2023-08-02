@@ -38,16 +38,21 @@
         <LinearLayout
             android:id="@+id/home_padding"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_height="50dp"
+            android:gravity="center"
+            android:orientation="horizontal">
 
             <androidx.appcompat.widget.SearchView
                 android:id="@+id/home_search"
+                android:nextFocusRight="@id/home_switch_account"
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:layout_gravity="start"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical"
+                android:padding="0dp"
+                android:layout_marginEnd="50dp"
                 android:editTextColor="@color/white"
-                android:gravity="start"
+                android:gravity="center_vertical"
+
                 android:iconifiedByDefault="true"
                 android:textColor="@color/white"
                 android:textColorHint="@color/white"
@@ -57,6 +62,19 @@
                 app:queryHint="@string/search_hint"
                 app:searchIcon="@drawable/search_icon"
                 tools:ignore="RtlSymmetry" />
+
+            <ImageView
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+
+                android:nextFocusLeft="@id/home_search"
+                android:id="@+id/home_switch_account"
+                android:layout_width="50dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_marginStart="-50dp"
+                android:contentDescription="@string/account"
+                android:padding="10dp"
+                android:src="@drawable/ic_outline_account_circle_24" />
         </LinearLayout>
 
         <!--

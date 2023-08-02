@@ -96,8 +96,8 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
     //    protected var currentPrefQuality =
 //        Qualities.P2160.value // preferred maximum quality, used for ppl w bad internet or on cell
     protected var fastForwardTime = 10000L
-    protected var androidTVInterfaceOffSeekTime = 10000L;
-    protected var androidTVInterfaceOnSeekTime = 30000L;
+    protected var androidTVInterfaceOffSeekTime = 10000L
+    protected var androidTVInterfaceOnSeekTime = 30000L
     protected var swipeHorizontalEnabled = false
     protected var swipeVerticalEnabled = false
     protected var playBackSpeedEnabled = false

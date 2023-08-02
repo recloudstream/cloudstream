@@ -15,6 +15,7 @@ import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
 import android.view.*
+import android.view.ViewGroup.MarginLayoutParams
 import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
 import android.widget.ListAdapter
@@ -33,6 +34,10 @@ import androidx.core.graphics.blue
 import androidx.core.graphics.drawable.toBitmapOrNull
 import androidx.core.graphics.green
 import androidx.core.graphics.red
+import androidx.core.view.marginBottom
+import androidx.core.view.marginLeft
+import androidx.core.view.marginRight
+import androidx.core.view.marginTop
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.navigation.fragment.NavHostFragment
@@ -55,7 +60,6 @@ import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.ui.result.UiImage
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isEmulatorSettings
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
-import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
 import jp.wasabeef.glide.transformations.BlurTransformation
 import kotlin.math.roundToInt
 
@@ -77,8 +81,8 @@ object UIHelper {
                 || Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
     }
 
-    fun populateChips(view: ChipGroup?, tags : List<String>) {
-        if(view == null) return
+    fun populateChips(view: ChipGroup?, tags: List<String>) {
+        if (view == null) return
         view.removeAllViews()
         val context = view.context ?: return
 
@@ -304,7 +308,7 @@ object UIHelper {
                     else req
                 }
 
-            if(radius > 0) {
+            if (radius > 0) {
                 builder = builder.apply(bitmapTransform(BlurTransformation(radius, sample)))
             }
 
@@ -494,6 +498,22 @@ object UIHelper {
             v.paddingRight,
             v.paddingBottom
         )
+    }
+
+    fun fixPaddingStatusbarMargin(v: View?) {
+        if (v == null) return
+        val ctx = v.context ?: return
+
+        v.layoutParams = v.layoutParams.apply {
+            if (this is MarginLayoutParams) {
+                setMargins(
+                    v.marginLeft,
+                    v.marginTop + ctx.getStatusBarHeight(),
+                    v.marginRight,
+                    v.marginBottom
+                )
+            }
+        }
     }
 
     fun fixPaddingStatusbarView(v: View?) {

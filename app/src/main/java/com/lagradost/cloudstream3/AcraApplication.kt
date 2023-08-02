@@ -148,6 +148,14 @@ class AcraApplication : Application() {
                 _context = WeakReference(value)
             }
 
+        fun <T : Any> getKeyClass(path: String, valueType: Class<T>): T? {
+            return context?.getKey(path, valueType)
+        }
+
+        fun <T : Any> setKeyClass(path: String, value: T) {
+            context?.setKey(path, value)
+        }
+
         fun removeKeys(folder: String): Int? {
             return context?.removeKeys(folder)
         }

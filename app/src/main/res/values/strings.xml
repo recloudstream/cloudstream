@@ -307,6 +307,7 @@
     <string name="queued">queued</string>
     <string name="no_subtitles">No Subtitles</string>
     <string name="default_subtitles">Default</string>
+    <string name="default_account">@string/default_subtitles</string>
     <string name="free_storage">Free</string>
     <string name="used_storage">Used</string>
     <string name="app_storage">App</string>
