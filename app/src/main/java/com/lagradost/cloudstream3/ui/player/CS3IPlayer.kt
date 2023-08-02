@@ -30,7 +30,6 @@ import androidx.media3.datasource.cache.SimpleCache
 import androidx.media3.datasource.okhttp.OkHttpDataSource
 import androidx.media3.exoplayer.DefaultLoadControl
 import androidx.media3.exoplayer.DefaultRenderersFactory
-import androidx.media3.exoplayer.DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.SeekParameters
 import androidx.media3.exoplayer.source.ClippingMediaSource
@@ -702,9 +701,9 @@ class CS3IPlayer : IPlayer {
                 ExoPlayer.Builder(context)
                     .setRenderersFactory { eventHandler, videoRendererEventListener, audioRendererEventListener, textRendererOutput, metadataRendererOutput ->
                         DefaultRenderersFactory(context).apply {
-                            setEnableDecoderFallback(true)
+//                            setEnableDecoderFallback(true)
                             // Enable Ffmpeg extension
-                            setExtensionRendererMode(EXTENSION_RENDERER_MODE_PREFER)
+//                            setExtensionRendererMode(EXTENSION_RENDERER_MODE_ON)
                         }.createRenderers(
                             eventHandler,
                             videoRendererEventListener,
