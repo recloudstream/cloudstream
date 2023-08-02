@@ -83,6 +83,7 @@
             app:cardCornerRadius="@dimen/rounded_image_radius">
 
             <ImageView
+                android:foreground="@drawable/outline_drawable_forced_round"
                 android:id="@+id/profile_pic"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"

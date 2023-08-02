@@ -36,12 +36,26 @@
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/home_preview_change_api"
                 style="@style/RegularButtonTV"
+                android:nextFocusRight="@id/home_switch_account"
                 android:layout_width="wrap_content"
                 android:layout_gravity="top|start"
                 android:layout_marginStart="@dimen/navbar_width"
                 android:minWidth="150dp"
                 android:nextFocusLeft="@id/nav_rail_view"
                 android:nextFocusDown="@id/home_preview_play_btt" />
+
+            <ImageView
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:nextFocusDown="@id/home_preview_play_btt"
+                android:nextFocusLeft="@id/home_preview_change_api"
+                android:id="@+id/home_switch_account"
+                android:layout_width="50dp"
+                android:layout_gravity="end"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/account"
+                android:padding="10dp"
+                android:src="@drawable/ic_outline_account_circle_24" />
+
         </FrameLayout>
 
         <LinearLayout
