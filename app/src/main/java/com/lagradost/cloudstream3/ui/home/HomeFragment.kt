@@ -311,12 +311,34 @@ class HomeFragment : Fragment() {
             validTypes: List<TvType>,
             callback: (List<TvType>) -> Unit
         ) {
+            bindChips(header, selectedTypes, validTypes, callback, null, null)
+        }
+
+        fun bindChips(
+            header: TvtypesChipsBinding?,
+            selectedTypes: List<TvType>,
+            validTypes: List<TvType>,
+            callback: (List<TvType>) -> Unit,
+            nextFocusDown: Int?,
+            nextFocusUp: Int?
+        ) {
             if (header == null) return
             val pairList = getPairList(header)
             for ((button, types) in pairList) {
                 val isValid = validTypes.any { types.contains(it) }
                 button?.isVisible = isValid
                 button?.isChecked = isValid && selectedTypes.any { types.contains(it) }
+                button?.isFocusable = true
+                if (isTrueTvSettings()) {
+                    button?.isFocusableInTouchMode = true
+                }
+
+                if (nextFocusDown != null)
+                    button?.nextFocusDownId = nextFocusDown
+
+                if (nextFocusUp != null)
+                    button?.nextFocusUpId = nextFocusUp
+
                 button?.setOnCheckedChangeListener { _, _ ->
                     val list = ArrayList<TvType>()
                     for ((sbutton, vvalidTypes) in pairList) {
@@ -462,7 +484,7 @@ class HomeFragment : Fragment() {
 
     private val apiChangeClickListener = View.OnClickListener { view ->
         view.context.selectHomepage(currentApiName) { api ->
-            homeViewModel.loadAndCancel(api, forceReload = true,fromUI = true)
+            homeViewModel.loadAndCancel(api, forceReload = true, fromUI = true)
         }
         /*val validAPIs = view.context?.filterProviderByPreferredMedia()?.toMutableList() ?: mutableListOf()
 

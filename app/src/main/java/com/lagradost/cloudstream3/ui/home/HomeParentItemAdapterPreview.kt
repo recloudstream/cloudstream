@@ -30,6 +30,7 @@ import com.lagradost.cloudstream3.mvvm.debugException
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.home.HomeFragment.Companion.selectHomepage
+import com.lagradost.cloudstream3.ui.result.FOCUS_SELF
 import com.lagradost.cloudstream3.ui.result.ResultViewModel2
 import com.lagradost.cloudstream3.ui.result.START_ACTION_RESUME_LATEST
 import com.lagradost.cloudstream3.ui.result.setLinearListLayout
@@ -439,8 +440,8 @@ class HomeParentItemAdapterPreview(
             resumeRecyclerView.adapter = resumeAdapter
             bookmarkRecyclerView.adapter = bookmarkAdapter
 
-            resumeRecyclerView.setLinearListLayout()
-            bookmarkRecyclerView.setLinearListLayout()
+            resumeRecyclerView.setLinearListLayout(nextLeft = R.id.nav_rail_view, nextRight = FOCUS_SELF)
+            bookmarkRecyclerView.setLinearListLayout(nextLeft = R.id.nav_rail_view, nextRight = FOCUS_SELF)
 
             fixPaddingStatusbarMargin(topPadding)
 

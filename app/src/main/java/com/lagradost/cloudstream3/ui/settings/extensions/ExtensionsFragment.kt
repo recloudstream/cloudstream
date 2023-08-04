@@ -23,6 +23,8 @@ import com.lagradost.cloudstream3.databinding.FragmentExtensionsBinding
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.mvvm.observeNullable
 import com.lagradost.cloudstream3.plugins.RepositoryManager
+import com.lagradost.cloudstream3.ui.result.FOCUS_SELF
+import com.lagradost.cloudstream3.ui.result.setLinearListLayout
 import com.lagradost.cloudstream3.ui.result.setText
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTrueTvSettings
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setUpToolbar
@@ -82,6 +84,14 @@ class ExtensionsFragment : Fragment() {
 
         setUpToolbar(R.string.extensions)
 
+        binding?.repoRecyclerView?.setLinearListLayout(
+            isHorizontal = false,
+            nextUp = R.id.settings_toolbar, //FOCUS_SELF, // back has no id so we cant :pensive:
+            nextDown = R.id.plugin_storage_appbar,
+            nextRight = FOCUS_SELF,
+            nextLeft = R.id.nav_rail_view
+        )
+
         binding?.repoRecyclerView?.adapter = RepoAdapter(false, {
             findNavController().navigate(
                 R.id.navigation_settings_extensions_to_navigation_settings_plugins,
@@ -126,11 +136,11 @@ class ExtensionsFragment : Fragment() {
             (binding?.repoRecyclerView?.adapter as? RepoAdapter)?.updateList(it)
         }
 
-        binding?.repoRecyclerView?.apply {
+        /*binding?.repoRecyclerView?.apply {
             context?.let { ctx ->
                 layoutManager = LinearRecycleViewLayoutManager(ctx, nextFocusUpId, nextFocusDownId)
             }
-        }
+        }*/
 
 //        list_repositories?.setOnClickListener {
 //            // Open webview on tv if browser fails

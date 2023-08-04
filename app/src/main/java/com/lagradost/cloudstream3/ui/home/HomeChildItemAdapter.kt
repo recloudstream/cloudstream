@@ -88,14 +88,14 @@ class HomeChildItemAdapter(
         private val nextFocusUp: Int? = null,
         private val nextFocusDown: Int? = null,
         private val isHorizontal: Boolean = false,
-        private val isRtl : Boolean
+        private val isRtl: Boolean
     ) :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(card: SearchResponse, position: Int) {
 
             // TV focus fixing
-            val nextFocusBehavior = when (position) {
+            /*val nextFocusBehavior = when (position) {
                 0 -> true
                 itemCount - 1 -> false
                 else -> null
@@ -113,7 +113,7 @@ class HomeChildItemAdapter(
             } else {
                 itemView.nextFocusRightId = -1
                 itemView.nextFocusLeftId = -1
-            }
+            }*/
 
 
             when (binding) {
@@ -171,7 +171,7 @@ class HomeChildItemAdapter(
                 card,
                 position,
                 itemView,
-                nextFocusBehavior,
+                null, // nextFocusBehavior,
                 nextFocusUp,
                 nextFocusDown
             )

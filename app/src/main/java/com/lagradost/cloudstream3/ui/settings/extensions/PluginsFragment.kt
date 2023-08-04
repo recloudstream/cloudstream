@@ -15,6 +15,8 @@ import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.databinding.FragmentPluginsBinding
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.ui.home.HomeFragment.Companion.bindChips
+import com.lagradost.cloudstream3.ui.result.FOCUS_SELF
+import com.lagradost.cloudstream3.ui.result.setLinearListLayout
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setUpToolbar
 import com.lagradost.cloudstream3.ui.settings.appLanguages
@@ -32,7 +34,7 @@ class PluginsFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
-        val localBinding = FragmentPluginsBinding.inflate(inflater,container,false)
+        val localBinding = FragmentPluginsBinding.inflate(inflater, container, false)
         binding = localBinding
         return localBinding.root//inflater.inflate(R.layout.fragment_plugins, container, false)
     }
@@ -73,48 +75,51 @@ class PluginsFragment : Fragment() {
 
         setUpToolbar(name)
         binding?.settingsToolbar?.apply {
-        setOnMenuItemClickListener { menuItem ->
-            when (menuItem?.itemId) {
-                R.id.download_all -> {
-                    PluginsViewModel.downloadAll(activity, url, pluginViewModel)
-                }
-                R.id.lang_filter -> {
-                    val tempLangs = appLanguages.toMutableList()
-                    val languageCodes = mutableListOf("none") + tempLangs.map { (_, _, iso) -> iso }
-                    val languageNames =
-                        mutableListOf(getString(R.string.no_data)) + tempLangs.map { (emoji, name, iso) ->
-                            val flag =
-                                emoji.ifBlank { SubtitleHelper.getFlagFromIso(iso) ?: "ERROR" }
-                            "$flag $name"
-                        }
-                    val selectedList =
-                        pluginViewModel.languages.map { it -> languageCodes.indexOf(it) }
-
-                    activity?.showMultiDialog(
-                        languageNames,
-                        selectedList,
-                        getString(R.string.provider_lang_settings),
-                        {}) { newList ->
-                        pluginViewModel.languages = newList.map { it -> languageCodes[it] }
-                        pluginViewModel.updateFilteredPlugins()
+            setOnMenuItemClickListener { menuItem ->
+                when (menuItem?.itemId) {
+                    R.id.download_all -> {
+                        PluginsViewModel.downloadAll(activity, url, pluginViewModel)
                     }
+
+                    R.id.lang_filter -> {
+                        val tempLangs = appLanguages.toMutableList()
+                        val languageCodes =
+                            mutableListOf("none") + tempLangs.map { (_, _, iso) -> iso }
+                        val languageNames =
+                            mutableListOf(getString(R.string.no_data)) + tempLangs.map { (emoji, name, iso) ->
+                                val flag =
+                                    emoji.ifBlank { SubtitleHelper.getFlagFromIso(iso) ?: "ERROR" }
+                                "$flag $name"
+                            }
+                        val selectedList =
+                            pluginViewModel.languages.map { languageCodes.indexOf(it) }
+
+                        activity?.showMultiDialog(
+                            languageNames,
+                            selectedList,
+                            getString(R.string.provider_lang_settings),
+                            {}) { newList ->
+                            pluginViewModel.languages = newList.map { languageCodes[it] }
+                            pluginViewModel.updateFilteredPlugins()
+                        }
+                    }
+
+                    else -> {}
                 }
-                else -> {}
+                return@setOnMenuItemClickListener true
             }
-            return@setOnMenuItemClickListener true
-        }
 
-        val searchView =
-            menu?.findItem(R.id.search_button)?.actionView as? SearchView
+            val searchView =
+                menu?.findItem(R.id.search_button)?.actionView as? SearchView
 
-        // Don't go back if active query
-        setNavigationOnClickListener {
-            if (searchView?.isIconified == false) {
-                searchView.isIconified = true
-            } else {
-                activity?.onBackPressed()
+            // Don't go back if active query
+            setNavigationOnClickListener {
+                if (searchView?.isIconified == false) {
+                    searchView.isIconified = true
+                } else {
+                    activity?.onBackPressed()
+                }
             }
-        }
             searchView?.setOnQueryTextFocusChangeListener { _, hasFocus ->
                 if (!hasFocus) pluginViewModel.search(null)
             }
@@ -137,7 +142,11 @@ class PluginsFragment : Fragment() {
 
         // Because onActionViewCollapsed doesn't wanna work we need this workaround :(
 
-
+        binding?.pluginRecyclerView?.setLinearListLayout(
+            isHorizontal = false,
+            nextDown = FOCUS_SELF,
+            nextRight = FOCUS_SELF,
+        )
 
         binding?.pluginRecyclerView?.adapter =
             PluginAdapter {
@@ -167,11 +176,18 @@ class PluginsFragment : Fragment() {
             pluginViewModel.updatePluginList(context, url)
             binding?.tvtypesChipsScroll?.root?.isVisible = true
 
-            bindChips(binding?.tvtypesChipsScroll?.tvtypesChips, emptyList(), TvType.values().toList()) { list ->
-                pluginViewModel.tvTypes.clear()
-                pluginViewModel.tvTypes.addAll(list.map { it.name })
-                pluginViewModel.updateFilteredPlugins()
-            }
+            bindChips(
+                binding?.tvtypesChipsScroll?.tvtypesChips,
+                emptyList(),
+                TvType.values().toList(),
+                callback = { list ->
+                    pluginViewModel.tvTypes.clear()
+                    pluginViewModel.tvTypes.addAll(list.map { it.name })
+                    pluginViewModel.updateFilteredPlugins()
+                },
+                nextFocusDown = R.id.plugin_recycler_view,
+                nextFocusUp = null,
+            )
         }
     }
 

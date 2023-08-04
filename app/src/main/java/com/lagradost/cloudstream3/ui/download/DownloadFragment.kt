@@ -40,6 +40,8 @@ import com.lagradost.cloudstream3.databinding.FragmentDownloadsBinding
 import com.lagradost.cloudstream3.databinding.StreamInputBinding
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.ui.player.BasicLink
+import com.lagradost.cloudstream3.ui.result.FOCUS_SELF
+import com.lagradost.cloudstream3.ui.result.setLinearListLayout
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTrueTvSettings
 import java.net.URI
 
@@ -74,7 +76,7 @@ class DownloadFragment : Fragment() {
         super.onDestroyView()
     }
 
-    var binding : FragmentDownloadsBinding? = null
+    var binding: FragmentDownloadsBinding? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -151,6 +153,7 @@ class DownloadFragment : Fragment() {
                                 )
                             }
                         }
+
                         1 -> {
                             (activity as AppCompatActivity?)?.loadResult(
                                 click.data.url,
@@ -187,7 +190,13 @@ class DownloadFragment : Fragment() {
 
         binding?.downloadList?.apply {
             this.adapter = adapter
-            layoutManager = GridLayoutManager(context, 1)
+            setLinearListLayout(
+                isHorizontal = false,
+                nextRight = FOCUS_SELF,
+                nextUp = FOCUS_SELF,
+                nextDown = FOCUS_SELF
+            )
+            //layoutManager = GridLayoutManager(context, 1)
         }
 
         // Should be visible in emulator layout

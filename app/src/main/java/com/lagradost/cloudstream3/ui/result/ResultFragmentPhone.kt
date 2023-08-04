@@ -294,7 +294,7 @@ open class ResultFragmentPhone : FullScreenPlayer(),
         super.onStop()
     }
 
-    private fun updateUI(id : Int?) {
+    private fun updateUI(id: Int?) {
         syncModel.updateUserData()
         viewModel.reloadEpisodes()
     }
@@ -338,7 +338,12 @@ open class ResultFragmentPhone : FullScreenPlayer(),
                 )
             }
 
-            resultCastItems.layoutManager = object : LinearListLayout(view.context) {
+            resultCastItems.setLinearListLayout(
+                isHorizontal = true,
+                nextLeft = FOCUS_SELF,
+                nextRight = FOCUS_SELF
+            )
+            /*resultCastItems.layoutManager = object : LinearListLayout(view.context) {
                 override fun onRequestChildFocus(
                     parent: RecyclerView,
                     state: RecyclerView.State,
@@ -356,7 +361,7 @@ open class ResultFragmentPhone : FullScreenPlayer(),
                 }
             }.apply {
                 this.orientation = RecyclerView.HORIZONTAL
-            }
+            }*/
             resultCastItems.adapter = ActorAdaptor()
 
             resultEpisodes.adapter =
@@ -597,8 +602,14 @@ open class ResultFragmentPhone : FullScreenPlayer(),
                                     EpisodeClickEvent(ACTION_DOWNLOAD_EPISODE, ep)
                                 )
                             }
+
                             DOWNLOAD_ACTION_LONG_CLICK -> {
-                                viewModel.handleAction(EpisodeClickEvent(ACTION_DOWNLOAD_MIRROR, ep))
+                                viewModel.handleAction(
+                                    EpisodeClickEvent(
+                                        ACTION_DOWNLOAD_MIRROR,
+                                        ep
+                                    )
+                                )
                             }
 
                             else -> DownloadButtonSetup.handleDownloadClick(click)

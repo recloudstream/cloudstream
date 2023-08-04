@@ -24,6 +24,7 @@ import com.lagradost.cloudstream3.syncproviders.AccountManager
 import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.WhoIsWatchingAdapter
+import com.lagradost.cloudstream3.ui.result.FOCUS_SELF
 import com.lagradost.cloudstream3.ui.result.UiImage
 import com.lagradost.cloudstream3.ui.result.VideoWatchState
 import com.lagradost.cloudstream3.ui.result.setImage
@@ -194,7 +195,13 @@ object DataStoreHelper {
         builder.setContentView(binding.root)
         val accountName = context.getString(R.string.account)
 
-        binding.profilesRecyclerview.setLinearListLayout(isHorizontal = true)
+        binding.profilesRecyclerview.setLinearListLayout(
+            isHorizontal = true,
+            nextUp = FOCUS_SELF,
+            nextDown = FOCUS_SELF,
+            nextLeft = FOCUS_SELF,
+            nextRight = FOCUS_SELF
+        )
         binding.profilesRecyclerview.adapter = WhoIsWatchingAdapter(
             selectCallBack = { account ->
                 setAccount(account)
