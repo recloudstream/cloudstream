@@ -570,4 +570,6 @@
     <string name="qualities">Kualitas</string>
     <string name="profile_background_des">Latar belakang profil</string>
     <string name="unable_to_inflate">UI tidak dapat dibuat dengan benar, ini adalah BUG UTAMA dan harus segera dilaporkan %s</string>
+    <string name="disable">Nonaktif</string>
+    <string name="automatic_plugin_download_mode_title">Pilih mode untuk memfilter unduhan plugin</string>
 </resources>

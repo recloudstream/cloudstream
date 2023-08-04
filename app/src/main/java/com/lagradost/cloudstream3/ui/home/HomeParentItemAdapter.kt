@@ -11,6 +11,7 @@ import com.lagradost.cloudstream3.HomePageList
 import com.lagradost.cloudstream3.LoadResponse
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.HomepageParentBinding
+import com.lagradost.cloudstream3.ui.result.FOCUS_SELF
 import com.lagradost.cloudstream3.ui.result.setLinearListLayout
 import com.lagradost.cloudstream3.ui.search.SearchClickCallback
 import com.lagradost.cloudstream3.ui.search.SearchFragment.Companion.filterSearchResponse
@@ -154,7 +155,7 @@ open class ParentItemAdapter(
     class ParentViewHolder
     constructor(
         val binding: HomepageParentBinding,
-       // val viewModel: HomeViewModel,
+        // val viewModel: HomeViewModel,
         private val clickCallback: (SearchClickCallback) -> Unit,
         private val moreInfoClickCallback: (HomeViewModel.ExpandableHomepageList) -> Unit,
         private val expandCallback: ((String) -> Unit)? = null,
@@ -162,7 +163,8 @@ open class ParentItemAdapter(
         RecyclerView.ViewHolder(binding.root) {
         val title: TextView = binding.homeChildMoreInfo
         private val recyclerView: RecyclerView = binding.homeChildRecyclerview
-
+        private val startFocus = R.id.nav_rail_view
+        private val endFocus = FOCUS_SELF
         fun update(expand: HomeViewModel.ExpandableHomepageList) {
             val info = expand.list
             (recyclerView.adapter as? HomeChildItemAdapter?)?.apply {
@@ -176,8 +178,13 @@ open class ParentItemAdapter(
                     nextFocusDown = recyclerView.nextFocusDownId,
                 ).apply {
                     isHorizontal = info.isHorizontalImages
+                    hasNext = expand.hasNext
                 }
-                recyclerView.setLinearListLayout()
+                recyclerView.setLinearListLayout(
+                    isHorizontal = true,
+                    nextLeft = startFocus,
+                    nextRight = endFocus,
+                )
             }
         }
 
@@ -192,7 +199,11 @@ open class ParentItemAdapter(
                 isHorizontal = info.isHorizontalImages
                 hasNext = expand.hasNext
             }
-            recyclerView.setLinearListLayout()
+            recyclerView.setLinearListLayout(
+                isHorizontal = true,
+                nextLeft = startFocus,
+                nextRight = endFocus,
+            )
             title.text = info.name
 
             recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {

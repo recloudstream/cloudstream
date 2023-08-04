@@ -27,6 +27,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.children
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
+import androidx.core.view.marginStart
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
@@ -37,6 +38,8 @@ import androidx.navigation.NavOptions
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import androidx.preference.PreferenceManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -91,6 +94,7 @@ import com.lagradost.cloudstream3.ui.home.HomeViewModel
 import com.lagradost.cloudstream3.ui.player.BasicLink
 import com.lagradost.cloudstream3.ui.player.GeneratorPlayer
 import com.lagradost.cloudstream3.ui.player.LinkGenerator
+import com.lagradost.cloudstream3.ui.result.LinearListLayout
 import com.lagradost.cloudstream3.ui.result.ResultViewModel2
 import com.lagradost.cloudstream3.ui.result.START_ACTION_RESUME_LATEST
 import com.lagradost.cloudstream3.ui.result.setImage
@@ -110,6 +114,7 @@ import com.lagradost.cloudstream3.utils.AppUtils.html
 import com.lagradost.cloudstream3.utils.AppUtils.isCastApiAvailable
 import com.lagradost.cloudstream3.utils.AppUtils.isLtr
 import com.lagradost.cloudstream3.utils.AppUtils.isNetworkAvailable
+import com.lagradost.cloudstream3.utils.AppUtils.isRtl
 import com.lagradost.cloudstream3.utils.AppUtils.loadCache
 import com.lagradost.cloudstream3.utils.AppUtils.loadRepository
 import com.lagradost.cloudstream3.utils.AppUtils.loadResult
@@ -146,6 +151,7 @@ import java.lang.ref.WeakReference
 import java.net.URI
 import java.net.URLDecoder
 import java.nio.charset.Charset
+import kotlin.math.abs
 import kotlin.math.absoluteValue
 import kotlin.reflect.KClass
 import kotlin.system.exitProcess
@@ -848,6 +854,24 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
 
         private var animator: ValueAnimator? = null
 
+        /** if this is enabled it will keep the focus unmoving
+         *  during listview move */
+        private const val NO_MOVE_LIST: Boolean = false
+
+        /** If this is enabled then it will try to move the
+         * listview focus to the left instead of center */
+        private const val LEFTMOST_MOVE_LIST: Boolean = true
+
+        private val reflectedScroll by lazy {
+            try {
+                RecyclerView::class.java.declaredMethods.firstOrNull {
+                    it.name == "scrollStep"
+                }?.also { it.isAccessible = true }
+            } catch (t : Throwable) {
+                null
+            }
+        }
+
         @MainThread
         fun updateFocusView(newFocus: View?, same: Boolean = false) {
             val focusOutline = focusOutline.get() ?: return
@@ -867,17 +891,67 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
 
             if (newFocus != null) {
                 lastFocus = WeakReference(newFocus)
+                val parent = newFocus.parent
+                var targetDx = 0
+                if (parent is RecyclerView) {
+                    val layoutManager = parent.layoutManager
+                    if (layoutManager is LinearListLayout && layoutManager.orientation == LinearLayoutManager.HORIZONTAL) {
+                        val dx =
+                            LinearSnapHelper().calculateDistanceToFinalSnap(layoutManager, newFocus)
+                                ?.get(0)
 
+                        if (dx != null) {
+                            val rdx = if (LEFTMOST_MOVE_LIST) {
+                                // this makes the item the leftmost in ltr, instead of center
+                                val diff =
+                                    ((layoutManager.width - layoutManager.paddingStart - newFocus.measuredWidth) / 2) - newFocus.marginStart
+                                dx + if (parent.isRtl()) {
+                                    -diff
+                                } else {
+                                    diff
+                                }
+                            } else {
+                                if (dx > 0) dx else 0
+                            }
+
+                            if(!NO_MOVE_LIST) {
+                                parent.smoothScrollBy(rdx, 0)
+                            }else {
+                                val smoothScroll = reflectedScroll
+                                if(smoothScroll == null) {
+                                    parent.smoothScrollBy(rdx, 0)
+                                } else {
+                                    try {
+                                        // this is very fucked but because it is a protected method to
+                                        // be able to compute the scroll I use reflection, scroll, then
+                                        // scroll back, then smooth scroll and set the no move
+                                        val out = IntArray(2)
+                                        smoothScroll.invoke(parent, rdx, 0, out)
+                                        val scrolledX = out[0]
+                                        if(abs(scrolledX) <= 0) { // newFocus.measuredWidth*2
+                                            smoothScroll.invoke(parent, -rdx, 0, out)
+                                            parent.smoothScrollBy(scrolledX, 0)
+                                            if (NO_MOVE_LIST) targetDx = scrolledX
+                                        }
+                                    } catch (t : Throwable) {
+                                        parent.smoothScrollBy(rdx, 0)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
 
                 val out = IntArray(2)
                 newFocus.getLocationInWindow(out)
                 val (screenX, screenY) = out
                 var (x, y) = screenX.toFloat() to screenY.toFloat()
                 val (currentX, currentY) = focusOutline.translationX to focusOutline.translationY
-                //            println(">><<< $x $y $currentX $currentY")
+
                 if (!newFocus.isLtr()) {
                     x = x - focusOutline.rootView.width + newFocus.measuredWidth
                 }
+                x -= targetDx
 
                 // out of bounds = 0,0
                 if (screenX == 0 && screenY == 0) {
@@ -1093,9 +1167,17 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                     }
 
                     //Automatically download not existing plugins, using mode specified.
-                    val auto_download_plugin = AutoDownloadMode.getEnum(settingsManager.getInt(getString(R.string.auto_download_plugins_key), 0)) ?: AutoDownloadMode.Disable
+                    val auto_download_plugin = AutoDownloadMode.getEnum(
+                        settingsManager.getInt(
+                            getString(R.string.auto_download_plugins_key),
+                            0
+                        )
+                    ) ?: AutoDownloadMode.Disable
                     if (auto_download_plugin != AutoDownloadMode.Disable) {
-                        PluginManager.downloadNotExistingPluginsAndLoad(this@MainActivity, auto_download_plugin)
+                        PluginManager.downloadNotExistingPluginsAndLoad(
+                            this@MainActivity,
+                            auto_download_plugin
+                        )
                     }
                 }
 

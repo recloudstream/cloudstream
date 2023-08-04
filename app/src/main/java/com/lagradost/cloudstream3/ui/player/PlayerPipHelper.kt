@@ -11,6 +11,7 @@ import android.util.Rational
 import androidx.annotation.RequiresApi
 import androidx.annotation.StringRes
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import kotlin.math.roundToInt
 
 class PlayerPipHelper {
@@ -88,22 +89,25 @@ class PlayerPipHelper {
             val ratioAccuracy = 100000 // To convert the float to int
 
             // java.lang.IllegalArgumentException: setPictureInPictureParams: Aspect ratio is too extreme (must be between 0.418410 and 2.390000)
-            val fixedRational = aspectRatio?.toFloat()?.coerceIn(mixAspectRatio, maxAspectRatio)?.let {
-                Rational((it * ratioAccuracy).roundToInt(), ratioAccuracy)
-            }
+            val fixedRational =
+                aspectRatio?.toFloat()?.coerceIn(mixAspectRatio, maxAspectRatio)?.let {
+                    Rational((it * ratioAccuracy).roundToInt(), ratioAccuracy)
+                }
 
-            activity.setPictureInPictureParams(
-                PictureInPictureParams.Builder()
-                    .apply {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                            setSeamlessResizeEnabled(true)
-                            setAutoEnterEnabled(isPlaying)
+            normalSafeApiCall {
+                activity.setPictureInPictureParams(
+                    PictureInPictureParams.Builder()
+                        .apply {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                                setSeamlessResizeEnabled(true)
+                                setAutoEnterEnabled(isPlaying)
+                            }
                         }
-                    }
-                    .setAspectRatio(fixedRational)
-                    .setActions(actions)
-                    .build()
-            )
+                        .setAspectRatio(fixedRational)
+                        .setActions(actions)
+                        .build()
+                )
+            }
         }
     }
 }

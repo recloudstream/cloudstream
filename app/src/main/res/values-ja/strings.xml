@@ -204,4 +204,11 @@
     <string name="next_episode_format" formatted="true">エピソード %d は にリリースされます</string>
     <string name="type_re_watching">再視聴</string>
     <string name="play_torrent_button">ストリームトレント</string>
+    <string name="subs_text_color">文字の色</string>
+    <string name="popup_delete_file">ファイルを削除</string>
+    <string name="popup_play_file">再生ファイル</string>
+    <string name="subs_background_color">背景の色</string>
+    <string name="subs_window_color">窓の色</string>
+    <string name="subs_edge_type">エッジタイプ</string>
+    <string name="popup_pause_download">ダウンロードを一時停止する</string>
 </resources>

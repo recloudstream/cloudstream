@@ -248,6 +248,7 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
                             style="@style/ResultButtonTV"
 
                             android:nextFocusRight="@id/result_description"
+                            android:nextFocusUp="@id/result_play_movie"
                             android:nextFocusDown="@id/result_play_series"
                             android:text="@string/play_movie_button"
                             android:visibility="visible"
@@ -537,10 +538,10 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
     </androidx.core.widget.NestedScrollView>
 
     <ImageView
-        android:layout_gravity="end"
         android:id="@+id/episodes_shadow"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_gravity="end"
         android:clickable="false"
         android:focusable="false"
         android:focusableInTouchMode="false"
@@ -552,8 +553,8 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
     <LinearLayout
         android:id="@+id/episode_holder_tv"
         android:layout_width="wrap_content"
-
         android:layout_height="wrap_content"
+
         android:layout_gravity="end"
         android:orientation="horizontal"
         android:paddingStart="@dimen/result_padding"
@@ -563,15 +564,15 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="RtlHardcoded"
-        tools:visibility="visible">
+        tools:visibility="gone">
 
         <androidx.recyclerview.widget.RecyclerView
-            android:descendantFocusability="afterDescendants"
             android:id="@+id/result_season_selection"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-
             android:clipToPadding="false"
+
+            android:descendantFocusability="afterDescendants"
             android:nextFocusLeft="@id/result_episodes_show"
             android:nextFocusRight="@id/result_range_selection"
             android:orientation="vertical"
@@ -580,11 +581,11 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
             tools:listitem="@layout/result_selection" />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:descendantFocusability="afterDescendants"
             android:id="@+id/result_range_selection"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:clipToPadding="false"
+            android:descendantFocusability="afterDescendants"
 
             android:nextFocusLeft="@id/result_season_selection"
             android:nextFocusRight="@id/result_dub_selection"
@@ -595,12 +596,12 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
             tools:visibility="visible" />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:descendantFocusability="afterDescendants"
             android:id="@+id/result_dub_selection"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-
             android:clipToPadding="false"
+
+            android:descendantFocusability="afterDescendants"
             android:nextFocusLeft="@id/result_range_selection"
             android:nextFocusRight="@id/result_episodes"
             android:orientation="vertical"
@@ -618,13 +619,12 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
                 android:layout_height="50dp" />-->
 
         <androidx.recyclerview.widget.RecyclerView
-            android:descendantFocusability="afterDescendants"
             android:id="@+id/result_episodes"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:clipToPadding="false"
+            android:descendantFocusability="afterDescendants"
             android:nextFocusLeft="@id/result_dub_selection"
-            android:nextFocusRight="@id/result_recommendations_filter_selection"
             android:orientation="vertical"
             android:paddingVertical="@dimen/result_padding"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"

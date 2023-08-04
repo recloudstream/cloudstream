@@ -5,11 +5,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.FragmentChildDownloadsBinding
 import com.lagradost.cloudstream3.ui.download.DownloadButtonSetup.handleDownloadClick
+import com.lagradost.cloudstream3.ui.result.FOCUS_SELF
+import com.lagradost.cloudstream3.ui.result.setLinearListLayout
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStore.getKeys
@@ -110,7 +111,11 @@ class DownloadChildFragment : Fragment() {
         downloadDeleteEventListener?.let { VideoDownloadManager.downloadDeleteEvent += it }
 
         binding?.downloadChildList?.adapter = adapter
-        binding?.downloadChildList?.layoutManager = GridLayoutManager(context, 1)
+        binding?.downloadChildList?.setLinearListLayout(
+            isHorizontal = false,
+            nextDown = FOCUS_SELF,
+            nextRight = FOCUS_SELF
+        )//layoutManager = GridLayoutManager(context, 1)
 
         updateList(folder)
     }

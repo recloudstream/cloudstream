@@ -307,7 +307,29 @@ class ResultFragmentTv : Fragment() {
                 }
             }
 
-            resultEpisodes.setLinearListLayout(isHorizontal = false)/*.layoutManager =
+            resultEpisodes.setLinearListLayout(
+                isHorizontal = false,
+                nextUp = FOCUS_SELF,
+                nextDown = FOCUS_SELF,
+                nextRight = FOCUS_SELF,
+            )
+            resultDubSelection.setLinearListLayout(
+                isHorizontal = false,
+                nextUp = FOCUS_SELF,
+                nextDown = FOCUS_SELF,
+            )
+            resultRangeSelection.setLinearListLayout(
+                isHorizontal = false,
+                nextUp = FOCUS_SELF,
+                nextDown = FOCUS_SELF,
+            )
+            resultSeasonSelection.setLinearListLayout(
+                isHorizontal = false,
+                nextUp = FOCUS_SELF,
+                nextDown = FOCUS_SELF,
+            )
+
+            /*.layoutManager =
                 LinearListLayout(resultEpisodes.context, resultEpisodes.isRtl()).apply {
                     setVertical()
                 }*/
@@ -367,6 +389,11 @@ class ResultFragmentTv : Fragment() {
                 )
 
             resultCastItems.layoutManager = object : LinearListLayout(view.context) {
+
+                override fun onInterceptFocusSearch(focused: View, direction: Int): View? {
+                    return super.onInterceptFocusSearch(focused, direction)
+                }
+
                 override fun onRequestChildFocus(
                     parent: RecyclerView,
                     state: RecyclerView.State,
@@ -383,8 +410,9 @@ class ResultFragmentTv : Fragment() {
                     }
                 }
             }.apply {
-                this.orientation = RecyclerView.HORIZONTAL
+                setHorizontal()
             }
+
             resultCastItems.adapter = ActorAdaptor {
                 toggleEpisodes(false)
             }
