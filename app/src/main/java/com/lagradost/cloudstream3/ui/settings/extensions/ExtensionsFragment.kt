@@ -224,14 +224,31 @@ class ExtensionsFragment : Fragment() {
                             showToast(R.string.error_invalid_data, Toast.LENGTH_SHORT)
                         }
                     } else {
+                        val repository = RepositoryManager.parseRepository(url)
+
+                        // Exit if wrong repository
+                        if (repository == null) {
+                            showToast(R.string.no_repository_found_error, Toast.LENGTH_LONG)
+                            return@ioSafe
+                        }
+
                         val fixedName = if (!name.isNullOrBlank()) name
-                        else RepositoryManager.parseRepository(url)?.name ?: "No name"
+                        else repository.name
 
                         val newRepo = RepositoryData(fixedName, url)
                         RepositoryManager.addRepository(newRepo)
                         extensionViewModel.loadStats()
                         extensionViewModel.loadRepositories()
-                        this@ExtensionsFragment.activity?.downloadAllPluginsDialog(url, fixedName)
+
+                        val plugins = RepositoryManager.getRepoPlugins(url)
+                        if (plugins.isNullOrEmpty()) {
+                            showToast(R.string.no_plugins_found_error, Toast.LENGTH_LONG)
+                        } else {
+                            this@ExtensionsFragment.activity?.downloadAllPluginsDialog(
+                                url,
+                                fixedName
+                            )
+                        }
                     }
                 }
                 dialog.dismissSafe(activity)

@@ -572,6 +572,8 @@
     <string name="batch_download_start_format" formatted="true">Started downloading %d %s…</string>
     <string name="batch_download_finish_format" formatted="true">Downloaded %d %s</string>
     <string name="batch_download_nothing_to_download_format" formatted="true">All %s already downloaded</string>
+    <string name="no_plugins_found_error">No plugins found in repository</string>
+    <string name="no_repository_found_error">Repository not found, check the URL and try VPN</string>
     <string name="batch_download">Batch download</string>
     <string name="plugin_singular">plugin</string>
     <string name="plugin">plugins</string>
