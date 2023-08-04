@@ -86,13 +86,17 @@ class PluginsViewModel : ViewModel() {
                 }.also { list ->
                     main {
                         showToast(
-                            if (list.isEmpty()) {
-                                txt(
+                            when {
+                                // No plugins at all
+                                plugins.isEmpty() -> txt(
+                                    R.string.no_plugins_found_error,
+                                )
+                                // All plugins downloaded
+                                list.isEmpty() -> txt(
                                     R.string.batch_download_nothing_to_download_format,
                                     txt(R.string.plugin)
                                 )
-                            } else {
-                                txt(
+                                else -> txt(
                                     R.string.batch_download_start_format,
                                     list.size,
                                     txt(if (list.size == 1) R.string.plugin_singular else R.string.plugin)
