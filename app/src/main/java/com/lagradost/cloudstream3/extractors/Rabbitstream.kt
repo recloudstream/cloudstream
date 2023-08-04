@@ -1,6 +1,7 @@
 package com.lagradost.cloudstream3.extractors
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.lagradost.cloudstream3.ErrorLoadingException
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.base64DecodeArray
@@ -11,11 +12,12 @@ import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.M3u8Helper
 import java.nio.charset.StandardCharsets
 import java.security.MessageDigest
-import java.util.Objects
 import javax.crypto.Cipher
 import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
 
+// No License found in https://github.com/enimax-anime/key
+// special credits to @enimax for providing key
 class Megacloud : Rabbitstream() {
     override val name = "Megacloud"
     override val mainUrl = "https://megacloud.tv"
@@ -34,6 +36,7 @@ open class Rabbitstream : ExtractorApi() {
     override val requiresReferer = false
     open val embed = "ajax/embed-4"
     open val key = "https://raw.githubusercontent.com/enimax-anime/key/e4/key.txt"
+    private var rawKey: String? = null
 
     override suspend fun getUrl(
         url: String,
@@ -42,18 +45,19 @@ open class Rabbitstream : ExtractorApi() {
         callback: (ExtractorLink) -> Unit
     ) {
         val id = url.substringAfterLast("/").substringBefore("?")
-        val rawKey = app.get(key).text
+
         val response = app.get(
             "$mainUrl/$embed/getSources?id=$id",
             referer = mainUrl,
             headers = mapOf("X-Requested-With" to "XMLHttpRequest")
         )
+
         val encryptedMap = response.parsedSafe<SourcesEncrypted>()
         val sources = encryptedMap?.sources
         val decryptedSources = if (sources == null || encryptedMap.encrypted == false) {
             response.parsedSafe()
         } else {
-            val (key, encData) = extractRealKey(sources, rawKey)
+            val (key, encData) = extractRealKey(sources, getRawKey())
             val decrypted = decryptMapped<List<Sources>>(encData, key)
             SourcesResponses(
                 sources = decrypted,
@@ -79,6 +83,8 @@ open class Rabbitstream : ExtractorApi() {
         }
 
     }
+
+    private suspend fun getRawKey(): String = rawKey ?: app.get(key).text.also { rawKey = it }
 
     private fun extractRealKey(originalString: String?, stops: String): Pair<String, String> {
         val table = parseJson<List<List<Int>>>(stops)
@@ -129,15 +135,12 @@ open class Rabbitstream : ExtractorApi() {
         val cipherData = base64DecodeArray(sourceUrl)
         val encrypted = cipherData.copyOfRange(16, cipherData.size)
         val aesCBC = Cipher.getInstance("AES/CBC/PKCS5Padding")
-
-        Objects.requireNonNull(aesCBC).init(
-            Cipher.DECRYPT_MODE, SecretKeySpec(
-                decryptionKey.copyOfRange(0, 32),
-                "AES"
-            ),
+        aesCBC.init(
+            Cipher.DECRYPT_MODE,
+            SecretKeySpec(decryptionKey.copyOfRange(0, 32), "AES"),
             IvParameterSpec(decryptionKey.copyOfRange(32, decryptionKey.size))
         )
-        val decryptedData = aesCBC!!.doFinal(encrypted)
+        val decryptedData = aesCBC?.doFinal(encrypted) ?: throw ErrorLoadingException("Cipher not found")
         return String(decryptedData, StandardCharsets.UTF_8)
     }
 
