@@ -5,7 +5,8 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath("com.android.tools.build:gradle:8.0.2")
+        // we stay on low ver because prerelease build gradle is fucked
+        classpath("com.android.tools.build:gradle:7.3.1")
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.20")
         classpath("org.jetbrains.dokka:dokka-gradle-plugin:1.5.0")
 
