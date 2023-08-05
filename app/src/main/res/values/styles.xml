@@ -737,6 +737,11 @@
         <item name="android:layout_marginEnd">0dp</item>
     </style>
 
+    <style name="SelectableButtonTV" parent="RegularButtonTV">
+        <item name="icon">@drawable/cpv_preset_checked</item>
+        <item name="iconTint">@color/button_selector_color</item>
+    </style>
+
     <style name="RegularButtonTV">
         <item name="android:tag">@string/tv_no_focus_tag</item>
         <item name="android:stateListAnimator">@null</item>

@@ -45,19 +45,9 @@ class SelectAdaptor(val callback: (Any) -> Unit) : RecyclerView.Adapter<Recycler
         if(newIndex == selectedIndex) return
         val oldIndex = selectedIndex
         selectedIndex = newIndex
-        recyclerView.apply {
-            for (i in 0 until itemCount) {
-                val viewHolder = getChildViewHolder( getChildAt(i) ?: continue) ?: continue
-                val pos = viewHolder.absoluteAdapterPosition
-                if (viewHolder is SelectViewHolder) {
-                    if (pos == oldIndex) {
-                        viewHolder.update(false)
-                    } else if (pos == newIndex) {
-                        viewHolder.update(true)
-                    }
-                }
-            }
-        }
+
+        notifyItemChanged(selectedIndex)
+        notifyItemChanged(oldIndex)
     }
 
     fun updateSelectionList(newList: List<SelectData>) {
@@ -78,10 +68,6 @@ class SelectAdaptor(val callback: (Any) -> Unit) : RecyclerView.Adapter<Recycler
     ) :
         RecyclerView.ViewHolder(binding.root) {
         private val item: MaterialButton = binding.root
-
-        fun update(isSelected: Boolean) {
-            item.isSelected = isSelected
-        }
 
         fun bind(
             data: SelectData, isSelected: Boolean, callback: (Any) -> Unit
