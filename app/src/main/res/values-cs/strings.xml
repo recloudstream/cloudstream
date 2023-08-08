@@ -571,6 +571,9 @@
 \n
 \nPOZNÁMKA: Pokud je součet 10 nebo vyšší, přehrávač automaticky přeskočí načítání při načtení daného odkazu!</string>
     <string name="unable_to_inflate">Nepodařilo se správně vytvořit rozhraní. Toto je VÁŽNÁ CHYBA, kterou je potřeba ihned nahlásit %s</string>
-    <string name="disable">Zakázat</string>
+    <string name="disable">Vypnout</string>
     <string name="automatic_plugin_download_mode_title">Výběr režimu pro filtrování stahování doplňků</string>
+    <string name="no_plugins_found_error">V repozitáři nebyly nalezeny žádné doplňky</string>
+    <string name="no_repository_found_error">Repozitář nenalezen, zkontrolujte adresu URL a zkuste použít VPN</string>
+    <string name="default_account">\@string/default_subtitles</string>
 </resources>

@@ -550,4 +550,6 @@
     <string name="automatic_plugin_download_mode_title">Selecciona el modo para filtrar la descarga de los plugins</string>
     <string name="disable">Desactivar</string>
     <string name="default_account">@string/default_subtitles</string>
+    <string name="no_plugins_found_error">No se encontraron complementos en el repositorio</string>
+    <string name="no_repository_found_error">Repositorio no encontrado, comprueba la URL y prueba la VPN</string>
 </resources>

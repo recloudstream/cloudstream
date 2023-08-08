@@ -581,4 +581,7 @@
     <string name="unable_to_inflate">تعذر إنشاء واجهة المستخدم بشكل صحيح ، وهذا خطأ كبير ويجب الإبلاغ عنه على الفور %s</string>
     <string name="automatic_plugin_download_mode_title">حدد الوضع لتصفية تنزيل المكونات الإضافية</string>
     <string name="disable">تعطيل</string>
+    <string name="default_account">\@string/default_subtitles</string>
+    <string name="no_plugins_found_error">لا توجد اضافة في المستودع</string>
+    <string name="no_repository_found_error">المستودع لم يتم العثور عليه، تحقق من العنوان اوجرب شبكة افتراضية خاصة(vpn)</string>
 </resources>

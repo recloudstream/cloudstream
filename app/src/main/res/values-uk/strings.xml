@@ -546,4 +546,10 @@
     <string name="edit">Редагувати</string>
     <string name="qualities">Якості</string>
     <string name="profile_background_des">Фон профілю</string>
+    <string name="unable_to_inflate">Не вдалося створити UI коректно, це ВАЖЛИВА ПОМИЛКА, про яку слід негайно повідомити %s</string>
+    <string name="automatic_plugin_download_mode_title">Виберіть режим для фільтрації завантаження плагінів</string>
+    <string name="disable">Вимкнути</string>
+    <string name="default_account">\@string/default_subtitles</string>
+    <string name="no_repository_found_error">Репозиторій не знайдено, перевірте URL-адресу та спробуйте VPN</string>
+    <string name="no_plugins_found_error">Не знайдено жодних плагінів у репозиторії</string>
 </resources>

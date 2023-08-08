@@ -568,4 +568,10 @@
 \n
 \nNOTITIE: Als de som 10 of hoger is zal de speler automatisch het laden overslaan wanneer die link is geladen!</string>
     <string name="profile_number">Profiel %d</string>
+    <string name="no_repository_found_error">Repository niet gevonden, controleer de URL en probeer een VPN</string>
+    <string name="no_plugins_found_error">Geen plug-ins gevonden in de repository</string>
+    <string name="automatic_plugin_download_mode_title">Selecteer een modus om het downloaden van plug-ins te filteren</string>
+    <string name="disable">Uitzetten</string>
+    <string name="unable_to_inflate">De gebruikersinterface kon niet correct worden gemaakt, dit is een ERNSTIG PROBLEEM en moet onmiddellijk gerapporteerd worden %s</string>
+    <string name="default_account">\@string/default_subtitles</string>
 </resources>

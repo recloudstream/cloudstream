@@ -121,7 +121,7 @@
     <string name="player_size_settings">Pulsante di ridimensionamento del video</string>
     <string name="player_size_settings_des">Rimuovi bordi neri</string>
     <string name="player_subtitles_settings">Sottotitoli</string>
-    <string name="player_subtitles_settings_des">Impostazioni sottotitoli</string>
+    <string name="player_subtitles_settings_des">Impostazioni sottotitoli lettore</string>
     <string name="chromecast_subtitles_settings">Sottotitoli Chromecast</string>
     <string name="chromecast_subtitles_settings_des">Impostazioni sottotitoli Chromecast</string>
     <string name="eigengraumode_settings">Modalità Eigengravy</string>
@@ -226,7 +226,7 @@
     <string name="others">Altri</string>
     <!--singular-->
     <string name="movies_singular">Film</string>
-    <string name="tv_series_singular">Serie TV</string>
+    <string name="tv_series_singular">Serie</string>
     <string name="cartoons_singular">Cartoni</string>
     <string name="anime_singular">Anime</string>
     <string name="ova_singular">OVA</string>
@@ -568,4 +568,10 @@
     <string name="mobile_data">Dati Mobili</string>
     <string name="qualities">Qualità</string>
     <string name="profile_background_des">Sfondo profilo</string>
+    <string name="no_plugins_found_error">Nessun plugin trovato nel repository</string>
+    <string name="no_repository_found_error">Repository non trovato, controlla l\'URL e prova la VPN</string>
+    <string name="unable_to_inflate">Non è stato possibile creare correttamente l\'interfaccia utente, questo è un GRANDE BUG e dovrebbe essere segnalato immediatamente %s</string>
+    <string name="automatic_plugin_download_mode_title">Seleziona la modalità per filtrare il download dei plugin</string>
+    <string name="default_account">\@string/default_subtitles</string>
+    <string name="disable">Disabilita</string>
 </resources>
