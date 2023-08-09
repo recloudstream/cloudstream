@@ -572,4 +572,7 @@
     <string name="unable_to_inflate">UI tidak dapat dibuat dengan benar, ini adalah BUG UTAMA dan harus segera dilaporkan %s</string>
     <string name="disable">Nonaktif</string>
     <string name="automatic_plugin_download_mode_title">Pilih mode untuk memfilter unduhan plugin</string>
+    <string name="default_account">\@string/subtitle_default</string>
+    <string name="no_plugins_found_error">Tidak ada plugin yang ditemukan di repositori</string>
+    <string name="no_repository_found_error">Repositori tidak ditemukan, periksa URL dan coba VPN</string>
 </resources>

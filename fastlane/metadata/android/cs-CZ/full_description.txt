@@ -1,0 +1,10 @@
+CloudStream-3 umožňuje streamovat a stahovat filmy, televizní seriály a anime.
+
+Aplikace je bez reklam a analytik a podporuje
+spoustu stránek s trailery a filmy a další, např.
+
+Záložky
+
+Stahování titulků
+
+Podpora Chromecastu

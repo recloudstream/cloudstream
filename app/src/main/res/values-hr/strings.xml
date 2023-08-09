@@ -417,22 +417,22 @@
     <string name="add_repository">Dodaj repository</string>
     <string name="repository_name_hint">Ime repositorya</string>
     <string name="repository_url_hint">URL spremišta (repositorija)</string>
-    <string name="plugin_loaded">Dodatak je učitan</string>
-    <string name="plugin_deleted">Dodatak je izbrisan</string>
+    <string name="plugin_loaded">Dodatak učitan</string>
+    <string name="plugin_deleted">Dodatak izbrisan</string>
     <string name="plugin_load_fail" formatted="true">Nije moguće učitati %s</string>
     <string name="is_adult">18+</string>
     <string name="batch_download_start_format" formatted="true">Započelo preuzimanje %d %s…</string>
     <string name="batch_download_finish_format" formatted="true">Preuzeto %d %s</string>
     <string name="batch_download_nothing_to_download_format" formatted="true">Sve %s je već preuzeto</string>
     <string name="batch_download">Skupno preuzimanje</string>
-    <string name="plugin_singular">plugin</string>
-    <string name="plugin">plugins</string>
-    <string name="delete_repository_plugins">Ovo će također izbrisati sve dodatke spremišta</string>
+    <string name="plugin_singular">dodatak</string>
+    <string name="plugin">dodaci</string>
+    <string name="delete_repository_plugins">Ovo će također izbrisati sve dodatke repozitorija</string>
     <string name="delete_repository">Izbriši repository</string>
     <string name="setup_extensions_subtext">Preuzmi popis stranica koje želite koristiti</string>
     <string name="plugins_downloaded" formatted="true">Preuzeto: %d</string>
     <string name="plugins_disabled" formatted="true">Onemogućeno: %d</string>
-    <string name="plugins_not_downloaded" formatted="true">Nije preuzeto: %d</string>
+    <string name="plugins_not_downloaded" formatted="true">Nepreuzeto: %d</string>
     <string name="blank_repo_message">CloudStream nema instalirane web stranice prema zadanim postavkama. Morate instalirati stranice iz repozitorija.
 \n
 \nZbog bezumnog uklanjanja DMCA od strane Sky UK Limited 🤮 ne možemo povezati web mjesto repozitorija u aplikaciji.
@@ -459,9 +459,9 @@
     <string name="extension_types">Podržano</string>
     <string name="extension_language">Jezik</string>
     <string name="hls_playlist">HLS Playlista</string>
-    <string name="automatic_plugin_download">Automatski instaliraj ekstenzije</string>
+    <string name="automatic_plugin_download">Automatski instaliraj dodatke</string>
     <string name="skip_type_creddits">Zasluge</string>
-    <string name="automatic_plugin_download_summary">Automatski instaliraj sve neinstalirane ekstenzije iz dodanih repozitorija.</string>
+    <string name="automatic_plugin_download_summary">Automatski instaliraj sve neinstalirane dodatke iz dodanih repozitorija.</string>
     <string name="player_pref">Preferirani video player</string>
     <string name="player_settings_play_in_app">Interni player</string>
     <string name="extension_install_first">Prvo instalirajte ekstenziju</string>
@@ -479,7 +479,7 @@
     <string name="no">Ne</string>
     <string name="update_notification_installing">Instaliranje ažuriranja aplikacije…</string>
     <string name="update_notification_failed">Nije moguće instalirati novu verziju aplikacije</string>
-    <string name="plugins_updated" formatted="true">Ažurirano %d ekstenzija</string>
+    <string name="plugins_updated" formatted="true">Ažurirano %d dodataka</string>
     <string name="skip_type_mixed_op">Mješoviti početak</string>
     <string name="skip_type_intro">Uvod</string>
     <string name="pref_category_links">Linkovi</string>
@@ -565,4 +565,5 @@
     <string name="qualities">Kvalitete</string>
     <string name="profile_background_des">Pozadina profila</string>
     <string name="unable_to_inflate">Nije bilo moguće ispravno izraditi korisničko sučelje. Ovo je ZNAČAJNA GREŠKA i treba se odmah prijaviti %s</string>
+    <string name="automatic_plugin_download_mode_title">Odaberi modus za filtriranje preuzimanja dodataka</string>
 </resources>
