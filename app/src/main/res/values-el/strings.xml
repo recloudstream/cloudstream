@@ -547,6 +547,6 @@
     <string name="unable_to_inflate">Το UI δεν ήταν σε θέση να δημιουργηθεί σωστά, είναι ένα σφάλμα και θα πρέπει να αναφερθεί αμέσως %s</string>
     <string name="automatic_plugin_download_mode_title">Επιλέξτε κατάσταση για φιλτράρισμα επεκτάσεων για λήψη</string>
     <string name="disable">Απενεργοποιημένο</string>
-    <string name="default_account">\@string/default_subtitles</string>
+    <string name="default_account">@string/default_subtitles</string>
     <string name="stop">Τέλος</string>
 </resources>

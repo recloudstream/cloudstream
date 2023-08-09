@@ -572,6 +572,6 @@
     <string name="no_repository_found_error">Repository non trovato, controlla l\'URL e prova la VPN</string>
     <string name="unable_to_inflate">Non è stato possibile creare correttamente l\'interfaccia utente, questo è un GRANDE BUG e dovrebbe essere segnalato immediatamente %s</string>
     <string name="automatic_plugin_download_mode_title">Seleziona la modalità per filtrare il download dei plugin</string>
-    <string name="default_account">\@string/default_subtitles</string>
+    <string name="default_account">@string/default_subtitles</string>
     <string name="disable">Disabilita</string>
 </resources>
