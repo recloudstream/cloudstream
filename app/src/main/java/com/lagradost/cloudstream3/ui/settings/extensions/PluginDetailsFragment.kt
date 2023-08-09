@@ -13,10 +13,9 @@ import com.lagradost.cloudstream3.AcraApplication.Companion.openBrowser
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.FragmentPluginDetailsBinding
 import com.lagradost.cloudstream3.plugins.PluginManager
-import com.lagradost.cloudstream3.plugins.VotingApi
 import com.lagradost.cloudstream3.plugins.VotingApi.canVote
-import com.lagradost.cloudstream3.plugins.VotingApi.getVoteType
 import com.lagradost.cloudstream3.plugins.VotingApi.getVotes
+import com.lagradost.cloudstream3.plugins.VotingApi.hasVoted
 import com.lagradost.cloudstream3.plugins.VotingApi.vote
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.main
@@ -106,7 +105,6 @@ class PluginDetailsFragment(val data: PluginViewData) : BottomSheetDialogFragmen
             }
 
             if (!metadata.canVote()) {
-                downvote.alpha = .6f
                 upvote.alpha = .6f
             }
 
@@ -137,17 +135,9 @@ class PluginDetailsFragment(val data: PluginViewData) : BottomSheetDialogFragmen
 
             upvote.setOnClickListener {
                 ioSafe {
-                    metadata.vote(VotingApi.VoteType.UPVOTE).main {
+                    metadata.vote().main {
                         updateVoting(it)
                     }
-                }
-            }
-            downvote.setOnClickListener {
-                ioSafe {
-                    metadata.vote(VotingApi.VoteType.DOWNVOTE).main {
-                        updateVoting(it)
-                    }
-
                 }
             }
 
@@ -163,33 +153,14 @@ class PluginDetailsFragment(val data: PluginViewData) : BottomSheetDialogFragmen
         val metadata = data.plugin.second
         binding?.apply {
             pluginVotes.text = value.toString()
-            when (metadata.getVoteType()) {
-                VotingApi.VoteType.UPVOTE -> {
-                    upvote.imageTintList = ColorStateList.valueOf(
-                        context?.colorFromAttribute(R.attr.colorPrimary) ?: R.color.colorPrimary
-                    )
-                    downvote.imageTintList = ColorStateList.valueOf(
-                        context?.colorFromAttribute(R.attr.white) ?: R.color.white
-                    )
-                }
-
-                VotingApi.VoteType.DOWNVOTE -> {
-                    downvote.imageTintList = ColorStateList.valueOf(
-                        context?.colorFromAttribute(R.attr.colorPrimary) ?: R.color.colorPrimary
-                    )
-                    upvote.imageTintList = ColorStateList.valueOf(
-                        context?.colorFromAttribute(R.attr.white) ?: R.color.white
-                    )
-                }
-
-                VotingApi.VoteType.NONE -> {
-                    upvote.imageTintList = ColorStateList.valueOf(
-                        context?.colorFromAttribute(R.attr.white) ?: R.color.white
-                    )
-                    downvote.imageTintList = ColorStateList.valueOf(
-                        context?.colorFromAttribute(R.attr.white) ?: R.color.white
-                    )
-                }
+            if (metadata.hasVoted()) {
+                upvote.imageTintList = ColorStateList.valueOf(
+                    context?.colorFromAttribute(R.attr.colorPrimary) ?: R.color.colorPrimary
+                )
+            } else {
+                upvote.imageTintList = ColorStateList.valueOf(
+                    context?.colorFromAttribute(R.attr.colorOnSurface) ?: R.color.white
+                )
             }
         }
     }
