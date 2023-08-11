@@ -214,7 +214,7 @@
     <string name="dont_show_again">Να μην εμφανιστεί ξανά</string>
     <string name="skip_update">Παράλειψη της τρέχουσας ενημέρωσης</string>
     <string name="update">Ενημέρωση</string>
-    <string name="watch_quality_pref">Προτιμώμενη ποιότητας παρακολούθησης</string>
+    <string name="watch_quality_pref">Προτιμώμενη ποιότητας παρακολούθησης (WiFi)</string>
     <string name="limit_title">Μέγιστος αριθμός χαρακτήρων τίτλου</string>
     <string name="limit_title_rez">Ανάλυση προγράμματος αναπαραγωγής βίντεο</string>
     <string name="video_buffer_size_settings">Μέγεθος buffer για βίντεο</string>
@@ -452,7 +452,7 @@
     <string name="skip_type_mixed_ed">Ανάμεικτοι τίτλοι τέλους</string>
     <string name="go_back_30">-30</string>
     <string name="rating">Κριτική</string>
-    <string name="ova_singular">@string/ova</string>
+    <string name="ova_singular">OVA</string>
     <string name="pref_category_app_updates">Ενημερώσεις εφαρμογής</string>
     <string name="pref_category_backup">Αντίγραφο ασφαλείας</string>
     <string name="pref_category_extensions">Extensions</string>
@@ -500,16 +500,53 @@
     <string name="sort_by">Ταξινόμηση με βάση</string>
     <string name="sort_alphabetical_a">Αλφαβητικά (Α προς Ω)</string>
     <string name="select_library">Διάλεξε βιβλιοθήκη</string>
-    <string name="empty_library_logged_in_message">Φαίνεται πως η λίστα είναι άδεια, δοκίμασε να μεταβείς σε μία άλλη</string>
+    <string name="empty_library_logged_in_message">Αυτή η λίστα είναι άδεια. Δοκιμάστε μια άλλη.</string>
     <string name="action_remove_from_watched">Αφαίρεση από παρακολουθημένα</string>
     <string name="browser">Περιηγητής</string>
     <string name="open_with">Άνοιγμα με</string>
-    <string name="empty_library_no_accounts_message">Φαίνεται πως η βιβλιοθήκη σου είναι άδεια :(
-\nΣυνδέσου σε έναν λογαριασμό που έχει βιβλιοθήκη, ή πρόσθεσε σειρές στην τοπική βιβλιοθήκη σου</string>
+    <string name="empty_library_no_accounts_message">Η βιβλιοθήκη σας είναι άδεια :(
+\nΣυνδεθείτε με έναν λογαριασμό βιβλιοθήκης ή προσθέστε σειρές στην τοπική βιβλιοθήκη σας.</string>
     <string name="safe_mode_file">Βρέθηκε αρχείο Ασφαλούς Λειτουργίας!
 \nΔεν πρόκειται να φορτωθούν extensions κατά το ξεκίνημα μέχρι να διαγραφεί το αρχείο.</string>
     <string name="test_log">Αρχείο Καταγραφής</string>
     <string name="test_failed">Απέτυχε</string>
     <string name="test_passed">Πέτυχε</string>
     <string name="start">Εκκίνηση</string>
+    <string name="no_plugins_found_error">Δε βρέθηκαν επεκτάσεις στο αποθετήριο</string>
+    <string name="no_repository_found_error">Δε βρέθηκε αποθετήριο, ελέγξτε την URL και δοκιμάστε VPN</string>
+    <string name="quality_profile_help">Από εδώ μπορείτε να αλλάξετε τον τρόπο σειράς των πηγών. Εάν ένα βίντεο έχει υψηλότερη προτεραιότητα, θα εμφανίζεται ψηλότερα στην επιλογή πηγής. Το άθροισμα της προτεραιότητας πηγής και της ποιότητας, είναι η προτεραιότητα του βίντεο.
+\n
+\nΠηγή Α: 3
+\nΠοιότητα Β: 7
+\nΘα έχει συνδυασμένη προτεραιότητα βίντεο 10.
+\n
+\nΣΗΜΕΙΩΣΗ: Εάν το άθροισμα είναι 10 ή περισσότερο, η συσκευή αναπαραγωγής θα παραλείψει αυτόματα τη φόρτωση όταν φορτωθεί αυτός ο σύνδεσμος!</string>
+    <string name="category_provider_test">Δοκιμή παρόχου</string>
+    <string name="watch_quality_pref_data">Προτιμώμενη ποιότητας παρακολούθησης (Δεδομένα τηλεφώνου)</string>
+    <string name="jsdelivr_proxy">Διακομιστής μεσολάβησης raw.githubusercontent.com</string>
+    <string name="pref_category_android_tv">Android TV</string>
+    <string name="subscription_in_progress_notification">Ενημέρωση εγγεγραμμένων εκπομπών</string>
+    <string name="subscription_new">Έγινε εγγραφή σε %s</string>
+    <string name="revert">Επαναφορά</string>
+    <string name="subscription_episode_released">Δημοσιεύθηκε το επεισόδιο %d!</string>
+    <string name="help">Βοήθεια</string>
+    <string name="qualities">Ποιότητες</string>
+    <string name="profile_background_des">Φόντο προφίλ</string>
+    <string name="restart">Επανεκκίνηση</string>
+    <string name="jsdelivr_enabled">Το GitHub δεν είναι προσβάσιμο. Ενεργοποίηση διακομιστή μεσολάβησης jsDelivr…</string>
+    <string name="pref_category_bypass">Παράκαμψη ISP</string>
+    <string name="subscription_deleted">Αφαιρέθηκε η εγγραφή από %s</string>
+    <string name="subscription_list_name">Εγγεγραμμένος</string>
+    <string name="profile_number">Προφίλ %d</string>
+    <string name="wifi">Wi-Fi</string>
+    <string name="mobile_data">Δεδομένα τηλεφώνου</string>
+    <string name="set_default">Ορισμός προεπιλογής</string>
+    <string name="use">Χρήση</string>
+    <string name="edit">Επεξεργασία</string>
+    <string name="profiles">Προφίλ</string>
+    <string name="unable_to_inflate">Το UI δεν ήταν σε θέση να δημιουργηθεί σωστά, είναι ένα σφάλμα και θα πρέπει να αναφερθεί αμέσως %s</string>
+    <string name="automatic_plugin_download_mode_title">Επιλέξτε κατάσταση για φιλτράρισμα επεκτάσεων για λήψη</string>
+    <string name="disable">Απενεργοποιημένο</string>
+    <string name="default_account">@string/default_subtitles</string>
+    <string name="stop">Τέλος</string>
 </resources>

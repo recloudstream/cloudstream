@@ -546,4 +546,10 @@
 \nTerá uma prioridade de vídeo combinada de 10.
 \n
 \nNOTA: Se a soma for 10 ou mais, o leitor saltará automaticamente o carregamento quando essa ligação for carregada!</string>
+    <string name="automatic_plugin_download_mode_title">Selecionar o modo para filtrar a transferência de plug-ins</string>
+    <string name="unable_to_inflate">Não foi possível criar corretamente a interface do utilizador, trata-se de um GRANDE BUG e deve ser comunicado imediatamente %s</string>
+    <string name="default_account">\@ string/legendas_padrão</string>
+    <string name="disable">Desativar</string>
+    <string name="no_plugins_found_error">Não foram encontrados plugins no repositório</string>
+    <string name="no_repository_found_error">Repositório não encontrado, verifique o URL e tente a VPN</string>
 </resources>

@@ -688,4 +688,5 @@
 
 
     <string name="tv_no_focus_tag" translatable="false">tv_no_focus_tag</string>
+    <string name="already_voted">You have already voted</string>
 </resources>

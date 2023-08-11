@@ -211,4 +211,11 @@
     <string name="subs_window_color">窓の色</string>
     <string name="subs_edge_type">エッジタイプ</string>
     <string name="popup_pause_download">ダウンロードを一時停止する</string>
+    <string name="search_provider_text_types">使用タイプの検索</string>
+    <string name="subs_font">フォント</string>
+    <string name="subs_download_languages">言語をダウンロードする</string>
+    <string name="subs_subtitle_languages">字幕の言語</string>
+    <string name="subs_font_size">フォントサイズ</string>
+    <string name="search_provider_text_providers">プロバイダーから探す</string>
+    <string name="subs_auto_select_language">言語の自動選択</string>
 </resources>

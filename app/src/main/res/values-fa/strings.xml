@@ -45,4 +45,12 @@
     <string name="cartoons">کارتونها</string>
     <string name="used_storage">استفاده شده</string>
     <string name="app_storage">برنامه</string>
+    <string name="go_back_img_des">بازگشت</string>
+    <string name="autoplay_next_settings_des">آغاز قسمت بعد پس از پایان قسمت فعلی</string>
+    <string name="home_change_provider_img_des">تغییر ارائه دهنده</string>
+    <string name="action_remove_watching">حذف</string>
+    <string name="action_open_watching">اطلاعات بیشتر</string>
+    <string name="torrent_plot">شرح</string>
+    <string name="subs_subtitle_languages">زبان زیرنویس</string>
+    <string name="player_subtitles_settings">زیرنویس</string>
 </resources>
