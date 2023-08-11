@@ -36,18 +36,18 @@ class SyncViewModel : ViewModel() {
 
     val metadata: LiveData<Resource<SyncAPI.SyncResult>> get() = _metaResponse
 
-    private val _userDataResponse: MutableLiveData<Resource<SyncAPI.SyncStatus>?> =
+    private val _userDataResponse: MutableLiveData<Resource<SyncAPI.AbstractSyncStatus>?> =
         MutableLiveData(null)
 
-    val userData: LiveData<Resource<SyncAPI.SyncStatus>?> get() = _userDataResponse
+    val userData: LiveData<Resource<SyncAPI.AbstractSyncStatus>?> get() = _userDataResponse
 
     // prefix, id
-    private var syncs = mutableMapOf<String, String>()
+    private val syncs = mutableMapOf<String, String>()
     //private val _syncIds: MutableLiveData<MutableMap<String, String>> =
     //    MutableLiveData(mutableMapOf())
     //val syncIds: LiveData<MutableMap<String, String>> get() = _syncIds
 
-    fun getSyncs() : Map<String,String> {
+    fun getSyncs(): Map<String, String> {
         return syncs
     }
 
@@ -106,7 +106,7 @@ class SyncViewModel : ViewModel() {
         Log.i(TAG, "addFromUrl = $url")
 
         if (url == null || hasAddedFromUrl.contains(url)) return@ioSafe
-        if(!url.startsWith("http")) return@ioSafe
+        if (!url.startsWith("http")) return@ioSafe
 
         SyncUtil.getIdsFromUrl(url)?.let { (malId, aniListId) ->
             hasAddedFromUrl.add(url)
@@ -150,7 +150,8 @@ class SyncViewModel : ViewModel() {
 
         val user = userData.value
         if (user is Resource.Success) {
-            _userDataResponse.postValue(Resource.Success(user.value.copy(watchedEpisodes = episodes)))
+            user.value.watchedEpisodes = episodes
+            _userDataResponse.postValue(Resource.Success(user.value))
         }
     }
 
@@ -158,7 +159,8 @@ class SyncViewModel : ViewModel() {
         Log.i(TAG, "setScore = $score")
         val user = userData.value
         if (user is Resource.Success) {
-            _userDataResponse.postValue(Resource.Success(user.value.copy(score = score)))
+            user.value.score = score
+            _userDataResponse.postValue(Resource.Success(user.value))
         }
     }
 
@@ -167,7 +169,8 @@ class SyncViewModel : ViewModel() {
         if (which < -1 || which > 5) return // validate input
         val user = userData.value
         if (user is Resource.Success) {
-            _userDataResponse.postValue(Resource.Success(user.value.copy(status = which)))
+            user.value.status = which
+            _userDataResponse.postValue(Resource.Success(user.value))
         }
     }
 
@@ -185,17 +188,16 @@ class SyncViewModel : ViewModel() {
     fun modifyMaxEpisode(episodeNum: Int) {
         Log.i(TAG, "modifyMaxEpisode = $episodeNum")
         modifyData { status ->
-            status.copy(
-                watchedEpisodes = maxOf(
-                    episodeNum,
-                    status.watchedEpisodes ?: return@modifyData null
-                )
+            status.watchedEpisodes = maxOf(
+                episodeNum,
+                status.watchedEpisodes ?: return@modifyData null
             )
+            status
         }
     }
 
     /// modifies the current sync data, return null if you don't want to change it
-    private fun modifyData(update: ((SyncAPI.SyncStatus) -> (SyncAPI.SyncStatus?))) =
+    private fun modifyData(update: ((SyncAPI.AbstractSyncStatus) -> (SyncAPI.AbstractSyncStatus?))) =
         ioSafe {
             syncs.amap { (prefix, id) ->
                 repos.firstOrNull { it.idPrefix == prefix }?.let { repo ->
@@ -245,8 +247,12 @@ class SyncViewModel : ViewModel() {
         // shitty way to sort anilist first, as it has trailers while mal does not
         if (syncs.containsKey(aniListApi.idPrefix)) {
             try { // swap can throw error
-                Collections.swap(current, current.indexOfFirst { it.first == aniListApi.idPrefix }, 0)
-            } catch (t : Throwable) {
+                Collections.swap(
+                    current,
+                    current.indexOfFirst { it.first == aniListApi.idPrefix },
+                    0
+                )
+            } catch (t: Throwable) {
                 logError(t)
             }
         }

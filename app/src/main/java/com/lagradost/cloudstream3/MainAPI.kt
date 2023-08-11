@@ -11,9 +11,12 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.lagradost.cloudstream3.mvvm.logError
+import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.aniListApi
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.malApi
+import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.simklApi
 import com.lagradost.cloudstream3.syncproviders.SyncIdName
+import com.lagradost.cloudstream3.syncproviders.providers.SimklApi
 import com.lagradost.cloudstream3.ui.player.SubtitleData
 import com.lagradost.cloudstream3.utils.*
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
@@ -821,7 +824,8 @@ public enum class AutoDownloadMode(val value: Int) {
     ;
 
     companion object {
-        infix fun getEnum(value: Int): AutoDownloadMode? = AutoDownloadMode.values().firstOrNull { it.value == value }
+        infix fun getEnum(value: Int): AutoDownloadMode? =
+            AutoDownloadMode.values().firstOrNull { it.value == value }
     }
 }
 
@@ -1143,6 +1147,7 @@ interface LoadResponse {
     companion object {
         private val malIdPrefix = malApi.idPrefix
         private val aniListIdPrefix = aniListApi.idPrefix
+        private val simklIdPrefix = simklApi.idPrefix
         var isTrailersEnabled = true
 
         fun LoadResponse.isMovie(): Boolean {
@@ -1164,6 +1169,20 @@ interface LoadResponse {
             this.actors = actors?.map { (actor, role) -> ActorData(actor, role = role) }
         }
 
+        /**
+         * Internal helper function to add simkl ids from other databases.
+         */
+        private fun LoadResponse.addSimklId(
+            database: SimklApi.Companion.SyncServices,
+            id: String?
+        ) {
+            normalSafeApiCall {
+                this.syncData[simklIdPrefix] =
+                    SimklApi.addIdToString(this.syncData[simklIdPrefix], database, id.toString())
+                        ?: return@normalSafeApiCall
+            }
+        }
+
         @JvmName("addActorsOnly")
         fun LoadResponse.addActors(actors: List<Actor>?) {
             this.actors = actors?.map { actor -> ActorData(actor) }
@@ -1179,10 +1198,16 @@ interface LoadResponse {
 
         fun LoadResponse.addMalId(id: Int?) {
             this.syncData[malIdPrefix] = (id ?: return).toString()
+            this.addSimklId(SimklApi.Companion.SyncServices.Mal, id.toString())
         }
 
         fun LoadResponse.addAniListId(id: Int?) {
             this.syncData[aniListIdPrefix] = (id ?: return).toString()
+            this.addSimklId(SimklApi.Companion.SyncServices.AniList, id.toString())
+        }
+
+        fun LoadResponse.addSimklId(id: Int?) {
+            this.addSimklId(SimklApi.Companion.SyncServices.Simkl, id.toString())
         }
 
         fun LoadResponse.addImdbUrl(url: String?) {
@@ -1264,6 +1289,7 @@ interface LoadResponse {
 
         fun LoadResponse.addImdbId(id: String?) {
             // TODO add imdb sync
+            this.addSimklId(SimklApi.Companion.SyncServices.Imdb, id)
         }
 
         fun LoadResponse.addTrackId(id: String?) {
@@ -1276,6 +1302,7 @@ interface LoadResponse {
 
         fun LoadResponse.addTMDbId(id: String?) {
             // TODO add TMDb sync
+            this.addSimklId(SimklApi.Companion.SyncServices.Tmdb, id)
         }
 
         fun LoadResponse.addRating(text: String?) {

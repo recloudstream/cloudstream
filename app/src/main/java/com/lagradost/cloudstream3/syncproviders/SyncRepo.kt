@@ -18,11 +18,11 @@ class SyncRepo(private val repo: SyncAPI) {
             repo.requireLibraryRefresh = value
         }
 
-    suspend fun score(id: String, status: SyncAPI.SyncStatus): Resource<Boolean> {
+    suspend fun score(id: String, status: SyncAPI.AbstractSyncStatus): Resource<Boolean> {
         return safeApiCall { repo.score(id, status) }
     }
 
-    suspend fun getStatus(id: String): Resource<SyncAPI.SyncStatus> {
+    suspend fun getStatus(id: String): Resource<SyncAPI.AbstractSyncStatus> {
         return safeApiCall { repo.getStatus(id) ?: throw ErrorLoadingException("No data") }
     }
 

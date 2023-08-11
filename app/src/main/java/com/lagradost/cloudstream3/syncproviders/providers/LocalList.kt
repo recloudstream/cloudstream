@@ -45,11 +45,11 @@ class LocalList : SyncAPI {
 
     override val mainUrl = ""
     override val syncIdName = SyncIdName.LocalList
-    override suspend fun score(id: String, status: SyncAPI.SyncStatus): Boolean {
+    override suspend fun score(id: String, status: SyncAPI.AbstractSyncStatus): Boolean {
         return true
     }
 
-    override suspend fun getStatus(id: String): SyncAPI.SyncStatus? {
+    override suspend fun getStatus(id: String): SyncAPI.AbstractSyncStatus? {
         return null
     }
 
