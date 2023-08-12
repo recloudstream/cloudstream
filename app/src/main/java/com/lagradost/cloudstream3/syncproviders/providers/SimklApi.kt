@@ -124,7 +124,7 @@ class SimklApi(index: Int) : AccountManager(index), SyncAPI {
         }
 
         fun getPosterUrl(poster: String): String {
-            return "https://wsrv.nl/?url=https://simkl.in/posters/${poster}_m.jpg"
+            return "https://wsrv.nl/?url=https://simkl.in/posters/${poster}_m.webp"
         }
 
         private fun getUrlFromId(id: Int): String {
@@ -744,9 +744,6 @@ class SimklApi(index: Int) : AccountManager(index), SyncAPI {
                 activities?.tv_shows?.all,
                 activities?.anime?.all,
                 activities?.movies?.all,
-                activities?.tv_shows?.rated_at,
-                activities?.anime?.rated_at,
-                activities?.movies?.rated_at,
             ).maxOf {
                 getUnixTime(it) ?: -1
             }

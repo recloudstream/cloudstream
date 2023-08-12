@@ -738,7 +738,7 @@
     </style>
 
     <style name="SelectableButtonTV" parent="RegularButtonTV">
-        <item name="icon">@drawable/cpv_preset_checked</item>
+        <item name="icon">@drawable/ic_baseline_check_24_listview</item>
         <item name="iconTint">@color/button_selector_color</item>
     </style>
 

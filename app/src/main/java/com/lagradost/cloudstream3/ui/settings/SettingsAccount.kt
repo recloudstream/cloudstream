@@ -258,7 +258,7 @@ class SettingsAccount : PreferenceFragmentCompat() {
             listOf(
                 R.string.mal_key to malApi,
                 R.string.anilist_key to aniListApi,
-                R.string.trakt_key to simklApi,
+                R.string.simkl_key to simklApi,
                 R.string.opensubtitles_key to openSubtitlesApi,
             )
 
