@@ -449,6 +449,7 @@
     <string name="bottom_title_settings_des">Put the title under the poster</string>
     <!-- account stuff -->
     <string name="anilist_key" translatable="false">anilist_key</string>
+    <string name="simkl_key" translatable="false">simkl_key</string>
     <string name="mal_key" translatable="false">mal_key</string>
     <string name="opensubtitles_key" translatable="false">opensubtitles_key</string>
     <string name="nginx_key" translatable="false">nginx_key</string>

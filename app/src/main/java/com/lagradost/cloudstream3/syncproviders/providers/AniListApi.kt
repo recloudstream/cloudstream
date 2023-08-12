@@ -158,7 +158,7 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
         )
     }
 
-    override suspend fun getStatus(id: String): SyncAPI.SyncStatus? {
+    override suspend fun getStatus(id: String): SyncAPI.AbstractSyncStatus? {
         val internalId = id.toIntOrNull() ?: return null
         val data = getDataAboutId(internalId) ?: return null
 
@@ -171,7 +171,7 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
         )
     }
 
-    override suspend fun score(id: String, status: SyncAPI.SyncStatus): Boolean {
+    override suspend fun score(id: String, status: SyncAPI.AbstractSyncStatus): Boolean {
         return postDataAboutId(
             id.toIntOrNull() ?: return false,
             fromIntToAnimeStatus(status.status),

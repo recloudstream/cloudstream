@@ -91,7 +91,7 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
         return Regex("""/anime/((.*)/|(.*))""").find(url)!!.groupValues.first()
     }
 
-    override suspend fun score(id: String, status: SyncAPI.SyncStatus): Boolean {
+    override suspend fun score(id: String, status: SyncAPI.AbstractSyncStatus): Boolean {
         return setScoreRequest(
             id.toIntOrNull() ?: return false,
             fromIntToAnimeStatus(status.status),

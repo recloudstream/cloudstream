@@ -10,7 +10,8 @@ enum class SyncIdName {
     MyAnimeList,
     Trakt,
     Imdb,
-    LocalList
+    Simkl,
+    LocalList,
 }
 
 interface SyncAPI : OAuth2API {
@@ -35,9 +36,9 @@ interface SyncAPI : OAuth2API {
     4 -> PlanToWatch
     5 -> ReWatching
      */
-    suspend fun score(id: String, status: SyncStatus): Boolean
+    suspend fun score(id: String, status: AbstractSyncStatus): Boolean
 
-    suspend fun getStatus(id: String): SyncStatus?
+    suspend fun getStatus(id: String): AbstractSyncStatus?
 
     suspend fun getResult(id: String): SyncResult?
 
@@ -59,14 +60,24 @@ interface SyncAPI : OAuth2API {
         override var id: Int? = null,
     ) : SearchResponse
 
-    data class SyncStatus(
-        val status: Int,
+    abstract class AbstractSyncStatus {
+        abstract var status: Int
+
         /** 1-10 */
-        val score: Int?,
-        val watchedEpisodes: Int?,
-        var isFavorite: Boolean? = null,
-        var maxEpisodes: Int? = null,
-    )
+        abstract var score: Int?
+        abstract var watchedEpisodes: Int?
+        abstract var isFavorite: Boolean?
+        abstract var maxEpisodes: Int?
+    }
+
+    data class SyncStatus(
+        override var status: Int,
+        /** 1-10 */
+        override var score: Int?,
+        override var watchedEpisodes: Int?,
+        override var isFavorite: Boolean? = null,
+        override var maxEpisodes: Int? = null,
+    ) : AbstractSyncStatus()
 
     data class SyncResult(
         /**Used to verify*/

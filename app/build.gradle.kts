@@ -1,3 +1,4 @@
+import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
 import org.jetbrains.dokka.gradle.DokkaTask
 import java.io.ByteArrayOutputStream
 import java.net.URL
@@ -54,17 +55,27 @@ android {
         versionName = "4.1.3"
 
         resValue("string", "app_version", "${defaultConfig.versionName}${versionNameSuffix ?: ""}")
-
         resValue("string", "commit_hash", "git rev-parse --short HEAD".execute() ?: "")
-
         resValue("bool", "is_prerelease", "false")
+
+        // Reads local.properties
+        val localProperties = gradleLocalProperties(rootDir)
 
         buildConfigField(
             "String",
             "BUILDDATE",
             "new java.text.SimpleDateFormat(\"yyyy-MM-dd HH:mm\").format(new java.util.Date(" + System.currentTimeMillis() + "L));"
         )
-
+        buildConfigField(
+            "String",
+            "SIMKL_CLIENT_ID",
+            "\"" + (System.getenv("SIMKL_CLIENT_ID") ?: localProperties["simkl.id"]) + "\""
+        )
+        buildConfigField(
+            "String",
+            "SIMKL_CLIENT_SECRET",
+            "\"" + (System.getenv("SIMKL_CLIENT_SECRET") ?: localProperties["simkl.secret"]) + "\""
+        )
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         kapt {
@@ -108,9 +119,9 @@ android {
         }
     }
     //toolchain {
-   //     languageVersion.set(JavaLanguageVersion.of(17))
-   // }
-   // jvmToolchain(17)
+    //     languageVersion.set(JavaLanguageVersion.of(17))
+    // }
+    // jvmToolchain(17)
 
     compileOptions {
         isCoreLibraryDesugaringEnabled = true
@@ -211,7 +222,7 @@ dependencies {
     // Networking
 //    implementation("com.squareup.okhttp3:okhttp:4.9.2")
 //    implementation("com.squareup.okhttp3:okhttp-dnsoverhttps:4.9.1")
-    implementation("com.github.Blatzar:NiceHttp:0.4.2")
+    implementation("com.github.Blatzar:NiceHttp:0.4.3")
     // To fix SSL fuckery on android 9
     implementation("org.conscrypt:conscrypt-android:2.2.1")
     // Util to skip the URI file fuckery 🙏
