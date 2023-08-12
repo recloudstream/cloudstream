@@ -13,6 +13,7 @@ import com.lagradost.cloudstream3.BuildConfig
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.app
+import com.lagradost.cloudstream3.mvvm.debugAssert
 import com.lagradost.cloudstream3.mvvm.debugPrint
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.syncproviders.AccountManager
@@ -44,7 +45,9 @@ class SimklApi(index: Int) : AccountManager(index), SyncAPI {
     override val createAccountUrl = "$mainUrl/signup"
     override val syncIdName = SyncIdName.Simkl
     private val token: String?
-        get() = getKey(accountId, SIMKL_TOKEN_KEY)
+        get() = getKey<String>(accountId, SIMKL_TOKEN_KEY).also {
+            debugAssert({ it == null }) { "No ${this.name} token!" }
+        }
 
     /** Automatically adds simkl auth headers */
     private val interceptor = HeaderInterceptor()
@@ -354,7 +357,7 @@ class SimklApi(index: Int) : AccountManager(index), SyncAPI {
 
             interface Metadata {
                 val last_watched_at: String?
-                val status: String
+                val status: String?
                 val user_rating: Int?
                 val last_watched: String?
                 val watched_episodes_count: Int?
@@ -388,7 +391,7 @@ class SimklApi(index: Int) : AccountManager(index), SyncAPI {
                         getUnixTime(last_watched_at) ?: 0,
                         "Simkl",
                         TvType.Movie,
-                        getPosterUrl(this.movie.poster),
+                        this.movie.poster?.let { getPosterUrl(it) },
                         null,
                         null,
                         movie.ids.simkl
@@ -420,7 +423,7 @@ class SimklApi(index: Int) : AccountManager(index), SyncAPI {
                         getUnixTime(last_watched_at) ?: 0,
                         "Simkl",
                         TvType.Anime,
-                        getPosterUrl(this.show.poster),
+                        this.show.poster?.let { getPosterUrl(it) },
                         null,
                         null,
                         show.ids.simkl
@@ -429,8 +432,8 @@ class SimklApi(index: Int) : AccountManager(index), SyncAPI {
 
                 data class Show(
                     val title: String,
-                    val poster: String,
-                    val year: Int,
+                    val poster: String?,
+                    val year: Int?,
                     val ids: Ids,
                 ) {
                     data class Ids(
@@ -466,6 +469,7 @@ class SimklApi(index: Int) : AccountManager(index), SyncAPI {
      **/
     private inner class HeaderInterceptor : Interceptor {
         override fun intercept(chain: Interceptor.Chain): Response {
+            debugPrint { "${this@SimklApi.name} made request to ${chain.request().url}" }
             return chain.proceed(
                 chain.request()
                     .newBuilder()
@@ -506,7 +510,7 @@ class SimklApi(index: Int) : AccountManager(index), SyncAPI {
 
         if (foundItem != null) {
             return SimklSyncStatus(
-                status = SimklListStatusType.fromString(foundItem.status)?.value ?: return null,
+                status = foundItem.status?.let { SimklListStatusType.fromString(it)?.value } ?: return null,
                 score = foundItem.user_rating,
                 watchedEpisodes = foundItem.watched_episodes_count,
                 maxEpisodes = foundItem.total_episodes_count,
@@ -707,7 +711,7 @@ class SimklApi(index: Int) : AccountManager(index), SyncAPI {
         return null
     }
 
-    private suspend fun getSyncListSince(since: Long?): AllItemsResponse? {
+    private suspend fun getSyncListSince(since: Long?): AllItemsResponse {
         val params = getDateTime(since)?.let {
             mapOf("date_from" to it)
         } ?: emptyMap()
@@ -716,7 +720,7 @@ class SimklApi(index: Int) : AccountManager(index), SyncAPI {
             "$mainUrl/sync/all-items/",
             params = params,
             interceptor = interceptor
-        ).parsedSafe()
+        ).parsed()
     }
 
     private suspend fun getActivities(): ActivitiesResponse? {
@@ -761,6 +765,7 @@ class SimklApi(index: Int) : AccountManager(index), SyncAPI {
             debugPrint { "Cached list update in ${this.name}." }
             getSyncListCached()
         }
+        debugPrint { "List sizes: movies=${list?.movies?.size}, shows=${list?.shows?.size}, anime=${list?.anime?.size}" }
 
         setKey(accountId, SIMKL_CACHED_LIST, list)
 
@@ -772,9 +777,11 @@ class SimklApi(index: Int) : AccountManager(index), SyncAPI {
         val list = getSyncListSmart() ?: return null
 
         val baseMap =
-            SimklListStatusType.values().filter { it.value >= 0 }.associate {
-                it.stringRes to emptyList<SyncAPI.LibraryItem>()
-            }
+            SimklListStatusType.values()
+                .filter { it.value >= 0 && it.value != SimklListStatusType.ReWatching.value }
+                .associate {
+                    it.stringRes to emptyList<SyncAPI.LibraryItem>()
+                }
 
         val syncMap = listOf(list.anime, list.movies, list.shows)
             .flatten()
@@ -783,7 +790,7 @@ class SimklApi(index: Int) : AccountManager(index), SyncAPI {
             }
             .mapNotNull { (status, list) ->
                 val stringRes =
-                    SimklListStatusType.fromString(status)?.stringRes ?: return@mapNotNull null
+                    status?.let { SimklListStatusType.fromString(it)?.stringRes } ?: return@mapNotNull null
                 val libraryList = list.map { it.toLibraryItem() }
                 stringRes to libraryList
             }.toMap()
