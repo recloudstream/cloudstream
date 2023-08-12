@@ -16,6 +16,7 @@ import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.mvvm.debugAssert
 import com.lagradost.cloudstream3.mvvm.debugPrint
 import com.lagradost.cloudstream3.mvvm.logError
+import com.lagradost.cloudstream3.mvvm.suspendSafeApiCall
 import com.lagradost.cloudstream3.syncproviders.AccountManager
 import com.lagradost.cloudstream3.syncproviders.AuthAPI
 import com.lagradost.cloudstream3.syncproviders.SyncAPI
@@ -481,8 +482,10 @@ class SimklApi(index: Int) : AccountManager(index), SyncAPI {
     }
 
     private suspend fun getUser(): SettingsResponse.User? {
-        return app.post("$mainUrl/users/settings", interceptor = interceptor)
-            .parsedSafe<SettingsResponse>()?.user
+        return suspendSafeApiCall {
+            app.post("$mainUrl/users/settings", interceptor = interceptor)
+                .parsedSafe<SettingsResponse>()?.user
+        }
     }
 
     class SimklSyncStatus(
@@ -510,7 +513,8 @@ class SimklApi(index: Int) : AccountManager(index), SyncAPI {
 
         if (foundItem != null) {
             return SimklSyncStatus(
-                status = foundItem.status?.let { SimklListStatusType.fromString(it)?.value } ?: return null,
+                status = foundItem.status?.let { SimklListStatusType.fromString(it)?.value }
+                    ?: return null,
                 score = foundItem.user_rating,
                 watchedEpisodes = foundItem.watched_episodes_count,
                 maxEpisodes = foundItem.total_episodes_count,
@@ -790,7 +794,8 @@ class SimklApi(index: Int) : AccountManager(index), SyncAPI {
             }
             .mapNotNull { (status, list) ->
                 val stringRes =
-                    status?.let { SimklListStatusType.fromString(it)?.stringRes } ?: return@mapNotNull null
+                    status?.let { SimklListStatusType.fromString(it)?.stringRes }
+                        ?: return@mapNotNull null
                 val libraryList = list.map { it.toLibraryItem() }
                 stringRes to libraryList
             }.toMap()
