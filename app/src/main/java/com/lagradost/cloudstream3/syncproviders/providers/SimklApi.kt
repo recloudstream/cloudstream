@@ -316,9 +316,12 @@ class SimklApi(index: Int) : AccountManager(index), SyncAPI {
 
         /** https://simkl.docs.apiary.io/#reference/sync/get-all-items/get-all-items-in-the-user's-watchlist */
         data class AllItemsResponse(
-            val shows: List<ShowMetadata>,
-            val anime: List<ShowMetadata>,
-            val movies: List<MovieMetadata>,
+            @JsonProperty("shows")
+            val shows: List<ShowMetadata> = emptyList(),
+            @JsonProperty("anime")
+            val anime: List<ShowMetadata> = emptyList(),
+            @JsonProperty("movies")
+            val movies: List<MovieMetadata> = emptyList(),
         ) {
             companion object {
                 fun merge(first: AllItemsResponse?, second: AllItemsResponse?): AllItemsResponse {
