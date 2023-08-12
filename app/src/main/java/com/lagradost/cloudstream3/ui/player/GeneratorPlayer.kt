@@ -1273,7 +1273,18 @@ class GeneratorPlayer : FullScreenPlayer() {
                 from, to
             ).apply {
                 addListener(onEnd = {
-                    if (!show) playerBinding?.skipChapterButton?.isVisible = false
+                    if (show) {
+                        if (!isShowing) {
+                            // Automatically request focus if the menu is not opened
+                            playerBinding?.skipChapterButton?.requestFocus()
+                        }
+                    } else {
+                        playerBinding?.skipChapterButton?.isVisible = false
+                        if (!isShowing) {
+                            // Automatically return focus to play pause
+                            playerBinding?.playerPausePlay?.requestFocus()
+                        }
+                    }
                 })
                 addUpdateListener { valueAnimator ->
                     val value = valueAnimator.animatedValue as Int
