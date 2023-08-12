@@ -56,6 +56,8 @@ jobs:
         SIGNING_KEY_ALIAS: "key0"
         SIGNING_KEY_PASSWORD: ${{ steps.fetch_keystore.outputs.key_pwd }}
         SIGNING_STORE_PASSWORD: ${{ steps.fetch_keystore.outputs.key_pwd }}
+        SIMKL_CLIENT_ID: ${{ secrets.SIMKL_CLIENT_ID }}
+        SIMKL_CLIENT_SECRET: ${{ secrets.SIMKL_CLIENT_SECRET }}
     - uses: actions/checkout@v3
       with:
         repository: "recloudstream/cloudstream-archive"
