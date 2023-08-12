@@ -905,6 +905,7 @@ open class ResultFragmentPhone : FullScreenPlayer(),
 
         observe(viewModel.watchStatus) { watchType ->
             binding?.resultBookmarkFab?.apply {
+                setText(watchType.stringRes)
                 if (watchType == WatchType.NONE) {
                     context?.colorFromAttribute(R.attr.white)
                 } else {
