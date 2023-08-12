@@ -278,7 +278,7 @@ var app = Requests(responseParser = object : ResponseParser {
 class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
     companion object {
         const val TAG = "MAINACT"
-
+        var lastError: String? = null
         /**
          * Setting this will automatically enter the query in the search
          * next time the search fragment is opened.
@@ -599,22 +599,9 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
     }
 
     override fun dispatchKeyEvent(event: KeyEvent?): Boolean {
-        val start = System.currentTimeMillis()
-        try {
-            val response = CommonActivity.dispatchKeyEvent(this, event)
-
-            if (response != null)
-                return response
-        } finally {
-            debugAssert({
-                val end = System.currentTimeMillis()
-                val delta = end - start
-                delta > 100
-            }) {
-                "Took over 100ms to navigate, smth is VERY wrong"
-            }
-        }
-
+        val response = CommonActivity.dispatchKeyEvent(this, event)
+        if (response != null)
+            return response
         return super.dispatchKeyEvent(event)
     }
 
@@ -1054,10 +1041,11 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
 
         val errorFile = filesDir.resolve("last_error")
-        var lastError: String? = null
         if (errorFile.exists() && errorFile.isFile) {
             lastError = errorFile.readText(Charset.defaultCharset())
             errorFile.delete()
+        } else {
+            lastError = null
         }
 
         val settingsForProvider = SettingsJson()
@@ -1167,16 +1155,16 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                     }
 
                     //Automatically download not existing plugins, using mode specified.
-                    val auto_download_plugin = AutoDownloadMode.getEnum(
+                    val autoDownloadPlugin = AutoDownloadMode.getEnum(
                         settingsManager.getInt(
                             getString(R.string.auto_download_plugins_key),
                             0
                         )
                     ) ?: AutoDownloadMode.Disable
-                    if (auto_download_plugin != AutoDownloadMode.Disable) {
+                    if (autoDownloadPlugin != AutoDownloadMode.Disable) {
                         PluginManager.downloadNotExistingPluginsAndLoad(
                             this@MainActivity,
-                            auto_download_plugin
+                            autoDownloadPlugin
                         )
                     }
                 }

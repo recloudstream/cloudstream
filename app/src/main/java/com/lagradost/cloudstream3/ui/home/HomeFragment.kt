@@ -513,9 +513,13 @@ class HomeFragment : Fragment() {
         fixGrid()
 
         binding?.apply {
-            homeChangeApiLoading.setOnClickListener(apiChangeClickListener)
+            //homeChangeApiLoading.setOnClickListener(apiChangeClickListener)
             //homeChangeApiLoading.setOnClickListener(apiChangeClickListener)
             homeApiFab.setOnClickListener(apiChangeClickListener)
+            homeChangeApi.setOnClickListener(apiChangeClickListener)
+            homeSwitchAccount.setOnClickListener { v ->
+                DataStoreHelper.showWhoIsWatching(v?.context ?: return@setOnClickListener)
+            }
             homeRandom.setOnClickListener {
                 if (listHomepageItems.isNotEmpty()) {
                     activity.loadSearchResult(listHomepageItems.random())
@@ -527,21 +531,9 @@ class HomeFragment : Fragment() {
                     mutableListOf(),
                     homeViewModel
                 )
-            fixPaddingStatusbar(homeLoadingStatusbar)
+            //fixPaddingStatusbar(homeLoadingStatusbar)
 
-            if (isTvSettings()) {
-                homeApiFab.isVisible = false
-                if (isTrueTvSettings()) {
-                    homeChangeApiLoading.isVisible = true
-                    homeChangeApiLoading.isFocusable = true
-                    homeChangeApiLoading.isFocusableInTouchMode = true
-                }
-                // home_bookmark_select?.isFocusable = true
-                // home_bookmark_select?.isFocusableInTouchMode = true
-            } else {
-                homeApiFab.isVisible = true
-                homeChangeApiLoading.isVisible = false
-            }
+            homeApiFab.isVisible = !isTvSettings()
 
             homeMasterRecycler.addOnScrollListener(object : RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -574,6 +566,7 @@ class HomeFragment : Fragment() {
         observe(homeViewModel.apiName) { apiName ->
             currentApiName = apiName
             binding?.homeApiFab?.text = apiName
+            binding?.homeChangeApi?.text = apiName
         }
 
         observe(homeViewModel.page) { data ->

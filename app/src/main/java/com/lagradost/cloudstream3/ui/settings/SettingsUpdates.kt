@@ -177,7 +177,7 @@ class SettingsUpdates : PreferenceFragmentCompat() {
             val prefNames = resources.getStringArray(R.array.auto_download_plugin)
             val prefValues = enumValues<AutoDownloadMode>().sortedBy { x -> x.value }.map { x -> x.value }
 
-            val current = settingsManager.getInt(getString(R.string.auto_download_plugins_pref), 0)
+            val current = settingsManager.getInt(getString(R.string.auto_download_plugins_key), 0)
 
             activity?.showBottomDialog(
                 prefNames.toList(),
@@ -185,7 +185,7 @@ class SettingsUpdates : PreferenceFragmentCompat() {
                 getString(R.string.automatic_plugin_download_mode_title),
                 true,
                 {}) {
-                settingsManager.edit().putInt(getString(R.string.auto_download_plugins_pref), prefValues[it]).apply()
+                settingsManager.edit().putInt(getString(R.string.auto_download_plugins_key), prefValues[it]).apply()
                 (context ?: AcraApplication.context)?.let { ctx -> app.initClient(ctx) }
             }
             return@setOnPreferenceClickListener true

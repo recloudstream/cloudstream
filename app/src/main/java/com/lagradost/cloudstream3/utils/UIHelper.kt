@@ -24,6 +24,7 @@ import androidx.annotation.AttrRes
 import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
 import androidx.annotation.IdRes
+import androidx.annotation.StyleRes
 import androidx.appcompat.view.ContextThemeWrapper
 import androidx.appcompat.view.menu.MenuBuilder
 import androidx.appcompat.widget.PopupMenu
@@ -81,7 +82,7 @@ object UIHelper {
                 || Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
     }
 
-    fun populateChips(view: ChipGroup?, tags: List<String>) {
+    fun populateChips(view: ChipGroup?, tags: List<String>, @StyleRes style : Int = R.style.ChipFilled) {
         if (view == null) return
         view.removeAllViews()
         val context = view.context ?: return
@@ -92,7 +93,7 @@ object UIHelper {
                 context,
                 null,
                 0,
-                R.style.ChipFilled
+                style
             )
             chip.setChipDrawable(chipDrawable)
             chip.text = tag
@@ -100,7 +101,7 @@ object UIHelper {
             chip.isCheckable = false
             chip.isFocusable = false
             chip.isClickable = false
-            chip.setTextColor(context.colorFromAttribute(R.attr.textColor))
+            chip.setTextColor(context.colorFromAttribute(R.attr.white))
             view.addView(chip)
         }
     }

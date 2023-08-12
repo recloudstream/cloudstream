@@ -62,7 +62,8 @@
         <item name="iconGrayBackground">@color/iconGrayBackground</item>
         <item name="boxItemBackground">@color/boxItemBackground</item>
         <item name="iconColor">@color/iconColor</item>
-        <item name="white">#FFF</item>
+        <item name="white">@color/white</item>
+        <item name="black">@color/black</item>
 
         <item name="preferenceTheme">@style/CustomPreferenceThemeOverlay</item>
 
@@ -99,7 +100,7 @@
 
     <style name="ChipFilledSemiTransparent" parent="@style/ChipFilled">
         <item name="chipBackgroundColor">@color/transparent</item>
-        <item name="chipSurfaceColor">@color/semiWhite</item>
+        <item name="chipSurfaceColor">@color/white_attr_20</item>
         <item name="backgroundColor">@color/transparent</item>
     </style>
 
@@ -117,6 +118,7 @@
         <item name="textColor">@color/textColor</item>
         <item name="grayTextColor">@color/grayTextColor</item>
         <item name="white">@color/white</item>
+        <item name="black">@color/black</item>
         <item name="colorOnPrimary">@color/whiteText</item>
     </style>
 
@@ -158,7 +160,9 @@
         <item name="boxItemBackground">@color/lightItemBackground</item>
         <item name="textColor">@color/lightTextColor</item>
         <item name="grayTextColor">@color/lightGrayTextColor</item>
-        <item name="white">#000</item>
+        <item name="white">@color/black</item>
+        <item name="black">@color/white</item>
+
         <item name="colorOnPrimary">@color/blackText</item>
     </style>
 
@@ -170,6 +174,7 @@
         <item name="textColor">@color/material_dynamic_neutral90</item>
         <item name="grayTextColor">@color/material_dynamic_neutral60</item>
         <item name="white">@color/material_dynamic_neutral90</item>
+        <item name="black">@color/material_dynamic_neutral10</item>
         <item name="colorOnPrimary">@color/material_on_primary_emphasis_medium</item>
     </style>
 
@@ -747,13 +752,13 @@
         <item name="android:stateListAnimator">@null</item>
         <item name="strokeColor">@color/transparent</item>
         <item name="backgroundTint">@null</item>
-        <item name="android:background">@drawable/player_button_tv</item>
+        <item name="android:background">@drawable/player_button_tv_attr</item>
         <item name="rippleColor">@color/white</item>
         <item name="android:shadowColor">@color/transparent</item>
 
-        <item name="iconTint">@color/player_on_button_tv</item>
-        <item name="textColor">@color/player_on_button_tv</item>
-        <item name="android:textColor">@color/player_on_button_tv</item>
+        <item name="iconTint">@color/player_on_button_tv_attr</item>
+        <item name="textColor">@color/player_on_button_tv_attr</item>
+        <item name="android:textColor">@color/player_on_button_tv_attr</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">40dp</item>
         <item name="iconSize">16dp</item>

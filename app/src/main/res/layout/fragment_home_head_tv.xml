@@ -15,7 +15,6 @@
         android:layout_height="0dp" />
 
     <FrameLayout
-        android:id="@+id/home_preview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -28,7 +27,44 @@
 
         </androidx.viewpager2.widget.ViewPager2>
 
-        <FrameLayout
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_gravity="end"
+            android:layout_margin="10dp"
+            android:background="@drawable/player_button_tv_attr"
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/home_preview_change_api"
+                style="@style/RegularButtonTV"
+                android:layout_width="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="0dp"
+                android:layout_marginEnd="0dp"
+                android:background="@drawable/player_button_tv_attr_no_bg"
+                android:gravity="center_vertical"
+                android:nextFocusLeft="@id/nav_rail_view"
+                android:nextFocusRight="@id/home_preview_switch_account"
+                android:nextFocusDown="@id/home_preview_play_btt" />
+
+            <ImageView
+                android:id="@+id/home_preview_switch_account"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="end"
+                android:background="@drawable/player_button_tv_attr_no_bg"
+                android:contentDescription="@string/account"
+                android:nextFocusLeft="@id/home_preview_change_api"
+                android:nextFocusDown="@id/home_preview_info_btt"
+
+                android:padding="10dp"
+                android:src="@drawable/ic_outline_account_circle_24"
+                android:tag="@string/tv_no_focus_tag"
+                app:tint="@color/player_on_button_tv_attr" />
+        </LinearLayout>
+
+        <!--<FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_margin="10dp">
@@ -36,7 +72,7 @@
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/home_preview_change_api"
                 style="@style/RegularButtonTV"
-                android:nextFocusRight="@id/home_switch_account"
+                android:nextFocusRight="@id/home_preview_switch_account"
                 android:layout_width="wrap_content"
                 android:layout_gravity="top|start"
                 android:layout_marginStart="@dimen/navbar_width"
@@ -48,7 +84,7 @@
                 android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:nextFocusDown="@id/home_preview_play_btt"
                 android:nextFocusLeft="@id/home_preview_change_api"
-                android:id="@+id/home_switch_account"
+                android:id="@+id/home_preview_switch_account"
                 android:layout_width="50dp"
                 android:layout_gravity="end"
                 android:layout_height="wrap_content"
@@ -56,9 +92,9 @@
                 android:padding="10dp"
                 android:src="@drawable/ic_outline_account_circle_24" />
 
-        </FrameLayout>
-
+        </FrameLayout>-->
         <LinearLayout
+            android:id="@+id/home_preview_viewpager_text"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="bottom"
@@ -138,25 +174,28 @@
                     android:focusable="false" />
             </LinearLayout>
         </LinearLayout>
+
+
     </FrameLayout>
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_margin="10dp">
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/home_preview_change_api2"
-            style="@style/RegularButtonTV"
-            android:layout_width="wrap_content"
-            android:layout_gravity="top|start"
-            android:layout_marginStart="@dimen/navbar_width"
-            android:backgroundTint="@color/semiWhite"
-            android:minWidth="150dp"
-            android:nextFocusUp="@id/home_preview_play_btt"
-            android:nextFocusLeft="@id/nav_rail_view"
-            android:nextFocusDown="@id/home_watch_child_recyclerview" />
-    </FrameLayout>
+    <!-- <FrameLayout
+         android:layout_width="match_parent"
+         android:layout_height="match_parent"
+         android:layout_margin="10dp">
+
+         <com.google.android.material.button.MaterialButton
+             android:id="@+id/home_preview_change_api2"
+             style="@style/RegularButtonTV"
+             android:layout_width="wrap_content"
+             android:layout_gravity="top|start"
+             android:layout_marginStart="@dimen/navbar_width"
+             android:backgroundTint="@color/white_attr_20"
+             android:minWidth="150dp"
+             android:nextFocusUp="@id/home_preview_play_btt"
+             android:nextFocusLeft="@id/nav_rail_view"
+             android:nextFocusDown="@id/home_watch_child_recyclerview" />
+     </FrameLayout>-->
 
     <LinearLayout
         android:id="@+id/home_watch_holder"
@@ -179,12 +218,12 @@
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/home_watch_child_recyclerview"
-            android:nextFocusUp="@id/home_preview_change_api2"
-            android:nextFocusDown="@id/home_type_holder"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:clipToPadding="false"
             android:descendantFocusability="afterDescendants"
+            android:nextFocusUp="@id/home_preview_play_btt"
+            android:nextFocusDown="@id/home_type_holder"
             android:orientation="horizontal"
             android:paddingStart="@dimen/navbar_width"
             android:paddingEnd="5dp"
@@ -216,14 +255,14 @@
 
             <com.google.android.material.chip.ChipGroup
                 android:id="@+id/home_type_holder"
-                android:nextFocusLeft="@id/nav_rail_view"
-                android:nextFocusUp="@id/home_watch_child_recyclerview"
-                android:nextFocusDown="@id/home_bookmarked_child_recyclerview"
-
-                android:descendantFocusability="afterDescendants"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/navbar_width"
+
+                android:descendantFocusability="afterDescendants"
+                android:nextFocusLeft="@id/nav_rail_view"
+                android:nextFocusUp="@id/home_watch_child_recyclerview"
+                android:nextFocusDown="@id/home_bookmarked_child_recyclerview"
                 android:orientation="horizontal">
 
                 <com.google.android.material.chip.Chip
@@ -231,11 +270,11 @@
                     style="@style/ChipFilled"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:nextFocusUp="@id/home_watch_child_recyclerview"
-                    android:nextFocusDown="@id/home_bookmarked_child_recyclerview"
-
                     android:nextFocusLeft="@id/nav_rail_view"
                     android:nextFocusRight="@id/home_plan_to_watch_btt"
+
+                    android:nextFocusUp="@id/home_watch_child_recyclerview"
+                    android:nextFocusDown="@id/home_bookmarked_child_recyclerview"
                     android:text="@string/type_watching" />
 
                 <com.google.android.material.chip.Chip
@@ -243,11 +282,11 @@
                     style="@style/ChipFilled"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:nextFocusUp="@id/home_watch_child_recyclerview"
-                    android:nextFocusDown="@id/home_bookmarked_child_recyclerview"
-
                     android:nextFocusLeft="@id/home_type_watching_btt"
                     android:nextFocusRight="@id/home_type_on_hold_btt"
+
+                    android:nextFocusUp="@id/home_watch_child_recyclerview"
+                    android:nextFocusDown="@id/home_bookmarked_child_recyclerview"
                     android:text="@string/type_plan_to_watch" />
 
                 <com.google.android.material.chip.Chip
@@ -255,11 +294,11 @@
                     style="@style/ChipFilled"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:nextFocusUp="@id/home_watch_child_recyclerview"
-                    android:nextFocusDown="@id/home_bookmarked_child_recyclerview"
-
                     android:nextFocusLeft="@id/home_plan_to_watch_btt"
                     android:nextFocusRight="@id/home_type_dropped_btt"
+
+                    android:nextFocusUp="@id/home_watch_child_recyclerview"
+                    android:nextFocusDown="@id/home_bookmarked_child_recyclerview"
                     android:text="@string/type_on_hold" />
 
                 <com.google.android.material.chip.Chip
@@ -267,37 +306,37 @@
                     style="@style/ChipFilled"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:nextFocusUp="@id/home_watch_child_recyclerview"
-                    android:nextFocusDown="@id/home_bookmarked_child_recyclerview"
-
                     android:nextFocusLeft="@id/home_type_on_hold_btt"
                     android:nextFocusRight="@id/home_type_completed_btt"
+
+                    android:nextFocusUp="@id/home_watch_child_recyclerview"
+                    android:nextFocusDown="@id/home_bookmarked_child_recyclerview"
                     android:text="@string/type_dropped" />
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/home_type_completed_btt"
                     style="@style/ChipFilled"
                     android:layout_width="wrap_content"
-                    android:nextFocusUp="@id/home_watch_child_recyclerview"
-                    android:nextFocusDown="@id/home_bookmarked_child_recyclerview"
-
                     android:layout_height="wrap_content"
                     android:nextFocusLeft="@id/home_type_dropped_btt"
+
+                    android:nextFocusUp="@id/home_watch_child_recyclerview"
+                    android:nextFocusDown="@id/home_bookmarked_child_recyclerview"
                     android:text="@string/type_completed" />
             </com.google.android.material.chip.ChipGroup>
         </HorizontalScrollView>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/home_bookmarked_child_recyclerview"
-            android:nextFocusUp="@id/home_type_holder"
-            android:nextFocusLeft="@id/nav_rail_view"
-            android:nextFocusDown="@id/home_child_recyclerview"
-
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:clipToPadding="false"
 
             android:descendantFocusability="afterDescendants"
+            android:nextFocusLeft="@id/nav_rail_view"
+            android:nextFocusUp="@id/home_type_holder"
+
+            android:nextFocusDown="@id/home_child_recyclerview"
             android:orientation="horizontal"
             android:paddingStart="@dimen/navbar_width"
             android:paddingEnd="5dp"

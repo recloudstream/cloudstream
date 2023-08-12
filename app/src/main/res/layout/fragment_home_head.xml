@@ -14,7 +14,7 @@
         android:layout_height="0dp" />
 
     <FrameLayout
-        android:id="@+id/home_preview"
+        android:id="@+id/home_preview_viewpager_text"
         android:layout_width="match_parent"
         android:layout_height="500dp">
 
@@ -26,15 +26,6 @@
 
         </androidx.viewpager2.widget.ViewPager2>
 
-        <ImageView
-            android:id="@+id/home_preview_image"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:alpha="0.8"
-            android:scaleType="centerCrop"
-            android:visibility="gone"
-            tools:src="@drawable/example_poster" />
-
         <LinearLayout
             android:id="@+id/home_padding"
             android:layout_width="match_parent"
@@ -44,16 +35,16 @@
 
             <androidx.appcompat.widget.SearchView
                 android:id="@+id/home_search"
-                android:nextFocusRight="@id/home_switch_account"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_gravity="center_vertical"
-                android:padding="0dp"
                 android:layout_marginEnd="50dp"
                 android:editTextColor="@color/white"
                 android:gravity="center_vertical"
-
                 android:iconifiedByDefault="true"
+                android:nextFocusRight="@id/home_preview_switch_account"
+
+                android:padding="0dp"
                 android:textColor="@color/white"
                 android:textColorHint="@color/white"
                 app:closeIcon="@drawable/ic_baseline_close_24"
@@ -64,15 +55,15 @@
                 tools:ignore="RtlSymmetry" />
 
             <ImageView
-                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:id="@+id/home_preview_switch_account"
 
-                android:nextFocusLeft="@id/home_search"
-                android:id="@+id/home_switch_account"
                 android:layout_width="50dp"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
                 android:layout_marginStart="-50dp"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:contentDescription="@string/account"
+                android:nextFocusLeft="@id/home_search"
                 android:padding="10dp"
                 android:src="@drawable/ic_outline_account_circle_24" />
         </LinearLayout>
@@ -150,6 +141,7 @@
                     app:tint="?attr/white" />
             </LinearLayout>
         </LinearLayout>
+
     </FrameLayout>
 
 

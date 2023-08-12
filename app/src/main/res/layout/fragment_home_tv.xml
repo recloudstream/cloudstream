@@ -8,13 +8,14 @@
     android:layout_height="match_parent"
     tools:context=".ui.home.HomeFragment">
 
+
     <FrameLayout
         android:id="@+id/home_loading"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginStart="@dimen/navbar_width"
         android:visibility="gone"
-        tools:visibility="gone">
+        tools:visibility="visible">
 
         <ProgressBar
             android:layout_width="50dp"
@@ -93,22 +94,41 @@
             </LinearLayout>
         </com.facebook.shimmer.ShimmerFrameLayout>
 
-        <FrameLayout
-            android:id="@+id/home_loading_statusbar"
-            android:layout_width="match_parent"
-            android:layout_height="70dp">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_gravity="end"
+            android:layout_margin="10dp"
+            android:background="@drawable/player_button_tv_attr"
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/home_change_api"
+                style="@style/RegularButtonTV"
+                android:layout_width="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="0dp"
+                android:layout_marginEnd="0dp"
+                android:background="@drawable/player_button_tv_attr_no_bg"
+                android:gravity="center_vertical"
+                android:nextFocusLeft="@id/nav_rail_view"
+                android:nextFocusRight="@id/home_switch_account" />
 
             <ImageView
-                android:id="@+id/home_change_api_loading"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_gravity="center_vertical|end"
+                android:id="@+id/home_switch_account"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="end"
+                android:background="@drawable/player_button_tv_attr_no_bg"
+                android:contentDescription="@string/account"
+                android:nextFocusLeft="@id/home_change_api"
 
-                android:layout_margin="10dp"
-                android:background="?android:attr/selectableItemBackgroundBorderless"
-                android:contentDescription="@string/home_change_provider_img_des"
-                android:src="@drawable/ic_baseline_keyboard_arrow_down_24" />
-        </FrameLayout>
+                android:padding="10dp"
+                android:src="@drawable/ic_outline_account_circle_24"
+                android:tag="@string/tv_no_focus_tag"
+                app:tint="@color/player_on_button_tv_attr" />
+        </LinearLayout>
     </FrameLayout>
 
     <LinearLayout
@@ -155,7 +175,6 @@
             android:textColor="?attr/textColor" />
     </LinearLayout>
 
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/home_master_recycler"
         android:layout_width="match_parent"
@@ -164,7 +183,8 @@
         android:nextFocusLeft="@id/nav_rail_view"
         android:nextFocusUp="@id/home_bookmarked_child_recyclerview"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        tools:listitem="@layout/homepage_parent_tv" />
+        tools:listitem="@layout/homepage_parent_tv"
+        tools:visibility="gone" />
 
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/home_api_fab"

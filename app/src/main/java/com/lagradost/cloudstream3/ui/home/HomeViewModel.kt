@@ -18,6 +18,7 @@ import com.lagradost.cloudstream3.HomePageList
 import com.lagradost.cloudstream3.LoadResponse
 import com.lagradost.cloudstream3.MainAPI
 import com.lagradost.cloudstream3.MainActivity
+import com.lagradost.cloudstream3.MainActivity.Companion.lastError
 import com.lagradost.cloudstream3.SearchResponse
 import com.lagradost.cloudstream3.amap
 import com.lagradost.cloudstream3.mvvm.Resource
@@ -484,7 +485,7 @@ class HomeViewModel : ViewModel() {
             } else if (api == null) {
                 // API is not found aka not loaded or removed, post the loading
                 // progress if waiting for plugins, otherwise nothing
-                if(PluginManager.loadedLocalPlugins) {
+                if(PluginManager.loadedLocalPlugins || PluginManager.checkSafeModeFile() || lastError != null) {
                     loadAndCancel(noneApi)
                 } else {
                     _page.postValue(Resource.Loading())
