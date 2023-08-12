@@ -6,7 +6,7 @@
     <string name="search_types_list_key" translatable="false">search_type_list</string>
     <string name="auto_update_key" translatable="false">auto_update</string>
     <string name="auto_update_plugins_key" translatable="false">auto_update_plugins</string>
-    <string name="auto_download_plugins_key" translatable="false">auto_download_plugins_key</string>
+    <string name="auto_download_plugins_key" translatable="false">auto_download_plugins_key2</string>
     <string name="skip_update_key" translatable="false">skip_update_key</string>
     <string name="prerelease_update_key" translatable="false">prerelease_update</string>
     <string name="manual_check_update_key" translatable="false">manual_check_update</string>
