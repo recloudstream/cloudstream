@@ -13,7 +13,7 @@ class SpeedoStream1 : SpeedoStream() {
 
 open class SpeedoStream : ExtractorApi() {
     override val name = "SpeedoStream"
-    override val mainUrl = "https://speedostream.com"
+    override val mainUrl = "https://speedostream.mom"
     override val requiresReferer = true
 
     override suspend fun getUrl(url: String, referer: String?): List<ExtractorLink> {
