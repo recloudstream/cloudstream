@@ -103,7 +103,7 @@ class HomeViewModel : ViewModel() {
     private var currentShuffledList: List<SearchResponse> = listOf()
 
     private fun autoloadRepo(): APIRepository {
-        return APIRepository(synchronized(apis) { apis.first { it.hasMainPage }})
+        return APIRepository(synchronized(apis) { apis.first { it.hasMainPage } })
     }
 
     private val _availableWatchStatusTypes =
@@ -185,8 +185,9 @@ class HomeViewModel : ViewModel() {
     }
 
     private var onGoingLoad: Job? = null
-    private var isCurrentlyLoadingName : String? = null
+    private var isCurrentlyLoadingName: String? = null
     private fun loadAndCancel(api: MainAPI) {
+        //println("loaded ${api.name}")
         onGoingLoad?.cancel()
         isCurrentlyLoadingName = api.name
         onGoingLoad = load(api)
@@ -290,7 +291,7 @@ class HomeViewModel : ViewModel() {
         }
     }
 
-    private fun load(api: MainAPI) : Job = ioSafe {
+    private fun load(api: MainAPI): Job = ioSafe {
         repo = //if (api != null) {
             APIRepository(api)
         //} else {
@@ -455,9 +456,9 @@ class HomeViewModel : ViewModel() {
         fromUI: Boolean = false
     ) =
         ioSafe {
+            //println("trying to load $preferredApiName")
             // Since plugins are loaded in stages this function can get called multiple times.
             // The issue with this is that the homepage may be fetched multiple times while the first request is loading
-            val api = getApiFromNameNull(preferredApiName)
             // api?.let { expandable[it.name]?.list?.list?.isNotEmpty() } == true
             val currentPage = page.value
 
@@ -467,6 +468,7 @@ class HomeViewModel : ViewModel() {
                 return@ioSafe
             }
 
+            val api = getApiFromNameNull(preferredApiName)
             if (preferredApiName == noneApi.name) {
                 // just set to random
                 if (fromUI) setKey(USER_SELECTED_HOMEPAGE_API, noneApi.name)
@@ -485,10 +487,12 @@ class HomeViewModel : ViewModel() {
             } else if (api == null) {
                 // API is not found aka not loaded or removed, post the loading
                 // progress if waiting for plugins, otherwise nothing
-                if(PluginManager.loadedLocalPlugins || PluginManager.checkSafeModeFile() || lastError != null) {
+                if (PluginManager.loadedOnlinePlugins || PluginManager.checkSafeModeFile() || lastError != null) {
                     loadAndCancel(noneApi)
                 } else {
                     _page.postValue(Resource.Loading())
+                    if (preferredApiName != null)
+                        _apiName.postValue(preferredApiName)
                 }
             } else {
                 // if the api is found, then set it to it and save key

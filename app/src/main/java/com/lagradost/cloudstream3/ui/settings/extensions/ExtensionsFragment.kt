@@ -3,6 +3,7 @@ package com.lagradost.cloudstream3.ui.settings.extensions
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.DialogInterface
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,6 +13,8 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
+import androidx.core.view.marginBottom
+import androidx.core.view.marginTop
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
@@ -33,7 +36,6 @@ import com.lagradost.cloudstream3.utils.AppUtils.setDefaultFocus
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
-import com.lagradost.cloudstream3.widget.LinearRecycleViewLayoutManager
 
 class ExtensionsFragment : Fragment() {
     var binding: FragmentExtensionsBinding? = null
@@ -84,51 +86,76 @@ class ExtensionsFragment : Fragment() {
 
         setUpToolbar(R.string.extensions)
 
-        binding?.repoRecyclerView?.setLinearListLayout(
-            isHorizontal = false,
-            nextUp = R.id.settings_toolbar, //FOCUS_SELF, // back has no id so we cant :pensive:
-            nextDown = R.id.plugin_storage_appbar,
-            nextRight = FOCUS_SELF,
-            nextLeft = R.id.nav_rail_view
-        )
 
-        binding?.repoRecyclerView?.adapter = RepoAdapter(false, {
-            findNavController().navigate(
-                R.id.navigation_settings_extensions_to_navigation_settings_plugins,
-                PluginsFragment.newInstance(
-                    it.name,
-                    it.url,
-                    false
-                )
+        binding?.repoRecyclerView?.apply {
+            setLinearListLayout(
+                isHorizontal = false,
+                nextUp = R.id.settings_toolbar, //FOCUS_SELF, // back has no id so we cant :pensive:
+                nextDown = R.id.plugin_storage_appbar,
+                nextRight = FOCUS_SELF,
+                nextLeft = R.id.nav_rail_view
             )
-        }, { repo ->
-            // Prompt user before deleting repo
-            main {
-                val builder = AlertDialog.Builder(context ?: view.context)
-                val dialogClickListener =
-                    DialogInterface.OnClickListener { _, which ->
-                        when (which) {
-                            DialogInterface.BUTTON_POSITIVE -> {
-                                ioSafe {
-                                    RepositoryManager.removeRepository(view.context, repo)
-                                    extensionViewModel.loadStats()
-                                    extensionViewModel.loadRepositories()
-                                }
-                            }
 
-                            DialogInterface.BUTTON_NEGATIVE -> {}
-                        }
+            if (!isTrueTvSettings())
+                binding?.addRepoButton?.let { button ->
+                    button.post {
+                        setPadding(
+                            paddingLeft,
+                            paddingTop,
+                            paddingRight,
+                            button.measuredHeight + button.marginTop + button.marginBottom
+                        )
                     }
+                }
 
-                builder.setTitle(R.string.delete_repository)
-                    .setMessage(
-                        context?.getString(R.string.delete_repository_plugins)
-                    )
-                    .setPositiveButton(R.string.delete, dialogClickListener)
-                    .setNegativeButton(R.string.cancel, dialogClickListener)
-                    .show().setDefaultFocus()
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                setOnScrollChangeListener { _, _, scrollY, _, oldScrollY ->
+                    val dy = scrollY - oldScrollY
+                    if (dy > 0) { //check for scroll down
+                        binding?.addRepoButton?.shrink() // hide
+                    } else if (dy < -5) {
+                        binding?.addRepoButton?.extend() // show
+                    }
+                }
             }
-        })
+            adapter = RepoAdapter(false, {
+                findNavController().navigate(
+                    R.id.navigation_settings_extensions_to_navigation_settings_plugins,
+                    PluginsFragment.newInstance(
+                        it.name,
+                        it.url,
+                        false
+                    )
+                )
+            }, { repo ->
+                // Prompt user before deleting repo
+                main {
+                    val builder = AlertDialog.Builder(context ?: view.context)
+                    val dialogClickListener =
+                        DialogInterface.OnClickListener { _, which ->
+                            when (which) {
+                                DialogInterface.BUTTON_POSITIVE -> {
+                                    ioSafe {
+                                        RepositoryManager.removeRepository(view.context, repo)
+                                        extensionViewModel.loadStats()
+                                        extensionViewModel.loadRepositories()
+                                    }
+                                }
+
+                                DialogInterface.BUTTON_NEGATIVE -> {}
+                            }
+                        }
+
+                    builder.setTitle(R.string.delete_repository)
+                        .setMessage(
+                            context?.getString(R.string.delete_repository_plugins)
+                        )
+                        .setPositiveButton(R.string.delete, dialogClickListener)
+                        .setNegativeButton(R.string.cancel, dialogClickListener)
+                        .show().setDefaultFocus()
+                }
+            })
+        }
 
         observe(extensionViewModel.repositories) {
             binding?.repoRecyclerView?.isVisible = it.isNotEmpty()

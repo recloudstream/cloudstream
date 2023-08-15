@@ -165,6 +165,9 @@ object PluginManager {
 
     var loadedLocalPlugins = false
         private set
+
+    var loadedOnlinePlugins = false
+        private set
     private val gson = Gson()
 
     private suspend fun maybeLoadPlugin(context: Context, file: File) {
@@ -278,6 +281,7 @@ object PluginManager {
         }
 
         // ioSafe {
+        loadedOnlinePlugins = true
         afterPluginsLoadedEvent.invoke(false)
         // }
 

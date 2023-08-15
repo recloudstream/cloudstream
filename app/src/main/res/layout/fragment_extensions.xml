@@ -11,6 +11,7 @@
     <include layout="@layout/standard_toolbar" />
 
     <androidx.recyclerview.widget.RecyclerView
+        android:clipToPadding="false"
         android:id="@+id/repo_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
