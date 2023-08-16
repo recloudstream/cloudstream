@@ -244,6 +244,7 @@ dependencies {
     implementation("com.github.albfernandez:juniversalchardet:2.4.0")
 
     // newpipe yt taken from https://github.com/TeamNewPipe/NewPipe/blob/dev/app/build.gradle#L204
+    // this should be updated frequently to avoid trailer fu*kery
     implementation("com.github.TeamNewPipe:NewPipeExtractor:1f08d28")
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.1.6")
 
