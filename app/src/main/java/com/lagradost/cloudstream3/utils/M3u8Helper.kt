@@ -47,7 +47,7 @@ class M3u8Helper {
     private val QUALITY_REGEX =
         Regex("""#EXT-X-STREAM-INF:(?:(?:.*?(?:RESOLUTION=\d+x(\d+)).*?\s+(.*))|(?:.*?\s+(.*)))""")
     private val TS_EXTENSION_REGEX =
-        Regex("""(.*\.ts.*|.*\.jpg.*)""") //.jpg here 'case vizcloud uses .jpg instead of .ts
+        Regex("""(.*\.ts.*|.*\.jpg.*|.*\.html.*)""") //.jpg here 'case vizcloud uses .jpg instead of .ts
 
     private fun absoluteExtensionDetermination(url: String): String? {
         val split = url.split("/")
