@@ -831,7 +831,7 @@ public enum class AutoDownloadMode(val value: Int) {
 
 // IN CASE OF FUTURE ANIME MOVIE OR SMTH
 fun TvType.isMovieType(): Boolean {
-    return this == TvType.Movie || this == TvType.AnimeMovie || this == TvType.Torrent || this == TvType.Live
+    return this == TvType.Movie || this == TvType.AnimeMovie || this == TvType.Torrent || this == TvType.Live || this == TvType.NSFW
 }
 
 fun TvType.isLiveStream(): Boolean {
