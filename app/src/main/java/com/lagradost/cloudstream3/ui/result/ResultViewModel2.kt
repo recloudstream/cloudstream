@@ -1707,7 +1707,7 @@ class ResultViewModel2 : ViewModel() {
                 else -> {
                     if (response.type.isLiveStream())
                         R.string.play_livestream_button
-                    else if (response.type.isMovieType()) // this wont break compatibility as you only need to override isMovieType
+                    else if (response.isMovie()) // this wont break compatibility as you only need to override isMovieType
                         R.string.play_movie_button
                     else null
                 }
