@@ -286,7 +286,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
          *
          * This is a very bad solution but I was unable to find a better one.
          **/
-        private var nextSearchQuery: String? = null
+        var nextSearchQuery: String? = null
 
         /**
          * Fires every time a new batch of plugins have been loaded, no guarantee about how often this is run and on which thread
@@ -362,9 +362,14 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                         loadRepository(url)
                         return true
                     } else if (safeURI(str)?.scheme == appStringSearch) {
+                        val query = str.substringAfter("$appStringSearch://")
                         nextSearchQuery =
-                            URLDecoder.decode(str.substringAfter("$appStringSearch://"), "UTF-8")
-
+                            try {
+                                URLDecoder.decode(query, "UTF-8")
+                            } catch (t : Throwable) {
+                                logError(t)
+                                query
+                            }
                         // Use both navigation views to support both layouts.
                         // It might be better to use the QuickSearch.
                         activity?.findViewById<BottomNavigationView>(R.id.nav_view)?.selectedItemId =
@@ -1315,7 +1320,6 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             if (navDestination.matchDestination(R.id.navigation_search) && !nextSearchQuery.isNullOrBlank()) {
                 bundle?.apply {
                     this.putString(SearchFragment.SEARCH_QUERY, nextSearchQuery)
-                    nextSearchQuery = null
                 }
             }
         }
