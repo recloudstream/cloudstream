@@ -2,9 +2,11 @@ package com.lagradost.cloudstream3.ui.player
 
 import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
 import android.content.pm.ActivityInfo
 import android.content.res.ColorStateList
+import android.content.res.Configuration
 import android.content.res.Resources
 import android.graphics.Color
 import android.media.AudioManager
@@ -16,6 +18,7 @@ import android.util.DisplayMetrics
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.MotionEvent
+import android.view.Surface
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
@@ -55,6 +58,7 @@ import com.lagradost.cloudstream3.utils.UIHelper.showSystemUI
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import com.lagradost.cloudstream3.utils.Vector2
 import kotlin.math.*
+
 
 const val MINIMUM_SEEK_TIME = 7000L         // when swipe seeking
 const val MINIMUM_VERTICAL_SWIPE = 2.0f     // in percentage
@@ -292,6 +296,36 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
             player.getCurrentPreferredSubtitle() == null
     }
 
+    open fun lockOrientation(activity: Activity) {
+        val display =
+            (activity.getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay
+        val rotation = display.rotation
+        val currentOrientation = activity.resources.configuration.orientation
+        var orientation = 0
+        when (currentOrientation) {
+            Configuration.ORIENTATION_LANDSCAPE -> orientation =
+                if (rotation == Surface.ROTATION_0 || rotation == Surface.ROTATION_90) ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE else ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE
+
+            Configuration.ORIENTATION_SQUARE, Configuration.ORIENTATION_UNDEFINED, Configuration.ORIENTATION_PORTRAIT -> ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
+            //Configuration.ORIENTATION_PORTRAIT -> orientation =
+            //    if (rotation == Surface.ROTATION_0 || rotation == Surface.ROTATION_270) ActivityInfo.SCREEN_ORIENTATION_PORTRAIT else ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT
+        }
+        activity.requestedOrientation = orientation
+    }
+
+    private fun updateOrientation() {
+        activity?.apply {
+            if(lockRotation) {
+                if(isLocked) {
+                    lockOrientation(this)
+                }
+                else {
+                    requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
+                }
+            }
+        }
+    }
+
     protected fun enterFullscreen() {
         if (isFullScreenPlayer) {
             activity?.hideSystemUI()
@@ -301,8 +335,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                 activity?.window?.attributes = params
             }
         }
-        if (lockRotation)
-            activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
+        updateOrientation()
     }
 
     protected fun exitFullscreen() {
@@ -561,6 +594,8 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         }
 
         isLocked = !isLocked
+        updateOrientation()
+
         if (isLocked && isShowing) {
             playerBinding?.playerHolder?.postDelayed({
                 if (isLocked && isShowing) {
