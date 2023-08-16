@@ -165,7 +165,7 @@ dependencies {
     androidTestImplementation("androidx.test:core")
 
     //implementation("io.karn:khttp-android:0.1.2") //okhttp instead
-//    implementation("org.jsoup:jsoup:1.13.1")
+    // implementation("org.jsoup:jsoup:1.13.1")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.1")
 
     implementation("androidx.preference:preference-ktx:1.2.0")
@@ -220,8 +220,8 @@ dependencies {
     implementation("androidx.work:work-runtime-ktx:2.8.1")
 
     // Networking
-//    implementation("com.squareup.okhttp3:okhttp:4.9.2")
-//    implementation("com.squareup.okhttp3:okhttp-dnsoverhttps:4.9.1")
+    // implementation("com.squareup.okhttp3:okhttp:4.9.2")
+    // implementation("com.squareup.okhttp3:okhttp-dnsoverhttps:4.9.1")
     implementation("com.github.Blatzar:NiceHttp:0.4.3")
     // To fix SSL fuckery on android 9
     implementation("org.conscrypt:conscrypt-android:2.2.1")
@@ -243,11 +243,8 @@ dependencies {
     // used for subtitle decoding https://github.com/albfernandez/juniversalchardet
     implementation("com.github.albfernandez:juniversalchardet:2.4.0")
 
-    // slow af yt
-    //implementation("com.github.HaarigerHarald:android-youtubeExtractor:master-SNAPSHOT")
-
     // newpipe yt taken from https://github.com/TeamNewPipe/NewPipe/blob/dev/app/build.gradle#L204
-    implementation("com.github.TeamNewPipe:NewPipeExtractor:8495ad619e")
+    implementation("com.github.TeamNewPipe:NewPipeExtractor:1f08d28")
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.1.6")
 
     // Library/extensions searching with Levenshtein distance
