@@ -231,7 +231,7 @@ dependencies {
     // API because cba maintaining it myself
     implementation("com.uwetrottmann.tmdb2:tmdb-java:2.6.0")
 
-    implementation("com.github.discord:OverlappingPanels:0.1.3")
+    implementation("com.github.discord:OverlappingPanels:0.1.5")
     // debugImplementation because LeakCanary should only run in debug builds.
     //debugImplementation("com.squareup.leakcanary:leakcanary-android:2.12")
 

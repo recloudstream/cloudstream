@@ -118,9 +118,6 @@ open class ResultTrailerPlayer : ResultFragmentPhone(), IOnBackPressed {
     override fun onTracksInfoChanged() {}
 
     override fun exitedPipMode() {}
-
-    override fun onGestureRegionsUpdate(gestureRegions: List<Rect>) {}
-
     private fun updateFullscreen(fullscreen: Boolean) {
         isFullScreenPlayer = fullscreen
         lockRotation = fullscreen
