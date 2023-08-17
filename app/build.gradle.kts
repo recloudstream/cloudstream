@@ -195,8 +195,8 @@ dependencies {
     //implementation("com.google.android.exoplayer:extension-leanback:2.14.0")
 
     // Bug reports
-    implementation("ch.acra:acra-core:5.8.4")
-    implementation("ch.acra:acra-toast:5.8.4")
+    implementation("ch.acra:acra-core:5.11.0")
+    implementation("ch.acra:acra-toast:5.11.0")
 
     compileOnly("com.google.auto.service:auto-service-annotations:1.0")
     //either for java sources:
