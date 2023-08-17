@@ -181,22 +181,22 @@ dependencies {
     // implementation("androidx.leanback:leanback-paging:1.1.0-alpha09")
 
     // Media 3
-    implementation("androidx.media3:media3-common:1.1.0")
-    implementation("androidx.media3:media3-exoplayer:1.1.0")
-    implementation("androidx.media3:media3-datasource-okhttp:1.1.0")
-    implementation("androidx.media3:media3-ui:1.1.0")
-    implementation("androidx.media3:media3-session:1.1.0")
-    implementation("androidx.media3:media3-cast:1.1.0")
-    implementation("androidx.media3:media3-exoplayer-hls:1.1.0")
-    implementation("androidx.media3:media3-exoplayer-dash:1.1.0")
+    implementation("androidx.media3:media3-common:1.1.1")
+    implementation("androidx.media3:media3-exoplayer:1.1.1")
+    implementation("androidx.media3:media3-datasource-okhttp:1.1.1")
+    implementation("androidx.media3:media3-ui:1.1.1")
+    implementation("androidx.media3:media3-session:1.1.1")
+    implementation("androidx.media3:media3-cast:1.1.1")
+    implementation("androidx.media3:media3-exoplayer-hls:1.1.1")
+    implementation("androidx.media3:media3-exoplayer-dash:1.1.1")
     // Custom ffmpeg extension for audio codecs
     implementation("com.github.recloudstream:media-ffmpeg:1.1.0")
 
     //implementation("com.google.android.exoplayer:extension-leanback:2.14.0")
 
     // Bug reports
-    implementation("ch.acra:acra-core:5.8.4")
-    implementation("ch.acra:acra-toast:5.8.4")
+    implementation("ch.acra:acra-core:5.11.0")
+    implementation("ch.acra:acra-toast:5.11.0")
 
     compileOnly("com.google.auto.service:auto-service-annotations:1.0")
     //either for java sources:

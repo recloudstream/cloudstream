@@ -121,10 +121,10 @@ class AcraApplication : Application() {
             buildConfigClass = BuildConfig::class.java
             reportFormat = StringFormat.JSON
 
-            reportContent = arrayOf(
+            reportContent = listOf(
                 ReportField.BUILD_CONFIG, ReportField.USER_CRASH_DATE,
                 ReportField.ANDROID_VERSION, ReportField.PHONE_MODEL,
-                ReportField.STACK_TRACE
+                ReportField.STACK_TRACE,
             )
 
             // removed this due to bug when starting the app, moved it to when it actually crashes
