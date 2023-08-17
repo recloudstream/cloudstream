@@ -1,6 +1,5 @@
 name: Archive build
 
-
 on:
   push:
     branches: [ master ]
