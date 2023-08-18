@@ -32,6 +32,12 @@ android {
         enable = true
     }
 
+    externalNativeBuild {
+        cmake {
+            path("CMakeLists.txt")
+        }
+    }
+
     signingConfigs {
         create("prerelease") {
             if (prereleaseStoreFile != null) {
