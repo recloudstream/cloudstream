@@ -22,7 +22,7 @@ data class DownloadMetadata(
     val progressPercentage: Long
         get() = if (downloadedLength < 1024) 0 else maxOf(
             0,
-            minOf(100, (downloadedLength * 100L) / totalLength)
+            minOf(100, (downloadedLength * 100L) / (totalLength + 1))
         )
 }
 
@@ -101,38 +101,41 @@ abstract class BaseFetchButton(context: Context, attributeSet: AttributeSet) :
 
     open fun setProgress(downloadedBytes: Long, totalBytes: Long) {
         isZeroBytes = downloadedBytes == 0L
-        val steps = 10000L
-        progressBar.max = steps.toInt()
-        // div by zero error and 1 byte off is ok impo
-        val progress = (downloadedBytes * steps / (totalBytes + 1L)).toInt()
+        progressBar.post {
+            val steps = 10000L
+            progressBar.max = steps.toInt()
+            // div by zero error and 1 byte off is ok impo
 
-        val animation = ProgressBarAnimation(
-            progressBar,
-            progressBar.progress.toFloat(),
-            progress.toFloat()
-        ).apply {
-            fillAfter = true
-            duration =
-                if (progress > progressBar.progress) // we don't want to animate backward changes in progress
-                    100
-                else
-                    0L
-        }
+            val progress = (downloadedBytes * steps / (totalBytes + 1L)).toInt()
 
-        if (isZeroBytes) {
-            progressText?.isVisible = false
-        } else {
-            progressText?.apply {
-                val currentMbString = Formatter.formatShortFileSize(context, downloadedBytes)
-                val totalMbString = Formatter.formatShortFileSize(context, totalBytes)
-                text =
-                        //if (isTextPercentage) "%d%%".format(setCurrentBytes * 100L / setTotalBytes) else
-                    context?.getString(R.string.download_size_format)
-                        ?.format(currentMbString, totalMbString)
+            val animation = ProgressBarAnimation(
+                progressBar,
+                progressBar.progress.toFloat(),
+                progress.toFloat()
+            ).apply {
+                fillAfter = true
+                duration =
+                    if (progress > progressBar.progress) // we don't want to animate backward changes in progress
+                        100
+                    else
+                        0L
             }
-        }
 
-        progressBar.startAnimation(animation)
+            if (isZeroBytes) {
+                progressText?.isVisible = false
+            } else {
+                progressText?.apply {
+                    val currentMbString = Formatter.formatShortFileSize(context, downloadedBytes)
+                    val totalMbString = Formatter.formatShortFileSize(context, totalBytes)
+                    text =
+                            //if (isTextPercentage) "%d%%".format(setCurrentBytes * 100L / setTotalBytes) else
+                        context?.getString(R.string.download_size_format)
+                            ?.format(currentMbString, totalMbString)
+                }
+            }
+
+            progressBar.startAnimation(animation)
+        }
     }
 
     fun downloadStatusEvent(data: Pair<Int, VideoDownloadManager.DownloadType>) {

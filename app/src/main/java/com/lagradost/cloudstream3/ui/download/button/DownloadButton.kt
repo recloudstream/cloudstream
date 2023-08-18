@@ -21,14 +21,17 @@ class DownloadButton(context: Context, attributeSet: AttributeSet) :
     }
 
     override fun setStatus(status: DownloadStatusTell?) {
-        super.setStatus(status)
-        val txt = when (status) {
-            DownloadStatusTell.IsPaused -> R.string.download_paused
-            DownloadStatusTell.IsDownloading -> R.string.downloading
-            DownloadStatusTell.IsDone -> R.string.downloaded
-            else -> R.string.download
+        mainText?.post {
+            val txt = when (status) {
+                DownloadStatusTell.IsPaused -> R.string.download_paused
+                DownloadStatusTell.IsDownloading -> R.string.downloading
+                DownloadStatusTell.IsDone -> R.string.downloaded
+                else -> R.string.download
+            }
+            mainText?.setText(txt)
         }
-        mainText?.setText(txt)
+        super.setStatus(status)
+
     }
 
     override fun setDefaultClickListener(
