@@ -212,19 +212,17 @@ open class ResultFragmentPhone : FullScreenPlayer() {
         loadTrailer()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        PanelsChildGestureRegionObserver.Provider.get().apply {
-            resultBinding?.resultCastItems?.let {
-                unregister(it)
-            }
-            removeGestureRegionsUpdateListener(gestureRegionsListener)
-        }
-    }
-
     override fun onDestroyView() {
+
         //somehow this still leaks and I dont know why????
         // todo look at https://github.com/discord/OverlappingPanels/blob/70b4a7cf43c6771873b1e091029d332896d41a1a/sample_app/src/main/java/com/discord/sampleapp/MainActivity.kt
+        PanelsChildGestureRegionObserver.Provider.get().let { obs ->
+            resultBinding?.resultCastItems?.let {
+                obs.unregister(it)
+            }
+
+            obs.removeGestureRegionsUpdateListener(gestureRegionsListener)
+        }
 
         updateUIEvent -= ::updateUI
         binding = null
