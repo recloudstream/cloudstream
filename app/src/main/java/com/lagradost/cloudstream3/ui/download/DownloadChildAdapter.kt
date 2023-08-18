@@ -23,7 +23,7 @@ data class VisualDownloadChildCached(
     val data: VideoDownloadHelper.DownloadEpisodeCached,
 )
 
-data class DownloadClickEvent(val action: Int, val data: EasyDownloadButton.IMinimumData)
+data class DownloadClickEvent(val action: Int, val data: VideoDownloadHelper.DownloadEpisodeCached)
 
 class DownloadChildAdapter(
     var cardList: List<VisualDownloadChildCached>,

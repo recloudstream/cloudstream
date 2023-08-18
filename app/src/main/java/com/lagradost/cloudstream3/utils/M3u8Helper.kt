@@ -186,6 +186,27 @@ object M3u8Helper2 {
     ) {
         val size get() = allTsLinks.size
 
+        suspend fun resolveLinkWhileSafe(
+            index: Int,
+            tries: Int = 3,
+            failDelay: Long = 3000,
+            condition : (() -> Boolean)
+        ): ByteArray? {
+            for (i in 0 until tries) {
+                if(!condition()) return null
+
+                try {
+                    val out = resolveLink(index)
+                    return if(condition()) out else null
+                } catch (e: IllegalArgumentException) {
+                    return null
+                } catch (t: Throwable) {
+                    delay(failDelay)
+                }
+            }
+            return null
+        }
+
         suspend fun resolveLinkSafe(
             index: Int,
             tries: Int = 3,
@@ -239,8 +260,6 @@ object M3u8Helper2 {
                 headers = headers,
                 verify = false
             ).text
-
-        println("m3u8Response=$m3u8Response")
 
         // encryption, this is because crunchy uses it
         var encryptionIv = byteArrayOf()
