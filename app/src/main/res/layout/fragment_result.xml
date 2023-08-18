@@ -476,7 +476,7 @@
                         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                         tools:itemCount="2"
                         tools:listitem="@layout/cast_item"
-                        tools:visibility="gone" />
+                        tools:visibility="visible" />
 
                     <TextView
                         android:id="@+id/result_vpn"
