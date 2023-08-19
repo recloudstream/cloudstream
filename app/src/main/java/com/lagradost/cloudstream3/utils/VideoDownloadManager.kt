@@ -26,6 +26,7 @@ import com.hippo.unifile.UniFile
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
 import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
+import com.lagradost.cloudstream3.BuildConfig
 import com.lagradost.cloudstream3.MainActivity
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.TvType
@@ -723,7 +724,7 @@ object VideoDownloadManager {
         var hlsTotal: Int? = null,
         // this is how many segments that has been written to the file
         // will always be <= hlsProgress as we may keep some in a buffer
-        var hlsWrittenProgress: Long = 0,
+        var hlsWrittenProgress: Int = 0,
 
         // this is used for copy with metadata on how much we have downloaded for setKey
         private var downloadFileInfoTemplate: DownloadedFileInfo? = null
@@ -798,6 +799,15 @@ object VideoDownloadManager {
                 notify()
             }
 
+        fun onDelete() {
+            bytesDownloaded = 0
+            hlsWrittenProgress = 0
+            hlsProgress = 0
+
+            //internalType = DownloadType.IsStopped
+            notify()
+        }
+
         companion object {
             const val UPDATE_RATE_MS: Long = 1000L
         }
@@ -842,6 +852,9 @@ object VideoDownloadManager {
                 }
             } catch (t: Throwable) {
                 logError(t)
+                if (BuildConfig.DEBUG) {
+                    throw t
+                }
             }
         }
 
@@ -866,7 +879,7 @@ object VideoDownloadManager {
         }
 
         fun setWrittenSegment(segmentIndex: Int) {
-            hlsWrittenProgress = segmentIndex.toLong() + 1L
+            hlsWrittenProgress = segmentIndex + 1
         }
     }
 
@@ -916,16 +929,18 @@ object VideoDownloadManager {
             // set up a connection
             val request = app.get(
                 link.url.replace(" ", "%20"),
-                headers = link.headers + mapOf(
-                    "Accept-Encoding" to "identity",
-                    "accept" to "*/*",
-                    "user-agent" to USER_AGENT,
-                    "sec-ch-ua" to "\"Chromium\";v=\"91\", \" Not;A Brand\";v=\"99\"",
-                    "sec-fetch-mode" to "navigate",
-                    "sec-fetch-dest" to "video",
-                    "sec-fetch-user" to "?1",
-                    "sec-ch-ua-mobile" to "?0",
-                ) + if (resumeAt > 0) mapOf("Range" to "bytes=${resumeAt}-") else emptyMap(),
+                headers = link.headers.appendAndDontOverride(
+                    mapOf(
+                        "Accept-Encoding" to "identity",
+                        "accept" to "*/*",
+                        "user-agent" to USER_AGENT,
+                        "sec-ch-ua" to "\"Chromium\";v=\"91\", \" Not;A Brand\";v=\"99\"",
+                        "sec-fetch-mode" to "navigate",
+                        "sec-fetch-dest" to "video",
+                        "sec-fetch-user" to "?1",
+                        "sec-ch-ua-mobile" to "?0",
+                    ) + if (resumeAt > 0) mapOf("Range" to "bytes=${resumeAt}-") else emptyMap()
+                ),
                 referer = link.referer,
                 verify = false
             )
@@ -964,14 +979,14 @@ object VideoDownloadManager {
             }
 
             if (metadata.type == DownloadType.IsStopped) {
-                return@withContext delete(
-                    context,
-                    name,
-                    relativePath,
-                    extension,
-                    parentId,
-                    baseFile
-                )
+                // we need to close before delete
+                fileStream.closeQuietly()
+                metadata.onDelete()
+                if (deleteFile(context, baseFile, relativePath ?: "", displayName)) {
+                    return@withContext SUCCESS_STOPPED
+                } else {
+                    return@withContext ERROR_DELETING_FILE
+                }
             }
 
             metadata.type = DownloadType.IsDone
@@ -995,6 +1010,18 @@ object VideoDownloadManager {
         }
     }
 
+    /** Helper function to make sure duplicate attributes don't get overriden or inserted without lowercase cmp
+     * example: map("a" to 1) appendAndDontOverride map("A" to 2, "a" to 3, "c" to 4) = map("a" to 1, "c" to 4)
+     * */
+    private fun <V> Map<String, V>.appendAndDontOverride(rhs: Map<String, V>): Map<String, V> {
+        val out = this.toMutableMap()
+        val current = this.keys.map { it.lowercase() }
+        for ((key, value) in rhs) {
+            if (current.contains(key.lowercase())) continue
+            out[key] = value
+        }
+        return out
+    }
 
     @Throws
     private suspend fun downloadHLS(
@@ -1047,11 +1074,13 @@ object VideoDownloadManager {
 
             // do the initial get request to fetch the segments
             val m3u8 = M3u8Helper.M3u8Stream(
-                link.url, link.quality, mapOf(
-                    "Accept-Encoding" to "identity",
-                    "accept" to "*/*",
-                    "user-agent" to USER_AGENT,
-                ) + if (link.referer.isNotBlank()) mapOf("referer" to link.referer) else emptyMap()
+                link.url, link.quality, link.headers.appendAndDontOverride(
+                    mapOf(
+                        "Accept-Encoding" to "identity",
+                        "accept" to "*/*",
+                        "user-agent" to USER_AGENT,
+                    ) + if (link.referer.isNotBlank()) mapOf("referer" to link.referer) else emptyMap()
+                )
             )
             val items = M3u8Helper2.hslLazy(listOf(m3u8))
 
@@ -1081,14 +1110,14 @@ object VideoDownloadManager {
             }
 
             if (metadata.type == DownloadType.IsStopped) {
-                return@withContext delete(
-                    context,
-                    name,
-                    relativePath,
-                    extension,
-                    parentId,
-                    baseFile
-                )
+                // we need to close before delete
+                fileStream.closeQuietly()
+                metadata.onDelete()
+                if (deleteFile(context, baseFile, relativePath ?: "", displayName)) {
+                    return@withContext SUCCESS_STOPPED
+                } else {
+                    return@withContext ERROR_DELETING_FILE
+                }
             }
 
             metadata.type = DownloadType.IsDone
@@ -1194,7 +1223,7 @@ object VideoDownloadManager {
         return (Environment.DIRECTORY_DOWNLOADS + '/' + folder + '/').replace(
             '/',
             File.separatorChar
-        )
+        ).replace("${File.separatorChar}${File.separatorChar}", File.separatorChar.toString())
     }
 
     /**
@@ -1224,7 +1253,7 @@ object VideoDownloadManager {
         return this != null && this.filePath == getDownloadDir()?.filePath
     }
 
-    private fun delete(
+    /*private fun delete(
         context: Context,
         name: String,
         folder: String?,
@@ -1235,7 +1264,7 @@ object VideoDownloadManager {
         val displayName = getDisplayName(name, extension)
 
         // delete all subtitle files
-        if (extension == "mp4") {
+        if (extension != "vtt" && extension != "srt") {
             try {
                 delete(context, name, folder, "vtt", parentId, basePath)
                 delete(context, name, folder, "srt", parentId, basePath)
@@ -1248,9 +1277,9 @@ object VideoDownloadManager {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && basePath.isDownloadDir()) {
             val relativePath = getRelativePath(folder)
             val lastContent =
-                context.contentResolver.getExistingDownloadUriOrNullQ(relativePath, displayName)
-            if (lastContent != null) {
-                context.contentResolver.delete(lastContent, null, null)
+                context.contentResolver.getExistingDownloadUriOrNullQ(relativePath, displayName) ?: return ERROR_DELETING_FILE
+            if(context.contentResolver.delete(lastContent, null, null) <= 0) {
+                return ERROR_DELETING_FILE
             }
         } else {
             val dir = basePath?.gotoDir(folder)
@@ -1260,13 +1289,12 @@ object VideoDownloadManager {
                 // Cleans up empty directory
                 if (dir.listFiles()?.isEmpty() == true) dir.delete()
             }
-//        }
             parentId?.let {
                 downloadDeleteEvent.invoke(parentId)
             }
         }
         return SUCCESS_STOPPED
-    }
+    }*/
 
 
     fun getFileName(context: Context, metadata: DownloadEpisodeMetadata): String {
@@ -1377,71 +1405,71 @@ object VideoDownloadManager {
 
     suspend fun downloadCheck(
         context: Context, notificationCallback: (Int, Notification) -> Unit,
-    ): Int? {
-        if (currentDownloads.size < maxConcurrentDownloads && downloadQueue.size > 0) {
-            val pkg = downloadQueue.removeFirst()
-            val item = pkg.item
-            val id = item.ep.id
-            if (currentDownloads.contains(id)) { // IF IT IS ALREADY DOWNLOADING, RESUME IT
-                downloadEvent.invoke(Pair(id, DownloadActionType.Resume))
-                /** ID needs to be returned to the work-manager to properly await notification */
-                return id
-            }
+    ) {
+        if (!(currentDownloads.size < maxConcurrentDownloads && downloadQueue.size > 0)) return
 
-            currentDownloads.add(id)
-
-            try {
-                for (index in (pkg.linkIndex ?: 0) until item.links.size) {
-                    val link = item.links[index]
-                    val resume = pkg.linkIndex == index
-
-                    setKey(
-                        KEY_RESUME_PACKAGES,
-                        id.toString(),
-                        DownloadResumePackage(item, index)
-                    )
-
-                    var connectionResult =
-                        downloadSingleEpisode(
-                            context,
-                            item.source,
-                            item.folder,
-                            item.ep,
-                            link,
-                            notificationCallback,
-                            resume
-                        )
-                    //.also { println("Single episode finished with return code: $it") }
-
-                    // retry every link at least once
-                    if (connectionResult <= 0) {
-                        connectionResult = downloadSingleEpisode(
-                            context,
-                            item.source,
-                            item.folder,
-                            item.ep,
-                            link,
-                            notificationCallback,
-                            true
-                        )
-                    }
-
-                    if (connectionResult > 0) { // SUCCESS
-                        removeKey(KEY_RESUME_PACKAGES, id.toString())
-                        break
-                    } else if (index == item.links.lastIndex) {
-                        downloadStatusEvent.invoke(Pair(id, DownloadType.IsFailed))
-                    }
-                }
-            } catch (e: Exception) {
-                logError(e)
-            } finally {
-                currentDownloads.remove(id)
-                // Because otherwise notifications will not get caught by the work manager
-                downloadCheckUsingWorker(context)
-            }
+        val pkg = downloadQueue.removeFirst()
+        val item = pkg.item
+        val id = item.ep.id
+        if (currentDownloads.contains(id)) { // IF IT IS ALREADY DOWNLOADING, RESUME IT
+            downloadEvent.invoke(Pair(id, DownloadActionType.Resume))
+            /** ID needs to be returned to the work-manager to properly await notification */
+            // return id
         }
-        return null
+
+        currentDownloads.add(id)
+        try {
+            for (index in (pkg.linkIndex ?: 0) until item.links.size) {
+                val link = item.links[index]
+                val resume = pkg.linkIndex == index
+
+                setKey(
+                    KEY_RESUME_PACKAGES,
+                    id.toString(),
+                    DownloadResumePackage(item, index)
+                )
+
+                var connectionResult =
+                    downloadSingleEpisode(
+                        context,
+                        item.source,
+                        item.folder,
+                        item.ep,
+                        link,
+                        notificationCallback,
+                        resume
+                    )
+                //.also { println("Single episode finished with return code: $it") }
+
+                // retry every link at least once
+                if (connectionResult <= 0) {
+                    connectionResult = downloadSingleEpisode(
+                        context,
+                        item.source,
+                        item.folder,
+                        item.ep,
+                        link,
+                        notificationCallback,
+                        true
+                    )
+                }
+
+                if (connectionResult > 0) { // SUCCESS
+                    removeKey(KEY_RESUME_PACKAGES, id.toString())
+                    break
+                } else if (index == item.links.lastIndex) {
+                    downloadStatusEvent.invoke(Pair(id, DownloadType.IsFailed))
+                }
+            }
+        } catch (e: Exception) {
+            logError(e)
+        } finally {
+            currentDownloads.remove(id)
+            // Because otherwise notifications will not get caught by the work manager
+            downloadCheckUsingWorker(context)
+        }
+
+        // return id
     }
 
     fun getDownloadFileInfoAndUpdateSettings(context: Context, id: Int): DownloadedFileInfoResult? {
@@ -1500,23 +1528,21 @@ object VideoDownloadManager {
         return success
     }
 
-    private fun deleteFile(context: Context, id: Int): Boolean {
-        val info =
-            context.getKey<DownloadedFileInfo>(KEY_DOWNLOAD_INFO, id.toString()) ?: return false
-        downloadEvent.invoke(Pair(id, DownloadActionType.Stop))
-        downloadProgressEvent.invoke(Triple(id, 0, 0))
-        downloadStatusEvent.invoke(Pair(id, DownloadType.IsStopped))
-        downloadDeleteEvent.invoke(id)
-        val base = basePathToFile(context, info.basePath)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && base.isDownloadDir()) {
+    private fun deleteFile(
+        context: Context,
+        folder: UniFile?,
+        relativePath: String,
+        displayName: String
+    ): Boolean {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && folder.isDownloadDir()) {
             val cr = context.contentResolver ?: return false
             val fileUri =
-                cr.getExistingDownloadUriOrNullQ(info.relativePath, info.displayName)
+                cr.getExistingDownloadUriOrNullQ(relativePath, displayName)
                     ?: return true // FILE NOT FOUND, ALREADY DELETED
 
             return cr.delete(fileUri, null, null) > 0 // IF DELETED ROWS IS OVER 0
         } else {
-            val file = base?.gotoDir(info.relativePath)?.findFile(info.displayName)
+            val file = folder?.gotoDir(relativePath)?.findFile(displayName)
 //            val normalPath = context.getNormalPath(getFile(info.relativePath), info.displayName)
 //            val dFile = File(normalPath)
             if (file?.exists() != true) return true
@@ -1528,6 +1554,17 @@ object VideoDownloadManager {
                 cr.delete(file.uri, null, null) > 0
             }
         }
+    }
+
+    private fun deleteFile(context: Context, id: Int): Boolean {
+        val info =
+            context.getKey<DownloadedFileInfo>(KEY_DOWNLOAD_INFO, id.toString()) ?: return false
+        downloadEvent.invoke(Pair(id, DownloadActionType.Stop))
+        downloadProgressEvent.invoke(Triple(id, 0, 0))
+        downloadStatusEvent.invoke(id to DownloadType.IsStopped)
+        downloadDeleteEvent.invoke(id)
+        val base = basePathToFile(context, info.basePath)
+        return deleteFile(context, base, info.relativePath, info.displayName)
     }
 
     fun getDownloadResumePackage(context: Context, id: Int): DownloadResumePackage? {
@@ -1544,10 +1581,12 @@ object VideoDownloadManager {
             downloadQueue.addLast(pkg)
             downloadCheck(context, notificationCallback)
             if (setKey) saveQueue()
+            //ret
         } else {
-            downloadEvent.invoke(
+            downloadEvent(
                 Pair(pkg.item.ep.id, DownloadActionType.Resume)
             )
+            //null
         }
     }
 
