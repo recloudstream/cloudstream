@@ -552,4 +552,5 @@
     <string name="disable">Desativar</string>
     <string name="no_plugins_found_error">Não foram encontrados plugins no repositório</string>
     <string name="no_repository_found_error">Repositório não encontrado, verifique o URL e tente a VPN</string>
+    <string name="already_voted">Você já votou</string>
 </resources>
