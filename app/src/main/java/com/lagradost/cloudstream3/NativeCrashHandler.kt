@@ -1,6 +1,7 @@
 package com.lagradost.cloudstream3
 
 import com.lagradost.cloudstream3.MainActivity.Companion.lastError
+import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.plugins.PluginManager.checkSafeModeFile
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -28,8 +29,16 @@ object NativeCrashHandler {
     }
 
     fun initCrashHandler() {
-        System.loadLibrary("native-lib")
-        initNativeCrashHandler()
+        try {
+            System.loadLibrary("native-lib")
+            initNativeCrashHandler()
+        } catch (t: Throwable) {
+            // Make debug crash.
+            if (BuildConfig.DEBUG) throw t
+            logError(t)
+            return
+        }
+
         initSignalPolling()
     }
 }
