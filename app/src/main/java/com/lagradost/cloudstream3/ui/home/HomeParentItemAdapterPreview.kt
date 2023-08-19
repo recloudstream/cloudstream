@@ -539,7 +539,7 @@ class HomeParentItemAdapterPreview(
             resumeAdapter.updateList(resumeWatching)
 
             if (binding is FragmentHomeHeadBinding) {
-                binding.homeBookmarkParentItemTitle.setOnClickListener {
+                binding.homeWatchParentItemTitle.setOnClickListener {
                     viewModel.popup(
                         HomeViewModel.ExpandableHomepageList(
                             HomePageList(

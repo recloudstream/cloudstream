@@ -61,7 +61,7 @@
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
                 android:layout_marginStart="-50dp"
-                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:foreground="?android:attr/selectableItemBackgroundBorderless"
                 android:contentDescription="@string/account"
                 android:nextFocusLeft="@id/home_search"
                 android:padding="10dp"
