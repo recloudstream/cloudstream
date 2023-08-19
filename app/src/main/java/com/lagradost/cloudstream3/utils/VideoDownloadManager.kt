@@ -803,6 +803,8 @@ object VideoDownloadManager {
             bytesDownloaded = 0
             hlsWrittenProgress = 0
             hlsProgress = 0
+            if (id != null)
+                downloadDeleteEvent(id)
 
             //internalType = DownloadType.IsStopped
             notify()
