@@ -240,8 +240,8 @@ dependencies {
 
     implementation("androidx.tvprovider:tvprovider:1.0.0")
 
-    // used for subtitle decoding https://github.com/albfernandez/juniversalchardet
-    implementation("com.github.albfernandez:juniversalchardet:2.4.0")
+    // used for subtitle decoding https://github.com/albfernandez/juniversalchardet/commits/main
+    implementation("com.github.albfernandez:juniversalchardet:ff74981")
 
     // newpipe yt taken from https://github.com/TeamNewPipe/NewPipe/blob/dev/app/build.gradle#L204
     // this should be updated frequently to avoid trailer fu*kery
