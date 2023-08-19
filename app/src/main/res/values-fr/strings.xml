@@ -530,4 +530,26 @@
     <string name="android_tv_interface_on_seek_settings">Joueur représenté - Montant de la recherche</string>
     <string name="android_tv_interface_off_seek_settings">Joueur caché - Montant de la recherche</string>
     <string name="jsdelivr_enabled">Impossible d\'accéder à GitHub. Activation du proxy jsDelivr…</string>
+    <string name="already_voted">Vous avez déjà voté</string>
+    <string name="disable">Désactivé</string>
+    <string name="quality_profile_help">Ici, vous pouvez modifier la façon dont les sources sont ordonnées. Si une vidéo a une priorité plus élevée, elle apparaîtra plus haut dans la sélection de la source. La somme de la priorité source et de la priorité qualité est la priorité vidéo.
+\n
+\nSource A : 3
+\nQualité B : 7
+\nLa priorité vidéo combinée sera de 10.
+\n
+\nREMARQUE : Si la somme est de 10 ou plus, le joueur sautera automatiquement le chargement lorsque ce lien est chargé !</string>
+    <string name="no_plugins_found_error">Aucun plugin trouvé dans ce dossier</string>
+    <string name="no_repository_found_error">Dossier non trouvé, vérifiez l\'url et essayé un VPN</string>
+    <string name="mobile_data">Données mobiles</string>
+    <string name="set_default">Définir par défaut</string>
+    <string name="use">Utiliser</string>
+    <string name="edit">Modifier</string>
+    <string name="profiles">Profils</string>
+    <string name="help">Aide</string>
+    <string name="profile_number">Profil %d</string>
+    <string name="wifi">Wi-Fi</string>
+    <string name="qualities">Qualités</string>
+    <string name="unable_to_inflate">L\'interface utilisateur n\'a pas pu être créée correctement. Il s\'agit d\'un bogue majeur qui doit être signalé immédiatement %s</string>
+    <string name="automatic_plugin_download_mode_title">Sélectionnez le mode pour filtrer le téléchargement des plugins</string>
 </resources>
