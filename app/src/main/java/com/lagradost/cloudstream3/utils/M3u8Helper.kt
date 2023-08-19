@@ -2,6 +2,7 @@ package com.lagradost.cloudstream3.utils
 
 import com.lagradost.cloudstream3.ErrorLoadingException
 import com.lagradost.cloudstream3.app
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.delay
 import javax.crypto.Cipher
 import javax.crypto.spec.IvParameterSpec
@@ -196,6 +197,8 @@ object M3u8Helper2 {
                     return if(condition()) out else null
                 } catch (e: IllegalArgumentException) {
                     return null
+                } catch (e : CancellationException) {
+                    return null
                 } catch (t: Throwable) {
                     delay(failDelay)
                 }
@@ -212,6 +215,8 @@ object M3u8Helper2 {
                 try {
                     return resolveLink(index)
                 } catch (e: IllegalArgumentException) {
+                    return null
+                } catch (e : CancellationException) {
                     return null
                 } catch (t: Throwable) {
                     delay(failDelay)
