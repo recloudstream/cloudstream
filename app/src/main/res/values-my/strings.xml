@@ -58,7 +58,7 @@
     <string name="continue_watching">ဆက်လက်ကြည့်ရှုမည်</string>
     <string name="action_remove_watching">ဖယ်ရှားရန်</string>
     <string name="action_open_watching">ပိုမို၍</string>
-    <string name="action_open_play">\@string/home_play</string>
+    <string name="action_open_play">@string/home_play</string>
     <string name="vpn_torrent">ဒီဟာကတောရပ်တစ်ခုပါ ဗီပီအန်တစ်ခုသုံးဖို့အကြံပြုပါတယ်</string>
     <string name="torrent_plot">ဖော်ပြချက်</string>
     <string name="normal_no_plot">ဇာတ်လမ်းသွား မတွေ့ပါ</string>
@@ -128,7 +128,7 @@
     <string name="queued">နောက်အစီအစဥ်</string>
     <string name="no_subtitles">စာတန်းထိုးမထည့်</string>
     <string name="default_subtitles">ပုံသေ</string>
-    <string name="default_account">\@string/default_subtitles</string>
+    <string name="default_account">@string/default_subtitles</string>
     <string name="free_storage">ကျန်ရှိသော</string>
     <string name="app_storage">အက်ပ်</string>
     <string name="movies">ရုပ်ရှင်များ</string>

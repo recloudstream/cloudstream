@@ -575,5 +575,5 @@
     <string name="no_plugins_found_error">Tidak ada plugin yang ditemukan di repositori</string>
     <string name="no_repository_found_error">Repositori tidak ditemukan, periksa URL dan coba VPN</string>
     <string name="already_voted">Kamu sudah voting</string>
-    <string name="default_account">\@string/default_subtitles</string>
+    <string name="default_account">@string/default_subtitles</string>
 </resources>

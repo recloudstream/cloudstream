@@ -567,5 +567,5 @@
     <string name="no_plugins_found_error">Không tìm thấy plugin</string>
     <string name="unable_to_inflate">Không thể khởi tạo UI, đây là một LỖI LỚN và cần được báo cáo ngay lập tức tới %s</string>
     <string name="automatic_plugin_download_mode_title">Chọn chế độ để lọc plugin tải xuống</string>
-    <string name="default_account">\@string/default_subtitles</string>
+    <string name="default_account">@string/default_subtitles</string>
 </resources>
