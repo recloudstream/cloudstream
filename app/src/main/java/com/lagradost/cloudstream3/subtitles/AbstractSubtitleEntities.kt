@@ -23,6 +23,6 @@ class AbstractSubtitleEntities {
         var lang: String? = null,
         var epNumber: Int? = null,
         var seasonNumber: Int? = null,
-        var year: Int? = null
+        var year: Int? = null,
     )
 }
