@@ -593,10 +593,8 @@ class ResultViewModel2 : ViewModel() {
                     folder,
                     if (link.url.contains(".srt")) ".srt" else "vtt",
                     false,
-                    null
-                ) {
-                    // no notification
-                }
+                    null, createNotificationCallback = {}
+                )
             }
         }
 
