@@ -23,7 +23,7 @@ enum class SubtitleStatus {
 enum class SubtitleOrigin {
     URL,
     DOWNLOADED_FILE,
-    EMBEDDED_IN_VIDEO
+    EMBEDDED_IN_VIDEO,
 }
 
 /**
@@ -94,7 +94,8 @@ class PlayerSubtitleHelper {
         }
         return SubtitleStatus.NOT_FOUND
     }
-
+    
+    @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
     fun setSubStyle(style: SaveCaptionStyle) {
         regexSubtitlesToRemoveBloat = style.removeBloat
         uppercaseSubtitles = style.upperCase
