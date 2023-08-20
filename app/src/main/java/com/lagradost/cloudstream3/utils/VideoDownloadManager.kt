@@ -30,7 +30,6 @@ import com.lagradost.cloudstream3.BuildConfig
 import com.lagradost.cloudstream3.MainActivity
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.TvType
-import com.lagradost.cloudstream3.amap
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.suspendSafeApiCall
@@ -256,7 +255,8 @@ object VideoDownloadManager {
         total: Long,
         notificationCallback: (Int, Notification) -> Unit,
         hlsProgress: Long? = null,
-        hlsTotal: Long? = null
+        hlsTotal: Long? = null,
+        bytesPerSecond: Long
     ): Notification? {
         try {
             if (total <= 0) return null// crash, invalid data
@@ -327,22 +327,29 @@ object VideoDownloadManager {
                 val totalMbString: String
                 val suffix: String
 
+                val mbFormat = "%.1f MB"
+
                 if (hlsProgress != null && hlsTotal != null) {
                     progressPercentage = hlsProgress.toLong() * 100 / hlsTotal
                     progressMbString = hlsProgress.toString()
                     totalMbString = hlsTotal.toString()
-                    suffix = " - %.1f MB".format(progress / 1000000f)
+                    suffix = " - $mbFormat".format(progress / 1000000f)
                 } else {
                     progressPercentage = progress * 100 / total
-                    progressMbString = "%.1f MB".format(progress / 1000000f)
-                    totalMbString = "%.1f MB".format(total / 1000000f)
+                    progressMbString = mbFormat.format(progress / 1000000f)
+                    totalMbString = mbFormat.format(total / 1000000f)
                     suffix = ""
                 }
+
+                val mbPerSecondString =
+                    if (state == DownloadType.IsDownloading) {
+                        " ($mbFormat/s)".format(bytesPerSecond.toFloat() / 1000000f)
+                    } else ""
 
                 val bigText =
                     when (state) {
                         DownloadType.IsDownloading, DownloadType.IsPaused -> {
-                            (if (linkName == null) "" else "$linkName\n") + "$rowTwo\n$progressPercentage % ($progressMbString/$totalMbString)$suffix"
+                            (if (linkName == null) "" else "$linkName\n") + "$rowTwo\n$progressPercentage % ($progressMbString/$totalMbString)$suffix$mbPerSecondString"
                         }
 
                         DownloadType.IsFailed -> {
@@ -608,6 +615,7 @@ object VideoDownloadManager {
         val bytesTotal: Long,
         val hlsProgress: Long? = null,
         val hlsTotal: Long? = null,
+        val bytesPerSecond: Long
     )
 
     data class StreamData(
@@ -723,6 +731,7 @@ object VideoDownloadManager {
 
         // notification metadata
         private var lastUpdatedMs: Long = 0,
+        private var lastDownloadedBytes: Long = 0,
         private val createNotificationCallback: (CreateNotificationMetadata) -> Unit,
 
         private var internalType: DownloadType = DownloadType.IsPending,
@@ -738,6 +747,12 @@ object VideoDownloadManager {
         // this is used for copy with metadata on how much we have downloaded for setKey
         private var downloadFileInfoTemplate: DownloadedFileInfo? = null
     ) : Closeable {
+        fun setResumeLength(length: Long) {
+            bytesDownloaded = length
+            bytesWritten = length
+            lastDownloadedBytes = length
+        }
+
         val approxTotalBytes: Long
             get() = totalBytes ?: hlsTotal?.let { total ->
                 (bytesDownloaded * (total / hlsProgress.toFloat())).toLong()
@@ -839,6 +854,13 @@ object VideoDownloadManager {
 
         @JvmName("DownloadMetaDataNotify")
         private fun notify() {
+            // max 10 sec between notifications, min 0.1s, this is to stop div by zero
+            val dt = (System.currentTimeMillis() - lastUpdatedMs).coerceIn(100, 10000)
+
+            val bytesPerSecond =
+                ((bytesDownloaded - lastDownloadedBytes) * 1000L) / dt
+
+            lastDownloadedBytes = bytesDownloaded
             lastUpdatedMs = System.currentTimeMillis()
             try {
                 val bytes = approxTotalBytes
@@ -851,7 +873,8 @@ object VideoDownloadManager {
                             bytesDownloaded,
                             bytes,
                             hlsTotal = hlsTotal?.toLong(),
-                            hlsProgress = hlsProgress.toLong()
+                            hlsProgress = hlsProgress.toLong(),
+                            bytesPerSecond = bytesPerSecond
                         )
                     )
                 } else {
@@ -860,6 +883,7 @@ object VideoDownloadManager {
                             internalType,
                             bytesDownloaded,
                             bytes,
+                            bytesPerSecond = bytesPerSecond
                         )
                     )
                 }
@@ -1057,21 +1081,29 @@ object VideoDownloadManager {
         // we don't want to make a separate connection for every 1kb
         require(chuckSize > 1000)
 
-        val contentLength =
+        var contentLength =
             app.head(url = url, headers = headers, referer = referer, verify = false).size
+        if (contentLength != null && contentLength <= 0) contentLength = null
 
         var downloadLength: Long? = null
         var totalLength: Long? = null
 
         val ranges = if (contentLength == null) {
+            // is the equivalent of [startByte..EOF] as we don't know the size we can only do one
+            // connection
             LongArray(1) { startByte }
         } else {
             downloadLength = contentLength - startByte
             totalLength = contentLength
-            LongArray((downloadLength / chuckSize).toInt()) { idx ->
+            // div with ceiling as
+            // this makes the last part "unknown ending" and it will break at EOF
+            // so eg startByte = 0, downloadLength = 13, chuckSize = 10
+            // = LongArray(2) { 0, 10 } = [0,10) + [10..EOF]
+            LongArray(((downloadLength + chuckSize - 1) / chuckSize).toInt()) { idx ->
                 startByte + idx * chuckSize
             }
         }
+
         return LazyStreamDownloadData(
             url = url,
             headers = headers,
@@ -1158,8 +1190,7 @@ object VideoDownloadManager {
             val resume = stream.resume ?: return@withContext ERROR_UNKNOWN
             val fileLength = stream.fileLength ?: return@withContext ERROR_UNKNOWN
             val resumeAt = (if (resume) fileLength else 0)
-            metadata.bytesDownloaded = resumeAt
-            metadata.bytesWritten = resumeAt
+            metadata.setResumeLength(resumeAt)
             metadata.type = DownloadType.IsPending
 
             val items = streamLazy(
@@ -1268,7 +1299,8 @@ object VideoDownloadManager {
                         if (!isActive) return@launch
                         fileMutex.withLock {
                             if (metadata.type == DownloadType.IsStopped
-                                || metadata.type == DownloadType.IsFailed) return@launch
+                                || metadata.type == DownloadType.IsFailed
+                            ) return@launch
                         }
 
                         // mutex just in case, we never want this to fail due to multithreading
@@ -1374,7 +1406,7 @@ object VideoDownloadManager {
             fileStream = stream.fileStream ?: return@withContext ERROR_UNKNOWN
 
             // push the metadata
-            metadata.bytesDownloaded = stream.fileLength ?: 0
+            metadata.setResumeLength(stream.fileLength ?: 0)
             metadata.hlsProgress = startAt
             metadata.type = DownloadType.IsPending
             metadata.setDownloadFileInfoTemplate(
@@ -1446,12 +1478,15 @@ object VideoDownloadManager {
                             // if stopped then break to delete
                             if (metadata.type == DownloadType.IsStopped || !isActive) return@launch
 
+                            val segmentLength = bytes.size.toLong()
                             // send notification, no matter the actual write order
-                            metadata.addSegment(bytes.size.toLong())
+                            metadata.addSegment(segmentLength)
 
                             // directly write the bytes if you are first
                             if (metadata.hlsWrittenProgress == index) {
                                 fileStream.write(bytes)
+
+                                metadata.addBytesWritten(segmentLength)
                                 metadata.setWrittenSegment(index)
                             } else {
                                 // no need to clone as there will be no modification of this bytearray
@@ -1460,12 +1495,14 @@ object VideoDownloadManager {
 
                             // write the cached bytes submitted by other threads
                             while (true) {
-                                fileStream.write(
-                                    pendingData.remove(metadata.hlsWrittenProgress) ?: break
-                                )
+                                val cache = pendingData.remove(metadata.hlsWrittenProgress) ?: break
+                                val cacheLength = cache.size.toLong()
+
+                                fileStream.write(cache)
+                                metadata.addBytesWritten(cacheLength)
                                 metadata.setWrittenSegment(metadata.hlsWrittenProgress)
                             }
-                        } catch (t : Throwable) {
+                        } catch (t: Throwable) {
                             // this is in case of write fail
                             if (metadata.type != DownloadType.IsStopped) {
                                 metadata.type = DownloadType.IsFailed
@@ -1756,7 +1793,8 @@ object VideoDownloadManager {
                                 meta.bytesTotal,
                                 notificationCallback,
                                 meta.hlsProgress,
-                                meta.hlsTotal
+                                meta.hlsTotal,
+                                meta.bytesPerSecond
                             )
                         }
                     }
@@ -1785,7 +1823,8 @@ object VideoDownloadManager {
                             meta.type,
                             meta.bytesDownloaded,
                             meta.bytesTotal,
-                            notificationCallback
+                            notificationCallback,
+                            bytesPerSecond = meta.bytesPerSecond
                         )
                     }
                 })
