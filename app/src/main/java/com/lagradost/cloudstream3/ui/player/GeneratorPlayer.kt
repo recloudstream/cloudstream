@@ -520,10 +520,10 @@ class GeneratorPlayer : FullScreenPlayer() {
                 if (uri == null) return@normalSafeApiCall
                 val ctx = context ?: AcraApplication.context ?: return@normalSafeApiCall
                 // RW perms for the path
-                val flags =
+                ctx.contentResolver.takePersistableUriPermission(
+                    uri,
                     Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
-
-                ctx.contentResolver.takePersistableUriPermission(uri, flags)
+                )
 
                 val file = UniFile.fromUri(ctx, uri)
                 println("Loaded subtitle file. Selected URI path: $uri - Name: ${file.name}")

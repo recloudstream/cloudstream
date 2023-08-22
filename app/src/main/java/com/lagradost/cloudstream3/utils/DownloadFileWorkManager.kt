@@ -16,6 +16,7 @@ import com.lagradost.cloudstream3.utils.VideoDownloadManager.downloadCheck
 import com.lagradost.cloudstream3.utils.VideoDownloadManager.downloadEpisode
 import com.lagradost.cloudstream3.utils.VideoDownloadManager.downloadFromResume
 import com.lagradost.cloudstream3.utils.VideoDownloadManager.downloadStatusEvent
+import com.lagradost.cloudstream3.utils.VideoDownloadManager.getDownloadResumePackage
 import kotlinx.coroutines.delay
 
 const val DOWNLOAD_CHECK = "DownloadCheck"
@@ -36,15 +37,20 @@ class DownloadFileWorkManager(val context: Context, private val workerParams: Wo
                         WORK_KEY_PACKAGE,
                         key
                     )
+
                 if (info != null) {
-                    downloadEpisode(
-                        applicationContext,
-                        info.source,
-                        info.folder,
-                        info.ep,
-                        info.links,
-                        ::handleNotification
-                    )
+                    getDownloadResumePackage(applicationContext, info.ep.id)?.let { dpkg ->
+                        downloadFromResume(applicationContext, dpkg, ::handleNotification)
+                    } ?: run {
+                        downloadEpisode(
+                            applicationContext,
+                            info.source,
+                            info.folder,
+                            info.ep,
+                            info.links,
+                            ::handleNotification
+                        )
+                    }
                 } else if (pkg != null) {
                     downloadFromResume(applicationContext, pkg, ::handleNotification)
                 }
