@@ -14,6 +14,12 @@ object NativeCrashHandler {
     private external fun getSignalStatus(): Int
 
     private fun initSignalPolling() = CoroutineScope(Dispatchers.IO).launch {
+
+        //launch {
+        //    delay(10000)
+        //    triggerNativeCrash()
+        //}
+
         while (true) {
             delay(10_000)
             val signal = getSignalStatus()
@@ -24,7 +30,10 @@ object NativeCrashHandler {
             if (lastError != null) continue
             if (checkSafeModeFile()) continue
 
-            throw RuntimeException("Native crash with code: $signal. Try uninstalling extensions.\n")
+            AcraApplication.exceptionHandler?.uncaughtException(
+                Thread.currentThread(),
+                RuntimeException("Native crash with code: $signal. Try uninstalling extensions.\n")
+            )
         }
     }
 
