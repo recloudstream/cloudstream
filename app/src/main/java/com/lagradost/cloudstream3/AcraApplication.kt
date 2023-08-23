@@ -104,13 +104,17 @@ class ExceptionHandler(val errorFile: File, val onError: (() -> Unit)) :
 }
 
 class AcraApplication : Application() {
+
     override fun onCreate() {
         super.onCreate()
         NativeCrashHandler.initCrashHandler()
-        Thread.setDefaultUncaughtExceptionHandler(ExceptionHandler(filesDir.resolve("last_error")) {
+        ExceptionHandler(filesDir.resolve("last_error")) {
             val intent = context!!.packageManager.getLaunchIntentForPackage(context!!.packageName)
             startActivity(Intent.makeRestartActivityTask(intent!!.component))
-        })
+        }.also {
+            exceptionHandler = it
+            Thread.setDefaultUncaughtExceptionHandler(it)
+        }
     }
 
     override fun attachBaseContext(base: Context?) {
@@ -138,6 +142,8 @@ class AcraApplication : Application() {
     }
 
     companion object {
+        var exceptionHandler: ExceptionHandler? = null
+
         /** Use to get activity from Context */
         tailrec fun Context.getActivity(): Activity? = this as? Activity
             ?: (this as? ContextWrapper)?.baseContext?.getActivity()
@@ -212,6 +218,5 @@ class AcraApplication : Application() {
                 activity?.supportFragmentManager?.fragments?.lastOrNull()
             )
         }
-
     }
 }
