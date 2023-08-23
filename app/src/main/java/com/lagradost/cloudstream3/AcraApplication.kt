@@ -107,7 +107,7 @@ class AcraApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        NativeCrashHandler.initCrashHandler()
+        //NativeCrashHandler.initCrashHandler()
         ExceptionHandler(filesDir.resolve("last_error")) {
             val intent = context!!.packageManager.getLaunchIntentForPackage(context!!.packageName)
             startActivity(Intent.makeRestartActivityTask(intent!!.component))
