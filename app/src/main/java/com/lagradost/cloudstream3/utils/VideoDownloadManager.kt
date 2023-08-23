@@ -1598,9 +1598,8 @@ object VideoDownloadManager {
         val item = pkg.item
         val id = item.ep.id
         if (currentDownloads.contains(id)) { // IF IT IS ALREADY DOWNLOADING, RESUME IT
-            downloadEvent.invoke(Pair(id, DownloadActionType.Resume))
-            /** ID needs to be returned to the work-manager to properly await notification */
-            // return id
+            downloadEvent.invoke(id to DownloadActionType.Resume)
+            return
         }
 
         currentDownloads.add(id)
@@ -1741,14 +1740,14 @@ object VideoDownloadManager {
         notificationCallback: (Int, Notification) -> Unit,
         setKey: Boolean = true
     ) {
-        if (!currentDownloads.any { it == pkg.item.ep.id }) {
+        if (!currentDownloads.any { it == pkg.item.ep.id } && !downloadQueue.any { it.item.ep.id == pkg.item.ep.id }) {
             downloadQueue.addLast(pkg)
             downloadCheck(context, notificationCallback)
             if (setKey) saveQueue()
             //ret
         } else {
             downloadEvent(
-                Pair(pkg.item.ep.id, DownloadActionType.Resume)
+                pkg.item.ep.id to DownloadActionType.Resume
             )
             //null
         }
