@@ -44,6 +44,8 @@ open class ResultTrailerPlayer : ResultFragmentPhone(), IOnBackPressed {
 
     private fun fixPlayerSize() {
         playerWidthHeight?.let { (w, h) ->
+            if(w <= 0 || h <= 0) return@let
+
             val orientation = context?.resources?.configuration?.orientation ?: return
 
             val sw = if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
