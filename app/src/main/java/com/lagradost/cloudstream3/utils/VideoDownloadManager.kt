@@ -8,7 +8,6 @@ import android.content.*
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
-import android.os.Environment
 import androidx.annotation.DrawableRes
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -20,7 +19,6 @@ import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
 import com.bumptech.glide.load.model.GlideUrl
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.hippo.unifile.UniFile
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
 import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
@@ -31,19 +29,19 @@ import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
-import com.lagradost.cloudstream3.mvvm.suspendSafeApiCall
 import com.lagradost.cloudstream3.services.VideoDownloadService
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStore.removeKey
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
+import com.lagradost.cloudstream3.utils.storage.MediaFileContentType
+import com.lagradost.cloudstream3.utils.storage.SafeFile
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
@@ -160,24 +158,33 @@ object VideoDownloadManager {
         @JsonProperty("pkg") val pkg: DownloadResumePackage,
     )
 
-    private const val SUCCESS_DOWNLOAD_DONE = 1
-    private const val SUCCESS_STREAM = 3
-    private const val SUCCESS_STOPPED = 2
+    data class DownloadStatus(
+        /** if you should retry with the same args and hope for a better result */
+        val retrySame: Boolean,
+        /** if you should try the next mirror */
+        val tryNext: Boolean,
+        /** if the result is what the user intended */
+        val success: Boolean,
+    )
 
-    // will not download the next one, but is still classified as an error
-    private const val ERROR_DELETING_FILE = 3
-    private const val ERROR_CREATE_FILE = -2
-    private const val ERROR_UNKNOWN = -10
+    /** Invalid input, just skip to the next one as the same args will give the same error */
+    private val DOWNLOAD_INVALID_INPUT =
+        DownloadStatus(retrySame = false, tryNext = true, success = false)
 
-    //private const val ERROR_OPEN_FILE = -3
-    private const val ERROR_TOO_SMALL_CONNECTION = -4
+    /** no need to try any other mirror as we have downloaded the file */
+    private val DOWNLOAD_SUCCESS =
+        DownloadStatus(retrySame = false, tryNext = false, success = true)
 
-    //private const val ERROR_WRONG_CONTENT = -5
-    private const val ERROR_CONNECTION_ERROR = -6
+    /** the user pressed stop, so no need to download anything else */
+    private val DOWNLOAD_STOPPED =
+        DownloadStatus(retrySame = false, tryNext = false, success = true)
 
-    //private const val ERROR_MEDIA_STORE_URI_CANT_BE_CREATED = -7
-    //private const val ERROR_CONTENT_RESOLVER_CANT_OPEN_STREAM = -8
-    private const val ERROR_CONTENT_RESOLVER_NOT_FOUND = -9
+    /** the process failed due to some reason, so we retry and also try the next mirror */
+    private val DOWNLOAD_FAILED = DownloadStatus(retrySame = true, tryNext = true, success = false)
+
+    /** bad config, skip all mirrors as every call to download will have the same bad config */
+    private val DOWNLOAD_BAD_CONFIG =
+        DownloadStatus(retrySame = false, tryNext = false, success = false)
 
     private const val KEY_RESUME_PACKAGES = "download_resume"
     const val KEY_DOWNLOAD_INFO = "download_info"
@@ -209,15 +216,15 @@ object VideoDownloadManager {
         }
     }
 
-    /** Will return IsDone if not found or error */
-    fun getDownloadState(id: Int): DownloadType {
-        return try {
-            downloadStatus[id] ?: DownloadType.IsDone
-        } catch (e: Exception) {
-            logError(e)
-            DownloadType.IsDone
-        }
-    }
+    ///** Will return IsDone if not found or error */
+    //fun getDownloadState(id: Int): DownloadType {
+    //    return try {
+    //        downloadStatus[id] ?: DownloadType.IsDone
+    //    } catch (e: Exception) {
+    //        logError(e)
+    //        DownloadType.IsDone
+    //    }
+    //}
 
     private val cachedBitmaps = hashMapOf<String, Bitmap>()
     fun Context.getImageBitmapFromUrl(url: String, headers: Map<String, String>? = null): Bitmap? {
@@ -302,7 +309,7 @@ object VideoDownloadManager {
             if (state == DownloadType.IsDownloading || state == DownloadType.IsPaused) {
                 builder.setProgress((total / 1000).toInt(), (progress / 1000).toInt(), false)
             } else if (state == DownloadType.IsPending) {
-                builder.setProgress(0,0,true)
+                builder.setProgress(0, 0, true)
             }
 
             val rowTwoExtra = if (ep.name != null) " - ${ep.name}\n" else ""
@@ -496,10 +503,11 @@ object VideoDownloadManager {
         basePath: String?
     ): List<Pair<String, Uri>>? {
         val base = basePathToFile(context, basePath)
-        val folder = base?.gotoDir(relativePath, false) ?: return null
-        if (!folder.isDirectory) return null
+        val folder = base?.gotoDirectory(relativePath, false) ?: return null
+        if (folder.isDirectory() != false) return null
 
-        return folder.listFiles()?.map { (it.name ?: "") to it.uri }
+        return folder.listFiles()
+            ?.mapNotNull { (it.name() ?: "") to (it.uri() ?: return@mapNotNull null) }
     }
 
 
@@ -514,37 +522,29 @@ object VideoDownloadManager {
 
     data class StreamData(
         private val fileLength: Long,
-        val file: UniFile,
+        val file: SafeFile,
         //val fileStream: OutputStream,
     ) {
-        fun open() : OutputStream {
-            return file.openOutputStream(resume)
+        @Throws(IOException::class)
+        fun open(): OutputStream {
+            return file.openOutputStreamOrThrow(resume)
         }
 
-        fun openNew() : OutputStream {
-            return file.openOutputStream(false)
+        @Throws(IOException::class)
+        fun openNew(): OutputStream {
+            return file.openOutputStreamOrThrow(false)
+        }
+
+        fun delete(): Boolean {
+            return file.delete()
         }
 
         val resume: Boolean get() = fileLength > 0L
         val startAt: Long get() = if (resume) fileLength else 0L
-        val exists: Boolean get() = file.exists()
+        val exists: Boolean get() = file.exists() == true
     }
 
 
-    //class ADownloadException(val id: Int) : RuntimeException(message = "Download error $id")
-
-    fun UniFile.createFileOrThrow(displayName: String): UniFile {
-        return this.createFile(displayName) ?: throw IOException("Could not create file")
-    }
-
-    fun UniFile.deleteOrThrow() {
-        if (!this.delete()) throw IOException("Could not delete file")
-    }
-
-    /**
-     * Sets up the appropriate file and creates a data stream from the file.
-     * Used for initializing downloads.
-     * */
     @Throws(IOException::class)
     fun setupStream(
         context: Context,
@@ -553,18 +553,38 @@ object VideoDownloadManager {
         extension: String,
         tryResume: Boolean,
     ): StreamData {
+        val (base, _) = context.getBasePath()
+        return setupStream(
+            base ?: throw IOException("Bad config"),
+            name,
+            folder,
+            extension,
+            tryResume
+        )
+    }
+
+    /**
+     * Sets up the appropriate file and creates a data stream from the file.
+     * Used for initializing downloads.
+     * */
+    @Throws(IOException::class)
+    fun setupStream(
+        baseFile: SafeFile,
+        name: String,
+        folder: String?,
+        extension: String,
+        tryResume: Boolean,
+    ): StreamData {
         val displayName = getDisplayName(name, extension)
 
-        val (baseFile, _) = context.getBasePath()
-
-        val subDir = baseFile?.gotoDir(folder) ?: throw IOException()
+        val subDir = baseFile.gotoDirectoryOrThrow(folder)
         val foundFile = subDir.findFile(displayName)
 
-        val (file, fileLength) = if (foundFile == null || !foundFile.exists()) {
+        val (file, fileLength) = if (foundFile == null || foundFile.exists() != true) {
             subDir.createFileOrThrow(displayName) to 0L
         } else {
             if (tryResume) {
-                foundFile to foundFile.size()
+                foundFile to foundFile.lengthOrThrow()
             } else {
                 foundFile.deleteOrThrow()
                 subDir.createFileOrThrow(displayName) to 0L
@@ -1004,21 +1024,20 @@ object VideoDownloadManager {
         }
     }
 
-    @Throws
     suspend fun downloadThing(
         context: Context,
         link: IDownloadableMinimum,
         name: String,
-        folder: String?,
+        folder: String,
         extension: String,
         tryResume: Boolean,
         parentId: Int?,
         createNotificationCallback: (CreateNotificationMetadata) -> Unit,
         parallelConnections: Int = 3
-    ): Int = withContext(Dispatchers.IO) {
+    ): DownloadStatus = withContext(Dispatchers.IO) {
         // we cant download torrents with this implementation, aria2c might be used in the future
-        if (link.url.startsWith("magnet") || link.url.endsWith(".torrent")) {
-            return@withContext ERROR_UNKNOWN
+        if (link.url.startsWith("magnet") || link.url.endsWith(".torrent") || parallelConnections < 1) {
+            return@withContext DOWNLOAD_INVALID_INPUT
         }
 
         var fileStream: OutputStream? = null
@@ -1033,13 +1052,10 @@ object VideoDownloadManager {
             // get the file path
             val (baseFile, basePath) = context.getBasePath()
             val displayName = getDisplayName(name, extension)
-            val relativePath =
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && baseFile.isDownloadDir()) getRelativePath(
-                    folder
-                ) else folder
+            if (baseFile == null) return@withContext DOWNLOAD_BAD_CONFIG
 
             // set up the download file
-            val stream = setupStream(context, name, relativePath, extension, tryResume)
+            val stream = setupStream(baseFile, name, folder, extension, tryResume)
 
             fileStream = stream.open()
 
@@ -1069,7 +1085,7 @@ object VideoDownloadManager {
             metadata.setDownloadFileInfoTemplate(
                 DownloadedFileInfo(
                     totalBytes = metadata.approxTotalBytes,
-                    relativePath = relativePath ?: "",
+                    relativePath = folder,
                     displayName = displayName,
                     basePath = basePath
                 )
@@ -1202,19 +1218,19 @@ object VideoDownloadManager {
             if (!stream.exists) metadata.type = DownloadType.IsStopped
 
             if (metadata.type == DownloadType.IsFailed) {
-                return@withContext ERROR_CONNECTION_ERROR
+                return@withContext DOWNLOAD_FAILED
             }
 
             if (metadata.type == DownloadType.IsStopped) {
                 // we need to close before delete
                 fileStream.closeQuietly()
                 metadata.onDelete()
-                deleteFile(context, baseFile, relativePath ?: "", displayName)
-                return@withContext SUCCESS_STOPPED
+                stream.delete()
+                return@withContext DOWNLOAD_STOPPED
             }
 
             metadata.type = DownloadType.IsDone
-            return@withContext SUCCESS_DOWNLOAD_DONE
+            return@withContext DOWNLOAD_SUCCESS
         } catch (e: IOException) {
             // some sort of IO error, this should not happened
             // we just rethrow it
@@ -1226,7 +1242,7 @@ object VideoDownloadManager {
             // note that when failing we don't want to delete the file,
             // only user interaction has that power
             metadata.type = DownloadType.IsFailed
-            return@withContext ERROR_CONNECTION_ERROR
+            return@withContext DOWNLOAD_FAILED
         } finally {
             fileStream?.closeQuietly()
             //requestStream?.closeQuietly()
@@ -1234,39 +1250,36 @@ object VideoDownloadManager {
         }
     }
 
-    @Throws
     private suspend fun downloadHLS(
         context: Context,
         link: ExtractorLink,
         name: String,
-        folder: String?,
+        folder: String,
         parentId: Int?,
         startIndex: Int?,
         createNotificationCallback: (CreateNotificationMetadata) -> Unit,
         parallelConnections: Int = 3
-    ): Int = withContext(Dispatchers.IO) {
-        require(parallelConnections >= 1)
+    ): DownloadStatus = withContext(Dispatchers.IO) {
+        if (parallelConnections < 1) return@withContext DOWNLOAD_INVALID_INPUT
 
         val metadata = DownloadMetaData(
             createNotificationCallback = createNotificationCallback,
             id = parentId
         )
-        val extension = "mp4"
-
         var fileStream: OutputStream? = null
         try {
+            val extension = "mp4"
+
             // the start .ts index
             var startAt = startIndex ?: 0
 
             // set up the file data
             val (baseFile, basePath) = context.getBasePath()
-            val relativePath =
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && baseFile.isDownloadDir()) getRelativePath(
-                    folder
-                ) else folder
+            if (baseFile == null) return@withContext DOWNLOAD_BAD_CONFIG
+
             val displayName = getDisplayName(name, extension)
             val stream =
-                setupStream(context, name, relativePath, extension, startAt > 0)
+                setupStream(baseFile, name, folder, extension, startAt > 0)
             if (!stream.resume) startAt = 0
             fileStream = stream.open()
 
@@ -1277,7 +1290,7 @@ object VideoDownloadManager {
             metadata.setDownloadFileInfoTemplate(
                 DownloadedFileInfo(
                     totalBytes = 0,
-                    relativePath = relativePath ?: "",
+                    relativePath = folder,
                     displayName = displayName,
                     basePath = basePath
                 )
@@ -1406,96 +1419,26 @@ object VideoDownloadManager {
             if (!stream.exists) metadata.type = DownloadType.IsStopped
 
             if (metadata.type == DownloadType.IsFailed) {
-                return@withContext ERROR_CONNECTION_ERROR
+                return@withContext DOWNLOAD_FAILED
             }
 
             if (metadata.type == DownloadType.IsStopped) {
                 // we need to close before delete
                 fileStream.closeQuietly()
                 metadata.onDelete()
-                deleteFile(context, baseFile, relativePath ?: "", displayName)
-                return@withContext SUCCESS_STOPPED
+                stream.delete()
+                return@withContext DOWNLOAD_STOPPED
             }
 
             metadata.type = DownloadType.IsDone
-            return@withContext SUCCESS_DOWNLOAD_DONE
+            return@withContext DOWNLOAD_SUCCESS
         } catch (t: Throwable) {
             logError(t)
             metadata.type = DownloadType.IsFailed
-            return@withContext ERROR_UNKNOWN
+            return@withContext DOWNLOAD_FAILED
         } finally {
             fileStream?.closeQuietly()
             metadata.close()
-        }
-    }
-
-
-    /**
-     * Guarantees a directory is present with the dir name (if createMissingDirectories is true).
-     * Works recursively when '/' is present.
-     * Will remove any file with the dir name if present and add directory.
-     * Will not work if the parent directory does not exist.
-     *
-     * @param directoryName if null will use the current path.
-     * @return UniFile / null if createMissingDirectories = false and folder is not found.
-     * */
-    private fun UniFile.gotoDir(
-        directoryName: String?,
-        createMissingDirectories: Boolean = true
-    ): UniFile? {
-        if(directoryName == null) return this
-
-        return directoryName.split(File.separatorChar).filter { it.isNotBlank() }.fold(this) { file: UniFile?, directory ->
-            file?.createDirectory(directory)
-        }
-
-        // May give this error on scoped storage.
-        // W/DocumentsContract: Failed to create document
-        // java.lang.IllegalArgumentException: Parent document isn't a directory
-
-        // Not present in latest testing.
-
-        println("Going to dir $directoryName from ${this.uri} ---- ${this.filePath}")
-
-        try {
-            // Creates itself from parent if doesn't exist.
-            if (!this.exists() && createMissingDirectories && !this.name.isNullOrBlank()) {
-                if (this.parentFile != null) {
-                    this.parentFile?.createDirectory(this.name)
-                } else if (this.filePath != null) {
-                    UniFile.fromFile(File(this.filePath!!).parentFile)?.createDirectory(this.name)
-                }
-            }
-
-            val allDirectories = directoryName?.split("/")
-            return if (allDirectories?.size == 1 || allDirectories == null) {
-                val found = this.findFile(directoryName)
-                when {
-                    directoryName.isNullOrBlank() -> this
-                    found?.isDirectory == true -> found
-
-                    !createMissingDirectories -> null
-                    // Below creates directories
-                    found?.isFile == true -> {
-                        found.delete()
-                        this.createDirectory(directoryName)
-                    }
-
-                    this.isDirectory -> this.createDirectory(directoryName)
-                    else -> this.parentFile?.createDirectory(directoryName)
-                }
-            } else {
-                var currentDirectory = this
-                allDirectories.forEach {
-                    // If the next directory is not found it returns the deepest directory possible.
-                    val nextDir = currentDirectory.gotoDir(it, createMissingDirectories)
-                    currentDirectory = nextDir ?: return null
-                }
-                currentDirectory
-            }
-        } catch (e: Exception) {
-            logError(e)
-            return null
         }
     }
 
@@ -1510,33 +1453,22 @@ object VideoDownloadManager {
      * As of writing UniFile is used for everything but download directory on scoped storage.
      * Special ContentResolver fuckery is needed for that as UniFile doesn't work.
      * */
-    fun getDownloadDir(): UniFile? {
+    fun getDefaultDir(context: Context): SafeFile? {
         // See https://www.py4u.net/discuss/614761
-        return UniFile.fromFile(
-            File(
-                Environment.getExternalStorageDirectory().absolutePath + File.separatorChar +
-                        Environment.DIRECTORY_DOWNLOADS
-            )
+        return SafeFile.fromMedia(
+            context, MediaFileContentType.Downloads
         )
-    }
-
-    @Deprecated("TODO fix UniFile to work with download directory.")
-    private fun getRelativePath(folder: String?): String {
-        return (Environment.DIRECTORY_DOWNLOADS + '/' + folder + '/').replace(
-            '/',
-            File.separatorChar
-        ).replace("${File.separatorChar}${File.separatorChar}", File.separatorChar.toString())
     }
 
     /**
      * Turns a string to an UniFile. Used for stored string paths such as settings.
      * Should only be used to get a download path.
      * */
-    private fun basePathToFile(context: Context, path: String?): UniFile? {
+    private fun basePathToFile(context: Context, path: String?): SafeFile? {
         return when {
-            path.isNullOrBlank() -> getDownloadDir()
-            path.startsWith("content://") -> UniFile.fromUri(context, path.toUri())
-            else -> UniFile.fromFile(File(path))
+            path.isNullOrBlank() -> getDefaultDir(context)
+            path.startsWith("content://") -> SafeFile.fromUri(context, path.toUri())
+            else -> SafeFile.fromFile(context, File(path))
         }
     }
 
@@ -1545,16 +1477,11 @@ object VideoDownloadManager {
      * Returns the file and a string to be stored for future file retrieval.
      * UniFile.filePath is not sufficient for storage.
      * */
-    fun Context.getBasePath(): Pair<UniFile?, String?> {
+    fun Context.getBasePath(): Pair<SafeFile?, String?> {
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
         val basePathSetting = settingsManager.getString(getString(R.string.download_path_key), null)
         return basePathToFile(this, basePathSetting) to basePathSetting
     }
-
-    fun UniFile?.isDownloadDir(): Boolean {
-        return this != null && this.filePath == getDownloadDir()?.filePath
-    }
-
 
     fun getFileName(context: Context, metadata: DownloadEpisodeMetadata): String {
         return getFileName(context, metadata.name, metadata.episode, metadata.season)
@@ -1596,7 +1523,7 @@ object VideoDownloadManager {
         link: ExtractorLink,
         notificationCallback: (Int, Notification) -> Unit,
         tryResume: Boolean = false,
-    ): Int {
+    ): DownloadStatus {
         val name = getFileName(context, ep)
 
         // Make sure this is cancelled when download is done or cancelled.
@@ -1638,7 +1565,7 @@ object VideoDownloadManager {
                     context,
                     link,
                     name,
-                    folder,
+                    folder ?: "",
                     ep.id,
                     startIndex,
                     callback
@@ -1648,7 +1575,7 @@ object VideoDownloadManager {
                     context,
                     link,
                     name,
-                    folder,
+                    folder ?: "",
                     "mp4",
                     tryResume,
                     ep.id,
@@ -1656,7 +1583,7 @@ object VideoDownloadManager {
                 )
             }
         } catch (t: Throwable) {
-            return ERROR_UNKNOWN
+            return DOWNLOAD_FAILED
         } finally {
             extractorJob.cancel()
         }
@@ -1698,10 +1625,8 @@ object VideoDownloadManager {
                         notificationCallback,
                         resume
                     )
-                //.also { println("Single episode finished with return code: $it") }
 
-                // retry every link at least once
-                if (connectionResult <= 0) {
+                if (connectionResult.retrySame) {
                     connectionResult = downloadSingleEpisode(
                         context,
                         item.source,
@@ -1713,11 +1638,12 @@ object VideoDownloadManager {
                     )
                 }
 
-                if (connectionResult > 0) { // SUCCESS
+                if (connectionResult.success) { // SUCCESS
                     removeKey(KEY_RESUME_PACKAGES, id.toString())
                     break
-                } else if (index == item.links.lastIndex) {
+                } else if (!connectionResult.tryNext || index >= item.links.lastIndex) {
                     downloadStatusEvent.invoke(Pair(id, DownloadType.IsFailed))
+                    break
                 }
             }
         } catch (e: Exception) {
@@ -1731,38 +1657,44 @@ object VideoDownloadManager {
         // return id
     }
 
-    fun getDownloadFileInfoAndUpdateSettings(context: Context, id: Int): DownloadedFileInfoResult? {
-        val res = getDownloadFileInfo(context, id)
-        if (res == null) context.removeKey(KEY_DOWNLOAD_INFO, id.toString())
-        return res
+    /* fun getDownloadFileInfoAndUpdateSettings(context: Context, id: Int): DownloadedFileInfoResult? {
+         val res = getDownloadFileInfo(context, id)
+         if (res == null) context.removeKey(KEY_DOWNLOAD_INFO, id.toString())
+         return res
+     }
+ */
+    fun getDownloadFileInfoAndUpdateSettings(context: Context, id: Int): DownloadedFileInfoResult? =
+        getDownloadFileInfo(context, id, removeKeys = true)
+
+    private fun DownloadedFileInfo.toFile(context: Context): SafeFile? {
+        return basePathToFile(context, this.basePath)?.gotoDirectory(relativePath)
+            ?.findFile(displayName)
     }
 
-    private fun getDownloadFileInfo(context: Context, id: Int): DownloadedFileInfoResult? {
+    private fun getDownloadFileInfo(
+        context: Context,
+        id: Int,
+        removeKeys: Boolean = false
+    ): DownloadedFileInfoResult? {
         try {
             val info =
                 context.getKey<DownloadedFileInfo>(KEY_DOWNLOAD_INFO, id.toString()) ?: return null
-            val base = basePathToFile(context, info.basePath)
-            val file = base?.gotoDir(info.relativePath, false)?.findFile(info.displayName)
-            if (file?.exists() != true) return null
+            val file = info.toFile(context)
 
-            return DownloadedFileInfoResult(file.size(), info.totalBytes, file.uri)
+            // only delete the key if the file is not found
+            if (file == null || !file.existsOrThrow()) {
+                if (removeKeys) context.removeKey(KEY_DOWNLOAD_INFO, id.toString())
+                return null
+            }
+
+            return DownloadedFileInfoResult(
+                file.lengthOrThrow(),
+                info.totalBytes,
+                file.uriOrThrow()
+            )
         } catch (e: Exception) {
             logError(e)
             return null
-        }
-    }
-
-    /**
-     * Gets the true download size as Scoped Storage sometimes wrongly returns 0.
-     * */
-    fun UniFile.size(): Long {
-        val len = length()
-        return if (len <= 1) {
-            println("LEN:::::::>>>>>>>>>>>>>>>>>>>>>>>$len")
-            val inputStream = this.openInputStream()
-            return inputStream.available().toLong().also { inputStream.closeQuietly() }
-        } else {
-            len
         }
     }
 
@@ -1772,21 +1704,22 @@ object VideoDownloadManager {
         return success
     }
 
-    private fun deleteFile(
+    /*private fun deleteFile(
         context: Context,
-        folder: UniFile?,
+        folder: SafeFile?,
         relativePath: String,
         displayName: String
     ): Boolean {
-        val file = folder?.gotoDir(relativePath)?.findFile(displayName) ?: return false
-        if (!file.exists()) return true
+        val file = folder?.gotoDirectory(relativePath)?.findFile(displayName) ?: return false
+        if (file.exists() == false) return true
         return try {
             file.delete()
         } catch (e: Exception) {
             logError(e)
-            (context.contentResolver?.delete(file.uri, null, null) ?: return false) > 0
+            (context.contentResolver?.delete(file.uri() ?: return true, null, null)
+                ?: return false) > 0
         }
-    }
+    }*/
 
     private fun deleteFile(context: Context, id: Int): Boolean {
         val info =
@@ -1795,8 +1728,7 @@ object VideoDownloadManager {
         downloadProgressEvent.invoke(Triple(id, 0, 0))
         downloadStatusEvent.invoke(id to DownloadType.IsStopped)
         downloadDeleteEvent.invoke(id)
-        val base = basePathToFile(context, info.basePath)
-        return deleteFile(context, base, info.relativePath, info.displayName)
+        return info.toFile(context)?.delete() ?: false
     }
 
     fun getDownloadResumePackage(context: Context, id: Int): DownloadResumePackage? {

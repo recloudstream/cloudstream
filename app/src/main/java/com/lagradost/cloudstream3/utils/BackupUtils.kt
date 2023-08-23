@@ -1,11 +1,8 @@
 package com.lagradost.cloudstream3.utils
 
 import android.annotation.SuppressLint
-import android.content.ContentValues
 import android.content.Context
 import android.net.Uri
-import android.os.Build
-import android.provider.MediaStore
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -36,9 +33,9 @@ import com.lagradost.cloudstream3.utils.DataStore.mapper
 import com.lagradost.cloudstream3.utils.DataStore.setKeyRaw
 import com.lagradost.cloudstream3.utils.UIHelper.checkWrite
 import com.lagradost.cloudstream3.utils.UIHelper.requestRW
-import com.lagradost.cloudstream3.utils.VideoDownloadManager.getBasePath
-import com.lagradost.cloudstream3.utils.VideoDownloadManager.isDownloadDir
-import java.io.IOException
+import com.lagradost.cloudstream3.utils.VideoDownloadManager.setupStream
+import okhttp3.internal.closeQuietly
+import java.io.OutputStream
 import java.io.PrintWriter
 import java.lang.System.currentTimeMillis
 import java.text.SimpleDateFormat
@@ -147,6 +144,8 @@ object BackupUtils {
 
     @SuppressLint("SimpleDateFormat")
     fun FragmentActivity.backup() {
+        var fileStream: OutputStream? = null
+        var printStream: PrintWriter? = null
         try {
             if (!checkWrite()) {
                 showToast(getString(R.string.backup_failed), Toast.LENGTH_LONG)
@@ -154,13 +153,16 @@ object BackupUtils {
                 return
             }
 
-            val subDir = getBasePath().first
             val date = SimpleDateFormat("yyyy_MM_dd_HH_mm").format(Date(currentTimeMillis()))
             val ext = "json"
             val displayName = "CS3_Backup_${date}"
             val backupFile = getBackup()
+            val stream = setupStream(this, displayName, null, ext, false)
+            fileStream = stream.openNew()
+            printStream = PrintWriter(fileStream)
+            printStream.print(mapper.writeValueAsString(backupFile))
 
-            val steam = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
+            /*val steam = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
                 && subDir?.isDownloadDir() == true
             ) {
                 val cr = this.contentResolver
@@ -198,7 +200,7 @@ object BackupUtils {
 
             val printStream = PrintWriter(steam)
             printStream.print(mapper.writeValueAsString(backupFile))
-            printStream.close()
+            printStream.close()*/
 
             showToast(
                 R.string.backup_success,
@@ -214,6 +216,9 @@ object BackupUtils {
             } catch (e: Exception) {
                 logError(e)
             }
+        } finally {
+            printStream?.closeQuietly()
+            fileStream?.closeQuietly()
         }
     }
 

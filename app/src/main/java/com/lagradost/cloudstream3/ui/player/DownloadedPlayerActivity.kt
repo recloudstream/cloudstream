@@ -6,11 +6,11 @@ import android.os.Bundle
 import android.util.Log
 import android.view.KeyEvent
 import androidx.appcompat.app.AppCompatActivity
-import com.hippo.unifile.UniFile
 import com.lagradost.cloudstream3.CommonActivity
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.utils.ExtractorUri
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
+import com.lagradost.cloudstream3.utils.storage.SafeFile
 
 const val DTAG = "PlayerActivity"
 
@@ -50,7 +50,7 @@ class DownloadedPlayerActivity : AppCompatActivity() {
     }
 
     private fun playUri(uri: Uri) {
-        val name = UniFile.fromUri(this, uri).name
+        val name = SafeFile.fromUri(this, uri)?.name()
         this.navigate(
             R.id.global_to_navigation_player, GeneratorPlayer.newInstance(
                 DownloadFileGenerator(

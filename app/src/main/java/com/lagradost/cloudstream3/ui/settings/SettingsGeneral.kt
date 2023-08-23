@@ -3,9 +3,7 @@ package com.lagradost.cloudstream3.ui.settings
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
-import android.os.Environment
 import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -13,7 +11,6 @@ import androidx.appcompat.app.AlertDialog
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.hippo.unifile.UniFile
 import com.lagradost.cloudstream3.APIHolder.allProviders
 import com.lagradost.cloudstream3.AcraApplication
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
@@ -41,7 +38,7 @@ import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.utils.USER_PROVIDER_API
 import com.lagradost.cloudstream3.utils.VideoDownloadManager
 import com.lagradost.cloudstream3.utils.VideoDownloadManager.getBasePath
-import java.io.File
+import com.lagradost.cloudstream3.utils.storage.SafeFile
 
 fun getCurrentLocale(context: Context): String {
     val res = context.resources
@@ -139,8 +136,9 @@ class SettingsGeneral : PreferenceFragmentCompat() {
 
             context.contentResolver.takePersistableUriPermission(uri, flags)
 
-            val file = UniFile.fromUri(context, uri)
-            println("Selected URI path: $uri - Full path: ${file.filePath}")
+            val file = SafeFile.fromUri(context, uri)
+            val filePath = file?.filePath()
+            println("Selected URI path: $uri - Full path: $filePath")
 
             // Stores the real URI using download_path_key
             // Important that the URI is stored instead of filepath due to permissions.
@@ -149,7 +147,7 @@ class SettingsGeneral : PreferenceFragmentCompat() {
 
             // From URI -> File path
             // File path here is purely for cosmetic purposes in settings
-            (file.filePath ?: uri.toString()).let {
+            (filePath ?: uri.toString()).let {
                 PreferenceManager.getDefaultSharedPreferences(context)
                     .edit().putString(getString(R.string.download_path_pref), it).apply()
             }
@@ -306,25 +304,23 @@ class SettingsGeneral : PreferenceFragmentCompat() {
             }
             return@setOnPreferenceClickListener true
         }
+
         fun getDownloadDirs(): List<String> {
             return normalSafeApiCall {
-                val defaultDir = VideoDownloadManager.getDownloadDir()?.filePath
+                context?.let { ctx ->
+                    val defaultDir = VideoDownloadManager.getDefaultDir(ctx)?.filePath()
 
-                // app_name_download_path = Cloudstream and does not change depending on release.
-                // DOES NOT WORK ON SCOPED STORAGE.
-                val secondaryDir =
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) null else Environment.getExternalStorageDirectory().absolutePath +
-                            File.separator + resources.getString(R.string.app_name_download_path)
-                val first = listOf(defaultDir, secondaryDir)
-                (try {
-                    val currentDir = context?.getBasePath()?.let { it.first?.filePath ?: it.second }
+                    val first = listOf(defaultDir)
+                    (try {
+                        val currentDir = ctx.getBasePath().let { it.first?.filePath() ?: it.second }
 
-                    (first +
-                            requireContext().getExternalFilesDirs("").mapNotNull { it.path } +
-                            currentDir)
-                } catch (e: Exception) {
-                    first
-                }).filterNotNull().distinct()
+                        (first +
+                                ctx.getExternalFilesDirs("").mapNotNull { it.path } +
+                                currentDir)
+                    } catch (e: Exception) {
+                        first
+                    }).filterNotNull().distinct()
+                }
             } ?: emptyList()
         }
 
@@ -339,7 +335,7 @@ class SettingsGeneral : PreferenceFragmentCompat() {
 
             val currentDir =
                 settingsManager.getString(getString(R.string.download_path_pref), null)
-                    ?: VideoDownloadManager.getDownloadDir().toString()
+                    ?: context?.let { ctx -> VideoDownloadManager.getDefaultDir(ctx).toString() }
 
             activity?.showBottomDialog(
                 dirs + listOf("Custom"),

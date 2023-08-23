@@ -52,6 +52,7 @@ import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.hideSystemUI
 import com.lagradost.cloudstream3.utils.UIHelper.popCurrentPage
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
+import com.lagradost.cloudstream3.utils.storage.SafeFile
 import kotlinx.coroutines.Job
 import java.util.*
 import kotlin.math.abs
@@ -525,10 +526,11 @@ class GeneratorPlayer : FullScreenPlayer() {
                     Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
                 )
 
-                val file = UniFile.fromUri(ctx, uri)
-                println("Loaded subtitle file. Selected URI path: $uri - Name: ${file.name}")
+                val file = SafeFile.fromUri(ctx, uri)
+                val fileName = file?.name()
+                println("Loaded subtitle file. Selected URI path: $uri - Name: $fileName")
                 // DO NOT REMOVE THE FILE EXTENSION FROM NAME, IT'S NEEDED FOR MIME TYPES
-                val name = file.name ?: uri.toString()
+                val name = fileName ?: uri.toString()
 
                 val subtitleData = SubtitleData(
                     name,
