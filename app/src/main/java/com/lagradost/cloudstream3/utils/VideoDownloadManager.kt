@@ -1682,7 +1682,7 @@ object VideoDownloadManager {
 
             // only delete the key if the file is not found
             if (file == null || !file.existsOrThrow()) {
-                if (removeKeys) context.removeKey(KEY_DOWNLOAD_INFO, id.toString())
+                //if (removeKeys) context.removeKey(KEY_DOWNLOAD_INFO, id.toString()) // TODO READD
                 return null
             }
 
