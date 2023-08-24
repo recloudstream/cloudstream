@@ -55,7 +55,7 @@ android {
     defaultConfig {
         applicationId = "com.lagradost.cloudstream3"
         minSdk = 21
-        targetSdk = 33
+        targetSdk = 29
 
         versionCode = 59
         versionName = "4.1.7"
