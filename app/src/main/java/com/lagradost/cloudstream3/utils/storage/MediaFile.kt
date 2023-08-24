@@ -129,6 +129,9 @@ class MediaFile(
 
         // VideoDownloadManager.sanitizeFilename(path.replace(File.separator, ""))
 
+        // in case of duplicate path, aka Download -> Download
+        if(relativePath == path) return this
+
         val newPath =
             sanitizedAbsolutePath + path + if (folder) File.separator else ""
 
