@@ -23,7 +23,7 @@ interface SafeFile {
             // because UniFile sucks balls on Media we have to do this
             val absPath = file.absolutePath.removePrefix(File.separator)
             for (value in MediaFileContentType.values()) {
-                val prefixes = listOf(value.toAbsolutePath(), value.toPath())
+                val prefixes = listOf(value.toAbsolutePath(), value.toPath()).map { it.removePrefix(File.separator) }
                 for (prefix in prefixes) {
                     if (!absPath.startsWith(prefix)) continue
                     return fromMedia(
