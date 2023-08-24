@@ -13,6 +13,7 @@ import com.hippo.unifile.UniRandomAccessFile
 import com.lagradost.cloudstream3.mvvm.logError
 import okhttp3.internal.closeQuietly
 import java.io.File
+import java.io.FileNotFoundException
 import java.io.InputStream
 import java.io.OutputStream
 
@@ -65,6 +66,10 @@ class MediaFile(
     private val external: Boolean = true,
     absolutePath: String,
 ) : SafeFile {
+    override fun toString(): String {
+        return sanitizedAbsolutePath
+    }
+
     // this is the path relative to the download directory so "/hello/text.txt" = "hello/text.txt" is in fact "Download/hello/text.txt"
     private val sanitizedAbsolutePath: String =
         replaceDuplicateFileSeparators(absolutePath)
@@ -130,7 +135,7 @@ class MediaFile(
         // VideoDownloadManager.sanitizeFilename(path.replace(File.separator, ""))
 
         // in case of duplicate path, aka Download -> Download
-        if(relativePath == path) return this
+        if (relativePath == path) return this
 
         val newPath =
             sanitizedAbsolutePath + path + if (folder) File.separator else ""
@@ -246,12 +251,24 @@ class MediaFile(
 
     override fun length(): Long? {
         if (isDir) return null
-        val length = query()?.length ?: return null
-        if(length <= 0) {
-            val inputStream : InputStream = openInputStream() ?: return null
+        val query = query()
+        val length = query?.length ?: return null
+        if (length <= 0) {
+            try {
+                contentResolver.openFileDescriptor(query.uri, "r")
+                    .use {
+                        it?.statSize
+                    }?.let {
+                        return it
+                    }
+            } catch (e: FileNotFoundException) {
+                return null
+            }
+
+            val inputStream: InputStream = openInputStream() ?: return null
             return try {
                 inputStream.available().toLong()
-            } catch (t : Throwable) {
+            } catch (t: Throwable) {
                 null
             } finally {
                 inputStream.closeQuietly()

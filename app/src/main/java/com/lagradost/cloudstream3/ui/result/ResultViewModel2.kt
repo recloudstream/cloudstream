@@ -591,7 +591,7 @@ class ResultViewModel2 : ViewModel() {
                     link,
                     "$fileName ${link.name}",
                     folder,
-                    if (link.url.contains(".srt")) ".srt" else "vtt",
+                    if (link.url.contains(".srt")) "srt" else "vtt",
                     false,
                     null, createNotificationCallback = {}
                 )
@@ -719,7 +719,7 @@ class ResultViewModel2 : ViewModel() {
                             )
                         )
                     }
-                        .map { ExtractorSubtitleLink(it.name, it.url, "") }
+                        .map { ExtractorSubtitleLink(it.name, it.url, "") }.take(3)
                         .forEach { link ->
                             val fileName = VideoDownloadManager.getFileName(context, meta)
                             downloadSubtitle(context, link, fileName, folder)
