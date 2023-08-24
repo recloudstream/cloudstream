@@ -62,6 +62,7 @@ const val DOWNLOAD_CHANNEL_DESCRIPT = "The download notification channel"
 
 object VideoDownloadManager {
     var maxConcurrentDownloads = 3
+    var maxConcurrentConnections = 3
     private var currentDownloads = mutableListOf<Int>()
 
     private const val USER_AGENT =
@@ -1568,7 +1569,7 @@ object VideoDownloadManager {
                     folder ?: "",
                     ep.id,
                     startIndex,
-                    callback
+                    callback, parallelConnections = maxConcurrentConnections
                 )
             } else {
                 return downloadThing(
@@ -1579,7 +1580,7 @@ object VideoDownloadManager {
                     "mp4",
                     tryResume,
                     ep.id,
-                    callback
+                    callback, parallelConnections = maxConcurrentConnections
                 )
             }
         } catch (t: Throwable) {
