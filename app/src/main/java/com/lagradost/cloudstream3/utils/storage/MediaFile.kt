@@ -13,6 +13,7 @@ import com.hippo.unifile.UniRandomAccessFile
 import com.lagradost.cloudstream3.mvvm.logError
 import okhttp3.internal.closeQuietly
 import java.io.File
+import java.io.FileNotFoundException
 import java.io.InputStream
 import java.io.OutputStream
 
@@ -65,6 +66,10 @@ class MediaFile(
     private val external: Boolean = true,
     absolutePath: String,
 ) : SafeFile {
+    override fun toString(): String {
+        return sanitizedAbsolutePath
+    }
+
     // this is the path relative to the download directory so "/hello/text.txt" = "hello/text.txt" is in fact "Download/hello/text.txt"
     private val sanitizedAbsolutePath: String =
         replaceDuplicateFileSeparators(absolutePath)
@@ -83,6 +88,20 @@ class MediaFile(
     private val namePath: String = sanitizedAbsolutePath.substringAfterLast(File.separator)
     private val baseUri = folderType.toUri(external)
     private val contentResolver: ContentResolver = context.contentResolver
+
+    fun removeCache() {
+        cachedUri = null
+    }
+
+    fun setCache(uri: Uri) {
+        cachedUri = uri
+    }
+
+    private var cachedUri : Uri? = null
+    private val fileUri: Uri? get() {
+        cachedUri?.let { return it }
+        return if (isFile) query()?.uri?.also { cachedUri = it } else null
+    }
 
     init {
         // some standard asserts that should always be hold or else this class wont work
@@ -130,7 +149,7 @@ class MediaFile(
         // VideoDownloadManager.sanitizeFilename(path.replace(File.separator, ""))
 
         // in case of duplicate path, aka Download -> Download
-        if(relativePath == path) return this
+        if (relativePath == path) return this
 
         val newPath =
             sanitizedAbsolutePath + path + if (folder) File.separator else ""
@@ -155,7 +174,12 @@ class MediaFile(
                 put(MediaStore.MediaColumns.MIME_TYPE, mime)
             put(MediaStore.MediaColumns.RELATIVE_PATH, relativePath)
         }
-        return contentResolver.insert(baseUri, newFile)
+
+        return contentResolver.insert(baseUri, newFile)?.also {
+            if(displayName == namePath) {
+                setCache(it)
+            }
+        }
     }
 
     override fun createFile(displayName: String?): SafeFile? {
@@ -172,22 +196,79 @@ class MediaFile(
 
     private data class QueryResult(
         val uri: Uri,
-        val lastModified: Long,
-        val length: Long,
+        // val lastModified: Long,
+        // val length: Long,
     )
+
 
     @RequiresApi(Build.VERSION_CODES.Q)
     private fun query(displayName: String = namePath): QueryResult? {
         try {
-            //val (name, mime) = splitFilenameMime(fullName)
+            val (name, ext) = splitFilenameExt(displayName)
+            contentResolver.query(
+                baseUri,
+                arrayOf(
+                    MediaStore.MediaColumns._ID,
+                    //MediaStore.MediaColumns.DATE_MODIFIED,
+                    //MediaStore.MediaColumns.SIZE
+                ),
+                "${MediaStore.MediaColumns.RELATIVE_PATH}='$relativePath${File.separator}' AND ${MediaStore.MediaColumns.DISPLAY_NAME}='$displayName'",
+                null,
+                null
+            )?.use { cursor ->
+                while (cursor.moveToNext()) {
+                    val cursorId =
+                        cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.MediaColumns._ID))
 
-            val projection = arrayOf(
-                MediaStore.MediaColumns._ID,
-                MediaStore.MediaColumns.DATE_MODIFIED,
-                MediaStore.MediaColumns.SIZE,
-            )
+                    return QueryResult(
+                        uri = ContentUris.withAppendedId(
+                            baseUri, cursorId
+                        ),
+                        // lastModified = cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATE_MODIFIED)),
+                        // length = cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.SIZE)),
+                    )
+                }
+            }
 
-            val selection =
+            // fuck android fr, who decided that MediaStore.MediaColumns.DISPLAY_NAME ***WONT*** BE THE SAME AS THE FUCKING NAME IN EXPLORER
+            contentResolver.query(
+                baseUri,
+                arrayOf(
+                    MediaStore.MediaColumns._ID,
+                    MediaStore.MediaColumns.MIME_TYPE,
+                   // MediaStore.MediaColumns.DATE_MODIFIED,
+                   // MediaStore.MediaColumns.SIZE
+                ),
+                "${MediaStore.MediaColumns.RELATIVE_PATH}='$relativePath${File.separator}' AND ${MediaStore.MediaColumns.TITLE}='$name'",
+                null,
+                null
+            )?.use { cursor ->
+                while (cursor.moveToNext()) {
+                    val cursorMime =
+                        cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.MIME_TYPE))
+
+                    val matchAgainst = MimeTypes.fromMimeToExt(cursorMime)
+                    // if extension does not exist and mime has no match, or both are nonull and match contains ext
+                    if (!((ext == null && matchAgainst == null) || (matchAgainst != null && ext != null && matchAgainst.contains(
+                            ext
+                        )))
+                    ) continue
+
+                    val cursorId =
+                        cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.MediaColumns._ID))
+
+                    return QueryResult(
+                        uri = ContentUris.withAppendedId(
+                            baseUri, cursorId
+                        ),
+                        //lastModified = cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATE_MODIFIED)),
+                        //length = cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.SIZE)),
+                    )
+                }
+            }
+
+
+            /*val selection =
                 "${MediaStore.MediaColumns.RELATIVE_PATH}='$relativePath${File.separator}' AND ${MediaStore.MediaColumns.DISPLAY_NAME}='$displayName'"
 
             contentResolver.query(
@@ -206,7 +287,7 @@ class MediaFile(
                         length = cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.SIZE)),
                     )
                 }
-            }
+            }*/
         } catch (t: Throwable) {
             logError(t)
         }
@@ -215,7 +296,7 @@ class MediaFile(
     }
 
     override fun uri(): Uri? {
-        return query()?.uri
+        return fileUri //query()?.uri
     }
 
     override fun name(): String? {
@@ -241,23 +322,42 @@ class MediaFile(
 
     override fun lastModified(): Long? {
         if (isDir) return null
-        return query()?.lastModified
+
+        return null
+        //return query()?.lastModified
     }
 
     override fun length(): Long? {
         if (isDir) return null
-        val length = query()?.length ?: return null
-        if(length <= 0) {
-            val inputStream : InputStream = openInputStream() ?: return null
-            return try {
-                inputStream.available().toLong()
-            } catch (t : Throwable) {
-                null
-            } finally {
-                inputStream.closeQuietly()
+        //val query = query()
+        // val length = query?.length ?: return null
+        // if (length <= 0) {
+        try {
+            uri()?.let { uri ->
+                contentResolver.openFileDescriptor(uri, "r")
+                    .use {
+                        it?.statSize
+                    }?.let {
+                        return it
+                    }
             }
+        } catch (e: FileNotFoundException) {
+            removeCache()
+            return null
         }
-        return length
+
+        val inputStream: InputStream = openInputStream() ?: return null
+        return try {
+            inputStream.available().toLong()
+        } catch (t: Throwable) {
+            logError(t)
+            null
+        } finally {
+            inputStream.closeQuietly()
+        }
+        //return null
+        // }
+        // return length
     }
 
     override fun canRead(): Boolean {
@@ -278,20 +378,24 @@ class MediaFile(
                 it.delete()
             }
         } else {
-            delete(uri() ?: return false)
+            delete(uri() ?: return false).also {
+                removeCache()
+            }
         }
     }
 
     override fun exists(): Boolean {
         if (isDir) return true
-        return query() != null
+        return length() != null
     }
 
     override fun listFiles(): List<SafeFile>? {
         if (isFile) return null
         try {
             val projection = arrayOf(
-                MediaStore.MediaColumns.DISPLAY_NAME
+                MediaStore.MediaColumns.DISPLAY_NAME,
+                // MediaStore.MediaColumns.TITLE,
+                // MediaStore.MediaColumns._ID
             )
 
             val selection =
@@ -304,14 +408,16 @@ class MediaFile(
                 while (cursor.moveToNext()) {
                     val nameIdx = cursor.getColumnIndex(MediaStore.MediaColumns.DISPLAY_NAME)
                     if (nameIdx == -1) continue
+                    //val titleIdx = cursor.getColumnIndex(MediaStore.MediaColumns.TITLE)
+                    //val title = cursor.getString(titleIdx)
                     val name = cursor.getString(nameIdx)
-
+                    //println("title = $title, name = $name")
                     appendRelativePath(name, false)?.let { new ->
                         out.add(new)
                     }
                 }
 
-                out
+                return out
             }
         } catch (t: Throwable) {
             logError(t)
@@ -362,6 +468,7 @@ class MediaFile(
         try {
             return contentResolver.openInputStream(uri() ?: return null)
         } catch (t: Throwable) {
+            logError(t)
             return null
         }
     }

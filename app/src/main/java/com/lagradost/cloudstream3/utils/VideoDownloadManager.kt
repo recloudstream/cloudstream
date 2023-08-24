@@ -581,6 +581,7 @@ object VideoDownloadManager {
         val foundFile = subDir.findFile(displayName)
 
         val (file, fileLength) = if (foundFile == null || foundFile.exists() != true) {
+            foundFile?.delete()
             subDir.createFileOrThrow(displayName) to 0L
         } else {
             if (tryResume) {
@@ -1678,6 +1679,11 @@ object VideoDownloadManager {
         try {
             val info =
                 context.getKey<DownloadedFileInfo>(KEY_DOWNLOAD_INFO, id.toString()) ?: return null
+
+            /*
+           val test = basePathToFile(context, info.basePath)?.gotoDirectory(info.relativePath)
+            val files = test?.listFiles()
+            println("FILES:::: $files")*/
             val file = info.toFile(context)
 
             // only delete the key if the file is not found
