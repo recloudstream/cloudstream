@@ -92,7 +92,7 @@
     <string name="sort_cancel">Abbrechen</string>
     <string name="sort_copy">Kopieren</string>
     <string name="sort_close">Schließen</string>
-    <string name="sort_clear">Löschen</string>
+    <string name="sort_clear">Leeren</string>
     <string name="sort_save">Speichern</string>
     <string name="player_speed">Player-Geschwindigkeit</string>
     <string name="subtitles_settings">Untertiteleinstellungen</string>
@@ -390,7 +390,7 @@
     <string name="skip_setup">Einrichtung überspringen</string>
     <string name="app_layout_subtext">Aussehen der App passend zu dem des Geräts ändern</string>
     <string name="crash_reporting_title">Absturzmeldung</string>
-    <string name="preferred_media_subtext">Was möchtest du anschauen\?</string>
+    <string name="preferred_media_subtext">Was möchten Sie sehen\?</string>
     <string name="setup_done">Fertig</string>
     <string name="extensions">Erweiterungen</string>
     <string name="add_repository">Repository hinzufügen</string>
@@ -546,4 +546,10 @@
 \nWerden eine kombinierte Videopriorität von 10 haben.
 \n
 \nHINWEIS: Wenn die Summe 10 oder mehr beträgt, überspringt der Player automatisch das Laden, wenn der Link geladen wird!</string>
+    <string name="automatic_plugin_download_mode_title">Filtermodus für Plugin-Downloads auswählen</string>
+    <string name="already_voted">Es wurde bereits abgestimmt</string>
+    <string name="no_plugins_found_error">Keine Plugins im Repository gefunden</string>
+    <string name="no_repository_found_error">Repository nicht gefunden, überprüfe die URL und probiere eine VPN</string>
+    <string name="unable_to_inflate">Die Benutzeroberfläche konnte nicht korrekt erstellt werden. Dies ist ein schwerwiegender Fehler und sollte sofort gemeldet werden. %s</string>
+    <string name="disable">Deaktivieren</string>
 </resources>
