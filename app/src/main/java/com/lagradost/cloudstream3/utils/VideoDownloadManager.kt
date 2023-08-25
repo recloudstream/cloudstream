@@ -35,8 +35,8 @@ import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStore.removeKey
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
-import com.lagradost.cloudstream3.utils.storage.MediaFileContentType
-import com.lagradost.cloudstream3.utils.storage.SafeFile
+import com.lagradost.safefile.MediaFileContentType
+import com.lagradost.safefile.SafeFile
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -554,9 +554,8 @@ object VideoDownloadManager {
         extension: String,
         tryResume: Boolean,
     ): StreamData {
-        val (base, _) = context.getBasePath()
         return setupStream(
-            base ?: throw IOException("Bad config"),
+            context.getBasePath().first ?: getDefaultDir(context) ?: throw IOException("Bad config"),
             name,
             folder,
             extension,
@@ -1401,7 +1400,12 @@ object VideoDownloadManager {
                                 metadata.type = DownloadType.IsFailed
                             }
                         } finally {
-                            fileMutex.unlock()
+                            try {
+                                // may cause java.lang.IllegalStateException: Mutex is not locked because of cancelling
+                                fileMutex.unlock()
+                            } catch (t : Throwable) {
+                                logError(t)
+                            }
                         }
                     }
                 }

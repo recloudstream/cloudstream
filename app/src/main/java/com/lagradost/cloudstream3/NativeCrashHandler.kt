@@ -10,7 +10,7 @@ import kotlinx.coroutines.launch
 
 object NativeCrashHandler {
     // external fun triggerNativeCrash()
-    private external fun initNativeCrashHandler()
+    /*private external fun initNativeCrashHandler()
     private external fun getSignalStatus(): Int
 
     private fun initSignalPolling() = CoroutineScope(Dispatchers.IO).launch {
@@ -49,5 +49,5 @@ object NativeCrashHandler {
         }
 
         initSignalPolling()
-    }
+    }*/
 }

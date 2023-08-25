@@ -158,6 +158,7 @@ object BackupUtils {
             val displayName = "CS3_Backup_${date}"
             val backupFile = getBackup()
             val stream = setupStream(this, displayName, null, ext, false)
+
             fileStream = stream.openNew()
             printStream = PrintWriter(fileStream)
             printStream.print(mapper.writeValueAsString(backupFile))
