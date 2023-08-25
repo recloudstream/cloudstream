@@ -190,7 +190,7 @@
     <string name="backup_success">Adatok eltárolva</string>
     <string name="backup_failed_error_format">Hiba a biztonsági mentés során %s</string>
     <string name="category_account">Fiókok</string>
-    <string name="advanced_search_des">Szolgáltatás szerinti keresés eredmények</string>
+    <string name="advanced_search_des">Szolgáltató szerint elkülönítve adja meg a keresési eredményeket</string>
     <string name="bug_report_settings_on">Nem küld adatokat</string>
     <string name="kitsu_settings">Poszterek megjelenítése Kitsu-ról</string>
     <string name="pref_filter_search_quality">Kiválasztott videóminőségek elrejtése keresési eredményekbe</string>
@@ -198,7 +198,7 @@
     <string name="automatic_plugin_download">Bővítmények automatikus letöltése</string>
     <string name="automatic_plugin_download_summary">Automatikusan telepíti az összes még nem telepített bővítményt a hozzáadott tárolókból.</string>
     <string name="updates_settings">Alkalmazás frissítések megjelenítése</string>
-    <string name="updates_settings_des">Automatikusan keressen új frissítéseket indításkor</string>
+    <string name="updates_settings_des">Automatikusan keressen új frissítéseket indításkor.</string>
     <string name="uprereleases_settings">Frissítés az előzetes kiadásokhoz (prerelease)</string>
     <string name="uprereleases_settings_des">Csak előzetesen kiadott frissítések (prerelease) keresése a teljes kiadások helyett</string>
     <string name="github">Github</string>
@@ -232,30 +232,30 @@
     <string name="episode_action_play_in_browser">Lejátszás böngészőben</string>
     <string name="episode_action_download_subtitle">Feliratok letöltése</string>
     <string name="reload_error">Újracsatlakozás…</string>
-    <string name="swipe_to_seek_settings_des">Swipe balra vagy jobbra a videólejátszóban az idő vezérléséhez</string>
+    <string name="swipe_to_seek_settings_des">Húzd balra vagy jobbra a videólejátszóban az idő vezérléséhez</string>
     <string name="swipe_to_change_settings">Csúsztassa ujját a beállítások módosításához</string>
-    <string name="swipe_to_change_settings_des">Csúsztassa az újját bal vagy jobb oldalon a fényerő vagy hangerő megváltoztatásához</string>
+    <string name="swipe_to_change_settings_des">Csúsztassa felfelé vagy lefelé a bal vagy jobb oldalon a fényerő vagy a hangerő megváltoztatásához</string>
     <string name="backup_settings">Biztonsági mentés</string>
     <string name="benene_count_text_none">0 Banán a fejlesztőknek</string>
-    <string name="swipe_to_seek_settings">Swipe to seek</string>
+    <string name="swipe_to_seek_settings">Húzás a kereséshez</string>
     <string name="autoplay_next_settings">Következő epizód automatikus lejátszása</string>
     <string name="autoplay_next_settings_des">Következő epizód lejátszása amikor az aktuális epizód véget ér</string>
-    <string name="double_tap_to_seek_settings">Dupla koppintás to seek</string>
+    <string name="double_tap_to_seek_settings">Dupla koppintás a kereséshez</string>
     <string name="double_tap_to_pause_settings">Dupla koppintás a szüneteltetéshez</string>
-    <string name="double_tap_to_seek_amount_settings">Player seek amount</string>
+    <string name="double_tap_to_seek_amount_settings">Lejátszó keresési értéke (Másodpercben)</string>
     <string name="double_tap_to_seek_settings_des">Koppintson kétszer a jobb vagy bal oldalra az előre vagy hátra ugráshoz</string>
-    <string name="double_tap_to_pause_settings_des">Koppintson középre a szüneteltetéshez</string>
+    <string name="double_tap_to_pause_settings_des">Koppintson kétszer középen a szüneteltetéshez</string>
     <string name="use_system_brightness_settings">Rendszer fényerejének használata</string>
     <string name="use_system_brightness_settings_des">Rendszer fényerejének használata az appban a sötét átfedés helyett</string>
     <string name="episode_sync_settings">Előrehaladás frissítése</string>
     <string name="episode_sync_settings_des">Automatikusan szinkronizálja az aktuális epizód előrehaladását</string>
-    <string name="restore_settings">Adatok visszaállítása a biztonsági mentésből</string>
+    <string name="restore_settings">Adatok visszaállítása biztonsági mentésből</string>
     <string name="restore_success">Biztonsági mentés betöltve</string>
     <string name="settings_info">Információ</string>
     <string name="resume">Folytatás</string>
     <string name="go_back_30">-30</string>
     <string name="update_started">Frissítés elkezdődött</string>
-    <string name="restore_failed_format" formatted="true">Nem sikerült visszaállítani az adatok a fájlból %s</string>
+    <string name="restore_failed_format" formatted="true">Nem sikerült visszaállítani az adatokat a %s fájlból</string>
     <string name="backup_failed">Tárolási engedélyek hiányoznak. Kérjük próbálja újra.</string>
     <string name="bug_report_settings_off">Csak összeomlásokról küld adatokat</string>
     <string name="apk_installer_settings">APK Telepítő</string>
@@ -280,7 +280,7 @@
     <string name="dns_pref">DNS HTTPS-en keresztül</string>
     <string name="browser">Böngésző</string>
     <string name="pref_category_android_tv">Android TV</string>
-    <string name="pref_category_gestures">kézmozdulatok</string>
+    <string name="pref_category_gestures">Kézmozdulatok</string>
     <string name="skip_update">frissítés kihagyása</string>
     <string name="pref_category_app_updates">Alkalmazásfrissítések</string>
     <string name="category_providers">Szolgáltatók</string>
@@ -496,4 +496,18 @@
     <string name="quality_hq">HQ</string>
     <string name="plugins_downloaded" formatted="true">%d letöltve</string>
     <string name="start">Start</string>
+    <string name="emulator_layout">Emulátor elrendezés</string>
+    <string name="add_sync">Nyomkövetés hozzáadása</string>
+    <string name="phone_layout">Telefon elrendezés</string>
+    <string name="bottom_title_settings">Poszter cím helye</string>
+    <string name="bottom_title_settings_des">Tegye a címet a poszter alá</string>
+    <string name="android_tv_interface_off_seek_settings_summary">Az átugrás mértéke, amikor a lejátszó el van rejtve</string>
+    <string name="legal_notice">Jogi nyilatkozat</string>
+    <string name="android_tv_interface_on_seek_settings">Lejátszó megjelenítve - Ugrási Érték</string>
+    <string name="android_tv_interface_off_seek_settings">Lejátszó elrejtve - Ugrási Érték</string>
+    <string name="add_site_pref">Klónozott oldal</string>
+    <string name="add_site_summary">Egy meglévő webhely klónjának hozzáadása, más URL-címmel</string>
+    <string name="tv_layout">TV elrendezés</string>
+    <string name="automatic">Automatikus</string>
+    <string name="android_tv_interface_on_seek_settings_summary">Az átugrás mértéke, amikor a lejátszó látható</string>
 </resources>

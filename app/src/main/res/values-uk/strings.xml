@@ -418,7 +418,7 @@
     <string name="batch_download_start_format" formatted="true">Почалося завантаження %d %s…</string>
     <string name="batch_download_finish_format" formatted="true">Завантажено %d %s</string>
     <string name="batch_download_nothing_to_download_format" formatted="true">Всі %s вже завантажено</string>
-    <string name="batch_download">Пакетне завантаження</string>
+    <string name="batch_download">Завантажити пакети</string>
     <string name="plugin_singular">плагін</string>
     <string name="plugin">плагіни</string>
     <string name="delete_repository">Видалити репозиторій</string>
