@@ -36,7 +36,6 @@ open class Rabbitstream : ExtractorApi() {
     override val requiresReferer = false
     open val embed = "ajax/embed-4"
     open val key = "https://raw.githubusercontent.com/enimax-anime/key/e4/key.txt"
-    private var rawKey: String? = null
 
     override suspend fun getUrl(
         url: String,
@@ -82,9 +81,10 @@ open class Rabbitstream : ExtractorApi() {
             )
         }
 
+
     }
 
-    private suspend fun getRawKey(): String = rawKey ?: app.get(key).text.also { rawKey = it }
+    private suspend fun getRawKey(): String = app.get(key).text
 
     private fun extractRealKey(originalString: String?, stops: String): Pair<String, String> {
         val table = parseJson<List<List<Int>>>(stops)
