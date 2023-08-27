@@ -25,6 +25,7 @@ import com.lagradost.cloudstream3.syncproviders.providers.MALApi.Companion.MAL_T
 import com.lagradost.cloudstream3.syncproviders.providers.MALApi.Companion.MAL_UNIXTIME_KEY
 import com.lagradost.cloudstream3.syncproviders.providers.MALApi.Companion.MAL_USER_KEY
 import com.lagradost.cloudstream3.syncproviders.providers.OpenSubtitlesApi.Companion.OPEN_SUBTITLES_USER_KEY
+import com.lagradost.cloudstream3.ui.result.txt
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.DataStore.getDefaultSharedPrefs
@@ -143,65 +144,25 @@ object BackupUtils {
     }
 
     @SuppressLint("SimpleDateFormat")
-    fun FragmentActivity.backup() {
+    fun FragmentActivity.backup() = ioSafe {
         var fileStream: OutputStream? = null
         var printStream: PrintWriter? = null
         try {
             if (!checkWrite()) {
-                showToast(getString(R.string.backup_failed), Toast.LENGTH_LONG)
+                showToast(R.string.backup_failed, Toast.LENGTH_LONG)
                 requestRW()
-                return
+                return@ioSafe
             }
 
             val date = SimpleDateFormat("yyyy_MM_dd_HH_mm").format(Date(currentTimeMillis()))
-            val ext = "json"
+            val ext = "txt"
             val displayName = "CS3_Backup_${date}"
             val backupFile = getBackup()
-            val stream = setupStream(this, displayName, null, ext, false)
+            val stream = setupStream(this@backup, displayName, null, ext, false)
 
             fileStream = stream.openNew()
             printStream = PrintWriter(fileStream)
             printStream.print(mapper.writeValueAsString(backupFile))
-
-            /*val steam = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
-                && subDir?.isDownloadDir() == true
-            ) {
-                val cr = this.contentResolver
-                val contentUri =
-                    MediaStore.Downloads.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY) // USE INSTEAD OF MediaStore.Downloads.EXTERNAL_CONTENT_URI
-                //val currentMimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension)
-
-                val newFile = ContentValues().apply {
-                    put(MediaStore.MediaColumns.DISPLAY_NAME, displayName)
-                    put(MediaStore.MediaColumns.TITLE, displayName)
-                    // While it a json file we store as txt because not
-                    // all file managers support mimetype json
-                    put(MediaStore.MediaColumns.MIME_TYPE, "text/plain")
-                    //put(MediaStore.MediaColumns.RELATIVE_PATH, folder)
-                }
-
-                val newFileUri = cr.insert(
-                    contentUri,
-                    newFile
-                ) ?: throw IOException("Error creating file uri")
-                cr.openOutputStream(newFileUri, "w")
-                    ?: throw IOException("Error opening stream")
-            } else {
-                val fileName = "$displayName.$ext"
-                val rFile = subDir?.findFile(fileName)
-                if (rFile?.exists() == true) {
-                    rFile.delete()
-                }
-                val file =
-                    subDir?.createFile(fileName)
-                        ?: throw IOException("Error creating file")
-                if (!file.exists()) throw IOException("File does not exist")
-                file.openOutputStream()
-            }
-
-            val printStream = PrintWriter(steam)
-            printStream.print(mapper.writeValueAsString(backupFile))
-            printStream.close()*/
 
             showToast(
                 R.string.backup_success,
@@ -211,7 +172,7 @@ object BackupUtils {
             logError(e)
             try {
                 showToast(
-                    getString(R.string.backup_failed_error_format).format(e.toString()),
+                    txt(R.string.backup_failed_error_format, e.toString()),
                     Toast.LENGTH_LONG
                 )
             } catch (e: Exception) {
