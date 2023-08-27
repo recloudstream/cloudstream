@@ -8,12 +8,12 @@ import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.M3u8Helper
 
 class SpeedoStream1 : SpeedoStream() {
-    override val mainUrl = "https://speedostream.pm"
+    override val mainUrl = "https://speedostream.bond"
 }
 
 open class SpeedoStream : ExtractorApi() {
     override val name = "SpeedoStream"
-    override val mainUrl = "https://speedostream.mom"
+    override val mainUrl = "https://speedostream.bond"
     override val requiresReferer = true
 
     override suspend fun getUrl(url: String, referer: String?): List<ExtractorLink> {
@@ -37,6 +37,4 @@ open class SpeedoStream : ExtractorApi() {
     private data class File(
         @JsonProperty("file") val file: String,
     )
-
-
 }
