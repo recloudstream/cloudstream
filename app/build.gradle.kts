@@ -233,7 +233,7 @@ dependencies {
     // To fix SSL fuckery on android 9
     implementation("org.conscrypt:conscrypt-android:2.2.1")
     // Util to skip the URI file fuckery 🙏
-    implementation("com.github.LagradOst:SafeFile:0.0.2")
+    implementation("com.github.LagradOst:SafeFile:0.0.3")
 
     // API because cba maintaining it myself
     implementation("com.uwetrottmann.tmdb2:tmdb-java:2.6.0")

@@ -389,6 +389,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     Acefile(),
     SpeedoStream(),
     SpeedoStream1(),
+    SpeedoStream2(),
     Zorofile(),
     Embedgram(),
     Mvidoo(),
