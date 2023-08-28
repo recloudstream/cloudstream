@@ -584,4 +584,5 @@
     <string name="default_account">@string/default_subtitles</string>
     <string name="no_plugins_found_error">لا توجد اضافة في المستودع</string>
     <string name="no_repository_found_error">المستودع لم يتم العثور عليه، تحقق من العنوان اوجرب شبكة افتراضية خاصة(vpn)</string>
+    <string name="already_voted">لقد صوتت بالفعل</string>
 </resources>

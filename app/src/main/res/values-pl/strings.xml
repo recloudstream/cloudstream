@@ -553,4 +553,7 @@
     <string name="automatic_plugin_download_mode_title">Wybierz tryb filtrowania pobieranych rozszerzeń</string>
     <string name="disable">Wyłączać</string>
     <string name="default_account">@string/default_subtitles</string>
+    <string name="no_plugins_found_error">Nie znaleziono żadnych wtyczek w repozytorium</string>
+    <string name="already_voted">Już oddano głos</string>
+    <string name="no_repository_found_error">Nie znaleziono tego repozytorium, sprawdź adres URL lub spróbuj połączyć się przez VPN</string>
 </resources>

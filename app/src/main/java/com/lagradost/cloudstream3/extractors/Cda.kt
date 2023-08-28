@@ -1,13 +1,11 @@
 package com.lagradost.cloudstream3.extractors
 
-import com.lagradost.cloudstream3.*
-import com.lagradost.cloudstream3.utils.Qualities
+import com.lagradost.cloudstream3.USER_AGENT
+import com.lagradost.cloudstream3.app
+import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
-import com.lagradost.cloudstream3.utils.M3u8Helper.Companion.generateM3u8
-import com.fasterxml.jackson.annotation.JsonProperty
-import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
-import android.util.Log
+import com.lagradost.cloudstream3.utils.Qualities
 import java.net.URLDecoder
 
 open class Cda: ExtractorApi() {

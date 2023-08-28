@@ -1,17 +1,17 @@
 package com.lagradost.cloudstream3.utils
 
+import com.lagradost.cloudstream3.ErrorLoadingException
 import com.lagradost.cloudstream3.app
-import com.lagradost.cloudstream3.mvvm.logError
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.delay
 import javax.crypto.Cipher
 import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
 import kotlin.math.pow
 
-
+/** backwards api surface */
 class M3u8Helper {
     companion object {
-        private val generator = M3u8Helper()
         suspend fun generateM3u8(
             source: String,
             streamUrl: String,
@@ -20,25 +20,49 @@ class M3u8Helper {
             headers: Map<String, String> = mapOf(),
             name: String = source
         ): List<ExtractorLink> {
-            return generator.m3u8Generation(
-                M3u8Stream(
-                    streamUrl = streamUrl,
-                    quality = quality,
-                    headers = headers,
-                ), null
-            )
-                .map { stream ->
-                    ExtractorLink(
-                        source,
-                        name = name,
-                        stream.streamUrl,
-                        referer,
-                        stream.quality ?: Qualities.Unknown.value,
-                        true,
-                        stream.headers,
-                    )
-                }
+            return M3u8Helper2.generateM3u8(source, streamUrl, referer, quality, headers, name)
         }
+    }
+
+
+    data class M3u8Stream(
+        val streamUrl: String,
+        val quality: Int? = null,
+        val headers: Map<String, String> = mapOf()
+    )
+
+    suspend fun m3u8Generation(m3u8: M3u8Stream, returnThis: Boolean? = true): List<M3u8Stream> {
+        return M3u8Helper2.m3u8Generation(m3u8, returnThis)
+    }
+}
+
+object M3u8Helper2 {
+    suspend fun generateM3u8(
+        source: String,
+        streamUrl: String,
+        referer: String,
+        quality: Int? = null,
+        headers: Map<String, String> = mapOf(),
+        name: String = source
+    ): List<ExtractorLink> {
+        return m3u8Generation(
+            M3u8Helper.M3u8Stream(
+                streamUrl = streamUrl,
+                quality = quality,
+                headers = headers,
+            ), null
+        )
+            .map { stream ->
+                ExtractorLink(
+                    source,
+                    name = name,
+                    stream.streamUrl,
+                    referer,
+                    stream.quality ?: Qualities.Unknown.value,
+                    true,
+                    stream.headers,
+                )
+            }
     }
 
     private val ENCRYPTION_DETECTION_REGEX = Regex("#EXT-X-KEY:METHOD=([^,]+),")
@@ -47,7 +71,8 @@ class M3u8Helper {
     private val QUALITY_REGEX =
         Regex("""#EXT-X-STREAM-INF:(?:(?:.*?(?:RESOLUTION=\d+x(\d+)).*?\s+(.*))|(?:.*?\s+(.*)))""")
     private val TS_EXTENSION_REGEX =
-        Regex("""(.*\.ts.*|.*\.jpg.*)""") //.jpg here 'case vizcloud uses .jpg instead of .ts
+        Regex("""#EXTINF:.*\n(.+?\n)""") // fuck it we ball, who cares about the type anyways
+        //Regex("""(.*\.(ts|jpg|html).*)""") //.jpg here 'case vizcloud uses .jpg instead of .ts
 
     private fun absoluteExtensionDetermination(url: String): String? {
         val split = url.split("/")
@@ -64,21 +89,17 @@ class M3u8Helper {
         }
     }
 
-    private val defaultIvGen = sequence {
-        var initial = 1
+    private fun defaultIv(index: Int) : ByteArray {
+        return toBytes16Big(index+1)
+    }
 
-        while (true) {
-            yield(toBytes16Big(initial))
-            ++initial
-        }
-    }.iterator()
-
-    private fun getDecrypter(
+    fun getDecrypted(
         secretKey: ByteArray,
         data: ByteArray,
-        iv: ByteArray = "".toByteArray()
+        iv: ByteArray = byteArrayOf(),
+        index : Int,
     ): ByteArray {
-        val ivKey = if (iv.isEmpty()) defaultIvGen.next() else iv
+        val ivKey = if (iv.isEmpty()) defaultIv(index) else iv
         val c = Cipher.getInstance("AES/CBC/PKCS5Padding")
         val skSpec = SecretKeySpec(secretKey, "AES")
         val ivSpec = IvParameterSpec(ivKey)
@@ -91,13 +112,8 @@ class M3u8Helper {
         return st != null && (st.value.isNotEmpty() || st.destructured.component1() != "NONE")
     }
 
-    data class M3u8Stream(
-        val streamUrl: String,
-        val quality: Int? = null,
-        val headers: Map<String, String> = mapOf()
-    )
 
-    private fun selectBest(qualities: List<M3u8Stream>): M3u8Stream? {
+    private fun selectBest(qualities: List<M3u8Helper.M3u8Stream>): M3u8Helper.M3u8Stream? {
         val result = qualities.sortedBy {
             if (it.quality != null && it.quality <= 1080) it.quality else 0
         }.filter {
@@ -113,19 +129,16 @@ class M3u8Helper {
     }
 
     private fun isNotCompleteUrl(url: String): Boolean {
-        return !url.contains("https://") && !url.contains("http://")
+        return !url.startsWith("https://") && !url.startsWith("http://")
     }
 
-    suspend fun m3u8Generation(m3u8: M3u8Stream, returnThis: Boolean? = true): List<M3u8Stream> {
-//        return listOf(m3u8)
-        val list = mutableListOf<M3u8Stream>()
+    suspend fun m3u8Generation(m3u8: M3u8Helper.M3u8Stream, returnThis: Boolean? = true): List<M3u8Helper.M3u8Stream> {
+        val list = mutableListOf<M3u8Helper.M3u8Stream>()
 
         val m3u8Parent = getParentLink(m3u8.streamUrl)
         val response = app.get(m3u8.streamUrl, headers = m3u8.headers, verify = false).text
 
-//        var hasAnyContent = false
         for (match in QUALITY_REGEX.findAll(response)) {
-//            hasAnyContent = true
             var (quality, m3u8Link, m3u8Link2) = match.destructured
             if (m3u8Link.isEmpty()) m3u8Link = m3u8Link2
             if (absoluteExtensionDetermination(m3u8Link) == "m3u8") {
@@ -136,21 +149,21 @@ class M3u8Helper {
                     println(m3u8.streamUrl)
                 }
                 list += m3u8Generation(
-                    M3u8Stream(
+                    M3u8Helper.M3u8Stream(
                         m3u8Link,
                         quality.toIntOrNull(),
                         m3u8.headers
                     ), false
                 )
             }
-            list += M3u8Stream(
+            list += M3u8Helper.M3u8Stream(
                 m3u8Link,
                 quality.toIntOrNull(),
                 m3u8.headers
             )
         }
         if (returnThis != false) {
-            list += M3u8Stream(
+            list += M3u8Helper.M3u8Stream(
                 m3u8.streamUrl,
                 Qualities.Unknown.value,
                 m3u8.headers
@@ -160,113 +173,134 @@ class M3u8Helper {
         return list
     }
 
+    data class LazyHlsDownloadData(
+        private val encryptionData: ByteArray,
+        private val encryptionIv: ByteArray,
+        private val isEncrypted: Boolean,
+        private val allTsLinks: List<String>,
+        private val relativeUrl: String,
+        private val headers: Map<String, String>,
+    ) {
+        val size get() = allTsLinks.size
 
-    data class HlsDownloadData(
-        val bytes: ByteArray,
-        val currentIndex: Int,
-        val totalTs: Int,
-        val errored: Boolean = false
-    )
+        suspend fun resolveLinkWhileSafe(
+            index: Int,
+            tries: Int = 3,
+            failDelay: Long = 3000,
+            condition : (() -> Boolean)
+        ): ByteArray? {
+            for (i in 0 until tries) {
+                if(!condition()) return null
 
-    suspend fun hlsYield(
-        qualities: List<M3u8Stream>,
-        startIndex: Int = 0
-    ): Iterator<HlsDownloadData> {
-        if (qualities.isEmpty()) return listOf(
-            HlsDownloadData(
-                byteArrayOf(),
-                1,
-                1,
-                true
-            )
-        ).iterator()
-
-        var selected = selectBest(qualities)
-        if (selected == null) {
-            selected = qualities[0]
+                try {
+                    val out = resolveLink(index)
+                    return if(condition()) out else null
+                } catch (e: IllegalArgumentException) {
+                    return null
+                } catch (e : CancellationException) {
+                    return null
+                } catch (t: Throwable) {
+                    delay(failDelay)
+                }
+            }
+            return null
         }
+
+        suspend fun resolveLinkSafe(
+            index: Int,
+            tries: Int = 3,
+            failDelay: Long = 3000
+        ): ByteArray? {
+            for (i in 0 until tries) {
+                try {
+                    return resolveLink(index)
+                } catch (e: IllegalArgumentException) {
+                    return null
+                } catch (e : CancellationException) {
+                    return null
+                } catch (t: Throwable) {
+                    delay(failDelay)
+                }
+            }
+            return null
+        }
+
+        @Throws
+        suspend fun resolveLink(index: Int): ByteArray {
+            if (index < 0 || index >= size) throw IllegalArgumentException("index must be in the bounds of the ts")
+            val url = allTsLinks[index]
+
+            val tsResponse = app.get(url, headers = headers, verify = false)
+            val tsData = tsResponse.body.bytes()
+            if (tsData.isEmpty()) throw ErrorLoadingException("no data")
+
+            return if (isEncrypted) {
+                getDecrypted(encryptionData, tsData, encryptionIv, index)
+            } else {
+                tsData
+            }
+        }
+    }
+
+    @Throws
+    suspend fun hslLazy(
+        qualities: List<M3u8Helper.M3u8Stream>
+    ): LazyHlsDownloadData {
+        if (qualities.isEmpty()) throw IllegalArgumentException("qualities must be non empty")
+        val selected = selectBest(qualities) ?: qualities.first()
         val headers = selected.headers
-
         val streams = qualities.map { m3u8Generation(it, false) }.flatten()
-        //val sslVerification = if (headers.containsKey("ssl_verification")) headers["ssl_verification"].toBoolean() else true
-
+        // this selects the best quality of the qualities offered,
+        // due to the recursive nature of m3u8, we only go 2 depth
         val secondSelection = selectBest(streams.ifEmpty { listOf(selected) })
-        if (secondSelection != null) {
-            val m3u8Response =
-                runBlocking {
-                    app.get(
-                        secondSelection.streamUrl,
-                        headers = headers,
-                        verify = false
-                    ).text
-                }
+            ?: throw IllegalArgumentException("qualities has no streams")
 
-            var encryptionUri: String?
-            var encryptionIv = byteArrayOf()
-            var encryptionData = byteArrayOf()
+        val m3u8Response =
+            app.get(
+                secondSelection.streamUrl,
+                headers = headers,
+                verify = false
+            ).text
 
-            val encryptionState = isEncrypted(m3u8Response)
+        // encryption, this is because crunchy uses it
+        var encryptionIv = byteArrayOf()
+        var encryptionData = byteArrayOf()
 
-            if (encryptionState) {
-                val match =
-                    ENCRYPTION_URL_IV_REGEX.find(m3u8Response)!!.destructured  // its safe to assume that its not going to be null
-                encryptionUri = match.component2()
+        val encryptionState = isEncrypted(m3u8Response)
 
-                if (isNotCompleteUrl(encryptionUri)) {
-                    encryptionUri = "${getParentLink(secondSelection.streamUrl)}/$encryptionUri"
-                }
+        if (encryptionState) {
+            // its safe to assume that its not going to be null
+            val match =
+                ENCRYPTION_URL_IV_REGEX.find(m3u8Response)!!.groupValues
 
-                encryptionIv = match.component3().toByteArray()
-                val encryptionKeyResponse =
-                    runBlocking { app.get(encryptionUri, headers = headers, verify = false) }
-                encryptionData = encryptionKeyResponse.body?.bytes() ?: byteArrayOf()
+            var encryptionUri = match[2]
+
+            if (isNotCompleteUrl(encryptionUri)) {
+                encryptionUri = "${getParentLink(secondSelection.streamUrl)}/$encryptionUri"
             }
 
-            val allTs = TS_EXTENSION_REGEX.findAll(m3u8Response)
-            val allTsList = allTs.toList()
-            val totalTs = allTsList.size
-            if (totalTs == 0) {
-                return listOf(HlsDownloadData(byteArrayOf(), 1, 1, true)).iterator()
-            }
-            var lastYield = 0
-
-            val relativeUrl = getParentLink(secondSelection.streamUrl)
-            var retries = 0
-            val tsByteGen = sequence {
-                loop@ for ((index, ts) in allTs.withIndex()) {
-                    val url = if (
-                        isNotCompleteUrl(ts.destructured.component1())
-                    ) "$relativeUrl/${ts.destructured.component1()}" else ts.destructured.component1()
-                    val c = index + 1 + startIndex
-
-                    while (lastYield != c) {
-                        try {
-                            val tsResponse =
-                                runBlocking { app.get(url, headers = headers, verify = false) }
-                            var tsData = tsResponse.body?.bytes() ?: byteArrayOf()
-
-                            if (encryptionState) {
-                                tsData = getDecrypter(encryptionData, tsData, encryptionIv)
-                                yield(HlsDownloadData(tsData, c, totalTs))
-                                lastYield = c
-                                break
-                            }
-                            yield(HlsDownloadData(tsData, c, totalTs))
-                            lastYield = c
-                        } catch (e: Exception) {
-                            logError(e)
-                            if (retries == 3) {
-                                yield(HlsDownloadData(byteArrayOf(), c, totalTs, true))
-                                break@loop
-                            }
-                            ++retries
-                            Thread.sleep(2_000)
-                        }
-                    }
-                }
-            }
-            return tsByteGen.iterator()
+            encryptionIv = match[3].toByteArray()
+            val encryptionKeyResponse = app.get(encryptionUri, headers = headers, verify = false)
+            encryptionData = encryptionKeyResponse.body.bytes()
         }
-        return listOf(HlsDownloadData(byteArrayOf(), 1, 1, true)).iterator()
+        val relativeUrl = getParentLink(secondSelection.streamUrl)
+        val allTsList = TS_EXTENSION_REGEX.findAll(m3u8Response + "\n").map { ts ->
+            val value = ts.groupValues[1]
+            if (isNotCompleteUrl(value)) {
+                "$relativeUrl/${value}"
+            } else {
+                value
+            }
+        }.toList()
+        if (allTsList.isEmpty()) throw IllegalArgumentException("ts must be non empty")
+
+        return LazyHlsDownloadData(
+            encryptionData = encryptionData,
+            encryptionIv = encryptionIv,
+            isEncrypted = encryptionState,
+            allTsLinks = allTsList,
+            relativeUrl = relativeUrl,
+            headers = headers
+        )
     }
 }

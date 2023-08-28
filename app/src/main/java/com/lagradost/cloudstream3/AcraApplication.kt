@@ -43,9 +43,9 @@ class CustomReportSender : ReportSender {
     override fun send(context: Context, errorContent: CrashReportData) {
         println("Sending report")
         val url =
-            "https://docs.google.com/forms/d/e/1FAIpQLSdOlbgCx7NeaxjvEGyEQlqdh2nCvwjm2vwpP1VwW7REj9Ri3Q/formResponse"
+            "https://docs.google.com/forms/d/e/1FAIpQLSfO4r353BJ79TTY_-t5KWSIJT2xfqcQWY81xjAA1-1N0U2eSg/formResponse"
         val data = mapOf(
-            "entry.753293084" to errorContent.toJSON()
+            "entry.1993829403" to errorContent.toJSON()
         )
 
         thread { // to not run it on main thread
@@ -104,12 +104,17 @@ class ExceptionHandler(val errorFile: File, val onError: (() -> Unit)) :
 }
 
 class AcraApplication : Application() {
+
     override fun onCreate() {
         super.onCreate()
-        Thread.setDefaultUncaughtExceptionHandler(ExceptionHandler(filesDir.resolve("last_error")) {
+        //NativeCrashHandler.initCrashHandler()
+        ExceptionHandler(filesDir.resolve("last_error")) {
             val intent = context!!.packageManager.getLaunchIntentForPackage(context!!.packageName)
             startActivity(Intent.makeRestartActivityTask(intent!!.component))
-        })
+        }.also {
+            exceptionHandler = it
+            Thread.setDefaultUncaughtExceptionHandler(it)
+        }
     }
 
     override fun attachBaseContext(base: Context?) {
@@ -121,10 +126,10 @@ class AcraApplication : Application() {
             buildConfigClass = BuildConfig::class.java
             reportFormat = StringFormat.JSON
 
-            reportContent = arrayOf(
+            reportContent = listOf(
                 ReportField.BUILD_CONFIG, ReportField.USER_CRASH_DATE,
                 ReportField.ANDROID_VERSION, ReportField.PHONE_MODEL,
-                ReportField.STACK_TRACE
+                ReportField.STACK_TRACE,
             )
 
             // removed this due to bug when starting the app, moved it to when it actually crashes
@@ -137,6 +142,8 @@ class AcraApplication : Application() {
     }
 
     companion object {
+        var exceptionHandler: ExceptionHandler? = null
+
         /** Use to get activity from Context */
         tailrec fun Context.getActivity(): Activity? = this as? Activity
             ?: (this as? ContextWrapper)?.baseContext?.getActivity()
@@ -211,6 +218,5 @@ class AcraApplication : Application() {
                 activity?.supportFragmentManager?.fragments?.lastOrNull()
             )
         }
-
     }
 }

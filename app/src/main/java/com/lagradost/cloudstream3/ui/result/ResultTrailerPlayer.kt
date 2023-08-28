@@ -44,6 +44,8 @@ open class ResultTrailerPlayer : ResultFragmentPhone(), IOnBackPressed {
 
     private fun fixPlayerSize() {
         playerWidthHeight?.let { (w, h) ->
+            if(w <= 0 || h <= 0) return@let
+
             val orientation = context?.resources?.configuration?.orientation ?: return
 
             val sw = if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
@@ -118,9 +120,6 @@ open class ResultTrailerPlayer : ResultFragmentPhone(), IOnBackPressed {
     override fun onTracksInfoChanged() {}
 
     override fun exitedPipMode() {}
-
-    override fun onGestureRegionsUpdate(gestureRegions: List<Rect>) {}
-
     private fun updateFullscreen(fullscreen: Boolean) {
         isFullScreenPlayer = fullscreen
         lockRotation = fullscreen

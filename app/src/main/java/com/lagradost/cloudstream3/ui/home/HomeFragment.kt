@@ -658,12 +658,14 @@ class HomeFragment : Fragment() {
                 return@observeNullable
             }
 
-            bottomSheetDialog = activity?.loadHomepageList(item, expandCallback = {
+            val (items, delete) = item
+
+            bottomSheetDialog = activity?.loadHomepageList(items, expandCallback = {
                 homeViewModel.expandAndReturn(it)
             }, dismissCallback = {
                 homeViewModel.popup(null)
                 bottomSheetDialog = null
-            })
+            }, deleteCallback = delete)
         }
 
         homeViewModel.reloadStored()

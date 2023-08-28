@@ -574,4 +574,5 @@
     <string name="disable">Uitzetten</string>
     <string name="unable_to_inflate">De gebruikersinterface kon niet correct worden gemaakt, dit is een ERNSTIG PROBLEEM en moet onmiddellijk gerapporteerd worden %s</string>
     <string name="default_account">@string/default_subtitles</string>
+    <string name="already_voted">Je hebt al gestemd</string>
 </resources>

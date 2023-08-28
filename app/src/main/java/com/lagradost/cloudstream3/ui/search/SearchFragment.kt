@@ -84,7 +84,7 @@ class SearchFragment : Fragment() {
 
         fun newInstance(query: String): Bundle {
             return Bundle().apply {
-                putString(SEARCH_QUERY, query)
+                if(query.isNotBlank()) putString(SEARCH_QUERY, query)
             }
         }
     }
@@ -211,7 +211,7 @@ class SearchFragment : Fragment() {
         reloadRepos()
 
         binding?.apply {
-            val adapter: RecyclerView.Adapter<RecyclerView.ViewHolder>? =
+            val adapter: RecyclerView.Adapter<RecyclerView.ViewHolder> =
                 SearchAdapter(
                     ArrayList(),
                     searchAutofitResults,
@@ -530,11 +530,18 @@ class SearchFragment : Fragment() {
             searchMasterRecycler.layoutManager = GridLayoutManager(context, 1)
 
             // Automatically search the specified query, this allows the app search to launch from intent
-            arguments?.getString(SEARCH_QUERY)?.let { query ->
+            var sq = arguments?.getString(SEARCH_QUERY) ?: savedInstanceState?.getString(SEARCH_QUERY)
+            if(sq.isNullOrBlank()) {
+                sq = MainActivity.nextSearchQuery
+            }
+
+            sq?.let { query ->
                 if (query.isBlank()) return@let
                 mainSearch.setQuery(query, true)
                 // Clear the query as to not make it request the same query every time the page is opened
-                arguments?.putString(SEARCH_QUERY, null)
+                arguments?.remove(SEARCH_QUERY)
+                savedInstanceState?.remove(SEARCH_QUERY)
+                MainActivity.nextSearchQuery = null
             }
         }
 

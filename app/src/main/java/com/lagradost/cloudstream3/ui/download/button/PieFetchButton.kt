@@ -174,7 +174,7 @@ open class PieFetchButton(context: Context, attributeSet: AttributeSet) :
 
                 currentMetaData.apply {
                     // DON'T RESUME A DOWNLOADED FILE lastState != VideoDownloadManager.DownloadType.IsDone &&
-                    if ((downloadedLength * 100 / totalLength) < 98) {
+                    if (progressPercentage < 98) {
                         list.add(
                             if (status == VideoDownloadManager.DownloadType.IsDownloading)
                                 Pair(DOWNLOAD_ACTION_PAUSE_DOWNLOAD, R.string.popup_pause_download)
@@ -248,33 +248,34 @@ open class PieFetchButton(context: Context, attributeSet: AttributeSet) :
         //progressBar.isVisible =
         //    status != null && status != DownloadStatusTell.Complete && status != DownloadStatusTell.Error
         //progressBarBackground.isVisible = status != null && status != DownloadStatusTell.Complete
-        val isPreActive = isZeroBytes && status == DownloadStatusTell.IsDownloading
+        progressBarBackground.post {
+            val isPreActive = isZeroBytes && status == DownloadStatusTell.IsDownloading
+            if (animateWaiting && (status == DownloadStatusTell.IsPending || isPreActive)) {
+                val animation = AnimationUtils.loadAnimation(context, waitingAnimation)
+                progressBarBackground.startAnimation(animation)
+            } else {
+                progressBarBackground.clearAnimation()
+            }
 
-        if (animateWaiting && (status == DownloadStatusTell.IsPending || isPreActive)) {
-            val animation = AnimationUtils.loadAnimation(context, waitingAnimation)
-            progressBarBackground.startAnimation(animation)
-        } else {
-            progressBarBackground.clearAnimation()
+            val progressDrawable =
+                if (status == DownloadStatusTell.IsDownloading && !isPreActive) activeOutline else nonActiveOutline
+
+            progressBarBackground.background =
+                ContextCompat.getDrawable(context, progressDrawable)
+
+            val drawable = getDrawableFromStatus(status)
+            statusView.setImageDrawable(drawable)
+            val isDrawable = drawable != null
+
+            statusView.isVisible = isDrawable
+            val hide = hideWhenIcon && isDrawable
+            if (hide) {
+                progressBar.clearAnimation()
+                progressBarBackground.clearAnimation()
+            }
+            progressBarBackground.isGone = hide
+            progressBar.isGone = hide
         }
-
-        val progressDrawable =
-            if (status == DownloadStatusTell.IsDownloading && !isPreActive) activeOutline else nonActiveOutline
-
-        progressBarBackground.background =
-            ContextCompat.getDrawable(context, progressDrawable)
-
-        val drawable = getDrawableFromStatus(status)
-        statusView.setImageDrawable(drawable)
-        val isDrawable = drawable != null
-
-        statusView.isVisible = isDrawable
-        val hide = hideWhenIcon && isDrawable
-        if (hide) {
-            progressBar.clearAnimation()
-            progressBarBackground.clearAnimation()
-        }
-        progressBarBackground.isGone = hide
-        progressBar.isGone = hide
     }
 
     override fun resetView() {

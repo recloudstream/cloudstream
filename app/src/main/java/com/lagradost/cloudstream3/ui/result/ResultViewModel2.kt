@@ -591,12 +591,10 @@ class ResultViewModel2 : ViewModel() {
                     link,
                     "$fileName ${link.name}",
                     folder,
-                    if (link.url.contains(".srt")) ".srt" else "vtt",
+                    if (link.url.contains(".srt")) "srt" else "vtt",
                     false,
-                    null
-                ) {
-                    // no notification
-                }
+                    null, createNotificationCallback = {}
+                )
             }
         }
 
@@ -721,7 +719,7 @@ class ResultViewModel2 : ViewModel() {
                             )
                         )
                     }
-                        .map { ExtractorSubtitleLink(it.name, it.url, "") }
+                        .map { ExtractorSubtitleLink(it.name, it.url, "") }.take(3)
                         .forEach { link ->
                             val fileName = VideoDownloadManager.getFileName(context, meta)
                             downloadSubtitle(context, link, fileName, folder)
@@ -1707,7 +1705,7 @@ class ResultViewModel2 : ViewModel() {
                 else -> {
                     if (response.type.isLiveStream())
                         R.string.play_livestream_button
-                    else if (response.type.isMovieType()) // this wont break compatibility as you only need to override isMovieType
+                    else if (response.isMovie()) // this wont break compatibility as you only need to override isMovieType
                         R.string.play_movie_button
                     else null
                 }

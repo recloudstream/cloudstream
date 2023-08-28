@@ -1,16 +1,17 @@
 package com.lagradost.cloudstream3.ui.player
 
+import android.content.ContentUris
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.KeyEvent
 import androidx.appcompat.app.AppCompatActivity
-import com.hippo.unifile.UniFile
 import com.lagradost.cloudstream3.CommonActivity
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.utils.ExtractorUri
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
+import com.lagradost.safefile.SafeFile
 
 const val DTAG = "PlayerActivity"
 
@@ -50,14 +51,17 @@ class DownloadedPlayerActivity : AppCompatActivity() {
     }
 
     private fun playUri(uri: Uri) {
-        val name = UniFile.fromUri(this, uri).name
+        val name = SafeFile.fromUri(this, uri)?.name()
         this.navigate(
             R.id.global_to_navigation_player, GeneratorPlayer.newInstance(
                 DownloadFileGenerator(
                     listOf(
                         ExtractorUri(
                             uri = uri,
-                            name = name ?: getString(R.string.downloaded_file)
+                            name = name ?: getString(R.string.downloaded_file),
+                            // well not the same as a normal id, but we take it as users may want to
+                            // play downloaded files and save the location
+                            id = kotlin.runCatching { ContentUris.parseId(uri) }.getOrNull()?.hashCode()
                         )
                     )
                 )

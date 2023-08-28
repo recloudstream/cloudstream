@@ -353,6 +353,12 @@ object DataStoreHelper {
         removeKeys(folder2)
     }
 
+    fun deleteBookmarkedData(id : Int?) {
+        if (id == null) return
+        removeKey("$currentAccount/$RESULT_WATCH_STATE", id.toString())
+        removeKey("$currentAccount/$RESULT_WATCH_STATE_DATA", id.toString())
+    }
+
     fun getAllResumeStateIds(): List<Int>? {
         val folder = "$currentAccount/$RESULT_RESUME_WATCHING"
         return getKeys(folder)?.mapNotNull {
@@ -519,12 +525,10 @@ object DataStoreHelper {
 
     fun setResultWatchState(id: Int?, status: Int) {
         if (id == null) return
-        val folder = "$currentAccount/$RESULT_WATCH_STATE"
         if (status == WatchType.NONE.internalId) {
-            removeKey(folder, id.toString())
-            removeKey("$currentAccount/$RESULT_WATCH_STATE_DATA", id.toString())
+            deleteBookmarkedData(id)
         } else {
-            setKey(folder, id.toString(), status)
+            setKey("$currentAccount/$RESULT_WATCH_STATE", id.toString(), status)
         }
     }
 

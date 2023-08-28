@@ -23,7 +23,6 @@ import androidx.core.view.isVisible
 import androidx.core.widget.NestedScrollView
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.RecyclerView
 import com.discord.panels.OverlappingPanelsLayout
 import com.discord.panels.PanelsChildGestureRegionObserver
 import com.google.android.gms.cast.framework.CastButtonFactory
@@ -62,8 +61,6 @@ import com.lagradost.cloudstream3.ui.search.SearchHelper
 import com.lagradost.cloudstream3.utils.AppUtils.getNameFull
 import com.lagradost.cloudstream3.utils.AppUtils.html
 import com.lagradost.cloudstream3.utils.AppUtils.isCastApiAvailable
-import com.lagradost.cloudstream3.utils.AppUtils.isLtr
-import com.lagradost.cloudstream3.utils.AppUtils.isRtl
 import com.lagradost.cloudstream3.utils.AppUtils.loadCache
 import com.lagradost.cloudstream3.utils.AppUtils.openBrowser
 import com.lagradost.cloudstream3.utils.ExtractorLink
@@ -81,8 +78,13 @@ import com.lagradost.cloudstream3.utils.UIHelper.setImage
 import com.lagradost.cloudstream3.utils.VideoDownloadHelper
 
 
-open class ResultFragmentPhone : FullScreenPlayer(),
-    PanelsChildGestureRegionObserver.GestureRegionsListener {
+open class ResultFragmentPhone : FullScreenPlayer() {
+    private val gestureRegionsListener = object : PanelsChildGestureRegionObserver.GestureRegionsListener {
+        override fun onGestureRegionsUpdate(gestureRegions: List<Rect>) {
+            binding?.resultOverlappingPanels?.setChildGestureRegions(gestureRegions)
+        }
+    }
+
     protected lateinit var viewModel: ResultViewModel2
     protected lateinit var syncModel: SyncViewModel
 
@@ -211,14 +213,17 @@ open class ResultFragmentPhone : FullScreenPlayer(),
     }
 
     override fun onDestroyView() {
+
         //somehow this still leaks and I dont know why????
         // todo look at https://github.com/discord/OverlappingPanels/blob/70b4a7cf43c6771873b1e091029d332896d41a1a/sample_app/src/main/java/com/discord/sampleapp/MainActivity.kt
         PanelsChildGestureRegionObserver.Provider.get().let { obs ->
             resultBinding?.resultCastItems?.let {
                 obs.unregister(it)
             }
-            obs.removeGestureRegionsUpdateListener(this)
+
+            obs.removeGestureRegionsUpdateListener(gestureRegionsListener)
         }
+
         updateUIEvent -= ::updateUI
         binding = null
         resultBinding = null
@@ -287,6 +292,8 @@ open class ResultFragmentPhone : FullScreenPlayer(),
                 it.colorFromAttribute(R.attr.primaryBlackBackground)
         }
         super.onResume()
+        PanelsChildGestureRegionObserver.Provider.get()
+            .addGestureRegionsUpdateListener(gestureRegionsListener)
     }
 
     override fun onStop() {
@@ -323,7 +330,16 @@ open class ResultFragmentPhone : FullScreenPlayer(),
         setUrl(storedData.url)
         syncModel.addFromUrl(storedData.url)
         val api = APIHolder.getApiFromNameNull(storedData.apiName)
-        PanelsChildGestureRegionObserver.Provider.get().addGestureRegionsUpdateListener(this)
+
+        PanelsChildGestureRegionObserver.Provider.get().apply {
+            resultBinding?.resultCastItems?.let {
+                register(it)
+            }
+            addGestureRegionsUpdateListener(gestureRegionsListener)
+        }
+
+
+
         // ===== ===== =====
 
         resultBinding?.apply {
@@ -374,9 +390,8 @@ open class ResultFragmentPhone : FullScreenPlayer(),
                         DownloadButtonSetup.handleDownloadClick(downloadClickEvent)
                     }
                 )
-            resultCastItems.let {
-                PanelsChildGestureRegionObserver.Provider.get().register(it)
-            }
+
+
             resultScroll.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { _, _, scrollY, _, oldScrollY ->
                 val dy = scrollY - oldScrollY
                 if (dy > 0) { //check for scroll down
@@ -1055,11 +1070,7 @@ open class ResultFragmentPhone : FullScreenPlayer(),
 
     override fun onPause() {
         super.onPause()
-        PanelsChildGestureRegionObserver.Provider.get().addGestureRegionsUpdateListener(this)
-    }
-
-    override fun onGestureRegionsUpdate(gestureRegions: List<Rect>) {
-        binding?.resultOverlappingPanels?.setChildGestureRegions(gestureRegions)
+        PanelsChildGestureRegionObserver.Provider.get().addGestureRegionsUpdateListener(gestureRegionsListener)
     }
 
     private fun setRecommendations(rec: List<SearchResponse>?, validApiName: String?) {

@@ -116,13 +116,14 @@ class SettingsUpdates : PreferenceFragmentCompat() {
                             null,
                             "txt",
                             false
-                        ).fileStream
-                    fileStream?.writer()?.write(text)
-                } catch (e: Exception) {
-                    logError(e)
+                        ).openNew()
+                    fileStream.writer().write(text)
+                    dialog.dismissSafe(activity)
+                } catch (t: Throwable) {
+                    logError(t)
+                    showToast(t.message)
                 } finally {
                     fileStream?.closeQuietly()
-                    dialog.dismissSafe(activity)
                 }
             }
             binding.closeBtt.setOnClickListener {

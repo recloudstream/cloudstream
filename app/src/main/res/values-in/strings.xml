@@ -574,4 +574,6 @@
     <string name="automatic_plugin_download_mode_title">Pilih mode untuk memfilter unduhan plugin</string>
     <string name="no_plugins_found_error">Tidak ada plugin yang ditemukan di repositori</string>
     <string name="no_repository_found_error">Repositori tidak ditemukan, periksa URL dan coba VPN</string>
+    <string name="already_voted">Kamu sudah voting</string>
+    <string name="default_account">@string/default_subtitles</string>
 </resources>

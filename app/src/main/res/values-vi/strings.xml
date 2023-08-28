@@ -267,7 +267,7 @@
     <string name="update">Cập nhật</string>
     <string name="watch_quality_pref">Chất lượng xem ưu tiên (WiFi)</string>
     <string name="limit_title">Kí tự tối đa trên tiêu đề</string>
-    <string name="limit_title_rez">Độ phân giải trình phát video</string>
+    <string name="limit_title_rez">Nội dung trình phát video</string>
     <string name="video_buffer_size_settings">Kích thước bộ nhớ đệm video</string>
     <string name="video_buffer_length_settings">Thời lượng bộ nhớ đệm</string>
     <string name="video_buffer_disk_settings">Lưu bộ nhớ đệm video trên ổ cứng</string>
@@ -380,8 +380,8 @@
     <string name="quality_webrip">Web</string>
     <string name="poster_image">Ảnh áp phích</string>
     <string name="category_player">Trình phát</string>
-    <string name="resolution_and_title">Độ phân giải và Tiêu đề</string>
-    <string name="title">Tiêu đề</string>
+    <string name="resolution_and_title">Độ phân giải và Tên nguồn</string>
+    <string name="title">Tên nguồn</string>
     <string name="resolution">Độ phân giải</string>
     <string name="error_invalid_id">Id không hợp lệ</string>
     <string name="error_invalid_data">Lỗi dữ liệu</string>
@@ -561,4 +561,11 @@
 \n
 \nLƯU Ý: Nếu tổng là 10 hoặc nhiều hơn, trình phát sẽ tự động bỏ tải khi liên kết đó được tải!</string>
     <string name="qualities">Các phẩm chất</string>
+    <string name="already_voted">Bạn đã bình chọn</string>
+    <string name="disable">Vô hiệu hoá</string>
+    <string name="no_repository_found_error">Không tìm thấy tiện ích, hãy kiểm tra URL và thử VPN</string>
+    <string name="no_plugins_found_error">Không tìm thấy plugin</string>
+    <string name="unable_to_inflate">Không thể khởi tạo UI, đây là một LỖI LỚN và cần được báo cáo ngay lập tức tới %s</string>
+    <string name="automatic_plugin_download_mode_title">Chọn chế độ để lọc plugin tải xuống</string>
+    <string name="default_account">@string/default_subtitles</string>
 </resources>
