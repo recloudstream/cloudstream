@@ -1,12 +1,11 @@
 {
   "image": "mcr.microsoft.com/devcontainers/universal:2",
+  "postCreateCommand": "sudo chown $(whoami) /opt/android/",
   "features": {
-    "ghcr.io/devcontainers/features/java:1": {
+    "ghcr.io/devcontainers/features/java:latest": {
       "version": "17"
     },
-    "ghcr.io/akhildevelops/devcontainer-features/android-cli:latest": {
-      "PACKAGES": "platform-tools,platforms;android-29"
-    }
+    "ghcr.io/akhildevelops/devcontainer-features/android-cli:0": {}
   },
   "customizations": {
     "vscode": {

@@ -90,6 +90,7 @@ class CS3IPlayer : IPlayer {
     private var currentLink: ExtractorLink? = null
     private var currentDownloadedFile: ExtractorUri? = null
     private var hasUsedFirstRender = false
+    private var shouldPauseUnfocused = true
 
     private var currentWindow: Int = 0
     private var playbackPosition: Long = 0
@@ -509,7 +510,8 @@ class CS3IPlayer : IPlayer {
     override fun onPause() {
         Log.i(TAG, "onPause")
         saveData()
-        exoPlayer?.pause()
+        if (shouldPauseUnfocused)
+            exoPlayer?.pause()
         //releasePlayer()
     }
 
@@ -964,6 +966,11 @@ class CS3IPlayer : IPlayer {
                         embeddedSubtitlesFetched?.invoke(exoPlayerReportedTracks)
                         onTracksInfoChanged?.invoke()
                         subtitlesUpdates?.invoke()
+
+                        // if there are no video tracks, but there are audio tracks, don't pause playback while in background
+                        val videoTrackCount = tracks.groups.filter { it.type == TRACK_TYPE_VIDEO }.length ?: 0
+                        val audioTrackCount = tracks.groups.filter { it.type == TRACK_TYPE_AUDIO }.length ?: 0
+                        shouldPauseUnfocused = videoTrackCount > 0 || audioTrackCount == 0
                     }
                 }
 
