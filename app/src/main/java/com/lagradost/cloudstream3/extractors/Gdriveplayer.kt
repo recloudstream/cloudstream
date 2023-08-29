@@ -2,14 +2,10 @@ package com.lagradost.cloudstream3.extractors
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.*
+import com.lagradost.cloudstream3.extractors.helper.AesHelper.cryptoAESHandler
 import com.lagradost.cloudstream3.utils.*
 import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
 import org.jsoup.nodes.Element
-import java.security.DigestException
-import java.security.MessageDigest
-import javax.crypto.Cipher
-import javax.crypto.spec.IvParameterSpec
-import javax.crypto.spec.SecretKeySpec
 
 class DatabaseGdrive2 : Gdriveplayer() {
     override var mainUrl = "https://databasegdriveplayer.co"
@@ -65,78 +61,6 @@ open class Gdriveplayer : ExtractorApi() {
             ?.data()?.let { getAndUnpack(it) }
     }
 
-    private fun String.decodeHex(): ByteArray {
-        check(length % 2 == 0) { "Must have an even length" }
-        return chunked(2)
-            .map { it.toInt(16).toByte() }
-            .toByteArray()
-    }
-
-    // https://stackoverflow.com/a/41434590/8166854
-    private fun GenerateKeyAndIv(
-        password: ByteArray,
-        salt: ByteArray,
-        hashAlgorithm: String = "MD5",
-        keyLength: Int = 32,
-        ivLength: Int = 16,
-        iterations: Int = 1
-    ): List<ByteArray>? {
-
-        val md = MessageDigest.getInstance(hashAlgorithm)
-        val digestLength = md.digestLength
-        val targetKeySize = keyLength + ivLength
-        val requiredLength = (targetKeySize + digestLength - 1) / digestLength * digestLength
-        val generatedData = ByteArray(requiredLength)
-        var generatedLength = 0
-
-        try {
-            md.reset()
-
-            while (generatedLength < targetKeySize) {
-                if (generatedLength > 0)
-                    md.update(
-                        generatedData,
-                        generatedLength - digestLength,
-                        digestLength
-                    )
-
-                md.update(password)
-                md.update(salt, 0, 8)
-                md.digest(generatedData, generatedLength, digestLength)
-
-                for (i in 1 until iterations) {
-                    md.update(generatedData, generatedLength, digestLength)
-                    md.digest(generatedData, generatedLength, digestLength)
-                }
-
-                generatedLength += digestLength
-            }
-            return listOf(
-                generatedData.copyOfRange(0, keyLength),
-                generatedData.copyOfRange(keyLength, targetKeySize)
-            )
-        } catch (e: DigestException) {
-            return null
-        }
-    }
-
-    private fun cryptoAESHandler(
-        data: AesData,
-        pass: ByteArray,
-        encrypt: Boolean = true
-    ): String? {
-        val (key, iv) = GenerateKeyAndIv(pass, data.s.decodeHex()) ?: return null
-        val cipher = Cipher.getInstance("AES/CBC/NoPadding")
-        return if (!encrypt) {
-            cipher.init(Cipher.DECRYPT_MODE, SecretKeySpec(key, "AES"), IvParameterSpec(iv))
-            String(cipher.doFinal(base64DecodeArray(data.ct)))
-        } else {
-            cipher.init(Cipher.DECRYPT_MODE, SecretKeySpec(key, "AES"), IvParameterSpec(iv))
-            base64Encode(cipher.doFinal(data.ct.toByteArray()))
-
-        }
-    }
-
     private fun Regex.first(str: String): String? {
         return find(str)?.groupValues?.getOrNull(1)
     }
@@ -154,14 +78,14 @@ open class Gdriveplayer : ExtractorApi() {
         val document = app.get(url).document
 
         val eval = unpackJs(document)?.replace("\\", "") ?: return
-        val data = tryParseJson<AesData>(Regex("data='(\\S+?)'").first(eval)) ?: return
+        val data = Regex("data='(\\S+?)'").first(eval) ?: return
         val password = Regex("null,['|\"](\\w+)['|\"]").first(eval)
             ?.split(Regex("\\D+"))
             ?.joinToString("") {
                 Char(it.toInt()).toString()
             }.let { Regex("var pass = \"(\\S+?)\"").first(it ?: return)?.toByteArray() }
             ?: throw ErrorLoadingException("can't find password")
-        val decryptedData = cryptoAESHandler(data, password, false)?.let { getAndUnpack(it) }?.replace("\\", "")
+        val decryptedData = cryptoAESHandler(data, password, false, "AES/CBC/NoPadding")?.let { getAndUnpack(it) }?.replace("\\", "")
 
         val sourceData = decryptedData?.substringAfter("sources:[")?.substringBefore("],")
         val subData = decryptedData?.substringAfter("tracks:[")?.substringBefore("],")
@@ -193,12 +117,6 @@ open class Gdriveplayer : ExtractorApi() {
         }
 
     }
-
-    data class AesData(
-        @JsonProperty("ct") val ct: String,
-        @JsonProperty("iv") val iv: String,
-        @JsonProperty("s") val s: String
-    )
 
     data class Tracks(
         @JsonProperty("file") val file: String,
