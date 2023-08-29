@@ -505,7 +505,7 @@ object VideoDownloadManager {
     ): List<Pair<String, Uri>>? {
         val base = basePathToFile(context, basePath)
         val folder = base?.gotoDirectory(relativePath, false) ?: return null
-        if (folder.isDirectory() != false) return null
+        //if (folder.isDirectory() != false) return null
 
         return folder.listFiles()
             ?.mapNotNull { (it.name() ?: "") to (it.uri() ?: return@mapNotNull null) }
