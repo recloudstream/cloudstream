@@ -13,14 +13,17 @@ import javax.crypto.spec.SecretKeySpec
 
 object AesHelper {
 
+    private const val HASH = "AES/CBC/PKCS5PADDING"
+    private const val KDF = "MD5"
+
     fun cryptoAESHandler(
         data: String,
         pass: ByteArray,
         encrypt: Boolean = true,
-        padding: String = "AES/CBC/PKCS5PADDING",
+        padding: String = HASH,
     ): String? {
         val parse = AppUtils.tryParseJson<AesData>(data) ?: return null
-        val (key, iv) = generateKeyAndIv(pass, parse.s.hexToByteArray()) ?: throw ErrorLoadingException("failed to generate key")
+        val (key, iv) = generateKeyAndIv(pass, parse.s.hexToByteArray()) ?: return null
         val cipher = Cipher.getInstance(padding)
         return if (!encrypt) {
             cipher.init(Cipher.DECRYPT_MODE, SecretKeySpec(key, "AES"), IvParameterSpec(iv))
@@ -35,11 +38,11 @@ object AesHelper {
     fun generateKeyAndIv(
         password: ByteArray,
         salt: ByteArray,
-        hashAlgorithm: String = "MD5",
+        hashAlgorithm: String = KDF,
         keyLength: Int = 32,
         ivLength: Int = 16,
         iterations: Int = 1
-    ): List<ByteArray>? {
+    ): Pair<ByteArray,ByteArray>? {
 
         val md = MessageDigest.getInstance(hashAlgorithm)
         val digestLength = md.digestLength
@@ -70,10 +73,7 @@ object AesHelper {
 
                 generatedLength += digestLength
             }
-            return listOf(
-                generatedData.copyOfRange(0, keyLength),
-                generatedData.copyOfRange(keyLength, targetKeySize)
-            )
+            return generatedData.copyOfRange(0, keyLength) to generatedData.copyOfRange(keyLength, targetKeySize)
         } catch (e: DigestException) {
             return null
         }
