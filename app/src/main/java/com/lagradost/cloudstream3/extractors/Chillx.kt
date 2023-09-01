@@ -2,15 +2,12 @@ package com.lagradost.cloudstream3.extractors
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.*
+import com.lagradost.cloudstream3.extractors.helper.*
+import com.lagradost.cloudstream3.extractors.helper.AesHelper.cryptoAESHandler
 import com.lagradost.cloudstream3.utils.AppUtils
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.Qualities
-import javax.crypto.Cipher
-import javax.crypto.SecretKeyFactory
-import javax.crypto.spec.IvParameterSpec
-import javax.crypto.spec.PBEKeySpec
-import javax.crypto.spec.SecretKeySpec
 
 class Moviesapi : Chillx() {
     override val name = "Moviesapi"
@@ -32,7 +29,7 @@ open class Chillx : ExtractorApi() {
     override val requiresReferer = true
 
     companion object {
-        private const val KEY = "11x&W5UBrcqn\$9Yl"
+        private const val KEY = "m4H6D9%0\$N&F6rQ&"
     }
 
     override suspend fun getUrl(
@@ -47,8 +44,7 @@ open class Chillx : ExtractorApi() {
                 referer = referer
             ).text
         )?.groupValues?.get(1)
-        val encData = AppUtils.tryParseJson<AESData>(base64Decode(master ?: return))
-        val decrypt = cryptoAESHandler(encData ?: return, KEY, false)
+        val decrypt = cryptoAESHandler(master ?: return, KEY.toByteArray(), false)?.replace("\\", "") ?: throw ErrorLoadingException("failed to decrypt")
 
         val source = Regex(""""?file"?:\s*"([^"]+)""").find(decrypt)?.groupValues?.get(1)
         val tracks = Regex("""tracks:\s*\[(.+)]""").find(decrypt)?.groupValues?.get(1)
@@ -85,52 +81,6 @@ open class Chillx : ExtractorApi() {
                 )
             }
     }
-
-    private fun cryptoAESHandler(
-        data: AESData,
-        pass: String,
-        encrypt: Boolean = true
-    ): String {
-        val factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA512")
-        val spec = PBEKeySpec(
-            pass.toCharArray(),
-            data.salt?.hexToByteArray(),
-            data.iterations?.toIntOrNull() ?: 1,
-            256
-        )
-        val key = factory.generateSecret(spec)
-        val cipher = Cipher.getInstance("AES/CBC/PKCS5Padding")
-        return if (!encrypt) {
-            cipher.init(
-                Cipher.DECRYPT_MODE,
-                SecretKeySpec(key.encoded, "AES"),
-                IvParameterSpec(data.iv?.hexToByteArray())
-            )
-            String(cipher.doFinal(base64DecodeArray(data.ciphertext.toString())))
-        } else {
-            cipher.init(
-                Cipher.ENCRYPT_MODE,
-                SecretKeySpec(key.encoded, "AES"),
-                IvParameterSpec(data.iv?.hexToByteArray())
-            )
-            base64Encode(cipher.doFinal(data.ciphertext?.toByteArray()))
-        }
-    }
-
-    private fun String.hexToByteArray(): ByteArray {
-        check(length % 2 == 0) { "Must have an even length" }
-        return chunked(2)
-            .map { it.toInt(16).toByte() }
-
-            .toByteArray()
-    }
-
-    data class AESData(
-        @JsonProperty("ciphertext") val ciphertext: String? = null,
-        @JsonProperty("iv") val iv: String? = null,
-        @JsonProperty("salt") val salt: String? = null,
-        @JsonProperty("iterations") val iterations: String? = null,
-    )
 
     data class Tracks(
         @JsonProperty("file") val file: String? = null,
