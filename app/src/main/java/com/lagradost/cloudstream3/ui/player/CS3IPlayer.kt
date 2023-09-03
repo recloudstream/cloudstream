@@ -53,9 +53,11 @@ import com.lagradost.cloudstream3.utils.AppUtils.isUsingMobileData
 import com.lagradost.cloudstream3.utils.EpisodeSkip
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.ExtractorLinkPlayList
+import com.lagradost.cloudstream3.utils.ExtractorLinkType
 import com.lagradost.cloudstream3.utils.ExtractorUri
 import com.lagradost.cloudstream3.utils.SubtitleHelper.fromTwoLettersToLanguage
 import java.io.File
+import java.lang.IllegalArgumentException
 import javax.net.ssl.HttpsURLConnection
 import javax.net.ssl.SSLContext
 import javax.net.ssl.SSLSession
@@ -1257,10 +1259,12 @@ class CS3IPlayer : IPlayer {
                 HttpsURLConnection.setDefaultSSLSocketFactory(sslContext.socketFactory)
             }
 
-            val mime = when {
-                link.isM3u8 -> MimeTypes.APPLICATION_M3U8
-                link.isDash -> MimeTypes.APPLICATION_MPD
-                else -> MimeTypes.VIDEO_MP4
+            val mime = when(link.type) {
+                ExtractorLinkType.M3U8 -> MimeTypes.APPLICATION_M3U8
+                ExtractorLinkType.DASH -> MimeTypes.APPLICATION_MPD
+                ExtractorLinkType.VIDEO -> MimeTypes.VIDEO_MP4
+                ExtractorLinkType.TORRENT -> throw IllegalArgumentException("No torrent support")
+                ExtractorLinkType.MAGNET -> throw IllegalArgumentException("No magnet support")
             }
 
             val mediaItems = if (link is ExtractorLinkPlayList) {

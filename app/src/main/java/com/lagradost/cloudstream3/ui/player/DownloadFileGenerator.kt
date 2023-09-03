@@ -56,10 +56,10 @@ class DownloadFileGenerator(
 
     override suspend fun generateLinks(
         clearCache: Boolean,
-        isCasting: Boolean,
+        type: LoadType,
         callback: (Pair<ExtractorLink?, ExtractorUri?>) -> Unit,
         subtitleCallback: (SubtitleData) -> Unit,
-        offset: Int,
+        offset: Int
     ): Boolean {
         val meta = episodes[currentIndex + offset]
         callback(null to meta)

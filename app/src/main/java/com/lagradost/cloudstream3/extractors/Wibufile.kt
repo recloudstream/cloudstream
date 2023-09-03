@@ -4,8 +4,8 @@ import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
+import com.lagradost.cloudstream3.utils.INFER_TYPE
 import com.lagradost.cloudstream3.utils.Qualities
-import java.net.URI
 
 open class Wibufile : ExtractorApi() {
     override val name: String = "Wibufile"
@@ -28,10 +28,8 @@ open class Wibufile : ExtractorApi() {
                 video ?: return,
                 "$mainUrl/",
                 Qualities.Unknown.value,
-                URI(url).path.endsWith(".m3u8")
+                type = INFER_TYPE
             )
         )
-
     }
-
 }

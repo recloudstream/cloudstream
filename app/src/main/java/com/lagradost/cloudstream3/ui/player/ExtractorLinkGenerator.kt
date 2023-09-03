@@ -37,14 +37,17 @@ class ExtractorLinkGenerator(
 
     override suspend fun generateLinks(
         clearCache: Boolean,
-        isCasting: Boolean,
+        type: LoadType,
         callback: (Pair<ExtractorLink?, ExtractorUri?>) -> Unit,
         subtitleCallback: (SubtitleData) -> Unit,
         offset: Int
     ): Boolean {
         subtitles.forEach(subtitleCallback)
+        val allowedTypes = type.toSet()
         links.forEach {
-            callback.invoke(it to null)
+            if(allowedTypes.contains(it.type)) {
+                callback.invoke(it to null)
+            }
         }
 
         return true
