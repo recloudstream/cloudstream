@@ -50,13 +50,13 @@ android {
         }
     }
 
-    compileSdk = 34
+    compileSdk = 33
     buildToolsVersion = "34.0.0"
 
     defaultConfig {
         applicationId = "com.lagradost.cloudstream3"
         minSdk = 21
-        targetSdk = 34
+        targetSdk = 33
 
         versionCode = 59
         versionName = "4.1.8"
