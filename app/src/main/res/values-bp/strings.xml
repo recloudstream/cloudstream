@@ -157,7 +157,7 @@
     <string name="show_fillers_settings">Mostrar episódios de Filler em anime</string>
     <string name="show_trailers_settings">Mostrar trailers</string>
     <string name="kitsu_settings">Mostrar posters do Kitsu</string>
-    <string name="pref_filter_search_quality">Esconder qualidades de vídeo selecionadas nos resultados da Pesquisa</string>
+    <string name="pref_filter_search_quality">Esconder qualidades de vídeo selecionadas nos resultados da pesquisa</string>
     <string name="automatic_plugin_updates">Atualizações de plugin automáticas</string>
     <string name="updates_settings">Mostrar atualizações do app</string>
     <string name="updates_settings_des">Automaticamente procurar por novas atualizações ao abrir</string>
@@ -222,7 +222,7 @@
     <string name="movies_singular">Filme</string>
     <string name="tv_series_singular">Série</string>
     <string name="cartoons_singular">Desenho Animado</string>
-    <string name="anime_singular">@string/anime</string>
+    <string name="anime_singular">Anime</string>
     <string name="ova_singular">@string/ova</string>
     <string name="torrent_singular">Torrent</string>
     <string name="documentaries_singular">Documentário</string>
@@ -265,14 +265,14 @@
     <string name="video_buffer_disk_settings">Cache do vídeo em disco</string>
     <string name="video_buffer_clear_settings">Limpar cache de vídeo e imagem</string>
     <string name="video_ram_description">Causará travamentos aleatórios se definido muito alto. Não mude caso tiver pouca memória RAM, como um Android TV ou um telefone antigo</string>
-    <string name="video_disk_description">Pode causar problemas em sistemas com pouco espaço de armazenamento se definido muito alto, como em dispositivos Android TV</string>
+    <string name="video_disk_description">Causa problemas em sistemas com pouco espaço de armazenamento se definido muito alto, como em dispositivos Android TV.</string>
     <string name="dns_pref">DNS sobre HTTPS</string>
     <string name="dns_pref_summary">Útil para burlar bloqueios de provedores de internet</string>
     <string name="add_site_pref">Clonar site</string>
     <string name="remove_site_pref">Remover site</string>
     <string name="add_site_summary">Adiciona um clone de um site existente, com uma URL diferente</string>
     <string name="download_path_pref">Caminho para Download</string>
-    <string name="nginx_url_pref">Url do servidor Nginx</string>
+    <string name="nginx_url_pref">URL do servidor NGINX</string>
     <string name="display_subbed_dubbed_settings">Mostrar Anime Dublado/Legendado</string>
     <string name="resize_fit">Ajustar para a Tela</string>
     <string name="resize_fill">Esticar</string>
@@ -338,7 +338,7 @@
     <string name="subtitles_shadow">Sombreado</string>
     <string name="subtitles_raised">Em Relevo</string>
     <string name="subtitle_offset">Sincronizar legendas</string>
-    <string name="subtitle_offset_hint">1000ms</string>
+    <string name="subtitle_offset_hint">1000 ms</string>
     <string name="subtitle_offset_title">Atraso de legenda</string>
     <string name="subtitle_offset_extra_hint_later_format">Use isto se as legendas forem mostradas %dms adiantadas</string>
     <string name="subtitle_offset_extra_hint_before_format">Use isto se as legendas forem mostradas %dms atrasadas</string>
@@ -382,9 +382,9 @@
     <string name="resolution_and_title">Resolução e título</string>
     <string name="title">Título</string>
     <string name="resolution">Resolução</string>
-    <string name="error_invalid_id">Id invalida</string>
+    <string name="error_invalid_id">ID inválido</string>
     <string name="error_invalid_data">Dado invalido</string>
-    <string name="error_invalid_url">URL invalido</string>
+    <string name="error_invalid_url">URL inválida</string>
     <string name="error">Erro</string>
     <string name="subtitles_remove_captions">Remover legendas ocultas(CC) das legendas</string>
     <string name="subtitles_remove_bloat">Remover bloat das legendas</string>
@@ -406,8 +406,8 @@
     <string name="plugin_loaded">Plugin Carregado</string>
     <string name="plugin_deleted">Plugin Apagado</string>
     <string name="plugin_load_fail" formatted="true">Falha ao carregar %s</string>
-    <string name="batch_download_start_format" formatted="true">Iniciada a transferência %d %s</string>
-    <string name="batch_download_finish_format" formatted="true">Transferido %d %s com sucesso</string>
+    <string name="batch_download_start_format" formatted="true">Iniciada a transferência %d %s…</string>
+    <string name="batch_download_finish_format" formatted="true">Transferido %d %s</string>
     <string name="batch_download_nothing_to_download_format" formatted="true">Tudo %s já transferido</string>
     <string name="batch_download">Transferência em batch</string>
     <string name="plugin_singular">Plugin</string>
@@ -444,7 +444,7 @@
     <string name="browser">Navegador</string>
     <string name="pref_category_backup">Copia de Segurança</string>
     <string name="android_tv_interface_off_seek_settings_summary">A Barra de Progresso pode ser usada quando o player estiver oculto</string>
-    <string name="subscription_list_name">Inscrever</string>
+    <string name="subscription_list_name">Inscrito</string>
     <string name="empty_library_logged_in_message">Essa lista está vazia. Tente mudar para outra.</string>
     <string name="play_livestream_button">Reproduzir Livestream</string>
     <string name="test_log">Log do Teste</string>
@@ -493,10 +493,10 @@
 \nNOTA: Se a soma for 10 ou mais, o Player pulará automaticamente o carregamento quando o link for carregado!</string>
     <string name="safe_mode_file">Arquivo de modo de segurança encontrado!
 \nNão carregar nenhuma extensão na inicialização até que o arquivo seja removido.</string>
-    <string name="subscription_new">Inscrevel em %d</string>
+    <string name="subscription_new">Inscrito em %s</string>
     <string name="subscription_episode_released">Episódio %d Lançado</string>
     <string name="set_default">Selecionar padrão</string>
-    <string name="subscription_deleted">Disinscrevel em %d</string>
+    <string name="subscription_deleted">Desinscrito de %s</string>
     <string name="apk_installer_settings_des">Alguns aparelhos não possuem suporte para este pacote de instalação. Tente a opção legada se a atualização não instalar.</string>
     <string name="mobile_data">Dados móveis</string>
     <string name="profile_number">Perfil %d</string>
@@ -550,4 +550,21 @@
     <string name="audio_tracks">Faixas de áudio</string>
     <string name="sort_updated_new">Adicionado em (novo para antigo)</string>
     <string name="video_tracks">Faixas de video</string>
+    <string name="pref_category_subtitles">Legendas</string>
+    <string name="player_settings_play_in_browser">Navegador</string>
+    <string name="is_adult">18+</string>
+    <string name="pref_category_links">Links</string>
+    <string name="pref_category_player_features">Funcionalidades do Player</string>
+    <string name="apk_installer_settings">Instalador APK</string>
+    <string name="pref_category_looks">Aparência</string>
+    <string name="disable">Desativar</string>
+    <string name="use">Usar</string>
+    <string name="network_adress_example">Link da stream</string>
+    <string name="pref_category_gestures">Gestos</string>
+    <string name="plugin_downloaded">Plugin baixado</string>
+    <string name="jsdelivr_enabled">Não foi possível se conectar ao GitHub. Ativando proxy jsDelivr…</string>
+    <string name="pref_category_cache">Cache</string>
+    <string name="other_singular">Vídeo</string>
+    <string name="pref_category_android_tv">Android TV</string>
+    <string name="wifi">Wi-Fi</string>
 </resources>

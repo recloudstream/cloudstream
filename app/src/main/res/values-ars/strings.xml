@@ -200,4 +200,69 @@
     <string name="use">استخدم</string>
     <string name="unable_to_inflate">%sتعذر إنشاء واجهة المستخدم بشكل صحيح، وهذا خطأ كبير ويجب الإبلاغ عنه على الفور</string>
     <string name="qualities">الصفات</string>
+    <string name="subs_edge_type">نوع الحافة</string>
+    <string name="home_play">العب</string>
+    <string name="error_loading_links_toast">حدث خطأ أثناء تحميل الروابط</string>
+    <string name="download_storage_text">التخزين الداخلي</string>
+    <string name="app_subbed_text">الترجمة</string>
+    <string name="popup_resume_download">استئناف تحميل</string>
+    <string name="home_info">معلومات</string>
+    <string name="popup_pause_download">وقفة التحميل</string>
+    <string name="sort_cancel">الغي</string>
+    <string name="sort_save">احفظ</string>
+    <string name="subtitles_settings">إعدادات الترجمة</string>
+    <string name="subs_text_color">لون الخط</string>
+    <string name="subs_outline_color">لون المخطط التفصيلي</string>
+    <string name="sort_close">اقفل</string>
+    <string name="sort_clear">امسح</string>
+    <string name="player_speed">سرعة اللاعب</string>
+    <string name="subs_background_color">لون الخلفية</string>
+    <string name="subs_window_color">لون النافذة</string>
+    <string name="subs_subtitle_elevation">ارتفاع الترجمة</string>
+    <string name="popup_delete_file">حذف ملف</string>
+    <string name="pref_disable_acra">تعطيل الإبلاغ التلقائي عن الأخطاء</string>
+    <string name="update_started">بدأ التحديث</string>
+    <string name="sort_copy">انسخ</string>
+    <string name="stream">بث</string>
+    <string name="popup_play_file">ملف اللعب</string>
+    <string name="home_more_info">مزيد من المعلومات</string>
+    <string name="filter_bookmarks">تصفية الإشارات المرجعية</string>
+    <string name="error_bookmarks_text">إشارات مرجعية</string>
+    <string name="action_remove_from_bookmarks">زيل</string>
+    <string name="action_add_to_bookmarks">ضبط حالة المشاهدة</string>
+    <string name="app_dubbed_text">مدبلجة</string>
+    <string name="home_expanded_hide">اخفي</string>
+    <string name="sort_apply">قدم</string>
+    <string name="torrent_plot">وصف</string>
+    <string name="picture_in_picture_des">يستمر التشغيل في مشغل مصغر فوق التطبيقات الأخرى</string>
+    <string name="delete_message" formatted="true">نهائيا %sسيؤدي هذا الى حذف 
+\nهل أنت متأكد؟</string>
+    <string name="subs_font">الخط</string>
+    <string name="subs_font_size">حجم الخط</string>
+    <string name="action_remove_watching">زيل</string>
+    <string name="vpn_torrent">هذا المزود عبارة عن تورنت، ويوصى باستخدام فيبيان</string>
+    <string name="provider_info_meta">لا يتم توفير البيانات الوصفية بواسطة الموقع، وسيفشل تحميل الفيديو إذا لم يكن موجودًا في الموقع.</string>
+    <string name="status_ongoing">جاري التنفيذ</string>
+    <string name="status_completed">مكتمل</string>
+    <string name="status">حالة</string>
+    <string name="subs_auto_select_language">التحديد التلقائي للغة</string>
+    <string name="player_size_settings">زر تغيير حجم المشغل</string>
+    <string name="continue_watching">مواصلة المشاهدة</string>
+    <string name="action_open_watching">مزيد من المعلومات</string>
+    <string name="search_provider_text_providers">البحث باستخدام مقدمي الخدمات</string>
+    <string name="search_provider_text_types">البحث باستخدام الأنواع</string>
+    <string name="benene_count_text">بنيني الى المطورين %d تم منح</string>
+    <string name="benene_count_text_none">لم يتم تقديم بنيني</string>
+    <string name="subs_download_languages">تحميل اللغات</string>
+    <string name="subs_subtitle_languages">لغة الترجمة</string>
+    <string name="subs_hold_to_reset_to_default">اضغط لإعادة التعيين إلى الوضع الافتراضي</string>
+    <string name="subs_import_text" formatted="true">%s قم باستيراد الخطوط بوضعها في</string>
+    <string name="vpn_might_be_needed">قد تكون هناك حاجة إلى فيبيان حتى يعمل هذا المزود بشكل صحيح</string>
+    <string name="normal_no_plot">لم يتم العثور على قطعة أرض</string>
+    <string name="torrent_no_plot">لم يتم العثور على وصف</string>
+    <string name="show_log_cat">🐈عرض لوجكات</string>
+    <string name="test_log">سجل</string>
+    <string name="picture_in_picture">صور في صور</string>
+    <string name="resume_time_left" formatted="true">%d
+\nباقي</string>
 </resources>

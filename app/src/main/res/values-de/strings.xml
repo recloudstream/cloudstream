@@ -5,19 +5,19 @@
     <string name="next_episode_format" formatted="true">Episode %d wird veröffentlicht in</string>
     <string name="result_poster_img_des">Vorschaubild</string>
     <string name="search_poster_img_des">Vorschaubild</string>
-    <string name="subs_hold_to_reset_to_default">Halten, um auf die Standardeinstellungen zurückzusetzen</string>
+    <string name="subs_hold_to_reset_to_default">Halten, um auf Standardeinstellungen zurückzusetzen</string>
     <string name="restore_failed_format" formatted="true">Wiederherstellung der Daten aus der Datei %s fehlgeschlagen</string>
     <string name="backup_success">Daten erfolgreich gesichert</string>
     <string name="backup_failed_error_format">Fehler beim Sichern von %s</string>
     <string name="no_chromecast_support_toast">Dieser Anbieter hat keine Chromecast-Unterstützung</string>
     <string name="episode_action_chromecast_mirror">Chromecast-Mirror</string>
     <string name="episode_action_play_in_app">In App wiedergeben</string>
-    <string name="skip_type_mixed_op">Vermischte Openings</string>
+    <string name="skip_type_mixed_op">Gemischte Openings</string>
     <string name="skip_type_creddits">Abspann</string>
     <string name="skip_type_intro">Intro</string>
     <string name="clear_history">Verlauf löschen</string>
     <string name="history">Verlauf</string>
-    <string name="enable_skip_op_from_database_des">Überspringen Knopf für Openings/Endings anzeigen</string>
+    <string name="enable_skip_op_from_database_des">Button zum Überspringen für Openings/Endings anzeigen</string>
     <string name="clipboard_too_large">Zu viel Text. Kann nicht in der Zwischenablage gespeichert werden.</string>
     <string name="episode_poster_img_des">Episodenvorschaubild</string>
     <string name="home_main_poster_img_des">Medienvorschaubild</string>
@@ -34,7 +34,7 @@
     <string name="app_name">CloudStream</string>
     <string name="play_with_app_name">Mit CloudStream abspielen</string>
     <string name="title_home">Startseite</string>
-    <string name="title_search">Suchen</string>
+    <string name="title_search">Suche</string>
     <string name="title_downloads">Downloads</string>
     <string name="title_settings">Einstellungen</string>
     <string name="search_hint">Suchen…</string>
@@ -44,8 +44,8 @@
     <string name="next_episode">Nächste Episode</string>
     <string name="result_tags">Genres</string>
     <string name="result_share">Teilen</string>
-    <string name="result_open_in_browser">In Browser öffnen</string>
-    <string name="skip_loading">Puffern überspringen</string>
+    <string name="result_open_in_browser">Im Browser öffnen</string>
+    <string name="skip_loading">Laden überspringen</string>
     <string name="loading">Lädt…</string>
     <string name="type_watching">Am schauen</string>
     <string name="type_on_hold">Pausiert</string>
@@ -79,7 +79,7 @@
     <string name="popup_play_file">Datei abspielen</string>
     <string name="popup_resume_download">Download fortsetzen</string>
     <string name="popup_pause_download">Download pausieren</string>
-    <string name="pref_disable_acra">Automatische Fehlerberichterstattung deaktivieren</string>
+    <string name="pref_disable_acra">Automatische Fehlerberichtserstattung deaktivieren</string>
     <string name="home_more_info">Mehr Infos</string>
     <string name="home_expanded_hide">Verstecken</string>
     <string name="home_play">Abspielen</string>
@@ -106,8 +106,8 @@
     <string name="subs_font_size">Schriftgröße</string>
     <string name="search_provider_text_providers">Suche anhand Anbietern</string>
     <string name="search_provider_text_types">Suche anhand Typen</string>
-    <string name="benene_count_text">%d Benenes an die Devs verteilt</string>
-    <string name="benene_count_text_none">Noch keine Benenes verteilt</string>
+    <string name="benene_count_text">%d Benenes an die Devs geschenkt</string>
+    <string name="benene_count_text_none">Noch keine Benenes verschenkt</string>
     <string name="subs_auto_select_language">Sprache automatisch wählen</string>
     <string name="subs_download_languages">Sprachen herunterladen</string>
     <string name="subs_subtitle_languages">Untertitelsprache</string>
@@ -117,8 +117,8 @@
     <string name="action_open_watching">Mehr Infos</string>
     <string name="action_open_play">@string/home_play</string>
     <string name="vpn_might_be_needed">Damit dieser Anbieter korrekt funktioniert, ist möglicherweise ein VPN erforderlich</string>
-    <string name="vpn_torrent">Dieser Anbieter bietet Torrents an, ein VPN wird dringend empfohlen</string>
-    <string name="provider_info_meta">Metadaten werden nicht von der Website bereitgestellt, das Laden des Videos schlägt fehl, wenn sie auf der Website nicht vorhanden sind.</string>
+    <string name="vpn_torrent">Dieser Anbieter bietet Torrents an, ein VPN wird deswegen dringend empfohlen</string>
+    <string name="provider_info_meta">Metadaten werden nicht von der Website bereitgestellt, das Laden des Videos schlägt fehl, wenn sie nicht auf der Website vorhanden sind.</string>
     <string name="torrent_plot">Beschreibung</string>
     <string name="normal_no_plot">Keine Handlung gefunden</string>
     <string name="torrent_no_plot">Keine Beschreibung gefunden</string>
@@ -143,7 +143,7 @@
     <string name="double_tap_to_pause_settings">Doppeltippen zum Pausieren</string>
     <string name="double_tap_to_seek_amount_settings">Zeit für vor- und zurückspulen im Player (Sekunden)</string>
     <string name="double_tap_to_seek_settings_des">Zweimal auf die rechte oder linke Seite tippen, um vor- oder zurückzuspulen</string>
-    <string name="double_tap_to_pause_settings_des">Doppelt in die Mitte tippen, um zu pausieren</string>
+    <string name="double_tap_to_pause_settings_des">Zweimal in die Mitte tippen, um zu pausieren</string>
     <string name="use_system_brightness_settings">Systemhelligkeit verwenden</string>
     <string name="use_system_brightness_settings_des">Systemhelligkeit anstelle eines dunklen Overlay im Player verwenden</string>
     <string name="episode_sync_settings">Episodenfortschritt aktualisieren</string>
@@ -163,7 +163,7 @@
     <string name="show_fillers_settings">Füller-Episoden für Animes anzeigen</string>
     <string name="show_trailers_settings">Trailer anzeigen</string>
     <string name="kitsu_settings">Vorschaubilder von Kitsu anzeigen</string>
-    <string name="pref_filter_search_quality">Ausgewählte Videoqualität bei Suchergebnissen ausblenden</string>
+    <string name="pref_filter_search_quality">Ausgewählte Videoqualität in den Suchergebnissen ausblenden</string>
     <string name="automatic_plugin_updates">Automatische Plugin-Updates</string>
     <string name="updates_settings">App-Updates anzeigen</string>
     <string name="updates_settings_des">Automatisches Suchen nach neuen Updates nach dem Start.</string>
@@ -172,11 +172,11 @@
     <string name="github">Github</string>
     <string name="lightnovel">Light Novel App von denselben Entwicklern</string>
     <string name="anim">Anime App von denselben Entwicklern</string>
-    <string name="discord">Discord beitreten</string>
-    <string name="benene">Eine Benene an die Devs verteilen</string>
-    <string name="benene_des">Verteilte Benenes</string>
+    <string name="discord">Trete dem Discord Server bei</string>
+    <string name="benene">Eine Benene an die Devs schenken</string>
+    <string name="benene_des">Geschenkte Benenes</string>
     <string name="app_language">App-Sprache</string>
-    <string name="no_links_found_toast">Keine Verlinkung gefunden</string>
+    <string name="no_links_found_toast">Keine Links gefunden</string>
     <string name="copy_link_toast">Link in die Zwischenablage kopiert</string>
     <string name="play_episode_toast">Episode abspielen</string>
     <string name="subs_default_reset_toast">Auf Standardwert zurücksetzen</string>
@@ -240,7 +240,7 @@
     <string name="remote_error">Remote-Fehler</string>
     <string name="render_error">Renderfehler</string>
     <string name="unexpected_error">Unerwarteter Playerfehler</string>
-    <string name="storage_error">Downloadfehler, Speicherberechtigungen prüfen</string>
+    <string name="storage_error">Downloadfehler, bitte überprüfen sie die Speicherberechtigungen</string>
     <string name="episode_action_chromecast_episode">Chromecast-Episode</string>
     <string name="episode_action_play_in_format">In %s wiedergeben</string>
     <string name="episode_action_play_in_browser">In Browser wiedergeben</string>
@@ -255,7 +255,7 @@
     <string name="show_title">Titel</string>
     <string name="poster_ui_settings">UI-Elemente auf Vorschaubild umschalten</string>
     <string name="no_update_found">Kein Update gefunden</string>
-    <string name="check_for_update">Auf Update prüfen</string>
+    <string name="check_for_update">Auf Updates prüfen</string>
     <string name="video_lock">Sperren</string>
     <string name="video_aspect_ratio_resize">Skalieren</string>
     <string name="video_source">Quelle</string>
@@ -270,16 +270,16 @@
     <string name="video_buffer_length_settings">Videopufferlänge</string>
     <string name="video_buffer_disk_settings">Video-Cache in Speicher</string>
     <string name="video_buffer_clear_settings">Video- und Bild-Cache leeren</string>
-    <string name="video_ram_description">Verursacht Abstürze, wenn zu hoch eingestellt. Nicht ändern, wenn wenig Arbeitsspeicher verfügbar ist, wie z.B. ein Android TV oder ein altes Telefon.</string>
-    <string name="video_disk_description">Kann auf Systemen mit geringem Speicherplatz, wie z. B. Android TV-Geräten, zu Problemen führen, wenn der Wert zu hoch eingestellt ist.</string>
+    <string name="video_ram_description">Verursacht Abstürze, wenn zu hoch eingestellt. Nicht ändern, wenn wenig Arbeitsspeicher verfügbar ist, wie z.B. auf einem Android TV oder auf einem alten Smartphone.</string>
+    <string name="video_disk_description">Kann auf Systemen mit geringem Speicherplatz, wie z. B. auf Android TV-Geräten, zu Problemen führen, wenn der Wert zu hoch eingestellt ist.</string>
     <string name="dns_pref">DNS über HTTPS</string>
-    <string name="dns_pref_summary">Nützlich für die Umgehung von ISP-Sperren</string>
+    <string name="dns_pref_summary">Nützlich zur Umgehung von ISP-Sperren</string>
     <string name="add_site_pref">Website klonen</string>
     <string name="remove_site_pref">Website entfernen</string>
     <string name="add_site_summary">Einen Klon einer bestehenden Website mit einer anderen URL hinzufügen</string>
     <string name="download_path_pref">Downloadpfad</string>
     <string name="nginx_url_pref">Nginx-Server-URL</string>
-    <string name="display_subbed_dubbed_settings">Dubbed/Subbed Anime anzeigen (Synchronisiert/Untertitelt)</string>
+    <string name="display_subbed_dubbed_settings">Dubbed/Subbed Anime anzeigen</string>
     <string name="resize_fit">An Bildschirm anpassen</string>
     <string name="resize_fill">Strecken</string>
     <string name="resize_zoom">Vergrößern</string>
@@ -308,7 +308,7 @@
     <string name="example_ip">127.0.0.1</string>
     <string name="example_site_name">MeineCooleSeite</string>
     <string name="example_site_url">example.com</string>
-    <string name="example_lang_name">Sprachcode (en)</string>
+    <string name="example_lang_name">Sprachencode (en)</string>
     <string name="login_format" formatted="true">%s %s</string>
     <string name="account">Account</string>
     <string name="logout">Ausloggen</string>
@@ -317,13 +317,13 @@
     <string name="add_account">Account hinzufügen</string>
     <string name="create_account">Account erstellen</string>
     <string name="add_sync">Synchronisation hinzufügen</string>
-    <string name="added_sync_format" formatted="true">Hinzugefügt %s</string>
+    <string name="added_sync_format" formatted="true">%s hinzugefügt</string>
     <string name="upload_sync">Sync</string>
     <string name="sync_score">Bewertung</string>
     <string name="sync_score_format" formatted="true">%d / 10</string>
     <string name="sync_total_episodes_none">/\?\?</string>
     <string name="sync_total_episodes_some" formatted="true">/%d</string>
-    <string name="authenticated_user" formatted="true">Authentifiziert %s</string>
+    <string name="authenticated_user" formatted="true">%s authentifiziert</string>
     <string name="authenticated_user_fail" formatted="true">Die Authentifizierung bei %s ist fehlgeschlagen</string>
     <string name="none">Keine</string>
     <string name="normal">Normal</string>
@@ -335,10 +335,10 @@
     <string name="subtitles_shadow">Schatten</string>
     <string name="subtitles_raised">Erhöht</string>
     <string name="subtitle_offset">Untertitel synchronisieren</string>
-    <string name="subtitle_offset_hint">1000ms</string>
+    <string name="subtitle_offset_hint">1000 ms</string>
     <string name="subtitle_offset_title">Untertitelverzögerung</string>
-    <string name="subtitle_offset_extra_hint_later_format">Verwenden, wenn die Untertitel %dms zu früh angezeigt werden</string>
-    <string name="subtitle_offset_extra_hint_before_format">Verwenden, wenn die Untertitel %dms zu spät angezeigt werden</string>
+    <string name="subtitle_offset_extra_hint_later_format">Verwenden, wenn die Untertitel %d ms zu früh angezeigt werden</string>
+    <string name="subtitle_offset_extra_hint_before_format">Verwenden, wenn die Untertitel %d ms zu spät angezeigt werden</string>
     <string name="subtitle_offset_extra_hint_none_format">Keine Untertitelverzögerung</string>
     <string name="subtitles_example_text">Vogel Quax zwickt Johnys Pferd Bim</string>
     <string name="recommended">Empfohlen</string>
@@ -359,7 +359,7 @@
     <string name="quality_hd">HD</string>
     <string name="quality_ts">TS</string>
     <string name="quality_tc">TC</string>
-    <string name="quality_blueray">BlueRay</string>
+    <string name="quality_blueray">Blue-ray</string>
     <string name="quality_workprint">WP</string>
     <string name="quality_dvd">DVD</string>
     <string name="quality_4k">4K</string>
@@ -408,7 +408,7 @@
     <string name="plugin">Plugins</string>
     <string name="delete_repository_plugins">Dadurch werden auch alle Repository-Plugins gelöscht</string>
     <string name="delete_repository">Repository löschen</string>
-    <string name="setup_extensions_subtext">Lade eine Liste der Websiten herunter, welche du verwenden möchtest</string>
+    <string name="setup_extensions_subtext">Lade eine Liste der Websites herunter, welche du verwenden möchtest</string>
     <string name="plugins_downloaded" formatted="true">Heruntergeladen: %d</string>
     <string name="plugins_disabled" formatted="true">Deaktiviert: %d</string>
     <string name="plugins_not_downloaded" formatted="true">Nicht heruntergeladen: %d</string>
@@ -416,7 +416,7 @@
 \n
 \nAufgrund eines hirnlosen DMCA-Takedowns durch Sky UK Limited 🤮 können wir die Repository-Site nicht in der App verlinken.
 \n
-\nTrete unserem Discord bei oder suche online.</string>
+\nTrete unserem Discord Server bei oder suche online.</string>
     <string name="view_public_repositories_button">Community-Repositories anzeigen</string>
     <string name="view_public_repositories_button_short">Öffentliche Liste</string>
     <string name="uppercase_all_subtitles">Alle Untertitel in Großbuchstaben</string>
@@ -427,7 +427,7 @@
     <string name="video_tracks">Videospuren</string>
     <string name="apply_on_restart">Bei Neustart anwenden</string>
     <string name="safe_mode_title">Abgesicherter Modus aktiviert</string>
-    <string name="safe_mode_description">Alle Erweiterungen wurden aufgrund eines Absturzes deaktiviert, damit Sie diejenige finden können, die Probleme verursacht.</string>
+    <string name="safe_mode_description">Alle Erweiterungen wurden aufgrund eines Absturzes deaktiviert, damit Sie diejenige finden können, welche Probleme verursacht.</string>
     <string name="safe_mode_crash_info">Absturzinfo ansehen</string>
     <string name="extension_rating" formatted="true">Bewertung: %s</string>
     <string name="extension_description">Beschreibung</string>
@@ -460,7 +460,7 @@
     <string name="automatic_plugin_download_summary">Automatische Installation aller noch nicht installierten Plugins aus hinzugefügten Repositories.</string>
     <string name="redo_setup_process">Einrichtungsvorgang wiederholen</string>
     <string name="apk_installer_settings">APK-Installer</string>
-    <string name="apk_installer_settings_des">Einige Telefone unterstützen den neuen Package-Installer nicht. Benutze die Legacy-Option, wenn sich die Updates nicht installieren lassen.</string>
+    <string name="apk_installer_settings_des">Einige Smartphones unterstützen den neuen Package-Installer nicht. Benutze die Legacy-Option, wenn sich die Updates nicht installieren lassen.</string>
     <string name="season_format">%s %d%s</string>
     <string name="pref_category_links">Links</string>
     <string name="pref_category_app_updates">App-Updates</string>
@@ -482,7 +482,7 @@
     <string name="no">Nein</string>
     <string name="update_notification_downloading">App-Update wird heruntergeladen…</string>
     <string name="update_notification_installing">App-Update wird installiert…</string>
-    <string name="update_notification_failed">Konnte die neue Version der App nicht installieren</string>
+    <string name="update_notification_failed">Die neue Version der App konnte nicht installieren werden</string>
     <string name="apk_installer_legacy">Legacy</string>
     <string name="apk_installer_package_installer">PackageInstaller</string>
     <string name="update_started">Aktualisierung gestartet</string>
@@ -493,18 +493,18 @@
     <string name="browser">Browser</string>
     <string name="sort_by">Sortieren nach</string>
     <string name="sort">Sortieren</string>
-    <string name="sort_rating_desc">Bewertung (gut bis schlecht)</string>
-    <string name="sort_rating_asc">Bewertung (schlecht bis gut)</string>
-    <string name="sort_updated_new">Aktualisiert (neu bis alt)</string>
-    <string name="sort_updated_old">Aktualisiert (alt bis neu)</string>
-    <string name="sort_alphabetical_a">Alphabetisch (A bis Z)</string>
-    <string name="sort_alphabetical_z">Alphabetisch (Z bis A)</string>
+    <string name="sort_rating_desc">Bewertung (gut zu schlecht)</string>
+    <string name="sort_rating_asc">Bewertung (schlecht zu gut)</string>
+    <string name="sort_updated_new">Aktualisiert (neu zu alt)</string>
+    <string name="sort_updated_old">Aktualisiert (alt zu neu)</string>
+    <string name="sort_alphabetical_a">Alphabetisch (A zu Z)</string>
+    <string name="sort_alphabetical_z">Alphabetisch (Z zu A)</string>
     <string name="select_library">Bibliothek auswählen</string>
     <string name="open_with">Öffnen mit</string>
     <string name="empty_library_no_accounts_message">Deine Bibliothek ist leer :(
 \nMelde dich mit einem Bibliothekskonto an oder füge Titel zu deiner lokalen Bibliothek hinzu.</string>
-    <string name="empty_library_logged_in_message">Diese Liste ist leer. Versuche zu einer anderen Liste zu wechseln.</string>
-    <string name="safe_mode_file">Datei für abgesicherten Modus gefunden!
+    <string name="empty_library_logged_in_message">Diese Liste ist leer. Versuch zu einer anderen Liste zu wechseln.</string>
+    <string name="safe_mode_file">Datei für den abgesicherten Modus gefunden!
 \nBeim Start werden keine Erweiterungen geladen, bis die Datei entfernt wird.</string>
     <string name="android_tv_interface_off_seek_settings">Player ausgeblendet - Betrag zum vor- und zurückspulen</string>
     <string name="android_tv_interface_on_seek_settings_summary">Der Betrag, welcher verwendet wird, wenn der Player eingeblendet ist</string>
@@ -549,7 +549,7 @@
     <string name="automatic_plugin_download_mode_title">Filtermodus für Plugin-Downloads auswählen</string>
     <string name="already_voted">Es wurde bereits abgestimmt</string>
     <string name="no_plugins_found_error">Keine Plugins im Repository gefunden</string>
-    <string name="no_repository_found_error">Repository nicht gefunden, überprüfe die URL und probiere eine VPN</string>
-    <string name="unable_to_inflate">Die Benutzeroberfläche konnte nicht korrekt erstellt werden. Dies ist ein schwerwiegender Fehler und sollte sofort gemeldet werden. %s</string>
+    <string name="no_repository_found_error">Repository nicht gefunden, überprüf die URL und versuch ein VPN</string>
+    <string name="unable_to_inflate">Die Benutzeroberfläche konnte nicht korrekt erstellt werden. Dies ist ein SCHWERWIEGENDER FEHLER und sollte sofort gemeldet werden. %s</string>
     <string name="disable">Deaktivieren</string>
 </resources>

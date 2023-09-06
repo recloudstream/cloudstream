@@ -6,12 +6,12 @@
     <string name="title_home">முகப்பு</string>
     <string name="title_search">தேடு</string>
     <string name="title_downloads">பதிவிறக்கம்</string>
-    <string name="no_data">தகவல் எதுவும் இல்லை</string>
+    <string name="no_data">தரவு இல்லை</string>
     <string name="episode_more_options_des">மேலும் விருப்பங்கள்</string>
-    <string name="next_episode">அடுத்த எபிசோட்</string>
+    <string name="next_episode">அடுத்த அத்தியாயம்</string>
     <string name="result_tags">வகைகள்</string>
     <string name="result_share">பகிர்</string>
-    <string name="result_open_in_browser">Browser இல் திற</string>
+    <string name="result_open_in_browser">உலாவியில் திற</string>
     <string name="skip_loading">ஏற்றுவதைத் தவிர்</string>
     <string name="type_watching">பார்த்து கொண்டிருப்பது</string>
     <string name="type_on_hold">நிறுத்தி வைக்கப்பட்டுள்ளது</string>
@@ -21,9 +21,9 @@
     <string name="play_torrent_button">ஸ்ட்ரீம் டோரண்ட்</string>
     <string name="pick_subtitle">வசன வரிகள்</string>
     <string name="go_back">பின் செல்</string>
-    <string name="play_episode">எபிசோடை இயக்கு</string>
+    <string name="play_episode">அத்தியாயத்தை இயக்கு</string>
     <string name="download">எபிசோட் பதிவிற்கான அனுமதி கொடுக்கவும்</string>
-    <string name="downloaded">பதிவிறக்கம் செய்யப்பட்டது</string>
+    <string name="downloaded">பதிவிறக்கப்பட்டது</string>
     <string name="downloading">பதிவிறக்குகிறது</string>
     <string name="download_paused">பதிவிறக்கம் இடைநிறுத்தப்பட்டது</string>
     <string name="download_started">பதிவிறக்கம் தொடங்கியது</string>
@@ -67,10 +67,10 @@
     <string name="loading">ஏற்றுகிறது…</string>
     <string name="type_dropped">கைவிடப்பட்டது</string>
     <string name="download_done">பதிவிறக்கம் முடிந்தது</string>
-    <string name="reload_error">இணைப்பை மீண்டும் முயற்சிக்கவும்…</string>
+    <string name="reload_error">இணைப்பை மீண்டும் முயலவும்…</string>
     <string name="play_movie_button">திரைப்படத்தை இயக்கு</string>
     <string name="play_livestream_button">லைவ்ஸ்ட்ரீம் இயக்கு</string>
-    <string name="play_trailer_button">டிரெய்லரை இயக்கவும்</string>
+    <string name="play_trailer_button">டிரெய்லரை இயக்கு</string>
     <string name="pick_source">மூலம்</string>
     <string name="error_loading_links_toast">இணைப்புகளை ஏற்றுவதில் பிழை</string>
     <string name="home_play">இயக்கு</string>
@@ -107,4 +107,14 @@
     <string name="double_tap_to_pause_settings">இடைநிறுத்துவதற்கு இருமுறை தட்டவும்</string>
     <string name="chromecast_subtitles_settings_des">Chromecast வசன அமைப்புகள்</string>
     <string name="use_system_brightness_settings_des">இருண்ட மேலடுக்குக்குப் பதிலாக ஆப் பிளேயரில் சிஸ்டம் பிரகாசத்தைப் பயன்படுத்தவும்</string>
+    <string name="next_episode_format" formatted="true">அத்தியாயம் %d-இன் வெளியீட்டு நேரம்</string>
+    <string name="next_episode_time_hour_format" formatted="true">%dம %dநி</string>
+    <string name="next_episode_time_min_format" formatted="true">%dநி</string>
+    <string name="home_next_random_img_des">அடுத்து ஏதாவது</string>
+    <string name="browser">உலாவி</string>
+    <string name="duration_format" formatted="true">%d நிமி</string>
+    <string name="play_with_app_name">CloudStream-உடன் இயக்கு</string>
+    <string name="new_update_format" formatted="true">புதிய புதுப்பிப்பு உள்ளது
+\n%s-&gt;%s</string>
+    <string name="filler" formatted="true">நிரப்பி</string>
 </resources>
