@@ -1081,7 +1081,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             val lastAppAutoBackup: String = getKey("VERSION_NAME") ?: ""
             if (appVer != lastAppAutoBackup) {
                 setKey("VERSION_NAME", BuildConfig.VERSION_NAME)
-                backup()
+                backup(this)
             }
         } catch (t: Throwable) {
             logError(t)
