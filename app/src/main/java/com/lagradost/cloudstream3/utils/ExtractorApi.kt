@@ -8,6 +8,7 @@ import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import kotlinx.coroutines.delay
 import org.jsoup.Jsoup
 import java.net.URL
+import java.util.UUID
 import kotlin.collections.MutableList
 
 /**
@@ -99,6 +100,60 @@ private fun inferTypeFromUrl(url: String): ExtractorLinkType {
     }
 }
 val INFER_TYPE : ExtractorLinkType? = null
+
+open class DrmExtractorLink private constructor(
+    override val source: String,
+    override val name: String,
+    override val url: String,
+    override val referer: String,
+    override val quality: Int,
+    override val headers: Map<String, String> = mapOf(),
+    /** Used for getExtractorVerifierJob() */
+    override val extractorData: String? = null,
+    override val type: ExtractorLinkType,
+    open val kid : String,
+    open val key : String,
+    /** if null then it uses the UUID for the ClearKey DRM scheme */
+    open val uuid : UUID?,
+    open val kty : String,
+
+    open val keyRequestParameters : HashMap<String, String>
+) : ExtractorLink(
+    source, name, url, referer, quality, type, headers, extractorData
+) {
+    constructor(
+        source: String,
+        name: String,
+        url: String,
+        referer: String,
+        quality: Int,
+        /** the type of the media, use INFER_TYPE if you want to auto infer the type from the url */
+        type: ExtractorLinkType?,
+        headers: Map<String, String> = mapOf(),
+        /** Used for getExtractorVerifierJob() */
+        extractorData: String? = null,
+        kid : String,
+        key : String,
+        uuid : UUID? = null,
+        kty : String = "oct",
+        keyRequestParameters : HashMap<String, String> = hashMapOf(),
+    ) : this(
+        source = source,
+        name = name,
+        url = url,
+        referer = referer,
+        quality = quality,
+        headers = headers,
+        extractorData = extractorData,
+        type = type ?: inferTypeFromUrl(url),
+        kid = kid,
+        key = key,
+        uuid = uuid,
+        keyRequestParameters = keyRequestParameters,
+        kty = kty,
+    )
+}
+
 open class ExtractorLink constructor(
     open val source: String,
     open val name: String,

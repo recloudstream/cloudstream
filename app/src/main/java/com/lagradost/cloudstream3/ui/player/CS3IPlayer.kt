@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.ui.player
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.net.Uri
 import android.os.Handler
@@ -7,6 +8,7 @@ import android.os.Looper
 import android.util.Log
 import android.util.Rational
 import android.widget.FrameLayout
+import androidx.media3.common.C
 import androidx.media3.common.C.*
 import androidx.media3.common.Format
 import androidx.media3.common.MediaItem
@@ -31,6 +33,10 @@ import androidx.media3.exoplayer.DefaultRenderersFactory
 import androidx.media3.exoplayer.DefaultRenderersFactory.EXTENSION_RENDERER_MODE_ON
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.SeekParameters
+import androidx.media3.exoplayer.dash.DashMediaSource
+import androidx.media3.exoplayer.drm.DefaultDrmSessionManager
+import androidx.media3.exoplayer.drm.FrameworkMediaDrm
+import androidx.media3.exoplayer.drm.LocalMediaDrmCallback
 import androidx.media3.exoplayer.source.ClippingMediaSource
 import androidx.media3.exoplayer.source.ConcatenatingMediaSource
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
@@ -50,6 +56,7 @@ import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.ui.subtitles.SaveCaptionStyle
 import com.lagradost.cloudstream3.utils.AppUtils.isUsingMobileData
+import com.lagradost.cloudstream3.utils.DrmExtractorLink
 import com.lagradost.cloudstream3.utils.EpisodeSkip
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.ExtractorLinkPlayList
@@ -58,6 +65,7 @@ import com.lagradost.cloudstream3.utils.ExtractorUri
 import com.lagradost.cloudstream3.utils.SubtitleHelper.fromTwoLettersToLanguage
 import java.io.File
 import java.lang.IllegalArgumentException
+import java.util.UUID
 import javax.net.ssl.HttpsURLConnection
 import javax.net.ssl.SSLContext
 import javax.net.ssl.SSLSession
@@ -104,7 +112,16 @@ class CS3IPlayer : IPlayer {
      * */
     data class MediaItemSlice(
         val mediaItem: MediaItem,
-        val durationUs: Long
+        val durationUs: Long,
+        val drm: DrmMetadata? = null
+    )
+
+    data class DrmMetadata(
+        val kid: String,
+        val key: String,
+        val uuid: UUID,
+        val kty: String,
+        val keyRequestParameters: HashMap<String, String>,
     )
 
     override fun getDuration(): Long? = exoPlayer?.duration
@@ -340,6 +357,7 @@ class CS3IPlayer : IPlayer {
         }.flatten()
     }
 
+    @SuppressLint("UnsafeOptInUsageError")
     private fun Tracks.Group.getFormats(): List<Pair<Format, Int>> {
         return (0 until this.mediaTrackGroup.length).mapNotNull { i ->
             if (this.isSupported)
@@ -368,6 +386,7 @@ class CS3IPlayer : IPlayer {
         )
     }
 
+    @SuppressLint("UnsafeOptInUsageError")
     override fun getVideoTracks(): CurrentTracks {
         val allTracks = exoPlayer?.currentTracks?.groups ?: emptyList()
         val videoTracks = allTracks.filter { it.type == TRACK_TYPE_VIDEO }
@@ -387,6 +406,7 @@ class CS3IPlayer : IPlayer {
     /**
      * @return True if the player should be reloaded
      * */
+    @SuppressLint("UnsafeOptInUsageError")
     override fun setPreferredSubtitles(subtitle: SubtitleData?): Boolean {
         Log.i(TAG, "setPreferredSubtitles init $subtitle")
         currentSubtitles = subtitle
@@ -465,6 +485,7 @@ class CS3IPlayer : IPlayer {
         }
     }
 
+    @SuppressLint("UnsafeOptInUsageError")
     override fun getAspectRatio(): Rational? {
         return exoPlayer?.videoFormat?.let { format ->
             Rational(format.width, format.height)
@@ -475,6 +496,7 @@ class CS3IPlayer : IPlayer {
         subtitleHelper.setSubStyle(style)
     }
 
+    @SuppressLint("UnsafeOptInUsageError")
     override fun saveData() {
         Log.i(TAG, "saveData")
         updatedTime()
@@ -548,6 +570,7 @@ class CS3IPlayer : IPlayer {
 
         var requestSubtitleUpdate: (() -> Unit)? = null
 
+        @SuppressLint("UnsafeOptInUsageError")
         private fun createOnlineSource(headers: Map<String, String>): HttpDataSource.Factory {
             val source = OkHttpDataSource.Factory(app.baseClient).setUserAgent(USER_AGENT)
             return source.apply {
@@ -555,6 +578,7 @@ class CS3IPlayer : IPlayer {
             }
         }
 
+        @SuppressLint("UnsafeOptInUsageError")
         private fun createOnlineSource(link: ExtractorLink): HttpDataSource.Factory {
             val provider = getApiFromNameNull(link.source)
             val interceptor = provider?.getVideoInterceptor(link)
@@ -632,6 +656,7 @@ class CS3IPlayer : IPlayer {
             return Pair(subSources, activeSubtitles)
         }*/
 
+        @SuppressLint("UnsafeOptInUsageError")
         private fun getCache(context: Context, cacheSize: Long): SimpleCache? {
             return try {
                 val databaseProvider = StandaloneDatabaseProvider(context)
@@ -663,6 +688,7 @@ class CS3IPlayer : IPlayer {
             return getMediaItemBuilder(mimeType).setUri(url).build()
         }
 
+        @SuppressLint("UnsafeOptInUsageError")
         private fun getTrackSelector(context: Context, maxVideoHeight: Int?): TrackSelector {
             val trackSelector = DefaultTrackSelector(context)
             trackSelector.parameters = trackSelector.buildUponParameters()
@@ -676,6 +702,7 @@ class CS3IPlayer : IPlayer {
 
         var currentTextRenderer: CustomTextRenderer? = null
 
+        @SuppressLint("UnsafeOptInUsageError")
         private fun buildExoPlayer(
             context: Context,
             mediaItemSlices: List<MediaItemSlice>,
@@ -760,15 +787,33 @@ class CS3IPlayer : IPlayer {
 
             // If there is only one item then treat it as normal, if multiple: concatenate the items.
             val videoMediaSource = if (mediaItemSlices.size == 1) {
-                factory.createMediaSource(mediaItemSlices.first().mediaItem)
+                val item = mediaItemSlices.first()
+
+                item.drm?.let { drm ->
+                    val drmCallback =
+                        LocalMediaDrmCallback("{\"keys\":[{\"kty\":\"${drm.kty}\",\"k\":\"${drm.key}\",\"kid\":\"${drm.kid}\"}],\"type\":\"temporary\"}".toByteArray())
+                    val manager = DefaultDrmSessionManager.Builder()
+                        .setPlayClearSamplesWithoutKeys(true)
+                        .setMultiSession(false)
+                        .setKeyRequestParameters(drm.keyRequestParameters)
+                        .setUuidAndExoMediaDrmProvider(drm.uuid, FrameworkMediaDrm.DEFAULT_PROVIDER)
+                        .build(drmCallback)
+                    val manifestDataSourceFactory = DefaultHttpDataSource.Factory()
+
+                    DashMediaSource.Factory(manifestDataSourceFactory)
+                        .setDrmSessionManagerProvider { manager }
+                        .createMediaSource(item.mediaItem)
+                } ?: run {
+                    factory.createMediaSource(item.mediaItem)
+                }
             } else {
                 val source = ConcatenatingMediaSource()
-                mediaItemSlices.map {
+                mediaItemSlices.map { item ->
                     source.addMediaSource(
                         // The duration MUST be known for it to work properly, see https://github.com/google/ExoPlayer/issues/4727
                         ClippingMediaSource(
-                            factory.createMediaSource(it.mediaItem),
-                            it.durationUs
+                            factory.createMediaSource(item.mediaItem),
+                            item.durationUs
                         )
                     )
                 }
@@ -1105,6 +1150,8 @@ class CS3IPlayer : IPlayer {
     }
 
     private var lastTimeStamps: List<EpisodeSkip.SkipStamp> = emptyList()
+
+    @SuppressLint("UnsafeOptInUsageError")
     override fun addTimeStamps(timeStamps: List<EpisodeSkip.SkipStamp>) {
         lastTimeStamps = timeStamps
         timeStamps.forEach { timestamp ->
@@ -1122,6 +1169,7 @@ class CS3IPlayer : IPlayer {
         updatedTime()
     }
 
+    @SuppressLint("UnsafeOptInUsageError")
     fun onRenderFirst() {
         if (hasUsedFirstRender) { // this insures that we only call this once per player load
             return
@@ -1188,6 +1236,7 @@ class CS3IPlayer : IPlayer {
         }
     }
 
+    @SuppressLint("UnsafeOptInUsageError")
     private fun getSubSources(
         onlineSourceFactory: HttpDataSource.Factory?,
         offlineSourceFactory: DataSource.Factory?,
@@ -1243,6 +1292,7 @@ class CS3IPlayer : IPlayer {
         return exoPlayer != null
     }
 
+    @SuppressLint("UnsafeOptInUsageError")
     private fun loadOnlinePlayer(context: Context, link: ExtractorLink) {
         Log.i(TAG, "loadOnlinePlayer $link")
         try {
@@ -1259,7 +1309,7 @@ class CS3IPlayer : IPlayer {
                 HttpsURLConnection.setDefaultSSLSocketFactory(sslContext.socketFactory)
             }
 
-            val mime = when(link.type) {
+            val mime = when (link.type) {
                 ExtractorLinkType.M3U8 -> MimeTypes.APPLICATION_M3U8
                 ExtractorLinkType.DASH -> MimeTypes.APPLICATION_MPD
                 ExtractorLinkType.VIDEO -> MimeTypes.VIDEO_MP4
@@ -1267,12 +1317,29 @@ class CS3IPlayer : IPlayer {
                 ExtractorLinkType.MAGNET -> throw IllegalArgumentException("No magnet support")
             }
 
-            val mediaItems = if (link is ExtractorLinkPlayList) {
-                link.playlist.map {
+
+            val mediaItems = when (link) {
+                is ExtractorLinkPlayList -> link.playlist.map {
                     MediaItemSlice(getMediaItem(mime, it.url), it.durationUs)
                 }
-            } else {
-                listOf(
+
+                is DrmExtractorLink -> {
+                    listOf(
+                        // Single sliced list with unset length
+                        MediaItemSlice(
+                            getMediaItem(mime, link.url), Long.MIN_VALUE,
+                            drm = DrmMetadata(
+                                kid = link.kid,
+                                key = link.key,
+                                uuid = link.uuid ?: C.CLEARKEY_UUID,
+                                kty = link.kty,
+                                keyRequestParameters = link.keyRequestParameters
+                            )
+                        )
+                    )
+                }
+
+                else -> listOf(
                     // Single sliced list with unset length
                     MediaItemSlice(getMediaItem(mime, link.url), Long.MIN_VALUE)
                 )
