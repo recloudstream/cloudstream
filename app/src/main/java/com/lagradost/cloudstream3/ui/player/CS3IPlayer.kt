@@ -1331,7 +1331,7 @@ class CS3IPlayer : IPlayer {
                             drm = DrmMetadata(
                                 kid = link.kid,
                                 key = link.key,
-                                uuid = link.uuid ?: C.CLEARKEY_UUID,
+                                uuid = link.uuid,
                                 kty = link.kty,
                                 keyRequestParameters = link.keyRequestParameters
                             )
