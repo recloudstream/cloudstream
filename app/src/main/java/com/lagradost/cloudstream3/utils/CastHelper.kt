@@ -55,7 +55,11 @@ object CastHelper {
 
         val builder = MediaInfo.Builder(link.url)
             .setStreamType(MediaInfo.STREAM_TYPE_BUFFERED)
-            .setContentType(if (link.isM3u8) MimeTypes.APPLICATION_M3U8 else MimeTypes.VIDEO_MP4)
+            .setContentType(when(link.type) {
+                ExtractorLinkType.M3U8 -> MimeTypes.APPLICATION_M3U8
+                ExtractorLinkType.DASH -> MimeTypes.APPLICATION_MPD
+                else -> MimeTypes.VIDEO_MP4
+            })
             .setMetadata(movieMetadata)
             .setMediaTracks(tracks)
         data?.let {
