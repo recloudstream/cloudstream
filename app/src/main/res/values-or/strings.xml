@@ -153,4 +153,9 @@
     <string name="updates_settings">ଆପ୍ ଅଦ୍ୟତନ ଦେଖାଇବା</string>
     <string name="update_started">ଅଦ୍ୟତନ ଆରମ୍ଭ ହୋଇଛି</string>
     <string name="search_hint">ସନ୍ଧାନ କରିବା…</string>
+    <string name="skip_type_recap">ସଂକ୍ଷିପ୍ତବୃତ୍ତି</string>
+    <string name="play_movie_button">ଚଳଚ୍ଚିତ୍ର ଚଲାଅ</string>
+    <string name="search_hint_site" formatted="true">%s ସନ୍ଧାନ କରିବା…</string>
+    <string name="next_episode">ପରବର୍ତ୍ତୀ ଅଧ୍ୟାୟ</string>
+    <string name="no_data">କୌଣସି ତଥ୍ୟ ନାହିଁ</string>
 </resources>
