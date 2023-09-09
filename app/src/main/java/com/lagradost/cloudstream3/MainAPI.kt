@@ -213,7 +213,7 @@ object APIHolder {
                 } ?: false
 
                 val matchingTypes = types?.any { it.name.equals(media.format, true) } == true
-                if(lessAccurate) matchingTitles || (matchingTypes && matchingYears) else matchingTitles && matchingTypes && matchingYears
+                if(lessAccurate) matchingTitles || matchingTypes && matchingYears else matchingTitles && matchingTypes && matchingYears
             } ?: return null
 
             Tracker(res.idMal, res.id.toString(), res.coverImage?.extraLarge ?: res.coverImage?.large, res.bannerImage)
