@@ -227,7 +227,6 @@ data class ExtractorLinkPlayList(
     val playlist: List<PlayListItem>,
     override val referer: String,
     override val quality: Int,
-    val isM3u8: Boolean = false,
     override val headers: Map<String, String> = mapOf(),
     /** Used for getExtractorVerifierJob() */
     override val extractorData: String? = null,
