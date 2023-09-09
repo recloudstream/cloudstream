@@ -378,6 +378,9 @@ open class ExtractorLink constructor(
     open val extractorData: String? = null,
     open val type: ExtractorLinkType,
 ) : VideoDownloadManager.IDownloadableMinimum {
+    val isM3u8 : Boolean get() = type == ExtractorLinkType.M3U8
+    val isDash : Boolean get() = type == ExtractorLinkType.DASH
+
     constructor(
         source: String,
         name: String,
