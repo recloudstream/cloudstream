@@ -3,7 +3,6 @@ package com.lagradost.cloudstream3.ui.result
 import android.animation.ValueAnimator
 import android.content.Context
 import android.content.res.Configuration
-import android.graphics.Rect
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
@@ -12,6 +11,7 @@ import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.ui.player.CSPlayerEvent
+import com.lagradost.cloudstream3.ui.player.PlayerEventSource
 import com.lagradost.cloudstream3.ui.player.SubtitleData
 import com.lagradost.cloudstream3.utils.IOnBackPressed
 
@@ -32,7 +32,7 @@ open class ResultTrailerPlayer : ResultFragmentPhone(), IOnBackPressed {
 
     override fun prevEpisode() {}
 
-    override fun playerPositionChanged(posDur: Pair<Long, Long>) {}
+    override fun playerPositionChanged(position: Long, duration : Long) {}
 
     override fun nextMirror() {}
 
@@ -99,8 +99,8 @@ open class ResultTrailerPlayer : ResultFragmentPhone(), IOnBackPressed {
         }
     }
 
-    override fun playerDimensionsLoaded(widthHeight: Pair<Int, Int>) {
-        playerWidthHeight = widthHeight
+    override fun playerDimensionsLoaded(width: Int, height : Int) {
+        playerWidthHeight = width to height
         fixPlayerSize()
     }
 
@@ -164,7 +164,7 @@ open class ResultTrailerPlayer : ResultFragmentPhone(), IOnBackPressed {
 
         playerBinding?.playerIntroPlay?.setOnClickListener {
             playerBinding?.playerIntroPlay?.isGone = true
-            player.handleEvent(CSPlayerEvent.Play)
+            player.handleEvent(CSPlayerEvent.Play, PlayerEventSource.UI)
             updateUIVisibility()
             fixPlayerSize()
         }
