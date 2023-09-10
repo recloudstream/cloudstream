@@ -9,7 +9,7 @@
         android:summaryOn="@string/bug_report_settings_on"
         android:title="@string/pref_disable_acra" />
 
-    <PreferenceCategory
+    <PreferenceCategory 
         android:title="@string/pref_category_app_updates">
         <Preference
             android:title="@string/check_for_update"
@@ -37,7 +37,7 @@
             app:key="@string/auto_update_key" />
     </PreferenceCategory>
 
-    <PreferenceCategory
+    <PreferenceCategory 
         android:title="@string/pref_category_backup">
         <Preference
             android:icon="@drawable/baseline_save_as_24"
@@ -45,24 +45,19 @@
             android:title="@string/backup_settings" />
 
         <Preference
-            android:icon="@drawable/baseline_save_as_24"
-            android:key="@string/automatic_backup_key"
-            android:title="@string/backup_frequency" />
-
-        <Preference
             android:icon="@drawable/baseline_restore_page_24"
             android:key="@string/restore_key"
             android:title="@string/restore_settings" />
     </PreferenceCategory>
 
-    <PreferenceCategory
+    <PreferenceCategory 
         android:title="@string/pref_category_extensions">
         <SwitchPreference
             android:defaultValue="true"
             android:icon="@drawable/ic_baseline_extension_24"
             android:key="@string/auto_update_plugins_key"
             android:title="@string/automatic_plugin_updates" />
-
+        
         <Preference
             android:icon="@drawable/ic_baseline_extension_24"
             android:key="@string/auto_download_plugins_key"
@@ -70,7 +65,7 @@
             android:summary="@string/automatic_plugin_download_summary" />
     </PreferenceCategory>
 
-    <PreferenceCategory
+    <PreferenceCategory 
         android:title="@string/pref_category_actions">
         <Preference
             android:icon="@drawable/baseline_description_24"

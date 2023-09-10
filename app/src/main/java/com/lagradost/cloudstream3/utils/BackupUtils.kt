@@ -10,7 +10,6 @@ import androidx.annotation.WorkerThread
 import androidx.fragment.app.FragmentActivity
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.module.kotlin.readValue
-import com.lagradost.cloudstream3.AcraApplication.Companion.getActivity
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError
@@ -91,11 +90,9 @@ object BackupUtils {
     )
 
     @Suppress("UNCHECKED_CAST")
-    private fun getBackup(context: Context?): BackupFile? {
-        if (context == null) return null
-
-        val allData = context.getSharedPrefs().all.filter { it.key.isTransferable() }
-        val allSettings = context.getDefaultSharedPrefs().all.filter { it.key.isTransferable() }
+    fun Context.getBackup(): BackupFile {
+        val allData = getSharedPrefs().all.filter { it.key.isTransferable() }
+        val allSettings = getDefaultSharedPrefs().all.filter { it.key.isTransferable() }
 
         val allDataSorted = BackupVars(
             allData.filter { it.value is Boolean } as? Map<String, Boolean>,
@@ -122,50 +119,46 @@ object BackupUtils {
     }
 
     @WorkerThread
-    fun restore(
-        context: Context?,
+    fun Context.restore(
         backupFile: BackupFile,
         restoreSettings: Boolean,
         restoreDataStore: Boolean
     ) {
-        if (context == null) return
         if (restoreSettings) {
-            context.restoreMap(backupFile.settings._Bool, true)
-            context.restoreMap(backupFile.settings._Int, true)
-            context.restoreMap(backupFile.settings._String, true)
-            context.restoreMap(backupFile.settings._Float, true)
-            context.restoreMap(backupFile.settings._Long, true)
-            context.restoreMap(backupFile.settings._StringSet, true)
+            restoreMap(backupFile.settings._Bool, true)
+            restoreMap(backupFile.settings._Int, true)
+            restoreMap(backupFile.settings._String, true)
+            restoreMap(backupFile.settings._Float, true)
+            restoreMap(backupFile.settings._Long, true)
+            restoreMap(backupFile.settings._StringSet, true)
         }
 
         if (restoreDataStore) {
-            context.restoreMap(backupFile.datastore._Bool)
-            context.restoreMap(backupFile.datastore._Int)
-            context.restoreMap(backupFile.datastore._String)
-            context.restoreMap(backupFile.datastore._Float)
-            context.restoreMap(backupFile.datastore._Long)
-            context.restoreMap(backupFile.datastore._StringSet)
+            restoreMap(backupFile.datastore._Bool)
+            restoreMap(backupFile.datastore._Int)
+            restoreMap(backupFile.datastore._String)
+            restoreMap(backupFile.datastore._Float)
+            restoreMap(backupFile.datastore._Long)
+            restoreMap(backupFile.datastore._StringSet)
         }
     }
 
     @SuppressLint("SimpleDateFormat")
-    fun backup(context: Context?) = ioSafe {
-        if (context == null) return@ioSafe
-
+    fun FragmentActivity.backup() = ioSafe {
         var fileStream: OutputStream? = null
         var printStream: PrintWriter? = null
         try {
-            if (!context.checkWrite()) {
+            if (!checkWrite()) {
                 showToast(R.string.backup_failed, Toast.LENGTH_LONG)
-                context.getActivity()?.requestRW()
+                requestRW()
                 return@ioSafe
             }
 
             val date = SimpleDateFormat("yyyy_MM_dd_HH_mm").format(Date(currentTimeMillis()))
             val ext = "txt"
             val displayName = "CS3_Backup_${date}"
-            val backupFile = getBackup(context)
-            val stream = setupStream(context, displayName, null, ext, false)
+            val backupFile = getBackup()
+            val stream = setupStream(this@backup, displayName, null, ext, false)
 
             fileStream = stream.openNew()
             printStream = PrintWriter(fileStream)
@@ -205,8 +198,7 @@ object BackupUtils {
                             val restoredValue =
                                 mapper.readValue<BackupFile>(input)
 
-                            restore(
-                                activity,
+                            activity.restore(
                                 restoredValue,
                                 restoreSettings = true,
                                 restoreDataStore = true

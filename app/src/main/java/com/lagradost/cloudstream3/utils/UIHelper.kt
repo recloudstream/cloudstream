@@ -71,7 +71,7 @@ object UIHelper {
     val Int.toDp: Int get() = (this / Resources.getSystem().displayMetrics.density).toInt()
     val Float.toDp: Float get() = (this / Resources.getSystem().displayMetrics.density)
 
-    fun Context.checkWrite(): Boolean {
+    fun Activity.checkWrite(): Boolean {
         return (ContextCompat.checkSelfPermission(
             this,
             Manifest.permission.WRITE_EXTERNAL_STORAGE
