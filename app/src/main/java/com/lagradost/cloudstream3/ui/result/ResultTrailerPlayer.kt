@@ -9,6 +9,8 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
+import com.lagradost.cloudstream3.CommonActivity.screenHeight
+import com.lagradost.cloudstream3.CommonActivity.screenWidth
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.ui.player.CSPlayerEvent
 import com.lagradost.cloudstream3.ui.player.PlayerEventSource
