@@ -7,6 +7,7 @@ import android.graphics.drawable.AnimatedVectorDrawable
 import android.media.metrics.PlaybackErrorEvent
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -25,8 +26,10 @@ import androidx.media3.common.PlaybackException
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.session.MediaSession
 import androidx.media3.ui.AspectRatioFrameLayout
+import androidx.media3.ui.DefaultTimeBar
 import androidx.media3.ui.PlayerView
 import androidx.media3.ui.SubtitleView
+import androidx.media3.ui.TimeBar
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.CommonActivity.canEnterPipMode
@@ -371,6 +374,7 @@ abstract class AbstractPlayerFragment(
      * do note that this only receives events for UI changes,
      * and returning early WONT stop it from changing in eg the player time or pause status */
     open fun mainCallback(event : PlayerEvent) {
+        Log.i(TAG, "Handle event: $event")
         when(event) {
             is ResizedEvent -> {
                 playerDimensionsLoaded(event.width, event.height)
@@ -433,7 +437,7 @@ abstract class AbstractPlayerFragment(
         }
     }
 
-    @SuppressLint("SetTextI18n")
+    @SuppressLint("SetTextI18n", "UnsafeOptInUsageError")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         resizeMode = getKey(RESIZE_MODE_KEY) ?: 0
         resize(resizeMode, false)
@@ -453,6 +457,19 @@ abstract class AbstractPlayerFragment(
             subView = playerView?.findViewById(R.id.exo_subtitles)
             subStyle = SubtitlesFragment.getCurrentSavedStyle()
             player.initSubtitles(subView, subtitleHolder, subStyle)
+
+            /** this might seam a bit fucky and that is because it is, the seek event is captured twice, once by the player
+             * and once by the UI even if it should only be registered once by the UI */
+            playerView?.findViewById<DefaultTimeBar>(R.id.exo_progress)?.addListener(object : TimeBar.OnScrubListener {
+                override fun onScrubStart(timeBar: TimeBar, position: Long) = Unit
+                override fun onScrubMove(timeBar: TimeBar, position: Long) = Unit
+                override fun onScrubStop(timeBar: TimeBar, position: Long, canceled: Boolean) {
+                    if (canceled) return
+                    val playerDuration = player.getDuration() ?: return
+                    val playerPosition = player.getPosition() ?: return
+                    mainCallback(PositionEvent(source = PlayerEventSource.UI, durationMs = playerDuration, fromMs = playerPosition, toMs = position))
+                }
+            })
 
             SubtitlesFragment.applyStyleEvent += ::onSubStyleChanged
 
