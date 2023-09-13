@@ -570,4 +570,5 @@
     <string name="unable_to_inflate">UI nu a putut fi creată corect, acesta este un BUG MAJOR și trebuie raportat imediat %s</string>
     <string name="automatic_plugin_download_mode_title">Selectați modul de filtrare a descărcării plugin-urilor</string>
     <string name="default_account">@string/default_subtitles</string>
+    <string name="already_voted">Ați votat deja</string>
 </resources>

@@ -540,7 +540,7 @@
 \n
 \nREMARQUE : Si la somme est de 10 ou plus, le joueur sautera automatiquement le chargement lorsque ce lien est chargé !</string>
     <string name="no_plugins_found_error">Aucun plugin trouvé dans ce dossier</string>
-    <string name="no_repository_found_error">Dossier non trouvé, vérifiez l\'url et essayé un VPN</string>
+    <string name="no_repository_found_error">Dépôt introuvable, vérifiez l\'URL et essayez avec un VPN</string>
     <string name="mobile_data">Données mobiles</string>
     <string name="set_default">Définir par défaut</string>
     <string name="use">Utiliser</string>
@@ -552,4 +552,6 @@
     <string name="qualities">Qualités</string>
     <string name="unable_to_inflate">L\'interface utilisateur n\'a pas pu être créée correctement. Il s\'agit d\'un bogue majeur qui doit être signalé immédiatement %s</string>
     <string name="automatic_plugin_download_mode_title">Sélectionnez le mode pour filtrer le téléchargement des plugins</string>
+    <string name="profile_background_des">Fond de profil</string>
+    <string name="default_account">@string/default_subtitles</string>
 </resources>

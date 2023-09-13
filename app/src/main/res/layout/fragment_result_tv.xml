@@ -128,7 +128,7 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
     <FrameLayout
         android:id="@+id/background_poster_holder"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="150dp"
         android:visibility="visible">
 
         <ImageView
@@ -147,8 +147,6 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
             android:src="@drawable/background_shadow">
 
         </ImageView>
-
-
     </FrameLayout>
 
 
@@ -411,7 +409,7 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
                         android:padding="5dp"
                         android:requiresFadingEdge="vertical"
                         android:textColor="?attr/textColor"
-                        android:textSize="12sp"
+                        android:textSize="16sp"
                         tools:text="Ryan Quicksave Romano is an eccentric adventurer with a strange power: he can create a save-point in time and redo his life whenever he dies. Arriving in New Rome, the glitzy capital of sin of a rebuilding Europe, he finds the city torn between mega-corporations, sponsored heroes, superpowered criminals, and true monsters. It's a time of chaos, where potions can grant the power to rule the world and dangers lurk everywhere. " />
 
                     <com.google.android.material.chip.ChipGroup
@@ -537,18 +535,32 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
-    <ImageView
+    <FrameLayout
+        android:visibility="gone"
+        tools:visibility="visible"
         android:id="@+id/episodes_shadow"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="end"
-        android:clickable="false"
-        android:focusable="false"
-        android:focusableInTouchMode="false"
-        android:importantForAccessibility="no"
-        android:src="@drawable/episodes_shadow"
-        android:visibility="gone"
-        tools:visibility="visible" />
+        android:layout_height="match_parent">
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="end"
+            android:clickable="false"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:importantForAccessibility="no"
+            android:src="@drawable/episodes_shadow"/>
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="end"
+            android:clickable="false"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:importantForAccessibility="no"
+            android:src="@drawable/episodes_shadow"/>
+    </FrameLayout>
+
 
     <LinearLayout
         android:id="@+id/episode_holder_tv"

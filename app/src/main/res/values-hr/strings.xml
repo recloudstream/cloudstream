@@ -566,4 +566,15 @@
     <string name="profile_background_des">Pozadina profila</string>
     <string name="unable_to_inflate">Nije bilo moguće ispravno izraditi korisničko sučelje. Ovo je ZNAČAJNA GREŠKA i treba se odmah prijaviti %s</string>
     <string name="automatic_plugin_download_mode_title">Odaberi modus za filtriranje preuzimanja dodataka</string>
+    <string name="disable">Onemogući</string>
+    <string name="default_account">@string/default_subtitles</string>
+    <string name="no_plugins_found_error">U repozitoriju nisu pronađeni dodaci</string>
+    <string name="no_repository_found_error">Repozitorij nije pronađen, provjerite URL i pokušajte koristiti VPN</string>
+    <string name="quality_profile_help">Ovdje možete promijeniti način na koji su izvori poredani. Ako video ima viši prioritet, pojavit će se više u odabiru izvora. Zbroj prioriteta izvora i prioriteta kvalitete je video prioritet.
+\n
+\nIzvor A: 3
+\nKvaliteta B: 7
+\nImat će kombinirani prioritet videozapisa od 10.
+\n
+\nNAPOMENA: Ako je zbroj 10 ili više, video player će automatski preskočiti učitavanje kada se ta poveznica učita!</string>
 </resources>
