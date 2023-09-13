@@ -551,7 +551,7 @@ class GeneratorPlayer : FullScreenPlayer() {
             //println("CURRENT SELECTED :$currentSelectedSubtitles of $currentSubs")
             context?.let { ctx ->
                 val isPlaying = player.getIsPlaying()
-                player.handleEvent(CSPlayerEvent.Pause)
+                player.handleEvent(CSPlayerEvent.Pause, PlayerEventSource.UI)
                 val currentSubtitles = sortSubs(currentSubs)
 
                 val sourceDialog = Dialog(ctx, R.style.AlertDialogCustomBlack)
@@ -883,7 +883,7 @@ class GeneratorPlayer : FullScreenPlayer() {
     }
 
 
-    override fun playerError(exception: Exception) {
+    override fun playerError(exception: Throwable) {
         Log.i(TAG, "playerError = $currentSelectedLink")
         super.playerError(exception)
     }
@@ -945,14 +945,13 @@ class GeneratorPlayer : FullScreenPlayer() {
 
     var maxEpisodeSet: Int? = null
     var hasRequestedStamps: Boolean = false
-    override fun playerPositionChanged(posDur: Pair<Long, Long>) {
+    override fun playerPositionChanged(position: Long, duration : Long) {
         // Don't save livestream data
         if ((currentMeta as? ResultEpisode)?.tvType?.isLiveStream() == true) return
 
         // Don't save NSFW data
         if ((currentMeta as? ResultEpisode)?.tvType == TvType.NSFW) return
 
-        val (position, duration) = posDur
         if (duration <= 0L) return // idk how you achieved this, but div by zero crash
         if (!hasRequestedStamps) {
             hasRequestedStamps = true
@@ -1209,8 +1208,8 @@ class GeneratorPlayer : FullScreenPlayer() {
         }
     }
 
-    override fun playerDimensionsLoaded(widthHeight: Pair<Int, Int>) {
-        setPlayerDimen(widthHeight)
+    override fun playerDimensionsLoaded(width: Int, height : Int) {
+        setPlayerDimen(width to height)
     }
 
     private fun unwrapBundle(savedInstanceState: Bundle?) {

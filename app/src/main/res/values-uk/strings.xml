@@ -18,7 +18,7 @@
     <string name="preview_background_img_des">Попередній перегляд фону</string>
     <string name="player_speed_text_format" formatted="true">Швидкість (%.2fx)</string>
     <string name="new_update_format" formatted="true">Знайдено нове оновлення!
-\n%s -&gt; %s</string>
+\n%s –&gt; %s</string>
     <string name="title_search">Пошук</string>
     <string name="title_downloads">Завантаження</string>
     <string name="duration_format" formatted="true">%d хв</string>
@@ -37,7 +37,7 @@
     <string name="type_dropped">Покинуто</string>
     <string name="play_movie_button">Переглянути фільм</string>
     <string name="play_trailer_button">Переглянути трейлер</string>
-    <string name="play_torrent_button">Трансляція через торрент</string>
+    <string name="play_torrent_button">Трансляція через торент</string>
     <string name="reload_error">Повторити підключення…</string>
     <string name="go_back">Назад</string>
     <string name="play_episode">Переглянути епізод</string>
@@ -75,7 +75,7 @@
     <string name="continue_watching">Продовжити перегляд</string>
     <string name="action_remove_watching">Вилучити</string>
     <string name="action_open_watching">Детальніше</string>
-    <string name="vpn_torrent">Цей постачальник є торрентом, рекомендується VPN</string>
+    <string name="vpn_torrent">Цей постачальник є торентом, рекомендується використовувати VPN</string>
     <string name="torrent_plot">Опис</string>
     <string name="normal_no_plot">Сюжет не знайдено</string>
     <string name="torrent_no_plot">Опис не знайдено</string>
@@ -86,9 +86,9 @@
     <string name="chromecast_subtitles_settings">Субтитри Chromecast</string>
     <string name="chromecast_subtitles_settings_des">Налаштування субтитрів Chromecast</string>
     <string name="eigengraumode_settings">Режим Eigengravy</string>
-    <string name="swipe_to_change_settings">Проведіть пальцем, щоб змінити налаштування</string>
+    <string name="swipe_to_change_settings">Проведіть, щоб змінити налаштування</string>
     <string name="swipe_to_change_settings_des">Проведіть вгору або вниз з лівого або правого боку, щоб змінити яскравість чи гучність</string>
-    <string name="autoplay_next_settings_des">Відтворювати наступний епізод після закінчення поточного</string>
+    <string name="autoplay_next_settings_des">Відтворює наступний епізод після закінчення поточного</string>
     <string name="title_home">Головна</string>
     <string name="app_name">CloudStream</string>
     <string name="filler" formatted="true">Філер</string>
@@ -130,7 +130,7 @@
     <string name="picture_in_picture">Картинка в картинці</string>
     <string name="player_subtitles_settings_des">Налаштування субтитрів плеєра</string>
     <string name="eigengraumode_settings_des">Додає опцію керування швидкістю в плеєрі</string>
-    <string name="swipe_to_seek_settings">Проведіть пальцем, щоб перемотати</string>
+    <string name="swipe_to_seek_settings">Проведіть, щоб перемотати</string>
     <string name="double_tap_to_seek_settings">Двічі торкніться, щоб перемотати</string>
     <string name="double_tap_to_pause_settings">Двічі торкніться для паузи</string>
     <string name="double_tap_to_seek_amount_settings">Крок перемотки (секунди)</string>
@@ -224,7 +224,7 @@
     <string name="double_tap_to_seek_settings_des">Двічі торкніться праворуч або ліворуч, щоб перемотати відео вперед або назад</string>
     <string name="use_system_brightness_settings_des">Використовуйте системну яскравість у плеєрі замість темної накладки</string>
     <string name="restore_success">Завантажено файл резервної копії</string>
-    <string name="torrent">Торренти</string>
+    <string name="torrent">Торенти</string>
     <string name="episode_sync_settings_des">Автоматична синхронізація прогресу поточного епізоду</string>
     <string name="backup_failed">Відсутні дозволи на зберігання. Будь ласка, спробуйте ще раз.</string>
     <string name="kitsu_settings">Показувати постери від Kitsu</string>
@@ -256,7 +256,7 @@
     <string name="nsfw">NSFW</string>
     <string name="movies_singular">Фільм</string>
     <string name="ova_singular">OVA</string>
-    <string name="torrent_singular">Торрент</string>
+    <string name="torrent_singular">Торент</string>
     <string name="show_hd">Мітка якості</string>
     <string name="nsfw_singular">NSFW</string>
     <string name="episode_action_play_in_browser">Переглянути в браузері</string>
@@ -294,9 +294,9 @@
     <string name="primary_color_settings">Основний колір</string>
     <string name="app_theme_settings">Тема застосунку</string>
     <string name="bottom_title_settings">Розташування назви постера</string>
-    <string name="bottom_title_settings_des">Розмістіть назву під постером</string>
+    <string name="bottom_title_settings_des">Розмістити назву під постером</string>
     <string name="example_password">Пароль123</string>
-    <string name="example_username">Моє круте ім\'я</string>
+    <string name="example_username">Моє круте ім’я</string>
     <string name="example_email">hello@world.com</string>
     <string name="example_site_name">Мій крутий сайт</string>
     <string name="example_lang_name">Код мови (uk)</string>
@@ -348,9 +348,9 @@
     <string name="limit_title_rez">Роздільна здатність відеоплеєра</string>
     <string name="video_buffer_length_settings">Довжина буфера відео</string>
     <string name="video_buffer_clear_settings">Очистити кеш відео та зображень</string>
-    <string name="video_ram_description">Спричиняє збої, якщо встановлено занадто високе значення на пристроях із малим об\'ємом пам\'яті, наприклад Android TV.</string>
+    <string name="video_ram_description">Спричиняє збої, якщо встановлено занадто високе значення на пристроях із малим об’ємом пам’яті, наприклад Android TV.</string>
     <string name="dns_pref_summary">Корисно для обходу блокувань провайдера</string>
-    <string name="video_disk_description">Спричиняє збої, якщо встановлено занадто високе значення на пристроях із малим об\'ємом вільної пам\'яті, наприклад Android TV.</string>
+    <string name="video_disk_description">Спричиняє збої, якщо встановлено занадто високе значення на пристроях із малим об’ємом вільної пам’яті, наприклад Android TV.</string>
     <string name="dns_pref">DNS через HTTPS</string>
     <string name="download_path_pref">Шлях завантаження</string>
     <string name="add_site_summary">Додайте клон існуючого сайту, з іншою URL-адресою</string>
@@ -374,10 +374,10 @@
     <string name="sync_score">Оцінений</string>
     <string name="player_load_subtitles">Завантажити з файлу</string>
     <string name="max">Макс.</string>
-    <string name="subtitles_example_text">Щастям б\'єш жук їх глицю в фон й ґедзь пріч</string>
+    <string name="subtitles_example_text">Щастям б’єш жук їх глицю в фон й ґедзь пріч</string>
     <string name="subtitle_offset_hint">1000 мс</string>
-    <string name="subtitle_offset_extra_hint_later_format">Використовуйте цей параметр, якщо субтитри з\'являються на %d мс занадто рано</string>
-    <string name="subtitle_offset_extra_hint_before_format">Використовуйте це, якщо субтитри з\'являються із запізненням на %d мс</string>
+    <string name="subtitle_offset_extra_hint_later_format">Використовуйте цей параметр, якщо субтитри з’являються на %d мс занадто рано</string>
+    <string name="subtitle_offset_extra_hint_before_format">Використовуйте це, якщо субтитри з’являються із запізненням на %d мс</string>
     <string name="player_loaded_subtitles" formatted="true">Завантажено %s</string>
     <string name="actor_supporting">Підтримка</string>
     <string name="actor_background">Фон</string>
@@ -507,8 +507,8 @@
     <string name="safe_mode_file">Файл безпечного режиму знайдено!
 \nРозширеня не завантажуються під час запуску, доки файл не буде видалено.</string>
     <string name="pref_category_android_tv">Android TV</string>
-    <string name="android_tv_interface_off_seek_settings">Плеєр сховано - обсяг перемотки</string>
-    <string name="android_tv_interface_on_seek_settings">Плеєр показано - обсяг перемотки</string>
+    <string name="android_tv_interface_off_seek_settings">Плеєр сховано – обсяг перемотки</string>
+    <string name="android_tv_interface_on_seek_settings">Плеєр показано – обсяг перемотки</string>
     <string name="android_tv_interface_on_seek_settings_summary">Обсяг перемотки, який використовується, коли плеєр видимий</string>
     <string name="android_tv_interface_off_seek_settings_summary">Обсяг перемотки, який використовується, коли плеєр прихований</string>
     <string name="test_failed">Тест провалено</string>
@@ -532,7 +532,7 @@
     <string name="set_default">Встановити за замовчуванням</string>
     <string name="profiles">Профілі</string>
     <string name="help">Допомога</string>
-    <string name="quality_profile_help">Тут ви можете змінити порядок джерел. Якщо відео має вищий пріоритет, воно з\'явиться вище у списку джерел. Сума пріоритету джерела та пріоритету якості є пріоритетом відео.
+    <string name="quality_profile_help">Тут ви можете змінити порядок джерел. Якщо відео має вищий пріоритет, воно з’явиться вище у списку джерел. Сума пріоритету джерела та пріоритету якості є пріоритетом відео.
 \n
 \nДжерело A: 3
 \nЯкість B: 7

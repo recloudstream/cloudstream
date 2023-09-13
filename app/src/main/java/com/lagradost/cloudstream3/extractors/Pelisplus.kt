@@ -5,6 +5,7 @@ import com.lagradost.cloudstream3.amap
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.mvvm.suspendSafeApiCall
 import com.lagradost.cloudstream3.utils.ExtractorLink
+import com.lagradost.cloudstream3.utils.INFER_TYPE
 import com.lagradost.cloudstream3.utils.extractorApis
 import com.lagradost.cloudstream3.utils.getQualityFromName
 import com.lagradost.cloudstream3.utils.loadExtractor
@@ -66,7 +67,7 @@ open class Pelisplus(val mainUrl: String) {
                                 href,
                                 page.url,
                                 getQualityFromName(qual),
-                                element.attr("href").contains(".m3u8")
+                                type = INFER_TYPE
                             )
                         )
                     }

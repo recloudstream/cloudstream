@@ -78,10 +78,10 @@ class PlayerGeneratorViewModel : ViewModel() {
             if (generator?.hasCache == true && generator?.hasNext() == true) {
                 safeApiCall {
                     generator?.generateLinks(
+                        type = LoadType.InApp,
                         clearCache = false,
-                        isCasting = false,
-                        {},
-                        {},
+                        callback = {},
+                        subtitleCallback = {},
                         offset = 1
                     )
                 }
@@ -147,7 +147,7 @@ class PlayerGeneratorViewModel : ViewModel() {
         }
     }
 
-    fun loadLinks(clearCache: Boolean = false, isCasting: Boolean = false) {
+    fun loadLinks(clearCache: Boolean = false, type: LoadType = LoadType.InApp) {
         Log.i(TAG, "loadLinks")
         currentJob?.cancel()
 
@@ -162,14 +162,14 @@ class PlayerGeneratorViewModel : ViewModel() {
             // load more data
             _loadingLinks.postValue(Resource.Loading())
             val loadingState = safeApiCall {
-                generator?.generateLinks(clearCache = clearCache, isCasting = isCasting, {
+                generator?.generateLinks(type = type,clearCache = clearCache, callback =  {
                     currentLinks.add(it)
                     // Clone to prevent ConcurrentModificationException
                     normalSafeApiCall {
                         // Extra normalSafeApiCall since .toSet() iterates.
                         _currentLinks.postValue(currentLinks.toSet())
                     }
-                }, {
+                }, subtitleCallback =  {
                     currentSubs.add(it)
                     normalSafeApiCall {
                         _currentSubs.postValue(currentSubs.toSet())

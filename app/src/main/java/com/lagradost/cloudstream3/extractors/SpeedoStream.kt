@@ -7,14 +7,21 @@ import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.M3u8Helper
 
+class SpeedoStream2 : SpeedoStream() {
+    override val mainUrl = "https://speedostream.mom"
+}
+
 class SpeedoStream1 : SpeedoStream() {
     override val mainUrl = "https://speedostream.pm"
 }
 
 open class SpeedoStream : ExtractorApi() {
     override val name = "SpeedoStream"
-    override val mainUrl = "https://speedostream.mom"
+    override val mainUrl = "https://speedostream.bond"
     override val requiresReferer = true
+
+    // .bond, .pm, .mom redirect to .bond
+    private val hostUrl = "https://speedostream.bond"
 
     override suspend fun getUrl(url: String, referer: String?): List<ExtractorLink> {
         val sources = mutableListOf<ExtractorLink>()
@@ -26,7 +33,7 @@ open class SpeedoStream : ExtractorApi() {
                     M3u8Helper.generateM3u8(
                         name,
                         it.file,
-                        "$mainUrl/",
+                        "$hostUrl/",
                     ).forEach { m3uData -> sources.add(m3uData) }
                 }
             }
@@ -37,6 +44,4 @@ open class SpeedoStream : ExtractorApi() {
     private data class File(
         @JsonProperty("file") val file: String,
     )
-
-
 }
