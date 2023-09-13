@@ -130,8 +130,8 @@ open class ResultFragmentPhone : FullScreenPlayer() {
         return currentTrailerIndex + 1 < currentTrailers.size
     }
 
-    override fun playerError(exception: Exception) {
-        if (player.getIsPlaying()) { // because we dont want random toasts in player
+    override fun playerError(exception: Throwable) {
+        if (player.getIsPlaying()) { // because we don't want random toasts in player
             super.playerError(exception)
         } else {
             nextMirror()

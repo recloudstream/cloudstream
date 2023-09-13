@@ -22,8 +22,10 @@ import com.lagradost.cloudstream3.utils.*
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
 import com.lagradost.cloudstream3.utils.Coroutines.mainWork
 import com.lagradost.cloudstream3.utils.Coroutines.threadSafeListOf
+import com.lagradost.nicehttp.RequestBodyTypes
 import okhttp3.Interceptor
-import org.mozilla.javascript.Scriptable
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.RequestBody.Companion.toRequestBody
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.absoluteValue
@@ -180,7 +182,7 @@ object APIHolder {
     /**
      * Get anime tracker information based on title, year and type.
      * Both titles are attempted to be matched with both Romaji and English title.
-     * Uses the consumet api.
+     * Uses the anilist api.
      *
      * @param titles uses first index to search, but if you have multiple titles and want extra guarantee to match you can also have that
      * @param types Optional parameter to narrow down the scope to Movies, TV, etc. See TrackerType.getTypes()
@@ -189,7 +191,8 @@ object APIHolder {
     suspend fun getTracker(
         titles: List<String>,
         types: Set<TrackerType>?,
-        year: Int?
+        year: Int?,
+        lessAccurate: Boolean = false
     ): Tracker? {
         return try {
             require(titles.isNotEmpty()) { "titles must no be empty when calling getTracker" }
@@ -197,28 +200,68 @@ object APIHolder {
             val mainTitle = titles[0]
             val search =
                 trackerCache[mainTitle]
-                    ?: app.get("https://api.consumet.org/meta/anilist/$mainTitle")
-                        .parsedSafe<AniSearch>()?.also {
-                            trackerCache[mainTitle] = it
-                        } ?: return null
+                    ?: searchAnilist(mainTitle)?.also {
+                        trackerCache[mainTitle] = it
+                    } ?: return null
 
-            val res = search.results?.find { media ->
-                val matchingYears = year == null || media.releaseDate == year
+            val res = search.data?.page?.media?.find { media ->
+                val matchingYears = year == null || media.seasonYear == year
                 val matchingTitles = media.title?.let { title ->
                     titles.any { userTitle ->
                         title.isMatchingTitles(userTitle)
                     }
                 } ?: false
 
-                val matchingTypes = types?.any { it.name.equals(media.type, true) } == true
-                matchingTitles && matchingTypes && matchingYears
+                val matchingTypes = types?.any { it.name.equals(media.format, true) } == true
+                if(lessAccurate) matchingTitles || matchingTypes && matchingYears else matchingTitles && matchingTypes && matchingYears
             } ?: return null
 
-            Tracker(res.malId, res.aniId, res.image, res.cover)
+            Tracker(res.idMal, res.id.toString(), res.coverImage?.extraLarge ?: res.coverImage?.large, res.bannerImage)
         } catch (t: Throwable) {
             logError(t)
             null
         }
+    }
+
+    private suspend fun searchAnilist(
+        title: String?,
+    ): AniSearch? {
+        val query = """
+        query (
+          ${'$'}page: Int = 1
+          ${'$'}search: String
+          ${'$'}sort: [MediaSort] = [POPULARITY_DESC, SCORE_DESC]
+          ${'$'}type: MediaType
+        ) {
+          Page(page: ${'$'}page, perPage: 20) {
+            media(
+              search: ${'$'}search
+              sort: ${'$'}sort
+              type: ${'$'}type
+            ) {
+              id
+              idMal
+              title { romaji english }
+              coverImage { extraLarge large }
+              bannerImage
+              seasonYear
+              format
+            }
+          }
+        }
+    """.trimIndent().trim()
+
+        val data = mapOf(
+            "query" to query,
+            "variables" to mapOf(
+                "search" to title,
+                "sort" to "SEARCH_MATCH",
+                "type" to "ANIME",
+            )
+        ).toJson().toRequestBody(RequestBodyTypes.JSON.toMediaTypeOrNull())
+
+        return app.post("https://graphql.anilist.co", requestBody = data)
+            .parsedSafe()
     }
 
 
@@ -1730,29 +1773,41 @@ data class Tracker(
     val cover: String? = null,
 )
 
-data class Title(
-    @JsonProperty("romaji") val romaji: String? = null,
-    @JsonProperty("english") val english: String? = null,
+data class AniSearch(
+    @JsonProperty("data") var data: Data? = Data()
 ) {
-    fun isMatchingTitles(title: String?): Boolean {
-        if (title == null) return false
-        return english.equals(title, true) || romaji.equals(title, true)
+    data class Data(
+        @JsonProperty("Page") var page: Page? = Page()
+    ) {
+        data class Page(
+            @JsonProperty("media") var media: ArrayList<Media> = arrayListOf()
+        ) {
+            data class Media(
+                @JsonProperty("title") var title: Title? = null,
+                @JsonProperty("id") var id: Int? = null,
+                @JsonProperty("idMal") var idMal: Int? = null,
+                @JsonProperty("seasonYear") var seasonYear: Int? = null,
+                @JsonProperty("format") var format: String? = null,
+                @JsonProperty("coverImage") var coverImage: CoverImage? = null,
+                @JsonProperty("bannerImage") var bannerImage: String? = null,
+            ) {
+                data class CoverImage(
+                    @JsonProperty("extraLarge") var extraLarge: String? = null,
+                    @JsonProperty("large") var large: String? = null,
+                )
+                data class Title(
+                    @JsonProperty("romaji") var romaji: String? = null,
+                    @JsonProperty("english") var english: String? = null,
+                ) {
+                    fun isMatchingTitles(title: String?): Boolean {
+                        if (title == null) return false
+                        return english.equals(title, true) || romaji.equals(title, true)
+                    }
+                }
+            }
+        }
     }
 }
-
-data class Results(
-    @JsonProperty("id") val aniId: String? = null,
-    @JsonProperty("malId") val malId: Int? = null,
-    @JsonProperty("title") val title: Title? = null,
-    @JsonProperty("releaseDate") val releaseDate: Int? = null,
-    @JsonProperty("type") val type: String? = null,
-    @JsonProperty("image") val image: String? = null,
-    @JsonProperty("cover") val cover: String? = null,
-)
-
-data class AniSearch(
-    @JsonProperty("results") val results: ArrayList<Results>? = arrayListOf()
-)
 
 /**
  * used for the getTracker() method
