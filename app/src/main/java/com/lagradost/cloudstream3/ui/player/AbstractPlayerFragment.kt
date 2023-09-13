@@ -517,6 +517,7 @@ abstract class AbstractPlayerFragment(
         canEnterPipMode = false
         mMediaSession?.release()
         mMediaSession = null
+        playerView?.player = null
         SubtitlesFragment.applyStyleEvent -= ::onSubStyleChanged
 
         keepScreenOn(false)
