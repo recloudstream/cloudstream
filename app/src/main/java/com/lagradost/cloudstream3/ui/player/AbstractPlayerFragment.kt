@@ -19,14 +19,14 @@ import androidx.annotation.LayoutRes
 import androidx.annotation.StringRes
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.preference.PreferenceManager
-import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
 import androidx.media3.common.PlaybackException
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.session.MediaSession
 import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.PlayerView
 import androidx.media3.ui.SubtitleView
+import androidx.preference.PreferenceManager
+import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.CommonActivity.canEnterPipMode
@@ -446,6 +446,7 @@ abstract class AbstractPlayerFragment(
         canEnterPipMode = false
         mMediaSession?.release()
         mMediaSession = null
+        playerView?.player = null
         SubtitlesFragment.applyStyleEvent -= ::onSubStyleChanged
 
         keepScreenOn(false)
