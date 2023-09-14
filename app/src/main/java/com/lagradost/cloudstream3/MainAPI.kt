@@ -179,6 +179,13 @@ object APIHolder {
 
     private var trackerCache: HashMap<String, AniSearch> = hashMapOf()
 
+    /** backwards compatibility, use getTracker4 instead */
+    suspend fun getTracker(
+        titles: List<String>,
+        types: Set<TrackerType>?,
+        year: Int?,
+    ): Tracker? = getTracker(titles, types, year, false)
+
     /**
      * Get anime tracker information based on title, year and type.
      * Both titles are attempted to be matched with both Romaji and English title.
@@ -192,7 +199,7 @@ object APIHolder {
         titles: List<String>,
         types: Set<TrackerType>?,
         year: Int?,
-        lessAccurate: Boolean = false
+        lessAccurate: Boolean
     ): Tracker? {
         return try {
             require(titles.isNotEmpty()) { "titles must no be empty when calling getTracker" }

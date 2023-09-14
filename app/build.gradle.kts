@@ -58,8 +58,8 @@ android {
         minSdk = 21
         targetSdk = 33
 
-        versionCode = 59
-        versionName = "4.1.8"
+        versionCode = 60
+        versionName = "4.1.9"
 
         resValue("string", "app_version", "${defaultConfig.versionName}${versionNameSuffix ?: ""}")
         resValue("string", "commit_hash", "git rev-parse --short HEAD".execute() ?: "")
