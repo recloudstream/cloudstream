@@ -94,6 +94,7 @@ import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_NAVIGATE_TO
 import com.lagradost.cloudstream3.ui.home.HomeViewModel
 import com.lagradost.cloudstream3.ui.player.BasicLink
+import com.lagradost.cloudstream3.ui.player.ExtractorLinkGenerator
 import com.lagradost.cloudstream3.ui.player.GeneratorPlayer
 import com.lagradost.cloudstream3.ui.player.LinkGenerator
 import com.lagradost.cloudstream3.ui.result.LinearListLayout
@@ -130,8 +131,11 @@ import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStore.setKey
 import com.lagradost.cloudstream3.utils.DataStoreHelper.migrateResumeWatching
 import com.lagradost.cloudstream3.utils.Event
+import com.lagradost.cloudstream3.utils.ExtractorLink
+import com.lagradost.cloudstream3.utils.INFER_TYPE
 import com.lagradost.cloudstream3.utils.IOnBackPressed
 import com.lagradost.cloudstream3.utils.InAppUpdater.Companion.runAutoUpdate
+import com.lagradost.cloudstream3.utils.Qualities
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.UIHelper.changeStatusBarState
 import com.lagradost.cloudstream3.utils.UIHelper.checkWrite
@@ -1112,16 +1116,17 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                 newLocalBinding.root.viewTreeObserver.addOnGlobalFocusChangeListener { _, newFocus ->
                     // println("refocus $oldFocus -> $newFocus")
                     try {
-                        val r = Rect(0,0,0,0)
+                        val r = Rect(0, 0, 0, 0)
                         newFocus.getDrawingRect(r)
                         val x = r.centerX()
                         val y = r.centerY()
                         val dx = 0 //screenWidth / 2
                         val dy = screenHeight / 2
-                        val r2 = Rect(x-dx,y-dy,x+dx,y+dy)
+                        val r2 = Rect(x - dx, y - dy, x + dx, y + dy)
                         newFocus.requestRectangleOnScreen(r2, false)
-                       // TvFocus.current =TvFocus.current.copy(y=y.toFloat())
-                    } catch (_ : Throwable) { }
+                        // TvFocus.current =TvFocus.current.copy(y=y.toFloat())
+                    } catch (_: Throwable) {
+                    }
                     TvFocus.updateFocusView(newFocus)
                     /*var focus = newFocus
 
@@ -1561,6 +1566,26 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         } finally {
             setKey(HAS_DONE_SETUP_KEY, true)
         }
+
+        /*val defaultDirectory = "${filesDir.path}/torrent_tmp"
+        //File(defaultDirectory).deleteRecursively()
+        navigate(
+            R.id.global_to_navigation_player, GeneratorPlayer.newInstance(
+                ExtractorLinkGenerator(
+                    listOf(
+                        ExtractorLink(
+                            source = "",
+                            name = "hello world",
+                            url = "",
+                            "",
+                            Qualities.Unknown.value,
+                            type = INFER_TYPE
+                        )
+                    ),
+                    emptyList()
+                )
+            )
+        )*/
 
 //        Used to check current focus for TV
 //        main {

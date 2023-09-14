@@ -1,6 +1,7 @@
 package com.lagradost.cloudstream3.ui.player
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
 import android.net.Uri
 import android.os.Handler
@@ -8,6 +9,7 @@ import android.os.Looper
 import android.util.Log
 import android.util.Rational
 import android.widget.FrameLayout
+import androidx.core.net.toUri
 import androidx.media3.common.C.*
 import androidx.media3.common.Format
 import androidx.media3.common.MediaItem
@@ -49,6 +51,8 @@ import androidx.preference.PreferenceManager
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
+import com.lagradost.cloudstream3.CommonActivity
+import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.USER_AGENT
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.mvvm.debugAssert
@@ -63,6 +67,15 @@ import com.lagradost.cloudstream3.utils.ExtractorLinkPlayList
 import com.lagradost.cloudstream3.utils.ExtractorLinkType
 import com.lagradost.cloudstream3.utils.ExtractorUri
 import com.lagradost.cloudstream3.utils.SubtitleHelper.fromTwoLettersToLanguage
+import com.lagradost.fetchbutton.aria2c.Aria2Settings
+import com.lagradost.fetchbutton.aria2c.Aria2Starter
+import com.lagradost.fetchbutton.aria2c.DownloadListener
+import com.lagradost.fetchbutton.aria2c.DownloadStatusTell
+import com.lagradost.fetchbutton.aria2c.newUriRequest
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.io.File
 import java.lang.IllegalArgumentException
 import java.util.UUID
@@ -88,7 +101,9 @@ class CS3IPlayer : IPlayer {
     private var exoPlayer: ExoPlayer? = null
         set(value) {
             // If the old value is not null then the player has not been properly released.
-            debugAssert({ field != null && value != null }, { "Previous player instance should be released!" })
+            debugAssert(
+                { field != null && value != null },
+                { "Previous player instance should be released!" })
             field = value
         }
 
@@ -180,6 +195,273 @@ class CS3IPlayer : IPlayer {
 
     fun initSubtitles(subView: SubtitleView?, subHolder: FrameLayout?, style: SaveCaptionStyle?) {
         subtitleHelper.initSubtitles(subView, subHolder, style)
+    }
+
+    private fun getPlayableFile(
+        data: com.lagradost.fetchbutton.aria2c.Metadata,
+        minimumBytes: Long
+    ): Uri? {
+        for (item in data.items) {
+            for (file in item.files) {
+                // only allow files with a length above minimumBytes
+                if (file.completedLength < minimumBytes) continue
+                // only allow video formats
+                if (videoFormats.none { suf ->
+                        file.path.contains(
+                            suf,
+                            ignoreCase = true
+                        )
+                    }) continue
+
+                return file.path.toUri()
+            }
+        }
+        return null
+    }
+
+    private val videoFormats = arrayOf(
+        ".3g2",
+        ".3gp",
+        ".amv",
+        ".asf",
+        ".avi",
+        ".drc",
+        ".flv",
+        ".f4v",
+        ".f4p",
+        ".f4a",
+        ".f4b",
+        ".gif",
+        ".gifv",
+        ".m4v",
+        ".mkv",
+        ".mng",
+        ".mov",
+        ".qt",
+        ".mp4",
+        ".m4p",
+        ".mpg", ".mp2", ".mpeg", ".mpe", ".mpv",
+        ".mpg", ".mpeg", ".m2v",
+        ".MTS", ".M2TS", ".TS",
+        ".mxf",
+        ".nsv",
+        ".ogv", ".ogg",
+        //".rm", // Made for RealPlayer
+        //".rmvb", // Made for RealPlayer
+        ".svi",
+        ".viv",
+        ".vob",
+        ".webm",
+        ".wmv",
+        ".yuv"
+    )
+
+    @Throws
+    private suspend fun awaitAria2c(
+        activity: Activity,
+        link: ExtractorLink,
+        requestId: Long,
+    ) {
+        var hasFileChecked = false
+        while (true) {
+            val gid = DownloadListener.sessionIdToGid[requestId]
+
+            // request has not yet been processed, wait for it to do
+            if (gid == null) {
+                delay(1000)
+                continue
+            }
+
+            val metadata = DownloadListener.getInfo(gid)
+            event(
+                DownloadEvent(
+                    downloadedBytes = metadata.downloadedLength,
+                    downloadSpeed = metadata.downloadSpeed,
+                    totalBytes = metadata.totalLength,
+                    connections = metadata.items.sumOf { it.connections }
+                )
+            )
+            when (metadata.status) {
+                // if completed/error/removed then we don't have to wait anymore
+                DownloadStatusTell.Complete,
+                DownloadStatusTell.Error,
+                DownloadStatusTell.Removed -> break
+
+                // if waiting to be added, wait more
+                DownloadStatusTell.Waiting -> {
+                    delay(1000)
+                    continue
+                }
+
+                DownloadStatusTell.Active -> {
+                    if (metadata.downloadedLength >= metadata.totalLength && getPlayableFile(
+                            metadata,
+                            minimumBytes = 10 shl 20
+                        ) != null
+                    ) break
+
+                    // as we don't want to waste the users time with torrents that is useless
+                    // we do this to check that at a video file exists
+                    if (!hasFileChecked && metadata.totalLength > (10 shl 20)) {
+                        hasFileChecked = true
+                        if (getPlayableFile(
+                                metadata,
+                                minimumBytes = -1
+                            ) == null
+                        ) {
+                            throw Exception("Download file has no video")
+                        }
+                    }
+
+                    println("downloaded ${metadata.downloadedLength}/${metadata.totalLength}")
+                    delay(1000)
+                    continue
+                }
+
+                // if downloading then check if we have reached a stable file length
+                /*DownloadStatusTell.Active -> {
+                    if (getPlayableFile(metadata, minimumBytes = 50 shl 20) != null) {
+                        break
+                    }
+                    delay(1000)
+                    continue
+                }*/
+
+                // unpause any pending files
+                DownloadStatusTell.Paused -> {
+                    Aria2Starter.unpause(gid)
+                    delay(1000)
+                    continue
+                }
+
+                null -> break
+            }
+        }
+
+        val gid = DownloadListener.sessionIdToGid[requestId]
+            ?: throw Exception("Unable to start download")
+
+        val metadata = DownloadListener.getInfo(gid)
+
+        when (metadata.status) {
+            DownloadStatusTell.Active, DownloadStatusTell.Complete -> {
+                val uri = getPlayableFile(metadata, minimumBytes = 10 shl 20)
+                    ?: throw Exception("Not downloaded enough")
+                activity.runOnUiThread {
+                    //Log.i(TAG, "downloaded data: $metadata")
+                    loadOfflinePlayer(
+                        activity,
+                        ExtractorUri(
+                            // we require at least 10MB to play the file
+                            uri = uri,
+                            name = link.name,
+                            tvType = TvType.Torrent
+                        )
+                    )
+                }
+            }
+
+            DownloadStatusTell.Waiting -> {
+                throw Exception("Download was unable to be started")
+            }
+
+            DownloadStatusTell.Paused -> {
+                throw Exception("Download is paused")
+            }
+
+            DownloadStatusTell.Error -> {
+                throw Exception("Download error")
+            }
+
+            DownloadStatusTell.Removed -> {
+                throw Exception("Download removed")
+            }
+
+            null -> {
+                throw Exception("Unexpected download error")
+            }
+        }
+    }
+
+    private fun releaseAria2c() = pauseAllAria2c()
+    private fun pauseAllAria2c() {
+        for ((_, gid) in DownloadListener.sessionIdToGid) {
+            Aria2Starter.pause(gid)
+        }
+    }
+
+
+    @Throws
+    private suspend fun playAria2c(activity: Activity, link: ExtractorLink) {
+        // ephemeral id based on url to make it unique
+        val requestId = link.url.hashCode().toLong()
+
+        val uriReq = newUriRequest(
+            id = requestId,
+            uri = link.url,
+            fileName = null,
+            seed = false
+        )
+
+        val metadata =
+            DownloadListener.sessionIdToGid[requestId]?.let { gid -> DownloadListener.getInfo(gid) }
+
+        when (metadata?.status) {
+            DownloadStatusTell.Removed, DownloadStatusTell.Error, null -> {
+                Aria2Starter.download(uriReq)
+            }
+
+            else -> Unit
+        }
+
+        try {
+            awaitAria2c(activity, link, requestId)
+        } catch (t: Throwable) {
+            // if we detect any download error then we delete it as we don't want any useless background tasks
+            Aria2Starter.delete(DownloadListener.sessionIdToGid[requestId], requestId)
+            throw t
+        }
+    }
+
+    private fun loadAria2c(link: ExtractorLink) {
+        val act = CommonActivity.activity
+        if (act == null) {
+            event(ErrorEvent(IllegalArgumentException("No activity")))
+            return
+        }
+
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val defaultDirectory = "${act.cacheDir.path}/torrent_tmp"
+
+                // start the client if not active, lazy init
+                if (Aria2Starter.client == null) {
+                    Aria2Starter.start(
+                        activity = act,
+                        Aria2Settings(
+                            UUID.randomUUID().toString(),
+                            4337,
+                            defaultDirectory,
+                        )
+                    )
+                    // remove all the cache
+                    //File(defaultDirectory).deleteRecursively()
+                }
+                playAria2c(act, link)
+            } catch (t: Throwable) {
+                event(ErrorEvent(t))
+            }
+        }
+    }
+
+    /** hijacks the torrent links and downloads them with aria2c instead to be played */
+    private fun loadOnlinePlayer(context: Context, link: ExtractorLink) {
+        when (link.type) {
+            ExtractorLinkType.TORRENT, ExtractorLinkType.MAGNET -> loadAria2c(link)
+            else -> {
+                loadOnlinePlayerReal(context, link)
+            }
+        }
     }
 
     override fun loadPlayer(
@@ -470,6 +752,7 @@ class CS3IPlayer : IPlayer {
         currentTextRenderer = null
 
         exoPlayer = null
+        releaseAria2c()
         //simpleCache = null
     }
 
@@ -871,8 +1154,20 @@ class CS3IPlayer : IPlayer {
 
                     CSPlayerEvent.SeekForward -> seekTime(seekActionTime, source)
                     CSPlayerEvent.SeekBack -> seekTime(-seekActionTime, source)
-                    CSPlayerEvent.NextEpisode -> event(EpisodeSeekEvent(offset = 1, source = source))
-                    CSPlayerEvent.PrevEpisode -> event(EpisodeSeekEvent(offset = -1, source = source))
+                    CSPlayerEvent.NextEpisode -> event(
+                        EpisodeSeekEvent(
+                            offset = 1,
+                            source = source
+                        )
+                    )
+
+                    CSPlayerEvent.PrevEpisode -> event(
+                        EpisodeSeekEvent(
+                            offset = -1,
+                            source = source
+                        )
+                    )
+
                     CSPlayerEvent.SkipCurrentChapter -> {
                         //val dur = this@CS3IPlayer.getDuration() ?: return@apply
                         getCurrentTimestamp()?.let { lastTimeStamp ->
@@ -1249,7 +1544,7 @@ class CS3IPlayer : IPlayer {
     }
 
     @SuppressLint("UnsafeOptInUsageError")
-    private fun loadOnlinePlayer(context: Context, link: ExtractorLink) {
+    private fun loadOnlinePlayerReal(context: Context, link: ExtractorLink) {
         Log.i(TAG, "loadOnlinePlayer $link")
         try {
             currentLink = link

@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.os.Bundle
+import android.text.format.Formatter
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -91,6 +92,52 @@ class GeneratorPlayer : FullScreenPlayer() {
     private var preferredAutoSelectSubtitles: String? = null // null means do nothing, "" means none
 
     private var binding: FragmentPlayerBinding? = null
+
+    override fun playerDimensionsLoaded(width: Int, height: Int) {
+        setPlayerDimen(width to height)
+        showDownloadProgress(null)
+    }
+
+    override fun playerError(exception: Throwable) {
+        Log.i(TAG, "playerError = $currentSelectedLink")
+        showDownloadProgress(null)
+        super.playerError(exception)
+    }
+
+    override fun onDownload(event: DownloadEvent) {
+        super.onDownload(event)
+        showDownloadProgress(event)
+    }
+
+    private fun showDownloadProgress(event: DownloadEvent?) {
+        activity?.runOnUiThread {
+            if(event == null) {
+                binding?.downloadHeader?.isVisible = false
+                return@runOnUiThread
+            }
+            binding?.downloadHeader?.isVisible = true
+            binding?.downloadedProgress?.apply {
+                val indeterminate = event.totalBytes <= 0 || event.downloadedBytes <= 0
+                isIndeterminate = indeterminate
+                if (!indeterminate) {
+                    max = (event.totalBytes / 1000).toInt()
+                    progress = (event.downloadedBytes / 1000).toInt()
+                }
+            }
+            binding?.downloadedProgressText.setText(
+                txt(
+                    R.string.download_size_format,
+                    Formatter.formatShortFileSize(context, event.downloadedBytes),
+                    Formatter.formatShortFileSize(context, event.totalBytes)
+                )
+            )
+            val downloadSpeed = Formatter.formatShortFileSize(context, event.downloadSpeed)
+            binding?.downloadedProgressSpeedText?.text = event.connections?.let { connections ->
+                "%s/s - %d Connections".format(downloadSpeed, connections)
+            } ?: downloadSpeed
+        }
+    }
+
 
     private fun startLoading() {
         player.release()
@@ -883,10 +930,6 @@ class GeneratorPlayer : FullScreenPlayer() {
     }
 
 
-    override fun playerError(exception: Throwable) {
-        Log.i(TAG, "playerError = $currentSelectedLink")
-        super.playerError(exception)
-    }
 
     private fun noLinksFound() {
         showToast(R.string.no_links_found_toast, Toast.LENGTH_SHORT)
@@ -945,7 +988,7 @@ class GeneratorPlayer : FullScreenPlayer() {
 
     var maxEpisodeSet: Int? = null
     var hasRequestedStamps: Boolean = false
-    override fun playerPositionChanged(position: Long, duration : Long) {
+    override fun playerPositionChanged(position: Long, duration: Long) {
         // Don't save livestream data
         if ((currentMeta as? ResultEpisode)?.tvType?.isLiveStream() == true) return
 
@@ -1208,10 +1251,6 @@ class GeneratorPlayer : FullScreenPlayer() {
         }
     }
 
-    override fun playerDimensionsLoaded(width: Int, height : Int) {
-        setPlayerDimen(width to height)
-    }
-
     private fun unwrapBundle(savedInstanceState: Bundle?) {
         Log.i(TAG, "unwrapBundle = $savedInstanceState")
         savedInstanceState?.let { bundle ->
@@ -1354,6 +1393,11 @@ class GeneratorPlayer : FullScreenPlayer() {
         }
 
         binding?.playerLoadingGoBack?.setOnClickListener {
+            player.release()
+            activity?.popCurrentPage()
+        }
+
+        binding?.playerLoadingGoBack2?.setOnClickListener {
             player.release()
             activity?.popCurrentPage()
         }

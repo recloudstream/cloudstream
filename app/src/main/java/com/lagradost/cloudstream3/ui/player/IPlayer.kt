@@ -72,8 +72,19 @@ data class PositionEvent(
     val durationMs: Long,
 ) : PlayerEvent() {
     /** how many ms (+-) we have skipped */
-    val seekMs : Long get() = toMs - fromMs
+    val seekMs: Long get() = toMs - fromMs
 }
+
+/** Used for torrent to pre-download a video before playing it */
+data class DownloadEvent(
+    val downloadedBytes: Long,
+    val totalBytes: Long,
+    /** bytes / sec */
+    val downloadSpeed: Long,
+    val connections: Int?,
+
+    override val source: PlayerEventSource = PlayerEventSource.Player
+) : PlayerEvent()
 
 /** player error when rendering or misc, used to display toast or log */
 data class ErrorEvent(

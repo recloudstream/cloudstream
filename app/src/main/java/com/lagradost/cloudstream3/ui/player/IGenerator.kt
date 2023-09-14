@@ -18,7 +18,10 @@ fun LoadType.toSet() : Set<ExtractorLinkType> {
         LoadType.InApp -> setOf(
             ExtractorLinkType.VIDEO,
             ExtractorLinkType.DASH,
-            ExtractorLinkType.M3U8
+            ExtractorLinkType.M3U8,
+            // testing
+            ExtractorLinkType.TORRENT,
+            ExtractorLinkType.MAGNET,
         )
         LoadType.Browser -> setOf(
             ExtractorLinkType.VIDEO,

@@ -30,6 +30,78 @@
         app:show_timeout="0" />
 
     <FrameLayout
+        android:id="@+id/download_header"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/black"
+        android:backgroundTint="@android:color/black">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <TextView
+                android:id="@+id/downloaded_progress_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                tools:text="10MB / 20MB" />
+
+            <TextView
+                android:id="@+id/downloaded_progress_speed_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                tools:text="10MB/s - 12 seeders" />
+
+            <androidx.core.widget.ContentLoadingProgressBar
+                android:id="@+id/downloaded_progress"
+                style="@android:style/Widget.Material.ProgressBar.Horizontal"
+                android:layout_width="200dp"
+                android:layout_height="15dp"
+                android:layout_gravity="center"
+                android:layout_marginBottom="-6.5dp"
+                android:indeterminate="false"
+                android:indeterminateTint="?attr/colorPrimary"
+                android:progressBackgroundTint="?attr/colorPrimary"
+                android:progressTint="?attr/colorPrimary"
+                tools:progress="20" />
+
+        </LinearLayout>
+
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_gravity="center"
+                android:contentDescription="@string/go_back_img_des"
+                android:src="@drawable/ic_baseline_arrow_back_24"
+                app:tint="@android:color/white" />
+
+            <ImageView
+                android:id="@+id/player_loading_go_back2"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_gravity="center"
+                android:background="@drawable/video_tap_button_always_white"
+                android:clickable="true"
+                android:contentDescription="@string/go_back_img_des"
+                android:focusable="true" />
+        </FrameLayout>
+
+    </FrameLayout>
+
+    <FrameLayout
         android:id="@+id/player_loading_overlay"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -38,7 +110,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="gone">
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/overlay_loading_skip_button"
@@ -93,39 +166,39 @@
         </FrameLayout>
     </FrameLayout>
 
-   <!-- <FrameLayout
-        android:id="@+id/player_torrent_info"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingStart="20dp"
-        android:paddingEnd="20dp"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+    <!-- <FrameLayout
+         android:id="@+id/player_torrent_info"
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+         android:paddingStart="20dp"
+         android:paddingEnd="20dp"
+         android:visibility="gone"
+         app:layout_constraintBottom_toBottomOf="parent"
+         app:layout_constraintEnd_toEndOf="parent"
+         app:layout_constraintStart_toStartOf="parent"
+         app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:id="@+id/video_torrent_progress"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
-            android:gravity="start"
-            android:textColor="@color/white"
-            android:textStyle="bold"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="78% at 18kb/s" />
+         <TextView
+             android:id="@+id/video_torrent_progress"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:layout_marginTop="15dp"
+             android:gravity="start"
+             android:textColor="@color/white"
+             android:textStyle="bold"
+             app:layout_constraintLeft_toLeftOf="parent"
+             app:layout_constraintTop_toTopOf="parent"
+             tools:text="78% at 18kb/s" />
 
-        <TextView
-            android:id="@+id/video_torrent_seeders"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="0dp"
-            android:gravity="start"
-            android:textColor="@color/white"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/player_video_title"
-            tools:text="17 seeders" />
-    </FrameLayout>-->
+         <TextView
+             android:id="@+id/video_torrent_seeders"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:layout_marginTop="0dp"
+             android:gravity="start"
+             android:textColor="@color/white"
+             app:layout_constraintLeft_toLeftOf="parent"
+             app:layout_constraintTop_toBottomOf="@+id/player_video_title"
+             tools:text="17 seeders" />
+     </FrameLayout>-->
 </androidx.constraintlayout.widget.ConstraintLayout>
