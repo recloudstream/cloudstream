@@ -51,6 +51,7 @@ import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.USER_AGENT
 import com.lagradost.cloudstream3.app
+import com.lagradost.cloudstream3.mvvm.debugAssert
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.ui.subtitles.SaveCaptionStyle
@@ -85,6 +86,12 @@ const val toleranceAfterUs = 300_000L
 class CS3IPlayer : IPlayer {
     private var isPlaying = false
     private var exoPlayer: ExoPlayer? = null
+        set(value) {
+            // If the old value is not null then the player has not been properly released.
+            debugAssert({ field != null && value != null }, { "Previous player instance should be released!" })
+            field = value
+        }
+
     var cacheSize = 0L
     var simpleCacheSize = 0L
     var videoBufferMs = 0L
@@ -682,13 +689,13 @@ class CS3IPlayer : IPlayer {
                             metadataRendererOutput
                         ).map {
                             if (it is TextRenderer) {
-                                currentTextRenderer = CustomTextRenderer(
+                                val currentTextRenderer = CustomTextRenderer(
                                     subtitleOffset,
                                     textRendererOutput,
                                     eventHandler.looper,
                                     CustomSubtitleDecoderFactory()
-                                )
-                                currentTextRenderer!!
+                                ).also { this.currentTextRenderer = it }
+                                currentTextRenderer
                             } else it
                         }.toTypedArray()
                     }
@@ -1323,7 +1330,7 @@ class CS3IPlayer : IPlayer {
     override fun reloadPlayer(context: Context) {
         Log.i(TAG, "reloadPlayer")
 
-        exoPlayer?.release()
+        releasePlayer(false)
         currentLink?.let {
             loadOnlinePlayer(context, it)
         } ?: currentDownloadedFile?.let {
