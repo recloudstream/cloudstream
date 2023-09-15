@@ -219,7 +219,7 @@
     <string name="status_ongoing">Folyamatban levő</string>
     <string name="year">Év</string>
     <string name="site">Webhely</string>
-    <string name="synopsis">Szinopszis</string>
+    <string name="synopsis">Összegzés</string>
     <string name="no_subtitles">Nincsenek feliratok</string>
     <string name="remote_error">Távoli hiba</string>
     <string name="render_error">Render hiba</string>
@@ -237,7 +237,7 @@
     <string name="swipe_to_change_settings_des">Csúsztassa felfelé vagy lefelé a bal vagy jobb oldalon a fényerő vagy a hangerő megváltoztatásához</string>
     <string name="backup_settings">Biztonsági mentés</string>
     <string name="benene_count_text_none">0 Banán a fejlesztőknek</string>
-    <string name="swipe_to_seek_settings">Húzás a kereséshez</string>
+    <string name="swipe_to_seek_settings">Húzd el, hogy beless</string>
     <string name="autoplay_next_settings">Következő epizód automatikus lejátszása</string>
     <string name="autoplay_next_settings_des">Következő epizód lejátszása amikor az aktuális epizód véget ér</string>
     <string name="double_tap_to_seek_settings">Dupla koppintás a kereséshez</string>
@@ -510,4 +510,5 @@
     <string name="tv_layout">TV elrendezés</string>
     <string name="automatic">Automatikus</string>
     <string name="android_tv_interface_on_seek_settings_summary">Az átugrás mértéke, amikor a lejátszó látható</string>
+    <string name="automatic_plugin_download_mode_title">Válassza ki a módot a pluginek letöltésének szűréséhez</string>
 </resources>

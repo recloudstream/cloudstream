@@ -7,6 +7,7 @@ import android.graphics.drawable.AnimatedVectorDrawable
 import android.media.metrics.PlaybackErrorEvent
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -25,8 +26,10 @@ import androidx.media3.common.PlaybackException
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.session.MediaSession
 import androidx.media3.ui.AspectRatioFrameLayout
+import androidx.media3.ui.DefaultTimeBar
 import androidx.media3.ui.PlayerView
 import androidx.media3.ui.SubtitleView
+import androidx.media3.ui.TimeBar
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.CommonActivity.canEnterPipMode
@@ -92,11 +95,11 @@ abstract class AbstractPlayerFragment(
         throw NotImplementedError()
     }
 
-    open fun playerPositionChanged(posDur: Pair<Long, Long>) {
+    open fun playerPositionChanged(position: Long, duration : Long) {
         throw NotImplementedError()
     }
 
-    open fun playerDimensionsLoaded(widthHeight: Pair<Int, Int>) {
+    open fun playerDimensionsLoaded(width: Int, height : Int) {
         throw NotImplementedError()
     }
 
@@ -132,8 +135,8 @@ abstract class AbstractPlayerFragment(
         }
     }
 
-    private fun updateIsPlaying(playing: Pair<CSPlayerLoading, CSPlayerLoading>) {
-        val (wasPlaying, isPlaying) = playing
+    private fun updateIsPlaying(wasPlaying : CSPlayerLoading,
+                                isPlaying : CSPlayerLoading) {
         val isPlayingRightNow = CSPlayerLoading.IsPlaying == isPlaying
         val isPausedRightNow = CSPlayerLoading.IsPaused == isPlaying
 
@@ -206,7 +209,7 @@ abstract class AbstractPlayerFragment(
                             CSPlayerEvent.values()[intent.getIntExtra(
                                 EXTRA_CONTROL_TYPE,
                                 0
-                            )]
+                            )], source = PlayerEventSource.UI
                         )
                     }
                 }
@@ -216,7 +219,7 @@ abstract class AbstractPlayerFragment(
                 val isPlaying = player.getIsPlaying()
                 val isPlayingValue =
                     if (isPlaying) CSPlayerLoading.IsPlaying else CSPlayerLoading.IsPaused
-                updateIsPlaying(Pair(isPlayingValue, isPlayingValue))
+                updateIsPlaying(isPlayingValue, isPlayingValue)
             } else {
                 // Restore the full-screen UI.
                 piphide?.isVisible = true
@@ -249,7 +252,7 @@ abstract class AbstractPlayerFragment(
         }
     }
 
-    open fun playerError(exception: Exception) {
+    open fun playerError(exception: Throwable) {
         fun showToast(message: String, gotoNext: Boolean = false) {
             if (gotoNext && hasNextMirror()) {
                 showToast(
@@ -326,6 +329,7 @@ abstract class AbstractPlayerFragment(
         }
     }
 
+    @SuppressLint("UnsafeOptInUsageError")
     private fun playerUpdated(player: Any?) {
         if (player is ExoPlayer) {
             context?.let { ctx ->
@@ -366,39 +370,106 @@ abstract class AbstractPlayerFragment(
     //    }
     //}
 
+    /** This receives the events from the player, if you want to append functionality you do it here,
+     * do note that this only receives events for UI changes,
+     * and returning early WONT stop it from changing in eg the player time or pause status */
+    open fun mainCallback(event : PlayerEvent) {
+        Log.i(TAG, "Handle event: $event")
+        when(event) {
+            is ResizedEvent -> {
+                playerDimensionsLoaded(event.width, event.height)
+            }
+            is PlayerAttachedEvent -> {
+                playerUpdated(event.player)
+            }
+            is SubtitlesUpdatedEvent -> {
+                subtitlesChanged()
+            }
+            is TimestampSkippedEvent -> {
+                onTimestampSkipped(event.timestamp)
+            }
+            is TimestampInvokedEvent -> {
+                onTimestamp(event.timestamp)
+            }
+            is TracksChangedEvent -> {
+                onTracksInfoChanged()
+            }
+            is EmbeddedSubtitlesFetchedEvent -> {
+                embeddedSubtitlesFetched(event.tracks)
+            }
+            is ErrorEvent -> {
+                playerError(event.error)
+            }
+            is RequestAudioFocusEvent -> {
+                requestAudioFocus()
+            }
+            is EpisodeSeekEvent -> {
+                when(event.offset) {
+                    -1 -> prevEpisode()
+                    1 -> nextEpisode()
+                    else -> {}
+                }
+            }
+            is StatusEvent -> {
+                updateIsPlaying(wasPlaying = event.wasPlaying, isPlaying = event.isPlaying)
+            }
+            is PositionEvent -> {
+                playerPositionChanged(position = event.toMs, duration = event.durationMs)
+            }
+            is VideoEndedEvent -> {
+                context?.let { ctx ->
+                    // Only play next episode if autoplay is on (default)
+                    if (PreferenceManager.getDefaultSharedPreferences(ctx)
+                            ?.getBoolean(
+                                ctx.getString(R.string.autoplay_next_key),
+                                true
+                            ) == true
+                    ) {
+                        player.handleEvent(
+                            CSPlayerEvent.NextEpisode,
+                            source = PlayerEventSource.Player
+                        )
+                    }
+                }
+            }
+            is PauseEvent -> Unit
+            is PlayEvent -> Unit
+        }
+    }
 
-    @SuppressLint("SetTextI18n")
+    @SuppressLint("SetTextI18n", "UnsafeOptInUsageError")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         resizeMode = getKey(RESIZE_MODE_KEY) ?: 0
         resize(resizeMode, false)
 
         player.releaseCallbacks()
         player.initCallbacks(
-            playerUpdated = ::playerUpdated,
-            updateIsPlaying = ::updateIsPlaying,
-            playerError = ::playerError,
-            requestAutoFocus = ::requestAudioFocus,
-            nextEpisode = ::nextEpisode,
-            prevEpisode = ::prevEpisode,
-            playerPositionChanged = ::playerPositionChanged,
-            playerDimensionsLoaded = ::playerDimensionsLoaded,
+            eventHandler = ::mainCallback,
             requestedListeningPercentages = listOf(
                 SKIP_OP_VIDEO_PERCENTAGE,
                 PRELOAD_NEXT_EPISODE_PERCENTAGE,
                 NEXT_WATCH_EPISODE_PERCENTAGE,
                 UPDATE_SYNC_PROGRESS_PERCENTAGE,
             ),
-            subtitlesUpdates = ::subtitlesChanged,
-            embeddedSubtitlesFetched = ::embeddedSubtitlesFetched,
-            onTracksInfoChanged = ::onTracksInfoChanged,
-            onTimestampInvoked = ::onTimestamp,
-            onTimestampSkipped = ::onTimestampSkipped
         )
 
         if (player is CS3IPlayer) {
             subView = playerView?.findViewById(R.id.exo_subtitles)
             subStyle = SubtitlesFragment.getCurrentSavedStyle()
             player.initSubtitles(subView, subtitleHolder, subStyle)
+
+            /** this might seam a bit fucky and that is because it is, the seek event is captured twice, once by the player
+             * and once by the UI even if it should only be registered once by the UI */
+            playerView?.findViewById<DefaultTimeBar>(R.id.exo_progress)?.addListener(object : TimeBar.OnScrubListener {
+                override fun onScrubStart(timeBar: TimeBar, position: Long) = Unit
+                override fun onScrubMove(timeBar: TimeBar, position: Long) = Unit
+                override fun onScrubStop(timeBar: TimeBar, position: Long, canceled: Boolean) {
+                    if (canceled) return
+                    val playerDuration = player.getDuration() ?: return
+                    val playerPosition = player.getPosition() ?: return
+                    mainCallback(PositionEvent(source = PlayerEventSource.UI, durationMs = playerDuration, fromMs = playerPosition, toMs = position))
+                }
+            })
 
             SubtitlesFragment.applyStyleEvent += ::onSubStyleChanged
 
@@ -446,6 +517,7 @@ abstract class AbstractPlayerFragment(
         canEnterPipMode = false
         mMediaSession?.release()
         mMediaSession = null
+        playerView?.player = null
         SubtitlesFragment.applyStyleEvent -= ::onSubStyleChanged
 
         keepScreenOn(false)
@@ -461,6 +533,7 @@ abstract class AbstractPlayerFragment(
         resize(PlayerResize.values()[resize], showToast)
     }
 
+    @SuppressLint("UnsafeOptInUsageError")
     fun resize(resize: PlayerResize, showToast: Boolean) {
         setKey(RESIZE_MODE_KEY, resize.ordinal)
         val type = when (resize) {

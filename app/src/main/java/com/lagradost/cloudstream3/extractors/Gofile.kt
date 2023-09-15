@@ -19,7 +19,7 @@ open class Gofile : ExtractorApi() {
         subtitleCallback: (SubtitleFile) -> Unit,
         callback: (ExtractorLink) -> Unit
     ) {
-        val id = Regex("/(?:\\?c=|d/)([\\da-zA-Z]+)").find(url)?.groupValues?.get(1)
+        val id = Regex("/(?:\\?c=|d/)([\\da-zA-Z-]+)").find(url)?.groupValues?.get(1)
         val token = app.get("$mainApi/createAccount").parsedSafe<Account>()?.data?.get("token")
         val websiteToken = app.get("$mainUrl/dist/js/alljs.js").text.let {
             Regex("websiteToken\\s*=\\s*\"([^\"]+)").find(it)?.groupValues?.get(1)

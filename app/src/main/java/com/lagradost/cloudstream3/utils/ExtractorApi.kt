@@ -1,14 +1,204 @@
 package com.lagradost.cloudstream3.utils
 
 import android.net.Uri
-import com.lagradost.cloudstream3.*
+import com.lagradost.cloudstream3.SubtitleFile
+import com.lagradost.cloudstream3.TvType
+import com.lagradost.cloudstream3.USER_AGENT
+import com.lagradost.cloudstream3.app
+import com.lagradost.cloudstream3.extractors.AStreamHub
+import com.lagradost.cloudstream3.extractors.Acefile
+import com.lagradost.cloudstream3.extractors.Ahvsh
+import com.lagradost.cloudstream3.extractors.Aico
+import com.lagradost.cloudstream3.extractors.AsianLoad
+import com.lagradost.cloudstream3.extractors.Bestx
+import com.lagradost.cloudstream3.extractors.Blogger
+import com.lagradost.cloudstream3.extractors.BullStream
+import com.lagradost.cloudstream3.extractors.ByteShare
+import com.lagradost.cloudstream3.extractors.Cda
+import com.lagradost.cloudstream3.extractors.Cdnplayer
+import com.lagradost.cloudstream3.extractors.Chillx
+import com.lagradost.cloudstream3.extractors.CineGrabber
+import com.lagradost.cloudstream3.extractors.Cinestart
+import com.lagradost.cloudstream3.extractors.DBfilm
+import com.lagradost.cloudstream3.extractors.Dailymotion
+import com.lagradost.cloudstream3.extractors.DatabaseGdrive
+import com.lagradost.cloudstream3.extractors.DatabaseGdrive2
+import com.lagradost.cloudstream3.extractors.DesuArcg
+import com.lagradost.cloudstream3.extractors.DesuDrive
+import com.lagradost.cloudstream3.extractors.DesuOdchan
+import com.lagradost.cloudstream3.extractors.DesuOdvip
+import com.lagradost.cloudstream3.extractors.Dokicloud
+import com.lagradost.cloudstream3.extractors.DoodCxExtractor
+import com.lagradost.cloudstream3.extractors.DoodLaExtractor
+import com.lagradost.cloudstream3.extractors.DoodPmExtractor
+import com.lagradost.cloudstream3.extractors.DoodShExtractor
+import com.lagradost.cloudstream3.extractors.DoodSoExtractor
+import com.lagradost.cloudstream3.extractors.DoodToExtractor
+import com.lagradost.cloudstream3.extractors.DoodWatchExtractor
+import com.lagradost.cloudstream3.extractors.DoodWfExtractor
+import com.lagradost.cloudstream3.extractors.DoodWsExtractor
+import com.lagradost.cloudstream3.extractors.DoodYtExtractor
+import com.lagradost.cloudstream3.extractors.Dooood
+import com.lagradost.cloudstream3.extractors.Embedgram
+import com.lagradost.cloudstream3.extractors.Evoload
+import com.lagradost.cloudstream3.extractors.Evoload1
+import com.lagradost.cloudstream3.extractors.FEmbed
+import com.lagradost.cloudstream3.extractors.FEnet
+import com.lagradost.cloudstream3.extractors.Fastream
+import com.lagradost.cloudstream3.extractors.FeHD
+import com.lagradost.cloudstream3.extractors.Fembed9hd
+import com.lagradost.cloudstream3.extractors.FileMoon
+import com.lagradost.cloudstream3.extractors.FileMoonIn
+import com.lagradost.cloudstream3.extractors.FileMoonSx
+import com.lagradost.cloudstream3.extractors.Filesim
+import com.lagradost.cloudstream3.extractors.Fplayer
+import com.lagradost.cloudstream3.extractors.GMPlayer
+import com.lagradost.cloudstream3.extractors.Gdriveplayer
+import com.lagradost.cloudstream3.extractors.Gdriveplayerapi
+import com.lagradost.cloudstream3.extractors.Gdriveplayerapp
+import com.lagradost.cloudstream3.extractors.Gdriveplayerbiz
+import com.lagradost.cloudstream3.extractors.Gdriveplayerco
+import com.lagradost.cloudstream3.extractors.Gdriveplayerfun
+import com.lagradost.cloudstream3.extractors.Gdriveplayerio
+import com.lagradost.cloudstream3.extractors.Gdriveplayerme
+import com.lagradost.cloudstream3.extractors.Gdriveplayerorg
+import com.lagradost.cloudstream3.extractors.Gdriveplayerus
+import com.lagradost.cloudstream3.extractors.Gofile
+import com.lagradost.cloudstream3.extractors.GuardareStream
+import com.lagradost.cloudstream3.extractors.Guccihide
+import com.lagradost.cloudstream3.extractors.Hxfile
+import com.lagradost.cloudstream3.extractors.JWPlayer
+import com.lagradost.cloudstream3.extractors.Jawcloud
+import com.lagradost.cloudstream3.extractors.Jeniusplay
+import com.lagradost.cloudstream3.extractors.Keephealth
+import com.lagradost.cloudstream3.extractors.KotakAnimeid
+import com.lagradost.cloudstream3.extractors.Kotakajair
+import com.lagradost.cloudstream3.extractors.Krakenfiles
+import com.lagradost.cloudstream3.extractors.LayarKaca
+import com.lagradost.cloudstream3.extractors.Linkbox
+import com.lagradost.cloudstream3.extractors.Luxubu
+import com.lagradost.cloudstream3.extractors.Lvturbo
+import com.lagradost.cloudstream3.extractors.Maxstream
+import com.lagradost.cloudstream3.extractors.Mcloud
+import com.lagradost.cloudstream3.extractors.Megacloud
+import com.lagradost.cloudstream3.extractors.Meownime
+import com.lagradost.cloudstream3.extractors.MixDrop
+import com.lagradost.cloudstream3.extractors.MixDropBz
+import com.lagradost.cloudstream3.extractors.MixDropCh
+import com.lagradost.cloudstream3.extractors.MixDropTo
+import com.lagradost.cloudstream3.extractors.Movhide
+import com.lagradost.cloudstream3.extractors.Moviehab
+import com.lagradost.cloudstream3.extractors.MoviehabNet
+import com.lagradost.cloudstream3.extractors.Moviesapi
+import com.lagradost.cloudstream3.extractors.Moviesm4u
+import com.lagradost.cloudstream3.extractors.Mp4Upload
+import com.lagradost.cloudstream3.extractors.Mvidoo
+import com.lagradost.cloudstream3.extractors.MwvnVizcloudInfo
+import com.lagradost.cloudstream3.extractors.Neonime7n
+import com.lagradost.cloudstream3.extractors.Neonime8n
+import com.lagradost.cloudstream3.extractors.OkRu
+import com.lagradost.cloudstream3.extractors.OkRuHttps
+import com.lagradost.cloudstream3.extractors.Okrulink
+import com.lagradost.cloudstream3.extractors.Pixeldrain
+import com.lagradost.cloudstream3.extractors.PlayLtXyz
+import com.lagradost.cloudstream3.extractors.PlayerVoxzer
+import com.lagradost.cloudstream3.extractors.Rabbitstream
+import com.lagradost.cloudstream3.extractors.Rasacintaku
+import com.lagradost.cloudstream3.extractors.SBfull
+import com.lagradost.cloudstream3.extractors.Sbasian
+import com.lagradost.cloudstream3.extractors.Sbface
+import com.lagradost.cloudstream3.extractors.Sbflix
+import com.lagradost.cloudstream3.extractors.Sblona
+import com.lagradost.cloudstream3.extractors.Sblongvu
+import com.lagradost.cloudstream3.extractors.Sbnet
+import com.lagradost.cloudstream3.extractors.Sbrapid
+import com.lagradost.cloudstream3.extractors.Sbsonic
+import com.lagradost.cloudstream3.extractors.Sbspeed
+import com.lagradost.cloudstream3.extractors.Sbthe
+import com.lagradost.cloudstream3.extractors.Sendvid
+import com.lagradost.cloudstream3.extractors.ShaveTape
+import com.lagradost.cloudstream3.extractors.Solidfiles
+import com.lagradost.cloudstream3.extractors.SpeedoStream
+import com.lagradost.cloudstream3.extractors.SpeedoStream1
+import com.lagradost.cloudstream3.extractors.SpeedoStream2
+import com.lagradost.cloudstream3.extractors.Ssbstream
+import com.lagradost.cloudstream3.extractors.StreamM4u
+import com.lagradost.cloudstream3.extractors.StreamSB
+import com.lagradost.cloudstream3.extractors.StreamSB1
+import com.lagradost.cloudstream3.extractors.StreamSB10
+import com.lagradost.cloudstream3.extractors.StreamSB11
+import com.lagradost.cloudstream3.extractors.StreamSB2
+import com.lagradost.cloudstream3.extractors.StreamSB3
+import com.lagradost.cloudstream3.extractors.StreamSB4
+import com.lagradost.cloudstream3.extractors.StreamSB5
+import com.lagradost.cloudstream3.extractors.StreamSB6
+import com.lagradost.cloudstream3.extractors.StreamSB7
+import com.lagradost.cloudstream3.extractors.StreamSB8
+import com.lagradost.cloudstream3.extractors.StreamSB9
+import com.lagradost.cloudstream3.extractors.StreamTape
+import com.lagradost.cloudstream3.extractors.StreamTapeNet
+import com.lagradost.cloudstream3.extractors.StreamhideCom
+import com.lagradost.cloudstream3.extractors.StreamhideTo
+import com.lagradost.cloudstream3.extractors.Streamhub2
+import com.lagradost.cloudstream3.extractors.Streamlare
+import com.lagradost.cloudstream3.extractors.StreamoUpload
+import com.lagradost.cloudstream3.extractors.Streamplay
+import com.lagradost.cloudstream3.extractors.Streamsss
+import com.lagradost.cloudstream3.extractors.Supervideo
+import com.lagradost.cloudstream3.extractors.Tantifilm
+import com.lagradost.cloudstream3.extractors.Tomatomatela
+import com.lagradost.cloudstream3.extractors.TomatomatelalClub
+import com.lagradost.cloudstream3.extractors.Tubeless
+import com.lagradost.cloudstream3.extractors.Upstream
+import com.lagradost.cloudstream3.extractors.UpstreamExtractor
+import com.lagradost.cloudstream3.extractors.Uqload
+import com.lagradost.cloudstream3.extractors.Uqload1
+import com.lagradost.cloudstream3.extractors.Uqload2
+import com.lagradost.cloudstream3.extractors.Userload
+import com.lagradost.cloudstream3.extractors.Userscloud
+import com.lagradost.cloudstream3.extractors.Uservideo
+import com.lagradost.cloudstream3.extractors.Vanfem
+import com.lagradost.cloudstream3.extractors.Vicloud
+import com.lagradost.cloudstream3.extractors.VidSrcExtractor
+import com.lagradost.cloudstream3.extractors.VidSrcExtractor2
+import com.lagradost.cloudstream3.extractors.VideoVard
+import com.lagradost.cloudstream3.extractors.VideovardSX
+import com.lagradost.cloudstream3.extractors.Vidgomunime
+import com.lagradost.cloudstream3.extractors.Vidgomunimesb
+import com.lagradost.cloudstream3.extractors.Vidmoly
+import com.lagradost.cloudstream3.extractors.Vidmolyme
+import com.lagradost.cloudstream3.extractors.Vido
+import com.lagradost.cloudstream3.extractors.Vidstreamz
+import com.lagradost.cloudstream3.extractors.Vizcloud
+import com.lagradost.cloudstream3.extractors.Vizcloud2
+import com.lagradost.cloudstream3.extractors.VizcloudCloud
+import com.lagradost.cloudstream3.extractors.VizcloudDigital
+import com.lagradost.cloudstream3.extractors.VizcloudInfo
+import com.lagradost.cloudstream3.extractors.VizcloudLive
+import com.lagradost.cloudstream3.extractors.VizcloudOnline
+import com.lagradost.cloudstream3.extractors.VizcloudSite
+import com.lagradost.cloudstream3.extractors.VizcloudXyz
+import com.lagradost.cloudstream3.extractors.Voe
+import com.lagradost.cloudstream3.extractors.Watchx
+import com.lagradost.cloudstream3.extractors.WcoStream
+import com.lagradost.cloudstream3.extractors.Wibufile
+import com.lagradost.cloudstream3.extractors.XStreamCdn
+import com.lagradost.cloudstream3.extractors.YourUpload
+import com.lagradost.cloudstream3.extractors.YoutubeExtractor
+import com.lagradost.cloudstream3.extractors.YoutubeMobileExtractor
+import com.lagradost.cloudstream3.extractors.YoutubeNoCookieExtractor
+import com.lagradost.cloudstream3.extractors.YoutubeShortLinkExtractor
+import com.lagradost.cloudstream3.extractors.Yufiles
+import com.lagradost.cloudstream3.extractors.Zorofile
+import com.lagradost.cloudstream3.extractors.Zplayer
+import com.lagradost.cloudstream3.extractors.ZplayerV2
+import com.lagradost.cloudstream3.extractors.Ztreamhub
 import com.lagradost.cloudstream3.mvvm.logError
-import com.lagradost.cloudstream3.extractors.*
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import kotlinx.coroutines.delay
 import org.jsoup.Jsoup
 import java.net.URL
-import kotlin.collections.MutableList
+import java.util.UUID
 
 /**
  * For use in the ConcatenatingMediaSource.
@@ -37,7 +227,6 @@ data class ExtractorLinkPlayList(
     val playlist: List<PlayListItem>,
     override val referer: String,
     override val quality: Int,
-    val isM3u8: Boolean = false,
     override val headers: Map<String, String> = mapOf(),
     /** Used for getExtractorVerifierJob() */
     override val extractorData: String? = null,
@@ -99,6 +288,84 @@ private fun inferTypeFromUrl(url: String): ExtractorLinkType {
     }
 }
 val INFER_TYPE : ExtractorLinkType? = null
+
+/**
+ * UUID for the ClearKey DRM scheme.
+ *
+ *
+ * ClearKey is supported on Android devices running Android 5.0 (API Level 21) and up.
+ */
+val CLEARKEY_UUID = UUID(-0x1d8e62a7567a4c37L, 0x781AB030AF78D30EL)
+
+/**
+ * UUID for the Widevine DRM scheme.
+ *
+ *
+ * Widevine is supported on Android devices running Android 4.3 (API Level 18) and up.
+ */
+val WIDEVINE_UUID = UUID(-0x121074568629b532L, -0x5c37d8232ae2de13L)
+
+/**
+ * UUID for the PlayReady DRM scheme.
+ *
+ *
+ * PlayReady is supported on all AndroidTV devices. Note that most other Android devices do not
+ * provide PlayReady support.
+ */
+val PLAYREADY_UUID = UUID(-0x65fb0f8667bfbd7aL, -0x546d19a41f77a06bL)
+
+open class DrmExtractorLink private constructor(
+    override val source: String,
+    override val name: String,
+    override val url: String,
+    override val referer: String,
+    override val quality: Int,
+    override val headers: Map<String, String> = mapOf(),
+    /** Used for getExtractorVerifierJob() */
+    override val extractorData: String? = null,
+    override val type: ExtractorLinkType,
+    open val kid : String,
+    open val key : String,
+    open val uuid : UUID,
+    open val kty : String,
+
+    open val keyRequestParameters : HashMap<String, String>
+) : ExtractorLink(
+    source, name, url, referer, quality, type, headers, extractorData
+) {
+    constructor(
+        source: String,
+        name: String,
+        url: String,
+        referer: String,
+        quality: Int,
+        /** the type of the media, use INFER_TYPE if you want to auto infer the type from the url */
+        type: ExtractorLinkType?,
+        headers: Map<String, String> = mapOf(),
+        /** Used for getExtractorVerifierJob() */
+        extractorData: String? = null,
+        kid : String,
+        key : String,
+        uuid : UUID = CLEARKEY_UUID,
+        kty : String = "oct",
+        keyRequestParameters : HashMap<String, String> = hashMapOf(),
+    ) : this(
+        source = source,
+        name = name,
+        url = url,
+        referer = referer,
+        quality = quality,
+        headers = headers,
+        extractorData = extractorData,
+        type = type ?: inferTypeFromUrl(url),
+        kid = kid,
+        key = key,
+        uuid = uuid,
+        keyRequestParameters = keyRequestParameters,
+        kty = kty,
+    )
+}
+
 open class ExtractorLink constructor(
     open val source: String,
     open val name: String,
@@ -110,6 +377,9 @@ open class ExtractorLink constructor(
     open val extractorData: String? = null,
     open val type: ExtractorLinkType,
 ) : VideoDownloadManager.IDownloadableMinimum {
+    val isM3u8 : Boolean get() = type == ExtractorLinkType.M3U8
+    val isDash : Boolean get() = type == ExtractorLinkType.DASH
+
     constructor(
         source: String,
         name: String,
