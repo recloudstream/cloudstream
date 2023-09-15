@@ -128,6 +128,7 @@ import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStore.setKey
+import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.DataStoreHelper.migrateResumeWatching
 import com.lagradost.cloudstream3.utils.Event
 import com.lagradost.cloudstream3.utils.IOnBackPressed
@@ -305,6 +306,10 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
 
         // kinda shitty solution, but cant com main->home otherwise for popups
         val bookmarksUpdatedEvent = Event<Boolean>()
+        /**
+         * Used by data store helper to fully reload home when switching accounts
+         */
+        val reloadHomeEvent = Event<Boolean>()
 
 
         /**
@@ -1187,7 +1192,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             }
         } else if (lastError == null) {
             ioSafe {
-                getKey<String>(USER_SELECTED_HOMEPAGE_API)?.let { homeApi ->
+                DataStoreHelper.currentHomePage?.let { homeApi ->
                     mainPluginsLoadedEvent.invoke(loadSinglePlugin(this@MainActivity, homeApi))
                 } ?: run {
                     mainPluginsLoadedEvent.invoke(false)
@@ -1546,6 +1551,11 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
 
         ioSafe {
             migrateResumeWatching()
+        }
+
+        getKey<String>(USER_SELECTED_HOMEPAGE_API)?.let { homepage ->
+            DataStoreHelper.currentHomePage = homepage
+            removeKey(USER_SELECTED_HOMEPAGE_API)
         }
 
         try {
