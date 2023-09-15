@@ -137,6 +137,20 @@ object PluginManager {
         }
     }
 
+    /**
+     * Deletes all generated oat files which will force Android to recompile the dex extensions.
+     * This might fix unrecoverable SIGSEGV exceptions when old oat files are loaded in a new app update.
+     */
+    fun deleteAllOatFiles(context: Context) {
+        File("${context.filesDir}/${ONLINE_PLUGINS_FOLDER}").listFiles()?.forEach { repo ->
+            repo.listFiles { file -> file.name == "oat" && file.isDirectory }?.forEach { file ->
+                val success = file.deleteRecursively()
+                Log.i(TAG, "Deleted oat directory: ${file.absolutePath} Success=$success")
+            }
+        }
+    }
+
+
     fun getPluginsOnline(): Array<PluginData> {
         return getKey(PLUGINS_KEY) ?: emptyArray()
     }
