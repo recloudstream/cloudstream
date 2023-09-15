@@ -539,6 +539,10 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             val isTrueTv = isTrueTvSettings()
             navView.menu.findItem(R.id.navigation_library)?.isVisible = !isTrueTv
             navRailView.menu.findItem(R.id.navigation_library)?.isVisible = !isTrueTv
+
+            // Hide downloads on TV
+            navView.menu.findItem(R.id.navigation_downloads)?.isVisible = !isTrueTv
+            navRailView.menu.findItem(R.id.navigation_downloads)?.isVisible = !isTrueTv
         }
     }
 
@@ -1112,16 +1116,17 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                 newLocalBinding.root.viewTreeObserver.addOnGlobalFocusChangeListener { _, newFocus ->
                     // println("refocus $oldFocus -> $newFocus")
                     try {
-                        val r = Rect(0,0,0,0)
+                        val r = Rect(0, 0, 0, 0)
                         newFocus.getDrawingRect(r)
                         val x = r.centerX()
                         val y = r.centerY()
                         val dx = 0 //screenWidth / 2
                         val dy = screenHeight / 2
-                        val r2 = Rect(x-dx,y-dy,x+dx,y+dy)
+                        val r2 = Rect(x - dx, y - dy, x + dx, y + dy)
                         newFocus.requestRectangleOnScreen(r2, false)
-                       // TvFocus.current =TvFocus.current.copy(y=y.toFloat())
-                    } catch (_ : Throwable) { }
+                        // TvFocus.current =TvFocus.current.copy(y=y.toFloat())
+                    } catch (_: Throwable) {
+                    }
                     TvFocus.updateFocusView(newFocus)
                     /*var focus = newFocus
 
