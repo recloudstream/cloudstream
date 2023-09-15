@@ -3,6 +3,7 @@ package com.lagradost.cloudstream3.ui
 import android.content.Context
 import android.util.AttributeSet
 import android.view.View
+import androidx.core.view.children
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlin.math.abs
@@ -70,8 +71,8 @@ class GrdLayoutManager(val context: Context, _spanCount: Int) :
         val orientation = this.orientation
 
         // fixes arabic by inverting left and right layout focus
-        val correctDirection = if(this.isLayoutRTL) {
-            when(direction) {
+        val correctDirection = if (this.isLayoutRTL) {
+            when (direction) {
                 View.FOCUS_RIGHT -> View.FOCUS_LEFT
                 View.FOCUS_LEFT -> View.FOCUS_RIGHT
                 else -> direction
@@ -83,12 +84,15 @@ class GrdLayoutManager(val context: Context, _spanCount: Int) :
                 View.FOCUS_DOWN -> {
                     return spanCount
                 }
+
                 View.FOCUS_UP -> {
                     return -spanCount
                 }
+
                 View.FOCUS_RIGHT -> {
                     return 1
                 }
+
                 View.FOCUS_LEFT -> {
                     return -1
                 }
@@ -98,12 +102,15 @@ class GrdLayoutManager(val context: Context, _spanCount: Int) :
                 View.FOCUS_DOWN -> {
                     return 1
                 }
+
                 View.FOCUS_UP -> {
                     return -1
                 }
+
                 View.FOCUS_RIGHT -> {
                     return spanCount
                 }
+
                 View.FOCUS_LEFT -> {
                     return -spanCount
                 }
@@ -154,5 +161,33 @@ class AutofitRecyclerView @JvmOverloads constructor(context: Context, attrs: Att
         }
 
         layoutManager = manager
+    }
+}
+
+/**
+ * Recyclerview wherein the max item width or height is set by the biggest view to prevent inconsistent view sizes.
+ */
+class MaxRecyclerView(ctx: Context, attrs: AttributeSet) : RecyclerView(ctx, attrs) {
+    private var biggestObserved: Int = 0
+    private val orientation = LayoutManager.getProperties(context, attrs, 0, 0).orientation
+    private val isHorizontal = orientation == HORIZONTAL
+    private fun View.updateMaxSize() {
+        if (isHorizontal) {
+            this.minimumHeight = biggestObserved
+        } else {
+            this.minimumWidth = biggestObserved
+        }
+    }
+
+    override fun onChildAttachedToWindow(child: View) {
+        child.measure(MeasureSpec.UNSPECIFIED, MeasureSpec.UNSPECIFIED)
+        val observed = if (isHorizontal) child.measuredHeight else child.measuredWidth
+        if (observed > biggestObserved) {
+            biggestObserved = observed
+            children.forEach { it.updateMaxSize() }
+        } else {
+            child.updateMaxSize()
+        }
+        super.onChildAttachedToWindow(child)
     }
 }
