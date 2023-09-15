@@ -144,6 +144,7 @@ import com.lagradost.cloudstream3.utils.USER_PROVIDER_API
 import com.lagradost.cloudstream3.utils.USER_SELECTED_HOMEPAGE_API
 import com.lagradost.nicehttp.Requests
 import com.lagradost.nicehttp.ResponseParser
+import com.lagradost.safefile.SafeFile
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import java.io.File
@@ -279,6 +280,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
     companion object {
         const val TAG = "MAINACT"
         var lastError: String? = null
+
         /**
          * Setting this will automatically enter the query in the search
          * next time the search fragment is opened.
@@ -366,7 +368,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                         nextSearchQuery =
                             try {
                                 URLDecoder.decode(query, "UTF-8")
-                            } catch (t : Throwable) {
+                            } catch (t: Throwable) {
                                 logError(t)
                                 query
                             }
@@ -859,7 +861,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                 RecyclerView::class.java.declaredMethods.firstOrNull {
                     it.name == "scrollStep"
                 }?.also { it.isAccessible = true }
-            } catch (t : Throwable) {
+            } catch (t: Throwable) {
                 null
             }
         }
@@ -906,11 +908,11 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                                 if (dx > 0) dx else 0
                             }
 
-                            if(!NO_MOVE_LIST) {
+                            if (!NO_MOVE_LIST) {
                                 parent.smoothScrollBy(rdx, 0)
-                            }else {
+                            } else {
                                 val smoothScroll = reflectedScroll
-                                if(smoothScroll == null) {
+                                if (smoothScroll == null) {
                                     parent.smoothScrollBy(rdx, 0)
                                 } else {
                                     try {
@@ -920,12 +922,12 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                                         val out = IntArray(2)
                                         smoothScroll.invoke(parent, rdx, 0, out)
                                         val scrolledX = out[0]
-                                        if(abs(scrolledX) <= 0) { // newFocus.measuredWidth*2
+                                        if (abs(scrolledX) <= 0) { // newFocus.measuredWidth*2
                                             smoothScroll.invoke(parent, -rdx, 0, out)
                                             parent.smoothScrollBy(scrolledX, 0)
                                             if (NO_MOVE_LIST) targetDx = scrolledX
                                         }
-                                    } catch (t : Throwable) {
+                                    } catch (t: Throwable) {
                                         parent.smoothScrollBy(rdx, 0)
                                     }
                                 }
@@ -1131,10 +1133,10 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                             snackbar.show()
                         }
                 }
-
             }
         }
 
+        ioSafe { SafeFile.check(this@MainActivity) }
 
         if (PluginManager.checkSafeModeFile()) {
             normalSafeApiCall {

@@ -38,7 +38,7 @@ import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.utils.USER_PROVIDER_API
 import com.lagradost.cloudstream3.utils.VideoDownloadManager
 import com.lagradost.cloudstream3.utils.VideoDownloadManager.getBasePath
-import com.lagradost.cloudstream3.utils.storage.SafeFile
+import com.lagradost.safefile.SafeFile
 
 fun getCurrentLocale(context: Context): String {
     val res = context.resources
@@ -54,6 +54,8 @@ fun getCurrentLocale(context: Context): String {
 // https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes leave blank for auto
 val appLanguages = arrayListOf(
     /* begin language list */
+    Triple("", "ajp", "ajp"),
+    Triple("", "አማርኛ", "am"),
     Triple("", "العربية", "ar"),
     Triple("", "ars", "ars"),
     Triple("", "български", "bg"),
@@ -96,6 +98,7 @@ val appLanguages = arrayListOf(
     Triple("", "Soomaaliga", "so"),
     Triple("", "svenska", "sv"),
     Triple("", "தமிழ்", "ta"),
+    Triple("", "ትግርኛ", "ti"),
     Triple("", "Tagalog", "tl"),
     Triple("", "Türkçe", "tr"),
     Triple("", "українська", "uk"),
@@ -335,7 +338,7 @@ class SettingsGeneral : PreferenceFragmentCompat() {
 
             val currentDir =
                 settingsManager.getString(getString(R.string.download_path_pref), null)
-                    ?: context?.let { ctx -> VideoDownloadManager.getDefaultDir(ctx).toString() }
+                    ?: context?.let { ctx -> VideoDownloadManager.getDefaultDir(ctx)?.filePath() }
 
             activity?.showBottomDialog(
                 dirs + listOf("Custom"),

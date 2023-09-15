@@ -48,7 +48,7 @@ class LinkGenerator(
 
     override suspend fun generateLinks(
         clearCache: Boolean,
-        isCasting: Boolean,
+        type: LoadType,
         callback: (Pair<ExtractorLink?, ExtractorUri?>) -> Unit,
         subtitleCallback: (SubtitleData) -> Unit,
         offset: Int

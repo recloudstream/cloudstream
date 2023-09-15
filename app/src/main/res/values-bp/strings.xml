@@ -156,7 +156,7 @@
     <string name="bug_report_settings_on">Não enviar nenhum dado</string>
     <string name="show_fillers_settings">Mostrar episódios de Filler em anime</string>
     <string name="show_trailers_settings">Mostrar trailers</string>
-    <string name="kitsu_settings">Mostrar posters do kitsu</string>
+    <string name="kitsu_settings">Mostrar posters do Kitsu</string>
     <string name="pref_filter_search_quality">Esconder qualidades de vídeo selecionadas nos resultados da Pesquisa</string>
     <string name="automatic_plugin_updates">Atualizações de plugin automáticas</string>
     <string name="updates_settings">Mostrar atualizações do app</string>
@@ -183,7 +183,7 @@
     <string name="season_short">S</string>
     <string name="episode_short">E</string>
     <string name="no_episodes_found">Nenhum Episódio encontrado</string>
-    <string name="delete_file">Deletar Arquivo</string>
+    <string name="delete_file">Apagar Arquivo</string>
     <string name="delete">Deletar</string>
     <string name="pause">Pausar</string>
     <string name="resume">Retomar</string>
@@ -410,15 +410,19 @@
     <string name="batch_download_finish_format" formatted="true">Transferido %d %s com sucesso</string>
     <string name="batch_download_nothing_to_download_format" formatted="true">Tudo %s já transferido</string>
     <string name="batch_download">Transferência em batch</string>
-    <string name="plugin_singular">plugin</string>
-    <string name="plugin">plugins</string>
+    <string name="plugin_singular">Plugin</string>
+    <string name="plugin">Plugins</string>
     <string name="delete_repository_plugins">Isto irá apagar todos os repositórios de plugins</string>
     <string name="delete_repository">Apagar repositório</string>
     <string name="setup_extensions_subtext">Transferir lista de sites a usar</string>
     <string name="plugins_downloaded" formatted="true">Transferido: %d</string>
     <string name="plugins_disabled" formatted="true">Desativado: %d</string>
     <string name="plugins_not_downloaded" formatted="true">Não transferido: %d</string>
-    <string name="blank_repo_message">Adicionar um repositório para instalar extensões de sites</string>
+    <string name="blank_repo_message">CloudStream não tem fontes instaladas por padrão. Você precisa instalar um site de repositórios.
+\n
+\nPor causa das limitações do DMCA (Digital Millennium Copyright Act ) feito em nome de Sky UK Limited 🤮nós não podemos adicionar site de repositórios no app.
+\n
+\nEntre no nosso Discord ou pesquise online.</string>
     <string name="view_public_repositories_button">Ver repositórios da comunidade</string>
     <string name="view_public_repositories_button_short">Lista pública</string>
     <string name="uppercase_all_subtitles">Todas as legendas em maiúsculas</string>
@@ -455,7 +459,7 @@
     <string name="edit">Editar</string>
     <string name="profiles">Perfis</string>
     <string name="android_tv_interface_on_seek_settings">Exibindo Player - procure na Barra de Progresso</string>
-    <string name="action_remove_from_watched">remover dos assitidos</string>
+    <string name="action_remove_from_watched">Remover dos assistidos</string>
     <string name="pref_category_extensions">Extensões</string>
     <string name="sort_alphabetical_a">Alfabética(A =&gt; Z)</string>
     <string name="open_with">Abrir com</string>
@@ -468,7 +472,7 @@
     <string name="library">Biblioteca</string>
     <string name="no">Não</string>
     <string name="tracks">Trilhas Sonoras</string>
-    <string name="sort_rating_asc">Votação(Baixa para Alta)</string>
+    <string name="sort_rating_asc">Votação (Baixa para Alta)</string>
     <string name="update_started">Atualização iniciada</string>
     <string name="nsfw_singular">Conteúdo +18</string>
     <string name="help">Ajuda</string>
@@ -476,7 +480,7 @@
     <string name="update_notification_failed">Não pudemos instalar a nova versão do App</string>
     <string name="apk_installer_package_installer">instalador de pacotes</string>
     <string name="sort_by">Organizar por</string>
-    <string name="sort_rating_desc">Votação(Alta para Baixa)</string>
+    <string name="sort_rating_desc">Votação (Alta para Baixa)</string>
     <string name="sort_alphabetical_z">Alfabética(Z =&gt; A)</string>
     <string name="qualities">Qualidade</string>
     <string name="profile_background_des">Perfil de plano de fundo</string>
@@ -499,4 +503,51 @@
     <string name="subscription_in_progress_notification">Atualizando shows inscritos</string>
     <string name="android_tv_interface_off_seek_settings">Player oculto - Procure na barra de progresso</string>
     <string name="nsfw">Conteúdo +18</string>
+    <string name="restart">Reiniciar</string>
+    <string name="stop">Parar</string>
+    <string name="action_mark_as_watched">Marcar como assistido</string>
+    <string name="delayed_update_notice">Aplicativo precisa ser fechado para atualizar</string>
+    <string name="enable_skip_op_from_database_des">Mostrar popups pulados para abertura e finalização</string>
+    <string name="episodes_range">%d-%d</string>
+    <string name="player_settings_play_in_app">Player interno</string>
+    <string name="extension_size">Tamanho</string>
+    <string name="skip_type_op">Abrindo</string>
+    <string name="season_format">%s %d%s</string>
+    <string name="plugins_updated" formatted="true">%d plugins atualizados</string>
+    <string name="safe_mode_description">Todos as extensões serão desligadas para ajuda se talvez estejam causando algum bug.</string>
+    <string name="app_not_found_error">Aplicativo não encontrado</string>
+    <string name="skip_type_recap">Recapitular</string>
+    <string name="all_languages_preference">Todas as linguagens</string>
+    <string name="skip_type_format" formatted="true">Pula %s</string>
+    <string name="skip_type_mixed_ed">Mistura terminada</string>
+    <string name="safe_mode_title">Modo seguro ligado</string>
+    <string name="extension_rating" formatted="true">Ranquear: %s</string>
+    <string name="extension_language">Linguagem</string>
+    <string name="hls_playlist">Lista de reprodução HLS</string>
+    <string name="skip_type_ed">Terminando</string>
+    <string name="episode_format" formatted="true">%d %s</string>
+    <string name="sort_updated_old">Adicionado em (antigo para novo)</string>
+    <string name="skip_type_intro">Introdução</string>
+    <string name="no_plugins_found_error">plug-ins não foram encontrados no repositório</string>
+    <string name="no_repository_found_error">Repositório não encontrado, verifique o URL e tente usa uma VPN</string>
+    <string name="extension_description">Descrição</string>
+    <string name="extension_version">Versão</string>
+    <string name="extension_authors">Autores</string>
+    <string name="extension_install_first">Instale a extensão primeiro</string>
+    <string name="skip_type_creddits">Créditos</string>
+    <string name="history">Historico</string>
+    <string name="clear_history">Limpar historico</string>
+    <string name="clipboard_too_large">Tem Muito texto. Não é possível salvar no clipboard.</string>
+    <string name="player_pref">Player de vídeo preferido</string>
+    <string name="start">Começar</string>
+    <string name="extension_types">Suportado</string>
+    <string name="extension_status">Status</string>
+    <string name="player_settings_play_in_mpv">MPV</string>
+    <string name="skip_type_mixed_op">Abrindo mistura</string>
+    <string name="player_settings_play_in_vlc">VLC</string>
+    <string name="apply_on_restart">Aplicar quando reiniciar</string>
+    <string name="safe_mode_crash_info">Visualização info de crash</string>
+    <string name="audio_tracks">Faixas de áudio</string>
+    <string name="sort_updated_new">Adicionado em (novo para antigo)</string>
+    <string name="video_tracks">Faixas de video</string>
 </resources>

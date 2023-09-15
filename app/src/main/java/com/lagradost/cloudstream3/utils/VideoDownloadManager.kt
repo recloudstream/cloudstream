@@ -35,8 +35,8 @@ import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStore.removeKey
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
-import com.lagradost.cloudstream3.utils.storage.MediaFileContentType
-import com.lagradost.cloudstream3.utils.storage.SafeFile
+import com.lagradost.safefile.MediaFileContentType
+import com.lagradost.safefile.SafeFile
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -53,7 +53,7 @@ import java.io.Closeable
 import java.io.File
 import java.io.IOException
 import java.io.OutputStream
-import java.net.URL
+import java.lang.IllegalArgumentException
 import java.util.*
 
 const val DOWNLOAD_CHANNEL_ID = "cloudstream3.general"
@@ -62,6 +62,7 @@ const val DOWNLOAD_CHANNEL_DESCRIPT = "The download notification channel"
 
 object VideoDownloadManager {
     var maxConcurrentDownloads = 3
+    var maxConcurrentConnections = 3
     private var currentDownloads = mutableListOf<Int>()
 
     private const val USER_AGENT =
@@ -504,7 +505,7 @@ object VideoDownloadManager {
     ): List<Pair<String, Uri>>? {
         val base = basePathToFile(context, basePath)
         val folder = base?.gotoDirectory(relativePath, false) ?: return null
-        if (folder.isDirectory() != false) return null
+        //if (folder.isDirectory() != false) return null
 
         return folder.listFiles()
             ?.mapNotNull { (it.name() ?: "") to (it.uri() ?: return@mapNotNull null) }
@@ -553,9 +554,8 @@ object VideoDownloadManager {
         extension: String,
         tryResume: Boolean,
     ): StreamData {
-        val (base, _) = context.getBasePath()
         return setupStream(
-            base ?: throw IOException("Bad config"),
+            context.getBasePath().first ?: getDefaultDir(context) ?: throw IOException("Bad config"),
             name,
             folder,
             extension,
@@ -951,7 +951,10 @@ object VideoDownloadManager {
         /** how many bytes every connection should be, by default it is 10 MiB */
         chuckSize: Long = (1 shl 20) * 10,
         /** maximum bytes in the buffer that responds */
-        bufferSize: Int = DEFAULT_BUFFER_SIZE
+        bufferSize: Int = DEFAULT_BUFFER_SIZE,
+        /** how many bytes bytes it should require to use the parallel downloader instead,
+         * if we download a very small file we don't want it parallel */
+        maximumSmallSize : Long = chuckSize * 2
     ): LazyStreamDownloadData {
         // we don't want to make a separate connection for every 1kb
         require(chuckSize > 1000)
@@ -963,7 +966,7 @@ object VideoDownloadManager {
         var downloadLength: Long? = null
         var totalLength: Long? = null
 
-        val ranges = if (contentLength == null) {
+        val ranges = if (contentLength == null || contentLength < maximumSmallSize) {
             // is the equivalent of [startByte..EOF] as we don't know the size we can only do one
             // connection
             LongArray(1) { startByte }
@@ -1024,6 +1027,7 @@ object VideoDownloadManager {
         }
     }
 
+    /** download a file that consist of a single stream of data*/
     suspend fun downloadThing(
         context: Context,
         link: IDownloadableMinimum,
@@ -1035,8 +1039,7 @@ object VideoDownloadManager {
         createNotificationCallback: (CreateNotificationMetadata) -> Unit,
         parallelConnections: Int = 3
     ): DownloadStatus = withContext(Dispatchers.IO) {
-        // we cant download torrents with this implementation, aria2c might be used in the future
-        if (link.url.startsWith("magnet") || link.url.endsWith(".torrent") || parallelConnections < 1) {
+        if (parallelConnections < 1) {
             return@withContext DOWNLOAD_INVALID_INPUT
         }
 
@@ -1400,7 +1403,12 @@ object VideoDownloadManager {
                                 metadata.type = DownloadType.IsFailed
                             }
                         } finally {
-                            fileMutex.unlock()
+                            try {
+                                // may cause java.lang.IllegalStateException: Mutex is not locked because of cancelling
+                                fileMutex.unlock()
+                            } catch (t : Throwable) {
+                                logError(t)
+                            }
                         }
                     }
                 }
@@ -1524,6 +1532,11 @@ object VideoDownloadManager {
         notificationCallback: (Int, Notification) -> Unit,
         tryResume: Boolean = false,
     ): DownloadStatus {
+        // no support for these file formats
+        if(link.type == ExtractorLinkType.MAGNET || link.type == ExtractorLinkType.TORRENT || link.type == ExtractorLinkType.DASH) {
+            return DOWNLOAD_INVALID_INPUT
+        }
+
         val name = getFileName(context, ep)
 
         // Make sure this is cancelled when download is done or cancelled.
@@ -1552,35 +1565,39 @@ object VideoDownloadManager {
         }
 
         try {
-            if (link.isM3u8 || normalSafeApiCall { URL(link.url).path.endsWith(".m3u8") } == true) {
-                val startIndex = if (tryResume) {
-                    context.getKey<DownloadedFileInfo>(
-                        KEY_DOWNLOAD_INFO,
-                        ep.id.toString(),
-                        null
-                    )?.extraInfo?.toIntOrNull()
-                } else null
+            when(link.type) {
+                ExtractorLinkType.M3U8 -> {
+                    val startIndex = if (tryResume) {
+                        context.getKey<DownloadedFileInfo>(
+                            KEY_DOWNLOAD_INFO,
+                            ep.id.toString(),
+                            null
+                        )?.extraInfo?.toIntOrNull()
+                    } else null
 
-                return downloadHLS(
-                    context,
-                    link,
-                    name,
-                    folder ?: "",
-                    ep.id,
-                    startIndex,
-                    callback
-                )
-            } else {
-                return downloadThing(
-                    context,
-                    link,
-                    name,
-                    folder ?: "",
-                    "mp4",
-                    tryResume,
-                    ep.id,
-                    callback
-                )
+                    return downloadHLS(
+                        context,
+                        link,
+                        name,
+                        folder ?: "",
+                        ep.id,
+                        startIndex,
+                        callback, parallelConnections = maxConcurrentConnections
+                    )
+                }
+                ExtractorLinkType.VIDEO -> {
+                    return downloadThing(
+                        context,
+                        link,
+                        name,
+                        folder ?: "",
+                        "mp4",
+                        tryResume,
+                        ep.id,
+                        callback, parallelConnections = maxConcurrentConnections
+                    )
+                }
+                else -> throw IllegalArgumentException("unsuported download type")
             }
         } catch (t: Throwable) {
             return DOWNLOAD_FAILED
@@ -1682,7 +1699,7 @@ object VideoDownloadManager {
 
             // only delete the key if the file is not found
             if (file == null || !file.existsOrThrow()) {
-                if (removeKeys) context.removeKey(KEY_DOWNLOAD_INFO, id.toString())
+                //if (removeKeys) context.removeKey(KEY_DOWNLOAD_INFO, id.toString()) // TODO READD
                 return null
             }
 

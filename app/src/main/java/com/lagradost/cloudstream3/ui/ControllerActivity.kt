@@ -25,6 +25,7 @@ import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.safeApiCall
 import com.lagradost.cloudstream3.sortSubs
 import com.lagradost.cloudstream3.sortUrls
+import com.lagradost.cloudstream3.ui.player.LoadType
 import com.lagradost.cloudstream3.ui.player.RepoLinkGenerator
 import com.lagradost.cloudstream3.ui.player.SubtitleData
 import com.lagradost.cloudstream3.ui.result.ResultEpisode
@@ -294,7 +295,8 @@ class SelectSourceController(val view: ImageView, val activity: ControllerActivi
                         val generator = RepoLinkGenerator(listOf(epData))
 
                         val isSuccessful = safeApiCall {
-                            generator.generateLinks(clearCache = false, isCasting = true,
+                            generator.generateLinks(
+                                clearCache = false, type = LoadType.Chromecast,
                                 callback = {
                                     it.first?.let { link ->
                                         currentLinks.add(link)

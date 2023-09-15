@@ -41,6 +41,8 @@ import com.lagradost.cloudstream3.utils.AppUtils.loadResult
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.DOWNLOAD_HEADER_CACHE
 import com.lagradost.cloudstream3.utils.DataStoreHelper
+import com.lagradost.cloudstream3.utils.DataStoreHelper.deleteAllBookmarkedData
+import com.lagradost.cloudstream3.utils.DataStoreHelper.deleteAllResumeStateIds
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getAllResumeStateIds
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getAllWatchStateIds
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getBookmarkedData
@@ -90,6 +92,21 @@ class HomeViewModel : ViewModel() {
             }
             return resumeWatchingResult
         }
+    }
+
+    fun deleteResumeWatching() {
+        deleteAllResumeStateIds()
+        loadResumeWatching()
+    }
+
+    fun deleteBookmarks(list: List<SearchResponse>) {
+        list.forEach { DataStoreHelper.deleteBookmarkedData(it.id) }
+        loadStoredData()
+    }
+
+    fun deleteBookmarks() {
+        deleteAllBookmarkedData()
+        loadStoredData()
     }
 
     var repo: APIRepository? = null
@@ -394,11 +411,14 @@ class HomeViewModel : ViewModel() {
     }
 
 
-    private val _popup = MutableLiveData<ExpandableHomepageList?>(null)
-    val popup: LiveData<ExpandableHomepageList?> = _popup
+    private val _popup = MutableLiveData<Pair<ExpandableHomepageList, (() -> Unit)?>?>(null)
+    val popup: LiveData<Pair<ExpandableHomepageList, (() -> Unit)?>?> = _popup
 
-    fun popup(list: ExpandableHomepageList?) {
-        _popup.postValue(list)
+    fun popup(list: ExpandableHomepageList?, deleteCallback: (() -> Unit)? = null) {
+        if (list == null)
+            _popup.postValue(null)
+        else
+            _popup.postValue(list to deleteCallback)
     }
 
     private fun bookmarksUpdated(unused: Boolean) {
@@ -436,13 +456,17 @@ class HomeViewModel : ViewModel() {
         // do nothing
     }
 
-    fun reloadStored() {
-        loadResumeWatching()
+    fun loadStoredData() {
         val list = EnumSet.noneOf(WatchType::class.java)
         getKey<IntArray>(HOME_BOOKMARK_VALUE_LIST)?.map { WatchType.fromInternalId(it) }?.let {
             list.addAll(it)
         }
         loadStoredData(list)
+    }
+
+    fun reloadStored() {
+        loadResumeWatching()
+        loadStoredData()
     }
 
     fun click(load: LoadClickCallback) {

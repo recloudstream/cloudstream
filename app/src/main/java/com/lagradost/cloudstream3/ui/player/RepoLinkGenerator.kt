@@ -67,18 +67,19 @@ class RepoLinkGenerator(
 
     override suspend fun generateLinks(
         clearCache: Boolean,
-        isCasting: Boolean,
+        type: LoadType,
         callback: (Pair<ExtractorLink?, ExtractorUri?>) -> Unit,
         subtitleCallback: (SubtitleData) -> Unit,
-        offset: Int,
+        offset: Int
     ): Boolean {
+        val allowedTypes = type.toSet()
         val index = currentIndex
         val current = episodes.getOrNull(index + offset) ?: return false
 
         val (currentLinkCache, currentSubsCache) = if (clearCache) {
             Pair(mutableSetOf(), mutableSetOf())
         } else {
-            cache[Pair(current.apiName, current.id)] ?: Pair(mutableSetOf(), mutableSetOf())
+            cache[current.apiName to current.id] ?: Pair(mutableSetOf(), mutableSetOf())
         }
 
         //val currentLinkCache = if (clearCache) mutableSetOf() else linkCache[index].toMutableSet()
@@ -88,9 +89,9 @@ class RepoLinkGenerator(
         val currentSubsUrls = mutableSetOf<String>()    // makes all subs urls unique
         val currentSubsNames = mutableSetOf<String>()   // makes all subs names unique
 
-        currentLinkCache.forEach { link ->
+        currentLinkCache.filter { allowedTypes.contains(it.type) }.forEach { link ->
             currentLinks.add(link.url)
-            callback(Pair(link, null))
+            callback(link to null)
         }
 
         currentSubsCache.forEach { sub ->
@@ -108,8 +109,8 @@ class RepoLinkGenerator(
         val result = APIRepository(
             getApiFromNameNull(current.apiName) ?: throw Exception("This provider does not exist")
         ).loadLinks(current.data,
-            isCasting,
-            { file ->
+            isCasting = LoadType.Chromecast == type,
+            subtitleCallback = { file ->
                 val correctFile = PlayerSubtitleHelper.getSubtitleData(file)
                 if (!currentSubsUrls.contains(correctFile.url)) {
                     currentSubsUrls.add(correctFile.url)
@@ -132,12 +133,14 @@ class RepoLinkGenerator(
                     }
                 }
             },
-            { link ->
+            callback = { link ->
                 Log.d(TAG, "Loaded ExtractorLink: $link")
                 if (!currentLinks.contains(link.url)) {
                     if (!currentLinkCache.contains(link)) {
                         currentLinks.add(link.url)
-                        callback(Pair(link, null))
+                        if (allowedTypes.contains(link.type)) {
+                            callback(Pair(link, null))
+                        }
                         currentLinkCache.add(link)
                         //linkCache[index] = currentLinkCache
                     }

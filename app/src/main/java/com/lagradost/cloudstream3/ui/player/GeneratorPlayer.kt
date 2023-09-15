@@ -21,13 +21,11 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
 import androidx.media3.common.Format.NO_VALUE
 import androidx.media3.common.MimeTypes
-import com.hippo.unifile.UniFile
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.databinding.DialogOnlineSubtitlesBinding
 import com.lagradost.cloudstream3.databinding.FragmentPlayerBinding
-import com.lagradost.cloudstream3.databinding.PlayerCustomLayoutBinding
 import com.lagradost.cloudstream3.databinding.PlayerSelectSourceAndSubsBinding
 import com.lagradost.cloudstream3.databinding.PlayerSelectTracksBinding
 import com.lagradost.cloudstream3.mvvm.*
@@ -52,7 +50,7 @@ import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.hideSystemUI
 import com.lagradost.cloudstream3.utils.UIHelper.popCurrentPage
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
-import com.lagradost.cloudstream3.utils.storage.SafeFile
+import com.lagradost.safefile.SafeFile
 import kotlinx.coroutines.Job
 import java.util.*
 import kotlin.math.abs
@@ -136,7 +134,7 @@ class GeneratorPlayer : FullScreenPlayer() {
         return durPos.position
     }
 
-    var currentVerifyLink: Job? = null
+    private var currentVerifyLink: Job? = null
 
     private fun loadExtractorJob(extractorLink: ExtractorLink?) {
         currentVerifyLink?.cancel()

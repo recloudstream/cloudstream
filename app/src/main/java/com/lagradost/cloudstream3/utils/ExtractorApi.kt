@@ -4,8 +4,10 @@ import android.net.Uri
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.extractors.*
+import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import kotlinx.coroutines.delay
 import org.jsoup.Jsoup
+import java.net.URL
 import kotlin.collections.MutableList
 
 /**
@@ -35,35 +37,101 @@ data class ExtractorLinkPlayList(
     val playlist: List<PlayListItem>,
     override val referer: String,
     override val quality: Int,
-    override val isM3u8: Boolean = false,
+    val isM3u8: Boolean = false,
     override val headers: Map<String, String> = mapOf(),
     /** Used for getExtractorVerifierJob() */
     override val extractorData: String? = null,
+    override val type: ExtractorLinkType,
 ) : ExtractorLink(
-    source,
-    name,
-    // Blank as un-used
-    "",
-    referer,
-    quality,
-    isM3u8,
-    headers,
-    extractorData
-)
+    source = source,
+    name = name,
+    url = "",
+    referer = referer,
+    quality = quality,
+    headers = headers,
+    extractorData = extractorData,
+    type = type
+) {
+    constructor(
+        source: String,
+        name: String,
+        playlist: List<PlayListItem>,
+        referer: String,
+        quality: Int,
+        isM3u8: Boolean = false,
+        headers: Map<String, String> = mapOf(),
+        extractorData: String? = null,
+    ) : this(
+        source = source,
+        name = name,
+        playlist = playlist,
+        referer = referer,
+        quality = quality,
+        type = if (isM3u8) ExtractorLinkType.M3U8 else ExtractorLinkType.VIDEO,
+        headers = headers,
+        extractorData = extractorData,
+    )
+}
 
+/** Metadata about the file type used for downloads and exoplayer hint,
+ * if you respond with the wrong one the file will fail to download or be played */
+enum class ExtractorLinkType {
+    /** Single stream of bytes no matter the actual file type */
+    VIDEO,
+    /** Split into several .ts files, has support for encrypted m3u8s */
+    M3U8,
+    /** Like m3u8 but uses xml, currently no download support */
+    DASH,
+    /** No support at the moment */
+    TORRENT,
+    /** No support at the moment */
+    MAGNET,
+}
 
+private fun inferTypeFromUrl(url: String): ExtractorLinkType {
+    val path = normalSafeApiCall { URL(url).path }
+    return when {
+        path?.endsWith(".m3u8") == true -> ExtractorLinkType.M3U8
+        path?.endsWith(".mpd") == true -> ExtractorLinkType.DASH
+        path?.endsWith(".torrent") == true -> ExtractorLinkType.TORRENT
+        url.startsWith("magnet:") -> ExtractorLinkType.MAGNET
+        else -> ExtractorLinkType.VIDEO
+    }
+}
+val INFER_TYPE : ExtractorLinkType? = null
 open class ExtractorLink constructor(
     open val source: String,
     open val name: String,
     override val url: String,
     override val referer: String,
     open val quality: Int,
-    open val isM3u8: Boolean = false,
     override val headers: Map<String, String> = mapOf(),
     /** Used for getExtractorVerifierJob() */
     open val extractorData: String? = null,
-    open val isDash: Boolean = false,
+    open val type: ExtractorLinkType,
 ) : VideoDownloadManager.IDownloadableMinimum {
+    constructor(
+        source: String,
+        name: String,
+        url: String,
+        referer: String,
+        quality: Int,
+        /** the type of the media, use INFER_TYPE if you want to auto infer the type from the url */
+        type: ExtractorLinkType?,
+        headers: Map<String, String> = mapOf(),
+        /** Used for getExtractorVerifierJob() */
+        extractorData: String? = null,
+    ) : this(
+        source = source,
+        name = name,
+        url = url,
+        referer = referer,
+        quality = quality,
+        headers = headers,
+        extractorData = extractorData,
+        type = type ?: inferTypeFromUrl(url)
+    )
+
     /**
      * Old constructor without isDash, allows for backwards compatibility with extensions.
      * Should be removed after all extensions have updated their cloudstream.jar
@@ -80,8 +148,30 @@ open class ExtractorLink constructor(
         extractorData: String? = null
     ) : this(source, name, url, referer, quality, isM3u8, headers, extractorData, false)
 
+    constructor(
+        source: String,
+        name: String,
+        url: String,
+        referer: String,
+        quality: Int,
+        isM3u8: Boolean = false,
+        headers: Map<String, String> = mapOf(),
+        /** Used for getExtractorVerifierJob() */
+        extractorData: String? = null,
+        isDash: Boolean,
+    ) : this(
+        source = source,
+        name = name,
+        url = url,
+        referer = referer,
+        quality = quality,
+        headers = headers,
+        extractorData = extractorData,
+        type = if (isDash) ExtractorLinkType.DASH else if (isM3u8) ExtractorLinkType.M3U8 else ExtractorLinkType.VIDEO
+    )
+
     override fun toString(): String {
-        return "ExtractorLink(name=$name, url=$url, referer=$referer, isM3u8=$isM3u8)"
+        return "ExtractorLink(name=$name, url=$url, referer=$referer, type=$type)"
     }
 }
 
@@ -135,6 +225,7 @@ enum class Qualities(var value: Int, val defaultPriority: Int) {
                 else -> "${qual}p"
             }
         }
+
         fun getStringByIntFull(quality: Int): String {
             return when (quality) {
                 0 -> "Auto"
@@ -389,6 +480,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     Acefile(),
     SpeedoStream(),
     SpeedoStream1(),
+    SpeedoStream2(),
     Zorofile(),
     Embedgram(),
     Mvidoo(),
