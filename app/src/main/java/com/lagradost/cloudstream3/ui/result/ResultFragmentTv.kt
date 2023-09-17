@@ -177,7 +177,7 @@ class ResultFragmentTv : Fragment() {
             isVisible = true
         }
 
-        this.animate().alpha(if (turnVisible) 1.0f else 0.0f).apply {
+        this.animate().alpha(if (turnVisible) 0.97f else 0.0f).apply {
             duration = 200
             interpolator = DecelerateInterpolator()
             setListener(object : Animator.AnimatorListener {
@@ -294,9 +294,9 @@ class ResultFragmentTv : Fragment() {
                 toggleEpisodes(true)
                 binding?.apply {
                     val views = listOf(
+                        resultDubSelection,
                         resultSeasonSelection,
                         resultRangeSelection,
-                        resultDubSelection,
                         resultEpisodes,
                         resultPlayTrailer,
                     )

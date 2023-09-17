@@ -69,7 +69,6 @@ import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
 import com.lagradost.cloudstream3.utils.UIHelper.getSpanCount
 import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIconsAndNoStringRes
-import com.lagradost.cloudstream3.utils.USER_SELECTED_HOMEPAGE_API
 
 import java.util.*
 
@@ -669,7 +668,7 @@ class HomeFragment : Fragment() {
         }
 
         homeViewModel.reloadStored()
-        homeViewModel.loadAndCancel(getKey(USER_SELECTED_HOMEPAGE_API), false)
+        homeViewModel.loadAndCancel(DataStoreHelper.currentHomePage, false)
         //loadHomePage(false)
 
         // nice profile pic on homepage

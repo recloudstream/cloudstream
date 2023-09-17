@@ -518,7 +518,8 @@ class ResultViewModel2 : ViewModel() {
                         val episodeNumber = episodes[currentIndex].episode
                         if (episodeNumber < currentMin) {
                             currentMin = episodeNumber
-                        } else if (episodeNumber > currentMax) {
+                        }
+                        if (episodeNumber > currentMax) {
                             currentMax = episodeNumber
                         }
                         ++currentIndex
