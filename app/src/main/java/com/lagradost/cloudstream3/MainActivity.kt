@@ -128,6 +128,7 @@ import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStore.setKey
+import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.DataStoreHelper.migrateResumeWatching
 import com.lagradost.cloudstream3.utils.Event
 import com.lagradost.cloudstream3.utils.IOnBackPressed
@@ -305,6 +306,10 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
 
         // kinda shitty solution, but cant com main->home otherwise for popups
         val bookmarksUpdatedEvent = Event<Boolean>()
+        /**
+         * Used by data store helper to fully reload home when switching accounts
+         */
+        val reloadHomeEvent = Event<Boolean>()
 
 
         /**
@@ -539,6 +544,10 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             val isTrueTv = isTrueTvSettings()
             navView.menu.findItem(R.id.navigation_library)?.isVisible = !isTrueTv
             navRailView.menu.findItem(R.id.navigation_library)?.isVisible = !isTrueTv
+
+            // Hide downloads on TV
+            navView.menu.findItem(R.id.navigation_downloads)?.isVisible = !isTrueTv
+            navRailView.menu.findItem(R.id.navigation_downloads)?.isVisible = !isTrueTv
         }
     }
 
@@ -1116,16 +1125,17 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                 newLocalBinding.root.viewTreeObserver.addOnGlobalFocusChangeListener { _, newFocus ->
                     // println("refocus $oldFocus -> $newFocus")
                     try {
-                        val r = Rect(0,0,0,0)
+                        val r = Rect(0, 0, 0, 0)
                         newFocus.getDrawingRect(r)
                         val x = r.centerX()
                         val y = r.centerY()
                         val dx = 0 //screenWidth / 2
                         val dy = screenHeight / 2
-                        val r2 = Rect(x-dx,y-dy,x+dx,y+dy)
+                        val r2 = Rect(x - dx, y - dy, x + dx, y + dy)
                         newFocus.requestRectangleOnScreen(r2, false)
-                       // TvFocus.current =TvFocus.current.copy(y=y.toFloat())
-                    } catch (_ : Throwable) { }
+                        // TvFocus.current =TvFocus.current.copy(y=y.toFloat())
+                    } catch (_: Throwable) {
+                    }
                     TvFocus.updateFocusView(newFocus)
                     /*var focus = newFocus
 
@@ -1186,7 +1196,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             }
         } else if (lastError == null) {
             ioSafe {
-                getKey<String>(USER_SELECTED_HOMEPAGE_API)?.let { homeApi ->
+                DataStoreHelper.currentHomePage?.let { homeApi ->
                     mainPluginsLoadedEvent.invoke(loadSinglePlugin(this@MainActivity, homeApi))
                 } ?: run {
                     mainPluginsLoadedEvent.invoke(false)
@@ -1545,6 +1555,11 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
 
         ioSafe {
             migrateResumeWatching()
+        }
+
+        getKey<String>(USER_SELECTED_HOMEPAGE_API)?.let { homepage ->
+            DataStoreHelper.currentHomePage = homepage
+            removeKey(USER_SELECTED_HOMEPAGE_API)
         }
 
         try {

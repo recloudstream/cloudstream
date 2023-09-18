@@ -15,8 +15,8 @@ import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.databinding.FragmentSetupMediaBinding
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
+import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
-import com.lagradost.cloudstream3.utils.USER_SELECTED_HOMEPAGE_API
 
 
 class SetupFragmentMedia : Fragment() {
@@ -77,7 +77,7 @@ class SetupFragmentMedia : Fragment() {
                             .apply()
 
                         // Regenerate set homepage
-                        removeKey(USER_SELECTED_HOMEPAGE_API)
+                        DataStoreHelper.currentHomePage = null
                     }
                 }
 
