@@ -3,6 +3,8 @@ package com.lagradost.cloudstream3.ui.result
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.IdRes
+import androidx.annotation.LayoutRes
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -12,7 +14,10 @@ import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.CastItemBinding
 import com.lagradost.cloudstream3.utils.UIHelper.setImage
 
-class ActorAdaptor(private val focusCallback : (View?) -> Unit = {}) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class ActorAdaptor(
+    private var nextFocusUpId: Int? = null,
+    private val focusCallback: (View?) -> Unit = {}
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     data class ActorMetaData(
         var isInverted: Boolean,
         val actor: ActorData,
@@ -22,7 +27,8 @@ class ActorAdaptor(private val focusCallback : (View?) -> Unit = {}) : RecyclerV
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return CardViewHolder(
-            CastItemBinding.inflate(LayoutInflater.from(parent.context), parent, false), focusCallback
+            CastItemBinding.inflate(LayoutInflater.from(parent.context), parent, false),
+            focusCallback
         )
     }
 
@@ -64,10 +70,10 @@ class ActorAdaptor(private val focusCallback : (View?) -> Unit = {}) : RecyclerV
         }
     }
 
-    private class CardViewHolder
+    private inner class CardViewHolder
     constructor(
         val binding: CastItemBinding,
-        private val focusCallback : (View?) -> Unit = {}
+        private val focusCallback: (View?) -> Unit = {}
     ) :
         RecyclerView.ViewHolder(binding.root) {
 
@@ -78,8 +84,18 @@ class ActorAdaptor(private val focusCallback : (View?) -> Unit = {}) : RecyclerV
                 Pair(actor.voiceActor?.image, actor.actor.image)
             }
 
+            // Fix tv focus escaping the recyclerview
+            if (position == 0) {
+                itemView.nextFocusLeftId = R.id.result_cast_items
+            } else if ((position - 1) == itemCount) {
+                itemView.nextFocusRightId = R.id.result_cast_items
+            }
+            nextFocusUpId?.let {
+                itemView.nextFocusUpId = it
+            }
+
             itemView.setOnFocusChangeListener { v, hasFocus ->
-                if(hasFocus) {
+                if (hasFocus) {
                     focusCallback(v)
                 }
             }

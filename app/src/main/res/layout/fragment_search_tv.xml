@@ -99,7 +99,7 @@
         android:id="@+id/search_autofit_results"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-
+        android:layout_marginStart="@dimen/navbar_width"
         android:background="?attr/primaryBlackBackground"
         android:clipToPadding="false"
         android:descendantFocusability="afterDescendants"
