@@ -497,6 +497,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             R.id.navigation_results_phone,
             R.id.navigation_results_tv,
             R.id.navigation_player,
+            R.id.navigation_quick_search,
         ).contains(destination.id)
 
         binding?.navHostFragment?.apply {

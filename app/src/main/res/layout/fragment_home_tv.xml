@@ -113,7 +113,25 @@
                 android:background="@drawable/player_button_tv_attr_no_bg"
                 android:gravity="center_vertical"
                 android:nextFocusLeft="@id/nav_rail_view"
-                android:nextFocusRight="@id/home_switch_account" />
+                android:nextFocusRight="@id/home_preview_search_button"
+                android:nextFocusDown="@id/home_preview_play_btt" />
+
+            <ImageView
+                android:id="@+id/home_preview_search_button"
+                android:layout_width="50dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="end"
+                android:background="@drawable/player_button_tv_attr_no_bg"
+                android:clickable="true"
+                android:contentDescription="@string/search"
+                android:focusable="true"
+                android:nextFocusLeft="@id/home_change_api"
+                android:nextFocusRight="@id/home_switch_account"
+                android:nextFocusDown="@id/home_preview_info_btt"
+                android:padding="10dp"
+                android:src="@drawable/search_icon"
+                android:tag="@string/tv_no_focus_tag"
+                app:tint="@color/player_on_button_tv_attr" />
 
             <ImageView
                 android:id="@+id/home_switch_account"
@@ -122,7 +140,9 @@
                 android:layout_gravity="end"
                 android:background="@drawable/player_button_tv_attr_no_bg"
                 android:contentDescription="@string/account"
-                android:nextFocusLeft="@id/home_change_api"
+                android:nextFocusLeft="@id/home_preview_search_button"
+                android:nextFocusRight="@id/home_switch_account"
+                android:nextFocusDown="@id/home_change_api"
 
                 android:padding="10dp"
                 android:src="@drawable/ic_outline_account_circle_24"
