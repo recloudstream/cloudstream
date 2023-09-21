@@ -648,6 +648,9 @@ class ResultFragmentTv : Fragment() {
                     .show()
             }
         }
+
+        // Used to request focus the first time the episodes are loaded.
+        var hasLoadedEpisodesOnce = false
         observeNullable(viewModel.episodes) { episodes ->
             binding?.apply {
                 resultEpisodes.isVisible = episodes is Resource.Success
@@ -675,7 +678,10 @@ class ResultFragmentTv : Fragment() {
                             )
                             return@setOnLongClickListener true
                         }
-                        focusPlayButton()
+                        if (!hasLoadedEpisodesOnce) {
+                            hasLoadedEpisodesOnce = true
+                            focusPlayButton()
+                        }
                     }
 
                     /*
