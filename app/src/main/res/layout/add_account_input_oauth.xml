@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="10dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/text1"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+
+            android:layout_rowWeight="1"
+            android:layout_gravity="center_vertical"
+
+            android:paddingStart="?android:attr/listPreferredItemPaddingStart"
+            android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
+            android:textColor="?attr/textColor"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            tools:text="Test" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/info_button"
+            style="@style/WhiteButton"
+            android:layout_width="wrap_content"
+            android:layout_gravity="center_vertical|end"
+            android:text="@string/info_button"
+            app:icon="@drawable/ic_outline_info_24" />
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginBottom="60dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/example_login_client_id"/>
+        <EditText
+            android:id="@+id/login_client_id"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/example_login_client_id"
+            android:inputType="textEmailAddress"
+            android:nextFocusLeft="@id/apply_btt"
+            android:nextFocusRight="@id/cancel_btt"
+
+            android:nextFocusDown="@id/login_client_secret"
+            android:requiresFadingEdge="vertical"
+            android:textColorHint="?attr/grayTextColor"
+            tools:ignore="LabelFor"
+            android:importantForAutofill="no" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/example_login_client_secret"/>
+        <EditText
+            android:id="@+id/login_client_secret"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/example_login_client_secret"
+            android:inputType="textVisiblePassword"
+            android:nextFocusLeft="@id/apply_btt"
+
+            android:nextFocusRight="@id/cancel_btt"
+            android:nextFocusUp="@id/login_client_id"
+            android:nextFocusDown="@id/login_file_name"
+            android:requiresFadingEdge="vertical"
+            android:textColorHint="?attr/grayTextColor"
+            tools:ignore="LabelFor"
+            android:importantForAutofill="no" />
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/example_login_file_name_full"/>
+        <EditText
+            android:id="@+id/login_file_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/example_login_file_name"
+            android:inputType="text"
+            android:nextFocusLeft="@id/apply_btt"
+            android:nextFocusRight="@id/cancel_btt"
+            android:nextFocusUp="@id/login_client_secret"
+            android:nextFocusDown="@id/login_redirect_url"
+            android:requiresFadingEdge="vertical"
+            android:textColorHint="?attr/grayTextColor"
+            android:importantForAutofill="no" />
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/example_login_redirect_url_full"/>
+        <EditText
+            android:id="@+id/login_redirect_url"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/example_redirect_url"
+            android:inputType="textUri"
+            android:nextFocusLeft="@id/apply_btt"
+            android:nextFocusRight="@id/cancel_btt"
+            android:nextFocusUp="@id/login_file_name"
+            android:nextFocusDown="@id/apply_btt"
+            android:requiresFadingEdge="vertical"
+            android:textColorHint="?attr/grayTextColor"
+            android:importantForAutofill="no" />
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/apply_btt_holder"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_gravity="bottom"
+        android:layout_marginTop="-60dp"
+        android:gravity="bottom|end"
+        android:orientation="horizontal">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/apply_btt"
+            style="@style/WhiteButton"
+            android:layout_width="wrap_content"
+            android:layout_gravity="center_vertical|end"
+            android:text="@string/login" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/cancel_btt"
+            style="@style/BlackButton"
+            android:layout_width="wrap_content"
+            android:layout_gravity="center_vertical|end"
+            android:text="@string/sort_cancel" />
+    </LinearLayout>
+</LinearLayout>

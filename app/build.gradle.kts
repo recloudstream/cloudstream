@@ -2,6 +2,8 @@ import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
 import org.jetbrains.dokka.gradle.DokkaTask
 import java.io.ByteArrayOutputStream
 import java.net.URL
+import java.util.Properties
+import java.io.FileInputStream
 
 plugins {
     id("com.android.application")
@@ -22,6 +24,15 @@ fun String.execute() = ByteArrayOutputStream().use { baot ->
         String(baot.toByteArray()).trim()
     else null
 }
+
+val localProperties = Properties()
+try {
+    localProperties.load(FileInputStream(rootProject.file("local.properties")))
+} catch (_: Exception) {
+    localProperties.setProperty("debug.gdrive.clientId", "")
+    localProperties.setProperty("debug.gdrive.secret", "")
+}
+
 
 android {
     testOptions {
@@ -106,6 +117,16 @@ android {
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
+            )
+            resValue(
+                "string",
+                "debug_gdrive_secret",
+                localProperties.getProperty("debug.gdrive.secret") ?: ""
+            )
+            resValue(
+                "string",
+                "debug_gdrive_clientId",
+                localProperties.getProperty("debug.gdrive.clientId") ?: ""
             )
         }
     }
@@ -260,7 +281,26 @@ dependencies {
 
     // color palette for images -> colors
     implementation("androidx.palette:palette-ktx:1.0.0")
+
+    implementation("org.skyscreamer:jsonassert:1.2.3")
+    implementation("androidx.browser:browser:1.4.0")
+    implementation("com.google.api-client:google-api-client:2.0.0") {
+        exclude(
+            group = "org.apache.httpcomponents",
+        )
+    }
+    implementation("com.google.oauth-client:google-oauth-client-jetty:1.34.1") {
+        exclude(
+            group = "org.apache.httpcomponents",
+        )
+    }
+    implementation("com.google.apis:google-api-services-drive:v3-rev20220815-2.0.0") {
+        exclude(
+            group = "org.apache.httpcomponents",
+        )
+    }
 }
+
 
 tasks.register("androidSourcesJar", Jar::class) {
     archiveClassifier.set("sources")

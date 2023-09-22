@@ -17,6 +17,10 @@ import com.lagradost.cloudstream3.databinding.FragmentSetupMediaBinding
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
+import com.lagradost.cloudstream3.utils.Scheduler.Companion.attachBackupListener
+import com.lagradost.cloudstream3.utils.DataStore.getSyncPrefs
+import com.lagradost.cloudstream3.utils.DataStore.removeKey
+import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
 
 
 class SetupFragmentMedia : Fragment() {
@@ -45,6 +49,7 @@ class SetupFragmentMedia : Fragment() {
 
             val ctx = context ?: return@normalSafeApiCall
             val settingsManager = PreferenceManager.getDefaultSharedPreferences(ctx)
+                 .attachBackupListener(getSyncPrefs()).self
 
             val arrayAdapter =
                 ArrayAdapter<String>(ctx, R.layout.sort_bottom_single_choice)

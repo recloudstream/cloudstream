@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.text.TextUtils
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -14,17 +15,18 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.mvvm.logError
+import com.lagradost.cloudstream3.utils.Scheduler.Companion.attachBackupListener
 import com.lagradost.cloudstream3.utils.AppUtils.parseJson
+import com.lagradost.cloudstream3.utils.AppUtils.setDefaultFocus
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
+import com.lagradost.cloudstream3.utils.DataStore.getSyncPrefs
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import okio.BufferedSink
 import okio.buffer
 import okio.sink
-import java.io.File
-import android.text.TextUtils
-import com.lagradost.cloudstream3.utils.AppUtils.setDefaultFocus
 import java.io.BufferedReader
+import java.io.File
 import java.io.IOException
 import java.io.InputStreamReader
 
@@ -74,6 +76,7 @@ class InAppUpdater {
         private suspend fun Activity.getAppUpdate(): Update {
             return try {
                 val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
+                    .attachBackupListener(getSyncPrefs()).self
                 if (settingsManager.getBoolean(
                         getString(R.string.prerelease_update_key),
                         resources.getBoolean(R.bool.is_prerelease)
@@ -255,7 +258,9 @@ class InAppUpdater {
          * @param checkAutoUpdate if the update check was launched automatically
          **/
         suspend fun Activity.runAutoUpdate(checkAutoUpdate: Boolean = true): Boolean {
-            val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
+            val settingsManager =
+                PreferenceManager.getDefaultSharedPreferences(this)
+                    .attachBackupListener(getSyncPrefs()).self
 
             if (!checkAutoUpdate || settingsManager.getBoolean(
                     getString(R.string.auto_update_key),
@@ -265,7 +270,8 @@ class InAppUpdater {
                 val update = getAppUpdate()
                 if (
                     update.shouldUpdate &&
-                        update.updateURL != null) {
+                    update.updateURL != null
+                ) {
 
                     // Check if update should be skipped
                     val updateNodeId =

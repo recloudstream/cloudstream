@@ -6,6 +6,8 @@ import android.content.res.Configuration
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
+import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,11 +23,13 @@ import com.lagradost.cloudstream3.APIHolder.allProviders
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.openBrowser
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
+import com.lagradost.cloudstream3.MainActivity
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.FragmentLibraryBinding
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.debugAssert
 import com.lagradost.cloudstream3.mvvm.observe
+import com.lagradost.cloudstream3.syncproviders.BackupAPI
 import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.syncproviders.SyncIdName
 import com.lagradost.cloudstream3.ui.quicksearch.QuickSearchFragment
@@ -38,6 +42,7 @@ import com.lagradost.cloudstream3.utils.AppUtils.reduceDragSensitivity
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
 import com.lagradost.cloudstream3.utils.UIHelper.getSpanCount
+import org.checkerframework.framework.qual.Unused
 import kotlin.math.abs
 
 const val LIBRARY_FOLDER = "library_folder"
@@ -78,6 +83,7 @@ class LibraryFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
+        MainActivity.afterBackupRestoreEvent += ::onNewSyncData
         val localBinding = FragmentLibraryBinding.inflate(inflater, container, false)
         binding = localBinding
         return localBinding.root
@@ -88,6 +94,11 @@ class LibraryFragment : Fragment() {
     override fun onDestroyView() {
         binding = null
         super.onDestroyView()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        MainActivity.afterBackupRestoreEvent -= ::onNewSyncData
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -419,6 +430,21 @@ class LibraryFragment : Fragment() {
     override fun onConfigurationChanged(newConfig: Configuration) {
         (binding?.viewpager?.adapter as? ViewpagerAdapter)?.rebind()
         super.onConfigurationChanged(newConfig)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        MainActivity.afterBackupRestoreEvent += ::onNewSyncData
+    }
+
+    override fun onStop() {
+        super.onStop()
+        MainActivity.afterBackupRestoreEvent -= ::onNewSyncData
+    }
+
+    private fun onNewSyncData(unused: Unit) {
+        Log.d(BackupAPI.LOG_KEY, "will reload pages")
+        libraryViewModel.reloadPages(true)
     }
 }
 

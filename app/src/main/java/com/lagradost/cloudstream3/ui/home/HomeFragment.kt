@@ -32,6 +32,7 @@ import com.lagradost.cloudstream3.APIHolder.filterProviderByPreferredMedia
 import com.lagradost.cloudstream3.APIHolder.getApiProviderLangSettings
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.CommonActivity.showToast
+import com.lagradost.cloudstream3.MainActivity.Companion.afterBackupRestoreEvent
 import com.lagradost.cloudstream3.MainActivity.Companion.afterPluginsLoadedEvent
 import com.lagradost.cloudstream3.MainActivity.Companion.bookmarksUpdatedEvent
 import com.lagradost.cloudstream3.MainActivity.Companion.mainPluginsLoadedEvent
@@ -498,6 +499,61 @@ class HomeFragment : Fragment() {
         super.onConfigurationChanged(newConfig)
         //(home_preview_viewpager?.adapter as? HomeScrollAdapter)?.notifyDataSetChanged()
         fixGrid()
+    }
+
+    fun bookmarksUpdated(_data : Boolean) {
+        reloadStored()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        reloadStored()
+        bookmarksUpdatedEvent += ::bookmarksUpdated
+        afterPluginsLoadedEvent += ::afterPluginsLoaded
+        mainPluginsLoadedEvent += ::afterMainPluginsLoaded
+        afterBackupRestoreEvent += ::reloadStored
+    }
+
+    override fun onStop() {
+        bookmarksUpdatedEvent -= ::bookmarksUpdated
+        afterPluginsLoadedEvent -= ::afterPluginsLoaded
+        mainPluginsLoadedEvent -= ::afterMainPluginsLoaded
+        afterBackupRestoreEvent -= ::reloadStored
+        super.onStop()
+    }
+
+    private fun reloadStored(unused: Unit = Unit) {
+        homeViewModel.loadResumeWatching()
+        val list = EnumSet.noneOf(WatchType::class.java)
+        getKey<IntArray>(HOME_BOOKMARK_VALUE_LIST)?.map { WatchType.fromInternalId(it) }?.let {
+            list.addAll(it)
+        }
+        homeViewModel.loadStoredData(list)
+    }
+
+    private fun afterMainPluginsLoaded(unused: Boolean = false) {
+        loadHomePage(false)
+    }
+
+    private fun afterPluginsLoaded(forceReload: Boolean) {
+        loadHomePage(forceReload)
+    }
+
+    private fun loadHomePage(forceReload: Boolean) {
+        val apiName = context?.getKey<String>(USER_SELECTED_HOMEPAGE_API)
+
+        if (homeViewModel.apiName.value != apiName || apiName == null || forceReload) {
+            //println("Caught home: " + homeViewModel.apiName.value + " at " + apiName)
+            homeViewModel.loadAndCancel(apiName, forceReload)
+        }
+    }
+
+    private fun homeHandleSearch(callback: SearchClickCallback) {
+        if (callback.action == SEARCH_ACTION_FOCUSED) {
+            //focusCallback(callback.card)
+        } else {
+            handleSearchClickCallback(activity, callback)
+        }
     }
 
     private var currentApiName: String? = null
