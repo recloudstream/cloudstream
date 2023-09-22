@@ -3,6 +3,7 @@ package com.lagradost.cloudstream3.ui.settings.extensions
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.DialogInterface
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,15 +13,21 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
+import androidx.core.view.marginBottom
+import androidx.core.view.marginTop
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.MainActivity.Companion.afterRepositoryLoadedEvent
 import com.lagradost.cloudstream3.R
-import com.lagradost.cloudstream3.mvvm.Some
+import com.lagradost.cloudstream3.databinding.AddRepoInputBinding
+import com.lagradost.cloudstream3.databinding.FragmentExtensionsBinding
 import com.lagradost.cloudstream3.mvvm.observe
+import com.lagradost.cloudstream3.mvvm.observeNullable
 import com.lagradost.cloudstream3.plugins.RepositoryManager
+import com.lagradost.cloudstream3.ui.result.FOCUS_SELF
+import com.lagradost.cloudstream3.ui.result.setLinearListLayout
 import com.lagradost.cloudstream3.ui.result.setText
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTrueTvSettings
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setUpToolbar
@@ -29,17 +36,22 @@ import com.lagradost.cloudstream3.utils.AppUtils.setDefaultFocus
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
-import com.lagradost.cloudstream3.widget.LinearRecycleViewLayoutManager
-import kotlinx.android.synthetic.main.add_repo_input.*
-import kotlinx.android.synthetic.main.fragment_extensions.*
 
 class ExtensionsFragment : Fragment() {
+    var binding: FragmentExtensionsBinding? = null
+    override fun onDestroyView() {
+        binding = null
+        super.onDestroyView()
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?,
-    ): View? {
-        return inflater.inflate(R.layout.fragment_extensions, container, false)
+    ): View {
+        val localBinding = FragmentExtensionsBinding.inflate(inflater, container, false)
+        binding = localBinding
+        return localBinding.root//inflater.inflate(R.layout.fragment_extensions, container, false)
     }
 
     private fun View.setLayoutWidth(weight: Int) {
@@ -74,54 +86,88 @@ class ExtensionsFragment : Fragment() {
 
         setUpToolbar(R.string.extensions)
 
-        repo_recycler_view?.adapter = RepoAdapter(false, {
-            findNavController().navigate(
-                R.id.navigation_settings_extensions_to_navigation_settings_plugins,
-                PluginsFragment.newInstance(
-                    it.name,
-                    it.url,
-                    false
-                )
+
+        binding?.repoRecyclerView?.apply {
+            setLinearListLayout(
+                isHorizontal = false,
+                nextUp = R.id.settings_toolbar, //FOCUS_SELF, // back has no id so we cant :pensive:
+                nextDown = R.id.plugin_storage_appbar,
+                nextRight = FOCUS_SELF,
+                nextLeft = R.id.nav_rail_view
             )
-        }, { repo ->
-            // Prompt user before deleting repo
-            main {
-                val builder = AlertDialog.Builder(context ?: view.context)
-                val dialogClickListener =
-                    DialogInterface.OnClickListener { _, which ->
-                        when (which) {
-                            DialogInterface.BUTTON_POSITIVE -> {
-                                ioSafe {
-                                    RepositoryManager.removeRepository(view.context, repo)
-                                    extensionViewModel.loadStats()
-                                    extensionViewModel.loadRepositories()
-                                }
-                            }
-                            DialogInterface.BUTTON_NEGATIVE -> {}
-                        }
+
+            if (!isTrueTvSettings())
+                binding?.addRepoButton?.let { button ->
+                    button.post {
+                        setPadding(
+                            paddingLeft,
+                            paddingTop,
+                            paddingRight,
+                            button.measuredHeight + button.marginTop + button.marginBottom
+                        )
                     }
+                }
 
-                builder.setTitle(R.string.delete_repository)
-                    .setMessage(
-                        context?.getString(R.string.delete_repository_plugins)
-                    )
-                    .setPositiveButton(R.string.delete, dialogClickListener)
-                    .setNegativeButton(R.string.cancel, dialogClickListener)
-                    .show().setDefaultFocus()
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                setOnScrollChangeListener { _, _, scrollY, _, oldScrollY ->
+                    val dy = scrollY - oldScrollY
+                    if (dy > 0) { //check for scroll down
+                        binding?.addRepoButton?.shrink() // hide
+                    } else if (dy < -5) {
+                        binding?.addRepoButton?.extend() // show
+                    }
+                }
             }
-        })
+            adapter = RepoAdapter(false, {
+                findNavController().navigate(
+                    R.id.navigation_settings_extensions_to_navigation_settings_plugins,
+                    PluginsFragment.newInstance(
+                        it.name,
+                        it.url,
+                        false
+                    )
+                )
+            }, { repo ->
+                // Prompt user before deleting repo
+                main {
+                    val builder = AlertDialog.Builder(context ?: view.context)
+                    val dialogClickListener =
+                        DialogInterface.OnClickListener { _, which ->
+                            when (which) {
+                                DialogInterface.BUTTON_POSITIVE -> {
+                                    ioSafe {
+                                        RepositoryManager.removeRepository(view.context, repo)
+                                        extensionViewModel.loadStats()
+                                        extensionViewModel.loadRepositories()
+                                    }
+                                }
 
-        observe(extensionViewModel.repositories) {
-            repo_recycler_view?.isVisible = it.isNotEmpty()
-            blank_repo_screen?.isVisible = it.isEmpty()
-            (repo_recycler_view?.adapter as? RepoAdapter)?.updateList(it)
+                                DialogInterface.BUTTON_NEGATIVE -> {}
+                            }
+                        }
+
+                    builder.setTitle(R.string.delete_repository)
+                        .setMessage(
+                            context?.getString(R.string.delete_repository_plugins)
+                        )
+                        .setPositiveButton(R.string.delete, dialogClickListener)
+                        .setNegativeButton(R.string.cancel, dialogClickListener)
+                        .show().setDefaultFocus()
+                }
+            })
         }
 
-        repo_recycler_view?.apply {
+        observe(extensionViewModel.repositories) {
+            binding?.repoRecyclerView?.isVisible = it.isNotEmpty()
+            binding?.blankRepoScreen?.isVisible = it.isEmpty()
+            (binding?.repoRecyclerView?.adapter as? RepoAdapter)?.updateList(it)
+        }
+
+        /*binding?.repoRecyclerView?.apply {
             context?.let { ctx ->
                 layoutManager = LinearRecycleViewLayoutManager(ctx, nextFocusUpId, nextFocusDownId)
             }
-        }
+        }*/
 
 //        list_repositories?.setOnClickListener {
 //            // Open webview on tv if browser fails
@@ -138,32 +184,31 @@ class ExtensionsFragment : Fragment() {
 //            }
 //        }
 
-        observe(extensionViewModel.pluginStats) {
-            when (it) {
-                is Some.Success -> {
-                    val value = it.value
+        observeNullable(extensionViewModel.pluginStats) { value ->
+            binding?.apply {
+                if (value == null) {
+                    pluginStorageAppbar.isVisible = false
 
-                    plugin_storage_appbar?.isVisible = true
-                    if (value.total == 0) {
-                        plugin_download?.setLayoutWidth(1)
-                        plugin_disabled?.setLayoutWidth(0)
-                        plugin_not_downloaded?.setLayoutWidth(0)
-                    } else {
-                        plugin_download?.setLayoutWidth(value.downloaded)
-                        plugin_disabled?.setLayoutWidth(value.disabled)
-                        plugin_not_downloaded?.setLayoutWidth(value.notDownloaded)
-                    }
-                    plugin_not_downloaded_txt.setText(value.notDownloadedText)
-                    plugin_disabled_txt.setText(value.disabledText)
-                    plugin_download_txt.setText(value.downloadedText)
+                    return@observeNullable
                 }
-                is Some.None -> {
-                    plugin_storage_appbar?.isVisible = false
+
+                pluginStorageAppbar.isVisible = true
+                if (value.total == 0) {
+                    pluginDownload.setLayoutWidth(1)
+                    pluginDisabled.setLayoutWidth(0)
+                    pluginNotDownloaded.setLayoutWidth(0)
+                } else {
+                    pluginDownload.setLayoutWidth(value.downloaded)
+                    pluginDisabled.setLayoutWidth(value.disabled)
+                    pluginNotDownloaded.setLayoutWidth(value.notDownloaded)
                 }
+                pluginNotDownloadedTxt.setText(value.notDownloadedText)
+                pluginDisabledTxt.setText(value.disabledText)
+                pluginDownloadTxt.setText(value.downloadedText)
             }
         }
 
-        plugin_storage_appbar?.setOnClickListener {
+        binding?.pluginStorageAppbar?.setOnClickListener {
             findNavController().navigate(
                 R.id.navigation_settings_extensions_to_navigation_settings_plugins,
                 PluginsFragment.newInstance(
@@ -175,16 +220,18 @@ class ExtensionsFragment : Fragment() {
         }
 
         val addRepositoryClick = View.OnClickListener {
+            val ctx = context ?: return@OnClickListener
+            val binding = AddRepoInputBinding.inflate(LayoutInflater.from(ctx), null, false)
             val builder =
-                AlertDialog.Builder(context ?: return@OnClickListener, R.style.AlertDialogCustom)
-                    .setView(R.layout.add_repo_input)
+                AlertDialog.Builder(ctx, R.style.AlertDialogCustom)
+                    .setView(binding.root)
 
             val dialog = builder.create()
             dialog.show()
             (activity?.getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager?)?.primaryClip?.getItemAt(
                 0
             )?.text?.toString()?.let { copy ->
-                dialog.repo_url_input?.setText(copy)
+                binding.repoUrlInput.setText(copy)
             }
 
 //            dialog.list_repositories?.setOnClickListener {
@@ -194,44 +241,62 @@ class ExtensionsFragment : Fragment() {
 //            }
 
 //            dialog.text2?.text = provider.name
-            dialog.apply_btt?.setOnClickListener secondListener@{
-                val name = dialog.repo_name_input?.text?.toString()
+            binding.applyBtt.setOnClickListener secondListener@{
+                val name = binding.repoNameInput.text?.toString()
                 ioSafe {
-                    val url = dialog.repo_url_input?.text?.toString()
+                    val url = binding.repoUrlInput.text?.toString()
                         ?.let { it1 -> RepositoryManager.parseRepoUrl(it1) }
                     if (url.isNullOrBlank()) {
                         main {
-                            showToast(activity, R.string.error_invalid_data, Toast.LENGTH_SHORT)
+                            showToast(R.string.error_invalid_data, Toast.LENGTH_SHORT)
                         }
                     } else {
+                        val repository = RepositoryManager.parseRepository(url)
+
+                        // Exit if wrong repository
+                        if (repository == null) {
+                            showToast(R.string.no_repository_found_error, Toast.LENGTH_LONG)
+                            return@ioSafe
+                        }
+
                         val fixedName = if (!name.isNullOrBlank()) name
-                        else RepositoryManager.parseRepository(url)?.name ?: "No name"
+                        else repository.name
 
                         val newRepo = RepositoryData(fixedName, url)
                         RepositoryManager.addRepository(newRepo)
                         extensionViewModel.loadStats()
                         extensionViewModel.loadRepositories()
-                        this@ExtensionsFragment.activity?.downloadAllPluginsDialog(url, fixedName)
+
+                        val plugins = RepositoryManager.getRepoPlugins(url)
+                        if (plugins.isNullOrEmpty()) {
+                            showToast(R.string.no_plugins_found_error, Toast.LENGTH_LONG)
+                        } else {
+                            this@ExtensionsFragment.activity?.downloadAllPluginsDialog(
+                                url,
+                                fixedName
+                            )
+                        }
                     }
                 }
                 dialog.dismissSafe(activity)
             }
-            dialog.cancel_btt?.setOnClickListener {
+            binding.cancelBtt.setOnClickListener {
                 dialog.dismissSafe(activity)
             }
         }
 
         val isTv = isTrueTvSettings()
-        add_repo_button?.isGone = isTv
-        add_repo_button_imageview_holder?.isVisible = isTv
+        binding?.apply {
+            addRepoButton.isGone = isTv
+            addRepoButtonImageviewHolder.isVisible = isTv
 
-        // Band-aid for Fire TV
-        plugin_storage_appbar?.isFocusableInTouchMode = isTv
-        add_repo_button_imageview?.isFocusableInTouchMode = isTv
+            // Band-aid for Fire TV
+            pluginStorageAppbar.isFocusableInTouchMode = isTv
+            addRepoButtonImageview.isFocusableInTouchMode = isTv
 
-        add_repo_button?.setOnClickListener(addRepositoryClick)
-        add_repo_button_imageview?.setOnClickListener(addRepositoryClick)
-
+            addRepoButton.setOnClickListener(addRepositoryClick)
+            addRepoButtonImageview.setOnClickListener(addRepositoryClick)
+        }
         reloadRepositories()
     }
 }

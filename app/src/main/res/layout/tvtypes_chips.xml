@@ -6,6 +6,7 @@
     android:paddingStart="8dp"
     android:paddingEnd="8dp"
     android:id="@+id/home_select_group"
+    android:descendantFocusability="afterDescendants"
     app:singleSelection="false"
     xmlns:android="http://schemas.android.com/apk/res/android">
 

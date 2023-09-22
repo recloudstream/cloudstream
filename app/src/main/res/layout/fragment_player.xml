@@ -13,7 +13,7 @@
     <!--
           app:fastforward_increment="10000"
             app:rewind_increment="10000"-->
-    <com.google.android.exoplayer2.ui.PlayerView
+    <androidx.media3.ui.PlayerView
         android:id="@+id/player_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -93,7 +93,7 @@
         </FrameLayout>
     </FrameLayout>
 
-    <FrameLayout
+   <!-- <FrameLayout
         android:id="@+id/player_torrent_info"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -127,5 +127,5 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/player_video_title"
             tools:text="17 seeders" />
-    </FrameLayout>
+    </FrameLayout>-->
 </androidx.constraintlayout.widget.ConstraintLayout>

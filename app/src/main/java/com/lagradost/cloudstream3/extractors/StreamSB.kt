@@ -8,6 +8,31 @@ import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.M3u8Helper
 import kotlin.random.Random
 
+class Sblona : StreamSB() {
+    override var name = "Sblona"
+    override var mainUrl = "https://sblona.com"
+}
+
+class Lvturbo : StreamSB() {
+    override var name = "Lvturbo"
+    override var mainUrl = "https://lvturbo.com"
+}
+
+class Sbrapid : StreamSB() {
+    override var name = "Sbrapid"
+    override var mainUrl = "https://sbrapid.com"
+}
+
+class Sbface : StreamSB() {
+    override var name = "Sbface"
+    override var mainUrl = "https://sbface.com"
+}
+
+class Sbsonic : StreamSB() {
+    override var name = "Sbsonic"
+    override var mainUrl = "https://sbsonic.com"
+}
+
 class Vidgomunimesb : StreamSB() {
     override var mainUrl = "https://vidgomunimesb.xyz"
 }

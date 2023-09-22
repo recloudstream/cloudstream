@@ -50,47 +50,60 @@ class DownloadFileGenerator(
         return null
     }
 
+    fun cleanDisplayName(name: String): String {
+        return name.substringBeforeLast('.').trim()
+    }
+
     override suspend fun generateLinks(
         clearCache: Boolean,
-        isCasting: Boolean,
+        type: LoadType,
         callback: (Pair<ExtractorLink?, ExtractorUri?>) -> Unit,
         subtitleCallback: (SubtitleData) -> Unit,
-        offset: Int,
+        offset: Int
     ): Boolean {
         val meta = episodes[currentIndex + offset]
-        callback(Pair(null, meta))
+        callback(null to meta)
 
-        context?.let { ctx ->
-            val relative = meta.relativePath
-            val display = meta.displayName
+        val ctx = context ?: return true
+        val relative = meta.relativePath ?: return true
+        val display = meta.displayName ?: return true
 
-            if (display == null || relative == null) {
-                return@let
+        val cleanDisplay = cleanDisplayName(display)
+
+        VideoDownloadManager.getFolder(ctx, relative, meta.basePath)
+            ?.forEach { (name, uri) ->
+                // only these files are allowed, so no videos as subtitles
+                if (listOf(
+                        ".vtt",
+                        ".srt",
+                        ".txt",
+                        ".ass",
+                        ".ttml",
+                        ".sbv",
+                        ".dfxp"
+                    ).none { name.contains(it, true) }
+                ) return@forEach
+
+                // cant have the exact same file as a subtitle
+                if (name.equals(display, true)) return@forEach
+
+                val cleanName = cleanDisplayName(name)
+
+                // we only want files with the approx same name
+                if (!cleanName.startsWith(cleanDisplay, true)) return@forEach
+
+                val realName = cleanName.removePrefix(cleanDisplay)
+
+                subtitleCallback(
+                    SubtitleData(
+                        realName.ifBlank { ctx.getString(R.string.default_subtitles) },
+                        uri.toString(),
+                        SubtitleOrigin.DOWNLOADED_FILE,
+                        name.toSubtitleMimeType(),
+                        emptyMap()
+                    )
+                )
             }
-            VideoDownloadManager.getFolder(ctx, relative, meta.basePath)
-                ?.forEach { file ->
-                    val name = display.removeSuffix(".mp4")
-                    if (file.first != meta.displayName && file.first.startsWith(name)) {
-                        val realName = file.first.removePrefix(name)
-                            .removeSuffix(".vtt")
-                            .removeSuffix(".srt")
-                            .removeSuffix(".txt")
-                            .trim()
-                            .removePrefix("(")
-                            .removeSuffix(")")
-
-                        subtitleCallback(
-                            SubtitleData(
-                                realName.ifBlank { ctx.getString(R.string.default_subtitles) },
-                                file.second.toString(),
-                                SubtitleOrigin.DOWNLOADED_FILE,
-                                name.toSubtitleMimeType(),
-                                emptyMap()
-                            )
-                        )
-                    }
-                }
-        }
 
         return true
     }

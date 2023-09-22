@@ -11,11 +11,11 @@
     tools:context=".ui.search.SearchFragment">
 
     <LinearLayout
-        android:layout_marginStart="@dimen/navbar_width"
-        android:paddingBottom="10dp"
-        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/navbar_width"
+        android:orientation="vertical"
+        android:paddingBottom="10dp">
 
         <FrameLayout
             android:layout_width="match_parent"
@@ -89,7 +89,9 @@
                 app:tint="?attr/textColor" />
         </FrameLayout>
 
-        <include layout="@layout/tvtypes_chips_scroll" />
+        <include
+            android:id="@+id/tvtypes_chips_scroll"
+            layout="@layout/tvtypes_chips_scroll" />
     </LinearLayout>
 
 
@@ -97,7 +99,7 @@
         android:id="@+id/search_autofit_results"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-
+        android:layout_marginStart="@dimen/navbar_width"
         android:background="?attr/primaryBlackBackground"
         android:clipToPadding="false"
         android:descendantFocusability="afterDescendants"
@@ -118,38 +120,43 @@
         android:background="?attr/primaryBlackBackground"
         android:descendantFocusability="afterDescendants"
         android:nextFocusLeft="@id/nav_rail_view"
+        android:nextFocusUp="@id/tvtypes_chips"
+        android:nextFocusDown="@id/search_clear_call_history"
         android:visibility="gone"
         tools:listitem="@layout/homepage_parent" />
 
     <FrameLayout
         android:id="@+id/search_history_holder"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
+        android:layout_height="match_parent"
+        android:background="?attr/primaryBlackBackground">
 
         <androidx.recyclerview.widget.RecyclerView
-            android:paddingStart="@dimen/navbar_width"
             android:id="@+id/search_history_recycler"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_marginStart="@dimen/navbar_width"
 
-            android:background="?attr/primaryBlackBackground"
             android:descendantFocusability="afterDescendants"
             android:nextFocusLeft="@id/nav_rail_view"
-            android:visibility="visible"
+            android:nextFocusUp="@id/tvtypes_chips"
+            android:nextFocusDown="@id/search_clear_call_history"
             android:paddingBottom="50dp"
+            android:visibility="visible"
             tools:listitem="@layout/search_history_item" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/search_clear_call_history"
             style="@style/BlackButton"
-            android:layout_gravity="bottom"
-            android:padding="0dp"
-            app:cornerRadius="0dp"
-            android:layout_margin="0dp"
-            android:text="@string/clear_history"
-            app:icon="@drawable/delete_all"
             android:layout_width="match_parent"
-            android:layout_height="50dp" />
+            android:layout_height="50dp"
+            android:layout_gravity="bottom"
+            android:layout_margin="0dp"
+            android:layout_marginStart="@dimen/navbar_width"
+            android:nextFocusUp="@id/search_history_recycler"
+            android:padding="0dp"
+            android:text="@string/clear_history"
+            app:cornerRadius="0dp"
+            app:icon="@drawable/delete_all" />
     </FrameLayout>
 </LinearLayout>

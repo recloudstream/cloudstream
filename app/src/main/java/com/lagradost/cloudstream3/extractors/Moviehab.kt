@@ -7,7 +7,7 @@ import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.M3u8Helper
 
 class MoviehabNet : Moviehab() {
-    override var mainUrl = "https://play.moviehab.net"
+    override var mainUrl = "https://play.moviehab.asia"
 }
 
 open class Moviehab : ExtractorApi() {

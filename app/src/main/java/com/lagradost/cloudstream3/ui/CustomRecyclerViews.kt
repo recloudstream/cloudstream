@@ -3,6 +3,7 @@ package com.lagradost.cloudstream3.ui
 import android.content.Context
 import android.util.AttributeSet
 import android.view.View
+import androidx.core.view.children
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlin.math.abs
@@ -24,7 +25,7 @@ class GrdLayoutManager(val context: Context, _spanCount: Int) :
         }
     }
 
-    override fun onRequestChildFocus(
+    /*override fun onRequestChildFocus(
         parent: RecyclerView,
         state: RecyclerView.State,
         child: View,
@@ -32,13 +33,17 @@ class GrdLayoutManager(val context: Context, _spanCount: Int) :
     ): Boolean {
         // android.widget.FrameLayout$LayoutParams cannot be cast to androidx.recyclerview.widget.RecyclerView$LayoutParams
         return try {
-            val pos = maxOf(0, getPosition(focused!!) - 2)
-            parent.scrollToPosition(pos)
+            if(focused != null) {
+              //  val pos = maxOf(0, getPosition(focused) - 2) // IDK WHY
+                val pos = getPosition(focused)
+                if(pos >= 0) parent.scrollToPosition(pos)
+            }
+
             super.onRequestChildFocus(parent, state, child, focused)
         } catch (e: Exception) {
             false
         }
-    }
+    }*/
 
     // Allows moving right and left with focus https://gist.github.com/vganin/8930b41f55820ec49e4d
     override fun onInterceptFocusSearch(focused: View, direction: Int): View? {
@@ -65,32 +70,47 @@ class GrdLayoutManager(val context: Context, _spanCount: Int) :
         val spanCount = this.spanCount
         val orientation = this.orientation
 
-        if (orientation == VERTICAL) {
+        // fixes arabic by inverting left and right layout focus
+        val correctDirection = if (this.isLayoutRTL) {
             when (direction) {
+                View.FOCUS_RIGHT -> View.FOCUS_LEFT
+                View.FOCUS_LEFT -> View.FOCUS_RIGHT
+                else -> direction
+            }
+        } else direction
+
+        if (orientation == VERTICAL) {
+            when (correctDirection) {
                 View.FOCUS_DOWN -> {
                     return spanCount
                 }
+
                 View.FOCUS_UP -> {
                     return -spanCount
                 }
+
                 View.FOCUS_RIGHT -> {
                     return 1
                 }
+
                 View.FOCUS_LEFT -> {
                     return -1
                 }
             }
         } else if (orientation == HORIZONTAL) {
-            when (direction) {
+            when (correctDirection) {
                 View.FOCUS_DOWN -> {
                     return 1
                 }
+
                 View.FOCUS_UP -> {
                     return -1
                 }
+
                 View.FOCUS_RIGHT -> {
                     return spanCount
                 }
+
                 View.FOCUS_LEFT -> {
                     return -spanCount
                 }
@@ -141,5 +161,33 @@ class AutofitRecyclerView @JvmOverloads constructor(context: Context, attrs: Att
         }
 
         layoutManager = manager
+    }
+}
+
+/**
+ * Recyclerview wherein the max item width or height is set by the biggest view to prevent inconsistent view sizes.
+ */
+class MaxRecyclerView(ctx: Context, attrs: AttributeSet) : RecyclerView(ctx, attrs) {
+    private var biggestObserved: Int = 0
+    private val orientation = LayoutManager.getProperties(context, attrs, 0, 0).orientation
+    private val isHorizontal = orientation == HORIZONTAL
+    private fun View.updateMaxSize() {
+        if (isHorizontal) {
+            this.minimumHeight = biggestObserved
+        } else {
+            this.minimumWidth = biggestObserved
+        }
+    }
+
+    override fun onChildAttachedToWindow(child: View) {
+        child.measure(MeasureSpec.UNSPECIFIED, MeasureSpec.UNSPECIFIED)
+        val observed = if (isHorizontal) child.measuredHeight else child.measuredWidth
+        if (observed > biggestObserved) {
+            biggestObserved = observed
+            children.forEach { it.updateMaxSize() }
+        } else {
+            child.updateMaxSize()
+        }
+        super.onChildAttachedToWindow(child)
     }
 }

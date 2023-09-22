@@ -15,7 +15,7 @@
     <uses-permission android:name="android.permission.UPDATE_PACKAGES_WITHOUT_USER_ACTION" /> <!-- Used for updates without prompt -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" /> <!-- Used for update service -->
 
-    <!-- <permission android:name="android.permission.QUERY_ALL_PACKAGES" /> &lt;!&ndash; Used for getting if vlc is installed &ndash;&gt; -->
+    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" /> <!-- Required for getting arbitrary Aniyomi packages  -->
     <!-- Fixes android tv fuckery -->
     <uses-feature
         android:name="android.hardware.touchscreen"

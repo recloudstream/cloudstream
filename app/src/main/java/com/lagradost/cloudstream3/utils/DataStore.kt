@@ -6,7 +6,12 @@ import androidx.preference.PreferenceManager
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
+import com.lagradost.cloudstream3.AcraApplication.Companion.getKeyClass
+import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
+import com.lagradost.cloudstream3.AcraApplication.Companion.setKeyClass
 import com.lagradost.cloudstream3.mvvm.logError
+import kotlin.reflect.KClass
+import kotlin.reflect.KProperty
 import com.lagradost.cloudstream3.syncproviders.BackupAPI
 
 const val DOWNLOAD_HEADER_CACHE = "download_header_cache"
@@ -19,6 +24,33 @@ const val USER_PROVIDER_API = "user_custom_sites"
 
 const val PREFERENCES_NAME = "rebuild_preference"
 const val SYNC_PREFERENCES_NAME = "rebuild_sync_preference"
+
+// TODO degelgate by value for get & set
+
+class PreferenceDelegate<T : Any>(
+    val key: String, val default: T //, private val klass: KClass<T>
+) {
+    private val klass: KClass<out T> = default::class
+    // simple cache to make it not get the key every time it is accessed, however this requires
+    // that ONLY this changes the key
+    private var cache: T? = null
+
+    operator fun getValue(self: Any?, property: KProperty<*>) =
+        cache ?: getKeyClass(key, klass.java).also { newCache -> cache = newCache } ?: default
+
+    operator fun setValue(
+        self: Any?,
+        property: KProperty<*>,
+        t: T?
+    ) {
+        cache = t
+        if (t == null) {
+            removeKey(key)
+        } else {
+            setKeyClass(key, t)
+        }
+    }
+}
 
 object DataStore {
     val mapper: JsonMapper = JsonMapper.builder().addModule(KotlinModule())
@@ -127,7 +159,7 @@ object DataStore {
     }
 
     fun Context.removeKeys(folder: String): Int {
-        val keys = getKeys(folder)
+        val keys = getKeys("$folder/")
         keys.forEach { value ->
             removeKey(value)
         }
@@ -158,6 +190,15 @@ object DataStore {
         }
     }
 
+    fun <T> Context.getKey(path: String, valueType: Class<T>): T? {
+        try {
+            val json: String = getSharedPrefs().getString(path, null) ?: return null
+            return json.toKotlinObject(valueType)
+        } catch (e: Exception) {
+            return null
+        }
+    }
+
     fun <T> Context.setKey(folder: String, path: String, value: T) {
         setKey(getFolderName(folder, path), value)
     }
@@ -165,6 +206,10 @@ object DataStore {
 
     inline fun <reified T : Any> String.toKotlinObject(): T {
         return mapper.readValue(this, T::class.java)
+    }
+
+    fun <T> String.toKotlinObject(valueType: Class<T>): T {
+        return mapper.readValue(this, valueType)
     }
 
     // GET KEY GIVEN PATH AND DEFAULT VALUE, NULL IF ERROR

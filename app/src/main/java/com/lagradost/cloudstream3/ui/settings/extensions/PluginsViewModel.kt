@@ -86,14 +86,17 @@ class PluginsViewModel : ViewModel() {
                 }.also { list ->
                     main {
                         showToast(
-                            activity,
-                            if (list.isEmpty()) {
-                                txt(
+                            when {
+                                // No plugins at all
+                                plugins.isEmpty() -> txt(
+                                    R.string.no_plugins_found_error,
+                                )
+                                // All plugins downloaded
+                                list.isEmpty() -> txt(
                                     R.string.batch_download_nothing_to_download_format,
                                     txt(R.string.plugin)
                                 )
-                            } else {
-                                txt(
+                                else -> txt(
                                     R.string.batch_download_start_format,
                                     list.size,
                                     txt(if (list.size == 1) R.string.plugin_singular else R.string.plugin)
@@ -113,7 +116,6 @@ class PluginsViewModel : ViewModel() {
                 }.main { list ->
                     if (list.any { it }) {
                         showToast(
-                            activity,
                             txt(
                                 R.string.batch_download_finish_format,
                                 list.count { it },
@@ -123,7 +125,7 @@ class PluginsViewModel : ViewModel() {
                         )
                         viewModel?.updatePluginListPrivate(activity, repositoryUrl)
                     } else if (list.isNotEmpty()) {
-                        showToast(activity, R.string.download_failed, Toast.LENGTH_SHORT)
+                        showToast(R.string.download_failed, Toast.LENGTH_SHORT)
                     }
                 }
             }
@@ -166,9 +168,9 @@ class PluginsViewModel : ViewModel() {
 
         runOnMainThread {
             if (success)
-                showToast(activity, message, Toast.LENGTH_SHORT)
+                showToast(message, Toast.LENGTH_SHORT)
             else
-                showToast(activity, R.string.error, Toast.LENGTH_SHORT)
+                showToast(R.string.error, Toast.LENGTH_SHORT)
         }
 
         if (success)

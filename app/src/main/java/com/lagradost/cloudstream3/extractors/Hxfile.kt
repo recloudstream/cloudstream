@@ -7,7 +7,7 @@ import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
 
 class Neonime7n : Hxfile() {
     override val name = "Neonime7n"
-    override val mainUrl = "https://7njctn.neonime.watch"
+    override val mainUrl = "https://neonime.fun"
     override val redirect = false
 }
 
@@ -19,7 +19,7 @@ class Neonime8n : Hxfile() {
 
 class KotakAnimeid : Hxfile() {
     override val name = "KotakAnimeid"
-    override val mainUrl = "https://kotakanimeid.com"
+    override val mainUrl = "https://nontonanimeid.bio"
     override val requiresReferer = true
 }
 

@@ -11,6 +11,7 @@
     <include layout="@layout/standard_toolbar" />
 
     <androidx.recyclerview.widget.RecyclerView
+        android:clipToPadding="false"
         android:id="@+id/repo_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -64,6 +65,7 @@
         android:focusable="true"
         android:foreground="@drawable/outline_drawable"
         android:nextFocusRight="@id/add_repo_button_imageview"
+        android:nextFocusUp="@id/repo_recycler_view"
         android:orientation="horizontal"
         android:padding="10dp"
 
@@ -84,13 +86,13 @@
                 android:textColor="?attr/textColor" />
 
             <androidx.cardview.widget.CardView
-                app:cardElevation="0dp"
-                android:elevation="0dp"
-                app:cardMaxElevation="0dp"
                 android:layout_width="fill_parent"
                 android:layout_height="12dp"
                 android:layout_marginBottom="5dp"
-                app:cardCornerRadius="@dimen/storage_radius">
+                android:elevation="0dp"
+                app:cardCornerRadius="@dimen/storage_radius"
+                app:cardElevation="0dp"
+                app:cardMaxElevation="0dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -203,6 +205,8 @@
                 android:contentDescription="@string/add_repository"
                 android:focusable="true"
                 android:nextFocusLeft="@id/plugin_storage_appbar"
+                android:nextFocusUp="@id/repo_recycler_view"
+
                 android:src="@drawable/ic_baseline_add_24"
                 app:tint="?attr/textColor" />
         </LinearLayout>

@@ -5,6 +5,16 @@ import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.utils.*
 import com.lagradost.cloudstream3.utils.M3u8Helper.Companion.generateM3u8
 
+class Guccihide : Filesim() {
+    override val name = "Guccihide"
+    override var mainUrl = "https://guccihide.com"
+}
+
+class Ahvsh : Filesim() {
+    override val name = "Ahvsh"
+    override var mainUrl = "https://ahvsh.com"
+}
+
 class Moviesm4u : Filesim() {
     override val mainUrl = "https://moviesm4u.com"
     override val name = "Moviesm4u"
@@ -13,6 +23,11 @@ class Moviesm4u : Filesim() {
 class FileMoonIn : Filesim() {
     override val mainUrl = "https://filemoon.in"
     override val name = "FileMoon"
+}
+
+class StreamhideTo : Filesim() {
+    override val mainUrl = "https://streamhide.to"
+    override val name = "Streamhide"
 }
 
 class StreamhideCom : Filesim() {
@@ -42,7 +57,7 @@ class FileMoonSx : Filesim() {
 open class Filesim : ExtractorApi() {
     override val name = "Filesim"
     override val mainUrl = "https://files.im"
-    override val requiresReferer = false
+    override val requiresReferer = true
 
     override suspend fun getUrl(
         url: String,
@@ -50,27 +65,19 @@ open class Filesim : ExtractorApi() {
         subtitleCallback: (SubtitleFile) -> Unit,
         callback: (ExtractorLink) -> Unit
     ) {
-        val response = app.get(url, referer = mainUrl).document
-        response.select("script[type=text/javascript]").map { script ->
-            if (script.data().contains(Regex("eval\\(function\\(p,a,c,k,e,[rd]"))) {
-                val unpackedscript = getAndUnpack(script.data())
-                val m3u8Regex = Regex("file.\"(.*?m3u8.*?)\"")
-                val m3u8 = m3u8Regex.find(unpackedscript)?.destructured?.component1() ?: ""
-                if (m3u8.isNotEmpty()) {
-                    generateM3u8(
-                        name,
-                        m3u8,
-                        mainUrl
-                    ).forEach(callback)
-                }
-            }
+        val response = app.get(url, referer = referer)
+        val script = if (!getPacked(response.text).isNullOrEmpty()) {
+            getAndUnpack(response.text)
+        } else {
+            response.document.selectFirst("script:containsData(sources:)")?.data()
         }
+        val m3u8 =
+            Regex("file:\\s*\"(.*?m3u8.*?)\"").find(script ?: return)?.groupValues?.getOrNull(1)
+        generateM3u8(
+            name,
+            m3u8 ?: return,
+            mainUrl
+        ).forEach(callback)
     }
-
-   /* private data class ResponseSource(
-        @JsonProperty("file") val file: String,
-        @JsonProperty("type") val type: String?,
-        @JsonProperty("label") val label: String?
-    ) */
 
 }

@@ -2,12 +2,13 @@ package com.lagradost.cloudstream3.syncproviders.providers
 
 import android.util.Log
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.google.common.collect.BiMap
-import com.google.common.collect.HashBiMap
-import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
+import com.lagradost.cloudstream3.ErrorLoadingException
+import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.TvType
+import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.subtitles.AbstractSubApi
 import com.lagradost.cloudstream3.subtitles.AbstractSubtitleEntities
@@ -15,8 +16,8 @@ import com.lagradost.cloudstream3.syncproviders.AuthAPI
 import com.lagradost.cloudstream3.syncproviders.InAppAuthAPI
 import com.lagradost.cloudstream3.syncproviders.InAppAuthAPIManager
 import com.lagradost.cloudstream3.utils.AppUtils
-import java.net.URLEncoder
-import java.nio.charset.StandardCharsets
+import okhttp3.Interceptor
+import okhttp3.Response
 
 class OpenSubtitlesApi(index: Int) : InAppAuthAPIManager(index), AbstractSubApi {
     override val idPrefix = "opensubtitles"
@@ -34,6 +35,23 @@ class OpenSubtitlesApi(index: Int) : InAppAuthAPIManager(index), AbstractSubApi 
         const val coolDownDuration: Long = 1000L * 30L // CoolDown if 429 error code in ms
         var currentCoolDown: Long = 0L
         var currentSession: SubtitleOAuthEntity? = null
+    }
+
+    private val headerInterceptor = OpenSubtitleInterceptor()
+
+    /** Automatically adds required api headers */
+    private class OpenSubtitleInterceptor : Interceptor {
+        /** Required user agent! */
+        private val userAgent = "Cloudstream3 v0.1"
+        override fun intercept(chain: Interceptor.Chain): Response {
+            return chain.proceed(
+                chain.request().newBuilder()
+                    .removeHeader("user-agent")
+                    .addHeader("user-agent", userAgent)
+                    .addHeader("Api-Key", apiKey)
+                    .build()
+            )
+        }
     }
 
     private fun canDoRequest(): Boolean {
@@ -98,13 +116,13 @@ class OpenSubtitlesApi(index: Int) : InAppAuthAPIManager(index), AbstractSubApi 
         val response = app.post(
             url = "$host/login",
             headers = mapOf(
-                "Api-Key" to apiKey,
-                "Content-Type" to "application/json"
+                "Content-Type" to "application/json",
             ),
             data = mapOf(
                 "username" to username,
                 "password" to password
-            )
+            ),
+            interceptor = headerInterceptor
         )
         //Log.i(TAG, "Responsecode = ${response.code}")
         //Log.i(TAG, "Result => ${response.text}")
@@ -149,11 +167,13 @@ class OpenSubtitlesApi(index: Int) : InAppAuthAPIManager(index), AbstractSubApi 
 //        "pt" to "pt-PT",
 //        "pt" to "pt-BR"
     )
-    private fun fixLanguage(language: String?) : String? {
+
+    private fun fixLanguage(language: String?): String? {
         return languageExceptions[language] ?: language
     }
+
     // O(n) but good enough, BiMap did not want to work properly
-    private fun fixLanguageReverse(language: String?) : String? {
+    private fun fixLanguageReverse(language: String?): String? {
         return languageExceptions.entries.firstOrNull { it.value == language }?.key ?: language
     }
 
@@ -183,9 +203,9 @@ class OpenSubtitlesApi(index: Int) : InAppAuthAPIManager(index), AbstractSubApi 
         val req = app.get(
             url = searchQueryUrl,
             headers = mapOf(
-                Pair("Api-Key", apiKey),
                 Pair("Content-Type", "application/json")
-            )
+            ),
+            interceptor = headerInterceptor
         )
         Log.i(TAG, "Search Req => ${req.text}")
         if (!req.isSuccessful) {
@@ -207,7 +227,7 @@ class OpenSubtitlesApi(index: Int) : InAppAuthAPIManager(index), AbstractSubApi 
                 //Use any valid name/title in hierarchy
                 val name = filename ?: featureDetails?.movieName ?: featureDetails?.title
                 ?: featureDetails?.parentTitle ?: attr.release ?: query.query
-                val lang = fixLanguageReverse(attr.language)?: ""
+                val lang = fixLanguageReverse(attr.language) ?: ""
                 val resEpNum = featureDetails?.episodeNumber ?: query.epNumber
                 val resSeasonNum = featureDetails?.seasonNumber ?: query.seasonNumber
                 val year = featureDetails?.year ?: query.year
@@ -251,13 +271,13 @@ class OpenSubtitlesApi(index: Int) : InAppAuthAPIManager(index), AbstractSubApi 
                     "Authorization",
                     "Bearer ${currentSession?.access_token ?: throw ErrorLoadingException("No access token active in current session")}"
                 ),
-                Pair("Api-Key", apiKey),
                 Pair("Content-Type", "application/json"),
                 Pair("Accept", "*/*")
             ),
             data = mapOf(
                 Pair("file_id", data.data)
-            )
+            ),
+            interceptor = headerInterceptor
         )
         Log.i(TAG, "Request result  => (${req.code}) ${req.text}")
         //Log.i(TAG, "Request headers => ${req.headers}")

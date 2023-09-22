@@ -55,7 +55,7 @@
     <string name="download_failed">فشل التنزيل</string>
     <string name="download_canceled">تم إلغاء التنزيل</string>
     <string name="download_done">تم التنزيل</string>
-    <string name="stream">تشغيل</string>
+    <string name="stream">بث</string>
     <string name="error_loading_links_toast">خطأ في تحميل الرابط</string>
     <string name="download_storage_text">التخزين الداخلي</string>
     <string name="app_dubbed_text">مدبلج</string>
@@ -71,7 +71,7 @@
     <string name="home_info">معلومات</string>
     <string name="filter_bookmarks">تصفية الاشارات المرجعية</string>
     <string name="error_bookmarks_text">إشارات مرجعية</string>
-    <string name="action_remove_from_bookmarks">حذف</string>
+    <string name="action_remove_from_bookmarks">ازالة</string>
     <string name="action_add_to_bookmarks">إعداد حالة المشاهدة</string>
     <string name="sort_apply">تطبيق</string>
     <string name="sort_cancel">إلغاء</string>
@@ -561,4 +561,28 @@
     <string name="jsdelivr_proxy_summary">تجاوز حظر GitHub باستخدام jsdelivr ، قد يتسبب في تأخير التحديثات لبضعة أيام.</string>
     <string name="jsdelivr_proxy">وكيل raw.githubusercontent.com</string>
     <string name="watch_quality_pref_data">جودة المشاهدة المفضلة (بيانات الجوال)</string>
+    <string name="profile_number">الملف الشخصي %d</string>
+    <string name="wifi">واي فاي</string>
+    <string name="mobile_data">بيانات الهاتف</string>
+    <string name="set_default">تعيين الافتراضي</string>
+    <string name="use">استخدام</string>
+    <string name="edit">تعديل</string>
+    <string name="profiles">الملفات التعريفية</string>
+    <string name="help">مساعدة</string>
+    <string name="quality_profile_help">‎‎هنا يمكنك تغيير طريقة ترتيب المصادر. إذا كان للفيديو أولوية أعلى ، فسيظهر في الأعلى في اختيار المصدر. يمثل مجموع أولوية المصدر وأولوية الجودة أولوية الفيديو.
+\n
+\nالمصدر أ: 3
+\nالجودة ب: 7
+\nسيكون لها أولوية فيديو مجمعة تبلغ 10.
+\n
+\nملاحظة: إذا كان المجموع 10 أو أكثر ، فسيتخطى المشغل التحميل تلقائيًا عند تحميل هذا الرابط!</string>
+    <string name="qualities">النوعيات</string>
+    <string name="profile_background_des">خلفية الملف الشخصي</string>
+    <string name="unable_to_inflate">تعذر إنشاء واجهة المستخدم بشكل صحيح ، وهذا خطأ كبير ويجب الإبلاغ عنه على الفور %s</string>
+    <string name="automatic_plugin_download_mode_title">حدد الوضع لتصفية تنزيل المكونات الإضافية</string>
+    <string name="disable">تعطيل</string>
+    <string name="default_account">@string/default_subtitles</string>
+    <string name="no_plugins_found_error">لا توجد اضافة في المستودع</string>
+    <string name="no_repository_found_error">المستودع لم يتم العثور عليه، تحقق من العنوان اوجرب شبكة افتراضية خاصة(vpn)</string>
+    <string name="already_voted">لقد صوتت بالفعل</string>
 </resources>

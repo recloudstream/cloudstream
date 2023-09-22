@@ -7,6 +7,7 @@ import androidx.work.ForegroundInfo
 import androidx.work.WorkerParameters
 import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
 import com.lagradost.cloudstream3.mvvm.logError
+import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.VideoDownloadManager.WORK_KEY_INFO
@@ -15,6 +16,7 @@ import com.lagradost.cloudstream3.utils.VideoDownloadManager.downloadCheck
 import com.lagradost.cloudstream3.utils.VideoDownloadManager.downloadEpisode
 import com.lagradost.cloudstream3.utils.VideoDownloadManager.downloadFromResume
 import com.lagradost.cloudstream3.utils.VideoDownloadManager.downloadStatusEvent
+import com.lagradost.cloudstream3.utils.VideoDownloadManager.getDownloadResumePackage
 import kotlinx.coroutines.delay
 
 const val DOWNLOAD_CHECK = "DownloadCheck"
@@ -25,28 +27,32 @@ class DownloadFileWorkManager(val context: Context, private val workerParams: Wo
     override suspend fun doWork(): Result {
         val key = workerParams.inputData.getString("key")
         try {
-            println("KEY $key")
             if (key == DOWNLOAD_CHECK) {
-                downloadCheck(applicationContext, ::handleNotification)?.let {
-                    awaitDownload(it)
-                }
+                downloadCheck(applicationContext, ::handleNotification)
             } else if (key != null) {
-                val info = applicationContext.getKey<VideoDownloadManager.DownloadInfo>(WORK_KEY_INFO, key)
+                val info =
+                    applicationContext.getKey<VideoDownloadManager.DownloadInfo>(WORK_KEY_INFO, key)
                 val pkg =
-                    applicationContext.getKey<VideoDownloadManager.DownloadResumePackage>(WORK_KEY_PACKAGE, key)
-                if (info != null) {
-                    downloadEpisode(
-                        applicationContext,
-                        info.source,
-                        info.folder,
-                        info.ep,
-                        info.links,
-                        ::handleNotification
+                    applicationContext.getKey<VideoDownloadManager.DownloadResumePackage>(
+                        WORK_KEY_PACKAGE,
+                        key
                     )
-                    awaitDownload(info.ep.id)
+
+                if (info != null) {
+                    getDownloadResumePackage(applicationContext, info.ep.id)?.let { dpkg ->
+                        downloadFromResume(applicationContext, dpkg, ::handleNotification)
+                    } ?: run {
+                        downloadEpisode(
+                            applicationContext,
+                            info.source,
+                            info.folder,
+                            info.ep,
+                            info.links,
+                            ::handleNotification
+                        )
+                    }
                 } else if (pkg != null) {
                     downloadFromResume(applicationContext, pkg, ::handleNotification)
-                    awaitDownload(pkg.item.ep.id)
                 }
                 removeKeys(key)
             }
@@ -73,6 +79,7 @@ class DownloadFileWorkManager(val context: Context, private val workerParams: Wo
                     VideoDownloadManager.DownloadType.IsDone, VideoDownloadManager.DownloadType.IsFailed, VideoDownloadManager.DownloadType.IsStopped -> {
                         isDone = true
                     }
+
                     else -> Unit
                 }
             }

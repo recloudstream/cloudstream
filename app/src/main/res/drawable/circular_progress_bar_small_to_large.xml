@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<scale xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:scaleGravity="center"
+    android:scaleHeight="100%"
+    android:scaleWidth="100%">
+    <shape
+        android:shape="ring"
+        android:innerRadius="0dp"
+        android:thicknessRatio="2.5"
+        android:useLevel="false"><!-- this line fixes the issue for lollipop api 21 -->
+        <solid
+            android:color="?attr/download_fill_color"
+            tools:color="#FFF" />
+    </shape>
+</scale>

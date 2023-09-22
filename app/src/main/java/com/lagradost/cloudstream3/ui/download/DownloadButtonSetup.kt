@@ -5,6 +5,7 @@ import android.content.DialogInterface
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
+import com.lagradost.cloudstream3.CommonActivity.activity
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError
@@ -19,7 +20,7 @@ import com.lagradost.cloudstream3.utils.VideoDownloadHelper
 import com.lagradost.cloudstream3.utils.VideoDownloadManager
 
 object DownloadButtonSetup {
-    fun handleDownloadClick(activity: Activity?, click: DownloadClickEvent) {
+    fun handleDownloadClick(click: DownloadClickEvent) {
         val id = click.data.id
         if (click.data !is VideoDownloadHelper.DownloadEpisodeCached) return
         when (click.action) {
@@ -89,9 +90,9 @@ object DownloadButtonSetup {
                         )?.fileLength
                             ?: 0
                     if (length > 0) {
-                        showToast(act, R.string.delete, Toast.LENGTH_LONG)
+                        showToast(R.string.delete, Toast.LENGTH_LONG)
                     } else {
-                        showToast(act, R.string.download, Toast.LENGTH_LONG)
+                        showToast(R.string.download, Toast.LENGTH_LONG)
                     }
                 }
             }

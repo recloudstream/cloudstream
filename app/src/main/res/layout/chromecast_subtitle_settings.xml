@@ -35,7 +35,7 @@
                     android:layout_height="match_parent"
                     android:contentDescription="@string/preview_background_img_des" />
 
-            <com.google.android.exoplayer2.ui.SubtitleView
+            <androidx.media3.ui.SubtitleView
                     android:id="@+id/subtitle_text"
 
                     android:layout_width="match_parent"

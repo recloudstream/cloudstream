@@ -1,7 +1,7 @@
 package com.lagradost.cloudstream3.utils
 
 import android.net.Uri
-import com.google.android.exoplayer2.util.MimeTypes
+import androidx.media3.common.MimeTypes
 import com.google.android.gms.cast.*
 import com.google.android.gms.cast.framework.CastSession
 import com.google.android.gms.cast.framework.media.RemoteMediaClient
@@ -55,7 +55,11 @@ object CastHelper {
 
         val builder = MediaInfo.Builder(link.url)
             .setStreamType(MediaInfo.STREAM_TYPE_BUFFERED)
-            .setContentType(if (link.isM3u8) MimeTypes.APPLICATION_M3U8 else MimeTypes.VIDEO_MP4)
+            .setContentType(when(link.type) {
+                ExtractorLinkType.M3U8 -> MimeTypes.APPLICATION_M3U8
+                ExtractorLinkType.DASH -> MimeTypes.APPLICATION_MPD
+                else -> MimeTypes.VIDEO_MP4
+            })
             .setMetadata(movieMetadata)
             .setMediaTracks(tracks)
         data?.let {

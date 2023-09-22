@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="10dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/text1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_rowWeight="1"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+
+            android:paddingStart="?android:attr/listPreferredItemPaddingStart"
+            android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
+            android:text="@string/create_account"
+            android:textColor="?attr/textColor"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <!--        <com.google.android.material.button.MaterialButton-->
+        <!--            android:nextFocusDown="@id/repo_name_input"-->
+        <!--            android:id="@+id/list_repositories"-->
+        <!--            android:nextFocusLeft="@id/apply_btt"-->
+        <!--            android:nextFocusRight="@id/cancel_btt"-->
+        <!--            style="@style/WhiteButton"-->
+        <!--            android:layout_width="wrap_content"-->
+        <!--            android:layout_gravity="center_vertical"-->
+        <!--            android:text="@string/view_public_repositories_button_short" />-->
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/text2"
+        android:layout_width="match_parent"
+
+        android:layout_height="wrap_content"
+        android:layout_rowWeight="1"
+        android:layout_gravity="center_vertical"
+
+        android:layout_marginBottom="10dp"
+        android:paddingStart="?android:attr/listPreferredItemPaddingStart"
+
+        android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
+        android:textColor="?attr/grayTextColor"
+        android:textSize="15sp"
+        android:visibility="gone"
+        tools:text="Gogoanime" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginBottom="60dp"
+        android:orientation="vertical">
+
+        <EditText
+            android:id="@+id/account_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:autofillHints="username"
+            android:hint="@string/default_account"
+            android:inputType="text"
+            android:nextFocusLeft="@id/apply_btt"
+            android:nextFocusRight="@id/cancel_btt"
+            android:nextFocusDown="@id/site_url_input"
+            android:requiresFadingEdge="vertical"
+            android:textColorHint="?attr/grayTextColor"
+            tools:ignore="LabelFor" />
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:cardCornerRadius="@dimen/rounded_image_radius">
+
+            <ImageView
+                android:foreground="@drawable/outline_drawable_forced_round"
+                android:id="@+id/profile_pic"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_gravity="center"
+                android:contentDescription="@string/preview_background_img_des"
+                android:scaleType="centerCrop"
+                android:src="@drawable/profile_bg_blue" />
+        </androidx.cardview.widget.CardView>
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/apply_btt_holder"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_gravity="bottom"
+        android:layout_marginTop="-60dp"
+        android:orientation="horizontal"
+        android:padding="10dp">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/delete_btt"
+            style="@style/BlackButton"
+            android:layout_width="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_gravity="center_vertical"
+            android:nextFocusRight="@id/apply_btt"
+            android:text="@string/delete" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/apply_btt"
+            style="@style/WhiteButton"
+
+            android:layout_width="wrap_content"
+            android:layout_gravity="center_vertical|end"
+            android:layout_toStartOf="@+id/cancel_btt"
+            android:nextFocusLeft="@id/delete_btt"
+            android:nextFocusRight="@id/cancel_btt"
+            android:text="@string/sort_apply" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/cancel_btt"
+            style="@style/BlackButton"
+
+            android:layout_width="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_gravity="center_vertical|end"
+            android:nextFocusLeft="@id/apply_btt"
+            android:text="@string/sort_cancel" />
+    </RelativeLayout>
+</LinearLayout>

@@ -11,22 +11,27 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.lagradost.cloudstream3.mvvm.logError
+import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.aniListApi
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.malApi
+import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.simklApi
 import com.lagradost.cloudstream3.syncproviders.SyncIdName
+import com.lagradost.cloudstream3.syncproviders.providers.SimklApi
 import com.lagradost.cloudstream3.ui.player.SubtitleData
 import com.lagradost.cloudstream3.utils.*
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
 import com.lagradost.cloudstream3.utils.Coroutines.mainWork
 import com.lagradost.cloudstream3.utils.Coroutines.threadSafeListOf
+import com.lagradost.nicehttp.RequestBodyTypes
 import okhttp3.Interceptor
-import org.mozilla.javascript.Scriptable
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.RequestBody.Companion.toRequestBody
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.absoluteValue
 
 const val USER_AGENT =
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36"
 
 //val baseHeader = mapOf("User-Agent" to USER_AGENT)
 val mapper = JsonMapper.builder().addModule(KotlinModule())
@@ -50,8 +55,10 @@ object APIHolder {
     val allProviders = threadSafeListOf<MainAPI>()
 
     fun initAll() {
-        for (api in allProviders) {
-            api.init()
+        synchronized(allProviders) {
+            for (api in allProviders) {
+                api.init()
+            }
         }
         apiMap = null
     }
@@ -64,27 +71,35 @@ object APIHolder {
     var apiMap: Map<String, Int>? = null
 
     fun addPluginMapping(plugin: MainAPI) {
-        apis = apis + plugin
+        synchronized(apis) {
+            apis = apis + plugin
+        }
         initMap(true)
     }
 
     fun removePluginMapping(plugin: MainAPI) {
-        apis = apis.filter { it != plugin }
+        synchronized(apis) {
+            apis = apis.filter { it != plugin }
+        }
         initMap(true)
     }
 
     private fun initMap(forcedUpdate: Boolean = false) {
-        if (apiMap == null || forcedUpdate)
-            apiMap = apis.mapIndexed { index, api -> api.name to index }.toMap()
+        synchronized(apis) {
+            if (apiMap == null || forcedUpdate)
+                apiMap = apis.mapIndexed { index, api -> api.name to index }.toMap()
+        }
     }
 
     fun getApiFromNameNull(apiName: String?): MainAPI? {
         if (apiName == null) return null
         synchronized(allProviders) {
             initMap()
-            return apiMap?.get(apiName)?.let { apis.getOrNull(it) }
-            // Leave the ?. null check, it can crash regardless
-                ?: allProviders.firstOrNull { it.name == apiName }
+            synchronized(apis) {
+                return apiMap?.get(apiName)?.let { apis.getOrNull(it) }
+                // Leave the ?. null check, it can crash regardless
+                    ?: allProviders.firstOrNull { it.name == apiName }
+            }
         }
     }
 
@@ -164,10 +179,17 @@ object APIHolder {
 
     private var trackerCache: HashMap<String, AniSearch> = hashMapOf()
 
+    /** backwards compatibility, use getTracker4 instead */
+    suspend fun getTracker(
+        titles: List<String>,
+        types: Set<TrackerType>?,
+        year: Int?,
+    ): Tracker? = getTracker(titles, types, year, false)
+
     /**
      * Get anime tracker information based on title, year and type.
      * Both titles are attempted to be matched with both Romaji and English title.
-     * Uses the consumet api.
+     * Uses the anilist api.
      *
      * @param titles uses first index to search, but if you have multiple titles and want extra guarantee to match you can also have that
      * @param types Optional parameter to narrow down the scope to Movies, TV, etc. See TrackerType.getTypes()
@@ -176,7 +198,8 @@ object APIHolder {
     suspend fun getTracker(
         titles: List<String>,
         types: Set<TrackerType>?,
-        year: Int?
+        year: Int?,
+        lessAccurate: Boolean
     ): Tracker? {
         return try {
             require(titles.isNotEmpty()) { "titles must no be empty when calling getTracker" }
@@ -184,28 +207,68 @@ object APIHolder {
             val mainTitle = titles[0]
             val search =
                 trackerCache[mainTitle]
-                    ?: app.get("https://api.consumet.org/meta/anilist/$mainTitle")
-                        .parsedSafe<AniSearch>()?.also {
-                            trackerCache[mainTitle] = it
-                        } ?: return null
+                    ?: searchAnilist(mainTitle)?.also {
+                        trackerCache[mainTitle] = it
+                    } ?: return null
 
-            val res = search.results?.find { media ->
-                val matchingYears = year == null || media.releaseDate == year
+            val res = search.data?.page?.media?.find { media ->
+                val matchingYears = year == null || media.seasonYear == year
                 val matchingTitles = media.title?.let { title ->
                     titles.any { userTitle ->
                         title.isMatchingTitles(userTitle)
                     }
                 } ?: false
 
-                val matchingTypes = types?.any { it.name.equals(media.type, true) } == true
-                matchingTitles && matchingTypes && matchingYears
+                val matchingTypes = types?.any { it.name.equals(media.format, true) } == true
+                if(lessAccurate) matchingTitles || matchingTypes && matchingYears else matchingTitles && matchingTypes && matchingYears
             } ?: return null
 
-            Tracker(res.malId, res.aniId, res.image, res.cover)
+            Tracker(res.idMal, res.id.toString(), res.coverImage?.extraLarge ?: res.coverImage?.large, res.bannerImage)
         } catch (t: Throwable) {
             logError(t)
             null
         }
+    }
+
+    private suspend fun searchAnilist(
+        title: String?,
+    ): AniSearch? {
+        val query = """
+        query (
+          ${'$'}page: Int = 1
+          ${'$'}search: String
+          ${'$'}sort: [MediaSort] = [POPULARITY_DESC, SCORE_DESC]
+          ${'$'}type: MediaType
+        ) {
+          Page(page: ${'$'}page, perPage: 20) {
+            media(
+              search: ${'$'}search
+              sort: ${'$'}sort
+              type: ${'$'}type
+            ) {
+              id
+              idMal
+              title { romaji english }
+              coverImage { extraLarge large }
+              bannerImage
+              seasonYear
+              format
+            }
+          }
+        }
+    """.trimIndent().trim()
+
+        val data = mapOf(
+            "query" to query,
+            "variables" to mapOf(
+                "search" to title,
+                "sort" to "SEARCH_MATCH",
+                "type" to "ANIME",
+            )
+        ).toJson().toRequestBody(RequestBodyTypes.JSON.toMediaTypeOrNull())
+
+        return app.post("https://graphql.anilist.co", requestBody = data)
+            .parsedSafe()
     }
 
 
@@ -215,7 +278,7 @@ object APIHolder {
         val hashSet = HashSet<String>()
         val activeLangs = getApiProviderLangSettings()
         val hasUniversal = activeLangs.contains(AllLanguagesName)
-        hashSet.addAll(apis.filter { hasUniversal || activeLangs.contains(it.lang) }
+        hashSet.addAll(synchronized(apis) { apis.filter { hasUniversal || activeLangs.contains(it.lang) } }
             .map { it.name })
 
         /*val set = settingsManager.getStringSet(
@@ -314,8 +377,9 @@ object APIHolder {
         } ?: default
         val langs = this.getApiProviderLangSettings()
         val hasUniversal = langs.contains(AllLanguagesName)
-        val allApis = apis.filter { hasUniversal || langs.contains(it.lang) }
-            .filter { api -> api.hasMainPage || !hasHomePageIsRequired }
+        val allApis = synchronized(apis) {
+            apis.filter { api -> (hasUniversal || langs.contains(api.lang)) && (api.hasMainPage || !hasHomePageIsRequired) }
+        }
         return if (currentPrefMedia.isEmpty()) {
             allApis
         } else {
@@ -736,6 +800,7 @@ fun fixTitle(str: String): String {
             .replaceFirstChar { char -> if (char.isLowerCase()) char.titlecase(Locale.getDefault()) else it }
     }
 }
+
 /**
  * Get rhino context in a safe way as it needs to be initialized on the main thread.
  * Make sure you get the scope using: val scope: Scriptable = rhino.initSafeStandardObjects()
@@ -799,6 +864,19 @@ enum class TvType(value: Int?) {
     Live(10),
     NSFW(11),
     Others(12)
+}
+
+public enum class AutoDownloadMode(val value: Int) {
+    Disable(0),
+    FilterByLang(1),
+    All(2),
+    NsfwOnly(3)
+    ;
+
+    companion object {
+        infix fun getEnum(value: Int): AutoDownloadMode? =
+            AutoDownloadMode.values().firstOrNull { it.value == value }
+    }
 }
 
 // IN CASE OF FUTURE ANIME MOVIE OR SMTH
@@ -1119,10 +1197,11 @@ interface LoadResponse {
     companion object {
         private val malIdPrefix = malApi.idPrefix
         private val aniListIdPrefix = aniListApi.idPrefix
+        private val simklIdPrefix = simklApi.idPrefix
         var isTrailersEnabled = true
 
         fun LoadResponse.isMovie(): Boolean {
-            return this.type.isMovieType()
+            return this.type.isMovieType() || this is MovieLoadResponse
         }
 
         @JvmName("addActorNames")
@@ -1140,6 +1219,20 @@ interface LoadResponse {
             this.actors = actors?.map { (actor, role) -> ActorData(actor, role = role) }
         }
 
+        /**
+         * Internal helper function to add simkl ids from other databases.
+         */
+        private fun LoadResponse.addSimklId(
+            database: SimklApi.Companion.SyncServices,
+            id: String?
+        ) {
+            normalSafeApiCall {
+                this.syncData[simklIdPrefix] =
+                    SimklApi.addIdToString(this.syncData[simklIdPrefix], database, id.toString())
+                        ?: return@normalSafeApiCall
+            }
+        }
+
         @JvmName("addActorsOnly")
         fun LoadResponse.addActors(actors: List<Actor>?) {
             this.actors = actors?.map { actor -> ActorData(actor) }
@@ -1155,10 +1248,16 @@ interface LoadResponse {
 
         fun LoadResponse.addMalId(id: Int?) {
             this.syncData[malIdPrefix] = (id ?: return).toString()
+            this.addSimklId(SimklApi.Companion.SyncServices.Mal, id.toString())
         }
 
         fun LoadResponse.addAniListId(id: Int?) {
             this.syncData[aniListIdPrefix] = (id ?: return).toString()
+            this.addSimklId(SimklApi.Companion.SyncServices.AniList, id.toString())
+        }
+
+        fun LoadResponse.addSimklId(id: Int?) {
+            this.addSimklId(SimklApi.Companion.SyncServices.Simkl, id.toString())
         }
 
         fun LoadResponse.addImdbUrl(url: String?) {
@@ -1240,6 +1339,7 @@ interface LoadResponse {
 
         fun LoadResponse.addImdbId(id: String?) {
             // TODO add imdb sync
+            this.addSimklId(SimklApi.Companion.SyncServices.Imdb, id)
         }
 
         fun LoadResponse.addTrackId(id: String?) {
@@ -1252,6 +1352,7 @@ interface LoadResponse {
 
         fun LoadResponse.addTMDbId(id: String?) {
             // TODO add TMDb sync
+            this.addSimklId(SimklApi.Companion.SyncServices.Tmdb, id)
         }
 
         fun LoadResponse.addRating(text: String?) {
@@ -1679,29 +1780,41 @@ data class Tracker(
     val cover: String? = null,
 )
 
-data class Title(
-    @JsonProperty("romaji") val romaji: String? = null,
-    @JsonProperty("english") val english: String? = null,
+data class AniSearch(
+    @JsonProperty("data") var data: Data? = Data()
 ) {
-    fun isMatchingTitles(title: String?): Boolean {
-        if (title == null) return false
-        return english.equals(title, true) || romaji.equals(title, true)
+    data class Data(
+        @JsonProperty("Page") var page: Page? = Page()
+    ) {
+        data class Page(
+            @JsonProperty("media") var media: ArrayList<Media> = arrayListOf()
+        ) {
+            data class Media(
+                @JsonProperty("title") var title: Title? = null,
+                @JsonProperty("id") var id: Int? = null,
+                @JsonProperty("idMal") var idMal: Int? = null,
+                @JsonProperty("seasonYear") var seasonYear: Int? = null,
+                @JsonProperty("format") var format: String? = null,
+                @JsonProperty("coverImage") var coverImage: CoverImage? = null,
+                @JsonProperty("bannerImage") var bannerImage: String? = null,
+            ) {
+                data class CoverImage(
+                    @JsonProperty("extraLarge") var extraLarge: String? = null,
+                    @JsonProperty("large") var large: String? = null,
+                )
+                data class Title(
+                    @JsonProperty("romaji") var romaji: String? = null,
+                    @JsonProperty("english") var english: String? = null,
+                ) {
+                    fun isMatchingTitles(title: String?): Boolean {
+                        if (title == null) return false
+                        return english.equals(title, true) || romaji.equals(title, true)
+                    }
+                }
+            }
+        }
     }
 }
-
-data class Results(
-    @JsonProperty("id") val aniId: String? = null,
-    @JsonProperty("malId") val malId: Int? = null,
-    @JsonProperty("title") val title: Title? = null,
-    @JsonProperty("releaseDate") val releaseDate: Int? = null,
-    @JsonProperty("type") val type: String? = null,
-    @JsonProperty("image") val image: String? = null,
-    @JsonProperty("cover") val cover: String? = null,
-)
-
-data class AniSearch(
-    @JsonProperty("results") val results: ArrayList<Results>? = arrayListOf()
-)
 
 /**
  * used for the getTracker() method

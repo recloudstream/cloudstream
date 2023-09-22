@@ -5,23 +5,24 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.databinding.FragmentChildDownloadsBinding
 import com.lagradost.cloudstream3.ui.download.DownloadButtonSetup.handleDownloadClick
+import com.lagradost.cloudstream3.ui.result.FOCUS_SELF
+import com.lagradost.cloudstream3.ui.result.setLinearListLayout
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStore.getKeys
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
 import com.lagradost.cloudstream3.utils.VideoDownloadHelper
 import com.lagradost.cloudstream3.utils.VideoDownloadManager
-import kotlinx.android.synthetic.main.fragment_child_downloads.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class DownloadChildFragment : Fragment() {
     companion object {
-        fun newInstance(headerName: String, folder: String) : Bundle {
+        fun newInstance(headerName: String, folder: String): Bundle {
             return Bundle().apply {
                 putString("folder", folder)
                 putString("name", headerName)
@@ -30,13 +31,20 @@ class DownloadChildFragment : Fragment() {
     }
 
     override fun onDestroyView() {
-        (download_child_list?.adapter as DownloadChildAdapter?)?.killAdapter()
         downloadDeleteEventListener?.let { VideoDownloadManager.downloadDeleteEvent -= it }
+        binding = null
         super.onDestroyView()
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_child_downloads, container, false)
+    var binding: FragmentChildDownloadsBinding? = null
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        val localBinding = FragmentChildDownloadsBinding.inflate(inflater, container, false)
+        binding = localBinding
+        return localBinding.root//inflater.inflate(R.layout.fragment_child_downloads, container, false)
     }
 
     private fun updateList(folder: String) = main {
@@ -50,14 +58,15 @@ class DownloadChildFragment : Fragment() {
                         ?: return@mapNotNull null
                     VisualDownloadChildCached(info.fileLength, info.totalBytes, it)
                 }
-            }.sortedBy { it.data.episode + (it.data.season?: 0)*100000 }
+            }.sortedBy { it.data.episode + (it.data.season ?: 0) * 100000 }
             if (eps.isEmpty()) {
                 activity?.onBackPressed()
                 return@main
             }
 
-            (download_child_list?.adapter as DownloadChildAdapter? ?: return@main).cardList = eps
-            download_child_list?.adapter?.notifyDataSetChanged()
+            (binding?.downloadChildList?.adapter as DownloadChildAdapter? ?: return@main).cardList =
+                eps
+            binding?.downloadChildList?.adapter?.notifyDataSetChanged()
         }
     }
 
@@ -72,23 +81,26 @@ class DownloadChildFragment : Fragment() {
             activity?.onBackPressed() // TODO FIX
             return
         }
-        context?.fixPaddingStatusbar(download_child_root)
+        fixPaddingStatusbar(binding?.downloadChildRoot)
 
-        download_child_toolbar.title = name
-        download_child_toolbar.setNavigationIcon(R.drawable.ic_baseline_arrow_back_24)
-        download_child_toolbar.setNavigationOnClickListener {
-            activity?.onBackPressed()
+        binding?.downloadChildToolbar?.apply {
+            title = name
+            setNavigationIcon(R.drawable.ic_baseline_arrow_back_24)
+            setNavigationOnClickListener {
+                activity?.onBackPressed()
+            }
         }
+
 
         val adapter: RecyclerView.Adapter<RecyclerView.ViewHolder> =
             DownloadChildAdapter(
                 ArrayList(),
             ) { click ->
-                handleDownloadClick(activity, click)
+                handleDownloadClick(click)
             }
 
         downloadDeleteEventListener = { id: Int ->
-            val list = (download_child_list?.adapter as DownloadChildAdapter?)?.cardList
+            val list = (binding?.downloadChildList?.adapter as DownloadChildAdapter?)?.cardList
             if (list != null) {
                 if (list.any { it.data.id == id }) {
                     updateList(folder)
@@ -98,8 +110,12 @@ class DownloadChildFragment : Fragment() {
 
         downloadDeleteEventListener?.let { VideoDownloadManager.downloadDeleteEvent += it }
 
-        download_child_list.adapter = adapter
-        download_child_list.layoutManager = GridLayoutManager(context, 1)
+        binding?.downloadChildList?.adapter = adapter
+        binding?.downloadChildList?.setLinearListLayout(
+            isHorizontal = false,
+            nextDown = FOCUS_SELF,
+            nextRight = FOCUS_SELF
+        )//layoutManager = GridLayoutManager(context, 1)
 
         updateList(folder)
     }

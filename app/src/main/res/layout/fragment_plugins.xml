@@ -25,18 +25,22 @@
             app:titleTextColor="?attr/textColor"
             tools:title="Overlord" />
 
-        <include layout="@layout/tvtypes_chips_scroll" />
+        <include
+            android:id="@+id/tvtypes_chips_scroll"
+            layout="@layout/tvtypes_chips_scroll" />
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:clipToPadding="false"
         android:id="@+id/plugin_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:nextFocusLeft="@id/nav_rail_view"
+        android:nextFocusUp="@id/tvtypes_chips"
+
+        android:clipToPadding="false"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         tools:listitem="@layout/repository_item" />
-
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

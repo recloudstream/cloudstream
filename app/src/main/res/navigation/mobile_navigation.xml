@@ -436,7 +436,7 @@
 
     <fragment
         android:id="@+id/navigation_results_phone"
-        android:name="com.lagradost.cloudstream3.ui.result.ResultFragmentPhone"
+        android:name="com.lagradost.cloudstream3.ui.result.ResultTrailerPlayer"
         android:layout_height="match_parent"
         app:enterAnim="@anim/enter_anim"
         app:exitAnim="@anim/exit_anim"

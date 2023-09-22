@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <TextView
+        android:paddingStart="?android:attr/listPreferredItemPaddingStart"
+        android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
+        android:layout_marginTop="20dp"
+        android:textStyle="bold"
+        android:text="@string/switch_account"
+        android:textSize="20sp"
+        android:textColor="?attr/textColor"
+        android:layout_width="match_parent"
+        android:layout_rowWeight="1"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:paddingStart="?android:attr/listPreferredItemPaddingStart"
+        android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
+        android:text="@string/history"
+        android:textSize="15sp"
+        android:textColor="?attr/grayTextColor"
+        android:layout_width="match_parent"
+        android:layout_rowWeight="1"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:paddingStart="?android:attr/listPreferredItemPaddingStart"
+        android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
+        android:text="@string/error_bookmarks_text"
+        android:textSize="15sp"
+        android:textColor="?attr/grayTextColor"
+        android:layout_width="match_parent"
+        android:layout_rowWeight="1"
+        android:layout_height="wrap_content" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_marginTop="10dp"
+        android:descendantFocusability="afterDescendants"
+        android:id="@+id/profiles_recyclerview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:orientation="horizontal"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tools:itemCount="4"
+        tools:listitem="@layout/who_is_watching_account">
+
+        <requestFocus />
+    </androidx.recyclerview.widget.RecyclerView>
+</LinearLayout>

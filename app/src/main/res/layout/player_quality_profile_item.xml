@@ -34,7 +34,7 @@
             android:id="@+id/outline"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/outline"
+            android:background="@drawable/outline_card"
             android:visibility="gone"
             tools:visibility="visible" />
 

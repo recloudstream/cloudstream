@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_dub_sub_episode_text_format" formatted="true">%s ክፍል %d</string>
+    <string name="cast_format" formatted="true">ተዋናዮች: %s</string>
+</resources>

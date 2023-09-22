@@ -48,7 +48,7 @@
     <string name="result_share">Podijeli</string>
     <string name="result_open_in_browser">Otvori u pregledniku</string>
     <string name="skip_loading">Preskoči učitavanje</string>
-    <string name="loading">Učitavanje...</string>
+    <string name="loading">Učitavanje …</string>
     <string name="type_watching">Gledam</string>
     <string name="type_on_hold">Na čekanju</string>
     <string name="type_completed">Dovršeno</string>
@@ -306,7 +306,7 @@
     <string name="enable_nsfw_on_providers">Omogući NSFW na podržanim pružateljima usluga</string>
     <string name="subtitles_encoding">Kodiranje titlova</string>
     <string name="category_providers">Pružatelji usluga</string>
-    <string name="category_ui">Izgled</string>
+    <string name="category_ui">Respored</string>
     <string name="automatic">Auto</string>
     <string name="tv_layout">TV izgled</string>
     <string name="phone_layout">Izgled za telefone</string>
@@ -417,22 +417,22 @@
     <string name="add_repository">Dodaj repository</string>
     <string name="repository_name_hint">Ime repositorya</string>
     <string name="repository_url_hint">URL spremišta (repositorija)</string>
-    <string name="plugin_loaded">Dodatak je učitan</string>
-    <string name="plugin_deleted">Dodatak je izbrisan</string>
+    <string name="plugin_loaded">Dodatak učitan</string>
+    <string name="plugin_deleted">Dodatak izbrisan</string>
     <string name="plugin_load_fail" formatted="true">Nije moguće učitati %s</string>
     <string name="is_adult">18+</string>
     <string name="batch_download_start_format" formatted="true">Započelo preuzimanje %d %s…</string>
     <string name="batch_download_finish_format" formatted="true">Preuzeto %d %s</string>
     <string name="batch_download_nothing_to_download_format" formatted="true">Sve %s je već preuzeto</string>
     <string name="batch_download">Skupno preuzimanje</string>
-    <string name="plugin_singular">plugin</string>
-    <string name="plugin">plugins</string>
-    <string name="delete_repository_plugins">Ovo će također izbrisati sve dodatke spremišta</string>
+    <string name="plugin_singular">dodatak</string>
+    <string name="plugin">dodaci</string>
+    <string name="delete_repository_plugins">Ovo će također izbrisati sve dodatke repozitorija</string>
     <string name="delete_repository">Izbriši repository</string>
     <string name="setup_extensions_subtext">Preuzmi popis stranica koje želite koristiti</string>
     <string name="plugins_downloaded" formatted="true">Preuzeto: %d</string>
     <string name="plugins_disabled" formatted="true">Onemogućeno: %d</string>
-    <string name="plugins_not_downloaded" formatted="true">Nije preuzeto: %d</string>
+    <string name="plugins_not_downloaded" formatted="true">Nepreuzeto: %d</string>
     <string name="blank_repo_message">CloudStream nema instalirane web stranice prema zadanim postavkama. Morate instalirati stranice iz repozitorija.
 \n
 \nZbog bezumnog uklanjanja DMCA od strane Sky UK Limited 🤮 ne možemo povezati web mjesto repozitorija u aplikaciji.
@@ -459,9 +459,9 @@
     <string name="extension_types">Podržano</string>
     <string name="extension_language">Jezik</string>
     <string name="hls_playlist">HLS Playlista</string>
-    <string name="automatic_plugin_download">Automatski instaliraj ekstenzije</string>
+    <string name="automatic_plugin_download">Automatski instaliraj dodatke</string>
     <string name="skip_type_creddits">Zasluge</string>
-    <string name="automatic_plugin_download_summary">Automatski instaliraj sve neinstalirane ekstenzije iz dodanih repozitorija.</string>
+    <string name="automatic_plugin_download_summary">Automatski instaliraj sve neinstalirane dodatke iz dodanih repozitorija.</string>
     <string name="player_pref">Preferirani video player</string>
     <string name="player_settings_play_in_app">Interni player</string>
     <string name="extension_install_first">Prvo instalirajte ekstenziju</string>
@@ -479,7 +479,7 @@
     <string name="no">Ne</string>
     <string name="update_notification_installing">Instaliranje ažuriranja aplikacije…</string>
     <string name="update_notification_failed">Nije moguće instalirati novu verziju aplikacije</string>
-    <string name="plugins_updated" formatted="true">Ažurirano %d ekstenzija</string>
+    <string name="plugins_updated" formatted="true">Ažurirano %d dodataka</string>
     <string name="skip_type_mixed_op">Mješoviti početak</string>
     <string name="skip_type_intro">Uvod</string>
     <string name="pref_category_links">Linkovi</string>
@@ -495,7 +495,7 @@
     <string name="pref_category_gestures">Geste</string>
     <string name="pref_category_player_features">Značajke playera</string>
     <string name="pref_category_subtitles">Titlovi</string>
-    <string name="pref_category_player_layout">Izgled</string>
+    <string name="pref_category_player_layout">Respored</string>
     <string name="pref_category_defaults">Zadane postavke</string>
     <string name="pref_category_looks">Izgled</string>
     <string name="pref_category_ui_features">Značajke</string>
@@ -554,4 +554,27 @@
     <string name="jsdelivr_enabled">Neuspješno dohvaćanje GitHuba. Uključuje se jsdelivr proxy …</string>
     <string name="jsdelivr_proxy_summary">Zaobilazi blokiranje GitHuba koristeći jsdelivr. Može odgoditi ažuriranja za nekoliko dana.</string>
     <string name="watch_quality_pref_data">Preferirana kvaliteta gledanja (podatkovna mobilna mreža)</string>
+    <string name="profile_number">Profil %d</string>
+    <string name="wifi">Wi-Fi</string>
+    <string name="mobile_data">Mobilni podaci</string>
+    <string name="set_default">Postavi standardnu vrijednost</string>
+    <string name="use">Koristi</string>
+    <string name="edit">Uredi</string>
+    <string name="profiles">Profili</string>
+    <string name="help">Pomoć</string>
+    <string name="qualities">Kvalitete</string>
+    <string name="profile_background_des">Pozadina profila</string>
+    <string name="unable_to_inflate">Nije bilo moguće ispravno izraditi korisničko sučelje. Ovo je ZNAČAJNA GREŠKA i treba se odmah prijaviti %s</string>
+    <string name="automatic_plugin_download_mode_title">Odaberi modus za filtriranje preuzimanja dodataka</string>
+    <string name="disable">Onemogući</string>
+    <string name="default_account">@string/default_subtitles</string>
+    <string name="no_plugins_found_error">U repozitoriju nisu pronađeni dodaci</string>
+    <string name="no_repository_found_error">Repozitorij nije pronađen, provjerite URL i pokušajte koristiti VPN</string>
+    <string name="quality_profile_help">Ovdje možete promijeniti način na koji su izvori poredani. Ako video ima viši prioritet, pojavit će se više u odabiru izvora. Zbroj prioriteta izvora i prioriteta kvalitete je video prioritet.
+\n
+\nIzvor A: 3
+\nKvaliteta B: 7
+\nImat će kombinirani prioritet videozapisa od 10.
+\n
+\nNAPOMENA: Ako je zbroj 10 ili više, video player će automatski preskočiti učitavanje kada se ta poveznica učita!</string>
 </resources>

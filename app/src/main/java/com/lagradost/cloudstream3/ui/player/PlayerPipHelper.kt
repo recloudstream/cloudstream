@@ -7,28 +7,23 @@ import android.app.RemoteAction
 import android.content.Intent
 import android.graphics.drawable.Icon
 import android.os.Build
+import android.util.Rational
 import androidx.annotation.RequiresApi
 import androidx.annotation.StringRes
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
+import kotlin.math.roundToInt
 
 class PlayerPipHelper {
     companion object {
+        @RequiresApi(Build.VERSION_CODES.O)
         private fun getPen(activity: Activity, code: Int): PendingIntent {
-            return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                PendingIntent.getBroadcast(
-                    activity,
-                    code,
-                    Intent("media_control").putExtra("control_type", code),
-                    PendingIntent.FLAG_IMMUTABLE
-                )
-            } else {
-                PendingIntent.getBroadcast(
-                    activity,
-                    code,
-                    Intent("media_control").putExtra("control_type", code),
-                    0
-                )
-            }
+            return PendingIntent.getBroadcast(
+                activity,
+                code,
+                Intent(ACTION_MEDIA_CONTROL).putExtra(EXTRA_CONTROL_TYPE, code),
+                PendingIntent.FLAG_IMMUTABLE
+            )
         }
 
         @RequiresApi(Build.VERSION_CODES.O)
@@ -48,7 +43,7 @@ class PlayerPipHelper {
         }
 
         @RequiresApi(Build.VERSION_CODES.O)
-        fun updatePIPModeActions(activity: Activity, isPlaying: Boolean) {
+        fun updatePIPModeActions(activity: Activity, isPlaying: Boolean, aspectRatio: Rational?) {
             val actions: ArrayList<RemoteAction> = ArrayList()
             actions.add(
                 getRemoteAction(
@@ -87,9 +82,32 @@ class PlayerPipHelper {
                     CSPlayerEvent.SeekForward
                 )
             )
-            activity.setPictureInPictureParams(
-                PictureInPictureParams.Builder().setActions(actions).build()
-            )
+
+            // Nessecary to prevent crashing.
+            val mixAspectRatio = 0.41841f // ~1/2.39
+            val maxAspectRatio = 2.39f // widescreen standard
+            val ratioAccuracy = 100000 // To convert the float to int
+
+            // java.lang.IllegalArgumentException: setPictureInPictureParams: Aspect ratio is too extreme (must be between 0.418410 and 2.390000)
+            val fixedRational =
+                aspectRatio?.toFloat()?.coerceIn(mixAspectRatio, maxAspectRatio)?.let {
+                    Rational((it * ratioAccuracy).roundToInt(), ratioAccuracy)
+                }
+
+            normalSafeApiCall {
+                activity.setPictureInPictureParams(
+                    PictureInPictureParams.Builder()
+                        .apply {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                                setSeamlessResizeEnabled(true)
+                                setAutoEnterEnabled(isPlaying)
+                            }
+                        }
+                        .setAspectRatio(fixedRational)
+                        .setActions(actions)
+                        .build()
+                )
+            }
         }
     }
 }

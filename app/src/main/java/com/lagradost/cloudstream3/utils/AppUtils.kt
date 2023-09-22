@@ -20,6 +20,9 @@ import android.os.*
 import android.provider.MediaStore
 import android.text.Spanned
 import android.util.Log
+import android.view.View
+import android.view.View.LAYOUT_DIRECTION_LTR
+import android.view.View.LAYOUT_DIRECTION_RTL
 import android.view.animation.DecelerateInterpolator
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -33,6 +36,7 @@ import androidx.core.widget.ContentLoadingProgressBar
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.navigation.fragment.findNavController
+import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -47,12 +51,14 @@ import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.common.wrappers.Wrappers
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.lagradost.cloudstream3.*
+import com.lagradost.cloudstream3.CommonActivity.activity
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.MainActivity.Companion.afterRepositoryLoadedEvent
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.plugins.RepositoryManager
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.appStringResumeWatching
+import com.lagradost.cloudstream3.syncproviders.providers.Kitsu
 import com.lagradost.cloudstream3.ui.WebviewFragment
 import com.lagradost.cloudstream3.ui.result.ResultFragment
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTrueTvSettings
@@ -86,6 +92,9 @@ object AppUtils {
         val adapter = adapter
         return if (layoutManager == null || adapter == null) false else layoutManager.findLastCompletelyVisibleItemPosition() < adapter.itemCount - 7 // bit more than 1 to make it more seamless
     }
+
+    fun View.isLtr() = this.layoutDirection == LAYOUT_DIRECTION_LTR
+    fun View.isRtl() = this.layoutDirection == LAYOUT_DIRECTION_RTL
 
     fun BottomSheetDialog?.ownHide() {
         this?.hide()
@@ -198,7 +207,11 @@ object AppUtils {
         animation.start()
     }
 
-    fun Context.createNotificationChannel(channelId: String, channelName: String, description: String) {
+    fun Context.createNotificationChannel(
+        channelId: String,
+        channelName: String,
+        description: String
+    ) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val importance = NotificationManager.IMPORTANCE_DEFAULT
             val channel =
@@ -288,6 +301,7 @@ object AppUtils {
 
     // https://github.com/googlearchive/leanback-homescreen-channels/blob/master/app/src/main/java/com/google/android/tvhomescreenchannels/SampleTvProvider.java
     @SuppressLint("RestrictedApi")
+    @Throws
     @WorkerThread
     suspend fun Context.addProgramsToContinueWatching(data: List<DataStoreHelper.ResumeWatchingResult>) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return
@@ -369,7 +383,6 @@ object AppUtils {
             )
             main {
                 showToast(
-                    this@loadRepository,
                     getString(R.string.player_loaded_subtitles, repo.name),
                     Toast.LENGTH_LONG
                 )
@@ -577,12 +590,29 @@ object AppUtils {
         }
     }
 
+    fun loadResult(
+        url: String,
+        apiName: String,
+        startAction: Int = 0,
+        startValue: Int = 0
+    ) {
+        (activity as FragmentActivity?)?.loadResult(url, apiName, startAction, startValue)
+    }
+
     fun FragmentActivity.loadResult(
         url: String,
         apiName: String,
         startAction: Int = 0,
         startValue: Int = 0
     ) {
+        try {
+            val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
+            Kitsu.isEnabled =
+                settingsManager.getBoolean(this.getString(R.string.show_kitsu_posters_key), true)
+        }catch (t : Throwable) {
+            logError(t)
+        }
+
         this.runOnUiThread {
             // viewModelStore.clear()
             this.navigate(
@@ -590,6 +620,14 @@ object AppUtils {
                 ResultFragment.newInstance(url, apiName, startAction, startValue)
             )
         }
+    }
+
+    fun loadSearchResult(
+        card: SearchResponse,
+        startAction: Int = 0,
+        startValue: Int? = null,
+    ) {
+        activity?.loadSearchResult(card, startAction, startValue)
     }
 
     fun Activity?.loadSearchResult(
@@ -776,12 +814,12 @@ object AppUtils {
         return networkInfo.any {
             conManager.getNetworkCapabilities(it)
                 ?.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) == true
-                    } &&
+        } &&
                 !networkInfo.any {
                     conManager.getNetworkCapabilities(it)
                         ?.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) == true
                 }
-        }
+    }
 
 
     private fun Activity?.cacheClass(clazz: String?) {

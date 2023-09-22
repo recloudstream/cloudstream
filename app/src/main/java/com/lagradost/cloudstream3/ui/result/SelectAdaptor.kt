@@ -1,12 +1,11 @@
 package com.lagradost.cloudstream3.ui.result
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.button.MaterialButton
-import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.databinding.ResultSelectionBinding
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTrueTvSettings
 
 typealias SelectData = Pair<UiText?, Any>
@@ -17,7 +16,9 @@ class SelectAdaptor(val callback: (Any) -> Unit) : RecyclerView.Adapter<Recycler
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return SelectViewHolder(
-            LayoutInflater.from(parent.context).inflate(R.layout.result_selection, parent, false),
+            ResultSelectionBinding.inflate(LayoutInflater.from(parent.context), parent, false),
+
+                    //LayoutInflater.from(parent.context).inflate(R.layout.result_selection, parent, false),
         )
     }
 
@@ -44,19 +45,9 @@ class SelectAdaptor(val callback: (Any) -> Unit) : RecyclerView.Adapter<Recycler
         if(newIndex == selectedIndex) return
         val oldIndex = selectedIndex
         selectedIndex = newIndex
-        recyclerView.apply {
-            for (i in 0 until itemCount) {
-                val viewHolder = getChildViewHolder( getChildAt(i) ?: continue) ?: continue
-                val pos = viewHolder.absoluteAdapterPosition
-                if (viewHolder is SelectViewHolder) {
-                    if (pos == oldIndex) {
-                        viewHolder.update(false)
-                    } else if (pos == newIndex) {
-                        viewHolder.update(true)
-                    }
-                }
-            }
-        }
+
+        notifyItemChanged(selectedIndex)
+        notifyItemChanged(oldIndex)
     }
 
     fun updateSelectionList(newList: List<SelectData>) {
@@ -73,14 +64,10 @@ class SelectAdaptor(val callback: (Any) -> Unit) : RecyclerView.Adapter<Recycler
 
     private class SelectViewHolder
     constructor(
-        itemView: View,
+        binding: ResultSelectionBinding,
     ) :
-        RecyclerView.ViewHolder(itemView) {
-        private val item: MaterialButton = itemView as MaterialButton
-
-        fun update(isSelected: Boolean) {
-            item.isSelected = isSelected
-        }
+        RecyclerView.ViewHolder(binding.root) {
+        private val item: MaterialButton = binding.root
 
         fun bind(
             data: SelectData, isSelected: Boolean, callback: (Any) -> Unit

@@ -96,7 +96,7 @@
     <string name="subs_download_languages">הורדת שפות</string>
     <string name="subs_subtitle_languages">שפת הכתוביות</string>
     <string name="subs_import_text" formatted="true">ייבא גופנים בהצבתם ב %s</string>
-    <string name="continue_watching">להמשיך לצפות</string>
+    <string name="continue_watching">המשך צפיה</string>
     <string name="action_remove_watching">להסיר</string>
     <string name="action_open_watching">עוד מידע</string>
     <string name="vpn_torrent">הספק הזה הוא טורנט, שימוש ב-VPN הוא מומלץ</string>

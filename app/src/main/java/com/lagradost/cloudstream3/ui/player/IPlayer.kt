@@ -1,6 +1,7 @@
 package com.lagradost.cloudstream3.ui.player
 
 import android.content.Context
+import android.util.Rational
 import com.lagradost.cloudstream3.ui.subtitles.SaveCaptionStyle
 import com.lagradost.cloudstream3.utils.EpisodeSkip
 import com.lagradost.cloudstream3.utils.ExtractorLink
@@ -44,9 +45,120 @@ enum class CSPlayerLoading {
     IsPaused,
     IsPlaying,
     IsBuffering,
-    //IsDone,
 }
 
+enum class PlayerEventSource {
+    /** This event was invoked from the user pressing some button or selecting something */
+    UI,
+
+    /** This event was invoked automatically */
+    Player,
+
+    /** This event was invoked from a external sync tool like WatchTogether */
+    Sync,
+}
+
+abstract class PlayerEvent {
+    abstract val source: PlayerEventSource
+}
+
+/** this is used to update UI based of the current time,
+ * using requestedListeningPercentages as well as saving time */
+data class PositionEvent(
+    override val source: PlayerEventSource,
+    val fromMs: Long,
+    val toMs: Long,
+    /** duration of the entire video */
+    val durationMs: Long,
+) : PlayerEvent() {
+    /** how many ms (+-) we have skipped */
+    val seekMs : Long get() = toMs - fromMs
+}
+
+/** player error when rendering or misc, used to display toast or log */
+data class ErrorEvent(
+    val error: Throwable,
+    override val source: PlayerEventSource = PlayerEventSource.Player,
+) : PlayerEvent()
+
+/** Event when timestamps appear, null when it should disappear */
+data class TimestampInvokedEvent(
+    val timestamp: EpisodeSkip.SkipStamp,
+    override val source: PlayerEventSource = PlayerEventSource.Player,
+) : PlayerEvent()
+
+/** Event for when a chapter is skipped, aka when event is handled (or for future use when skip automatically ads/sponsor) */
+data class TimestampSkippedEvent(
+    val timestamp: EpisodeSkip.SkipStamp,
+    override val source: PlayerEventSource = PlayerEventSource.Player,
+) : PlayerEvent()
+
+/** this is used by the player to load the next or prev episode */
+data class EpisodeSeekEvent(
+    /** -1 = prev, 1 = next, will never be 0, atm the user cant seek more than +-1 */
+    val offset: Int,
+    override val source: PlayerEventSource = PlayerEventSource.Player,
+) : PlayerEvent() {
+    init {
+        assert(offset != 0)
+    }
+}
+
+/** Event when the video is resized aka changed resolution or mirror */
+data class ResizedEvent(
+    val height: Int,
+    val width: Int,
+    override val source: PlayerEventSource = PlayerEventSource.Player,
+) : PlayerEvent()
+
+/** Event when the player status update, along with the previous status (for animation)*/
+data class StatusEvent(
+    val wasPlaying: CSPlayerLoading,
+    val isPlaying: CSPlayerLoading,
+    override val source: PlayerEventSource = PlayerEventSource.Player
+) : PlayerEvent()
+
+/** Event when tracks are changed, used for UI changes */
+data class TracksChangedEvent(
+    override val source: PlayerEventSource = PlayerEventSource.Player
+) : PlayerEvent()
+
+/** Event from player to give all embedded subtitles */
+data class EmbeddedSubtitlesFetchedEvent(
+    val tracks: List<SubtitleData>,
+    override val source: PlayerEventSource = PlayerEventSource.Player
+) : PlayerEvent()
+
+/** on attach player to view */
+data class PlayerAttachedEvent(
+    val player: Any?,
+    override val source: PlayerEventSource = PlayerEventSource.Player
+) : PlayerEvent()
+
+/** Event from player to inform that subtitles have updated in some way */
+data class SubtitlesUpdatedEvent(
+    override val source: PlayerEventSource = PlayerEventSource.Player
+) : PlayerEvent()
+
+/** current player starts, asking for all other programs to shut the fuck up */
+data class RequestAudioFocusEvent(
+    override val source: PlayerEventSource = PlayerEventSource.Player
+) : PlayerEvent()
+
+/** Pause event, separate from StatusEvent */
+data class PauseEvent(
+    override val source: PlayerEventSource = PlayerEventSource.Player
+) : PlayerEvent()
+
+/** Play event, separate from StatusEvent */
+data class PlayEvent(
+    override val source: PlayerEventSource = PlayerEventSource.Player
+) : PlayerEvent()
+
+/** Event when the player video has ended, up to the settings on what to do when that happens */
+data class VideoEndedEvent(
+    override val source: PlayerEventSource = PlayerEventSource.Player
+) : PlayerEvent()
 
 interface Track {
     /**
@@ -107,27 +219,16 @@ interface IPlayer {
     fun getDuration(): Long?
     fun getPosition(): Long?
 
-    fun seekTime(time: Long)
-    fun seekTo(time: Long)
+    fun seekTime(time: Long, source: PlayerEventSource = PlayerEventSource.UI)
+    fun seekTo(time: Long, source: PlayerEventSource = PlayerEventSource.UI)
 
     fun getSubtitleOffset(): Long // in ms
     fun setSubtitleOffset(offset: Long) // in ms
 
     fun initCallbacks(
-        playerUpdated: (Any?) -> Unit,                              // attach player to view
-        updateIsPlaying: ((Pair<CSPlayerLoading, CSPlayerLoading>) -> Unit)? = null, // (wasPlaying, isPlaying)
-        requestAutoFocus: (() -> Unit)? = null,                     // current player starts, asking for all other programs to shut the fuck up
-        playerError: ((Exception) -> Unit)? = null,                 // player error when rendering or misc, used to display toast or log
-        playerDimensionsLoaded: ((Pair<Int, Int>) -> Unit)? = null, // (with, height), for UI
-        requestedListeningPercentages: List<Int>? = null,           // this is used to request when the player should report back view percentage
-        playerPositionChanged: ((Pair<Long, Long>) -> Unit)? = null,// (position, duration) this is used to update UI based of the current time
-        nextEpisode: (() -> Unit)? = null,                          // this is used by the player to load the next episode
-        prevEpisode: (() -> Unit)? = null,                          // this is used by the player to load the previous episode
-        subtitlesUpdates: (() -> Unit)? = null,                     // callback from player to inform that subtitles have updated in some way
-        embeddedSubtitlesFetched: ((List<SubtitleData>) -> Unit)? = null, // callback from player to give all embedded subtitles
-        onTracksInfoChanged: (() -> Unit)? = null,                  // Callback when tracks are changed, used for UI changes
-        onTimestampInvoked: ((EpisodeSkip.SkipStamp?) -> Unit)? = null, // Callback when timestamps appear, null when it should disappear
-        onTimestampSkipped: ((EpisodeSkip.SkipStamp) -> Unit)? = null, // callback for when a chapter is skipped, aka when event is handled (or for future use when skip automatically ads/sponsor)
+        eventHandler: ((PlayerEvent) -> Unit),
+        /** this is used to request when the player should report back view percentage */
+        requestedListeningPercentages: List<Int>? = null,
     )
 
     fun releaseCallbacks()
@@ -154,7 +255,7 @@ interface IPlayer {
     fun setPreferredSubtitles(subtitle: SubtitleData?): Boolean // returns true if the player requires a reload, null for nothing
     fun getCurrentPreferredSubtitle(): SubtitleData?
 
-    fun handleEvent(event: CSPlayerEvent)
+    fun handleEvent(event: CSPlayerEvent, source: PlayerEventSource = PlayerEventSource.UI)
 
     fun onStop()
     fun onPause()
@@ -166,6 +267,19 @@ interface IPlayer {
     fun isActive(): Boolean
 
     fun getVideoTracks(): CurrentTracks
+
+    /**
+     * Original video aspect ratio used for PiP mode
+     *
+     * Set using: Width, Height.
+     * Example: Rational(16, 9)
+     *
+     * If null will default to set no aspect ratio.
+     *
+     * PiP functions calling this needs to coerce this value between 0.418410 and 2.390000
+     * to prevent crashes.
+     */
+    fun getAspectRatio(): Rational?
 
     /** If no parameters are set it'll default to no set size, Specifying the id allows for track overrides to force the player to pick the quality. */
     fun setMaxVideoSize(width: Int = Int.MAX_VALUE, height: Int = Int.MAX_VALUE, id: String? = null)

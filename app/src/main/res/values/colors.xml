@@ -13,7 +13,6 @@
     <color name="boxItemBackground">#161616</color> <!-- 17171B 1B1B20-->
 
     <color name="textColor">#e9eaee</color> <!--FFF-->
-    <color name="semiWhite">#1AFFFFFF</color> <!--FFF-->
     <color name="grayTextColor">#9ba0a4</color> <!-- 5e5f62-->
     <color name="grayShimmer">#DCDCDC</color> <!-- 5e5f62-->
 

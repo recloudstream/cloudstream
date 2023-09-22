@@ -201,4 +201,21 @@
     <string name="preview_background_img_des">バックグラウンドをプレビュー</string>
     <string name="play_livestream_button">ライブストリームの再生</string>
     <string name="home_change_provider_img_des">プロバイダーの変更</string>
+    <string name="next_episode_format" formatted="true">エピソード %d は にリリースされます</string>
+    <string name="type_re_watching">再視聴</string>
+    <string name="play_torrent_button">ストリームトレント</string>
+    <string name="subs_text_color">文字の色</string>
+    <string name="popup_delete_file">ファイルを削除</string>
+    <string name="popup_play_file">再生ファイル</string>
+    <string name="subs_background_color">背景の色</string>
+    <string name="subs_window_color">窓の色</string>
+    <string name="subs_edge_type">エッジタイプ</string>
+    <string name="popup_pause_download">ダウンロードを一時停止する</string>
+    <string name="search_provider_text_types">使用タイプの検索</string>
+    <string name="subs_font">フォント</string>
+    <string name="subs_download_languages">言語をダウンロードする</string>
+    <string name="subs_subtitle_languages">字幕の言語</string>
+    <string name="subs_font_size">フォントサイズ</string>
+    <string name="search_provider_text_providers">プロバイダーから探す</string>
+    <string name="subs_auto_select_language">言語の自動選択</string>
 </resources>
