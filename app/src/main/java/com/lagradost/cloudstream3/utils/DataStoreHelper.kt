@@ -77,10 +77,28 @@ object DataStoreHelper {
     var selectedKeyIndex by PreferenceDelegate("$TAG/account_key_index", 0)
     val currentAccount: String get() = selectedKeyIndex.toString()
 
-    private fun setAccount(account: Account) {
+    /**
+     * Get or set the current account homepage.
+     * Setting this does not automatically reload the homepage.
+     */
+    var currentHomePage: String?
+        get() = getKey("$currentAccount/$USER_SELECTED_HOMEPAGE_API")
+        set(value) {
+            val key = "$currentAccount/$USER_SELECTED_HOMEPAGE_API"
+            if (value == null) {
+                removeKey(key)
+            } else {
+                setKey(key, value)
+            }
+        }
+
+    private fun setAccount(account: Account, refreshHomePage: Boolean) {
         selectedKeyIndex = account.keyIndex
         showToast(account.name)
         MainActivity.bookmarksUpdatedEvent(true)
+        if (refreshHomePage) {
+            MainActivity.reloadHomeEvent(true)
+        }
     }
 
     private fun editAccount(context: Context, account: Account, isNewAccount: Boolean) {
@@ -112,7 +130,7 @@ object DataStoreHelper {
                             accounts = currentAccounts.toTypedArray()
 
                             // update UI
-                            setAccount(getDefaultAccount(context))
+                            setAccount(getDefaultAccount(context), true)
                             MainActivity.bookmarksUpdatedEvent(true)
                             dialog?.dismissSafe()
                         }
@@ -161,8 +179,13 @@ object DataStoreHelper {
                 currentAccounts.add(currentEditAccount)
             }
 
+            // Save the current homepage for new accounts
+            val currentHomePage = DataStoreHelper.currentHomePage
+
             // set the new default account as well as add the key for the new account
-            setAccount(currentEditAccount)
+            setAccount(currentEditAccount, false)
+            DataStoreHelper.currentHomePage = currentHomePage
+
             accounts = currentAccounts.toTypedArray()
 
             dialog.dismissSafe()
@@ -204,7 +227,7 @@ object DataStoreHelper {
         )
         binding.profilesRecyclerview.adapter = WhoIsWatchingAdapter(
             selectCallBack = { account ->
-                setAccount(account)
+                setAccount(account, true)
                 builder.dismissSafe()
             },
             addAccountCallback = {
@@ -353,7 +376,7 @@ object DataStoreHelper {
         removeKeys(folder2)
     }
 
-    fun deleteBookmarkedData(id : Int?) {
+    fun deleteBookmarkedData(id: Int?) {
         if (id == null) return
         removeKey("$currentAccount/$RESULT_WATCH_STATE", id.toString())
         removeKey("$currentAccount/$RESULT_WATCH_STATE_DATA", id.toString())

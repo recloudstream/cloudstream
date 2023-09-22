@@ -7,9 +7,14 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.content.res.Resources
 import android.os.Build
+import android.util.DisplayMetrics
 import android.util.Log
-import android.view.*
+import android.view.Gravity
+import android.view.KeyEvent
+import android.view.LayoutInflater
+import android.view.View
 import android.view.View.NO_ID
+import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -40,7 +45,9 @@ import com.lagradost.cloudstream3.utils.UIHelper.shouldShowPIPMode
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import org.schabi.newpipe.extractor.NewPipe
 import java.lang.ref.WeakReference
-import java.util.*
+import java.util.Locale
+import kotlin.math.max
+import kotlin.math.min
 
 enum class FocusDirection {
     Start,
@@ -62,6 +69,19 @@ object CommonActivity {
     fun Activity?.getCastSession(): CastSession? {
         return (this as MainActivity?)?.mSessionManager?.currentCastSession
     }
+
+    val displayMetrics: DisplayMetrics = Resources.getSystem().displayMetrics
+
+    // screenWidth and screenHeight does always
+    // refer to the screen while in landscape mode
+    val screenWidth: Int
+        get() {
+            return max(displayMetrics.widthPixels, displayMetrics.heightPixels)
+        }
+    val screenHeight: Int
+        get() {
+            return min(displayMetrics.widthPixels, displayMetrics.heightPixels)
+        }
 
 
     var canEnterPipMode: Boolean = false
@@ -328,6 +348,14 @@ object CommonActivity {
         currentLook = currentLook.parent as? View ?: break
     }*/
 
+    private fun View.hasContent() : Boolean {
+        return isShown && when(this) {
+            //is RecyclerView -> this.childCount > 0
+            is ViewGroup -> this.childCount > 0
+            else -> true
+        }
+    }
+
     /** skips the initial stage of searching for an id using the view, see getNextFocus for specification */
     fun continueGetNextFocus(
         root: Any?,
@@ -348,16 +376,17 @@ object CommonActivity {
             } ?: return null
 
         next = localLook(view, nextId) ?: next
+        val shown = next.hasContent()
 
         // if cant focus but visible then break and let android decide
         // the exception if is the view is a parent and has children that wants focus
         val hasChildrenThatWantsFocus = (next as? ViewGroup)?.let { parent ->
             parent.descendantFocusability == ViewGroup.FOCUS_AFTER_DESCENDANTS && parent.childCount > 0
         } ?: false
-        if (!next.isFocusable && next.isShown && !hasChildrenThatWantsFocus) return null
+        if (!next.isFocusable && shown && !hasChildrenThatWantsFocus) return null
 
         // if not shown then continue because we will "skip" over views to get to a replacement
-        if (!next.isShown) {
+        if (!shown) {
             // we don't want a while true loop, so we let android decide if we find a recursive view
             if (next == view) return null
             return getNextFocus(root, next, direction, depth + 1)

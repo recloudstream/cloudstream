@@ -461,6 +461,11 @@ class HomeParentItemAdapterPreview(
                     }
                 }
 
+                homePreviewSearchButton.setOnClickListener { _ ->
+                    // Open blank screen.
+                    viewModel.queryTextSubmit("")
+                }
+
                 // This makes the hidden next buttons only available when on the info button
                 // Otherwise you might be able to go to the next item without being at the info button
                 homePreviewInfoBtt.setOnFocusChangeListener { _, hasFocus ->

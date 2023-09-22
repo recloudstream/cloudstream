@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.content.res.Configuration
+import android.graphics.Rect
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -52,6 +53,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.navigationrail.NavigationRailView
 import com.google.android.material.snackbar.Snackbar
+import com.google.common.collect.Comparators.min
 import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
 import com.lagradost.cloudstream3.APIHolder.allProviders
 import com.lagradost.cloudstream3.APIHolder.apis
@@ -64,13 +66,13 @@ import com.lagradost.cloudstream3.CommonActivity.loadThemes
 import com.lagradost.cloudstream3.CommonActivity.onColorSelectedEvent
 import com.lagradost.cloudstream3.CommonActivity.onDialogDismissedEvent
 import com.lagradost.cloudstream3.CommonActivity.onUserLeaveHint
+import com.lagradost.cloudstream3.CommonActivity.screenHeight
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.CommonActivity.updateLocale
 import com.lagradost.cloudstream3.databinding.ActivityMainBinding
 import com.lagradost.cloudstream3.databinding.ActivityMainTvBinding
 import com.lagradost.cloudstream3.databinding.BottomResultviewPreviewBinding
 import com.lagradost.cloudstream3.mvvm.Resource
-import com.lagradost.cloudstream3.mvvm.debugAssert
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.mvvm.observeNullable
@@ -126,6 +128,7 @@ import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStore.setKey
+import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.DataStoreHelper.migrateResumeWatching
 import com.lagradost.cloudstream3.utils.Event
 import com.lagradost.cloudstream3.utils.IOnBackPressed
@@ -303,6 +306,10 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
 
         // kinda shitty solution, but cant com main->home otherwise for popups
         val bookmarksUpdatedEvent = Event<Boolean>()
+        /**
+         * Used by data store helper to fully reload home when switching accounts
+         */
+        val reloadHomeEvent = Event<Boolean>()
 
 
         /**
@@ -490,6 +497,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             R.id.navigation_results_phone,
             R.id.navigation_results_tv,
             R.id.navigation_player,
+            R.id.navigation_quick_search,
         ).contains(destination.id)
 
         binding?.navHostFragment?.apply {
@@ -537,6 +545,10 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             val isTrueTv = isTrueTvSettings()
             navView.menu.findItem(R.id.navigation_library)?.isVisible = !isTrueTv
             navRailView.menu.findItem(R.id.navigation_library)?.isVisible = !isTrueTv
+
+            // Hide downloads on TV
+            navView.menu.findItem(R.id.navigation_downloads)?.isVisible = !isTrueTv
+            navRailView.menu.findItem(R.id.navigation_downloads)?.isVisible = !isTrueTv
         }
     }
 
@@ -832,6 +844,13 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                     focusOutline.get()?.isVisible = false
                 }
             }
+        /*private val scrollListener = object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                current = current.copy(x = current.x + dx, y = current.y + dy)
+                setTargetPosition(current)
+            }
+        }*/
 
         private fun setTargetPosition(target: FocusTarget) {
             focusOutline.get()?.apply {
@@ -874,7 +893,10 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             if (!exactlyTheSame) {
                 lastView?.removeOnLayoutChangeListener(layoutListener)
                 lastView?.removeOnAttachStateChangeListener(attachListener)
-                (lastView?.parent as? RecyclerView)?.removeOnLayoutChangeListener(layoutListener)
+                (lastView?.parent as? RecyclerView)?.apply {
+                    removeOnLayoutChangeListener(layoutListener)
+                    //removeOnScrollListener(scrollListener)
+                }
             }
 
             val wasGone = focusOutline.isGone
@@ -952,7 +974,10 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                     focusOutline.isVisible = false
                 }
                 if (!exactlyTheSame) {
-                    (newFocus.parent as? RecyclerView)?.addOnLayoutChangeListener(layoutListener)
+                    (newFocus.parent as? RecyclerView)?.apply {
+                        addOnLayoutChangeListener(layoutListener)
+                        //addOnScrollListener(scrollListener)
+                    }
                     newFocus.addOnLayoutChangeListener(layoutListener)
                     newFocus.addOnAttachStateChangeListener(attachListener)
                 }
@@ -970,8 +995,9 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                 )
 
                 // if they are the same within then snap, aka scrolling
-                val deltaMin = 50.toPx
-                if (start.width == end.width && start.height == end.height && (start.x - end.x).absoluteValue < deltaMin && (start.y - end.y).absoluteValue < deltaMin) {
+                val deltaMinX = min(end.width / 2, 60.toPx)
+                val deltaMinY = min(end.height / 2, 60.toPx)
+                if (start.width == end.width && start.height == end.height && (start.x - end.x).absoluteValue < deltaMinX && (start.y - end.y).absoluteValue < deltaMinY) {
                     animator?.cancel()
                     last = start
                     current = end
@@ -1000,7 +1026,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                 // animate between a and b
                 animator = ValueAnimator.ofFloat(0.0f, 1.0f).apply {
                     startDelay = 0
-                    duration = 100
+                    duration = 200
                     addUpdateListener { animation ->
                         val animatedValue = animation.animatedValue as Float
                         val target = FocusTarget.lerp(last, current, minOf(animatedValue, 1.0f))
@@ -1076,15 +1102,19 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         updateTv()
 
         // backup when we update the app, I don't trust myself to not boot lock users, might want to make this a setting?
-        try {
+        normalSafeApiCall {
             val appVer = BuildConfig.VERSION_NAME
             val lastAppAutoBackup: String = getKey("VERSION_NAME") ?: ""
             if (appVer != lastAppAutoBackup) {
                 setKey("VERSION_NAME", BuildConfig.VERSION_NAME)
-                backup(this)
+                normalSafeApiCall {
+                    backup(this)
+                }
+                normalSafeApiCall {
+                    // Recompile oat on new version
+                    PluginManager.deleteAllOatFiles(this)
+                }
             }
-        } catch (t: Throwable) {
-            logError(t)
         }
 
         // just in case, MAIN SHOULD *NEVER* BOOT LOOP CRASH
@@ -1095,7 +1125,30 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                 TvFocus.focusOutline = WeakReference(newLocalBinding.focusOutline)
                 newLocalBinding.root.viewTreeObserver.addOnGlobalFocusChangeListener { _, newFocus ->
                     // println("refocus $oldFocus -> $newFocus")
+                    try {
+                        val r = Rect(0, 0, 0, 0)
+                        newFocus.getDrawingRect(r)
+                        val x = r.centerX()
+                        val y = r.centerY()
+                        val dx = 0 //screenWidth / 2
+                        val dy = screenHeight / 2
+                        val r2 = Rect(x - dx, y - dy, x + dx, y + dy)
+                        newFocus.requestRectangleOnScreen(r2, false)
+                        // TvFocus.current =TvFocus.current.copy(y=y.toFloat())
+                    } catch (_: Throwable) {
+                    }
                     TvFocus.updateFocusView(newFocus)
+                    /*var focus = newFocus
+
+                    while(focus != null) {
+                        if(focus is ScrollingView && focus.canScrollVertically()) {
+                            focus.scrollBy()
+                        }
+                        when(focus.parent) {
+                            is View -> focus = newFocus
+                            else -> break
+                        }
+                    }*/
                 }
                 newLocalBinding.root.viewTreeObserver.addOnScrollChangedListener {
                     TvFocus.updateFocusView(TvFocus.lastFocus.get(), same = true)
@@ -1144,7 +1197,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             }
         } else if (lastError == null) {
             ioSafe {
-                getKey<String>(USER_SELECTED_HOMEPAGE_API)?.let { homeApi ->
+                DataStoreHelper.currentHomePage?.let { homeApi ->
                     mainPluginsLoadedEvent.invoke(loadSinglePlugin(this@MainActivity, homeApi))
                 } ?: run {
                     mainPluginsLoadedEvent.invoke(false)
@@ -1503,6 +1556,11 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
 
         ioSafe {
             migrateResumeWatching()
+        }
+
+        getKey<String>(USER_SELECTED_HOMEPAGE_API)?.let { homepage ->
+            DataStoreHelper.currentHomePage = homepage
+            removeKey(USER_SELECTED_HOMEPAGE_API)
         }
 
         try {

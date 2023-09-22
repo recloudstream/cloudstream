@@ -109,18 +109,19 @@ class InAppUpdater {
                 releases.sortedWith(compareBy {
                     versionRegex.find(it.name)?.groupValues?.get(2)
                 }).toList().lastOrNull()*/
-            val found =
+            val foundList =
                 response.filter { rel ->
                     !rel.prerelease
                 }.sortedWith(compareBy { release ->
-                    release.assets.filter { it.content_type == "application/vnd.android.package-archive" }
-                        .getOrNull(0)?.name?.let { it1 ->
+                    release.assets.firstOrNull { it.content_type == "application/vnd.android.package-archive" }?.name?.let { it1 ->
                             versionRegex.find(
                                 it1
-                            )?.groupValues?.get(2)
+                            )?.groupValues?.let {
+                                it[3].toInt() * 100_000_000 + it[4].toInt() * 10_000 + it[5].toInt()
+                            }
                         }
-                }).toList().lastOrNull()
-
+                }).toList()
+            val found = foundList.lastOrNull()
             val foundAsset = found?.assets?.getOrNull(0)
             val currentVersion = packageName?.let {
                 packageManager.getPackageInfo(

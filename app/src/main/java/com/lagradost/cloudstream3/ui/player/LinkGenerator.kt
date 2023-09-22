@@ -67,9 +67,8 @@ class LinkGenerator(
                         link.name ?: link.url,
                         unshortenLinkSafe(link.url), // unshorten because it might be a raw link
                         referer ?: "",
-                        Qualities.Unknown.value, isM3u8 ?: normalSafeApiCall {
-                            URI(link.url).path?.substringAfterLast(".")?.contains("m3u")
-                        } ?: false
+                        Qualities.Unknown.value,
+                        type = INFER_TYPE,
                     ) to null
                 )
             }

@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.ui.player
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.net.Uri
 import android.os.Handler
@@ -31,6 +32,10 @@ import androidx.media3.exoplayer.DefaultRenderersFactory
 import androidx.media3.exoplayer.DefaultRenderersFactory.EXTENSION_RENDERER_MODE_ON
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.SeekParameters
+import androidx.media3.exoplayer.dash.DashMediaSource
+import androidx.media3.exoplayer.drm.DefaultDrmSessionManager
+import androidx.media3.exoplayer.drm.FrameworkMediaDrm
+import androidx.media3.exoplayer.drm.LocalMediaDrmCallback
 import androidx.media3.exoplayer.source.ClippingMediaSource
 import androidx.media3.exoplayer.source.ConcatenatingMediaSource
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
@@ -46,10 +51,12 @@ import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.USER_AGENT
 import com.lagradost.cloudstream3.app
+import com.lagradost.cloudstream3.mvvm.debugAssert
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.ui.subtitles.SaveCaptionStyle
 import com.lagradost.cloudstream3.utils.AppUtils.isUsingMobileData
+import com.lagradost.cloudstream3.utils.DrmExtractorLink
 import com.lagradost.cloudstream3.utils.EpisodeSkip
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.ExtractorLinkPlayList
@@ -58,6 +65,7 @@ import com.lagradost.cloudstream3.utils.ExtractorUri
 import com.lagradost.cloudstream3.utils.SubtitleHelper.fromTwoLettersToLanguage
 import java.io.File
 import java.lang.IllegalArgumentException
+import java.util.UUID
 import javax.net.ssl.HttpsURLConnection
 import javax.net.ssl.SSLContext
 import javax.net.ssl.SSLSession
@@ -78,6 +86,12 @@ const val toleranceAfterUs = 300_000L
 class CS3IPlayer : IPlayer {
     private var isPlaying = false
     private var exoPlayer: ExoPlayer? = null
+        set(value) {
+            // If the old value is not null then the player has not been properly released.
+            debugAssert({ field != null && value != null }, { "Previous player instance should be released!" })
+            field = value
+        }
+
     var cacheSize = 0L
     var simpleCacheSize = 0L
     var videoBufferMs = 0L
@@ -104,7 +118,16 @@ class CS3IPlayer : IPlayer {
      * */
     data class MediaItemSlice(
         val mediaItem: MediaItem,
-        val durationUs: Long
+        val durationUs: Long,
+        val drm: DrmMetadata? = null
+    )
+
+    data class DrmMetadata(
+        val kid: String,
+        val key: String,
+        val uuid: UUID,
+        val kty: String,
+        val keyRequestParameters: HashMap<String, String>,
     )
 
     override fun getDuration(): Long? = exoPlayer?.duration
@@ -118,80 +141,24 @@ class CS3IPlayer : IPlayer {
      * Boolean = if it's active
      * */
     private var playerSelectedSubtitleTracks = listOf<Pair<String, Boolean>>()
-
-    /** isPlaying */
-    private var updateIsPlaying: ((Pair<CSPlayerLoading, CSPlayerLoading>) -> Unit)? = null
-    private var requestAutoFocus: (() -> Unit)? = null
-    private var playerError: ((Exception) -> Unit)? = null
-    private var subtitlesUpdates: (() -> Unit)? = null
-
-    /** width x height */
-    private var playerDimensionsLoaded: ((Pair<Int, Int>) -> Unit)? = null
-
-    /** used for playerPositionChanged */
     private var requestedListeningPercentages: List<Int>? = null
 
-    /** Fired when seeking the player or on requestedListeningPercentages,
-     * used to make things appear on que
-     * position, duration */
-    private var playerPositionChanged: ((Pair<Long, Long>) -> Unit)? = null
+    private var eventHandler: ((PlayerEvent) -> Unit)? = null
 
-    private var nextEpisode: (() -> Unit)? = null
-    private var prevEpisode: (() -> Unit)? = null
-
-    private var playerUpdated: ((Any?) -> Unit)? = null
-    private var embeddedSubtitlesFetched: ((List<SubtitleData>) -> Unit)? = null
-    private var onTracksInfoChanged: (() -> Unit)? = null
-    private var onTimestampInvoked: ((EpisodeSkip.SkipStamp?) -> Unit)? = null
-    private var onTimestampSkipped: ((EpisodeSkip.SkipStamp) -> Unit)? = null
+    fun event(event: PlayerEvent) {
+        eventHandler?.invoke(event)
+    }
 
     override fun releaseCallbacks() {
-        playerUpdated = null
-        updateIsPlaying = null
-        requestAutoFocus = null
-        playerError = null
-        playerDimensionsLoaded = null
-        requestedListeningPercentages = null
-        playerPositionChanged = null
-        nextEpisode = null
-        prevEpisode = null
-        subtitlesUpdates = null
-        onTracksInfoChanged = null
-        onTimestampInvoked = null
-        requestSubtitleUpdate = null
-        onTimestampSkipped = null
+        eventHandler = null
     }
 
     override fun initCallbacks(
-        playerUpdated: (Any?) -> Unit,
-        updateIsPlaying: ((Pair<CSPlayerLoading, CSPlayerLoading>) -> Unit)?,
-        requestAutoFocus: (() -> Unit)?,
-        playerError: ((Exception) -> Unit)?,
-        playerDimensionsLoaded: ((Pair<Int, Int>) -> Unit)?,
+        eventHandler: ((PlayerEvent) -> Unit),
         requestedListeningPercentages: List<Int>?,
-        playerPositionChanged: ((Pair<Long, Long>) -> Unit)?,
-        nextEpisode: (() -> Unit)?,
-        prevEpisode: (() -> Unit)?,
-        subtitlesUpdates: (() -> Unit)?,
-        embeddedSubtitlesFetched: ((List<SubtitleData>) -> Unit)?,
-        onTracksInfoChanged: (() -> Unit)?,
-        onTimestampInvoked: ((EpisodeSkip.SkipStamp?) -> Unit)?,
-        onTimestampSkipped: ((EpisodeSkip.SkipStamp) -> Unit)?,
     ) {
-        this.playerUpdated = playerUpdated
-        this.updateIsPlaying = updateIsPlaying
-        this.requestAutoFocus = requestAutoFocus
-        this.playerError = playerError
-        this.playerDimensionsLoaded = playerDimensionsLoaded
         this.requestedListeningPercentages = requestedListeningPercentages
-        this.playerPositionChanged = playerPositionChanged
-        this.nextEpisode = nextEpisode
-        this.prevEpisode = prevEpisode
-        this.subtitlesUpdates = subtitlesUpdates
-        this.embeddedSubtitlesFetched = embeddedSubtitlesFetched
-        this.onTracksInfoChanged = onTracksInfoChanged
-        this.onTimestampInvoked = onTimestampInvoked
-        this.onTimestampSkipped = onTimestampSkipped
+        this.eventHandler = eventHandler
     }
 
     // I know, this is not a perfect solution, however it works for fixing subs
@@ -200,7 +167,7 @@ class CS3IPlayer : IPlayer {
             try {
                 Handler(it).post {
                     try {
-                        seekTime(1L)
+                        seekTime(1L, source = PlayerEventSource.Player)
                     } catch (e: Exception) {
                         logError(e)
                     }
@@ -254,8 +221,9 @@ class CS3IPlayer : IPlayer {
         subtitleHelper.setAllSubtitles(subtitles)
     }
 
-    var currentSubtitles: SubtitleData? = null
+    private var currentSubtitles: SubtitleData? = null
 
+    @SuppressLint("UnsafeOptInUsageError")
     private fun List<Tracks.Group>.getTrack(id: String?): Pair<TrackGroup, Int>? {
         if (id == null) return null
         // This beast of an expression does:
@@ -340,6 +308,7 @@ class CS3IPlayer : IPlayer {
         }.flatten()
     }
 
+    @SuppressLint("UnsafeOptInUsageError")
     private fun Tracks.Group.getFormats(): List<Pair<Format, Int>> {
         return (0 until this.mediaTrackGroup.length).mapNotNull { i ->
             if (this.isSupported)
@@ -368,6 +337,7 @@ class CS3IPlayer : IPlayer {
         )
     }
 
+    @SuppressLint("UnsafeOptInUsageError")
     override fun getVideoTracks(): CurrentTracks {
         val allTracks = exoPlayer?.currentTracks?.groups ?: emptyList()
         val videoTracks = allTracks.filter { it.type == TRACK_TYPE_VIDEO }
@@ -387,6 +357,7 @@ class CS3IPlayer : IPlayer {
     /**
      * @return True if the player should be reloaded
      * */
+    @SuppressLint("UnsafeOptInUsageError")
     override fun setPreferredSubtitles(subtitle: SubtitleData?): Boolean {
         Log.i(TAG, "setPreferredSubtitles init $subtitle")
         currentSubtitles = subtitle
@@ -465,6 +436,7 @@ class CS3IPlayer : IPlayer {
         }
     }
 
+    @SuppressLint("UnsafeOptInUsageError")
     override fun getAspectRatio(): Rational? {
         return exoPlayer?.videoFormat?.let { format ->
             Rational(format.width, format.height)
@@ -475,6 +447,7 @@ class CS3IPlayer : IPlayer {
         subtitleHelper.setSubStyle(style)
     }
 
+    @SuppressLint("UnsafeOptInUsageError")
     override fun saveData() {
         Log.i(TAG, "saveData")
         updatedTime()
@@ -504,14 +477,14 @@ class CS3IPlayer : IPlayer {
         Log.i(TAG, "onStop")
 
         saveData()
-        exoPlayer?.pause()
+        handleEvent(CSPlayerEvent.Pause, PlayerEventSource.Player)
         //releasePlayer()
     }
 
     override fun onPause() {
         Log.i(TAG, "onPause")
         saveData()
-        exoPlayer?.pause()
+        handleEvent(CSPlayerEvent.Pause, PlayerEventSource.Player)
         //releasePlayer()
     }
 
@@ -548,6 +521,7 @@ class CS3IPlayer : IPlayer {
 
         var requestSubtitleUpdate: (() -> Unit)? = null
 
+        @SuppressLint("UnsafeOptInUsageError")
         private fun createOnlineSource(headers: Map<String, String>): HttpDataSource.Factory {
             val source = OkHttpDataSource.Factory(app.baseClient).setUserAgent(USER_AGENT)
             return source.apply {
@@ -555,6 +529,7 @@ class CS3IPlayer : IPlayer {
             }
         }
 
+        @SuppressLint("UnsafeOptInUsageError")
         private fun createOnlineSource(link: ExtractorLink): HttpDataSource.Factory {
             val provider = getApiFromNameNull(link.source)
             val interceptor = provider?.getVideoInterceptor(link)
@@ -587,6 +562,7 @@ class CS3IPlayer : IPlayer {
             }
         }
 
+        @SuppressLint("UnsafeOptInUsageError")
         private fun Context.createOfflineSource(): DataSource.Factory {
             return DefaultDataSourceFactory(this, USER_AGENT)
         }
@@ -632,6 +608,7 @@ class CS3IPlayer : IPlayer {
             return Pair(subSources, activeSubtitles)
         }*/
 
+        @SuppressLint("UnsafeOptInUsageError")
         private fun getCache(context: Context, cacheSize: Long): SimpleCache? {
             return try {
                 val databaseProvider = StandaloneDatabaseProvider(context)
@@ -663,6 +640,7 @@ class CS3IPlayer : IPlayer {
             return getMediaItemBuilder(mimeType).setUri(url).build()
         }
 
+        @SuppressLint("UnsafeOptInUsageError")
         private fun getTrackSelector(context: Context, maxVideoHeight: Int?): TrackSelector {
             val trackSelector = DefaultTrackSelector(context)
             trackSelector.parameters = trackSelector.buildUponParameters()
@@ -676,6 +654,7 @@ class CS3IPlayer : IPlayer {
 
         var currentTextRenderer: CustomTextRenderer? = null
 
+        @SuppressLint("UnsafeOptInUsageError")
         private fun buildExoPlayer(
             context: Context,
             mediaItemSlices: List<MediaItemSlice>,
@@ -710,13 +689,13 @@ class CS3IPlayer : IPlayer {
                             metadataRendererOutput
                         ).map {
                             if (it is TextRenderer) {
-                                currentTextRenderer = CustomTextRenderer(
+                                val currentTextRenderer = CustomTextRenderer(
                                     subtitleOffset,
                                     textRendererOutput,
                                     eventHandler.looper,
                                     CustomSubtitleDecoderFactory()
-                                )
-                                currentTextRenderer!!
+                                ).also { this.currentTextRenderer = it }
+                                currentTextRenderer
                             } else it
                         }.toTypedArray()
                     }
@@ -760,15 +739,33 @@ class CS3IPlayer : IPlayer {
 
             // If there is only one item then treat it as normal, if multiple: concatenate the items.
             val videoMediaSource = if (mediaItemSlices.size == 1) {
-                factory.createMediaSource(mediaItemSlices.first().mediaItem)
+                val item = mediaItemSlices.first()
+
+                item.drm?.let { drm ->
+                    val drmCallback =
+                        LocalMediaDrmCallback("{\"keys\":[{\"kty\":\"${drm.kty}\",\"k\":\"${drm.key}\",\"kid\":\"${drm.kid}\"}],\"type\":\"temporary\"}".toByteArray())
+                    val manager = DefaultDrmSessionManager.Builder()
+                        .setPlayClearSamplesWithoutKeys(true)
+                        .setMultiSession(false)
+                        .setKeyRequestParameters(drm.keyRequestParameters)
+                        .setUuidAndExoMediaDrmProvider(drm.uuid, FrameworkMediaDrm.DEFAULT_PROVIDER)
+                        .build(drmCallback)
+                    val manifestDataSourceFactory = DefaultHttpDataSource.Factory()
+
+                    DashMediaSource.Factory(manifestDataSourceFactory)
+                        .setDrmSessionManagerProvider { manager }
+                        .createMediaSource(item.mediaItem)
+                } ?: run {
+                    factory.createMediaSource(item.mediaItem)
+                }
             } else {
                 val source = ConcatenatingMediaSource()
-                mediaItemSlices.map {
+                mediaItemSlices.map { item ->
                     source.addMediaSource(
                         // The duration MUST be known for it to work properly, see https://github.com/google/ExoPlayer/issues/4727
                         ClippingMediaSource(
-                            factory.createMediaSource(it.mediaItem),
-                            it.durationUs
+                            factory.createMediaSource(item.mediaItem),
+                            item.durationUs
                         )
                     )
                 }
@@ -801,43 +798,55 @@ class CS3IPlayer : IPlayer {
         return null
     }
 
-    fun updatedTime(writePosition: Long? = null) {
+    fun updatedTime(
+        writePosition: Long? = null,
+        source: PlayerEventSource = PlayerEventSource.Player
+    ) {
         val position = writePosition ?: exoPlayer?.currentPosition
 
         getCurrentTimestamp(position)?.let { timestamp ->
-            onTimestampInvoked?.invoke(timestamp)
+            event(TimestampInvokedEvent(timestamp, source))
         }
 
         val duration = exoPlayer?.contentDuration
         if (duration != null && position != null) {
-            playerPositionChanged?.invoke(Pair(position, duration))
+            event(
+                PositionEvent(
+                    source,
+                    fromMs = exoPlayer?.currentPosition ?: 0,
+                    position,
+                    duration
+                )
+            )
         }
     }
 
-    override fun seekTime(time: Long) {
-        exoPlayer?.seekTime(time)
+    override fun seekTime(time: Long, source: PlayerEventSource) {
+        exoPlayer?.seekTime(time, source)
     }
 
-    override fun seekTo(time: Long) {
-        updatedTime(time)
+    override fun seekTo(time: Long, source: PlayerEventSource) {
+        updatedTime(time, source)
         exoPlayer?.seekTo(time)
     }
 
-    private fun ExoPlayer.seekTime(time: Long) {
-        updatedTime(currentPosition + time)
+    private fun ExoPlayer.seekTime(time: Long, source: PlayerEventSource) {
+        updatedTime(currentPosition + time, source)
         seekTo(currentPosition + time)
     }
 
-    override fun handleEvent(event: CSPlayerEvent) {
+    override fun handleEvent(event: CSPlayerEvent, source: PlayerEventSource) {
         Log.i(TAG, "handleEvent ${event.name}")
         try {
             exoPlayer?.apply {
                 when (event) {
                     CSPlayerEvent.Play -> {
+                        event(PlayEvent(source))
                         play()
                     }
 
                     CSPlayerEvent.Pause -> {
+                        event(PauseEvent(source))
                         pause()
                     }
 
@@ -854,32 +863,32 @@ class CS3IPlayer : IPlayer {
 
                     CSPlayerEvent.PlayPauseToggle -> {
                         if (isPlaying) {
-                            pause()
+                            handleEvent(CSPlayerEvent.Pause, source)
                         } else {
-                            play()
+                            handleEvent(CSPlayerEvent.Play, source)
                         }
                     }
 
-                    CSPlayerEvent.SeekForward -> seekTime(seekActionTime)
-                    CSPlayerEvent.SeekBack -> seekTime(-seekActionTime)
-                    CSPlayerEvent.NextEpisode -> nextEpisode?.invoke()
-                    CSPlayerEvent.PrevEpisode -> prevEpisode?.invoke()
+                    CSPlayerEvent.SeekForward -> seekTime(seekActionTime, source)
+                    CSPlayerEvent.SeekBack -> seekTime(-seekActionTime, source)
+                    CSPlayerEvent.NextEpisode -> event(EpisodeSeekEvent(offset = 1, source = source))
+                    CSPlayerEvent.PrevEpisode -> event(EpisodeSeekEvent(offset = -1, source = source))
                     CSPlayerEvent.SkipCurrentChapter -> {
                         //val dur = this@CS3IPlayer.getDuration() ?: return@apply
                         getCurrentTimestamp()?.let { lastTimeStamp ->
                             if (lastTimeStamp.skipToNextEpisode) {
-                                handleEvent(CSPlayerEvent.NextEpisode)
+                                handleEvent(CSPlayerEvent.NextEpisode, source)
                             } else {
                                 seekTo(lastTimeStamp.endMs + 1L)
                             }
-                            onTimestampSkipped?.invoke(lastTimeStamp)
+                            event(TimestampSkippedEvent(timestamp = lastTimeStamp, source = source))
                         }
                     }
                 }
             }
-        } catch (e: Exception) {
-            Log.e(TAG, "handleEvent error", e)
-            playerError?.invoke(e)
+        } catch (t: Throwable) {
+            Log.e(TAG, "handleEvent error", t)
+            event(ErrorEvent(t))
         }
     }
 
@@ -918,18 +927,14 @@ class CS3IPlayer : IPlayer {
 
             requestSubtitleUpdate = ::reloadSubs
 
-            playerUpdated?.invoke(exoPlayer)
+            event(PlayerAttachedEvent(exoPlayer))
             exoPlayer?.prepare()
 
             exoPlayer?.let { exo ->
-                updateIsPlaying?.invoke(
-                    Pair(
-                        CSPlayerLoading.IsBuffering,
-                        CSPlayerLoading.IsBuffering
-                    )
-                )
+                event(StatusEvent(CSPlayerLoading.IsBuffering, CSPlayerLoading.IsBuffering))
                 isPlaying = exo.isPlaying
             }
+
             exoPlayer?.addListener(object : Player.Listener {
                 override fun onTracksChanged(tracks: Tracks) {
                     normalSafeApiCall {
@@ -963,18 +968,19 @@ class CS3IPlayer : IPlayer {
                                     )
                                 }
 
-                        embeddedSubtitlesFetched?.invoke(exoPlayerReportedTracks)
-                        onTracksInfoChanged?.invoke()
-                        subtitlesUpdates?.invoke()
+                        event(EmbeddedSubtitlesFetchedEvent(tracks = exoPlayerReportedTracks))
+                        event(TracksChangedEvent())
+                        event(SubtitlesUpdatedEvent())
                     }
                 }
 
+                @SuppressLint("UnsafeOptInUsageError")
                 override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
                     exoPlayer?.let { exo ->
-                        updateIsPlaying?.invoke(
-                            Pair(
-                                if (isPlaying) CSPlayerLoading.IsPlaying else CSPlayerLoading.IsPaused,
-                                if (playbackState == Player.STATE_BUFFERING) CSPlayerLoading.IsBuffering else if (exo.isPlaying) CSPlayerLoading.IsPlaying else CSPlayerLoading.IsPaused
+                        event(
+                            StatusEvent(
+                                wasPlaying = if (isPlaying) CSPlayerLoading.IsPlaying else CSPlayerLoading.IsPaused,
+                                isPlaying = if (playbackState == Player.STATE_BUFFERING) CSPlayerLoading.IsBuffering else if (exo.isPlaying) CSPlayerLoading.IsPlaying else CSPlayerLoading.IsPaused
                             )
                         )
                         isPlaying = exo.isPlaying
@@ -996,23 +1002,15 @@ class CS3IPlayer : IPlayer {
                             }
 
                             Player.STATE_ENDED -> {
-                                // Only play next episode if autoplay is on (default)
-                                if (PreferenceManager.getDefaultSharedPreferences(context)
-                                        ?.getBoolean(
-                                            context.getString(com.lagradost.cloudstream3.R.string.autoplay_next_key),
-                                            true
-                                        ) == true
-                                ) {
-                                    handleEvent(CSPlayerEvent.NextEpisode)
-                                }
+                                event(VideoEndedEvent())
                             }
 
                             Player.STATE_BUFFERING -> {
-                                updatedTime()
+                                updatedTime(source = PlayerEventSource.Player)
                             }
 
                             Player.STATE_IDLE -> {
-                                // IDLE
+
                             }
 
                             else -> Unit
@@ -1037,7 +1035,7 @@ class CS3IPlayer : IPlayer {
                         }
 
                         else -> {
-                            playerError?.invoke(error)
+                            event(ErrorEvent(error))
                         }
                     }
 
@@ -1051,7 +1049,7 @@ class CS3IPlayer : IPlayer {
                 override fun onIsPlayingChanged(isPlaying: Boolean) {
                     super.onIsPlayingChanged(isPlaying)
                     if (isPlaying) {
-                        requestAutoFocus?.invoke()
+                        event(RequestAudioFocusEvent())
                         onRenderFirst()
                     }
                 }
@@ -1071,12 +1069,15 @@ class CS3IPlayer : IPlayer {
                                         true
                                     ) == true
                             ) {
-                                handleEvent(CSPlayerEvent.NextEpisode)
+                                handleEvent(
+                                    CSPlayerEvent.NextEpisode,
+                                    source = PlayerEventSource.Player
+                                )
                             }
                         }
 
                         Player.STATE_BUFFERING -> {
-                            updatedTime()
+                            updatedTime(source = PlayerEventSource.Player)
                         }
 
                         Player.STATE_IDLE -> {
@@ -1089,27 +1090,29 @@ class CS3IPlayer : IPlayer {
 
                 override fun onVideoSizeChanged(videoSize: VideoSize) {
                     super.onVideoSizeChanged(videoSize)
-                    playerDimensionsLoaded?.invoke(Pair(videoSize.width, videoSize.height))
+                    event(ResizedEvent(height = videoSize.height, width = videoSize.width))
                 }
 
                 override fun onRenderedFirstFrame() {
                     super.onRenderedFirstFrame()
                     onRenderFirst()
-                    updatedTime()
+                    updatedTime(source = PlayerEventSource.Player)
                 }
             })
-        } catch (e: Exception) {
-            Log.e(TAG, "loadExo error", e)
-            playerError?.invoke(e)
+        } catch (t: Throwable) {
+            Log.e(TAG, "loadExo error", t)
+            event(ErrorEvent(t))
         }
     }
 
     private var lastTimeStamps: List<EpisodeSkip.SkipStamp> = emptyList()
+
+    @SuppressLint("UnsafeOptInUsageError")
     override fun addTimeStamps(timeStamps: List<EpisodeSkip.SkipStamp>) {
         lastTimeStamps = timeStamps
         timeStamps.forEach { timestamp ->
             exoPlayer?.createMessage { _, _ ->
-                updatedTime()
+                updatedTime(source = PlayerEventSource.Player)
                 //if (payload is EpisodeSkip.SkipStamp) // this should always be true
                 //    onTimestampInvoked?.invoke(payload)
             }
@@ -1119,9 +1122,10 @@ class CS3IPlayer : IPlayer {
                 ?.setDeleteAfterDelivery(false)
                 ?.send()
         }
-        updatedTime()
+        updatedTime(source = PlayerEventSource.Player)
     }
 
+    @SuppressLint("UnsafeOptInUsageError")
     fun onRenderFirst() {
         if (hasUsedFirstRender) { // this insures that we only call this once per player load
             return
@@ -1139,7 +1143,7 @@ class CS3IPlayer : IPlayer {
 
         if (invalid) {
             releasePlayer(saveTime = false)
-            playerError?.invoke(InvalidFileException("Too short playback"))
+            event(ErrorEvent(InvalidFileException("Too short playback")))
             return
         }
 
@@ -1148,7 +1152,7 @@ class CS3IPlayer : IPlayer {
         val width = format?.width
         val height = format?.height
         if (height != null && width != null) {
-            playerDimensionsLoaded?.invoke(Pair(width, height))
+            event(ResizedEvent(width = width, height = height))
             updatedTime()
             exoPlayer?.apply {
                 requestedListeningPercentages?.forEach { percentage ->
@@ -1182,12 +1186,13 @@ class CS3IPlayer : IPlayer {
 
             subtitleHelper.setActiveSubtitles(activeSubtitles.toSet())
             loadExo(context, listOf(MediaItemSlice(mediaItem, Long.MIN_VALUE)), subSources)
-        } catch (e: Exception) {
-            Log.e(TAG, "loadOfflinePlayer error", e)
-            playerError?.invoke(e)
+        } catch (t: Throwable) {
+            Log.e(TAG, "loadOfflinePlayer error", t)
+            event(ErrorEvent(t))
         }
     }
 
+    @SuppressLint("UnsafeOptInUsageError")
     private fun getSubSources(
         onlineSourceFactory: HttpDataSource.Factory?,
         offlineSourceFactory: DataSource.Factory?,
@@ -1243,6 +1248,7 @@ class CS3IPlayer : IPlayer {
         return exoPlayer != null
     }
 
+    @SuppressLint("UnsafeOptInUsageError")
     private fun loadOnlinePlayer(context: Context, link: ExtractorLink) {
         Log.i(TAG, "loadOnlinePlayer $link")
         try {
@@ -1259,7 +1265,7 @@ class CS3IPlayer : IPlayer {
                 HttpsURLConnection.setDefaultSSLSocketFactory(sslContext.socketFactory)
             }
 
-            val mime = when(link.type) {
+            val mime = when (link.type) {
                 ExtractorLinkType.M3U8 -> MimeTypes.APPLICATION_M3U8
                 ExtractorLinkType.DASH -> MimeTypes.APPLICATION_MPD
                 ExtractorLinkType.VIDEO -> MimeTypes.VIDEO_MP4
@@ -1267,12 +1273,29 @@ class CS3IPlayer : IPlayer {
                 ExtractorLinkType.MAGNET -> throw IllegalArgumentException("No magnet support")
             }
 
-            val mediaItems = if (link is ExtractorLinkPlayList) {
-                link.playlist.map {
+
+            val mediaItems = when (link) {
+                is ExtractorLinkPlayList -> link.playlist.map {
                     MediaItemSlice(getMediaItem(mime, it.url), it.durationUs)
                 }
-            } else {
-                listOf(
+
+                is DrmExtractorLink -> {
+                    listOf(
+                        // Single sliced list with unset length
+                        MediaItemSlice(
+                            getMediaItem(mime, link.url), Long.MIN_VALUE,
+                            drm = DrmMetadata(
+                                kid = link.kid,
+                                key = link.key,
+                                uuid = link.uuid,
+                                kty = link.kty,
+                                keyRequestParameters = link.keyRequestParameters
+                            )
+                        )
+                    )
+                }
+
+                else -> listOf(
                     // Single sliced list with unset length
                     MediaItemSlice(getMediaItem(mime, link.url), Long.MIN_VALUE)
                 )
@@ -1298,16 +1321,16 @@ class CS3IPlayer : IPlayer {
             }
 
             loadExo(context, mediaItems, subSources, cacheFactory)
-        } catch (e: Exception) {
-            Log.e(TAG, "loadOnlinePlayer error", e)
-            playerError?.invoke(e)
+        } catch (t: Throwable) {
+            Log.e(TAG, "loadOnlinePlayer error", t)
+            event(ErrorEvent(t))
         }
     }
 
     override fun reloadPlayer(context: Context) {
         Log.i(TAG, "reloadPlayer")
 
-        exoPlayer?.release()
+        releasePlayer(false)
         currentLink?.let {
             loadOnlinePlayer(context, it)
         } ?: currentDownloadedFile?.let {

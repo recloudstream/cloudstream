@@ -518,7 +518,8 @@ class ResultViewModel2 : ViewModel() {
                         val episodeNumber = episodes[currentIndex].episode
                         if (episodeNumber < currentMin) {
                             currentMin = episodeNumber
-                        } else if (episodeNumber > currentMax) {
+                        }
+                        if (episodeNumber > currentMax) {
                             currentMax = episodeNumber
                         }
                         ++currentIndex
@@ -1538,7 +1539,11 @@ class ResultViewModel2 : ViewModel() {
                             this.name,
                             this.japName
                         ).filter { it.length > 2 }
-                            .distinct(), // the reason why we filter is due to not wanting smth like " " or "?"
+                            .distinct().map {
+                            // this actually would be nice if we improved a bit as 3rd season == season 3 == III ect
+                                // right now it just removes the dubbed status
+                                it.lowercase().replace(Regex("""\(?[ds]ub(bed)?\)?(\s|$)""") , "").trim()
+                                            },
                         TrackerType.getTypes(this.type),
                         this.year
                     )

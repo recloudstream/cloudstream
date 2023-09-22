@@ -38,6 +38,8 @@ import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.CommonActivity.keyEventListener
 import com.lagradost.cloudstream3.CommonActivity.playerEventListener
+import com.lagradost.cloudstream3.CommonActivity.screenHeight
+import com.lagradost.cloudstream3.CommonActivity.screenWidth
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.PlayerCustomLayoutBinding
 import com.lagradost.cloudstream3.databinding.SubtitleOffsetBinding
@@ -125,19 +127,6 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
     //private var useSystemBrightness = false
     protected var useTrueSystemBrightness = true
     private val fullscreenNotch = true //TODO SETTING
-
-    protected val displayMetrics: DisplayMetrics = Resources.getSystem().displayMetrics
-
-    // screenWidth and screenHeight does always
-    // refer to the screen while in landscape mode
-    protected val screenWidth: Int
-        get() {
-            return max(displayMetrics.widthPixels, displayMetrics.heightPixels)
-        }
-    protected val screenHeight: Int
-        get() {
-            return min(displayMetrics.widthPixels, displayMetrics.heightPixels)
-        }
 
     private var statusBarHeight: Int? = null
     private var navigationBarHeight: Int? = null
@@ -874,7 +863,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                                     currentTouch
                                 )?.let { seekTo ->
                                     if (abs(seekTo - startTime) > MINIMUM_SEEK_TIME) {
-                                        player.seekTo(seekTo)
+                                        player.seekTo(seekTo, PlayerEventSource.UI)
                                     }
                                 }
                             }
@@ -909,7 +898,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                                         }
 
                                         else -> {
-                                            player.handleEvent(CSPlayerEvent.PlayPauseToggle)
+                                            player.handleEvent(CSPlayerEvent.PlayPauseToggle, PlayerEventSource.UI)
                                         }
                                     }
                                 } else if (doubleTapEnabled && isFullScreenPlayer) {

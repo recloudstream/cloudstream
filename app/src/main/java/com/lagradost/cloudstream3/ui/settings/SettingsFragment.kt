@@ -205,6 +205,11 @@ class SettingsFragment : Fragment() {
                     }
                 }
             }
+
+            // Default focus on TV
+            if (isTrueTv) {
+                settingsGeneral.requestFocus()
+            }
         }
     }
 }
