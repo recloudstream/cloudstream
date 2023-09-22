@@ -115,6 +115,22 @@
 />
 
             <ImageView
+                android:id="@+id/home_preview_search_button"
+                android:layout_width="50dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="end"
+                android:background="@drawable/player_button_tv_attr_no_bg"
+                android:contentDescription="@string/search"
+                android:nextFocusLeft="@id/home_change_api"
+                android:nextFocusRight="@id/home_preview_switch_account"
+                android:nextFocusDown="@id/home_preview_info_btt"
+                android:padding="10dp"
+                android:visibility="gone"
+                android:src="@drawable/search_icon"
+                android:tag="@string/tv_no_focus_tag"
+                app:tint="@color/player_on_button_tv_attr" />
+
+            <ImageView
                 android:id="@+id/home_switch_account"
 
                 android:layout_width="50dp"

@@ -497,6 +497,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             R.id.navigation_results_phone,
             R.id.navigation_results_tv,
             R.id.navigation_player,
+            R.id.navigation_quick_search,
         ).contains(destination.id)
 
         binding?.navHostFragment?.apply {
@@ -1101,15 +1102,19 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         updateTv()
 
         // backup when we update the app, I don't trust myself to not boot lock users, might want to make this a setting?
-        try {
+        normalSafeApiCall {
             val appVer = BuildConfig.VERSION_NAME
             val lastAppAutoBackup: String = getKey("VERSION_NAME") ?: ""
             if (appVer != lastAppAutoBackup) {
                 setKey("VERSION_NAME", BuildConfig.VERSION_NAME)
-                backup()
+                normalSafeApiCall {
+                    backup()
+                }
+                normalSafeApiCall {
+                    // Recompile oat on new version
+                    PluginManager.deleteAllOatFiles(this)
+                }
             }
-        } catch (t: Throwable) {
-            logError(t)
         }
 
         // just in case, MAIN SHOULD *NEVER* BOOT LOOP CRASH
