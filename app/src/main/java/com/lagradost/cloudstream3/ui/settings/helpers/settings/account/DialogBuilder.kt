@@ -6,16 +6,17 @@ import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentActivity
+import androidx.viewbinding.ViewBinding
 import com.google.android.material.button.MaterialButton
 import com.lagradost.cloudstream3.syncproviders.AuthAPI
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 
-abstract class DialogBuilder(
+abstract class DialogBuilder<T : ViewBinding>(
     private val api: AuthAPI,
     private val activity: FragmentActivity?,
     private val themeResId: Int,
-    private val layoutResId: Int,
+    val binding: T,
 ) {
     class CommonDialogItems(
         private val dialog: AlertDialog,
@@ -57,7 +58,7 @@ abstract class DialogBuilder(
             return null
         }
 
-        val dialogBuilder = AlertDialog.Builder(activity, themeResId).setView(layoutResId)
+        val dialogBuilder = AlertDialog.Builder(activity, themeResId).setView(binding.root)
         val dialog = dialogBuilder.show()
 
         setup(dialog)
@@ -111,8 +112,8 @@ abstract class DialogBuilder(
         val displayedItems = getVisibilityMap(dialog).keys.filter { it.isVisible }
 
         displayedItems.foldRight(displayedItems.firstOrNull()) { item, previous ->
-            item?.id?.let { previous?.nextFocusDownId = it }
-            previous?.id?.let { item?.nextFocusUpId = it }
+            item.id.let { previous?.nextFocusDownId = it }
+            previous?.id?.let { item.nextFocusUpId = it }
             item
         }
 

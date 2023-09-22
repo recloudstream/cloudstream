@@ -15,7 +15,6 @@ import android.view.animation.AlphaAnimation
 import androidx.annotation.StringRes
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.isVisible
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.google.android.material.tabs.TabLayoutMediator
 import com.lagradost.cloudstream3.APIHolder
@@ -93,12 +92,8 @@ class LibraryFragment : Fragment() {
 
     override fun onDestroyView() {
         binding = null
-        super.onDestroyView()
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
         MainActivity.afterBackupRestoreEvent -= ::onNewSyncData
+        super.onDestroyView()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

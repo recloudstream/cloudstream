@@ -8,30 +8,30 @@ import androidx.fragment.app.FragmentActivity
 import com.lagradost.cloudstream3.AcraApplication
 import com.lagradost.cloudstream3.CommonActivity
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.databinding.AddAccountInputBinding
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.syncproviders.InAppAuthAPI
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
-import kotlinx.android.synthetic.main.add_account_input.*
 
 class InAppAuthDialogBuilder(
     private val api: InAppAuthAPI,
-    private val activity: FragmentActivity?,
-) : DialogBuilder(
+    private val activity: FragmentActivity,
+) : DialogBuilder<AddAccountInputBinding>(
     api,
     activity,
     R.style.AlertDialogCustom,
-    R.layout.add_account_input,
+    AddAccountInputBinding.inflate(activity.layoutInflater),
 ) {
 
-    override fun onLogin(dialog: AlertDialog): Unit = with(dialog) {
-        if (activity == null) throw IllegalStateException("Login should be called after validation")
+    override fun onLogin(dialog: AlertDialog): Unit = with(binding) {
+//        if (activity == null) throw IllegalStateException("Login should be called after validation")
 
         val loginData = InAppAuthAPI.LoginData(
-            username = if (api.requiresUsername) login_username_input?.text?.toString() else null,
-            password = if (api.requiresPassword) login_password_input?.text?.toString() else null,
-            email = if (api.requiresEmail) login_email_input?.text?.toString() else null,
-            server = if (api.requiresServer) login_server_input?.text?.toString() else null,
+            username = if (api.requiresUsername) loginUsernameInput.text?.toString() else null,
+            password = if (api.requiresPassword) loginPasswordInput.text?.toString() else null,
+            email = if (api.requiresEmail) loginEmailInput.text?.toString() else null,
+            server = if (api.requiresServer) loginServerInput.text?.toString() else null,
         )
 
         ioSafe {
@@ -40,6 +40,9 @@ class InAppAuthDialogBuilder(
             } catch (e: Exception) {
                 logError(e)
                 false
+            }
+            if (isSuccessful) {
+                dialog.dismissSafe()
             }
             activity.runOnUiThread {
                 try {
@@ -58,43 +61,43 @@ class InAppAuthDialogBuilder(
 
     }
 
-    override fun getCommonItems(dialog: AlertDialog) = with(dialog) {
-        CommonDialogItems(dialog, text1, apply_btt, cancel_btt, create_account,null)
+    override fun getCommonItems(dialog: AlertDialog) = with(binding) {
+        CommonDialogItems(dialog, text1, applyBtt, cancelBtt, createAccount,null)
     }
 
-    override fun getVisibilityMap(dialog: AlertDialog): Map<View, Boolean> = with(dialog) {
+    override fun getVisibilityMap(dialog: AlertDialog): Map<View, Boolean> = with(binding) {
         mapOf(
-            login_email_input to api.requiresEmail,
-            login_password_input to api.requiresPassword,
-            login_server_input to api.requiresServer,
-            login_username_input to api.requiresUsername
+            loginEmailInput to api.requiresEmail,
+            loginPasswordInput to api.requiresPassword,
+            loginServerInput to api.requiresServer,
+            loginUsernameInput to api.requiresUsername
         )
     }
 
-    override fun setupItems(dialog: AlertDialog): Unit = with(dialog) {
-        login_email_input?.isVisible = api.requiresEmail
-        login_password_input?.isVisible = api.requiresPassword
-        login_server_input?.isVisible = api.requiresServer
-        login_username_input?.isVisible = api.requiresUsername
+    override fun setupItems(dialog: AlertDialog): Unit = with(binding) {
+        loginEmailInput.isVisible = api.requiresEmail
+        loginPasswordInput.isVisible = api.requiresPassword
+        loginServerInput.isVisible = api.requiresServer
+        loginUsernameInput.isVisible = api.requiresUsername
 
-        create_account?.isGone = api.createAccountUrl.isNullOrBlank()
-        create_account?.setOnClickListener {
+        createAccount.isGone = api.createAccountUrl.isNullOrBlank()
+        createAccount.setOnClickListener {
             AcraApplication.openBrowser(
                 api.createAccountUrl ?: return@setOnClickListener, activity
             )
 
-            dismissSafe()
+            dialog.dismissSafe()
         }
     }
 
-    override fun handleStoresPasswordInPlainText(dialog: AlertDialog): Unit = with(dialog) {
+    override fun handleStoresPasswordInPlainText(dialog: AlertDialog): Unit = with(binding) {
         if (!api.storesPasswordInPlainText) return
 
         api.getLatestLoginData()?.let { data ->
-            login_email_input?.setText(data.email ?: "")
-            login_server_input?.setText(data.server ?: "")
-            login_username_input?.setText(data.username ?: "")
-            login_password_input?.setText(data.password ?: "")
+            loginEmailInput.setText(data.email ?: "")
+            loginServerInput.setText(data.server ?: "")
+            loginUsernameInput.setText(data.username ?: "")
+            loginPasswordInput.setText(data.password ?: "")
         }
     }
 }

@@ -53,7 +53,7 @@ class SetupFragmentLanguage : Fragment() {
 
             val ctx = context ?: return@normalSafeApiCall
             val settingsManager = PreferenceManager.getDefaultSharedPreferences(ctx)
-                 .attachBackupListener(getSyncPrefs()).self
+                 .attachBackupListener(ctx.getSyncPrefs()).self
 
             val arrayAdapter =
                 ArrayAdapter<String>(ctx, R.layout.sort_bottom_single_choice)

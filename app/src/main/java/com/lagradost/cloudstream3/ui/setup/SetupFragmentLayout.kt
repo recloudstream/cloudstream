@@ -45,7 +45,7 @@ class SetupFragmentLayout : Fragment() {
             val ctx = context ?: return@normalSafeApiCall
 
             val settingsManager = PreferenceManager.getDefaultSharedPreferences(ctx)
-                 .attachBackupListener(getSyncPrefs()).self
+                 .attachBackupListener(ctx.getSyncPrefs()).self
 
             val prefNames = resources.getStringArray(R.array.app_layout)
             val prefValues = resources.getIntArray(R.array.app_layout_values)
