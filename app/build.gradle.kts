@@ -171,7 +171,7 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
     androidTestImplementation("androidx.test:core")
 
-    //implementation("io.karn:khttp-android:0.1.2") //okhttp instead
+    // implementation("io.karn:khttp-android:0.1.2") //okhttp instead
     // implementation("org.jsoup:jsoup:1.13.1")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.1")
 
@@ -199,8 +199,6 @@ dependencies {
     // Custom ffmpeg extension for audio codecs
     implementation("com.github.recloudstream:media-ffmpeg:1.1.0")
 
-    //implementation("com.google.android.exoplayer:extension-leanback:2.14.0")
-
     // Bug reports
     implementation("ch.acra:acra-core:5.11.0")
     implementation("ch.acra:acra-toast:5.11.0")
@@ -214,13 +212,13 @@ dependencies {
     // subtitle color picker
     implementation("com.jaredrummler:colorpicker:1.1.0")
 
-    //run JS
+    // run JS
     // do not upgrade to 1.7.14, since in 1.7.14 Rhino uses the `SourceVersion` class, which is not
     // available on Android (even when using desugaring), and `NoClassDefFoundError` is thrown
     implementation("org.mozilla:rhino:1.7.13")
 
     // TorrentStream
-    //implementation("com.github.TorrentStream:TorrentStream-Android:2.7.0")
+    // implementation("com.github.TorrentStream:TorrentStream-Android:2.7.0")
 
     // Downloading
     implementation("androidx.work:work-runtime:2.8.1")
@@ -236,11 +234,11 @@ dependencies {
     implementation("com.github.LagradOst:SafeFile:0.0.5")
 
     // API because cba maintaining it myself
-    implementation("com.uwetrottmann.tmdb2:tmdb-java:2.6.0")
+    implementation("com.uwetrottmann.tmdb2:tmdb-java:2.10.0")
 
     implementation("com.github.discord:OverlappingPanels:0.1.5")
     // debugImplementation because LeakCanary should only run in debug builds.
-    //debugImplementation("com.squareup.leakcanary:leakcanary-android:2.12")
+    // debugImplementation("com.squareup.leakcanary:leakcanary-android:2.12")
 
     // for shimmer when loading
     implementation("com.facebook.shimmer:shimmer:0.5.0")
@@ -252,7 +250,7 @@ dependencies {
 
     // newpipe yt taken from https://github.com/TeamNewPipe/NewPipeExtractor/commits/dev
     // this should be updated frequently to avoid trailer fu*kery
-    implementation("com.github.teamnewpipe:NewPipeExtractor:1f08d28")
+    implementation("com.github.teamnewpipe:NewPipeExtractor:917554a")
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.1.6")
 
     // Library/extensions searching with Levenshtein distance
