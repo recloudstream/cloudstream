@@ -547,8 +547,8 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             navRailView.menu.findItem(R.id.navigation_library)?.isVisible = !isTrueTv
 
             // Hide downloads on TV
-            navView.menu.findItem(R.id.navigation_downloads)?.isVisible = !isTrueTv
-            navRailView.menu.findItem(R.id.navigation_downloads)?.isVisible = !isTrueTv
+            //navView.menu.findItem(R.id.navigation_downloads)?.isVisible = !isTrueTv
+            //navRailView.menu.findItem(R.id.navigation_downloads)?.isVisible = !isTrueTv
         }
     }
 
