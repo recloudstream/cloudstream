@@ -82,6 +82,7 @@ import com.lagradost.cloudstream3.extractors.Maxstream
 import com.lagradost.cloudstream3.extractors.Mcloud
 import com.lagradost.cloudstream3.extractors.Megacloud
 import com.lagradost.cloudstream3.extractors.Meownime
+import com.lagradost.cloudstream3.extractors.Minoplres
 import com.lagradost.cloudstream3.extractors.MixDrop
 import com.lagradost.cloudstream3.extractors.MixDropBz
 import com.lagradost.cloudstream3.extractors.MixDropCh
@@ -118,9 +119,6 @@ import com.lagradost.cloudstream3.extractors.Sbthe
 import com.lagradost.cloudstream3.extractors.Sendvid
 import com.lagradost.cloudstream3.extractors.ShaveTape
 import com.lagradost.cloudstream3.extractors.Solidfiles
-import com.lagradost.cloudstream3.extractors.SpeedoStream
-import com.lagradost.cloudstream3.extractors.SpeedoStream1
-import com.lagradost.cloudstream3.extractors.SpeedoStream2
 import com.lagradost.cloudstream3.extractors.Ssbstream
 import com.lagradost.cloudstream3.extractors.StreamM4u
 import com.lagradost.cloudstream3.extractors.StreamSB
@@ -748,9 +746,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     Vido(),
     Linkbox(),
     Acefile(),
-    SpeedoStream(),
-    SpeedoStream1(),
-    SpeedoStream2(),
+    Minoplres(), // formerly SpeedoStream
     Zorofile(),
     Embedgram(),
     Mvidoo(),
