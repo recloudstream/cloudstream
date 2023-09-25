@@ -216,11 +216,9 @@ class ResultFragmentTv : Fragment() {
             episodesShadow.fade(show)
             episodeHolderTv.fade(show)
             if (episodesShadow.isRtl()) {
-                episodesShadow.scaleX = -1.0f
-                episodesShadow.scaleY = -1.0f
+                episodesShadowBackground.scaleX = -1f
             } else {
-                episodesShadow.scaleX = 1.0f
-                episodesShadow.scaleY = 1.0f
+                episodesShadowBackground.scaleX = 1f
             }
         }
     }
