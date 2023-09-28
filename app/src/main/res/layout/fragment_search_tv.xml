@@ -84,7 +84,7 @@
                 android:nextFocusLeft="@id/main_search"
                 android:nextFocusRight="@id/main_search"
                 android:nextFocusUp="@id/nav_rail_view"
-                android:nextFocusDown="@id/search_autofit_results"
+                android:nextFocusDown="@id/tvtypes_chips_scroll"
                 android:src="@drawable/ic_baseline_tune_24"
                 app:tint="?attr/textColor" />
         </FrameLayout>

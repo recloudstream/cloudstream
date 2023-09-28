@@ -34,7 +34,7 @@
 
                     android:id="@+id/actor_image"
                     android:layout_width="match_parent"
-
+                    android:focusable="true"
                     android:layout_height="match_parent"
                     android:contentDescription="@string/episode_poster_img_des"
                     android:scaleType="centerCrop"
