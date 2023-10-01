@@ -61,6 +61,9 @@ internal class ThumbnailSpriteGenerator(
 		try {
 			val spriteBitmap = createSpriteBitmap(thumbnailList)
 			callback.onThumbnailSpriteGenerated(spriteBitmap)
+
+			// Release the MediaMetadataRetriever
+			retriever.release()
 		} catch (e: Exception) {
 			e.printStackTrace()
 			callback.onThumbnailSpriteGenerationError(e)
@@ -68,9 +71,6 @@ internal class ThumbnailSpriteGenerator(
 			// Release the MediaMetadataRetriever
 			retriever.release()
 		}
-
-		// Release the MediaMetadataRetriever
-		retriever.release()
 	}
 
 	private fun generateThumbnail(timeInMillis: Long, thumbnailWidth: Int, thumbnailHeight: Int): Bitmap? {
