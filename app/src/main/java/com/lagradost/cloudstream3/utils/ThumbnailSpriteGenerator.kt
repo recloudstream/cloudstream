@@ -17,13 +17,15 @@ internal class ThumbnailSpriteGenerator(
 	private val callback: ThumbnailSpriteCallback
 ) {
 
-	private val maxLines = 10
-	private val maxColumns = 10
+	private val maxLines: Int = 10
+	private val maxColumns: Int = 10
+
+	private val minFrameIntervalSeconds: Int = 10
 
 	// By setting this here we can use setDataSource once
 	// This will improve performance, in particular for online videos
 	// It means that we don't have to seek through the video multiple times, only once
-	private val retriever = MediaMetadataRetriever()
+	private val retriever: MediaMetadataRetriever = MediaMetadataRetriever()
 
 	internal fun generateThumbnailSprite() {
 		retriever.setDataSource(videoPath)
@@ -42,7 +44,13 @@ internal class ThumbnailSpriteGenerator(
 			return
 		}
 
-		val frameIntervalMillis: Long = videoDuration / (maxLines * maxColumns)
+		val minFrameIntervalMillis: Long = (minFrameIntervalSeconds * 1000).toLong()
+		val maxFrameIntervalMillis: Long = videoDuration / (maxLines * maxColumns)
+		val frameIntervalMillis: Long = if (minFrameIntervalMillis > maxFrameIntervalMillis) {
+			minFrameIntervalMillis
+		} else {
+			maxFrameIntervalMillis
+		}
 
 		val videoWidth = videoDimensions.first
 		val videoHeight = videoDimensions.second
