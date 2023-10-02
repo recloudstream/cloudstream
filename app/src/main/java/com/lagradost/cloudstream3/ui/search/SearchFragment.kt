@@ -55,6 +55,7 @@ import com.lagradost.cloudstream3.utils.AppUtils.setDefaultFocus
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStore.setKey
+import com.lagradost.cloudstream3.utils.DataStoreHelper.currentAccount
 import com.lagradost.cloudstream3.utils.SubtitleHelper
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
@@ -398,7 +399,7 @@ class SearchFragment : Fragment() {
                     DialogInterface.OnClickListener { _, which ->
                         when (which) {
                             DialogInterface.BUTTON_POSITIVE -> {
-                                removeKeys(SEARCH_HISTORY_KEY)
+                                removeKeys("$currentAccount/$SEARCH_HISTORY_KEY")
                                 searchViewModel.updateHistory()
                             }
                             DialogInterface.BUTTON_NEGATIVE -> {
@@ -510,7 +511,7 @@ class SearchFragment : Fragment() {
                     binding?.mainSearch?.setQuery(searchItem.searchText, true)
                 }
                 SEARCH_HISTORY_REMOVE -> {
-                    removeKey(SEARCH_HISTORY_KEY, searchItem.key)
+                    removeKey("$currentAccount/$SEARCH_HISTORY_KEY", searchItem.key)
                     searchViewModel.updateHistory()
                 }
                 else -> {
