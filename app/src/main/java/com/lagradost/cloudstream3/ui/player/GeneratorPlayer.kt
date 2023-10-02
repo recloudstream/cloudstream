@@ -180,6 +180,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                 (if (sameEpisode) currentSelectedSubtitles else null) ?: getAutoSelectSubtitle(
                     currentSubs, settings = true, downloads = true
                 ),
+                preview = isFullScreenPlayer
             )
         }
 

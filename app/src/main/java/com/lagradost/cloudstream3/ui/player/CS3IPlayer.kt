@@ -2,6 +2,7 @@ package com.lagradost.cloudstream3.ui.player
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Handler
 import android.os.Looper
@@ -88,13 +89,17 @@ class CS3IPlayer : IPlayer {
     private var exoPlayer: ExoPlayer? = null
         set(value) {
             // If the old value is not null then the player has not been properly released.
-            debugAssert({ field != null && value != null }, { "Previous player instance should be released!" })
+            debugAssert(
+                { field != null && value != null },
+                { "Previous player instance should be released!" })
             field = value
         }
 
     var cacheSize = 0L
     var simpleCacheSize = 0L
     var videoBufferMs = 0L
+
+    private val imageGenerator = PreviewGenerator()
 
     private val seekActionTime = 30000L
 
@@ -182,6 +187,14 @@ class CS3IPlayer : IPlayer {
         subtitleHelper.initSubtitles(subView, subHolder, style)
     }
 
+    override fun getPreview(fraction: Float): Bitmap? {
+        return imageGenerator.getPreviewImage(fraction)
+    }
+
+    override fun hasPreview(): Boolean {
+        return imageGenerator.hasPreview()
+    }
+
     override fun loadPlayer(
         context: Context,
         sameEpisode: Boolean,
@@ -190,7 +203,8 @@ class CS3IPlayer : IPlayer {
         startPosition: Long?,
         subtitles: Set<SubtitleData>,
         subtitle: SubtitleData?,
-        autoPlay: Boolean?
+        autoPlay: Boolean?,
+        preview : Boolean,
     ) {
         Log.i(TAG, "loadPlayer")
         if (sameEpisode) {
@@ -210,9 +224,27 @@ class CS3IPlayer : IPlayer {
         // release the current exoplayer and cache
         releasePlayer()
         if (link != null) {
+            // only video support atm
+            if (link.type == ExtractorLinkType.VIDEO && preview) {
+                val headers = if (link.referer.isBlank()) {
+                    link.headers
+                } else {
+                    mapOf("referer" to link.referer) + link.headers
+                }
+                imageGenerator.load(sameEpisode, link.url, headers)
+            } else {
+                imageGenerator.clear(sameEpisode)
+            }
             loadOnlinePlayer(context, link)
         } else if (data != null) {
+            if (preview) {
+                imageGenerator.load(sameEpisode, context, data.uri)
+            } else {
+                imageGenerator.clear(sameEpisode)
+            }
             loadOfflinePlayer(context, data)
+        } else {
+            throw IllegalArgumentException("Requires link or uri")
         }
     }
 
@@ -494,6 +526,7 @@ class CS3IPlayer : IPlayer {
     }
 
     override fun release() {
+        imageGenerator.release()
         releasePlayer()
     }
 
@@ -871,8 +904,20 @@ class CS3IPlayer : IPlayer {
 
                     CSPlayerEvent.SeekForward -> seekTime(seekActionTime, source)
                     CSPlayerEvent.SeekBack -> seekTime(-seekActionTime, source)
-                    CSPlayerEvent.NextEpisode -> event(EpisodeSeekEvent(offset = 1, source = source))
-                    CSPlayerEvent.PrevEpisode -> event(EpisodeSeekEvent(offset = -1, source = source))
+                    CSPlayerEvent.NextEpisode -> event(
+                        EpisodeSeekEvent(
+                            offset = 1,
+                            source = source
+                        )
+                    )
+
+                    CSPlayerEvent.PrevEpisode -> event(
+                        EpisodeSeekEvent(
+                            offset = -1,
+                            source = source
+                        )
+                    )
+
                     CSPlayerEvent.SkipCurrentChapter -> {
                         //val dur = this@CS3IPlayer.getDuration() ?: return@apply
                         getCurrentTimestamp()?.let { lastTimeStamp ->

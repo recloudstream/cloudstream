@@ -86,7 +86,6 @@
         </FrameLayout>
         <!-- atm this is useless, however it might be used for PIP one day? -->
         <ImageView
-            android:visibility="gone"
             android:id="@+id/player_fullscreen"
             android:layout_width="30dp"
             android:layout_height="30dp"
@@ -94,7 +93,9 @@
             android:layout_marginEnd="20dp"
             android:background="?android:attr/selectableItemBackgroundBorderless"
             android:src="@drawable/baseline_fullscreen_24"
+            android:visibility="gone"
             app:tint="@color/white" />
+
         <FrameLayout
             android:id="@+id/player_intro_play"
             android:layout_width="0dp"
@@ -108,14 +109,15 @@
             android:clickable="false"
             android:focusable="false"
             android:focusableInTouchMode="false"
-            android:visibility="gone"
-            android:importantForAccessibility="no" />
+            android:importantForAccessibility="no"
+            android:visibility="gone" />
 
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/player_video_holder"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+
 
             <FrameLayout
                 android:id="@+id/player_top_holder"
@@ -272,6 +274,7 @@
                         app:tint="@color/white"
                         tools:ignore="ContentDescription" />
                 </FrameLayout>
+
                 <FrameLayout
                     android:id="@+id/player_pause_play_holder_holder"
                     android:layout_width="100dp"
@@ -298,6 +301,7 @@
                         app:tint="@color/white"
                         tools:ignore="ContentDescription" />
                 </FrameLayout>
+
                 <FrameLayout
                     android:id="@+id/player_ffwd_holder"
                     android:layout_width="0dp"
@@ -427,7 +431,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent">
 
-                <LinearLayout
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/player_video_bar"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -437,10 +441,10 @@
                     <TextView
                         android:id="@id/exo_position"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_height="30dp"
                         android:layout_gravity="center"
                         android:layout_marginStart="20dp"
-                        android:gravity="end"
+                        android:gravity="end|center_vertical"
                         android:includeFontPadding="false"
                         android:minWidth="50dp"
                         android:paddingLeft="4dp"
@@ -448,14 +452,46 @@
                         android:textColor="@android:color/white"
                         android:textSize="14sp"
                         android:textStyle="normal"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
                         tools:text="15:30" />
-                    <!--app:buffered_color="@color/videoCache"-->
-                    <androidx.media3.ui.DefaultTimeBar
+
+                    <FrameLayout
+                        android:id="@+id/previewFrameLayout"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginEnd="16dp"
+                        android:layout_marginBottom="16dp"
+                        android:background="@drawable/video_frame"
+                        android:visibility="invisible"
+                        app:layout_constraintBottom_toTopOf="@+id/exo_progress"
+                        app:layout_constraintDimensionRatio="16:9"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.0"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintWidth_default="percent"
+                        app:layout_constraintWidth_percent="0.25"
+                        tools:visibility="visible">
+
+                        <ImageView
+                            android:id="@+id/previewImageView"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_margin="@dimen/video_frame_width"
+                            android:importantForAccessibility="no"
+                            android:scaleType="centerCrop" />
+                    </FrameLayout>
+
+                    <com.github.rubensousa.previewseekbar.media3.PreviewTimeBar
                         android:id="@id/exo_progress"
                         android:layout_width="0dp"
                         android:layout_height="30dp"
                         android:layout_weight="1"
                         app:bar_height="2dp"
+                        app:layout_constraintBottom_toBottomOf="@id/exo_position"
+                        app:layout_constraintEnd_toStartOf="@id/exo_duration"
+                        app:layout_constraintStart_toEndOf="@+id/exo_position"
                         app:played_color="?attr/colorPrimary"
 
                         app:scrubber_color="?attr/colorPrimary"
@@ -463,12 +499,12 @@
                         app:scrubber_enabled_size="24dp"
                         app:unplayed_color="@color/videoProgress" />
 
-                    <!-- exo_duration-->
                     <TextView
                         android:id="@id/exo_duration"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
+                        android:layout_height="30dp"
+                        android:layout_gravity="center|center_vertical"
+
                         android:layout_marginEnd="20dp"
                         android:includeFontPadding="false"
                         android:minWidth="50dp"
@@ -477,9 +513,10 @@
                         android:textColor="@android:color/white"
                         android:textSize="14sp"
                         android:textStyle="normal"
+                        app:layout_constraintBaseline_toBaselineOf="@id/exo_position"
+                        app:layout_constraintEnd_toEndOf="parent"
                         tools:text="23:20" />
-
-                </LinearLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <HorizontalScrollView
                     android:layout_width="wrap_content"

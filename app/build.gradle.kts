@@ -258,6 +258,8 @@ dependencies {
 
     // color palette for images -> colors
     implementation("androidx.palette:palette-ktx:1.0.0")
+    // seekbar https://github.com/rubensousa/PreviewSeekBar
+    implementation("com.github.rubensousa:previewseekbar-media3:1.1.1.0")
 }
 
 tasks.register("androidSourcesJar", Jar::class) {
