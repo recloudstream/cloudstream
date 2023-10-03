@@ -264,7 +264,7 @@ dependencies {
 
     // https://github.com/wseemann/FFmpegMediaMetadataRetriever
     implementation("com.github.wseemann:FFmpegMediaMetadataRetriever-core:1.0.19")
-    implementation(:com.github.wseemann:FFmpegMediaMetadataRetriever-native:1.0.19")
+    implementation("com.github.wseemann:FFmpegMediaMetadataRetriever-native:1.0.19")
 }
 
 tasks.register("androidSourcesJar", Jar::class) {
