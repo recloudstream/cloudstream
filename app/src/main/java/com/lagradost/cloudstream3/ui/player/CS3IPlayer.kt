@@ -225,7 +225,7 @@ class CS3IPlayer : IPlayer {
         releasePlayer()
         if (link != null) {
             // only video and m3u8 support atm (DASH is untested)
-            val isSupportedType == link.type == ExtractorLinkType.VIDEO || link.type == ExtractorLinkType.M3U8 
+            val isSupportedType = link.type == ExtractorLinkType.VIDEO || link.type == ExtractorLinkType.M3U8 
             if (isSupportedType && preview) {
                 val headers = if (link.referer.isBlank()) {
                     link.headers
