@@ -378,6 +378,15 @@ open class ExtractorLink constructor(
     val isM3u8 : Boolean get() = type == ExtractorLinkType.M3U8
     val isDash : Boolean get() = type == ExtractorLinkType.DASH
 
+    fun getAllHeaders() : Map<String, String> {
+        if (referer.isBlank()) {
+            return headers
+        } else if (headers.keys.none { it.equals("referer", ignoreCase = true) }) {
+            return headers + mapOf("referer" to referer)
+        }
+        return headers
+    }
+
     constructor(
         source: String,
         name: String,

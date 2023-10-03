@@ -225,20 +225,15 @@ class CS3IPlayer : IPlayer {
         releasePlayer()
         if (link != null) {
             // only video support atm
-            if (link.type == ExtractorLinkType.VIDEO && preview) {
-                val headers = if (link.referer.isBlank()) {
-                    link.headers
-                } else {
-                    mapOf("referer" to link.referer) + link.headers
-                }
-                imageGenerator.load(sameEpisode, link.url, headers)
+            if (preview) {
+                imageGenerator.load(link, sameEpisode)
             } else {
                 imageGenerator.clear(sameEpisode)
             }
             loadOnlinePlayer(context, link)
         } else if (data != null) {
             if (preview) {
-                imageGenerator.load(sameEpisode, context, data.uri)
+                imageGenerator.load(context, data, sameEpisode)
             } else {
                 imageGenerator.clear(sameEpisode)
             }
