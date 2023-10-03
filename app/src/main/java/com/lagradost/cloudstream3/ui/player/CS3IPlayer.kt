@@ -57,6 +57,7 @@ import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.ui.subtitles.SaveCaptionStyle
 import com.lagradost.cloudstream3.utils.AppUtils.isUsingMobileData
+import com.lagradost.cloudstream3.utils.DataStoreHelper.currentAccount
 import com.lagradost.cloudstream3.utils.DrmExtractorLink
 import com.lagradost.cloudstream3.utils.EpisodeSkip
 import com.lagradost.cloudstream3.utils.ExtractorLink
@@ -536,12 +537,12 @@ class CS3IPlayer : IPlayer {
          **/
         var preferredAudioTrackLanguage: String? = null
             get() {
-                return field ?: getKey(PREFERRED_AUDIO_LANGUAGE_KEY, field)?.also {
+                return field ?: getKey("$currentAccount/$PREFERRED_AUDIO_LANGUAGE_KEY", field)?.also {
                     field = it
                 }
             }
             set(value) {
-                setKey(PREFERRED_AUDIO_LANGUAGE_KEY, value)
+                setKey("$currentAccount/$PREFERRED_AUDIO_LANGUAGE_KEY", value)
                 field = value
             }
 
