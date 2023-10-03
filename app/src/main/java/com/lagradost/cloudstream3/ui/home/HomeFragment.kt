@@ -383,7 +383,7 @@ class HomeFragment : Fragment() {
                     ?: mutableListOf(TvType.Movie, TvType.TvSeries)
 
                 binding.cancelBtt.setOnClickListener {
-                 dialog.dismissSafe()
+                    dialog.dismissSafe()
                 }
 
                 binding.applyBtt.setOnClickListener {
