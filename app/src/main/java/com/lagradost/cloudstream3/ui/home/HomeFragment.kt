@@ -408,7 +408,7 @@ class HomeFragment : Fragment() {
                 }
 
                 fun updateList() {
-                    this.setKey(HOME_PREF_HOMEPAGE, preSelectedTypes)
+                    this.setKey("${DataStoreHelper.currentAccount}/$HOME_PREF_HOMEPAGE", preSelectedTypes)
 
                     arrayAdapter.clear()
                     currentValidApis = validAPIs.filter { api ->
