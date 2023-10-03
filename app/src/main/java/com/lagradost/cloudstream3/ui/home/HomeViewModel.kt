@@ -171,7 +171,7 @@ class HomeViewModel : ViewModel() {
 
         if (currentWatchTypes.size <= 0) {
             setKey(
-                HOME_BOOKMARK_VALUE_LIST,
+                "${DataStoreHelper.currentAccount}/$HOME_BOOKMARK_VALUE_LIST",
                 intArrayOf()
             )
             _availableWatchStatusTypes.postValue(setOf<WatchType>() to setOf())
@@ -182,7 +182,7 @@ class HomeViewModel : ViewModel() {
         val watchPrefNotNull = preferredWatchStatus ?: EnumSet.of(currentWatchTypes.first())
         //if (currentWatchTypes.any { watchPrefNotNull.contains(it) }) watchPrefNotNull else listOf(currentWatchTypes.first())
         setKey(
-            HOME_BOOKMARK_VALUE_LIST,
+            "${DataStoreHelper.currentAccount}/$HOME_BOOKMARK_VALUE_LIST",
             watchPrefNotNull.map { it.internalId }.toIntArray()
         )
         _availableWatchStatusTypes.postValue(
@@ -463,7 +463,7 @@ class HomeViewModel : ViewModel() {
 
     fun loadStoredData() {
         val list = EnumSet.noneOf(WatchType::class.java)
-        getKey<IntArray>(HOME_BOOKMARK_VALUE_LIST)?.map { WatchType.fromInternalId(it) }?.let {
+        getKey<IntArray>("${DataStoreHelper.currentAccount}/$HOME_BOOKMARK_VALUE_LIST")?.map { WatchType.fromInternalId(it) }?.let {
             list.addAll(it)
         }
         loadStoredData(list)

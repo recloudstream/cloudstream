@@ -377,7 +377,7 @@ class HomeFragment : Fragment() {
                 var currentApiName = selectedApiName
 
                 var currentValidApis: MutableList<MainAPI> = mutableListOf()
-                val preSelectedTypes = this.getKey<List<String>>(HOME_PREF_HOMEPAGE)
+                val preSelectedTypes = this.getKey<List<String>>("${DataStoreHelper.currentAccount}/$HOME_PREF_HOMEPAGE")
                     ?.mapNotNull { listName -> TvType.values().firstOrNull { it.name == listName } }
                     ?.toMutableList()
                     ?: mutableListOf(TvType.Movie, TvType.TvSeries)
@@ -408,7 +408,7 @@ class HomeFragment : Fragment() {
                 }
 
                 fun updateList() {
-                    this.setKey(HOME_PREF_HOMEPAGE, preSelectedTypes)
+                    this.setKey("${DataStoreHelper.currentAccount}/$HOME_PREF_HOMEPAGE", preSelectedTypes)
 
                     arrayAdapter.clear()
                     currentValidApis = validAPIs.filter { api ->
