@@ -11,6 +11,7 @@ import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.SyncApis
 import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
+import com.lagradost.cloudstream3.utils.DataStoreHelper.currentAccount
 
 enum class ListSorting(@StringRes val stringRes: Int) {
     Query(R.string.none),
@@ -35,12 +36,12 @@ class LibraryViewModel : ViewModel() {
         get() = SyncApis.filter { it.hasAccount() }
 
     var currentSyncApi = availableSyncApis.let { allApis ->
-        val lastSelection = getKey<String>(LAST_SYNC_API_KEY)
+        val lastSelection = getKey<String>("$currentAccount/$LAST_SYNC_API_KEY")
         availableSyncApis.firstOrNull { it.name == lastSelection } ?: allApis.firstOrNull()
     }
         private set(value) {
             field = value
-            setKey(LAST_SYNC_API_KEY, field?.name)
+            setKey("$currentAccount/$LAST_SYNC_API_KEY", field?.name)
         }
 
     val availableApiNames: List<String>
