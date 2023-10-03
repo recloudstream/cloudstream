@@ -194,7 +194,7 @@ class SearchFragment : Fragment() {
                 validAPIs.flatMap { api -> api.supportedTypes }.distinct()
             ) { list ->
                 if (selectedSearchTypes.toSet() != list.toSet()) {
-                    setKey(SEARCH_PREF_TAGS, selectedSearchTypes)
+                    setKey("$currentAccount/$SEARCH_PREF_TAGS", selectedSearchTypes)
                     selectedSearchTypes.clear()
                     selectedSearchTypes.addAll(list)
                     search(binding?.mainSearch?.query?.toString())
@@ -236,7 +236,7 @@ class SearchFragment : Fragment() {
         context?.let { ctx ->
             val validAPIs = ctx.filterProviderByPreferredMedia()
             selectedApis = ctx.getKey(
-                SEARCH_PREF_PROVIDERS,
+                "$currentAccount/$SEARCH_PREF_PROVIDERS",
                 defVal = validAPIs.map { it.name }
             )!!.toMutableSet()
         }
@@ -287,7 +287,7 @@ class SearchFragment : Fragment() {
                     }
 
                     fun updateList(types: List<TvType>) {
-                        setKey(SEARCH_PREF_TAGS, types.map { it.name })
+                        setKey("$currentAccount/$SEARCH_PREF_TAGS", types.map { it.name })
 
                         arrayAdapter.clear()
                         currentValidApis = validAPIs.filter { api ->
@@ -312,7 +312,7 @@ class SearchFragment : Fragment() {
                         arrayAdapter.notifyDataSetChanged()
                     }
 
-                    val selectedSearchTypes = getKey<List<String>>(SEARCH_PREF_TAGS)
+                    val selectedSearchTypes = getKey<List<String>>("$currentAccount/$SEARCH_PREF_TAGS")
                         ?.mapNotNull { listName ->
                             TvType.values().firstOrNull { it.name == listName }
                         }
@@ -343,7 +343,7 @@ class SearchFragment : Fragment() {
                     }
 
                     dialog.setOnDismissListener {
-                        context?.setKey(SEARCH_PREF_PROVIDERS, currentSelectedApis.toList())
+                        context?.setKey("$currentAccount/$SEARCH_PREF_PROVIDERS", currentSelectedApis.toList())
                         selectedApis = currentSelectedApis
                     }
                     updateList(selectedSearchTypes.toList())
@@ -354,7 +354,7 @@ class SearchFragment : Fragment() {
         val settingsManager = context?.let { PreferenceManager.getDefaultSharedPreferences(it) }
         val isAdvancedSearch = settingsManager?.getBoolean("advanced_search", true) ?: true
 
-        selectedSearchTypes = context?.getKey<List<String>>(SEARCH_PREF_TAGS)
+        selectedSearchTypes = context?.getKey<List<String>>("$currentAccount/$SEARCH_PREF_TAGS")
             ?.mapNotNull { listName -> TvType.values().firstOrNull { it.name == listName } }
             ?.toMutableList()
             ?: mutableListOf(TvType.Movie, TvType.TvSeries)
