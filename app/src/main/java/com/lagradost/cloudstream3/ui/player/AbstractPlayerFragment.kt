@@ -48,6 +48,7 @@ import com.lagradost.cloudstream3.ui.subtitles.SaveCaptionStyle
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment
 import com.lagradost.cloudstream3.utils.AppUtils
 import com.lagradost.cloudstream3.utils.AppUtils.requestLocalAudioFocus
+import com.lagradost.cloudstream3.utils.DataStoreHelper.currentAccount
 import com.lagradost.cloudstream3.utils.EpisodeSkip
 import com.lagradost.cloudstream3.utils.UIHelper
 import com.lagradost.cloudstream3.utils.UIHelper.hideSystemUI
@@ -442,7 +443,7 @@ abstract class AbstractPlayerFragment(
 
     @SuppressLint("SetTextI18n", "UnsafeOptInUsageError")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        resizeMode = getKey(RESIZE_MODE_KEY) ?: 0
+        resizeMode = getKey("$currentAccount/$RESIZE_MODE_KEY") ?: 0
         resize(resizeMode, false)
 
         player.releaseCallbacks()
@@ -573,7 +574,7 @@ abstract class AbstractPlayerFragment(
 
     @SuppressLint("UnsafeOptInUsageError")
     fun resize(resize: PlayerResize, showToast: Boolean) {
-        setKey(RESIZE_MODE_KEY, resize.ordinal)
+        setKey("$currentAccount/$RESIZE_MODE_KEY", resize.ordinal)
         val type = when (resize) {
             PlayerResize.Fill -> AspectRatioFrameLayout.RESIZE_MODE_FILL
             PlayerResize.Fit -> AspectRatioFrameLayout.RESIZE_MODE_FIT
