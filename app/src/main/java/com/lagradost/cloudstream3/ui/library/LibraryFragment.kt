@@ -35,6 +35,7 @@ import com.lagradost.cloudstream3.ui.search.SEARCH_ACTION_SHOW_METADATA
 import com.lagradost.cloudstream3.utils.AppUtils.loadResult
 import com.lagradost.cloudstream3.utils.AppUtils.loadSearchResult
 import com.lagradost.cloudstream3.utils.AppUtils.reduceDragSensitivity
+import com.lagradost.cloudstream3.utils.DataStoreHelper.currentAccount
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
 import com.lagradost.cloudstream3.utils.UIHelper.getSpanCount
@@ -180,7 +181,7 @@ class LibraryFragment : Fragment() {
 
             val items = baseOptions.map { txt(it.stringRes).asString(this) } + availableProviders
 
-            val savedSelection = getKey<LibraryOpener>(LIBRARY_FOLDER, key)
+            val savedSelection = getKey<LibraryOpener>("$currentAccount/$LIBRARY_FOLDER", key)
             val selectedIndex =
                 when {
                     savedSelection == null -> 0
@@ -215,7 +216,7 @@ class LibraryFragment : Fragment() {
                 }
 
                 setKey(
-                    LIBRARY_FOLDER,
+                    "$currentAccount/$LIBRARY_FOLDER",
                     key,
                     savedData,
                 )
@@ -262,8 +263,8 @@ class LibraryFragment : Fragment() {
                         // This basically first selects the individual opener and if that is default then
                         // selects the whole list opener
                         val savedListSelection =
-                            getKey<LibraryOpener>(LIBRARY_FOLDER, syncName.name)
-                        val savedSelection = getKey<LibraryOpener>(LIBRARY_FOLDER, syncId).takeIf {
+                            getKey<LibraryOpener>("$currentAccount/$LIBRARY_FOLDER", syncName.name)
+                        val savedSelection = getKey<LibraryOpener>("$currentAccount/$LIBRARY_FOLDER", syncId).takeIf {
                             it?.openType != LibraryOpenerType.Default
                         } ?: savedListSelection
 
