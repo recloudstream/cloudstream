@@ -81,6 +81,7 @@ class PreviewGenerator : IPreviewGenerator {
             }
 
             else -> {
+                Log.i("PreviewImg", "unsupported format for $link")
                 currentGenerator.clear(keepCache)
             }
         }
@@ -193,6 +194,7 @@ class M3u8PreviewGenerator : IPreviewGenerator {
 
                 // no support for encryption atm
                 if (hsl.isEncrypted) {
+                    Log.i(TAG, "m3u8 is encrypted")
                     totalImages = 0
                     return@withContext
                 }
@@ -239,12 +241,13 @@ class M3u8PreviewGenerator : IPreviewGenerator {
                             if (!isActive) {
                                 return@withContext
                             }
-                            val frame = retriever.getFrameAtTime(0)
+                            val img = retriever.getFrameAtTime(0)
                             if (!isActive) {
                                 return@withContext
                             }
+                            if(img == null || img.width <= 1 || img.height <= 1) continue
                             synchronized(images) {
-                                images[index] = frame
+                                images[index] = img
                                 loadedImages += 1
                             }
                         } catch (t: Throwable) {
@@ -301,6 +304,9 @@ class Mp4PreviewGenerator : IPreviewGenerator {
                     val idx = items - 1 + i
                     if (idx > loadedImages) {
                         break
+                    }
+                    if(images[idx] == null) {
+                        continue
                     }
                     val currentFraction =
                         (1.0f.div((1 shl l).toFloat()) + i * 1.0f.div(items.toFloat()))
@@ -382,6 +388,7 @@ class Mp4PreviewGenerator : IPreviewGenerator {
                     MediaMetadataRetriever.OPTION_CLOSEST_SYNC
                 )
                 if (!scope.isActive) return
+                if(img == null || img.width <= 1 || img.height <= 1) continue
                 synchronized(images) {
                     images[idx] = img
                     loadedImages = maxOf(loadedImages, idx)

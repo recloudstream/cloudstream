@@ -115,19 +115,19 @@ object M3u8Helper2 {
 
     private fun selectBest(qualities: List<M3u8Helper.M3u8Stream>): M3u8Helper.M3u8Stream? {
         val result = qualities.sortedBy {
-            if (it.quality != null && it.quality <= 1080) it.quality else 0
-        }.filter {
+            it.quality ?: Qualities.Unknown.value //if (it.quality != null && it.quality <= 1080)  else 0
+        }/*.filter {
             listOf("m3u", "m3u8").contains(absoluteExtensionDetermination(it.streamUrl))
-        }
+        }*/
         return result.lastOrNull()
     }
 
     private fun selectWorst(qualities: List<M3u8Helper.M3u8Stream>): M3u8Helper.M3u8Stream? {
         val result = qualities.sortedBy {
-            if (it.quality != null && it.quality <= 1080) it.quality else 0
-        }.filter {
+            it.quality ?: Qualities.Unknown.value //if (it.quality != null && it.quality <= 1080)  else 0
+        }/*.filter {
             listOf("m3u", "m3u8").contains(absoluteExtensionDetermination(it.streamUrl))
-        }
+        }*/
         return result.firstOrNull()
     }
 
