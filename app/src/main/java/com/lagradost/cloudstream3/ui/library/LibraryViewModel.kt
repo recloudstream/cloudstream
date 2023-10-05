@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
+import com.lagradost.cloudstream3.MainActivity
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.SyncApis
@@ -100,5 +101,14 @@ class LibraryViewModel : ViewModel() {
                 _pages.postValue(Resource.Success(pages))
             }
         }
+    }
+    
+    init {
+        MainActivity.reloadHomeEvent += ::reloadPages
+    }
+
+    override fun onCleared() {
+        MainActivity.reloadHomeEvent -= ::reloadPages
+        super.onCleared()
     }
 }
