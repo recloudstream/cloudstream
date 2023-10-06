@@ -15,6 +15,7 @@ import androidx.appcompat.widget.SearchView
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayoutMediator
 import com.lagradost.cloudstream3.APIHolder
 import com.lagradost.cloudstream3.APIHolder.allProviders
@@ -229,6 +230,7 @@ class LibraryFragment : Fragment() {
         }
 
         binding?.viewpager?.setPageTransformer(LibraryScrollTransformer())
+
         binding?.viewpager?.adapter =
             binding?.viewpager?.adapter ?: ViewpagerAdapter(
                 mutableListOf(),
@@ -357,6 +359,7 @@ class LibraryFragment : Fragment() {
                             0,
                             viewpager.adapter?.itemCount ?: 0
                         )
+                        binding?.viewpager?.setCurrentItem(libraryViewModel.currentPage, false)
 
                         // Only stop loading after 300ms to hide the fade effect the viewpager produces when updating
                         // Without this there would be a flashing effect:
@@ -415,6 +418,11 @@ class LibraryFragment : Fragment() {
                 }
             }
         }
+        binding?.viewpager?.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                libraryViewModel.currentPage = position
+            }
+        })
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
