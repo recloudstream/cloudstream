@@ -131,7 +131,6 @@ object DataStoreHelper {
 
                             // update UI
                             setAccount(getDefaultAccount(context), true)
-                            MainActivity.bookmarksUpdatedEvent(true)
                             dialog?.dismissSafe()
                         }
 
