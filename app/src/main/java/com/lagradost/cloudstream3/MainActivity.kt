@@ -1122,23 +1122,25 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             if (isTvSettings()) {
                 val newLocalBinding = ActivityMainTvBinding.inflate(layoutInflater, null, false)
                 setContentView(newLocalBinding.root)
-                TvFocus.focusOutline = WeakReference(newLocalBinding.focusOutline)
-                newLocalBinding.root.viewTreeObserver.addOnGlobalFocusChangeListener { _, newFocus ->
-                    // println("refocus $oldFocus -> $newFocus")
-                    try {
-                        val r = Rect(0, 0, 0, 0)
-                        newFocus.getDrawingRect(r)
-                        val x = r.centerX()
-                        val y = r.centerY()
-                        val dx = 0 //screenWidth / 2
-                        val dy = screenHeight / 2
-                        val r2 = Rect(x - dx, y - dy, x + dx, y + dy)
-                        newFocus.requestRectangleOnScreen(r2, false)
-                        // TvFocus.current =TvFocus.current.copy(y=y.toFloat())
-                    } catch (_: Throwable) {
-                    }
-                    TvFocus.updateFocusView(newFocus)
-                    /*var focus = newFocus
+
+                if(isTrueTvSettings()) {
+                    TvFocus.focusOutline = WeakReference(newLocalBinding.focusOutline)
+                    newLocalBinding.root.viewTreeObserver.addOnGlobalFocusChangeListener { _, newFocus ->
+                        // println("refocus $oldFocus -> $newFocus")
+                        try {
+                            val r = Rect(0, 0, 0, 0)
+                            newFocus.getDrawingRect(r)
+                            val x = r.centerX()
+                            val y = r.centerY()
+                            val dx = 0 //screenWidth / 2
+                            val dy = screenHeight / 2
+                            val r2 = Rect(x - dx, y - dy, x + dx, y + dy)
+                            newFocus.requestRectangleOnScreen(r2, false)
+                            // TvFocus.current =TvFocus.current.copy(y=y.toFloat())
+                        } catch (_: Throwable) {
+                        }
+                        TvFocus.updateFocusView(newFocus)
+                        /*var focus = newFocus
 
                     while(focus != null) {
                         if(focus is ScrollingView && focus.canScrollVertically()) {
@@ -1149,7 +1151,11 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                             else -> break
                         }
                     }*/
+                    }
+                } else {
+                    newLocalBinding.focusOutline.isVisible = false
                 }
+
                 newLocalBinding.root.viewTreeObserver.addOnScrollChangedListener {
                     TvFocus.updateFocusView(TvFocus.lastFocus.get(), same = true)
                 }

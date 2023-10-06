@@ -199,17 +199,8 @@ data class CurrentTracks(
 class InvalidFileException(msg: String) : Exception(msg)
 
 //http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4
-const val STATE_RESUME_WINDOW = "resumeWindow"
-const val STATE_RESUME_POSITION = "resumePosition"
-const val STATE_PLAYER_FULLSCREEN = "playerFullscreen"
-const val STATE_PLAYER_PLAYING = "playerOnPlay"
 const val ACTION_MEDIA_CONTROL = "media_control"
 const val EXTRA_CONTROL_TYPE = "control_type"
-const val PLAYBACK_SPEED = "playback_speed"
-const val RESIZE_MODE_KEY = "resize_mode" // Last used resize mode
-const val PLAYBACK_SPEED_KEY = "playback_speed" // Last used playback speed
-const val PREFERRED_SUBS_KEY = "preferred_subtitles" // Last used resize mode
-//const val PLAYBACK_FASTFORWARD = "playback_fastforward" // Last used resize mode
 
 /** Abstract Exoplayer logic, can be expanded to other players */
 interface IPlayer {

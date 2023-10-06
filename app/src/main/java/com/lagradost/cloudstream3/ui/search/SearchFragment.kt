@@ -22,17 +22,22 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.button.MaterialButton
-import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.APIHolder.filterProviderByPreferredMedia
 import com.lagradost.cloudstream3.APIHolder.filterSearchResultByFilmQuality
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
 import com.lagradost.cloudstream3.APIHolder.getApiProviderLangSettings
 import com.lagradost.cloudstream3.APIHolder.getApiSettings
-import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.removeKeys
-import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
+import com.lagradost.cloudstream3.AllLanguagesName
+import com.lagradost.cloudstream3.AnimeSearchResponse
+import com.lagradost.cloudstream3.HomePageList
+import com.lagradost.cloudstream3.MainAPI
+import com.lagradost.cloudstream3.MainActivity
 import com.lagradost.cloudstream3.MainActivity.Companion.afterPluginsLoadedEvent
+import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.SearchResponse
+import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.databinding.FragmentSearchBinding
 import com.lagradost.cloudstream3.databinding.HomeSelectMainpageBinding
 import com.lagradost.cloudstream3.mvvm.Resource
@@ -53,8 +58,7 @@ import com.lagradost.cloudstream3.utils.AppUtils.ownHide
 import com.lagradost.cloudstream3.utils.AppUtils.ownShow
 import com.lagradost.cloudstream3.utils.AppUtils.setDefaultFocus
 import com.lagradost.cloudstream3.utils.Coroutines.main
-import com.lagradost.cloudstream3.utils.DataStore.getKey
-import com.lagradost.cloudstream3.utils.DataStore.setKey
+import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.DataStoreHelper.currentAccount
 import com.lagradost.cloudstream3.utils.SubtitleHelper
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
@@ -62,9 +66,6 @@ import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
 import com.lagradost.cloudstream3.utils.UIHelper.getSpanCount
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import java.util.concurrent.locks.ReentrantLock
-
-const val SEARCH_PREF_TAGS = "search_pref_tags"
-const val SEARCH_PREF_PROVIDERS = "search_pref_providers"
 
 class SearchFragment : Fragment() {
     companion object {
@@ -194,7 +195,7 @@ class SearchFragment : Fragment() {
                 validAPIs.flatMap { api -> api.supportedTypes }.distinct()
             ) { list ->
                 if (selectedSearchTypes.toSet() != list.toSet()) {
-                    setKey("$currentAccount/$SEARCH_PREF_TAGS", selectedSearchTypes)
+                    DataStoreHelper.searchPreferenceTags = list
                     selectedSearchTypes.clear()
                     selectedSearchTypes.addAll(list)
                     search(binding?.mainSearch?.query?.toString())
@@ -233,13 +234,7 @@ class SearchFragment : Fragment() {
         //searchMagIcon.scaleX = 0.65f
         //searchMagIcon.scaleY = 0.65f
 
-        context?.let { ctx ->
-            val validAPIs = ctx.filterProviderByPreferredMedia()
-            selectedApis = ctx.getKey(
-                "$currentAccount/$SEARCH_PREF_PROVIDERS",
-                defVal = validAPIs.map { it.name }
-            )!!.toMutableSet()
-        }
+        selectedApis = DataStoreHelper.searchPreferenceProviders.toMutableSet()
 
         binding?.searchFilter?.setOnClickListener { searchView ->
             searchView?.context?.let { ctx ->
@@ -287,7 +282,7 @@ class SearchFragment : Fragment() {
                     }
 
                     fun updateList(types: List<TvType>) {
-                        setKey("$currentAccount/$SEARCH_PREF_TAGS", types.map { it.name })
+                        DataStoreHelper.searchPreferenceTags = types
 
                         arrayAdapter.clear()
                         currentValidApis = validAPIs.filter { api ->
@@ -312,12 +307,7 @@ class SearchFragment : Fragment() {
                         arrayAdapter.notifyDataSetChanged()
                     }
 
-                    val selectedSearchTypes = getKey<List<String>>("$currentAccount/$SEARCH_PREF_TAGS")
-                        ?.mapNotNull { listName ->
-                            TvType.values().firstOrNull { it.name == listName }
-                        }
-                        ?.toMutableList()
-                        ?: mutableListOf(TvType.Movie, TvType.TvSeries)
+                    val selectedSearchTypes = DataStoreHelper.searchPreferenceTags
 
                     bindChips(
                         binding.tvtypesChipsScroll.tvtypesChips,
@@ -343,7 +333,7 @@ class SearchFragment : Fragment() {
                     }
 
                     dialog.setOnDismissListener {
-                        context?.setKey("$currentAccount/$SEARCH_PREF_PROVIDERS", currentSelectedApis.toList())
+                        DataStoreHelper.searchPreferenceProviders = currentSelectedApis.toList()
                         selectedApis = currentSelectedApis
                     }
                     updateList(selectedSearchTypes.toList())
@@ -354,10 +344,7 @@ class SearchFragment : Fragment() {
         val settingsManager = context?.let { PreferenceManager.getDefaultSharedPreferences(it) }
         val isAdvancedSearch = settingsManager?.getBoolean("advanced_search", true) ?: true
 
-        selectedSearchTypes = context?.getKey<List<String>>("$currentAccount/$SEARCH_PREF_TAGS")
-            ?.mapNotNull { listName -> TvType.values().firstOrNull { it.name == listName } }
-            ?.toMutableList()
-            ?: mutableListOf(TvType.Movie, TvType.TvSeries)
+        selectedSearchTypes = DataStoreHelper.searchPreferenceTags.toMutableList()
 
         if (isTrueTvSettings()) {
             binding?.searchFilter?.isFocusable = true

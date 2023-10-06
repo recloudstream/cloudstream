@@ -33,8 +33,6 @@ import androidx.preference.PreferenceManager
 import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
 import com.github.rubensousa.previewseekbar.PreviewBar
 import com.github.rubensousa.previewseekbar.media3.PreviewTimeBar
-import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
-import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.CommonActivity.canEnterPipMode
 import com.lagradost.cloudstream3.CommonActivity.isInPIPMode
 import com.lagradost.cloudstream3.CommonActivity.keyEventListener
@@ -48,7 +46,7 @@ import com.lagradost.cloudstream3.ui.subtitles.SaveCaptionStyle
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment
 import com.lagradost.cloudstream3.utils.AppUtils
 import com.lagradost.cloudstream3.utils.AppUtils.requestLocalAudioFocus
-import com.lagradost.cloudstream3.utils.DataStoreHelper.currentAccount
+import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.EpisodeSkip
 import com.lagradost.cloudstream3.utils.UIHelper
 import com.lagradost.cloudstream3.utils.UIHelper.hideSystemUI
@@ -443,7 +441,7 @@ abstract class AbstractPlayerFragment(
 
     @SuppressLint("SetTextI18n", "UnsafeOptInUsageError")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        resizeMode = getKey("$currentAccount/$RESIZE_MODE_KEY") ?: 0
+        resizeMode = DataStoreHelper.resizeMode
         resize(resizeMode, false)
 
         player.releaseCallbacks()
@@ -466,7 +464,8 @@ abstract class AbstractPlayerFragment(
                 var resume = false
                 progressBar.addOnScrubListener(object : PreviewBar.OnScrubListener {
                     override fun onScrubStart(previewBar: PreviewBar?) {
-                        progressBar.isPreviewEnabled = player.hasPreview()
+                        val hasPreview = player.hasPreview()
+                        progressBar.isPreviewEnabled = hasPreview
                         resume = player.getIsPlaying()
                         if (resume) player.handleEvent(
                             CSPlayerEvent.Pause,
@@ -574,7 +573,7 @@ abstract class AbstractPlayerFragment(
 
     @SuppressLint("UnsafeOptInUsageError")
     fun resize(resize: PlayerResize, showToast: Boolean) {
-        setKey("$currentAccount/$RESIZE_MODE_KEY", resize.ordinal)
+        DataStoreHelper.resizeMode = resize.ordinal
         val type = when (resize) {
             PlayerResize.Fill -> AspectRatioFrameLayout.RESIZE_MODE_FILL
             PlayerResize.Fit -> AspectRatioFrameLayout.RESIZE_MODE_FIT

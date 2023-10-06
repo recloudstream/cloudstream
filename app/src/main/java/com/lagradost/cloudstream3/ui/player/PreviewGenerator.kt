@@ -28,86 +28,122 @@ const val MIN_LOD = 3
 interface IPreviewGenerator {
     fun hasPreview(): Boolean
     fun getPreviewImage(fraction: Float): Bitmap?
-    fun clear(keepCache: Boolean = false)
     fun release()
+
+    var durationMs: Long
+    var loadedImages: Int
 }
 
+/** PreviewGenerator that hides the implementation details of the sub generators that is used, used for source switch cache */
 class PreviewGenerator : IPreviewGenerator {
+    /** the most up to date generator, will always mirror the actual source in the player */
     private var currentGenerator: IPreviewGenerator = NoPreviewGenerator()
+    /** the longest generated preview of the same episode */
+    private var lastGenerator: IPreviewGenerator = NoPreviewGenerator()
+    /** always NoPreviewGenerator, used as a cache for nothing */
+    private val dummy: IPreviewGenerator = NoPreviewGenerator()
+
+    /** if the current generator is the same as the last by checking time */
+    private fun isSameLength(): Boolean =
+        currentGenerator.durationMs.minus(lastGenerator.durationMs).absoluteValue < 10_000L
+
+    /** use the backup if the current generator is init or if they have the same length */
+    private val backupGenerator: IPreviewGenerator
+        get() {
+            if (currentGenerator.durationMs == 0L || isSameLength()) {
+                return lastGenerator
+            }
+            return dummy
+        }
+
     override fun hasPreview(): Boolean {
-        return currentGenerator.hasPreview()
+        return currentGenerator.hasPreview() || backupGenerator.hasPreview()
     }
 
     override fun getPreviewImage(fraction: Float): Bitmap? {
         return try {
-            currentGenerator.getPreviewImage(fraction)
+            currentGenerator.getPreviewImage(fraction) ?: backupGenerator.getPreviewImage(fraction)
         } catch (t: Throwable) {
             logError(t)
             null
         }
     }
 
-    override fun clear(keepCache: Boolean) {
-        currentGenerator.clear(keepCache)
+    override fun release() {
+        lastGenerator.release()
+        currentGenerator.release()
+        lastGenerator = NoPreviewGenerator()
+        currentGenerator = NoPreviewGenerator()
     }
 
-    override fun release() {
-        currentGenerator.release()
+    override var durationMs: Long
+        get() = currentGenerator.durationMs
+        set(_) {}
+    override var loadedImages: Int
+        get() = currentGenerator.loadedImages
+        set(_) {}
+
+    fun clear(keepCache: Boolean) {
+        if (keepCache) {
+            if (!isSameLength() || currentGenerator.loadedImages >= lastGenerator.loadedImages || lastGenerator.durationMs == 0L) {
+                // the current generator is better than the last generator, therefore keep the current
+                // or the lengths are not the same, therefore favoring the more recent selection
+
+                // if they are the same we favor the current generator
+                lastGenerator.release()
+                lastGenerator = currentGenerator
+            } else {
+                // otherwise just keep the last generator and throw away the current generator
+                currentGenerator.release()
+            }
+        } else {
+            // we switched the episode, therefore keep nothing
+            lastGenerator.release()
+            lastGenerator = NoPreviewGenerator()
+            currentGenerator.release()
+            // we assume that we set currentGenerator right after this, so currentGenerator != NoPreviewGenerator
+        }
     }
 
     fun load(link: ExtractorLink, keepCache: Boolean) {
-        val gen = currentGenerator
+        clear(keepCache)
+
         when (link.type) {
             ExtractorLinkType.M3U8 -> {
-                if (gen is M3u8PreviewGenerator) {
-                    gen.load(keepCache = keepCache, url = link.url, headers = link.getAllHeaders())
-                } else {
-                    currentGenerator.release()
-                    currentGenerator = M3u8PreviewGenerator().apply {
-                        load(keepCache = keepCache, url = link.url, headers = link.getAllHeaders())
-                    }
+                currentGenerator = M3u8PreviewGenerator().apply {
+                    load(url = link.url, headers = link.getAllHeaders())
                 }
             }
 
             ExtractorLinkType.VIDEO -> {
-                if (gen is Mp4PreviewGenerator) {
-                    gen.load(keepCache = keepCache, url = link.url, headers = link.getAllHeaders())
-                } else {
-                    currentGenerator.release()
-                    currentGenerator = Mp4PreviewGenerator().apply {
-                        load(keepCache = keepCache, url = link.url, headers = link.getAllHeaders())
-                    }
+                currentGenerator = Mp4PreviewGenerator().apply {
+                    load(url = link.url, headers = link.getAllHeaders())
                 }
             }
 
             else -> {
                 Log.i("PreviewImg", "unsupported format for $link")
-                currentGenerator.clear(keepCache)
             }
         }
     }
 
     fun load(context: Context, link: ExtractorUri, keepCache: Boolean) {
-        val gen = currentGenerator
-        if (gen is Mp4PreviewGenerator) {
-            gen.load(keepCache = keepCache, context = context, uri = link.uri)
-        } else {
-            currentGenerator.release()
-            currentGenerator = Mp4PreviewGenerator().apply {
-                load(keepCache = keepCache, context = context, uri = link.uri)
-            }
+        clear(keepCache)
+        currentGenerator = Mp4PreviewGenerator().apply {
+            load(keepCache = keepCache, context = context, uri = link.uri)
         }
     }
 }
 
-class NoPreviewGenerator : IPreviewGenerator {
+private class NoPreviewGenerator : IPreviewGenerator {
     override fun hasPreview(): Boolean = false
     override fun getPreviewImage(fraction: Float): Bitmap? = null
-    override fun clear(keepCache: Boolean) = Unit
     override fun release() = Unit
+    override var durationMs: Long = 0L
+    override var loadedImages: Int = 0
 }
 
-class M3u8PreviewGenerator : IPreviewGenerator {
+private class M3u8PreviewGenerator : IPreviewGenerator {
     // generated images 1:1 to idx of hsl
     private var images: Array<Bitmap?> = arrayOf()
 
@@ -118,7 +154,7 @@ class M3u8PreviewGenerator : IPreviewGenerator {
     private var prefixSum: Array<Double> = arrayOf()
 
     // how many images has been generated
-    private var loadedImages: Int = 0
+    override var loadedImages: Int = 0
 
     // how many images we can generate in total, == hsl.size ?: 0
     private var totalImages: Int = 0
@@ -155,7 +191,7 @@ class M3u8PreviewGenerator : IPreviewGenerator {
         }*/
     }
 
-    override fun clear(keepCache: Boolean) {
+    private fun clear() {
         synchronized(images) {
             currentJob?.cancel()
             images = arrayOf()
@@ -170,9 +206,11 @@ class M3u8PreviewGenerator : IPreviewGenerator {
         images = arrayOf()
     }
 
+    override var durationMs: Long = 0L
+
     private var currentJob: Job? = null
-    fun load(keepCache: Boolean, url: String, headers: Map<String, String>) {
-        clear(keepCache)
+    fun load(url: String, headers: Map<String, String>) {
+        clear()
         currentJob?.cancel()
         currentJob = ioSafe {
             withContext(Dispatchers.IO) {
@@ -201,6 +239,7 @@ class M3u8PreviewGenerator : IPreviewGenerator {
 
                 // total duration of the entire m3u8 in seconds
                 val duration = hsl.allTsLinks.sumOf { it.time ?: 0.0 }
+                durationMs = (duration * 1000.0).toLong()
                 val durationInv = 1.0 / duration
 
                 // if the total duration is less then 10s then something is very wrong or
@@ -245,7 +284,7 @@ class M3u8PreviewGenerator : IPreviewGenerator {
                             if (!isActive) {
                                 return@withContext
                             }
-                            if(img == null || img.width <= 1 || img.height <= 1) continue
+                            if (img == null || img.width <= 1 || img.height <= 1) continue
                             synchronized(images) {
                                 images[index] = img
                                 loadedImages += 1
@@ -269,11 +308,11 @@ class M3u8PreviewGenerator : IPreviewGenerator {
     }
 }
 
-class Mp4PreviewGenerator : IPreviewGenerator {
+private class Mp4PreviewGenerator : IPreviewGenerator {
     // lod = level of detail where the number indicates how many ones there is
     // 2^(lod-1) = images
     private var loadedLod = 0
-    private var loadedImages = 0
+    override var loadedImages = 0
     private var images = Array<Bitmap?>((1 shl MAX_LOD) - 1) {
         null
     }
@@ -305,7 +344,7 @@ class Mp4PreviewGenerator : IPreviewGenerator {
                     if (idx > loadedImages) {
                         break
                     }
-                    if(images[idx] == null) {
+                    if (images[idx] == null) {
                         continue
                     }
                     val currentFraction =
@@ -325,7 +364,7 @@ class Mp4PreviewGenerator : IPreviewGenerator {
     // also check out https://github.com/wseemann/FFmpegMediaMetadataRetriever
     private val retriever: MediaMetadataRetriever = MediaMetadataRetriever()
 
-    override fun clear(keepCache: Boolean) {
+    private fun clear(keepCache: Boolean) {
         if (keepCache) return
         synchronized(images) {
             loadedLod = 0
@@ -335,11 +374,11 @@ class Mp4PreviewGenerator : IPreviewGenerator {
     }
 
     private var currentJob: Job? = null
-    fun load(keepCache: Boolean, url: String, headers: Map<String, String>) {
+    fun load(url: String, headers: Map<String, String>) {
         currentJob?.cancel()
         currentJob = ioSafe {
             Log.i(TAG, "Loading with url = $url headers = $headers")
-            clear(keepCache)
+            clear(true)
             retriever.setDataSource(url, headers)
             start(this)
         }
@@ -360,6 +399,8 @@ class Mp4PreviewGenerator : IPreviewGenerator {
         clear(false)
     }
 
+    override var durationMs: Long = 0L
+
     @Throws
     @WorkerThread
     private fun start(scope: CoroutineScope) {
@@ -368,6 +409,7 @@ class Mp4PreviewGenerator : IPreviewGenerator {
         val durationMs =
             retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)?.toLong()
                 ?: throw IllegalArgumentException("Bad video duration")
+        this.durationMs = durationMs
         val durationUs = (durationMs * 1000L).toFloat()
         //val width = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH)?.toInt() ?: throw IllegalArgumentException("Bad video width")
         //val height = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT)?.toInt() ?: throw IllegalArgumentException("Bad video height")
@@ -388,7 +430,7 @@ class Mp4PreviewGenerator : IPreviewGenerator {
                     MediaMetadataRetriever.OPTION_CLOSEST_SYNC
                 )
                 if (!scope.isActive) return
-                if(img == null || img.width <= 1 || img.height <= 1) continue
+                if (img == null || img.width <= 1 || img.height <= 1) continue
                 synchronized(images) {
                     images[idx] = img
                     loadedImages = maxOf(loadedImages, idx)
