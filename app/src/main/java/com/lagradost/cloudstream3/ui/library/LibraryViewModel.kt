@@ -95,7 +95,6 @@ class LibraryViewModel : ViewModel() {
                 val library = (libraryResource as? Resource.Success)?.value ?: return@let
 
                 sortingMethods = library.supportedListSorting.toList()
-                //currentSortingMethod = null
 
                 repo.requireLibraryRefresh = false
 

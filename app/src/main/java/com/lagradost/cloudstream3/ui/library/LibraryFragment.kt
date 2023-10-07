@@ -340,8 +340,11 @@ class LibraryFragment : Fragment() {
         observe(libraryViewModel.pages) { resource ->
             when (resource) {
                 is Resource.Success -> {
+                    handler.removeCallbacks(startLoading)
                     val pages = resource.value
                     val showNotice = pages.all { it.items.isEmpty() }
+
+
                     binding?.apply {
                         emptyListTextview.isVisible = showNotice
                         if (showNotice) {
@@ -418,10 +421,12 @@ class LibraryFragment : Fragment() {
                         }.attach()
                     }
                 }
+
                 is Resource.Loading -> {
                     // Only start loading after 200ms to prevent loading cached lists
                     handler.postDelayed(startLoading, 200)
                 }
+
                 is Resource.Failure -> {
                     stopLoading.run()
                     // No user indication it failed :(
