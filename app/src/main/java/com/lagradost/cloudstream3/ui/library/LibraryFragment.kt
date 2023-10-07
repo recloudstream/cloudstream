@@ -126,7 +126,10 @@ class LibraryFragment : Fragment() {
         binding?.sortFab?.setOnClickListener(sortChangeClickListener)
         binding?.librarySort?.setOnClickListener(sortChangeClickListener)
 
-        binding?.libraryRoot?.findViewById<TextView>(R.id.search_src_text)?.tag = "tv_no_focus_tag"
+        binding?.libraryRoot?.findViewById<TextView>(R.id.search_src_text)?.apply {
+            tag = "tv_no_focus_tag"
+            nextFocusDownId = R.id.search_result_root
+        }
 
         binding?.mainSearch?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
