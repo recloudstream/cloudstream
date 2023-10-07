@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.ui.library
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.res.Configuration
@@ -10,22 +11,27 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AlphaAnimation
+import android.widget.TextView
+import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.viewpager2.widget.ViewPager2
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.tabs.TabLayoutMediator
 import com.lagradost.cloudstream3.APIHolder
 import com.lagradost.cloudstream3.APIHolder.allProviders
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.openBrowser
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
+import com.lagradost.cloudstream3.CommonActivity
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.FragmentLibraryBinding
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.debugAssert
+import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.syncproviders.SyncIdName
@@ -33,6 +39,7 @@ import com.lagradost.cloudstream3.ui.quicksearch.QuickSearchFragment
 import com.lagradost.cloudstream3.ui.result.txt
 import com.lagradost.cloudstream3.ui.search.SEARCH_ACTION_LOAD
 import com.lagradost.cloudstream3.ui.search.SEARCH_ACTION_SHOW_METADATA
+import com.lagradost.cloudstream3.ui.settings.SettingsFragment
 import com.lagradost.cloudstream3.utils.AppUtils.loadResult
 import com.lagradost.cloudstream3.utils.AppUtils.loadSearchResult
 import com.lagradost.cloudstream3.utils.AppUtils.reduceDragSensitivity
@@ -80,9 +87,21 @@ class LibraryFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-        val localBinding = FragmentLibraryBinding.inflate(inflater, container, false)
-        binding = localBinding
-        return localBinding.root
+        val layout =
+            if (SettingsFragment.isTvSettings()) R.layout.fragment_library_tv else R.layout.fragment_library
+        val root = inflater.inflate(layout, container, false)
+        binding = try {
+            FragmentLibraryBinding.bind(root)
+        } catch (t: Throwable) {
+            CommonActivity.showToast(
+                txt(R.string.unable_to_inflate, t.message ?: ""),
+                Toast.LENGTH_LONG
+            )
+            logError(t)
+            null
+        }
+
+        return root
 
         //return inflater.inflate(R.layout.fragment_library, container, false)
     }
@@ -99,25 +118,15 @@ class LibraryFragment : Fragment() {
         super.onSaveInstanceState(outState)
     }
 
+    @SuppressLint("ResourceType", "CutPasteId")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         fixPaddingStatusbar(binding?.searchStatusBarPadding)
 
-        binding?.sortFab?.setOnClickListener {
-            val methods = libraryViewModel.sortingMethods.map {
-                txt(it.stringRes).asString(view.context)
-            }
+        binding?.sortFab?.setOnClickListener(sortChangeClickListener)
+        binding?.librarySort?.setOnClickListener(sortChangeClickListener)
 
-            activity?.showBottomDialog(methods,
-                libraryViewModel.sortingMethods.indexOf(libraryViewModel.currentSortingMethod),
-                txt(R.string.sort_by).asString(view.context),
-                false,
-                {},
-                {
-                    val method = libraryViewModel.sortingMethods[it]
-                    libraryViewModel.sort(method)
-                })
-        }
+        binding?.libraryRoot?.findViewById<TextView>(R.id.search_src_text)?.tag = "tv_no_focus_tag"
 
         binding?.mainSearch?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
@@ -266,7 +275,10 @@ class LibraryFragment : Fragment() {
                         // selects the whole list opener
                         val savedListSelection =
                             getKey<LibraryOpener>("$currentAccount/$LIBRARY_FOLDER", syncName.name)
-                        val savedSelection = getKey<LibraryOpener>("$currentAccount/$LIBRARY_FOLDER", syncId).takeIf {
+                        val savedSelection = getKey<LibraryOpener>(
+                            "$currentAccount/$LIBRARY_FOLDER",
+                            syncId
+                        ).takeIf {
                             it?.openType != LibraryOpenerType.Default
                         } ?: savedListSelection
 
@@ -354,6 +366,9 @@ class LibraryFragment : Fragment() {
                         }
 
                         (viewpager.adapter as? ViewpagerAdapter)?.pages = pages
+                        //fix focus on the viewpager itself
+                        (viewpager.getChildAt(0) as RecyclerView).tag = "tv_no_focus_tag"
+
                         // Using notifyItemRangeChanged keeps the animations when sorting
                         viewpager.adapter?.notifyItemRangeChanged(
                             0,
@@ -396,6 +411,11 @@ class LibraryFragment : Fragment() {
                             viewpager,
                         ) { tab, position ->
                             tab.text = pages.getOrNull(position)?.title?.asStringNull(context)
+                            tab.view.tag = "tv_no_focus_tag"
+                            tab.view.nextFocusUpId = R.id.search_result_root
+                            /*tab.view.setOnFocusChangeListener { view, b ->
+                                Log.d("King", libraryTabLayout.focusedChild)
+                            }*/
                             tab.view.setOnClickListener {
                                 val currentItem =
                                     binding?.viewpager?.currentItem ?: return@setOnClickListener
@@ -428,6 +448,22 @@ class LibraryFragment : Fragment() {
     override fun onConfigurationChanged(newConfig: Configuration) {
         (binding?.viewpager?.adapter as? ViewpagerAdapter)?.rebind()
         super.onConfigurationChanged(newConfig)
+    }
+
+    private val sortChangeClickListener = View.OnClickListener { view ->
+        val methods = libraryViewModel.sortingMethods.map {
+            txt(it.stringRes).asString(view.context)
+        }
+
+        activity?.showBottomDialog(methods,
+            libraryViewModel.sortingMethods.indexOf(libraryViewModel.currentSortingMethod),
+            txt(R.string.sort_by).asString(view.context),
+            false,
+            {},
+            {
+                val method = libraryViewModel.sortingMethods[it]
+                libraryViewModel.sort(method)
+            })
     }
 }
 

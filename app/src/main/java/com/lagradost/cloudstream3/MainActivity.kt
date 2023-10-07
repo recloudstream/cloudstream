@@ -542,9 +542,9 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             navRailView.isVisible = isNavVisible && landscape
 
             // Hide library on TV since it is not supported yet :(
-            val isTrueTv = isTrueTvSettings()
-            navView.menu.findItem(R.id.navigation_library)?.isVisible = !isTrueTv
-            navRailView.menu.findItem(R.id.navigation_library)?.isVisible = !isTrueTv
+            //val isTrueTv = isTrueTvSettings()
+            //navView.menu.findItem(R.id.navigation_library)?.isVisible = !isTrueTv
+            //navRailView.menu.findItem(R.id.navigation_library)?.isVisible = !isTrueTv
 
             // Hide downloads on TV
             //navView.menu.findItem(R.id.navigation_downloads)?.isVisible = !isTrueTv
@@ -904,6 +904,8 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             val visible =
                 newFocus != null && newFocus.measuredHeight > 0 && newFocus.measuredWidth > 0 && newFocus.isShown && newFocus.tag != "tv_no_focus_tag"
             focusOutline.isVisible = visible
+            //Todo Clean this
+            Log.d("King","${newFocus?.tag}:${newFocus.toString()}")
 
             if (newFocus != null) {
                 lastFocus = WeakReference(newFocus)
