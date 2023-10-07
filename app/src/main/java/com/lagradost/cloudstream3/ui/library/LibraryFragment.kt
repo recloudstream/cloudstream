@@ -39,6 +39,10 @@ import com.lagradost.cloudstream3.utils.DataStoreHelper.currentAccount
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
 import com.lagradost.cloudstream3.utils.UIHelper.getSpanCount
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlin.math.abs
 
 const val LIBRARY_FOLDER = "library_folder"
@@ -336,11 +340,8 @@ class LibraryFragment : Fragment() {
         observe(libraryViewModel.pages) { resource ->
             when (resource) {
                 is Resource.Success -> {
-                    handler.removeCallbacks(startLoading)
                     val pages = resource.value
                     val showNotice = pages.all { it.items.isEmpty() }
-
-
                     binding?.apply {
                         emptyListTextview.isVisible = showNotice
                         if (showNotice) {
@@ -359,7 +360,7 @@ class LibraryFragment : Fragment() {
                         )
 
                         // Only stop loading after 300ms to hide the fade effect the viewpager produces when updating
-                        // Without this there would be a flashing effect:
+                        // Without this, there would be a flashing effect:
                         // loading -> show old viewpager -> black screen -> show new viewpager
                         handler.postDelayed(stopLoading, 300)
 
@@ -370,7 +371,7 @@ class LibraryFragment : Fragment() {
                             savedInstanceState.putInt(VIEWPAGER_ITEM_KEY, -1)
                         }
 
-                        // Since the animation to scroll multiple items is so much its better to just hide
+                        // Since the animation to scroll multiple items is so much it's better to just hide
                         // the viewpager a bit while the fastest animation is running
                         fun hideViewpager(distance: Int) {
                             if (distance < 3) return
@@ -388,6 +389,21 @@ class LibraryFragment : Fragment() {
                             viewpager.startAnimation(showAnimation)
                         }
 
+                        CoroutineScope(Dispatchers.Default).launch {
+                            // Perform sorting in the background
+                            libraryViewModel.currentSortingMethod?.let { sortingMethod ->
+                                val currentList = pages
+                                currentList.forEachIndexed { _, page ->
+                                    page.sort(sortingMethod)
+                                }
+                                // Update the UI on the main thread
+                                withContext(Dispatchers.Main) {
+                                    (viewpager.adapter as? ViewpagerAdapter)?.pages = currentList
+                                    viewpager.adapter?.notifyDataSetChanged()
+                                }
+                            }
+                        }
+
                         TabLayoutMediator(
                             libraryTabLayout,
                             viewpager,
@@ -402,12 +418,10 @@ class LibraryFragment : Fragment() {
                         }.attach()
                     }
                 }
-
                 is Resource.Loading -> {
                     // Only start loading after 200ms to prevent loading cached lists
                     handler.postDelayed(startLoading, 200)
                 }
-
                 is Resource.Failure -> {
                     stopLoading.run()
                     // No user indication it failed :(

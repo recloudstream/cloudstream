@@ -25,6 +25,7 @@ enum class ListSorting(@StringRes val stringRes: Int) {
 }
 
 const val LAST_SYNC_API_KEY = "last_sync_api"
+const val SORTING_METHOD_KEY = "sorting_method"
 
 class LibraryViewModel : ViewModel() {
     private val _pages: MutableLiveData<Resource<List<SyncAPI.Page>>> = MutableLiveData(null)
@@ -51,8 +52,15 @@ class LibraryViewModel : ViewModel() {
     var sortingMethods = emptyList<ListSorting>()
         private set
 
-    var currentSortingMethod: ListSorting? = sortingMethods.firstOrNull()
-        private set
+    var currentSortingMethod: ListSorting? = null
+        private set(value) {
+            field = value
+            setKey("$currentAccount/$SORTING_METHOD_KEY", value?.name)
+        }
+        get() {
+            val methodName = getKey<String>("$currentAccount/$SORTING_METHOD_KEY")
+            return sortingMethods.firstOrNull { it.name == methodName }
+        }
 
     fun switchList(name: String) {
         currentSyncApi = availableSyncApis[availableApiNames.indexOf(name)]
@@ -87,7 +95,7 @@ class LibraryViewModel : ViewModel() {
                 val library = (libraryResource as? Resource.Success)?.value ?: return@let
 
                 sortingMethods = library.supportedListSorting.toList()
-                currentSortingMethod = null
+                //currentSortingMethod = null
 
                 repo.requireLibraryRefresh = false
 
