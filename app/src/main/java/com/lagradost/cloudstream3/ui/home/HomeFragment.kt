@@ -7,7 +7,6 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.content.res.Configuration
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -23,18 +22,12 @@ import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.google.android.material.button.MaterialButton
 import com.google.android.material.chip.Chip
-import com.google.android.material.chip.ChipGroup
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.APIHolder.apis
 import com.lagradost.cloudstream3.APIHolder.filterProviderByPreferredMedia
 import com.lagradost.cloudstream3.APIHolder.getApiProviderLangSettings
-import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.CommonActivity.showToast
-import com.lagradost.cloudstream3.MainActivity.Companion.afterPluginsLoadedEvent
-import com.lagradost.cloudstream3.MainActivity.Companion.bookmarksUpdatedEvent
-import com.lagradost.cloudstream3.MainActivity.Companion.mainPluginsLoadedEvent
 import com.lagradost.cloudstream3.databinding.FragmentHomeBinding
 import com.lagradost.cloudstream3.databinding.HomeEpisodesExpandedBinding
 import com.lagradost.cloudstream3.databinding.HomeSelectMainpageBinding
@@ -45,36 +38,25 @@ import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.mvvm.observeNullable
 import com.lagradost.cloudstream3.ui.APIRepository.Companion.noneApi
 import com.lagradost.cloudstream3.ui.APIRepository.Companion.randomApi
-import com.lagradost.cloudstream3.ui.WatchType
-import com.lagradost.cloudstream3.ui.quicksearch.QuickSearchFragment
 import com.lagradost.cloudstream3.ui.result.txt
 import com.lagradost.cloudstream3.ui.search.*
 import com.lagradost.cloudstream3.ui.search.SearchHelper.handleSearchClickCallback
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTrueTvSettings
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
-import com.lagradost.cloudstream3.utils.AppUtils.addProgramsToContinueWatching
 import com.lagradost.cloudstream3.utils.AppUtils.isRecyclerScrollable
-import com.lagradost.cloudstream3.utils.AppUtils.loadResult
 import com.lagradost.cloudstream3.utils.AppUtils.loadSearchResult
 import com.lagradost.cloudstream3.utils.AppUtils.ownHide
 import com.lagradost.cloudstream3.utils.AppUtils.ownShow
 import com.lagradost.cloudstream3.utils.AppUtils.setDefaultFocus
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
-import com.lagradost.cloudstream3.utils.DataStore.getKey
-import com.lagradost.cloudstream3.utils.DataStore.setKey
 import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.Event
 import com.lagradost.cloudstream3.utils.SubtitleHelper.getFlagFromIso
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
-import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
 import com.lagradost.cloudstream3.utils.UIHelper.getSpanCount
 import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIconsAndNoStringRes
-
 import java.util.*
 
-
-const val HOME_BOOKMARK_VALUE_LIST = "home_bookmarked_last_list"
-const val HOME_PREF_HOMEPAGE = "home_pref_homepage"
 
 class HomeFragment : Fragment() {
     companion object {
@@ -377,10 +359,7 @@ class HomeFragment : Fragment() {
                 var currentApiName = selectedApiName
 
                 var currentValidApis: MutableList<MainAPI> = mutableListOf()
-                val preSelectedTypes = this.getKey<List<String>>("${DataStoreHelper.currentAccount}/$HOME_PREF_HOMEPAGE")
-                    ?.mapNotNull { listName -> TvType.values().firstOrNull { it.name == listName } }
-                    ?.toMutableList()
-                    ?: mutableListOf(TvType.Movie, TvType.TvSeries)
+                val preSelectedTypes = DataStoreHelper.homePreference.toMutableList()
 
                 binding.cancelBtt.setOnClickListener {
                     dialog.dismissSafe()
@@ -408,7 +387,7 @@ class HomeFragment : Fragment() {
                 }
 
                 fun updateList() {
-                    this.setKey("${DataStoreHelper.currentAccount}/$HOME_PREF_HOMEPAGE", preSelectedTypes)
+                    DataStoreHelper.homePreference = preSelectedTypes
 
                     arrayAdapter.clear()
                     currentValidApis = validAPIs.filter { api ->

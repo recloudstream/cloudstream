@@ -12,7 +12,6 @@ import com.lagradost.cloudstream3.APIHolder.filterSearchResultByFilmQuality
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
 import com.lagradost.cloudstream3.AcraApplication.Companion.context
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
-import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.CommonActivity.activity
 import com.lagradost.cloudstream3.HomePageList
 import com.lagradost.cloudstream3.LoadResponse
@@ -170,10 +169,7 @@ class HomeViewModel : ViewModel() {
         currentWatchTypes.remove(WatchType.NONE)
 
         if (currentWatchTypes.size <= 0) {
-            setKey(
-                "${DataStoreHelper.currentAccount}/$HOME_BOOKMARK_VALUE_LIST",
-                intArrayOf()
-            )
+            DataStoreHelper.homeBookmarkedList = intArrayOf()
             _availableWatchStatusTypes.postValue(setOf<WatchType>() to setOf())
             _bookmarks.postValue(Pair(false, ArrayList()))
             return@launchSafe
@@ -181,16 +177,14 @@ class HomeViewModel : ViewModel() {
 
         val watchPrefNotNull = preferredWatchStatus ?: EnumSet.of(currentWatchTypes.first())
         //if (currentWatchTypes.any { watchPrefNotNull.contains(it) }) watchPrefNotNull else listOf(currentWatchTypes.first())
-        setKey(
-            "${DataStoreHelper.currentAccount}/$HOME_BOOKMARK_VALUE_LIST",
-            watchPrefNotNull.map { it.internalId }.toIntArray()
-        )
+
+        DataStoreHelper.homeBookmarkedList = watchPrefNotNull.map { it.internalId }.toIntArray()
         _availableWatchStatusTypes.postValue(
-            Pair(
-                watchPrefNotNull,
-                currentWatchTypes,
+
+            watchPrefNotNull to
+                    currentWatchTypes,
+
             )
-        )
 
         val list = withContext(Dispatchers.IO) {
             watchStatusIds.filter { watchPrefNotNull.contains(it.second) }
@@ -463,7 +457,7 @@ class HomeViewModel : ViewModel() {
 
     fun loadStoredData() {
         val list = EnumSet.noneOf(WatchType::class.java)
-        getKey<IntArray>("${DataStoreHelper.currentAccount}/$HOME_BOOKMARK_VALUE_LIST")?.map { WatchType.fromInternalId(it) }?.let {
+        DataStoreHelper.homeBookmarkedList.map { WatchType.fromInternalId(it) }.let {
             list.addAll(it)
         }
         loadStoredData(list)

@@ -49,7 +49,7 @@ import com.lagradost.cloudstream3.ui.player.source_priority.QualityDataHelper
 import com.lagradost.cloudstream3.ui.result.setText
 import com.lagradost.cloudstream3.ui.result.txt
 import com.lagradost.cloudstream3.utils.AppUtils.isUsingMobileData
-import com.lagradost.cloudstream3.utils.DataStoreHelper.currentAccount
+import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showDialog
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
@@ -357,7 +357,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
     private fun setPlayBackSpeed(speed: Float) {
         try {
-            setKey("$currentAccount/$PLAYBACK_SPEED_KEY", speed)
+            DataStoreHelper.playBackSpeed = speed
             playerBinding?.playerSpeedBtt?.text =
                 getString(R.string.player_speed_text_format).format(speed)
                     .replace(".0x", "x")
@@ -1195,7 +1195,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         // init variables
-        setPlayBackSpeed(getKey("$currentAccount/$PLAYBACK_SPEED_KEY") ?: 1.0f)
+        setPlayBackSpeed(DataStoreHelper.playBackSpeed)
         savedInstanceState?.getLong(SUBTITLE_DELAY_BUNDLE_KEY)?.let {
             subtitleDelay = it
         }
