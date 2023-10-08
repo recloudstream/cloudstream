@@ -10,11 +10,14 @@ import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewGroup.FOCUS_AFTER_DESCENDANTS
+import android.view.ViewGroup.FOCUS_BLOCK_DESCENDANTS
 import android.view.animation.AlphaAnimation
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.appcompat.widget.SearchView
+import androidx.core.view.allViews
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -35,6 +38,7 @@ import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.syncproviders.SyncIdName
+import com.lagradost.cloudstream3.ui.AutofitRecyclerView
 import com.lagradost.cloudstream3.ui.quicksearch.QuickSearchFragment
 import com.lagradost.cloudstream3.ui.result.txt
 import com.lagradost.cloudstream3.ui.search.SEARCH_ACTION_LOAD
@@ -441,9 +445,22 @@ class LibraryFragment : Fragment() {
                 }
             }
         }
-        binding?.viewpager?.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+        binding?.viewpager?.registerOnPageChangeCallback(object :
+            ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
-                libraryViewModel.currentPage = position
+                val all = binding?.viewpager?.allViews?.toList()
+                    ?.filterIsInstance<AutofitRecyclerView>()
+
+                all?.forEach { view ->
+                    view.isVisible = view.tag == position
+                    view.isFocusable = view.tag == position
+
+                    if (view.tag == position)
+                        view.descendantFocusability = FOCUS_AFTER_DESCENDANTS
+                    else
+                        view.descendantFocusability = FOCUS_BLOCK_DESCENDANTS
+                }
+                super.onPageSelected(position)
             }
         })
     }
