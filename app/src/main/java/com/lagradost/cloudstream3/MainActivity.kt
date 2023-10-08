@@ -681,6 +681,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         broadcastIntent.setClass(this, VideoDownloadRestartReceiver::class.java)
         this.sendBroadcast(broadcastIntent)
         afterPluginsLoadedEvent -= ::onAllPluginsLoaded
+        CommonActivity.unregisterActivity(this)
         super.onDestroy()
     }
 
@@ -1369,8 +1370,8 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
 
         //  val navView: BottomNavigationView = findViewById(R.id.nav_view)
         setUpBackup()
-
-        CommonActivity.init(this)
+        CommonActivity.registerActivity(this)
+        CommonActivity.init()
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         val navController = navHostFragment.navController

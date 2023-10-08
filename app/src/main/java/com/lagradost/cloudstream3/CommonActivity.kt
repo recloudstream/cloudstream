@@ -64,6 +64,35 @@ object CommonActivity {
         private set(value) {
             _activity = WeakReference(value)
         }
+    private val activeActivities = mutableListOf<WeakReference<Activity>>() // Keep track of active activities
+
+    @MainThread
+    fun registerActivity(activity: Activity) {
+        activeActivities.add(WeakReference(activity))
+    }
+
+    @MainThread
+    fun unregisterActivity(activity: Activity) {
+        val iterator = activeActivities.iterator()
+        while (iterator.hasNext()) {
+            val weakReference = iterator.next()
+            val storedActivity = weakReference.get()
+            if (storedActivity == null || storedActivity == activity) {
+                iterator.remove()
+            }
+        }
+    }
+
+    @MainThread
+    fun getCurrentActivity(): Activity? {
+        for (weakReference in activeActivities) {
+            val activity = weakReference.get()
+            if (activity != null && !activity.isFinishing) {
+                return activity
+            }
+        }
+        return null
+    }
 
     @MainThread
     fun Activity?.getCastSession(): CastSession? {
@@ -203,8 +232,9 @@ object CommonActivity {
         setLocale(this, localeCode)
     }
 
-    fun init(act: ComponentActivity?) {
-        if (act == null) return
+    fun init() {
+        val act = getCurrentActivity() as? ComponentActivity ?: return
+
         activity = act
         //https://stackoverflow.com/questions/52594181/how-to-know-if-user-has-disabled-picture-in-picture-feature-permission
         //https://developer.android.com/guide/topics/ui/picture-in-picture
