@@ -7,12 +7,14 @@ import android.content.res.Configuration
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.FOCUS_AFTER_DESCENDANTS
 import android.view.ViewGroup.FOCUS_BLOCK_DESCENDANTS
 import android.view.animation.AlphaAnimation
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.StringRes
@@ -23,6 +25,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.viewpager2.widget.ViewPager2
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.lagradost.cloudstream3.APIHolder
 import com.lagradost.cloudstream3.APIHolder.allProviders
@@ -132,7 +135,6 @@ class LibraryFragment : Fragment() {
 
         binding?.libraryRoot?.findViewById<TextView>(R.id.search_src_text)?.apply {
             tag = "tv_no_focus_tag"
-            nextFocusDownId = R.id.search_result_root
         }
 
         binding?.mainSearch?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
@@ -374,7 +376,10 @@ class LibraryFragment : Fragment() {
 
                         (viewpager.adapter as? ViewpagerAdapter)?.pages = pages
                         //fix focus on the viewpager itself
-                        (viewpager.getChildAt(0) as RecyclerView).tag = "tv_no_focus_tag"
+                        (viewpager.getChildAt(0) as RecyclerView).apply {
+                            tag = "tv_no_focus_tag"
+                            //isFocusable = false
+                        }
 
                         // Using notifyItemRangeChanged keeps the animations when sorting
                         viewpager.adapter?.notifyItemRangeChanged(
@@ -419,10 +424,8 @@ class LibraryFragment : Fragment() {
                         ) { tab, position ->
                             tab.text = pages.getOrNull(position)?.title?.asStringNull(context)
                             tab.view.tag = "tv_no_focus_tag"
-                            tab.view.nextFocusUpId = R.id.search_result_root
-                            /*tab.view.setOnFocusChangeListener { view, b ->
-                                Log.d("King", libraryTabLayout.focusedChild)
-                            }*/
+                            tab.view.nextFocusDownId = R.id.search_result_root
+
                             tab.view.setOnClickListener {
                                 val currentItem =
                                     binding?.viewpager?.currentItem ?: return@setOnClickListener
@@ -464,7 +467,6 @@ class LibraryFragment : Fragment() {
             }
         })
     }
-
     override fun onConfigurationChanged(newConfig: Configuration) {
         (binding?.viewpager?.adapter as? ViewpagerAdapter)?.rebind()
         super.onConfigurationChanged(newConfig)

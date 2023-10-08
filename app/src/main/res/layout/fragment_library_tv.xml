@@ -40,7 +40,6 @@
                 android:contentDescription="@string/change_providers_img_des"
                 android:nextFocusLeft="@id/nav_rail_view"
                 android:nextFocusRight="@id/library_sort"
-                android:nextFocusDown="@id/search_result_root"
                 android:tag="@string/tv_no_focus_tag"
                 android:src="@drawable/ic_baseline_extension_24"
                 app:tint="?attr/textColor" />
@@ -55,7 +54,6 @@
                 android:contentDescription="@string/change_providers_img_des"
                 android:nextFocusLeft="@id/provider_selector"
                 android:nextFocusRight="@id/list_selector"
-                android:nextFocusDown="@id/search_result_root"
                 android:tag="@string/tv_no_focus_tag"
                 android:src="@drawable/ic_baseline_sort_24"
                 app:tint="?attr/textColor" />
@@ -71,7 +69,6 @@
                 android:contentDescription="@string/change_providers_img_des"
                 android:nextFocusLeft="@id/library_sort"
                 android:nextFocusRight="@id/main_search"
-                android:nextFocusDown="@id/search_result_root"
                 android:tag="@string/tv_no_focus_tag"
                 android:src="@drawable/ic_baseline_filter_list_24"
                 app:tint="?attr/textColor" />
@@ -82,7 +79,6 @@
                 android:layout_margin="10dp"
                 android:background="@drawable/search_background"
                 android:visibility="visible"
-                android:nextFocusDown="@id/search_result_root"
                 app:layout_scrollFlags="scroll|enterAlways">
 
                 <androidx.appcompat.widget.SearchView
@@ -108,6 +104,25 @@
                 </androidx.appcompat.widget.SearchView>
             </FrameLayout>
         </LinearLayout>
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/library_tab_layout"
+            style="@style/Theme.Widget.Tabs"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_gravity="top"
+            android:nextFocusDown="@id/search_result_root"
+            android:background="?attr/primaryGrayBackground"
+            android:paddingHorizontal="5dp"
+            app:layout_scrollFlags="noScroll"
+            app:tabGravity="center"
+            app:tabIndicator="@drawable/indicator_background"
+            app:tabIndicatorColor="?attr/white"
+            app:tabIndicatorGravity="center"
+            app:tabIndicatorHeight="30dp"
+            app:tabMode="scrollable"
+            app:tabSelectedTextColor="?attr/primaryBlackBackground"
+            app:tabTextAppearance="@style/TabNoCaps"
+            app:tabTextColor="?attr/textColor" />
     </com.google.android.material.appbar.AppBarLayout>
 
     <FrameLayout
@@ -121,7 +136,7 @@
             android:layout_height="match_parent"
             android:clipToPadding="false"
             android:paddingBottom="40dp"
-            android:focusable="false"
+            android:focusable="true"
             android:tag="@string/tv_no_focus_tag"
             tools:listitem="@layout/library_viewpager_page" />
 
@@ -181,26 +196,5 @@
             app:icon="@drawable/ic_baseline_sort_24"
             tools:ignore="ContentDescription" />
     </FrameLayout>
-
-    <com.google.android.material.tabs.TabLayout
-        android:id="@+id/library_tab_layout"
-        style="@style/Theme.Widget.Tabs"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:layout_gravity="bottom"
-        android:nextFocusUp="@id/search_result_root"
-        android:background="?attr/primaryGrayBackground"
-        android:nextFocusLeft="@id/nav_rail_view"
-        android:paddingHorizontal="5dp"
-        app:layout_scrollFlags="noScroll"
-        app:tabGravity="center"
-        app:tabIndicator="@drawable/indicator_background"
-        app:tabIndicatorColor="?attr/white"
-        app:tabIndicatorGravity="center"
-        app:tabIndicatorHeight="30dp"
-        app:tabMode="scrollable"
-        app:tabSelectedTextColor="?attr/primaryBlackBackground"
-        app:tabTextAppearance="@style/TabNoCaps"
-        app:tabTextColor="?attr/textColor" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
