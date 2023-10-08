@@ -26,6 +26,7 @@ import com.lagradost.cloudstream3.syncproviders.AccountManager
 import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.WhoIsWatchingAdapter
+import com.lagradost.cloudstream3.ui.library.ListSorting
 import com.lagradost.cloudstream3.ui.result.FOCUS_SELF
 import com.lagradost.cloudstream3.ui.result.UiImage
 import com.lagradost.cloudstream3.ui.result.VideoWatchState
@@ -123,6 +124,7 @@ object DataStoreHelper {
     var homeBookmarkedList : IntArray by UserPreferenceDelegate("home_bookmarked_last_list", IntArray(0))
     var playBackSpeed : Float by UserPreferenceDelegate("playback_speed", 1.0f)
     var resizeMode : Int by UserPreferenceDelegate("resize_mode", 0)
+    var librarySortingMode : Int by UserPreferenceDelegate("library_sorting_mode", ListSorting.AlphabeticalA.ordinal)
 
     data class Account(
         @JsonProperty("keyIndex")
