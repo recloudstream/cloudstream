@@ -50,13 +50,13 @@ android {
         }
     }
 
-    compileSdk = 33
+    compileSdk = 34
     buildToolsVersion = "34.0.0"
 
     defaultConfig {
         applicationId = "com.lagradost.cloudstream3"
         minSdk = 21
-        targetSdk = 33
+        targetSdk = 34
 
         versionCode = 62
         versionName = "4.2.0"
@@ -162,7 +162,7 @@ dependencies {
     // dont change this to 1.6.0 it looks ugly af
     implementation("com.google.android.material:material:1.5.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
-    implementation("androidx.navigation:navigation-fragment-ktx:2.6.0")
+    implementation("androidx.navigation:navigation-fragment-ktx:2.7.4")
     implementation("androidx.navigation:navigation-ui-ktx:2.6.0")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.6.1")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1")
