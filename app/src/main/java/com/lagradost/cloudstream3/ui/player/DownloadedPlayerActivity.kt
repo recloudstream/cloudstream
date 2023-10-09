@@ -74,8 +74,7 @@ class DownloadedPlayerActivity : AppCompatActivity() {
 
         CommonActivity.loadThemes(this)
         super.onCreate(savedInstanceState)
-        CommonActivity.registerActivity(this)
-        CommonActivity.init()
+        CommonActivity.init(this)
 
         setContentView(R.layout.empty_layout)
 
@@ -112,8 +111,8 @@ class DownloadedPlayerActivity : AppCompatActivity() {
         }
     }
 
-    override fun onDestroy() {
-        CommonActivity.unregisterActivity(this)
-        super.onDestroy()
+    override fun onResume() {
+        super.onResume()
+        CommonActivity.setActivityInstance(this)
     }
 }

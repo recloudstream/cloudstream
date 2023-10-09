@@ -64,34 +64,10 @@ object CommonActivity {
         private set(value) {
             _activity = WeakReference(value)
         }
-    private val activeActivities = mutableListOf<WeakReference<Activity>>() // Keep track of active activities
 
     @MainThread
-    fun registerActivity(activity: Activity) {
-        activeActivities.add(WeakReference(activity))
-    }
-
-    @MainThread
-    fun unregisterActivity(activity: Activity) {
-        val iterator = activeActivities.iterator()
-        while (iterator.hasNext()) {
-            val weakReference = iterator.next()
-            val storedActivity = weakReference.get()
-            if (storedActivity == null || storedActivity == activity) {
-                iterator.remove()
-            }
-        }
-    }
-
-    @MainThread
-    fun getCurrentActivity(): Activity? {
-        for (weakReference in activeActivities) {
-            val activity = weakReference.get()
-            if (activity != null && !activity.isFinishing) {
-                return activity
-            }
-        }
-        return null
+    fun setActivityInstance(newActivity: Activity?) {
+        activity = newActivity
     }
 
     @MainThread
@@ -232,24 +208,25 @@ object CommonActivity {
         setLocale(this, localeCode)
     }
 
-    fun init() {
-        val act = getCurrentActivity() as? ComponentActivity ?: return
+    fun init(act: Activity) {
+        setActivityInstance(act)
 
-        activity = act
+        val componentActivity = activity as? ComponentActivity ?: return
+
         //https://stackoverflow.com/questions/52594181/how-to-know-if-user-has-disabled-picture-in-picture-feature-permission
         //https://developer.android.com/guide/topics/ui/picture-in-picture
         canShowPipMode =
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && // OS SUPPORT
-                    act.packageManager.hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE) && // HAS FEATURE, MIGHT BE BLOCKED DUE TO POWER DRAIN
-                    act.hasPIPPermission() // CHECK IF FEATURE IS ENABLED IN SETTINGS
+                    componentActivity.packageManager.hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE) && // HAS FEATURE, MIGHT BE BLOCKED DUE TO POWER DRAIN
+                    componentActivity.hasPIPPermission() // CHECK IF FEATURE IS ENABLED IN SETTINGS
 
-        act.updateLocale()
-        act.updateTv()
+        componentActivity.updateLocale()
+        componentActivity.updateTv()
         NewPipe.init(DownloaderTestImpl.getInstance())
 
         for (resumeApp in resumeApps) {
             resumeApp.launcher =
-                act.registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+                componentActivity.registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
                     val resultCode = result.resultCode
                     val data = result.data
                     if (resultCode == AppCompatActivity.RESULT_OK && data != null && resumeApp.position != null && resumeApp.duration != null) {
@@ -266,11 +243,11 @@ object CommonActivity {
         // Ask for notification permissions on Android 13
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
             ContextCompat.checkSelfPermission(
-                act,
+                componentActivity,
                 Manifest.permission.POST_NOTIFICATIONS
             ) != PackageManager.PERMISSION_GRANTED
         ) {
-            val requestPermissionLauncher = act.registerForActivityResult(
+            val requestPermissionLauncher = componentActivity.registerForActivityResult(
                 ActivityResultContracts.RequestPermission()
             ) { isGranted: Boolean ->
                 Log.d(TAG, "Notification permission: $isGranted")
