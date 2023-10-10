@@ -9,6 +9,8 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.viewbinding.ViewBinding
 import com.lagradost.cloudstream3.databinding.FragmentHomeBinding
 import com.lagradost.cloudstream3.databinding.FragmentHomeTvBinding
+import com.lagradost.cloudstream3.databinding.FragmentLibraryBinding
+import com.lagradost.cloudstream3.databinding.FragmentLibraryTvBinding
 import com.lagradost.cloudstream3.databinding.FragmentPlayerBinding
 import com.lagradost.cloudstream3.databinding.FragmentPlayerTvBinding
 import com.lagradost.cloudstream3.databinding.FragmentResultBinding
@@ -120,6 +122,8 @@ class ExampleInstrumentedTest {
                 testAllLayouts<HomepageParentTvBinding>(activity, R.layout.homepage_parent_tv, R.layout.homepage_parent)
                 testAllLayouts<HomepageParentBinding>(activity, R.layout.homepage_parent_tv, R.layout.homepage_parent)
 
+                testAllLayouts<FragmentLibraryTvBinding>(activity, R.layout.fragment_library_tv, R.layout.fragment_library)
+                testAllLayouts<FragmentLibraryBinding>(activity, R.layout.fragment_library_tv, R.layout.fragment_library)
             }
         }
     }

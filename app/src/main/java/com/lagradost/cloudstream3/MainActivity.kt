@@ -543,9 +543,9 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             navRailView.isVisible = isNavVisible && landscape
 
             // Hide library on TV since it is not supported yet :(
-            val isTrueTv = isTrueTvSettings()
-            navView.menu.findItem(R.id.navigation_library)?.isVisible = !isTrueTv
-            navRailView.menu.findItem(R.id.navigation_library)?.isVisible = !isTrueTv
+            //val isTrueTv = isTrueTvSettings()
+            //navView.menu.findItem(R.id.navigation_library)?.isVisible = !isTrueTv
+            //navRailView.menu.findItem(R.id.navigation_library)?.isVisible = !isTrueTv
 
             // Hide downloads on TV
             //navView.menu.findItem(R.id.navigation_downloads)?.isVisible = !isTrueTv
