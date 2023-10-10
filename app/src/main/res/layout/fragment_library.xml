@@ -166,11 +166,11 @@
         app:layout_scrollFlags="noScroll"
         app:tabGravity="center"
         app:tabIndicator="@drawable/indicator_background"
-        app:tabIndicatorColor="?attr/colorPrimary"
+        app:tabIndicatorColor="?attr/white"
         app:tabIndicatorGravity="center"
         app:tabIndicatorHeight="30dp"
         app:tabMode="scrollable"
-        app:tabSelectedTextColor="?attr/textColor"
+        app:tabSelectedTextColor="?attr/primaryBlackBackground"
         app:tabTextAppearance="@style/TabNoCaps"
         app:tabTextColor="?attr/textColor" />
 
