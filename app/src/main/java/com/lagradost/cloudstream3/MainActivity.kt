@@ -1110,7 +1110,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             if (appVer != lastAppAutoBackup) {
                 setKey("VERSION_NAME", BuildConfig.VERSION_NAME)
                 normalSafeApiCall {
-                    backup()
+                    backup(this)
                 }
                 normalSafeApiCall {
                     // Recompile oat on new version

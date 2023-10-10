@@ -51,6 +51,7 @@
     <string name="primary_color_key" translatable="false">primary_color_key</string>
     <string name="restore_key" translatable="false">restore_key</string>
     <string name="backup_key" translatable="false">backup_key</string>
+    <string name="automatic_backup_key" translatable="false">automatic_backup_key</string>
     <string name="prefer_media_type_key" translatable="false">prefer_media_type_key_2</string>
     <string name="app_theme_key" translatable="false">app_theme_key</string>
     <string name="episode_sync_enabled_key" translatable="false">episode_sync_enabled_key</string>
@@ -229,6 +230,7 @@
     <string name="episode_sync_settings_des">Automatically sync your current episode progress</string>
     <string name="restore_settings">Restore data from backup</string>
     <string name="backup_settings">Back up data</string>
+    <string name="backup_frequency">Backup frequency</string>
     <string name="restore_success">Loaded backup file</string>
     <string name="restore_failed_format" formatted="true">Failed to restore data from file %s</string>
     <string name="backup_success">Data stored</string>

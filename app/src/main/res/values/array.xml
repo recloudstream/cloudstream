@@ -41,7 +41,7 @@
         <item>0</item>
         <item>1</item>
     </array>
-    
+
     <!-- MainAPI enum: AutoDownloadMode -->
     <array name="auto_download_plugin">
         <item>@string/disable</item>
@@ -125,6 +125,26 @@
         <item>20min</item>
         <item>30min</item>
     </array>
+
+    <string-array name="periodic_work_names">
+        <item>@string/none</item>
+        <item>3h</item>
+        <item>6h</item>
+        <item>12h</item>
+        <item>24h</item>
+        <item>3d</item>
+        <item>7d</item>
+    </string-array>
+    <!-- Values in hours -->
+    <integer-array name="periodic_work_values">
+        <item>0</item>
+        <item>3</item>
+        <item>6</item>
+        <item>12</item>
+        <item>24</item>
+        <item>72</item>
+        <item>168</item>
+    </integer-array>
 
     <array name="video_buffer_length_values">
         <item>0</item>
