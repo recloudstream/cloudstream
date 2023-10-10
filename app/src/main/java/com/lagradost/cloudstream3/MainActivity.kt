@@ -904,8 +904,6 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             val visible =
                 newFocus != null && newFocus.measuredHeight > 0 && newFocus.measuredWidth > 0 && newFocus.isShown && newFocus.tag != "tv_no_focus_tag"
             focusOutline.isVisible = visible
-            //Todo Clean this
-            Log.d("King","${newFocus?.tag}:${newFocus.toString()}")
 
             if (newFocus != null) {
                 lastFocus = WeakReference(newFocus)
