@@ -177,7 +177,8 @@ dependencies {
 
     // implementation("io.karn:khttp-android:0.1.2") //okhttp instead
     // implementation("org.jsoup:jsoup:1.13.1")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.15.2")
+    // DONT UPDATE, WILL CRASH ANDROID TV ????
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.1")
 
     implementation("androidx.preference:preference-ktx:1.2.0")
 
