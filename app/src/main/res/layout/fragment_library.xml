@@ -170,7 +170,7 @@
         app:tabIndicatorGravity="center"
         app:tabIndicatorHeight="30dp"
         app:tabMode="scrollable"
-        app:tabSelectedTextColor="?attr/primaryBlackBackground"
+        app:tabSelectedTextColor="?attr/textColor"
         app:tabTextAppearance="@style/TabNoCaps"
         app:tabTextColor="?attr/textColor" />
 
