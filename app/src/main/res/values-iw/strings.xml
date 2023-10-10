@@ -519,7 +519,7 @@
     <string name="edit">עריכה</string>
     <string name="wifi">Wi-Fi</string>
     <string name="profile_background_des">רקע הפרופיל</string>
-    <string name="default_account">\@string/default_subtitles</string>
+    <string name="default_account">@string/default_subtitles</string>
     <string name="test_log">רשומה</string>
     <string name="help">עזרה</string>
     <string name="start">התחלה</string>

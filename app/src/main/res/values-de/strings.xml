@@ -552,5 +552,5 @@
     <string name="no_repository_found_error">Repository nicht gefunden, überprüf die URL und versuch ein VPN</string>
     <string name="unable_to_inflate">Die Benutzeroberfläche konnte nicht korrekt erstellt werden. Dies ist ein SCHWERWIEGENDER FEHLER und sollte sofort gemeldet werden. %s</string>
     <string name="disable">Deaktivieren</string>
-    <string name="default_account">\@string/default_subtitles</string>
+    <string name="default_account">@string/default_subtitles</string>
 </resources>

@@ -535,7 +535,7 @@
     <string name="edit">ترتیب دیں</string>
     <string name="wifi">وائی فائی</string>
     <string name="profile_background_des">پروفائل پس منظر</string>
-    <string name="default_account">\@string/default_subtitles</string>
+    <string name="default_account">@string/default_subtitles</string>
     <string name="help">مدد</string>
     <string name="profile_number">پروفائل %d</string>
     <string name="automatic_plugin_download_mode_title">پلگ انز کو ڈاؤن لوڈ کرنے کے لئے موڈ منتخب کریں</string>
