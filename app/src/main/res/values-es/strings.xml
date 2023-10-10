@@ -32,7 +32,7 @@
     <string name="phone_layout">Diseño para teléfonos</string>
     <string name="player_subtitles_settings">Subtítulos</string>
     <string name="subtitles_encoding">Codificación de subtítulos</string>
-    <string name="app_layout_subtext">Cambia el aspecto de la aplicación para que se adapte a tu dispositivo</string>
+    <string name="app_layout_subtext">Cambiar el aspecto de la aplicación para que se adapte a tu dispositivo</string>
     <string name="subtitles_settings">Configurar Subtítulos</string>
     <string name="player_subtitles_settings_des">Configuración de subtítulos del reproductor</string>
     <string name="subtitles_shadow">Sombra</string>
@@ -52,7 +52,7 @@
     <string name="subtitle_offset_extra_hint_later_format">Use esto si los subtítulos se muestran %d ms muy pronto</string>
     <string name="subtitle_offset_extra_hint_before_format">Use esto si los subtítulos se muestran %d ms tarde</string>
     <string name="swipe_to_seek_settings_des">Desliza el dedo de lado a lado para controlar la posición en un video</string>
-    <string name="subtitles_filter_lang">Filtrar por idioma de medios preferido</string>
+    <string name="subtitles_filter_lang">Filtrar por idioma preferido</string>
     <string name="subtitles_remove_captions">Eliminar Closed Captions (CC) de los subtítulos</string>
     <string name="double_tap_to_seek_amount_settings">Cantidad de búsquedas del reproductor (segundos)</string>
     <string name="use_system_brightness_settings_des">Use el brillo del sistema en el reproductor de la app en lugar de una superposición oscura</string>
@@ -94,7 +94,7 @@
     <string name="home_main_poster_img_des">Poster Principal</string>
     <string name="app_language">Idioma de la aplicación</string>
     <string name="provider_languages_tip">Ver videos en estos idiomas</string>
-    <string name="search_poster_img_des">Cartel</string>
+    <string name="search_poster_img_des">Poster</string>
     <string name="home_next_random_img_des">Siguiente al azar</string>
     <string name="all_languages_preference">Todos los Idiomas</string>
     <string name="go_back_img_des">Volver</string>
@@ -105,9 +105,9 @@
 \n%s -&gt; %s</string>
     <string name="download">Descargar</string>
     <string name="popup_pause_download">Pausar Descarga</string>
-    <string name="subs_font">Fuente</string>
+    <string name="subs_font">Formato de fuente</string>
     <string name="subs_background_color">Color de Fondo</string>
-    <string name="subs_font_size">Tamaño Fuente</string>
+    <string name="subs_font_size">Tamaño de Fuente</string>
     <string name="player_speed_text_format" formatted="true">Velocidad (%.2fx)</string>
     <string name="skip_loading">Omitir carga</string>
     <string name="app_dub_sub_episode_text_format" formatted="true">%s Ep %d</string>
@@ -195,7 +195,7 @@
     <string name="action_remove_watching">Remover</string>
     <string name="action_open_watching">Más info</string>
     <string name="action_open_play">@string/home_play</string>
-    <string name="vpn_might_be_needed">Una VPN puede ser necesaria para que este proveedor funcione correctamente</string>
+    <string name="vpn_might_be_needed">Tal vez se requiera una VPN para que este proveedor funcione correctamente</string>
     <string name="vpn_torrent">Este proveedor es un torrent, se recomienda una VPN</string>
     <string name="provider_info_meta">El sitio no proporciona los metadatos, la carga del video fallará si no existe en el sitio.</string>
     <string name="torrent_plot">Descripción</string>
@@ -230,10 +230,10 @@
     <string name="search">Buscar</string>
     <string name="category_account">Cuentas</string>
     <string name="category_updates">Actualizaciones y copias de seguridad</string>
-    <string name="settings_info">Info</string>
+    <string name="settings_info">Información</string>
     <string name="advanced_search">Búsqueda Avanzada</string>
-    <string name="advanced_search_des">Da los resultados de la búsqueda separados por proveedor</string>
-    <string name="bug_report_settings_off">Solo envía datos si la App termina / falla inesperadamente (crash)</string>
+    <string name="advanced_search_des">Mostrar los resultados de la búsqueda por proveedor</string>
+    <string name="bug_report_settings_off">Solo envíar los datos si la App se cierra / falla inesperadamente</string>
     <string name="bug_report_settings_on">No enviar datos</string>
     <string name="show_trailers_settings">Mostrar Trailers (avances)</string>
     <string name="kitsu_settings">Mostrar pósters de Kitsu</string>
@@ -270,9 +270,9 @@
     <string name="status">Estado</string>
     <string name="limit_title">Máxima cantidad de caracteres en el título del reproductor</string>
     <string name="pref_category_app_updates">Actualizaciones de la aplicación</string>
-    <string name="automatic">Auto</string>
+    <string name="automatic">Automático</string>
     <string name="pref_category_actions">Acciones</string>
-    <string name="enable_nsfw_on_providers">Activa NSFW (contenido adulto) en proveedores soportados</string>
+    <string name="enable_nsfw_on_providers">Activar NSFW (contenido adulto) en proveedores soportados</string>
     <string name="category_providers">Proveedores</string>
     <string name="pref_category_defaults">Predeterminados</string>
     <string name="preferred_media_settings">Medios preferidos</string>
@@ -283,7 +283,7 @@
     <string name="skip_setup">Omitir configuración</string>
     <string name="preferred_media_subtext">Qué quieres ver</string>
     <string name="uppercase_all_subtitles">Poner en MAYÚSCULAS todos los subtítulos</string>
-    <string name="apply_on_restart">Se aplican los cambios al reiniciar la App</string>
+    <string name="apply_on_restart">Se aplicarán los cambios al reiniciar la App</string>
     <string name="player_settings_play_in_app">Reproductor interno</string>
     <string name="extension_language">Idioma</string>
     <string name="apk_installer_legacy">Legacy (método antiguo)</string>
@@ -305,9 +305,9 @@
     <string name="automatic_plugin_download_summary">Instala automáticamente todos los plugins aún no instalados de los repositorios agregados.</string>
     <string name="pref_category_looks">Aspecto</string>
     <string name="pref_category_ui_features">Características</string>
-    <string name="random_button_settings">Botón de Al azar</string>
+    <string name="random_button_settings">Botón aleatorio</string>
     <string name="random_button_settings_desc">Mostrar el botón aleatorio en la página de inicio</string>
-    <string name="account">cuenta</string>
+    <string name="account">Cuenta</string>
     <string name="logout">Cerrar sesión</string>
     <string name="switch_account">Cambiar cuenta</string>
     <string name="add_account">Añadir cuenta</string>
@@ -319,7 +319,7 @@
     <string name="poster_image">Imagen del póster</string>
     <string name="trailer">Tráiler</string>
     <string name="coming_soon">Próximamente…</string>
-    <string name="home_random">Al azar</string>
+    <string name="home_random">Aleatorio</string>
     <string name="actor_main">Principal</string>
     <string name="error_invalid_data">Datos no válidos</string>
     <string name="add_sync">Añadir seguimiento</string>
@@ -460,7 +460,7 @@
     <string name="audio_tracks">Pistas de audio</string>
     <string name="video_tracks">Pistas de video</string>
     <string name="safe_mode_title">Modo seguro ON</string>
-    <string name="safe_mode_crash_info">Ver info de fallos</string>
+    <string name="safe_mode_crash_info">Ver información de fallos</string>
     <string name="extension_rating" formatted="true">Puntaje:%s</string>
     <string name="extension_version">Versión</string>
     <string name="extension_status">Estado</string>
@@ -545,12 +545,13 @@
     <string name="set_default">Establecer por defecto</string>
     <string name="use">Usar</string>
     <string name="qualities">Calidades</string>
-    <string name="profile_background_des">Perfil del fondo</string>
+    <string name="profile_background_des">Fondo de perfil</string>
     <string name="unable_to_inflate">La interfaz de usuario no se ha podido crear correctamente, se trata de un GRAN BUG y debe ser reportado inmediatamente %s</string>
-    <string name="automatic_plugin_download_mode_title">Selecciona el modo para filtrar la descarga de los plugins</string>
-    <string name="disable">Desactivar</string>
+    <string name="automatic_plugin_download_mode_title">Seleccionar modo para filtrar los plugins descargados</string>
+    <string name="disable">Deshabilitar</string>
     <string name="default_account">@string/default_subtitles</string>
     <string name="no_plugins_found_error">No se encontraron complementos en el repositorio</string>
     <string name="no_repository_found_error">Repositorio no encontrado, comprueba la URL y prueba la VPN</string>
     <string name="already_voted">Ya has votado</string>
+    <string name="backup_frequency">Frecuencia de la copia de seguridad</string>
 </resources>

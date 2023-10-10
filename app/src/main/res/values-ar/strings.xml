@@ -99,13 +99,13 @@
     <string name="subs_hold_to_reset_to_default">إضغط بإستمرار لإعادة التعيين للإعدادات الافتراضية</string>
     <string name="subs_import_text" formatted="true">إستيراد خطوط بوضعها هنا %s</string>
     <string name="continue_watching">متابعة المشاهدة</string>
-    <string name="action_remove_watching">حذف</string>
-    <string name="action_open_watching">مزيد من المعلومات</string>
+    <string name="action_remove_watching">ازالة</string>
+    <string name="action_open_watching">المزيد من المعلومات</string>
     <string name="vpn_might_be_needed">قد تكون هناك حاجة إلى VPN لكي يعمل هذا المزود بشكل صحيح</string>
-    <string name="vpn_torrent">هذا المزود هو تورنت ، يوصى باستخدام شبكة ظاهرية خاصة</string>
+    <string name="vpn_torrent">هذا المزود هو تورنت، يوصى باستخدام شبكة ظاهرية خاصة</string>
     <string name="provider_info_meta">لا يتم توفير البيانات الوصفية بواسطة الموقع، وسيفشل تحميل الفيديو إذا لم يكن موجودًا في الموقع.</string>
     <string name="torrent_plot">الوصف</string>
-    <string name="normal_no_plot">لم يتم العثور على وصف</string>
+    <string name="normal_no_plot">لم يتم العثور على حبكة</string>
     <string name="torrent_no_plot">لم يتم العثور على وصف</string>
     <string name="show_log_cat">عرض سجل الاخطاء 🐈</string>
     <string name="picture_in_picture">نافذة منبثقة</string>
@@ -585,4 +585,5 @@
     <string name="no_plugins_found_error">لا توجد اضافة في المستودع</string>
     <string name="no_repository_found_error">المستودع لم يتم العثور عليه، تحقق من العنوان اوجرب شبكة افتراضية خاصة(vpn)</string>
     <string name="already_voted">لقد صوتت بالفعل</string>
+    <string name="backup_frequency">معدل النسخ الإحتياطي</string>
 </resources>

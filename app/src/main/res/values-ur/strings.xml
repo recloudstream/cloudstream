@@ -28,12 +28,12 @@
     <string name="episode_more_options_des">مزید آپشنز</string>
     <string name="next_episode">اگلا قسط</string>
     <string name="result_open_in_browser">براؤزر میں کھولیں</string>
-    <string name="skip_loading">لوڈ کرنا سکیپ کر دیں</string>
+    <string name="skip_loading">لوڈنگ چھوڑیں</string>
     <string name="loading">لوڈ ہو رہا ہے…</string>
-    <string name="type_watching">دیکھنا</string>
-    <string name="type_on_hold">آن ہولڈ</string>
-    <string name="type_dropped">گرا دیا</string>
-    <string name="type_plan_to_watch">دیکھنا ہے</string>
+    <string name="type_watching">دیکھ رہے ہیں</string>
+    <string name="type_on_hold">معطل</string>
+    <string name="type_dropped">چھوڑ دیا گیا</string>
+    <string name="type_plan_to_watch">دیکھنے کا منصوبہ</string>
     <string name="type_none">کوئی نہیں</string>
     <string name="type_re_watching">دوبارہ دیکھنا</string>
     <string name="play_movie_button">مووی لگائے</string>
@@ -95,7 +95,7 @@
     <string name="action_open_play">کھلا (آن)</string>
     <string name="vpn_torrent">یہ سورس Torrent ہے، ضرورت پڑنے پر VPN کا استعمال کریں</string>
     <string name="torrent_plot">تفصیل</string>
-    <string name="normal_no_plot">کوئی تفصیل نہیں ملی</string>
+    <string name="normal_no_plot">کوئی کہانی نہیں ملی</string>
     <string name="torrent_no_plot">کوئی تفصیل نہیں ملی</string>
     <string name="show_log_cat">غلطی کا لاگ دیکھیں 🐈</string>
     <string name="picture_in_picture">PIP</string>
@@ -134,14 +134,14 @@
     <string name="updates_settings">ایپ کی تازہ کاریاں نمایش کریں</string>
     <string name="redo_setup_process">سیٹ اپ کا عمل دوبارہ کریں</string>
     <string name="uprereleases_settings">پری ریلیز کے لیے اپ ڈیٹ کریں</string>
-    <string name="uprereleases_settings_des">صرف مکمل ریلیز کے بجائے پری ریلیز اپ ڈیٹس تلاش کریں</string>
+    <string name="uprereleases_settings_des">صرف مکمل جاریات کی بجائے پیش رلیز اپ ڈیٹس کی تلاش کریں</string>
     <string name="apk_installer_settings">APK انسٹالر</string>
     <string name="github">Github</string>
-    <string name="lightnovel">ایک ہی dev کی طرف سے light ناول اپلی کیشن</string>
-    <string name="anim">اسی devs کے ذریعے anime ایپ</string>
+    <string name="lightnovel">یہ لائٹ ناول ایپ وہی ڈویلپرز نے تیار کی ہے جو اس ایپ کو ڈویلپ کیا ہے</string>
+    <string name="anim">یہ اینمی ایپ وہی ڈویلپرز نے تیار کی ہے جو اس ایپ کو ڈویلپ کیا ہے</string>
     <string name="discord">ڈسکارڈ میں شامل ہوں</string>
-    <string name="benene">دیووں کو ایک بینین دیں</string>
-    <string name="benene_des">دی گئی بینین</string>
+    <string name="benene">شکریہ ڈویلپرز کو! آپ کا کام شاندار ہے</string>
+    <string name="benene_des">تعریفیں</string>
     <string name="app_language">ایپ کی زبان</string>
     <string name="no_chromecast_support_toast">اس فراہم کنندہ کے پاس کروم کاسٹ سپورٹ نہیں ہے</string>
     <string name="no_links_found_toast">کوئی لنکس نہیں ملے</string>
@@ -150,7 +150,7 @@
     <string name="subs_default_reset_toast">طے شدہ قدر پر ری سیٹ کریں</string>
     <string name="app_dub_sub_episode_text_format" formatted="true">%s قسط %d</string>
     <string name="result_poster_img_des">پوسٹر</string>
-    <string name="result_share">شیئر</string>
+    <string name="result_share">شئیر کریں</string>
     <string name="result_tags">انواع</string>
     <string name="player_speed_text_format" formatted="true">رفتار (%.2fx)</string>
     <string name="type_completed">مکمل</string>
@@ -178,7 +178,7 @@
     <string name="show_fillers_settings">anime کے لیے فلر ایپیسوڈ دکھائیں</string>
     <string name="automatic_plugin_download">پلگ ان خود بخود ڈاؤن لوڈ کریں</string>
     <string name="automatic_plugin_download_summary">شامل کردہ ذخیروں سے خود بخود تمام ابھی تک انسٹال نہیں ہوئے پلگ ان انسٹال کریں۔</string>
-    <string name="updates_settings_des">شروع ہونے پر خودکار طور پر نئی اپ ڈیٹس تلاش کریں</string>
+    <string name="updates_settings_des">اپلیکیشن کو شروع کرنے کے بعد خود بخود نئی اپ ڈیٹس کی تلاش کریں۔</string>
     <string name="apk_installer_settings_des">کچھ فون نئے پیکیج انسٹالر کو سپورٹ نہیں کرتے ہیں. اگر اپ ڈیٹس انسٹال نہیں ہوتے ہیں تو لیگیسی آپشن کو آزمائیں.</string>
     <string name="acra_report_toast">معذرت، ایپلی کیشن کریش ہو گئی. ایک گمنام بگ رپورٹ ڈویلپرز کو بھیجی جائے گی</string>
     <string name="season">سیزن</string>
@@ -233,7 +233,7 @@
     <string name="ova_singular">اووا</string>
     <string name="torrent_singular">ٹورینٹ</string>
     <string name="documentaries_singular">دستاویزی فلم</string>
-    <string name="asian_drama_singular">ایشیائی ڈرامے</string>
+    <string name="asian_drama_singular">ایشین ڈرامہ</string>
     <string name="live_singular">لائیو اسٹریمز</string>
     <string name="other_singular">ویڈیو</string>
     <string name="source_error">ماخذ نقص</string>
@@ -333,15 +333,15 @@
     <string name="subtitles_shadow">سایہ</string>
     <string name="subtitle_offset">ذیلی ہم وقت سازی کریں</string>
     <string name="subtitle_offset_hint">1000 ms</string>
-    <string name="subtitle_offset_title">سب ٹائٹل تاخیر</string>
+    <string name="subtitle_offset_title">زیرنویس میں دیری</string>
     <string name="subtitle_offset_extra_hint_later_format">اگر سب ٹائٹلز %d ms بہت جلد دکھائے جائیں تو اسے استعمال کریں</string>
-    <string name="subtitle_offset_extra_hint_none_format">سب ٹائٹل تاخیر</string>
+    <string name="subtitle_offset_extra_hint_none_format">کوئی زیرنویس میں دیری نہیں</string>
     <string name="nsfw_singular">این ایس ایف ڈبلیو</string>
     <string name="episode_action_auto_download">آٹو ڈاؤن لوڈ</string>
     <string name="episode_action_play_in_browser">براؤزر میں چلائیں</string>
     <string name="video_ram_description">کم میموری والے آلات، جیسے کہ Android TV پر بہت زیادہ سیٹ ہونے پر کریشوں کا سبب بنتا ہے.</string>
     <string name="remove_site_pref">سائٹ ہٹائیں</string>
-    <string name="add_site_summary">ایک مختلف URL کے ساتھ ، موجودہ سائٹ کا کلون شامل کریں.</string>
+    <string name="add_site_summary">ایک مختلف URL کے ساتھ ، موجودہ سائٹ کا کلون شامل کریں</string>
     <string name="resize_fit">اسکرین پر فٹ</string>
     <string name="resize_fill">کھینچیں</string>
     <string name="create_account">اکاؤنٹ بنائیں</string>
@@ -488,7 +488,7 @@
     <string name="error_invalid_id">غلط ID</string>
     <string name="repository_name_hint">مخزن کا نام</string>
     <string name="skip_type_ed">ختم ہونے والا</string>
-    <string name="skip_type_op">کھل رہا</string>
+    <string name="skip_type_op">کھولنا</string>
     <string name="confirm_exit_dialog">کیا آپ کو یقین ہے کہ آپ ہیاں سے نکلنا چاہتے ہیں؟</string>
     <string name="quality_sd">ایس ڈی</string>
     <string name="all_languages_preference">تمام زبانیں</string>
@@ -519,12 +519,38 @@
     <string name="subtitles_remove_captions">سب ٹائٹلز سے بند کیپشنز کو ہٹا دیں</string>
     <string name="app_layout_subtext">اپنے آلے کے مطابق ایپ کی شکل تبدیل کریں</string>
     <string name="next">اگلے</string>
-    <string name="blank_repo_message">CloudStream میں بذریعہ ڈیفالٹ کوئی سائٹ انسٹال نہیں ہے۔ آپ کو ریپوزٹری سے سائٹس انسٹال کرنے کی ضرورت ہے۔
-\nSky UK Limited 🤮 کی طرف سے بے دماغ DMCA ہٹانے کی وجہ سے ہم ایپ میں ریپوزٹری سائٹ کو لنک نہیں کر سکتے۔
-\nہمارے ڈسکارڈ میں شامل ہوں یا آن لائن تلاش کریں۔</string>
+    <string name="blank_repo_message">CloudStream کے ساتھ پہلے سے کوئی ویب سائٹس انسٹال نہیں ہیں۔ آپ کو مخزنوں سے ویب سائٹس انسٹال کرنی ہوں گی۔
+\n
+\nSky UK Limited کی طرف سے DMCA کے تعلیم نامے کی بنا پر 🤮، ہم ایپ کے اندر مخزن سائٹ کی مستقیم لنک فراہم نہیں کر سکتے۔
+\n
+\nبراہ کرم ہمارے ڈسکارڈ کمیونٹی میں شامل ہونے کو مد نظر رکھیں یا مخزن کیلئے آن لائن تلاش کریں۔</string>
     <string name="safe_mode_description">تمام ایکسٹینشنز کریش کی وجہ سے آف کر دی گئیں تاکہ آپ کو پریشانی کا باعث تلاش کرنے میں مدد مل سکے۔</string>
     <string name="extension_install_first">پہلے ایکسٹینشن انسٹال کریں</string>
     <string name="clipboard_too_large">بہت زیادہ متن۔ کلپ بورڈ میں محفوظ کرنے سے قاصر۔</string>
     <string name="update_notification_installing">ایپ اپ ڈیٹ انسٹال ہو رہا ہے…</string>
     <string name="empty_library_logged_in_message">یہ فہرست خالی ہے۔ کسی اور پر سوئچ کرنے کی کوشش کریں۔</string>
+    <string name="mobile_data">موبائل ڈیٹا</string>
+    <string name="profiles">پروفائلز</string>
+    <string name="unable_to_inflate">یو آئی درست طریقے سے تخلیق نہیں کی جاسکتی تھی، یہ ایک بڑا بگ ہے اور فوراً رپورٹ کیا جانا چاہئے%s</string>
+    <string name="edit">ترتیب دیں</string>
+    <string name="wifi">وائی فائی</string>
+    <string name="profile_background_des">پروفائل پس منظر</string>
+    <string name="default_account">\@string/default_subtitles</string>
+    <string name="help">مدد</string>
+    <string name="profile_number">پروفائل %d</string>
+    <string name="automatic_plugin_download_mode_title">پلگ انز کو ڈاؤن لوڈ کرنے کے لئے موڈ منتخب کریں</string>
+    <string name="qualities">کوالٹیز</string>
+    <string name="use">استعمال کریں</string>
+    <string name="disable">غیرفعال کریں</string>
+    <string name="no_repository_found_error">مخزن نہیں ملا، URL کو چیک کریں اور VPN استعمال کریں</string>
+    <string name="already_voted">آپ نے پہلے ہی ووٹ دیا ہے</string>
+    <string name="no_plugins_found_error">مخزن میں کوئی پلگ انز نہیں ملا</string>
+    <string name="set_default">ترجیحی تعین کریں</string>
+    <string name="quality_profile_help">یہاں آپ تبدیلی کرسکتے ہیں کہ سورسز کو کس طرح کی ترتیب دی جائے۔ اگر ایک ویڈیو کی زیادہ پرائیورٹی ہوتی ہے تو یہ سورس کی انتخاب میں زیادہ اوپر آئے گی۔ سورس کی پرائیورٹی اور کوالٹی کی پرائیورٹی کا مجموعہ ویڈیو کی پرائیورٹی ہوتی ہے۔
+\n
+\nسورس A: 3
+\nکوالٹی B: 7
+\nاس کا مجموعی ویڈیو پرائیورٹی 10 ہوتی ہے۔
+\n
+\nنوٹ: اگر مجموعہ 10 یا اس سے زیادہ ہو تو پلیر وہ لنک لوڈ کرنے کو خود بخود چھوڑ دے گا!</string>
 </resources>

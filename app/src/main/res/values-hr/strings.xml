@@ -28,7 +28,7 @@
     <string name="preview_background_img_des">Preview Background</string>
     <!-- TRANSLATE, BUT DON'T FORGET FORMAT -->
     <string name="player_speed_text_format" formatted="true">Brzina (%.2fx)</string>
-    <string name="rated_format" formatted="true">Ocijenjeno: %.1f</string>
+    <string name="rated_format" formatted="true">Ocjena: %.1f</string>
     <string name="new_update_format" formatted="true">Pronađeno novo ažuriranje!
 \n%s -&gt; %s</string>
     <string name="filler" formatted="true">Umetak</string>
@@ -89,7 +89,7 @@
     <string name="home_info">Informacije</string>
     <string name="filter_bookmarks">Filtriraj oznake</string>
     <string name="error_bookmarks_text">Oznake</string>
-    <string name="action_remove_from_bookmarks">Makni</string>
+    <string name="action_remove_from_bookmarks">Ukloni</string>
     <string name="action_add_to_bookmarks">Postavi status gledanja</string>
     <string name="sort_apply">Primijeni</string>
     <string name="sort_cancel">Poništi</string>
@@ -117,7 +117,7 @@
     <string name="subs_hold_to_reset_to_default">Držite za vraćanje na zadane postavke</string>
     <string name="subs_import_text" formatted="true">Uvezi fontove tako da ih postavite u %s</string>
     <string name="continue_watching">Nastavite s gledanjem</string>
-    <string name="action_remove_watching">Makni</string>
+    <string name="action_remove_watching">Ukloni</string>
     <string name="action_open_watching">Više informacija</string>
     <string name="action_open_play">@string/home_play</string>
     <string name="vpn_might_be_needed">Za ispravan rad ovog pružatelja usluga može biti potreban VPN</string>
@@ -130,7 +130,7 @@
     <string name="picture_in_picture">Picture-in-picture</string>
     <string name="picture_in_picture_des">Nastavlja reprodukciju u minijaturnom playeru povrh drugih aplikacija</string>
     <string name="player_size_settings">Gumb za promjenu veličine playera</string>
-    <string name="player_size_settings_des">Ukloni crne rubove</string>
+    <string name="player_size_settings_des">Uklaja crne rubove</string>
     <string name="player_subtitles_settings">Titlovi</string>
     <string name="player_subtitles_settings_des">Postavke titlova playera</string>
     <string name="chromecast_subtitles_settings">Chromecast Titlovi</string>
@@ -151,7 +151,7 @@
     <string name="use_system_brightness_settings">Koristi svijetlinu u sustavu</string>
     <string name="use_system_brightness_settings_des">Koristi svjetlinu sustava u playeru aplikacija umjesto tamnog preklopa</string>
     <string name="episode_sync_settings">Ažuriraj napredak gledanja</string>
-    <string name="episode_sync_settings_des">Automatski sinkroniziraj svoj trenutni napredak u epizodi</string>
+    <string name="episode_sync_settings_des">Automatski sinkronizira vaš trenutni napredak u filmu ili epizodi</string>
     <string name="restore_settings">Vraćanje podataka iz sigurnosne kopije</string>
     <string name="backup_settings">Sigurnosno kopiranje podataka</string>
     <string name="restore_success">Učitana datoteka sigurnosne kopije</string>
@@ -306,7 +306,7 @@
     <string name="enable_nsfw_on_providers">Omogući NSFW na podržanim pružateljima usluga</string>
     <string name="subtitles_encoding">Kodiranje titlova</string>
     <string name="category_providers">Pružatelji usluga</string>
-    <string name="category_ui">Respored</string>
+    <string name="category_ui">Raspored</string>
     <string name="automatic">Auto</string>
     <string name="tv_layout">TV izgled</string>
     <string name="phone_layout">Izgled za telefone</string>
@@ -314,7 +314,7 @@
     <string name="primary_color_settings">Primarna boja</string>
     <string name="app_theme_settings">Tema aplikacije</string>
     <string name="bottom_title_settings">Mjesto naslova postera</string>
-    <string name="bottom_title_settings_des">Stavi naslov ispod postera</string>
+    <string name="bottom_title_settings_des">Stavlja naslov ispod postera</string>
     <!-- account stuff -->
     <string name="example_password">lozinka123</string>
     <string name="example_username">MojeCoolIme</string>
@@ -398,7 +398,7 @@
     <string name="error_invalid_data">Nevažeći podaci</string>
     <string name="error_invalid_url">URL je nevažeći</string>
     <string name="error">Greška</string>
-    <string name="subtitles_remove_captions">Ukloni titlove iz titlova</string>
+    <string name="subtitles_remove_captions">Ukloni CC iz titlova</string>
     <string name="subtitles_remove_bloat">Ukloni reklame iz titlova</string>
     <string name="subtitles_filter_lang">Filtriraj po željenom jeziku medija</string>
     <string name="extras">Extras</string>
@@ -446,7 +446,7 @@
     <string name="tracks">Zapis</string>
     <string name="audio_tracks">Audio zapis</string>
     <string name="video_tracks">Video zapis</string>
-    <string name="apply_on_restart">Primijeni na ponovnom pokretanju</string>
+    <string name="apply_on_restart">Primjenjuje se na ponovnom pokretanju</string>
     <string name="safe_mode_title">Sigurnosni način rada omogućen</string>
     <string name="safe_mode_description">Sve su ekstenzije isključene zbog rušenja aplikacije kako biste lakše pronašli ono koje uzrokuje probleme.</string>
     <string name="safe_mode_crash_info">Pogledajte podatke o padu</string>
@@ -472,7 +472,7 @@
     <string name="all_languages_preference">Svi jezici</string>
     <string name="clipboard_too_large">Previše teksta. Nije moguće spremiti u međuspremnik.</string>
     <string name="action_mark_as_watched">Označi kao gledano</string>
-    <string name="enable_skip_op_from_database_des">Prikaži skočne prozore za preskakanje za početak/završetak</string>
+    <string name="enable_skip_op_from_database_des">Prikazuje skočni prozor za preskakanje početka ili završetka medija</string>
     <string name="yes">Da</string>
     <string name="update_notification_downloading">Preuzimanje ažuriranja aplikacije…</string>
     <string name="confirm_exit_dialog">Jeste li sigurni da želite izaći\?</string>
@@ -495,7 +495,7 @@
     <string name="pref_category_gestures">Geste</string>
     <string name="pref_category_player_features">Značajke playera</string>
     <string name="pref_category_subtitles">Titlovi</string>
-    <string name="pref_category_player_layout">Respored</string>
+    <string name="pref_category_player_layout">Raspored</string>
     <string name="pref_category_defaults">Zadane postavke</string>
     <string name="pref_category_looks">Izgled</string>
     <string name="pref_category_ui_features">Značajke</string>
@@ -527,7 +527,7 @@
     <string name="select_library">Odaberite biblioteku</string>
     <string name="open_with">Otvori sa</string>
     <string name="empty_library_no_accounts_message">Vaša je biblioteka prazna :(
-\nPrijavite se na račun biblioteke ili dodajte emisije u svoju lokalnu biblioteku.</string>
+\nPrijavite se na račun biblioteke ili dodajte filmove / serije u svoju lokalnu biblioteku.</string>
     <string name="empty_library_logged_in_message">Ova je lista prazna. Pokušajte se prebaciti na jednu drugu listu.</string>
     <string name="safe_mode_file">Pronađena datoteka sigurnog načina rada!
 \nNe učitavaju se ekstenzije pri pokretanju dok se datoteka ne ukloni.</string>
@@ -577,4 +577,6 @@
 \nImat će kombinirani prioritet videozapisa od 10.
 \n
 \nNAPOMENA: Ako je zbroj 10 ili više, video player će automatski preskočiti učitavanje kada se ta poveznica učita!</string>
+    <string name="already_voted">Već si glasao/la</string>
+    <string name="backup_frequency">Učestalost rezervne kopije</string>
 </resources>

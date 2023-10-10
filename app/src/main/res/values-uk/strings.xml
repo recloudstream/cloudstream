@@ -38,7 +38,7 @@
     <string name="play_movie_button">Переглянути фільм</string>
     <string name="play_trailer_button">Переглянути трейлер</string>
     <string name="play_torrent_button">Трансляція через торент</string>
-    <string name="reload_error">Повторити підключення…</string>
+    <string name="reload_error">Повторити з\'єднання…</string>
     <string name="go_back">Назад</string>
     <string name="play_episode">Переглянути епізод</string>
     <string name="downloaded">Завантажено</string>
@@ -136,7 +136,7 @@
     <string name="double_tap_to_seek_amount_settings">Крок перемотки (секунди)</string>
     <string name="double_tap_to_pause_settings_des">Натисніть двічі посередині, щоб призупинити відтворення відео</string>
     <string name="use_system_brightness_settings">Використовувати яскравість системи</string>
-    <string name="episode_sync_settings">Оновити прогрес перегляду</string>
+    <string name="episode_sync_settings">Оновлювати прогрес перегляду</string>
     <string name="restore_settings">Відновлення даних з резервної копії</string>
     <string name="backup_settings">Резервне копіювання даних</string>
     <string name="restore_failed_format" formatted="true">Не вдалося відновити дані з файлу %s</string>
@@ -193,7 +193,7 @@
     <string name="tv_series">Телесеріали</string>
     <string name="cartoons">Мультфільми</string>
     <string name="anime">Аніме</string>
-    <string name="ova">ОВА</string>
+    <string name="ova">OVA</string>
     <string name="asian_drama">Азіатські драми</string>
     <string name="livestreams">Прямі трансляції</string>
     <string name="others">Інше</string>
@@ -206,7 +206,7 @@
     <string name="other_singular">Відео</string>
     <string name="source_error">Помилка джерела</string>
     <string name="remote_error">Віддалена помилка</string>
-    <string name="render_error">Помилка рендеринга</string>
+    <string name="render_error">Помилка рендерингу</string>
     <string name="episode_action_chromecast_mirror">Дзеркало Chromecast</string>
     <string name="episode_action_play_in_app">Переглянути в застосунку</string>
     <string name="episode_action_play_in_format">Переглянути в %s</string>
@@ -214,7 +214,7 @@
     <string name="episode_action_download_mirror">Завантажити дзеркало</string>
     <string name="check_for_update">Перевірити наявність оновлень</string>
     <string name="video_lock">Заблокувати</string>
-    <string name="video_skip_op">Пропускати OP</string>
+    <string name="video_skip_op">Пропустити ОП</string>
     <string name="dont_show_again">Не показувати знову</string>
     <string name="update">Оновити</string>
     <string name="watch_quality_pref">Бажана якість перегляду (WiFi)</string>
@@ -233,7 +233,7 @@
     <string name="updates_settings_des">Автоматично шукає нові оновлення після запуску застосунку.</string>
     <string name="uprereleases_settings">Оновлення до бета-версій</string>
     <string name="copy_link_toast">Посилання скопійовано в буфер обміну</string>
-    <string name="apk_installer_settings_des">Деякі телефони не підтримують новий інсталятор пакетів. Спробуйте стару версію, якщо оновлення не встановлюються.</string>
+    <string name="apk_installer_settings_des">Деякі телефони не підтримують новий встановлювач пакетів. Спробуйте стару версію, якщо оновлення не встановлюються.</string>
     <string name="discord">Приєднуйтесь до Discord</string>
     <string name="benene_des">Дано бананів</string>
     <string name="year">Рік</string>
@@ -553,4 +553,5 @@
     <string name="no_repository_found_error">Репозиторій не знайдено, перевірте URL-адресу та спробуйте VPN</string>
     <string name="no_plugins_found_error">Не знайдено жодних плагінів у репозиторії</string>
     <string name="already_voted">Ви вже проголосували</string>
+    <string name="backup_frequency">Частота резервного копіювання</string>
 </resources>

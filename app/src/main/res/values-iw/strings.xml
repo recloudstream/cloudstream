@@ -132,7 +132,7 @@
     <string name="update_started">העדכון התחיל</string>
     <string name="settings_info">מידע</string>
     <string name="automatic_plugin_download_summary">התקן אוטומטית את כל התוספים שטרם הותקנו ממאגרים שנוספו.</string>
-    <string name="updates_settings_des">חפש אוטומטית עדכונים חדשים בפתיחת האפליקציה</string>
+    <string name="updates_settings_des">חפש אוטומטית עדכונים חדשים לאחר פתיחת האפליקציה.</string>
     <string name="updates_settings">הצג עדכונים לאפליקציה</string>
     <string name="redo_setup_process">בצע מחדש את תהליך ההגדרה</string>
     <string name="uprereleases_settings">עדכן למהדורות מוקדמות</string>
@@ -146,7 +146,7 @@
     <string name="no_episodes_found">לא נמצאו פרקים</string>
     <string name="delete_file">מחק קובץ</string>
     <string name="delete">מחק</string>
-    <string name="pause">עצור</string>
+    <string name="pause">השהה</string>
     <string name="resume">המשך</string>
     <string name="go_back_30">-30</string>
     <string name="go_forward_30">+30</string>
@@ -176,7 +176,7 @@
     <string name="dont_show_again">אל תראה שוב</string>
     <string name="skip_update">דלג על עדכון זה</string>
     <string name="update">עדכון</string>
-    <string name="watch_quality_pref">איכות צפייה מועדפת</string>
+    <string name="watch_quality_pref">איכות צפייה מועדפת (WiFi)</string>
     <string name="limit_title">נגן וידאו כותרת מקסימום תווים</string>
     <string name="limit_title_rez">רזולוציית נגן וידאו</string>
     <string name="add_sync">הוסף מעקב</string>
@@ -184,7 +184,7 @@
     <string name="next">הבא</string>
     <string name="library">ספריה</string>
     <string name="provider_info_meta">מטא-דאטה לא מסופק על ידי האתר, טעינת הסרטון תיכשל אם הוא לא קיים באתר.</string>
-    <string name="swipe_to_change_settings_des">החלק על הצד השמאלי או הימני כדי לשנות את הבהירות או עוצמת הקול</string>
+    <string name="swipe_to_change_settings_des">החלק בצד השמאלי או הימני כדי לשנות את הבהירות או עוצמת הקול</string>
     <string name="restore_failed_format" formatted="true">שחזור הנתונים מהקובץ נכשל %s</string>
     <string name="category_updates">עדכונים וגיבויים</string>
     <string name="advanced_search_des">נותן לך את תוצאות החיפוש מופרדות לפי ספק</string>
@@ -194,7 +194,7 @@
     <string name="benene_des">כמות בנינים שניתנו</string>
     <string name="season">עונה</string>
     <string name="acra_report_toast">מצטערים, האפליקציה קרסה. דוח באג אנונימי יישלח למפתחים</string>
-    <string name="torrent">טורנט</string>
+    <string name="torrent">טורנטים</string>
     <string name="nsfw">NSFW</string>
     <string name="render_error">שגיאת מעבד</string>
     <string name="episode_action_download_mirror">הורד מראה</string>
@@ -226,8 +226,8 @@
     <string name="pref_category_player_features">תכונות נגן</string>
     <string name="episode_sync_settings">עדכן התקדמות צפייה</string>
     <string name="dns_pref">DNS מעל HTTPS</string>
-    <string name="double_tap_to_pause_settings_des">לחץ באמצע כדי לעצור</string>
-    <string name="swipe_to_seek_settings_des">החלק שמאלה או ימינה כדי לשלוט על זמן בנגן הסרטונים</string>
+    <string name="double_tap_to_pause_settings_des">לחץ פעמיים באמצע כדי לעצור</string>
+    <string name="swipe_to_seek_settings_des">החלק מצד לצד כדי לשלוט על מיקומך בסרטון</string>
     <string name="autoplay_next_settings">נגן אוטומטית את הפרק הבא</string>
     <string name="autoplay_next_settings_des">התחל את הפרק הבא כאשר הפרק הנוכחי נגמר</string>
     <string name="double_tap_to_seek_settings_des">לחץ פעמיים על צד ימין או שמאל כדי להציץ קדימה או אחורה</string>
@@ -264,11 +264,11 @@
     <string name="quality_cam">איכות מצלמה</string>
     <string name="swipe_to_seek_settings">החלק כדי להציץ</string>
     <string name="pref_category_backup">גיבוי</string>
-    <string name="double_tap_to_seek_amount_settings">כמות הצצת הנגן</string>
+    <string name="double_tap_to_seek_amount_settings">כמות הזזת הנגן (שניות)</string>
     <string name="other_singular">סרטון</string>
     <string name="github">גיטהאב</string>
     <string name="quality_cam_rip">מצלמה</string>
-    <string name="swipe_to_change_settings">החלק לשינוי ההגדרות</string>
+    <string name="swipe_to_change_settings">החלק כדי לשנות הגדרות</string>
     <string name="browser">‪דפדפן</string>
     <string name="subs_window_color">צבע חלון</string>
     <string name="show_log_cat">הצג לוג</string>
@@ -438,7 +438,7 @@
     <string name="sort">מיין</string>
     <string name="select_library">בחר ספרייה</string>
     <string name="empty_library_no_accounts_message">נראה שהספרייה שלכם ריקה :(
-\nהתחברו לחשבון ספריה או הוסף סדרות לספרייה המקומית שלך</string>
+\nהתחברו לחשבון ספריה או הוסיפו סדרות לספרייה המקומית שלכם.</string>
     <string name="safe_mode_file">קובץ מצב בטוח נמצא!
 \nלא טוען שום תוספות בהפעלה עד להסרת הקובץ.</string>
     <string name="update_notification_failed">לא ניתן להתקין את הגרסה החדשה של האפליקציה</string>
@@ -505,5 +505,52 @@
     <string name="sort_alphabetical_a">אלפביתי (א \'עד ת\')</string>
     <string name="sort_alphabetical_z">אלפביתי (ת\' עד א\')</string>
     <string name="open_with">פתח עם</string>
-    <string name="empty_library_logged_in_message">נראה שהרשימה הזו ריקה, נסו לעבור לרשימה אחרת</string>
+    <string name="empty_library_logged_in_message">נראה שהרשימה הזו ריקה, נסו לעבור לרשימה אחרת.</string>
+    <string name="subscription_new">רשום ל%s</string>
+    <string name="subscription_in_progress_notification">מעדכן סדרות שנרשמת אליהן</string>
+    <string name="android_tv_interface_off_seek_settings">נגן מוסתר - כמות הזזה</string>
+    <string name="mobile_data">רשת סלולארית</string>
+    <string name="subscription_list_name">רשום</string>
+    <string name="revert">חזור</string>
+    <string name="subscription_deleted">הרשמה ל-%s מבוטלת</string>
+    <string name="jsdelivr_proxy">פרוקסי עבור raw.githubusercontent.com</string>
+    <string name="profiles">פרופילים</string>
+    <string name="unable_to_inflate">הממשק לא נוצר נכון. זוהי שגיאה רצינית, נא לדווח עליה מיידית ל-%s</string>
+    <string name="edit">עריכה</string>
+    <string name="wifi">Wi-Fi</string>
+    <string name="profile_background_des">רקע הפרופיל</string>
+    <string name="default_account">\@string/default_subtitles</string>
+    <string name="test_log">רשומה</string>
+    <string name="help">עזרה</string>
+    <string name="start">התחלה</string>
+    <string name="stop">עצור</string>
+    <string name="profile_number">פרופיל %d</string>
+    <string name="android_tv_interface_on_seek_settings_summary">הזמן שיזוז כשהנגן מוצג</string>
+    <string name="android_tv_interface_on_seek_settings">נגן מוצג - כמות הזזה</string>
+    <string name="restart">אתחול</string>
+    <string name="jsdelivr_proxy_summary">עוקף את החסימה של GitHub באמצעות jsDelivr. עלול לגרום לעדכונים להתעכב בכמה ימים.</string>
+    <string name="automatic_plugin_download_mode_title">בחר מצב כדי לסנן תוספים להורדה</string>
+    <string name="qualities">איכויות</string>
+    <string name="use">השתמש</string>
+    <string name="category_provider_test">בדיקת ספק</string>
+    <string name="test_failed">נכשל</string>
+    <string name="subscription_episode_released">פרק %d שוחרר לצפיה!</string>
+    <string name="disable">ביטול</string>
+    <string name="watch_quality_pref_data">איכות צפיה מועדפת (אינטרנט סלולארי)</string>
+    <string name="no_repository_found_error">המאגר לא נמצא, נא לבדוק את ה-URL ולנסות VPN</string>
+    <string name="jsdelivr_enabled">ההתחברות אל GitHub נכשלה. מדליק פרוקסי אל jsDelivr…</string>
+    <string name="android_tv_interface_off_seek_settings_summary">הזמן שיזוז כשהנגן מוסתר</string>
+    <string name="already_voted">כבר הצבעת</string>
+    <string name="no_plugins_found_error">לא נמצאו תוספים במאגר</string>
+    <string name="pref_category_android_tv">טלוויזיית אנדרואיד</string>
+    <string name="set_default">קביעה כברירת מחדל</string>
+    <string name="test_passed">עבר</string>
+    <string name="pref_category_bypass">מעקף ספק אינטרנט</string>
+    <string name="quality_profile_help">כאן ניתן לשנות את סדר המקורות. אם לוידיאו יש עדיפות גבוהה יותר, הוא יופיע גבוה יותר בבחירת המקור. סכום עדיפות המקור ועדיפות האיכות היא עדיפות הוידיאו.
+\n
+\nמקור א: 3
+\nאיכות ב: 7
+\nיגרמו לעדיפות הסרטון להיות 10.
+\n
+\nשימו לב: אם הסכום הוא 10 או יותר, הנגן ידלג על טעינת הסרטון כאשר הלינק נטען!</string>
 </resources>
