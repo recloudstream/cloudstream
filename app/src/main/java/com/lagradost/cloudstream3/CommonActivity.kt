@@ -66,6 +66,11 @@ object CommonActivity {
         }
 
     @MainThread
+    fun setActivityInstance(newActivity: Activity?) {
+        activity = newActivity
+    }
+
+    @MainThread
     fun Activity?.getCastSession(): CastSession? {
         return (this as MainActivity?)?.mSessionManager?.currentCastSession
     }
@@ -203,23 +208,25 @@ object CommonActivity {
         setLocale(this, localeCode)
     }
 
-    fun init(act: ComponentActivity?) {
-        if (act == null) return
-        activity = act
+    fun init(act: Activity) {
+        setActivityInstance(act)
+
+        val componentActivity = activity as? ComponentActivity ?: return
+
         //https://stackoverflow.com/questions/52594181/how-to-know-if-user-has-disabled-picture-in-picture-feature-permission
         //https://developer.android.com/guide/topics/ui/picture-in-picture
         canShowPipMode =
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && // OS SUPPORT
-                    act.packageManager.hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE) && // HAS FEATURE, MIGHT BE BLOCKED DUE TO POWER DRAIN
-                    act.hasPIPPermission() // CHECK IF FEATURE IS ENABLED IN SETTINGS
+                    componentActivity.packageManager.hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE) && // HAS FEATURE, MIGHT BE BLOCKED DUE TO POWER DRAIN
+                    componentActivity.hasPIPPermission() // CHECK IF FEATURE IS ENABLED IN SETTINGS
 
-        act.updateLocale()
-        act.updateTv()
+        componentActivity.updateLocale()
+        componentActivity.updateTv()
         NewPipe.init(DownloaderTestImpl.getInstance())
 
         for (resumeApp in resumeApps) {
             resumeApp.launcher =
-                act.registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+                componentActivity.registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
                     val resultCode = result.resultCode
                     val data = result.data
                     if (resultCode == AppCompatActivity.RESULT_OK && data != null && resumeApp.position != null && resumeApp.duration != null) {
@@ -236,11 +243,11 @@ object CommonActivity {
         // Ask for notification permissions on Android 13
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
             ContextCompat.checkSelfPermission(
-                act,
+                componentActivity,
                 Manifest.permission.POST_NOTIFICATIONS
             ) != PackageManager.PERMISSION_GRANTED
         ) {
-            val requestPermissionLauncher = act.registerForActivityResult(
+            val requestPermissionLauncher = componentActivity.registerForActivityResult(
                 ActivityResultContracts.RequestPermission()
             ) { isGranted: Boolean ->
                 Log.d(TAG, "Notification permission: $isGranted")

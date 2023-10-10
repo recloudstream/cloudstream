@@ -67,6 +67,7 @@ import com.lagradost.cloudstream3.CommonActivity.onColorSelectedEvent
 import com.lagradost.cloudstream3.CommonActivity.onDialogDismissedEvent
 import com.lagradost.cloudstream3.CommonActivity.onUserLeaveHint
 import com.lagradost.cloudstream3.CommonActivity.screenHeight
+import com.lagradost.cloudstream3.CommonActivity.setActivityInstance
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.CommonActivity.updateLocale
 import com.lagradost.cloudstream3.databinding.ActivityMainBinding
@@ -590,6 +591,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
     override fun onResume() {
         super.onResume()
         afterPluginsLoadedEvent += ::onAllPluginsLoaded
+        setActivityInstance(this)
         try {
             if (isCastApiAvailable()) {
                 //mCastSession = mSessionManager.currentCastSession
