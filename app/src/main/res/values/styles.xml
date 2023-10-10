@@ -388,7 +388,7 @@
         <item name="behavior_skipCollapsed">true</item>
         <item name="shapeAppearance">@null</item>
         <item name="shapeAppearanceOverlay">@null</item>
-        <item name="backgroundTint">@color/transparent</item>
+        <item name="backgroundTint">?attr/primaryGrayBackground</item>
         <item name="android:background">@drawable/rounded_dialog</item>
         <item name="behavior_peekHeight">512dp</item>
     </style>

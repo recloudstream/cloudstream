@@ -166,7 +166,7 @@
         app:layout_scrollFlags="noScroll"
         app:tabGravity="center"
         app:tabIndicator="@drawable/indicator_background"
-        app:tabIndicatorColor="?attr/white"
+        app:tabIndicatorColor="?attr/colorPrimary"
         app:tabIndicatorGravity="center"
         app:tabIndicatorHeight="30dp"
         app:tabMode="scrollable"

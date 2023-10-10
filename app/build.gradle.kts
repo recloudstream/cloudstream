@@ -50,7 +50,7 @@ android {
         }
     }
 
-    compileSdk = 33
+    compileSdk = 34
     buildToolsVersion = "34.0.0"
 
     defaultConfig {
@@ -157,10 +157,9 @@ dependencies {
     testImplementation("org.json:json:20180813")
 
     implementation("androidx.core:core-ktx:1.10.1")
-    implementation("androidx.appcompat:appcompat:1.6.1") // need target 32 for 1.5.0
+    implementation("androidx.appcompat:appcompat:1.6.1")
 
-    // dont change this to 1.6.0 it looks ugly af
-    implementation("com.google.android.material:material:1.5.0")
+    implementation("com.google.android.material:material:1.10.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     implementation("androidx.navigation:navigation-fragment-ktx:2.6.0")
     implementation("androidx.navigation:navigation-ui-ktx:2.6.0")
@@ -200,8 +199,8 @@ dependencies {
     implementation("com.github.recloudstream:media-ffmpeg:1.1.0")
 
     // Bug reports
-    implementation("ch.acra:acra-core:5.11.0")
-    implementation("ch.acra:acra-toast:5.11.0")
+    implementation("ch.acra:acra-core:5.11.2")
+    implementation("ch.acra:acra-toast:5.11.2")
 
     compileOnly("com.google.auto.service:auto-service-annotations:1.0")
     //either for java sources:

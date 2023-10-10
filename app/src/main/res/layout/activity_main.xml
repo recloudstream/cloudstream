@@ -27,22 +27,16 @@
             app:layout_constraintTop_toTopOf="parent"
             app:menu="@menu/bottom_nav_menu"
             app:menuGravity="center">
-
         </com.google.android.material.navigationrail.NavigationRailView>
-        <!-- android:layout_height="65dp"
-                              app:labelVisibilityMode="unlabeled"
 
-                  -->
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/nav_view"
             android:layout_height="70dp"
             android:layout_width="0dp"
             app:labelVisibilityMode="unlabeled"
             android:background="?attr/primaryGrayBackground"
-
             app:itemIconTint="@color/item_select_color"
             app:itemTextColor="@color/item_select_color"
-
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
