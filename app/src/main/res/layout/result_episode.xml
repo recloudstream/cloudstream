@@ -11,7 +11,9 @@
     android:nextFocusRight="@id/download_button"
     app:cardBackgroundColor="@color/transparent"
     app:cardCornerRadius="@dimen/rounded_image_radius"
-    app:cardElevation="0dp">
+    app:cardElevation="0dp"
+    android:foreground="@drawable/outline_drawable"
+    >
     <!--
         android:nextFocusLeft="@id/result_episode_download"
         -->

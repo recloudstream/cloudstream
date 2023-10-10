@@ -4,26 +4,23 @@
     xmlns:tools="http://schemas.android.com/tools"
 
     android:id="@+id/episode_holder_large"
-    android:layout_width="wrap_content"
 
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_marginBottom="10dp"
-    android:foreground="@drawable/outline_drawable"
-    android:nextFocusRight="@id/download_button"
+    android:background="@drawable/outline_drawable"
     app:cardBackgroundColor="?attr/boxItemBackground"
 
     app:cardCornerRadius="@dimen/rounded_image_radius">
 
     <LinearLayout
-        android:id="@+id/episode_holder"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:foreground="?android:attr/selectableItemBackgroundBorderless"
+        android:background="@drawable/outline_drawable"
         android:orientation="vertical"
         android:padding="10dp">
 
         <LinearLayout
-            android:id="@+id/episode_lin_holder"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
@@ -35,13 +32,11 @@
 
                 <ImageView
                     android:id="@+id/episode_poster"
-
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:contentDescription="@string/episode_poster_img_des"
 
+                    android:contentDescription="@string/episode_poster_img_des"
                     android:foreground="?android:attr/selectableItemBackgroundBorderless"
-                    android:nextFocusRight="@id/download_button"
                     android:scaleType="centerCrop"
                     tools:src="@drawable/example_poster" />
 
@@ -101,15 +96,6 @@
                     android:textColor="?attr/grayTextColor"
                     tools:text="Rated: 8.8" />
             </LinearLayout>
-
-            <com.lagradost.cloudstream3.ui.download.button.PieFetchButton
-                android:id="@+id/download_button"
-                android:layout_width="@dimen/download_size"
-                android:layout_height="@dimen/download_size"
-                android:layout_gravity="center_vertical|end"
-                android:layout_marginStart="-50dp"
-                android:background="?selectableItemBackgroundBorderless"
-                android:padding="10dp" />
         </LinearLayout>
 
         <TextView

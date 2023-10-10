@@ -283,6 +283,7 @@ var app = Requests(responseParser = object : ResponseParser {
 class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
     companion object {
         const val TAG = "MAINACT"
+        const val ANIMATED_OUTLINE : Boolean = false
         var lastError: String? = null
 
         /**
@@ -1070,7 +1071,22 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         }
     }
 
-
+    private fun centerView(view : View?) {
+        if(view == null) return
+        try {
+            Log.v(TAG, "centerView: $view")
+            val r = Rect(0, 0, 0, 0)
+            view.getDrawingRect(r)
+            val x = r.centerX()
+            val y = r.centerY()
+            val dx = r.width() / 2 //screenWidth / 2
+            val dy = screenHeight / 2
+            val r2 = Rect(x - dx, y - dy, x + dx, y + dy)
+            view.requestRectangleOnScreen(r2, false)
+            // TvFocus.current =TvFocus.current.copy(y=y.toFloat())
+        } catch (_: Throwable) {
+        }
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         app.initClient(this)
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
@@ -1125,42 +1141,25 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                 val newLocalBinding = ActivityMainTvBinding.inflate(layoutInflater, null, false)
                 setContentView(newLocalBinding.root)
 
-                if(isTrueTvSettings()) {
+                if(isTrueTvSettings() && ANIMATED_OUTLINE) {
                     TvFocus.focusOutline = WeakReference(newLocalBinding.focusOutline)
+                    newLocalBinding.root.viewTreeObserver.addOnScrollChangedListener {
+                        TvFocus.updateFocusView(TvFocus.lastFocus.get(), same = true)
+                    }
                     newLocalBinding.root.viewTreeObserver.addOnGlobalFocusChangeListener { _, newFocus ->
-                        // println("refocus $oldFocus -> $newFocus")
-                        try {
-                            val r = Rect(0, 0, 0, 0)
-                            newFocus.getDrawingRect(r)
-                            val x = r.centerX()
-                            val y = r.centerY()
-                            val dx = 0 //screenWidth / 2
-                            val dy = screenHeight / 2
-                            val r2 = Rect(x - dx, y - dy, x + dx, y + dy)
-                            newFocus.requestRectangleOnScreen(r2, false)
-                            // TvFocus.current =TvFocus.current.copy(y=y.toFloat())
-                        } catch (_: Throwable) {
-                        }
                         TvFocus.updateFocusView(newFocus)
-                        /*var focus = newFocus
-
-                    while(focus != null) {
-                        if(focus is ScrollingView && focus.canScrollVertically()) {
-                            focus.scrollBy()
-                        }
-                        when(focus.parent) {
-                            is View -> focus = newFocus
-                            else -> break
-                        }
-                    }*/
                     }
                 } else {
                     newLocalBinding.focusOutline.isVisible = false
                 }
 
-                newLocalBinding.root.viewTreeObserver.addOnScrollChangedListener {
-                    TvFocus.updateFocusView(TvFocus.lastFocus.get(), same = true)
+                if(isTrueTvSettings()) {
+                    newLocalBinding.root.viewTreeObserver.addOnGlobalFocusChangeListener { _, newFocus ->
+                        centerView(newFocus)
+                    }
                 }
+
+
 
                 ActivityMainBinding.bind(newLocalBinding.root) // this may crash
             } else {

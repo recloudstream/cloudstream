@@ -875,7 +875,7 @@
                                 android:descendantFocusability="afterDescendants"
                                 android:paddingBottom="100dp"
                                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                                tools:listitem="@layout/result_episode_both_tv" />
+                                tools:listitem="@layout/result_episode" />
                         </LinearLayout>
                     </LinearLayout>
 
