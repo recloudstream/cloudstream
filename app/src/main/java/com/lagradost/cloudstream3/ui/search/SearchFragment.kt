@@ -11,6 +11,7 @@ import android.widget.AbsListView
 import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.ListView
+import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.isVisible
@@ -221,7 +222,7 @@ class SearchFragment : Fragment() {
                     SearchHelper.handleSearchClickCallback(callback)
                 }
 
-
+            searchRoot.findViewById<TextView>(R.id.search_src_text)?.tag = "tv_no_focus_tag"
             searchAutofitResults.adapter = adapter
             searchLoadingBar.alpha = 0f
         }
