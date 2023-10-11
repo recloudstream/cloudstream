@@ -594,4 +594,6 @@
 \nNOT: Toplam 10 veya daha fazlaysa, bu bağlantı yüklendiğinde oynatıcı otomatik olarak yüklemeyi atlayacaktır!</string>
     <string name="qualities">Kaliteler</string>
     <string name="profile_background_des">Profil arkaplanı</string>
+    <string name="unable_to_inflate">UI was unable to be created correctly, this is a MAJOR BUG and should be reported immediately %s</string>
+    <string name="automatic_plugin_download_mode_title">Select mode to filter plugins download</string>
 </resources>

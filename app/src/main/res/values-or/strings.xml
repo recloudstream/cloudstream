@@ -158,4 +158,5 @@
     <string name="search_hint_site" formatted="true">%s ସନ୍ଧାନ କରିବା…</string>
     <string name="next_episode">ପରବର୍ତ୍ତୀ ଅଧ୍ୟାୟ</string>
     <string name="no_data">କୌଣସି ତଥ୍ୟ ନାହିଁ</string>
+    <string name="app_dub_sub_episode_text_format" formatted="true">%s ଅ %d</string>
 </resources>

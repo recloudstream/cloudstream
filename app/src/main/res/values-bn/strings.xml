@@ -127,9 +127,9 @@
     <string name="double_tap_to_pause_settings_des">বিরতি দিতে মাঝে চাপুন</string>
     <string name="use_system_brightness_settings">সিস্টেম এর উজ্জ্বলতা ব্যবহার করুন</string>
     <string name="play_trailer_button">ট্রেইলার চালু করুন</string>
-    <string name="swipe_to_seek_settings_des">ভিডিওপ্লেয়ার এ সময় নিয়ন্ত্রণ করতে, ডানে অথবা বামে সোয়াইপ করুন</string>
+    <string name="swipe_to_seek_settings_des">ভিডিওর সময় নিয়ন্ত্রণ করতে, ডানে অথবা বামে সোয়াইপ করুন</string>
     <string name="swipe_to_change_settings">সেটিংস পরিবর্তন করতে সোয়াইপ করুন</string>
-    <string name="swipe_to_change_settings_des">উজ্জ্বলতা অথবা স্বরমাত্রা পরিবর্তন করতে যথাক্রমে বামে অথবা ডানে সোয়াইপ করুন</string>
+    <string name="swipe_to_change_settings_des">উজ্জ্বলতা বা ভলিউম পরিবর্তন করতে বাম বা ডান দিকে উপরে বা নিচে স্লাইড করুন</string>
     <string name="autoplay_next_settings">স্বয়ংক্রিয়ভাবে পরবর্তী পর্ব চালান</string>
     <string name="autoplay_next_settings_des">বর্তমান পর্বটি শেষ হলে পরের পর্বটি চালান</string>
     <string name="double_tap_to_pause_settings">থামতে দুইবার চাপুন</string>
@@ -143,10 +143,11 @@
     <string name="category_updates">হালনাগাদ ও ব্যাকআপ</string>
     <string name="updates_settings">অ্যাপ এর হালনাগাদ দেখান</string>
     <string name="swipe_to_seek_settings">খুঁজতে সোয়াইপ করুন</string>
-    <string name="search_poster_img_des">@string/result_poster_img_des</string>
+    <string name="search_poster_img_des">পোস্টার</string>
     <string name="action_open_play">@string/home_play</string>
     <string name="double_tap_to_seek_settings">আগাতে ডবল ট্যাপ করুন</string>
     <string name="eigengraumode_settings">আইজেনগ্রাভি মোড</string>
     <string name="update_started">আপডেট শুরু হয়েছে</string>
     <string name="browser">ব্রাউজার</string>
+    <string name="test_log">লগ</string>
 </resources>

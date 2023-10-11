@@ -80,6 +80,7 @@ val appLanguages = arrayListOf(
     Triple("", "日本語 (にほんご)", "ja"),
     Triple("", "ಕನ್ನಡ", "kn"),
     Triple("", "한국어", "ko"),
+    Triple("", "lietuvių kalba", "lt"),
     Triple("", "latviešu valoda", "lv"),
     Triple("", "македонски", "mk"),
     Triple("", "മലയാളം", "ml"),

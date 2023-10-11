@@ -37,6 +37,7 @@ import com.lagradost.cloudstream3.CommonActivity.canEnterPipMode
 import com.lagradost.cloudstream3.CommonActivity.isInPIPMode
 import com.lagradost.cloudstream3.CommonActivity.keyEventListener
 import com.lagradost.cloudstream3.CommonActivity.playerEventListener
+import com.lagradost.cloudstream3.CommonActivity.screenWidth
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError
@@ -79,12 +80,12 @@ abstract class AbstractPlayerFragment(
     var isBuffering = true
     protected open var hasPipModeSupport = true
 
-    var playerPausePlayHolderHolder : FrameLayout? = null
-    var playerPausePlay : ImageView? = null
-    var playerBuffering : ProgressBar? = null
-    var playerView : PlayerView? = null
-    var piphide : FrameLayout? = null
-    var subtitleHolder : FrameLayout? = null
+    var playerPausePlayHolderHolder: FrameLayout? = null
+    var playerPausePlay: ImageView? = null
+    var playerBuffering: ProgressBar? = null
+    var playerView: PlayerView? = null
+    var piphide: FrameLayout? = null
+    var subtitleHolder: FrameLayout? = null
 
     @LayoutRes
     protected open var layout: Int = R.layout.fragment_player
@@ -97,11 +98,11 @@ abstract class AbstractPlayerFragment(
         throw NotImplementedError()
     }
 
-    open fun playerPositionChanged(position: Long, duration : Long) {
+    open fun playerPositionChanged(position: Long, duration: Long) {
         throw NotImplementedError()
     }
 
-    open fun playerDimensionsLoaded(width: Int, height : Int) {
+    open fun playerDimensionsLoaded(width: Int, height: Int) {
         throw NotImplementedError()
     }
 
@@ -137,8 +138,10 @@ abstract class AbstractPlayerFragment(
         }
     }
 
-    private fun updateIsPlaying(wasPlaying : CSPlayerLoading,
-                                isPlaying : CSPlayerLoading) {
+    private fun updateIsPlaying(
+        wasPlaying: CSPlayerLoading,
+        isPlaying: CSPlayerLoading
+    ) {
         val isPlayingRightNow = CSPlayerLoading.IsPlaying == isPlaying
         val isPausedRightNow = CSPlayerLoading.IsPaused == isPlaying
 
@@ -186,7 +189,11 @@ abstract class AbstractPlayerFragment(
         canEnterPipMode = isPlayingRightNow && hasPipModeSupport
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             activity?.let { act ->
-                PlayerPipHelper.updatePIPModeActions(act, isPlayingRightNow, player.getAspectRatio())
+                PlayerPipHelper.updatePIPModeActions(
+                    act,
+                    isPlayingRightNow,
+                    player.getAspectRatio()
+                )
             }
         }
     }
@@ -375,49 +382,61 @@ abstract class AbstractPlayerFragment(
     /** This receives the events from the player, if you want to append functionality you do it here,
      * do note that this only receives events for UI changes,
      * and returning early WONT stop it from changing in eg the player time or pause status */
-    open fun mainCallback(event : PlayerEvent) {
+    open fun mainCallback(event: PlayerEvent) {
         Log.i(TAG, "Handle event: $event")
-        when(event) {
+        when (event) {
             is ResizedEvent -> {
                 playerDimensionsLoaded(event.width, event.height)
             }
+
             is PlayerAttachedEvent -> {
                 playerUpdated(event.player)
             }
+
             is SubtitlesUpdatedEvent -> {
                 subtitlesChanged()
             }
+
             is TimestampSkippedEvent -> {
                 onTimestampSkipped(event.timestamp)
             }
+
             is TimestampInvokedEvent -> {
                 onTimestamp(event.timestamp)
             }
+
             is TracksChangedEvent -> {
                 onTracksInfoChanged()
             }
+
             is EmbeddedSubtitlesFetchedEvent -> {
                 embeddedSubtitlesFetched(event.tracks)
             }
+
             is ErrorEvent -> {
                 playerError(event.error)
             }
+
             is RequestAudioFocusEvent -> {
                 requestAudioFocus()
             }
+
             is EpisodeSeekEvent -> {
-                when(event.offset) {
+                when (event.offset) {
                     -1 -> prevEpisode()
                     1 -> nextEpisode()
                     else -> {}
                 }
             }
+
             is StatusEvent -> {
                 updateIsPlaying(wasPlaying = event.wasPlaying, isPlaying = event.isPlaying)
             }
+
             is PositionEvent -> {
                 playerPositionChanged(position = event.toMs, duration = event.durationMs)
             }
+
             is VideoEndedEvent -> {
                 context?.let { ctx ->
                     // Only play next episode if autoplay is on (default)
@@ -434,6 +453,7 @@ abstract class AbstractPlayerFragment(
                     }
                 }
             }
+
             is PauseEvent -> Unit
             is PlayEvent -> Unit
         }
@@ -457,10 +477,10 @@ abstract class AbstractPlayerFragment(
 
         if (player is CS3IPlayer) {
             // preview bar
-            val progressBar : PreviewTimeBar? = playerView?.findViewById(R.id.exo_progress)
-            val previewImageView : ImageView? = playerView?.findViewById(R.id.previewImageView)
-            val previewFrameLayout : FrameLayout? = playerView?.findViewById(R.id.previewFrameLayout)
-            if(progressBar != null && previewImageView != null && previewFrameLayout != null) {
+            val progressBar: PreviewTimeBar? = playerView?.findViewById(R.id.exo_progress)
+            val previewImageView: ImageView? = playerView?.findViewById(R.id.previewImageView)
+            val previewFrameLayout: FrameLayout? = playerView?.findViewById(R.id.previewFrameLayout)
+            if (progressBar != null && previewImageView != null && previewFrameLayout != null) {
                 var resume = false
                 progressBar.addOnScrubListener(object : PreviewBar.OnScrubListener {
                     override fun onScrubStart(previewBar: PreviewBar?) {
@@ -495,19 +515,34 @@ abstract class AbstractPlayerFragment(
             subView = playerView?.findViewById(R.id.exo_subtitles)
             subStyle = SubtitlesFragment.getCurrentSavedStyle()
             player.initSubtitles(subView, subtitleHolder, subStyle)
+            (player.imageGenerator as? PreviewGenerator)?.params = ImageParams.new16by9(screenWidth)
 
+            /*previewImageView?.doOnLayout {
+                (player.imageGenerator as? PreviewGenerator)?.params = ImageParams(
+                    it.measuredWidth,
+                    it.measuredHeight
+                )
+            }*/
             /** this might seam a bit fucky and that is because it is, the seek event is captured twice, once by the player
              * and once by the UI even if it should only be registered once by the UI */
-            playerView?.findViewById<DefaultTimeBar>(R.id.exo_progress)?.addListener(object : TimeBar.OnScrubListener {
-                override fun onScrubStart(timeBar: TimeBar, position: Long) = Unit
-                override fun onScrubMove(timeBar: TimeBar, position: Long) = Unit
-                override fun onScrubStop(timeBar: TimeBar, position: Long, canceled: Boolean) {
-                    if (canceled) return
-                    val playerDuration = player.getDuration() ?: return
-                    val playerPosition = player.getPosition() ?: return
-                    mainCallback(PositionEvent(source = PlayerEventSource.UI, durationMs = playerDuration, fromMs = playerPosition, toMs = position))
-                }
-            })
+            playerView?.findViewById<DefaultTimeBar>(R.id.exo_progress)
+                ?.addListener(object : TimeBar.OnScrubListener {
+                    override fun onScrubStart(timeBar: TimeBar, position: Long) = Unit
+                    override fun onScrubMove(timeBar: TimeBar, position: Long) = Unit
+                    override fun onScrubStop(timeBar: TimeBar, position: Long, canceled: Boolean) {
+                        if (canceled) return
+                        val playerDuration = player.getDuration() ?: return
+                        val playerPosition = player.getPosition() ?: return
+                        mainCallback(
+                            PositionEvent(
+                                source = PlayerEventSource.UI,
+                                durationMs = playerDuration,
+                                fromMs = playerPosition,
+                                toMs = position
+                            )
+                        )
+                    }
+                })
 
             SubtitlesFragment.applyStyleEvent += ::onSubStyleChanged
 
