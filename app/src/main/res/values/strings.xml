@@ -690,4 +690,7 @@
 
     <string name="tv_no_focus_tag" translatable="false">tv_no_focus_tag</string>
     <string name="already_voted">You have already voted</string>
+    <string name="favorites_list_name">Favorites</string>
+    <string name="favorite_added">%s added to favorites</string>
+    <string name="favorite_removed">%s removed from favorites</string>
 </resources>

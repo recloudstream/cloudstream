@@ -9,6 +9,7 @@ import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.library.ListSorting
 import com.lagradost.cloudstream3.ui.result.txt
 import com.lagradost.cloudstream3.utils.Coroutines.ioWork
+import com.lagradost.cloudstream3.utils.DataStoreHelper.getAllFavorites
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getAllSubscriptions
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getAllWatchStateIds
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getBookmarkedData
@@ -77,13 +78,15 @@ class LocalList : SyncAPI {
                 }
             } + mapOf(R.string.subscription_list_name to getAllSubscriptions().mapNotNull {
                 it.toLibraryItem()
+            }) + mapOf(R.string.favorites_list_name to getAllFavorites().mapNotNull {
+                it.toLibraryItem()
             })
         }
 
         val baseMap = WatchType.values().filter { it != WatchType.NONE }.associate {
             // None is not something to display
             it.stringRes to emptyList<SyncAPI.LibraryItem>()
-        } + mapOf(R.string.subscription_list_name to emptyList())
+        } + mapOf(R.string.subscription_list_name to emptyList()) + mapOf(R.string.favorites_list_name to emptyList())
 
         return SyncAPI.LibraryMetadata(
             (baseMap + list).map { SyncAPI.LibraryList(txt(it.key), it.value) },

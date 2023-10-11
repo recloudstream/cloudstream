@@ -42,6 +42,7 @@ const val VIDEO_WATCH_STATE = "video_watch_state"
 const val RESULT_WATCH_STATE = "result_watch_state"
 const val RESULT_WATCH_STATE_DATA = "result_watch_state_data"
 const val RESULT_SUBSCRIBED_STATE_DATA = "result_subscribed_state_data"
+const val RESULT_FAVORITES_STATE_DATA = "result_favorites_state_data"
 const val RESULT_RESUME_WATCHING = "result_resume_watching_2" // changed due to id changes
 const val RESULT_RESUME_WATCHING_OLD = "result_resume_watching"
 const val RESULT_RESUME_WATCHING_HAS_MIGRATED = "result_resume_watching_migrated"
@@ -406,6 +407,33 @@ object DataStoreHelper {
         }
     }
 
+    data class FavoritesData(
+        @JsonProperty("id") override var id: Int?,
+        @JsonProperty("favoritesTime") val favoritesTime: Long,
+        @JsonProperty("latestUpdatedTime") val latestUpdatedTime: Long,
+        @JsonProperty("name") override val name: String,
+        @JsonProperty("url") override val url: String,
+        @JsonProperty("apiName") override val apiName: String,
+        @JsonProperty("type") override var type: TvType? = null,
+        @JsonProperty("posterUrl") override var posterUrl: String?,
+        @JsonProperty("year") val year: Int?,
+        @JsonProperty("quality") override var quality: SearchQuality? = null,
+        @JsonProperty("posterHeaders") override var posterHeaders: Map<String, String>? = null,
+    ) : SearchResponse {
+        fun toLibraryItem(): SyncAPI.LibraryItem? {
+            return SyncAPI.LibraryItem(
+                name,
+                url,
+                id?.toString() ?: return null,
+                null,
+                null,
+                null,
+                latestUpdatedTime,
+                apiName, type, posterUrl, posterHeaders, quality, this.id
+            )
+        }
+    }
+
     data class ResumeWatchingResult(
         @JsonProperty("name") override val name: String,
         @JsonProperty("url") override val url: String,
@@ -577,6 +605,29 @@ object DataStoreHelper {
     fun getSubscribedData(id: Int?): SubscribedData? {
         if (id == null) return null
         return getKey("$currentAccount/$RESULT_SUBSCRIBED_STATE_DATA", id.toString())
+    }
+
+    fun getAllFavorites(): List<FavoritesData> {
+        return getKeys("$currentAccount/$RESULT_FAVORITES_STATE_DATA")?.mapNotNull {
+            getKey(it)
+        } ?: emptyList()
+    }
+
+    fun removeFavoritesData(id: Int?) {
+        if (id == null) return
+        AccountManager.localListApi.requireLibraryRefresh = true
+        removeKey("$currentAccount/$RESULT_FAVORITES_STATE_DATA", id.toString())
+    }
+
+    fun setFavoritesData(id: Int?, data: FavoritesData) {
+        if (id == null) return
+        setKey("$currentAccount/$RESULT_FAVORITES_STATE_DATA", id.toString(), data)
+        AccountManager.localListApi.requireLibraryRefresh = true
+    }
+
+    fun getFavoritesData(id: Int?): FavoritesData? {
+        if (id == null) return null
+        return getKey("$currentAccount/$RESULT_FAVORITES_STATE_DATA", id.toString())
     }
 
     fun setViewPos(id: Int?, pos: Long, dur: Long) {

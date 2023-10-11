@@ -445,6 +445,20 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                     ?: txt(R.string.no_data).asStringNull(context) ?: ""
                 CommonActivity.showToast(txt(message, name), Toast.LENGTH_SHORT)
             }
+            resultFavorite.setOnClickListener {
+                val isFavorite =
+                    viewModel.toggleFavoriteStatus() ?: return@setOnClickListener
+
+                val message = if (isFavorite) {
+                    R.string.favorite_added
+                } else {
+                    R.string.favorite_removed
+                }
+
+                val name = (viewModel.page.value as? Resource.Success)?.value?.title
+                    ?: txt(R.string.no_data).asStringNull(context) ?: ""
+                CommonActivity.showToast(txt(message, name), Toast.LENGTH_SHORT)
+            }
             mediaRouteButton.apply {
                 val chromecastSupport = api?.hasChromecastSupport == true
                 alpha = if (chromecastSupport) 1f else 0.3f
@@ -562,6 +576,19 @@ open class ResultFragmentPhone : FullScreenPlayer() {
             }
 
             binding?.resultSubscribe?.setImageResource(drawable)
+        }
+
+        observeNullable(viewModel.favoriteStatus) { isFavorite ->
+            binding?.resultFavorite?.isVisible = isFavorite != null
+            if (isFavorite == null) return@observeNullable
+
+            val drawable = if (isFavorite) {
+                R.drawable.ic_baseline_favorite_24
+            } else {
+                R.drawable.ic_baseline_favorite_border_24
+            }
+
+            binding?.resultFavorite?.setImageResource(drawable)
         }
 
         observe(viewModel.trailers) { trailers ->
