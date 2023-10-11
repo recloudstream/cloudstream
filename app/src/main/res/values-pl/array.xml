@@ -203,12 +203,15 @@
 
     <string-array name="themes_overlay_names">
         <item>Normalny</item>
+        <item>Żółty mniszek lekarski</item>
         <item>Goździk różowy</item>
+        <item>Pomarańczowy</item>
         <item>Ciemnozielony</item>
         <item>Kasztanowaty</item>
         <item>Ciemnoniebieski</item>
         <item>Szary</item>
         <item>Biały</item>
+        <item>Fajny niebieski</item>
         <item>Brązowy</item>
         <item>Niebieski</item>
         <item>Czerwony</item>
@@ -223,12 +226,15 @@
     </string-array>
     <string-array name="themes_overlay_names_values">
         <item>Normal</item>
+        <item>DandelionYellow</item>
         <item>CarnationPink</item>
+        <item>Orange</item>
         <item>DarkGreen</item>
         <item>Maroon</item>
         <item>NavyBlue</item>
         <item>Grey</item>
         <item>White</item>
+        <item>CoolBlue</item>
         <item>Brown</item>
         <item>Blue</item>
         <item>Red</item>

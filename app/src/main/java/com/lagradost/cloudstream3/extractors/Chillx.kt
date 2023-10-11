@@ -29,7 +29,7 @@ open class Chillx : ExtractorApi() {
     override val requiresReferer = true
 
     companion object {
-        private const val KEY = "m4H6D9%0\$N&F6rQ&"
+        private const val KEY = "eN0^>\$^#M08uFv%c"
     }
 
     override suspend fun getUrl(

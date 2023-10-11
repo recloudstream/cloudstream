@@ -151,7 +151,8 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                         startPosition = 0L,
                         subtitles = emptySet(),
                         subtitle = null,
-                        autoPlay = false
+                        autoPlay = false,
+                        preview = false
                     )
                     true
                 } ?: run {

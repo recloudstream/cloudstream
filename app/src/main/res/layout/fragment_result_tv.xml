@@ -535,128 +535,150 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
-    <FrameLayout
-        android:visibility="gone"
-        tools:visibility="visible"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/episodes_shadow"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="end"
-            android:clickable="false"
-            android:focusable="false"
-            android:focusableInTouchMode="false"
-            android:importantForAccessibility="no"
-            android:src="@drawable/episodes_shadow"/>
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="end"
-            android:clickable="false"
-            android:focusable="false"
-            android:focusableInTouchMode="false"
-            android:importantForAccessibility="no"
-            android:src="@drawable/episodes_shadow"/>
-    </FrameLayout>
-
-
-    <LinearLayout
-        android:id="@+id/episode_holder_tv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-
+        android:layout_height="match_parent"
         android:layout_gravity="end"
-        android:orientation="horizontal"
-        android:paddingStart="@dimen/result_padding"
-        android:paddingEnd="@dimen/result_padding"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="RtlHardcoded"
-        tools:visibility="gone">
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/result_season_selection"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:clipToPadding="false"
-
-            android:descendantFocusability="afterDescendants"
-            android:nextFocusLeft="@id/result_episodes_show"
-            android:nextFocusRight="@id/result_range_selection"
-            android:orientation="vertical"
-            android:paddingVertical="@dimen/result_padding"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            tools:listitem="@layout/result_selection" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/result_range_selection"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:clipToPadding="false"
-            android:descendantFocusability="afterDescendants"
-
-            android:nextFocusLeft="@id/result_season_selection"
-            android:nextFocusRight="@id/result_dub_selection"
-            android:orientation="vertical"
-            android:paddingVertical="@dimen/result_padding"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            tools:listitem="@layout/result_selection"
-            tools:visibility="visible" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/result_dub_selection"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:clipToPadding="false"
-
-            android:descendantFocusability="afterDescendants"
-            android:nextFocusLeft="@id/result_range_selection"
-            android:nextFocusRight="@id/result_episodes"
-            android:orientation="vertical"
-            android:paddingVertical="@dimen/result_padding"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            tools:listitem="@layout/result_selection" />
+        tools:visibility="visible">
 
 
-        <!--<androidx.core.widget.ContentLoadingProgressBar
-                android:id="@+id/result_episode_loading"
+        <!--
+         These two shadow spaces are used to create a view which always x% bigger
+         than the episode_holder_tv. This is required for creating a consistent shadow.
+        -->
+        <Space
+            android:id="@+id/shadow_space_1"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintEnd_toEndOf="@+id/episode_holder_tv"
+            app:layout_constraintStart_toStartOf="@+id/episode_holder_tv" />
 
-                style="@style/Widget.AppCompat.ProgressBar"
-                android:layout_gravity="center"
-                android:layout_width="50dp"
-                android:layout_height="50dp" />-->
+        <!--
+        The dimension ratio should and episodes_shadow centerX should add up to
+        100% for the best results. For example (100:80 + 0.2) or (100:70 + 0.3).
+        Bigger centerX => Larger fade distance.
+         -->
+        <Space
+            android:id="@+id/shadow_space_2"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintDimensionRatio="100:80"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/shadow_space_1" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/result_episodes"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:clipToPadding="false"
-            android:descendantFocusability="afterDescendants"
-            android:nextFocusLeft="@id/result_dub_selection"
-            android:orientation="vertical"
-            android:paddingVertical="@dimen/result_padding"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            tools:listitem="@layout/result_episode" />
-
-        <View
-            android:id="@+id/temporary_no_focus"
-            android:layout_width="1dp"
-            android:layout_height="1dp"
+        <ImageView
+            android:id="@+id/episodes_shadow_background"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="end"
+            android:clickable="false"
             android:focusable="false"
-            android:nextFocusLeft="@id/temporary_no_focus"
-            android:nextFocusRight="@id/temporary_no_focus"
-            android:nextFocusUp="@id/temporary_no_focus"
-            android:nextFocusDown="@id/temporary_no_focus" />
-    </LinearLayout>
+            android:focusableInTouchMode="false"
+            android:importantForAccessibility="no"
+            android:src="@drawable/episodes_shadow"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/shadow_space_2"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <LinearLayout
+            android:id="@+id/episode_holder_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:orientation="horizontal"
+            android:paddingStart="@dimen/result_padding"
+            android:paddingEnd="@dimen/result_padding"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="RtlHardcoded"
+            tools:visibility="visible">
+
+            <com.lagradost.cloudstream3.ui.MaxRecyclerView
+                android:id="@+id/result_dub_selection"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clipToPadding="false"
+                android:descendantFocusability="afterDescendants"
+                android:nextFocusLeft="@id/result_episodes_show"
+                android:nextFocusRight="@id/result_season_selection"
+                android:orientation="vertical"
+                android:paddingVertical="@dimen/result_padding"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:listitem="@layout/result_selection"
+                tools:visibility="gone" />
+
+            <com.lagradost.cloudstream3.ui.MaxRecyclerView
+                android:id="@+id/result_season_selection"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clipToPadding="false"
+                android:descendantFocusability="afterDescendants"
+                android:nextFocusLeft="@id/result_dub_selection"
+                android:nextFocusRight="@id/result_range_selection"
+                android:orientation="vertical"
+                android:paddingVertical="@dimen/result_padding"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:listitem="@layout/result_selection"
+                tools:visibility="gone" />
+
+            <com.lagradost.cloudstream3.ui.MaxRecyclerView
+                android:id="@+id/result_range_selection"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clipToPadding="false"
+                android:descendantFocusability="afterDescendants"
+                android:nextFocusLeft="@id/result_season_selection"
+                android:nextFocusRight="@id/result_episodes"
+                android:orientation="vertical"
+                android:paddingVertical="@dimen/result_padding"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:listitem="@layout/result_selection"
+                tools:visibility="visible" />
+
+
+            <!--<androidx.core.widget.ContentLoadingProgressBar
+                    android:id="@+id/result_episode_loading"
+
+                    style="@style/Widget.AppCompat.ProgressBar"
+                    android:layout_gravity="center"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp" />-->
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/result_episodes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clipToPadding="false"
+                android:descendantFocusability="afterDescendants"
+                android:nextFocusLeft="@id/result_range_selection"
+                android:orientation="vertical"
+                android:paddingVertical="@dimen/result_padding"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:listitem="@layout/result_episode" />
+
+            <View
+                android:id="@+id/temporary_no_focus"
+                android:layout_width="1dp"
+                android:layout_height="1dp"
+                android:focusable="false"
+                android:nextFocusLeft="@id/temporary_no_focus"
+                android:nextFocusRight="@id/temporary_no_focus"
+                android:nextFocusUp="@id/temporary_no_focus"
+                android:nextFocusDown="@id/temporary_no_focus" />
+        </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-
 
         <LinearLayout
             android:layout_width="match_parent"

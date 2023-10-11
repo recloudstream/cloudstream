@@ -71,7 +71,7 @@ object M3u8Helper2 {
     private val QUALITY_REGEX =
         Regex("""#EXT-X-STREAM-INF:(?:(?:.*?(?:RESOLUTION=\d+x(\d+)).*?\s+(.*))|(?:.*?\s+(.*)))""")
     private val TS_EXTENSION_REGEX =
-        Regex("""#EXTINF:.*\n(.+?\n)""") // fuck it we ball, who cares about the type anyways
+        Regex("""#EXTINF:(([0-9]*[.])?[0-9]+|).*\n(.+?\n)""") // fuck it we ball, who cares about the type anyways
         //Regex("""(.*\.(ts|jpg|html).*)""") //.jpg here 'case vizcloud uses .jpg instead of .ts
 
     private fun absoluteExtensionDetermination(url: String): String? {
@@ -115,11 +115,20 @@ object M3u8Helper2 {
 
     private fun selectBest(qualities: List<M3u8Helper.M3u8Stream>): M3u8Helper.M3u8Stream? {
         val result = qualities.sortedBy {
-            if (it.quality != null && it.quality <= 1080) it.quality else 0
-        }.filter {
+            it.quality ?: Qualities.Unknown.value //if (it.quality != null && it.quality <= 1080)  else 0
+        }/*.filter {
             listOf("m3u", "m3u8").contains(absoluteExtensionDetermination(it.streamUrl))
-        }
+        }*/
         return result.lastOrNull()
+    }
+
+    private fun selectWorst(qualities: List<M3u8Helper.M3u8Stream>): M3u8Helper.M3u8Stream? {
+        val result = qualities.sortedBy {
+            it.quality ?: Qualities.Unknown.value //if (it.quality != null && it.quality <= 1080)  else 0
+        }/*.filter {
+            listOf("m3u", "m3u8").contains(absoluteExtensionDetermination(it.streamUrl))
+        }*/
+        return result.firstOrNull()
     }
 
     private fun getParentLink(uri: String): String {
@@ -173,14 +182,20 @@ object M3u8Helper2 {
         return list
     }
 
+    data class TsLink(
+        val url : String,
+        val time : Double?,
+    )
+
     data class LazyHlsDownloadData(
         private val encryptionData: ByteArray,
         private val encryptionIv: ByteArray,
-        private val isEncrypted: Boolean,
-        private val allTsLinks: List<String>,
-        private val relativeUrl: String,
-        private val headers: Map<String, String>,
+        val isEncrypted: Boolean,
+        val allTsLinks: List<TsLink>,
+        val relativeUrl: String,
+        val headers: Map<String, String>,
     ) {
+
         val size get() = allTsLinks.size
 
         suspend fun resolveLinkWhileSafe(
@@ -228,9 +243,9 @@ object M3u8Helper2 {
         @Throws
         suspend fun resolveLink(index: Int): ByteArray {
             if (index < 0 || index >= size) throw IllegalArgumentException("index must be in the bounds of the ts")
-            val url = allTsLinks[index]
+            val ts = allTsLinks[index]
 
-            val tsResponse = app.get(url, headers = headers, verify = false)
+            val tsResponse = app.get(ts.url, headers = headers, verify = false)
             val tsData = tsResponse.body.bytes()
             if (tsData.isEmpty()) throw ErrorLoadingException("no data")
 
@@ -244,15 +259,16 @@ object M3u8Helper2 {
 
     @Throws
     suspend fun hslLazy(
-        qualities: List<M3u8Helper.M3u8Stream>
+        qualities: List<M3u8Helper.M3u8Stream>, selectBest : Boolean = true
     ): LazyHlsDownloadData {
         if (qualities.isEmpty()) throw IllegalArgumentException("qualities must be non empty")
-        val selected = selectBest(qualities) ?: qualities.first()
+        val selected = if(selectBest) { selectBest(qualities) } else { selectWorst(qualities) } ?: qualities.first()
         val headers = selected.headers
         val streams = qualities.map { m3u8Generation(it, false) }.flatten()
         // this selects the best quality of the qualities offered,
         // due to the recursive nature of m3u8, we only go 2 depth
-        val secondSelection = selectBest(streams.ifEmpty { listOf(selected) })
+        val innerStreams = streams.ifEmpty { listOf(selected) }
+        val secondSelection = if(selectBest) { selectBest(innerStreams) } else { selectWorst(innerStreams) }
             ?: throw IllegalArgumentException("qualities has no streams")
 
         val m3u8Response =
@@ -285,12 +301,14 @@ object M3u8Helper2 {
         }
         val relativeUrl = getParentLink(secondSelection.streamUrl)
         val allTsList = TS_EXTENSION_REGEX.findAll(m3u8Response + "\n").map { ts ->
-            val value = ts.groupValues[1]
-            if (isNotCompleteUrl(value)) {
+            val time = ts.groupValues[1]
+            val value = ts.groupValues[3]
+            val url = if (isNotCompleteUrl(value)) {
                 "$relativeUrl/${value}"
             } else {
                 value
             }
+            TsLink(url = url, time = time.toDoubleOrNull())
         }.toList()
         if (allTsList.isEmpty()) throw IllegalArgumentException("ts must be non empty")
 

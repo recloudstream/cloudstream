@@ -114,10 +114,20 @@ class ResultFragmentTv : Fragment() {
         }
     }
 
-    private fun hasNoFocus(): Boolean {
-        val focus = activity?.currentFocus
-        if (focus == null || !focus.isVisible) return true
-        return focus == binding?.resultRoot
+//    private fun hasNoFocus(): Boolean {
+//        val focus = activity?.currentFocus
+//        if (focus == null || !focus.isVisible) return true
+//        return focus == binding?.resultRoot
+//    }
+
+    /**
+     * Force focus any play button.
+     * Note that this will steal any focus if the episode loading is too slow (unlikely).
+     */
+    private fun focusPlayButton() {
+        binding?.resultPlayMovie?.requestFocus()
+        binding?.resultPlaySeries?.requestFocus()
+        binding?.resultResumeSeries?.requestFocus()
     }
 
     private fun setRecommendations(rec: List<SearchResponse>?, validApiName: String?) {
@@ -177,7 +187,7 @@ class ResultFragmentTv : Fragment() {
             isVisible = true
         }
 
-        this.animate().alpha(if (turnVisible) 1.0f else 0.0f).apply {
+        this.animate().alpha(if (turnVisible) 0.97f else 0.0f).apply {
             duration = 200
             interpolator = DecelerateInterpolator()
             setListener(object : Animator.AnimatorListener {
@@ -206,11 +216,9 @@ class ResultFragmentTv : Fragment() {
             episodesShadow.fade(show)
             episodeHolderTv.fade(show)
             if (episodesShadow.isRtl()) {
-                episodesShadow.scaleX = -1.0f
-                episodesShadow.scaleY = -1.0f
+                episodesShadowBackground.scaleX = -1f
             } else {
-                episodesShadow.scaleX = 1.0f
-                episodesShadow.scaleY = 1.0f
+                episodesShadowBackground.scaleX = 1f
             }
         }
     }
@@ -294,9 +302,9 @@ class ResultFragmentTv : Fragment() {
                 toggleEpisodes(true)
                 binding?.apply {
                     val views = listOf(
+                        resultDubSelection,
                         resultSeasonSelection,
                         resultRangeSelection,
-                        resultDubSelection,
                         resultEpisodes,
                         resultPlayTrailer,
                     )
@@ -413,7 +421,13 @@ class ResultFragmentTv : Fragment() {
                 setHorizontal()
             }
 
-            resultCastItems.adapter = ActorAdaptor {
+            val aboveCast = listOf(
+                binding?.resultEpisodesShow,
+                binding?.resultBookmarkButton,
+            ).firstOrNull {
+                it?.isVisible == true
+            }
+            resultCastItems.adapter = ActorAdaptor(aboveCast?.id) {
                 toggleEpisodes(false)
             }
         }
@@ -454,9 +468,7 @@ class ResultFragmentTv : Fragment() {
                 resultPlaySeries.isVisible = false
                 resultResumeSeries.isVisible = true
 
-                if (hasNoFocus()) {
-                    resultResumeSeries.requestFocus()
-                }
+                focusPlayButton()
 
                 resultResumeSeries.text =
                     if (resume.isMovie) context?.getString(R.string.play_movie_button) else context?.getNameFull(
@@ -539,9 +551,7 @@ class ResultFragmentTv : Fragment() {
                         )
                         return@setOnLongClickListener true
                     }
-                    if (hasNoFocus()) {
-                        resultPlayMovie.requestFocus()
-                    }
+                    focusPlayButton()
                 }
             }
         }
@@ -636,6 +646,9 @@ class ResultFragmentTv : Fragment() {
                     .show()
             }
         }
+
+        // Used to request focus the first time the episodes are loaded.
+        var hasLoadedEpisodesOnce = false
         observeNullable(viewModel.episodes) { episodes ->
             binding?.apply {
                 resultEpisodes.isVisible = episodes is Resource.Success
@@ -662,6 +675,10 @@ class ResultFragmentTv : Fragment() {
                                 EpisodeClickEvent(ACTION_SHOW_OPTIONS, first)
                             )
                             return@setOnLongClickListener true
+                        }
+                        if (!hasLoadedEpisodesOnce) {
+                            hasLoadedEpisodesOnce = true
+                            focusPlayButton()
                         }
                     }
 

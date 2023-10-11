@@ -110,4 +110,9 @@ class DownloadedPlayerActivity : AppCompatActivity() {
             return
         }
     }
+
+    override fun onResume() {
+        super.onResume()
+        CommonActivity.setActivityInstance(this)
+    }
 }

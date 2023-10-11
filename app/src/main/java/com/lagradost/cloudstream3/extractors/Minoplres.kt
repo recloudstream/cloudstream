@@ -7,21 +7,12 @@ import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.M3u8Helper
 
-class SpeedoStream2 : SpeedoStream() {
-    override val mainUrl = "https://speedostream.mom"
-}
+open class Minoplres : ExtractorApi() {
 
-class SpeedoStream1 : SpeedoStream() {
-    override val mainUrl = "https://speedostream.pm"
-}
-
-open class SpeedoStream : ExtractorApi() {
-    override val name = "SpeedoStream"
-    override val mainUrl = "https://speedostream.bond"
+    override val name = "Minoplres" // formerly SpeedoStream
     override val requiresReferer = true
-
-    // .bond, .pm, .mom redirect to .bond
-    private val hostUrl = "https://speedostream.bond"
+    override val mainUrl = "https://minoplres.xyz" // formerly speedostream.bond
+    private val hostUrl = "https://minoplres.xyz"
 
     override suspend fun getUrl(url: String, referer: String?): List<ExtractorLink> {
         val sources = mutableListOf<ExtractorLink>()

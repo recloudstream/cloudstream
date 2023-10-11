@@ -84,7 +84,8 @@
                 android:nextFocusLeft="@id/main_search"
                 android:nextFocusRight="@id/main_search"
                 android:nextFocusUp="@id/nav_rail_view"
-                android:nextFocusDown="@id/search_autofit_results"
+                android:nextFocusDown="@id/tvtypes_chips_scroll"
+                android:tag = "@string/tv_no_focus_tag"
                 android:src="@drawable/ic_baseline_tune_24"
                 app:tint="?attr/textColor" />
         </FrameLayout>
@@ -99,7 +100,7 @@
         android:id="@+id/search_autofit_results"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-
+        android:layout_marginStart="@dimen/navbar_width"
         android:background="?attr/primaryBlackBackground"
         android:clipToPadding="false"
         android:descendantFocusability="afterDescendants"
@@ -141,6 +142,7 @@
             android:nextFocusLeft="@id/nav_rail_view"
             android:nextFocusUp="@id/tvtypes_chips"
             android:nextFocusDown="@id/search_clear_call_history"
+            android:tag = "@string/tv_no_focus_tag"
             android:paddingBottom="50dp"
             android:visibility="visible"
             tools:listitem="@layout/search_history_item" />

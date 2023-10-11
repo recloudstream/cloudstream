@@ -15,6 +15,8 @@
     <uses-permission android:name="android.permission.UPDATE_PACKAGES_WITHOUT_USER_ACTION" /> <!-- Used for updates without prompt -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" /> <!-- Used for update service -->
 
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
+
     <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" /> <!-- Required for getting arbitrary Aniyomi packages  -->
     <!-- Fixes android tv fuckery -->
     <uses-feature
@@ -61,7 +63,9 @@
             android:exported="true"
             android:resizeableActivity="true"
             android:screenOrientation="userLandscape"
-            android:supportsPictureInPicture="true">
+            android:supportsPictureInPicture="true"
+            android:taskAffinity="com.lagradost.cloudstream3.downloadedplayer"
+            android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -175,6 +179,7 @@
         </receiver>
 
         <service
+            android:foregroundServiceType="dataSync"
             android:name=".services.VideoDownloadService"
             android:enabled="true"
             android:exported="false" />
@@ -184,6 +189,7 @@
             android:exported="false" />
 
         <service
+            android:foregroundServiceType="dataSync"
             android:name=".utils.PackageInstallerService"
             android:exported="false" />
 

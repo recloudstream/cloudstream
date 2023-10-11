@@ -25,7 +25,7 @@ class ViewpagerAdapter(
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
             is PageViewHolder -> {
-                holder.bind(pages[position], unbound.remove(position))
+                holder.bind(pages[position], position, unbound.remove(position))
             }
         }
     }
@@ -43,7 +43,8 @@ class ViewpagerAdapter(
 
     inner class PageViewHolder(private val binding: LibraryViewpagerPageBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(page: SyncAPI.Page, rebind: Boolean) {
+        fun bind(page: SyncAPI.Page, position: Int, rebind: Boolean) {
+            binding.pageRecyclerview.tag = position
             binding.pageRecyclerview.apply {
                 spanCount =
                     this@PageViewHolder.itemView.context.getSpanCount() ?: 3

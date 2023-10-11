@@ -33,6 +33,7 @@ import com.lagradost.cloudstream3.ui.search.SearchAdapter
 import com.lagradost.cloudstream3.ui.search.SearchClickCallback
 import com.lagradost.cloudstream3.ui.search.SearchHelper
 import com.lagradost.cloudstream3.ui.search.SearchViewModel
+import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTrueTvSettings
 import com.lagradost.cloudstream3.utils.AppUtils.ownShow
 import com.lagradost.cloudstream3.utils.UIHelper
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
@@ -267,6 +268,10 @@ class QuickSearchFragment : Fragment() {
         //}
         binding?.quickSearchBack?.setOnClickListener {
             activity?.popCurrentPage()
+        }
+
+        if (isTrueTvSettings()) {
+            binding?.quickSearch?.requestFocus()
         }
 
         arguments?.getString(AUTOSEARCH_KEY)?.let {

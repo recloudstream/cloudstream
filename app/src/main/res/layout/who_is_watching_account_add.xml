@@ -11,6 +11,7 @@
     android:foreground="?attr/selectableItemBackgroundBorderless"
     app:cardCornerRadius="@dimen/rounded_image_radius"
     android:layout_margin="5dp"
+    android:focusable="true"
     app:layout_constraintBottom_toBottomOf="parent"
     app:layout_constraintDimensionRatio="1"
     app:layout_constraintEnd_toEndOf="parent"

@@ -12,7 +12,6 @@ import com.lagradost.cloudstream3.APIHolder.filterSearchResultByFilmQuality
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
 import com.lagradost.cloudstream3.AcraApplication.Companion.context
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
-import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.CommonActivity.activity
 import com.lagradost.cloudstream3.HomePageList
 import com.lagradost.cloudstream3.LoadResponse
@@ -49,7 +48,6 @@ import com.lagradost.cloudstream3.utils.DataStoreHelper.getBookmarkedData
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getLastWatched
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getResultWatchState
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
-import com.lagradost.cloudstream3.utils.USER_SELECTED_HOMEPAGE_API
 import com.lagradost.cloudstream3.utils.VideoDownloadHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -171,10 +169,7 @@ class HomeViewModel : ViewModel() {
         currentWatchTypes.remove(WatchType.NONE)
 
         if (currentWatchTypes.size <= 0) {
-            setKey(
-                HOME_BOOKMARK_VALUE_LIST,
-                intArrayOf()
-            )
+            DataStoreHelper.homeBookmarkedList = intArrayOf()
             _availableWatchStatusTypes.postValue(setOf<WatchType>() to setOf())
             _bookmarks.postValue(Pair(false, ArrayList()))
             return@launchSafe
@@ -182,16 +177,14 @@ class HomeViewModel : ViewModel() {
 
         val watchPrefNotNull = preferredWatchStatus ?: EnumSet.of(currentWatchTypes.first())
         //if (currentWatchTypes.any { watchPrefNotNull.contains(it) }) watchPrefNotNull else listOf(currentWatchTypes.first())
-        setKey(
-            HOME_BOOKMARK_VALUE_LIST,
-            watchPrefNotNull.map { it.internalId }.toIntArray()
-        )
+
+        DataStoreHelper.homeBookmarkedList = watchPrefNotNull.map { it.internalId }.toIntArray()
         _availableWatchStatusTypes.postValue(
-            Pair(
-                watchPrefNotNull,
-                currentWatchTypes,
+
+            watchPrefNotNull to
+                    currentWatchTypes,
+
             )
-        )
 
         val list = withContext(Dispatchers.IO) {
             watchStatusIds.filter { watchPrefNotNull.contains(it.second) }
@@ -426,23 +419,29 @@ class HomeViewModel : ViewModel() {
     }
 
     private fun afterPluginsLoaded(forceReload: Boolean) {
-        loadAndCancel(getKey(USER_SELECTED_HOMEPAGE_API), forceReload)
+        loadAndCancel(DataStoreHelper.currentHomePage, forceReload)
     }
 
     private fun afterMainPluginsLoaded(unused: Boolean = false) {
-        loadAndCancel(getKey(USER_SELECTED_HOMEPAGE_API), false)
+        loadAndCancel(DataStoreHelper.currentHomePage, false)
+    }
+
+    private fun reloadHome(unused: Boolean = false) {
+        loadAndCancel(DataStoreHelper.currentHomePage, true)
     }
 
     init {
         MainActivity.bookmarksUpdatedEvent += ::bookmarksUpdated
         MainActivity.afterPluginsLoadedEvent += ::afterPluginsLoaded
         MainActivity.mainPluginsLoadedEvent += ::afterMainPluginsLoaded
+        MainActivity.reloadHomeEvent += ::reloadHome
     }
 
     override fun onCleared() {
         MainActivity.bookmarksUpdatedEvent -= ::bookmarksUpdated
         MainActivity.afterPluginsLoadedEvent -= ::afterPluginsLoaded
         MainActivity.mainPluginsLoadedEvent -= ::afterMainPluginsLoaded
+        MainActivity.reloadHomeEvent -= ::reloadHome
         super.onCleared()
     }
 
@@ -458,7 +457,7 @@ class HomeViewModel : ViewModel() {
 
     fun loadStoredData() {
         val list = EnumSet.noneOf(WatchType::class.java)
-        getKey<IntArray>(HOME_BOOKMARK_VALUE_LIST)?.map { WatchType.fromInternalId(it) }?.let {
+        DataStoreHelper.homeBookmarkedList.map { WatchType.fromInternalId(it) }.let {
             list.addAll(it)
         }
         loadStoredData(list)
@@ -495,7 +494,7 @@ class HomeViewModel : ViewModel() {
             val api = getApiFromNameNull(preferredApiName)
             if (preferredApiName == noneApi.name) {
                 // just set to random
-                if (fromUI) setKey(USER_SELECTED_HOMEPAGE_API, noneApi.name)
+                if (fromUI) DataStoreHelper.currentHomePage = noneApi.name
                 loadAndCancel(noneApi)
             } else if (preferredApiName == randomApi.name) {
                 // randomize the api, if none exist like if not loaded or not installed
@@ -506,7 +505,7 @@ class HomeViewModel : ViewModel() {
                 } else {
                     val apiRandom = validAPIs.random()
                     loadAndCancel(apiRandom)
-                    if (fromUI) setKey(USER_SELECTED_HOMEPAGE_API, apiRandom.name)
+                    if (fromUI) DataStoreHelper.currentHomePage = apiRandom.name
                 }
             } else if (api == null) {
                 // API is not found aka not loaded or removed, post the loading
@@ -520,7 +519,7 @@ class HomeViewModel : ViewModel() {
                 }
             } else {
                 // if the api is found, then set it to it and save key
-                if (fromUI) setKey(USER_SELECTED_HOMEPAGE_API, api.name)
+                if (fromUI) DataStoreHelper.currentHomePage = api.name
                 loadAndCancel(api)
             }
         }

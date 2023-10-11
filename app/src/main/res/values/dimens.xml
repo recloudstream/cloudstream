@@ -19,5 +19,5 @@
     <dimen name="navbar_width">62dp</dimen>
 
     <dimen name="download_size">50dp</dimen>
-
+    <dimen name="video_frame_width">1dp</dimen>
 </resources>

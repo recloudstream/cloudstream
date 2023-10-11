@@ -229,12 +229,15 @@
 
     <string-array name="themes_overlay_names">
         <item>Normal</item>
+        <item>Karahindiba sarı</item>
         <item>Karanfil Pembesi</item>
+        <item>Turuncu</item>
         <item>Koyu Yeşil</item>
         <item>Kestane</item>
         <item>Lacivert</item>
         <item>Gri</item>
         <item>Beyaz</item>
+        <item>Soğuk Mavi</item>
         <item>Kahverengi</item>
         <item>Soğuk</item>
         <item>Ateş</item>
@@ -249,12 +252,15 @@
     </string-array>
     <string-array name="themes_overlay_names_values">
         <item>Normal</item>
+        <item>DandelionYellow</item>
         <item>CarnationPink</item>
+        <item>Orange</item>
         <item>DarkGreen</item>
         <item>Maroon</item>
         <item>NavyBlue</item>
         <item>Grey</item>
         <item>White</item>
+        <item>CoolBlue</item>
         <item>Brown</item>
         <item>Blue</item>
         <item>Red</item>
