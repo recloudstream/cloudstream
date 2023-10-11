@@ -100,7 +100,7 @@ class CS3IPlayer : IPlayer {
     var simpleCacheSize = 0L
     var videoBufferMs = 0L
 
-    private val imageGenerator = PreviewGenerator()
+    val imageGenerator = IPreviewGenerator.new()
 
     private val seekActionTime = 30000L
 
@@ -205,7 +205,7 @@ class CS3IPlayer : IPlayer {
         subtitles: Set<SubtitleData>,
         subtitle: SubtitleData?,
         autoPlay: Boolean?,
-        preview : Boolean,
+        preview: Boolean,
     ) {
         Log.i(TAG, "loadPlayer")
         if (sameEpisode) {
@@ -224,24 +224,30 @@ class CS3IPlayer : IPlayer {
 
         // release the current exoplayer and cache
         releasePlayer()
+
         if (link != null) {
             // only video support atm
-            if (preview) {
-                imageGenerator.load(link, sameEpisode)
-            } else {
-                imageGenerator.clear(sameEpisode)
+            (imageGenerator as? PreviewGenerator)?.let { gen ->
+                if (preview) {
+                    gen.load(link, sameEpisode)
+                } else {
+                    gen.clear(sameEpisode)
+                }
             }
             loadOnlinePlayer(context, link)
         } else if (data != null) {
-            if (preview) {
-                imageGenerator.load(context, data, sameEpisode)
-            } else {
-                imageGenerator.clear(sameEpisode)
+            (imageGenerator as? PreviewGenerator)?.let { gen ->
+                if (preview) {
+                    gen.load(context, data, sameEpisode)
+                } else {
+                    gen.clear(sameEpisode)
+                }
             }
             loadOfflinePlayer(context, data)
         } else {
             throw IllegalArgumentException("Requires link or uri")
         }
+
     }
 
     override fun setActiveSubtitles(subtitles: Set<SubtitleData>) {
@@ -537,7 +543,10 @@ class CS3IPlayer : IPlayer {
          **/
         var preferredAudioTrackLanguage: String? = null
             get() {
-                return field ?: getKey("$currentAccount/$PREFERRED_AUDIO_LANGUAGE_KEY", field)?.also {
+                return field ?: getKey(
+                    "$currentAccount/$PREFERRED_AUDIO_LANGUAGE_KEY",
+                    field
+                )?.also {
                     field = it
                 }
             }

@@ -4,9 +4,12 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.media.MediaMetadataRetriever
 import android.net.Uri
+import android.os.Build
 import android.util.Log
 import androidx.annotation.WorkerThread
+import androidx.core.graphics.scale
 import com.lagradost.cloudstream3.mvvm.logError
+import com.lagradost.cloudstream3.ui.settings.SettingsFragment
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.ExtractorLinkType
@@ -25,21 +28,98 @@ import kotlin.math.log2
 const val MAX_LOD = 6
 const val MIN_LOD = 3
 
+data class ImageParams(
+    val width: Int,
+    val height: Int,
+) {
+    companion object {
+        val DEFAULT = ImageParams(200, 320)
+        fun new16by9(width: Int): ImageParams {
+            if (width < 100) {
+                return DEFAULT
+            }
+            return ImageParams(
+                width / 4,
+                (width * 9) / (4 * 16)
+            )
+        }
+    }
+
+    init {
+        assert(width > 0 && height > 0)
+    }
+}
+
 interface IPreviewGenerator {
     fun hasPreview(): Boolean
     fun getPreviewImage(fraction: Float): Bitmap?
     fun release()
 
+    var params: ImageParams
+
     var durationMs: Long
     var loadedImages: Int
+
+    companion object {
+        fun new(): IPreviewGenerator {
+            /** because TV has low ram + not show we disable this for now */
+            return if (SettingsFragment.isTrueTvSettings()) {
+                empty()
+            } else {
+                PreviewGenerator()
+            }
+        }
+
+        fun empty(): IPreviewGenerator {
+            return NoPreviewGenerator()
+        }
+    }
+}
+
+private fun rescale(image: Bitmap, params: ImageParams): Bitmap {
+    if (image.width <= params.width && image.height <= params.height) return image
+    val new = image.scale(params.width, params.height)
+    // throw away the old image
+    if (new != image) {
+        image.recycle()
+    }
+    return new
+}
+
+/** rescale to not take up as much memory */
+private fun MediaMetadataRetriever.image(timeUs: Long, params: ImageParams): Bitmap? {
+    /*if (timeUs <= 0 && Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+        try {
+            val primary = this.primaryImage
+            if (primary != null) {
+                return rescale(primary, params)
+            }
+        } catch (t: Throwable) {
+            logError(t)
+        }
+    }*/
+
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+        this.getScaledFrameAtTime(
+            timeUs,
+            MediaMetadataRetriever.OPTION_CLOSEST_SYNC,
+            params.width,
+            params.height
+        )
+    } else {
+        return rescale(this.getFrameAtTime(timeUs) ?: return null, params)
+    }
 }
 
 /** PreviewGenerator that hides the implementation details of the sub generators that is used, used for source switch cache */
 class PreviewGenerator : IPreviewGenerator {
+
     /** the most up to date generator, will always mirror the actual source in the player */
     private var currentGenerator: IPreviewGenerator = NoPreviewGenerator()
+
     /** the longest generated preview of the same episode */
     private var lastGenerator: IPreviewGenerator = NoPreviewGenerator()
+
     /** always NoPreviewGenerator, used as a cache for nothing */
     private val dummy: IPreviewGenerator = NoPreviewGenerator()
 
@@ -76,6 +156,14 @@ class PreviewGenerator : IPreviewGenerator {
         currentGenerator = NoPreviewGenerator()
     }
 
+    override var params: ImageParams = ImageParams.DEFAULT
+        set(value) {
+            field = value
+            lastGenerator.params = value
+            backupGenerator.params = value
+            currentGenerator.params = value
+        }
+
     override var durationMs: Long
         get() = currentGenerator.durationMs
         set(_) {}
@@ -110,13 +198,13 @@ class PreviewGenerator : IPreviewGenerator {
 
         when (link.type) {
             ExtractorLinkType.M3U8 -> {
-                currentGenerator = M3u8PreviewGenerator().apply {
+                currentGenerator = M3u8PreviewGenerator(params).apply {
                     load(url = link.url, headers = link.getAllHeaders())
                 }
             }
 
             ExtractorLinkType.VIDEO -> {
-                currentGenerator = Mp4PreviewGenerator().apply {
+                currentGenerator = Mp4PreviewGenerator(params).apply {
                     load(url = link.url, headers = link.getAllHeaders())
                 }
             }
@@ -129,21 +217,25 @@ class PreviewGenerator : IPreviewGenerator {
 
     fun load(context: Context, link: ExtractorUri, keepCache: Boolean) {
         clear(keepCache)
-        currentGenerator = Mp4PreviewGenerator().apply {
+        currentGenerator = Mp4PreviewGenerator(params).apply {
             load(keepCache = keepCache, context = context, uri = link.uri)
         }
     }
 }
 
+@Suppress("UNUSED_PARAMETER")
 private class NoPreviewGenerator : IPreviewGenerator {
     override fun hasPreview(): Boolean = false
     override fun getPreviewImage(fraction: Float): Bitmap? = null
     override fun release() = Unit
+    override var params: ImageParams
+        get() = ImageParams(0, 0)
+        set(value) {}
     override var durationMs: Long = 0L
     override var loadedImages: Int = 0
 }
 
-private class M3u8PreviewGenerator : IPreviewGenerator {
+private class M3u8PreviewGenerator(override var params: ImageParams) : IPreviewGenerator {
     // generated images 1:1 to idx of hsl
     private var images: Array<Bitmap?> = arrayOf()
 
@@ -194,6 +286,9 @@ private class M3u8PreviewGenerator : IPreviewGenerator {
     private fun clear() {
         synchronized(images) {
             currentJob?.cancel()
+            // for (i in images.indices) {
+            //     images[i]?.recycle()
+            // }
             images = arrayOf()
             prefixSum = arrayOf()
             loadedImages = 0
@@ -280,7 +375,7 @@ private class M3u8PreviewGenerator : IPreviewGenerator {
                             if (!isActive) {
                                 return@withContext
                             }
-                            val img = retriever.getFrameAtTime(0)
+                            val img = retriever.image(0, params)
                             if (!isActive) {
                                 return@withContext
                             }
@@ -308,7 +403,7 @@ private class M3u8PreviewGenerator : IPreviewGenerator {
     }
 }
 
-private class Mp4PreviewGenerator : IPreviewGenerator {
+private class Mp4PreviewGenerator(override var params: ImageParams) : IPreviewGenerator {
     // lod = level of detail where the number indicates how many ones there is
     // 2^(lod-1) = images
     private var loadedLod = 0
@@ -369,6 +464,10 @@ private class Mp4PreviewGenerator : IPreviewGenerator {
         synchronized(images) {
             loadedLod = 0
             loadedImages = 0
+            // for (i in images.indices) {
+            //    images[i]?.recycle()
+            //     images[i] = null
+            //}
             images.fill(null)
         }
     }
@@ -425,10 +524,7 @@ private class Mp4PreviewGenerator : IPreviewGenerator {
                 val fraction = (1.0f.div((1 shl l).toFloat()) + i * 1.0f.div(items.toFloat()))
                 Log.i(TAG, "Generating preview for ${fraction * 100}%")
                 val frame = durationUs * fraction
-                val img = retriever.getFrameAtTime(
-                    frame.toLong(),
-                    MediaMetadataRetriever.OPTION_CLOSEST_SYNC
-                )
+                val img = retriever.image(frame.toLong(), params);
                 if (!scope.isActive) return
                 if (img == null || img.width <= 1 || img.height <= 1) continue
                 synchronized(images) {
