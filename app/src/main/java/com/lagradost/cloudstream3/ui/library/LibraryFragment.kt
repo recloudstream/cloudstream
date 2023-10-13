@@ -8,12 +8,14 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.FOCUS_AFTER_DESCENDANTS
 import android.view.ViewGroup.FOCUS_BLOCK_DESCENDANTS
 import android.view.animation.AlphaAnimation
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
@@ -136,6 +138,13 @@ class LibraryFragment : Fragment() {
         binding?.libraryRoot?.findViewById<TextView>(R.id.search_src_text)?.apply {
             tag = "tv_no_focus_tag"
         }
+
+        // Set the color for the search exit icon to the correct theme text color
+        val searchExitIcon = binding?.mainSearch?.findViewById<ImageView>(androidx.appcompat.R.id.search_close_btn)
+        val searchExitIconColor = TypedValue()
+
+        activity?.theme?.resolveAttribute(android.R.attr.textColor, searchExitIconColor, true)
+        searchExitIcon?.setColorFilter(searchExitIconColor.data)
 
         binding?.mainSearch?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
