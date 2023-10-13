@@ -17,6 +17,7 @@
         android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+        android:focusable="true"
         android:padding="5dp">
         <!--app:cardCornerRadius="@dimen/roundedImageRadius"-->
         <FrameLayout
@@ -34,7 +35,6 @@
 
                     android:id="@+id/actor_image"
                     android:layout_width="match_parent"
-
                     android:layout_height="match_parent"
                     android:contentDescription="@string/episode_poster_img_des"
                     android:scaleType="centerCrop"

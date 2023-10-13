@@ -8,6 +8,7 @@
 
     android:layout_height="wrap_content"
     android:layout_marginBottom="10dp"
+    android:foreground="@drawable/outline_drawable"
     android:nextFocusRight="@id/download_button"
     app:cardBackgroundColor="?attr/boxItemBackground"
 

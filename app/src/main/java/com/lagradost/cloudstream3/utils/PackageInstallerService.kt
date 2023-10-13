@@ -1,12 +1,12 @@
 package com.lagradost.cloudstream3.utils
 
-import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC
 import android.os.Build
 import android.os.IBinder
 import android.util.Log
@@ -54,7 +54,11 @@ class PackageInstallerService : Service() {
             UPDATE_CHANNEL_NAME,
             UPDATE_CHANNEL_DESCRIPTION
         )
-        startForeground(UPDATE_NOTIFICATION_ID, baseNotification.build())
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            startForeground(UPDATE_NOTIFICATION_ID, baseNotification.build(), FOREGROUND_SERVICE_TYPE_DATA_SYNC)
+        } else{
+            startForeground(UPDATE_NOTIFICATION_ID, baseNotification.build())
+        }
     }
 
     private val updateLock = Mutex()

@@ -195,12 +195,15 @@
 
     <string-array name="themes_overlay_names">
         <item>Mặc định</item>
+        <item>bồ công anh màu vàng</item>
         <item>Hồng nhạt</item>
+        <item>Quả cam</item>
         <item>Xanh lam đậm</item>
         <item>Nâu sẫm</item>
         <item>Xanh lục</item>
         <item>Xám</item>
         <item>Trắng</item>
+        <item>Màu xanh mát</item>
         <item>Nâu</item>
         <item>Xanh lục nhạt</item>
         <item>Đỏ</item>
@@ -215,12 +218,15 @@
     </string-array>
     <string-array name="themes_overlay_names_values">
         <item>Normal</item>
+        <item>DandelionYellow</item>
         <item>CarnationPink</item>
+        <item>Orange</item>
         <item>DarkGreen</item>
         <item>Maroon</item>
         <item>NavyBlue</item>
         <item>Grey</item>
         <item>White</item>
+        <item>CoolBlue</item>
         <item>Brown</item>
         <item>Blue</item>
         <item>Red</item>

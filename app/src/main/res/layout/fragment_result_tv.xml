@@ -572,6 +572,7 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
             app:layout_constraintTop_toTopOf="@+id/shadow_space_1" />
 
         <ImageView
+            android:id="@+id/episodes_shadow_background"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_gravity="end"

@@ -194,12 +194,15 @@
 
     <string-array name="themes_overlay_names">
         <item>Normal</item>
+        <item>Diente de león amarilla</item>
         <item>Rosa clavel</item>
+        <item>Naranja</item>
         <item>Verde oscuro</item>
         <item>Vino</item>
         <item>Azul marino</item>
         <item>Gris</item>
         <item>Blanco</item>
+        <item>Azul fresco</item>
         <item>Marrón</item>
         <item>Fresco</item>
         <item>Fuego</item>
@@ -214,12 +217,15 @@
     </string-array>
     <string-array name="themes_overlay_names_values">
         <item>Normal</item>
+        <item>DandelionYellow</item>
         <item>CarnationPink</item>
+        <item>Orange</item>
         <item>DarkGreen</item>
         <item>Maroon</item>
         <item>NavyBlue</item>
         <item>Grey</item>
         <item>White</item>
+        <item>CoolBlue</item>
         <item>Brown</item>
         <item>Blue</item>
         <item>Red</item>

@@ -22,6 +22,7 @@
         android:layout_toStartOf="@id/priority_number"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:padding="10dp"
+        android:focusable="true"
         android:src="@drawable/baseline_remove_24" />
 
     <TextView
@@ -43,6 +44,7 @@
         android:layout_centerVertical="true"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:padding="10dp"
+        android:focusable="true"
         android:src="@drawable/ic_baseline_add_24" />
 
 </RelativeLayout>

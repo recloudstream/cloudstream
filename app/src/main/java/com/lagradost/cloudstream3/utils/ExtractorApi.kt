@@ -82,6 +82,7 @@ import com.lagradost.cloudstream3.extractors.Maxstream
 import com.lagradost.cloudstream3.extractors.Mcloud
 import com.lagradost.cloudstream3.extractors.Megacloud
 import com.lagradost.cloudstream3.extractors.Meownime
+import com.lagradost.cloudstream3.extractors.Minoplres
 import com.lagradost.cloudstream3.extractors.MixDrop
 import com.lagradost.cloudstream3.extractors.MixDropBz
 import com.lagradost.cloudstream3.extractors.MixDropCh
@@ -118,9 +119,6 @@ import com.lagradost.cloudstream3.extractors.Sbthe
 import com.lagradost.cloudstream3.extractors.Sendvid
 import com.lagradost.cloudstream3.extractors.ShaveTape
 import com.lagradost.cloudstream3.extractors.Solidfiles
-import com.lagradost.cloudstream3.extractors.SpeedoStream
-import com.lagradost.cloudstream3.extractors.SpeedoStream1
-import com.lagradost.cloudstream3.extractors.SpeedoStream2
 import com.lagradost.cloudstream3.extractors.Ssbstream
 import com.lagradost.cloudstream3.extractors.StreamM4u
 import com.lagradost.cloudstream3.extractors.StreamSB
@@ -379,6 +377,15 @@ open class ExtractorLink constructor(
 ) : VideoDownloadManager.IDownloadableMinimum {
     val isM3u8 : Boolean get() = type == ExtractorLinkType.M3U8
     val isDash : Boolean get() = type == ExtractorLinkType.DASH
+
+    fun getAllHeaders() : Map<String, String> {
+        if (referer.isBlank()) {
+            return headers
+        } else if (headers.keys.none { it.equals("referer", ignoreCase = true) }) {
+            return headers + mapOf("referer" to referer)
+        }
+        return headers
+    }
 
     constructor(
         source: String,
@@ -748,9 +755,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     Vido(),
     Linkbox(),
     Acefile(),
-    SpeedoStream(),
-    SpeedoStream1(),
-    SpeedoStream2(),
+    Minoplres(), // formerly SpeedoStream
     Zorofile(),
     Embedgram(),
     Mvidoo(),

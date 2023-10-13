@@ -10,7 +10,9 @@ import androidx.core.widget.doOnTextChanged
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.lagradost.cloudstream3.*
+import com.lagradost.cloudstream3.APIHolder.filterProviderByPreferredMedia
 import com.lagradost.cloudstream3.APIHolder.unixTimeMS
+import com.lagradost.cloudstream3.AcraApplication.Companion.context
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKeys
 import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
@@ -24,6 +26,7 @@ import com.lagradost.cloudstream3.syncproviders.AccountManager
 import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.WhoIsWatchingAdapter
+import com.lagradost.cloudstream3.ui.library.ListSorting
 import com.lagradost.cloudstream3.ui.result.FOCUS_SELF
 import com.lagradost.cloudstream3.ui.result.UiImage
 import com.lagradost.cloudstream3.ui.result.VideoWatchState
@@ -31,6 +34,8 @@ import com.lagradost.cloudstream3.ui.result.setImage
 import com.lagradost.cloudstream3.ui.result.setLinearListLayout
 import com.lagradost.cloudstream3.utils.AppUtils.setDefaultFocus
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
+import kotlin.reflect.KClass
+import kotlin.reflect.KProperty
 
 const val VIDEO_POS_DUR = "video_pos_dur"
 const val VIDEO_WATCH_STATE = "video_watch_state"
@@ -44,6 +49,28 @@ const val RESULT_EPISODE = "result_episode"
 const val RESULT_SEASON = "result_season"
 const val RESULT_DUB = "result_dub"
 
+
+class UserPreferenceDelegate<T : Any>(
+    private val key: String, private val default: T //, private val klass: KClass<T>
+) {
+    private val klass: KClass<out T> = default::class
+    private val realKey get() = "${DataStoreHelper.currentAccount}/$key"
+    operator fun getValue(self: Any?, property: KProperty<*>) =
+        AcraApplication.getKeyClass(realKey, klass.java) ?: default
+
+    operator fun setValue(
+        self: Any?,
+        property: KProperty<*>,
+        t: T?
+    ) {
+        if (t == null) {
+            removeKey(realKey)
+        } else {
+            AcraApplication.setKeyClass(realKey, t)
+        }
+    }
+}
+
 object DataStoreHelper {
     // be aware, don't change the index of these as Account uses the index for the art
     private val profileImages = arrayOf(
@@ -55,6 +82,49 @@ object DataStoreHelper {
         R.drawable.profile_bg_red,
         R.drawable.profile_bg_teal
     )
+
+    private var searchPreferenceProvidersStrings : List<String> by UserPreferenceDelegate(
+        /** java moment right here, as listOf()::class.java != List(0) { "" }::class.java */
+        "search_pref_providers", List(0) { "" }
+    )
+
+    private fun serializeTv(data : List<TvType>) : List<String> = data.map { it.name }
+
+    private fun deserializeTv(data : List<String>) : List<TvType> {
+        return data.mapNotNull { listName ->
+            TvType.values().firstOrNull { it.name == listName }
+        }
+    }
+
+    var searchPreferenceProviders : List<String>
+        get() {
+            val ret = searchPreferenceProvidersStrings
+            return ret.ifEmpty {
+                context?.filterProviderByPreferredMedia()?.map { it.name } ?: emptyList()
+            }
+        } set(value) {
+            searchPreferenceProvidersStrings = value
+        }
+
+    private var searchPreferenceTagsStrings : List<String> by UserPreferenceDelegate("search_pref_tags", listOf(TvType.Movie, TvType.TvSeries).map { it.name })
+    var searchPreferenceTags : List<TvType>
+        get() = deserializeTv(searchPreferenceTagsStrings)
+        set(value) {
+            searchPreferenceTagsStrings = serializeTv(value)
+        }
+
+
+    private var homePreferenceStrings : List<String> by UserPreferenceDelegate("home_pref_homepage", listOf(TvType.Movie, TvType.TvSeries).map { it.name })
+    var homePreference : List<TvType>
+        get() = deserializeTv(homePreferenceStrings)
+        set(value) {
+            homePreferenceStrings = serializeTv(value)
+        }
+
+    var homeBookmarkedList : IntArray by UserPreferenceDelegate("home_bookmarked_last_list", IntArray(0))
+    var playBackSpeed : Float by UserPreferenceDelegate("playback_speed", 1.0f)
+    var resizeMode : Int by UserPreferenceDelegate("resize_mode", 0)
+    var librarySortingMode : Int by UserPreferenceDelegate("library_sorting_mode", ListSorting.AlphabeticalA.ordinal)
 
     data class Account(
         @JsonProperty("keyIndex")
@@ -131,7 +201,6 @@ object DataStoreHelper {
 
                             // update UI
                             setAccount(getDefaultAccount(context), true)
-                            MainActivity.bookmarksUpdatedEvent(true)
                             dialog?.dismissSafe()
                         }
 
