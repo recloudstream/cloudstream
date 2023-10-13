@@ -102,6 +102,7 @@
                     app:queryBackground="@color/transparent"
                     app:queryHint="@string/search_hint"
                     app:searchIcon="@drawable/search_icon"
+                    app:closeIcon="@drawable/ic_baseline_close_24"
                     tools:ignore="RtlSymmetry">
 
                 </androidx.appcompat.widget.SearchView>

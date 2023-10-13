@@ -68,6 +68,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="center_vertical"
+                    android:layout_marginEnd="25dp"
 
                     android:iconifiedByDefault="false"
                     android:imeOptions="actionSearch"
@@ -81,6 +82,7 @@
                     app:queryBackground="@color/transparent"
                     app:queryHint="@string/search_hint"
                     app:searchIcon="@drawable/search_icon"
+                    app:closeIcon="@drawable/ic_baseline_close_24"
                     tools:ignore="RtlSymmetry">
 
                 </androidx.appcompat.widget.SearchView>

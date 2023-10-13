@@ -49,6 +49,8 @@
                     app:queryBackground="@color/transparent"
 
                     app:searchIcon="@drawable/search_icon"
+                    app:closeIcon="@drawable/ic_baseline_close_24"
+
                     android:paddingStart="-10dp"
                     android:iconifiedByDefault="false"
                     app:queryHint="@string/search_hint"
