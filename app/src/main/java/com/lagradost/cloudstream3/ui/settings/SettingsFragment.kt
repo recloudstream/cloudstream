@@ -187,13 +187,13 @@ class SettingsFragment : Fragment() {
         }
         binding?.apply {
             listOf(
-                settingsGeneral to R.id.action_navigation_settings_to_navigation_settings_general,
-                settingsPlayer to R.id.action_navigation_settings_to_navigation_settings_player,
-                settingsCredits to R.id.action_navigation_settings_to_navigation_settings_account,
-                settingsUi to R.id.action_navigation_settings_to_navigation_settings_ui,
-                settingsProviders to R.id.action_navigation_settings_to_navigation_settings_providers,
-                settingsUpdates to R.id.action_navigation_settings_to_navigation_settings_updates,
-                settingsExtensions to R.id.action_navigation_settings_to_navigation_settings_extensions,
+                settingsGeneral to R.id.action_navigation_global_to_navigation_settings_general,
+                settingsPlayer to R.id.action_navigation_global_to_navigation_settings_player,
+                settingsCredits to R.id.action_navigation_global_to_navigation_settings_account,
+                settingsUi to R.id.action_navigation_global_to_navigation_settings_ui,
+                settingsProviders to R.id.action_navigation_global_to_navigation_settings_providers,
+                settingsUpdates to R.id.action_navigation_global_to_navigation_settings_updates,
+                settingsExtensions to R.id.action_navigation_global_to_navigation_settings_extensions,
             ).forEach { (view, navigationId) ->
                 view.apply {
                     setOnClickListener {
