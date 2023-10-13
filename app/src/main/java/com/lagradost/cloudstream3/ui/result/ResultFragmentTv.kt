@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.DecelerateInterpolator
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
@@ -17,6 +18,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.lagradost.cloudstream3.APIHolder.updateHasTrailers
+import com.lagradost.cloudstream3.CommonActivity
 import com.lagradost.cloudstream3.DubStatus
 import com.lagradost.cloudstream3.LoadResponse
 import com.lagradost.cloudstream3.MainActivity.Companion.afterPluginsLoadedEvent
@@ -265,6 +267,7 @@ class ResultFragmentTv : Fragment() {
             resultEpisodesShow.onFocusChangeListener = rightListener
             resultDescription.onFocusChangeListener = leftListener
             resultBookmarkButton.onFocusChangeListener = leftListener
+            resultFavoriteButton.onFocusChangeListener = leftListener
             resultEpisodesShow.setOnClickListener {
                 // toggle, to make it more touch accessable just in case someone thinks that a
                 // tv layout is better but is using a touch device
@@ -283,7 +286,8 @@ class ResultFragmentTv : Fragment() {
                         resultPlaySeries,
                         resultResumeSeries,
                         resultPlayTrailer,
-                        resultBookmarkButton
+                        resultBookmarkButton,
+                        resultFavoriteButton
                     )
                     for (requestView in views) {
                         if (!requestView.isVisible) continue
@@ -424,6 +428,7 @@ class ResultFragmentTv : Fragment() {
             val aboveCast = listOf(
                 binding?.resultEpisodesShow,
                 binding?.resultBookmarkButton,
+                binding?.resultFavoriteButton,
             ).firstOrNull {
                 it?.isVisible == true
             }
@@ -528,6 +533,41 @@ class ResultFragmentTv : Fragment() {
                         {}) {
                         viewModel.updateWatchStatus(WatchType.values()[it])
                     }
+                }
+            }
+        }
+
+        observeNullable(viewModel.favoriteStatus) { isFavorite ->
+            binding?.resultFavoriteButton?.apply {
+                isVisible = isFavorite != null
+                if (isFavorite == null) return@observeNullable
+
+                val drawable = if (isFavorite) {
+                    R.drawable.ic_baseline_favorite_24
+                } else {
+                    R.drawable.ic_baseline_favorite_border_24
+                }
+
+                val text = if (isFavorite) {
+                    R.string.action_remove_from_favorites
+                } else {
+                    R.string.action_add_to_favorites
+                }
+
+                setIconResource(drawable)
+                setText(text)
+                setOnClickListener {
+                    val isFavorite = viewModel.toggleFavoriteStatus() ?: return@setOnClickListener
+
+                    val message = if (isFavorite) {
+                        R.string.favorite_added
+                    } else {
+                        R.string.favorite_removed
+                    }
+
+                    val name = (viewModel.page.value as? Resource.Success)?.value?.title
+                        ?: txt(R.string.no_data).asStringNull(context) ?: ""
+                    CommonActivity.showToast(txt(message, name), Toast.LENGTH_SHORT)
                 }
             }
         }
