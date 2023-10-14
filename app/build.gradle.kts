@@ -5,6 +5,7 @@ import java.net.URL
 
 plugins {
     id("com.android.application")
+    id("com.google.devtools.ksp")
     id("kotlin-android")
     id("kotlin-kapt")
     id("org.jetbrains.dokka")
@@ -85,6 +86,11 @@ android {
             "\"" + (System.getenv("SIMKL_CLIENT_SECRET") ?: localProperties["simkl.secret"]) + "\""
         )
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        ksp {
+            arg("room.schemaLocation", "$projectDir/schemas")
+            arg("exportSchema", "true")
+        }
 
         kapt {
             includeCompileClasspath = true
@@ -182,9 +188,13 @@ dependencies {
 
     implementation("androidx.preference:preference-ktx:1.2.0")
 
-    implementation("com.github.bumptech.glide:glide:4.13.1")
-    kapt("com.github.bumptech.glide:compiler:4.13.1")
-    implementation("com.github.bumptech.glide:okhttp3-integration:4.13.0")
+    implementation("com.github.bumptech.glide:glide:4.15.1")
+    ksp("com.github.bumptech.glide:ksp:4.15.1")
+    implementation("com.github.bumptech.glide:okhttp3-integration:4.15.1")
+    // for ksp
+    ksp("dev.zacsweers.autoservice:auto-service-ksp:1.1.0")
+    implementation("dev.zacsweers.autoservice:auto-service-ksp:1.1.0")
+    implementation("com.google.guava:guava:32.1.2-android")
 
     implementation("jp.wasabeef:glide-transformations:4.3.0")
 
@@ -208,9 +218,6 @@ dependencies {
     implementation("ch.acra:acra-core:5.11.2")
     implementation("ch.acra:acra-toast:5.11.2")
 
-    compileOnly("com.google.auto.service:auto-service-annotations:1.1.1")
-    //either for java sources:
-    annotationProcessor("com.google.auto.service:auto-service:1.1.1")
     //or for kotlin sources (requires kapt gradle plugin):
     kapt("com.google.auto.service:auto-service:1.1.1")
 

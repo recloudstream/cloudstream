@@ -234,7 +234,7 @@ object VideoDownloadManager {
                 return cachedBitmaps[url]
             }
 
-            val bitmap = GlideApp.with(this)
+            val bitmap = com.bumptech.glide.Glide.with(this)
                 .asBitmap()
                 .load(GlideUrl(url) { headers ?: emptyMap() })
                 .into(720, 720)
