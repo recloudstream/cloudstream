@@ -75,6 +75,8 @@ import java.util.concurrent.TimeUnit
 
 interface AlertDialogResponseCallback {
     fun onUserResponse(response: Boolean)
+
+    fun onUserResponseReplace(duplicateId: Int)
 }
 
 /** This starts at 1 */
@@ -871,6 +873,10 @@ class ResultViewModel2 : ViewModel() {
                 response.name,
                 getAllSubscriptions(),
                 object : AlertDialogResponseCallback {
+                    override fun onUserResponseReplace(duplicateId: Int) {
+                        removeSubscribedData(duplicateId)
+                    }
+
                     override fun onUserResponse(action: Boolean) {
                         if (!action) {
                             _subscribeStatus.postValue(false)
@@ -932,6 +938,10 @@ class ResultViewModel2 : ViewModel() {
                 response.name,
                 getAllFavorites(),
                 object : AlertDialogResponseCallback {
+                    override fun onUserResponseReplace(duplicateId: Int) {
+                        removeFavoritesData(duplicateId)
+                    }
+
                     override fun onUserResponse(action: Boolean) {
                         if (!action) {
                             _favoriteStatus.postValue(false)
@@ -974,10 +984,10 @@ class ResultViewModel2 : ViewModel() {
         message: Int,
         name: String,
         data: List<DataStoreHelper.BaseSearchResponse>,
-        callback: AlertDialogResponseCallback)
-    {
-        val isDuplicate = data.any { it.name == name }
-        if (!isDuplicate || context == null) {
+        callback: AlertDialogResponseCallback
+    ) {
+        val duplicateEntry = data.find { it.name == name }
+        if (duplicateEntry == null || context == null) {
             callback.onUserResponse(true)
             return
         }
@@ -987,11 +997,23 @@ class ResultViewModel2 : ViewModel() {
         builder.setTitle(title)
         builder.setMessage(message)
 
+        builder.setNeutralButton(R.string.replace) { _, _ ->
+            // Replace current entry with new one
+            val duplicateId = duplicateEntry.id
+            if (duplicateId != null) {
+                callback.onUserResponseReplace(duplicateId)
+            }
+
+            callback.onUserResponse(true)
+        }
+
         builder.setNegativeButton(R.string.cancel) { _, _ ->
+            // Don't add duplicate
             callback.onUserResponse(false)
         }
 
-        builder.setPositiveButton(R.string.ignore) { _, _ ->
+        builder.setPositiveButton(R.string.add_anyway) { _, _ ->
+            // Add anyway
             callback.onUserResponse(true)
         }
 

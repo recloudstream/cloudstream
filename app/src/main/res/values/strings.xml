@@ -699,5 +699,6 @@
     <string name="subscription_duplicate_message">A possible duplicate with the same name already exists in your subscrptions.</string>
     <string name="favorites_duplicate_title">Possible Duplicate Found</string>
     <string name="favorites_duplicate_message">A possible duplicate with the same name already exists in your favorites.</string>
-    <string name="ignore">Ignore</string>
+    <string name="add_anyway">Add Anyway</string>
+    <string name="replace">Replace</string>
 </resources>
