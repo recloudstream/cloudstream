@@ -7,6 +7,7 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.FileProvider
 import androidx.core.net.toUri
 import androidx.lifecycle.LiveData
@@ -28,6 +29,7 @@ import com.lagradost.cloudstream3.LoadResponse.Companion.getMalId
 import com.lagradost.cloudstream3.LoadResponse.Companion.isMovie
 import com.lagradost.cloudstream3.metaproviders.SyncRedirector
 import com.lagradost.cloudstream3.mvvm.*
+import com.lagradost.cloudstream3.services.SubscriptionWorkManager
 import com.lagradost.cloudstream3.syncproviders.AccountManager
 import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.syncproviders.providers.Kitsu
@@ -45,18 +47,23 @@ import com.lagradost.cloudstream3.utils.*
 import com.lagradost.cloudstream3.utils.AppUtils.getNameFull
 import com.lagradost.cloudstream3.utils.AppUtils.isAppInstalled
 import com.lagradost.cloudstream3.utils.AppUtils.isConnectedToChromecast
+import com.lagradost.cloudstream3.utils.AppUtils.setDefaultFocus
 import com.lagradost.cloudstream3.utils.CastHelper.startCast
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.ioWork
 import com.lagradost.cloudstream3.utils.Coroutines.ioWorkSafe
 import com.lagradost.cloudstream3.utils.Coroutines.main
+import com.lagradost.cloudstream3.utils.DataStoreHelper.getAllFavorites
+import com.lagradost.cloudstream3.utils.DataStoreHelper.getAllSubscriptions
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getDub
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getFavoritesData
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getResultEpisode
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getResultSeason
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getResultWatchState
+import com.lagradost.cloudstream3.utils.DataStoreHelper.getSubscribedData
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
 import com.lagradost.cloudstream3.utils.DataStoreHelper.removeFavoritesData
+import com.lagradost.cloudstream3.utils.DataStoreHelper.removeSubscribedData
 import com.lagradost.cloudstream3.utils.DataStoreHelper.setDub
 import com.lagradost.cloudstream3.utils.DataStoreHelper.setFavoritesData
 import com.lagradost.cloudstream3.utils.DataStoreHelper.setResultEpisode
@@ -66,6 +73,9 @@ import kotlinx.coroutines.*
 import java.io.File
 import java.util.concurrent.TimeUnit
 
+interface AlertDialogResponseCallback {
+    fun onUserResponse(response: Boolean)
+}
 
 /** This starts at 1 */
 data class EpisodeRange(
@@ -452,15 +462,15 @@ class ResultViewModel2 : ViewModel() {
             DataStoreHelper.setBookmarkedData(
                 currentId,
                 DataStoreHelper.BookmarkedData(
-                    currentId,
                     current?.bookmarkedTime ?: currentTime,
                     currentTime,
+                    currentResponse.year,
+                    currentId,
                     currentResponse.name,
                     currentResponse.url,
                     currentResponse.apiName,
                     currentResponse.type,
-                    currentResponse.posterUrl,
-                    currentResponse.year
+                    currentResponse.posterUrl
                 )
             )
             if (currentWatchType != status) {
@@ -841,7 +851,7 @@ class ResultViewModel2 : ViewModel() {
     /**
      * @return true if the new status is Subscribed, false if not. Null if not possible to subscribe.
      **/
-    fun toggleSubscriptionStatus(): Boolean? {
+    fun toggleSubscriptionStatus(context: Context?): Boolean? {
         val isSubscribed = _subscribeStatus.value ?: return null
         val response = currentResponse ?: return null
         if (response !is EpisodeResponse) return null
@@ -849,35 +859,61 @@ class ResultViewModel2 : ViewModel() {
         val currentId = response.getId()
 
         if (isSubscribed) {
-            DataStoreHelper.removeSubscribedData(currentId)
+            removeSubscribedData(currentId)
+
+            _subscribeStatus.postValue(!isSubscribed)
+            return !isSubscribed
         } else {
-            val current = DataStoreHelper.getSubscribedData(currentId)
+            checkAndWarnDuplicates(
+                context,
+                R.string.subscription_duplicate_title,
+                R.string.subscription_duplicate_message,
+                response.name,
+                getAllSubscriptions(),
+                object : AlertDialogResponseCallback {
+                    override fun onUserResponse(action: Boolean) {
+                        if (!action) {
+                            _subscribeStatus.postValue(false)
+                            return
+                        }
 
-            DataStoreHelper.setSubscribedData(
-                currentId,
-                DataStoreHelper.SubscribedData(
-                    currentId,
-                    current?.bookmarkedTime ?: unixTimeMS,
-                    unixTimeMS,
-                    response.getLatestEpisodes(),
-                    response.name,
-                    response.url,
-                    response.apiName,
-                    response.type,
-                    response.posterUrl,
-                    response.year
-                )
+                        val current = getSubscribedData(currentId)
+
+                        DataStoreHelper.setSubscribedData(
+                            currentId,
+                            DataStoreHelper.SubscribedData(
+                                current?.subscribedTime ?: unixTimeMS,
+                                unixTimeMS,
+                                response.getLatestEpisodes(),
+                                response.year,
+                                currentId,
+                                response.name,
+                                response.url,
+                                response.apiName,
+                                response.type,
+                                response.posterUrl
+                            )
+                        )
+
+                        _subscribeStatus.postValue(true)
+
+                        SubscriptionWorkManager.enqueuePeriodicWork(context)
+
+                        val name = (page.value as? Resource.Success)?.value?.title
+                            ?: txt(R.string.no_data).asStringNull(context) ?: ""
+                        showToast(txt(R.string.subscription_new, name), Toast.LENGTH_SHORT)
+                    }
+                }
             )
-        }
 
-        _subscribeStatus.postValue(!isSubscribed)
-        return !isSubscribed
+            return _subscribeStatus.value
+        }
     }
 
     /**
      * @return true if added to favorites, false if not. Null if not possible to favorite.
      **/
-    fun toggleFavoriteStatus(): Boolean? {
+    fun toggleFavoriteStatus(context: Context?): Boolean? {
         val isFavorite = _favoriteStatus.value ?: return null
         val response = currentResponse ?: return null
 
@@ -885,27 +921,81 @@ class ResultViewModel2 : ViewModel() {
 
         if (isFavorite) {
             removeFavoritesData(currentId)
-        } else {
-            val current = getFavoritesData(currentId)
 
-            setFavoritesData(
-                currentId,
-                DataStoreHelper.FavoritesData(
-                    currentId,
-                    current?.favoritesTime ?: unixTimeMS,
-                    unixTimeMS,
-                    response.name,
-                    response.url,
-                    response.apiName,
-                    response.type,
-                    response.posterUrl,
-                    response.year
-                )
+            _favoriteStatus.postValue(!isFavorite)
+            return !isFavorite
+        } else {
+            checkAndWarnDuplicates(
+                context,
+                R.string.favorites_duplicate_title,
+                R.string.favorites_duplicate_message,
+                response.name,
+                getAllFavorites(),
+                object : AlertDialogResponseCallback {
+                    override fun onUserResponse(action: Boolean) {
+                        if (!action) {
+                            _favoriteStatus.postValue(false)
+                            return
+                        }
+
+                        val current = getFavoritesData(currentId)
+
+                        setFavoritesData(
+                            currentId,
+                            DataStoreHelper.FavoritesData(
+                                current?.favoritesTime ?: unixTimeMS,
+                                unixTimeMS,
+                                response.year,
+                                currentId,
+                                response.name,
+                                response.url,
+                                response.apiName,
+                                response.type,
+                                response.posterUrl
+                            )
+                        )
+
+                        _favoriteStatus.postValue(true)
+
+                        val name = (page.value as? Resource.Success)?.value?.title
+                            ?: txt(R.string.no_data).asStringNull(context) ?: ""
+                        showToast(txt(R.string.favorite_added, name), Toast.LENGTH_SHORT)
+                    }
+                }
             )
+
+            return _favoriteStatus.value
+        }
+    }
+
+    private fun checkAndWarnDuplicates(
+        context: Context?,
+        title: Int,
+        message: Int,
+        name: String,
+        data: List<DataStoreHelper.BaseSearchResponse>,
+        callback: AlertDialogResponseCallback)
+    {
+        val isDuplicate = data.any { it.name == name }
+        if (!isDuplicate || context == null) {
+            callback.onUserResponse(true)
+            return
         }
 
-        _favoriteStatus.postValue(!isFavorite)
-        return !isFavorite
+        val builder: AlertDialog.Builder = AlertDialog.Builder(context)
+
+        builder.setTitle(title)
+        builder.setMessage(message)
+
+        builder.setNegativeButton(R.string.cancel) { _, _ ->
+            callback.onUserResponse(false)
+        }
+
+        builder.setPositiveButton(R.string.ignore) { _, _ ->
+            callback.onUserResponse(true)
+        }
+
+        builder.show().setDefaultFocus()
     }
 
     private fun startChromecast(

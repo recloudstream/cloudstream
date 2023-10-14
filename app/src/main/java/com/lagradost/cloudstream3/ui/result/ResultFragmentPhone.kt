@@ -431,7 +431,11 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                 })
             resultSubscribe.setOnClickListener {
                 val isSubscribed =
-                    viewModel.toggleSubscriptionStatus() ?: return@setOnClickListener
+                    viewModel.toggleSubscriptionStatus(context) ?: return@setOnClickListener
+
+                if (viewModel.subscribeStatus.value == isSubscribed) {
+                    return@setOnClickListener
+                }
 
                 val message = if (isSubscribed) {
                     // Kinda icky to have this here, but it works.
@@ -447,7 +451,11 @@ open class ResultFragmentPhone : FullScreenPlayer() {
             }
             resultFavorite.setOnClickListener {
                 val isFavorite =
-                    viewModel.toggleFavoriteStatus() ?: return@setOnClickListener
+                    viewModel.toggleFavoriteStatus(context) ?: return@setOnClickListener
+
+                if (viewModel.favoriteStatus.value == isFavorite) {
+                    return@setOnClickListener
+                }
 
                 val message = if (isFavorite) {
                     R.string.favorite_added

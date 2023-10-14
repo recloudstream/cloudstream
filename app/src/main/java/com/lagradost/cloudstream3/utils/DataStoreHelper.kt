@@ -352,20 +352,31 @@ object DataStoreHelper {
     /**
      * Used to display notifications on new episodes and posters in library.
      **/
-    data class SubscribedData(
+    abstract class BaseSearchResponse(
         @JsonProperty("id") override var id: Int?,
-        @JsonProperty("subscribedTime") val bookmarkedTime: Long,
-        @JsonProperty("latestUpdatedTime") val latestUpdatedTime: Long,
-        @JsonProperty("lastSeenEpisodeCount") val lastSeenEpisodeCount: Map<DubStatus, Int?>,
         @JsonProperty("name") override val name: String,
         @JsonProperty("url") override val url: String,
         @JsonProperty("apiName") override val apiName: String,
         @JsonProperty("type") override var type: TvType? = null,
         @JsonProperty("posterUrl") override var posterUrl: String?,
-        @JsonProperty("year") val year: Int?,
         @JsonProperty("quality") override var quality: SearchQuality? = null,
-        @JsonProperty("posterHeaders") override var posterHeaders: Map<String, String>? = null,
-    ) : SearchResponse {
+        @JsonProperty("posterHeaders") override var posterHeaders: Map<String, String>? = null
+    ) : SearchResponse
+
+    data class SubscribedData(
+        @JsonProperty("subscribedTime") val subscribedTime: Long,
+        @JsonProperty("latestUpdatedTime") val latestUpdatedTime: Long,
+        @JsonProperty("lastSeenEpisodeCount") val lastSeenEpisodeCount: Map<DubStatus, Int?>,
+        @JsonProperty("year") val year: Int?,
+        override var id: Int?,
+        override val name: String,
+        override val url: String,
+        override val apiName: String,
+        override var type: TvType?,
+        override var posterUrl: String?,
+        override var quality: SearchQuality? = null,
+        override var posterHeaders: Map<String, String>? = null
+    ) : BaseSearchResponse(id, name, url, apiName, type, posterUrl, quality, posterHeaders) {
         fun toLibraryItem(): SyncAPI.LibraryItem? {
             return SyncAPI.LibraryItem(
                 name,
@@ -381,18 +392,18 @@ object DataStoreHelper {
     }
 
     data class BookmarkedData(
-        @JsonProperty("id") override var id: Int?,
         @JsonProperty("bookmarkedTime") val bookmarkedTime: Long,
         @JsonProperty("latestUpdatedTime") val latestUpdatedTime: Long,
-        @JsonProperty("name") override val name: String,
-        @JsonProperty("url") override val url: String,
-        @JsonProperty("apiName") override val apiName: String,
-        @JsonProperty("type") override var type: TvType? = null,
-        @JsonProperty("posterUrl") override var posterUrl: String?,
         @JsonProperty("year") val year: Int?,
-        @JsonProperty("quality") override var quality: SearchQuality? = null,
-        @JsonProperty("posterHeaders") override var posterHeaders: Map<String, String>? = null,
-    ) : SearchResponse {
+        override var id: Int?,
+        override val name: String,
+        override val url: String,
+        override val apiName: String,
+        override var type: TvType?,
+        override var posterUrl: String?,
+        override var quality: SearchQuality? = null,
+        override var posterHeaders: Map<String, String>? = null
+    ) : BaseSearchResponse(id, name, url, apiName, type, posterUrl, quality, posterHeaders) {
         fun toLibraryItem(id: String): SyncAPI.LibraryItem {
             return SyncAPI.LibraryItem(
                 name,
@@ -408,18 +419,18 @@ object DataStoreHelper {
     }
 
     data class FavoritesData(
-        @JsonProperty("id") override var id: Int?,
         @JsonProperty("favoritesTime") val favoritesTime: Long,
         @JsonProperty("latestUpdatedTime") val latestUpdatedTime: Long,
-        @JsonProperty("name") override val name: String,
-        @JsonProperty("url") override val url: String,
-        @JsonProperty("apiName") override val apiName: String,
-        @JsonProperty("type") override var type: TvType? = null,
-        @JsonProperty("posterUrl") override var posterUrl: String?,
         @JsonProperty("year") val year: Int?,
-        @JsonProperty("quality") override var quality: SearchQuality? = null,
-        @JsonProperty("posterHeaders") override var posterHeaders: Map<String, String>? = null,
-    ) : SearchResponse {
+        override var id: Int?,
+        override val name: String,
+        override val url: String,
+        override val apiName: String,
+        override var type: TvType?,
+        override var posterUrl: String?,
+        override var quality: SearchQuality? = null,
+        override var posterHeaders: Map<String, String>? = null
+    ) : BaseSearchResponse(id, name, url, apiName, type, posterUrl, quality, posterHeaders) {
         fun toLibraryItem(): SyncAPI.LibraryItem? {
             return SyncAPI.LibraryItem(
                 name,
@@ -435,20 +446,20 @@ object DataStoreHelper {
     }
 
     data class ResumeWatchingResult(
-        @JsonProperty("name") override val name: String,
-        @JsonProperty("url") override val url: String,
-        @JsonProperty("apiName") override val apiName: String,
-        @JsonProperty("type") override var type: TvType? = null,
-        @JsonProperty("posterUrl") override var posterUrl: String?,
         @JsonProperty("watchPos") val watchPos: PosDur?,
-        @JsonProperty("id") override var id: Int?,
         @JsonProperty("parentId") val parentId: Int?,
         @JsonProperty("episode") val episode: Int?,
         @JsonProperty("season") val season: Int?,
         @JsonProperty("isFromDownload") val isFromDownload: Boolean,
-        @JsonProperty("quality") override var quality: SearchQuality? = null,
-        @JsonProperty("posterHeaders") override var posterHeaders: Map<String, String>? = null,
-    ) : SearchResponse
+        override var id: Int?,
+        override val name: String,
+        override val url: String,
+        override val apiName: String,
+        override var type: TvType?,
+        override var posterUrl: String?,
+        override var quality: SearchQuality? = null,
+        override var posterHeaders: Map<String, String>? = null
+    ) : BaseSearchResponse(id, name, url, apiName, type, posterUrl, quality, posterHeaders)
 
     /**
      * A datastore wide account for future implementations of a multiple account system

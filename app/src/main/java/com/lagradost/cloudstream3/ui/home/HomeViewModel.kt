@@ -74,17 +74,17 @@ class HomeViewModel : ViewModel() {
                     val watchPos = getViewPos(resume.episodeId)
 
                     DataStoreHelper.ResumeWatchingResult(
+                        watchPos,
+                        resume.parentId,
+                        resume.episode,
+                        resume.season,
+                        resume.isFromDownload,
+                        resume.episodeId,
                         data.name,
                         data.url,
                         data.apiName,
                         data.type,
-                        data.poster,
-                        watchPos,
-                        resume.episodeId,
-                        resume.parentId,
-                        resume.episode,
-                        resume.season,
-                        resume.isFromDownload
+                        data.poster
                     )
                 }
             }

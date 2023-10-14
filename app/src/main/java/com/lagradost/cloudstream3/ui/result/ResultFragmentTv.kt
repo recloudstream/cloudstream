@@ -557,7 +557,11 @@ class ResultFragmentTv : Fragment() {
                 setIconResource(drawable)
                 setText(text)
                 setOnClickListener {
-                    val isFavorite = viewModel.toggleFavoriteStatus() ?: return@setOnClickListener
+                    val isFavorite = viewModel.toggleFavoriteStatus(context) ?: return@setOnClickListener
+
+                    if (viewModel.favoriteStatus.value == isFavorite) {
+                        return@setOnClickListener
+                    }
 
                     val message = if (isFavorite) {
                         R.string.favorite_added
