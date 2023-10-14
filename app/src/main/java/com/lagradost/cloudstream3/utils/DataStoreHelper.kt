@@ -583,6 +583,17 @@ object DataStoreHelper {
         return getKey("$currentAccount/$RESULT_WATCH_STATE_DATA", id.toString())
     }
 
+    fun getAllBookmarkedDataByWatchType(): Map<WatchType, List<BookmarkedData>> {
+        val allBookmarkedData: List<BookmarkedData> =
+            getKeys("$currentAccount/$RESULT_WATCH_STATE_DATA")?.mapNotNull {
+                getKey(it)
+        } ?: emptyList()
+
+        return allBookmarkedData
+            .groupBy { getResultWatchState(it.id ?: return emptyMap()) }
+            .mapValues { it.value }
+    }
+
     fun getAllSubscriptions(): List<SubscribedData> {
         return getKeys("$currentAccount/$RESULT_SUBSCRIBED_STATE_DATA")?.mapNotNull {
             getKey(it)

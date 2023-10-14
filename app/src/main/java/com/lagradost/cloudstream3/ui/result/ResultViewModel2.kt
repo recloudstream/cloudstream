@@ -53,8 +53,11 @@ import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.ioWork
 import com.lagradost.cloudstream3.utils.Coroutines.ioWorkSafe
 import com.lagradost.cloudstream3.utils.Coroutines.main
+import com.lagradost.cloudstream3.utils.DataStoreHelper.deleteBookmarkedData
+import com.lagradost.cloudstream3.utils.DataStoreHelper.getAllBookmarkedDataByWatchType
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getAllFavorites
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getAllSubscriptions
+import com.lagradost.cloudstream3.utils.DataStoreHelper.getBookmarkedData
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getDub
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getFavoritesData
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getResultEpisode
@@ -64,17 +67,20 @@ import com.lagradost.cloudstream3.utils.DataStoreHelper.getSubscribedData
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
 import com.lagradost.cloudstream3.utils.DataStoreHelper.removeFavoritesData
 import com.lagradost.cloudstream3.utils.DataStoreHelper.removeSubscribedData
+import com.lagradost.cloudstream3.utils.DataStoreHelper.setBookmarkedData
 import com.lagradost.cloudstream3.utils.DataStoreHelper.setDub
 import com.lagradost.cloudstream3.utils.DataStoreHelper.setFavoritesData
 import com.lagradost.cloudstream3.utils.DataStoreHelper.setResultEpisode
 import com.lagradost.cloudstream3.utils.DataStoreHelper.setResultSeason
+import com.lagradost.cloudstream3.utils.DataStoreHelper.setResultWatchState
+import com.lagradost.cloudstream3.utils.DataStoreHelper.updateSubscribedData
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import kotlinx.coroutines.*
 import java.io.File
 import java.util.concurrent.TimeUnit
 
 interface AlertDialogResponseCallback {
-    fun onUserResponse(response: Boolean)
+    fun onUserResponse(action: Boolean)
 
     fun onUserResponseReplace(duplicateId: Int)
 }
@@ -458,10 +464,10 @@ class ResultViewModel2 : ViewModel() {
 
             val currentWatchType = getResultWatchState(currentId)
 
-            DataStoreHelper.setResultWatchState(currentId, status.internalId)
-            val current = DataStoreHelper.getBookmarkedData(currentId)
+            setResultWatchState(currentId, status.internalId)
+            val current = getBookmarkedData(currentId)
             val currentTime = System.currentTimeMillis()
-            DataStoreHelper.setBookmarkedData(
+            setBookmarkedData(
                 currentId,
                 DataStoreHelper.BookmarkedData(
                     current?.bookmarkedTime ?: currentTime,
@@ -834,9 +840,31 @@ class ResultViewModel2 : ViewModel() {
     val selectPopup: LiveData<SelectPopup?> = _selectPopup
 
 
-    fun updateWatchStatus(status: WatchType) {
-        updateWatchStatus(currentResponse ?: return, status)
-        _watchStatus.postValue(status)
+    fun updateWatchStatus(status: WatchType, context: Context?) {
+        val currentStatus = _watchStatus.value ?: return
+        if (status == currentStatus) return
+
+        val response = currentResponse ?: return
+
+        checkAndWarnDuplicates(
+            context,
+            R.string.bookmarks_duplicate_title,
+            R.string.bookmarks_duplicate_message,
+            response.name,
+            getAllBookmarkedDataByWatchType()[status] ?: emptyList(),
+            object : AlertDialogResponseCallback {
+                override fun onUserResponseReplace(duplicateId: Int) {
+                    deleteBookmarkedData(duplicateId)
+                }
+
+                override fun onUserResponse(action: Boolean) {
+                    if (!action) return
+
+                    updateWatchStatus(response, status)
+                    _watchStatus.postValue(status)
+                }
+            }
+        )
     }
 
     private fun startChromecast(
@@ -863,13 +891,13 @@ class ResultViewModel2 : ViewModel() {
         if (isSubscribed) {
             removeSubscribedData(currentId)
 
-            _subscribeStatus.postValue(!isSubscribed)
-            return !isSubscribed
+            _subscribeStatus.postValue(false)
+            return false
         } else {
             checkAndWarnDuplicates(
                 context,
-                R.string.subscription_duplicate_title,
-                R.string.subscription_duplicate_message,
+                R.string.subscriptions_duplicate_title,
+                R.string.subscriptions_duplicate_message,
                 response.name,
                 getAllSubscriptions(),
                 object : AlertDialogResponseCallback {
@@ -878,10 +906,7 @@ class ResultViewModel2 : ViewModel() {
                     }
 
                     override fun onUserResponse(action: Boolean) {
-                        if (!action) {
-                            _subscribeStatus.postValue(false)
-                            return
-                        }
+                        if (!action) return
 
                         val current = getSubscribedData(currentId)
 
@@ -928,8 +953,8 @@ class ResultViewModel2 : ViewModel() {
         if (isFavorite) {
             removeFavoritesData(currentId)
 
-            _favoriteStatus.postValue(!isFavorite)
-            return !isFavorite
+            _favoriteStatus.postValue(false)
+            return false
         } else {
             checkAndWarnDuplicates(
                 context,
@@ -943,10 +968,7 @@ class ResultViewModel2 : ViewModel() {
                     }
 
                     override fun onUserResponse(action: Boolean) {
-                        if (!action) {
-                            _favoriteStatus.postValue(false)
-                            return
-                        }
+                        if (!action) return
 
                         val current = getFavoritesData(currentId)
 
@@ -1895,8 +1917,8 @@ class ResultViewModel2 : ViewModel() {
     private fun postSubscription(loadResponse: LoadResponse) {
         if (loadResponse.isEpisodeBased()) {
             val id = loadResponse.getId()
-            val data = DataStoreHelper.getSubscribedData(id)
-            DataStoreHelper.updateSubscribedData(id, data, loadResponse as? EpisodeResponse)
+            val data = getSubscribedData(id)
+            updateSubscribedData(id, data, loadResponse as? EpisodeResponse)
             val isSubscribed = data != null
             _subscribeStatus.postValue(isSubscribed)
         }
@@ -2274,7 +2296,7 @@ class ResultViewModel2 : ViewModel() {
         postResume()
     }
 
-    fun postResume() {
+    private fun postResume() {
         _resumeWatching.postValue(resume())
     }
 

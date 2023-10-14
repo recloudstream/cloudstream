@@ -695,10 +695,12 @@
     <string name="favorite_removed">%s removed from favorites</string>
     <string name="action_add_to_favorites">Add to favorites</string>
     <string name="action_remove_from_favorites">Remove from favorites</string>
-    <string name="subscription_duplicate_title">Possible Duplicate Subscription</string>
-    <string name="subscription_duplicate_message">A possible duplicate with the same name already exists in your subscrptions.</string>
+    <string name="subscriptions_duplicate_title">Possible Duplicate Subscription</string>
+    <string name="subscriptions_duplicate_message">A possible duplicate with the same name already exists in your subscrptions.</string>
     <string name="favorites_duplicate_title">Possible Duplicate Found</string>
     <string name="favorites_duplicate_message">A possible duplicate with the same name already exists in your favorites.</string>
     <string name="add_anyway">Add Anyway</string>
     <string name="replace">Replace</string>
+    <string name="bookmarks_duplicate_title">Possible Duplicate Found</string>
+    <string name="bookmarks_duplicate_message">A possible duplicate with the same name and watch status already exists in your library.</string>
 </resources>

@@ -974,7 +974,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                         fab.context.getString(R.string.action_add_to_bookmarks),
                         showApply = false,
                         {}) {
-                        viewModel.updateWatchStatus(WatchType.values()[it])
+                        viewModel.updateWatchStatus(WatchType.values()[it], context)
                     }
                 }
             }
