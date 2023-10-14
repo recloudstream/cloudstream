@@ -80,7 +80,7 @@ class LocalList : SyncAPI {
                 R.string.favorites_list_name to emptyList()
             ) + if (!isTv) {
                 mapOf(
-                    R.string.subscription_list_name to emptyList(),
+                    R.string.subscription_list_name to emptyList()
                 )
             } else {
                 emptyMap()
@@ -115,8 +115,8 @@ class LocalList : SyncAPI {
             setOf(
                 ListSorting.AlphabeticalA,
                 ListSorting.AlphabeticalZ,
-//                ListSorting.UpdatedNew,
-//                ListSorting.UpdatedOld,
+                ListSorting.UpdatedNew,
+                ListSorting.UpdatedOld,
 //                ListSorting.RatingHigh,
 //                ListSorting.RatingLow,
             )
