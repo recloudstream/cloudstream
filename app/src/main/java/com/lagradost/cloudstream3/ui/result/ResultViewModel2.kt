@@ -60,10 +60,12 @@ import com.lagradost.cloudstream3.utils.DataStoreHelper.getAllSubscriptions
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getBookmarkedData
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getDub
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getFavoritesData
+import com.lagradost.cloudstream3.utils.DataStoreHelper.getLastWatched
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getResultEpisode
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getResultSeason
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getResultWatchState
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getSubscribedData
+import com.lagradost.cloudstream3.utils.DataStoreHelper.getVideoWatchState
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
 import com.lagradost.cloudstream3.utils.DataStoreHelper.removeFavoritesData
 import com.lagradost.cloudstream3.utils.DataStoreHelper.removeSubscribedData
@@ -73,6 +75,8 @@ import com.lagradost.cloudstream3.utils.DataStoreHelper.setFavoritesData
 import com.lagradost.cloudstream3.utils.DataStoreHelper.setResultEpisode
 import com.lagradost.cloudstream3.utils.DataStoreHelper.setResultSeason
 import com.lagradost.cloudstream3.utils.DataStoreHelper.setResultWatchState
+import com.lagradost.cloudstream3.utils.DataStoreHelper.setSubscribedData
+import com.lagradost.cloudstream3.utils.DataStoreHelper.setVideoWatchState
 import com.lagradost.cloudstream3.utils.DataStoreHelper.updateSubscribedData
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import kotlinx.coroutines.*
@@ -472,9 +476,9 @@ class ResultViewModel2 : ViewModel() {
                 DataStoreHelper.BookmarkedData(
                     current?.bookmarkedTime ?: currentTime,
                     currentTime,
-                    currentResponse.year,
                     currentId,
                     currentResponse.name,
+                    currentResponse.year,
                     currentResponse.url,
                     currentResponse.apiName,
                     currentResponse.type,
@@ -851,6 +855,7 @@ class ResultViewModel2 : ViewModel() {
             R.string.bookmarks_duplicate_title,
             R.string.bookmarks_duplicate_message,
             response.name,
+            response.year,
             getAllBookmarkedDataByWatchType()[status] ?: emptyList(),
             object : AlertDialogResponseCallback {
                 override fun onUserResponseReplace(duplicateId: Int) {
@@ -899,6 +904,7 @@ class ResultViewModel2 : ViewModel() {
                 R.string.subscriptions_duplicate_title,
                 R.string.subscriptions_duplicate_message,
                 response.name,
+                response.year,
                 getAllSubscriptions(),
                 object : AlertDialogResponseCallback {
                     override fun onUserResponseReplace(duplicateId: Int) {
@@ -910,15 +916,15 @@ class ResultViewModel2 : ViewModel() {
 
                         val current = getSubscribedData(currentId)
 
-                        DataStoreHelper.setSubscribedData(
+                        setSubscribedData(
                             currentId,
                             DataStoreHelper.SubscribedData(
                                 current?.subscribedTime ?: unixTimeMS,
                                 unixTimeMS,
                                 response.getLatestEpisodes(),
-                                response.year,
                                 currentId,
                                 response.name,
+                                response.year,
                                 response.url,
                                 response.apiName,
                                 response.type,
@@ -961,6 +967,7 @@ class ResultViewModel2 : ViewModel() {
                 R.string.favorites_duplicate_title,
                 R.string.favorites_duplicate_message,
                 response.name,
+                response.year,
                 getAllFavorites(),
                 object : AlertDialogResponseCallback {
                     override fun onUserResponseReplace(duplicateId: Int) {
@@ -977,9 +984,9 @@ class ResultViewModel2 : ViewModel() {
                             DataStoreHelper.FavoritesData(
                                 current?.favoritesTime ?: unixTimeMS,
                                 unixTimeMS,
-                                response.year,
                                 currentId,
                                 response.name,
+                                response.year,
                                 response.url,
                                 response.apiName,
                                 response.type,
@@ -1005,10 +1012,12 @@ class ResultViewModel2 : ViewModel() {
         title: Int,
         message: Int,
         name: String,
+        year: Int?,
         data: List<DataStoreHelper.BaseSearchResponse>,
         callback: AlertDialogResponseCallback
     ) {
-        val duplicateEntry = data.find { it.name == name }
+        // TODO support checking IMDB ID rather than name + year when available
+        val duplicateEntry = data.find { it.name == name && it.year == year }
         if (duplicateEntry == null || context == null) {
             callback.onUserResponse(true)
             return
@@ -1393,7 +1402,7 @@ class ResultViewModel2 : ViewModel() {
                 // Do not add mark as watched on movies
                 if (!listOf(TvType.Movie, TvType.AnimeMovie).contains(click.data.tvType)) {
                     val isWatched =
-                        DataStoreHelper.getVideoWatchState(click.data.id) == VideoWatchState.Watched
+                        getVideoWatchState(click.data.id) == VideoWatchState.Watched
 
                     val watchedText = if (isWatched) R.string.action_remove_from_watched
                     else R.string.action_mark_as_watched
@@ -1642,12 +1651,12 @@ class ResultViewModel2 : ViewModel() {
 
             ACTION_MARK_AS_WATCHED -> {
                 val isWatched =
-                    DataStoreHelper.getVideoWatchState(click.data.id) == VideoWatchState.Watched
+                    getVideoWatchState(click.data.id) == VideoWatchState.Watched
 
                 if (isWatched) {
-                    DataStoreHelper.setVideoWatchState(click.data.id, VideoWatchState.None)
+                    setVideoWatchState(click.data.id, VideoWatchState.None)
                 } else {
-                    DataStoreHelper.setVideoWatchState(click.data.id, VideoWatchState.Watched)
+                    setVideoWatchState(click.data.id, VideoWatchState.Watched)
                 }
 
                 // Kinda dirty to reload all episodes :(
@@ -1856,7 +1865,7 @@ class ResultViewModel2 : ViewModel() {
                 list.subList(start, end).map {
                     val posDur = getViewPos(it.id)
                     val watchState =
-                        DataStoreHelper.getVideoWatchState(it.id) ?: VideoWatchState.None
+                        getVideoWatchState(it.id) ?: VideoWatchState.None
                     it.copy(
                         position = posDur?.position ?: 0,
                         duration = posDur?.duration ?: 0,
@@ -2302,7 +2311,7 @@ class ResultViewModel2 : ViewModel() {
 
     private fun resume(): ResumeWatchingStatus? {
         val correctId = currentId ?: return null
-        val resume = DataStoreHelper.getLastWatched(correctId)
+        val resume = getLastWatched(correctId)
         val resumeParentId = resume?.parentId
         if (resumeParentId != correctId) return null // is null or smth went wrong with getLastWatched
         val resumeId = resume.episodeId ?: return null// invalid episode id

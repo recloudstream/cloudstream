@@ -355,6 +355,7 @@ object DataStoreHelper {
     abstract class BaseSearchResponse(
         @JsonProperty("id") override var id: Int?,
         @JsonProperty("name") override val name: String,
+        @JsonProperty("year") open val year: Int?,
         @JsonProperty("url") override val url: String,
         @JsonProperty("apiName") override val apiName: String,
         @JsonProperty("type") override var type: TvType? = null,
@@ -367,16 +368,16 @@ object DataStoreHelper {
         @JsonProperty("subscribedTime") val subscribedTime: Long,
         @JsonProperty("latestUpdatedTime") val latestUpdatedTime: Long,
         @JsonProperty("lastSeenEpisodeCount") val lastSeenEpisodeCount: Map<DubStatus, Int?>,
-        @JsonProperty("year") val year: Int?,
         override var id: Int?,
         override val name: String,
+        override val year: Int?,
         override val url: String,
         override val apiName: String,
         override var type: TvType?,
         override var posterUrl: String?,
         override var quality: SearchQuality? = null,
         override var posterHeaders: Map<String, String>? = null
-    ) : BaseSearchResponse(id, name, url, apiName, type, posterUrl, quality, posterHeaders) {
+    ) : BaseSearchResponse(id, name, year, url, apiName, type, posterUrl, quality, posterHeaders) {
         fun toLibraryItem(): SyncAPI.LibraryItem? {
             return SyncAPI.LibraryItem(
                 name,
@@ -394,16 +395,16 @@ object DataStoreHelper {
     data class BookmarkedData(
         @JsonProperty("bookmarkedTime") val bookmarkedTime: Long,
         @JsonProperty("latestUpdatedTime") val latestUpdatedTime: Long,
-        @JsonProperty("year") val year: Int?,
         override var id: Int?,
         override val name: String,
+        override val year: Int?,
         override val url: String,
         override val apiName: String,
         override var type: TvType?,
         override var posterUrl: String?,
         override var quality: SearchQuality? = null,
         override var posterHeaders: Map<String, String>? = null
-    ) : BaseSearchResponse(id, name, url, apiName, type, posterUrl, quality, posterHeaders) {
+    ) : BaseSearchResponse(id, name, year, url, apiName, type, posterUrl, quality, posterHeaders) {
         fun toLibraryItem(id: String): SyncAPI.LibraryItem {
             return SyncAPI.LibraryItem(
                 name,
@@ -421,16 +422,16 @@ object DataStoreHelper {
     data class FavoritesData(
         @JsonProperty("favoritesTime") val favoritesTime: Long,
         @JsonProperty("latestUpdatedTime") val latestUpdatedTime: Long,
-        @JsonProperty("year") val year: Int?,
         override var id: Int?,
         override val name: String,
+        override val year: Int?,
         override val url: String,
         override val apiName: String,
         override var type: TvType?,
         override var posterUrl: String?,
         override var quality: SearchQuality? = null,
         override var posterHeaders: Map<String, String>? = null
-    ) : BaseSearchResponse(id, name, url, apiName, type, posterUrl, quality, posterHeaders) {
+    ) : BaseSearchResponse(id, name, year, url, apiName, type, posterUrl, quality, posterHeaders) {
         fun toLibraryItem(): SyncAPI.LibraryItem? {
             return SyncAPI.LibraryItem(
                 name,
@@ -459,7 +460,7 @@ object DataStoreHelper {
         override var posterUrl: String?,
         override var quality: SearchQuality? = null,
         override var posterHeaders: Map<String, String>? = null
-    ) : BaseSearchResponse(id, name, url, apiName, type, posterUrl, quality, posterHeaders)
+    ) : BaseSearchResponse(id, name, null, url, apiName, type, posterUrl, quality, posterHeaders)
 
     /**
      * A datastore wide account for future implementations of a multiple account system
