@@ -29,7 +29,6 @@ import com.lagradost.cloudstream3.LoadResponse.Companion.getMalId
 import com.lagradost.cloudstream3.LoadResponse.Companion.isMovie
 import com.lagradost.cloudstream3.metaproviders.SyncRedirector
 import com.lagradost.cloudstream3.mvvm.*
-import com.lagradost.cloudstream3.services.SubscriptionWorkManager
 import com.lagradost.cloudstream3.syncproviders.AccountManager
 import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.syncproviders.providers.Kitsu
@@ -83,11 +82,6 @@ import kotlinx.coroutines.*
 import java.io.File
 import java.util.concurrent.TimeUnit
 
-interface AlertDialogResponseCallback {
-    fun onUserResponse(action: Boolean)
-
-    fun onUserResponseReplace(duplicateId: Int)
-}
 
 /** This starts at 1 */
 data class EpisodeRange(
@@ -463,33 +457,6 @@ class ResultViewModel2 : ViewModel() {
             return this?.firstOrNull { it.season == season }
         }
 
-        fun updateWatchStatus(currentResponse: LoadResponse, status: WatchType) {
-            val currentId = currentResponse.getId()
-
-            val currentWatchType = getResultWatchState(currentId)
-
-            setResultWatchState(currentId, status.internalId)
-            val current = getBookmarkedData(currentId)
-            val currentTime = System.currentTimeMillis()
-            setBookmarkedData(
-                currentId,
-                DataStoreHelper.BookmarkedData(
-                    current?.bookmarkedTime ?: currentTime,
-                    currentTime,
-                    currentId,
-                    currentResponse.name,
-                    currentResponse.year,
-                    currentResponse.url,
-                    currentResponse.apiName,
-                    currentResponse.type,
-                    currentResponse.posterUrl
-                )
-            )
-            if (currentWatchType != status) {
-                MainActivity.bookmarksUpdatedEvent(true)
-            }
-        }
-
         private fun filterName(name: String?): String? {
             if (name == null) return null
             Regex("[eE]pisode [0-9]*(.*)").find(name)?.groupValues?.get(1)?.let {
@@ -844,32 +811,57 @@ class ResultViewModel2 : ViewModel() {
     val selectPopup: LiveData<SelectPopup?> = _selectPopup
 
 
-    fun updateWatchStatus(status: WatchType, context: Context?) {
-        val currentStatus = _watchStatus.value ?: return
-        if (status == currentStatus) return
+    fun updateWatchStatus(
+        status: WatchType,
+        context: Context?,
+        loadResponse: LoadResponse? = null,
+        statusChangeCallback: ((Boolean) -> Unit)? = null
+    ) {
+        val response = loadResponse ?: currentResponse ?: return
 
-        val response = currentResponse ?: return
+        val currentId = response.getId()
+
+        val currentStatus = getResultWatchState(currentId)
+
+        if (status == currentStatus) return
 
         checkAndWarnDuplicates(
             context,
-            R.string.bookmarks_duplicate_title,
-            R.string.bookmarks_duplicate_message,
+            R.string.duplicate_message_bookmarks,
             response.name,
             response.year,
-            getAllBookmarkedDataByWatchType()[status] ?: emptyList(),
-            object : AlertDialogResponseCallback {
-                override fun onUserResponseReplace(duplicateId: Int) {
-                    deleteBookmarkedData(duplicateId)
-                }
+            getAllBookmarkedDataByWatchType()[status] ?: emptyList()
+        ) { userResponse: Boolean, duplicateId: Int? ->
+            if (!userResponse) return@checkAndWarnDuplicates
 
-                override fun onUserResponse(action: Boolean) {
-                    if (!action) return
-
-                    updateWatchStatus(response, status)
-                    _watchStatus.postValue(status)
-                }
+            if (duplicateId != null) {
+                deleteBookmarkedData(duplicateId)
             }
-        )
+
+            setResultWatchState(currentId, status.internalId)
+            val current = getBookmarkedData(currentId)
+            val currentTime = System.currentTimeMillis()
+            setBookmarkedData(
+                currentId,
+                DataStoreHelper.BookmarkedData(
+                    current?.bookmarkedTime ?: currentTime,
+                    currentTime,
+                    currentId,
+                    response.name,
+                    response.year,
+                    response.url,
+                    response.apiName,
+                    response.type,
+                    response.posterUrl
+                )
+            )
+
+            MainActivity.bookmarksUpdatedEvent(true)
+
+            _watchStatus.postValue(status)
+
+            statusChangeCallback?.invoke(true)
+        }
     }
 
     private fun startChromecast(
@@ -886,7 +878,10 @@ class ResultViewModel2 : ViewModel() {
     /**
      * @return true if the new status is Subscribed, false if not. Null if not possible to subscribe.
      **/
-    fun toggleSubscriptionStatus(context: Context?): Boolean? {
+    fun toggleSubscriptionStatus(
+        context: Context?,
+        statusChangeCallback: ((Boolean?) -> Unit)? = null
+    ): Boolean? {
         val isSubscribed = _subscribeStatus.value ?: return null
         val response = currentResponse ?: return null
         if (response !is EpisodeResponse) return null
@@ -895,53 +890,48 @@ class ResultViewModel2 : ViewModel() {
 
         if (isSubscribed) {
             removeSubscribedData(currentId)
-
+            statusChangeCallback?.invoke(false)
             _subscribeStatus.postValue(false)
             return false
         } else {
             checkAndWarnDuplicates(
                 context,
-                R.string.subscriptions_duplicate_title,
-                R.string.subscriptions_duplicate_message,
+                R.string.duplicate_message_subscriptions,
                 response.name,
                 response.year,
                 getAllSubscriptions(),
-                object : AlertDialogResponseCallback {
-                    override fun onUserResponseReplace(duplicateId: Int) {
-                        removeSubscribedData(duplicateId)
-                    }
-
-                    override fun onUserResponse(action: Boolean) {
-                        if (!action) return
-
-                        val current = getSubscribedData(currentId)
-
-                        setSubscribedData(
-                            currentId,
-                            DataStoreHelper.SubscribedData(
-                                current?.subscribedTime ?: unixTimeMS,
-                                unixTimeMS,
-                                response.getLatestEpisodes(),
-                                currentId,
-                                response.name,
-                                response.year,
-                                response.url,
-                                response.apiName,
-                                response.type,
-                                response.posterUrl
-                            )
-                        )
-
-                        _subscribeStatus.postValue(true)
-
-                        SubscriptionWorkManager.enqueuePeriodicWork(context)
-
-                        val name = (page.value as? Resource.Success)?.value?.title
-                            ?: txt(R.string.no_data).asStringNull(context) ?: ""
-                        showToast(txt(R.string.subscription_new, name), Toast.LENGTH_SHORT)
-                    }
+            ) { userResponse: Boolean, duplicateId: Int? ->
+                if (!userResponse) {
+                    statusChangeCallback?.invoke(null)
+                    return@checkAndWarnDuplicates
                 }
-            )
+
+                if (duplicateId != null) {
+                    removeSubscribedData(duplicateId)
+                }
+
+                val current = getSubscribedData(currentId)
+
+                setSubscribedData(
+                    currentId,
+                    DataStoreHelper.SubscribedData(
+                        current?.subscribedTime ?: unixTimeMS,
+                        unixTimeMS,
+                        response.getLatestEpisodes(),
+                        currentId,
+                        response.name,
+                        response.year,
+                        response.url,
+                        response.apiName,
+                        response.type,
+                        response.posterUrl
+                    )
+                )
+
+                _subscribeStatus.postValue(true)
+
+                statusChangeCallback?.invoke(true)
+            }
 
             return _subscribeStatus.value
         }
@@ -950,7 +940,10 @@ class ResultViewModel2 : ViewModel() {
     /**
      * @return true if added to favorites, false if not. Null if not possible to favorite.
      **/
-    fun toggleFavoriteStatus(context: Context?): Boolean? {
+    fun toggleFavoriteStatus(
+        context: Context?,
+        statusChangeCallback: ((Boolean?) -> Unit)? = null
+    ): Boolean? {
         val isFavorite = _favoriteStatus.value ?: return null
         val response = currentResponse ?: return null
 
@@ -958,50 +951,47 @@ class ResultViewModel2 : ViewModel() {
 
         if (isFavorite) {
             removeFavoritesData(currentId)
-
+            statusChangeCallback?.invoke(false)
             _favoriteStatus.postValue(false)
             return false
         } else {
             checkAndWarnDuplicates(
                 context,
-                R.string.favorites_duplicate_title,
-                R.string.favorites_duplicate_message,
+                R.string.duplicate_message_favorites,
                 response.name,
                 response.year,
                 getAllFavorites(),
-                object : AlertDialogResponseCallback {
-                    override fun onUserResponseReplace(duplicateId: Int) {
-                        removeFavoritesData(duplicateId)
-                    }
-
-                    override fun onUserResponse(action: Boolean) {
-                        if (!action) return
-
-                        val current = getFavoritesData(currentId)
-
-                        setFavoritesData(
-                            currentId,
-                            DataStoreHelper.FavoritesData(
-                                current?.favoritesTime ?: unixTimeMS,
-                                unixTimeMS,
-                                currentId,
-                                response.name,
-                                response.year,
-                                response.url,
-                                response.apiName,
-                                response.type,
-                                response.posterUrl
-                            )
-                        )
-
-                        _favoriteStatus.postValue(true)
-
-                        val name = (page.value as? Resource.Success)?.value?.title
-                            ?: txt(R.string.no_data).asStringNull(context) ?: ""
-                        showToast(txt(R.string.favorite_added, name), Toast.LENGTH_SHORT)
-                    }
+            ) { userResponse: Boolean, duplicateId: Int? ->
+                if (!userResponse) {
+                    statusChangeCallback?.invoke(null)
+                    return@checkAndWarnDuplicates
                 }
-            )
+
+                if (duplicateId != null) {
+                    removeFavoritesData(duplicateId)
+                }
+
+                val current = getFavoritesData(currentId)
+
+                setFavoritesData(
+                    currentId,
+                    DataStoreHelper.FavoritesData(
+                        current?.favoritesTime ?: unixTimeMS,
+                        unixTimeMS,
+                        currentId,
+                        response.name,
+                        response.year,
+                        response.url,
+                        response.apiName,
+                        response.type,
+                        response.posterUrl
+                    )
+                )
+
+                _favoriteStatus.postValue(true)
+
+                statusChangeCallback?.invoke(true)
+            }
 
             return _favoriteStatus.value
         }
@@ -1009,46 +999,49 @@ class ResultViewModel2 : ViewModel() {
 
     private fun checkAndWarnDuplicates(
         context: Context?,
-        title: Int,
         message: Int,
         name: String,
         year: Int?,
         data: List<DataStoreHelper.BaseSearchResponse>,
-        callback: AlertDialogResponseCallback
+        alertCallback: (Boolean, Int?) -> Unit
     ) {
         // TODO support checking IMDB ID rather than name + year when available
         val duplicateEntry = data.find { it.name == name && it.year == year }
         if (duplicateEntry == null || context == null) {
-            callback.onUserResponse(true)
+            alertCallback.invoke(true, null)
             return
         }
 
         val builder: AlertDialog.Builder = AlertDialog.Builder(context)
 
-        builder.setTitle(title)
-        builder.setMessage(message)
-
-        builder.setNeutralButton(R.string.replace) { _, _ ->
-            // Replace current entry with new one
-            val duplicateId = duplicateEntry.id
-            if (duplicateId != null) {
-                callback.onUserResponseReplace(duplicateId)
+        val dialogClickListener =
+            DialogInterface.OnClickListener { _, which ->
+                when (which) {
+                    DialogInterface.BUTTON_POSITIVE -> {
+                        alertCallback.invoke(true, null)
+                    }
+                    DialogInterface.BUTTON_NEGATIVE -> {
+                        alertCallback.invoke(false, null)
+                    }
+                    DialogInterface.BUTTON_NEUTRAL -> {
+                        alertCallback.invoke(true, duplicateEntry.id)
+                    }
+                }
             }
 
-            callback.onUserResponse(true)
-        }
-
-        builder.setNegativeButton(R.string.cancel) { _, _ ->
-            // Don't add duplicate
-            callback.onUserResponse(false)
-        }
-
-        builder.setPositiveButton(R.string.add_anyway) { _, _ ->
-            // Add anyway
-            callback.onUserResponse(true)
-        }
-
-        builder.show().setDefaultFocus()
+        builder.setTitle(R.string.duplicate_title)
+            .setMessage(
+                context.getString(message).format(
+                    duplicateEntry.name,
+                    context.getString(
+                        getResultWatchState(duplicateEntry.id ?: 0).stringRes
+                    )
+                )
+            )
+            .setPositiveButton(R.string.duplicate_add, dialogClickListener)
+            .setNegativeButton(R.string.duplicate_cancel, dialogClickListener)
+            .setNeutralButton(R.string.duplicate_replace, dialogClickListener)
+            .show().setDefaultFocus()
     }
 
     private fun startChromecast(

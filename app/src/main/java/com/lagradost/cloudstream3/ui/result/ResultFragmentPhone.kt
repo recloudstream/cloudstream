@@ -430,42 +430,36 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                     }
                 })
             resultSubscribe.setOnClickListener {
-                val isSubscribed =
-                    viewModel.toggleSubscriptionStatus(context) ?: return@setOnClickListener
+                viewModel.toggleSubscriptionStatus(context) { newStatus: Boolean? ->
+                    if (newStatus == null) return@toggleSubscriptionStatus
 
-                if (viewModel.subscribeStatus.value == isSubscribed) {
-                    return@setOnClickListener
+                    val message = if (newStatus) {
+                            // Kinda icky to have this here, but it works.
+                            SubscriptionWorkManager.enqueuePeriodicWork(context)
+                            R.string.subscription_new
+                        } else {
+                            R.string.subscription_deleted
+                        }
+
+                        val name = (viewModel.page.value as? Resource.Success)?.value?.title
+                            ?: txt(R.string.no_data).asStringNull(context) ?: ""
+                        CommonActivity.showToast(txt(message, name), Toast.LENGTH_SHORT)
                 }
-
-                val message = if (isSubscribed) {
-                    // Kinda icky to have this here, but it works.
-                    SubscriptionWorkManager.enqueuePeriodicWork(context)
-                    R.string.subscription_new
-                } else {
-                    R.string.subscription_deleted
-                }
-
-                val name = (viewModel.page.value as? Resource.Success)?.value?.title
-                    ?: txt(R.string.no_data).asStringNull(context) ?: ""
-                CommonActivity.showToast(txt(message, name), Toast.LENGTH_SHORT)
             }
             resultFavorite.setOnClickListener {
-                val isFavorite =
-                    viewModel.toggleFavoriteStatus(context) ?: return@setOnClickListener
+                viewModel.toggleFavoriteStatus(context) { newStatus: Boolean? ->
+                    if (newStatus == null) return@toggleFavoriteStatus
 
-                if (viewModel.favoriteStatus.value == isFavorite) {
-                    return@setOnClickListener
+                    val message = if (newStatus) {
+                        R.string.favorite_added
+                    } else {
+                        R.string.favorite_removed
+                    }
+
+                    val name = (viewModel.page.value as? Resource.Success)?.value?.title
+                        ?: txt(R.string.no_data).asStringNull(context) ?: ""
+                    CommonActivity.showToast(txt(message, name), Toast.LENGTH_SHORT)
                 }
-
-                val message = if (isFavorite) {
-                    R.string.favorite_added
-                } else {
-                    R.string.favorite_removed
-                }
-
-                val name = (viewModel.page.value as? Resource.Success)?.value?.title
-                    ?: txt(R.string.no_data).asStringNull(context) ?: ""
-                CommonActivity.showToast(txt(message, name), Toast.LENGTH_SHORT)
             }
             mediaRouteButton.apply {
                 val chromecastSupport = api?.hasChromecastSupport == true

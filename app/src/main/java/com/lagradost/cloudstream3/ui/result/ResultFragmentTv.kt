@@ -557,21 +557,19 @@ class ResultFragmentTv : Fragment() {
                 setIconResource(drawable)
                 setText(text)
                 setOnClickListener {
-                    val isFavorite = viewModel.toggleFavoriteStatus(context) ?: return@setOnClickListener
+                    viewModel.toggleFavoriteStatus(context) { newStatus: Boolean? ->
+                        if (newStatus == null) return@toggleFavoriteStatus
 
-                    if (viewModel.favoriteStatus.value == isFavorite) {
-                        return@setOnClickListener
+                        val message = if (newStatus) {
+                            R.string.favorite_added
+                        } else {
+                            R.string.favorite_removed
+                        }
+
+                        val name = (viewModel.page.value as? Resource.Success)?.value?.title
+                            ?: txt(R.string.no_data).asStringNull(context) ?: ""
+                        CommonActivity.showToast(txt(message, name), Toast.LENGTH_SHORT)
                     }
-
-                    val message = if (isFavorite) {
-                        R.string.favorite_added
-                    } else {
-                        R.string.favorite_removed
-                    }
-
-                    val name = (viewModel.page.value as? Resource.Success)?.value?.title
-                        ?: txt(R.string.no_data).asStringNull(context) ?: ""
-                    CommonActivity.showToast(txt(message, name), Toast.LENGTH_SHORT)
                 }
             }
         }
