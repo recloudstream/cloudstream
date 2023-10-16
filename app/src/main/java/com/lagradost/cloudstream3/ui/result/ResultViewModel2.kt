@@ -815,7 +815,7 @@ class ResultViewModel2 : ViewModel() {
         status: WatchType,
         context: Context?,
         loadResponse: LoadResponse? = null,
-        statusChangeCallback: ((Boolean) -> Unit)? = null
+        statusChangedCallback: ((statusChanged: Boolean) -> Unit)? = null
     ) {
         val response = loadResponse ?: currentResponse ?: return
 
@@ -831,8 +831,8 @@ class ResultViewModel2 : ViewModel() {
             response.name,
             response.year,
             getAllBookmarkedDataByWatchType()[status] ?: emptyList()
-        ) { userResponse: Boolean, duplicateId: Int? ->
-            if (!userResponse) return@checkAndWarnDuplicates
+        ) { shouldContinue: Boolean, duplicateId: Int? ->
+            if (!shouldContinue) return@checkAndWarnDuplicates
 
             if (duplicateId != null) {
                 deleteBookmarkedData(duplicateId)
@@ -860,7 +860,7 @@ class ResultViewModel2 : ViewModel() {
 
             _watchStatus.postValue(status)
 
-            statusChangeCallback?.invoke(true)
+            statusChangedCallback?.invoke(true)
         }
     }
 
@@ -880,7 +880,7 @@ class ResultViewModel2 : ViewModel() {
      **/
     fun toggleSubscriptionStatus(
         context: Context?,
-        statusChangeCallback: ((Boolean?) -> Unit)? = null
+        statusChangedCallback: ((newStatus: Boolean?) -> Unit)? = null
     ): Boolean? {
         val isSubscribed = _subscribeStatus.value ?: return null
         val response = currentResponse ?: return null
@@ -890,7 +890,7 @@ class ResultViewModel2 : ViewModel() {
 
         if (isSubscribed) {
             removeSubscribedData(currentId)
-            statusChangeCallback?.invoke(false)
+            statusChangedCallback?.invoke(false)
             _subscribeStatus.postValue(false)
             return false
         } else {
@@ -900,9 +900,9 @@ class ResultViewModel2 : ViewModel() {
                 response.name,
                 response.year,
                 getAllSubscriptions(),
-            ) { userResponse: Boolean, duplicateId: Int? ->
-                if (!userResponse) {
-                    statusChangeCallback?.invoke(null)
+            ) { shouldContinue: Boolean, duplicateId: Int? ->
+                if (!shouldContinue) {
+                    statusChangedCallback?.invoke(null)
                     return@checkAndWarnDuplicates
                 }
 
@@ -930,7 +930,7 @@ class ResultViewModel2 : ViewModel() {
 
                 _subscribeStatus.postValue(true)
 
-                statusChangeCallback?.invoke(true)
+                statusChangedCallback?.invoke(true)
             }
 
             return _subscribeStatus.value
@@ -942,7 +942,7 @@ class ResultViewModel2 : ViewModel() {
      **/
     fun toggleFavoriteStatus(
         context: Context?,
-        statusChangeCallback: ((Boolean?) -> Unit)? = null
+        statusChangedCallback: ((newStatus: Boolean?) -> Unit)? = null
     ): Boolean? {
         val isFavorite = _favoriteStatus.value ?: return null
         val response = currentResponse ?: return null
@@ -951,7 +951,7 @@ class ResultViewModel2 : ViewModel() {
 
         if (isFavorite) {
             removeFavoritesData(currentId)
-            statusChangeCallback?.invoke(false)
+            statusChangedCallback?.invoke(false)
             _favoriteStatus.postValue(false)
             return false
         } else {
@@ -961,9 +961,9 @@ class ResultViewModel2 : ViewModel() {
                 response.name,
                 response.year,
                 getAllFavorites(),
-            ) { userResponse: Boolean, duplicateId: Int? ->
-                if (!userResponse) {
-                    statusChangeCallback?.invoke(null)
+            ) { shouldContinue: Boolean, duplicateId: Int? ->
+                if (!shouldContinue) {
+                    statusChangedCallback?.invoke(null)
                     return@checkAndWarnDuplicates
                 }
 
@@ -990,7 +990,7 @@ class ResultViewModel2 : ViewModel() {
 
                 _favoriteStatus.postValue(true)
 
-                statusChangeCallback?.invoke(true)
+                statusChangedCallback?.invoke(true)
             }
 
             return _favoriteStatus.value
@@ -1003,12 +1003,25 @@ class ResultViewModel2 : ViewModel() {
         name: String,
         year: Int?,
         data: List<DataStoreHelper.BaseSearchResponse>,
-        alertCallback: (Boolean, Int?) -> Unit
+        checkDuplicatesCallback: (shouldContinue: Boolean, duplicateId: Int?) -> Unit
     ) {
+        fun normalizeString(input: String): String {
+            /**
+             * Trim the input string and replace consecutive spaces with a single space.
+             * This covers some edge-cases where the title does not match exactly across providers,
+             * and one provider has the title with an extra whitespace. This is minor enough that
+             * it should still match in this case.
+             */
+            return input.trim().replace("\\s+".toRegex(), " ")
+        }
+
         // TODO support checking IMDB ID rather than name + year when available
-        val duplicateEntry = data.find { it.name == name && it.year == year }
+        val duplicateEntry = data.find {
+            // Normalize both strings for comparison
+            normalizeString(it.name) == normalizeString(name) && it.year == year
+        }
         if (duplicateEntry == null || context == null) {
-            alertCallback.invoke(true, null)
+            checkDuplicatesCallback.invoke(true, null)
             return
         }
 
@@ -1018,13 +1031,13 @@ class ResultViewModel2 : ViewModel() {
             DialogInterface.OnClickListener { _, which ->
                 when (which) {
                     DialogInterface.BUTTON_POSITIVE -> {
-                        alertCallback.invoke(true, null)
+                        checkDuplicatesCallback.invoke(true, null)
                     }
                     DialogInterface.BUTTON_NEGATIVE -> {
-                        alertCallback.invoke(false, null)
+                        checkDuplicatesCallback.invoke(false, null)
                     }
                     DialogInterface.BUTTON_NEUTRAL -> {
-                        alertCallback.invoke(true, duplicateEntry.id)
+                        checkDuplicatesCallback.invoke(true, duplicateEntry.id)
                     }
                 }
             }
@@ -1032,7 +1045,7 @@ class ResultViewModel2 : ViewModel() {
         builder.setTitle(R.string.duplicate_title)
             .setMessage(
                 context.getString(message).format(
-                    duplicateEntry.name,
+                    normalizeString(duplicateEntry.name),
                     context.getString(
                         getResultWatchState(duplicateEntry.id ?: 0).stringRes
                     )
