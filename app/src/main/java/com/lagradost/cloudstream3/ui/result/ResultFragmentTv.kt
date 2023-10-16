@@ -247,7 +247,7 @@ class ResultFragmentTv : Fragment() {
 
         binding?.apply {
             //episodesShadow.rotationX = 180.0f//if(episodesShadow.isRtl()) 180.0f else 0.0f
-
+            
             val leftListener: View.OnFocusChangeListener =
                 View.OnFocusChangeListener { _, hasFocus ->
                     if (!hasFocus) return@OnFocusChangeListener
@@ -804,12 +804,14 @@ class ResultFragmentTv : Fragment() {
                             R.drawable.profile_bg_red,
                             R.drawable.profile_bg_teal
                         ).random()
+                        //Change poster crop area to 20% from Top
+                        backgroundPoster.cropYCenterOffsetPct = 0.20F
+                        
                         backgroundPoster.setImage(
                             d.posterBackgroundImage ?: UiImage.Drawable(error),
                             radius = 0,
                             errorImageDrawable = error
                         )
-
                         resultComingSoon.isVisible = d.comingSoon
                         resultDataHolder.isGone = d.comingSoon
                         UIHelper.populateChips(resultTag, d.tags)
