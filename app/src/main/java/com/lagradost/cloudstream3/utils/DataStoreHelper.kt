@@ -352,34 +352,35 @@ object DataStoreHelper {
     /**
      * Used to display notifications on new episodes and posters in library.
      **/
-    abstract class BaseSearchResponse(
+    abstract class LibrarySearchResponse(
         @JsonProperty("id") override var id: Int?,
+        @JsonProperty("latestUpdatedTime") open val latestUpdatedTime: Long,
         @JsonProperty("name") override val name: String,
-        @JsonProperty("year") open val year: Int?,
         @JsonProperty("url") override val url: String,
         @JsonProperty("apiName") override val apiName: String,
-        @JsonProperty("type") override var type: TvType? = null,
+        @JsonProperty("type") override var type: TvType?,
         @JsonProperty("posterUrl") override var posterUrl: String?,
-        @JsonProperty("imdbId") open val imdbId: String? = null,
-        @JsonProperty("quality") override var quality: SearchQuality? = null,
-        @JsonProperty("posterHeaders") override var posterHeaders: Map<String, String>? = null
+        @JsonProperty("year") open val year: Int?,
+        @JsonProperty("imdbId") open val imdbId: String?,
+        @JsonProperty("quality") override var quality: SearchQuality?,
+        @JsonProperty("posterHeaders") override var posterHeaders: Map<String, String>?
     ) : SearchResponse
 
     data class SubscribedData(
         @JsonProperty("subscribedTime") val subscribedTime: Long,
-        @JsonProperty("latestUpdatedTime") val latestUpdatedTime: Long,
         @JsonProperty("lastSeenEpisodeCount") val lastSeenEpisodeCount: Map<DubStatus, Int?>,
         override var id: Int?,
+        override val latestUpdatedTime: Long,
         override val name: String,
-        override val year: Int?,
         override val url: String,
         override val apiName: String,
         override var type: TvType?,
         override var posterUrl: String?,
-        override var imdbId: String? = null,
+        override val year: Int?,
+        override val imdbId: String?,
         override var quality: SearchQuality? = null,
         override var posterHeaders: Map<String, String>? = null
-    ) : BaseSearchResponse(id, name, year, url, apiName, type, posterUrl, imdbId, quality, posterHeaders) {
+    ) : LibrarySearchResponse(id, latestUpdatedTime, name, url, apiName, type, posterUrl, year, imdbId, quality, posterHeaders) {
         fun toLibraryItem(): SyncAPI.LibraryItem? {
             return SyncAPI.LibraryItem(
                 name,
@@ -396,18 +397,18 @@ object DataStoreHelper {
 
     data class BookmarkedData(
         @JsonProperty("bookmarkedTime") val bookmarkedTime: Long,
-        @JsonProperty("latestUpdatedTime") val latestUpdatedTime: Long,
         override var id: Int?,
+        override val latestUpdatedTime: Long,
         override val name: String,
-        override val year: Int?,
         override val url: String,
         override val apiName: String,
         override var type: TvType?,
         override var posterUrl: String?,
-        override var imdbId: String? = null,
+        override val year: Int?,
+        override val imdbId: String?,
         override var quality: SearchQuality? = null,
         override var posterHeaders: Map<String, String>? = null
-    ) : BaseSearchResponse(id, name, year, url, apiName, type, posterUrl, imdbId, quality, posterHeaders) {
+    ) : LibrarySearchResponse(id, latestUpdatedTime, name, url, apiName, type, posterUrl, year, imdbId, quality, posterHeaders) {
         fun toLibraryItem(id: String): SyncAPI.LibraryItem {
             return SyncAPI.LibraryItem(
                 name,
@@ -424,18 +425,18 @@ object DataStoreHelper {
 
     data class FavoritesData(
         @JsonProperty("favoritesTime") val favoritesTime: Long,
-        @JsonProperty("latestUpdatedTime") val latestUpdatedTime: Long,
         override var id: Int?,
+        override val latestUpdatedTime: Long,
         override val name: String,
-        override val year: Int?,
         override val url: String,
         override val apiName: String,
         override var type: TvType?,
         override var posterUrl: String?,
-        override var imdbId: String? = null,
+        override val year: Int?,
+        override val imdbId: String?,
         override var quality: SearchQuality? = null,
         override var posterHeaders: Map<String, String>? = null
-    ) : BaseSearchResponse(id, name, year, url, apiName, type, posterUrl, imdbId, quality, posterHeaders) {
+    ) : LibrarySearchResponse(id, latestUpdatedTime, name, url, apiName, type, posterUrl, year, imdbId, quality, posterHeaders) {
         fun toLibraryItem(): SyncAPI.LibraryItem? {
             return SyncAPI.LibraryItem(
                 name,
@@ -451,20 +452,20 @@ object DataStoreHelper {
     }
 
     data class ResumeWatchingResult(
+        @JsonProperty("name") override val name: String,
+        @JsonProperty("url") override val url: String,
+        @JsonProperty("apiName") override val apiName: String,
+        @JsonProperty("type") override var type: TvType? = null,
+        @JsonProperty("posterUrl") override var posterUrl: String?,
         @JsonProperty("watchPos") val watchPos: PosDur?,
+        @JsonProperty("id") override var id: Int?,
         @JsonProperty("parentId") val parentId: Int?,
         @JsonProperty("episode") val episode: Int?,
         @JsonProperty("season") val season: Int?,
         @JsonProperty("isFromDownload") val isFromDownload: Boolean,
-        override var id: Int?,
-        override val name: String,
-        override val url: String,
-        override val apiName: String,
-        override var type: TvType?,
-        override var posterUrl: String?,
-        override var quality: SearchQuality? = null,
-        override var posterHeaders: Map<String, String>? = null
-    ) : BaseSearchResponse(id, name, null, url, apiName, type, posterUrl, null, quality, posterHeaders)
+        @JsonProperty("quality") override var quality: SearchQuality? = null,
+        @JsonProperty("posterHeaders") override var posterHeaders: Map<String, String>? = null,
+    ) : SearchResponse
 
     /**
      * A datastore wide account for future implementations of a multiple account system
@@ -588,15 +589,14 @@ object DataStoreHelper {
         return getKey("$currentAccount/$RESULT_WATCH_STATE_DATA", id.toString())
     }
 
-    fun getAllBookmarkedDataByWatchType(): Map<WatchType, List<BookmarkedData>> {
+    fun getBookmarkedDataByWatchType(watchType: WatchType): List<BookmarkedData> {
         val allBookmarkedData: List<BookmarkedData> =
             getKeys("$currentAccount/$RESULT_WATCH_STATE_DATA")?.mapNotNull {
                 getKey(it)
         } ?: emptyList()
 
         return allBookmarkedData
-            .groupBy { getResultWatchState(it.id ?: return emptyMap()) }
-            .mapValues { it.value }
+            .filter { getResultWatchState(it.id ?: return emptyList()) == watchType }
     }
 
     fun getAllSubscriptions(): List<SubscribedData> {

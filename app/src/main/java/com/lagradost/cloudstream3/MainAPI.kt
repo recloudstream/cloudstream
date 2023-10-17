@@ -26,8 +26,6 @@ import com.lagradost.nicehttp.RequestBodyTypes
 import okhttp3.Interceptor
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.toRequestBody
-import org.json.JSONException
-import org.json.JSONObject
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.absoluteValue
@@ -1249,12 +1247,8 @@ interface LoadResponse {
         }
 
         fun LoadResponse.getImdbId(): String? {
-            val simklId = this.syncData[simklIdPrefix] ?: return null
-            return try {
-                val jsonObject = JSONObject(simklId)
-                jsonObject.optString("Imdb")
-            } catch (e: JSONException) {
-                null
+            return normalSafeApiCall {
+                SimklApi.readIdFromString(this.syncData[simklIdPrefix])?.get(SimklApi.Companion.SyncServices.Imdb)
             }
         }
 

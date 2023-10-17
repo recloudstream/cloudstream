@@ -54,10 +54,10 @@ import com.lagradost.cloudstream3.utils.Coroutines.ioWork
 import com.lagradost.cloudstream3.utils.Coroutines.ioWorkSafe
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.DataStoreHelper.deleteBookmarkedData
-import com.lagradost.cloudstream3.utils.DataStoreHelper.getAllBookmarkedDataByWatchType
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getAllFavorites
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getAllSubscriptions
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getBookmarkedData
+import com.lagradost.cloudstream3.utils.DataStoreHelper.getBookmarkedDataByWatchType
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getDub
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getFavoritesData
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getLastWatched
@@ -832,7 +832,7 @@ class ResultViewModel2 : ViewModel() {
             response.name,
             response.year,
             response.getImdbId(),
-            getAllBookmarkedDataByWatchType()[status] ?: emptyList()
+            getBookmarkedDataByWatchType(status)
         ) { shouldContinue: Boolean, duplicateId: Int? ->
             if (!shouldContinue) return@checkAndWarnDuplicates
 
@@ -841,20 +841,21 @@ class ResultViewModel2 : ViewModel() {
             }
 
             setResultWatchState(currentId, status.internalId)
+
             val current = getBookmarkedData(currentId)
-            val currentTime = System.currentTimeMillis()
+
             setBookmarkedData(
                 currentId,
                 DataStoreHelper.BookmarkedData(
-                    current?.bookmarkedTime ?: currentTime,
-                    currentTime,
+                    current?.bookmarkedTime ?: unixTimeMS,
                     currentId,
+                    unixTimeMS,
                     response.name,
-                    response.year,
                     response.url,
                     response.apiName,
                     response.type,
                     response.posterUrl,
+                    response.year,
                     response.getImdbId()
                 )
             )
@@ -920,15 +921,15 @@ class ResultViewModel2 : ViewModel() {
                     currentId,
                     DataStoreHelper.SubscribedData(
                         current?.subscribedTime ?: unixTimeMS,
-                        unixTimeMS,
                         response.getLatestEpisodes(),
                         currentId,
+                        unixTimeMS,
                         response.name,
-                        response.year,
                         response.url,
                         response.apiName,
                         response.type,
                         response.posterUrl,
+                        response.year,
                         response.getImdbId()
                     )
                 )
@@ -983,14 +984,14 @@ class ResultViewModel2 : ViewModel() {
                     currentId,
                     DataStoreHelper.FavoritesData(
                         current?.favoritesTime ?: unixTimeMS,
-                        unixTimeMS,
                         currentId,
+                        unixTimeMS,
                         response.name,
-                        response.year,
                         response.url,
                         response.apiName,
                         response.type,
                         response.posterUrl,
+                        response.year,
                         response.getImdbId()
                     )
                 )
@@ -1010,7 +1011,7 @@ class ResultViewModel2 : ViewModel() {
         name: String,
         year: Int?,
         imdbId: String?,
-        data: List<DataStoreHelper.BaseSearchResponse>,
+        data: List<DataStoreHelper.LibrarySearchResponse>,
         checkDuplicatesCallback: (shouldContinue: Boolean, duplicateId: Int?) -> Unit
     ) {
         fun normalizeString(input: String): String {

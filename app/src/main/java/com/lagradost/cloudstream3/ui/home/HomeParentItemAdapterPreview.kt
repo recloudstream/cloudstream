@@ -361,18 +361,18 @@ class HomeParentItemAdapterPreview(
                             fab.context,
                             item
                         ) { statusChanged: Boolean ->
-                            if (statusChanged) {
-                                homePreviewBookmark.setCompoundDrawablesWithIntrinsicBounds(
-                                    null,
-                                    ContextCompat.getDrawable(
-                                        homePreviewBookmark.context,
-                                        newValue.iconRes
-                                    ),
-                                    null,
-                                    null
-                                )
-                                homePreviewBookmark.setText(newValue.stringRes)
-                            }
+                            if (!statusChanged) return@updateWatchStatus
+
+                            homePreviewBookmark.setCompoundDrawablesWithIntrinsicBounds(
+                                null,
+                                ContextCompat.getDrawable(
+                                    homePreviewBookmark.context,
+                                    newValue.iconRes
+                                ),
+                                null,
+                                null
+                            )
+                            homePreviewBookmark.setText(newValue.stringRes)
                         }
                     }
                 }

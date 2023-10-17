@@ -694,24 +694,24 @@
     <string name="action_add_to_favorites">Add to favorites</string>
     <string name="action_remove_from_favorites">Remove from favorites</string>
 
-    <string name="duplicate_title">Possible Duplicate Found</string>
+    <string name="duplicate_title">Potential Duplicate Found</string>
     <string name="duplicate_add">Add</string>
     <string name="duplicate_replace">Replace</string>
     <string name="duplicate_cancel" translatable="false">@string/sort_cancel</string>
     <string name="duplicate_message_bookmarks">
-        A possible duplicate with the same title \'%s\' and watch status \'%s\' already exists in your library.
+        It appears that a potentially duplicate title \'%s\' with the watch status \'%s\' already exists in your library.
 
-        \n\nDo you want to still add this to item, replace the existing one, or cancel the action?
+        \n\nWould you like to add this item anyway, replace the existing one, or cancel the action?
     </string>
     <string name="duplicate_message_subscriptions">
-        A possible duplicate with the same title \'%s\' already exists in your subscriptions.
+        You are already subscribed to a title that appears to be a potential duplicate: \'%s.\'
 
-        \n\nDo you want to still subscribe to this item, replace the existing subscription, or cancel the action?
+        \n\nWould you like to add this subscription anyway, replace the existing one, or cancel the action?
     </string>
     <string name="duplicate_message_favorites">
-        A possible duplicate with the same title \'%s\' already exists in your favorites.
+        It seems that a potentially duplicate title \'%s\' is already in your favorites.
 
-        \n\nDo you want to still add this to item, replace the existing one, or cancel the action?
+        \n\nWould you like to add this item anyway, replace the existing one, or cancel the action?
     </string>
 
 
