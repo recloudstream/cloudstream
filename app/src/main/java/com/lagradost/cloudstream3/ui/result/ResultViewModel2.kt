@@ -25,6 +25,7 @@ import com.lagradost.cloudstream3.CommonActivity.getCastSession
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.LoadResponse.Companion.addTrailer
 import com.lagradost.cloudstream3.LoadResponse.Companion.getAniListId
+import com.lagradost.cloudstream3.LoadResponse.Companion.getImdbId
 import com.lagradost.cloudstream3.LoadResponse.Companion.getMalId
 import com.lagradost.cloudstream3.LoadResponse.Companion.isMovie
 import com.lagradost.cloudstream3.metaproviders.SyncRedirector
@@ -830,6 +831,7 @@ class ResultViewModel2 : ViewModel() {
             R.string.duplicate_message_bookmarks,
             response.name,
             response.year,
+            response.getImdbId(),
             getAllBookmarkedDataByWatchType()[status] ?: emptyList()
         ) { shouldContinue: Boolean, duplicateId: Int? ->
             if (!shouldContinue) return@checkAndWarnDuplicates
@@ -852,7 +854,8 @@ class ResultViewModel2 : ViewModel() {
                     response.url,
                     response.apiName,
                     response.type,
-                    response.posterUrl
+                    response.posterUrl,
+                    response.getImdbId()
                 )
             )
 
@@ -899,6 +902,7 @@ class ResultViewModel2 : ViewModel() {
                 R.string.duplicate_message_subscriptions,
                 response.name,
                 response.year,
+                response.getImdbId(),
                 getAllSubscriptions(),
             ) { shouldContinue: Boolean, duplicateId: Int? ->
                 if (!shouldContinue) {
@@ -924,7 +928,8 @@ class ResultViewModel2 : ViewModel() {
                         response.url,
                         response.apiName,
                         response.type,
-                        response.posterUrl
+                        response.posterUrl,
+                        response.getImdbId()
                     )
                 )
 
@@ -960,6 +965,7 @@ class ResultViewModel2 : ViewModel() {
                 R.string.duplicate_message_favorites,
                 response.name,
                 response.year,
+                response.getImdbId(),
                 getAllFavorites(),
             ) { shouldContinue: Boolean, duplicateId: Int? ->
                 if (!shouldContinue) {
@@ -984,7 +990,8 @@ class ResultViewModel2 : ViewModel() {
                         response.url,
                         response.apiName,
                         response.type,
-                        response.posterUrl
+                        response.posterUrl,
+                        response.getImdbId()
                     )
                 )
 
@@ -1002,6 +1009,7 @@ class ResultViewModel2 : ViewModel() {
         message: Int,
         name: String,
         year: Int?,
+        imdbId: String?,
         data: List<DataStoreHelper.BaseSearchResponse>,
         checkDuplicatesCallback: (shouldContinue: Boolean, duplicateId: Int?) -> Unit
     ) {
@@ -1015,11 +1023,11 @@ class ResultViewModel2 : ViewModel() {
             return input.trim().replace("\\s+".toRegex(), " ")
         }
 
-        // TODO support checking IMDB ID rather than name + year when available
         val duplicateEntry = data.find {
-            // Normalize both strings for comparison
-            normalizeString(it.name) == normalizeString(name) && it.year == year
+            imdbId != null && it.imdbId == imdbId ||
+                    normalizeString(it.name) == normalizeString(name) && it.year == year
         }
+
         if (duplicateEntry == null || context == null) {
             checkDuplicatesCallback.invoke(true, null)
             return

@@ -360,6 +360,7 @@ object DataStoreHelper {
         @JsonProperty("apiName") override val apiName: String,
         @JsonProperty("type") override var type: TvType? = null,
         @JsonProperty("posterUrl") override var posterUrl: String?,
+        @JsonProperty("imdbId") open val imdbId: String? = null,
         @JsonProperty("quality") override var quality: SearchQuality? = null,
         @JsonProperty("posterHeaders") override var posterHeaders: Map<String, String>? = null
     ) : SearchResponse
@@ -375,9 +376,10 @@ object DataStoreHelper {
         override val apiName: String,
         override var type: TvType?,
         override var posterUrl: String?,
+        override var imdbId: String? = null,
         override var quality: SearchQuality? = null,
         override var posterHeaders: Map<String, String>? = null
-    ) : BaseSearchResponse(id, name, year, url, apiName, type, posterUrl, quality, posterHeaders) {
+    ) : BaseSearchResponse(id, name, year, url, apiName, type, posterUrl, imdbId, quality, posterHeaders) {
         fun toLibraryItem(): SyncAPI.LibraryItem? {
             return SyncAPI.LibraryItem(
                 name,
@@ -402,9 +404,10 @@ object DataStoreHelper {
         override val apiName: String,
         override var type: TvType?,
         override var posterUrl: String?,
+        override var imdbId: String? = null,
         override var quality: SearchQuality? = null,
         override var posterHeaders: Map<String, String>? = null
-    ) : BaseSearchResponse(id, name, year, url, apiName, type, posterUrl, quality, posterHeaders) {
+    ) : BaseSearchResponse(id, name, year, url, apiName, type, posterUrl, imdbId, quality, posterHeaders) {
         fun toLibraryItem(id: String): SyncAPI.LibraryItem {
             return SyncAPI.LibraryItem(
                 name,
@@ -429,9 +432,10 @@ object DataStoreHelper {
         override val apiName: String,
         override var type: TvType?,
         override var posterUrl: String?,
+        override var imdbId: String? = null,
         override var quality: SearchQuality? = null,
         override var posterHeaders: Map<String, String>? = null
-    ) : BaseSearchResponse(id, name, year, url, apiName, type, posterUrl, quality, posterHeaders) {
+    ) : BaseSearchResponse(id, name, year, url, apiName, type, posterUrl, imdbId, quality, posterHeaders) {
         fun toLibraryItem(): SyncAPI.LibraryItem? {
             return SyncAPI.LibraryItem(
                 name,
@@ -460,7 +464,7 @@ object DataStoreHelper {
         override var posterUrl: String?,
         override var quality: SearchQuality? = null,
         override var posterHeaders: Map<String, String>? = null
-    ) : BaseSearchResponse(id, name, null, url, apiName, type, posterUrl, quality, posterHeaders)
+    ) : BaseSearchResponse(id, name, null, url, apiName, type, posterUrl, null, quality, posterHeaders)
 
     /**
      * A datastore wide account for future implementations of a multiple account system
