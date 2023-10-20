@@ -33,6 +33,7 @@ class SettingsFragment : Fragment() {
         var beneneCount = 0
 
         private var isTv: Boolean = false
+        private var isAutoTv: Boolean = false
         private var isTrueTv: Boolean = false
 
         fun PreferenceFragmentCompat?.getPref(id: Int): Preference? {
@@ -121,7 +122,12 @@ class SettingsFragment : Fragment() {
 
         fun Context.updateTv() {
             isTrueTv = isTrueTvSettings()
+            isAutoTv = isAutoTv()
             isTv = isTvSettings()
+        }
+
+        fun isAutoTv(): Boolean {
+            return isAutoTv
         }
 
         fun isTrueTvSettings(): Boolean {
