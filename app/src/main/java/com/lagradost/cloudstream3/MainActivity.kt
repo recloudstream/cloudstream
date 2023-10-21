@@ -662,7 +662,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         val isAtHome =
             navController?.currentDestination?.matchDestination(R.id.navigation_home) == true
 
-        if (isAtHome && isTrueTvSettings()) {
+        if (isAtHome && isTvSettings()) {
             showConfirmExitDialog()
         } else {
             super.onBackPressed()
