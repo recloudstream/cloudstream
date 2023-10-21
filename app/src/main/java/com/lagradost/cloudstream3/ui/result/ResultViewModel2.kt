@@ -100,6 +100,7 @@ data class ResultData(
     val plotText: UiText,
     val apiName: UiText,
     val ratingText: UiText?,
+    val contentRatingText: UiText?,
     val vpnText: UiText?,
     val metaText: UiText?,
     val durationText: UiText?,
@@ -219,6 +220,7 @@ fun LoadResponse.toResultData(repo: APIRepository): ResultData {
         apiName = txt(apiName),
         ratingText = rating?.div(1000f)
             ?.let { if (it <= 0.1f) null else txt(R.string.rating_format, it) },
+        contentRatingText = txt(contentRating),
         vpnText = txt(
             when (repo.vpnStatus) {
                 VPNStatus.None -> null

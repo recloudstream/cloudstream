@@ -151,6 +151,8 @@ open class TmdbProvider : MainAPI() {
             recommendations = (this@toLoadResponse.recommendations
                 ?: this@toLoadResponse.similar)?.results?.map { it.toSearchResponse() }
             addActors(credits?.cast?.toList().toActors())
+
+            contentRating = fetchContentRating(id, "US", true)
         }
     }
 
@@ -193,6 +195,8 @@ open class TmdbProvider : MainAPI() {
             recommendations = (this@toLoadResponse.recommendations
                 ?: this@toLoadResponse.similar)?.results?.map { it.toSearchResponse() }
             addActors(credits?.cast?.toList().toActors())
+
+            contentRating = fetchContentRating(id, "US", false)
         }
     }
 
@@ -261,6 +265,51 @@ open class TmdbProvider : MainAPI() {
     }
 
     open fun loadFromTmdb(tmdb: Int): LoadResponse? {
+        return null
+    }
+
+    open suspend fun fetchContentRating(id: Int?, country: String, isTvSeries: Boolean): String? {
+        id ?: return null
+        return if (isTvSeries) {
+            val contentRatings = tmdb.tvService().content_ratings(id).awaitResponse().body()
+            contentRatings?.results
+                ?.find { it.iso_3166_1 == country }
+                ?.rating
+        } else {
+            val releaseDates = tmdb.moviesService().releaseDates(id).awaitResponse().body()?.results
+            val certification = findFirstNonEmptyCertificationWithCountry(releaseDates, country)
+            if (!certification.isNullOrEmpty()) {
+                certification
+            } else {
+                null
+            }
+        }
+    }
+
+    private fun findFirstNonEmptyCertificationWithCountry(
+        releaseDatesResults: List<ReleaseDatesResult>?,
+        country: String
+    ): String? {
+        for (releaseDateResult in releaseDatesResults.orEmpty()) {
+            if (releaseDateResult.iso_3166_1 == country) {
+                val certification = findFirstNonEmptyCertification(releaseDateResult.release_dates)
+                if (!certification.isNullOrEmpty()) {
+                    return certification
+                }
+            }
+        }
+
+        return null
+    }
+
+    private fun findFirstNonEmptyCertification(releaseDates: List<ReleaseDate>?): String? {
+        for (releaseDate in releaseDates.orEmpty()) {
+            val certification = releaseDate.certification
+            if (!certification.isNullOrBlank()) {
+                return certification
+            }
+        }
+
         return null
     }
 

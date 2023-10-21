@@ -407,6 +407,12 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
                             android:id="@+id/result_meta_duration"
                             style="@style/ResultInfoText"
                             tools:text="121min" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/result_meta_content_rating"
+                            android:layout_gravity="center_vertical"
+                            style="@style/SmallWhiteButton"
+                            tools:text="PG-13" />
                     </com.lagradost.cloudstream3.widget.FlowLayout>
 
 

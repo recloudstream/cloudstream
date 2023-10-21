@@ -675,6 +675,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                     resultMetaYear.setText(d.yearText)
                     resultMetaDuration.setText(d.durationText)
                     resultMetaRating.setText(d.ratingText)
+                    resultMetaContentRating.setText(d.contentRatingText)
                     resultCastText.setText(d.actorsText)
                     resultNextAiring.setText(d.nextAiringEpisode)
                     resultNextAiringTime.setText(d.nextAiringDate)

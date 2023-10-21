@@ -1193,6 +1193,7 @@ interface LoadResponse {
     var syncData: MutableMap<String, String>
     var posterHeaders: Map<String, String>?
     var backgroundPosterUrl: String?
+    var contentRating: String?
 
     companion object {
         private val malIdPrefix = malApi.idPrefix
@@ -1490,6 +1491,7 @@ data class TorrentLoadResponse(
     override var syncData: MutableMap<String, String> = mutableMapOf(),
     override var posterHeaders: Map<String, String>? = null,
     override var backgroundPosterUrl: String? = null,
+    override var contentRating: String? = null,
 ) : LoadResponse
 
 data class AnimeLoadResponse(
@@ -1521,6 +1523,7 @@ data class AnimeLoadResponse(
     override var nextAiring: NextAiring? = null,
     override var seasonNames: List<SeasonData>? = null,
     override var backgroundPosterUrl: String? = null,
+    override var contentRating: String? = null,
 ) : LoadResponse, EpisodeResponse {
     override fun getLatestEpisodes(): Map<DubStatus, Int?> {
         return episodes.map { (status, episodes) ->
@@ -1583,6 +1586,7 @@ data class LiveStreamLoadResponse(
     override var syncData: MutableMap<String, String> = mutableMapOf(),
     override var posterHeaders: Map<String, String>? = null,
     override var backgroundPosterUrl: String? = null,
+    override var contentRating: String? = null,
 ) : LoadResponse
 
 data class MovieLoadResponse(
@@ -1606,6 +1610,7 @@ data class MovieLoadResponse(
     override var syncData: MutableMap<String, String> = mutableMapOf(),
     override var posterHeaders: Map<String, String>? = null,
     override var backgroundPosterUrl: String? = null,
+    override var contentRating: String? = null,
 ) : LoadResponse
 
 suspend fun <T> MainAPI.newMovieLoadResponse(
@@ -1730,6 +1735,7 @@ data class TvSeriesLoadResponse(
     override var nextAiring: NextAiring? = null,
     override var seasonNames: List<SeasonData>? = null,
     override var backgroundPosterUrl: String? = null,
+    override var contentRating: String? = null,
 ) : LoadResponse, EpisodeResponse {
     override fun getLatestEpisodes(): Map<DubStatus, Int?> {
         val maxSeason =
