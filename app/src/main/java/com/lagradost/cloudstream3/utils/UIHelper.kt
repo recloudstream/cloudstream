@@ -178,9 +178,10 @@ object UIHelper {
     fun Activity?.navigate(@IdRes navigation: Int, arguments: Bundle? = null) {
         try {
             if (this is FragmentActivity) {
-                (supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as? NavHostFragment?)?.navController?.navigate(
-                    navigation, arguments
-                )
+                val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as? NavHostFragment?
+                navHostFragment?.navController?.let {
+                    it.navigate(navigation, arguments)
+                }
             }
         } catch (t: Throwable) {
             logError(t)
