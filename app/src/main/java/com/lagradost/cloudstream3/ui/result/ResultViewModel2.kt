@@ -7,6 +7,7 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import androidx.annotation.MainThread
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.FileProvider
 import androidx.core.net.toUri
@@ -129,6 +130,18 @@ data class ResultData(
     val nextAiringEpisode: UiText?,
     val plotHeaderText: UiText,
 )
+
+data class CheckDuplicateData(
+    val name: String,
+    val year: Int?,
+    val imdbId: String?
+)
+
+enum class LibraryListType {
+    BOOKMARKS,
+    FAVORITES,
+    SUBSCRIPTIONS
+}
 
 fun txt(status: DubStatus?): UiText? {
     return txt(
@@ -824,20 +837,29 @@ class ResultViewModel2 : ViewModel() {
 
         val currentStatus = getResultWatchState(currentId)
 
-        if (status == currentStatus) return
+        // If the status is not actually changing, set this to an empty
+        // list so that we don't show the duplicate warning dialog, but we
+        // still want to refresh the data anyway
+        val bookmarkedData = if (status == currentStatus) {
+            emptyList()
+        } else getBookmarkedDataByWatchType(status)
 
         checkAndWarnDuplicates(
             context,
-            R.string.duplicate_message_bookmarks,
-            response.name,
-            response.year,
-            response.getImdbId(),
-            getBookmarkedDataByWatchType(status)
-        ) { shouldContinue: Boolean, duplicateId: Int? ->
+            LibraryListType.BOOKMARKS,
+            CheckDuplicateData(
+                name = response.name,
+                year = response.year,
+                imdbId = response.getImdbId(),
+            ),
+            bookmarkedData
+        ) { shouldContinue: Boolean, duplicateIds: List<Int?> ->
             if (!shouldContinue) return@checkAndWarnDuplicates
 
-            if (duplicateId != null) {
-                deleteBookmarkedData(duplicateId)
+            if (duplicateIds.isNotEmpty()) {
+                duplicateIds.forEach { duplicateId ->
+                    deleteBookmarkedData(duplicateId)
+                }
             }
 
             setResultWatchState(currentId, status.internalId)
@@ -900,19 +922,23 @@ class ResultViewModel2 : ViewModel() {
         } else {
             checkAndWarnDuplicates(
                 context,
-                R.string.duplicate_message_subscriptions,
-                response.name,
-                response.year,
-                response.getImdbId(),
+                LibraryListType.SUBSCRIPTIONS,
+                CheckDuplicateData(
+                    name = response.name,
+                    year = response.year,
+                    imdbId = response.getImdbId(),
+                ),
                 getAllSubscriptions(),
-            ) { shouldContinue: Boolean, duplicateId: Int? ->
+            ) { shouldContinue: Boolean, duplicateIds: List<Int?> ->
                 if (!shouldContinue) {
                     statusChangedCallback?.invoke(null)
                     return@checkAndWarnDuplicates
                 }
 
-                if (duplicateId != null) {
-                    removeSubscribedData(duplicateId)
+                if (duplicateIds.isNotEmpty()) {
+                    duplicateIds.forEach { duplicateId ->
+                        removeSubscribedData(duplicateId)
+                    }
                 }
 
                 val current = getSubscribedData(currentId)
@@ -963,19 +989,23 @@ class ResultViewModel2 : ViewModel() {
         } else {
             checkAndWarnDuplicates(
                 context,
-                R.string.duplicate_message_favorites,
-                response.name,
-                response.year,
-                response.getImdbId(),
+                LibraryListType.FAVORITES,
+                CheckDuplicateData(
+                    name = response.name,
+                    year = response.year,
+                    imdbId = response.getImdbId(),
+                ),
                 getAllFavorites(),
-            ) { shouldContinue: Boolean, duplicateId: Int? ->
+            ) { shouldContinue: Boolean, duplicateIds: List<Int?> ->
                 if (!shouldContinue) {
                     statusChangedCallback?.invoke(null)
                     return@checkAndWarnDuplicates
                 }
 
-                if (duplicateId != null) {
-                    removeFavoritesData(duplicateId)
+                if (duplicateIds.isNotEmpty()) {
+                    duplicateIds.forEach { duplicateId ->
+                        removeFavoritesData(duplicateId)
+                    }
                 }
 
                 val current = getFavoritesData(currentId)
@@ -1005,14 +1035,13 @@ class ResultViewModel2 : ViewModel() {
         }
     }
 
+    @MainThread
     private fun checkAndWarnDuplicates(
         context: Context?,
-        message: Int,
-        name: String,
-        year: Int?,
-        imdbId: String?,
+        listType: LibraryListType,
+        checkDuplicateData: CheckDuplicateData,
         data: List<DataStoreHelper.LibrarySearchResponse>,
-        checkDuplicatesCallback: (shouldContinue: Boolean, duplicateId: Int?) -> Unit
+        checkDuplicatesCallback: (shouldContinue: Boolean, duplicateIds: List<Int?>) -> Unit
     ) {
         fun normalizeString(input: String): String {
             /**
@@ -1021,17 +1050,46 @@ class ResultViewModel2 : ViewModel() {
              * and one provider has the title with an extra whitespace. This is minor enough that
              * it should still match in this case.
              */
-            return input.trim().replace("\\s+".toRegex(), " ")
+            val regex = "\\s+".toRegex()
+            return input.trim().replace(regex, " ")
         }
 
-        val duplicateEntry = data.find {
-            imdbId != null && it.imdbId == imdbId ||
-                    normalizeString(it.name) == normalizeString(name) && it.year == year
+        val duplicateEntries = data.filter {
+            checkDuplicateData.imdbId != null && it.imdbId == checkDuplicateData.imdbId ||
+                    normalizeString(it.name) == normalizeString(checkDuplicateData.name) && it.year == checkDuplicateData.year
         }
 
-        if (duplicateEntry == null || context == null) {
-            checkDuplicatesCallback.invoke(true, null)
+        if (duplicateEntries.isEmpty() || context == null) {
+            checkDuplicatesCallback.invoke(true, emptyList())
             return
+        }
+
+        val replaceMessage = if (duplicateEntries.size > 1) {
+            R.string.duplicate_replace_all
+        } else R.string.duplicate_replace
+
+        val message = if (duplicateEntries.size == 1) {
+            val list = when (listType) {
+                LibraryListType.BOOKMARKS -> getResultWatchState(duplicateEntries[0].id ?: 0).stringRes
+                LibraryListType.FAVORITES -> R.string.favorites_list_name
+                LibraryListType.SUBSCRIPTIONS -> R.string.subscription_list_name
+            }
+
+            context.getString(R.string.duplicate_message_single,
+                "${normalizeString(duplicateEntries[0].name)} (${context.getString(list)})"
+            )
+        } else {
+            val bulletPoints = duplicateEntries.joinToString("\n") {
+                val list = when (listType) {
+                    LibraryListType.BOOKMARKS -> getResultWatchState(it.id ?: 0).stringRes
+                    LibraryListType.FAVORITES -> R.string.favorites_list_name
+                    LibraryListType.SUBSCRIPTIONS -> R.string.subscription_list_name
+                }
+
+                "• ${normalizeString(it.name)} (${context.getString(list)})"
+            }
+
+            context.getString(R.string.duplicate_message_multiple, bulletPoints)
         }
 
         val builder: AlertDialog.Builder = AlertDialog.Builder(context)
@@ -1040,29 +1098,22 @@ class ResultViewModel2 : ViewModel() {
             DialogInterface.OnClickListener { _, which ->
                 when (which) {
                     DialogInterface.BUTTON_POSITIVE -> {
-                        checkDuplicatesCallback.invoke(true, null)
+                        checkDuplicatesCallback.invoke(true, emptyList())
                     }
                     DialogInterface.BUTTON_NEGATIVE -> {
-                        checkDuplicatesCallback.invoke(false, null)
+                        checkDuplicatesCallback.invoke(false, emptyList())
                     }
                     DialogInterface.BUTTON_NEUTRAL -> {
-                        checkDuplicatesCallback.invoke(true, duplicateEntry.id)
+                        checkDuplicatesCallback.invoke(true, duplicateEntries.map { it.id })
                     }
                 }
             }
 
         builder.setTitle(R.string.duplicate_title)
-            .setMessage(
-                context.getString(message).format(
-                    normalizeString(duplicateEntry.name),
-                    context.getString(
-                        getResultWatchState(duplicateEntry.id ?: 0).stringRes
-                    )
-                )
-            )
+            .setMessage(message)
             .setPositiveButton(R.string.duplicate_add, dialogClickListener)
             .setNegativeButton(R.string.duplicate_cancel, dialogClickListener)
-            .setNeutralButton(R.string.duplicate_replace, dialogClickListener)
+            .setNeutralButton(replaceMessage, dialogClickListener)
             .show().setDefaultFocus()
     }
 

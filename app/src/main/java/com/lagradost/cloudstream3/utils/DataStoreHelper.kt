@@ -377,7 +377,7 @@ object DataStoreHelper {
         override var type: TvType?,
         override var posterUrl: String?,
         override val year: Int?,
-        override val imdbId: String?,
+        override val imdbId: String? = null,
         override var quality: SearchQuality? = null,
         override var posterHeaders: Map<String, String>? = null
     ) : LibrarySearchResponse(id, latestUpdatedTime, name, url, apiName, type, posterUrl, year, imdbId, quality, posterHeaders) {
@@ -405,7 +405,7 @@ object DataStoreHelper {
         override var type: TvType?,
         override var posterUrl: String?,
         override val year: Int?,
-        override val imdbId: String?,
+        override val imdbId: String? = null,
         override var quality: SearchQuality? = null,
         override var posterHeaders: Map<String, String>? = null
     ) : LibrarySearchResponse(id, latestUpdatedTime, name, url, apiName, type, posterUrl, year, imdbId, quality, posterHeaders) {
@@ -433,7 +433,7 @@ object DataStoreHelper {
         override var type: TvType?,
         override var posterUrl: String?,
         override val year: Int?,
-        override val imdbId: String?,
+        override val imdbId: String? = null,
         override var quality: SearchQuality? = null,
         override var posterHeaders: Map<String, String>? = null
     ) : LibrarySearchResponse(id, latestUpdatedTime, name, url, apiName, type, posterUrl, year, imdbId, quality, posterHeaders) {
