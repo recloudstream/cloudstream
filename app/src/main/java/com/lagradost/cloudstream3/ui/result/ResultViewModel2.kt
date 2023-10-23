@@ -26,7 +26,6 @@ import com.lagradost.cloudstream3.CommonActivity.getCastSession
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.LoadResponse.Companion.addTrailer
 import com.lagradost.cloudstream3.LoadResponse.Companion.getAniListId
-import com.lagradost.cloudstream3.LoadResponse.Companion.getImdbId
 import com.lagradost.cloudstream3.LoadResponse.Companion.getMalId
 import com.lagradost.cloudstream3.LoadResponse.Companion.isMovie
 import com.lagradost.cloudstream3.metaproviders.SyncRedirector
@@ -135,7 +134,7 @@ data class ResultData(
 data class CheckDuplicateData(
     val name: String,
     val year: Int?,
-    val imdbId: String?
+    val syncData: Map<String, String>?
 )
 
 enum class LibraryListType {
@@ -851,7 +850,7 @@ class ResultViewModel2 : ViewModel() {
             CheckDuplicateData(
                 name = response.name,
                 year = response.year,
-                imdbId = response.getImdbId(),
+                syncData = response.syncData,
             ),
             bookmarkedData
         ) { shouldContinue: Boolean, duplicateIds: List<Int?> ->
@@ -927,7 +926,7 @@ class ResultViewModel2 : ViewModel() {
                 CheckDuplicateData(
                     name = response.name,
                     year = response.year,
-                    imdbId = response.getImdbId(),
+                    syncData = response.syncData,
                 ),
                 getAllSubscriptions(),
             ) { shouldContinue: Boolean, duplicateIds: List<Int?> ->
@@ -994,7 +993,7 @@ class ResultViewModel2 : ViewModel() {
                 CheckDuplicateData(
                     name = response.name,
                     year = response.year,
-                    imdbId = response.getImdbId(),
+                    syncData = response.syncData,
                 ),
                 getAllFavorites(),
             ) { shouldContinue: Boolean, duplicateIds: List<Int?> ->
@@ -1044,6 +1043,7 @@ class ResultViewModel2 : ViewModel() {
         data: List<DataStoreHelper.LibrarySearchResponse>,
         checkDuplicatesCallback: (shouldContinue: Boolean, duplicateIds: List<Int?>) -> Unit
     ) {
+        val whitespaceRegex = "\\s+".toRegex()
         fun normalizeString(input: String): String {
             /**
              * Trim the input string and replace consecutive spaces with a single space.
@@ -1051,15 +1051,22 @@ class ResultViewModel2 : ViewModel() {
              * and one provider has the title with an extra whitespace. This is minor enough that
              * it should still match in this case.
              */
-            val regex = "\\s+".toRegex()
-            return input.trim().replace(regex, " ")
+            return input.trim().replace(whitespaceRegex, " ")
         }
 
         val duplicateEntries = data.filter {
-            checkDuplicateData.imdbId != null &&
-                    getImdbIdFromSyncData(it.syncData) == checkDuplicateData.imdbId ||
-                    normalizeString(it.name) == normalizeString(checkDuplicateData.name) &&
-                    it.year == checkDuplicateData.year
+            val syncData = checkDuplicateData.syncData
+            val librarySyncData = it.syncData
+
+            val checks = listOf(
+                { getImdbIdFromSyncData(syncData) != null && getImdbIdFromSyncData(librarySyncData) == getImdbIdFromSyncData(syncData) },
+                { getTMDbIdFromSyncData(syncData) != null && getTMDbIdFromSyncData(librarySyncData) == getTMDbIdFromSyncData(syncData) },
+                { syncData?.get(AccountManager.malApi.idPrefix) != null && librarySyncData?.get(AccountManager.malApi.idPrefix) == syncData[AccountManager.malApi.idPrefix] },
+                { syncData?.get(AccountManager.aniListApi.idPrefix) != null && librarySyncData?.get(AccountManager.aniListApi.idPrefix) == syncData[AccountManager.aniListApi.idPrefix] },
+                { normalizeString(it.name) == normalizeString(checkDuplicateData.name) && it.year == checkDuplicateData.year }
+            )
+
+            checks.any { it() }
         }
 
         if (duplicateEntries.isEmpty() || context == null) {
@@ -1125,6 +1132,14 @@ class ResultViewModel2 : ViewModel() {
             SimklApi.readIdFromString(
                 syncData?.get(AccountManager.simklApi.idPrefix)
             )[SimklApi.Companion.SyncServices.Imdb]
+        }
+    }
+
+    private fun getTMDbIdFromSyncData(syncData: Map<String, String>?): String? {
+        return normalSafeApiCall {
+            SimklApi.readIdFromString(
+                syncData?.get(AccountManager.simklApi.idPrefix)
+            )[SimklApi.Companion.SyncServices.Tmdb]
         }
     }
 

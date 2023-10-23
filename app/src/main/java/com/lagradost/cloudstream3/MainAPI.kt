@@ -1252,6 +1252,12 @@ interface LoadResponse {
             }
         }
 
+        fun LoadResponse.getTMDbId(): String? {
+            return normalSafeApiCall {
+                SimklApi.readIdFromString(this.syncData[simklIdPrefix])?.get(SimklApi.Companion.SyncServices.Tmdb)
+            }
+        }
+
         fun LoadResponse.addMalId(id: Int?) {
             this.syncData[malIdPrefix] = (id ?: return).toString()
             this.addSimklId(SimklApi.Companion.SyncServices.Mal, id.toString())
