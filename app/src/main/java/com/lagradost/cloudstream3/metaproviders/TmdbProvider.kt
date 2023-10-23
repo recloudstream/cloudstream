@@ -273,44 +273,19 @@ open class TmdbProvider : MainAPI() {
         return if (isTvSeries) {
             val contentRatings = tmdb.tvService().content_ratings(id).awaitResponse().body()
             contentRatings?.results
-                ?.find { it.iso_3166_1 == country }
-                ?.rating
+                ?.find { it: ContentRating ->
+                    it.iso_3166_1 == country
+                }?.rating
         } else {
             val releaseDates = tmdb.moviesService().releaseDates(id).awaitResponse().body()?.results
-            val certification = findFirstNonEmptyCertificationWithCountry(releaseDates, country)
-            if (!certification.isNullOrEmpty()) {
-                certification
-            } else {
-                null
-            }
+            val certification = releaseDates?.firstOrNull { it: ReleaseDatesResult ->
+                it.iso_3166_1 == country
+            }?.release_dates?.firstOrNull { it: ReleaseDate ->
+                !it.certification.isNullOrBlank()
+            }?.certification
+
+            certification
         }
-    }
-
-    private fun findFirstNonEmptyCertificationWithCountry(
-        releaseDatesResults: List<ReleaseDatesResult>?,
-        country: String
-    ): String? {
-        for (releaseDateResult in releaseDatesResults.orEmpty()) {
-            if (releaseDateResult.iso_3166_1 == country) {
-                val certification = findFirstNonEmptyCertification(releaseDateResult.release_dates)
-                if (!certification.isNullOrEmpty()) {
-                    return certification
-                }
-            }
-        }
-
-        return null
-    }
-
-    private fun findFirstNonEmptyCertification(releaseDates: List<ReleaseDate>?): String? {
-        for (releaseDate in releaseDates.orEmpty()) {
-            val certification = releaseDate.certification
-            if (!certification.isNullOrBlank()) {
-                return certification
-            }
-        }
-
-        return null
     }
 
     // Possible to add recommendations and such here.
