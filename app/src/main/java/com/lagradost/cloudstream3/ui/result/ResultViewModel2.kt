@@ -1079,7 +1079,7 @@ class ResultViewModel2 : ViewModel() {
             }
 
             context.getString(R.string.duplicate_message_single,
-                "${normalizeString(duplicateEntries[0].name)} (${context.getString(list)})"
+                "${normalizeString(duplicateEntries[0].name)} (${context.getString(list)}) — ${duplicateEntries[0].apiName}"
             )
         } else {
             val bulletPoints = duplicateEntries.joinToString("\n") {
@@ -1089,7 +1089,7 @@ class ResultViewModel2 : ViewModel() {
                     LibraryListType.SUBSCRIPTIONS -> R.string.subscription_list_name
                 }
 
-                "• ${normalizeString(it.name)} (${context.getString(list)})"
+                "• ${it.apiName}: ${normalizeString(it.name)} (${context.getString(list)})"
             }
 
             context.getString(R.string.duplicate_message_multiple, bulletPoints)
