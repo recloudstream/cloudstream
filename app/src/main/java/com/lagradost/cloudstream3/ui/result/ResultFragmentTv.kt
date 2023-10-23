@@ -818,6 +818,11 @@ class ResultFragmentTv : Fragment() {
                         (resultCastItems.adapter as? ActorAdaptor)?.updateList(
                             d.actors ?: emptyList()
                         )
+
+                        if (d.contentRatingText == null) {
+                            // If there is no rating to display, we don't want an empty gap
+                            resultMetaContentRating.width = 0
+                        }
                     }
 
                     is Resource.Loading -> {

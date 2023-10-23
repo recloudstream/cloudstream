@@ -701,6 +701,11 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                     resultCastItems.isGone = d.actors.isNullOrEmpty()
                     (resultCastItems.adapter as? ActorAdaptor)?.updateList(d.actors ?: emptyList())
 
+                    if (d.contentRatingText == null) {
+                        // If there is no rating to display, we don't want an empty gap
+                        resultMetaContentRating.width = 0
+                    }
+
                     if (syncModel.addSyncs(d.syncData)) {
                         syncModel.updateMetaAndUser()
                         syncModel.updateSynced()
