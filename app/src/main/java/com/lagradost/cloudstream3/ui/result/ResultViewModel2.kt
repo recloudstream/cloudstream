@@ -34,6 +34,7 @@ import com.lagradost.cloudstream3.mvvm.*
 import com.lagradost.cloudstream3.syncproviders.AccountManager
 import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.syncproviders.providers.Kitsu
+import com.lagradost.cloudstream3.syncproviders.providers.SimklApi
 import com.lagradost.cloudstream3.ui.APIRepository
 import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_NAVIGATE_TO
@@ -878,7 +879,7 @@ class ResultViewModel2 : ViewModel() {
                     response.type,
                     response.posterUrl,
                     response.year,
-                    response.getImdbId()
+                    response.syncData
                 )
             )
 
@@ -956,7 +957,7 @@ class ResultViewModel2 : ViewModel() {
                         response.type,
                         response.posterUrl,
                         response.year,
-                        response.getImdbId()
+                        response.syncData
                     )
                 )
 
@@ -1022,7 +1023,7 @@ class ResultViewModel2 : ViewModel() {
                         response.type,
                         response.posterUrl,
                         response.year,
-                        response.getImdbId()
+                        response.syncData
                     )
                 )
 
@@ -1055,8 +1056,10 @@ class ResultViewModel2 : ViewModel() {
         }
 
         val duplicateEntries = data.filter {
-            checkDuplicateData.imdbId != null && it.imdbId == checkDuplicateData.imdbId ||
-                    normalizeString(it.name) == normalizeString(checkDuplicateData.name) && it.year == checkDuplicateData.year
+            checkDuplicateData.imdbId != null &&
+                    getImdbIdFromSyncData(it.syncData) == checkDuplicateData.imdbId ||
+                    normalizeString(it.name) == normalizeString(checkDuplicateData.name) &&
+                    it.year == checkDuplicateData.year
         }
 
         if (duplicateEntries.isEmpty() || context == null) {
@@ -1115,6 +1118,14 @@ class ResultViewModel2 : ViewModel() {
             .setNegativeButton(R.string.duplicate_cancel, dialogClickListener)
             .setNeutralButton(replaceMessage, dialogClickListener)
             .show().setDefaultFocus()
+    }
+
+    private fun getImdbIdFromSyncData(syncData: Map<String, String>?): String? {
+        return normalSafeApiCall {
+            SimklApi.readIdFromString(
+                syncData?.get(AccountManager.simklApi.idPrefix)
+            )[SimklApi.Companion.SyncServices.Imdb]
+        }
     }
 
     private fun startChromecast(
