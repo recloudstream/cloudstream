@@ -575,6 +575,7 @@ class ResultFragmentTv : Fragment() {
         observeNullable(viewModel.movie) { data ->
             binding?.apply {
                 resultPlayMovie.isVisible = data is Resource.Success
+                resultPlaySeries.isVisible = data == null
                 seriesHolder.isVisible = data == null
                 resultEpisodesShow.isVisible = data == null
 

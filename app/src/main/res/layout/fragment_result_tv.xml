@@ -419,6 +419,7 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
                         android:fadingEdgeLength="30dp"
                         android:foreground="@drawable/outline_drawable"
                         android:maxLines="7"
+                        android:focusable="true"
                         android:nextFocusUp="@id/result_back"
                         android:nextFocusDown="@id/result_bookmark_button"
                         android:padding="5dp"
