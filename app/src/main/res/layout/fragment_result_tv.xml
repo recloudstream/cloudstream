@@ -130,14 +130,15 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
         android:layout_height="250dp"
         android:visibility="visible">
 
-        <ImageView
+        <com.lagradost.cloudstream3.utils.PercentageCropImageView
             android:id="@+id/background_poster"
             android:layout_width="match_parent"
             android:layout_height="275dp"
             android:layout_gravity="center"
             android:alpha="0.8"
-            android:scaleType="centerCrop"
-            tools:src="@drawable/profile_bg_dark_blue" />
+            android:scaleType="matrix"
+            tools:src="@drawable/profile_bg_dark_blue" >
+        </com.lagradost.cloudstream3.utils.PercentageCropImageView>
 
         <ImageView
             android:layout_width="match_parent"
