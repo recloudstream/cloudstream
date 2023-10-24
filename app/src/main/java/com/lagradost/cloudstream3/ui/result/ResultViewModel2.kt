@@ -907,18 +907,14 @@ class ResultViewModel2 : ViewModel() {
      * @param context The context to use for operations.
      * @param statusChangedCallback A callback that is invoked when the subscription status changes.
      *        It provides the new subscription status (true if subscribed, false if unsubscribed, null if action was canceled).
-     * @return The new subscription status as a Boolean:
-     *         - true if subscribed,
-     *         - false if unsubscribed,
-     *         - null if not possible to subscribe.
      */
     fun toggleSubscriptionStatus(
         context: Context?,
         statusChangedCallback: ((newStatus: Boolean?) -> Unit)? = null
-    ): Boolean? {
-        val isSubscribed = _subscribeStatus.value ?: return null
-        val response = currentResponse ?: return null
-        if (response !is EpisodeResponse) return null
+    ) {
+        val isSubscribed = _subscribeStatus.value ?: return
+        val response = currentResponse ?: return
+        if (response !is EpisodeResponse) return
 
         val currentId = response.getId()
 
@@ -926,7 +922,6 @@ class ResultViewModel2 : ViewModel() {
             removeSubscribedData(currentId)
             statusChangedCallback?.invoke(false)
             _subscribeStatus.postValue(false)
-            return false
         } else {
             checkAndWarnDuplicates(
                 context,
@@ -972,8 +967,6 @@ class ResultViewModel2 : ViewModel() {
 
                 statusChangedCallback?.invoke(true)
             }
-
-            return _subscribeStatus.value
         }
     }
 
