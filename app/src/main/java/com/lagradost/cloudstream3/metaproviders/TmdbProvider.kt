@@ -152,7 +152,7 @@ open class TmdbProvider : MainAPI() {
                 ?: this@toLoadResponse.similar)?.results?.map { it.toSearchResponse() }
             addActors(credits?.cast?.toList().toActors())
 
-            contentRating = fetchContentRating(id, "US", true)
+            contentRating = fetchContentRating(id, "US")
         }
     }
 
@@ -196,7 +196,7 @@ open class TmdbProvider : MainAPI() {
                 ?: this@toLoadResponse.similar)?.results?.map { it.toSearchResponse() }
             addActors(credits?.cast?.toList().toActors())
 
-            contentRating = fetchContentRating(id, "US", false)
+            contentRating = fetchContentRating(id, "US")
         }
     }
 
@@ -268,14 +268,14 @@ open class TmdbProvider : MainAPI() {
         return null
     }
 
-    open suspend fun fetchContentRating(id: Int?, country: String, isTvSeries: Boolean): String? {
+    open suspend fun fetchContentRating(id: Int?, country: String): String? {
         id ?: return null
-        return if (isTvSeries) {
-            val contentRatings = tmdb.tvService().content_ratings(id).awaitResponse().body()
-            contentRatings?.results
-                ?.find { it: ContentRating ->
-                    it.iso_3166_1 == country
-                }?.rating
+
+        val contentRatings = tmdb.tvService().content_ratings(id).awaitResponse().body()?.results
+        return if (!contentRatings.isNullOrEmpty()) {
+            contentRatings.firstOrNull { it: ContentRating ->
+                it.iso_3166_1 == country
+            }?.rating
         } else {
             val releaseDates = tmdb.moviesService().releaseDates(id).awaitResponse().body()?.results
             val certification = releaseDates?.firstOrNull { it: ReleaseDatesResult ->
