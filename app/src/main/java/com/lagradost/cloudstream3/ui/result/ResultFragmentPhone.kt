@@ -17,7 +17,6 @@ import android.view.animation.DecelerateInterpolator
 import android.widget.AbsListView
 import android.widget.ArrayAdapter
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.core.widget.NestedScrollView
@@ -59,7 +58,6 @@ import com.lagradost.cloudstream3.ui.result.ResultFragment.updateUIEvent
 import com.lagradost.cloudstream3.ui.search.SearchAdapter
 import com.lagradost.cloudstream3.ui.search.SearchHelper
 import com.lagradost.cloudstream3.utils.AppUtils.getNameFull
-import com.lagradost.cloudstream3.utils.AppUtils.html
 import com.lagradost.cloudstream3.utils.AppUtils.isCastApiAvailable
 import com.lagradost.cloudstream3.utils.AppUtils.loadCache
 import com.lagradost.cloudstream3.utils.AppUtils.openBrowser
@@ -681,14 +679,13 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                     resultPoster.setImage(d.posterImage)
                     resultPosterBackground.setImage(d.posterBackgroundImage)
                     resultDescription.setTextHtml(d.plotText)
-                    resultDescription.setOnClickListener { view ->
-                        // todo bottom view?
-                        view.context?.let { ctx ->
-                            val builder: AlertDialog.Builder =
-                                AlertDialog.Builder(ctx, R.style.AlertDialogCustom)
-                            builder.setMessage(d.plotText.asString(ctx).html())
-                                .setTitle(d.plotHeaderText.asString(ctx))
-                                .show()
+                    resultDescription.setOnClickListener {
+                        activity?.let { activity ->
+                            activity.showBottomDialogInstant(
+                                listOf(d.plotText.asString(activity)),
+                                d.titleText.asString(activity),
+                                {}, {}
+                            )
                         }
                     }
 
@@ -879,16 +876,13 @@ open class ResultFragmentPhone : FullScreenPlayer() {
             setRecommendations(recommendations, null)
         }
         observe(viewModel.episodeSynopsis) { description ->
-            // TODO bottom dialog
-            view.context?.let { ctx ->
-                val builder: AlertDialog.Builder =
-                    AlertDialog.Builder(ctx, R.style.AlertDialogCustom)
-                builder.setMessage(description.html())
-                    .setTitle(R.string.synopsis)
-                    .setOnDismissListener {
-                        viewModel.releaseEpisodeSynopsis()
-                    }
-                    .show()
+            activity?.let { activity ->
+                activity.showBottomDialogInstant(
+                    listOf(description ?: return@observe),
+                    activity.getString(R.string.synopsis),
+                    { viewModel.releaseEpisodeSynopsis() },
+                    {}
+                )
             }
         }
         context?.let { ctx ->
