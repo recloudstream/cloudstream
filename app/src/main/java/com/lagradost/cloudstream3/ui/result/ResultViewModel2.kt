@@ -902,8 +902,16 @@ class ResultViewModel2 : ViewModel() {
     }
 
     /**
-     * @return true if the new status is Subscribed, false if not. Null if not possible to subscribe.
-     **/
+     * Toggles the subscription status of an item.
+     *
+     * @param context The context to use for operations.
+     * @param statusChangedCallback A callback that is invoked when the subscription status changes.
+     *        It provides the new subscription status (true if subscribed, false if unsubscribed, null if action was canceled).
+     * @return The new subscription status as a Boolean:
+     *         - true if subscribed,
+     *         - false if unsubscribed,
+     *         - null if not possible to subscribe.
+     */
     fun toggleSubscriptionStatus(
         context: Context?,
         statusChangedCallback: ((newStatus: Boolean?) -> Unit)? = null
@@ -970,14 +978,18 @@ class ResultViewModel2 : ViewModel() {
     }
 
     /**
-     * @return true if added to favorites, false if not. Null if not possible to favorite.
-     **/
+     * Toggles the favorite status of an item.
+     *
+     * @param context The context to use.
+     * @param statusChangedCallback A callback that is invoked when the favorite status changes.
+     *        It provides the new favorite status (true if added to favorites, false if removed, null if action was canceled).
+     */
     fun toggleFavoriteStatus(
         context: Context?,
         statusChangedCallback: ((newStatus: Boolean?) -> Unit)? = null
-    ): Boolean? {
-        val isFavorite = _favoriteStatus.value ?: return null
-        val response = currentResponse ?: return null
+    ) {
+        val isFavorite = _favoriteStatus.value ?: return
+        val response = currentResponse ?: return
 
         val currentId = response.getId()
 
@@ -985,7 +997,6 @@ class ResultViewModel2 : ViewModel() {
             removeFavoritesData(currentId)
             statusChangedCallback?.invoke(false)
             _favoriteStatus.postValue(false)
-            return false
         } else {
             checkAndWarnDuplicates(
                 context,
@@ -1030,8 +1041,6 @@ class ResultViewModel2 : ViewModel() {
 
                 statusChangedCallback?.invoke(true)
             }
-
-            return _favoriteStatus.value
         }
     }
 
@@ -1054,16 +1063,24 @@ class ResultViewModel2 : ViewModel() {
             return input.trim().replace(whitespaceRegex, " ")
         }
 
-        val duplicateEntries = data.filter {
-            val syncData = checkDuplicateData.syncData
+        val syncData = checkDuplicateData.syncData
+
+        val imdbId = getImdbIdFromSyncData(syncData)
+        val tmdbId = getTMDbIdFromSyncData(syncData)
+        val malId = syncData?.get(AccountManager.malApi.idPrefix)
+        val aniListId = syncData?.get(AccountManager.aniListApi.idPrefix)
+        val normalizedName = normalizeString(checkDuplicateData.name)
+        val year = checkDuplicateData.year
+
+        val duplicateEntries = data.filter { it: DataStoreHelper.LibrarySearchResponse ->
             val librarySyncData = it.syncData
 
             val checks = listOf(
-                { getImdbIdFromSyncData(syncData) != null && getImdbIdFromSyncData(librarySyncData) == getImdbIdFromSyncData(syncData) },
-                { getTMDbIdFromSyncData(syncData) != null && getTMDbIdFromSyncData(librarySyncData) == getTMDbIdFromSyncData(syncData) },
-                { syncData?.get(AccountManager.malApi.idPrefix) != null && librarySyncData?.get(AccountManager.malApi.idPrefix) == syncData[AccountManager.malApi.idPrefix] },
-                { syncData?.get(AccountManager.aniListApi.idPrefix) != null && librarySyncData?.get(AccountManager.aniListApi.idPrefix) == syncData[AccountManager.aniListApi.idPrefix] },
-                { normalizeString(it.name) == normalizeString(checkDuplicateData.name) && it.year == checkDuplicateData.year }
+                { imdbId != null && getImdbIdFromSyncData(librarySyncData) == imdbId },
+                { tmdbId != null && getTMDbIdFromSyncData(librarySyncData) == tmdbId },
+                { malId != null && librarySyncData?.get(AccountManager.malApi.idPrefix) == malId },
+                { aniListId != null && librarySyncData?.get(AccountManager.aniListApi.idPrefix) == aniListId },
+                { normalizedName == normalizeString(it.name) && year == it.year }
             )
 
             checks.any { it() }
