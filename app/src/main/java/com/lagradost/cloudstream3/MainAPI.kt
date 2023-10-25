@@ -1453,6 +1453,15 @@ interface EpisodeResponse {
     var nextAiring: NextAiring?
     var seasonNames: List<SeasonData>?
     fun getLatestEpisodes(): Map<DubStatus, Int?>
+
+    /** Count all episodes in all previous seasons up until this episode to get a total count.
+     * Example:
+     *      Season 1: 10 episodes.
+     *      Season 2: 6 episodes.
+     *
+     * getTotalEpisodeIndex(episode = 3, season = 2) -> 10 + 3 = 13
+     * */
+    fun getTotalEpisodeIndex(episode: Int, season: Int): Int
 }
 
 @JvmName("addSeasonNamesString")
@@ -1531,6 +1540,12 @@ data class AnimeLoadResponse(
                 .maxOfOrNull { it.episode ?: Int.MIN_VALUE }
                 .takeUnless { it == Int.MIN_VALUE }
         }.toMap()
+    }
+
+    override fun getTotalEpisodeIndex(episode: Int, season: Int): Int {
+        return this.episodes.maxOf { (_, episodes) ->
+            episodes.count { ((it.season ?: Int.MIN_VALUE) < season) && it.season != 0 }
+        } + episode
     }
 }
 
@@ -1739,6 +1754,12 @@ data class TvSeriesLoadResponse(
             .maxOfOrNull { it.episode ?: Int.MIN_VALUE }
             .takeUnless { it == Int.MIN_VALUE }
         return mapOf(DubStatus.None to max)
+    }
+
+    override fun getTotalEpisodeIndex(episode: Int, season: Int): Int {
+        return episodes.count {
+            (it.season ?: Int.MIN_VALUE) < season && it.season != 0
+        } + episode
     }
 }
 

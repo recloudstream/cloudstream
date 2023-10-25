@@ -1915,6 +1915,10 @@ class ResultViewModel2 : ViewModel() {
                         val id =
                             mainId + episode + idIndex * 1_000_000 + (i.season?.times(10_000)
                                 ?: 0)
+
+                        val totalIndex =
+                            i.season?.let { season -> loadResponse.getTotalEpisodeIndex(episode, season) }
+
                         if (!existingEpisodes.contains(id)) {
                             existingEpisodes.add(id)
                             val seasonData = loadResponse.seasonNames.getSeason(i.season)
@@ -1934,7 +1938,8 @@ class ResultViewModel2 : ViewModel() {
                                     i.description,
                                     fillers.getOrDefault(episode, false),
                                     loadResponse.type,
-                                    mainId
+                                    mainId,
+                                    totalIndex
                                 )
 
                             val season = eps.seasonIndex ?: 0
@@ -1963,6 +1968,9 @@ class ResultViewModel2 : ViewModel() {
                         val seasonData =
                             loadResponse.seasonNames.getSeason(episode.season)
 
+                        val totalIndex =
+                            episode.season?.let { season -> loadResponse.getTotalEpisodeIndex(episodeIndex, season) }
+
                         val ep =
                             buildResultEpisode(
                                 loadResponse.name,
@@ -1979,7 +1987,8 @@ class ResultViewModel2 : ViewModel() {
                                 episode.description,
                                 null,
                                 loadResponse.type,
-                                mainId
+                                mainId,
+                                totalIndex
                             )
 
                         val season = ep.seasonIndex ?: 0
@@ -2010,7 +2019,8 @@ class ResultViewModel2 : ViewModel() {
                         null,
                         null,
                         loadResponse.type,
-                        mainId
+                        mainId,
+                        null
                     )
                 )
             }
@@ -2032,7 +2042,8 @@ class ResultViewModel2 : ViewModel() {
                         null,
                         null,
                         loadResponse.type,
-                        mainId
+                        mainId,
+                        null
                     )
                 )
             }
@@ -2054,7 +2065,8 @@ class ResultViewModel2 : ViewModel() {
                         null,
                         null,
                         loadResponse.type,
-                        mainId
+                        mainId,
+                        null
                     )
                 )
             }
