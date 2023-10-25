@@ -260,6 +260,8 @@ dependencies {
 
     // color palette for images -> colors
     implementation("androidx.palette:palette-ktx:1.0.0")
+
+    implementation("com.github.recloudstream:Aria2cStream:0.0.1")
 }
 
 tasks.register("androidSourcesJar", Jar::class) {

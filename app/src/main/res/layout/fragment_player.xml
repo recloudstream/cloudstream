@@ -30,13 +30,13 @@
         app:show_timeout="0" />
 
     <FrameLayout
-        android:id="@+id/download_header"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@android:color/black"
         android:backgroundTint="@android:color/black">
 
         <LinearLayout
+            android:id="@+id/download_header"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"

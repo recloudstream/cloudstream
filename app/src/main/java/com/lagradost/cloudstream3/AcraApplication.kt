@@ -5,6 +5,7 @@ import android.app.Application
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
+import android.util.Log
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
@@ -41,7 +42,7 @@ import kotlin.system.exitProcess
 class CustomReportSender : ReportSender {
     // Sends all your crashes to google forms
     override fun send(context: Context, errorContent: CrashReportData) {
-        println("Sending report")
+        Log.i("Acra", "Sending report: ${errorContent.toMap().map { "${it.key}:${it.value}" }.joinToString()}")
         val url =
             "https://docs.google.com/forms/d/e/1FAIpQLSfO4r353BJ79TTY_-t5KWSIJT2xfqcQWY81xjAA1-1N0U2eSg/formResponse"
         val data = mapOf(

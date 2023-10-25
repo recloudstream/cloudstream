@@ -262,6 +262,7 @@ class CS3IPlayer : IPlayer {
         link: ExtractorLink,
         requestId: Long,
     ) {
+        val minimumBytes : Long = 30 shl 20
         var hasFileChecked = false
         while (true) {
             val gid = DownloadListener.sessionIdToGid[requestId]
@@ -294,15 +295,16 @@ class CS3IPlayer : IPlayer {
                 }
 
                 DownloadStatusTell.Active -> {
-                    if (metadata.downloadedLength >= metadata.totalLength && getPlayableFile(
+                    //metadata.downloadedLength >= metadata.totalLength &&
+                    if (getPlayableFile(
                             metadata,
-                            minimumBytes = 10 shl 20
+                            minimumBytes = minimumBytes
                         ) != null
                     ) break
 
                     // as we don't want to waste the users time with torrents that is useless
                     // we do this to check that at a video file exists
-                    if (!hasFileChecked && metadata.totalLength > (10 shl 20)) {
+                    if (!hasFileChecked && metadata.totalLength > minimumBytes) {
                         hasFileChecked = true
                         if (getPlayableFile(
                                 metadata,
@@ -334,7 +336,10 @@ class CS3IPlayer : IPlayer {
                     continue
                 }
 
-                null -> break
+                null -> {
+                    delay(1000)
+                    continue
+                }
             }
         }
 
@@ -345,7 +350,7 @@ class CS3IPlayer : IPlayer {
 
         when (metadata.status) {
             DownloadStatusTell.Active, DownloadStatusTell.Complete -> {
-                val uri = getPlayableFile(metadata, minimumBytes = 10 shl 20)
+                val uri = getPlayableFile(metadata, minimumBytes = minimumBytes)
                     ?: throw Exception("Not downloaded enough")
                 activity.runOnUiThread {
                     //Log.i(TAG, "downloaded data: $metadata")
@@ -400,7 +405,8 @@ class CS3IPlayer : IPlayer {
             id = requestId,
             uri = link.url,
             fileName = null,
-            seed = false
+            seed = false,
+            stream = true,
         )
 
         val metadata =

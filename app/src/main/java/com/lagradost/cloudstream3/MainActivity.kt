@@ -1567,7 +1567,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             setKey(HAS_DONE_SETUP_KEY, true)
         }
 
-        /*val defaultDirectory = "${filesDir.path}/torrent_tmp"
+        //val defaultDirectory = "${filesDir.path}/torrent_tmp"
         //File(defaultDirectory).deleteRecursively()
         navigate(
             R.id.global_to_navigation_player, GeneratorPlayer.newInstance(
@@ -1576,7 +1576,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                         ExtractorLink(
                             source = "",
                             name = "hello world",
-                            url = "",
+                            url = "magnet:?xt=urn:btih:bbeb7617fb6240230b862edac6221f47d59e586b&dn=%5BOhys-Raws%5D%20Kamierabi%20-%2004%20%28CX%201280x720%20x264%20AAC%29.mp4&tr=http%3A%2F%2Fnyaa.tracker.wf%3A7777%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce",
                             "",
                             Qualities.Unknown.value,
                             type = INFER_TYPE
@@ -1585,7 +1585,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                     emptyList()
                 )
             )
-        )*/
+        )
 
 //        Used to check current focus for TV
 //        main {
