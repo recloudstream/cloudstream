@@ -7,7 +7,7 @@ import com.lagradost.cloudstream3.utils.*
 open class Acefile : ExtractorApi() {
     override val name = "Acefile"
     override val mainUrl = "https://acefile.co"
-    override val requiresReferer = false
+    override val requiresReferer = true
 
     override suspend fun getUrl(url: String, referer: String?): List<ExtractorLink> {
         val sources = mutableListOf<ExtractorLink>()
