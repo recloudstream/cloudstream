@@ -124,28 +124,27 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
             android:textColor="?attr/textColor" />
     </LinearLayout>
 
-
     <FrameLayout
         android:id="@+id/background_poster_holder"
         android:layout_width="match_parent"
-        android:layout_height="150dp"
+        android:layout_height="250dp"
         android:visibility="visible">
 
-        <ImageView
+        <com.lagradost.cloudstream3.utils.PercentageCropImageView
             android:id="@+id/background_poster"
             android:layout_width="match_parent"
-            android:layout_height="250dp"
+            android:layout_height="275dp"
             android:layout_gravity="center"
             android:alpha="0.8"
-            android:scaleType="centerCrop"
-            tools:src="@drawable/profile_bg_dark_blue" />
+            android:scaleType="matrix"
+            tools:src="@drawable/profile_bg_dark_blue" >
+        </com.lagradost.cloudstream3.utils.PercentageCropImageView>
 
         <ImageView
             android:layout_width="match_parent"
-            android:layout_height="100dp"
+            android:layout_height="120dp"
             android:layout_gravity="bottom"
             android:src="@drawable/background_shadow">
-
         </ImageView>
     </FrameLayout>
 
@@ -154,7 +153,6 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
         android:id="@+id/result_finish_loading"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -166,8 +164,70 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="100dp"
-                android:orientation="horizontal">
+                android:orientation="vertical"
+                android:layout_marginTop="175dp">
+
+                <TextView
+                    android:id="@+id/result_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="marquee"
+                    android:gravity="center_vertical"
+                    android:singleLine="true"
+                    android:textColor="?attr/textColor"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    tools:text="The Perfect Run The Perfect Run" />
+
+                <LinearLayout
+                    android:id="@+id/result_next_airing_holder"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/result_episodes_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginEnd="20dp"
+                        android:textColor="?attr/textColor"
+                        android:textSize="17sp"
+                        android:textStyle="normal"
+                        android:visibility="gone"
+                        tools:text="8 Episodes" />
+
+                    <TextView
+                        android:id="@+id/result_next_airing"
+                        android:layout_width="match_parent"
+
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:gravity="center"
+                        android:textColor="?attr/grayTextColor"
+                        android:textSize="17sp"
+                        android:textStyle="normal"
+                        tools:text="Episode 1022 will be released in" />
+
+                    <TextView
+                        android:id="@+id/result_next_airing_time"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:gravity="start"
+                        android:textColor="?attr/textColor"
+                        android:textSize="17sp"
+                        android:textStyle="normal"
+                        tools:text="5d 3h 30m" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="10dp">
 
                 <LinearLayout
                     android:layout_width="250dp"
@@ -176,67 +236,11 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
                     android:layout_weight="0"
                     android:orientation="vertical">
 
-                    <TextView
-                        android:id="@+id/result_title"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:ellipsize="marquee"
-                        android:gravity="center_vertical"
-                        android:singleLine="true"
-                        android:textColor="?attr/textColor"
-                        android:textSize="20sp"
-                        android:textStyle="bold"
-                        tools:text="The Perfect Run The Perfect Run" />
-
-                    <LinearLayout
-                        android:id="@+id/result_next_airing_holder"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="start"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:id="@+id/result_episodes_text"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_vertical"
-                            android:layout_marginEnd="20dp"
-                            android:textColor="?attr/textColor"
-                            android:textSize="17sp"
-                            android:textStyle="normal"
-                            android:visibility="gone"
-                            tools:text="8 Episodes" />
-
-                        <TextView
-                            android:id="@+id/result_next_airing"
-                            android:layout_width="match_parent"
-
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_vertical"
-                            android:gravity="center"
-                            android:textColor="?attr/grayTextColor"
-                            android:textSize="17sp"
-                            android:textStyle="normal"
-                            tools:text="Episode 1022 will be released in" />
-
-                        <TextView
-                            android:id="@+id/result_next_airing_time"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_vertical"
-                            android:gravity="start"
-                            android:textColor="?attr/textColor"
-                            android:textSize="17sp"
-                            android:textStyle="normal"
-                            tools:text="5d 3h 30m" />
-                    </LinearLayout>
-
                     <LinearLayout
                         android:id="@+id/result_movie_parent"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="start"
-                        android:layout_marginTop="10dp"
                         android:animateLayoutChanges="true"
                         android:orientation="vertical"
                         tools:visibility="visible">
@@ -310,11 +314,22 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
                             style="@style/ResultButtonTV"
                             android:nextFocusRight="@id/result_description"
                             android:nextFocusUp="@id/result_play_trailer"
-                            android:nextFocusDown="@id/result_episodes_show"
+                            android:nextFocusDown="@id/result_favorite_button"
 
                             android:text="@string/type_none"
                             android:visibility="visible"
                             app:icon="@drawable/ic_baseline_bookmark_24" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/result_favorite_button"
+                            style="@style/ResultButtonTV"
+                            android:nextFocusRight="@id/result_description"
+                            android:nextFocusUp="@id/result_bookmark_button"
+                            android:nextFocusDown="@id/result_episodes_show"
+
+                            android:text="@string/action_add_to_favorites"
+                            android:visibility="visible"
+                            app:icon="@drawable/ic_baseline_favorite_border_24" />
 
 
                         <com.google.android.material.button.MaterialButton
@@ -322,7 +337,7 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
                             style="@style/ResultButtonTV"
 
                             android:nextFocusRight="@id/redirect_to_episodes"
-                            android:nextFocusUp="@id/result_bookmark_button"
+                            android:nextFocusUp="@id/result_favorite_button"
                             android:nextFocusDown="@id/result_cast_items"
 
                             android:text="@string/episodes"
@@ -404,6 +419,7 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
                         android:fadingEdgeLength="30dp"
                         android:foreground="@drawable/outline_drawable"
                         android:maxLines="7"
+                        android:focusable="true"
                         android:nextFocusUp="@id/result_back"
                         android:nextFocusDown="@id/result_bookmark_button"
                         android:padding="5dp"

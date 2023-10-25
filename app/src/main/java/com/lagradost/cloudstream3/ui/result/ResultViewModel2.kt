@@ -51,11 +51,14 @@ import com.lagradost.cloudstream3.utils.Coroutines.ioWork
 import com.lagradost.cloudstream3.utils.Coroutines.ioWorkSafe
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getDub
+import com.lagradost.cloudstream3.utils.DataStoreHelper.getFavoritesData
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getResultEpisode
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getResultSeason
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getResultWatchState
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
+import com.lagradost.cloudstream3.utils.DataStoreHelper.removeFavoritesData
 import com.lagradost.cloudstream3.utils.DataStoreHelper.setDub
+import com.lagradost.cloudstream3.utils.DataStoreHelper.setFavoritesData
 import com.lagradost.cloudstream3.utils.DataStoreHelper.setResultEpisode
 import com.lagradost.cloudstream3.utils.DataStoreHelper.setResultSeason
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
@@ -424,6 +427,9 @@ class ResultViewModel2 : ViewModel() {
 
     private val _subscribeStatus: MutableLiveData<Boolean?> = MutableLiveData(null)
     val subscribeStatus: LiveData<Boolean?> = _subscribeStatus
+
+    private val _favoriteStatus: MutableLiveData<Boolean?> = MutableLiveData(null)
+    val favoriteStatus: LiveData<Boolean?> = _favoriteStatus
 
     companion object {
         const val TAG = "RVM2"
@@ -866,6 +872,40 @@ class ResultViewModel2 : ViewModel() {
 
         _subscribeStatus.postValue(!isSubscribed)
         return !isSubscribed
+    }
+
+    /**
+     * @return true if added to favorites, false if not. Null if not possible to favorite.
+     **/
+    fun toggleFavoriteStatus(): Boolean? {
+        val isFavorite = _favoriteStatus.value ?: return null
+        val response = currentResponse ?: return null
+
+        val currentId = response.getId()
+
+        if (isFavorite) {
+            removeFavoritesData(currentId)
+        } else {
+            val current = getFavoritesData(currentId)
+
+            setFavoritesData(
+                currentId,
+                DataStoreHelper.FavoritesData(
+                    currentId,
+                    current?.favoritesTime ?: unixTimeMS,
+                    unixTimeMS,
+                    response.name,
+                    response.url,
+                    response.apiName,
+                    response.type,
+                    response.posterUrl,
+                    response.year
+                )
+            )
+        }
+
+        _favoriteStatus.postValue(!isFavorite)
+        return !isFavorite
     }
 
     private fun startChromecast(
@@ -1750,6 +1790,12 @@ class ResultViewModel2 : ViewModel() {
         }
     }
 
+    private fun postFavorites(loadResponse: LoadResponse) {
+            val id = loadResponse.getId()
+            val isFavorite = getFavoritesData(id) != null
+            _favoriteStatus.postValue(isFavorite)
+    }
+
     private fun postEpisodeRange(indexer: EpisodeIndexer?, range: EpisodeRange?) {
         if (range == null || indexer == null) {
             return
@@ -1887,6 +1933,7 @@ class ResultViewModel2 : ViewModel() {
         currentResponse = loadResponse
         postPage(loadResponse, apiRepository)
         postSubscription(loadResponse)
+        postFavorites(loadResponse)
         if (updateEpisodes)
             postEpisodes(loadResponse, updateFillers)
     }

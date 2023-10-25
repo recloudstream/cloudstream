@@ -8,7 +8,9 @@ import com.lagradost.cloudstream3.syncproviders.SyncIdName
 import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.library.ListSorting
 import com.lagradost.cloudstream3.ui.result.txt
+import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTrueTvSettings
 import com.lagradost.cloudstream3.utils.Coroutines.ioWork
+import com.lagradost.cloudstream3.utils.DataStoreHelper.getAllFavorites
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getAllSubscriptions
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getAllWatchStateIds
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getBookmarkedData
@@ -69,29 +71,52 @@ class LocalList : SyncAPI {
         }?.distinctBy { it.first } ?: return null
 
         val list = ioWork {
-            watchStatusIds.groupBy {
-                it.second.stringRes
-            }.mapValues { group ->
+            val isTrueTv = isTrueTvSettings()
+
+            val baseMap = WatchType.values().filter { it != WatchType.NONE }.associate {
+                // None is not something to display
+                it.stringRes to emptyList<SyncAPI.LibraryItem>()
+            } + mapOf(
+                R.string.favorites_list_name to emptyList()
+            ) + if (!isTrueTv) {
+                mapOf(
+                    R.string.subscription_list_name to emptyList()
+                )
+            } else {
+                emptyMap()
+            }
+
+            val watchStatusMap = watchStatusIds.groupBy { it.second.stringRes }.mapValues { group ->
                 group.value.mapNotNull {
                     getBookmarkedData(it.first)?.toLibraryItem(it.first.toString())
                 }
-            } + mapOf(R.string.subscription_list_name to getAllSubscriptions().mapNotNull {
+            }
+
+            val favoritesMap = mapOf(R.string.favorites_list_name to getAllFavorites().mapNotNull {
                 it.toLibraryItem()
             })
+
+            // Don't show subscriptions on TV
+            val result = if (isTrueTv) {
+                baseMap + watchStatusMap + favoritesMap
+            } else {
+                val subscriptionsMap = mapOf(R.string.subscription_list_name to getAllSubscriptions().mapNotNull {
+                    it.toLibraryItem()
+                })
+
+                baseMap + watchStatusMap + subscriptionsMap + favoritesMap
+            }
+
+            result
         }
 
-        val baseMap = WatchType.values().filter { it != WatchType.NONE }.associate {
-            // None is not something to display
-            it.stringRes to emptyList<SyncAPI.LibraryItem>()
-        } + mapOf(R.string.subscription_list_name to emptyList())
-
         return SyncAPI.LibraryMetadata(
-            (baseMap + list).map { SyncAPI.LibraryList(txt(it.key), it.value) },
+            list.map { SyncAPI.LibraryList(txt(it.key), it.value) },
             setOf(
                 ListSorting.AlphabeticalA,
                 ListSorting.AlphabeticalZ,
-//                ListSorting.UpdatedNew,
-//                ListSorting.UpdatedOld,
+                ListSorting.UpdatedNew,
+                ListSorting.UpdatedOld,
 //                ListSorting.RatingHigh,
 //                ListSorting.RatingLow,
             )

@@ -3,6 +3,7 @@ package com.lagradost.cloudstream3.ui.search
 import android.content.DialogInterface
 import android.content.res.Configuration
 import android.os.Bundle
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -231,9 +232,15 @@ class SearchFragment : Fragment() {
         val searchExitIcon =
             binding?.mainSearch?.findViewById<ImageView>(androidx.appcompat.R.id.search_close_btn)
         // val searchMagIcon =
-        //    main_search.findViewById<ImageView>(androidx.appcompat.R.id.search_mag_icon)
-        //searchMagIcon.scaleX = 0.65f
-        //searchMagIcon.scaleY = 0.65f
+        //    binding?.mainSearch?.findViewById<ImageView>(androidx.appcompat.R.id.search_mag_icon)
+        // searchMagIcon.scaleX = 0.65f
+        // searchMagIcon.scaleY = 0.65f
+
+        // Set the color for the search exit icon to the correct theme text color
+        val searchExitIconColor = TypedValue()
+
+        activity?.theme?.resolveAttribute(android.R.attr.textColor, searchExitIconColor, true)
+        searchExitIcon?.setColorFilter(searchExitIconColor.data)
 
         selectedApis = DataStoreHelper.searchPreferenceProviders.toMutableSet()
 
