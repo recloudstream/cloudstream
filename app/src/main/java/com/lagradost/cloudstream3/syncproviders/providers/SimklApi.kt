@@ -416,7 +416,7 @@ class SimklApi(index: Int) : AccountManager(index), SyncAPI {
                     if (newEpisodes > (oldEpisodes ?: 0)) {
                         this.addEpisodes = getEpisodes(allEpisodes.take(newEpisodes))
 
-                        // Set to watching if there is episodes added and there is no status
+                        // Set to watching if episodes are added and there is no current status
                         if (!onList) {
                             status = SimklListStatusType.Watching.value
                         }
