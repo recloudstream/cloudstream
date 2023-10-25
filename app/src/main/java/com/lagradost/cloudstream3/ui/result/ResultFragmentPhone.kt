@@ -58,12 +58,14 @@ import com.lagradost.cloudstream3.ui.result.ResultFragment.updateUIEvent
 import com.lagradost.cloudstream3.ui.search.SearchAdapter
 import com.lagradost.cloudstream3.ui.search.SearchHelper
 import com.lagradost.cloudstream3.utils.AppUtils.getNameFull
+import com.lagradost.cloudstream3.utils.AppUtils.html
 import com.lagradost.cloudstream3.utils.AppUtils.isCastApiAvailable
 import com.lagradost.cloudstream3.utils.AppUtils.loadCache
 import com.lagradost.cloudstream3.utils.AppUtils.openBrowser
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialogInstant
+import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialogText
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showDialog
 import com.lagradost.cloudstream3.utils.UIHelper
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
@@ -681,10 +683,10 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                     resultDescription.setTextHtml(d.plotText)
                     resultDescription.setOnClickListener {
                         activity?.let { activity ->
-                            activity.showBottomDialogInstant(
-                                listOf(d.plotText.asString(activity)),
+                            activity.showBottomDialogText(
                                 d.titleText.asString(activity),
-                                {}, {}
+                                d.plotText.asString(activity).html(),
+                                {}
                             )
                         }
                     }
@@ -877,12 +879,10 @@ open class ResultFragmentPhone : FullScreenPlayer() {
         }
         observe(viewModel.episodeSynopsis) { description ->
             activity?.let { activity ->
-                activity.showBottomDialogInstant(
-                    listOf(description ?: return@observe),
+                activity.showBottomDialogText(
                     activity.getString(R.string.synopsis),
-                    { viewModel.releaseEpisodeSynopsis() },
-                    {}
-                )
+                    description.html()
+                ) { viewModel.releaseEpisodeSynopsis() }
             }
         }
         context?.let { ctx ->
