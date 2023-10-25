@@ -19,6 +19,7 @@ import com.lagradost.cloudstream3.databinding.FragmentSearchBinding
 import com.lagradost.cloudstream3.databinding.FragmentSearchTvBinding
 import com.lagradost.cloudstream3.databinding.HomeResultGridBinding
 import com.lagradost.cloudstream3.databinding.HomepageParentBinding
+import com.lagradost.cloudstream3.databinding.HomepageParentEmulatorBinding
 import com.lagradost.cloudstream3.databinding.HomepageParentTvBinding
 import com.lagradost.cloudstream3.databinding.PlayerCustomLayoutBinding
 import com.lagradost.cloudstream3.databinding.PlayerCustomLayoutTvBinding
@@ -119,8 +120,9 @@ class ExampleInstrumentedTest {
                // testAllLayouts<HomeScrollViewBinding>(activity, R.layout.home_scroll_view, R.layout.home_scroll_view_tv)
                // testAllLayouts<HomeScrollViewTvBinding>(activity, R.layout.home_scroll_view, R.layout.home_scroll_view_tv)
 
-                testAllLayouts<HomepageParentTvBinding>(activity, R.layout.homepage_parent_tv, R.layout.homepage_parent)
-                testAllLayouts<HomepageParentBinding>(activity, R.layout.homepage_parent_tv, R.layout.homepage_parent)
+                testAllLayouts<HomepageParentTvBinding>(activity, R.layout.homepage_parent_tv, R.layout.homepage_parent_emulator, R.layout.homepage_parent)
+                testAllLayouts<HomepageParentEmulatorBinding>(activity, R.layout.homepage_parent_tv, R.layout.homepage_parent_emulator, R.layout.homepage_parent)
+                testAllLayouts<HomepageParentBinding>(activity, R.layout.homepage_parent_tv, R.layout.homepage_parent_emulator, R.layout.homepage_parent)
 
                 testAllLayouts<FragmentLibraryTvBinding>(activity, R.layout.fragment_library_tv, R.layout.fragment_library)
                 testAllLayouts<FragmentLibraryBinding>(activity, R.layout.fragment_library_tv, R.layout.fragment_library)

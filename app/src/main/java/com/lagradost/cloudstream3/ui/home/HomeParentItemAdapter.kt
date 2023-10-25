@@ -15,7 +15,8 @@ import com.lagradost.cloudstream3.ui.result.FOCUS_SELF
 import com.lagradost.cloudstream3.ui.result.setLinearListLayout
 import com.lagradost.cloudstream3.ui.search.SearchClickCallback
 import com.lagradost.cloudstream3.ui.search.SearchFragment.Companion.filterSearchResponse
-import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
+import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isEmulatorSettings
+import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTrueTvSettings
 import com.lagradost.cloudstream3.utils.AppUtils.isRecyclerScrollable
 
 class LoadClickCallback(
@@ -34,11 +35,13 @@ open class ParentItemAdapter(
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
 
-        val root = LayoutInflater.from(parent.context).inflate(
-            if (isTvSettings()) R.layout.homepage_parent_tv else R.layout.homepage_parent,
-            parent,
-            false
-        )
+        val layoutResId = when {
+            isTrueTvSettings() -> R.layout.homepage_parent_tv
+            parent.context.isEmulatorSettings() -> R.layout.homepage_parent_emulator
+            else -> R.layout.homepage_parent
+        }
+
+        val root = LayoutInflater.from(parent.context).inflate(layoutResId, parent, false)
 
         val binding = HomepageParentBinding.bind(root)
 
@@ -234,7 +237,7 @@ open class ParentItemAdapter(
             })
 
             //(recyclerView.adapter as HomeChildItemAdapter).notifyDataSetChanged()
-            if (!isTvSettings()) {
+            if (!isTrueTvSettings()) {
                 title.setOnClickListener {
                     moreInfoClickCallback.invoke(expand)
                 }
