@@ -1532,13 +1532,17 @@ data class AnimeLoadResponse(
     override var url: String,
     override var apiName: String,
     override var type: TvType,
+
     override var posterUrl: String? = null,
     override var year: Int? = null,
+
     var episodes: MutableMap<DubStatus, List<Episode>> = mutableMapOf(),
     override var showStatus: ShowStatus? = null,
+
     override var plot: String? = null,
     override var tags: List<String>? = null,
     var synonyms: List<String>? = null,
+
     override var rating: Int? = null,
     override var duration: Int? = null,
     override var trailers: MutableList<TrailerData> = mutableListOf(),
