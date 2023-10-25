@@ -28,6 +28,7 @@ import com.lagradost.cloudstream3.databinding.FragmentResultTvBinding
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.mvvm.observeNullable
+import com.lagradost.cloudstream3.services.SubscriptionWorkManager
 import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.download.DownloadButtonSetup
 import com.lagradost.cloudstream3.ui.player.ExtractorLinkGenerator
@@ -37,6 +38,7 @@ import com.lagradost.cloudstream3.ui.result.ResultFragment.updateUIEvent
 import com.lagradost.cloudstream3.ui.search.SEARCH_ACTION_FOCUSED
 import com.lagradost.cloudstream3.ui.search.SearchAdapter
 import com.lagradost.cloudstream3.ui.search.SearchHelper
+import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isEmulatorSettings
 import com.lagradost.cloudstream3.utils.AppUtils.getNameFull
 import com.lagradost.cloudstream3.utils.AppUtils.html
 import com.lagradost.cloudstream3.utils.AppUtils.isRtl
@@ -287,7 +289,8 @@ class ResultFragmentTv : Fragment() {
                         resultResumeSeries,
                         resultPlayTrailer,
                         resultBookmarkButton,
-                        resultFavoriteButton
+                        resultFavoriteButton,
+                        resultSubscribeButton
                     )
                     for (requestView in views) {
                         if (!requestView.isVisible) continue
@@ -429,6 +432,7 @@ class ResultFragmentTv : Fragment() {
                 binding?.resultEpisodesShow,
                 binding?.resultBookmarkButton,
                 binding?.resultFavoriteButton,
+                binding?.resultSubscribeButton,
             ).firstOrNull {
                 it?.isVisible == true
             }
@@ -563,6 +567,43 @@ class ResultFragmentTv : Fragment() {
                         R.string.favorite_added
                     } else {
                         R.string.favorite_removed
+                    }
+
+                    val name = (viewModel.page.value as? Resource.Success)?.value?.title
+                        ?: txt(R.string.no_data).asStringNull(context) ?: ""
+                    CommonActivity.showToast(txt(message, name), Toast.LENGTH_SHORT)
+                }
+            }
+        }
+
+        observeNullable(viewModel.subscribeStatus) { isSubscribed ->
+            binding?.resultSubscribeButton?.apply {
+                isVisible = isSubscribed != null && context.isEmulatorSettings()
+                if (isSubscribed == null) return@observeNullable
+
+                val drawable = if (isSubscribed) {
+                    R.drawable.ic_baseline_notifications_active_24
+                } else {
+                    R.drawable.baseline_notifications_none_24
+                }
+
+                val text = if (isSubscribed) {
+                    R.string.action_unsubscribe
+                } else {
+                    R.string.action_subscribe
+                }
+
+                setIconResource(drawable)
+                setText(text)
+                setOnClickListener {
+                    val isSubscribed = viewModel.toggleSubscriptionStatus() ?: return@setOnClickListener
+
+                    val message = if (isSubscribed) {
+                        // Kinda icky to have this here, but it works.
+                        SubscriptionWorkManager.enqueuePeriodicWork(context)
+                        R.string.subscription_new
+                    } else {
+                        R.string.subscription_deleted
                     }
 
                     val name = (viewModel.page.value as? Resource.Success)?.value?.title
