@@ -55,10 +55,10 @@ import com.lagradost.cloudstream3.utils.Coroutines.ioWork
 import com.lagradost.cloudstream3.utils.Coroutines.ioWorkSafe
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.DataStoreHelper.deleteBookmarkedData
+import com.lagradost.cloudstream3.utils.DataStoreHelper.getAllBookmarkedData
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getAllFavorites
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getAllSubscriptions
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getBookmarkedData
-import com.lagradost.cloudstream3.utils.DataStoreHelper.getBookmarkedDataByWatchType
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getDub
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getFavoritesData
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getLastWatched
@@ -837,12 +837,13 @@ class ResultViewModel2 : ViewModel() {
 
         val currentStatus = getResultWatchState(currentId)
 
-        // If the status is not actually changing, set this to an empty
-        // list so that we don't show the duplicate warning dialog, but we
-        // still want to refresh the data anyway
-        val bookmarkedData = if (status == currentStatus) {
-            emptyList()
-        } else getBookmarkedDataByWatchType(status)
+        // If the current status is "NONE" and the new status is not "NONE",
+        // fetch the bookmarked data to check for duplicates, otherwise set this
+        // to an empty list, so that we don't show the duplicate warning dialog,
+        // but we still want to update the current bookmark and refresh the data anyway.
+        val bookmarkedData = if (currentStatus == WatchType.NONE && status != WatchType.NONE) {
+            getAllBookmarkedData()
+        } else emptyList()
 
         checkAndWarnDuplicates(
             context,
@@ -864,25 +865,32 @@ class ResultViewModel2 : ViewModel() {
 
             setResultWatchState(currentId, status.internalId)
 
-            val current = getBookmarkedData(currentId)
+            // We don't need to store if WatchType.NONE.
+            // The key is removed in setResultWatchState, we don't want to
+            // re-add it again here if it was just removed.
+            if (status != WatchType.NONE) {
+                val current = getBookmarkedData(currentId)
 
-            setBookmarkedData(
-                currentId,
-                DataStoreHelper.BookmarkedData(
-                    current?.bookmarkedTime ?: unixTimeMS,
+                setBookmarkedData(
                     currentId,
-                    unixTimeMS,
-                    response.name,
-                    response.url,
-                    response.apiName,
-                    response.type,
-                    response.posterUrl,
-                    response.year,
-                    response.syncData
+                    DataStoreHelper.BookmarkedData(
+                        current?.bookmarkedTime ?: unixTimeMS,
+                        currentId,
+                        unixTimeMS,
+                        response.name,
+                        response.url,
+                        response.apiName,
+                        response.type,
+                        response.posterUrl,
+                        response.year,
+                        response.syncData
+                    )
                 )
-            )
+            }
 
-            MainActivity.bookmarksUpdatedEvent(true)
+            if (currentStatus != status) {
+                MainActivity.bookmarksUpdatedEvent(true)
+            }
 
             _watchStatus.postValue(status)
 

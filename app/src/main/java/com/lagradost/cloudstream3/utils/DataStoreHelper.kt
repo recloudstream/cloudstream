@@ -589,14 +589,10 @@ object DataStoreHelper {
         return getKey("$currentAccount/$RESULT_WATCH_STATE_DATA", id.toString())
     }
 
-    fun getBookmarkedDataByWatchType(watchType: WatchType): List<BookmarkedData> {
-        val allBookmarkedData: List<BookmarkedData> =
-            getKeys("$currentAccount/$RESULT_WATCH_STATE_DATA")?.mapNotNull {
-                getKey(it)
+    fun getAllBookmarkedData(): List<BookmarkedData> {
+        return getKeys("$currentAccount/$RESULT_WATCH_STATE_DATA")?.mapNotNull {
+            getKey(it)
         } ?: emptyList()
-
-        return allBookmarkedData
-            .filter { getResultWatchState(it.id ?: return emptyList()) == watchType }
     }
 
     fun getAllSubscriptions(): List<SubscribedData> {
