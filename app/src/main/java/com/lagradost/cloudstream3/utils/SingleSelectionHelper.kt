@@ -2,6 +2,7 @@ package com.lagradost.cloudstream3.utils
 
 import android.app.Activity
 import android.app.Dialog
+import android.text.Spanned
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.AbsListView
@@ -19,6 +20,7 @@ import androidx.core.view.marginRight
 import androidx.core.view.marginTop
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.databinding.BottomTextDialogBinding
 import com.lagradost.cloudstream3.databinding.BottomSelectionDialogBinding
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
@@ -362,5 +364,25 @@ object SingleSelectionHelper {
             callback,
             dismissCallback
         )
+    }
+
+    fun Activity.showBottomDialogText(
+        title: String,
+        text: Spanned,
+        dismissCallback: () -> Unit
+    ) {
+        val binding = BottomTextDialogBinding.inflate(layoutInflater)
+        val dialog = BottomSheetDialog(this)
+
+        dialog.setContentView(binding.root)
+
+        binding.dialogTitle.text = title
+        binding.dialogText.text = text
+
+        dialog.setOnDismissListener {
+            dismissCallback.invoke()
+        }
+
+        dialog.show()
     }
 }
