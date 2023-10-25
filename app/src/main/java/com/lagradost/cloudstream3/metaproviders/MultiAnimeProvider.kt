@@ -21,6 +21,7 @@ class MultiAnimeProvider : MainAPI() {
         when (syncApi) {
             is AniListApi -> "anilist"
             is MALApi -> "myanimelist"
+            is NekosApi -> "nekoslist
             else -> throw ErrorLoadingException("Invalid Api")
         }
     }
