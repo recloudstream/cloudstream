@@ -27,10 +27,10 @@ data class TmdbLink(
 
 open class TmdbProvider : MainAPI() {
     // This should always be false, but might as well make it easier for forks
-    open val includeAdult = false
+    open val includeAdult = true
 
     // Use the LoadResponse from the metadata provider
-    open val useMetaLoadResponse = false
+    open val useMetaLoadResponse = true
     open val apiName = "TMDB"
 
     // As some sites doesn't support s0
@@ -73,7 +73,7 @@ open class TmdbProvider : MainAPI() {
     private fun BaseMovie.toSearchResponse(): MovieSearchResponse {
         return MovieSearchResponse(
             this.title ?: this.original_title,
-            getUrl(id, false),
+            getUrl(id, true),
             apiName,
             TvType.TvSeries,
             getImageUrl(this.poster_path),
@@ -169,7 +169,7 @@ open class TmdbProvider : MainAPI() {
 
     private suspend fun Movie.toLoadResponse(): MovieLoadResponse {
         return newMovieLoadResponse(
-            this.title ?: this.original_title, getUrl(id, false), TvType.Movie, TmdbLink(
+            this.title ?: this.original_title, getUrl(id, true), TvType.Movie, TmdbLink(
                 this.imdb_id,
                 this.id,
                 null,
