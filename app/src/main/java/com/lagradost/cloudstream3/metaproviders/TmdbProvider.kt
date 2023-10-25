@@ -20,6 +20,7 @@ import java.util.*
 data class TmdbLink(
     @JsonProperty("imdbID") val imdbID: String?,
     @JsonProperty("tmdbID") val tmdbID: Int?,
+    @JsonProperty("filmslothID") val filmsloth: Int?
     @JsonProperty("episode") val episode: Int?,
     @JsonProperty("season") val season: Int?,
     @JsonProperty("movieName") val movieName: String? = null,
