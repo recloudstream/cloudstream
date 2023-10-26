@@ -109,6 +109,14 @@ class GeneratorPlayer : FullScreenPlayer() {
         showDownloadProgress(event)
     }
 
+    /*override fun updateIsPlaying(wasPlaying: CSPlayerLoading, isPlaying: CSPlayerLoading) {
+        super.updateIsPlaying(wasPlaying, isPlaying)
+        if(isPlaying == CSPlayerLoading.IsPlaying)
+        activity?.runOnUiThread {
+
+        }
+    }*/
+
     private fun showDownloadProgress(event: DownloadEvent?) {
         activity?.runOnUiThread {
             if(event == null) {

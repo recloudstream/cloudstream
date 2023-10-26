@@ -56,6 +56,7 @@ import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.USER_AGENT
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.mvvm.debugAssert
+import com.lagradost.cloudstream3.mvvm.launchSafe
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.ui.subtitles.SaveCaptionStyle
@@ -67,10 +68,15 @@ import com.lagradost.cloudstream3.utils.ExtractorLinkPlayList
 import com.lagradost.cloudstream3.utils.ExtractorLinkType
 import com.lagradost.cloudstream3.utils.ExtractorUri
 import com.lagradost.cloudstream3.utils.SubtitleHelper.fromTwoLettersToLanguage
+import com.lagradost.fetchbutton.aria2c.Aria2Args
 import com.lagradost.fetchbutton.aria2c.Aria2Settings
 import com.lagradost.fetchbutton.aria2c.Aria2Starter
+import com.lagradost.fetchbutton.aria2c.BtPieceSelector
 import com.lagradost.fetchbutton.aria2c.DownloadListener
 import com.lagradost.fetchbutton.aria2c.DownloadStatusTell
+import com.lagradost.fetchbutton.aria2c.FileAllocationType
+import com.lagradost.fetchbutton.aria2c.FollowMetaLinkType
+import com.lagradost.fetchbutton.aria2c.UriRequest
 import com.lagradost.fetchbutton.aria2c.newUriRequest
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -119,6 +125,9 @@ class CS3IPlayer : IPlayer {
     private var lastMuteVolume: Float = 1.0f
 
     private var currentLink: ExtractorLink? = null
+
+    private var currentAria2cRequestLink: ExtractorLink? = null
+    private var currentAria2cRequestId: Long? = null
     private var currentDownloadedFile: ExtractorUri? = null
     private var hasUsedFirstRender = false
 
@@ -262,7 +271,7 @@ class CS3IPlayer : IPlayer {
         link: ExtractorLink,
         requestId: Long,
     ) {
-        val minimumBytes : Long = 30 shl 20
+        val minimumBytes: Long = 30 shl 20
         var hasFileChecked = false
         while (true) {
             val gid = DownloadListener.sessionIdToGid[requestId]
@@ -354,6 +363,8 @@ class CS3IPlayer : IPlayer {
                     ?: throw Exception("Not downloaded enough")
                 activity.runOnUiThread {
                     //Log.i(TAG, "downloaded data: $metadata")
+                    exoPlayer?.release()
+                    exoPlayer = null
                     loadOfflinePlayer(
                         activity,
                         ExtractorUri(
@@ -400,13 +411,64 @@ class CS3IPlayer : IPlayer {
     private suspend fun playAria2c(activity: Activity, link: ExtractorLink) {
         // ephemeral id based on url to make it unique
         val requestId = link.url.hashCode().toLong()
+        currentAria2cRequestId = requestId
+        currentAria2cRequestLink = link
 
-        val uriReq = newUriRequest(
+        val uriReq = UriRequest(
             id = requestId,
-            uri = link.url,
-            fileName = null,
-            seed = false,
-            stream = true,
+            uris = listOf(link.url),
+            args = Aria2Args(
+                headers = link.headers,
+                referer = link.referer,
+                /** torrent specifics to make it possible to stream */
+                seedRatio = 0.0f,
+                seedTimeMin = 0.0f,
+                btPieceSelector = BtPieceSelector.Inorder,
+                followTorrent = FollowMetaLinkType.Mem,
+                fileAllocation = FileAllocationType.None,
+                btPrioritizePiece = "head=30M,tail=30M",
+                /** Best trackers to make it faster */
+                btTracker = listOf(
+                    "udp://tracker.opentrackr.org:1337/announce",
+                    "https://tracker2.ctix.cn/announce",
+                    "https://tracker1.520.jp:443/announce",
+                    "udp://opentracker.i2p.rocks:6969/announce",
+                    "udp://open.tracker.cl:1337/announce",
+                    "udp://open.demonii.com:1337/announce",
+                    "http://tracker.openbittorrent.com:80/announce",
+                    "udp://tracker.openbittorrent.com:6969/announce",
+                    "udp://open.stealth.si:80/announce",
+                    "udp://exodus.desync.com:6969/announce",
+                    "udp://tracker-udp.gbitt.info:80/announce",
+                    "udp://explodie.org:6969/announce",
+                    "https://tracker.gbitt.info:443/announce",
+                    "http://tracker.gbitt.info:80/announce",
+                    "udp://uploads.gamecoast.net:6969/announce",
+                    "udp://tracker1.bt.moack.co.kr:80/announce",
+                    "udp://tracker.tiny-vps.com:6969/announce",
+                    "udp://tracker.theoks.net:6969/announce",
+                    "udp://tracker.dump.cl:6969/announce",
+                    "udp://tracker.bittor.pw:1337/announce",
+                    "https://tracker1.520.jp:443/announce",
+                    "udp://opentracker.i2p.rocks:6969/announce",
+                    "udp://open.tracker.cl:1337/announce",
+                    "udp://open.demonii.com:1337/announce",
+                    "http://tracker.openbittorrent.com:80/announce",
+                    "udp://tracker.openbittorrent.com:6969/announce",
+                    "udp://open.stealth.si:80/announce",
+                    "udp://exodus.desync.com:6969/announce",
+                    "udp://tracker-udp.gbitt.info:80/announce",
+                    "udp://explodie.org:6969/announce",
+                    "https://tracker.gbitt.info:443/announce",
+                    "http://tracker.gbitt.info:80/announce",
+                    "udp://uploads.gamecoast.net:6969/announce",
+                    "udp://tracker1.bt.moack.co.kr:80/announce",
+                    "udp://tracker.tiny-vps.com:6969/announce",
+                    "udp://tracker.theoks.net:6969/announce",
+                    "udp://tracker.dump.cl:6969/announce",
+                    "udp://tracker.bittor.pw:1337/announce"
+                )
+            )
         )
 
         val metadata =
@@ -421,6 +483,7 @@ class CS3IPlayer : IPlayer {
         }
 
         try {
+            saveData()
             awaitAria2c(activity, link, requestId)
         } catch (t: Throwable) {
             // if we detect any download error then we delete it as we don't want any useless background tasks
@@ -500,6 +563,7 @@ class CS3IPlayer : IPlayer {
         if (link != null) {
             loadOnlinePlayer(context, link)
         } else if (data != null) {
+            currentAria2cRequestId = null
             loadOfflinePlayer(context, data)
         }
     }
@@ -1320,10 +1384,64 @@ class CS3IPlayer : IPlayer {
                 }
 
                 override fun onPlayerError(error: PlaybackException) {
-                    // If the Network fails then ignore the exception if the duration is set.
-                    // This is to switch mirrors automatically if the stream has not been fetched, but
-                    // allow playing the buffer without internet as then the duration is fetched.
+                    val aria2cRequestId = currentAria2cRequestId
+                    val loadedLink = currentAria2cRequestLink
                     when {
+                        // if we are loading an torrent, then we will get these errors, in that case
+                        // we just treat it as buffering
+                        aria2cRequestId != null && loadedLink != null &&
+                                (error.errorCode == PlaybackException.ERROR_CODE_IO_READ_POSITION_OUT_OF_RANGE
+                                        || error.errorCode == PlaybackException.ERROR_CODE_PARSING_MANIFEST_MALFORMED
+                                        || error.errorCode == PlaybackException.ERROR_CODE_PARSING_CONTAINER_MALFORMED
+                                        || error.errorCode == PlaybackException.ERROR_CODE_PARSING_CONTAINER_UNSUPPORTED
+                                        ) -> {
+
+                            val gid = DownloadListener.sessionIdToGid[aria2cRequestId]
+                            Log.i(TAG, "Aria2 error $error error ${error.errorCode}")
+                            if(gid == null) {
+                                event(ErrorEvent(error))
+                                super.onPlayerError(error)
+                                return
+                            }
+                            event(
+                                StatusEvent(
+                                    wasPlaying = CSPlayerLoading.IsPlaying,
+                                    isPlaying = CSPlayerLoading.IsBuffering
+                                )
+                            )
+                            CoroutineScope(Dispatchers.IO).launchSafe {
+                                for (i in 0..5) {
+                                    val metadata = DownloadListener.getInfo(gid)
+                                    event(
+                                        DownloadEvent(
+                                            downloadedBytes = metadata.downloadedLength,
+                                            downloadSpeed = metadata.downloadSpeed,
+                                            totalBytes = metadata.totalLength,
+                                            connections = metadata.items.sumOf { it.connections }
+                                        )
+                                    )
+
+                                    delay(1000)
+                                }
+
+                               // CommonActivity.activity?.runOnUiThread {
+                              //      exoPlayer?.prepare()
+                               // }
+
+                                // shitty solution to release it every time, however we will get timeout otherwise
+                                CommonActivity.activity?.let { act ->
+                                    try {
+                                        awaitAria2c(act, loadedLink, aria2cRequestId)
+                                    }  catch (t : Throwable) {
+                                        event(ErrorEvent(t))
+                                    }
+                                }
+                            }
+                        }
+
+                        // If the Network fails then ignore the exception if the duration is set.
+                        // This is to switch mirrors automatically if the stream has not been fetched, but
+                        // allow playing the buffer without internet as then the duration is fetched.
                         error.errorCode == PlaybackException.ERROR_CODE_IO_NETWORK_CONNECTION_FAILED
                                 && exoPlayer?.duration != TIME_UNSET -> {
                             exoPlayer?.prepare()
@@ -1554,6 +1672,7 @@ class CS3IPlayer : IPlayer {
         Log.i(TAG, "loadOnlinePlayer $link")
         try {
             currentLink = link
+            currentAria2cRequestId = null
 
             if (ignoreSSL) {
                 // Disables ssl check

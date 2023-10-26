@@ -1569,14 +1569,13 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
 
         //val defaultDirectory = "${filesDir.path}/torrent_tmp"
         //File(defaultDirectory).deleteRecursively()
-        navigate(
+        /*navigate(
             R.id.global_to_navigation_player, GeneratorPlayer.newInstance(
                 ExtractorLinkGenerator(
                     listOf(
                         ExtractorLink(
                             source = "",
                             name = "hello world",
-                            url = "",
                             "",
                             Qualities.Unknown.value,
                             type = INFER_TYPE
@@ -1585,7 +1584,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                     emptyList()
                 )
             )
-        )
+        )*/
 
 //        Used to check current focus for TV
 //        main {

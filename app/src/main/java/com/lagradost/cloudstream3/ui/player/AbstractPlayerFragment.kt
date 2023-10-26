@@ -135,7 +135,7 @@ abstract class AbstractPlayerFragment(
         }
     }
 
-    private fun updateIsPlaying(wasPlaying : CSPlayerLoading,
+    open fun updateIsPlaying(wasPlaying : CSPlayerLoading,
                                 isPlaying : CSPlayerLoading) {
         val isPlayingRightNow = CSPlayerLoading.IsPlaying == isPlaying
         val isPausedRightNow = CSPlayerLoading.IsPaused == isPlaying

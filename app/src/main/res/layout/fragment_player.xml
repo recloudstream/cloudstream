@@ -30,19 +30,19 @@
         app:show_timeout="0" />
 
     <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
         android:background="@android:color/black"
-        android:backgroundTint="@android:color/black">
+        android:backgroundTint="@android:color/black"
+        android:id="@+id/download_header"
+        android:visibility="gone"
+        tools:visibility="visible"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
         <LinearLayout
-            android:id="@+id/download_header"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:orientation="vertical"
-            android:visibility="gone"
-            tools:visibility="visible">
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/downloaded_progress_text"
