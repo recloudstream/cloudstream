@@ -352,20 +352,35 @@ object DataStoreHelper {
     /**
      * Used to display notifications on new episodes and posters in library.
      **/
-    data class SubscribedData(
+    abstract class LibrarySearchResponse(
         @JsonProperty("id") override var id: Int?,
-        @JsonProperty("subscribedTime") val bookmarkedTime: Long,
-        @JsonProperty("latestUpdatedTime") val latestUpdatedTime: Long,
-        @JsonProperty("lastSeenEpisodeCount") val lastSeenEpisodeCount: Map<DubStatus, Int?>,
+        @JsonProperty("latestUpdatedTime") open val latestUpdatedTime: Long,
         @JsonProperty("name") override val name: String,
         @JsonProperty("url") override val url: String,
         @JsonProperty("apiName") override val apiName: String,
-        @JsonProperty("type") override var type: TvType? = null,
+        @JsonProperty("type") override var type: TvType?,
         @JsonProperty("posterUrl") override var posterUrl: String?,
-        @JsonProperty("year") val year: Int?,
-        @JsonProperty("quality") override var quality: SearchQuality? = null,
-        @JsonProperty("posterHeaders") override var posterHeaders: Map<String, String>? = null,
-    ) : SearchResponse {
+        @JsonProperty("year") open val year: Int?,
+        @JsonProperty("syncData") open val syncData: Map<String, String>?,
+        @JsonProperty("quality") override var quality: SearchQuality?,
+        @JsonProperty("posterHeaders") override var posterHeaders: Map<String, String>?
+    ) : SearchResponse
+
+    data class SubscribedData(
+        @JsonProperty("subscribedTime") val subscribedTime: Long,
+        @JsonProperty("lastSeenEpisodeCount") val lastSeenEpisodeCount: Map<DubStatus, Int?>,
+        override var id: Int?,
+        override val latestUpdatedTime: Long,
+        override val name: String,
+        override val url: String,
+        override val apiName: String,
+        override var type: TvType?,
+        override var posterUrl: String?,
+        override val year: Int?,
+        override val syncData: Map<String, String>? = null,
+        override var quality: SearchQuality? = null,
+        override var posterHeaders: Map<String, String>? = null
+    ) : LibrarySearchResponse(id, latestUpdatedTime, name, url, apiName, type, posterUrl, year, syncData, quality, posterHeaders) {
         fun toLibraryItem(): SyncAPI.LibraryItem? {
             return SyncAPI.LibraryItem(
                 name,
@@ -381,18 +396,19 @@ object DataStoreHelper {
     }
 
     data class BookmarkedData(
-        @JsonProperty("id") override var id: Int?,
         @JsonProperty("bookmarkedTime") val bookmarkedTime: Long,
-        @JsonProperty("latestUpdatedTime") val latestUpdatedTime: Long,
-        @JsonProperty("name") override val name: String,
-        @JsonProperty("url") override val url: String,
-        @JsonProperty("apiName") override val apiName: String,
-        @JsonProperty("type") override var type: TvType? = null,
-        @JsonProperty("posterUrl") override var posterUrl: String?,
-        @JsonProperty("year") val year: Int?,
-        @JsonProperty("quality") override var quality: SearchQuality? = null,
-        @JsonProperty("posterHeaders") override var posterHeaders: Map<String, String>? = null,
-    ) : SearchResponse {
+        override var id: Int?,
+        override val latestUpdatedTime: Long,
+        override val name: String,
+        override val url: String,
+        override val apiName: String,
+        override var type: TvType?,
+        override var posterUrl: String?,
+        override val year: Int?,
+        override val syncData: Map<String, String>? = null,
+        override var quality: SearchQuality? = null,
+        override var posterHeaders: Map<String, String>? = null
+    ) : LibrarySearchResponse(id, latestUpdatedTime, name, url, apiName, type, posterUrl, year, syncData, quality, posterHeaders) {
         fun toLibraryItem(id: String): SyncAPI.LibraryItem {
             return SyncAPI.LibraryItem(
                 name,
@@ -408,18 +424,19 @@ object DataStoreHelper {
     }
 
     data class FavoritesData(
-        @JsonProperty("id") override var id: Int?,
         @JsonProperty("favoritesTime") val favoritesTime: Long,
-        @JsonProperty("latestUpdatedTime") val latestUpdatedTime: Long,
-        @JsonProperty("name") override val name: String,
-        @JsonProperty("url") override val url: String,
-        @JsonProperty("apiName") override val apiName: String,
-        @JsonProperty("type") override var type: TvType? = null,
-        @JsonProperty("posterUrl") override var posterUrl: String?,
-        @JsonProperty("year") val year: Int?,
-        @JsonProperty("quality") override var quality: SearchQuality? = null,
-        @JsonProperty("posterHeaders") override var posterHeaders: Map<String, String>? = null,
-    ) : SearchResponse {
+        override var id: Int?,
+        override val latestUpdatedTime: Long,
+        override val name: String,
+        override val url: String,
+        override val apiName: String,
+        override var type: TvType?,
+        override var posterUrl: String?,
+        override val year: Int?,
+        override val syncData: Map<String, String>? = null,
+        override var quality: SearchQuality? = null,
+        override var posterHeaders: Map<String, String>? = null
+    ) : LibrarySearchResponse(id, latestUpdatedTime, name, url, apiName, type, posterUrl, year, syncData, quality, posterHeaders) {
         fun toLibraryItem(): SyncAPI.LibraryItem? {
             return SyncAPI.LibraryItem(
                 name,
@@ -570,6 +587,12 @@ object DataStoreHelper {
     fun getBookmarkedData(id: Int?): BookmarkedData? {
         if (id == null) return null
         return getKey("$currentAccount/$RESULT_WATCH_STATE_DATA", id.toString())
+    }
+
+    fun getAllBookmarkedData(): List<BookmarkedData> {
+        return getKeys("$currentAccount/$RESULT_WATCH_STATE_DATA")?.mapNotNull {
+            getKey(it)
+        } ?: emptyList()
     }
 
     fun getAllSubscriptions(): List<SubscribedData> {

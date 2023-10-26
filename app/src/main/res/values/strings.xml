@@ -686,13 +686,32 @@
     <string name="qualities">Qualities</string>
     <string name="profile_background_des">Profile background</string>
     <string name="unable_to_inflate">UI was unable to be created correctly, this is a MAJOR BUG and should be reported immediately %s</string>
-
-
-    <string name="tv_no_focus_tag" translatable="false">tv_no_focus_tag</string>
     <string name="already_voted">You have already voted</string>
+
     <string name="favorites_list_name">Favorites</string>
     <string name="favorite_added">%s added to favorites</string>
     <string name="favorite_removed">%s removed from favorites</string>
     <string name="action_add_to_favorites">Add to favorites</string>
     <string name="action_remove_from_favorites">Remove from favorites</string>
+
+    <string name="duplicate_title">Potential Duplicate Found</string>
+    <string name="duplicate_add">Add</string>
+    <string name="duplicate_replace">Replace</string>
+    <string name="duplicate_replace_all">Replace All</string>
+    <string name="duplicate_cancel" translatable="false">@string/sort_cancel</string>
+    <string name="duplicate_message_single">
+        It appears that a potentially duplicate item already exists in your library: \'%1$s.\'
+
+        \n\nWould you like to add this item anyway, replace the existing one, or cancel the action?
+    </string>
+    <string name="duplicate_message_multiple">
+        Potential duplicate items have been found in your library:
+
+        \n\n%1$s
+
+        \n\nWould you like to add this item anyway, replace the existing ones, or cancel the action?
+    </string>
+
+
+    <string name="tv_no_focus_tag" translatable="false">tv_no_focus_tag</string>
 </resources>
