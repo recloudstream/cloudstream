@@ -535,7 +535,7 @@ class ResultFragmentTv : Fragment() {
                         view.context.getString(R.string.action_add_to_bookmarks),
                         showApply = false,
                         {}) {
-                        viewModel.updateWatchStatus(WatchType.values()[it])
+                        viewModel.updateWatchStatus(WatchType.values()[it], context)
                     }
                 }
             }
@@ -561,17 +561,19 @@ class ResultFragmentTv : Fragment() {
                 setIconResource(drawable)
                 setText(text)
                 setOnClickListener {
-                    val isFavorite = viewModel.toggleFavoriteStatus() ?: return@setOnClickListener
+                    viewModel.toggleFavoriteStatus(context) { newStatus: Boolean? ->
+                        if (newStatus == null) return@toggleFavoriteStatus
 
-                    val message = if (isFavorite) {
-                        R.string.favorite_added
-                    } else {
-                        R.string.favorite_removed
+                        val message = if (newStatus) {
+                            R.string.favorite_added
+                        } else {
+                            R.string.favorite_removed
+                        }
+
+                        val name = (viewModel.page.value as? Resource.Success)?.value?.title
+                            ?: txt(R.string.no_data).asStringNull(context) ?: ""
+                        CommonActivity.showToast(txt(message, name), Toast.LENGTH_SHORT)
                     }
-
-                    val name = (viewModel.page.value as? Resource.Success)?.value?.title
-                        ?: txt(R.string.no_data).asStringNull(context) ?: ""
-                    CommonActivity.showToast(txt(message, name), Toast.LENGTH_SHORT)
                 }
             }
         }
