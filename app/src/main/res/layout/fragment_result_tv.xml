@@ -348,7 +348,7 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
                             style="@style/ResultButtonTV"
 
                             android:nextFocusRight="@id/redirect_to_episodes"
-                            android:nextFocusUp="@id/result_favorite_button"
+                            android:nextFocusUp="@id/result_subscribe_button"
                             android:nextFocusDown="@id/result_cast_items"
 
                             android:text="@string/episodes"

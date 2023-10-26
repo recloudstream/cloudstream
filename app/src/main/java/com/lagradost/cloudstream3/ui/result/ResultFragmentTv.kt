@@ -598,19 +598,21 @@ class ResultFragmentTv : Fragment() {
                 setIconResource(drawable)
                 setText(text)
                 setOnClickListener {
-                    val isSubscribed = viewModel.toggleSubscriptionStatus() ?: return@setOnClickListener
+                    viewModel.toggleSubscriptionStatus(context) { newStatus: Boolean? ->
+                        if (newStatus == null) return@toggleSubscriptionStatus
 
-                    val message = if (isSubscribed) {
-                        // Kinda icky to have this here, but it works.
-                        SubscriptionWorkManager.enqueuePeriodicWork(context)
-                        R.string.subscription_new
-                    } else {
-                        R.string.subscription_deleted
+                        val message = if (newStatus) {
+                            // Kinda icky to have this here, but it works.
+                            SubscriptionWorkManager.enqueuePeriodicWork(context)
+                            R.string.subscription_new
+                        } else {
+                            R.string.subscription_deleted
+                        }
+
+                        val name = (viewModel.page.value as? Resource.Success)?.value?.title
+                            ?: txt(R.string.no_data).asStringNull(context) ?: ""
+                        CommonActivity.showToast(txt(message, name), Toast.LENGTH_SHORT)
                     }
-
-                    val name = (viewModel.page.value as? Resource.Success)?.value?.title
-                        ?: txt(R.string.no_data).asStringNull(context) ?: ""
-                    CommonActivity.showToast(txt(message, name), Toast.LENGTH_SHORT)
                 }
             }
         }
