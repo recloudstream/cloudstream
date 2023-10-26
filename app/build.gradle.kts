@@ -1,5 +1,6 @@
 import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
 import org.jetbrains.dokka.gradle.DokkaTask
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.ByteArrayOutputStream
 import java.net.URL
 
@@ -126,20 +127,12 @@ android {
             versionCode = (System.currentTimeMillis() / 60000).toInt()
         }
     }
-    //toolchain {
-    //     languageVersion.set(JavaLanguageVersion.of(17))
-    // }
-    // jvmToolchain(17)
 
     compileOptions {
         isCoreLibraryDesugaringEnabled = true
 
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
-    }
-    kotlinOptions {
-        jvmTarget = "1.8"
-        freeCompilerArgs = listOf("-Xjvm-default=compatibility")
     }
     lint {
         abortOnError = false
@@ -278,6 +271,13 @@ tasks.register("makeJar", Copy::class) {
     into("build")
     include("classes.jar")
     dependsOn("build")
+}
+
+tasks.withType<KotlinCompile> {
+    kotlinOptions {
+        jvmTarget = "1.8"
+        freeCompilerArgs = listOf("-Xjvm-default=all-compatibility")
+    }
 }
 
 tasks.withType<DokkaTask>().configureEach {
