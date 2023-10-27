@@ -44,7 +44,6 @@
     <string name="type_completed">Voltooid</string>
     <string name="type_dropped">Dropped</string>
     <string name="type_plan_to_watch">Plan om te kijken</string>
-    <string name="type_none">Geen</string>
     <string name="type_re_watching">Opnieuw kijken</string>
     <string name="play_movie_button">Film afspelen</string>
     <string name="play_livestream_button">Livestream afspelen</string>
@@ -82,7 +81,6 @@
     <string name="action_remove_from_bookmarks">Verwijder</string>
     <string name="action_add_to_bookmarks">Zet kijkstatus</string>
     <string name="sort_apply">Toepassen</string>
-    <string name="sort_cancel">annuleer</string>
     <string name="sort_copy">Kopiëren</string>
     <string name="sort_close">Sluit</string>
     <string name="sort_clear">Wissen</string>
@@ -186,6 +184,7 @@
     <string name="no_episodes_found">Geen afleveringen gevonden</string>
     <string name="delete_file">Verwijder bestand</string>
     <string name="delete">Verwijder</string>
+    <string name="cancel">annuleer</string>
     <string name="pause">Pauze</string>
     <string name="resume">Hervatten</string>
     <string name="go_back_30">-30</string>
@@ -204,7 +203,7 @@
     <string name="synopsis">Korte inhoud</string>
     <string name="queued">wachtrij</string>
     <string name="no_subtitles">Geen ondertiteling</string>
-    <string name="default_subtitles">Standaard</string>
+    <string name="action_default">Standaard</string>
     <string name="free_storage">Vrij</string>
     <string name="used_storage">Gebruikt</string>
     <string name="app_storage">App</string>
@@ -573,6 +572,5 @@
     <string name="automatic_plugin_download_mode_title">Selecteer een modus om het downloaden van plug-ins te filteren</string>
     <string name="disable">Uitzetten</string>
     <string name="unable_to_inflate">De gebruikersinterface kon niet correct worden gemaakt, dit is een ERNSTIG PROBLEEM en moet onmiddellijk gerapporteerd worden %s</string>
-    <string name="default_account">@string/default_subtitles</string>
     <string name="already_voted">Je hebt al gestemd</string>
 </resources>

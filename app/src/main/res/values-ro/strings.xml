@@ -43,7 +43,6 @@
     <string name="type_completed">Finalizat</string>
     <string name="type_dropped">Renunțat</string>
     <string name="type_plan_to_watch">Planificare pentru a urmări</string>
-    <string name="type_none">Anuleaza</string>
     <string name="type_re_watching">Reurmat</string>
     <string name="play_movie_button">Urmărește</string>
     <string name="play_torrent_button">Stream Torrent</string>
@@ -79,7 +78,6 @@
     <string name="action_remove_from_bookmarks">Eliminează</string>
     <string name="action_add_to_bookmarks">Adaugă</string>
     <string name="sort_apply">Aplică</string>
-    <string name="sort_cancel">Anulează</string>
     <string name="sort_copy">Copiază</string>
     <string name="sort_close">Închide</string>
     <string name="sort_clear">Elimină</string>
@@ -181,6 +179,7 @@
     <string name="no_episodes_found">Nu s-au găsit episoade</string>
     <string name="delete_file">Ștergeți fișierul</string>
     <string name="delete">Ștergeți</string>
+    <string name="cancel">Anulează</string>
     <string name="pause">Pauză</string>
     <string name="resume">Continuă</string>
     <string name="go_back_30">-30</string>
@@ -199,7 +198,7 @@
     <string name="synopsis">Rezumat</string>
     <string name="queued">În coada de așteptare</string>
     <string name="no_subtitles">Nu există subtitrare</string>
-    <string name="default_subtitles">Implicit</string>
+    <string name="action_default">Implicit</string>
     <string name="free_storage">Liber</string>
     <string name="used_storage">Folosit</string>
     <string name="app_storage">Aplicație</string>
@@ -569,6 +568,5 @@
     <string name="use">Utilizați</string>
     <string name="unable_to_inflate">UI nu a putut fi creată corect, acesta este un BUG MAJOR și trebuie raportat imediat %s</string>
     <string name="automatic_plugin_download_mode_title">Selectați modul de filtrare a descărcării plugin-urilor</string>
-    <string name="default_account">@string/default_subtitles</string>
     <string name="already_voted">Ați votat deja</string>
 </resources>
