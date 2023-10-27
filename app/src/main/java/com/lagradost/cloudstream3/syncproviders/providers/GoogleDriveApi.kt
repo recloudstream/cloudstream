@@ -18,6 +18,8 @@ import com.google.api.services.drive.Drive
 import com.google.api.services.drive.DriveScopes
 import com.google.api.services.drive.model.File
 import com.lagradost.cloudstream3.AcraApplication
+import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
+import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.CommonActivity
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.syncproviders.AuthAPI
@@ -28,8 +30,10 @@ import com.lagradost.cloudstream3.syncproviders.InAppOAuth2APIManager
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
 import com.lagradost.cloudstream3.utils.BackupUtils.getBackup
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
+import com.lagradost.cloudstream3.utils.Coroutines.ioWorkSafe
 import com.lagradost.cloudstream3.utils.Scheduler
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.runBlocking
 import java.io.InputStream
 import java.util.Date
 
@@ -71,7 +75,8 @@ class GoogleDriveApi(index: Int) :
     override val requiresSecret = true
     override val requiresClientId = true
     override val defaultFilenameValue = "cloudstreamapp-sync-file"
-    override val defaultRedirectUrl = "https://recloudstream.github.io/cloudstream-sync/google-drive"
+    override val defaultRedirectUrl =
+        "https://recloudstream.github.io/cloudstream-sync/google-drive"
     override val infoUrl = "https://recloudstream.github.io/cloudstream-sync/google-drive/help.html"
 
     override var isActive: Boolean? = false
@@ -80,6 +85,10 @@ class GoogleDriveApi(index: Int) :
 
     private var tempAuthFlow: AuthorizationCodeFlow? = null
     private var lastBackupJson: String? = null
+
+    companion object {
+        const val GOOGLE_ACCOUNT_INFO_KEY = "google_account_info_key"
+    }
 
     /////////////////////////////////////////
     /////////////////////////////////////////
@@ -137,11 +146,47 @@ class GoogleDriveApi(index: Int) :
         }
     }
 
+    private suspend fun fetchUserInfo(driveService: Drive): GoogleUser? {
+        return ioWorkSafe {
+            val user = driveService.about()
+                .get()
+                .apply {
+                    this.fields = "user"
+                }
+                .execute()
+                .user
+            GoogleUser(user.displayName, user.photoLink)
+        }
+    }
+
+    private suspend fun getUserInfo(driveService: Drive): GoogleUser? {
+        return getKey(accountId, GOOGLE_ACCOUNT_INFO_KEY)
+            ?: fetchUserInfo(driveService).also { user ->
+                setKey(accountId, GOOGLE_ACCOUNT_INFO_KEY, user)
+            }
+    }
+
+    data class GoogleUser(
+        val displayName: String,
+        val photoLink: String?,
+    )
+
+    private fun getBlankUser(): GoogleUser {
+        return GoogleUser(
+            "google-account-$accountIndex",
+            null,
+        )
+    }
+
     override fun loginInfo(): AuthAPI.LoginInfo? {
-        getCredentialsFromStore() ?: return null
+        val driveService = getDriveService() ?: return null
+        val userInfo = runBlocking {
+            getUserInfo(driveService)
+        } ?: getBlankUser()
 
         return AuthAPI.LoginInfo(
-            name = "google-account-$accountIndex",
+            name = userInfo.displayName,
+            profilePicture = userInfo.photoLink,
             accountIndex = accountIndex
         )
     }
