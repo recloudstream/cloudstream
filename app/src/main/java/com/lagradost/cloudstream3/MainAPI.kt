@@ -1194,8 +1194,6 @@ interface LoadResponse {
     var posterHeaders: Map<String, String>?
     var backgroundPosterUrl: String?
     var contentRating: String?
-        get() = throw NotImplementedError()
-        set(value) { contentRating = value }
 
     companion object {
         private val malIdPrefix = malApi.idPrefix
