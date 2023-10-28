@@ -667,6 +667,8 @@
     <string name="subscription_new">Subscribed to %s</string>
     <string name="subscription_deleted">Unsubscribed from %s</string>
     <string name="subscription_episode_released">Episode %d released!</string>
+    <string name="action_subscribe">Subscribe</string>
+    <string name="action_unsubscribe">Unsubscribe</string>
     <string name="profile_number">Profile %d</string>
     <string name="wifi">Wi-Fi</string>
     <string name="mobile_data">Mobile data</string>
