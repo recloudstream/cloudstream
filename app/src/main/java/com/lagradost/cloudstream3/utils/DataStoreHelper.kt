@@ -245,13 +245,10 @@ object DataStoreHelper {
             if (currentEditAccount.lockPin != null) {
                 // Ask for the current PIN
                 showPinInputDialog(context, currentEditAccount.lockPin, false) { pin ->
-                    if (pin == null || pin != currentEditAccount.lockPin) {
-                        binding.lockProfileCheckbox.isChecked = true
-                    } else {
-                        // PIN is correct, proceed to update the account
-                        performAccountUpdate(currentEditAccount)
-                        dialog.dismissSafe()
-                    }
+                    if (pin == null) return@showPinInputDialog
+                    // PIN is correct, proceed to update the account
+                    performAccountUpdate(currentEditAccount)
+                    dialog.dismissSafe()
                 }
             } else {
                 // No lock PIN set, proceed to update the account
