@@ -65,6 +65,7 @@
     <string name="documentaries">Dokumentika</string>
     <string name="play_torrent_button">Transliuoti Torrentą</string>
     <string name="delete">Ištrinti</string>
+    <string name="cancel">Atšaukti</string>
     <string name="start">Pradėti</string>
     <string name="eigengraumode_settings_des">Prideda greičio pasirinkti grotuve</string>
     <string name="cartoons_singular">Filmukas</string>
@@ -95,7 +96,6 @@
     <string name="subs_text_color">Teksto spalva</string>
     <string name="type_completed">Užbaigta</string>
     <string name="use_system_brightness_settings_des">Naudoti sistemos ryškumą programos grotuve vietoj tamsumo</string>
-    <string name="type_none">Tuščia</string>
     <string name="restore_failed_format" formatted="true">Nepavyko atstatyti duomenis iš failo %s</string>
     <string name="play_trailer_button">Paleisti anonsa</string>
     <string name="play_livestream_button">Paleisti gyva transliacija</string>
@@ -107,7 +107,6 @@
     <string name="type_re_watching">Peržiūrima</string>
     <string name="result_open_in_browser">Atidaryti Naršyklėje</string>
     <string name="use_system_brightness_settings">Naudoti sistemos ryškumą</string>
-    <string name="sort_cancel">Atšaukti</string>
     <string name="no_data">Nėra duomenų</string>
     <string name="subs_font">Šriftas</string>
     <string name="redo_setup_process">Perdaryti nustatymo procesą</string>

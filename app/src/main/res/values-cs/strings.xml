@@ -40,7 +40,6 @@
     <string name="type_completed">Dokončeno</string>
     <string name="type_dropped">Zahozeno</string>
     <string name="type_plan_to_watch">Plánuji sledovat</string>
-    <string name="type_none">Žádné</string>
     <string name="type_re_watching">Opětovné sledování</string>
     <string name="play_movie_button">Přehrát film</string>
     <string name="play_torrent_button">Streamovat torrent</string>
@@ -76,7 +75,6 @@
     <string name="action_remove_from_bookmarks">Odebrat</string>
     <string name="action_add_to_bookmarks">Nastavit stav sledování</string>
     <string name="sort_apply">Použít</string>
-    <string name="sort_cancel">Zrušit</string>
     <string name="sort_copy">Kopírovat</string>
     <string name="sort_close">Zavřít</string>
     <string name="sort_clear">Vymazat</string>
@@ -176,6 +174,7 @@
     <string name="no_episodes_found">Nenalezeny žádné epizody</string>
     <string name="delete_file">Smazat soubor</string>
     <string name="delete">Smazat</string>
+    <string name="cancel">Zrušit</string>
     <string name="pause">Pozastavit</string>
     <string name="resume">Pokračovat</string>
     <string name="go_back_30">-30</string>
@@ -194,7 +193,7 @@
     <string name="synopsis">Synopse</string>
     <string name="queued">ve frontě</string>
     <string name="no_subtitles">Žádné titulky</string>
-    <string name="default_subtitles">Výchozí</string>
+    <string name="action_default">Výchozí</string>
     <string name="free_storage">Volné</string>
     <string name="used_storage">Použito</string>
     <string name="app_storage">Aplikace</string>
@@ -575,6 +574,5 @@
     <string name="automatic_plugin_download_mode_title">Výběr režimu pro filtrování stahování doplňků</string>
     <string name="no_plugins_found_error">V repozitáři nebyly nalezeny žádné doplňky</string>
     <string name="no_repository_found_error">Repozitář nenalezen, zkontrolujte adresu URL a zkuste použít VPN</string>
-    <string name="default_account">@string/default_subtitles</string>
     <string name="already_voted">Již jste hlasovali</string>
 </resources>

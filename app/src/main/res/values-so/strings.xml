@@ -10,6 +10,7 @@
     <string name="download_failed">Dejintii ma guulaysan</string>
     <string name="search">Raadi</string>
     <string name="delete">Tirtir</string>
+    <string name="cancel">Jooji</string>
     <string name="pause">Haki</string>
     <string name="queued">Horran</string>
     <string name="resize_fit">Le-ekaysii shaashadda</string>
@@ -46,7 +47,6 @@
     <string name="type_completed">Dhamaystirmay</string>
     <string name="type_dropped">Soo dhacay</string>
     <string name="type_plan_to_watch">Ku talo jira</string>
-    <string name="type_none">Midna</string>
     <string name="play_movie_button">Daaro filinka</string>
     <string name="play_trailer_button">Daar goos-gooska</string>
     <string name="subs_window_color">Midabka daaqadda</string>
@@ -56,7 +56,6 @@
     <string name="play_torrent_button">Daalaco toorentiga</string>
     <string name="pick_subtitle">Qrl-hoosaadka</string>
     <string name="popup_resume_download">Dib u bilow dejinta</string>
-    <string name="sort_cancel">Jooji</string>
     <string name="subs_background_color">Midabka dambeedka</string>
     <string name="pick_source">Xigashooyinka</string>
     <string name="reload_error">Dib u xidhiidhinaya…</string>
@@ -202,7 +201,7 @@
     <string name="duration">Muddada</string>
     <string name="used_storage">La isticmaalay</string>
     <string name="no_subtitles">Qrl-hoosaad ma leh</string>
-    <string name="default_subtitles">Sidiisaa</string>
+    <string name="action_default">Sidiisaa</string>
     <string name="free_storage">Bilaash</string>
     <string name="app_storage">Appka</string>
     <string name="cartoons_singular">Kartoob</string>

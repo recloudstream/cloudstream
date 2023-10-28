@@ -34,7 +34,6 @@
     <string name="result_tags">الأنواع</string>
     <string name="download_paused">توقف التنزيل</string>
     <string name="type_plan_to_watch">خطط للمشاهدة</string>
-    <string name="type_none">لا يوجد</string>
     <string name="type_re_watching">إعادة المشاهدة</string>
     <string name="new_update_format" formatted="true">!تم العثور على تحديث جديد
 \n%s-&gt;%s</string>
@@ -125,6 +124,7 @@
     <string name="season">موسم</string>
     <string name="copy_link_toast">تم نسخ الرابط إلى الحافظة</string>
     <string name="delete">مسح</string>
+    <string name="cancel">الغي</string>
     <string name="pause">وقف</string>
     <string name="update_notification_downloading">جارٍ تنزيل تحديث التطبيق…</string>
     <string name="subs_default_reset_toast">إعادة التعيين إلى القيمة العادية</string>
@@ -208,7 +208,6 @@
     <string name="popup_resume_download">استئناف تحميل</string>
     <string name="home_info">معلومات</string>
     <string name="popup_pause_download">وقفة التحميل</string>
-    <string name="sort_cancel">الغي</string>
     <string name="sort_save">احفظ</string>
     <string name="subtitles_settings">إعدادات الترجمة</string>
     <string name="subs_text_color">لون الخط</string>
