@@ -3,10 +3,12 @@ package com.lagradost.cloudstream3.utils
 import android.content.Context
 import android.content.DialogInterface
 import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
+import android.view.View
+import android.view.inputmethod.EditorInfo
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isGone
-import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -272,18 +274,18 @@ object DataStoreHelper {
         binding.lockProfileCheckbox.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
                 if (canSetPin) {
-                    showPinInputDialog(context) { pin ->
+                    showPinInputDialog(context, null, true) { pin ->
+                        if (pin == null) return@showPinInputDialog
                         currentEditAccount = currentEditAccount.copy(lockPin = pin)
                     }
                 }
             } else {
                 if (currentEditAccount.lockPin != null) {
                     // Ask for the current PIN
-                    showPinInputDialog(context) { currentPin ->
-                        if (currentPin != currentEditAccount.lockPin) {
+                    showPinInputDialog(context, currentEditAccount.lockPin, true) { pin ->
+                        if (pin == null || pin != currentEditAccount.lockPin) {
                             canSetPin = false
                             binding.lockProfileCheckbox.isChecked = true
-                            binding.lockProfileIncorrect.isVisible = true
                         }
                     }
                 } else {
@@ -324,15 +326,11 @@ object DataStoreHelper {
                 // Check if the selected account has a lock PIN set
                 if (account.lockPin != null) {
                     // Prompt for the lock pin
-                    showPinInputDialog(context) { enteredPin ->
-                        if (enteredPin == account.lockPin) {
-                            // Pin is correct, unlock the profile
-                            setAccount(account, true)
-                            builder.dismissSafe()
-                        } else {
-                            // PIN is incorrect, display an error message
-                            showToast(R.string.incorrect_pin)
-                        }
+                    showPinInputDialog(context, account.lockPin, false) { pin ->
+                        if (pin == null) return@showPinInputDialog
+                        // Pin is correct, unlock the profile
+                        setAccount(account, true)
+                        builder.dismissSafe()
                     }
                 } else {
                     // No lock PIN set, directly set the account
@@ -374,23 +372,75 @@ object DataStoreHelper {
         builder.show()
     }
 
-    private fun showPinInputDialog(context: Context, callback: (String) -> Unit) {
+    private fun showPinInputDialog(
+        context: Context,
+        currentPin: String?,
+        editAccount: Boolean,
+        callback: (String?) -> Unit
+    ) {
         val binding: LockPinDialogBinding = LockPinDialogBinding.inflate(LayoutInflater.from(context))
-        val builder =
-            AlertDialog.Builder(context, R.style.AlertDialogCustom)
-                .setView(binding.root)
+        val builder = AlertDialog.Builder(context, R.style.AlertDialogCustom)
+            .setView(binding.root)
 
-        builder.setTitle(R.string.enter_pin)
-            .setPositiveButton(R.string.ok) { dialog, _ ->
+        val dialog = builder.create()
+
+        if (editAccount && currentPin != null) {
+            dialog.setTitle(R.string.enter_current_pin)
+        } else dialog.setTitle(R.string.enter_pin)
+
+        binding.pinEditTextError.visibility = View.GONE
+
+        // A flag to track if the PIN is valid
+        var isPinValid = false
+
+        binding.pinEditText.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                val enteredPin = s.toString()
+                if (enteredPin.length == 4) {
+                    if (currentPin != null) {
+                        if (enteredPin != currentPin) {
+                            binding.pinEditTextError.visibility = View.VISIBLE
+                            binding.pinEditTextError.text = context.getString(R.string.pin_error_incorrect)
+                            isPinValid = false
+                        } else {
+                            binding.pinEditTextError.visibility = View.GONE
+                            isPinValid = true
+
+                            callback.invoke(enteredPin)
+                            dialog.dismiss()
+                        }
+                    } else {
+                        binding.pinEditTextError.visibility = View.GONE
+                        isPinValid = true
+                    }
+                } else if (editAccount && currentPin == null) {
+                    binding.pinEditTextError.visibility = View.VISIBLE
+                    binding.pinEditTextError.text = context.getString(R.string.pin_error_length)
+                    isPinValid = false
+                }
+            }
+
+            override fun afterTextChanged(s: Editable?) {}
+        })
+
+        // Detect IME_ACTION_DONE
+        binding.pinEditText.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_DONE && isPinValid) {
                 val enteredPin = binding.pinEditText.text.toString()
-                callback(enteredPin)
+                callback.invoke(enteredPin)
                 dialog.dismiss()
             }
-            .setNegativeButton(R.string.cancel) { dialog, _ ->
-                dialog.cancel()
-            }
+            true
+        }
 
-        builder.show()
+        dialog.setButton(AlertDialog.BUTTON_NEGATIVE, context.getString(R.string.cancel)) { _, _ ->
+            callback.invoke(null)
+            dialog.dismiss()
+        }
+
+        dialog.show()
     }
 
     data class PosDur(

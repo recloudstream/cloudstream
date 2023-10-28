@@ -717,10 +717,9 @@
 
 
     <string name="enter_pin">Enter PIN</string>
-    <string name="ok">OK</string>
+    <string name="enter_current_pin">Enter Current PIN</string>
     <string name="lock_profile">Lock Profile</string>
     <string name="pin">PIN</string>
-    <string name="enter_lock_pin">Enter Lock PIN</string>
-    <string name="incorrect_pin">Incorrect PIN</string>
-    <string name="lock_profile_incorrect_current">Current PIN entered incorrectly</string>
+    <string name="pin_error_incorrect">Incorrect PIN. Please try again.</string>
+    <string name="pin_error_length">PIN must be 4 characters</string>
 </resources>
