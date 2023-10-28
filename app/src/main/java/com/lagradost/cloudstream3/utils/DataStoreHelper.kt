@@ -242,28 +242,22 @@ object DataStoreHelper {
         }
 
         binding.applyBtt.setOnClickListener {
-            val currentAccounts = accounts.toMutableList()
-
-            val overrideIndex =
-                currentAccounts.indexOfFirst { it.keyIndex == currentEditAccount.keyIndex }
-
-            // If an account is found that has the same keyIndex, override that one; if not, append it
-            if (overrideIndex != -1) {
-                currentAccounts[overrideIndex] = currentEditAccount
+            if (currentEditAccount.lockPin != null) {
+                // Ask for the current PIN
+                showPinInputDialog(context, currentEditAccount.lockPin, false) { pin ->
+                    if (pin == null || pin != currentEditAccount.lockPin) {
+                        binding.lockProfileCheckbox.isChecked = true
+                    } else {
+                        // PIN is correct, proceed to update the account
+                        performAccountUpdate(currentEditAccount)
+                        dialog.dismissSafe()
+                    }
+                }
             } else {
-                currentAccounts.add(currentEditAccount)
+                // No lock PIN set, proceed to update the account
+                performAccountUpdate(currentEditAccount)
+                dialog.dismissSafe()
             }
-
-            // Save the current homepage for new accounts
-            val currentHomePage = DataStoreHelper.currentHomePage
-
-            // Set the new default account as well as add the key for the new account
-            setAccount(currentEditAccount, false)
-            DataStoreHelper.currentHomePage = currentHomePage
-
-            accounts = currentAccounts.toTypedArray()
-
-            dialog.dismissSafe()
         }
 
         // Handle setting or changing the PIN
@@ -295,6 +289,23 @@ object DataStoreHelper {
         }
 
         canSetPin = true
+    }
+
+    private fun performAccountUpdate(account: Account) {
+        val currentAccounts = accounts.toMutableList()
+
+        val overrideIndex = currentAccounts.indexOfFirst { it.keyIndex == account.keyIndex }
+
+        if (overrideIndex != -1) {
+            currentAccounts[overrideIndex] = account
+        } else {
+            currentAccounts.add(account)
+        }
+
+        val currentHomePage = DataStoreHelper.currentHomePage
+        setAccount(account, false)
+        DataStoreHelper.currentHomePage = currentHomePage
+        accounts = currentAccounts.toTypedArray()
     }
 
     private fun getDefaultAccount(context: Context): Account {
@@ -436,8 +447,13 @@ object DataStoreHelper {
         }
 
         dialog.setButton(AlertDialog.BUTTON_NEGATIVE, context.getString(R.string.cancel)) { _, _ ->
-            callback.invoke(null)
             dialog.dismiss()
+        }
+
+        dialog.setOnDismissListener {
+            if (!isPinValid) {
+                callback.invoke(null)
+            }
         }
 
         dialog.show()
