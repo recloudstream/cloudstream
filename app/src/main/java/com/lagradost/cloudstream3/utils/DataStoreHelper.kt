@@ -483,15 +483,9 @@ object DataStoreHelper {
         removeKeys(folder)
     }
 
-    fun deleteAllBookmarkedData() {
-        val folder1 = "$currentAccount/$RESULT_WATCH_STATE"
-        val folder2 = "$currentAccount/$RESULT_WATCH_STATE_DATA"
-        removeKeys(folder1)
-        removeKeys(folder2)
-    }
-
     fun deleteBookmarkedData(id: Int?) {
         if (id == null) return
+        AccountManager.localListApi.requireLibraryRefresh = true
         removeKey("$currentAccount/$RESULT_WATCH_STATE", id.toString())
         removeKey("$currentAccount/$RESULT_WATCH_STATE_DATA", id.toString())
     }
