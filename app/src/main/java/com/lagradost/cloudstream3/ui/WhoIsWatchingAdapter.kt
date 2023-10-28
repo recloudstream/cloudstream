@@ -55,7 +55,6 @@ class WhoIsWatchingAdapter(
             editCallBack = editCallBack,
         )
 
-
     override fun onBindViewHolder(holder: WhoIsWatchingHolder, position: Int) =
         holder.bind(currentList.getOrNull(position))
 
@@ -70,10 +69,15 @@ class WhoIsWatchingAdapter(
         fun bind(card: DataStoreHelper.Account?) {
             when (binding) {
                 is WhoIsWatchingAccountBinding -> binding.apply {
-                    if(card == null) return@apply
+                    if (card == null) return@apply
                     outline.isVisible = card.keyIndex == DataStoreHelper.selectedKeyIndex
                     profileText.text = card.name
                     profileImageBackground.setImage(card.image)
+
+                    // Handle the lock indicator
+                    val isLocked = card.lockPin != null
+                    lockIcon.isVisible = isLocked
+
                     root.setOnClickListener {
                         selectCallBack(card)
                     }

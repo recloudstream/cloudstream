@@ -6,6 +6,7 @@ import android.text.Editable
 import android.view.LayoutInflater
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isGone
+import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -19,6 +20,7 @@ import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.removeKeys
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.CommonActivity.showToast
+import com.lagradost.cloudstream3.databinding.LockPinDialogBinding
 import com.lagradost.cloudstream3.databinding.WhoIsWatchingAccountEditBinding
 import com.lagradost.cloudstream3.databinding.WhoIsWatchingBinding
 import com.lagradost.cloudstream3.mvvm.logError
@@ -27,7 +29,6 @@ import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.WhoIsWatchingAdapter
 import com.lagradost.cloudstream3.ui.library.ListSorting
-import com.lagradost.cloudstream3.ui.result.FOCUS_SELF
 import com.lagradost.cloudstream3.ui.result.UiImage
 import com.lagradost.cloudstream3.ui.result.VideoWatchState
 import com.lagradost.cloudstream3.ui.result.setImage
@@ -136,6 +137,8 @@ object DataStoreHelper {
         val customImage: String? = null,
         @JsonProperty("defaultImageIndex")
         val defaultImageIndex: Int,
+        @JsonProperty("lockPin")
+        val lockPin: String? = null,
     ) {
         val image: UiImage
             get() = customImage?.let { UiImage.Image(it) } ?: UiImage.Drawable(
@@ -228,9 +231,9 @@ object DataStoreHelper {
             dialog?.dismissSafe()
         }
 
-        binding.profilePic.setImage(account.image)
+        binding.profilePic.setImage(currentEditAccount.image)
         binding.profilePic.setOnClickListener {
-            // rolls the image forwards once
+            // Roll the image forwards once
             currentEditAccount =
                 currentEditAccount.copy(defaultImageIndex = (currentEditAccount.defaultImageIndex + 1) % profileImages.size)
             binding.profilePic.setImage(currentEditAccount.image)
@@ -242,7 +245,7 @@ object DataStoreHelper {
             val overrideIndex =
                 currentAccounts.indexOfFirst { it.keyIndex == currentEditAccount.keyIndex }
 
-            // if an account is found that has the same keyIndex then override that one, if not then append it
+            // If an account is found that has the same keyIndex, override that one; if not, append it
             if (overrideIndex != -1) {
                 currentAccounts[overrideIndex] = currentEditAccount
             } else {
@@ -252,7 +255,7 @@ object DataStoreHelper {
             // Save the current homepage for new accounts
             val currentHomePage = DataStoreHelper.currentHomePage
 
-            // set the new default account as well as add the key for the new account
+            // Set the new default account as well as add the key for the new account
             setAccount(currentEditAccount, false)
             DataStoreHelper.currentHomePage = currentHomePage
 
@@ -260,6 +263,36 @@ object DataStoreHelper {
 
             dialog.dismissSafe()
         }
+
+        // Handle setting or changing the PIN
+        var canSetPin = true
+
+        binding.lockProfileCheckbox.isChecked = currentEditAccount.lockPin != null
+
+        binding.lockProfileCheckbox.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                if (canSetPin) {
+                    showPinInputDialog(context) { pin ->
+                        currentEditAccount = currentEditAccount.copy(lockPin = pin)
+                    }
+                }
+            } else {
+                if (currentEditAccount.lockPin != null) {
+                    // Ask for the current PIN
+                    showPinInputDialog(context) { currentPin ->
+                        if (currentPin != currentEditAccount.lockPin) {
+                            canSetPin = false
+                            binding.lockProfileCheckbox.isChecked = true
+                            binding.lockProfileIncorrect.isVisible = true
+                        }
+                    }
+                } else {
+                    currentEditAccount = currentEditAccount.copy(lockPin = null)
+                }
+            }
+        }
+
+        canSetPin = true
     }
 
     private fun getDefaultAccount(context: Context): Account {
@@ -273,9 +306,9 @@ object DataStoreHelper {
     }
 
     fun showWhoIsWatching(context: Context) {
-        val binding: WhoIsWatchingBinding = WhoIsWatchingBinding.inflate(
-            LayoutInflater.from(context)
-        )
+        val binding: WhoIsWatchingBinding = WhoIsWatchingBinding.inflate(LayoutInflater.from(context))
+        val builder = BottomSheetDialog(context)
+        builder.setContentView(binding.root)
 
         val showAccount = accounts.toMutableList().apply {
             val item = getDefaultAccount(context)
@@ -283,22 +316,29 @@ object DataStoreHelper {
             add(0, item)
         }
 
-        val builder =
-            BottomSheetDialog(context)
-        builder.setContentView(binding.root)
         val accountName = context.getString(R.string.account)
 
-        binding.profilesRecyclerview.setLinearListLayout(
-            isHorizontal = true,
-            nextUp = FOCUS_SELF,
-            nextDown = FOCUS_SELF,
-            nextLeft = FOCUS_SELF,
-            nextRight = FOCUS_SELF
-        )
+        binding.profilesRecyclerview.setLinearListLayout(isHorizontal = true)
         binding.profilesRecyclerview.adapter = WhoIsWatchingAdapter(
             selectCallBack = { account ->
-                setAccount(account, true)
-                builder.dismissSafe()
+                // Check if the selected account has a lock PIN set
+                if (account.lockPin != null) {
+                    // Prompt for the lock pin
+                    showPinInputDialog(context) { enteredPin ->
+                        if (enteredPin == account.lockPin) {
+                            // Pin is correct, unlock the profile
+                            setAccount(account, true)
+                            builder.dismissSafe()
+                        } else {
+                            // PIN is incorrect, display an error message
+                            showToast(R.string.incorrect_pin)
+                        }
+                    }
+                } else {
+                    // No lock PIN set, directly set the account
+                    setAccount(account, true)
+                    builder.dismissSafe()
+                }
             },
             addAccountCallback = {
                 val currentAccounts = accounts
@@ -334,6 +374,24 @@ object DataStoreHelper {
         builder.show()
     }
 
+    private fun showPinInputDialog(context: Context, callback: (String) -> Unit) {
+        val binding: LockPinDialogBinding = LockPinDialogBinding.inflate(LayoutInflater.from(context))
+        val builder =
+            AlertDialog.Builder(context, R.style.AlertDialogCustom)
+                .setView(binding.root)
+
+        builder.setTitle(R.string.enter_pin)
+            .setPositiveButton(R.string.ok) { dialog, _ ->
+                val enteredPin = binding.pinEditText.text.toString()
+                callback(enteredPin)
+                dialog.dismiss()
+            }
+            .setNegativeButton(R.string.cancel) { dialog, _ ->
+                dialog.cancel()
+            }
+
+        builder.show()
+    }
 
     data class PosDur(
         @JsonProperty("position") val position: Long,

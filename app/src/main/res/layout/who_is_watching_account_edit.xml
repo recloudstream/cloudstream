@@ -63,6 +63,14 @@
         android:layout_marginBottom="60dp"
         android:orientation="vertical">
 
+        <TextView
+            android:id="@+id/lockProfileIncorrect"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:text="@string/lock_profile_incorrect_current"
+            android:visibility="gone" />
+
         <EditText
             android:id="@+id/account_name"
             android:layout_width="match_parent"
@@ -76,6 +84,12 @@
             android:requiresFadingEdge="vertical"
             android:textColorHint="?attr/grayTextColor"
             tools:ignore="LabelFor" />
+
+        <CheckBox
+            android:id="@+id/lockProfileCheckbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/lock_profile" />
 
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
