@@ -1023,7 +1023,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                                 ctx.getString(R.string.episode_sync_enabled_key), true
                             )
                         ) maxEpisodeSet = meta.episode
-                        sync.modifyMaxEpisode(meta.episode)
+                        sync.modifyMaxEpisode(meta.totalEpisodeIndex ?: meta.episode)
                     }
                 }
 
