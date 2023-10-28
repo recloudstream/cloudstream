@@ -62,7 +62,7 @@ const val LIBRARY_FOLDER = "library_folder"
 
 
 enum class LibraryOpenerType(@StringRes val stringRes: Int) {
-    Default(R.string.default_subtitles), // TODO FIX AFTER MERGE
+    Default(R.string.action_default),
     Provider(R.string.none),
     Browser(R.string.browser),
     Search(R.string.search),

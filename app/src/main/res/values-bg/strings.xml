@@ -41,7 +41,6 @@
     <string name="type_completed">Завършено</string>
     <string name="type_dropped">Изпуснат</string>
     <string name="type_plan_to_watch">План за гледане</string>
-    <string name="type_none">Нито един</string>
     <string name="type_re_watching">Повторно гледане</string>
     <string name="play_movie_button">Пускане на филм</string>
     <string name="play_livestream_button">Възпроизвеждане на живо</string>
@@ -78,7 +77,6 @@
     <string name="action_remove_from_bookmarks">Премахване</string>
     <string name="action_add_to_bookmarks">Задайте статус на гледане</string>
     <string name="sort_apply">Приложи</string>
-    <string name="sort_cancel">Отказ</string>
     <string name="sort_copy">Копирай</string>
     <string name="sort_close">Затвори</string>
     <string name="sort_clear">Изчисти</string>
@@ -187,6 +185,7 @@
     <string name="no_episodes_found">Няма намерени епизоди</string>
     <string name="delete_file">Изтрий файла</string>
     <string name="delete">Изтрий</string>
+    <string name="cancel">Отказ</string>
     <string name="pause">Пауза</string>
     <string name="resume">Продължи</string>
     <string name="go_back_30">-30</string>
@@ -205,7 +204,7 @@
     <string name="synopsis">Синопсис</string>
     <string name="queued">На опашката</string>
     <string name="no_subtitles">Без субтитри</string>
-    <string name="default_subtitles">По подразбиране</string>
+    <string name="action_default">По подразбиране</string>
     <string name="free_storage">Безплатно</string>
     <string name="used_storage">Използвано</string>
     <string name="app_storage">Приложения</string>

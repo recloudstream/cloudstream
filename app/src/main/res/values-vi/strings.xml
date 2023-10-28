@@ -45,7 +45,6 @@
     <string name="type_completed">Đã xem</string>
     <string name="type_dropped">Bỏ qua</string>
     <string name="type_plan_to_watch">Xem sau</string>
-    <string name="type_none">Mặc định</string>
     <string name="type_re_watching">Xem lại</string>
     <string name="play_movie_button">Xem Ngay</string>
     <string name="play_livestream_button">Phát trực tiếp</string>
@@ -83,7 +82,6 @@
     <string name="action_remove_from_bookmarks">Xóa</string>
     <string name="action_add_to_bookmarks">Đặt trạng thái xem</string>
     <string name="sort_apply">Áp dụng</string>
-    <string name="sort_cancel">Hủy bỏ</string>
     <string name="sort_copy">Sao lưu</string>
     <string name="sort_close">Đóng</string>
     <string name="sort_clear">Huỷ bỏ</string>
@@ -190,6 +188,7 @@
     <string name="no_episodes_found">Không có tập nào</string>
     <string name="delete_file">Xóa Tệp</string>
     <string name="delete">Xóa</string>
+    <string name="cancel">Hủy bỏ</string>
     <string name="pause">Tạm Dừng</string>
     <string name="resume">Tiếp Tục</string>
     <string name="go_back_30">-30</string>
@@ -208,7 +207,7 @@
     <string name="synopsis">Thông tin</string>
     <string name="queued">Hàng chờ</string>
     <string name="no_subtitles">Không có phụ đề</string>
-    <string name="default_subtitles">Mặc Định</string>
+    <string name="action_default">Mặc Định</string>
     <string name="free_storage">Còn trống</string>
     <string name="used_storage">Đã sử dụng</string>
     <string name="app_storage">App</string>
@@ -567,5 +566,4 @@
     <string name="no_plugins_found_error">Không tìm thấy plugin</string>
     <string name="unable_to_inflate">Không thể khởi tạo UI, đây là một LỖI LỚN và cần được báo cáo ngay lập tức tới %s</string>
     <string name="automatic_plugin_download_mode_title">Chọn chế độ để lọc plugin tải xuống</string>
-    <string name="default_account">@string/default_subtitles</string>
 </resources>

@@ -26,7 +26,6 @@
     <string name="type_completed">Avslutad</string>
     <string name="type_dropped">Dropped</string>
     <string name="type_plan_to_watch">Plannerad</string>
-    <string name="type_none">Ingen</string>
     <string name="play_movie_button">Spela Upp</string>
     <string name="play_torrent_button">Strömma Torrent</string>
     <string name="pick_source">Källor</string>
@@ -53,7 +52,6 @@
     <string name="error_bookmarks_text">Bokmärken</string>
     <string name="action_remove_from_bookmarks">Ta bort</string>
     <string name="sort_apply">Tillämpa</string>
-    <string name="sort_cancel">Avbryt</string>
     <string name="player_speed">Spelarhastighet</string>
     <string name="subtitles_settings">Undertextinställningar</string>
     <string name="subs_text_color">Textfärg</string>
@@ -125,6 +123,7 @@
     <string name="episode_short">A</string>
     <string name="delete_file">Ta bort nerladdad fil</string>
     <string name="delete">Ta bort</string>
+    <string name="cancel">Avbryt</string>
     <string name="delete_message">%s kommer att raderas permanent
 \nÄr du helt säker\?</string>
     <string name="status_ongoing">Pågående</string>
@@ -137,7 +136,7 @@
     <string name="synopsis">Sammanfattning</string>
     <string name="queued">på kö</string>
     <string name="no_subtitles">Inga undertexter</string>
-    <string name="default_subtitles">Standard</string>
+    <string name="action_default">Standard</string>
     <string name="free_storage">Tillgängligt</string>
     <string name="used_storage">Använtt</string>
     <string name="app_storage">App</string>

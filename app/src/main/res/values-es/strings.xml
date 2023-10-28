@@ -45,7 +45,7 @@
     <string name="player_load_subtitles_online">Cargar desde Internet</string>
     <string name="autoplay_next_settings">Reproducir automáticamente episodio siguiente</string>
     <string name="chromecast_subtitles_settings_des">Configuración de subtítulos de Chromecast</string>
-    <string name="default_subtitles">Predeterminado</string>
+    <string name="action_default">Predeterminado</string>
     <string name="subtitles_outline">Contorno</string>
     <string name="no_subtitles">Sin Subtítulos</string>
     <string name="subtitles_raised">Elevado</string>
@@ -138,7 +138,6 @@
     <string name="type_completed">Completado</string>
     <string name="type_dropped">Descartado</string>
     <string name="type_plan_to_watch">Planeando ver</string>
-    <string name="type_none">Ninguno</string>
     <string name="type_re_watching">Volviendo a mirar</string>
     <string name="play_movie_button">Reproducir película</string>
     <string name="play_trailer_button">Reproducir Trailer</string>
@@ -167,7 +166,6 @@
     <string name="error_bookmarks_text">Marcadores</string>
     <string name="action_remove_from_bookmarks">Remover</string>
     <string name="action_add_to_bookmarks">Seleccionar estado de visualización</string>
-    <string name="sort_cancel">Cancelar</string>
     <string name="sort_copy">Copiar</string>
     <string name="sort_close">Cerrar</string>
     <string name="sort_clear">Limpiar</string>
@@ -256,6 +254,7 @@
     <string name="season_short">T</string>
     <string name="delete_file">Borrar Archivo</string>
     <string name="delete">Borrar</string>
+    <string name="cancel">Cancelar</string>
     <string name="unexpected_error">Error inesperado del reproductor</string>
     <string name="episode_action_chromecast_episode">Episodio en Chromecast</string>
     <string name="episode_action_play_in_app">Reproducir en la aplicación</string>
@@ -549,7 +548,6 @@
     <string name="unable_to_inflate">La interfaz de usuario no se ha podido crear correctamente, se trata de un GRAN BUG y debe ser reportado inmediatamente %s</string>
     <string name="automatic_plugin_download_mode_title">Seleccionar modo para filtrar los plugins descargados</string>
     <string name="disable">Deshabilitar</string>
-    <string name="default_account">@string/default_subtitles</string>
     <string name="no_plugins_found_error">No se encontraron complementos en el repositorio</string>
     <string name="no_repository_found_error">Repositorio no encontrado, comprueba la URL y prueba la VPN</string>
     <string name="already_voted">Ya has votado</string>

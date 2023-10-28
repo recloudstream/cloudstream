@@ -123,7 +123,7 @@
     <string name="type_completed">Completed</string>
     <string name="type_dropped">Dropped</string>
     <string name="type_plan_to_watch">Plan to Watch</string>
-    <string name="type_none">None</string>
+    <string name="type_none" translatable="false">@string/none</string>
     <string name="type_re_watching">Rewatching</string>
     <string name="play_movie_button">Play Movie</string>
     <string name="play_trailer_button">Play Trailer</string>
@@ -164,7 +164,7 @@
     <string name="action_remove_from_bookmarks">Remove</string>
     <string name="action_add_to_bookmarks">Set watch status</string>
     <string name="sort_apply">Apply</string>
-    <string name="sort_cancel">Cancel</string>
+    <string name="sort_cancel" translatable="false">@string/cancel</string>
     <string name="sort_copy">Copy</string>
     <string name="sort_close">Close</string>
     <string name="sort_clear">Clear</string>
@@ -287,7 +287,7 @@
     <string name="no_episodes_found">No Episodes found</string>
     <string name="delete_file">Delete File</string>
     <string name="delete">Delete</string>
-    <string name="cancel" translatable="false">@string/sort_cancel</string>
+    <string name="cancel">Cancel</string>
     <string name="pause">Pause</string>
     <string name="start">Start</string>
     <string name="test_failed">Failed</string>
@@ -307,8 +307,9 @@
     <string name="synopsis">Synopsis</string>
     <string name="queued">queued</string>
     <string name="no_subtitles">No Subtitles</string>
-    <string name="default_subtitles">Default</string>
-    <string name="default_account">@string/default_subtitles</string>
+    <string name="action_default">Default</string>
+    <string name="default_subtitles" translatable="false">@string/action_default</string>
+    <string name="default_account" translatable="false">@string/action_default</string>
     <string name="free_storage">Free</string>
     <string name="used_storage">Used</string>
     <string name="app_storage">App</string>
@@ -698,7 +699,7 @@
     <string name="duplicate_add">Add</string>
     <string name="duplicate_replace">Replace</string>
     <string name="duplicate_replace_all">Replace All</string>
-    <string name="duplicate_cancel" translatable="false">@string/sort_cancel</string>
+    <string name="duplicate_cancel" translatable="false">@string/cancel</string>
     <string name="duplicate_message_single">
         It appears that a potentially duplicate item already exists in your library: \'%1$s.\'
 
