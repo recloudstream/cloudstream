@@ -1394,6 +1394,7 @@ class CS3IPlayer : IPlayer {
                                         || error.errorCode == PlaybackException.ERROR_CODE_PARSING_MANIFEST_MALFORMED
                                         || error.errorCode == PlaybackException.ERROR_CODE_PARSING_CONTAINER_MALFORMED
                                         || error.errorCode == PlaybackException.ERROR_CODE_PARSING_CONTAINER_UNSUPPORTED
+                                        || error.errorCode == PlaybackException.ERROR_CODE_IO_UNSPECIFIED
                                         ) -> {
 
                             val gid = DownloadListener.sessionIdToGid[aria2cRequestId]
