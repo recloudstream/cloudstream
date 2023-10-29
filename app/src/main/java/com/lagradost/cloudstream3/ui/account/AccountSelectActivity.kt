@@ -29,6 +29,13 @@ class AccountSelectActivity : AppCompatActivity() {
 
         val accounts = getAccounts(this@AccountSelectActivity)
 
+        // Don't show account selection if there is only
+        // one account that exists
+        if (accounts.count() <= 1) {
+            navigateToMainActivity()
+            return
+        }
+
         val adapter = AccountAdapter(accounts) { selectedAccount ->
             // Handle the selected account
             onAccountSelected(selectedAccount)
