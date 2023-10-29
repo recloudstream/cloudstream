@@ -1,11 +1,14 @@
 package com.lagradost.cloudstream3.ui.account
 
+import android.os.Build
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.annotation.RequiresApi
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.lagradost.cloudstream3.databinding.AccountListItemBinding
 import com.lagradost.cloudstream3.ui.result.setImage
+import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTrueTvSettings
 import com.lagradost.cloudstream3.utils.DataStoreHelper
 
 class AccountAdapter(
@@ -17,9 +20,17 @@ class AccountAdapter(
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(account: DataStoreHelper.Account) {
+            val isLastUsedAccount = account.keyIndex == DataStoreHelper.selectedKeyIndex
+
             binding.accountName.text = account.name
             binding.accountImage.setImage(account.image)
             binding.lockIcon.isVisible = account.lockPin != null
+            binding.outline.isVisible = isLastUsedAccount
+
+            @RequiresApi(Build.VERSION_CODES.O)
+            if (isTrueTvSettings()) {
+                binding.root.isFocusedByDefault = isLastUsedAccount
+            }
 
             binding.root.setOnClickListener {
                 onItemClick(account)

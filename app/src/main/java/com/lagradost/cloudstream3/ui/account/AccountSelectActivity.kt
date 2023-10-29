@@ -4,10 +4,13 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.lagradost.cloudstream3.CommonActivity
 import com.lagradost.cloudstream3.MainActivity
 import com.lagradost.cloudstream3.databinding.ActivityAccountSelectBinding
 import com.lagradost.cloudstream3.ui.account.AccountDialog.showPinInputDialog
+import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
 import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getAccounts
 
@@ -17,6 +20,8 @@ class AccountSelectActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        CommonActivity.init(this)
+
         binding = ActivityAccountSelectBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -30,7 +35,9 @@ class AccountSelectActivity : AppCompatActivity() {
         }
         recyclerView.adapter = adapter
 
-        recyclerView.layoutManager = GridLayoutManager(this, 3)
+        recyclerView.layoutManager = if (isTvSettings()) {
+            LinearLayoutManager(this)
+        } else GridLayoutManager(this, 3)
     }
 
     private fun onAccountSelected(selectedAccount: DataStoreHelper.Account) {
