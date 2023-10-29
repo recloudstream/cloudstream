@@ -12,7 +12,8 @@ import com.lagradost.cloudstream3.AcraApplication.Companion.setKeyClass
 import com.lagradost.cloudstream3.mvvm.logError
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
-import com.lagradost.cloudstream3.syncproviders.BackupAPI
+import com.lagradost.cloudstream3.syncproviders.IBackupAPI
+import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 
 const val DOWNLOAD_HEADER_CACHE = "download_header_cache"
 
@@ -31,6 +32,7 @@ class PreferenceDelegate<T : Any>(
     val key: String, val default: T //, private val klass: KClass<T>
 ) {
     private val klass: KClass<out T> = default::class
+
     // simple cache to make it not get the key every time it is accessed, however this requires
     // that ONLY this changes the key
     private var cache: T? = null
@@ -79,6 +81,7 @@ object DataStore {
     fun getFolderName(folder: String, path: String): String {
         return "${folder}/${path}"
     }
+
     fun <T> Context.setKeyRaw(path: String, value: T, restoreSource: BackupUtils.RestoreSource) {
         try {
             val editor = when (restoreSource) {
@@ -100,7 +103,8 @@ object DataStore {
             logError(e)
         }
     }
-    fun Context.removeKeyRaw(path: String,  restoreSource: BackupUtils.RestoreSource) {
+
+    fun Context.removeKeyRaw(path: String, restoreSource: BackupUtils.RestoreSource) {
         try {
             when (restoreSource) {
                 BackupUtils.RestoreSource.DATA -> getSharedPrefs().edit()
@@ -143,15 +147,17 @@ object DataStore {
                 editor.remove(path)
                 editor.apply()
 
-                backupScheduler.work(
-                    BackupAPI.PreferencesSchedulerData(
-                        getSyncPrefs(),
-                        path,
-                        oldValueExists,
-                        false,
-                        BackupUtils.RestoreSource.DATA
+                ioSafe {
+                    backupScheduler.work(
+                        IBackupAPI.PreferencesSchedulerData(
+                            getSyncPrefs(),
+                            path,
+                            oldValueExists,
+                            false,
+                            BackupUtils.RestoreSource.DATA
+                        )
                     )
-                )
+                }
             }
         } catch (e: Exception) {
             logError(e)
@@ -176,15 +182,17 @@ object DataStore {
             editor.putString(path, newValue)
             editor.apply()
 
-            backupScheduler.work(
-                BackupAPI.PreferencesSchedulerData(
-                    getSyncPrefs(),
-                    path,
-                    oldValue,
-                    newValue,
-                    BackupUtils.RestoreSource.DATA
+            ioSafe {
+                backupScheduler.work(
+                    IBackupAPI.PreferencesSchedulerData(
+                        getSyncPrefs(),
+                        path,
+                        oldValue,
+                        newValue,
+                        BackupUtils.RestoreSource.DATA
+                    )
                 )
-            )
+            }
         } catch (e: Exception) {
             logError(e)
         }

@@ -18,6 +18,7 @@ import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.aniList
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.googleDriveApi
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.malApi
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.openSubtitlesApi
+import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.pcloudApi
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.simklApi
 import com.lagradost.cloudstream3.syncproviders.AuthAPI
 import com.lagradost.cloudstream3.syncproviders.InAppAuthAPI
@@ -140,7 +141,8 @@ class SettingsAccount : PreferenceFragmentCompat() {
                 R.string.anilist_key to aniListApi,
                 R.string.simkl_key to simklApi,
                 R.string.opensubtitles_key to openSubtitlesApi,
-                R.string.gdrive_key to googleDriveApi
+                R.string.gdrive_key to googleDriveApi,
+                R.string.pcloud_key to pcloudApi
             )
 
         for ((key, api) in syncApis) {

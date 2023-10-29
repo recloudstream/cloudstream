@@ -90,7 +90,6 @@ import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.appStri
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.appStringResumeWatching
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.appStringSearch
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.inAppAuths
-import com.lagradost.cloudstream3.syncproviders.providers.localnetwork.LocalNetworkApi
 import com.lagradost.cloudstream3.ui.APIRepository
 import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_NAVIGATE_TO
@@ -685,7 +684,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         this.sendBroadcast(broadcastIntent)
         afterPluginsLoadedEvent -= ::onAllPluginsLoaded
         // run sync before app quits
-        BackupApis.forEach { it.addToQueueNow() }
+        BackupApis.forEach { it.scheduleUpload() }
         super.onDestroy()
     }
 
@@ -1595,10 +1594,6 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
 //                showToast(this, currentFocus.toString(), Toast.LENGTH_LONG)
 //            }
 //        }
-
-        val local = LocalNetworkApi(this)
-        local.registerService()
-        local.discover()
     }
 
     suspend fun checkGithubConnectivity(): Boolean {

@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.core.view.children
 import androidx.core.view.isVisible
@@ -17,11 +18,15 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
 import com.google.android.material.appbar.MaterialToolbar
+import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.MainSettingsBinding
 import com.lagradost.cloudstream3.mvvm.logError
+import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.BackupApis
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.accountManagers
+import com.lagradost.cloudstream3.syncproviders.AuthAPI
 import com.lagradost.cloudstream3.ui.home.HomeFragment
+import com.lagradost.cloudstream3.ui.result.txt
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.setImage
@@ -204,6 +209,21 @@ class SettingsFragment : Fragment() {
                         isFocusableInTouchMode = true
                     }
                 }
+            }
+
+            // Only show the button if the api does not require login, requires login, but the user is logged in
+            forceSyncDataBtt.isVisible = BackupApis.any { api ->
+                api !is AuthAPI || api.loginInfo() != null
+            }
+
+            forceSyncDataBtt.setOnClickListener {
+                BackupApis.forEach { api ->
+                    api.scheduleUpload()
+                }
+                showToast(activity, txt(R.string.syncing_data), Toast.LENGTH_SHORT)
+            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                forceSyncDataBtt.tooltipText = txt(R.string.sync_data).asString(forceSyncDataBtt.context)
             }
 
             // Default focus on TV

@@ -17,6 +17,10 @@
         <Preference
             android:key="@string/gdrive_key"
             android:icon="@drawable/ic_baseline_add_to_drive_24" />
+
+        <Preference
+            android:key="@string/pcloud_key"
+            android:icon="@drawable/baseline_cloud_24" />
     </PreferenceCategory>
 <!--    <Preference-->
 <!--            android:key="@string/nginx_key"-->

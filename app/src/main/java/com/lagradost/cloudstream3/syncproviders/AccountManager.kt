@@ -14,6 +14,7 @@ abstract class AccountManager(private val defIndex: Int) : AuthAPI {
         val openSubtitlesApi = OpenSubtitlesApi(0)
         val simklApi = SimklApi(0)
         val googleDriveApi = GoogleDriveApi(0)
+        val pcloudApi = PcloudApi(0)
         val indexSubtitlesApi = IndexSubtitleApi()
         val addic7ed = Addic7ed()
         val localListApi = LocalList()
@@ -21,13 +22,18 @@ abstract class AccountManager(private val defIndex: Int) : AuthAPI {
         // used to login via app intent
         val OAuth2Apis
             get() = listOf<OAuth2API>(
-                malApi, aniListApi, simklApi, googleDriveApi
+                malApi, aniListApi, simklApi, googleDriveApi, pcloudApi
             )
 
         // this needs init with context and can be accessed in settings
         val accountManagers
             get() = listOf(
-                malApi, aniListApi, openSubtitlesApi, simklApi, googleDriveApi //, nginxApi
+                malApi,
+                aniListApi,
+                openSubtitlesApi,
+                simklApi,
+                googleDriveApi,
+                pcloudApi //, nginxApi
             )
 
         // used for active syncing
@@ -39,12 +45,12 @@ abstract class AccountManager(private val defIndex: Int) : AuthAPI {
         // used for active backup
         val BackupApis
             get() = listOf<BackupAPI<*>>(
-                googleDriveApi
+                googleDriveApi, pcloudApi
             )
 
         val inAppAuths
             get() = listOf(
-                openSubtitlesApi, googleDriveApi//, nginxApi
+                openSubtitlesApi, googleDriveApi, pcloudApi//, nginxApi
             )
 
         val subtitleProviders
@@ -94,7 +100,7 @@ abstract class AccountManager(private val defIndex: Int) : AuthAPI {
 
     var accountIndex = defIndex
     private var lastAccountIndex = defIndex
-    protected val accountId get() = "${idPrefix}_account_$accountIndex"
+    val accountId get() = "${idPrefix}_account_$accountIndex"
     private val accountActiveKey get() = "${idPrefix}_active"
 
     // int array of all accounts indexes
@@ -132,6 +138,7 @@ abstract class AccountManager(private val defIndex: Int) : AuthAPI {
         lastAccountIndex = accountIndex
         accountIndex = (accounts?.maxOrNull() ?: 0) + 1
     }
+
     protected fun switchToOldAccount() {
         accountIndex = lastAccountIndex
     }

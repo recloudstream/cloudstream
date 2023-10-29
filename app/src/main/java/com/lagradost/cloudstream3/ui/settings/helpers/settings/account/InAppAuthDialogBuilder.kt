@@ -27,7 +27,7 @@ class InAppAuthDialogBuilder(
     override fun onLogin(dialog: AlertDialog): Unit = with(binding) {
 //        if (activity == null) throw IllegalStateException("Login should be called after validation")
 
-        val loginData = InAppAuthAPI.LoginData(
+        val userData = InAppAuthAPI.UserData(
             username = if (api.requiresUsername) loginUsernameInput.text?.toString() else null,
             password = if (api.requiresPassword) loginPasswordInput.text?.toString() else null,
             email = if (api.requiresEmail) loginEmailInput.text?.toString() else null,
@@ -36,7 +36,7 @@ class InAppAuthDialogBuilder(
 
         ioSafe {
             val isSuccessful = try {
-                api.login(loginData)
+                api.login(userData)
             } catch (e: Exception) {
                 logError(e)
                 false
@@ -93,7 +93,7 @@ class InAppAuthDialogBuilder(
     override fun handleStoresPasswordInPlainText(dialog: AlertDialog): Unit = with(binding) {
         if (!api.storesPasswordInPlainText) return
 
-        api.getLatestLoginData()?.let { data ->
+        api.getUserData()?.let { data ->
             loginEmailInput.setText(data.email ?: "")
             loginServerInput.setText(data.server ?: "")
             loginUsernameInput.setText(data.username ?: "")

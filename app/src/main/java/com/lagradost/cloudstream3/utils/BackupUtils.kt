@@ -3,8 +3,6 @@ package com.lagradost.cloudstream3.utils
 import android.annotation.SuppressLint
 import android.content.Context
 import android.net.Uri
-import android.os.Build
-import android.provider.MediaStore
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
@@ -20,11 +18,12 @@ import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.plugins.PLUGINS_KEY
 import com.lagradost.cloudstream3.plugins.PLUGINS_KEY_LOCAL
 import com.lagradost.cloudstream3.syncproviders.BackupAPI
-import com.lagradost.cloudstream3.syncproviders.InAppOAuth2APIManager
+import com.lagradost.cloudstream3.syncproviders.IBackupAPI
 import com.lagradost.cloudstream3.syncproviders.providers.AniListApi.Companion.ANILIST_CACHED_LIST
 import com.lagradost.cloudstream3.syncproviders.providers.AniListApi.Companion.ANILIST_TOKEN_KEY
 import com.lagradost.cloudstream3.syncproviders.providers.AniListApi.Companion.ANILIST_UNIXTIME_KEY
 import com.lagradost.cloudstream3.syncproviders.providers.AniListApi.Companion.ANILIST_USER_KEY
+import com.lagradost.cloudstream3.syncproviders.providers.GoogleDriveApi
 import com.lagradost.cloudstream3.syncproviders.providers.MALApi.Companion.MAL_CACHED_LIST
 import com.lagradost.cloudstream3.syncproviders.providers.MALApi.Companion.MAL_REFRESH_TOKEN_KEY
 import com.lagradost.cloudstream3.syncproviders.providers.MALApi.Companion.MAL_TOKEN_KEY
@@ -55,7 +54,7 @@ object BackupUtils {
         DATA, SETTINGS, SYNC;
 
         val prefix = "$name/"
-        val syncPrefix = "${BackupAPI.SYNC_HISTORY_PREFIX}$prefix"
+        val syncPrefix = "${IBackupAPI.SYNC_HISTORY_PREFIX}$prefix"
     }
 
     /**
@@ -72,8 +71,8 @@ object BackupUtils {
         MAL_CACHED_LIST,
         MAL_UNIXTIME_KEY,
         MAL_USER_KEY,
-        InAppOAuth2APIManager.K.TOKEN.value,
-        InAppOAuth2APIManager.K.IS_READY.value,
+        GoogleDriveApi.K.TOKEN.value,
+        GoogleDriveApi.K.IS_READY.value,
 
         // The plugins themselves are not backed up
         PLUGINS_KEY,
@@ -81,6 +80,8 @@ object BackupUtils {
 
         OPEN_SUBTITLES_USER_KEY,
         "nginx_user", // Nginx user key
+        DOWNLOAD_HEADER_CACHE,
+        DOWNLOAD_EPISODE_CACHE
     )
 
     /** false if blacklisted key */
@@ -328,7 +329,7 @@ object BackupUtils {
             var prefixToRemove = prefixToMatch
 
             if (restoreSource == RestoreSource.SYNC) {
-                prefixToMatch = BackupAPI.SYNC_HISTORY_PREFIX
+                prefixToMatch = IBackupAPI.SYNC_HISTORY_PREFIX
                 prefixToRemove = ""
             }
 
