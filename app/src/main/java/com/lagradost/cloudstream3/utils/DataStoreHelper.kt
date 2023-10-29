@@ -234,7 +234,7 @@ object DataStoreHelper {
             dialog?.dismissSafe()
         }
 
-        binding.profilePic.setImage(currentEditAccount.image)
+        binding.profilePic.setImage(account.image)
         binding.profilePic.setOnClickListener {
             // Roll the image forwards once
             currentEditAccount =
@@ -245,7 +245,7 @@ object DataStoreHelper {
         binding.applyBtt.setOnClickListener {
             if (currentEditAccount.lockPin != null) {
                 // Ask for the current PIN
-                showPinInputDialog(context, currentEditAccount, false) { pin ->
+                showPinInputDialog(context, currentEditAccount.lockPin, false) { pin ->
                     if (pin == null) return@showPinInputDialog
                     // PIN is correct, proceed to update the account
                     performAccountUpdate(currentEditAccount)
@@ -262,6 +262,9 @@ object DataStoreHelper {
 
         if (currentEditAccount.keyIndex == getDefaultAccount(context).keyIndex) {
             binding.lockProfileCheckbox.isVisible = false
+            if (currentEditAccount.lockPin != null) {
+                currentEditAccount = currentEditAccount.copy(lockPin = null)
+            }
         }
 
         var canSetPin = true
@@ -283,14 +286,14 @@ object DataStoreHelper {
             } else {
                 if (currentEditAccount.lockPin != null) {
                     // Ask for the current PIN
-                    showPinInputDialog(context, currentEditAccount, true) { pin ->
+                    showPinInputDialog(context, currentEditAccount.lockPin, true) { pin ->
                         if (pin == null || pin != currentEditAccount.lockPin) {
                             canSetPin = false
                             binding.lockProfileCheckbox.isChecked = true
+                        } else {
+                            currentEditAccount = currentEditAccount.copy(lockPin = null)
                         }
                     }
-                } else {
-                    currentEditAccount = currentEditAccount.copy(lockPin = null)
                 }
             }
         }
@@ -309,9 +312,9 @@ object DataStoreHelper {
             currentAccounts.add(account)
         }
 
-        val currentHomePage = DataStoreHelper.currentHomePage
+        val currentHomePage = this.currentHomePage
         setAccount(account, false)
-        DataStoreHelper.currentHomePage = currentHomePage
+        this.currentHomePage = currentHomePage
         accounts = currentAccounts.toTypedArray()
     }
 
@@ -344,7 +347,7 @@ object DataStoreHelper {
                 // Check if the selected account has a lock PIN set
                 if (account.lockPin != null) {
                     // Prompt for the lock pin
-                    showPinInputDialog(context, account, false) { pin ->
+                    showPinInputDialog(context, account.lockPin, false) { pin ->
                         if (pin == null) return@showPinInputDialog
                         // Pin is correct, unlock the profile
                         setAccount(account, true)
@@ -392,19 +395,15 @@ object DataStoreHelper {
 
     private fun showPinInputDialog(
         context: Context,
-        account: Account?,
+        currentPin: String?,
         editAccount: Boolean,
         callback: (String?) -> Unit
     ) {
-        if (account?.keyIndex == getDefaultAccount(context).keyIndex) return
-
         val binding: LockPinDialogBinding = LockPinDialogBinding.inflate(LayoutInflater.from(context))
         val builder = AlertDialog.Builder(context, R.style.AlertDialogCustom)
             .setView(binding.root)
 
         val dialog = builder.create()
-
-        val currentPin = account?.lockPin
 
         if (editAccount && currentPin != null) {
             dialog.setTitle(R.string.enter_current_pin)
@@ -458,6 +457,17 @@ object DataStoreHelper {
             true
         }
 
+        // Only when setting pin
+        if (editAccount && currentPin == null) {
+            dialog.setButton(AlertDialog.BUTTON_POSITIVE, context.getString(R.string.setup_done)) { _, _ ->
+                if (isPinValid) {
+                    val enteredPin = binding.pinEditText.text.toString()
+                    callback.invoke(enteredPin)
+                    dialog.dismiss()
+                }
+            }
+        }
+
         dialog.setButton(AlertDialog.BUTTON_NEGATIVE, context.getString(R.string.cancel)) { _, _ ->
             dialog.dismiss()
         }
@@ -467,6 +477,10 @@ object DataStoreHelper {
                 callback.invoke(null)
             }
         }
+
+        // We don't want to accidentally have the dialog dismiss when clicking outside of it.
+        // That is what the cancel button is for.
+        dialog.setCanceledOnTouchOutside(false)
 
         dialog.show()
     }
