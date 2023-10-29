@@ -7,6 +7,8 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.inputmethod.EditorInfo
+import android.widget.TextView
+import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
@@ -399,19 +401,39 @@ object DataStoreHelper {
         editAccount: Boolean,
         callback: (String?) -> Unit
     ) {
-        val binding: LockPinDialogBinding = LockPinDialogBinding.inflate(LayoutInflater.from(context))
-        val builder = AlertDialog.Builder(context, R.style.AlertDialogCustom)
-            .setView(binding.root)
+        fun TextView.visibleWithText(@StringRes textRes: Int) {
+            visibility = View.VISIBLE
+            setText(textRes)
+        }
 
-        val dialog = builder.create()
+        fun View.isVisible() = visibility == View.VISIBLE
 
-        if (editAccount && currentPin != null) {
-            dialog.setTitle(R.string.enter_current_pin)
-        } else dialog.setTitle(R.string.enter_pin)
+        val binding = LockPinDialogBinding.inflate(LayoutInflater.from(context))
 
         binding.pinEditTextError.visibility = View.GONE
 
-        // A flag to track if the PIN is valid
+        val isPinSet = currentPin != null
+        val isNewPin = editAccount && !isPinSet
+        val isEditPin = editAccount && isPinSet
+
+        val titleRes = if (isEditPin) R.string.enter_current_pin else R.string.enter_pin
+
+        val dialog = AlertDialog.Builder(context, R.style.AlertDialogCustom)
+            .setView(binding.root)
+            .setTitle(titleRes)
+            .setNegativeButton(R.string.cancel) { _, _ ->
+                callback.invoke(null)
+            }
+            .setOnCancelListener {
+                callback.invoke(null)
+            }
+            .setOnDismissListener {
+                if (binding.pinEditTextError.isVisible()) {
+                    callback.invoke(null)
+                }
+            }
+            .create()
+
         var isPinValid = false
 
         binding.pinEditText.addTextChangedListener(object : TextWatcher {
@@ -419,11 +441,12 @@ object DataStoreHelper {
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 val enteredPin = s.toString()
-                if (enteredPin.length == 4) {
-                    if (currentPin != null) {
+                val isEnteredPinValid = enteredPin.length == 4
+
+                if (isEnteredPinValid) {
+                    if (isPinSet) {
                         if (enteredPin != currentPin) {
-                            binding.pinEditTextError.visibility = View.VISIBLE
-                            binding.pinEditTextError.text = context.getString(R.string.pin_error_incorrect)
+                            binding.pinEditTextError.visibleWithText(R.string.pin_error_incorrect)
                             binding.pinEditText.text = null
                             isPinValid = false
                         } else {
@@ -437,9 +460,8 @@ object DataStoreHelper {
                         binding.pinEditTextError.visibility = View.GONE
                         isPinValid = true
                     }
-                } else if (editAccount && currentPin == null) {
-                    binding.pinEditTextError.visibility = View.VISIBLE
-                    binding.pinEditTextError.text = context.getString(R.string.pin_error_length)
+                } else if (isNewPin) {
+                    binding.pinEditTextError.visibleWithText(R.string.pin_error_length)
                     isPinValid = false
                 }
             }
@@ -455,27 +477,6 @@ object DataStoreHelper {
                 dialog.dismiss()
             }
             true
-        }
-
-        // Only when setting pin
-        if (editAccount && currentPin == null) {
-            dialog.setButton(AlertDialog.BUTTON_POSITIVE, context.getString(R.string.setup_done)) { _, _ ->
-                if (isPinValid) {
-                    val enteredPin = binding.pinEditText.text.toString()
-                    callback.invoke(enteredPin)
-                    dialog.dismiss()
-                }
-            }
-        }
-
-        dialog.setButton(AlertDialog.BUTTON_NEGATIVE, context.getString(R.string.cancel)) { _, _ ->
-            dialog.dismiss()
-        }
-
-        dialog.setOnDismissListener {
-            if (!isPinValid) {
-                callback.invoke(null)
-            }
         }
 
         // We don't want to accidentally have the dialog dismiss when clicking outside of it.
