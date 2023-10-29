@@ -9,6 +9,7 @@ import android.view.View
 import android.view.inputmethod.EditorInfo
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isGone
+import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -244,7 +245,7 @@ object DataStoreHelper {
         binding.applyBtt.setOnClickListener {
             if (currentEditAccount.lockPin != null) {
                 // Ask for the current PIN
-                showPinInputDialog(context, currentEditAccount.lockPin, false) { pin ->
+                showPinInputDialog(context, currentEditAccount, false) { pin ->
                     if (pin == null) return@showPinInputDialog
                     // PIN is correct, proceed to update the account
                     performAccountUpdate(currentEditAccount)
@@ -258,6 +259,11 @@ object DataStoreHelper {
         }
 
         // Handle setting or changing the PIN
+
+        if (currentEditAccount.keyIndex == getDefaultAccount(context).keyIndex) {
+            binding.lockProfileCheckbox.isVisible = false
+        }
+
         var canSetPin = true
 
         binding.lockProfileCheckbox.isChecked = currentEditAccount.lockPin != null
@@ -266,14 +272,18 @@ object DataStoreHelper {
             if (isChecked) {
                 if (canSetPin) {
                     showPinInputDialog(context, null, true) { pin ->
-                        if (pin == null) return@showPinInputDialog
+                        if (pin == null) {
+                            binding.lockProfileCheckbox.isChecked = false
+                            return@showPinInputDialog
+                        }
+
                         currentEditAccount = currentEditAccount.copy(lockPin = pin)
                     }
                 }
             } else {
                 if (currentEditAccount.lockPin != null) {
                     // Ask for the current PIN
-                    showPinInputDialog(context, currentEditAccount.lockPin, true) { pin ->
+                    showPinInputDialog(context, currentEditAccount, true) { pin ->
                         if (pin == null || pin != currentEditAccount.lockPin) {
                             canSetPin = false
                             binding.lockProfileCheckbox.isChecked = true
@@ -334,7 +344,7 @@ object DataStoreHelper {
                 // Check if the selected account has a lock PIN set
                 if (account.lockPin != null) {
                     // Prompt for the lock pin
-                    showPinInputDialog(context, account.lockPin, false) { pin ->
+                    showPinInputDialog(context, account, false) { pin ->
                         if (pin == null) return@showPinInputDialog
                         // Pin is correct, unlock the profile
                         setAccount(account, true)
@@ -382,15 +392,19 @@ object DataStoreHelper {
 
     private fun showPinInputDialog(
         context: Context,
-        currentPin: String?,
+        account: Account?,
         editAccount: Boolean,
         callback: (String?) -> Unit
     ) {
+        if (account?.keyIndex == getDefaultAccount(context).keyIndex) return
+
         val binding: LockPinDialogBinding = LockPinDialogBinding.inflate(LayoutInflater.from(context))
         val builder = AlertDialog.Builder(context, R.style.AlertDialogCustom)
             .setView(binding.root)
 
         val dialog = builder.create()
+
+        val currentPin = account?.lockPin
 
         if (editAccount && currentPin != null) {
             dialog.setTitle(R.string.enter_current_pin)
