@@ -6,18 +6,21 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.lagradost.cloudstream3.MainActivity
-import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.databinding.ActivityAccountSelectBinding
 import com.lagradost.cloudstream3.ui.account.AccountDialog.showPinInputDialog
 import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getAccounts
 
 class AccountSelectActivity : AppCompatActivity() {
 
+    private lateinit var binding: ActivityAccountSelectBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_account_select)
+        binding = ActivityAccountSelectBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        val recyclerView: RecyclerView = findViewById(R.id.accountRecyclerView)
+        val recyclerView: RecyclerView = binding.accountRecyclerView
 
         val accounts = getAccounts(this@AccountSelectActivity)
 
@@ -51,6 +54,4 @@ class AccountSelectActivity : AppCompatActivity() {
         startActivity(mainIntent)
         finish() // Finish the account selection activity
     }
-
-
 }
