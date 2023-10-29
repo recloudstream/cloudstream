@@ -425,6 +425,7 @@ object DataStoreHelper {
                         if (enteredPin != currentPin) {
                             binding.pinEditTextError.visibility = View.VISIBLE
                             binding.pinEditTextError.text = context.getString(R.string.pin_error_incorrect)
+                            binding.pinEditText.text = null
                             isPinValid = false
                         } else {
                             binding.pinEditTextError.visibility = View.GONE
