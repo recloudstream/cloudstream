@@ -22,6 +22,15 @@ class AccountSelectActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val accounts = getAccounts(this@AccountSelectActivity)
+        
+        // Don't show account selection if there is only
+        // one account that exists
+        if (accounts.count() <= 1) {
+            navigateToMainActivity()
+            return
+        }
+
         CommonActivity.init(this)
         loadThemes(this)
 
@@ -35,14 +44,6 @@ class AccountSelectActivity : AppCompatActivity() {
 
         val recyclerView: RecyclerView = binding.root.findViewById(R.id.account_recycler_view)
 
-        val accounts = getAccounts(this@AccountSelectActivity)
-
-        // Don't show account selection if there is only
-        // one account that exists
-        if (accounts.count() <= 1) {
-            navigateToMainActivity()
-            return
-        }
 
         val adapter = AccountAdapter(accounts) { selectedAccount ->
             // Handle the selected account
