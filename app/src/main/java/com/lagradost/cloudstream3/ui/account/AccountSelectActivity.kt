@@ -8,7 +8,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.lagradost.cloudstream3.CommonActivity
 import com.lagradost.cloudstream3.MainActivity
+import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.ActivityAccountSelectBinding
+import com.lagradost.cloudstream3.databinding.ActivityAccountSelectTvBinding
 import com.lagradost.cloudstream3.ui.account.AccountDialog.showPinInputDialog
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
 import com.lagradost.cloudstream3.utils.DataStoreHelper
@@ -16,16 +18,17 @@ import com.lagradost.cloudstream3.utils.DataStoreHelper.getAccounts
 
 class AccountSelectActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivityAccountSelectBinding
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         CommonActivity.init(this)
 
-        binding = ActivityAccountSelectBinding.inflate(layoutInflater)
+        val binding = if (isTvSettings()) {
+            ActivityAccountSelectTvBinding.inflate(layoutInflater)
+        } else ActivityAccountSelectBinding.inflate(layoutInflater)
+
         setContentView(binding.root)
 
-        val recyclerView: RecyclerView = binding.accountRecyclerView
+        val recyclerView: RecyclerView = binding.root.findViewById(R.id.account_recycler_view)
 
         val accounts = getAccounts(this@AccountSelectActivity)
 
@@ -44,7 +47,7 @@ class AccountSelectActivity : AppCompatActivity() {
 
         recyclerView.layoutManager = if (isTvSettings()) {
             LinearLayoutManager(this)
-        } else GridLayoutManager(this, 3)
+        } else GridLayoutManager(this, 2)
     }
 
     private fun onAccountSelected(selectedAccount: DataStoreHelper.Account) {

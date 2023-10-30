@@ -8,7 +8,7 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.lagradost.cloudstream3.databinding.AccountListItemBinding
 import com.lagradost.cloudstream3.ui.result.setImage
-import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTrueTvSettings
+import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
 import com.lagradost.cloudstream3.utils.DataStoreHelper
 
 class AccountAdapter(
@@ -28,7 +28,7 @@ class AccountAdapter(
             binding.outline.isVisible = isLastUsedAccount
 
             @RequiresApi(Build.VERSION_CODES.O)
-            if (isTrueTvSettings()) {
+            if (isTvSettings()) {
                 binding.root.isFocusedByDefault = isLastUsedAccount
             }
 
@@ -42,6 +42,15 @@ class AccountAdapter(
         val binding = AccountListItemBinding.inflate(
             LayoutInflater.from(parent.context), parent, false
         )
+
+        if (isTvSettings()) {
+            val layoutParams = binding.root.layoutParams as RecyclerView.LayoutParams
+            val marginInDp = 5 // Set the margin to 5dp
+            val marginInPixels = (marginInDp * parent.resources.displayMetrics.density).toInt()
+            layoutParams.setMargins(marginInPixels, marginInPixels, marginInPixels, marginInPixels)
+            binding.root.layoutParams = layoutParams
+        }
+
         return AccountViewHolder(binding)
     }
 
