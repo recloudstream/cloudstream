@@ -6,11 +6,13 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.LockPinDialogBinding
+import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 
 object AccountDialog {
     // TODO add account creation dialog to allow creating accounts directly from AccountSelectActivity
@@ -29,8 +31,6 @@ object AccountDialog {
         fun View.isVisible() = visibility == View.VISIBLE
 
         val binding = LockPinDialogBinding.inflate(LayoutInflater.from(context))
-
-        binding.pinEditTextError.visibility = View.GONE
 
         val isPinSet = currentPin != null
         val isNewPin = editAccount && !isPinSet
@@ -74,7 +74,7 @@ object AccountDialog {
                             isPinValid = true
 
                             callback.invoke(enteredPin)
-                            dialog.dismiss()
+                            dialog.dismissSafe()
                         }
                     } else {
                         binding.pinEditTextError.visibility = View.GONE
@@ -94,7 +94,7 @@ object AccountDialog {
             if (actionId == EditorInfo.IME_ACTION_DONE && isPinValid) {
                 val enteredPin = binding.pinEditText.text.toString()
                 callback.invoke(enteredPin)
-                dialog.dismiss()
+                dialog.dismissSafe()
             }
             true
         }
@@ -104,5 +104,12 @@ object AccountDialog {
         dialog.setCanceledOnTouchOutside(false)
 
         dialog.show()
+
+        // Auto focus on PIN input and show keyboard
+        binding.pinEditText.requestFocus()
+        binding.pinEditText.postDelayed({
+            val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.showSoftInput(binding.pinEditText, InputMethodManager.SHOW_IMPLICIT)
+        }, 200)
     }
 }
