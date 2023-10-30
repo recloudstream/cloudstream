@@ -1,9 +1,7 @@
 package com.lagradost.cloudstream3.ui.account
 
-import android.os.Build
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.annotation.RequiresApi
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.lagradost.cloudstream3.databinding.AccountListItemBinding
@@ -27,9 +25,8 @@ class AccountAdapter(
             binding.lockIcon.isVisible = account.lockPin != null
             binding.outline.isVisible = isLastUsedAccount
 
-            @RequiresApi(Build.VERSION_CODES.O)
-            if (isTvSettings()) {
-                binding.root.isFocusedByDefault = isLastUsedAccount
+            if (isTvSettings() && isLastUsedAccount) {
+                binding.root.requestFocus()
             }
 
             binding.root.setOnClickListener {
