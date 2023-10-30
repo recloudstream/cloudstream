@@ -58,14 +58,26 @@ class AccountSelectActivity : AppCompatActivity() {
             showPinInputDialog(this@AccountSelectActivity, selectedAccount.lockPin, false) { pin ->
                 if (pin == null) return@showPinInputDialog
                 // Pin is correct, proceed to main activity
-                DataStoreHelper.selectedKeyIndex = selectedAccount.keyIndex
+                setAccount(selectedAccount)
                 navigateToMainActivity()
             }
         } else {
             // No PIN set for the selected account, proceed to main activity
-            DataStoreHelper.selectedKeyIndex = selectedAccount.keyIndex
+            setAccount(selectedAccount)
             navigateToMainActivity()
         }
+    }
+
+    private fun setAccount(account: DataStoreHelper.Account) {
+        // Don't reload if it is the same account
+        if (DataStoreHelper.selectedKeyIndex == account.keyIndex) {
+            return
+        }
+
+        DataStoreHelper.selectedKeyIndex = account.keyIndex
+
+        MainActivity.bookmarksUpdatedEvent(true)
+        MainActivity.reloadHomeEvent(true)
     }
 
     private fun navigateToMainActivity() {
