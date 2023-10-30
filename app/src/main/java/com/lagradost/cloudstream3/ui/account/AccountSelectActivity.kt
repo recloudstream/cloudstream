@@ -16,6 +16,7 @@ import com.lagradost.cloudstream3.ui.account.AccountDialog.showPinInputDialog
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
 import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getAccounts
+import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
 
 class AccountSelectActivity : AppCompatActivity() {
 
@@ -23,6 +24,8 @@ class AccountSelectActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         CommonActivity.init(this)
         loadThemes(this)
+
+        window.navigationBarColor = colorFromAttribute(R.attr.primaryBlackBackground)
 
         val binding = if (isTvSettings()) {
             ActivityAccountSelectTvBinding.inflate(layoutInflater)
