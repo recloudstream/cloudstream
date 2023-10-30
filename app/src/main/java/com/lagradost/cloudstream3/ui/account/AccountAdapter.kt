@@ -25,8 +25,11 @@ class AccountAdapter(
             binding.lockIcon.isVisible = account.lockPin != null
             binding.outline.isVisible = isLastUsedAccount
 
-            if (isTvSettings() && isLastUsedAccount) {
-                binding.root.requestFocus()
+            if (isTvSettings()) {
+                binding.root.isFocusableInTouchMode = true
+                if (isLastUsedAccount) {
+                    binding.root.requestFocus()
+                }
             }
 
             binding.root.setOnClickListener {
