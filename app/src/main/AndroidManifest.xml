@@ -163,7 +163,6 @@
             android:name=".ui.account.AccountSelectActivity"
             android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout|keyboard|keyboardHidden|navigation"
             android:exported="true"
-            android:launchMode="singleTask"
             android:resizeableActivity="true">
             <intent-filter android:exported="true">
                 <action android:name="android.intent.action.MAIN" />
