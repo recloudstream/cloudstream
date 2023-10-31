@@ -1,13 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="?attr/primaryBlackBackground"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:paddingTop="36dp"
     android:gravity="center">
+
+    <ImageView
+        android:id="@+id/edit_account_button"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_gravity="end|top"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:src="@drawable/ic_baseline_edit_24"
+        android:contentDescription="@string/manage_accounts" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -25,16 +34,4 @@
         android:layout_gravity="center_horizontal"
         android:paddingLeft="16dp"
         android:paddingRight="16dp" />
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/edit_account_button"
-        style="@style/RegularButtonTV"
-
-        android:layout_width="wrap_content"
-        android:minWidth="150dp"
-
-        android:text="@string/edit"
-        app:icon="@drawable/ic_baseline_add_24" />
-
 </LinearLayout>
-
