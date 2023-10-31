@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.ui.home
 
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -27,6 +28,7 @@ import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.debugException
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.ui.WatchType
+import com.lagradost.cloudstream3.ui.account.AccountSelectActivity
 import com.lagradost.cloudstream3.ui.home.HomeFragment.Companion.selectHomepage
 import com.lagradost.cloudstream3.ui.result.FOCUS_SELF
 import com.lagradost.cloudstream3.ui.result.ResultViewModel2
@@ -478,7 +480,8 @@ class HomeParentItemAdapterPreview(
             }
 
             homeAccount?.setOnClickListener { v ->
-                DataStoreHelper.showWhoIsWatching(v?.context ?: return@setOnClickListener)
+                val accountSelectIntent = Intent(v.context, AccountSelectActivity::class.java)
+                v.context.startActivity(accountSelectIntent)
             }
 
             (binding as? FragmentHomeHeadTvBinding)?.apply {
