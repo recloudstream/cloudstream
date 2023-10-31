@@ -38,6 +38,10 @@ object AccountDialog {
         val dialog = AlertDialog.Builder(context, R.style.AlertDialogCustom)
             .setView(binding.root)
             .setTitle(titleRes)
+            .setPositiveButton(R.string.setup_done) { _, _ ->
+                val enteredPin = binding.pinEditText.text.toString()
+                callback.invoke(enteredPin)
+            }
             .setNegativeButton(R.string.cancel) { _, _ ->
                 callback.invoke(null)
             }
