@@ -1,12 +1,11 @@
 package com.lagradost.cloudstream3.ui.settings.helpers.settings.account
 
-import android.net.Uri
 import android.view.View
 import androidx.appcompat.app.AlertDialog
-import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentActivity
+import com.lagradost.cloudstream3.AcraApplication.Companion.openBrowser
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.AddAccountInputOauthBinding
 import com.lagradost.cloudstream3.syncproviders.InAppOAuth2API
@@ -40,8 +39,7 @@ class InAppOAuth2DialogBuilder(
 
         infoButton.isGone = api.infoUrl.isNullOrBlank()
         infoButton.setOnClickListener {
-            val customTabIntent = CustomTabsIntent.Builder().setShowTitle(true).build()
-            customTabIntent.launchUrl(binding.root.context, Uri.parse(api.infoUrl))
+            api.infoUrl?.let { url -> openBrowser(url) }
         }
     }
 

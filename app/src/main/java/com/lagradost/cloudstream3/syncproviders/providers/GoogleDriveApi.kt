@@ -3,7 +3,6 @@ package com.lagradost.cloudstream3.syncproviders.providers
 import android.content.Context
 import android.net.Uri
 import android.util.Log
-import androidx.browser.customtabs.CustomTabsIntent
 import androidx.fragment.app.FragmentActivity
 import com.google.api.client.auth.oauth2.AuthorizationCodeFlow
 import com.google.api.client.auth.oauth2.Credential
@@ -19,6 +18,7 @@ import com.google.api.services.drive.DriveScopes
 import com.google.api.services.drive.model.File
 import com.lagradost.cloudstream3.AcraApplication
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
+import com.lagradost.cloudstream3.AcraApplication.Companion.openBrowser
 import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.CommonActivity
@@ -133,6 +133,7 @@ class GoogleDriveApi(index: Int) :
             data.clientId
         )
 
+        registerAccount()
         storeValue(K.TOKEN, googleTokenResponse)
         storeValue(K.IS_READY, true)
 
@@ -202,7 +203,8 @@ class GoogleDriveApi(index: Int) :
         data: InAppOAuth2API.LoginData
     ) {
         val credential = loginInfo()
-        if (credential != null) {
+        // Repeated attempts will not switch account because IS_READY is false
+        if (credential != null && getValue<Boolean>(K.IS_READY) != false) {
             switchToNewAccount()
         }
 
@@ -213,13 +215,9 @@ class GoogleDriveApi(index: Int) :
         this.tempAuthFlow = authFlow
 
         try {
-            registerAccount()
-
             val url = authFlow.newAuthorizationUrl().setRedirectUri(data.redirectUrl).build()
-            val customTabIntent = CustomTabsIntent.Builder().setShowTitle(true).build()
-            customTabIntent.launchUrl(activity, Uri.parse(url))
-        } catch (e: Exception) {
-            switchToOldAccount()
+            openBrowser(url)
+        } catch (e: Throwable) {
             CommonActivity.showToast(
                 activity,
                 activity.getString(R.string.authenticated_user_fail).format(name)

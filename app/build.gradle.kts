@@ -283,7 +283,6 @@ dependencies {
     implementation("androidx.palette:palette-ktx:1.0.0")
 
     implementation("org.skyscreamer:jsonassert:1.2.3")
-    implementation("androidx.browser:browser:1.4.0")
     implementation("com.google.api-client:google-api-client:2.0.0") {
         exclude(
             group = "org.apache.httpcomponents",
