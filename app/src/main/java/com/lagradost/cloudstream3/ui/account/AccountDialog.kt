@@ -4,12 +4,12 @@ import android.content.Context
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
-import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
+import androidx.core.view.isVisible
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.LockPinDialogBinding
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
@@ -24,18 +24,15 @@ object AccountDialog {
         callback: (String?) -> Unit
     ) {
         fun TextView.visibleWithText(@StringRes textRes: Int) {
-            visibility = View.VISIBLE
+            isVisible = true
             setText(textRes)
         }
-
-        fun View.isVisible() = visibility == View.VISIBLE
 
         val binding = LockPinDialogBinding.inflate(LayoutInflater.from(context))
 
         val isPinSet = currentPin != null
         val isNewPin = editAccount && !isPinSet
         val isEditPin = editAccount && isPinSet
-
         val titleRes = if (isEditPin) R.string.enter_current_pin else R.string.enter_pin
 
         val dialog = AlertDialog.Builder(context, R.style.AlertDialogCustom)
@@ -48,7 +45,7 @@ object AccountDialog {
                 callback.invoke(null)
             }
             .setOnDismissListener {
-                if (binding.pinEditTextError.isVisible()) {
+                if (binding.pinEditTextError.isVisible) {
                     callback.invoke(null)
                 }
             }
@@ -70,14 +67,14 @@ object AccountDialog {
                             binding.pinEditText.text = null
                             isPinValid = false
                         } else {
-                            binding.pinEditTextError.visibility = View.GONE
+                            binding.pinEditTextError.isVisible = false
                             isPinValid = true
 
                             callback.invoke(enteredPin)
                             dialog.dismissSafe()
                         }
                     } else {
-                        binding.pinEditTextError.visibility = View.GONE
+                        binding.pinEditTextError.isVisible = false
                         isPinValid = true
                     }
                 } else if (isNewPin) {
