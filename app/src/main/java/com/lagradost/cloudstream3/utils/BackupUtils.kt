@@ -11,6 +11,7 @@ import androidx.annotation.WorkerThread
 import androidx.fragment.app.FragmentActivity
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.module.kotlin.readValue
+import com.lagradost.cloudstream3.AcraApplication.Companion.getActivity
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.MainActivity.Companion.afterBackupRestoreEvent
 import com.lagradost.cloudstream3.R
@@ -150,10 +151,12 @@ object BackupUtils {
     }
 
     @Suppress("UNCHECKED_CAST")
-    fun Context.getBackup(): BackupFile {
+    private fun getBackup(context: Context?): BackupFile? {
+        if (context == null) return null
+
         val syncDataPrefs = getSyncPrefs().all.filter { it.key.isTransferable() }
-        val allData = getSharedPrefs().all.filter { it.key.isTransferable() }
-        val allSettings = getDefaultSharedPrefs().all.filter { it.key.isTransferable() }
+        val allData = context.getSharedPrefs().all.filter { it.key.isTransferable() }
+        val allSettings = context.getDefaultSharedPrefs().all.filter { it.key.isTransferable() }
 
         val syncData = BackupVars(
             syncDataPrefs.filter { it.value is Boolean } as? Map<String, Boolean>,
@@ -226,21 +229,23 @@ object BackupUtils {
     }
 
     @SuppressLint("SimpleDateFormat")
-    fun FragmentActivity.backup() = ioSafe {
+    fun backup(context: Context?) = ioSafe {
+        if (context == null) return@ioSafe
+
         var fileStream: OutputStream? = null
         var printStream: PrintWriter? = null
         try {
-            if (!checkWrite()) {
+            if (!context.checkWrite()) {
                 showToast(R.string.backup_failed, Toast.LENGTH_LONG)
-                requestRW()
+                context.getActivity()?.requestRW()
                 return@ioSafe
             }
 
             val date = SimpleDateFormat("yyyy_MM_dd_HH_mm").format(Date(currentTimeMillis()))
             val ext = "txt"
             val displayName = "CS3_Backup_${date}"
-            val backupFile = getBackup()
-            val stream = setupStream(this@backup, displayName, null, ext, false)
+            val backupFile = getBackup(context)
+            val stream = setupStream(context, displayName, null, ext, false)
 
             fileStream = stream.openNew()
             printStream = PrintWriter(fileStream)

@@ -36,7 +36,6 @@
     <string name="type_completed">Tapos nang panoorin</string>
     <string name="type_dropped">Ayaw nang panoorin</string>
     <string name="type_plan_to_watch">Balak panoorin</string>
-    <string name="type_none">None</string>
     <string name="play_movie_button">I-play ang Movie</string>
     <string name="play_torrent_button">Stream Torrent</string>
     <string name="pick_source">Sources</string>
@@ -70,7 +69,6 @@
     <string name="error_bookmarks_text">Bookmark</string>
     <string name="action_remove_from_bookmarks">Tanggalin</string>
     <string name="sort_apply">Kumpirmahin</string>
-    <string name="sort_cancel">Kanselahin</string>
     <string name="player_speed">Bilis ng Playback</string>
     <string name="subtitles_settings">Subtitle Setting</string>
     <string name="subs_text_color">Kulay ng Teksto</string>
@@ -144,6 +142,7 @@
     <string name="episode_short">E</string>
     <string name="delete_file">Burahin ang file</string>
     <string name="delete">Tanggalin</string>
+    <string name="cancel">Kanselahin</string>
     <string name="pause">I-pause</string>
     <string name="resume">I-resume</string>
     <string name="delete_message">This will permanently delete %s
@@ -158,7 +157,7 @@
     <string name="synopsis">Sinopsis</string>
     <string name="queued">nakapila</string>
     <string name="no_subtitles">walang subtitles</string>
-    <string name="default_subtitles">Default</string>
+    <string name="action_default">Default</string>
     <string name="free_storage">Bakante</string>
     <string name="used_storage">Gamit</string>
     <string name="app_storage">App</string>

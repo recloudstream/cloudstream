@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/outline_drawable_less"
-
+    android:focusable="true"
     android:nextFocusRight="@id/home_history_remove"
     android:orientation="horizontal">
     <!-- android:foreground="?android:attr/selectableItemBackgroundBorderless"
@@ -30,7 +30,7 @@
         android:layout_gravity="center_vertical|end"
 
         android:background="@drawable/outline_drawable_less"
-
+        android:focusable="true"
         android:nextFocusLeft="@id/home_history_tab"
         android:padding="10dp"
         android:src="@drawable/ic_baseline_close_24"

@@ -137,6 +137,7 @@
         android:background="?attr/primaryBlackBackground"
         android:descendantFocusability="afterDescendants"
         android:nextFocusLeft="@id/nav_rail_view"
+        android:tag = "@string/tv_no_focus_tag"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         tools:listitem="@layout/download_header_episode" />
 

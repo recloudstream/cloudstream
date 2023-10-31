@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.ui.library
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.res.Configuration
@@ -8,14 +9,25 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import androidx.fragment.app.Fragment
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewGroup.FOCUS_AFTER_DESCENDANTS
+import android.view.ViewGroup.FOCUS_BLOCK_DESCENDANTS
 import android.view.animation.AlphaAnimation
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
+import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.appcompat.widget.SearchView
+import androidx.core.view.allViews
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
+import androidx.viewpager2.widget.ViewPager2
+import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.lagradost.cloudstream3.APIHolder
 import com.lagradost.cloudstream3.APIHolder.allProviders
@@ -23,21 +35,26 @@ import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.openBrowser
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.MainActivity
+import com.lagradost.cloudstream3.CommonActivity
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.FragmentLibraryBinding
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.debugAssert
+import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.syncproviders.BackupAPI
 import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.syncproviders.SyncIdName
+import com.lagradost.cloudstream3.ui.AutofitRecyclerView
 import com.lagradost.cloudstream3.ui.quicksearch.QuickSearchFragment
 import com.lagradost.cloudstream3.ui.result.txt
 import com.lagradost.cloudstream3.ui.search.SEARCH_ACTION_LOAD
 import com.lagradost.cloudstream3.ui.search.SEARCH_ACTION_SHOW_METADATA
+import com.lagradost.cloudstream3.ui.settings.SettingsFragment
 import com.lagradost.cloudstream3.utils.AppUtils.loadResult
 import com.lagradost.cloudstream3.utils.AppUtils.loadSearchResult
 import com.lagradost.cloudstream3.utils.AppUtils.reduceDragSensitivity
+import com.lagradost.cloudstream3.utils.DataStoreHelper.currentAccount
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
 import com.lagradost.cloudstream3.utils.UIHelper.getSpanCount
@@ -48,7 +65,7 @@ const val LIBRARY_FOLDER = "library_folder"
 
 
 enum class LibraryOpenerType(@StringRes val stringRes: Int) {
-    Default(R.string.default_subtitles), // TODO FIX AFTER MERGE
+    Default(R.string.action_default),
     Provider(R.string.none),
     Browser(R.string.browser),
     Search(R.string.search),
@@ -83,9 +100,21 @@ class LibraryFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         MainActivity.afterBackupRestoreEvent += ::onNewSyncData
-        val localBinding = FragmentLibraryBinding.inflate(inflater, container, false)
-        binding = localBinding
-        return localBinding.root
+        val layout =
+            if (SettingsFragment.isTvSettings()) R.layout.fragment_library_tv else R.layout.fragment_library
+        val root = inflater.inflate(layout, container, false)
+        binding = try {
+            FragmentLibraryBinding.bind(root)
+        } catch (t: Throwable) {
+            CommonActivity.showToast(
+                txt(R.string.unable_to_inflate, t.message ?: ""),
+                Toast.LENGTH_LONG
+            )
+            logError(t)
+            null
+        }
+
+        return root
 
         //return inflater.inflate(R.layout.fragment_library, container, false)
     }
@@ -103,25 +132,24 @@ class LibraryFragment : Fragment() {
         super.onSaveInstanceState(outState)
     }
 
+    @SuppressLint("ResourceType", "CutPasteId")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         fixPaddingStatusbar(binding?.searchStatusBarPadding)
 
-        binding?.sortFab?.setOnClickListener {
-            val methods = libraryViewModel.sortingMethods.map {
-                txt(it.stringRes).asString(view.context)
-            }
+        binding?.sortFab?.setOnClickListener(sortChangeClickListener)
+        binding?.librarySort?.setOnClickListener(sortChangeClickListener)
 
-            activity?.showBottomDialog(methods,
-                libraryViewModel.sortingMethods.indexOf(libraryViewModel.currentSortingMethod),
-                txt(R.string.sort_by).asString(view.context),
-                false,
-                {},
-                {
-                    val method = libraryViewModel.sortingMethods[it]
-                    libraryViewModel.sort(method)
-                })
+        binding?.libraryRoot?.findViewById<TextView>(R.id.search_src_text)?.apply {
+            tag = "tv_no_focus_tag"
         }
+
+        // Set the color for the search exit icon to the correct theme text color
+        val searchExitIcon = binding?.mainSearch?.findViewById<ImageView>(androidx.appcompat.R.id.search_close_btn)
+        val searchExitIconColor = TypedValue()
+
+        activity?.theme?.resolveAttribute(android.R.attr.textColor, searchExitIconColor, true)
+        searchExitIcon?.setColorFilter(searchExitIconColor.data)
 
         binding?.mainSearch?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
@@ -186,7 +214,7 @@ class LibraryFragment : Fragment() {
 
             val items = baseOptions.map { txt(it.stringRes).asString(this) } + availableProviders
 
-            val savedSelection = getKey<LibraryOpener>(LIBRARY_FOLDER, key)
+            val savedSelection = getKey<LibraryOpener>("$currentAccount/$LIBRARY_FOLDER", key)
             val selectedIndex =
                 when {
                     savedSelection == null -> 0
@@ -221,7 +249,7 @@ class LibraryFragment : Fragment() {
                 }
 
                 setKey(
-                    LIBRARY_FOLDER,
+                    "$currentAccount/$LIBRARY_FOLDER",
                     key,
                     savedData,
                 )
@@ -234,6 +262,7 @@ class LibraryFragment : Fragment() {
         }
 
         binding?.viewpager?.setPageTransformer(LibraryScrollTransformer())
+
         binding?.viewpager?.adapter =
             binding?.viewpager?.adapter ?: ViewpagerAdapter(
                 mutableListOf(),
@@ -268,8 +297,11 @@ class LibraryFragment : Fragment() {
                         // This basically first selects the individual opener and if that is default then
                         // selects the whole list opener
                         val savedListSelection =
-                            getKey<LibraryOpener>(LIBRARY_FOLDER, syncName.name)
-                        val savedSelection = getKey<LibraryOpener>(LIBRARY_FOLDER, syncId).takeIf {
+                            getKey<LibraryOpener>("$currentAccount/$LIBRARY_FOLDER", syncName.name)
+                        val savedSelection = getKey<LibraryOpener>(
+                            "$currentAccount/$LIBRARY_FOLDER",
+                            syncId
+                        ).takeIf {
                             it?.openType != LibraryOpenerType.Default
                         } ?: savedListSelection
 
@@ -357,11 +389,18 @@ class LibraryFragment : Fragment() {
                         }
 
                         (viewpager.adapter as? ViewpagerAdapter)?.pages = pages
+                        //fix focus on the viewpager itself
+                        (viewpager.getChildAt(0) as RecyclerView).apply {
+                            tag = "tv_no_focus_tag"
+                            //isFocusable = false
+                        }
+
                         // Using notifyItemRangeChanged keeps the animations when sorting
                         viewpager.adapter?.notifyItemRangeChanged(
                             0,
                             viewpager.adapter?.itemCount ?: 0
                         )
+                        binding?.viewpager?.setCurrentItem(libraryViewModel.currentPage, false)
 
                         // Only stop loading after 300ms to hide the fade effect the viewpager produces when updating
                         // Without this there would be a flashing effect:
@@ -398,6 +437,9 @@ class LibraryFragment : Fragment() {
                             viewpager,
                         ) { tab, position ->
                             tab.text = pages.getOrNull(position)?.title?.asStringNull(context)
+                            tab.view.tag = "tv_no_focus_tag"
+                            tab.view.nextFocusDownId = R.id.search_result_root
+
                             tab.view.setOnClickListener {
                                 val currentItem =
                                     binding?.viewpager?.currentItem ?: return@setOnClickListener
@@ -420,8 +462,25 @@ class LibraryFragment : Fragment() {
                 }
             }
         }
-    }
+        binding?.viewpager?.registerOnPageChangeCallback(object :
+            ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                val all = binding?.viewpager?.allViews?.toList()
+                    ?.filterIsInstance<AutofitRecyclerView>()
 
+                all?.forEach { view ->
+                    view.isVisible = view.tag == position
+                    view.isFocusable = view.tag == position
+
+                    if (view.tag == position)
+                        view.descendantFocusability = FOCUS_AFTER_DESCENDANTS
+                    else
+                        view.descendantFocusability = FOCUS_BLOCK_DESCENDANTS
+                }
+                super.onPageSelected(position)
+            }
+        })
+    }
     override fun onConfigurationChanged(newConfig: Configuration) {
         (binding?.viewpager?.adapter as? ViewpagerAdapter)?.rebind()
         super.onConfigurationChanged(newConfig)
@@ -440,6 +499,21 @@ class LibraryFragment : Fragment() {
     private fun onNewSyncData(unused: Unit) {
         Log.d(BackupAPI.LOG_KEY, "will reload pages")
         libraryViewModel.reloadPages(true)
+
+    private val sortChangeClickListener = View.OnClickListener { view ->
+        val methods = libraryViewModel.sortingMethods.map {
+            txt(it.stringRes).asString(view.context)
+        }
+
+        activity?.showBottomDialog(methods,
+            libraryViewModel.sortingMethods.indexOf(libraryViewModel.currentSortingMethod),
+            txt(R.string.sort_by).asString(view.context),
+            false,
+            {},
+            {
+                val method = libraryViewModel.sortingMethods[it]
+                libraryViewModel.sort(method)
+            })
     }
 }
 

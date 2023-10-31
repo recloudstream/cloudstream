@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.DecelerateInterpolator
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
@@ -17,6 +18,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.lagradost.cloudstream3.APIHolder.updateHasTrailers
+import com.lagradost.cloudstream3.CommonActivity
 import com.lagradost.cloudstream3.DubStatus
 import com.lagradost.cloudstream3.LoadResponse
 import com.lagradost.cloudstream3.MainActivity.Companion.afterPluginsLoadedEvent
@@ -26,6 +28,7 @@ import com.lagradost.cloudstream3.databinding.FragmentResultTvBinding
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.mvvm.observeNullable
+import com.lagradost.cloudstream3.services.SubscriptionWorkManager
 import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.download.DownloadButtonSetup
 import com.lagradost.cloudstream3.ui.player.ExtractorLinkGenerator
@@ -35,6 +38,7 @@ import com.lagradost.cloudstream3.ui.result.ResultFragment.updateUIEvent
 import com.lagradost.cloudstream3.ui.search.SEARCH_ACTION_FOCUSED
 import com.lagradost.cloudstream3.ui.search.SearchAdapter
 import com.lagradost.cloudstream3.ui.search.SearchHelper
+import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isEmulatorSettings
 import com.lagradost.cloudstream3.utils.AppUtils.getNameFull
 import com.lagradost.cloudstream3.utils.AppUtils.html
 import com.lagradost.cloudstream3.utils.AppUtils.isRtl
@@ -216,11 +220,9 @@ class ResultFragmentTv : Fragment() {
             episodesShadow.fade(show)
             episodeHolderTv.fade(show)
             if (episodesShadow.isRtl()) {
-                episodesShadow.scaleX = -1.0f
-                episodesShadow.scaleY = -1.0f
+                episodesShadowBackground.scaleX = -1f
             } else {
-                episodesShadow.scaleX = 1.0f
-                episodesShadow.scaleY = 1.0f
+                episodesShadowBackground.scaleX = 1f
             }
         }
     }
@@ -247,7 +249,7 @@ class ResultFragmentTv : Fragment() {
 
         binding?.apply {
             //episodesShadow.rotationX = 180.0f//if(episodesShadow.isRtl()) 180.0f else 0.0f
-
+            
             val leftListener: View.OnFocusChangeListener =
                 View.OnFocusChangeListener { _, hasFocus ->
                     if (!hasFocus) return@OnFocusChangeListener
@@ -267,6 +269,7 @@ class ResultFragmentTv : Fragment() {
             resultEpisodesShow.onFocusChangeListener = rightListener
             resultDescription.onFocusChangeListener = leftListener
             resultBookmarkButton.onFocusChangeListener = leftListener
+            resultFavoriteButton.onFocusChangeListener = leftListener
             resultEpisodesShow.setOnClickListener {
                 // toggle, to make it more touch accessable just in case someone thinks that a
                 // tv layout is better but is using a touch device
@@ -285,7 +288,9 @@ class ResultFragmentTv : Fragment() {
                         resultPlaySeries,
                         resultResumeSeries,
                         resultPlayTrailer,
-                        resultBookmarkButton
+                        resultBookmarkButton,
+                        resultFavoriteButton,
+                        resultSubscribeButton
                     )
                     for (requestView in views) {
                         if (!requestView.isVisible) continue
@@ -426,6 +431,8 @@ class ResultFragmentTv : Fragment() {
             val aboveCast = listOf(
                 binding?.resultEpisodesShow,
                 binding?.resultBookmarkButton,
+                binding?.resultFavoriteButton,
+                binding?.resultSubscribeButton,
             ).firstOrNull {
                 it?.isVisible == true
             }
@@ -528,7 +535,83 @@ class ResultFragmentTv : Fragment() {
                         view.context.getString(R.string.action_add_to_bookmarks),
                         showApply = false,
                         {}) {
-                        viewModel.updateWatchStatus(WatchType.values()[it])
+                        viewModel.updateWatchStatus(WatchType.values()[it], context)
+                    }
+                }
+            }
+        }
+
+        observeNullable(viewModel.favoriteStatus) { isFavorite ->
+            binding?.resultFavoriteButton?.apply {
+                isVisible = isFavorite != null
+                if (isFavorite == null) return@observeNullable
+
+                val drawable = if (isFavorite) {
+                    R.drawable.ic_baseline_favorite_24
+                } else {
+                    R.drawable.ic_baseline_favorite_border_24
+                }
+
+                val text = if (isFavorite) {
+                    R.string.action_remove_from_favorites
+                } else {
+                    R.string.action_add_to_favorites
+                }
+
+                setIconResource(drawable)
+                setText(text)
+                setOnClickListener {
+                    viewModel.toggleFavoriteStatus(context) { newStatus: Boolean? ->
+                        if (newStatus == null) return@toggleFavoriteStatus
+
+                        val message = if (newStatus) {
+                            R.string.favorite_added
+                        } else {
+                            R.string.favorite_removed
+                        }
+
+                        val name = (viewModel.page.value as? Resource.Success)?.value?.title
+                            ?: txt(R.string.no_data).asStringNull(context) ?: ""
+                        CommonActivity.showToast(txt(message, name), Toast.LENGTH_SHORT)
+                    }
+                }
+            }
+        }
+
+        observeNullable(viewModel.subscribeStatus) { isSubscribed ->
+            binding?.resultSubscribeButton?.apply {
+                isVisible = isSubscribed != null && context.isEmulatorSettings()
+                if (isSubscribed == null) return@observeNullable
+
+                val drawable = if (isSubscribed) {
+                    R.drawable.ic_baseline_notifications_active_24
+                } else {
+                    R.drawable.baseline_notifications_none_24
+                }
+
+                val text = if (isSubscribed) {
+                    R.string.action_unsubscribe
+                } else {
+                    R.string.action_subscribe
+                }
+
+                setIconResource(drawable)
+                setText(text)
+                setOnClickListener {
+                    viewModel.toggleSubscriptionStatus(context) { newStatus: Boolean? ->
+                        if (newStatus == null) return@toggleSubscriptionStatus
+
+                        val message = if (newStatus) {
+                            // Kinda icky to have this here, but it works.
+                            SubscriptionWorkManager.enqueuePeriodicWork(context)
+                            R.string.subscription_new
+                        } else {
+                            R.string.subscription_deleted
+                        }
+
+                        val name = (viewModel.page.value as? Resource.Success)?.value?.title
+                            ?: txt(R.string.no_data).asStringNull(context) ?: ""
+                        CommonActivity.showToast(txt(message, name), Toast.LENGTH_SHORT)
                     }
                 }
             }
@@ -537,6 +620,7 @@ class ResultFragmentTv : Fragment() {
         observeNullable(viewModel.movie) { data ->
             binding?.apply {
                 resultPlayMovie.isVisible = data is Resource.Success
+                resultPlaySeries.isVisible = data == null
                 seriesHolder.isVisible = data == null
                 resultEpisodesShow.isVisible = data == null
 
@@ -766,12 +850,14 @@ class ResultFragmentTv : Fragment() {
                             R.drawable.profile_bg_red,
                             R.drawable.profile_bg_teal
                         ).random()
+                        //Change poster crop area to 20% from Top
+                        backgroundPoster.cropYCenterOffsetPct = 0.20F
+                        
                         backgroundPoster.setImage(
                             d.posterBackgroundImage ?: UiImage.Drawable(error),
                             radius = 0,
                             errorImageDrawable = error
                         )
-
                         resultComingSoon.isVisible = d.comingSoon
                         resultDataHolder.isGone = d.comingSoon
                         UIHelper.populateChips(resultTag, d.tags)

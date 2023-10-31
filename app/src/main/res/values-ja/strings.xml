@@ -37,7 +37,6 @@
     <string name="asian_drama_singular">アジアドラマ</string>
     <string name="live_singular">ライブ配信</string>
     <string name="nsfw_singular">NSFW</string>
-    <string name="sort_cancel">キャンセル</string>
     <string name="anime">アニメ</string>
     <string name="video_lock">ロック</string>
     <string name="video_source">ソース</string>
@@ -71,7 +70,6 @@
     <string name="home_source">ソース</string>
     <string name="history">履歴</string>
     <string name="result_poster_img_des">ポスター</string>
-    <string name="type_none">なし</string>
     <string name="sort_copy">コピー</string>
     <string name="sort_close">閉じる</string>
     <string name="sort_save">保存</string>
@@ -135,6 +133,7 @@
     <string name="pause">一時停止</string>
     <string name="play_episode_toast">再生エピソード</string>
     <string name="delete">削除</string>
+    <string name="cancel">キャンセル</string>
     <string name="start">開始</string>
     <string name="status">状態</string>
     <string name="year">年</string>
@@ -155,7 +154,7 @@
     <string name="extension_version">バージョン</string>
     <string name="extension_rating" formatted="true">視聴率 %s</string>
     <string name="rating">視聴率</string>
-    <string name="default_subtitles">デフォルト</string>
+    <string name="action_default">デフォルト</string>
     <string name="download_failed">ダウンロード失敗</string>
     <string name="download_started">ダウンロード開始</string>
     <string name="download_done">ダウンロード完了</string>
@@ -218,4 +217,5 @@
     <string name="subs_font_size">フォントサイズ</string>
     <string name="search_provider_text_providers">プロバイダーから探す</string>
     <string name="subs_auto_select_language">言語の自動選択</string>
+    <string name="error_loading_links_toast">リンクの読み込みエラー</string>
 </resources>

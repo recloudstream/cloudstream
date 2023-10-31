@@ -20,15 +20,17 @@ import com.lagradost.cloudstream3.databinding.LogcatBinding
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.network.initClient
 import com.lagradost.cloudstream3.utils.Scheduler.Companion.attachBackupListener
+import com.lagradost.cloudstream3.services.BackupWorkManager
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.getPref
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setPaddingBottom
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setUpToolbar
-import com.lagradost.cloudstream3.utils.BackupUtils.backup
+import com.lagradost.cloudstream3.utils.BackupUtils
 import com.lagradost.cloudstream3.utils.BackupUtils.restorePrompt
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.DataStore.getSyncPrefs
 import com.lagradost.cloudstream3.utils.InAppUpdater.Companion.runAutoUpdate
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
+import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showDialog
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.utils.VideoDownloadManager
@@ -50,7 +52,30 @@ class SettingsUpdates : PreferenceFragmentCompat() {
         //val settingsManager = PreferenceManager.getDefaultSharedPreferences(requireContext())
 
         getPref(R.string.backup_key)?.setOnPreferenceClickListener {
-            activity?.backup()
+            BackupUtils.backup(activity)
+            return@setOnPreferenceClickListener true
+        }
+
+        getPref(R.string.automatic_backup_key)?.setOnPreferenceClickListener {
+            val settingsManager = PreferenceManager.getDefaultSharedPreferences(requireContext())
+
+            val prefNames = resources.getStringArray(R.array.periodic_work_names)
+            val prefValues = resources.getIntArray(R.array.periodic_work_values)
+            val current = settingsManager.getInt(getString(R.string.automatic_backup_key), 0)
+
+            activity?.showDialog(
+                prefNames.toList(),
+                prefValues.indexOf(current),
+                getString(R.string.backup_frequency),
+                true,
+                {}) { index ->
+                settingsManager.edit()
+                    .putInt(getString(R.string.automatic_backup_key), prefValues[index]).apply()
+                BackupWorkManager.enqueuePeriodicWork(
+                    context ?: AcraApplication.context,
+                    prefValues[index].toLong()
+                )
+            }
             return@setOnPreferenceClickListener true
         }
 
@@ -67,7 +92,7 @@ class SettingsUpdates : PreferenceFragmentCompat() {
             val builder =
                 AlertDialog.Builder(pref.context, R.style.AlertDialogCustom)
 
-            val binding = LogcatBinding.inflate(layoutInflater,null,false )
+            val binding = LogcatBinding.inflate(layoutInflater, null, false)
             builder.setView(binding.root)
 
             val dialog = builder.create()
@@ -179,7 +204,8 @@ class SettingsUpdates : PreferenceFragmentCompat() {
             val settingsManager = PreferenceManager.getDefaultSharedPreferences(it.context)
 
             val prefNames = resources.getStringArray(R.array.auto_download_plugin)
-            val prefValues = enumValues<AutoDownloadMode>().sortedBy { x -> x.value }.map { x -> x.value }
+            val prefValues =
+                enumValues<AutoDownloadMode>().sortedBy { x -> x.value }.map { x -> x.value }
 
             val current = settingsManager.getInt(getString(R.string.auto_download_plugins_key), 0)
 
@@ -189,7 +215,8 @@ class SettingsUpdates : PreferenceFragmentCompat() {
                 getString(R.string.automatic_plugin_download_mode_title),
                 true,
                 {}) {
-                settingsManager.edit().putInt(getString(R.string.auto_download_plugins_key), prefValues[it]).apply()
+                settingsManager.edit()
+                    .putInt(getString(R.string.auto_download_plugins_key), prefValues[it]).apply()
                 (context ?: AcraApplication.context)?.let { ctx -> app.initClient(ctx) }
             }
             return@setOnPreferenceClickListener true

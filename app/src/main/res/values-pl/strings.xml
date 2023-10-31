@@ -35,7 +35,6 @@
     <string name="type_completed">Zakończone</string>
     <string name="type_dropped">Porzucone</string>
     <string name="type_plan_to_watch">Planowane</string>
-    <string name="type_none">Brak</string>
     <string name="type_re_watching">Ponowne oglądanie</string>
     <string name="play_movie_button">Odtwórz film</string>
     <string name="play_livestream_button">Odtwórz transmisję na żywo</string>
@@ -72,7 +71,6 @@
     <string name="action_remove_from_bookmarks">Usuń</string>
     <string name="action_add_to_bookmarks">Ustaw status oglądania</string>
     <string name="sort_apply">Zastosuj</string>
-    <string name="sort_cancel">Anuluj</string>
     <string name="sort_copy">Kopiuj</string>
     <string name="sort_close">Zamknij</string>
     <string name="sort_clear">Wyczyść</string>
@@ -181,6 +179,7 @@
     <string name="no_episodes_found">Nie znaleziono odcinków</string>
     <string name="delete_file">Usuń plik</string>
     <string name="delete">Usuń</string>
+    <string name="cancel">Anuluj</string>
     <string name="pause">Wstrzymaj</string>
     <string name="resume">Odtwórz</string>
     <string name="go_back_30">-30</string>
@@ -199,7 +198,7 @@
     <string name="synopsis">Streszczenie</string>
     <string name="queued">W kolejce</string>
     <string name="no_subtitles">Brak napisów</string>
-    <string name="default_subtitles">Domyślne</string>
+    <string name="action_default">Domyślne</string>
     <string name="free_storage">Wolne</string>
     <string name="used_storage">W użyciu</string>
     <string name="app_storage">Aplikacja</string>
@@ -552,7 +551,6 @@
     <string name="unable_to_inflate">Nie można było poprawnie utworzyć interfejsu użytkownika, jest to POWAŻNY BŁĄD i należy go natychmiast zgłosić %s</string>
     <string name="automatic_plugin_download_mode_title">Wybierz tryb filtrowania pobieranych rozszerzeń</string>
     <string name="disable">Wyłączać</string>
-    <string name="default_account">@string/default_subtitles</string>
     <string name="no_plugins_found_error">Nie znaleziono żadnych wtyczek w repozytorium</string>
     <string name="already_voted">Już oddano głos</string>
     <string name="no_repository_found_error">Nie znaleziono tego repozytorium, sprawdź adres URL lub spróbuj połączyć się przez VPN</string>

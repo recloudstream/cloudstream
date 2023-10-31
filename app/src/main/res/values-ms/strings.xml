@@ -37,4 +37,22 @@
     <string name="player_speed_text_format" formatted="true">Kelajuan (%.2fx)</string>
     <string name="result_poster_img_des">Poster</string>
     <string name="search_poster_img_des">Poster</string>
+    <string name="sort_copy">Salin</string>
+    <string name="title_downloads">Muat Turun</string>
+    <string name="result_tags">Genre</string>
+    <string name="search_hint_site" formatted="true">Cari %s…</string>
+    <string name="edit">Sunting</string>
+    <string name="search_hint">Carian…</string>
+    <string name="browser">Pelayar</string>
+    <string name="next_episode">Episod seterusnya</string>
+    <string name="download">Muat Turun</string>
+    <string name="open_with">Buka dengan</string>
+    <string name="popup_delete_file">Padam Fail</string>
+    <string name="result_open_in_browser">Buka Dalam Pelayar</string>
+    <string name="no_data">Tiada Data</string>
+    <string name="home_info">Info</string>
+    <string name="sort_save">Simpan</string>
+    <string name="result_share">Kongsi</string>
+    <string name="title_settings">Tetapan</string>
+    <string name="sort_close">Tutup</string>
 </resources>

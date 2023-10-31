@@ -27,7 +27,6 @@ import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.APIHolder.apis
 import com.lagradost.cloudstream3.APIHolder.filterProviderByPreferredMedia
 import com.lagradost.cloudstream3.APIHolder.getApiProviderLangSettings
-import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.MainActivity.Companion.afterBackupRestoreEvent
 import com.lagradost.cloudstream3.MainActivity.Companion.afterPluginsLoadedEvent
@@ -55,8 +54,6 @@ import com.lagradost.cloudstream3.utils.AppUtils.ownHide
 import com.lagradost.cloudstream3.utils.AppUtils.ownShow
 import com.lagradost.cloudstream3.utils.AppUtils.setDefaultFocus
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
-import com.lagradost.cloudstream3.utils.DataStore.getKey
-import com.lagradost.cloudstream3.utils.DataStore.setKey
 import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.DataStoreHelper.currentHomePage
 import com.lagradost.cloudstream3.utils.Event
@@ -66,9 +63,6 @@ import com.lagradost.cloudstream3.utils.UIHelper.getSpanCount
 import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIconsAndNoStringRes
 import java.util.*
 
-
-const val HOME_BOOKMARK_VALUE_LIST = "home_bookmarked_last_list"
-const val HOME_PREF_HOMEPAGE = "home_pref_homepage"
 
 class HomeFragment : Fragment() {
     companion object {
@@ -371,10 +365,7 @@ class HomeFragment : Fragment() {
                 var currentApiName = selectedApiName
 
                 var currentValidApis: MutableList<MainAPI> = mutableListOf()
-                val preSelectedTypes = this.getKey<List<String>>(HOME_PREF_HOMEPAGE)
-                    ?.mapNotNull { listName -> TvType.values().firstOrNull { it.name == listName } }
-                    ?.toMutableList()
-                    ?: mutableListOf(TvType.Movie, TvType.TvSeries)
+                val preSelectedTypes = DataStoreHelper.homePreference.toMutableList()
 
                 binding.cancelBtt.setOnClickListener {
                     dialog.dismissSafe()
@@ -402,7 +393,7 @@ class HomeFragment : Fragment() {
                 }
 
                 fun updateList() {
-                    this.setKey(HOME_PREF_HOMEPAGE, preSelectedTypes)
+                    DataStoreHelper.homePreference = preSelectedTypes
 
                     arrayAdapter.clear()
                     currentValidApis = validAPIs.filter { api ->

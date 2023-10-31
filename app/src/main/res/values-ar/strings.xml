@@ -36,7 +36,6 @@
     <string name="type_completed">مكتمل</string>
     <string name="type_dropped">مهمل</string>
     <string name="type_plan_to_watch">أخطط لمشاهدته</string>
-    <string name="type_none">لا شيء</string>
     <string name="type_re_watching">إعادة المشاهدة</string>
     <string name="play_movie_button">مشاهدة الفيلم</string>
     <string name="play_livestream_button">تشغيل بث حي</string>
@@ -74,7 +73,6 @@
     <string name="action_remove_from_bookmarks">ازالة</string>
     <string name="action_add_to_bookmarks">إعداد حالة المشاهدة</string>
     <string name="sort_apply">تطبيق</string>
-    <string name="sort_cancel">إلغاء</string>
     <string name="sort_copy">نسخ</string>
     <string name="sort_close">إغلاق</string>
     <string name="sort_clear">مسح</string>
@@ -99,13 +97,13 @@
     <string name="subs_hold_to_reset_to_default">إضغط بإستمرار لإعادة التعيين للإعدادات الافتراضية</string>
     <string name="subs_import_text" formatted="true">إستيراد خطوط بوضعها هنا %s</string>
     <string name="continue_watching">متابعة المشاهدة</string>
-    <string name="action_remove_watching">حذف</string>
-    <string name="action_open_watching">مزيد من المعلومات</string>
+    <string name="action_remove_watching">ازالة</string>
+    <string name="action_open_watching">المزيد من المعلومات</string>
     <string name="vpn_might_be_needed">قد تكون هناك حاجة إلى VPN لكي يعمل هذا المزود بشكل صحيح</string>
-    <string name="vpn_torrent">هذا المزود هو تورنت ، يوصى باستخدام شبكة ظاهرية خاصة</string>
+    <string name="vpn_torrent">هذا المزود هو تورنت، يوصى باستخدام شبكة ظاهرية خاصة</string>
     <string name="provider_info_meta">لا يتم توفير البيانات الوصفية بواسطة الموقع، وسيفشل تحميل الفيديو إذا لم يكن موجودًا في الموقع.</string>
     <string name="torrent_plot">الوصف</string>
-    <string name="normal_no_plot">لم يتم العثور على وصف</string>
+    <string name="normal_no_plot">لم يتم العثور على حبكة</string>
     <string name="torrent_no_plot">لم يتم العثور على وصف</string>
     <string name="show_log_cat">عرض سجل الاخطاء 🐈</string>
     <string name="picture_in_picture">نافذة منبثقة</string>
@@ -180,6 +178,7 @@
     <string name="no_episodes_found">لم يتم العثور على أي حلقات</string>
     <string name="delete_file">حذف الملف</string>
     <string name="delete">حذف</string>
+    <string name="cancel">إلغاء</string>
     <string name="pause">إيقاف مؤقت</string>
     <string name="resume">إستئناف</string>
     <string name="go_back_30">-٣٠</string>
@@ -198,7 +197,7 @@
     <string name="synopsis">القصة</string>
     <string name="queued">في قائمة الانتظار</string>
     <string name="no_subtitles">الترجمة ليست موجودة</string>
-    <string name="default_subtitles">الإفتراضي</string>
+    <string name="action_default">الإفتراضي</string>
     <string name="free_storage">فارغ</string>
     <string name="used_storage">مستخدم</string>
     <string name="app_storage">التطبيق</string>
@@ -581,8 +580,8 @@
     <string name="unable_to_inflate">تعذر إنشاء واجهة المستخدم بشكل صحيح ، وهذا خطأ كبير ويجب الإبلاغ عنه على الفور %s</string>
     <string name="automatic_plugin_download_mode_title">حدد الوضع لتصفية تنزيل المكونات الإضافية</string>
     <string name="disable">تعطيل</string>
-    <string name="default_account">@string/default_subtitles</string>
     <string name="no_plugins_found_error">لا توجد اضافة في المستودع</string>
     <string name="no_repository_found_error">المستودع لم يتم العثور عليه، تحقق من العنوان اوجرب شبكة افتراضية خاصة(vpn)</string>
     <string name="already_voted">لقد صوتت بالفعل</string>
+    <string name="backup_frequency">معدل النسخ الإحتياطي</string>
 </resources>

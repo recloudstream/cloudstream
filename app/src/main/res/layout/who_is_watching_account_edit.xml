@@ -77,6 +77,12 @@
             android:textColorHint="?attr/grayTextColor"
             tools:ignore="LabelFor" />
 
+        <CheckBox
+            android:id="@+id/lockProfileCheckbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/lock_profile" />
+
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -88,6 +94,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:layout_gravity="center"
+                android:focusable="true"
                 android:contentDescription="@string/preview_background_img_des"
                 android:scaleType="centerCrop"
                 android:src="@drawable/profile_bg_blue" />

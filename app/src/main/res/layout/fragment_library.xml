@@ -41,6 +41,20 @@
                 android:src="@drawable/ic_baseline_extension_24"
                 app:tint="?attr/textColor" />
 
+            <ImageView
+                android:id="@+id/library_sort"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:layout_gravity="end|center_vertical"
+                android:layout_marginStart="10dp"
+                android:background="?selectableItemBackgroundBorderless"
+                android:contentDescription="@string/change_providers_img_des"
+                android:padding="5dp"
+                android:visibility="gone"
+                tools:visibility="visible"
+                android:src="@drawable/ic_baseline_sort_24"
+                app:tint="?attr/textColor" />
+
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
@@ -54,6 +68,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="center_vertical"
+                    android:layout_marginEnd="25dp"
 
                     android:iconifiedByDefault="false"
                     android:imeOptions="actionSearch"
@@ -67,6 +82,7 @@
                     app:queryBackground="@color/transparent"
                     app:queryHint="@string/search_hint"
                     app:searchIcon="@drawable/search_icon"
+                    app:closeIcon="@drawable/ic_baseline_close_24"
                     tools:ignore="RtlSymmetry">
 
                 </androidx.appcompat.widget.SearchView>
@@ -160,8 +176,7 @@
         android:layout_height="40dp"
         android:layout_gravity="bottom"
         android:background="?attr/primaryGrayBackground"
-        android:descendantFocusability="blocksDescendants"
-        android:focusable="false"
+        android:focusable="true"
         android:paddingHorizontal="5dp"
         app:layout_scrollFlags="noScroll"
         app:tabGravity="center"

@@ -11,6 +11,7 @@
     android:foreground="?attr/selectableItemBackgroundBorderless"
     app:cardCornerRadius="@dimen/rounded_image_radius"
     android:layout_margin="5dp"
+    android:focusable="true"
     app:layout_constraintBottom_toBottomOf="parent"
     app:layout_constraintDimensionRatio="1"
     app:layout_constraintEnd_toEndOf="parent"
@@ -32,6 +33,15 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/outline_card"
+        android:visibility="gone" />
+
+    <ImageView
+        android:id="@+id/lock_icon"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_gravity="top|end"
+        android:layout_margin="4dp"
+        android:src="@drawable/video_locked"
         android:visibility="gone" />
 
     <TextView

@@ -44,7 +44,6 @@
     <string name="type_completed">Completado</string>
     <string name="type_dropped">Deixado</string>
     <string name="type_plan_to_watch">Planejando assistir</string>
-    <string name="type_none">Nenhum</string>
     <string name="type_re_watching">Reassistindo</string>
     <string name="play_movie_button">Assistir Filme</string>
     <string name="play_torrent_button">Transmitir Torrent</string>
@@ -81,7 +80,6 @@
     <string name="action_remove_from_bookmarks">Remover</string>
     <string name="action_add_to_bookmarks">Selecionar marcador</string>
     <string name="sort_apply">Aplicar</string>
-    <string name="sort_cancel">Cancelar</string>
     <string name="sort_copy">Copiar</string>
     <string name="sort_close">Fechar</string>
     <string name="sort_clear">Limpar</string>
@@ -127,14 +125,14 @@
     <string name="eigengraumode_settings">Modo Eigengravy</string>
     <string name="eigengraumode_settings_des">Adiciona um botão de velocidade no player</string>
     <string name="swipe_to_seek_settings">Deslize para avançar o vídeo</string>
-    <string name="swipe_to_seek_settings_des">Deslize para a esq. ou dir. para controlar o tempo no player</string>
+    <string name="swipe_to_seek_settings_des">Deslize de lado à lado para controlar a posição no vídeo</string>
     <string name="swipe_to_change_settings">Deslize para mudar as configurações</string>
-    <string name="swipe_to_change_settings_des">Deslize para o lado esq. ou dir. para ajustar brilho ou volume</string>
+    <string name="swipe_to_change_settings_des">Deslize para cima ou para baixo, para ajustar brilho ou volume</string>
     <string name="double_tap_to_seek_settings">Toque duplo para avançar o vídeo</string>
     <string name="double_tap_to_pause_settings">Toque duplo para pausar</string>
     <string name="double_tap_to_seek_amount_settings">Segundos avançados no player</string>
     <string name="double_tap_to_seek_settings_des">Toque duplo no lado direito ou esquerdo para regredir ou avançar vídeo</string>
-    <string name="double_tap_to_pause_settings_des">Toque no meio para pausar</string>
+    <string name="double_tap_to_pause_settings_des">Toque duas vezes no meio para pausar</string>
     <string name="use_system_brightness_settings">Usar brilho do sistema</string>
     <string name="use_system_brightness_settings_des">Usar brilho do sistema no player ao invés da sobreposição escura</string>
     <string name="episode_sync_settings">Atualizar progresso assistido</string>
@@ -143,8 +141,8 @@
     <string name="backup_settings">Fazer Backup</string>
     <string name="restore_success">Arquivo de Backup carregado</string>
     <string name="restore_failed_format" formatted="true">Falha em restaurar dados do arquivo %s</string>
-    <string name="backup_success">Dados salvos com sucesso</string>
-    <string name="backup_failed">Permissões de armazenamento faltando, por favor tente de novo</string>
+    <string name="backup_success">Dados salvos</string>
+    <string name="backup_failed">Permissões de armazenamento faltando. Por favor tente novamente.</string>
     <string name="backup_failed_error_format">Erro no backup de %s</string>
     <string name="search">Procurar</string>
     <string name="category_account">Contas</string>
@@ -160,7 +158,7 @@
     <string name="pref_filter_search_quality">Esconder qualidades de vídeo selecionadas nos resultados da pesquisa</string>
     <string name="automatic_plugin_updates">Atualizações de plugin automáticas</string>
     <string name="updates_settings">Mostrar atualizações do app</string>
-    <string name="updates_settings_des">Automaticamente procurar por novas atualizações ao abrir</string>
+    <string name="updates_settings_des">Automaticamente procurar por novas atualizações ao abrir.</string>
     <string name="uprereleases_settings">Atualizar para pré-lançamento</string>
     <string name="uprereleases_settings_des">Procura atualizações do pré-lançamento ao invés de apenas do lançamento oficial</string>
     <string name="github">Github</string>
@@ -185,6 +183,7 @@
     <string name="no_episodes_found">Nenhum Episódio encontrado</string>
     <string name="delete_file">Apagar Arquivo</string>
     <string name="delete">Deletar</string>
+    <string name="cancel">Cancelar</string>
     <string name="pause">Pausar</string>
     <string name="resume">Retomar</string>
     <string name="go_back_30">-30</string>
@@ -203,7 +202,7 @@
     <string name="synopsis">Sinopse</string>
     <string name="queued">Na fila</string>
     <string name="no_subtitles">Sem Legendas</string>
-    <string name="default_subtitles">Padrão</string>
+    <string name="action_default">Padrão</string>
     <string name="free_storage">Livre</string>
     <string name="used_storage">Usado</string>
     <string name="app_storage">App</string>
@@ -223,7 +222,7 @@
     <string name="tv_series_singular">Série</string>
     <string name="cartoons_singular">Desenho Animado</string>
     <string name="anime_singular">Anime</string>
-    <string name="ova_singular">@string/ova</string>
+    <string name="ova_singular">OVA</string>
     <string name="torrent_singular">Torrent</string>
     <string name="documentaries_singular">Documentário</string>
     <string name="asian_drama_singular">Drama Asiático</string>
@@ -264,7 +263,7 @@
     <string name="video_buffer_length_settings">Comprimento do buffer do vídeo</string>
     <string name="video_buffer_disk_settings">Cache do vídeo em disco</string>
     <string name="video_buffer_clear_settings">Limpar cache de vídeo e imagem</string>
-    <string name="video_ram_description">Causará travamentos aleatórios se definido muito alto. Não mude caso tiver pouca memória RAM, como um Android TV ou um telefone antigo</string>
+    <string name="video_ram_description">Causará travamentos se o valor escolhido for muito alto em dispositivos com pouca memória RAM, como um Android TV.</string>
     <string name="video_disk_description">Causa problemas em sistemas com pouco espaço de armazenamento se definido muito alto, como em dispositivos Android TV.</string>
     <string name="dns_pref">DNS sobre HTTPS</string>
     <string name="dns_pref_summary">Útil para burlar bloqueios de provedores de internet</string>
@@ -326,7 +325,7 @@
     <string name="sync_total_episodes_none">/\?\?</string>
     <string name="sync_total_episodes_some" formatted="true">/%d</string>
     <string name="authenticated_user" formatted="true">%s autenticado</string>
-    <string name="authenticated_user_fail" formatted="true">Falha em autenticar para %s</string>
+    <string name="authenticated_user_fail" formatted="true">Não foi possível fazer login em %s</string>
     <!-- ============ -->
     <string name="none">Nenhum</string>
     <string name="normal">Normal</string>
@@ -340,8 +339,8 @@
     <string name="subtitle_offset">Sincronizar legendas</string>
     <string name="subtitle_offset_hint">1000 ms</string>
     <string name="subtitle_offset_title">Atraso de legenda</string>
-    <string name="subtitle_offset_extra_hint_later_format">Use isto se as legendas forem mostradas %dms adiantadas</string>
-    <string name="subtitle_offset_extra_hint_before_format">Use isto se as legendas forem mostradas %dms atrasadas</string>
+    <string name="subtitle_offset_extra_hint_later_format">Use isto se as legendas forem mostradas %d ms adiantadas</string>
+    <string name="subtitle_offset_extra_hint_before_format">Use isto se as legendas forem mostradas %d ms atrasadas</string>
     <string name="subtitle_offset_extra_hint_none_format">Sem atraso de legenda</string>
     <!--
     Example text (pangram) can optionally be translated; if you do, include all the letters in the alphabet,
@@ -405,7 +404,7 @@
     <string name="repository_url_hint">URL do repositório</string>
     <string name="plugin_loaded">Plugin Carregado</string>
     <string name="plugin_deleted">Plugin Apagado</string>
-    <string name="plugin_load_fail" formatted="true">Falha ao carregar %s</string>
+    <string name="plugin_load_fail" formatted="true">Não consegui carregar %s :-(</string>
     <string name="batch_download_start_format" formatted="true">Iniciada a transferência %d %s…</string>
     <string name="batch_download_finish_format" formatted="true">Transferido %d %s</string>
     <string name="batch_download_nothing_to_download_format" formatted="true">Tudo %s já transferido</string>
@@ -448,7 +447,7 @@
     <string name="empty_library_logged_in_message">Essa lista está vazia. Tente mudar para outra.</string>
     <string name="play_livestream_button">Reproduzir Livestream</string>
     <string name="test_log">Log do Teste</string>
-    <string name="automatic_plugin_download">Baixa plugins automaticamente</string>
+    <string name="automatic_plugin_download">Baixar plugins automaticamente</string>
     <string name="automatic_plugin_download_mode_title">Selecione o modo para filtrar os plugins baixados</string>
     <string name="test_failed">Teste falhou</string>
     <string name="android_tv_interface_on_seek_settings_summary">A Barra de Progresso pode ser usada quando o player estiver visível</string>
@@ -494,9 +493,9 @@
     <string name="safe_mode_file">Arquivo de modo de segurança encontrado!
 \nNão carregar nenhuma extensão na inicialização até que o arquivo seja removido.</string>
     <string name="subscription_new">Inscrito em %s</string>
-    <string name="subscription_episode_released">Episódio %d Lançado</string>
+    <string name="subscription_episode_released">Episódio %d lançado</string>
     <string name="set_default">Selecionar padrão</string>
-    <string name="subscription_deleted">Desinscrito de %s</string>
+    <string name="subscription_deleted">Inscrição cancelada de %s</string>
     <string name="apk_installer_settings_des">Alguns aparelhos não possuem suporte para este pacote de instalação. Tente a opção legada se a atualização não instalar.</string>
     <string name="mobile_data">Dados móveis</string>
     <string name="profile_number">Perfil %d</string>
@@ -562,9 +561,18 @@
     <string name="network_adress_example">Link da stream</string>
     <string name="pref_category_gestures">Gestos</string>
     <string name="plugin_downloaded">Plugin baixado</string>
-    <string name="jsdelivr_enabled">Não foi possível se conectar ao GitHub. Ativando proxy jsDelivr…</string>
+    <string name="jsdelivr_enabled">Não foi possível se conectar ao GitHub. Ativando proxy JsDelivr…</string>
     <string name="pref_category_cache">Cache</string>
     <string name="other_singular">Vídeo</string>
     <string name="pref_category_android_tv">Android TV</string>
     <string name="wifi">Wi-Fi</string>
+    <string name="player_settings_play_in_web">Lista de videos da web</string>
+    <string name="unable_to_inflate">A interface de usuário não foi gerada corretamente. Isto se trata de um bug importante e deve ser reportado imediatamente %s</string>
+    <string name="pref_category_ui_features">Características da interface de usuário</string>
+    <string name="category_provider_test">Provedor de teste</string>
+    <string name="pref_category_player_layout">Layout</string>
+    <string name="pref_category_defaults">Padrões</string>
+    <string name="jsdelivr_proxy">Proxy: raw.githubusercontent.com</string>
+    <string name="jsdelivr_proxy_summary">Contorna o bloqueio do GitHub usando jsDelivr. Pode atrasar as atualizações por alguns dias.</string>
+    <string name="pref_category_bypass">Rotas alternativas</string>
 </resources>

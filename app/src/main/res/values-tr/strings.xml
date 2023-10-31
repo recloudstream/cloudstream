@@ -57,7 +57,6 @@
     <string name="type_completed">Tamamlandı</string>
     <string name="type_dropped">Bırakıldı</string>
     <string name="type_plan_to_watch">Planlandı</string>
-    <string name="type_none">Hiçbiri</string>
     <string name="type_re_watching">Yeniden izleniyor</string>
     <string name="play_movie_button">Filmi oynat</string>
     <string name="play_livestream_button">Canlı yayını oynat</string>
@@ -96,7 +95,6 @@
     <string name="action_remove_from_bookmarks">Kaldır</string>
     <string name="action_add_to_bookmarks">İzleme durumunu ayarla</string>
     <string name="sort_apply">Uygula</string>
-    <string name="sort_cancel">İptal et</string>
     <string name="sort_copy">Kopyala</string>
     <string name="sort_close">Kapat</string>
     <string name="sort_clear">Temizle</string>
@@ -205,7 +203,7 @@
     <string name="no_episodes_found">Bölüm bulunamadı</string>
     <string name="delete_file">Dosyayı sil</string>
     <string name="delete">Sil</string>
-    <string name="cancel" translatable="false">@string/sort_cancel</string>
+    <string name="cancel">İptal et</string>
     <string name="pause">Durdur</string>
     <string name="resume">Sürdür</string>
     <string name="go_back_30">-30</string>
@@ -224,7 +222,7 @@
     <string name="synopsis">Özet</string>
     <string name="queued">Sıraya alındı</string>
     <string name="no_subtitles">Alt yazı yok</string>
-    <string name="default_subtitles">Varsayılan</string>
+    <string name="action_default">Varsayılan</string>
     <string name="free_storage">Boş</string>
     <string name="used_storage">Kullanılan</string>
     <string name="app_storage">Uygulama</string>
@@ -594,4 +592,6 @@
 \nNOT: Toplam 10 veya daha fazlaysa, bu bağlantı yüklendiğinde oynatıcı otomatik olarak yüklemeyi atlayacaktır!</string>
     <string name="qualities">Kaliteler</string>
     <string name="profile_background_des">Profil arkaplanı</string>
+    <string name="unable_to_inflate">UI was unable to be created correctly, this is a MAJOR BUG and should be reported immediately %s</string>
+    <string name="automatic_plugin_download_mode_title">Select mode to filter plugins download</string>
 </resources>

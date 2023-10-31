@@ -47,7 +47,9 @@ data class ResultEpisode(
     /**
      * Conveys if the episode itself is marked as watched
      **/
-    val videoWatchState: VideoWatchState
+    val videoWatchState: VideoWatchState,
+    /** Sum of all previous season episode counts + episode */
+    val totalEpisodeIndex: Int? = null,
 )
 
 fun ResultEpisode.getRealPosition(): Long {
@@ -82,6 +84,7 @@ fun buildResultEpisode(
     isFiller: Boolean? = null,
     tvType: TvType,
     parentId: Int,
+    totalEpisodeIndex: Int? = null,
 ): ResultEpisode {
     val posDur = getViewPos(id)
     val videoWatchState = getVideoWatchState(id) ?: VideoWatchState.None
@@ -103,7 +106,8 @@ fun buildResultEpisode(
         isFiller,
         tvType,
         parentId,
-        videoWatchState
+        videoWatchState,
+        totalEpisodeIndex
     )
 }
 

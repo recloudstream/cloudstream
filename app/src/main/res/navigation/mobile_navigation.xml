@@ -331,57 +331,56 @@
         app:exitAnim="@anim/exit_anim"
         app:popEnterAnim="@anim/enter_anim"
         app:popExitAnim="@anim/exit_anim"
-        tools:layout="@layout/main_settings">
-        <action
-            android:id="@+id/action_navigation_settings_to_navigation_settings_ui"
-            app:destination="@id/navigation_settings_ui"
-            app:enterAnim="@anim/enter_anim"
-            app:exitAnim="@anim/exit_anim"
-            app:popEnterAnim="@anim/enter_anim"
-            app:popExitAnim="@anim/exit_anim" />
-        <action
-            android:id="@+id/action_navigation_settings_to_navigation_settings_providers"
-            app:destination="@id/navigation_settings_providers"
-            app:enterAnim="@anim/enter_anim"
-            app:exitAnim="@anim/exit_anim"
-            app:popEnterAnim="@anim/enter_anim"
-            app:popExitAnim="@anim/exit_anim" />
-        <action
-            android:id="@+id/action_navigation_settings_to_navigation_settings_player"
-            app:destination="@id/navigation_settings_player"
-            app:enterAnim="@anim/enter_anim"
-            app:exitAnim="@anim/exit_anim"
-            app:popEnterAnim="@anim/enter_anim"
-            app:popExitAnim="@anim/exit_anim" />
-        <action
-            android:id="@+id/action_navigation_settings_to_navigation_settings_updates"
-            app:destination="@id/navigation_settings_updates"
-            app:enterAnim="@anim/enter_anim"
-            app:exitAnim="@anim/exit_anim"
-            app:popEnterAnim="@anim/enter_anim"
-            app:popExitAnim="@anim/exit_anim" />
-        <action
-            android:id="@+id/action_navigation_settings_to_navigation_settings_account"
-            app:destination="@id/navigation_settings_account"
-            app:enterAnim="@anim/enter_anim"
-            app:exitAnim="@anim/exit_anim"
-            app:popEnterAnim="@anim/enter_anim"
-            app:popExitAnim="@anim/exit_anim" />
-        <action
-            android:id="@+id/action_navigation_settings_to_navigation_settings_general"
-            app:destination="@id/navigation_settings_general"
-            app:enterAnim="@anim/enter_anim"
-            app:exitAnim="@anim/exit_anim"
-            app:popEnterAnim="@anim/enter_anim"
-            app:popExitAnim="@anim/exit_anim" />
-        <action
-            android:id="@+id/action_navigation_settings_to_navigation_settings_extensions"
-            app:destination="@id/navigation_settings_extensions"
-            app:enterAnim="@anim/enter_anim"
-            app:exitAnim="@anim/exit_anim"
-            app:popEnterAnim="@anim/enter_anim"
-            app:popExitAnim="@anim/exit_anim" />
-    </fragment>
+        tools:layout="@layout/main_settings" />
+    <action
+        android:id="@+id/action_navigation_global_to_navigation_settings_ui"
+        app:destination="@id/navigation_settings_ui"
+        app:enterAnim="@anim/enter_anim"
+        app:exitAnim="@anim/exit_anim"
+        app:popEnterAnim="@anim/enter_anim"
+        app:popExitAnim="@anim/exit_anim" />
+    <action
+        android:id="@+id/action_navigation_global_to_navigation_settings_providers"
+        app:destination="@id/navigation_settings_providers"
+        app:enterAnim="@anim/enter_anim"
+        app:exitAnim="@anim/exit_anim"
+        app:popEnterAnim="@anim/enter_anim"
+        app:popExitAnim="@anim/exit_anim" />
+    <action
+        android:id="@+id/action_navigation_global_to_navigation_settings_player"
+        app:destination="@id/navigation_settings_player"
+        app:enterAnim="@anim/enter_anim"
+        app:exitAnim="@anim/exit_anim"
+        app:popEnterAnim="@anim/enter_anim"
+        app:popExitAnim="@anim/exit_anim" />
+    <action
+        android:id="@+id/action_navigation_global_to_navigation_settings_updates"
+        app:destination="@id/navigation_settings_updates"
+        app:enterAnim="@anim/enter_anim"
+        app:exitAnim="@anim/exit_anim"
+        app:popEnterAnim="@anim/enter_anim"
+        app:popExitAnim="@anim/exit_anim" />
+    <action
+        android:id="@+id/action_navigation_global_to_navigation_settings_account"
+        app:destination="@id/navigation_settings_account"
+        app:enterAnim="@anim/enter_anim"
+        app:exitAnim="@anim/exit_anim"
+        app:popEnterAnim="@anim/enter_anim"
+        app:popExitAnim="@anim/exit_anim" />
+    <action
+        android:id="@+id/action_navigation_global_to_navigation_settings_general"
+        app:destination="@id/navigation_settings_general"
+        app:enterAnim="@anim/enter_anim"
+        app:exitAnim="@anim/exit_anim"
+        app:popEnterAnim="@anim/enter_anim"
+        app:popExitAnim="@anim/exit_anim" />
+    <action
+        android:id="@+id/action_navigation_global_to_navigation_settings_extensions"
+        app:destination="@id/navigation_settings_extensions"
+        app:enterAnim="@anim/enter_anim"
+        app:exitAnim="@anim/exit_anim"
+        app:popEnterAnim="@anim/enter_anim"
+        app:popExitAnim="@anim/exit_anim" />
 
     <fragment
         android:id="@+id/navigation_subtitles"

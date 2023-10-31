@@ -25,7 +25,6 @@
     <string name="type_completed">Завршени</string>
     <string name="type_dropped">Отфрлени</string>
     <string name="type_plan_to_watch">Планирани за гледање</string>
-    <string name="type_none">Ништо одбрано</string>
     <string name="type_re_watching">Повторно гледање</string>
     <string name="play_movie_button">Пушти филм</string>
     <string name="play_torrent_button">Стримај торент</string>
@@ -58,7 +57,6 @@
     <string name="error_bookmarks_text">Обележувачи</string>
     <string name="action_remove_from_bookmarks">Отстрани</string>
     <string name="sort_apply">Активирај</string>
-    <string name="sort_cancel">Откажи</string>
     <string name="player_speed">Брзина на плеер</string>
     <string name="subtitles_settings">Поставки за преводи</string>
     <string name="subs_text_color">Боја на текстот</string>
@@ -133,6 +131,7 @@
     <string name="episode_short">Е</string>
     <string name="delete_file">Избриши датотека</string>
     <string name="delete">Избриши</string>
+    <string name="cancel">Откажи</string>
     <string name="pause">Паузирај</string>
     <string name="resume">Продолжи</string>
     <string name="delete_message">Ова трајно ќе го избрише %s
@@ -147,7 +146,7 @@
     <string name="synopsis">Крат</string>
     <string name="queued">во редица</string>
     <string name="no_subtitles">Нема преводи</string>
-    <string name="default_subtitles">Стандардно</string>
+    <string name="action_default">Стандардно</string>
     <string name="free_storage">Слободен простор</string>
     <string name="used_storage">Искористен простор</string>
     <string name="app_storage">Апликациски простор</string>

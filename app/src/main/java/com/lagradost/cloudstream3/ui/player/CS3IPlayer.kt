@@ -2,6 +2,7 @@ package com.lagradost.cloudstream3.ui.player
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Handler
 import android.os.Looper
@@ -56,6 +57,7 @@ import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.ui.subtitles.SaveCaptionStyle
 import com.lagradost.cloudstream3.utils.AppUtils.isUsingMobileData
+import com.lagradost.cloudstream3.utils.DataStoreHelper.currentAccount
 import com.lagradost.cloudstream3.utils.DrmExtractorLink
 import com.lagradost.cloudstream3.utils.EpisodeSkip
 import com.lagradost.cloudstream3.utils.ExtractorLink
@@ -88,13 +90,17 @@ class CS3IPlayer : IPlayer {
     private var exoPlayer: ExoPlayer? = null
         set(value) {
             // If the old value is not null then the player has not been properly released.
-            debugAssert({ field != null && value != null }, { "Previous player instance should be released!" })
+            debugAssert(
+                { field != null && value != null },
+                { "Previous player instance should be released!" })
             field = value
         }
 
     var cacheSize = 0L
     var simpleCacheSize = 0L
     var videoBufferMs = 0L
+
+    val imageGenerator = IPreviewGenerator.new()
 
     private val seekActionTime = 30000L
 
@@ -182,6 +188,14 @@ class CS3IPlayer : IPlayer {
         subtitleHelper.initSubtitles(subView, subHolder, style)
     }
 
+    override fun getPreview(fraction: Float): Bitmap? {
+        return imageGenerator.getPreviewImage(fraction)
+    }
+
+    override fun hasPreview(): Boolean {
+        return imageGenerator.hasPreview()
+    }
+
     override fun loadPlayer(
         context: Context,
         sameEpisode: Boolean,
@@ -190,7 +204,8 @@ class CS3IPlayer : IPlayer {
         startPosition: Long?,
         subtitles: Set<SubtitleData>,
         subtitle: SubtitleData?,
-        autoPlay: Boolean?
+        autoPlay: Boolean?,
+        preview: Boolean,
     ) {
         Log.i(TAG, "loadPlayer")
         if (sameEpisode) {
@@ -209,11 +224,30 @@ class CS3IPlayer : IPlayer {
 
         // release the current exoplayer and cache
         releasePlayer()
+
         if (link != null) {
+            // only video support atm
+            (imageGenerator as? PreviewGenerator)?.let { gen ->
+                if (preview) {
+                    gen.load(link, sameEpisode)
+                } else {
+                    gen.clear(sameEpisode)
+                }
+            }
             loadOnlinePlayer(context, link)
         } else if (data != null) {
+            (imageGenerator as? PreviewGenerator)?.let { gen ->
+                if (preview) {
+                    gen.load(context, data, sameEpisode)
+                } else {
+                    gen.clear(sameEpisode)
+                }
+            }
             loadOfflinePlayer(context, data)
+        } else {
+            throw IllegalArgumentException("Requires link or uri")
         }
+
     }
 
     override fun setActiveSubtitles(subtitles: Set<SubtitleData>) {
@@ -494,6 +528,7 @@ class CS3IPlayer : IPlayer {
     }
 
     override fun release() {
+        imageGenerator.release()
         releasePlayer()
     }
 
@@ -508,12 +543,15 @@ class CS3IPlayer : IPlayer {
          **/
         var preferredAudioTrackLanguage: String? = null
             get() {
-                return field ?: getKey(PREFERRED_AUDIO_LANGUAGE_KEY, field)?.also {
+                return field ?: getKey(
+                    "$currentAccount/$PREFERRED_AUDIO_LANGUAGE_KEY",
+                    field
+                )?.also {
                     field = it
                 }
             }
             set(value) {
-                setKey(PREFERRED_AUDIO_LANGUAGE_KEY, value)
+                setKey("$currentAccount/$PREFERRED_AUDIO_LANGUAGE_KEY", value)
                 field = value
             }
 
@@ -871,8 +909,20 @@ class CS3IPlayer : IPlayer {
 
                     CSPlayerEvent.SeekForward -> seekTime(seekActionTime, source)
                     CSPlayerEvent.SeekBack -> seekTime(-seekActionTime, source)
-                    CSPlayerEvent.NextEpisode -> event(EpisodeSeekEvent(offset = 1, source = source))
-                    CSPlayerEvent.PrevEpisode -> event(EpisodeSeekEvent(offset = -1, source = source))
+                    CSPlayerEvent.NextEpisode -> event(
+                        EpisodeSeekEvent(
+                            offset = 1,
+                            source = source
+                        )
+                    )
+
+                    CSPlayerEvent.PrevEpisode -> event(
+                        EpisodeSeekEvent(
+                            offset = -1,
+                            source = source
+                        )
+                    )
+
                     CSPlayerEvent.SkipCurrentChapter -> {
                         //val dur = this@CS3IPlayer.getDuration() ?: return@apply
                         getCurrentTimestamp()?.let { lastTimeStamp ->

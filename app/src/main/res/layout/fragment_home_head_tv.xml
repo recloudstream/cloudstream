@@ -55,6 +55,7 @@
                 android:layout_gravity="end"
                 android:background="@drawable/player_button_tv_attr_no_bg"
                 android:contentDescription="@string/search"
+                android:focusable="true"
                 android:nextFocusLeft="@id/home_preview_change_api"
                 android:nextFocusRight="@id/home_preview_switch_account"
                 android:nextFocusDown="@id/home_preview_info_btt"
@@ -70,6 +71,7 @@
                 android:layout_gravity="end"
                 android:background="@drawable/player_button_tv_attr_no_bg"
                 android:contentDescription="@string/account"
+                android:focusable="true"
                 android:nextFocusLeft="@id/home_preview_search_button"
                 android:nextFocusRight="@id/home_preview_switch_account"
                 android:nextFocusDown="@id/home_preview_info_btt"
@@ -230,7 +232,9 @@
             android:layout_marginStart="@dimen/navbar_width"
             android:layout_marginEnd="0dp"
             android:padding="12dp"
-            android:text="@string/continue_watching" />
+            android:text="@string/continue_watching"
+            android:background="?android:attr/selectableItemBackground"
+            app:drawableTint="?attr/white" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/home_watch_child_recyclerview"
@@ -256,7 +260,15 @@
         android:visibility="gone"
         tools:visibility="visible">
 
+        <FrameLayout
+            android:id="@+id/home_bookmark_parent_item_title"
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?android:attr/selectableItemBackground">
+
         <HorizontalScrollView
+            android:id="@+id/horizontal_scroll_chips"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fadingEdge="horizontal"
@@ -341,6 +353,18 @@
                     android:text="@string/type_completed" />
             </com.google.android.material.chip.ChipGroup>
         </HorizontalScrollView>
+
+        <ImageView
+            android:id="@+id/home_bookmark_parent_item_more_info"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="end"
+            android:layout_marginEnd="12dp"
+            android:contentDescription="@string/home_more_info"
+            android:src="@drawable/ic_baseline_arrow_forward_24"
+            android:visibility="gone"
+            app:drawableTint="?attr/white" />
+        </FrameLayout>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/home_bookmarked_child_recyclerview"

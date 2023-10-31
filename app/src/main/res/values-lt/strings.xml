@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="delete_file">Ištrinti failą</string>
+    <string name="action_remove_from_bookmarks">Pašalinti</string>
+    <string name="player_speed_text_format" formatted="true">Greitis (%.2fx)</string>
+    <string name="error_bookmarks_text">Žymos</string>
+    <string name="episode_format" formatted="true">%d %s</string>
+    <string name="download_started">Siuntimas pradėtas</string>
+    <string name="home_next_random_img_des">Sekantis atsitiktinai</string>
+    <string name="preview_background_img_des">Peržiūros fonas</string>
+    <string name="play_movie_button">Paleisti filmą</string>
+    <string name="pref_disable_acra">Išjungti automatini klaidų pateikimą</string>
+    <string name="subs_default_reset_toast">Atstatyti į numatytą reikšmę</string>
+    <string name="sort_clear">Išvalyti</string>
+    <string name="search_poster_img_des">Plakatas</string>
+    <string name="filter_bookmarks">Filtruoti žymas</string>
+    <string name="update_notification_failed">Nepavyko įrašyti naujos programos versijos</string>
+    <string name="updates_settings_des">Automatiškai ieškoti atnaujinimų, kai paleidžiama programa.</string>
+    <string name="movies_singular">Filmas</string>
+    <string name="torrent_singular">Torrentas</string>
+    <string name="show_fillers_settings">Rodyti tarpines serijas animei</string>
+    <string name="subs_font_size">Šrifto dydis</string>
+    <string name="no_links_found_toast">Nuorodos ne rastos</string>
+    <string name="type_plan_to_watch">Planuojama žiūrėti</string>
+    <string name="update_started">Atnaujinimas pradėtas</string>
+    <string name="sort_copy">Kopijuoti</string>
+    <string name="benene_des">Duoti bananai</string>
+    <string name="home_more_info">Daugiau informacijos</string>
+    <string name="title_downloads">Atsiuntimai</string>
+    <string name="subs_auto_select_language">Automatiškai pasirinkti kalbą</string>
+    <string name="error_loading_links_toast">Klaida kraunant nuorodas</string>
+    <string name="go_forward_30">+30</string>
+    <string name="download_done">Atsiuntimas baigtas</string>
+    <string name="continue_watching">Tęsti žiūrėjimą</string>
+    <string name="new_update_format" formatted="true">Rastas atnaujinimas!
+\n%s -&gt; %s</string>
+    <string name="subs_download_languages">Atsisiųsti kalbas</string>
+    <string name="search_provider_text_providers">Ieškoti naudojant tiekėjus</string>
+    <string name="go_back_img_des">Grįžti atgal</string>
+    <string name="downloading">Siunčiama</string>
+    <string name="episode_more_options_des">Daugiau pasirinkčiu</string>
+    <string name="play_episode">Paleisti seriją</string>
+    <string name="player_speed">Grotuvo greitis</string>
+    <string name="benene_count_text">%d Bananai duoti kūrėjams</string>
+    <string name="type_watching">Žiūrima</string>
+    <string name="pause">Pauzė</string>
+    <string name="result_tags">Žanrai</string>
+    <string name="go_back_30">-30</string>
+    <string name="episode_poster_img_des">Serijos plakatas</string>
+    <string name="vpn_might_be_needed">Gali reikėti VPN šitam tiekėjui, kad veiktų teisingai</string>
+    <string name="search_hint_site" formatted="true">Ieškoti %s…</string>
+    <string name="github">Github</string>
+    <string name="benene_count_text_none">Nėra duotu bananų</string>
+    <string name="subs_subtitle_languages">Subtitrų kalba</string>
+    <string name="home_change_provider_img_des">Keisti teikėją</string>
+    <string name="subs_background_color">Fono spalva</string>
+    <string name="search_hint">Ieškoti…</string>
+    <string name="no_season">Nėra Sezonų</string>
+    <string name="play_episode_toast">Leisti seriją</string>
+    <string name="category_account">Paskyros</string>
+    <string name="popup_pause_download">Sustabdyti siuntimą</string>
+    <string name="app_dubbed_text">Įgarsinimas</string>
+    <string name="subtitles_settings">Subtitrų nustatymai</string>
+    <string name="subs_window_color">Lango spalva</string>
+    <string name="documentaries">Dokumentika</string>
+    <string name="play_torrent_button">Transliuoti Torrentą</string>
+    <string name="delete">Ištrinti</string>
+    <string name="cancel">Atšaukti</string>
+    <string name="start">Pradėti</string>
+    <string name="eigengraumode_settings_des">Prideda greičio pasirinkti grotuve</string>
+    <string name="cartoons_singular">Filmukas</string>
+    <string name="download_canceled">Atsiuntimas atšauktas</string>
+    <string name="advanced_search">Išplėstinė paieška</string>
+    <string name="empty_library_logged_in_message">Tuščias sąrašas. Pabandykite pasirinkti kitą sąrašą.</string>
+    <string name="chromecast_subtitles_settings">Chromecast subtitrai</string>
+    <string name="rated_format" formatted="true">Įvertinimas: %.1f</string>
+    <string name="home_expanded_hide">Slėpti</string>
+    <string name="sort_apply">Pritaikyti</string>
+    <string name="browser">Naršyklė</string>
+    <string name="pick_subtitle">Subtitrai</string>
+    <string name="next_episode">Kita serija</string>
+    <string name="download_paused">Siuntimas sustabdytas</string>
+    <string name="updates_settings">Rodyti programos atnaujinimus</string>
+    <string name="download">Atsisiųsti</string>
+    <string name="library">Biblioteka</string>
+    <string name="video_disk_description">Kelią problemas jei nustatytas per didelis ant prietaisų su mažai turymos vietos, tokiu kaip Android TV.</string>
+    <string name="others">Kita</string>
+    <string name="popup_delete_file">Ištrinti failą</string>
+    <string name="downloaded">Atsisiųsta</string>
+    <string name="popup_resume_download">Pratęsti siuntimą</string>
+    <string name="asian_drama">Azijietiškos dramos</string>
+    <string name="episode">Serija</string>
+    <string name="empty_library_no_accounts_message">Jūsų biblioteka tuščia :(
+\nPrisijunkite prie bibliotekos paskyros arba pridėkite laidas prie vietinės bibliotekos.</string>
+    <string name="autoplay_next_settings_des">Pradėti sekančia seriją, kai dabartinė baigsis</string>
+    <string name="subs_text_color">Teksto spalva</string>
+    <string name="type_completed">Užbaigta</string>
+    <string name="use_system_brightness_settings_des">Naudoti sistemos ryškumą programos grotuve vietoj tamsumo</string>
+    <string name="restore_failed_format" formatted="true">Nepavyko atstatyti duomenis iš failo %s</string>
+    <string name="play_trailer_button">Paleisti anonsa</string>
+    <string name="play_livestream_button">Paleisti gyva transliacija</string>
+    <string name="no_episodes_found">Nerasta serijų</string>
+    <string name="vpn_torrent">Šis tiekėjas yra iš Torrentų, VPN rekomenduojama naudoti</string>
+    <string name="test_failed">Nepavyko</string>
+    <string name="result_poster_img_des">Plakatas</string>
+    <string name="popup_play_file">Paleisti failą</string>
+    <string name="type_re_watching">Peržiūrima</string>
+    <string name="result_open_in_browser">Atidaryti Naršyklėje</string>
+    <string name="use_system_brightness_settings">Naudoti sistemos ryškumą</string>
+    <string name="no_data">Nėra duomenų</string>
+    <string name="subs_font">Šriftas</string>
+    <string name="redo_setup_process">Perdaryti nustatymo procesą</string>
+    <string name="episodes_range">%d-%d</string>
+    <string name="benene">Duoti bananą kūrėjams</string>
+    <string name="go_back">Sugryšti</string>
+    <string name="copy_link_toast">Nuoroda nukopijuota į iškarpinę</string>
+    <string name="search">Paieška</string>
+    <string name="settings_info">Informacija</string>
+    <string name="skip_loading">Praleisti įkėlima</string>
+    <string name="home_info">Informacija</string>
+    <string name="next_episode_format" formatted="true">Serija %d bus išleista</string>
+    <string name="sort_save">Išsaugoti</string>
+    <string name="clipboard_too_large">Perdaug teksto. Nepavyko išsaugoti i iškarpynę.</string>
+    <string name="download_failed">Atsiuntimas nepavyko</string>
+    <string name="result_share">Pasidalinti</string>
+    <string name="home_main_poster_img_des">Pagrindinis Plakatas</string>
+    <string name="pick_source">Šaltiniai</string>
+    <string name="title_settings">Nustatymai</string>
+    <string name="title_search">Ieškoti</string>
+    <string name="loading">Kraunama…</string>
+    <string name="action_remove_watching">Pašalinti</string>
+    <string name="action_open_watching">Daugiau informacijos</string>
+    <string name="type_on_hold">Sustabdyta</string>
+    <string name="app_name">CloudStream</string>
+    <string name="home_play">Paleisti</string>
+    <string name="livestreams">Gyvos transliacijos</string>
+    <string name="apk_installer_settings">APK įrašymas</string>
+    <string name="download_storage_text">Vidinė atmintis</string>
+    <string name="autoplay_next_settings">Automatiškai paleisti kitą seriją</string>
+    <string name="player_subtitles_settings_des">Grotuvo subtitrų nustatymai</string>
+    <string name="app_language">Programos kalba</string>
+    <string name="sort_close">Uždaryti</string>
+    <string name="action_add_to_bookmarks">Nustatyti žiūrėjimo statusą</string>
+    <string name="play_with_app_name">Paleisti su CloudStream</string>
+    <string name="subs_subtitle_elevation">Subtitrų iškėlimas</string>
+    <string name="episodes">Serijos</string>
+    <string name="cast_format" formatted="true">Skleisti: %s</string>
+    <string name="season">Sezonas</string>
+    <string name="added_sync_format" formatted="true">Pridėta %s</string>
+    <string name="video_source">Šaltinis</string>
+    <string name="pref_category_app_updates">Programos atnaujinimai</string>
+    <string name="no_update_found">Nerasta atnaujinimų</string>
+    <string name="show_title">Pavadinimas</string>
+    <string name="download_path_pref">Atsiuntimo kelias</string>
+    <string name="normal">Normalu</string>
+    <string name="add_site_pref">Klonuoti puslapį</string>
+    <string name="update">Atnaujinimas</string>
+    <string name="episode_action_download_subtitle">Atsisiųsti subtitrus</string>
+    <string name="dont_show_again">Ne rodyti dar kartą</string>
+    <string name="video_skip_op">Praleisti OP</string>
+    <string name="live_singular">Gyva transliacija</string>
+    <string name="sync_total_episodes_none">/\?\?</string>
+    <string name="unexpected_error">Netikėta grotuvo klaida</string>
+    <string name="sync_score">Įvertinta</string>
+    <string name="skip_update">Praleisti šį atnaujinimą</string>
+    <string name="pref_category_actions">Veiksmai</string>
+    <string name="episode_action_copy_link">Kopijuoti nuorodą</string>
+    <string name="episode_action_play_in_app">Paleisti programoje</string>
+    <string name="upload_sync">Sinchronizuoti</string>
+    <string name="episode_action_play_in_browser">Paleisti naršyklėje</string>
+    <string name="remove_site_pref">Pašalinti puslapį</string>
+    <string name="episode_action_reload_links">Perkrauti nuorodos</string>
+    <string name="disable">Išjungti</string>
+    <string name="sync_score_format" formatted="true">%d / 10</string>
+    <string name="pref_category_links">Nuorodos</string>
+    <string name="resize_zoom">Pritraukti</string>
+    <string name="resize_fit">Sutalpinti į ekraną</string>
+    <string name="video_lock">Užrakinti</string>
+    <string name="storage_error">Atsiuntimo klaida, patikrinkite atminties leidimus</string>
+    <string name="pref_category_android_tv">Android TV</string>
+    <string name="asian_drama_singular">Azijietiška drama</string>
+    <string name="sync_total_episodes_some" formatted="true">/%d</string>
+    <string name="source_error">Šaltinio klaida</string>
+    <string name="view_public_repositories_button_short">Viešas sąrašas</string>
+    <string name="example_ip">127.0.0.1</string>
+    <string name="batch_download_finish_format" formatted="true">Atsiųsta %d %s</string>
+    <string name="skip_type_format" formatted="true">Praleisti %s</string>
+    <string name="blank_repo_message">Pagal numatytuosius nustatymus „CloudStream“ neturi įdiegtų svetainių. Turite įdiegti svetaines iš saugyklų.
+\n
+\nDėl beprotiško DMCA reikalavimų, kurios atliko Sky UK Limited 🤮, negalime susieti saugyklos svetainės programoje.
+\n
+\nPrisijunkite prie mūsų Discord arba ieškokite internete.</string>
+    <string name="mobile_data">Mobilūs duomenys</string>
+    <string name="example_username">šaunusPrisijungimoVardas</string>
+    <string name="extension_authors">Autoriai</string>
+    <string name="player_settings_play_in_browser">Naršyklė</string>
+    <string name="all_languages_preference">Visos kalbos</string>
+    <string name="quality_4k">4K</string>
+    <string name="batch_download_start_format" formatted="true">Pradėta siųsti %d %s…</string>
+    <string name="extension_description">Aprašymas</string>
+    <string name="safe_mode_title">Saugus režimas įjungtas</string>
+    <string name="quality_hdr">HDR</string>
+    <string name="plugins_not_downloaded" formatted="true">Ne atsiųsta: %d</string>
+    <string name="next">Kitas</string>
+    <string name="select_library">Pasirinkti biblioteką</string>
+    <string name="no">Ne</string>
+    <string name="example_lang_name">Kalbos kodas (lt)</string>
+    <string name="setup_done">Baigta</string>
+    <string name="clear_history">Išvalyti istoriją</string>
+    <string name="player_settings_play_in_vlc">VLC</string>
+    <string name="edit">Redaguoti</string>
+    <string name="wifi">Wi-Fi</string>
+    <string name="coming_soon">Greitai būs…</string>
+    <string name="yes">Taip</string>
+    <string name="help">Pagalba</string>
+    <string name="app_not_found_error">Programa nerasta</string>
+    <string name="plugins_disabled" formatted="true">Išjungta: %d</string>
+    <string name="sort_by">Rūšiuoti pagal</string>
+    <string name="skip_type_op">Atidarymas</string>
+    <string name="example_password">Slaptazodis123</string>
+    <string name="open_with">Atidaryti su</string>
+    <string name="extension_language">Kalba</string>
+    <string name="quality_sd">SD</string>
+    <string name="example_email">sveikas@pasauli.com</string>
+    <string name="use">Naudoti</string>
+    <string name="quality_sdr">SDR</string>
+    <string name="example_site_url">Pavyzdys.com</string>
+    <string name="quality_uhd">UHD</string>
+    <string name="extension_size">Dydis</string>
+    <string name="extension_types">Palaikoma</string>
+    <string name="player_settings_play_in_mpv">MPV</string>
+    <string name="example_site_name">ManoŠaunusPuslapis</string>
+    <string name="trailer">Anonsas</string>
+    <string name="history">Istorija</string>
+    <string name="subscription_episode_released">Serija %d išleista!</string>
+    <string name="update_notification_downloading">Atsiunčiamas programos atnaujinimas…</string>
+    <string name="plugins_downloaded" formatted="true">Atsiųsta: %d</string>
+    <string name="error">Klaida</string>
+    <string name="logout">Atsijungti</string>
+    <string name="sort">Rūšiuoti</string>
+    <string name="video_tracks">Vaizdo takelis</string>
+    <string name="quality_blueray">Blu-ray</string>
+    <string name="delayed_update_notice">Programa bus atnaujinta išėjus</string>
+    <string name="primary_color_settings">Pagrindinė kalba</string>
+    <string name="login">Prisijungti</string>
+    <string name="action_mark_as_watched">Pažymėti kaip žiūrima</string>
+    <string name="preferred_media_subtext">Ką norite matyti</string>
+    <string name="update_notification_installing">Įrašomas programos atnaujinimas…</string>
+    <string name="plugin_load_fail" formatted="true">Nepavyko įkelti %s</string>
+    <string name="extension_rating" formatted="true">Įvertinimas: %s</string>
+    <string name="extension_status">Statusas</string>
+    <string name="skip_type_ed">Pabaiga</string>
+    <string name="error_invalid_url">Klaidingas URL</string>
+    <string name="extension_version">Versija</string>
+    <string name="is_adult">18+</string>
+    <string name="single_plugin_disabled" formatted="true">%s (išjungta)</string>
+    <string name="quality_dvd">DVD</string>
+    <string name="player_settings_play_in_app">Integruotas grotuvas</string>
+    <string name="setup_extensions_subtext">Atsisiųskite sąrašą puslapiu jūs norite naudoti</string>
+    <string name="app_dub_sub_episode_text_format" formatted="true">%s Ser %d</string>
+    <string name="confirm_exit_dialog">Ar tikrai norite išeiti\?</string>
+    <string name="action_remove_from_watched">Pašalinti iš žiūrimų</string>
+    <string name="audio_tracks">Garso takelis</string>
+</resources>

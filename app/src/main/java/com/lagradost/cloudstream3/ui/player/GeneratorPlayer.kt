@@ -182,6 +182,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                 (if (sameEpisode) currentSelectedSubtitles else null) ?: getAutoSelectSubtitle(
                     currentSubs, settings = true, downloads = true
                 ),
+                preview = isFullScreenPlayer
             )
         }
 
@@ -1025,7 +1026,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                                 ctx.getString(R.string.episode_sync_enabled_key), true
                             )
                         ) maxEpisodeSet = meta.episode
-                        sync.modifyMaxEpisode(meta.episode)
+                        sync.modifyMaxEpisode(meta.totalEpisodeIndex ?: meta.episode)
                     }
                 }
 

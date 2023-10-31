@@ -12,7 +12,6 @@ import com.lagradost.cloudstream3.APIHolder.filterSearchResultByFilmQuality
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
 import com.lagradost.cloudstream3.AcraApplication.Companion.context
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
-import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.CommonActivity.activity
 import com.lagradost.cloudstream3.HomePageList
 import com.lagradost.cloudstream3.LoadResponse
@@ -41,7 +40,6 @@ import com.lagradost.cloudstream3.utils.AppUtils.loadResult
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.DOWNLOAD_HEADER_CACHE
 import com.lagradost.cloudstream3.utils.DataStoreHelper
-import com.lagradost.cloudstream3.utils.DataStoreHelper.deleteAllBookmarkedData
 import com.lagradost.cloudstream3.utils.DataStoreHelper.deleteAllResumeStateIds
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getAllResumeStateIds
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getAllWatchStateIds
@@ -100,11 +98,6 @@ class HomeViewModel : ViewModel() {
 
     fun deleteBookmarks(list: List<SearchResponse>) {
         list.forEach { DataStoreHelper.deleteBookmarkedData(it.id) }
-        loadStoredData()
-    }
-
-    fun deleteBookmarks() {
-        deleteAllBookmarkedData()
         loadStoredData()
     }
 
@@ -170,10 +163,7 @@ class HomeViewModel : ViewModel() {
         currentWatchTypes.remove(WatchType.NONE)
 
         if (currentWatchTypes.size <= 0) {
-            setKey(
-                HOME_BOOKMARK_VALUE_LIST,
-                intArrayOf()
-            )
+            DataStoreHelper.homeBookmarkedList = intArrayOf()
             _availableWatchStatusTypes.postValue(setOf<WatchType>() to setOf())
             _bookmarks.postValue(Pair(false, ArrayList()))
             return@launchSafe
@@ -181,16 +171,14 @@ class HomeViewModel : ViewModel() {
 
         val watchPrefNotNull = preferredWatchStatus ?: EnumSet.of(currentWatchTypes.first())
         //if (currentWatchTypes.any { watchPrefNotNull.contains(it) }) watchPrefNotNull else listOf(currentWatchTypes.first())
-        setKey(
-            HOME_BOOKMARK_VALUE_LIST,
-            watchPrefNotNull.map { it.internalId }.toIntArray()
-        )
+
+        DataStoreHelper.homeBookmarkedList = watchPrefNotNull.map { it.internalId }.toIntArray()
         _availableWatchStatusTypes.postValue(
-            Pair(
-                watchPrefNotNull,
-                currentWatchTypes,
+
+            watchPrefNotNull to
+                    currentWatchTypes,
+
             )
-        )
 
         val list = withContext(Dispatchers.IO) {
             watchStatusIds.filter { watchPrefNotNull.contains(it.second) }
@@ -463,7 +451,7 @@ class HomeViewModel : ViewModel() {
 
     fun loadStoredData() {
         val list = EnumSet.noneOf(WatchType::class.java)
-        getKey<IntArray>(HOME_BOOKMARK_VALUE_LIST)?.map { WatchType.fromInternalId(it) }?.let {
+        DataStoreHelper.homeBookmarkedList.map { WatchType.fromInternalId(it) }.let {
             list.addAll(it)
         }
         loadStoredData(list)

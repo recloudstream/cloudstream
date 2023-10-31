@@ -86,8 +86,8 @@
 
     <style name="ChipFilled" parent="@style/Widget.Material3.Chip.Filter">
         <item name="chipBackgroundColor">@color/chip_color</item>
-       <!-- <item name="chipStrokeColor">@color/white_transparent_toggle</item>-->
-        <item name="chipStrokeColor">@color/transparent</item>
+        <item name="chipStrokeColor">@color/white_transparent_toggle</item>
+        <!--        <item name="chipStrokeColor">@color/transparent</item>-->
         <item name="chipStrokeWidth">2dp</item>
         <item name="textColor">@color/chip_color_text</item>
         <item name="android:textColor">@color/chip_color_text</item>
@@ -95,6 +95,7 @@
         <item name="fontFamily">@font/google_sans</item>
         <item name="chipIconTint">@color/chip_color_text</item>
         <item name="android:fontFamily">@font/google_sans</item>
+        <item name="android:tag">@string/tv_no_focus_tag</item>
         <item name="chipMinTouchTargetSize">0dp</item>
     </style>
 
@@ -352,6 +353,36 @@
         <item name="android:colorAccent">@color/colorPrimaryBrown</item>
     </style>
 
+    <style name="OverlayPrimaryColorOrange">
+        <item name="colorPrimary">@color/colorPrimaryOrange</item>
+        <item name="android:colorPrimary">@color/colorPrimaryOrange</item>
+        <item name="colorPrimaryDark">#A66B00</item>
+        <item name="colorAccent">#CE8500</item>
+        <item name="colorOnPrimary">@color/whiteText</item>
+        <!--    Needed for leanback fuckery    -->
+        <item name="android:colorAccent">@color/colorPrimaryOrange</item>
+    </style>
+
+    <style name="OverlayPrimaryColorDandelionYellow">
+        <item name="colorPrimary">@color/colorPrimaryDandelionYellow</item>
+        <item name="android:colorPrimary">@color/colorPrimaryDandelionYellow</item>
+        <item name="colorPrimaryDark">#C49600</item>
+        <item name="colorAccent">#F5BB00</item>
+        <item name="colorOnPrimary">@color/whiteText</item>
+        <!--    Needed for leanback fuckery    -->
+        <item name="android:colorAccent">@color/colorPrimaryDandelionYellow</item>
+    </style>
+
+    <style name="OverlayPrimaryColorCoolBlue">
+        <item name="colorPrimary">@color/colorPrimaryCoolBlue</item>
+        <item name="android:colorPrimary">@color/colorPrimaryCoolBlue</item>
+        <item name="colorPrimaryDark">#306981</item>
+        <item name="colorAccent">#51b0d7</item>
+        <item name="colorOnPrimary">@color/whiteText</item>
+        <!--    Needed for leanback fuckery    -->
+        <item name="android:colorAccent">@color/colorPrimaryCoolBlue</item>
+    </style>
+
     <style name="customRatingBar" parent="@style/Widget.AppCompat.RatingBar">
 
         <item name="android:progressDrawable">@drawable/abc_ratingbar_indicator_material</item>
@@ -388,7 +419,7 @@
         <item name="behavior_skipCollapsed">true</item>
         <item name="shapeAppearance">@null</item>
         <item name="shapeAppearanceOverlay">@null</item>
-        <item name="backgroundTint">@color/transparent</item>
+        <item name="backgroundTint">?attr/primaryBlackBackground</item>
         <item name="android:background">@drawable/rounded_dialog</item>
         <item name="behavior_peekHeight">512dp</item>
     </style>
@@ -500,9 +531,8 @@
         <item name="android:paddingStart">20dp</item>
         <item name="android:paddingEnd">20dp</item>
         <item name="android:selectAllOnFocus">true</item>
-       <!-- <item name="android:background">@drawable/outline_drawable_less</item>
-               <item name="android:foreground">?attr/selectableItemBackgroundBorderless</item>
-       -->
+        <item name="android:background">@drawable/outline_drawable_less</item>
+        <item name="android:foreground">?attr/selectableItemBackgroundBorderless</item>
         <item name="android:textColor">?attr/textColor</item>
         <item name="android:textAppearance">?android:attr/textAppearanceListItemSmall</item>
         <item name="drawableEndCompat">@drawable/ic_baseline_keyboard_arrow_right_24</item>

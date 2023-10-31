@@ -71,7 +71,7 @@ object UIHelper {
     val Int.toDp: Int get() = (this / Resources.getSystem().displayMetrics.density).toInt()
     val Float.toDp: Float get() = (this / Resources.getSystem().displayMetrics.density)
 
-    fun Activity.checkWrite(): Boolean {
+    fun Context.checkWrite(): Boolean {
         return (ContextCompat.checkSelfPermission(
             this,
             Manifest.permission.WRITE_EXTERNAL_STORAGE
@@ -178,9 +178,10 @@ object UIHelper {
     fun Activity?.navigate(@IdRes navigation: Int, arguments: Bundle? = null) {
         try {
             if (this is FragmentActivity) {
-                (supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as? NavHostFragment?)?.navController?.navigate(
-                    navigation, arguments
-                )
+                val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as? NavHostFragment?
+                navHostFragment?.navController?.let {
+                    it.navigate(navigation, arguments)
+                }
             }
         } catch (t: Throwable) {
             logError(t)

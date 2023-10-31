@@ -41,7 +41,6 @@
     <string name="type_completed">Завършено</string>
     <string name="type_dropped">Изпуснат</string>
     <string name="type_plan_to_watch">План за гледане</string>
-    <string name="type_none">Нито един</string>
     <string name="type_re_watching">Повторно гледане</string>
     <string name="play_movie_button">Пускане на филм</string>
     <string name="play_livestream_button">Възпроизвеждане на живо</string>
@@ -78,7 +77,6 @@
     <string name="action_remove_from_bookmarks">Премахване</string>
     <string name="action_add_to_bookmarks">Задайте статус на гледане</string>
     <string name="sort_apply">Приложи</string>
-    <string name="sort_cancel">Отказ</string>
     <string name="sort_copy">Копирай</string>
     <string name="sort_close">Затвори</string>
     <string name="sort_clear">Изчисти</string>
@@ -159,7 +157,7 @@
     <string name="pref_filter_search_quality">Скрий избраното видео качество в резултатите от търсенето</string>
     <string name="automatic_plugin_updates">Автоматични актуализации на плъгини</string>
     <string name="updates_settings">Показвай актуализации на приложението</string>
-    <string name="updates_settings_des">Автоматично търси нови актуализации при стартиране</string>
+    <string name="updates_settings_des">Автоматично търси нови актуализации при стартиране на приложението.</string>
     <string name="uprereleases_settings">Актуализация до експериментални версии</string>
     <string name="uprereleases_settings_des">Търсете експериментални актуализации вместо само пълни версии</string>
     <string name="github">Github</string>
@@ -187,6 +185,7 @@
     <string name="no_episodes_found">Няма намерени епизоди</string>
     <string name="delete_file">Изтрий файла</string>
     <string name="delete">Изтрий</string>
+    <string name="cancel">Отказ</string>
     <string name="pause">Пауза</string>
     <string name="resume">Продължи</string>
     <string name="go_back_30">-30</string>
@@ -205,7 +204,7 @@
     <string name="synopsis">Синопсис</string>
     <string name="queued">На опашката</string>
     <string name="no_subtitles">Без субтитри</string>
-    <string name="default_subtitles">По подразбиране</string>
+    <string name="action_default">По подразбиране</string>
     <string name="free_storage">Безплатно</string>
     <string name="used_storage">Използвано</string>
     <string name="app_storage">Приложения</string>
@@ -223,8 +222,8 @@
     <string name="movies_singular">Филм</string>
     <string name="tv_series_singular">Серия</string>
     <string name="cartoons_singular">Анимационен филм</string>
-    <string name="anime_singular">@string/anime</string>
-    <string name="ova_singular">@string/ova</string>
+    <string name="anime_singular">Аниме</string>
+    <string name="ova_singular">ОВА</string>
     <string name="torrent_singular">Торент</string>
     <string name="documentaries_singular">Документален филм</string>
     <string name="asian_drama_singular">Азиатска драма</string>
@@ -260,7 +259,7 @@
     <string name="dont_show_again">Не показвай отново</string>
     <string name="skip_update">Пропуснете тази актуализация</string>
     <string name="update">Актуализация</string>
-    <string name="watch_quality_pref">Предпочитано качество за гледане</string>
+    <string name="watch_quality_pref">Предпочитано качество за гледане (през WiFi)</string>
     <string name="limit_title">Максимален брой знаци за заглавие във видеоплейъра</string>
     <string name="limit_title_rez">Разделителна способност на видео плейъра</string>
     <string name="video_buffer_size_settings">Размер на видео буфера</string>
@@ -505,4 +504,45 @@
     <string name="library">Библиотека</string>
     <string name="watch_quality_pref_data">Предпочитано качество за гледане (Мобилни данни)</string>
     <string name="start">Начало</string>
+    <string name="automatic_plugin_download_mode_title">Избери режим, да филтрира изтегляне на добавки</string>
+    <string name="jsdelivr_proxy">raw.githubusercontent.com Прокси</string>
+    <string name="jsdelivr_enabled">Неуспешно свързване с GitHub. Включване на jsDelivr прокси…</string>
+    <string name="jsdelivr_proxy_summary">Заобикаля блокирането на GitHub с помощта на jsDelivr. Може да доведе до забавяне на актуализациите с няколко дни.</string>
+    <string name="category_provider_test">Тест на доставчик</string>
+    <string name="disable">Деактивиране</string>
+    <string name="pref_category_android_tv">Android TV</string>
+    <string name="pref_category_bypass">Заобикаляне на интернет доставчик</string>
+    <string name="no_plugins_found_error">Няма намерени добавки в този архив.</string>
+    <string name="no_repository_found_error">Архивът не е намерен, проверете уеб-адреса и пробвайте с VPN</string>
+    <string name="sort_rating_desc">Оценка (От висока до ниска)</string>
+    <string name="sort_by">Сортирай по</string>
+    <string name="stop">Стоп</string>
+    <string name="restart">Рестартиране</string>
+    <string name="sort">Сортиране</string>
+    <string name="sort_rating_asc">Оценка (от ниска до висока)</string>
+    <string name="subscription_new">Абонирани сте за %s</string>
+    <string name="subscription_in_progress_notification">Обновяване на абонирани сериали</string>
+    <string name="mobile_data">Мобилни данни</string>
+    <string name="subscription_list_name">Абонаменти</string>
+    <string name="revert">Връщане</string>
+    <string name="select_library">Избиране на библиотека</string>
+    <string name="subscription_deleted">Отписахте се от %s</string>
+    <string name="profiles">Профили</string>
+    <string name="sort_alphabetical_z">По азбучен ред (Z до A)</string>
+    <string name="unable_to_inflate">Създаването на потребителският интерфейс е неуспешно, това е ГОЛЯМ БЪГ и трябва да бъде докладван незабавно %s</string>
+    <string name="edit">Редактиране</string>
+    <string name="wifi">Wi-Fi</string>
+    <string name="help">Помощ</string>
+    <string name="empty_library_logged_in_message">Списъкът е празен. Опитайте да превключите на друг.</string>
+    <string name="profile_number">Профил %d</string>
+    <string name="sort_alphabetical_a">По азбучен ред (A до Z)</string>
+    <string name="open_with">Отваряне с</string>
+    <string name="empty_library_no_accounts_message">Вашата библиотека е празна :(
+\nВпишете се в акаунт с библиотеки или добавете сериали в локалната Ви библиотека.</string>
+    <string name="use">Използване</string>
+    <string name="subscription_episode_released">Епизод %d е публикуван!</string>
+    <string name="safe_mode_file">Намерен е файл за безопасен режим!
+\nНяма да се зареждат никакви разширения при стартиране, докато файлът не бъде премахнат.</string>
+    <string name="already_voted">Вече сте гласували</string>
+    <string name="set_default">Задаване по подразбиране</string>
 </resources>

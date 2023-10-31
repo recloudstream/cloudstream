@@ -12,6 +12,7 @@
     <string name="download_failed">Скачать неудачный</string>
     <string name="resize_fit">Подогнать</string>
     <string name="delete">Удалить</string>
+    <string name="cancel">Отмена</string>
     <string name="all">Все</string>
     <string name="pause">Пауза</string>
     <string name="cast_format" formatted="true">Актёрский состав: %s</string>
@@ -58,7 +59,6 @@
     <string name="type_completed">Завершено</string>
     <string name="type_dropped">Брошенный</string>
     <string name="type_plan_to_watch">План посмотреть</string>
-    <string name="type_none">Нет</string>
     <string name="type_re_watching">Пересмотрю</string>
     <string name="play_movie_button">Смотреть фильм</string>
     <string name="play_trailer_button">Смотреть трейлер</string>
@@ -82,7 +82,6 @@
     <string name="filter_bookmarks">Фильтр закладки</string>
     <string name="error_bookmarks_text">Закладки</string>
     <string name="sort_apply">Применить</string>
-    <string name="sort_cancel">Отмена</string>
     <string name="sort_copy">Копия</string>
     <string name="sort_close">Закрыть</string>
     <string name="sort_clear">Очистить</string>
@@ -90,7 +89,7 @@
     <string name="player_speed">Скорость проигрыватель</string>
     <string name="play_episode_toast">Воспроизвести Эпизод</string>
     <string name="next_episode_time_day_format" formatted="true">%dд %dч %dм</string>
-    <string name="duration_format" formatted="true">%d мин.</string>
+    <string name="duration_format" formatted="true">%d мин</string>
     <string name="app_dubbed_text">Dub</string>
     <string name="app_subbed_text">Sub</string>
     <string name="action_add_to_bookmarks">Установите смотреть состояние</string>
@@ -186,7 +185,7 @@
     <string name="rating">Рейтинг</string>
     <string name="duration">Продолжительность</string>
     <string name="no_subtitles">Нет субтитров</string>
-    <string name="default_subtitles">По умолчанию</string>
+    <string name="action_default">По умолчанию</string>
     <string name="app_storage">Приложение</string>
     <string name="anime">Аниме</string>
     <string name="torrent">Торренты</string>
@@ -200,7 +199,7 @@
     <string name="automatic_plugin_download_summary">Автоматически загружать еще не установленные плагины из добавленных репозиториев.</string>
     <string name="discord">Присоединится в Discord</string>
     <string name="free_storage">Бесплатно</string>
-    <string name="next_episode_time_min_format" formatted="true">%d мин.</string>
+    <string name="next_episode_time_min_format" formatted="true">%dm</string>
     <string name="next_episode_time_hour_format" formatted="true">%d ч. %d мин.</string>
     <string name="movies">Фильмы</string>
     <string name="cartoons_singular">Мультфильм</string>
@@ -529,4 +528,27 @@
     <string name="jsdelivr_proxy_summary">Обход ограничения доступа к GitHub с помощью jsDelivr может задержать обновления на несколько дней.</string>
     <string name="subscription_list_name">Подписные</string>
     <string name="subscription_deleted">Отказались от подписки на %s</string>
+    <string name="mobile_data">Мобильный интернет</string>
+    <string name="profiles">Профили</string>
+    <string name="unable_to_inflate">Пользовательский интерфейс не был доступен для правильного создания, это ГЛАВНАЯ ОШИБКА и должна быть сообщена немедленно %s</string>
+    <string name="edit">Изменить</string>
+    <string name="wifi">Интернет</string>
+    <string name="profile_background_des">Задний фон профиля</string>
+    <string name="help">Помощь</string>
+    <string name="profile_number">Профиль %d</string>
+    <string name="automatic_plugin_download_mode_title">Выберите режим фильтера плагинов для загрузки</string>
+    <string name="qualities">Качество</string>
+    <string name="use">Использовать</string>
+    <string name="disable">Выключить</string>
+    <string name="no_repository_found_error">Хранилище не обнаружено, проверьте URL и попробуйте с ВПН</string>
+    <string name="already_voted">Вы уже проголосовали</string>
+    <string name="no_plugins_found_error">Никаких плагинов не обнаружено</string>
+    <string name="set_default">Поставить обычный</string>
+    <string name="quality_profile_help">Здесь вы можете изменить порядок расположения источников. Если видео имеет более высокий приоритет, оно будет отображаться выше в списке источников. Сумма приоритета источника и приоритета качества составляет приоритет видео.
+\n
+\nИсточник А: 3
+\nКачество Б: 7
+\nБудет иметь общий приоритет видео 10.
+\n
+\nПРИМЕЧАНИЕ. Если сумма равна 10 или более, плеер автоматически пропустит загрузку при загрузке этой ссылки!</string>
 </resources>
