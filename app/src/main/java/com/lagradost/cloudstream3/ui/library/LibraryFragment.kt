@@ -145,7 +145,8 @@ class LibraryFragment : Fragment() {
         }
 
         // Set the color for the search exit icon to the correct theme text color
-        val searchExitIcon = binding?.mainSearch?.findViewById<ImageView>(androidx.appcompat.R.id.search_close_btn)
+        val searchExitIcon =
+            binding?.mainSearch?.findViewById<ImageView>(androidx.appcompat.R.id.search_close_btn)
         val searchExitIconColor = TypedValue()
 
         activity?.theme?.resolveAttribute(android.R.attr.textColor, searchExitIconColor, true)
@@ -481,6 +482,7 @@ class LibraryFragment : Fragment() {
             }
         })
     }
+
     override fun onConfigurationChanged(newConfig: Configuration) {
         (binding?.viewpager?.adapter as? ViewpagerAdapter)?.rebind()
         super.onConfigurationChanged(newConfig)
@@ -499,6 +501,7 @@ class LibraryFragment : Fragment() {
     private fun onNewSyncData(unused: Unit) {
         Log.d(BackupAPI.LOG_KEY, "will reload pages")
         libraryViewModel.reloadPages(true)
+    }
 
     private val sortChangeClickListener = View.OnClickListener { view ->
         val methods = libraryViewModel.sortingMethods.map {
@@ -515,10 +518,10 @@ class LibraryFragment : Fragment() {
                 libraryViewModel.sort(method)
             })
     }
-}
 
-class MenuSearchView(context: Context) : SearchView(context) {
-    override fun onActionViewCollapsed() {
-        super.onActionViewCollapsed()
+    class MenuSearchView(context: Context) : SearchView(context) {
+        override fun onActionViewCollapsed() {
+            super.onActionViewCollapsed()
+        }
     }
 }

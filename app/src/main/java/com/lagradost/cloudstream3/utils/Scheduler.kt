@@ -7,9 +7,6 @@ import android.util.Log
 import com.lagradost.cloudstream3.syncproviders.AccountManager
 import com.lagradost.cloudstream3.syncproviders.BackupAPI
 import com.lagradost.cloudstream3.syncproviders.BackupAPI.Companion.logHistoryChanged
-import com.lagradost.cloudstream3.ui.home.HOME_BOOKMARK_VALUE_LIST
-import com.lagradost.cloudstream3.ui.player.PLAYBACK_SPEED_KEY
-import com.lagradost.cloudstream3.ui.player.RESIZE_MODE_KEY
 import com.lagradost.cloudstream3.utils.BackupUtils.nonTransferableKeys
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 
@@ -27,9 +24,6 @@ class Scheduler<INPUT>(
             *nonTransferableKeys.toTypedArray(),
             VideoDownloadManager.KEY_DOWNLOAD_INFO,
             DOWNLOAD_HEADER_CACHE,
-            PLAYBACK_SPEED_KEY,
-            HOME_BOOKMARK_VALUE_LIST,
-            RESIZE_MODE_KEY,
         )
         private val invalidUploadTriggerKeysRegex = listOf(
             // These trigger automatically every time a show is opened, way too often.
@@ -100,6 +94,7 @@ class Scheduler<INPUT>(
 
             var lastValue = all
             registerOnSharedPreferenceChangeListener { sharedPreferences, storeKey ->
+                if (storeKey == null) return@registerOnSharedPreferenceChangeListener
                 ioSafe {
                     scheduler.work(
                         BackupAPI.PreferencesSchedulerData(

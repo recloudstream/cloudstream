@@ -28,10 +28,6 @@ import com.lagradost.cloudstream3.APIHolder.apis
 import com.lagradost.cloudstream3.APIHolder.filterProviderByPreferredMedia
 import com.lagradost.cloudstream3.APIHolder.getApiProviderLangSettings
 import com.lagradost.cloudstream3.CommonActivity.showToast
-import com.lagradost.cloudstream3.MainActivity.Companion.afterBackupRestoreEvent
-import com.lagradost.cloudstream3.MainActivity.Companion.afterPluginsLoadedEvent
-import com.lagradost.cloudstream3.MainActivity.Companion.bookmarksUpdatedEvent
-import com.lagradost.cloudstream3.MainActivity.Companion.mainPluginsLoadedEvent
 import com.lagradost.cloudstream3.databinding.FragmentHomeBinding
 import com.lagradost.cloudstream3.databinding.HomeEpisodesExpandedBinding
 import com.lagradost.cloudstream3.databinding.HomeSelectMainpageBinding
@@ -42,7 +38,6 @@ import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.mvvm.observeNullable
 import com.lagradost.cloudstream3.ui.APIRepository.Companion.noneApi
 import com.lagradost.cloudstream3.ui.APIRepository.Companion.randomApi
-import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.result.txt
 import com.lagradost.cloudstream3.ui.search.*
 import com.lagradost.cloudstream3.ui.search.SearchHelper.handleSearchClickCallback
@@ -55,7 +50,6 @@ import com.lagradost.cloudstream3.utils.AppUtils.ownShow
 import com.lagradost.cloudstream3.utils.AppUtils.setDefaultFocus
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.DataStoreHelper
-import com.lagradost.cloudstream3.utils.DataStoreHelper.currentHomePage
 import com.lagradost.cloudstream3.utils.Event
 import com.lagradost.cloudstream3.utils.SubtitleHelper.getFlagFromIso
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
@@ -483,61 +477,6 @@ class HomeFragment : Fragment() {
         super.onConfigurationChanged(newConfig)
         //(home_preview_viewpager?.adapter as? HomeScrollAdapter)?.notifyDataSetChanged()
         fixGrid()
-    }
-
-    fun bookmarksUpdated(_data : Boolean) {
-        reloadStored()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        reloadStored()
-        bookmarksUpdatedEvent += ::bookmarksUpdated
-        afterPluginsLoadedEvent += ::afterPluginsLoaded
-        mainPluginsLoadedEvent += ::afterMainPluginsLoaded
-        afterBackupRestoreEvent += ::reloadStored
-    }
-
-    override fun onStop() {
-        bookmarksUpdatedEvent -= ::bookmarksUpdated
-        afterPluginsLoadedEvent -= ::afterPluginsLoaded
-        mainPluginsLoadedEvent -= ::afterMainPluginsLoaded
-        afterBackupRestoreEvent -= ::reloadStored
-        super.onStop()
-    }
-
-    private fun reloadStored(unused: Unit = Unit) {
-        homeViewModel.reloadStored()
-        val list = EnumSet.noneOf(WatchType::class.java)
-        getKey<IntArray>(HOME_BOOKMARK_VALUE_LIST)?.map { WatchType.fromInternalId(it) }?.let {
-            list.addAll(it)
-        }
-        homeViewModel.loadStoredData(list)
-    }
-
-    private fun afterMainPluginsLoaded(unused: Boolean = false) {
-        loadHomePage(false)
-    }
-
-    private fun afterPluginsLoaded(forceReload: Boolean) {
-        loadHomePage(forceReload)
-    }
-
-    private fun loadHomePage(forceReload: Boolean) {
-        val apiName = currentHomePage
-
-        if (homeViewModel.apiName.value != apiName || apiName == null || forceReload) {
-            //println("Caught home: " + homeViewModel.apiName.value + " at " + apiName)
-            homeViewModel.loadAndCancel(apiName, forceReload)
-        }
-    }
-
-    private fun homeHandleSearch(callback: SearchClickCallback) {
-        if (callback.action == SEARCH_ACTION_FOCUSED) {
-            //focusCallback(callback.card)
-        } else {
-            handleSearchClickCallback(callback)
-        }
     }
 
     private var currentApiName: String? = null

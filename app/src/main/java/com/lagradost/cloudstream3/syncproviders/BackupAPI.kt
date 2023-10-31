@@ -162,7 +162,7 @@ abstract class BackupAPI<LOGIN_DATA>(defIndex: Int) : IBackupAPI<LOGIN_DATA>,
                 return
             }
 
-            val keysToUpdate = getKeysToUpdate(context.getBackup(), newData)
+            val keysToUpdate = getKeysToUpdate(getBackup(context), newData)
             if (keysToUpdate.isEmpty()) {
                 Log.d(LOG_KEY, "remote data is up to date, sync not needed")
                 return
@@ -267,7 +267,7 @@ abstract class BackupAPI<LOGIN_DATA>(defIndex: Int) : IBackupAPI<LOGIN_DATA>,
     private fun shouldUploadBackup(): Boolean {
         val ctx = AcraApplication.context ?: return false
 
-        val newBackup = ctx.getBackup().toJson()
+        val newBackup = getBackup(ctx).toJson()
         return compareJson(lastBackupJson ?: "", newBackup).failed
     }
 
@@ -322,7 +322,7 @@ abstract class BackupAPI<LOGIN_DATA>(defIndex: Int) : IBackupAPI<LOGIN_DATA>,
             return
         }
 
-        val backupFile = context.getBackup().toJson()
+        val backupFile = getBackup(context).toJson()
         lastBackupJson = backupFile
         Log.d(LOG_KEY, "${this.name}: uploadFile is now running")
         uploadFile(context, backupFile, loginData)

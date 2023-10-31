@@ -696,8 +696,6 @@
     <string name="qualities">Qualities</string>
     <string name="profile_background_des">Profile background</string>
     <string name="unable_to_inflate">UI was unable to be created correctly, this is a MAJOR BUG and should be reported immediately %s</string>
-    <string name="tv_no_focus_tag" translatable="false">tv_no_focus_tag</string>
-    <string name="already_voted">You have already voted</string>
     <string name="example_login_file_name_full">Sync file name (optional)</string>
     <string name="example_login_redirect_url_full">Oauth redirect url (optional)</string>
     <string name="example_redirect_url" translatable="false">https://recloudstream.github.io/cloudstream-sync/google-drive</string>
@@ -732,8 +730,6 @@
 
 
     <string name="tv_no_focus_tag" translatable="false">tv_no_focus_tag</string>
-
-
     <string name="enter_pin">Enter PIN</string>
     <string name="enter_current_pin">Enter Current PIN</string>
     <string name="lock_profile">Lock Profile</string>

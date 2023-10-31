@@ -151,10 +151,8 @@ object BackupUtils {
     }
 
     @Suppress("UNCHECKED_CAST")
-    private fun getBackup(context: Context?): BackupFile? {
-        if (context == null) return null
-
-        val syncDataPrefs = getSyncPrefs().all.filter { it.key.isTransferable() }
+    fun getBackup(context: Context): BackupFile {
+        val syncDataPrefs = context.getSyncPrefs().all.filter { it.key.isTransferable() }
         val allData = context.getSharedPrefs().all.filter { it.key.isTransferable() }
         val allSettings = context.getDefaultSharedPrefs().all.filter { it.key.isTransferable() }
 
@@ -216,9 +214,15 @@ object BackupUtils {
 
             // we must remove keys that are not present
             if (!restoreKeys.isNullOrEmpty()) {
-                Log.d(BackupAPI.LOG_KEY, "successfulRestore for src=[${restoreSource.name}]: ${restoreData.successfulRestore}")
+                Log.d(
+                    BackupAPI.LOG_KEY,
+                    "successfulRestore for src=[${restoreSource.name}]: ${restoreData.successfulRestore}"
+                )
                 val removedKeys = restoreData.wantToRestore - restoreData.successfulRestore
-                Log.d(BackupAPI.LOG_KEY, "removed keys for src=[${restoreSource.name}]: $removedKeys")
+                Log.d(
+                    BackupAPI.LOG_KEY,
+                    "removed keys for src=[${restoreSource.name}]: $removedKeys"
+                )
 
                 removedKeys.forEach { removeKeyRaw(it, restoreSource) }
             }
