@@ -30,6 +30,7 @@ import com.lagradost.cloudstream3.syncproviders.OAuth2API
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.getPref
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setPaddingBottom
+import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setToolBarScrollFlags
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setUpToolbar
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
@@ -248,6 +249,7 @@ class SettingsAccount : PreferenceFragmentCompat() {
         super.onViewCreated(view, savedInstanceState)
         setUpToolbar(R.string.category_account)
         setPaddingBottom()
+        setToolBarScrollFlags()
     }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
