@@ -13,6 +13,7 @@ import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.AccountManagmentBinding
 import com.lagradost.cloudstream3.databinding.AccountSwitchBinding
 import com.lagradost.cloudstream3.mvvm.logError
+import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.syncproviders.AccountManager
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.aniListApi
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.googleDriveApi
@@ -150,7 +151,7 @@ class SettingsAccount : PreferenceFragmentCompat() {
                 title =
                     getString(R.string.login_format).format(api.name, getString(R.string.account))
                 setOnPreferenceClickListener {
-                    val info = api.loginInfo()
+                    val info = normalSafeApiCall { api.loginInfo() }
                     if (info != null) {
                         showLoginInfo(activity, api, info)
                     } else {

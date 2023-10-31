@@ -10,9 +10,9 @@ import com.lagradost.cloudstream3.AcraApplication.Companion.getKeyClass
 import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKeyClass
 import com.lagradost.cloudstream3.mvvm.logError
+import com.lagradost.cloudstream3.syncproviders.BackupAPI
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
-import com.lagradost.cloudstream3.syncproviders.IBackupAPI
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 
 const val DOWNLOAD_HEADER_CACHE = "download_header_cache"
@@ -149,7 +149,7 @@ object DataStore {
 
                 ioSafe {
                     backupScheduler.work(
-                        IBackupAPI.PreferencesSchedulerData(
+                        BackupAPI.PreferencesSchedulerData(
                             getSyncPrefs(),
                             path,
                             oldValueExists,
@@ -184,7 +184,7 @@ object DataStore {
 
             ioSafe {
                 backupScheduler.work(
-                    IBackupAPI.PreferencesSchedulerData(
+                    BackupAPI.PreferencesSchedulerData(
                         getSyncPrefs(),
                         path,
                         oldValue,

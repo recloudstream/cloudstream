@@ -44,7 +44,7 @@ abstract class AccountManager(private val defIndex: Int) : AuthAPI {
 
         // used for active backup
         val BackupApis
-            get() = listOf<BackupAPI<*>>(
+            get() = listOf<SafeBackupAPI>(
                 googleDriveApi, pcloudApi
             )
 

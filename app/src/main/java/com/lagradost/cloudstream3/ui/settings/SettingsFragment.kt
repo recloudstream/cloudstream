@@ -24,9 +24,9 @@ import com.lagradost.cloudstream3.databinding.MainSettingsBinding
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.BackupApis
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.accountManagers
-import com.lagradost.cloudstream3.syncproviders.AuthAPI
 import com.lagradost.cloudstream3.ui.home.HomeFragment
 import com.lagradost.cloudstream3.ui.result.txt
+import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.setImage
@@ -62,7 +62,8 @@ class SettingsFragment : Fragment() {
 
         fun Fragment?.setUpToolbar(title: String) {
             if (this == null) return
-            val settingsToolbar = view?.findViewById<MaterialToolbar>(R.id.settings_toolbar) ?: return
+            val settingsToolbar =
+                view?.findViewById<MaterialToolbar>(R.id.settings_toolbar) ?: return
 
             settingsToolbar.apply {
                 setTitle(title)
@@ -76,7 +77,8 @@ class SettingsFragment : Fragment() {
 
         fun Fragment?.setUpToolbar(@StringRes title: Int) {
             if (this == null) return
-            val settingsToolbar = view?.findViewById<MaterialToolbar>(R.id.settings_toolbar) ?: return
+            val settingsToolbar =
+                view?.findViewById<MaterialToolbar>(R.id.settings_toolbar) ?: return
 
             settingsToolbar.apply {
                 setTitle(title)
@@ -213,7 +215,7 @@ class SettingsFragment : Fragment() {
 
             // Only show the button if the api does not require login, requires login, but the user is logged in
             forceSyncDataBtt.isVisible = BackupApis.any { api ->
-                api !is AuthAPI || api.loginInfo() != null
+                api.getIsLoggedIn()
             }
 
             forceSyncDataBtt.setOnClickListener {
@@ -223,7 +225,8 @@ class SettingsFragment : Fragment() {
                 showToast(activity, txt(R.string.syncing_data), Toast.LENGTH_SHORT)
             }
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                forceSyncDataBtt.tooltipText = txt(R.string.sync_data).asString(forceSyncDataBtt.context)
+                forceSyncDataBtt.tooltipText =
+                    txt(R.string.sync_data).asString(forceSyncDataBtt.context)
             }
 
             // Default focus on TV

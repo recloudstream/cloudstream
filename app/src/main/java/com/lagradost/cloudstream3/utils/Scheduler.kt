@@ -6,14 +6,12 @@ import android.os.Looper
 import android.util.Log
 import com.lagradost.cloudstream3.syncproviders.AccountManager
 import com.lagradost.cloudstream3.syncproviders.BackupAPI
-import com.lagradost.cloudstream3.syncproviders.IBackupAPI
-import com.lagradost.cloudstream3.syncproviders.IBackupAPI.Companion.logHistoryChanged
+import com.lagradost.cloudstream3.syncproviders.BackupAPI.Companion.logHistoryChanged
 import com.lagradost.cloudstream3.ui.home.HOME_BOOKMARK_VALUE_LIST
 import com.lagradost.cloudstream3.ui.player.PLAYBACK_SPEED_KEY
 import com.lagradost.cloudstream3.ui.player.RESIZE_MODE_KEY
 import com.lagradost.cloudstream3.utils.BackupUtils.nonTransferableKeys
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
-import kotlinx.coroutines.runBlocking
 
 class Scheduler<INPUT>(
     private val throttleTimeMs: Long,
@@ -40,7 +38,7 @@ class Scheduler<INPUT>(
             Regex("""^\d+/$RESULT_DUB/"""),
         )
 
-        fun createBackupScheduler() = Scheduler<IBackupAPI.PreferencesSchedulerData<*>>(
+        fun createBackupScheduler() = Scheduler<BackupAPI.PreferencesSchedulerData<*>>(
             BackupAPI.UPLOAD_THROTTLE.inWholeMilliseconds,
             onWork = { input ->
                 AccountManager.BackupApis.forEach { api ->
@@ -52,13 +50,13 @@ class Scheduler<INPUT>(
             },
             beforeWork = { _ ->
                 AccountManager.BackupApis.filter { api ->
-                    api.isReady()
+                    api.getIsReady()
                 }.forEach {
-                    it.willUploadSoon = true
+                    it.setIsUploadingSoon()
                 }
             },
             canWork = { input ->
-                val hasSomeActiveManagers = AccountManager.BackupApis.any { it.isReady() }
+                val hasSomeActiveManagers = AccountManager.BackupApis.any { it.getIsReady() }
                 if (!hasSomeActiveManagers) {
                     return@Scheduler false
                 }
@@ -97,14 +95,14 @@ class Scheduler<INPUT>(
         fun SharedPreferences.attachBackupListener(
             source: BackupUtils.RestoreSource = BackupUtils.RestoreSource.SETTINGS,
             syncPrefs: SharedPreferences
-        ): IBackupAPI.SharedPreferencesWithListener {
+        ): BackupAPI.SharedPreferencesWithListener {
             val scheduler = createBackupScheduler()
 
             var lastValue = all
             registerOnSharedPreferenceChangeListener { sharedPreferences, storeKey ->
                 ioSafe {
                     scheduler.work(
-                        IBackupAPI.PreferencesSchedulerData(
+                        BackupAPI.PreferencesSchedulerData(
                             syncPrefs,
                             storeKey,
                             lastValue[storeKey],
@@ -116,10 +114,10 @@ class Scheduler<INPUT>(
                 lastValue = sharedPreferences.all
             }
 
-            return IBackupAPI.SharedPreferencesWithListener(this, scheduler)
+            return BackupAPI.SharedPreferencesWithListener(this, scheduler)
         }
 
-        fun SharedPreferences.attachBackupListener(syncPrefs: SharedPreferences): IBackupAPI.SharedPreferencesWithListener {
+        fun SharedPreferences.attachBackupListener(syncPrefs: SharedPreferences): BackupAPI.SharedPreferencesWithListener {
             return attachBackupListener(BackupUtils.RestoreSource.SETTINGS, syncPrefs)
         }
     }
@@ -172,7 +170,7 @@ class Scheduler<INPUT>(
 
         runnable = Runnable {
             Log.d(BackupAPI.LOG_KEY, "[$id] schedule success")
-            runBlocking {
+            ioSafe {
                 onWork(input)
             }
         }.also { run ->

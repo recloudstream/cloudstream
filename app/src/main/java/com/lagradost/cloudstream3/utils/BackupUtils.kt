@@ -54,7 +54,7 @@ object BackupUtils {
         DATA, SETTINGS, SYNC;
 
         val prefix = "$name/"
-        val syncPrefix = "${IBackupAPI.SYNC_HISTORY_PREFIX}$prefix"
+        val syncPrefix = "${BackupAPI.SYNC_HISTORY_PREFIX}$prefix"
     }
 
     /**
@@ -80,7 +80,6 @@ object BackupUtils {
 
         OPEN_SUBTITLES_USER_KEY,
         "nginx_user", // Nginx user key
-        DOWNLOAD_HEADER_CACHE,
         DOWNLOAD_EPISODE_CACHE
     )
 
@@ -329,7 +328,7 @@ object BackupUtils {
             var prefixToRemove = prefixToMatch
 
             if (restoreSource == RestoreSource.SYNC) {
-                prefixToMatch = IBackupAPI.SYNC_HISTORY_PREFIX
+                prefixToMatch = BackupAPI.SYNC_HISTORY_PREFIX
                 prefixToRemove = ""
             }
 

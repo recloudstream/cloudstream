@@ -85,9 +85,9 @@ class GoogleDriveApi(index: Int) :
         accountId, key.value, value
     )
 
-    private  fun clearValue(key: K) = removeKey(accountId, key.value)
+    private fun clearValue(key: K) = removeKey(accountId, key.value)
 
-    private  inline fun <reified T : Any> getValue(key: K) = getKey<T>(
+    private inline fun <reified T : Any> getValue(key: K) = getKey<T>(
         accountId, key.value
     )
 
