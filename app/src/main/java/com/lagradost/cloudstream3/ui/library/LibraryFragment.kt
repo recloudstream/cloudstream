@@ -99,7 +99,6 @@ class LibraryFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-        MainActivity.afterBackupRestoreEvent += ::onNewSyncData
         val layout =
             if (SettingsFragment.isTvSettings()) R.layout.fragment_library_tv else R.layout.fragment_library
         val root = inflater.inflate(layout, container, false)
@@ -121,7 +120,6 @@ class LibraryFragment : Fragment() {
 
     override fun onDestroyView() {
         binding = null
-        MainActivity.afterBackupRestoreEvent -= ::onNewSyncData
         super.onDestroyView()
     }
 
