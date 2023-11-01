@@ -1567,7 +1567,7 @@ data class AnimeLoadResponse(
 
     /**
      * Secondary constructor for backwards compatibility without contentRating.
-     * TODO: Remove this constructor after there is a new stable release and extensions are updated to support contentRating.
+     * Remove this constructor after there is a new stable release and extensions are updated to support contentRating.
      */
     constructor(
         engName: String? = null,
@@ -1654,7 +1654,7 @@ data class LiveStreamLoadResponse(
 ) : LoadResponse {
     /**
      * Secondary constructor for backwards compatibility without contentRating.
-     * TODO: Remove this constructor after there is a new stable release and extensions are updated to support contentRating.
+     * Remove this constructor after there is a new stable release and extensions are updated to support contentRating.
      */
     constructor(
         name: String,
@@ -1706,7 +1706,7 @@ data class MovieLoadResponse(
 ) : LoadResponse {
     /**
      * Secondary constructor for backwards compatibility without contentRating.
-     * TODO: Remove this constructor after there is a new stable release and extensions are updated to support contentRating.
+     * Remove this constructor after there is a new stable release and extensions are updated to support contentRating.
      */
     constructor(
         name: String,
@@ -1869,7 +1869,7 @@ data class TvSeriesLoadResponse(
 
     /**
      * Secondary constructor for backwards compatibility without contentRating.
-     * TODO: Remove this constructor after there is a new stable release and extensions are updated to support contentRating.
+     * Remove this constructor after there is a new stable release and extensions are updated to support contentRating.
      */
     constructor(
         name: String,
