@@ -35,6 +35,15 @@
         android:background="@drawable/outline_card"
         android:visibility="gone" />
 
+    <ImageView
+        android:id="@+id/lock_icon"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_gravity="top|end"
+        android:layout_margin="4dp"
+        android:src="@drawable/video_locked"
+        android:visibility="gone" />
+
     <TextView
         android:id="@+id/profile_text"
         tools:text="@string/mobile_data"

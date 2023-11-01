@@ -31,7 +31,6 @@
     <string name="type_completed">Pabeigts</string>
     <string name="type_dropped">Atmests</string>
     <string name="type_plan_to_watch">Plāno skatīties</string>
-    <string name="type_none">Neviena</string>
     <string name="type_re_watching">Atkārtoti skatities</string>
     <string name="play_movie_button">Palaist Filmu</string>
     <string name="play_trailer_button">Palaist Trelleri</string>
@@ -67,7 +66,6 @@
     <string name="action_remove_from_bookmarks">Noņemt</string>
     <string name="action_add_to_bookmarks">Ieliec skatīšanās statusu</string>
     <string name="sort_apply">Izmantot</string>
-    <string name="sort_cancel">Atcelt</string>
     <string name="sort_copy">Kopēt</string>
     <string name="sort_save">Saglabāt</string>
     <string name="player_speed">Atskaņošanas ātrums</string>
@@ -192,6 +190,7 @@
     <string name="no_episodes_found">Epizodes netika atrastas</string>
     <string name="delete_file">Dzēsti faili</string>
     <string name="delete">Dzēst</string>
+    <string name="cancel">Atcelt</string>
     <string name="pause">Pauzēt</string>
     <string name="start">Sākt</string>
     <string name="test_failed">Neizdevās</string>
@@ -483,7 +482,7 @@
     <string name="status_ongoing">Iet</string>
     <string name="free_storage">Bezmaksas</string>
     <string name="poster_ui_settings">Ieslēgt elementus uz plakātiem</string>
-    <string name="default_subtitles">Parastais</string>
+    <string name="action_default">Parastais</string>
     <string name="no_update_found">Nav atjauninājumi atrasti</string>
     <string name="video_buffer_clear_settings">Izdzēst video un bildes atkritne</string>
     <string name="watch_quality_pref_data">Izvēlētā skatīšanās kvalitāte (Mobilie Dati)</string>

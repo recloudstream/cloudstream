@@ -22,7 +22,6 @@
     <string name="type_completed">Terminé</string>
     <string name="type_dropped">Abandonné</string>
     <string name="type_plan_to_watch">À regarder</string>
-    <string name="type_none">Aucun</string>
     <string name="play_movie_button">Lire</string>
     <string name="play_torrent_button">Streamer le Torrent</string>
     <string name="pick_source">Sources</string>
@@ -60,7 +59,6 @@
     <string name="error_bookmarks_text">Marque-pages</string>
     <string name="action_remove_from_bookmarks">Supprimer</string>
     <string name="sort_apply">Appliquer</string>
-    <string name="sort_cancel">Annuler</string>
     <string name="player_speed">Vitesse de lecture</string>
     <string name="preview_background_img_des">Aperçu de l\'arrière-plan</string>
     <string name="benene">Donner une benene aux devs</string>
@@ -80,6 +78,7 @@
     <string name="episode_short">E</string>
     <string name="delete_file">Supprimer le Fichier</string>
     <string name="delete">Supprimer</string>
+    <string name="cancel">Annuler</string>
     <string name="pause">Pause</string>
     <string name="resume">Reprendre</string>
     <string name="delete_message">Cela va supprimer définitivement %s
@@ -94,7 +93,7 @@
     <string name="synopsis">Synopsis</string>
     <string name="queued">Liste d\'attente</string>
     <string name="no_subtitles">Pas de sous-titres</string>
-    <string name="default_subtitles">Défault</string>
+    <string name="action_default">Défault</string>
     <string name="free_storage">Libre</string>
     <string name="used_storage">Utilisé</string>
     <string name="app_storage">Application</string>
@@ -553,5 +552,4 @@
     <string name="unable_to_inflate">L\'interface utilisateur n\'a pas pu être créée correctement. Il s\'agit d\'un bogue majeur qui doit être signalé immédiatement %s</string>
     <string name="automatic_plugin_download_mode_title">Sélectionnez le mode pour filtrer le téléchargement des plugins</string>
     <string name="profile_background_des">Fond de profil</string>
-    <string name="default_account">@string/default_subtitles</string>
 </resources>

@@ -35,6 +35,7 @@ import com.lagradost.cloudstream3.ui.result.setLinearListLayout
 import com.lagradost.cloudstream3.ui.search.SEARCH_ACTION_LOAD
 import com.lagradost.cloudstream3.ui.search.SEARCH_ACTION_SHOW_METADATA
 import com.lagradost.cloudstream3.ui.search.SearchClickCallback
+import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isEmulatorSettings
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
 import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
@@ -81,6 +82,28 @@ class HomeParentItemAdapterPreview(
                     parent,
                     false
                 ) else FragmentHomeHeadBinding.inflate(inflater, parent, false)
+
+                if (binding is FragmentHomeHeadTvBinding && parent.context.isEmulatorSettings()) {
+                    binding.homeBookmarkParentItemMoreInfo.isVisible = true
+
+                    val marginInDp = 50
+                    val density = binding.horizontalScrollChips.context.resources.displayMetrics.density
+                    val marginInPixels = (marginInDp * density).toInt()
+
+                    val params = binding.horizontalScrollChips.layoutParams as ViewGroup.MarginLayoutParams
+                    params.marginEnd = marginInPixels
+                    binding.horizontalScrollChips.layoutParams = params
+                    binding.homeWatchParentItemTitle.setCompoundDrawablesWithIntrinsicBounds(
+                        null,
+                        null,
+                        ContextCompat.getDrawable(
+                            parent.context,
+                            R.drawable.ic_baseline_arrow_forward_24
+                        ),
+                        null
+                    )
+                }
+
                 HeaderViewHolder(
                     binding,
                     viewModel,
@@ -355,21 +378,25 @@ class HomeParentItemAdapterPreview(
                         showApply = false,
                         {}) {
                         val newValue = WatchType.values()[it]
-                        homePreviewBookmark.setCompoundDrawablesWithIntrinsicBounds(
-                            null,
-                            ContextCompat.getDrawable(
-                                homePreviewBookmark.context,
-                                newValue.iconRes
-                            ),
-                            null,
-                            null
-                        )
-                        homePreviewBookmark.setText(newValue.stringRes)
 
-                        ResultViewModel2.updateWatchStatus(
-                            item,
-                            newValue
-                        )
+                        ResultViewModel2().updateWatchStatus(
+                            newValue,
+                            fab.context,
+                            item
+                        ) { statusChanged: Boolean ->
+                            if (!statusChanged) return@updateWatchStatus
+
+                            homePreviewBookmark.setCompoundDrawablesWithIntrinsicBounds(
+                                null,
+                                ContextCompat.getDrawable(
+                                    homePreviewBookmark.context,
+                                    newValue.iconRes
+                                ),
+                                null,
+                                null
+                            )
+                            homePreviewBookmark.setText(newValue.stringRes)
+                        }
                     }
                 }
             }
@@ -553,12 +580,19 @@ class HomeParentItemAdapterPreview(
             resumeHolder.isVisible = resumeWatching.isNotEmpty()
             resumeAdapter.updateList(resumeWatching)
 
-            if (binding is FragmentHomeHeadBinding) {
-                binding.homeWatchParentItemTitle.setOnClickListener {
+            if (
+                binding is FragmentHomeHeadBinding ||
+                binding is FragmentHomeHeadTvBinding &&
+                binding.root.context.isEmulatorSettings()
+            ) {
+                val title = (binding as? FragmentHomeHeadBinding)?.homeWatchParentItemTitle
+                    ?: (binding as? FragmentHomeHeadTvBinding)?.homeWatchParentItemTitle
+
+                title?.setOnClickListener {
                     viewModel.popup(
                         HomeViewModel.ExpandableHomepageList(
                             HomePageList(
-                                binding.homeWatchParentItemTitle.text.toString(),
+                                title.text.toString(),
                                 resumeWatching,
                                 false
                             ), 1, false
@@ -576,8 +610,15 @@ class HomeParentItemAdapterPreview(
             bookmarkHolder.isVisible = visible
             bookmarkAdapter.updateList(list)
 
-            if (binding is FragmentHomeHeadBinding) {
-                binding.homeBookmarkParentItemTitle.setOnClickListener {
+            if (
+                binding is FragmentHomeHeadBinding ||
+                binding is FragmentHomeHeadTvBinding &&
+                binding.root.context.isEmulatorSettings()
+            ) {
+                val title = (binding as? FragmentHomeHeadBinding)?.homeBookmarkParentItemTitle
+                    ?: (binding as? FragmentHomeHeadTvBinding)?.homeBookmarkParentItemTitle
+
+                title?.setOnClickListener {
                     val items = toggleList.map { it.first }.filter { it.isChecked }
                     if (items.isEmpty()) return@setOnClickListener // we don't want to show an empty dialog
                     val textSum = items

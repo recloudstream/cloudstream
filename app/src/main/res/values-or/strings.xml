@@ -19,7 +19,6 @@
     <string name="player_speed_text_format" formatted="true">ଵେଗ (%.2fଗୁଣ)</string>
     <string name="type_dropped">ତ୍ୟାଗିଛନ୍ତି</string>
     <string name="type_plan_to_watch">ଦେଖିବା ପାଇଁ ଇଚ୍ଛୁକ</string>
-    <string name="type_none">କିଛି ନାହିଁ</string>
     <string name="home_more_info">ଅଧିକ ସୂଚନା</string>
     <string name="cast_format" formatted="true">ପାତ୍ର: %s</string>
     <string name="result_poster_img_des">ପୋଷ୍ଟର୍</string>
@@ -42,7 +41,7 @@
     <string name="episode_short">ଅ</string>
     <string name="episode_poster_img_des">ଅଧ୍ୟାୟର ପୋଷ୍ଟର୍</string>
     <string name="home_main_poster_img_des">ମୁଖ୍ୟ ପୋଷ୍ଟର୍</string>
-    <string name="default_subtitles">ଡିଫଲ୍ଟ</string>
+    <string name="action_default">ଡିଫଲ୍ଟ</string>
     <string name="extension_language">ଭାଷା</string>
     <string name="no">ନାହିଁ</string>
     <string name="extension_description">ଵର୍ଣ୍ଣନା</string>

@@ -74,12 +74,10 @@
     <string name="popup_resume_download">ማውረድ ቀጥል</string>
     <string name="subs_text_color">የጽሑፍ ቀለም</string>
     <string name="type_completed">የተጠናቀቀ</string>
-    <string name="type_none">ምንም</string>
     <string name="play_trailer_button">የፊልም ማስታወቂያ አጫውት</string>
     <string name="play_livestream_button">የቀጥታ ስርጭት አጫውት</string>
     <string name="popup_play_file">ፋይል አጫውት</string>
     <string name="type_re_watching">እንደገና በማየት ላይ</string>
-    <string name="sort_cancel">ሰርዝ</string>
     <string name="go_back">ወደ ኋላ መመለሻ</string>
     <string name="home_info">መረጃ</string>
     <string name="sort_save">ያስቀምጡ</string>

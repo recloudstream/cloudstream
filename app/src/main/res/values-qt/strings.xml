@@ -23,7 +23,6 @@
     <string name="type_completed">ahhahooo</string>
     <string name="type_dropped">ooooo haa</string>
     <string name="type_plan_to_watch">aaahhuoh</string>
-    <string name="type_none">aaaghh</string>
     <string name="play_movie_button">aaaaa aaaghh</string>
     <string name="play_torrent_button">aaaghhaaahhu aaaaa</string>
     <string name="pick_source">oha aauuh</string>
@@ -51,7 +50,6 @@
     <string name="error_bookmarks_text">oouuh ooh</string>
     <string name="action_remove_from_bookmarks">aauuh ooh</string>
     <string name="sort_apply">oouuhaooo-ahah</string>
-    <string name="sort_cancel">oooohh</string>
     <string name="player_speed">oouuh aauuh oha</string>
     <string name="subtitles_settings">ouuhhhooooooh ooo-ahah</string>
     <string name="subs_text_color">ohaouuhhh</string>
@@ -122,6 +120,7 @@
     <string name="episode_short">A</string>
     <string name="delete_file">ooha ohahaaahoooa ahahooo</string>
     <string name="delete">oooooah</string>
+    <string name="cancel">oooohh</string>
     <string name="delete_message">aahhaaaaaahooo aauuh aaahhuaooo-ahahoooohh aoouuhoohoohooo-ahah %s</string>
     <string name="status_ongoing">aaaghhaaaaa</string>
     <string name="status_completed">aauuhaauuh</string>
@@ -133,7 +132,7 @@
     <string name="synopsis">aauugghh ohaaauugghh</string>
     <string name="queued">haaouuhhh</string>
     <string name="no_subtitles">ahaaaaaaaaaahaaaauugghh</string>
-    <string name="default_subtitles">ahooooh</string>
+    <string name="action_default">ahooooh</string>
     <string name="free_storage">ooo-ahahaaaaa</string>
     <string name="used_storage">ahhahhh</string>
     <string name="app_storage">aauugghh</string>

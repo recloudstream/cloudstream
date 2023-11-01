@@ -35,7 +35,6 @@
     <string name="type_completed">시청 완료</string>
     <string name="type_dropped">포기</string>
     <string name="type_plan_to_watch">시청 예정</string>
-    <string name="type_none">없음</string>
     <string name="type_re_watching">다시보기</string>
     <string name="play_movie_button">영화 재생</string>
     <string name="play_trailer_button">예고편 재생</string>
@@ -95,7 +94,6 @@
     <string name="pref_category_backup">백업</string>
     <string name="app_dubbed_text">더빙</string>
     <string name="app_subbed_text">자막</string>
-    <string name="sort_cancel">취소</string>
     <string name="filter_bookmarks">북마크 필터</string>
     <string name="error_bookmarks_text">북마크</string>
     <string name="sort_clear">제거</string>
@@ -177,7 +175,7 @@
     <string name="synopsis">개요</string>
     <string name="queued">대기중</string>
     <string name="no_subtitles">자막 없음</string>
-    <string name="default_subtitles">기본</string>
+    <string name="action_default">기본</string>
     <string name="free_storage">남음</string>
     <string name="used_storage">사용됨</string>
     <string name="app_storage">앱</string>
@@ -352,6 +350,7 @@
     <string name="asian_drama_singular">아시아 드라마</string>
     <string name="season">시즌</string>
     <string name="delete">삭제</string>
+    <string name="cancel">취소</string>
     <string name="season_format">%s %d%s</string>
     <string name="delete_file">파일 삭제</string>
     <string name="pause">일시정지</string>

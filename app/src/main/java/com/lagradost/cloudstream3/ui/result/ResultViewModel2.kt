@@ -7,6 +7,8 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import androidx.annotation.MainThread
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.FileProvider
 import androidx.core.net.toUri
 import androidx.lifecycle.LiveData
@@ -31,6 +33,7 @@ import com.lagradost.cloudstream3.mvvm.*
 import com.lagradost.cloudstream3.syncproviders.AccountManager
 import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.syncproviders.providers.Kitsu
+import com.lagradost.cloudstream3.syncproviders.providers.SimklApi
 import com.lagradost.cloudstream3.ui.APIRepository
 import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_NAVIGATE_TO
@@ -45,22 +48,37 @@ import com.lagradost.cloudstream3.utils.*
 import com.lagradost.cloudstream3.utils.AppUtils.getNameFull
 import com.lagradost.cloudstream3.utils.AppUtils.isAppInstalled
 import com.lagradost.cloudstream3.utils.AppUtils.isConnectedToChromecast
+import com.lagradost.cloudstream3.utils.AppUtils.setDefaultFocus
 import com.lagradost.cloudstream3.utils.CastHelper.startCast
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.ioWork
 import com.lagradost.cloudstream3.utils.Coroutines.ioWorkSafe
 import com.lagradost.cloudstream3.utils.Coroutines.main
+import com.lagradost.cloudstream3.utils.DataStoreHelper.deleteBookmarkedData
+import com.lagradost.cloudstream3.utils.DataStoreHelper.getAllBookmarkedData
+import com.lagradost.cloudstream3.utils.DataStoreHelper.getAllFavorites
+import com.lagradost.cloudstream3.utils.DataStoreHelper.getAllSubscriptions
+import com.lagradost.cloudstream3.utils.DataStoreHelper.getBookmarkedData
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getDub
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getFavoritesData
+import com.lagradost.cloudstream3.utils.DataStoreHelper.getLastWatched
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getResultEpisode
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getResultSeason
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getResultWatchState
+import com.lagradost.cloudstream3.utils.DataStoreHelper.getSubscribedData
+import com.lagradost.cloudstream3.utils.DataStoreHelper.getVideoWatchState
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
 import com.lagradost.cloudstream3.utils.DataStoreHelper.removeFavoritesData
+import com.lagradost.cloudstream3.utils.DataStoreHelper.removeSubscribedData
+import com.lagradost.cloudstream3.utils.DataStoreHelper.setBookmarkedData
 import com.lagradost.cloudstream3.utils.DataStoreHelper.setDub
 import com.lagradost.cloudstream3.utils.DataStoreHelper.setFavoritesData
 import com.lagradost.cloudstream3.utils.DataStoreHelper.setResultEpisode
 import com.lagradost.cloudstream3.utils.DataStoreHelper.setResultSeason
+import com.lagradost.cloudstream3.utils.DataStoreHelper.setResultWatchState
+import com.lagradost.cloudstream3.utils.DataStoreHelper.setSubscribedData
+import com.lagradost.cloudstream3.utils.DataStoreHelper.setVideoWatchState
+import com.lagradost.cloudstream3.utils.DataStoreHelper.updateSubscribedData
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import kotlinx.coroutines.*
 import java.io.File
@@ -113,6 +131,18 @@ data class ResultData(
     val nextAiringEpisode: UiText?,
     val plotHeaderText: UiText,
 )
+
+data class CheckDuplicateData(
+    val name: String,
+    val year: Int?,
+    val syncData: Map<String, String>?
+)
+
+enum class LibraryListType {
+    BOOKMARKS,
+    FAVORITES,
+    SUBSCRIPTIONS
+}
 
 fun txt(status: DubStatus?): UiText? {
     return txt(
@@ -441,33 +471,6 @@ class ResultViewModel2 : ViewModel() {
         private fun List<SeasonData>?.getSeason(season: Int?): SeasonData? {
             if (season == null) return null
             return this?.firstOrNull { it.season == season }
-        }
-
-        fun updateWatchStatus(currentResponse: LoadResponse, status: WatchType) {
-            val currentId = currentResponse.getId()
-
-            val currentWatchType = getResultWatchState(currentId)
-
-            DataStoreHelper.setResultWatchState(currentId, status.internalId)
-            val current = DataStoreHelper.getBookmarkedData(currentId)
-            val currentTime = System.currentTimeMillis()
-            DataStoreHelper.setBookmarkedData(
-                currentId,
-                DataStoreHelper.BookmarkedData(
-                    currentId,
-                    current?.bookmarkedTime ?: currentTime,
-                    currentTime,
-                    currentResponse.name,
-                    currentResponse.url,
-                    currentResponse.apiName,
-                    currentResponse.type,
-                    currentResponse.posterUrl,
-                    currentResponse.year
-                )
-            )
-            if (currentWatchType != status) {
-                MainActivity.bookmarksUpdatedEvent(true)
-            }
         }
 
         private fun filterName(name: String?): String? {
@@ -824,9 +827,77 @@ class ResultViewModel2 : ViewModel() {
     val selectPopup: LiveData<SelectPopup?> = _selectPopup
 
 
-    fun updateWatchStatus(status: WatchType) {
-        updateWatchStatus(currentResponse ?: return, status)
-        _watchStatus.postValue(status)
+    fun updateWatchStatus(
+        status: WatchType,
+        context: Context?,
+        loadResponse: LoadResponse? = null,
+        statusChangedCallback: ((statusChanged: Boolean) -> Unit)? = null
+    ) {
+        val response = loadResponse ?: currentResponse ?: return
+
+        val currentId = response.getId()
+
+        val currentStatus = getResultWatchState(currentId)
+
+        // If the current status is "NONE" and the new status is not "NONE",
+        // fetch the bookmarked data to check for duplicates, otherwise set this
+        // to an empty list, so that we don't show the duplicate warning dialog,
+        // but we still want to update the current bookmark and refresh the data anyway.
+        val bookmarkedData = if (currentStatus == WatchType.NONE && status != WatchType.NONE) {
+            getAllBookmarkedData()
+        } else emptyList()
+
+        checkAndWarnDuplicates(
+            context,
+            LibraryListType.BOOKMARKS,
+            CheckDuplicateData(
+                name = response.name,
+                year = response.year,
+                syncData = response.syncData,
+            ),
+            bookmarkedData
+        ) { shouldContinue: Boolean, duplicateIds: List<Int?> ->
+            if (!shouldContinue) return@checkAndWarnDuplicates
+
+            if (duplicateIds.isNotEmpty()) {
+                duplicateIds.forEach { duplicateId ->
+                    deleteBookmarkedData(duplicateId)
+                }
+            }
+
+            setResultWatchState(currentId, status.internalId)
+
+            // We don't need to store if WatchType.NONE.
+            // The key is removed in setResultWatchState, we don't want to
+            // re-add it again here if it was just removed.
+            if (status != WatchType.NONE) {
+                val current = getBookmarkedData(currentId)
+
+                setBookmarkedData(
+                    currentId,
+                    DataStoreHelper.BookmarkedData(
+                        current?.bookmarkedTime ?: unixTimeMS,
+                        currentId,
+                        unixTimeMS,
+                        response.name,
+                        response.url,
+                        response.apiName,
+                        response.type,
+                        response.posterUrl,
+                        response.year,
+                        response.syncData
+                    )
+                )
+            }
+
+            if (currentStatus != status) {
+                MainActivity.bookmarksUpdatedEvent(true)
+            }
+
+            _watchStatus.postValue(status)
+
+            statusChangedCallback?.invoke(true)
+        }
     }
 
     private fun startChromecast(
@@ -841,73 +912,255 @@ class ResultViewModel2 : ViewModel() {
     }
 
     /**
-     * @return true if the new status is Subscribed, false if not. Null if not possible to subscribe.
-     **/
-    fun toggleSubscriptionStatus(): Boolean? {
-        val isSubscribed = _subscribeStatus.value ?: return null
-        val response = currentResponse ?: return null
-        if (response !is EpisodeResponse) return null
+     * Toggles the subscription status of an item.
+     *
+     * @param context The context to use for operations.
+     * @param statusChangedCallback A callback that is invoked when the subscription status changes.
+     *        It provides the new subscription status (true if subscribed, false if unsubscribed, null if action was canceled).
+     */
+    fun toggleSubscriptionStatus(
+        context: Context?,
+        statusChangedCallback: ((newStatus: Boolean?) -> Unit)? = null
+    ) {
+        val isSubscribed = _subscribeStatus.value ?: return
+        val response = currentResponse ?: return
+        if (response !is EpisodeResponse) return
 
         val currentId = response.getId()
 
         if (isSubscribed) {
-            DataStoreHelper.removeSubscribedData(currentId)
+            removeSubscribedData(currentId)
+            statusChangedCallback?.invoke(false)
+            _subscribeStatus.postValue(false)
         } else {
-            val current = DataStoreHelper.getSubscribedData(currentId)
+            checkAndWarnDuplicates(
+                context,
+                LibraryListType.SUBSCRIPTIONS,
+                CheckDuplicateData(
+                    name = response.name,
+                    year = response.year,
+                    syncData = response.syncData,
+                ),
+                getAllSubscriptions(),
+            ) { shouldContinue: Boolean, duplicateIds: List<Int?> ->
+                if (!shouldContinue) {
+                    statusChangedCallback?.invoke(null)
+                    return@checkAndWarnDuplicates
+                }
 
-            DataStoreHelper.setSubscribedData(
-                currentId,
-                DataStoreHelper.SubscribedData(
+                if (duplicateIds.isNotEmpty()) {
+                    duplicateIds.forEach { duplicateId ->
+                        removeSubscribedData(duplicateId)
+                    }
+                }
+
+                val current = getSubscribedData(currentId)
+
+                setSubscribedData(
                     currentId,
-                    current?.bookmarkedTime ?: unixTimeMS,
-                    unixTimeMS,
-                    response.getLatestEpisodes(),
-                    response.name,
-                    response.url,
-                    response.apiName,
-                    response.type,
-                    response.posterUrl,
-                    response.year
+                    DataStoreHelper.SubscribedData(
+                        current?.subscribedTime ?: unixTimeMS,
+                        response.getLatestEpisodes(),
+                        currentId,
+                        unixTimeMS,
+                        response.name,
+                        response.url,
+                        response.apiName,
+                        response.type,
+                        response.posterUrl,
+                        response.year,
+                        response.syncData
+                    )
                 )
-            )
-        }
 
-        _subscribeStatus.postValue(!isSubscribed)
-        return !isSubscribed
+                _subscribeStatus.postValue(true)
+
+                statusChangedCallback?.invoke(true)
+            }
+        }
     }
 
     /**
-     * @return true if added to favorites, false if not. Null if not possible to favorite.
-     **/
-    fun toggleFavoriteStatus(): Boolean? {
-        val isFavorite = _favoriteStatus.value ?: return null
-        val response = currentResponse ?: return null
+     * Toggles the favorite status of an item.
+     *
+     * @param context The context to use.
+     * @param statusChangedCallback A callback that is invoked when the favorite status changes.
+     *        It provides the new favorite status (true if added to favorites, false if removed, null if action was canceled).
+     */
+    fun toggleFavoriteStatus(
+        context: Context?,
+        statusChangedCallback: ((newStatus: Boolean?) -> Unit)? = null
+    ) {
+        val isFavorite = _favoriteStatus.value ?: return
+        val response = currentResponse ?: return
 
         val currentId = response.getId()
 
         if (isFavorite) {
             removeFavoritesData(currentId)
+            statusChangedCallback?.invoke(false)
+            _favoriteStatus.postValue(false)
         } else {
-            val current = getFavoritesData(currentId)
+            checkAndWarnDuplicates(
+                context,
+                LibraryListType.FAVORITES,
+                CheckDuplicateData(
+                    name = response.name,
+                    year = response.year,
+                    syncData = response.syncData,
+                ),
+                getAllFavorites(),
+            ) { shouldContinue: Boolean, duplicateIds: List<Int?> ->
+                if (!shouldContinue) {
+                    statusChangedCallback?.invoke(null)
+                    return@checkAndWarnDuplicates
+                }
 
-            setFavoritesData(
-                currentId,
-                DataStoreHelper.FavoritesData(
+                if (duplicateIds.isNotEmpty()) {
+                    duplicateIds.forEach { duplicateId ->
+                        removeFavoritesData(duplicateId)
+                    }
+                }
+
+                val current = getFavoritesData(currentId)
+
+                setFavoritesData(
                     currentId,
-                    current?.favoritesTime ?: unixTimeMS,
-                    unixTimeMS,
-                    response.name,
-                    response.url,
-                    response.apiName,
-                    response.type,
-                    response.posterUrl,
-                    response.year
+                    DataStoreHelper.FavoritesData(
+                        current?.favoritesTime ?: unixTimeMS,
+                        currentId,
+                        unixTimeMS,
+                        response.name,
+                        response.url,
+                        response.apiName,
+                        response.type,
+                        response.posterUrl,
+                        response.year,
+                        response.syncData
+                    )
                 )
-            )
+
+                _favoriteStatus.postValue(true)
+
+                statusChangedCallback?.invoke(true)
+            }
+        }
+    }
+
+    @MainThread
+    private fun checkAndWarnDuplicates(
+        context: Context?,
+        listType: LibraryListType,
+        checkDuplicateData: CheckDuplicateData,
+        data: List<DataStoreHelper.LibrarySearchResponse>,
+        checkDuplicatesCallback: (shouldContinue: Boolean, duplicateIds: List<Int?>) -> Unit
+    ) {
+        val whitespaceRegex = "\\s+".toRegex()
+        fun normalizeString(input: String): String {
+            /**
+             * Trim the input string and replace consecutive spaces with a single space.
+             * This covers some edge-cases where the title does not match exactly across providers,
+             * and one provider has the title with an extra whitespace. This is minor enough that
+             * it should still match in this case.
+             */
+            return input.trim().replace(whitespaceRegex, " ")
         }
 
-        _favoriteStatus.postValue(!isFavorite)
-        return !isFavorite
+        val syncData = checkDuplicateData.syncData
+
+        val imdbId = getImdbIdFromSyncData(syncData)
+        val tmdbId = getTMDbIdFromSyncData(syncData)
+        val malId = syncData?.get(AccountManager.malApi.idPrefix)
+        val aniListId = syncData?.get(AccountManager.aniListApi.idPrefix)
+        val normalizedName = normalizeString(checkDuplicateData.name)
+        val year = checkDuplicateData.year
+
+        val duplicateEntries = data.filter { it: DataStoreHelper.LibrarySearchResponse ->
+            val librarySyncData = it.syncData
+
+            val checks = listOf(
+                { imdbId != null && getImdbIdFromSyncData(librarySyncData) == imdbId },
+                { tmdbId != null && getTMDbIdFromSyncData(librarySyncData) == tmdbId },
+                { malId != null && librarySyncData?.get(AccountManager.malApi.idPrefix) == malId },
+                { aniListId != null && librarySyncData?.get(AccountManager.aniListApi.idPrefix) == aniListId },
+                { normalizedName == normalizeString(it.name) && year == it.year }
+            )
+
+            checks.any { it() }
+        }
+
+        if (duplicateEntries.isEmpty() || context == null) {
+            checkDuplicatesCallback.invoke(true, emptyList())
+            return
+        }
+
+        val replaceMessage = if (duplicateEntries.size > 1) {
+            R.string.duplicate_replace_all
+        } else R.string.duplicate_replace
+
+        val message = if (duplicateEntries.size == 1) {
+            val list = when (listType) {
+                LibraryListType.BOOKMARKS -> getResultWatchState(duplicateEntries[0].id ?: 0).stringRes
+                LibraryListType.FAVORITES -> R.string.favorites_list_name
+                LibraryListType.SUBSCRIPTIONS -> R.string.subscription_list_name
+            }
+
+            context.getString(R.string.duplicate_message_single,
+                "${normalizeString(duplicateEntries[0].name)} (${context.getString(list)}) — ${duplicateEntries[0].apiName}"
+            )
+        } else {
+            val bulletPoints = duplicateEntries.joinToString("\n") {
+                val list = when (listType) {
+                    LibraryListType.BOOKMARKS -> getResultWatchState(it.id ?: 0).stringRes
+                    LibraryListType.FAVORITES -> R.string.favorites_list_name
+                    LibraryListType.SUBSCRIPTIONS -> R.string.subscription_list_name
+                }
+
+                "• ${it.apiName}: ${normalizeString(it.name)} (${context.getString(list)})"
+            }
+
+            context.getString(R.string.duplicate_message_multiple, bulletPoints)
+        }
+
+        val builder: AlertDialog.Builder = AlertDialog.Builder(context)
+
+        val dialogClickListener =
+            DialogInterface.OnClickListener { _, which ->
+                when (which) {
+                    DialogInterface.BUTTON_POSITIVE -> {
+                        checkDuplicatesCallback.invoke(true, emptyList())
+                    }
+                    DialogInterface.BUTTON_NEGATIVE -> {
+                        checkDuplicatesCallback.invoke(false, emptyList())
+                    }
+                    DialogInterface.BUTTON_NEUTRAL -> {
+                        checkDuplicatesCallback.invoke(true, duplicateEntries.map { it.id })
+                    }
+                }
+            }
+
+        builder.setTitle(R.string.duplicate_title)
+            .setMessage(message)
+            .setPositiveButton(R.string.duplicate_add, dialogClickListener)
+            .setNegativeButton(R.string.duplicate_cancel, dialogClickListener)
+            .setNeutralButton(replaceMessage, dialogClickListener)
+            .show().setDefaultFocus()
+    }
+
+    private fun getImdbIdFromSyncData(syncData: Map<String, String>?): String? {
+        return normalSafeApiCall {
+            SimklApi.readIdFromString(
+                syncData?.get(AccountManager.simklApi.idPrefix)
+            )[SimklApi.Companion.SyncServices.Imdb]
+        }
+    }
+
+    private fun getTMDbIdFromSyncData(syncData: Map<String, String>?): String? {
+        return normalSafeApiCall {
+            SimklApi.readIdFromString(
+                syncData?.get(AccountManager.simklApi.idPrefix)
+            )[SimklApi.Companion.SyncServices.Tmdb]
+        }
     }
 
     private fun startChromecast(
@@ -1261,7 +1514,7 @@ class ResultViewModel2 : ViewModel() {
                 // Do not add mark as watched on movies
                 if (!listOf(TvType.Movie, TvType.AnimeMovie).contains(click.data.tvType)) {
                     val isWatched =
-                        DataStoreHelper.getVideoWatchState(click.data.id) == VideoWatchState.Watched
+                        getVideoWatchState(click.data.id) == VideoWatchState.Watched
 
                     val watchedText = if (isWatched) R.string.action_remove_from_watched
                     else R.string.action_mark_as_watched
@@ -1510,12 +1763,12 @@ class ResultViewModel2 : ViewModel() {
 
             ACTION_MARK_AS_WATCHED -> {
                 val isWatched =
-                    DataStoreHelper.getVideoWatchState(click.data.id) == VideoWatchState.Watched
+                    getVideoWatchState(click.data.id) == VideoWatchState.Watched
 
                 if (isWatched) {
-                    DataStoreHelper.setVideoWatchState(click.data.id, VideoWatchState.None)
+                    setVideoWatchState(click.data.id, VideoWatchState.None)
                 } else {
-                    DataStoreHelper.setVideoWatchState(click.data.id, VideoWatchState.Watched)
+                    setVideoWatchState(click.data.id, VideoWatchState.Watched)
                 }
 
                 // Kinda dirty to reload all episodes :(
@@ -1724,7 +1977,7 @@ class ResultViewModel2 : ViewModel() {
                 list.subList(start, end).map {
                     val posDur = getViewPos(it.id)
                     val watchState =
-                        DataStoreHelper.getVideoWatchState(it.id) ?: VideoWatchState.None
+                        getVideoWatchState(it.id) ?: VideoWatchState.None
                     it.copy(
                         position = posDur?.position ?: 0,
                         duration = posDur?.duration ?: 0,
@@ -1785,8 +2038,8 @@ class ResultViewModel2 : ViewModel() {
     private fun postSubscription(loadResponse: LoadResponse) {
         if (loadResponse.isEpisodeBased()) {
             val id = loadResponse.getId()
-            val data = DataStoreHelper.getSubscribedData(id)
-            DataStoreHelper.updateSubscribedData(id, data, loadResponse as? EpisodeResponse)
+            val data = getSubscribedData(id)
+            updateSubscribedData(id, data, loadResponse as? EpisodeResponse)
             val isSubscribed = data != null
             _subscribeStatus.postValue(isSubscribed)
         }
@@ -1964,6 +2217,10 @@ class ResultViewModel2 : ViewModel() {
                         val id =
                             mainId + episode + idIndex * 1_000_000 + (i.season?.times(10_000)
                                 ?: 0)
+
+                        val totalIndex =
+                            i.season?.let { season -> loadResponse.getTotalEpisodeIndex(episode, season) }
+
                         if (!existingEpisodes.contains(id)) {
                             existingEpisodes.add(id)
                             val seasonData = loadResponse.seasonNames.getSeason(i.season)
@@ -1983,7 +2240,8 @@ class ResultViewModel2 : ViewModel() {
                                     i.description,
                                     fillers.getOrDefault(episode, false),
                                     loadResponse.type,
-                                    mainId
+                                    mainId,
+                                    totalIndex
                                 )
 
                             val season = eps.seasonIndex ?: 0
@@ -2012,6 +2270,9 @@ class ResultViewModel2 : ViewModel() {
                         val seasonData =
                             loadResponse.seasonNames.getSeason(episode.season)
 
+                        val totalIndex =
+                            episode.season?.let { season -> loadResponse.getTotalEpisodeIndex(episodeIndex, season) }
+
                         val ep =
                             buildResultEpisode(
                                 loadResponse.name,
@@ -2028,7 +2289,8 @@ class ResultViewModel2 : ViewModel() {
                                 episode.description,
                                 null,
                                 loadResponse.type,
-                                mainId
+                                mainId,
+                                totalIndex
                             )
 
                         val season = ep.seasonIndex ?: 0
@@ -2059,7 +2321,8 @@ class ResultViewModel2 : ViewModel() {
                         null,
                         null,
                         loadResponse.type,
-                        mainId
+                        mainId,
+                        null
                     )
                 )
             }
@@ -2081,7 +2344,8 @@ class ResultViewModel2 : ViewModel() {
                         null,
                         null,
                         loadResponse.type,
-                        mainId
+                        mainId,
+                        null
                     )
                 )
             }
@@ -2103,7 +2367,8 @@ class ResultViewModel2 : ViewModel() {
                         null,
                         null,
                         loadResponse.type,
-                        mainId
+                        mainId,
+                        null
                     )
                 )
             }
@@ -2164,13 +2429,13 @@ class ResultViewModel2 : ViewModel() {
         postResume()
     }
 
-    fun postResume() {
+    private fun postResume() {
         _resumeWatching.postValue(resume())
     }
 
     private fun resume(): ResumeWatchingStatus? {
         val correctId = currentId ?: return null
-        val resume = DataStoreHelper.getLastWatched(correctId)
+        val resume = getLastWatched(correctId)
         val resumeParentId = resume?.parentId
         if (resumeParentId != correctId) return null // is null or smth went wrong with getLastWatched
         val resumeId = resume.episodeId ?: return null// invalid episode id

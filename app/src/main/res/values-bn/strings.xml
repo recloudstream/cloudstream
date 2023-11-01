@@ -43,7 +43,6 @@
     <string name="type_completed">শেষ</string>
     <string name="type_dropped">বাদ</string>
     <string name="type_plan_to_watch">দেখার ইচ্ছায়</string>
-    <string name="type_none">কোন কিছুই না</string>
     <string name="type_re_watching">পুনরায় দেখা হচ্ছে</string>
     <string name="play_torrent_button">টরেন্ট স্ট্রিম করুন</string>
     <string name="pick_source">উৎসসমূহ</string>
@@ -72,7 +71,6 @@
     <string name="action_remove_from_bookmarks">বাদ দিন</string>
     <string name="action_add_to_bookmarks">বুকমার্ক করুন</string>
     <string name="sort_apply">প্রয়োগ করুন</string>
-    <string name="sort_cancel">বাদ দিন</string>
     <string name="sort_copy">কপি করুন</string>
     <string name="sort_close">বন্ধ করুন</string>
     <string name="sort_clear">মুছুন</string>

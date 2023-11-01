@@ -33,7 +33,6 @@
     <string name="search_hint">Hľadať…</string>
     <string name="title_downloads">Sťahovanie</string>
     <string name="no_data">Žiadne dáta</string>
-    <string name="sort_cancel">Zrušiť</string>
     <string name="sort_copy">Kopírovať</string>
     <string name="sort_close">Zavrieť</string>
     <string name="sort_save">Uložiť</string>
@@ -60,7 +59,6 @@
     <string name="download_canceled">Sťahovanie zrušené</string>
     <string name="app_dubbed_text">Dab</string>
     <string name="popup_delete_file">Zmazať súbor</string>
-    <string name="type_none">Žiadny</string>
     <string name="app_subbed_text">Tit</string>
     <string name="type_re_watching">Opätovné sledovanie</string>
     <string name="popup_play_file">Prehrať súbor</string>
@@ -265,7 +263,7 @@
     <string name="preferred_media_settings">Preferované médiá</string>
     <string name="nginx_url_pref">URL servera NGINX</string>
     <string name="episode_format" formatted="true">%d %s</string>
-    <string name="default_subtitles">Predvolené</string>
+    <string name="action_default">Predvolené</string>
     <string name="add_sync">Pridať sledovanie</string>
     <string name="no_season">Žiadna sezóna</string>
     <string name="episode">Epizóda</string>
@@ -293,6 +291,7 @@
     <string name="year">Rok</string>
     <string name="resize_fit">Prispôsobiť obrazovke</string>
     <string name="delete">Zmazať</string>
+    <string name="cancel">Zrušiť</string>
     <string name="used_storage">Využité</string>
     <string name="show_hd">Štítok kvality</string>
     <string name="android_tv_interface_off_seek_settings">Prehrávač skrytý - dĺžka pretočenia</string>
