@@ -69,7 +69,7 @@ class PluginsFragment : Fragment() {
         val isLocal = arguments?.getBoolean(PLUGINS_BUNDLE_LOCAL) == true
 
         if (url == null || name == null) {
-            activity?.onBackPressed()
+            activity?.onBackPressedDispatcher?.onBackPressed()
             return
         }
 
@@ -117,7 +117,7 @@ class PluginsFragment : Fragment() {
                 if (searchView?.isIconified == false) {
                     searchView.isIconified = true
                 } else {
-                    activity?.onBackPressed()
+                    activity?.onBackPressedDispatcher?.onBackPressed()
                 }
             }
             searchView?.setOnQueryTextFocusChangeListener { _, hasFocus ->

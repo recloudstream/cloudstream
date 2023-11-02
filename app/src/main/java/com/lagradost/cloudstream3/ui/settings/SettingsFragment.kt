@@ -63,7 +63,7 @@ class SettingsFragment : Fragment() {
                 setTitle(title)
                 setNavigationIcon(R.drawable.ic_baseline_arrow_back_24)
                 setNavigationOnClickListener {
-                    activity?.onBackPressed()
+                    activity?.onBackPressedDispatcher?.onBackPressed()
                 }
             }
             fixPaddingStatusbar(settingsToolbar)
@@ -78,7 +78,7 @@ class SettingsFragment : Fragment() {
                 setNavigationIcon(R.drawable.ic_baseline_arrow_back_24)
                 children.firstOrNull { it is ImageView }?.tag = getString(R.string.tv_no_focus_tag)
                 setNavigationOnClickListener {
-                    activity?.onBackPressed()
+                    activity?.onBackPressedDispatcher?.onBackPressed()
                 }
             }
             fixPaddingStatusbar(settingsToolbar)

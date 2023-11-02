@@ -418,7 +418,7 @@ object UIHelper {
     }
 
     fun FragmentActivity.popCurrentPage() {
-        this.onBackPressed()
+        this.onBackPressedDispatcher.onBackPressed()
         /*val currentFragment = supportFragmentManager.fragments.lastOrNull {
             it.isVisible
         } ?: return
@@ -438,7 +438,7 @@ object UIHelper {
         val currentFragment = supportFragmentManager.fragments.lastOrNull {
             it.isVisible
         }
-            ?: //this.onBackPressed()
+            ?: //this.onBackPressedDispatcher.onBackPressed()
             return
 
 /*
