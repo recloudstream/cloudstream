@@ -22,6 +22,7 @@ import com.lagradost.cloudstream3.network.initClient
 import com.lagradost.cloudstream3.services.BackupWorkManager
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.getPref
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setPaddingBottom
+import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setToolBarScrollFlags
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setUpToolbar
 import com.lagradost.cloudstream3.utils.BackupUtils
 import com.lagradost.cloudstream3.utils.BackupUtils.restorePrompt
@@ -42,6 +43,7 @@ class SettingsUpdates : PreferenceFragmentCompat() {
         super.onViewCreated(view, savedInstanceState)
         setUpToolbar(R.string.category_updates)
         setPaddingBottom()
+        setToolBarScrollFlags()
     }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
