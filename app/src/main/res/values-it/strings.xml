@@ -20,7 +20,7 @@
     <string name="player_speed_text_format" formatted="true">Velocità (%.2fx)</string>
     <string name="rated_format" formatted="true">Valutato: %.1f</string>
     <string name="new_update_format" formatted="true">Nuovo aggiornamento trovato!
-\n%s -&gt; %s</string>
+\n%1$s -&gt; %2$s</string>
     <string name="filler" formatted="true">Filler</string>
     <string name="duration_format" formatted="true">%d min</string>
     <!-- <string name="app_name">CloudStream</string> -->
@@ -409,8 +409,8 @@
     <string name="plugin_deleted">Plugin eliminato</string>
     <string name="plugin_load_fail" formatted="true">Impossibile caricare %s</string>
     <string name="is_adult">18+</string>
-    <string name="batch_download_start_format" formatted="true">Download iniziato %d %s…</string>
-    <string name="batch_download_finish_format" formatted="true">Scaricato %d %s</string>
+    <string name="batch_download_start_format" formatted="true">Download iniziato %1$d %2$s…</string>
+    <string name="batch_download_finish_format" formatted="true">Scaricato %1$d %2$s</string>
     <string name="batch_download_nothing_to_download_format" formatted="true">Tutti %s già scaricati</string>
     <string name="batch_download">Download in blocco</string>
     <string name="plugin_singular">plugin</string>
@@ -573,4 +573,30 @@
     <string name="automatic_plugin_download_mode_title">Seleziona la modalità per filtrare il download dei plugin</string>
     <string name="disable">Disabilita</string>
     <string name="already_voted">Hai già votato</string>
+    <string name="favorite_removed">%s rimosso dai preferiti</string>
+    <string name="favorites_list_name">Preferiti</string>
+    <string name="favorite_added">%s aggiunto ai preferiti</string>
+    <string name="duplicate_message_multiple" formatted="true">Dei possibili duplicati sono stati trovati nella tua libreria:
+\n
+\n%s
+\n
+\nVorresti aggiungere l\'oggetto alla libreria comunque, rimpiazzare l\'esistente, o cancellare l\'azione\?</string>
+    <string name="backup_frequency">Frequenza di backup</string>
+    <string name="duplicate_title">Trovato Possibile Duplicato</string>
+    <string name="action_add_to_favorites">Aggiungi ai preferiti</string>
+    <string name="duplicate_replace_all">Rimpiazza tutti</string>
+    <string name="pin_error_incorrect">PIN non corretto. Riprova.</string>
+    <string name="action_unsubscribe">Disiscriviti</string>
+    <string name="pin_error_length">Il PIN deve essere almeno di 4 caratteri</string>
+    <string name="duplicate_replace">Rimpiazza</string>
+    <string name="duplicate_add">Aggiungi</string>
+    <string name="action_subscribe">Iscriviti</string>
+    <string name="action_remove_from_favorites">Rimuovi dai preferiti</string>
+    <string name="select_an_account">Seleziona un Account</string>
+    <string name="duplicate_message_single">Sembra che un oggetto potenziale duplicato sia già presente nella tua libreria: \'%1$s.\'
+\n
+\nVorresti aggiungere l\'oggetto lo stesso, rimpiazzare l\'esistente, o cancellare l\'azione\?</string>
+    <string name="enter_pin">Inserisci PIN</string>
+    <string name="pin">PIN</string>
+    <string name="enter_current_pin">Inserisci PIN Corrente</string>
 </resources>
