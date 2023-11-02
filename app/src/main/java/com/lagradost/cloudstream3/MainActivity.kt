@@ -1590,7 +1590,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         }
 
         backPressedCallback?.isEnabled = true
-        onBackPressedDispatcher.addCallback(this, backPressedCallback!!)
+        onBackPressedDispatcher.addCallback(this, backPressedCallback ?: return)
     }
 
     private fun detachBackPressedCallback() {

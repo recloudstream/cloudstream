@@ -187,7 +187,11 @@ open class ResultTrailerPlayer : ResultFragmentPhone() {
         }
 
         backPressedCallback?.isEnabled = true
-        requireActivity().onBackPressedDispatcher.addCallback(requireActivity(), backPressedCallback!!)
+
+        activity?.onBackPressedDispatcher?.addCallback(
+            activity ?: return,
+            backPressedCallback ?: return
+        )
     }
 
     private fun detachBackPressedCallback() {
