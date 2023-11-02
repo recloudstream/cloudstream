@@ -6,6 +6,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.KeyEvent
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import com.lagradost.cloudstream3.CommonActivity
 import com.lagradost.cloudstream3.R
@@ -32,10 +33,6 @@ class DownloadedPlayerActivity : AppCompatActivity() {
     override fun onUserLeaveHint() {
         super.onUserLeaveHint()
         CommonActivity.onUserLeaveHint(this)
-    }
-
-    override fun onBackPressed() {
-        finish()
     }
 
     private fun playLink(url: String) {
@@ -109,6 +106,15 @@ class DownloadedPlayerActivity : AppCompatActivity() {
             finish()
             return
         }
+
+        onBackPressedDispatcher.addCallback(
+            this,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    finish()
+                }
+            }
+        )
     }
 
     override fun onResume() {

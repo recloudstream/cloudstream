@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import androidx.activity.OnBackPressedCallback
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import com.lagradost.cloudstream3.CommonActivity.screenHeight
@@ -15,10 +16,8 @@ import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.ui.player.CSPlayerEvent
 import com.lagradost.cloudstream3.ui.player.PlayerEventSource
 import com.lagradost.cloudstream3.ui.player.SubtitleData
-import com.lagradost.cloudstream3.utils.IOnBackPressed
 
-
-open class ResultTrailerPlayer : ResultFragmentPhone(), IOnBackPressed {
+open class ResultTrailerPlayer : ResultFragmentPhone() {
 
     override var lockRotation = false
     override var isFullScreenPlayer = false
@@ -28,7 +27,7 @@ open class ResultTrailerPlayer : ResultFragmentPhone(), IOnBackPressed {
         const val TAG = "RESULT_TRAILER"
     }
 
-    var playerWidthHeight: Pair<Int, Int>? = null
+    private var playerWidthHeight: Pair<Int, Int>? = null
 
     override fun nextEpisode() {}
 
@@ -154,6 +153,10 @@ open class ResultTrailerPlayer : ResultFragmentPhone(), IOnBackPressed {
         }
         fixPlayerSize()
         uiReset()
+
+        if (isFullScreenPlayer) {
+            attachBackPressedCallback()
+        } else detachBackPressedCallback()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -172,12 +175,22 @@ open class ResultTrailerPlayer : ResultFragmentPhone(), IOnBackPressed {
         }
     }
 
-    override fun onBackPressed(): Boolean {
-        return if (isFullScreenPlayer) {
-            updateFullscreen(false)
-            false
-        } else {
-            true
+    private var backPressedCallback: OnBackPressedCallback? = null
+
+    private fun attachBackPressedCallback() {
+        if (backPressedCallback == null) {
+            backPressedCallback = object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    updateFullscreen(false)
+                }
+            }
         }
+
+        backPressedCallback?.isEnabled = true
+        requireActivity().onBackPressedDispatcher.addCallback(requireActivity(), backPressedCallback!!)
+    }
+
+    private fun detachBackPressedCallback() {
+        backPressedCallback?.isEnabled = false
     }
 }
