@@ -17,7 +17,7 @@
         android:layout_marginTop="16dp"
         android:layout_marginBottom="16dp" />
 
-    <androidx.recyclerview.widget.RecyclerView
+    <com.lagradost.cloudstream3.ui.AutofitRecyclerView
         android:id="@+id/account_recycler_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
