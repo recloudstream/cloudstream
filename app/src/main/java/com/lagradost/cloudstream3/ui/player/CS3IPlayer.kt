@@ -1396,7 +1396,7 @@ class CS3IPlayer : IPlayer {
                                         || error.errorCode == PlaybackException.ERROR_CODE_PARSING_CONTAINER_UNSUPPORTED
                                         || error.errorCode == PlaybackException.ERROR_CODE_IO_UNSPECIFIED
                                         ) -> {
-
+                            val position = exoPlayer?.currentPosition ?: 0L
                             val gid = DownloadListener.sessionIdToGid[aria2cRequestId]
                             Log.i(TAG, "Aria2 error $error error ${error.errorCode}")
                             if(gid == null) {
@@ -1432,6 +1432,7 @@ class CS3IPlayer : IPlayer {
                                 // shitty solution to release it every time, however we will get timeout otherwise
                                 CommonActivity.activity?.let { act ->
                                     try {
+                                        playbackPosition = position
                                         awaitAria2c(act, loadedLink, aria2cRequestId)
                                     }  catch (t : Throwable) {
                                         event(ErrorEvent(t))

@@ -265,7 +265,9 @@ abstract class AbstractPlayerFragment(
                     context?.getString(R.string.no_links_found_toast) + "\n" + message,
                     Toast.LENGTH_LONG
                 )
-                activity?.popCurrentPage()
+                activity?.runOnUiThread {
+                    activity?.popCurrentPage()
+                }
             }
         }
 

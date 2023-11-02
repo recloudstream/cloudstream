@@ -278,7 +278,7 @@ enum class ExtractorLinkType {
 }
 
 private fun inferTypeFromUrl(url: String): ExtractorLinkType {
-    val path = normalSafeApiCall { URL(url).path }
+    val path = try { URL(url).path } catch (_ : Throwable) { null }
     return when {
         path?.endsWith(".m3u8") == true || path?.endsWith(".m3u") == true -> ExtractorLinkType.M3U8
         path?.endsWith(".mpd") == true -> ExtractorLinkType.DASH
