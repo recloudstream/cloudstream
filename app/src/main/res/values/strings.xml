@@ -726,5 +726,6 @@
     <string name="pin_error_incorrect">Incorrect PIN. Please try again.</string>
     <string name="pin_error_length">PIN must be 4 characters</string>
     <string name="select_an_account">Select an Account</string>
-    <string name="manage_accounts">Manage accounts</string>
+    <string name="manage_accounts">Manage Accounts</string>
+    <string name="edit_account">Edit account</string>
 </resources>

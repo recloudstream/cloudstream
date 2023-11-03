@@ -1,14 +1,18 @@
 package com.lagradost.cloudstream3.ui.account
 
+import android.graphics.RenderEffect
+import android.graphics.Shader
+import android.os.Build
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.AccountListItemAddBinding
 import com.lagradost.cloudstream3.databinding.AccountListItemBinding
-import com.lagradost.cloudstream3.databinding.AccountListItemEditingBinding
+import com.lagradost.cloudstream3.databinding.AccountListItemEditBinding
 import com.lagradost.cloudstream3.ui.account.AccountHelper.showAccountEditDialog
 import com.lagradost.cloudstream3.ui.result.setImage
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
@@ -22,8 +26,8 @@ class AccountAdapter(
 ) : RecyclerView.Adapter<AccountAdapter.AccountViewHolder>() {
 
     companion object {
-        private const val VIEW_TYPE_ACCOUNT = 0
-        private const val VIEW_TYPE_ADD_ACCOUNT = 1
+        const val VIEW_TYPE_SELECT_ACCOUNT = 0
+        const val VIEW_TYPE_ADD_ACCOUNT = 1
         const val VIEW_TYPE_EDIT_ACCOUNT = 2
     }
 
@@ -35,17 +39,32 @@ class AccountAdapter(
                 is AccountListItemBinding -> binding.apply {
                     if (account == null) return@apply
 
+                    val isTv = isTvSettings() || !root.isInTouchMode
+
                     val isLastUsedAccount = account.keyIndex == DataStoreHelper.selectedKeyIndex
 
                     accountName.text = account.name
                     accountImage.setImage(account.image)
                     lockIcon.isVisible = account.lockPin != null
-                    outline.isVisible = isLastUsedAccount
+                    outline.isVisible = !isTv && isLastUsedAccount
 
-                    if (isTvSettings()) {
+                    if (isTv) {
+                        // For emulator but this is fine on TV also
                         root.isFocusableInTouchMode = true
                         if (isLastUsedAccount) {
                             root.requestFocus()
+                        }
+
+                        root.foreground = ContextCompat.getDrawable(
+                            root.context,
+                            R.drawable.outline_drawable
+                        )
+                    } else {
+                        root.setOnLongClickListener {
+                            showAccountEditDialog(root.context, account, isNewAccount = false) {
+                                accountEditCallback.invoke(it)
+                            }
+                            true
                         }
                     }
 
@@ -54,7 +73,7 @@ class AccountAdapter(
                     }
                 }
 
-                is AccountListItemEditingBinding -> binding.apply {
+                is AccountListItemEditBinding -> binding.apply {
                     if (account == null) return@apply
 
                     val isLastUsedAccount = account.keyIndex == DataStoreHelper.selectedKeyIndex
@@ -62,13 +81,26 @@ class AccountAdapter(
                     accountName.text = account.name
                     accountImage.setImage(account.image)
                     lockIcon.isVisible = account.lockPin != null
-                    outline.isVisible = isLastUsedAccount
+                    outline.isVisible = !isTvSettings() && isLastUsedAccount
+
+                    if (Build.VERSION.SDK_INT >= 33) {
+                        accountImage.setRenderEffect(
+                            RenderEffect.createBlurEffect(
+                                10f, 10f, Shader.TileMode.CLAMP
+                            )
+                        )
+                    }
 
                     if (isTvSettings()) {
                         root.isFocusableInTouchMode = true
                         if (isLastUsedAccount) {
                             root.requestFocus()
                         }
+
+                        root.foreground = ContextCompat.getDrawable(
+                            root.context,
+                            R.drawable.outline_drawable
+                        )
                     }
 
                     root.setOnClickListener {
@@ -107,7 +139,7 @@ class AccountAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AccountViewHolder =
         AccountViewHolder(
             binding = when (viewType) {
-                VIEW_TYPE_ACCOUNT -> {
+                VIEW_TYPE_SELECT_ACCOUNT -> {
                     AccountListItemBinding.inflate(
                         LayoutInflater.from(parent.context),
                         parent,
@@ -122,7 +154,7 @@ class AccountAdapter(
                     )
                 }
                 VIEW_TYPE_EDIT_ACCOUNT -> {
-                    AccountListItemEditingBinding.inflate(
+                    AccountListItemEditBinding.inflate(
                         LayoutInflater.from(parent.context),
                         parent,
                         false
@@ -145,7 +177,7 @@ class AccountAdapter(
 
         return when (position) {
             accounts.count() -> VIEW_TYPE_ADD_ACCOUNT
-            else -> VIEW_TYPE_ACCOUNT
+            else -> VIEW_TYPE_SELECT_ACCOUNT
         }
     }
 

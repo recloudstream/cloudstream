@@ -44,14 +44,6 @@
             android:src="@drawable/video_locked"
             android:visibility="gone" />
 
-        <ImageView
-            android:id="@+id/pencil_icon"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_gravity="center"
-            android:src="@drawable/ic_baseline_add_24"
-            android:visibility="gone" />
-
         <TextView
             android:id="@+id/account_name"
             android:layout_width="wrap_content"

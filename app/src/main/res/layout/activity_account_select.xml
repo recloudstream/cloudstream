@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="?attr/primaryBlackBackground"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -16,9 +17,14 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:src="@drawable/ic_baseline_edit_24"
-        android:contentDescription="@string/manage_accounts" />
+        android:focusable="true"
+        android:nextFocusDown="@id/account_recycler_view"
+        android:background="@drawable/player_button_tv_attr_no_bg"
+        android:contentDescription="@string/manage_accounts"
+        app:tint="@color/player_on_button_tv_attr" />
 
     <TextView
+        android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/select_an_account"

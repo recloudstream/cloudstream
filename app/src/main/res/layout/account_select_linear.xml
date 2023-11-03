@@ -41,7 +41,7 @@
     <androidx.recyclerview.widget.RecyclerView
         android:layout_marginTop="10dp"
         android:descendantFocusability="afterDescendants"
-        android:id="@+id/profiles_recyclerview"
+        android:id="@+id/account_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
 
@@ -52,4 +52,15 @@
 
         <requestFocus />
     </androidx.recyclerview.widget.RecyclerView>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/manage_accounts_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_gravity="center"
+        android:text="@string/manage_accounts"
+        android:textSize="16sp"
+        app:icon="@drawable/ic_baseline_edit_24"
+        style="@style/Widget.MaterialComponents.Button.TextButton" />
 </LinearLayout>

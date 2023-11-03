@@ -2,6 +2,7 @@ package com.lagradost.cloudstream3.ui.account
 
 import android.content.Context
 import android.content.DialogInterface
+import android.content.Intent
 import android.text.Editable
 import android.view.LayoutInflater
 import android.view.inputmethod.EditorInfo
@@ -11,6 +12,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.lagradost.cloudstream3.AcraApplication.Companion.removeKeys
 import com.lagradost.cloudstream3.R
@@ -41,6 +43,8 @@ object AccountHelper {
 
         var currentEditAccount = account
         val dialog = builder.show()
+
+        if (!isNewAccount) binding.text1.setText(R.string.edit_account)
 
         // Set up the dialog content
         binding.accountName.text = Editable.Factory.getInstance()?.newEditable(account.name)
@@ -294,8 +298,27 @@ object AccountHelper {
         builder.setContentView(binding.root)
         builder.show()
 
-        binding.profilesRecyclerview.setLinearListLayout(isHorizontal = true)
-        binding.profilesRecyclerview.adapter = AccountAdapter(
+        binding.manageAccountsButton.setOnClickListener {
+            val accountSelectIntent = Intent(context, AccountSelectActivity::class.java)
+            accountSelectIntent.putExtra("isEditingFromMainActivity", true)
+            context.startActivity(accountSelectIntent)
+            builder.dismissSafe()
+        }
+
+        val recyclerView: RecyclerView = binding.accountRecyclerView
+
+        val itemWidth = recyclerView.resources.getDimensionPixelSize(
+            R.dimen.account_select_linear_item_size
+        )
+
+        val itemHeight = recyclerView.resources.getDimensionPixelSize(
+            R.dimen.account_select_linear_item_size
+        )
+
+        recyclerView.addItemDecoration(AccountSelectLinearItemDecoration(itemWidth, itemHeight))
+
+        recyclerView.setLinearListLayout(isHorizontal = true)
+        recyclerView.adapter = AccountAdapter(
             getAccounts(context),
             accountSelectCallback = { account ->
                 // Check if the selected account has a lock PIN set
@@ -317,10 +340,8 @@ object AccountHelper {
                 onAccountUpdated(it)
                 builder.dismissSafe()
             },
-            accountEditCallback = {
-                onAccountUpdated(it)
-                builder.dismissSafe()
-            }
+            // Editing is done using AccountSelectActivity
+            accountEditCallback = {}
         )
     }
 }

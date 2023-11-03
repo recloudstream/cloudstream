@@ -2,6 +2,7 @@ package com.lagradost.cloudstream3.ui.account
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -11,6 +12,7 @@ import com.lagradost.cloudstream3.MainActivity
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.ActivityAccountSelectBinding
 import com.lagradost.cloudstream3.ui.account.AccountAdapter.Companion.VIEW_TYPE_EDIT_ACCOUNT
+import com.lagradost.cloudstream3.ui.account.AccountAdapter.Companion.VIEW_TYPE_SELECT_ACCOUNT
 import com.lagradost.cloudstream3.ui.account.AccountHelper.showPinInputDialog
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
 import com.lagradost.cloudstream3.utils.DataStoreHelper
@@ -40,18 +42,60 @@ class AccountSelectActivity : AppCompatActivity() {
 
         val recyclerView: RecyclerView = binding.accountRecyclerView
 
+        // Are we editing and coming from MainActivity?
+        val isEditingFromMainActivity = intent.getBooleanExtra(
+            "isEditingFromMainActivity",
+            false
+        )
+
         val adapter = AccountAdapter(
             accounts,
             // Handle the selected account
             accountSelectCallback = { onAccountSelected(it) },
             accountCreateCallback = { onAccountUpdated(it) },
-            accountEditCallback = { onAccountUpdated(it) }
+            accountEditCallback = {
+                onAccountUpdated(it)
+
+                // We came from MainActivity, return there
+                // and switch to the edited account
+                if (isEditingFromMainActivity) {
+                    DataStoreHelper.setAccount(it, it.keyIndex != DataStoreHelper.selectedKeyIndex)
+                    navigateToMainActivity()
+                }
+            }
         )
 
         recyclerView.adapter = adapter
 
-        binding.editAccountButton.setOnClickListener {
+        var isEditing = false
+
+        if (isEditingFromMainActivity) {
+            binding.editAccountButton.setImageResource(R.drawable.ic_baseline_close_24)
+            binding.title.setText(R.string.manage_accounts)
             adapter.viewType = VIEW_TYPE_EDIT_ACCOUNT
+            isEditing = true
+
+            adapter.notifyDataSetChanged()
+        }
+
+        binding.editAccountButton.setOnClickListener {
+            isEditing = !isEditing
+             if (isEditing) {
+                 (it as ImageView).setImageResource(R.drawable.ic_baseline_close_24)
+                 binding.title.setText(R.string.manage_accounts)
+                 adapter.viewType = VIEW_TYPE_EDIT_ACCOUNT
+            } else {
+                 // We came from MainActivity, return there
+                 // and resume it's state
+                 if (isEditingFromMainActivity) {
+                     navigateToMainActivity()
+                 }
+
+                 (it as ImageView).setImageResource(R.drawable.ic_baseline_edit_24)
+                 binding.title.setText(R.string.select_an_account)
+                 adapter.viewType = VIEW_TYPE_SELECT_ACCOUNT
+            }
+
             adapter.notifyDataSetChanged()
         }
 

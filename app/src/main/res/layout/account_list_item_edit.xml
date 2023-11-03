@@ -23,7 +23,7 @@
         android:id="@+id/account_image"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:alpha="0.2"
+        android:alpha="0.1"
         android:contentDescription="@string/profile_background_des"
         android:scaleType="centerCrop" />
 
@@ -39,18 +39,17 @@
         android:id="@+id/lock_icon"
         android:layout_width="24dp"
         android:layout_height="24dp"
-        android:layout_gravity="top|end"
+        android:layout_gravity="top|start"
         android:layout_margin="4dp"
         android:src="@drawable/video_locked"
         android:visibility="gone" />
 
     <ImageView
         android:id="@+id/pencil_icon"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_gravity="center"
-        android:src="@drawable/ic_baseline_edit_24"
-        android:visibility="visible" />
+        android:layout_width="42dp"
+        android:layout_height="42dp"
+        android:layout_gravity="top|end"
+        android:src="@drawable/ic_baseline_edit_24" />
 
     <TextView
         android:id="@+id/account_name"
