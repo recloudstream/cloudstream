@@ -22,6 +22,7 @@ import com.lagradost.cloudstream3.ui.result.setImage
 import com.lagradost.cloudstream3.ui.result.setLinearListLayout
 import com.lagradost.cloudstream3.utils.AppUtils.setDefaultFocus
 import com.lagradost.cloudstream3.utils.DataStoreHelper
+import com.lagradost.cloudstream3.utils.DataStoreHelper.getAccounts
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getDefaultAccount
 import com.lagradost.cloudstream3.utils.DataStoreHelper.setAccount
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
@@ -270,6 +271,21 @@ object AccountHelper {
     }
 
     fun showAccountSelectLinear(context: Context) {
+        fun onAccountUpdated(account: DataStoreHelper.Account) {
+            val currentAccounts = DataStoreHelper.accounts.toMutableList()
+
+            val overrideIndex = currentAccounts.indexOfFirst { it.keyIndex == account.keyIndex }
+
+            if (overrideIndex != -1) {
+                currentAccounts[overrideIndex] = account
+            } else currentAccounts.add(account)
+
+            val currentHomePage = DataStoreHelper.currentHomePage
+            setAccount(account, false)
+            DataStoreHelper.currentHomePage = currentHomePage
+            DataStoreHelper.accounts = currentAccounts.toTypedArray()
+        }
+
         val binding: AccountSelectLinearBinding = AccountSelectLinearBinding.inflate(
             LayoutInflater.from(context)
         )
@@ -280,7 +296,7 @@ object AccountHelper {
 
         binding.profilesRecyclerview.setLinearListLayout(isHorizontal = true)
         binding.profilesRecyclerview.adapter = AccountAdapter(
-            DataStoreHelper.getAccounts(context),
+            getAccounts(context),
             accountSelectCallback = { account ->
                 // Check if the selected account has a lock PIN set
                 if (account.lockPin != null) {
@@ -297,9 +313,14 @@ object AccountHelper {
                     builder.dismissSafe()
                 }
             },
-            accountCreateCallback = {},
-            // TODO
-            accountEditCallback = {}
+            accountCreateCallback = {
+                onAccountUpdated(it)
+                builder.dismissSafe()
+            },
+            accountEditCallback = {
+                onAccountUpdated(it)
+                builder.dismissSafe()
+            }
         )
     }
 }

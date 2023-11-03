@@ -44,7 +44,6 @@ class AccountSelectActivity : AppCompatActivity() {
             accounts,
             // Handle the selected account
             accountSelectCallback = { onAccountSelected(it) },
-            // Handle the selected account
             accountCreateCallback = { onAccountUpdated(it) },
             accountEditCallback = { onAccountUpdated(it) }
         )
