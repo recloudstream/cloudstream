@@ -11,12 +11,15 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.lagradost.cloudstream3.AcraApplication.Companion.removeKeys
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.AccountEditDialogBinding
+import com.lagradost.cloudstream3.databinding.AccountSelectLinearBinding
 import com.lagradost.cloudstream3.databinding.LockPinDialogBinding
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.ui.result.setImage
+import com.lagradost.cloudstream3.ui.result.setLinearListLayout
 import com.lagradost.cloudstream3.utils.AppUtils.setDefaultFocus
 import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getDefaultAccount
@@ -24,7 +27,7 @@ import com.lagradost.cloudstream3.utils.DataStoreHelper.setAccount
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.showInputMethod
 
-object AccountDialogs {
+object AccountHelper {
     fun showAccountEditDialog(
         context: Context,
         account: DataStoreHelper.Account,
@@ -264,5 +267,39 @@ object AccountDialogs {
         binding.pinEditText.postDelayed({
             showInputMethod(binding.pinEditText)
         }, 200)
+    }
+
+    fun showAccountSelectLinear(context: Context) {
+        val binding: AccountSelectLinearBinding = AccountSelectLinearBinding.inflate(
+            LayoutInflater.from(context)
+        )
+
+        val builder = BottomSheetDialog(context)
+        builder.setContentView(binding.root)
+        builder.show()
+
+        binding.profilesRecyclerview.setLinearListLayout(isHorizontal = true)
+        binding.profilesRecyclerview.adapter = AccountAdapter(
+            DataStoreHelper.getAccounts(context),
+            accountSelectCallback = { account ->
+                // Check if the selected account has a lock PIN set
+                if (account.lockPin != null) {
+                    // Prompt for the lock pin
+                    showPinInputDialog(context, account.lockPin, false) { pin ->
+                        if (pin == null) return@showPinInputDialog
+                        // Pin is correct, unlock the profile
+                        setAccount(account, true)
+                        builder.dismissSafe()
+                    }
+                } else {
+                    // No lock PIN set, directly set the account
+                    setAccount(account, true)
+                    builder.dismissSafe()
+                }
+            },
+            accountCreateCallback = {},
+            // TODO
+            accountEditCallback = {}
+        )
     }
 }

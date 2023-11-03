@@ -9,7 +9,7 @@ import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.AccountListItemAddBinding
 import com.lagradost.cloudstream3.databinding.AccountListItemBinding
 import com.lagradost.cloudstream3.databinding.AccountListItemEditingBinding
-import com.lagradost.cloudstream3.ui.account.AccountDialogs.showAccountEditDialog
+import com.lagradost.cloudstream3.ui.account.AccountHelper.showAccountEditDialog
 import com.lagradost.cloudstream3.ui.result.setImage
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
 import com.lagradost.cloudstream3.utils.DataStoreHelper

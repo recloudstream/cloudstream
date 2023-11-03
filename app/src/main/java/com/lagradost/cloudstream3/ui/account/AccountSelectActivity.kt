@@ -11,7 +11,7 @@ import com.lagradost.cloudstream3.MainActivity
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.ActivityAccountSelectBinding
 import com.lagradost.cloudstream3.ui.account.AccountAdapter.Companion.VIEW_TYPE_EDIT_ACCOUNT
-import com.lagradost.cloudstream3.ui.account.AccountDialogs.showPinInputDialog
+import com.lagradost.cloudstream3.ui.account.AccountHelper.showPinInputDialog
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
 import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getAccounts
