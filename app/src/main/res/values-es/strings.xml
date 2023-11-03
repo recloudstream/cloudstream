@@ -4,10 +4,10 @@
     <string name="setup_extensions_subtext">Descargue la lista de sitios que quiera utilizar</string>
     <string name="plugins_downloaded" formatted="true">Descargado:%d</string>
     <string name="downloaded">Descargado</string>
-    <string name="batch_download_finish_format" formatted="true">Descargado %d %s</string>
+    <string name="batch_download_finish_format" formatted="true">Descargado %1$d %2$s</string>
     <string name="delete_repository">Borrar repositorio</string>
     <string name="next_episode_format" formatted="true">El episodio %d se lanzará en</string>
-    <string name="next_episode_time_hour_format" formatted="true">%dh %dm</string>
+    <string name="next_episode_time_hour_format" formatted="true">%1$dh %2$dm</string>
     <string name="next_episode_time_min_format" formatted="true">%dm</string>
     <string name="result_poster_img_des">Poster</string>
     <string name="extensions">Extensiones</string>
@@ -97,12 +97,12 @@
     <string name="search_poster_img_des">Poster</string>
     <string name="home_next_random_img_des">Siguiente al azar</string>
     <string name="all_languages_preference">Todos los Idiomas</string>
-    <string name="go_back_img_des">Volver</string>
+    <string name="go_back_img_des">Regresar</string>
     <string name="home_change_provider_img_des">Cambiar proveedor</string>
     <string name="preview_background_img_des">Vista previa del fondo</string>
     <string name="rated_format" formatted="true">Nota:%.1f</string>
-    <string name="new_update_format" formatted="true">Nueva actualización encontrada!
-\n%s -&gt; %s</string>
+    <string name="new_update_format" formatted="true">¡Nueva actualización encontrada!
+\n%1$s -&gt; %2$s</string>
     <string name="download">Descargar</string>
     <string name="popup_pause_download">Pausar Descarga</string>
     <string name="subs_font">Formato de fuente</string>
@@ -110,8 +110,8 @@
     <string name="subs_font_size">Tamaño de Fuente</string>
     <string name="player_speed_text_format" formatted="true">Velocidad (%.2fx)</string>
     <string name="skip_loading">Omitir carga</string>
-    <string name="app_dub_sub_episode_text_format" formatted="true">%s Ep %d</string>
-    <string name="next_episode_time_day_format" formatted="true">%dd %dh %dm</string>
+    <string name="app_dub_sub_episode_text_format" formatted="true">%1$s Ep. %2$d</string>
+    <string name="next_episode_time_day_format" formatted="true">%1$dd %2$dh %3$dm</string>
     <string name="cast_format" formatted="true">Elenco %s</string>
     <string name="filler" formatted="true">Relleno</string>
     <string name="duration_format" formatted="true">%d min</string>
@@ -145,7 +145,7 @@
     <string name="play_torrent_button">Transmitir Torrent</string>
     <string name="pick_source">Fuentes</string>
     <string name="reload_error">Reintentar conexión…</string>
-    <string name="go_back">Volver</string>
+    <string name="go_back">Regresar</string>
     <string name="downloading">Descargando</string>
     <string name="download_paused">Descarga pausada</string>
     <string name="download_started">Descarga iniciada</string>
@@ -218,8 +218,8 @@
     <string name="play_episode_toast">Reproducir Episodio</string>
     <string name="episode">Episodio</string>
     <string name="episodes">Episodios</string>
-    <string name="episodes_range">%d-%d</string>
-    <string name="episode_format" formatted="true">%d %s</string>
+    <string name="episodes_range">%1$d-%2$d</string>
+    <string name="episode_format" formatted="true">%1$d %2$s</string>
     <string name="episode_short">E</string>
     <string name="restore_failed_format" formatted="true">Falló la restauración de los datos desde el archivo %s</string>
     <string name="backup_success">Datos guardados</string>
@@ -233,7 +233,7 @@
     <string name="advanced_search_des">Mostrar los resultados de la búsqueda por proveedor</string>
     <string name="bug_report_settings_off">Solo envíar los datos si la App se cierra / falla inesperadamente</string>
     <string name="bug_report_settings_on">No enviar datos</string>
-    <string name="show_trailers_settings">Mostrar Trailers (avances)</string>
+    <string name="show_trailers_settings">Mostrar los trailers</string>
     <string name="kitsu_settings">Mostrar pósters de Kitsu</string>
     <string name="uprereleases_settings">Actualizar a las versiones preliminares</string>
     <string name="uprereleases_settings_des">Buscar actualizaciones preliminares (beta) en lugar de solo versiones completas (stable releases)</string>
@@ -249,7 +249,7 @@
     <string name="subs_default_reset_toast">Reiniciar a valores predefinidos</string>
     <string name="acra_report_toast">Lo sentimos, la aplicación se bloqueó. Se enviará un informe de error anónimo a los desarrolladores</string>
     <string name="season">Temporada</string>
-    <string name="season_format">%s %d%s</string>
+    <string name="season_format">%1$s %2$d%3$s</string>
     <string name="no_season">Ninguna Temporada</string>
     <string name="season_short">T</string>
     <string name="delete_file">Borrar Archivo</string>
@@ -311,7 +311,7 @@
     <string name="switch_account">Cambiar cuenta</string>
     <string name="add_account">Añadir cuenta</string>
     <string name="upload_sync">Sincronizar</string>
-    <string name="sync_score">Calificación</string>
+    <string name="sync_score">Clasificado</string>
     <string name="authenticated_user" formatted="true">%s autenticado</string>
     <string name="authenticated_user_fail" formatted="true">No se pudo autenticar a %s</string>
     <string name="recommended">Recomendado</string>
@@ -345,7 +345,7 @@
     <string name="primary_color_settings">Color primario</string>
     <string name="app_theme_settings">Tema de la aplicación</string>
     <string name="example_email">hola@mundo.com</string>
-    <string name="login_format" formatted="true">%s %s</string>
+    <string name="login_format" formatted="true">%1$s %2$s</string>
     <string name="all">Todo</string>
     <string name="subtitle_offset_hint">1000ms</string>
     <string name="subtitle_offset_extra_hint_none_format">Sin retraso de subtítulos</string>
@@ -448,7 +448,7 @@
     <string name="setup_done">Hecho</string>
     <string name="plugin_loaded">Plugin Cargado</string>
     <string name="is_adult">18+</string>
-    <string name="batch_download_start_format" formatted="true">Iniciada la descarga %d %s…</string>
+    <string name="batch_download_start_format" formatted="true">Comenzó la descarga de %1$d %2$s…</string>
     <string name="batch_download">Descarga por lotes</string>
     <string name="plugin_singular">plugin</string>
     <string name="plugin">plugins</string>
@@ -552,4 +552,30 @@
     <string name="no_repository_found_error">Repositorio no encontrado, comprueba la URL y prueba la VPN</string>
     <string name="already_voted">Ya has votado</string>
     <string name="backup_frequency">Frecuencia de la copia de seguridad</string>
+    <string name="favorite_removed">%s eliminado de favoritos</string>
+    <string name="favorites_list_name">Favoritos</string>
+    <string name="favorite_added">%s añadido a favoritos</string>
+    <string name="duplicate_message_multiple" formatted="true">Se han encontrado posibles elementos duplicados en su biblioteca:
+\n
+\n%s
+\n
+\n¿Desea añadir este elemento de todos modos, sustituir los existentes o cancelar la acción\?</string>
+    <string name="duplicate_title">Posible duplicado encontrado</string>
+    <string name="lock_profile">Perfil de bloqueo</string>
+    <string name="action_add_to_favorites">Añadido a favoritos</string>
+    <string name="duplicate_replace_all">Sustituir todo</string>
+    <string name="pin_error_incorrect">PIN incorrecto. Por favor, inténtelo de nuevo.</string>
+    <string name="action_unsubscribe">Cancelar la suscripción</string>
+    <string name="pin_error_length">El PIN debe tener 4 caracteres</string>
+    <string name="duplicate_replace">Sustituir</string>
+    <string name="duplicate_add">Añadir</string>
+    <string name="action_subscribe">Suscríbase</string>
+    <string name="action_remove_from_favorites">Eliminar de favoritos</string>
+    <string name="select_an_account">Seleccione una cuenta</string>
+    <string name="duplicate_message_single">Parece que ya existe un elemento potencialmente duplicado en su biblioteca: \'%s.\'
+\n
+\n¿Desea añadir este elemento de todos modos, sustituir el existente o cancelar la acción\?</string>
+    <string name="enter_pin">Introducir el PIN</string>
+    <string name="pin">PIN</string>
+    <string name="enter_current_pin">Introduzca el PIN actual</string>
 </resources>

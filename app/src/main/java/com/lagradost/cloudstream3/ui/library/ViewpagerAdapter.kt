@@ -1,14 +1,18 @@
 package com.lagradost.cloudstream3.ui.library
 
 import android.os.Build
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.view.doOnAttach
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.OnFlingListener
+import com.google.android.material.appbar.AppBarLayout
+import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.LibraryViewpagerPageBinding
 import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.ui.search.SearchClickCallback
+import com.lagradost.cloudstream3.ui.settings.SettingsFragment
 import com.lagradost.cloudstream3.utils.UIHelper.getSpanCount
 
 class ViewpagerAdapter(
@@ -67,6 +71,17 @@ class ViewpagerAdapter(
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     setOnScrollChangeListener { _, _, scrollY, _, oldScrollY ->
                         val diff = scrollY - oldScrollY
+
+                        //Expand the top Appbar based on scroll direction up/down, simulate phone behavior
+                        if (SettingsFragment.isTvSettings()) {
+                            binding.root.rootView.findViewById<AppBarLayout>(R.id.search_bar)
+                                .apply {
+                                    if (diff <= 0)
+                                        setExpanded(true)
+                                    else
+                                        setExpanded(false)
+                                }
+                        }
                         if (diff == 0) return@setOnScrollChangeListener
 
                         scrollCallback.invoke(diff > 0)
@@ -80,8 +95,6 @@ class ViewpagerAdapter(
                     }
                 }
             }
-
-
         }
     }
 

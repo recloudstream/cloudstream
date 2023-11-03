@@ -54,7 +54,6 @@ class AccountAdapter(
                     }
                 }
 
-
                 is AccountListItemEditingBinding -> binding.apply {
                     if (account == null) return@apply
 
