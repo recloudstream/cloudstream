@@ -3,10 +3,8 @@ package com.lagradost.cloudstream3.ui.account
 import android.content.Context
 import android.content.DialogInterface
 import android.text.Editable
-import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.inputmethod.EditorInfo
-import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
@@ -24,6 +22,7 @@ import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getDefaultAccount
 import com.lagradost.cloudstream3.utils.DataStoreHelper.setAccount
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
+import com.lagradost.cloudstream3.utils.UIHelper.showInputMethod
 
 object AccountDialogs {
     fun showAccountEditDialog(
@@ -178,6 +177,8 @@ object AccountDialogs {
 
         val titleRes = if (isEditPin) R.string.enter_current_pin else R.string.enter_pin
 
+        var isPinValid = false
+
         val builder = AlertDialog.Builder(context, R.style.AlertDialogCustom)
             .setView(binding.root)
             .setTitle(titleRes)
@@ -188,7 +189,7 @@ object AccountDialogs {
                 callback.invoke(null)
             }
             .setOnDismissListener {
-                if (binding.pinEditTextError.isVisible) {
+                if (!isPinValid) {
                     callback.invoke(null)
                 }
             }
@@ -196,8 +197,8 @@ object AccountDialogs {
         if (isNewPin) {
             if (errorText != null) binding.pinEditTextError.visibleWithText(errorText)
             builder.setPositiveButton(R.string.setup_done) { _, _ ->
-                if (binding.pinEditTextError.isVisible) {
-                    // If the done button is pressed and there is a error,
+                if (!isPinValid) {
+                    // If the done button is pressed and there is an error,
                     // ask again, and mention the error that caused this.
                     showPinInputDialog(
                         context = binding.root.context,
@@ -215,40 +216,32 @@ object AccountDialogs {
 
         val dialog = builder.create()
 
-        var isPinValid = false
+        binding.pinEditText.doOnTextChanged { text, _, _, _ ->
+            val enteredPin = text.toString()
+            val isEnteredPinValid = enteredPin.length == 4
 
-        binding.pinEditText.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                val enteredPin = s.toString()
-                val isEnteredPinValid = enteredPin.length == 4
-
-                if (isEnteredPinValid) {
-                    if (isPinSet) {
-                        if (enteredPin != currentPin) {
-                            binding.pinEditTextError.visibleWithText(R.string.pin_error_incorrect)
-                            binding.pinEditText.text = null
-                            isPinValid = false
-                        } else {
-                            binding.pinEditTextError.isVisible = false
-                            isPinValid = true
-
-                            callback.invoke(enteredPin)
-                            dialog.dismissSafe()
-                        }
+            if (isEnteredPinValid) {
+                if (isPinSet) {
+                    if (enteredPin != currentPin) {
+                        binding.pinEditTextError.visibleWithText(R.string.pin_error_incorrect)
+                        binding.pinEditText.text = null
+                        isPinValid = false
                     } else {
                         binding.pinEditTextError.isVisible = false
                         isPinValid = true
-                    }
-                } else if (isNewPin) {
-                    binding.pinEditTextError.visibleWithText(R.string.pin_error_length)
-                    isPinValid = false
-                }
-            }
 
-            override fun afterTextChanged(s: Editable?) {}
-        })
+                        callback.invoke(enteredPin)
+                        dialog.dismissSafe()
+                    }
+                } else {
+                    binding.pinEditTextError.isVisible = false
+                    isPinValid = true
+                }
+            } else if (isNewPin) {
+                binding.pinEditTextError.visibleWithText(R.string.pin_error_length)
+                isPinValid = false
+            }
+        }
 
         // Detect IME_ACTION_DONE
         binding.pinEditText.setOnEditorActionListener { _, actionId, _ ->
@@ -269,8 +262,7 @@ object AccountDialogs {
         // Auto focus on PIN input and show keyboard
         binding.pinEditText.requestFocus()
         binding.pinEditText.postDelayed({
-            val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            imm.showSoftInput(binding.pinEditText, InputMethodManager.SHOW_IMPLICIT)
+            showInputMethod(binding.pinEditText)
         }, 200)
     }
 }
