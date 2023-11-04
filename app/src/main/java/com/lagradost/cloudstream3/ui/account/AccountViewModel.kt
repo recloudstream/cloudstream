@@ -16,6 +16,9 @@ class AccountViewModel : ViewModel() {
     private val _isEditing = MutableLiveData(false)
     val isEditing: LiveData<Boolean> = _isEditing
 
+    private val _isAllowedLogin = MutableLiveData(false)
+    val isAllowedLogin: LiveData<Boolean> = _isAllowedLogin
+
     fun handleAccountUpdate(context: Context) {
         _accounts.postValue(getAccounts(context))
     }
@@ -63,11 +66,13 @@ class AccountViewModel : ViewModel() {
                 false
             ) { pin ->
                 if (pin == null) return@showPinInputDialog
-                // Pin is correct, proceed to main activity
+                // Pin is correct, proceed
+                _isAllowedLogin.postValue(true)
                 setAccount(account, true)
             }
         } else {
-            // No PIN set for the selected account, proceed to main activity
+            // No PIN set for the selected account, proceed
+            _isAllowedLogin.postValue(true)
             setAccount(account, true)
         }
     }

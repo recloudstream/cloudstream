@@ -60,7 +60,12 @@ class AccountSelectActivity : AppCompatActivity() {
                 // Handle the selected account
                 accountSelectCallback = {
                     viewModel.handleAccountSelect(it,this@AccountSelectActivity)
-                    navigateToMainActivity()
+                    observe(viewModel.isAllowedLogin) { isAllowedLogin ->
+                        if (isAllowedLogin) {
+                            // We are allowed to continue to MainActivity
+                            navigateToMainActivity()
+                        }
+                    }
                 },
                 accountCreateCallback = { viewModel.handleAccountUpdate(it, this@AccountSelectActivity) },
                 accountEditCallback = {
