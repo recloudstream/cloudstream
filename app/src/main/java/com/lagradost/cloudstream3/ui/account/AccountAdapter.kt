@@ -22,7 +22,8 @@ class AccountAdapter(
     private val accounts: List<DataStoreHelper.Account>,
     private val accountSelectCallback: (DataStoreHelper.Account) -> Unit,
     private val accountCreateCallback: (DataStoreHelper.Account) -> Unit,
-    private val accountEditCallback: (DataStoreHelper.Account) -> Unit
+    private val accountEditCallback: (DataStoreHelper.Account) -> Unit,
+    private val accountDeleteCallback: () -> Unit
 ) : RecyclerView.Adapter<AccountAdapter.AccountViewHolder>() {
 
     companion object {
@@ -62,8 +63,11 @@ class AccountAdapter(
                     } else {
                         root.setOnLongClickListener {
                             showAccountEditDialog(root.context, account, isNewAccount = false) {
-                                accountEditCallback.invoke(it)
+                                if (it != null) {
+                                    accountEditCallback.invoke(it)
+                                } else accountDeleteCallback.invoke()
                             }
+
                             true
                         }
                     }
@@ -105,7 +109,9 @@ class AccountAdapter(
 
                     root.setOnClickListener {
                         showAccountEditDialog(root.context, account, isNewAccount = false) {
-                            accountEditCallback.invoke(it)
+                            if (it != null) {
+                                accountEditCallback.invoke(it)
+                            } else accountDeleteCallback.invoke()
                         }
                     }
                 }
@@ -128,7 +134,9 @@ class AccountAdapter(
                             customImage = null,
                             defaultImageIndex = image
                         ), isNewAccount = true) {
-                            accountCreateCallback.invoke(it)
+                            if (it != null) {
+                                accountCreateCallback.invoke(it)
+                            }
                         }
                     }
                 }

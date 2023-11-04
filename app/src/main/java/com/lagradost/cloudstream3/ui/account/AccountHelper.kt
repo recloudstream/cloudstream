@@ -12,6 +12,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
+import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.lagradost.cloudstream3.AcraApplication.Companion.removeKeys
@@ -20,6 +21,7 @@ import com.lagradost.cloudstream3.databinding.AccountEditDialogBinding
 import com.lagradost.cloudstream3.databinding.AccountSelectLinearBinding
 import com.lagradost.cloudstream3.databinding.LockPinDialogBinding
 import com.lagradost.cloudstream3.mvvm.logError
+import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.ui.result.setImage
 import com.lagradost.cloudstream3.ui.result.setLinearListLayout
 import com.lagradost.cloudstream3.utils.AppUtils.setDefaultFocus
@@ -35,7 +37,7 @@ object AccountHelper {
         context: Context,
         account: DataStoreHelper.Account,
         isNewAccount: Boolean,
-        callback: (DataStoreHelper.Account) -> Unit
+        callback: (DataStoreHelper.Account?) -> Unit
     ) {
         val binding = AccountEditDialogBinding.inflate(LayoutInflater.from(context), null, false)
         val builder = AlertDialog.Builder(context, R.style.AlertDialogCustom)
@@ -65,6 +67,7 @@ object AccountHelper {
 
                         // Update UI
                         setAccount(getDefaultAccount(context), true)
+                        callback.invoke(null)
                         dialog?.dismissSafe()
                     }
 
@@ -274,7 +277,11 @@ object AccountHelper {
         }, 200)
     }
 
-    fun showAccountSelectLinear(context: Context) {
+    fun showAccountSelectLinear(
+        context: Context,
+        viewModel: AccountViewModel,
+        lifecycleOwner: LifecycleOwner
+    ) {
         fun onAccountUpdated(account: DataStoreHelper.Account) {
             val currentAccounts = DataStoreHelper.accounts.toMutableList()
 
@@ -318,30 +325,38 @@ object AccountHelper {
         recyclerView.addItemDecoration(AccountSelectLinearItemDecoration(itemWidth, itemHeight))
 
         recyclerView.setLinearListLayout(isHorizontal = true)
-        recyclerView.adapter = AccountAdapter(
-            getAccounts(context),
-            accountSelectCallback = { account ->
-                // Check if the selected account has a lock PIN set
-                if (account.lockPin != null) {
-                    // Prompt for the lock pin
-                    showPinInputDialog(context, account.lockPin, false) { pin ->
-                        if (pin == null) return@showPinInputDialog
-                        // Pin is correct, unlock the profile
+
+        lifecycleOwner.observe(viewModel.accountsLiveData) { liveAccounts ->
+            recyclerView.adapter = AccountAdapter(
+                liveAccounts,
+                accountSelectCallback = { account ->
+                    // Check if the selected account has a lock PIN set
+                    if (account.lockPin != null) {
+                        // Prompt for the lock pin
+                        showPinInputDialog(context, account.lockPin, false) { pin ->
+                            if (pin == null) return@showPinInputDialog
+                            // Pin is correct, unlock the profile
+                            setAccount(account, true)
+                            builder.dismissSafe()
+                        }
+                    } else {
+                        // No lock PIN set, directly set the account
                         setAccount(account, true)
                         builder.dismissSafe()
                     }
-                } else {
-                    // No lock PIN set, directly set the account
-                    setAccount(account, true)
-                    builder.dismissSafe()
+                },
+                accountCreateCallback = {
+                    onAccountUpdated(it)
+                    viewModel.updateAccounts(getAccounts(context))
+                },
+                accountEditCallback = {
+                    onAccountUpdated(it)
+                    viewModel.updateAccounts(getAccounts(context))
+                },
+                accountDeleteCallback = {
+                    viewModel.updateAccounts(getAccounts(context))
                 }
-            },
-            accountCreateCallback = {
-                onAccountUpdated(it)
-                builder.dismissSafe()
-            },
-            // Editing is done using AccountSelectActivity
-            accountEditCallback = {}
-        )
+            )
+        }
     }
 }
