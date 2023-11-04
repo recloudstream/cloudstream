@@ -161,9 +161,7 @@
 
         <activity
             android:name=".ui.account.AccountSelectActivity"
-            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout|keyboard|keyboardHidden|navigation"
-            android:exported="true"
-            android:resizeableActivity="true">
+            android:exported="true">
             <intent-filter android:exported="true">
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
