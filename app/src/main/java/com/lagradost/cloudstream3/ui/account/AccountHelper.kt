@@ -307,6 +307,8 @@ object AccountHelper {
 
         recyclerView.setLinearListLayout(isHorizontal = true)
 
+        viewModel.handleAccountUpdate(activity)
+
         activity.observe(viewModel.accounts) { liveAccounts ->
             recyclerView.adapter = AccountAdapter(
                 liveAccounts,

@@ -34,7 +34,7 @@ class AccountSelectActivity : AppCompatActivity() {
         )
 
         val accounts = getAccounts(this@AccountSelectActivity)
-        
+
         // Don't show account selection if there is only
         // one account that exists
         if (!isEditingFromMainActivity && accounts.count() <= 1) {
