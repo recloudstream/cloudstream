@@ -120,11 +120,11 @@ class LibraryViewModel : ViewModel() {
     }
 
     init {
-        MainActivity.reloadHomeEvent += ::reloadPages
+        MainActivity.bookmarksUpdatedEvent += ::reloadPages
     }
 
     override fun onCleared() {
-        MainActivity.reloadHomeEvent -= ::reloadPages
+        MainActivity.bookmarksUpdatedEvent -= ::reloadPages
         super.onCleared()
     }
 }

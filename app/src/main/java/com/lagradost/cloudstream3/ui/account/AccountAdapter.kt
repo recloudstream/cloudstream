@@ -80,12 +80,14 @@ class AccountAdapter(
                 is AccountListItemEditBinding -> binding.apply {
                     if (account == null) return@apply
 
+                    val isTv = isTvSettings() || !root.isInTouchMode
+
                     val isLastUsedAccount = account.keyIndex == DataStoreHelper.selectedKeyIndex
 
                     accountName.text = account.name
                     accountImage.setImage(account.image)
                     lockIcon.isVisible = account.lockPin != null
-                    outline.isVisible = !isTvSettings() && isLastUsedAccount
+                    outline.isVisible = !isTv && isLastUsedAccount
 
                     if (Build.VERSION.SDK_INT >= 33) {
                         accountImage.setRenderEffect(
@@ -95,7 +97,7 @@ class AccountAdapter(
                         )
                     }
 
-                    if (isTvSettings()) {
+                    if (isTv) {
                         root.isFocusableInTouchMode = true
                         if (isLastUsedAccount) {
                             root.requestFocus()

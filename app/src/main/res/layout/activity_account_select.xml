@@ -16,7 +16,7 @@
         android:src="@drawable/ic_baseline_edit_24"
         android:focusable="true"
         android:nextFocusDown="@id/account_recycler_view"
-        android:background="@drawable/player_button_tv_attr_no_bg"
+        android:background="?attr/selectableItemBackgroundBorderless"
         android:contentDescription="@string/manage_accounts"
         app:tint="@color/player_on_button_tv_attr" />
 

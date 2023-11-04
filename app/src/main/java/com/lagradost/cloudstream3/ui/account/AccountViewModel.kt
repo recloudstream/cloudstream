@@ -35,7 +35,7 @@ class AccountViewModel : ViewModel() {
         account: DataStoreHelper.Account,
         context: Context
     ) {
-        val currentAccounts = getAccounts(context).toMutableList()
+        val currentAccounts = DataStoreHelper.accounts.toMutableList()
 
         val overrideIndex = currentAccounts.indexOfFirst { it.keyIndex == account.keyIndex }
 

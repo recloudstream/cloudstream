@@ -5,14 +5,13 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.lagradost.cloudstream3.CommonActivity
 import com.lagradost.cloudstream3.CommonActivity.loadThemes
 import com.lagradost.cloudstream3.MainActivity
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.ActivityAccountSelectBinding
 import com.lagradost.cloudstream3.mvvm.observe
+import com.lagradost.cloudstream3.ui.AutofitRecyclerView
 import com.lagradost.cloudstream3.ui.account.AccountAdapter.Companion.VIEW_TYPE_EDIT_ACCOUNT
 import com.lagradost.cloudstream3.ui.account.AccountAdapter.Companion.VIEW_TYPE_SELECT_ACCOUNT
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
@@ -50,7 +49,7 @@ class AccountSelectActivity : AppCompatActivity() {
         val binding = ActivityAccountSelectBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val recyclerView: RecyclerView = binding.accountRecyclerView
+        val recyclerView: AutofitRecyclerView = binding.accountRecyclerView
 
         val viewModel = ViewModelProvider(this)[AccountViewModel::class.java]
 
@@ -83,6 +82,12 @@ class AccountSelectActivity : AppCompatActivity() {
 
             recyclerView.adapter = adapter
 
+            if (isTvSettings()) {
+                binding.editAccountButton.setBackgroundResource(
+                    R.drawable.player_button_tv_attr_no_bg
+                )
+            }
+
             observe(viewModel.isEditing) { isEditing ->
                 if (isEditing) {
                     binding.editAccountButton.setImageResource(R.drawable.ic_baseline_close_24)
@@ -114,11 +119,9 @@ class AccountSelectActivity : AppCompatActivity() {
         }
 
         if (isTvSettings()) {
-            val spanSize = if (accounts.count() <= 6) {
+            recyclerView.spanCount = if (accounts.count() <= 6) {
                 accounts.count()
             } else 6
-
-            recyclerView.layoutManager = GridLayoutManager(this, spanSize)
         }
     }
 
