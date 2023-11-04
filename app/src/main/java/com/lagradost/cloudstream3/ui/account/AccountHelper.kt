@@ -14,6 +14,7 @@ import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.lagradost.cloudstream3.AcraApplication.Companion.removeKeys
@@ -320,6 +321,12 @@ object AccountHelper {
                 accountEditCallback = { viewModel.handleAccountUpdate(it, activity) },
                 accountDeleteCallback = { viewModel.handleAccountUpdate(activity) }
             )
+
+            activity.observe(viewModel.selectedKeyIndex) { selectedKeyIndex ->
+                // Scroll to current account (which is focused by default)
+                val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+                layoutManager.scrollToPositionWithOffset(selectedKeyIndex, 0)
+            }
         }
     }
 }

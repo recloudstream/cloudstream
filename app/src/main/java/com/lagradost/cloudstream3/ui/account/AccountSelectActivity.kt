@@ -116,12 +116,12 @@ class AccountSelectActivity : AppCompatActivity() {
 
                 viewModel.toggleIsEditing()
             }
-        }
 
-        if (isTvSettings()) {
-            recyclerView.spanCount = if (accounts.count() <= 6) {
-                accounts.count()
-            } else 6
+            if (isTvSettings()) {
+                recyclerView.spanCount = if (liveAccounts.count() + 1 <= 6) {
+                    liveAccounts.count() + 1
+                } else 6
+            }
         }
     }
 
