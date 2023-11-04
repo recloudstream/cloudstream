@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.GridLayoutManager
 import com.lagradost.cloudstream3.CommonActivity
 import com.lagradost.cloudstream3.CommonActivity.loadThemes
 import com.lagradost.cloudstream3.MainActivity
@@ -77,7 +78,7 @@ class AccountSelectActivity : AppCompatActivity() {
                         navigateToMainActivity()
                     }
                 },
-                accountDeleteCallback = { viewModel.handleAccountUpdate(this@AccountSelectActivity) }
+                accountDeleteCallback = { viewModel.updateAccounts(this@AccountSelectActivity) }
             )
 
             recyclerView.adapter = adapter
@@ -86,6 +87,12 @@ class AccountSelectActivity : AppCompatActivity() {
                 binding.editAccountButton.setBackgroundResource(
                     R.drawable.player_button_tv_attr_no_bg
                 )
+            }
+
+            observe(viewModel.selectedKeyIndex) { selectedKeyIndex ->
+                // Scroll to current account (which is focused by default)
+                val layoutManager = recyclerView.layoutManager as GridLayoutManager
+                layoutManager.scrollToPositionWithOffset(selectedKeyIndex, 0)
             }
 
             observe(viewModel.isEditing) { isEditing ->

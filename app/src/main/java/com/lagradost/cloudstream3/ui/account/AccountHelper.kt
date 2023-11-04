@@ -308,7 +308,7 @@ object AccountHelper {
 
         recyclerView.setLinearListLayout(isHorizontal = true)
 
-        viewModel.handleAccountUpdate(activity)
+        viewModel.updateAccounts(activity)
 
         activity.observe(viewModel.accounts) { liveAccounts ->
             recyclerView.adapter = AccountAdapter(
@@ -319,7 +319,7 @@ object AccountHelper {
                 },
                 accountCreateCallback = { viewModel.handleAccountUpdate(it, activity) },
                 accountEditCallback = { viewModel.handleAccountUpdate(it, activity) },
-                accountDeleteCallback = { viewModel.handleAccountUpdate(activity) }
+                accountDeleteCallback = { viewModel.updateAccounts(activity) }
             )
 
             activity.observe(viewModel.selectedKeyIndex) { selectedKeyIndex ->

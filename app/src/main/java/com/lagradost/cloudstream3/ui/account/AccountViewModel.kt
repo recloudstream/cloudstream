@@ -23,7 +23,7 @@ class AccountViewModel : ViewModel() {
     private val _isAllowedLogin = MutableLiveData(false)
     val isAllowedLogin: LiveData<Boolean> = _isAllowedLogin
 
-    private val _selectedKeyIndex = MutableLiveData(0)
+    private val _selectedKeyIndex = MutableLiveData(DataStoreHelper.selectedKeyIndex)
     val selectedKeyIndex: LiveData<Int> = _selectedKeyIndex
 
     fun setIsEditing(value: Boolean) {
@@ -34,7 +34,7 @@ class AccountViewModel : ViewModel() {
         _isEditing.postValue(!(_isEditing.value ?: false))
     }
 
-    fun handleAccountUpdate(context: Context) {
+    fun updateAccounts(context: Context) {
         _accounts.postValue(getAccounts(context))
         _selectedKeyIndex.postValue(DataStoreHelper.selectedKeyIndex)
     }
