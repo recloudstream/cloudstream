@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.ui.account
 
+import android.app.Activity
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
@@ -12,10 +13,11 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
-import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.lagradost.cloudstream3.AcraApplication.Companion.removeKeys
+import com.lagradost.cloudstream3.MainActivity
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.AccountEditDialogBinding
 import com.lagradost.cloudstream3.databinding.AccountSelectLinearBinding
@@ -26,7 +28,6 @@ import com.lagradost.cloudstream3.ui.result.setImage
 import com.lagradost.cloudstream3.ui.result.setLinearListLayout
 import com.lagradost.cloudstream3.utils.AppUtils.setDefaultFocus
 import com.lagradost.cloudstream3.utils.DataStoreHelper
-import com.lagradost.cloudstream3.utils.DataStoreHelper.getAccounts
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getDefaultAccount
 import com.lagradost.cloudstream3.utils.DataStoreHelper.setAccount
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
@@ -277,85 +278,45 @@ object AccountHelper {
         }, 200)
     }
 
-    fun showAccountSelectLinear(
-        context: Context,
-        viewModel: AccountViewModel,
-        lifecycleOwner: LifecycleOwner
-    ) {
-        fun onAccountUpdated(account: DataStoreHelper.Account) {
-            val currentAccounts = DataStoreHelper.accounts.toMutableList()
-
-            val overrideIndex = currentAccounts.indexOfFirst { it.keyIndex == account.keyIndex }
-
-            if (overrideIndex != -1) {
-                currentAccounts[overrideIndex] = account
-            } else currentAccounts.add(account)
-
-            val currentHomePage = DataStoreHelper.currentHomePage
-            setAccount(account, false)
-            DataStoreHelper.currentHomePage = currentHomePage
-            DataStoreHelper.accounts = currentAccounts.toTypedArray()
-        }
+    fun Activity?.showAccountSelectLinear() {
+        val activity = this as? MainActivity ?: return
+        val viewModel = ViewModelProvider(activity)[AccountViewModel::class.java]
 
         val binding: AccountSelectLinearBinding = AccountSelectLinearBinding.inflate(
-            LayoutInflater.from(context)
+            LayoutInflater.from(activity)
         )
 
-        val builder = BottomSheetDialog(context)
+        val builder = BottomSheetDialog(activity)
         builder.setContentView(binding.root)
         builder.show()
 
         binding.manageAccountsButton.setOnClickListener {
-            val accountSelectIntent = Intent(context, AccountSelectActivity::class.java)
+            val accountSelectIntent = Intent(activity, AccountSelectActivity::class.java)
             accountSelectIntent.putExtra("isEditingFromMainActivity", true)
-            context.startActivity(accountSelectIntent)
+            activity.startActivity(accountSelectIntent)
             builder.dismissSafe()
         }
 
         val recyclerView: RecyclerView = binding.accountRecyclerView
 
-        val itemWidth = recyclerView.resources.getDimensionPixelSize(
+        val itemSize = recyclerView.resources.getDimensionPixelSize(
             R.dimen.account_select_linear_item_size
         )
 
-        val itemHeight = recyclerView.resources.getDimensionPixelSize(
-            R.dimen.account_select_linear_item_size
-        )
-
-        recyclerView.addItemDecoration(AccountSelectLinearItemDecoration(itemWidth, itemHeight))
+        recyclerView.addItemDecoration(AccountSelectLinearItemDecoration(itemSize))
 
         recyclerView.setLinearListLayout(isHorizontal = true)
 
-        lifecycleOwner.observe(viewModel.accountsLiveData) { liveAccounts ->
+        activity.observe(viewModel.accounts) { liveAccounts ->
             recyclerView.adapter = AccountAdapter(
                 liveAccounts,
                 accountSelectCallback = { account ->
-                    // Check if the selected account has a lock PIN set
-                    if (account.lockPin != null) {
-                        // Prompt for the lock pin
-                        showPinInputDialog(context, account.lockPin, false) { pin ->
-                            if (pin == null) return@showPinInputDialog
-                            // Pin is correct, unlock the profile
-                            setAccount(account, true)
-                            builder.dismissSafe()
-                        }
-                    } else {
-                        // No lock PIN set, directly set the account
-                        setAccount(account, true)
-                        builder.dismissSafe()
-                    }
+                    viewModel.handleAccountSelect(account, activity)
+                    builder.dismissSafe()
                 },
-                accountCreateCallback = {
-                    onAccountUpdated(it)
-                    viewModel.updateAccounts(getAccounts(context))
-                },
-                accountEditCallback = {
-                    onAccountUpdated(it)
-                    viewModel.updateAccounts(getAccounts(context))
-                },
-                accountDeleteCallback = {
-                    viewModel.updateAccounts(getAccounts(context))
-                }
+                accountCreateCallback = { viewModel.handleAccountUpdate(it, activity) },
+                accountEditCallback = { viewModel.handleAccountUpdate(it, activity) },
+                accountDeleteCallback = { viewModel.handleAccountUpdate(activity) }
             )
         }
     }

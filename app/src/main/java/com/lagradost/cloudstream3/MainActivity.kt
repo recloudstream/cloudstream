@@ -92,8 +92,6 @@ import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.appStri
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.inAppAuths
 import com.lagradost.cloudstream3.ui.APIRepository
 import com.lagradost.cloudstream3.ui.WatchType
-import com.lagradost.cloudstream3.ui.account.AccountHelper
-import com.lagradost.cloudstream3.ui.account.AccountViewModel
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_NAVIGATE_TO
 import com.lagradost.cloudstream3.ui.home.HomeViewModel
 import com.lagradost.cloudstream3.ui.player.BasicLink
@@ -1611,10 +1609,5 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         } catch (t: Throwable) {
             false
         }
-    }
-
-    fun showAccountSelectLinear(context: Context) {
-        val viewModel = ViewModelProvider(this)[AccountViewModel::class.java]
-        AccountHelper.showAccountSelectLinear(context, viewModel, this)
     }
 }

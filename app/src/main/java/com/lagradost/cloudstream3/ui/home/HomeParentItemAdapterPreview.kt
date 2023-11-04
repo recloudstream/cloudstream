@@ -27,6 +27,7 @@ import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.debugException
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.ui.WatchType
+import com.lagradost.cloudstream3.ui.account.AccountHelper.showAccountSelectLinear
 import com.lagradost.cloudstream3.ui.home.HomeFragment.Companion.selectHomepage
 import com.lagradost.cloudstream3.ui.result.FOCUS_SELF
 import com.lagradost.cloudstream3.ui.result.ResultViewModel2
@@ -477,8 +478,8 @@ class HomeParentItemAdapterPreview(
                 }
             }
 
-            homeAccount?.setOnClickListener { v ->
-                (activity as MainActivity).showAccountSelectLinear(v?.context ?: return@setOnClickListener)
+            homeAccount?.setOnClickListener {
+                activity?.showAccountSelectLinear()
             }
 
             (binding as? FragmentHomeHeadTvBinding)?.apply {

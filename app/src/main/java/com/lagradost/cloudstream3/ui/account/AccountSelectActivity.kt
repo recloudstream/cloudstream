@@ -1,8 +1,8 @@
 package com.lagradost.cloudstream3.ui.account
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
-import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
@@ -15,14 +15,15 @@ import com.lagradost.cloudstream3.databinding.ActivityAccountSelectBinding
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.ui.account.AccountAdapter.Companion.VIEW_TYPE_EDIT_ACCOUNT
 import com.lagradost.cloudstream3.ui.account.AccountAdapter.Companion.VIEW_TYPE_SELECT_ACCOUNT
-import com.lagradost.cloudstream3.ui.account.AccountHelper.showPinInputDialog
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
 import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getAccounts
+import com.lagradost.cloudstream3.utils.DataStoreHelper.setAccount
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
 
 class AccountSelectActivity : AppCompatActivity() {
 
+    @SuppressLint("NotifyDataSetChanged")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -53,74 +54,57 @@ class AccountSelectActivity : AppCompatActivity() {
 
         val viewModel = ViewModelProvider(this)[AccountViewModel::class.java]
 
-        observe(viewModel.accountsLiveData) { liveAccounts ->
+        observe(viewModel.accounts) { liveAccounts ->
             val adapter = AccountAdapter(
                 liveAccounts,
                 // Handle the selected account
-                accountSelectCallback = { onAccountSelected(it) },
-                accountCreateCallback = {
-                    onAccountUpdated(it)
-
-                    viewModel.updateAccounts(
-                        getAccounts(binding.root.context)
-                    )
+                accountSelectCallback = {
+                    viewModel.handleAccountSelect(it,this@AccountSelectActivity)
+                    navigateToMainActivity()
                 },
+                accountCreateCallback = { viewModel.handleAccountUpdate(it, this@AccountSelectActivity) },
                 accountEditCallback = {
-                    onAccountUpdated(it)
-
-                    viewModel.updateAccounts(
-                        getAccounts(binding.root.context)
-                    )
+                    viewModel.handleAccountUpdate(it, this@AccountSelectActivity)
 
                     // We came from MainActivity, return there
                     // and switch to the edited account
                     if (isEditingFromMainActivity) {
-                        DataStoreHelper.setAccount(
-                            it,
-                            it.keyIndex != DataStoreHelper.selectedKeyIndex
-                        )
+                        setAccount(it, it.keyIndex != DataStoreHelper.selectedKeyIndex)
                         navigateToMainActivity()
                     }
                 },
-                accountDeleteCallback = {
-                    viewModel.updateAccounts(
-                        getAccounts(binding.root.context)
-                    )
-                }
+                accountDeleteCallback = { viewModel.handleAccountUpdate(this@AccountSelectActivity) }
             )
 
             recyclerView.adapter = adapter
 
-            var isEditing = false
-
-            if (isEditingFromMainActivity) {
-                binding.editAccountButton.setImageResource(R.drawable.ic_baseline_close_24)
-                binding.title.setText(R.string.manage_accounts)
-                adapter.viewType = VIEW_TYPE_EDIT_ACCOUNT
-                isEditing = true
-
-                adapter.notifyDataSetChanged()
-            }
-
-            binding.editAccountButton.setOnClickListener {
-                isEditing = !isEditing
+            observe(viewModel.isEditing) { isEditing ->
                 if (isEditing) {
-                    (it as ImageView).setImageResource(R.drawable.ic_baseline_close_24)
+                    binding.editAccountButton.setImageResource(R.drawable.ic_baseline_close_24)
                     binding.title.setText(R.string.manage_accounts)
                     adapter.viewType = VIEW_TYPE_EDIT_ACCOUNT
                 } else {
-                    // We came from MainActivity, return there
-                    // and resume it's state
-                    if (isEditingFromMainActivity) {
-                        navigateToMainActivity()
-                    }
-
-                    (it as ImageView).setImageResource(R.drawable.ic_baseline_edit_24)
+                    binding.editAccountButton.setImageResource(R.drawable.ic_baseline_edit_24)
                     binding.title.setText(R.string.select_an_account)
                     adapter.viewType = VIEW_TYPE_SELECT_ACCOUNT
                 }
 
                 adapter.notifyDataSetChanged()
+            }
+
+            if (isEditingFromMainActivity) {
+                viewModel.setIsEditing(true)
+            }
+
+            binding.editAccountButton.setOnClickListener {
+                // We came from MainActivity, return there
+                // and resume its state
+                if (isEditingFromMainActivity) {
+                    navigateToMainActivity()
+                    return@setOnClickListener
+                }
+
+                viewModel.toggleIsEditing()
             }
         }
 
@@ -131,49 +115,6 @@ class AccountSelectActivity : AppCompatActivity() {
 
             recyclerView.layoutManager = GridLayoutManager(this, spanSize)
         }
-    }
-
-    private fun onAccountSelected(selectedAccount: DataStoreHelper.Account) {
-        if (selectedAccount.lockPin != null) {
-            // The selected account has a PIN set, prompt the user to enter the PIN
-            showPinInputDialog(this@AccountSelectActivity, selectedAccount.lockPin, false) { pin ->
-                if (pin == null) return@showPinInputDialog
-                // Pin is correct, proceed to main activity
-                setAccount(selectedAccount)
-                navigateToMainActivity()
-            }
-        } else {
-            // No PIN set for the selected account, proceed to main activity
-            setAccount(selectedAccount)
-            navigateToMainActivity()
-        }
-    }
-
-    private fun onAccountUpdated(account: DataStoreHelper.Account) {
-        val currentAccounts = DataStoreHelper.accounts.toMutableList()
-
-        val overrideIndex = currentAccounts.indexOfFirst { it.keyIndex == account.keyIndex }
-        if (overrideIndex != -1) {
-            currentAccounts[overrideIndex] = account
-        } else currentAccounts.add(account)
-
-        val currentHomePage = DataStoreHelper.currentHomePage
-        setAccount(account)
-
-        DataStoreHelper.accounts = currentAccounts.toTypedArray()
-        DataStoreHelper.currentHomePage = currentHomePage
-    }
-
-    private fun setAccount(account: DataStoreHelper.Account) {
-        // Don't reload if it is the same account
-        if (DataStoreHelper.selectedKeyIndex == account.keyIndex) {
-            return
-        }
-
-        DataStoreHelper.selectedKeyIndex = account.keyIndex
-
-        MainActivity.bookmarksUpdatedEvent(true)
-        MainActivity.reloadHomeEvent(true)
     }
 
     private fun navigateToMainActivity() {
