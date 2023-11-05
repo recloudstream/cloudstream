@@ -6,6 +6,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
+import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.CommonActivity
 import com.lagradost.cloudstream3.CommonActivity.loadThemes
 import com.lagradost.cloudstream3.MainActivity
@@ -35,9 +36,14 @@ class AccountSelectActivity : AppCompatActivity() {
 
         val accounts = getAccounts(this@AccountSelectActivity)
 
+        val skipStartup = getKey(
+            getString(R.string.skip_startup_account_select_key),
+            false
+        ) ?: false || accounts.count() <= 1
+
         // Don't show account selection if there is only
         // one account that exists
-        if (!isEditingFromMainActivity && accounts.count() <= 1) {
+        if (!isEditingFromMainActivity && skipStartup) {
             navigateToMainActivity()
             return
         }

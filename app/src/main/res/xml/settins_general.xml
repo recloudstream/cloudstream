@@ -11,6 +11,12 @@
             android:title="@string/download_path_pref"
             android:icon="@drawable/netflix_download" />
 
+    <SwitchPreference
+        android:defaultValue="false"
+        android:icon="@drawable/ic_outline_account_circle_24"
+        android:key="@string/skip_startup_account_select_key"
+        android:title="@string/skip_startup_account_select_pref" />
+
     <Preference
             android:key="@string/legal_notice_key"
             android:title="@string/legal_notice"
