@@ -728,4 +728,5 @@
     <string name="select_an_account">Select an Account</string>
     <string name="manage_accounts">Manage Accounts</string>
     <string name="edit_account">Edit account</string>
+    <string name="logged_account" formatted="true">Logged in as %s</string>
 </resources>

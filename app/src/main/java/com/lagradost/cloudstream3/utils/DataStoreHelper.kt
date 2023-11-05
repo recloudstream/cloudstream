@@ -151,7 +151,7 @@ object DataStoreHelper {
 
     fun setAccount(account: Account, refreshHomePage: Boolean) {
         selectedKeyIndex = account.keyIndex
-        showToast(account.name)
+        showToast(context?.getString(R.string.logged_account, account.name) ?: account.name)
         MainActivity.bookmarksUpdatedEvent(true)
         MainActivity.reloadLibraryEvent(true)
         if (refreshHomePage) {
