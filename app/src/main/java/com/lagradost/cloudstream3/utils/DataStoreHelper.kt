@@ -153,6 +153,7 @@ object DataStoreHelper {
         selectedKeyIndex = account.keyIndex
         showToast(account.name)
         MainActivity.bookmarksUpdatedEvent(true)
+        MainActivity.reloadLibraryEvent(true)
         if (refreshHomePage) {
             MainActivity.reloadHomeEvent(true)
         }
