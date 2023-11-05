@@ -69,8 +69,10 @@ object AccountHelper {
                         currentAccounts.removeIf { it.keyIndex == account.keyIndex }
                         DataStoreHelper.accounts = currentAccounts.toTypedArray()
 
-                        // Update UI
-                        setAccount(getDefaultAccount(context))
+                        if (account.keyIndex == DataStoreHelper.selectedKeyIndex) {
+                            setAccount(getDefaultAccount(context))
+                        }
+
                         callback.invoke(null)
                         dialog?.dismissSafe()
                     }
