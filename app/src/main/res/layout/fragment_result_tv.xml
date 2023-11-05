@@ -325,9 +325,20 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
                             style="@style/ResultButtonTV"
                             android:nextFocusRight="@id/result_description"
                             android:nextFocusUp="@id/result_bookmark_button"
-                            android:nextFocusDown="@id/result_episodes_show"
+                            android:nextFocusDown="@id/result_subscribe_button"
 
                             android:text="@string/action_add_to_favorites"
+                            android:visibility="visible"
+                            app:icon="@drawable/ic_baseline_favorite_border_24" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/result_subscribe_button"
+                            style="@style/ResultButtonTV"
+                            android:nextFocusRight="@id/result_description"
+                            android:nextFocusUp="@id/result_favorite_button"
+                            android:nextFocusDown="@id/result_episodes_show"
+
+                            android:text="@string/action_subscribe"
                             android:visibility="visible"
                             app:icon="@drawable/ic_baseline_favorite_border_24" />
 
@@ -337,7 +348,7 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
                             style="@style/ResultButtonTV"
 
                             android:nextFocusRight="@id/redirect_to_episodes"
-                            android:nextFocusUp="@id/result_favorite_button"
+                            android:nextFocusUp="@id/result_subscribe_button"
                             android:nextFocusDown="@id/result_cast_items"
 
                             android:text="@string/episodes"

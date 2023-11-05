@@ -40,7 +40,6 @@ import com.lagradost.cloudstream3.utils.AppUtils.loadResult
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.DOWNLOAD_HEADER_CACHE
 import com.lagradost.cloudstream3.utils.DataStoreHelper
-import com.lagradost.cloudstream3.utils.DataStoreHelper.deleteAllBookmarkedData
 import com.lagradost.cloudstream3.utils.DataStoreHelper.deleteAllResumeStateIds
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getAllResumeStateIds
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getAllWatchStateIds
@@ -99,11 +98,6 @@ class HomeViewModel : ViewModel() {
 
     fun deleteBookmarks(list: List<SearchResponse>) {
         list.forEach { DataStoreHelper.deleteBookmarkedData(it.id) }
-        loadStoredData()
-    }
-
-    fun deleteBookmarks() {
-        deleteAllBookmarkedData()
         loadStoredData()
     }
 

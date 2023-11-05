@@ -12,6 +12,7 @@
     <string name="download_failed">Скачать неудачный</string>
     <string name="resize_fit">Подогнать</string>
     <string name="delete">Удалить</string>
+    <string name="cancel">Отмена</string>
     <string name="all">Все</string>
     <string name="pause">Пауза</string>
     <string name="cast_format" formatted="true">Актёрский состав: %s</string>
@@ -58,7 +59,6 @@
     <string name="type_completed">Завершено</string>
     <string name="type_dropped">Брошенный</string>
     <string name="type_plan_to_watch">План посмотреть</string>
-    <string name="type_none">Нет</string>
     <string name="type_re_watching">Пересмотрю</string>
     <string name="play_movie_button">Смотреть фильм</string>
     <string name="play_trailer_button">Смотреть трейлер</string>
@@ -82,7 +82,6 @@
     <string name="filter_bookmarks">Фильтр закладки</string>
     <string name="error_bookmarks_text">Закладки</string>
     <string name="sort_apply">Применить</string>
-    <string name="sort_cancel">Отмена</string>
     <string name="sort_copy">Копия</string>
     <string name="sort_close">Закрыть</string>
     <string name="sort_clear">Очистить</string>
@@ -186,7 +185,7 @@
     <string name="rating">Рейтинг</string>
     <string name="duration">Продолжительность</string>
     <string name="no_subtitles">Нет субтитров</string>
-    <string name="default_subtitles">По умолчанию</string>
+    <string name="action_default">По умолчанию</string>
     <string name="app_storage">Приложение</string>
     <string name="anime">Аниме</string>
     <string name="torrent">Торренты</string>
@@ -535,7 +534,6 @@
     <string name="edit">Изменить</string>
     <string name="wifi">Интернет</string>
     <string name="profile_background_des">Задний фон профиля</string>
-    <string name="default_account">\@строка/обычные_субтитры</string>
     <string name="help">Помощь</string>
     <string name="profile_number">Профиль %d</string>
     <string name="automatic_plugin_download_mode_title">Выберите режим фильтера плагинов для загрузки</string>

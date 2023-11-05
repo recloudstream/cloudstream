@@ -378,21 +378,25 @@ class HomeParentItemAdapterPreview(
                         showApply = false,
                         {}) {
                         val newValue = WatchType.values()[it]
-                        homePreviewBookmark.setCompoundDrawablesWithIntrinsicBounds(
-                            null,
-                            ContextCompat.getDrawable(
-                                homePreviewBookmark.context,
-                                newValue.iconRes
-                            ),
-                            null,
-                            null
-                        )
-                        homePreviewBookmark.setText(newValue.stringRes)
 
-                        ResultViewModel2.updateWatchStatus(
-                            item,
-                            newValue
-                        )
+                        ResultViewModel2().updateWatchStatus(
+                            newValue,
+                            fab.context,
+                            item
+                        ) { statusChanged: Boolean ->
+                            if (!statusChanged) return@updateWatchStatus
+
+                            homePreviewBookmark.setCompoundDrawablesWithIntrinsicBounds(
+                                null,
+                                ContextCompat.getDrawable(
+                                    homePreviewBookmark.context,
+                                    newValue.iconRes
+                                ),
+                                null,
+                                null
+                            )
+                            homePreviewBookmark.setText(newValue.stringRes)
+                        }
                     }
                 }
             }

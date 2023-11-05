@@ -38,7 +38,6 @@
     <string name="home_more_info">மேலும் தகவல்கள்</string>
     <string name="home_expanded_hide">மறை</string>
     <string name="action_remove_from_bookmarks">நீக்கு</string>
-    <string name="sort_cancel">ரத்து செய்க</string>
     <string name="sort_clear">நீக்கு</string>
     <string name="sort_save">சேமிக்கவும்</string>
     <string name="subs_text_color">உரை வண்ணம்</string>
@@ -63,7 +62,6 @@
     <string name="cast_format" formatted="true">நடிகர்கள்: %s</string>
     <string name="go_back_img_des">பின் செல்</string>
     <string name="title_settings">அமைப்புகள்</string>
-    <string name="type_none">ஏதும் இல்லை</string>
     <string name="loading">ஏற்றுகிறது…</string>
     <string name="type_dropped">கைவிடப்பட்டது</string>
     <string name="download_done">பதிவிறக்கம் முடிந்தது</string>

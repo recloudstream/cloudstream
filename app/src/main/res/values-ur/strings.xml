@@ -34,7 +34,6 @@
     <string name="type_on_hold">معطل</string>
     <string name="type_dropped">چھوڑ دیا گیا</string>
     <string name="type_plan_to_watch">دیکھنے کا منصوبہ</string>
-    <string name="type_none">کوئی نہیں</string>
     <string name="type_re_watching">دوبارہ دیکھنا</string>
     <string name="play_movie_button">مووی لگائے</string>
     <string name="play_trailer_button">ٹریلر چلائیں</string>
@@ -67,7 +66,6 @@
     <string name="action_remove_from_bookmarks">ریمو</string>
     <string name="action_add_to_bookmarks">واچ اسٹیٹس کو سیٹ کریں</string>
     <string name="sort_apply">لاگو کریں</string>
-    <string name="sort_cancel">منسوخ کریں</string>
     <string name="sort_copy">کاپی</string>
     <string name="sort_close">بند کریں</string>
     <string name="sort_clear">صاف کریں</string>
@@ -193,6 +191,7 @@
     <string name="no_episodes_found">کوئی اقساط نہیں ملی</string>
     <string name="delete_file">فائل کو ڈیلیٹ کریں</string>
     <string name="delete">مٹا دیں</string>
+    <string name="cancel">منسوخ کریں</string>
     <string name="pause">توقف</string>
     <string name="resume">از سر نو شروع کریں</string>
     <string name="go_back_30">-30</string>
@@ -211,7 +210,7 @@
     <string name="synopsis">خلاصہ</string>
     <string name="queued">قطار میں</string>
     <string name="no_subtitles">کوئی سب ٹائٹلز نہیں</string>
-    <string name="default_subtitles">ڈیفالٹ</string>
+    <string name="action_default">ڈیفالٹ</string>
     <string name="free_storage">مفت</string>
     <string name="used_storage">استعمال شُدہ</string>
     <string name="cartoons">کارٹون</string>
@@ -535,7 +534,6 @@
     <string name="edit">ترتیب دیں</string>
     <string name="wifi">وائی فائی</string>
     <string name="profile_background_des">پروفائل پس منظر</string>
-    <string name="default_account">@string/default_subtitles</string>
     <string name="help">مدد</string>
     <string name="profile_number">پروفائل %d</string>
     <string name="automatic_plugin_download_mode_title">پلگ انز کو ڈاؤن لوڈ کرنے کے لئے موڈ منتخب کریں</string>

@@ -54,7 +54,6 @@
     <string name="type_completed">Dovršeno</string>
     <string name="type_dropped">Ispušteno</string>
     <string name="type_plan_to_watch">Planiram pogledati</string>
-    <string name="type_none">Ništa</string>
     <string name="type_re_watching">Ponovno gledam</string>
     <string name="play_movie_button">Pokreni Film</string>
     <string name="play_livestream_button">Pokreni LiveStream</string>
@@ -92,7 +91,6 @@
     <string name="action_remove_from_bookmarks">Ukloni</string>
     <string name="action_add_to_bookmarks">Postavi status gledanja</string>
     <string name="sort_apply">Primijeni</string>
-    <string name="sort_cancel">Poništi</string>
     <string name="sort_copy">Kopiraj</string>
     <string name="sort_close">Zatvori</string>
     <string name="sort_clear">Očisti</string>
@@ -200,6 +198,7 @@
     <string name="no_episodes_found">Nisu pronađene epizode</string>
     <string name="delete_file">Izbriši datoteku</string>
     <string name="delete">Izbriši</string>
+    <string name="cancel">Poništi</string>
     <string name="pause">Pauziraj</string>
     <string name="resume">Nastavi</string>
     <string name="go_back_30">-30</string>
@@ -218,7 +217,7 @@
     <string name="synopsis">Sinopsis</string>
     <string name="queued">u redu čekanja</string>
     <string name="no_subtitles">Bez titlova</string>
-    <string name="default_subtitles">Zadano</string>
+    <string name="action_default">Zadano</string>
     <string name="free_storage">Slobodno</string>
     <string name="used_storage">Iskorišteno</string>
     <string name="app_storage">Aplikacija</string>
@@ -567,7 +566,6 @@
     <string name="unable_to_inflate">Nije bilo moguće ispravno izraditi korisničko sučelje. Ovo je ZNAČAJNA GREŠKA i treba se odmah prijaviti %s</string>
     <string name="automatic_plugin_download_mode_title">Odaberi modus za filtriranje preuzimanja dodataka</string>
     <string name="disable">Onemogući</string>
-    <string name="default_account">@string/default_subtitles</string>
     <string name="no_plugins_found_error">U repozitoriju nisu pronađeni dodaci</string>
     <string name="no_repository_found_error">Repozitorij nije pronađen, provjerite URL i pokušajte koristiti VPN</string>
     <string name="quality_profile_help">Ovdje možete promijeniti način na koji su izvori poredani. Ako video ima viši prioritet, pojavit će se više u odabiru izvora. Zbroj prioriteta izvora i prioriteta kvalitete je video prioritet.

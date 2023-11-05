@@ -583,7 +583,7 @@ object AppUtils {
     //private val viewModel: ResultViewModel by activityViewModels()
 
     private fun getResultsId(): Int {
-        return if (isTrueTvSettings()) {
+        return if (isTvSettings()) {
             R.id.global_to_navigation_results_tv
         } else {
             R.id.global_to_navigation_results_phone

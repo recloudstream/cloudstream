@@ -32,7 +32,6 @@
     <string name="home_info">ಮಾಹಿತಿ</string>
     <string name="action_add_to_bookmarks">ಸೆಟ್ ವಾಚ್ ಸ್ಟೇಟಸ್</string>
     <string name="sort_apply">ಅನ್ವಯಿಸು</string>
-    <string name="sort_cancel">ರದ್ದುಮಾಡು</string>
     <string name="subs_subtitle_elevation">ಸಬ್ ಟೈಟಲ್ಸ್ ಎಲೆವಷನ್</string>
     <string name="subs_font_size">ಫಾಂಟ್ ಸೈಜ್</string>
     <string name="subs_subtitle_languages">ಸಬ್ ಟೈಟಲ್ಸ್ ಭಾಷೆ</string>
@@ -108,7 +107,6 @@
     <string name="result_tags">ಪ್ರಕಾರಗಳು</string>
     <string name="result_open_in_browser">ಬ್ರೌಸರ್ ತೆರೆಯಿರಿ</string>
     <string name="type_on_hold">ಆನ್-ಹೋಲ್ಡ್</string>
-    <string name="type_none">ನನ್</string>
     <string name="reload_error">ಸಂಪರ್ಕವನ್ನು ಮರುಪ್ರಯತ್ನಿಸಿ…</string>
     <string name="download_paused">ಡೌನ್‌ಲೋಡ್ ವಿರಾಮಗೊಳಿಸಲಾಗಿದೆ</string>
     <string name="download_failed">ಡೌನ್‌ಲೋಡ್ ವಿಫಲವಾಗಿದೆ</string>

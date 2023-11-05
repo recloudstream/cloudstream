@@ -52,7 +52,6 @@
     <string name="type_completed">Abgeschlossen</string>
     <string name="type_dropped">Abgebrochen</string>
     <string name="type_plan_to_watch">Geplant</string>
-    <string name="type_none">Nichts</string>
     <string name="type_re_watching">Erneut schauen</string>
     <string name="play_movie_button">Film abspielen</string>
     <string name="play_livestream_button">Livestream abspielen</string>
@@ -89,7 +88,6 @@
     <string name="action_remove_from_bookmarks">Entfernen</string>
     <string name="action_add_to_bookmarks">Status setzen</string>
     <string name="sort_apply">Anwenden</string>
-    <string name="sort_cancel">Abbrechen</string>
     <string name="sort_copy">Kopieren</string>
     <string name="sort_close">Schließen</string>
     <string name="sort_clear">Leeren</string>
@@ -192,6 +190,7 @@
     <string name="episode_short">E</string>
     <string name="no_episodes_found">Keine Episoden gefunden</string>
     <string name="delete">Löschen</string>
+    <string name="cancel">Abbrechen</string>
     <string name="pause">Pause</string>
     <string name="resume">Fortsetzen</string>
     <string name="go_back_30">-30</string>
@@ -210,7 +209,7 @@
     <string name="synopsis">Zusammenfassung</string>
     <string name="queued">In Warteschlange eingereiht</string>
     <string name="no_subtitles">Keine Untertitel</string>
-    <string name="default_subtitles">Standard</string>
+    <string name="action_default">Standard</string>
     <string name="free_storage">Frei</string>
     <string name="used_storage">Belegt</string>
     <string name="app_storage">App</string>
@@ -552,5 +551,4 @@
     <string name="no_repository_found_error">Repository nicht gefunden, überprüf die URL und versuch ein VPN</string>
     <string name="unable_to_inflate">Die Benutzeroberfläche konnte nicht korrekt erstellt werden. Dies ist ein SCHWERWIEGENDER FEHLER und sollte sofort gemeldet werden. %s</string>
     <string name="disable">Deaktivieren</string>
-    <string name="default_account">@string/default_subtitles</string>
 </resources>

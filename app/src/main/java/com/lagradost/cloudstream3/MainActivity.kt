@@ -1306,7 +1306,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                                 this@MainActivity.getString(R.string.action_add_to_bookmarks),
                                 showApply = false,
                                 {}) {
-                                viewModel.updateWatchStatus(WatchType.values()[it])
+                                viewModel.updateWatchStatus(WatchType.values()[it], this@MainActivity)
                             }
                         }
 

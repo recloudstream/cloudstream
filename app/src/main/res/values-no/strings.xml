@@ -33,7 +33,6 @@
     <string name="type_completed">Fullført</string>
     <string name="type_dropped">Falt</string>
     <string name="type_plan_to_watch">Planlegg å se</string>
-    <string name="type_none">Ingen</string>
     <string name="play_movie_button">Spill filmer</string>
     <string name="play_torrent_button">Strøm Torrent</string>
     <string name="pick_source">Kilder</string>
@@ -67,7 +66,6 @@
     <string name="error_bookmarks_text">Bokmerker</string>
     <string name="action_remove_from_bookmarks">Ta bort</string>
     <string name="sort_apply">Søke om</string>
-    <string name="sort_cancel">Avbryt</string>
     <string name="player_speed">Spillerhastighet</string>
     <string name="subtitles_settings">Innstillinger for teksting</string>
     <string name="subs_text_color">Tekstfarge</string>
@@ -141,6 +139,7 @@
     <string name="episode_short">E</string>
     <string name="delete_file">Slett fil</string>
     <string name="delete">Slett</string>
+    <string name="cancel">Avbryt</string>
     <string name="pause">Stopp</string>
     <string name="resume">Gjenoppta</string>
     <string name="delete_message">Dette vil slette %s
@@ -155,7 +154,7 @@
     <string name="synopsis">Om</string>
     <string name="queued">I kø</string>
     <string name="no_subtitles">Ingen undertekster</string>
-    <string name="default_subtitles">Misligholde</string>
+    <string name="action_default">Misligholde</string>
     <string name="free_storage">Tilgjengelig</string>
     <string name="used_storage">Brukt</string>
     <string name="app_storage">applikasjon</string>

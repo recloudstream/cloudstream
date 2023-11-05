@@ -39,7 +39,6 @@
     <string name="type_completed">Selesai</string>
     <string name="type_dropped">Dihentikan</string>
     <string name="type_plan_to_watch">Rencana untuk Menonton</string>
-    <string name="type_none">Tidak Ada</string>
     <string name="type_re_watching">Menonton Ulang</string>
     <string name="play_movie_button">Putar Movie</string>
     <string name="play_torrent_button">Streaming Torrent</string>
@@ -75,7 +74,6 @@
     <string name="action_remove_from_bookmarks">Hapus</string>
     <string name="action_add_to_bookmarks">Atur status tontonan</string>
     <string name="sort_apply">Terapkan</string>
-    <string name="sort_cancel">Batalkan</string>
     <string name="sort_copy">Salin</string>
     <string name="sort_close">Tutup</string>
     <string name="sort_clear">Bersihkan</string>
@@ -174,6 +172,7 @@
     <string name="no_episodes_found">Episode Tidak Ditemukan</string>
     <string name="delete_file">Hapus File</string>
     <string name="delete">Hapus</string>
+    <string name="cancel">Batalkan</string>
     <string name="pause">Jeda</string>
     <string name="resume">Lanjutkan</string>
     <string name="go_back_30">-30</string>
@@ -192,7 +191,7 @@
     <string name="synopsis">Sinopsis</string>
     <string name="queued">antri</string>
     <string name="no_subtitles">Tidak Ada Subtitle</string>
-    <string name="default_subtitles">Default</string>
+    <string name="action_default">Default</string>
     <string name="free_storage">Tersedia</string>
     <string name="used_storage">Terpakai</string>
     <string name="app_storage">Aplikasi</string>
@@ -575,5 +574,4 @@
     <string name="no_plugins_found_error">Tidak ada plugin yang ditemukan di repositori</string>
     <string name="no_repository_found_error">Repositori tidak ditemukan, periksa URL dan coba VPN</string>
     <string name="already_voted">Kamu sudah voting</string>
-    <string name="default_account">@string/default_subtitles</string>
 </resources>

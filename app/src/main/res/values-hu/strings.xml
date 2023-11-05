@@ -20,6 +20,7 @@
     <string name="download">Letöltés</string>
     <string name="search">Keresés</string>
     <string name="delete">Törlés</string>
+    <string name="cancel">Mégse</string>
     <string name="pause">Szüneteltetés</string>
     <string name="queued">sorba állítva</string>
     <string name="resize_fit">Igazítás</string>
@@ -61,7 +62,6 @@
     <string name="type_watching">Nézés</string>
     <string name="type_completed">Befejezve</string>
     <string name="type_plan_to_watch">Később megnézés</string>
-    <string name="type_none">Nincs</string>
     <string name="type_re_watching">Újranézés</string>
     <string name="play_movie_button">Film lejátszása</string>
     <string name="play_trailer_button">Előzetes lejátszása</string>
@@ -90,7 +90,6 @@
     <string name="action_remove_from_bookmarks">Eltávolítás</string>
     <string name="action_add_to_bookmarks">Megtekintés állapotának beállítása</string>
     <string name="sort_apply">Alkalmazás</string>
-    <string name="sort_cancel">Mégse</string>
     <string name="sort_copy">Másolás</string>
     <string name="sort_close">Bezárás</string>
     <string name="sort_clear">Törlés</string>
@@ -162,7 +161,7 @@
     <string name="rating">Értékelés</string>
     <string name="cartoons">Rajzfilmek</string>
     <string name="livestreams">Élőadások</string>
-    <string name="default_subtitles">Alapértelmezett</string>
+    <string name="action_default">Alapértelmezett</string>
     <string name="movies">Filmek</string>
     <string name="tv_series">TV sorozat</string>
     <string name="anime">Anime</string>

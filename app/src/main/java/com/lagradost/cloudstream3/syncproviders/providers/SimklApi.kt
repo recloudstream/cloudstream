@@ -203,7 +203,7 @@ class SimklApi(index: Int) : AccountManager(index), SyncAPI {
         }
 
         /** Read the id string to get all other ids */
-        private fun readIdFromString(idString: String?): Map<SyncServices, String> {
+        fun readIdFromString(idString: String?): Map<SyncServices, String> {
             return tryParseJson(idString) ?: return emptyMap()
         }
 

@@ -50,14 +50,15 @@ android {
         }
     }
 
-    // https://developer.android.com/about/versions/14/behavior-changes-14#safer-dynamic-code-loading
-    compileSdk = 34 // android 14 is fucked
+    compileSdk = 34
     buildToolsVersion = "34.0.0"
 
     defaultConfig {
         applicationId = "com.lagradost.cloudstream3"
         minSdk = 21
-        targetSdk = 33
+
+        // https://developer.android.com/about/versions/14/behavior-changes-14#safer-dynamic-code-loading
+        targetSdk = 33 // android 14 is fucked
 
         versionCode = 62
         versionName = "4.2.1"
@@ -157,16 +158,14 @@ dependencies {
     implementation("androidx.test.ext:junit-ktx:1.1.5")
     testImplementation("org.json:json:20230618")
 
-    implementation("androidx.core:core-ktx:1.12.0") // need 34 for higher
-    implementation("androidx.appcompat:appcompat:1.6.1") // need target 32 for 1.5.0
+    implementation("androidx.core:core-ktx:1.12.0")
+    implementation("androidx.appcompat:appcompat:1.6.1")
 
-    // dont change this to 1.6.0 it looks ugly af
-    implementation("com.google.android.material:material:1.5.0")
+    implementation("com.google.android.material:material:1.10.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
 
-    // need 34 for higher
-    implementation("androidx.navigation:navigation-fragment-ktx:2.7.4")
-    implementation("androidx.navigation:navigation-ui-ktx:2.7.4")
+    implementation("androidx.navigation:navigation-fragment-ktx:2.7.5")
+    implementation("androidx.navigation:navigation-ui-ktx:2.7.5")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.6.2")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2")
 
@@ -180,7 +179,7 @@ dependencies {
     // DONT UPDATE, WILL CRASH ANDROID TV ????
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.1")
 
-    implementation("androidx.preference:preference-ktx:1.2.0")
+    implementation("androidx.preference:preference-ktx:1.2.1")
 
     implementation("com.github.bumptech.glide:glide:4.13.1")
     kapt("com.github.bumptech.glide:compiler:4.13.1")

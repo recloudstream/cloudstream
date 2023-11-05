@@ -32,7 +32,6 @@
     <string name="type_watching">ကြည့်နေသည်</string>
     <string name="type_completed">ကြည့်ပြီး</string>
     <string name="type_dropped">ကြည့်ခြင်းရပ်ထားသော</string>
-    <string name="type_none">ဘာမျှ</string>
     <string name="error_loading_links_toast">လင့်များချိတ်ဆက်ရာတွင်အချို့အယွင်း</string>
     <string name="download_storage_text">ဖုန်း သိုလှောင်ရုံ</string>
     <string name="filter_bookmarks">စာမှတ်များ စစ်ထုတ်မှု</string>
@@ -127,8 +126,7 @@
     <string name="synopsis">အကျဥ်းချုပ်</string>
     <string name="queued">နောက်အစီအစဥ်</string>
     <string name="no_subtitles">စာတန်းထိုးမထည့်</string>
-    <string name="default_subtitles">ပုံသေ</string>
-    <string name="default_account">@string/default_subtitles</string>
+    <string name="action_default">ပုံသေ</string>
     <string name="free_storage">ကျန်ရှိသော</string>
     <string name="app_storage">အက်ပ်</string>
     <string name="movies">ရုပ်ရှင်များ</string>
@@ -253,7 +251,6 @@
     <string name="subs_subtitle_languages">စာတန်းထိုး ဘာသာစကား</string>
     <string name="subs_import_text" formatted="true">ဒီမှာနေရာချခြင်းဖြင့်ဖောင့်များကိုသွင်းပါ %s</string>
     <string name="sort_apply">အတည်ပြု</string>
-    <string name="sort_cancel">ပယ်ဖျက်ရန်</string>
     <string name="subtitles_settings">စာတန်းထိုး ပြုပြင်ခြင်း</string>
     <string name="subs_text_color">စာသား အရောင်</string>
     <string name="subs_outline_color">အနားကွပ် အရောင်</string>
@@ -301,6 +298,7 @@
     <string name="no_episodes_found">အပိုင်းများမတွေ့ပါ</string>
     <string name="delete_file">ဖိုင်ကိုဖျက်ရန်</string>
     <string name="delete">ဖျက်ရန်</string>
+    <string name="cancel">ပယ်ဖျက်ရန်</string>
     <string name="pause">ရပ်ရန်</string>
     <string name="start">စရန်</string>
     <string name="test_failed">မအောင်မြင်ပါ</string>

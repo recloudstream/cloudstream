@@ -44,7 +44,6 @@
     <string name="type_completed">Completado</string>
     <string name="type_dropped">Deixado</string>
     <string name="type_plan_to_watch">Planejando assistir</string>
-    <string name="type_none">Nenhum</string>
     <string name="type_re_watching">Reassistindo</string>
     <string name="play_movie_button">Assistir Filme</string>
     <string name="play_torrent_button">Transmitir Torrent</string>
@@ -81,7 +80,6 @@
     <string name="action_remove_from_bookmarks">Remover</string>
     <string name="action_add_to_bookmarks">Selecionar marcador</string>
     <string name="sort_apply">Aplicar</string>
-    <string name="sort_cancel">Cancelar</string>
     <string name="sort_copy">Copiar</string>
     <string name="sort_close">Fechar</string>
     <string name="sort_clear">Limpar</string>
@@ -185,6 +183,7 @@
     <string name="no_episodes_found">Nenhum Episódio encontrado</string>
     <string name="delete_file">Apagar Arquivo</string>
     <string name="delete">Deletar</string>
+    <string name="cancel">Cancelar</string>
     <string name="pause">Pausar</string>
     <string name="resume">Retomar</string>
     <string name="go_back_30">-30</string>
@@ -203,7 +202,7 @@
     <string name="synopsis">Sinopse</string>
     <string name="queued">Na fila</string>
     <string name="no_subtitles">Sem Legendas</string>
-    <string name="default_subtitles">Padrão</string>
+    <string name="action_default">Padrão</string>
     <string name="free_storage">Livre</string>
     <string name="used_storage">Usado</string>
     <string name="app_storage">App</string>
@@ -569,7 +568,6 @@
     <string name="wifi">Wi-Fi</string>
     <string name="player_settings_play_in_web">Lista de videos da web</string>
     <string name="unable_to_inflate">A interface de usuário não foi gerada corretamente. Isto se trata de um bug importante e deve ser reportado imediatamente %s</string>
-    <string name="default_account">Legendas padrão da conta</string>
     <string name="pref_category_ui_features">Características da interface de usuário</string>
     <string name="category_provider_test">Provedor de teste</string>
     <string name="pref_category_player_layout">Layout</string>

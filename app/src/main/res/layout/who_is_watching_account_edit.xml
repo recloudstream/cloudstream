@@ -77,6 +77,12 @@
             android:textColorHint="?attr/grayTextColor"
             tools:ignore="LabelFor" />
 
+        <CheckBox
+            android:id="@+id/lockProfileCheckbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/lock_profile" />
+
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
