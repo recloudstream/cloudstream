@@ -89,7 +89,7 @@ class AccountAdapter(
                     lockIcon.isVisible = account.lockPin != null
                     outline.isVisible = !isTv && isLastUsedAccount
 
-                    if (Build.VERSION.SDK_INT >= 33) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                         accountImage.setRenderEffect(
                             RenderEffect.createBlurEffect(
                                 10f, 10f, Shader.TileMode.CLAMP
