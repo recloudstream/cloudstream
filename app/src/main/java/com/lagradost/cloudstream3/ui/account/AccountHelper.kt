@@ -68,7 +68,7 @@ object AccountHelper {
                         DataStoreHelper.accounts = currentAccounts.toTypedArray()
 
                         // Update UI
-                        setAccount(getDefaultAccount(context), true)
+                        setAccount(getDefaultAccount(context))
                         callback.invoke(null)
                         dialog?.dismissSafe()
                     }

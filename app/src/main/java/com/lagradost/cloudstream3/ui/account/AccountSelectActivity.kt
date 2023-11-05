@@ -17,7 +17,6 @@ import com.lagradost.cloudstream3.ui.AutofitRecyclerView
 import com.lagradost.cloudstream3.ui.account.AccountAdapter.Companion.VIEW_TYPE_EDIT_ACCOUNT
 import com.lagradost.cloudstream3.ui.account.AccountAdapter.Companion.VIEW_TYPE_SELECT_ACCOUNT
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
-import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getAccounts
 import com.lagradost.cloudstream3.utils.DataStoreHelper.setAccount
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
@@ -80,7 +79,7 @@ class AccountSelectActivity : AppCompatActivity() {
                     // We came from MainActivity, return there
                     // and switch to the edited account
                     if (isEditingFromMainActivity) {
-                        setAccount(it, it.keyIndex != DataStoreHelper.selectedKeyIndex)
+                        setAccount(it)
                         navigateToMainActivity()
                     }
                 },

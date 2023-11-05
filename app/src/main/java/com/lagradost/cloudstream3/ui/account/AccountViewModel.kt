@@ -53,7 +53,7 @@ class AccountViewModel : ViewModel() {
 
         val currentHomePage = DataStoreHelper.currentHomePage
 
-        setAccount(account, false)
+        setAccount(account)
 
         DataStoreHelper.currentHomePage = currentHomePage
         DataStoreHelper.accounts = currentAccounts.toTypedArray()
@@ -78,13 +78,13 @@ class AccountViewModel : ViewModel() {
                 // Pin is correct, proceed
                 _isAllowedLogin.postValue(true)
                 _selectedKeyIndex.postValue(account.keyIndex)
-                setAccount(account, true)
+                setAccount(account)
             }
         } else {
             // No PIN set for the selected account, proceed
             _isAllowedLogin.postValue(true)
             _selectedKeyIndex.postValue(account.keyIndex)
-            setAccount(account, true)
+            setAccount(account)
         }
     }
 }
