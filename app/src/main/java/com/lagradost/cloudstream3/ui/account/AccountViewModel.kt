@@ -14,7 +14,6 @@ class AccountViewModel : ViewModel() {
     private val _accounts: MutableLiveData<List<DataStoreHelper.Account>> = MutableLiveData(
         context?.let { getAccounts(it) } ?: DataStoreHelper.accounts.toList()
     )
-
     val accounts: LiveData<List<DataStoreHelper.Account>> = _accounts
 
     private val _isEditing = MutableLiveData(false)

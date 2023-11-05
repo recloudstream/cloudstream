@@ -17,7 +17,7 @@ import com.lagradost.cloudstream3.ui.AutofitRecyclerView
 import com.lagradost.cloudstream3.ui.account.AccountAdapter.Companion.VIEW_TYPE_EDIT_ACCOUNT
 import com.lagradost.cloudstream3.ui.account.AccountAdapter.Companion.VIEW_TYPE_SELECT_ACCOUNT
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
-import com.lagradost.cloudstream3.utils.DataStoreHelper.getAccounts
+import com.lagradost.cloudstream3.utils.DataStoreHelper.accounts
 import com.lagradost.cloudstream3.utils.DataStoreHelper.setAccount
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
 
@@ -32,8 +32,6 @@ class AccountSelectActivity : AppCompatActivity() {
             "isEditingFromMainActivity",
             false
         )
-
-        val accounts = getAccounts(this@AccountSelectActivity)
 
         val skipStartup = getKey(
             getString(R.string.skip_startup_account_select_key),
