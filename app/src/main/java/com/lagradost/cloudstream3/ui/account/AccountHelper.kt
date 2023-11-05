@@ -48,7 +48,7 @@ object AccountHelper {
         var currentEditAccount = account
         val dialog = builder.show()
 
-        if (!isNewAccount) binding.text1.setText(R.string.edit_account)
+        if (!isNewAccount) binding.title.setText(R.string.edit_account)
 
         // Set up the dialog content
         binding.accountName.text = Editable.Factory.getInstance()?.newEditable(account.name)
@@ -98,12 +98,12 @@ object AccountHelper {
         }
 
         // Handle the profile picture and its interactions
-        binding.profilePic.setImage(account.image)
-        binding.profilePic.setOnClickListener {
+        binding.accountImage.setImage(account.image)
+        binding.accountImage.setOnClickListener {
             // Roll the image forwards once
             currentEditAccount =
                 currentEditAccount.copy(defaultImageIndex = (currentEditAccount.defaultImageIndex + 1) % DataStoreHelper.profileImages.size)
-            binding.profilePic.setImage(currentEditAccount.image)
+            binding.accountImage.setImage(currentEditAccount.image)
         }
 
         // Handle applying changes

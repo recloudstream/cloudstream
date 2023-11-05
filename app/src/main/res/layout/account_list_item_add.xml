@@ -8,9 +8,9 @@
     android:animateLayoutChanges="true"
     android:backgroundTint="?attr/primaryGrayBackground"
     android:foreground="?attr/selectableItemBackground"
-    app:cardCornerRadius="@dimen/rounded_image_radius"
     android:layout_margin="10dp"
     android:focusable="true"
+    app:cardCornerRadius="@dimen/rounded_image_radius"
     app:layout_constraintBottom_toBottomOf="parent"
     app:layout_constraintDimensionRatio="1"
     app:layout_constraintEnd_toEndOf="parent"
@@ -27,4 +27,3 @@
         android:contentDescription="@string/add_account" />
 
 </androidx.cardview.widget.CardView>
-

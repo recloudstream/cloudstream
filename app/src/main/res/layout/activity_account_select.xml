@@ -44,5 +44,6 @@
             android:layout_gravity="center_horizontal"
             android:paddingLeft="16dp"
             android:paddingRight="16dp" />
+
     </LinearLayout>
 </FrameLayout>

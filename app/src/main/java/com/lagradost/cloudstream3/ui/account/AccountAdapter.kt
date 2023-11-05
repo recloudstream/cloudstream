@@ -98,6 +98,7 @@ class AccountAdapter(
                     }
 
                     if (isTv) {
+                        // For emulator but this is fine on TV also
                         root.isFocusableInTouchMode = true
                         if (isLastUsedAccount) {
                             root.requestFocus()

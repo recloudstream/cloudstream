@@ -1,57 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    android:layout_height="match_parent">
 
     <TextView
         android:paddingStart="?android:attr/listPreferredItemPaddingStart"
         android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
-        android:layout_marginTop="20dp"
         android:textStyle="bold"
         android:text="@string/switch_account"
         android:textSize="20sp"
         android:textColor="?attr/textColor"
         android:layout_width="match_parent"
         android:layout_rowWeight="1"
-        android:layout_height="wrap_content" />
-
-    <TextView
-        android:paddingStart="?android:attr/listPreferredItemPaddingStart"
-        android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
-        android:text="@string/history"
-        android:textSize="15sp"
-        android:textColor="?attr/grayTextColor"
-        android:layout_width="match_parent"
-        android:layout_rowWeight="1"
-        android:layout_height="wrap_content" />
-
-    <TextView
-        android:paddingStart="?android:attr/listPreferredItemPaddingStart"
-        android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
-        android:text="@string/error_bookmarks_text"
-        android:textSize="15sp"
-        android:textColor="?attr/grayTextColor"
-        android:layout_width="match_parent"
-        android:layout_rowWeight="1"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:layout_marginTop="10dp"
-        android:descendantFocusability="afterDescendants"
         android:id="@+id/account_recycler_view"
+        android:orientation="horizontal"
+        android:descendantFocusability="afterDescendants"
+        android:layout_marginTop="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-
-        android:orientation="horizontal"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         tools:itemCount="4"
-        tools:listitem="@layout/account_list_item">
-
-        <requestFocus />
-    </androidx.recyclerview.widget.RecyclerView>
+        tools:listitem="@layout/account_list_item" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/manage_accounts_button"
@@ -63,4 +40,5 @@
         android:textSize="16sp"
         app:icon="@drawable/ic_baseline_edit_24"
         style="@style/Widget.MaterialComponents.Button.TextButton" />
+
 </LinearLayout>
