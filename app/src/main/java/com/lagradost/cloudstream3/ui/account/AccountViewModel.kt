@@ -63,7 +63,8 @@ class AccountViewModel : ViewModel() {
 
     fun handleAccountSelect(
         account: DataStoreHelper.Account,
-        context: Context
+        context: Context,
+        forStartup: Boolean = false
     ) {
         // Check if the selected account has a lock PIN set
         if (account.lockPin != null) {
@@ -71,7 +72,8 @@ class AccountViewModel : ViewModel() {
             showPinInputDialog(
                 context,
                 account.lockPin,
-                false
+                false,
+                forStartup
             ) { pin ->
                 if (pin == null) return@showPinInputDialog
                 // Pin is correct, proceed

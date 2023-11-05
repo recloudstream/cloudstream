@@ -721,6 +721,7 @@
 
 
     <string name="enter_pin">Enter PIN</string>
+    <string name="enter_pin_with_name" formatted="true">Enter PIN for %s</string>
     <string name="enter_current_pin">Enter Current PIN</string>
     <string name="lock_profile">Lock Profile</string>
     <string name="pin">PIN</string>
@@ -731,4 +732,5 @@
     <string name="edit_account">Edit account</string>
     <string name="logged_account" formatted="true">Logged in as %s</string>
     <string name="skip_startup_account_select_pref">Skip account selection at startup</string>
+    <string name="use_default_account">Use Default Account</string>
 </resources>

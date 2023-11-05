@@ -17,6 +17,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.lagradost.cloudstream3.AcraApplication.Companion.getActivity
 import com.lagradost.cloudstream3.AcraApplication.Companion.removeKeys
 import com.lagradost.cloudstream3.MainActivity
 import com.lagradost.cloudstream3.R
@@ -33,6 +34,7 @@ import com.lagradost.cloudstream3.utils.DataStoreHelper.getDefaultAccount
 import com.lagradost.cloudstream3.utils.DataStoreHelper.setAccount
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.showInputMethod
+import kotlin.system.exitProcess
 
 object AccountHelper {
     fun showAccountEditDialog(
@@ -169,6 +171,7 @@ object AccountHelper {
         context: Context,
         currentPin: String?,
         editAccount: Boolean,
+        forStartup: Boolean = false,
         errorText: String? = null,
         callback: (String?) -> Unit
     ) {
@@ -206,6 +209,28 @@ object AccountHelper {
                     callback.invoke(null)
                 }
             }
+
+        if (forStartup) {
+            val currentAccount = DataStoreHelper.accounts.firstOrNull {
+                it.keyIndex == DataStoreHelper.selectedKeyIndex
+            }
+
+            builder.setTitle(context.getString(R.string.enter_pin_with_name, currentAccount?.name))
+            builder.setOnDismissListener {
+                if (!isPinValid) {
+                    exitProcess(0)
+                }
+            }
+            // So that if they don't know the PIN for the current account,
+            // they don't get completely locked out
+            builder.setNeutralButton(R.string.use_default_account) { _, _ ->
+                val activity = context.getActivity()
+                if (activity is AccountSelectActivity) {
+                    isPinValid = true
+                    activity.viewModel.handleAccountSelect(getDefaultAccount(context), activity)
+                }
+            }
+        }
 
         if (isNewPin) {
             if (errorText != null) binding.pinEditTextError.visibleWithText(errorText)
