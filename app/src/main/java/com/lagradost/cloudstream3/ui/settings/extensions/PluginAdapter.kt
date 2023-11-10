@@ -21,7 +21,6 @@ import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTrueT
 import com.lagradost.cloudstream3.utils.AppUtils.html
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.main
-import com.lagradost.cloudstream3.utils.GlideApp
 import com.lagradost.cloudstream3.utils.SubtitleHelper.fromTwoLettersToLanguage
 import com.lagradost.cloudstream3.utils.SubtitleHelper.getFlagFromIso
 import com.lagradost.cloudstream3.utils.UIHelper.setImage
@@ -87,7 +86,7 @@ class PluginAdapter(
     override fun onViewRecycled(holder: RecyclerView.ViewHolder) {
         if (holder is PluginViewHolder) {
             holder.binding.entryIcon.let { pluginIcon ->
-                GlideApp.with(pluginIcon).clear(pluginIcon)
+                com.bumptech.glide.Glide.with(pluginIcon).clear(pluginIcon)
             }
         }
         super.onViewRecycled(holder)

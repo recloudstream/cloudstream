@@ -65,6 +65,15 @@ class SettingsFragment : Fragment() {
                 }
             }
         }
+        fun Fragment?.setToolBarScrollFlags() {
+            if (isTvSettings()) {
+                val settingsAppbar = this?.view?.findViewById<MaterialToolbar>(R.id.settings_toolbar)
+
+                settingsAppbar?.updateLayoutParams<AppBarLayout.LayoutParams> {
+                    scrollFlags = AppBarLayout.LayoutParams.SCROLL_FLAG_NO_SCROLL
+                }
+            }
+        }
         fun Fragment?.setUpToolbar(title: String) {
             if (this == null) return
             val settingsToolbar = view?.findViewById<MaterialToolbar>(R.id.settings_toolbar) ?: return
