@@ -45,7 +45,6 @@
     <string name="type_completed">Đã xem</string>
     <string name="type_dropped">Bỏ qua</string>
     <string name="type_plan_to_watch">Xem sau</string>
-    <string name="type_none">Mặc định</string>
     <string name="type_re_watching">Xem lại</string>
     <string name="play_movie_button">Xem Ngay</string>
     <string name="play_livestream_button">Phát trực tiếp</string>
@@ -83,7 +82,6 @@
     <string name="action_remove_from_bookmarks">Xóa</string>
     <string name="action_add_to_bookmarks">Đặt trạng thái xem</string>
     <string name="sort_apply">Áp dụng</string>
-    <string name="sort_cancel">Hủy bỏ</string>
     <string name="sort_copy">Sao lưu</string>
     <string name="sort_close">Đóng</string>
     <string name="sort_clear">Huỷ bỏ</string>
@@ -190,6 +188,7 @@
     <string name="no_episodes_found">Không có tập nào</string>
     <string name="delete_file">Xóa Tệp</string>
     <string name="delete">Xóa</string>
+    <string name="cancel">Hủy bỏ</string>
     <string name="pause">Tạm Dừng</string>
     <string name="resume">Tiếp Tục</string>
     <string name="go_back_30">-30</string>
@@ -208,7 +207,7 @@
     <string name="synopsis">Thông tin</string>
     <string name="queued">Hàng chờ</string>
     <string name="no_subtitles">Không có phụ đề</string>
-    <string name="default_subtitles">Mặc Định</string>
+    <string name="action_default">Mặc Định</string>
     <string name="free_storage">Còn trống</string>
     <string name="used_storage">Đã sử dụng</string>
     <string name="app_storage">App</string>
@@ -410,8 +409,8 @@
     <string name="plugin_deleted">Plugin đã xoá</string>
     <string name="plugin_load_fail" formatted="true">Không tải được %s</string>
     <string name="is_adult">18+</string>
-    <string name="batch_download_start_format" formatted="true">Bắt đầu tải %d %s…</string>
-    <string name="batch_download_finish_format" formatted="true">Tải xuống %d %s thành công</string>
+    <string name="batch_download_start_format" formatted="true">Đã bắt đầu tải xuống %1$d %2$s…</string>
+    <string name="batch_download_finish_format" formatted="true">Đã tải xuống %1$d %2$s</string>
     <string name="batch_download_nothing_to_download_format" formatted="true">Toàn bộ %s đã được tải xuống</string>
     <string name="batch_download">Tải hàng loạt</string>
     <string name="plugin_singular">plugin</string>
@@ -567,5 +566,31 @@
     <string name="no_plugins_found_error">Không tìm thấy plugin</string>
     <string name="unable_to_inflate">Không thể khởi tạo UI, đây là một LỖI LỚN và cần được báo cáo ngay lập tức tới %s</string>
     <string name="automatic_plugin_download_mode_title">Chọn chế độ để lọc plugin tải xuống</string>
-    <string name="default_account">@string/default_subtitles</string>
+    <string name="favorite_removed">%s đã loại bỏ khỏi mục yêu thích</string>
+    <string name="favorites_list_name">Yêu thích</string>
+    <string name="favorite_added">%s đã thêm vào mục yêu thích</string>
+    <string name="duplicate_message_multiple" formatted="true">Các mục có thể trùng lặp đã được tìm thấy trong thư viện của bạn:
+\n
+\n%s
+\n
+\nBạn vẫn muốn thêm mục này, thay thế những mục hiện có hay hủy hành động\?</string>
+    <string name="backup_frequency">Tần suất sao lưu</string>
+    <string name="duplicate_title">Đã tìm thấy bản sao tiềm năng</string>
+    <string name="lock_profile">Khóa hồ sơ</string>
+    <string name="action_add_to_favorites">Thêm vào mục yêu thích</string>
+    <string name="duplicate_replace_all">Thay thế tất cả</string>
+    <string name="pin_error_incorrect">Mã PIN không chính xác. Vui lòng thử lại.</string>
+    <string name="action_unsubscribe">Hủy đăng ký</string>
+    <string name="pin_error_length">Mã PIN phải có 4 ký tự</string>
+    <string name="duplicate_replace">Thay thế</string>
+    <string name="duplicate_add">Thêm vào</string>
+    <string name="action_subscribe">Đăng ký</string>
+    <string name="action_remove_from_favorites">Loại bỏ khỏi mục yêu thích</string>
+    <string name="select_an_account">Chọn một tài khoản</string>
+    <string name="duplicate_message_single">Có vẻ như một mục có khả năng trùng lặp đã tồn tại trong thư viện của bạn: \'%1$s.\'
+\n
+\nBạn vẫn muốn thêm mục này, thay thế mục hiện có hay hủy hành động\?</string>
+    <string name="enter_pin">Nhập PIN</string>
+    <string name="pin">PIN</string>
+    <string name="enter_current_pin">Nhập mã PIN hiện tại</string>
 </resources>

@@ -49,7 +49,6 @@
     <string name="error_bookmarks_text">बुकमार्क्स</string>
     <string name="action_remove_from_bookmarks">हटाएँ</string>
     <string name="sort_apply">लागू करें</string>
-    <string name="sort_cancel">रद्द करें</string>
     <string name="player_speed">प्लेयर स्पीड</string>
     <string name="search_provider_text_providers">प्रोवाइडरों का उपयोग कर खोजें</string>
     <string name="search_provider_text_types">प्रकार का उपयोग करके खोजें</string>
@@ -91,6 +90,7 @@
     <string name="acra_report_toast">क्षमा करें, एप्प क्रैश हो गया है । निर्माताओं को एक अनाम बग रिपोर्ट भेजी जाएगी</string>
     <string name="delete_file">फ़ाइल डिलीट करें</string>
     <string name="delete">डिलीट</string>
+    <string name="cancel">रद्द करें</string>
     <string name="pause">रोकें</string>
     <string name="resume">फिर से चलाएं</string>
     <string name="delete_message">इससे %s स्थायी रूप से हट जाएगा

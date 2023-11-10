@@ -376,6 +376,8 @@ class SimklApi(index: Int) : AccountManager(index), SyncAPI {
                 private var status: Int? = null,
                 private var addEpisodes: Pair<List<MediaObject.Season>?, List<MediaObject.Season.Episode>?>? = null,
                 private var removeEpisodes: Pair<List<MediaObject.Season>?, List<MediaObject.Season.Episode>?>? = null,
+                // Required for knowing if the status should be overwritten
+                private var onList: Boolean = false
             ) {
                 fun interceptor(interceptor: Interceptor) = apply { this.interceptor = interceptor }
                 fun apiUrl(url: String) = apply { this.url = url }
@@ -387,6 +389,7 @@ class SimklApi(index: Int) : AccountManager(index), SyncAPI {
                 }
 
                 fun status(newStatus: Int?, oldStatus: Int?) = apply {
+                    onList = oldStatus != null
                     // Only set status if its new
                     if (newStatus != oldStatus) {
                         this.status = newStatus
@@ -412,6 +415,11 @@ class SimklApi(index: Int) : AccountManager(index), SyncAPI {
                     // Do not add episodes if there is no change
                     if (newEpisodes > (oldEpisodes ?: 0)) {
                         this.addEpisodes = getEpisodes(allEpisodes.take(newEpisodes))
+
+                        // Set to watching if episodes are added and there is no current status
+                        if (!onList) {
+                            status = SimklListStatusType.Watching.value
+                        }
                     }
                     if ((oldEpisodes ?: 0) > newEpisodes) {
                         this.removeEpisodes = getEpisodes(allEpisodes.drop(newEpisodes))
@@ -431,6 +439,28 @@ class SimklApi(index: Int) : AccountManager(index), SyncAPI {
                             interceptor = interceptor
                         ).isSuccessful
                     } else {
+                        val statusResponse = status?.let { setStatus ->
+                            val newStatus =
+                                SimklListStatusType.values()
+                                    .firstOrNull { it.value == setStatus }?.originalName
+                                    ?: SimklListStatusType.Watching.originalName!!
+
+                            app.post(
+                                "${this.url}/sync/add-to-list",
+                                json = StatusRequest(
+                                    shows = listOf(
+                                        StatusMediaObject(
+                                            null,
+                                            null,
+                                            ids,
+                                            newStatus,
+                                        )
+                                    ), movies = emptyList()
+                                ),
+                                interceptor = interceptor
+                            ).isSuccessful
+                        } ?: true
+
                         val episodeRemovalResponse = removeEpisodes?.let { (seasons, episodes) ->
                             app.post(
                                 "${this.url}/sync/history/remove",
@@ -471,28 +501,6 @@ class SimklApi(index: Int) : AccountManager(index), SyncAPI {
                             } else {
                                 true
                             }
-
-                        val statusResponse = status?.let { setStatus ->
-                            val newStatus =
-                                SimklListStatusType.values()
-                                    .firstOrNull { it.value == setStatus }?.originalName
-                                    ?: SimklListStatusType.Watching.originalName!!
-
-                            app.post(
-                                "${this.url}/sync/add-to-list",
-                                json = StatusRequest(
-                                    shows = listOf(
-                                        StatusMediaObject(
-                                            null,
-                                            null,
-                                            ids,
-                                            newStatus,
-                                        )
-                                    ), movies = emptyList()
-                                ),
-                                interceptor = interceptor
-                            ).isSuccessful
-                        } ?: true
 
                         statusResponse && episodeRemovalResponse && historyResponse
                     }

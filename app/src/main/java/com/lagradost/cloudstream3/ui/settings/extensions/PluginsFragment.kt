@@ -18,6 +18,7 @@ import com.lagradost.cloudstream3.ui.home.HomeFragment.Companion.bindChips
 import com.lagradost.cloudstream3.ui.result.FOCUS_SELF
 import com.lagradost.cloudstream3.ui.result.setLinearListLayout
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
+import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setToolBarScrollFlags
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setUpToolbar
 import com.lagradost.cloudstream3.ui.settings.appLanguages
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showMultiDialog
@@ -73,6 +74,7 @@ class PluginsFragment : Fragment() {
             return
         }
 
+        setToolBarScrollFlags()
         setUpToolbar(name)
         binding?.settingsToolbar?.apply {
             setOnMenuItemClickListener { menuItem ->

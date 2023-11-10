@@ -63,7 +63,6 @@
     <string name="action_remove_from_bookmarks">Fjern</string>
     <string name="action_add_to_bookmarks">Sett visingstatus</string>
     <string name="sort_apply">Bruk</string>
-    <string name="sort_cancel">Avbryt</string>
     <string name="sort_copy">Kopier</string>
     <string name="sort_clear">Tøm</string>
     <string name="sort_save">Lagre</string>
@@ -113,6 +112,7 @@
     <string name="no_episodes_found">Ingen episodar blei funnen</string>
     <string name="delete_file">Slett fil</string>
     <string name="delete">Slett</string>
+    <string name="cancel">Avbryt</string>
     <string name="pause">Pause</string>
     <string name="resume">Gjenoppta</string>
     <string name="go_back_30">-30</string>
@@ -129,7 +129,7 @@
     <string name="synopsis">Om</string>
     <string name="queued">i kø</string>
     <string name="no_subtitles">Ingen undertekstar</string>
-    <string name="default_subtitles">Standard</string>
+    <string name="action_default">Standard</string>
     <string name="used_storage">Brukt</string>
     <string name="app_storage">Program</string>
     <string name="movies">Filmar</string>
@@ -166,7 +166,6 @@
     <string name="go_back_img_des">Gå tilbake</string>
     <string name="result_tags">Sjangrar</string>
     <string name="result_share">Dele</string>
-    <string name="type_none">Ingen</string>
     <string name="type_re_watching">Ser om igjen</string>
     <string name="update_started">Oppdatering starta</string>
     <string name="popup_resume_download">Fortsett nedlasting</string>

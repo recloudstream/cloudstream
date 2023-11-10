@@ -42,7 +42,6 @@
     <string name="type_completed">Concluído</string>
     <string name="type_dropped">Desistido</string>
     <string name="type_plan_to_watch">Pretendo assistir</string>
-    <string name="type_none">Nenhum</string>
     <string name="type_re_watching">Reassistindo</string>
     <string name="play_movie_button">Reproduzir filme</string>
     <string name="play_livestream_button">Reproduzir transmissão ao vivo</string>
@@ -78,7 +77,6 @@
     <string name="error_bookmarks_text">Marcadores</string>
     <string name="action_remove_from_bookmarks">Remover</string>
     <string name="sort_apply">Aplicar</string>
-    <string name="sort_cancel">Cancelar</string>
     <string name="sort_copy">Copiar</string>
     <string name="sort_close">Fechar</string>
     <string name="sort_clear">Limpar</string>
@@ -182,6 +180,7 @@
     <string name="no_episodes_found">Nenhum Episódio encontrado</string>
     <string name="delete_file">Eliminar Ficheiro</string>
     <string name="delete">Eliminar</string>
+    <string name="cancel">Cancelar</string>
     <string name="pause">Pôr em Pausa</string>
     <string name="resume">Retomar</string>
     <string name="delete_message" formatted="true">Isto apagará %s permanentemente
@@ -198,7 +197,7 @@
     <string name="synopsis">Sinopse</string>
     <string name="queued">Na fila</string>
     <string name="no_subtitles">Sem Legendas</string>
-    <string name="default_subtitles">Padrão</string>
+    <string name="action_default">Padrão</string>
     <string name="free_storage">Livre</string>
     <string name="used_storage">Usado</string>
     <string name="app_storage">App</string>
@@ -548,7 +547,6 @@
 \nNOTA: Se a soma for 10 ou mais, o leitor saltará automaticamente o carregamento quando essa ligação for carregada!</string>
     <string name="automatic_plugin_download_mode_title">Selecionar o modo para filtrar a transferência de plug-ins</string>
     <string name="unable_to_inflate">Não foi possível criar corretamente a interface do utilizador, trata-se de um GRANDE BUG e deve ser comunicado imediatamente %s</string>
-    <string name="default_account">\@ string/legendas_padrão</string>
     <string name="disable">Desativar</string>
     <string name="no_plugins_found_error">Não foram encontrados plugins no repositório</string>
     <string name="no_repository_found_error">Repositório não encontrado, verifique o URL e tente a VPN</string>
