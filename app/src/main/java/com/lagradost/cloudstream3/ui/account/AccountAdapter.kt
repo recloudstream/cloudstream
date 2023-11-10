@@ -1,8 +1,5 @@
 package com.lagradost.cloudstream3.ui.account
 
-import android.graphics.RenderEffect
-import android.graphics.Shader
-import android.os.Build
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
@@ -17,13 +14,14 @@ import com.lagradost.cloudstream3.ui.account.AccountHelper.showAccountEditDialog
 import com.lagradost.cloudstream3.ui.result.setImage
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
 import com.lagradost.cloudstream3.utils.DataStoreHelper
+import com.lagradost.cloudstream3.utils.UIHelper.setImage
 
 class AccountAdapter(
     private val accounts: List<DataStoreHelper.Account>,
     private val accountSelectCallback: (DataStoreHelper.Account) -> Unit,
     private val accountCreateCallback: (DataStoreHelper.Account) -> Unit,
     private val accountEditCallback: (DataStoreHelper.Account) -> Unit,
-    private val accountDeleteCallback: () -> Unit
+    private val accountDeleteCallback: (DataStoreHelper.Account) -> Unit
 ) : RecyclerView.Adapter<AccountAdapter.AccountViewHolder>() {
 
     companion object {
@@ -62,11 +60,13 @@ class AccountAdapter(
                         )
                     } else {
                         root.setOnLongClickListener {
-                            showAccountEditDialog(root.context, account, isNewAccount = false) {
-                                if (it != null) {
-                                    accountEditCallback.invoke(it)
-                                } else accountDeleteCallback.invoke()
-                            }
+                            showAccountEditDialog(
+                                context = root.context,
+                                account = account,
+                                isNewAccount = false,
+                                accountEditCallback = { account -> accountEditCallback.invoke(account) },
+                                accountDeleteCallback = { account -> accountDeleteCallback.invoke(account) }
+                            )
 
                             true
                         }
@@ -85,17 +85,13 @@ class AccountAdapter(
                     val isLastUsedAccount = account.keyIndex == DataStoreHelper.selectedKeyIndex
 
                     accountName.text = account.name
-                    accountImage.setImage(account.image)
+                    accountImage.setImage(
+                        account.image,
+                        fadeIn = false,
+                        radius = 10
+                    )
                     lockIcon.isVisible = account.lockPin != null
                     outline.isVisible = !isTv && isLastUsedAccount
-
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                        accountImage.setRenderEffect(
-                            RenderEffect.createBlurEffect(
-                                10f, 10f, Shader.TileMode.CLAMP
-                            )
-                        )
-                    }
 
                     if (isTv) {
                         // For emulator but this is fine on TV also
@@ -111,11 +107,13 @@ class AccountAdapter(
                     }
 
                     root.setOnClickListener {
-                        showAccountEditDialog(root.context, account, isNewAccount = false) {
-                            if (it != null) {
-                                accountEditCallback.invoke(it)
-                            } else accountDeleteCallback.invoke()
-                        }
+                        showAccountEditDialog(
+                            context = root.context,
+                            account = account,
+                            isNewAccount = false,
+                            accountEditCallback = { account -> accountEditCallback.invoke(account) },
+                            accountDeleteCallback = { account -> accountDeleteCallback.invoke(account) }
+                        )
                     }
                 }
 
@@ -131,16 +129,18 @@ class AccountAdapter(
 
                         val accountName = root.context.getString(R.string.account)
 
-                        showAccountEditDialog(root.context, DataStoreHelper.Account(
-                            keyIndex = keyIndex,
-                            name = "$accountName $keyIndex",
-                            customImage = null,
-                            defaultImageIndex = image
-                        ), isNewAccount = true) {
-                            if (it != null) {
-                                accountCreateCallback.invoke(it)
-                            }
-                        }
+                        showAccountEditDialog(
+                            root.context,
+                            DataStoreHelper.Account(
+                                keyIndex = keyIndex,
+                                name = "$accountName $keyIndex",
+                                customImage = null,
+                                defaultImageIndex = image
+                            ),
+                            isNewAccount = true,
+                            accountEditCallback = { account -> accountCreateCallback.invoke(account) },
+                            accountDeleteCallback = {}
+                        )
                     }
                 }
             }

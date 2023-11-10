@@ -5,8 +5,8 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.GridLayoutManager
-import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.CommonActivity
 import com.lagradost.cloudstream3.CommonActivity.loadThemes
 import com.lagradost.cloudstream3.CommonActivity.showToast
@@ -40,10 +40,11 @@ class AccountSelectActivity : AppCompatActivity() {
             false
         )
 
-        val skipStartup = getKey(
+        val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
+        val skipStartup = settingsManager.getBoolean(
             getString(R.string.skip_startup_account_select_key),
             false
-        ) ?: false || accounts.count() <= 1
+        ) || accounts.count() <= 1
 
         viewModel = ViewModelProvider(this)[AccountViewModel::class.java]
 
@@ -105,7 +106,7 @@ class AccountSelectActivity : AppCompatActivity() {
                         navigateToMainActivity()
                     }
                 },
-                accountDeleteCallback = { viewModel.updateAccounts(this) }
+                accountDeleteCallback = { viewModel.handleAccountDelete(it,this) }
             )
 
             recyclerView.adapter = adapter

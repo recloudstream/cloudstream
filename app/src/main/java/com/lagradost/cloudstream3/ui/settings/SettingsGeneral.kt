@@ -335,15 +335,6 @@ class SettingsGeneral : PreferenceFragmentCompat() {
             return@setOnPreferenceChangeListener true
         }
 
-        settingsManager.edit().putBoolean(
-            getString(R.string.skip_startup_account_select_key),
-            getKey(getString(R.string.skip_startup_account_select_key), false) ?: false
-        ).apply()
-        getPref(R.string.skip_startup_account_select_key)?.setOnPreferenceChangeListener { _, newValue ->
-            setKey(getString(R.string.skip_startup_account_select_key), newValue)
-            return@setOnPreferenceChangeListener true
-        }
-
         getPref(R.string.download_path_key)?.setOnPreferenceClickListener {
             val dirs = getDownloadDirs()
 

@@ -5,15 +5,19 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.lagradost.cloudstream3.AcraApplication.Companion.context
+import com.lagradost.cloudstream3.AcraApplication.Companion.removeKeys
 import com.lagradost.cloudstream3.ui.account.AccountHelper.showPinInputDialog
 import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getAccounts
+import com.lagradost.cloudstream3.utils.DataStoreHelper.getDefaultAccount
 import com.lagradost.cloudstream3.utils.DataStoreHelper.setAccount
 
 class AccountViewModel : ViewModel() {
-    private val _accounts: MutableLiveData<List<DataStoreHelper.Account>> = MutableLiveData(
-        context?.let { getAccounts(it) } ?: DataStoreHelper.accounts.toList()
-    )
+    private fun getAllAccounts(): List<DataStoreHelper.Account> {
+        return context?.let { getAccounts(it) } ?: DataStoreHelper.accounts.toList()
+    }
+
+    private val _accounts: MutableLiveData<List<DataStoreHelper.Account>> = MutableLiveData(getAllAccounts())
     val accounts: LiveData<List<DataStoreHelper.Account>> = _accounts
 
     private val _isEditing = MutableLiveData(false)
@@ -22,7 +26,11 @@ class AccountViewModel : ViewModel() {
     private val _isAllowedLogin = MutableLiveData(false)
     val isAllowedLogin: LiveData<Boolean> = _isAllowedLogin
 
-    private val _selectedKeyIndex = MutableLiveData(DataStoreHelper.selectedKeyIndex)
+    private val _selectedKeyIndex = MutableLiveData(
+        getAllAccounts().indexOfFirst {
+            it.keyIndex == DataStoreHelper.selectedKeyIndex
+        }
+    )
     val selectedKeyIndex: LiveData<Int> = _selectedKeyIndex
 
     fun setIsEditing(value: Boolean) {
@@ -31,11 +39,6 @@ class AccountViewModel : ViewModel() {
 
     fun toggleIsEditing() {
         _isEditing.postValue(!(_isEditing.value ?: false))
-    }
-
-    fun updateAccounts(context: Context) {
-        _accounts.postValue(getAccounts(context))
-        _selectedKeyIndex.postValue(DataStoreHelper.selectedKeyIndex)
     }
 
     fun handleAccountUpdate(
@@ -58,7 +61,29 @@ class AccountViewModel : ViewModel() {
         DataStoreHelper.accounts = currentAccounts.toTypedArray()
 
         _accounts.postValue(getAccounts(context))
-        _selectedKeyIndex.postValue(account.keyIndex)
+        _selectedKeyIndex.postValue(getAccounts(context).indexOf(account))
+    }
+
+    fun handleAccountDelete(
+        account: DataStoreHelper.Account,
+        context: Context
+    ) {
+        removeKeys(account.keyIndex.toString())
+
+        val currentAccounts = getAccounts(context).toMutableList()
+
+        currentAccounts.removeIf { it.keyIndex == account.keyIndex }
+
+        DataStoreHelper.accounts = currentAccounts.toTypedArray()
+
+        if (account.keyIndex == DataStoreHelper.selectedKeyIndex) {
+            setAccount(getDefaultAccount(context))
+        }
+
+        _accounts.postValue(getAccounts(context))
+        _selectedKeyIndex.postValue(getAllAccounts().indexOfFirst {
+            it.keyIndex == DataStoreHelper.selectedKeyIndex
+        })
     }
 
     fun handleAccountSelect(
@@ -78,13 +103,13 @@ class AccountViewModel : ViewModel() {
                 if (pin == null) return@showPinInputDialog
                 // Pin is correct, proceed
                 _isAllowedLogin.postValue(true)
-                _selectedKeyIndex.postValue(account.keyIndex)
+                _selectedKeyIndex.postValue(getAccounts(context).indexOf(account))
                 setAccount(account)
             }
         } else {
             // No PIN set for the selected account, proceed
             _isAllowedLogin.postValue(true)
-            _selectedKeyIndex.postValue(account.keyIndex)
+            _selectedKeyIndex.postValue(getAccounts(context).indexOf(account))
             setAccount(account)
         }
     }

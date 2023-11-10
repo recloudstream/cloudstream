@@ -18,7 +18,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.lagradost.cloudstream3.AcraApplication.Companion.getActivity
-import com.lagradost.cloudstream3.AcraApplication.Companion.removeKeys
 import com.lagradost.cloudstream3.MainActivity
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.AccountEditDialogBinding
@@ -31,17 +30,16 @@ import com.lagradost.cloudstream3.ui.result.setLinearListLayout
 import com.lagradost.cloudstream3.utils.AppUtils.setDefaultFocus
 import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getDefaultAccount
-import com.lagradost.cloudstream3.utils.DataStoreHelper.setAccount
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.showInputMethod
-import kotlin.system.exitProcess
 
 object AccountHelper {
     fun showAccountEditDialog(
         context: Context,
         account: DataStoreHelper.Account,
         isNewAccount: Boolean,
-        callback: (DataStoreHelper.Account?) -> Unit
+        accountEditCallback: (DataStoreHelper.Account) -> Unit,
+        accountDeleteCallback: (DataStoreHelper.Account) -> Unit
     ) {
         val binding = AccountEditDialogBinding.inflate(LayoutInflater.from(context), null, false)
         val builder = AlertDialog.Builder(context, R.style.AlertDialogCustom)
@@ -63,17 +61,7 @@ object AccountHelper {
             val dialogClickListener = DialogInterface.OnClickListener { _, which ->
                 when (which) {
                     DialogInterface.BUTTON_POSITIVE -> {
-                        // Remove the account
-                        removeKeys(account.keyIndex.toString())
-                        val currentAccounts = DataStoreHelper.accounts.toMutableList()
-                        currentAccounts.removeIf { it.keyIndex == account.keyIndex }
-                        DataStoreHelper.accounts = currentAccounts.toTypedArray()
-
-                        if (account.keyIndex == DataStoreHelper.selectedKeyIndex) {
-                            setAccount(getDefaultAccount(context))
-                        }
-
-                        callback.invoke(null)
+                        accountDeleteCallback.invoke(account)
                         dialog?.dismissSafe()
                     }
 
@@ -117,12 +105,12 @@ object AccountHelper {
                 showPinInputDialog(context, currentEditAccount.lockPin, false) { pin ->
                     if (pin == null) return@showPinInputDialog
                     // PIN is correct, proceed to update the account
-                    callback.invoke(currentEditAccount)
+                    accountEditCallback.invoke(currentEditAccount)
                     dialog.dismissSafe()
                 }
             } else {
                 // No lock PIN set, proceed to update the account
-                callback.invoke(currentEditAccount)
+                accountEditCallback.invoke(currentEditAccount)
                 dialog.dismissSafe()
             }
         }
@@ -220,7 +208,7 @@ object AccountHelper {
             builder.setTitle(context.getString(R.string.enter_pin_with_name, currentAccount?.name))
             builder.setOnDismissListener {
                 if (!isPinValid) {
-                    exitProcess(0)
+                    context.getActivity()?.finish()
                 }
             }
             // So that if they don't know the PIN for the current account,
@@ -335,8 +323,6 @@ object AccountHelper {
 
         recyclerView.setLinearListLayout(isHorizontal = true)
 
-        viewModel.updateAccounts(activity)
-
         activity.observe(viewModel.accounts) { liveAccounts ->
             recyclerView.adapter = AccountAdapter(
                 liveAccounts,
@@ -346,7 +332,7 @@ object AccountHelper {
                 },
                 accountCreateCallback = { viewModel.handleAccountUpdate(it, activity) },
                 accountEditCallback = { viewModel.handleAccountUpdate(it, activity) },
-                accountDeleteCallback = { viewModel.updateAccounts(activity) }
+                accountDeleteCallback = { viewModel.handleAccountDelete(it, activity) }
             )
 
             activity.observe(viewModel.selectedKeyIndex) { selectedKeyIndex ->
