@@ -1576,6 +1576,23 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
 //                showToast(this, currentFocus.toString(), Toast.LENGTH_LONG)
 //            }
 //        }
+
+        onBackPressedDispatcher.addCallback(
+            this,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    window?.navigationBarColor = colorFromAttribute(R.attr.primaryGrayBackground)
+                    updateLocale()
+
+                    // If we don't disable we end up in a loop with default behavior calling
+                    // this callback as well, so we disable it, run default behavior,
+                    // then re-enable this callback so it can be used for next back press.
+                    isEnabled = false
+                    onBackPressedDispatcher.onBackPressed()
+                    isEnabled = true
+                }
+            }
+        )
     }
 
     private var backPressedCallback: OnBackPressedCallback? = null
@@ -1585,6 +1602,9 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             backPressedCallback = object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
                     showConfirmExitDialog()
+                    window?.navigationBarColor =
+                        colorFromAttribute(R.attr.primaryGrayBackground)
+                    updateLocale()
                 }
             }
         }
