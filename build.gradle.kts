@@ -5,7 +5,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath("com.android.tools.build:gradle:8.1.2")
+        classpath("com.android.tools.build:gradle:8.1.3")
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.10")
         classpath("org.jetbrains.dokka:dokka-gradle-plugin:1.9.10")
 
@@ -22,7 +22,7 @@ allprojects {
 }
 
 plugins {
-    id("com.google.devtools.ksp") version "1.8.20-1.0.11" apply false
+    id("com.google.devtools.ksp") version "1.9.10-1.0.13" apply false
 }
 
 tasks.register("clean", Delete::class) {
