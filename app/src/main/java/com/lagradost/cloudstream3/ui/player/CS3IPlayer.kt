@@ -1254,7 +1254,7 @@ class CS3IPlayer : IPlayer {
                 .setMimeType(sub.mimeType)
                 .setLanguage("_${sub.name}")
                 .setId(sub.getId())
-                .setSelectionFlags(SELECTION_FLAG_DEFAULT)
+                .setSelectionFlags(0)
                 .build()
             when (sub.origin) {
                 SubtitleOrigin.DOWNLOADED_FILE -> {
