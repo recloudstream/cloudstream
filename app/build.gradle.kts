@@ -1,4 +1,5 @@
 import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
+import com.android.build.gradle.internal.tasks.factory.dependsOn
 import org.jetbrains.dokka.gradle.DokkaTask
 import java.io.ByteArrayOutputStream
 import java.net.URL
@@ -283,8 +284,10 @@ tasks.register("makeJar", Copy::class) {
     from("build/intermediates/compile_app_classes_jar/prereleaseDebug")
     into("build")
     include("classes.jar")
-    dependsOn("build")
 }
+
+tasks.named("makeJar").dependsOn("build")
+tasks.named("makeJar").dependsOn("assemblePrerelease")
 
 tasks.withType<DokkaTask>().configureEach {
     moduleName.set("Cloudstream")
