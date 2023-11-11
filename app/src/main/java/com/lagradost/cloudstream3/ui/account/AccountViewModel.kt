@@ -93,12 +93,8 @@ class AccountViewModel : ViewModel() {
         reloadForActivity: Boolean = false
     ) {
         if (reloadForActivity) {
-            val currentAccount = DataStoreHelper.accounts.firstOrNull {
-                it.keyIndex == DataStoreHelper.selectedKeyIndex
-            }
-
             _accounts.postValue(getAccounts(context))
-            _selectedKeyIndex.postValue(getAccounts(context).indexOf(currentAccount))
+            _selectedKeyIndex.postValue(getAccounts(context).indexOf(account))
             return
         }
 
