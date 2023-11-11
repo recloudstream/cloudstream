@@ -8,7 +8,6 @@ import android.content.Intent
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
-import com.google.auto.service.AutoService
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.mvvm.suspendSafeApiCall
 import com.lagradost.cloudstream3.plugins.PluginManager
@@ -37,7 +36,6 @@ import java.lang.ref.WeakReference
 import kotlin.concurrent.thread
 import kotlin.system.exitProcess
 
-
 class CustomReportSender : ReportSender {
     // Sends all your crashes to google forms
     override fun send(context: Context, errorContent: CrashReportData) {
@@ -65,7 +63,6 @@ class CustomReportSender : ReportSender {
     }
 }
 
-@AutoService(ReportSenderFactory::class)
 class CustomSenderFactory : ReportSenderFactory {
     override fun create(context: Context, config: CoreConfiguration): ReportSender {
         return CustomReportSender()

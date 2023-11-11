@@ -1,6 +1,7 @@
 package com.lagradost.cloudstream3.utils
 
 import android.net.Uri
+import com.fasterxml.jackson.annotation.JsonIgnore
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.USER_AGENT
@@ -377,7 +378,8 @@ open class ExtractorLink constructor(
 ) : VideoDownloadManager.IDownloadableMinimum {
     val isM3u8 : Boolean get() = type == ExtractorLinkType.M3U8
     val isDash : Boolean get() = type == ExtractorLinkType.DASH
-
+    
+    @JsonIgnore
     fun getAllHeaders() : Map<String, String> {
         if (referer.isBlank()) {
             return headers

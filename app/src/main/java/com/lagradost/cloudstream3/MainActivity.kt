@@ -19,6 +19,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.annotation.IdRes
 import androidx.annotation.MainThread
@@ -132,7 +133,6 @@ import com.lagradost.cloudstream3.utils.DataStore.setKey
 import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.DataStoreHelper.migrateResumeWatching
 import com.lagradost.cloudstream3.utils.Event
-import com.lagradost.cloudstream3.utils.IOnBackPressed
 import com.lagradost.cloudstream3.utils.InAppUpdater.Companion.runAutoUpdate
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.UIHelper.changeStatusBarState
@@ -650,34 +650,6 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         builder.show().setDefaultFocus()
     }
 
-    private fun backPressed() {
-        this.window?.navigationBarColor =
-            this.colorFromAttribute(R.attr.primaryGrayBackground)
-        this.updateLocale()
-        this.updateLocale()
-
-        val navHostFragment =
-            supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as? NavHostFragment
-        val navController = navHostFragment?.navController
-        val isAtHome =
-            navController?.currentDestination?.matchDestination(R.id.navigation_home) == true
-
-        if (isAtHome && isTvSettings()) {
-            showConfirmExitDialog()
-        } else {
-            super.onBackPressed()
-        }
-    }
-
-    override fun onBackPressed() {
-        ((supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as? NavHostFragment?)?.childFragmentManager?.primaryNavigationFragment as? IOnBackPressed)?.onBackPressed()
-            ?.let { runNormal ->
-                if (runNormal) backPressed()
-            } ?: run {
-            backPressed()
-        }
-    }
-
     override fun onDestroy() {
         val broadcastIntent = Intent()
         broadcastIntent.action = "restart_service"
@@ -1087,6 +1059,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         } catch (_: Throwable) {
         }
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         app.initClient(this)
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
@@ -1384,6 +1357,12 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                     this.putString(SearchFragment.SEARCH_QUERY, nextSearchQuery)
                 }
             }
+
+            if (isTvSettings()) {
+                if (navDestination.matchDestination(R.id.navigation_home)) {
+                    attachBackPressedCallback()
+                } else detachBackPressedCallback()
+            }
         }
 
         //val navController = findNavController(R.id.nav_host_fragment)
@@ -1598,6 +1577,44 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
 //            }
 //        }
 
+        onBackPressedDispatcher.addCallback(
+            this,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    window?.navigationBarColor = colorFromAttribute(R.attr.primaryGrayBackground)
+                    updateLocale()
+
+                    // If we don't disable we end up in a loop with default behavior calling
+                    // this callback as well, so we disable it, run default behavior,
+                    // then re-enable this callback so it can be used for next back press.
+                    isEnabled = false
+                    onBackPressedDispatcher.onBackPressed()
+                    isEnabled = true
+                }
+            }
+        )
+    }
+
+    private var backPressedCallback: OnBackPressedCallback? = null
+
+    private fun attachBackPressedCallback() {
+        if (backPressedCallback == null) {
+            backPressedCallback = object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    showConfirmExitDialog()
+                    window?.navigationBarColor =
+                        colorFromAttribute(R.attr.primaryGrayBackground)
+                    updateLocale()
+                }
+            }
+        }
+
+        backPressedCallback?.isEnabled = true
+        onBackPressedDispatcher.addCallback(this, backPressedCallback ?: return)
+    }
+
+    private fun detachBackPressedCallback() {
+        backPressedCallback?.isEnabled = false
     }
 
     suspend fun checkGithubConnectivity(): Boolean {

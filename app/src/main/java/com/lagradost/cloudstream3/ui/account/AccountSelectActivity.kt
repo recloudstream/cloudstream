@@ -4,14 +4,12 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.lagradost.cloudstream3.CommonActivity
 import com.lagradost.cloudstream3.CommonActivity.loadThemes
 import com.lagradost.cloudstream3.MainActivity
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.ActivityAccountSelectBinding
-import com.lagradost.cloudstream3.databinding.ActivityAccountSelectTvBinding
 import com.lagradost.cloudstream3.ui.account.AccountDialog.showPinInputDialog
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
 import com.lagradost.cloudstream3.utils.DataStoreHelper
@@ -36,13 +34,11 @@ class AccountSelectActivity : AppCompatActivity() {
 
         window.navigationBarColor = colorFromAttribute(R.attr.primaryBlackBackground)
 
-        val binding = if (isTvSettings()) {
-            ActivityAccountSelectTvBinding.inflate(layoutInflater)
-        } else ActivityAccountSelectBinding.inflate(layoutInflater)
+        val binding = ActivityAccountSelectBinding.inflate(layoutInflater)
 
         setContentView(binding.root)
 
-        val recyclerView: RecyclerView = binding.root.findViewById(R.id.account_recycler_view)
+        val recyclerView: RecyclerView = binding.accountRecyclerView
 
 
         val adapter = AccountAdapter(accounts) { selectedAccount ->
@@ -51,9 +47,13 @@ class AccountSelectActivity : AppCompatActivity() {
         }
         recyclerView.adapter = adapter
 
-        recyclerView.layoutManager = if (isTvSettings()) {
-            LinearLayoutManager(this)
-        } else GridLayoutManager(this, 2)
+        if (isTvSettings()) {
+            val spanSize = if (accounts.count() <= 6) {
+                accounts.count()
+            } else 6
+
+            recyclerView.layoutManager = GridLayoutManager(this, spanSize)
+        }
     }
 
     private fun onAccountSelected(selectedAccount: DataStoreHelper.Account) {

@@ -30,6 +30,7 @@ import com.lagradost.cloudstream3.ui.result.FOCUS_SELF
 import com.lagradost.cloudstream3.ui.result.setLinearListLayout
 import com.lagradost.cloudstream3.ui.result.setText
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTrueTvSettings
+import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setToolBarScrollFlags
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setUpToolbar
 import com.lagradost.cloudstream3.utils.AppUtils.downloadAllPluginsDialog
 import com.lagradost.cloudstream3.utils.AppUtils.setDefaultFocus
@@ -85,7 +86,7 @@ class ExtensionsFragment : Fragment() {
         //context?.fixPaddingStatusbar(extensions_root)
 
         setUpToolbar(R.string.extensions)
-
+        setToolBarScrollFlags()
 
         binding?.repoRecyclerView?.apply {
             setLinearListLayout(

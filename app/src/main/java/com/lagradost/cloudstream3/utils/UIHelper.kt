@@ -301,7 +301,7 @@ object UIHelper {
             } ?: return false
 
         return try {
-            var builder = GlideApp.with(this)
+            var builder = com.bumptech.glide.Glide.with(this)
                 .load(glideImage)
                 .skipMemoryCache(true)
                 .diskCacheStrategy(DiskCacheStrategy.ALL).let { req ->
@@ -368,7 +368,7 @@ object UIHelper {
     ) {
         if (this == null || url.isNullOrBlank()) return
         try {
-            val res = GlideApp.with(this)
+            val res = com.bumptech.glide.Glide.with(this)
                 .load(GlideUrl(url) { headers ?: emptyMap() })
                 .apply(bitmapTransform(BlurTransformation(radius, sample)))
                 .transition(
@@ -418,7 +418,7 @@ object UIHelper {
     }
 
     fun FragmentActivity.popCurrentPage() {
-        this.onBackPressed()
+        this.onBackPressedDispatcher.onBackPressed()
         /*val currentFragment = supportFragmentManager.fragments.lastOrNull {
             it.isVisible
         } ?: return
@@ -438,7 +438,7 @@ object UIHelper {
         val currentFragment = supportFragmentManager.fragments.lastOrNull {
             it.isVisible
         }
-            ?: //this.onBackPressed()
+            ?: //this.onBackPressedDispatcher.onBackPressed()
             return
 
 /*

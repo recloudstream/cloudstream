@@ -43,14 +43,6 @@ class AccountAdapter(
             LayoutInflater.from(parent.context), parent, false
         )
 
-        if (isTvSettings()) {
-            val layoutParams = binding.root.layoutParams as RecyclerView.LayoutParams
-            val marginInDp = 5 // Set the margin to 5dp
-            val marginInPixels = (marginInDp * parent.resources.displayMetrics.density).toInt()
-            layoutParams.setMargins(marginInPixels, marginInPixels, marginInPixels, marginInPixels)
-            binding.root.layoutParams = layoutParams
-        }
-
         return AccountViewHolder(binding)
     }
 

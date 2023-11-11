@@ -9,16 +9,16 @@
     <string name="cast_format" formatted="true">Актори: %s</string>
     <string name="next_episode_format" formatted="true">Епізод %d вийде через</string>
     <string name="result_poster_img_des">Poster</string>
-    <string name="app_dub_sub_episode_text_format" formatted="true">%s Еп. %d</string>
-    <string name="next_episode_time_day_format" formatted="true">%dд %dгод %dхв</string>
-    <string name="next_episode_time_hour_format" formatted="true">%dгод %dхв</string>
+    <string name="app_dub_sub_episode_text_format" formatted="true">%1$s Еп. %2$d</string>
+    <string name="next_episode_time_day_format" formatted="true">%1$dд %2$dгод %3$dхв</string>
+    <string name="next_episode_time_hour_format" formatted="true">%1$dгод %2$dхв</string>
     <string name="next_episode_time_min_format" formatted="true">%dхв</string>
     <string name="home_main_poster_img_des">Головний постер</string>
     <string name="home_next_random_img_des">Наступний випадковий</string>
     <string name="preview_background_img_des">Попередній перегляд фону</string>
     <string name="player_speed_text_format" formatted="true">Швидкість (%.2fx)</string>
     <string name="new_update_format" formatted="true">Знайдено нове оновлення!
-\n%s –&gt; %s</string>
+\n%1$s –&gt; %2$s</string>
     <string name="title_search">Пошук</string>
     <string name="title_downloads">Завантаження</string>
     <string name="duration_format" formatted="true">%d хв</string>
@@ -112,7 +112,7 @@
     <string name="popup_play_file">Переглянути файл</string>
     <string name="home_more_info">Детальніше</string>
     <string name="filter_bookmarks">Фільтр закладок</string>
-        <string name="sort_clear">Очистити</string>
+    <string name="sort_clear">Очистити</string>
     <string name="subtitles_settings">Налаштування субтитрів</string>
     <string name="subs_background_color">Колір фону</string>
     <string name="subs_subtitle_elevation">Висота субтитрів</string>
@@ -167,7 +167,7 @@
     <string name="subs_default_reset_toast">Скинути до значення за замовчуванням</string>
     <string name="no_season">Немає сезону</string>
     <string name="episodes">епізодів</string>
-    <string name="episode_format" formatted="true">%d %s</string>
+    <string name="episode_format" formatted="true">%1$d %2$s</string>
     <string name="season_short">С</string>
     <string name="episode_short">Е</string>
     <string name="delete_file">Видалити файл</string>
@@ -238,9 +238,9 @@
     <string name="year">Рік</string>
     <string name="go_forward_30">+30</string>
     <string name="acra_report_toast">Вибачте, у застосунку стався збій. Анонімне повідомлення про помилку буде відправлено розробникам</string>
-    <string name="season_format">%s %d%s</string>
+    <string name="season_format">%1$s %2$d%3$s</string>
     <string name="episode">Епізод</string>
-    <string name="episodes_range">%d-%d</string>
+    <string name="episodes_range">%1$d-%2$d</string>
     <string name="no_episodes_found">Епізодів не знайдено</string>
     <string name="pause">Пауза</string>
     <string name="season">Сезон</string>
@@ -364,7 +364,7 @@
     <string name="category_ui">Макет</string>
     <string name="category_providers">Постачальники</string>
     <string name="example_site_url">example.com</string>
-    <string name="login_format" formatted="true">%s %s</string>
+    <string name="login_format" formatted="true">%2$s %1$s</string>
     <string name="subtitles_depressed">Депресивний</string>
     <string name="account">обліковий запис</string>
     <string name="create_account">Створити</string>
@@ -414,8 +414,8 @@
     <string name="plugin_loaded">Плагін завантажено</string>
     <string name="plugin_downloaded">Плагін завантажено</string>
     <string name="plugin_load_fail" formatted="true">Не вдалося завантажити %s</string>
-    <string name="batch_download_start_format" formatted="true">Почалося завантаження %d %s…</string>
-    <string name="batch_download_finish_format" formatted="true">Завантажено %d %s</string>
+    <string name="batch_download_start_format" formatted="true">Почалося завантаження %1$d %2$s…</string>
+    <string name="batch_download_finish_format" formatted="true">Завантажено %1$d %2$s</string>
     <string name="batch_download_nothing_to_download_format" formatted="true">Всі %s вже завантажено</string>
     <string name="batch_download">Завантажити пакети</string>
     <string name="plugin_singular">плагін</string>
@@ -499,7 +499,7 @@
     <string name="empty_library_no_accounts_message">Ваша бібліотека порожня :(
 \nУвійдіть в обліковий запис бібліотеки або додайте фільми до вашої локальної бібліотеки.</string>
     <string name="sort_alphabetical_z">Алфавітом (від Я до А)</string>
-    <string name="select_library">Виберіть бібліотеку</string>
+    <string name="select_library">Оберіть бібліотеку</string>
     <string name="open_with">Відкрити</string>
     <string name="browser">Браузер</string>
     <string name="empty_library_logged_in_message">Цей список порожній. Спробуйте перейти до іншого.</string>
@@ -546,10 +546,36 @@
     <string name="qualities">Якості</string>
     <string name="profile_background_des">Фон профілю</string>
     <string name="unable_to_inflate">Не вдалося створити UI коректно, це ВАЖЛИВА ПОМИЛКА, про яку слід негайно повідомити %s</string>
-    <string name="automatic_plugin_download_mode_title">Виберіть режим для фільтрації завантаження плагінів</string>
+    <string name="automatic_plugin_download_mode_title">Оберіть режим для фільтрації завантаження плагінів</string>
     <string name="disable">Вимкнути</string>
     <string name="no_repository_found_error">Репозиторій не знайдено, перевірте URL-адресу та спробуйте VPN</string>
     <string name="no_plugins_found_error">Не знайдено жодних плагінів у репозиторії</string>
     <string name="already_voted">Ви вже проголосували</string>
     <string name="backup_frequency">Частота резервного копіювання</string>
+    <string name="favorite_removed">%s вилучено з обраного</string>
+    <string name="favorites_list_name">Обране</string>
+    <string name="favorite_added">%s додано до обраного</string>
+    <string name="duplicate_message_multiple" formatted="true">У вашій бібліотеці знайдено потенційні дублікати:
+\n
+\n%s
+\n
+\nВсе одно хочете додати цей елемент, замінити наявні чи скасувати дію\?</string>
+    <string name="duplicate_title">Знайдено потенційний дублікат</string>
+    <string name="lock_profile">Розблокувати профіль</string>
+    <string name="action_add_to_favorites">Додати до обраного</string>
+    <string name="duplicate_replace_all">Замінити усе</string>
+    <string name="pin_error_incorrect">Неправильний PIN-код. Спробуйте ще раз.</string>
+    <string name="action_unsubscribe">Відписатись</string>
+    <string name="pin_error_length">PIN-код повинен складатися з 4 символів</string>
+    <string name="duplicate_replace">Замінити</string>
+    <string name="duplicate_add">Додати</string>
+    <string name="action_subscribe">Підписатись</string>
+    <string name="action_remove_from_favorites">Вилучити з обраного</string>
+    <string name="select_an_account">Оберіть обліковий запис</string>
+    <string name="duplicate_message_single">Виявилося, що у вашій бібліотеці вже є потенційно повторюваний елемент: \'%1$s.\'
+\n
+\nВсе одно хочете додати цей елемент, замінити наявний чи скасувати дію\?</string>
+    <string name="enter_pin">Введіть PIN-код</string>
+    <string name="pin">PIN-код</string>
+    <string name="enter_current_pin">Введіть поточний PIN-код</string>
 </resources>
