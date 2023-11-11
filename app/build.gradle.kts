@@ -276,7 +276,6 @@ tasks.register("makeJar", Copy::class) {
     from("build/intermediates/compile_app_classes_jar/prereleaseDebug")
     into("build")
     include("classes.jar")
-    dependsOn("build")
 }
 
 tasks.withType<KotlinCompile> {
