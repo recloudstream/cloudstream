@@ -8,7 +8,6 @@ plugins {
     id("com.android.application")
     id("com.google.devtools.ksp")
     id("kotlin-android")
-    id("kotlin-kapt")
     id("org.jetbrains.dokka")
 }
 
@@ -34,12 +33,12 @@ android {
         enable = true
     }
 
-    // disable this for now
-    //externalNativeBuild {
-    //    cmake {
-    //        path("CMakeLists.txt")
-    //    }
-    //}
+    /* disable this for now
+    externalNativeBuild {
+        cmake {
+            path("CMakeLists.txt")
+        }
+    }*/
 
     signingConfigs {
         create("prerelease") {
@@ -58,9 +57,8 @@ android {
     defaultConfig {
         applicationId = "com.lagradost.cloudstream3"
         minSdk = 21
-
         // https://developer.android.com/about/versions/14/behavior-changes-14#safer-dynamic-code-loading
-        targetSdk = 33 // android 14 is fucked
+        targetSdk = 33 // android 14 is fu*ked
 
         versionCode = 62
         versionName = "4.2.1"
@@ -92,10 +90,6 @@ android {
         ksp {
             arg("room.schemaLocation", "$projectDir/schemas")
             arg("exportSchema", "true")
-        }
-
-        kapt {
-            includeCompileClasspath = true
         }
     }
 
