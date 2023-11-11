@@ -1014,7 +1014,8 @@ class CS3IPlayer : IPlayer {
                                         format.id!!,
                                         SubtitleOrigin.EMBEDDED_IN_VIDEO,
                                         format.sampleMimeType ?: MimeTypes.APPLICATION_SUBRIP,
-                                        emptyMap()
+                                        emptyMap(),
+                                        format.language
                                     )
                                 }
 
