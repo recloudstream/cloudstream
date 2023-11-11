@@ -89,8 +89,19 @@ class AccountViewModel : ViewModel() {
     fun handleAccountSelect(
         account: DataStoreHelper.Account,
         context: Context,
-        forStartup: Boolean = false
+        forStartup: Boolean = false,
+        reloadForActivity: Boolean = false
     ) {
+        if (reloadForActivity) {
+            val currentAccount = DataStoreHelper.accounts.firstOrNull {
+                it.keyIndex == DataStoreHelper.selectedKeyIndex
+            }
+
+            _accounts.postValue(getAccounts(context))
+            _selectedKeyIndex.postValue(getAccounts(context).indexOf(currentAccount))
+            return
+        }
+
         // Check if the selected account has a lock PIN set
         if (account.lockPin != null) {
             // The selected account has a PIN set, prompt the user to enter the PIN

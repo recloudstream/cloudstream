@@ -323,6 +323,17 @@ object AccountHelper {
 
         recyclerView.setLinearListLayout(isHorizontal = true)
 
+        val currentAccount = DataStoreHelper.accounts.firstOrNull {
+            it.keyIndex == DataStoreHelper.selectedKeyIndex
+        } ?: getDefaultAccount(activity)
+
+        // We want to make sure the accounts are up-to-date
+        viewModel.handleAccountSelect(
+            currentAccount,
+            activity,
+            reloadForActivity = true
+        )
+
         activity.observe(viewModel.accounts) { liveAccounts ->
             recyclerView.adapter = AccountAdapter(
                 liveAccounts,
