@@ -1,10 +1,12 @@
 import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
 import org.jetbrains.dokka.gradle.DokkaTask
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.ByteArrayOutputStream
 import java.net.URL
 
 plugins {
     id("com.android.application")
+    id("com.google.devtools.ksp")
     id("kotlin-android")
     id("kotlin-kapt")
     id("org.jetbrains.dokka")
@@ -87,6 +89,11 @@ android {
         )
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
+        ksp {
+            arg("room.schemaLocation", "$projectDir/schemas")
+            arg("exportSchema", "true")
+        }
+
         kapt {
             includeCompileClasspath = true
         }
@@ -127,20 +134,12 @@ android {
             versionCode = (System.currentTimeMillis() / 60000).toInt()
         }
     }
-    //toolchain {
-    //     languageVersion.set(JavaLanguageVersion.of(17))
-    // }
-    // jvmToolchain(17)
 
     compileOptions {
         isCoreLibraryDesugaringEnabled = true
 
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
-    }
-    kotlinOptions {
-        jvmTarget = "1.8"
-        freeCompilerArgs = listOf("-Xjvm-default=compatibility")
     }
     lint {
         abortOnError = false
@@ -181,9 +180,13 @@ dependencies {
 
     implementation("androidx.preference:preference-ktx:1.2.1")
 
-    implementation("com.github.bumptech.glide:glide:4.13.1")
-    kapt("com.github.bumptech.glide:compiler:4.13.1")
-    implementation("com.github.bumptech.glide:okhttp3-integration:4.13.0")
+    implementation("com.github.bumptech.glide:glide:4.15.1")
+    ksp("com.github.bumptech.glide:ksp:4.15.1")
+    implementation("com.github.bumptech.glide:okhttp3-integration:4.15.1")
+    // for ksp
+    ksp("dev.zacsweers.autoservice:auto-service-ksp:1.1.0")
+    implementation("dev.zacsweers.autoservice:auto-service-ksp:1.1.0")
+    implementation("com.google.guava:guava:32.1.2-android")
 
     implementation("jp.wasabeef:glide-transformations:4.3.0")
 
@@ -207,9 +210,6 @@ dependencies {
     implementation("ch.acra:acra-core:5.11.2")
     implementation("ch.acra:acra-toast:5.11.2")
 
-    compileOnly("com.google.auto.service:auto-service-annotations:1.1.1")
-    //either for java sources:
-    annotationProcessor("com.google.auto.service:auto-service:1.1.1")
     //or for kotlin sources (requires kapt gradle plugin):
     kapt("com.google.auto.service:auto-service:1.1.1")
 
@@ -276,7 +276,13 @@ tasks.register("makeJar", Copy::class) {
     from("build/intermediates/compile_app_classes_jar/prereleaseDebug")
     into("build")
     include("classes.jar")
-    dependsOn("build")
+}
+
+tasks.withType<KotlinCompile> {
+    kotlinOptions {
+        jvmTarget = "1.8"
+        freeCompilerArgs = listOf("-Xjvm-default=all-compatibility")
+    }
 }
 
 tasks.withType<DokkaTask>().configureEach {

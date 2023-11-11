@@ -60,7 +60,7 @@ class DownloadChildFragment : Fragment() {
                 }
             }.sortedBy { it.data.episode + (it.data.season ?: 0) * 100000 }
             if (eps.isEmpty()) {
-                activity?.onBackPressed()
+                activity?.onBackPressedDispatcher?.onBackPressed()
                 return@main
             }
 
@@ -78,7 +78,7 @@ class DownloadChildFragment : Fragment() {
         val folder = arguments?.getString("folder")
         val name = arguments?.getString("name")
         if (folder == null) {
-            activity?.onBackPressed() // TODO FIX
+            activity?.onBackPressedDispatcher?.onBackPressed() // TODO FIX
             return
         }
         fixPaddingStatusbar(binding?.downloadChildRoot)
@@ -87,7 +87,7 @@ class DownloadChildFragment : Fragment() {
             title = name
             setNavigationIcon(R.drawable.ic_baseline_arrow_back_24)
             setNavigationOnClickListener {
-                activity?.onBackPressed()
+                activity?.onBackPressedDispatcher?.onBackPressed()
             }
         }
 
