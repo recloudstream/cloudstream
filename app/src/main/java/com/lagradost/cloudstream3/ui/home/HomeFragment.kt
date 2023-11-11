@@ -38,6 +38,7 @@ import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.mvvm.observeNullable
 import com.lagradost.cloudstream3.ui.APIRepository.Companion.noneApi
 import com.lagradost.cloudstream3.ui.APIRepository.Companion.randomApi
+import com.lagradost.cloudstream3.ui.account.AccountHelper.showAccountSelectLinear
 import com.lagradost.cloudstream3.ui.result.txt
 import com.lagradost.cloudstream3.ui.search.*
 import com.lagradost.cloudstream3.ui.search.SearchHelper.handleSearchClickCallback
@@ -495,9 +496,10 @@ class HomeFragment : Fragment() {
             //homeChangeApiLoading.setOnClickListener(apiChangeClickListener)
             homeApiFab.setOnClickListener(apiChangeClickListener)
             homeChangeApi.setOnClickListener(apiChangeClickListener)
-            homeSwitchAccount.setOnClickListener { v ->
-                DataStoreHelper.showWhoIsWatching(v?.context ?: return@setOnClickListener)
+            homeSwitchAccount.setOnClickListener {
+                activity?.showAccountSelectLinear()
             }
+
             homeRandom.setOnClickListener {
                 if (listHomepageItems.isNotEmpty()) {
                     activity.loadSearchResult(listHomepageItems.random())

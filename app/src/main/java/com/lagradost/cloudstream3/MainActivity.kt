@@ -309,9 +309,13 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         // kinda shitty solution, but cant com main->home otherwise for popups
         val bookmarksUpdatedEvent = Event<Boolean>()
         /**
-         * Used by data store helper to fully reload home when switching accounts
+         * Used by DataStoreHelper to fully reload home when switching accounts
          */
         val reloadHomeEvent = Event<Boolean>()
+        /**
+         * Used by DataStoreHelper to fully reload library when switching accounts
+         */
+        val reloadLibraryEvent = Event<Boolean>()
 
 
         /**

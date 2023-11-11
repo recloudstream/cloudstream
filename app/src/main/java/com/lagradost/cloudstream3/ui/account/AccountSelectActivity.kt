@@ -1,87 +1,163 @@
 package com.lagradost.cloudstream3.ui.account
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
+import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.lagradost.cloudstream3.CommonActivity
 import com.lagradost.cloudstream3.CommonActivity.loadThemes
+import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.MainActivity
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.ActivityAccountSelectBinding
-import com.lagradost.cloudstream3.ui.account.AccountDialog.showPinInputDialog
+import com.lagradost.cloudstream3.mvvm.observe
+import com.lagradost.cloudstream3.ui.AutofitRecyclerView
+import com.lagradost.cloudstream3.ui.account.AccountAdapter.Companion.VIEW_TYPE_EDIT_ACCOUNT
+import com.lagradost.cloudstream3.ui.account.AccountAdapter.Companion.VIEW_TYPE_SELECT_ACCOUNT
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
-import com.lagradost.cloudstream3.utils.DataStoreHelper
-import com.lagradost.cloudstream3.utils.DataStoreHelper.getAccounts
+import com.lagradost.cloudstream3.utils.DataStoreHelper.accounts
+import com.lagradost.cloudstream3.utils.DataStoreHelper.selectedKeyIndex
+import com.lagradost.cloudstream3.utils.DataStoreHelper.setAccount
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
 
 class AccountSelectActivity : AppCompatActivity() {
 
+    lateinit var viewModel: AccountViewModel
+
+    @SuppressLint("NotifyDataSetChanged")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val accounts = getAccounts(this@AccountSelectActivity)
-        
-        // Don't show account selection if there is only
-        // one account that exists
-        if (accounts.count() <= 1) {
-            navigateToMainActivity()
-            return
-        }
-
-        CommonActivity.init(this)
         loadThemes(this)
 
         window.navigationBarColor = colorFromAttribute(R.attr.primaryBlackBackground)
 
-        val binding = ActivityAccountSelectBinding.inflate(layoutInflater)
+        // Are we editing and coming from MainActivity?
+        val isEditingFromMainActivity = intent.getBooleanExtra(
+            "isEditingFromMainActivity",
+            false
+        )
 
-        setContentView(binding.root)
+        val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
+        val skipStartup = settingsManager.getBoolean(
+            getString(R.string.skip_startup_account_select_key),
+            false
+        ) || accounts.count() <= 1
 
-        val recyclerView: RecyclerView = binding.accountRecyclerView
+        viewModel = ViewModelProvider(this)[AccountViewModel::class.java]
 
+        // Don't show account selection if there is only
+        // one account that exists
+        if (!isEditingFromMainActivity && skipStartup) {
+            val currentAccount = accounts.firstOrNull { it.keyIndex == selectedKeyIndex }
+            if (currentAccount?.lockPin != null) {
+                CommonActivity.init(this)
+                viewModel.handleAccountSelect(currentAccount, this, true)
+                observe(viewModel.isAllowedLogin) { isAllowedLogin ->
+                    if (isAllowedLogin) {
+                        // We are allowed to continue to MainActivity
+                        navigateToMainActivity()
+                    }
+                }
+            } else {
+                if (accounts.count() > 1) {
+                    showToast(this, getString(
+                        R.string.logged_account,
+                        currentAccount?.name
+                    ))
+                }
 
-        val adapter = AccountAdapter(accounts) { selectedAccount ->
-            // Handle the selected account
-            onAccountSelected(selectedAccount)
-        }
-        recyclerView.adapter = adapter
-
-        if (isTvSettings()) {
-            val spanSize = if (accounts.count() <= 6) {
-                accounts.count()
-            } else 6
-
-            recyclerView.layoutManager = GridLayoutManager(this, spanSize)
-        }
-    }
-
-    private fun onAccountSelected(selectedAccount: DataStoreHelper.Account) {
-        if (selectedAccount.lockPin != null) {
-            // The selected account has a PIN set, prompt the user to enter the PIN
-            showPinInputDialog(this@AccountSelectActivity, selectedAccount.lockPin, false) { pin ->
-                if (pin == null) return@showPinInputDialog
-                // Pin is correct, proceed to main activity
-                setAccount(selectedAccount)
                 navigateToMainActivity()
             }
-        } else {
-            // No PIN set for the selected account, proceed to main activity
-            setAccount(selectedAccount)
-            navigateToMainActivity()
-        }
-    }
 
-    private fun setAccount(account: DataStoreHelper.Account) {
-        // Don't reload if it is the same account
-        if (DataStoreHelper.selectedKeyIndex == account.keyIndex) {
             return
         }
 
-        DataStoreHelper.selectedKeyIndex = account.keyIndex
+        CommonActivity.init(this)
 
-        MainActivity.bookmarksUpdatedEvent(true)
-        MainActivity.reloadHomeEvent(true)
+        val binding = ActivityAccountSelectBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        val recyclerView: AutofitRecyclerView = binding.accountRecyclerView
+
+        observe(viewModel.accounts) { liveAccounts ->
+            val adapter = AccountAdapter(
+                liveAccounts,
+                // Handle the selected account
+                accountSelectCallback = {
+                    viewModel.handleAccountSelect(it, this)
+                    observe(viewModel.isAllowedLogin) { isAllowedLogin ->
+                        if (isAllowedLogin) {
+                            // We are allowed to continue to MainActivity
+                            navigateToMainActivity()
+                        }
+                    }
+                },
+                accountCreateCallback = { viewModel.handleAccountUpdate(it, this) },
+                accountEditCallback = {
+                    viewModel.handleAccountUpdate(it, this)
+
+                    // We came from MainActivity, return there
+                    // and switch to the edited account
+                    if (isEditingFromMainActivity) {
+                        setAccount(it)
+                        navigateToMainActivity()
+                    }
+                },
+                accountDeleteCallback = { viewModel.handleAccountDelete(it,this) }
+            )
+
+            recyclerView.adapter = adapter
+
+            if (isTvSettings()) {
+                binding.editAccountButton.setBackgroundResource(
+                    R.drawable.player_button_tv_attr_no_bg
+                )
+            }
+
+            observe(viewModel.selectedKeyIndex) { selectedKeyIndex ->
+                // Scroll to current account (which is focused by default)
+                val layoutManager = recyclerView.layoutManager as GridLayoutManager
+                layoutManager.scrollToPositionWithOffset(selectedKeyIndex, 0)
+            }
+
+            observe(viewModel.isEditing) { isEditing ->
+                if (isEditing) {
+                    binding.editAccountButton.setImageResource(R.drawable.ic_baseline_close_24)
+                    binding.title.setText(R.string.manage_accounts)
+                    adapter.viewType = VIEW_TYPE_EDIT_ACCOUNT
+                } else {
+                    binding.editAccountButton.setImageResource(R.drawable.ic_baseline_edit_24)
+                    binding.title.setText(R.string.select_an_account)
+                    adapter.viewType = VIEW_TYPE_SELECT_ACCOUNT
+                }
+
+                adapter.notifyDataSetChanged()
+            }
+
+            if (isEditingFromMainActivity) {
+                viewModel.setIsEditing(true)
+            }
+
+            binding.editAccountButton.setOnClickListener {
+                // We came from MainActivity, return there
+                // and resume its state
+                if (isEditingFromMainActivity) {
+                    navigateToMainActivity()
+                    return@setOnClickListener
+                }
+
+                viewModel.toggleIsEditing()
+            }
+
+            if (isTvSettings()) {
+                recyclerView.spanCount = if (liveAccounts.count() + 1 <= 6) {
+                    liveAccounts.count() + 1
+                } else 6
+            }
+        }
     }
 
     private fun navigateToMainActivity() {

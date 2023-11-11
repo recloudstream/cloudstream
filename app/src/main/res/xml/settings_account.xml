@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+    <SwitchPreference
+        android:defaultValue="false"
+        android:icon="@drawable/ic_outline_account_circle_24"
+        android:key="@string/skip_startup_account_select_key"
+        android:title="@string/skip_startup_account_select_pref" />
+
     <Preference
         android:icon="@drawable/mal_logo"
         android:key="@string/mal_key" />
