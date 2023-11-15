@@ -12,8 +12,8 @@
     <!-- TRANSLATE, BUT DON'T FORGET FORMAT -->
     <string name="player_speed_text_format" formatted="true">سرعة (%.2fx)</string>
     <string name="rated_format" formatted="true">تقييم: %.1f</string>
-    <string name="new_update_format" formatted="true">!تم العثور على تحديث جديد
-\n%s -&gt; %s</string>
+    <string name="new_update_format" formatted="true">يوجد تحديث جديد!
+\n%1$s -&gt; %2$s</string>
     <string name="duration_format" formatted="true">%d دقيقة</string>
     <string name="app_name">CloudStream</string>
     <string name="play_with_app_name">تشغيل بواسطة CloudStream</string>
@@ -36,7 +36,6 @@
     <string name="type_completed">مكتمل</string>
     <string name="type_dropped">مهمل</string>
     <string name="type_plan_to_watch">أخطط لمشاهدته</string>
-    <string name="type_none">لا شيء</string>
     <string name="type_re_watching">إعادة المشاهدة</string>
     <string name="play_movie_button">مشاهدة الفيلم</string>
     <string name="play_livestream_button">تشغيل بث حي</string>
@@ -74,7 +73,6 @@
     <string name="action_remove_from_bookmarks">ازالة</string>
     <string name="action_add_to_bookmarks">إعداد حالة المشاهدة</string>
     <string name="sort_apply">تطبيق</string>
-    <string name="sort_cancel">إلغاء</string>
     <string name="sort_copy">نسخ</string>
     <string name="sort_close">إغلاق</string>
     <string name="sort_clear">مسح</string>
@@ -180,6 +178,7 @@
     <string name="no_episodes_found">لم يتم العثور على أي حلقات</string>
     <string name="delete_file">حذف الملف</string>
     <string name="delete">حذف</string>
+    <string name="cancel">إلغاء</string>
     <string name="pause">إيقاف مؤقت</string>
     <string name="resume">إستئناف</string>
     <string name="go_back_30">-٣٠</string>
@@ -198,7 +197,7 @@
     <string name="synopsis">القصة</string>
     <string name="queued">في قائمة الانتظار</string>
     <string name="no_subtitles">الترجمة ليست موجودة</string>
-    <string name="default_subtitles">الإفتراضي</string>
+    <string name="action_default">الإفتراضي</string>
     <string name="free_storage">فارغ</string>
     <string name="used_storage">مستخدم</string>
     <string name="app_storage">التطبيق</string>
@@ -320,7 +319,7 @@
     <string name="kitsu_account_settings" translatable="false">Kitsu</string>
     <string name="trakt_account_settings" translatable="false">Trakt</string>
     -->
-    <string name="login_format" formatted="true">%s %s</string>
+    <string name="login_format" formatted="true">%1$s %2$s</string>
     <string name="account">حساب</string>
     <string name="logout">تسجيل الخروج</string>
     <string name="login">تسجيل الدخول</string>
@@ -419,8 +418,8 @@
     <string name="plugin_deleted">تم إزالة الإضافة</string>
     <string name="plugin_load_fail" formatted="true">تعذر التحميل %s</string>
     <string name="is_adult">18+</string>
-    <string name="batch_download_start_format" formatted="true">بدأ تنزيل %d %s …</string>
-    <string name="batch_download_finish_format" formatted="true">تم التنزيل %d %s</string>
+    <string name="batch_download_start_format" formatted="true">بدأ تنزيل %1$d %2$s…</string>
+    <string name="batch_download_finish_format" formatted="true">تم تنزيل %1$d %2$s</string>
     <string name="batch_download_nothing_to_download_format" formatted="true">جميع %s محملة بالفعل</string>
     <string name="batch_download">تحميل مكثف</string>
     <string name="plugin_singular">إضافة</string>
@@ -462,11 +461,11 @@
     <string name="history">السجل</string>
     <string name="enable_skip_op_from_database_des">عرض زر تخطي المقدمة/الخاتمة</string>
     <string name="cast_format" formatted="true">طاقم العمل: %s</string>
-    <string name="next_episode_time_day_format" formatted="true">%d يوم %d ساعة %d دقيقة</string>
-    <string name="next_episode_time_hour_format" formatted="true">%d ساعة %d دقيقة</string>
+    <string name="next_episode_time_day_format" formatted="true">%1$d يوم %2$d ساعة %3$d دقيقة</string>
+    <string name="next_episode_time_hour_format" formatted="true">%1$d ساعة %2$d دقيقة</string>
     <string name="filler" formatted="true">الفيلير</string>
     <string name="action_open_play">فتح(تشغيل)</string>
-    <string name="season_format">%s %d%s</string>
+    <string name="season_format">%1$s %2$d%3$s</string>
     <string name="plugins_updated" formatted="true">المكونات الإضافية المحدثة %d</string>
     <string name="player_settings_play_in_vlc">VLC</string>
     <string name="player_settings_play_in_mpv">MPV</string>
@@ -483,7 +482,7 @@
     <string name="action_mark_as_watched">علّمه كفيديو تمت مشاهدته</string>
     <string name="yes">نعم</string>
     <string name="no">ﻻ</string>
-    <string name="app_dub_sub_episode_text_format" formatted="true">%s الحلقة %d</string>
+    <string name="app_dub_sub_episode_text_format" formatted="true">%1$s الحلقة %2$d</string>
     <string name="next_episode_format" formatted="true">سيتم إصدار الحلقة %d في</string>
     <string name="update_notification_failed">تعذر تثبيت الإصدار الجديد من التطبيق</string>
     <string name="extension_install_first">تثبيت الإضافة أولا</string>
@@ -494,8 +493,8 @@
     <string name="update_notification_downloading">‌تنزيل تحديث التطبيق…</string>
     <string name="update_notification_installing">‏تثبيت تحديث التطبيق…</string>
     <string name="next_episode_time_min_format" formatted="true">%d دقيقة</string>
-    <string name="episodes_range">%d-%d</string>
-    <string name="episode_format" formatted="true">%d %s</string>
+    <string name="episodes_range">%1$d-%2$d</string>
+    <string name="episode_format" formatted="true">%1$d %2$s</string>
     <string name="confirm_exit_dialog">هل أنت متأكد أنك تريد الخروج؟</string>
     <string name="automatic_plugin_download_summary">قم بتثبيت جميع المكونات الإضافية التي لم يتم تثبيتها بعد تلقائيا من المستودعات المضافة.</string>
     <string name="apk_installer_settings">مثبت الحزم</string>
@@ -581,9 +580,34 @@
     <string name="unable_to_inflate">تعذر إنشاء واجهة المستخدم بشكل صحيح ، وهذا خطأ كبير ويجب الإبلاغ عنه على الفور %s</string>
     <string name="automatic_plugin_download_mode_title">حدد الوضع لتصفية تنزيل المكونات الإضافية</string>
     <string name="disable">تعطيل</string>
-    <string name="default_account">@string/default_subtitles</string>
     <string name="no_plugins_found_error">لا توجد اضافة في المستودع</string>
     <string name="no_repository_found_error">المستودع لم يتم العثور عليه، تحقق من العنوان اوجرب شبكة افتراضية خاصة(vpn)</string>
     <string name="already_voted">لقد صوتت بالفعل</string>
     <string name="backup_frequency">معدل النسخ الإحتياطي</string>
+    <string name="favorite_removed">تمت إزالة %s من المفضلة</string>
+    <string name="favorites_list_name">المفضلة</string>
+    <string name="favorite_added">تمت إضافة %s إلى المفضلة</string>
+    <string name="duplicate_message_multiple" formatted="true">احتمال وجود تكرارات في مكتبتك.
+\n
+\n%s
+\n
+\nهل تريد الاضافة على اي حال مستبدلاً النسخة الموجودة بالفعل, أم تفضل إلغاء العملية؟</string>
+    <string name="duplicate_title">احتمال أن يكون موجود بالفعل</string>
+    <string name="lock_profile">قفل الحساب</string>
+    <string name="action_add_to_favorites">اضافة الى المفضلة</string>
+    <string name="duplicate_replace_all">تبديل الكل</string>
+    <string name="pin_error_incorrect">رقم PIN غير صحيح. برجاء المحاولة مرة اخرى.</string>
+    <string name="action_unsubscribe">إلغاء الاشتراك</string>
+    <string name="pin_error_length">رقم ال PIN يجب ان يكون 4 ارقام</string>
+    <string name="duplicate_replace">استبدال</string>
+    <string name="duplicate_add">اضافة</string>
+    <string name="action_subscribe">إشترك</string>
+    <string name="action_remove_from_favorites">إزالة من المفضلة</string>
+    <string name="select_an_account">اختار حساب</string>
+    <string name="duplicate_message_single">من الظاهر أن \"%1$s\" موجود بالفعل في مكتبتك.
+\n
+\nهل تريد الاضافة على أي حال مستبدلاً القديم أو إلغاء العملية؟</string>
+    <string name="enter_pin">ادخال ال PIN</string>
+    <string name="pin">PIN</string>
+    <string name="enter_current_pin">أدخل ال PIN الحالي</string>
 </resources>

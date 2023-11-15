@@ -54,7 +54,6 @@
     <string name="error_bookmarks_text">ബുക്മാർക്</string>
     <string name="action_remove_from_bookmarks">നീക്കം ചെയ്യുക</string>
     <string name="sort_apply">പ്രയോഗിക്കുക</string>
-    <string name="sort_cancel">റദ്ദാക്കുക</string>
     <string name="player_speed">പ്ലേയർ വേഗത</string>
     <!-- <string name="subtitles_settings">Subtitle Settings</string>
     <string name="subs_text_color">Text Color</string>
@@ -121,6 +120,7 @@
     <string name="episodes">എപ്പിസോഡുകൾ</string>
     <string name="delete_file">ഫയൽ ഡിലീറ്റ് ചെയ്യുക</string>
     <string name="delete">ഡിലീറ്റ്</string>
+    <string name="cancel">റദ്ദാക്കുക</string>
     <string name="pause">നിർത്തുക</string>
     <string name="resume">തുടരുക</string>
     <string name="delete_message">സ്ഥിരമായി %sനെ ഡിലീറ്റ് ചെയ്യുക
@@ -135,7 +135,7 @@
     <string name="synopsis">സംഗ്രഹം</string>
     <!-- <string name="queued">queued</string>
     <string name="no_subtitles">No Subtitles</string>
-    <string name="default_subtitles">Default</string> -->
+    <string name="action_default">Default</string> -->
     <string name="free_storage">ഒഴിവ്</string>
     <string name="used_storage">ഉപയോഗത്തിൽ</string>
     <string name="app_storage">ആപ്പ്</string>
@@ -197,7 +197,6 @@
     <string name="home_change_provider_img_des">ദാതാവിനെ മാറ്റുക</string>
     <string name="loading">ലോഡിംഗ്…</string>
     <string name="browser">ബ്രൗസർ</string>
-    <string name="type_none">ഒന്നുമില്ല</string>
     <string name="type_re_watching">വീണ്ടും കാണുക</string>
     <string name="stream">സ്ട്രീം</string>
 </resources>

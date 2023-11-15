@@ -57,7 +57,6 @@
     <string name="type_completed">观看完毕</string>
     <string name="type_dropped">放弃观看</string>
     <string name="type_plan_to_watch">计划观看</string>
-    <string name="type_none">无</string>
     <string name="type_re_watching">重新观看</string>
     <string name="play_movie_button">播放电影</string>
     <string name="play_livestream_button">播放直播</string>
@@ -96,7 +95,6 @@
     <string name="action_remove_from_bookmarks">移除</string>
     <string name="action_add_to_bookmarks">设置观看状态</string>
     <string name="sort_apply">应用</string>
-    <string name="sort_cancel">取消</string>
     <string name="sort_copy">复制</string>
     <string name="sort_close">关闭</string>
     <string name="sort_clear">清除</string>
@@ -206,7 +204,7 @@
     <string name="no_episodes_found">未找到剧集</string>
     <string name="delete_file">删除文件</string>
     <string name="delete">删除</string>
-    <string name="cancel" translatable="false">@string/sort_cancel</string>
+    <string name="cancel">取消</string>
     <string name="pause">暂停</string>
     <string name="resume">继续</string>
     <string name="go_back_30">-30</string>
@@ -225,7 +223,7 @@
     <string name="synopsis">简介</string>
     <string name="queued">已加入队列</string>
     <string name="no_subtitles">无字幕</string>
-    <string name="default_subtitles">默认</string>
+    <string name="action_default">默认</string>
     <string name="free_storage">空闲</string>
     <string name="used_storage">已使用</string>
     <string name="app_storage">应用</string>

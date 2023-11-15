@@ -2,14 +2,12 @@ package com.lagradost.cloudstream3.utils
 
 import android.app.Activity
 import android.app.Dialog
+import android.text.Spanned
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.AbsListView
 import android.widget.ArrayAdapter
-import android.widget.EditText
-import android.widget.ImageView
 import android.widget.LinearLayout
-import android.widget.ListView
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isGone
@@ -19,7 +17,10 @@ import androidx.core.view.marginRight
 import androidx.core.view.marginTop
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.databinding.BottomInputDialogBinding
 import com.lagradost.cloudstream3.databinding.BottomSelectionDialogBinding
+import com.lagradost.cloudstream3.databinding.BottomTextDialogBinding
+import com.lagradost.cloudstream3.databinding.OptionsPopupTvBinding
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIconsAndNoStringRes
@@ -54,14 +55,14 @@ object SingleSelectionHelper {
         if (this == null) return
 
         if (isTvSettings()) {
-            val builder =
-                AlertDialog.Builder(this, R.style.AlertDialogCustom)
-                    .setView(R.layout.options_popup_tv)
+            val binding = OptionsPopupTvBinding.inflate(layoutInflater)
+            val dialog = AlertDialog.Builder(this, R.style.AlertDialogCustom)
+                .setView(binding.root)
+                .create()
 
-            val dialog = builder.create()
             dialog.show()
 
-            dialog.findViewById<ListView>(R.id.listview1)?.let { listView ->
+            binding.listview1.let { listView ->
                 listView.choiceMode = AbsListView.CHOICE_MODE_SINGLE
                 listView.adapter =
                     ArrayAdapter<String>(this, R.layout.sort_bottom_single_choice_color).apply {
@@ -74,7 +75,7 @@ object SingleSelectionHelper {
                 }
             }
 
-            dialog.findViewById<ImageView>(R.id.imageView)?.apply {
+            binding.imageView.apply {
                 isGone = poster.isNullOrEmpty()
                 setImage(poster)
             }
@@ -105,12 +106,12 @@ object SingleSelectionHelper {
         if (this == null) return
 
         val realShowApply = showApply || isMultiSelect
-        val listView = binding.listview1//.findViewById<ListView>(R.id.listview1)!!
-        val textView = binding.text1//.findViewById<TextView>(R.id.text1)!!
-        val applyButton = binding.applyBtt//.findViewById<TextView>(R.id.apply_btt)
-        val cancelButton = binding.cancelBtt//findViewById<TextView>(R.id.cancel_btt)
+        val listView = binding.listview1
+        val textView = binding.text1
+        val applyButton = binding.applyBtt
+        val cancelButton = binding.cancelBtt
         val applyHolder =
-            binding.applyBttHolder//.findViewById<LinearLayout>(R.id.apply_btt_holder)
+            binding.applyBttHolder
 
         applyHolder.isVisible = realShowApply
         if (!realShowApply) {
@@ -173,8 +174,8 @@ object SingleSelectionHelper {
         }
     }
 
-
     private fun Activity?.showInputDialog(
+        binding: BottomInputDialogBinding,
         dialog: Dialog,
         value: String,
         name: String,
@@ -184,11 +185,11 @@ object SingleSelectionHelper {
     ) {
         if (this == null) return
 
-        val inputView = dialog.findViewById<EditText>(R.id.nginx_text_input)!!
-        val textView = dialog.findViewById<TextView>(R.id.text1)!!
-        val applyButton = dialog.findViewById<TextView>(R.id.apply_btt)!!
-        val cancelButton = dialog.findViewById<TextView>(R.id.cancel_btt)!!
-        val applyHolder = dialog.findViewById<LinearLayout>(R.id.apply_btt_holder)!!
+        val inputView = binding.nginxTextInput
+        val textView = binding.text1
+        val applyButton = binding.applyBtt
+        val cancelButton = binding.cancelBtt
+        val applyHolder = binding.applyBttHolder
 
         applyHolder.isVisible = true
         textView.text = name
@@ -350,11 +351,17 @@ object SingleSelectionHelper {
         dismissCallback: () -> Unit,
         callback: (String) -> Unit,
     ) {
-        val builder = BottomSheetDialog(this)  // probably the stuff at the bottom
-        builder.setContentView(R.layout.bottom_input_dialog)  // input layout
+        val builder = BottomSheetDialog(this)
+
+        val binding: BottomInputDialogBinding = BottomInputDialogBinding.inflate(
+            LayoutInflater.from(this)
+        )
+
+        builder.setContentView(binding.root)
 
         builder.show()
         showInputDialog(
+            binding,
             builder,
             value,
             name,
@@ -362,5 +369,25 @@ object SingleSelectionHelper {
             callback,
             dismissCallback
         )
+    }
+
+    fun Activity.showBottomDialogText(
+        title: String,
+        text: Spanned,
+        dismissCallback: () -> Unit
+    ) {
+        val binding = BottomTextDialogBinding.inflate(layoutInflater)
+        val dialog = BottomSheetDialog(this)
+
+        dialog.setContentView(binding.root)
+
+        binding.dialogTitle.text = title
+        binding.dialogText.text = text
+
+        dialog.setOnDismissListener {
+            dismissCallback.invoke()
+        }
+
+        dialog.show()
     }
 }

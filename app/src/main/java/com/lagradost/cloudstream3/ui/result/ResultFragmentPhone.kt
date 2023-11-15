@@ -17,7 +17,6 @@ import android.view.animation.DecelerateInterpolator
 import android.widget.AbsListView
 import android.widget.ArrayAdapter
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.core.widget.NestedScrollView
@@ -66,6 +65,7 @@ import com.lagradost.cloudstream3.utils.AppUtils.openBrowser
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialogInstant
+import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialogText
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showDialog
 import com.lagradost.cloudstream3.utils.UIHelper
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
@@ -430,20 +430,36 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                     }
                 })
             resultSubscribe.setOnClickListener {
-                val isSubscribed =
-                    viewModel.toggleSubscriptionStatus() ?: return@setOnClickListener
+                viewModel.toggleSubscriptionStatus(context) { newStatus: Boolean? ->
+                    if (newStatus == null) return@toggleSubscriptionStatus
 
-                val message = if (isSubscribed) {
-                    // Kinda icky to have this here, but it works.
-                    SubscriptionWorkManager.enqueuePeriodicWork(context)
-                    R.string.subscription_new
-                } else {
-                    R.string.subscription_deleted
+                    val message = if (newStatus) {
+                            // Kinda icky to have this here, but it works.
+                            SubscriptionWorkManager.enqueuePeriodicWork(context)
+                            R.string.subscription_new
+                        } else {
+                            R.string.subscription_deleted
+                        }
+
+                        val name = (viewModel.page.value as? Resource.Success)?.value?.title
+                            ?: txt(R.string.no_data).asStringNull(context) ?: ""
+                        CommonActivity.showToast(txt(message, name), Toast.LENGTH_SHORT)
                 }
+            }
+            resultFavorite.setOnClickListener {
+                viewModel.toggleFavoriteStatus(context) { newStatus: Boolean? ->
+                    if (newStatus == null) return@toggleFavoriteStatus
 
-                val name = (viewModel.page.value as? Resource.Success)?.value?.title
-                    ?: txt(R.string.no_data).asStringNull(context) ?: ""
-                CommonActivity.showToast(txt(message, name), Toast.LENGTH_SHORT)
+                    val message = if (newStatus) {
+                        R.string.favorite_added
+                    } else {
+                        R.string.favorite_removed
+                    }
+
+                    val name = (viewModel.page.value as? Resource.Success)?.value?.title
+                        ?: txt(R.string.no_data).asStringNull(context) ?: ""
+                    CommonActivity.showToast(txt(message, name), Toast.LENGTH_SHORT)
+                }
             }
             mediaRouteButton.apply {
                 val chromecastSupport = api?.hasChromecastSupport == true
@@ -564,6 +580,19 @@ open class ResultFragmentPhone : FullScreenPlayer() {
             binding?.resultSubscribe?.setImageResource(drawable)
         }
 
+        observeNullable(viewModel.favoriteStatus) { isFavorite ->
+            binding?.resultFavorite?.isVisible = isFavorite != null
+            if (isFavorite == null) return@observeNullable
+
+            val drawable = if (isFavorite) {
+                R.drawable.ic_baseline_favorite_24
+            } else {
+                R.drawable.ic_baseline_favorite_border_24
+            }
+
+            binding?.resultFavorite?.setImageResource(drawable)
+        }
+
         observe(viewModel.trailers) { trailers ->
             setTrailers(trailers.flatMap { it.mirros }) // I dont care about subtitles yet!
         }
@@ -654,14 +683,13 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                     resultPoster.setImage(d.posterImage)
                     resultPosterBackground.setImage(d.posterBackgroundImage)
                     resultDescription.setTextHtml(d.plotText)
-                    resultDescription.setOnClickListener { view ->
-                        // todo bottom view?
-                        view.context?.let { ctx ->
-                            val builder: AlertDialog.Builder =
-                                AlertDialog.Builder(ctx, R.style.AlertDialogCustom)
-                            builder.setMessage(d.plotText.asString(ctx).html())
-                                .setTitle(d.plotHeaderText.asString(ctx))
-                                .show()
+                    resultDescription.setOnClickListener {
+                        activity?.let { activity ->
+                            activity.showBottomDialogText(
+                                d.titleText.asString(activity),
+                                d.plotText.asString(activity).html(),
+                                {}
+                            )
                         }
                     }
 
@@ -852,16 +880,11 @@ open class ResultFragmentPhone : FullScreenPlayer() {
             setRecommendations(recommendations, null)
         }
         observe(viewModel.episodeSynopsis) { description ->
-            // TODO bottom dialog
-            view.context?.let { ctx ->
-                val builder: AlertDialog.Builder =
-                    AlertDialog.Builder(ctx, R.style.AlertDialogCustom)
-                builder.setMessage(description.html())
-                    .setTitle(R.string.synopsis)
-                    .setOnDismissListener {
-                        viewModel.releaseEpisodeSynopsis()
-                    }
-                    .show()
+            activity?.let { activity ->
+                activity.showBottomDialogText(
+                    activity.getString(R.string.synopsis),
+                    description.html()
+                ) { viewModel.releaseEpisodeSynopsis() }
             }
         }
         context?.let { ctx ->
@@ -939,7 +962,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                         fab.context.getString(R.string.action_add_to_bookmarks),
                         showApply = false,
                         {}) {
-                        viewModel.updateWatchStatus(WatchType.values()[it])
+                        viewModel.updateWatchStatus(WatchType.values()[it], context)
                     }
                 }
             }

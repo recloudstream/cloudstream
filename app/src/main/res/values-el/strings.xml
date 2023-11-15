@@ -23,7 +23,6 @@
     <string name="type_completed">Ολοκληρώθηκε</string>
     <string name="type_dropped">Διακόπηκε</string>
     <string name="type_plan_to_watch">Για παρακολούθηση</string>
-    <string name="type_none">Τίποτα</string>
     <string name="play_movie_button">Αναπαραγωγή ταινίας</string>
     <string name="play_torrent_button">Μετάδοση Torrent</string>
     <string name="pick_source">Πηγές</string>
@@ -58,7 +57,6 @@
     <string name="action_remove_from_bookmarks">Αφαίρεση</string>
     <string name="play_episode_toast">Αναπαραγωγή επεισοδίου</string>
     <string name="sort_apply">Υποβολή</string>
-    <string name="sort_cancel">Ακύρωση</string>
     <string name="player_speed">Ταχύτητα αναπαραγωγής</string>
     <string name="subtitles_settings">Ρυθμίσεις υπότιτλων</string>
     <string name="subs_text_color">Χρώμα κειμένου</string>
@@ -155,6 +153,7 @@
     <string name="no_episodes_found">Δεν βρέθηκαν επεισόδια</string>
     <string name="delete_file">Διαγραφή αρχείου</string>
     <string name="delete">Διαγραφή</string>
+    <string name="cancel">Ακύρωση</string>
     <string name="pause">Παύση</string>
     <string name="resume">Συνέχιση</string>
     <string name="delete_message" formatted="true">Αυτό θα διαγράψει μόνιμα το %s
@@ -169,7 +168,7 @@
     <string name="synopsis">Περίληψη</string>
     <string name="queued">προστέθηκε στην ουρά</string>
     <string name="no_subtitles">Δεν υπάρχουν διαθέσιμοι υπότιτλοι</string>
-    <string name="default_subtitles">Προεπιλεγμένοι υπότιτλοι</string>
+    <string name="action_default">Προεπιλεγμένοι υπότιτλοι</string>
     <string name="free_storage">Ελεύθερος</string>
     <string name="used_storage">Σε χρήση</string>
     <string name="app_storage">Εφαρμογή</string>
@@ -547,6 +546,5 @@
     <string name="unable_to_inflate">Το UI δεν ήταν σε θέση να δημιουργηθεί σωστά, είναι ένα σφάλμα και θα πρέπει να αναφερθεί αμέσως %s</string>
     <string name="automatic_plugin_download_mode_title">Επιλέξτε κατάσταση για φιλτράρισμα επεκτάσεων για λήψη</string>
     <string name="disable">Απενεργοποιημένο</string>
-    <string name="default_account">@string/default_subtitles</string>
     <string name="stop">Τέλος</string>
 </resources>

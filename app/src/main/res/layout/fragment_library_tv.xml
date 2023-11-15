@@ -27,7 +27,8 @@
             android:id="@+id/search_status_bar_padding"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            app:layout_scrollFlags="scroll|enterAlways">
 
             <ImageView
                 android:id="@+id/provider_selector"
@@ -102,11 +103,13 @@
                     app:queryBackground="@color/transparent"
                     app:queryHint="@string/search_hint"
                     app:searchIcon="@drawable/search_icon"
+                    app:closeIcon="@drawable/ic_baseline_close_24"
                     tools:ignore="RtlSymmetry">
 
                 </androidx.appcompat.widget.SearchView>
             </FrameLayout>
         </LinearLayout>
+
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/library_tab_layout"
             style="@style/Theme.Widget.Tabs"
@@ -116,7 +119,7 @@
             android:nextFocusDown="@id/search_result_root"
             android:background="?attr/primaryGrayBackground"
             android:paddingHorizontal="5dp"
-            app:layout_scrollFlags="noScroll"
+            android:focusable="true"
             app:tabGravity="center"
             app:tabIndicator="@drawable/indicator_background"
             app:tabIndicatorColor="?attr/white"
@@ -133,15 +136,15 @@
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <androidx.viewpager2.widget.ViewPager2
-            android:id="@+id/viewpager"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:clipToPadding="false"
-            android:paddingBottom="40dp"
-            android:focusable="true"
-            android:tag="@string/tv_no_focus_tag"
-            tools:listitem="@layout/library_viewpager_page" />
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/viewpager"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:paddingBottom="40dp"
+                android:focusable="true"
+                android:tag="@string/tv_no_focus_tag"
+                tools:listitem="@layout/library_viewpager_page" />
 
         <LinearLayout
             android:id="@+id/library_loading_overlay"
@@ -181,7 +184,6 @@
                     tools:listitem="@layout/loading_poster_dynamic" />
             </com.facebook.shimmer.ShimmerFrameLayout>
         </LinearLayout>
-
     </FrameLayout>
 
     <FrameLayout

@@ -100,7 +100,8 @@ class DownloadFileGenerator(
                         uri.toString(),
                         SubtitleOrigin.DOWNLOADED_FILE,
                         name.toSubtitleMimeType(),
-                        emptyMap()
+                        emptyMap(),
+                        null
                     )
                 )
             }

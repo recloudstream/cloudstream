@@ -2,7 +2,7 @@
 <resources>
     <!-- KEYS DON'T TRANSLATE -->
     <!-- FORMAT MIGHT TRANSLATE, WILL CAUSE CRASH IF APPLIED WRONG -->
-    <string name="app_dub_sub_episode_text_format" formatted="true">%s Ep %d</string>
+    <string name="app_dub_sub_episode_text_format" formatted="true">%1$s Ep %2$d</string>
     <string name="cast_format" formatted="true">Hrají: %s</string>
     <!-- IS NOT NEEDED TO TRANSLATE AS THEY ARE ONLY USED FOR SCREEN READERS AND WONT SHOW UP TO NORMAL USERS -->
     <string name="result_poster_img_des">Plakát</string>
@@ -17,7 +17,7 @@
     <string name="player_speed_text_format" formatted="true">Rychlost (%.2fx)</string>
     <string name="rated_format" formatted="true">Hodnocení: %.1f</string>
     <string name="new_update_format" formatted="true">Nalezena nová aktualizace!
-\n%s -&gt; %s</string>
+\n%1$s -&gt; %2$s</string>
     <string name="filler" formatted="true">Výplň</string>
     <string name="duration_format" formatted="true">%d min</string>
     <string name="app_name">CloudStream</string>
@@ -40,7 +40,6 @@
     <string name="type_completed">Dokončeno</string>
     <string name="type_dropped">Zahozeno</string>
     <string name="type_plan_to_watch">Plánuji sledovat</string>
-    <string name="type_none">Žádné</string>
     <string name="type_re_watching">Opětovné sledování</string>
     <string name="play_movie_button">Přehrát film</string>
     <string name="play_torrent_button">Streamovat torrent</string>
@@ -76,7 +75,6 @@
     <string name="action_remove_from_bookmarks">Odebrat</string>
     <string name="action_add_to_bookmarks">Nastavit stav sledování</string>
     <string name="sort_apply">Použít</string>
-    <string name="sort_cancel">Zrušit</string>
     <string name="sort_copy">Kopírovat</string>
     <string name="sort_close">Zavřít</string>
     <string name="sort_clear">Vymazat</string>
@@ -176,6 +174,7 @@
     <string name="no_episodes_found">Nenalezeny žádné epizody</string>
     <string name="delete_file">Smazat soubor</string>
     <string name="delete">Smazat</string>
+    <string name="cancel">Zrušit</string>
     <string name="pause">Pozastavit</string>
     <string name="resume">Pokračovat</string>
     <string name="go_back_30">-30</string>
@@ -194,7 +193,7 @@
     <string name="synopsis">Synopse</string>
     <string name="queued">ve frontě</string>
     <string name="no_subtitles">Žádné titulky</string>
-    <string name="default_subtitles">Výchozí</string>
+    <string name="action_default">Výchozí</string>
     <string name="free_storage">Volné</string>
     <string name="used_storage">Použito</string>
     <string name="app_storage">Aplikace</string>
@@ -293,7 +292,7 @@
     <string name="kitsu_account_settings" translatable="false">Kitsu</string>
     <string name="trakt_account_settings" translatable="false">Trakt</string>
     -->
-    <string name="login_format" formatted="true">%s %s</string>
+    <string name="login_format" formatted="true">%1$s %2$s</string>
     <string name="account">účet</string>
     <string name="logout">Odhlásit se</string>
     <string name="login">Přihlásit se</string>
@@ -411,17 +410,17 @@
     <string name="clipboard_too_large">Příliš mnoho textu. Nepodařilo se uložit do schránky.</string>
     <string name="yes">Ano</string>
     <string name="browser">Prohlížeč</string>
-    <string name="episodes_range">%d-%d</string>
+    <string name="episodes_range">%1$d-%2$d</string>
     <string name="library">Knihovna</string>
     <string name="kitsu_settings">Zobrazit plakáty z Kitsu</string>
     <string name="automatic_plugin_download">Automaticky stahovat doplňky</string>
     <string name="redo_setup_process">Znovu provést proces nastavení</string>
     <string name="apk_installer_settings">Instalátor APK</string>
-    <string name="episode_format" formatted="true">%d %s</string>
+    <string name="episode_format" formatted="true">%1$d %2$s</string>
     <string name="apk_installer_settings_des">Některé telefony nepodporují nový instalátor balíčků. Pokud se aktualizace nenainstalují, zkuste použít starší možnost.</string>
     <string name="pref_category_cache">Mezipaměť</string>
     <string name="next_episode_format" formatted="true">Epizoda %d bude vydána za</string>
-    <string name="next_episode_time_hour_format" formatted="true">%dh %dm</string>
+    <string name="next_episode_time_hour_format" formatted="true">%1$dh %2$dm</string>
     <string name="play_livestream_button">Přehrát přímý přenos</string>
     <string name="pref_category_extensions">Rozšíření</string>
     <string name="pref_category_actions">Akce</string>
@@ -437,7 +436,7 @@
     <string name="preferred_media_subtext">Co chcete vidět</string>
     <string name="plugin_downloaded">Doplněk stažen</string>
     <string name="is_adult">18+</string>
-    <string name="batch_download_start_format" formatted="true">Spuštěno stahování %d %s…</string>
+    <string name="batch_download_start_format" formatted="true">Spuštěno stahování %1$d %2$s…</string>
     <string name="blank_repo_message">CloudStream nemá ve výchozím nastavení nainstalované žádné weby. Stránky je třeba nainstalovat z úložišť.
 \n
 \nKvůli nesmyslnému podání stížnosti DMCA společností Sky UK Limited 🤮 nemůžeme v aplikaci propojit stránky repozitářů.
@@ -506,12 +505,12 @@
     <string name="pref_category_app_updates">Aktualizace aplikace</string>
     <string name="setup_done">Hotovo</string>
     <string name="extension_types">Podporováno</string>
-    <string name="season_format">%s %d%s</string>
+    <string name="season_format">%1$s %2$d%3$s</string>
     <string name="live_singular">Živý přenos</string>
     <string name="nsfw_singular">NSFW</string>
     <string name="extensions">Rozšíření</string>
     <string name="play_trailer_button">Přehrát trailer</string>
-    <string name="next_episode_time_day_format" formatted="true">%dd %dh %dm</string>
+    <string name="next_episode_time_day_format" formatted="true">%1$dd %2$dh %3$dm</string>
     <string name="view_public_repositories_button">Zobrazit komunitní repozitáře</string>
     <string name="update_started">Aktualizace zahájena</string>
     <string name="stream">Stream</string>
@@ -521,7 +520,7 @@
     <string name="referer">Referent</string>
     <string name="next">Další</string>
     <string name="provider_languages_tip">Sledovat videa v těchto jazycích</string>
-    <string name="batch_download_finish_format" formatted="true">Staženo %d %s</string>
+    <string name="batch_download_finish_format" formatted="true">Staženo %1$d %2$s</string>
     <string name="batch_download_nothing_to_download_format" formatted="true">Všechny %s jsou již staženy</string>
     <string name="batch_download">Hromadné stahování</string>
     <string name="plugin_singular">doplněk</string>
@@ -575,6 +574,32 @@
     <string name="automatic_plugin_download_mode_title">Výběr režimu pro filtrování stahování doplňků</string>
     <string name="no_plugins_found_error">V repozitáři nebyly nalezeny žádné doplňky</string>
     <string name="no_repository_found_error">Repozitář nenalezen, zkontrolujte adresu URL a zkuste použít VPN</string>
-    <string name="default_account">@string/default_subtitles</string>
     <string name="already_voted">Již jste hlasovali</string>
+    <string name="favorite_removed">%s odebráno z oblíbených</string>
+    <string name="favorites_list_name">Oblíbené</string>
+    <string name="favorite_added">%s přidáno do oblíbených</string>
+    <string name="duplicate_message_multiple" formatted="true">Ve vaší knihovně byl nalezen potenciální duplikát:
+\n
+\n%s
+\n
+\nChcete přesto přidat tuto položku, nahradit existující nebo zrušit akci\?</string>
+    <string name="backup_frequency">Frekvence záloh</string>
+    <string name="duplicate_title">Nalezena potenciální duplicita</string>
+    <string name="lock_profile">Zamknout profil</string>
+    <string name="action_add_to_favorites">Přidat do oblíbených</string>
+    <string name="duplicate_replace_all">Nahradit vše</string>
+    <string name="pin_error_incorrect">Nesprávný PIN. Zkuste to prosím znovu.</string>
+    <string name="action_unsubscribe">Zrušit odběr</string>
+    <string name="pin_error_length">PIN musí obsahovat 4 znaky</string>
+    <string name="duplicate_replace">Nahradit</string>
+    <string name="duplicate_add">Přidat</string>
+    <string name="action_subscribe">Odebírat</string>
+    <string name="action_remove_from_favorites">Odebrat z oblíbených</string>
+    <string name="select_an_account">Vyberte účet</string>
+    <string name="duplicate_message_single">Vypadá to, že ve vaší knihovně již existuje potenciální duplikát: „%1$s“.
+\n
+\nChcete přesto přidat tuto položku, nahradit existující nebo zrušit akci\?</string>
+    <string name="enter_pin">Zadejte PIN</string>
+    <string name="pin">PIN</string>
+    <string name="enter_current_pin">Zadejte současný PIN</string>
 </resources>

@@ -16,13 +16,13 @@ import javax.crypto.Cipher
 import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
 
-// No License found in https://github.com/enimax-anime/key
-// special credits to @enimax for providing key
+// Code found in https://github.com/theonlymo/keys
+// special credits to @theonlymo for providing key
 class Megacloud : Rabbitstream() {
     override val name = "Megacloud"
     override val mainUrl = "https://megacloud.tv"
     override val embed = "embed-2/ajax/e-1"
-    override val key = "https://raw.githubusercontent.com/enimax-anime/key/e6/key.txt"
+    override val key = "https://raw.githubusercontent.com/theonlymo/keys/e1/key"
 }
 
 class Dokicloud : Rabbitstream() {
@@ -35,7 +35,7 @@ open class Rabbitstream : ExtractorApi() {
     override val mainUrl = "https://rabbitstream.net"
     override val requiresReferer = false
     open val embed = "ajax/embed-4"
-    open val key = "https://raw.githubusercontent.com/enimax-anime/key/e4/key.txt"
+    open val key = "https://raw.githubusercontent.com/theonlymo/keys/e4/key"
 
     override suspend fun getUrl(
         url: String,
@@ -86,21 +86,23 @@ open class Rabbitstream : ExtractorApi() {
 
     private suspend fun getRawKey(): String = app.get(key).text
 
-    private fun extractRealKey(originalString: String?, stops: String): Pair<String, String> {
-        val table = parseJson<List<List<Int>>>(stops)
-        val decryptedKey = StringBuilder()
-        var offset = 0
-        var encryptedString = originalString
+    private fun extractRealKey(sources: String, stops: String): Pair<String, String> {
+        val decryptKey = parseJson<List<List<Int>>>(stops)
+        val sourcesArray = sources.toCharArray()
 
-        table.forEach { (start, end) ->
-            decryptedKey.append(encryptedString?.substring(start - offset, end - offset))
-            encryptedString = encryptedString?.substring(
-                0,
-                start - offset
-            ) + encryptedString?.substring(end - offset)
-            offset += end - start
+        var extractedKey = ""
+        var currentIndex = 0
+        for (index in decryptKey) {
+            val start = index[0] + currentIndex
+            val end = start + index[1]
+            for (i in start until end) {
+                extractedKey += sourcesArray[i].toString()
+                sourcesArray[i] = ' '
+            }
+            currentIndex += index[1]
         }
-        return decryptedKey.toString() to encryptedString.toString()
+
+        return extractedKey to sourcesArray.joinToString("")
     }
 
     private inline fun <reified T> decryptMapped(input: String, key: String): T? {
