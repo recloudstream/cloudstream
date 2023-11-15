@@ -55,10 +55,10 @@ fun getCurrentLocale(context: Context): String {
 // https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes leave blank for auto
 val appLanguages = arrayListOf(
     /* begin language list */
-    Triple("", "ajp", "ajp"),
+    Triple("", "عربي شامي", "ajp"),
     Triple("", "አማርኛ", "am"),
     Triple("", "العربية", "ar"),
-    Triple("", "ars", "ars"),
+    Triple("", "اللهجة النجدية", "ars"),
     Triple("", "български", "bg"),
     Triple("", "বাংলা", "bn"),
     Triple("\uD83C\uDDE7\uD83C\uDDF7", "português brasileiro", "bp"),
