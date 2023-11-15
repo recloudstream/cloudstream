@@ -157,6 +157,7 @@ object SubtitleHelper {
         "ak" to "GH",
         "am" to "ET",
         "ar" to "AE",
+        "ars" to "SA",
         "as" to "IN",
         "asa" to "TZ",
         "az" to "AZ",
