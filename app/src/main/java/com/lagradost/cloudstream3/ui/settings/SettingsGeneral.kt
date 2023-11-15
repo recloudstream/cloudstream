@@ -58,7 +58,7 @@ val appLanguages = arrayListOf(
     Triple("", "عربي شامي", "ajp"),
     Triple("", "አማርኛ", "am"),
     Triple("", "العربية", "ar"),
-    Triple("", "ars", "ars"),
+    Triple("", "اللهجة النجدية", "ars"),
     Triple("", "български", "bg"),
     Triple("", "বাংলা", "bn"),
     Triple("\uD83C\uDDE7\uD83C\uDDF7", "português brasileiro", "bp"),
