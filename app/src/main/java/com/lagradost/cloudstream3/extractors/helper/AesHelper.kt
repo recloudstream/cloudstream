@@ -1,7 +1,6 @@
 package com.lagradost.cloudstream3.extractors.helper
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.lagradost.cloudstream3.ErrorLoadingException
 import com.lagradost.cloudstream3.base64DecodeArray
 import com.lagradost.cloudstream3.base64Encode
 import com.lagradost.cloudstream3.utils.AppUtils
@@ -23,7 +22,12 @@ object AesHelper {
         padding: String = HASH,
     ): String? {
         val parse = AppUtils.tryParseJson<AesData>(data) ?: return null
-        val (key, iv) = generateKeyAndIv(pass, parse.s.hexToByteArray()) ?: return null
+        val (key, iv) = generateKeyAndIv(
+            pass,
+            parse.s.hexToByteArray(),
+            ivLength = parse.iv.length / 2,
+            saltLength = parse.s.length / 2
+        ) ?: return null
         val cipher = Cipher.getInstance(padding)
         return if (!encrypt) {
             cipher.init(Cipher.DECRYPT_MODE, SecretKeySpec(key, "AES"), IvParameterSpec(iv))
@@ -40,7 +44,8 @@ object AesHelper {
         salt: ByteArray,
         hashAlgorithm: String = KDF,
         keyLength: Int = 32,
-        ivLength: Int = 16,
+        ivLength: Int,
+        saltLength: Int,
         iterations: Int = 1
     ): Pair<ByteArray,ByteArray>? {
 
@@ -63,7 +68,7 @@ object AesHelper {
                     )
 
                 md.update(password)
-                md.update(salt, 0, 8)
+                md.update(salt, 0, saltLength)
                 md.digest(generatedData, generatedLength, digestLength)
 
                 for (i in 1 until iterations) {
