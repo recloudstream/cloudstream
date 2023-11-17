@@ -216,7 +216,7 @@ dependencies {
     implementation("com.github.LagradOst:SafeFile:0.0.5") // To Prevent the URI File Fu*kery
     implementation("org.conscrypt:conscrypt-android:2.5.2") // To Fix SSL Fu*kery on Android 9
     implementation("com.uwetrottmann.tmdb2:tmdb-java:2.10.0") // TMDB API v3 Wrapper Made with RetroFit
-    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.1.6")
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.1") /* JSON Parser
     ^ Don't Bump Jackson above 2.13.1 , Crashes on Android TV's and FireSticks that have Min API
     Level 25 or Less. */
