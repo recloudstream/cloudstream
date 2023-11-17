@@ -29,6 +29,7 @@ import com.lagradost.cloudstream3.utils.Scheduler.Companion.attachBackupListener
 import com.lagradost.cloudstream3.ui.EasterEggMonke
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.getPref
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setPaddingBottom
+import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setToolBarScrollFlags
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setUpToolbar
 import com.lagradost.cloudstream3.utils.DataStore.getSyncPrefs
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
@@ -56,10 +57,10 @@ fun getCurrentLocale(context: Context): String {
 // https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes leave blank for auto
 val appLanguages = arrayListOf(
     /* begin language list */
-    Triple("", "ajp", "ajp"),
+    Triple("", "عربي شامي", "ajp"),
     Triple("", "አማርኛ", "am"),
     Triple("", "العربية", "ar"),
-    Triple("", "ars", "ars"),
+    Triple("", "اللهجة النجدية", "ars"),
     Triple("", "български", "bg"),
     Triple("", "বাংলা", "bn"),
     Triple("\uD83C\uDDE7\uD83C\uDDF7", "português brasileiro", "bp"),
@@ -117,6 +118,7 @@ class SettingsGeneral : PreferenceFragmentCompat() {
         super.onViewCreated(view, savedInstanceState)
         setUpToolbar(R.string.category_general)
         setPaddingBottom()
+        setToolBarScrollFlags()
     }
 
     data class CustomSite(
@@ -200,7 +202,6 @@ class SettingsGeneral : PreferenceFragmentCompat() {
             }
             return@setOnPreferenceClickListener true
         }
-
 
         fun showAdd() {
             val providers = synchronized(allProviders) { allProviders.distinctBy { it.javaClass }.sortedBy { it.name } }

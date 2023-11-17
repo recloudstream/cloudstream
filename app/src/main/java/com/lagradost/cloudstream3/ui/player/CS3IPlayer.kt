@@ -1014,7 +1014,8 @@ class CS3IPlayer : IPlayer {
                                         format.id!!,
                                         SubtitleOrigin.EMBEDDED_IN_VIDEO,
                                         format.sampleMimeType ?: MimeTypes.APPLICATION_SUBRIP,
-                                        emptyMap()
+                                        emptyMap(),
+                                        format.language
                                     )
                                 }
 
@@ -1254,7 +1255,7 @@ class CS3IPlayer : IPlayer {
                 .setMimeType(sub.mimeType)
                 .setLanguage("_${sub.name}")
                 .setId(sub.getId())
-                .setSelectionFlags(SELECTION_FLAG_DEFAULT)
+                .setSelectionFlags(0)
                 .build()
             when (sub.origin) {
                 SubtitleOrigin.DOWNLOADED_FILE -> {

@@ -1,15 +1,7 @@
 package com.lagradost.cloudstream3.utils
 
 import android.content.Context
-import android.content.DialogInterface
-import android.text.Editable
-import android.view.LayoutInflater
-import androidx.appcompat.app.AlertDialog
-import androidx.core.view.isGone
-import androidx.core.view.isVisible
-import androidx.core.widget.doOnTextChanged
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.APIHolder.filterProviderByPreferredMedia
 import com.lagradost.cloudstream3.APIHolder.unixTimeMS
@@ -20,21 +12,12 @@ import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.removeKeys
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.CommonActivity.showToast
-import com.lagradost.cloudstream3.databinding.WhoIsWatchingAccountEditBinding
-import com.lagradost.cloudstream3.databinding.WhoIsWatchingBinding
-import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.syncproviders.AccountManager
 import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.ui.WatchType
-import com.lagradost.cloudstream3.ui.WhoIsWatchingAdapter
-import com.lagradost.cloudstream3.ui.account.AccountDialog.showPinInputDialog
 import com.lagradost.cloudstream3.ui.library.ListSorting
 import com.lagradost.cloudstream3.ui.result.UiImage
 import com.lagradost.cloudstream3.ui.result.VideoWatchState
-import com.lagradost.cloudstream3.ui.result.setImage
-import com.lagradost.cloudstream3.ui.result.setLinearListLayout
-import com.lagradost.cloudstream3.utils.AppUtils.setDefaultFocus
-import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
 
@@ -75,7 +58,7 @@ class UserPreferenceDelegate<T : Any>(
 
 object DataStoreHelper {
     // be aware, don't change the index of these as Account uses the index for the art
-    private val profileImages = arrayOf(
+    val profileImages = arrayOf(
         R.drawable.profile_bg_dark_blue,
         R.drawable.profile_bg_blue,
         R.drawable.profile_bg_orange,
@@ -147,7 +130,7 @@ object DataStoreHelper {
     }
 
     const val TAG = "data_store_helper"
-    private var accounts by PreferenceDelegate("$TAG/account", arrayOf<Account>())
+    var accounts by PreferenceDelegate("$TAG/account", arrayOf<Account>())
     var selectedKeyIndex by PreferenceDelegate("$TAG/account_key_index", 0)
     val currentAccount: String get() = selectedKeyIndex.toString()
 
@@ -166,156 +149,21 @@ object DataStoreHelper {
             }
         }
 
-    private fun setAccount(account: Account, refreshHomePage: Boolean) {
+    fun setAccount(account: Account) {
+        val homepage = currentHomePage
+
         selectedKeyIndex = account.keyIndex
-        showToast(account.name)
+        showToast(context?.getString(R.string.logged_account, account.name) ?: account.name)
         MainActivity.bookmarksUpdatedEvent(true)
-        if (refreshHomePage) {
+        MainActivity.reloadLibraryEvent(true)
+        val oldAccount = accounts.find { it.keyIndex == account.keyIndex }
+        if (oldAccount != null && currentHomePage != homepage) {
+            // This is not a new account, and the homepage has changed, reload it
             MainActivity.reloadHomeEvent(true)
         }
     }
 
-    private fun editAccount(context: Context, account: Account, isNewAccount: Boolean) {
-        val binding =
-            WhoIsWatchingAccountEditBinding.inflate(LayoutInflater.from(context), null, false)
-        val builder =
-            AlertDialog.Builder(context, R.style.AlertDialogCustom)
-                .setView(binding.root)
-
-        var currentEditAccount = account
-        val dialog = builder.show()
-        binding.accountName.text = Editable.Factory.getInstance()?.newEditable(account.name)
-        binding.accountName.doOnTextChanged { text, _, _, _ ->
-            currentEditAccount = currentEditAccount.copy(name = text?.toString() ?: "")
-        }
-
-        binding.deleteBtt.isGone = isNewAccount
-        binding.deleteBtt.setOnClickListener {
-            val dialogClickListener =
-                DialogInterface.OnClickListener { _, which ->
-                    when (which) {
-                        DialogInterface.BUTTON_POSITIVE -> {
-                            // remove all keys as well as the account, note that default wont get
-                            // deleted from currentAccounts, as it is not part of "accounts",
-                            // but the watch keys will
-                            removeKeys(account.keyIndex.toString())
-                            val currentAccounts = accounts.toMutableList()
-                            currentAccounts.removeIf { it.keyIndex == account.keyIndex }
-                            accounts = currentAccounts.toTypedArray()
-
-                            // update UI
-                            setAccount(getDefaultAccount(context), true)
-                            dialog?.dismissSafe()
-                        }
-
-                        DialogInterface.BUTTON_NEGATIVE -> {}
-                    }
-                }
-
-            try {
-                AlertDialog.Builder(context).setTitle(R.string.delete).setMessage(
-                    context.getString(R.string.delete_message).format(
-                        currentEditAccount.name
-                    )
-                )
-                    .setPositiveButton(R.string.delete, dialogClickListener)
-                    .setNegativeButton(R.string.cancel, dialogClickListener)
-                    .show().setDefaultFocus()
-            } catch (t: Throwable) {
-                logError(t)
-                // ye you somehow fucked up formatting did you?
-            }
-        }
-
-        binding.cancelBtt.setOnClickListener {
-            dialog?.dismissSafe()
-        }
-
-        binding.profilePic.setImage(account.image)
-        binding.profilePic.setOnClickListener {
-            // Roll the image forwards once
-            currentEditAccount =
-                currentEditAccount.copy(defaultImageIndex = (currentEditAccount.defaultImageIndex + 1) % profileImages.size)
-            binding.profilePic.setImage(currentEditAccount.image)
-        }
-
-        binding.applyBtt.setOnClickListener {
-            if (currentEditAccount.lockPin != null) {
-                // Ask for the current PIN
-                showPinInputDialog(context, currentEditAccount.lockPin, false) { pin ->
-                    if (pin == null) return@showPinInputDialog
-                    // PIN is correct, proceed to update the account
-                    performAccountUpdate(currentEditAccount)
-                    dialog.dismissSafe()
-                }
-            } else {
-                // No lock PIN set, proceed to update the account
-                performAccountUpdate(currentEditAccount)
-                dialog.dismissSafe()
-            }
-        }
-
-        // Handle setting or changing the PIN
-
-        if (currentEditAccount.keyIndex == getDefaultAccount(context).keyIndex) {
-            binding.lockProfileCheckbox.isVisible = false
-            if (currentEditAccount.lockPin != null) {
-                currentEditAccount = currentEditAccount.copy(lockPin = null)
-            }
-        }
-
-        var canSetPin = true
-
-        binding.lockProfileCheckbox.isChecked = currentEditAccount.lockPin != null
-
-        binding.lockProfileCheckbox.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked) {
-                if (canSetPin) {
-                    showPinInputDialog(context, null, true) { pin ->
-                        if (pin == null) {
-                            binding.lockProfileCheckbox.isChecked = false
-                            return@showPinInputDialog
-                        }
-
-                        currentEditAccount = currentEditAccount.copy(lockPin = pin)
-                    }
-                }
-            } else {
-                if (currentEditAccount.lockPin != null) {
-                    // Ask for the current PIN
-                    showPinInputDialog(context, currentEditAccount.lockPin, true) { pin ->
-                        if (pin == null || pin != currentEditAccount.lockPin) {
-                            canSetPin = false
-                            binding.lockProfileCheckbox.isChecked = true
-                        } else {
-                            currentEditAccount = currentEditAccount.copy(lockPin = null)
-                        }
-                    }
-                }
-            }
-        }
-
-        canSetPin = true
-    }
-
-    private fun performAccountUpdate(account: Account) {
-        val currentAccounts = accounts.toMutableList()
-
-        val overrideIndex = currentAccounts.indexOfFirst { it.keyIndex == account.keyIndex }
-
-        if (overrideIndex != -1) {
-            currentAccounts[overrideIndex] = account
-        } else {
-            currentAccounts.add(account)
-        }
-
-        val currentHomePage = this.currentHomePage
-        setAccount(account, false)
-        this.currentHomePage = currentHomePage
-        accounts = currentAccounts.toTypedArray()
-    }
-
-    private fun getDefaultAccount(context: Context): Account {
+    fun getDefaultAccount(context: Context): Account {
         return accounts.let { currentAccounts ->
             currentAccounts.getOrNull(currentAccounts.indexOfFirst { it.keyIndex == 0 }) ?: Account(
                 keyIndex = 0,
@@ -331,71 +179,6 @@ object DataStoreHelper {
             remove(item)
             add(0, item)
         }
-    }
-
-    fun showWhoIsWatching(context: Context) {
-        val binding: WhoIsWatchingBinding = WhoIsWatchingBinding.inflate(LayoutInflater.from(context))
-        val builder = BottomSheetDialog(context)
-        builder.setContentView(binding.root)
-
-        val showAccount = accounts.toMutableList().apply {
-            val item = getDefaultAccount(context)
-            remove(item)
-            add(0, item)
-        }
-
-        val accountName = context.getString(R.string.account)
-
-        binding.profilesRecyclerview.setLinearListLayout(isHorizontal = true)
-        binding.profilesRecyclerview.adapter = WhoIsWatchingAdapter(
-            selectCallBack = { account ->
-                // Check if the selected account has a lock PIN set
-                if (account.lockPin != null) {
-                    // Prompt for the lock pin
-                    showPinInputDialog(context, account.lockPin, false) { pin ->
-                        if (pin == null) return@showPinInputDialog
-                        // Pin is correct, unlock the profile
-                        setAccount(account, true)
-                        builder.dismissSafe()
-                    }
-                } else {
-                    // No lock PIN set, directly set the account
-                    setAccount(account, true)
-                    builder.dismissSafe()
-                }
-            },
-            addAccountCallback = {
-                val currentAccounts = accounts
-                val remainingImages =
-                    profileImages.toSet() - currentAccounts.filter { it.customImage == null }
-                        .mapNotNull { profileImages.getOrNull(it.defaultImageIndex) }.toSet()
-                val image =
-                    profileImages.indexOf(remainingImages.randomOrNull() ?: profileImages.random())
-                val keyIndex = (currentAccounts.maxOfOrNull { it.keyIndex } ?: 0) + 1
-
-                // create a new dummy account
-                editAccount(
-                    context,
-                    Account(
-                        keyIndex = keyIndex,
-                        name = "$accountName $keyIndex",
-                        customImage = null,
-                        defaultImageIndex = image
-                    ), isNewAccount = true
-                )
-                builder.dismissSafe()
-            },
-            editCallBack = { account ->
-                editAccount(
-                    context, account, isNewAccount = false
-                )
-                builder.dismissSafe()
-            }
-        ).apply {
-            submitList(showAccount)
-        }
-
-        builder.show()
     }
 
     data class PosDur(

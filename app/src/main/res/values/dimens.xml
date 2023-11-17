@@ -20,4 +20,6 @@
 
     <dimen name="download_size">50dp</dimen>
     <dimen name="video_frame_width">1dp</dimen>
+
+    <dimen name="account_select_linear_item_size">100dp</dimen>
 </resources>

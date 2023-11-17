@@ -27,6 +27,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.viewpager2.widget.ViewPager2
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.lagradost.cloudstream3.APIHolder
@@ -140,6 +141,10 @@ class LibraryFragment : Fragment() {
 
         binding?.libraryRoot?.findViewById<TextView>(R.id.search_src_text)?.apply {
             tag = "tv_no_focus_tag"
+            //Expand the Appbar when search bar is focused, fixing scroll up issue
+            setOnFocusChangeListener { _, _ ->
+                binding?.searchBar?.setExpanded(true)
+            }
         }
 
         // Set the color for the search exit icon to the correct theme text color
@@ -346,6 +351,7 @@ class LibraryFragment : Fragment() {
         binding?.apply {
             viewpager.offscreenPageLimit = 2
             viewpager.reduceDragSensitivity()
+            searchBar.setExpanded(true)
         }
 
         val startLoading = Runnable {
@@ -444,6 +450,10 @@ class LibraryFragment : Fragment() {
                                     binding?.viewpager?.currentItem ?: return@setOnClickListener
                                 val distance = abs(position - currentItem)
                                 hideViewpager(distance)
+                            }
+                            //Expand the appBar on tab focus
+                            tab.view.setOnFocusChangeListener { view, b ->
+                                binding?.searchBar?.setExpanded(true)
                             }
                         }.attach()
                     }

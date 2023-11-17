@@ -23,6 +23,7 @@ import androidx.media3.common.Format.NO_VALUE
 import androidx.media3.common.MimeTypes
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
+import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.databinding.DialogOnlineSubtitlesBinding
 import com.lagradost.cloudstream3.databinding.FragmentPlayerBinding
@@ -39,6 +40,7 @@ import com.lagradost.cloudstream3.ui.player.source_priority.QualityDataHelper
 import com.lagradost.cloudstream3.ui.player.source_priority.QualityProfileDialog
 import com.lagradost.cloudstream3.ui.result.*
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
+import com.lagradost.cloudstream3.ui.subtitles.SUBTITLE_AUTO_SELECT_KEY
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment.Companion.getAutoSelectLanguageISO639_1
 import com.lagradost.cloudstream3.utils.*
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
@@ -102,10 +104,33 @@ class GeneratorPlayer : FullScreenPlayer() {
         binding?.playerLoadingOverlay?.isVisible = true
     }
 
-    private fun setSubtitles(sub: SubtitleData?): Boolean {
-        currentSelectedSubtitles = sub
-        //Log.i(TAG, "setSubtitles = $sub")
-        return player.setPreferredSubtitles(sub)
+    private fun setSubtitles(subtitle: SubtitleData?): Boolean {
+        // If subtitle is changed -> Save the language
+        if (subtitle != currentSelectedSubtitles) {
+            val subtitleLanguage639 = if (subtitle == null) {
+                // "" is No Subtitles
+                ""
+            } else if (subtitle.languageCode != null) {
+                // Could be "English 4" which is why it is trimmed.
+                val trimmedLanguage = subtitle.languageCode.replace(Regex("\\d"), "").trim()
+
+                languages.firstOrNull { language ->
+                    language.languageName.equals(trimmedLanguage, ignoreCase = true) ||
+                            language.ISO_639_1 == subtitle.languageCode
+                }?.ISO_639_1
+            } else {
+                null
+            }
+
+            if (subtitleLanguage639 != null) {
+                setKey(SUBTITLE_AUTO_SELECT_KEY, subtitleLanguage639)
+                preferredAutoSelectSubtitles = subtitleLanguage639
+            }
+        }
+
+        currentSelectedSubtitles = subtitle
+        //Log.i(TAG, "setSubtitles = $subtitle")
+        return player.setPreferredSubtitles(subtitle)
     }
 
     override fun embeddedSubtitlesFetched(subtitles: List<SubtitleData>) {
@@ -450,7 +475,8 @@ class GeneratorPlayer : FullScreenPlayer() {
                             url = url,
                             origin = SubtitleOrigin.URL,
                             mimeType = url.toSubtitleMimeType(),
-                            headers = currentSubtitle.headers
+                            headers = currentSubtitle.headers,
+                            currentSubtitle.lang
                         )
                         runOnMainThread {
                             addAndSelectSubtitles(subtitle)
@@ -538,7 +564,8 @@ class GeneratorPlayer : FullScreenPlayer() {
                     uri.toString(),
                     SubtitleOrigin.DOWNLOADED_FILE,
                     name.toSubtitleMimeType(),
-                    emptyMap()
+                    emptyMap(),
+                    null
                 )
 
                 addAndSelectSubtitles(subtitleData)
@@ -949,7 +976,7 @@ class GeneratorPlayer : FullScreenPlayer() {
 
     var maxEpisodeSet: Int? = null
     var hasRequestedStamps: Boolean = false
-    override fun playerPositionChanged(position: Long, duration : Long) {
+    override fun playerPositionChanged(position: Long, duration: Long) {
         // Don't save livestream data
         if ((currentMeta as? ResultEpisode)?.tvType?.isLiveStream() == true) return
 
@@ -1212,7 +1239,7 @@ class GeneratorPlayer : FullScreenPlayer() {
         }
     }
 
-    override fun playerDimensionsLoaded(width: Int, height : Int) {
+    override fun playerDimensionsLoaded(width: Int, height: Int) {
         setPlayerDimen(width to height)
     }
 
