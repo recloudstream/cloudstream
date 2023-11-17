@@ -148,6 +148,6 @@
             style="@style/BlackButton"
             android:layout_width="wrap_content"
             android:layout_gravity="center_vertical|end"
-            android:text="@string/sort_cancel" />
+            android:text="@string/cancel" />
     </LinearLayout>
 </LinearLayout>
