@@ -211,7 +211,7 @@ dependencies {
     implementation("com.github.rubensousa:previewseekbar-media3:1.1.1.0") // SeekBar Preview
 
     // Extensions & Other Libs
-    implementation("org.mozilla:rhino:1.7.14") // run JavaScript
+    implementation("org.mozilla:rhino:1.7.14") // Run JavaScript
     implementation("me.xdrop:fuzzywuzzy:1.4.0") // Library/Ext Searching with Levenshtein Distance
     implementation("com.github.LagradOst:SafeFile:0.0.5") // To Prevent the URI File Fu*kery
     implementation("org.conscrypt:conscrypt-android:2.5.2") // To Fix SSL Fu*kery on Android 9
