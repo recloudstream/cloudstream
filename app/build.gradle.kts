@@ -150,7 +150,7 @@ repositories {
 dependencies {
     // Testing
     testImplementation("junit:junit:4.13.2")
-    testImplementation("org.json:json:20230618")
+    testImplementation("org.json:json:20231013")
     androidTestImplementation("androidx.test:core")
     implementation("androidx.test.ext:junit-ktx:1.1.5")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
@@ -178,7 +178,7 @@ dependencies {
 
     // For KSP -> Official Annotation Processors are Not Yet Supported for KSP
     ksp("dev.zacsweers.autoservice:auto-service-ksp:1.1.0")
-    implementation("com.google.guava:guava:32.1.2-android")
+    implementation("com.google.guava:guava:32.1.3-jre")
     implementation("dev.zacsweers.autoservice:auto-service-ksp:1.1.0")
 
     // Media 3 (ExoPlayer)
