@@ -11,6 +11,7 @@ import androidx.fragment.app.FragmentActivity
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.mvvm.suspendSafeApiCall
 import com.lagradost.cloudstream3.plugins.PluginManager
+import com.lagradost.cloudstream3.ui.settings.SettingsFragment
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
 import com.lagradost.cloudstream3.utils.AppUtils.openBrowser
 import com.lagradost.cloudstream3.utils.Coroutines.runOnMainThread
@@ -37,11 +38,18 @@ import kotlin.concurrent.thread
 import kotlin.system.exitProcess
 
 class CustomReportSender : ReportSender {
+
     // Sends all your crashes to google forms
     override fun send(context: Context, errorContent: CrashReportData) {
-        println("Sending report")
-        val url =
-            "https://docs.google.com/forms/d/e/1FAIpQLSfO4r353BJ79TTY_-t5KWSIJT2xfqcQWY81xjAA1-1N0U2eSg/formResponse"
+
+        println("Sending Crash Report")
+
+        val url = if (SettingsFragment.isTrueTvSettings()) {
+            "Google Form URL for TV's"
+        } else {
+            "For Phones"
+        }
+
         val data = mapOf(
             "entry.1993829403" to errorContent.toJSON()
         )
