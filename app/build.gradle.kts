@@ -200,8 +200,8 @@ dependencies {
     implementation("com.github.albfernandez:juniversalchardet:2.4.0") // Subtitle Decoding
 
     // Crash Reports (AcraApplication.kt)
-    implementation("ch.acra:acra-core:5.11.2")
-    implementation("ch.acra:acra-toast:5.11.2")
+    implementation("ch.acra:acra-core:5.11.3")
+    implementation("ch.acra:acra-toast:5.11.3")
 
     // UI Stuff
     implementation("com.facebook.shimmer:shimmer:0.5.0") // Shimmering Effect (Loading Skeleton)

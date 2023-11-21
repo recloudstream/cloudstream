@@ -38,7 +38,7 @@ import kotlin.concurrent.thread
 import kotlin.system.exitProcess
 
 class CustomReportSender : ReportSender {
-    // Sends crash logs to google forms, might give a false positive of a google tracker in app scans
+    // Sends crash logs to Google forms, Might give a false positive of having a Google Tracker in App Scans
     override fun send(context: Context, errorContent: CrashReportData) {
 
         println("Sending Crash Report")
@@ -104,7 +104,6 @@ class ExceptionHandler(val errorFile: File, val onError: (() -> Unit)) :
         }
         exitProcess(1)
     }
-
 }
 
 class AcraApplication : Application() {
