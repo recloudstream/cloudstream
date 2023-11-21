@@ -38,16 +38,15 @@ import kotlin.concurrent.thread
 import kotlin.system.exitProcess
 
 class CustomReportSender : ReportSender {
-
-    // Sends all your crashes to google forms
+    // Sends crash logs to google forms, might give a false positive of a google tracker in app scans
     override fun send(context: Context, errorContent: CrashReportData) {
 
         println("Sending Crash Report")
 
         val url = if (SettingsFragment.isTrueTvSettings()) {
-            "Google Form URL for TV's"
+            "FORM_URL_FOR_TVs"
         } else {
-            "For Phones"
+            "FORM_URL_FOR_PHONES"
         }
 
         val data = mapOf(
@@ -112,7 +111,7 @@ class AcraApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        //NativeCrashHandler.initCrashHandler()
+        // NativeCrashHandler.initCrashHandler()
         ExceptionHandler(filesDir.resolve("last_error")) {
             val intent = context!!.packageManager.getLaunchIntentForPackage(context!!.packageName)
             startActivity(Intent.makeRestartActivityTask(intent!!.component))
@@ -127,7 +126,7 @@ class AcraApplication : Application() {
         context = base
 
         initAcra {
-            //core configuration:
+            // core configuration:
             buildConfigClass = BuildConfig::class.java
             reportFormat = StringFormat.JSON
 
@@ -136,13 +135,6 @@ class AcraApplication : Application() {
                 ReportField.ANDROID_VERSION, ReportField.PHONE_MODEL,
                 ReportField.STACK_TRACE,
             )
-
-            // removed this due to bug when starting the app, moved it to when it actually crashes
-            //each plugin you chose above can be configured in a block like this:
-            /*toast {
-                text = getString(R.string.acra_report_toast)
-                //opening this block automatically enables the plugin.
-            }*/
         }
     }
 
