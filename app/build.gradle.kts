@@ -210,13 +210,15 @@ dependencies {
     implementation("com.github.discord:OverlappingPanels:0.1.5") // Gestures
     implementation("com.github.rubensousa:previewseekbar-media3:1.1.1.0") // SeekBar Preview
 
-    // Extensions & Other Libs
-    implementation("org.mozilla:rhino:1.7.14") // Run JavaScript
+    // Extensionns & Other Libs
+    implementation("org.mozilla:rhino:1.7.13") /* run JS
+    ^ Don't Bump RhinoJS to 1.7.14, since in 1.7.14 Rhino Uses the `SourceVersion` Class, Which is NOT
+    Available on Android (even with Desugaring) & `NoClassDefFoundError` Occurs. */
     implementation("me.xdrop:fuzzywuzzy:1.4.0") // Library/Ext Searching with Levenshtein Distance
     implementation("com.github.LagradOst:SafeFile:0.0.5") // To Prevent the URI File Fu*kery
     implementation("org.conscrypt:conscrypt-android:2.5.2") // To Fix SSL Fu*kery on Android 9
     implementation("com.uwetrottmann.tmdb2:tmdb-java:2.10.0") // TMDB API v3 Wrapper Made with RetroFit
-    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.1.6")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.1") /* JSON Parser
     ^ Don't Bump Jackson above 2.13.1 , Crashes on Android TV's and FireSticks that have Min API
     Level 25 or Less. */

@@ -10,7 +10,6 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
-import com.google.errorprone.annotations.Keep
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.aniListApi
@@ -807,7 +806,6 @@ fun fixTitle(str: String): String {
  * Make sure you get the scope using: val scope: Scriptable = rhino.initSafeStandardObjects()
  * Use like the following: rhino.evaluateString(scope, js, "JavaScript", 1, null)
  **/
-@Keep
 suspend fun getRhinoContext(): org.mozilla.javascript.Context {
     return Coroutines.mainWork {
         val rhino = org.mozilla.javascript.Context.enter()
