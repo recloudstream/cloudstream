@@ -9,7 +9,7 @@
     <string name="title_home">ホーム</string>
     <string name="library">ライブラリ</string>
     <string name="home_play">再生</string>
-    <string name="next_episode_time_day_format" formatted="true">%d日 %d時間%d分</string>
+    <string name="next_episode_time_day_format" formatted="true">%9$d%9$d%9$d%9$d%d日 %d時間%d分</string>
     <string name="next_episode_time_hour_format" formatted="true">%d時間%d分</string>
     <string name="search_hint">検索…</string>
     <string name="download">ダウンロード</string>
@@ -74,7 +74,7 @@
     <string name="sort_close">閉じる</string>
     <string name="sort_save">保存</string>
     <string name="sort_clear">消去</string>
-    <string name="app_dub_sub_episode_text_format" formatted="true">%sエピ%d</string>
+    <string name="app_dub_sub_episode_text_format" formatted="true">%99$d%99$s%sエピ%d</string>
     <string name="cast_format" formatted="true">出演者：%s</string>
     <string name="search_poster_img_des">ポスター</string>
     <string name="episode_poster_img_des">エピソードポスター</string>
@@ -218,4 +218,5 @@
     <string name="search_provider_text_providers">プロバイダーから探す</string>
     <string name="subs_auto_select_language">言語の自動選択</string>
     <string name="error_loading_links_toast">リンクの読み込みエラー</string>
+    <string name="enter_pin">137905</string>
 </resources>

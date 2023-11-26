@@ -23,7 +23,7 @@
     <string name="title_search">খুঁজুন</string>
     <string name="title_downloads">ডাউনলোডসমূহ</string>
     <string name="title_settings">সেটিংস</string>
-    <string name="app_dub_sub_episode_text_format" formatted="true">%s এপি %d</string>
+    <string name="app_dub_sub_episode_text_format" formatted="true">%1$s এপি %2$d</string>
     <string name="next_episode_format" formatted="true">পর্ব %d মুক্তির তারিখ</string>
     <string name="result_share">শেয়ার</string>
     <string name="result_open_in_browser">ব্রাউজারে খুলুন</string>

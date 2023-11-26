@@ -11,11 +11,11 @@
     <string name="rew_text_regular_format" formatted="true" translatable="false">%d</string>
     <string name="rating_format" formatted="true" translatable="false">%.1f/10.0</string>
     <string name="year_format" formatted="true" translatable="false">%d</string>
-    <string name="app_dub_sub_episode_text_format" formatted="true">%s Ep %d</string>
+    <string name="app_dub_sub_episode_text_format" formatted="true">%1$s Ep %2$d</string>
     <string name="cast_format" formatted="true">Cast: %s</string>
     <string name="next_episode_format" formatted="true">Epizoda %d će izaći</string>
-    <string name="next_episode_time_day_format" formatted="true">%dd %dh %dm</string>
-    <string name="next_episode_time_hour_format" formatted="true">%dh %dm</string>
+    <string name="next_episode_time_day_format" formatted="true">%1$dd %2$dh %3$dm</string>
+    <string name="next_episode_time_hour_format" formatted="true">%1$dh %2$dm</string>
     <string name="next_episode_time_min_format" formatted="true">%dm</string>
     <!-- IS NOT NEEDED TO TRANSLATE AS THEY ARE ONLY USED FOR SCREEN READERS AND WONT SHOW UP TO NORMAL USERS -->
     <string name="result_poster_img_des">Poster</string>
@@ -30,7 +30,7 @@
     <string name="player_speed_text_format" formatted="true">Brzina (%.2fx)</string>
     <string name="rated_format" formatted="true">Ocjena: %.1f</string>
     <string name="new_update_format" formatted="true">Pronađeno novo ažuriranje!
-\n%s -&gt; %s</string>
+\n%1$s -&gt; %2$s</string>
     <string name="filler" formatted="true">Umetak</string>
     <string name="duration_format" formatted="true">%d min</string>
     <string name="app_name">CloudStream</string>
@@ -191,8 +191,8 @@
     <string name="no_season">Nema sezone</string>
     <string name="episode">Epizoda</string>
     <string name="episodes">Epizoda</string>
-    <string name="episodes_range">%d-%d</string>
-    <string name="episode_format" formatted="true">%d %s</string>
+    <string name="episodes_range">%1$d-%2$d</string>
+    <string name="episode_format" formatted="true">%1$d %2$s</string>
     <string name="season_short">S</string>
     <string name="episode_short">E</string>
     <string name="no_episodes_found">Nisu pronađene epizode</string>
@@ -322,7 +322,7 @@
     <string name="example_site_name">MojaCoolStranica</string>
     <string name="example_site_url">primjer.com</string>
     <string name="example_lang_name">Šifra jezika (en)</string>
-    <string name="login_format" formatted="true">%s %s</string>
+    <string name="login_format" formatted="true">%1$s %2$s</string>
     <string name="account">račun</string>
     <string name="logout">Odjava</string>
     <string name="login">Prijava</string>
@@ -420,8 +420,8 @@
     <string name="plugin_deleted">Dodatak izbrisan</string>
     <string name="plugin_load_fail" formatted="true">Nije moguće učitati %s</string>
     <string name="is_adult">18+</string>
-    <string name="batch_download_start_format" formatted="true">Započelo preuzimanje %d %s…</string>
-    <string name="batch_download_finish_format" formatted="true">Preuzeto %d %s</string>
+    <string name="batch_download_start_format" formatted="true">Započeto preuzimanje %1$d %2$s…</string>
+    <string name="batch_download_finish_format" formatted="true">Preuzeto %1$d %2$s</string>
     <string name="batch_download_nothing_to_download_format" formatted="true">Sve %s je već preuzeto</string>
     <string name="batch_download">Skupno preuzimanje</string>
     <string name="plugin_singular">dodatak</string>
@@ -508,7 +508,7 @@
     <string name="apk_installer_legacy">Legacy</string>
     <string name="skip_type_op">Otvaranje</string>
     <string name="apk_installer_package_installer">PackageInstaller</string>
-    <string name="season_format">%s %d%s</string>
+    <string name="season_format">%1$s %2$d%3$s</string>
     <string name="update_started">Aktualiziranje započeto</string>
     <string name="delayed_update_notice">Program če se aktualizirati tijekom zatvaranja programa</string>
     <string name="plugin_downloaded">Dodatak preuzet</string>
@@ -577,4 +577,36 @@
 \nNAPOMENA: Ako je zbroj 10 ili više, video player će automatski preskočiti učitavanje kada se ta poveznica učita!</string>
     <string name="already_voted">Već si glasao/la</string>
     <string name="backup_frequency">Učestalost rezervne kopije</string>
+    <string name="favorite_removed">%s uklonjeno iz favorita</string>
+    <string name="favorites_list_name">Favoriti</string>
+    <string name="favorite_added">%s dodano u favorite</string>
+    <string name="duplicate_message_multiple" formatted="true">Potencijalni duplikati pronađeni su u vašoj biblioteci:
+\n
+\n%s
+\n
+\nŽelite li ipak dodati ovu stavku koja zamjenjuje postojeće ili poništiti radnju?</string>
+    <string name="duplicate_title">Pronađen potencijalni duplikat</string>
+    <string name="lock_profile">Zaključaj profil</string>
+    <string name="action_add_to_favorites">Dodaj u favorite</string>
+    <string name="duplicate_replace_all">Zamjeni sve</string>
+    <string name="pin_error_incorrect">Netočan PIN. Pokušajte ponovno.</string>
+    <string name="action_unsubscribe">Odjava pretplate</string>
+    <string name="pin_error_length">PIN mora imati 4 znaka</string>
+    <string name="duplicate_replace">Zamjeni</string>
+    <string name="duplicate_add">Dodaj</string>
+    <string name="action_subscribe">Pretplata</string>
+    <string name="action_remove_from_favorites">Ukloni iz favorita</string>
+    <string name="select_an_account">Odaberite račun</string>
+    <string name="duplicate_message_single" formatted="true">Čini se da potencijalno duplicirana stavka već postoji u vašoj biblioteci: \'%s.\'
+\n
+\nŽelite li ipak dodati ovu stavku koja zamjenjuje postojeću ili poništiti radnju?</string>
+    <string name="enter_pin">Unesite PIN</string>
+    <string name="pin">PIN</string>
+    <string name="enter_current_pin">Unesite trenutni PIN</string>
+    <string name="logged_account" formatted="true">Prijavljeni ste kao %s</string>
+    <string name="enter_pin_with_name" formatted="true">Unesite PIN za %s</string>
+    <string name="use_default_account">Koristi zadani račun</string>
+    <string name="skip_startup_account_select_pref">Preskoči odabir računa pri pokretanju</string>
+    <string name="manage_accounts">Upravljanje računima</string>
+    <string name="edit_account">Uredi račun</string>
 </resources>

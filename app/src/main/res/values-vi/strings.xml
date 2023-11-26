@@ -2,11 +2,11 @@
 <resources>
     <!-- KEYS DON'T TRANSLATE -->
     <!-- FORMAT MIGHT TRANSLATE, WILL CAUSE CRASH IF APPLIED WRONG -->
-    <string name="app_dub_sub_episode_text_format" formatted="true">%s Tập %d</string>
+    <string name="app_dub_sub_episode_text_format" formatted="true">%1$s Tập %2$d</string>
     <string name="cast_format" formatted="true">Diễn viên: %s</string>
     <string name="next_episode_format" formatted="true">Tập %d sẽ ra mắt sau</string>
-    <string name="next_episode_time_day_format" formatted="true">%dd %dh %dm</string>
-    <string name="next_episode_time_hour_format" formatted="true">%dh %dm</string>
+    <string name="next_episode_time_day_format" formatted="true">%1$dng %2$dg %3$dph</string>
+    <string name="next_episode_time_hour_format" formatted="true">%1$dgi %2$dph</string>
     <string name="next_episode_time_min_format" formatted="true">%dm</string>
     <!-- IS NOT NEEDED TO TRANSLATE AS THEY ARE ONLY USED FOR SCREEN READERS AND WONT SHOW UP TO NORMAL USERS -->
     <string name="result_poster_img_des">Poster</string>
@@ -20,8 +20,8 @@
     <!-- TRANSLATE, BUT DON'T FORGET FORMAT -->
     <string name="player_speed_text_format" formatted="true">Tốc độ (%.2fx)</string>
     <string name="rated_format" formatted="true">Đánh giá: %.1f</string>
-    <string name="new_update_format" formatted="true">Đã có bản cập nhật mới!
-\n%s -&gt; %s</string>
+    <string name="new_update_format" formatted="true">Đã tìm thấy bản cập nhật mới!
+\n%1$s -&gt; %2$s</string>
     <string name="filler" formatted="true">Bộ lọc</string>
     <string name="duration_format" formatted="true">%d phút</string>
     <string name="app_name">CloudStream</string>
@@ -181,7 +181,7 @@
     <string name="no_season">Không có mùa nào</string>
     <string name="episode">Tập</string>
     <string name="episodes">Tập</string>
-    <string name="episodes_range">%d-%d</string>
+    <string name="episodes_range">%1$ng-%2$ng</string>
     <string name="episode_format" formatted="true">%d %s</string>
     <string name="season_short">M</string>
     <string name="episode_short">T</string>
@@ -311,7 +311,7 @@
     <string name="example_site_name">Địa chỉ trang web</string>
     <string name="example_site_url">example.com</string>
     <string name="example_lang_name">Mã ngôn ngữ (vi)</string>
-    <string name="login_format" formatted="true">%s %s</string>
+    <string name="login_format" formatted="true">%1$gi %2$gi</string>
     <string name="account">tài khoản</string>
     <string name="logout">Đăng xuất</string>
     <string name="login">Đăng nhập</string>
@@ -587,10 +587,16 @@
     <string name="action_subscribe">Đăng ký</string>
     <string name="action_remove_from_favorites">Loại bỏ khỏi mục yêu thích</string>
     <string name="select_an_account">Chọn một tài khoản</string>
-    <string name="duplicate_message_single">Có vẻ như một mục có khả năng trùng lặp đã tồn tại trong thư viện của bạn: \'%1$s.\'
+    <string name="duplicate_message_single">Có vẻ như một mục có khả năng trùng lặp đã tồn tại trong thư viện của bạn: \'%s.\'
 \n
-\nBạn vẫn muốn thêm mục này, thay thế mục hiện có hay hủy hành động\?</string>
+\nBạn vẫn muốn thêm mục này, thay thế mục hiện có hay hủy hành động?</string>
     <string name="enter_pin">Nhập PIN</string>
     <string name="pin">PIN</string>
     <string name="enter_current_pin">Nhập mã PIN hiện tại</string>
+    <string name="logged_account" formatted="true">Đã đăng nhập với tư cách %s</string>
+    <string name="enter_pin_with_name" formatted="true">Nhập mã PIN cho %s</string>
+    <string name="use_default_account">Sử dụng tài khoản mặc định</string>
+    <string name="skip_startup_account_select_pref">Bỏ qua lựa chọn tài khoản khi khởi động</string>
+    <string name="manage_accounts">Quản lý tài khoản</string>
+    <string name="edit_account">Chỉnh sửa tài khoản</string>
 </resources>

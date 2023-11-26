@@ -292,7 +292,7 @@
 \nDebido a que dieron de baja el proyecto de manera arbitraria por infracción a la lay de derechos de autor (DMCA) de parte de Sky UK Limited 🤮, no podemos vincular el sitio del repositorio en la aplicación.
 \n
 \nÚnete a nuestro Discord o busca en línea.</string>
-    <string name="download_all_plugins_from_repo">Descarga todos los plugins desde este repositorio\?</string>
+    <string name="download_all_plugins_from_repo">¿Descargar todos los plugins de este repositorio?</string>
     <string name="updates_settings">Mostrar actualizaciones de la aplicación</string>
     <string name="apk_installer_settings">Instalador de APK</string>
     <string name="apk_installer_settings_des">Algunos dispositivos no soportan el nuevo instalador de paquetes. Pruebe la opción antigua (legacy) si las actualizaciones no se instalan.</string>
@@ -578,4 +578,10 @@
     <string name="enter_pin">Introducir el PIN</string>
     <string name="pin">PIN</string>
     <string name="enter_current_pin">Introduzca el PIN actual</string>
+    <string name="logged_account" formatted="true">Conectado como %s</string>
+    <string name="enter_pin_with_name" formatted="true">Introduzca el PIN para %s</string>
+    <string name="use_default_account">Utilizar la cuenta por defecto</string>
+    <string name="skip_startup_account_select_pref">Omitir la selección de cuenta al inicio</string>
+    <string name="manage_accounts">Gestionar las cuentas</string>
+    <string name="edit_account">Editar la cuenta</string>
 </resources>

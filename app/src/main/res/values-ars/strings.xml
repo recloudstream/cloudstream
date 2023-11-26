@@ -9,10 +9,10 @@
     <string name="loading">تحميل…</string>
     <string name="pick_subtitle">ترجمات</string>
     <string name="reload_error">إعادة محاولة الاتصال …</string>
-    <string name="app_dub_sub_episode_text_format" formatted="true">%sييبي%d</string>
+    <string name="app_dub_sub_episode_text_format" formatted="true">%1$sايبي%2$d</string>
     <string name="next_episode_format" formatted="true">الحلقة%dسيتم نشرها في</string>
-    <string name="next_episode_time_day_format" formatted="true">%dي%dس%dد</string>
-    <string name="next_episode_time_hour_format" formatted="true">%dس%dد</string>
+    <string name="next_episode_time_day_format" formatted="true">%1$dي%2$dس%3$dد</string>
+    <string name="next_episode_time_hour_format" formatted="true">%1$dس%2$dد</string>
     <string name="next_episode_time_min_format" formatted="true">%dد</string>
     <string name="episode_poster_img_des">لافتة الحلقة</string>
     <string name="home_main_poster_img_des">اللافتة الاساسية</string>
@@ -36,7 +36,7 @@
     <string name="type_plan_to_watch">خطط للمشاهدة</string>
     <string name="type_re_watching">إعادة المشاهدة</string>
     <string name="new_update_format" formatted="true">!تم العثور على تحديث جديد
-\n%s-&gt;%s</string>
+\n%1$s -&gt; %2$s</string>
     <string name="rated_format" formatted="true">%.1f:قدر</string>
     <string name="duration_format" formatted="true">%dاقل</string>
     <string name="app_name">كلاودستريم</string>
@@ -129,15 +129,15 @@
     <string name="update_notification_downloading">جارٍ تنزيل تحديث التطبيق…</string>
     <string name="subs_default_reset_toast">إعادة التعيين إلى القيمة العادية</string>
     <string name="season_short">س</string>
-    <string name="episode_format" formatted="true">%d%s</string>
+    <string name="episode_format" formatted="true">%1$d %2$s</string>
     <string name="no_chromecast_support_toast">لا يتمتع هذا المزود بدعم كرومكاست</string>
     <string name="no_links_found_toast">لم يتم العثور على أي روابط</string>
     <string name="play_episode_toast">تشغيل الحلقة</string>
     <string name="acra_report_toast">عذرًا، تعطل التطبيق. سيتم إرسال تقرير خطأ مجهول إلى المطورين</string>
-    <string name="season_format">%s%d%s</string>
+    <string name="season_format">%1$s%2$d%3$s</string>
     <string name="no_season">لا يوجد موسم</string>
     <string name="episode">حلقة</string>
-    <string name="episodes_range">%d-%d</string>
+    <string name="episodes_range">%1$d-%2$d</string>
     <string name="episode_short">يي</string>
     <string name="clear_history">امسح التاريخ</string>
     <string name="update_notification_installing">جارٍ تثبيت تحديث التطبيق…</string>
@@ -264,4 +264,93 @@
     <string name="picture_in_picture">صور في صور</string>
     <string name="resume_time_left" formatted="true">%d
 \nباقي</string>
+    <string name="video_source">مصدر</string>
+    <string name="android_tv_interface_off_seek_settings">اللاعب مخفي - ابحث عن المبلغ</string>
+    <string name="backup_frequency">تكرار النسخ الاحتياطي</string>
+    <string name="movies_singular">فلم</string>
+    <string name="torrent_singular">توررنت</string>
+    <string name="no_update_found">لا يوجد تحديث</string>
+    <string name="tv_series">مسلسل تلفزيونى</string>
+    <string name="check_for_update">فحص التحديثات</string>
+    <string name="render_error">خطأ في العارض</string>
+    <string name="show_title">عنوان</string>
+    <string name="download_path_pref">مسار التحميل</string>
+    <string name="movies">افلام</string>
+    <string name="limit_title_rez">دقة مشغل الفيديو</string>
+    <string name="torrent">توررنتس</string>
+    <string name="legal_notice">تنصل</string>
+    <string name="show_sub">علامة الترجمة</string>
+    <string name="ova_singular">اوفياي</string>
+    <string name="episode_action_download_mirror">تحميل مرآة</string>
+    <string name="add_site_pref">موقع استنساخ</string>
+    <string name="free_storage">مجان</string>
+    <string name="resize_fill">تمتد</string>
+    <string name="update">تحديث</string>
+    <string name="show_dub">علامة الدبلجة</string>
+    <string name="year">سنة</string>
+    <string name="nsfw_singular">NSFW</string>
+    <string name="episode_action_play_in_format">%s افتح في</string>
+    <string name="episode_action_download_subtitle">تحميل ترجمات</string>
+    <string name="dont_show_again">لا تظهر مرة أخرى</string>
+    <string name="video_buffer_clear_settings">مسح ذاكرة التخزين المؤقت للفيديو والصور</string>
+    <string name="video_skip_op">تخطي البداية</string>
+    <string name="documentaries">الافلام الوثائقية</string>
+    <string name="cartoons">الرسوم المتحركة</string>
+    <string name="no_subtitles">لا ترجمات</string>
+    <string name="watch_quality_pref">(WiFi) جودة الساعة المفضلة</string>
+    <string name="cartoons_singular">فلم كرتون</string>
+    <string name="synopsis">ملخص</string>
+    <string name="android_tv_interface_on_seek_settings_summary">يتم استخدام مبلغ البحث عندما يكون اللاعب مرئيًا</string>
+    <string name="other_singular">فيديو</string>
+    <string name="live_singular">بث مباشر</string>
+    <string name="android_tv_interface_on_seek_settings">اللاعب المعروض - ابحث عن المبلغ</string>
+    <string name="display_subbed_dubbed_settings">عرض الأنمي المدبلج/المترجم</string>
+    <string name="ova">اوفياي</string>
+    <string name="unexpected_error">خطأ غير متوقع من اللاعب</string>
+    <string name="used_storage">مستعمل</string>
+    <string name="video_disk_description">.Android TV يسبب مشاكل إذا تم ضبطه على أجهزة ذات مساحة تخزين منخفضة، مثل</string>
+    <string name="others">اخرون</string>
+    <string name="skip_update">تخطي هذا التحديث</string>
+    <string name="jsdelivr_proxy_summary">.قد يتسبب في تأخير التحديثات لبضعة أيام .jsDelivr باستخدام GitHubيتجاوز حظر</string>
+    <string name="episode_action_copy_link">انسخ الرابط</string>
+    <string name="asian_drama">الدرامات الآسيوية</string>
+    <string name="queued">في قائمة الانتظار</string>
+    <string name="episode_action_play_in_app">افتح في التطبيق</string>
+    <string name="episode_action_play_in_browser">افتح في المتصفح</string>
+    <string name="dns_pref_summary">مفيد لتجاوز حجب مزودي خدمة الإنترنت</string>
+    <string name="tv_series_singular">مسلسل</string>
+    <string name="rating">تقييم</string>
+    <string name="remove_site_pref">إزالة الموقع</string>
+    <string name="video_aspect_ratio_resize">تغيير الحجم</string>
+    <string name="show_hd">علامة الجودة</string>
+    <string name="episode_action_reload_links">إعادة تحميل الروابط</string>
+    <string name="add_site_summary">مختلف URL أضف نسخة من موقع موجود بعنوان</string>
+    <string name="watch_quality_pref_data">جودة الساعة المفضلة (بيانات الجوال)</string>
+    <string name="episode_action_auto_download">التنزيل التلقائي</string>
+    <string name="nsfw">NSFW</string>
+    <string name="anime">انيمي</string>
+    <string name="episode_action_chromecast_mirror">مرآة كروم كاست</string>
+    <string name="poster_ui_settings">تبديل عناصر واجهة المستخدم على الملصق</string>
+    <string name="resize_zoom">تكبير</string>
+    <string name="resize_fit">صالح للشاشة</string>
+    <string name="jsdelivr_enabled">...jsDelivr لا يمكن الوصول إلى جيتهاب. جارٍ تشغيل وكيل</string>
+    <string name="android_tv_interface_off_seek_settings_summary">استخدام مبلغ البحث عندما يكون اللاعب مخفيًا</string>
+    <string name="video_lock">قفل</string>
+    <string name="storage_error">خطأ في التنزيل، تحقق من أذونات التخزين</string>
+    <string name="anime_singular">انيمي</string>
+    <string name="app_storage">برنامج</string>
+    <string name="action_default">عادي</string>
+    <string name="remote_error">خطأ عن بعد</string>
+    <string name="video_buffer_size_settings">حجم المخزن المؤقت للفيديو</string>
+    <string name="video_buffer_length_settings">طول المخزن المؤقت للفيديو</string>
+    <string name="episode_action_chromecast_episode">حلقة كروم كاست</string>
+    <string name="livestreams">بثات مباشرة</string>
+    <string name="duration">مدة</string>
+    <string name="asian_drama_singular">الدراما الآسيوية</string>
+    <string name="video_ram_description">.Android TV يتسبب في حدوث أعطال إذا تم ضبطه على مستوى مرتفع جدًا على الأجهزة ذات الذاكرة المنخفضة، مثل</string>
+    <string name="source_error">خطأ في المصدر</string>
+    <string name="video_buffer_disk_settings">ذاكرة التخزين المؤقت للفيديو على القرص</string>
+    <string name="documentaries_singular">وثائقي</string>
+    <string name="site">موقع</string>
+    <string name="limit_title">عنوان مشغل الفيديو بحد أقصى لعدد الأحرف</string>
 </resources>

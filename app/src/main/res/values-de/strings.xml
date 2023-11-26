@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_dub_sub_episode_text_format" formatted="true">%s Ep %d</string>
+    <string name="app_dub_sub_episode_text_format" formatted="true">%1$s Ep %2$d</string>
     <string name="cast_format" formatted="true">Besetzung: %s</string>
     <string name="next_episode_format" formatted="true">Episode %d wird veröffentlicht in</string>
     <string name="result_poster_img_des">Vorschaubild</string>
@@ -28,7 +28,7 @@
     <string name="player_speed_text_format" formatted="true">Geschwindigkeit (%.2fx)</string>
     <string name="rated_format" formatted="true">Bewertung: %.1f</string>
     <string name="new_update_format" formatted="true">Neues Update gefunden!
-\n%s -&gt; %s</string>
+\n%1$s -&gt; %2$s</string>
     <string name="filler" formatted="true">Füller</string>
     <string name="duration_format" formatted="true">%d Min</string>
     <string name="app_name">CloudStream</string>
@@ -183,8 +183,8 @@
     <string name="no_season">Keine Staffel</string>
     <string name="episode">Episode</string>
     <string name="episodes">Episoden</string>
-    <string name="episodes_range">%d-%d</string>
-    <string name="episode_format" formatted="true">%d %s</string>
+    <string name="episodes_range">%1$d-%2$d</string>
+    <string name="episode_format" formatted="true">%1$d %2$s</string>
     <string name="season_short">S</string>
     <string name="delete_file">Datei löschen</string>
     <string name="episode_short">E</string>
@@ -308,7 +308,7 @@
     <string name="example_site_name">MeineCooleSeite</string>
     <string name="example_site_url">example.com</string>
     <string name="example_lang_name">Sprachencode (en)</string>
-    <string name="login_format" formatted="true">%s %s</string>
+    <string name="login_format" formatted="true">%1$s %2$s</string>
     <string name="account">Account</string>
     <string name="logout">Ausloggen</string>
     <string name="login">Einloggen</string>
@@ -400,7 +400,7 @@
     <string name="plugin_load_fail" formatted="true">Fehler beim Laden von %s</string>
     <string name="is_adult">18+</string>
     <string name="batch_download_start_format" formatted="true">Herunterladen begonnen %d %s…</string>
-    <string name="batch_download_finish_format" formatted="true">%d %s heruntergeladen</string>
+    <string name="batch_download_finish_format" formatted="true">%1$d %2$s heruntergeladen</string>
     <string name="batch_download_nothing_to_download_format" formatted="true">Alle %s bereits heruntergeladen</string>
     <string name="batch_download">Batch-Download</string>
     <string name="plugin_singular">Plugin</string>
@@ -451,8 +451,8 @@
     <string name="skip_type_ed">Ending</string>
     <string name="skip_type_recap">Zusammenfassung</string>
     <string name="skip_type_mixed_ed">Vermischte Endings</string>
-    <string name="next_episode_time_day_format" formatted="true">%dd %dh %dm</string>
-    <string name="next_episode_time_hour_format" formatted="true">%dh %dm</string>
+    <string name="next_episode_time_day_format" formatted="true">%1$dd %2$dh %3$dm</string>
+    <string name="next_episode_time_hour_format" formatted="true">%1$dh %2$dm</string>
     <string name="next_episode_time_min_format" formatted="true">%dm</string>
     <string name="play_trailer_button">Trailer abspielen</string>
     <string name="automatic_plugin_download">Automatisches Herunterladen von Plugins</string>
@@ -460,7 +460,7 @@
     <string name="redo_setup_process">Einrichtungsvorgang wiederholen</string>
     <string name="apk_installer_settings">APK-Installer</string>
     <string name="apk_installer_settings_des">Einige Smartphones unterstützen den neuen Package-Installer nicht. Benutze die Legacy-Option, wenn sich die Updates nicht installieren lassen.</string>
-    <string name="season_format">%s %d%s</string>
+    <string name="season_format">%1$s %2$d%3$s</string>
     <string name="pref_category_links">Links</string>
     <string name="pref_category_app_updates">App-Updates</string>
     <string name="pref_category_backup">Sicherung</string>
@@ -551,4 +551,23 @@
     <string name="no_repository_found_error">Repository nicht gefunden, überprüf die URL und versuch ein VPN</string>
     <string name="unable_to_inflate">Die Benutzeroberfläche konnte nicht korrekt erstellt werden. Dies ist ein SCHWERWIEGENDER FEHLER und sollte sofort gemeldet werden. %s</string>
     <string name="disable">Deaktivieren</string>
+    <string name="favorite_removed">%s von Favoriten entfernt</string>
+    <string name="favorites_list_name">Favoriten</string>
+    <string name="favorite_added">%s zu Favoriten hinzugefügt</string>
+    <string name="backup_frequency">Sicherungshäufigkeit</string>
+    <string name="duplicate_title">Potentielles Duplikat gefunden</string>
+    <string name="lock_profile">Profil sperren</string>
+    <string name="action_add_to_favorites">Zu Favoriten hinzufügen</string>
+    <string name="duplicate_replace_all">Alle ersetzen</string>
+    <string name="pin_error_incorrect">Falsche PIN. Bitte versuche es erneut.</string>
+    <string name="action_unsubscribe">Deabonnieren</string>
+    <string name="pin_error_length">PIN muss 4 Zeichen sein</string>
+    <string name="duplicate_replace">Ersetzen</string>
+    <string name="duplicate_add">Hinzufügen</string>
+    <string name="action_subscribe">Abonnieren</string>
+    <string name="action_remove_from_favorites">Von Favoriten entfernen</string>
+    <string name="select_an_account">Ein Konto auswählen</string>
+    <string name="enter_pin">PIN eingeben</string>
+    <string name="pin">PIN</string>
+    <string name="enter_current_pin">Aktuelle PIN eingeben</string>
 </resources>
