@@ -3,7 +3,7 @@
     <!-- TRANSLATE, BUT DON'T FORGET FORMAT -->
     <string name="player_speed_text_format" formatted="true">स्पीड (%.2fx)</string>
     <string name="new_update_format" formatted="true">नया अपडेट आया है!
-\n%s -&gt; %s</string>
+\n%1$s -&gt; %2$s</string>
     <string name="title_home">होम</string>
     <string name="title_search">खोजें</string>
     <string name="title_downloads">डाउनलोडस</string>
@@ -142,8 +142,8 @@
     <string name="action_mark_as_watched">देखा हुआ चिह्नित करें</string>
     <string name="history">इतिहास</string>
     <string name="next_episode_format" formatted="true">भाग %d रिलीज़ किया जाएगा</string>
-    <string name="next_episode_time_day_format" formatted="true">%dd %dh %dm</string>
-    <string name="next_episode_time_hour_format" formatted="true">%dh %dm</string>
+    <string name="next_episode_time_day_format" formatted="true">%1$dd %2$dh %3$dm</string>
+    <string name="next_episode_time_hour_format" formatted="true">%1$dh %2$dm</string>
     <string name="next_episode_time_min_format" formatted="true">%dm</string>
     <string name="home_next_random_img_des">अगला रैंडम</string>
     <string name="go_back_img_des">वापिस जाओ</string>
@@ -153,7 +153,7 @@
     <string name="cast_format" formatted="true">Cast: %s</string>
     <string name="home_main_poster_img_des">मुख्य पोस्टर</string>
     <string name="episode_poster_img_des">एपिसोड का पोस्टर</string>
-    <string name="app_dub_sub_episode_text_format" formatted="true">%s Ep %d</string>
+    <string name="app_dub_sub_episode_text_format" formatted="true">%1$s Ep %2$d</string>
     <string name="filler" formatted="true">पूरक</string>
     <string name="rated_format" formatted="true">रेटिंग: %.1f</string>
     <string name="search_hint_site" formatted="true">%s पर खोजें…</string>

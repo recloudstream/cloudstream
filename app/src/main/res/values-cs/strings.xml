@@ -596,10 +596,16 @@
     <string name="action_subscribe">Odebírat</string>
     <string name="action_remove_from_favorites">Odebrat z oblíbených</string>
     <string name="select_an_account">Vyberte účet</string>
-    <string name="duplicate_message_single">Vypadá to, že ve vaší knihovně již existuje potenciální duplikát: „%1$s“.
+    <string name="duplicate_message_single">Vypadá to, že ve vaší knihovně již existuje potenciální duplikát: „%s“.
 \n
-\nChcete přesto přidat tuto položku, nahradit existující nebo zrušit akci\?</string>
+\nChcete přesto přidat tuto položku, nahradit existující nebo zrušit akci?</string>
     <string name="enter_pin">Zadejte PIN</string>
     <string name="pin">PIN</string>
     <string name="enter_current_pin">Zadejte současný PIN</string>
+    <string name="logged_account" formatted="true">Přihlášeni jako %s</string>
+    <string name="enter_pin_with_name" formatted="true">Zadejte PIN pro %s</string>
+    <string name="use_default_account">Použít výchozí účet</string>
+    <string name="skip_startup_account_select_pref">Přeskočit výběr účtu při spuštění</string>
+    <string name="manage_accounts">Správce účtů</string>
+    <string name="edit_account">Upravit účet</string>
 </resources>

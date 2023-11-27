@@ -604,10 +604,16 @@
     <string name="action_subscribe">إشترك</string>
     <string name="action_remove_from_favorites">إزالة من المفضلة</string>
     <string name="select_an_account">اختار حساب</string>
-    <string name="duplicate_message_single">من الظاهر أن \"%1$s\" موجود بالفعل في مكتبتك.
+    <string name="duplicate_message_single">يبدو أن هناك عنصرًا مكررًا موجود بالفعل في مكتبتك: \'%s\'.
 \n
-\nهل تريد الاضافة على أي حال مستبدلاً القديم أو إلغاء العملية؟</string>
+\nهل ترغب في إضافة هذا العنصر على أية حال، أو استبدال العنصر الموجود، أو إلغاء الإجراء؟</string>
     <string name="enter_pin">ادخال ال PIN</string>
     <string name="pin">PIN</string>
     <string name="enter_current_pin">أدخل ال PIN الحالي</string>
+    <string name="logged_account" formatted="true">تم تسجيل الدخول كـ %s</string>
+    <string name="enter_pin_with_name" formatted="true">أدخل رقم التعريف الشخصي لـ %s</string>
+    <string name="use_default_account">استخدم الحساب الافتراضي</string>
+    <string name="skip_startup_account_select_pref">تخطي اختيار الحساب عند بدء التشغيل</string>
+    <string name="manage_accounts">إدارة الحسابات</string>
+    <string name="edit_account">تعديل الحساب</string>
 </resources>

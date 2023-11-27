@@ -39,7 +39,7 @@
     <string name="filler" formatted="true">Заполнитель</string>
     <string name="app_name">CloudStream</string>
     <string name="action_remove_from_bookmarks">Убирать</string>
-    <string name="app_dub_sub_episode_text_format" formatted="true">%s Ep %d</string>
+    <string name="app_dub_sub_episode_text_format" formatted="true">%1$s Серия %2$d</string>
     <string name="play_with_app_name">Смотреть с CloudStream</string>
     <string name="title_home">Главная</string>
     <string name="title_search">Поиск</string>
@@ -88,7 +88,7 @@
     <string name="sort_save">Сохранить</string>
     <string name="player_speed">Скорость проигрыватель</string>
     <string name="play_episode_toast">Воспроизвести Эпизод</string>
-    <string name="next_episode_time_day_format" formatted="true">%dд %dч %dм</string>
+    <string name="next_episode_time_day_format" formatted="true">%1$dд %2$dч %3$dм</string>
     <string name="duration_format" formatted="true">%d мин</string>
     <string name="app_dubbed_text">Dub</string>
     <string name="app_subbed_text">Sub</string>

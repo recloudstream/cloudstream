@@ -572,10 +572,16 @@
     <string name="action_subscribe">Підписатись</string>
     <string name="action_remove_from_favorites">Вилучити з обраного</string>
     <string name="select_an_account">Оберіть обліковий запис</string>
-    <string name="duplicate_message_single">Виявилося, що у вашій бібліотеці вже є потенційно повторюваний елемент: \'%1$s.\'
+    <string name="duplicate_message_single">Виявилося, що у вашій бібліотеці вже є потенційно повторюваний елемент: \'%s.\'
 \n
-\nВсе одно хочете додати цей елемент, замінити наявний чи скасувати дію\?</string>
+\nВсе одно хочете додати цей елемент, замінити наявний чи скасувати дію?</string>
     <string name="enter_pin">Введіть PIN-код</string>
     <string name="pin">PIN-код</string>
     <string name="enter_current_pin">Введіть поточний PIN-код</string>
+    <string name="logged_account" formatted="true">Увійшли як %s</string>
+    <string name="enter_pin_with_name" formatted="true">Введіть ПІН для %s</string>
+    <string name="use_default_account">Використовувати акаунт за замовчуванням</string>
+    <string name="skip_startup_account_select_pref">Пропускати вибір акаунту під час запуску</string>
+    <string name="manage_accounts">Керування акаунтами</string>
+    <string name="edit_account">Редагувати акаунт</string>
 </resources>

@@ -11,11 +11,11 @@
     <string name="rew_text_regular_format" formatted="true" translatable="false">%d</string>
     <string name="rating_format" formatted="true" translatable="false">%.1f/10.0</string>
     <string name="year_format" formatted="true" translatable="false">%d</string>
-    <string name="app_dub_sub_episode_text_format" formatted="true">%s Ep %d</string>
+    <string name="app_dub_sub_episode_text_format" formatted="true">%$1s B. %2$d</string>
     <string name="cast_format" formatted="true">Cast: %s</string>
     <string name="next_episode_format" formatted="true">Bölüm %d şu tarihte yayınlanacak</string>
-    <string name="next_episode_time_day_format" formatted="true">%dd %dh %dm</string>
-    <string name="next_episode_time_hour_format" formatted="true">%dh %dm</string>
+    <string name="next_episode_time_day_format" formatted="true">%dg %ds %dd</string>
+    <string name="next_episode_time_hour_format" formatted="true">%ds %dd</string>
     <string name="next_episode_time_min_format" formatted="true">%dm</string>
     <!-- IS NOT NEEDED TO TRANSLATE AS THEY ARE ONLY USED FOR SCREEN READERS AND WONT SHOW UP TO NORMAL USERS -->
     <string name="result_poster_img_des">Poster</string>
@@ -32,7 +32,7 @@
     <string name="player_speed_text_format" formatted="true">Hız (%.2fx)</string>
     <string name="rated_format" formatted="true">Puan: %.1f</string>
     <string name="new_update_format" formatted="true">Yeni güncelleme bulundu!
-\n%s -&gt; %s</string>
+\n%1$s -&gt; %2$s</string>
     <string name="filler" formatted="true">Filler</string>
     <string name="duration_format" formatted="true">%d dakika</string>
     <string name="app_name">CloudStream</string>
@@ -192,12 +192,12 @@
     <string name="subs_default_reset_toast">Varsayılan değere sıfırla</string>
     <string name="acra_report_toast">Üzgünüz, uygulama çöktü. Geliştiricilere anonim bir hata raporu gönderilecek</string>
     <string name="season">Sezon</string>
-    <string name="season_format">%s %d%s</string>
+    <string name="season_format">%1$s %2$d%3$s</string>
     <string name="no_season">Sezon yok</string>
     <string name="episode">Bölüm</string>
     <string name="episodes">Bölümler</string>
-    <string name="episodes_range">%d-%d</string>
-    <string name="episode_format" formatted="true">%d %s</string>
+    <string name="episodes_range">%1$d-%2$d</string>
+    <string name="episode_format" formatted="true">%1$d %2$s</string>
     <string name="season_short">S</string>
     <string name="episode_short">B</string>
     <string name="no_episodes_found">Bölüm bulunamadı</string>
@@ -344,7 +344,7 @@
     <string name="kitsu_account_settings" translatable="false">Kitsu</string>
     <string name="trakt_account_settings" translatable="false">Trakt</string>
     -->
-    <string name="login_format" formatted="true">%s %s</string>
+    <string name="login_format" formatted="true">%1$s %2$s</string>
     <string name="account">hesabı</string>
     <string name="logout">Çıkış yap</string>
     <string name="login">Giriş yap</string>
@@ -443,8 +443,8 @@
     <string name="plugin_deleted">Eklenti silindi</string>
     <string name="plugin_load_fail" formatted="true">%s yüklenemedi</string>
     <string name="is_adult">+18</string>
-    <string name="batch_download_start_format" formatted="true">%d %s indirilmeye başlandı…</string>
-    <string name="batch_download_finish_format" formatted="true">%d %s indirildi</string>
+    <string name="batch_download_start_format" formatted="true">%1$d %2$s indirilmeye başlandı…</string>
+    <string name="batch_download_finish_format" formatted="true">%1$d %2$s indirildi</string>
     <string name="batch_download_nothing_to_download_format" formatted="true">%s\'nin tamamı zaten indirildi</string>
     <string name="batch_download">Toplu indir</string>
     <string name="plugin_singular">eklenti</string>
@@ -594,4 +594,41 @@
     <string name="profile_background_des">Profil arkaplanı</string>
     <string name="unable_to_inflate">UI was unable to be created correctly, this is a MAJOR BUG and should be reported immediately %s</string>
     <string name="automatic_plugin_download_mode_title">Select mode to filter plugins download</string>
+    <string name="favorite_removed">%s favorilerden çıkarıldı</string>
+    <string name="favorites_list_name">Favoriler</string>
+    <string name="favorite_added">%s favorilere eklendi</string>
+    <string name="logged_account" formatted="true">%s olarak giriş yapıldı</string>
+    <string name="duplicate_message_multiple" formatted="true">Kütüphanenizde potensiyel kopya ürünler bulundu:
+\n
+\n%s
+\n
+\nYine de ekleyerek var olanları değiştirmek mi istersiniz, yoksa iptal etmek mi?</string>
+    <string name="enter_pin_with_name" formatted="true">%s için PIN girin</string>
+    <string name="backup_frequency">Yedekleme sıklığı</string>
+    <string name="duplicate_title">Potensiyel Kopya Bulundu</string>
+    <string name="lock_profile">Profili Kilitle</string>
+    <string name="use_default_account">Varsayılan Hesabı Kullan</string>
+    <string name="skip_startup_account_select_pref">Başlangıçta hesap seçimini atla</string>
+    <string name="action_add_to_favorites">Favorilere ekle</string>
+    <string name="manage_accounts">Hesapları Yönet</string>
+    <string name="duplicate_replace_all">Tümünü Değiştir</string>
+    <string name="edit_account">Hesabı düzenle</string>
+    <string name="pin_error_incorrect">Yanlış PIN. Lütfen tekrar deneyin.</string>
+    <string name="action_unsubscribe">Abonelikten çık</string>
+    <string name="pin_error_length">PIN 4 karakterden oluşmalı</string>
+    <string name="duplicate_replace">Değiştir</string>
+    <string name="duplicate_add">Ekle</string>
+    <string name="action_subscribe">Abone ol</string>
+    <string name="action_remove_from_favorites">Favorilerden çıkar</string>
+    <string name="select_an_account">Hesap Seç</string>
+    <string name="disable">Devre dışı bırak</string>
+    <string name="no_repository_found_error">Depo bulunamadı, bağlantı adresini kontrol edin ve VPN deneyin</string>
+    <string name="already_voted">Zaten oyladınız</string>
+    <string name="no_plugins_found_error">Depoda eklenti bulunamadı</string>
+    <string name="duplicate_message_single" formatted="true">Görünüşe göre potansiyel bir kopya kütüphanenizde zaten bulunuyor: \'%s\'
+\n
+\nYine de ekleyerek var olanı değiştirmek mi istersiniz, yoksa iptal etmek mi?</string>
+    <string name="enter_pin">PIN girin</string>
+    <string name="pin">PIN</string>
+    <string name="enter_current_pin">Geçerli PIN\'i Giriniz</string>
 </resources>

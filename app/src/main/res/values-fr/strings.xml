@@ -552,4 +552,20 @@
     <string name="unable_to_inflate">L\'interface utilisateur n\'a pas pu être créée correctement. Il s\'agit d\'un bogue majeur qui doit être signalé immédiatement %s</string>
     <string name="automatic_plugin_download_mode_title">Sélectionnez le mode pour filtrer le téléchargement des plugins</string>
     <string name="profile_background_des">Fond de profil</string>
+    <string name="favorite_removed">%s retiré(e) des favoris</string>
+    <string name="favorite_added">%s ajouté(e) aux favoris</string>
+    <string name="backup_frequency">Fréquence de sauvegarde</string>
+    <string name="use_default_account">Utiliser le compte par défaut</string>
+    <string name="action_add_to_favorites">Ajouter aux favoris</string>
+    <string name="manage_accounts">Gérer les comptes</string>
+    <string name="duplicate_replace_all">Tout remplacer</string>
+    <string name="edit_account">Modifier le compte</string>
+    <string name="pin_error_incorrect">PIN incorrect. Ressayez s\'il vous plait.</string>
+    <string name="pin_error_length">Le PIN doit être de 4 caractères</string>
+    <string name="duplicate_replace">Remplacer</string>
+    <string name="duplicate_add">Ajouter</string>
+    <string name="action_remove_from_favorites">Retirer des favoris</string>
+    <string name="select_an_account">Sélectionnez un compte</string>
+    <string name="enter_pin">Entrer PIN</string>
+    <string name="pin">PIN</string>
 </resources>
