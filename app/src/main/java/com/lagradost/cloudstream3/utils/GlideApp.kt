@@ -30,7 +30,7 @@ class GlideModule : AppGlideModule() {
                 .signature(ObjectKey(System.currentTimeMillis().toShort()))
         }.setDiskCache {
             // Possible to make this a setting in the future.
-            val memoryCacheSizeBytes: Long = 1024 * 1024 * 100; // 100mb
+            val memoryCacheSizeBytes: Long = 1024 * 1024 * 100 // 100mb
             InternalCacheDiskCacheFactory(context, memoryCacheSizeBytes).build()
         }
     }
