@@ -162,7 +162,7 @@ class SettingsGeneral : PreferenceFragmentCompat() {
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         hideKeyboard()
-        setPreferencesFromResource(R.xml.settins_general, rootKey)
+        setPreferencesFromResource(R.xml.settings_general, rootKey)
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(requireContext())
 
         fun getCurrent(): MutableList<CustomSite> {
