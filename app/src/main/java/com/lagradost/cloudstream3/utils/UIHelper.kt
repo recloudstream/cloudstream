@@ -316,15 +316,15 @@ object UIHelper {
 
             if (colorCallback != null) {
                 builder = builder.listener(object : RequestListener<Drawable> {
-                    @SuppressLint("CheckResult")
+
                     override fun onResourceReady(
-                        resource: Drawable?,
-                        model: Any?,
+                        resource: Drawable,
+                        model: Any,
                         target: Target<Drawable>?,
-                        dataSource: DataSource?,
+                        dataSource: DataSource,
                         isFirstResource: Boolean
                     ): Boolean {
-                        resource?.toBitmapOrNull()
+                        resource.toBitmapOrNull()
                             ?.let { bitmap ->
                                 createPaletteAsync(
                                     identifier,
@@ -335,11 +335,10 @@ object UIHelper {
                         return false
                     }
 
-                    @SuppressLint("CheckResult")
                     override fun onLoadFailed(
                         e: GlideException?,
                         model: Any?,
-                        target: Target<Drawable>?,
+                        target: Target<Drawable>,
                         isFirstResource: Boolean
                     ): Boolean {
                         return false
