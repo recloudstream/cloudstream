@@ -224,8 +224,8 @@ dependencies {
     Level 25 or Less. */
 
     // Downloading & Networking
-    implementation("androidx.work:work-runtime:2.8.1")
-    implementation("androidx.work:work-runtime-ktx:2.8.1")
+    implementation("androidx.work:work-runtime:2.9.0")
+    implementation("androidx.work:work-runtime-ktx:2.9.0")
     implementation("com.github.Blatzar:NiceHttp:0.4.4") // HTTP Lib
 }
 
