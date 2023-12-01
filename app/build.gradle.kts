@@ -25,6 +25,7 @@ fun String.execute() = ByteArrayOutputStream().use { baot ->
 }
 
 android {
+
     testOptions {
         unitTests.isReturnDefaultValues = true
     }
@@ -131,13 +132,17 @@ android {
 
     compileOptions {
         isCoreLibraryDesugaringEnabled = true
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
     lint {
         abortOnError = false
         checkReleaseBuilds = false
+    }
+
+    buildFeatures {
+        buildConfig = true
     }
 
     namespace = "com.lagradost.cloudstream3"
@@ -243,7 +248,7 @@ tasks.register("makeJar", Copy::class) {
 
 tasks.withType<KotlinCompile> {
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "17"
         freeCompilerArgs = listOf("-Xjvm-default=all-compatibility")
     }
 }
