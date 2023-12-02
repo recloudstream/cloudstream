@@ -1,6 +1,7 @@
-CloudStream-3 size film, dizi ve anime akışı yapma ve indirme olanağı sunar.
+CloudStream-3, Filmleri, TV Dizilerini ve Animeleri izlemenize ve indirmenize olanak tanır.
 
-Uygulama hiçbir reklam ve analitik yöntemleri barındırmaz ve birçok fragman & film sitelerini destekler, ve daha fazlası:
+Uygulama herhangi bir reklam ve analitik içermez ve
+birden fazla fragman & film sitesini ve daha fazlasını destekler, örneğin:
 
 Yer imleri
 

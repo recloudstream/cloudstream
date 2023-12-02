@@ -181,8 +181,8 @@
     <string name="no_season">Không có mùa nào</string>
     <string name="episode">Tập</string>
     <string name="episodes">Tập</string>
-    <string name="episodes_range">%1$ng-%2$ng</string>
-    <string name="episode_format" formatted="true">%d %s</string>
+    <string name="episodes_range">%1$d-%2$d</string>
+    <string name="episode_format" formatted="true">%1$d %2$s</string>
     <string name="season_short">M</string>
     <string name="episode_short">T</string>
     <string name="no_episodes_found">Không có tập nào</string>
@@ -311,7 +311,7 @@
     <string name="example_site_name">Địa chỉ trang web</string>
     <string name="example_site_url">example.com</string>
     <string name="example_lang_name">Mã ngôn ngữ (vi)</string>
-    <string name="login_format" formatted="true">%1$gi %2$gi</string>
+    <string name="login_format" formatted="true">%1$s %2$s</string>
     <string name="account">tài khoản</string>
     <string name="logout">Đăng xuất</string>
     <string name="login">Đăng nhập</string>
@@ -444,7 +444,7 @@
     <string name="redo_setup_process">Thiết lập lại</string>
     <string name="apk_installer_settings">Bộ cài APK</string>
     <string name="apk_installer_settings_des">Một số máy không hỗ trợ trình cài đặt gói mới. Hãy thử tùy chọn cũ nếu các bản cập nhật không cài đặt.</string>
-    <string name="season_format">%s %d%s</string>
+    <string name="season_format">%1$s %2$d%3$s</string>
     <string name="play_trailer_button">Xem giới thiệu</string>
     <string name="automatic_plugin_download_summary">Tự động tải plugin còn thiếu.</string>
     <string name="update_started">Bắt đầu cập nhật</string>
