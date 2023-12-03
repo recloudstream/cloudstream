@@ -46,6 +46,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           java-version: 17
+          distribution: 'adopt'
 
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
