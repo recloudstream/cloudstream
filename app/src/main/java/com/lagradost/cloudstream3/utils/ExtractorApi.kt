@@ -167,6 +167,7 @@ import com.lagradost.cloudstream3.extractors.Vidgomunimesb
 import com.lagradost.cloudstream3.extractors.Vidmoly
 import com.lagradost.cloudstream3.extractors.Vidmolyme
 import com.lagradost.cloudstream3.extractors.Vido
+import com.lagradost.cloudstream3.extractors.Vidplay
 import com.lagradost.cloudstream3.extractors.Vidstreamz
 import com.lagradost.cloudstream3.extractors.Vizcloud
 import com.lagradost.cloudstream3.extractors.Vizcloud2
@@ -793,6 +794,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     VidSrcExtractor2(),
     PlayLtXyz(),
     AStreamHub(),
+    Vidplay(),
 
     Cda(),
     Dailymotion(),
