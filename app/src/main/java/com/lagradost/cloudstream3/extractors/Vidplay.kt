@@ -23,7 +23,7 @@ open class Vidplay : ExtractorApi() {
         subtitleCallback: (SubtitleFile) -> Unit,
         callback: (ExtractorLink) -> Unit
     ) {
-        val id = url.substringAfter("/e/").substringBefore("?")
+        val id = url.substringBefore("?").substringAfterLast("/")
         val encodeId = encodeId(id, getKeys())
         val mediaUrl = callFutoken(encodeId, url)
         val res = app.get(
