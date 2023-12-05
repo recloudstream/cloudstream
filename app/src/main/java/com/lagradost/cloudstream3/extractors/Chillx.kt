@@ -7,7 +7,7 @@ import com.lagradost.cloudstream3.extractors.helper.AesHelper.cryptoAESHandler
 import com.lagradost.cloudstream3.utils.AppUtils
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
-import com.lagradost.cloudstream3.utils.Qualities
+import com.lagradost.cloudstream3.utils.M3u8Helper
 
 class Moviesapi : Chillx() {
     override val name = "Moviesapi"
@@ -64,17 +64,12 @@ open class Chillx : ExtractorApi() {
             "Origin" to mainUrl,
         )
 
-        callback.invoke(
-            ExtractorLink(
-                name,
-                name,
-                source ?: return,
-                "$mainUrl/",
-                Qualities.P1080.value,
-                headers = headers,
-                isM3u8 = true
-            )
-        )
+        M3u8Helper.generateM3u8(
+            name,
+            source ?: return,
+            "$mainUrl/",
+            headers = headers
+        ).forEach(callback)
 
         AppUtils.tryParseJson<List<Tracks>>("[$tracks]")
             ?.filter { it.kind == "captions" }?.map { track ->
