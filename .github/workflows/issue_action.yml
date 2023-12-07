@@ -27,7 +27,7 @@ jobs:
           comment-body: '${index}. ${similarity} #${number}'
       - name: Label if possible duplicate
         if: steps.similarity.outputs.similar-issues-found =='true'
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         with:
           github-token: ${{ steps.generate_token.outputs.token }}
           script: |
@@ -68,7 +68,7 @@ jobs:
             Found provider name: `${{ steps.provider_check.outputs.name }}`
       - name: Label if mentions provider
         if: steps.provider_check.outputs.name != 'none'
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         with:
           github-token: ${{ steps.generate_token.outputs.token }}
           script: |
