@@ -11,9 +11,9 @@
     <string name="bug_report_settings_off">بس بعات البيانات وقتما يتعطل الآپ</string>
     <string name="preview_background_img_des">شوف الخلفية</string>
     <string name="play_movie_button">مشّي الفيلم</string>
-    <string name="subs_hold_to_reset_to_default">ضلّ كابس لترجع الساتِنگز كيف كانة أول ما نزلتو الآپ</string>
+    <string name="subs_hold_to_reset_to_default">ضلّ كابس لترجع السَتِنگز كيف كانة أول ما نزلتو الآپ</string>
     <string name="season_format">%1$s%2$d%3$s</string>
-    <string name="subs_default_reset_toast">رجِعت الساتِنيگز ل كيف كانت أساسًا</string>
+    <string name="subs_default_reset_toast">رجِعت السَتِنگز ل كيف كانت أساسًا</string>
     <string name="uprereleases_settings_des">نبش على تجديدات بالنسخة التجريبية كمان</string>
     <string name="subs_outline_color">لون حدود الكتيبة</string>
     <string name="search_poster_img_des">پوستر</string>
@@ -37,7 +37,7 @@
     <string name="subs_download_languages">نزل الترجمات مع الڤيديو</string>
     <string name="search_provider_text_providers">عوزو المصادر لَ تنبّشو</string>
     <string name="go_back_img_des">رجاع</string>
-    <string name="discord">انضم لگروپ \"كلودستريم\" ع الـ\"ديسكورد\"</string>
+    <string name="discord">انضم لگروپ \"كلود ستريم\" ع الـ\"ديسكورد\"</string>
     <string name="episode_more_options_des">بعد خيارات</string>
     <string name="backup_success">تسيّڤة النسخة الإحتياطية</string>
     <string name="benene_count_text">صرتو عاطين %d موزززة للمطورين!</string>
@@ -73,7 +73,7 @@
     <string name="resume">كَمِّل</string>
     <string name="test_log">سِجِل</string>
     <string name="torrent_no_plot">ما نلاقى الوصف</string>
-    <string name="subtitles_settings">ساتِنگز الترجمة</string>
+    <string name="subtitles_settings">سَتِنگز الترجمة</string>
     <string name="subs_window_color">لون العلبة</string>
     <string name="play_torrent_button">عمول ستريم للتورنت</string>
     <string name="automatic_plugin_download_summary">تلقائيًا نَزِل كل الإضافات من الريپويات يلي نزادِت.</string>
@@ -86,18 +86,18 @@
     <string name="advanced_search">تنبيش منظّم</string>
     <string name="chromecast_subtitles_settings">ترجمة \"كروم كاست\"</string>
     <string name="swipe_to_change_settings">سحابو لتتحكمو بالصوت والضو</string>
-    <string name="rated_format" formatted="true">رايتيگ: %.1f</string>
-    <string name="chromecast_subtitles_settings_des">ستنگز تبع ترجمة \"كروم كاست\"</string>
+    <string name="rated_format" formatted="true">رايتينگ: %.1f</string>
+    <string name="chromecast_subtitles_settings_des">سَتِنگز تبع ترجمة \"كروم كاست\"</string>
     <string name="browser">متصفح الوَب</string>
     <string name="double_tap_to_seek_settings_des">كبوس مرتين على اليمين أو الشمال حتى تقرب أو ترَجِع الڤيديو</string>
     <string name="normal_no_plot">ما نلاقى وصف الأحداث</string>
     <string name="next_episode">الحلقة يلي بَعدا</string>
     <string name="updates_settings">فرجي تجديدات الآپ</string>
     <string name="library">رفّ</string>
-    <string name="lightnovel">آپ زغير من نفس المطورين للروايات بدل من الڤيديوات</string>
+    <string name="lightnovel">آپ من نفس المطورين للروايات الخفيفة، بدل من الڤيديوات</string>
     <string name="automatic_plugin_download_mode_title">حدد الوضع لَتفَلتِر تنزيل الإضافات</string>
     <string name="episode">حلقة</string>
-    <string name="autoplay_next_settings_des">مَشّي الحلقة يلي بعدا تلقائيًا بعد ما تُخلَص الحلقة</string>
+    <string name="autoplay_next_settings_des">مَشّي الحلقة يلّي بعدا تلقائيًا بعد ما تُخلَص الحلقة</string>
     <string name="subs_text_color">لون الكتيبة</string>
     <string name="type_completed">مخلص</string>
     <string name="use_system_brightness_settings_des">عوز قوة ضوّ الشاشة تبع السيستام بدل من تغميئ الڤيديو</string>
@@ -139,7 +139,7 @@
     <string name="home_main_poster_img_des">الپوسر الأساسية</string>
     <string name="pick_source">المصادر</string>
     <string name="double_tap_to_seek_settings">كبوسو مرتين لتقفو</string>
-    <string name="title_settings">ثاتينگز</string>
+    <string name="title_settings">سَتِنگز</string>
     <string name="title_search">التنبيش</string>
     <string name="loading">لودينگ…</string>
     <string name="action_remove_watching">شيل</string>
@@ -147,17 +147,17 @@
     <string name="category_updates">التجديد والنسخات الاحتياطية</string>
     <string name="pref_filter_search_quality">خبي هيدي الجودات من نتائج التنبيش</string>
     <string name="type_on_hold">موقف موقتًا</string>
-    <string name="app_name">كلاودستريم</string>
+    <string name="app_name">كلود ستريم</string>
     <string name="player_size_settings_des">شيل الأسود من الأطراف</string>
     <string name="season_short">ج</string>
     <string name="apk_installer_settings">طريقة تجديد الآپ</string>
-    <string name="autoplay_next_settings">تقائيًا مشّي الحلقة ل بعدا</string>
+    <string name="autoplay_next_settings">تلقائيًا مشّي الحلقة الّي بعدا</string>
     <string name="picture_in_picture">كفي فوق غير آپ</string>
-    <string name="player_subtitles_settings_des">ساتِنگز ترجمة الڤيديو</string>
+    <string name="player_subtitles_settings_des">سَتِنگز ترجمة الڤيديو</string>
     <string name="app_language">لغة الآپ</string>
     <string name="show_trailers_settings">فرجي المقاطع الدعائية</string>
     <string name="test_passed">نجح</string>
-    <string name="play_with_app_name">مَشّي بـ\"كلاود ستريم\"</string>
+    <string name="play_with_app_name">مَشّي بـ\"كلود ستريم\"</string>
     <string name="subs_subtitle_elevation">إرتفاع الترجمة</string>
     <string name="search_provider_text_types">عوزو الأنواع ل تنبّشو</string>
     <string name="episodes">حلقات</string>
@@ -536,7 +536,7 @@
     <string name="plugins_updated" formatted="true">عدد الإضافيات يلي تجددت: %d</string>
     <string name="delayed_update_notice">رح يتجدد الآپ وقتا تطلعو مِنو</string>
     <string name="hls_playlist">پلاي ليست \"ايش أل أس\"</string>
-    <string name="add_repository">زيد ريپوزيتاري</string>
+    <string name="add_repository">زيد ريپوزيتوري</string>
     <string name="action_mark_as_watched">علم إنو حضرتو</string>
     <string name="preferred_media_subtext">شو بَدَك تشوف</string>
     <string name="subtitles_remove_captions">شيل المعلومات يلي محطوطة بالترجمة ليلي عندن فقد سمعي</string>
