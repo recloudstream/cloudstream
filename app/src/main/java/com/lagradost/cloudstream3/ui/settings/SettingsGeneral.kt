@@ -8,7 +8,6 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
@@ -43,13 +42,18 @@ import com.lagradost.cloudstream3.utils.VideoDownloadManager
 import com.lagradost.cloudstream3.utils.VideoDownloadManager.getBasePath
 import com.lagradost.safefile.SafeFile
 
-@RequiresApi(Build.VERSION_CODES.N)
+// Change local language settings in the app.
 fun getCurrentLocale(context: Context): String {
-    val res = context.resources
-    // Change locale settings in the app.
     // val dm = res.displayMetrics
+    val res = context.resources
     val conf = res.configuration
-    return conf?.locales?.toString() ?: "en"
+
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+        conf?.locales?.toString() ?: "en"
+    } else {
+        @Suppress("DEPRECATION")
+        conf?.locale?.toString() ?: "en"
+    }
 }
 
 // idk, if you find a way of automating this it would be great
@@ -163,7 +167,6 @@ class SettingsGeneral : PreferenceFragmentCompat() {
             }
         }
 
-    @RequiresApi(Build.VERSION_CODES.N)
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         hideKeyboard()
         setPreferencesFromResource(R.xml.settings_general, rootKey)
