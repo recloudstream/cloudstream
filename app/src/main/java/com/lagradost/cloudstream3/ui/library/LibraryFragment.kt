@@ -25,7 +25,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
-import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.lagradost.cloudstream3.APIHolder
 import com.lagradost.cloudstream3.APIHolder.allProviders
@@ -398,7 +397,7 @@ class LibraryFragment : Fragment() {
                             0,
                             viewpager.adapter?.itemCount ?: 0
                         )
-                        binding?.viewpager?.setCurrentItem(libraryViewModel.getTabPosition().value ?: 0, false)
+                        binding?.viewpager?.setCurrentItem(libraryViewModel.currentPage, false)
 
                         // Only stop loading after 300ms to hide the fade effect the viewpager produces when updating
                         // Without this there would be a flashing effect:
@@ -439,6 +438,8 @@ class LibraryFragment : Fragment() {
                             tab.view.nextFocusDownId = R.id.search_result_root
 
                             tab.view.setOnClickListener {
+                                libraryViewModel.currentPage = position // updating selected library tab position
+
                                 val currentItem =
                                     binding?.viewpager?.currentItem ?: return@setOnClickListener
                                 val distance = abs(position - currentItem)
@@ -449,19 +450,6 @@ class LibraryFragment : Fragment() {
                                 binding?.searchBar?.setExpanded(true)
                             }
                         }.attach()
-
-                        binding?.libraryTabLayout?.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
-                            override fun onTabSelected(tab: TabLayout.Tab?) {
-                                val position = tab?.position ?: 0
-                                libraryViewModel.setTabPosition(position)
-                            }
-                            override fun onTabUnselected(tab: TabLayout.Tab?) = Unit
-                            override fun onTabReselected(tab: TabLayout.Tab?) = Unit
-                        })
-
-                        libraryViewModel.getTabPosition().observe(viewLifecycleOwner) { position ->
-                            binding?.libraryTabLayout?.getTabAt(position)?.select()
-                        }
 
                     }
                 }
