@@ -27,6 +27,7 @@ import android.os.Looper;
 import android.os.Message;
 
 import androidx.annotation.IntDef;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.media3.common.C;
 import androidx.media3.common.Format;
@@ -34,6 +35,7 @@ import androidx.media3.common.text.Cue;
 import androidx.media3.common.text.CueGroup;
 import androidx.media3.common.MimeTypes;
 import androidx.media3.common.util.Log;
+import androidx.media3.common.util.UnstableApi;
 import androidx.media3.common.util.Util;
 import androidx.media3.exoplayer.BaseRenderer;
 import androidx.media3.exoplayer.FormatHolder;
@@ -64,6 +66,7 @@ import java.util.stream.Collectors;
  * obtained from a {@link SubtitleDecoderFactory}. The actual rendering of the subtitle {@link Cue}s
  * is delegated to a {@link TextOutput}.
  */
+@UnstableApi
 public class NonFinalTextRenderer extends BaseRenderer implements Callback {
 
     private static final String TAG = "TextRenderer";
@@ -163,13 +166,14 @@ public class NonFinalTextRenderer extends BaseRenderer implements Callback {
         finalStreamEndPositionUs = C.TIME_UNSET;
     }
 
+    @NonNull
     @Override
     public String getName() {
         return TAG;
     }
 
     @Override
-    public @Capabilities int supportsFormat(Format format) {
+    public @Capabilities int supportsFormat(@NonNull Format format) {
         if (decoderFactory.supportsFormat(format)) {
             return RendererCapabilities.create(
                     format.cryptoType == C.CRYPTO_TYPE_NONE ? C.FORMAT_HANDLED : C.FORMAT_UNSUPPORTED_DRM);

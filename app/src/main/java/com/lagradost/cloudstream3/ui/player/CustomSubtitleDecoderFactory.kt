@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.preference.PreferenceManager
 import androidx.media3.common.Format
 import androidx.media3.common.MimeTypes
+import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.text.ExoplayerCuesDecoder
 import androidx.media3.exoplayer.text.SubtitleDecoderFactory
 import androidx.media3.extractor.text.SubtitleDecoder
@@ -30,6 +31,7 @@ import java.nio.charset.Charset
  * @param fallbackFormat used to create a decoder based on mimetype if the subtitle string is not
  * enough to identify the subtitle format.
  **/
+@UnstableApi
 class CustomDecoder(private val fallbackFormat: Format?) : SubtitleDecoder {
     companion object {
         fun updateForcedEncoding(context: Context) {
@@ -260,6 +262,7 @@ class CustomDecoder(private val fallbackFormat: Format?) : SubtitleDecoder {
 }
 
 /** See https://github.com/google/ExoPlayer/blob/release-v2/library/core/src/main/java/com/google/android/exoplayer2/text/SubtitleDecoderFactory.java */
+@UnstableApi
 class CustomSubtitleDecoderFactory : SubtitleDecoderFactory {
     override fun supportsFormat(format: Format): Boolean {
 //        return SubtitleDecoderFactory.DEFAULT.supportsFormat(format)
