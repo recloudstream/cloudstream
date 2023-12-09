@@ -7,7 +7,7 @@ import com.lagradost.cloudstream3.extractors.helper.AesHelper.cryptoAESHandler
 import com.lagradost.cloudstream3.utils.AppUtils
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
-import com.lagradost.cloudstream3.utils.Qualities
+import com.lagradost.cloudstream3.utils.M3u8Helper
 
 class Moviesapi : Chillx() {
     override val name = "Moviesapi"
@@ -23,13 +23,14 @@ class Watchx : Chillx() {
     override val name = "Watchx"
     override val mainUrl = "https://watchx.top"
 }
+
 open class Chillx : ExtractorApi() {
     override val name = "Chillx"
     override val mainUrl = "https://chillx.top"
     override val requiresReferer = true
 
     companion object {
-        private const val KEY = "eN0^>\$^#M08uFv%c"
+        private const val KEY = "tSIsE8FgpRkv3QQQ"
     }
 
     override suspend fun getUrl(
@@ -38,10 +39,14 @@ open class Chillx : ExtractorApi() {
         subtitleCallback: (SubtitleFile) -> Unit,
         callback: (ExtractorLink) -> Unit
     ) {
-        val master = Regex("MasterJS\\s*=\\s*'([^']+)").find(
+        val master = Regex("\\s*=\\s*'([^']+)").find(
             app.get(
                 url,
-                referer = referer
+                referer = referer ?: "",
+                headers = mapOf(
+                    "Accept" to "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+                    "Accept-Language" to "en-US,en;q=0.5",
+                )
             ).text
         )?.groupValues?.get(1)
         val decrypt = cryptoAESHandler(master ?: return, KEY.toByteArray(), false)?.replace("\\", "") ?: throw ErrorLoadingException("failed to decrypt")
@@ -59,17 +64,12 @@ open class Chillx : ExtractorApi() {
             "Origin" to mainUrl,
         )
 
-        callback.invoke(
-            ExtractorLink(
-                name,
-                name,
-                source ?: return,
-                "$mainUrl/",
-                Qualities.P1080.value,
-                headers = headers,
-                isM3u8 = true
-            )
-        )
+        M3u8Helper.generateM3u8(
+            name,
+            source ?: return,
+            "$mainUrl/",
+            headers = headers
+        ).forEach(callback)
 
         AppUtils.tryParseJson<List<Tracks>>("[$tracks]")
             ?.filter { it.kind == "captions" }?.map { track ->

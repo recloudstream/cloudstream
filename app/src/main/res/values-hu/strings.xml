@@ -510,4 +510,7 @@
     <string name="automatic">Automatikus</string>
     <string name="android_tv_interface_on_seek_settings_summary">Az átugrás mértéke, amikor a lejátszó látható</string>
     <string name="automatic_plugin_download_mode_title">Válassza ki a módot a pluginek letöltésének szűréséhez</string>
+    <string name="backup_frequency">Mentési gyakoriság</string>
+    <string name="sync_score">Értékelt</string>
+    <string name="disable">Kikapcsolás</string>
 </resources>
