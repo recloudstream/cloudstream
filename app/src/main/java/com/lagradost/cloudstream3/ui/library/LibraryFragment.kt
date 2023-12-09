@@ -398,7 +398,7 @@ class LibraryFragment : Fragment() {
                             0,
                             viewpager.adapter?.itemCount ?: 0
                         )
-                        binding?.viewpager?.setCurrentItem(libraryViewModel.currentPage, false)
+                        binding?.viewpager?.setCurrentItem(libraryViewModel.getTabPosition().value ?: 0, false)
 
                         // Only stop loading after 300ms to hide the fade effect the viewpager produces when updating
                         // Without this there would be a flashing effect:
