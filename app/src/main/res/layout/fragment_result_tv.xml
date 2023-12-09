@@ -391,9 +391,15 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/result_meta_site"
-                            style="@style/SmallWhiteButton"
                             android:layout_gravity="center_vertical"
+                            style="@style/SmallWhiteButton"
                             tools:text="Gogoanime" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/result_meta_content_rating"
+                            android:layout_gravity="center_vertical"
+                            style="@style/SmallWhiteButton"
+                            tools:text="PG-13" />
 
                         <TextView
                             android:id="@+id/result_meta_type"
