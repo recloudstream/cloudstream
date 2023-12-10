@@ -1022,6 +1022,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                         resumeMeta.id,
                         resumeMeta.episode,
                         resumeMeta.season,
+                        resumeMeta.dubStatus,
                         isFromDownload = false
                     )
                 }
