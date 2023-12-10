@@ -2477,7 +2477,7 @@ class ResultViewModel2 : ViewModel() {
 
         // restore range based on resume details
         currentRanges[currentIndex]?.first {
-            it.endEpisode >= (resume.episode ?: 0)
+            it.endEpisode >= resume.episode ?: 0
         }?.apply {
             changeRange(this)
         }
