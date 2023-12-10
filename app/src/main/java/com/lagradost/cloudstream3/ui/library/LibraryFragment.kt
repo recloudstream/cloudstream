@@ -170,7 +170,7 @@ class LibraryFragment : Fragment() {
 
                 binding?.mainSearch?.removeCallbacks(callback)
 
-                // Delay the execution of the search operation by 0.5 second (adjust as needed)
+                // Delay the execution of the search operation by 1 second (adjust as needed)
                 // this prevents running search when the user is typing
                 binding?.mainSearch?.postDelayed(callback, 1000)
 
