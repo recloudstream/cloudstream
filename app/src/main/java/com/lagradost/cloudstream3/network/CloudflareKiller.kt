@@ -69,7 +69,7 @@ class CloudflareKiller : Interceptor {
         }
 
         debugWarning({ true }) { "Failed cloudflare at: ${request.url}" }
-        return@runBlocking chain.proceed(request)
+        return@runBlocking response
     }
 
     private fun getWebViewCookie(url: String): String? {
