@@ -184,20 +184,16 @@ class PlayerGeneratorViewModel : ViewModel() {
             _loadingLinks.postValue(Resource.Loading())
             val loadingState = safeApiCall {
                 generator?.generateLinks(type = type, clearCache = clearCache, callback = {
-                    if (it.first?.url?.isNotEmpty() == true) {
-                        currentLinks.add(it)
-                        // Clone to prevent ConcurrentModificationException
-                        normalSafeApiCall {
-                            // Extra normalSafeApiCall since .toSet() iterates.
-                            _currentLinks.postValue(currentLinks.toSet())
-                        }
+                    currentLinks.add(it)
+                    // Clone to prevent ConcurrentModificationException
+                    normalSafeApiCall {
+                        // Extra normalSafeApiCall since .toSet() iterates.
+                        _currentLinks.postValue(currentLinks.toSet())
                     }
                 }, subtitleCallback = {
-                    if (it.url.isNotEmpty()) {
-                        currentSubs.add(it)
-                        normalSafeApiCall {
-                            _currentSubs.postValue(currentSubs.toSet())
-                        }
+                    currentSubs.add(it)
+                    normalSafeApiCall {
+                        _currentSubs.postValue(currentSubs.toSet())
                     }
                 })
             }
