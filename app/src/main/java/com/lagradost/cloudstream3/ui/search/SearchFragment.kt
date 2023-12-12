@@ -315,30 +315,27 @@ class SearchFragment : Fragment() {
                         arrayAdapter.notifyDataSetChanged()
                     }
 
-                    val selectedSearchTypesFromDialog = DataStoreHelper.searchPreferenceTags
+                    bindChips(
+                        selectMainpageBinding.tvtypesChipsScroll.tvtypesChips,
+                        selectedSearchTypes,
+                        validAPIs.flatMap { api -> api.supportedTypes }.distinct()
+                    ) { list ->
+                        updateList(list)
 
-                    context?.filterProviderByPreferredMedia()?.let { validAPIs ->
-                        bindChips(
-                            selectMainpageBinding.tvtypesChipsScroll.tvtypesChips,
-                            selectedSearchTypesFromDialog,
-                            validAPIs.flatMap { api -> api.supportedTypes }.distinct()
-                        ) { list ->
-                            updateList(list)
-
-                            // refresh selected chips in main chips
-                            if (selectedSearchTypes.toSet() != list.toSet()) {
-                                selectedSearchTypes.clear()
-                                selectedSearchTypes.addAll(list)
-                                bindChips(
-                                    binding?.tvtypesChipsScroll?.tvtypesChips,
-                                    selectedSearchTypes,
-                                    validAPIs.flatMap { api -> api.supportedTypes }.distinct()
-                                ) { // This already handled in another bindChips. Do nothing here! }
-                                }
-
+                        // refresh selected chips in main chips
+                        if (selectedSearchTypes.toSet() != list.toSet()) {
+                            selectedSearchTypes.clear()
+                            selectedSearchTypes.addAll(list)
+                            bindChips(
+                                binding?.tvtypesChipsScroll?.tvtypesChips,
+                                selectedSearchTypes,
+                                validAPIs.flatMap { api -> api.supportedTypes }.distinct()
+                            ) { // This already handled in another bindChips. Do nothing here! }
                             }
+
                         }
                     }
+
 
                     cancelBtt?.setOnClickListener {
                         dialog.dismissSafe()
@@ -362,7 +359,7 @@ class SearchFragment : Fragment() {
                         // run search when dialog is close
                         search(binding?.mainSearch?.query?.toString())
                     }
-                    updateList(selectedSearchTypesFromDialog.toList())
+                    updateList(selectedSearchTypes.toList())
                 }
             }
         }
