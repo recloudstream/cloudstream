@@ -330,7 +330,8 @@ class SearchFragment : Fragment() {
                                 binding?.tvtypesChipsScroll?.tvtypesChips,
                                 selectedSearchTypes,
                                 validAPIs.flatMap { api -> api.supportedTypes }.distinct()
-                            ) { // This already handled in another bindChips. Do nothing here! }
+                            ) {
+                                // This already handled in another bindChips. Do nothing here!
                             }
 
                         }
