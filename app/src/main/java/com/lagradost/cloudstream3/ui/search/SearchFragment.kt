@@ -256,12 +256,12 @@ class SearchFragment : Fragment() {
 
                 builder.behavior.state = BottomSheetBehavior.STATE_EXPANDED
 
-                val binding: HomeSelectMainpageBinding = HomeSelectMainpageBinding.inflate(
+                val selectMainpageBinding: HomeSelectMainpageBinding = HomeSelectMainpageBinding.inflate(
                     builder.layoutInflater,
                     null,
                     false
                 )
-                builder.setContentView(binding.root)
+                builder.setContentView(selectMainpageBinding.root)
                 builder.show()
                 builder.let { dialog ->
                     val isMultiLang = ctx.getApiProviderLangSettings().let { set ->
@@ -315,14 +315,29 @@ class SearchFragment : Fragment() {
                         arrayAdapter.notifyDataSetChanged()
                     }
 
-                    val selectedSearchTypes = DataStoreHelper.searchPreferenceTags
+                    val selectedSearchTypesFromDialog = DataStoreHelper.searchPreferenceTags
 
-                    bindChips(
-                        binding.tvtypesChipsScroll.tvtypesChips,
-                        selectedSearchTypes,
-                        TvType.values().toList()
-                    ) { list ->
-                        updateList(list)
+                    context?.filterProviderByPreferredMedia()?.let { validAPIs ->
+                        bindChips(
+                            selectMainpageBinding.tvtypesChipsScroll.tvtypesChips,
+                            selectedSearchTypesFromDialog,
+                            validAPIs.flatMap { api -> api.supportedTypes }.distinct()
+                        ) { list ->
+                            updateList(list)
+
+                            // refresh selected chips in main chips
+                            if (selectedSearchTypes.toSet() != list.toSet()) {
+                                selectedSearchTypes.clear()
+                                selectedSearchTypes.addAll(list)
+                                bindChips(
+                                    binding?.tvtypesChipsScroll?.tvtypesChips,
+                                    selectedSearchTypes,
+                                    validAPIs.flatMap { api -> api.supportedTypes }.distinct()
+                                ) { // This already handled in another bindChips. Do nothing here! }
+                                }
+
+                            }
+                        }
                     }
 
                     cancelBtt?.setOnClickListener {
@@ -343,8 +358,11 @@ class SearchFragment : Fragment() {
                     dialog.setOnDismissListener {
                         DataStoreHelper.searchPreferenceProviders = currentSelectedApis.toList()
                         selectedApis = currentSelectedApis
+
+                        // run search when dialog is close
+                        search(binding?.mainSearch?.query?.toString())
                     }
-                    updateList(selectedSearchTypes.toList())
+                    updateList(selectedSearchTypesFromDialog.toList())
                 }
             }
         }
