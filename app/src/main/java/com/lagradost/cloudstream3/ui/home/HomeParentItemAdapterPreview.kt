@@ -280,8 +280,12 @@ class HomeParentItemAdapterPreview(
 
         private var homeAccount: View? =
             itemView.findViewById(R.id.home_preview_switch_account)
+        private var alternativeHomeAccount: View? =
+            itemView.findViewById(R.id.alternative_switch_account)
 
         private var topPadding: View? = itemView.findViewById(R.id.home_padding)
+
+        private var alternativeAccountPadding: View? = itemView.findViewById(R.id.alternative_account_padding)
 
         private val homeNonePadding: View = itemView.findViewById(R.id.home_none_padding)
 
@@ -482,6 +486,10 @@ class HomeParentItemAdapterPreview(
                 activity?.showAccountSelectLinear()
             }
 
+            alternativeHomeAccount?.setOnClickListener {
+                activity?.showAccountSelectLinear()
+            }
+
             (binding as? FragmentHomeHeadTvBinding)?.apply {
                 homePreviewChangeApi.setOnClickListener { view ->
                     view.context.selectHomepage(viewModel.repo?.name) { api ->
@@ -563,6 +571,7 @@ class HomeParentItemAdapterPreview(
                         previewCallback.onPageSelected(0)
                         previewViewpager.isVisible = true
                         previewViewpagerText.isVisible = true
+                        alternativeAccountPadding?.isVisible = false
                         //previewHeader.isVisible = true
                     }
                 }
@@ -572,6 +581,7 @@ class HomeParentItemAdapterPreview(
                     previewViewpager.setCurrentItem(0, false)
                     previewViewpager.isVisible = false
                     previewViewpagerText.isVisible = false
+                    alternativeAccountPadding?.isVisible = true
                     //previewHeader.isVisible = false
                 }
             }
