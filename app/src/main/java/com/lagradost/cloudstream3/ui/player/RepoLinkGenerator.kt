@@ -112,7 +112,7 @@ class RepoLinkGenerator(
             isCasting = LoadType.Chromecast == type,
             subtitleCallback = { file ->
                 val correctFile = PlayerSubtitleHelper.getSubtitleData(file)
-                if (!currentSubsUrls.contains(correctFile.url)) {
+                if (correctFile.url.isNotEmpty() && !currentSubsUrls.contains(correctFile.url)) {
                     currentSubsUrls.add(correctFile.url)
 
                     // this part makes sure that all names are unique for UX
@@ -135,15 +135,15 @@ class RepoLinkGenerator(
             },
             callback = { link ->
                 Log.d(TAG, "Loaded ExtractorLink: $link")
-                if (!currentLinks.contains(link.url)) {
-                    if (!currentLinkCache.contains(link)) {
-                        currentLinks.add(link.url)
-                        if (allowedTypes.contains(link.type)) {
-                            callback(Pair(link, null))
-                        }
-                        currentLinkCache.add(link)
-                        //linkCache[index] = currentLinkCache
+                if (link.url.isNotEmpty() && !currentLinks.contains(link.url) && !currentLinkCache.contains(link)) {
+                    currentLinks.add(link.url)
+
+                    if (allowedTypes.contains(link.type)) {
+                        callback(Pair(link, null))
                     }
+
+                    currentLinkCache.add(link)
+                    // linkCache[index] = currentLinkCache
                 }
             }
         )
