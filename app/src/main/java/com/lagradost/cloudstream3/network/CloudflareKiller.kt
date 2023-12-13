@@ -50,17 +50,17 @@ class CloudflareKiller : Interceptor {
 
     override fun intercept(chain: Interceptor.Chain): Response = runBlocking {
         val request = chain.request()
-        val response = chain.proceed(request)
-        val cookies = savedCookies[request.url.host]
 
-        when {
-            !(response.header("Server") in CLOUDFLARE_SERVERS && response.code in ERROR_CODES) -> {
-                return@runBlocking response
-            }
-            cookies == null -> {
-                bypassCloudflare(request)?.let {
-                    Log.d(TAG, "Succeeded bypassing cloudflare: ${request.url}")
-                    return@runBlocking it
+        when (val cookies = savedCookies[request.url.host]) {
+            null -> {
+                val response = chain.proceed(request)
+                if(!(response.header("Server") in CLOUDFLARE_SERVERS && response.code in ERROR_CODES)) {
+                    return@runBlocking response
+                } else {
+                    bypassCloudflare(request)?.let {
+                        Log.d(TAG, "Succeeded bypassing cloudflare: ${request.url}")
+                        return@runBlocking it
+                    }
                 }
             }
             else -> {
@@ -69,7 +69,7 @@ class CloudflareKiller : Interceptor {
         }
 
         debugWarning({ true }) { "Failed cloudflare at: ${request.url}" }
-        return@runBlocking response
+        return@runBlocking chain.proceed(request)
     }
 
     private fun getWebViewCookie(url: String): String? {
