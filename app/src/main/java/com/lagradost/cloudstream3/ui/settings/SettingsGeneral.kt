@@ -3,6 +3,7 @@ package com.lagradost.cloudstream3.ui.settings
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -41,12 +42,18 @@ import com.lagradost.cloudstream3.utils.VideoDownloadManager
 import com.lagradost.cloudstream3.utils.VideoDownloadManager.getBasePath
 import com.lagradost.safefile.SafeFile
 
+// Change local language settings in the app.
 fun getCurrentLocale(context: Context): String {
-    val res = context.resources
-    // Change locale settings in the app.
     // val dm = res.displayMetrics
+    val res = context.resources
     val conf = res.configuration
-    return conf?.locale?.toString() ?: "en"
+
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+        conf?.locales?.get(0)?.toString() ?: "en"
+    } else {
+        @Suppress("DEPRECATION")
+        conf?.locale?.toString() ?: "en"
+    }
 }
 
 // idk, if you find a way of automating this it would be great
@@ -162,7 +169,7 @@ class SettingsGeneral : PreferenceFragmentCompat() {
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         hideKeyboard()
-        setPreferencesFromResource(R.xml.settins_general, rootKey)
+        setPreferencesFromResource(R.xml.settings_general, rootKey)
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(requireContext())
 
         fun getCurrent(): MutableList<CustomSite> {

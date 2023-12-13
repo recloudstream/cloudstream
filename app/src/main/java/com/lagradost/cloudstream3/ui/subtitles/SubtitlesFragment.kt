@@ -65,6 +65,7 @@ data class SaveCaptionStyle(
 
 const val DEF_SUBS_ELEVATION = 20
 
+@androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
 class SubtitlesFragment : Fragment() {
     companion object {
         val applyStyleEvent = Event<SaveCaptionStyle>()
