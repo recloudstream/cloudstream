@@ -326,13 +326,7 @@ class SearchFragment : Fragment() {
                         if (selectedSearchTypes.toSet() != list.toSet()) {
                             selectedSearchTypes.clear()
                             selectedSearchTypes.addAll(list)
-                            bindChips(
-                                binding?.tvtypesChipsScroll?.tvtypesChips,
-                                selectedSearchTypes,
-                                validAPIs.flatMap { api -> api.supportedTypes }.distinct()
-                            ) {
-                                // This already handled in another bindChips. Do nothing here!
-                            }
+                            updateChips(binding?.tvtypesChipsScroll?.tvtypesChips, selectedSearchTypes)
 
                         }
                     }
