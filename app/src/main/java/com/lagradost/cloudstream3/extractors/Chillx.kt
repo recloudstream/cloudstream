@@ -28,10 +28,7 @@ open class Chillx : ExtractorApi() {
     override val name = "Chillx"
     override val mainUrl = "https://chillx.top"
     override val requiresReferer = true
-
-    companion object {
-        private const val KEY = "tSIsE8FgpRkv3QQQ"
-    }
+    private var key: String? = null
 
     override suspend fun getUrl(
         url: String,
@@ -49,7 +46,7 @@ open class Chillx : ExtractorApi() {
                 )
             ).text
         )?.groupValues?.get(1)
-        val decrypt = cryptoAESHandler(master ?: return, KEY.toByteArray(), false)?.replace("\\", "") ?: throw ErrorLoadingException("failed to decrypt")
+        val decrypt = cryptoAESHandler(master ?: return, getKey().toByteArray(), false)?.replace("\\", "") ?: throw ErrorLoadingException("failed to decrypt")
 
         val source = Regex(""""?file"?:\s*"([^"]+)""").find(decrypt)?.groupValues?.get(1)
         val tracks = Regex("""tracks:\s*\[(.+)]""").find(decrypt)?.groupValues?.get(1)
@@ -80,6 +77,12 @@ open class Chillx : ExtractorApi() {
                     )
                 )
             }
+    }
+
+    suspend fun getKey() = key ?: fetchKey().also { key = it }
+
+    private suspend fun fetchKey(): String {
+        return app.get("https://raw.githubusercontent.com/Sofie99/Resources/main/chillix_key.json").parsed()
     }
 
     data class Tracks(
