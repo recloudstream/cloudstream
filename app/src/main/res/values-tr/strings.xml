@@ -11,11 +11,11 @@
     <string name="rew_text_regular_format" formatted="true" translatable="false">%d</string>
     <string name="rating_format" formatted="true" translatable="false">%.1f/10.0</string>
     <string name="year_format" formatted="true" translatable="false">%d</string>
-    <string name="app_dub_sub_episode_text_format" formatted="true">%$1s B. %2$d</string>
+    <string name="app_dub_sub_episode_text_format" formatted="true">%1$s B. %2$d</string>
     <string name="cast_format" formatted="true">Cast: %s</string>
     <string name="next_episode_format" formatted="true">Bölüm %d şu tarihte yayınlanacak</string>
-    <string name="next_episode_time_day_format" formatted="true">%dg %ds %dd</string>
-    <string name="next_episode_time_hour_format" formatted="true">%ds %dd</string>
+    <string name="next_episode_time_day_format" formatted="true">%1$dg %2$ds %3$dd</string>
+    <string name="next_episode_time_hour_format" formatted="true">%1$ds %2$dd</string>
     <string name="next_episode_time_min_format" formatted="true">%dm</string>
     <!-- IS NOT NEEDED TO TRANSLATE AS THEY ARE ONLY USED FOR SCREEN READERS AND WONT SHOW UP TO NORMAL USERS -->
     <string name="result_poster_img_des">Poster</string>
@@ -204,7 +204,7 @@
     <string name="delete_file">Dosyayı sil</string>
     <string name="delete">Sil</string>
     <string name="cancel">İptal et</string>
-    <string name="pause">Durdur</string>
+    <string name="pause">Duraklat</string>
     <string name="resume">Sürdür</string>
     <string name="go_back_30">-30</string>
     <string name="go_forward_30">+30</string>
@@ -537,11 +537,11 @@
     <string name="clipboard_too_large">Çok fazla metin. Panoya kaydedilemiyor.</string>
     <string name="library">Kütüphane</string>
     <string name="browser">Tarayıcı</string>
-    <string name="empty_library_no_accounts_message">Görünüşe göre kütüphaneniz boş :(
-\nBir kütüphane hesabına giriş yapın veya yerel kütüphanenize içerik ekleyin</string>
+    <string name="empty_library_no_accounts_message">Kütüphaneniz boş :(
+\nBir kütüphane hesabında oturum açın veya yerel kütüphanenize programlar ekleyin.</string>
     <string name="safe_mode_file">Güvenli mod dosyası bulundu!
 \nDosya kaldırılana kadar başlangıçta herhangi bir uzantı yüklenmiyor.</string>
-    <string name="sort_by">Sırala</string>
+    <string name="sort_by">Şuna Göre Sırala</string>
     <string name="sort">Sırala</string>
     <string name="sort_updated_new">Güncellenme (Yeniden Eskiye)</string>
     <string name="sort_updated_old">Güncellenme (Eskiden Yeniye)</string>

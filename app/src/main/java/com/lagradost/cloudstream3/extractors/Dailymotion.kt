@@ -7,7 +7,6 @@ import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.M3u8Helper.Companion.generateM3u8
-import com.lagradost.cloudstream3.utils.Qualities
 import java.net.URL
 
 open class Dailymotion : ExtractorApi() {
@@ -27,21 +26,16 @@ open class Dailymotion : ExtractorApi() {
         callback: (ExtractorLink) -> Unit
     ) {
         val embedUrl = getEmbedUrl(url) ?: return
-        val doc = app.get(embedUrl).document
+        val req = app.get(embedUrl)
         val prefix = "window.__PLAYER_CONFIG__ = "
-        val configStr = doc.selectFirst("script:containsData($prefix)")?.data() ?: return
-        val config = tryParseJson<Config>(configStr.substringAfter(prefix)) ?: return
+        val configStr = req.document.selectFirst("script:containsData($prefix)")?.data() ?: return
+        val config = tryParseJson<Config>(configStr.substringAfter(prefix).substringBefore(";").trim()) ?: return
         val id = getVideoId(embedUrl) ?: return
         val dmV1st = config.dmInternalData.v1st
         val dmTs = config.dmInternalData.ts
-        val metaDataUrl =
-            "$mainUrl/player/metadata/video/$id?locale=en&dmV1st=$dmV1st&dmTs=$dmTs&is_native_app=0"
-        val cookies = mapOf(
-            "v1st" to dmV1st,
-            "dmvk" to config.context.dmvk,
-            "ts" to dmTs.toString()
-        )
-        val metaData = app.get(metaDataUrl, referer = embedUrl, cookies = cookies)
+        val embedder = config.context.embedder
+        val metaDataUrl = "$mainUrl/player/metadata/video/$id?embedder=$embedder&locale=en-US&dmV1st=$dmV1st&dmTs=$dmTs&is_native_app=0"
+        val metaData = app.get(metaDataUrl, referer = embedUrl, cookies = req.cookies)
             .parsedSafe<MetaData>() ?: return
         metaData.qualities.forEach { (_, video) ->
             video.forEach {
@@ -84,13 +78,13 @@ open class Dailymotion : ExtractorApi() {
     )
 
     data class InternalData(
-        val ts: Int,
+        val ts: Long,
         val v1st: String
     )
 
     data class Context(
         @JsonProperty("access_token") val accessToken: String?,
-        val dmvk: String,
+        val embedder: String?,
     )
 
     data class MetaData(
