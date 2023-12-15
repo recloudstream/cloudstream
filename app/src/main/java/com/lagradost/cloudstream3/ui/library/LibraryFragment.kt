@@ -385,7 +385,6 @@ class LibraryFragment : Fragment() {
                     val pages = resource.value
                     val showNotice = pages.all { it.items.isEmpty() }
 
-
                     binding?.apply {
                         emptyListTextview.isVisible = showNotice
                         if (showNotice) {
@@ -408,7 +407,10 @@ class LibraryFragment : Fragment() {
                             0,
                             viewpager.adapter?.itemCount ?: 0
                         )
-                        binding?.viewpager?.setCurrentItem(libraryViewModel.currentPage, false)
+
+                        libraryViewModel.currentPage.value?.let { page ->
+                            binding?.viewpager?.setCurrentItem(page, false)
+                        }
 
                         // Only stop loading after 300ms to hide the fade effect the viewpager produces when updating
                         // Without this there would be a flashing effect:
@@ -449,27 +451,26 @@ class LibraryFragment : Fragment() {
                             tab.view.nextFocusDownId = R.id.search_result_root
 
                             tab.view.setOnClickListener {
-                                libraryViewModel.currentPage = position // updating selected library tab position
-
                                 val currentItem =
                                     binding?.viewpager?.currentItem ?: return@setOnClickListener
                                 val distance = abs(position - currentItem)
                                 hideViewpager(distance)
                             }
                             //Expand the appBar on tab focus
-                            tab.view.setOnFocusChangeListener { view, b ->
+                            tab.view.setOnFocusChangeListener { _, _ ->
                                 binding?.searchBar?.setExpanded(true)
                             }
                         }.attach()
 
                         binding?.libraryTabLayout?.addOnTabSelectedListener(object: TabLayout.OnTabSelectedListener {
                             override fun onTabSelected(tab: TabLayout.Tab?) {
-                                libraryViewModel.currentPage = binding?.libraryTabLayout?.selectedTabPosition ?:0
+                                binding?.libraryTabLayout?.selectedTabPosition?.let { page ->
+                                    libraryViewModel.switchPage(page)
+                                }
                             }
-                            override fun onTabUnselected(tab: TabLayout.Tab?) {}
-                            override fun onTabReselected(tab: TabLayout.Tab?) {}
+                            override fun onTabUnselected(tab: TabLayout.Tab?) = Unit
+                            override fun onTabReselected(tab: TabLayout.Tab?) = Unit
                         })
-
                     }
                 }
 
@@ -485,24 +486,29 @@ class LibraryFragment : Fragment() {
                 }
             }
         }
-        binding?.viewpager?.registerOnPageChangeCallback(object :
+
+        observe(libraryViewModel.currentPage) { position ->
+            val all = binding?.viewpager?.allViews?.toList()
+                ?.filterIsInstance<AutofitRecyclerView>()
+
+            all?.forEach { view ->
+                view.isVisible = view.tag == position
+                view.isFocusable = view.tag == position
+
+                if (view.tag == position)
+                    view.descendantFocusability = FOCUS_AFTER_DESCENDANTS
+                else
+                    view.descendantFocusability = FOCUS_BLOCK_DESCENDANTS
+            }
+        }
+
+        /*binding?.viewpager?.registerOnPageChangeCallback(object :
             ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
-                val all = binding?.viewpager?.allViews?.toList()
-                    ?.filterIsInstance<AutofitRecyclerView>()
 
-                all?.forEach { view ->
-                    view.isVisible = view.tag == position
-                    view.isFocusable = view.tag == position
-
-                    if (view.tag == position)
-                        view.descendantFocusability = FOCUS_AFTER_DESCENDANTS
-                    else
-                        view.descendantFocusability = FOCUS_BLOCK_DESCENDANTS
-                }
                 super.onPageSelected(position)
             }
-        })
+        })*/
     }
     override fun onConfigurationChanged(newConfig: Configuration) {
         (binding?.viewpager?.adapter as? ViewpagerAdapter)?.rebind()
