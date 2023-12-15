@@ -25,6 +25,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
+import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.lagradost.cloudstream3.APIHolder
 import com.lagradost.cloudstream3.APIHolder.allProviders
@@ -147,6 +148,11 @@ class LibraryFragment : Fragment() {
         activity?.theme?.resolveAttribute(android.R.attr.textColor, searchExitIconColor, true)
         searchExitIcon?.setColorFilter(searchExitIconColor.data)
 
+        val searchCallback = Runnable {
+            val newText = binding?.mainSearch?.query?.toString() ?: return@Runnable
+            libraryViewModel.sort(ListSorting.Query, newText)
+        }
+
         binding?.mainSearch?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 libraryViewModel.sort(ListSorting.Query, query)
@@ -163,7 +169,12 @@ class LibraryFragment : Fragment() {
                     return true
                 }
 
-                libraryViewModel.sort(ListSorting.Query, newText)
+                binding?.mainSearch?.removeCallbacks(searchCallback)
+
+                // Delay the execution of the search operation by 1 second (adjust as needed)
+                // this prevents running search when the user is typing
+                binding?.mainSearch?.postDelayed(searchCallback, 1000)
+
                 return true
             }
         })
@@ -450,6 +461,14 @@ class LibraryFragment : Fragment() {
                                 binding?.searchBar?.setExpanded(true)
                             }
                         }.attach()
+
+                        binding?.libraryTabLayout?.addOnTabSelectedListener(object: TabLayout.OnTabSelectedListener {
+                            override fun onTabSelected(tab: TabLayout.Tab?) {
+                                libraryViewModel.currentPage = binding?.libraryTabLayout?.selectedTabPosition ?:0
+                            }
+                            override fun onTabUnselected(tab: TabLayout.Tab?) {}
+                            override fun onTabReselected(tab: TabLayout.Tab?) {}
+                        })
 
                     }
                 }
