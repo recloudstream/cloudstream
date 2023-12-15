@@ -148,6 +148,11 @@ class LibraryFragment : Fragment() {
         activity?.theme?.resolveAttribute(android.R.attr.textColor, searchExitIconColor, true)
         searchExitIcon?.setColorFilter(searchExitIconColor.data)
 
+        val searchCallback = Runnable {
+            val newText = binding?.mainSearch?.query?.toString() ?: return@Runnable
+            libraryViewModel.sort(ListSorting.Query, newText)
+        }
+
         binding?.mainSearch?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 libraryViewModel.sort(ListSorting.Query, query)
@@ -164,15 +169,11 @@ class LibraryFragment : Fragment() {
                     return true
                 }
 
-                val callback = Runnable {
-                    libraryViewModel.sort(ListSorting.Query, newText)
-                }
-
-                binding?.mainSearch?.removeCallbacks(callback)
+                binding?.mainSearch?.removeCallbacks(searchCallback)
 
                 // Delay the execution of the search operation by 1 second (adjust as needed)
                 // this prevents running search when the user is typing
-                binding?.mainSearch?.postDelayed(callback, 1000)
+                binding?.mainSearch?.postDelayed(searchCallback, 1000)
 
                 return true
             }
