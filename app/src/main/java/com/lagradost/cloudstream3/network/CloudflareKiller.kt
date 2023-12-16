@@ -57,6 +57,7 @@ class CloudflareKiller : Interceptor {
                 if(!(response.header("Server") in CLOUDFLARE_SERVERS && response.code in ERROR_CODES)) {
                     return@runBlocking response
                 } else {
+                    response.close()
                     bypassCloudflare(request)?.let {
                         Log.d(TAG, "Succeeded bypassing cloudflare: ${request.url}")
                         return@runBlocking it
