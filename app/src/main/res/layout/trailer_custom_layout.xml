@@ -535,6 +535,10 @@
                     android:paddingBottom="10dp">
 
                     <com.google.android.material.button.MaterialButton
+                        android:id="@+id/player_rotate_btt"
+                        style="@style/VideoButton"/>
+
+                    <com.google.android.material.button.MaterialButton
                         android:id="@+id/player_lock"
                         style="@style/VideoButton"
                         android:nextFocusLeft="@id/player_skip_episode"
