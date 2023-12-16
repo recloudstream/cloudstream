@@ -148,6 +148,7 @@
     <string name="update_started">Update Started</string>
     <string name="stream">Stream</string>
     <string name="error_loading_links_toast">Error Loading Links</string>
+    <string name="links_reloaded_toast">Links Reloaded</string>
     <string name="download_storage_text">Internal Storage</string>
     <string name="app_dubbed_text">Dub</string>
     <string name="app_subbed_text">Sub</string>

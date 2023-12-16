@@ -1646,6 +1646,10 @@ class ResultViewModel2 : ViewModel() {
                         clearCache = true
                     )
                 }
+                showToast(
+                    R.string.links_reloaded_toast,
+                    Toast.LENGTH_SHORT
+                )
             }
 
             ACTION_CHROME_CAST_MIRROR -> {
