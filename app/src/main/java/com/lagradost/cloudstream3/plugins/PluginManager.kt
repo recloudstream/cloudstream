@@ -477,13 +477,13 @@ object PluginManager {
         Log.i(TAG, "Loading plugin: $data")
 
         return try {
-            /* in case of android 14 then
+            // in case of android 14 then
             try {
                 File(filePath).setReadOnly()
-            } catch (t : Throwable) {
+            } catch (t: Throwable) {
                 Log.e(TAG, "Failed to set dex as readonly")
                 logError(t)
-            }*/
+            }
 
             val loader = PathClassLoader(filePath, context.classLoader)
             var manifest: Plugin.Manifest
