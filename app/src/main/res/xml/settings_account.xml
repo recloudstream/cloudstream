@@ -1,11 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
-    <SwitchPreference
-        android:defaultValue="false"
-        android:icon="@drawable/ic_outline_account_circle_24"
-        android:key="@string/skip_startup_account_select_key"
-        android:title="@string/skip_startup_account_select_pref" />
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <Preference
         android:icon="@drawable/mal_logo"
@@ -22,17 +16,17 @@
     <Preference
         android:icon="@drawable/open_subtitles_icon"
         android:key="@string/opensubtitles_key" />
-    <!--    <Preference-->
-    <!--            android:key="@string/nginx_key"-->
-    <!--            android:icon="@drawable/nginx" />-->
 
-    <!--    <Preference-->
-    <!--            android:title="@string/nginx_info_title"-->
-    <!--            android:icon="@drawable/nginx_question"-->
-    <!--            android:summary="@string/nginx_info_summary">-->
-    <!--        <intent-->
-    <!--                android:action="android.intent.action.VIEW"-->
-    <!--                android:data="https://www.sarlays.com/use-nginx-with-cloudstream/" />-->
-    <!--    </Preference>-->
+    <SwitchPreference
+        android:defaultValue="false"
+        android:icon="@drawable/ic_outline_account_circle_24"
+        android:key="@string/skip_startup_account_select_key"
+        android:title="@string/skip_startup_account_select_pref" />
+
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="@string/biometric_enabled_key"
+        android:icon="@drawable/ic_fingerprint"
+        android:title="@string/biometric_setting" />
 
 </PreferenceScreen>

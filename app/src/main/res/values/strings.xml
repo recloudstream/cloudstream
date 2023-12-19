@@ -67,6 +67,7 @@
     <string name="enable_nsfw_on_providers_key" translatable="false">enable_nsfw_on_providers_key</string>
     <string name="skip_startup_account_select_key" translatable="false">skip_startup_account_select_key</string>
     <string name="enable_skip_op_from_database" translatable="false">enable_skip_op_from_database</string>
+    <string name="biometric_enabled_key" translatable="false">biometric_key</string>
     <!-- FORMAT MIGHT TRANSLATE, WILL CAUSE CRASH IF APPLIED WRONG -->
     <string name="extra_info_format" formatted="true" translatable="false">%d %s | %s</string>
     <string name="storage_size_format" formatted="true" translatable="false">%s • %s</string>
@@ -733,4 +734,5 @@
     <string name="logged_account" formatted="true">Logged in as %s</string>
     <string name="skip_startup_account_select_pref">Skip account selection at startup</string>
     <string name="use_default_account">Use Default Account</string>
+    <string name="biometric_setting">Use Fingerprint Authentication</string>
 </resources>
