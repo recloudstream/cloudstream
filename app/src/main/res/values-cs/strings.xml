@@ -608,4 +608,5 @@
     <string name="skip_startup_account_select_pref">Přeskočit výběr účtu při spuštění</string>
     <string name="manage_accounts">Správce účtů</string>
     <string name="edit_account">Upravit účet</string>
+    <string name="links_reloaded_toast">Odkazy znovu načteny</string>
 </resources>
