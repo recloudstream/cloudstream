@@ -6,6 +6,8 @@ import android.util.Log
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.utils.*
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 
 open class VideoSeyred : ExtractorApi() {
     override val name            = "VideoSeyred"
@@ -18,7 +20,9 @@ open class VideoSeyred : ExtractorApi() {
         val video_url = "${mainUrl}/playlist/${video_id}.json"
         Log.d("Kekik_${this.name}", "video_url » ${video_url}")
 
-        val response  = app.get(video_url).parsedSafe<List<VideoSeyredSource>>()?.firstOrNull() ?: throw Error("Failed to parse response")
+        val response_raw                          = app.get(video_url)
+        val response_list:List<VideoSeyredSource> = jacksonObjectMapper().readValue(response_raw.text) ?: throw ErrorLoadingException("VideoSeyred")
+        val response                              = response_list[0] ?: throw ErrorLoadingException("VideoSeyred")
 
         for (track in response.tracks) {
             if (track.label != null && track.kind == "captions") {
