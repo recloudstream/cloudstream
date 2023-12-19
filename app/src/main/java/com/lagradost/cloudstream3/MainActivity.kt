@@ -77,6 +77,7 @@ import com.lagradost.cloudstream3.databinding.BottomResultviewPreviewBinding
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
+import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.mvvm.observeNullable
 import com.lagradost.cloudstream3.network.initClient
 import com.lagradost.cloudstream3.plugins.PluginManager
@@ -1234,6 +1235,13 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             builder.show().setDefaultFocus()
         }
 
+        observe(viewModel.watchStatus) { state ->
+            bottomPreviewBinding?.resultviewPreviewBookmark?.apply {
+                setIconResource(state.iconRes)
+                setText(state.stringRes)
+            }
+        }
+
         observeNullable(viewModel.page) { resource ->
             if (resource == null) {
                 hidePreviewPopupDialog()
@@ -1273,7 +1281,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                             d.posterImage ?: d.posterBackgroundImage
                         )
 
-                        resultviewPreviewPoster.setOnClickListener {
+                        resultviewPreviewBookmark.setOnClickListener {
                             //viewModel.updateWatchStatus(WatchType.PLANTOWATCH)
                             val value = viewModel.watchStatus.value ?: WatchType.NONE
 

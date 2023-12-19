@@ -114,17 +114,38 @@
             </LinearLayout>
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/resultview_preview_more_info"
+        <LinearLayout
+            android:padding="7dp"
+            android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="?android:attr/selectableItemBackground"
-            android:gravity="start|center_vertical"
-            android:padding="12dp"
-            android:text="@string/home_more_info"
-            android:textColor="?attr/textColor"
-            app:drawableRightCompat="@drawable/ic_baseline_arrow_forward_24"
-            app:drawableTint="?attr/white" />
+            android:layout_height="wrap_content">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/resultview_preview_bookmark"
+                android:layout_weight="1"
+                android:nextFocusRight="@id/resultview_preview_more_info"
+
+                tools:visibility="visible"
+
+                app:icon="@drawable/ic_baseline_bookmark_24"
+                tools:text="Bookmark"
+                style="@style/BlackButton"
+
+                android:layout_width="50dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/resultview_preview_more_info"
+                android:layout_weight="1"
+                android:nextFocusLeft="@id/resultview_preview_bookmark"
+
+                tools:visibility="visible"
+
+                app:icon="@drawable/ic_baseline_open_in_new_24"
+                android:text="@string/home_more_info"
+                style="@style/WhiteButton"
+
+                android:layout_width="50dp" />
+        </LinearLayout>
     </LinearLayout>
 
     <FrameLayout
