@@ -127,6 +127,9 @@ import com.lagradost.cloudstream3.utils.AppUtils.loadSearchResult
 import com.lagradost.cloudstream3.utils.AppUtils.setDefaultFocus
 import com.lagradost.cloudstream3.utils.BackupUtils.backup
 import com.lagradost.cloudstream3.utils.BackupUtils.setUpBackup
+import com.lagradost.cloudstream3.utils.BiometricAuthenticator
+import com.lagradost.cloudstream3.utils.BiometricAuthenticator.isTruePhone
+import com.lagradost.cloudstream3.utils.BiometricAuthenticator.promptInfo
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.DataStore.getKey
@@ -1151,6 +1154,16 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         }
 
         changeStatusBarState(isEmulatorSettings())
+
+        /** Biometric Stuff **/
+        val authEnabled = settingsManager.getBoolean(
+            getString(R.string.biometric_enabled_key), false)
+
+        if (isTruePhone() && authEnabled) {
+            BiometricAuthenticator.initializeBiometrics(this@MainActivity)
+            BiometricAuthenticator.checkBiometricAvailability(this@MainActivity)
+            BiometricAuthenticator.biometricPrompt.authenticate(promptInfo)
+        }
 
         // Automatically enable jsdelivr if cant connect to raw.githubusercontent.com
         if (this.getKey<Boolean>(getString(R.string.jsdelivr_proxy_key)) == null && isNetworkAvailable()) {
