@@ -616,4 +616,5 @@
     <string name="skip_startup_account_select_pref">تخطي اختيار الحساب عند بدء التشغيل</string>
     <string name="manage_accounts">إدارة الحسابات</string>
     <string name="edit_account">تعديل الحساب</string>
+    <string name="links_reloaded_toast">تم إعادة تحميل الروابط</string>
 </resources>

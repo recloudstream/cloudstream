@@ -140,7 +140,7 @@
     <string name="dns_pref">DNS avec HTTPS</string>
     <string name="display_subbed_dubbed_settings">Afficher les animés en Anglais (Dub) / sous-titrés</string>
     <string name="phone_layout">Disposition en mode téléphone</string>
-    <string name="app_dub_sub_episode_text_format">%s Ep %d</string>
+    <string name="app_dub_sub_episode_text_format">%s Episode %d</string>
     <string name="rated_format" formatted="true">Note : %.1f</string>
     <string name="resize_zoom">Zoom</string>
     <string name="resize_fit">Adapter à l\'écran</string>
@@ -568,4 +568,21 @@
     <string name="select_an_account">Sélectionnez un compte</string>
     <string name="enter_pin">Entrer PIN</string>
     <string name="pin">PIN</string>
+    <string name="favorites_list_name">Favoris</string>
+    <string name="logged_account" formatted="true">Connecté en tant que %s</string>
+    <string name="duplicate_message_multiple" formatted="true">Des doublons potentiels ont été trouvés dans votre bibliothèque :
+\n
+\n%s
+\n
+\nSouhaitez-vous ajouter cet élément, remplacer les éléments existants ou annuler l\'action ?</string>
+    <string name="enter_pin_with_name" formatted="true">Entrer le code PIN pour %s</string>
+    <string name="duplicate_title">Doublon potentiel trouvé</string>
+    <string name="lock_profile">Verrouiller le profil</string>
+    <string name="skip_startup_account_select_pref">Passer la sélection de compte au démarrage</string>
+    <string name="action_unsubscribe">Se désabonner</string>
+    <string name="action_subscribe">S\'abonner</string>
+    <string name="duplicate_message_single" formatted="true">Il semble qu\'un élément potentiellement dupliqué existe déjà dans votre bibliothèque : \'%s.
+\n
+\nSouhaitez-vous ajouter cet élément, remplacer l\'élément existant ou annuler l\'action ?</string>
+    <string name="enter_current_pin">Entrer le code PIN actuel</string>
 </resources>

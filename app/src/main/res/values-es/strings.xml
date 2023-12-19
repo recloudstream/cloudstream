@@ -584,4 +584,5 @@
     <string name="skip_startup_account_select_pref">Omitir la selección de cuenta al inicio</string>
     <string name="manage_accounts">Gestionar las cuentas</string>
     <string name="edit_account">Editar la cuenta</string>
+    <string name="links_reloaded_toast">Enlaces recargados</string>
 </resources>
