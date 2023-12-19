@@ -1157,6 +1157,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
 
         changeStatusBarState(isEmulatorSettings())
 
+        /** Biometric Stuff **/
         val authEnabled = settingsManager.getBoolean(
             getString(R.string.biometric_enabled_key), false)
 

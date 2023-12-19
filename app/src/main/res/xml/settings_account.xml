@@ -23,9 +23,9 @@
         android:key="@string/skip_startup_account_select_key"
         android:title="@string/skip_startup_account_select_pref" />
 
-    <SwitchPreference
-        android:defaultValue="false"
+    <SwitchPreferenceCompat
         android:key="@string/biometric_enabled_key"
+        android:defaultValue="false"
         android:icon="@drawable/ic_fingerprint"
         android:title="@string/biometric_setting" />
 

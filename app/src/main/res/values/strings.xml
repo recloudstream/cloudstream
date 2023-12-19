@@ -240,7 +240,7 @@
     <string name="backup_failed_error_format">Error backing up %s</string>
     <string name="search">Search</string>
     <string name="library">Library</string>
-    <string name="category_account">Accounts</string>
+    <string name="category_account">Accounts and Security</string>
     <string name="category_updates">Updates and backup</string>
     <string name="settings_info">Info</string>
     <string name="advanced_search">Advanced Search</string>
@@ -734,5 +734,5 @@
     <string name="logged_account" formatted="true">Logged in as %s</string>
     <string name="skip_startup_account_select_pref">Skip account selection at startup</string>
     <string name="use_default_account">Use Default Account</string>
-    <string name="biometric_setting">Use Fingerprint Authentication</string>
+    <string name="biometric_setting">Use Fingerprint authentication</string>
 </resources>

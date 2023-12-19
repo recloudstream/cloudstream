@@ -26,29 +26,28 @@ object BiometricAuthenticator {
         val executor = ContextCompat.getMainExecutor(activity)
         biometricManager = BiometricManager.from(activity)
 
-        biometricPrompt = BiometricPrompt(activity, executor,
-            object : BiometricPrompt.AuthenticationCallback() {
+        biometricPrompt = BiometricPrompt(activity, executor, object : BiometricPrompt.AuthenticationCallback() {
+
                 override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
                     super.onAuthenticationError(errorCode, errString)
                     Toast.makeText(context?.applicationContext, "Authentication error: $errString", Toast.LENGTH_SHORT).show()
-                    // Handle error as needed
+                    activity.finish()
                 }
 
                 override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
                     super.onAuthenticationSucceeded(result)
-                    Toast.makeText(context?.applicationContext, "Authentication succeeded!", Toast.LENGTH_SHORT).show()
-                    // Handle authentication success
+                    Log.d("Cs3Auth", "Biometric succeeded.")
                 }
 
                 override fun onAuthenticationFailed() {
                     super.onAuthenticationFailed()
                     Toast.makeText(context?.applicationContext, "Authentication failed", Toast.LENGTH_SHORT).show()
-                    // Handle authentication failure
+                    activity.finish()
                 }
             })
 
         promptInfo = BiometricPrompt.PromptInfo.Builder()
-            .setTitle("Biometric login for my app")
+            .setTitle("CloudStream")
             .setSubtitle("Log in using your biometric credential")
             //.setNegativeButtonText("Use account password")
             .setAllowedAuthenticators(BIOMETRIC_WEAK or BIOMETRIC_STRONG or DEVICE_CREDENTIAL)
@@ -56,28 +55,19 @@ object BiometricAuthenticator {
     }
 
     fun checkBiometricAvailability(context: Context) {
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+
+            // Strong and credential bundle cannot be checked at same time in API < 11
             when (biometricManager.canAuthenticate(BIOMETRIC_WEAK or BIOMETRIC_STRONG or DEVICE_CREDENTIAL)) {
                 BiometricManager.BIOMETRIC_SUCCESS ->
-                    Toast.makeText(
-                        context,
-                        "Biometric authentication is available",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    Log.d("Cs3Auth", "App can authenticate.")
 
                 BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE ->
-                    Toast.makeText(
-                        context,
-                        "This device doesn't support biometric authentication",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    Log.d("Cs3Auth", "No biometric sensor found.")
 
                 BiometricManager.BIOMETRIC_ERROR_HW_UNAVAILABLE ->
-                    Toast.makeText(
-                        context,
-                        "Biometric authentication is currently unavailable",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    Log.d("Cs3Auth", "Biometric authentication is currently unavailable.")
 
                 BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED ->
                     Toast.makeText(
@@ -87,21 +77,31 @@ object BiometricAuthenticator {
                     ).show()
 
                 BiometricManager.BIOMETRIC_ERROR_SECURITY_UPDATE_REQUIRED -> {
-                    TODO()
+                    Toast.makeText(
+                        context,
+                        "Please update your software and security patches.",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
 
                 BiometricManager.BIOMETRIC_ERROR_UNSUPPORTED -> {
-                    TODO()
+                    Toast.makeText(
+                        context,
+                        "Please update your software and security patches.",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
 
                 BiometricManager.BIOMETRIC_STATUS_UNKNOWN -> {
-                    TODO()
+                    Log.d("Cs3Auth", "Unknown error encountered(Biometric data failed).")
                 }
             }
         }
 
         else {
+
             when (biometricManager.canAuthenticate(BIOMETRIC_WEAK or BIOMETRIC_STRONG)) {
+
             BiometricManager.BIOMETRIC_SUCCESS ->
             Log.d("Cs3Auth", "App can authenticate using biometrics.")
             BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE ->
@@ -112,20 +112,29 @@ object BiometricAuthenticator {
             Log.e("Cs3Auth", "Biometric features are currently unavailable.")
 
                 BiometricManager.BIOMETRIC_ERROR_SECURITY_UPDATE_REQUIRED -> {
-                    TODO()
+                    Toast.makeText(
+                        context,
+                        "Please update your software and security patches.",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
 
                 BiometricManager.BIOMETRIC_ERROR_UNSUPPORTED -> {
-                    TODO()
+                    Toast.makeText(
+                        context,
+                        "Please update your software and security patches.",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
 
                 BiometricManager.BIOMETRIC_STATUS_UNKNOWN -> {
-                    TODO()
+                    Log.d("Cs3Auth", "Unknown error encountered(Biometric data failed).")
                 }
             }
         }
     }
 
+    // yes, this feature is phone exclusive
     fun isTruePhone(): Boolean {
         return !isTrueTvSettings() && !isTvSettings() && context?.isEmulatorSettings() != true
     }
