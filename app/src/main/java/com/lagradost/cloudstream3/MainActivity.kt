@@ -1071,9 +1071,6 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         app.initClient(this)
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
 
-
-
-
         val errorFile = filesDir.resolve("last_error")
         if (errorFile.exists() && errorFile.isFile) {
             lastError = errorFile.readText(Charset.defaultCharset())
