@@ -49,13 +49,11 @@ open class HDMomPlayer : ExtractorApi() {
             }
         }
 
-        if (m3u_link == null) throw ErrorLoadingException("m3u link not found")
-
         callback.invoke(
             ExtractorLink(
                 source  = this.name,
                 name    = this.name,
-                url     = m3u_link,
+                url     = m3u_link ?: throw ErrorLoadingException("m3u link not found"),
                 referer = url,
                 quality = Qualities.Unknown.value,
                 isM3u8  = true

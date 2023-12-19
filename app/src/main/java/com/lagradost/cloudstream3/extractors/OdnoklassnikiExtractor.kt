@@ -13,7 +13,7 @@ open class Odnoklassniki : ExtractorApi() {
     override val requiresReferer = false
 
     override suspend fun getUrl(url: String, referer: String?, subtitleCallback: (SubtitleFile) -> Unit, callback: (ExtractorLink) -> Unit) {
-        val ext_ref = referer ?: ""
+        val ext_ref    = referer ?: ""
         Log.d("Kekik_${this.name}", "url » ${url}")
 
         val user_agent = mapOf("User-Agent" to "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36")

@@ -28,7 +28,7 @@ open class TauVideo : ExtractorApi() {
                     url     = video.url,
                     referer = ext_ref,
                     quality = Qualities.Unknown.value,
-                    isM3u8  = video.url.contains(".m3u8")
+                    type    = INFER_TYPE
                 )
             )
         }

@@ -43,22 +43,20 @@ open class PeaceMakerst : ExtractorApi() {
             val video_response = response.parsedSafe<PeaceResponse>() ?: throw ErrorLoadingException("peace response is null")
             val video_sources  = video_response.videoSources
             if (video_sources.isNotEmpty()) {
-                m3u_link = video_sources.last().file
+                m3u_link = video_sources.lastOrNull()?.file
             } else {
                 m3u_link = null
             }
         }
 
-        if (m3u_link == null) throw ErrorLoadingException("m3u link not found")
-
         callback.invoke(
             ExtractorLink(
                 source  = this.name,
                 name    = this.name,
-                url     = m3u_link,
+                url     = m3u_link ?: throw ErrorLoadingException("m3u link not found"),
                 referer = ext_ref,
                 quality = Qualities.Unknown.value,
-                isM3u8  = m3u_link.contains(".m3u8")
+                type    = INFER_TYPE
             )
         )
     }

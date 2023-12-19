@@ -60,7 +60,7 @@ open class TRsTX : ExtractorApi() {
                     url     = m3u_link,
                     referer = ext_ref,
                     quality = Qualities.Unknown.value,
-                    isM3u8  = m3u_link.contains(".m3u8")
+                    type    = INFER_TYPE
                 )
             )
         }
