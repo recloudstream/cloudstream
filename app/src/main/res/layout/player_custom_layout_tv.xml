@@ -639,6 +639,11 @@
                         </FrameLayout>
 
                         <com.google.android.material.button.MaterialButton
+                            android:id="@+id/player_rotate_btt"
+                            style="@style/VideoButton"
+                            android:visibility="gone"/>
+
+                        <com.google.android.material.button.MaterialButton
                             android:id="@+id/player_skip_op"
                             style="@style/VideoButtonTV"
                             android:nextFocusLeft="@id/player_pause_play"

@@ -734,4 +734,10 @@
     <string name="logged_account" formatted="true">Logged in as %s</string>
     <string name="skip_startup_account_select_pref">Skip account selection at startup</string>
     <string name="use_default_account">Use Default Account</string>
+    <string name="rotate_video">Rotate</string>
+    <string name="rotate_video_key">rotate_video_key</string>
+    <string name="rotate_video_desc">Display a toggle button for screen orientation</string>
+    <string name="auto_rotate_video_key">auto_rotate_video_key</string>
+    <string name="auto_rotate_video_desc">Enable automatic switching of screen orientation based on video orientation</string>
+    <string name="auto_rotate_video">Auto rotate</string>
 </resources>
