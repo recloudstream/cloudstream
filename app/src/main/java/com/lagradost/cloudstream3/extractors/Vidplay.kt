@@ -10,8 +10,8 @@ import com.lagradost.cloudstream3.utils.M3u8Helper
 import javax.crypto.Cipher
 import javax.crypto.spec.SecretKeySpec
 
-// Code found in https://github.com/Claudemirovsky/worstsource-keys
-// special credits to @Claudemirovsky for providing key
+// Code found in https://github.com/J4zzyB1te7s/keys
+// special credits to @J4zzyB1te7s for providing key
 open class Vidplay : ExtractorApi() {
     override val name = "Vidplay"
     override val mainUrl = "https://vidplay.site"
@@ -44,7 +44,7 @@ open class Vidplay : ExtractorApi() {
     }
 
     private suspend fun getKeys(): List<String> {
-        return app.get("https://raw.githubusercontent.com/Claudemirovsky/worstsource-keys/keys/keys.json")
+        return app.get("https://raw.githubusercontent.com/J4zzyB1te7s/keys/keys/keys.json")
             .parsed()
     }
 
