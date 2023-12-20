@@ -1,6 +1,7 @@
 package com.lagradost.cloudstream3.utils
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.lagradost.cloudstream3.DubStatus
 import com.lagradost.cloudstream3.TvType
 object VideoDownloadHelper {
     data class DownloadEpisodeCached(
@@ -30,6 +31,7 @@ object VideoDownloadHelper {
         @JsonProperty("episodeId") val episodeId: Int?,
         @JsonProperty("episode") val episode: Int?,
         @JsonProperty("season") val season: Int?,
+        @JsonProperty("dubStatus") val dubStatus: DubStatus?,
         @JsonProperty("updateTime") val updateTime: Long,
         @JsonProperty("isFromDownload") val isFromDownload: Boolean,
     )

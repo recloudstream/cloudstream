@@ -2245,7 +2245,8 @@ class ResultViewModel2 : ViewModel() {
                                     fillers.getOrDefault(episode, false),
                                     loadResponse.type,
                                     mainId,
-                                    totalIndex
+                                    totalIndex,
+                                    ep.key
                                 )
 
                             val season = eps.seasonIndex ?: 0
@@ -2294,7 +2295,8 @@ class ResultViewModel2 : ViewModel() {
                                 null,
                                 loadResponse.type,
                                 mainId,
-                                totalIndex
+                                totalIndex,
+                                null
                             )
 
                         val season = ep.seasonIndex ?: 0
@@ -2326,6 +2328,7 @@ class ResultViewModel2 : ViewModel() {
                         null,
                         loadResponse.type,
                         mainId,
+                        null,
                         null
                     )
                 )
@@ -2349,6 +2352,7 @@ class ResultViewModel2 : ViewModel() {
                         null,
                         loadResponse.type,
                         mainId,
+                        null,
                         null
                     )
                 )
@@ -2372,6 +2376,7 @@ class ResultViewModel2 : ViewModel() {
                         null,
                         loadResponse.type,
                         mainId,
+                        null,
                         null
                     )
                 )
@@ -2458,7 +2463,28 @@ class ResultViewModel2 : ViewModel() {
             )
         }
 
+        restoreSeasonAndRange(resume)
+
         return ResumeWatchingStatus(progress = progress, isMovie = isMovie, result = episode)
+    }
+
+    private fun restoreSeasonAndRange(resume: VideoDownloadHelper.ResumeWatching) {
+        // restore season based on resume details
+        resume.season?.apply {
+            changeSeason(this)
+        }
+
+        // restore dubStatus based on resume details
+        resume.dubStatus?.apply {
+            changeDubStatus(this)
+        }
+
+        // restore range based on resume details
+        currentRanges[currentIndex]?.first {
+            it.endEpisode >= resume.episode ?: 0
+        }?.apply {
+            changeRange(this)
+        }
     }
 
     private fun loadTrailers(loadResponse: LoadResponse) = ioSafe {

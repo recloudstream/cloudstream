@@ -360,6 +360,7 @@ object DataStoreHelper {
                     null,
                     it.episode,
                     it.season,
+                    it.dubStatus,
                     it.isFromDownload,
                     it.updateTime
                 )
@@ -374,6 +375,7 @@ object DataStoreHelper {
         episodeId: Int?,
         episode: Int?,
         season: Int?,
+        dubStatus: DubStatus? = null,
         isFromDownload: Boolean = false,
         updateTime: Long? = null,
     ) {
@@ -386,6 +388,7 @@ object DataStoreHelper {
                 episodeId,
                 episode,
                 season,
+                dubStatus,
                 updateTime ?: System.currentTimeMillis(),
                 isFromDownload
             )
