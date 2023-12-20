@@ -16,6 +16,7 @@ import com.lagradost.cloudstream3.syncproviders.AccountManager
 import com.lagradost.cloudstream3.syncproviders.AuthAPI
 import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.syncproviders.SyncIdName
+import com.lagradost.cloudstream3.ui.SyncWatchType
 import com.lagradost.cloudstream3.ui.library.ListSorting
 import com.lagradost.cloudstream3.ui.result.txt
 import com.lagradost.cloudstream3.utils.AppUtils.parseJson
@@ -94,7 +95,7 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
     override suspend fun score(id: String, status: SyncAPI.AbstractSyncStatus): Boolean {
         return setScoreRequest(
             id.toIntOrNull() ?: return false,
-            fromIntToAnimeStatus(status.status),
+            fromIntToAnimeStatus(status.status.internalId),
             status.score,
             status.watchedEpisodes
         ).also {
@@ -245,7 +246,7 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
             getDataAboutMalId(internalId)?.my_list_status //?: throw ErrorLoadingException("No my_list_status")
         return SyncAPI.SyncStatus(
             score = data?.score,
-            status = malStatusAsString.indexOf(data?.status),
+            status = SyncWatchType.fromInternalId(malStatusAsString.indexOf(data?.status)) ,
             isFavorite = null,
             watchedEpisodes = data?.num_episodes_watched,
         )
@@ -442,6 +443,7 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
                 this.node.main_picture?.large ?: this.node.main_picture?.medium,
                 null,
                 null,
+                plot = this.node.synopsis,
             )
         }
     }
