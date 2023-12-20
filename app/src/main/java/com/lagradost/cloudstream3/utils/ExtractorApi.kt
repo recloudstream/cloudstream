@@ -776,7 +776,6 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     Movhide(),
     StreamhideCom(),
     StreamhideTo(),
-    Pixeldrain(),
     Wibufile(),
     FileMoonIn(),
     Moviesm4u(),
