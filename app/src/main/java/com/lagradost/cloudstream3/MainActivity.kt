@@ -135,6 +135,7 @@ import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStore.setKey
 import com.lagradost.cloudstream3.utils.DataStoreHelper
+import com.lagradost.cloudstream3.utils.DataStoreHelper.accounts
 import com.lagradost.cloudstream3.utils.DataStoreHelper.migrateResumeWatching
 import com.lagradost.cloudstream3.utils.Event
 import com.lagradost.cloudstream3.utils.InAppUpdater.Companion.runAutoUpdate
@@ -1155,13 +1156,13 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
 
         changeStatusBarState(isEmulatorSettings())
 
-        /** Biometric Stuff **/
-        val authEnabled = settingsManager.getBoolean(
-            getString(R.string.biometric_enabled_key), false)
+        /** Biometric stuff for users without accounts **/
+        val authEnabled = settingsManager.getBoolean(getString(R.string.biometric_enabled_key), false)
+        val noAccounts = settingsManager.getBoolean(getString(R.string.skip_startup_account_select_key), false) || accounts.count() <= 1
 
-        if (isTruePhone() && authEnabled) {
+        if (isTruePhone() && authEnabled && noAccounts ) {
             BiometricAuthenticator.initializeBiometrics(this@MainActivity)
-            BiometricAuthenticator.checkBiometricAvailability(this@MainActivity)
+            BiometricAuthenticator.checkBiometricAvailability()
             BiometricAuthenticator.biometricPrompt.authenticate(promptInfo)
         }
 

@@ -18,6 +18,7 @@ import com.lagradost.cloudstream3.ui.AutofitRecyclerView
 import com.lagradost.cloudstream3.ui.account.AccountAdapter.Companion.VIEW_TYPE_EDIT_ACCOUNT
 import com.lagradost.cloudstream3.ui.account.AccountAdapter.Companion.VIEW_TYPE_SELECT_ACCOUNT
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
+import com.lagradost.cloudstream3.utils.BiometricAuthenticator
 import com.lagradost.cloudstream3.utils.DataStoreHelper.accounts
 import com.lagradost.cloudstream3.utils.DataStoreHelper.selectedKeyIndex
 import com.lagradost.cloudstream3.utils.DataStoreHelper.setAccount
@@ -41,12 +42,23 @@ class AccountSelectActivity : AppCompatActivity() {
         )
 
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
+        val authEnabled = settingsManager.getBoolean(getString(R.string.biometric_enabled_key), false)
+
         val skipStartup = settingsManager.getBoolean(
             getString(R.string.skip_startup_account_select_key),
             false
         ) || accounts.count() <= 1
 
         viewModel = ViewModelProvider(this)[AccountViewModel::class.java]
+
+        fun askBiometricAuth() {
+
+            if (BiometricAuthenticator.isTruePhone() && authEnabled) {
+                BiometricAuthenticator.initializeBiometrics(this)
+                BiometricAuthenticator.checkBiometricAvailability()
+                BiometricAuthenticator.biometricPrompt.authenticate(BiometricAuthenticator.promptInfo)
+            }
+        }
 
         // Don't show account selection if there is only
         // one account that exists
@@ -158,6 +170,8 @@ class AccountSelectActivity : AppCompatActivity() {
                 } else 6
             }
         }
+
+        askBiometricAuth()
     }
 
     private fun navigateToMainActivity() {
