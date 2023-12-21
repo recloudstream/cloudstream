@@ -70,19 +70,18 @@ open class YoutubeExtractor : ExtractorApi() {
             }
         }
         ytVideos[url]?.mapNotNull {
-            if (it.isVideoOnly || it.height <= 0) return@mapNotNull null
+            if (it.isVideoOnly() || it.height <= 0) return@mapNotNull null
 
             ExtractorLink(
                 this.name,
                 this.name,
-                it.url ?: return@mapNotNull null,
+                it.content ?: return@mapNotNull null,
                 "",
                 it.height
             )
         }?.forEach(callback)
         ytVideosSubtitles[url]?.mapNotNull {
-            SubtitleFile(it.languageTag ?: return@mapNotNull null, it.url ?: return@mapNotNull null)
+            SubtitleFile(it.languageTag ?: return@mapNotNull null, it.content ?: return@mapNotNull null)
         }?.forEach(subtitleCallback)
     }
-
 }
