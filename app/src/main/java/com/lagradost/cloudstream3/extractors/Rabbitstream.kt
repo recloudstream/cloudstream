@@ -16,13 +16,13 @@ import javax.crypto.Cipher
 import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
 
-// Code found in https://github.com/theonlymo/keys
-// special credits to @theonlymo for providing key
+// Code found in https://github.com/Claudemirovsky/keys
+// special credits to @Claudemirovsky for providing key
 class Megacloud : Rabbitstream() {
     override val name = "Megacloud"
     override val mainUrl = "https://megacloud.tv"
     override val embed = "embed-2/ajax/e-1"
-    override val key = "https://raw.githubusercontent.com/theonlymo/keys/e1/key"
+    override val key = "https://raw.githubusercontent.com/Claudemirovsky/keys/e1/key"
 }
 
 class Dokicloud : Rabbitstream() {
@@ -35,7 +35,7 @@ open class Rabbitstream : ExtractorApi() {
     override val mainUrl = "https://rabbitstream.net"
     override val requiresReferer = false
     open val embed = "ajax/embed-4"
-    open val key = "https://raw.githubusercontent.com/theonlymo/keys/e4/key"
+    open val key = "https://raw.githubusercontent.com/Claudemirovsky/keys/e4/key"
 
     override suspend fun getUrl(
         url: String,
