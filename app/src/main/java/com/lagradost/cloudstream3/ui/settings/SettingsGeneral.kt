@@ -95,6 +95,7 @@ val appLanguages = arrayListOf(
     Triple("", "മലയാളം", "ml"),
     Triple("", "bahasa Melayu", "ms"),
     Triple("", "ဗမာစာ", "my"),
+    Triple("", "नेपाली", "ne"),
     Triple("", "Nederlands", "nl"),
     Triple("", "norsk nynorsk", "nn"),
     Triple("", "norsk bokmål", "no"),
