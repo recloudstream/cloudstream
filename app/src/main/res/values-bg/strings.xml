@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- FORMAT MIGHT TRANSLATE, WILL CAUSE CRASH IF APPLIED WRONG -->
-    <string formatted="true" name="app_dub_sub_episode_text_format">%s еп. %d</string>
+    <string formatted="true" name="app_dub_sub_episode_text_format">%1$s еп. %2$d</string>
     <string formatted="true" name="cast_format">Актьори: %s</string>
     <string formatted="true" name="next_episode_format">Епизод %d ще бъде пуснат след</string>
-    <string formatted="true" name="next_episode_time_day_format">%dd %dh %dm</string>
-    <string formatted="true" name="next_episode_time_hour_format">%dh %dm</string>
+    <string formatted="true" name="next_episode_time_day_format">%1$dd %2$dh %3$dm</string>
+    <string formatted="true" name="next_episode_time_hour_format">%1$dh %2$dm</string>
     <string formatted="true" name="next_episode_time_min_format">%dm</string>
     <string name="result_poster_img_des">Poster</string>
     <string name="episode_poster_img_des">Episode Poster</string>
@@ -17,7 +17,7 @@
     <string formatted="true" name="player_speed_text_format">Скорост (%.2fx)</string>
     <string formatted="true" name="rated_format">Оценка: %.1f</string>
     <string formatted="true" name="new_update_format">Намерена е нова актуализация!
-\n%s -&gt; %s</string>
+\n%1$s -&gt; %2$s</string>
     <string formatted="true" name="filler">Шаблон</string>
     <string formatted="true" name="duration_format">%d мин</string>
     <string name="app_name">CloudStream</string>
@@ -174,12 +174,12 @@
     <string name="subs_default_reset_toast">Възстановяване на стойността по подразбиране</string>
     <string name="acra_report_toast">За съжаление приложението се срина. Анонимен доклад за грешка ще бъде изпратен до разработчиците</string>
     <string name="season">Сезон</string>
-    <string name="season_format">%s %d%s</string>
+    <string name="season_format">%1$s %2$d%3$s</string>
     <string name="no_season">Без сезон</string>
     <string name="episode">Епизод</string>
     <string name="episodes">Епизоди</string>
-    <string name="episodes_range">%d-%d</string>
-    <string formatted="true" name="episode_format">%d %s</string>
+    <string name="episodes_range">%1$d-%2$d</string>
+    <string formatted="true" name="episode_format">%1$d %2$s</string>
     <string name="season_short">С</string>
     <string name="episode_short">Е</string>
     <string name="no_episodes_found">Няма намерени епизоди</string>
@@ -307,7 +307,7 @@
     <string name="example_lang_name">Езиков код (en)</string>
     <!--
     -->
-    <string name="login_format" formatted="true">%s %s</string>
+    <string name="login_format" formatted="true">%1$s %2$s</string>
     <string name="account">Акаунт</string>
     <string name="logout">Излизане</string>
     <string name="login">Влизане</string>
@@ -404,8 +404,8 @@
     <string name="plugin_deleted">Приставката е изтрита</string>
     <string name="plugin_load_fail" formatted="true">Не може да зареди %s</string>
     <string name="is_adult">18+</string>
-    <string name="batch_download_start_format" formatted="true">Започна да изтегля %d %s…</string>
-    <string name="batch_download_finish_format" formatted="true">Изтеглено %d %s</string>
+    <string name="batch_download_start_format" formatted="true">Започна да изтегля %1$d %2$s…</string>
+    <string name="batch_download_finish_format" formatted="true">Изтеглено %1$d %2$s</string>
     <string name="batch_download_nothing_to_download_format" formatted="true">Всички %s вече са изтеглени</string>
     <string name="batch_download">Пакетно изтегляне</string>
     <string name="plugin_singular">Плъгин</string>

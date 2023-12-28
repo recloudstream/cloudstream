@@ -4,7 +4,7 @@
     <string name="action_remove_from_bookmarks">Pašalinti</string>
     <string name="player_speed_text_format" formatted="true">Greitis (%.2fx)</string>
     <string name="error_bookmarks_text">Žymos</string>
-    <string name="episode_format" formatted="true">%d %s</string>
+    <string name="episode_format" formatted="true">%1$d %2$s</string>
     <string name="download_started">Siuntimas pradėtas</string>
     <string name="home_next_random_img_des">Sekantis atsitiktinai</string>
     <string name="preview_background_img_des">Peržiūros fonas</string>
@@ -33,7 +33,7 @@
     <string name="download_done">Atsiuntimas baigtas</string>
     <string name="continue_watching">Tęsti žiūrėjimą</string>
     <string name="new_update_format" formatted="true">Rastas atnaujinimas!
-\n%s -&gt; %s</string>
+\n%1$s -&gt; %2$s</string>
     <string name="subs_download_languages">Atsisiųsti kalbas</string>
     <string name="search_provider_text_providers">Ieškoti naudojant tiekėjus</string>
     <string name="go_back_img_des">Grįžti atgal</string>
@@ -110,7 +110,7 @@
     <string name="no_data">Nėra duomenų</string>
     <string name="subs_font">Šriftas</string>
     <string name="redo_setup_process">Perdaryti nustatymo procesą</string>
-    <string name="episodes_range">%d-%d</string>
+    <string name="episodes_range">%1$d-%2$d</string>
     <string name="benene">Duoti bananą kūrėjams</string>
     <string name="go_back">Sugryšti</string>
     <string name="copy_link_toast">Nuoroda nukopijuota į iškarpinę</string>
@@ -183,7 +183,7 @@
     <string name="source_error">Šaltinio klaida</string>
     <string name="view_public_repositories_button_short">Viešas sąrašas</string>
     <string name="example_ip">127.0.0.1</string>
-    <string name="batch_download_finish_format" formatted="true">Atsiųsta %d %s</string>
+    <string name="batch_download_finish_format" formatted="true">Atsiųsta %1$d %2$s</string>
     <string name="skip_type_format" formatted="true">Praleisti %s</string>
     <string name="blank_repo_message">Pagal numatytuosius nustatymus „CloudStream“ neturi įdiegtų svetainių. Turite įdiegti svetaines iš saugyklų.
 \n
@@ -196,7 +196,7 @@
     <string name="player_settings_play_in_browser">Naršyklė</string>
     <string name="all_languages_preference">Visos kalbos</string>
     <string name="quality_4k">4K</string>
-    <string name="batch_download_start_format" formatted="true">Pradėta siųsti %d %s…</string>
+    <string name="batch_download_start_format" formatted="true">Pradėta siųsti %1$d %2$s…</string>
     <string name="extension_description">Aprašymas</string>
     <string name="safe_mode_title">Saugus režimas įjungtas</string>
     <string name="quality_hdr">HDR</string>
@@ -257,7 +257,7 @@
     <string name="quality_dvd">DVD</string>
     <string name="player_settings_play_in_app">Integruotas grotuvas</string>
     <string name="setup_extensions_subtext">Atsisiųskite sąrašą puslapiu jūs norite naudoti</string>
-    <string name="app_dub_sub_episode_text_format" formatted="true">%s Ser %d</string>
+    <string name="app_dub_sub_episode_text_format" formatted="true">%1$s Ser %2$d</string>
     <string name="confirm_exit_dialog">Ar tikrai norite išeiti\?</string>
     <string name="action_remove_from_watched">Pašalinti iš žiūrimų</string>
     <string name="audio_tracks">Garso takelis</string>

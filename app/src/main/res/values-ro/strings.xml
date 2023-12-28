@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- FORMAT MIGHT TRANSLATE, WILL CAUSE CRASH IF APPLIED WRONG -->
-    <string name="app_dub_sub_episode_text_format" formatted="true">%s Ep %d</string>
+    <string name="app_dub_sub_episode_text_format" formatted="true">%1$s Ep %2$d</string>
     <string name="cast_format" formatted="true">Distribuție: %s</string>
     <string name="next_episode_format" formatted="true">Episodul %d va fi lansat în</string>
-    <string name="next_episode_time_day_format" formatted="true">%dd %dh %dm</string>
-    <string name="next_episode_time_hour_format" formatted="true">%dh %dm</string>
+    <string name="next_episode_time_day_format" formatted="true">%1$dd %2$dh %3$dm</string>
+    <string name="next_episode_time_hour_format" formatted="true">%1$dh %2$dm</string>
     <string name="next_episode_time_min_format" formatted="true">%dm</string>
     <!-- IS NOT NEEDED TO TRANSLATE AS THEY ARE ONLY USED FOR SCREEN READERS AND WONT SHOW UP TO NORMAL USERS -->
     <string name="result_poster_img_des">Poster</string>
@@ -20,7 +20,7 @@
     <string name="player_speed_text_format" formatted="true">Viteză (%.2fx)</string>
     <string name="rated_format" formatted="true">Evaluare: %.1f</string>
     <string name="new_update_format" formatted="true">Actualizare nouă găsită!
-\n%s -&gt; %s</string>
+\n%1$s -&gt; %2$s</string>
     <string name="filler" formatted="true">Filler</string>
     <string name="duration_format" formatted="true">%d min</string>
     <!-- <string name="app_name">CloudStream</string> -->
@@ -295,7 +295,7 @@
     <string name="example_site_name">David Popovici</string>
     <string name="example_site_url">davidpopovici.com</string>
     <string name="example_lang_name">Cod limbă (RO)</string>
-    <string name="login_format" formatted="true">%s %s</string>
+    <string name="login_format" formatted="true">%1$s %2$s</string>
     <string name="account">Cont</string>
     <string name="logout">Deconectare</string>
     <string name="login">Conectare</string>
@@ -392,9 +392,9 @@
     <string name="others">Altele</string>
     <string name="test_passed">Trecut</string>
     <string name="start">Start</string>
-    <string name="episode_format" formatted="true">%d %s</string>
+    <string name="episode_format" formatted="true">%1$d %2$s</string>
     <string name="nsfw">NSFW</string>
-    <string name="episodes_range">%d-%d</string>
+    <string name="episodes_range">%1$d-%2$d</string>
     <string name="android_tv_interface_on_seek_settings">Player Afișat - Căutați Suma</string>
     <string name="android_tv_interface_off_seek_settings">Player Ascuns - Căutați Suma</string>
     <string name="livestreams">Livestream-uri</string>
@@ -407,7 +407,7 @@
     <string name="other_singular">Video</string>
     <string name="apk_installer_settings">Instalator APK</string>
     <string name="automatic_plugin_download_summary">Instalează automat toate plugin-urile neinstalate din depozite adăugate.</string>
-    <string name="season_format">%s %d%s</string>
+    <string name="season_format">%1$s %2$d%3$s</string>
     <string name="apk_installer_settings_des">Unele telefoane nu acceptă noul program de instalare a pachetului. Încercați opțiunea veche dacă nu se instalează actualizările.</string>
     <string name="redo_setup_process">Refaceți procesul de configurare</string>
     <string name="skip_setup">Treci peste partea de configurare</string>
@@ -489,7 +489,7 @@
 \nDin cauza unui DMCA takedown fără creier de către Sky UK Limited 🤮 nu putem lega site-ul de depozit în aplicație.
 \n
 \nAlăturați-vă Discordului nostru sau căutați online.</string>
-    <string name="batch_download_start_format" formatted="true">A început să descarce %d %s…</string>
+    <string name="batch_download_start_format" formatted="true">A început să descarce %1$d %2$s…</string>
     <string name="safe_mode_title">Mod sigur pornit</string>
     <string name="safe_mode_file">Fișier Mod Sigur găsit!
 \nNu încarcă nicio extensie la pornire până când fișierul nu este eliminat.</string>
@@ -531,7 +531,7 @@
     <string name="network_adress_example">Link către stream</string>
     <string name="delete_repository_plugins">Acest lucru va șterge, de asemenea, toate plugin-urile din depozit</string>
     <string name="update_notification_installing">Se instalează actualizarea aplicației…</string>
-    <string name="batch_download_finish_format" formatted="true">S-a descărcat %d %s</string>
+    <string name="batch_download_finish_format" formatted="true">S-a descărcat %1$d %2$s</string>
     <string name="extension_types">Suportat</string>
     <string name="hls_playlist">Playlist HLS</string>
     <string name="video_tracks">Piste video</string>

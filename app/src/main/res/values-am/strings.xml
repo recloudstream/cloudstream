@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_dub_sub_episode_text_format" formatted="true">%s ክፍል %d</string>
+    <string name="app_dub_sub_episode_text_format" formatted="true">%1$s ክፍል %2$d</string>
     <string name="cast_format" formatted="true">ተዋናዮች: %s</string>
     <string name="player_speed_text_format" formatted="true">ፍጥነት(%.2fx)</string>
     <string name="home_next_random_img_des">ቀጣይ በዘፈቀደ</string>
     <string name="preview_background_img_des">ዳራ ቅድም እይታ</string>
-    <string name="next_episode_time_hour_format" formatted="true">%dሰዓት %dደቂቃ</string>
+    <string name="next_episode_time_hour_format" formatted="true">%1$dሰዓት %2$dደቂቃ</string>
     <string name="search_poster_img_des">ፖስተር</string>
     <string name="title_downloads">የወረዱ</string>
     <string name="new_update_format" formatted="true">አዲስ ማሻሻያ ተገኝቷል!
-\n%s -&gt; %s</string>
+\n%1$s -&gt; %2$s</string>
     <string name="go_back_img_des">ተመለስ</string>
     <string name="episode_more_options_des">ተጨማሪ አማራጮች</string>
     <string name="type_watching">በማየት ላይ</string>
@@ -21,7 +21,7 @@
     <string name="search_hint">ፍለጋ…</string>
     <string name="rated_format" formatted="true">ተመዘነ: %.1f</string>
     <string name="browser">አሳሽ</string>
-    <string name="next_episode_time_day_format" formatted="true">%dቀን %dሰዓት %dደቂቃ</string>
+    <string name="next_episode_time_day_format" formatted="true">%1$dቀን %2$dሰዓት %3$dደቂቃ</string>
     <string name="next_episode">ቀጣይ ክፍል</string>
     <string name="next_episode_time_min_format" formatted="true">%dደቂቃ</string>
     <string name="duration_format" formatted="true">%d ደቂቃ</string>

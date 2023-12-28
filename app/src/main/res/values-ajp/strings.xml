@@ -481,7 +481,7 @@
     <string name="plugin_downloaded">تنزلت الإضافة</string>
     <string name="reload_error">رجاع جَرِب تعمل إتصال…</string>
     <string name="duplicate_add">زيد</string>
-    <string name="batch_download">نزلو الحلقات بالجملة</string>
+    <string name="batch_download">نزلو المصادر بالجملة</string>
     <string name="open_with">فتاح بـ</string>
     <string name="sync_score">راينيگ</string>
     <string name="delete_repository_plugins">محي الريپو كمان بمحي الإضافات يلي في</string>
@@ -588,4 +588,11 @@
 \nعلامت المصدر والجودة تبعو بينجمعو مع بعض (8 + 1 = 9). يلي علامتو 10 أو أعلى، بينحط تلقائيًا، من دون ما ينعمل لود لكل المصادر!</string>
     <string name="enter_current_pin">حطو الأرقام السرية الحالية</string>
     <string name="audio_tracks">صوت</string>
+    <string name="rotate_video_desc">حط كبسة لبرم إتجاه الشاشة</string>
+    <string name="rotate_video_key">rotate_video_key</string>
+    <string name="auto_rotate_video_key">auto_rotate_video_key</string>
+    <string name="auto_rotate_video">برم الشاشة أوتوماتيكيًا</string>
+    <string name="rotate_video">برومو</string>
+    <string name="auto_rotate_video_desc">غير إتجاه الشاشة أوتوماتيكيًا حسب شكل الڤيديو</string>
+    <string name="links_reloaded_toast">رجع نعمل لاود لاللينك</string>
 </resources>
