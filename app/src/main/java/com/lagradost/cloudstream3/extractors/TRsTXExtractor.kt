@@ -55,7 +55,7 @@ open class TRsTX : ExtractorApi() {
 
 	        callback.invoke(
                 ExtractorLink(
-                    source  = "${this.name} - ${title}",
+                    source  = this.name,
                     name    = "${this.name} - ${title}",
                     url     = m3u_link,
                     referer = ext_ref,
