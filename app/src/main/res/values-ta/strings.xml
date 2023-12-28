@@ -106,18 +106,18 @@
     <string name="chromecast_subtitles_settings_des">Chromecast வசன அமைப்புகள்</string>
     <string name="use_system_brightness_settings_des">இருண்ட மேலடுக்குக்குப் பதிலாக ஆப் பிளேயரில் சிஸ்டம் பிரகாசத்தைப் பயன்படுத்தவும்</string>
     <string name="next_episode_format" formatted="true">அத்தியாயம் %d-இன் வெளியீட்டு நேரம்</string>
-    <string name="next_episode_time_hour_format" formatted="true">%dம %dநி</string>
+    <string name="next_episode_time_hour_format" formatted="true">%1$dம %2$dநி</string>
     <string name="next_episode_time_min_format" formatted="true">%dநி</string>
     <string name="home_next_random_img_des">அடுத்து ஏதாவது</string>
     <string name="browser">உலாவி</string>
     <string name="duration_format" formatted="true">%d நிமி</string>
     <string name="play_with_app_name">CloudStream-உடன் இயக்கு</string>
     <string name="new_update_format" formatted="true">புதிய புதுப்பிப்பு உள்ளது
-\n%s-&gt;%s</string>
+\n%1$s-&gt;%2$s</string>
     <string name="filler" formatted="true">நிரப்பி</string>
     <string name="search_poster_img_des">போஸ்டர்</string>
     <string name="episode_poster_img_des">எபிசோட்டின் போஸ்டர்</string>
     <string name="result_poster_img_des">போஸ்டர்</string>
     <string name="home_main_poster_img_des">பிரதான போஸ்டர்</string>
-    <string name="app_dub_sub_episode_text_format" formatted="true">%s Ep %d</string>
+    <string name="app_dub_sub_episode_text_format" formatted="true">%1$s Ep %2$d</string>
 </resources>

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="cast_format" formatted="true">သရုပ်ဆောင်များ: %s</string>
-    <string name="next_episode_time_day_format" formatted="true">%dရက် %ddနာရီ %ddမိနစ်</string>
-    <string name="next_episode_time_hour_format" formatted="true">%ddနာရီ %ddမိနစ်</string>
+    <string name="next_episode_time_day_format" formatted="true">%1$dရက် %2$ddနာရီ %3$ddမိနစ်</string>
+    <string name="next_episode_time_hour_format" formatted="true">%1$ddနာရီ %2$ddမိနစ်</string>
     <string name="next_episode_time_min_format" formatted="true">%ddမိနစ်</string>
     <string name="search_poster_img_des">ပိုစတာ</string>
     <string name="episode_poster_img_des">အပိုင်း ပိုစတာ</string>
@@ -12,7 +12,7 @@
     <string name="preview_background_img_des">နောက်ခံပုံရိပ်ကို အကြိုကြည့်ရန်</string>
     <string name="rated_format" formatted="true">အဆင့်: %.1f</string>
     <string name="new_update_format" formatted="true">အပ်ဒိတ်အသစ်!
-\n%s -&gt; %s</string>
+\n%1$s -&gt; %2$s</string>
     <string name="filler" formatted="true">စစ်ထုတ်မှု</string>
     <string name="duration_format" formatted="true">%d မိနစ်</string>
     <string name="app_name">CloudStream</string>
@@ -111,7 +111,7 @@
     <string name="no_season">အတွဲမရှိပါ</string>
     <string name="episode">အပိုင်း</string>
     <string name="episodes">အပိုင်းများ</string>
-    <string name="episodes_range">%d-%d</string>
+    <string name="episodes_range">%1$d-%2$d</string>
     <string name="delete_message" formatted="true">ဒါကအပြီးဖျက်ခြင်းဖြစ်ပါသည် %s
 \nသင်သေချာပါသလား။</string>
     <string name="resume_time_left" formatted="true">%dမိနစ်
@@ -204,7 +204,7 @@
     <string name="pref_category_looks">ပုံပန်းသဏ္ဌာန်</string>
     <string name="category_general">အထွေထွေ</string>
     <string name="random_button_settings_desc">ပင်မစာမျက်နှာမှာကျပန်းခလုတ်ကိုပြပါ</string>
-    <string name="app_dub_sub_episode_text_format" formatted="true">%s အပိုင်း %d</string>
+    <string name="app_dub_sub_episode_text_format" formatted="true">%1$s အပိုင်း %2$d</string>
     <string name="next_episode_format" formatted="true">အပိုင်း %d ထုတ်လွှင့်ပြသမည်</string>
     <string name="result_poster_img_des">ပိုစတာ</string>
     <string name="home_change_provider_img_des">ပံ့ပိုးပေးသောဝန်ဆောင်မှုပြောင်းရန်</string>
@@ -291,9 +291,9 @@
     <string name="app_language">အက်ပ်ဘာသာစကား</string>
     <string name="subs_default_reset_toast">မူလအခြေအနေများကိုပြန်ထားပါ</string>
     <string name="acra_report_toast">စိတ်မကောင်းပါ။အက်ပ်ရပ်တန့်သွားပါတယ်။အမည်မဖော်ထားတဲ့တင်ပြချက်ကို အက်ပ်ရေးသားသူများထံ ပို့မှာဖြစ်ပါတယ်</string>
-    <string name="season_format">%s %d%s</string>
+    <string name="season_format">%1$s %2$d%3$s</string>
     <string name="season_short">အတွဲ</string>
-    <string name="episode_format" formatted="true">%d %s</string>
+    <string name="episode_format" formatted="true">%1$d %2$s</string>
     <string name="episode_short">အပိုင်း</string>
     <string name="no_episodes_found">အပိုင်းများမတွေ့ပါ</string>
     <string name="delete_file">ဖိုင်ကိုဖျက်ရန်</string>
@@ -442,7 +442,7 @@
     <string name="qualities">အရည်အသွေးများ</string>
     <string name="subtitles_encoding">စာတန်းထိုး ကုဒ်လုပ်ခြင်း</string>
     <string name="category_provider_test">ပံ့ပိုးပေးသူ စစ်ဆေးမှု</string>
-    <string name="login_format" formatted="true">%s %s</string>
+    <string name="login_format" formatted="true">%1$s %2$s</string>
     <string name="login">အကောင့်ဝင်မည်</string>
     <string name="switch_account">အကောင့်ပြောင်းမည်</string>
     <string name="upload_sync">ချိန်ညိှခြင်း</string>
@@ -478,8 +478,8 @@
     <string name="provider_languages_tip">ဤဘာသာစကားများဖြင့် ဗီဒီယိုများကို ကြည့်ရှုပါ</string>
     <string name="plugin_downloaded">ဖြည့်စွက်များ ဒေါင်းလုဒ်လုပ်ပြီး</string>
     <string name="plugin_deleted">ဖြည့်စွက်များဖျက်ပြီး</string>
-    <string name="batch_download_start_format" formatted="true">ဒေါင်းလုဒ်လုပ်ခြင်း စတင်သည် %d %s…</string>
-    <string name="batch_download_finish_format" formatted="true">ဒေါင်းလုဒ်လုပ်ပြီး %d %s</string>
+    <string name="batch_download_start_format" formatted="true">ဒေါင်းလုဒ်လုပ်ခြင်း စတင်သည် %1$d %2$s…</string>
+    <string name="batch_download_finish_format" formatted="true">ဒေါင်းလုဒ်လုပ်ပြီး %1$d %2$s</string>
     <string name="batch_download_nothing_to_download_format" formatted="true">အားလုံး %s ဒေါင်းလုဒ်လုပ်ပြီးသား</string>
     <string name="no_plugins_found_error">ရီပိုစစ်ထရီထဲတွင်ဖြည့်စွက်များမတွေ့ပါ</string>
     <string name="no_repository_found_error">ရီပိုစစ်ထရီမတွေ့ပါ၊URLကိုပြန်စစ်ပြီးဗီပီအန်ဖြင့်ကြိုးစားကြည့်ပါ</string>

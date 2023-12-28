@@ -7,7 +7,7 @@
     <string name="player_speed_text_format" formatted="true">מהירות (%.2fx)</string>
     <string name="rated_format" formatted="true">דירוג: %.1f</string>
     <string name="new_update_format" formatted="true">נמצא עדכון חדש!
-\n%s -&gt; %s</string>
+\n%1$s -&gt; %2$s</string>
     <string name="filler" formatted="true">סינון</string>
     <string name="duration_format" formatted="true">%d דקות</string>
     <string name="app_name">קלאודסטרים</string>
@@ -24,8 +24,8 @@
     <string name="result_open_in_browser">לפתוח בדפדפן</string>
     <string name="skip_loading">דלג על טעינה</string>
     <string name="next_episode_format" formatted="true">פרק %d יצא בעוד</string>
-    <string name="next_episode_time_day_format" formatted="true">%dימים %dשעות %dחודשים</string>
-    <string name="next_episode_time_hour_format" formatted="true">%dשעות %dחודשים</string>
+    <string name="next_episode_time_day_format" formatted="true">%1$dימים %2$dשעות %3$dחודשים</string>
+    <string name="next_episode_time_hour_format" formatted="true">%1$dשעות %2$dחודשים</string>
     <string name="next_episode_time_min_format" formatted="true">%dחודשים</string>
     <string name="result_poster_img_des">פוסטר</string>
     <string name="episode_poster_img_des">הפוסטר של הפרק</string>
@@ -70,7 +70,7 @@
     <string name="sort_close">לסגור</string>
     <string name="sort_clear">נקה</string>
     <string name="sort_save">לשמור</string>
-    <string name="app_dub_sub_episode_text_format" formatted="true">%s פרק %d</string>
+    <string name="app_dub_sub_episode_text_format" formatted="true">%1$s פרק %2$d</string>
     <string name="play_with_app_name">נגן עם קלאודסטרים</string>
     <string name="next_episode">פרק הבא</string>
     <string name="loading">טוען…</string>
@@ -136,9 +136,9 @@
     <string name="uprereleases_settings">עדכן למהדורות מוקדמות</string>
     <string name="uprereleases_settings_des">חפש עדכוני מהדרות מוקדמות במקום מהדורות מלאות בלבד</string>
     <string name="episodes">פרקים</string>
-    <string name="episodes_range">%d-%d</string>
+    <string name="episodes_range">%1$d-%2$d</string>
     <string name="episode">פרק</string>
-    <string name="episode_format" formatted="true">%d %s</string>
+    <string name="episode_format" formatted="true">%1$d %2$s</string>
     <string name="season_short">עו</string>
     <string name="episode_short">פר</string>
     <string name="no_episodes_found">לא נמצאו פרקים</string>
@@ -208,7 +208,7 @@
     <string name="pref_category_looks">נראה</string>
     <string name="automatic">אוטומטי</string>
     <string name="tv_layout">פריסת טלוויזיה</string>
-    <string name="login_format" formatted="true">%s %s</string>
+    <string name="login_format" formatted="true">%1$s %2$s</string>
     <string name="subtitles_filter_lang">סנן לפי שפת מדיה מועדפת</string>
     <string name="app_theme_settings">נושא אפליקציה</string>
     <string name="bottom_title_settings">מיקום כותרת פוסטר</string>
@@ -305,7 +305,7 @@
     <string name="synopsis">תקציר</string>
     <string name="queued">בתור</string>
     <string name="benene">לתת בניני למפתחים</string>
-    <string name="season_format">%s %d%s</string>
+    <string name="season_format">%1$s %2$d%3$s</string>
     <string name="app_storage">אפליקציה</string>
     <string name="movies">סרטים</string>
     <string name="anime">אנימה</string>
@@ -424,8 +424,8 @@
     <string name="plugin_downloaded">תוסף הורד</string>
     <string name="plugin_deleted">התוסף נמחק</string>
     <string name="plugin_load_fail" formatted="true">לא יכול לטעון %s</string>
-    <string name="batch_download_start_format" formatted="true">התחיל להוריד %d %s…</string>
-    <string name="batch_download_finish_format" formatted="true">הוריד %d %s</string>
+    <string name="batch_download_start_format" formatted="true">התחיל להוריד %1$d %2$s…</string>
+    <string name="batch_download_finish_format" formatted="true">הוריד %1$d %2$s</string>
     <string name="enable_skip_op_from_database_des">הצג חלונות קופצים של דילוג בשביל פתיח/שיר סיום</string>
     <string name="delete_repository">מחק מאגר</string>
     <string name="skip_type_mixed_op">פתיח מעורב</string>

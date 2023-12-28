@@ -26,11 +26,11 @@
     <string name="search_poster_img_des">پوستر</string>
     <string name="result_poster_img_des">پوستر</string>
     <string name="episode_poster_img_des">پوستر قسمت</string>
-    <string name="next_episode_time_day_format" formatted="true">%dروز %dساعت %dدقیقه</string>
-    <string name="app_dub_sub_episode_text_format" formatted="true">%s قسمت %d</string>
+    <string name="next_episode_time_day_format" formatted="true">%1$dروز %2$dساعت %3$dدقیقه</string>
+    <string name="app_dub_sub_episode_text_format" formatted="true">%1$s قسمت %2$d</string>
     <string name="cast_format" formatted="true">بازیگران: %s</string>
     <string name="next_episode_format" formatted="true">قسمت %d پخش خواهد شد</string>
-    <string name="next_episode_time_hour_format" formatted="true">%dساعت %dدقیقه</string>
+    <string name="next_episode_time_hour_format" formatted="true">%1$dساعت %2$dدقیقه</string>
     <string name="next_episode_time_min_format" formatted="true">%dدقیقه</string>
     <string name="home_main_poster_img_des">پوستر اصلی</string>
     <string name="torrent">تورنت</string>

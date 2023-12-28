@@ -3,8 +3,8 @@
     <!-- TRANSLATE, BUT DON'T FORGET FORMAT -->
     <string name="player_speed_text_format" formatted="true">Брзина (%.2fx)</string>
     <string name="rated_format" formatted="true">Оценето: %.1f</string>
-    <string name="new_update_format" formatted="true">Пронајдена нова верзија на апликацијата!
-\n%s -&gt; %s</string>
+    <string name="new_update_format" formatted="true">"Пронајдена нова верзија!
+\n%1$s -&gt;  %2$s"</string>
     <string name="filler" formatted="true">Филтер</string>
     <string name="app_name">CloudStream</string>
     <string name="title_home">Дома</string>
@@ -32,7 +32,7 @@
     <string name="pick_subtitle">Преводи</string>
     <string name="reload_error">Повтори конекција…</string>
     <string name="go_back">Оди назад</string>
-    <string name="play_episode">Пушти епизода</string>
+    <string name="play_episode">Вклучи епизода</string>
     <!--<string name="need_storage">Allow to download episodes</string>-->
     <string name="download">Превземи</string>
     <string name="downloaded">Превземено</string>
@@ -195,7 +195,7 @@
     <string name="phone_layout">Изглед за гледање на телефон</string>
     <string name="primary_color_settings">Примарна боја</string>
     <string name="app_theme_settings">Тема на апликацијата</string>
-    <string name="login_format">%s %s</string>
+    <string name="login_format">%1$s %2$s</string>
     <string name="account">Корисничко име</string>
     <string name="logout">Одјави се</string>
     <string name="login">Најавете се</string>
@@ -214,8 +214,8 @@
     <string name="history">Историја</string>
     <string name="uppercase_all_subtitles">Голема буква на сите преводи</string>
     <string name="automatic_plugin_download_summary">Автоматски инсталирајте ги сите сè уште неинсталирани приклучоци од додадените складишта.</string>
-    <string name="episodes_range">%d-%d</string>
-    <string name="episode_format" formatted="true">%d %s</string>
+    <string name="episodes_range">%1$d-%2$d</string>
+    <string name="episode_format" formatted="true">%1$d %2$s</string>
     <string name="livestreams">Пренос во живо</string>
     <string name="nsfw">NSFW</string>
     <string name="others">Други</string>
@@ -369,7 +369,7 @@
     <string name="authenticated_user_fail" formatted="true">Не можев да се најавам на %s</string>
     <string name="clipboard_too_large">Премногу текст. Не може да се зачува во таблата со исечоци.</string>
     <string name="error_invalid_id">Неважечки ID</string>
-    <string name="batch_download_finish_format" formatted="true">Преземено %d %s</string>
+    <string name="batch_download_finish_format" formatted="true">Преземено %1$d %2$s</string>
     <string name="subtitle_offset_extra_hint_later_format">Користете го ова ако преводите се прикажани %d ms премногу рано</string>
     <string name="error_invalid_url">Неважечка URL адреса</string>
     <string name="safe_mode_title">Безбедниот режим е вклучен</string>
@@ -428,7 +428,7 @@
     <string name="player_settings_play_in_vlc">VLC</string>
     <string name="restart">Рестартирај</string>
     <string name="cartoons_singular">Цртан филм</string>
-    <string name="batch_download_start_format" formatted="true">Почна да презема %d %s…</string>
+    <string name="batch_download_start_format" formatted="true">Почна да презема %1$d %2$s…</string>
     <string name="automatic_plugin_updates">Автоматски ажурирања на приклучоци</string>
     <string name="go_back_30">-30</string>
     <string name="resume_time_left" formatted="true">%dm
@@ -452,7 +452,7 @@
     <string name="app_not_found_error">Апликацијата не е пронајдена</string>
     <string name="example_username">MyCoolUsername</string>
     <string name="open_with">Отвори со</string>
-    <string name="season_format">%s %d%s</string>
+    <string name="season_format">%1$s %2$d%3$s</string>
     <string name="redo_setup_process">Повторете го процесот на поставување</string>
     <string name="pref_category_links">Линкови</string>
     <string name="skip_type_recap">Повторување</string>
@@ -517,13 +517,13 @@
     <string name="action_add_to_bookmarks">Поставете статус на пратење</string>
     <string name="play_livestream_button">Пушти Livestream</string>
     <string name="authenticated_user" formatted="true">%s е автентициран</string>
-    <string name="app_dub_sub_episode_text_format" formatted="true">%s Епизода %d</string>
-    <string name="next_episode_time_hour_format" formatted="true">%dч %dм</string>
+    <string name="app_dub_sub_episode_text_format" formatted="true">%1$sЕп.%2$d</string>
+    <string name="next_episode_time_hour_format" formatted="true">%1$dч%2$dм</string>
     <string name="next_episode_time_min_format" formatted="true">%dм</string>
     <string name="home_next_random_img_des">Следен рандом</string>
     <string name="result_poster_img_des">Постер</string>
     <string name="search_poster_img_des">Постер</string>
-    <string name="next_episode_time_day_format" formatted="true">%dд %dч %dм</string>
+    <string name="next_episode_time_day_format" formatted="true">%1$dч%2$dд%3$dм</string>
     <string name="home_main_poster_img_des">Главен постер</string>
     <string name="next_episode_format" formatted="true">Епизодата %d ќе биде објавена на</string>
     <string name="episode_poster_img_des">Постер за епизода</string>

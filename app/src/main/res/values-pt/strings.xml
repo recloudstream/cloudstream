@@ -362,8 +362,8 @@
     <string name="plugin_loaded">Plugin Carregado</string>
     <string name="plugin_deleted">Plugin Apagado</string>
     <string name="plugin_load_fail" formatted="true">Falha ao carregar %s</string>
-    <string name="batch_download_start_format" formatted="true">Download iniciado %d %s…</string>
-    <string name="batch_download_finish_format" formatted="true">Transferido %d %s com sucesso</string>
+    <string name="batch_download_start_format" formatted="true">Download iniciado %1$d %2$s…</string>
+    <string name="batch_download_finish_format" formatted="true">Transferido %1$d %2$s com sucesso</string>
     <string name="batch_download_nothing_to_download_format" formatted="true">Tudo %s já transferido</string>
     <string name="batch_download">Transferência em batch</string>
     <string name="plugin_singular">plugin</string>
@@ -395,13 +395,13 @@
     <string name="go_back_30">-30</string>
     <string name="other_singular">Vídeo</string>
     <string name="go_forward_30">+30</string>
-    <string name="season_format">%s %d%s</string>
+    <string name="season_format">%1$s %2$d%3$s</string>
     <string name="cast_format" formatted="true">Elenco: %s</string>
     <string name="update_started">Atualização iniciada</string>
     <string name="test_log">Log</string>
     <string name="apk_installer_settings_des">Alguns aparelhos não suportam o novo instalador de pacotes. Use a opção legado caso não esteja conseguindo atualizar.</string>
-    <string name="episodes_range">%d-%d</string>
-    <string name="episode_format" formatted="true">%d %s</string>
+    <string name="episodes_range">%1$d-%2$d</string>
+    <string name="episode_format" formatted="true">%1$d %2$s</string>
     <string name="start">Iniciar</string>
     <string name="test_failed">Falha</string>
     <string name="test_passed">Sucesso</string>
@@ -506,7 +506,7 @@
     <string name="pref_category_cache">Cache</string>
     <string name="pref_category_android_tv">Android TV</string>
     <string name="pref_category_subtitles">Legendas</string>
-    <string name="login_format" formatted="true">%s %s</string>
+    <string name="login_format" formatted="true">%1$s %2$s</string>
     <string name="quality_ts">TS</string>
     <string name="quality_cam_rip">Cam</string>
     <string name="quality_cam_hd">Cam</string>

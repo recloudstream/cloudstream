@@ -607,4 +607,5 @@
     <string name="manage_accounts">Gestisci Accounts</string>
     <string name="edit_account">Modifica account</string>
     <string name="links_reloaded_toast">Collegamenti ricaricati</string>
+    <string name="rotate_video">Ruota</string>
 </resources>

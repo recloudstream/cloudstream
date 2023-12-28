@@ -16,12 +16,12 @@
     <string name="preview_background_img_des">Forhandsvis bakgrunnsbilete</string>
     <string name="rated_format" formatted="true">Vurdert: %.1f</string>
     <string name="new_update_format" formatted="true">Ny oppdatering tilgjengeleg!
-\n%s -&gt; %s</string>
+\n%1$s -&gt; %2$s</string>
     <string name="duration_format" formatted="true">%d minutt</string>
     <string name="result_poster_img_des">Miniatyrbilete</string>
     <string name="next_episode_format" formatted="true">Episode %d vil bli sleppt om</string>
-    <string name="next_episode_time_day_format" formatted="true">%dd %dt %dm</string>
-    <string name="next_episode_time_hour_format" formatted="true">%dt %dm</string>
+    <string name="next_episode_time_day_format" formatted="true">%1$dd %2$dt %3$dm</string>
+    <string name="next_episode_time_hour_format" formatted="true">%1$dt %2$dm</string>
     <string name="cast_format" formatted="true">Rollebesetning: %s</string>
     <string name="home_main_poster_img_des">Hovudminiatyrbilete</string>
     <string name="home_change_provider_img_des">Endre leverandør</string>
@@ -104,7 +104,7 @@
     <string name="play_episode_toast">Spel av episode</string>
     <string name="subs_default_reset_toast">Tilbakestill til standardverdi</string>
     <string name="acra_report_toast">Beklager, programmet har krasjet. Ein anonymisert feilrapport vil bli sendt til utviklarane</string>
-    <string name="season_format">%s %d%s</string>
+    <string name="season_format">%1$s %2$d%3$s</string>
     <string name="no_season">Ingen sesong</string>
     <string name="episode">Episode</string>
     <string name="season_short">S</string>

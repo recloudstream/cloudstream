@@ -13,7 +13,7 @@
     <string name="player_speed_text_format" formatted="true">Avspillingshastighet (%.2fx)</string>
     <string name="rated_format" formatted="true">Vurdert: %.1f</string>
     <string name="new_update_format" formatted="true">Ny oppdatering funnet!
-\n%s -&gt; %s</string>
+\n%1$s -&gt; %2$s</string>
     <string name="app_name">CloudStream</string>
     <string name="title_home">Hjem</string>
     <string name="title_search">Søk</string>
@@ -207,15 +207,15 @@
     <string name="next_episode_time_min_format" formatted="true">%dm</string>
     <string name="sort_clear">Tøm</string>
     <string name="category_account">Kontoer</string>
-    <string name="app_dub_sub_episode_text_format" formatted="true">%s Ep %d</string>
+    <string name="app_dub_sub_episode_text_format" formatted="true">%1$s Ep %2$d</string>
     <string name="play_with_app_name">Spill med CloudStream</string>
     <string name="sort_copy">Kopier</string>
     <string name="next_episode_format" formatted="true">Episode %d vil bli sluppet om</string>
-    <string name="next_episode_time_hour_format" formatted="true">%dt %dm</string>
+    <string name="next_episode_time_hour_format" formatted="true">%1$dt %2$dm</string>
     <string name="duration_format" formatted="true">%d min</string>
     <string name="sort_close">Lukk</string>
     <string name="subs_subtitle_languages">Undertekstspråk</string>
-    <string name="next_episode_time_day_format" formatted="true">%dd %dt %dm</string>
+    <string name="next_episode_time_day_format" formatted="true">%1$dd %2$dt %3$dm</string>
     <string name="sort_save">Lagre</string>
     <string name="show_log_cat">Vis Logcat 🐈</string>
     <string name="chromecast_subtitles_settings_des">Innstillinger for Chromecast-innstillinger</string>
@@ -262,7 +262,7 @@
     <string name="max">Maks</string>
     <string name="movies_singular">Film</string>
     <string name="episode_action_download_subtitle">Last ned undertekster</string>
-    <string name="season_format">%s %d%s</string>
+    <string name="season_format">%1$s %2$d%3$s</string>
     <string name="add_site_pref">Klon siden</string>
     <string name="random_button_settings_desc">Vis tilfeldig-knapp på hjemmesiden</string>
     <string name="torrent_singular">Torrent</string>
@@ -353,18 +353,18 @@
     <string name="previous">Forrige</string>
     <string name="crash_reporting_title">Krasjrapportering</string>
     <string name="extensions">Utvidelser</string>
-    <string name="episode_format" formatted="true">%d %s</string>
+    <string name="episode_format" formatted="true">%1$d %2$s</string>
     <string name="example_username">MittKuleBrukernavn</string>
     <string name="skip_setup">Hopp over oppsett</string>
     <string name="preferred_media_subtext">Hva du ønsker å se</string>
-    <string name="login_format" formatted="true">%s %s</string>
+    <string name="login_format" formatted="true">%1$s %2$s</string>
     <string name="provider_languages_tip">Se videoer på disse språkene</string>
     <string name="setup_done">Ferdig</string>
     <string name="plugin_singular">programtillegg</string>
     <string name="safe_mode_title">Trygt modus påslått</string>
     <string name="action_add_to_bookmarks">Sett visningsstatus</string>
     <string name="episode_sync_settings_des">Synkroniser automatisk fremdriften din for gjeldende episode</string>
-    <string name="episodes_range">%d-%d</string>
+    <string name="episodes_range">%1$d-%2$d</string>
     <string name="view_public_repositories_button_short">Offentlig liste</string>
     <string name="plugin">programtillegg</string>
     <string name="resume_time_left" formatted="true">%dm
@@ -455,9 +455,9 @@
     <string name="skip_type_recap">Tilbakeblikk</string>
     <string name="quality_sd">SD</string>
     <string name="trailer">Forfilm</string>
-    <string name="batch_download_finish_format" formatted="true">Lastet ned %d %s</string>
+    <string name="batch_download_finish_format" formatted="true">Lastet ned %1$d %2$s</string>
     <string name="bottom_title_settings_des">Navn under plakat</string>
-    <string name="batch_download_start_format" formatted="true">Begynte nedlasting av %d %s …</string>
+    <string name="batch_download_start_format" formatted="true">Begynte nedlasting av %1$d %2$s …</string>
     <string name="apply_on_restart">Bruk etter omstart av programmet</string>
     <string name="quality_cam_rip">Cam</string>
     <string name="quality_cam_hd">Cam</string>

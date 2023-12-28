@@ -26,8 +26,8 @@
     <string name="next_episode_format" formatted="true">Episod %d akan disiarkan dalam</string>
     <string name="cast_format" formatted="true">Pelakon:%s</string>
     <string name="safe_mode_title">Mod Selamat Hidup</string>
-    <string name="next_episode_time_day_format" formatted="true">%dd %dh %dm</string>
-    <string name="next_episode_time_hour_format" formatted="true">%dh %dm</string>
+    <string name="next_episode_time_day_format" formatted="true">%1$dd %2$dh %3$dm</string>
+    <string name="next_episode_time_hour_format" formatted="true">%1$dh %2$dm</string>
     <string name="next_episode_time_min_format" formatted="true">%dm</string>
     <string name="episode_poster_img_des">Poster Episod</string>
     <string name="home_main_poster_img_des">Poster Utama</string>

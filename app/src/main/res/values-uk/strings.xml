@@ -584,4 +584,11 @@
     <string name="skip_startup_account_select_pref">Пропускати вибір акаунту під час запуску</string>
     <string name="manage_accounts">Керування акаунтами</string>
     <string name="edit_account">Редагувати акаунт</string>
+    <string name="rotate_video_desc">Показувати кнопку перемикання орієнтації екрана</string>
+    <string name="rotate_video_key">rotate_video_key</string>
+    <string name="rotate_video">Поворот</string>
+    <string name="links_reloaded_toast">Посилання перезавантажені</string>
+    <string name="auto_rotate_video_key">auto_rotate_video_key</string>
+    <string name="auto_rotate_video">Автоповорот</string>
+    <string name="auto_rotate_video_desc">Ввімкнути автоматичний поворот екрана на основі орієнтації відео</string>
 </resources>
