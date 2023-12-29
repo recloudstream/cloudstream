@@ -17,6 +17,3 @@
 <a href="https://hosted.weblate.org/engage/cloudstream/">
   <img src="https://hosted.weblate.org/widgets/cloudstream/-/app/multi-auto.svg" alt="Translation status" />
 </a>
-
-
-
