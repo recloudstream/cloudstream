@@ -35,6 +35,7 @@ import androidx.core.graphics.blue
 import androidx.core.graphics.drawable.toBitmapOrNull
 import androidx.core.graphics.green
 import androidx.core.graphics.red
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.marginBottom
 import androidx.core.view.marginLeft
 import androidx.core.view.marginRight
@@ -401,81 +402,35 @@ object UIHelper {
         // Enables regular immersive mode.
         // For "lean back" mode, remove SYSTEM_UI_FLAG_IMMERSIVE.
         // Or for "sticky immersive," replace it with SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-        window.decorView.systemUiVisibility = (
-                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                        // Set the content to appear under the system bars so that the
-                        // content doesn't resize when the system bars hide and show.
-                        or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                        or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                        or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                        // Hide the nav bar and status bar
-                        or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                        or View.SYSTEM_UI_FLAG_FULLSCREEN
-                //  or View.SYSTEM_UI_FLAG_LOW_PROFILE
-                )
-        // window.addFlags(View.KEEP_SCREEN_ON)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+
+            if (window.insetsController != null) {
+
+                window!!.insetsController?.hide(WindowInsetsCompat.Type.systemBars())
+                window!!.insetsController?.systemBarsBehavior =
+                WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+            }
+        }
+
+        else {
+            @Suppress("DEPRECATION")
+            window.decorView.systemUiVisibility = (
+                    View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                            // Set the content to appear under the system bars so that the
+                            // content doesn't resize when the system bars hide and show.
+                            or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                            or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                            or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                            // Hide the nav bar and status bar
+                            or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                            or View.SYSTEM_UI_FLAG_FULLSCREEN
+                    )
+        }
     }
 
     fun FragmentActivity.popCurrentPage() {
         this.onBackPressedDispatcher.onBackPressed()
-        /*val currentFragment = supportFragmentManager.fragments.lastOrNull {
-            it.isVisible
-        } ?: return
-
-        supportFragmentManager.beginTransaction()
-            .setCustomAnimations(
-                R.anim.enter_anim,
-                R.anim.exit_anim,
-                R.anim.pop_enter,
-                R.anim.pop_exit
-            )
-            .remove(currentFragment)
-            .commitAllowingStateLoss()*/
     }
-    /*
-    fun FragmentActivity.popCurrentPage(isInPlayer: Boolean, isInExpandedView: Boolean, isInResults: Boolean) {
-        val currentFragment = supportFragmentManager.fragments.lastOrNull {
-            it.isVisible
-        }
-            ?: //this.onBackPressedDispatcher.onBackPressed()
-            return
-
-/*
-        if (tvActivity == null) {
-            requestedOrientation = if (settingsManager?.getBoolean("force_landscape", false) == true) {
-                ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE
-            } else {
-                ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-            }
-        }*/
-
-        // No fucked animations leaving the player :)
-        when {
-            isInPlayer -> {
-                supportFragmentManager.beginTransaction()
-                    //.setCustomAnimations(R.anim.enter, R.anim.exit, R.anim.pop_enter, R.anim.pop_exit)
-                    .remove(currentFragment)
-                    .commitAllowingStateLoss()
-            }
-            isInExpandedView && !isInResults -> {
-                supportFragmentManager.beginTransaction()
-                    .setCustomAnimations(
-                        R.anim.enter_anim,//R.anim.enter_from_right,
-                        R.anim.exit_anim,//R.anim.exit_to_right,
-                        R.anim.pop_enter,
-                        R.anim.pop_exit
-                    )
-                    .remove(currentFragment)
-                    .commitAllowingStateLoss()
-            }
-            else -> {
-                supportFragmentManager.beginTransaction()
-                    .setCustomAnimations(R.anim.enter_anim, R.anim.exit_anim, R.anim.pop_enter, R.anim.pop_exit)
-                    .remove(currentFragment)
-                    .commitAllowingStateLoss()
-            }
-        }
-    }*/
 
     fun Context.getStatusBarHeight(): Int {
         if (isTvSettings()) {
@@ -541,14 +496,27 @@ object UIHelper {
     }
 
     fun Activity.changeStatusBarState(hide: Boolean): Int {
+        @Suppress("DEPRECATION")
         return if (hide) {
-            window?.setFlags(
-                WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN
-            )
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                window.insetsController?.hide(WindowInsets.Type.statusBars())
+
+            } else {
+                window.setFlags(
+                    WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                    WindowManager.LayoutParams.FLAG_FULLSCREEN
+                )
+            }
             0
         } else {
-            window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                window.insetsController?.show(WindowInsets.Type.statusBars())
+
+            } else {
+                window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
+            }
+
             this.getStatusBarHeight()
         }
     }
@@ -556,13 +524,20 @@ object UIHelper {
     // Shows the system bars by removing all the flags
     // except for the ones that make the content appear under the system bars.
     fun Activity.showSystemUI() {
-        window.decorView.systemUiVisibility =
 
-            (View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+
+        if (window.insetsController != null) {
+            window!!.insetsController?.show(WindowInsetsCompat.Type.systemBars())
+        }
+
+        } else {
+            @Suppress("DEPRECATION")
+            window.decorView.systemUiVisibility =
+                (View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN)
+        }
 
         changeStatusBarState(isEmulatorSettings())
-
-        // window.clearFlags(View.KEEP_SCREEN_ON)
     }
 
     fun Context.shouldShowPIPMode(isInPlayer: Boolean): Boolean {
