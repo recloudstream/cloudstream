@@ -247,6 +247,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
     }
 
     var selectSeason: String? = null
+    var selectEpisodeRange: String? = null
 
     private fun setUrl(url: String?) {
         if (url == null) {
@@ -1027,6 +1028,8 @@ open class ResultFragmentPhone : FullScreenPlayer() {
         observeNullable(viewModel.selectedRange) { range ->
             resultBinding?.apply {
                 resultEpisodeSelect.setText(range)
+
+                selectEpisodeRange = range?.asStringNull(resultEpisodeSelect.context)
                 // If Season button is invisible then the bookmark button next focus is episode select
                 if (resultEpisodeSelect.isVisible && !resultSeasonButton.isVisible && resultResumeParent.isVisible) {
                     setFocusUpAndDown(resultResumeSeriesButton, resultEpisodeSelect)
@@ -1060,9 +1063,12 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                             r to (text?.asStringNull(ctx) ?: return@mapNotNull null)
                         }
 
-                    view.popupMenuNoIconsAndNoStringRes(names.mapIndexed { index, (_, name) ->
-                        index to name
-                    }) {
+                    activity?.showDialog(
+                        names.map { it.second },
+                        names.indexOfFirst { it.second == selectEpisodeRange },
+                        "",
+                        false,
+                        {}) { itemId ->
                         viewModel.changeRange(names[itemId].first)
                     }
                 }
