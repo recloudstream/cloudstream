@@ -8,7 +8,7 @@ import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.json.JsonMapper
-import com.fasterxml.jackson.module.kotlin.KotlinModule
+import com.fasterxml.jackson.module.kotlin.kotlinModule
 import com.google.android.gms.cast.MediaQueueItem
 import com.google.android.gms.cast.MediaSeekOptions
 import com.google.android.gms.cast.MediaStatus.REPEAT_MODE_REPEAT_OFF
@@ -98,7 +98,7 @@ data class MetadataHolder(
 
 class SelectSourceController(val view: ImageView, val activity: ControllerActivity) :
     UIController() {
-    private val mapper: JsonMapper = JsonMapper.builder().addModule(KotlinModule())
+    private val mapper: JsonMapper = JsonMapper.builder().addModule(kotlinModule())
         .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false).build()
 
     init {
