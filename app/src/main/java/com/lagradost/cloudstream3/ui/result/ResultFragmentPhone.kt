@@ -564,6 +564,10 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                         )
                     )
                 }
+                showCurrentButton.isVisible = !resume.isMovie;
+                showCurrentButton.setOnClickListener {
+                    viewModel.restoreSeasonAndRange()
+                }
             }
         }
 

@@ -2472,25 +2472,25 @@ class ResultViewModel2 : ViewModel() {
             )
         }
 
-        restoreSeasonAndRange(resume)
-
         return ResumeWatchingStatus(progress = progress, isMovie = isMovie, result = episode)
     }
 
-    private fun restoreSeasonAndRange(resume: VideoDownloadHelper.ResumeWatching) {
+    fun restoreSeasonAndRange() {
+        val correctId = currentId ?: return
+        val resume = getLastWatched(correctId)
         // restore season based on resume details
-        resume.season?.apply {
+        resume?.season?.apply {
             changeSeason(this)
         }
 
         // restore dubStatus based on resume details
-        resume.dubStatus?.apply {
+        resume?.dubStatus?.apply {
             changeDubStatus(this)
         }
 
         // restore range based on resume details
         currentRanges[currentIndex]?.first {
-            it.endEpisode >= resume.episode ?: 0
+            it.endEpisode >= resume?.episode ?: 0
         }?.apply {
             changeRange(this)
         }
