@@ -399,7 +399,7 @@
     <string name="plugin_deleted">Plugin gelöscht</string>
     <string name="plugin_load_fail" formatted="true">Fehler beim Laden von %s</string>
     <string name="is_adult">18+</string>
-    <string name="batch_download_start_format" formatted="true">Herunterladen begonnen %d %s…</string>
+    <string name="batch_download_start_format" formatted="true">Herunterladen von %1$d %2$s gestartet…</string>
     <string name="batch_download_finish_format" formatted="true">%1$d %2$s heruntergeladen</string>
     <string name="batch_download_nothing_to_download_format" formatted="true">Alle %s bereits heruntergeladen</string>
     <string name="batch_download">Batch-Download</string>
@@ -570,4 +570,19 @@
     <string name="enter_pin">PIN eingeben</string>
     <string name="pin">PIN</string>
     <string name="enter_current_pin">Aktuelle PIN eingeben</string>
+    <string name="logged_account" formatted="true">Angemeldet als %s</string>
+    <string name="enter_pin_with_name" formatted="true">PIN für %s eingeben</string>
+    <string name="use_default_account">Standard-Konto verwenden</string>
+    <string name="skip_startup_account_select_pref">Kontoauswahl beim Starten überspringen</string>
+    <string name="manage_accounts">Konten verwalten</string>
+    <string name="edit_account">Konto bearbeiten</string>
+    <string name="duplicate_message_multiple" formatted="true">Es wurden potentielle Duplikate in ihrer Bibliothek gefunden:
+\n
+\n%s
+\n
+\nWollen sie dieses Element trotzdem hinzufügen, das existierende Element ersetzen oder diese Aktion abbrechen?</string>
+    <string name="duplicate_message_single" formatted="true">Ihre Bibliothek enthält möglicherweise schon ein Duplikat dieses Elements: \'%s\'
+\n
+\nWollen sie dieses Element trotzdem hinzufügen, das existierende ersetzen oder diese Aktion abbrechen?</string>
+    <string name="links_reloaded_toast">Links wurden neu geladen</string>
 </resources>

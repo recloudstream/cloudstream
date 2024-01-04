@@ -851,7 +851,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
 
                         val d = status.value
                         resultSyncRating.value = d.score?.toFloat() ?: 0.0f
-                        resultSyncCheck.setItemChecked(d.status + 1, true)
+                        resultSyncCheck.setItemChecked(d.status.internalId + 1, true)
                         val watchedEpisodes = d.watchedEpisodes ?: 0
                         currentSyncProgress = watchedEpisodes
 

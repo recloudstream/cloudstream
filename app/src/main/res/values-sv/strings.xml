@@ -3,7 +3,7 @@
     <string name="rated_format">Betygsatt: %.1f</string>
     <string name="player_speed_text_format">Hastighet (%.2fx)</string>
     <string name="new_update_format">Ny uppdatering hittad!
-\n%s -&gt; %s</string>
+\n%1$s -&gt; %2$s</string>
     <string name="app_name">CloudStream</string>
     <string name="title_home">Hem</string>
     <string name="title_search">Sök</string>
@@ -210,8 +210,8 @@
     <string name="dns_pref">DNS över HTTPS</string>
     <string name="dns_pref_summary">" "</string>
     <string name="app_theme_settings">Appens tema</string>
-    <string name="app_dub_sub_episode_text_format">%s A%d</string>
-    <string name="next_episode_time_hour_format" formatted="true">%dh %dm</string>
+    <string name="app_dub_sub_episode_text_format">%1$s A%2$d</string>
+    <string name="next_episode_time_hour_format" formatted="true">%1$dh %2$dm</string>
     <string name="next_episode_time_min_format" formatted="true">%dm</string>
     <string name="play_with_app_name">Spela med CloudStream</string>
     <string name="chromecast_subtitles_settings">Chromecast-undertexter</string>
@@ -220,7 +220,7 @@
     <string name="category_account">Konton</string>
     <string name="category_updates">Uppdateringar och backup</string>
     <string name="automatic_plugin_updates">Automatiska pluginuppdateringar</string>
-    <string name="next_episode_time_day_format" formatted="true">%dd %dh %dm</string>
+    <string name="next_episode_time_day_format" formatted="true">%1$dd %2$dh %3$dm</string>
     <string name="search_hint_site" formatted="true">Sök %s…</string>
     <string name="sort_copy">Kopiera</string>
     <string name="sort_close">Stäng</string>
@@ -236,9 +236,9 @@
     <string name="show_trailers_settings">Visa trailers</string>
     <string name="action_open_play">@string/home_play</string>
     <string name="ova">OVA</string>
-    <string name="episodes_range">%d-%d</string>
-    <string name="episode_format" formatted="true">%d %s</string>
-    <string name="season_format">%s %d%s</string>
+    <string name="episodes_range">%1$d-%2$d</string>
+    <string name="episode_format" formatted="true">%1$d %2$s</string>
+    <string name="season_format">%1$s %2$d%3$s</string>
     <string name="go_back_30">-30</string>
     <string name="resume_time_left" formatted="true">%dm
 \nåterstår</string>
@@ -321,7 +321,7 @@
     <string name="app_layout_subtext">Ändra appens utseende så att den passar din enhet</string>
     <string name="cast_format" formatted="true">Skådespelare: %s</string>
     <string name="play_livestream_button">Spela Livestream</string>
-    <string name="login_format" formatted="true">%s %s</string>
+    <string name="login_format" formatted="true">%1$s %2$s</string>
     <string name="subtitle_offset_extra_hint_none_format">Ingen undertextfördröjning</string>
     <string name="pref_category_player_features">Spelarfunktioner</string>
     <string name="trailer">Trailer</string>

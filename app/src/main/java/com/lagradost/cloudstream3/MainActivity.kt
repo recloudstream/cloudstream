@@ -77,6 +77,7 @@ import com.lagradost.cloudstream3.databinding.BottomResultviewPreviewBinding
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
+import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.mvvm.observeNullable
 import com.lagradost.cloudstream3.network.initClient
 import com.lagradost.cloudstream3.plugins.PluginManager
@@ -91,7 +92,9 @@ import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.appStri
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.appStringResumeWatching
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.appStringSearch
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.inAppAuths
+import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.ui.APIRepository
+import com.lagradost.cloudstream3.ui.SyncWatchType
 import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_NAVIGATE_TO
 import com.lagradost.cloudstream3.ui.home.HomeViewModel
@@ -101,6 +104,7 @@ import com.lagradost.cloudstream3.ui.player.LinkGenerator
 import com.lagradost.cloudstream3.ui.result.LinearListLayout
 import com.lagradost.cloudstream3.ui.result.ResultViewModel2
 import com.lagradost.cloudstream3.ui.result.START_ACTION_RESUME_LATEST
+import com.lagradost.cloudstream3.ui.result.SyncViewModel
 import com.lagradost.cloudstream3.ui.result.setImage
 import com.lagradost.cloudstream3.ui.result.setText
 import com.lagradost.cloudstream3.ui.result.txt
@@ -439,13 +443,30 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
     }
 
     var lastPopup: SearchResponse? = null
-    fun loadPopup(result: SearchResponse) {
+    fun loadPopup(result: SearchResponse, load : Boolean = true) {
         lastPopup = result
-        viewModel.load(
-            this, result.url, result.apiName, false, if (getApiDubstatusSettings()
-                    .contains(DubStatus.Dubbed)
-            ) DubStatus.Dubbed else DubStatus.Subbed, null
-        )
+        val syncName = syncViewModel.syncName(result.apiName)
+
+        // based on apiName we decide on if it is a local list or not, this is because
+        // we want to show a bit of extra UI to sync apis
+        if (result is SyncAPI.LibraryItem && syncName != null) {
+            isLocalList = false
+            syncViewModel.setSync(syncName, result.syncId)
+            syncViewModel.updateMetaAndUser()
+        } else {
+            isLocalList = true
+            syncViewModel.clear()
+        }
+
+        if (load) {
+            viewModel.load(
+                this, result.url, result.apiName, false, if (getApiDubstatusSettings()
+                        .contains(DubStatus.Dubbed)
+                ) DubStatus.Dubbed else DubStatus.Subbed, null
+            )
+        }else {
+            viewModel.loadSmall(this,result)
+        }
     }
 
     override fun onColorSelected(dialogId: Int, color: Int) {
@@ -733,10 +754,14 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
     }
 
     lateinit var viewModel: ResultViewModel2
-
+    lateinit var syncViewModel : SyncViewModel
+    /** kinda dirty, however it signals that we should use the watch status as sync or not*/
+    var isLocalList : Boolean = false
     override fun onCreateView(name: String, context: Context, attrs: AttributeSet): View? {
         viewModel =
             ViewModelProvider(this)[ResultViewModel2::class.java]
+        syncViewModel =
+            ViewModelProvider(this)[SyncViewModel::class.java]
 
         return super.onCreateView(name, context, attrs)
     }
@@ -1234,6 +1259,48 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             builder.show().setDefaultFocus()
         }
 
+
+        fun setUserData(status : Resource<SyncAPI.AbstractSyncStatus>?) {
+            if (isLocalList) return
+            bottomPreviewBinding?.apply {
+                when (status) {
+                    is Resource.Success -> {
+                        resultviewPreviewBookmark.isEnabled = true
+                        resultviewPreviewBookmark.setText(status.value.status.stringRes)
+                        resultviewPreviewBookmark.setIconResource(status.value.status.iconRes)
+                    }
+
+                    is Resource.Failure -> {
+                        resultviewPreviewBookmark.isEnabled = false
+                        resultviewPreviewBookmark.setIconResource(R.drawable.ic_baseline_bookmark_border_24)
+                        resultviewPreviewBookmark.text = status.errorString
+                    }
+
+                    else -> {
+                        resultviewPreviewBookmark.isEnabled = false
+                        resultviewPreviewBookmark.setIconResource(R.drawable.ic_baseline_bookmark_border_24)
+                        resultviewPreviewBookmark.setText(R.string.loading)
+                    }
+                }
+            }
+        }
+
+        fun setWatchStatus(state : WatchType?) {
+            if (!isLocalList || state == null) return
+
+            bottomPreviewBinding?.resultviewPreviewBookmark?.apply {
+                setIconResource(state.iconRes)
+                setText(state.stringRes)
+            }
+        }
+
+        observe(viewModel.watchStatus) { state ->
+            setWatchStatus(state)
+        }
+        observe(syncViewModel.userData) { status ->
+            setUserData(status)
+        }
+
         observeNullable(viewModel.page) { resource ->
             if (resource == null) {
                 hidePreviewPopupDialog()
@@ -1273,17 +1340,37 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                             d.posterImage ?: d.posterBackgroundImage
                         )
 
-                        resultviewPreviewPoster.setOnClickListener {
-                            //viewModel.updateWatchStatus(WatchType.PLANTOWATCH)
-                            val value = viewModel.watchStatus.value ?: WatchType.NONE
+                        setUserData(syncViewModel.userData.value)
+                        setWatchStatus(viewModel.watchStatus.value)
 
-                            this@MainActivity.showBottomDialog(
-                                WatchType.values().map { getString(it.stringRes) }.toList(),
-                                value.ordinal,
-                                this@MainActivity.getString(R.string.action_add_to_bookmarks),
-                                showApply = false,
-                                {}) {
-                                viewModel.updateWatchStatus(WatchType.values()[it], this@MainActivity)
+                        resultviewPreviewBookmark.setOnClickListener {
+                            //viewModel.updateWatchStatus(WatchType.PLANTOWATCH)
+                            if (isLocalList) {
+                                val value = viewModel.watchStatus.value ?: WatchType.NONE
+
+                                this@MainActivity.showBottomDialog(
+                                    WatchType.values().map { getString(it.stringRes) }.toList(),
+                                    value.ordinal,
+                                    this@MainActivity.getString(R.string.action_add_to_bookmarks),
+                                    showApply = false,
+                                    {}) {
+                                    viewModel.updateWatchStatus(
+                                        WatchType.values()[it],
+                                        this@MainActivity
+                                    )
+                                }
+                            } else {
+                                val value = (syncViewModel.userData.value as? Resource.Success)?.value?.status ?: SyncWatchType.NONE
+
+                                this@MainActivity.showBottomDialog(
+                                    SyncWatchType.values().map { getString(it.stringRes) }.toList(),
+                                    value.ordinal,
+                                    this@MainActivity.getString(R.string.action_add_to_bookmarks),
+                                    showApply = false,
+                                    {}) {
+                                    syncViewModel.setStatus(SyncWatchType.values()[it].internalId)
+                                    syncViewModel.publishUserData()
+                                }
                             }
                         }
 

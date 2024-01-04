@@ -631,4 +631,11 @@
     <string name="enter_pin">PIN girin</string>
     <string name="pin">PIN</string>
     <string name="enter_current_pin">Geçerli PIN\'i Giriniz</string>
+    <string name="rotate_video_desc">Ekran yönü için bir geçiş düğmesi göster</string>
+    <string name="rotate_video_key">rotate_video_key</string>
+    <string name="auto_rotate_video_key">auto_rotate_video_key</string>
+    <string name="auto_rotate_video">Otomatik döndürme</string>
+    <string name="rotate_video">Döndür</string>
+    <string name="auto_rotate_video_desc">Video yönüne göre ekran yönünün otomatik olarak değişmesini sağla</string>
+    <string name="links_reloaded_toast">Bağlantılar Yeniden Yüklendi</string>
 </resources>

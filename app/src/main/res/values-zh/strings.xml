@@ -11,11 +11,11 @@
     <string name="rew_text_regular_format" formatted="true" translatable="false">%d</string>
     <string name="rating_format" formatted="true" translatable="false">%.1f/10.0</string>
     <string name="year_format" formatted="true" translatable="false">%d</string>
-    <string name="app_dub_sub_episode_text_format" formatted="true">%s 共 %d 集</string>
+    <string name="app_dub_sub_episode_text_format" formatted="true">%1$s 共 %2$d 集</string>
     <string name="cast_format" formatted="true">演员：%s</string>
     <string name="next_episode_format" formatted="true">第 %d 集将发布于</string>
-    <string name="next_episode_time_day_format" formatted="true">%dd %dh %dm</string>
-    <string name="next_episode_time_hour_format" formatted="true">%dh %dm</string>
+    <string name="next_episode_time_day_format" formatted="true">%1$dd %2$dh %3$dm</string>
+    <string name="next_episode_time_hour_format" formatted="true">%1$dh %2$dm</string>
     <string name="next_episode_time_min_format" formatted="true">%dm</string>
     <!-- IS NOT NEEDED TO TRANSLATE AS THEY ARE ONLY USED FOR SCREEN READERS AND WONT SHOW UP TO NORMAL USERS -->
     <string name="result_poster_img_des">封面</string>
@@ -32,7 +32,7 @@
     <string name="player_speed_text_format" formatted="true">速度（%.2fx）</string>
     <string name="rated_format" formatted="true">评分：%.1f</string>
     <string name="new_update_format" formatted="true">发现新版本！
-\n%s -&gt; %s</string>
+\n%1$s -&gt; %2$s</string>
     <string name="filler" formatted="true">填充</string>
     <string name="duration_format" formatted="true">%d 分钟</string>
     <string name="app_name">CloudStream</string>
@@ -193,12 +193,12 @@
     <string name="subs_default_reset_toast">重置为默认值</string>
     <string name="acra_report_toast">抱歉，应用崩溃了，将发送一份匿名错误报告给开发者</string>
     <string name="season">季</string>
-    <string name="season_format">%s %d%s</string>
+    <string name="season_format">%1$s %2$d%3$s</string>
     <string name="no_season">无季</string>
     <string name="episode">集</string>
     <string name="episodes">集</string>
-    <string name="episodes_range">%d-%d</string>
-    <string name="episode_format" formatted="true">%d %s</string>
+    <string name="episodes_range">%1$d-%2$d</string>
+    <string name="episode_format" formatted="true">%1$d %2$s</string>
     <string name="season_short">S</string>
     <string name="episode_short">E</string>
     <string name="no_episodes_found">未找到剧集</string>
@@ -345,7 +345,7 @@
     <string name="kitsu_account_settings" translatable="false">Kitsu</string>
     <string name="trakt_account_settings" translatable="false">Trakt</string>
     -->
-    <string name="login_format" formatted="true">%s %s</string>
+    <string name="login_format" formatted="true">%1$s %2$s</string>
     <string name="account">账户</string>
     <string name="logout">注销</string>
     <string name="login">登录</string>
@@ -444,8 +444,8 @@
     <string name="plugin_deleted">插件已删除</string>
     <string name="plugin_load_fail" formatted="true">无法加载 %s</string>
     <string name="is_adult">18+</string>
-    <string name="batch_download_start_format" formatted="true">开始下载 %d %s…</string>
-    <string name="batch_download_finish_format" formatted="true">已下载 %d %s</string>
+    <string name="batch_download_start_format" formatted="true">开始下载 %1$d %2$s…</string>
+    <string name="batch_download_finish_format" formatted="true">已下载 %1$d %2$s</string>
     <string name="batch_download_nothing_to_download_format" formatted="true">全部 %s 已经下载</string>
     <string name="batch_download">批量下载</string>
     <string name="plugin_singular">插件</string>

@@ -9,8 +9,8 @@
     <string name="title_home">ホーム</string>
     <string name="library">ライブラリ</string>
     <string name="home_play">再生</string>
-    <string name="next_episode_time_day_format" formatted="true">%9$d%9$d%9$d%9$d%d日 %d時間%d分</string>
-    <string name="next_episode_time_hour_format" formatted="true">%d時間%d分</string>
+    <string name="next_episode_time_day_format" formatted="true">%1$d日 %2$d時間%3$d分</string>
+    <string name="next_episode_time_hour_format" formatted="true">%1$d時間%2$d分</string>
     <string name="search_hint">検索…</string>
     <string name="download">ダウンロード</string>
     <string name="home_info">情報</string>
@@ -74,7 +74,7 @@
     <string name="sort_close">閉じる</string>
     <string name="sort_save">保存</string>
     <string name="sort_clear">消去</string>
-    <string name="app_dub_sub_episode_text_format" formatted="true">%99$d%99$s%sエピ%d</string>
+    <string name="app_dub_sub_episode_text_format" formatted="true">%1$sエピ%2$d</string>
     <string name="cast_format" formatted="true">出演者：%s</string>
     <string name="search_poster_img_des">ポスター</string>
     <string name="episode_poster_img_des">エピソードポスター</string>
@@ -83,7 +83,7 @@
     <string name="go_back_img_des">戻り</string>
     <string name="rated_format" formatted="true">視聴率 %.1f</string>
     <string name="new_update_format" formatted="true">新しいアップデートを発見!
-\n%s -&gt; %s</string>
+\n%1$s -&gt; %2$s</string>
     <string name="duration_format" formatted="true">%d分</string>
     <string name="search_hint_site" formatted="true">%sを検索…</string>
     <string name="pick_source">ソース</string>

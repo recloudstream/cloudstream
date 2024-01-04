@@ -616,4 +616,11 @@
     <string name="skip_startup_account_select_pref">تخطي اختيار الحساب عند بدء التشغيل</string>
     <string name="manage_accounts">إدارة الحسابات</string>
     <string name="edit_account">تعديل الحساب</string>
+    <string name="links_reloaded_toast">تم إعادة تحميل الروابط</string>
+    <string name="rotate_video_desc">عرض زر تبديل لاتجاه الشاشة</string>
+    <string name="rotate_video_key">مفتاح تدوير الفيديو</string>
+    <string name="auto_rotate_video_key">مفتاح تدوير الفيديو التلقائي</string>
+    <string name="auto_rotate_video">الدوران التلقائي</string>
+    <string name="rotate_video">تدوير</string>
+    <string name="auto_rotate_video_desc">تمكين التبديل التلقائي لاتجاه الشاشة بناءً على اتجاه الفيديو</string>
 </resources>

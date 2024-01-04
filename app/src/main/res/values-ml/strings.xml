@@ -4,7 +4,7 @@
     <string name="player_speed_text_format" formatted="true">വേഗം (%.2fx)</string>
     <string name="rated_format" formatted="true">റേറ്റിംഗ്: %.1f</string>
     <string name="new_update_format" formatted="true">പുതിയ അപ്ഡേറ്റ്
-\n%s -&gt; %s</string>
+\n%1$s -&gt; %2$s</string>
     <string name="app_name">CloudStream</string>
     <string name="title_home">ഹോം</string>
     <string name="title_search">തിരയുക</string>
@@ -169,10 +169,10 @@
     <string name="watch_quality_pref">ഔചിത്യ വീഡിയോ ക്വാളിറ്റി</string>
     <string name="history">ചരിത്രം</string>
     <string name="action_mark_as_watched">കണ്ടതാണെന്ന് അടയാളപ്പെടുത്തുക</string>
-    <string name="next_episode_time_day_format" formatted="true">%dd%</string>
+    <string name="next_episode_time_day_format" formatted="true">%1$d%2$d</string>
     <string name="next_episode_format" formatted="true">yg5t4r%dujyhtg</string>
     <string name="next_episode_time_hour_format" formatted="true">qeWERT</string>
-    <string name="app_dub_sub_episode_text_format" formatted="true">%fghj%gf</string>
+    <string name="app_dub_sub_episode_text_format" formatted="true">%1$sghj%2$d</string>
     <string name="cast_format" formatted="true">rtf:%</string>
     <string name="create_account">അക്കൗണ്ട് ഉണ്ടാക്കുക</string>
     <string name="delayed_update_notice">പുറത്ത്പോകുന്നതോടുകൂടി ആപ് അപ്ഡേറ്റ് ആവുന്നതാണ്</string>

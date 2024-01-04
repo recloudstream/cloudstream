@@ -1237,6 +1237,7 @@ class GeneratorPlayer : FullScreenPlayer() {
     }
 
     override fun playerDimensionsLoaded(width: Int, height: Int) {
+        super.playerDimensionsLoaded(width, height)
         setPlayerDimen(width to height)
     }
 

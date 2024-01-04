@@ -2,8 +2,8 @@
 <resources>
     <string name="episode_more_options_des">ଅଧିକ ଵିକଳ୍ପ</string>
     <string name="type_watching">ଦେଖୁଛନ୍ତି</string>
-    <string name="next_episode_time_day_format" formatted="true">%dଦି %dଘ %dମି</string>
-    <string name="next_episode_time_hour_format" formatted="true">%dଘ %dମି</string>
+    <string name="next_episode_time_day_format" formatted="true">%1$dଦି %2$dଘ %3$dମି</string>
+    <string name="next_episode_time_hour_format" formatted="true">%1$dଘ %2$dମି</string>
     <string name="next_episode_time_min_format" formatted="true">%dମି</string>
     <string name="type_re_watching">ପୁନଃଦେଖୁଛନ୍ତି</string>
     <string name="home_expanded_hide">ଲୁଚାଅ</string>
@@ -89,7 +89,7 @@
     <string name="pref_category_android_tv">ଆଣ୍ଡ୍ରଏଡ୍ ଟିଵି</string>
     <string name="pref_category_gestures">ଅଙ୍ଗଭଙ୍ଗୀ</string>
     <string name="new_update_format" formatted="true">ନୂଆ ଅଦ୍ୟତନ ମିଳିଲା!
-\n%s -&gt; %s</string>
+\n%1$s -&gt; %2$s</string>
     <string name="duration">ଅଵଧି</string>
     <string name="app_storage">ଆପ୍</string>
     <string name="restore_success">ବ୍ୟାକଅପ୍ ଫାଇଲ୍ ଧାରଣ ହେଲା</string>
@@ -157,5 +157,5 @@
     <string name="search_hint_site" formatted="true">%s ସନ୍ଧାନ କରିବା…</string>
     <string name="next_episode">ପରବର୍ତ୍ତୀ ଅଧ୍ୟାୟ</string>
     <string name="no_data">କୌଣସି ତଥ୍ୟ ନାହିଁ</string>
-    <string name="app_dub_sub_episode_text_format" formatted="true">%s ଅ %d</string>
+    <string name="app_dub_sub_episode_text_format" formatted="true">%1$s ଅ %2$d</string>
 </resources>

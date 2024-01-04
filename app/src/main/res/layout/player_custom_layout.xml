@@ -550,9 +550,18 @@
                             android:orientation="horizontal">
 
                             <com.google.android.material.button.MaterialButton
-                                android:id="@+id/player_resize_btt"
+                                android:id="@+id/player_rotate_btt"
                                 style="@style/VideoButton"
                                 android:nextFocusLeft="@id/player_lock"
+
+                                android:nextFocusRight="@id/player_resize_btt"
+                                android:text="@string/rotate_video"
+                                app:icon="@drawable/screen_rotation" />
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/player_resize_btt"
+                                style="@style/VideoButton"
+                                android:nextFocusLeft="@id/player_rotate_btt"
 
                                 android:nextFocusRight="@id/player_speed_btt"
                                 android:text="@string/video_aspect_ratio_resize"

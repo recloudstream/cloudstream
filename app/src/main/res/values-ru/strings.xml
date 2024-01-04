@@ -35,7 +35,7 @@
     <string name="player_speed_text_format" formatted="true">Скорость (%.2fx)</string>
     <string name="rated_format" formatted="true">Оценили: %.1f</string>
     <string name="new_update_format" formatted="true">Новое обновление найдено!
-\n%s -&gt; %s</string>
+\n%1$s -&gt; %2$s</string>
     <string name="filler" formatted="true">Заполнитель</string>
     <string name="app_name">CloudStream</string>
     <string name="action_remove_from_bookmarks">Убирать</string>
@@ -200,7 +200,7 @@
     <string name="discord">Присоединится в Discord</string>
     <string name="free_storage">Бесплатно</string>
     <string name="next_episode_time_min_format" formatted="true">%dm</string>
-    <string name="next_episode_time_hour_format" formatted="true">%d ч. %d мин.</string>
+    <string name="next_episode_time_hour_format" formatted="true">%1$d ч. %2$d мин.</string>
     <string name="movies">Фильмы</string>
     <string name="cartoons_singular">Мультфильм</string>
     <string name="tv_series">Сериалы</string>
@@ -282,10 +282,10 @@
     <string name="uprereleases_settings_des">Поиск предварительных обновлений вместо полных выпусков</string>
     <string name="redo_setup_process">Повторить процесс настройки</string>
     <string name="no_chromecast_support_toast">Этот провайдер не поддерживает Chromecast</string>
-    <string name="season_format">%s %d%s</string>
+    <string name="season_format">%1$s %2$d%3$s</string>
     <string name="no_season">Нет сезона</string>
-    <string name="episodes_range">%d-%d</string>
-    <string name="episode_format" formatted="true">%d %s</string>
+    <string name="episodes_range">%1$d-%2$d</string>
+    <string name="episode_format" formatted="true">%1$d %2$s</string>
     <string name="livestreams">Прямые трансляции</string>
     <string name="live_singular">Прямая трансляция</string>
     <string name="source_error">Ошибка источника</string>
@@ -390,7 +390,7 @@
     <string name="quality_cam">Cam</string>
     <string name="quality_hq">HQ</string>
     <string name="plugins_disabled" formatted="true">Отключено: %d</string>
-    <string name="login_format" formatted="true">%s %s</string>
+    <string name="login_format" formatted="true">%1$s %2$s</string>
     <string name="authenticated_user" formatted="true">%s аутентифицировано</string>
     <string name="authenticated_user_fail" formatted="true">Не удается логин на %s</string>
     <string name="max">Макс</string>
@@ -450,9 +450,9 @@
     <string name="subtitles_encoding">Кодировка субтитров</string>
     <string name="player_load_subtitles">Загрузить из файла</string>
     <string name="extension_rating" formatted="true">Рейтинг: %s</string>
-    <string name="batch_download_finish_format" formatted="true">Скачано %d %s</string>
+    <string name="batch_download_finish_format" formatted="true">Скачано %1$d %2$s</string>
     <string name="batch_download_nothing_to_download_format" formatted="true">Все %s уже скачаны</string>
-    <string name="batch_download_start_format" formatted="true">Начата загрузка %d %s…</string>
+    <string name="batch_download_start_format" formatted="true">Начата загрузка %1$d %2$s…</string>
     <string name="plugins_not_downloaded" formatted="true">Не скачано: %d</string>
     <string name="download_all_plugins_from_repo">Скачать все плагины из этого репозитория\?</string>
     <string name="safe_mode_title">Включен безопасный режим</string>

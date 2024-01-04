@@ -499,7 +499,11 @@ class CS3IPlayer : IPlayer {
         if (saveTime)
             updatedTime()
 
-        exoPlayer?.release()
+        exoPlayer?.apply {
+            setPlayWhenReady(false)
+            stop()
+            release()
+        }
         //simpleCache?.release()
         currentTextRenderer = null
 

@@ -3,10 +3,10 @@
     <string name="player_speed_text_format" formatted="true">Prędkość (%.2fx)</string>
     <string name="rated_format" formatted="true">Ocena: %.1f</string>
     <string name="new_update_format" formatted="true">Znaleziono nową aktualizację!
-\n%s -&gt; %s</string>
+\n%1$s -&gt; %2$s</string>
     <string name="filler" formatted="true">Filler</string>
     <string name="duration_format" formatted="true">%d min</string>
-    <string name="app_dub_sub_episode_text_format">%s Odc. %d</string>
+    <string name="app_dub_sub_episode_text_format">%1$s Odc. %2$d</string>
     <string name="result_poster_img_des">Obrazek</string>
     <string name="episode_poster_img_des">Obrazek odcinka</string>
     <string name="home_main_poster_img_des">Główny obrazek</string>
@@ -168,12 +168,12 @@
     <string name="subs_default_reset_toast">Zresetowano</string>
     <string name="acra_report_toast">Awaria aplikacji. Anonimowe zgłoszenie błędu zostanie wysłane programistom</string>
     <string name="season">Sezon</string>
-    <string name="season_format">%s %d%s</string>
+    <string name="season_format">%1$s %2$d%3$s</string>
     <string name="no_season">Brak sezonu</string>
     <string name="episode">Odcinek</string>
     <string name="episodes">Odcinki</string>
-    <string name="episodes_range">%d-%d</string>
-    <string name="episode_format" formatted="true">%d %s</string>
+    <string name="episodes_range">%1$d-%2$d</string>
+    <string name="episode_format" formatted="true">%1$d %2$s</string>
     <string name="season_short">S</string>
     <string name="episode_short">O</string>
     <string name="no_episodes_found">Nie znaleziono odcinków</string>
@@ -293,7 +293,7 @@
     <string name="bottom_title_settings">Pozycja tytułu względem obrazka</string>
     <string name="bottom_title_settings_des">Ustaw tytuł pod obrazkiem</string>
     <string name="example_lang_name">Kod języka (pl)</string>
-    <string name="login_format" formatted="true">%s %s</string>
+    <string name="login_format" formatted="true">%1$s %2$s</string>
     <string name="account">konto</string>
     <string name="logout">Wyloguj się</string>
     <string name="login">Zaloguj się</string>
@@ -382,8 +382,8 @@
     <string name="plugin_deleted">Usunięto rozszerzenie</string>
     <string name="plugin_load_fail" formatted="true">Błąd ładowania %s</string>
     <string name="is_adult">18+</string>
-    <string name="batch_download_start_format" formatted="true">Rozpoczęto pobieranie %d %s…</string>
-    <string name="batch_download_finish_format" formatted="true">Pobrano %d %s</string>
+    <string name="batch_download_start_format" formatted="true">Rozpoczęto pobieranie %1$d %2$s…</string>
+    <string name="batch_download_finish_format" formatted="true">Pobrano %1$d %2$s</string>
     <string name="batch_download_nothing_to_download_format" formatted="true">Wszystkie %s już pobrane</string>
     <string name="batch_download">Pobierz wszystko</string>
     <string name="plugin_singular">rozszerzenie</string>
@@ -436,11 +436,11 @@
     <string name="network_adress_example">Link do odtwarzania</string>
     <string name="play_with_app_name">Odtwórz w CloudStream</string>
     <string name="skip_type_format" formatted="true">Pomiń %s</string>
-    <string name="next_episode_time_hour_format" formatted="true">%dh %dm</string>
+    <string name="next_episode_time_hour_format" formatted="true">%1$dh %2$dm</string>
     <string name="yes">Tak</string>
     <string name="no">Nie</string>
     <string name="update_notification_failed">Aktualizacja aplikacji nie powiodła się</string>
-    <string name="next_episode_time_day_format" formatted="true">%dd %dh %dm</string>
+    <string name="next_episode_time_day_format" formatted="true">%1$dd %2$dh %3$dm</string>
     <string name="update_notification_installing">Instalowanie aktualizacji aplikacji…</string>
     <string name="next_episode_time_min_format" formatted="true">%dm</string>
     <string name="action_mark_as_watched">Oznacz jako obejrzane</string>

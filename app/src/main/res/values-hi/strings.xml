@@ -161,4 +161,35 @@
     <string name="duration_format" formatted="true">%d मिनट</string>
     <string name="app_name">क्लाउडस्ट्रीम</string>
     <string name="play_with_app_name">क्लाउडस्ट्रीम के साथ चलाएं</string>
+    <string name="duplicate_message_multiple" formatted="true">आपकी लाइब्रेरी में संभावित डुप्लिकेट आइटम पाए गए हैं:
+\n
+\n%s
+\n
+\nक्या आप किसी भी तरह इस आइटम को जोड़ना चाहेंगे, मौजूदा आइटम को बदलना चाहेंगे, या कार्रवाई रद्द करना चाहेंगे?</string>
+    <string name="enter_pin_with_name" formatted="true">%s के लिए पिन दर्ज करें</string>
+    <string name="duplicate_title">संभावित डुप्लिकेट मिला</string>
+    <string name="update_started">अपडेट शुरू हुआ</string>
+    <string name="lock_profile">प्रोफ़ाइल लॉक करें</string>
+    <string name="duplicate_replace_all">सबको बदली करें</string>
+    <string name="pin_error_incorrect">ग़लत पिन. कृपया पुन: प्रयास करें।</string>
+    <string name="browser">ब्राउज़र</string>
+    <string name="pick_subtitle">उपशीर्षक</string>
+    <string name="pin_error_length">पिन 4 अक्षर का होना चाहिए</string>
+    <string name="duplicate_replace">बदली</string>
+    <string name="duplicate_add">जोड़े</string>
+    <string name="play_trailer_button">ट्रेलर देखे</string>
+    <string name="play_livestream_button">लाइवस्ट्रीम देखे</string>
+    <string name="result_poster_img_des">विज्ञापन</string>
+    <string name="type_re_watching">दोबारा देखे</string>
+    <string name="auto_rotate_video">स्वत: घुमाएँ</string>
+    <string name="select_an_account">अकाउंट चुनिये</string>
+    <string name="skip_loading">लोडिंग स्किप करे</string>
+    <string name="loading">लोडिंग…</string>
+    <string name="duplicate_message_single" formatted="true">ऐसा प्रतीत होता है कि संभावित रूप से डुप्लिकेट आइटम आपकी लाइब्रेरी में पहले से मौजूद है: \'%s.\'
+\n
+\nक्या आप किसी भी तरह इस आइटम को जोड़ना चाहेंगे, मौजूदा आइटम को बदलना चाहेंगे, या कार्रवाई रद्द करना चाहेंगे?</string>
+    <string name="enter_pin">पिन दर्ज करें</string>
+    <string name="pin">पिन</string>
+    <string name="links_reloaded_toast">लिंक पुन्ह खुली</string>
+    <string name="enter_current_pin">वर्तमान पिन दर्ज करें</string>
 </resources>

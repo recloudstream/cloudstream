@@ -12,7 +12,7 @@
     <string name="player_speed_text_format" formatted="true">속도 (%.2fx)</string>
     <string name="rated_format" formatted="true">평점: %.1f</string>
     <string name="new_update_format" formatted="true">새로운 업데이트!
-\n%s -&gt; %s</string>
+\n%1$s -&gt; %2$s</string>
     <string name="duration_format" formatted="true">%d분</string>
     <string name="app_name">CloudStream</string>
     <string name="play_with_app_name">CloudStream에서 재생</string>
@@ -82,10 +82,10 @@
     <string name="continue_watching">계속 시청</string>
     <string name="action_remove_watching">제거</string>
     <string name="go_back_30">-30</string>
-    <string name="app_dub_sub_episode_text_format" formatted="true">%s 에피소드 %d</string>
+    <string name="app_dub_sub_episode_text_format" formatted="true">%1$s 에피소드 %2$d</string>
     <string name="result_poster_img_des">포스터</string>
-    <string name="next_episode_time_day_format" formatted="true">%d일 %d시간 %d분</string>
-    <string name="next_episode_time_hour_format" formatted="true">%d시간 %d분</string>
+    <string name="next_episode_time_day_format" formatted="true">%1$d일 %2$d시간 %3$d분</string>
+    <string name="next_episode_time_hour_format" formatted="true">%1$d시간 %2$d분</string>
     <string name="next_episode_time_min_format" formatted="true">%d분</string>
     <string name="title_search">검색</string>
     <string name="popup_delete_file">파일 삭제</string>
@@ -159,7 +159,7 @@
     <string name="subs_default_reset_toast">기본값으로 재설정</string>
     <string name="acra_report_toast">죄송합니다, 애플리케이션이 충돌했습니다. 버그 보고서가 익명으로 개발자에게 전송됩니다</string>
     <string name="episodes">에피소드</string>
-    <string name="episodes_range">%d-%d</string>
+    <string name="episodes_range">%1$d-%2$d</string>
     <string name="status_ongoing">진행중</string>
     <string name="status_completed">시청 완료</string>
     <string name="status">상태</string>
@@ -294,8 +294,8 @@
     <string name="extensions">확장 기능</string>
     <string name="extension_version">버전</string>
     <string name="is_adult">18+</string>
-    <string name="batch_download_start_format" formatted="true">다운로드 시작 %d %s…</string>
-    <string name="batch_download_finish_format" formatted="true">다운로드 %d %s</string>
+    <string name="batch_download_start_format" formatted="true">다운로드 시작 %1$d %2$s…</string>
+    <string name="batch_download_finish_format" formatted="true">다운로드 %1$d %2$s</string>
     <string name="batch_download_nothing_to_download_format" formatted="true">모든 %s가 이미 다운로드되었습니다</string>
     <string name="batch_download">일괄 다운로드</string>
     <string name="plugin_singular">플러그인</string>
@@ -351,12 +351,12 @@
     <string name="season">시즌</string>
     <string name="delete">삭제</string>
     <string name="cancel">취소</string>
-    <string name="season_format">%s %d%s</string>
+    <string name="season_format">%1$s %2$d%3$s</string>
     <string name="delete_file">파일 삭제</string>
     <string name="pause">일시정지</string>
     <string name="episode">에피소드</string>
     <string name="episode_short">에피소드</string>
-    <string name="episode_format" formatted="true">%d %s</string>
+    <string name="episode_format" formatted="true">%1$d %2$s</string>
     <string name="no_episodes_found">에피소드를 찾을 수 없음</string>
     <string name="start">시작</string>
     <string name="test_failed">실패</string>
@@ -412,7 +412,7 @@
     <string name="example_username">사용자 이름</string>
     <string name="example_lang_name">언어 코드 (ko)</string>
     <string name="example_site_name">사이트 이름</string>
-    <string name="login_format" formatted="true">%s %s</string>
+    <string name="login_format" formatted="true">%1$s %2$s</string>
     <string name="subtitle_offset_extra_hint_before_format">자막이 %d ms 너무 늦게 표시되는 경우, 사용하세요</string>
     <string name="subtitle_offset_extra_hint_none_format">자막 지연 없음</string>
     <string name="downloaded_file">다운로드한 파일</string>

@@ -5,7 +5,7 @@ import android.content.SharedPreferences
 import androidx.preference.PreferenceManager
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.json.JsonMapper
-import com.fasterxml.jackson.module.kotlin.KotlinModule
+import com.fasterxml.jackson.module.kotlin.kotlinModule
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKeyClass
 import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKeyClass
@@ -51,7 +51,7 @@ class PreferenceDelegate<T : Any>(
 }
 
 object DataStore {
-    val mapper: JsonMapper = JsonMapper.builder().addModule(KotlinModule())
+    val mapper: JsonMapper = JsonMapper.builder().addModule(kotlinModule())
         .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false).build()
 
     private fun getPreferences(context: Context): SharedPreferences {

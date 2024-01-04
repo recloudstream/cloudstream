@@ -584,4 +584,11 @@
     <string name="skip_startup_account_select_pref">Omitir la selección de cuenta al inicio</string>
     <string name="manage_accounts">Gestionar las cuentas</string>
     <string name="edit_account">Editar la cuenta</string>
+    <string name="links_reloaded_toast">Enlaces recargados</string>
+    <string name="rotate_video_desc">Mostrar un botón para cambiar la orientación de la pantalla</string>
+    <string name="rotate_video_key">rotate_video_key</string>
+    <string name="auto_rotate_video_key">auto_rotate_video_key</string>
+    <string name="auto_rotate_video">Giro automático</string>
+    <string name="rotate_video">Girar</string>
+    <string name="auto_rotate_video_desc">Activar el cambio automático de la orientación de la pantalla en función de la orientación del vídeo</string>
 </resources>

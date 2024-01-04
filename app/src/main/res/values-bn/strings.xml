@@ -4,8 +4,8 @@
     <string name="play_with_app_name">ক্লাউডস্ট্রিম দিয়ে চালান</string>
     <string name="title_home">হোম</string>
     <string name="cast_format" formatted="true">অভিনয়েঃ %s</string>
-    <string name="next_episode_time_day_format" formatted="true">%dদিন %dঘন্টা %dমিনিট</string>
-    <string name="next_episode_time_hour_format" formatted="true">%dঘন্টা %dমিনিট</string>
+    <string name="next_episode_time_day_format" formatted="true">%1$dদিন %2$dঘন্টা %3$dমিনিট</string>
+    <string name="next_episode_time_hour_format" formatted="true">%1$dঘন্টা %2$dমিনিট</string>
     <string name="next_episode_time_min_format" formatted="true">%d মিনিট</string>
     <string name="episode_poster_img_des">পর্বের পোস্টার</string>
     <string name="home_main_poster_img_des">মূল পোস্টার</string>
@@ -16,7 +16,7 @@
     <string name="player_speed_text_format" formatted="true">গতি (%.2f গুণ)</string>
     <string name="rated_format" formatted="true">মূল্যায়নঃ %.1f</string>
     <string name="new_update_format" formatted="true">নতুন আপডেট এসেছে!
-\n%s -&gt; %s</string>
+\n%1$s -&gt; %2$s</string>
     <string name="filler" formatted="true">ফিলার</string>
     <string name="duration_format" formatted="true">%d মিনিট</string>
     <string name="app_name">ক্লাউডস্ট্রিম</string>

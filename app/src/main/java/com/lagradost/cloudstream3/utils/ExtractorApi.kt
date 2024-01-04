@@ -96,12 +96,27 @@ import com.lagradost.cloudstream3.extractors.Moviesm4u
 import com.lagradost.cloudstream3.extractors.Mp4Upload
 import com.lagradost.cloudstream3.extractors.Mvidoo
 import com.lagradost.cloudstream3.extractors.MwvnVizcloudInfo
+import com.lagradost.cloudstream3.extractors.MyCloud
 import com.lagradost.cloudstream3.extractors.Neonime7n
 import com.lagradost.cloudstream3.extractors.Neonime8n
-import com.lagradost.cloudstream3.extractors.OkRu
-import com.lagradost.cloudstream3.extractors.OkRuHttps
+import com.lagradost.cloudstream3.extractors.Odnoklassniki
+import com.lagradost.cloudstream3.extractors.TauVideo
+import com.lagradost.cloudstream3.extractors.SibNet
+import com.lagradost.cloudstream3.extractors.ContentX
+import com.lagradost.cloudstream3.extractors.Hotlinger
+import com.lagradost.cloudstream3.extractors.HDMomPlayer
+import com.lagradost.cloudstream3.extractors.HDPlayerSystem
+import com.lagradost.cloudstream3.extractors.VideoSeyred
+import com.lagradost.cloudstream3.extractors.PeaceMakerst
+import com.lagradost.cloudstream3.extractors.HDStreamAble
+import com.lagradost.cloudstream3.extractors.RapidVid
+import com.lagradost.cloudstream3.extractors.TRsTX
+import com.lagradost.cloudstream3.extractors.VidMoxy
+import com.lagradost.cloudstream3.extractors.PixelDrain
+import com.lagradost.cloudstream3.extractors.MailRu
+import com.lagradost.cloudstream3.extractors.OkRuSSL
+import com.lagradost.cloudstream3.extractors.OkRuHTTP
 import com.lagradost.cloudstream3.extractors.Okrulink
-import com.lagradost.cloudstream3.extractors.Pixeldrain
 import com.lagradost.cloudstream3.extractors.PlayLtXyz
 import com.lagradost.cloudstream3.extractors.PlayerVoxzer
 import com.lagradost.cloudstream3.extractors.Rabbitstream
@@ -168,6 +183,7 @@ import com.lagradost.cloudstream3.extractors.Vidmoly
 import com.lagradost.cloudstream3.extractors.Vidmolyme
 import com.lagradost.cloudstream3.extractors.Vido
 import com.lagradost.cloudstream3.extractors.Vidplay
+import com.lagradost.cloudstream3.extractors.VidplayOnline
 import com.lagradost.cloudstream3.extractors.Vidstreamz
 import com.lagradost.cloudstream3.extractors.Vizcloud
 import com.lagradost.cloudstream3.extractors.Vizcloud2
@@ -662,11 +678,27 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     Evoload1(),
     UpstreamExtractor(),
 
+    Odnoklassniki(),
+    TauVideo(),
+    SibNet(),
+    ContentX(),
+    Hotlinger(),
+    HDMomPlayer(),
+    HDPlayerSystem(),
+    VideoSeyred(),
+    PeaceMakerst(),
+    HDStreamAble(),
+    RapidVid(),
+    TRsTX(),
+    VidMoxy(),
+    PixelDrain(),
+    MailRu(),
+
     Tomatomatela(),
     TomatomatelalClub(),
     Cinestart(),
-    OkRu(),
-    OkRuHttps(),
+    OkRuSSL(),
+    OkRuHTTP(),
     Okrulink(),
     Sendvid(),
 
@@ -746,7 +778,6 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     Movhide(),
     StreamhideCom(),
     StreamhideTo(),
-    Pixeldrain(),
     Wibufile(),
     FileMoonIn(),
     Moviesm4u(),
@@ -795,6 +826,8 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     PlayLtXyz(),
     AStreamHub(),
     Vidplay(),
+    VidplayOnline(),
+    MyCloud(),
 
     Cda(),
     Dailymotion(),

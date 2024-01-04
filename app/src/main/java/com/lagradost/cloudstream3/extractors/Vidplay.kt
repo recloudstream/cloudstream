@@ -12,10 +12,22 @@ import javax.crypto.spec.SecretKeySpec
 
 // Code found in https://github.com/Claudemirovsky/worstsource-keys
 // special credits to @Claudemirovsky for providing key
+
+class MyCloud : Vidplay() {
+    override val name = "MyCloud"
+    override val mainUrl = "https://mcloud.bz"
+}
+
+class VidplayOnline : Vidplay() {
+    override val mainUrl = "https://vidplay.online"
+}
+
 open class Vidplay : ExtractorApi() {
     override val name = "Vidplay"
     override val mainUrl = "https://vidplay.site"
     override val requiresReferer = true
+    open val key =
+        "https://raw.githubusercontent.com/Claudemirovsky/worstsource-keys/keys/keys.json"
 
     override suspend fun getUrl(
         url: String,
@@ -44,8 +56,7 @@ open class Vidplay : ExtractorApi() {
     }
 
     private suspend fun getKeys(): List<String> {
-        return app.get("https://raw.githubusercontent.com/Claudemirovsky/worstsource-keys/keys/keys.json")
-            .parsed()
+        return app.get(key).parsed()
     }
 
     private suspend fun callFutoken(id: String, url: String): String? {

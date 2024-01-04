@@ -33,6 +33,7 @@ import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.openBrowser
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.CommonActivity
+import com.lagradost.cloudstream3.MainActivity
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.FragmentLibraryBinding
 import com.lagradost.cloudstream3.mvvm.Resource
@@ -293,11 +294,12 @@ class LibraryFragment : Fragment() {
 
                 when (searchClickCallback.action) {
                     SEARCH_ACTION_SHOW_METADATA -> {
-                        activity?.showPluginSelectionDialog(
+                        (activity as? MainActivity)?.loadPopup(searchClickCallback.card, load = false)
+                    /*activity?.showPluginSelectionDialog(
                             syncId,
                             syncName,
                             searchClickCallback.card.apiName
-                        )
+                        )*/
                     }
 
                     SEARCH_ACTION_LOAD -> {

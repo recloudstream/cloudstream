@@ -13,6 +13,7 @@ import com.lagradost.cloudstream3.syncproviders.AccountManager
 import com.lagradost.cloudstream3.syncproviders.AuthAPI
 import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.syncproviders.SyncIdName
+import com.lagradost.cloudstream3.ui.SyncWatchType
 import com.lagradost.cloudstream3.ui.library.ListSorting
 import com.lagradost.cloudstream3.ui.result.txt
 import com.lagradost.cloudstream3.utils.AppUtils.parseJson
@@ -165,7 +166,7 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
         return SyncAPI.SyncStatus(
             score = data.score,
             watchedEpisodes = data.progress,
-            status = data.type?.value ?: return null,
+            status = SyncWatchType.fromInternalId(data.type?.value ?: return null),
             isFavorite = data.isFavourite,
             maxEpisodes = data.episodes,
         )
@@ -174,7 +175,7 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
     override suspend fun score(id: String, status: SyncAPI.AbstractSyncStatus): Boolean {
         return postDataAboutId(
             id.toIntOrNull() ?: return false,
-            fromIntToAnimeStatus(status.status),
+            fromIntToAnimeStatus(status.status.internalId),
             status.score,
             status.watchedEpisodes
         ).also {
@@ -595,7 +596,7 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
         //@JsonProperty("source") val source: String,
         @JsonProperty("episodes") val episodes: Int,
         @JsonProperty("title") val title: Title,
-        //@JsonProperty("description") val description: String,
+        @JsonProperty("description") val description: String?,
         @JsonProperty("coverImage") val coverImage: CoverImage,
         @JsonProperty("synonyms") val synonyms: List<String>,
         @JsonProperty("nextAiringEpisode") val nextAiringEpisode: SeasonNextAiringEpisode?,
@@ -629,7 +630,8 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
                 ?: this.media.coverImage.medium,
                 null,
                 null,
-                null
+                null,
+                plot = this.media.description
             )
         }
     }

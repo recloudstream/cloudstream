@@ -75,6 +75,7 @@ private const val SUBTITLE_DELAY_BUNDLE_KEY = "subtitle_delay"
 
 // All the UI Logic for the player
 open class FullScreenPlayer : AbstractPlayerFragment() {
+    private var isVerticalOrientation: Boolean = false
     protected open var lockRotation = true
     protected open var isFullScreenPlayer = true
     protected open var isTv = false
@@ -111,6 +112,8 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
     protected var playerResizeEnabled = false
     protected var doubleTapEnabled = false
     protected var doubleTapPauseEnabled = true
+    protected var playerRotateEnabled = false
+    protected var autoPlayerRotateEnabled = false
 
     protected var subtitleDelay
         set(value) = try {
@@ -286,6 +289,38 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
             player.getCurrentPreferredSubtitle() == null
     }
 
+    private fun restoreOrientationWithSensor(activity: Activity){
+        val currentOrientation = activity.resources.configuration.orientation
+        var orientation = 0
+        when (currentOrientation) {
+            Configuration.ORIENTATION_LANDSCAPE ->
+                orientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
+
+            Configuration.ORIENTATION_SQUARE, Configuration.ORIENTATION_UNDEFINED ->
+                orientation = dynamicOrientation()
+
+            Configuration.ORIENTATION_PORTRAIT ->
+                orientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT
+        }
+        activity.requestedOrientation = orientation
+    }
+
+    private fun toggleOrientationWithSensor(activity: Activity){
+        val currentOrientation = activity.resources.configuration.orientation
+        var orientation = 0
+        when (currentOrientation) {
+            Configuration.ORIENTATION_LANDSCAPE ->
+                orientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT
+
+            Configuration.ORIENTATION_SQUARE, Configuration.ORIENTATION_UNDEFINED ->
+                orientation = dynamicOrientation()
+
+            Configuration.ORIENTATION_PORTRAIT ->
+                orientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
+        }
+        activity.requestedOrientation = orientation
+    }
+
     open fun lockOrientation(activity: Activity) {
         val display =
             (activity.getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay
@@ -293,24 +328,39 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         val currentOrientation = activity.resources.configuration.orientation
         var orientation = 0
         when (currentOrientation) {
-            Configuration.ORIENTATION_LANDSCAPE -> orientation =
-                if (rotation == Surface.ROTATION_0 || rotation == Surface.ROTATION_90) ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE else ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE
+            Configuration.ORIENTATION_LANDSCAPE ->
+                orientation =
+                    if (rotation == Surface.ROTATION_0 || rotation == Surface.ROTATION_90)
+                        ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+                    else
+                        ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE
 
-            Configuration.ORIENTATION_SQUARE, Configuration.ORIENTATION_UNDEFINED, Configuration.ORIENTATION_PORTRAIT -> ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
-            //Configuration.ORIENTATION_PORTRAIT -> orientation =
-            //    if (rotation == Surface.ROTATION_0 || rotation == Surface.ROTATION_270) ActivityInfo.SCREEN_ORIENTATION_PORTRAIT else ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT
+            Configuration.ORIENTATION_SQUARE, Configuration.ORIENTATION_UNDEFINED ->
+                orientation = dynamicOrientation()
+
+            Configuration.ORIENTATION_PORTRAIT ->
+                orientation =
+                    if (rotation == Surface.ROTATION_0 || rotation == Surface.ROTATION_270)
+                        ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+                    else
+                        ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT
         }
         activity.requestedOrientation = orientation
     }
 
-    private fun updateOrientation() {
+    private fun updateOrientation(ignoreDynamicOrientation: Boolean = false) {
         activity?.apply {
             if(lockRotation) {
                 if(isLocked) {
                     lockOrientation(this)
                 }
                 else {
-                    requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
+                    if(ignoreDynamicOrientation){
+                        // restore when lock is disabled
+                        restoreOrientationWithSensor(this)
+                    } else {
+                        this.requestedOrientation = dynamicOrientation()
+                    }
                 }
             }
         }
@@ -584,7 +634,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         }
 
         isLocked = !isLocked
-        updateOrientation()
+        updateOrientation(true) // set true to ignore auto rotate to stay in current orientation
 
         if (isLocked && isShowing) {
             playerBinding?.playerHolder?.postDelayed({
@@ -1326,6 +1376,14 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                     ctx.getString(R.string.playback_speed_enabled_key),
                     false
                 )
+                playerRotateEnabled = settingsManager.getBoolean(
+                    ctx.getString(R.string.rotate_video_key),
+                    false
+                )
+                autoPlayerRotateEnabled = settingsManager.getBoolean(
+                    ctx.getString(R.string.auto_rotate_video_key),
+                    false
+                )
                 playerResizeEnabled =
                     settingsManager.getBoolean(
                         ctx.getString(R.string.player_resize_enabled_key),
@@ -1362,6 +1420,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
             playerBinding?.apply {
                 playerSpeedBtt.isVisible = playBackSpeedEnabled
                 playerResizeBtt.isVisible = playerResizeEnabled
+                playerRotateBtt.isVisible = playerRotateEnabled
             }
         } catch (e: Exception) {
             logError(e)
@@ -1374,6 +1433,11 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
             skipChapterButton.setOnClickListener {
                 player.handleEvent(CSPlayerEvent.SkipCurrentChapter)
+            }
+
+            playerRotateBtt.setOnClickListener {
+                autoHide()
+                toggleRotate()
             }
 
             // init clicks
@@ -1479,6 +1543,30 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
             //}
         } catch (e: Exception) {
             logError(e)
+        }
+    }
+
+    @SuppressLint("SourceLockedOrientationActivity")
+    private fun toggleRotate() {
+        activity?.let {
+            toggleOrientationWithSensor(it)
+        }
+    }
+
+    override fun playerDimensionsLoaded(width: Int, height: Int) {
+        isVerticalOrientation = height > width
+        updateOrientation()
+    }
+
+    private fun dynamicOrientation(): Int {
+        return if (autoPlayerRotateEnabled) {
+            if (isVerticalOrientation) {
+                ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT
+            } else {
+                ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
+            }
+        } else {
+            ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE // default orientation
         }
     }
 }

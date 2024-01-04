@@ -126,8 +126,8 @@
     <string name="update">Mettre à jour</string>
     <string name="dns_pref_summary">Utile pour contourner les bloquages des FAI</string>
     <string name="download_path_pref">Emplacement de téléchargement</string>
-    <string name="new_update_format" formatted="true">Nouvelle mise à jour trouvée !
-\n%s -&gt; %s</string>
+    <string name="new_update_format" formatted="true">Nouvelle mise à jour trouvée !
+\n%1$s -&gt; %2$s</string>
     <string name="filler" formatted="true">Épisode spécial</string>
     <string name="watch_quality_pref">Qualité de visionnage préférée (WiFi)</string>
     <string name="video_buffer_size_settings">Taille de la mémoire cache</string>
@@ -140,7 +140,7 @@
     <string name="dns_pref">DNS avec HTTPS</string>
     <string name="display_subbed_dubbed_settings">Afficher les animés en Anglais (Dub) / sous-titrés</string>
     <string name="phone_layout">Disposition en mode téléphone</string>
-    <string name="app_dub_sub_episode_text_format">%s Ep %d</string>
+    <string name="app_dub_sub_episode_text_format">%1$s Episode %2$d</string>
     <string name="rated_format" formatted="true">Note : %.1f</string>
     <string name="resize_zoom">Zoom</string>
     <string name="resize_fit">Adapter à l\'écran</string>
@@ -300,7 +300,7 @@
     <string name="lightnovel">Application Light Novel par les mêmes devs</string>
     <string name="anim">Anime app by the same devs</string>
     <string name="discord">Rejoignez le Discord</string>
-    <string name="next_episode_time_hour_format" formatted="true">%d h %d min</string>
+    <string name="next_episode_time_hour_format" formatted="true">%1$d h %2$d min</string>
     <string name="next_episode_time_min_format" formatted="true">%d min</string>
     <string name="play_with_app_name">Lire avec CloudStream</string>
     <string name="play_livestream_button">Lire en direct</string>
@@ -315,7 +315,7 @@
     <string name="skip_type_intro">Intro</string>
     <string name="clear_history">Effacer l\'historique</string>
     <string name="yes">Oui</string>
-    <string name="next_episode_time_day_format" formatted="true">%d j %d h %d min</string>
+    <string name="next_episode_time_day_format" formatted="true">%1$d j %2$d h %3$d min</string>
     <string name="stream">Stream</string>
     <string name="confirm_exit_dialog">Êtes-vous sûr·e de vouloir quitter \?</string>
     <string name="no">Non</string>
@@ -366,9 +366,9 @@
     <string name="quality_dvd">DVD</string>
     <string name="next">Suivant</string>
     <string name="quality_blueray">Blu-ray</string>
-    <string name="season_format">%s %d%s</string>
-    <string name="episodes_range">%d-%d</string>
-    <string name="episode_format" formatted="true">%d %s</string>
+    <string name="season_format">%1$s %2$d%3$s</string>
+    <string name="episodes_range">%1$d-%2$d</string>
+    <string name="episode_format" formatted="true">%1$d %2$s</string>
     <string name="nsfw">NSFW</string>
     <string name="example_ip">127.0.0.1</string>
     <string name="sync_score_format" formatted="true">%d / 10</string>
@@ -387,7 +387,7 @@
     <string name="anime_singular">@string/anime</string>
     <string name="ova_singular">OAV</string>
     <string name="nsfw_singular">NSFW</string>
-    <string name="login_format" formatted="true">%s %s</string>
+    <string name="login_format" formatted="true">%1$s %2$s</string>
     <string name="subtitles_filter_lang">Filtrez par langue préférée</string>
     <string name="extras">Extras</string>
     <string name="network_adress_example">Lien vers le stream</string>
@@ -414,8 +414,8 @@
     <string name="plugin_loaded">Plugin Chargé</string>
     <string name="plugin_deleted">Plugin Supprimé</string>
     <string name="batch_download">Téléchargement par lots</string>
-    <string name="batch_download_start_format" formatted="true">Début du téléchargement %d %s…</string>
-    <string name="batch_download_finish_format" formatted="true">Téléchargé %d %s</string>
+    <string name="batch_download_start_format" formatted="true">Début du téléchargement %1$d %2$s…</string>
+    <string name="batch_download_finish_format" formatted="true">Téléchargé %1$d %2$s</string>
     <string name="batch_download_nothing_to_download_format" formatted="true">Tous les %s déjà téléchargés</string>
     <string name="setup_extensions_subtext">Télécharger la liste de sites que vous voulez utiliser</string>
     <string name="plugins_downloaded" formatted="true">Téléchargé : %d</string>
@@ -568,4 +568,21 @@
     <string name="select_an_account">Sélectionnez un compte</string>
     <string name="enter_pin">Entrer PIN</string>
     <string name="pin">PIN</string>
+    <string name="favorites_list_name">Favoris</string>
+    <string name="logged_account" formatted="true">Connecté en tant que %s</string>
+    <string name="duplicate_message_multiple" formatted="true">Des doublons potentiels ont été trouvés dans votre bibliothèque :
+\n
+\n%s
+\n
+\nSouhaitez-vous ajouter cet élément, remplacer les éléments existants ou annuler l\'action ?</string>
+    <string name="enter_pin_with_name" formatted="true">Entrer le code PIN pour %s</string>
+    <string name="duplicate_title">Doublon potentiel trouvé</string>
+    <string name="lock_profile">Verrouiller le profil</string>
+    <string name="skip_startup_account_select_pref">Passer la sélection de compte au démarrage</string>
+    <string name="action_unsubscribe">Se désabonner</string>
+    <string name="action_subscribe">S\'abonner</string>
+    <string name="duplicate_message_single" formatted="true">Il semble qu\'un élément potentiellement dupliqué existe déjà dans votre bibliothèque : \'%s.
+\n
+\nSouhaitez-vous ajouter cet élément, remplacer l\'élément existant ou annuler l\'action ?</string>
+    <string name="enter_current_pin">Entrer le code PIN actuel</string>
 </resources>

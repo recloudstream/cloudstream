@@ -608,4 +608,11 @@
     <string name="skip_startup_account_select_pref">Přeskočit výběr účtu při spuštění</string>
     <string name="manage_accounts">Správce účtů</string>
     <string name="edit_account">Upravit účet</string>
+    <string name="links_reloaded_toast">Odkazy znovu načteny</string>
+    <string name="rotate_video_desc">Zobrazit tlačítko pro přepnutí otočení obrazovky</string>
+    <string name="rotate_video_key">rotate_video_key</string>
+    <string name="auto_rotate_video_key">auto_rotate_video_key</string>
+    <string name="auto_rotate_video">Automatické otáčení</string>
+    <string name="rotate_video">Otočení</string>
+    <string name="auto_rotate_video_desc">Zapnout automatické otáčení obrazovky v závislosti na orientaci videa</string>
 </resources>
