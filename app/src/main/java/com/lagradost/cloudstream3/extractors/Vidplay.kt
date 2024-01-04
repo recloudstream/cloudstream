@@ -43,14 +43,22 @@ open class Vidplay : ExtractorApi() {
                 "Accept" to "application/json, text/javascript, */*; q=0.01",
                 "X-Requested-With" to "XMLHttpRequest",
             ), referer = url
-        ).parsedSafe<Response>()?.result?.sources
+        ).parsedSafe<Response>()?.result
 
-        res?.map {
+        res?.sources?.map {
             M3u8Helper.generateM3u8(
                 this.name,
                 it.file ?: return@map,
                 "$mainUrl/"
             ).forEach(callback)
+        }
+
+        res?.tracks?.forEach {
+            val subtitle = it.file ?: return@forEach
+            val lang = it.label ?: return@forEach
+            subtitleCallback.invoke(
+                SubtitleFile(lang, subtitle)
+            )
         }
 
     }
@@ -92,8 +100,14 @@ open class Vidplay : ExtractorApi() {
         @JsonProperty("file") val file: String? = null,
     )
 
+    data class Tracks(
+        @JsonProperty("file") var file: String? = null,
+        @JsonProperty("label") var label: String? = null,
+    )
+
     data class Result(
-        @JsonProperty("sources") val sources: ArrayList<Sources>? = arrayListOf(),
+        @JsonProperty("sources") val sources: List<Sources> = emptyList(),
+        @JsonProperty("tracks") var tracks: List<Tracks> = emptyList()
     )
 
     data class Response(
