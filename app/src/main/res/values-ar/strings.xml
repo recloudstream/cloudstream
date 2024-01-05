@@ -618,7 +618,7 @@
     <string name="edit_account">تعديل الحساب</string>
     <string name="links_reloaded_toast">تم إعادة تحميل الروابط</string>
     <string name="rotate_video_desc">عرض زر تبديل لاتجاه الشاشة</string>
-    <string name="rotate_video_key">مفتاح تدوير الفيديو</string>
+    <string name="rotate_video_key">تدوير الفيديو</string>
     <string name="auto_rotate_video_key">مفتاح تدوير الفيديو التلقائي</string>
     <string name="auto_rotate_video">الدوران التلقائي</string>
     <string name="rotate_video">تدوير</string>
