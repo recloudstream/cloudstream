@@ -262,4 +262,8 @@
     <string name="add_account">Magdagdag ng Account</string>
     <string name="history">Kasaysayan</string>
     <string name="action_mark_as_watched">I-tanda bilang napanood na</string>
+    <string name="update_started">Nagsimula ang Update</string>
+    <string name="chromecast_subtitles_settings">Mga Subtitle ng Chromecast</string>
+    <string name="chromecast_subtitles_settings_des">Mga setting ng mga subtitle ng Chromecast</string>
+    <string name="play_trailer_button">Maglaro ng Trailer</string>
 </resources>

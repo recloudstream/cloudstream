@@ -432,4 +432,5 @@
     <string name="profiles">Profiler</string>
     <string name="help">Hjälp</string>
     <string name="qualities">Kvalitet</string>
+    <string name="stream">Ström</string>
 </resources>

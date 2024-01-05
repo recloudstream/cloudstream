@@ -554,4 +554,42 @@
     <string name="no_plugins_found_error">Nie znaleziono żadnych wtyczek w repozytorium</string>
     <string name="already_voted">Już oddano głos</string>
     <string name="no_repository_found_error">Nie znaleziono tego repozytorium, sprawdź adres URL lub spróbuj połączyć się przez VPN</string>
+    <string name="favorite_removed">Usunięto %s z ulubionych</string>
+    <string name="favorites_list_name">Ulubione</string>
+    <string name="favorite_added">Dodano %s do ulubionych</string>
+    <string name="duplicate_message_multiple" formatted="true">W swojej bibliotece znaleziono potencjalne duplikaty:
+\n
+\n%s
+\n
+\nCzy chcesz dodać ten element, zastąpić istniejące, czy anulować operację?</string>
+    <string name="enter_pin_with_name" formatted="true">Wprowadź pin dla %s</string>
+    <string name="backup_frequency">Częstotliwość tworzenia kopii zapasowych</string>
+    <string name="duplicate_title">Znaleziono potencjalny duplikat</string>
+    <string name="lock_profile">Zablokuj profil</string>
+    <string name="action_add_to_favorites">Dodaj do ulubionych</string>
+    <string name="manage_accounts">Zarządzaj kontami</string>
+    <string name="duplicate_replace_all">Zamień wszystko</string>
+    <string name="edit_account">Edytuj konto</string>
+    <string name="pin_error_incorrect">Nieprawidłowy PIN. Spróbuj ponownie.</string>
+    <string name="action_unsubscribe">Anuluj subskrypcję</string>
+    <string name="pin_error_length">Kod PIN musi mieć 4 znaki</string>
+    <string name="duplicate_replace">Zastąp</string>
+    <string name="duplicate_add">Dodaj</string>
+    <string name="action_subscribe">Zasubskrybuj</string>
+    <string name="action_remove_from_favorites">Usuń z ulubionych</string>
+    <string name="select_an_account">Wybierz konto</string>
+    <string name="duplicate_message_single" formatted="true">Wygląda się, że potencjalny duplikat już znajduje się w bibliotece: \'%s\'. \'
+\n
+\nCzy chciałbyś dodać ten element, zastąpić istniejący, czy anulować akcję?</string>
+    <string name="enter_pin">Wprowadź PIN</string>
+    <string name="pin">PIN</string>
+    <string name="links_reloaded_toast">Linki załadowane ponownie</string>
+    <string name="enter_current_pin">Wprowadź obecny PIN</string>
+    <string name="logged_account" formatted="true">Zalogowano jako %s</string>
+    <string name="rotate_video_desc">Wyświetl przycisk przełączający orientację ekranu</string>
+    <string name="use_default_account">Używaj domyślnego konta</string>
+    <string name="skip_startup_account_select_pref">Pomiń wybór konta podczas uruchamiania</string>
+    <string name="auto_rotate_video">Automatyczny obrót</string>
+    <string name="rotate_video">Obrót</string>
+    <string name="auto_rotate_video_desc">Włącz automatyczne przełączanie orientacji ekranu na podstawie orientacji filmu</string>
 </resources>
