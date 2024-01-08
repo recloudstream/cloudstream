@@ -1331,15 +1331,6 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
             } else false
         }
 
-        //player_episodes_button?.setOnClickListener {
-        //    player_episodes_button?.isGone = true
-        //    player_episode_list?.isVisible = true
-        //}
-//
-        //player_episode_list?.adapter = PlayerEpisodeAdapter { click ->
-//
-        //}
-
         try {
             context?.let { ctx ->
                 val settingsManager = PreferenceManager.getDefaultSharedPreferences(ctx)
@@ -1424,6 +1415,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         } catch (e: Exception) {
             logError(e)
         }
+
         playerBinding?.apply {
             playerPausePlay.setOnClickListener {
                 autoHide()
