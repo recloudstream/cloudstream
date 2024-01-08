@@ -683,6 +683,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     SibNet(),
     ContentX(),
     Hotlinger(),
+    FourCX(),
     HDMomPlayer(),
     HDPlayerSystem(),
     VideoSeyred(),
