@@ -7,14 +7,15 @@ import android.content.Context
 import android.content.pm.ActivityInfo
 import android.content.res.ColorStateList
 import android.content.res.Configuration
-import android.content.res.Resources
 import android.graphics.Color
 import android.media.AudioManager
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.provider.Settings
 import android.text.Editable
-import android.util.DisplayMetrics
+import android.text.format.DateUtils
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -34,8 +35,6 @@ import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
 import androidx.preference.PreferenceManager
-import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
-import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.CommonActivity.keyEventListener
 import com.lagradost.cloudstream3.CommonActivity.playerEventListener
 import com.lagradost.cloudstream3.CommonActivity.screenHeight
@@ -62,7 +61,6 @@ import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import com.lagradost.cloudstream3.utils.Vector2
 import kotlin.math.*
 
-
 const val MINIMUM_SEEK_TIME = 7000L         // when swipe seeking
 const val MINIMUM_VERTICAL_SWIPE = 2.0f     // in percentage
 const val MINIMUM_HORIZONTAL_SWIPE = 2.0f   // in percentage
@@ -79,9 +77,9 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
     protected open var lockRotation = true
     protected open var isFullScreenPlayer = true
     protected open var isTv = false
-
     protected var playerBinding: PlayerCustomLayoutBinding? = null
-
+    private val handler = Handler(Looper.getMainLooper())
+    private var isRemainingTimeEnabled = false
 
     // state of player UI
     protected var isShowing = false
@@ -399,6 +397,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
     }
 
     override fun onDestroy() {
+        stopUpdatingRemainingTime()
         exitFullscreen()
         player.release()
         player.releaseCallbacks()
@@ -1431,6 +1430,14 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                 player.handleEvent(CSPlayerEvent.PlayPauseToggle)
             }
 
+            exoDuration.setOnClickListener {
+                if (!isRemainingTimeEnabled) {
+                    startUpdatingRemainingTime()
+                } else {
+                    stopUpdatingRemainingTime()
+                }
+            }
+
             skipChapterButton.setOnClickListener {
                 player.handleEvent(CSPlayerEvent.SkipCurrentChapter)
             }
@@ -1518,29 +1525,6 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         // init UI
         try {
             uiReset()
-
-            // init chromecast UI
-            // removed due to having no use and bugging
-            //activity?.let {
-            //    if (it.isCastApiAvailable()) {
-            //        try {
-            //            CastButtonFactory.setUpMediaRouteButton(it, player_media_route_button)
-            //            val castContext = CastContext.getSharedInstance(it.applicationContext)
-            //
-            //            player_media_route_button?.isGone =
-            //                castContext.castState == CastState.NO_DEVICES_AVAILABLE
-            //            castContext.addCastStateListener { state ->
-            //                player_media_route_button?.isGone =
-            //                    state == CastState.NO_DEVICES_AVAILABLE
-            //            }
-            //        } catch (e: Exception) {
-            //            logError(e)
-            //        }
-            //    } else {
-            //        // if cast is not possible hide UI
-            //        player_media_route_button?.isGone = true
-            //    }
-            //}
         } catch (e: Exception) {
             logError(e)
         }
@@ -1556,6 +1540,36 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
     override fun playerDimensionsLoaded(width: Int, height: Int) {
         isVerticalOrientation = height > width
         updateOrientation()
+    }
+
+    private fun updateRemainingTime() {
+
+        val duration = player.getDuration()
+        val position = player.getPosition()
+
+        if (duration != null && position != null) {
+            val remainingTimeSeconds = (duration - position) / 1000
+            val formattedTime = "-${DateUtils.formatElapsedTime(remainingTimeSeconds)}"
+
+            playerBinding?.exoDuration?.text = formattedTime
+            isRemainingTimeEnabled = true
+        }
+    }
+
+    private fun startUpdatingRemainingTime() {
+        handler.post(object : Runnable {
+            override fun run() {
+                updateRemainingTime()
+                handler.postDelayed(this, 1000) // realtime decrement
+            }
+        })
+    }
+
+    private fun stopUpdatingRemainingTime() {
+        handler.removeCallbacksAndMessages(null)
+        val totalDuration = player.getDuration()!! / 1000
+        playerBinding?.exoDuration?.text = DateUtils.formatElapsedTime(totalDuration)
+        isRemainingTimeEnabled = false
     }
 
     private fun dynamicOrientation(): Int {
