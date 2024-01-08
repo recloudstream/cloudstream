@@ -152,6 +152,7 @@ import com.lagradost.cloudstream3.extractors.StreamSB8
 import com.lagradost.cloudstream3.extractors.StreamSB9
 import com.lagradost.cloudstream3.extractors.StreamTape
 import com.lagradost.cloudstream3.extractors.StreamTapeNet
+import com.lagradost.cloudstream3.extractors.StreamTapeXyz
 import com.lagradost.cloudstream3.extractors.StreamhideCom
 import com.lagradost.cloudstream3.extractors.StreamhideTo
 import com.lagradost.cloudstream3.extractors.Streamhub2
@@ -620,6 +621,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     StreamTape(),
     StreamTapeNet(),
     ShaveTape(),
+    StreamTapeXyz(),
 
     //mixdrop extractors
     MixDropBz(),
