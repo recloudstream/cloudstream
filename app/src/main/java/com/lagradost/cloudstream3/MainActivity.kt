@@ -28,6 +28,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.children
 import androidx.core.view.isGone
+import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.core.view.marginStart
 import androidx.fragment.app.FragmentActivity
@@ -128,6 +129,7 @@ import com.lagradost.cloudstream3.utils.AppUtils.setDefaultFocus
 import com.lagradost.cloudstream3.utils.BackupUtils.backup
 import com.lagradost.cloudstream3.utils.BackupUtils.setUpBackup
 import com.lagradost.cloudstream3.utils.BiometricAuthenticator
+import com.lagradost.cloudstream3.utils.BiometricAuthenticator.TAG
 import com.lagradost.cloudstream3.utils.BiometricAuthenticator.isTruePhone
 import com.lagradost.cloudstream3.utils.BiometricAuthenticator.promptInfo
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
@@ -165,7 +167,6 @@ import kotlin.math.abs
 import kotlin.math.absoluteValue
 import kotlin.reflect.KClass
 import kotlin.system.exitProcess
-
 
 //https://github.com/videolan/vlc-android/blob/3706c4be2da6800b3d26344fc04fab03ffa4b860/application/vlc-android/src/org/videolan/vlc/gui/video/VideoPlayerActivity.kt#L1898
 //https://wiki.videolan.org/Android_Player_Intents/
@@ -285,7 +286,7 @@ var app = Requests(responseParser = object : ResponseParser {
     defaultHeaders = mapOf("user-agent" to USER_AGENT)
 }
 
-class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
+class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricAuthenticator.BiometricAuthCallback {
     companion object {
         const val TAG = "MAINACT"
         const val ANIMATED_OUTLINE : Boolean = false
@@ -1161,9 +1162,11 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         val noAccounts = settingsManager.getBoolean(getString(R.string.skip_startup_account_select_key), false) || accounts.count() <= 1
 
         if (isTruePhone() && authEnabled && noAccounts ) {
-            BiometricAuthenticator.initializeBiometrics(this@MainActivity)
+
+            BiometricAuthenticator.initializeBiometrics(this@MainActivity, this)
             BiometricAuthenticator.checkBiometricAvailability()
             BiometricAuthenticator.biometricPrompt.authenticate(promptInfo)
+            binding?.navHostFragment?.isInvisible = true // hide background while authenticating
         }
 
         // Automatically enable jsdelivr if cant connect to raw.githubusercontent.com
@@ -1619,6 +1622,11 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                 }
             }
         )
+    }
+
+    override fun onAuthenticationSuccess() { /** Biometric stuff **/
+        // make background (nav host fragment) visible again
+        binding?.navHostFragment?.isInvisible = false
     }
 
     private var backPressedCallback: OnBackPressedCallback? = null

@@ -24,7 +24,7 @@ import com.lagradost.cloudstream3.utils.DataStoreHelper.selectedKeyIndex
 import com.lagradost.cloudstream3.utils.DataStoreHelper.setAccount
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
 
-class AccountSelectActivity : AppCompatActivity() {
+class AccountSelectActivity : AppCompatActivity(), BiometricAuthenticator.BiometricAuthCallback {
 
     lateinit var viewModel: AccountViewModel
 
@@ -43,7 +43,6 @@ class AccountSelectActivity : AppCompatActivity() {
 
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
         val authEnabled = settingsManager.getBoolean(getString(R.string.biometric_enabled_key), false)
-
         val skipStartup = settingsManager.getBoolean(
             getString(R.string.skip_startup_account_select_key),
             false
@@ -54,7 +53,7 @@ class AccountSelectActivity : AppCompatActivity() {
         fun askBiometricAuth() {
 
             if (BiometricAuthenticator.isTruePhone() && authEnabled) {
-                BiometricAuthenticator.initializeBiometrics(this)
+                BiometricAuthenticator.initializeBiometrics(this@AccountSelectActivity, this)
                 BiometricAuthenticator.checkBiometricAvailability()
                 BiometricAuthenticator.biometricPrompt.authenticate(BiometricAuthenticator.promptInfo)
             }
@@ -178,5 +177,8 @@ class AccountSelectActivity : AppCompatActivity() {
         val mainIntent = Intent(this, MainActivity::class.java)
         startActivity(mainIntent)
         finish() // Finish the account selection activity
+    }
+    override fun onAuthenticationSuccess() {
+        //ask github.com/IndusAryan if confusion occurs
     }
 }
