@@ -18,7 +18,7 @@ open class ContentX : ExtractorApi() {
         val i_source  = app.get(url, referer=ext_ref).text
         val i_extract = Regex("""window\.openPlayer\('([^']+)'""").find(i_source)!!.groups[1]?.value ?: throw ErrorLoadingException("i_extract is null")
 
-        val vid_source  = app.get("https://contentx.me/source2.php?v=${i_extract}", referer=ext_ref).text
+        val vid_source  = app.get("${mainUrl}/source2.php?v=${i_extract}", referer=ext_ref).text
         val vid_extract = Regex("""file\":\"([^\"]+)""").find(vid_source)!!.groups[1]?.value ?: throw ErrorLoadingException("vid_extract is null")
         val m3u_link    = vid_extract.replace("\\", "")
 
@@ -35,7 +35,7 @@ open class ContentX : ExtractorApi() {
 
         val i_dublaj = Regex(""",\"([^']+)\",\"Türkçe""").find(i_source)!!.groups[1]?.value
         if (i_dublaj != null) {
-            val dublaj_source  = app.get("https://contentx.me/source2.php?v=${i_dublaj}", referer=ext_ref).text
+            val dublaj_source  = app.get("${mainUrl}/source2.php?v=${i_dublaj}", referer=ext_ref).text
             val dublaj_extract = Regex("""file\":\"([^\"]+)""").find(dublaj_source)!!.groups[1]?.value ?: throw ErrorLoadingException("dublaj_extract is null")
             val dublaj_link    = dublaj_extract.replace("\\", "")
 

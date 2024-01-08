@@ -104,6 +104,7 @@ import com.lagradost.cloudstream3.extractors.TauVideo
 import com.lagradost.cloudstream3.extractors.SibNet
 import com.lagradost.cloudstream3.extractors.ContentX
 import com.lagradost.cloudstream3.extractors.Hotlinger
+import com.lagradost.cloudstream3.extractors.FourCX
 import com.lagradost.cloudstream3.extractors.HDMomPlayer
 import com.lagradost.cloudstream3.extractors.HDPlayerSystem
 import com.lagradost.cloudstream3.extractors.VideoSeyred
@@ -683,6 +684,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     SibNet(),
     ContentX(),
     Hotlinger(),
+    FourCX(),
     HDMomPlayer(),
     HDPlayerSystem(),
     VideoSeyred(),
