@@ -1559,8 +1559,8 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
     private fun stopUpdatingRemainingTime() {
         handler.removeCallbacksAndMessages(null)
-        val totalDuration = player.getDuration()!! / 1000
-        playerBinding?.exoDuration?.text = DateUtils.formatElapsedTime(totalDuration)
+        val totalDuration = player.getDuration()?.div(1000)
+        playerBinding?.exoDuration?.text = totalDuration?.let { DateUtils.formatElapsedTime(it) }
         isRemainingTimeEnabled = false
     }
 
