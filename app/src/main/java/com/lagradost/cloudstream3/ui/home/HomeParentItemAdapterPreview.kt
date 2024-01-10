@@ -216,6 +216,9 @@ class HomeParentItemAdapterPreview(
                 viewModel.click(callback)
                 return@HomeChildItemAdapter
             }
+
+            (callback.view.context?.getActivity() as? MainActivity)?.loadPopup(callback.card, load = false)
+            /*
             callback.view.context?.getActivity()?.showOptionSelectStringRes(
                 callback.view,
                 callback.card.posterUrl,
@@ -261,6 +264,7 @@ class HomeParentItemAdapterPreview(
                     }
                 }
             }
+            */
         }
 
 
