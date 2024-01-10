@@ -1383,6 +1383,7 @@ class GeneratorPlayer : FullScreenPlayer() {
         }
 
         binding?.playerLoadingGoBack?.setOnClickListener {
+            exitFullscreen()
             player.release()
             activity?.popCurrentPage()
         }

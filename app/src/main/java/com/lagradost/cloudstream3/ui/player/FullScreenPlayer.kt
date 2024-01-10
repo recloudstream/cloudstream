@@ -379,7 +379,6 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
     }
 
     protected fun exitFullscreen() {
-        activity?.showSystemUI()
         //if (lockRotation)
         activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_USER
 
@@ -391,6 +390,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                 WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_DEFAULT
         }
         activity?.window?.attributes = lp
+        activity?.showSystemUI()
     }
 
     override fun onResume() {
