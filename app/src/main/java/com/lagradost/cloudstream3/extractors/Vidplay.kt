@@ -10,8 +10,8 @@ import com.lagradost.cloudstream3.utils.M3u8Helper
 import javax.crypto.Cipher
 import javax.crypto.spec.SecretKeySpec
 
-// Code found in https://github.com/Claudemirovsky/worstsource-keys
-// special credits to @Claudemirovsky for providing key
+// Code found in https://github.com/blacksourcellc/vid_keys
+// special credits to @blacksourcellc for providing key
 
 class MyCloud : Vidplay() {
     override val name = "MyCloud"
@@ -27,7 +27,7 @@ open class Vidplay : ExtractorApi() {
     override val mainUrl = "https://vidplay.site"
     override val requiresReferer = true
     open val key =
-        "https://raw.githubusercontent.com/Claudemirovsky/worstsource-keys/keys/keys.json"
+        "https://raw.githubusercontent.com/blacksourcellc/vid_keys/keys/keys.json"
 
     override suspend fun getUrl(
         url: String,
