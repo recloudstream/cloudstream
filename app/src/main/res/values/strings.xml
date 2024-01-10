@@ -435,7 +435,7 @@
     <string name="pref_category_ui_features">Features</string>
     <string name="category_general">General</string>
     <string name="random_button_settings">Random Button</string>
-    <string name="random_button_settings_desc">Show random button on Homepage</string>
+    <string name="random_button_settings_desc">Show random button on Homepage and Library</string>
     <string name="provider_lang_settings">Provider languages</string>
     <string name="app_layout">App Layout</string>
     <string name="preferred_media_settings">Preferred media</string>
