@@ -1374,6 +1374,35 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                             }
                         }
 
+                        observeNullable(viewModel.favoriteStatus) observeFavoriteStatus@{ isFavorite ->
+                            resultviewPreviewFavorite.isVisible = isFavorite != null
+                            if (isFavorite == null) return@observeFavoriteStatus
+
+                            val drawable = if (isFavorite) {
+                                R.drawable.ic_baseline_favorite_24
+                            } else {
+                                R.drawable.ic_baseline_favorite_border_24
+                            }
+
+                            resultviewPreviewFavorite.setImageResource(drawable)
+                        }
+
+                        resultviewPreviewFavorite.setOnClickListener{
+                            viewModel.toggleFavoriteStatus(this@MainActivity) { newStatus: Boolean? ->
+                                if (newStatus == null) return@toggleFavoriteStatus
+
+                                val message = if (newStatus) {
+                                    R.string.favorite_added
+                                } else {
+                                    R.string.favorite_removed
+                                }
+
+                                val name = (viewModel.page.value as? Resource.Success)?.value?.title
+                                    ?: txt(R.string.no_data).asStringNull(this@MainActivity) ?: ""
+                                showToast(txt(message, name), Toast.LENGTH_SHORT)
+                            }
+                        }
+
                         if (!isTvSettings()) // dont want this clickable on tv layout
                             resultviewPreviewDescription.setOnClickListener { view ->
                                 view.context?.let { ctx ->
