@@ -264,6 +264,9 @@ class SearchFragment : Fragment() {
                 builder.setContentView(selectMainpageBinding.root)
                 builder.show()
                 builder.let { dialog ->
+                    val previousSelectedApis = selectedApis.toSet()
+                    val previousSelectedSearchTypes = selectedSearchTypes.toSet()
+
                     val isMultiLang = ctx.getApiProviderLangSettings().let { set ->
                         set.size > 1 || set.contains(AllLanguagesName)
                     }
@@ -352,7 +355,9 @@ class SearchFragment : Fragment() {
                         selectedApis = currentSelectedApis
 
                         // run search when dialog is close
-                        search(binding?.mainSearch?.query?.toString())
+                        if(previousSelectedApis != selectedApis.toSet() || previousSelectedSearchTypes != selectedSearchTypes.toSet()) {
+                            search(binding?.mainSearch?.query?.toString())
+                        }
                     }
                     updateList(selectedSearchTypes.toList())
                 }
