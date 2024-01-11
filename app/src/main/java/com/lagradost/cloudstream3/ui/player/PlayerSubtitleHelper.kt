@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.media3.common.MimeTypes
 import androidx.media3.ui.SubtitleView
+import com.lagradost.cloudstream3.APIHolder
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.ui.player.CustomDecoder.Companion.regexSubtitlesToRemoveBloat
 import com.lagradost.cloudstream3.ui.player.CustomDecoder.Companion.regexSubtitlesToRemoveCaptions
@@ -38,7 +39,8 @@ data class SubtitleData(
     val origin: SubtitleOrigin,
     val mimeType: String,
     val headers: Map<String, String>,
-    val languageCode: String?
+    val languageCode: String?,
+    val createdTime: Long = APIHolder.unixTime
 ) {
     /** Internal ID for exoplayer, unique for each link*/
     fun getId(): String {

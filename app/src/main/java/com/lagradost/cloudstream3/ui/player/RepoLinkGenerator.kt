@@ -2,6 +2,7 @@ package com.lagradost.cloudstream3.ui.player
 
 import android.util.Log
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
+import com.lagradost.cloudstream3.APIHolder.unixTime
 import com.lagradost.cloudstream3.LoadResponse
 import com.lagradost.cloudstream3.ui.APIRepository
 import com.lagradost.cloudstream3.ui.result.ResultEpisode
@@ -88,6 +89,14 @@ class RepoLinkGenerator(
         val currentLinks = mutableSetOf<String>()       // makes all urls unique
         val currentSubsUrls = mutableSetOf<String>()    // makes all subs urls unique
         val currentSubsNames = mutableSetOf<String>()   // makes all subs names unique
+
+        val invalidateCache = currentLinkCache.size - currentLinkCache.filter { link -> unixTime-link.createdTime < 60 * 20  }.size !=0 // 20 minutes
+        if(invalidateCache)
+            currentLinkCache.clear()
+
+        val invalidateSubtitleCache = currentSubsCache.size - currentSubsCache.filter { link -> unixTime-link.createdTime < 60 * 20 }.size !=0 // 20 minutes
+        if(invalidateSubtitleCache)
+            currentSubsCache.clear()
 
         currentLinkCache.filter { allowedTypes.contains(it.type) }.forEach { link ->
             currentLinks.add(link.url)

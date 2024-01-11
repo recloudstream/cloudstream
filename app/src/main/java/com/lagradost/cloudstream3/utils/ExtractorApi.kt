@@ -2,6 +2,7 @@ package com.lagradost.cloudstream3.utils
 
 import android.net.Uri
 import com.fasterxml.jackson.annotation.JsonIgnore
+import com.lagradost.cloudstream3.APIHolder
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.USER_AGENT
@@ -394,6 +395,7 @@ open class ExtractorLink constructor(
     /** Used for getExtractorVerifierJob() */
     open val extractorData: String? = null,
     open val type: ExtractorLinkType,
+    open val createdTime: Long = APIHolder.unixTime
 ) : VideoDownloadManager.IDownloadableMinimum {
     val isM3u8 : Boolean get() = type == ExtractorLinkType.M3U8
     val isDash : Boolean get() = type == ExtractorLinkType.DASH

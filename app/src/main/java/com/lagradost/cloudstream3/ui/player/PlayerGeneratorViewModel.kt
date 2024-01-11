@@ -45,6 +45,8 @@ class PlayerGeneratorViewModel : ViewModel() {
      */
     private var currentLoadingEpisodeId: Int? = null
 
+    var clearCache = false
+
     fun setSubtitleYear(year: Int?) {
         _currentSubtitleYear.postValue(year)
     }
@@ -168,7 +170,7 @@ class PlayerGeneratorViewModel : ViewModel() {
         }
     }
 
-    fun loadLinks(clearCache: Boolean = false, type: LoadType = LoadType.InApp) {
+    fun loadLinks(type: LoadType = LoadType.InApp) {
         Log.i(TAG, "loadLinks")
         currentJob?.cancel()
 
