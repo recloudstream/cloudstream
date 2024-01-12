@@ -171,6 +171,7 @@
     <string name="sort_close">Close</string>
     <string name="sort_clear">Clear</string>
     <string name="sort_save">Save</string>
+    <string name="copyTitle">Title copied!</string>
     <string name="player_speed">Player Speed</string>
     <string name="subtitles_settings">Subtitle Settings</string>
     <string name="subs_text_color">Text Color</string>

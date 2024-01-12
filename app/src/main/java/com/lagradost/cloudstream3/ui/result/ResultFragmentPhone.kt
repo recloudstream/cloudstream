@@ -2,6 +2,9 @@ package com.lagradost.cloudstream3.ui.result
 
 import android.annotation.SuppressLint
 import android.app.Dialog
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Rect
@@ -31,6 +34,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.lagradost.cloudstream3.APIHolder
 import com.lagradost.cloudstream3.APIHolder.updateHasTrailers
 import com.lagradost.cloudstream3.CommonActivity
+import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.DubStatus
 import com.lagradost.cloudstream3.LoadResponse
 import com.lagradost.cloudstream3.MainActivity.Companion.afterPluginsLoadedEvent
@@ -76,7 +80,6 @@ import com.lagradost.cloudstream3.utils.UIHelper.populateChips
 import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIconsAndNoStringRes
 import com.lagradost.cloudstream3.utils.UIHelper.setImage
 import com.lagradost.cloudstream3.utils.VideoDownloadHelper
-
 
 open class ResultFragmentPhone : FullScreenPlayer() {
     private val gestureRegionsListener = object : PanelsChildGestureRegionObserver.GestureRegionsListener {
@@ -752,6 +755,17 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                 resultLoadingError.isVisible = data is Resource.Failure
                 resultErrorText.isVisible = data is Resource.Failure
                 resultReloadConnectionOpenInBrowser.isVisible = data is Resource.Failure
+
+                resultTitle.setOnLongClickListener {
+                        val titleToCopy = resultTitle.text
+                        val clipboardManager =
+                            activity?.getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager?
+                        clipboardManager?.setPrimaryClip(ClipData.newPlainText("Title", titleToCopy))
+                        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2) {
+                            showToast(R.string.copyTitle, Toast.LENGTH_SHORT)
+                        }
+                        return@setOnLongClickListener true
+                }
             }
         }
 
