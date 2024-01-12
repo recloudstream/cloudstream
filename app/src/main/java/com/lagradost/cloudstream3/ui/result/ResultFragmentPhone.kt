@@ -756,22 +756,15 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                 resultErrorText.isVisible = data is Resource.Failure
                 resultReloadConnectionOpenInBrowser.isVisible = data is Resource.Failure
 
-                resultTitle.apply {
-
-                    setOnClickListener {
-                        showToast(R.string.copyTitleHint, Toast.LENGTH_SHORT)
-                    }
-
-                    setOnLongClickListener {
-                        val titleCopy = resultTitle.text
+                resultTitle.setOnLongClickListener {
+                        val titleToCopy = resultTitle.text
                         val clipboardManager =
                             activity?.getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager?
-                        clipboardManager?.setPrimaryClip(ClipData.newPlainText("text", titleCopy))
+                        clipboardManager?.setPrimaryClip(ClipData.newPlainText("Title", titleToCopy))
                         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2) {
                             showToast(R.string.copyTitle, Toast.LENGTH_SHORT)
                         }
                         return@setOnLongClickListener true
-                    }
                 }
             }
         }
