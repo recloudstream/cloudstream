@@ -214,6 +214,7 @@ import com.lagradost.cloudstream3.extractors.Ztreamhub
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import kotlinx.coroutines.delay
+import me.xdrop.fuzzywuzzy.FuzzySearch
 import org.jsoup.Jsoup
 import java.net.URL
 import java.util.UUID
@@ -593,6 +594,18 @@ suspend fun loadExtractor(
     val compareUrl = currentUrl.lowercase().replace(schemaStripRegex, "")
     for (extractor in extractorApis) {
         if (compareUrl.startsWith(extractor.mainUrl.replace(schemaStripRegex, ""))) {
+            extractor.getSafeUrl(currentUrl, referer, subtitleCallback, callback)
+            return true
+        }
+    }
+
+    // this is to match mirror domains - like example.com, example.net
+    for (extractor in extractorApis) {
+        if (FuzzySearch.partialRatio(
+                extractor.mainUrl,
+                currentUrl
+            ) > 80
+        ) {
             extractor.getSafeUrl(currentUrl, referer, subtitleCallback, callback)
             return true
         }
