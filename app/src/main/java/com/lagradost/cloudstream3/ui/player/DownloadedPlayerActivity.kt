@@ -8,11 +8,14 @@ import android.util.Log
 import android.view.KeyEvent
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
+import com.lagradost.cloudstream3.APIHolder
 import com.lagradost.cloudstream3.CommonActivity
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.utils.AppUtils.loadResult
 import com.lagradost.cloudstream3.utils.ExtractorUri
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.safefile.SafeFile
+import me.xdrop.fuzzywuzzy.FuzzySearch
 
 const val DTAG = "PlayerActivity"
 
@@ -36,6 +39,27 @@ class DownloadedPlayerActivity : AppCompatActivity() {
     }
 
     private fun playLink(url: String) {
+        // check if url matches any provider
+        synchronized(APIHolder.apis) {
+            for (api in APIHolder.apis) {
+                if (url.startsWith(api.mainUrl)) {
+                    loadResult(url, api.name)
+                    return
+                }
+            }
+            // this is to match mirror domains - like example.com, example.net
+            for (api in APIHolder.apis) {
+                if (FuzzySearch.partialRatio(
+                        api.mainUrl,
+                        url
+                    ) > 80
+                ) {
+                    loadResult(url, api.name)
+                    return
+                }
+            }
+        }
+
         this.navigate(
             R.id.global_to_navigation_player, GeneratorPlayer.newInstance(
                 LinkGenerator(
