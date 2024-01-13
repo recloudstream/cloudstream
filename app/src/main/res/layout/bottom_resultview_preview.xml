@@ -41,17 +41,36 @@
                 android:layout_marginStart="10dp"
                 android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/resultview_preview_title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="?attr/textColor"
-                    android:textSize="16sp"
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
-                    android:textStyle="bold"
-                    tools:text="The Perfect Run">
+                    <TextView
+                        android:id="@+id/resultview_preview_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="?attr/textColor"
+                        android:textSize="16sp"
+                        android:layout_gravity="start|center_vertical"
+                        android:textStyle="bold"
+                        android:layout_marginEnd="25dp"
+                        tools:text="The Perfect Run">
 
-                </TextView>
+                    </TextView>
+
+                    <ImageView
+                        android:id="@+id/resultview_preview_favorite"
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:layout_gravity="end|center_vertical"
+
+                        android:layout_margin="5dp"
+                        android:background="?android:attr/selectableItemBackgroundBorderless"
+                        android:elevation="10dp"
+                        android:nextFocusDown="@id/resultview_preview_bookmark"
+                        android:src="@drawable/ic_baseline_favorite_border_24"
+                        app:tint="?attr/textColor" />
+                </FrameLayout>
 
                 <com.lagradost.cloudstream3.widget.FlowLayout
                     android:layout_width="match_parent"
@@ -123,6 +142,7 @@
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/resultview_preview_bookmark"
                 android:layout_weight="1"
+                android:nextFocusUp="@id/resultview_preview_favorite"
                 android:nextFocusRight="@id/resultview_preview_more_info"
 
                 tools:visibility="visible"
@@ -136,6 +156,7 @@
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/resultview_preview_more_info"
                 android:layout_weight="1"
+                android:nextFocusUp="@id/resultview_preview_favorite"
                 android:nextFocusLeft="@id/resultview_preview_bookmark"
 
                 tools:visibility="visible"

@@ -104,6 +104,7 @@ import com.lagradost.cloudstream3.extractors.TauVideo
 import com.lagradost.cloudstream3.extractors.SibNet
 import com.lagradost.cloudstream3.extractors.ContentX
 import com.lagradost.cloudstream3.extractors.Hotlinger
+import com.lagradost.cloudstream3.extractors.FourCX
 import com.lagradost.cloudstream3.extractors.HDMomPlayer
 import com.lagradost.cloudstream3.extractors.HDPlayerSystem
 import com.lagradost.cloudstream3.extractors.VideoSeyred
@@ -151,6 +152,7 @@ import com.lagradost.cloudstream3.extractors.StreamSB8
 import com.lagradost.cloudstream3.extractors.StreamSB9
 import com.lagradost.cloudstream3.extractors.StreamTape
 import com.lagradost.cloudstream3.extractors.StreamTapeNet
+import com.lagradost.cloudstream3.extractors.StreamTapeXyz
 import com.lagradost.cloudstream3.extractors.StreamhideCom
 import com.lagradost.cloudstream3.extractors.StreamhideTo
 import com.lagradost.cloudstream3.extractors.Streamhub2
@@ -619,6 +621,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     StreamTape(),
     StreamTapeNet(),
     ShaveTape(),
+    StreamTapeXyz(),
 
     //mixdrop extractors
     MixDropBz(),
@@ -683,6 +686,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     SibNet(),
     ContentX(),
     Hotlinger(),
+    FourCX(),
     HDMomPlayer(),
     HDPlayerSystem(),
     VideoSeyred(),

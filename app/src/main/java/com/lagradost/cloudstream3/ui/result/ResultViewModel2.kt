@@ -1006,6 +1006,7 @@ class ResultViewModel2 : ViewModel() {
             removeFavoritesData(currentId)
             statusChangedCallback?.invoke(false)
             _favoriteStatus.postValue(false)
+            MainActivity.reloadLibraryEvent(true)
         } else {
             checkAndWarnDuplicates(
                 context,
@@ -1050,8 +1051,8 @@ class ResultViewModel2 : ViewModel() {
                 )
 
                 _favoriteStatus.postValue(true)
-
                 statusChangedCallback?.invoke(true)
+                MainActivity.reloadLibraryEvent(true)
             }
         }
     }
@@ -2602,6 +2603,11 @@ class ResultViewModel2 : ViewModel() {
             if (searchResponse is SyncAPI.LibraryItem) {
                 this.plot = searchResponse.plot
                 this.rating = searchResponse.personalRating?.times(100) ?: searchResponse.rating
+                this.tags = searchResponse.tags
+            }
+            if (searchResponse is DataStoreHelper.BookmarkedData) {
+                this.plot = searchResponse.plot
+                this.rating = searchResponse.rating
                 this.tags = searchResponse.tags
             }
         }

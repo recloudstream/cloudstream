@@ -9,6 +9,10 @@ class StreamTapeNet : StreamTape() {
     override var mainUrl = "https://streamtape.net"
 }
 
+class StreamTapeXyz : StreamTape() {
+    override var mainUrl = "https://streamtape.xyz"
+}
+
 class ShaveTape : StreamTape(){
     override var mainUrl = "https://shavetape.cash"
 }
