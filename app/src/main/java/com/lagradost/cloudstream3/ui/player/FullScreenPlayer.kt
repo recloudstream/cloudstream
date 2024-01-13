@@ -47,6 +47,7 @@ import com.lagradost.cloudstream3.ui.player.GeneratorPlayer.Companion.subsProvid
 import com.lagradost.cloudstream3.ui.player.source_priority.QualityDataHelper
 import com.lagradost.cloudstream3.ui.result.setText
 import com.lagradost.cloudstream3.ui.result.txt
+import com.lagradost.cloudstream3.ui.settings.SettingsFragment
 import com.lagradost.cloudstream3.utils.AppUtils.isUsingMobileData
 import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showDialog
@@ -79,7 +80,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
     protected open var isTv = false
     protected var playerBinding: PlayerCustomLayoutBinding? = null
     private val handler = Handler(Looper.getMainLooper())
-    private var isRemainingTimeEnabled = false
+    private var isShowTimeRemaining = false
 
     // state of player UI
     protected var isShowing = false
@@ -1423,7 +1424,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
             }
 
             exoDuration.setOnClickListener {
-                if (!isRemainingTimeEnabled) {
+                if (!isShowTimeRemaining) {
                     startUpdatingRemainingTime()
                 } else {
                     stopUpdatingRemainingTime()
@@ -1521,6 +1522,10 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         } catch (e: Exception) {
             logError(e)
         }
+
+        if (SettingsFragment.isTrueTvSettings()) {
+            startUpdatingRemainingTime() // cs3 is an ott platform itself
+        }
     }
 
     @SuppressLint("SourceLockedOrientationActivity")
@@ -1545,7 +1550,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
             val formattedTime = "-${DateUtils.formatElapsedTime(remainingTimeSeconds)}"
 
             playerBinding?.exoDuration?.text = formattedTime
-            isRemainingTimeEnabled = true
+            isShowTimeRemaining = true
         }
     }
 
@@ -1562,7 +1567,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         handler.removeCallbacksAndMessages(null)
         val totalDuration = player.getDuration()?.div(1000)
         playerBinding?.exoDuration?.text = totalDuration?.let { DateUtils.formatElapsedTime(it) }
-        isRemainingTimeEnabled = false
+        isShowTimeRemaining = false
     }
 
     private fun dynamicOrientation(): Int {
