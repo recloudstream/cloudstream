@@ -32,6 +32,7 @@ import androidx.core.graphics.blue
 import androidx.core.graphics.green
 import androidx.core.graphics.red
 import androidx.core.view.isGone
+import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
 import androidx.preference.PreferenceManager
@@ -80,7 +81,6 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
     protected open var isTv = false
     protected var playerBinding: PlayerCustomLayoutBinding? = null
     private val handler = Handler(Looper.getMainLooper())
-    private var isShowTimeRemaining = false
 
     // state of player UI
     protected var isShowing = false
@@ -1424,11 +1424,11 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
             }
 
             exoDuration.setOnClickListener {
-                if (!isShowTimeRemaining) {
-                    startUpdatingRemainingTime()
-                } else {
-                    stopUpdatingRemainingTime()
-                }
+                startUpdatingRemainingTime()
+            }
+
+            timeLeft.setOnClickListener {
+                stopUpdatingRemainingTime()
             }
 
             skipChapterButton.setOnClickListener {
@@ -1549,8 +1549,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
             val remainingTimeSeconds = (duration - position) / 1000
             val formattedTime = "-${DateUtils.formatElapsedTime(remainingTimeSeconds)}"
 
-            playerBinding?.exoDuration?.text = formattedTime
-            isShowTimeRemaining = true
+            playerBinding?.timeLeft?.text = formattedTime
         }
     }
 
@@ -1561,13 +1560,15 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                 handler.postDelayed(this, 1000) // realtime decrement
             }
         })
+
+        playerBinding?.exoDuration?.isInvisible = true
+        playerBinding?.timeLeft?.isVisible = true
     }
 
     private fun stopUpdatingRemainingTime() {
         handler.removeCallbacksAndMessages(null)
-        val totalDuration = player.getDuration()?.div(1000)
-        playerBinding?.exoDuration?.text = totalDuration?.let { DateUtils.formatElapsedTime(it) }
-        isShowTimeRemaining = false
+        playerBinding?.timeLeft?.isInvisible = true
+        playerBinding?.exoDuration?.isVisible = true
     }
 
     private fun dynamicOrientation(): Int {
