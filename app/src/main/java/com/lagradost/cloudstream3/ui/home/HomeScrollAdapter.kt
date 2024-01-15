@@ -81,6 +81,7 @@ class HomeScrollAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                     binding.homeScrollPreviewTags.apply {
                         text = card.tags?.joinToString(" • ") ?: ""
                         isGone = card.tags.isNullOrEmpty()
+                        maxLines = 2
                     }
                     binding.homeScrollPreviewTitle.text = card.name
                 }
