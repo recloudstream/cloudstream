@@ -1392,4 +1392,9 @@ class CS3IPlayer : IPlayer {
             loadOfflinePlayer(context, it)
         }
     }
+
+    fun isLivestream(context: Context) {
+        if (exoPlayer?.isCurrentMediaItemLive == true)
+            return
+    }
 }
