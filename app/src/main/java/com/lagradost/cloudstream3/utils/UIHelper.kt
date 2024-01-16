@@ -90,8 +90,9 @@ object UIHelper {
         if (view == null) return
         view.removeAllViews()
         val context = view.context ?: return
+        val maxTags = tags.take(10) // Limited because they are too much
 
-        tags.forEach { tag ->
+        maxTags.forEach { tag ->
             val chip = Chip(context)
             val chipDrawable = ChipDrawable.createFromAttributes(
                 context,
