@@ -94,7 +94,7 @@
     <string name="sort_copy">Kopiraj</string>
     <string name="sort_close">Zatvori</string>
     <string name="sort_clear">Očisti</string>
-    <string name="sort_save">Sačuvaj</string>
+    <string name="sort_save">Spremi</string>
     <string name="player_speed">Brzina playera</string>
     <string name="subtitles_settings">Postavke titlova</string>
     <string name="subs_text_color">Boja teksta</string>
@@ -298,7 +298,7 @@
     <string name="legal_notice_text" translatable="false">Any legal issues regarding the content on this application should be taken up with the actual file hosts and providers themselves as we are not affiliated with them. In case of copyright infringement, please directly contact the responsible parties or the streaming websites. The app is purely for educational and personal use. CloudStream 3 does not host any content on the app, and has no control over what media is put up or taken down. CloudStream 3 functions like any other search engine, such as Google. CloudStream 3 does not host, upload or manage any videos, films or content. It simply crawls, aggregates and displayes links in a convenient, user-friendly interface. It merely scrapes 3rd-party websites that are publicly accessable via any regular web browser. It is the responsibility of user to avoid any actions that might violate the laws governing his/her locality. Use CloudStream 3 at your own risk.</string>
     <string name="category_general">Općenito</string>
     <string name="random_button_settings">Random gumb</string>
-    <string name="random_button_settings_desc">Prikaži gumb za slučajni odabir reprodukcija na početnoj stranici</string>
+    <string name="random_button_settings_desc">Prikaži gumb za slučajni odabir reprodukcija na početnoj stranici i biblioteci</string>
     <string name="provider_lang_settings">Jezici pružatelja usluga</string>
     <string name="app_layout">Izgled aplikacije</string>
     <string name="preferred_media_settings">Preferirani mediji</string>
@@ -609,4 +609,12 @@
     <string name="skip_startup_account_select_pref">Preskoči odabir računa pri pokretanju</string>
     <string name="manage_accounts">Upravljanje računima</string>
     <string name="edit_account">Uredi račun</string>
+    <string name="links_reloaded_toast">Linkovi ponovno učitani</string>
+    <string name="rotate_video">Rotiraj</string>
+    <string name="rotate_video_desc">Prikaži gumb za prebacivanje orijentacije zaslona</string>
+    <string name="auto_rotate_video_desc">Omogućuje automatsko mijenjanje orijentacije zaslona na temelju orijentacije videa</string>
+    <string name="auto_rotate_video">Automatsko rotiranje</string>
+    <string name="copyTitle">Naslov je kopiran!</string>
+    <string name="rotate_video_key">rotiraj_video_tipka</string>
+    <string name="auto_rotate_video_key">automatski_rotiraj_video_tipka</string>
 </resources>

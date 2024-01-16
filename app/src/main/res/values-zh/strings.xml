@@ -309,7 +309,7 @@
     <string name="legal_notice_text" translatable="false">Any legal issues regarding the content on this application should be taken up with the actual file hosts and providers themselves as we are not affiliated with them. In case of copyright infringement, please directly contact the responsible parties or the streaming websites. The app is purely for educational and personal use. CloudStream 3 does not host any content on the app, and has no control over what media is put up or taken down. CloudStream 3 functions like any other search engine, such as Google. CloudStream 3 does not host, upload or manage any videos, films or content. It simply crawls, aggregates and displayes links in a convenient, user-friendly interface. It merely scrapes 3rd-party websites that are publicly accessable via any regular web browser. It is the responsibility of user to avoid any actions that might violate the laws governing his/her locality. Use CloudStream 3 at your own risk.</string>
     <string name="category_general">通用</string>
     <string name="random_button_settings">随机按钮</string>
-    <string name="random_button_settings_desc">在主页中显示随机按钮</string>
+    <string name="random_button_settings_desc">在主页和库中显示随机按钮</string>
     <string name="provider_lang_settings">片源语言</string>
     <string name="app_layout">应用布局</string>
     <string name="preferred_media_settings">首选类型</string>
@@ -592,4 +592,22 @@
 \n注意：如果总和为 10 或更多，则加载该链接时播放器将自动跳过加载！</string>
     <string name="qualities">质量</string>
     <string name="profile_background_des">个人资料背景</string>
+    <string name="pin">PIN</string>
+    <string name="links_reloaded_toast">链接已重新加载</string>
+    <string name="disable">禁用</string>
+    <string name="pin_error_incorrect">PIN码不正确，请再试一次。</string>
+    <string name="pin_error_length">PIN码必须为4个字符</string>
+    <string name="select_an_account">选择一个账户</string>
+    <string name="manage_accounts">账户管理</string>
+    <string name="action_subscribe">订阅</string>
+    <string name="action_unsubscribe">取消订阅</string>
+    <string name="duplicate_add">添加</string>
+    <string name="duplicate_replace">替换</string>
+    <string name="duplicate_replace_all">替换全部</string>
+    <string name="no_plugins_found_error">仓库中未找到插件</string>
+    <string name="rotate_video">旋转</string>
+    <string name="auto_rotate_video">自动旋转</string>
+    <string name="logged_account" formatted="true">以%s的身份登录</string>
+    <string name="use_default_account">使用默认账户</string>
+    <string name="automatic_plugin_download_mode_title">选择过滤插件的下载模式</string>
 </resources>

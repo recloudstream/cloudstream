@@ -210,7 +210,7 @@
     <string name="episode_action_play_in_format">مشي بـ\"%s\"</string>
     <string name="episode_action_download_subtitle">نزل الترجمة</string>
     <string name="dont_show_again">ما تفرجيا بعد مرة</string>
-    <string name="video_buffer_clear_settings">فضّي التخزين المؤقت للصور والڤيديوات</string>
+    <string name="video_buffer_clear_settings">فضّي التخزين الموقت للصور والڤيديوات</string>
     <string name="video_skip_op">أفي المقدمة</string>
     <string name="watch_quality_pref">الجودة المفضلة (Wi-Fi)</string>
     <string name="cartoons_singular">رسوم مُتَحَرِكة</string>
@@ -260,7 +260,7 @@
     <string name="add_site_pref">نسوخ موقع (clone site)</string>
     <string name="random_button_settings">زر العشوائي</string>
     <string name="resize_fill">مدو</string>
-    <string name="random_button_settings_desc">فرجي زر \"عشوائي\" على الصفحة الرئيسية</string>
+    <string name="random_button_settings_desc">فرجي زر \"عشوائي\" بالصفحة الرئيسية وبصفحة الرفّ</string>
     <string name="pref_category_ui_features">الميزات</string>
     <string name="display_subbed_dubbed_settings">فرجي أنمي المدبلج-المترجم</string>
     <string name="pref_category_backup">النسخ الإحتياطي</string>
@@ -595,4 +595,5 @@
     <string name="rotate_video">برومو</string>
     <string name="auto_rotate_video_desc">غير إتجاه الشاشة أوتوماتيكيًا حسب شكل الڤيديو</string>
     <string name="links_reloaded_toast">رجع نعمل لاود لاللينك</string>
+    <string name="copyTitle">نعمل كَپي للعنوان!</string>
 </resources>
