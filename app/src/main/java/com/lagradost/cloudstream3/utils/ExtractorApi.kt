@@ -153,6 +153,7 @@ import com.lagradost.cloudstream3.extractors.StreamSB9
 import com.lagradost.cloudstream3.extractors.StreamTape
 import com.lagradost.cloudstream3.extractors.StreamTapeNet
 import com.lagradost.cloudstream3.extractors.StreamTapeXyz
+import com.lagradost.cloudstream3.extractors.StreamWishExtractor
 import com.lagradost.cloudstream3.extractors.StreamhideCom
 import com.lagradost.cloudstream3.extractors.StreamhideTo
 import com.lagradost.cloudstream3.extractors.Streamhub2
@@ -181,6 +182,7 @@ import com.lagradost.cloudstream3.extractors.VideoVard
 import com.lagradost.cloudstream3.extractors.VideovardSX
 import com.lagradost.cloudstream3.extractors.Vidgomunime
 import com.lagradost.cloudstream3.extractors.Vidgomunimesb
+import com.lagradost.cloudstream3.extractors.VidhideExtractor
 import com.lagradost.cloudstream3.extractors.Vidmoly
 import com.lagradost.cloudstream3.extractors.Vidmolyme
 import com.lagradost.cloudstream3.extractors.Vido
@@ -840,6 +842,8 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     Rabbitstream(),
     Dokicloud(),
     Megacloud(),
+    VidhideExtractor(),
+    StreamWishExtractor()
 )
 
 
