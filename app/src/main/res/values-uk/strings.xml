@@ -282,7 +282,7 @@
     <string name="pref_category_ui_features">Особливості</string>
     <string name="category_general">Загальне</string>
     <string name="random_button_settings">Випадкова кнопка</string>
-    <string name="random_button_settings_desc">Показувати кнопку на Головній сторінці, яка вибирає випадковий фільм чи серіал</string>
+    <string name="random_button_settings_desc">Показувати кнопку на Головній сторінці та в Бібліотеці, яка вибирає випадковий фільм чи серіал</string>
     <string name="provider_lang_settings">Мови постачальника</string>
     <string name="app_layout">Макет застосунку</string>
     <string name="preferred_media_settings">Бажані медіа</string>
@@ -591,4 +591,5 @@
     <string name="auto_rotate_video_key">auto_rotate_video_key</string>
     <string name="auto_rotate_video">Автоповорот</string>
     <string name="auto_rotate_video_desc">Ввімкнути автоматичний поворот екрана на основі орієнтації відео</string>
+    <string name="copyTitle">Назву скопійовано!</string>
 </resources>
