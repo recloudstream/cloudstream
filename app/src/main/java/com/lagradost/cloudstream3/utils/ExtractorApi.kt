@@ -103,6 +103,7 @@ import com.lagradost.cloudstream3.extractors.Odnoklassniki
 import com.lagradost.cloudstream3.extractors.TauVideo
 import com.lagradost.cloudstream3.extractors.SibNet
 import com.lagradost.cloudstream3.extractors.ContentX
+import com.lagradost.cloudstream3.extractors.EmturbovidExtractor
 import com.lagradost.cloudstream3.extractors.Hotlinger
 import com.lagradost.cloudstream3.extractors.FourCX
 import com.lagradost.cloudstream3.extractors.HDMomPlayer
@@ -843,7 +844,8 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     Dokicloud(),
     Megacloud(),
     VidhideExtractor(),
-    StreamWishExtractor()
+    StreamWishExtractor(),
+    EmturbovidExtractor()
 )
 
 
