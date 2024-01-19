@@ -184,9 +184,7 @@ object UIHelper {
         try {
             if (this is FragmentActivity) {
                 val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as? NavHostFragment?
-                navHostFragment?.navController?.let {
-                    it.navigate(navigation, arguments)
-                }
+                navHostFragment?.navController?.navigate(navigation, arguments)
             }
         } catch (t: Throwable) {
             logError(t)
