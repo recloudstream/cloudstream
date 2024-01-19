@@ -102,9 +102,7 @@ abstract class AbstractPlayerFragment(
         throw NotImplementedError()
     }
 
-    open fun playerStatusChanged(){
-        throw NotImplementedError()
-    }
+    open fun playerStatusChanged(){}
 
     open fun playerDimensionsLoaded(width: Int, height: Int) {
         throw NotImplementedError()
