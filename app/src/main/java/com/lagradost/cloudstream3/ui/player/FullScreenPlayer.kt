@@ -80,7 +80,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
     protected open var isTv = false
     protected var playerBinding: PlayerCustomLayoutBinding? = null
 
-    var durationMode : Int by UserPreferenceDelegate("duration_mode", 0)
+    private var durationMode : Int by UserPreferenceDelegate("duration_mode", 0)
     // state of player UI
     protected var isShowing = false
     protected var isLocked = false
@@ -397,7 +397,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
     }
 
     override fun onDestroy() {
-        stopUpdatingRemainingTime()
+        //stopUpdatingRemainingTime()
         exitFullscreen()
         player.release()
         player.releaseCallbacks()
@@ -1524,7 +1524,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
         if (SettingsFragment.isTrueTvSettings()) {
             startUpdatingRemainingTime() // cs3 is a bleeding edge media center itself
-        } else if (durationMode == 0 && !SettingsFragment.isTrueTvSettings()) {
+        } else if (durationMode == 1 && !SettingsFragment.isTrueTvSettings()) {
             startUpdatingRemainingTime()
         }
     }
