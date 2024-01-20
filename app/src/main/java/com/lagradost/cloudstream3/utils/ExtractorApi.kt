@@ -204,6 +204,7 @@ import com.lagradost.cloudstream3.extractors.Watchx
 import com.lagradost.cloudstream3.extractors.WcoStream
 import com.lagradost.cloudstream3.extractors.Wibufile
 import com.lagradost.cloudstream3.extractors.XStreamCdn
+import com.lagradost.cloudstream3.extractors.Xtremestream
 import com.lagradost.cloudstream3.extractors.YourUpload
 import com.lagradost.cloudstream3.extractors.YoutubeExtractor
 import com.lagradost.cloudstream3.extractors.YoutubeMobileExtractor
@@ -858,7 +859,8 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     Megacloud(),
     VidhideExtractor(),
     StreamWishExtractor(),
-    EmturbovidExtractor()
+    EmturbovidExtractor(),
+    Xtremestream()
 )
 
 
