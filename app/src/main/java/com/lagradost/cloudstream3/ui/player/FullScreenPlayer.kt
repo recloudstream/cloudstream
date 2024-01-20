@@ -11,8 +11,6 @@ import android.graphics.Color
 import android.media.AudioManager
 import android.os.Build
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.provider.Settings
 import android.text.Editable
 import android.text.format.DateUtils
@@ -60,6 +58,7 @@ import com.lagradost.cloudstream3.utils.UIHelper.hideSystemUI
 import com.lagradost.cloudstream3.utils.UIHelper.popCurrentPage
 import com.lagradost.cloudstream3.utils.UIHelper.showSystemUI
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
+import com.lagradost.cloudstream3.utils.UserPreferenceDelegate
 import com.lagradost.cloudstream3.utils.Vector2
 import kotlin.math.*
 
@@ -80,8 +79,8 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
     protected open var isFullScreenPlayer = true
     protected open var isTv = false
     protected var playerBinding: PlayerCustomLayoutBinding? = null
-    private val handler = Handler(Looper.getMainLooper())
 
+    var durationMode : Int by UserPreferenceDelegate("duration_mode", 0)
     // state of player UI
     protected var isShowing = false
     protected var isLocked = false
@@ -1524,7 +1523,9 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         }
 
         if (SettingsFragment.isTrueTvSettings()) {
-            startUpdatingRemainingTime() // cs3 is an ott platform itself
+            startUpdatingRemainingTime() // cs3 is a bleeding edge media center itself
+        } else if (durationMode == 0 && !SettingsFragment.isTrueTvSettings()) {
+            startUpdatingRemainingTime()
         }
     }
 
@@ -1545,8 +1546,8 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         val duration = player.getDuration()
         val position = player.getPosition()
 
-        if (duration != null && position != null) {
-            val remainingTimeSeconds = (duration - position) / 1000
+        if (duration != null && duration > 1 && position != null) {
+            val remainingTimeSeconds = (duration - position + 500) / 1000
             val formattedTime = "-${DateUtils.formatElapsedTime(remainingTimeSeconds)}"
 
             playerBinding?.timeLeft?.text = formattedTime
@@ -1554,21 +1555,20 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
     }
 
     private fun startUpdatingRemainingTime() {
-        handler.post(object : Runnable {
-            override fun run() {
-                updateRemainingTime()
-                handler.postDelayed(this, 1000) // realtime decrement
-            }
-        })
+
+        playerBinding?.exoPosition?.doOnTextChanged { _, _, _, _ ->
+            updateRemainingTime()
+        }
 
         playerBinding?.exoDuration?.isInvisible = true
         playerBinding?.timeLeft?.isVisible = true
+        durationMode = 1
     }
 
     private fun stopUpdatingRemainingTime() {
-        handler.removeCallbacksAndMessages(null)
         playerBinding?.timeLeft?.isInvisible = true
         playerBinding?.exoDuration?.isVisible = true
+        durationMode = 0
     }
 
     private fun dynamicOrientation(): Int {
