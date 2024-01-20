@@ -602,6 +602,15 @@ suspend fun loadExtractor(
         }
     }
 
+    for (extractor in extractorApis) {
+        try {
+            if (Regex(extractor.mainUrl).find(currentUrl) != null) {
+                extractor.getSafeUrl(currentUrl, referer, subtitleCallback, callback)
+                return true
+            }
+        } catch (_: PatternSyntaxException) {}
+    }
+
     // this is to match mirror domains - like example.com, example.net
     for (extractor in extractorApis) {
         if (FuzzySearch.partialRatio(
