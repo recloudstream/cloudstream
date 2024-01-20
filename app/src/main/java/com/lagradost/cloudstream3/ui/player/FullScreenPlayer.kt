@@ -397,7 +397,6 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
     }
 
     override fun onDestroy() {
-        //stopUpdatingRemainingTime()
         exitFullscreen()
         player.release()
         player.releaseCallbacks()
