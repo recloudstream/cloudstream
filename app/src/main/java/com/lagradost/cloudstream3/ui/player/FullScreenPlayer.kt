@@ -1515,9 +1515,9 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
             }
         }
         // cs3 is peak media center
+        setRemainingTimeCounter(durationMode || SettingsFragment.isTrueTvSettings())
         playerBinding?.exoPosition?.doOnTextChanged { _, _, _, _ ->
             updateRemainingTime()
-            setRemainingTimeCounter(durationMode || SettingsFragment.isTrueTvSettings())
         }
         // init UI
         try {
