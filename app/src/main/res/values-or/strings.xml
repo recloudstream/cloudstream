@@ -158,4 +158,5 @@
     <string name="next_episode">ପରବର୍ତ୍ତୀ ଅଧ୍ୟାୟ</string>
     <string name="no_data">କୌଣସି ତଥ୍ୟ ନାହିଁ</string>
     <string name="app_dub_sub_episode_text_format" formatted="true">%1$s ଅ %2$d</string>
+    <string name="video_skip_op">ଆଦ୍ୟ ବାଦ୍ ଦିଅ</string>
 </resources>

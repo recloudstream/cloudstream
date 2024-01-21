@@ -35,7 +35,9 @@ import androidx.core.graphics.blue
 import androidx.core.graphics.drawable.toBitmapOrNull
 import androidx.core.graphics.green
 import androidx.core.graphics.red
+import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.core.view.marginBottom
 import androidx.core.view.marginLeft
 import androidx.core.view.marginRight
@@ -57,6 +59,7 @@ import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipDrawable
 import com.google.android.material.chip.ChipGroup
 import com.lagradost.cloudstream3.CommonActivity.activity
+import com.lagradost.cloudstream3.MainActivity
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.ui.result.UiImage
@@ -87,8 +90,9 @@ object UIHelper {
         if (view == null) return
         view.removeAllViews()
         val context = view.context ?: return
+        val maxTags = tags.take(10) // Limited because they are too much
 
-        tags.forEach { tag ->
+        maxTags.forEach { tag ->
             val chip = Chip(context)
             val chipDrawable = ChipDrawable.createFromAttributes(
                 context,
@@ -180,9 +184,7 @@ object UIHelper {
         try {
             if (this is FragmentActivity) {
                 val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as? NavHostFragment?
-                navHostFragment?.navController?.let {
-                    it.navigate(navigation, arguments)
-                }
+                navHostFragment?.navController?.navigate(navigation, arguments)
             }
         } catch (t: Throwable) {
             logError(t)
@@ -402,17 +404,16 @@ object UIHelper {
         // Enables regular immersive mode.
         // For "lean back" mode, remove SYSTEM_UI_FLAG_IMMERSIVE.
         // Or for "sticky immersive," replace it with SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+        /** BUGGED AF  **/
+        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
 
-            if (window.insetsController != null) {
-
-                window!!.insetsController?.hide(WindowInsetsCompat.Type.systemBars())
-                window!!.insetsController?.systemBarsBehavior =
-                WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+            WindowCompat.setDecorFitsSystemWindows(window, false)
+            WindowInsetsControllerCompat(window, View(this)).let { controller ->
+                controller.hide(WindowInsetsCompat.Type.systemBars())
+                controller.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
             }
-        }
+        }*/
 
-        else {
             @Suppress("DEPRECATION")
             window.decorView.systemUiVisibility = (
                     View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
@@ -425,7 +426,7 @@ object UIHelper {
                             or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                             or View.SYSTEM_UI_FLAG_FULLSCREEN
                     )
-        }
+          //}
     }
 
     fun FragmentActivity.popCurrentPage() {
@@ -496,13 +497,13 @@ object UIHelper {
     }
 
     fun Activity.changeStatusBarState(hide: Boolean): Int {
-        @Suppress("DEPRECATION")
         return if (hide) {
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                 window.insetsController?.hide(WindowInsets.Type.statusBars())
 
             } else {
+                @Suppress("DEPRECATION")
                 window.setFlags(
                     WindowManager.LayoutParams.FLAG_FULLSCREEN,
                     WindowManager.LayoutParams.FLAG_FULLSCREEN
@@ -525,17 +526,16 @@ object UIHelper {
     // except for the ones that make the content appear under the system bars.
     fun Activity.showSystemUI() {
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
 
-        if (window.insetsController != null) {
-            window!!.insetsController?.show(WindowInsetsCompat.Type.systemBars())
-        }
+            WindowCompat.setDecorFitsSystemWindows(window, true)
+            WindowInsetsControllerCompat(window, View(this)).show(WindowInsetsCompat.Type.systemBars())
 
-        } else {
-            @Suppress("DEPRECATION")
+        } else {*/ /** WINDOW COMPAT IS BUGGY DUE TO FU*KED UP PLAYER AND TRAILERS **/
+            Suppress("DEPRECATION")
             window.decorView.systemUiVisibility =
                 (View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN)
-        }
+        //}
 
         changeStatusBarState(isEmulatorSettings())
     }

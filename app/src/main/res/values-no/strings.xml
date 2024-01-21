@@ -532,4 +532,11 @@
 \nLaster ikke inn noen utvidelser ved oppstart til filen er fjernet.</string>
     <string name="empty_library_no_accounts_message">Biblioteket ditt er tomt :(
 \nLogg inn på en bibliotekkonto eller legg til programmer i ditt lokale bibliotek.</string>
+    <string name="edit">Rediger</string>
+    <string name="profiles">Profiler</string>
+    <string name="favorites_list_name">Favoritter</string>
+    <string name="lock_profile">Lås profil</string>
+    <string name="use">Bruk</string>
+    <string name="help">Hjelp</string>
+    <string name="profile_background_des">Profilbakgrunn</string>
 </resources>

@@ -139,6 +139,10 @@ android {
         abortOnError = false
         checkReleaseBuilds = false
     }
+    
+    buildFeatures {
+        buildConfig = true
+    }
 
     namespace = "com.lagradost.cloudstream3"
 }
@@ -195,13 +199,13 @@ dependencies {
     // PlayBack
     implementation("com.jaredrummler:colorpicker:1.1.0") // Subtitle Color Picker
     implementation("com.github.recloudstream:media-ffmpeg:1.1.0") // Custom FF-MPEG Lib for Audio Codecs
-    implementation("com.github.teamnewpipe:NewPipeExtractor:eac850") /* For Trailers
+    implementation("com.github.teamnewpipe:NewPipeExtractor:6dc25f7") /* For Trailers
     ^ Update to Latest Commits if Trailers Misbehave, github.com/TeamNewPipe/NewPipeExtractor/commits/dev */
     implementation("com.github.albfernandez:juniversalchardet:2.4.0") // Subtitle Decoding
 
     // Crash Reports (AcraApplication.kt)
-    implementation("ch.acra:acra-core:5.11.2")
-    implementation("ch.acra:acra-toast:5.11.2")
+    implementation("ch.acra:acra-core:5.11.3")
+    implementation("ch.acra:acra-toast:5.11.3")
 
     // UI Stuff
     implementation("com.facebook.shimmer:shimmer:0.5.0") // Shimmering Effect (Loading Skeleton)
@@ -226,7 +230,7 @@ dependencies {
     // Downloading & Networking
     implementation("androidx.work:work-runtime:2.9.0")
     implementation("androidx.work:work-runtime-ktx:2.9.0")
-    implementation("com.github.Blatzar:NiceHttp:0.4.4") // HTTP Lib
+    implementation("com.github.Blatzar:NiceHttp:0.4.5") // HTTP Lib
 }
 
 tasks.register("androidSourcesJar", Jar::class) {
