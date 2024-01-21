@@ -80,7 +80,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
     protected open var isTv = false
     protected var playerBinding: PlayerCustomLayoutBinding? = null
 
-    private var durationMode : Int by UserPreferenceDelegate("duration_mode", 0)
+    private var durationMode : Boolean by UserPreferenceDelegate("duration_mode", false)
     // state of player UI
     protected var isShowing = false
     protected var isLocked = false
@@ -1422,11 +1422,11 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
             }
 
             exoDuration.setOnClickListener {
-                startUpdatingRemainingTime()
+                setRemainingTimeCounter(true)
             }
 
             timeLeft.setOnClickListener {
-                stopUpdatingRemainingTime()
+                setRemainingTimeCounter(false)
             }
 
             skipChapterButton.setOnClickListener {
@@ -1514,17 +1514,16 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                 return@setOnTouchListener false
             }
         }
+        // cs3 is peak media center
+        playerBinding?.exoPosition?.doOnTextChanged { _, _, _, _ ->
+            updateRemainingTime()
+            setRemainingTimeCounter(durationMode || SettingsFragment.isTrueTvSettings())
+        }
         // init UI
         try {
             uiReset()
         } catch (e: Exception) {
             logError(e)
-        }
-
-        if (SettingsFragment.isTrueTvSettings()) {
-            startUpdatingRemainingTime() // cs3 is a bleeding edge media center itself
-        } else if (durationMode == 1 && !SettingsFragment.isTrueTvSettings()) {
-            startUpdatingRemainingTime()
         }
     }
 
@@ -1541,7 +1540,6 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
     }
 
     private fun updateRemainingTime() {
-
         val duration = player.getDuration()
         val position = player.getPosition()
 
@@ -1553,21 +1551,10 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         }
     }
 
-    private fun startUpdatingRemainingTime() {
-
-        playerBinding?.exoPosition?.doOnTextChanged { _, _, _, _ ->
-            updateRemainingTime()
-        }
-
-        playerBinding?.exoDuration?.isInvisible = true
-        playerBinding?.timeLeft?.isVisible = true
-        durationMode = 1
-    }
-
-    private fun stopUpdatingRemainingTime() {
-        playerBinding?.timeLeft?.isInvisible = true
-        playerBinding?.exoDuration?.isVisible = true
-        durationMode = 0
+    private fun setRemainingTimeCounter(showRemaining: Boolean) {
+        durationMode = showRemaining
+        playerBinding?.exoDuration?.isInvisible= showRemaining
+        playerBinding?.timeLeft?.isVisible = showRemaining
     }
 
     private fun dynamicOrientation(): Int {
