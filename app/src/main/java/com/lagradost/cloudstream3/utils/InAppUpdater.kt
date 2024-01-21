@@ -191,7 +191,7 @@ class InAppUpdater {
                 Update(
                     shouldUpdate,
                     foundAsset.browser_download_url,
-                    tagResponse.github_object.sha,
+                    tagResponse.github_object.sha.take(10),
                     found.body,
                     found.node_id
                 )
@@ -293,7 +293,13 @@ class InAppUpdater {
                                     update.updateVersion
                                 )
                             )
-                            builder.setMessage("${update.changelog}")
+
+                            val logRegex = Regex("\\[(.*?)\\]\\((.*?)\\)")
+                            val sanitizedChangelog = update.changelog?.replace(logRegex) { matchResult ->
+                                matchResult.groupValues[1]
+                            } // Sanitized because it looks cluttered
+
+                            builder.setMessage(sanitizedChangelog)
 
                             val context = this
                             builder.apply {

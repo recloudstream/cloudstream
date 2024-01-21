@@ -265,7 +265,7 @@
     <string name="legal_notice_text" translatable="false">Jakékoli právní otázky týkající se obsahu této aplikace je třeba řešit se samotnými hostiteli a poskytovateli souborů, protože s nimi nejsme nijak spojeni. V případě porušení autorských práv se obraťte přímo na odpovědné strany nebo na webové stránky, na kterých se streamování odehrává. Aplikace je určena výhradně pro vzdělávací a osobní účely. CloudStream 3 v aplikaci nehostuje žádný obsah a nemá žádnou kontrolu nad tím, jaká média jsou v aplikaci umístěna nebo odstraněna. CloudStream 3 funguje jako jakýkoli jiný vyhledávač, například Google. Služba CloudStream 3 nehostuje, nenahrává ani nespravuje žádná videa, filmy ani obsah. Pouze vyhledává, agreguje a zobrazuje odkazy v pohodlném, uživatelsky přívětivém rozhraní. Pouze shromažďuje webové stránky třetích stran, které jsou veřejně přístupné prostřednictvím jakéhokoli běžného webového prohlížeče. Je odpovědností uživatele, aby se vyvaroval jakýchkoli akcí, které by mohly porušovat zákony platné v jeho lokalitě. Použijte CloudStream 3 na vlastní nebezpečí.</string>
     <string name="category_general">Obecné</string>
     <string name="random_button_settings">Náhodné tlačítko</string>
-    <string name="random_button_settings_desc">Zobrazit na domovské stránce náhodné tlačítko</string>
+    <string name="random_button_settings_desc">Zobrazit na domovské stránce a v knihovně náhodné tlačítko</string>
     <string name="provider_lang_settings">Jazyk poskytovatelů</string>
     <string name="app_layout">Rozložení aplikace</string>
     <string name="preferred_media_settings">Preferovaná média</string>
@@ -615,4 +615,5 @@
     <string name="auto_rotate_video">Automatické otáčení</string>
     <string name="rotate_video">Otočení</string>
     <string name="auto_rotate_video_desc">Zapnout automatické otáčení obrazovky v závislosti na orientaci videa</string>
+    <string name="copyTitle">Název zkopírován!</string>
 </resources>
