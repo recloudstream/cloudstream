@@ -116,6 +116,7 @@ import com.lagradost.cloudstream3.extractors.TRsTX
 import com.lagradost.cloudstream3.extractors.VidMoxy
 import com.lagradost.cloudstream3.extractors.PixelDrain
 import com.lagradost.cloudstream3.extractors.MailRu
+import com.lagradost.cloudstream3.extractors.Mediafire
 import com.lagradost.cloudstream3.extractors.OkRuSSL
 import com.lagradost.cloudstream3.extractors.OkRuHTTP
 import com.lagradost.cloudstream3.extractors.Okrulink
@@ -835,6 +836,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     Gdriveplayer(),
     DatabaseGdrive(),
     DatabaseGdrive2(),
+    Mediafire(),
 
     YoutubeExtractor(),
     YoutubeShortLinkExtractor(),
