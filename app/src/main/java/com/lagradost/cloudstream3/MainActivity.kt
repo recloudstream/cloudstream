@@ -10,6 +10,7 @@ import android.graphics.Rect
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.util.AttributeSet
 import android.util.Log
 import android.view.KeyEvent
@@ -23,6 +24,7 @@ import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.annotation.IdRes
 import androidx.annotation.MainThread
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -150,6 +152,7 @@ import com.lagradost.cloudstream3.utils.UIHelper.requestRW
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import com.lagradost.cloudstream3.utils.USER_PROVIDER_API
 import com.lagradost.cloudstream3.utils.USER_SELECTED_HOMEPAGE_API
+import com.lagradost.cloudstream3.utils.UserPreferenceDelegate
 import com.lagradost.nicehttp.Requests
 import com.lagradost.nicehttp.ResponseParser
 import com.lagradost.safefile.SafeFile
@@ -164,7 +167,6 @@ import kotlin.math.abs
 import kotlin.math.absoluteValue
 import kotlin.reflect.KClass
 import kotlin.system.exitProcess
-
 
 //https://github.com/videolan/vlc-android/blob/3706c4be2da6800b3d26344fc04fab03ffa4b860/application/vlc-android/src/org/videolan/vlc/gui/video/VideoPlayerActivity.kt#L1898
 //https://wiki.videolan.org/Android_Player_Intents/
@@ -320,6 +322,9 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
          * Used by DataStoreHelper to fully reload library when switching accounts
          */
         val reloadLibraryEvent = Event<Boolean>()
+
+        /** For battery optimisation **/
+        private var isAppOptimised : Boolean by UserPreferenceDelegate("iAppOptimised", false)
 
 
         /**
@@ -1174,8 +1179,12 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             null
         }
 
-        changeStatusBarState(isEmulatorSettings())
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !isAppOptimised && !isTrueTvSettings()
+            && !isTvSettings() && !isEmulatorSettings()) {
+            showBatteryOptimizationDialog()
+        }
 
+        changeStatusBarState(isEmulatorSettings())
         // Automatically enable jsdelivr if cant connect to raw.githubusercontent.com
         if (this.getKey<Boolean>(getString(R.string.jsdelivr_proxy_key)) == null && isNetworkAvailable()) {
             main {
@@ -1746,5 +1755,21 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         } catch (t: Throwable) {
             false
         }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.M)
+    private fun showBatteryOptimizationDialog() {
+       AlertDialog.Builder(this)
+            .setTitle(R.string.battery_dialog_title)
+            .setMessage(R.string.battery_dialog_message)
+            .setPositiveButton(R.string.ok) { _, _ ->
+                isAppOptimised = true
+                val intent = Intent()
+                intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+                intent.data = Uri.fromParts("package", packageName, null)
+                startActivity(intent)
+            }
+            .setNegativeButton(R.string.cancel, null)
+            .show()
     }
 }
