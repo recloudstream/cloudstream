@@ -324,8 +324,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         val reloadLibraryEvent = Event<Boolean>()
 
         /** For battery optimisation **/
-        private var isAppOptimised : Boolean by UserPreferenceDelegate("iAppOptimised", false)
-
+        private var isAppOptimised : Boolean by UserPreferenceDelegate("isAppOptimised", false)
 
         /**
          * @return true if the str has launched an app task (be it successful or not)
