@@ -826,6 +826,7 @@ class ResultFragmentTv : Fragment() {
                         resultMetaYear.setText(d.yearText)
                         resultMetaDuration.setText(d.durationText)
                         resultMetaRating.setText(d.ratingText)
+                        resultMetaContentRating.setText(d.contentRatingText)
                         resultCastText.setText(d.actorsText)
                         resultNextAiring.setText(d.nextAiringEpisode)
                         resultNextAiringTime.setText(d.nextAiringDate)
@@ -865,6 +866,11 @@ class ResultFragmentTv : Fragment() {
                         (resultCastItems.adapter as? ActorAdaptor)?.updateList(
                             d.actors ?: emptyList()
                         )
+
+                        if (d.contentRatingText == null) {
+                            // If there is no rating to display, we don't want an empty gap
+                            resultMetaContentRating.width = 0
+                        }
                     }
 
                     is Resource.Loading -> {

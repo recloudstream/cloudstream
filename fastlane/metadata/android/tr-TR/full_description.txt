@@ -1,0 +1,10 @@
+CloudStream-3, Filmleri, TV Dizilerini ve Animeleri izlemenize ve indirmenize olanak tanır.
+
+Uygulama herhangi bir reklam ve analitik içermez ve
+birden fazla fragman & film sitesini ve daha fazlasını destekler, örneğin:
+
+Yer imleri
+
+Altyazı indirmeleri
+
+Chromecast desteği

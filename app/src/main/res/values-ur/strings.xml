@@ -11,11 +11,11 @@
     <string name="preview_background_img_des">پس منظر کا دیکھنا</string>
     <string name="rated_format" formatted="true">درجہ بندی: %.1f</string>
     <string name="new_update_format" formatted="true">نیا update آگیا ہے!
-\n%s -&gt; %s</string>
+\n%1$s -&gt; %2$s</string>
     <string name="filler" formatted="true">بھرنے والا</string>
     <string name="duration_format" formatted="true">%d منٹ</string>
-    <string name="next_episode_time_day_format" formatted="true">%d دن %d گھنٹے %d منٹ</string>
-    <string name="next_episode_time_hour_format" formatted="true">%d گھنٹے %d منٹ</string>
+    <string name="next_episode_time_day_format" formatted="true">%1$d دن %2$d گھنٹے %3$d منٹ</string>
+    <string name="next_episode_time_hour_format" formatted="true">%1$d گھنٹے %2$d منٹ</string>
     <string name="next_episode_time_min_format" formatted="true">%d منٹ</string>
     <string name="app_name">CloudStream</string>
     <string name="play_with_app_name">CloudStream کے ساتھ چلائیں</string>
@@ -146,7 +146,7 @@
     <string name="copy_link_toast">کلپ بورڈ میں نقل ہوا</string>
     <string name="play_episode_toast">قسط چلائیں</string>
     <string name="subs_default_reset_toast">طے شدہ قدر پر ری سیٹ کریں</string>
-    <string name="app_dub_sub_episode_text_format" formatted="true">%s قسط %d</string>
+    <string name="app_dub_sub_episode_text_format" formatted="true">%1$s قسط %2$d</string>
     <string name="result_poster_img_des">پوسٹر</string>
     <string name="result_share">شئیر کریں</string>
     <string name="result_tags">انواع</string>
@@ -180,12 +180,12 @@
     <string name="apk_installer_settings_des">کچھ فون نئے پیکیج انسٹالر کو سپورٹ نہیں کرتے ہیں. اگر اپ ڈیٹس انسٹال نہیں ہوتے ہیں تو لیگیسی آپشن کو آزمائیں.</string>
     <string name="acra_report_toast">معذرت، ایپلی کیشن کریش ہو گئی. ایک گمنام بگ رپورٹ ڈویلپرز کو بھیجی جائے گی</string>
     <string name="season">سیزن</string>
-    <string name="season_format">%s %d%s</string>
+    <string name="season_format">%1$s %2$d%3$s</string>
     <string name="no_season">کوئی سیزن نہیں</string>
     <string name="episode">قسط</string>
     <string name="episodes">اقساط</string>
-    <string name="episodes_range">%d-%d</string>
-    <string name="episode_format" formatted="true">%d %s</string>
+    <string name="episodes_range">%1$d-%2$d</string>
+    <string name="episode_format" formatted="true">%1$d %2$s</string>
     <string name="season_short">S</string>
     <string name="episode_short">E</string>
     <string name="no_episodes_found">کوئی اقساط نہیں ملی</string>
@@ -344,7 +344,7 @@
     <string name="resize_fit">اسکرین پر فٹ</string>
     <string name="resize_fill">کھینچیں</string>
     <string name="create_account">اکاؤنٹ بنائیں</string>
-    <string name="login_format" formatted="true">%s %s</string>
+    <string name="login_format" formatted="true">%1$s %2$s</string>
     <string name="switch_account">اکاؤنٹ سوئچ کریں</string>
     <string name="add_sync">ٹریکنگ شامل کریں</string>
     <string name="upload_sync">تواقت</string>
@@ -406,8 +406,8 @@
     <string name="repository_url_hint">ذخیرہ URL</string>
     <string name="plugin_loaded">پلگ ان لوڈ ہو گیا</string>
     <string name="plugin_load_fail" formatted="true">%s کو لوڈ نہیں کیا جا سکا</string>
-    <string name="batch_download_start_format" formatted="true">ڈاؤن لوڈ ہونا شروع ہو گیا %d %s…</string>
-    <string name="batch_download_finish_format" formatted="true">ڈاؤن لوڈ کیا گیا %d %s</string>
+    <string name="batch_download_start_format" formatted="true">ڈاؤن لوڈ ہونا شروع ہو گیا %1$d %2$s…</string>
+    <string name="batch_download_finish_format" formatted="true">ڈاؤن لوڈ کیا گیا %1$d %2$s</string>
     <string name="batch_download_nothing_to_download_format" formatted="true">سبھی %s پہلے ہی ڈاؤن لوڈ ہو چکے ہیں</string>
     <string name="plugin_singular">رابطہ بحال کرو</string>
     <string name="plugin">پلگ ان</string>

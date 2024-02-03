@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="search_poster_img_des">Plakāts</string>
-    <string name="app_dub_sub_episode_text_format" formatted="true">%s Ep %d</string>
+    <string name="app_dub_sub_episode_text_format" formatted="true">%1$s Ep %2$d</string>
     <string name="cast_format" formatted="true">Cast: %s</string>
     <string name="result_poster_img_des">Plakāts</string>
     <string name="episode_poster_img_des">Epizodes plakāts</string>
@@ -13,7 +13,7 @@
     <string name="player_speed_text_format" formatted="true">Ātrums (%.2fx)</string>
     <string name="rated_format" formatted="true">Lidzīgi: %.1f</string>
     <string name="new_update_format" formatted="true">Jauns atjauninājums atrasts!
-\n%s -&gt; %s</string>
+\n%1$s -&gt; %2$s</string>
     <string name="duration_format" formatted="true">%d galvenais</string>
     <string name="app_name">Claudstream</string>
     <string name="play_with_app_name">Atskaņo ar cloudstream</string>
@@ -96,9 +96,9 @@
     <string name="sort_clear">Iztīrīt</string>
     <string name="subs_text_color">Teksta krāsa</string>
     <string name="subs_auto_select_language">Automātiski-iestādīt valodu</string>
-    <string name="next_episode_time_hour_format" formatted="true">%dh %dm</string>
+    <string name="next_episode_time_hour_format" formatted="true">%1$dh %2$dm</string>
     <string name="next_episode_time_min_format" formatted="true">%dm</string>
-    <string name="next_episode_time_day_format" formatted="true">%dd %dh %dm</string>
+    <string name="next_episode_time_day_format" formatted="true">%1$dd %2$dh %3$dm</string>
     <string name="subs_download_languages">Ielādēt valodas</string>
     <string name="subs_subtitle_languages">Subtitru valoda</string>
     <string name="subs_hold_to_reset_to_default">Tūri lai restartētu uz sākumu</string>
@@ -179,12 +179,12 @@
     <string name="copy_link_toast">Links kopēts cliobordā</string>
     <string name="subs_default_reset_toast">Restartēt uz parasto value</string>
     <string name="season">Sezona</string>
-    <string name="season_format">%s %d%s</string>
+    <string name="season_format">%1$s %2$d%3$s</string>
     <string name="no_season">Nav sezonas</string>
     <string name="episode">Epizode</string>
     <string name="episodes">Epizodes</string>
-    <string name="episodes_range">%d-%d</string>
-    <string name="episode_format" formatted="true">%d %s</string>
+    <string name="episodes_range">%1$d-%2$d</string>
+    <string name="episode_format" formatted="true">%1$d %2$s</string>
     <string name="season_short">S</string>
     <string name="episode_short">E</string>
     <string name="no_episodes_found">Epizodes netika atrastas</string>
@@ -402,8 +402,8 @@
     <string name="plugin_deleted">Plugins dzēsts</string>
     <string name="plugin_load_fail" formatted="true">Nevarēja ielādēt %s</string>
     <string name="is_adult">18+</string>
-    <string name="batch_download_start_format" formatted="true">Sākta %d %s lejupielāde…</string>
-    <string name="batch_download_finish_format" formatted="true">Lejuplādēts %d %s</string>
+    <string name="batch_download_start_format" formatted="true">Sākta %1$d %2$s lejupielāde…</string>
+    <string name="batch_download_finish_format" formatted="true">Lejuplādēts %1$d %2$s</string>
     <string name="batch_download">Pakešu lejupielāde</string>
     <string name="plugin_singular">Plugins</string>
     <string name="plugin">Plugins</string>
@@ -493,7 +493,7 @@
     <string name="jsdelivr_enabled">Neizdevās sasniegt GitHub. Pieslēdzas starpniekserverim caur jsDelivr…</string>
     <string name="resize_fill">Iztiept</string>
     <string name="primary_color_settings">Galvenā krāsa</string>
-    <string name="login_format" formatted="true">%s %s</string>
+    <string name="login_format" formatted="true">%1$s %2$s</string>
     <string name="bottom_title_settings_des">Likt nosaukumu zem plakāta</string>
     <string name="subtitle_offset_extra_hint_before_format">Izmantojiet šo, ja subtitri tiek rādīti %d ms pārāk vēlu</string>
     <string name="recommended">Rekomendācijas</string>

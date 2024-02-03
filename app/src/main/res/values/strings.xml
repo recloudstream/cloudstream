@@ -67,6 +67,8 @@
     <string name="enable_nsfw_on_providers_key" translatable="false">enable_nsfw_on_providers_key</string>
     <string name="skip_startup_account_select_key" translatable="false">skip_startup_account_select_key</string>
     <string name="enable_skip_op_from_database" translatable="false">enable_skip_op_from_database</string>
+    <string name="rotate_video_key" translatable="false">rotate_video_key</string>
+    <string name="auto_rotate_video_key" translatable="false">auto_rotate_video_key</string>
     <!-- FORMAT MIGHT TRANSLATE, WILL CAUSE CRASH IF APPLIED WRONG -->
     <string name="extra_info_format" formatted="true" translatable="false">%d %s | %s</string>
     <string name="storage_size_format" formatted="true" translatable="false">%s • %s</string>
@@ -148,6 +150,7 @@
     <string name="update_started">Update Started</string>
     <string name="stream">Stream</string>
     <string name="error_loading_links_toast">Error Loading Links</string>
+    <string name="links_reloaded_toast">Links Reloaded</string>
     <string name="download_storage_text">Internal Storage</string>
     <string name="app_dubbed_text">Dub</string>
     <string name="app_subbed_text">Sub</string>
@@ -170,6 +173,7 @@
     <string name="sort_close">Close</string>
     <string name="sort_clear">Clear</string>
     <string name="sort_save">Save</string>
+    <string name="copyTitle">Title copied!</string>
     <string name="player_speed">Player Speed</string>
     <string name="subtitles_settings">Subtitle Settings</string>
     <string name="subs_text_color">Text Color</string>
@@ -434,7 +438,7 @@
     <string name="pref_category_ui_features">Features</string>
     <string name="category_general">General</string>
     <string name="random_button_settings">Random Button</string>
-    <string name="random_button_settings_desc">Show random button on Homepage</string>
+    <string name="random_button_settings_desc">Show random button on Homepage and Library</string>
     <string name="provider_lang_settings">Provider languages</string>
     <string name="app_layout">App Layout</string>
     <string name="preferred_media_settings">Preferred media</string>
@@ -733,4 +737,8 @@
     <string name="logged_account" formatted="true">Logged in as %s</string>
     <string name="skip_startup_account_select_pref">Skip account selection at startup</string>
     <string name="use_default_account">Use Default Account</string>
+    <string name="rotate_video">Rotate</string>
+    <string name="rotate_video_desc">Display a toggle button for screen orientation</string>
+    <string name="auto_rotate_video_desc">Enable automatic switching of screen orientation based on video orientation</string>
+    <string name="auto_rotate_video">Auto rotate</string>
 </resources>

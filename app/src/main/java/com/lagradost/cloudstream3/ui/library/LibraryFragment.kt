@@ -7,7 +7,6 @@ import android.content.res.Configuration
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
@@ -16,18 +15,17 @@ import android.view.ViewGroup.FOCUS_AFTER_DESCENDANTS
 import android.view.ViewGroup.FOCUS_BLOCK_DESCENDANTS
 import android.view.animation.AlphaAnimation
 import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.allViews
+import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.viewpager2.widget.ViewPager2
+import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.lagradost.cloudstream3.APIHolder
@@ -36,7 +34,9 @@ import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.openBrowser
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.CommonActivity
+import com.lagradost.cloudstream3.MainActivity
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.SearchResponse
 import com.lagradost.cloudstream3.databinding.FragmentLibraryBinding
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.debugAssert
@@ -82,6 +82,8 @@ data class ProviderLibraryData(
 
 class LibraryFragment : Fragment() {
     companion object {
+
+        val listLibraryItems = mutableListOf<SyncAPI.LibraryItem>()
         fun newInstance() = LibraryFragment()
 
         /**
@@ -93,6 +95,7 @@ class LibraryFragment : Fragment() {
     private val libraryViewModel: LibraryViewModel by activityViewModels()
 
     var binding: FragmentLibraryBinding? = null
+    private var toggleRandomButton = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -151,6 +154,11 @@ class LibraryFragment : Fragment() {
         activity?.theme?.resolveAttribute(android.R.attr.textColor, searchExitIconColor, true)
         searchExitIcon?.setColorFilter(searchExitIconColor.data)
 
+        val searchCallback = Runnable {
+            val newText = binding?.mainSearch?.query?.toString() ?: return@Runnable
+            libraryViewModel.sort(ListSorting.Query, newText)
+        }
+
         binding?.mainSearch?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 libraryViewModel.sort(ListSorting.Query, query)
@@ -167,7 +175,12 @@ class LibraryFragment : Fragment() {
                     return true
                 }
 
-                libraryViewModel.sort(ListSorting.Query, newText)
+                binding?.mainSearch?.removeCallbacks(searchCallback)
+
+                // Delay the execution of the search operation by 1 second (adjust as needed)
+                // this prevents running search when the user is typing
+                binding?.mainSearch?.postDelayed(searchCallback, 1000)
+
                 return true
             }
         })
@@ -188,6 +201,25 @@ class LibraryFragment : Fragment() {
             }
         }
 
+        //Load value for toggling Random button. Hide at startup
+        context?.let {
+            val settingsManager = PreferenceManager.getDefaultSharedPreferences(it)
+            toggleRandomButton =
+                settingsManager.getBoolean(
+                    getString(R.string.random_button_key),
+                    false
+                ) && !SettingsFragment.isTvSettings()
+            binding?.libraryRandom?.visibility = View.GONE
+        }
+
+        binding?.libraryRandom?.setOnClickListener {
+            if (listLibraryItems.isNotEmpty()) {
+                val listLibraryItem = listLibraryItems.random()
+                libraryViewModel.currentSyncApi?.syncIdName?.let {
+                    loadLibraryItem(it, listLibraryItem.syncId,listLibraryItem)
+                }
+            }
+        }
 
         /**
          * Shows a plugin selection dialogue and saves the response
@@ -269,8 +301,10 @@ class LibraryFragment : Fragment() {
                 { isScrollingDown: Boolean ->
                     if (isScrollingDown) {
                         binding?.sortFab?.shrink()
+                        binding?.libraryRandom?.shrink()
                     } else {
                         binding?.sortFab?.extend()
+                        binding?.libraryRandom?.extend()
                     }
                 }) callback@{ searchClickCallback ->
                 // To prevent future accidents
@@ -286,60 +320,16 @@ class LibraryFragment : Fragment() {
 
                 when (searchClickCallback.action) {
                     SEARCH_ACTION_SHOW_METADATA -> {
-                        activity?.showPluginSelectionDialog(
+                        (activity as? MainActivity)?.loadPopup(searchClickCallback.card, load = false)
+                    /*activity?.showPluginSelectionDialog(
                             syncId,
                             syncName,
                             searchClickCallback.card.apiName
-                        )
+                        )*/
                     }
 
                     SEARCH_ACTION_LOAD -> {
-                        // This basically first selects the individual opener and if that is default then
-                        // selects the whole list opener
-                        val savedListSelection =
-                            getKey<LibraryOpener>("$currentAccount/$LIBRARY_FOLDER", syncName.name)
-                        val savedSelection = getKey<LibraryOpener>(
-                            "$currentAccount/$LIBRARY_FOLDER",
-                            syncId
-                        ).takeIf {
-                            it?.openType != LibraryOpenerType.Default
-                        } ?: savedListSelection
-
-                        when (savedSelection?.openType) {
-                            null, LibraryOpenerType.Default -> {
-                                // Prevents opening MAL/AniList as a provider
-                                if (APIHolder.getApiFromNameNull(searchClickCallback.card.apiName) != null) {
-                                    activity?.loadSearchResult(
-                                        searchClickCallback.card
-                                    )
-                                } else {
-                                    // Search when no provider can open
-                                    QuickSearchFragment.pushSearch(
-                                        activity,
-                                        searchClickCallback.card.name
-                                    )
-                                }
-                            }
-
-                            LibraryOpenerType.None -> {}
-                            LibraryOpenerType.Provider ->
-                                savedSelection.providerData?.apiName?.let { apiName ->
-                                    activity?.loadResult(
-                                        searchClickCallback.card.url,
-                                        apiName,
-                                    )
-                                }
-
-                            LibraryOpenerType.Browser ->
-                                openBrowser(searchClickCallback.card.url)
-
-                            LibraryOpenerType.Search -> {
-                                QuickSearchFragment.pushSearch(
-                                    activity,
-                                    searchClickCallback.card.name
-                                )
-                            }
-                        }
+                        loadLibraryItem(syncName, syncId, searchClickCallback.card)
                     }
                 }
             }
@@ -378,7 +368,6 @@ class LibraryFragment : Fragment() {
                     val pages = resource.value
                     val showNotice = pages.all { it.items.isEmpty() }
 
-
                     binding?.apply {
                         emptyListTextview.isVisible = showNotice
                         if (showNotice) {
@@ -401,7 +390,20 @@ class LibraryFragment : Fragment() {
                             0,
                             viewpager.adapter?.itemCount ?: 0
                         )
-                        binding?.viewpager?.setCurrentItem(libraryViewModel.currentPage, false)
+
+                        libraryViewModel.currentPage.value?.let { page ->
+                            binding?.viewpager?.setCurrentItem(page, false)
+                        }
+
+                        observe(libraryViewModel.currentPage){
+                            if (toggleRandomButton) {
+                                listLibraryItems.clear()
+                                listLibraryItems.addAll(pages[it].items)
+                                libraryRandom.isVisible = listLibraryItems.isNotEmpty()
+                            } else {
+                                libraryRandom.isGone = true
+                            }
+                        }
 
                         // Only stop loading after 300ms to hide the fade effect the viewpager produces when updating
                         // Without this there would be a flashing effect:
@@ -448,10 +450,20 @@ class LibraryFragment : Fragment() {
                                 hideViewpager(distance)
                             }
                             //Expand the appBar on tab focus
-                            tab.view.setOnFocusChangeListener { view, b ->
+                            tab.view.setOnFocusChangeListener { _, _ ->
                                 binding?.searchBar?.setExpanded(true)
                             }
                         }.attach()
+
+                        binding?.libraryTabLayout?.addOnTabSelectedListener(object: TabLayout.OnTabSelectedListener {
+                            override fun onTabSelected(tab: TabLayout.Tab?) {
+                                binding?.libraryTabLayout?.selectedTabPosition?.let { page ->
+                                    libraryViewModel.switchPage(page)
+                                }
+                            }
+                            override fun onTabUnselected(tab: TabLayout.Tab?) = Unit
+                            override fun onTabReselected(tab: TabLayout.Tab?) = Unit
+                        })
                     }
                 }
 
@@ -467,25 +479,86 @@ class LibraryFragment : Fragment() {
                 }
             }
         }
-        binding?.viewpager?.registerOnPageChangeCallback(object :
+
+        observe(libraryViewModel.currentPage) { position ->
+            val all = binding?.viewpager?.allViews?.toList()
+                ?.filterIsInstance<AutofitRecyclerView>()
+
+            all?.forEach { view ->
+                view.isVisible = view.tag == position
+                view.isFocusable = view.tag == position
+
+                if (view.tag == position)
+                    view.descendantFocusability = FOCUS_AFTER_DESCENDANTS
+                else
+                    view.descendantFocusability = FOCUS_BLOCK_DESCENDANTS
+            }
+        }
+
+        /*binding?.viewpager?.registerOnPageChangeCallback(object :
             ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
-                val all = binding?.viewpager?.allViews?.toList()
-                    ?.filterIsInstance<AutofitRecyclerView>()
 
-                all?.forEach { view ->
-                    view.isVisible = view.tag == position
-                    view.isFocusable = view.tag == position
-
-                    if (view.tag == position)
-                        view.descendantFocusability = FOCUS_AFTER_DESCENDANTS
-                    else
-                        view.descendantFocusability = FOCUS_BLOCK_DESCENDANTS
-                }
                 super.onPageSelected(position)
             }
-        })
+        })*/
     }
+
+    private fun loadLibraryItem(
+        syncName: SyncIdName,
+        syncId: String,
+        card: SearchResponse
+    ) {
+        // This basically first selects the individual opener and if that is default then
+        // selects the whole list opener
+        val savedListSelection =
+            getKey<LibraryOpener>("$currentAccount/$LIBRARY_FOLDER", syncName.name)
+
+        val savedSelection = getKey<LibraryOpener>(
+            "$currentAccount/$LIBRARY_FOLDER",
+            syncId
+        ).takeIf {
+            it?.openType != LibraryOpenerType.Default
+        } ?: savedListSelection
+
+        when (savedSelection?.openType) {
+            null, LibraryOpenerType.Default -> {
+                // Prevents opening MAL/AniList as a provider
+                if (APIHolder.getApiFromNameNull(card.apiName) != null) {
+                    activity?.loadSearchResult(
+                        card
+                    )
+                } else {
+                    // Search when no provider can open
+                    QuickSearchFragment.pushSearch(
+                        activity,
+                        card.name
+                    )
+                }
+            }
+
+            LibraryOpenerType.None -> {}
+            LibraryOpenerType.Provider ->
+                savedSelection.providerData?.apiName?.let { apiName ->
+                    activity?.loadResult(
+                        card.url,
+                        apiName,
+                    )
+                }
+
+            LibraryOpenerType.Browser ->
+                openBrowser(card.url)
+
+            LibraryOpenerType.Search -> {
+                QuickSearchFragment.pushSearch(
+                    activity,
+                    card.name
+                )
+            }
+        }
+
+    }
+
     override fun onConfigurationChanged(newConfig: Configuration) {
         (binding?.viewpager?.adapter as? ViewpagerAdapter)?.rebind()
         super.onConfigurationChanged(newConfig)

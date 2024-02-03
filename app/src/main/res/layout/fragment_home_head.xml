@@ -136,6 +136,25 @@
 
     </FrameLayout>
 
+    <LinearLayout
+        android:id="@+id/alternative_account_padding"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:gravity="right"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/alternative_switch_account"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:layout_marginStart="-50dp"
+            android:foreground="?android:attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/account"
+            android:padding="10dp"
+            android:src="@drawable/ic_outline_account_circle_24" />
+    </LinearLayout>
+
 
     <LinearLayout
         android:id="@+id/home_watch_holder"

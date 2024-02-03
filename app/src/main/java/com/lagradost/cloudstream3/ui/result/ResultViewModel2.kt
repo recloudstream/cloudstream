@@ -118,6 +118,7 @@ data class ResultData(
     val plotText: UiText,
     val apiName: UiText,
     val ratingText: UiText?,
+    val contentRatingText: UiText?,
     val vpnText: UiText?,
     val metaText: UiText?,
     val durationText: UiText?,
@@ -249,6 +250,7 @@ fun LoadResponse.toResultData(repo: APIRepository): ResultData {
         apiName = txt(apiName),
         ratingText = rating?.div(1000f)
             ?.let { if (it <= 0.1f) null else txt(R.string.rating_format, it) },
+        contentRatingText = txt(contentRating),
         vpnText = txt(
             when (repo.vpnStatus) {
                 VPNStatus.None -> null
@@ -824,16 +826,15 @@ class ResultViewModel2 : ViewModel() {
     private val _selectPopup: MutableLiveData<SelectPopup?> = MutableLiveData(null)
     val selectPopup: LiveData<SelectPopup?> = _selectPopup
 
-
     fun updateWatchStatus(
         status: WatchType,
         context: Context?,
         loadResponse: LoadResponse? = null,
         statusChangedCallback: ((statusChanged: Boolean) -> Unit)? = null
     ) {
-        val response = loadResponse ?: currentResponse ?: return
-
-        val currentId = response.getId()
+        val (response,currentId) = loadResponse?.let { load ->
+            (load to load.getId())
+        } ?: ((currentResponse ?: return) to (currentId ?: return))
 
         val currentStatus = getResultWatchState(currentId)
 
@@ -883,13 +884,17 @@ class ResultViewModel2 : ViewModel() {
                         response.type,
                         response.posterUrl,
                         response.year,
-                        response.syncData
+                        response.syncData,
+                        plot = response.plot,
+                        tags = response.tags,
+                        rating = response.rating
                     )
                 )
             }
 
             if (currentStatus != status) {
                 MainActivity.bookmarksUpdatedEvent(true)
+                MainActivity.reloadLibraryEvent(true)
             }
 
             _watchStatus.postValue(status)
@@ -924,7 +929,7 @@ class ResultViewModel2 : ViewModel() {
         val response = currentResponse ?: return
         if (response !is EpisodeResponse) return
 
-        val currentId = response.getId()
+        val currentId = currentId ?: return
 
         if (isSubscribed) {
             removeSubscribedData(currentId)
@@ -967,7 +972,10 @@ class ResultViewModel2 : ViewModel() {
                         response.type,
                         response.posterUrl,
                         response.year,
-                        response.syncData
+                        response.syncData,
+                        plot = response.plot,
+                        rating = response.rating,
+                        tags = response.tags
                     )
                 )
 
@@ -992,12 +1000,13 @@ class ResultViewModel2 : ViewModel() {
         val isFavorite = _favoriteStatus.value ?: return
         val response = currentResponse ?: return
 
-        val currentId = response.getId()
+        val currentId = currentId ?: return
 
         if (isFavorite) {
             removeFavoritesData(currentId)
             statusChangedCallback?.invoke(false)
             _favoriteStatus.postValue(false)
+            MainActivity.reloadLibraryEvent(true)
         } else {
             checkAndWarnDuplicates(
                 context,
@@ -1034,13 +1043,16 @@ class ResultViewModel2 : ViewModel() {
                         response.type,
                         response.posterUrl,
                         response.year,
-                        response.syncData
+                        response.syncData,
+                        plot = response.plot,
+                        rating = response.rating,
+                        tags = response.tags
                     )
                 )
 
                 _favoriteStatus.postValue(true)
-
                 statusChangedCallback?.invoke(true)
+                MainActivity.reloadLibraryEvent(true)
             }
         }
     }
@@ -1644,6 +1656,10 @@ class ResultViewModel2 : ViewModel() {
                         clearCache = true
                     )
                 }
+                showToast(
+                    R.string.links_reloaded_toast,
+                    Toast.LENGTH_SHORT
+                )
             }
 
             ACTION_CHROME_CAST_MIRROR -> {
@@ -1833,10 +1849,10 @@ class ResultViewModel2 : ViewModel() {
                             this.japName
                         ).filter { it.length > 2 }
                             .distinct().map {
-                            // this actually would be nice if we improved a bit as 3rd season == season 3 == III ect
+                                // this actually would be nice if we improved a bit as 3rd season == season 3 == III ect
                                 // right now it just removes the dubbed status
                                 it.lowercase().replace(Regex("""\(?[ds]ub(bed)?\)?(\s|$)""") , "").trim()
-                                            },
+                            },
                         TrackerType.getTypes(this.type),
                         this.year
                     )
@@ -1930,6 +1946,7 @@ class ResultViewModel2 : ViewModel() {
 
             postSuccessful(
                 value ?: return@launchSafe,
+                currentId ?: return@launchSafe,
                 currentRepo ?: return@launchSafe,
                 updateEpisodes ?: return@launchSafe,
                 false
@@ -2044,9 +2061,9 @@ class ResultViewModel2 : ViewModel() {
     }
 
     private fun postFavorites(loadResponse: LoadResponse) {
-            val id = loadResponse.getId()
-            val isFavorite = getFavoritesData(id) != null
-            _favoriteStatus.postValue(isFavorite)
+        val id = loadResponse.getId()
+        val isFavorite = getFavoritesData(id) != null
+        _favoriteStatus.postValue(isFavorite)
     }
 
     private fun postEpisodeRange(indexer: EpisodeIndexer?, range: EpisodeRange?) {
@@ -2179,25 +2196,24 @@ class ResultViewModel2 : ViewModel() {
 
     private suspend fun postSuccessful(
         loadResponse: LoadResponse,
+        mainId : Int,
         apiRepository: APIRepository,
         updateEpisodes: Boolean,
         updateFillers: Boolean,
     ) {
+        currentId = mainId
         currentResponse = loadResponse
         postPage(loadResponse, apiRepository)
         postSubscription(loadResponse)
         postFavorites(loadResponse)
+        _watchStatus.postValue(getResultWatchState(mainId))
+
         if (updateEpisodes)
-            postEpisodes(loadResponse, updateFillers)
+            postEpisodes(loadResponse, mainId, updateFillers)
     }
 
-    private suspend fun postEpisodes(loadResponse: LoadResponse, updateFillers: Boolean) {
+    private suspend fun postEpisodes(loadResponse: LoadResponse, mainId : Int, updateFillers: Boolean) {
         _episodes.postValue(Resource.Loading())
-
-        val mainId = loadResponse.getId()
-        currentId = mainId
-
-        _watchStatus.postValue(getResultWatchState(mainId))
 
         if (updateFillers && loadResponse is AnimeLoadResponse) {
             updateFillers(loadResponse.name)
@@ -2555,6 +2571,54 @@ class ResultViewModel2 : ViewModel() {
             }
         }
 
+    data class LoadResponseFromSearch(
+        override var name: String,
+        override var url: String,
+        override var apiName: String,
+        override var type: TvType,
+        override var posterUrl: String?,
+        override var year: Int? = null,
+        override var plot: String? = null,
+        override var rating: Int? = null,
+        override var tags: List<String>? = null,
+        override var duration: Int? = null,
+        override var trailers: MutableList<TrailerData> = mutableListOf(),
+        override var recommendations: List<SearchResponse>? = null,
+        override var actors: List<ActorData>? = null,
+        override var comingSoon: Boolean = false,
+        override var syncData: MutableMap<String, String> = mutableMapOf(),
+        override var posterHeaders: Map<String, String>? = null,
+        override var backgroundPosterUrl: String? = null,
+        override var contentRating: String? = null,
+    ) : LoadResponse
+
+    fun loadSmall(activity: Activity?, searchResponse : SearchResponse) = ioSafe {
+        val url = searchResponse.url
+        _page.postValue(Resource.Loading(url))
+        _episodes.postValue(Resource.Loading())
+        val api = APIHolder.getApiFromNameNull(searchResponse.apiName) ?: APIHolder.getApiFromUrlNull(searchResponse.url) ?: APIRepository.noneApi
+        val repo = APIRepository(api)
+        val response = LoadResponseFromSearch(name = searchResponse.name, url = searchResponse.url, apiName = api.name, type = searchResponse.type ?: TvType.Others,
+            posterUrl = searchResponse.posterUrl).apply {
+            if (searchResponse is SyncAPI.LibraryItem) {
+                this.plot = searchResponse.plot
+                this.rating = searchResponse.personalRating?.times(100) ?: searchResponse.rating
+                this.tags = searchResponse.tags
+            }
+            if (searchResponse is DataStoreHelper.BookmarkedData) {
+                this.plot = searchResponse.plot
+                this.rating = searchResponse.rating
+                this.tags = searchResponse.tags
+            }
+        }
+        val mainId = searchResponse.id ?: response.getId()
+
+        postSuccessful(
+            loadResponse = response,
+            mainId = mainId,
+            apiRepository = repo, updateEpisodes = false, updateFillers =  false)
+    }
+
     fun load(
         activity: Activity?,
         url: String,
@@ -2640,6 +2704,7 @@ class ResultViewModel2 : ViewModel() {
                         loadTrailers(data.value)
                     postSuccessful(
                         data.value,
+                        mainId,
                         updateEpisodes = true,
                         updateFillers = showFillers,
                         apiRepository = repo

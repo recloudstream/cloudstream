@@ -146,6 +146,12 @@ class GeneratorPlayer : FullScreenPlayer() {
         }
     }
 
+    override fun playerStatusChanged() {
+        if(player.getIsPlaying()){
+            viewModel.forceClearCache = false
+        }
+    }
+
     private fun noSubtitles(): Boolean {
         return setSubtitles(null)
     }
@@ -913,10 +919,15 @@ class GeneratorPlayer : FullScreenPlayer() {
 
     override fun playerError(exception: Throwable) {
         Log.i(TAG, "playerError = $currentSelectedLink")
+        if(!hasNextMirror()){
+            viewModel.forceClearCache = true
+        }
         super.playerError(exception)
     }
 
     private fun noLinksFound() {
+        viewModel.forceClearCache = true
+
         showToast(R.string.no_links_found_toast, Toast.LENGTH_SHORT)
         activity?.popCurrentPage()
     }
@@ -1237,6 +1248,7 @@ class GeneratorPlayer : FullScreenPlayer() {
     }
 
     override fun playerDimensionsLoaded(width: Int, height: Int) {
+        super.playerDimensionsLoaded(width, height)
         setPlayerDimen(width to height)
     }
 
@@ -1382,6 +1394,7 @@ class GeneratorPlayer : FullScreenPlayer() {
         }
 
         binding?.playerLoadingGoBack?.setOnClickListener {
+            exitFullscreen()
             player.release()
             activity?.popCurrentPage()
         }

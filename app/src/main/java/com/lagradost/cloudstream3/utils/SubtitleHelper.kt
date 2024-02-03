@@ -153,9 +153,11 @@ object SubtitleHelper {
     private val flags = mapOf(
         "af" to "ZA",
         "agq" to "CM",
+        "ajp" to "SY",
         "ak" to "GH",
         "am" to "ET",
         "ar" to "AE",
+        "ars" to "SA",
         "as" to "IN",
         "asa" to "TZ",
         "az" to "AZ",

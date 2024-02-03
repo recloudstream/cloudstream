@@ -45,6 +45,8 @@ class PlayerGeneratorViewModel : ViewModel() {
      */
     private var currentLoadingEpisodeId: Int? = null
 
+    var forceClearCache = false
+
     fun setSubtitleYear(year: Int?) {
         _currentSubtitleYear.postValue(year)
     }
@@ -168,7 +170,7 @@ class PlayerGeneratorViewModel : ViewModel() {
         }
     }
 
-    fun loadLinks(clearCache: Boolean = false, type: LoadType = LoadType.InApp) {
+    fun loadLinks(type: LoadType = LoadType.InApp) {
         Log.i(TAG, "loadLinks")
         currentJob?.cancel()
 
@@ -183,7 +185,7 @@ class PlayerGeneratorViewModel : ViewModel() {
             // load more data
             _loadingLinks.postValue(Resource.Loading())
             val loadingState = safeApiCall {
-                generator?.generateLinks(type = type, clearCache = clearCache, callback = {
+                generator?.generateLinks(type = type, clearCache = forceClearCache, callback = {
                     currentLinks.add(it)
                     // Clone to prevent ConcurrentModificationException
                     normalSafeApiCall {

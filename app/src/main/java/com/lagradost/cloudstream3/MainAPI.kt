@@ -9,7 +9,7 @@ import androidx.preference.PreferenceManager
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.json.JsonMapper
-import com.fasterxml.jackson.module.kotlin.KotlinModule
+import com.fasterxml.jackson.module.kotlin.kotlinModule
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.aniListApi
@@ -34,7 +34,7 @@ const val USER_AGENT =
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36"
 
 //val baseHeader = mapOf("User-Agent" to USER_AGENT)
-val mapper = JsonMapper.builder().addModule(KotlinModule())
+val mapper = JsonMapper.builder().addModule(kotlinModule())
     .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false).build()!!
 
 /**
@@ -1193,6 +1193,7 @@ interface LoadResponse {
     var syncData: MutableMap<String, String>
     var posterHeaders: Map<String, String>?
     var backgroundPosterUrl: String?
+    var contentRating: String?
 
     companion object {
         private val malIdPrefix = malApi.idPrefix
@@ -1511,7 +1512,37 @@ data class TorrentLoadResponse(
     override var syncData: MutableMap<String, String> = mutableMapOf(),
     override var posterHeaders: Map<String, String>? = null,
     override var backgroundPosterUrl: String? = null,
-) : LoadResponse
+    override var contentRating: String? = null,
+) : LoadResponse {
+    /**
+     * Secondary constructor for backwards compatibility without contentRating.
+     * Remove this constructor after there is a new stable release and extensions are updated to support contentRating.
+     */
+    constructor(
+        name: String,
+        url: String,
+        apiName: String,
+        magnet: String?,
+        torrent: String?,
+        plot: String?,
+        type: TvType = TvType.Torrent,
+        posterUrl: String? = null,
+        year: Int? = null,
+        rating: Int? = null,
+        tags: List<String>? = null,
+        duration: Int? = null,
+        trailers: MutableList<TrailerData> = mutableListOf(),
+        recommendations: List<SearchResponse>? = null,
+        actors: List<ActorData>? = null,
+        comingSoon: Boolean = false,
+        syncData: MutableMap<String, String> = mutableMapOf(),
+        posterHeaders: Map<String, String>? = null,
+        backgroundPosterUrl: String? = null,
+    ) : this(
+        name, url, apiName, magnet, torrent, plot, type, posterUrl, year, rating, tags, duration, trailers,
+        recommendations, actors, comingSoon, syncData, posterHeaders, backgroundPosterUrl, null
+    )
+}
 
 data class AnimeLoadResponse(
     var engName: String? = null,
@@ -1542,6 +1573,7 @@ data class AnimeLoadResponse(
     override var nextAiring: NextAiring? = null,
     override var seasonNames: List<SeasonData>? = null,
     override var backgroundPosterUrl: String? = null,
+    override var contentRating: String? = null,
 ) : LoadResponse, EpisodeResponse {
     override fun getLatestEpisodes(): Map<DubStatus, Int?> {
         return episodes.map { (status, episodes) ->
@@ -1555,10 +1587,52 @@ data class AnimeLoadResponse(
     }
 
     override fun getTotalEpisodeIndex(episode: Int, season: Int): Int {
+        val displayMap = this.seasonNames?.associate { it.season to it.displaySeason } ?: emptyMap()
+
         return this.episodes.maxOf { (_, episodes) ->
-            episodes.count { ((it.season ?: Int.MIN_VALUE) < season) && it.season != 0 }
+            episodes.count { episodeData ->
+                // Prioritize display season as actual season may be something random to fit multiple seasons into one.
+                val episodeSeason = displayMap[episodeData.season] ?: episodeData.season ?: Int.MIN_VALUE
+                // Count all episodes from season 1 to below the current season.
+                episodeSeason in 1..<season
+            }
         } + episode
     }
+
+    /**
+     * Secondary constructor for backwards compatibility without contentRating.
+     * Remove this constructor after there is a new stable release and extensions are updated to support contentRating.
+     */
+    constructor(
+        engName: String? = null,
+        japName: String? = null,
+        name: String,
+        url: String,
+        apiName: String,
+        type: TvType,
+        posterUrl: String? = null,
+        year: Int? = null,
+        episodes: MutableMap<DubStatus, List<Episode>> = mutableMapOf(),
+        showStatus: ShowStatus? = null,
+        plot: String? = null,
+        tags: List<String>? = null,
+        synonyms: List<String>? = null,
+        rating: Int? = null,
+        duration: Int? = null,
+        trailers: MutableList<TrailerData> = mutableListOf(),
+        recommendations: List<SearchResponse>? = null,
+        actors: List<ActorData>? = null,
+        comingSoon: Boolean = false,
+        syncData: MutableMap<String, String> = mutableMapOf(),
+        posterHeaders: Map<String, String>? = null,
+        nextAiring: NextAiring? = null,
+        seasonNames: List<SeasonData>? = null,
+        backgroundPosterUrl: String? = null,
+    ) : this(
+        engName, japName, name, url, apiName, type, posterUrl, year, episodes, showStatus, plot, tags,
+        synonyms, rating, duration, trailers, recommendations, actors, comingSoon, syncData, posterHeaders,
+        nextAiring, seasonNames, backgroundPosterUrl, null
+    )
 }
 
 /**
@@ -1610,7 +1684,36 @@ data class LiveStreamLoadResponse(
     override var syncData: MutableMap<String, String> = mutableMapOf(),
     override var posterHeaders: Map<String, String>? = null,
     override var backgroundPosterUrl: String? = null,
-) : LoadResponse
+    override var contentRating: String? = null,
+) : LoadResponse {
+    /**
+     * Secondary constructor for backwards compatibility without contentRating.
+     * Remove this constructor after there is a new stable release and extensions are updated to support contentRating.
+     */
+    constructor(
+        name: String,
+        url: String,
+        apiName: String,
+        dataUrl: String,
+        posterUrl: String? = null,
+        year: Int? = null,
+        plot: String? = null,
+        type: TvType = TvType.Live,
+        rating: Int? = null,
+        tags: List<String>? = null,
+        duration: Int? = null,
+        trailers: MutableList<TrailerData> = mutableListOf(),
+        recommendations: List<SearchResponse>? = null,
+        actors: List<ActorData>? = null,
+        comingSoon: Boolean = false,
+        syncData: MutableMap<String, String> = mutableMapOf(),
+        posterHeaders: Map<String, String>? = null,
+        backgroundPosterUrl: String? = null,
+    ) : this(
+        name, url, apiName, dataUrl, posterUrl, year, plot, type, rating, tags, duration, trailers,
+        recommendations, actors, comingSoon, syncData, posterHeaders, backgroundPosterUrl, null
+    )
+}
 
 data class MovieLoadResponse(
     override var name: String,
@@ -1633,7 +1736,36 @@ data class MovieLoadResponse(
     override var syncData: MutableMap<String, String> = mutableMapOf(),
     override var posterHeaders: Map<String, String>? = null,
     override var backgroundPosterUrl: String? = null,
-) : LoadResponse
+    override var contentRating: String? = null,
+) : LoadResponse {
+    /**
+     * Secondary constructor for backwards compatibility without contentRating.
+     * Remove this constructor after there is a new stable release and extensions are updated to support contentRating.
+     */
+    constructor(
+        name: String,
+        url: String,
+        apiName: String,
+        type: TvType,
+        dataUrl: String,
+        posterUrl: String? = null,
+        year: Int? = null,
+        plot: String? = null,
+        rating: Int? = null,
+        tags: List<String>? = null,
+        duration: Int? = null,
+        trailers: MutableList<TrailerData> = mutableListOf(),
+        recommendations: List<SearchResponse>? = null,
+        actors: List<ActorData>? = null,
+        comingSoon: Boolean = false,
+        syncData: MutableMap<String, String> = mutableMapOf(),
+        posterHeaders: Map<String, String>? = null,
+        backgroundPosterUrl: String? = null,
+    ) : this(
+        name, url, apiName, type, dataUrl, posterUrl, year, plot, rating, tags, duration, trailers,
+        recommendations, actors, comingSoon, syncData, posterHeaders, backgroundPosterUrl,null
+    )
+}
 
 suspend fun <T> MainAPI.newMovieLoadResponse(
     name: String,
@@ -1757,6 +1889,7 @@ data class TvSeriesLoadResponse(
     override var nextAiring: NextAiring? = null,
     override var seasonNames: List<SeasonData>? = null,
     override var backgroundPosterUrl: String? = null,
+    override var contentRating: String? = null,
 ) : LoadResponse, EpisodeResponse {
     override fun getLatestEpisodes(): Map<DubStatus, Int?> {
         val maxSeason =
@@ -1769,10 +1902,47 @@ data class TvSeriesLoadResponse(
     }
 
     override fun getTotalEpisodeIndex(episode: Int, season: Int): Int {
-        return episodes.count {
-            (it.season ?: Int.MIN_VALUE) < season && it.season != 0
+        val displayMap = this.seasonNames?.associate { it.season to it.displaySeason } ?: emptyMap()
+
+        return episodes.count { episodeData ->
+            // Prioritize display season as actual season may be something random to fit multiple seasons into one.
+            val episodeSeason = displayMap[episodeData.season] ?: episodeData.season ?: Int.MIN_VALUE
+            // Count all episodes from season 1 to below the current season.
+            episodeSeason in 1..<season
         } + episode
     }
+
+    /**
+     * Secondary constructor for backwards compatibility without contentRating.
+     * Remove this constructor after there is a new stable release and extensions are updated to support contentRating.
+     */
+    constructor(
+        name: String,
+        url: String,
+        apiName: String,
+        type: TvType,
+        episodes: List<Episode>,
+        posterUrl: String? = null,
+        year: Int? = null,
+        plot: String? = null,
+        showStatus: ShowStatus? = null,
+        rating: Int? = null,
+        tags: List<String>? = null,
+        duration: Int? = null,
+        trailers: MutableList<TrailerData> = mutableListOf(),
+        recommendations: List<SearchResponse>? = null,
+        actors: List<ActorData>? = null,
+        comingSoon: Boolean = false,
+        syncData: MutableMap<String, String> = mutableMapOf(),
+        posterHeaders: Map<String, String>? = null,
+        nextAiring: NextAiring? = null,
+        seasonNames: List<SeasonData>? = null,
+        backgroundPosterUrl: String? = null,
+    ) : this(
+        name, url, apiName, type, episodes, posterUrl, year, plot, showStatus, rating, tags, duration,
+        trailers, recommendations, actors, comingSoon, syncData, posterHeaders, nextAiring, seasonNames,
+        backgroundPosterUrl, null
+    )
 }
 
 suspend fun MainAPI.newTvSeriesLoadResponse(

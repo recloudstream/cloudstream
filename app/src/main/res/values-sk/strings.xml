@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="new_update_format" formatted="true">Našla sa nová aktualizácia!
-\n%s -&gt; %s</string>
+\n%1$s -&gt; %2$s</string>
     <string name="filler" formatted="true">Výplň</string>
-    <string name="next_episode_time_hour_format" formatted="true">%dh %dm</string>
+    <string name="next_episode_time_hour_format" formatted="true">%1$dh %2$dm</string>
     <string name="next_episode_format" formatted="true">Epizóda %d bude vydaná za</string>
-    <string name="app_dub_sub_episode_text_format" formatted="true">%s Ep %d</string>
+    <string name="app_dub_sub_episode_text_format" formatted="true">%1$s Ep %2$d</string>
     <string name="next_episode">Ďalšia epizóda</string>
     <string name="result_tags">Žánre</string>
     <string name="result_share">Zdielať</string>
@@ -14,7 +14,7 @@
     <string name="cast_format" formatted="true">Hrajú: %s</string>
     <string name="app_name">CloudStream</string>
     <string name="result_poster_img_des">Plagát</string>
-    <string name="next_episode_time_day_format" formatted="true">%dd %dh %dm</string>
+    <string name="next_episode_time_day_format" formatted="true">%1$dd %2$dh %3$dm</string>
     <string name="next_episode_time_min_format" formatted="true">%dm</string>
     <string name="duration_format" formatted="true">%d min</string>
     <string name="search_poster_img_des">Plagát</string>
@@ -233,7 +233,7 @@
     <string name="pref_category_subtitles">Titulky</string>
     <string name="upload_sync">Synchronizovať</string>
     <string name="episode_action_play_in_app">Prehrať v aplikácii</string>
-    <string name="episodes_range">%d-%d</string>
+    <string name="episodes_range">%1$d-%2$d</string>
     <string name="video_ram_description">Spôsobuje zlyhania, ak je nastavená príliš vysoko na zariadeniach s nízkou pamäťou, ako je Android TV.</string>
     <string name="jsdelivr_proxy">raw.githubusercontent.com Proxy</string>
     <string name="duration">Trvanie</string>
@@ -262,7 +262,7 @@
     <string name="documentaries">Dokumenty</string>
     <string name="preferred_media_settings">Preferované médiá</string>
     <string name="nginx_url_pref">URL servera NGINX</string>
-    <string name="episode_format" formatted="true">%d %s</string>
+    <string name="episode_format" formatted="true">%1$d %2$s</string>
     <string name="action_default">Predvolené</string>
     <string name="add_sync">Pridať sledovanie</string>
     <string name="no_season">Žiadna sezóna</string>
@@ -296,7 +296,7 @@
     <string name="show_hd">Štítok kvality</string>
     <string name="android_tv_interface_off_seek_settings">Prehrávač skrytý - dĺžka pretočenia</string>
     <string name="pref_category_looks">Vzhľad</string>
-    <string name="season_format">%s %d%s</string>
+    <string name="season_format">%1$s %2$d%3$s</string>
     <string name="jsdelivr_proxy_summary">Obchádza blokovanie GitHubu pomocou jsDelivr. Môže spôsobiť oneskorenie aktualizácií o niekoľko dní.</string>
     <string name="random_button_settings_desc">Zobraziť náhodné tlačidlo na domovskej stránke</string>
     <string name="logout">Odhlásiť sa</string>
@@ -338,7 +338,7 @@
     <string name="tv_layout">TV rozloženie</string>
     <string name="example_lang_name">Kód jazyka (sk)</string>
     <string name="example_site_name">MôjSuperWeb</string>
-    <string name="login_format" formatted="true">%s %s</string>
+    <string name="login_format" formatted="true">%1$s %2$s</string>
     <string name="legal_notice">Vylúčenie zodpovednosti</string>
     <string name="nsfw">NSFW</string>
     <string name="delete_message" formatted="true">Týmto sa natrvalo vymaže %s
@@ -355,4 +355,5 @@
     <string name="watch_quality_pref_data">Preferovaná kvalita sledovania (mobilné dáta)</string>
     <string name="limit_title">Maximálny počet znakov v názve prehrávača</string>
     <string name="video_disk_description">Spôsobuje problémy, ak je nastavená príliš vysoko v zariadeniach s malým ukladacím priestorom, ako je napríklad Android TV.</string>
+    <string name="backup_frequency">Frekvencia zálohovania</string>
 </resources>

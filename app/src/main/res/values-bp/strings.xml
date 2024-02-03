@@ -2,11 +2,11 @@
 <resources>
     <!-- KEYS DON'T TRANSLATE -->
     <!-- FORMAT MIGHT TRANSLATE, WILL CAUSE CRASH IF APPLIED WRONG -->
-    <string name="app_dub_sub_episode_text_format" formatted="true">%s Ep %d</string>
+    <string name="app_dub_sub_episode_text_format" formatted="true">%1$s Ep %2$d</string>
     <string name="cast_format" formatted="true">Elenco: %s</string>
     <string name="next_episode_format" formatted="true">O episódio %d vai ser lançado em</string>
-    <string name="next_episode_time_day_format" formatted="true">%dd %dh %dm</string>
-    <string name="next_episode_time_hour_format" formatted="true">%dh %dm</string>
+    <string name="next_episode_time_day_format" formatted="true">%1$dd %2$dh %3$dm</string>
+    <string name="next_episode_time_hour_format" formatted="true">%1$dh %2$dm</string>
     <string name="next_episode_time_min_format" formatted="true">%dm</string>
     <!-- IS NOT NEEDED TO TRANSLATE AS THEY ARE ONLY USED FOR SCREEN READERS AND WONT SHOW UP TO NORMAL USERS -->
     <string name="result_poster_img_des">Poster</string>
@@ -21,7 +21,7 @@
     <string name="player_speed_text_format" formatted="true">Velocidade (%.2fx)</string>
     <string name="rated_format" formatted="true">Nota: %.1f</string>
     <string name="new_update_format" formatted="true">Nova atualização encontrada!
-\n%s -&gt; %s</string>
+\n%1$s -&gt; %2$s</string>
     <string name="filler" formatted="true">Filler</string>
     <string name="duration_format" formatted="true">%d min</string>
     <string name="app_name">CloudStream</string>
@@ -310,7 +310,7 @@
     <string name="kitsu_account_settings" translatable="false">Kitsu</string>
     <string name="trakt_account_settings" translatable="false">Trakt</string>
     -->
-    <string name="login_format" formatted="true">%s %s</string>
+    <string name="login_format" formatted="true">%1$s %2$s</string>
     <string name="account">Conta</string>
     <string name="logout">Sair</string>
     <string name="login">Entrar</string>
@@ -405,8 +405,8 @@
     <string name="plugin_loaded">Plugin Carregado</string>
     <string name="plugin_deleted">Plugin Apagado</string>
     <string name="plugin_load_fail" formatted="true">Não consegui carregar %s :-(</string>
-    <string name="batch_download_start_format" formatted="true">Iniciada a transferência %d %s…</string>
-    <string name="batch_download_finish_format" formatted="true">Transferido %d %s</string>
+    <string name="batch_download_start_format" formatted="true">Iniciada a transferência %1$d %2$s…</string>
+    <string name="batch_download_finish_format" formatted="true">Transferido %1$d %2$s</string>
     <string name="batch_download_nothing_to_download_format" formatted="true">Tudo %s já transferido</string>
     <string name="batch_download">Transferência em batch</string>
     <string name="plugin_singular">Plugin</string>
@@ -507,11 +507,11 @@
     <string name="action_mark_as_watched">Marcar como assistido</string>
     <string name="delayed_update_notice">Aplicativo precisa ser fechado para atualizar</string>
     <string name="enable_skip_op_from_database_des">Mostrar popups pulados para abertura e finalização</string>
-    <string name="episodes_range">%d-%d</string>
+    <string name="episodes_range">%1$d-%2$d</string>
     <string name="player_settings_play_in_app">Player interno</string>
     <string name="extension_size">Tamanho</string>
     <string name="skip_type_op">Abrindo</string>
-    <string name="season_format">%s %d%s</string>
+    <string name="season_format">%1$s %2$d%3$s</string>
     <string name="plugins_updated" formatted="true">%d plugins atualizados</string>
     <string name="safe_mode_description">Todos as extensões serão desligadas para ajuda se talvez estejam causando algum bug.</string>
     <string name="app_not_found_error">Aplicativo não encontrado</string>
@@ -524,7 +524,7 @@
     <string name="extension_language">Linguagem</string>
     <string name="hls_playlist">Lista de reprodução HLS</string>
     <string name="skip_type_ed">Terminando</string>
-    <string name="episode_format" formatted="true">%d %s</string>
+    <string name="episode_format" formatted="true">%1$d %2$s</string>
     <string name="sort_updated_old">Adicionado em (antigo para novo)</string>
     <string name="skip_type_intro">Introdução</string>
     <string name="no_plugins_found_error">plug-ins não foram encontrados no repositório</string>
