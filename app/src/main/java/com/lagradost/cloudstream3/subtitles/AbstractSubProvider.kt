@@ -2,6 +2,7 @@ package com.lagradost.cloudstream3.subtitles
 
 import androidx.annotation.WorkerThread
 import androidx.core.net.toUri
+import com.lagradost.cloudstream3.MainActivity.Companion.deleteFileOnExit
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.subtitles.AbstractSubtitleEntities.SubtitleEntity
 import com.lagradost.cloudstream3.subtitles.AbstractSubtitleEntities.SubtitleSearch
@@ -48,7 +49,7 @@ interface AbstractSubProvider {
 class SubtitleResource {
     fun downloadFile(source: BufferedSource): File {
         val file = File.createTempFile("temp-subtitle", ".tmp").apply {
-            deleteOnExit()
+            deleteFileOnExit(this)
         }
         val sink = file.sink().buffer()
         sink.writeAll(source)
@@ -66,7 +67,7 @@ class SubtitleResource {
 
             while (zipEntry != null) {
                 val tempFile = File.createTempFile("unzipped-subtitle", ".tmp").apply {
-                    deleteOnExit()
+                    deleteFileOnExit(this)
                 }
                 entries.add(zipEntry.name to tempFile)
 
@@ -103,13 +104,17 @@ class SubtitleResource {
         this.resources.add(
             SingleSubtitleResource(name, file.toUri().toString(), SubtitleOrigin.DOWNLOADED_FILE)
         )
-        file.deleteOnExit() // Remove?
+        deleteFileOnExit(file)
     }
 
-    suspend fun addZipUrl(url: String, nameGenerator: (String, File) -> String? = { _, _ -> null }) {
+    suspend fun addZipUrl(
+        url: String,
+        nameGenerator: (String, File) -> String? = { _, _ -> null }
+    ) {
         val source = app.get(url).okhttpResponse.body.source()
         val zip = downloadFile(source)
         val realFiles = unzip(zip)
+        zip.deleteRecursively()
         realFiles.forEach { (name, subtitleFile) ->
             addFile(subtitleFile, nameGenerator(name, subtitleFile))
         }
