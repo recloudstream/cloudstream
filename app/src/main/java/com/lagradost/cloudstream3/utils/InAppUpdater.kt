@@ -23,6 +23,7 @@ import okio.buffer
 import okio.sink
 import java.io.File
 import android.text.TextUtils
+import com.lagradost.cloudstream3.MainActivity.Companion.deleteFileOnExit
 import com.lagradost.cloudstream3.utils.AppUtils.setDefaultFocus
 import java.io.BufferedReader
 import java.io.IOException
@@ -213,7 +214,7 @@ class InAppUpdater {
                 this.cacheDir.listFiles()?.filter {
                     it.name.startsWith(appUpdateName) && it.extension == appUpdateSuffix
                 }?.forEach {
-                    it.deleteOnExit()
+                    deleteFileOnExit(it)
                 }
 
                 val downloadedFile = File.createTempFile(appUpdateName, ".$appUpdateSuffix")
