@@ -450,7 +450,7 @@
     <string name="category_providers">Providers</string>
     <string name="category_provider_test">Provider test</string>
     <string name="test_extensions">Test all Extensions</string>
-    <string name="test_extensions_summary">This Test is meant for developers only and does not verifies or denies working of any extension. </string>
+    <string name="test_extensions_summary">This Test is meant for developers only and does not verifies or denies working of any extension.</string>
     <string name="category_ui">Layout</string>
     <string name="automatic">Auto</string>
     <string name="tv_layout">TV layout</string>
