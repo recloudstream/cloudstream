@@ -3,6 +3,7 @@ import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.ByteArrayOutputStream
 import java.net.URL
+import kotlin.io.outputStream
 
 plugins {
     id("com.android.application")
@@ -62,8 +63,9 @@ android {
         versionCode = 63
         versionName = "4.3.1"
 
+        val commitHashFile = layout.projectDirectory.file("commit-hash.txt")
         resValue("string", "app_version", "${defaultConfig.versionName}${versionNameSuffix ?: ""}")
-        resValue("string", "commit_hash", "git rev-parse --short HEAD".execute() ?: "")
+        resValue("string", "commit_hash", file(commitHashFile).readText())
         resValue("bool", "is_prerelease", "false")
 
         // Reads local.properties
@@ -182,7 +184,7 @@ dependencies {
 
     // For KSP -> Official Annotation Processors are Not Yet Supported for KSP
     ksp("dev.zacsweers.autoservice:auto-service-ksp:1.1.0")
-    implementation("com.google.guava:guava:32.1.3-android")
+    implementation("com.google.guava:guava:33.0.0-android")
     implementation("dev.zacsweers.autoservice:auto-service-ksp:1.1.0")
 
     // Media 3 (ExoPlayer)
@@ -231,6 +233,21 @@ dependencies {
     implementation("androidx.work:work-runtime:2.9.0")
     implementation("androidx.work:work-runtime-ktx:2.9.0")
     implementation("com.github.Blatzar:NiceHttp:0.4.5") // HTTP Lib
+}
+
+tasks.register<Exec>("retrieveCommitHash") {
+    // task needed because configurationCache does not support parallel git commands
+    group = "build"
+    description = "Retrieves the commit hash."
+
+    doFirst {
+        commandLine("git", "rev-parse", "--short", "HEAD")
+        val commitOutput = layout.projectDirectory.file("commit-hash.txt")
+        standardOutput = commitOutput.asFile.outputStream()
+    }
+
+    outputs.file(layout.projectDirectory.file("commit-hash.txt"))
+    mustRunAfter(tasks.assemble)
 }
 
 tasks.register("androidSourcesJar", Jar::class) {
