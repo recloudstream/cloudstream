@@ -49,8 +49,6 @@ open class Chillx : ExtractorApi() {
         val decrypt = cryptoAESHandler(master ?: return, getKey().toByteArray(), false)?.replace("\\", "") ?: throw ErrorLoadingException("failed to decrypt")
 
         val source = Regex(""""?file"?:\s*"([^"]+)""").find(decrypt)?.groupValues?.get(1)
-        //val tracks = Regex("""tracks:\s*\[(.+)]""").find(decrypt)?.groupValues?.get(1)
-
 
         val subtitles = Regex("""subtitle"?:\s*"([^"]+)""").find(decrypt)?.groupValues?.get(1)
         val subtitlePattern = """\[(.*?)\](https?://[^\s,]+)""".toRegex()
