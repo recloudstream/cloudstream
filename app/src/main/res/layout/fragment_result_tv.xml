@@ -399,6 +399,7 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
                             android:id="@+id/result_meta_content_rating"
                             android:layout_gravity="center_vertical"
                             style="@style/SmallWhiteButton"
+                            android:focusable="false"
                             tools:text="PG-13" />
 
                         <TextView
