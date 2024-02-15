@@ -49,8 +49,25 @@ open class Chillx : ExtractorApi() {
         val decrypt = cryptoAESHandler(master ?: return, getKey().toByteArray(), false)?.replace("\\", "") ?: throw ErrorLoadingException("failed to decrypt")
 
         val source = Regex(""""?file"?:\s*"([^"]+)""").find(decrypt)?.groupValues?.get(1)
-        val tracks = Regex("""tracks:\s*\[(.+)]""").find(decrypt)?.groupValues?.get(1)
+        //val tracks = Regex("""tracks:\s*\[(.+)]""").find(decrypt)?.groupValues?.get(1)
 
+
+        val subtitles = Regex("""subtitle"?:\s*"([^"]+)""").find(decrypt)?.groupValues?.get(1)
+        val subtitlePattern = """\[(.*?)\](https?://[^\s,]+)""".toRegex()
+        val matches = subtitlePattern.findAll(subtitles ?: "")
+        val languageUrlPairs = matches.map { matchResult ->
+            val (language, url) = matchResult.destructured
+            decodeUnicodeEscape(language) to url
+        }.toList()
+
+        languageUrlPairs.forEach{ (name, file) ->
+            subtitleCallback.invoke(
+                SubtitleFile(
+                    name,
+                    file
+                )
+            )
+        }
         // required
         val headers = mapOf(
             "Accept" to "*/*",
@@ -67,18 +84,15 @@ open class Chillx : ExtractorApi() {
             "$mainUrl/",
             headers = headers
         ).forEach(callback)
-
-        AppUtils.tryParseJson<List<Tracks>>("[$tracks]")
-            ?.filter { it.kind == "captions" }?.map { track ->
-                subtitleCallback.invoke(
-                    SubtitleFile(
-                        track.label ?: "",
-                        track.file ?: return@map null
-                    )
-                )
-            }
     }
-
+    
+    private fun decodeUnicodeEscape(input: String): String {
+        val regex = Regex("u([0-9a-fA-F]{4})")
+        return regex.replace(input) {
+            it.groupValues[1].toInt(16).toChar().toString()
+        }
+    }
+    
     suspend fun getKey() = key ?: fetchKey().also { key = it }
 
     private suspend fun fetchKey(): String {
