@@ -151,7 +151,6 @@ import com.lagradost.cloudstream3.utils.UIHelper.requestRW
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import com.lagradost.cloudstream3.utils.USER_PROVIDER_API
 import com.lagradost.cloudstream3.utils.USER_SELECTED_HOMEPAGE_API
-import com.lagradost.cloudstream3.utils.UserPreferenceDelegate
 import com.lagradost.nicehttp.Requests
 import com.lagradost.nicehttp.ResponseParser
 import com.lagradost.safefile.SafeFile
@@ -339,9 +338,6 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
          * Used by DataStoreHelper to fully reload library when switching accounts
          */
         val reloadLibraryEvent = Event<Boolean>()
-
-        /** For battery optimisation **/
-        private var isAppOptimised : Boolean by UserPreferenceDelegate("isAppOptimised", false)
 
         /**
          * @return true if the str has launched an app task (be it successful or not)
