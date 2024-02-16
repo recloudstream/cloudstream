@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="cast_format" formatted="true">Stáblista: %s</string>
-    <string name="next_episode_time_day_format" formatted="true">%dn %dó%dp</string>
-    <string name="next_episode_time_hour_format" formatted="true">%dó%dp</string>
+    <string name="next_episode_time_day_format" formatted="true">%1$dn %2$dó%3$dp</string>
+    <string name="next_episode_time_hour_format" formatted="true">%1$dó%2$dp</string>
     <string name="next_episode_time_min_format" formatted="true">%dp</string>
     <string name="episode_poster_img_des">Epizód Plakát</string>
     <string name="home_main_poster_img_des">Fő Plakát</string>
@@ -11,9 +11,9 @@
     <string name="player_speed_text_format" formatted="true">Sebesség (%.2fx)</string>
     <string name="rated_format" formatted="true">Értékelés: %.1f</string>
     <string name="new_update_format" formatted="true">Új frissítés található!
-\n%s -&gt; %s</string>
+\n%1$s -&gt; %2$s</string>
     <string name="duration_format" formatted="true">%d perc</string>
-    <string name="app_dub_sub_episode_text_format" formatted="true">%sEp%d</string>
+    <string name="app_dub_sub_episode_text_format" formatted="true">%1$sEp%2$d</string>
     <string name="app_name">CloudStream</string>
     <string name="preview_background_img_des">Háttér Előnézet</string>
     <string name="download_failed">Letöltés sikertelen</string>
@@ -146,8 +146,8 @@
     <string name="episodes">Epizódok</string>
     <string name="season_short">Év</string>
     <string name="movies_singular">Film</string>
-    <string name="episodes_range">%d-%d</string>
-    <string name="episode_format" formatted="true">%d %s</string>
+    <string name="episodes_range">%1$d-%2$d</string>
+    <string name="episode_format" formatted="true">%1$d %2$s</string>
     <string name="episode_short">Ep</string>
     <string name="no_episodes_found">Nem található epizód</string>
     <string name="delete_file">Fájl törlése</string>
@@ -210,7 +210,7 @@
     <string name="subs_default_reset_toast">Alapértelmezett értékre visszaállítása</string>
     <string name="acra_report_toast">Az alkalmazás összeomlott. Egy névtelen hibabejelentés küldünk a fejlesztőknek</string>
     <string name="season">Évad</string>
-    <string name="season_format">%s %d%s</string>
+    <string name="season_format">%1$s %2$d%3$s</string>
     <string name="no_season">Nincs évad</string>
     <string name="go_forward_30">+30</string>
     <string name="delete_message" formatted="true">Ezzel véglegesen törli a %s
@@ -365,7 +365,7 @@
     <string name="error_invalid_data">Érvénytelen adatok</string>
     <string name="network_adress_example">Link a streamhez</string>
     <string name="plugin_load_fail" formatted="true">Nem sikerült betölteni: %s</string>
-    <string name="batch_download_start_format" formatted="true">Elkezdődött a(z) %d %s letöltése…</string>
+    <string name="batch_download_start_format" formatted="true">Elkezdődött a(z) %1$d %2$s letöltése…</string>
     <string name="download_all_plugins_from_repo">Töltse le az összes bővítményt ebből a tárolóból\?</string>
     <string name="safe_mode_title">Biztonságos mód bekapcsolva</string>
     <string name="extension_size">Méret</string>
@@ -391,7 +391,7 @@
     <string name="error_invalid_id">Érvénytelen azonosító</string>
     <string name="provider_languages_tip">Videók megtekintése ezeken a nyelveken</string>
     <string name="previous">Előző</string>
-    <string name="batch_download_finish_format" formatted="true">%d%s letöltve</string>
+    <string name="batch_download_finish_format" formatted="true">%1$d%2$s letöltve</string>
     <string name="batch_download">Batch letöltés</string>
     <string name="plugin">bővítmények</string>
     <string name="apk_installer_legacy">Legacy</string>

@@ -160,7 +160,7 @@ class PluginsViewModel : ViewModel() {
             PluginManager.downloadPlugin(
                 activity,
                 metadata.url,
-                metadata.name,
+                metadata.internalName,
                 repo,
                 isEnabled
             ) to message

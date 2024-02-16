@@ -308,7 +308,7 @@
     <string name="legal_notice_text" translatable="false">Any legal issues regarding the content on this application should be taken up with the actual file hosts and providers themselves as we are not affiliated with them. In case of copyright infringement, please directly contact the responsible parties or the streaming websites. The app is purely for educational and personal use. CloudStream 3 does not host any content on the app, and has no control over what media is put up or taken down. CloudStream 3 functions like any other search engine, such as Google. CloudStream 3 does not host, upload or manage any videos, films or content. It simply crawls, aggregates and displayes links in a convenient, user-friendly interface. It merely scrapes 3rd-party websites that are publicly accessable via any regular web browser. It is the responsibility of user to avoid any actions that might violate the laws governing his/her locality. Use CloudStream 3 at your own risk.</string>
     <string name="category_general">Genel</string>
     <string name="random_button_settings">Rastgele İçerik</string>
-    <string name="random_button_settings_desc">Ana sayfada rastgele bir film veya dizi seçen bir tuş göster</string>
+    <string name="random_button_settings_desc">Anasayfada ve Kütüphanede rastgele düğmesini göster</string>
     <string name="provider_lang_settings">Sağlayıcı dilleri</string>
     <string name="app_layout">Uygulama düzeni</string>
     <string name="preferred_media_settings">Tercih edilen medya</string>
@@ -631,4 +631,12 @@
     <string name="enter_pin">PIN girin</string>
     <string name="pin">PIN</string>
     <string name="enter_current_pin">Geçerli PIN\'i Giriniz</string>
+    <string name="rotate_video_desc">Ekran yönü için bir geçiş düğmesi göster</string>
+    <string name="rotate_video_key">rotate_video_key</string>
+    <string name="auto_rotate_video_key">auto_rotate_video_key</string>
+    <string name="auto_rotate_video">Otomatik döndürme</string>
+    <string name="rotate_video">Döndür</string>
+    <string name="auto_rotate_video_desc">Video yönüne göre ekran yönünün otomatik olarak değişmesini sağla</string>
+    <string name="links_reloaded_toast">Bağlantılar Yeniden Yüklendi</string>
+    <string name="copyTitle">Başlık kopyalandı!</string>
 </resources>

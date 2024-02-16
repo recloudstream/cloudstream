@@ -10,7 +10,9 @@ import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.SyncApis
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.aniListApi
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.malApi
+import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.simklApi
 import com.lagradost.cloudstream3.syncproviders.SyncAPI
+import com.lagradost.cloudstream3.ui.SyncWatchType
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.SyncUtil
 import java.util.*
@@ -31,15 +33,15 @@ class SyncViewModel : ViewModel() {
 
     private val repos = SyncApis
 
-    private val _metaResponse: MutableLiveData<Resource<SyncAPI.SyncResult>> =
-        MutableLiveData()
+    private val _metaResponse: MutableLiveData<Resource<SyncAPI.SyncResult>?> =
+        MutableLiveData(null)
 
-    val metadata: LiveData<Resource<SyncAPI.SyncResult>> get() = _metaResponse
+    val metadata: LiveData<Resource<SyncAPI.SyncResult>?> = _metaResponse
 
     private val _userDataResponse: MutableLiveData<Resource<SyncAPI.AbstractSyncStatus>?> =
         MutableLiveData(null)
 
-    val userData: LiveData<Resource<SyncAPI.AbstractSyncStatus>?> get() = _userDataResponse
+    val userData: LiveData<Resource<SyncAPI.AbstractSyncStatus>?> = _userDataResponse
 
     // prefix, id
     private val syncs = mutableMapOf<String, String>()
@@ -55,7 +57,7 @@ class SyncViewModel : ViewModel() {
         MutableLiveData(getMissing())
 
     // pair of name idPrefix isSynced
-    val synced: LiveData<List<CurrentSynced>> get() = _currentSynced
+    val synced: LiveData<List<CurrentSynced>> = _currentSynced
 
     private fun getMissing(): List<CurrentSynced> {
         return repos.map {
@@ -169,7 +171,7 @@ class SyncViewModel : ViewModel() {
         if (which < -1 || which > 5) return // validate input
         val user = userData.value
         if (user is Resource.Success) {
-            user.value.status = which
+            user.value.status = SyncWatchType.fromInternalId(which)
             _userDataResponse.postValue(Resource.Success(user.value))
         }
     }
@@ -279,7 +281,33 @@ class SyncViewModel : ViewModel() {
         setEpisodesDelta(0)
     }
 
+    fun syncName(syncName: String) : String? {
+        // fix because of bad old data :pensive:
+        val realName = when(syncName) {
+            "MAL" -> malApi.idPrefix
+            "Simkl" -> simklApi.idPrefix
+            "AniList" -> aniListApi.idPrefix
+            else -> syncName
+        }
+        return repos.firstOrNull { it.idPrefix == realName }?.idPrefix
+    }
+
+    fun setSync(syncName : String, syncId : String) {
+        syncs.clear()
+        syncs[syncName] = syncId
+    }
+
+    fun clear() {
+        syncs.clear()
+        _metaResponse.postValue(null)
+        _currentSynced.postValue(getMissing())
+        _userDataResponse.postValue(null)
+    }
+
     fun updateMetaAndUser() {
+        _userDataResponse.postValue(Resource.Loading())
+        _metaResponse.postValue(Resource.Loading())
+
         Log.i(TAG, "updateMetaAndUser")
         updateMetadata()
         updateUserData()

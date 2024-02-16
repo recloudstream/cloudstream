@@ -62,6 +62,7 @@ import com.lagradost.cloudstream3.APIHolder.apis
 import com.lagradost.cloudstream3.APIHolder.getApiDubstatusSettings
 import com.lagradost.cloudstream3.APIHolder.initAll
 import com.lagradost.cloudstream3.APIHolder.updateHasTrailers
+import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.CommonActivity.loadThemes
@@ -93,7 +94,9 @@ import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.appStri
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.appStringResumeWatching
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.appStringSearch
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.inAppAuths
+import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.ui.APIRepository
+import com.lagradost.cloudstream3.ui.SyncWatchType
 import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_NAVIGATE_TO
 import com.lagradost.cloudstream3.ui.home.HomeViewModel
@@ -103,6 +106,7 @@ import com.lagradost.cloudstream3.ui.player.LinkGenerator
 import com.lagradost.cloudstream3.ui.result.LinearListLayout
 import com.lagradost.cloudstream3.ui.result.ResultViewModel2
 import com.lagradost.cloudstream3.ui.result.START_ACTION_RESUME_LATEST
+import com.lagradost.cloudstream3.ui.result.SyncViewModel
 import com.lagradost.cloudstream3.ui.result.setImage
 import com.lagradost.cloudstream3.ui.result.setText
 import com.lagradost.cloudstream3.ui.result.txt
@@ -289,8 +293,26 @@ var app = Requests(responseParser = object : ResponseParser {
 class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricAuthenticator.BiometricAuthCallback {
     companion object {
         const val TAG = "MAINACT"
-        const val ANIMATED_OUTLINE : Boolean = false
+        const val ANIMATED_OUTLINE: Boolean = false
         var lastError: String? = null
+
+        private const val FILE_DELETE_KEY = "FILES_TO_DELETE_KEY"
+
+        /**
+         * Transient files to delete on application exit.
+         * Deletes files on onDestroy().
+         */
+        private var filesToDelete: Set<String>
+            // This needs to be persistent because the application may exit without calling onDestroy.
+            get() = getKey<Set<String>>(FILE_DELETE_KEY) ?: setOf()
+            private set(value) = setKey(FILE_DELETE_KEY, value)
+
+        /**
+         * Add file to delete on Exit.
+         */
+        fun deleteFileOnExit(file: File) {
+            filesToDelete = filesToDelete + file.path
+        }
 
         /**
          * Setting this will automatically enter the query in the search
@@ -445,13 +467,30 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricAu
     }
 
     var lastPopup: SearchResponse? = null
-    fun loadPopup(result: SearchResponse) {
+    fun loadPopup(result: SearchResponse, load : Boolean = true) {
         lastPopup = result
-        viewModel.load(
-            this, result.url, result.apiName, false, if (getApiDubstatusSettings()
-                    .contains(DubStatus.Dubbed)
-            ) DubStatus.Dubbed else DubStatus.Subbed, null
-        )
+        val syncName = syncViewModel.syncName(result.apiName)
+
+        // based on apiName we decide on if it is a local list or not, this is because
+        // we want to show a bit of extra UI to sync apis
+        if (result is SyncAPI.LibraryItem && syncName != null) {
+            isLocalList = false
+            syncViewModel.setSync(syncName, result.syncId)
+            syncViewModel.updateMetaAndUser()
+        } else {
+            isLocalList = true
+            syncViewModel.clear()
+        }
+
+        if (load) {
+            viewModel.load(
+                this, result.url, result.apiName, false, if (getApiDubstatusSettings()
+                        .contains(DubStatus.Dubbed)
+                ) DubStatus.Dubbed else DubStatus.Subbed, null
+            )
+        }else {
+            viewModel.loadSmall(this,result)
+        }
     }
 
     override fun onColorSelected(dialogId: Int, color: Int) {
@@ -661,6 +700,15 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricAu
     }
 
     override fun onDestroy() {
+        filesToDelete.forEach { path ->
+            val result = File(path).deleteRecursively()
+            if (result) {
+                Log.d(TAG, "Deleted temporary file: $path")
+            } else {
+                Log.d(TAG, "Failed to delete temporary file: $path")
+            }
+        }
+        filesToDelete = setOf()
         val broadcastIntent = Intent()
         broadcastIntent.action = "restart_service"
         broadcastIntent.setClass(this, VideoDownloadRestartReceiver::class.java)
@@ -739,10 +787,14 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricAu
     }
 
     lateinit var viewModel: ResultViewModel2
-
+    lateinit var syncViewModel : SyncViewModel
+    /** kinda dirty, however it signals that we should use the watch status as sync or not*/
+    var isLocalList : Boolean = false
     override fun onCreateView(name: String, context: Context, attrs: AttributeSet): View? {
         viewModel =
             ViewModelProvider(this)[ResultViewModel2::class.java]
+        syncViewModel =
+            ViewModelProvider(this)[SyncViewModel::class.java]
 
         return super.onCreateView(name, context, attrs)
     }
@@ -1252,11 +1304,46 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricAu
             builder.show().setDefaultFocus()
         }
 
-        observe(viewModel.watchStatus) { state ->
+
+        fun setUserData(status : Resource<SyncAPI.AbstractSyncStatus>?) {
+            if (isLocalList) return
+            bottomPreviewBinding?.apply {
+                when (status) {
+                    is Resource.Success -> {
+                        resultviewPreviewBookmark.isEnabled = true
+                        resultviewPreviewBookmark.setText(status.value.status.stringRes)
+                        resultviewPreviewBookmark.setIconResource(status.value.status.iconRes)
+                    }
+
+                    is Resource.Failure -> {
+                        resultviewPreviewBookmark.isEnabled = false
+                        resultviewPreviewBookmark.setIconResource(R.drawable.ic_baseline_bookmark_border_24)
+                        resultviewPreviewBookmark.text = status.errorString
+                    }
+
+                    else -> {
+                        resultviewPreviewBookmark.isEnabled = false
+                        resultviewPreviewBookmark.setIconResource(R.drawable.ic_baseline_bookmark_border_24)
+                        resultviewPreviewBookmark.setText(R.string.loading)
+                    }
+                }
+            }
+        }
+
+        fun setWatchStatus(state : WatchType?) {
+            if (!isLocalList || state == null) return
+
             bottomPreviewBinding?.resultviewPreviewBookmark?.apply {
                 setIconResource(state.iconRes)
                 setText(state.stringRes)
             }
+        }
+
+        observe(viewModel.watchStatus) { state ->
+            setWatchStatus(state)
+        }
+        observe(syncViewModel.userData) { status ->
+            setUserData(status)
         }
 
         observeNullable(viewModel.page) { resource ->
@@ -1298,17 +1385,66 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricAu
                             d.posterImage ?: d.posterBackgroundImage
                         )
 
+                        setUserData(syncViewModel.userData.value)
+                        setWatchStatus(viewModel.watchStatus.value)
+
                         resultviewPreviewBookmark.setOnClickListener {
                             //viewModel.updateWatchStatus(WatchType.PLANTOWATCH)
-                            val value = viewModel.watchStatus.value ?: WatchType.NONE
+                            if (isLocalList) {
+                                val value = viewModel.watchStatus.value ?: WatchType.NONE
 
-                            this@MainActivity.showBottomDialog(
-                                WatchType.values().map { getString(it.stringRes) }.toList(),
-                                value.ordinal,
-                                this@MainActivity.getString(R.string.action_add_to_bookmarks),
-                                showApply = false,
-                                {}) {
-                                viewModel.updateWatchStatus(WatchType.values()[it], this@MainActivity)
+                                this@MainActivity.showBottomDialog(
+                                    WatchType.values().map { getString(it.stringRes) }.toList(),
+                                    value.ordinal,
+                                    this@MainActivity.getString(R.string.action_add_to_bookmarks),
+                                    showApply = false,
+                                    {}) {
+                                    viewModel.updateWatchStatus(
+                                        WatchType.values()[it],
+                                        this@MainActivity
+                                    )
+                                }
+                            } else {
+                                val value = (syncViewModel.userData.value as? Resource.Success)?.value?.status ?: SyncWatchType.NONE
+
+                                this@MainActivity.showBottomDialog(
+                                    SyncWatchType.values().map { getString(it.stringRes) }.toList(),
+                                    value.ordinal,
+                                    this@MainActivity.getString(R.string.action_add_to_bookmarks),
+                                    showApply = false,
+                                    {}) {
+                                    syncViewModel.setStatus(SyncWatchType.values()[it].internalId)
+                                    syncViewModel.publishUserData()
+                                }
+                            }
+                        }
+
+                        observeNullable(viewModel.favoriteStatus) observeFavoriteStatus@{ isFavorite ->
+                            resultviewPreviewFavorite.isVisible = isFavorite != null
+                            if (isFavorite == null) return@observeFavoriteStatus
+
+                            val drawable = if (isFavorite) {
+                                R.drawable.ic_baseline_favorite_24
+                            } else {
+                                R.drawable.ic_baseline_favorite_border_24
+                            }
+
+                            resultviewPreviewFavorite.setImageResource(drawable)
+                        }
+
+                        resultviewPreviewFavorite.setOnClickListener{
+                            viewModel.toggleFavoriteStatus(this@MainActivity) { newStatus: Boolean? ->
+                                if (newStatus == null) return@toggleFavoriteStatus
+
+                                val message = if (newStatus) {
+                                    R.string.favorite_added
+                                } else {
+                                    R.string.favorite_removed
+                                }
+
+                                val name = (viewModel.page.value as? Resource.Success)?.value?.title
+                                    ?: txt(R.string.no_data).asStringNull(this@MainActivity) ?: ""
+                                showToast(txt(message, name), Toast.LENGTH_SHORT)
                             }
                         }
 
@@ -1563,7 +1699,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricAu
             // this ensures that no unnecessary space is taken
             loadCache()
             File(filesDir, "exoplayer").deleteRecursively() // old cache
-            File(cacheDir, "exoplayer").deleteOnExit()      // current cache
+            deleteFileOnExit(File(cacheDir, "exoplayer"))   // current cache
         } catch (e: Exception) {
             logError(e)
         }

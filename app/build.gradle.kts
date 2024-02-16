@@ -60,7 +60,7 @@ android {
         targetSdk = 33 /* Android 14 is Fu*ked
         ^ https://developer.android.com/about/versions/14/behavior-changes-14#safer-dynamic-code-loading*/
         versionCode = 63
-        versionName = "4.3.0"
+        versionName = "4.3.1"
 
         resValue("string", "app_version", "${defaultConfig.versionName}${versionNameSuffix ?: ""}")
         resValue("string", "commit_hash", "git rev-parse --short HEAD".execute() ?: "")
@@ -139,6 +139,10 @@ android {
         abortOnError = false
         checkReleaseBuilds = false
     }
+    
+    buildFeatures {
+        buildConfig = true
+    }
 
     namespace = "com.lagradost.cloudstream3"
 }
@@ -159,10 +163,10 @@ dependencies {
     // Android Core & Lifecycle
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
-    implementation("androidx.navigation:navigation-ui-ktx:2.7.5")
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.6.2")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2")
-    implementation("androidx.navigation:navigation-fragment-ktx:2.7.5")
+    implementation("androidx.navigation:navigation-ui-ktx:2.7.6")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.7.0")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0")
+    implementation("androidx.navigation:navigation-fragment-ktx:2.7.6")
 
     // Design & UI
     implementation("jp.wasabeef:glide-transformations:4.3.0")
@@ -195,13 +199,13 @@ dependencies {
     // PlayBack
     implementation("com.jaredrummler:colorpicker:1.1.0") // Subtitle Color Picker
     implementation("com.github.recloudstream:media-ffmpeg:1.1.0") // Custom FF-MPEG Lib for Audio Codecs
-    implementation("com.github.teamnewpipe:NewPipeExtractor:eac850") /* For Trailers
+    implementation("com.github.teamnewpipe:NewPipeExtractor:6dc25f7") /* For Trailers
     ^ Update to Latest Commits if Trailers Misbehave, github.com/TeamNewPipe/NewPipeExtractor/commits/dev */
     implementation("com.github.albfernandez:juniversalchardet:2.4.0") // Subtitle Decoding
 
     // Crash Reports (AcraApplication.kt)
-    implementation("ch.acra:acra-core:5.11.2")
-    implementation("ch.acra:acra-toast:5.11.2")
+    implementation("ch.acra:acra-core:5.11.3")
+    implementation("ch.acra:acra-toast:5.11.3")
 
     // UI Stuff
     implementation("com.facebook.shimmer:shimmer:0.5.0") // Shimmering Effect (Loading Skeleton)
@@ -225,9 +229,9 @@ dependencies {
     Level 25 or Less. */
 
     // Downloading & Networking
-    implementation("androidx.work:work-runtime:2.8.1")
-    implementation("androidx.work:work-runtime-ktx:2.8.1")
-    implementation("com.github.Blatzar:NiceHttp:0.4.4") // HTTP Lib
+    implementation("androidx.work:work-runtime:2.9.0")
+    implementation("androidx.work:work-runtime-ktx:2.9.0")
+    implementation("com.github.Blatzar:NiceHttp:0.4.5") // HTTP Lib
 }
 
 tasks.register("androidSourcesJar", Jar::class) {

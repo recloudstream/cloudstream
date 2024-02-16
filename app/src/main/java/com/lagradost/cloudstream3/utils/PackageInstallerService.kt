@@ -12,6 +12,7 @@ import android.os.IBinder
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.lagradost.cloudstream3.MainActivity
+import com.lagradost.cloudstream3.MainActivity.Companion.deleteFileOnExit
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.utils.AppUtils.createNotificationChannel
@@ -75,7 +76,7 @@ class PackageInstallerService : Service() {
                 this@PackageInstallerService.cacheDir.listFiles()?.filter {
                     it.name.startsWith(appUpdateName) && it.extension == appUpdateSuffix
                 }?.forEach {
-                    it.deleteOnExit()
+                    deleteFileOnExit(it)
                 }
             }
 

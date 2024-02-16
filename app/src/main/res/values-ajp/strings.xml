@@ -210,7 +210,7 @@
     <string name="episode_action_play_in_format">مشي بـ\"%s\"</string>
     <string name="episode_action_download_subtitle">نزل الترجمة</string>
     <string name="dont_show_again">ما تفرجيا بعد مرة</string>
-    <string name="video_buffer_clear_settings">فضّي التخزين المؤقت للصور والڤيديوات</string>
+    <string name="video_buffer_clear_settings">فضّي التخزين الموقت للصور والڤيديوات</string>
     <string name="video_skip_op">أفي المقدمة</string>
     <string name="watch_quality_pref">الجودة المفضلة (Wi-Fi)</string>
     <string name="cartoons_singular">رسوم مُتَحَرِكة</string>
@@ -260,7 +260,7 @@
     <string name="add_site_pref">نسوخ موقع (clone site)</string>
     <string name="random_button_settings">زر العشوائي</string>
     <string name="resize_fill">مدو</string>
-    <string name="random_button_settings_desc">فرجي زر \"عشوائي\" على الصفحة الرئيسية</string>
+    <string name="random_button_settings_desc">فرجي زر \"عشوائي\" بالصفحة الرئيسية وبصفحة الرفّ</string>
     <string name="pref_category_ui_features">الميزات</string>
     <string name="display_subbed_dubbed_settings">فرجي أنمي المدبلج-المترجم</string>
     <string name="pref_category_backup">النسخ الإحتياطي</string>
@@ -481,7 +481,7 @@
     <string name="plugin_downloaded">تنزلت الإضافة</string>
     <string name="reload_error">رجاع جَرِب تعمل إتصال…</string>
     <string name="duplicate_add">زيد</string>
-    <string name="batch_download">نزلو الحلقات بالجملة</string>
+    <string name="batch_download">نزلو المصادر بالجملة</string>
     <string name="open_with">فتاح بـ</string>
     <string name="sync_score">راينيگ</string>
     <string name="delete_repository_plugins">محي الريپو كمان بمحي الإضافات يلي في</string>
@@ -588,4 +588,12 @@
 \nعلامت المصدر والجودة تبعو بينجمعو مع بعض (8 + 1 = 9). يلي علامتو 10 أو أعلى، بينحط تلقائيًا، من دون ما ينعمل لود لكل المصادر!</string>
     <string name="enter_current_pin">حطو الأرقام السرية الحالية</string>
     <string name="audio_tracks">صوت</string>
+    <string name="rotate_video_desc">حط كبسة لبرم إتجاه الشاشة</string>
+    <string name="rotate_video_key">rotate_video_key</string>
+    <string name="auto_rotate_video_key">auto_rotate_video_key</string>
+    <string name="auto_rotate_video">برم الشاشة أوتوماتيكيًا</string>
+    <string name="rotate_video">برومو</string>
+    <string name="auto_rotate_video_desc">غير إتجاه الشاشة أوتوماتيكيًا حسب شكل الڤيديو</string>
+    <string name="links_reloaded_toast">رجع نعمل لاود لاللينك</string>
+    <string name="copyTitle">نعمل كَپي للعنوان!</string>
 </resources>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_dub_sub_episode_text_format" formatted="true">%sಎಪಿ%d</string>
+    <string name="app_dub_sub_episode_text_format" formatted="true">%1$sಎಪಿ%2$d</string>
     <string name="cast_format" formatted="true">ಕ್ಯಾಸ್ಟ್:%s</string>
     <string name="go_back_img_des">ಹಿಂದೆ ಹೋಗು</string>
     <string name="filler" formatted="true">ಫಿಲ್ಲರ್</string>
@@ -16,7 +16,7 @@
     <string name="vpn_might_be_needed">ಈ ಪೂರೈಕೆದಾರರು ಸರಿಯಾಗಿ ಕೆಲಸ ಮಾಡಲು VPN ಬೇಕಾಗಬಹುದು</string>
     <string name="player_size_settings_des">ಕಪ್ಪು ಗಡಿಗಳನ್ನು ತೆಗೆದುಹಾಕಿ</string>
     <string name="next_episode_format" formatted="true">ಸಂಚಿಕೆ%d ಬಿಡುಗಡೆಯಾಗಲಿದೆ</string>
-    <string name="next_episode_time_hour_format" formatted="true">%dh %dm</string>
+    <string name="next_episode_time_hour_format" formatted="true">%1$dh %2$dm</string>
     <string name="result_poster_img_des">ಪೋಸ್ಟರ್</string>
     <string name="search_poster_img_des">ಪೋಸ್ಟರ್</string>
     <string name="episode_poster_img_des">ಸಂಚಿಕೆ ಪೋಸ್ಟರ್</string>
@@ -85,7 +85,7 @@
     <string name="popup_delete_file">ಫೈಲ್ ಅಳಿಸಿ</string>
     <string name="home_more_info">ಹೆಚ್ಚಿನ ಮಾಹಿತಿ</string>
     <string name="new_update_format" formatted="true">ಹೊಸ ಅಪ್ಡೇಟ್ ಬಂದಿದೆ
-\n%s-%s</string>
+\n%1$s-%2$s</string>
     <string name="loading">ಲೋಡಿಂಗ್…</string>
     <string name="subs_download_languages">ಡೌನ್‌ಲೋಡ್ ಭಾಷೆಗಳನ್ನು ಮಾಡಿ</string>
     <string name="play_livestream_button">ಲೈವ್‌ಸ್ಟ್ರೀಮ್ ಪ್ಲೇ ಮಾಡಿ</string>
@@ -99,7 +99,7 @@
     <string name="sort_copy">ಕಾಪಿ</string>
     <string name="no_data">ನೋ ಡೇಟಾ</string>
     <string name="player_speed">ಪ್ಲೇಯರ್ ಸ್ಪೀಡ್</string>
-    <string name="next_episode_time_day_format" formatted="true">%d %dh %dm</string>
+    <string name="next_episode_time_day_format" formatted="true">%1$d %2$dh %3$dm</string>
     <string name="search_hint_site" formatted="true">ಹುಡುಕು %s…</string>
     <string name="episode_more_options_des">ಹೆಚ್ಚಿನ ಆಯ್ಕೆ</string>
     <string name="subs_import_text" formatted="true">ಫಾಂಟ್‌ಗಳನ್ನು ಇರಿಸುವ ಮೂಲಕ ಆಮದು ಮಾಡಿ %s</string>

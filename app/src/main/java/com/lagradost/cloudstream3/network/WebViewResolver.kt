@@ -2,6 +2,8 @@ package com.lagradost.cloudstream3.network
 
 import android.annotation.SuppressLint
 import android.net.http.SslError
+import android.os.Handler
+import android.os.Looper
 import android.webkit.*
 import com.lagradost.cloudstream3.AcraApplication
 import com.lagradost.cloudstream3.AcraApplication.Companion.context
@@ -27,14 +29,25 @@ import java.net.URI
  * @param additionalUrls this will make resolveUsingWebView also return all other requests matching the list of Regex.
  * @param userAgent if null then will use the default user agent
  * @param useOkhttp will try to use the okhttp client as much as possible, but this might cause some requests to fail. Disable for cloudflare.
+ * @param script pass custom js to execute
+ * @param scriptCallback will be called with the result from custom js
  * */
 class WebViewResolver(
     val interceptUrl: Regex,
     val additionalUrls: List<Regex> = emptyList(),
     val userAgent: String? = USER_AGENT,
-    val useOkhttp: Boolean = true
+    val useOkhttp: Boolean = true,
+    val script: String? = null,
+    val scriptCallback: ((String) -> Unit)? = null
 ) :
     Interceptor {
+
+    constructor(
+        interceptUrl: Regex,
+        additionalUrls: List<Regex> = emptyList(),
+        userAgent: String? = USER_AGENT,
+        useOkhttp: Boolean = true
+    ) : this(interceptUrl, additionalUrls, userAgent, useOkhttp, null, null)
 
     companion object {
         var webViewUserAgent: String? = null
@@ -135,6 +148,14 @@ class WebViewResolver(
                     ): WebResourceResponse? = runBlocking {
                         val webViewUrl = request.url.toString()
                         println("Loading WebView URL: $webViewUrl")
+
+                        if (script != null) {
+                            val handler = Handler(Looper.getMainLooper())
+                            handler.post {
+                                view.evaluateJavascript("$script")
+                                { scriptCallback?.invoke(it) }
+                            }
+                        }
 
                         if (interceptUrl.containsMatchIn(webViewUrl)) {
                             fixedRequest = request.toRequest()?.also {

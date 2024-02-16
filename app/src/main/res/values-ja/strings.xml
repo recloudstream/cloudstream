@@ -9,8 +9,8 @@
     <string name="title_home">ホーム</string>
     <string name="library">ライブラリ</string>
     <string name="home_play">再生</string>
-    <string name="next_episode_time_day_format" formatted="true">%9$d%9$d%9$d%9$d%d日 %d時間%d分</string>
-    <string name="next_episode_time_hour_format" formatted="true">%d時間%d分</string>
+    <string name="next_episode_time_day_format" formatted="true">%1$d日 %2$d時間%3$d分</string>
+    <string name="next_episode_time_hour_format" formatted="true">%1$d時間%2$d分</string>
     <string name="search_hint">検索…</string>
     <string name="download">ダウンロード</string>
     <string name="home_info">情報</string>
@@ -74,7 +74,7 @@
     <string name="sort_close">閉じる</string>
     <string name="sort_save">保存</string>
     <string name="sort_clear">消去</string>
-    <string name="app_dub_sub_episode_text_format" formatted="true">%99$d%99$s%sエピ%d</string>
+    <string name="app_dub_sub_episode_text_format" formatted="true">%1$sエピ%2$d</string>
     <string name="cast_format" formatted="true">出演者：%s</string>
     <string name="search_poster_img_des">ポスター</string>
     <string name="episode_poster_img_des">エピソードポスター</string>
@@ -83,7 +83,7 @@
     <string name="go_back_img_des">戻り</string>
     <string name="rated_format" formatted="true">視聴率 %.1f</string>
     <string name="new_update_format" formatted="true">新しいアップデートを発見!
-\n%s -&gt; %s</string>
+\n%1$s -&gt; %2$s</string>
     <string name="duration_format" formatted="true">%d分</string>
     <string name="search_hint_site" formatted="true">%sを検索…</string>
     <string name="pick_source">ソース</string>
@@ -219,4 +219,27 @@
     <string name="subs_auto_select_language">言語の自動選択</string>
     <string name="error_loading_links_toast">リンクの読み込みエラー</string>
     <string name="enter_pin">137905</string>
+    <string name="links_reloaded_toast">リンクがリロードされました</string>
+    <string name="pref_disable_acra">自動バグ報告を無効にする</string>
+    <string name="player_speed">プレーヤーの速度</string>
+    <string name="subtitles_settings">字幕設定</string>
+    <string name="app_dubbed_text">ダブ</string>
+    <string name="app_subbed_text">サブ</string>
+    <string name="torrent_no_plot">説明が見つかりません</string>
+    <string name="swipe_to_change_settings">スワイプして設定を変更します</string>
+    <string name="subs_outline_color">輪郭の色</string>
+    <string name="subs_subtitle_elevation">字幕の標高</string>
+    <string name="benene_count_text">%d ベネネスが開発者に与えられました</string>
+    <string name="vpn_might_be_needed">このプロバイダーが正しく動作するには VPN が必要になる可能性があります</string>
+    <string name="vpn_torrent">このプロバイダーは torrent です、VPN をお勧めします</string>
+    <string name="player_size_settings">プレーヤーのサイズ変更ボタン</string>
+    <string name="player_size_settings_des">黒い境界線を削除します</string>
+    <string name="player_subtitles_settings_des">プレーヤーの字幕設定</string>
+    <string name="chromecast_subtitles_settings">Chromecastの字幕</string>
+    <string name="chromecast_subtitles_settings_des">Chromecastの字幕設定</string>
+    <string name="eigengraumode_settings_des">プレーヤーに速度オプションを追加します</string>
+    <string name="swipe_to_seek_settings">スワイプして探す</string>
+    <string name="autoplay_next_settings">次のエピソードを自動再生する</string>
+    <string name="autoplay_next_settings_des">現在のエピソードが終了したら次のエピソードを開始する</string>
+    <string name="subs_hold_to_reset_to_default">長押しするとデフォルトにリセットされます</string>
 </resources>

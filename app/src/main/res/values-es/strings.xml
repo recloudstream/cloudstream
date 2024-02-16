@@ -305,7 +305,7 @@
     <string name="pref_category_looks">Aspecto</string>
     <string name="pref_category_ui_features">Características</string>
     <string name="random_button_settings">Botón aleatorio</string>
-    <string name="random_button_settings_desc">Mostrar el botón aleatorio en la página de inicio</string>
+    <string name="random_button_settings_desc">Mostrar el botón aleatorio en la página de inicio y en la biblioteca</string>
     <string name="account">Cuenta</string>
     <string name="logout">Cerrar sesión</string>
     <string name="switch_account">Cambiar cuenta</string>
@@ -585,4 +585,11 @@
     <string name="manage_accounts">Gestionar las cuentas</string>
     <string name="edit_account">Editar la cuenta</string>
     <string name="links_reloaded_toast">Enlaces recargados</string>
+    <string name="rotate_video_desc">Mostrar un botón para cambiar la orientación de la pantalla</string>
+    <string name="rotate_video_key">rotate_video_key</string>
+    <string name="auto_rotate_video_key">auto_rotate_video_key</string>
+    <string name="auto_rotate_video">Giro automático</string>
+    <string name="rotate_video">Girar</string>
+    <string name="auto_rotate_video_desc">Activar el cambio automático de la orientación de la pantalla en función de la orientación del vídeo</string>
+    <string name="copyTitle">¡Título copiado!</string>
 </resources>

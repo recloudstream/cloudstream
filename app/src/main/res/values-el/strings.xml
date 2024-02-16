@@ -118,7 +118,7 @@
     <string name="player_speed_text_format" formatted="true">Ταχύτητα (%.2fx)</string>
     <string name="rated_format" formatted="true">Βαθμολογία: %.1f</string>
     <string name="new_update_format" formatted="true">Νέα διαθέσιμη ενημέρωση!
-\n%s -&gt; %s</string>
+\n%1$s -&gt; %2$s</string>
     <string name="double_tap_to_pause_settings_des">Πατήστε δύο φορές στη μέση για παύση</string>
     <string name="use_system_brightness_settings">Χρήση φωτεινότητας συστήματος</string>
     <string name="use_system_brightness_settings_des">Χρήση φωτεινότητας συστήματος στο ενσωματωμένο πρόγραμμα αναπαραγωγής, αντί εφαρμογής προεπιλεγμένου σκούρου επικαλύμματος</string>
@@ -142,12 +142,12 @@
     <string name="no_links_found_toast">Δεν βρέθηκαν διαθέσιμοι σύνδεσμοι</string>
     <string name="copy_link_toast">Ο σύνδεσμος αντιγράφηκε στο πρόχειρο</string>
     <string name="season">Κύκλος</string>
-    <string name="season_format">%s %d%s</string>
+    <string name="season_format">%1$s %2$d%3$s</string>
     <string name="no_season">Κανένας κύκλος</string>
     <string name="episode">Επεισόδιο</string>
     <string name="episodes">Επεισόδια</string>
-    <string name="episodes_range">%d-%d</string>
-    <string name="episode_format" formatted="true">%d %s</string>
+    <string name="episodes_range">%1$d-%2$d</string>
+    <string name="episode_format" formatted="true">%1$d %2$s</string>
     <string name="season_short">Σ</string>
     <string name="episode_short">E</string>
     <string name="no_episodes_found">Δεν βρέθηκαν επεισόδια</string>
@@ -320,8 +320,8 @@
     <string name="plugin_loaded">Το πρόσθετο φορτώθηκε</string>
     <string name="plugin_deleted">Το πρόσθετο διαγράφηκε</string>
     <string name="plugin_load_fail" formatted="true">Αποτυχία φόρτωσης του %s</string>
-    <string name="batch_download_start_format" formatted="true">Ξεκίνησε η λήψη %d %s…</string>
-    <string name="batch_download_finish_format" formatted="true">Κατέβηκε το %d %s επιτυχώς</string>
+    <string name="batch_download_start_format" formatted="true">Ξεκίνησε η λήψη %1$d %2$s…</string>
+    <string name="batch_download_finish_format" formatted="true">Κατέβηκε το %1$d %2$s επιτυχώς</string>
     <string name="batch_download_nothing_to_download_format" formatted="true">Όλα τα %s έχουν ήδη κατέβει</string>
     <string name="batch_download">Μαζική λήψη</string>
     <string name="plugin_singular">Πρόσθετο</string>
@@ -367,13 +367,13 @@
     <string name="player_settings_play_in_web">Web Video Cast</string>
     <string name="player_settings_play_in_browser">Περιηγητής</string>
     <string name="app_not_found_error">Η εφαρμογή δεν βρέθηκε</string>
-    <string name="app_dub_sub_episode_text_format" formatted="true">%s Επ %d</string>
+    <string name="app_dub_sub_episode_text_format" formatted="true">%1$s Επ %2$d</string>
     <string name="next_episode_format" formatted="true">Το επεισόδιο %d θα κυκλοφορήσει σε</string>
     <string name="filler" formatted="true">Φίλτρο</string>
     <string name="duration_format" formatted="true">%d λεπτά</string>
     <string name="cast_format" formatted="true">Ηθοποιοί: %s</string>
-    <string name="next_episode_time_day_format" formatted="true">%dμ %dω %dλ</string>
-    <string name="next_episode_time_hour_format" formatted="true">%dω %dλ</string>
+    <string name="next_episode_time_day_format" formatted="true">%1$dμ %2$dω %3$dλ</string>
+    <string name="next_episode_time_hour_format" formatted="true">%1$dω %2$dλ</string>
     <string name="next_episode_time_min_format" formatted="true">%dλ</string>
     <string name="search_hint_site" formatted="true">Αναζήτηση %s…</string>
     <string name="play_livestream_button">Αναπαραγωγή ζωντανής μετάδοσης</string>
@@ -461,7 +461,7 @@
     <string name="pref_category_subtitles">Υπότιτλοι</string>
     <string name="pref_category_player_layout">Δομή</string>
     <string name="pref_category_defaults">Προεπιλεγμένα</string>
-    <string name="login_format" formatted="true">%s %s</string>
+    <string name="login_format" formatted="true">%1$s %2$s</string>
     <string name="subs_font_size">Μέγεθος γραμματοσειράς</string>
     <string name="anime_singular">Άνιμε</string>
     <string name="pref_category_links">Σύνδεσμοι</string>

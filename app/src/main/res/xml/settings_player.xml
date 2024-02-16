@@ -70,7 +70,7 @@
             app:key="@string/player_resize_enabled_key" />
         <SwitchPreference
             android:icon="@drawable/ic_baseline_speed_24"
-            android:summary="@string/eigengraumode_settings_des"
+            android:summary="@string/speed_setting_summary"
             android:title="@string/eigengraumode_settings"
             app:defaultValue="false"
             app:key="@string/playback_speed_enabled_key" />
