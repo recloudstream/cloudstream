@@ -47,7 +47,7 @@ open class Rabbitstream : ExtractorApi() {
 
         val response = app.get(
             "$mainUrl/$embed/getSources?id=$id",
-            referer = mainUrl,
+            referer = url,
             headers = mapOf("X-Requested-With" to "XMLHttpRequest")
         )
 
@@ -72,7 +72,7 @@ open class Rabbitstream : ExtractorApi() {
             ).forEach(callback)
         }
 
-        decryptedSources?.tracks?.map { track ->
+        decryptedSources?.tracks?.filter { it?.kind == "captions" }?.map { track ->
             subtitleCallback.invoke(
                 SubtitleFile(
                     track?.label ?: "",
