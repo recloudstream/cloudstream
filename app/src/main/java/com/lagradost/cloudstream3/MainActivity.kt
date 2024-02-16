@@ -10,7 +10,6 @@ import android.graphics.Rect
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.provider.Settings
 import android.util.AttributeSet
 import android.util.Log
 import android.view.KeyEvent
@@ -24,7 +23,6 @@ import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.annotation.IdRes
 import androidx.annotation.MainThread
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -1205,13 +1203,8 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
             showToast(txt(R.string.unable_to_inflate, t.message ?: ""), Toast.LENGTH_LONG)
             null
         }
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !isAppOptimised && !isTrueTvSettings()
-            && !isTvSettings() && !isEmulatorSettings()) {
-            showBatteryOptimizationDialog()
-        }
-
         changeStatusBarState(isEmulatorSettings())
+
         // Automatically enable jsdelivr if cant connect to raw.githubusercontent.com
         if (this.getKey<Boolean>(getString(R.string.jsdelivr_proxy_key)) == null && isNetworkAvailable()) {
             main {
@@ -1782,21 +1775,5 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         } catch (t: Throwable) {
             false
         }
-    }
-
-    @RequiresApi(Build.VERSION_CODES.M)
-    private fun showBatteryOptimizationDialog() {
-       AlertDialog.Builder(this)
-            .setTitle(R.string.battery_dialog_title)
-            .setMessage(R.string.battery_dialog_message)
-            .setPositiveButton(R.string.ok) { _, _ ->
-                isAppOptimised = true
-                val intent = Intent()
-                intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
-                intent.data = Uri.fromParts("package", packageName, null)
-                startActivity(intent)
-            }
-            .setNegativeButton(R.string.cancel, null)
-            .show()
     }
 }
