@@ -58,7 +58,7 @@ class Megacloud : Rabbitstream() {
             } catch (e: NumberFormatException) {
                 emptyList()
             }
-        }
+        }.filter { it.isNotEmpty() }
 
         return indexPairs
     }
