@@ -113,6 +113,7 @@ import com.lagradost.cloudstream3.ui.result.txt
 import com.lagradost.cloudstream3.ui.search.SearchFragment
 import com.lagradost.cloudstream3.ui.search.SearchResultBuilder
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isEmulatorSettings
+import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTruePhone
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTrueTvSettings
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.updateTv
@@ -133,9 +134,8 @@ import com.lagradost.cloudstream3.utils.AppUtils.setDefaultFocus
 import com.lagradost.cloudstream3.utils.BackupUtils.backup
 import com.lagradost.cloudstream3.utils.BackupUtils.setUpBackup
 import com.lagradost.cloudstream3.utils.BiometricAuthenticator
-import com.lagradost.cloudstream3.utils.BiometricAuthenticator.TAG
-import com.lagradost.cloudstream3.utils.BiometricAuthenticator.isTruePhone
-import com.lagradost.cloudstream3.utils.BiometricAuthenticator.promptInfo
+import com.lagradost.cloudstream3.utils.BiometricAuthenticator.deviceHasPasswordPinLock
+import com.lagradost.cloudstream3.utils.BiometricAuthenticator.startBiometricAuthentication
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.DataStore.getKey
@@ -1176,7 +1176,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricAu
                 val newLocalBinding = ActivityMainTvBinding.inflate(layoutInflater, null, false)
                 setContentView(newLocalBinding.root)
 
-                if(isTrueTvSettings() && ANIMATED_OUTLINE) {
+                if (isTrueTvSettings() && ANIMATED_OUTLINE) {
                     TvFocus.focusOutline = WeakReference(newLocalBinding.focusOutline)
                     newLocalBinding.root.viewTreeObserver.addOnScrollChangedListener {
                         TvFocus.updateFocusView(TvFocus.lastFocus.get(), same = true)
@@ -1188,13 +1188,11 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricAu
                     newLocalBinding.focusOutline.isVisible = false
                 }
 
-                if(isTrueTvSettings()) {
+                if (isTrueTvSettings()) {
                     newLocalBinding.root.viewTreeObserver.addOnGlobalFocusChangeListener { _, newFocus ->
                         centerView(newFocus)
                     }
                 }
-
-
 
                 ActivityMainBinding.bind(newLocalBinding.root) // this may crash
             } else {
@@ -1213,12 +1211,20 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricAu
         val authEnabled = settingsManager.getBoolean(getString(R.string.biometric_enabled_key), false)
         val noAccounts = settingsManager.getBoolean(getString(R.string.skip_startup_account_select_key), false) || accounts.count() <= 1
 
-        if (isTruePhone() && authEnabled && noAccounts ) {
+        if (isTruePhone() && authEnabled && noAccounts) {
+            if (deviceHasPasswordPinLock(this)) {
+                startBiometricAuthentication(this,
+                    R.string.biometric_authentication_title,
+                    false
+                )
 
-            BiometricAuthenticator.initializeBiometrics(this@MainActivity, this)
-            BiometricAuthenticator.checkBiometricAvailability()
-            BiometricAuthenticator.biometricPrompt.authenticate(promptInfo)
-            binding?.navHostFragment?.isInvisible = true // hide background while authenticating
+                BiometricAuthenticator.biometricPrompt.authenticate(BiometricAuthenticator.promptInfo)
+
+                // hide background while authenticating, Sorry moms & dads 🙏
+                binding?.navHostFragment?.isInvisible = true
+            } else {
+                showToast(R.string.phone_not_secured, Toast.LENGTH_LONG)
+            }
         }
 
         // Automatically enable jsdelivr if cant connect to raw.githubusercontent.com
@@ -1760,7 +1766,8 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricAu
         )
     }
 
-    override fun onAuthenticationSuccess() { /** Biometric stuff **/
+    /** Biometric stuff **/
+    override fun onAuthenticationSuccess() {
         // make background (nav host fragment) visible again
         binding?.navHostFragment?.isInvisible = false
     }

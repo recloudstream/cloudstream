@@ -745,13 +745,13 @@
     <string name="auto_rotate_video_desc">Enable automatic switching of screen orientation based on video orientation</string>
     <string name="auto_rotate_video">Auto rotate</string>
 
+    <!-- For Biometrics -->
+    <string name="biometric_authentication_title">Unlock CloudStream</string>
     <string name="biometric_setting">Fingerprint sensor authentication</string>
-    <string name="biometric_success">Fingerprint authentication succeeded</string>
-    <string name="biometric_failed">Fingerprint authentication failed</string>
-    <string name="biometric_prompt_title">Unlock CloudStream</string>
-    <string name="biometric_not_enrolled">Please add fingerprint or screen lock or disable setting</string>
-    <string name="biometric_update_required">Please update software and security patches.</string>
-    <string name="biometric_unsupported">Biometric authentication is not supported on this device</string>
     <string name="biometric_enabled_key" translatable="false">biometric_key</string>
+    <string name="password_pin_authentication_title">Password/PIN Authentication</string>
+    <string name="biometric_unsupported">Biometric authentication is not supported on this device</string>
+    <string name="phone_not_secured">Please disable fingerprint authentication if device has no lock.</string>
+    <string name="biometric_prompt_description">This window will close after few failed attempts. You\'ll have to restart the App.</string>
 
 </resources>
