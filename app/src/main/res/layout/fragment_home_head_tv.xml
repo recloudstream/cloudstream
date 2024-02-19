@@ -137,7 +137,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
-                android:maxLines="5"
+                android:maxLines="3"
                 android:paddingBottom="5dp"
                 android:textSize="15sp"
                 tools:text="very nice tv series" />
