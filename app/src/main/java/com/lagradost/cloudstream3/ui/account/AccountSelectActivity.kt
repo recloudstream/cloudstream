@@ -62,7 +62,9 @@ class AccountSelectActivity : AppCompatActivity(), BiometricAuthenticator.Biomet
                         R.string.biometric_authentication_title,
                         false
                     )
-                    BiometricAuthenticator.biometricPrompt.authenticate(BiometricAuthenticator.promptInfo)
+                    BiometricAuthenticator.promptInfo?.let {
+                        BiometricAuthenticator.biometricPrompt?.authenticate(it)
+                    }
                 }
             } else {
                 showToast(R.string.phone_not_secured, Toast.LENGTH_LONG)

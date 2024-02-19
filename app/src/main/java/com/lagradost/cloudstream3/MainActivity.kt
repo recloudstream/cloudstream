@@ -1218,7 +1218,11 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricAu
                     false
                 )
 
-                BiometricAuthenticator.biometricPrompt.authenticate(BiometricAuthenticator.promptInfo)
+                BiometricAuthenticator.promptInfo?.let {
+                    BiometricAuthenticator.biometricPrompt?.authenticate(
+                        it
+                    )
+                }
 
                 // hide background while authenticating, Sorry moms & dads 🙏
                 binding?.navHostFragment?.isInvisible = true
