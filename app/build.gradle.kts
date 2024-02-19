@@ -63,7 +63,7 @@ android {
         versionCode = 63
         versionName = "4.3.1"
 
-        val commitHashFile = layout.projectDirectory.file("commit-hash.txt")
+        val commitHashFile = layout.buildDirectory.file("commit-hash.txt")
         resValue("string", "app_version", "${defaultConfig.versionName}${versionNameSuffix ?: ""}")
         resValue("string", "commit_hash", file(commitHashFile).readText())
         resValue("bool", "is_prerelease", "false")
@@ -165,10 +165,10 @@ dependencies {
     // Android Core & Lifecycle
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
-    implementation("androidx.navigation:navigation-ui-ktx:2.7.6")
+    implementation("androidx.navigation:navigation-ui-ktx:2.7.7")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.7.0")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0")
-    implementation("androidx.navigation:navigation-fragment-ktx:2.7.6")
+    implementation("androidx.navigation:navigation-fragment-ktx:2.7.7")
 
     // Design & UI
     implementation("jp.wasabeef:glide-transformations:4.3.0")
