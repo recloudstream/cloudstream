@@ -1,8 +1,7 @@
 package com.lagradost.cloudstream3.ui.settings
 
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.os.TransactionTooLargeException
 import android.view.View
@@ -21,6 +20,7 @@ import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.network.initClient
 import com.lagradost.cloudstream3.services.BackupWorkManager
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.getPref
+import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTruePhone
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setPaddingBottom
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setToolBarScrollFlags
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setUpToolbar
@@ -30,6 +30,7 @@ import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.InAppUpdater.Companion.runAutoUpdate
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showDialog
+import com.lagradost.cloudstream3.utils.UIHelper.clipboardHelper
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.utils.VideoDownloadManager
@@ -114,25 +115,30 @@ class SettingsUpdates : PreferenceFragmentCompat() {
             }
 
             val text = log.toString()
+            val lagraAppsSupportUri = "https://discord.com/channels/737724143126052974/737725084881387652"
             binding.text1.text = text
 
             binding.copyBtt.setOnClickListener {
                 // Can crash on too much text
                 try {
-                    val serviceClipboard =
-                        (activity?.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager?)
-                            ?: return@setOnClickListener
-                    val clip = ClipData.newPlainText("logcat", text)
-                    serviceClipboard.setPrimaryClip(clip)
+                    clipboardHelper("Logcat", text)
+                    // copy log and open support channel of Lagra apps server
+                    if (isTruePhone())
+                    {
+                        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(lagraAppsSupportUri)))
+                    }
+
                     dialog.dismissSafe(activity)
                 } catch (e: TransactionTooLargeException) {
                     showToast(R.string.clipboard_too_large)
                 }
             }
+
             binding.clearBtt.setOnClickListener {
                 Runtime.getRuntime().exec("logcat -c")
                 dialog.dismissSafe(activity)
             }
+
             binding.saveBtt.setOnClickListener {
                 var fileStream: OutputStream? = null
                 try {
@@ -153,9 +159,11 @@ class SettingsUpdates : PreferenceFragmentCompat() {
                     fileStream?.closeQuietly()
                 }
             }
+
             binding.closeBtt.setOnClickListener {
                 dialog.dismissSafe(activity)
             }
+
             return@setOnPreferenceClickListener true
         }
 

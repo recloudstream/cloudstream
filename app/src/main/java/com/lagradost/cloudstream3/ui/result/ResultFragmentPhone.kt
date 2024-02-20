@@ -2,9 +2,6 @@ package com.lagradost.cloudstream3.ui.result
 
 import android.annotation.SuppressLint
 import android.app.Dialog
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Rect
@@ -34,7 +31,6 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.lagradost.cloudstream3.APIHolder
 import com.lagradost.cloudstream3.APIHolder.updateHasTrailers
 import com.lagradost.cloudstream3.CommonActivity
-import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.DubStatus
 import com.lagradost.cloudstream3.LoadResponse
 import com.lagradost.cloudstream3.MainActivity.Companion.afterPluginsLoadedEvent
@@ -72,6 +68,7 @@ import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialogIn
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialogText
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showDialog
 import com.lagradost.cloudstream3.utils.UIHelper
+import com.lagradost.cloudstream3.utils.UIHelper.clipboardHelper
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
@@ -757,14 +754,15 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                 resultReloadConnectionOpenInBrowser.isVisible = data is Resource.Failure
 
                 resultTitle.setOnLongClickListener {
-                        val titleToCopy = resultTitle.text
-                        val clipboardManager =
-                            activity?.getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager?
-                        clipboardManager?.setPrimaryClip(ClipData.newPlainText("Title", titleToCopy))
-                        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2) {
-                            showToast(R.string.copyTitle, Toast.LENGTH_SHORT)
-                        }
-                        return@setOnLongClickListener true
+                    val titleString = activity?.getString(R.string.title) as String
+                    clipboardHelper(titleString, resultTitle.text)
+                    true
+                }
+
+                resultDescription.setOnLongClickListener {
+                    val synopsisString = activity?.getString(R.string.torrent_plot) as String
+                    clipboardHelper(synopsisString, resultDescription.text)
+                    true
                 }
             }
         }
