@@ -1693,8 +1693,7 @@ class ResultViewModel2 : ViewModel() {
                     txt(R.string.episode_action_copy_link)
                 ) { (result, index) ->
                     val link = result.links[index]
-                    val clip = "${link.name} , ${link.url}"
-                    clipboardHelper(link.name, clip )
+                    clipboardHelper(link.name, link.url)
                 }
             }
 
