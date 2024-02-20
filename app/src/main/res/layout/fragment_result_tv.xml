@@ -454,14 +454,9 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
 
-                    <FrameLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:visibility="gone">
-
                         <LinearLayout
                             android:id="@+id/result_resume_progress_holder"
-                            android:layout_width="match_parent"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="10dp"
                             android:orientation="horizontal"
@@ -496,13 +491,10 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
                                 android:paddingEnd="5dp"
                                 android:textColor="?attr/grayTextColor"
                                 android:visibility="gone"
+                                tools:visibility="visible"
                                 tools:ignore="RtlSymmetry"
                                 tools:text="69m remaining" />
                         </LinearLayout>
-
-                    </FrameLayout>
-
-
                 </LinearLayout>
             </LinearLayout>
 
