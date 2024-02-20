@@ -443,9 +443,17 @@ class ResultFragmentTv : Fragment() {
 
         observeNullable(viewModel.resumeWatching) { resume ->
             binding?.apply {
+
+                // > resultResumeSeries is visible when not null
+                if (resume == null) {
+                    resultResumeSeries.isVisible = false
+                    return@observeNullable
+                }
+
                 // show progress no matter if series or movie
-                resume?.progress?.let { progress ->
+                resume.progress?.let { progress ->
                     resultResumeSeriesProgressText.setText(progress.progressLeft)
+                    resultResumeSeriesProgressText.isVisible = true
                     resultResumeSeriesProgress.apply {
                         isVisible = true
                         this.max = progress.maxProgress
@@ -456,35 +464,14 @@ class ResultFragmentTv : Fragment() {
                     resultResumeProgressHolder.isVisible = false
                 }
 
-                // if movie then hide both as movie button is
-                // always visible on movies, this is done in movie observe
-
-                if (resume?.isMovie == true) {
-                    resultPlaySeries.isVisible = false
-                    resultResumeSeries.isVisible = false
-                    return@observeNullable
-                }
-
-                // if series then
-                // > resultPlaySeries is visible when null
-                // > resultResumeSeries is visible when not null
-                if (resume == null) {
-                    resultPlaySeries.isVisible = true
-                    resultResumeSeries.isVisible = false
-                    return@observeNullable
-                }
-
                 resultPlaySeries.isVisible = false
+                resultPlayMovie.isVisible = false
                 resultResumeSeries.isVisible = true
 
                 focusPlayButton()
 
                 resultResumeSeries.text =
-                    if (resume.isMovie) context?.getString(R.string.play_movie_button) else context?.getNameFull(
-                        null, // resume.result.name, we don't want episode title
-                        resume.result.episode,
-                        resume.result.season
-                    )
+                    if (resume.isMovie) context?.getString(R.string.resume) else "${context?.getString(R.string.resume)} S${resume.result.season}:E${resume.result.episode}"
 
                 resultResumeSeries.setOnClickListener {
                     viewModel.handleAction(
@@ -501,7 +488,6 @@ class ResultFragmentTv : Fragment() {
                     )
                     return@setOnLongClickListener true
                 }
-
             }
         }
 
@@ -621,7 +607,6 @@ class ResultFragmentTv : Fragment() {
             binding?.apply {
                 resultPlayMovie.isVisible = data is Resource.Success
                 resultPlaySeries.isVisible = data == null
-                seriesHolder.isVisible = data == null
                 resultEpisodesShow.isVisible = data == null
 
                 (data as? Resource.Success)?.value?.let { (text, ep) ->

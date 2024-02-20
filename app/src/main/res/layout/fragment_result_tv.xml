@@ -229,13 +229,6 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
                 android:orientation="horizontal"
                 android:layout_marginTop="10dp">
 
-                <LinearLayout
-                    android:layout_width="250dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="10dp"
-                    android:layout_weight="0"
-                    android:orientation="vertical">
-
                     <LinearLayout
                         android:id="@+id/result_movie_parent"
                         android:layout_width="wrap_content"
@@ -243,6 +236,7 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
                         android:layout_gravity="start"
                         android:animateLayoutChanges="true"
                         android:orientation="vertical"
+                        android:layout_marginEnd="10dp"
                         tools:visibility="visible">
 
                         <com.google.android.material.button.MaterialButton
@@ -255,12 +249,6 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
                             android:text="@string/play_movie_button"
                             android:visibility="visible"
                             app:icon="@drawable/ic_baseline_play_arrow_24" />
-
-                        <LinearLayout
-                            android:id="@+id/series_holder"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical">
 
                             <com.google.android.material.button.MaterialButton
                                 android:id="@+id/result_play_series"
@@ -276,15 +264,12 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
                             <com.google.android.material.button.MaterialButton
                                 android:id="@+id/result_resume_series"
                                 style="@style/ResultButtonTV"
-
                                 android:nextFocusRight="@id/result_description"
                                 android:nextFocusUp="@id/result_play_series"
                                 android:nextFocusDown="@id/result_play_trailer"
                                 android:text="@string/resume"
                                 android:visibility="visible"
                                 app:icon="@drawable/ic_baseline_play_arrow_24" />
-                        </LinearLayout>
-
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/result_play_trailer"
@@ -335,12 +320,12 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
                             android:id="@+id/result_subscribe_button"
                             style="@style/ResultButtonTV"
                             android:nextFocusRight="@id/result_description"
-                            android:nextFocusUp="@id/result_favorite_button"
+                            android:nextFocusUp="@id/result_bookmark_button"
                             android:nextFocusDown="@id/result_episodes_show"
 
                             android:text="@string/action_subscribe"
                             android:visibility="visible"
-                            app:icon="@drawable/ic_baseline_favorite_border_24" />
+                            app:icon="@drawable/baseline_notifications_none_24" />
 
 
                         <com.google.android.material.button.MaterialButton
@@ -370,7 +355,6 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
                             android:layout_height="1dp"
                             android:focusable="true"
                             android:focusableInTouchMode="true" />
-                    </LinearLayout>
                 </LinearLayout>
 
                 <LinearLayout
@@ -496,13 +480,11 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
                                 android:paddingEnd="5dp"
                                 android:textColor="?attr/grayTextColor"
                                 android:visibility="gone"
+                                tools:visibility="visible"
                                 tools:ignore="RtlSymmetry"
                                 tools:text="69m remaining" />
                         </LinearLayout>
-
                     </FrameLayout>
-
-
                 </LinearLayout>
             </LinearLayout>
 
