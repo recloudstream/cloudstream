@@ -138,7 +138,6 @@ object UIHelper {
             if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2) {
             showToast("${label.asString(context!!)} ${labelSuffix.asString(context!!)}")
             }
-
         } catch (t: Throwable) {
             Log.e("ClipboardService", "$t")
             showToast(R.string.clipboard_too_large)
