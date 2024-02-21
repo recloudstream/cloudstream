@@ -67,6 +67,8 @@ import com.lagradost.cloudstream3.MainActivity
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.ui.result.UiImage
+import com.lagradost.cloudstream3.ui.result.UiText
+import com.lagradost.cloudstream3.ui.result.txt
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isEmulatorSettings
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
 import jp.wasabeef.glide.transformations.BlurTransformation
@@ -127,17 +129,18 @@ object UIHelper {
         )
     }
 
-    fun clipboardHelper(label: String, text: CharSequence) {
+    fun clipboardHelper(label: UiText, text: CharSequence) {
         try {
-            val clip = ClipData.newPlainText(label, text)
-            val labelSuffix = activity?.getString(R.string.toast_copied) as String
+            val clip = ClipData.newPlainText(label.asString(context!!), text)
+            val labelSuffix = txt(R.string.toast_copied)
             context?.getSystemService<ClipboardManager>()!!.setPrimaryClip(clip)
 
             if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2) {
-                showToast("$label $labelSuffix", Toast.LENGTH_SHORT)
+            showToast("${label.asString(context!!)} ${labelSuffix.asString(context!!)}")
             }
 
-        } catch (e: Exception) {
+        } catch (t: Throwable) {
+            Log.e("ClipboardService", "$t")
             showToast(R.string.clipboard_too_large)
         }
     }

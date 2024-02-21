@@ -19,7 +19,6 @@ import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.MaterialToolbar
-import com.lagradost.cloudstream3.AcraApplication.Companion.context
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.MainSettingsBinding
 import com.lagradost.cloudstream3.mvvm.logError
@@ -154,12 +153,6 @@ class SettingsFragment : Fragment() {
 
         fun Context.isEmulatorSettings(): Boolean {
             return getLayoutInt() == 2
-        }
-
-        // phone exclusive
-        fun isTruePhone(): Boolean {
-            return !isTrueTvSettings() && !isTvSettings() && context?.isEmulatorSettings() != true
-                    && context?.isAutoTv() != true && !isTrueTv && !isTv
         }
 
         private fun Context.isAutoTv(): Boolean {

@@ -754,14 +754,8 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                 resultReloadConnectionOpenInBrowser.isVisible = data is Resource.Failure
 
                 resultTitle.setOnLongClickListener {
-                    val titleString = activity?.getString(R.string.title) as String
+                    val titleString = txt(R.string.title)
                     clipboardHelper(titleString, resultTitle.text)
-                    true
-                }
-
-                resultDescription.setOnLongClickListener {
-                    val synopsisString = activity?.getString(R.string.torrent_plot) as String
-                    clipboardHelper(synopsisString, resultDescription.text)
                     true
                 }
             }

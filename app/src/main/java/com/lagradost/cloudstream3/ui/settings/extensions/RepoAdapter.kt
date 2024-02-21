@@ -5,11 +5,11 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
-import com.lagradost.cloudstream3.CommonActivity.activity
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.RepositoryItemBinding
 import com.lagradost.cloudstream3.databinding.RepositoryItemTvBinding
 import com.lagradost.cloudstream3.plugins.RepositoryManager.PREBUILT_REPOSITORIES
+import com.lagradost.cloudstream3.ui.result.txt
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTrueTvSettings
 import com.lagradost.cloudstream3.utils.UIHelper.clipboardHelper
 
@@ -117,9 +117,8 @@ class RepoAdapter(
 
                         repositoryItemRoot.setOnLongClickListener {
                             val shareableRepoData = "${repositoryData.name} : \n ${repositoryData.url}"
-                            val copyLabel = activity?.getString(R.string.repo_copy_label) as String
-
-                            clipboardHelper(copyLabel, shareableRepoData)
+                            val repoCopyLabel = txt(R.string.repo_copy_label)
+                            clipboardHelper(repoCopyLabel, shareableRepoData)
                             true
                         }
 
