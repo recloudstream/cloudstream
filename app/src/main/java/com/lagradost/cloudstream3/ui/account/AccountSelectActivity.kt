@@ -47,7 +47,7 @@ class AccountSelectActivity : AppCompatActivity(), BiometricAuthenticator.Biomet
         )
 
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
-        val authEnabled = settingsManager.getBoolean(getString(R.string.biometric_enabled_key), false)
+        val authEnabled = settingsManager.getBoolean(getString(R.string.biometric_key), false)
         val skipStartup = settingsManager.getBoolean(getString(R.string.skip_startup_account_select_key), false
         ) || accounts.count() <= 1
 
@@ -57,11 +57,8 @@ class AccountSelectActivity : AppCompatActivity(), BiometricAuthenticator.Biomet
 
             if (isTruePhone() && authEnabled) {
                 if (deviceHasPasswordPinLock(this)) {
-                    startBiometricAuthentication(
-                        this,
-                        R.string.biometric_authentication_title,
-                        false
-                    )
+                    startBiometricAuthentication(this, R.string.biometric_authentication_title, false)
+
                     BiometricAuthenticator.promptInfo?.let {
                         BiometricAuthenticator.biometricPrompt?.authenticate(it)
                     }

@@ -5,7 +5,6 @@ import android.app.KeyguardManager
 import android.content.Context
 import android.os.Build
 import android.util.Log
-import android.widget.Toast.LENGTH_SHORT
 import androidx.appcompat.app.AppCompatActivity
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_STRONG
@@ -41,9 +40,10 @@ object BiometricAuthenticator {
 
                 override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
                     super.onAuthenticationError(errorCode, errString)
-                    showToast("$errString", LENGTH_SHORT)
+                    showToast("$errString")
                     Log.e(TAG, "$errorCode")
                     failedAttempts++
+
                     if (failedAttempts >= MAX_FAILED_ATTEMPTS) {
                         failedAttempts = 0
                         activity.finish()
@@ -70,6 +70,7 @@ object BiometricAuthenticator {
             })
     }
 
+    @Suppress("DEPRECATION")
     // authentication dialog prompt builder
     private fun authenticationDialog(
         activity: Activity,
@@ -77,6 +78,7 @@ object BiometricAuthenticator {
         setDeviceCred: Boolean,
     ) {
         val description = activity.getString(R.string.biometric_prompt_description)
+
         if (setDeviceCred) {
             // For API level > 30, Newer API setAllowedAuthenticators is used
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
@@ -87,17 +89,18 @@ object BiometricAuthenticator {
                     .setDescription(description)
                     .setAllowedAuthenticators(authFlag)
                     .build()
+
             } else {
-                @Suppress("DEPRECATION")
+                // for apis < 30
                 promptInfo = BiometricPrompt.PromptInfo.Builder()
                     .setTitle(activity.getString(title))
                     .setDescription(description)
                     .setDeviceCredentialAllowed(true)
                     .build()
             }
+
         } else {
             // fallback for A12+ when both fingerprint & Face unlock is absent but PIN is set
-            @Suppress("DEPRECATION")
             promptInfo = BiometricPrompt.PromptInfo.Builder()
                 .setTitle(activity.getString(title))
                 .setDescription(description)
@@ -107,9 +110,11 @@ object BiometricAuthenticator {
     }
 
     private fun isBiometricHardWareAvailable(): Boolean {
+        // authentication occurs only when this is true and device is truly capable
         var result = false
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+
             when (biometricManager?.canAuthenticate(
                 DEVICE_CREDENTIAL or BIOMETRIC_STRONG or BIOMETRIC_WEAK
             )) {
@@ -121,6 +126,7 @@ object BiometricAuthenticator {
                 BiometricManager.BIOMETRIC_ERROR_UNSUPPORTED -> result = true
                 BiometricManager.BIOMETRIC_STATUS_UNKNOWN -> result = false
             }
+
         } else {
             @Suppress("DEPRECATION")
             when (biometricManager?.canAuthenticate()) {
@@ -137,7 +143,7 @@ object BiometricAuthenticator {
         return result
     }
 
-    // checks if device is secured or not
+    // checks if device is secured i.e has at least some type of lock
     fun deviceHasPasswordPinLock(context: Context?): Boolean {
         val keyMgr =
             context?.getSystemService(AppCompatActivity.KEYGUARD_SERVICE) as? KeyguardManager
@@ -160,7 +166,7 @@ object BiometricAuthenticator {
                 promptInfo?.let { biometricPrompt?.authenticate(it) }
 
             } else {
-                showToast(R.string.biometric_unsupported, LENGTH_SHORT)
+                showToast(R.string.biometric_unsupported)
             }
         }
     }

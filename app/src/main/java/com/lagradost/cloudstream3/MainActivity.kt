@@ -19,6 +19,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.Toast
+import android.widget.Toast.LENGTH_LONG
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.annotation.IdRes
@@ -1208,26 +1209,21 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricAu
         changeStatusBarState(isEmulatorSettings())
 
         /** Biometric stuff for users without accounts **/
-        val authEnabled = settingsManager.getBoolean(getString(R.string.biometric_enabled_key), false)
+        val authEnabled = settingsManager.getBoolean(getString(R.string.biometric_key), false)
         val noAccounts = settingsManager.getBoolean(getString(R.string.skip_startup_account_select_key), false) || accounts.count() <= 1
 
         if (isTruePhone() && authEnabled && noAccounts) {
             if (deviceHasPasswordPinLock(this)) {
-                startBiometricAuthentication(this,
-                    R.string.biometric_authentication_title,
-                    false
-                )
+                startBiometricAuthentication(this, R.string.biometric_authentication_title, false)
 
                 BiometricAuthenticator.promptInfo?.let {
-                    BiometricAuthenticator.biometricPrompt?.authenticate(
-                        it
-                    )
+                    BiometricAuthenticator.biometricPrompt?.authenticate(it)
                 }
 
                 // hide background while authenticating, Sorry moms & dads 🙏
                 binding?.navHostFragment?.isInvisible = true
             } else {
-                showToast(R.string.phone_not_secured, Toast.LENGTH_LONG)
+                showToast(R.string.phone_not_secured, LENGTH_LONG)
             }
         }
 
