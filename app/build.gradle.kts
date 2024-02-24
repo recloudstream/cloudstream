@@ -232,7 +232,7 @@ dependencies {
     // Downloading & Networking
     implementation("androidx.work:work-runtime:2.9.0")
     implementation("androidx.work:work-runtime-ktx:2.9.0")
-    implementation("com.github.Blatzar:NiceHttp:0.4.5") // HTTP Lib
+    implementation("com.github.Blatzar:NiceHttp:0.4.11") // HTTP Lib
 }
 
 tasks.register<Exec>("retrieveCommitHash") {
