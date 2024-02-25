@@ -253,7 +253,7 @@ class ResultFragmentTv : Fragment() {
             val leftListener: View.OnFocusChangeListener =
                 View.OnFocusChangeListener { view, hasFocus ->
                     if (!hasFocus) return@OnFocusChangeListener
-                    if (view?.tag == "tv_no_focus_tag"){
+                    if (view?.tag == context?.getString(R.string.tv_no_focus_tag)){
                         resultFinishLoading.scrollTo(0,0)
                     }
                     toggleEpisodes(false)

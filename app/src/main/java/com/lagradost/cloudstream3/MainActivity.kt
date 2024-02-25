@@ -61,6 +61,7 @@ import com.lagradost.cloudstream3.APIHolder.apis
 import com.lagradost.cloudstream3.APIHolder.getApiDubstatusSettings
 import com.lagradost.cloudstream3.APIHolder.initAll
 import com.lagradost.cloudstream3.APIHolder.updateHasTrailers
+import com.lagradost.cloudstream3.AcraApplication.Companion.context
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
@@ -1185,7 +1186,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
 
                 if(isTrueTvSettings()) {
                     newLocalBinding.root.viewTreeObserver.addOnGlobalFocusChangeListener { _, newFocus ->
-                        if (newFocus?.tag == "tv_no_focus_tag") return@addOnGlobalFocusChangeListener
+                        if (newFocus?.tag == context?.getString(R.string.tv_no_focus_tag)) return@addOnGlobalFocusChangeListener
                         centerView(newFocus)
                     }
                 }

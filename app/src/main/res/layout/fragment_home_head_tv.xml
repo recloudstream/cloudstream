@@ -157,7 +157,7 @@
                     android:id="@+id/home_preview_hidden_prev_focus"
                     android:layout_width="1dp"
                     android:layout_height="1dp"
-                    android:tag="tv_no_focus_tag"
+                    android:tag="@string/tv_no_focus_tag"
                     android:focusable="false" />
 
                 <com.google.android.material.button.MaterialButton
@@ -190,7 +190,7 @@
                     android:id="@+id/home_preview_hidden_next_focus"
                     android:layout_width="1dp"
                     android:layout_height="1dp"
-                    android:tag="tv_no_focus_tag"
+                    android:tag="@string/tv_no_focus_tag"
                     android:focusable="false" />
             </LinearLayout>
         </LinearLayout>
