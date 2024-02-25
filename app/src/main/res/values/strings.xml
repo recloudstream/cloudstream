@@ -745,4 +745,7 @@
     <string name="rotate_video_desc">Display a toggle button for screen orientation</string>
     <string name="auto_rotate_video_desc">Enable automatic switching of screen orientation based on video orientation</string>
     <string name="auto_rotate_video">Auto rotate</string>
+    <string name="favorite">Favorite</string>
+    <string name="movie">Movie</string>
+    <string name="unfavorite">Unfavorite</string>
 </resources>

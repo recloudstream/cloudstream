@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:orientation="vertical">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/result_play_movie"
+            android:focusable="true"
+            style="@style/ResultSmallButtonTV"
+            app:iconPadding="0dp"
+            app:icon="@drawable/ic_baseline_play_arrow_24"
+            android:tag="@string/tv_no_focus_tag">
+        </com.google.android.material.button.MaterialButton>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/movie" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:orientation="vertical">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/result_play_series"
+            android:focusable="true"
+            style="@style/ResultSmallButtonTV"
+            app:iconPadding="0dp"
+            app:icon="@drawable/ic_baseline_play_arrow_24"
+            android:tag="@string/tv_no_focus_tag">
+        </com.google.android.material.button.MaterialButton>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/episode" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:orientation="vertical">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/result_small_resume_series"
+            android:focusable="true"
+            style="@style/ResultSmallButtonTV"
+            app:iconPadding="0dp"
+            app:icon="@drawable/ic_baseline_play_arrow_24"
+            android:tag="@string/tv_no_focus_tag">
+        </com.google.android.material.button.MaterialButton>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/resume" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:orientation="vertical">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/result_small_play_trailer"
+            android:focusable="true"
+            style="@style/ResultSmallButtonTV"
+            app:iconPadding="0dp"
+            app:icon="@drawable/ic_baseline_play_arrow_24"
+            android:tag="@string/tv_no_focus_tag">
+        </com.google.android.material.button.MaterialButton>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/play_trailer_button" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:orientation="vertical">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/result_small_bookmark_button"
+            android:focusable="true"
+            style="@style/ResultSmallButtonTV"
+            app:iconPadding="0dp"
+            app:icon="@drawable/ic_baseline_bookmark_24"
+            android:tag="@string/tv_no_focus_tag">
+        </com.google.android.material.button.MaterialButton>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/type_none" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:orientation="vertical">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/result_small_favorite_button"
+            android:focusable="true"
+            style="@style/ResultSmallButtonTV"
+            app:iconPadding="0dp"
+            app:icon="@drawable/ic_baseline_favorite_border_24"
+            android:tag="@string/tv_no_focus_tag">
+        </com.google.android.material.button.MaterialButton>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:singleLine="false"
+            android:text="@string/favorite" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:orientation="vertical">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/result_small_subscribe_button"
+            android:focusable="true"
+            style="@style/ResultSmallButtonTV"
+            app:iconPadding="0dp"
+            app:icon="@drawable/baseline_notifications_none_24"
+            android:tag="@string/tv_no_focus_tag">
+        </com.google.android.material.button.MaterialButton>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:singleLine="false"
+            android:text="@string/action_subscribe" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:orientation="vertical">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/result_small_episodes_show"
+            android:focusable="true"
+            style="@style/ResultSmallButtonTV"
+            app:iconPadding="0dp"
+            app:icon="@drawable/ic_baseline_sort_24"
+            android:tag="@string/tv_no_focus_tag">
+        </com.google.android.material.button.MaterialButton>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:singleLine="false"
+            android:text="@string/episodes" />
+
+    </LinearLayout>
+
+</LinearLayout>

@@ -1185,6 +1185,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
 
                 if(isTrueTvSettings()) {
                     newLocalBinding.root.viewTreeObserver.addOnGlobalFocusChangeListener { _, newFocus ->
+                        if (newFocus?.tag == "tv_no_focus_tag") return@addOnGlobalFocusChangeListener
                         centerView(newFocus)
                     }
                 }
