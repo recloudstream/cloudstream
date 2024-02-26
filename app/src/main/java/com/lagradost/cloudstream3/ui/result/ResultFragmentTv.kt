@@ -617,7 +617,10 @@ class ResultFragmentTv : Fragment() {
         }
 
         observeNullable(viewModel.movie) { data ->
+            if (data == null) return@observeNullable
+
             binding?.apply {
+
                 resultPlayMovie.isVisible = data is Resource.Success
                 resultPlaySeries.isVisible = false
                 resultEpisodesShow.isVisible = false
@@ -736,15 +739,17 @@ class ResultFragmentTv : Fragment() {
         // Used to request focus the first time the episodes are loaded.
         var hasLoadedEpisodesOnce = false
         observeNullable(viewModel.episodes) { episodes ->
+            if (episodes == null) return@observeNullable
+
             binding?.apply {
+
+                resultPlayMovie.isVisible = false
+                resultPlaySeries.isVisible = true
+                resultEpisodes.isVisible = true
+                resultEpisodesShow.isVisible = true
 
                 //    resultEpisodeLoading.isVisible = episodes is Resource.Loading
                 if (episodes is Resource.Success) {
-                    resultPlayMovie.isVisible = false
-                    resultPlaySeries.isVisible = true
-                    resultEpisodes.isVisible = true
-                    resultEpisodesShow.isVisible = true
-
                     val first = episodes.value.firstOrNull()
                     if (first != null) {
                         resultPlaySeriesText.text = "${getString(R.string.season_short)}${first.season}:${getString(R.string.episode_short)}${first.episode}"
