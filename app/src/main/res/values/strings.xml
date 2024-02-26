@@ -748,4 +748,5 @@
     <string name="favorite">Favorite</string>
     <string name="movie">Movie</string>
     <string name="unfavorite">Unfavorite</string>
+    <string name="result_search">Search</string>
 </resources>

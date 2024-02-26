@@ -33,6 +33,7 @@ import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.download.DownloadButtonSetup
 import com.lagradost.cloudstream3.ui.player.ExtractorLinkGenerator
 import com.lagradost.cloudstream3.ui.player.GeneratorPlayer
+import com.lagradost.cloudstream3.ui.quicksearch.QuickSearchFragment
 import com.lagradost.cloudstream3.ui.result.ResultFragment.getStoredData
 import com.lagradost.cloudstream3.ui.result.ResultFragment.updateUIEvent
 import com.lagradost.cloudstream3.ui.search.SEARCH_ACTION_FOCUSED
@@ -272,6 +273,7 @@ class ResultFragmentTv : Fragment() {
             resultEpisodesShowButton.onFocusChangeListener = rightListener
             resultDescription.onFocusChangeListener = leftListener
             resultBookmarkButton.onFocusChangeListener = leftListener
+            resultSearchButton.onFocusChangeListener = leftListener
             resultFavoriteButton.onFocusChangeListener = leftListener
             resultEpisodesShowButton.setOnClickListener {
                 // toggle, to make it more touch accessable just in case someone thinks that a
@@ -293,7 +295,8 @@ class ResultFragmentTv : Fragment() {
                         resultPlayTrailerButton,
                         resultBookmarkButton,
                         resultFavoriteButton,
-                        resultSubscribeButton
+                        resultSubscribeButton,
+                        resultSearchButton
                     )
                     for (requestView in views) {
                         if (!requestView.isVisible) continue
@@ -877,6 +880,10 @@ class ResultFragmentTv : Fragment() {
                         if (d.contentRatingText == null) {
                             // If there is no rating to display, we don't want an empty gap
                             resultMetaContentRating.width = 0
+                        }
+
+                        resultSearchButton.setOnClickListener {
+                            QuickSearchFragment.pushSearch(activity, d.title)
                         }
                     }
 

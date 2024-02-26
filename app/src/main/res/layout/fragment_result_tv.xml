@@ -469,6 +469,34 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="8dp"
+                    android:id="@+id/result_search"
+                    android:orientation="vertical">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/result_search_Button"
+                        android:focusable="true"
+                        style="@style/ResultSmallButtonTV"
+                        app:iconPadding="0dp"
+                        app:icon="@drawable/search_icon"
+                        android:nextFocusUp="@id/result_search_Button"
+                        android:nextFocusDown="@id/result_description"
+                        android:tag="@string/tv_no_focus_tag">
+                    </com.google.android.material.button.MaterialButton>
+
+                    <TextView
+                        android:id="@+id/result_search_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="top|center_horizontal"
+                        android:minLines="2"
+                        android:text="@string/result_search" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
                     android:id="@+id/result_episodes_show"
                     android:visibility="gone"
                     tools:visibility="visible"
