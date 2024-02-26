@@ -254,7 +254,8 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
                         android:id="@+id/result_play_movie_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="center"
+                        android:gravity="top|center_horizontal"
+                        android:minLines="2"
                         android:text="@string/movie" />
 
                 </LinearLayout>
@@ -283,7 +284,8 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
                         android:id="@+id/result_play_series_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="center"
+                        android:gravity="top|center_horizontal"
+                        android:minLines="2"
                         android:text="@string/episode" />
 
                 </LinearLayout>
@@ -310,7 +312,8 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
                         android:id="@+id/result_resume_series_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="center"
+                        android:gravity="top|center_horizontal"
+                        android:minLines="2"
                         android:text="@string/resume" />
 
                 </LinearLayout>
@@ -337,7 +340,8 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
                         android:id="@+id/result_play_trailer_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="center"
+                        android:gravity="top|center_horizontal"
+                        android:minLines="2"
                         android:text="@string/play_trailer_button" />
 
                 </LinearLayout>
@@ -364,7 +368,8 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
                         android:id="@+id/result_bookmark_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="center"
+                        android:gravity="top|center_horizontal"
+                        android:minLines="2"
                         android:text="@string/type_none" />
 
                 </LinearLayout>
@@ -391,8 +396,8 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
                         android:id="@+id/result_favorite_Text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:singleLine="false"
+                        android:gravity="top|center_horizontal"
+                        android:minLines="2"
                         android:text="@string/favorite" />
 
                 </LinearLayout>
@@ -419,8 +424,8 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
                         android:id="@+id/result_subscribe_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:singleLine="false"
+                        android:gravity="top|center_horizontal"
+                        android:minLines="2"
                         android:text="@string/action_subscribe" />
 
                 </LinearLayout>
@@ -450,12 +455,11 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
                         android:id="@+id/result_episodes_show_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:singleLine="false"
+                        android:gravity="top|center_horizontal"
+                        android:minLines="2"
                         android:text="@string/episodes" />
 
                 </LinearLayout>
-
             </LinearLayout>
 
             <LinearLayout
