@@ -263,8 +263,8 @@ fun LoadResponse.toResultData(repo: APIRepository): ResultData {
         metaText =
         if (repo.providerType == ProviderType.MetaProvider) txt(R.string.provider_info_meta) else null,
         durationText = if (dur == null || dur <= 0) null else txt(
-            R.string.duration_format,
-            dur
+            //R.string.duration_format,
+            secondsToReadable(dur * 60, "0 ${context?.getString(R.string.mins_long)}")
         ),
         onGoingText = if (this is EpisodeResponse) {
             txt(

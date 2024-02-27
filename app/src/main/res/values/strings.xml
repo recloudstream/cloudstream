@@ -311,6 +311,9 @@
     <string name="days_short">d</string>
     <string name="hours_short">h</string>
     <string name="mins_short">m</string>
+    <string name="days_long">days</string>
+    <string name="hours_long">hours</string>
+    <string name="mins_long">mins</string>
     <string name="status_completed">Completed</string>
     <string name="status">Status</string>
     <string name="year">Year</string>
