@@ -836,6 +836,7 @@ class ResultFragmentTv : Fragment() {
                         resultMetaYear.setText(d.yearText)
                         resultMetaDuration.setText(d.durationText)
                         resultMetaRating.setText(d.ratingText)
+                        resultMetaStatus.setText(d.onGoingText)
                         resultMetaContentRating.setText(d.contentRatingText)
                         resultCastText.setText(d.actorsText)
                         resultNextAiring.setText(d.nextAiringEpisode)
