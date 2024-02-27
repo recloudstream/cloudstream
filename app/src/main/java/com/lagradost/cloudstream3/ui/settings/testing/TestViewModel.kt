@@ -10,7 +10,6 @@ import com.lagradost.cloudstream3.utils.TestingUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
-import okhttp3.internal.toImmutableList
 
 class TestViewModel : ViewModel() {
     data class TestProgress(
