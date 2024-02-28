@@ -8,8 +8,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.DecelerateInterpolator
+import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.core.view.children
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.core.widget.NestedScrollView
@@ -133,6 +135,14 @@ class ResultFragmentTv : Fragment() {
         binding?.resultPlayMovieButton?.requestFocus()
         binding?.resultPlaySeriesButton?.requestFocus()
         binding?.resultResumeSeriesButton?.requestFocus()
+    }
+    private fun setFocusRotation(id: Int)
+    {
+        binding?.apply {
+            (resultPlayParent.children.filter { view ->
+                view.isVisible
+            }.toList().lastOrNull() as LinearLayout).getChildAt(0)?.nextFocusRightId = id
+        }
     }
 
     private fun setRecommendations(rec: List<SearchResponse>?, validApiName: String?) {
@@ -474,6 +484,7 @@ class ResultFragmentTv : Fragment() {
                 resultResumeSeries.isVisible = true
 
                 focusPlayButton()
+                if (resume.isMovie) setFocusRotation(R.id.result_resume_series_button)
 
                 resultResumeSeriesText.text =
                     if (resume.isMovie) context?.getString(R.string.resume) else "${getString(R.string.season_short)}${resume.result.season}:${getString(R.string.episode_short)}${resume.result.episode}"
@@ -643,6 +654,7 @@ class ResultFragmentTv : Fragment() {
                     }
                     //focusPlayButton()
                     resultPlayMovieButton.requestFocus()
+                    setFocusRotation(R.id.result_play_movie_button)
                 }
             }
             //focusPlayButton()
