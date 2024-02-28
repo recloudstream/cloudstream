@@ -684,7 +684,7 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
         android:layout_height="match_parent"
         android:layout_gravity="end"
         android:visibility="gone"
-        tools:visibility="visible">
+        tools:visibility="invisible">
 
 
         <!--
@@ -873,152 +873,7 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal">
-                        <!--
 
-                        <LinearLayout
-                            android:id="@+id/result_movie_parent"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="5dp"
-                            android:animateLayoutChanges="true"
-                            android:orientation="vertical"
-                            tools:visibility="visible">
-
-                            <com.google.android.material.button.MaterialButton
-                                android:id="@+id/result_play_movie"
-                                style="@style/RegularButtonTV"
-                                android:layout_width="wrap_content"
-
-                                android:layout_marginStart="0dp"
-                                android:layout_marginEnd="5dp"
-                                android:layout_marginBottom="10dp"
-                                android:layout_weight="1"
-                                android:minWidth="250dp"
-                                android:nextFocusUp="@id/result_back"
-                                android:nextFocusDown="@id/result_play_series"
-                                android:text="@string/play_movie_button"
-                                android:visibility="visible"
-                                app:icon="@drawable/ic_baseline_play_arrow_24">
-
-                            </com.google.android.material.button.MaterialButton>
-
-                            <LinearLayout
-                                android:id="@+id/series_holder"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:orientation="vertical">
-
-                                <com.google.android.material.button.MaterialButton
-                                    android:id="@+id/result_play_series"
-                                    style="@style/RegularButtonTV"
-                                    android:layout_width="wrap_content"
-                                    android:layout_marginStart="0dp"
-
-                                    android:layout_marginEnd="5dp"
-                                    android:layout_marginBottom="10dp"
-                                    android:layout_weight="1"
-                                    android:minWidth="250dp"
-                                    android:nextFocusUp="@id/result_play_movie"
-                                    android:nextFocusDown="@id/result_resume_series"
-                                    android:text="@string/play_episode"
-                                    android:visibility="visible"
-                                    app:icon="@drawable/ic_baseline_play_arrow_24"
-                                    tools:visibility="gone" />
-
-                                <com.google.android.material.button.MaterialButton
-                                    android:id="@+id/result_resume_series"
-                                    style="@style/RegularButtonTV"
-                                    android:layout_width="wrap_content"
-                                    android:layout_marginStart="0dp"
-
-                                    android:layout_marginEnd="5dp"
-                                    android:layout_marginBottom="10dp"
-                                    android:layout_weight="1"
-                                    android:minWidth="250dp"
-                                    android:nextFocusUp="@id/result_play_series"
-                                    android:nextFocusDown="@id/result_play_trailer"
-                                    android:text="@string/resume"
-                                    android:visibility="visible"
-                                    app:icon="@drawable/ic_baseline_play_arrow_24"
-                                    tools:visibility="gone" />
-
-                            </LinearLayout>
-
-
-                            <com.google.android.material.button.MaterialButton
-                                android:id="@+id/result_play_trailer"
-                                style="@style/RegularButtonTV"
-                                android:layout_width="wrap_content"
-                                android:layout_marginStart="0dp"
-                                android:layout_marginEnd="5dp"
-                                android:layout_marginBottom="10dp"
-                                android:layout_weight="1"
-                                android:minWidth="250dp"
-                                android:nextFocusUp="@id/result_resume_series"
-                                android:nextFocusDown="@id/result_bookmark_button"
-                                android:text="@string/play_trailer_button"
-                                android:visibility="gone"
-                                app:icon="@drawable/ic_baseline_play_arrow_24"
-                                tools:visibility="visible">
-
-                            </com.google.android.material.button.MaterialButton>
-
-                            <com.google.android.material.button.MaterialButton
-                                android:id="@+id/result_bookmark_button"
-                                style="@style/RegularButtonTV"
-
-                                android:layout_width="wrap_content"
-                                android:layout_marginStart="0dp"
-                                android:layout_marginEnd="5dp"
-                                android:layout_marginBottom="10dp"
-                                android:layout_weight="1"
-                                android:minWidth="250dp"
-                                android:nextFocusUp="@id/result_play_trailer"
-                                android:nextFocusDown="@id/result_resume_series_button"
-                                android:text="@string/type_none"
-                                android:visibility="visible" />
-
-                            <LinearLayout
-                                android:id="@+id/result_resume_progress_holder"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginBottom="10dp"
-                                android:orientation="horizontal"
-                                android:visibility="gone"
-                                tools:visibility="visible">
-
-                                <androidx.core.widget.ContentLoadingProgressBar
-                                    android:id="@+id/result_resume_series_progress"
-                                    style="?android:attr/progressBarStyleHorizontal"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="20dp"
-                                    android:layout_gravity="end|center_vertical"
-                                    android:layout_weight="1"
-                                    android:indeterminate="false"
-                                    android:max="100"
-                                    android:paddingEnd="10dp"
-                                    android:progress="0"
-                                    android:progressBackgroundTint="?attr/colorPrimary"
-                                    android:visibility="visible"
-                                    tools:progress="50"
-                                    tools:visibility="visible" />
-
-                                <TextView
-                                    android:id="@+id/result_resume_series_progress_text"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_gravity="center"
-                                    android:layout_weight="0"
-                                    android:gravity="center"
-                                    android:maxLines="1"
-                                    android:paddingEnd="5dp"
-                                    android:textColor="?attr/grayTextColor"
-                                    tools:ignore="RtlSymmetry"
-                                    tools:text="69m remaining" />
-                            </LinearLayout>
-
-                        </LinearLayout>
--->
                         <androidx.cardview.widget.CardView
                             android:id="@+id/result_poster_holder"
                             android:layout_width="wrap_content"
@@ -1175,70 +1030,8 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
                     android:visibility="gone"
                     app:icon="@drawable/ic_baseline_add_24" />
 
-
-                <!--<LinearLayout
-
-                    android:id="@+id/result_resume_parent"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
-                    android:orientation="vertical"
-                    android:visibility="gone"
-                    tools:visibility="gone">
-
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/result_next_series_button"
-                        style="@style/WhiteButton"
-                        android:layout_width="match_parent"
-                        android:layout_gravity="center_vertical"
-                        android:layout_marginStart="0dp"
-                        android:layout_marginEnd="0dp"
-                        android:layout_marginBottom="10dp"
-                        android:nextFocusUp="@id/result_bookmark_button"
-                        android:nextFocusDown="@id/result_download_movie"
-                        android:text="@string/next_episode"
-                        android:visibility="gone"
-                        app:icon="@drawable/cast_ic_mini_controller_skip_next" />
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-
-                        <ImageView
-                            android:id="@+id/result_resume_series_button"
-                            android:layout_width="30dp"
-                            android:layout_height="30dp"
-
-                            android:layout_gravity="center"
-                            android:background="?selectableItemBackgroundBorderless"
-                            android:contentDescription="@string/download"
-
-                            android:nextFocusUp="@id/result_play_movie"
-                            android:nextFocusDown="@id/result_season_selection"
-                            android:src="@drawable/ic_baseline_play_arrow_24"
-                            android:visibility="visible"
-                            app:tint="?attr/white" />
-
-
-                        <TextView
-                            android:id="@+id/result_resume_series_title"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:gravity="center"
-                            android:paddingStart="10dp"
-                            android:paddingEnd="10dp"
-                            android:textColor="?attr/textColor"
-                            android:textSize="17sp"
-                            android:textStyle="bold"
-                            tools:text="S1E1 Episode 1" />
-
-                    </LinearLayout>
-
-                </LinearLayout>-->
             </LinearLayout>
+
             <LinearLayout
                 android:layout_width="250dp"
                 android:layout_height="wrap_content"
@@ -1255,110 +1048,11 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
                     android:orientation="vertical"
                     tools:visibility="visible">
 
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/result_play_movie2"
-                        style="@style/ResultButtonTV"
-
-                        android:nextFocusRight="@id/result_description"
-                        android:nextFocusUp="@id/result_play_movie"
-                        android:nextFocusDown="@id/result_play_series"
-                        android:text="@string/play_movie_button"
-                        android:visibility="visible"
-                        app:icon="@drawable/ic_baseline_play_arrow_24" />
-
                     <LinearLayout
                         android:id="@+id/series_holder"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="vertical">
-
-                        <com.google.android.material.button.MaterialButton
-                            android:id="@+id/result_play_series2"
-                            style="@style/ResultButtonTV"
-
-                            android:nextFocusRight="@id/result_description"
-                            android:nextFocusUp="@id/result_play_movie"
-                            android:nextFocusDown="@id/result_resume_series"
-                            android:text="@string/play_episode"
-                            android:visibility="visible"
-                            app:icon="@drawable/ic_baseline_play_arrow_24" />
-
-                        <com.google.android.material.button.MaterialButton
-                            android:id="@+id/result_resume_series2"
-                            style="@style/ResultButtonTV"
-
-                            android:nextFocusRight="@id/result_description"
-                            android:nextFocusUp="@id/result_play_series"
-                            android:nextFocusDown="@id/result_play_trailer"
-                            android:text="@string/resume"
-                            android:visibility="visible"
-                            app:icon="@drawable/ic_baseline_play_arrow_24" />
-                    </LinearLayout>
-
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/result_play_trailer2"
-                        style="@style/ResultButtonTV"
-
-                        android:nextFocusRight="@id/result_description"
-                        android:nextFocusUp="@id/result_resume_series"
-                        android:text="@string/play_trailer_button"
-                        android:visibility="gone"
-                        app:icon="@drawable/ic_baseline_play_arrow_24"
-                        tools:visibility="visible" />
-
-
-                    <!--  <com.lagradost.cloudstream3.ui.download.button.DownloadButton
-                          android:visibility="gone"
-                          android:id="@+id/download_button"
-                          android:layout_width="wrap_content"
-                          android:layout_height="wrap_content"
-                          android:layout_weight="1"
-                          android:minWidth="250dp"
-                          app:download_layout="@layout/download_button_layout" />
-        -->
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/result_bookmark_button2"
-                        style="@style/ResultButtonTV"
-                        android:nextFocusRight="@id/result_description"
-                        android:nextFocusUp="@id/result_play_trailer"
-
-                        android:text="@string/type_none"
-                        android:visibility="visible"
-                        app:icon="@drawable/ic_baseline_bookmark_24" />
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/result_favorite_button2"
-                        style="@style/ResultButtonTV"
-                        android:nextFocusRight="@id/result_description"
-
-                        android:text="@string/action_add_to_favorites"
-                        android:visibility="visible"
-                        app:icon="@drawable/ic_baseline_favorite_border_24" />
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/result_subscribe_button2"
-                        style="@style/ResultButtonTV"
-                        android:nextFocusRight="@id/result_description"
-                        android:nextFocusDown="@id/result_episodes_show"
-
-                        android:text="@string/action_subscribe"
-                        android:visibility="visible"
-                        app:icon="@drawable/ic_baseline_favorite_border_24" />
-
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/result_episodes_show2"
-                        style="@style/ResultButtonTV"
-
-                        android:nextFocusRight="@id/redirect_to_episodes"
-                        android:nextFocusDown="@id/result_cast_items"
-
-                        android:text="@string/episodes"
-                        android:visibility="visible"
-                        app:icon="@drawable/ic_baseline_sort_24"
-                        tools:visibility="visible" />
 
                     <View
                         android:id="@+id/redirect_to_episodes"
@@ -1367,13 +1061,13 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
                         android:focusable="true"
                         android:focusableInTouchMode="true" />
 
-
                     <View
                         android:id="@+id/redirect_to_play"
                         android:layout_width="1dp"
                         android:layout_height="1dp"
                         android:focusable="true"
                         android:focusableInTouchMode="true" />
+                    </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>
