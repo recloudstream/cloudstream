@@ -1,17 +1,19 @@
 package com.lagradost.cloudstream3.extractors
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.lagradost.cloudstream3.ErrorLoadingException
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.base64Encode
+import com.lagradost.cloudstream3.utils.AppUtils
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.M3u8Helper
 import javax.crypto.Cipher
 import javax.crypto.spec.SecretKeySpec
 
-// Code found in https://github.com/KillerDogeEmpire/vidplay-keys
-// special credits to @KillerDogeEmpire for providing key
+// Code found in https://github.com/Ciarands/vidsrc-keys
+// special credits to @Ciarands for providing key
 
 class MyCloud : Vidplay() {
     override val name = "MyCloud"
@@ -26,8 +28,7 @@ open class Vidplay : ExtractorApi() {
     override val name = "Vidplay"
     override val mainUrl = "https://vidplay.site"
     override val requiresReferer = true
-    open val key =
-        "https://raw.githubusercontent.com/KillerDogeEmpire/vidplay-keys/keys/keys.json"
+    open val key = "https://github.com/Ciarands/vidsrc-keys/blob/main/keys.json" // using raw.githubusercontent.com will make the keys out of sync
 
     override suspend fun getUrl(
         url: String,
@@ -62,7 +63,9 @@ open class Vidplay : ExtractorApi() {
     }
 
     private suspend fun getKeys(): List<String> {
-        return app.get(key).parsed()
+        val res = app.get(key).text
+        val keys = """"rawLines":\s*\["(.+)"]""".toRegex().find(res)?.groupValues?.get(1)?.replace(Regex("""\\""""), "\"")
+        return AppUtils.tryParseJson<List<String>>(keys) ?: throw ErrorLoadingException("No keys found")
     }
 
     private suspend fun callFutoken(id: String, url: String): String? {
