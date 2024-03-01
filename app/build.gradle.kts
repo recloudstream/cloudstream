@@ -1,6 +1,6 @@
-import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
 import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.konan.properties.Properties
 import java.io.ByteArrayOutputStream
 import java.net.URL
 
@@ -67,7 +67,9 @@ android {
         resValue("bool", "is_prerelease", "false")
 
         // Reads local.properties
-        val localProperties = gradleLocalProperties(rootDir)
+        val localPropertiesFile = File(rootDir, "local.properties")
+        val localProperties = Properties()
+        localProperties.load(localPropertiesFile.inputStream())
 
         buildConfigField(
             "String",
@@ -77,12 +79,12 @@ android {
         buildConfigField(
             "String",
             "SIMKL_CLIENT_ID",
-            "\"" + (System.getenv("SIMKL_CLIENT_ID") ?: localProperties["simkl.id"]) + "\""
+            "\"" + (System.getenv("SIMKL_CLIENT_ID") ?: localProperties.getProperty("simkl.id")) + "\""
         )
         buildConfigField(
             "String",
             "SIMKL_CLIENT_SECRET",
-            "\"" + (System.getenv("SIMKL_CLIENT_SECRET") ?: localProperties["simkl.secret"]) + "\""
+            "\"" + (System.getenv("SIMKL_CLIENT_SECRET") ?: localProperties.getProperty("simkl.secret")) + "\""
         )
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -154,7 +156,7 @@ repositories {
 dependencies {
     // Testing
     testImplementation("junit:junit:4.13.2")
-    testImplementation("org.json:json:20231013")
+    testImplementation("org.json:json:20240205")
     androidTestImplementation("androidx.test:core")
     implementation("androidx.test.ext:junit-ktx:1.1.5")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
@@ -163,10 +165,10 @@ dependencies {
     // Android Core & Lifecycle
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
-    implementation("androidx.navigation:navigation-ui-ktx:2.7.6")
+    implementation("androidx.navigation:navigation-ui-ktx:2.7.7")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.7.0")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0")
-    implementation("androidx.navigation:navigation-fragment-ktx:2.7.6")
+    implementation("androidx.navigation:navigation-fragment-ktx:2.7.7")
 
     // Design & UI
     implementation("jp.wasabeef:glide-transformations:4.3.0")
@@ -182,7 +184,7 @@ dependencies {
 
     // For KSP -> Official Annotation Processors are Not Yet Supported for KSP
     ksp("dev.zacsweers.autoservice:auto-service-ksp:1.1.0")
-    implementation("com.google.guava:guava:32.1.3-android")
+    implementation("com.google.guava:guava:33.0.0-android")
     implementation("dev.zacsweers.autoservice:auto-service-ksp:1.1.0")
 
     // Media 3 (ExoPlayer)
