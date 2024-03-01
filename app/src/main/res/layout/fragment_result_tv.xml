@@ -78,6 +78,30 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
         </LinearLayout>
     </com.facebook.shimmer.ShimmerFrameLayout>
 
+    <FrameLayout
+        android:id="@+id/background_poster_holder"
+        android:layout_width="match_parent"
+        android:layout_height="275dp"
+        android:visibility="visible">
+
+        <com.lagradost.cloudstream3.utils.PercentageCropImageView
+            android:id="@+id/background_poster"
+            android:layout_width="match_parent"
+            android:layout_height="275dp"
+            android:layout_gravity="center"
+            android:alpha="0.8"
+            android:scaleType="matrix"
+            tools:src="@drawable/profile_bg_dark_blue" >
+        </com.lagradost.cloudstream3.utils.PercentageCropImageView>
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            android:layout_gravity="bottom"
+            android:src="@drawable/background_shadow">
+        </ImageView>
+    </FrameLayout>
+
     <LinearLayout
         android:id="@+id/result_loading_error"
 
@@ -123,31 +147,6 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
             android:gravity="center"
             android:textColor="?attr/textColor" />
     </LinearLayout>
-
-    <FrameLayout
-        android:id="@+id/background_poster_holder"
-        android:layout_width="match_parent"
-        android:layout_height="275dp"
-        android:visibility="visible">
-
-        <com.lagradost.cloudstream3.utils.PercentageCropImageView
-            android:id="@+id/background_poster"
-            android:layout_width="match_parent"
-            android:layout_height="275dp"
-            android:layout_gravity="center"
-            android:alpha="0.8"
-            android:scaleType="matrix"
-            tools:src="@drawable/profile_bg_dark_blue" >
-        </com.lagradost.cloudstream3.utils.PercentageCropImageView>
-
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="120dp"
-            android:layout_gravity="bottom"
-            android:src="@drawable/background_shadow">
-        </ImageView>
-    </FrameLayout>
-
 
     <androidx.core.widget.NestedScrollView
         android:id="@+id/result_finish_loading"
