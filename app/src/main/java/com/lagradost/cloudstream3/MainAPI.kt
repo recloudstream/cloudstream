@@ -1587,8 +1587,15 @@ data class AnimeLoadResponse(
     }
 
     override fun getTotalEpisodeIndex(episode: Int, season: Int): Int {
+        val displayMap = this.seasonNames?.associate { it.season to it.displaySeason } ?: emptyMap()
+
         return this.episodes.maxOf { (_, episodes) ->
-            episodes.count { ((it.season ?: Int.MIN_VALUE) < season) && it.season != 0 }
+            episodes.count { episodeData ->
+                // Prioritize display season as actual season may be something random to fit multiple seasons into one.
+                val episodeSeason = displayMap[episodeData.season] ?: episodeData.season ?: Int.MIN_VALUE
+                // Count all episodes from season 1 to below the current season.
+                episodeSeason in 1..<season
+            }
         } + episode
     }
 
@@ -1895,8 +1902,13 @@ data class TvSeriesLoadResponse(
     }
 
     override fun getTotalEpisodeIndex(episode: Int, season: Int): Int {
-        return episodes.count {
-            (it.season ?: Int.MIN_VALUE) < season && it.season != 0
+        val displayMap = this.seasonNames?.associate { it.season to it.displaySeason } ?: emptyMap()
+
+        return episodes.count { episodeData ->
+            // Prioritize display season as actual season may be something random to fit multiple seasons into one.
+            val episodeSeason = displayMap[episodeData.season] ?: episodeData.season ?: Int.MIN_VALUE
+            // Count all episodes from season 1 to below the current season.
+            episodeSeason in 1..<season
         } + episode
     }
 
