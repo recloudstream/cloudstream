@@ -83,7 +83,7 @@
                     android:layout_height="25dp"
                     android:layout_margin="5dp"
                     android:elevation="10dp"
-
+                    android:tooltipText="@string/subscribe_tooltip"
                     android:background="?android:attr/selectableItemBackgroundBorderless"
                     android:src="@drawable/baseline_notifications_none_24"
                     android:layout_gravity="end|center_vertical"
@@ -100,7 +100,7 @@
                 android:layout_height="25dp"
                 android:layout_margin="5dp"
                 android:elevation="10dp"
-
+                android:tooltipText="@string/action_add_to_favorites"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:src="@drawable/ic_baseline_favorite_border_24"
                 android:layout_gravity="end|center_vertical"
@@ -117,7 +117,7 @@
                     android:layout_height="25dp"
                     android:layout_margin="5dp"
                     android:elevation="10dp"
-
+                    android:tooltipText="@string/result_share"
                     android:background="?android:attr/selectableItemBackgroundBorderless"
                     android:src="@drawable/ic_outline_share_24"
                     android:layout_gravity="end|center_vertical"
@@ -135,7 +135,7 @@
                     android:layout_height="25dp"
                     android:layout_margin="5dp"
                     android:elevation="10dp"
-
+                    android:tooltipText="@string/result_open_in_browser"
                     android:background="?android:attr/selectableItemBackgroundBorderless"
                     android:src="@drawable/ic_baseline_public_24"
                     android:layout_gravity="end|center_vertical"
@@ -153,7 +153,7 @@
                     android:layout_height="30dp"
                     android:layout_margin="5dp"
                     android:elevation="10dp"
-
+                    android:tooltipText="@string/result_search_tooltip"
                     android:background="?android:attr/selectableItemBackgroundBorderless"
                     android:src="@drawable/search_icon"
                     android:layout_gravity="end|center_vertical"
@@ -171,7 +171,7 @@
                     android:layout_height="25dp"
                     android:layout_margin="5dp"
                     android:elevation="10dp"
-
+                    android:tooltipText="@string/recommendations_tooltip"
                     android:background="?android:attr/selectableItemBackgroundBorderless"
                     android:src="@drawable/baseline_list_alt_24"
                     android:layout_gravity="end|center_vertical"

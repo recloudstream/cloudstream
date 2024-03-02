@@ -5,6 +5,7 @@ import com.lagradost.cloudstream3.ErrorLoadingException
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.base64DecodeArray
+import com.lagradost.cloudstream3.base64Encode
 import com.lagradost.cloudstream3.utils.AppUtils
 import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 import com.lagradost.cloudstream3.utils.ExtractorApi
@@ -16,13 +17,52 @@ import javax.crypto.Cipher
 import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
 
-// Code found in https://github.com/theonlymo/keys
-// special credits to @theonlymo for providing key
 class Megacloud : Rabbitstream() {
     override val name = "Megacloud"
     override val mainUrl = "https://megacloud.tv"
     override val embed = "embed-2/ajax/e-1"
-    override val key = "https://raw.githubusercontent.com/theonlymo/keys/e1/key"
+    private val scriptUrl = "$mainUrl/js/player/a/prod/e1-player.min.js"
+
+    override suspend fun extractRealKey(sources: String): Pair<String, String> {
+        val rawKeys = getKeys()
+        val sourcesArray = sources.toCharArray()
+
+        var extractedKey = ""
+        var currentIndex = 0
+        for (index in rawKeys) {
+            val start = index[0] + currentIndex
+            val end = start + index[1]
+            for (i in start until end) {
+                extractedKey += sourcesArray[i].toString()
+                sourcesArray[i] = ' '
+            }
+            currentIndex += index[1]
+        }
+
+        return extractedKey to sourcesArray.joinToString("").replace(" ", "")
+    }
+
+    private suspend fun getKeys(): List<List<Int>> {
+        val script = app.get(scriptUrl).text
+        fun matchingKey(value: String): String {
+            return Regex(",$value=((?:0x)?([0-9a-fA-F]+))").find(script)?.groupValues?.get(1)
+                ?.removePrefix("0x") ?: throw ErrorLoadingException("Failed to match the key")
+        }
+
+        val regex = Regex("case\\s*0x[0-9a-f]+:(?![^;]*=partKey)\\s*\\w+\\s*=\\s*(\\w+)\\s*,\\s*\\w+\\s*=\\s*(\\w+);")
+        val indexPairs = regex.findAll(script).toList().map { match ->
+            val matchKey1 = matchingKey(match.groupValues[1])
+            val matchKey2 = matchingKey(match.groupValues[2])
+            try {
+                listOf(matchKey1.toInt(16), matchKey2.toInt(16))
+            } catch (e: NumberFormatException) {
+                emptyList()
+            }
+        }.filter { it.isNotEmpty() }
+
+        return indexPairs
+    }
+
 }
 
 class Dokicloud : Rabbitstream() {
@@ -30,12 +70,14 @@ class Dokicloud : Rabbitstream() {
     override val mainUrl = "https://dokicloud.one"
 }
 
+// Code found in https://github.com/eatmynerds/key
+// special credits to @eatmynerds for providing key
 open class Rabbitstream : ExtractorApi() {
     override val name = "Rabbitstream"
     override val mainUrl = "https://rabbitstream.net"
     override val requiresReferer = false
     open val embed = "ajax/embed-4"
-    open val key = "https://raw.githubusercontent.com/theonlymo/keys/e4/key"
+    open val key = "https://raw.githubusercontent.com/eatmynerds/key/e4/key.txt"
 
     override suspend fun getUrl(
         url: String,
@@ -56,7 +98,7 @@ open class Rabbitstream : ExtractorApi() {
         val decryptedSources = if (sources == null || encryptedMap.encrypted == false) {
             response.parsedSafe()
         } else {
-            val (key, encData) = extractRealKey(sources, getRawKey())
+            val (key, encData) = extractRealKey(sources)
             val decrypted = decryptMapped<List<Sources>>(encData, key)
             SourcesResponses(
                 sources = decrypted,
@@ -75,8 +117,8 @@ open class Rabbitstream : ExtractorApi() {
         decryptedSources?.tracks?.map { track ->
             subtitleCallback.invoke(
                 SubtitleFile(
-                    track?.label ?: "",
-                    track?.file ?: return@map
+                    track?.label ?: return@map,
+                    track.file ?: return@map
                 )
             )
         }
@@ -84,25 +126,10 @@ open class Rabbitstream : ExtractorApi() {
 
     }
 
-    private suspend fun getRawKey(): String = app.get(key).text
-
-    private fun extractRealKey(sources: String, stops: String): Pair<String, String> {
-        val decryptKey = parseJson<List<List<Int>>>(stops)
-        val sourcesArray = sources.toCharArray()
-
-        var extractedKey = ""
-        var currentIndex = 0
-        for (index in decryptKey) {
-            val start = index[0] + currentIndex
-            val end = start + index[1]
-            for (i in start until end) {
-                extractedKey += sourcesArray[i].toString()
-                sourcesArray[i] = ' '
-            }
-            currentIndex += index[1]
-        }
-
-        return extractedKey to sourcesArray.joinToString("")
+    open suspend fun extractRealKey(sources: String): Pair<String, String> {
+        val rawKeys = parseJson<List<Int>>(app.get(key).text)
+        val extractedKey = base64Encode(rawKeys.map { it.toByte() }.toByteArray())
+        return extractedKey to sources
     }
 
     private inline fun <reified T> decryptMapped(input: String, key: String): T? {

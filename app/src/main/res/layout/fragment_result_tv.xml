@@ -387,6 +387,7 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
                     <com.lagradost.cloudstream3.widget.FlowLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginBottom="5dp"
                         app:itemSpacing="10dp">
 
                         <com.google.android.material.button.MaterialButton
@@ -399,6 +400,7 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
                             android:id="@+id/result_meta_content_rating"
                             android:layout_gravity="center_vertical"
                             style="@style/SmallWhiteButton"
+                            android:focusable="false"
                             tools:text="PG-13" />
 
                         <TextView
