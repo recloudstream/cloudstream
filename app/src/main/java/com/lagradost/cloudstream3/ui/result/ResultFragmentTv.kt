@@ -478,7 +478,12 @@ class ResultFragmentTv : Fragment() {
                     resultSearchButton.nextFocusRightId = R.id.result_search_Button
 
                 resultResumeSeriesText.text =
-                    if (resume.isMovie) context?.getString(R.string.resume) else "${getString(R.string.season_short)}${resume.result.season}:${getString(R.string.episode_short)}${resume.result.episode}"
+                    when {
+                        resume.isMovie -> context?.getString(R.string.resume)
+                        resume.result.season != null ->
+                            "${getString(R.string.season_short)}${resume.result.season}:${getString(R.string.episode_short)}${resume.result.episode}"
+                        else -> "${getString(R.string.episode_short)}${resume.result.episode}"
+                    }
 
                 resultResumeSeriesButton.setOnClickListener {
                     viewModel.handleAction(
