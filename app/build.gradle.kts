@@ -3,7 +3,6 @@ import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.ByteArrayOutputStream
 import java.net.URL
-import kotlin.io.outputStream
 
 plugins {
     id("com.android.application")
@@ -63,9 +62,13 @@ android {
         versionCode = 63
         versionName = "4.3.1"
 
-        val commitHashFile = layout.buildDirectory.file("commit-hash.txt")
+        // retrieve latest commit hash
+        val gitVersion = providers.exec {
+            commandLine("git", "rev-parse", "--short", "HEAD")
+        }.standardOutput.asText.get()
+
         resValue("string", "app_version", "${defaultConfig.versionName}${versionNameSuffix ?: ""}")
-        resValue("string", "commit_hash", file(commitHashFile).readText())
+        resValue("string", "commit_hash", gitVersion)
         resValue("bool", "is_prerelease", "false")
 
         // Reads local.properties
@@ -233,22 +236,6 @@ dependencies {
     implementation("androidx.work:work-runtime:2.9.0")
     implementation("androidx.work:work-runtime-ktx:2.9.0")
     implementation("com.github.Blatzar:NiceHttp:0.4.11") // HTTP Lib
-    implementation("com.github.Blatzar:NiceHttp:0.4.11") // HTTP Lib
-}
-
-tasks.register<Exec>("retrieveCommitHash") {
-    // task needed because configurationCache does not support parallel git commands
-    group = "build"
-    description = "Retrieves the commit hash."
-
-    doFirst {
-        commandLine("git", "rev-parse", "--short", "HEAD")
-        val commitOutput = layout.projectDirectory.file("commit-hash.txt")
-        standardOutput = commitOutput.asFile.outputStream()
-    }
-
-    outputs.file(layout.projectDirectory.file("commit-hash.txt"))
-    mustRunAfter(tasks.assemble)
 }
 
 tasks.register("androidSourcesJar", Jar::class) {
