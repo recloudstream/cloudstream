@@ -263,8 +263,7 @@ fun LoadResponse.toResultData(repo: APIRepository): ResultData {
         metaText =
         if (repo.providerType == ProviderType.MetaProvider) txt(R.string.provider_info_meta) else null,
         durationText = if (dur == null || dur <= 0) null else txt(
-            //R.string.duration_format,
-            secondsToReadable(dur * 60, "0 ${context?.getString(R.string.mins_long)}")
+            secondsToReadable(dur * 60, "0 mins")
         ),
         onGoingText = if (this is EpisodeResponse) {
             txt(
@@ -2466,8 +2465,7 @@ class ResultViewModel2 : ViewModel() {
             ResumeProgress(
                 progress = (viewPos.position / 1000).toInt(),
                 maxProgress = (viewPos.duration / 1000).toInt(),
-                //txt(R.string.resume_time_left, (viewPos.duration - viewPos.position) / (60_000))
-                txt(R.string.resume_remaining, secondsToReadable(((viewPos.duration - viewPos.position) / 1_000).toInt(), "0 ${context?.getString(R.string.mins_short)}"))
+                txt(R.string.resume_remaining, secondsToReadable(((viewPos.duration - viewPos.position) / 1_000).toInt(), "0 mins"))
             )
         }
 

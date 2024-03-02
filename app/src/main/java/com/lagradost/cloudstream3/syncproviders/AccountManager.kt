@@ -1,10 +1,8 @@
 package com.lagradost.cloudstream3.syncproviders
 
-import com.lagradost.cloudstream3.AcraApplication.Companion.context
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.removeKeys
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
-import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.syncproviders.providers.SubScene
 import com.lagradost.cloudstream3.syncproviders.providers.*
 import java.util.concurrent.TimeUnit
@@ -83,9 +81,7 @@ abstract class AccountManager(private val defIndex: Int) : AuthAPI {
                 return completedValue
             }
             //println("$days $hours $minutes")
-            return "${if (days != 0L) "$days" + "${context?.getString(R.string.days_short)} " else ""}${if (hours != 0L) "$hours" +
-                    "${context?.getString(R.string.hours_short)} " else ""}${minutes}${context?.getString(R.string.mins_short)}"
-
+            return "${if (days != 0L) "$days" + "d " else ""}${if (hours != 0L) "$hours" + "h " else ""}${minutes}m"
         }
     }
 
