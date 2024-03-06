@@ -31,6 +31,7 @@ import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.getPref
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setPaddingBottom
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setToolBarScrollFlags
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setUpToolbar
+import com.lagradost.cloudstream3.utils.BatteryOptimizationChecker.intentOpenAppInfo
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showMultiDialog
@@ -44,7 +45,6 @@ import com.lagradost.safefile.SafeFile
 
 // Change local language settings in the app.
 fun getCurrentLocale(context: Context): String {
-    // val dm = res.displayMetrics
     val res = context.resources
     val conf = res.configuration
 
@@ -200,6 +200,11 @@ class SettingsGeneral : PreferenceFragmentCompat() {
                     logError(e)
                 }
             }
+            return@setOnPreferenceClickListener true
+        }
+
+        getPref(R.string.battery_optimisation_key)?.setOnPreferenceClickListener {
+            intentOpenAppInfo(requireContext())
             return@setOnPreferenceClickListener true
         }
 

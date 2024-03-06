@@ -9,14 +9,14 @@ import android.os.PowerManager
 import android.provider.Settings
 import android.util.Log
 import androidx.appcompat.app.AlertDialog
-import com.lagradost.cloudstream3.AcraApplication.Companion.context
+import androidx.preference.PreferenceManager
 import com.lagradost.cloudstream3.BuildConfig
 import com.lagradost.cloudstream3.R
-import com.lagradost.cloudstream3.ui.settings.SettingsFragment
+
+const val packageName = BuildConfig.APPLICATION_ID
+const val TAG = "PowerManagerAPI"
 
 object BatteryOptimizationChecker {
-
-    private const val packageName = BuildConfig.APPLICATION_ID
 
     private fun isAppRestricted(context: Context?): Boolean {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && context != null) {
@@ -24,34 +24,55 @@ object BatteryOptimizationChecker {
             return !powerManager.isIgnoringBatteryOptimizations(context.packageName)
         }
 
-        return false // below Marshmallow, it's always unrestricted
+        return false // below Marshmallow, it's always unrestricted when app is in background
     }
 
     fun openBatteryOptimizationSettings(context: Context) {
-        if (isPhoneAndRestricted()) {
-            try {
-                showBatteryOptimizationDialog(context)
-            } catch (e: Exception) {
-                Log.e("PowerManagerAPI", "Error showing battery optimization dialog", e)
-            }
+        if (shouldShowBatteryOptimizationDialog(context)) {
+            showBatteryOptimizationDialog(context)
         }
     }
 
     private fun showBatteryOptimizationDialog(context: Context) {
-        AlertDialog.Builder(context)
-            .setTitle(R.string.battery_dialog_title)
-            .setMessage(R.string.battery_dialog_message)
-            .setPositiveButton(R.string.ok) { _, _ ->
-                val intent = Intent()
-                intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
-                intent.data = Uri.fromParts("package", packageName, null)
-                context.startActivity(intent, Bundle())
+        val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
+
+        try {
+            context.let {
+                AlertDialog.Builder(it)
+                    .setTitle(R.string.battery_dialog_title)
+                    .setIcon(R.drawable.ic_battery)
+                    .setMessage(R.string.battery_dialog_message)
+                    .setCancelable(false)
+                    .setPositiveButton(R.string.ok) { _, _ ->
+                        intentOpenAppInfo(it)
+                    }
+                    .setNegativeButton(R.string.cancel) { _, _ ->
+                        settingsManager.edit()
+                            .putBoolean(context.getString(R.string.battery_optimisation_key), false)
+                            .apply()
+                    }
+                    .show()
             }
-            .setNegativeButton(R.string.cancel, null)
-            .show()
+        } catch (e: Exception) {
+            Log.e(TAG, "Error showing battery optimization dialog")
+        }
     }
 
-    private fun isPhoneAndRestricted(): Boolean {
-        return SettingsFragment.isTruePhone() && isAppRestricted(context)
+    private fun shouldShowBatteryOptimizationDialog(context: Context): Boolean {
+        val isRestricted = isAppRestricted(context)
+        val isOptimizedShown = PreferenceManager.getDefaultSharedPreferences(context)
+            .getBoolean(context.getString(R.string.battery_optimisation_key), true)
+        return isRestricted && isOptimizedShown
+    }
+
+    fun intentOpenAppInfo(context: Context) {
+        try {
+            val intent = Intent()
+                .setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                .setData(Uri.fromParts("package", packageName, null))
+            context.startActivity(intent, Bundle())
+        } catch (t: Throwable) {
+            Log.e(TAG, "Unable to invoke intent for App info.")
+        }
     }
 }

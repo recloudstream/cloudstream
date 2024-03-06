@@ -651,8 +651,10 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="ok">OK</string>
-    <string name="battery_dialog_title"> ◉ Disable Battery optimization</string>
-    <string name="battery_dialog_message">\nTo ensure proper Downloads and Notifications, please set battery optimization for CloudStream app to UNRESTRICTED.</string>
+    <string name="battery_dialog_title">Disable Battery optimization</string>
+    <string name="battery_dialog_message">To ensure proper downloads and notifications, please set battery optimization for CloudStream app to Unrestricted. You can change this later from General Settings.</string>
+    <string name="battery_optimisation_key" translatable="false">battery_optimisation</string>
+    <string name="app_unrestricted_toast">App is already set to unrestricted</string>
     <string name="update_notification_downloading">Downloading app update…</string>
     <string name="update_notification_installing">Installing app update…</string>
     <string name="update_notification_failed">Could not install the new version of the app</string>
