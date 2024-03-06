@@ -327,6 +327,78 @@ class ResultFragmentTv : Fragment() {
                 }
             }
 
+            resultPlayMovieButton.setOnFocusChangeListener { _, hasFocus ->
+                if (!hasFocus) {
+                    resultPlayMovieText.isSelected = false
+                    return@setOnFocusChangeListener
+                }
+                resultPlayMovieText.isSelected = true
+            }
+
+            resultPlaySeriesButton.setOnFocusChangeListener { _, hasFocus ->
+                if (!hasFocus) {
+                    resultPlaySeriesText.isSelected = false
+                    return@setOnFocusChangeListener
+                }
+                resultPlaySeriesText.isSelected = true
+            }
+
+            resultResumeSeriesButton.setOnFocusChangeListener { _, hasFocus ->
+                if (!hasFocus) {
+                    resultResumeSeriesText.isSelected = false
+                    return@setOnFocusChangeListener
+                }
+                resultResumeSeriesText.isSelected = true
+            }
+
+            resultPlayTrailerButton.setOnFocusChangeListener { _, hasFocus ->
+                if (!hasFocus) {
+                    resultPlayTrailerText.isSelected = false
+                    return@setOnFocusChangeListener
+                }
+                resultPlayTrailerText.isSelected = true
+            }
+
+            resultBookmarkButton.setOnFocusChangeListener { _, hasFocus ->
+                if (!hasFocus) {
+                    resultBookmarkText.isSelected = false
+                    return@setOnFocusChangeListener
+                }
+                resultBookmarkText.isSelected = true
+            }
+
+            resultFavoriteButton.setOnFocusChangeListener { _, hasFocus ->
+                if (!hasFocus) {
+                    resultFavoriteText.isSelected = false
+                    return@setOnFocusChangeListener
+                }
+                resultFavoriteText.isSelected = true
+            }
+
+            resultSubscribeButton.setOnFocusChangeListener { _, hasFocus ->
+                if (!hasFocus) {
+                    resultSubscribeText.isSelected = false
+                    return@setOnFocusChangeListener
+                }
+                resultSubscribeText.isSelected = true
+            }
+
+            resultSearchButton.setOnFocusChangeListener { _, hasFocus ->
+                if (!hasFocus) {
+                    resultSearchText.isSelected = false
+                    return@setOnFocusChangeListener
+                }
+                resultSearchText.isSelected = true
+            }
+
+            resultEpisodesShowButton.setOnFocusChangeListener { _, hasFocus ->
+                if (!hasFocus) {
+                    resultEpisodesShowText.isSelected = false
+                    return@setOnFocusChangeListener
+                }
+                resultEpisodesShowText.isSelected = true
+            }
+
             resultEpisodes.setLinearListLayout(
                 isHorizontal = false,
                 nextUp = FOCUS_SELF,
@@ -527,14 +599,25 @@ class ResultFragmentTv : Fragment() {
         observe(viewModel.watchStatus) { watchType ->
             binding?.apply {
                 resultBookmarkText.setText(watchType.stringRes)
-                resultBookmarkButton.setOnClickListener { view ->
-                    activity?.showBottomDialog(
-                        WatchType.entries.map { view.context.getString(it.stringRes) }.toList(),
-                        watchType.ordinal,
-                        view.context.getString(R.string.action_add_to_bookmarks),
-                        showApply = false,
-                        {}) {
-                        viewModel.updateWatchStatus(WatchType.entries[it], context)
+
+                resultBookmarkButton.apply {
+
+                    val drawable = if (watchType.stringRes == R.string.type_none) {
+                        R.drawable.outline_bookmark_add_24
+                    } else {
+                        R.drawable.ic_baseline_bookmark_24
+                    }
+                    setIconResource(drawable)
+
+                    setOnClickListener { view ->
+                        activity?.showBottomDialog(
+                            WatchType.entries.map { view.context.getString(it.stringRes) }.toList(),
+                            watchType.ordinal,
+                            view.context.getString(R.string.action_add_to_bookmarks),
+                            showApply = false,
+                            {}) {
+                            viewModel.updateWatchStatus(WatchType.entries[it], context)
+                        }
                     }
                 }
             }

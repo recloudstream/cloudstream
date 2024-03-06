@@ -289,7 +289,10 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="top|center_horizontal"
-                        android:minLines="2"
+                        android:singleLine="true"
+                        android:scrollHorizontally="true"
+                        android:marqueeRepeatLimit="marquee_forever"
+                        android:ellipsize="marquee"
                         android:text="@string/movie" />
 
                 </LinearLayout>
@@ -319,7 +322,10 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="top|center_horizontal"
-                        android:minLines="2"
+                        android:singleLine="true"
+                        android:scrollHorizontally="true"
+                        android:marqueeRepeatLimit="marquee_forever"
+                        android:ellipsize="marquee"
                         android:text="@string/episode" />
 
                 </LinearLayout>
@@ -347,7 +353,10 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="top|center_horizontal"
-                        android:minLines="2"
+                        android:singleLine="true"
+                        android:scrollHorizontally="true"
+                        android:marqueeRepeatLimit="marquee_forever"
+                        android:ellipsize="marquee"
                         android:text="@string/resume" />
 
                 </LinearLayout>
@@ -375,7 +384,10 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="top|center_horizontal"
-                        android:minLines="2"
+                        android:singleLine="true"
+                        android:scrollHorizontally="true"
+                        android:marqueeRepeatLimit="marquee_forever"
+                        android:ellipsize="marquee"
                         android:text="@string/play_trailer_button" />
 
                 </LinearLayout>
@@ -392,7 +404,7 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
                         android:focusable="true"
                         style="@style/ResultSmallButtonTV"
                         app:iconPadding="0dp"
-                        app:icon="@drawable/ic_baseline_bookmark_24"
+                        app:icon="@drawable/outline_bookmark_add_24"
                         android:nextFocusUp="@id/result_bookmark_Button"
                         android:nextFocusDown="@id/result_description"
                         android:tag="@string/tv_no_focus_tag">
@@ -403,7 +415,10 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="top|center_horizontal"
-                        android:minLines="2"
+                        android:singleLine="true"
+                        android:scrollHorizontally="true"
+                        android:marqueeRepeatLimit="marquee_forever"
+                        android:ellipsize="marquee"
                         android:text="@string/type_none" />
 
                 </LinearLayout>
@@ -431,7 +446,10 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="top|center_horizontal"
-                        android:minLines="2"
+                        android:singleLine="true"
+                        android:scrollHorizontally="true"
+                        android:marqueeRepeatLimit="marquee_forever"
+                        android:ellipsize="marquee"
                         android:text="@string/favorite" />
 
                 </LinearLayout>
@@ -459,7 +477,10 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="top|center_horizontal"
-                        android:minLines="2"
+                        android:singleLine="true"
+                        android:scrollHorizontally="true"
+                        android:marqueeRepeatLimit="marquee_forever"
+                        android:ellipsize="marquee"
                         android:text="@string/action_subscribe" />
 
                 </LinearLayout>
@@ -487,7 +508,10 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="top|center_horizontal"
-                        android:minLines="2"
+                        android:singleLine="true"
+                        android:scrollHorizontally="true"
+                        android:marqueeRepeatLimit="marquee_forever"
+                        android:ellipsize="marquee"
                         android:text="@string/result_search" />
 
                 </LinearLayout>
@@ -518,7 +542,10 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="top|center_horizontal"
-                        android:minLines="2"
+                        android:singleLine="true"
+                        android:scrollHorizontally="true"
+                        android:marqueeRepeatLimit="marquee_forever"
+                        android:ellipsize="marquee"
                         android:text="@string/episodes" />
 
                 </LinearLayout>
