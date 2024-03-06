@@ -174,6 +174,7 @@
     <string name="sort_clear">Clear</string>
     <string name="sort_save">Save</string>
     <string name="copyTitle">Title copied!</string>
+    <string name="copyRepoUrl">Repo URL copied!</string>
     <string name="subscribe_tooltip">New episode notification</string>
     <string name="result_search_tooltip">Search in other extensions</string>
     <string name="recommendations_tooltip">Show recommendations</string>
