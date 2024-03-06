@@ -440,9 +440,9 @@ class SimklApi(index: Int) : AccountManager(index), SyncAPI {
                             interceptor = interceptor
                         ).isSuccessful
                     } else {
-                        val statusResponse = status?.let { setStatus ->
+                        val statusResponse = this.status?.let { setStatus ->
                             val newStatus =
-                                SimklListStatusType.values()
+                                SimklListStatusType.entries
                                     .firstOrNull { it.value == setStatus }?.originalName
                                     ?: SimklListStatusType.Watching.originalName!!
 
@@ -479,9 +479,14 @@ class SimklApi(index: Int) : AccountManager(index), SyncAPI {
                             ).isSuccessful
                         } ?: true
 
+                        // You cannot rate if you are planning to watch it.
+                        val shouldRate =
+                            score != null && status != SimklListStatusType.Planning.value
+                        val realScore = if (shouldRate) score else null
+
                         val historyResponse =
                             // Only post if there are episodes or score to upload
-                            if (addEpisodes != null || score != null) {
+                            if (addEpisodes != null || shouldRate) {
                                 app.post(
                                     "${this.url}/sync/history",
                                     json = StatusRequest(
@@ -492,8 +497,8 @@ class SimklApi(index: Int) : AccountManager(index), SyncAPI {
                                                 ids,
                                                 addEpisodes?.first,
                                                 addEpisodes?.second,
-                                                score,
-                                                score?.let { time },
+                                                realScore,
+                                                realScore?.let { time },
                                             )
                                         ), movies = emptyList()
                                     ),
@@ -827,7 +832,13 @@ class SimklApi(index: Int) : AccountManager(index), SyncAPI {
 
         if (foundItem != null) {
             return SimklSyncStatus(
-                status = foundItem.status?.let { SyncWatchType.fromInternalId(SimklListStatusType.fromString(it)?.value) }
+                status = foundItem.status?.let {
+                    SyncWatchType.fromInternalId(
+                        SimklListStatusType.fromString(
+                            it
+                        )?.value
+                    )
+                }
                     ?: return null,
                 score = foundItem.user_rating,
                 watchedEpisodes = foundItem.watched_episodes_count,
@@ -839,7 +850,7 @@ class SimklApi(index: Int) : AccountManager(index), SyncAPI {
             )
         } else {
             return SimklSyncStatus(
-                status = SyncWatchType.fromInternalId(SimklListStatusType.None.value) ,
+                status = SyncWatchType.fromInternalId(SimklListStatusType.None.value),
                 score = 0,
                 watchedEpisodes = 0,
                 maxEpisodes = if (searchResult.type == "movie") 0 else searchResult.total_episodes,
@@ -859,11 +870,13 @@ class SimklApi(index: Int) : AccountManager(index), SyncAPI {
         val builder = SimklScoreBuilder.Builder()
             .apiUrl(this.mainUrl)
             .score(status.score, simklStatus?.oldScore)
-            .status(status.status.internalId, (status as? SimklSyncStatus)?.oldStatus?.let { oldStatus ->
-                SimklListStatusType.values().firstOrNull {
-                    it.originalName == oldStatus
-                }?.value
-            })
+            .status(
+                status.status.internalId,
+                (status as? SimklSyncStatus)?.oldStatus?.let { oldStatus ->
+                    SimklListStatusType.entries.firstOrNull {
+                        it.originalName == oldStatus
+                    }?.value
+                })
             .interceptor(interceptor)
             .ids(MediaObject.Ids.fromMap(parsedId))
 
@@ -996,7 +1009,7 @@ class SimklApi(index: Int) : AccountManager(index), SyncAPI {
         val list = getSyncListSmart() ?: return null
 
         val baseMap =
-            SimklListStatusType.values()
+            SimklListStatusType.entries
                 .filter { it.value >= 0 && it.value != SimklListStatusType.ReWatching.value }
                 .associate {
                     it.stringRes to emptyList<SyncAPI.LibraryItem>()
