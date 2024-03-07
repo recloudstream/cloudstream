@@ -1,5 +1,7 @@
+import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
 import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.utils.provider
 import org.jetbrains.kotlin.konan.properties.Properties
 import java.io.ByteArrayOutputStream
 import java.net.URL
@@ -67,9 +69,15 @@ android {
         resValue("bool", "is_prerelease", "false")
 
         // Reads local.properties
-        val localPropertiesFile = File(rootDir, "local.properties")
-        val localProperties = Properties()
-        localProperties.load(localPropertiesFile.inputStream())
+        val localPropertiesProvider = objects.fileProperty()
+        localPropertiesProvider.set(File(rootDir, "local.properties"))
+        val localProperties = localPropertiesProvider.map { file ->
+            val properties = Properties()
+            if (file.asFile.exists()) {
+                file.asFile.inputStream().use { properties.load(it) }
+            }
+            properties
+        }
 
         buildConfigField(
             "String",
@@ -79,12 +87,12 @@ android {
         buildConfigField(
             "String",
             "SIMKL_CLIENT_ID",
-            "\"" + (System.getenv("SIMKL_CLIENT_ID") ?: localProperties.getProperty("simkl.id")) + "\""
+            "\"" + (System.getenv("SIMKL_CLIENT_ID") ?: localProperties.get().getProperty("simkl.id")) + "\""
         )
         buildConfigField(
             "String",
             "SIMKL_CLIENT_SECRET",
-            "\"" + (System.getenv("SIMKL_CLIENT_SECRET") ?: localProperties.getProperty("simkl.secret")) + "\""
+            "\"" + (System.getenv("SIMKL_CLIENT_SECRET") ?: localProperties.get().getProperty("simkl.secret")) + "\""
         )
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
