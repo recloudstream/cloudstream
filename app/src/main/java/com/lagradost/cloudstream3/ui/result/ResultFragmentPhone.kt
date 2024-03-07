@@ -11,6 +11,7 @@ import android.graphics.Rect
 import android.os.Build
 import android.os.Bundle
 import android.text.Editable
+import android.text.InputFilter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -688,14 +689,17 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                     resultNextAiringTime.setText(d.nextAiringDate)
                     resultPoster.setImage(d.posterImage)
                     resultPosterBackground.setImage(d.posterBackgroundImage)
-                    resultDescription.setTextHtml(d.plotText)
-                    resultDescription.setOnClickListener {
-                        activity?.let { activity ->
-                            activity.showBottomDialogText(
-                                d.titleText.asString(activity),
-                                d.plotText.asString(activity).html(),
-                                {}
-                            )
+
+                    var isExpanded = false
+                    resultDescription.apply {
+                        setTextHtml(d.plotText)
+                        setOnClickListener {
+                            isExpanded = !isExpanded
+                            filters = if (isExpanded) {
+                                arrayOf(InputFilter.LengthFilter(Integer.MAX_VALUE))
+                            } else {
+                                arrayOf(InputFilter.LengthFilter(1000))
+                            }
                         }
                     }
 
@@ -900,14 +904,6 @@ open class ResultFragmentPhone : FullScreenPlayer() {
         }
         observe(viewModel.recommendations) { recommendations ->
             setRecommendations(recommendations, null)
-        }
-        observe(viewModel.episodeSynopsis) { description ->
-            activity?.let { activity ->
-                activity.showBottomDialogText(
-                    activity.getString(R.string.synopsis),
-                    description.html()
-                ) { viewModel.releaseEpisodeSynopsis() }
-            }
         }
         context?.let { ctx ->
             val arrayAdapter = ArrayAdapter<String>(ctx, R.layout.sort_bottom_single_choice)

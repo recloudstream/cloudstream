@@ -246,8 +246,20 @@ class EpisodeAdapter(
                 episodeDescript.apply {
                     text = card.description.html()
                     isGone = text.isNullOrBlank()
+
+                    var isExpanded = false
                     setOnClickListener {
-                        clickCallback.invoke(EpisodeClickEvent(ACTION_SHOW_DESCRIPTION, card))
+                        if (isTrueTv) {
+                            clickCallback.invoke(EpisodeClickEvent(ACTION_SHOW_DESCRIPTION, card))
+                        } else {
+                            isExpanded = !isExpanded
+
+                            maxLines = if (isExpanded) {
+                                Integer.MAX_VALUE
+                            } else {
+                                4
+                            }
+                        }
                     }
                 }
 

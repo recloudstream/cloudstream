@@ -4,6 +4,7 @@ import android.animation.Animator
 import android.annotation.SuppressLint
 import android.app.Dialog
 import android.os.Bundle
+import android.text.InputFilter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -39,6 +40,7 @@ import com.lagradost.cloudstream3.ui.search.SEARCH_ACTION_FOCUSED
 import com.lagradost.cloudstream3.ui.search.SearchAdapter
 import com.lagradost.cloudstream3.ui.search.SearchHelper
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isEmulatorSettings
+import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTrueTvSettings
 import com.lagradost.cloudstream3.utils.AppUtils.getNameFull
 import com.lagradost.cloudstream3.utils.AppUtils.html
 import com.lagradost.cloudstream3.utils.AppUtils.isRtl
@@ -720,16 +722,19 @@ class ResultFragmentTv : Fragment() {
         observe(viewModel.recommendations) { recommendations ->
             setRecommendations(recommendations, null)
         }
-        observe(viewModel.episodeSynopsis) { description ->
-            view.context?.let { ctx ->
-                val builder: AlertDialog.Builder =
-                    AlertDialog.Builder(ctx, R.style.AlertDialogCustom)
-                builder.setMessage(description.html())
-                    .setTitle(R.string.synopsis)
-                    .setOnDismissListener {
-                        viewModel.releaseEpisodeSynopsis()
-                    }
-                    .show()
+
+        if (isTrueTvSettings()) {
+            observe(viewModel.episodeSynopsis) { description ->
+                view.context?.let { ctx ->
+                    val builder: AlertDialog.Builder =
+                        AlertDialog.Builder(ctx, R.style.AlertDialogCustom)
+                    builder.setMessage(description.html())
+                        .setTitle(R.string.synopsis)
+                        .setOnDismissListener {
+                            viewModel.releaseEpisodeSynopsis()
+                        }
+                        .show()
+                }
             }
         }
 
@@ -831,14 +836,27 @@ class ResultFragmentTv : Fragment() {
                         resultNextAiring.setText(d.nextAiringEpisode)
                         resultNextAiringTime.setText(d.nextAiringDate)
                         resultPoster.setImage(d.posterImage)
-                        resultDescription.setTextHtml(d.plotText)
-                        resultDescription.setOnClickListener { view ->
-                            view.context?.let { ctx ->
-                                val builder: AlertDialog.Builder =
-                                    AlertDialog.Builder(ctx, R.style.AlertDialogCustom)
-                                builder.setMessage(d.plotText.asString(ctx).html())
-                                    .setTitle(d.plotHeaderText.asString(ctx))
-                                    .show()
+
+                        var isExpanded = false
+                        resultDescription.apply {
+                            setTextHtml(d.plotText)
+                            setOnClickListener {
+                                if (context.isEmulatorSettings()) {
+                                    isExpanded = !isExpanded
+                                    filters = if (isExpanded) {
+                                        arrayOf(InputFilter.LengthFilter(Integer.MAX_VALUE))
+                                    } else {
+                                        arrayOf(InputFilter.LengthFilter(1000))
+                                    }
+                                } else {
+                                    view.context?.let { ctx ->
+                                        val builder: AlertDialog.Builder =
+                                            AlertDialog.Builder(ctx, R.style.AlertDialogCustom)
+                                        builder.setMessage(d.plotText.asString(ctx).html())
+                                            .setTitle(d.plotHeaderText.asString(ctx))
+                                            .show()
+                                    }
+                                }
                             }
                         }
 
