@@ -388,6 +388,10 @@ object SingleSelectionHelper {
             dismissCallback.invoke()
         }
 
+        dialog.setOnCancelListener {
+            dismissCallback.invoke()
+        }
+
         dialog.show()
     }
 }
