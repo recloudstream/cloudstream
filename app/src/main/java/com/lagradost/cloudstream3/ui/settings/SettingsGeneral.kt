@@ -32,6 +32,7 @@ import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setPadd
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setToolBarScrollFlags
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setUpToolbar
 import com.lagradost.cloudstream3.utils.BatteryOptimizationChecker.intentOpenAppInfo
+import com.lagradost.cloudstream3.utils.BatteryOptimizationChecker.isAppRestricted
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showMultiDialog
@@ -204,8 +205,14 @@ class SettingsGeneral : PreferenceFragmentCompat() {
         }
 
         getPref(R.string.battery_optimisation_key)?.setOnPreferenceClickListener {
-            intentOpenAppInfo(requireContext())
-            return@setOnPreferenceClickListener true
+            val ctx = context ?: requireContext()
+
+            if (isAppRestricted(ctx)) {
+                intentOpenAppInfo(ctx)
+            } else {
+                showToast(R.string.app_unrestricted_toast)
+            }
+            true
         }
 
         fun showAdd() {

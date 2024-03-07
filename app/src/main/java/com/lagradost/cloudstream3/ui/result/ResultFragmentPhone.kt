@@ -33,7 +33,6 @@ import com.google.android.gms.cast.framework.CastState
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.lagradost.cloudstream3.APIHolder
 import com.lagradost.cloudstream3.APIHolder.updateHasTrailers
-import com.lagradost.cloudstream3.CommonActivity
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.DubStatus
 import com.lagradost.cloudstream3.LoadResponse
@@ -448,7 +447,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
 
                         val name = (viewModel.page.value as? Resource.Success)?.value?.title
                             ?: txt(R.string.no_data).asStringNull(context) ?: ""
-                        CommonActivity.showToast(txt(message, name), Toast.LENGTH_SHORT)
+                        showToast(txt(message, name), Toast.LENGTH_SHORT)
                 }
             }
             resultFavorite.setOnClickListener {
@@ -463,7 +462,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
 
                     val name = (viewModel.page.value as? Resource.Success)?.value?.title
                         ?: txt(R.string.no_data).asStringNull(context) ?: ""
-                    CommonActivity.showToast(txt(message, name), Toast.LENGTH_SHORT)
+                    showToast(txt(message, name), Toast.LENGTH_SHORT)
                 }
             }
             mediaRouteButton.apply {
@@ -471,7 +470,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                 alpha = if (chromecastSupport) 1f else 0.3f
                 if (!chromecastSupport) {
                     setOnClickListener {
-                        CommonActivity.showToast(
+                        showToast(
                             R.string.no_chromecast_support_toast,
                             Toast.LENGTH_LONG
                         )
@@ -646,7 +645,8 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                         ),
                         null
                     ) { click ->
-                        openBatteryOptimizationSettings(requireContext())
+                        runCatching { context ?: requireContext() }.getOrNull()
+                            ?.let { openBatteryOptimizationSettings(it) }
 
                         when (click.action) {
                             DOWNLOAD_ACTION_DOWNLOAD -> {

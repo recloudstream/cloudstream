@@ -11,6 +11,7 @@ import android.util.Log
 import androidx.appcompat.app.AlertDialog
 import androidx.preference.PreferenceManager
 import com.lagradost.cloudstream3.BuildConfig
+import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.R
 
 const val packageName = BuildConfig.APPLICATION_ID
@@ -18,7 +19,7 @@ const val TAG = "PowerManagerAPI"
 
 object BatteryOptimizationChecker {
 
-    private fun isAppRestricted(context: Context?): Boolean {
+    fun isAppRestricted(context: Context?): Boolean {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && context != null) {
             val powerManager = context.getSystemService(Context.POWER_SERVICE) as PowerManager
             return !powerManager.isIgnoringBatteryOptimizations(context.packageName)
@@ -72,7 +73,8 @@ object BatteryOptimizationChecker {
                 .setData(Uri.fromParts("package", packageName, null))
             context.startActivity(intent, Bundle())
         } catch (t: Throwable) {
-            Log.e(TAG, "Unable to invoke intent for App info.")
+            Log.e(TAG, "Unable to invoke Intent for - CS3/App Info")
+            showToast(R.string.app_info_intent_error)
         }
     }
 }
