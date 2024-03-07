@@ -157,10 +157,10 @@ object CommonActivity {
             val binding = ToastBinding.inflate(act.layoutInflater)
             binding.text.text = message.trim()
 
+            // custom toasts are deprecated and won't appear when cs3 sets minSDK to api30 (A11)
             val toast = Toast(act)
             toast.duration = duration ?: Toast.LENGTH_SHORT
             toast.view = binding.root
-            // custom toasts are deprecated and won't appear when cs3 starts targeting api30 (A11)
             currentToast = toast
             toast.show()
 
