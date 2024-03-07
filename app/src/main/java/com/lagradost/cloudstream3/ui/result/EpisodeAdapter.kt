@@ -253,12 +253,9 @@ class EpisodeAdapter(
                             clickCallback.invoke(EpisodeClickEvent(ACTION_SHOW_DESCRIPTION, card))
                         } else {
                             isExpanded = !isExpanded
-
                             maxLines = if (isExpanded) {
                                 Integer.MAX_VALUE
-                            } else {
-                                4
-                            }
+                            } else 4
                         }
                     }
                 }

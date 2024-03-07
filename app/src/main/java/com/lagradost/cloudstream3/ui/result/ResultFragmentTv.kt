@@ -4,7 +4,6 @@ import android.animation.Animator
 import android.annotation.SuppressLint
 import android.app.Dialog
 import android.os.Bundle
-import android.text.InputFilter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -843,11 +842,9 @@ class ResultFragmentTv : Fragment() {
                             setOnClickListener {
                                 if (context.isEmulatorSettings()) {
                                     isExpanded = !isExpanded
-                                    filters = if (isExpanded) {
-                                        arrayOf(InputFilter.LengthFilter(Integer.MAX_VALUE))
-                                    } else {
-                                        arrayOf(InputFilter.LengthFilter(1000))
-                                    }
+                                    maxLines = if (isExpanded) {
+                                        Integer.MAX_VALUE
+                                    } else 10
                                 } else {
                                     view.context?.let { ctx ->
                                         val builder: AlertDialog.Builder =

@@ -11,7 +11,6 @@ import android.graphics.Rect
 import android.os.Build
 import android.os.Bundle
 import android.text.Editable
-import android.text.InputFilter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -63,14 +62,12 @@ import com.lagradost.cloudstream3.ui.result.ResultFragment.updateUIEvent
 import com.lagradost.cloudstream3.ui.search.SearchAdapter
 import com.lagradost.cloudstream3.ui.search.SearchHelper
 import com.lagradost.cloudstream3.utils.AppUtils.getNameFull
-import com.lagradost.cloudstream3.utils.AppUtils.html
 import com.lagradost.cloudstream3.utils.AppUtils.isCastApiAvailable
 import com.lagradost.cloudstream3.utils.AppUtils.loadCache
 import com.lagradost.cloudstream3.utils.AppUtils.openBrowser
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialogInstant
-import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialogText
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showDialog
 import com.lagradost.cloudstream3.utils.UIHelper
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
@@ -695,11 +692,9 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                         setTextHtml(d.plotText)
                         setOnClickListener {
                             isExpanded = !isExpanded
-                            filters = if (isExpanded) {
-                                arrayOf(InputFilter.LengthFilter(Integer.MAX_VALUE))
-                            } else {
-                                arrayOf(InputFilter.LengthFilter(1000))
-                            }
+                            maxLines = if (isExpanded) {
+                                Integer.MAX_VALUE
+                            } else 10
                         }
                     }
 
