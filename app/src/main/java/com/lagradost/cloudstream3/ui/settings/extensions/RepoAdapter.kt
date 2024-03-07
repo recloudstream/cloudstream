@@ -117,8 +117,7 @@ class RepoAdapter(
 
                         repositoryItemRoot.setOnLongClickListener {
                             val shareableRepoData = "${repositoryData.name} : \n ${repositoryData.url}"
-                            val repoCopyLabel = txt(R.string.repo_copy_label)
-                            clipboardHelper(repoCopyLabel, shareableRepoData)
+                            clipboardHelper(txt(R.string.repo_copy_label), shareableRepoData)
                             true
                         }
 

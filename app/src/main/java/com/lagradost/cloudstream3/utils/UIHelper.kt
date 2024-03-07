@@ -16,6 +16,7 @@ import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
+import android.os.TransactionTooLargeException
 import android.util.Log
 import android.view.*
 import android.view.ViewGroup.MarginLayoutParams
@@ -23,7 +24,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
 import android.widget.ListAdapter
 import android.widget.ListView
-import android.widget.Toast
+import android.widget.Toast.LENGTH_LONG
 import androidx.annotation.AttrRes
 import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
@@ -63,7 +64,6 @@ import com.google.android.material.chip.ChipGroup
 import com.lagradost.cloudstream3.AcraApplication.Companion.context
 import com.lagradost.cloudstream3.CommonActivity.activity
 import com.lagradost.cloudstream3.CommonActivity.showToast
-import com.lagradost.cloudstream3.MainActivity
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.ui.result.UiImage
@@ -73,7 +73,6 @@ import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isEmula
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
 import jp.wasabeef.glide.transformations.BlurTransformation
 import kotlin.math.roundToInt
-
 
 object UIHelper {
     val Int.toPx: Int get() = (this * Resources.getSystem().displayMetrics.density).toInt()
@@ -130,17 +129,32 @@ object UIHelper {
     }
 
     fun clipboardHelper(label: UiText, text: CharSequence) {
+        val ctx = context ?: return
         try {
-            val clip = ClipData.newPlainText(label.asString(context!!), text)
-            val labelSuffix = txt(R.string.toast_copied)
-            context?.getSystemService<ClipboardManager>()!!.setPrimaryClip(clip)
+            ctx.let {
+                val clip = ClipData.newPlainText(label.asString(ctx), text)
+                val labelSuffix = txt(R.string.toast_copied).asString(ctx)
+                ctx.getSystemService<ClipboardManager>()?.setPrimaryClip(clip)
 
-            if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2) {
-            showToast("${label.asString(context!!)} ${labelSuffix.asString(context!!)}")
+                if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2) {
+                    showToast("$label $labelSuffix")
+                }
             }
         } catch (t: Throwable) {
             Log.e("ClipboardService", "$t")
-            showToast(R.string.clipboard_too_large)
+            when (t) {
+                is SecurityException -> {
+                    showToast(R.string.clipboard_permission_error)
+                }
+
+                is TransactionTooLargeException -> {
+                    showToast(R.string.clipboard_too_large)
+                }
+
+                else -> {
+                    showToast(R.string.unexpected_error, LENGTH_LONG)
+                }
+            }
         }
     }
 

@@ -645,6 +645,8 @@
     <string name="history">History</string>
     <string name="enable_skip_op_from_database_des">Show skip popups for opening/ending</string>
     <string name="clipboard_too_large">Too much text. Unable to save to clipboard.</string>
+    <string name="clipboard_permission_error">Error accessing Clipboard, Please try again.</string>
+    <string name="clipboard_unknown_error">Error copying content, Please copy logcat and contact app support.</string>
     <string name="action_mark_as_watched">Mark as watched</string>
     <string name="action_remove_from_watched">Remove from watched</string>
     <string name="confirm_exit_dialog">Are you sure you want to exit\?</string>

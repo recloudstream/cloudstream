@@ -1693,8 +1693,7 @@ class ResultViewModel2 : ViewModel() {
                     txt(R.string.episode_action_copy_link)
                 ) { (result, index) ->
                     val link = result.links[index]
-                    val linkCopyLabel = UiText.DynamicString(link.name)
-                    clipboardHelper(linkCopyLabel, link.url)
+                    clipboardHelper(txt(link.name), link.url)
                 }
             }
 
