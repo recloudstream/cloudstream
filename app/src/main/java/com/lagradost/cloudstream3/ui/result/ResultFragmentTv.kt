@@ -249,38 +249,11 @@ class ResultFragmentTv : Fragment() {
 
         binding?.apply {
             //episodesShadow.rotationX = 180.0f//if(episodesShadow.isRtl()) 180.0f else 0.0f
-            
-            val leftListener: View.OnFocusChangeListener =
-                View.OnFocusChangeListener { view, hasFocus ->
-                    if (!hasFocus) return@OnFocusChangeListener
-                    if (view?.tag == context?.getString(R.string.tv_no_focus_tag)){
-                        resultFinishLoading.scrollTo(0,0)
-                    }
-                    toggleEpisodes(false)
-                }
 
-            val rightListener: View.OnFocusChangeListener =
-                View.OnFocusChangeListener { _, hasFocus ->
-                    if (!hasFocus) return@OnFocusChangeListener
-                    toggleEpisodes(true)
-                }
-
-            resultPlayMovieButton.onFocusChangeListener = leftListener
-            resultPlaySeriesButton.onFocusChangeListener = leftListener
-            resultResumeSeriesButton.onFocusChangeListener = leftListener
-            resultPlayTrailerButton.onFocusChangeListener = leftListener
-            resultEpisodesShowButton.onFocusChangeListener = rightListener
-            resultDescription.onFocusChangeListener = leftListener
-            resultBookmarkButton.onFocusChangeListener = leftListener
-            resultSearchButton.onFocusChangeListener = leftListener
-            resultFavoriteButton.onFocusChangeListener = leftListener
-            resultEpisodesShowButton.setOnClickListener {
-                // toggle, to make it more touch accessable just in case someone thinks that a
-                // tv layout is better but is using a touch device
-                toggleEpisodes(!episodeHolderTv.isVisible)
-            }
-
-            //  resultEpisodes.onFocusChangeListener = leftListener
+            // parallax on background
+            resultFinishLoading.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { view, _, scrollY, _, oldScrollY ->
+                backgroundPosterHolder.translationY = -scrollY.toFloat() * 0.8f
+            })
 
             redirectToPlay.setOnFocusChangeListener { _, hasFocus ->
                 if (!hasFocus) return@setOnFocusChangeListener
@@ -304,11 +277,6 @@ class ResultFragmentTv : Fragment() {
                 }
             }
 
-            // parallax on background
-            resultFinishLoading.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { view, _, scrollY, _, oldScrollY ->
-                backgroundPosterHolder.translationY = -scrollY.toFloat() * 0.8f
-            })
-
             redirectToEpisodes.setOnFocusChangeListener { _, hasFocus ->
                 if (!hasFocus) return@setOnFocusChangeListener
                 toggleEpisodes(true)
@@ -327,76 +295,43 @@ class ResultFragmentTv : Fragment() {
                 }
             }
 
-            resultPlayMovieButton.setOnFocusChangeListener { _, hasFocus ->
-                if (!hasFocus) {
-                    resultPlayMovieText.isSelected = false
-                    return@setOnFocusChangeListener
+            mapOf(
+                resultPlayMovieButton to resultPlayMovieText,
+                resultPlaySeriesButton to resultPlaySeriesText,
+                resultResumeSeriesButton to resultResumeSeriesText,
+                resultPlayTrailerButton to resultPlayTrailerText,
+                resultBookmarkButton to resultBookmarkText,
+                resultFavoriteButton to resultFavoriteText,
+                resultSubscribeButton to resultSubscribeText,
+                resultSearchButton to resultSearchText,
+                resultEpisodesShowButton to resultEpisodesShowText
+            ).forEach { (button , text) ->
+
+                button.setOnFocusChangeListener { _, hasFocus ->
+                    if (!hasFocus) {
+                        text.isSelected = false
+                        return@setOnFocusChangeListener
+                    }
+
+                    text.isSelected = true
+                    if (button.tag == context?.getString(R.string.tv_no_focus_tag)){
+                        resultFinishLoading.scrollTo(0,0)
+                    }
+                    when (button.id) {
+                        R.id.result_episodes_show_button -> {
+                            toggleEpisodes(true)
+                        }
+                        else -> {
+                            toggleEpisodes(false)
+                        }
+                    }
                 }
-                resultPlayMovieText.isSelected = true
             }
 
-            resultPlaySeriesButton.setOnFocusChangeListener { _, hasFocus ->
-                if (!hasFocus) {
-                    resultPlaySeriesText.isSelected = false
-                    return@setOnFocusChangeListener
-                }
-                resultPlaySeriesText.isSelected = true
-            }
-
-            resultResumeSeriesButton.setOnFocusChangeListener { _, hasFocus ->
-                if (!hasFocus) {
-                    resultResumeSeriesText.isSelected = false
-                    return@setOnFocusChangeListener
-                }
-                resultResumeSeriesText.isSelected = true
-            }
-
-            resultPlayTrailerButton.setOnFocusChangeListener { _, hasFocus ->
-                if (!hasFocus) {
-                    resultPlayTrailerText.isSelected = false
-                    return@setOnFocusChangeListener
-                }
-                resultPlayTrailerText.isSelected = true
-            }
-
-            resultBookmarkButton.setOnFocusChangeListener { _, hasFocus ->
-                if (!hasFocus) {
-                    resultBookmarkText.isSelected = false
-                    return@setOnFocusChangeListener
-                }
-                resultBookmarkText.isSelected = true
-            }
-
-            resultFavoriteButton.setOnFocusChangeListener { _, hasFocus ->
-                if (!hasFocus) {
-                    resultFavoriteText.isSelected = false
-                    return@setOnFocusChangeListener
-                }
-                resultFavoriteText.isSelected = true
-            }
-
-            resultSubscribeButton.setOnFocusChangeListener { _, hasFocus ->
-                if (!hasFocus) {
-                    resultSubscribeText.isSelected = false
-                    return@setOnFocusChangeListener
-                }
-                resultSubscribeText.isSelected = true
-            }
-
-            resultSearchButton.setOnFocusChangeListener { _, hasFocus ->
-                if (!hasFocus) {
-                    resultSearchText.isSelected = false
-                    return@setOnFocusChangeListener
-                }
-                resultSearchText.isSelected = true
-            }
-
-            resultEpisodesShowButton.setOnFocusChangeListener { _, hasFocus ->
-                if (!hasFocus) {
-                    resultEpisodesShowText.isSelected = false
-                    return@setOnFocusChangeListener
-                }
-                resultEpisodesShowText.isSelected = true
+            resultEpisodesShowButton.setOnClickListener {
+                // toggle, to make it more touch accessible just in case someone thinks that a
+                // tv layout is better but is using a touch device
+                toggleEpisodes(!episodeHolderTv.isVisible)
             }
 
             resultEpisodes.setLinearListLayout(
