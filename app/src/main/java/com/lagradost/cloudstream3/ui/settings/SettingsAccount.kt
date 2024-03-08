@@ -263,7 +263,7 @@ class SettingsAccount : PreferenceFragmentCompat() {
 
         getPref(R.string.biometric_key)?.setOnPreferenceClickListener {
             val authEnabled = PreferenceManager.getDefaultSharedPreferences(
-                context ?: requireContext()
+                context ?: return@setOnPreferenceClickListener false
             )
                 .getBoolean(getString(R.string.biometric_key), false)
 
