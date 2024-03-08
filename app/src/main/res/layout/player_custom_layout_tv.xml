@@ -533,18 +533,14 @@
                         android:id="@id/exo_position"
                         android:layout_width="wrap_content"
                         android:layout_height="30dp"
-                        android:layout_gravity="center"
-                        android:layout_marginStart="20dp"
-                        android:gravity="end|center_vertical"
+                        android:gravity="center"
                         android:includeFontPadding="false"
                         android:minWidth="50dp"
-                        android:paddingLeft="4dp"
-                        android:paddingRight="4dp"
                         android:textColor="@android:color/white"
                         android:textSize="14sp"
                         android:textStyle="normal"
                         app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toStartOf="@id/player_pause_play"
+                        app:layout_constraintStart_toEndOf="@id/player_pause_play"
                         tools:text="15:30" />
 
                     <FrameLayout
