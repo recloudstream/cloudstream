@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
@@ -57,14 +56,16 @@ class AccountSelectActivity : AppCompatActivity(), BiometricAuthenticator.Biomet
 
             if (isTruePhone() && authEnabled) {
                 if (deviceHasPasswordPinLock(this)) {
-                    startBiometricAuthentication(this, R.string.biometric_authentication_title, false)
+                    startBiometricAuthentication(
+                        this,
+                        R.string.biometric_authentication_title,
+                        false
+                    )
 
                     BiometricAuthenticator.promptInfo?.let {
                         BiometricAuthenticator.biometricPrompt?.authenticate(it)
                     }
                 }
-            } else {
-                showToast(R.string.phone_not_secured, Toast.LENGTH_LONG)
             }
         }
 
