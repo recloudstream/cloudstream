@@ -645,8 +645,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                         ),
                         null
                     ) { click ->
-                        runCatching { context ?: requireContext() }.getOrNull()
-                            ?.let { openBatteryOptimizationSettings(it) }
+                        context?.let { openBatteryOptimizationSettings(it) }
 
                         when (click.action) {
                             DOWNLOAD_ACTION_DOWNLOAD -> {

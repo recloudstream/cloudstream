@@ -205,7 +205,7 @@ class SettingsGeneral : PreferenceFragmentCompat() {
         }
 
         getPref(R.string.battery_optimisation_key)?.setOnPreferenceClickListener {
-            val ctx = context ?: requireContext()
+            val ctx = context ?: return@setOnPreferenceClickListener false
 
             if (isAppRestricted(ctx)) {
                 intentOpenAppInfo(ctx)

@@ -73,7 +73,7 @@ object BatteryOptimizationChecker {
                 .setData(Uri.fromParts("package", packageName, null))
             context.startActivity(intent, Bundle())
         } catch (t: Throwable) {
-            Log.e(TAG, "Unable to invoke Intent for - CS3/App Info")
+            Log.e(TAG, "Unable to invoke intent for - CS3/App Info", t)
             showToast(R.string.app_info_intent_error)
         }
     }
