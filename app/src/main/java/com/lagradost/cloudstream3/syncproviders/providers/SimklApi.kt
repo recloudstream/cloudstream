@@ -226,7 +226,7 @@ class SimklApi(index: Int) : AccountManager(index), SyncAPI {
             Paused(2, R.string.type_on_hold, "hold"),
             Dropped(3, R.string.type_dropped, "dropped"),
             Planning(4, R.string.type_plan_to_watch, "plantowatch"),
-            ReWatching(5, R.string.type_re_watching, "watching"),
+            ReWatching(5, R.string.type_re_watching, "rewatching"),
             None(-1, R.string.none, null);
 
             companion object {
@@ -1010,7 +1010,7 @@ class SimklApi(index: Int) : AccountManager(index), SyncAPI {
 
         val baseMap =
             SimklListStatusType.entries
-                .filter { it.value >= 0 && it.value != SimklListStatusType.ReWatching.value }
+                .filter { it.value >= 0 }
                 .associate {
                     it.stringRes to emptyList<SyncAPI.LibraryItem>()
                 }
