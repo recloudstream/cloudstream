@@ -531,7 +531,6 @@ object UIHelper {
             WindowInsetsControllerCompat(window, View(this)).show(WindowInsetsCompat.Type.systemBars())
 
         } else {*/ /** WINDOW COMPAT IS BUGGY DUE TO FU*KED UP PLAYER AND TRAILERS **/
-            Suppress("DEPRECATION")
             window.decorView.systemUiVisibility =
                 (View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN)
         //}

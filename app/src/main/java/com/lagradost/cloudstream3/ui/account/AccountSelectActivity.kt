@@ -3,6 +3,8 @@ package com.lagradost.cloudstream3.ui.account
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
@@ -17,13 +19,17 @@ import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.ui.AutofitRecyclerView
 import com.lagradost.cloudstream3.ui.account.AccountAdapter.Companion.VIEW_TYPE_EDIT_ACCOUNT
 import com.lagradost.cloudstream3.ui.account.AccountAdapter.Companion.VIEW_TYPE_SELECT_ACCOUNT
+import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTruePhone
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
+import com.lagradost.cloudstream3.utils.BiometricAuthenticator
+import com.lagradost.cloudstream3.utils.BiometricAuthenticator.deviceHasPasswordPinLock
+import com.lagradost.cloudstream3.utils.BiometricAuthenticator.startBiometricAuthentication
 import com.lagradost.cloudstream3.utils.DataStoreHelper.accounts
 import com.lagradost.cloudstream3.utils.DataStoreHelper.selectedKeyIndex
 import com.lagradost.cloudstream3.utils.DataStoreHelper.setAccount
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
 
-class AccountSelectActivity : AppCompatActivity() {
+class AccountSelectActivity : AppCompatActivity(), BiometricAuthenticator.BiometricAuthCallback {
 
     lateinit var viewModel: AccountViewModel
 
@@ -41,12 +47,33 @@ class AccountSelectActivity : AppCompatActivity() {
         )
 
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
-        val skipStartup = settingsManager.getBoolean(
-            getString(R.string.skip_startup_account_select_key),
-            false
+        val authEnabled = settingsManager.getBoolean(getString(R.string.biometric_key), false)
+        val skipStartup = settingsManager.getBoolean(getString(R.string.skip_startup_account_select_key), false
         ) || accounts.count() <= 1
 
         viewModel = ViewModelProvider(this)[AccountViewModel::class.java]
+
+        fun askBiometricAuth() {
+
+            if (isTruePhone() && authEnabled) {
+                if (deviceHasPasswordPinLock(this)) {
+                    startBiometricAuthentication(this, R.string.biometric_authentication_title, false)
+
+                    BiometricAuthenticator.promptInfo?.let {
+                        BiometricAuthenticator.biometricPrompt?.authenticate(it)
+                    }
+                }
+            } else {
+                showToast(R.string.phone_not_secured, Toast.LENGTH_LONG)
+            }
+        }
+
+        observe(viewModel.isAllowedLogin) { isAllowedLogin ->
+            if (isAllowedLogin) {
+                // We are allowed to continue to MainActivity
+                navigateToMainActivity()
+            }
+        }
 
         // Don't show account selection if there is only
         // one account that exists
@@ -55,12 +82,6 @@ class AccountSelectActivity : AppCompatActivity() {
             if (currentAccount?.lockPin != null) {
                 CommonActivity.init(this)
                 viewModel.handleAccountSelect(currentAccount, this, true)
-                observe(viewModel.isAllowedLogin) { isAllowedLogin ->
-                    if (isAllowedLogin) {
-                        // We are allowed to continue to MainActivity
-                        navigateToMainActivity()
-                    }
-                }
             } else {
                 if (accounts.count() > 1) {
                     showToast(this, getString(
@@ -88,12 +109,6 @@ class AccountSelectActivity : AppCompatActivity() {
                 // Handle the selected account
                 accountSelectCallback = {
                     viewModel.handleAccountSelect(it, this)
-                    observe(viewModel.isAllowedLogin) { isAllowedLogin ->
-                        if (isAllowedLogin) {
-                            // We are allowed to continue to MainActivity
-                            navigateToMainActivity()
-                        }
-                    }
                 },
                 accountCreateCallback = { viewModel.handleAccountUpdate(it, this) },
                 accountEditCallback = {
@@ -158,11 +173,17 @@ class AccountSelectActivity : AppCompatActivity() {
                 } else 6
             }
         }
+
+        askBiometricAuth()
     }
 
     private fun navigateToMainActivity() {
         val mainIntent = Intent(this, MainActivity::class.java)
         startActivity(mainIntent)
         finish() // Finish the account selection activity
+    }
+
+    override fun onAuthenticationSuccess() {
+       Log.i(BiometricAuthenticator.TAG,"Authentication successful in AccountSelectActivity")
     }
 }
