@@ -783,8 +783,12 @@ class ResultFragmentTv : Fragment() {
                 if (episodes is Resource.Success) {
                     val first = episodes.value.firstOrNull()
                     if (first != null) {
-                        resultPlaySeriesText.text = "${getString(R.string.season_short)}${first.season}:${getString(R.string.episode_short)}${first.episode}"
-
+                        resultPlaySeriesText.text = //"${getString(R.string.season_short)}${first.season}:${getString(R.string.episode_short)}${first.episode}"
+                            when {
+                                first.season != null ->
+                                    "${getString(R.string.season_short)}${first.season}:${getString(R.string.episode_short)}${first.episode}"
+                                else -> "${getString(R.string.episode)} ${first.episode}"
+                            }
                         resultPlaySeriesButton.setOnClickListener {
                             viewModel.handleAction(
                                 EpisodeClickEvent(
@@ -903,7 +907,7 @@ class ResultFragmentTv : Fragment() {
                         resultPlayMovie.isGone = d.comingSoon
                         resultPlaySeries.isGone = d.comingSoon
                         resultDataHolder.isGone = d.comingSoon
-                        
+
                         UIHelper.populateChips(resultTag, d.tags)
                         resultCastItems.isGone = d.actors.isNullOrEmpty()
                         (resultCastItems.adapter as? ActorAdaptor)?.updateList(
