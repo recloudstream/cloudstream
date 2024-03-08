@@ -490,7 +490,7 @@ class ResultFragmentTv : Fragment() {
                         resume.isMovie -> context?.getString(R.string.resume)
                         resume.result.season != null ->
                             "${getString(R.string.season_short)}${resume.result.season}:${getString(R.string.episode_short)}${resume.result.episode}"
-                        else -> "${getString(R.string.episode_short)}${resume.result.episode}"
+                        else -> "${getString(R.string.episode)}${resume.result.episode}"
                     }
 
                 resultResumeSeriesButton.setOnClickListener {
