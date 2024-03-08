@@ -747,9 +747,7 @@
     <string name="auto_rotate_video_desc">Enable automatic switching of screen orientation based on video orientation</string>
     <string name="auto_rotate_video">Auto rotate</string>
     <string name="favorite">Favorite</string>
-    <string name="movie">Movie</string>
     <string name="unfavorite">Unfavorite</string>
-    <string name="result_search">Search</string>
     <!-- For Biometrics -->
     <string name="biometric_authentication_title">Unlock CloudStream</string>
     <string name="biometric_setting">Lock with Biometrics</string>
