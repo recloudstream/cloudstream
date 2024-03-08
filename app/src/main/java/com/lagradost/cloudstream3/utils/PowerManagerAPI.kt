@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.utils
 
+import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -13,6 +14,7 @@ import androidx.preference.PreferenceManager
 import com.lagradost.cloudstream3.BuildConfig
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTruePhone
 
 const val packageName = BuildConfig.APPLICATION_ID
 const val TAG = "PowerManagerAPI"
@@ -34,7 +36,7 @@ object BatteryOptimizationChecker {
         }
     }
 
-    private fun showBatteryOptimizationDialog(context: Context) {
+    fun showBatteryOptimizationDialog(context: Context) {
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
 
         try {
@@ -43,7 +45,6 @@ object BatteryOptimizationChecker {
                     .setTitle(R.string.battery_dialog_title)
                     .setIcon(R.drawable.ic_battery)
                     .setMessage(R.string.battery_dialog_message)
-                    .setCancelable(false)
                     .setPositiveButton(R.string.ok) { _, _ ->
                         intentOpenAppInfo(it)
                     }
@@ -55,7 +56,7 @@ object BatteryOptimizationChecker {
                     .show()
             }
         } catch (e: Exception) {
-            Log.e(TAG, "Error showing battery optimization dialog")
+            Log.e(TAG, "Error showing battery optimization dialog", e)
         }
     }
 
@@ -63,18 +64,24 @@ object BatteryOptimizationChecker {
         val isRestricted = isAppRestricted(context)
         val isOptimizedShown = PreferenceManager.getDefaultSharedPreferences(context)
             .getBoolean(context.getString(R.string.battery_optimisation_key), true)
-        return isRestricted && isOptimizedShown
+        return isRestricted && isOptimizedShown && isTruePhone()
     }
 
     fun intentOpenAppInfo(context: Context) {
+        val intent = Intent()
+
         try {
-            val intent = Intent()
+            intent
                 .setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
                 .setData(Uri.fromParts("package", packageName, null))
             context.startActivity(intent, Bundle())
         } catch (t: Throwable) {
-            Log.e(TAG, "Unable to invoke intent for - CS3/App Info", t)
-            showToast(R.string.app_info_intent_error)
+            Log.e(TAG, "Unable to invoke any intent", t)
+            if (t is ActivityNotFoundException) {
+                showToast("ActivityNotFoundException")
+            } else {
+                showToast(R.string.app_info_intent_error)
+            }
         }
     }
 }

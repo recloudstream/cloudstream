@@ -449,6 +449,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                             ?: txt(R.string.no_data).asStringNull(context) ?: ""
                         showToast(txt(message, name), Toast.LENGTH_SHORT)
                 }
+                context?.let { openBatteryOptimizationSettings(it) }
             }
             resultFavorite.setOnClickListener {
                 viewModel.toggleFavoriteStatus(context) { newStatus: Boolean? ->

@@ -31,8 +31,11 @@ import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.getPref
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setPaddingBottom
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setToolBarScrollFlags
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setUpToolbar
+import com.lagradost.cloudstream3.utils.BatteryOptimizationChecker
 import com.lagradost.cloudstream3.utils.BatteryOptimizationChecker.intentOpenAppInfo
 import com.lagradost.cloudstream3.utils.BatteryOptimizationChecker.isAppRestricted
+import com.lagradost.cloudstream3.utils.BatteryOptimizationChecker.openBatteryOptimizationSettings
+import com.lagradost.cloudstream3.utils.BatteryOptimizationChecker.showBatteryOptimizationDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showMultiDialog
@@ -208,7 +211,7 @@ class SettingsGeneral : PreferenceFragmentCompat() {
             val ctx = context ?: return@setOnPreferenceClickListener false
 
             if (isAppRestricted(ctx)) {
-                intentOpenAppInfo(ctx)
+                showBatteryOptimizationDialog(ctx)
             } else {
                 showToast(R.string.app_unrestricted_toast)
             }
