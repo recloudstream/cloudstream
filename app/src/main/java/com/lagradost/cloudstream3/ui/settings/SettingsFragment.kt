@@ -24,6 +24,8 @@ import com.lagradost.cloudstream3.databinding.MainSettingsBinding
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.accountManagers
 import com.lagradost.cloudstream3.ui.home.HomeFragment
+import com.lagradost.cloudstream3.ui.result.txt
+import com.lagradost.cloudstream3.utils.UIHelper.clipboardHelper
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.setImage
@@ -229,6 +231,14 @@ class SettingsFragment : Fragment() {
             if (isTrueTv) {
                 settingsGeneral.requestFocus()
             }
+        }
+
+        val appVersion = getString(R.string.app_version)
+        val commitInfo = getString(R.string.commit_hash)
+
+        binding?.appVersionInfo?.setOnLongClickListener{
+            clipboardHelper(txt(R.string.extension_version), "$appVersion $commitInfo")
+            true
         }
     }
 }

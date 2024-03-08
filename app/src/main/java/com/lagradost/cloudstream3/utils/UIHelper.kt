@@ -137,7 +137,7 @@ object UIHelper {
                 ctx.getSystemService<ClipboardManager>()?.setPrimaryClip(clip)
 
                 if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2) {
-                    showToast("$label $labelSuffix")
+                    showToast("${label.asString(ctx)} $labelSuffix")
                 }
             }
         } catch (t: Throwable) {
@@ -152,7 +152,7 @@ object UIHelper {
                 }
 
                 else -> {
-                    showToast(R.string.unexpected_error, LENGTH_LONG)
+                    showToast(R.string.clipboard_unknown_error, LENGTH_LONG)
                 }
             }
         }

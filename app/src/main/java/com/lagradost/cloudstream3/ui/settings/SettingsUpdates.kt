@@ -1,7 +1,6 @@
 package com.lagradost.cloudstream3.ui.settings
 
 import android.os.Bundle
-import android.os.TransactionTooLargeException
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -17,7 +16,6 @@ import com.lagradost.cloudstream3.databinding.LogcatBinding
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.network.initClient
 import com.lagradost.cloudstream3.services.BackupWorkManager
-import com.lagradost.cloudstream3.ui.result.UiText
 import com.lagradost.cloudstream3.ui.result.txt
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.getPref
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setPaddingBottom
