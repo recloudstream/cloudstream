@@ -755,8 +755,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                 resultReloadConnectionOpenInBrowser.isVisible = data is Resource.Failure
 
                 resultTitle.setOnLongClickListener {
-                    val titleCopyLabel = txt(R.string.title)
-                    clipboardHelper(titleCopyLabel, resultTitle.text)
+                    clipboardHelper(txt(R.string.title), resultTitle.text)
                     true
                 }
             }
