@@ -19,6 +19,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.Toast
+import android.widget.Toast.LENGTH_LONG
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.annotation.IdRes
@@ -28,6 +29,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.children
 import androidx.core.view.isGone
+import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.core.view.marginStart
 import androidx.fragment.app.FragmentActivity
@@ -112,6 +114,7 @@ import com.lagradost.cloudstream3.ui.result.txt
 import com.lagradost.cloudstream3.ui.search.SearchFragment
 import com.lagradost.cloudstream3.ui.search.SearchResultBuilder
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isEmulatorSettings
+import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTruePhone
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTrueTvSettings
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.updateTv
@@ -131,11 +134,15 @@ import com.lagradost.cloudstream3.utils.AppUtils.loadSearchResult
 import com.lagradost.cloudstream3.utils.AppUtils.setDefaultFocus
 import com.lagradost.cloudstream3.utils.BackupUtils.backup
 import com.lagradost.cloudstream3.utils.BackupUtils.setUpBackup
+import com.lagradost.cloudstream3.utils.BiometricAuthenticator
+import com.lagradost.cloudstream3.utils.BiometricAuthenticator.deviceHasPasswordPinLock
+import com.lagradost.cloudstream3.utils.BiometricAuthenticator.startBiometricAuthentication
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStore.setKey
 import com.lagradost.cloudstream3.utils.DataStoreHelper
+import com.lagradost.cloudstream3.utils.DataStoreHelper.accounts
 import com.lagradost.cloudstream3.utils.DataStoreHelper.migrateResumeWatching
 import com.lagradost.cloudstream3.utils.Event
 import com.lagradost.cloudstream3.utils.InAppUpdater.Companion.runAutoUpdate
@@ -165,7 +172,6 @@ import kotlin.math.abs
 import kotlin.math.absoluteValue
 import kotlin.reflect.KClass
 import kotlin.system.exitProcess
-
 
 //https://github.com/videolan/vlc-android/blob/3706c4be2da6800b3d26344fc04fab03ffa4b860/application/vlc-android/src/org/videolan/vlc/gui/video/VideoPlayerActivity.kt#L1898
 //https://wiki.videolan.org/Android_Player_Intents/
@@ -285,7 +291,7 @@ var app = Requests(responseParser = object : ResponseParser {
     defaultHeaders = mapOf("user-agent" to USER_AGENT)
 }
 
-class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
+class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricAuthenticator.BiometricAuthCallback {
     companion object {
         const val TAG = "MAINACT"
         const val ANIMATED_OUTLINE: Boolean = false
@@ -1171,7 +1177,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                 val newLocalBinding = ActivityMainTvBinding.inflate(layoutInflater, null, false)
                 setContentView(newLocalBinding.root)
 
-                if(isTrueTvSettings() && ANIMATED_OUTLINE) {
+                if (isTrueTvSettings() && ANIMATED_OUTLINE) {
                     TvFocus.focusOutline = WeakReference(newLocalBinding.focusOutline)
                     newLocalBinding.root.viewTreeObserver.addOnScrollChangedListener {
                         TvFocus.updateFocusView(TvFocus.lastFocus.get(), same = true)
@@ -1200,7 +1206,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                         R.id.result_search_Button,
                         R.id.result_episodes_show_button,
                     )
-
+                    
                     newLocalBinding.root.viewTreeObserver.addOnGlobalFocusChangeListener { _, newFocus ->
                         if (exceptionButtons.contains(newFocus?.id)) return@addOnGlobalFocusChangeListener
                         centerView(newFocus)
@@ -1219,6 +1225,25 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
         }
 
         changeStatusBarState(isEmulatorSettings())
+
+        /** Biometric stuff for users without accounts **/
+        val authEnabled = settingsManager.getBoolean(getString(R.string.biometric_key), false)
+        val noAccounts = settingsManager.getBoolean(getString(R.string.skip_startup_account_select_key), false) || accounts.count() <= 1
+
+        if (isTruePhone() && authEnabled && noAccounts) {
+            if (deviceHasPasswordPinLock(this)) {
+                startBiometricAuthentication(this, R.string.biometric_authentication_title, false)
+
+                BiometricAuthenticator.promptInfo?.let {
+                    BiometricAuthenticator.biometricPrompt?.authenticate(it)
+                }
+
+                // hide background while authenticating, Sorry moms & dads 🙏
+                binding?.navHostFragment?.isInvisible = true
+            } else {
+                showToast(R.string.phone_not_secured, LENGTH_LONG)
+            }
+        }
 
         // Automatically enable jsdelivr if cant connect to raw.githubusercontent.com
         if (this.getKey<Boolean>(getString(R.string.jsdelivr_proxy_key)) == null && isNetworkAvailable()) {
@@ -1757,6 +1782,12 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener {
                 }
             }
         )
+    }
+
+    /** Biometric stuff **/
+    override fun onAuthenticationSuccess() {
+        // make background (nav host fragment) visible again
+        binding?.navHostFragment?.isInvisible = false
     }
 
     private var backPressedCallback: OnBackPressedCallback? = null

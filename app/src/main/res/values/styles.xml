@@ -383,6 +383,16 @@
         <item name="android:colorAccent">@color/colorPrimaryCoolBlue</item>
     </style>
 
+    <style name="OverlayPrimaryColorLavender">
+        <item name="colorPrimary">@color/colorPrimaryLavender</item>
+        <item name="android:colorPrimary">@color/colorPrimaryLavender</item>
+        <item name="colorPrimaryDark">#6B51AB</item>
+        <item name="colorAccent">#7961B4</item>
+        <item name="colorOnPrimary">@color/whiteText</item>
+        <!--    Needed for leanback fuckery    -->
+        <item name="android:colorAccent">@color/colorPrimaryLavender</item>
+    </style>
+    
     <style name="customRatingBar" parent="@style/Widget.AppCompat.RatingBar">
 
         <item name="android:progressDrawable">@drawable/abc_ratingbar_indicator_material</item>

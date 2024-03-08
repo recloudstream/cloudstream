@@ -84,6 +84,7 @@
     <color name="colorPrimaryOrange">#CE8500</color>
     <color name="colorPrimaryDandelionYellow">#F5BB00</color>
     <color name="colorPrimaryCoolBlue">#408cac</color>
+    <color name="colorPrimaryLavender">#6F55AF</color>
 
     <color name="colorTestPass">#48E484</color>
     <color name="colorTestFail">#ea596e</color>

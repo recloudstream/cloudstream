@@ -212,6 +212,7 @@ dependencies {
     implementation("androidx.palette:palette-ktx:1.0.0") // Palette For Images -> Colors
     implementation("androidx.tvprovider:tvprovider:1.0.0")
     implementation("com.github.discord:OverlappingPanels:0.1.5") // Gestures
+    implementation ("androidx.biometric:biometric:1.2.0-alpha05") // Fingerprint Authentication
     implementation("com.github.rubensousa:previewseekbar-media3:1.1.1.0") // SeekBar Preview
 
     // Extensions & Other Libs

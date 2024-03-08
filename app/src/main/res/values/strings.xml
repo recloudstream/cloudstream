@@ -247,7 +247,7 @@
     <string name="backup_failed_error_format">Error backing up %s</string>
     <string name="search">Search</string>
     <string name="library">Library</string>
-    <string name="category_account">Accounts</string>
+    <string name="category_account">Accounts and Security</string>
     <string name="category_updates">Updates and backup</string>
     <string name="settings_info">Info</string>
     <string name="advanced_search">Advanced Search</string>
@@ -750,4 +750,17 @@
     <string name="movie">Movie</string>
     <string name="unfavorite">Unfavorite</string>
     <string name="result_search">Search</string>
+    <!-- For Biometrics -->
+    <string name="biometric_authentication_title">Unlock CloudStream</string>
+    <string name="biometric_setting">Lock with Biometrics</string>
+    <string name="biometric_key" translatable="false">biometric_key</string>
+    <string name="password_pin_authentication_title">Password/PIN Authentication</string>
+    <string name="biometric_unsupported">Biometric authentication is not supported on this device</string>
+    <string name="phone_not_secured">Please disable fingerprint authentication if device has no lock.</string>
+    <string name="biometric_setting_summary">Unlock the app with Fingerprint, Face ID, PIN, Pattern and Password.</string>
+    <string name="biometric_prompt_description">This window will close after few failed attempts. You\'ll have to restart the App.</string>
+    <string name="biometric_warning">Your CloudStream data has been backed up now, although probability of this rare case is very low but all
+        devices behave differently, in case you get locked down from accessing the app in worst case scenario,
+    Clear the app data wholly and restore the backup. Any inconvenience if arrived is deeply regretted.</string>
+
 </resources>
