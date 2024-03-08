@@ -246,6 +246,7 @@ class ResultFragmentTv : Fragment() {
                 storedData.start
             )
         // ===== ===== =====
+        var comingSoon = false
 
         binding?.apply {
             //episodesShadow.rotationX = 180.0f//if(episodesShadow.isRtl()) 180.0f else 0.0f
@@ -648,8 +649,7 @@ class ResultFragmentTv : Fragment() {
             if (data == null) return@observeNullable
 
             binding?.apply {
-
-                resultPlayMovie.isVisible = data is Resource.Success
+                resultPlayMovie.isVisible = (data is Resource.Success) && !comingSoon
                 resultPlaySeries.isVisible = false
                 resultEpisodesShow.isVisible = false
 
@@ -775,9 +775,9 @@ class ResultFragmentTv : Fragment() {
             binding?.apply {
 
                 resultPlayMovie.isVisible = false
-                resultPlaySeries.isVisible = true
-                resultEpisodes.isVisible = true
-                resultEpisodesShow.isVisible = true
+                resultPlaySeries.isVisible = true && !comingSoon
+                resultEpisodes.isVisible = true && !comingSoon
+                resultEpisodesShow.isVisible = true && !comingSoon
 
                 //    resultEpisodeLoading.isVisible = episodes is Resource.Loading
                 if (episodes is Resource.Success) {
@@ -898,8 +898,12 @@ class ResultFragmentTv : Fragment() {
                             radius = 0,
                             errorImageDrawable = error
                         )
-                        resultComingSoon.isVisible = d.comingSoon
+                        comingSoon = d.comingSoon
+                        resultTvComingSoon.isVisible = d.comingSoon
+                        resultPlayMovie.isGone = d.comingSoon
+                        resultPlaySeries.isGone = d.comingSoon
                         resultDataHolder.isGone = d.comingSoon
+                        
                         UIHelper.populateChips(resultTag, d.tags)
                         resultCastItems.isGone = d.actors.isNullOrEmpty()
                         (resultCastItems.adapter as? ActorAdaptor)?.updateList(

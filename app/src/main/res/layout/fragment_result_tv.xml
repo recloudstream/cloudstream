@@ -604,6 +604,20 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
                 tools:listitem="@layout/cast_item"
                 tools:visibility="visible" />
 
+            <TextView
+                android:id="@+id/result_tv_coming_soon"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:paddingTop="50dp"
+                android:text="@string/coming_soon"
+                android:textColor="?attr/textColor"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                tools:visibility="visible"
+                android:visibility="gone" />
+
             <LinearLayout
                 android:id="@+id/result_recommendations_holder"
                 android:descendantFocusability="afterDescendants"
