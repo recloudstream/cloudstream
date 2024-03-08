@@ -68,6 +68,13 @@ class AccountSelectActivity : AppCompatActivity(), BiometricAuthenticator.Biomet
             }
         }
 
+        observe(viewModel.isAllowedLogin) { isAllowedLogin ->
+            if (isAllowedLogin) {
+                // We are allowed to continue to MainActivity
+                navigateToMainActivity()
+            }
+        }
+
         // Don't show account selection if there is only
         // one account that exists
         if (!isEditingFromMainActivity && skipStartup) {
@@ -75,12 +82,6 @@ class AccountSelectActivity : AppCompatActivity(), BiometricAuthenticator.Biomet
             if (currentAccount?.lockPin != null) {
                 CommonActivity.init(this)
                 viewModel.handleAccountSelect(currentAccount, this, true)
-                observe(viewModel.isAllowedLogin) { isAllowedLogin ->
-                    if (isAllowedLogin) {
-                        // We are allowed to continue to MainActivity
-                        navigateToMainActivity()
-                    }
-                }
             } else {
                 if (accounts.count() > 1) {
                     showToast(this, getString(
@@ -108,12 +109,6 @@ class AccountSelectActivity : AppCompatActivity(), BiometricAuthenticator.Biomet
                 // Handle the selected account
                 accountSelectCallback = {
                     viewModel.handleAccountSelect(it, this)
-                    observe(viewModel.isAllowedLogin) { isAllowedLogin ->
-                        if (isAllowedLogin) {
-                            // We are allowed to continue to MainActivity
-                            navigateToMainActivity()
-                        }
-                    }
                 },
                 accountCreateCallback = { viewModel.handleAccountUpdate(it, this) },
                 accountEditCallback = {
