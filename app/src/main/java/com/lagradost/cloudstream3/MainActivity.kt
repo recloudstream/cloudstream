@@ -1189,8 +1189,26 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricAu
                     newLocalBinding.focusOutline.isVisible = false
                 }
 
-                if (isTrueTvSettings()) {
+                if(isTrueTvSettings()) {
+                    // Put here any button you don't want focusing it to center the view
+                    val exceptionButtons = listOf(
+                        R.id.home_preview_play_btt,
+                        R.id.home_preview_info_btt,
+                        R.id.home_preview_hidden_next_focus,
+                        R.id.home_preview_hidden_prev_focus,
+                        R.id.result_play_movie_button,
+                        R.id.result_play_series_button,
+                        R.id.result_resume_series_button,
+                        R.id.result_play_trailer_button,
+                        R.id.result_bookmark_Button,
+                        R.id.result_favorite_Button,
+                        R.id.result_subscribe_Button,
+                        R.id.result_search_Button,
+                        R.id.result_episodes_show_button,
+                    )
+                    
                     newLocalBinding.root.viewTreeObserver.addOnGlobalFocusChangeListener { _, newFocus ->
+                        if (exceptionButtons.contains(newFocus?.id)) return@addOnGlobalFocusChangeListener
                         centerView(newFocus)
                     }
                 }

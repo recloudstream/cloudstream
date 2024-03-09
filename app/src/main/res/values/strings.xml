@@ -306,6 +306,7 @@
     <string name="go_forward_30">+30</string>
     <string name="delete_message" formatted="true">This will permanently delete %s\nAre you sure?</string>
     <string name="resume_time_left" formatted="true">%dm\nremaining</string>
+    <string name="resume_remaining" formatted="true">%s\nremaining</string>
     <string name="status_ongoing">Ongoing</string>
     <string name="status_completed">Completed</string>
     <string name="status">Status</string>
@@ -745,7 +746,8 @@
     <string name="rotate_video_desc">Display a toggle button for screen orientation</string>
     <string name="auto_rotate_video_desc">Enable automatic switching of screen orientation based on video orientation</string>
     <string name="auto_rotate_video">Auto rotate</string>
-
+    <string name="favorite">Favorite</string>
+    <string name="unfavorite">Unfavorite</string>
     <!-- For Biometrics -->
     <string name="biometric_authentication_title">Unlock CloudStream</string>
     <string name="biometric_setting">Lock with Biometrics</string>
@@ -758,4 +760,5 @@
     <string name="biometric_warning">Your CloudStream data has been backed up now, although probability of this rare case is very low but all
         devices behave differently, in case you get locked down from accessing the app in worst case scenario,
     Clear the app data wholly and restore the backup. Any inconvenience if arrived is deeply regretted.</string>
+
 </resources>
