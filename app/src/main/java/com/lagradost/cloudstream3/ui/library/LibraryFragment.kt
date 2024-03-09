@@ -131,6 +131,18 @@ class LibraryFragment : Fragment() {
         super.onSaveInstanceState(outState)
     }
 
+    private fun updateRandom() {
+        val position = libraryViewModel.currentPage.value ?: 0
+        val pages = (libraryViewModel.pages.value as? Resource.Success)?.value ?: return
+        if (toggleRandomButton) {
+            listLibraryItems.clear()
+            listLibraryItems.addAll(pages[position].items)
+            binding?.libraryRandom?.isVisible = listLibraryItems.isNotEmpty()
+        } else {
+            binding?.libraryRandom?.isGone = true
+        }
+    }
+
     @SuppressLint("ResourceType", "CutPasteId")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -395,15 +407,7 @@ class LibraryFragment : Fragment() {
                             binding?.viewpager?.setCurrentItem(page, false)
                         }
 
-                        observe(libraryViewModel.currentPage){
-                            if (toggleRandomButton) {
-                                listLibraryItems.clear()
-                                listLibraryItems.addAll(pages[it].items)
-                                libraryRandom.isVisible = listLibraryItems.isNotEmpty()
-                            } else {
-                                libraryRandom.isGone = true
-                            }
-                        }
+                        updateRandom()
 
                         // Only stop loading after 300ms to hide the fade effect the viewpager produces when updating
                         // Without this there would be a flashing effect:
@@ -481,6 +485,7 @@ class LibraryFragment : Fragment() {
         }
 
         observe(libraryViewModel.currentPage) { position ->
+            updateRandom()
             val all = binding?.viewpager?.allViews?.toList()
                 ?.filterIsInstance<AutofitRecyclerView>()
 
