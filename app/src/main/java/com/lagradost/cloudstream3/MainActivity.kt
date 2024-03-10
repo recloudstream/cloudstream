@@ -19,7 +19,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.Toast
-import android.widget.Toast.LENGTH_LONG
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.annotation.IdRes
@@ -1240,8 +1239,6 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricAu
 
                 // hide background while authenticating, Sorry moms & dads 🙏
                 binding?.navHostFragment?.isInvisible = true
-            } else {
-                showToast(R.string.phone_not_secured, LENGTH_LONG)
             }
         }
 
