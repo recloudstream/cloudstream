@@ -69,6 +69,7 @@
     <string name="enable_skip_op_from_database" translatable="false">enable_skip_op_from_database</string>
     <string name="rotate_video_key" translatable="false">rotate_video_key</string>
     <string name="auto_rotate_video_key" translatable="false">auto_rotate_video_key</string>
+    <string name="biometric_key" translatable="false">biometric_key</string>
     <!-- FORMAT MIGHT TRANSLATE, WILL CAUSE CRASH IF APPLIED WRONG -->
     <string name="extra_info_format" formatted="true" translatable="false">%d %s | %s</string>
     <string name="storage_size_format" formatted="true" translatable="false">%s • %s</string>
@@ -751,7 +752,6 @@
     <!-- For Biometrics -->
     <string name="biometric_authentication_title">Unlock CloudStream</string>
     <string name="biometric_setting">Lock with Biometrics</string>
-    <string name="biometric_key" translatable="false">biometric_key</string>
     <string name="password_pin_authentication_title">Password/PIN Authentication</string>
     <string name="biometric_unsupported">Biometric authentication is not supported on this device</string>
     <string name="phone_not_secured">Please disable fingerprint authentication if device has no lock.</string>
