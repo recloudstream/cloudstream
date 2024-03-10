@@ -69,7 +69,7 @@ object BackupUtils {
         DOWNLOAD_EPISODE_CACHE,
 
         "biometric_key", // can lock down users if backup is shared on a incompatible device
-        "nginx_user", // Nginx user key
+        "nginx_user" // Nginx user key
     )
 
     /** false if key should not be contained in backup */
