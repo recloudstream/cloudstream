@@ -20,6 +20,7 @@ import com.lagradost.cloudstream3.APIHolder.apis
 import com.lagradost.cloudstream3.APIHolder.getId
 import com.lagradost.cloudstream3.APIHolder.unixTime
 import com.lagradost.cloudstream3.APIHolder.unixTimeMS
+import com.lagradost.cloudstream3.AcraApplication.Companion.context
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.CommonActivity.activity
 import com.lagradost.cloudstream3.CommonActivity.getCastSession
@@ -31,6 +32,7 @@ import com.lagradost.cloudstream3.LoadResponse.Companion.isMovie
 import com.lagradost.cloudstream3.metaproviders.SyncRedirector
 import com.lagradost.cloudstream3.mvvm.*
 import com.lagradost.cloudstream3.syncproviders.AccountManager
+import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.secondsToReadable
 import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.syncproviders.providers.Kitsu
 import com.lagradost.cloudstream3.syncproviders.providers.SimklApi
@@ -261,8 +263,7 @@ fun LoadResponse.toResultData(repo: APIRepository): ResultData {
         metaText =
         if (repo.providerType == ProviderType.MetaProvider) txt(R.string.provider_info_meta) else null,
         durationText = if (dur == null || dur <= 0) null else txt(
-            R.string.duration_format,
-            dur
+            secondsToReadable(dur * 60, "0 mins")
         ),
         onGoingText = if (this is EpisodeResponse) {
             txt(
@@ -2464,7 +2465,7 @@ class ResultViewModel2 : ViewModel() {
             ResumeProgress(
                 progress = (viewPos.position / 1000).toInt(),
                 maxProgress = (viewPos.duration / 1000).toInt(),
-                txt(R.string.resume_time_left, (viewPos.duration - viewPos.position) / (60_000))
+                txt(R.string.resume_remaining, secondsToReadable(((viewPos.duration - viewPos.position) / 1_000).toInt(), "0 mins"))
             )
         }
 

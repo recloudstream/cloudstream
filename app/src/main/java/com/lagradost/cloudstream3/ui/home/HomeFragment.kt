@@ -529,6 +529,7 @@ class HomeFragment : Fragment() {
                     super.onScrolled(recyclerView, dx, dy)
                 }
             })
+
         }
 
 
