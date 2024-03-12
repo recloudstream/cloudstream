@@ -10,7 +10,7 @@
         android:title="@string/title_search" />
     <item
         android:id="@+id/navigation_library"
-        android:icon="@drawable/ic_outline_account_circle_24"
+        android:icon="@drawable/library_icon"
         android:title="@string/library" />
     <item
         android:id="@+id/navigation_downloads"
