@@ -9,6 +9,7 @@ import android.content.res.Resources
 import android.os.Build
 import android.util.DisplayMetrics
 import android.util.Log
+import android.view.Gravity
 import android.view.KeyEvent
 import android.view.View
 import android.view.View.NO_ID
@@ -40,6 +41,7 @@ import com.lagradost.cloudstream3.utils.Event
 import com.lagradost.cloudstream3.utils.UIHelper
 import com.lagradost.cloudstream3.utils.UIHelper.hasPIPPermission
 import com.lagradost.cloudstream3.utils.UIHelper.shouldShowPIPMode
+import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import org.schabi.newpipe.extractor.NewPipe
 import java.lang.ref.WeakReference
 import java.util.Locale
@@ -160,6 +162,7 @@ object CommonActivity {
             // custom toasts are deprecated and won't appear when cs3 sets minSDK to api30 (A11)
             val toast = Toast(act)
             toast.duration = duration ?: Toast.LENGTH_SHORT
+            toast.setGravity(Gravity.CENTER_HORIZONTAL or Gravity.BOTTOM, 0, 5.toPx)
             toast.view = binding.root
             currentToast = toast
             toast.show()
