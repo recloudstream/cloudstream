@@ -7,6 +7,7 @@ import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError
+import com.lagradost.cloudstream3.utils.Scheduler.Companion.attachBackupListener
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.getFolderSize
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.getPref
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setPaddingBottom
@@ -14,6 +15,7 @@ import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setTool
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setUpToolbar
 import com.lagradost.cloudstream3.ui.subtitles.ChromecastSubtitlesFragment
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment
+import com.lagradost.cloudstream3.utils.DataStore.getSyncPrefs
 import com.lagradost.cloudstream3.utils.Qualities
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showDialog
@@ -30,6 +32,7 @@ class SettingsPlayer : PreferenceFragmentCompat() {
         hideKeyboard()
         setPreferencesFromResource(R.xml.settings_player, rootKey)
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(requireContext())
+            .attachBackupListener(requireContext().getSyncPrefs()).self
 
         getPref(R.string.video_buffer_length_key)?.setOnPreferenceClickListener {
             val prefNames = resources.getStringArray(R.array.video_buffer_length_names)

@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.syncproviders
 
+import androidx.annotation.WorkerThread
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.removeKeys
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
@@ -13,6 +14,8 @@ abstract class AccountManager(private val defIndex: Int) : AuthAPI {
         val aniListApi = AniListApi(0)
         val openSubtitlesApi = OpenSubtitlesApi(0)
         val simklApi = SimklApi(0)
+        val googleDriveApi = GoogleDriveApi(0)
+        val pcloudApi = PcloudApi(0)
         val indexSubtitlesApi = IndexSubtitleApi()
         val addic7ed = Addic7ed()
         val subScene = SubScene()
@@ -21,13 +24,18 @@ abstract class AccountManager(private val defIndex: Int) : AuthAPI {
         // used to login via app intent
         val OAuth2Apis
             get() = listOf<OAuth2API>(
-                malApi, aniListApi, simklApi
+                malApi, aniListApi, simklApi, googleDriveApi, pcloudApi
             )
 
         // this needs init with context and can be accessed in settings
         val accountManagers
             get() = listOf(
-                malApi, aniListApi, openSubtitlesApi, simklApi //nginxApi
+                malApi,
+                aniListApi,
+                openSubtitlesApi,
+                simklApi,
+                googleDriveApi,
+                pcloudApi //, nginxApi
             )
 
         // used for active syncing
@@ -36,8 +44,16 @@ abstract class AccountManager(private val defIndex: Int) : AuthAPI {
                 SyncRepo(malApi), SyncRepo(aniListApi), SyncRepo(localListApi), SyncRepo(simklApi)
             )
 
+        // used for active backup
+        val BackupApis
+            get() = listOf<SafeBackupAPI>(
+                googleDriveApi, pcloudApi
+            )
+
         val inAppAuths
-            get() = listOf(openSubtitlesApi)//, nginxApi)
+            get() = listOf(
+                openSubtitlesApi, googleDriveApi, pcloudApi//, nginxApi
+            )
 
         val subtitleProviders
             get() = listOf(
@@ -87,11 +103,17 @@ abstract class AccountManager(private val defIndex: Int) : AuthAPI {
 
     var accountIndex = defIndex
     private var lastAccountIndex = defIndex
-    protected val accountId get() = "${idPrefix}_account_$accountIndex"
+    val accountId get() = "${idPrefix}_account_$accountIndex"
     private val accountActiveKey get() = "${idPrefix}_active"
 
     // int array of all accounts indexes
     private val accountsKey get() = "${idPrefix}_accounts"
+
+
+    // runs on startup
+    @WorkerThread
+    open suspend fun initialize() {
+    }
 
     protected fun removeAccountKeys() {
         removeKeys(accountId)
@@ -119,6 +141,7 @@ abstract class AccountManager(private val defIndex: Int) : AuthAPI {
         lastAccountIndex = accountIndex
         accountIndex = (accounts?.maxOrNull() ?: 0) + 1
     }
+
     protected fun switchToOldAccount() {
         accountIndex = lastAccountIndex
     }

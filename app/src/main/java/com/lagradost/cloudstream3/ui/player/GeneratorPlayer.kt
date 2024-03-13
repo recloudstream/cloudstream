@@ -33,6 +33,7 @@ import com.lagradost.cloudstream3.mvvm.*
 import com.lagradost.cloudstream3.subtitles.AbstractSubApi
 import com.lagradost.cloudstream3.subtitles.AbstractSubtitleEntities
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.subtitleProviders
+import com.lagradost.cloudstream3.utils.Scheduler.Companion.attachBackupListener
 import com.lagradost.cloudstream3.ui.player.CS3IPlayer.Companion.preferredAudioTrackLanguage
 import com.lagradost.cloudstream3.ui.player.CustomDecoder.Companion.updateForcedEncoding
 import com.lagradost.cloudstream3.ui.player.PlayerSubtitleHelper.Companion.toSubtitleMimeType
@@ -45,6 +46,7 @@ import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment.Companion.getAu
 import com.lagradost.cloudstream3.utils.*
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.runOnMainThread
+import com.lagradost.cloudstream3.utils.DataStore.getSyncPrefs
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showDialog
 import com.lagradost.cloudstream3.utils.SubtitleHelper.fromTwoLettersToLanguage
 import com.lagradost.cloudstream3.utils.SubtitleHelper.languages
@@ -759,6 +761,7 @@ class GeneratorPlayer : FullScreenPlayer() {
 
                 binding.subtitlesClickSettings.setOnClickListener {
                     val settingsManager = PreferenceManager.getDefaultSharedPreferences(ctx)
+                        .attachBackupListener(ctx.getSyncPrefs()).self
 
                     val prefNames = ctx.resources.getStringArray(R.array.subtitles_encoding_list)
                     val prefValues = ctx.resources.getStringArray(R.array.subtitles_encoding_values)

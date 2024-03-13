@@ -8,12 +8,14 @@ import androidx.preference.PreferenceManager
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.SearchQuality
 import com.lagradost.cloudstream3.mvvm.logError
+import com.lagradost.cloudstream3.utils.Scheduler.Companion.attachBackupListener
 import com.lagradost.cloudstream3.ui.search.SearchResultBuilder
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.getPref
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setPaddingBottom
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setToolBarScrollFlags
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setUpToolbar
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.updateTv
+import com.lagradost.cloudstream3.utils.DataStore.getSyncPrefs
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showMultiDialog
@@ -31,6 +33,7 @@ class SettingsUI : PreferenceFragmentCompat() {
         hideKeyboard()
         setPreferencesFromResource(R.xml.settings_ui, rootKey)
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(requireContext())
+            .attachBackupListener(requireContext().getSyncPrefs()).self
 
         getPref(R.string.poster_ui_key)?.setOnPreferenceClickListener {
             val prefNames = resources.getStringArray(R.array.poster_ui_options)

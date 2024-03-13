@@ -18,6 +18,8 @@ import com.lagradost.cloudstream3.databinding.FragmentSetupProviderLanguagesBind
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.utils.SubtitleHelper
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
+import com.lagradost.cloudstream3.utils.Scheduler.Companion.attachBackupListener
+import com.lagradost.cloudstream3.utils.DataStore.getSyncPrefs
 
 class SetupFragmentProviderLanguage : Fragment() {
     var binding: FragmentSetupProviderLanguagesBinding? = null
@@ -46,6 +48,7 @@ class SetupFragmentProviderLanguage : Fragment() {
             val ctx = context ?: return@normalSafeApiCall
 
             val settingsManager = PreferenceManager.getDefaultSharedPreferences(ctx)
+                .attachBackupListener(ctx.getSyncPrefs()).self
 
             val arrayAdapter =
                 ArrayAdapter<String>(ctx, R.layout.sort_bottom_single_choice)

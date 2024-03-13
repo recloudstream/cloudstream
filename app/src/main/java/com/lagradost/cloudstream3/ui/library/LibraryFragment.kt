@@ -7,6 +7,8 @@ import android.content.res.Configuration
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
+import androidx.fragment.app.Fragment
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
@@ -22,7 +24,6 @@ import androidx.appcompat.widget.SearchView
 import androidx.core.view.allViews
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.RecyclerView
@@ -42,6 +43,7 @@ import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.debugAssert
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.observe
+import com.lagradost.cloudstream3.syncproviders.BackupAPI
 import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.syncproviders.SyncIdName
 import com.lagradost.cloudstream3.ui.AutofitRecyclerView
@@ -57,6 +59,7 @@ import com.lagradost.cloudstream3.utils.DataStoreHelper.currentAccount
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
 import com.lagradost.cloudstream3.utils.UIHelper.getSpanCount
+import org.checkerframework.framework.qual.Unused
 import kotlin.math.abs
 
 const val LIBRARY_FOLDER = "library_folder"
@@ -160,7 +163,8 @@ class LibraryFragment : Fragment() {
         }
 
         // Set the color for the search exit icon to the correct theme text color
-        val searchExitIcon = binding?.mainSearch?.findViewById<ImageView>(androidx.appcompat.R.id.search_close_btn)
+        val searchExitIcon =
+            binding?.mainSearch?.findViewById<ImageView>(androidx.appcompat.R.id.search_close_btn)
         val searchExitIconColor = TypedValue()
 
         activity?.theme?.resolveAttribute(android.R.attr.textColor, searchExitIconColor, true)
@@ -569,6 +573,21 @@ class LibraryFragment : Fragment() {
         super.onConfigurationChanged(newConfig)
     }
 
+    override fun onResume() {
+        super.onResume()
+        MainActivity.afterBackupRestoreEvent += ::onNewSyncData
+    }
+
+    override fun onStop() {
+        super.onStop()
+        MainActivity.afterBackupRestoreEvent -= ::onNewSyncData
+    }
+
+    private fun onNewSyncData(unused: Unit) {
+        Log.d(BackupAPI.LOG_KEY, "will reload pages")
+        libraryViewModel.reloadPages(true)
+    }
+
     private val sortChangeClickListener = View.OnClickListener { view ->
         val methods = libraryViewModel.sortingMethods.map {
             txt(it.stringRes).asString(view.context)
@@ -584,10 +603,10 @@ class LibraryFragment : Fragment() {
                 libraryViewModel.sort(method)
             })
     }
-}
 
-class MenuSearchView(context: Context) : SearchView(context) {
-    override fun onActionViewCollapsed() {
-        super.onActionViewCollapsed()
+    class MenuSearchView(context: Context) : SearchView(context) {
+        override fun onActionViewCollapsed() {
+            super.onActionViewCollapsed()
+        }
     }
 }

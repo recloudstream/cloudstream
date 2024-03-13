@@ -1,9 +1,7 @@
 package com.lagradost.cloudstream3.syncproviders
 
-import androidx.annotation.WorkerThread
-
 interface InAppAuthAPI : AuthAPI {
-    data class LoginData(
+    data class UserData(
         val username: String? = null,
         val password: String? = null,
         val server: String? = null,
@@ -21,10 +19,10 @@ interface InAppAuthAPI : AuthAPI {
     val storesPasswordInPlainText: Boolean
 
     // return true if logged in successfully
-    suspend fun login(data: LoginData): Boolean
+    suspend fun login(data: UserData): Boolean
 
     // used to fill the UI if you want to edit any data about your login info
-    fun getLatestLoginData(): LoginData?
+    fun getUserData(): UserData?
 }
 
 abstract class InAppAuthAPIManager(defIndex: Int) : AccountManager(defIndex), InAppAuthAPI {
@@ -34,11 +32,6 @@ abstract class InAppAuthAPIManager(defIndex: Int) : AccountManager(defIndex), In
     override val requiresServer = false
     override val storesPasswordInPlainText = true
     override val requiresLogin = true
-
-    // runs on startup
-    @WorkerThread
-    open suspend fun initialize() {
-    }
 
     override fun logOut() {
         throw NotImplementedError()
@@ -52,11 +45,11 @@ abstract class InAppAuthAPIManager(defIndex: Int) : AccountManager(defIndex), In
 
     override val icon: Int? = null
 
-    override suspend fun login(data: InAppAuthAPI.LoginData): Boolean {
+    override suspend fun login(data: InAppAuthAPI.UserData): Boolean {
         throw NotImplementedError()
     }
 
-    override fun getLatestLoginData(): InAppAuthAPI.LoginData? {
+    override fun getUserData(): InAppAuthAPI.UserData? {
         throw NotImplementedError()
     }
 

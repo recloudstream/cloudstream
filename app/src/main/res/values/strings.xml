@@ -464,10 +464,14 @@
     <string name="bottom_title_settings">Poster title location</string>
     <string name="bottom_title_settings_des">Put the title under the poster</string>
     <!-- account stuff -->
+    <string name="settings_category_plugins">Plugins</string>
+    <string name="settings_category_remote_sync">Remote Sync</string>
     <string name="anilist_key" translatable="false">anilist_key</string>
     <string name="simkl_key" translatable="false">simkl_key</string>
     <string name="mal_key" translatable="false">mal_key</string>
     <string name="opensubtitles_key" translatable="false">opensubtitles_key</string>
+    <string name="gdrive_key" translatable="false">gdrive_key</string>
+    <string name="pcloud_key" translatable="false">pcloud_key</string>
     <string name="nginx_key" translatable="false">nginx_key</string>
     <string name="example_password">password123</string>
     <string name="example_username">Username</string>
@@ -476,6 +480,9 @@
     <string name="example_site_name">NewSiteName</string>
     <string name="example_site_url">https://example.com</string>
     <string name="example_lang_name">Language code (en)</string>
+    <string name="example_login_file_name" translatable="false">cloudstreamapp-sync-file</string>
+    <string name="example_login_client_id">OAuth Client ID</string>
+    <string name="example_login_client_secret">OAuth Client Secret</string>
     <!--
     <string name="mal_account_settings" translatable="false">MAL</string>
     <string name="anilist_account_settings" translatable="false">AniList</string>
@@ -700,6 +707,12 @@
     <string name="qualities">Qualities</string>
     <string name="profile_background_des">Profile background</string>
     <string name="unable_to_inflate">UI was unable to be created correctly, this is a MAJOR BUG and should be reported immediately %s</string>
+    <string name="example_login_file_name_full">Sync file name (optional)</string>
+    <string name="example_login_redirect_url_full">Oauth redirect url (optional)</string>
+    <string name="example_redirect_url" translatable="false">https://recloudstream.github.io/cloudstream-sync/google-drive</string>
+    <string name="info_button">Info</string>
+    <string name="sync_data">Sync data</string>
+    <string name="syncing_data">Syncing data</string>
     <string name="already_voted">You have already voted</string>
 
     <string name="favorites_list_name">Favorites</string>
@@ -728,8 +741,6 @@
 
 
     <string name="tv_no_focus_tag" translatable="false">tv_no_focus_tag</string>
-
-
     <string name="enter_pin">Enter PIN</string>
     <string name="enter_pin_with_name" formatted="true">Enter PIN for %s</string>
     <string name="enter_current_pin">Enter Current PIN</string>
