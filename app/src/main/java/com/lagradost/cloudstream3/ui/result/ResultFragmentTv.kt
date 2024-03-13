@@ -40,6 +40,7 @@ import com.lagradost.cloudstream3.ui.search.SEARCH_ACTION_FOCUSED
 import com.lagradost.cloudstream3.ui.search.SearchAdapter
 import com.lagradost.cloudstream3.ui.search.SearchHelper
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isEmulatorSettings
+import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTrueTvSettings
 import com.lagradost.cloudstream3.utils.AppUtils.html
 import com.lagradost.cloudstream3.utils.AppUtils.isRtl
 import com.lagradost.cloudstream3.utils.AppUtils.loadCache
@@ -754,16 +755,19 @@ class ResultFragmentTv : Fragment() {
         observe(viewModel.recommendations) { recommendations ->
             setRecommendations(recommendations, null)
         }
-        observe(viewModel.episodeSynopsis) { description ->
-            view.context?.let { ctx ->
-                val builder: AlertDialog.Builder =
-                    AlertDialog.Builder(ctx, R.style.AlertDialogCustom)
-                builder.setMessage(description.html())
-                    .setTitle(R.string.synopsis)
-                    .setOnDismissListener {
-                        viewModel.releaseEpisodeSynopsis()
-                    }
-                    .show()
+
+        if (isTrueTvSettings()) {
+            observe(viewModel.episodeSynopsis) { description ->
+                view.context?.let { ctx ->
+                    val builder: AlertDialog.Builder =
+                        AlertDialog.Builder(ctx, R.style.AlertDialogCustom)
+                    builder.setMessage(description.html())
+                        .setTitle(R.string.synopsis)
+                        .setOnDismissListener {
+                            viewModel.releaseEpisodeSynopsis()
+                        }
+                        .show()
+                }
             }
         }
 
@@ -874,14 +878,25 @@ class ResultFragmentTv : Fragment() {
                         resultNextAiring.setText(d.nextAiringEpisode)
                         resultNextAiringTime.setText(d.nextAiringDate)
                         resultPoster.setImage(d.posterImage)
-                        resultDescription.setTextHtml(d.plotText)
-                        resultDescription.setOnClickListener { view ->
-                            view.context?.let { ctx ->
-                                val builder: AlertDialog.Builder =
-                                    AlertDialog.Builder(ctx, R.style.AlertDialogCustom)
-                                builder.setMessage(d.plotText.asString(ctx).html())
-                                    .setTitle(d.plotHeaderText.asString(ctx))
-                                    .show()
+
+                        var isExpanded = false
+                        resultDescription.apply {
+                            setTextHtml(d.plotText)
+                            setOnClickListener {
+                                if (context.isEmulatorSettings()) {
+                                    isExpanded = !isExpanded
+                                    maxLines = if (isExpanded) {
+                                        Integer.MAX_VALUE
+                                    } else 10
+                                } else {
+                                    view.context?.let { ctx ->
+                                        val builder: AlertDialog.Builder =
+                                            AlertDialog.Builder(ctx, R.style.AlertDialogCustom)
+                                        builder.setMessage(d.plotText.asString(ctx).html())
+                                            .setTitle(d.plotHeaderText.asString(ctx))
+                                            .show()
+                                    }
+                                }
                             }
                         }
 

@@ -62,14 +62,12 @@ import com.lagradost.cloudstream3.ui.result.ResultFragment.updateUIEvent
 import com.lagradost.cloudstream3.ui.search.SearchAdapter
 import com.lagradost.cloudstream3.ui.search.SearchHelper
 import com.lagradost.cloudstream3.utils.AppUtils.getNameFull
-import com.lagradost.cloudstream3.utils.AppUtils.html
 import com.lagradost.cloudstream3.utils.AppUtils.isCastApiAvailable
 import com.lagradost.cloudstream3.utils.AppUtils.loadCache
 import com.lagradost.cloudstream3.utils.AppUtils.openBrowser
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialogInstant
-import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialogText
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showDialog
 import com.lagradost.cloudstream3.utils.UIHelper
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
@@ -688,14 +686,15 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                     resultNextAiringTime.setText(d.nextAiringDate)
                     resultPoster.setImage(d.posterImage)
                     resultPosterBackground.setImage(d.posterBackgroundImage)
-                    resultDescription.setTextHtml(d.plotText)
-                    resultDescription.setOnClickListener {
-                        activity?.let { activity ->
-                            activity.showBottomDialogText(
-                                d.titleText.asString(activity),
-                                d.plotText.asString(activity).html(),
-                                {}
-                            )
+
+                    var isExpanded = false
+                    resultDescription.apply {
+                        setTextHtml(d.plotText)
+                        setOnClickListener {
+                            isExpanded = !isExpanded
+                            maxLines = if (isExpanded) {
+                                Integer.MAX_VALUE
+                            } else 10
                         }
                     }
 
@@ -900,14 +899,6 @@ open class ResultFragmentPhone : FullScreenPlayer() {
         }
         observe(viewModel.recommendations) { recommendations ->
             setRecommendations(recommendations, null)
-        }
-        observe(viewModel.episodeSynopsis) { description ->
-            activity?.let { activity ->
-                activity.showBottomDialogText(
-                    activity.getString(R.string.synopsis),
-                    description.html()
-                ) { viewModel.releaseEpisodeSynopsis() }
-            }
         }
         context?.let { ctx ->
             val arrayAdapter = ArrayAdapter<String>(ctx, R.layout.sort_bottom_single_choice)
