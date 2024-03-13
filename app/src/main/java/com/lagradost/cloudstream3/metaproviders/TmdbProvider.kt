@@ -151,6 +151,8 @@ open class TmdbProvider : MainAPI() {
             recommendations = (this@toLoadResponse.recommendations
                 ?: this@toLoadResponse.similar)?.results?.map { it.toSearchResponse() }
             addActors(credits?.cast?.toList().toActors())
+
+            contentRating = fetchContentRating(id, "US")
         }
     }
 
@@ -193,6 +195,8 @@ open class TmdbProvider : MainAPI() {
             recommendations = (this@toLoadResponse.recommendations
                 ?: this@toLoadResponse.similar)?.results?.map { it.toSearchResponse() }
             addActors(credits?.cast?.toList().toActors())
+
+            contentRating = fetchContentRating(id, "US")
         }
     }
 
@@ -262,6 +266,26 @@ open class TmdbProvider : MainAPI() {
 
     open fun loadFromTmdb(tmdb: Int): LoadResponse? {
         return null
+    }
+
+    open suspend fun fetchContentRating(id: Int?, country: String): String? {
+        id ?: return null
+
+        val contentRatings = tmdb.tvService().content_ratings(id).awaitResponse().body()?.results
+        return if (!contentRatings.isNullOrEmpty()) {
+            contentRatings.firstOrNull { it: ContentRating ->
+                it.iso_3166_1 == country
+            }?.rating
+        } else {
+            val releaseDates = tmdb.moviesService().releaseDates(id).awaitResponse().body()?.results
+            val certification = releaseDates?.firstOrNull { it: ReleaseDatesResult ->
+                it.iso_3166_1 == country
+            }?.release_dates?.firstOrNull { it: ReleaseDate ->
+                !it.certification.isNullOrBlank()
+            }?.certification
+
+            certification
+        }
     }
 
     // Possible to add recommendations and such here.

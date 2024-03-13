@@ -11,11 +11,11 @@
     <string name="rew_text_regular_format" formatted="true" translatable="false">%d</string>
     <string name="rating_format" formatted="true" translatable="false">%.1f/10.0</string>
     <string name="year_format" formatted="true" translatable="false">%d</string>
-    <string name="app_dub_sub_episode_text_format" formatted="true">%s 共 %d 集</string>
+    <string name="app_dub_sub_episode_text_format" formatted="true">%1$s 共 %2$d 集</string>
     <string name="cast_format" formatted="true">演員：%s</string>
     <string name="next_episode_format" formatted="true">第 %d 集即將發佈於</string>
-    <string name="next_episode_time_day_format" formatted="true">%dd %dh %dm</string>
-    <string name="next_episode_time_hour_format" formatted="true">%dh %dm</string>
+    <string name="next_episode_time_day_format" formatted="true">%1$dd %2$dh %3$dm</string>
+    <string name="next_episode_time_hour_format" formatted="true">%1$dh %2$dm</string>
     <string name="next_episode_time_min_format" formatted="true">%dm</string>
     <!-- IS NOT NEEDED TO TRANSLATE AS THEY ARE ONLY USED FOR SCREEN READERS AND WONT SHOW UP TO NORMAL USERS -->
     <string name="result_poster_img_des">封面</string>
@@ -32,12 +32,12 @@
     <string name="player_speed_text_format" formatted="true">速度（%.2fx）</string>
     <string name="rated_format" formatted="true">評分：%.1f</string>
     <string name="new_update_format" formatted="true">發現新版本！
-\n%s -&gt; %s</string>
+\n%1$s -&gt; %2$s</string>
     <string name="filler" formatted="true">填充</string>
     <string name="duration_format" formatted="true">%d 分鐘</string>
     <string name="app_name">CloudStream</string>
     <string name="play_with_app_name">使用 CloudStream 播放</string>
-    <string name="title_home">主頁</string>
+    <string name="title_home">主畫面</string>
     <string name="title_search">搜尋</string>
     <string name="title_downloads">下載</string>
     <string name="title_settings">設定</string>
@@ -78,14 +78,14 @@
     <string name="download_format" translatable="false">%s - %s</string>
     <string name="stream">播放</string>
     <string name="error_loading_links_toast">載入連結錯誤</string>
-    <string name="download_storage_text">內部存儲</string>
+    <string name="download_storage_text">內部儲存空間</string>
     <string name="app_dubbed_text">配音</string>
     <string name="app_subbed_text">字幕</string>
     <string name="popup_delete_file">刪除檔案</string>
     <string name="popup_play_file">播放檔案</string>
     <string name="popup_resume_download">繼續下載</string>
     <string name="popup_pause_download">暫停下載</string>
-    <string name="pref_disable_acra">禁用自動錯誤報告</string>
+    <string name="pref_disable_acra">停用自動錯誤報告</string>
     <string name="home_more_info">更多資訊</string>
     <string name="home_expanded_hide">隱藏</string>
     <string name="home_play">播放</string>
@@ -98,7 +98,7 @@
     <string name="sort_copy">複製</string>
     <string name="sort_close">關閉</string>
     <string name="sort_clear">清除</string>
-    <string name="sort_save">保存</string>
+    <string name="sort_save">儲存</string>
     <string name="player_speed">播放速度</string>
     <string name="subtitles_settings">字幕設定</string>
     <string name="subs_text_color">字體顏色</string>
@@ -167,14 +167,14 @@
     <string name="settings_info">資訊</string>
     <string name="advanced_search">進階搜尋</string>
     <string name="advanced_search_des">為您提供按片源分開的搜尋結果</string>
-    <string name="bug_report_settings_off">僅在崩潰時傳送資料</string>
+    <string name="bug_report_settings_off">僅在程式崩潰時傳送相關資料</string>
     <string name="bug_report_settings_on">不傳送資料</string>
     <string name="show_fillers_settings">顯示動畫外傳</string>
     <string name="show_trailers_settings">顯示預告片</string>
     <string name="kitsu_settings">顯示來自 Kitsu 的封面</string>
-    <string name="pref_filter_search_quality">在搜尋結果中隱藏選中的影片畫質</string>
+    <string name="pref_filter_search_quality">在搜尋結果中隱藏所選的影片畫質</string>
     <string name="automatic_plugin_updates">自動更新外掛程式</string>
-    <string name="updates_settings">顯示應用更新</string>
+    <string name="updates_settings">顯示應用程式更新</string>
     <string name="updates_settings_des">啟動應用程式後自動搜尋更新。</string>
     <string name="uprereleases_settings">更新至預覽版</string>
     <string name="uprereleases_settings_des">搜尋預覽版更新而不是僅搜尋正式版</string>
@@ -190,18 +190,18 @@
     <string name="copy_link_toast">連結已複製到剪貼簿</string>
     <string name="play_episode_toast">播放劇集</string>
     <string name="subs_default_reset_toast">重設為預設值</string>
-    <string name="acra_report_toast">很抱歉，應用崩潰了，將傳送一份匿名錯誤報告給開發者</string>
+    <string name="acra_report_toast">很抱歉，應用程式崩潰了，將傳送一份匿名錯誤報告給開發者</string>
     <string name="season">季</string>
-    <string name="season_format">%s %d%s</string>
+    <string name="season_format">%1$s %2$d%3$s</string>
     <string name="no_season">無季</string>
     <string name="episode">集</string>
     <string name="episodes">集</string>
-    <string name="episodes_range">%d-%d</string>
-    <string name="episode_format" formatted="true">%d %s</string>
+    <string name="episodes_range">%1$d-%2$d</string>
+    <string name="episode_format" formatted="true">%1$d %2$s</string>
     <string name="season_short">S</string>
     <string name="episode_short">E</string>
     <string name="no_episodes_found">未找到劇集</string>
-    <string name="delete_file">刪除文件</string>
+    <string name="delete_file">刪除檔案</string>
     <string name="delete">刪除</string>
     <string name="cancel">取消</string>
     <string name="pause">暫停</string>
@@ -210,8 +210,8 @@
     <string name="go_forward_30">+30</string>
     <string name="delete_message" formatted="true">這將永遠刪除 %s
 \n你確定嗎\?</string>
-    <string name="resume_time_left" formatted="true">%d 分鐘
-\n剩餘的</string>
+    <string name="resume_time_left" formatted="true">剩下
+\n%d 分鐘</string>
     <string name="status_ongoing">連載中</string>
     <string name="status_completed">已完結</string>
     <string name="status">狀態</string>
@@ -252,7 +252,7 @@
     <string name="other_singular">其他</string>
     <string name="source_error">來源錯誤</string>
     <string name="remote_error">遠端錯誤</string>
-    <string name="render_error">渲染器錯誤</string>
+    <string name="render_error">算繪器錯誤</string>
     <string name="unexpected_error">意料之外的播放器錯誤</string>
     <string name="storage_error">下載錯誤，請檢查儲存權限</string>
     <string name="episode_action_chromecast_episode">Chromecast 劇集</string>
@@ -290,7 +290,7 @@
     <string name="video_buffer_length_settings">影片緩衝長度</string>
     <string name="video_buffer_disk_settings">影片快取存儲</string>
     <string name="video_buffer_clear_settings">清除影片和圖片快取</string>
-    <string name="video_ram_description">如果在記憶體不足的裝置（例如 Android TV）上設定得太高會導致崩潰。</string>
+    <string name="video_ram_description">如果在記憶體不足的裝置（例如 Android TV）上設定得太高會導致程式崩潰。</string>
     <string name="video_disk_description">如果在儲存空間較小的裝置（例如 Android TV）上設定過高會導致問題。</string>
     <string name="dns_pref">DNS over HTTPS</string>
     <string name="dns_pref_summary">用於繞過網路服務供應商的封鎖</string>
@@ -308,18 +308,18 @@
     <string name="legal_notice_text" translatable="false">Any legal issues regarding the content on this application should be taken up with the actual file hosts and providers themselves as we are not affiliated with them. In case of copyright infringement, please directly contact the responsible parties or the streaming websites. The app is purely for educational and personal use. CloudStream 3 does not host any content on the app, and has no control over what media is put up or taken down. CloudStream 3 functions like any other search engine, such as Google. CloudStream 3 does not host, upload or manage any videos, films or content. It simply crawls, aggregates and displayes links in a convenient, user-friendly interface. It merely scrapes 3rd-party websites that are publicly accessable via any regular web browser. It is the responsibility of user to avoid any actions that might violate the laws governing his/her locality. Use CloudStream 3 at your own risk.</string>
     <string name="category_general">通用</string>
     <string name="random_button_settings">隨機按鈕</string>
-    <string name="random_button_settings_desc">在主頁中顯示隨機按鈕</string>
+    <string name="random_button_settings_desc">在主畫面中顯示隨機按鈕</string>
     <string name="provider_lang_settings">片源語言</string>
-    <string name="app_layout">應用佈局</string>
+    <string name="app_layout">應用程式版面配置</string>
     <string name="preferred_media_settings">偏好類型</string>
     <string name="enable_nsfw_on_providers">在支援的片源中啟用 NSFW 內容</string>
     <string name="subtitles_encoding">字幕編碼</string>
     <string name="category_providers">片源</string>
     <string name="category_ui">佈局</string>
     <string name="automatic">自動</string>
-    <string name="tv_layout">電視佈局</string>
-    <string name="phone_layout">手機佈局</string>
-    <string name="emulator_layout">模擬器佈局</string>
+    <string name="tv_layout">電視版面配置</string>
+    <string name="phone_layout">手機版面配置</string>
+    <string name="emulator_layout">模擬器版面配置</string>
     <string name="primary_color_settings">主題色</string>
     <string name="app_theme_settings">應用程式主題</string>
     <string name="bottom_title_settings">封面標題位置</string>
@@ -344,15 +344,15 @@
     <string name="kitsu_account_settings" translatable="false">Kitsu</string>
     <string name="trakt_account_settings" translatable="false">Trakt</string>
     -->
-    <string name="login_format" formatted="true">%s %s</string>
+    <string name="login_format" formatted="true">%1$s %2$s</string>
     <string name="account">帳號</string>
     <string name="logout">登出</string>
     <string name="login">登入</string>
     <string name="switch_account">切換帳號</string>
-    <string name="add_account">添加帳號</string>
-    <string name="create_account">創建帳號</string>
-    <string name="add_sync">添加同步</string>
-    <string name="added_sync_format" formatted="true">已添加 %s</string>
+    <string name="add_account">新增帳號</string>
+    <string name="create_account">建立帳號</string>
+    <string name="add_sync">加入同步</string>
+    <string name="added_sync_format" formatted="true">已新增 %s</string>
     <string name="upload_sync">同步</string>
     <string name="sync_score">評分</string>
     <string name="sync_score_format" formatted="true">%d / 10</string>
@@ -374,8 +374,8 @@
     <string name="subtitle_offset">同步字幕</string>
     <string name="subtitle_offset_hint">1000 毫秒</string>
     <string name="subtitle_offset_title">字幕延遲</string>
-    <string name="subtitle_offset_extra_hint_later_format">如果字幕過早顯示 %d 毫秒，請使用此選項</string>
-    <string name="subtitle_offset_extra_hint_before_format">如果字幕過晚顯示 %d 毫秒，請使用此選項</string>
+    <string name="subtitle_offset_extra_hint_later_format">如果字幕提早 %d 毫秒顯示，請使用此選項</string>
+    <string name="subtitle_offset_extra_hint_before_format">如果字幕延遲 %d 毫秒顯示，請使用此選項</string>
     <string name="subtitle_offset_extra_hint_none_format">無字幕延遲</string>
     <!--
     Example text (pangram) can optionally be translated; if you do, include all the letters in the alphabet,
@@ -422,7 +422,7 @@
     <string name="error">錯誤</string>
     <string name="subtitles_remove_captions">移除隱藏式字幕</string>
     <string name="subtitles_remove_bloat">移除字幕廣告</string>
-    <string name="subtitles_filter_lang">按偏好片源語言過濾</string>
+    <string name="subtitles_filter_lang">按偏好的片源語言篩選</string>
     <string name="extras">附加</string>
     <string name="trailer">預告片</string>
     <string name="network_adress_example">播放連結</string>
@@ -432,7 +432,7 @@
     <string name="previous">上一個</string>
     <string name="skip_setup">跳過設定</string>
     <string name="app_layout_subtext">更改應用程式的外觀以適應你的設備</string>
-    <string name="crash_reporting_title">崩潰報告</string>
+    <string name="crash_reporting_title">程式崩潰報告</string>
     <string name="preferred_media_subtext">你想要看什麼</string>
     <string name="setup_done">完成</string>
     <string name="extensions">擴充功能</string>
@@ -443,17 +443,17 @@
     <string name="plugin_deleted">外掛程式已刪除</string>
     <string name="plugin_load_fail" formatted="true">無法載入 %s</string>
     <string name="is_adult">18+</string>
-    <string name="batch_download_start_format" formatted="true">開始下載 %d %s …</string>
-    <string name="batch_download_finish_format" formatted="true">已下載 %d %s</string>
+    <string name="batch_download_start_format" formatted="true">開始下載 %1$d %2$s …</string>
+    <string name="batch_download_finish_format" formatted="true">已下載 %1$d %2$s</string>
     <string name="batch_download_nothing_to_download_format" formatted="true">全部 %s 已經下載</string>
     <string name="batch_download">批次下載</string>
     <string name="plugin_singular">外掛程式</string>
     <string name="plugin">外掛程式</string>
-    <string name="delete_repository_plugins">這也將刪除所有資源庫外掛程式</string>
+    <string name="delete_repository_plugins">這也將刪除所有在資源庫中的外掛程式</string>
     <string name="delete_repository">刪除資源庫</string>
     <string name="setup_extensions_subtext">下載你所需的片源</string>
     <string name="plugins_downloaded" formatted="true">已下載：%d</string>
-    <string name="plugins_disabled" formatted="true">已禁用：%d</string>
+    <string name="plugins_disabled" formatted="true">已停用：%d</string>
     <string name="plugins_not_downloaded" formatted="true">未下載：%d</string>
     <string name="plugins_updated" formatted="true">已更新 %d 外掛程式</string>
     <string name="blank_repo_message">CloudStream 預設沒有安裝任何片源。您需要從資源庫安裝站點。
@@ -465,14 +465,14 @@
     <string name="view_public_repositories_button_short">公開列表</string>
     <string name="uppercase_all_subtitles">字幕全大寫</string>
     <string name="download_all_plugins_from_repo">從此資源庫下載所有外掛程式？</string>
-    <string name="single_plugin_disabled" formatted="true">%s （禁用）</string>
+    <string name="single_plugin_disabled" formatted="true">%s （停用）</string>
     <string name="tracks">軌道</string>
     <string name="audio_tracks">音頻軌道</string>
     <string name="video_tracks">影片軌道</string>
     <string name="apply_on_restart">重新啟動時生效</string>
     <string name="safe_mode_title">安全模式已啟用</string>
-    <string name="safe_mode_description">由於崩潰，所有外掛程式皆已關閉，以幫助您找到導致問題的程式。</string>
-    <string name="safe_mode_crash_info">查看崩潰資訊</string>
+    <string name="safe_mode_description">由於程式崩潰，所有外掛程式皆已關閉，以協助您找到導致問題的程式。</string>
+    <string name="safe_mode_crash_info">查看程式崩潰資訊</string>
     <string name="extension_rating" formatted="true">評分：%s</string>
     <string name="extension_description">簡介</string>
     <string name="extension_version">版本</string>
@@ -489,7 +489,7 @@
     <string name="player_settings_play_in_mpv">MPV</string>
     <string name="player_settings_play_in_web">網路影片播放</string>
     <string name="player_settings_play_in_browser">網頁瀏覽器</string>
-    <string name="app_not_found_error">未找到應用</string>
+    <string name="app_not_found_error">未找到應用程式</string>
     <string name="all_languages_preference">所有語言</string>
     <string name="skip_type_format" formatted="true">跳過 %s</string>
     <string name="skip_type_op">片頭</string>
@@ -504,7 +504,7 @@
     <string name="automatic_plugin_download">自動下載外掛程式</string>
     <string name="confirm_exit_dialog">你確定要離開？</string>
     <string name="automatic_plugin_download_summary">從添加的資源庫自動安裝所有尚未安裝的外掛程式。</string>
-    <string name="enable_skip_op_from_database_des">在開始/結束顯示跳過彈出窗口</string>
+    <string name="enable_skip_op_from_database_des">在開始/結束顯示跳過彈出視窗</string>
     <string name="update_notification_failed">無法安裝新版本的應用程式</string>
     <string name="apk_installer_settings">APK 安裝器</string>
     <string name="apk_installer_settings_des">有些手機不支援新的軟體包安裝程式。 如果未安裝更新，請嘗試使用舊版選項。</string>
@@ -532,7 +532,7 @@
     <string name="pref_category_looks">外觀</string>
     <string name="pref_category_ui_features">功能</string>
     <string name="browser">瀏覽器</string>
-    <string name="subscription_episode_released">第 %d 集已發行!</string>
+    <string name="subscription_episode_released">第 %d 集已發行！</string>
     <string name="library">媒體庫</string>
     <string name="start">開始</string>
     <string name="android_tv_interface_on_seek_settings">播放器顯示 - 快轉快退秒數</string>
@@ -541,7 +541,7 @@
     <string name="sort_rating_asc">評分（從低到高）</string>
     <string name="update_started">更新開始</string>
     <string name="plugin_downloaded">外掛程式已下載</string>
-    <string name="action_remove_from_watched">從觀看中刪除</string>
+    <string name="action_remove_from_watched">從已觀看清單中刪除</string>
     <string name="sort_by">排序方式</string>
     <string name="sort">排序</string>
     <string name="sort_rating_desc">評分（從高到低）</string>
@@ -569,10 +569,73 @@
     <string name="jsdelivr_proxy">raw.githubusercontent.com Proxy</string>
     <string name="pref_category_bypass">繞過 ISP</string>
     <string name="revert">還原</string>
-    <string name="jsdelivr_enabled">無法訪問 GitHub。 正在開啟 jsDelivr proxy…</string>
+    <string name="jsdelivr_enabled">無法存取 GitHub。 正在開啟 jsDelivr proxy…</string>
     <string name="jsdelivr_proxy_summary">使用 jsDelivr 繞過 GitHub 的阻擋。 可能導致更新延遲幾天。</string>
     <string name="empty_library_no_accounts_message">您的媒體庫是空的:(
-\n登入媒體庫帳戶或將節目添加到您本機的媒體庫。</string>
+\n登入媒體庫帳號或將節目新增到您本機的媒體庫。</string>
     <string name="empty_library_logged_in_message">此列表是空的。 嘗試切換到另一個。</string>
     <string name="subscription_in_progress_notification">正在更新訂閱節目</string>
+    <string name="backup_frequency">備份頻率</string>
+    <string name="favorite_removed">%s 已由我的最愛移除</string>
+    <string name="favorites_list_name">我的最愛</string>
+    <string name="favorite_added">%s 已加入我的最愛</string>
+    <string name="logged_account" formatted="true">以 %s 的身分登入</string>
+    <string name="duplicate_message_multiple" formatted="true">您的媒體庫中似乎有多個重覆的項目：
+\n
+\n%s
+\n
+\n您要強制加入、取代已有項目、還是取消操作？</string>
+    <string name="enter_pin_with_name" formatted="true">輸入 %s 的 PIN 碼</string>
+    <string name="mobile_data">行動數據</string>
+    <string name="duplicate_title">找到可能重覆的項目</string>
+    <string name="lock_profile">鎖定設定檔</string>
+    <string name="use_default_account">使用預設帳號</string>
+    <string name="skip_startup_account_select_pref">啟動時略過選擇帳號</string>
+    <string name="action_add_to_favorites">加入我的最愛</string>
+    <string name="manage_accounts">管理帳號</string>
+    <string name="profiles">設定檔</string>
+    <string name="unable_to_inflate">無法正確建立使用者介面，這是重大的程式錯誤，請立即回報 %s</string>
+    <string name="edit">編輯</string>
+    <string name="duplicate_replace_all">全部取代</string>
+    <string name="wifi">Wi-Fi</string>
+    <string name="profile_background_des">設定檔背景</string>
+    <string name="help">說明</string>
+    <string name="edit_account">編輯帳號</string>
+    <string name="pin_error_incorrect">PIN 碼不符，請再試一次。</string>
+    <string name="profile_number">設定檔 %d</string>
+    <string name="action_unsubscribe">取消訂閱</string>
+    <string name="pin_error_length">PIN 碼需為 4 個字元</string>
+    <string name="duplicate_replace">取代</string>
+    <string name="duplicate_add">加入</string>
+    <string name="action_subscribe">訂閱</string>
+    <string name="qualities">品質</string>
+    <string name="use">使用</string>
+    <string name="action_remove_from_favorites">由我的最愛移除</string>
+    <string name="select_an_account">選擇帳號</string>
+    <string name="disable">停用</string>
+    <string name="no_repository_found_error">找不到資源庫，請檢查網址與 VPN 設定</string>
+    <string name="already_voted">您已完成投票</string>
+    <string name="no_plugins_found_error">在資源庫中找不到外掛程式</string>
+    <string name="duplicate_message_single" formatted="true">您的媒體庫中似乎有重覆的項目：「%s」。
+\n
+\n您要強制加入、取代已有項目、還是取消操作？</string>
+    <string name="set_default">設回預設</string>
+    <string name="enter_pin">輸入 PIN 碼</string>
+    <string name="pin">PIN 碼</string>
+    <string name="quality_profile_help">您可在此調整來源的排序方式。具有愈小的優先值的影片，在來源選擇中顯示得愈前面。來源優先值與品質優先值的加總就是影片優先值。
+\n例如：
+\n來源 A：3
+\n品質 B： 7
+\n則該來源的影片優先值為 10。
+\n
+\n注意：如果加總達到 10 或更高，則載入該連結時播放器將自動跳過載入！</string>
+    <string name="enter_current_pin">輸入目前的 PIN 碼</string>
+    <string name="rotate_video_desc">顯示切換畫面方向的按鈕</string>
+    <string name="rotate_video_key">rotate_video_key</string>
+    <string name="automatic_plugin_download_mode_title">選擇篩選外掛程式下載的模式</string>
+    <string name="auto_rotate_video_key">auto_rotate_video_key</string>
+    <string name="auto_rotate_video">自動旋轉</string>
+    <string name="rotate_video">旋轉</string>
+    <string name="auto_rotate_video_desc">根據影片方向自動切換畫面方向</string>
+    <string name="links_reloaded_toast">連結已重新載入</string>
 </resources>

@@ -30,6 +30,7 @@ import com.lagradost.cloudstream3.databinding.FragmentPlayerBinding
 import com.lagradost.cloudstream3.databinding.PlayerSelectSourceAndSubsBinding
 import com.lagradost.cloudstream3.databinding.PlayerSelectTracksBinding
 import com.lagradost.cloudstream3.mvvm.*
+import com.lagradost.cloudstream3.subtitles.AbstractSubApi
 import com.lagradost.cloudstream3.subtitles.AbstractSubtitleEntities
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.subtitleProviders
 import com.lagradost.cloudstream3.utils.Scheduler.Companion.attachBackupListener
@@ -71,7 +72,10 @@ class GeneratorPlayer : FullScreenPlayer() {
         }
 
         val subsProviders
-            get() = subtitleProviders.filter { !it.requiresLogin || it.loginInfo() != null }
+            get() = subtitleProviders.filter { provider ->
+                (provider as? AbstractSubApi)?.let { !it.requiresLogin || it.loginInfo() != null }
+                    ?: true
+            }
         val subsProvidersIsActive
             get() = subsProviders.isNotEmpty()
     }
@@ -145,6 +149,12 @@ class GeneratorPlayer : FullScreenPlayer() {
         // Otherwise it may give some users audio track init failed!
         if (tracks.allAudioTracks.any { it.language == preferredAudioTrackLanguage }) {
             player.setPreferredAudioTrack(preferredAudioTrackLanguage)
+        }
+    }
+
+    override fun playerStatusChanged() {
+        if (player.getIsPlaying()) {
+            viewModel.forceClearCache = false
         }
     }
 
@@ -469,17 +479,21 @@ class GeneratorPlayer : FullScreenPlayer() {
             currentSubtitle?.let { currentSubtitle ->
                 providers.firstOrNull { it.idPrefix == currentSubtitle.idPrefix }?.let { api ->
                     ioSafe {
-                        val url = api.load(currentSubtitle) ?: return@ioSafe
-                        val subtitle = SubtitleData(
-                            name = getName(currentSubtitle, true),
-                            url = url,
-                            origin = SubtitleOrigin.URL,
-                            mimeType = url.toSubtitleMimeType(),
-                            headers = currentSubtitle.headers,
-                            currentSubtitle.lang
-                        )
-                        runOnMainThread {
-                            addAndSelectSubtitles(subtitle)
+                        val subtitles =
+                            api.getResource(currentSubtitle).getSubtitles().map { resource ->
+                                SubtitleData(
+                                    name = resource.name ?: getName(currentSubtitle, true),
+                                    url = resource.url,
+                                    origin = resource.origin,
+                                    mimeType = resource.url.toSubtitleMimeType(),
+                                    headers = currentSubtitle.headers,
+                                    currentSubtitle.lang
+                                )
+                            }
+                        if (subtitles.isNotEmpty()) {
+                            runOnMainThread {
+                                addAndSelectSubtitles(*subtitles.toTypedArray())
+                            }
                         }
                     }
                 }
@@ -517,7 +531,11 @@ class GeneratorPlayer : FullScreenPlayer() {
         }
     }
 
-    private fun addAndSelectSubtitles(subtitleData: SubtitleData) {
+    private fun addAndSelectSubtitles(
+        vararg subtitleData: SubtitleData
+    ) {
+        if (subtitleData.isEmpty()) return
+        val selectedSubtitle = subtitleData.first()
         val ctx = context ?: return
 
         val subs = currentSubs + subtitleData
@@ -529,13 +547,13 @@ class GeneratorPlayer : FullScreenPlayer() {
         player.saveData()
         player.reloadPlayer(ctx)
 
-        setSubtitles(subtitleData)
-        viewModel.addSubtitles(setOf(subtitleData))
+        setSubtitles(selectedSubtitle)
+        viewModel.addSubtitles(subtitleData.toSet())
 
         selectSourceDialog?.dismissSafe()
 
         showToast(
-            String.format(ctx.getString(R.string.player_loaded_subtitles), subtitleData.name),
+            String.format(ctx.getString(R.string.player_loaded_subtitles), selectedSubtitle.name),
             Toast.LENGTH_LONG
         )
     }
@@ -916,10 +934,15 @@ class GeneratorPlayer : FullScreenPlayer() {
 
     override fun playerError(exception: Throwable) {
         Log.i(TAG, "playerError = $currentSelectedLink")
+        if (!hasNextMirror()) {
+            viewModel.forceClearCache = true
+        }
         super.playerError(exception)
     }
 
     private fun noLinksFound() {
+        viewModel.forceClearCache = true
+
         showToast(R.string.no_links_found_toast, Toast.LENGTH_SHORT)
         activity?.popCurrentPage()
     }
@@ -1240,6 +1263,7 @@ class GeneratorPlayer : FullScreenPlayer() {
     }
 
     override fun playerDimensionsLoaded(width: Int, height: Int) {
+        super.playerDimensionsLoaded(width, height)
         setPlayerDimen(width to height)
     }
 
@@ -1385,6 +1409,7 @@ class GeneratorPlayer : FullScreenPlayer() {
         }
 
         binding?.playerLoadingGoBack?.setOnClickListener {
+            exitFullscreen()
             player.release()
             activity?.popCurrentPage()
         }

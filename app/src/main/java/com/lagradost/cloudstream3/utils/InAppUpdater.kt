@@ -25,6 +25,10 @@ import kotlinx.coroutines.sync.withLock
 import okio.BufferedSink
 import okio.buffer
 import okio.sink
+import java.io.File
+import android.text.TextUtils
+import com.lagradost.cloudstream3.MainActivity.Companion.deleteFileOnExit
+import com.lagradost.cloudstream3.utils.AppUtils.setDefaultFocus
 import java.io.BufferedReader
 import java.io.File
 import java.io.IOException
@@ -194,7 +198,7 @@ class InAppUpdater {
                 Update(
                     shouldUpdate,
                     foundAsset.browser_download_url,
-                    tagResponse.github_object.sha,
+                    tagResponse.github_object.sha.take(10),
                     found.body,
                     found.node_id
                 )
@@ -216,7 +220,7 @@ class InAppUpdater {
                 this.cacheDir.listFiles()?.filter {
                     it.name.startsWith(appUpdateName) && it.extension == appUpdateSuffix
                 }?.forEach {
-                    it.deleteOnExit()
+                    deleteFileOnExit(it)
                 }
 
                 val downloadedFile = File.createTempFile(appUpdateName, ".$appUpdateSuffix")
@@ -299,7 +303,13 @@ class InAppUpdater {
                                     update.updateVersion
                                 )
                             )
-                            builder.setMessage("${update.changelog}")
+
+                            val logRegex = Regex("\\[(.*?)\\]\\((.*?)\\)")
+                            val sanitizedChangelog = update.changelog?.replace(logRegex) { matchResult ->
+                                matchResult.groupValues[1]
+                            } // Sanitized because it looks cluttered
+
+                            builder.setMessage(sanitizedChangelog)
 
                             val context = this
                             builder.apply {

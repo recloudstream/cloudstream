@@ -209,7 +209,10 @@ object DataStoreHelper {
         @JsonProperty("year") open val year: Int?,
         @JsonProperty("syncData") open val syncData: Map<String, String>?,
         @JsonProperty("quality") override var quality: SearchQuality?,
-        @JsonProperty("posterHeaders") override var posterHeaders: Map<String, String>?
+        @JsonProperty("posterHeaders") override var posterHeaders: Map<String, String>?,
+        @JsonProperty("plot") open val plot : String? = null,
+        @JsonProperty("rating") open val rating : Int? = null,
+        @JsonProperty("tags") open val tags : List<String>? = null,
     ) : SearchResponse
 
     data class SubscribedData(
@@ -225,8 +228,11 @@ object DataStoreHelper {
         override val year: Int?,
         override val syncData: Map<String, String>? = null,
         override var quality: SearchQuality? = null,
-        override var posterHeaders: Map<String, String>? = null
-    ) : LibrarySearchResponse(id, latestUpdatedTime, name, url, apiName, type, posterUrl, year, syncData, quality, posterHeaders) {
+        override var posterHeaders: Map<String, String>? = null,
+        override val plot: String? = null,
+        override val rating: Int? = null,
+        override val tags: List<String>? = null,
+    ) : LibrarySearchResponse(id, latestUpdatedTime, name, url, apiName, type, posterUrl, year, syncData, quality, posterHeaders, plot,rating,tags) {
         fun toLibraryItem(): SyncAPI.LibraryItem? {
             return SyncAPI.LibraryItem(
                 name,
@@ -236,7 +242,7 @@ object DataStoreHelper {
                 null,
                 null,
                 latestUpdatedTime,
-                apiName, type, posterUrl, posterHeaders, quality, this.id
+                apiName, type, posterUrl, posterHeaders, quality, this.id, plot = this.plot, rating = this.rating, tags = this.tags
             )
         }
     }
@@ -253,8 +259,11 @@ object DataStoreHelper {
         override val year: Int?,
         override val syncData: Map<String, String>? = null,
         override var quality: SearchQuality? = null,
-        override var posterHeaders: Map<String, String>? = null
-    ) : LibrarySearchResponse(id, latestUpdatedTime, name, url, apiName, type, posterUrl, year, syncData, quality, posterHeaders) {
+        override var posterHeaders: Map<String, String>? = null,
+        override val plot: String? = null,
+        override val rating: Int? = null,
+        override val tags: List<String>? = null,
+    ) : LibrarySearchResponse(id, latestUpdatedTime, name, url, apiName, type, posterUrl, year, syncData, quality, posterHeaders, plot) {
         fun toLibraryItem(id: String): SyncAPI.LibraryItem {
             return SyncAPI.LibraryItem(
                 name,
@@ -264,7 +273,7 @@ object DataStoreHelper {
                 null,
                 null,
                 latestUpdatedTime,
-                apiName, type, posterUrl, posterHeaders, quality, this.id
+                apiName, type, posterUrl, posterHeaders, quality, this.id, plot = this.plot, rating = this.rating, tags = this.tags
             )
         }
     }
@@ -281,8 +290,11 @@ object DataStoreHelper {
         override val year: Int?,
         override val syncData: Map<String, String>? = null,
         override var quality: SearchQuality? = null,
-        override var posterHeaders: Map<String, String>? = null
-    ) : LibrarySearchResponse(id, latestUpdatedTime, name, url, apiName, type, posterUrl, year, syncData, quality, posterHeaders) {
+        override var posterHeaders: Map<String, String>? = null,
+        override val plot: String? = null,
+        override val rating: Int? = null,
+        override val tags: List<String>? = null,
+    ) : LibrarySearchResponse(id, latestUpdatedTime, name, url, apiName, type, posterUrl, year, syncData, quality, posterHeaders,plot) {
         fun toLibraryItem(): SyncAPI.LibraryItem? {
             return SyncAPI.LibraryItem(
                 name,
@@ -292,7 +304,7 @@ object DataStoreHelper {
                 null,
                 null,
                 latestUpdatedTime,
-                apiName, type, posterUrl, posterHeaders, quality, this.id
+                apiName, type, posterUrl, posterHeaders, quality, this.id, plot = this.plot, rating = this.rating, tags = this.tags
             )
         }
     }

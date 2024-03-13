@@ -31,7 +31,7 @@ class SettingsUI : PreferenceFragmentCompat() {
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         hideKeyboard()
-        setPreferencesFromResource(R.xml.settins_ui, rootKey)
+        setPreferencesFromResource(R.xml.settings_ui, rootKey)
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(requireContext())
             .attachBackupListener(requireContext().getSyncPrefs()).self
 

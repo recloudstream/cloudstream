@@ -102,6 +102,8 @@ abstract class AbstractPlayerFragment(
         throw NotImplementedError()
     }
 
+    open fun playerStatusChanged(){}
+
     open fun playerDimensionsLoaded(width: Int, height: Int) {
         throw NotImplementedError()
     }
@@ -431,6 +433,7 @@ abstract class AbstractPlayerFragment(
 
             is StatusEvent -> {
                 updateIsPlaying(wasPlaying = event.wasPlaying, isPlaying = event.isPlaying)
+                playerStatusChanged()
             }
 
             is PositionEvent -> {

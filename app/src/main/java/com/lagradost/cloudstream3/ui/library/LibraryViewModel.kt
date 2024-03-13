@@ -28,10 +28,15 @@ enum class ListSorting(@StringRes val stringRes: Int) {
 const val LAST_SYNC_API_KEY = "last_sync_api"
 
 class LibraryViewModel : ViewModel() {
+    fun switchPage(page : Int) {
+        _currentPage.postValue(page)
+    }
+
+    private val _currentPage: MutableLiveData<Int> = MutableLiveData(0)
+    val currentPage: LiveData<Int> = _currentPage
+    
     private val _pages: MutableLiveData<Resource<List<SyncAPI.Page>>> = MutableLiveData(null)
     val pages: LiveData<Resource<List<SyncAPI.Page>>> = _pages
-
-    var currentPage: Int = 0
 
     private val _currentApiName: MutableLiveData<String> = MutableLiveData("")
     val currentApiName: LiveData<String> = _currentApiName

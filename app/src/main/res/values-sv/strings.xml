@@ -3,7 +3,7 @@
     <string name="rated_format">Betygsatt: %.1f</string>
     <string name="player_speed_text_format">Hastighet (%.2fx)</string>
     <string name="new_update_format">Ny uppdatering hittad!
-\n%s -&gt; %s</string>
+\n%1$s -&gt; %2$s</string>
     <string name="app_name">CloudStream</string>
     <string name="title_home">Hem</string>
     <string name="title_search">Sök</string>
@@ -13,7 +13,7 @@
     <string name="search_poster_img_des">Affisch</string>
     <string name="no_data">Ingen Data</string>
     <string name="episode_more_options_des">Mer Instälningar</string>
-    <string name="go_back_img_des">Gå tillbacka</string>
+    <string name="go_back_img_des">Gå tillbaka</string>
     <string name="next_episode">Nästa avsnitt</string>
     <string name="result_poster_img_des">Affisch</string>
     <string name="result_tags">Genrer</string>
@@ -24,8 +24,8 @@
     <string name="type_watching">Tittar på</string>
     <string name="type_on_hold">Pausad</string>
     <string name="type_completed">Avslutad</string>
-    <string name="type_dropped">Dropped</string>
-    <string name="type_plan_to_watch">Plannerad</string>
+    <string name="type_dropped">Släppt</string>
+    <string name="type_plan_to_watch">Planerad</string>
     <string name="play_movie_button">Spela Upp</string>
     <string name="play_torrent_button">Strömma Torrent</string>
     <string name="pick_source">Källor</string>
@@ -39,10 +39,10 @@
     <string name="app_dubbed_text">Dub</string>
     <string name="app_subbed_text">Sub</string>
     <string name="popup_delete_file">Ta bort</string>
-    <string name="popup_play_file">Spela upp</string>
+    <string name="popup_play_file">Spela upp fil</string>
     <string name="pref_disable_acra">Inaktivera automatisk felrapportering</string>
     <string name="home_more_info">Mer information</string>
-    <string name="home_expanded_hide">Hide</string>
+    <string name="home_expanded_hide">Göm</string>
     <string name="home_main_poster_img_des">@string/result_poster_img_des</string>
     <string name="home_play">Spela upp</string>
     <string name="home_info">Info</string>
@@ -64,10 +64,10 @@
     <string name="subs_font">Font</string>
     <string name="search_provider_text_providers">Sök med följande leverantörer</string>
     <string name="search_provider_text_types">Sök med följande filmtyper</string>
-    <string name="benene_count_text">%d Bananer donerade till utvecklarna</string>
+    <string name="benene_count_text">%d bananer donerade till utvecklarna</string>
     <string name="benene_count_text_none">Inga bananer givna</string>
     <string name="subs_auto_select_language">Automatisk val av undertextspråk</string>
-    <string name="subs_download_languages">Automatisk nerladdaning av språk</string>
+    <string name="subs_download_languages">Automatisk nedladdning av språk</string>
     <string name="subs_hold_to_reset_to_default">Håll inne för att återställa till standard</string>
     <string name="continue_watching">Fortsätt titta</string>
     <string name="action_remove_watching">Ta bort</string>
@@ -210,8 +210,8 @@
     <string name="dns_pref">DNS över HTTPS</string>
     <string name="dns_pref_summary">" "</string>
     <string name="app_theme_settings">Appens tema</string>
-    <string name="app_dub_sub_episode_text_format">%s A%d</string>
-    <string name="next_episode_time_hour_format" formatted="true">%dh %dm</string>
+    <string name="app_dub_sub_episode_text_format">%1$s A%2$d</string>
+    <string name="next_episode_time_hour_format" formatted="true">%1$dh %2$dm</string>
     <string name="next_episode_time_min_format" formatted="true">%dm</string>
     <string name="play_with_app_name">Spela med CloudStream</string>
     <string name="chromecast_subtitles_settings">Chromecast-undertexter</string>
@@ -220,7 +220,7 @@
     <string name="category_account">Konton</string>
     <string name="category_updates">Uppdateringar och backup</string>
     <string name="automatic_plugin_updates">Automatiska pluginuppdateringar</string>
-    <string name="next_episode_time_day_format" formatted="true">%dd %dh %dm</string>
+    <string name="next_episode_time_day_format" formatted="true">%1$dd %2$dh %3$dm</string>
     <string name="search_hint_site" formatted="true">Sök %s…</string>
     <string name="sort_copy">Kopiera</string>
     <string name="sort_close">Stäng</string>
@@ -236,9 +236,9 @@
     <string name="show_trailers_settings">Visa trailers</string>
     <string name="action_open_play">@string/home_play</string>
     <string name="ova">OVA</string>
-    <string name="episodes_range">%d-%d</string>
-    <string name="episode_format" formatted="true">%d %s</string>
-    <string name="season_format">%s %d%s</string>
+    <string name="episodes_range">%1$d-%2$d</string>
+    <string name="episode_format" formatted="true">%1$d %2$s</string>
+    <string name="season_format">%1$s %2$d%3$s</string>
     <string name="go_back_30">-30</string>
     <string name="resume_time_left" formatted="true">%dm
 \nåterstår</string>
@@ -297,7 +297,7 @@
     <string name="referer">Referer</string>
     <string name="next">Nästa</string>
     <string name="subtitle_offset_hint">1000 ms</string>
-    <string name="add_site_summary">Lägga till en klon av en befintlig webbplats med en annan webbadress.</string>
+    <string name="add_site_summary">Lägga till en klon av en befintlig webbplats med en annan webbadress</string>
     <string name="error_invalid_id">Ogiltigt ID</string>
     <string name="error_invalid_url">Ogiltig webbadress</string>
     <string name="video_ram_description">Orsakar krascher om inställningen är för hög på enheter med lågt minne, t.ex. Android TV.</string>
@@ -321,7 +321,7 @@
     <string name="app_layout_subtext">Ändra appens utseende så att den passar din enhet</string>
     <string name="cast_format" formatted="true">Skådespelare: %s</string>
     <string name="play_livestream_button">Spela Livestream</string>
-    <string name="login_format" formatted="true">%s %s</string>
+    <string name="login_format" formatted="true">%1$s %2$s</string>
     <string name="subtitle_offset_extra_hint_none_format">Ingen undertextfördröjning</string>
     <string name="pref_category_player_features">Spelarfunktioner</string>
     <string name="trailer">Trailer</string>
@@ -403,7 +403,7 @@
     <string name="restart">Starta om</string>
     <string name="category_provider_test">Testa leverantörer</string>
     <string name="watch_quality_pref_data">Föredragen videokvalitet (Mobildata)</string>
-    <string name="random_button_settings_desc">Visa en slumpknapp på förstasidan</string>
+    <string name="random_button_settings_desc">Visa slumpmässig knapp på förstasidan och biblioteket</string>
     <string name="is_adult">18+</string>
     <string name="audio_tracks">Ljudspår</string>
     <string name="livestreams">Direktsändningar</string>
@@ -432,4 +432,164 @@
     <string name="profiles">Profiler</string>
     <string name="help">Hjälp</string>
     <string name="qualities">Kvalitet</string>
+    <string name="stream">Ström</string>
+    <string name="repository_name_hint">Databasens namn</string>
+    <string name="batch_download_nothing_to_download_format" formatted="true">All %s har redan laddats ner</string>
+    <string name="download_all_plugins_from_repo">Ladda ner alla tillägg från den här databasen?</string>
+    <string name="safe_mode_title">Felsäkert läge på</string>
+    <string name="apply_on_restart">Applicera vid omstart</string>
+    <string name="player_settings_play_in_app">Intern spelare</string>
+    <string name="quality_cam_hd">Kamera HD</string>
+    <string name="plugin_downloaded">Tillägg nedladdad</string>
+    <string name="repository_url_hint">Lager URL</string>
+    <string name="batch_download_start_format" formatted="true">Börjat hämta %1$d %2$s…</string>
+    <string name="bottom_title_settings">Affisch titel plats</string>
+    <string name="player_loaded_subtitles" formatted="true">Laddat %s</string>
+    <string name="actor_main">Huvudsaklig</string>
+    <string name="actor_supporting">Stödjande</string>
+    <string name="actor_background">Bakgrund</string>
+    <string name="view_public_repositories_button_short">Offentlig lista</string>
+    <string name="extension_language">Språk</string>
+    <string name="extension_install_first">Installera tillägget först</string>
+    <string name="player_pref">Önskad videospelare</string>
+    <string name="android_tv_interface_on_seek_settings">Spelare visas - Sök förlopp</string>
+    <string name="android_tv_interface_on_seek_settings_summary">Sök förlopp som används när spelaren är synlig</string>
+    <string name="start">Starta</string>
+    <string name="stop">Stopp</string>
+    <string name="revert">Återställ</string>
+    <string name="subscription_deleted">Avslutat prenumerationen på %s</string>
+    <string name="subscription_episode_released">Avsnitt %d släppt!</string>
+    <string name="empty_library_logged_in_message">Den här listan är tom. Försök byta till en annan.</string>
+    <string name="plugin_deleted">Tillägg borttagen</string>
+    <string name="plugin_loaded">Tillägg laddade</string>
+    <string name="plugin_singular">Tillägg</string>
+    <string name="backup_frequency">Säkerhetskopierings antal</string>
+    <string name="episode_sync_settings">Uppdatera visnings förlopp</string>
+    <string name="automatic_plugin_download_mode_title">Välj läge för att filtrera nedladdning av plugins</string>
+    <string name="extension_version">Utgåva</string>
+    <string name="extension_status">Status</string>
+    <string name="enter_pin">Ange PIN-kod</string>
+    <string name="enter_pin_with_name" formatted="true">Ange PIN-kod för %s</string>
+    <string name="enter_current_pin">Ange aktuell PIN-kod</string>
+    <string name="lock_profile">Lås profil</string>
+    <string name="pin_error_incorrect">Felaktig PIN-kod. Försök igen.</string>
+    <string name="pin_error_length">PIN-koden måste vara fyra tecken</string>
+    <string name="select_an_account">Välj ett konto</string>
+    <string name="manage_accounts">Hantera konton</string>
+    <string name="edit_account">Redigera konto</string>
+    <string name="logged_account" formatted="true">Loggat in som %s</string>
+    <string name="skip_startup_account_select_pref">Hoppa över val av konto vid start</string>
+    <string name="auto_rotate_video_key">auto_rotera_video_nyckel</string>
+    <string name="jsdelivr_proxy_summary">Förbi passera blockering av GitHub genom att använda jsDelivr. Kan göra att uppdateringar försenas med några dagar.</string>
+    <string name="pref_category_actions">Funktion</string>
+    <string name="preferred_media_settings">Önskad media</string>
+    <string name="bottom_title_settings_des">Lägg titeln under affischen</string>
+    <string name="added_sync_format" formatted="true">Tillagt %s</string>
+    <string name="add_sync">Lägg till spårning</string>
+    <string name="sync_score">Betygsatt</string>
+    <string name="disable">Inaktivera</string>
+    <string name="quality_webrip">Web</string>
+    <string name="poster_image">Affischbild</string>
+    <string name="preferred_media_subtext">Vad vill du se</string>
+    <string name="add_repository">Lägg till databas</string>
+    <string name="plugins_updated" formatted="true">Uppdaterade %d tillägg</string>
+    <string name="batch_download_finish_format" formatted="true">Nedladdat %1$d %2$s</string>
+    <string name="plugins_disabled" formatted="true">Inaktiverad: %d</string>
+    <string name="plugins_not_downloaded" formatted="true">Ej hämtad: %d</string>
+    <string name="view_public_repositories_button">Visa community databaser</string>
+    <string name="skip_type_mixed_op">Blandad inledning</string>
+    <string name="skip_type_format" formatted="true">Skippa %s</string>
+    <string name="blank_repo_message">CloudStream har inga webbplatser installerade som standard. Du måste installera webbplatserna från databaser.
+\n
+\nPå grund av en hjärnlös DMCA-borttagning av Sky UK Limited kan vi inte länka databaser på denna applikation.
+\n
+\nGå med i vår Discord eller sök online.</string>
+    <string name="select_library">Välj bibliotek</string>
+    <string name="empty_library_no_accounts_message">Ditt bibliotek är tomt :( 
+\nLogga in på ett bibliotekskonto eller lägg till program i ditt lokala bibliotek.</string>
+    <string name="enable_skip_op_from_database_des">Visa hoppa över popups för introduktion/eftertexter</string>
+    <string name="action_remove_from_watched">Ta bort från sett</string>
+    <string name="safe_mode_file">Fil i säkertläge hittades!
+\nLaddar inte några tillägg vid start tills filen har tagits bort.</string>
+    <string name="subscription_in_progress_notification">Uppdaterar prenumererade program</string>
+    <string name="subscription_list_name">Prenumererad</string>
+    <string name="action_subscribe">Prenumerera</string>
+    <string name="unable_to_inflate">UI kunde inte skapas korrekt, detta är en MASSIV BUG och bör rapporteras omedelbart %s</string>
+    <string name="already_voted">Du har redan röstat</string>
+    <string name="action_unsubscribe">Avprenumerera</string>
+    <string name="action_add_to_favorites">Lägg till i favoriter</string>
+    <string name="duplicate_add">Lägg till</string>
+    <string name="duplicate_title">Potentiell Dublett Hittad</string>
+    <string name="action_remove_from_favorites">Ta bort från favoriter</string>
+    <string name="duplicate_replace">Ersätt</string>
+    <string name="duplicate_replace_all">Ersätt alla</string>
+    <string name="filler" formatted="true">Filler</string>
+    <string name="pref_category_bypass">Förbikoppla ISP</string>
+    <string name="quality_cam_rip">Kamera</string>
+    <string name="quality_cam">Kamera</string>
+    <string name="safe_mode_description">Alla tillägg stängdes av på grund av en krasch för att hjälpa dig hitta den som orsakar problem.</string>
+    <string name="extension_size">Storlek</string>
+    <string name="extension_authors">Författarna</string>
+    <string name="extension_types">Stödd</string>
+    <string name="no_plugins_found_error">Inga tillägg hittades i databasen</string>
+    <string name="no_repository_found_error">Databasen hittades inte, kontrollera URL:n och prova VPN</string>
+    <string name="batch_download">Flerfils nedladdning</string>
+    <string name="plugin">Tillägg</string>
+    <string name="plugins_downloaded" formatted="true">Hämtat: %d</string>
+    <string name="extension_rating" formatted="true">Betyg: %s</string>
+    <string name="clipboard_too_large">För mycket text. Det gick inte att spara till urklipp.</string>
+    <string name="quality_hq">Hög kvalite</string>
+    <string name="upload_sync">Synka</string>
+    <string name="skip_type_ed">Slutet</string>
+    <string name="skip_type_mixed_ed">Blandad avslut</string>
+    <string name="subscription_new">Prenumererar på %s</string>
+    <string name="safe_mode_crash_info">Visa krasch info</string>
+    <string name="hls_playlist">HLS spellista</string>
+    <string name="plugin_load_fail" formatted="true">Kunde inte ladda %s</string>
+    <string name="skip_type_op">Inledning</string>
+    <string name="skip_type_recap">Sammanfattning</string>
+    <string name="pref_category_gestures">Gester</string>
+    <string name="authenticated_user" formatted="true">%s autentiserad</string>
+    <string name="extras">Statister</string>
+    <string name="network_adress_example">Länka till strömmen</string>
+    <string name="delete_repository">Radera databasen</string>
+    <string name="profile_background_des">Profil bakgrund</string>
+    <string name="quality_workprint">WP</string>
+    <string name="auto_rotate_video">Auto rotera</string>
+    <string name="rotate_video">Rotera</string>
+    <string name="rotate_video_desc">Visa en växlingsknapp för skärmorientering</string>
+    <string name="auto_rotate_video_desc">Aktivera automatisk växling av skärmorientering baserat på videoorientering</string>
+    <string name="links_reloaded_toast">Länkar omladdade</string>
+    <string name="android_tv_interface_off_seek_settings">Spelare dold - Sökförlopp</string>
+    <string name="quality_blueray">Blu-ray</string>
+    <string name="delete_repository_plugins">Detta kommer också att ta bort alla tillägg för databasen</string>
+    <string name="setup_extensions_subtext">Ladda ner listan över webbplatser du vill använda</string>
+    <string name="single_plugin_disabled" formatted="true">%s (Inaktiverad)</string>
+    <string name="extension_description">Beskrivning</string>
+    <string name="skip_type_creddits">Eftertexter</string>
+    <string name="skip_type_intro">Introduktion</string>
+    <string name="favorites_list_name">Favoriter</string>
+    <string name="set_default">Ange standard</string>
+    <string name="favorite_removed">%s togs bort från favoriter</string>
+    <string name="favorite_added">%s har lagts till i favoriter</string>
+    <string name="use_default_account">Använd standard konto</string>
+    <string name="rotate_video_key">rotera_video_nyckel</string>
+    <string name="pin">PIN-kod</string>
+    <string name="android_tv_interface_off_seek_settings_summary">Sök mängden som används när spelaren är dold</string>
+    <string name="duplicate_message_multiple" formatted="true">Det verkar som om ett potentiellt duplicerat objekt redan finns i ditt bibliotek: 
+\n
+\n\'%s.\'
+\n
+\nVill du lägga till det här objektet ändå, ersätta det befintliga eller avbryta åtgärden?</string>
+    <string name="duplicate_message_single" formatted="true">Det verkar som om ett potentiellt duplicerat objekt redan finns i ditt bibliotek: \'%s.\'
+\n
+\nVill du lägga till det här objektet ändå, ersätta det befintliga eller avbryta åtgärden?</string>
+    <string name="quality_profile_help">Här kan du ändra hur källorna ska sorteras, om en video har högre prioritet visas den högre upp i källvalet. Summan av källprioriteten och kvalitetsprioriteten är videoprioriteten.
+\n
+\nKälla A: 3
+\nKvalitet B: 7
+\nKommer att ha en kombinerad videoprioritet på 10.
+\n
+\nOBS: Om summan är 10 eller mer kommer spelaren automatiskt att hoppa över laddningen när den länken laddas!</string>
+    <string name="copyTitle">Titel kopierad!</string>
 </resources>

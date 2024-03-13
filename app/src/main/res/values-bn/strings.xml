@@ -4,8 +4,8 @@
     <string name="play_with_app_name">ক্লাউডস্ট্রিম দিয়ে চালান</string>
     <string name="title_home">হোম</string>
     <string name="cast_format" formatted="true">অভিনয়েঃ %s</string>
-    <string name="next_episode_time_day_format" formatted="true">%dদিন %dঘন্টা %dমিনিট</string>
-    <string name="next_episode_time_hour_format" formatted="true">%dঘন্টা %dমিনিট</string>
+    <string name="next_episode_time_day_format" formatted="true">%1$dদিন %2$dঘন্টা %3$dমিনিট</string>
+    <string name="next_episode_time_hour_format" formatted="true">%1$dঘন্টা %2$dমিনিট</string>
     <string name="next_episode_time_min_format" formatted="true">%d মিনিট</string>
     <string name="episode_poster_img_des">পর্বের পোস্টার</string>
     <string name="home_main_poster_img_des">মূল পোস্টার</string>
@@ -16,14 +16,14 @@
     <string name="player_speed_text_format" formatted="true">গতি (%.2f গুণ)</string>
     <string name="rated_format" formatted="true">মূল্যায়নঃ %.1f</string>
     <string name="new_update_format" formatted="true">নতুন আপডেট এসেছে!
-\n%s -&gt; %s</string>
+\n%1$s -&gt; %2$s</string>
     <string name="filler" formatted="true">ফিলার</string>
     <string name="duration_format" formatted="true">%d মিনিট</string>
     <string name="app_name">ক্লাউডস্ট্রিম</string>
     <string name="title_search">খুঁজুন</string>
     <string name="title_downloads">ডাউনলোডসমূহ</string>
     <string name="title_settings">সেটিংস</string>
-    <string name="app_dub_sub_episode_text_format" formatted="true">%s এপি %d</string>
+    <string name="app_dub_sub_episode_text_format" formatted="true">%1$s এপি %2$d</string>
     <string name="next_episode_format" formatted="true">পর্ব %d মুক্তির তারিখ</string>
     <string name="result_share">শেয়ার</string>
     <string name="result_open_in_browser">ব্রাউজারে খুলুন</string>
@@ -122,7 +122,7 @@
     <string name="search">অনুসন্ধান করুন</string>
     <string name="category_account">অ্যাকাউন্টসমূহ</string>
     <string name="bug_report_settings_on">কোনো উপাত্ত পাঠাবে না</string>
-    <string name="double_tap_to_pause_settings_des">বিরতি দিতে মাঝে চাপুন</string>
+    <string name="double_tap_to_pause_settings_des">বিরতি দিতে মাঝে দুইবার চাপুন</string>
     <string name="use_system_brightness_settings">সিস্টেম এর উজ্জ্বলতা ব্যবহার করুন</string>
     <string name="play_trailer_button">ট্রেইলার চালু করুন</string>
     <string name="swipe_to_seek_settings_des">ভিডিওর সময় নিয়ন্ত্রণ করতে, ডানে অথবা বামে সোয়াইপ করুন</string>
@@ -148,4 +148,86 @@
     <string name="update_started">আপডেট শুরু হয়েছে</string>
     <string name="browser">ব্রাউজার</string>
     <string name="test_log">লগ</string>
+    <string name="double_tap_to_seek_amount_settings">প্লেয়ারে এগিয়ে যাওয়ার পরিমাণ (সেকেন্ডে)</string>
+    <string name="double_tap_to_seek_settings_des">সামনে বা পিছনের দিকে যেতে ডান বা বাম দিকে দুবার আলতো চাপুন</string>
+    <string name="delete_file">ফাইল ডিলিট</string>
+    <string name="acra_report_toast">দুঃখিত, অ্যাপ্লিকেশন ক্র্যাশ হয়েছে। ডেভেলপারদের কাছে একটি বেনামী বাগ রিপোর্ট পাঠানো হবে</string>
+    <string name="bug_report_settings_off">শুধুমাত্র ক্র্যাশ এর তথ্য পাঠায়</string>
+    <string name="subs_default_reset_toast">মান ডিফল্ট এ রিসেট করুন</string>
+    <string name="uprereleases_settings_des">ফুল রিলিজের পরিবর্তে শুধুমাত্র প্রি-রিলিজ আপডেটের জন্য অনুসন্ধান করুন</string>
+    <string name="updates_settings_des">স্টার্টআপে নতুন আপডেটের জন্য স্বয়ংক্রিয়ভাবে অনুসন্ধান করুন</string>
+    <string name="movies_singular">সিনেমা</string>
+    <string name="show_fillers_settings">এনিমে এর ফিলার পর্ব দেখায়</string>
+    <string name="tv_series">টিভি সিরিজ</string>
+    <string name="no_links_found_toast">লিংক পাওয়া যায়নি</string>
+    <string name="benene_des">চা খাওয়ানো হয়েছে</string>
+    <string name="go_forward_30">+৩০</string>
+    <string name="movies">সিনেমা</string>
+    <string name="discord">ডিসকর্ডে যোগ দিন</string>
+    <string name="torrent">টরেন্টস</string>
+    <string name="delete_message" formatted="true">এটি স্থায়ীভাবে মুছে ফেলা হবে %s
+\nআপনি কি নিশ্চিত?</string>
+    <string name="pause">থামুন</string>
+    <string name="go_back_30">-৩০</string>
+    <string name="github">গিটহাব</string>
+    <string name="free_storage">ফ্রি</string>
+    <string name="backup_settings">ডেটা ব্যাকআপ করুন</string>
+    <string name="restore_success">ব্যাকআপ ফাইল লোড হয়েছে</string>
+    <string name="year">বছর</string>
+    <string name="no_season">কোন সিজন নেই</string>
+    <string name="play_episode_toast">এপিসোড পরলে করুন</string>
+    <string name="resume">শুরু করুন</string>
+    <string name="documentaries">তথ্যচিত্র</string>
+    <string name="automatic_plugin_download_summary">যোগ করা রিপোজিটরি থেকে এখনও ইনস্টল করা হয়নি এমন সব প্লাগইন স্বয়ংক্রিয়ভাবে ইনস্টল করুন।</string>
+    <string name="delete">ডিলিট</string>
+    <string name="start">শুরু</string>
+    <string name="cartoons">কার্টুন</string>
+    <string name="apk_installer_settings_des">কিছু ফোন নতুন প্যাকেজ ইনস্টলার সাপোর্ট করে না। যদি আপডেটগুলি ইনস্টল না হয় তবে পুরোনো পদ্ধতি ব্যবহার করে দেখুন।</string>
+    <string name="no_subtitles">সাবটাইটেল নেই</string>
+    <string name="no_chromecast_support_toast">এই প্রোভাইডার ক্রোমকাস্ট সাপোর্ট করে না</string>
+    <string name="advanced_search">উন্নত অনুসন্ধান</string>
+    <string name="synopsis">সারমর্ম</string>
+    <string name="used_storage">ব্যবহৃত</string>
+    <string name="library">লাইব্রেরী</string>
+    <string name="lightnovel">আমাদের তৈরি ছোট উপন্যাস পড়ার অ্যাপ্লিকেশন</string>
+    <string name="resume_time_left" formatted="true">%d মি
+\nবাকি</string>
+    <string name="others">অন্যান্য</string>
+    <string name="status_ongoing">চলমান</string>
+    <string name="asian_drama">এশিয়ান নাটক</string>
+    <string name="queued">অপেক্ষা করছে</string>
+    <string name="episode">পর্ব</string>
+    <string name="status">অবস্থা</string>
+    <string name="use_system_brightness_settings_des">অ্যাপের প্লেয়ারে অন্ধকার ওভারলে এর পরিবর্তে সিস্টেম ব্রাইটনেস ব্যবহার করুন</string>
+    <string name="restore_failed_format" formatted="true">%s ফাইল থেকে ডেটা পুনরুদ্ধার করা ব্যর্থ হয়েছে</string>
+    <string name="no_episodes_found">কোনো এপিসোড পাওয়া যায়নি</string>
+    <string name="test_failed">ব্যর্থ হয়েছে</string>
+    <string name="advanced_search_des">প্রোভাইডার অনুযায়ী আপনাকে পৃথক অনুসন্ধান ফলাফল দেয়</string>
+    <string name="tv_series_singular">সিরিজ</string>
+    <string name="rating">রেটিং</string>
+    <string name="uprereleases_settings">প্রি-রিলিজে আপডেট করুন</string>
+    <string name="redo_setup_process">সেটআপ প্রক্রিয়া পুনরায় করুন</string>
+    <string name="benene">ভাই এক কাপ চা খাওয়াও ☕</string>
+    <string name="restore_settings">ব্যাকআপ থেকে ডেটা পুনরুদ্ধার করুন</string>
+    <string name="copy_link_toast">ক্লিপবোর্ডে লিঙ্ক কপি করা হয়েছে</string>
+    <string name="status_completed">দেখা শেষ</string>
+    <string name="anim">আমাদের তৈরি Anime দেখার অ্যাপ্লিকেশন</string>
+    <string name="nsfw">18+</string>
+    <string name="anime">এনিমে</string>
+    <string name="pref_filter_search_quality">অনুসন্ধান ফলাফলে নির্বাচিত ভিডিও কুয়ালিটি লুকান</string>
+    <string name="app_storage">অ্যাপ</string>
+    <string name="livestreams">লাইভস্ট্রিম</string>
+    <string name="apk_installer_settings">APK ইনস্টলার</string>
+    <string name="duration">সময়কাল</string>
+    <string name="app_language">অ্যাপের ভাষা</string>
+    <string name="test_passed">পাস করেছে</string>
+    <string name="episodes">পর্ব</string>
+    <string name="backup_failed_error_format">%s ব্যাক আপ করতে সমস্যা হয়েছে</string>
+    <string name="site">সাইট</string>
+    <string name="season">সিজন</string>
+    <string name="backup_frequency">ব্যাকআপ ফ্রিকোয়েন্সি</string>
+    <string name="episode_sync_settings">দেখার অগ্রগতি আপডেট করুন</string>
+    <string name="episode_sync_settings_des">আপনার বর্তমান পর্বের অগ্রগতি স্বয়ংক্রিয়ভাবে সিঙ্ক করুন</string>
+    <string name="automatic_plugin_download_mode_title">প্লাগইন ডাউনলোড ফিল্টার করতে মোড নির্বাচন করুন</string>
+    <string name="links_reloaded_toast">লিঙ্ক পুনরায় লোড হয়েছে</string>
 </resources>

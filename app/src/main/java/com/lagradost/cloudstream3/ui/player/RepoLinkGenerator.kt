@@ -2,6 +2,7 @@ package com.lagradost.cloudstream3.ui.player
 
 import android.util.Log
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
+import com.lagradost.cloudstream3.APIHolder.unixTime
 import com.lagradost.cloudstream3.LoadResponse
 import com.lagradost.cloudstream3.ui.APIRepository
 import com.lagradost.cloudstream3.ui.result.ResultEpisode
@@ -10,6 +11,12 @@ import com.lagradost.cloudstream3.utils.ExtractorUri
 import kotlin.math.max
 import kotlin.math.min
 
+data class Cache(
+    val linkCache: MutableSet<ExtractorLink>,
+    val subtitleCache: MutableSet<SubtitleData>,
+    var lastCachedTimestamp: Long = unixTime
+)
+
 class RepoLinkGenerator(
     private val episodes: List<ResultEpisode>,
     private var currentIndex: Int = 0,
@@ -17,7 +24,7 @@ class RepoLinkGenerator(
 ) : IGenerator {
     companion object {
         const val TAG = "RepoLink"
-        val cache: HashMap<Pair<String, Int>, Pair<MutableSet<ExtractorLink>, MutableSet<SubtitleData>>> =
+        val cache: HashMap<Pair<String, Int>, Cache> =
             hashMapOf()
     }
 
@@ -76,10 +83,10 @@ class RepoLinkGenerator(
         val index = currentIndex
         val current = episodes.getOrNull(index + offset) ?: return false
 
-        val (currentLinkCache, currentSubsCache) = if (clearCache) {
-            Pair(mutableSetOf(), mutableSetOf())
+        val (currentLinkCache, currentSubsCache, lastCachedTimestamp) = if (clearCache) {
+            Cache(mutableSetOf(), mutableSetOf(), unixTime)
         } else {
-            cache[current.apiName to current.id] ?: Pair(mutableSetOf(), mutableSetOf())
+            cache[current.apiName to current.id] ?: Cache(mutableSetOf(), mutableSetOf(), unixTime)
         }
 
         //val currentLinkCache = if (clearCache) mutableSetOf() else linkCache[index].toMutableSet()
@@ -88,6 +95,12 @@ class RepoLinkGenerator(
         val currentLinks = mutableSetOf<String>()       // makes all urls unique
         val currentSubsUrls = mutableSetOf<String>()    // makes all subs urls unique
         val currentSubsNames = mutableSetOf<String>()   // makes all subs names unique
+
+        val invalidateCache = unixTime - lastCachedTimestamp  > 60 * 20 // 20 minutes
+        if(invalidateCache){
+            currentLinkCache.clear()
+            currentSubsCache.clear()
+        }
 
         currentLinkCache.filter { allowedTypes.contains(it.type) }.forEach { link ->
             currentLinks.add(link.url)
@@ -112,7 +125,7 @@ class RepoLinkGenerator(
             isCasting = LoadType.Chromecast == type,
             subtitleCallback = { file ->
                 val correctFile = PlayerSubtitleHelper.getSubtitleData(file)
-                if (!currentSubsUrls.contains(correctFile.url)) {
+                if (correctFile.url.isNotEmpty() && !currentSubsUrls.contains(correctFile.url)) {
                     currentSubsUrls.add(correctFile.url)
 
                     // this part makes sure that all names are unique for UX
@@ -135,19 +148,19 @@ class RepoLinkGenerator(
             },
             callback = { link ->
                 Log.d(TAG, "Loaded ExtractorLink: $link")
-                if (!currentLinks.contains(link.url)) {
-                    if (!currentLinkCache.contains(link)) {
-                        currentLinks.add(link.url)
-                        if (allowedTypes.contains(link.type)) {
-                            callback(Pair(link, null))
-                        }
-                        currentLinkCache.add(link)
-                        //linkCache[index] = currentLinkCache
+                if (link.url.isNotEmpty() && !currentLinks.contains(link.url) && !currentLinkCache.contains(link)) {
+                    currentLinks.add(link.url)
+
+                    if (allowedTypes.contains(link.type)) {
+                        callback(Pair(link, null))
                     }
+
+                    currentLinkCache.add(link)
+                    // linkCache[index] = currentLinkCache
                 }
             }
         )
-        cache[Pair(current.apiName, current.id)] = Pair(currentLinkCache, currentSubsCache)
+        cache[Pair(current.apiName, current.id)] = Cache(currentLinkCache, currentSubsCache, unixTime)
 
         return result
     }

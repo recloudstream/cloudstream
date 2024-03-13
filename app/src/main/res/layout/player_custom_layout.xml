@@ -518,6 +518,26 @@
                         app:layout_constraintBaseline_toBaselineOf="@id/exo_position"
                         app:layout_constraintEnd_toEndOf="parent"
                         tools:text="23:20" />
+
+                    <TextView
+                        android:id="@+id/time_left"
+                        android:layout_width="wrap_content"
+                        android:layout_height="30dp"
+                        android:layout_gravity="center|center_vertical"
+
+                        android:layout_marginEnd="20dp"
+                        android:includeFontPadding="false"
+                        android:minWidth="50dp"
+                        android:paddingLeft="4dp"
+                        android:paddingRight="4dp"
+                        android:textColor="@android:color/white"
+                        android:textSize="14sp"
+                        android:textStyle="normal"
+                        app:layout_constraintBaseline_toBaselineOf="@id/exo_position"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        tools:text="-23:20"
+                        android:visibility="gone"/>
+
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <HorizontalScrollView
@@ -550,9 +570,18 @@
                             android:orientation="horizontal">
 
                             <com.google.android.material.button.MaterialButton
-                                android:id="@+id/player_resize_btt"
+                                android:id="@+id/player_rotate_btt"
                                 style="@style/VideoButton"
                                 android:nextFocusLeft="@id/player_lock"
+
+                                android:nextFocusRight="@id/player_resize_btt"
+                                android:text="@string/rotate_video"
+                                app:icon="@drawable/screen_rotation" />
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/player_resize_btt"
+                                style="@style/VideoButton"
+                                android:nextFocusLeft="@id/player_rotate_btt"
 
                                 android:nextFocusRight="@id/player_speed_btt"
                                 android:text="@string/video_aspect_ratio_resize"

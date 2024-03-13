@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="cast_format" formatted="true">Metalaya: %s</string>
-    <string name="next_episode_time_day_format" formatted="true">%dm %ds %dd</string>
-    <string name="next_episode_time_hour_format" formatted="true">%ds %dd</string>
+    <string name="next_episode_time_day_format" formatted="true">%1$dm %2$ds %3$dd</string>
+    <string name="next_episode_time_hour_format" formatted="true">%1$ds %2$dd</string>
     <string name="next_episode_time_min_format" formatted="true">%dd</string>
-    <string name="app_dub_sub_episode_text_format" formatted="true">%s Xlq %d</string>
+    <string name="app_dub_sub_episode_text_format" formatted="true">%1$s Xlq %2$d</string>
     <string name="next_episode_format" formatted="true">Xalqadda %d waxa lasoo deyn doonaa</string>
     <string name="download">Daji</string>
     <string name="download_failed">Dejintii ma guulaysan</string>
@@ -28,7 +28,7 @@
     <string name="title_home">Kadinka</string>
     <string name="rated_format" formatted="true">Qiimaysan: %.1f</string>
     <string name="new_update_format" formatted="true">App cusub baa soo baxay!
-\n%s -&gt; %s</string>
+\n%1$s -&gt; %2$s</string>
     <string name="title_downloads">Soo dejinta</string>
     <string name="title_search">Raadi</string>
     <string name="episode_more_options_des">Dookhyo kale</string>
@@ -163,7 +163,7 @@
     <string name="lightnovel">Light novel app, isla dhiseyaasha appkan baa leh</string>
     <string name="updates_settings">Tus wixii appka ku cusub</string>
     <string name="redo_setup_process">Dib uso bilow fadhiisinta appka</string>
-    <string name="episode_format" formatted="true">%d %s</string>
+    <string name="episode_format" formatted="true">%1$d %2$s</string>
     <string name="uprereleases_settings">Ku cusbooneysii baahinta ugu horreysa</string>
     <string name="apk_installer_settings">Rakibaha APKga</string>
     <string name="status_ongoing">Socda</string>
@@ -179,10 +179,10 @@
     <string name="synopsis">Dulucuda</string>
     <string name="acra_report_toast">Raalliahow, wuu duqeeyey appku, waxa warbixin cillad-saarka ka caawisa loo direy dhiseyaasha</string>
     <string name="season">Kalka</string>
-    <string name="season_format">%s %d%s</string>
+    <string name="season_format">%1$s %2$d%3$s</string>
     <string name="episode">Xalqad</string>
     <string name="episodes">Xalqado</string>
-    <string name="episodes_range">%d illaa %d</string>
+    <string name="episodes_range">%1$d illaa %2$d</string>
     <string name="season_short">K</string>
     <string name="episode_short">X</string>
     <string name="cartoons">Kartoon</string>
@@ -361,7 +361,7 @@
     <string name="none">Midna</string>
     <string name="example_site_name">Websaydkayga.com</string>
     <string name="example_lang_name">Koodhka Luuqadda (en)</string>
-    <string name="login_format" formatted="true">%s %s</string>
+    <string name="login_format" formatted="true">%1$s %2$s</string>
     <string name="create_account">Akoon samee</string>
     <string name="upload_sync">Talantaalli</string>
     <string name="sync_score">Qiimaysan</string>
@@ -467,8 +467,8 @@
     <string name="plugin_deleted">Waa la tiray sidkanahan</string>
     <string name="plugin_load_fail" formatted="true">Waa ka keeni kari waayey %s</string>
     <string name="is_adult">18+</string>
-    <string name="batch_download_start_format" formatted="true">Waa la dejinayaa %d %s…</string>
-    <string name="batch_download_finish_format" formatted="true">Waa la dejiyey %d %s</string>
+    <string name="batch_download_start_format" formatted="true">Waa la dejinayaa %1$d %2$s…</string>
+    <string name="batch_download_finish_format" formatted="true">Waa la dejiyey %1$d %2$s</string>
     <string name="batch_download_nothing_to_download_format" formatted="true">Dhammaan %s way dejisan yihiin</string>
     <string name="extensions">Kordhiyeyaasha</string>
     <string name="view_public_repositories_button_short">Liiska bulshada kale</string>

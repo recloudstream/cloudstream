@@ -195,12 +195,12 @@
     <string name="primary_color_settings">a ou oh ouhuouhoaaha</string>
     <string name="show_fillers_settings">aaooohhouhhha hauauuu</string>
     <string name="new_update_format">aaaaaaa uuuuuu
-\n%s -&gt; %s</string>
-    <string name="app_dub_sub_episode_text_format" formatted="true">%s aaou %d</string>
+\n%1$s -&gt; %2$s</string>
+    <string name="app_dub_sub_episode_text_format" formatted="true">%1$s aaou %2$d</string>
     <string name="cast_format" formatted="true">oouaaahh %s</string>
     <string name="next_episode_format" formatted="true">aaaaaaugh ouh %d uuoogahaaah ooua-h-ha</string>
-    <string name="next_episode_time_day_format" formatted="true">%daaa %duuu %dhhhg</string>
-    <string name="next_episode_time_hour_format" formatted="true">%daaaaaaauuhh %doouuahaaha</string>
+    <string name="next_episode_time_day_format" formatted="true">%1$daaa %2$duuu %3$dhhhg</string>
+    <string name="next_episode_time_hour_format" formatted="true">%1$daaaaaaauuhh %2$doouuahaaha</string>
     <string name="next_episode_time_min_format" formatted="true">%dmmmm...</string>
     <string name="player_speed_text_format" formatted="true">aaaaaaaaaaaaahh (%.2foouo)</string>
     <string name="rated_format" formatted="true">aghaaaooo-ough %.1f</string>

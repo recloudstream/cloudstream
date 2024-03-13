@@ -80,11 +80,13 @@ object BackupUtils {
         PLUGINS_KEY_LOCAL,
 
         OPEN_SUBTITLES_USER_KEY,
-        "nginx_user", // Nginx user key
-        DOWNLOAD_EPISODE_CACHE
+        DOWNLOAD_EPISODE_CACHE,
+
+        "biometric_key", // can lock down users if backup is shared on a incompatible device
+        "nginx_user" // Nginx user key
     )
 
-    /** false if blacklisted key */
+    /** false if key should not be contained in backup */
     private fun String.isTransferable(): Boolean {
         return !nonTransferableKeys.any { this.contains(it) }
     }

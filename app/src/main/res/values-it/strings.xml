@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- FORMAT MIGHT TRANSLATE, WILL CAUSE CRASH IF APPLIED WRONG -->
-    <string name="app_dub_sub_episode_text_format" formatted="true">%s Ep %d</string>
+    <string name="app_dub_sub_episode_text_format" formatted="true">%1$s Ep %2$d</string>
     <string name="cast_format" formatted="true">Cast: %s</string>
     <string name="next_episode_format" formatted="true">L\'episodio %d uscirà in</string>
-    <string name="next_episode_time_day_format" formatted="true">%d g %d o %d min</string>
-    <string name="next_episode_time_hour_format" formatted="true">%d o %d min</string>
+    <string name="next_episode_time_day_format" formatted="true">%1$dd %2$dh %3$dm</string>
+    <string name="next_episode_time_hour_format" formatted="true">%1$dh %2$dm</string>
     <string name="next_episode_time_min_format" formatted="true">%d min</string>
     <!-- IS NOT NEEDED TO TRANSLATE AS THEY ARE ONLY USED FOR SCREEN READERS AND WONT SHOW UP TO NORMAL USERS -->
     <string name="result_poster_img_des">Poster</string>
@@ -177,12 +177,12 @@
     <string name="subs_default_reset_toast">Ripristina il valore predefinito</string>
     <string name="acra_report_toast">Spiacente, l\'applicazione è andata in crash. Una segnalazione anonima di bug sarà inviata agli sviluppatori</string>
     <string name="season">Stagione</string>
-    <string name="season_format">%s %d%s</string>
+    <string name="season_format">%1$s %2$d%3$s</string>
     <string name="no_season">Nessuna stagione</string>
     <string name="episode">Episodio</string>
     <string name="episodes">Episodi</string>
-    <string name="episodes_range">%d-%d</string>
-    <string name="episode_format" formatted="true">%d %s</string>
+    <string name="episodes_range">%1$d-%2$d</string>
+    <string name="episode_format" formatted="true">%1$d %2$s</string>
     <string name="season_short">S</string>
     <string name="episode_short">E</string>
     <string name="no_episodes_found">Nessun episodio trovato</string>
@@ -311,7 +311,7 @@
     <string name="example_site_name">IlMioSito</string>
     <string name="example_site_url">example.com</string>
     <string name="example_lang_name">Codice lingua (it)</string>
-    <string name="login_format" formatted="true">%s %s</string>
+    <string name="login_format" formatted="true">%1$s %2$s</string>
     <string name="account">account</string>
     <string name="logout">Disconnetti</string>
     <string name="login">Accedi</string>
@@ -409,7 +409,7 @@
     <string name="plugin_deleted">Plugin eliminato</string>
     <string name="plugin_load_fail" formatted="true">Impossibile caricare %s</string>
     <string name="is_adult">18+</string>
-    <string name="batch_download_start_format" formatted="true">Download iniziato %1$d %2$s…</string>
+    <string name="batch_download_start_format" formatted="true">Avviato il download di %1$d %2$s…</string>
     <string name="batch_download_finish_format" formatted="true">Scaricato %1$d %2$s</string>
     <string name="batch_download_nothing_to_download_format" formatted="true">Tutti %s già scaricati</string>
     <string name="batch_download">Download in blocco</string>
@@ -593,10 +593,19 @@
     <string name="action_subscribe">Iscriviti</string>
     <string name="action_remove_from_favorites">Rimuovi dai preferiti</string>
     <string name="select_an_account">Seleziona un Account</string>
-    <string name="duplicate_message_single">Sembra che un oggetto potenziale duplicato sia già presente nella tua libreria: \'%1$s.\'
+    <string name="duplicate_message_single">Sembra che nella tua libreria esista già un elemento potenzialmente duplicato: \'%s.\'
 \n
-\nVorresti aggiungere l\'oggetto lo stesso, rimpiazzare l\'esistente, o cancellare l\'azione\?</string>
+\nDesideri aggiungere comunque questo elemento, sostituire quello esistente o annullare l\'azione?</string>
     <string name="enter_pin">Inserisci PIN</string>
     <string name="pin">PIN</string>
     <string name="enter_current_pin">Inserisci PIN Corrente</string>
+    <string name="logged_account" formatted="true">Entrato come %s</string>
+    <string name="enter_pin_with_name" formatted="true">Inserisci il PIN per %s</string>
+    <string name="lock_profile">Blocca profilo</string>
+    <string name="use_default_account">Usa Account Default</string>
+    <string name="skip_startup_account_select_pref">Salta la selezione dell\'account all\'avvio</string>
+    <string name="manage_accounts">Gestisci Accounts</string>
+    <string name="edit_account">Modifica account</string>
+    <string name="links_reloaded_toast">Collegamenti ricaricati</string>
+    <string name="rotate_video">Ruota</string>
 </resources>

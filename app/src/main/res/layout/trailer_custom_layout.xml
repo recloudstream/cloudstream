@@ -506,6 +506,25 @@
                     app:layout_constraintEnd_toEndOf="@id/player_fullscreen"
                     tools:text="23:20" />
 
+                <TextView
+                    android:id="@+id/time_left"
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dp"
+                    android:layout_gravity="center|center_vertical"
+
+                    android:layout_marginEnd="30dp"
+                    android:includeFontPadding="false"
+                    android:minWidth="50dp"
+                    android:paddingLeft="4dp"
+                    android:paddingRight="4dp"
+                    android:textColor="@android:color/white"
+                    android:textSize="14sp"
+                    android:textStyle="normal"
+                    app:layout_constraintBaseline_toBaselineOf="@id/exo_position"
+                    app:layout_constraintEnd_toEndOf="@id/player_fullscreen"
+                    tools:text="-23:20"
+                    android:visibility="gone"/>
+
                 <ImageView
                     android:id="@+id/player_fullscreen"
                     android:layout_width="30dp"
@@ -533,6 +552,10 @@
                     android:orientation="horizontal"
                     android:paddingTop="10dp"
                     android:paddingBottom="10dp">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/player_rotate_btt"
+                        style="@style/VideoButton"/>
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/player_lock"

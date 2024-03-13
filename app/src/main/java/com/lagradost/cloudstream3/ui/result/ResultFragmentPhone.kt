@@ -2,6 +2,9 @@ package com.lagradost.cloudstream3.ui.result
 
 import android.annotation.SuppressLint
 import android.app.Dialog
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Rect
@@ -31,6 +34,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.lagradost.cloudstream3.APIHolder
 import com.lagradost.cloudstream3.APIHolder.updateHasTrailers
 import com.lagradost.cloudstream3.CommonActivity
+import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.DubStatus
 import com.lagradost.cloudstream3.LoadResponse
 import com.lagradost.cloudstream3.MainActivity.Companion.afterPluginsLoadedEvent
@@ -58,14 +62,12 @@ import com.lagradost.cloudstream3.ui.result.ResultFragment.updateUIEvent
 import com.lagradost.cloudstream3.ui.search.SearchAdapter
 import com.lagradost.cloudstream3.ui.search.SearchHelper
 import com.lagradost.cloudstream3.utils.AppUtils.getNameFull
-import com.lagradost.cloudstream3.utils.AppUtils.html
 import com.lagradost.cloudstream3.utils.AppUtils.isCastApiAvailable
 import com.lagradost.cloudstream3.utils.AppUtils.loadCache
 import com.lagradost.cloudstream3.utils.AppUtils.openBrowser
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialogInstant
-import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialogText
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showDialog
 import com.lagradost.cloudstream3.utils.UIHelper
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
@@ -76,7 +78,6 @@ import com.lagradost.cloudstream3.utils.UIHelper.populateChips
 import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIconsAndNoStringRes
 import com.lagradost.cloudstream3.utils.UIHelper.setImage
 import com.lagradost.cloudstream3.utils.VideoDownloadHelper
-
 
 open class ResultFragmentPhone : FullScreenPlayer() {
     private val gestureRegionsListener = object : PanelsChildGestureRegionObserver.GestureRegionsListener {
@@ -247,6 +248,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
     }
 
     var selectSeason: String? = null
+    var selectEpisodeRange: String? = null
 
     private fun setUrl(url: String?) {
         if (url == null) {
@@ -677,19 +679,22 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                     resultMetaYear.setText(d.yearText)
                     resultMetaDuration.setText(d.durationText)
                     resultMetaRating.setText(d.ratingText)
+                    resultMetaStatus.setText(d.onGoingText)
+                    resultMetaContentRating.setText(d.contentRatingText)
                     resultCastText.setText(d.actorsText)
                     resultNextAiring.setText(d.nextAiringEpisode)
                     resultNextAiringTime.setText(d.nextAiringDate)
                     resultPoster.setImage(d.posterImage)
                     resultPosterBackground.setImage(d.posterBackgroundImage)
-                    resultDescription.setTextHtml(d.plotText)
-                    resultDescription.setOnClickListener {
-                        activity?.let { activity ->
-                            activity.showBottomDialogText(
-                                d.titleText.asString(activity),
-                                d.plotText.asString(activity).html(),
-                                {}
-                            )
+
+                    var isExpanded = false
+                    resultDescription.apply {
+                        setTextHtml(d.plotText)
+                        setOnClickListener {
+                            isExpanded = !isExpanded
+                            maxLines = if (isExpanded) {
+                                Integer.MAX_VALUE
+                            } else 10
                         }
                     }
 
@@ -700,6 +705,11 @@ open class ResultFragmentPhone : FullScreenPlayer() {
 
                     resultCastItems.isGone = d.actors.isNullOrEmpty()
                     (resultCastItems.adapter as? ActorAdaptor)?.updateList(d.actors ?: emptyList())
+
+                    if (d.contentRatingText == null) {
+                        // If there is no rating to display, we don't want an empty gap
+                        resultMetaContentRating.width = 0
+                    }
 
                     if (syncModel.addSyncs(d.syncData)) {
                         syncModel.updateMetaAndUser()
@@ -745,6 +755,17 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                 resultLoadingError.isVisible = data is Resource.Failure
                 resultErrorText.isVisible = data is Resource.Failure
                 resultReloadConnectionOpenInBrowser.isVisible = data is Resource.Failure
+
+                resultTitle.setOnLongClickListener {
+                        val titleToCopy = resultTitle.text
+                        val clipboardManager =
+                            activity?.getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager?
+                        clipboardManager?.setPrimaryClip(ClipData.newPlainText("Title", titleToCopy))
+                        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2) {
+                            showToast(R.string.copyTitle, Toast.LENGTH_SHORT)
+                        }
+                        return@setOnLongClickListener true
+                }
             }
         }
 
@@ -845,7 +866,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
 
                         val d = status.value
                         resultSyncRating.value = d.score?.toFloat() ?: 0.0f
-                        resultSyncCheck.setItemChecked(d.status + 1, true)
+                        resultSyncCheck.setItemChecked(d.status.internalId + 1, true)
                         val watchedEpisodes = d.watchedEpisodes ?: 0
                         currentSyncProgress = watchedEpisodes
 
@@ -878,14 +899,6 @@ open class ResultFragmentPhone : FullScreenPlayer() {
         }
         observe(viewModel.recommendations) { recommendations ->
             setRecommendations(recommendations, null)
-        }
-        observe(viewModel.episodeSynopsis) { description ->
-            activity?.let { activity ->
-                activity.showBottomDialogText(
-                    activity.getString(R.string.synopsis),
-                    description.html()
-                ) { viewModel.releaseEpisodeSynopsis() }
-            }
         }
         context?.let { ctx ->
             val arrayAdapter = ArrayAdapter<String>(ctx, R.layout.sort_bottom_single_choice)
@@ -1021,6 +1034,8 @@ open class ResultFragmentPhone : FullScreenPlayer() {
         observeNullable(viewModel.selectedRange) { range ->
             resultBinding?.apply {
                 resultEpisodeSelect.setText(range)
+
+                selectEpisodeRange = range?.asStringNull(resultEpisodeSelect.context)
                 // If Season button is invisible then the bookmark button next focus is episode select
                 if (resultEpisodeSelect.isVisible && !resultSeasonButton.isVisible && resultResumeParent.isVisible) {
                     setFocusUpAndDown(resultResumeSeriesButton, resultEpisodeSelect)
@@ -1054,9 +1069,12 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                             r to (text?.asStringNull(ctx) ?: return@mapNotNull null)
                         }
 
-                    view.popupMenuNoIconsAndNoStringRes(names.mapIndexed { index, (_, name) ->
-                        index to name
-                    }) {
+                    activity?.showDialog(
+                        names.map { it.second },
+                        names.indexOfFirst { it.second == selectEpisodeRange },
+                        "",
+                        false,
+                        {}) { itemId ->
                         viewModel.changeRange(names[itemId].first)
                     }
                 }

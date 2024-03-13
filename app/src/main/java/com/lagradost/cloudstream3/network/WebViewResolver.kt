@@ -2,6 +2,8 @@ package com.lagradost.cloudstream3.network
 
 import android.annotation.SuppressLint
 import android.net.http.SslError
+import android.os.Handler
+import android.os.Looper
 import android.webkit.*
 import com.lagradost.cloudstream3.AcraApplication
 import com.lagradost.cloudstream3.AcraApplication.Companion.context
@@ -27,16 +29,39 @@ import java.net.URI
  * @param additionalUrls this will make resolveUsingWebView also return all other requests matching the list of Regex.
  * @param userAgent if null then will use the default user agent
  * @param useOkhttp will try to use the okhttp client as much as possible, but this might cause some requests to fail. Disable for cloudflare.
+ * @param script pass custom js to execute
+ * @param scriptCallback will be called with the result from custom js
+ * @param timeout close webview after timeout
  * */
 class WebViewResolver(
     val interceptUrl: Regex,
     val additionalUrls: List<Regex> = emptyList(),
     val userAgent: String? = USER_AGENT,
-    val useOkhttp: Boolean = true
+    val useOkhttp: Boolean = true,
+    val script: String? = null,
+    val scriptCallback: ((String) -> Unit)? = null,
+    val timeout: Long = DEFAULT_TIMEOUT
 ) :
     Interceptor {
 
+    constructor(
+        interceptUrl: Regex,
+        additionalUrls: List<Regex> = emptyList(),
+        userAgent: String? = USER_AGENT,
+        useOkhttp: Boolean = true,
+        script: String? = null,
+        scriptCallback: ((String) -> Unit)? = null,
+    ) : this(interceptUrl, additionalUrls, userAgent, useOkhttp, script, scriptCallback, DEFAULT_TIMEOUT)
+
+    constructor(
+        interceptUrl: Regex,
+        additionalUrls: List<Regex> = emptyList(),
+        userAgent: String? = USER_AGENT,
+        useOkhttp: Boolean = true
+    ) : this(interceptUrl, additionalUrls, userAgent, useOkhttp, null, null, DEFAULT_TIMEOUT)
+
     companion object {
+        private const val DEFAULT_TIMEOUT = 60_000L
         var webViewUserAgent: String? = null
 
         @JvmName("getWebViewUserAgent1")
@@ -135,6 +160,14 @@ class WebViewResolver(
                     ): WebResourceResponse? = runBlocking {
                         val webViewUrl = request.url.toString()
                         println("Loading WebView URL: $webViewUrl")
+
+                        if (script != null) {
+                            val handler = Handler(Looper.getMainLooper())
+                            handler.post {
+                                view.evaluateJavascript("$script")
+                                { scriptCallback?.invoke(it) }
+                            }
+                        }
 
                         if (interceptUrl.containsMatchIn(webViewUrl)) {
                             fixedRequest = request.toRequest()?.also {
@@ -241,7 +274,7 @@ class WebViewResolver(
 
         var loop = 0
         // Timeouts after this amount, 60s
-        val totalTime = 60000L
+        val totalTime = timeout
 
         val delayTime = 100L
 

@@ -45,7 +45,7 @@ data class SaveChromeCaptionStyle(
     @JsonProperty("fontScale") var fontScale: Float = 1.05f,
     @JsonProperty("windowColor") var windowColor: Int = Color.TRANSPARENT,
 )
-
+@androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
 class ChromecastSubtitlesFragment : Fragment() {
     companion object {
         val applyStyleEvent = Event<SaveChromeCaptionStyle>()

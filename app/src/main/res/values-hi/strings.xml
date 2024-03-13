@@ -3,7 +3,7 @@
     <!-- TRANSLATE, BUT DON'T FORGET FORMAT -->
     <string name="player_speed_text_format" formatted="true">स्पीड (%.2fx)</string>
     <string name="new_update_format" formatted="true">नया अपडेट आया है!
-\n%s -&gt; %s</string>
+\n%1$s -&gt; %2$s</string>
     <string name="title_home">होम</string>
     <string name="title_search">खोजें</string>
     <string name="title_downloads">डाउनलोडस</string>
@@ -142,8 +142,8 @@
     <string name="action_mark_as_watched">देखा हुआ चिह्नित करें</string>
     <string name="history">इतिहास</string>
     <string name="next_episode_format" formatted="true">भाग %d रिलीज़ किया जाएगा</string>
-    <string name="next_episode_time_day_format" formatted="true">%dd %dh %dm</string>
-    <string name="next_episode_time_hour_format" formatted="true">%dh %dm</string>
+    <string name="next_episode_time_day_format" formatted="true">%1$dd %2$dh %3$dm</string>
+    <string name="next_episode_time_hour_format" formatted="true">%1$dh %2$dm</string>
     <string name="next_episode_time_min_format" formatted="true">%dm</string>
     <string name="home_next_random_img_des">अगला रैंडम</string>
     <string name="go_back_img_des">वापिस जाओ</string>
@@ -153,7 +153,7 @@
     <string name="cast_format" formatted="true">Cast: %s</string>
     <string name="home_main_poster_img_des">मुख्य पोस्टर</string>
     <string name="episode_poster_img_des">एपिसोड का पोस्टर</string>
-    <string name="app_dub_sub_episode_text_format" formatted="true">%s Ep %d</string>
+    <string name="app_dub_sub_episode_text_format" formatted="true">%1$s Ep %2$d</string>
     <string name="filler" formatted="true">पूरक</string>
     <string name="rated_format" formatted="true">रेटिंग: %.1f</string>
     <string name="search_hint_site" formatted="true">%s पर खोजें…</string>
@@ -161,4 +161,35 @@
     <string name="duration_format" formatted="true">%d मिनट</string>
     <string name="app_name">क्लाउडस्ट्रीम</string>
     <string name="play_with_app_name">क्लाउडस्ट्रीम के साथ चलाएं</string>
+    <string name="duplicate_message_multiple" formatted="true">आपकी लाइब्रेरी में संभावित डुप्लिकेट आइटम पाए गए हैं:
+\n
+\n%s
+\n
+\nक्या आप किसी भी तरह इस आइटम को जोड़ना चाहेंगे, मौजूदा आइटम को बदलना चाहेंगे, या कार्रवाई रद्द करना चाहेंगे?</string>
+    <string name="enter_pin_with_name" formatted="true">%s के लिए पिन दर्ज करें</string>
+    <string name="duplicate_title">संभावित डुप्लिकेट मिला</string>
+    <string name="update_started">अपडेट शुरू हुआ</string>
+    <string name="lock_profile">प्रोफ़ाइल लॉक करें</string>
+    <string name="duplicate_replace_all">सबको बदली करें</string>
+    <string name="pin_error_incorrect">ग़लत पिन. कृपया पुन: प्रयास करें।</string>
+    <string name="browser">ब्राउज़र</string>
+    <string name="pick_subtitle">उपशीर्षक</string>
+    <string name="pin_error_length">पिन 4 अक्षर का होना चाहिए</string>
+    <string name="duplicate_replace">बदली</string>
+    <string name="duplicate_add">जोड़े</string>
+    <string name="play_trailer_button">ट्रेलर देखे</string>
+    <string name="play_livestream_button">लाइवस्ट्रीम देखे</string>
+    <string name="result_poster_img_des">विज्ञापन</string>
+    <string name="type_re_watching">दोबारा देखे</string>
+    <string name="auto_rotate_video">स्वत: घुमाएँ</string>
+    <string name="select_an_account">अकाउंट चुनिये</string>
+    <string name="skip_loading">लोडिंग स्किप करे</string>
+    <string name="loading">लोडिंग…</string>
+    <string name="duplicate_message_single" formatted="true">ऐसा प्रतीत होता है कि संभावित रूप से डुप्लिकेट आइटम आपकी लाइब्रेरी में पहले से मौजूद है: \'%s.\'
+\n
+\nक्या आप किसी भी तरह इस आइटम को जोड़ना चाहेंगे, मौजूदा आइटम को बदलना चाहेंगे, या कार्रवाई रद्द करना चाहेंगे?</string>
+    <string name="enter_pin">पिन दर्ज करें</string>
+    <string name="pin">पिन</string>
+    <string name="links_reloaded_toast">लिंक पुन्ह खुली</string>
+    <string name="enter_current_pin">वर्तमान पिन दर्ज करें</string>
 </resources>

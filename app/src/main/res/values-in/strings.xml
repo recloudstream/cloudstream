@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- FORMAT MIGHT TRANSLATE, WILL CAUSE CRASH IF APPLIED WRONG -->
-    <string name="app_dub_sub_episode_text_format" formatted="true">%s Ep %d</string>
+    <string name="app_dub_sub_episode_text_format" formatted="true">%1$s Ep %2$d</string>
     <string name="cast_format" formatted="true">Pemeran: %s</string>
     <!-- IS NOT NEEDED TO TRANSLATE AS THEY ARE ONLY USED FOR SCREEN READERS AND WONT SHOW UP TO NORMAL USERS -->
     <string name="result_poster_img_des">Poster</string>
@@ -16,7 +16,7 @@
     <string name="player_speed_text_format" formatted="true">Kecepatan (%.2fx)</string>
     <string name="rated_format" formatted="true">Dinilai: %.1f</string>
     <string name="new_update_format" formatted="true">Update baru ditemukan!
-\n%s -&gt; %s</string>
+\n%1$s -&gt; %2$s</string>
     <string name="filler" formatted="true">Filler</string>
     <string name="duration_format" formatted="true">%d mnt</string>
     <string name="app_name">CloudStream</string>
@@ -285,7 +285,7 @@
     <string name="kitsu_account_settings" translatable="false">Kitsu</string>
     <string name="trakt_account_settings" translatable="false">Trakt</string>
     -->
-    <string name="login_format" formatted="true">%s %s</string>
+    <string name="login_format" formatted="true">%1$s %2$s</string>
     <string name="account">akun</string>
     <string name="logout">Keluar</string>
     <string name="login">Masuk</string>
@@ -354,10 +354,10 @@
     <string name="resolution_and_title">Resolusi dan judul</string>
     <string name="title">Judul</string>
     <string name="resolution">Resolusi</string>
-    <string name="next_episode_time_hour_format" formatted="true">%dh %dm</string>
+    <string name="next_episode_time_hour_format" formatted="true">%1$dh %2$dm</string>
     <string name="next_episode_time_min_format" formatted="true">%dm</string>
     <string name="next_episode_format" formatted="true">Episode %d akan dirilis tanggal</string>
-    <string name="next_episode_time_day_format" formatted="true">%dd %dh %dm</string>
+    <string name="next_episode_time_day_format" formatted="true">%1$dd %2$dh %3$dm</string>
     <string name="automatic_plugin_updates">Pembaruan otomatis plugin</string>
     <string name="automatic_plugin_download">Unduh plugins secara otomatis</string>
     <string name="kitsu_settings">Tampilkan poster dari Kitsu</string>
@@ -382,8 +382,8 @@
     <string name="autoplay_next_settings_des">Putar episode selanjutnya, setelah ini berakhir</string>
     <string name="show_trailers_settings">Tampilkan cuplikan</string>
     <string name="redo_setup_process">Ulang proses pemasangan</string>
-    <string name="episodes_range">%d-%d</string>
-    <string name="episode_format" formatted="true">%d %s</string>
+    <string name="episodes_range">%1$d-%2$d</string>
+    <string name="episode_format" formatted="true">%1$d %2$s</string>
     <string name="nsfw">NSFW</string>
     <string name="others">Lainnya</string>
     <string name="other_singular">Video</string>
@@ -395,7 +395,7 @@
     <string name="pref_category_extensions">Ekstensi</string>
     <string name="play_with_app_name">Putar di CloudStream</string>
     <string name="pref_filter_search_quality">Sembunyikan kualitas video terpilih di pencarian</string>
-    <string name="season_format">%s %d%s</string>
+    <string name="season_format">%1$s %2$d%3$s</string>
     <string name="livestreams">Siaran langsung</string>
     <string name="remove_site_pref">Hapus Website</string>
     <string name="example_username">UsernameKeren</string>
@@ -447,8 +447,8 @@
     <string name="player_settings_play_in_app">Pemutar Bawaan</string>
     <string name="player_settings_play_in_vlc">VLC</string>
     <string name="player_settings_play_in_mpv">MPV</string>
-    <string name="batch_download_finish_format" formatted="true">Terunduh %d %s</string>
-    <string name="batch_download_start_format" formatted="true">Memulai mengunduh %d %s…</string>
+    <string name="batch_download_finish_format" formatted="true">Terunduh %1$d %2$s</string>
+    <string name="batch_download_start_format" formatted="true">Memulai mengunduh %1$d %2$s…</string>
     <string name="safe_mode_description">Semua fitur tambahkan dimatikan karena crash, untuk memudahkanmu mencari penyebab crash.</string>
     <string name="example_lang_name">Kode bahasa (en)</string>
     <string name="player_load_subtitles_online">Ambil dari internet</string>
@@ -574,4 +574,37 @@
     <string name="no_plugins_found_error">Tidak ada plugin yang ditemukan di repositori</string>
     <string name="no_repository_found_error">Repositori tidak ditemukan, periksa URL dan coba VPN</string>
     <string name="already_voted">Kamu sudah voting</string>
+    <string name="favorite_removed">%s dihapus dari favorit</string>
+    <string name="favorites_list_name">Favorit</string>
+    <string name="favorite_added">%s Ditambahkan ke favorit</string>
+    <string name="duplicate_message_multiple" formatted="true">Item duplikat potensial telah ditemukan di perpustakaan Anda:
+\n
+\n%s
+\n
+\nApakah Anda tetap ingin menambahkan item ini, mengganti item yang sudah ada, atau membatalkan tindakan?</string>
+    <string name="backup_frequency">Frekuensi pencadangan</string>
+    <string name="duplicate_title">Potensi Duplikat Ditemukan</string>
+    <string name="lock_profile">Kunci Profil</string>
+    <string name="action_add_to_favorites">Tambahkan ke favorit</string>
+    <string name="duplicate_replace_all">Mengganti Semua</string>
+    <string name="pin_error_incorrect">PIN Salah. Silahkan coba lagi.</string>
+    <string name="action_unsubscribe">Unsubscribe</string>
+    <string name="pin_error_length">PIN harus terdiri 4 karakter</string>
+    <string name="duplicate_replace">Mengganti</string>
+    <string name="duplicate_add">Tambahkan</string>
+    <string name="action_subscribe">Subscribe</string>
+    <string name="action_remove_from_favorites">Hapus dari favorit</string>
+    <string name="select_an_account">Pilih Akun</string>
+    <string name="duplicate_message_single" formatted="true">Tampaknya item yang berpotensi duplikat sudah ada di perpustakaan Anda: \'%s.\'
+\n
+\nApakah Anda tetap ingin menambahkan item ini, mengganti item yang sudah ada, atau membatalkan tindakan?</string>
+    <string name="enter_pin">Masukan PIN</string>
+    <string name="pin">PIN</string>
+    <string name="enter_current_pin">Masukkan PIN Saat Ini</string>
+    <string name="logged_account" formatted="true">Masuk sebagai %s</string>
+    <string name="enter_pin_with_name" formatted="true">Masukan PIN untuk %s</string>
+    <string name="use_default_account">Gunakan Akun Default</string>
+    <string name="skip_startup_account_select_pref">Lewati pemilihan akun saat startup</string>
+    <string name="manage_accounts">Kelola Akun</string>
+    <string name="edit_account">Edit akun</string>
 </resources>

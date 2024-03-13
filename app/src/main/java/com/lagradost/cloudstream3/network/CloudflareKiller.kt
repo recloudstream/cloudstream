@@ -17,6 +17,8 @@ import java.net.URI
 class CloudflareKiller : Interceptor {
     companion object {
         const val TAG = "CloudflareKiller"
+        private val ERROR_CODES = listOf(403, 503)
+        private val CLOUDFLARE_SERVERS = listOf("cloudflare-nginx", "cloudflare")
         fun parseCookieMap(cookie: String): Map<String, String> {
             return cookie.split(";").associate {
                 val split = it.split("=")
@@ -48,15 +50,23 @@ class CloudflareKiller : Interceptor {
 
     override fun intercept(chain: Interceptor.Chain): Response = runBlocking {
         val request = chain.request()
-        val cookies = savedCookies[request.url.host]
 
-        if (cookies == null) {
-            bypassCloudflare(request)?.let {
-                Log.d(TAG, "Succeeded bypassing cloudflare: ${request.url}")
-                return@runBlocking it
+        when (val cookies = savedCookies[request.url.host]) {
+            null -> {
+                val response = chain.proceed(request)
+                if(!(response.header("Server") in CLOUDFLARE_SERVERS && response.code in ERROR_CODES)) {
+                    return@runBlocking response
+                } else {
+                    response.close()
+                    bypassCloudflare(request)?.let {
+                        Log.d(TAG, "Succeeded bypassing cloudflare: ${request.url}")
+                        return@runBlocking it
+                    }
+                }
             }
-        } else {
-            return@runBlocking proceed(request, cookies)
+            else -> {
+                return@runBlocking proceed(request, cookies)
+            }
         }
 
         debugWarning({ true }) { "Failed cloudflare at: ${request.url}" }

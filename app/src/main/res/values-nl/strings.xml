@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- FORMAT MIGHT TRANSLATE, WILL CAUSE CRASH IF APPLIED WRONG -->
-    <string name="app_dub_sub_episode_text_format" formatted="true">%s Ep %d</string>
+    <string name="app_dub_sub_episode_text_format" formatted="true">%1$s Ep %2$d</string>
     <string name="cast_format" formatted="true">Cast: %s</string>
     <string name="next_episode_format" formatted="true">Aflevering %d zal worden uitgebracht in</string>
-    <string name="next_episode_time_day_format" formatted="true">%dd %dh %dm</string>
-    <string name="next_episode_time_hour_format" formatted="true">%dh %dm</string>
+    <string name="next_episode_time_day_format" formatted="true">%1$dd %2$dh %3$dm</string>
+    <string name="next_episode_time_hour_format" formatted="true">%1$dh %2$dm</string>
     <string name="next_episode_time_min_format" formatted="true">%dm</string>
     <!-- IS NOT NEEDED TO TRANSLATE AS THEY ARE ONLY USED FOR SCREEN READERS AND WONT SHOW UP TO NORMAL USERS -->
     <string name="result_poster_img_des">Poster</string>
@@ -20,7 +20,7 @@
     <string name="player_speed_text_format" formatted="true">Snelheid (%.2fx)</string>
     <string name="rated_format" formatted="true">Beoordeeld: %.1fAls</string>
     <string name="new_update_format" formatted="true">Nieuwe update gevonden!
-\n%s -&gt; %s</string>
+\n%1$s -&gt; %2$s</string>
     <string name="filler" formatted="true">Filler</string>
     <string name="duration_format" formatted="true">%d min</string>
     <string name="app_name">CloudStream</string>
@@ -177,8 +177,8 @@
     <string name="no_season">Geen seizoen</string>
     <string name="episode">Aflevering</string>
     <string name="episodes">afleveringen</string>
-    <string name="episodes_range">%d-%d</string>
-    <string name="episode_format" formatted="true">%d %s</string>
+    <string name="episodes_range">%1$d-%2$d</string>
+    <string name="episode_format" formatted="true">%1$d %2$s</string>
     <string name="season_short">S</string>
     <string name="episode_short">E</string>
     <string name="no_episodes_found">Geen afleveringen gevonden</string>
@@ -309,7 +309,7 @@
     <string name="kitsu_account_settings" translatable="false">Kitsu</string>
     <string name="trakt_account_settings" translatable="false">Trakt</string>
     -->
-    <string name="login_format" formatted="true">%s %s</string>
+    <string name="login_format" formatted="true">%1$s %2$s</string>
     <string name="account">account</string>
     <string name="logout">Log uit</string>
     <string name="login">Log in</string>
@@ -423,7 +423,7 @@
     <string name="is_adult">18+</string>
     <string name="jsdelivr_proxy">raw.githubusercontent.com Proxy</string>
     <string name="pref_category_bypass">ISP Omleidingen</string>
-    <string name="pref_category_defaults">Standaard</string>
+    <string name="pref_category_defaults">Standaardinstellingen</string>
     <string name="app_not_found_error">App niet gevonden</string>
     <string name="pref_category_subtitles">Ondertitels</string>
     <string name="subtitles_filter_lang">Filter op gewenste mediataal</string>
@@ -438,10 +438,10 @@
     <string name="extension_language">Taal</string>
     <string name="extension_install_first">Installeer eerst de uitbreiding</string>
     <string name="all_languages_preference">Alle Talen</string>
-    <string name="automatic_plugin_download_summary">Installeert automatisch alle nog niet geïnstalleerde plugins uit toegevoegde repositories.</string>
+    <string name="automatic_plugin_download_summary">Installeer automatisch alle nog niet geïnstalleerde plugins uit toegevoegde repositories.</string>
     <string name="jsdelivr_enabled">Kan GitHub niet bereiken, schakel jsDelivr proxy in…</string>
     <string name="apk_installer_settings">APK Installatie</string>
-    <string name="automatic_plugin_download">Automatisch plugins downloaden</string>
+    <string name="automatic_plugin_download">Download plugins automatisch</string>
     <string name="extensions">Uitbreidingen</string>
     <string name="skip_type_op">Openen</string>
     <string name="plugin">plugins</string>
@@ -453,15 +453,15 @@
     <string name="test_failed">Mislukt</string>
     <string name="jsdelivr_proxy_summary">Omzeilt de blokkering van GitHub met behulp van jsDelivr, waardoor updates enkele dagen vertraging kunnen oplopen.</string>
     <string name="repository_url_hint">Repository URL</string>
-    <string name="batch_download_finish_format" formatted="true">Download %d %s voltooid</string>
+    <string name="batch_download_finish_format" formatted="true">Download %1$d %2$s voltooid</string>
     <string name="hls_playlist">HLS Afspeellijst</string>
     <string name="pref_category_player_features">Speler eigenschappen</string>
-    <string name="season_format">%s %d%s</string>
+    <string name="season_format">%1$s %2$d%3$s</string>
     <string name="plugin_deleted">Plugin Verwijderd</string>
     <string name="extension_types">Ondersteund</string>
     <string name="category_providers">Aanbieders</string>
     <string name="extension_status">Status</string>
-    <string name="batch_download_start_format" formatted="true">Gestart met downloaden van %d %s…</string>
+    <string name="batch_download_start_format" formatted="true">Gestart met downloaden van %1$d %2$s…</string>
     <string name="player_pref">Gewenste videospeler</string>
     <string name="pref_category_looks">Lijkt</string>
     <string name="enable_nsfw_on_providers">NSFW inschakelen op ondersteunde aanbieders</string>
@@ -573,4 +573,37 @@
     <string name="disable">Uitzetten</string>
     <string name="unable_to_inflate">De gebruikersinterface kon niet correct worden gemaakt, dit is een ERNSTIG PROBLEEM en moet onmiddellijk gerapporteerd worden %s</string>
     <string name="already_voted">Je hebt al gestemd</string>
+    <string name="favorite_removed">%s verwijderd uit favorieten</string>
+    <string name="favorites_list_name">Favorieten</string>
+    <string name="favorite_added">%s toegevoegd aan favorieten</string>
+    <string name="logged_account" formatted="true">Aangemeld als %s</string>
+    <string name="duplicate_message_multiple" formatted="true">Er zijn mogelijk dubbele items gevonden in uw bibliotheek:
+\n
+\n%s
+\n
+\nWilt u dit item toch toevoegen, de bestaande vervangen of de actie annuleren?</string>
+    <string name="enter_pin_with_name" formatted="true">Voer PIN in voor %s</string>
+    <string name="backup_frequency">Backupfrequentie</string>
+    <string name="duplicate_title">Mogelijk Duplicaat Gevonden</string>
+    <string name="lock_profile">Profiel vergrendelen</string>
+    <string name="use_default_account">Standaardaccount gebruiken</string>
+    <string name="skip_startup_account_select_pref">Accountselectie overslaan bij opstarten</string>
+    <string name="action_add_to_favorites">Voeg toe aan favorieten</string>
+    <string name="manage_accounts">Beheer Accounts</string>
+    <string name="duplicate_replace_all">Alles Vervangen</string>
+    <string name="edit_account">Account bewerken</string>
+    <string name="pin_error_incorrect">Onjuiste PIN. Probeer het opnieuw.</string>
+    <string name="action_unsubscribe">Afmelden</string>
+    <string name="pin_error_length">PIN moet 4 teken bevatten</string>
+    <string name="duplicate_replace">Vervangen</string>
+    <string name="duplicate_add">Toevoegen</string>
+    <string name="action_subscribe">Abonneer</string>
+    <string name="action_remove_from_favorites">Verwijder uit favorieten</string>
+    <string name="select_an_account">Selecteer een Account</string>
+    <string name="duplicate_message_single" formatted="true">Het lijkt erop dat er al een mogelijk duplicaat bestaat in uw bibliotheek: \'%s.\'
+\n
+\nWilt u dit item toch toevoegen, het bestaande item vervangen of de actie annuleren?</string>
+    <string name="enter_pin">PIN invoeren</string>
+    <string name="pin">PIN</string>
+    <string name="enter_current_pin">Huidige PIN invoeren</string>
 </resources>

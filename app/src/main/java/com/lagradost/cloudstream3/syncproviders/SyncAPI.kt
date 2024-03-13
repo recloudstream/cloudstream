@@ -1,6 +1,8 @@
 package com.lagradost.cloudstream3.syncproviders
 
 import com.lagradost.cloudstream3.*
+import com.lagradost.cloudstream3.ui.SyncWatchType
+import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.library.ListSorting
 import com.lagradost.cloudstream3.ui.result.UiText
 import me.xdrop.fuzzywuzzy.FuzzySearch
@@ -61,7 +63,7 @@ interface SyncAPI : OAuth2API {
     ) : SearchResponse
 
     abstract class AbstractSyncStatus {
-        abstract var status: Int
+        abstract var status: SyncWatchType
 
         /** 1-10 */
         abstract var score: Int?
@@ -70,8 +72,9 @@ interface SyncAPI : OAuth2API {
         abstract var maxEpisodes: Int?
     }
 
+
     data class SyncStatus(
-        override var status: Int,
+        override var status: SyncWatchType,
         /** 1-10 */
         override var score: Int?,
         override var watchedEpisodes: Int?,
@@ -166,5 +169,8 @@ interface SyncAPI : OAuth2API {
         override var posterHeaders: Map<String, String>?,
         override var quality: SearchQuality?,
         override var id: Int? = null,
+        val plot : String? = null,
+        val rating: Int? = null,
+        val tags: List<String>? = null,
     ) : SearchResponse
 }

@@ -8,7 +8,11 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentActivity
 import androidx.preference.PreferenceFragmentCompat
+import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.RecyclerView
+import com.lagradost.cloudstream3.AcraApplication.Companion.openBrowser
+import com.lagradost.cloudstream3.CommonActivity.onDialogDismissedEvent
+import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.AccountManagmentBinding
 import com.lagradost.cloudstream3.databinding.AccountSwitchBinding
@@ -32,6 +36,10 @@ import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setTool
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setUpToolbar
 import com.lagradost.cloudstream3.ui.settings.helpers.settings.account.InAppAuthDialogBuilder
 import com.lagradost.cloudstream3.ui.settings.helpers.settings.account.InAppOAuth2DialogBuilder
+import com.lagradost.cloudstream3.utils.AppUtils.html
+import com.lagradost.cloudstream3.utils.BackupUtils
+import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
+import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialogText
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.utils.UIHelper.setImage
@@ -137,6 +145,24 @@ class SettingsAccount : PreferenceFragmentCompat() {
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         hideKeyboard()
         setPreferencesFromResource(R.xml.settings_account, rootKey)
+
+        getPref(R.string.biometric_key)?.setOnPreferenceClickListener {
+            val authEnabled = PreferenceManager.getDefaultSharedPreferences(
+                context ?: return@setOnPreferenceClickListener false
+            )
+                .getBoolean(getString(R.string.biometric_key), false)
+
+            if (authEnabled) {
+                BackupUtils.backup(activity)
+                val title = activity?.getString(R.string.biometric_setting)
+                val warning = activity?.getString(R.string.biometric_warning)
+                activity?.showBottomDialogText(
+                    title as String,
+                    warning.html()
+                ) { onDialogDismissedEvent }
+            }
+            true
+        }
 
         val syncApis =
             listOf(

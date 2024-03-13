@@ -137,7 +137,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
-                android:maxLines="5"
+                android:maxLines="3"
                 android:paddingBottom="5dp"
                 android:textSize="15sp"
                 tools:text="very nice tv series" />
@@ -157,6 +157,7 @@
                     android:id="@+id/home_preview_hidden_prev_focus"
                     android:layout_width="1dp"
                     android:layout_height="1dp"
+                    android:tag="@string/tv_no_focus_tag"
                     android:focusable="false" />
 
                 <com.google.android.material.button.MaterialButton
@@ -189,6 +190,7 @@
                     android:id="@+id/home_preview_hidden_next_focus"
                     android:layout_width="1dp"
                     android:layout_height="1dp"
+                    android:tag="@string/tv_no_focus_tag"
                     android:focusable="false" />
             </LinearLayout>
         </LinearLayout>

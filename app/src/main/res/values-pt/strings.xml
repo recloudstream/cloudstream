@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_dub_sub_episode_text_format" formatted="true">%s Ep %d</string>
-    <string name="next_episode_time_hour_format" formatted="true">%dh %dm</string>
+    <string name="app_dub_sub_episode_text_format" formatted="true">%1$s Ep %2$d</string>
+    <string name="next_episode_time_hour_format" formatted="true">%1$dh %2$dm</string>
     <string name="next_episode_time_min_format" formatted="true">%dm</string>
     <string name="next_episode_format" formatted="true">O episódio %d será lançado em</string>
     <string name="result_poster_img_des">Poster</string>
@@ -11,7 +11,7 @@
     <string name="home_next_random_img_des">Próximo Aleatório</string>
     <string name="go_back_img_des">Voltar</string>
     <string name="home_change_provider_img_des">Alterar Provedor</string>
-    <string name="next_episode_time_day_format" formatted="true">%dd %dh %dm</string>
+    <string name="next_episode_time_day_format" formatted="true">%1$dd %2$dh %3$dm</string>
     <string name="home_source">Fonte</string>
     <string name="resolution">Resolução</string>
     <string name="extras">Extras</string>
@@ -19,7 +19,7 @@
     <string name="player_speed_text_format" formatted="true">Velocidade (%.2fx)</string>
     <string name="rated_format" formatted="true">Classificado: %.1f</string>
     <string name="new_update_format" formatted="true">Nova atualização encontrada!
-\n%s -&gt; %s</string>
+\n%1$s -&gt; %2$s</string>
     <string name="filler" formatted="true">Preenchimento</string>
     <string name="app_name">CloudStream</string>
     <string name="play_with_app_name">Assistir com o CloudStream</string>
@@ -362,8 +362,8 @@
     <string name="plugin_loaded">Plugin Carregado</string>
     <string name="plugin_deleted">Plugin Apagado</string>
     <string name="plugin_load_fail" formatted="true">Falha ao carregar %s</string>
-    <string name="batch_download_start_format" formatted="true">Download iniciado %d %s…</string>
-    <string name="batch_download_finish_format" formatted="true">Transferido %d %s com sucesso</string>
+    <string name="batch_download_start_format" formatted="true">Download iniciado %1$d %2$s…</string>
+    <string name="batch_download_finish_format" formatted="true">Transferido %1$d %2$s com sucesso</string>
     <string name="batch_download_nothing_to_download_format" formatted="true">Tudo %s já transferido</string>
     <string name="batch_download">Transferência em batch</string>
     <string name="plugin_singular">plugin</string>
@@ -395,13 +395,13 @@
     <string name="go_back_30">-30</string>
     <string name="other_singular">Vídeo</string>
     <string name="go_forward_30">+30</string>
-    <string name="season_format">%s %d%s</string>
+    <string name="season_format">%1$s %2$d%3$s</string>
     <string name="cast_format" formatted="true">Elenco: %s</string>
     <string name="update_started">Atualização iniciada</string>
     <string name="test_log">Log</string>
     <string name="apk_installer_settings_des">Alguns aparelhos não suportam o novo instalador de pacotes. Use a opção legado caso não esteja conseguindo atualizar.</string>
-    <string name="episodes_range">%d-%d</string>
-    <string name="episode_format" formatted="true">%d %s</string>
+    <string name="episodes_range">%1$d-%2$d</string>
+    <string name="episode_format" formatted="true">%1$d %2$s</string>
     <string name="start">Iniciar</string>
     <string name="test_failed">Falha</string>
     <string name="test_passed">Sucesso</string>
@@ -506,7 +506,7 @@
     <string name="pref_category_cache">Cache</string>
     <string name="pref_category_android_tv">Android TV</string>
     <string name="pref_category_subtitles">Legendas</string>
-    <string name="login_format" formatted="true">%s %s</string>
+    <string name="login_format" formatted="true">%1$s %2$s</string>
     <string name="quality_ts">TS</string>
     <string name="quality_cam_rip">Cam</string>
     <string name="quality_cam_hd">Cam</string>
