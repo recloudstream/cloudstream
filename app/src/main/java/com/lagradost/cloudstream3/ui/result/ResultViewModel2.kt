@@ -81,11 +81,11 @@ import com.lagradost.cloudstream3.utils.DataStoreHelper.setResultWatchState
 import com.lagradost.cloudstream3.utils.DataStoreHelper.setSubscribedData
 import com.lagradost.cloudstream3.utils.DataStoreHelper.setVideoWatchState
 import com.lagradost.cloudstream3.utils.DataStoreHelper.updateSubscribedData
+import com.lagradost.cloudstream3.utils.UIHelper.clipboardHelper
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import kotlinx.coroutines.*
 import java.io.File
 import java.util.concurrent.TimeUnit
-
 
 /** This starts at 1 */
 data class EpisodeRange(
@@ -1693,14 +1693,8 @@ class ResultViewModel2 : ViewModel() {
                     LoadType.ExternalApp,
                     txt(R.string.episode_action_copy_link)
                 ) { (result, index) ->
-                    val act = activity ?: return@acquireSingleLink
-                    val serviceClipboard =
-                        (act.getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager?)
-                            ?: return@acquireSingleLink
                     val link = result.links[index]
-                    val clip = ClipData.newPlainText(link.name, link.url)
-                    serviceClipboard.setPrimaryClip(clip)
-                    showToast(R.string.copy_link_toast, Toast.LENGTH_SHORT)
+                    clipboardHelper(txt(link.name), link.url)
                 }
             }
 

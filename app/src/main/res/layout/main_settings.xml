@@ -105,9 +105,10 @@
                 android:text="@string/extensions" />
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:id="@+id/app_version_info"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:gravity="center_horizontal"
+                android:layout_gravity="center"
                 android:orientation="horizontal">
 
                 <TextView

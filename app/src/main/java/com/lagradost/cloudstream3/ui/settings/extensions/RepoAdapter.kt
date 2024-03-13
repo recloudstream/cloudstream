@@ -1,22 +1,17 @@
 package com.lagradost.cloudstream3.ui.settings.extensions
 
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context
-import android.os.Build
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
-import com.lagradost.cloudstream3.CommonActivity.activity
-import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.RepositoryItemBinding
 import com.lagradost.cloudstream3.databinding.RepositoryItemTvBinding
 import com.lagradost.cloudstream3.plugins.RepositoryManager.PREBUILT_REPOSITORIES
+import com.lagradost.cloudstream3.ui.result.txt
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTrueTvSettings
+import com.lagradost.cloudstream3.utils.UIHelper.clipboardHelper
 
 class RepoAdapter(
     val isSetup: Boolean,
@@ -121,13 +116,9 @@ class RepoAdapter(
                         }
 
                         repositoryItemRoot.setOnLongClickListener {
-                            val clipboardManager =
-                                activity?.getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager?
-                            clipboardManager?.setPrimaryClip(ClipData.newPlainText("RepoUrl", repositoryData.url))
-                            if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2) {
-                                showToast(R.string.copyRepoUrl, Toast.LENGTH_SHORT)
-                            }
-                            return@setOnLongClickListener true
+                            val shareableRepoData = "${repositoryData.name} : \n ${repositoryData.url}"
+                            clipboardHelper(txt(R.string.repo_copy_label), shareableRepoData)
+                            true
                         }
 
                         mainText.text = repositoryData.name
