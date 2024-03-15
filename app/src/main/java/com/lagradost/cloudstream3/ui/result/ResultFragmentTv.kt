@@ -247,7 +247,6 @@ class ResultFragmentTv : Fragment() {
             )
         // ===== ===== =====
         var comingSoon = false
-        var resumeMode = false
 
         binding?.apply {
             //episodesShadow.rotationX = 180.0f//if(episodesShadow.isRtl()) 180.0f else 0.0f
@@ -456,10 +455,11 @@ class ResultFragmentTv : Fragment() {
             binding?.apply {
 
                 if (resume == null) {
-                    resumeMode = false
                     return@observeNullable
                 }
-                resumeMode = true
+                resultResumeSeries.isVisible = true
+                resultPlayMovie.isVisible = false
+                resultPlaySeries.isVisible = false
 
                 // show progress no matter if series or movie
                 resume.progress?.let { progress ->
@@ -469,14 +469,8 @@ class ResultFragmentTv : Fragment() {
                         this.max = progress.maxProgress
                         this.progress = progress.progress
                     }
-
                     resultResumeProgressHolder.isVisible = true
-                    resultResumeSeries.isVisible = true
-                    resultPlayMovie.isVisible = false
-                    resultPlaySeries.isVisible = false
                 } ?: run {
-                    //resumeMode = false
-                    resultResumeProgressHolder.isVisible = false
                     resultResumeProgressHolder.isVisible = false
                 }
 
@@ -646,7 +640,7 @@ class ResultFragmentTv : Fragment() {
         }
 
         observeNullable(viewModel.movie) { data ->
-            if (data == null || resumeMode) {
+            if (data == null ) {
                 return@observeNullable
             }
 
@@ -666,7 +660,7 @@ class ResultFragmentTv : Fragment() {
                         return@setOnLongClickListener true
                     }
 
-                    resultPlayMovie.isVisible = !comingSoon
+                    resultPlayMovie.isVisible = !comingSoon && resultResumeSeries.isGone
                     if (comingSoon)
                         resultBookmarkButton.requestFocus()
                     else
@@ -805,7 +799,7 @@ class ResultFragmentTv : Fragment() {
                         }
                         if (!hasLoadedEpisodesOnce) {
                             hasLoadedEpisodesOnce = true
-                            resultPlaySeries.isVisible = !resumeMode && !comingSoon
+                            resultPlaySeries.isVisible = resultResumeSeries.isGone && !comingSoon
                             resultEpisodesShow.isVisible = true && !comingSoon
                             resultPlaySeriesButton.requestFocus()
                         }
