@@ -39,14 +39,19 @@ import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setUpTo
 import com.lagradost.cloudstream3.utils.AppUtils.html
 import com.lagradost.cloudstream3.utils.BackupUtils
 import com.lagradost.cloudstream3.utils.BiometricAuthenticator
+import com.lagradost.cloudstream3.utils.BiometricAuthenticator.authCallback
+import com.lagradost.cloudstream3.utils.BiometricAuthenticator.biometricPrompt
+import com.lagradost.cloudstream3.utils.BiometricAuthenticator.deviceHasPasswordPinLock
 import com.lagradost.cloudstream3.utils.BiometricAuthenticator.isAuthEnabled
+import com.lagradost.cloudstream3.utils.BiometricAuthenticator.promptInfo
+import com.lagradost.cloudstream3.utils.BiometricAuthenticator.startBiometricAuthentication
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialogText
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.utils.UIHelper.setImage
 
-class SettingsAccount : PreferenceFragmentCompat(),BiometricAuthenticator.BiometricAuthCallback {
+class SettingsAccount : PreferenceFragmentCompat(), BiometricAuthenticator.BiometricAuthCallback {
     companion object {
         /** Used by nginx plugin too */
         fun showLoginInfo(
@@ -297,15 +302,15 @@ class SettingsAccount : PreferenceFragmentCompat(),BiometricAuthenticator.Biomet
         getPref(R.string.biometric_key)?.setOnPreferenceClickListener {
             val ctx = context ?: return@setOnPreferenceClickListener false
 
-            if (BiometricAuthenticator.deviceHasPasswordPinLock(ctx)) {
-                BiometricAuthenticator.startBiometricAuthentication(
-                        activity?: requireActivity(),
-                        R.string.biometric_authentication_title,
+            if (deviceHasPasswordPinLock(ctx)) {
+                startBiometricAuthentication(
+                    activity?: requireActivity(),
+                    R.string.biometric_authentication_title,
                         false
                     )
-                BiometricAuthenticator.promptInfo?.let {
-                    BiometricAuthenticator.authCallback = this
-                    BiometricAuthenticator.biometricPrompt?.authenticate(it)
+                promptInfo?.let {
+                    authCallback = this
+                    biometricPrompt?.authenticate(it)
                 }
             }
 
