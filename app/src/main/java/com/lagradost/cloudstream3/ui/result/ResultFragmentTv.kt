@@ -309,9 +309,10 @@ class ResultFragmentTv : Fragment() {
                 resultEpisodesShowButton to resultEpisodesShowText
             ).forEach { (button , text) ->
 
-                button.setOnFocusChangeListener { _, hasFocus ->
+                button.setOnFocusChangeListener { view, hasFocus ->
                     if (!hasFocus) {
                         text.isSelected = false
+                        if (view.id == R.id.result_episodes_show_button) toggleEpisodes(false)
                         return@setOnFocusChangeListener
                     }
 
@@ -376,10 +377,6 @@ class ResultFragmentTv : Fragment() {
             }
 
             resultMetaSite.isFocusable = false
-
-            //resultReloadConnectionOpenInBrowser.setOnClickListener {view ->
-            //    view.context?.openBrowser(storedData?.url ?: return@setOnClickListener, fallbackWebview = true)
-            //}
 
             resultSeasonSelection.setAdapter()
             resultRangeSelection.setAdapter()
@@ -458,11 +455,12 @@ class ResultFragmentTv : Fragment() {
         observeNullable(viewModel.resumeWatching) { resume ->
             binding?.apply {
 
-                // > resultResumeSeries is visible when not null
                 if (resume == null) {
-                    resultResumeSeries.isVisible = false
                     return@observeNullable
                 }
+                resultResumeSeries.isVisible = true
+                resultPlayMovie.isVisible = false
+                resultPlaySeries.isVisible = false
 
                 // show progress no matter if series or movie
                 resume.progress?.let { progress ->
@@ -477,10 +475,6 @@ class ResultFragmentTv : Fragment() {
                     resultResumeProgressHolder.isVisible = false
                 }
 
-                resultPlayMovie.isVisible = false
-                resultPlaySeries.isVisible = false
-                resultResumeSeries.isVisible = true
-
                 focusPlayButton()
                 // Stops last button right focus if it is a movie
                 if (resume.isMovie)
@@ -491,7 +485,7 @@ class ResultFragmentTv : Fragment() {
                         resume.isMovie -> context?.getString(R.string.resume)
                         resume.result.season != null ->
                             "${getString(R.string.season_short)}${resume.result.season}:${getString(R.string.episode_short)}${resume.result.episode}"
-                        else -> "${getString(R.string.episode)}${resume.result.episode}"
+                        else -> "${getString(R.string.episode)} ${resume.result.episode}"
                     }
 
                 resultResumeSeriesButton.setOnClickListener {
@@ -647,15 +641,14 @@ class ResultFragmentTv : Fragment() {
         }
 
         observeNullable(viewModel.movie) { data ->
-            if (data == null) return@observeNullable
+            if (data == null ) {
+                return@observeNullable
+            }
 
             binding?.apply {
-                resultPlayMovie.isVisible = (data is Resource.Success) && !comingSoon
-                resultPlaySeries.isVisible = false
-                resultEpisodesShow.isVisible = false
 
                 (data as? Resource.Success)?.value?.let { (text, ep) ->
-                    //resultPlayMovieText.setText(text)
+
                     resultPlayMovieButton.setOnClickListener {
                         viewModel.handleAction(
                             EpisodeClickEvent(ACTION_CLICK_DEFAULT, ep)
@@ -667,14 +660,17 @@ class ResultFragmentTv : Fragment() {
                         )
                         return@setOnLongClickListener true
                     }
-                    //focusPlayButton()
-                    resultPlayMovieButton.requestFocus()
+
+                    resultPlayMovie.isVisible = !comingSoon && resultResumeSeries.isGone
+                    if (comingSoon)
+                        resultBookmarkButton.requestFocus()
+                    else
+                        resultPlayMovieButton.requestFocus()
 
                     // Stops last button right focus
                     resultSearchButton.nextFocusRightId = R.id.result_search_Button
                 }
             }
-            //focusPlayButton()
         }
 
         observeNullable(viewModel.selectPopup) { popup ->
@@ -778,16 +774,14 @@ class ResultFragmentTv : Fragment() {
 
             binding?.apply {
 
-                resultPlayMovie.isVisible = false
-                resultPlaySeries.isVisible = true && !comingSoon
-                resultEpisodes.isVisible = true && !comingSoon
-                resultEpisodesShow.isVisible = true && !comingSoon
+                if (comingSoon)
+                    resultBookmarkButton.requestFocus()
 
                 //    resultEpisodeLoading.isVisible = episodes is Resource.Loading
                 if (episodes is Resource.Success) {
                     val first = episodes.value.firstOrNull()
                     if (first != null) {
-                        resultPlaySeriesText.text = //"${getString(R.string.season_short)}${first.season}:${getString(R.string.episode_short)}${first.episode}"
+                        resultPlaySeriesText.text =
                             when {
                                 first.season != null ->
                                     "${getString(R.string.season_short)}${first.season}:${getString(R.string.episode_short)}${first.episode}"
@@ -809,8 +803,9 @@ class ResultFragmentTv : Fragment() {
                         }
                         if (!hasLoadedEpisodesOnce) {
                             hasLoadedEpisodesOnce = true
-                            focusPlayButton()
-                            resultPlaySeries.requestFocus()
+                            resultPlaySeries.isVisible = resultResumeSeries.isGone && !comingSoon
+                            resultEpisodesShow.isVisible = true && !comingSoon
+                            resultPlaySeriesButton.requestFocus()
                         }
                     }
 
@@ -919,9 +914,6 @@ class ResultFragmentTv : Fragment() {
                         )
                         comingSoon = d.comingSoon
                         resultTvComingSoon.isVisible = d.comingSoon
-                        resultPlayMovie.isGone = d.comingSoon
-                        resultPlaySeries.isGone = d.comingSoon
-                        resultDataHolder.isGone = d.comingSoon
 
                         UIHelper.populateChips(resultTag, d.tags)
                         resultCastItems.isGone = d.actors.isNullOrEmpty()
