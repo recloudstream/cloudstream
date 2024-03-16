@@ -22,6 +22,7 @@ import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTrueP
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
 import com.lagradost.cloudstream3.utils.BiometricAuthenticator
 import com.lagradost.cloudstream3.utils.BiometricAuthenticator.deviceHasPasswordPinLock
+import com.lagradost.cloudstream3.utils.BiometricAuthenticator.isAuthEnabled
 import com.lagradost.cloudstream3.utils.BiometricAuthenticator.startBiometricAuthentication
 import com.lagradost.cloudstream3.utils.DataStoreHelper.accounts
 import com.lagradost.cloudstream3.utils.DataStoreHelper.selectedKeyIndex
@@ -46,7 +47,6 @@ class AccountSelectActivity : AppCompatActivity(), BiometricAuthenticator.Biomet
         )
 
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
-        val authEnabled = settingsManager.getBoolean(getString(R.string.biometric_key), false)
         val skipStartup = settingsManager.getBoolean(getString(R.string.skip_startup_account_select_key), false
         ) || accounts.count() <= 1
 
@@ -54,7 +54,7 @@ class AccountSelectActivity : AppCompatActivity(), BiometricAuthenticator.Biomet
 
         fun askBiometricAuth() {
 
-            if (isTruePhone() && authEnabled) {
+            if (isTruePhone() && isAuthEnabled(this)) {
                 if (deviceHasPasswordPinLock(this)) {
                     startBiometricAuthentication(
                         this,
@@ -186,5 +186,9 @@ class AccountSelectActivity : AppCompatActivity(), BiometricAuthenticator.Biomet
 
     override fun onAuthenticationSuccess() {
        Log.i(BiometricAuthenticator.TAG,"Authentication successful in AccountSelectActivity")
+    }
+
+    override fun onAuthenticationError() {
+        finish()
     }
 }

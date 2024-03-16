@@ -12,7 +12,9 @@ import androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_WEAK
 import androidx.biometric.BiometricManager.Authenticators.DEVICE_CREDENTIAL
 import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.getString
 import androidx.fragment.app.FragmentActivity
+import androidx.preference.PreferenceManager
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.R
 
@@ -21,7 +23,6 @@ object BiometricAuthenticator {
     private const val MAX_FAILED_ATTEMPTS = 3
     private var failedAttempts = 0
     const val TAG = "cs3Auth"
-
     private var biometricManager: BiometricManager? = null
     var biometricPrompt: BiometricPrompt? = null
     var promptInfo: BiometricPrompt.PromptInfo? = null
@@ -42,15 +43,8 @@ object BiometricAuthenticator {
                     super.onAuthenticationError(errorCode, errString)
                     showToast("$errString")
                     Log.e(TAG, "$errorCode")
-                    failedAttempts++
-
-                    if (failedAttempts >= MAX_FAILED_ATTEMPTS) {
-                        failedAttempts = 0
-                        activity.finish()
-                    } else {
-                        failedAttempts = 0
-                        activity.finish()
-                    }
+                    authCallback?.onAuthenticationError()
+                        //activity.finish()
                 }
 
                 override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
@@ -153,7 +147,7 @@ object BiometricAuthenticator {
     // function to start authentication in any fragment or activity
     fun startBiometricAuthentication(activity: Activity, title: Int, setDeviceCred: Boolean) {
         initializeBiometrics(activity)
-
+        authCallback = activity as? BiometricAuthCallback
         if (isBiometricHardWareAvailable()) {
             authCallback = activity as? BiometricAuthCallback
             authenticationDialog(activity, title, setDeviceCred)
@@ -171,7 +165,15 @@ object BiometricAuthenticator {
         }
     }
 
+    fun isAuthEnabled(ctx: Context):Boolean {
+        return ctx.let {
+            PreferenceManager.getDefaultSharedPreferences(ctx)
+                .getBoolean(getString(ctx, R.string.biometric_key), false)
+        }
+    }
+
     interface BiometricAuthCallback {
         fun onAuthenticationSuccess()
+        fun onAuthenticationError()
     }
 }

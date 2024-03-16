@@ -1,6 +1,7 @@
 package com.lagradost.cloudstream3
 
 import android.animation.ValueAnimator
+import android.app.Activity
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
@@ -62,9 +63,11 @@ import com.lagradost.cloudstream3.APIHolder.apis
 import com.lagradost.cloudstream3.APIHolder.getApiDubstatusSettings
 import com.lagradost.cloudstream3.APIHolder.initAll
 import com.lagradost.cloudstream3.APIHolder.updateHasTrailers
+import com.lagradost.cloudstream3.AcraApplication.Companion.context
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
+import com.lagradost.cloudstream3.CommonActivity.activity
 import com.lagradost.cloudstream3.CommonActivity.loadThemes
 import com.lagradost.cloudstream3.CommonActivity.onColorSelectedEvent
 import com.lagradost.cloudstream3.CommonActivity.onDialogDismissedEvent
@@ -135,6 +138,7 @@ import com.lagradost.cloudstream3.utils.BackupUtils.backup
 import com.lagradost.cloudstream3.utils.BackupUtils.setUpBackup
 import com.lagradost.cloudstream3.utils.BiometricAuthenticator
 import com.lagradost.cloudstream3.utils.BiometricAuthenticator.deviceHasPasswordPinLock
+import com.lagradost.cloudstream3.utils.BiometricAuthenticator.isAuthEnabled
 import com.lagradost.cloudstream3.utils.BiometricAuthenticator.startBiometricAuthentication
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.main
@@ -1226,10 +1230,9 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricAu
         changeStatusBarState(isEmulatorSettings())
 
         /** Biometric stuff for users without accounts **/
-        val authEnabled = settingsManager.getBoolean(getString(R.string.biometric_key), false)
         val noAccounts = settingsManager.getBoolean(getString(R.string.skip_startup_account_select_key), false) || accounts.count() <= 1
 
-        if (isTruePhone() && authEnabled && noAccounts) {
+        if (isTruePhone() && isAuthEnabled(this) && noAccounts) {
             if (deviceHasPasswordPinLock(this)) {
                 startBiometricAuthentication(this, R.string.biometric_authentication_title, false)
 
@@ -1787,6 +1790,14 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricAu
         binding?.navHostFragment?.isInvisible = false
     }
 
+    override fun onAuthenticationError() {
+        try {
+            finish()
+        }
+        catch (e:Exception) {
+            print(e)
+        }
+    }
     private var backPressedCallback: OnBackPressedCallback? = null
 
     private fun attachBackPressedCallback() {
