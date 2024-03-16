@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/outline_drawable"
-    android:nextFocusRight="@id/action_button"
+    android:nextFocusRight="@id/action_settings"
     android:orientation="horizontal"
     android:clickable="true"
     android:focusable="true"
@@ -117,6 +117,9 @@
         android:background="@drawable/outline_drawable"
         android:contentDescription="@string/title_settings"
         android:visibility="gone"
+        android:focusable="true"
+        android:nextFocusLeft="@id/repository_item_root"
+        android:nextFocusRight="@id/action_button"
         app:srcCompat="@drawable/ic_baseline_tune_24"
         tools:visibility="visible" />
 
@@ -130,7 +133,7 @@
         android:clickable="true"
         android:contentDescription="@string/download"
         android:focusable="true"
-        android:nextFocusLeft="@id/repository_item_root"
+        android:nextFocusLeft="@id/action_settings"
         android:padding="12dp"
         tools:src="@drawable/ic_baseline_add_24" />
 
