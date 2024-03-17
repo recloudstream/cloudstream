@@ -64,8 +64,8 @@ class AccountSelectActivity : AppCompatActivity(), BiometricAuthenticator.Biomet
                         false
                     )
 
-                    BiometricAuthenticator.promptInfo?.let { promt ->
-                        BiometricAuthenticator.biometricPrompt?.authenticate(promt)
+                    BiometricAuthenticator.promptInfo?.let { prompt ->
+                        BiometricAuthenticator.biometricPrompt?.authenticate(prompt)
                     }
                 }
             }

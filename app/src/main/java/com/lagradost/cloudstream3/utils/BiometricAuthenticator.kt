@@ -20,13 +20,12 @@ import com.lagradost.cloudstream3.R
 
 object BiometricAuthenticator {
 
+    const val TAG = "cs3Auth"
     private const val MAX_FAILED_ATTEMPTS = 3
     private var failedAttempts = 0
-    const val TAG = "cs3Auth"
     private var biometricManager: BiometricManager? = null
     var biometricPrompt: BiometricPrompt? = null
     var promptInfo: BiometricPrompt.PromptInfo? = null
-
     var authCallback: BiometricAuthCallback? = null // listen to authentication success
 
     private fun initializeBiometrics(activity: Activity) {

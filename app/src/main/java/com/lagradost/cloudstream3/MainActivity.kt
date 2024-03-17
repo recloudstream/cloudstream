@@ -1234,8 +1234,6 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener,
         changeStatusBarState(isLayout(EMULATOR))
 
         /** Biometric stuff for users without accounts **/
-        val noAccounts = settingsManager.getBoolean(getString(R.string.skip_startup_account_select_key), false) || accounts.count() <= 1
-        val authEnabled = settingsManager.getBoolean(getString(R.string.biometric_key), false)
         val noAccounts = settingsManager.getBoolean(
             getString(R.string.skip_startup_account_select_key),
             false
@@ -1245,8 +1243,8 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener,
             if (deviceHasPasswordPinLock(this)) {
                 startBiometricAuthentication(this, R.string.biometric_authentication_title, false)
 
-                BiometricAuthenticator.promptInfo?.let { promt ->
-                    BiometricAuthenticator.biometricPrompt?.authenticate(promt)
+                promptInfo?.let { prompt ->
+                    biometricPrompt?.authenticate(prompt)
                 }
 
                 // hide background while authenticating, Sorry moms & dads 🙏

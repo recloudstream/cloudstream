@@ -31,6 +31,7 @@ import com.lagradost.cloudstream3.syncproviders.AuthAPI
 import com.lagradost.cloudstream3.syncproviders.InAppAuthAPI
 import com.lagradost.cloudstream3.syncproviders.OAuth2API
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
+import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.getPref
@@ -296,7 +297,7 @@ class SettingsAccount : PreferenceFragmentCompat(), BiometricAuthenticator.Biome
         hideKeyboard()
         setPreferencesFromResource(R.xml.settings_account, rootKey)
         // hide preference on tvs and emulators
-        if (!isTruePhone()) {
+        if (!isLayout(PHONE)) {
             getPref(R.string.biometric_key)?.isVisible = false
         }
 
