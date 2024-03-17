@@ -298,7 +298,7 @@ class SettingsAccount : PreferenceFragmentCompat(), BiometricAuthenticator.Biome
         setPreferencesFromResource(R.xml.settings_account, rootKey)
         // hide preference on tvs and emulators
         if (!isLayout(PHONE)) {
-            getPref(R.string.biometric_key)?.isVisible = false
+            getPref(R.string.biometric_key)?.isEnabled = false
         }
 
         getPref(R.string.biometric_key)?.setOnPreferenceClickListener {

@@ -23,8 +23,10 @@ import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.utils.BiometricAuthenticator
+import com.lagradost.cloudstream3.utils.BiometricAuthenticator.biometricPrompt
 import com.lagradost.cloudstream3.utils.BiometricAuthenticator.deviceHasPasswordPinLock
 import com.lagradost.cloudstream3.utils.BiometricAuthenticator.isAuthEnabled
+import com.lagradost.cloudstream3.utils.BiometricAuthenticator.promptInfo
 import com.lagradost.cloudstream3.utils.BiometricAuthenticator.startBiometricAuthentication
 import com.lagradost.cloudstream3.utils.DataStoreHelper.accounts
 import com.lagradost.cloudstream3.utils.DataStoreHelper.selectedKeyIndex
@@ -64,8 +66,8 @@ class AccountSelectActivity : AppCompatActivity(), BiometricAuthenticator.Biomet
                         false
                     )
 
-                    BiometricAuthenticator.promptInfo?.let { prompt ->
-                        BiometricAuthenticator.biometricPrompt?.authenticate(prompt)
+                    promptInfo?.let { prompt ->
+                        biometricPrompt?.authenticate(prompt)
                     }
                 }
             }

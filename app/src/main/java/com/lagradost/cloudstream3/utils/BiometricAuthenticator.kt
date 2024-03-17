@@ -37,7 +37,6 @@ object BiometricAuthenticator {
             activity as FragmentActivity,
             executor,
             object : BiometricPrompt.AuthenticationCallback() {
-
                 override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
                     super.onAuthenticationError(errorCode, errString)
                     showToast("$errString")
@@ -82,7 +81,6 @@ object BiometricAuthenticator {
                     .setDescription(description)
                     .setAllowedAuthenticators(authFlag)
                     .build()
-
             } else {
                 // for apis < 30
                 promptInfo = BiometricPrompt.PromptInfo.Builder()
@@ -91,7 +89,6 @@ object BiometricAuthenticator {
                     .setDeviceCredentialAllowed(true)
                     .build()
             }
-
         } else {
             // fallback for A12+ when both fingerprint & Face unlock is absent but PIN is set
             promptInfo = BiometricPrompt.PromptInfo.Builder()
@@ -107,7 +104,6 @@ object BiometricAuthenticator {
         var result = false
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-
             when (biometricManager?.canAuthenticate(
                 DEVICE_CREDENTIAL or BIOMETRIC_STRONG or BIOMETRIC_WEAK
             )) {
@@ -119,7 +115,6 @@ object BiometricAuthenticator {
                 BiometricManager.BIOMETRIC_ERROR_UNSUPPORTED -> result = true
                 BiometricManager.BIOMETRIC_STATUS_UNKNOWN -> result = false
             }
-
         } else {
             @Suppress("DEPRECATION")
             when (biometricManager?.canAuthenticate()) {
@@ -151,7 +146,6 @@ object BiometricAuthenticator {
             authCallback = activity as? BiometricAuthCallback
             authenticationDialog(activity, title, setDeviceCred)
             promptInfo?.let { biometricPrompt?.authenticate(it) }
-
         } else {
             if (deviceHasPasswordPinLock(activity)) {
                 authCallback = activity as? BiometricAuthCallback
