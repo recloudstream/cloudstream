@@ -14,7 +14,8 @@ import androidx.preference.PreferenceManager
 import com.lagradost.cloudstream3.BuildConfig
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.R
-import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTruePhone
+import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
+import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 
 const val packageName = BuildConfig.APPLICATION_ID
 const val TAG = "PowerManagerAPI"
@@ -64,7 +65,7 @@ object BatteryOptimizationChecker {
         val isRestricted = isAppRestricted(context)
         val isOptimizedShown = PreferenceManager.getDefaultSharedPreferences(context)
             .getBoolean(context.getString(R.string.battery_optimisation_key), true)
-        return isRestricted && isOptimizedShown && isTruePhone()
+        return isRestricted && isOptimizedShown && isLayout(PHONE)
     }
 
     fun intentOpenAppInfo(context: Context) {
