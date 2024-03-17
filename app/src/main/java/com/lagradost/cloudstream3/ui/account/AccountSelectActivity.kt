@@ -18,8 +18,10 @@ import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.ui.AutofitRecyclerView
 import com.lagradost.cloudstream3.ui.account.AccountAdapter.Companion.VIEW_TYPE_EDIT_ACCOUNT
 import com.lagradost.cloudstream3.ui.account.AccountAdapter.Companion.VIEW_TYPE_SELECT_ACCOUNT
-import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTruePhone
-import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
+import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
+import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
+import com.lagradost.cloudstream3.ui.settings.Globals.TV
+import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.utils.BiometricAuthenticator
 import com.lagradost.cloudstream3.utils.BiometricAuthenticator.deviceHasPasswordPinLock
 import com.lagradost.cloudstream3.utils.BiometricAuthenticator.startBiometricAuthentication
@@ -54,7 +56,7 @@ class AccountSelectActivity : AppCompatActivity(), BiometricAuthenticator.Biomet
 
         fun askBiometricAuth() {
 
-            if (isTruePhone() && authEnabled) {
+            if (isLayout(PHONE) && authEnabled) {
                 if (deviceHasPasswordPinLock(this)) {
                     startBiometricAuthentication(
                         this,
@@ -62,8 +64,8 @@ class AccountSelectActivity : AppCompatActivity(), BiometricAuthenticator.Biomet
                         false
                     )
 
-                    BiometricAuthenticator.promptInfo?.let {
-                        BiometricAuthenticator.biometricPrompt?.authenticate(it)
+                    BiometricAuthenticator.promptInfo?.let { promt ->
+                        BiometricAuthenticator.biometricPrompt?.authenticate(promt)
                     }
                 }
             }
@@ -127,7 +129,7 @@ class AccountSelectActivity : AppCompatActivity(), BiometricAuthenticator.Biomet
 
             recyclerView.adapter = adapter
 
-            if (isTvSettings()) {
+            if (isLayout(TV or EMULATOR)) {
                 binding.editAccountButton.setBackgroundResource(
                     R.drawable.player_button_tv_attr_no_bg
                 )
@@ -168,7 +170,7 @@ class AccountSelectActivity : AppCompatActivity(), BiometricAuthenticator.Biomet
                 viewModel.toggleIsEditing()
             }
 
-            if (isTvSettings()) {
+            if (isLayout(TV or EMULATOR)) {
                 recyclerView.spanCount = if (liveAccounts.count() + 1 <= 6) {
                     liveAccounts.count() + 1
                 } else 6

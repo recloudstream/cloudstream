@@ -86,6 +86,7 @@ import com.lagradost.cloudstream3.plugins.PluginManager
 import com.lagradost.cloudstream3.plugins.PluginManager.loadAllOnlinePlugins
 import com.lagradost.cloudstream3.plugins.PluginManager.loadSinglePlugin
 import com.lagradost.cloudstream3.receivers.VideoDownloadRestartReceiver
+import com.lagradost.cloudstream3.services.SubscriptionWorkManager
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.OAuth2Apis
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.accountManagers
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.appString
@@ -112,11 +113,11 @@ import com.lagradost.cloudstream3.ui.result.setText
 import com.lagradost.cloudstream3.ui.result.txt
 import com.lagradost.cloudstream3.ui.search.SearchFragment
 import com.lagradost.cloudstream3.ui.search.SearchResultBuilder
-import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isEmulatorSettings
-import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTruePhone
-import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTrueTvSettings
-import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
-import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.updateTv
+import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
+import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
+import com.lagradost.cloudstream3.ui.settings.Globals.TV
+import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
+import com.lagradost.cloudstream3.ui.settings.Globals.updateTv
 import com.lagradost.cloudstream3.ui.settings.SettingsGeneral
 import com.lagradost.cloudstream3.ui.setup.HAS_DONE_SETUP_KEY
 import com.lagradost.cloudstream3.ui.setup.SetupFragmentExtensions
@@ -290,7 +291,8 @@ var app = Requests(responseParser = object : ResponseParser {
     defaultHeaders = mapOf("user-agent" to USER_AGENT)
 }
 
-class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricAuthenticator.BiometricAuthCallback {
+class MainActivity : AppCompatActivity(), ColorPickerDialogListener,
+    BiometricAuthenticator.BiometricAuthCallback {
     companion object {
         const val TAG = "MAINACT"
         const val ANIMATED_OUTLINE: Boolean = false
@@ -336,10 +338,12 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricAu
 
         // kinda shitty solution, but cant com main->home otherwise for popups
         val bookmarksUpdatedEvent = Event<Boolean>()
+
         /**
          * Used by DataStoreHelper to fully reload home when switching accounts
          */
         val reloadHomeEvent = Event<Boolean>()
+
         /**
          * Used by DataStoreHelper to fully reload library when switching accounts
          */
@@ -467,7 +471,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricAu
     }
 
     var lastPopup: SearchResponse? = null
-    fun loadPopup(result: SearchResponse, load : Boolean = true) {
+    fun loadPopup(result: SearchResponse, load: Boolean = true) {
         lastPopup = result
         val syncName = syncViewModel.syncName(result.apiName)
 
@@ -488,8 +492,8 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricAu
                         .contains(DubStatus.Dubbed)
                 ) DubStatus.Dubbed else DubStatus.Subbed, null
             )
-        }else {
-            viewModel.loadSmall(this,result)
+        } else {
+            viewModel.loadSmall(this, result)
         }
     }
 
@@ -554,7 +558,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricAu
         binding?.navHostFragment?.apply {
             val params = layoutParams as ConstraintLayout.LayoutParams
             val push =
-                if (!dontPush && isTvSettings()) resources.getDimensionPixelSize(R.dimen.navbar_width) else 0
+                if (!dontPush && isLayout(TV or EMULATOR)) resources.getDimensionPixelSize(R.dimen.navbar_width) else 0
 
             if (!this.isLtr()) {
                 params.setMargins(
@@ -581,7 +585,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricAu
             }
 
             Configuration.ORIENTATION_PORTRAIT -> {
-                isTvSettings()
+                isLayout(TV or EMULATOR)
             }
 
             else -> {
@@ -787,9 +791,10 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricAu
     }
 
     lateinit var viewModel: ResultViewModel2
-    lateinit var syncViewModel : SyncViewModel
+    lateinit var syncViewModel: SyncViewModel
+
     /** kinda dirty, however it signals that we should use the watch status as sync or not*/
-    var isLocalList : Boolean = false
+    var isLocalList: Boolean = false
     override fun onCreateView(name: String, context: Context, attrs: AttributeSet): View? {
         viewModel =
             ViewModelProvider(this)[ResultViewModel2::class.java]
@@ -1105,8 +1110,8 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricAu
         }
     }
 
-    private fun centerView(view : View?) {
-        if(view == null) return
+    private fun centerView(view: View?) {
+        if (view == null) return
         try {
             Log.v(TAG, "centerView: $view")
             val r = Rect(0, 0, 0, 0)
@@ -1172,11 +1177,11 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricAu
 
         // just in case, MAIN SHOULD *NEVER* BOOT LOOP CRASH
         binding = try {
-            if (isTvSettings()) {
+            if (isLayout(TV or EMULATOR)) {
                 val newLocalBinding = ActivityMainTvBinding.inflate(layoutInflater, null, false)
                 setContentView(newLocalBinding.root)
 
-                if (isTrueTvSettings() && ANIMATED_OUTLINE) {
+                if (isLayout(TV) && ANIMATED_OUTLINE) {
                     TvFocus.focusOutline = WeakReference(newLocalBinding.focusOutline)
                     newLocalBinding.root.viewTreeObserver.addOnScrollChangedListener {
                         TvFocus.updateFocusView(TvFocus.lastFocus.get(), same = true)
@@ -1188,7 +1193,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricAu
                     newLocalBinding.focusOutline.isVisible = false
                 }
 
-                if(isTrueTvSettings()) {
+                if (isLayout(TV)) {
                     // Put here any button you don't want focusing it to center the view
                     val exceptionButtons = listOf(
                         R.id.home_preview_play_btt,
@@ -1205,7 +1210,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricAu
                         R.id.result_search_Button,
                         R.id.result_episodes_show_button,
                     )
-                    
+
                     newLocalBinding.root.viewTreeObserver.addOnGlobalFocusChangeListener { _, newFocus ->
                         if (exceptionButtons.contains(newFocus?.id)) return@addOnGlobalFocusChangeListener
                         centerView(newFocus)
@@ -1223,18 +1228,21 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricAu
             null
         }
 
-        changeStatusBarState(isEmulatorSettings())
+        changeStatusBarState(isLayout(EMULATOR))
 
         /** Biometric stuff for users without accounts **/
         val authEnabled = settingsManager.getBoolean(getString(R.string.biometric_key), false)
-        val noAccounts = settingsManager.getBoolean(getString(R.string.skip_startup_account_select_key), false) || accounts.count() <= 1
+        val noAccounts = settingsManager.getBoolean(
+            getString(R.string.skip_startup_account_select_key),
+            false
+        ) || accounts.count() <= 1
 
-        if (isTruePhone() && authEnabled && noAccounts) {
+        if (isLayout(PHONE) && authEnabled && noAccounts) {
             if (deviceHasPasswordPinLock(this)) {
                 startBiometricAuthentication(this, R.string.biometric_authentication_title, false)
 
-                BiometricAuthenticator.promptInfo?.let {
-                    BiometricAuthenticator.biometricPrompt?.authenticate(it)
+                BiometricAuthenticator.promptInfo?.let { promt ->
+                    BiometricAuthenticator.biometricPrompt?.authenticate(promt)
                 }
 
                 // hide background while authenticating, Sorry moms & dads 🙏
@@ -1326,7 +1334,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricAu
         }
 
 
-        fun setUserData(status : Resource<SyncAPI.AbstractSyncStatus>?) {
+        fun setUserData(status: Resource<SyncAPI.AbstractSyncStatus>?) {
             if (isLocalList) return
             bottomPreviewBinding?.apply {
                 when (status) {
@@ -1351,7 +1359,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricAu
             }
         }
 
-        fun setWatchStatus(state : WatchType?) {
+        fun setWatchStatus(state: WatchType?) {
             if (!isLocalList || state == null) return
 
             bottomPreviewBinding?.resultviewPreviewBookmark?.apply {
@@ -1360,12 +1368,41 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricAu
             }
         }
 
-        observe(viewModel.watchStatus) { state ->
-            setWatchStatus(state)
+        fun setSubscribeStatus(state: Boolean?) {
+            bottomPreviewBinding?.resultviewPreviewSubscribe?.apply {
+                if (state != null) {
+                    val drawable = if (state) {
+                        R.drawable.ic_baseline_notifications_active_24
+                    } else {
+                        R.drawable.baseline_notifications_none_24
+                    }
+                    setImageResource(drawable)
+                }
+                isVisible = state != null
+
+                setOnClickListener {
+                    viewModel.toggleSubscriptionStatus(context) { newStatus: Boolean? ->
+                        if (newStatus == null) return@toggleSubscriptionStatus
+
+                        val message = if (newStatus) {
+                            // Kinda icky to have this here, but it works.
+                            SubscriptionWorkManager.enqueuePeriodicWork(context)
+                            R.string.subscription_new
+                        } else {
+                            R.string.subscription_deleted
+                        }
+
+                        val name = (viewModel.page.value as? Resource.Success)?.value?.title
+                            ?: txt(R.string.no_data).asStringNull(context) ?: ""
+                        showToast(txt(message, name), Toast.LENGTH_SHORT)
+                    }
+                }
+            }
         }
-        observe(syncViewModel.userData) { status ->
-            setUserData(status)
-        }
+
+        observe(viewModel.watchStatus,::setWatchStatus)
+        observe(syncViewModel.userData, ::setUserData)
+        observeNullable(viewModel.subscribeStatus, ::setSubscribeStatus)
 
         observeNullable(viewModel.page) { resource ->
             if (resource == null) {
@@ -1408,6 +1445,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricAu
 
                         setUserData(syncViewModel.userData.value)
                         setWatchStatus(viewModel.watchStatus.value)
+                        setSubscribeStatus(viewModel.subscribeStatus.value)
 
                         resultviewPreviewBookmark.setOnClickListener {
                             //viewModel.updateWatchStatus(WatchType.PLANTOWATCH)
@@ -1426,7 +1464,9 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricAu
                                     )
                                 }
                             } else {
-                                val value = (syncViewModel.userData.value as? Resource.Success)?.value?.status ?: SyncWatchType.NONE
+                                val value =
+                                    (syncViewModel.userData.value as? Resource.Success)?.value?.status
+                                        ?: SyncWatchType.NONE
 
                                 this@MainActivity.showBottomDialog(
                                     SyncWatchType.values().map { getString(it.stringRes) }.toList(),
@@ -1453,7 +1493,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricAu
                             resultviewPreviewFavorite.setImageResource(drawable)
                         }
 
-                        resultviewPreviewFavorite.setOnClickListener{
+                        resultviewPreviewFavorite.setOnClickListener {
                             viewModel.toggleFavoriteStatus(this@MainActivity) { newStatus: Boolean? ->
                                 if (newStatus == null) return@toggleFavoriteStatus
 
@@ -1469,7 +1509,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricAu
                             }
                         }
 
-                        if (!isTvSettings()) // dont want this clickable on tv layout
+                        if (isLayout(PHONE)) // dont want this clickable on tv layout
                             resultviewPreviewDescription.setOnClickListener { view ->
                                 view.context?.let { ctx ->
                                     val builder: AlertDialog.Builder =
@@ -1544,7 +1584,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricAu
                 }
             }
 
-            if (isTvSettings()) {
+            if (isLayout(TV or EMULATOR)) {
                 if (navDestination.matchDestination(R.id.navigation_home)) {
                     attachBackPressedCallback()
                 } else detachBackPressedCallback()
@@ -1580,7 +1620,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricAu
             itemRippleColor = rippleColor
             itemActiveIndicatorColor = rippleColor
             setupWithNavController(navController)
-            if (isTvSettings()) {
+            if (isLayout(TV or EMULATOR)) {
                 background?.alpha = 200
             } else {
                 background?.alpha = 255

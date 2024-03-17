@@ -49,6 +49,11 @@ import com.lagradost.cloudstream3.ui.quicksearch.QuickSearchFragment
 import com.lagradost.cloudstream3.ui.result.txt
 import com.lagradost.cloudstream3.ui.search.SEARCH_ACTION_LOAD
 import com.lagradost.cloudstream3.ui.search.SEARCH_ACTION_SHOW_METADATA
+import com.lagradost.cloudstream3.ui.settings.Globals
+import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
+import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
+import com.lagradost.cloudstream3.ui.settings.Globals.TV
+import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment
 import com.lagradost.cloudstream3.utils.AppUtils.loadResult
 import com.lagradost.cloudstream3.utils.AppUtils.loadSearchResult
@@ -101,7 +106,7 @@ class LibraryFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         val layout =
-            if (SettingsFragment.isTvSettings()) R.layout.fragment_library_tv else R.layout.fragment_library
+            if (isLayout(TV or EMULATOR)) R.layout.fragment_library_tv else R.layout.fragment_library
         val root = inflater.inflate(layout, container, false)
         binding = try {
             FragmentLibraryBinding.bind(root)
@@ -220,7 +225,7 @@ class LibraryFragment : Fragment() {
                 settingsManager.getBoolean(
                     getString(R.string.random_button_key),
                     false
-                ) && !SettingsFragment.isTvSettings()
+                ) && isLayout(PHONE)
             binding?.libraryRandom?.visibility = View.GONE
         }
 

@@ -2,16 +2,19 @@ package com.lagradost.cloudstream3.ui.download.button
 
 import android.content.Context
 import android.graphics.drawable.Drawable
+import android.os.Looper
 import android.util.AttributeSet
 import android.util.Log
 import android.view.View
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.annotation.MainThread
 import androidx.core.content.ContextCompat
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_ACTION_DELETE_FILE
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_ACTION_DOWNLOAD
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_ACTION_LONG_CLICK
@@ -241,40 +244,54 @@ open class PieFetchButton(context: Context, attributeSet: AttributeSet) :
         }
     }*/
 
+    @MainThread
+    private fun setStatusInternal(status : DownloadStatusTell?) {
+        val isPreActive = isZeroBytes && status == DownloadStatusTell.IsDownloading
+        if (animateWaiting && (status == DownloadStatusTell.IsPending || isPreActive)) {
+            val animation = AnimationUtils.loadAnimation(context, waitingAnimation)
+            progressBarBackground.startAnimation(animation)
+        } else {
+            progressBarBackground.clearAnimation()
+        }
+
+        val progressDrawable =
+            if (status == DownloadStatusTell.IsDownloading && !isPreActive) activeOutline else nonActiveOutline
+
+        progressBarBackground.background =
+            ContextCompat.getDrawable(context, progressDrawable)
+
+        val drawable = getDrawableFromStatus(status)
+        statusView.setImageDrawable(drawable)
+        val isDrawable = drawable != null
+
+        statusView.isVisible = isDrawable
+        val hide = hideWhenIcon && isDrawable
+        if (hide) {
+            progressBar.clearAnimation()
+            progressBarBackground.clearAnimation()
+        }
+        progressBarBackground.isGone = hide
+        progressBar.isGone = hide
+    }
+
     /** Also sets currentStatus */
     override fun setStatus(status: DownloadStatusTell?) {
         currentStatus = status
 
-        //progressBar.isVisible =
-        //    status != null && status != DownloadStatusTell.Complete && status != DownloadStatusTell.Error
-        //progressBarBackground.isVisible = status != null && status != DownloadStatusTell.Complete
-        progressBarBackground.post {
-            val isPreActive = isZeroBytes && status == DownloadStatusTell.IsDownloading
-            if (animateWaiting && (status == DownloadStatusTell.IsPending || isPreActive)) {
-                val animation = AnimationUtils.loadAnimation(context, waitingAnimation)
-                progressBarBackground.startAnimation(animation)
-            } else {
-                progressBarBackground.clearAnimation()
+        // runs on the main thread, but also instant if it already is
+        if (Looper.myLooper() == Looper.getMainLooper()) {
+            try {
+                setStatusInternal(status)
+            } catch (t : Throwable) {
+                logError(t) // just in case setStatusInternal throws because thread
+                progressBarBackground.post {
+                    setStatusInternal(status)
+                }
             }
-
-            val progressDrawable =
-                if (status == DownloadStatusTell.IsDownloading && !isPreActive) activeOutline else nonActiveOutline
-
-            progressBarBackground.background =
-                ContextCompat.getDrawable(context, progressDrawable)
-
-            val drawable = getDrawableFromStatus(status)
-            statusView.setImageDrawable(drawable)
-            val isDrawable = drawable != null
-
-            statusView.isVisible = isDrawable
-            val hide = hideWhenIcon && isDrawable
-            if (hide) {
-                progressBar.clearAnimation()
-                progressBarBackground.clearAnimation()
+        } else {
+            progressBarBackground.post {
+                setStatusInternal(status)
             }
-            progressBarBackground.isGone = hide
-            progressBar.isGone = hide
         }
     }
 

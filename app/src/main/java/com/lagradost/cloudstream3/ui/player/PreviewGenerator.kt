@@ -9,6 +9,9 @@ import android.util.Log
 import androidx.annotation.WorkerThread
 import androidx.core.graphics.scale
 import com.lagradost.cloudstream3.mvvm.logError
+import com.lagradost.cloudstream3.ui.settings.Globals
+import com.lagradost.cloudstream3.ui.settings.Globals.TV
+import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.ExtractorLink
@@ -63,7 +66,7 @@ interface IPreviewGenerator {
     companion object {
         fun new(): IPreviewGenerator {
             /** because TV has low ram + not show we disable this for now */
-            return if (SettingsFragment.isTrueTvSettings()) {
+            return if (isLayout(TV)) {
                 empty()
             } else {
                 PreviewGenerator()

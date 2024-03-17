@@ -27,6 +27,7 @@ import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.network.initClient
 import com.lagradost.cloudstream3.ui.EasterEggMonke
+import com.lagradost.cloudstream3.ui.settings.Globals.beneneCount
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.getPref
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setPaddingBottom
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setToolBarScrollFlags
@@ -378,30 +379,30 @@ class SettingsGeneral : PreferenceFragmentCompat() {
         }
 
         try {
-            SettingsFragment.beneneCount =
+            beneneCount =
                 settingsManager.getInt(getString(R.string.benene_count), 0)
             getPref(R.string.benene_count)?.let { pref ->
                 pref.summary =
-                    if (SettingsFragment.beneneCount <= 0) getString(R.string.benene_count_text_none) else getString(
+                    if (beneneCount <= 0) getString(R.string.benene_count_text_none) else getString(
                         R.string.benene_count_text
                     ).format(
-                        SettingsFragment.beneneCount
+                        beneneCount
                     )
 
                 pref.setOnPreferenceClickListener {
                     try {
-                        SettingsFragment.beneneCount++
-                        if (SettingsFragment.beneneCount%20 == 0) {
+                        beneneCount++
+                        if (beneneCount%20 == 0) {
                             val intent = Intent(context, EasterEggMonke::class.java)
                             startActivity(intent)
                         }
                         settingsManager.edit().putInt(
                             getString(R.string.benene_count),
-                            SettingsFragment.beneneCount
+                            beneneCount
                         )
                             .apply()
                         it.summary =
-                            getString(R.string.benene_count_text).format(SettingsFragment.beneneCount)
+                            getString(R.string.benene_count_text).format(beneneCount)
                     } catch (e: Exception) {
                         logError(e)
                     }

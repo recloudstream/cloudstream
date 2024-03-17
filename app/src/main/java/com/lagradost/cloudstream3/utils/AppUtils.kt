@@ -61,8 +61,7 @@ import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.appStri
 import com.lagradost.cloudstream3.syncproviders.providers.Kitsu
 import com.lagradost.cloudstream3.ui.WebviewFragment
 import com.lagradost.cloudstream3.ui.result.ResultFragment
-import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTrueTvSettings
-import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
+import com.lagradost.cloudstream3.ui.settings.Globals
 import com.lagradost.cloudstream3.ui.settings.extensions.PluginsViewModel.Companion.downloadAll
 import com.lagradost.cloudstream3.ui.settings.extensions.RepositoryData
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
@@ -78,7 +77,6 @@ import okhttp3.Cache
 import java.io.*
 import java.net.URL
 import java.net.URLDecoder
-import kotlin.system.measureTimeMillis
 
 object AppUtils {
     fun RecyclerView.setMaxViewPoolSize(maxViewTypeId: Int, maxPoolSize: Int) {
@@ -583,7 +581,7 @@ object AppUtils {
     //private val viewModel: ResultViewModel by activityViewModels()
 
     private fun getResultsId(): Int {
-        return if (isTvSettings()) {
+        return if (Globals.isLayout(Globals.TV or Globals.EMULATOR)) {
             R.id.global_to_navigation_results_tv
         } else {
             R.id.global_to_navigation_results_phone
@@ -707,7 +705,7 @@ object AppUtils {
      * Sets the focus to the negative button when in TV and Emulator layout.
      **/
     fun AlertDialog.setDefaultFocus(buttonFocus: Int = DialogInterface.BUTTON_NEGATIVE) {
-        if (!isTvSettings()) return
+        if (!Globals.isLayout(Globals.TV or Globals.EMULATOR)) return
         this.getButton(buttonFocus).run {
             isFocusableInTouchMode = true
             requestFocus()

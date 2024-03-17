@@ -10,7 +10,9 @@ import androidx.viewbinding.ViewBinding
 import com.lagradost.cloudstream3.LoadResponse
 import com.lagradost.cloudstream3.databinding.HomeScrollViewBinding
 import com.lagradost.cloudstream3.databinding.HomeScrollViewTvBinding
-import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
+import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
+import com.lagradost.cloudstream3.ui.settings.Globals.TV
+import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.utils.UIHelper.setImage
 
 class HomeScrollAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -40,7 +42,7 @@ class HomeScrollAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
-        val binding = if (isTvSettings()) {
+        val binding = if (isLayout(TV or EMULATOR)) {
             HomeScrollViewTvBinding.inflate(inflater, parent, false)
         } else {
             HomeScrollViewBinding.inflate(inflater, parent, false)

@@ -46,6 +46,7 @@ import com.lagradost.cloudstream3.ui.player.GeneratorPlayer.Companion.subsProvid
 import com.lagradost.cloudstream3.ui.player.source_priority.QualityDataHelper
 import com.lagradost.cloudstream3.ui.result.setText
 import com.lagradost.cloudstream3.ui.result.txt
+import com.lagradost.cloudstream3.ui.settings.Globals
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment
 import com.lagradost.cloudstream3.utils.AppUtils.isUsingMobileData
 import com.lagradost.cloudstream3.utils.DataStoreHelper
@@ -1514,7 +1515,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
             }
         }
         // cs3 is peak media center
-        setRemainingTimeCounter(durationMode || SettingsFragment.isTrueTvSettings())
+        setRemainingTimeCounter(durationMode || Globals.isLayout(Globals.TV))
         playerBinding?.exoPosition?.doOnTextChanged { _, _, _, _ ->
             updateRemainingTime()
         }

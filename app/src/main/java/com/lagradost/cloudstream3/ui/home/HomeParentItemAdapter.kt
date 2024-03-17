@@ -1,5 +1,7 @@
 package com.lagradost.cloudstream3.ui.home
 
+import android.os.Bundle
+import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -7,16 +9,20 @@ import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListUpdateCallback
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.lagradost.cloudstream3.HomePageList
 import com.lagradost.cloudstream3.LoadResponse
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.HomepageParentBinding
+import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.ui.result.FOCUS_SELF
 import com.lagradost.cloudstream3.ui.result.setLinearListLayout
 import com.lagradost.cloudstream3.ui.search.SearchClickCallback
 import com.lagradost.cloudstream3.ui.search.SearchFragment.Companion.filterSearchResponse
-import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isEmulatorSettings
-import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTrueTvSettings
+import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
+import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
+import com.lagradost.cloudstream3.ui.settings.Globals.TV
+import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.utils.AppUtils.isRecyclerScrollable
 
 class LoadClickCallback(
@@ -32,18 +38,90 @@ open class ParentItemAdapter(
     private val clickCallback: (SearchClickCallback) -> Unit,
     private val moreInfoClickCallback: (HomeViewModel.ExpandableHomepageList) -> Unit,
     private val expandCallback: ((String) -> Unit)? = null,
-) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+) : RecyclerView.Adapter<ViewHolder>() {
+    // Ok, this is fucked, but there is a reason for this as we want to resume 1. when scrolling up and down
+    // and 2. when doing into a thing and coming back. 1 is always active, but 2 requires doing it in the fragment
+    // as OnCreateView is called and this adapter is recreated losing the internal state to the GC
+    //
+    // 1. This works by having the adapter having a internal state "scrollStates" that keeps track of the states
+    // when a view recycles, it looks up this internal state
+    // 2. To solve the the coming back shit we have to save "scrollStates" to a Bundle inside the
+    // fragment via onSaveInstanceState, because this cant be easy for some reason as the adapter does
+    // not have a state but the layout-manager for no reason, then it is resumed via onRestoreInstanceState
+    //
+    // Even when looking at a real example they do this :skull:
+    // https://github.com/vivchar/RendererRecyclerViewAdapter/blob/185251ee9d94fb6eb3e063b00d646b745186c365/example/src/main/java/com/github/vivchar/example/pages/github/GithubFragment.kt#L32
+    private val scrollStates = mutableMapOf<Int, Parcelable?>()
 
+    companion object {
+        private const val SCROLL_KEY: String = "ParentItemAdapter::scrollStates.keys"
+        private const val SCROLL_VALUE: String = "ParentItemAdapter::scrollStates.values"
+    }
+
+    open fun onRestoreInstanceState(savedInstanceState: Bundle?) {
+        try {
+            val keys = savedInstanceState?.getIntArray(SCROLL_KEY) ?: intArrayOf()
+            val values = savedInstanceState?.getParcelableArray(SCROLL_VALUE) ?: arrayOf()
+            for ((k, v) in keys.zip(values)) {
+                this.scrollStates[k] = v
+            }
+        } catch (t: Throwable) {
+            logError(t)
+        }
+    }
+
+    open fun onSaveInstanceState(outState: Bundle, recyclerView: RecyclerView? = null) {
+        if (recyclerView != null) {
+            for (position in items.indices) {
+                val holder = recyclerView.findViewHolderForAdapterPosition(position) ?: continue
+                saveHolder(holder)
+            }
+        }
+
+        outState.putIntArray(SCROLL_KEY, scrollStates.keys.toIntArray())
+        outState.putParcelableArray(SCROLL_VALUE, scrollStates.values.toTypedArray())
+    }
+
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        when (holder) {
+            is ParentViewHolder -> {
+                holder.bind(items[position])
+                scrollStates[holder.absoluteAdapterPosition]?.let {
+                    holder.binding.homeChildRecyclerview.layoutManager?.onRestoreInstanceState(it)
+                }
+            }
+        }
+    }
+
+    private fun saveHolder(holder : ViewHolder) {
+        when (holder) {
+            is ParentViewHolder -> {
+                scrollStates[holder.absoluteAdapterPosition] =
+                    holder.binding.homeChildRecyclerview.layoutManager?.onSaveInstanceState()
+            }
+        }
+    }
+
+    override fun onViewRecycled(holder: ViewHolder) {
+        saveHolder(holder)
+        super.onViewRecycled(holder)
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val layoutResId = when {
-            isTrueTvSettings() -> R.layout.homepage_parent_tv
-            parent.context.isEmulatorSettings() -> R.layout.homepage_parent_emulator
+            isLayout(TV) -> R.layout.homepage_parent_tv
+            isLayout(EMULATOR) -> R.layout.homepage_parent_emulator
             else -> R.layout.homepage_parent
         }
 
-        val root = LayoutInflater.from(parent.context).inflate(layoutResId, parent, false)
-
-        val binding = HomepageParentBinding.bind(root)
+        val inflater = LayoutInflater.from(parent.context)
+        val binding = try {
+            HomepageParentBinding.bind(inflater.inflate(layoutResId, parent, false))
+        } catch (t : Throwable) {
+            logError(t)
+            // just in case someone forgot we don't want to crash
+            HomepageParentBinding.inflate(inflater)
+        }
 
         return ParentViewHolder(
             binding,
@@ -51,14 +129,6 @@ open class ParentItemAdapter(
             moreInfoClickCallback,
             expandCallback
         )
-    }
-
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        when (holder) {
-            is ParentViewHolder -> {
-                holder.bind(items[position])
-            }
-        }
     }
 
     override fun getItemCount(): Int {
@@ -116,7 +186,6 @@ open class ParentItemAdapter(
             }
 
             override fun onChanged(_position: Int, count: Int, payload: Any?) {
-
                 val position = _position + delta
 
                 // I know kinda messy, what this does is using the update or bind instead of onCreateViewHolder -> bind
@@ -155,15 +224,15 @@ open class ParentItemAdapter(
         //diffResult.dispatchUpdatesTo(this)
     }
 
-    class ParentViewHolder
-    constructor(
+
+    class ParentViewHolder(
         val binding: HomepageParentBinding,
         // val viewModel: HomeViewModel,
         private val clickCallback: (SearchClickCallback) -> Unit,
         private val moreInfoClickCallback: (HomeViewModel.ExpandableHomepageList) -> Unit,
         private val expandCallback: ((String) -> Unit)? = null,
     ) :
-        RecyclerView.ViewHolder(binding.root) {
+        ViewHolder(binding.root) {
         val title: TextView = binding.homeChildMoreInfo
         private val recyclerView: RecyclerView = binding.homeChildRecyclerview
         private val startFocus = R.id.nav_rail_view
@@ -237,7 +306,7 @@ open class ParentItemAdapter(
             })
 
             //(recyclerView.adapter as HomeChildItemAdapter).notifyDataSetChanged()
-            if (!isTrueTvSettings()) {
+            if (isLayout(PHONE)) {
                 title.setOnClickListener {
                     moreInfoClickCallback.invoke(expand)
                 }
