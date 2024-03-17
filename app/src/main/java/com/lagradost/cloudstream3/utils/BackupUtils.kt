@@ -32,7 +32,6 @@ import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.DataStore.getDefaultSharedPrefs
 import com.lagradost.cloudstream3.utils.DataStore.getSharedPrefs
 import com.lagradost.cloudstream3.utils.DataStore.mapper
-import com.lagradost.cloudstream3.utils.DataStore.setKeyRaw
 import com.lagradost.cloudstream3.utils.UIHelper.checkWrite
 import com.lagradost.cloudstream3.utils.UIHelper.requestRW
 import com.lagradost.cloudstream3.utils.VideoDownloadManager.setupStream
@@ -256,8 +255,12 @@ object BackupUtils {
         map: Map<String, T>?,
         isEditingAppSettings: Boolean = false
     ) {
-        map?.filter { it.key.isTransferable() }?.forEach {
-            setKeyRaw(it.key, it.value, isEditingAppSettings)
+        val editor = DataStore.editor(this, isEditingAppSettings)
+        map?.forEach {
+            if (it.key.isTransferable()) {
+                editor.setKeyRaw(it.key, it.value)
+            }
         }
+        editor.apply()
     }
 }

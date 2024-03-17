@@ -174,8 +174,8 @@
     <string name="sort_close">Close</string>
     <string name="sort_clear">Clear</string>
     <string name="sort_save">Save</string>
-    <string name="copyTitle">Title copied!</string>
-    <string name="copyRepoUrl">Repo URL copied!</string>
+    <string name="repo_copy_label">Repository name and URL</string>
+    <string name="toast_copied">copied!</string>
     <string name="subscribe_tooltip">New episode notification</string>
     <string name="result_search_tooltip">Search in other extensions</string>
     <string name="recommendations_tooltip">Show recommendations</string>
@@ -647,6 +647,8 @@
     <string name="history">History</string>
     <string name="enable_skip_op_from_database_des">Show skip popups for opening/ending</string>
     <string name="clipboard_too_large">Too much text. Unable to save to clipboard.</string>
+    <string name="clipboard_permission_error">Error accessing Clipboard, Please try again.</string>
+    <string name="clipboard_unknown_error">Error copying, Please copy logcat and contact app support.</string>
     <string name="action_mark_as_watched">Mark as watched</string>
     <string name="action_remove_from_watched">Remove from watched</string>
     <string name="confirm_exit_dialog">Are you sure you want to exit\?</string>

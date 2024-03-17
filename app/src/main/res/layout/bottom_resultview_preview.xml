@@ -41,22 +41,34 @@
                 android:layout_marginStart="10dp"
                 android:orientation="vertical">
 
-                <FrameLayout
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
                     <TextView
                         android:id="@+id/resultview_preview_title"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:layout_gravity="start|center_vertical"
+                        android:layout_weight="1"
                         android:textColor="?attr/textColor"
                         android:textSize="16sp"
-                        android:layout_gravity="start|center_vertical"
                         android:textStyle="bold"
-                        android:layout_marginEnd="25dp"
-                        tools:text="The Perfect Run">
+                        tools:text="The Perfect Run" />
 
-                    </TextView>
+                    <ImageView
+                        android:id="@+id/resultview_preview_subscribe"
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:layout_gravity="end|center_vertical"
+
+                        android:layout_margin="5dp"
+                        android:background="?android:attr/selectableItemBackgroundBorderless"
+                        android:contentDescription="@string/subscribe_tooltip"
+                        android:elevation="10dp"
+                        android:nextFocusDown="@id/resultview_preview_bookmark"
+                        android:src="@drawable/baseline_notifications_none_24"
+                        app:tint="?attr/textColor" />
 
                     <ImageView
                         android:id="@+id/resultview_preview_favorite"
@@ -66,11 +78,13 @@
 
                         android:layout_margin="5dp"
                         android:background="?android:attr/selectableItemBackgroundBorderless"
+                        android:contentDescription="@string/favorite"
                         android:elevation="10dp"
                         android:nextFocusDown="@id/resultview_preview_bookmark"
                         android:src="@drawable/ic_baseline_favorite_border_24"
                         app:tint="?attr/textColor" />
-                </FrameLayout>
+
+                </LinearLayout>
 
                 <com.lagradost.cloudstream3.widget.FlowLayout
                     android:layout_width="match_parent"
@@ -134,38 +148,38 @@
         </LinearLayout>
 
         <LinearLayout
-            android:padding="7dp"
-            android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="7dp">
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/resultview_preview_bookmark"
+                style="@style/BlackButton"
+                android:layout_width="50dp"
                 android:layout_weight="1"
-                android:nextFocusUp="@id/resultview_preview_favorite"
+
                 android:nextFocusRight="@id/resultview_preview_more_info"
 
-                tools:visibility="visible"
-
+                android:nextFocusUp="@id/resultview_preview_favorite"
                 app:icon="@drawable/ic_baseline_bookmark_24"
                 tools:text="Bookmark"
-                style="@style/BlackButton"
 
-                android:layout_width="50dp" />
+                tools:visibility="visible" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/resultview_preview_more_info"
+                style="@style/WhiteButton"
+                android:layout_width="50dp"
                 android:layout_weight="1"
-                android:nextFocusUp="@id/resultview_preview_favorite"
+
                 android:nextFocusLeft="@id/resultview_preview_bookmark"
 
-                tools:visibility="visible"
-
-                app:icon="@drawable/ic_baseline_open_in_new_24"
+                android:nextFocusUp="@id/resultview_preview_favorite"
                 android:text="@string/home_more_info"
-                style="@style/WhiteButton"
+                app:icon="@drawable/ic_baseline_open_in_new_24"
 
-                android:layout_width="50dp" />
+                tools:visibility="visible" />
         </LinearLayout>
     </LinearLayout>
 

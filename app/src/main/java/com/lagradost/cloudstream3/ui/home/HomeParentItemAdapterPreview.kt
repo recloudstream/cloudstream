@@ -36,8 +36,9 @@ import com.lagradost.cloudstream3.ui.result.setLinearListLayout
 import com.lagradost.cloudstream3.ui.search.SEARCH_ACTION_LOAD
 import com.lagradost.cloudstream3.ui.search.SEARCH_ACTION_SHOW_METADATA
 import com.lagradost.cloudstream3.ui.search.SearchClickCallback
-import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isEmulatorSettings
-import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
+import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
+import com.lagradost.cloudstream3.ui.settings.Globals.TV
+import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showOptionSelectStringRes
@@ -48,7 +49,8 @@ import com.lagradost.cloudstream3.utils.UIHelper.populateChips
 class HomeParentItemAdapterPreview(
     items: MutableList<HomeViewModel.ExpandableHomepageList>,
     private val viewModel: HomeViewModel,
-) : ParentItemAdapter(items, clickCallback = {
+) : ParentItemAdapter(items,
+    clickCallback = {
     viewModel.click(it)
 }, moreInfoClickCallback = {
     viewModel.popup(it)
@@ -78,13 +80,13 @@ class HomeParentItemAdapterPreview(
         return when (viewType) {
             VIEW_TYPE_HEADER -> {
                 val inflater = LayoutInflater.from(parent.context)
-                val binding = if (isTvSettings()) FragmentHomeHeadTvBinding.inflate(
+                val binding = if (isLayout(TV or EMULATOR)) FragmentHomeHeadTvBinding.inflate(
                     inflater,
                     parent,
                     false
                 ) else FragmentHomeHeadBinding.inflate(inflater, parent, false)
 
-                if (binding is FragmentHomeHeadTvBinding && parent.context.isEmulatorSettings()) {
+                if (binding is FragmentHomeHeadTvBinding && isLayout(EMULATOR)) {
                     binding.homeBookmarkParentItemMoreInfo.isVisible = true
 
                     val marginInDp = 50
@@ -598,7 +600,7 @@ class HomeParentItemAdapterPreview(
             if (
                 binding is FragmentHomeHeadBinding ||
                 binding is FragmentHomeHeadTvBinding &&
-                binding.root.context.isEmulatorSettings()
+                isLayout(EMULATOR)
             ) {
                 val title = (binding as? FragmentHomeHeadBinding)?.homeWatchParentItemTitle
                     ?: (binding as? FragmentHomeHeadTvBinding)?.homeWatchParentItemTitle
@@ -628,7 +630,7 @@ class HomeParentItemAdapterPreview(
             if (
                 binding is FragmentHomeHeadBinding ||
                 binding is FragmentHomeHeadTvBinding &&
-                binding.root.context.isEmulatorSettings()
+                isLayout(EMULATOR)
             ) {
                 val title = (binding as? FragmentHomeHeadBinding)?.homeBookmarkParentItemTitle
                     ?: (binding as? FragmentHomeHeadTvBinding)?.homeBookmarkParentItemTitle
