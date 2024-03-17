@@ -928,15 +928,20 @@ class ResultViewModel2 : ViewModel() {
     ) {
         val isSubscribed = _subscribeStatus.value ?: return
         val response = currentResponse ?: return
-        if (response !is EpisodeResponse) return
-
         val currentId = currentId ?: return
+
+        // This might be a bit confusing, but even if the loadresponse is not a EpisodeResponse
+        // _subscribeStatus might be true.
 
         if (isSubscribed) {
             removeSubscribedData(currentId)
             statusChangedCallback?.invoke(false)
-            _subscribeStatus.postValue(false)
+            _subscribeStatus.postValue(if (response is EpisodeResponse) false else null)
+            MainActivity.reloadLibraryEvent(true)
         } else {
+            if (response !is EpisodeResponse) {
+                return
+            }
             checkAndWarnDuplicates(
                 context,
                 LibraryListType.SUBSCRIPTIONS,
@@ -981,8 +986,8 @@ class ResultViewModel2 : ViewModel() {
                 )
 
                 _subscribeStatus.postValue(true)
-
                 statusChangedCallback?.invoke(true)
+                MainActivity.reloadLibraryEvent(true)
             }
         }
     }
@@ -2046,12 +2051,15 @@ class ResultViewModel2 : ViewModel() {
     }
 
     private fun postSubscription(loadResponse: LoadResponse) {
+        val id = loadResponse.getId()
+        val data = getSubscribedData(id)
         if (loadResponse.isEpisodeBased()) {
-            val id = loadResponse.getId()
-            val data = getSubscribedData(id)
             updateSubscribedData(id, data, loadResponse as? EpisodeResponse)
-            val isSubscribed = data != null
-            _subscribeStatus.postValue(isSubscribed)
+            _subscribeStatus.postValue(data != null)
+        }
+        // lets say that we have subscribed, then we must be able to unsubscribe no matter what
+        else if (data != null) {
+            _subscribeStatus.postValue(true)
         }
     }
 
@@ -2585,6 +2593,7 @@ class ResultViewModel2 : ViewModel() {
         override var posterHeaders: Map<String, String>? = null,
         override var backgroundPosterUrl: String? = null,
         override var contentRating: String? = null,
+        val id : Int?,
     ) : LoadResponse
 
     fun loadSmall(activity: Activity?, searchResponse : SearchResponse) = ioSafe {
@@ -2594,7 +2603,7 @@ class ResultViewModel2 : ViewModel() {
         val api = APIHolder.getApiFromNameNull(searchResponse.apiName) ?: APIHolder.getApiFromUrlNull(searchResponse.url) ?: APIRepository.noneApi
         val repo = APIRepository(api)
         val response = LoadResponseFromSearch(name = searchResponse.name, url = searchResponse.url, apiName = api.name, type = searchResponse.type ?: TvType.Others,
-            posterUrl = searchResponse.posterUrl).apply {
+            posterUrl = searchResponse.posterUrl, id = searchResponse.id).apply {
             if (searchResponse is SyncAPI.LibraryItem) {
                 this.plot = searchResponse.plot
                 this.rating = searchResponse.personalRating?.times(100) ?: searchResponse.rating
@@ -2606,12 +2615,14 @@ class ResultViewModel2 : ViewModel() {
                 this.tags = searchResponse.tags
             }
         }
-        val mainId = searchResponse.id ?: response.getId()
+        val mainId = response.getId()
 
         postSuccessful(
             loadResponse = response,
             mainId = mainId,
-            apiRepository = repo, updateEpisodes = false, updateFillers =  false)
+            apiRepository = repo,
+            updateEpisodes = false,
+            updateFillers =  false)
     }
 
     fun load(

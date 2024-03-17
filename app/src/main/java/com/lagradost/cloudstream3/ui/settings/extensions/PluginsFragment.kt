@@ -17,7 +17,9 @@ import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.ui.home.HomeFragment.Companion.bindChips
 import com.lagradost.cloudstream3.ui.result.FOCUS_SELF
 import com.lagradost.cloudstream3.ui.result.setLinearListLayout
-import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
+import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
+import com.lagradost.cloudstream3.ui.settings.Globals.TV
+import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setToolBarScrollFlags
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setUpToolbar
 import com.lagradost.cloudstream3.ui.settings.appLanguages
@@ -155,7 +157,7 @@ class PluginsFragment : Fragment() {
                 pluginViewModel.handlePluginAction(activity, url, it, isLocal)
             }
 
-        if (isTvSettings()) {
+        if (isLayout(TV or EMULATOR)) {
             // Scrolling down does not reveal the whole RecyclerView on TV, add to bypass that.
             binding?.pluginRecyclerView?.setPadding(0, 0, 0, 200.toPx)
         }

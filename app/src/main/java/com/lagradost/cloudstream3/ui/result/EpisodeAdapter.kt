@@ -15,8 +15,10 @@ import com.lagradost.cloudstream3.databinding.ResultEpisodeLargeBinding
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_ACTION_DOWNLOAD
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_ACTION_LONG_CLICK
 import com.lagradost.cloudstream3.ui.download.DownloadClickEvent
-import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTrueTvSettings
-import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
+import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
+import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
+import com.lagradost.cloudstream3.ui.settings.Globals.TV
+import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.utils.AppUtils.html
 import com.lagradost.cloudstream3.utils.UIHelper.setImage
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
@@ -172,15 +174,13 @@ class EpisodeAdapter(
         @SuppressLint("SetTextI18n")
         fun bind(card: ResultEpisode) {
             localCard = card
-
             val setWidth =
-                if (isTvSettings()) TV_EP_SIZE_LARGE.toPx else ViewGroup.LayoutParams.MATCH_PARENT
+                if (isLayout(TV or EMULATOR)) TV_EP_SIZE_LARGE.toPx else ViewGroup.LayoutParams.MATCH_PARENT
 
             binding.episodeLinHolder.layoutParams.width = setWidth
             binding.episodeHolderLarge.layoutParams.width = setWidth
             binding.episodeHolder.layoutParams.width = setWidth
 
-            val isTrueTv = isTrueTvSettings()
 
             binding.apply {
                 downloadButton.isVisible = hasDownloadSupport
@@ -249,7 +249,7 @@ class EpisodeAdapter(
 
                     var isExpanded = false
                     setOnClickListener {
-                        if (isTrueTv) {
+                        if (isLayout(TV)) {
                             clickCallback.invoke(EpisodeClickEvent(ACTION_SHOW_DESCRIPTION, card))
                         } else {
                             isExpanded = !isExpanded
@@ -260,7 +260,7 @@ class EpisodeAdapter(
                     }
                 }
 
-                if (!isTrueTv) {
+                if (isLayout(EMULATOR or PHONE)) {
                     episodePoster.setOnClickListener {
                         clickCallback.invoke(EpisodeClickEvent(ACTION_CLICK_DEFAULT, card))
                     }
@@ -275,7 +275,7 @@ class EpisodeAdapter(
                 clickCallback.invoke(EpisodeClickEvent(ACTION_CLICK_DEFAULT, card))
             }
 
-            if (isTrueTv) {
+            if (isLayout(TV)) {
                 itemView.isFocusable = true
                 itemView.isFocusableInTouchMode = true
                 //itemView.touchscreenBlocksFocus = false
@@ -300,11 +300,9 @@ class EpisodeAdapter(
     ) : RecyclerView.ViewHolder(binding.root) {
         @SuppressLint("SetTextI18n")
         fun bind(card: ResultEpisode) {
-            val isTrueTv = isTrueTvSettings()
-
             binding.episodeHolder.layoutParams.apply {
                 width =
-                    if (isTvSettings()) TV_EP_SIZE_SMALL.toPx else ViewGroup.LayoutParams.MATCH_PARENT
+                    if (isLayout(TV or EMULATOR)) TV_EP_SIZE_SMALL.toPx else ViewGroup.LayoutParams.MATCH_PARENT
             }
 
             binding.apply {
@@ -361,7 +359,7 @@ class EpisodeAdapter(
                     clickCallback.invoke(EpisodeClickEvent(ACTION_CLICK_DEFAULT, card))
                 }
 
-                if (isTrueTv) {
+                if (isLayout(TV)) {
                     itemView.isFocusable = true
                     itemView.isFocusableInTouchMode = true
                     //itemView.touchscreenBlocksFocus = false

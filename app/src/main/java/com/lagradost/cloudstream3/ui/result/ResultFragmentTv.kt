@@ -39,8 +39,10 @@ import com.lagradost.cloudstream3.ui.result.ResultFragment.updateUIEvent
 import com.lagradost.cloudstream3.ui.search.SEARCH_ACTION_FOCUSED
 import com.lagradost.cloudstream3.ui.search.SearchAdapter
 import com.lagradost.cloudstream3.ui.search.SearchHelper
-import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isEmulatorSettings
-import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTrueTvSettings
+import com.lagradost.cloudstream3.ui.settings.Globals
+import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
+import com.lagradost.cloudstream3.ui.settings.Globals.TV
+import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.utils.AppUtils.html
 import com.lagradost.cloudstream3.utils.AppUtils.isRtl
 import com.lagradost.cloudstream3.utils.AppUtils.loadCache
@@ -598,7 +600,7 @@ class ResultFragmentTv : Fragment() {
         }
 
         observeNullable(viewModel.subscribeStatus) { isSubscribed ->
-            binding?.resultSubscribe?.isVisible = isSubscribed != null && requireContext().isEmulatorSettings()
+            binding?.resultSubscribe?.isVisible = isSubscribed != null && isLayout(EMULATOR)
             binding?.resultSubscribeButton?.apply {
 
                 if (isSubscribed == null) return@observeNullable
@@ -752,7 +754,7 @@ class ResultFragmentTv : Fragment() {
             setRecommendations(recommendations, null)
         }
 
-        if (isTrueTvSettings()) {
+        if (isLayout(TV)) {
             observe(viewModel.episodeSynopsis) { description ->
                 view.context?.let { ctx ->
                     val builder: AlertDialog.Builder =
@@ -878,7 +880,7 @@ class ResultFragmentTv : Fragment() {
                         resultDescription.apply {
                             setTextHtml(d.plotText)
                             setOnClickListener {
-                                if (context.isEmulatorSettings()) {
+                                if (isLayout(EMULATOR)) {
                                     isExpanded = !isExpanded
                                     maxLines = if (isExpanded) {
                                         Integer.MAX_VALUE
