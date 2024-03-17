@@ -72,7 +72,7 @@ open class ParentItemAdapter(
 
     open fun onSaveInstanceState(outState: Bundle, recyclerView: RecyclerView? = null) {
         if (recyclerView != null) {
-            for (position in items.indices) {
+            for (position in 0..itemCount) {
                 val holder = recyclerView.findViewHolderForAdapterPosition(position) ?: continue
                 saveHolder(holder)
             }
