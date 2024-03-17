@@ -247,6 +247,7 @@
         <item>Muz</item>
         <item>Parti</item>
         <item>Pembe</item>
+        <item>Lavanta</item>
         <item>Material You</item>
         <item>Material You (İkincil)</item>
     </string-array>
@@ -270,6 +271,7 @@
         <item>Banana</item>
         <item>Party</item>
         <item>Pink</item>
+        <item>Lavender</item>
         <item>Monet</item>
         <item>Monet2</item>
     </string-array>

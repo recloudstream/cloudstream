@@ -1,7 +1,6 @@
 package com.lagradost.cloudstream3.ui.library
 
 import android.os.Build
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.view.doOnAttach
@@ -12,7 +11,9 @@ import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.LibraryViewpagerPageBinding
 import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.ui.search.SearchClickCallback
-import com.lagradost.cloudstream3.ui.settings.SettingsFragment
+import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
+import com.lagradost.cloudstream3.ui.settings.Globals.TV
+import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.utils.UIHelper.getSpanCount
 
 class ViewpagerAdapter(
@@ -73,7 +74,7 @@ class ViewpagerAdapter(
                         val diff = scrollY - oldScrollY
 
                         //Expand the top Appbar based on scroll direction up/down, simulate phone behavior
-                        if (SettingsFragment.isTvSettings()) {
+                        if (isLayout(TV or EMULATOR)) {
                             binding.root.rootView.findViewById<AppBarLayout>(R.id.search_bar)
                                 .apply {
                                     if (diff <= 0)

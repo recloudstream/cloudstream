@@ -11,8 +11,10 @@ import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentActivity
 import androidx.preference.PreferenceFragmentCompat
+import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.RecyclerView
 import com.lagradost.cloudstream3.AcraApplication.Companion.openBrowser
+import com.lagradost.cloudstream3.CommonActivity.onDialogDismissedEvent
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.AccountManagmentBinding
@@ -27,12 +29,17 @@ import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.simklAp
 import com.lagradost.cloudstream3.syncproviders.AuthAPI
 import com.lagradost.cloudstream3.syncproviders.InAppAuthAPI
 import com.lagradost.cloudstream3.syncproviders.OAuth2API
+import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
+import com.lagradost.cloudstream3.ui.settings.Globals.TV
+import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.getPref
-import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setPaddingBottom
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setToolBarScrollFlags
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setUpToolbar
+import com.lagradost.cloudstream3.utils.AppUtils.html
+import com.lagradost.cloudstream3.utils.BackupUtils
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
+import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialogText
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.utils.UIHelper.setImage
@@ -71,7 +78,7 @@ class SettingsAccount : PreferenceFragmentCompat() {
                 showAccountSwitch(activity, api)
             }
 
-            if (isTvSettings()) {
+            if (isLayout(TV or EMULATOR)) {
                 binding.accountSwitchAccount.requestFocus()
             }
         }
@@ -135,7 +142,7 @@ class SettingsAccount : PreferenceFragmentCompat() {
                             binding.loginUsernameInput to api.requiresUsername
                         )
 
-                        if (isTvSettings()) {
+                        if (isLayout(TV or EMULATOR)) {
                             visibilityMap.forEach { (input, isVisible) ->
                                 input.isVisible = isVisible
 
@@ -255,6 +262,24 @@ class SettingsAccount : PreferenceFragmentCompat() {
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         hideKeyboard()
         setPreferencesFromResource(R.xml.settings_account, rootKey)
+
+        getPref(R.string.biometric_key)?.setOnPreferenceClickListener {
+            val authEnabled = PreferenceManager.getDefaultSharedPreferences(
+                context ?: return@setOnPreferenceClickListener false
+            )
+                .getBoolean(getString(R.string.biometric_key), false)
+
+            if (authEnabled) {
+                BackupUtils.backup(activity)
+                val title = activity?.getString(R.string.biometric_setting)
+                val warning = activity?.getString(R.string.biometric_warning)
+                activity?.showBottomDialogText(
+                    title as String,
+                    warning.html()
+                ) { onDialogDismissedEvent }
+            }
+            true
+        }
 
         val syncApis =
             listOf(

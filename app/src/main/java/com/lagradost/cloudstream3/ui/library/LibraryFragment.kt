@@ -49,6 +49,11 @@ import com.lagradost.cloudstream3.ui.quicksearch.QuickSearchFragment
 import com.lagradost.cloudstream3.ui.result.txt
 import com.lagradost.cloudstream3.ui.search.SEARCH_ACTION_LOAD
 import com.lagradost.cloudstream3.ui.search.SEARCH_ACTION_SHOW_METADATA
+import com.lagradost.cloudstream3.ui.settings.Globals
+import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
+import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
+import com.lagradost.cloudstream3.ui.settings.Globals.TV
+import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment
 import com.lagradost.cloudstream3.utils.AppUtils.loadResult
 import com.lagradost.cloudstream3.utils.AppUtils.loadSearchResult
@@ -101,7 +106,7 @@ class LibraryFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         val layout =
-            if (SettingsFragment.isTvSettings()) R.layout.fragment_library_tv else R.layout.fragment_library
+            if (isLayout(TV or EMULATOR)) R.layout.fragment_library_tv else R.layout.fragment_library
         val root = inflater.inflate(layout, container, false)
         binding = try {
             FragmentLibraryBinding.bind(root)
@@ -129,6 +134,18 @@ class LibraryFragment : Fragment() {
             outState.putInt(VIEWPAGER_ITEM_KEY, currentItem)
         }
         super.onSaveInstanceState(outState)
+    }
+
+    private fun updateRandom() {
+        val position = libraryViewModel.currentPage.value ?: 0
+        val pages = (libraryViewModel.pages.value as? Resource.Success)?.value ?: return
+        if (toggleRandomButton) {
+            listLibraryItems.clear()
+            listLibraryItems.addAll(pages[position].items)
+            binding?.libraryRandom?.isVisible = listLibraryItems.isNotEmpty()
+        } else {
+            binding?.libraryRandom?.isGone = true
+        }
     }
 
     @SuppressLint("ResourceType", "CutPasteId")
@@ -208,7 +225,7 @@ class LibraryFragment : Fragment() {
                 settingsManager.getBoolean(
                     getString(R.string.random_button_key),
                     false
-                ) && !SettingsFragment.isTvSettings()
+                ) && isLayout(PHONE)
             binding?.libraryRandom?.visibility = View.GONE
         }
 
@@ -395,15 +412,7 @@ class LibraryFragment : Fragment() {
                             binding?.viewpager?.setCurrentItem(page, false)
                         }
 
-                        observe(libraryViewModel.currentPage){
-                            if (toggleRandomButton) {
-                                listLibraryItems.clear()
-                                listLibraryItems.addAll(pages[it].items)
-                                libraryRandom.isVisible = listLibraryItems.isNotEmpty()
-                            } else {
-                                libraryRandom.isGone = true
-                            }
-                        }
+                        updateRandom()
 
                         // Only stop loading after 300ms to hide the fade effect the viewpager produces when updating
                         // Without this there would be a flashing effect:
@@ -481,6 +490,7 @@ class LibraryFragment : Fragment() {
         }
 
         observe(libraryViewModel.currentPage) { position ->
+            updateRandom()
             val all = binding?.viewpager?.allViews?.toList()
                 ?.filterIsInstance<AutofitRecyclerView>()
 

@@ -69,6 +69,7 @@
     <string name="enable_skip_op_from_database" translatable="false">enable_skip_op_from_database</string>
     <string name="rotate_video_key" translatable="false">rotate_video_key</string>
     <string name="auto_rotate_video_key" translatable="false">auto_rotate_video_key</string>
+    <string name="biometric_key" translatable="false">biometric_key</string>
     <!-- FORMAT MIGHT TRANSLATE, WILL CAUSE CRASH IF APPLIED WRONG -->
     <string name="extra_info_format" formatted="true" translatable="false">%d %s | %s</string>
     <string name="storage_size_format" formatted="true" translatable="false">%s • %s</string>
@@ -173,8 +174,8 @@
     <string name="sort_close">Close</string>
     <string name="sort_clear">Clear</string>
     <string name="sort_save">Save</string>
-    <string name="copyTitle">Title copied!</string>
-    <string name="copyRepoUrl">Repo URL copied!</string>
+    <string name="repo_copy_label">Repository name and URL</string>
+    <string name="toast_copied">copied!</string>
     <string name="subscribe_tooltip">New episode notification</string>
     <string name="result_search_tooltip">Search in other extensions</string>
     <string name="recommendations_tooltip">Show recommendations</string>
@@ -247,7 +248,7 @@
     <string name="backup_failed_error_format">Error backing up %s</string>
     <string name="search">Search</string>
     <string name="library">Library</string>
-    <string name="category_account">Accounts</string>
+    <string name="category_account">Accounts and Security</string>
     <string name="category_updates">Updates and backup</string>
     <string name="settings_info">Info</string>
     <string name="advanced_search">Advanced Search</string>
@@ -306,6 +307,7 @@
     <string name="go_forward_30">+30</string>
     <string name="delete_message" formatted="true">This will permanently delete %s\nAre you sure?</string>
     <string name="resume_time_left" formatted="true">%dm\nremaining</string>
+    <string name="resume_remaining" formatted="true">%s\nremaining</string>
     <string name="status_ongoing">Ongoing</string>
     <string name="status_completed">Completed</string>
     <string name="status">Status</string>
@@ -645,6 +647,8 @@
     <string name="history">History</string>
     <string name="enable_skip_op_from_database_des">Show skip popups for opening/ending</string>
     <string name="clipboard_too_large">Too much text. Unable to save to clipboard.</string>
+    <string name="clipboard_permission_error">Error accessing Clipboard, Please try again.</string>
+    <string name="clipboard_unknown_error">Error copying, Please copy logcat and contact app support.</string>
     <string name="action_mark_as_watched">Mark as watched</string>
     <string name="action_remove_from_watched">Remove from watched</string>
     <string name="confirm_exit_dialog">Are you sure you want to exit\?</string>
@@ -745,4 +749,17 @@
     <string name="rotate_video_desc">Display a toggle button for screen orientation</string>
     <string name="auto_rotate_video_desc">Enable automatic switching of screen orientation based on video orientation</string>
     <string name="auto_rotate_video">Auto rotate</string>
+    <string name="favorite">Favorite</string>
+    <string name="unfavorite">Unfavorite</string>
+    <!-- For Biometrics -->
+    <string name="biometric_authentication_title">Unlock CloudStream</string>
+    <string name="biometric_setting">Lock with Biometrics</string>
+    <string name="password_pin_authentication_title">Password/PIN Authentication</string>
+    <string name="biometric_unsupported">Biometric authentication is not supported on this device</string>
+    <string name="biometric_setting_summary">Unlock the app with Fingerprint, Face ID, PIN, Pattern and Password.</string>
+    <string name="biometric_prompt_description">This window will close after few failed attempts. You\'ll have to restart the App.</string>
+    <string name="biometric_warning">Your CloudStream data has been backed up now, although probability of this rare case is very low but all
+        devices behave differently, in case you get locked down from accessing the app in worst case scenario,
+    Clear the app data wholly and restore the backup. Any inconvenience if arrived is deeply regretted.</string>
+
 </resources>

@@ -62,7 +62,7 @@ android {
         targetSdk = 33 /* Android 14 is Fu*ked
         ^ https://developer.android.com/about/versions/14/behavior-changes-14#safer-dynamic-code-loading*/
         versionCode = 63
-        versionName = "4.3.1"
+        versionName = "4.3.2"
 
         resValue("string", "app_version", "${defaultConfig.versionName}${versionNameSuffix ?: ""}")
         resValue("string", "commit_hash", "git rev-parse --short HEAD".execute() ?: "")
@@ -181,7 +181,7 @@ dependencies {
     // Design & UI
     implementation("jp.wasabeef:glide-transformations:4.3.0")
     implementation("androidx.preference:preference-ktx:1.2.1")
-    implementation("com.google.android.material:material:1.10.0")
+    implementation("com.google.android.material:material:1.11.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
 
@@ -222,6 +222,7 @@ dependencies {
     implementation("androidx.palette:palette-ktx:1.0.0") // Palette For Images -> Colors
     implementation("androidx.tvprovider:tvprovider:1.0.0")
     implementation("com.github.discord:OverlappingPanels:0.1.5") // Gestures
+    implementation ("androidx.biometric:biometric:1.2.0-alpha05") // Fingerprint Authentication
     implementation("com.github.rubensousa:previewseekbar-media3:1.1.1.0") // SeekBar Preview
 
     // Extensions & Other Libs

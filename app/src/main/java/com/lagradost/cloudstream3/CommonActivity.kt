@@ -11,11 +11,9 @@ import android.util.DisplayMetrics
 import android.util.Log
 import android.view.Gravity
 import android.view.KeyEvent
-import android.view.LayoutInflater
 import android.view.View
 import android.view.View.NO_ID
 import android.view.ViewGroup
-import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.result.contract.ActivityResultContracts
@@ -31,11 +29,12 @@ import com.google.android.material.chip.ChipGroup
 import com.google.android.material.navigationrail.NavigationRailView
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
+import com.lagradost.cloudstream3.databinding.ToastBinding
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.ui.player.PlayerEventType
 import com.lagradost.cloudstream3.ui.result.ResultFragment
 import com.lagradost.cloudstream3.ui.result.UiText
-import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.updateTv
+import com.lagradost.cloudstream3.ui.settings.Globals.updateTv
 import com.lagradost.cloudstream3.utils.AppUtils.isRtl
 import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.Event
@@ -99,8 +98,7 @@ object CommonActivity {
     var playerEventListener: ((PlayerEventType) -> Unit)? = null
     var keyEventListener: ((Pair<KeyEvent?, Boolean>) -> Boolean)? = null
 
-
-    var currentToast: Toast? = null
+    private var currentToast: Toast? = null
 
     fun showToast(@StringRes message: Int, duration: Int? = null) {
         val act = activity ?: return
@@ -156,25 +154,19 @@ object CommonActivity {
         } catch (e: Exception) {
             logError(e)
         }
+
         try {
-            val inflater =
-                act.getSystemService(AppCompatActivity.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+            val binding = ToastBinding.inflate(act.layoutInflater)
+            binding.text.text = message.trim()
 
-            val layout: View = inflater.inflate(
-                R.layout.toast,
-                act.findViewById<View>(R.id.toast_layout_root) as ViewGroup?
-            )
-
-            val text = layout.findViewById(R.id.text) as TextView
-            text.text = message.trim()
-
+            // custom toasts are deprecated and won't appear when cs3 sets minSDK to api30 (A11)
             val toast = Toast(act)
-            toast.setGravity(Gravity.CENTER_HORIZONTAL or Gravity.BOTTOM, 0, 5.toPx)
             toast.duration = duration ?: Toast.LENGTH_SHORT
-            toast.view = layout
-            //https://github.com/PureWriter/ToastCompat
-            toast.show()
+            toast.setGravity(Gravity.CENTER_HORIZONTAL or Gravity.BOTTOM, 0, 5.toPx)
+            toast.view = binding.root
             currentToast = toast
+            toast.show()
+
         } catch (e: Exception) {
             logError(e)
         }
@@ -319,6 +311,7 @@ object CommonActivity {
                 "Banana" -> R.style.OverlayPrimaryColorBanana
                 "Party" -> R.style.OverlayPrimaryColorParty
                 "Pink" -> R.style.OverlayPrimaryColorPink
+                "Lavender" -> R.style.OverlayPrimaryColorLavender
                 "Monet" -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
                     R.style.OverlayPrimaryColorMonet else R.style.OverlayPrimaryColorNormal
 

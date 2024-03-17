@@ -383,6 +383,16 @@
         <item name="android:colorAccent">@color/colorPrimaryCoolBlue</item>
     </style>
 
+    <style name="OverlayPrimaryColorLavender">
+        <item name="colorPrimary">@color/colorPrimaryLavender</item>
+        <item name="android:colorPrimary">@color/colorPrimaryLavender</item>
+        <item name="colorPrimaryDark">#6B51AB</item>
+        <item name="colorAccent">#7961B4</item>
+        <item name="colorOnPrimary">@color/whiteText</item>
+        <!--    Needed for leanback fuckery    -->
+        <item name="android:colorAccent">@color/colorPrimaryLavender</item>
+    </style>
+    
     <style name="customRatingBar" parent="@style/Widget.AppCompat.RatingBar">
 
         <item name="android:progressDrawable">@drawable/abc_ratingbar_indicator_material</item>
@@ -802,6 +812,35 @@
         <item name="android:layout_marginEnd">4dp</item>
         <item name="android:insetBottom">0dp</item>
         <item name="android:insetTop">0dp</item>
+    </style>
+
+    <style name="ResultSmallButtonTV">
+        <item name="android:tag">@string/tv_no_focus_tag</item>
+        <item name="android:stateListAnimator">@null</item>
+        <item name="strokeColor">@color/transparent</item>
+        <item name="backgroundTint">@null</item>
+        <item name="android:background">@drawable/player_button_tv_attr</item>
+        <item name="rippleColor">@color/white</item>
+        <item name="android:shadowColor">@color/transparent</item>
+        <item name="iconTint">@color/player_on_button_tv_attr</item>
+        <item name="iconGravity">textStart</item>
+        <item name="android:layout_width">60dp</item>
+        <item name="android:layout_height">40dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:layout_marginStart">4dp</item>
+        <item name="android:layout_marginEnd">4dp</item>
+        <item name="android:layout_marginBottom">4dp</item>
+    </style>
+
+    <style name="ResultMarqueeButtonText">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">top|center_horizontal</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:scrollHorizontally">true</item>
+        <item name="android:marqueeRepeatLimit">marquee_forever</item>
+        <item name="android:ellipsize">marquee</item>
     </style>
 
     <style name="VideoButtonTV">
