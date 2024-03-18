@@ -174,7 +174,7 @@ class QuickSearchFragment : Fragment() {
             }
         } else {
             binding?.quickSearchMasterRecycler?.adapter =
-                ParentItemAdapter(mutableListOf(), { callback ->
+                ParentItemAdapter(fragment = this, id = "quickSearchMasterRecycler".hashCode(), { callback ->
                     SearchHelper.handleSearchClickCallback(callback)
                     //when (callback.action) {
                     //SEARCH_ACTION_LOAD -> {
