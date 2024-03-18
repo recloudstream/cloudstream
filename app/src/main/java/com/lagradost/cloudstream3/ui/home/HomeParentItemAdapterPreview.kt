@@ -388,7 +388,7 @@ class HomeParentItemAdapterPreview(
                             viewModel.loadMoreHomeScrollResponses()
                         }
                     }
-                    val item = previewAdapter.getItem(position) ?: return
+                    val item = previewAdapter.getItemOrNull(position) ?: return
                     onSelect(item, position)
                 }
             }
@@ -516,6 +516,7 @@ class HomeParentItemAdapterPreview(
             when (preview) {
                 is Resource.Success -> {
                     previewAdapter.submitList(preview.value.second)
+                    previewAdapter.hasMoreItems = preview.value.first
                     /*if (!.setItems(
                             preview.value.second,
                             preview.value.first

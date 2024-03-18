@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import androidx.viewbinding.ViewBinding
+import java.util.concurrent.CopyOnWriteArrayList
 
 open class ViewHolderState<T>(val view: ViewBinding) : ViewHolder(view.root) {
     open fun save(): T? = null
@@ -26,6 +27,8 @@ open class ViewHolderState<T>(val view: ViewBinding) : ViewHolder(view.root) {
 class StateViewModel : ViewModel() {
     val layoutManagerStates = hashMapOf<Int, HashMap<Int, Any?>>()
 }
+
+abstract class NoStateAdapter<T : Any>(fragment: Fragment) : BaseAdapter<T, Any>(fragment, 0)
 
 /**
  * BaseAdapter is a persistent state stored adapter that supports headers and footers.
@@ -83,7 +86,8 @@ abstract class BaseAdapter<
     )
 
     fun submitList(list: List<T>?) {
-        mDiffer.submitList(list)
+        // deep copy at least the top list, because otherwise adapter can go crazy
+        mDiffer.submitList(list?.let { CopyOnWriteArrayList(it) })
     }
 
     override fun getItemCount(): Int {
