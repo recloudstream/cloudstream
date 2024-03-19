@@ -14,6 +14,7 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.MaterialToolbar
+import com.lagradost.cloudstream3.BuildConfig
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.MainSettingsBinding
 import com.lagradost.cloudstream3.mvvm.logError
@@ -179,6 +180,9 @@ class SettingsFragment : Fragment() {
 
         val appVersion = getString(R.string.app_version)
         val commitInfo = getString(R.string.commit_hash)
+        val buildDate = BuildConfig.BUILDDATE
+
+        binding?.buildDate?.text = buildDate
 
         binding?.appVersionInfo?.setOnLongClickListener{
             clipboardHelper(txt(R.string.extension_version), "$appVersion $commitInfo")
