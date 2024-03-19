@@ -19,7 +19,7 @@
             android:orientation="vertical">
 
             <LinearLayout
-                android:id="@+id/settings_profile"
+                android:id="@id/settings_profile"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
@@ -33,14 +33,14 @@
                     app:cardCornerRadius="25dp">
 
                     <ImageView
-                        android:id="@+id/settings_profile_pic"
+                        android:id="@id/settings_profile_pic"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         tools:ignore="ContentDescription" />
                 </androidx.cardview.widget.CardView>
 
                 <TextView
-                    android:id="@+id/settings_profile_text"
+                    android:id="@id/settings_profile_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
@@ -54,14 +54,14 @@
             </LinearLayout>
 
             <TextView
-                android:id="@+id/settings_general"
+                android:id="@id/settings_general"
 
                 style="@style/SettingsItem"
                 android:nextFocusDown="@id/settings_player"
                 android:text="@string/category_general" />
 
             <TextView
-                android:id="@+id/settings_player"
+                android:id="@id/settings_player"
                 style="@style/SettingsItem"
 
                 android:nextFocusUp="@id/settings_general"
@@ -69,7 +69,7 @@
                 android:text="@string/category_player" />
 
             <TextView
-                android:id="@+id/settings_providers"
+                android:id="@id/settings_providers"
                 style="@style/SettingsItem"
 
                 android:nextFocusUp="@id/settings_player"
@@ -77,7 +77,7 @@
                 android:text="@string/category_providers" />
 
             <TextView
-                android:id="@+id/settings_ui"
+                android:id="@id/settings_ui"
                 style="@style/SettingsItem"
 
                 android:nextFocusUp="@id/settings_providers"
@@ -85,7 +85,7 @@
                 android:text="@string/category_ui" />
 
             <TextView
-                android:id="@+id/settings_updates"
+                android:id="@id/settings_updates"
                 style="@style/SettingsItem"
 
                 android:nextFocusUp="@id/settings_ui"
@@ -93,19 +93,19 @@
                 android:text="@string/category_updates" />
 
             <TextView
-                android:id="@+id/settings_credits"
+                android:id="@id/settings_credits"
                 style="@style/SettingsItem"
                 android:nextFocusUp="@id/settings_updates"
                 android:text="@string/category_account" />
 
             <TextView
-                android:id="@+id/settings_extensions"
+                android:id="@id/settings_extensions"
                 style="@style/SettingsItem"
                 android:nextFocusUp="@id/settings_credits"
                 android:text="@string/extensions" />
 
             <LinearLayout
-                android:id="@+id/app_version_info"
+                android:id="@id/app_version_info"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
@@ -120,7 +120,7 @@
                     android:textColor="?attr/textColor" />
 
                 <TextView
-                    android:id="@+id/textView3"
+                    android:id="@id/textView3"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
@@ -129,12 +129,31 @@
                     android:textColor="?attr/textColor" />
 
                 <TextView
-                    android:id="@+id/commit_hash"
+                    android:id="@id/commit_hash"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:padding="10dp"
                     android:text="@string/commit_hash"
+                    android:textColor="?attr/textColor" />
+                
+                <TextView
+                    android:id="@id/textView4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:padding="10dp"
+                    android:text="•"
+                    android:textColor="?attr/textColor" />
+                
+                <TextView
+                    android:id="@id/build_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:padding="10dp"
+                    android:text=""
                     android:textColor="?attr/textColor" />
             </LinearLayout>
 
