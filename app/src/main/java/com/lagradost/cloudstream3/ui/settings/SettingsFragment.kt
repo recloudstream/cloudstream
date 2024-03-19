@@ -178,7 +178,7 @@ class SettingsFragment : Fragment() {
         }
 
         val appVersion = getString(R.string.app_version)
-        val commitInfo = getString(R.string.commit_hash)
+        val commitInfo = getString(R.string.origin_hash)
 
         binding?.appVersionInfo?.setOnLongClickListener{
             clipboardHelper(txt(R.string.extension_version), "$appVersion $commitInfo")

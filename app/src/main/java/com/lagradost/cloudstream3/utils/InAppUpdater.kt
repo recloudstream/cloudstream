@@ -180,7 +180,7 @@ class InAppUpdater {
             Log.d(LOG_TAG, "Fetched GitHub tag: ${tagResponse.github_object.sha.take(7)}")
 
             val shouldUpdate =
-                (getString(R.string.commit_hash)
+                (getString(R.string.origin_hash)
                     .trim { c -> c.isWhitespace() }
                     .take(7)
                         !=

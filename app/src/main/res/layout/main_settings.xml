@@ -129,12 +129,12 @@
                     android:textColor="?attr/textColor" />
 
                 <TextView
-                    android:id="@+id/commit_hash"
+                    android:id="@+id/origin_hash"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:padding="10dp"
-                    android:text="@string/commit_hash"
+                    android:text="@string/origin_hash"
                     android:textColor="?attr/textColor" />
             </LinearLayout>
 
