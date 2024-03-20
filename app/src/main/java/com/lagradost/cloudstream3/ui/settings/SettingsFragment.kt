@@ -179,7 +179,7 @@ class SettingsFragment : Fragment() {
         }
 
         val appVersion = getString(R.string.app_version)
-        val commitInfo = getString(R.string.commit_hash)
+        val commitInfo = getString(R.string.origin_hash)
         val buildDate = BuildConfig.BUILDDATE
 
         binding?.buildDate?.text = buildDate
