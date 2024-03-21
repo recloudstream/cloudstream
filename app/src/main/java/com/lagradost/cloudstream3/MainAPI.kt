@@ -743,8 +743,6 @@ fun base64Encode(array: ByteArray): String {
     }
 }
 
-class ErrorLoadingException(message: String? = null) : Exception(message)
-
 fun MainAPI.fixUrlNull(url: String?): String? {
     if (url.isNullOrEmpty()) {
         return null
