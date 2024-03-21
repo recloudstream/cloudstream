@@ -147,7 +147,7 @@
                     android:layout_height="wrap_content"
                     android:padding="10dp"
                     android:textColor="?attr/textColor"
-                    tools:text="21-03-2024 19:01"/>
+                    tools:text="21/03/2024 09:02 pm"/>
             </LinearLayout>
 
         </LinearLayout>

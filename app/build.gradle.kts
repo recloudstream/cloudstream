@@ -3,6 +3,8 @@ import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.ByteArrayOutputStream
 import java.net.URL
+import java.text.SimpleDateFormat
+import java.util.Date
 
 plugins {
     id("com.android.application")
@@ -69,10 +71,9 @@ android {
         // Reads local.properties
         val localProperties = gradleLocalProperties(rootDir)
 
-        buildConfigField(
-            "String",
+        buildConfigField ("String",
             "BUILDDATE",
-            "new java.text.SimpleDateFormat(\"yyyy-MM-dd HH:mm\").format(new java.util.Date(" + System.currentTimeMillis() + "L));"
+            "\"${SimpleDateFormat("dd/MM/yy hh:mm a").format(Date())}\""
         )
         buildConfigField(
             "String",
