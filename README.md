@@ -18,7 +18,21 @@
 
 ## About us: 
 
-**CloudStream is an open-source Android app that streams and downloads movies, TV series, and anime. We provide all of this content ad-free and without subscription or sign-up requirements.**
+**CloudStream can be defined in many ways. However, it's best described as a media center that prioritizes and emphasizes complete freedom and total flexibility between users and developers.** 
+
+A more descriptive example of Cloudstream is that it's an extension-based multimedia player with tracking support; an example of extensions for CloudStream includes Support for: 
+
++ [Librevox (audio-books)](https://librivox.org/) 
++ [Youtube](https://www.youtube.com/)
++ [Twitch](https://www.twitch.tv/)
++ [iptv-org (A collection of publicly available IPTV (Internet Protocol television) channels from all over the world.)](https://github.com/iptv-org/iptv) 
++ [nginx](https://nginx.org/)
++ And more... 
+
+To reiterate, **we do not support Piracy;** for more details about our stance on the DMCA and EUCD, you can read about it on our Organization: [ReCloudStream](https://github.com/recloudstream)
+
+**Important Copyright Note:** Our documentation is unmaintained and open to contributions; therefore, apps and sources, extensions in recommended sources, and recommended apps are not officially moderated or endorsed by CloudStream; if you or another copyright owner identify an extension that breaches your copyright, please let us know. 
+
 
 #### Features:
 + **AdFree**, No ads whatsoever
@@ -81,8 +95,6 @@ It is also important to ensure that an issue is not duplicated or related to ano
 As well as providing clear install steps, our [website](https://dweb.link/ipns/cloudstream.on.fleek.co/) includes a wide variety of other tools, such as: 
 - [Troubleshooting](https://recloudstream.github.io/csdocs/troubleshooting/)
 - [Further CloudStream Repositories](https://recloudstream.github.io/csdocs/repositories/) 
-- [Recommened Sources For CloudStream](https://recloudstream.github.io/csdocs/recsrc/) 
-- [Recommened Apps For CloudStream](https://recloudstream.github.io/csdocs/recapps/)
 - Set-Up for other devices, such as:
   - [Android Tv](https://recloudstream.github.io/csdocs/other-devices/tv/)
   - [Windows](https://recloudstream.github.io/csdocs/other-devices/windows/)
