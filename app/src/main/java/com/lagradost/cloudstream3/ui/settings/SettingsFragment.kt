@@ -30,6 +30,8 @@ import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.setImage
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import java.io.File
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class SettingsFragment : Fragment() {
     companion object {
@@ -181,11 +183,17 @@ class SettingsFragment : Fragment() {
         val appVersion = getString(R.string.app_version)
         val commitInfo = getString(R.string.commit_hash)
         val buildDate = BuildConfig.BUILDDATE
+        val formattedDate = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault())
+            .parse(buildDate)?.let { date ->
+                SimpleDateFormat("dd/MM/yy hh:mm a", Locale.getDefault()).format(date)
+            }
 
-        binding?.buildDate?.text = buildDate
-
-        binding?.appVersionInfo?.setOnLongClickListener{
-            clipboardHelper(txt(R.string.extension_version), "$appVersion $commitInfo")
+        binding?.buildDate?.text = formattedDate
+        binding?.appVersionInfo?.setOnLongClickListener {
+            clipboardHelper(
+                txt(R.string.extension_version),
+                "$appVersion $commitInfo $formattedDate"
+            )
             true
         }
     }
