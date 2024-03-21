@@ -24,7 +24,6 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:padding="20dp"
-                android:visibility="gone"
                 tools:visibility="visible">
 
                 <androidx.cardview.widget.CardView
@@ -36,7 +35,11 @@
                         android:id="@+id/settings_profile_pic"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        tools:ignore="ContentDescription" />
+                        android:scaleType="centerCrop"
+                        android:foreground="@drawable/rounded_outline"
+                        tools:src="@drawable/profile_bg_orange"
+                        android:contentDescription="@string/account"/>
+
                 </androidx.cardview.widget.CardView>
 
                 <TextView
@@ -50,7 +53,7 @@
                     android:textColor="?attr/textColor"
                     android:textSize="18sp"
                     android:textStyle="normal"
-                    tools:text="Hello world" />
+                    tools:text="Indus Aryan" />
             </LinearLayout>
 
             <TextView

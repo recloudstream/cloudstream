@@ -19,11 +19,16 @@ import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.MainSettingsBinding
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.accountManagers
+import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.aniListApi
+import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.malApi
+import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.simklApi
+import com.lagradost.cloudstream3.syncproviders.AuthAPI
 import com.lagradost.cloudstream3.ui.home.HomeFragment
 import com.lagradost.cloudstream3.ui.result.txt
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
+import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.UIHelper
 import com.lagradost.cloudstream3.utils.UIHelper.clipboardHelper
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
@@ -136,21 +141,38 @@ class SettingsFragment : Fragment() {
             activity?.navigate(id, Bundle())
         }
 
-        // used to debug leaks showToast(activity,"${VideoDownloadManager.downloadStatusEvent.size} : ${VideoDownloadManager.downloadProgressEvent.size}")
+        /** used to debug leaks
+        showToast(activity,"${VideoDownloadManager.downloadStatusEvent.size} :
+        ${VideoDownloadManager.downloadProgressEvent.size}") **/
+        // Check login status for each OAuth2 API
+        val isSyncing = simklApi.loginInfo() != null || malApi.loginInfo() != null || aniListApi.loginInfo() != null
 
-        for (syncApi in accountManagers) {
-            val login = syncApi.loginInfo()
-            val pic = login?.profilePicture ?: continue
-            if (binding?.settingsProfilePic?.setImage(
-                    pic,
-                    errorImageDrawable = HomeFragment.errorProfilePic
-                ) == true
-            ) {
-                binding?.settingsProfileText?.text = login.name
-                binding?.settingsProfile?.isVisible = true
-                break
+        // show local account image and pfp when not syncing with any api.
+        if (!isSyncing) {
+            val currentAccount = DataStoreHelper.accounts.firstOrNull {
+                it.keyIndex == DataStoreHelper.selectedKeyIndex
+            } ?: DataStoreHelper.getDefaultAccount(activity ?: requireActivity())
+            val name = currentAccount.name
+            val image = currentAccount.image
+
+            binding?.settingsProfilePic?.setImage(image)
+            binding?.settingsProfileText?.text = name
+        } else {
+            for (syncApi in accountManagers) {
+                val login = syncApi.loginInfo()
+                val pic = login?.profilePicture ?: continue
+                if (binding?.settingsProfilePic?.setImage(
+                        pic,
+                        errorImageDrawable = HomeFragment.errorProfilePic
+                    ) == true
+                ) {
+                    binding?.settingsProfileText?.text = login.name
+                    binding?.settingsProfile?.isVisible = true
+                    break
+                }
             }
         }
+
         binding?.apply {
             listOf(
                 settingsGeneral to R.id.action_navigation_global_to_navigation_settings_general,
