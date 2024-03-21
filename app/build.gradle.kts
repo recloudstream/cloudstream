@@ -71,7 +71,8 @@ android {
         // Reads local.properties
         val localProperties = gradleLocalProperties(rootDir)
 
-        buildConfigField ("String",
+        buildConfigField (
+            "String",
             "BUILDDATE",
             "\"${SimpleDateFormat("dd/MM/yy hh:mm a").format(Date())}\""
         )
