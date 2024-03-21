@@ -1,6 +1,7 @@
 package com.lagradost.cloudstream3.ui.settings
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,10 +20,6 @@ import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.MainSettingsBinding
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.accountManagers
-import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.aniListApi
-import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.malApi
-import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.simklApi
-import com.lagradost.cloudstream3.syncproviders.AuthAPI
 import com.lagradost.cloudstream3.ui.home.HomeFragment
 import com.lagradost.cloudstream3.ui.result.txt
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
@@ -144,19 +141,24 @@ class SettingsFragment : Fragment() {
         /** used to debug leaks
         showToast(activity,"${VideoDownloadManager.downloadStatusEvent.size} :
         ${VideoDownloadManager.downloadProgressEvent.size}") **/
-        // Check login status for each OAuth2 API
-        val isSyncing = simklApi.loginInfo() != null || malApi.loginInfo() != null || aniListApi.loginInfo() != null
+        // Check login status for each OAuth2API
+        val isSyncing = accountManagers.any{ it.loginInfo() != null }
+        val accountPFP = accountManagers.firstOrNull{ it.loginInfo() != null }
 
         // show local account image and pfp when not syncing with any api.
-        if (!isSyncing) {
-            val currentAccount = DataStoreHelper.accounts.firstOrNull {
-                it.keyIndex == DataStoreHelper.selectedKeyIndex
-            } ?: DataStoreHelper.getDefaultAccount(activity ?: requireActivity())
-            val name = currentAccount.name
-            val image = currentAccount.image
+        if (!isSyncing && accountPFP == null) {
+            val activity = activity ?: return
+            val currentAccount = try {
+                DataStoreHelper.accounts.firstOrNull {
+                    it.keyIndex == DataStoreHelper.selectedKeyIndex
+                } ?: activity.let { DataStoreHelper.getDefaultAccount(activity) }
+            } catch (e: IllegalStateException) {
+                Log.e("AccountManager", "Activity not found", e)
+                null
+            }
 
-            binding?.settingsProfilePic?.setImage(image)
-            binding?.settingsProfileText?.text = name
+            binding?.settingsProfilePic?.setImage(currentAccount?.image)
+            binding?.settingsProfileText?.text = currentAccount?.name
         } else {
             for (syncApi in accountManagers) {
                 val login = syncApi.loginInfo()
