@@ -141,17 +141,18 @@ class SettingsFragment : Fragment() {
         /** used to debug leaks
         showToast(activity,"${VideoDownloadManager.downloadStatusEvent.size} :
         ${VideoDownloadManager.downloadProgressEvent.size}") **/
+
         // Check login status for each OAuth2API
-        val isSyncing = accountManagers.any{ it.loginInfo() != null }
-        val accountPFP = accountManagers.firstOrNull{ it.loginInfo() != null }
+        val accountProfile = accountManagers.firstOrNull { it.loginInfo() != null }
 
         // show local account image and pfp when not syncing with any api.
-        if (!isSyncing && accountPFP == null) {
+        if (accountProfile == null) {
             val activity = activity ?: return
             val currentAccount = try {
                 DataStoreHelper.accounts.firstOrNull {
                     it.keyIndex == DataStoreHelper.selectedKeyIndex
                 } ?: activity.let { DataStoreHelper.getDefaultAccount(activity) }
+
             } catch (e: IllegalStateException) {
                 Log.e("AccountManager", "Activity not found", e)
                 null
