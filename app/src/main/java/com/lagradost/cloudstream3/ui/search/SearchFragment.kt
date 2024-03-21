@@ -46,6 +46,7 @@ import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.ui.APIRepository
+import com.lagradost.cloudstream3.ui.BaseAdapter
 import com.lagradost.cloudstream3.ui.home.HomeFragment
 import com.lagradost.cloudstream3.ui.home.HomeFragment.Companion.bindChips
 import com.lagradost.cloudstream3.ui.home.HomeFragment.Companion.currentSpan
@@ -54,8 +55,9 @@ import com.lagradost.cloudstream3.ui.home.HomeFragment.Companion.updateChips
 import com.lagradost.cloudstream3.ui.home.ParentItemAdapter
 import com.lagradost.cloudstream3.ui.result.FOCUS_SELF
 import com.lagradost.cloudstream3.ui.result.setLinearListLayout
-import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTrueTvSettings
-import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
+import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
+import com.lagradost.cloudstream3.ui.settings.Globals.TV
+import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.utils.AppUtils.ownHide
 import com.lagradost.cloudstream3.utils.AppUtils.ownShow
 import com.lagradost.cloudstream3.utils.AppUtils.setDefaultFocus
@@ -107,13 +109,16 @@ class SearchFragment : Fragment() {
         )
         bottomSheetDialog?.ownShow()
 
-        val layout = if (isTvSettings()) R.layout.fragment_search_tv else R.layout.fragment_search
 
-        val root = inflater.inflate(layout, container, false)
-        // TODO TRYCATCH
-        binding = FragmentSearchBinding.bind(root)
+        binding = try {
+            val layout = if (isLayout(TV or EMULATOR)) R.layout.fragment_search_tv else R.layout.fragment_search
+            val root = inflater.inflate(layout, container, false)
+            FragmentSearchBinding.bind(root)
+        } catch (t : Throwable) {
+            FragmentSearchBinding.inflate(inflater)
+        }
 
-        return root
+        return binding?.root
     }
 
     private fun fixGrid() {
@@ -157,7 +162,8 @@ class SearchFragment : Fragment() {
      **/
     fun search(query: String?) {
         if (query == null) return
-
+        // don't resume state from prev search
+        (binding?.searchMasterRecycler?.adapter as? BaseAdapter<*,*>)?.clear()
         context?.let { ctx ->
             val default = enumValues<TvType>().sorted().filter { it != TvType.NSFW }
                 .map { it.ordinal.toString() }.toSet()
@@ -369,7 +375,7 @@ class SearchFragment : Fragment() {
 
         selectedSearchTypes = DataStoreHelper.searchPreferenceTags.toMutableList()
 
-        if (isTrueTvSettings()) {
+        if (isLayout(TV)) {
             binding?.searchFilter?.isFocusable = true
             binding?.searchFilter?.isFocusableInTouchMode = true
         }
@@ -502,8 +508,8 @@ class SearchFragment : Fragment() {
         }*/
         //main_search.onActionViewExpanded()*/
 
-        val masterAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder> =
-            ParentItemAdapter(mutableListOf(), { callback ->
+        val masterAdapter =
+            ParentItemAdapter(fragment = this, id = "masterAdapter".hashCode(), { callback ->
                 SearchHelper.handleSearchClickCallback(callback)
             }, { item ->
                 bottomSheetDialog = activity?.loadHomepageList(item, dismissCallback = {

@@ -49,7 +49,10 @@ import com.lagradost.cloudstream3.ui.quicksearch.QuickSearchFragment
 import com.lagradost.cloudstream3.ui.result.txt
 import com.lagradost.cloudstream3.ui.search.SEARCH_ACTION_LOAD
 import com.lagradost.cloudstream3.ui.search.SEARCH_ACTION_SHOW_METADATA
-import com.lagradost.cloudstream3.ui.settings.SettingsFragment
+import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
+import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
+import com.lagradost.cloudstream3.ui.settings.Globals.TV
+import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.utils.AppUtils.loadResult
 import com.lagradost.cloudstream3.utils.AppUtils.loadSearchResult
 import com.lagradost.cloudstream3.utils.AppUtils.reduceDragSensitivity
@@ -57,6 +60,7 @@ import com.lagradost.cloudstream3.utils.DataStoreHelper.currentAccount
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
 import com.lagradost.cloudstream3.utils.UIHelper.getSpanCount
+import java.util.concurrent.CopyOnWriteArrayList
 import kotlin.math.abs
 
 const val LIBRARY_FOLDER = "library_folder"
@@ -101,7 +105,7 @@ class LibraryFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         val layout =
-            if (SettingsFragment.isTvSettings()) R.layout.fragment_library_tv else R.layout.fragment_library
+            if (isLayout(TV or EMULATOR)) R.layout.fragment_library_tv else R.layout.fragment_library
         val root = inflater.inflate(layout, container, false)
         binding = try {
             FragmentLibraryBinding.bind(root)
@@ -160,7 +164,8 @@ class LibraryFragment : Fragment() {
         }
 
         // Set the color for the search exit icon to the correct theme text color
-        val searchExitIcon = binding?.mainSearch?.findViewById<ImageView>(androidx.appcompat.R.id.search_close_btn)
+        val searchExitIcon =
+            binding?.mainSearch?.findViewById<ImageView>(androidx.appcompat.R.id.search_close_btn)
         val searchExitIconColor = TypedValue()
 
         activity?.theme?.resolveAttribute(android.R.attr.textColor, searchExitIconColor, true)
@@ -220,7 +225,7 @@ class LibraryFragment : Fragment() {
                 settingsManager.getBoolean(
                     getString(R.string.random_button_key),
                     false
-                ) && !SettingsFragment.isTvSettings()
+                ) && isLayout(PHONE)
             binding?.libraryRandom?.visibility = View.GONE
         }
 
@@ -228,7 +233,7 @@ class LibraryFragment : Fragment() {
             if (listLibraryItems.isNotEmpty()) {
                 val listLibraryItem = listLibraryItems.random()
                 libraryViewModel.currentSyncApi?.syncIdName?.let {
-                    loadLibraryItem(it, listLibraryItem.syncId,listLibraryItem)
+                    loadLibraryItem(it, listLibraryItem.syncId, listLibraryItem)
                 }
             }
         }
@@ -307,44 +312,46 @@ class LibraryFragment : Fragment() {
 
         binding?.viewpager?.setPageTransformer(LibraryScrollTransformer())
 
-        binding?.viewpager?.adapter =
-            binding?.viewpager?.adapter ?: ViewpagerAdapter(
-                mutableListOf(),
-                { isScrollingDown: Boolean ->
-                    if (isScrollingDown) {
-                        binding?.sortFab?.shrink()
-                        binding?.libraryRandom?.shrink()
-                    } else {
-                        binding?.sortFab?.extend()
-                        binding?.libraryRandom?.extend()
-                    }
-                }) callback@{ searchClickCallback ->
-                // To prevent future accidents
-                debugAssert({
-                    searchClickCallback.card !is SyncAPI.LibraryItem
-                }, {
-                    "searchClickCallback ${searchClickCallback.card} is not a LibraryItem"
-                })
+        binding?.viewpager?.adapter = ViewpagerAdapter(
+            fragment = this,
+            { isScrollingDown: Boolean ->
+                if (isScrollingDown) {
+                    binding?.sortFab?.shrink()
+                    binding?.libraryRandom?.shrink()
+                } else {
+                    binding?.sortFab?.extend()
+                    binding?.libraryRandom?.extend()
+                }
+            }) callback@{ searchClickCallback ->
+            // To prevent future accidents
+            debugAssert({
+                searchClickCallback.card !is SyncAPI.LibraryItem
+            }, {
+                "searchClickCallback ${searchClickCallback.card} is not a LibraryItem"
+            })
 
-                val syncId = (searchClickCallback.card as SyncAPI.LibraryItem).syncId
-                val syncName =
-                    libraryViewModel.currentSyncApi?.syncIdName ?: return@callback
+            val syncId = (searchClickCallback.card as SyncAPI.LibraryItem).syncId
+            val syncName =
+                libraryViewModel.currentSyncApi?.syncIdName ?: return@callback
 
-                when (searchClickCallback.action) {
-                    SEARCH_ACTION_SHOW_METADATA -> {
-                        (activity as? MainActivity)?.loadPopup(searchClickCallback.card, load = false)
+            when (searchClickCallback.action) {
+                SEARCH_ACTION_SHOW_METADATA -> {
+                    (activity as? MainActivity)?.loadPopup(
+                        searchClickCallback.card,
+                        load = false
+                    )
                     /*activity?.showPluginSelectionDialog(
                             syncId,
                             syncName,
                             searchClickCallback.card.apiName
                         )*/
-                    }
+                }
 
-                    SEARCH_ACTION_LOAD -> {
-                        loadLibraryItem(syncName, syncId, searchClickCallback.card)
-                    }
+                SEARCH_ACTION_LOAD -> {
+                    loadLibraryItem(syncName, syncId, searchClickCallback.card)
                 }
             }
+        }
 
         binding?.apply {
             viewpager.offscreenPageLimit = 2
@@ -390,7 +397,11 @@ class LibraryFragment : Fragment() {
                             }
                         }
 
-                        (viewpager.adapter as? ViewpagerAdapter)?.pages = pages
+                        (viewpager.adapter as? ViewpagerAdapter)?.submitList(pages.map {
+                            it.copy(
+                                items = CopyOnWriteArrayList(it.items)
+                            )
+                        })
                         //fix focus on the viewpager itself
                         (viewpager.getChildAt(0) as RecyclerView).apply {
                             tag = "tv_no_focus_tag"
@@ -398,10 +409,10 @@ class LibraryFragment : Fragment() {
                         }
 
                         // Using notifyItemRangeChanged keeps the animations when sorting
-                        viewpager.adapter?.notifyItemRangeChanged(
+                        /*viewpager.adapter?.notifyItemRangeChanged(
                             0,
                             viewpager.adapter?.itemCount ?: 0
-                        )
+                        )*/
 
                         libraryViewModel.currentPage.value?.let { page ->
                             binding?.viewpager?.setCurrentItem(page, false)
@@ -459,12 +470,14 @@ class LibraryFragment : Fragment() {
                             }
                         }.attach()
 
-                        binding?.libraryTabLayout?.addOnTabSelectedListener(object: TabLayout.OnTabSelectedListener {
+                        binding?.libraryTabLayout?.addOnTabSelectedListener(object :
+                            TabLayout.OnTabSelectedListener {
                             override fun onTabSelected(tab: TabLayout.Tab?) {
                                 binding?.libraryTabLayout?.selectedTabPosition?.let { page ->
                                     libraryViewModel.switchPage(page)
                                 }
                             }
+
                             override fun onTabUnselected(tab: TabLayout.Tab?) = Unit
                             override fun onTabReselected(tab: TabLayout.Tab?) = Unit
                         })
@@ -564,8 +577,9 @@ class LibraryFragment : Fragment() {
 
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     override fun onConfigurationChanged(newConfig: Configuration) {
-        (binding?.viewpager?.adapter as? ViewpagerAdapter)?.rebind()
+        binding?.viewpager?.adapter?.notifyDataSetChanged()
         super.onConfigurationChanged(newConfig)
     }
 

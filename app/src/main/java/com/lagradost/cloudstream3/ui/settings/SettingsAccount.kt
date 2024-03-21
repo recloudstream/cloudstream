@@ -29,8 +29,10 @@ import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.simklAp
 import com.lagradost.cloudstream3.syncproviders.AuthAPI
 import com.lagradost.cloudstream3.syncproviders.InAppAuthAPI
 import com.lagradost.cloudstream3.syncproviders.OAuth2API
+import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
+import com.lagradost.cloudstream3.ui.settings.Globals.TV
+import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.getPref
-import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setPaddingBottom
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setToolBarScrollFlags
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setUpToolbar
@@ -76,7 +78,7 @@ class SettingsAccount : PreferenceFragmentCompat() {
                 showAccountSwitch(activity, api)
             }
 
-            if (isTvSettings()) {
+            if (isLayout(TV or EMULATOR)) {
                 binding.accountSwitchAccount.requestFocus()
             }
         }
@@ -140,7 +142,7 @@ class SettingsAccount : PreferenceFragmentCompat() {
                             binding.loginUsernameInput to api.requiresUsername
                         )
 
-                        if (isTvSettings()) {
+                        if (isLayout(TV or EMULATOR)) {
                             visibilityMap.forEach { (input, isVisible) ->
                                 input.isVisible = isVisible
 

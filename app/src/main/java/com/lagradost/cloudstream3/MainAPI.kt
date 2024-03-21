@@ -18,6 +18,7 @@ import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.simklAp
 import com.lagradost.cloudstream3.syncproviders.SyncIdName
 import com.lagradost.cloudstream3.syncproviders.providers.SimklApi
 import com.lagradost.cloudstream3.ui.player.SubtitleData
+import com.lagradost.cloudstream3.ui.result.ResultViewModel2
 import com.lagradost.cloudstream3.utils.*
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
 import com.lagradost.cloudstream3.utils.Coroutines.mainWork
@@ -119,7 +120,8 @@ object APIHolder {
     }
 
     fun LoadResponse.getId(): Int {
-        return getLoadResponseIdFromUrl(url, apiName)
+        // this fixes an issue with outdated api as getLoadResponseIdFromUrl might be fucked
+        return (if (this is ResultViewModel2.LoadResponseFromSearch) this.id else null) ?: getLoadResponseIdFromUrl(url, apiName)
     }
 
     /**

@@ -5,7 +5,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.lagradost.cloudstream3.databinding.ResultMiniImageBinding
-import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTrueTvSettings
+import com.lagradost.cloudstream3.ui.settings.Globals.TV
+import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 
 /*
 class ImageAdapter(context: Context, val resource: Int) : ArrayAdapter<Int>(context, resource) {
@@ -83,7 +84,7 @@ class ImageAdapter(
                     this.nextFocusUpId = nextFocusUp
                 }
                 if (clickCallback != null) {
-                    if (isTrueTvSettings()) {
+                    if (isLayout(TV)) {
                         isClickable = true
                         isLongClickable = true
                         isFocusable = true

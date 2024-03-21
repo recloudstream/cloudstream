@@ -11,7 +11,9 @@ import androidx.fragment.app.FragmentActivity
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.mvvm.suspendSafeApiCall
 import com.lagradost.cloudstream3.plugins.PluginManager
-import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
+import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
+import com.lagradost.cloudstream3.ui.settings.Globals.TV
+import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.utils.AppUtils.openBrowser
 import com.lagradost.cloudstream3.utils.Coroutines.runOnMainThread
 import com.lagradost.cloudstream3.utils.DataStore.getKey
@@ -31,7 +33,6 @@ import org.acra.sender.ReportSenderFactory
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.PrintStream
-import java.lang.Exception
 import java.lang.ref.WeakReference
 import kotlin.concurrent.thread
 import kotlin.system.exitProcess
@@ -211,7 +212,7 @@ class AcraApplication : Application() {
         fun openBrowser(url: String, activity: FragmentActivity?) {
             openBrowser(
                 url,
-                isTvSettings(),
+                isLayout(TV or EMULATOR),
                 activity?.supportFragmentManager?.fragments?.lastOrNull()
             )
         }

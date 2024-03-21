@@ -34,7 +34,8 @@ import com.lagradost.cloudstream3.ui.search.SearchAdapter
 import com.lagradost.cloudstream3.ui.search.SearchClickCallback
 import com.lagradost.cloudstream3.ui.search.SearchHelper
 import com.lagradost.cloudstream3.ui.search.SearchViewModel
-import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTrueTvSettings
+import com.lagradost.cloudstream3.ui.settings.Globals.TV
+import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.utils.AppUtils.ownShow
 import com.lagradost.cloudstream3.utils.UIHelper
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
@@ -173,7 +174,7 @@ class QuickSearchFragment : Fragment() {
             }
         } else {
             binding?.quickSearchMasterRecycler?.adapter =
-                ParentItemAdapter(mutableListOf(), { callback ->
+                ParentItemAdapter(fragment = this, id = "quickSearchMasterRecycler".hashCode(), { callback ->
                     SearchHelper.handleSearchClickCallback(callback)
                     //when (callback.action) {
                     //SEARCH_ACTION_LOAD -> {
@@ -277,7 +278,7 @@ class QuickSearchFragment : Fragment() {
             activity?.popCurrentPage()
         }
 
-        if (isTrueTvSettings()) {
+        if (isLayout(TV)) {
             binding?.quickSearch?.requestFocus()
         }
 

@@ -105,9 +105,10 @@
                 android:text="@string/extensions" />
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:id="@+id/app_version_info"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:gravity="center_horizontal"
+                android:layout_gravity="center"
                 android:orientation="horizontal">
 
                 <TextView
@@ -119,7 +120,7 @@
                     android:textColor="?attr/textColor" />
 
                 <TextView
-                    android:id="@+id/textView3"
+                    android:id="@+id/delimiter0"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
@@ -134,6 +135,25 @@
                     android:gravity="center"
                     android:padding="10dp"
                     android:text="@string/commit_hash"
+                    android:textColor="?attr/textColor" />
+
+                <TextView
+                    android:id="@+id/delimiter1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:padding="10dp"
+                    android:text="•"
+                    android:textColor="?attr/textColor" />
+
+                <TextView
+                    android:id="@+id/build_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:padding="10dp"
                     android:textColor="?attr/textColor" />
             </LinearLayout>
 

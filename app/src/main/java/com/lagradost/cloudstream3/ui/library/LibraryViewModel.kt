@@ -113,7 +113,7 @@ class LibraryViewModel : ViewModel() {
                 }
 
                 val desiredSortingMethod =
-                    ListSorting.values().getOrNull(DataStoreHelper.librarySortingMode)
+                    ListSorting.entries.getOrNull(DataStoreHelper.librarySortingMode)
                 if (desiredSortingMethod != null && library.supportedListSorting.contains(desiredSortingMethod)) {
                     sort(desiredSortingMethod, null, pages)
                 } else {

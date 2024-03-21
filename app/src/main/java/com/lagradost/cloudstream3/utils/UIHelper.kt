@@ -5,6 +5,8 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AppOpsManager
 import android.app.Dialog
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
 import android.content.pm.PackageManager
 import android.content.res.Configuration
@@ -14,12 +16,15 @@ import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
+import android.os.TransactionTooLargeException
+import android.util.Log
 import android.view.*
 import android.view.ViewGroup.MarginLayoutParams
 import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
 import android.widget.ListAdapter
 import android.widget.ListView
+import android.widget.Toast.LENGTH_LONG
 import androidx.annotation.AttrRes
 import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
@@ -30,14 +35,12 @@ import androidx.appcompat.view.menu.MenuBuilder
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.getSystemService
 import androidx.core.graphics.alpha
 import androidx.core.graphics.blue
 import androidx.core.graphics.drawable.toBitmapOrNull
 import androidx.core.graphics.green
 import androidx.core.graphics.red
-import androidx.core.view.WindowCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.WindowInsetsControllerCompat
 import androidx.core.view.marginBottom
 import androidx.core.view.marginLeft
 import androidx.core.view.marginRight
@@ -58,16 +61,19 @@ import com.bumptech.glide.request.target.Target
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipDrawable
 import com.google.android.material.chip.ChipGroup
+import com.lagradost.cloudstream3.AcraApplication.Companion.context
 import com.lagradost.cloudstream3.CommonActivity.activity
-import com.lagradost.cloudstream3.MainActivity
+import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.ui.result.UiImage
-import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isEmulatorSettings
-import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
+import com.lagradost.cloudstream3.ui.result.UiText
+import com.lagradost.cloudstream3.ui.result.txt
+import com.lagradost.cloudstream3.ui.settings.Globals
+import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
+import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import jp.wasabeef.glide.transformations.BlurTransformation
 import kotlin.math.roundToInt
-
 
 object UIHelper {
     val Int.toPx: Int get() = (this * Resources.getSystem().displayMetrics.density).toInt()
@@ -123,6 +129,35 @@ object UIHelper {
         )
     }
 
+    fun clipboardHelper(label: UiText, text: CharSequence) {
+        val ctx = context ?: return
+        try {
+            ctx.let {
+                val clip = ClipData.newPlainText(label.asString(ctx), text)
+                val labelSuffix = txt(R.string.toast_copied).asString(ctx)
+                ctx.getSystemService<ClipboardManager>()?.setPrimaryClip(clip)
+
+                if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2) {
+                    showToast("${label.asString(ctx)} $labelSuffix")
+                }
+            }
+        } catch (t: Throwable) {
+            Log.e("ClipboardService", "$t")
+            when (t) {
+                is SecurityException -> {
+                    showToast(R.string.clipboard_permission_error)
+                }
+
+                is TransactionTooLargeException -> {
+                    showToast(R.string.clipboard_too_large)
+                }
+
+                else -> {
+                    showToast(R.string.clipboard_unknown_error, LENGTH_LONG)
+                }
+            }
+        }
+    }
 
     /**
      * Sets ListView height dynamically based on the height of the items.
@@ -434,7 +469,7 @@ object UIHelper {
     }
 
     fun Context.getStatusBarHeight(): Int {
-        if (isTvSettings()) {
+        if (isLayout(Globals.TV or EMULATOR)) {
             return 0
         }
 
@@ -536,7 +571,7 @@ object UIHelper {
                 (View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN)
         //}
 
-        changeStatusBarState(isEmulatorSettings())
+        changeStatusBarState(isLayout(EMULATOR))
     }
 
     fun Context.shouldShowPIPMode(isInPlayer: Boolean): Boolean {

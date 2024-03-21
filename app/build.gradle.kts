@@ -60,7 +60,7 @@ android {
         targetSdk = 33 /* Android 14 is Fu*ked
         ^ https://developer.android.com/about/versions/14/behavior-changes-14#safer-dynamic-code-loading*/
         versionCode = 63
-        versionName = "4.3.1"
+        versionName = "4.3.2"
 
         resValue("string", "app_version", "${defaultConfig.versionName}${versionNameSuffix ?: ""}")
         resValue("string", "commit_hash", "git rev-parse --short HEAD".execute() ?: "")
@@ -163,15 +163,15 @@ dependencies {
     // Android Core & Lifecycle
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
-    implementation("androidx.navigation:navigation-ui-ktx:2.7.6")
+    implementation("androidx.navigation:navigation-ui-ktx:2.7.7")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.7.0")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0")
-    implementation("androidx.navigation:navigation-fragment-ktx:2.7.6")
+    implementation("androidx.navigation:navigation-fragment-ktx:2.7.7")
 
     // Design & UI
     implementation("jp.wasabeef:glide-transformations:4.3.0")
     implementation("androidx.preference:preference-ktx:1.2.1")
-    implementation("com.google.android.material:material:1.10.0")
+    implementation("com.google.android.material:material:1.11.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
 

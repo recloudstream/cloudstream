@@ -19,6 +19,13 @@ sealed class UiText {
 
     data class DynamicString(val value: String) : UiText() {
         override fun toString(): String = value
+
+        override fun equals(other: Any?): Boolean {
+            if (other !is DynamicString) return false
+            return this.value == other.value
+        }
+
+        override fun hashCode(): Int = value.hashCode()
     }
 
     class StringResource(
@@ -27,6 +34,16 @@ sealed class UiText {
     ) : UiText() {
         override fun toString(): String =
             "resId = $resId\nargs = ${args.toList().map { "(${it::class} = $it)" }}"
+        override fun equals(other: Any?): Boolean {
+            if (other !is StringResource) return false
+            return this.resId == other.resId && this.args == other.args
+        }
+
+        override fun hashCode(): Int {
+            var result = resId
+            result = 31 * result + args.hashCode()
+            return result
+        }
     }
 
     fun asStringNull(context: Context?): String? {
