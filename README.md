@@ -19,7 +19,7 @@
 
 ## About us: 
 
-**CloudStream is best described as a media center that prioritizes and emphasizes complete freedom and flexibility for users and developers.** 
+**CloudStream is a media center that prioritizes and emphasizes complete freedom and flexibility for users and developers.** 
 
 CloudStream is an extension-based multimedia player with tracking support. There are extensions to view videos from: 
 
@@ -31,7 +31,7 @@ CloudStream is an extension-based multimedia player with tracking support. There
 + And more... 
 
 
-**we do not support Piracy.** For more details about our stance on the DMCA and EUCD, you can read about it on our organization: [reCloudStream](https://github.com/recloudstream)
+**Please don't create illegal extensions or use any that host any copyrighted media.** For more details about our stance on the DMCA and EUCD, you can read about it on our organization: [reCloudStream](https://github.com/recloudstream)
 
 #### Important Copyright Note: 
 
@@ -50,7 +50,7 @@ Our documentation is unmaintained and open to contributions; therefore, apps and
 
 ### Discord Server: 
 
-We have a discord server that hosts our passionate community, if you wish to talk with the maintainers of this project, have questions relating to CloudStream, or just wish to hang out, then please join our discord server through the link below. 
+We have a Discord server that hosts our passionate community; if you wish to talk with the project's maintainers, have questions about CloudStream, or just hang out, please join our Discord server through the link below. 
 
 [![Discord](https://invidget.switchblade.xyz/5Hus6fM)](https://discord.gg/5Hus6fM)
 
@@ -66,37 +66,23 @@ Our documentation provides the steps to Install Cloudstream. The steps are simpl
 
 ## Contributing:
 We **happily** accept any contributions to our project. To find out where you can start contributing towards the project, please look [at our issues tab](/cloudstream/issues)
-While we do not have intensive syntax rules for pull requests, it's appreciated that you follow the following rules when creating an issue:
+
+
 
 <a id="issues"></a> 
  
 ### Issues: 
-While we **actively** accept issues and pull requests, we do not have any syntaxial rules; for issue contributions, however, it is heavily appreciated if your issue includes the following:
+While we **actively** accept issues and pull requests; We do require you fill out an [template](https://github.com/recloudstream/cloudstream/issues/new/choose) for issues, these include the following:
+- [Bug Report Template: ](https://github.com/recloudstream/cloudstream/issues/new?assignees=&labels=bug&projects=&template=application-bug.yml)
+  - For bug reports, we want as much info as possible, including your downloaded version of CloudeStream, device and updated version (if possible, current API),
+    expected behavior of the program, and the actual behavior that the program did, most importantly we require clear, reproducible steps of the bug. If your bug can't be       reproduced, it is unlikely we'll work on your issue. 
+- [Feature Request Template: ](https://github.com/recloudstream/cloudstream/issues/new?assignees=&labels=enhancement&projects=&template=feature-request.yml)
+  - Before adding a feature request, please check to see if a feature request already has been requested.  
 
-<a id="bug_report"></a>
-
-#### Bug Reports: 
-+ A Short but Descriptive Title that accurately describes the bug and the issue. 
-+ Steps to reproduce: Make sure that the bug is reproducible  And describe the steps in brief but descriptive steps 
-+ Make sure you include the version and the commit hash of the version of CloudStream that the bug appeared in
-+ Make sure you include a description of the expected behavior  of the program and the actual behavior of the bug
-+ Make sure to include the "bug" label for the issue 
-
-<a id="enhancment"></a>
-
-#### Enhancement: 
-+ Before you add your Enhancement report, ensure the enhancement is reasonable and reasonably simple to implement; instead of asking for an entire UI redo, focus on a specific area that needs work. 
-+ Ensure the enhancement will fix an issue, such as some settings missing key or accessibility features. 
-+ Please describe an example of how the enhancement would be implemented and Why It is helpful. 
-+ Make sure to include the "enhancement" label for the issue. 
-
-It is also important to ensure that an issue is not duplicated or related to another open issue before recording it. 
-
-<a id="extensions"></a> 
 
 ### Extensions:
  
-**Further details on creating extensions for CloudStream are found on our website. **
+**Further details on creating extensions for CloudStream are found in our documentation. **
 
 [Guide: For Extension Developers](https://recloudstream.github.io/csdocs/devs/gettingstarted/) 
 
@@ -108,7 +94,7 @@ As well as providing clear install steps, our [website](https://dweb.link/ipns/c
 - [Troubleshooting](https://recloudstream.github.io/csdocs/troubleshooting/)
 - [Further CloudStream Repositories](https://recloudstream.github.io/csdocs/repositories/) 
 - Set-Up for other devices, such as:
-  - [Android Tv](https://recloudstream.github.io/csdocs/other-devices/tv/)
+  - [Android TV](https://recloudstream.github.io/csdocs/other-devices/tv/)
   - [Windows](https://recloudstream.github.io/csdocs/other-devices/windows/)
   - [Linux](https://recloudstream.github.io/csdocs/other-devices/linux/)
 - And more...
@@ -117,7 +103,7 @@ As well as providing clear install steps, our [website](https://dweb.link/ipns/c
 
 ### Supported languages:
 
-Even if you can't contribute to the code or documentation, we always contribute to translation and language support. It's exceptionally appreciated; you can check our translation from the figure below. 
+Even if you can't contribute to the code or documentation, we always look for those who can contribute to translation and language support. Your contribution is exceptionally appreciated; you can check our translation from the figure below. 
 
 <a href="https://hosted.weblate.org/engage/cloudstream/">
   <img src="https://hosted.weblate.org/widgets/cloudstream/-/app/multi-auto.svg" alt="Translation status" />
