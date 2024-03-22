@@ -8,7 +8,7 @@
 + [Installation Steps:](#install_rules)
 + [Contributing:](#contributing)
 + [Issues:](#issues)
-  + [Bugs:](#bug_report)
+  + [Bugs Reports:](#bug_report)
   + [Enhancement:](#enhancment)
 + [Extension Development:](#extensions)
 + [Languauge Support:](#languages)
@@ -73,9 +73,15 @@ We **happily** accept any contributions to our project. To find out where you ca
  
 ### Issues: 
 While we **actively** accept issues and pull requests; We do require you fill out an [template](https://github.com/recloudstream/cloudstream/issues/new/choose) for issues, these include the following:
+
+<a id="bug_report"></a>
+
 - [Bug Report Template: ](https://github.com/recloudstream/cloudstream/issues/new?assignees=&labels=bug&projects=&template=application-bug.yml)
   - For bug reports, we want as much info as possible, including your downloaded version of CloudeStream, device and updated version (if possible, current API),
-    expected behavior of the program, and the actual behavior that the program did, most importantly we require clear, reproducible steps of the bug. If your bug can't be       reproduced, it is unlikely we'll work on your issue. 
+    expected behavior of the program, and the actual behavior that the program did, most importantly we require clear, reproducible steps of the bug. If your bug can't be       reproduced, it is unlikely we'll work on your issue.
+    
+<a id="#enhancment">
+  
 - [Feature Request Template: ](https://github.com/recloudstream/cloudstream/issues/new?assignees=&labels=enhancement&projects=&template=feature-request.yml)
   - Before adding a feature request, please check to see if a feature request already has been requested.  
 
