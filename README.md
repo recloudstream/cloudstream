@@ -94,7 +94,7 @@ While we **actively** accept issues and pull requests; We do require you fill ou
 
 <a id="contact_and_sources"></a>
 
-## Further Sources and Social: 
+## Further Sources: 
 
 As well as providing clear install steps, our [website](https://dweb.link/ipns/cloudstream.on.fleek.co/) includes a wide variety of other tools, such as: 
 - [Troubleshooting](https://recloudstream.github.io/csdocs/troubleshooting/)
