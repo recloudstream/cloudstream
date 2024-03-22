@@ -9,6 +9,7 @@ import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceManager
+import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.FragmentSetupLayoutBinding
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
@@ -86,6 +87,7 @@ class SetupFragmentLayout : Fragment() {
 
 
                 nextBtt.setOnClickListener {
+                    setKey(HAS_DONE_SETUP_KEY, true)
                     findNavController().navigate(R.id.navigation_home)
                 }
 
