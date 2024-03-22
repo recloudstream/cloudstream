@@ -4,6 +4,7 @@
 
 ## Table of Contents: 
 + [About Us:](#about_us)
++ [Discord Server:](#discord)
 + [Installation Steps:](#install_rules)
 + [Contributing:](#contributing)
 + [Issues:](#issues)
@@ -11,16 +12,16 @@
   + [Enhancement:](#enhancment)
 + [Extension Development:](#extensions)
 + [Languauge Support:](#languages)
-+ [Further Sources and Social:](#contact_and_sources)
++ [Further Sources](#contact_and_sources)
 
 
 <a id="about_us"></a>
 
 ## About us: 
 
-**CloudStream can be defined in many ways. However, it's best described as a media center that prioritizes and emphasizes complete freedom and total flexibility between users and developers.** 
+**CloudStream is best described as a media center that prioritizes and emphasizes complete freedom and flexibility for users and developers.** 
 
-A more descriptive example of Cloudstream is that it's an extension-based multimedia player with tracking support; an example of extensions for CloudStream includes Support for: 
+CloudStream is an extension-based multimedia player with tracking support. There are extensions to view videos from: 
 
 + [Librevox (audio-books)](https://librivox.org/) 
 + [Youtube](https://www.youtube.com/)
@@ -29,9 +30,12 @@ A more descriptive example of Cloudstream is that it's an extension-based multim
 + [nginx](https://nginx.org/)
 + And more... 
 
-To reiterate, **we do not support Piracy;** for more details about our stance on the DMCA and EUCD, you can read about it on our Organization: [ReCloudStream](https://github.com/recloudstream)
 
-**Important Copyright Note:** Our documentation is unmaintained and open to contributions; therefore, apps and sources, extensions in recommended sources, and recommended apps are not officially moderated or endorsed by CloudStream; if you or another copyright owner identify an extension that breaches your copyright, please let us know. 
+**we do not support Piracy.** For more details about our stance on the DMCA and EUCD, you can read about it on our organization: [reCloudStream](https://github.com/recloudstream)
+
+#### Important Copyright Note: 
+
+Our documentation is unmaintained and open to contributions; therefore, apps and sources, extensions in recommended sources, and recommended apps are not officially moderated or endorsed by CloudStream; if you or another copyright owner identify an extension that breaches your copyright, please let us know. 
 
 
 #### Features:
@@ -41,6 +45,14 @@ To reiterate, **we do not support Piracy;** for more details about our stance on
 + Phone and TV support
 + Chromecast
 + Extension system for personal customization
+
+<a id="discord"></a>
+
+### Discord Server: 
+
+We have a discord server that hosts our passionate community, if you wish to talk with the maintainers of this project, have questions relating to CloudStream, or just wish to hang out, then please join our discord server through the link below. 
+
+[![Discord](https://invidget.switchblade.xyz/5Hus6fM)](https://discord.gg/5Hus6fM)
 
 <a id="install_rules"></a>
 
@@ -100,10 +112,6 @@ As well as providing clear install steps, our [website](https://dweb.link/ipns/c
   - [Windows](https://recloudstream.github.io/csdocs/other-devices/windows/)
   - [Linux](https://recloudstream.github.io/csdocs/other-devices/linux/)
 - And more...
-
-We have a discord server that helps host our passionate community. There, you can hang out and chat with other users of CloudStream, Discuss problems among fellow developers on the project, help with issues, or find guides relating to CloudStream use and development. 
-
-[![Discord](https://invidget.switchblade.xyz/5Hus6fM)](https://discord.gg/5Hus6fM)
 
 <a id="languages"> </a>  
 
