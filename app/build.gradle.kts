@@ -9,6 +9,7 @@ plugins {
     id("com.google.devtools.ksp")
     id("kotlin-android")
     id("org.jetbrains.dokka")
+    id("androidx.baselineprofile")
 }
 
 val tmpFilePath = System.getProperty("user.home") + "/work/_temp/keystore/"
@@ -232,6 +233,11 @@ dependencies {
     implementation("androidx.work:work-runtime:2.9.0")
     implementation("androidx.work:work-runtime-ktx:2.9.0")
     implementation("com.github.Blatzar:NiceHttp:0.4.11") // HTTP Lib
+
+    // Baseline Profile and Automation
+    implementation("androidx.profileinstaller:profileinstaller:1.3.1")
+    implementation("androidx.test.uiautomator:uiautomator:2.3.0")
+    "baselineProfile"(project(":baselineprofile"))
 }
 
 tasks.register("androidSourcesJar", Jar::class) {
