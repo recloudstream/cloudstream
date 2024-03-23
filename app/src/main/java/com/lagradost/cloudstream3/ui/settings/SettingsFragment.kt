@@ -153,8 +153,8 @@ class SettingsFragment : Fragment() {
                     it.keyIndex == DataStoreHelper.selectedKeyIndex
                 } ?: activity.let { DataStoreHelper.getDefaultAccount(activity) }
 
-            } catch (e: IllegalStateException) {
-                Log.e("AccountManager", "Activity not found", e)
+            } catch (t: IllegalStateException) {
+                Log.e("AccountManager", "Activity not found", t)
                 null
             }
 

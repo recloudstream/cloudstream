@@ -53,7 +53,7 @@
                     android:textColor="?attr/textColor"
                     android:textSize="18sp"
                     android:textStyle="normal"
-                    tools:text="Indus Aryan" />
+                    tools:text="Quick Brown Fox" />
             </LinearLayout>
 
             <TextView
