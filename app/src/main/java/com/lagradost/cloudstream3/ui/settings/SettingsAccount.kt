@@ -264,13 +264,13 @@ class SettingsAccount : PreferenceFragmentCompat(), BiometricAuthenticator.Biome
     private fun updateAuthPreference(enabled: Boolean) {
         val biometricKey = getString(R.string.biometric_key)
 
-        PreferenceManager.getDefaultSharedPreferences(context ?: requireContext()).edit()
+        PreferenceManager.getDefaultSharedPreferences(context ?: return).edit()
             .putBoolean(biometricKey, enabled).apply()
         findPreference<SwitchPreferenceCompat>(biometricKey)?.isChecked = enabled
     }
 
     override fun onAuthenticationError() {
-        updateAuthPreference(!isAuthEnabled(context ?: requireContext()))
+        updateAuthPreference(!isAuthEnabled(context ?: return))
     }
 
     override fun onAuthenticationSuccess() {
@@ -296,19 +296,18 @@ class SettingsAccount : PreferenceFragmentCompat(), BiometricAuthenticator.Biome
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         hideKeyboard()
         setPreferencesFromResource(R.xml.settings_account, rootKey)
+
         // hide preference on tvs and emulators
-        if (!isLayout(PHONE)) {
-            getPref(R.string.biometric_key)?.isEnabled = false
-        }
+        getPref(R.string.biometric_key)?.isEnabled = isLayout(PHONE)
 
         getPref(R.string.biometric_key)?.setOnPreferenceClickListener {
             val ctx = context ?: return@setOnPreferenceClickListener false
 
             if (deviceHasPasswordPinLock(ctx)) {
                 startBiometricAuthentication(
-                    activity?: requireActivity(),
+                    activity?: return@setOnPreferenceClickListener false,
                     R.string.biometric_authentication_title,
-                        false
+                    false
                     )
                 promptInfo?.let {
                     authCallback = this
