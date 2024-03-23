@@ -34,10 +34,7 @@ import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.getPref
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setPaddingBottom
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setToolBarScrollFlags
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setUpToolbar
-import com.lagradost.cloudstream3.utils.BatteryOptimizationChecker
-import com.lagradost.cloudstream3.utils.BatteryOptimizationChecker.intentOpenAppInfo
 import com.lagradost.cloudstream3.utils.BatteryOptimizationChecker.isAppRestricted
-import com.lagradost.cloudstream3.utils.BatteryOptimizationChecker.openBatteryOptimizationSettings
 import com.lagradost.cloudstream3.utils.BatteryOptimizationChecker.showBatteryOptimizationDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showDialog
@@ -210,10 +207,8 @@ class SettingsGeneral : PreferenceFragmentCompat() {
             return@setOnPreferenceClickListener true
         }
 
-        // hide preference on tvs and emulators
-        if (!isLayout(PHONE)) {
-            getPref(R.string.battery_optimisation_key)?.isEnabled = false
-        }
+        // disable preference on tvs and emulators
+        getPref(R.string.battery_optimisation_key)?.isEnabled = isLayout(PHONE)
         getPref(R.string.battery_optimisation_key)?.setOnPreferenceClickListener {
             val ctx = context ?: return@setOnPreferenceClickListener false
 
@@ -222,6 +217,7 @@ class SettingsGeneral : PreferenceFragmentCompat() {
             } else {
                 showToast(R.string.app_unrestricted_toast)
             }
+
             true
         }
 

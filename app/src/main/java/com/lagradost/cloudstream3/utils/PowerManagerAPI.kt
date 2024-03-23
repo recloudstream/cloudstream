@@ -56,30 +56,28 @@ object BatteryOptimizationChecker {
                     }
                     .show()
             }
-        } catch (e: Exception) {
-            Log.e(TAG, "Error showing battery optimization dialog", e)
+        } catch (t: Throwable) {
+            Log.e(TAG, "Error showing battery optimization dialog", t)
         }
     }
 
     private fun shouldShowBatteryOptimizationDialog(context: Context): Boolean {
         val isRestricted = isAppRestricted(context)
-        val isOptimizedShown = PreferenceManager.getDefaultSharedPreferences(context)
+        val isOptimizedNotShown = PreferenceManager.getDefaultSharedPreferences(context)
             .getBoolean(context.getString(R.string.battery_optimisation_key), true)
-        return isRestricted && isOptimizedShown && isLayout(PHONE)
+        return isRestricted && isOptimizedNotShown && isLayout(PHONE)
     }
 
-    fun intentOpenAppInfo(context: Context) {
+    private fun intentOpenAppInfo(context: Context) {
         val intent = Intent()
-
         try {
-            intent
-                .setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+            intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
                 .setData(Uri.fromParts("package", packageName, null))
             context.startActivity(intent, Bundle())
         } catch (t: Throwable) {
             Log.e(TAG, "Unable to invoke any intent", t)
             if (t is ActivityNotFoundException) {
-                showToast("ActivityNotFoundException")
+                showToast("Exception: Activity Not Found")
             } else {
                 showToast(R.string.app_info_intent_error)
             }
