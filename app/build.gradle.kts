@@ -3,8 +3,6 @@ import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.ByteArrayOutputStream
 import java.net.URL
-import java.text.SimpleDateFormat
-import java.util.Date
 
 plugins {
     id("com.android.application")
