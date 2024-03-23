@@ -1790,8 +1790,6 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener,
             }
         } catch (e: Exception) {
             logError(e)
-        } finally {
-            setKey(HAS_DONE_SETUP_KEY, true)
         }
 
 //        Used to check current focus for TV
