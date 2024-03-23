@@ -47,6 +47,9 @@ import com.lagradost.cloudstream3.ui.player.source_priority.QualityDataHelper
 import com.lagradost.cloudstream3.ui.result.setText
 import com.lagradost.cloudstream3.ui.result.txt
 import com.lagradost.cloudstream3.ui.settings.Globals
+import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
+import com.lagradost.cloudstream3.ui.settings.Globals.TV
+import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment
 import com.lagradost.cloudstream3.utils.AppUtils.isUsingMobileData
 import com.lagradost.cloudstream3.utils.DataStoreHelper
@@ -78,7 +81,6 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
     private var isVerticalOrientation: Boolean = false
     protected open var lockRotation = true
     protected open var isFullScreenPlayer = true
-    protected open var isTv = false
     protected var playerBinding: PlayerCustomLayoutBinding? = null
 
     private var durationMode : Boolean by UserPreferenceDelegate("duration_mode", false)
@@ -1205,7 +1207,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
                     // netflix capture back and hide ~monke
                     KeyEvent.KEYCODE_BACK -> {
-                        if (isShowing && isTv) {
+                        if (isShowing && isLayout(TV or EMULATOR)) {
                             onClickChange()
                             return true
                         }
