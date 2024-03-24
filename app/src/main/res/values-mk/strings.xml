@@ -90,7 +90,6 @@
     <string name="player_subtitles_settings">Преводи</string>
     <string name="player_subtitles_settings_des">Поставки на плеерот за преводи</string>
     <string name="eigengraumode_settings">Режим на Eigengravy</string>
-    <string name="eigengraumode_settings_des">Додава можност за брзина на снимка во плеерот</string>
     <string name="swipe_to_seek_settings">Повлечете за да барате</string>
     <string name="swipe_to_seek_settings_des">Повлечете од страна на страна за да ја контролирате вашата позиција во видеото</string>
     <string name="swipe_to_change_settings">Повлечете за да ги промените поставките</string>
@@ -336,7 +335,7 @@
     <string name="pref_category_ui_features">Карактеристики</string>
     <string name="asian_drama_singular">Азиска драма</string>
     <string name="extras">Додатоци</string>
-    <string name="random_button_settings_desc">Се прикажува копче на почетната страница што може да избере случаен филм или ТВ серија од почетната страница</string>
+    <string name="random_button_settings_desc">Прикажи случајно копче на почетната страница и библиотеката</string>
     <string name="extension_types">Поддржано</string>
     <string name="category_account">Сметки</string>
     <string name="skip_type_intro">Вовед</string>
@@ -531,4 +530,65 @@
     <string name="home_change_provider_img_des">Смени провајдер</string>
     <string name="go_back_img_des">Оди назад</string>
     <string name="cast_format" formatted="true">Актери: %s</string>
+    <string name="favorite_added">%s додадени на фаворити</string>
+    <string name="favorite_removed">%s избришено од фаворити</string>
+    <string name="automatic_plugin_download_mode_title">Одбери опција за филтрирање на превземени плагини</string>
+    <string name="no_repository_found_error">Складиштето не е пронајдено, проверете го URL-то и пробајте VPN</string>
+    <string name="favorites_list_name">Фаворити</string>
+    <string name="action_add_to_favorites">Додадено во фаворити</string>
+    <string name="action_remove_from_favorites">Избриши од фаворити</string>
+    <string name="duplicate_replace_all">Замени ги сите</string>
+    <string name="duplicate_message_single" formatted="true">Се чини дека потенцијално дупликат ставка веќе постои во вашата библиотека: „%s“.
+\n
+\nДали сепак сакате да ја додадете оваа ставка, да ја замените постојната или да го откажете дејството?</string>
+    <string name="duplicate_message_multiple" formatted="true">Во вашата библиотека се пронајдени потенцијални дупликати ставки:
+\n
+\n%s
+\n
+\nДали сепак сакате да ја додадете оваа ставка, да ги замените постоечките или да го откажете дејството?</string>
+    <string name="enter_pin_with_name" formatted="true">Внеси ПИН за %s</string>
+    <string name="pin_error_length">ПИН-от мора да биде 4 карактери</string>
+    <string name="manage_accounts">Менаџирај кориснички сметки</string>
+    <string name="edit_account">Измени корисничка сметка</string>
+    <string name="logged_account" formatted="true">Логиран како %s</string>
+    <string name="skip_startup_account_select_pref">Прескокнете го изборот на корисничка сметка при стартување</string>
+    <string name="use_default_account">Користете ја стандардната сметка</string>
+    <string name="rotate_video">Ротирај</string>
+    <string name="rotate_video_desc">Прикажете копче за префрлување за ориентација на екранот</string>
+    <string name="already_voted">Веќе гласаше</string>
+    <string name="quality_profile_help">Овде можете да го промените начинот на кој се подредуваат изворите. Ако видеото има повисок приоритет, ќе се појави повисоко во изборот на изворот. Збирот на приоритетот на изворот и приоритетот на квалитетот е приоритет на видеото.
+\n
+\nИзвор А: 3
+\nКвалитет Б: 7
+\nЌе има комбиниран приоритет на видеото од 10.
+\n
+\nЗАБЕЛЕШКА: Ако сумата е 10 или повеќе, играчот автоматски ќе го прескокне вчитувањето кога ќе се вчита таа врска!</string>
+    <string name="select_an_account">Одбери корисничка сметка</string>
+    <string name="links_reloaded_toast">Повторно вчитани линкови</string>
+    <string name="disable">Оневозможи</string>
+    <string name="enter_pin">Внеси ПИН</string>
+    <string name="enter_current_pin">Внеси моментален ПИН</string>
+    <string name="pin">ПИН</string>
+    <string name="lock_profile">Заклучи профил</string>
+    <string name="pin_error_incorrect">Неточен ПИН. Пробај повторно.</string>
+    <string name="action_unsubscribe">Исклучи претплата</string>
+    <string name="profile_number">Профил %d</string>
+    <string name="action_subscribe">Претплати се</string>
+    <string name="profile_background_des">Позадина на профил</string>
+    <string name="mobile_data">Мобилен интернет</string>
+    <string name="set_default">Поставете стандардно</string>
+    <string name="qualities">Квалитети</string>
+    <string name="duplicate_title">Пронајдени потенцијални дупликати</string>
+    <string name="duplicate_add">Додади</string>
+    <string name="duplicate_replace">Замени</string>
+    <string name="wifi">Wi-Fi</string>
+    <string name="no_plugins_found_error">Не се најдени плагини во складиштето</string>
+    <string name="use">Користи</string>
+    <string name="edit">Измени</string>
+    <string name="profiles">Профили</string>
+    <string name="help">Помош</string>
+    <string name="unable_to_inflate">UI-то не можеше да се креира правилно, ова е ГОЛЕМ БАГ и треба веднаш да се пријави %s</string>
+    <string name="backup_frequency">Зачестеност на зачувување на бекап</string>
+    <string name="auto_rotate_video_desc">Овозможете автоматско префрлување на ориентацијата на екранот врз основа на видео ориентација</string>
+    <string name="auto_rotate_video">Автоматска ротација</string>
 </resources>

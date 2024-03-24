@@ -111,7 +111,6 @@
     <string name="chromecast_subtitles_settings">Chromecast 자막</string>
     <string name="chromecast_subtitles_settings_des">Chromecast 자막 설정</string>
     <string name="eigengraumode_settings">배속 모드</string>
-    <string name="eigengraumode_settings_des">플레이어에 속도 옵션을 추가합니다</string>
     <string name="swipe_to_seek_settings">스와이프하여 탐색</string>
     <string name="swipe_to_seek_settings_des">좌우로 스와이프하여 동영상 위치 제어하기</string>
     <string name="swipe_to_change_settings">스와이프하여 설정 변경</string>

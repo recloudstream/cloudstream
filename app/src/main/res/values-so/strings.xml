@@ -250,7 +250,6 @@
     <string name="player_subtitles_settings">Qoraal-hoosaadka</string>
     <string name="chromecast_subtitles_settings_des">Habaynta Qrl-hoosaadka Koromakaastiga</string>
     <string name="eigengraumode_settings">Habka Xawaare-kordhinta</string>
-    <string name="eigengraumode_settings_des">Waxaad kordhin karta xawaaraha aad ku daawanayso</string>
     <string name="swipe_to_seek_settings_des">Midig iyo bidix u jiid si aad marba dhinac ugu dhaafiso muqaalka</string>
     <string name="double_tap_to_seek_settings_des">Laba jeer taabo midig ama bidix si aad u dhaafiso ama ku ceshato</string>
     <string name="double_tap_to_seek_settings">Laba jeer taabo si aad u dhaafiso</string>

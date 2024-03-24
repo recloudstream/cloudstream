@@ -263,7 +263,6 @@
     <string name="updates_settings_des">အက်ပ်ထဲဝင်လိုက်သည့်နှင့်အက်ပ်အပ်ဒိတ်ကိုစစ်ဆေးပါ။</string>
     <string name="chromecast_subtitles_settings">Chromecast စာတန်းထိုးများ</string>
     <string name="chromecast_subtitles_settings_des">Chromecast စာတန်းထိုး ပြုပြင်ရန်</string>
-    <string name="eigengraumode_settings_des">ကြည့်ရှုမှုပုံစံထဲမှာအရိှန်ရွေးစရာတစ်ခုထည့်ရန်</string>
     <string name="swipe_to_change_settings_des">အသံအတိုးအကျယ်နှင့်အလင်းအမှောင်များကိုချိန်ညိှရန် ဘယ် သို့ ညာ ဘက်တွင် အပေါ်အောက်ဆွဲပါ</string>
     <string name="autoplay_next_settings_des">ယခုကြည့်နေသောအပိုင်းပြီးပါကနောက်အပိုင်းကိုဖွင့်ပါ</string>
     <string name="episode_sync_settings_des">သင့်၏အပိုင်းကြည်ရှုမှုရောက်ရှိနေရာကိုအလိုအလျောက်သိမ်းဆည်းပါ</string>

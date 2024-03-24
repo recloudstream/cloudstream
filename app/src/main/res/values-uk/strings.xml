@@ -85,7 +85,7 @@
     <string name="player_subtitles_settings">Субтитри</string>
     <string name="chromecast_subtitles_settings">Субтитри Chromecast</string>
     <string name="chromecast_subtitles_settings_des">Налаштування субтитрів Chromecast</string>
-    <string name="eigengraumode_settings">Режим Eigengravy</string>
+    <string name="eigengraumode_settings">Швидкість відтворення</string>
     <string name="swipe_to_change_settings">Проведіть, щоб змінити налаштування</string>
     <string name="swipe_to_change_settings_des">Проведіть вгору або вниз з лівого або правого боку, щоб змінити яскравість чи гучність</string>
     <string name="autoplay_next_settings_des">Відтворює наступний епізод після закінчення поточного</string>
@@ -127,7 +127,6 @@
     <string name="provider_info_meta">Метадані не надаються сайтом, завантаження відео не відбудеться, якщо їх немає на сайті.</string>
     <string name="picture_in_picture">Картинка в картинці</string>
     <string name="player_subtitles_settings_des">Налаштування субтитрів плеєра</string>
-    <string name="eigengraumode_settings_des">Додає опцію керування швидкістю в плеєрі</string>
     <string name="swipe_to_seek_settings">Проведіть, щоб перемотати</string>
     <string name="double_tap_to_seek_settings">Двічі торкніться, щоб перемотати</string>
     <string name="double_tap_to_pause_settings">Двічі торкніться для паузи</string>
@@ -141,7 +140,7 @@
     <string name="backup_success">Дані збережено</string>
     <string name="backup_failed_error_format">Помилка резервного копіювання %s</string>
     <string name="search">Пошук</string>
-    <string name="category_account">Облікові записи</string>
+    <string name="category_account">Облікові записи та безпека</string>
     <string name="category_updates">Оновлення та резервне копіювання</string>
     <string name="settings_info">Інформація</string>
     <string name="advanced_search">Розширений пошук</string>
@@ -212,7 +211,7 @@
     <string name="episode_action_auto_download">Автозавантаження</string>
     <string name="episode_action_download_mirror">Завантажити дзеркало</string>
     <string name="check_for_update">Перевірити наявність оновлень</string>
-    <string name="video_lock">Заблокувати</string>
+    <string name="video_lock">Забл./Розбл.</string>
     <string name="video_skip_op">Пропустити ОП</string>
     <string name="dont_show_again">Не показувати знову</string>
     <string name="update">Оновити</string>
@@ -283,7 +282,7 @@
     <string name="category_general">Загальне</string>
     <string name="random_button_settings">Випадкова кнопка</string>
     <string name="random_button_settings_desc">Показувати кнопку на Головній сторінці та в Бібліотеці, яка вибирає випадковий фільм чи серіал</string>
-    <string name="provider_lang_settings">Мови постачальника</string>
+    <string name="provider_lang_settings">Мови розширень</string>
     <string name="app_layout">Макет застосунку</string>
     <string name="preferred_media_settings">Бажані медіа</string>
     <string name="automatic">Авто</string>
@@ -295,9 +294,9 @@
     <string name="bottom_title_settings">Розташування назви постера</string>
     <string name="bottom_title_settings_des">Розмістити назву під постером</string>
     <string name="example_password">Пароль123</string>
-    <string name="example_username">Моє круте ім’я</string>
+    <string name="example_username">Імʼя користувача</string>
     <string name="example_email">hello@world.com</string>
-    <string name="example_site_name">Мій крутий сайт</string>
+    <string name="example_site_name">НоваНазваСайту</string>
     <string name="example_lang_name">Код мови (uk)</string>
     <string name="logout">Вийти</string>
     <string name="login">Увійти</string>
@@ -360,10 +359,10 @@
     <string name="example_ip">127.0.0.1</string>
     <string name="pref_category_player_layout">Макет</string>
     <string name="subtitles_encoding">Кодування субтитрів</string>
-    <string name="enable_nsfw_on_providers">Включити NSFW на підтримуваних постачальників</string>
+    <string name="enable_nsfw_on_providers">Включити NSFW контент на підтримуваних розширеннях</string>
     <string name="category_ui">Макет</string>
     <string name="category_providers">Постачальники</string>
-    <string name="example_site_url">example.com</string>
+    <string name="example_site_url">https://example.com</string>
     <string name="login_format" formatted="true">%2$s %1$s</string>
     <string name="subtitles_depressed">Депресивний</string>
     <string name="account">обліковий запис</string>
@@ -391,7 +390,7 @@
     <string name="error">Помилка</string>
     <string name="trailer">Трейлер</string>
     <string name="extras">Додатково</string>
-    <string name="network_adress_example">Посилання на трансляцію</string>
+    <string name="network_adress_example">https://example.com/example.mp4</string>
     <string name="quality_cam">Cam</string>
     <string name="quality_cam_rip">Cam</string>
     <string name="quality_cam_hd">Cam</string>
@@ -400,7 +399,7 @@
     <string name="quality_ts">TS</string>
     <string name="quality_tc">TC</string>
     <string name="subtitles_remove_bloat">Видаляти роздуття субтитрів</string>
-    <string name="referer">Referer</string>
+    <string name="referer">Referer (необов\'язково)</string>
     <string name="next">Далі</string>
     <string name="provider_languages_tip">Дивіться відео на цих мовах</string>
     <string name="skip_setup">Пропустити налаштування</string>
@@ -426,11 +425,9 @@
     <string name="plugins_disabled" formatted="true">Вимкнено: %d</string>
     <string name="plugins_not_downloaded" formatted="true">Не завантажено: %d</string>
     <string name="plugins_updated" formatted="true">Оновлено %d плагіни</string>
-    <string name="blank_repo_message">CloudStream не має жодного сайту, встановленого за замовчуванням. Вам потрібно встановити сайти з репозиторіїв.
+    <string name="blank_repo_message">За замовчуванням у CloudStream не встановлено жодного сайту. Вам потрібно встановити сайти з репозиторіїв.
 \n
-\nЧерез безглузду заявку DMCA від Sky UK Limited 🤮 ми не можемо надати посилання на репозиторій в застосунку.
-\n
-\nПриєднуйтесь до нашого Discord або шукайте в інтернеті.</string>
+\nПриєднуйтесь до нашого Discord або шукайте в Інтернеті.</string>
     <string name="view_public_repositories_button">Переглянути репозиторії спільноти</string>
     <string name="view_public_repositories_button_short">Публічний список</string>
     <string name="uppercase_all_subtitles">Усі субтитри у верхньому регістрі</string>
@@ -523,7 +520,7 @@
     <string name="subscription_deleted">Ви відписалися від %s</string>
     <string name="subscription_episode_released">Епізод %d випущено!</string>
     <string name="revert">Повернути</string>
-    <string name="jsdelivr_proxy">raw.githubusercontent.com Proxy</string>
+    <string name="jsdelivr_proxy">GitHub проксі</string>
     <string name="jsdelivr_enabled">Не вдалося отримати доступ до GitHub. Увімкнення проксі-сервера jsDelivr…</string>
     <string name="pref_category_bypass">Обходи ISP</string>
     <string name="jsdelivr_proxy_summary">Обхід блокування GitHub за допомогою jsDelivr. Можлива затримка оновлень на кілька днів.</string>
@@ -591,5 +588,25 @@
     <string name="auto_rotate_video_key">auto_rotate_video_key</string>
     <string name="auto_rotate_video">Автоповорот</string>
     <string name="auto_rotate_video_desc">Ввімкнути автоматичний поворот екрана на основі орієнтації відео</string>
-    <string name="copyTitle">Назву скопійовано!</string>
+    <string name="speed_setting_summary">Додає опцію швидкості у плеєрі</string>
+    <string name="test_extensions">Перевірити всі розширення</string>
+    <string name="result_search_tooltip">Пошук в інших розширеннях</string>
+    <string name="recommendations_tooltip">Показати рекомендації</string>
+    <string name="test_extensions_summary">Цей тест призначений тільки для розробників й не виправляє та не заперечує роботу жодного розширення.</string>
+    <string name="subscribe_tooltip">Сповіщення про новий епізод</string>
+    <string name="password_pin_authentication_title">Автентифікація паролем/PIN-кодом</string>
+    <string name="biometric_authentication_title">Розблокувати CloudStream</string>
+    <string name="biometric_setting">Блокування за допомогою біометрії</string>
+    <string name="biometric_setting_summary">Розблокуйте застосунок за допомогою відбитка пальця, Face ID, PIN-коду, графічного ключа та пароля.</string>
+    <string name="biometric_warning">Резервне копіювання даних CloudStream виконано. Хоча ймовірність цього дуже низька, всі пристрої можуть вести себе по-різному. У рідкісних випадках, коли ви не можете отримати доступ до застосунку, повністю очистіть дані застосунку та відновіть їх з резервної копії. Просимо вибачення за незручності, пов \'язані з цим.</string>
+    <string name="biometric_unsupported">Біометрична автентифікація не підтримується на цьому пристрої</string>
+    <string name="biometric_prompt_description">Цей екран було закрито через кілька невдалих спроб. Будь ласка, перезапустіть застосунок.</string>
+    <string name="resume_remaining" formatted="true">%s
+\nзалишилося</string>
+    <string name="unfavorite">Вилучити з обраного</string>
+    <string name="favorite">Додати до обраного</string>
+    <string name="toast_copied">скопійовано!</string>
+    <string name="repo_copy_label">Назва репозиторію та URL</string>
+    <string name="clipboard_unknown_error">Помилка копіювання, будь ласка, скопіюйте logcat й зверніться до служби підтримки застосунку.</string>
+    <string name="clipboard_permission_error">Помилка доступу до буфера обміну, спробуйте ще раз.</string>
 </resources>
