@@ -70,9 +70,9 @@ android {
         val localProperties = gradleLocalProperties(rootDir)
 
         buildConfigField(
-            "String",
-            "BUILDDATE",
-            "new java.text.SimpleDateFormat(\"yyyy-MM-dd HH:mm\").format(new java.util.Date(" + System.currentTimeMillis() + "L));"
+            "long",
+            "BUILD_DATE",
+            "${System.currentTimeMillis()}"
         )
         buildConfigField(
             "String",
