@@ -84,8 +84,6 @@
     <string name="player_size_settings_des">കറുത്ത അതിർത്തി നീക്കംചെയ്യുക</string>
     <!-- <string name="player_subtitles_settings">Subtitles</string> -->
     <string name="player_subtitles_settings_des">പ്ലേയർ സബ്‌ടൈറ്റിലുകളുടെ സെറ്റിങ്‌സ്</string>
-    <!-- <string name="eigengraumode_setthings">Eigengrau Mode</string> -->
-    <string name="eigengraumode_settings_des">വേഗം നിയന്ത്രിക്കാൻ ഓപ്ഷൻ ചേർക്കുക</string>
     <!-- <string name="swipe_to_seek_setthings">Swipe to seek</string> -->
     <string name="swipe_to_seek_settings_des">വീഡിയോപ്ലേയറിൽ സമയം നിയന്ത്രിക്കാൻ ഇടത്തോട്ടോ വലത്തോട്ടോ സ്വൈപ്പുചെയ്യുക</string>
     <!-- <string name="swipe_to_change_settings">Swipe to change settings</string> -->
@@ -171,7 +169,7 @@
     <string name="action_mark_as_watched">കണ്ടതാണെന്ന് അടയാളപ്പെടുത്തുക</string>
     <string name="next_episode_time_day_format" formatted="true">%1$d%2$d</string>
     <string name="next_episode_format" formatted="true">yg5t4r%dujyhtg</string>
-    <string name="next_episode_time_hour_format" formatted="true">%d മണിക്കൂർ %d മിനിറ്റ്</string>
+    <string name="next_episode_time_hour_format" formatted="true">%1$d മണിക്കൂർ %2$d മിനിറ്റ്</string>
     <string name="app_dub_sub_episode_text_format" formatted="true">%1$sghj%2$d</string>
     <string name="cast_format" formatted="true">rtf:%</string>
     <string name="create_account">അക്കൗണ്ട് ഉണ്ടാക്കുക</string>

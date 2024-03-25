@@ -83,8 +83,7 @@
     <string name="player_size_settings_des">Ta bort de svarta kanterna</string>
     <string name="player_subtitles_settings">Undertexter</string>
     <string name="player_subtitles_settings_des">Inställningar för undertexter</string>
-    <string name="eigengraumode_settings">Eigengrau Läge</string>
-    <string name="eigengraumode_settings_des">Lägger till hastighetsalternativet i spelaren</string>
+    <string name="eigengraumode_settings">Uppspelningshastighet</string>
     <string name="swipe_to_seek_settings">Svep för att strya tiden</string>
     <string name="swipe_to_seek_settings_des">Svep åt vänster eller höger för att styra tiden i videospelaren</string>
     <string name="swipe_to_change_settings">Svep för att ändra inställningar</string>
@@ -138,7 +137,7 @@
     <string name="no_subtitles">Inga undertexter</string>
     <string name="action_default">Standard</string>
     <string name="free_storage">Tillgängligt</string>
-    <string name="used_storage">Använtt</string>
+    <string name="used_storage">Använt</string>
     <string name="app_storage">App</string>
     <string name="movies">Filmer</string>
     <string name="tv_series">Tv Serier</string>
@@ -180,9 +179,9 @@
     <string name="use_system_brightness_settings">Använd system ljusstyrka</string>
     <string name="use_system_brightness_settings_des">Använder systemets ljusstyrka instället för en svart överlaga</string>
     <string name="show_fillers_settings">Visa filler avsnitt för anime</string>
-    <string name="display_subbed_dubbed_settings">Visa Dubbad/Subbad anime</string>
-    <string name="resize_fit">Anpassad till skärmstorlek</string>
-    <string name="provider_lang_settings">Leverantörspråk</string>
+    <string name="display_subbed_dubbed_settings">Visa dubbad/undertextad anime</string>
+    <string name="resize_fit">Anpassa till skärmstorlek</string>
+    <string name="provider_lang_settings">Tilläggsspråk</string>
     <string name="resize_fill">Utsträckt</string>
     <string name="resize_zoom">Inzoomad</string>
     <string name="unexpected_error">Oförväntat uppspelingsfel</string>
@@ -205,7 +204,7 @@
     <string name="logout">Logga ut</string>
     <string name="account">konto</string>
     <string name="download_path_pref">Nerladdningsplats</string>
-    <string name="type_re_watching">Kollar om</string>
+    <string name="type_re_watching">Tittar på nytt</string>
     <string name="automatic">Automatisk</string>
     <string name="dns_pref">DNS över HTTPS</string>
     <string name="dns_pref_summary">" "</string>
@@ -217,7 +216,7 @@
     <string name="chromecast_subtitles_settings">Chromecast-undertexter</string>
     <string name="double_tap_to_pause_settings_des">Dubbeltryck i mitten för att pausa</string>
     <string name="restore_settings">Återställ data från backup</string>
-    <string name="category_account">Konton</string>
+    <string name="category_account">Konton och säkerhet</string>
     <string name="category_updates">Uppdateringar och backup</string>
     <string name="automatic_plugin_updates">Automatiska pluginuppdateringar</string>
     <string name="next_episode_time_day_format" formatted="true">%1$dd %2$dh %3$dm</string>
@@ -294,7 +293,7 @@
     <string name="quality_uhd">UHD</string>
     <string name="resolution_and_title">Upplösning och titel</string>
     <string name="error">Fel</string>
-    <string name="referer">Referer</string>
+    <string name="referer">Referent (valfritt)</string>
     <string name="next">Nästa</string>
     <string name="subtitle_offset_hint">1000 ms</string>
     <string name="add_site_summary">Lägga till en klon av en befintlig webbplats med en annan webbadress</string>
@@ -327,7 +326,7 @@
     <string name="trailer">Trailer</string>
     <string name="app_layout">Applayout</string>
     <string name="pref_category_ui_features">Funktioner</string>
-    <string name="example_site_url">exempel.se</string>
+    <string name="example_site_url">https://example.com</string>
     <string name="example_lang_name">Språkkod (en)</string>
     <string name="video_buffer_disk_settings">Videocache på disken</string>
     <string name="video_buffer_clear_settings">Rensa video- och bildcache</string>
@@ -348,7 +347,7 @@
     <string name="pref_category_cache">Cache</string>
     <string name="pref_category_backup">Säkerhetskopiering</string>
     <string name="pref_category_subtitles">Undertexter</string>
-    <string name="enable_nsfw_on_providers">Aktivera NSFW på sidor som stöds</string>
+    <string name="enable_nsfw_on_providers">Aktivera NSFW på tillägg som stöds</string>
     <string name="subtitles_encoding">Undertextkodning</string>
     <string name="example_password">lösenord123</string>
     <string name="subtitle_offset_title">Fördröjning av undertexter</string>
@@ -367,7 +366,7 @@
     <string name="provider_languages_tip">Titta på videor på dessa språk</string>
     <string name="previous">Föregående</string>
     <string name="tracks">Spår</string>
-    <string name="update_started">Uppdaterar</string>
+    <string name="update_started">Uppdatering påbörjad</string>
     <string name="test_log">Logg</string>
     <string name="double_tap_to_seek_amount_settings">Videospelarens hoppsträcka (Sekunder)</string>
     <string name="action_add_to_bookmarks">Ändra status</string>
@@ -379,12 +378,12 @@
     <string name="random_button_settings">Slumpknapp</string>
     <string name="show_sub">Visa sub</string>
     <string name="app_not_found_error">Kunde inte öppna appen</string>
-    <string name="jsdelivr_proxy">raw.githubusercontent.com Proxy</string>
+    <string name="jsdelivr_proxy">GitHub Proxy</string>
     <string name="player_settings_play_in_browser">Webbläsarens videospelare</string>
     <string name="update_notification_installing">Installerar uppdatering till appen…</string>
     <string name="jsdelivr_enabled">Kunde inte nå GitHub, sätter på jsDelivr proxy…</string>
     <string name="category_providers">Leverantörer</string>
-    <string name="example_site_name">MinTrevligaWebbsida</string>
+    <string name="example_site_name">Nytt webbplatsnamn</string>
     <string name="subtitles_remove_bloat">Ta bort reklam från undertexter</string>
     <string name="player_settings_play_in_vlc">VLC</string>
     <string name="all_languages_preference">Alla språk</string>
@@ -432,7 +431,7 @@
     <string name="profiles">Profiler</string>
     <string name="help">Hjälp</string>
     <string name="qualities">Kvalitet</string>
-    <string name="stream">Ström</string>
+    <string name="stream">Nätverks Stream</string>
     <string name="repository_name_hint">Databasens namn</string>
     <string name="batch_download_nothing_to_download_format" formatted="true">All %s har redan laddats ner</string>
     <string name="download_all_plugins_from_repo">Ladda ner alla tillägg från den här databasen?</string>
@@ -480,7 +479,7 @@
     <string name="logged_account" formatted="true">Loggat in som %s</string>
     <string name="skip_startup_account_select_pref">Hoppa över val av konto vid start</string>
     <string name="auto_rotate_video_key">auto_rotera_video_nyckel</string>
-    <string name="jsdelivr_proxy_summary">Förbi passera blockering av GitHub genom att använda jsDelivr. Kan göra att uppdateringar försenas med några dagar.</string>
+    <string name="jsdelivr_proxy_summary">Gå förbi blockering av rå GitHub-URL:er med jsDelivr. Kan göra att uppdateringar försenas med några dagar.</string>
     <string name="pref_category_actions">Funktion</string>
     <string name="preferred_media_settings">Önskad media</string>
     <string name="bottom_title_settings_des">Lägg titeln under affischen</string>
@@ -499,9 +498,7 @@
     <string name="view_public_repositories_button">Visa community databaser</string>
     <string name="skip_type_mixed_op">Blandad inledning</string>
     <string name="skip_type_format" formatted="true">Skippa %s</string>
-    <string name="blank_repo_message">CloudStream har inga webbplatser installerade som standard. Du måste installera webbplatserna från databaser.
-\n
-\nPå grund av en hjärnlös DMCA-borttagning av Sky UK Limited kan vi inte länka databaser på denna applikation.
+    <string name="blank_repo_message">CloudStream har inga webbplatser installerade som standard. Du måste installera webbplatser från arkiv.
 \n
 \nGå med i vår Discord eller sök online.</string>
     <string name="select_library">Välj bibliotek</string>
@@ -551,7 +548,7 @@
     <string name="pref_category_gestures">Gester</string>
     <string name="authenticated_user" formatted="true">%s autentiserad</string>
     <string name="extras">Statister</string>
-    <string name="network_adress_example">Länka till strömmen</string>
+    <string name="network_adress_example">https://example.com/example.mp4</string>
     <string name="delete_repository">Radera databasen</string>
     <string name="profile_background_des">Profil bakgrund</string>
     <string name="quality_workprint">WP</string>
@@ -591,5 +588,20 @@
 \nKommer att ha en kombinerad videoprioritet på 10.
 \n
 \nOBS: Om summan är 10 eller mer kommer spelaren automatiskt att hoppa över laddningen när den länken laddas!</string>
-    <string name="copyTitle">Titel kopierad!</string>
+    <string name="subscribe_tooltip">Meddelande om nytt avsnitt</string>
+    <string name="result_search_tooltip">Sök i andra tillägg</string>
+    <string name="recommendations_tooltip">Visa rekommendationer</string>
+    <string name="speed_setting_summary">Lägger till ett hastighetsalternativ i spelaren</string>
+    <string name="test_extensions">Testa alla tillägg</string>
+    <string name="test_extensions_summary">Detta test är endast avsett för utvecklare och verifierar eller förnekar inte att någon tillägg fungerar.</string>
+    <string name="biometric_setting">Lås med biometrik</string>
+    <string name="password_pin_authentication_title">Lösenord/PIN autentisering</string>
+    <string name="biometric_setting_summary">Lås upp appen med Fingerprint, Face ID, PIN, mönster eller lösenord.</string>
+    <string name="biometric_authentication_title">Lås upp CloudStream</string>
+    <string name="biometric_unsupported">Biometrisk autentisering stöds inte på den här enheten</string>
+    <string name="biometric_prompt_description">Detta fönster stängs efter några misslyckade försök. Du måste starta om appen.</string>
+    <string name="favorite">Favorit</string>
+    <string name="unfavorite">Ta bort från favoriter</string>
+    <string name="resume_remaining" formatted="true">%s
+\nkvarstår</string>
 </resources>

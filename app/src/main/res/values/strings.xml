@@ -703,13 +703,11 @@
     <string name="profile_background_des">Profile background</string>
     <string name="unable_to_inflate">UI was unable to be created correctly, this is a MAJOR BUG and should be reported immediately %s</string>
     <string name="already_voted">You have already voted</string>
-
     <string name="favorites_list_name">Favorites</string>
     <string name="favorite_added">%s added to favorites</string>
     <string name="favorite_removed">%s removed from favorites</string>
     <string name="action_add_to_favorites">Add to favorites</string>
     <string name="action_remove_from_favorites">Remove from favorites</string>
-
     <string name="duplicate_title">Potential Duplicate Found</string>
     <string name="duplicate_add">Add</string>
     <string name="duplicate_replace">Replace</string>
@@ -727,11 +725,7 @@
 
         \n\nWould you like to add this item anyway, replace the existing ones, or cancel the action?
     </string>
-
-
     <string name="tv_no_focus_tag" translatable="false">tv_no_focus_tag</string>
-
-
     <string name="enter_pin">Enter PIN</string>
     <string name="enter_pin_with_name" formatted="true">Enter PIN for %s</string>
     <string name="enter_current_pin">Enter Current PIN</string>
@@ -757,9 +751,6 @@
     <string name="password_pin_authentication_title">Password/PIN Authentication</string>
     <string name="biometric_unsupported">Biometric authentication is not supported on this device</string>
     <string name="biometric_setting_summary">Unlock the app with Fingerprint, Face ID, PIN, Pattern and Password.</string>
-    <string name="biometric_prompt_description">This window will close after few failed attempts. You\'ll have to restart the App.</string>
-    <string name="biometric_warning">Your CloudStream data has been backed up now, although probability of this rare case is very low but all
-        devices behave differently, in case you get locked down from accessing the app in worst case scenario,
-    Clear the app data wholly and restore the backup. Any inconvenience if arrived is deeply regretted.</string>
-
+    <string name="biometric_prompt_description">This screen was closed due to multiple failed attempts. Please restart the application.</string>
+    <string name="biometric_warning">Your CloudStream data has been backed up now. Although the possibility of this is very low, all devices can behave differently. In the rare case, that you get locked out from accessing the app, clear the app data completely and restore from a backup. We are very sorry for any inconvenience arising from this.</string>
 </resources>

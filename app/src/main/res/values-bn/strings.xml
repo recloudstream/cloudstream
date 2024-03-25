@@ -118,7 +118,6 @@
     <string name="chromecast_subtitles_settings">ক্রোমক্যাস্ট এ সাবটাইটেলসমূহ</string>
     <string name="chromecast_subtitles_settings_des">ক্রোমক্যাস্ট এ সাবটাইটেল সমূহের সেটিংস</string>
     <string name="player_size_settings_des">কালো প্রান্ত অপসারণ করুন</string>
-    <string name="eigengraumode_settings_des">প্লেয়ার এ দ্রুততা এর অপশন যুক্ত করে</string>
     <string name="search">অনুসন্ধান করুন</string>
     <string name="category_account">অ্যাকাউন্টসমূহ</string>
     <string name="bug_report_settings_on">কোনো উপাত্ত পাঠাবে না</string>

@@ -92,7 +92,6 @@
     <string name="chromecast_subtitles_settings">Υπότιτλοι για Chromecast</string>
     <string name="chromecast_subtitles_settings_des">Ρυθμίσεις υποτίτλων για Chromecast</string>
     <string name="eigengraumode_settings">Eigengravy Mode</string>
-    <string name="eigengraumode_settings_des">Προσθέτει την επιλογή ταχύτητας στο πρόγραμμα αναπαραγωγής</string>
     <string name="swipe_to_seek_settings">Σύρετε για αναζήτηση</string>
     <string name="swipe_to_seek_settings_des">Σύρετε από πλευρά σε πλευρά για να ελέγξετε το σημείο του βίντεο στο οποίο βρίσκεστε</string>
     <string name="swipe_to_change_settings">Σύρετε για να αλλάξετε ρυθμίσεις</string>

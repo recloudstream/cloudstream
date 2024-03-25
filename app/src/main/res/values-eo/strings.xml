@@ -77,4 +77,54 @@
     <string name="player_speed_text_format" formatted="true">Rapido (%.2fx)</string>
     <string name="search_hint">Serĉi…</string>
     <string name="download">Elŝuti</string>
+    <string name="app_dub_sub_episode_text_format" formatted="true">%1$s Ep %2$d</string>
+    <string name="cast_format" formatted="true">Rolantaro: %s</string>
+    <string name="next_episode_format" formatted="true">Epizodo %d estos publikigita en</string>
+    <string name="next_episode_time_day_format" formatted="true">%1$dt %2$dh %3$dm</string>
+    <string name="next_episode_time_hour_format" formatted="true">%1$dh %2$dm</string>
+    <string name="next_episode_time_min_format" formatted="true">%dm</string>
+    <string name="new_update_format" formatted="true">Nova ĝisdatigo trovita!
+\n%1$s -&gt; %2$s</string>
+    <string name="filler" formatted="true">Speciala epizodo</string>
+    <string name="app_name">CloudStream</string>
+    <string name="download_started">Elŝuto Komencite</string>
+    <string name="reload_error">Reprovi konekton…</string>
+    <string name="stream">Elsendfluo</string>
+    <string name="home_next_random_img_des">Sekva Hazarda</string>
+    <string name="download_canceled">Elŝuto Nuligite</string>
+    <string name="episode_more_options_des">Pli da Opcioj</string>
+    <string name="next_episode">Sekva epizodo</string>
+    <string name="search_poster_img_des">Afiŝo</string>
+    <string name="play_episode">Ludi Epizodon</string>
+    <string name="preview_background_img_des">Antaŭrigardi Fono</string>
+    <string name="home_change_provider_img_des">Ŝanĝi Provizanton</string>
+    <string name="rated_format" formatted="true">Rangita: %.1f</string>
+    <string name="search_hint_site" formatted="true">Serĉi %s…</string>
+    <string name="no_data">Neniuj Datumoj</string>
+    <string name="type_watching">Spektante</string>
+    <string name="type_on_hold">En paŭzo</string>
+    <string name="type_completed">Kompletigita</string>
+    <string name="type_re_watching">Re-spektante</string>
+    <string name="play_torrent_button">Elsendflui Torenton</string>
+    <string name="download_done">Elŝuto Farite</string>
+    <string name="update_started">Ĝisdatigo Komencite</string>
+    <string name="error_loading_links_toast">Eraro okazis dum la Ŝarĝado de Ligiloj</string>
+    <string name="type_dropped">Forlasita</string>
+    <string name="duration_format" formatted="true">%d min</string>
+    <string name="play_with_app_name">Ludi per CloudStream</string>
+    <string name="result_share">Kunhavigi</string>
+    <string name="play_livestream_button">Ludi tuj-elsendfluon</string>
+    <string name="download_paused">Elŝuto Paŭzite</string>
+    <string name="pick_subtitle">Subtekstoj</string>
+    <string name="skip_loading">Preterpasi la ŝarĝado</string>
+    <string name="browser">Retumilo</string>
+    <string name="loading">Ŝarĝante…</string>
+    <string name="type_plan_to_watch">Plani Spekti</string>
+    <string name="play_trailer_button">Ludi Antaŭfilmon</string>
+    <string name="episode_poster_img_des">Epizoda Afiŝo</string>
+    <string name="home_main_poster_img_des">Ĉefa Afiŝo</string>
+    <string name="result_open_in_browser">Malfermi en Retumilo</string>
+    <string name="downloaded">Elŝutite</string>
+    <string name="downloading">Elŝutante</string>
+    <string name="download_failed">Elŝuto Malsukcesite</string>
 </resources>
