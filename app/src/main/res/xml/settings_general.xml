@@ -6,10 +6,7 @@
         android:title="@string/app_language"
         android:icon="@drawable/ic_baseline_language_24" />
 
-    <Preference
-            android:key="@string/download_path_key"
-            android:title="@string/download_path_pref"
-            android:icon="@drawable/netflix_download" />
+
 
     <Preference
             android:key="@string/legal_notice_key"
@@ -23,7 +20,22 @@
         app:summary="@string/benene_des" />
 
     <PreferenceCategory
-            android:title="@string/pref_category_bypass">
+        android:title="@string/title_downloads">
+
+        <Preference
+            android:key="@string/download_path_key"
+            android:title="@string/download_path_pref"
+            android:icon="@drawable/netflix_download" />
+
+        <Preference
+            android:key="@string/battery_optimisation_key"
+            android:title="@string/battery_dialog_title"
+            android:icon="@drawable/ic_battery" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/pref_category_bypass">
 
         <Preference
                 android:key="@string/override_site_key"
