@@ -630,6 +630,9 @@ class ResultViewModel2 : ViewModel() {
                 TvType.Live -> "LiveStreams"
                 TvType.NSFW -> "NSFW"
                 TvType.Others -> "Others"
+                TvType.Music -> "Music"
+                TvType.AudioBook -> "AudioBooks"
+                TvType.CustomMedia -> "Media"
             }
         }
 
