@@ -246,6 +246,9 @@ fun LoadResponse.toResultData(repo: APIRepository): ResultData {
                 TvType.Live -> R.string.live_singular
                 TvType.Others -> R.string.other_singular
                 TvType.NSFW -> R.string.nsfw_singular
+                TvType.Music -> R.string.music_singlar
+                TvType.AudioBook -> R.string.audio_book_singular
+                TvType.CustomMedia -> R.string.custom_media_singluar
             }
         ),
         yearText = txt(year?.toString()),
@@ -1759,20 +1762,28 @@ class ResultViewModel2 : ViewModel() {
                 val data = currentResponse?.syncData?.toList() ?: emptyList()
                 val list =
                     HashMap<String, String>().apply { putAll(data) }
-
-                activity?.navigate(
-                    R.id.global_to_navigation_player,
-                    GeneratorPlayer.newInstance(
-                        generator?.also {
-                            it.getAll() // I know kinda shit to iterate all, but it is 100% sure to work
-                                ?.indexOfFirst { value -> value is ResultEpisode && value.id == click.data.id }
-                                ?.let { index ->
-                                    if (index >= 0)
-                                        it.goto(index)
-                                }
-                        } ?: return, list
+                generator?.also {
+                    it.getAll() // I know kinda shit to iterate all, but it is 100% sure to work
+                        ?.indexOfFirst { value -> value is ResultEpisode && value.id == click.data.id }
+                        ?.let { index ->
+                            if (index >= 0)
+                                it.goto(index)
+                        }
+                }
+                if (currentResponse?.type == TvType.CustomMedia) {
+                    generator?.generateLinks(
+                        clearCache = true,
+                        LoadType.Unknown,
+                        callback = {},
+                        subtitleCallback = {})
+                } else {
+                    activity?.navigate(
+                        R.id.global_to_navigation_player,
+                        GeneratorPlayer.newInstance(
+                            generator ?: return, list
+                        )
                     )
-                )
+                }
             }
 
             ACTION_MARK_AS_WATCHED -> {
