@@ -32,6 +32,11 @@ import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.setImage
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import java.io.File
+import java.text.DateFormat
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+import java.util.TimeZone
 
 class SettingsFragment : Fragment() {
     companion object {
@@ -205,12 +210,14 @@ class SettingsFragment : Fragment() {
 
         val appVersion = getString(R.string.app_version)
         val commitInfo = getString(R.string.commit_hash)
-        val buildDate = BuildConfig.BUILDDATE
+        val buildTimestamp = SimpleDateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG,
+            Locale.getDefault()
+        ).apply { timeZone = TimeZone.getTimeZone("UTC")
+        }.format(Date(BuildConfig.BUILD_DATE)).replace("UTC", "")
 
-        binding?.buildDate?.text = buildDate
-
-        binding?.appVersionInfo?.setOnLongClickListener{
-            clipboardHelper(txt(R.string.extension_version), "$appVersion $commitInfo")
+        binding?.buildDate?.text = buildTimestamp
+        binding?.appVersionInfo?.setOnLongClickListener {
+            clipboardHelper(txt(R.string.extension_version), "$appVersion $commitInfo $buildTimestamp")
             true
         }
     }

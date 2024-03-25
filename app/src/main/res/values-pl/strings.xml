@@ -52,7 +52,7 @@
     <string name="download_failed">Błąd przy pobieraniu</string>
     <string name="download_canceled">Anulowano pobieranie</string>
     <string name="download_done">Zakończono pobieranie</string>
-    <string name="stream">Odtwórz</string>
+    <string name="stream">Strumień sieciowy</string>
     <string name="error_loading_links_toast">Błąd przy ładowaniu linków</string>
     <string name="download_storage_text">Pamięć wewnętrzna</string>
     <string name="app_dubbed_text">Dub</string>
@@ -112,18 +112,17 @@
     <string name="player_subtitles_settings_des">Ustawienia napisów</string>
     <string name="chromecast_subtitles_settings">Napisy Chromecast</string>
     <string name="chromecast_subtitles_settings_des">Ustawienia napisów Chromecast</string>
-    <string name="eigengraumode_settings">Tryb Eigengravy</string>
-    <string name="eigengraumode_settings_des">Ustawienia prędkości</string>
-    <string name="swipe_to_seek_settings">Przesuń aby przewinąć</string>
+    <string name="eigengraumode_settings">Prędkość odtwarzania</string>
+    <string name="swipe_to_seek_settings">Przesuń, aby przewinąć</string>
     <string name="swipe_to_seek_settings_des">Przesuwaj w lewo lub prawo, aby kontrolować czas filmu</string>
-    <string name="swipe_to_change_settings">Przesuń aby zmienić ustawienia</string>
-    <string name="swipe_to_change_settings_des">Przesuwaj góra-dół z lewej lub prawej strony ekranu aby zmienić jasność czy głośność</string>
+    <string name="swipe_to_change_settings">Przesuń, aby zmienić ustawienia</string>
+    <string name="swipe_to_change_settings_des">Przesuwaj góra-dół z lewej lub prawej strony ekranu, aby zmienić jasność czy głośność</string>
     <string name="autoplay_next_settings">Autoodtwarzanie następnego odcinka</string>
     <string name="autoplay_next_settings_des">Rozpocznij następny odcinek po skończeniu bieżącego</string>
     <string name="double_tap_to_seek_amount_settings">Czas przewinięcia przy podwójnym kliknięciu (w sekundach)</string>
-    <string name="double_tap_to_seek_settings">Podwójne kliknięcie aby przewinąć</string>
-    <string name="double_tap_to_seek_settings_des">Kliknij 2 razy z prawej lub lewej strony aby przewinąć</string>
-    <string name="double_tap_to_pause_settings">Kliknij dwukrotnie aby wstrzymać</string>
+    <string name="double_tap_to_seek_settings">Podwójne kliknięcie, aby przewinąć</string>
+    <string name="double_tap_to_seek_settings_des">Kliknij dwa razy z prawej lub lewej strony, aby przewinąć</string>
+    <string name="double_tap_to_pause_settings">Kliknij dwukrotnie, aby wstrzymać</string>
     <string name="double_tap_to_pause_settings_des">Kliknij dwukrotnie na środku, aby zatrzymać wideo</string>
     <string name="use_system_brightness_settings">Użyj jasności systemowej</string>
     <string name="use_system_brightness_settings_des">Użyj jasności systemowej w odtwarzaczu aplikacji zamiast ciemnej nakładki</string>
@@ -137,7 +136,7 @@
     <string name="backup_failed">Brak uprawnień do pamięci, spróbuj ponownie.</string>
     <string name="backup_failed_error_format">Błąd tworzenia kopii zapasowej %s</string>
     <string name="search">Szukaj</string>
-    <string name="category_account">Konta</string>
+    <string name="category_account">Konta i zabezpieczenia</string>
     <string name="category_updates">Aktualizacje i kopia zapasowa</string>
     <string name="settings_info">Informacje</string>
     <string name="advanced_search">Zaawansowane wyszukiwanie</string>
@@ -210,7 +209,7 @@
     <string name="torrent">Torrenty</string>
     <string name="documentaries">Filmy dokumentalne</string>
     <string name="ova">OVA</string>
-    <string name="asian_drama">Dramy azjatyckie</string>
+    <string name="asian_drama">Dramaty azjatyckie</string>
     <string name="livestreams">Transmisje na żywo</string>
     <string name="nsfw">NSFW</string>
     <string name="others">Inne</string>
@@ -220,7 +219,7 @@
     <string name="cartoons_singular">Kreskówka</string>
     <string name="torrent_singular">Torrent</string>
     <string name="documentaries_singular">Film dokumentalny</string>
-    <string name="asian_drama_singular">Drama azjatycka</string>
+    <string name="asian_drama_singular">Dramat azjatycki</string>
     <string name="live_singular">Transmisja na żywo</string>
     <string name="nsfw_singular">NSFW</string>
     <string name="other_singular">Inne</string>
@@ -229,8 +228,8 @@
     <string name="render_error">Błąd renderowania</string>
     <string name="unexpected_error">Nieoczekiwany błąd odtwarzacza</string>
     <string name="storage_error">Błąd pobierania, sprawdź uprawnienia aplikacji</string>
-    <string name="episode_action_chromecast_episode">odcinek Chromecast</string>
-    <string name="episode_action_chromecast_mirror">mirror dla Chromecast</string>
+    <string name="episode_action_chromecast_episode">Odcinek Chromecast</string>
+    <string name="episode_action_chromecast_mirror">Mirror dla Chromecast</string>
     <string name="episode_action_play_in_app">Odtwórz w aplikacji</string>
     <string name="episode_action_play_in_format">Odtwórz w %s</string>
     <string name="episode_action_play_in_browser">Odtwórz w przeglądarce</string>
@@ -254,7 +253,7 @@
     <string name="skip_update">Pomiń tę aktualizację</string>
     <string name="update">Aktualizacja</string>
     <string name="watch_quality_pref">Domyślna jakość (WiFi)</string>
-    <string name="limit_title">Maksymalna ilość znaków w tytule odtwarzacza</string>
+    <string name="limit_title">Maksymalna liczba znaków w tytule odtwarzacza</string>
     <string name="limit_title_rez">Rozdzielczość odtwarzacza wideo</string>
     <string name="video_buffer_size_settings">Rozmiar bufora wideo</string>
     <string name="video_buffer_length_settings">Długość bufora wideo</string>
@@ -276,11 +275,11 @@
     <string name="legal_notice">Zastrzeżenie</string>
     <string name="category_general">Ogólne</string>
     <string name="random_button_settings">Przycisk do losowania</string>
-    <string name="random_button_settings_desc">Pokaż przycisk do losowania na stronie głównej</string>
-    <string name="provider_lang_settings">Języki źródeł</string>
+    <string name="random_button_settings_desc">Pokaż przycisk do losowania na stronie głównej i w bibliotece</string>
+    <string name="provider_lang_settings">Języki rozszerzeń</string>
     <string name="app_layout">Układ aplikacji</string>
     <string name="preferred_media_settings">Preferowane media</string>
-    <string name="enable_nsfw_on_providers">Włącz NSFW w obsługiwanych źródłach</string>
+    <string name="enable_nsfw_on_providers">Włącz NSFW w obsługiwanych rozszerzeniach</string>
     <string name="subtitles_encoding">Kodowanie napisów</string>
     <string name="category_providers">Źródła</string>
     <string name="category_ui">Układ interfejsu</string>
@@ -365,14 +364,14 @@
     <string name="subtitles_filter_lang">Filtrowanie wg preferowanego języka</string>
     <string name="extras">Dodatki</string>
     <string name="trailer">Zwiastun</string>
-    <string name="referer">Odsyłacz</string>
+    <string name="referer">Odsyłacz (opcjonalny)</string>
     <string name="next">Następny</string>
     <string name="provider_languages_tip">Wyświetlaj filmy w tych językach</string>
     <string name="previous">Poprzedni</string>
-    <string name="skip_setup">Pomiń setup</string>
+    <string name="skip_setup">Pomiń konfigurację</string>
     <string name="app_layout_subtext">Dostosuj wygląd aplikacji do urządzenia</string>
     <string name="crash_reporting_title">Zgłaszanie błędów</string>
-    <string name="preferred_media_subtext">Co chciałbyś obejrzeć</string>
+    <string name="preferred_media_subtext">Co chcesz obejrzeć</string>
     <string name="setup_done">Gotowe</string>
     <string name="extensions">Rozszerzenia</string>
     <string name="add_repository">Dodaj repozytorium</string>
@@ -396,8 +395,6 @@
     <string name="plugins_not_downloaded" formatted="true">Nie pobrano: %d</string>
     <string name="plugins_updated">Zaaktualizowano %d rozszerzeń</string>
     <string name="blank_repo_message">CloudStream nie ma domyślnie zainstalowanych żadnych witryn. Musisz zainstalować witryny z repozytoriów.
-\n
-\nZ powodu bezmyślnego usunięcia DMCA przez Sky UK Limited 🤮 nie możemy zamieścić linku do witryny z repozytoriami.
 \n
 \nDołącz do naszego Discorda lub poszukaj online.</string>
     <string name="view_public_repositories_button">Zobacz repozytoria społeczności</string>
@@ -433,7 +430,7 @@
     <string name="clear_history">Wyczyść historię</string>
     <string name="history">Historia</string>
     <string name="clipboard_too_large">Za dużo tekstu. Nie można skopiować do schowka.</string>
-    <string name="network_adress_example">Link do odtwarzania</string>
+    <string name="network_adress_example">https://example.com/example.mp4</string>
     <string name="play_with_app_name">Odtwórz w CloudStream</string>
     <string name="skip_type_format" formatted="true">Pomiń %s</string>
     <string name="next_episode_time_hour_format" formatted="true">%1$dh %2$dm</string>
@@ -453,17 +450,17 @@
     <string name="skip_type_recap">Podsumowanie</string>
     <string name="apk_installer_settings">Instalator APK</string>
     <string name="apk_installer_settings_des">Niektóre telefony nie obsługują nowego instalatora pakietów. Wypróbuj tryb legacy, jeśli aktualizacje nie zostaną zainstalowane.</string>
-    <string name="example_password">password123</string>
+    <string name="example_password">hasło123</string>
     <string name="ova_singular">@string/ova</string>
-    <string name="example_site_name">MojaFajnaWitryna</string>
-    <string name="example_username">MyCoolUsername</string>
+    <string name="example_site_name">NowaNazwaWitryny</string>
+    <string name="example_username">Nazwa użytkownika</string>
     <string name="example_ip">127.0.0.1</string>
     <string name="apk_installer_legacy">Tryb kompatybilności</string>
-    <string name="example_site_url">przyklad.pl</string>
+    <string name="example_site_url">https://example.com</string>
     <string name="sync_total_episodes_none">/\?\?</string>
     <string name="apk_installer_package_installer">Instalator pakietów</string>
     <string name="action_open_play">@string/home_play</string>
-    <string name="example_email">hello@world.com</string>
+    <string name="example_email">witaj@poczta.pl</string>
     <string name="anime_singular">@string/anime</string>
     <string name="skip_type_op">Opening</string>
     <string name="skip_type_ed">Ending</string>
@@ -518,7 +515,7 @@
     <string name="start">Rozpocznij</string>
     <string name="test_failed">Nie powiodło się</string>
     <string name="test_passed">Ukończone powodzeniem</string>
-    <string name="jsdelivr_proxy">Serwer pośredniczący raw.githubusercontent.com</string>
+    <string name="jsdelivr_proxy">Serwer proxy GitHuba</string>
     <string name="pref_category_bypass">Obejścia ISP</string>
     <string name="category_provider_test">Test dostawcy</string>
     <string name="stop">Zatrzymaj</string>
@@ -528,8 +525,8 @@
     <string name="subscription_new">Zasubskrybowano %s</string>
     <string name="subscription_deleted">Anulowano subskrypcję %s</string>
     <string name="subscription_episode_released">Został wydany odcinek %d!</string>
-    <string name="jsdelivr_proxy_summary">Obchodzi blokadę GitHuba za pomocą jsDelivr. może spowodować opóźnienie aktualizacji o kilka dni.</string>
-    <string name="jsdelivr_enabled">Nie udało się połączyć z GitHub, włączono serwer pośredniczący jsDelivr…</string>
+    <string name="jsdelivr_proxy_summary">Obchodzi blokadę surowych adresów URL GitHuba za pomocą jsDelivr. Może powodować opóźnienie aktualizacji o kilka dni.</string>
+    <string name="jsdelivr_enabled">Nie udało się połączyć z GitHubem. Włączono serwer pośredniczący jsDelivr…</string>
     <string name="watch_quality_pref_data">Domyślna jakość (dane mobilne)</string>
     <string name="quality_profile_help">W tym miejscu można zmienić kolejność źródeł. Jeśli wideo ma wyższy priorytet, pojawi się wyżej w wyborze źródła. Priorytet wideo jest sumą priorytetu źródła i priorytetu jakości.
 \n
@@ -562,7 +559,7 @@
 \n%s
 \n
 \nCzy chcesz dodać ten element, zastąpić istniejące, czy anulować operację?</string>
-    <string name="enter_pin_with_name" formatted="true">Wprowadź pin dla %s</string>
+    <string name="enter_pin_with_name" formatted="true">Wprowadź PIN dla %s</string>
     <string name="backup_frequency">Częstotliwość tworzenia kopii zapasowych</string>
     <string name="duplicate_title">Znaleziono potencjalny duplikat</string>
     <string name="lock_profile">Zablokuj profil</string>
@@ -592,4 +589,25 @@
     <string name="auto_rotate_video">Automatyczny obrót</string>
     <string name="rotate_video">Obrót</string>
     <string name="auto_rotate_video_desc">Włącz automatyczne przełączanie orientacji ekranu na podstawie orientacji filmu</string>
+    <string name="speed_setting_summary">Dodaje opcję prędkości w odtwarzaczu</string>
+    <string name="subscribe_tooltip">Powiadomienie o nowym odcinku</string>
+    <string name="result_search_tooltip">Szukaj w innych rozszerzeniach</string>
+    <string name="recommendations_tooltip">Pokaż rekomendacje</string>
+    <string name="test_extensions">Przetestuj wszystkie rozszerzenia</string>
+    <string name="test_extensions_summary">Ten test jest przeznaczony wyłącznie dla programistów i nie weryfikuje ani nie zaprzecza działaniu żadnego rozszerzenia.</string>
+    <string name="biometric_setting">Zablokuj za pomocą biometrii</string>
+    <string name="password_pin_authentication_title">Uwierzytelnianie hasłem/kodem PIN</string>
+    <string name="biometric_prompt_description">Ten ekran został zamknięty z powodu wielu nieudanych prób. Uruchom ponownie aplikację.</string>
+    <string name="biometric_authentication_title">Odblokuj CloudStream</string>
+    <string name="biometric_unsupported">To urządzenie nie obsługuje uwierzytelniania biometrycznego</string>
+    <string name="biometric_setting_summary">Odblokuj aplikację za pomocą odcisku palca, identyfikatora twarzy, kodu PIN, wzoru i hasła.</string>
+    <string name="biometric_warning">Kopia zapasowa Twoich danych CloudStream została teraz utworzona. Chociaż prawdopodobieństwo tego jest bardzo niskie, wszystkie urządzenia mogą zachowywać się inaczej. W rzadkich przypadkach, gdy dostęp do aplikacji zostanie zablokowany, należy całkowicie wyczyścić dane aplikacji i przywrócić je z kopii zapasowej. Bardzo nam przykro z powodu wszelkich niedogodności z tym związanych.</string>
+    <string name="unfavorite">Usuń z ulubionych</string>
+    <string name="resume_remaining" formatted="true">%s
+\npozostało</string>
+    <string name="favorite">Dodaj do ulubionych</string>
+    <string name="repo_copy_label">Nazwa repozytorium i adres URL</string>
+    <string name="clipboard_permission_error">Błąd dostępu do schowka. Spróbuj ponownie.</string>
+    <string name="toast_copied">skopiowano!</string>
+    <string name="clipboard_unknown_error">Błąd podczas kopiowania. Skopiuj logcat i skontaktuj się z pomocą techniczną aplikacji.</string>
 </resources>

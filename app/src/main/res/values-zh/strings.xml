@@ -137,8 +137,7 @@
     <string name="player_subtitles_settings_des">播放器字幕设置</string>
     <string name="chromecast_subtitles_settings">Chromecast 字幕</string>
     <string name="chromecast_subtitles_settings_des">Chromecast 字幕设置</string>
-    <string name="eigengraumode_settings">倍速模式</string>
-    <string name="eigengraumode_settings_des">在播放器中添加播放速度选项</string>
+    <string name="eigengraumode_settings">播放速度</string>
     <string name="swipe_to_seek_settings">滑动控制进度</string>
     <string name="swipe_to_seek_settings_des">左右滑动以控制视频中的位置</string>
     <string name="swipe_to_change_settings">滑动更改设置</string>
@@ -162,7 +161,7 @@
     <string name="backup_failed">缺少存储权限，请重试。</string>
     <string name="backup_failed_error_format">备份 %s 出错</string>
     <string name="search">搜索</string>
-    <string name="category_account">账户</string>
+    <string name="category_account">账户安全</string>
     <string name="category_updates">更新与备份</string>
     <string name="settings_info">信息</string>
     <string name="advanced_search">高级搜索</string>
@@ -457,7 +456,9 @@
     <string name="plugins_disabled" formatted="true">已禁用：%d</string>
     <string name="plugins_not_downloaded" formatted="true">未下载：%d</string>
     <string name="plugins_updated" formatted="true">已更新 %d 插件</string>
-    <string name="blank_repo_message">CloudStream 默认不安装片源。您需要从仓库中安装片源。
+    <string name="blank_repo_message">CloudStream 默认不安装片源。您需要从仓库中安装片源。\t
+\n …「」『』­‐­­­‐–—
+\n\t
 \n
 \n由于 Sky UK Limited 的无脑 DMCA 下架 🤮 我们不能在应用内提供仓库链接。
 \n
@@ -569,9 +570,9 @@
     <string name="subscription_episode_released">第 %d 集已发布！</string>
     <string name="test_passed">成功</string>
     <string name="test_log">日志</string>
-    <string name="jsdelivr_proxy">raw.githubusercontent.com 代理</string>
+    <string name="jsdelivr_proxy">GitHub 代理</string>
     <string name="jsdelivr_enabled">无法访问 GitHub。正在开启 jsDelivr 代理…</string>
-    <string name="jsdelivr_proxy_summary">使用 jsDelivr 绕过 GitHub 的封锁。可能会延迟几天的更新。</string>
+    <string name="jsdelivr_proxy_summary">使用 jsDelivr 绕过 raw github URL 的封锁。可能会延迟几天的更新。</string>
     <string name="pref_category_bypass">ISP 绕过</string>
     <string name="revert">还原</string>
     <string name="watch_quality_pref_data">首选播放画质（移动数据）</string>
@@ -604,10 +605,50 @@
     <string name="duplicate_add">添加</string>
     <string name="duplicate_replace">替换</string>
     <string name="duplicate_replace_all">替换全部</string>
-    <string name="no_plugins_found_error">仓库中未找到插件</string>
+    <string name="no_plugins_found_error">仓库中未找到任何插件</string>
     <string name="rotate_video">旋转</string>
     <string name="auto_rotate_video">自动旋转</string>
     <string name="logged_account" formatted="true">以%s的身份登录</string>
     <string name="use_default_account">使用默认账户</string>
     <string name="automatic_plugin_download_mode_title">选择过滤插件的下载模式</string>
+    <string name="favorites_list_name">收藏夹</string>
+    <string name="action_remove_from_favorites">从收藏夹删除</string>
+    <string name="enter_current_pin">输入当前 PIN</string>
+    <string name="backup_frequency">自动备份频率</string>
+    <string name="no_repository_found_error">仓库未找到，请检查你的URL或尝试使用VPN</string>
+    <string name="unable_to_inflate">无法正确的创建用户界面，这是一个重大BUG，应立即报告%s</string>
+    <string name="already_voted">您已投票</string>
+    <string name="favorite_added">%s已添加到收藏夹</string>
+    <string name="favorite_removed">%s已从收藏夹中删除</string>
+    <string name="duplicate_message_single" formatted="true">您的资料库中似乎已经存在一个可能相同的项目：\'%s.\'
+\n
+\n您想添加该项目、替换现有项目还是取消操作？</string>
+    <string name="duplicate_message_multiple" formatted="true">在您的资料库中发现了潜在的重复项目：
+\n
+\n%s
+\n
+\n您想添加此项目、替换现有项目还是取消操作？</string>
+    <string name="enter_pin">确认PIN</string>
+    <string name="enter_pin_with_name" formatted="true">输入来自 %s 的 PIN 码</string>
+    <string name="lock_profile">锁定个人资料</string>
+    <string name="rotate_video_desc">显示屏幕方向切换按钮</string>
+    <string name="edit_account">编辑账户</string>
+    <string name="duplicate_title">发现潜在重复</string>
+    <string name="action_add_to_favorites">添加到收藏夹</string>
+    <string name="skip_startup_account_select_pref">启动时跳过账户选择</string>
+    <string name="auto_rotate_video_desc">根据视频方向自动切换屏幕方向</string>
+    <string name="subscribe_tooltip">新剧集通知</string>
+    <string name="result_search_tooltip">在其他扩展中搜索</string>
+    <string name="recommendations_tooltip">显示推荐</string>
+    <string name="speed_setting_summary">在播放器中添加速度选项</string>
+    <string name="biometric_unsupported">这台设备不支持生物验证</string>
+    <string name="unfavorite">不喜欢</string>
+    <string name="favorite">喜欢</string>
+    <string name="biometric_authentication_title">解锁 CloudStream</string>
+    <string name="biometric_setting">使用生物识别技术锁定</string>
+    <string name="password_pin_authentication_title">密码或 PIN 验证</string>
+    <string name="resume_remaining" formatted="true">%s 
+\n剩余</string>
+    <string name="test_extensions">测试所有扩展</string>
+    <string name="toast_copied">已复制！</string>
 </resources>

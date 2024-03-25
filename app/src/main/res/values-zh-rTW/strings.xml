@@ -138,7 +138,6 @@
     <string name="chromecast_subtitles_settings">Chromecast 字幕</string>
     <string name="chromecast_subtitles_settings_des">Chromecast 字幕設定</string>
     <string name="eigengraumode_settings">播放速度</string>
-    <string name="eigengraumode_settings_des">在播放器中添加播放速度選項</string>
     <string name="swipe_to_seek_settings">活動控制進度</string>
     <string name="swipe_to_seek_settings_des">從一側滑動到另一側以控制影片中的位置</string>
     <string name="swipe_to_change_settings">滑動更改設定</string>

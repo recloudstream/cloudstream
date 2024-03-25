@@ -40,7 +40,7 @@ import java.io.OutputStream
 import java.io.PrintWriter
 import java.lang.System.currentTimeMillis
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
 
 object BackupUtils {
 
@@ -68,7 +68,8 @@ object BackupUtils {
         DOWNLOAD_EPISODE_CACHE,
 
         "biometric_key", // can lock down users if backup is shared on a incompatible device
-        "nginx_user" // Nginx user key
+        "nginx_user", // Nginx user key
+        "download_path_key" // No access rights after restore data from backup
     )
 
     /** false if key should not be contained in backup */

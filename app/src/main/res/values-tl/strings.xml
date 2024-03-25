@@ -101,7 +101,6 @@
     <string name="player_subtitles_settings">Subtitles</string>
     <string name="player_subtitles_settings_des">Player subtitles settings</string>
     <string name="eigengraumode_settings">Eigengravy Mode</string>
-    <string name="eigengraumode_settings_des">Magdagdag ng \'speed option\' sa \'player\'</string>
     <string name="swipe_to_seek_settings">Swipe to seek</string>
     <string name="swipe_to_seek_settings_des">Swipe pakanan o pakaliwa upang makontrol ang oras ng pinapanood</string>
     <string name="swipe_to_change_settings">Swipe to change settings</string>

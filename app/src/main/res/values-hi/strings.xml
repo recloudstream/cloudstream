@@ -66,7 +66,6 @@
     <string name="picture_in_picture_des">अन्य ऐप्स के ऊपर एक लघु प्लेयर में प्लेबैक जारी रखता है</string>
     <string name="player_size_settings_des">काले बॉर्डर हटाएँ</string>
     <string name="player_subtitles_settings_des">प्लेयर उपशीर्षक सेटिंग्स</string>
-    <string name="eigengraumode_settings_des">प्लेयर में स्पीड विकल्प जोड़ता है</string>
     <string name="swipe_to_seek_settings_des">किसी वीडियो में अपनी स्थिति नियंत्रित करने के लिए एक ओर से दूसरी ओर स्वाइप करें</string>
     <string name="swipe_to_change_settings_des">चमक या वॉल्यूम बदलने के लिए बाईं या दाईं ओर ऊपर या नीचे स्लाइड करें</string>
     <string name="double_tap_to_seek_settings_des">आगे या पीछे करने के लिए दाईं या बाईं ओर दो बार टैप करें</string>
@@ -82,7 +81,7 @@
     <string name="discord">Discord से जुड़िये</string>
     <string name="benene">इस प्रोग्राम के निर्माता को केला दें</string>
     <string name="benene_des">केले दे दिए गए</string>
-    <string name="app_language">एप्प की भाषा</string>
+    <string name="app_language">ऍप की भाषा</string>
     <string name="no_chromecast_support_toast">यह प्रोवाइडर क्रोमकास्ट का समर्थन नहीं करता</string>
     <string name="no_links_found_toast">कोई लिंक नहीं मिले</string>
     <string name="copy_link_toast">लिंक क्लिपबोर्ड पर कॉपी किया गया</string>
@@ -105,7 +104,7 @@
     <string name="synopsis">सारांश</string>
     <string name="free_storage">ख़ाली</string>
     <string name="used_storage">इस्तेमाल में</string>
-    <string name="app_storage">एप्प</string>
+    <string name="app_storage">ऍप</string>
     <string name="movies">मूवीज</string>
     <string name="tv_series">टीवी सीरियल</string>
     <string name="cartoons">कार्टून</string>
@@ -192,4 +191,5 @@
     <string name="pin">पिन</string>
     <string name="links_reloaded_toast">लिंक पुन्ह खुली</string>
     <string name="enter_current_pin">वर्तमान पिन दर्ज करें</string>
+    <string name="stream">नेटवर्क स्ट्रीम</string>
 </resources>

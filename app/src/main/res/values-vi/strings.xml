@@ -124,7 +124,6 @@
     <string name="chromecast_subtitles_settings">Phụ đề Chromecast</string>
     <string name="chromecast_subtitles_settings_des">Cài đặt phụ đề Chromecast</string>
     <string name="eigengraumode_settings">Chỉnh tốc độ phim</string>
-    <string name="eigengraumode_settings_des">Có thể điều chỉnh tốc độ phát phim</string>
     <string name="swipe_to_seek_settings">Vuốt để tua nhanh</string>
     <string name="swipe_to_seek_settings_des">Vuốt sang trái hoặc phải để tua video</string>
     <string name="swipe_to_change_settings">Vuốt để chỉnh độ sáng và âm lượng</string>
@@ -309,7 +308,7 @@
     <string name="example_email">Email</string>
     <string name="example_ip">127.0.0.1</string>
     <string name="example_site_name">Địa chỉ trang web</string>
-    <string name="example_site_url">example.com</string>
+    <string name="example_site_url">https://example.com</string>
     <string name="example_lang_name">Mã ngôn ngữ (vi)</string>
     <string name="login_format" formatted="true">%1$s %2$s</string>
     <string name="account">tài khoản</string>
@@ -391,8 +390,8 @@
     <string name="subtitles_filter_lang">Lọc theo ngôn ngữ media được chuộng hơn</string>
     <string name="extras">Thêm</string>
     <string name="trailer">Xem trước</string>
-    <string name="network_adress_example">Liên kết trực tiếp</string>
-    <string name="referer">Đề xuất</string>
+    <string name="network_adress_example">https://example.com/example.mp4</string>
+    <string name="referer">Đề xuất (tuỳ chọn)</string>
     <string name="next">Tiếp theo</string>
     <string name="provider_languages_tip">Xem video bằng các ngôn ngữ này</string>
     <string name="previous">Trước đó</string>
@@ -422,8 +421,6 @@
     <string name="plugins_disabled" formatted="true">Đã vô hiệu: %d</string>
     <string name="plugins_not_downloaded" formatted="true">Không tải: %d</string>
     <string name="blank_repo_message">CloudStream không có sẵn trang web nào. Bạn cần cài đặt các trang web từ kho lưu trữ.
-\n
-\nDo Sky UK Limited đã gỡ xuống theo DMCA một cách thiếu suy nghĩ 🤮 chúng tôi không thể cài sẵn trang web.
 \n
 \nHãy tham gia Discord của chúng tôi hoặc tìm kiếm trực tuyến.</string>
     <string name="view_public_repositories_button">Xem kho lưu trữ của cộng đồng</string>
@@ -524,7 +521,7 @@
     <string name="test_passed">Thành công</string>
     <string name="start">Bắt đầu</string>
     <string name="category_provider_test">Kiểm tra nguồn phim</string>
-    <string name="jsdelivr_proxy">raw.githubusercontent.com Proxy</string>
+    <string name="jsdelivr_proxy">GitHub Proxy</string>
     <string name="jsdelivr_enabled">Không thể kết nối được tới GitHub. Đang bật jsDelivr proxy…</string>
     <string name="pref_category_android_tv">Android TV</string>
     <string name="restart">Khởi động lại</string>
@@ -599,4 +596,14 @@
     <string name="skip_startup_account_select_pref">Bỏ qua lựa chọn tài khoản khi khởi động</string>
     <string name="manage_accounts">Quản lý tài khoản</string>
     <string name="edit_account">Chỉnh sửa tài khoản</string>
+    <string name="links_reloaded_toast">Tải lại link</string>
+    <string name="result_search_tooltip">Tìm kiếm tiện ích khác</string>
+    <string name="recommendations_tooltip">Hiển thị đề xuất</string>
+    <string name="test_extensions">Kiểm tra nguồn phim</string>
+    <string name="rotate_video">Xoay</string>
+    <string name="subscribe_tooltip">Thông báo tập mới</string>
+    <string name="speed_setting_summary">Chỉnh tốc độ trong trình phát</string>
+    <string name="rotate_video_desc">Hiển thị nút xoay màn hình</string>
+    <string name="auto_rotate_video_desc">Kích hoạt chế độ xoay màn hình tự động</string>
+    <string name="auto_rotate_video">Tự động xoay</string>
 </resources>
