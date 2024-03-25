@@ -154,7 +154,7 @@ repositories {
 dependencies {
     // Testing
     testImplementation("junit:junit:4.13.2")
-    testImplementation("org.json:json:20231013")
+    testImplementation("org.json:json:20240303")
     androidTestImplementation("androidx.test:core")
     implementation("androidx.test.ext:junit-ktx:1.1.5")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
