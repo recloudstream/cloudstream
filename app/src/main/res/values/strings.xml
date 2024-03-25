@@ -249,7 +249,7 @@
     <string name="search">Search</string>
     <string name="library">Library</string>
     <string name="category_account">Accounts and Security</string>
-    <string name="category_updates">Updates and backup</string>
+    <string name="category_updates">Updates and Backup</string>
     <string name="settings_info">Info</string>
     <string name="advanced_search">Advanced Search</string>
     <string name="advanced_search_des">Gives you the search results separated by provider</string>
@@ -611,7 +611,7 @@
     <string name="tracks">Tracks</string>
     <string name="audio_tracks">Audio tracks</string>
     <string name="video_tracks">Video tracks</string>
-    <string name="apply_on_restart">Apply on Restart</string>
+    <string name="apply_on_restart">Restart the app to see changes.</string>
     <string name="restart">Restart</string>
     <string name="stop">Stop</string>
     <string name="safe_mode_title">Safe mode on</string>
