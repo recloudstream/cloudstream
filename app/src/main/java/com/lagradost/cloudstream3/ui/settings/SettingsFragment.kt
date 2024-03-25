@@ -8,7 +8,6 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.annotation.StringRes
 import androidx.core.view.children
-import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import androidx.preference.Preference
@@ -19,6 +18,7 @@ import com.lagradost.cloudstream3.BuildConfig
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.MainSettingsBinding
 import com.lagradost.cloudstream3.mvvm.logError
+import com.lagradost.cloudstream3.syncproviders.AccountManager
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.accountManagers
 import com.lagradost.cloudstream3.ui.home.HomeFragment
 import com.lagradost.cloudstream3.ui.result.txt
@@ -135,7 +135,6 @@ class SettingsFragment : Fragment() {
         val localBinding = MainSettingsBinding.inflate(inflater, container, false)
         binding = localBinding
         return localBinding.root
-        //return inflater.inflate(R.layout.main_settings, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -147,11 +146,25 @@ class SettingsFragment : Fragment() {
         showToast(activity,"${VideoDownloadManager.downloadStatusEvent.size} :
         ${VideoDownloadManager.downloadProgressEvent.size}") **/
 
-        // Check login status for each OAuth2API
-        val accountProfile = accountManagers.firstOrNull { it.loginInfo() != null }
+        fun hasProfilePictureFromAccountManagers(accountManagers: List<AccountManager>): Boolean {
+            for (syncApi in accountManagers) {
+                val login = syncApi.loginInfo()
+                val pic = login?.profilePicture ?: continue
 
-        // show local account image and pfp when not syncing with any api.
-        if (accountProfile == null) {
+                if (binding?.settingsProfilePic?.setImage(
+                        pic,
+                        errorImageDrawable = HomeFragment.errorProfilePic
+                    ) == true
+                ) {
+                    binding?.settingsProfileText?.text = login.name
+                    return true // sync profile exists
+                }
+            }
+            return false // not syncing
+        }
+
+        // display local account information if not syncing
+        if (!hasProfilePictureFromAccountManagers(accountManagers)) {
             val activity = activity ?: return
             val currentAccount = try {
                 DataStoreHelper.accounts.firstOrNull {
@@ -165,20 +178,6 @@ class SettingsFragment : Fragment() {
 
             binding?.settingsProfilePic?.setImage(currentAccount?.image)
             binding?.settingsProfileText?.text = currentAccount?.name
-        } else {
-            for (syncApi in accountManagers) {
-                val login = syncApi.loginInfo()
-                val pic = login?.profilePicture ?: continue
-                if (binding?.settingsProfilePic?.setImage(
-                        pic,
-                        errorImageDrawable = HomeFragment.errorProfilePic
-                    ) == true
-                ) {
-                    binding?.settingsProfileText?.text = login.name
-                    binding?.settingsProfile?.isVisible = true
-                    break
-                }
-            }
         }
 
         binding?.apply {
