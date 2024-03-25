@@ -121,7 +121,6 @@
     <string name="chromecast_subtitles_settings">Subtítulos de Chromecast</string>
     <string name="chromecast_subtitles_settings_des">Configuración de subtítulos de Chromecast</string>
     <string name="eigengraumode_settings">Modo Eigengravy</string>
-    <string name="eigengraumode_settings_des">Engadir a opción de velocidade no reprodutor</string>
     <string name="swipe_to_seek_settings">Deslice para avanzar/retroceder</string>
     <string name="swipe_to_seek_settings_des">Deslice o dedo de lado a lado para controlar a posición nun video</string>
     <string name="swipe_to_change_settings">Deslice para cambiar a configuración</string>

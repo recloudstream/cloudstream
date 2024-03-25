@@ -92,7 +92,7 @@
     <string name="loading">Laai tans…</string>
     <string name="app_subbed_text">Sub</string>
     <string name="action_remove_watching">Verwyder</string>
-    <string name="stream">Stroom</string>
+    <string name="stream">Netwerk stroom</string>
     <string name="type_on_hold">Op rus</string>
     <string name="app_name">CloudStream</string>
     <string name="home_play">Speel</string>
@@ -105,4 +105,5 @@
     <string name="search_provider_text_types">Soek met behulp van tipes</string>
     <string name="subs_import_text" formatted="true">Voer lettertipes in deur dit in %s te plaas</string>
     <string name="cast_format" formatted="true">Rolverdeling: %s</string>
+    <string name="subscribe_tooltip">Nuwe episode notifikasie</string>
 </resources>

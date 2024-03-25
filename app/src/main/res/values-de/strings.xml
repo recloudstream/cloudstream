@@ -69,7 +69,7 @@
     <string name="download_failed">Download fehlgeschlagen</string>
     <string name="download_canceled">Download abgebrochen</string>
     <string name="download_done">Download abgeschlossen</string>
-    <string name="stream">Stream</string>
+    <string name="stream">Netzwerk-Stream</string>
     <string name="error_loading_links_toast">Fehler beim Laden von Links</string>
     <string name="download_storage_text">Interner Speicher</string>
     <string name="app_dubbed_text">Dub</string>
@@ -129,8 +129,7 @@
     <string name="player_subtitles_settings_des">Player-Untertiteleinstellungen</string>
     <string name="chromecast_subtitles_settings">Chromecast-Untertitel</string>
     <string name="chromecast_subtitles_settings_des">Chromecast-Untertiteleinstellungen</string>
-    <string name="eigengraumode_settings">Eigengravy-Modus</string>
-    <string name="eigengraumode_settings_des">Fügt eine Geschwindigkeitsoption im Player hinzu</string>
+    <string name="eigengraumode_settings">Wiedergabegeschwindigkeit</string>
     <string name="swipe_to_seek_settings">Wischen zum vor- und zurückspulen</string>
     <string name="swipe_to_seek_settings_des">Nach links oder rechts wischen, um die Zeit im Videoplayer zu steuern</string>
     <string name="swipe_to_change_settings">Wischen, um Einstellungen zu ändern</string>
@@ -151,7 +150,7 @@
     <string name="restore_success">Sicherungsdatei geladen</string>
     <string name="backup_failed">Speicherberechtigungen fehlen. Bitte erneut versuchen.</string>
     <string name="search">Suche</string>
-    <string name="category_account">Konten</string>
+    <string name="category_account">Konten und Sicherheit</string>
     <string name="category_updates">Updates und Datensicherung</string>
     <string name="settings_info">Info</string>
     <string name="advanced_search">Erweiterte Suche</string>
@@ -285,11 +284,11 @@
     <string name="legal_notice">Haftungsausschluss</string>
     <string name="category_general">Allgemein</string>
     <string name="random_button_settings">Zufalls-Button</string>
-    <string name="random_button_settings_desc">Zeige Zufallsgenerator Schaltfläche auf der Startseite</string>
-    <string name="provider_lang_settings">Anbieter-Sprachen</string>
+    <string name="random_button_settings_desc">Zeige Knopf mit Zufallsgenerator auf Startseite und Bibliothek</string>
+    <string name="provider_lang_settings">Erweiterungssprachen</string>
     <string name="app_layout">App-Layout</string>
     <string name="preferred_media_settings">Bevorzugte Medien</string>
-    <string name="enable_nsfw_on_providers">NSFW bei unterstützten Anbietern aktivieren</string>
+    <string name="enable_nsfw_on_providers">NSFW bei unterstützten Erweiterungen aktivieren</string>
     <string name="subtitles_encoding">Untertitel-Kodierung</string>
     <string name="category_providers">Anbieter</string>
     <string name="category_ui">Layout</string>
@@ -302,11 +301,11 @@
     <string name="bottom_title_settings">Vorschaubildtitel Platzierung</string>
     <string name="bottom_title_settings_des">Titel unter Vorschaubild platzieren</string>
     <string name="example_password">passwort123</string>
-    <string name="example_username">MeinCoolerUsername</string>
+    <string name="example_username">Benutzername</string>
     <string name="example_email">hello@world.com</string>
     <string name="example_ip">127.0.0.1</string>
-    <string name="example_site_name">MeineCooleSeite</string>
-    <string name="example_site_url">example.com</string>
+    <string name="example_site_name">NeuerSeitenNamen</string>
+    <string name="example_site_url">https://example.com</string>
     <string name="example_lang_name">Sprachencode (en)</string>
     <string name="login_format" formatted="true">%1$s %2$s</string>
     <string name="account">Account</string>
@@ -381,8 +380,8 @@
     <string name="subtitles_filter_lang">Nach bevorzugter Mediensprache filtern</string>
     <string name="extras">Extras</string>
     <string name="trailer">Trailer</string>
-    <string name="network_adress_example">Link zum Stream</string>
-    <string name="referer">Referent</string>
+    <string name="network_adress_example">https://example.com/example.mp4</string>
+    <string name="referer">Referent (optional)</string>
     <string name="next">Weiter</string>
     <string name="provider_languages_tip">Videos in diesen Sprachen ansehen</string>
     <string name="previous">Vorherige</string>
@@ -412,8 +411,6 @@
     <string name="plugins_disabled" formatted="true">Deaktiviert: %d</string>
     <string name="plugins_not_downloaded" formatted="true">Nicht heruntergeladen: %d</string>
     <string name="blank_repo_message">CloudStream hat standardmäßig keine Websites installiert. Websites müssen aus Repositories installiert werden.
-\n
-\nAufgrund eines hirnlosen DMCA-Takedowns durch Sky UK Limited 🤮 können wir die Repository-Site nicht in der App verlinken.
 \n
 \nTrete unserem Discord Server bei oder suche online.</string>
     <string name="view_public_repositories_button">Community-Repositories anzeigen</string>
@@ -518,11 +515,11 @@
     <string name="start">Start</string>
     <string name="restart">Neustarten</string>
     <string name="watch_quality_pref_data">Bevorzugte Videoqualität (mobile Daten)</string>
-    <string name="jsdelivr_proxy_summary">Umgehung der GitHub Sperre mit jsdelivr. Kann zu einigen Tagen Verzögerung bei Updates führen.</string>
+    <string name="jsdelivr_proxy_summary">Umgehung der Sperre von GitHub-URLs mit jsdelivr. Kann zu einigen Tagen Verzögerung bei Updates führen.</string>
     <string name="subscription_new">%s abonniert</string>
     <string name="subscription_deleted">%s deabonniert</string>
     <string name="subscription_episode_released">Episode %d erschienen!</string>
-    <string name="jsdelivr_proxy">raw.githubusercontent.com Proxy</string>
+    <string name="jsdelivr_proxy">GitHub Proxy</string>
     <string name="jsdelivr_enabled">GitHub konnte nicht erreicht werden. Der jsDelivr-Proxy wird aktiviert …</string>
     <string name="subscription_in_progress_notification">Abonnierte Serien werden aktualisiert</string>
     <string name="revert">Rückgängig</string>
@@ -576,17 +573,38 @@
     <string name="skip_startup_account_select_pref">Kontoauswahl beim Starten überspringen</string>
     <string name="manage_accounts">Konten verwalten</string>
     <string name="edit_account">Konto bearbeiten</string>
-    <string name="duplicate_message_multiple" formatted="true">Es wurden potentielle Duplikate in ihrer Bibliothek gefunden:
+    <string name="duplicate_message_multiple" formatted="true">Es wurden potentielle Duplikate in deiner Bibliothek gefunden:
 \n
 \n%s
 \n
-\nWollen sie dieses Element trotzdem hinzufügen, das existierende Element ersetzen oder diese Aktion abbrechen?</string>
-    <string name="duplicate_message_single" formatted="true">Ihre Bibliothek enthält möglicherweise schon ein Duplikat dieses Elements: \'%s\'
+\nMöchtest du dieses Element dennoch hinzufügen, das existierende ersetzen oder diese Aktion abbrechen?</string>
+    <string name="duplicate_message_single" formatted="true">Deine Bibliothek enthält möglicherweise schon ein Duplikat dieses Elements: \'%s\'
 \n
-\nWollen sie dieses Element trotzdem hinzufügen, das existierende ersetzen oder diese Aktion abbrechen?</string>
+\nMöchtest du dieses Element dennoch hinzufügen, das existierende ersetzen oder diese Aktion abbrechen?</string>
     <string name="links_reloaded_toast">Links wurden neu geladen</string>
     <string name="rotate_video">Drehen</string>
     <string name="rotate_video_desc">Zeige einen Umschalter für Bildschirmorientierung an</string>
     <string name="auto_rotate_video">Automatisch drehen</string>
-    <string name="copyTitle">Titel kopiert!</string>
+    <string name="result_search_tooltip">In anderen Erweiterungen suchen</string>
+    <string name="recommendations_tooltip">Empfehlungen anzeigen</string>
+    <string name="speed_setting_summary">Fügt dem Player eine Geschwindigkeitsoption hinzu</string>
+    <string name="subscribe_tooltip">Benachrichtigung für neue Episoden</string>
+    <string name="auto_rotate_video_desc">Automatisches Umschalten der Bildschirmausrichtung basierend auf der Videoausrichtung aktivieren</string>
+    <string name="test_extensions">Teste alle Erweiterungen</string>
+    <string name="test_extensions_summary">Dieser Test ist nur für Entwickler gedacht und bestimmt nicht die Funktionsfähigkeit einer Erweiterung.</string>
+    <string name="biometric_authentication_title">Entsperre CloudStream</string>
+    <string name="biometric_setting">Sperre mit Biometric</string>
+    <string name="password_pin_authentication_title">Passwort/PIN Authentifizierung</string>
+    <string name="biometric_unsupported">Biometrische Authentifizierung wird auf diesem Gerät nicht unterstützt</string>
+    <string name="biometric_setting_summary">Entsperre die App via Fingerabdruck, FaceID, PIN, Muster und Passwort.</string>
+    <string name="unfavorite">kein Favorit</string>
+    <string name="biometric_prompt_description">Dieser Bildschirm wurde nach einigen Fehlversuchen geschlossen. Starte die App neu.</string>
+    <string name="biometric_warning">Ihre CloudStream-Daten wurden gesichert. Obwohl die Wahrscheinlichkeit dieses seltenen Falles sehr gering ist, verhalten sich alle Geräte unterschiedlich. Falls Sie im schlimmsten Fall den Zugriff zur App verlieren, löschen Sie die App-Daten vollständig und stellen Sie die Sicherung wieder her. Jegliche Unannehmlichkeiten, die Ihnen dadurch entstehen, bedauern wir sehr.</string>
+    <string name="resume_remaining" formatted="true">%s
+\nausstehend</string>
+    <string name="favorite">Favorit</string>
+    <string name="toast_copied">Kopiert!</string>
+    <string name="clipboard_unknown_error">Beim kopieren ist ein Fehler aufgetreten, bitte kopieren sie logical und wenden sich an den Support.</string>
+    <string name="clipboard_permission_error">Fehler beim zugriff auf die Zwischenablage, bitte erneut versuchen.</string>
+    <string name="repo_copy_label">Repository Name und URL</string>
 </resources>

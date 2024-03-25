@@ -52,6 +52,7 @@
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/title_settings"
             android:visibility="gone"
+            android:focusable="true"
             app:srcCompat="@drawable/ic_baseline_tune_24"
             tools:visibility="visible" />
 
@@ -61,6 +62,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical|end"
             android:layout_marginStart="16dp"
+            android:focusable="true"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:src="@drawable/ic_github_logo" />
     </LinearLayout>
@@ -81,6 +83,7 @@
                 style="@style/SmallBlackButton"
                 android:layout_gravity="center"
                 android:layout_marginStart="10dp"
+                android:focusable="false"
                 android:text="@string/extension_description" />
 
             <TextView
@@ -111,6 +114,7 @@
                 style="@style/SmallBlackButton"
                 android:layout_gravity="center"
                 android:layout_marginStart="10dp"
+                android:focusable="false"
                 android:text="@string/extension_authors" />
 
             <TextView
@@ -140,6 +144,7 @@
                 style="@style/SmallBlackButton"
                 android:layout_gravity="center"
                 android:layout_marginStart="10dp"
+                android:focusable="false"
                 android:text="@string/extension_version" />
 
             <TextView
@@ -169,6 +174,7 @@
                 style="@style/SmallBlackButton"
                 android:layout_gravity="center"
                 android:layout_marginStart="10dp"
+                android:focusable="false"
                 android:text="@string/extension_status" />
 
             <TextView
@@ -198,6 +204,7 @@
                 style="@style/SmallBlackButton"
                 android:layout_gravity="center"
                 android:layout_marginStart="10dp"
+                android:focusable="false"
                 android:text="@string/extension_size" />
 
             <TextView
@@ -228,6 +235,7 @@
                 style="@style/SmallBlackButton"
                 android:layout_gravity="center"
                 android:layout_marginStart="10dp"
+                android:focusable="false"
                 android:text="@string/extension_types" />
 
             <TextView
@@ -258,6 +266,7 @@
                 style="@style/SmallBlackButton"
                 android:layout_gravity="center"
                 android:layout_marginStart="10dp"
+                android:focusable="false"
                 android:text="@string/extension_language" />
 
             <TextView
@@ -305,6 +314,7 @@
             android:layout_marginEnd="32dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:src="@drawable/ic_baseline_thumb_up_24"
+            android:focusable="true"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/plugin_votes"

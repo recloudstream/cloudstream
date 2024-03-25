@@ -23,7 +23,10 @@ import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.utils.BiometricAuthenticator
+import com.lagradost.cloudstream3.utils.BiometricAuthenticator.biometricPrompt
 import com.lagradost.cloudstream3.utils.BiometricAuthenticator.deviceHasPasswordPinLock
+import com.lagradost.cloudstream3.utils.BiometricAuthenticator.isAuthEnabled
+import com.lagradost.cloudstream3.utils.BiometricAuthenticator.promptInfo
 import com.lagradost.cloudstream3.utils.BiometricAuthenticator.startBiometricAuthentication
 import com.lagradost.cloudstream3.utils.DataStoreHelper.accounts
 import com.lagradost.cloudstream3.utils.DataStoreHelper.selectedKeyIndex
@@ -48,7 +51,6 @@ class AccountSelectActivity : AppCompatActivity(), BiometricAuthenticator.Biomet
         )
 
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
-        val authEnabled = settingsManager.getBoolean(getString(R.string.biometric_key), false)
         val skipStartup = settingsManager.getBoolean(getString(R.string.skip_startup_account_select_key), false
         ) || accounts.count() <= 1
 
@@ -56,7 +58,7 @@ class AccountSelectActivity : AppCompatActivity(), BiometricAuthenticator.Biomet
 
         fun askBiometricAuth() {
 
-            if (isLayout(PHONE) && authEnabled) {
+            if (isLayout(PHONE) && isAuthEnabled(this)) {
                 if (deviceHasPasswordPinLock(this)) {
                     startBiometricAuthentication(
                         this,
@@ -64,8 +66,8 @@ class AccountSelectActivity : AppCompatActivity(), BiometricAuthenticator.Biomet
                         false
                     )
 
-                    BiometricAuthenticator.promptInfo?.let { promt ->
-                        BiometricAuthenticator.biometricPrompt?.authenticate(promt)
+                    promptInfo?.let { prompt ->
+                        biometricPrompt?.authenticate(prompt)
                     }
                 }
             }
@@ -188,5 +190,9 @@ class AccountSelectActivity : AppCompatActivity(), BiometricAuthenticator.Biomet
 
     override fun onAuthenticationSuccess() {
        Log.i(BiometricAuthenticator.TAG,"Authentication successful in AccountSelectActivity")
+    }
+
+    override fun onAuthenticationError() {
+        finish()
     }
 }
