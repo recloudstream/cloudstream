@@ -1,10 +1,7 @@
 package com.lagradost.cloudstream3.mvvm
 
-import android.util.Log
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.LiveData
-import com.bumptech.glide.load.HttpException
-import com.lagradost.cloudstream3.BuildConfig
+import com.lagradost.api.BuildConfig
+import com.lagradost.api.Log
 import com.lagradost.cloudstream3.ErrorLoadingException
 import kotlinx.coroutines.*
 import java.io.InterruptedIOException
@@ -47,18 +44,6 @@ inline fun debugWarning(assert: () -> Boolean, message: () -> String) {
     if (BuildConfig.DEBUG && assert.invoke()) {
         logError(DebugException(message.invoke()))
     }
-}
-
-/** NOTE: Only one observer at a time per value */
-fun <T> LifecycleOwner.observe(liveData: LiveData<T>, action: (t: T) -> Unit) {
-    liveData.removeObservers(this)
-    liveData.observe(this) { it?.let { t -> action(t) } }
-}
-
-/** NOTE: Only one observer at a time per value */
-fun <T> LifecycleOwner.observeNullable(liveData: LiveData<T>, action: (t: T) -> Unit) {
-    liveData.removeObservers(this)
-    liveData.observe(this) { action(it) }
 }
 
 sealed class Resource<out T> {
@@ -158,14 +143,14 @@ fun<T> throwAbleToResource(
                 "Connection Timeout\nPlease try again later."
             )
         }
-        is HttpException -> {
-            Resource.Failure(
-                false,
-                throwable.statusCode,
-                null,
-                throwable.message ?: "HttpException"
-            )
-        }
+//        is HttpException -> {
+//            Resource.Failure(
+//                false,
+//                throwable.statusCode,
+//                null,
+//                throwable.message ?: "HttpException"
+//            )
+//        }
         is UnknownHostException -> {
             Resource.Failure(true, null, null, "Cannot connect to server, try again later.\n${throwable.message}")
         }
