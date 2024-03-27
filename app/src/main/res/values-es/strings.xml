@@ -281,7 +281,7 @@
     <string name="skip_setup">Omitir configuración</string>
     <string name="preferred_media_subtext">Qué quieres ver</string>
     <string name="uppercase_all_subtitles">Poner en MAYÚSCULAS todos los subtítulos</string>
-    <string name="apply_on_restart">Se aplicarán los cambios al reiniciar la App</string>
+    <string name="apply_on_restart">Se aplicarán los cambios al reiniciar la App.</string>
     <string name="player_settings_play_in_app">Reproductor interno</string>
     <string name="extension_language">Idioma</string>
     <string name="apk_installer_legacy">Legacy (método antiguo)</string>
@@ -609,4 +609,12 @@
     <string name="toast_copied">¡Copiado!</string>
     <string name="clipboard_unknown_error">Error al copiar. Por favor, copie el logcat y comuníquese con el soporte de la aplicación.</string>
     <string name="clipboard_permission_error">Error al acceder al portapapeles. Inténtelo de nuevo.</string>
+    <string name="ok">De acuerdo</string>
+    <string name="battery_dialog_title">Desactivar optimización de batería</string>
+    <string name="music_singlar">Música</string>
+    <string name="app_unrestricted_toast">El uso de la batería de la aplicación está configurado sin restricciones</string>
+    <string name="app_info_intent_error">No se puede abrir la información de la aplicación CloudStream.</string>
+    <string name="custom_media_singluar">Media</string>
+    <string name="audio_book_singular">Audiolibro</string>
+    <string name="battery_dialog_message">Para garantizar descargas y notificaciones ininterrumpidas para programas de televisión suscritos, CloudStream necesita permiso para ejecutarse en segundo plano. Al presionar OK, se le dirigirá a información de la aplicación. Allí, desplácese hasta Uso de la batería de la aplicación y establezca el uso de la batería en Sin restricciones. Tenga en cuenta que este permiso no significa que CS3 agotará su batería. Solo funcionará en segundo plano cuando sea necesario, como cuando reciba notificaciones o descargue videos de extensiones oficiales. Si decide cancelar, puede ajustar esta configuración más adelante en los ajustes generales.</string>
 </resources>

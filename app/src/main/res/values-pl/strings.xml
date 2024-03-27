@@ -137,7 +137,7 @@
     <string name="backup_failed_error_format">Błąd tworzenia kopii zapasowej %s</string>
     <string name="search">Szukaj</string>
     <string name="category_account">Konta i zabezpieczenia</string>
-    <string name="category_updates">Aktualizacje i kopia zapasowa</string>
+    <string name="category_updates">Aktualizacje i kopie zapasowe</string>
     <string name="settings_info">Informacje</string>
     <string name="advanced_search">Zaawansowane wyszukiwanie</string>
     <string name="advanced_search_des">Szukaj z podziałem na źródła</string>
@@ -278,7 +278,7 @@
     <string name="random_button_settings_desc">Pokaż przycisk do losowania na stronie głównej i w bibliotece</string>
     <string name="provider_lang_settings">Języki rozszerzeń</string>
     <string name="app_layout">Układ aplikacji</string>
-    <string name="preferred_media_settings">Preferowane media</string>
+    <string name="preferred_media_settings">Preferowane multimedia</string>
     <string name="enable_nsfw_on_providers">Włącz NSFW w obsługiwanych rozszerzeniach</string>
     <string name="subtitles_encoding">Kodowanie napisów</string>
     <string name="category_providers">Źródła</string>
@@ -405,7 +405,7 @@
     <string name="tracks">Ścieżki</string>
     <string name="audio_tracks">Ścieżki audio</string>
     <string name="video_tracks">Ścieżki wideo</string>
-    <string name="apply_on_restart">Zastosuj po ponownym uruchomieniu</string>
+    <string name="apply_on_restart">Uruchom ponownie aplikację, aby zobaczyć zmiany.</string>
     <string name="safe_mode_title">Tryb bezpieczny włączony</string>
     <string name="safe_mode_description">Z powodu wystąpienia błędu wszystkie rozszerzenia zostały wyłączone, aby ułatwić wykrycie tego wadliwego.</string>
     <string name="safe_mode_crash_info">Wyświetl informacje o błędzie</string>
@@ -610,4 +610,12 @@
     <string name="clipboard_permission_error">Błąd dostępu do schowka. Spróbuj ponownie.</string>
     <string name="toast_copied">skopiowano!</string>
     <string name="clipboard_unknown_error">Błąd podczas kopiowania. Skopiuj logcat i skontaktuj się z pomocą techniczną aplikacji.</string>
+    <string name="battery_dialog_title">Wyłącz optymalizację akumulatora</string>
+    <string name="app_info_intent_error">Nie można otworzyć informacji o aplikacji CloudStream.</string>
+    <string name="music_singlar">Muzyka</string>
+    <string name="audio_book_singular">Audiobook</string>
+    <string name="ok">OK</string>
+    <string name="custom_media_singluar">Multimedia</string>
+    <string name="app_unrestricted_toast">Użycie akumulatora przez aplikację jest już ustawione na nieograniczone</string>
+    <string name="battery_dialog_message">Aby zapewnić nieprzerwane pobieranie i powiadomienia o subskrybowanych programach telewizyjnych, CloudStream potrzebuje pozwolenia na działanie w tle. Naciskając OK, zostaniesz przekierowany do informacji o aplikacji. Tam przewiń do użycia akumulatora przez aplikację i ustaw je na nieograniczone. Pamiętaj, że to pozwolenie nie oznacza, że CS3 będzie zużywać akumulator. Będzie działać w tle tylko wtedy, gdy będzie to konieczne, na przykład podczas odbierania powiadomień lub pobierania filmów z oficjalnych rozszerzeń. Jeśli zdecydujesz się anulować, możesz dostosować to ustawienie później w ustawieniach głównych.</string>
 </resources>
