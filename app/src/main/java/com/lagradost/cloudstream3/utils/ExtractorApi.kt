@@ -218,7 +218,7 @@ import com.lagradost.cloudstream3.extractors.Zplayer
 import com.lagradost.cloudstream3.extractors.ZplayerV2
 import com.lagradost.cloudstream3.extractors.Ztreamhub
 import com.lagradost.cloudstream3.extractors.EPlay
-import com.lagradost.cloudstream3.extractors.vtbe
+import com.lagradost.cloudstream3.extractors.Vtbe
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import kotlinx.coroutines.delay
@@ -867,7 +867,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     VidhideExtractor(),
     StreamWishExtractor(),
     EmturbovidExtractor(),
-    vtbe(),
+    Vtbe(),
     EPlay()
 )
 
