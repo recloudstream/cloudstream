@@ -8,7 +8,7 @@ import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
 
 open class EPlayExtractor : ExtractorApi() {
     override var name = "EPlay"
-    override var mainUrl = "https://eplayvid.net/"
+    override var mainUrl = "https://eplayvid.net"
     override val requiresReferer = true
 
     override suspend fun getUrl(url: String, referer: String?): List<ExtractorLink>? {
