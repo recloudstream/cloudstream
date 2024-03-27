@@ -821,6 +821,8 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     Streamplay(),
     Vidmoly(),
     Vidmolyme(),
+    Vtbe(),
+    EPlay(),
     Voe(),
     Tubeless(),
     Moviehab(),
