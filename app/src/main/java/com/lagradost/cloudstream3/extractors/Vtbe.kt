@@ -14,8 +14,8 @@ import java.net.URI
 import com.lagradost.cloudstream3.utils.JsUnpacker
 
 
-open class vtbe : ExtractorApi() {
-    override var name = "vtbe"
+open class Vtbe : ExtractorApi() {
+    override var name = "Vtbe"
     override var mainUrl = "https://vtbe.to"
     override val requiresReferer = true
 
