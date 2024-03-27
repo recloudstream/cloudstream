@@ -11,7 +11,6 @@ import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.Qualities
 import com.lagradost.cloudstream3.utils.getQualityFromName
 import java.net.URI
-import com.lagradost.cloudstream3.utils.JsUnpacker
 
 
 open class Vtbe : ExtractorApi() {
