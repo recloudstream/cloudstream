@@ -162,7 +162,7 @@
     <string name="backup_failed_error_format">%s yedeklenirken hata</string>
     <string name="search">Ara</string>
     <string name="category_account">Hesaplar ve Güvenlik</string>
-    <string name="category_updates">Güncellemeler ve yedekleme</string>
+    <string name="category_updates">Güncellemeler ve Yedekleme</string>
     <string name="settings_info">Bilgi</string>
     <string name="advanced_search">Gelişmiş arama</string>
     <string name="advanced_search_des">Arama sonuçlarını sağlayıcıya göre ayırır</string>
@@ -466,7 +466,7 @@
     <string name="tracks">Parçalar</string>
     <string name="audio_tracks">Ses parçaları</string>
     <string name="video_tracks">Video parçaları</string>
-    <string name="apply_on_restart">Yeniden başlatmada uygula</string>
+    <string name="apply_on_restart">Değişiklikleri görmek için uygulamayı yeniden başlatın.</string>
     <string name="safe_mode_title">Güvenli mod açık</string>
     <string name="safe_mode_description">Çöküşe neden olan eklentiyi bulmaya yardımcı olabilmek için tüm eklentiler kapatıldı.</string>
     <string name="safe_mode_crash_info">Çökme bilgisini göster</string>
@@ -656,4 +656,12 @@
     <string name="toast_copied">kopyalandı!</string>
     <string name="clipboard_permission_error">Panoya erişimde hata oluştu. Lütfen tekrar deneyin.</string>
     <string name="clipboard_unknown_error">Kopyalama hatası. Lütfen logcat\'i kopyalayın ve uygulama desteğiyle iletişime geçin.</string>
+    <string name="ok">Tamam</string>
+    <string name="battery_dialog_title">Pil optimizasyonunu devre dışı bırak</string>
+    <string name="app_info_intent_error">CloudStream\'in Uygulama bilgileri açılamıyor.</string>
+    <string name="music_singlar">Müzik</string>
+    <string name="audio_book_singular">Sesli Kitap</string>
+    <string name="custom_media_singluar">Medya</string>
+    <string name="battery_dialog_message">Abone olunan TV şovları için kesintisiz indirmeleri ve bildirimleri sağlamak için, CloudStream\'in arka planda çalışmasına izin vermeniz gerekmektedir. Tamam\'a basarak Uygulama bilgilerine yönlendirileceksiniz. Orada, 𝘼𝙥𝙥 𝙗𝙖𝙩𝙩𝙚𝙧𝙮 𝙪𝙨𝙖𝙜𝙚 (Uygulama pil kullanımı) kısmına gidip pil kullanımını 𝙐𝙣𝙧𝙚𝙨𝙩𝙧𝙞𝙘𝙩𝙚𝙙 (Sınırsız) olarak ayarlayın. Bu iznin CS3\'ün pilinizi hızlıca tüketeceği anlamına gelmediğini lütfen unutmayın. Sadece gerektiğinde, resmi eklentilerden bildirim almak veya videoları indirmek gibi durumlarda arka planda çalışacaktır. İptal etmeyi seçerseniz, bu ayarı daha sonra 𝙂𝙚𝙣𝙚𝙧𝙖𝙡 𝙎𝙚𝙩𝙩𝙞𝙣𝙜𝙨 (Genel Ayarlar) bölümünden ayarlayabilirsiniz.</string>
+    <string name="app_unrestricted_toast">Uygulama pil kullanımı zaten sınırsız olarak ayarlanmış</string>
 </resources>

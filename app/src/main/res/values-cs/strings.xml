@@ -383,7 +383,7 @@
     <string name="plugins_downloaded" formatted="true">Staženo: %d</string>
     <string name="audio_tracks">Zvukové stopy</string>
     <string name="video_tracks">Videostopy</string>
-    <string name="apply_on_restart">Použít při restartu</string>
+    <string name="apply_on_restart">Restartujte aplikaci pro použití změn.</string>
     <string name="safe_mode_title">Bezpečný režim povolen</string>
     <string name="extension_size">Velikost</string>
     <string name="extension_authors">Autoři</string>
@@ -633,4 +633,12 @@
     <string name="clipboard_unknown_error">Chyba při kopírování, zkopírujte prosím protokol a kontaktujte podporu aplikace.</string>
     <string name="toast_copied">Zkopírováno!</string>
     <string name="clipboard_permission_error">Chyba při přístupu ke schránce, zkuste to prosím znovu.</string>
+    <string name="ok">OK</string>
+    <string name="app_unrestricted_toast">Využití baterie aplikací je již nastaveno na neomezené</string>
+    <string name="app_info_intent_error">Nepodařilo se otevřít informace o aplikaci CloudStream.</string>
+    <string name="music_singlar">Hudba</string>
+    <string name="custom_media_singluar">Média</string>
+    <string name="battery_dialog_title">Zakažte optimalizace baterie</string>
+    <string name="battery_dialog_message">Aby bylo zajištěno nepřetržité stahování a upozornění na odebírané seriály, potřebuje aplikace CloudStream povolení ke spuštění na pozadí. Stisknutím tlačítka OK budete přesměrováni na informace o aplikaci. Tam přejděte na položku Využití baterie aplikací a nastavte možnost Využití baterie na hodnotu Neomezené. Upozorňujeme, že toto povolení neznamená, že CS3 bude vybíjet baterii. Na pozadí bude pracovat pouze v případě potřeby, například při přijímání oznámení nebo stahování videí z oficiálních rozšíření. Pokud se rozhodnete toto nastavení zrušit, můžete jej později upravit v Obecných nastaveních.</string>
+    <string name="audio_book_singular">Audiokniha</string>
 </resources>
