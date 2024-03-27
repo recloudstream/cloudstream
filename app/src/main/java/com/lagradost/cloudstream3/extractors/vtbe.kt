@@ -21,9 +21,7 @@ open class vtbe : ExtractorApi() {
 
     override suspend fun getUrl(url: String, referer: String?): List<ExtractorLink>? {
         val response = app.get(url,referer=mainUrl).document
-        //println(response)
         val extractedpack =response.selectFirst("script:containsData(function(p,a,c,k,e,d))")?.data().toString()
-        //val unpacked= getAndUnpack(extractedpack)
         println(extractedpack)
             JsUnpacker(extractedpack).unpack()?.let { unPacked ->
                 Regex("sources:\\[\\{file:\"(.*?)\"").find(unPacked)?.groupValues?.get(1)?.let { link ->
