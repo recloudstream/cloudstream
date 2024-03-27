@@ -866,8 +866,8 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     Megacloud(),
     VidhideExtractor(),
     StreamWishExtractor(),
-    EmturbovidExtractor()
-    vtbe()
+    EmturbovidExtractor(),
+    vtbe(),
     EPlay()
 )
 
