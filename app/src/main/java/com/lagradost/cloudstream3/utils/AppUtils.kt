@@ -62,7 +62,6 @@ import com.lagradost.cloudstream3.syncproviders.providers.Kitsu
 import com.lagradost.cloudstream3.ui.WebviewFragment
 import com.lagradost.cloudstream3.ui.result.ResultFragment
 import com.lagradost.cloudstream3.ui.settings.Globals
-import com.lagradost.cloudstream3.ui.settings.extensions.PluginsViewModel.Companion.downloadAll
 import com.lagradost.cloudstream3.ui.settings.extensions.RepositoryData
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.main
@@ -386,7 +385,7 @@ object AppUtils {
                 )
             }
             afterRepositoryLoadedEvent.invoke(true)
-            downloadAllPluginsDialog(url, repo.name)
+            addRepositoryDialog(repo.name)
         }
     }
 
@@ -429,24 +428,17 @@ object AppUtils {
         }
     }
 
+    fun Activity.addRepositoryDialog(repositoryName: String) {
+        val message = String.format(resources.getString(
+            R.string.download_all_plugins_from_repo), repositoryName)
 
-    fun Activity.downloadAllPluginsDialog(repositoryUrl: String, repositoryName: String) {
         runOnUiThread {
-            val context = this
             val builder: AlertDialog.Builder = AlertDialog.Builder(this)
-            builder.setTitle(
-                repositoryName
-            )
-            builder.setMessage(
-                R.string.download_all_plugins_from_repo
-            )
-            builder.apply {
-                setPositiveButton(R.string.download) { _, _ ->
-                    downloadAll(context, repositoryUrl, null)
-                }
 
-                setNegativeButton(R.string.no) { _, _ -> }
-            }
+            builder.setTitle(repositoryName)
+            builder.setMessage(message)
+            builder.setPositiveButton(R.string.ok, null)
+            builder.setCancelable(false)
             builder.show().setDefaultFocus()
         }
     }
