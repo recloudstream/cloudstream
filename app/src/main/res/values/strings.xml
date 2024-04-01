@@ -606,7 +606,7 @@
     <string name="view_public_repositories_button">View community repositories</string>
     <string name="view_public_repositories_button_short">Public list</string>
     <string name="uppercase_all_subtitles">Uppercase all subtitles</string>
-    <string name="download_all_plugins_from_repo">%1$s has been added. You can install you desired extensions from 𝗦𝗲𝘁𝘁𝗶𝗻𝗴𝘀 > 𝗘𝘅𝘁𝗲𝗻𝘀𝗶𝗼𝗻𝘀 > %1$s.
+    <string name="download_all_plugins_from_repo">%1$s has been added. You can install your desired extensions from 𝗦𝗲𝘁𝘁𝗶𝗻𝗴𝘀 > 𝗘𝘅𝘁𝗲𝗻𝘀𝗶𝗼𝗻𝘀 > %1$s.
         CloudStream 3 does not takes any responsibility for using third-party extensions neither provides support for them.</string>
     <string name="single_plugin_disabled" formatted="true">%s (Disabled)</string>
     <string name="tracks">Tracks</string>
