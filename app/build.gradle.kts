@@ -13,6 +13,7 @@ plugins {
 
 val tmpFilePath = System.getProperty("user.home") + "/work/_temp/keystore/"
 val prereleaseStoreFile: File? = File(tmpFilePath).listFiles()?.first()
+var isLibraryDebug = false
 
 fun String.execute() = ByteArrayOutputStream().use { baot ->
     if (project.exec {
@@ -103,6 +104,7 @@ android {
             )
         }
         debug {
+            isLibraryDebug = true
             isDebuggable = true
             applicationIdSuffix = ".debug"
             proguardFiles(
@@ -233,7 +235,9 @@ dependencies {
     implementation("androidx.work:work-runtime-ktx:2.9.0")
     implementation("com.github.Blatzar:NiceHttp:0.4.11") // HTTP Lib
 
-    implementation(project(":library"))
+    implementation(project(":library") {
+        this.extra.set("isDebug", isLibraryDebug)
+    })
 }
 
 tasks.register("androidSourcesJar", Jar::class) {

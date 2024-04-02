@@ -1,7 +1,10 @@
+import com.codingfeline.buildkonfig.compiler.FieldSpec
+
 plugins {
     kotlin("multiplatform")
     id("maven-publish")
     id("com.android.library")
+    id("com.codingfeline.buildkonfig")
 }
 
 kotlin {
@@ -26,6 +29,16 @@ repositories {
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
     kotlinOptions.jvmTarget = JavaVersion.VERSION_1_8.toString()
+}
+
+buildkonfig {
+    packageName = "com.lagradost.api"
+    exposeObjectWithName = "BuildConfig"
+
+    defaultConfigs {
+        val isDebug = kotlin.runCatching { extra.get("isDebug") }.getOrNull() == true
+        buildConfigField(FieldSpec.Type.BOOLEAN, "DEBUG", isDebug.toString())
+    }
 }
 
 android {
