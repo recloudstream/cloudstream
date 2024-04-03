@@ -134,7 +134,7 @@ import com.lagradost.cloudstream3.utils.AppUtils.loadSearchResult
 import com.lagradost.cloudstream3.utils.AppUtils.setDefaultFocus
 import com.lagradost.cloudstream3.utils.BackupUtils.backup
 import com.lagradost.cloudstream3.utils.BackupUtils.setUpBackup
-import com.lagradost.cloudstream3.utils.BiometricAuthenticator
+import com.lagradost.cloudstream3.utils.BiometricAuthenticator.BiometricCallback
 import com.lagradost.cloudstream3.utils.BiometricAuthenticator.biometricPrompt
 import com.lagradost.cloudstream3.utils.BiometricAuthenticator.deviceHasPasswordPinLock
 import com.lagradost.cloudstream3.utils.BiometricAuthenticator.isAuthEnabled
@@ -294,8 +294,7 @@ var app = Requests(responseParser = object : ResponseParser {
     defaultHeaders = mapOf("user-agent" to USER_AGENT)
 }
 
-class MainActivity : AppCompatActivity(), ColorPickerDialogListener,
-    BiometricAuthenticator.BiometricAuthCallback {
+class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCallback {
     companion object {
         const val TAG = "MAINACT"
         const val ANIMATED_OUTLINE: Boolean = false

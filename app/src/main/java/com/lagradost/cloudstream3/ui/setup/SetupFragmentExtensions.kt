@@ -123,6 +123,4 @@ class SetupFragmentExtensions : Fragment() {
             }
         }
     }
-
-
 }

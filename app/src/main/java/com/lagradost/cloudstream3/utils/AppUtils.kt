@@ -62,6 +62,9 @@ import com.lagradost.cloudstream3.syncproviders.providers.Kitsu
 import com.lagradost.cloudstream3.ui.WebviewFragment
 import com.lagradost.cloudstream3.ui.result.ResultFragment
 import com.lagradost.cloudstream3.ui.settings.Globals
+import com.lagradost.cloudstream3.ui.settings.SettingsFragment
+import com.lagradost.cloudstream3.ui.settings.extensions.ExtensionsFragment
+import com.lagradost.cloudstream3.ui.settings.extensions.PluginsFragment
 import com.lagradost.cloudstream3.ui.settings.extensions.RepositoryData
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.main
@@ -385,7 +388,7 @@ object AppUtils {
                 )
             }
             afterRepositoryLoadedEvent.invoke(true)
-            addRepositoryDialog(repo.name)
+            addRepositoryDialog(repo.name, false)
         }
     }
 
@@ -428,18 +431,36 @@ object AppUtils {
         }
     }
 
-    fun Activity.addRepositoryDialog(repositoryName: String) {
+    fun Activity.addRepositoryDialog(repositoryName: String, isExtensionsFragment: Boolean) {
         val message = String.format(resources.getString(
             R.string.download_all_plugins_from_repo), repositoryName)
+        val repos = RepositoryManager.getRepositories()
+
+        // navigate to newly added repository on pressing OK
+        fun openAddedRepo() {
+            // don't redirect if user is adding from add repo button
+            if (!isExtensionsFragment && repos.isNotEmpty()) {
+                normalSafeApiCall { navigate(
+                        R.id.navigation_home_to_navigation_settings_plugins,
+                        PluginsFragment.newInstance(
+                            repositoryName,
+                            repos.last().url,
+                            false))
+                }
+            }
+        }
 
         runOnUiThread {
-            val builder: AlertDialog.Builder = AlertDialog.Builder(this)
-
-            builder.setTitle(repositoryName)
-            builder.setMessage(message)
-            builder.setPositiveButton(R.string.ok, null)
-            builder.setCancelable(false)
-            builder.show().setDefaultFocus()
+            val builder : AlertDialog.Builder = AlertDialog.Builder(this)
+                builder.apply {
+                    setTitle(repositoryName)
+                    setMessage(message)
+                    setPositiveButton(R.string.ok) { _, _ ->
+                        openAddedRepo()
+                    }
+                    setCancelable(false)
+                    show().setDefaultFocus()
+                }
         }
     }
 

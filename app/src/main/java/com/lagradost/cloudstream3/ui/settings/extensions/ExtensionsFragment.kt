@@ -273,7 +273,9 @@ class ExtensionsFragment : Fragment() {
                         if (plugins.isNullOrEmpty()) {
                             showToast(R.string.no_plugins_found_error, Toast.LENGTH_LONG)
                         } else {
-                            this@ExtensionsFragment.activity?.addRepositoryDialog(fixedName)
+                            this@ExtensionsFragment.activity?.addRepositoryDialog(
+                                fixedName, true
+                            )
                         }
                     }
                 }
