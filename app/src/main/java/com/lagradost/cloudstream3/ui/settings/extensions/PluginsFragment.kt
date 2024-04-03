@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.lagradost.cloudstream3.APIHolder.getApiProviderLangSettings
 import com.lagradost.cloudstream3.AllLanguagesName
+import com.lagradost.cloudstream3.BuildConfig
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.databinding.FragmentPluginsBinding
@@ -70,6 +71,8 @@ class PluginsFragment : Fragment() {
         val name = arguments?.getString(PLUGINS_BUNDLE_NAME)
         val url = arguments?.getString(PLUGINS_BUNDLE_URL)
         val isLocal = arguments?.getBoolean(PLUGINS_BUNDLE_LOCAL) == true
+        // download all extensions button
+        val downloadAllButton = binding?.settingsToolbar?.menu?.findItem(R.id.download_all)
 
         if (url == null || name == null) {
             activity?.onBackPressedDispatcher?.onBackPressed()
@@ -171,7 +174,7 @@ class PluginsFragment : Fragment() {
 
         if (isLocal) {
             // No download button and no categories on local
-            binding?.settingsToolbar?.menu?.findItem(R.id.download_all)?.isVisible = false
+            downloadAllButton?.isVisible = false
             binding?.settingsToolbar?.menu?.findItem(R.id.lang_filter)?.isVisible = false
             pluginViewModel.updatePluginListLocal()
 
@@ -179,6 +182,10 @@ class PluginsFragment : Fragment() {
         } else {
             pluginViewModel.updatePluginList(context, url)
             binding?.tvtypesChipsScroll?.root?.isVisible = true
+            // not needed for users but may be useful for devs
+            downloadAllButton?.isVisible = BuildConfig.DEBUG
+
+
 
             bindChips(
                 binding?.tvtypesChipsScroll?.tvtypesChips,

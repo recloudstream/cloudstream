@@ -21,5 +21,6 @@
         android:id="@+id/download_all"
         android:icon="@drawable/netflix_download"
         android:title="@string/batch_download"
-        app:showAsAction="collapseActionView|ifRoom" />
+        app:showAsAction="collapseActionView|ifRoom"
+        android:visible="false"/>
 </menu>
