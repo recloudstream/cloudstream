@@ -8,6 +8,7 @@ plugins {
 }
 
 kotlin {
+    version = "1.0.0"
     androidTarget()
     jvm()
 
@@ -58,14 +59,10 @@ android {
         targetCompatibility = JavaVersion.VERSION_1_8
     }
 }
-
-//publishing {
-//    publications {
-//        create<MavenPublication>("maven") {
-//            groupId = "com.lagradost"
-//            artifactId = "api"
-//            version = "0.1.0"
-//            from(components["java"])
-//        }
-//    }
-//}
+publishing {
+    publications {
+        withType<MavenPublication> {
+            groupId = "com.lagradost.api"
+        }
+    }
+}
