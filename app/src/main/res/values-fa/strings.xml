@@ -69,7 +69,6 @@
     <string name="torrent_no_plot">شرحی یافت نشد</string>
     <string name="subtitles_settings">تنظیمات زیرنویس</string>
     <string name="subs_window_color">رنگ پنجره</string>
-    <string name="eigengraumode_settings_des">افزودن گرینهٔ سرعت در پخش‌کننده</string>
     <string name="download_canceled">بارگیری لغو شد</string>
     <string name="home_expanded_hide">پنهان کردن</string>
     <string name="sort_apply">اعمال کردن</string>
@@ -87,4 +86,46 @@
     <string name="picture_in_picture">تصویر در تصویر</string>
     <string name="sort_close">بستن</string>
     <string name="home_next_random_img_des">اتاق بعدی</string>
+    <string name="preview_background_img_des">پیش‌نمایش پس‌زمینه</string>
+    <string name="filler" formatted="true">فیلتر</string>
+    <string name="duration_format" formatted="true">%d دقیقه</string>
+    <string name="app_name">CloudStream</string>
+    <string name="play_with_app_name">بازی با CloudStream</string>
+    <string name="title_home">خانه</string>
+    <string name="title_search">جست‌وجو</string>
+    <string name="title_settings">تنظیمات</string>
+    <string name="search_hint">جست‌وجو…</string>
+    <string name="search_hint_site" formatted="true">جست‌و‌جوی %s…</string>
+    <string name="result_tags">ژانرها</string>
+    <string name="play_livestream_button">پخش پخش‌زنده</string>
+    <string name="pick_subtitle">زیرنویس‌ها</string>
+    <string name="reload_error">تلاش دوباره برای اتصال…</string>
+    <string name="type_re_watching">تماشای دوباره</string>
+    <string name="pick_source">منابع</string>
+    <string name="no_data">داده‌ای نیست</string>
+    <string name="episode_more_options_des">گزینه‌های بیشتر</string>
+    <string name="next_episode">قسمت پسین</string>
+    <string name="skip_loading">گذر از بارگذاری</string>
+    <string name="subscribe_tooltip">اعلان قسمت جدید</string>
+    <string name="result_search_tooltip">جست‌و‌جو در سایر افزونه‌ها</string>
+    <string name="recommendations_tooltip">نمایش پیشنهادات</string>
+    <string name="links_reloaded_toast">پیوندها بازبارگیری شدند</string>
+    <string name="player_speed">سرعت پخش‌کننده</string>
+    <string name="type_watching">در حال تماشا</string>
+    <string name="title_downloads">بارگیری‌ها</string>
+    <string name="player_speed_text_format" formatted="true">سرعت (%.2f برابر)</string>
+    <string name="new_update_format" formatted="true">بروزرسانی جدید پیدا شد!
+\n%1$s -&gt; %2$s</string>
+    <string name="play_movie_button">پخش فیلم</string>
+    <string name="browser">مرورگر</string>
+    <string name="play_episode">پخش قسمت</string>
+    <string name="action_add_to_bookmarks">تنظیم وضعیت تماشا</string>
+    <string name="download_storage_text">حافظه درونی(داخلی)</string>
+    <string name="result_share">اشتراک‌گذاری</string>
+    <string name="play_trailer_button">پخش پیش‌پرده</string>
+    <string name="error_loading_links_toast">خطای بارگذاری پیوندها</string>
+    <string name="error_bookmarks_text">نشانک‌ها</string>
+    <string name="type_completed">به پایان رسیده</string>
+    <string name="result_open_in_browser">باز کردن در مرورگر</string>
+    <string name="type_plan_to_watch">برنامه‌ریزی برای تماشا</string>
 </resources>

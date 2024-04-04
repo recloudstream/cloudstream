@@ -54,7 +54,7 @@
     <string name="download_failed">فشل التنزيل</string>
     <string name="download_canceled">تم إلغاء التنزيل</string>
     <string name="download_done">تم التنزيل</string>
-    <string name="stream">بث</string>
+    <string name="stream">دفق الشبكة</string>
     <string name="error_loading_links_toast">خطأ في تحميل الرابط</string>
     <string name="download_storage_text">التخزين الداخلي</string>
     <string name="app_dubbed_text">مدبلج</string>
@@ -114,8 +114,7 @@
     <string name="player_subtitles_settings_des">إعدادات ترجمة المُشغل</string>
     <string name="chromecast_subtitles_settings">ترجمة كروم كاست</string>
     <string name="chromecast_subtitles_settings_des">إعدادات ترجمة كروم كاست</string>
-    <string name="eigengraumode_settings">وضع إيغنغرافي</string>
-    <string name="eigengraumode_settings_des">يضيف خيار السرعة في المُشغل</string>
+    <string name="eigengraumode_settings">سرعة التشغيل</string>
     <string name="swipe_to_seek_settings">السحب لتقديم</string>
     <string name="swipe_to_seek_settings_des">اسحب من جانب إلى آخر للتحكم في موضعك في مقطع فيديو</string>
     <string name="swipe_to_change_settings">السحب لتغيير الإعدادات</string>
@@ -139,7 +138,7 @@
     <string name="backup_failed">إذن الوصول الى ذاكرة التخزين مفقود, من فضلك حاول مجددا.</string>
     <string name="backup_failed_error_format">فشل إنشاء نسخة احتياطية %s</string>
     <string name="search">بحث</string>
-    <string name="category_account">الحسابات</string>
+    <string name="category_account">الحسابات والأمن</string>
     <string name="category_updates">التحديثات والنسخ الاحتياطية</string>
     <string name="settings_info">معلومات</string>
     <string name="advanced_search">البحث المتقدم</string>
@@ -284,10 +283,10 @@
     <string name="category_general">عام</string>
     <string name="random_button_settings">زر العشوائي</string>
     <string name="random_button_settings_desc">إظهار زر عشوائي على الصفحة الرئيسية والمكتبة</string>
-    <string name="provider_lang_settings">لغات المزود</string>
+    <string name="provider_lang_settings">لغات الامتداد</string>
     <string name="app_layout">واجهة التطبيق</string>
     <string name="preferred_media_settings">المحتوى المفضل</string>
-    <string name="enable_nsfw_on_providers">تفعيل محتوى خاص للبالغين داخل المزودين المدعومين</string>
+    <string name="enable_nsfw_on_providers">تفعيل محتوى خاص للبالغين داخل الإمتداد المدعوم</string>
     <string name="subtitles_encoding">فك تشفير الترجمة</string>
     <string name="category_providers">المصادر</string>
     <string name="category_ui">الواجهة</string>
@@ -308,8 +307,8 @@
     <string name="example_username">إسم المستخدم</string>
     <string name="example_email">البريد الإلكتروني</string>
     <string name="example_ip">127.0.0.1</string>
-    <string name="example_site_name">إسم الموقع</string>
-    <string name="example_site_url">رابط الموقع</string>
+    <string name="example_site_name">إسم الموقع الجديد</string>
+    <string name="example_site_url">رابط الموقع مثلا : https://example.com</string>
     <string name="example_lang_name">اللغة (الإنجليزية)</string>
     <!--
     <string name="mal_account_settings" translatable="false">MAL</string>
@@ -400,8 +399,8 @@
     <string name="subtitles_filter_lang">تصفية حسب لغة الوسائط المفضلة</string>
     <string name="extras">اكسترا</string>
     <string name="trailer">مقطع دعائي</string>
-    <string name="network_adress_example">رابط الفيديو</string>
-    <string name="referer">المرجع</string>
+    <string name="network_adress_example">https://example.com/example.mp4</string>
+    <string name="referer">المرجع (اختياري)</string>
     <string name="next">التالي</string>
     <string name="provider_languages_tip">شاهد الفيديوهات بهذه اللغات</string>
     <string name="previous">السابق</string>
@@ -430,11 +429,9 @@
     <string name="plugins_downloaded" formatted="true">تم تحميل: %d</string>
     <string name="plugins_disabled" formatted="true">مُعطل %d</string>
     <string name="plugins_not_downloaded" formatted="true">غير مُحمل: %d</string>
-    <string name="blank_repo_message">لا يحتوي CloudStream على مواقع مثبتة بشكل افتراضي. تحتاج إلى تثبيت المواقع من المستودعات.
+    <string name="blank_repo_message">لا يحتوي CloudStream على مواقع مثبتة افتراضيًا. تحتاج إلى تثبيت المواقع من المستودعات.
 \n
-\nبسبب إزالة قانون الألفية الجديدة لحقوق طبع ونشر المواد الرقمية بدون تفكير مسبق بواسطة Sky UK Limited 🤮 ، لا يمكننا ربط موقع المستودع في التطبيق.
-\n
-\nانضم إلى Discord أو ابحث عبر الإنترنت.</string>
+\nانضم إلى ديسكورد أو ابحث عبر الإنترنت.</string>
     <string name="view_public_repositories_button">عرض مستودعات المجتمع</string>
     <string name="view_public_repositories_button_short">قائمة عامة</string>
     <string name="uppercase_all_subtitles">جميع الترجمات حروف كبيرة</string>
@@ -557,8 +554,8 @@
     <string name="pref_category_bypass">تجاوز مزود خدمة الإنترنت</string>
     <string name="revert">استرجاع</string>
     <string name="jsdelivr_enabled">تعذر الوصول إلى جيثب. تشغيل وكيل jsDelivr …</string>
-    <string name="jsdelivr_proxy_summary">تجاوز حظر GitHub باستخدام jsdelivr ، قد يتسبب في تأخير التحديثات لبضعة أيام.</string>
-    <string name="jsdelivr_proxy">وكيل raw.githubusercontent.com</string>
+    <string name="jsdelivr_proxy_summary">تجاوز حظر عناوين URL الأولية لـ github باستخدام jsDelivr. قد يتسبب في تأخير التحديثات لبضعة أيام.</string>
+    <string name="jsdelivr_proxy">وكيل github</string>
     <string name="watch_quality_pref_data">جودة المشاهدة المفضلة (بيانات الجوال)</string>
     <string name="profile_number">الملف الشخصي %d</string>
     <string name="wifi">واي فاي</string>
@@ -623,5 +620,25 @@
     <string name="auto_rotate_video">الدوران التلقائي</string>
     <string name="rotate_video">تدوير</string>
     <string name="auto_rotate_video_desc">تمكين التبديل التلقائي لاتجاه الشاشة بناءً على اتجاه الفيديو</string>
-    <string name="copyTitle">تم نسخ العنوان!</string>
+    <string name="recommendations_tooltip">إظهار التوصيات</string>
+    <string name="speed_setting_summary">يضيف خيار السرعة في المُشغل</string>
+    <string name="test_extensions_summary">هذا الاختبار مخصص للمطورين فقط ولا يتحقق أو ينفي عمل أي ملحق.</string>
+    <string name="subscribe_tooltip">إشعار الحلقة الجديدة</string>
+    <string name="result_search_tooltip">البحث في امتدادات أخرى</string>
+    <string name="test_extensions">اختبار كافة الملحقات</string>
+    <string name="biometric_setting">اقفل باستخدام المقاييس الحيوية</string>
+    <string name="biometric_unsupported">المصادقة البيومترية غير مدعومة على هذا الجهاز</string>
+    <string name="biometric_setting_summary">افتح التطبيق باستخدام بصمة الإصبع ومعرف الوجه ورقم التعريف الشخصي والنمط وكلمة المرور.</string>
+    <string name="biometric_authentication_title">فتح سحابة البث</string>
+    <string name="password_pin_authentication_title">مصادقة كلمة المرور/رقم التعريف الشخصي</string>
+    <string name="biometric_prompt_description">تم إغلاق هذه الشاشة بسبب عدة محاولات فاشلة. الرجاء إعادة تشغيل التطبيق.</string>
+    <string name="biometric_warning">لقد تم الآن نسخ بيانات CloudStream احتياطيًا. على الرغم من أن احتمال حدوث ذلك منخفض جدًا، إلا أن جميع الأجهزة يمكن أن تتصرف بشكل مختلف. في الحالات النادرة، التي يتم فيها منعك من الوصول إلى التطبيق، قم بمسح بيانات التطبيق بالكامل واستعادتها من نسخة احتياطية. نحن نأسف جدًا لأي إزعاج ناتج عن هذا.</string>
+    <string name="resume_remaining" formatted="true">%s
+\nمتبقي</string>
+    <string name="favorite">المفضلة</string>
+    <string name="unfavorite">إزالة من المفضلة</string>
+    <string name="repo_copy_label">اسم و عنوان المخزن</string>
+    <string name="clipboard_permission_error">خطأ في الوصول الي حافظة النسخ، برجاء المحاولة مرة اخرى.</string>
+    <string name="toast_copied">تم النسخ!</string>
+    <string name="clipboard_unknown_error">خطأ في عملية النسخ، برجاء نسخ ال logcat و ارساله الى مسؤولين دعم التطبيق.</string>
 </resources>

@@ -152,7 +152,7 @@
     <string name="download_failed">Descarga fallida</string>
     <string name="download_canceled">Descarga Cancelada</string>
     <string name="download_done">Descarga Finalizada</string>
-    <string name="stream">Transmitir</string>
+    <string name="stream">Flujo de datos</string>
     <string name="error_loading_links_toast">Error cargando enlaces</string>
     <string name="download_storage_text">Almacenamiento Interno</string>
     <string name="app_dubbed_text">Doblado</string>
@@ -179,7 +179,6 @@
     <string name="picture_in_picture_des">Continúa la reproducción en un reproductor miniatura encima de otras aplicaciones</string>
     <string name="player_size_settings">Botón de cambio de tamaño del reproductor</string>
     <string name="player_size_settings_des">Eliminar bordes negros</string>
-    <string name="eigengraumode_settings_des">Agrega la opción de velocidad en el reproductor</string>
     <string name="subs_auto_select_language">Seleccionar idioma automáticamente</string>
     <string name="subs_download_languages">Descargar Idiomas</string>
     <string name="subs_subtitle_languages">Idioma del subtítulo</string>
@@ -200,7 +199,7 @@
     <string name="normal_no_plot">Trama no encontrada</string>
     <string name="torrent_no_plot">Descripción no encontrada</string>
     <string name="show_log_cat">Mostrar Logcat 🐈</string>
-    <string name="eigengraumode_settings">Modo Eigengravy</string>
+    <string name="eigengraumode_settings">Velocidad de reproducción</string>
     <string name="swipe_to_seek_settings">Deslice para avanzar/retroceder</string>
     <string name="swipe_to_change_settings">Deslice para cambiar la configuración</string>
     <string name="swipe_to_change_settings_des">Deslice hacia arriba o hacia abajo en el lado izquierdo o derecho para cambiar el brillo o el volumen</string>
@@ -226,7 +225,7 @@
     <string name="backup_failed">Faltan permisos de almacenamiento. Por favor intente de nuevo.</string>
     <string name="backup_failed_error_format">Error de backup de %s</string>
     <string name="search">Buscar</string>
-    <string name="category_account">Cuentas</string>
+    <string name="category_account">Cuentas y seguridad</string>
     <string name="category_updates">Actualizaciones y copias de seguridad</string>
     <string name="settings_info">Información</string>
     <string name="advanced_search">Búsqueda Avanzada</string>
@@ -271,12 +270,12 @@
     <string name="pref_category_app_updates">Actualizaciones de la aplicación</string>
     <string name="automatic">Automático</string>
     <string name="pref_category_actions">Acciones</string>
-    <string name="enable_nsfw_on_providers">Activar NSFW (contenido adulto) en proveedores soportados</string>
+    <string name="enable_nsfw_on_providers">Activar NSFW en las extensiones compatibles</string>
     <string name="category_providers">Proveedores</string>
     <string name="pref_category_defaults">Predeterminados</string>
     <string name="preferred_media_settings">Medios preferidos</string>
     <string name="pref_category_gestures">Gestos</string>
-    <string name="provider_lang_settings">Idiomas del proveedor</string>
+    <string name="provider_lang_settings">Idiomas de la extensión</string>
     <string name="player_loaded_subtitles" formatted="true">%s Cargado</string>
     <string name="subtitles_remove_bloat">Eliminar excedente (bloat) de los subtítulos</string>
     <string name="skip_setup">Omitir configuración</string>
@@ -287,11 +286,9 @@
     <string name="extension_language">Idioma</string>
     <string name="apk_installer_legacy">Legacy (método antiguo)</string>
     <string name="apk_installer_package_installer">Instalador de paquetes</string>
-    <string name="blank_repo_message">CloudStream no tiene sitios instalados de forma predeterminada. Necesita instalarlos desde repositorios.
+    <string name="blank_repo_message">CloudStream no tiene sitios instalados por defecto. Necesitas instalar los sitios desde los repositorios.
 \n
-\nDebido a que dieron de baja el proyecto de manera arbitraria por infracción a la lay de derechos de autor (DMCA) de parte de Sky UK Limited 🤮, no podemos vincular el sitio del repositorio en la aplicación.
-\n
-\nÚnete a nuestro Discord o busca en línea.</string>
+\nÚnase a nuestro Discord o busque en línea.</string>
     <string name="download_all_plugins_from_repo">¿Descargar todos los plugins de este repositorio?</string>
     <string name="updates_settings">Mostrar actualizaciones de la aplicación</string>
     <string name="apk_installer_settings">Instalador de APK</string>
@@ -401,10 +398,10 @@
     <string name="bottom_title_settings">Ubicación del título en el póster</string>
     <string name="bottom_title_settings_des">Coloca el título debajo del póster</string>
     <string name="example_password">contraseña123</string>
-    <string name="example_username">MiNombreDeUsuarioGenial</string>
+    <string name="example_username">Nombre de usuario</string>
     <string name="example_ip">127.0.0.1</string>
-    <string name="example_site_name">MiSitioGenial</string>
-    <string name="example_site_url">ejemplo.com</string>
+    <string name="example_site_name">NewSiteName</string>
+    <string name="example_site_url">https://example.com</string>
     <string name="sync_score_format" formatted="true">%d / 10</string>
     <string name="none">Ninguno</string>
     <string name="max">Máximo</string>
@@ -441,8 +438,8 @@
     <string name="pref_category_cache">Caché</string>
     <string name="create_account">Crear cuenta</string>
     <string name="error_invalid_url">URL Inválida</string>
-    <string name="network_adress_example">Enlace a la transmisión</string>
-    <string name="referer">Referente</string>
+    <string name="network_adress_example">https://example.com/example.mp4</string>
+    <string name="referer">Referencia (opcional)</string>
     <string name="next">Siguiente</string>
     <string name="previous">Anterior</string>
     <string name="setup_done">Hecho</string>
@@ -522,9 +519,9 @@
     <string name="subscription_deleted">Darse de baja de %s</string>
     <string name="subscription_in_progress_notification">Actualizando los programas suscritos</string>
     <string name="subscription_episode_released">¡Episodio %d publicado!</string>
-    <string name="jsdelivr_proxy">Proxy raw.githubusercontent.com</string>
+    <string name="jsdelivr_proxy">Proxy de GitHub</string>
     <string name="jsdelivr_enabled">No se ha podido acceder a GitHub. Activando el proxy jsDelivr…</string>
-    <string name="jsdelivr_proxy_summary">Omite el bloqueo de GitHub mediante jsDelivr. Lo que puede provocar que las actualizaciones se retrasen unos días.</string>
+    <string name="jsdelivr_proxy_summary">Eludir el bloqueo de URLs crudas de github usando jsDelivr. Puede causar que las actualizaciones se retrasen unos días.</string>
     <string name="revert">Revertir</string>
     <string name="pref_category_bypass">ISP Bypasses</string>
     <string name="watch_quality_pref_data">Calidad de visualización preferida (Datos móviles)</string>
@@ -591,5 +588,25 @@
     <string name="auto_rotate_video">Giro automático</string>
     <string name="rotate_video">Girar</string>
     <string name="auto_rotate_video_desc">Activar el cambio automático de la orientación de la pantalla en función de la orientación del vídeo</string>
-    <string name="copyTitle">¡Título copiado!</string>
+    <string name="test_extensions_summary">Esta prueba está destinada únicamente a desarrolladores y no verifica ni niega el funcionamiento de ninguna extensión.</string>
+    <string name="subscribe_tooltip">Notificación de nuevo episodio</string>
+    <string name="result_search_tooltip">Buscar en otras extensiones</string>
+    <string name="recommendations_tooltip">Mostrar recomendaciones</string>
+    <string name="speed_setting_summary">Añade una opción de velocidad en el reproductor</string>
+    <string name="test_extensions">Probar todas las extensiones</string>
+    <string name="biometric_setting">Bloquear biometricamente</string>
+    <string name="password_pin_authentication_title">Autenticación mediante contraseña/PIN</string>
+    <string name="biometric_setting_summary">Desbloquea la aplicación con huella dactilar, Face ID, PIN, patrón y contraseña.</string>
+    <string name="biometric_authentication_title">Desbloquear CloudStream</string>
+    <string name="biometric_unsupported">La autenticación biométrica no es compatible con este dispositivo</string>
+    <string name="biometric_prompt_description">Esta pantalla se cerró después de algunos intentos fallidos. Reinicie la aplicación.</string>
+    <string name="biometric_warning">Ahora se ha realizado una copia de seguridad de sus datos de CloudStream. Aunque la posibilidad de que esto ocurra es muy baja, todos los dispositivos pueden comportarse de forma diferente. En el raro caso de que no puedas acceder a la aplicación, borra completamente los datos de la aplicación y restaura desde una copia de seguridad. Sentimos mucho las molestias que esto pueda ocasionarte.</string>
+    <string name="favorite">Favorito</string>
+    <string name="unfavorite">No favorito</string>
+    <string name="resume_remaining" formatted="true">%s
+\nrestante</string>
+    <string name="repo_copy_label">Nombre del repositorio y su URL</string>
+    <string name="toast_copied">¡Copiado!</string>
+    <string name="clipboard_unknown_error">Error al copiar. Por favor, copie el logcat y comuníquese con el soporte de la aplicación.</string>
+    <string name="clipboard_permission_error">Error al acceder al portapapeles. Inténtelo de nuevo.</string>
 </resources>

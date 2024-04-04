@@ -63,6 +63,10 @@ open class ParentItemAdapter(
         }
     }
 
+    override fun submitList(list: List<HomeViewModel.ExpandableHomepageList>?) {
+        super.submitList(list?.sortedBy { it.list.list.isEmpty() })
+    }
+
     override fun onUpdateContent(
         holder: ViewHolderState<Bundle>,
         item: HomeViewModel.ExpandableHomepageList,
