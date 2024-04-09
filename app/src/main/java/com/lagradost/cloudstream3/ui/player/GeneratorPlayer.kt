@@ -1028,6 +1028,7 @@ class GeneratorPlayer : FullScreenPlayer() {
 
         val nextEp = percentage >= NEXT_WATCH_EPISODE_PERCENTAGE
         val resumeMeta = if (nextEp) nextMeta else currentMeta
+
         if (resumeMeta == null && nextEp) {
             // remove last watched as it is the last episode and you have watched too much
             when (val newMeta = currentMeta) {
@@ -1081,6 +1082,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                 }
 
                 if (meta.tvType.isAnimeOp()) isOpVisible = percentage < SKIP_OP_VIDEO_PERCENTAGE
+                if (nextEp) DataStoreHelper.setVideoWatchState(meta.id, VideoWatchState.Watched)
             }
         }
 
