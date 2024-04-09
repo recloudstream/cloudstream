@@ -108,7 +108,6 @@ open class TraktProvider : MainAPI() {
 
         val mediaDetails = parseJson<MediaDetails>(res)
 
-        //Trakt ID, Trakt slug, or IMDB ID
         val peopleDetails = getProfileImages(data.ids?.tmdb.toString(), data.movieBool)
 
         val actors = peopleDetails.cast?.filter { it.knownForDepartment == "Acting" }?.map {
