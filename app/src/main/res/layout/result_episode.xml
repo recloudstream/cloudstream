@@ -98,6 +98,7 @@
             android:layout_marginStart="2dp"
             android:layout_marginEnd="10dp"
             android:layout_gravity="center_vertical|end"
+            android:focusable="false"
             android:text="@string/episode_upcoming"
             android:visibility="gone"
             tools:visibility="visible"/>

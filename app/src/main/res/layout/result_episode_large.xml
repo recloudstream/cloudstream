@@ -104,6 +104,7 @@
                     android:id="@+id/episode_upcoming"
                     style="@style/SmallBlackButton"
                     android:textColor="?attr/colorPrimary"
+                    android:focusable="false"
                     android:text="@string/episode_upcoming"
                     android:visibility="gone"
                     tools:visibility="visible"/>
