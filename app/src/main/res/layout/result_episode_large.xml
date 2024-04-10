@@ -103,7 +103,7 @@
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/episode_upcoming"
                     style="@style/SmallBlackButton"
-                    android:textColor="?attr/colorPrimary"
+                    android:textColor="?attr/textColor"
                     android:focusable="false"
                     android:text="@string/episode_upcoming"
                     android:visibility="gone"
