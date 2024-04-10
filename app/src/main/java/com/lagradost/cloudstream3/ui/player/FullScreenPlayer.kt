@@ -1159,6 +1159,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                                 }
                             }
 
+                            KeyEvent.KEYCODE_DPAD_DOWN,
                             KeyEvent.KEYCODE_DPAD_UP -> {
                                 if (!isShowing) {
                                     onClickChange()
