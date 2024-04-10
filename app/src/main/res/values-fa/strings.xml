@@ -33,16 +33,16 @@
     <string name="next_episode_time_hour_format" formatted="true">%1$dساعت %2$dدقیقه</string>
     <string name="next_episode_time_min_format" formatted="true">%dدقیقه</string>
     <string name="home_main_poster_img_des">پوستر اصلی</string>
-    <string name="torrent">تورنت</string>
+    <string name="torrent">تورنت‌ها</string>
     <string name="free_storage">آزاد</string>
-    <string name="documentaries">مستند ها</string>
+    <string name="documentaries">مستند‌ها</string>
     <string name="ova">انیمیشن ویدیویی اصلی</string>
     <string name="max">حداکثر</string>
     <string name="movies">فیلم‌ها</string>
     <string name="tv_series">سریال های تلویزیونی</string>
-    <string name="asian_drama">درام های آسیایی</string>
+    <string name="asian_drama">درام‌های آسیایی</string>
     <string name="anime">انیمه</string>
-    <string name="cartoons">کارتونها</string>
+    <string name="cartoons">کارتون‌ها</string>
     <string name="used_storage">استفاده شده</string>
     <string name="app_storage">برنامه</string>
     <string name="go_back_img_des">بازگشت</string>
@@ -52,7 +52,7 @@
     <string name="action_open_watching">اطلاعات بیشتر</string>
     <string name="torrent_plot">شرح</string>
     <string name="subs_subtitle_languages">زبان زیرنویس</string>
-    <string name="player_subtitles_settings">زیرنویس</string>
+    <string name="player_subtitles_settings">زیرنویس‌ها</string>
     <string name="action_remove_from_bookmarks">حذف</string>
     <string name="download_started">بارگیری آغاز شد</string>
     <string name="pref_disable_acra">غیرفعال کردن گذارش باگ خودکار</string>
@@ -128,4 +128,67 @@
     <string name="type_completed">به پایان رسیده</string>
     <string name="result_open_in_browser">باز کردن در مرورگر</string>
     <string name="type_plan_to_watch">برنامه‌ریزی برای تماشا</string>
+    <string name="subs_hold_to_reset_to_default">برای بازنشانی به پیشفرض نگه‌دارید</string>
+    <string name="library">کتابخانه</string>
+    <string name="status_ongoing">درادامه</string>
+    <string name="delete_message" formatted="true">این فرآیند بطور کامل %s را حذف می‌کند
+\nآیا از این کار اطمینان دارید؟</string>
+    <string name="repo_copy_label">نام مخزن و نشانی</string>
+    <string name="toast_copied">رونویسی شد!</string>
+    <string name="settings_info">درباره</string>
+    <string name="subs_font">قلم</string>
+    <string name="subs_font_size">اندازه قلم</string>
+    <string name="swipe_to_change_settings">برای تغییر تنظیمات بکشید</string>
+    <string name="swipe_to_change_settings_des">برای تغییر میزان روشنایی یا صدا در سمت چپ و راست به بالا یا پایین بکشید</string>
+    <string name="automatic_plugin_updates">بروزرسانی خودکار افزونه</string>
+    <string name="start">آغاز</string>
+    <string name="app_language">زبان برنامه</string>
+    <string name="play_episode_toast">پخش قسمت</string>
+    <string name="year">سال</string>
+    <string name="movies_singular">فیلم</string>
+    <string name="tv_series_singular">سریال</string>
+    <string name="anime_singular">انیمه</string>
+    <string name="subs_outline_color">رنگ حاشیه متن</string>
+    <string name="player_size_settings">دکمه تغییر‌اندازه پخش‌کننده</string>
+    <string name="speed_setting_summary">افزودن گزینه سرعت در پخش‌کننده</string>
+    <string name="category_updates">بروزرسانی‌ و پشتیبانی</string>
+    <string name="kitsu_settings">نمایش پوستر از طریق Kitsu</string>
+    <string name="advanced_search">جستجوی پیشرفته</string>
+    <string name="season">فصل</string>
+    <string name="episode">قسمت</string>
+    <string name="season_short">ف</string>
+    <string name="episode_short">ق</string>
+    <string name="other_singular">ویدئو</string>
+    <string name="source_error">خطای منبع</string>
+    <string name="test_log">گزارش</string>
+    <string name="player_size_settings_des">حذف حاشیه سیاه</string>
+    <string name="player_subtitles_settings_des">تنظیمات زیرنویس پخش‌کننده</string>
+    <string name="category_account">حساب‌ها و امنیت</string>
+    <string name="show_log_cat">نمایش گزارش‌پیوسته 🐈</string>
+    <string name="copy_link_toast">پیوند در بریده‌دان رونویسی شد</string>
+    <string name="no_links_found_toast">هیچ پیوندی یافت‌نشد</string>
+    <string name="asian_drama_singular">درام آسیایی</string>
+    <string name="automatic_plugin_download">بارگیری خودکار افزونه‌ها</string>
+    <string name="documentaries_singular">مستند</string>
+    <string name="eigengraumode_settings">سرعت پخش</string>
+    <string name="no_episodes_found">هیچ قسمتی یافت‌نشد</string>
+    <string name="rated_format" formatted="true">امتیاز: %.1f</string>
+    <string name="subs_import_text" formatted="true">قلم‌ها را با گذاشتن در %s وارد کنید</string>
+    <string name="resume">ادامه</string>
+    <string name="subs_default_reset_toast">بازگردانی به مقدار پیشفرض</string>
+    <string name="go_back_30">−۳۰</string>
+    <string name="go_forward_30">+۳۰</string>
+    <string name="delete_file">حذف پرونده</string>
+    <string name="show_trailers_settings">نمایش پیش‌پرده‌ها</string>
+    <string name="episodes">قسمت‌ها</string>
+    <string name="resume_time_left" formatted="true">%dد
+\nباقی‌مانده</string>
+    <string name="github">گیتهاب</string>
+    <string name="pref_filter_search_quality">نهان کردن کیفیت ویدئو انتخابی در نتایج جستجو</string>
+    <string name="cancel">لغو</string>
+    <string name="resume_remaining" formatted="true">%s
+\nباقی‌مانده</string>
+    <string name="action_default">پیش‌فرض</string>
+    <string name="cartoons_singular">کارتون</string>
+    <string name="torrent_singular">تورنت</string>
 </resources>
