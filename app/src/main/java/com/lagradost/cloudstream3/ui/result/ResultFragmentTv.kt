@@ -33,6 +33,7 @@ import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.download.DownloadButtonSetup
 import com.lagradost.cloudstream3.ui.player.ExtractorLinkGenerator
 import com.lagradost.cloudstream3.ui.player.GeneratorPlayer
+import com.lagradost.cloudstream3.ui.player.NEXT_WATCH_EPISODE_PERCENTAGE
 import com.lagradost.cloudstream3.ui.quicksearch.QuickSearchFragment
 import com.lagradost.cloudstream3.ui.result.ResultFragment.getStoredData
 import com.lagradost.cloudstream3.ui.result.ResultFragment.updateUIEvent
@@ -782,7 +783,7 @@ class ResultFragmentTv : Fragment() {
                 //    resultEpisodeLoading.isVisible = episodes is Resource.Loading
                 if (episodes is Resource.Success) {
 
-                    val lastWatchedIndex = episodes.value.indexOfLast { ep -> ep.videoWatchState == VideoWatchState.Watched }
+                    val lastWatchedIndex = episodes.value.indexOfLast { ep -> ep.getWatchProgress() >= (NEXT_WATCH_EPISODE_PERCENTAGE / 100).toFloat() }
                     val firstUnwatched = episodes.value.getOrElse(lastWatchedIndex + 1) { episodes.value.firstOrNull() }
 
                     if (firstUnwatched != null) {
