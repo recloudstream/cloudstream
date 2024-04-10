@@ -50,6 +50,7 @@ data class ResultEpisode(
     val videoWatchState: VideoWatchState,
     /** Sum of all previous season episode counts + episode */
     val totalEpisodeIndex: Int? = null,
+    val isUpcoming: Boolean? = false,
 )
 
 fun ResultEpisode.getRealPosition(): Long {
@@ -85,6 +86,7 @@ fun buildResultEpisode(
     tvType: TvType,
     parentId: Int,
     totalEpisodeIndex: Int? = null,
+    isUpcoming: Boolean? = false
 ): ResultEpisode {
     val posDur = getViewPos(id)
     val videoWatchState = getVideoWatchState(id) ?: VideoWatchState.None
@@ -107,7 +109,8 @@ fun buildResultEpisode(
         tvType,
         parentId,
         videoWatchState,
-        totalEpisodeIndex
+        totalEpisodeIndex,
+        isUpcoming
     )
 }
 

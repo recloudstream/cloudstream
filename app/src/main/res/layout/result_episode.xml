@@ -9,7 +9,7 @@
     android:layout_marginBottom="5dp"
 
     android:nextFocusRight="@id/download_button"
-    app:cardBackgroundColor="@color/transparent"
+    app:cardBackgroundColor="?attr/boxItemBackground"
     app:cardCornerRadius="@dimen/rounded_image_radius"
     app:cardElevation="0dp"
     android:foreground="@drawable/outline_drawable"
@@ -75,11 +75,11 @@
 
         <TextView
             android:id="@+id/episode_text"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:layout_weight="1"
             android:layout_gravity="center_vertical"
             android:layout_marginStart="10dp"
-            android:layout_marginEnd="50dp"
             android:ellipsize="marquee"
 
             android:gravity="center_vertical"
@@ -90,14 +90,24 @@
 
             android:textColor="?attr/textColor"
             tools:text="Episode 1" />
-    </LinearLayout>
 
-    <com.lagradost.cloudstream3.ui.download.button.PieFetchButton
-        android:id="@+id/download_button"
-        android:layout_width="@dimen/download_size"
-        android:layout_height="@dimen/download_size"
-        android:layout_gravity="center_vertical|end"
-        android:layout_marginStart="-50dp"
-        android:background="?selectableItemBackgroundBorderless"
-        android:padding="10dp" />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/episode_upcoming"
+            style="@style/SmallBlackButton"
+            android:textColor="?attr/colorPrimary"
+            android:layout_marginStart="2dp"
+            android:layout_marginEnd="10dp"
+            android:layout_gravity="center_vertical|end"
+            android:text="@string/episode_upcoming"
+            android:visibility="gone"
+            tools:visibility="visible"/>
+
+        <com.lagradost.cloudstream3.ui.download.button.PieFetchButton
+            android:id="@+id/download_button"
+            android:layout_width="@dimen/download_size"
+            android:layout_height="@dimen/download_size"
+            android:layout_gravity="center_vertical|end"
+            android:background="?selectableItemBackgroundBorderless"
+            android:padding="10dp" />
+    </LinearLayout>
 </androidx.cardview.widget.CardView>

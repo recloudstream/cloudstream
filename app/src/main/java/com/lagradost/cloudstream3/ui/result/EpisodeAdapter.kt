@@ -260,6 +260,8 @@ class EpisodeAdapter(
                     }
                 }
 
+                episodeUpcoming.isVisible = card.isUpcoming == true
+
                 if (isLayout(EMULATOR or PHONE)) {
                     episodePoster.setOnClickListener {
                         clickCallback.invoke(EpisodeClickEvent(ACTION_CLICK_DEFAULT, card))
@@ -302,7 +304,7 @@ class EpisodeAdapter(
         fun bind(card: ResultEpisode) {
             binding.episodeHolder.layoutParams.apply {
                 width =
-                    if (isLayout(TV or EMULATOR)) TV_EP_SIZE_SMALL.toPx else ViewGroup.LayoutParams.MATCH_PARENT
+                    if (isLayout(TV or EMULATOR)) TV_EP_SIZE_LARGE.toPx else ViewGroup.LayoutParams.MATCH_PARENT
             }
 
             binding.apply {
@@ -354,6 +356,8 @@ class EpisodeAdapter(
                     episodeProgress.progress = (displayPos / 1000).toInt()
                     episodeProgress.isVisible = displayPos > 0L
                 }
+
+                episodeUpcoming.isVisible = card.isUpcoming == true
 
                 itemView.setOnClickListener {
                     clickCallback.invoke(EpisodeClickEvent(ACTION_CLICK_DEFAULT, card))

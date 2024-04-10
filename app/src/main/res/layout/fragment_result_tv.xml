@@ -674,7 +674,7 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
         android:layout_height="match_parent"
         android:layout_gravity="end"
         android:visibility="gone"
-        tools:visibility="invisible">
+        tools:visibility="visible">
 
 
         <!--

@@ -2252,6 +2252,8 @@ class ResultViewModel2 : ViewModel() {
                         val totalIndex =
                             i.season?.let { season -> loadResponse.getTotalEpisodeIndex(episode, season) }
 
+                        val isUpcoming = if (i.date == null) false else (unixTimeMS < i.date!!)
+
                         if (!existingEpisodes.contains(id)) {
                             existingEpisodes.add(id)
                             val seasonData = loadResponse.seasonNames.getSeason(i.season)
@@ -2272,7 +2274,8 @@ class ResultViewModel2 : ViewModel() {
                                     fillers.getOrDefault(episode, false),
                                     loadResponse.type,
                                     mainId,
-                                    totalIndex
+                                    totalIndex,
+                                    isUpcoming
                                 )
 
                             val season = eps.seasonIndex ?: 0
@@ -2304,6 +2307,8 @@ class ResultViewModel2 : ViewModel() {
                         val totalIndex =
                             episode.season?.let { season -> loadResponse.getTotalEpisodeIndex(episodeIndex, season) }
 
+                        val isUpcoming = if (episode.date == null) false else (unixTimeMS < episode.date!!)
+
                         val ep =
                             buildResultEpisode(
                                 loadResponse.name,
@@ -2321,7 +2326,8 @@ class ResultViewModel2 : ViewModel() {
                                 null,
                                 loadResponse.type,
                                 mainId,
-                                totalIndex
+                                totalIndex,
+                                isUpcoming,
                             )
 
                         val season = ep.seasonIndex ?: 0
