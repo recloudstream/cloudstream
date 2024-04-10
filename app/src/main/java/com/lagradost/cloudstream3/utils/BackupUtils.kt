@@ -69,7 +69,9 @@ object BackupUtils {
 
         "biometric_key", // can lock down users if backup is shared on a incompatible device
         "nginx_user", // Nginx user key
-        "download_path_key" // No access rights after restore data from backup
+        "download_path_key", // No access rights after restore data from backup
+        "benene_count"  // no benene cheat
+
     )
 
     /** false if key should not be contained in backup */
