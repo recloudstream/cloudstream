@@ -7,7 +7,7 @@
             <stroke
                 android:width="2dp"
                 android:color="?attr/white" />
-            <corners android:radius="@dimen/rounded_image_radius" />
+            <corners android:radius="10dp" />
         </shape>
     </item>
 </ripple>
