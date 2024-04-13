@@ -492,7 +492,9 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                 player.seekTime(1L)
             }
             resetBtt.setOnClickListener {
-                changeBy(-subtitleOffsetInput.text.toString().toLongOrNull()!!)
+                subtitleOffsetInput.setText("0")
+                dialog.dismissSafe(activity)
+                player.seekTime(1L)
             }
             cancelBtt.setOnClickListener {
                 subtitleDelay = beforeOffset
