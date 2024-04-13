@@ -404,9 +404,29 @@ open class ExtractorLink constructor(
     open val extractorData: String? = null,
     open val type: ExtractorLinkType,
 ) : VideoDownloadManager.IDownloadableMinimum {
-    val isM3u8 : Boolean get() = type == ExtractorLinkType.M3U8
-    val isDash : Boolean get() = type == ExtractorLinkType.DASH
-    
+    val isM3u8: Boolean get() = type == ExtractorLinkType.M3U8
+    val isDash: Boolean get() = type == ExtractorLinkType.DASH
+
+    // Cached video size
+    private var videoSize: Long? = null
+
+    /**
+     * Get video size in bytes with one head request. Only available for ExtractorLinkType.Video
+     * @param timeoutSeconds timeout of the head request.
+     */
+    suspend fun getVideoSize(timeoutSeconds: Long = 3L): Long? {
+        // Content-Length is not applicable to other types of formats
+        if (this.type != ExtractorLinkType.VIDEO) return null
+
+        videoSize = videoSize ?: runCatching {
+            val response =
+                app.head(this.url, headers = headers, referer = referer, timeout = timeoutSeconds)
+            response.headers["Content-Length"]?.toLong()
+        }.getOrNull()
+
+        return videoSize
+    }
+
     @JsonIgnore
     fun getAllHeaders() : Map<String, String> {
         if (referer.isBlank()) {
