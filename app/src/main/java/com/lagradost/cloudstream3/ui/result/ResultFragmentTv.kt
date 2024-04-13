@@ -783,7 +783,7 @@ class ResultFragmentTv : Fragment() {
                 //    resultEpisodeLoading.isVisible = episodes is Resource.Loading
                 if (episodes is Resource.Success) {
 
-                    val lastWatchedIndex = episodes.value.indexOfLast { ep -> ep.getWatchProgress() >= (NEXT_WATCH_EPISODE_PERCENTAGE.toFloat() / 100.0f) }
+                    val lastWatchedIndex = episodes.value.indexOfLast { ep -> ep.getWatchProgress() >= NEXT_WATCH_EPISODE_PERCENTAGE.toFloat() / 100.0f }
                     val firstUnwatched = episodes.value.getOrElse(lastWatchedIndex + 1) { episodes.value.firstOrNull() }
 
                     if (firstUnwatched != null) {
