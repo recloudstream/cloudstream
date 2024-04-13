@@ -107,7 +107,7 @@ open class TraktProvider : MainAPI() {
 
         val relatedMedia = parseJson<List<MediaDetails>>(resRelated).map { it.toSearchResponse() }
 
-        val isCartoon = (mediaDetails?.genres?.contains("animation") == true || mediaDetails?.genres?.contains("anime") == true)
+        val isCartoon = mediaDetails?.genres?.contains("animation") == true || mediaDetails?.genres?.contains("anime") == true
         val isAnime = isCartoon && (mediaDetails?.language == "zh" || mediaDetails?.language == "ja")
         val isAsian = !isAnime && (mediaDetails?.language == "zh" || mediaDetails?.language == "ko")
         val isBollywood = mediaDetails?.country == "in"
