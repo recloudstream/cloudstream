@@ -66,7 +66,7 @@ open class Vidplay : ExtractorApi() {
     }
 
     private suspend fun callFutoken(id: String, url: String): String? {
-        val script = app.get("$mainUrl/futoken").text
+        val script = app.get("$mainUrl/futoken", referer = url).text
         val k = "k='(\\S+)'".toRegex().find(script)?.groupValues?.get(1) ?: return null
         val a = mutableListOf(k)
         for (i in id.indices) {
