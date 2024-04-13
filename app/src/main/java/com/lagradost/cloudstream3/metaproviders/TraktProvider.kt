@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.metaproviders
 
+import android.net.Uri
 import com.lagradost.cloudstream3.*
 import com.fasterxml.jackson.annotation.JsonAlias
 import com.fasterxml.jackson.annotation.JsonProperty
@@ -20,135 +21,117 @@ open class TraktProvider : MainAPI() {
         TvType.TvSeries,
         TvType.Anime,
     )
-    // Override this to control random Posters on every extension reload
-    open val randomPosters = false
-    private val traktClientId = "d9f434f48b55683a279ffe88ddc68351cc04c9dc9372bd95af5de780b794e770"
-    private val tmdbApiKey = "e6333b32409e02a4a6eba6fb7ff866bb"
-    private val traktApiUrl = "https://api.trakt.tv"
-    private val tmdbApiUrl = "https://api.themoviedb.org/3"
 
-    // You can override mainPage in extension to pass the needed APIs.
+    private val traktClientId = base64Decode("N2YzODYwYWQzNGI4ZTZmOTdmN2I5MTA0ZWQzMzEwOGI0MmQ3MTdlMTM0MmM2NGMxMTg5NGE1MjUyYTQ3NjE3Zg==")
+    private val traktApiUrl = base64Decode("aHR0cHM6Ly9hcGl6LnRyYWt0LnR2")
+
     override val mainPage = mainPageOf(
         "$traktApiUrl/movies/trending" to "Trending Movies", //Most watched movies right now
         "$traktApiUrl/movies/popular" to "Popular Movies", //The most popular movies for all time
         "$traktApiUrl/shows/trending" to "Trending Shows", //Most watched Shows right now
         "$traktApiUrl/shows/popular" to "Popular Shows", //The most popular Shows for all time
     )
+
     override suspend fun getMainPage(page: Int, request: MainPageRequest): HomePageResponse {
 
-        val apiResponse = getApi("${request.data}?page=$page")
+        val apiResponse = getApi("${request.data}?extended=cloud9,full&page=$page")
 
-        val results = parseJson<List<Results>>(apiResponse).map { element ->
+        val results = parseJson<List<MediaDetails>>(apiResponse).map { element ->
             element.toSearchResponse()
         }
         return newHomePageResponse(request.name, results)
     }
-    private suspend fun Results.toSearchResponse(): SearchResponse {
 
-        val ids = this.ids ?: this.media?.ids
+    private fun MediaDetails.toSearchResponse(): SearchResponse {
 
-        val tmdbId = ids?.tmdb.toString()
-        val tvdbId = ids?.tvdb
-
-        val mediaType = if (tvdbId == null) TvType.Movie else TvType.TvSeries
+        val media = this.media ?: this
+        val mediaType = if (media.ids?.tvdb == null) TvType.Movie else TvType.TvSeries
+        val poster = media.images?.poster?.firstOrNull()
 
         if (mediaType == TvType.Movie) {
-            val images = getImages(tmdbId, true)
-            val posterUrl = getPosterUrl(images, randomPosters)
-
             return newMovieSearchResponse(
-                name = this.media?.title ?: this.title!!,
+                name = media.title!!,
                 url = Data(
-                    title = this.media?.title ?: this.title!!,
-                    movieBool = true,
-                    ids = ids,
-                    images = images,
-                    type = mediaType
+                    type = mediaType,
+                    mediaDetails = media,
                 ).toJson(),
                 type = TvType.Movie,
             ) {
-                this.posterUrl = posterUrl
+                posterUrl = fixPath(poster)
             }
         } else {
-            val images = getImages(tmdbId, false)
-            val posterUrl = getPosterUrl(images, randomPosters)
-
             return newTvSeriesSearchResponse(
-                name = this.media?.title ?: this.title!!,
+                name = media.title!!,
                 url = Data(
-                    title = this.media?.title ?: this.title!!,
-                    movieBool = false,
-                    ids = ids,
-                    images = images,
-                    type = mediaType
+                    type = mediaType,
+                    mediaDetails = media,
                 ).toJson(),
                 type = TvType.TvSeries,
             ) {
-                this.posterUrl = posterUrl
+                this.posterUrl = fixPath(poster)
             }
         }
     }
-    override suspend fun search(query: String): List<SearchResponse>? {
-        val apiResponse = getApi("$traktApiUrl/search/movie,show?query=$query")
 
-        val results = parseJson<List<Results>>(apiResponse).map { element ->
+    override suspend fun search(query: String): List<SearchResponse>? {
+        val apiResponse = getApi("$traktApiUrl/search/movie,show?extended=cloud9,full&limit=20&page=1&query=$query")
+
+        val results = parseJson<List<MediaDetails>>(apiResponse).map { element ->
             element.toSearchResponse()
         }
 
         return results
     }
     override suspend fun load(url: String): LoadResponse {
+
         val data = parseJson<Data>(url)
+        val mediaDetails = data.mediaDetails
+        val moviesOrShows = if (data.type == TvType.Movie) "movies" else "shows"
 
-        val posterUrl = getOrigPosterUrl(data.images, randomPosters)
-        val backDropUrl = getBackdropUrl(data.images)
+        val posterUrl = mediaDetails?.images?.poster?.firstOrNull()
+        val backDropUrl = mediaDetails?.images?.fanart?.firstOrNull()
 
-        val moviesOrShows = if (data.movieBool) "movies" else "shows"
-        val res = getApi("$traktApiUrl/$moviesOrShows/${data.ids?.trakt}?extended=full")
+        val resActor = getApi("$traktApiUrl/$moviesOrShows/${mediaDetails?.ids?.trakt}/people?extended=cloud9,full")
 
-        val mediaDetails = parseJson<MediaDetails>(res)
-
-        val peopleDetails = getProfileImages(data.ids?.tmdb.toString(), data.movieBool)
-
-        val actors = peopleDetails.cast?.filter { it.knownForDepartment == "Acting" }?.map {
+        val actors = parseJson<People>(resActor).cast?.map {
             ActorData(
                 Actor(
-                    name = it.name,
-                    image = getImageUrl(it.profilePath)
+                    name = it.person?.name!!,
+                    image = fixPath(it.person.images?.headshot?.firstOrNull())
                 ),
                 roleString = it.character
             )
         }
 
-        val resRelated = getApi("$traktApiUrl/$moviesOrShows/${data.ids?.trakt}/related")
+        val resRelated = getApi("$traktApiUrl/$moviesOrShows/${mediaDetails?.ids?.trakt}/related?extended=cloud9,full&limit=20")
 
-        val relatedMedia = parseJson<List<Results>>(resRelated).map { it.toSearchResponse() }
+        val relatedMedia = parseJson<List<MediaDetails>>(resRelated).map { it.toSearchResponse() }
 
-        val isCartoon = mediaDetails.genres?.contains("animation") == true || mediaDetails.genres?.contains("anime") == true
-        val isAnime = isCartoon && (mediaDetails.language == "zh" || mediaDetails.language == "ja")
-        val isAsian = !isAnime && (mediaDetails.language == "zh" || mediaDetails.language == "ko")
-        val isBollywood = mediaDetails.country == "in"
+        val isCartoon = (mediaDetails?.genres?.contains("animation") == true || mediaDetails?.genres?.contains("anime") == true)
+        val isAnime = isCartoon && (mediaDetails?.language == "zh" || mediaDetails?.language == "ja")
+        val isAsian = !isAnime && (mediaDetails?.language == "zh" || mediaDetails?.language == "ko")
+        val isBollywood = mediaDetails?.country == "in"
 
         if (data.type == TvType.Movie) {
 
             val linkData = LinkData(
-                id = mediaDetails.ids?.tmdb,
-                imdbId = mediaDetails.ids?.imdb.toString(),
-                tvdbId = mediaDetails.ids?.tvdb,
+                id = mediaDetails?.ids?.tmdb,
+                imdbId = mediaDetails?.ids?.imdb.toString(),
+                tvdbId = mediaDetails?.ids?.tvdb,
                 type = data.type.toString(),
-                title = mediaDetails.title,
-                year = mediaDetails.year,
-                orgTitle = mediaDetails.title,
+                title = mediaDetails?.title,
+                year = mediaDetails?.year,
+                orgTitle = mediaDetails?.title,
                 isAnime = isAnime,
                 //jpTitle = later if needed as it requires another network request,
-                airedDate = mediaDetails.released
-                    ?: mediaDetails.firstAired,
+                airedDate = mediaDetails?.released
+                    ?: mediaDetails?.firstAired,
                 isAsian = isAsian,
                 isBollywood = isBollywood,
             ).toJson()
 
             return newMovieLoadResponse(
-                name = mediaDetails.title,
+                name = mediaDetails?.title!!,
                 url = data.toJson(),
                 dataUrl = linkData.toJson(),
                 type = if (isAnime) TvType.AnimeMovie else TvType.Movie,
@@ -156,7 +139,7 @@ open class TraktProvider : MainAPI() {
                 this.name = mediaDetails.title
                 this.apiName = "Trakt"
                 this.type = if (isAnime) TvType.AnimeMovie else TvType.Movie
-                this.posterUrl = posterUrl
+                this.posterUrl = getOriginalWidthImageUrl(posterUrl)
                 this.year = mediaDetails.year
                 this.plot = mediaDetails.overview
                 this.rating = mediaDetails.rating?.times(1000)?.roundToInt()
@@ -167,41 +150,44 @@ open class TraktProvider : MainAPI() {
                 this.actors = actors
                 this.comingSoon = isUpcoming(mediaDetails.released)
                 //posterHeaders
-                this.backgroundPosterUrl = backDropUrl
+                this.backgroundPosterUrl = getOriginalWidthImageUrl(backDropUrl)
                 this.contentRating = mediaDetails.certification
             }
         } else {
 
-            val resSeasons = getApi("$traktApiUrl/shows/${data.ids?.trakt.toString()}/seasons?extended=episodes")
+            val resSeasons = getApi("$traktApiUrl/shows/${mediaDetails?.ids?.trakt.toString()}/seasons?extended=cloud9,full,episodes")
             val episodes = mutableListOf<Episode>()
-
             val seasons = parseJson<List<Seasons>>(resSeasons)
+            val seasonsNames = mutableListOf<SeasonData>()
 
             seasons.forEach { season ->
-                parseJson<TmdbSeason>(
 
-                    // Using tmdb here because trakt requires a network request for every episode to get its details which make the ext so slow
+                seasonsNames.add(
+                    SeasonData(
+                        season.number!!,
+                        season.title
+                    )
+                )
 
-                    getApi("$tmdbApiUrl/tv/${data.ids?.tmdb.toString()}/season/${season.number}?api_key=$tmdbApiKey")
-                ).episodes?.map { episode ->
+                season.episodes?.map { episode ->
 
                     val linkData = LinkData(
-                        id = mediaDetails.ids?.tmdb,
-                        imdbId = mediaDetails.ids?.imdb.toString(),
-                        tvdbId = mediaDetails.ids?.tvdb,
+                        id = mediaDetails?.ids?.tmdb,
+                        imdbId = mediaDetails?.ids?.imdb.toString(),
+                        tvdbId = mediaDetails?.ids?.tvdb,
                         type = data.type.toString(),
-                        season = episode.seasonNumber,
-                        episode = episode.episodeNumber,
-                        title = mediaDetails.title,
-                        year = mediaDetails.year,
-                        orgTitle = mediaDetails.title,
+                        season = episode.season,
+                        episode = episode.number,
+                        title = mediaDetails?.title,
+                        year = mediaDetails?.year,
+                        orgTitle = mediaDetails?.title,
                         isAnime = isAnime,
-                        airedYear = mediaDetails.year,
+                        airedYear = mediaDetails?.year,
                         lastSeason = seasons.size,
-                        epsTitle = episode.name,
+                        epsTitle = episode.title,
                         //jpTitle = later if needed as it requires another network request,
-                        date = episode.airDate,
-                        airedDate = episode.airDate,
+                        date = episode.firstAired,
+                        airedDate = episode.firstAired,
                         isAsian = isAsian,
                         isBollywood = isBollywood,
                         isCartoon = isCartoon
@@ -210,21 +196,21 @@ open class TraktProvider : MainAPI() {
                     episodes.add(
                         Episode(
                             data = linkData.toJson(),
-                            name = episode.name  + if (isUpcoming(episode.airDate)) " • [UPCOMING]" else "",
-                            season = episode.seasonNumber,
-                            episode = episode.episodeNumber,
-                            posterUrl = getImageUrl(episode.stillPath),
-                            rating = episode.voteAverage?.times(10)?.roundToInt(),
+                            name = episode.title,
+                            season = episode.season,
+                            episode = episode.number,
+                            posterUrl = fixPath(episode.images?.screenshot?.firstOrNull()),
+                            rating = episode.rating?.times(10)?.roundToInt(),
                             description = episode.overview,
                         ).apply {
-                            this.addDate(episode.airDate)
+                            this.addDate(episode.firstAired)
                         }
                     )
                 }
             }
 
             return newTvSeriesLoadResponse(
-                name = mediaDetails.title,
+                name = mediaDetails?.title!!,
                 url = data.toJson(),
                 type = if (isAnime) TvType.Anime else TvType.TvSeries,
                 episodes = episodes
@@ -233,7 +219,7 @@ open class TraktProvider : MainAPI() {
                 this.apiName = "Trakt"
                 this.type = if (isAnime) TvType.Anime else TvType.TvSeries
                 this.episodes = episodes
-                this.posterUrl = posterUrl
+                this.posterUrl = getOriginalWidthImageUrl(posterUrl)
                 this.year = mediaDetails.year
                 this.plot = mediaDetails.overview
                 this.showStatus = getStatus(mediaDetails.status)
@@ -243,13 +229,15 @@ open class TraktProvider : MainAPI() {
                 addTrailer(mediaDetails.trailer)
                 this.recommendations = relatedMedia
                 this.actors = actors
-                //comingSoon
+                this.comingSoon = isUpcoming(mediaDetails.released)
                 //posterHeaders
-                this.backgroundPosterUrl = backDropUrl
+                this.seasonNames = seasonsNames
+                this.backgroundPosterUrl = getOriginalWidthImageUrl(backDropUrl)
                 this.contentRating = mediaDetails.certification
             }
         }
     }
+
     private suspend fun getApi(url: String) : String {
         return app.get(
             url = url,
@@ -261,85 +249,11 @@ open class TraktProvider : MainAPI() {
         ).toString()
     }
 
-    private fun getPosterUrl(images: Images, random: Boolean) : String? {
-
-        val imagePath = when {
-            random -> {
-                images.posters?.filter { it.iso6391 == "en" }?.randomOrNull() ?: images.posters?.randomOrNull()
-            }
-            else -> {
-                images.posters?.firstOrNull { it.iso6391 == "en" } ?: images.posters?.firstOrNull()
-            }
-        }
-            ?: return null
-        return "https://image.tmdb.org/t/p/w500${imagePath.filePath}"
-
-    }
-
-    private fun getOrigPosterUrl(images: Images, random: Boolean) : String? {
-
-        val imagePath = when {
-            random -> {
-                images.posters?.filter { it.iso6391 == null }?.randomOrNull() ?: images.posters?.randomOrNull()
-            }
-            else -> {
-                images.posters?.firstOrNull { it.iso6391 == null } ?: images.posters?.firstOrNull()
-            }
-        }
-            ?: return null
-        return "https://image.tmdb.org/t/p/original${imagePath.filePath}"
-    }
-
-    private fun getBackdropUrl(images: Images) : String? {
-        val imagePath = images.backdrops?.filter { it.iso6391 == null }?.randomOrNull() ?: images.backdrops?.randomOrNull()
-        ?: return null
-        return "https://image.tmdb.org/t/p/original${imagePath.filePath}"
-    }
-
-    private fun getImageUrl(path: String?) : String? {
-        if (path == null) return null
-        return "https://image.tmdb.org/t/p/w500${path}"
-    }
-
-    private suspend fun getProfileImages(castTmdbId: String, movie: Boolean) : Images {
-        val imageApiUrl = if (movie) {
-            "$tmdbApiUrl/movie/$castTmdbId/credits?api_key=$tmdbApiKey"
-        } else {
-            "$tmdbApiUrl/tv/$castTmdbId/credits?api_key=$tmdbApiKey"
-        }
-
-        val req = app.get(
-            url = imageApiUrl,
-            headers = mapOf(
-                "accept" to "application/json",
-            )
-        ).toString()
-        return parseJson<Images>(req)
-    }
-
-    private suspend fun getImages(tmdbId: String, movie: Boolean = true) : Images {
-
-        val imageApiUrl = if (movie) {
-            "$tmdbApiUrl/movie/${tmdbId}/images?api_key=${tmdbApiKey}"
-        } else {
-            "$tmdbApiUrl/tv/${tmdbId}/images?api_key=${tmdbApiKey}"
-        }
-
-        val req = app.get(
-            url = imageApiUrl,
-            headers = mapOf(
-                "accept" to "application/json",
-            )
-        ).toString()
-
-        return parseJson<Images>(req)
-    }
-
     private fun isUpcoming(dateString: String?): Boolean {
         return try {
             val format = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
             val dateTime = dateString?.let { format.parse(it)?.time } ?: return false
-            System.currentTimeMillis() < dateTime
+            APIHolder.unixTimeMS < dateTime
         } catch (t: Throwable) {
             logError(t)
             false
@@ -354,209 +268,134 @@ open class TraktProvider : MainAPI() {
         }
     }
 
+    private fun fixPath(url: String?): String? {
+        url ?: return null
+        return "https://$url"
+    }
+
+    private fun getWidthImageUrl(path: String?, width: String) : String? {
+        if (path == null) return null
+        if (!path.contains("image.tmdb.org")) return fixPath(path)
+        val fileName = Uri.parse(path).lastPathSegment ?: return null
+        return "https://image.tmdb.org/t/p/${width}/${fileName}"
+    }
+
+    private fun getOriginalWidthImageUrl(path: String?) : String? {
+        if (path == null) return null
+        if (!path.contains("image.tmdb.org")) return fixPath(path)
+        return getWidthImageUrl(path, "original")
+    }
+
     data class Data(
-        val title: String,
-        val movieBool: Boolean,
-        val type: TvType,
-        val ids: Ids? = null,
-        val images: Images,
-    )
-
-    data class Results(
-        val watchers: Long? = null,
-        val revenue: Long? = null,
-        val title: String? = null,
-        val year: Int? = null,
-        @JsonProperty("movie")
-        @JsonAlias("show")
-        val media: Media? = null,
-        val ids: Ids? = null,
-    )
-
-    data class Media(
-        val title: String,
-        val year: Int,
-        val ids: Ids,
+        val type: TvType? = null,
+        val mediaDetails: MediaDetails? = null,
     )
 
     data class MediaDetails(
-        val title: String,
-        val year: Int? = null,
-        val ids: Ids? = null,
-        val tagline: String? = null,
-        val overview: String? = null,
-        val released: String? = null,
-        val runtime: Int? = null,
-        val country: String? = null,
-        @JsonProperty("updated_at")
-        val updatedAt: String? = null,
-        val trailer: String? = null,
-        val homepage: String? = null,
-        val status: String? = null,
-        val rating: Double? = null,
-        val votes: Long? = null,
-        @JsonProperty("comment_count")
-        val commentCount: Long? = null,
-        val language: String? = null,
-        val languages: List<String>? = null,
-        @JsonProperty("available_translations")
-        val availableTranslations: List<String>? = null,
-        val genres: List<String>? = null,
-        val certification: String? = null,
-        @JsonProperty("aired_episodes")
-        val airedEpisodes: Int? = null,
-        @JsonProperty("first_aired")
-        val firstAired: String? = null,
-        val airs: Airs? = null,
-        val network: String? = null,
+        @JsonProperty("title") val title: String? = null,
+        @JsonProperty("year") val year: Int? = null,
+        @JsonProperty("ids") val ids: Ids? = null,
+        @JsonProperty("tagline") val tagline: String? = null,
+        @JsonProperty("overview") val overview: String? = null,
+        @JsonProperty("released") val released: String? = null,
+        @JsonProperty("runtime") val runtime: Int? = null,
+        @JsonProperty("country") val country: String? = null,
+        @JsonProperty("updatedAt") val updatedAt: String? = null,
+        @JsonProperty("trailer") val trailer: String? = null,
+        @JsonProperty("homepage") val homepage: String? = null,
+        @JsonProperty("status") val status: String? = null,
+        @JsonProperty("rating") val rating: Double? = null,
+        @JsonProperty("votes") val votes: Long? = null,
+        @JsonProperty("comment_count") val commentCount: Long? = null,
+        @JsonProperty("language") val language: String? = null,
+        @JsonProperty("languages") val languages: List<String>? = null,
+        @JsonProperty("available_translations") val availableTranslations: List<String>? = null,
+        @JsonProperty("genres") val genres: List<String>? = null,
+        @JsonProperty("certification") val certification: String? = null,
+        @JsonProperty("aired_episodes") val airedEpisodes: Int? = null,
+        @JsonProperty("first_aired") val firstAired: String? = null,
+        @JsonProperty("airs") val airs: Airs? = null,
+        @JsonProperty("network") val network: String? = null,
+        @JsonProperty("images") val images: Images? = null,
+        @JsonProperty("movie") @JsonAlias("show") val media: MediaDetails? = null
     )
 
     data class Airs(
-        val day: String? = null,
-        val time: String? = null,
-        val timezone: String? = null,
+        @JsonProperty("day") val day: String? = null,
+        @JsonProperty("time") val time: String? = null,
+        @JsonProperty("timezone") val timezone: String? = null,
     )
 
     data class Ids(
-        val trakt: Int? = null,
-        val slug: String? = null,
-        val tvdb: Int? = null,
-        val imdb: String? = null,
-        val tmdb: Int? = null,
-        val tvrage: String? = null,
+        @JsonProperty("trakt") val trakt: Int? = null,
+        @JsonProperty("slug") val slug: String? = null,
+        @JsonProperty("tvdb") val tvdb: Int? = null,
+        @JsonProperty("imdb") val imdb: String? = null,
+        @JsonProperty("tmdb") val tmdb: Int? = null,
+        @JsonProperty("tvrage") val tvrage: String? = null,
     )
 
     data class Images(
-        val backdrops: List<Backdrop>? = null,
-        val id: Long? = null,
-        val logos: List<Logo>? = null,
-        val posters: List<Poster>? = null,
-        val cast: List<Cast>? = null,
+        @JsonProperty("fanart") val fanart: List<String>? = null,
+        @JsonProperty("poster") val poster: List<String>? = null,
+        @JsonProperty("logo") val logo: List<String>? = null,
+        @JsonProperty("clearart") val clearart: List<String>? = null,
+        @JsonProperty("banner") val banner: List<String>? = null,
+        @JsonProperty("thumb") val thumb: List<String>? = null,
+        @JsonProperty("screenshot") val screenshot: List<String>? = null,
+        @JsonProperty("headshot") val headshot: List<String>? = null,
     )
 
-    data class Backdrop(
-        @JsonProperty("aspect_ratio")
-        val aspectRatio: Double? = null,
-        val height: Long? = null,
-        @JsonProperty("iso_639_1")
-        val iso6391: String? = null,
-        @JsonProperty("file_path")
-        val filePath: String? = null,
-        @JsonProperty("vote_average")
-        val voteAverage: Double? = null,
-        @JsonProperty("vote_count")
-        val voteCount: Long? = null,
-        val width: Long? = null,
-    )
-
-    data class Logo(
-        @JsonProperty("aspect_ratio")
-        val aspectRatio: Double? = null,
-        val height: Long? = null,
-        @JsonProperty("iso_639_1")
-        val iso6391: String? = null,
-        @JsonProperty("file_path")
-        val filePath: String? = null,
-        @JsonProperty("vote_average")
-        val voteAverage: Double? = null,
-        @JsonProperty("vote_count")
-        val voteCount: Long? = null,
-        val width: Long? = null,
-    )
-
-    data class Poster(
-        @JsonProperty("aspect_ratio")
-        val aspectRatio: Double? = null,
-        val height: Long? = null,
-        @JsonProperty("iso_639_1")
-        val iso6391: String? = null,
-        @JsonProperty("file_path")
-        val filePath: String? = null,
-        @JsonProperty("vote_average")
-        val voteAverage: Double? = null,
-        @JsonProperty("vote_count")
-        val voteCount: Long? = null,
-        val width: Long? = null,
+    data class People(
+        @JsonProperty("cast") val cast: List<Cast>? = null,
     )
 
     data class Cast(
-        val adult: Boolean? = null,
-        val gender: Long? = null,
-        val id: Long? = null,
-        @JsonProperty("known_for_department")
-        val knownForDepartment: String? = null,
-        val name: String,
-        @JsonProperty("original_name")
-        val originalName: String? = null,
-        val popularity: Double? = null,
-        @JsonProperty("profile_path")
-        val profilePath: String? = null,
-        @JsonProperty("cast_id")
-        val castId: Long? = null,
-        val character: String? = null,
-        @JsonProperty("credit_id")
-        val creditId: String? = null,
-        val order: Long? = null,
+        @JsonProperty("character") val character: String? = null,
+        @JsonProperty("characters") val characters: List<String>? = null,
+        @JsonProperty("episode_count") val episodeCount: Long? = null,
+        @JsonProperty("person") val person: Person? = null,
+        @JsonProperty("images") val images: Images? = null,
+    )
+
+    data class Person(
+        @JsonProperty("name") val name: String? = null,
+        @JsonProperty("ids") val ids: Ids? = null,
+        @JsonProperty("images") val images: Images? = null,
     )
 
     data class Seasons(
-        val number: Int? = null,
-        val ids: Ids? = null,
-        @JsonProperty("episodes")
-        val episodes: List<TraktEpisode>? = null,
+        @JsonProperty("aired_episodes") val airedEpisodes: Int? = null,
+        @JsonProperty("episode_count") val episodeCount: Int? = null,
+        @JsonProperty("episodes") val episodes: List<TraktEpisode>? = null,
+        @JsonProperty("first_aired") val firstAired: String? = null,
+        @JsonProperty("ids") val ids: Ids? = null,
+        @JsonProperty("images") val images: Images? = null,
+        @JsonProperty("network") val network: String? = null,
+        @JsonProperty("number") val number: Int? = null,
+        @JsonProperty("overview") val overview: String? = null,
+        @JsonProperty("rating") val rating: Double? = null,
+        @JsonProperty("title") val title: String? = null,
+        @JsonProperty("updated_at") val updatedAt: String? = null,
+        @JsonProperty("votes") val votes: Int? = null,
     )
 
     data class TraktEpisode(
-        val season: Int? = null,
-        val number: Int? = null,
-        val title: String? = null,
-        val ids: Ids? = null,
-    )
-
-    data class TmdbSeason(
-        @JsonProperty("_id")
-        val id: String? = null,
-        @JsonProperty("air_date")
-        val airDate: String? = null,
-        val episodes: List<TmdbEpisode>? = null,
-        val name: String? = null,
-        val overview: String? = null,
-        @JsonProperty("id")
-        val id2: Int? = null,
-        @JsonProperty("poster_path")
-        val posterPath: String? = null,
-        @JsonProperty("season_number")
-        val seasonNumber: Int? = null,
-        @JsonProperty("vote_average")
-        val voteAverage: Double? = null,
-    )
-
-    data class TmdbEpisode(
-        @JsonProperty("air_date")
-        val airDate: String? = null,
-        @JsonProperty("episode_number")
-        val episodeNumber: Int? = null,
-        @JsonProperty("episode_type")
-        val episodeType: String? = null,
-        val id: Int? = null,
-        val name: String? = null,
-        val overview: String? = null,
-        @JsonProperty("production_code")
-        val productionCode: String? = null,
-        val runtime: Int? = null,
-        @JsonProperty("season_number")
-        val seasonNumber: Int? = null,
-        @JsonProperty("show_id")
-        val showId: Int? = null,
-        @JsonProperty("still_path")
-        val stillPath: String? = null,
-        @JsonProperty("vote_average")
-        val voteAverage: Double? = null,
-        @JsonProperty("vote_count")
-        val voteCount: Int? = null,
-        //val crew: List<Crew>,
-        //@JsonProperty("guest_stars")
-        //val guestStars: List<GuestStar>,
+        @JsonProperty("available_translations") val availableTranslations: List<String>? = null,
+        @JsonProperty("comment_count") val commentCount: Int? = null,
+        @JsonProperty("episode_type") val episodeType: String? = null,
+        @JsonProperty("first_aired") val firstAired: String? = null,
+        @JsonProperty("ids") val ids: Ids? = null,
+        @JsonProperty("images") val images: Images? = null,
+        @JsonProperty("number") val number: Int? = null,
+        @JsonProperty("number_abs") val numberAbs: Int? = null,
+        @JsonProperty("overview") val overview: String? = null,
+        @JsonProperty("rating") val rating: Double? = null,
+        @JsonProperty("runtime") val runtime: Int? = null,
+        @JsonProperty("season") val season: Int? = null,
+        @JsonProperty("title") val title: String? = null,
+        @JsonProperty("updated_at") val updatedAt: String? = null,
+        @JsonProperty("votes") val votes: Int? = null,
     )
 
     data class LinkData(
