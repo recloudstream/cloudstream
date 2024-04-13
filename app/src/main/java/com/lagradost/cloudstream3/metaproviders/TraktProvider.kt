@@ -97,7 +97,7 @@ open class TraktProvider : MainAPI() {
             ActorData(
                 Actor(
                     name = it.person?.name!!,
-                    image = fixPath(it.person.images?.headshot?.firstOrNull())
+                    image = getWidthImageUrl(it.person.images?.headshot?.firstOrNull(), "w500")
                 ),
                 roleString = it.character
             )
