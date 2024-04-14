@@ -1,7 +1,10 @@
 package com.lagradost.cloudstream3.ui.player
 
 import android.annotation.SuppressLint
-import android.content.*
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.graphics.drawable.AnimatedImageDrawable
 import android.graphics.drawable.AnimatedVectorDrawable
 import android.media.metrics.PlaybackErrorEvent
@@ -24,11 +27,7 @@ import androidx.fragment.app.Fragment
 import androidx.media3.common.PlaybackException
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.session.MediaSession
-import androidx.media3.ui.AspectRatioFrameLayout
-import androidx.media3.ui.DefaultTimeBar
-import androidx.media3.ui.PlayerView
-import androidx.media3.ui.SubtitleView
-import androidx.media3.ui.TimeBar
+import androidx.media3.ui.*
 import androidx.preference.PreferenceManager
 import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
 import com.github.rubensousa.previewseekbar.PreviewBar
@@ -380,7 +379,6 @@ abstract class AbstractPlayerFragment(
     //        return super.onMediaButtonEvent(mediaButtonEvent)
     //    }
     //}
-
     /** This receives the events from the player, if you want to append functionality you do it here,
      * do note that this only receives events for UI changes,
      * and returning early WONT stop it from changing in eg the player time or pause status */
@@ -442,6 +440,15 @@ abstract class AbstractPlayerFragment(
 
             is VideoEndedEvent -> {
                 context?.let { ctx ->
+                    if (PreferenceManager.getDefaultSharedPreferences(ctx)
+                            ?.getBoolean(
+                                ctx.getString(R.string.reset_delay_key),
+                                false
+                            ) == true
+                    ) {
+                        player.setSubtitleOffset(0)
+                    }
+
                     // Only play next episode if autoplay is on (default)
                     if (PreferenceManager.getDefaultSharedPreferences(ctx)
                             ?.getBoolean(

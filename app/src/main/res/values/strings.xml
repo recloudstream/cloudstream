@@ -768,4 +768,7 @@
     <string name="audio_book_singular">Audio Book</string>
     <string name="custom_media_singluar">Media</string>
     <string name="reset_btn">Reset</string>
+    <string name="reset_delay_settings">Reset delay on next episode</string>
+    <string name="reset_delay_settings_des">Resets subtitle delay on next episode</string>
+    <string name="reset_delay_key" translatable="false">reset_delay_key</string>
 </resources>
