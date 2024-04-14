@@ -81,14 +81,6 @@
             app:defaultValue="true"
             app:key="@string/autoplay_next_key" />
         <SwitchPreference
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:icon="@drawable/ic_baseline_skip_next_24"
-            android:summary="@string/reset_delay_settings_des"
-            android:title="@string/reset_delay_settings"
-            app:defaultValue="false"
-            app:key="@string/reset_delay_key"/>
-        <SwitchPreference
             android:icon="@drawable/ic_baseline_skip_next_24"
             android:title="@string/video_skip_op"
             app:defaultValue="true"

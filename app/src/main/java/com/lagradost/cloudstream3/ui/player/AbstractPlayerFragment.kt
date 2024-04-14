@@ -379,6 +379,7 @@ abstract class AbstractPlayerFragment(
     //        return super.onMediaButtonEvent(mediaButtonEvent)
     //    }
     //}
+
     /** This receives the events from the player, if you want to append functionality you do it here,
      * do note that this only receives events for UI changes,
      * and returning early WONT stop it from changing in eg the player time or pause status */
@@ -440,14 +441,8 @@ abstract class AbstractPlayerFragment(
 
             is VideoEndedEvent -> {
                 context?.let { ctx ->
-                    if (PreferenceManager.getDefaultSharedPreferences(ctx)
-                            ?.getBoolean(
-                                ctx.getString(R.string.reset_delay_key),
-                                false
-                            ) == true
-                    ) {
-                        player.setSubtitleOffset(0)
-                    }
+                    // Resets subtitle delay on ended video
+                    player.setSubtitleOffset(0)
 
                     // Only play next episode if autoplay is on (default)
                     if (PreferenceManager.getDefaultSharedPreferences(ctx)
