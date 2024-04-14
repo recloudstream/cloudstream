@@ -768,5 +768,5 @@
     <string name="biometric_setting_summary">Unlock the app with Fingerprint, Face ID, PIN, Pattern and Password.</string>
     <string name="biometric_prompt_description">After a few failed attempts, the prompt will close. Simply restart the app to try again.</string>
     <string name="biometric_warning">Your CloudStream data has been backed up now. Although the possibility of this is very low, all devices can behave differently. In the rare case, that you get locked out from accessing the app, clear the app data completely and restore from a backup. We are very sorry for any inconvenience arising from this.</string>
-
+    <string name="reset_btn">Reset</string>
 </resources>

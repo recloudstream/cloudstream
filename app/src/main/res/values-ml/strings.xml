@@ -3,14 +3,14 @@
     <!-- TRANSLATE, BUT DON'T FORGET FORMAT -->
     <string name="player_speed_text_format" formatted="true">വേഗം (%.2fx)</string>
     <string name="rated_format" formatted="true">റേറ്റിംഗ്: %.1f</string>
-    <string name="new_update_format" formatted="true">പുതിയ അപ്ഡേറ്റ്
+    <string name="new_update_format" formatted="true">പുതിയ അപ്ഡേറ്റ്!
 \n%1$s -&gt; %2$s</string>
-    <string name="app_name">CloudStream</string>
+    <string name="app_name">ക്ലൗഡ് സ്ട്രീം</string>
     <string name="title_home">ഹോം</string>
     <string name="title_search">തിരയുക</string>
     <string name="title_downloads">ഡൗൺലോഡ്സ്</string>
     <string name="title_settings">സെറ്റിങ്‌സ്</string>
-    <string name="search_hint">തിരയുക</string>
+    <string name="search_hint">തിരയുക…</string>
     <string name="no_data">ടാറ്റ ലഭ്യമല്ല</string>
     <string name="episode_more_options_des">കൂടുതൽ ഓപ്ഷൻസ്</string>
     <string name="next_episode">അടുത്ത എപ്പിസോഡ്</string>
@@ -167,11 +167,11 @@
     <string name="watch_quality_pref">ഔചിത്യ വീഡിയോ ക്വാളിറ്റി</string>
     <string name="history">ചരിത്രം</string>
     <string name="action_mark_as_watched">കണ്ടതാണെന്ന് അടയാളപ്പെടുത്തുക</string>
-    <string name="next_episode_time_day_format" formatted="true">%1$d%2$d</string>
-    <string name="next_episode_format" formatted="true">yg5t4r%dujyhtg</string>
+    <string name="next_episode_time_day_format" formatted="true">%d ദിവസങ്ങൾ %d മണിക്കൂർ %d മിനിറ്റ്</string>
+    <string name="next_episode_format" formatted="true">അധ്യായം%dൽ റിലീസ് ചെയ്യും</string>
     <string name="next_episode_time_hour_format" formatted="true">%1$d മണിക്കൂർ %2$d മിനിറ്റ്</string>
-    <string name="app_dub_sub_episode_text_format" formatted="true">%1$sghj%2$d</string>
-    <string name="cast_format" formatted="true">rtf:%</string>
+    <string name="app_dub_sub_episode_text_format" formatted="true">%1$sഅധ്യാ%2$d</string>
+    <string name="cast_format" formatted="true">കാസ്റ്റ്:%s</string>
     <string name="create_account">അക്കൗണ്ട് ഉണ്ടാക്കുക</string>
     <string name="delayed_update_notice">പുറത്ത്പോകുന്നതോടുകൂടി ആപ് അപ്ഡേറ്റ് ആവുന്നതാണ്</string>
     <string name="select_library">ലൈബ്രറി തിരഞ്ഞെടുക്കുക</string>
@@ -179,8 +179,8 @@
     <string name="play_trailer_button">ട്രെയിലർ പ്ലേ ചെയ്യുക</string>
     <string name="play_livestream_button">ലൈവ് സ്ട്രീം പ്ലേ ചെയ്യുക</string>
     <string name="filler" formatted="true">ഫില്ലർ</string>
-    <string name="duration_format" formatted="true">%d min</string>
-    <string name="play_with_app_name">ക്ലൗഡ് സ്ട്രീം ഉപയോഗിച്ച് കളിക്കുക</string>
+    <string name="duration_format" formatted="true">%d മിനിറ്റ്</string>
+    <string name="play_with_app_name">ക്ലൗഡ് സ്ട്രീം ഉപയോഗിച്ച് പ്രവർത്തിപ്പിക്കുക</string>
     <string name="home_next_random_img_des">അടുത്ത ക്രമരഹിതമായ</string>
     <string name="episode_poster_img_des">എപ്പിസോഡ് പോസ്റ്റർ</string>
     <string name="update_started">അപ്ഡേറ്റ് ആരംഭിച്ചു</string>
@@ -188,7 +188,7 @@
     <string name="search_poster_img_des">പോസ്റ്റർ</string>
     <string name="skip_loading">ലോഡിംഗ് ഒഴിവാക്കുക</string>
     <string name="search_hint_site" formatted="true">തിരയുക %s…</string>
-    <string name="next_episode_time_min_format" formatted="true">%dm</string>
+    <string name="next_episode_time_min_format" formatted="true">%dമിനിറ്റ്</string>
     <string name="go_back_img_des">മടങ്ങിപ്പോവുക</string>
     <string name="preview_background_img_des">പശ്ചാത്തല പ്രിവ്യൂ</string>
     <string name="result_poster_img_des">പോസ്റ്റർ</string>
@@ -202,8 +202,6 @@
     <string name="view_public_repositories_button_short">പൊതു പട്ടിക</string>
     <string name="blank_repo_message">CloudStream-ന് സ്ഥിരസ്ഥിതിയായി സൈറ്റുകളൊന്നും ഇൻസ്റ്റാൾ ചെയ്തിട്ടില്ല. നിങ്ങൾ റിപ്പോസിറ്ററികളിൽ നിന്ന് സൈറ്റുകൾ ഇൻസ്റ്റാൾ ചെയ്യേണ്ടതുണ്ട്.
 \n
-\nസ്‌കൈ യുകെ ലിമിറ്റഡിലെ ഡോഗ്‌ഷിറ്റ് ആളുകളിൽ നിന്ന് DMCA നീക്കം ചെയ്‌തതിനാൽ 🤮 ഞങ്ങൾക്ക് ആപ്പിൽ റിപ്പോസിറ്ററി സൈറ്റ് ലിങ്ക് ചെയ്യാൻ കഴിയില്ല.
-\n
 \nഞങ്ങളുടെ ഡിസ്കോർഡിൽ ചേരുക അല്ലെങ്കിൽ ഓൺലൈനിൽ തിരയുക.</string>
     <string name="sort_copy">പകർത്തുക</string>
     <string name="uppercase_all_subtitles">എല്ലാ സബ്‌ടൈറ്റിലുകളും വലിയക്ഷരമാക്കുക</string>
@@ -214,7 +212,7 @@
     <string name="manage_accounts">അക്കൗണ്ടുകൾ കൈകാര്യം ചെയ്യുക</string>
     <string name="coming_soon">ഉടൻ വരുന്നു…</string>
     <string name="apply_on_restart">പുനരാരംഭിക്കുമ്പോൾ പ്രയോഗിക്കുക</string>
-    <string name="edit_account">അക്കൗണ്ട് എഡിറ്റ് ചെയ്യുക</string>
+    <string name="edit_account">അക്കൗണ്ട് തിരുത്തുക</string>
     <string name="pin_error_incorrect">തെറ്റായ പിൻ. ദയവായി വീണ്ടും ശ്രമിക്കുക.</string>
     <string name="stop">നിർത്തുക</string>
     <string name="tracks">ട്രാക്കുകൾ</string>
@@ -245,4 +243,41 @@
     <string name="source_error">ഉറവിട പിശക്</string>
     <string name="enter_current_pin">നിലവിലെ പിൻ നൽകുക</string>
     <string name="audio_tracks">ഓഡിയോ ട്രാക്കുകൾ</string>
+    <string name="picture_in_picture">ചിത്രം-ഇൻ-ചിത്രം</string>
+    <string name="sort_updated_old">പുതുക്കിയത് (പഴയത് മുതൽ പുതിയത് വരെ)</string>
+    <string name="sort_rating_desc">റേറ്റിംഗ് (ഉയർന്നത് മുതൽ താഴ്ന്നത്)</string>
+    <string name="apk_installer_legacy">പാരമ്പര്യം</string>
+    <string name="subs_window_color">വിൻഡോ നിറം</string>
+    <string name="sort_clear">ക്ലിയർ</string>
+    <string name="test_log">ലോഗ്</string>
+    <string name="recommendations_tooltip">ശുപാർശകൾ കാണിക്കുക</string>
+    <string name="logged_account" formatted="true">%s ആയി ലോഗിൻ ചെയ്തു</string>
+    <string name="sort_by">ഇങ്ങനെ അടുക്കുക</string>
+    <string name="sort">അടുക്കുക</string>
+    <string name="edit">തിരുത്തുക</string>
+    <string name="sort_updated_new">പുതുക്കിയത് (പുതിയത് മുതൽ പഴയത് വരെ)</string>
+    <string name="nsfw_singular">NSFW</string>
+    <string name="update_notification_installing">ആപ്പ് അപ്ഡേറ്റ് ഇൻസ്റ്റാൾ ചെയ്യുന്നു…</string>
+    <string name="category_updates">അപ്ഡേറ്റുകളും ഒപ്പം ബാക്കപ്പും</string>
+    <string name="single_plugin_disabled" formatted="true">%s(അപ്രാപ്തമാക്കി)</string>
+    <string name="sort_rating_asc">റേറ്റിംഗ് (താഴ്ന്നത് മുതൽ ഉയർന്നത് വരെ)</string>
+    <string name="subs_text_color">വാചക നിറം</string>
+    <string name="update_notification_failed">ആപ്പിൻ്റെ പുതിയ പതിപ്പ് ഇൻസ്റ്റാൾ ചെയ്യാനായില്ല</string>
+    <string name="apk_installer_package_installer">പാക്കേജ് ഇൻസ്റ്റാളർ</string>
+    <string name="sort_alphabetical_a">അക്ഷരമാലാക്രമം (A മുതൽ Z വരെ)</string>
+    <string name="sort_alphabetical_z">അക്ഷരമാലാക്രമം (Z മുതൽ A വരെ)</string>
+    <string name="empty_library_logged_in_message">ഈ ലിസ്റ്റ് ശൂന്യമാണ്. മറ്റൊന്നിലേക്ക് മാറാൻ ശ്രമിക്കുക.</string>
+    <string name="clear_history">ചരിത്രം മായ്ക്കുക</string>
+    <string name="show_log_cat">ലോഗ്കാറ്റ് കാണിക്കുക 🐈</string>
+    <string name="empty_library_no_accounts_message">നിങ്ങളുടെ ലൈബ്രറി ശൂന്യമാണ് :(
+\nഒരു ലൈബ്രറി അക്കൗണ്ടിൽ ലോഗിൻ ചെയ്യുക അല്ലെങ്കിൽ നിങ്ങളുടെ പ്രാദേശിക ലൈബ്രറിയിലേക്ക് ഷോകൾ ചേർക്കുക.</string>
+    <string name="other_singular">വീഡിയോ</string>
+    <string name="repo_copy_label">റിപ്പോസിറ്ററി നാമവും URL ഉം</string>
+    <string name="toast_copied">പകർത്തി!</string>
+    <string name="subscribe_tooltip">പുതിയ എപ്പിസോഡ് അറിയിപ്പ്</string>
+    <string name="result_search_tooltip">മറ്റ് വിപുലീകരണങ്ങളിൽ തിരയുക</string>
+    <string name="subtitles_settings">ഉപശീർഷകം ക്രമീകരണങ്ങൾ</string>
+    <string name="subs_edge_type">എഡ്ജ് തരം</string>
+    <string name="subs_outline_color">ഔട്ട്ലൈൻ നിറം</string>
+    <string name="subs_background_color">പശ്ചാത്തല നിറം</string>
 </resources>

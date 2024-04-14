@@ -440,7 +440,7 @@
     <string name="tracks">المسارات</string>
     <string name="audio_tracks">مسار الصوت</string>
     <string name="video_tracks">مسار الفيديو</string>
-    <string name="apply_on_restart">تطبيق بعد إعادة التشغيل</string>
+    <string name="apply_on_restart">أعد تشغيل التطبيق لرؤية التغييرات.</string>
     <string name="safe_mode_title">الوضع الآمن قيد التشغيل</string>
     <string name="safe_mode_description">تم إيقاف تشغيل جميع الملحقات بسبب عطل لمساعدتك في العثور على الإضافة التي تسبب مشكلة.</string>
     <string name="safe_mode_crash_info">عرض بيانات الاعطال</string>
@@ -641,4 +641,13 @@
     <string name="clipboard_permission_error">خطأ في الوصول الي حافظة النسخ، برجاء المحاولة مرة اخرى.</string>
     <string name="toast_copied">تم النسخ!</string>
     <string name="clipboard_unknown_error">خطأ في عملية النسخ، برجاء نسخ ال logcat و ارساله الى مسؤولين دعم التطبيق.</string>
+    <string name="battery_dialog_title">تعطيل تحسين البطارية</string>
+    <string name="app_unrestricted_toast">تم ضبط استخدام بطارية التطبيق بالفعل على غير مقيد</string>
+    <string name="app_info_intent_error">غير قادر على فتح معلومات تطبيق CloudStream.</string>
+    <string name="audio_book_singular">كتاب صوتي</string>
+    <string name="ok">حسناً</string>
+    <string name="battery_dialog_message">لضمان عدم انقطاع التنزيلات والإشعارات للبرامج التلفزيونية المشتركة، يحتاج CloudStream إلى إذن للتشغيل في الخلفية. بالضغط على موافق، سيتم توجيهك إلى معلومات التطبيق. هناك، انتقل إلى استخدام بطارية التطبيق
+\nواضبط استخدام البطارية على غير مقيد. يرجى ملاحظة أن هذا الإذن لا يعني أن CS3 سوف يستنزف البطارية. ولن يعمل إلا في الخلفية عند الضرورة، كما هو الحال عند تلقي الإشعارات أو تنزيل مقاطع الفيديو من الملحقات الرسمية. إذا اخترت الإلغاء، فيمكنك ضبط هذا الإعداد لاحقًا في الإعدادات العامة.</string>
+    <string name="music_singlar">موسيقى</string>
+    <string name="custom_media_singluar">الوسائط</string>
 </resources>

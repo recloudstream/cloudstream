@@ -5,6 +5,7 @@ import android.content.*
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.text.format.Formatter.formatFileSize
 import android.util.Log
 import android.widget.Toast
 import androidx.annotation.MainThread
@@ -20,7 +21,6 @@ import com.lagradost.cloudstream3.APIHolder.apis
 import com.lagradost.cloudstream3.APIHolder.getId
 import com.lagradost.cloudstream3.APIHolder.unixTime
 import com.lagradost.cloudstream3.APIHolder.unixTimeMS
-import com.lagradost.cloudstream3.AcraApplication.Companion.context
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.CommonActivity.activity
 import com.lagradost.cloudstream3.CommonActivity.getCastSession
@@ -1280,9 +1280,14 @@ class ResultViewModel2 : ViewModel() {
         callback: (Pair<LinkLoadingResult, Int>) -> Unit,
     ) {
         loadLinks(result, isVisible = true, type) { links ->
+            // Could not find a better way to do this
+            val context = AcraApplication.context
             postPopup(
                 text,
-                links.links.map { txt("${it.name} ${Qualities.getStringByInt(it.quality)}") }) {
+                links.links.apmap {
+                    val size = it.getVideoSize()?.let { size -> " " + formatFileSize(context, size) } ?: ""
+                    txt("${it.name} ${Qualities.getStringByInt(it.quality)}$size")
+                }) {
                 callback.invoke(links to (it ?: return@postPopup))
             }
         }

@@ -651,4 +651,12 @@
 \n剩余</string>
     <string name="test_extensions">测试所有扩展</string>
     <string name="toast_copied">已复制！</string>
+    <string name="clipboard_permission_error">访问剪贴板出错，请重试。</string>
+    <string name="app_unrestricted_toast">应用程序电池使用量已设置为不受限制</string>
+    <string name="audio_book_singular">有声书</string>
+    <string name="custom_media_singluar">媒体</string>
+    <string name="battery_dialog_title">禁用电池最佳化</string>
+    <string name="music_singlar">音乐</string>
+    <string name="app_info_intent_error">无法打开 CloudStream 的应用程序信息。</string>
+    <string name="biometric_setting_summary">使用指纹、面部 ID、PIN 码、图案和密码解锁应用程序。</string>
 </resources>

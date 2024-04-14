@@ -279,7 +279,7 @@
     <string name="backup_failed">Permissions de stockage manquantes. Veuillez réessayer.</string>
     <string name="backup_failed_error_format">Erreur de sauvegarde %s</string>
     <string name="search">Recherche</string>
-    <string name="category_account">Comptes</string>
+    <string name="category_account">Comptes et Sécurité</string>
     <string name="category_updates">Mises à jour et sauvegarde</string>
     <string name="settings_info">Info</string>
     <string name="advanced_search">Recherche avancée</string>
