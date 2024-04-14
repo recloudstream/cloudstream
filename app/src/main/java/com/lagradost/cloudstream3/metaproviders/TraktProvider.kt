@@ -4,6 +4,8 @@ import android.net.Uri
 import com.lagradost.cloudstream3.*
 import com.fasterxml.jackson.annotation.JsonAlias
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.lagradost.cloudstream3.LoadResponse.Companion.addImdbId
+import com.lagradost.cloudstream3.LoadResponse.Companion.addTMDbId
 import com.lagradost.cloudstream3.LoadResponse.Companion.addTrailer
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.utils.AppUtils.parseJson
@@ -145,13 +147,15 @@ open class TraktProvider : MainAPI() {
                 this.rating = mediaDetails.rating?.times(1000)?.roundToInt()
                 this.tags = mediaDetails.genres
                 this.duration = mediaDetails.runtime
-                addTrailer(mediaDetails.trailer)
                 this.recommendations = relatedMedia
                 this.actors = actors
                 this.comingSoon = isUpcoming(mediaDetails.released)
                 //posterHeaders
                 this.backgroundPosterUrl = getOriginalWidthImageUrl(backDropUrl)
                 this.contentRating = mediaDetails.certification
+                addTrailer(mediaDetails.trailer)
+                addImdbId(mediaDetails.ids?.imdb)
+                addTMDbId(mediaDetails.ids?.tmdb.toString())
             }
         } else {
 
@@ -226,7 +230,6 @@ open class TraktProvider : MainAPI() {
                 this.rating = mediaDetails.rating?.times(1000)?.roundToInt()
                 this.tags = mediaDetails.genres
                 this.duration = mediaDetails.runtime
-                addTrailer(mediaDetails.trailer)
                 this.recommendations = relatedMedia
                 this.actors = actors
                 this.comingSoon = isUpcoming(mediaDetails.released)
@@ -234,6 +237,9 @@ open class TraktProvider : MainAPI() {
                 this.seasonNames = seasonsNames
                 this.backgroundPosterUrl = getOriginalWidthImageUrl(backDropUrl)
                 this.contentRating = mediaDetails.certification
+                addTrailer(mediaDetails.trailer)
+                addImdbId(mediaDetails.ids?.imdb)
+                addTMDbId(mediaDetails.ids?.tmdb.toString())
             }
         }
     }
