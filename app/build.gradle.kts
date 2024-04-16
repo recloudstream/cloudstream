@@ -1,5 +1,6 @@
 import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
 import org.jetbrains.dokka.gradle.DokkaTask
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.archivesName
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.ByteArrayOutputStream
 import java.net.URL
@@ -13,6 +14,7 @@ plugins {
 
 val tmpFilePath = System.getProperty("user.home") + "/work/_temp/keystore/"
 val prereleaseStoreFile: File? = File(tmpFilePath).listFiles()?.first()
+var isLibraryDebug = false
 
 fun String.execute() = ByteArrayOutputStream().use { baot ->
     if (project.exec {
@@ -103,6 +105,7 @@ android {
             )
         }
         debug {
+            isLibraryDebug = true
             isDebuggable = true
             applicationIdSuffix = ".debug"
             proguardFiles(
@@ -232,18 +235,37 @@ dependencies {
     implementation("androidx.work:work-runtime:2.9.0")
     implementation("androidx.work:work-runtime-ktx:2.9.0")
     implementation("com.github.Blatzar:NiceHttp:0.4.11") // HTTP Lib
+
+    implementation(project(":library") {
+        this.extra.set("isDebug", isLibraryDebug)
+    })
 }
 
-tasks.register("androidSourcesJar", Jar::class) {
+tasks.register<Jar>("androidSourcesJar") {
     archiveClassifier.set("sources")
     from(android.sourceSets.getByName("main").java.srcDirs) // Full Sources
 }
 
-// For GradLew Plugin
-tasks.register("makeJar", Copy::class) {
-    from("build/intermediates/compile_app_classes_jar/prereleaseDebug")
-    into("build")
-    include("classes.jar")
+tasks.register<Copy>("copyJar") {
+    from(
+        "build/intermediates/compile_app_classes_jar/prereleaseDebug",
+        "../library/build/libs"
+    )
+    into("build/app-classes")
+    include("classes.jar", "library-jvm*.jar")
+    // Remove the version
+    rename("library-jvm.*.jar", "library-jvm.jar")
+}
+
+// Merge the app classes and the library classes into classes.jar
+tasks.register<Jar>("makeJar") {
+    dependsOn(tasks.getByName("copyJar"))
+    from(
+        zipTree("build/app-classes/classes.jar"),
+        zipTree("build/app-classes/library-jvm.jar")
+    )
+    destinationDirectory.set(layout.buildDirectory)
+    archivesName = "classes"
 }
 
 tasks.withType<KotlinCompile> {
