@@ -876,7 +876,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     VidSrcTo(),
     PlayLtXyz(),
     AStreamHub(),
-    AnyVidplay("");
+    AnyVidplay(""),
     Vidplay(),
     VidplayOnline(),
     MyCloud(),
