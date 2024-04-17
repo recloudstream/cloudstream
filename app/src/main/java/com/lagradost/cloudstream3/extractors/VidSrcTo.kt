@@ -1,10 +1,9 @@
 package com.lagradost.cloudstream3.extractors
 
 import android.util.Base64
-import android.util.Log
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.SubtitleFile
-import com.lagradost.cloudstream3.apmap
+import com.lagradost.cloudstream3.amap
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
@@ -23,24 +22,16 @@ class VidSrcTo : ExtractorApi() {
             subtitleCallback: (SubtitleFile) -> Unit,
             callback: (ExtractorLink) -> Unit
     ) {
-        val mediaId =
-                app.get(url).document.selectFirst("ul.episodes li a")?.attr("data-id") ?: return
-        val res =
-                app.get("$mainUrl/ajax/embed/episode/$mediaId/sources")
-                        .parsedSafe<VidsrctoEpisodeSources>()
-        if (res?.status == 200) {
-            res.result?.apmap { source ->
-                val embedRes =
-                        app.get("$mainUrl/ajax/embed/source/${source.id}")
-                                .parsedSafe<VidsrctoEmbedSource>()
-                val finalUrl = DecryptUrl(embedRes?.result?.encUrl ?: "")
-                Log.d("rowdyTest", source.title + ": " + finalUrl)
-                when (source.title) {
-                    "Vidplay" ->
-                            AnyVidplay(finalUrl.substringBefore("/e/"))
-                                    .getUrl(finalUrl, referer, subtitleCallback, callback)
-                    "Filemoon" -> FileMoon().getUrl(finalUrl, referer, subtitleCallback, callback)
-                    else -> {}
+        app.get(url).document.selectFirst("ul.episodes li a")?.attr("data-id")?.let { mediaId ->
+            val res = app.get("$mainUrl/ajax/embed/episode/$mediaId/sources").parsedSafe<VidsrctoEpisodeSources>()
+            if (res?.status == 200) {
+                res.result?.amap { source ->
+                    val embedRes = app.get("$mainUrl/ajax/embed/source/${source.id}").parsedSafe<VidsrctoEmbedSource>()
+                    val finalUrl = DecryptUrl(embedRes?.result?.encUrl ?: "")
+                    when (source.title) {
+                        "Vidplay" -> AnyVidplay(finalUrl.substringBefore("/e/")).getUrl(finalUrl, referer, subtitleCallback, callback)
+                        "Filemoon" -> FileMoon().getUrl(finalUrl, referer, subtitleCallback, callback)
+                    }
                 }
             }
         }

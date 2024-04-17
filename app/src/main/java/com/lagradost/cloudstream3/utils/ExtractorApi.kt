@@ -10,7 +10,6 @@ import com.lagradost.cloudstream3.extractors.AStreamHub
 import com.lagradost.cloudstream3.extractors.Acefile
 import com.lagradost.cloudstream3.extractors.Ahvsh
 import com.lagradost.cloudstream3.extractors.Aico
-import com.lagradost.cloudstream3.extractors.AnyVidplay
 import com.lagradost.cloudstream3.extractors.AsianLoad
 import com.lagradost.cloudstream3.extractors.Bestx
 import com.lagradost.cloudstream3.extractors.Blogger
@@ -876,7 +875,6 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     VidSrcTo(),
     PlayLtXyz(),
     AStreamHub(),
-    AnyVidplay(""),
     Vidplay(),
     VidplayOnline(),
     MyCloud(),
