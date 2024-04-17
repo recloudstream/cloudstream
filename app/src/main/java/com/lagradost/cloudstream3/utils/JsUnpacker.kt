@@ -1,6 +1,6 @@
 package com.lagradost.cloudstream3.utils
 
-import com.lagradost.safefile.logError
+import com.lagradost.cloudstream3.mvvm.logError
 import java.util.regex.Pattern
 import kotlin.math.pow
 
