@@ -1118,6 +1118,9 @@ class CS3IPlayer : IPlayer {
                         }
 
                         Player.STATE_ENDED -> {
+                            // Resets subtitle delay on ended video
+                            setSubtitleOffset(0)
+
                             // Only play next episode if autoplay is on (default)
                             if (PreferenceManager.getDefaultSharedPreferences(context)
                                     ?.getBoolean(

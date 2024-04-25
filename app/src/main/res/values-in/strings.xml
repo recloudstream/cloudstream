@@ -138,7 +138,7 @@
     <string name="backup_failed_error_format">Error saat mencadang %s</string>
     <string name="search">Cari</string>
     <string name="category_account">Akun dan Keamanan</string>
-    <string name="category_updates">Update dan cadangan</string>
+    <string name="category_updates">Update dan Cadangan</string>
     <string name="settings_info">Info</string>
     <string name="advanced_search">Pencarian Lanjutan</string>
     <string name="advanced_search_des">Memberikan hasil pencarian yang dipisahkan berdasarkan provider</string>
@@ -432,7 +432,7 @@
     <string name="safe_mode_title">Semua Umur</string>
     <string name="single_plugin_disabled" formatted="true">%s (Tidak aktif)</string>
     <string name="tracks">Trek</string>
-    <string name="apply_on_restart">Terapkan saat dimuat ulang</string>
+    <string name="apply_on_restart">Terapkan saat dimuat ulang untuk melihat perubahan.</string>
     <string name="extension_description">Keterangan</string>
     <string name="extension_version">Versi</string>
     <string name="extension_status">Status</string>
@@ -630,4 +630,12 @@
     <string name="clipboard_permission_error">Gagal mengakses Papan Klip, mohon coba lagi.</string>
     <string name="toast_copied">disalin!</string>
     <string name="clipboard_unknown_error">Gagal menyalin, mohon salin logcat dan hubungi pengembang aplikasi.</string>
+    <string name="ok">Oke</string>
+    <string name="battery_dialog_title">Matikan pengoptimalan Baterai</string>
+    <string name="app_unrestricted_toast">Pemakaian baterai untuk aplikasi ini sudah diatur menjadi tidak dibatasi</string>
+    <string name="app_info_intent_error">Gagal membuka info aplikasi CloudStream.</string>
+    <string name="music_singlar">Musik</string>
+    <string name="audio_book_singular">Buku Audio</string>
+    <string name="custom_media_singluar">Media</string>
+    <string name="battery_dialog_message">Untuk memastikan unduhan dan pemberitahuan tanpa gangguan untuk acara TV berlangganan, CloudStream memerlukan izin untuk berjalan di latar belakang. Dengan menekan OK, Anda akan diarahkan ke Info aplikasi. Di sana, gulir ke Penggunaan baterai aplikasi dan atur penggunaan baterai ke Tidak Terbatas. Harap dicatat, izin ini tidak berarti CS3 akan menguras baterai Anda. Ini hanya akan beroperasi di latar belakang ketika diperlukan, seperti ketika menerima pemberitahuan atau mengunduh video dari ekstensi resmi. Jika Anda memilih untuk membatalkannya, Anda dapat menyesuaikan pengaturan ini nanti di Pengaturan Umum.</string>
 </resources>

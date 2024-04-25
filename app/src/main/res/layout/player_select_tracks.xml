@@ -38,21 +38,20 @@
                     android:requiresFadingEdge="vertical"
                     android:id="@+id/video_tracks_list"
                     android:layout_width="match_parent"
-
                     android:layout_height="match_parent"
                     android:layout_rowWeight="1"
                     android:background="?attr/primaryBlackBackground"
-                    android:nextFocusLeft="@id/sort_subtitles"
-                    android:nextFocusRight="@id/apply_btt"
+                    android:nextFocusRight="@id/audio_tracks_holder"
+
                     tools:listitem="@layout/sort_bottom_single_choice" />
         </LinearLayout>
 
         <LinearLayout
-                android:id="@+id/audio_tracks_holder"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="50"
-                android:orientation="vertical">
+            android:id="@+id/audio_tracks_holder"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="50"
+            android:orientation="vertical">
 
             <!--   android:id="@+id/subs_settings"                 android:foreground="?android:attr/selectableItemBackgroundBorderless"
 -->
@@ -107,17 +106,16 @@
             </LinearLayout>
 
             <ListView
-                    android:requiresFadingEdge="vertical"
-                    android:id="@+id/auto_tracks_list"
-                    android:layout_width="match_parent"
-
-                    android:layout_height="match_parent"
-                    android:layout_rowWeight="1"
-                    android:background="?attr/primaryBlackBackground"
-                    android:nextFocusLeft="@id/sort_providers"
-                    android:nextFocusRight="@id/cancel_btt"
-                    tools:listfooter="@layout/sort_bottom_footer_add_choice"
-                    tools:listitem="@layout/sort_bottom_single_choice" />
+                android:requiresFadingEdge="vertical"
+                android:id="@+id/auto_tracks_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_rowWeight="1"
+                android:background="?attr/primaryBlackBackground"
+                android:nextFocusRight="@id/apply_btt"
+                android:nextFocusLeft="@id/video_tracks_list"
+                tools:listfooter="@layout/sort_bottom_footer_add_choice"
+                tools:listitem="@layout/sort_bottom_single_choice" />
         </LinearLayout>
     </LinearLayout>
 
@@ -132,11 +130,12 @@
 
 
         <com.google.android.material.button.MaterialButton
-                style="@style/WhiteButton"
-                android:layout_gravity="center_vertical|end"
-                android:text="@string/sort_apply"
-                android:id="@+id/apply_btt"
-                android:layout_width="wrap_content" />
+            style="@style/WhiteButton"
+            android:layout_gravity="center_vertical|end"
+            android:text="@string/sort_apply"
+            android:id="@+id/apply_btt"
+            android:nextFocusLeft="@id/auto_tracks_list"
+            android:layout_width="wrap_content" />
 
         <com.google.android.material.button.MaterialButton
                 style="@style/BlackButton"
