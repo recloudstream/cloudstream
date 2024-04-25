@@ -24,7 +24,7 @@ class VidSrcTo : ExtractorApi() {
     ) {
         val mediaId = app.get(url).document.selectFirst("ul.episodes li a")?.attr("data-id") ?: return
         val res = app.get("$mainUrl/ajax/embed/episode/$mediaId/sources").parsedSafe<VidsrctoEpisodeSources>() ?: return
-        if (res?.status == 200) return
+        if (res?.status != 200) return
         res.result?.amap { source ->
             val embedRes = app.get("$mainUrl/ajax/embed/source/${source.id}").parsedSafe<VidsrctoEmbedSource>() ?: return@amap
             val finalUrl = DecryptUrl(embedRes?.result?.encUrl)
