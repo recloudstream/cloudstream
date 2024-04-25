@@ -27,16 +27,8 @@ open class Vidguardto : ExtractorApi() {
         subtitleCallback: (SubtitleFile) -> Unit,
         callback: (ExtractorLink) -> Unit
     ) {
-        val client = OkHttpClient()
-        val request = Request.Builder()
-            .url(url)
-            .build()
-
-        val response = client.newCall(request).execute()
-        val result = Jsoup.parse(response.body.string())
-
-        val resc = result.select("script:containsData(eval)").firstOrNull()?.data()
-
+        val res = app.get(url)
+		val resc = res.document.select("script:containsData(eval)").firstOrNull()?.data()
         resc?.let {
             val jsonStr2 = AppUtils.parseJson<SvgObject>(runJS2(it))
             val watchlink = sigDecode(jsonStr2.stream)
