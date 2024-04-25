@@ -22,17 +22,15 @@ class VidSrcTo : ExtractorApi() {
             subtitleCallback: (SubtitleFile) -> Unit,
             callback: (ExtractorLink) -> Unit
     ) {
-        app.get(url).document.selectFirst("ul.episodes li a")?.attr("data-id")?.let { mediaId ->
-            val res = app.get("$mainUrl/ajax/embed/episode/$mediaId/sources").parsedSafe<VidsrctoEpisodeSources>()
-            if (res?.status == 200) {
-                res.result?.amap { source ->
-                    val embedRes = app.get("$mainUrl/ajax/embed/source/${source.id}").parsedSafe<VidsrctoEmbedSource>()
-                    val finalUrl = DecryptUrl(embedRes?.result?.encUrl ?: "")
-                    when (source.title) {
-                        "Vidplay" -> AnyVidplay(finalUrl.substringBefore("/e/")).getUrl(finalUrl, referer, subtitleCallback, callback)
-                        "Filemoon" -> FileMoon().getUrl(finalUrl, referer, subtitleCallback, callback)
-                    }
-                }
+        val mediaId = app.get(url).document.selectFirst("ul.episodes li a")?.attr("data-id") ?: return
+        val res = app.get("$mainUrl/ajax/embed/episode/$mediaId/sources").parsedSafe<VidsrctoEpisodeSources>() ?: return
+        if (res?.status == 200) return
+        res.result?.amap { source ->
+            val embedRes = app.get("$mainUrl/ajax/embed/source/${source.id}").parsedSafe<VidsrctoEmbedSource>() ?: return@amap
+            val finalUrl = DecryptUrl(embedRes?.result?.encUrl)
+            when (source.title) {
+                "Vidplay" -> AnyVidplay(finalUrl.substringBefore("/e/")).getUrl(finalUrl, referer, subtitleCallback, callback)
+                "Filemoon" -> FileMoon().getUrl(finalUrl, referer, subtitleCallback, callback)
             }
         }
     }
@@ -46,6 +44,7 @@ class VidSrcTo : ExtractorApi() {
         data = cipher.doFinal(data)
         return URLDecoder.decode(data.toString(Charsets.UTF_8), "utf-8")
     }
+
     data class VidsrctoEpisodeSources(
             @JsonProperty("status") val status: Int,
             @JsonProperty("result") val result: List<VidsrctoResult>?
