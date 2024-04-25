@@ -29,6 +29,14 @@ import com.lagradost.cloudstream3.LoadResponse.Companion.addTrailer
 import com.lagradost.cloudstream3.LoadResponse.Companion.getAniListId
 import com.lagradost.cloudstream3.LoadResponse.Companion.getMalId
 import com.lagradost.cloudstream3.LoadResponse.Companion.isMovie
+import com.lagradost.cloudstream3.MainActivity.Companion.MPV
+import com.lagradost.cloudstream3.MainActivity.Companion.MPV_COMPONENT
+import com.lagradost.cloudstream3.MainActivity.Companion.MPV_PACKAGE
+import com.lagradost.cloudstream3.MainActivity.Companion.VLC
+import com.lagradost.cloudstream3.MainActivity.Companion.VLC_COMPONENT
+import com.lagradost.cloudstream3.MainActivity.Companion.VLC_PACKAGE
+import com.lagradost.cloudstream3.MainActivity.Companion.WEB_VIDEO
+import com.lagradost.cloudstream3.MainActivity.Companion.WEB_VIDEO_CAST_PACKAGE
 import com.lagradost.cloudstream3.metaproviders.SyncRedirector
 import com.lagradost.cloudstream3.mvvm.*
 import com.lagradost.cloudstream3.syncproviders.AccountManager
@@ -1345,7 +1353,7 @@ class ResultViewModel2 : ViewModel() {
 
     private fun launchActivity(
         activity: Activity?,
-        resumeApp: ResultResume,
+        resumeApp: MainActivity.Companion.ResultResume,
         id: Int? = null,
         work: suspend (Intent.(Activity) -> Unit)
     ): Job? {

@@ -161,8 +161,6 @@ import com.lagradost.cloudstream3.utils.UIHelper.requestRW
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import com.lagradost.cloudstream3.utils.USER_PROVIDER_API
 import com.lagradost.cloudstream3.utils.USER_SELECTED_HOMEPAGE_API
-import com.lagradost.nicehttp.Requests
-import com.lagradost.nicehttp.ResponseParser
 import com.lagradost.safefile.SafeFile
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -173,7 +171,6 @@ import java.net.URLDecoder
 import java.nio.charset.Charset
 import kotlin.math.abs
 import kotlin.math.absoluteValue
-import kotlin.reflect.KClass
 import kotlin.system.exitProcess
 
 //https://github.com/videolan/vlc-android/blob/3706c4be2da6800b3d26344fc04fab03ffa4b860/application/vlc-android/src/org/videolan/vlc/gui/video/VideoPlayerActivity.kt#L1898
@@ -186,117 +183,93 @@ import kotlin.system.exitProcess
 
 //https://github.com/jellyfin/jellyfin-android/blob/6cbf0edf84a3da82347c8d59b5d5590749da81a9/app/src/main/java/org/jellyfin/mobile/bridge/ExternalPlayer.kt#L225
 
-const val VLC_PACKAGE = "org.videolan.vlc"
-const val MPV_PACKAGE = "is.xyz.mpv"
-const val WEB_VIDEO_CAST_PACKAGE = "com.instantbits.cast.webvideo"
-
-val VLC_COMPONENT = ComponentName(VLC_PACKAGE, "$VLC_PACKAGE.gui.video.VideoPlayerActivity")
-val MPV_COMPONENT = ComponentName(MPV_PACKAGE, "$MPV_PACKAGE.MPVActivity")
-
-//TODO REFACTOR AF
-open class ResultResume(
-    val packageString: String,
-    val action: String = Intent.ACTION_VIEW,
-    val position: String? = null,
-    val duration: String? = null,
-    var launcher: ActivityResultLauncher<Intent>? = null,
-) {
-    val defaultTime = -1L
-
-    val lastId get() = "${packageString}_last_open_id"
-    suspend fun launch(id: Int?, callback: suspend Intent.() -> Unit) {
-        val intent = Intent(action)
-
-        if (id != null)
-            setKey(lastId, id)
-        else
-            removeKey(lastId)
-
-        intent.setPackage(packageString)
-        callback.invoke(intent)
-        launcher?.launch(intent)
-    }
-
-    open fun getPosition(intent: Intent?): Long {
-        return defaultTime
-    }
-
-    open fun getDuration(intent: Intent?): Long {
-        return defaultTime
-    }
-}
-
-val VLC = object : ResultResume(
-    VLC_PACKAGE,
-    // Android 13 intent restrictions fucks up specifically launching the VLC player
-    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
-        "org.videolan.vlc.player.result"
-    } else {
-        Intent.ACTION_VIEW
-    },
-    "extra_position",
-    "extra_duration",
-) {
-    override fun getPosition(intent: Intent?): Long {
-        return intent?.getLongExtra(this.position, defaultTime) ?: defaultTime
-    }
-
-    override fun getDuration(intent: Intent?): Long {
-        return intent?.getLongExtra(this.duration, defaultTime) ?: defaultTime
-    }
-}
-
-val MPV = object : ResultResume(
-    MPV_PACKAGE,
-    //"is.xyz.mpv.MPVActivity.result", // resume not working :pensive:
-    position = "position",
-    duration = "duration",
-) {
-    override fun getPosition(intent: Intent?): Long {
-        return intent?.getIntExtra(this.position, defaultTime.toInt())?.toLong() ?: defaultTime
-    }
-
-    override fun getDuration(intent: Intent?): Long {
-        return intent?.getIntExtra(this.duration, defaultTime.toInt())?.toLong() ?: defaultTime
-    }
-}
-
-val WEB_VIDEO = ResultResume(WEB_VIDEO_CAST_PACKAGE)
-
-val resumeApps = arrayOf(
-    VLC, MPV, WEB_VIDEO
-)
-
-// Short name for requests client to make it nicer to use
-
-var app = Requests(responseParser = object : ResponseParser {
-    val mapper: ObjectMapper = jacksonObjectMapper().configure(
-        DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,
-        false
-    )
-
-    override fun <T : Any> parse(text: String, kClass: KClass<T>): T {
-        return mapper.readValue(text, kClass.java)
-    }
-
-    override fun <T : Any> parseSafe(text: String, kClass: KClass<T>): T? {
-        return try {
-            mapper.readValue(text, kClass.java)
-        } catch (e: Exception) {
-            null
-        }
-    }
-
-    override fun writeValueAsString(obj: Any): String {
-        return mapper.writeValueAsString(obj)
-    }
-}).apply {
-    defaultHeaders = mapOf("user-agent" to USER_AGENT)
-}
-
 class MainActivity : AppCompatActivity(), ColorPickerDialogListener,
     BiometricAuthenticator.BiometricAuthCallback {
     companion object {
+        const val VLC_PACKAGE = "org.videolan.vlc"
+        const val MPV_PACKAGE = "is.xyz.mpv"
+        const val WEB_VIDEO_CAST_PACKAGE = "com.instantbits.cast.webvideo"
+
+        val VLC_COMPONENT = ComponentName(VLC_PACKAGE, "$VLC_PACKAGE.gui.video.VideoPlayerActivity")
+        val MPV_COMPONENT = ComponentName(MPV_PACKAGE, "$MPV_PACKAGE.MPVActivity")
+
+        //TODO REFACTOR AF
+        open class ResultResume(
+            val packageString: String,
+            val action: String = Intent.ACTION_VIEW,
+            val position: String? = null,
+            val duration: String? = null,
+            var launcher: ActivityResultLauncher<Intent>? = null,
+        ) {
+            val defaultTime = -1L
+
+            val lastId get() = "${packageString}_last_open_id"
+            suspend fun launch(id: Int?, callback: suspend Intent.() -> Unit) {
+                val intent = Intent(action)
+
+                if (id != null)
+                    setKey(lastId, id)
+                else
+                    removeKey(lastId)
+
+                intent.setPackage(packageString)
+                callback.invoke(intent)
+                launcher?.launch(intent)
+            }
+
+            open fun getPosition(intent: Intent?): Long {
+                return defaultTime
+            }
+
+            open fun getDuration(intent: Intent?): Long {
+                return defaultTime
+            }
+        }
+
+        val VLC = object : ResultResume(
+            VLC_PACKAGE,
+            // Android 13 intent restrictions fucks up specifically launching the VLC player
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+                "org.videolan.vlc.player.result"
+            } else {
+                Intent.ACTION_VIEW
+            },
+            "extra_position",
+            "extra_duration",
+        ) {
+            override fun getPosition(intent: Intent?): Long {
+                return intent?.getLongExtra(this.position, defaultTime) ?: defaultTime
+            }
+
+            override fun getDuration(intent: Intent?): Long {
+                return intent?.getLongExtra(this.duration, defaultTime) ?: defaultTime
+            }
+        }
+
+        val MPV = object : ResultResume(
+            MPV_PACKAGE,
+            //"is.xyz.mpv.MPVActivity.result", // resume not working :pensive:
+            position = "position",
+            duration = "duration",
+        ) {
+            override fun getPosition(intent: Intent?): Long {
+                return intent?.getIntExtra(this.position, defaultTime.toInt())?.toLong()
+                    ?: defaultTime
+            }
+
+            override fun getDuration(intent: Intent?): Long {
+                return intent?.getIntExtra(this.duration, defaultTime.toInt())?.toLong()
+                    ?: defaultTime
+            }
+        }
+
+        val WEB_VIDEO = ResultResume(WEB_VIDEO_CAST_PACKAGE)
+
+        val resumeApps = arrayOf(
+            VLC, MPV, WEB_VIDEO
+        )
+
+
         const val TAG = "MAINACT"
         const val ANIMATED_OUTLINE: Boolean = false
         var lastError: String? = null
@@ -1402,7 +1375,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener,
             }
         }
 
-        observe(viewModel.watchStatus,::setWatchStatus)
+        observe(viewModel.watchStatus, ::setWatchStatus)
         observe(syncViewModel.userData, ::setUserData)
         observeNullable(viewModel.subscribeStatus, ::setSubscribeStatus)
 
@@ -1828,7 +1801,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener,
     }
 
     override fun onAuthenticationError() {
-            finish()
+        finish()
     }
 
     private var backPressedCallback: OnBackPressedCallback? = null
