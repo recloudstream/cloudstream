@@ -28,7 +28,7 @@ open class Vidguardto : ExtractorApi() {
         callback: (ExtractorLink) -> Unit
     ) {
         val res = app.get(url)
-		val resc = res.document.select("script:containsData(eval)").firstOrNull()?.data()
+	val resc = res.document.select("script:containsData(eval)").firstOrNull()?.data()
         resc?.let {
             val jsonStr2 = AppUtils.parseJson<SvgObject>(runJS2(it))
             val watchlink = sigDecode(jsonStr2.stream)
