@@ -27,7 +27,7 @@ class VidSrcTo : ExtractorApi() {
         if (res?.status != 200) return
         res.result?.amap { source ->
             val embedRes = app.get("$mainUrl/ajax/embed/source/${source.id}").parsedSafe<VidsrctoEmbedSource>() ?: return@amap
-            val finalUrl = DecryptUrl(embedRes?.result?.encUrl)
+            val finalUrl = DecryptUrl(embedRes.result.encUrl)
             when (source.title) {
                 "Vidplay" -> AnyVidplay(finalUrl.substringBefore("/e/")).getUrl(finalUrl, referer, subtitleCallback, callback)
                 "Filemoon" -> FileMoon().getUrl(finalUrl, referer, subtitleCallback, callback)
