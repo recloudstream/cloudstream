@@ -1099,13 +1099,14 @@ class ResultViewModel2 : ViewModel() {
 
         val duplicateEntries = data.filter { it: DataStoreHelper.LibrarySearchResponse ->
             val librarySyncData = it.syncData
+            val yearCheck = year == it.year || year == null || it.year == null
 
             val checks = listOf(
                 { imdbId != null && getImdbIdFromSyncData(librarySyncData) == imdbId },
                 { tmdbId != null && getTMDbIdFromSyncData(librarySyncData) == tmdbId },
                 { malId != null && librarySyncData?.get(AccountManager.malApi.idPrefix) == malId },
                 { aniListId != null && librarySyncData?.get(AccountManager.aniListApi.idPrefix) == aniListId },
-                { normalizedName == normalizeString(it.name) && year == it.year }
+                { normalizedName == normalizeString(it.name) && yearCheck }
             )
 
             checks.any { it() }
