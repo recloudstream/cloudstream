@@ -292,6 +292,7 @@
     <string name="episodes">Episodes</string>
     <string name="episodes_range">%1$d-%2$d</string>
     <string name="episode_format" formatted="true">%1$d %2$s</string>
+    <string name="episode_upcoming_format" formatted="true">Upcoming in %s</string>
     <string name="season_short">S</string>
     <string name="episode_short">E</string>
     <string name="no_episodes_found">No Episodes found</string>
