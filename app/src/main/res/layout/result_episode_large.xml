@@ -43,14 +43,26 @@
                     android:foreground="?android:attr/selectableItemBackgroundBorderless"
                     android:nextFocusRight="@id/download_button"
                     android:scaleType="centerCrop"
-                    tools:src="@drawable/example_poster" />
+                    tools:src="@drawable/example_poster"
+                    tools:visibility="invisible"/>
 
                 <ImageView
+                    android:id="@+id/episode_play_icon"
                     android:layout_width="36dp"
                     android:layout_height="36dp"
                     android:layout_gravity="center"
                     android:contentDescription="@string/play_episode"
-                    android:src="@drawable/play_button" />
+                    android:src="@drawable/play_button"
+                    tools:visibility="invisible"/>
+
+                <ImageView
+                    android:id="@+id/episode_upcoming_icon"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/hourglass_24"
+                    android:visibility="gone"
+                    tools:visibility="visible" />
 
                 <androidx.core.widget.ContentLoadingProgressBar
                     android:id="@+id/episode_progress"
@@ -100,6 +112,13 @@
                     android:layout_height="wrap_content"
                     android:textColor="?attr/grayTextColor"
                     tools:text="Rated: 8.8" />
+
+                <TextView
+                    android:id="@+id/episode_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="?attr/grayTextColor"
+                    tools:text="15 Apr 2024" />
             </LinearLayout>
 
             <com.lagradost.cloudstream3.ui.download.button.PieFetchButton

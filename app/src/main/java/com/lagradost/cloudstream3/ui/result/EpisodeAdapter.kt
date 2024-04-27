@@ -9,9 +9,11 @@ import androidx.core.view.isVisible
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.lagradost.cloudstream3.APIHolder.unixTimeMS
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.ResultEpisodeBinding
 import com.lagradost.cloudstream3.databinding.ResultEpisodeLargeBinding
+import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.secondsToReadable
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_ACTION_DOWNLOAD
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_ACTION_LONG_CLICK
 import com.lagradost.cloudstream3.ui.download.DownloadClickEvent
@@ -23,6 +25,8 @@ import com.lagradost.cloudstream3.utils.AppUtils.html
 import com.lagradost.cloudstream3.utils.UIHelper.setImage
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import com.lagradost.cloudstream3.utils.VideoDownloadHelper
+import java.text.DateFormat
+import java.text.SimpleDateFormat
 import java.util.*
 
 const val ACTION_PLAY_EPISODE_IN_PLAYER = 1
@@ -104,7 +108,7 @@ class EpisodeAdapter(
 
     override fun getItemViewType(position: Int): Int {
         val item = getItem(position)
-        return if (item.poster.isNullOrBlank()) 0 else 1
+        return if (item.poster.isNullOrBlank() && item.description.isNullOrBlank()) 0 else 1
     }
 
 
@@ -260,6 +264,33 @@ class EpisodeAdapter(
                     }
                 }
 
+                if (card.airDate != null) {
+                    val isUpcoming = unixTimeMS < card.airDate
+
+                    if (isUpcoming) {
+                        episodePlayIcon.isVisible = false
+                        episodeUpcomingIcon.isVisible = !episodePoster.isVisible
+                        episodeDate.setText(
+                            txt(
+                                R.string.episode_upcoming_format,
+                                secondsToReadable(card.airDate.minus(unixTimeMS).div(1000).toInt(), "")
+                            )
+                        )
+                    } else {
+                        episodeUpcomingIcon.isVisible = false
+
+                        val formattedAirDate = SimpleDateFormat.getDateInstance(
+                            DateFormat.LONG,
+                            Locale.getDefault()
+                        ).apply {
+                        }.format(Date(card.airDate))
+
+                        episodeDate.setText(txt(formattedAirDate))
+                    }
+                } else {
+                    episodeDate.isVisible = false
+                }
+
                 if (isLayout(EMULATOR or PHONE)) {
                     episodePoster.setOnClickListener {
                         clickCallback.invoke(EpisodeClickEvent(ACTION_CLICK_DEFAULT, card))
@@ -271,6 +302,7 @@ class EpisodeAdapter(
                     }
                 }
             }
+
             itemView.setOnClickListener {
                 clickCallback.invoke(EpisodeClickEvent(ACTION_CLICK_DEFAULT, card))
             }

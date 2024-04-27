@@ -2277,7 +2277,8 @@ class ResultViewModel2 : ViewModel() {
                                     fillers.getOrDefault(episode, false),
                                     loadResponse.type,
                                     mainId,
-                                    totalIndex
+                                    totalIndex,
+                                    airDate = i.date
                                 )
 
                             val season = eps.seasonIndex ?: 0
@@ -2326,7 +2327,8 @@ class ResultViewModel2 : ViewModel() {
                                 null,
                                 loadResponse.type,
                                 mainId,
-                                totalIndex
+                                totalIndex,
+                                airDate = episode.date
                             )
 
                         val season = ep.seasonIndex ?: 0
