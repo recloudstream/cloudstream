@@ -268,7 +268,6 @@ class EpisodeAdapter(
                     val isUpcoming = unixTimeMS < card.airDate
 
                     if (isUpcoming) {
-                        episodePoster.isVisible = false
                         episodePlayIcon.isVisible = false
                         episodeUpcomingIcon.isVisible = !episodePoster.isVisible
                         episodeDate.setText(
