@@ -186,6 +186,7 @@ import com.lagradost.cloudstream3.extractors.VideoVard
 import com.lagradost.cloudstream3.extractors.VideovardSX
 import com.lagradost.cloudstream3.extractors.Vidgomunime
 import com.lagradost.cloudstream3.extractors.Vidgomunimesb
+import com.lagradost.cloudstream3.extractors.Vidguardto
 import com.lagradost.cloudstream3.extractors.VidhideExtractor
 import com.lagradost.cloudstream3.extractors.Vidmoly
 import com.lagradost.cloudstream3.extractors.Vidmolyme
@@ -888,7 +889,8 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     StreamWishExtractor(),
     EmturbovidExtractor(),
     Vtbe(),
-    EPlayExtractor()
+    EPlayExtractor(),
+    Vidguardto()
 )
 
 
