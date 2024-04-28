@@ -13,6 +13,8 @@ import androidx.annotation.MainThread
 import androidx.core.content.ContextCompat
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
+import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
+import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_ACTION_DELETE_FILE
@@ -25,6 +27,7 @@ import com.lagradost.cloudstream3.ui.download.DownloadClickEvent
 import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIcons
 import com.lagradost.cloudstream3.utils.VideoDownloadHelper
 import com.lagradost.cloudstream3.utils.VideoDownloadManager
+import com.lagradost.cloudstream3.utils.VideoDownloadManager.KEY_RESUME_PACKAGES
 
 
 open class PieFetchButton(context: Context, attributeSet: AttributeSet) :
@@ -167,6 +170,9 @@ open class PieFetchButton(context: Context, attributeSet: AttributeSet) :
         this.setPersistentId(card.id)
         view.setOnClickListener {
             if (isZeroBytes) {
+                if (getKey(KEY_RESUME_PACKAGES, card.id) != null) {
+                    removeKey(KEY_RESUME_PACKAGES, card.id.toString())
+                }
                 callback(DownloadClickEvent(DOWNLOAD_ACTION_DOWNLOAD, card))
                 //callback.invoke(DownloadClickEvent(DOWNLOAD_ACTION_DOWNLOAD, data))
             } else {
