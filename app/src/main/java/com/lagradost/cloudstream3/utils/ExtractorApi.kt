@@ -83,6 +83,7 @@ import com.lagradost.cloudstream3.extractors.Maxstream
 import com.lagradost.cloudstream3.extractors.Mcloud
 import com.lagradost.cloudstream3.extractors.Megacloud
 import com.lagradost.cloudstream3.extractors.Meownime
+import com.lagradost.cloudstream3.extractors.MetaGnathTuggers
 import com.lagradost.cloudstream3.extractors.Minoplres
 import com.lagradost.cloudstream3.extractors.MixDrop
 import com.lagradost.cloudstream3.extractors.MixDropBz
@@ -139,6 +140,7 @@ import com.lagradost.cloudstream3.extractors.Sbspeed
 import com.lagradost.cloudstream3.extractors.Sbthe
 import com.lagradost.cloudstream3.extractors.Sendvid
 import com.lagradost.cloudstream3.extractors.ShaveTape
+import com.lagradost.cloudstream3.extractors.Simpulumlamerop
 import com.lagradost.cloudstream3.extractors.Solidfiles
 import com.lagradost.cloudstream3.extractors.Ssbstream
 import com.lagradost.cloudstream3.extractors.StreamM4u
@@ -175,6 +177,7 @@ import com.lagradost.cloudstream3.extractors.UpstreamExtractor
 import com.lagradost.cloudstream3.extractors.Uqload
 import com.lagradost.cloudstream3.extractors.Uqload1
 import com.lagradost.cloudstream3.extractors.Uqload2
+import com.lagradost.cloudstream3.extractors.Urochsunloath
 import com.lagradost.cloudstream3.extractors.Userload
 import com.lagradost.cloudstream3.extractors.Userscloud
 import com.lagradost.cloudstream3.extractors.Uservideo
@@ -208,6 +211,7 @@ import com.lagradost.cloudstream3.extractors.Watchx
 import com.lagradost.cloudstream3.extractors.WcoStream
 import com.lagradost.cloudstream3.extractors.Wibufile
 import com.lagradost.cloudstream3.extractors.XStreamCdn
+import com.lagradost.cloudstream3.extractors.Yipsu
 import com.lagradost.cloudstream3.extractors.YourUpload
 import com.lagradost.cloudstream3.extractors.YoutubeExtractor
 import com.lagradost.cloudstream3.extractors.YoutubeMobileExtractor
@@ -890,7 +894,11 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     EmturbovidExtractor(),
     Vtbe(),
     EPlayExtractor(),
-    Vidguardto()
+    Vidguardto(),
+    Simpulumlamerop(),
+    Urochsunloath(),
+    Yipsu(),
+    MetaGnathTuggers()
 )
 
 
