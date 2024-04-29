@@ -24,6 +24,11 @@ class Watchx : Chillx() {
     override val mainUrl = "https://watchx.top"
 }
 
+
+class AnimesagaStream : Chillx() {
+    override val name = "AnimesagaStream"
+    override val mainUrl = "https://stream.anplay.in"
+}
 open class Chillx : ExtractorApi() {
     override val name = "Chillx"
     override val mainUrl = "https://chillx.top"
@@ -36,20 +41,15 @@ open class Chillx : ExtractorApi() {
         subtitleCallback: (SubtitleFile) -> Unit,
         callback: (ExtractorLink) -> Unit
     ) {
-        val master = Regex("\\s*=\\s*'([^']+)").find(
+        val master = Regex("""JScript[\w+]?\s*=\s*'([^']+)""").find(
             app.get(
                 url,
-                referer = referer ?: "",
-                headers = mapOf(
-                    "Accept" to "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
-                    "Accept-Language" to "en-US,en;q=0.5",
-                )
+                referer = url ?: "",
             ).text
         )?.groupValues?.get(1)
-        val decrypt = cryptoAESHandler(master ?: return, getKey().toByteArray(), false)?.replace("\\", "") ?: throw ErrorLoadingException("failed to decrypt")
-
+        val key = app.get("https://raw.githubusercontent.com/rushi-chavan/multi-keys/keys/keys.json").parsedSafe<Keys>()?.key?.get(0) ?: throw ErrorLoadingException("Unable to get key")
+        val decrypt = cryptoAESHandler(master ?: "",key.toByteArray(), false)?.replace("\\", "") ?: throw ErrorLoadingException("failed to decrypt")
         val source = Regex(""""?file"?:\s*"([^"]+)""").find(decrypt)?.groupValues?.get(1)
-
         val subtitles = Regex("""subtitle"?:\s*"([^"]+)""").find(decrypt)?.groupValues?.get(1)
         val subtitlePattern = """\[(.*?)\](https?://[^\s,]+)""".toRegex()
         val matches = subtitlePattern.findAll(subtitles ?: "")
@@ -83,23 +83,23 @@ open class Chillx : ExtractorApi() {
             headers = headers
         ).forEach(callback)
     }
-    
+
     private fun decodeUnicodeEscape(input: String): String {
         val regex = Regex("u([0-9a-fA-F]{4})")
         return regex.replace(input) {
             it.groupValues[1].toInt(16).toChar().toString()
         }
     }
-    
-    suspend fun getKey() = key ?: fetchKey().also { key = it }
 
-    private suspend fun fetchKey(): String {
-        return app.get("https://raw.githubusercontent.com/Sofie99/Resources/main/chillix_key.json").parsed()
-    }
 
     data class Tracks(
         @JsonProperty("file") val file: String? = null,
         @JsonProperty("label") val label: String? = null,
         @JsonProperty("kind") val kind: String? = null,
     )
+
+    data class Keys(
+        @JsonProperty("chillx") val key: List<String>
+    )
+
 }
