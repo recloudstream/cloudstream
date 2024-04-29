@@ -33,7 +33,6 @@ open class Chillx : ExtractorApi() {
     override val name = "Chillx"
     override val mainUrl = "https://chillx.top"
     override val requiresReferer = true
-    private var key: String? = null
 
     override suspend fun getUrl(
         url: String,
