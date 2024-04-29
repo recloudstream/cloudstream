@@ -23,10 +23,6 @@ class Watchx : Chillx() {
 }
 
 
-class AnimesagaStream : Chillx() {
-    override val name = "AnimesagaStream"
-    override val mainUrl = "https://stream.anplay.in"
-}
 @Suppress("NAME_SHADOWING")
 open class Chillx : ExtractorApi() {
     override val name = "Chillx"
