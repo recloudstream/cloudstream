@@ -2,9 +2,7 @@ package com.lagradost.cloudstream3.extractors
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.*
-import com.lagradost.cloudstream3.extractors.helper.*
 import com.lagradost.cloudstream3.extractors.helper.AesHelper.cryptoAESHandler
-import com.lagradost.cloudstream3.utils.AppUtils
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.M3u8Helper
@@ -29,6 +27,7 @@ class AnimesagaStream : Chillx() {
     override val name = "AnimesagaStream"
     override val mainUrl = "https://stream.anplay.in"
 }
+@Suppress("NAME_SHADOWING")
 open class Chillx : ExtractorApi() {
     override val name = "Chillx"
     override val mainUrl = "https://chillx.top"
@@ -43,14 +42,14 @@ open class Chillx : ExtractorApi() {
         val master = Regex("""JScript[\w+]?\s*=\s*'([^']+)""").find(
             app.get(
                 url,
-                referer = url ?: "",
+                referer = url,
             ).text
         )?.groupValues?.get(1)
         val key = app.get("https://raw.githubusercontent.com/rushi-chavan/multi-keys/keys/keys.json").parsedSafe<Keys>()?.key?.get(0) ?: throw ErrorLoadingException("Unable to get key")
         val decrypt = cryptoAESHandler(master ?: "",key.toByteArray(), false)?.replace("\\", "") ?: throw ErrorLoadingException("failed to decrypt")
         val source = Regex(""""?file"?:\s*"([^"]+)""").find(decrypt)?.groupValues?.get(1)
         val subtitles = Regex("""subtitle"?:\s*"([^"]+)""").find(decrypt)?.groupValues?.get(1)
-        val subtitlePattern = """\[(.*?)\](https?://[^\s,]+)""".toRegex()
+        val subtitlePattern = """\[(.*?)](https?://[^\s,]+)""".toRegex()
         val matches = subtitlePattern.findAll(subtitles ?: "")
         val languageUrlPairs = matches.map { matchResult ->
             val (language, url) = matchResult.destructured
@@ -89,13 +88,6 @@ open class Chillx : ExtractorApi() {
             it.groupValues[1].toInt(16).toChar().toString()
         }
     }
-
-
-    data class Tracks(
-        @JsonProperty("file") val file: String? = null,
-        @JsonProperty("label") val label: String? = null,
-        @JsonProperty("kind") val kind: String? = null,
-    )
 
     data class Keys(
         @JsonProperty("chillx") val key: List<String>
