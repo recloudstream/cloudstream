@@ -15,6 +15,7 @@ import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStore.getKeys
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
+import com.lagradost.cloudstream3.utils.UIHelper.setAppBarNoScrollFlagsOnTV
 import com.lagradost.cloudstream3.utils.VideoDownloadHelper
 import com.lagradost.cloudstream3.utils.VideoDownloadManager
 import kotlinx.coroutines.Dispatchers
@@ -89,8 +90,8 @@ class DownloadChildFragment : Fragment() {
             setNavigationOnClickListener {
                 activity?.onBackPressedDispatcher?.onBackPressed()
             }
+            setAppBarNoScrollFlagsOnTV()
         }
-
 
         val adapter: RecyclerView.Adapter<RecyclerView.ViewHolder> =
             DownloadChildAdapter(
