@@ -9,6 +9,8 @@
     android:layout_marginTop="10dp"
     android:layout_marginEnd="10dp"
     android:foreground="@drawable/outline_drawable"
+    android:focusable="true"
+    android:nextFocusRight="@id/download_button"
     app:cardBackgroundColor="?attr/boxItemBackground"
     app:cardCornerRadius="@dimen/rounded_image_radius">
 
@@ -71,7 +73,9 @@
             android:layout_height="@dimen/download_size"
             android:layout_gravity="center_vertical|end"
             android:layout_marginStart="-50dp"
-            android:background="?selectableItemBackgroundBorderless"
+            android:foreground="@drawable/outline_drawable"
+            android:focusable="true"
+            android:nextFocusLeft="@id/episode_holder"
             android:padding="10dp" />
     </LinearLayout>
 </androidx.cardview.widget.CardView>
