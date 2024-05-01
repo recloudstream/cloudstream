@@ -9,6 +9,7 @@
     android:layout_height="50dp"
     android:layout_marginBottom="5dp"
     android:foreground="@drawable/outline_drawable"
+    android:focusable="true"
     android:nextFocusLeft="@id/nav_rail_view"
     android:nextFocusRight="@id/download_button"
     app:cardBackgroundColor="@color/transparent"
@@ -84,7 +85,9 @@
             android:layout_height="@dimen/download_size"
             android:layout_gravity="center_vertical|end"
             android:layout_marginStart="-50dp"
-            android:background="?selectableItemBackgroundBorderless"
+            android:foreground="@drawable/outline_drawable"
+            android:focusable="true"
+            android:nextFocusLeft="@id/download_child_episode_holder"
             android:padding="10dp" />
     </GridLayout>
 </androidx.cardview.widget.CardView>
