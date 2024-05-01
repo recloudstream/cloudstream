@@ -170,9 +170,7 @@ open class PieFetchButton(context: Context, attributeSet: AttributeSet) :
         this.setPersistentId(card.id)
         view.setOnClickListener {
             if (isZeroBytes) {
-                if (getKey(KEY_RESUME_PACKAGES, card.id) != null) {
-                    removeKey(KEY_RESUME_PACKAGES, card.id.toString())
-                }
+                removeKey(KEY_RESUME_PACKAGES, card.id.toString())
                 callback(DownloadClickEvent(DOWNLOAD_ACTION_DOWNLOAD, card))
                 //callback.invoke(DownloadClickEvent(DOWNLOAD_ACTION_DOWNLOAD, data))
             } else {
