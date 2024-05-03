@@ -702,7 +702,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
             playerCenterMenu.isGone = isGone
             playerLock.isGone = !isShowing
             //player_media_route_button?.isClickable = !isGone
-            playerGoBackHolder.isGone = isGone
+            playerGoBackHolder.isGone = isLayout(TV or EMULATOR)
             playerSourcesBtt.isGone = isGone
             playerSkipEpisode.isClickable = !isGone
         }

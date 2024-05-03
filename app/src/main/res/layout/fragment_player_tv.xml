@@ -48,8 +48,6 @@
             android:clickable="true"
             android:focusable="true"
             android:focusableInTouchMode="true"
-            android:nextFocusLeft="@id/player_loading_go_back"
-            android:nextFocusUp="@id/player_loading_go_back"
             android:text="@string/skip_loading"
 
             android:visibility="gone"
@@ -62,11 +60,13 @@
             android:layout_height="50dp"
             android:layout_gravity="center" />
 
+        <!-- Hide the back button for now maybe we need it later -->
         <FrameLayout
             android:id="@+id/video_go_back_holder_holder"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
+            android:visibility="gone"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 

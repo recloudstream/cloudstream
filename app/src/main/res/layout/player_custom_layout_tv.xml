@@ -240,7 +240,7 @@
                         android:id="@+id/player_video_title"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="end"
+                        android:gravity="center"
                         android:textColor="@color/white"
                         android:textSize="16sp"
                         android:textStyle="bold"
@@ -250,24 +250,27 @@
                         android:id="@+id/player_video_title_rez"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="end"
+                        android:gravity="center"
                         android:textColor="@color/white"
                         android:textSize="16sp"
                         tools:text="1920x1080" />
 
-                    <FrameLayout
-                        android:id="@+id/player_episode_filler_holder"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="end"
-                        android:layout_marginTop="2dp">
 
-                        <com.google.android.material.button.MaterialButton
-                            android:id="@+id/player_episode_filler"
-                            style="@style/SmallBlackButton"
-                            android:text="@string/filler" />
-                    </FrameLayout>
                 </LinearLayout>
+
+                <FrameLayout
+                    android:id="@+id/player_episode_filler_holder"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:layout_marginTop="20dp">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/player_episode_filler"
+                        style="@style/SmallBlackButton"
+                        android:focusable="false"
+                        android:text="@string/filler" />
+                </FrameLayout>
 
                 <!-- Removed as it has no use anymore-->
                 <!--<androidx.mediarouter.app.MediaRouteButton
@@ -281,11 +284,13 @@
                         app:layout_constraintRight_toRightOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />-->
 
+                <!-- Hide the back button for now maybe we need it later -->
                 <FrameLayout
                     android:id="@+id/player_go_back_holder"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="5dp"
+                    android:visibility="gone"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent">
 
@@ -306,6 +311,7 @@
                         android:clickable="true"
                         android:contentDescription="@string/go_back_img_des"
                         android:focusable="true"
+                        android:visibility="gone"
                         android:tag="@string/tv_no_focus_tag" />
                 </FrameLayout>
             </FrameLayout>
