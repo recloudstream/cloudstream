@@ -197,7 +197,11 @@ fun LoadResponse.toResultData(repo: APIRepository): ResultData {
 
                 else -> null
             }?.also {
-                nextAiringEpisode = txt(R.string.next_episode_format, airing.episode)
+                nextAiringEpisode = when (airing.season) {
+
+                    null -> txt(R.string.next_episode_format, airing.episode)
+                    else -> txt(R.string.next_season_episode_format, airing.season, airing.episode)
+                }
             }
         }
     }
