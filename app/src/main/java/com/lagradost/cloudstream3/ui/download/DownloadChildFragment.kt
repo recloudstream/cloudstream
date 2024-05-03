@@ -11,6 +11,7 @@ import com.lagradost.cloudstream3.databinding.FragmentChildDownloadsBinding
 import com.lagradost.cloudstream3.ui.download.DownloadButtonSetup.handleDownloadClick
 import com.lagradost.cloudstream3.ui.result.FOCUS_SELF
 import com.lagradost.cloudstream3.ui.result.setLinearListLayout
+import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
 import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.utils.Coroutines.main
@@ -88,7 +89,7 @@ class DownloadChildFragment : Fragment() {
 
         binding?.downloadChildToolbar?.apply {
             title = name
-            if (isLayout(PHONE)) {
+            if (isLayout(PHONE or EMULATOR)) {
                 setNavigationIcon(R.drawable.ic_baseline_arrow_back_24)
                 setNavigationOnClickListener {
                     activity?.onBackPressedDispatcher?.onBackPressed()

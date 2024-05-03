@@ -85,7 +85,7 @@ class SettingsFragment : Fragment() {
 
             settingsToolbar.apply {
                 setTitle(title)
-                if (isLayout(PHONE)) {
+                if (isLayout(PHONE or EMULATOR)) {
                     setNavigationIcon(R.drawable.ic_baseline_arrow_back_24)
                     setNavigationOnClickListener {
                         activity?.onBackPressedDispatcher?.onBackPressed()
@@ -101,7 +101,7 @@ class SettingsFragment : Fragment() {
 
             settingsToolbar.apply {
                 setTitle(title)
-                if (isLayout(PHONE)) {
+                if (isLayout(PHONE or EMULATOR)) {
                     setNavigationIcon(R.drawable.ic_baseline_arrow_back_24)
                     children.firstOrNull { it is ImageView }?.tag = getString(R.string.tv_no_focus_tag)
                     setNavigationOnClickListener {
