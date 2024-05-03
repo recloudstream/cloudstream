@@ -23,11 +23,10 @@
             android:background="?android:attr/selectableItemBackgroundBorderless"
             android:src="@drawable/ic_baseline_arrow_back_24"
             app:tint="@android:color/white"
-            android:focusable="true"
+            android:visibility="gone"
             android:layout_width="25dp"
-            android:layout_height="wrap_content">
-
-            <requestFocus />
+            android:layout_height="wrap_content"
+            tools:visibility="visible">
         </ImageView>
 
         <FrameLayout

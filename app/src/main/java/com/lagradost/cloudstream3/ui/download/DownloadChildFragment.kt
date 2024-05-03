@@ -11,6 +11,8 @@ import com.lagradost.cloudstream3.databinding.FragmentChildDownloadsBinding
 import com.lagradost.cloudstream3.ui.download.DownloadButtonSetup.handleDownloadClick
 import com.lagradost.cloudstream3.ui.result.FOCUS_SELF
 import com.lagradost.cloudstream3.ui.result.setLinearListLayout
+import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
+import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStore.getKeys
@@ -86,9 +88,11 @@ class DownloadChildFragment : Fragment() {
 
         binding?.downloadChildToolbar?.apply {
             title = name
-            setNavigationIcon(R.drawable.ic_baseline_arrow_back_24)
-            setNavigationOnClickListener {
-                activity?.onBackPressedDispatcher?.onBackPressed()
+            if (isLayout(PHONE)) {
+                setNavigationIcon(R.drawable.ic_baseline_arrow_back_24)
+                setNavigationOnClickListener {
+                    activity?.onBackPressedDispatcher?.onBackPressed()
+                }
             }
             setAppBarNoScrollFlagsOnTV()
         }

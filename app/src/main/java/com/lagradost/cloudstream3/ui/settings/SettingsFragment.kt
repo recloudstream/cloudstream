@@ -23,6 +23,7 @@ import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.account
 import com.lagradost.cloudstream3.ui.home.HomeFragment
 import com.lagradost.cloudstream3.ui.result.txt
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
+import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.utils.DataStoreHelper
@@ -84,9 +85,11 @@ class SettingsFragment : Fragment() {
 
             settingsToolbar.apply {
                 setTitle(title)
-                setNavigationIcon(R.drawable.ic_baseline_arrow_back_24)
-                setNavigationOnClickListener {
-                    activity?.onBackPressedDispatcher?.onBackPressed()
+                if (isLayout(PHONE)) {
+                    setNavigationIcon(R.drawable.ic_baseline_arrow_back_24)
+                    setNavigationOnClickListener {
+                        activity?.onBackPressedDispatcher?.onBackPressed()
+                    }
                 }
             }
             UIHelper.fixPaddingStatusbar(settingsToolbar)
@@ -98,10 +101,12 @@ class SettingsFragment : Fragment() {
 
             settingsToolbar.apply {
                 setTitle(title)
-                setNavigationIcon(R.drawable.ic_baseline_arrow_back_24)
-                children.firstOrNull { it is ImageView }?.tag = getString(R.string.tv_no_focus_tag)
-                setNavigationOnClickListener {
-                    activity?.onBackPressedDispatcher?.onBackPressed()
+                if (isLayout(PHONE)) {
+                    setNavigationIcon(R.drawable.ic_baseline_arrow_back_24)
+                    children.firstOrNull { it is ImageView }?.tag = getString(R.string.tv_no_focus_tag)
+                    setNavigationOnClickListener {
+                        activity?.onBackPressedDispatcher?.onBackPressed()
+                    }
                 }
             }
             UIHelper.fixPaddingStatusbar(settingsToolbar)
