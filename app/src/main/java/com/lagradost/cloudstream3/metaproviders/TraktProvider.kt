@@ -118,8 +118,12 @@ open class TraktProvider : MainAPI() {
 
             val linkData = LinkData(
                 id = mediaDetails?.ids?.tmdb,
+                traktId = mediaDetails?.ids?.trakt,
+                traktSlug = mediaDetails?.ids?.slug,
+                tmdbId = mediaDetails?.ids?.tmdb,
                 imdbId = mediaDetails?.ids?.imdb.toString(),
                 tvdbId = mediaDetails?.ids?.tvdb,
+                tvrageId = mediaDetails?.ids?.tvrage,
                 type = data.type.toString(),
                 title = mediaDetails?.title,
                 year = mediaDetails?.year,
@@ -139,7 +143,6 @@ open class TraktProvider : MainAPI() {
                 type = if (isAnime) TvType.AnimeMovie else TvType.Movie,
             ) {
                 this.name = mediaDetails.title
-                this.apiName = "Trakt"
                 this.type = if (isAnime) TvType.AnimeMovie else TvType.Movie
                 this.posterUrl = getOriginalWidthImageUrl(posterUrl)
                 this.year = mediaDetails.year
@@ -177,8 +180,12 @@ open class TraktProvider : MainAPI() {
 
                     val linkData = LinkData(
                         id = mediaDetails?.ids?.tmdb,
+                        traktId = mediaDetails?.ids?.trakt,
+                        traktSlug = mediaDetails?.ids?.slug,
+                        tmdbId = mediaDetails?.ids?.tmdb,
                         imdbId = mediaDetails?.ids?.imdb.toString(),
                         tvdbId = mediaDetails?.ids?.tvdb,
+                        tvrageId = mediaDetails?.ids?.tvrage,
                         type = data.type.toString(),
                         season = episode.season,
                         episode = episode.number,
@@ -220,7 +227,6 @@ open class TraktProvider : MainAPI() {
                 episodes = episodes
             ) {
                 this.name = mediaDetails.title
-                this.apiName = "Trakt"
                 this.type = if (isAnime) TvType.Anime else TvType.TvSeries
                 this.episodes = episodes
                 this.posterUrl = getOriginalWidthImageUrl(posterUrl)
@@ -406,8 +412,12 @@ open class TraktProvider : MainAPI() {
 
     data class LinkData(
         val id: Int? = null,
+        val traktId: Int? = null,
+        val traktSlug: String? = null,
+        val tmdbId: Int? = null,
         val imdbId: String? = null,
         val tvdbId: Int? = null,
+        val tvrageId: String? = null,
         val type: String? = null,
         val season: Int? = null,
         val episode: Int? = null,
