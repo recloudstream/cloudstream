@@ -185,6 +185,7 @@ import com.lagradost.cloudstream3.extractors.Vanfem
 import com.lagradost.cloudstream3.extractors.Vicloud
 import com.lagradost.cloudstream3.extractors.VidSrcExtractor
 import com.lagradost.cloudstream3.extractors.VidSrcExtractor2
+import com.lagradost.cloudstream3.extractors.VidSrcTo
 import com.lagradost.cloudstream3.extractors.VideoVard
 import com.lagradost.cloudstream3.extractors.VideovardSX
 import com.lagradost.cloudstream3.extractors.Vidgomunime
@@ -876,6 +877,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     Streamlare(),
     VidSrcExtractor(),
     VidSrcExtractor2(),
+    VidSrcTo(),
     PlayLtXyz(),
     AStreamHub(),
     Vidplay(),
