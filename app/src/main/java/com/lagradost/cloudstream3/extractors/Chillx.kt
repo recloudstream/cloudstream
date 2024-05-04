@@ -27,6 +27,20 @@ open class Chillx : ExtractorApi() {
     override val mainUrl = "https://chillx.top"
     override val requiresReferer = true
 
+    companion object {
+        private var key: String? = null
+
+        suspend fun fetchKey(): String {
+            return if (key != null) {
+                key!!
+            } else {
+                val fetch = app.get("https://raw.githubusercontent.com/rushi-chavan/multi-keys/keys/keys.json").parsedSafe<Keys>()?.key?.get(0) ?: throw ErrorLoadingException("Unable to get key")
+                key = fetch
+                key!!
+            }
+        }
+    }
+
     @Suppress("NAME_SHADOWING")
     override suspend fun getUrl(
         url: String,
@@ -40,7 +54,8 @@ open class Chillx : ExtractorApi() {
                 referer = url,
             ).text
         )?.groupValues?.get(1)
-        val decrypt = cryptoAESHandler(master ?: "",fetchKey().toByteArray(), false)?.replace("\\", "") ?: throw ErrorLoadingException("failed to decrypt")
+        val key = fetchKey()
+        val decrypt = cryptoAESHandler(master ?: "", key.toByteArray(), false)?.replace("\\", "") ?: throw ErrorLoadingException("failed to decrypt")
         val source = Regex(""""?file"?:\s*"([^"]+)""").find(decrypt)?.groupValues?.get(1)
         val subtitles = Regex("""subtitle"?:\s*"([^"]+)""").find(decrypt)?.groupValues?.get(1)
         val subtitlePattern = """\[(.*?)](https?://[^\s,]+)""".toRegex()
@@ -83,9 +98,7 @@ open class Chillx : ExtractorApi() {
         }
     }
 
-    private suspend fun fetchKey(): String {
-        return app.get("https://raw.githubusercontent.com/rushi-chavan/multi-keys/keys/keys.json").parsedSafe<Keys>()?.key?.get(0) ?: throw ErrorLoadingException("Unable to get key")
-    }
+
 
     data class Keys(
         @JsonProperty("chillx") val key: List<String>
