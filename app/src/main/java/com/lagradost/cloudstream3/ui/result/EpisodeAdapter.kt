@@ -51,6 +51,8 @@ const val ACTION_PLAY_EPISODE_IN_WEB_VIDEO = 16
 const val ACTION_PLAY_EPISODE_IN_MPV = 17
 
 const val ACTION_MARK_AS_WATCHED = 18
+const val ACTION_FCAST = 19
+
 const val TV_EP_SIZE_LARGE = 400
 const val TV_EP_SIZE_SMALL = 300
 data class EpisodeClickEvent(val action: Int, val data: ResultEpisode)
