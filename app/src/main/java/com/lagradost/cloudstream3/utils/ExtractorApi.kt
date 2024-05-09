@@ -53,6 +53,7 @@ import com.lagradost.cloudstream3.extractors.FileMoonIn
 import com.lagradost.cloudstream3.extractors.FileMoonSx
 import com.lagradost.cloudstream3.extractors.Filesim
 import com.lagradost.cloudstream3.extractors.Fplayer
+import com.lagradost.cloudstream3.extractors.Geodailymotion
 import com.lagradost.cloudstream3.extractors.GMPlayer
 import com.lagradost.cloudstream3.extractors.Gdriveplayer
 import com.lagradost.cloudstream3.extractors.Gdriveplayerapi
@@ -900,7 +901,9 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     Simpulumlamerop(),
     Urochsunloath(),
     Yipsu(),
-    MetaGnathTuggers()
+    MetaGnathTuggers(),
+    Geodailymotion(),
+    
 )
 
 
