@@ -10,7 +10,8 @@ enum class LoadType {
     InAppDownload,
     ExternalApp,
     Browser,
-    Chromecast
+    Chromecast,
+    Fcast
 }
 
 fun LoadType.toSet() : Set<ExtractorLinkType> {
@@ -29,8 +30,13 @@ fun LoadType.toSet() : Set<ExtractorLinkType> {
             ExtractorLinkType.VIDEO,
             ExtractorLinkType.M3U8
         )
-        LoadType.ExternalApp, LoadType.Unknown -> ExtractorLinkType.values().toSet()
+        LoadType.ExternalApp, LoadType.Unknown -> ExtractorLinkType.entries.toSet()
         LoadType.Chromecast -> setOf(
+            ExtractorLinkType.VIDEO,
+            ExtractorLinkType.DASH,
+            ExtractorLinkType.M3U8
+        )
+        LoadType.Fcast -> setOf(
             ExtractorLinkType.VIDEO,
             ExtractorLinkType.DASH,
             ExtractorLinkType.M3U8

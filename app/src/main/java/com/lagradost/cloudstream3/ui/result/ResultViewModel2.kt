@@ -83,6 +83,10 @@ import com.lagradost.cloudstream3.utils.DataStoreHelper.setVideoWatchState
 import com.lagradost.cloudstream3.utils.DataStoreHelper.updateSubscribedData
 import com.lagradost.cloudstream3.utils.UIHelper.clipboardHelper
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
+import com.lagradost.cloudstream3.utils.fcast.FcastManager
+import com.lagradost.cloudstream3.utils.fcast.FcastSession
+import com.lagradost.cloudstream3.utils.fcast.Opcode
+import com.lagradost.cloudstream3.utils.fcast.PlayMessage
 import kotlinx.coroutines.*
 import java.io.File
 import java.util.concurrent.TimeUnit
@@ -1519,6 +1523,13 @@ class ResultViewModel2 : ViewModel() {
                         )
                     )
                 }
+
+                if (FcastManager.currentDevices.isNotEmpty()) {
+                    options.add(
+                        txt(R.string.player_settings_play_in_fcast) to ACTION_FCAST
+                    )
+                }
+
                 options.add(txt(R.string.episode_action_play_in_app) to ACTION_PLAY_EPISODE_IN_PLAYER)
 
                 for (app in apps) {
@@ -1691,6 +1702,39 @@ class ResultViewModel2 : ViewModel() {
                     txt(R.string.episode_action_chromecast_mirror)
                 ) { (result, index) ->
                     startChromecast(activity, click.data, result.links, result.subs, index)
+                }
+            }
+
+            ACTION_FCAST -> {
+                val devices = FcastManager.currentDevices.toList()
+                postPopup(
+                    txt(R.string.player_settings_select_cast_device),
+                    devices.map { txt(it.name) }) { index ->
+                    if (index == null) return@postPopup
+                    val device = devices.getOrNull(index)
+
+                    acquireSingleLink(
+                        click.data,
+                        LoadType.Fcast,
+                        txt(R.string.episode_action_cast_mirror)
+                    ) { (result, index) ->
+                        val host = device?.host ?: return@acquireSingleLink
+                        val link = result.links.firstOrNull() ?: return@acquireSingleLink
+
+                        FcastSession(host).use { session ->
+                            session.sendMessage(
+                                Opcode.Play,
+                                PlayMessage(
+                                    link.type.getMimeType(),
+                                    link.url,
+                                    headers = mapOf(
+                                        "referer" to link.referer,
+                                        "user-agent" to USER_AGENT
+                                    ) + link.headers
+                                )
+                            )
+                        }
+                    }
                 }
             }
 
