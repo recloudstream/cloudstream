@@ -42,10 +42,13 @@ class FcastSession(private val hostAddress: String): AutoCloseable {
 
             val json = message?.toJson()
             val content = json?.toByteArray() ?: ByteArray(0)
+
+            // Little endian starting from 1
+            // https://gitlab.com/futo-org/fcast/-/wikis/Protocol-version-1
             val size = content.size + 1
 
             val sizeArray = ByteArray(4) { num ->
-                (size shr (8 * num) and 0xff).toByte()
+                (size shr 8 * num and 0xff).toByte()
             }
 
             Log.d(tag, "Sending message with size: $size, opcode: $opcode")

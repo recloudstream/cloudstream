@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.utils.fcast
 
+// See https://gitlab.com/futo-org/fcast/-/wikis/Protocol-version-1
 enum class Opcode(val value: Byte) {
     None(0),
     Play(1),

@@ -1705,7 +1705,7 @@ class ResultViewModel2 : ViewModel() {
 
                     acquireSingleLink(
                         click.data,
-                        LoadType.Chromecast,
+                        LoadType.Fcast,
                         txt(R.string.episode_action_cast_mirror)
                     ) { (result, index) ->
                         val host = device?.host ?: return@acquireSingleLink
