@@ -258,6 +258,7 @@ class GeneratorPlayer : FullScreenPlayer() {
         var episode: Int? = null,
         var season: Int? = null,
         var name: String? = null,
+        var imdbId: String? = null,
     )
 
     private fun getMetaData(): TempMetaData {
@@ -270,6 +271,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                     meta.season = newMeta.season
                 }
                 meta.name = newMeta.headerName
+                meta.imdbId = newMeta.imdbId
             }
 
             is ExtractorUri -> {
@@ -284,7 +286,7 @@ class GeneratorPlayer : FullScreenPlayer() {
     }
 
     override fun openOnlineSubPicker(
-        context: Context, imdbId: Long?, dismissCallback: (() -> Unit)
+        context: Context, imdbId: String?, dismissCallback: (() -> Unit)
     ) {
         val providers = subsProviders
         val isSingleProvider = subsProviders.size == 1
@@ -424,7 +426,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                     val search =
                         AbstractSubtitleEntities.SubtitleSearch(
                             query = query ?: return@ioSafe,
-                            imdb = imdbId,
+                            imdb = imdbId ?: currentTempMeta.imdbId,
                             epNumber = currentTempMeta.episode,
                             seasonNumber = currentTempMeta.season,
                             lang = currentLanguageTwoLetters.ifBlank { null },

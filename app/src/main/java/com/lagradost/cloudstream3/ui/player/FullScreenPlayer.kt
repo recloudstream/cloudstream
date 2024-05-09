@@ -177,7 +177,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
     open fun openOnlineSubPicker(
         context: Context,
-        imdbId: Long?,
+        imdbId: String?,
         dismissCallback: (() -> Unit)
     ) {
         throw NotImplementedError()

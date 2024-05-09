@@ -110,7 +110,7 @@ open class ResultTrailerPlayer : ResultFragmentPhone() {
 
     override fun openOnlineSubPicker(
         context: Context,
-        imdbId: Long?,
+        imdbId: String?,
         dismissCallback: () -> Unit
     ) {
     }
