@@ -25,6 +25,10 @@ import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.CommonActivity.showToast
+import com.lagradost.cloudstream3.LoadResponse.Companion.getAniListId
+import com.lagradost.cloudstream3.LoadResponse.Companion.getImdbId
+import com.lagradost.cloudstream3.LoadResponse.Companion.getMalId
+import com.lagradost.cloudstream3.LoadResponse.Companion.getTMDbId
 import com.lagradost.cloudstream3.databinding.DialogOnlineSubtitlesBinding
 import com.lagradost.cloudstream3.databinding.FragmentPlayerBinding
 import com.lagradost.cloudstream3.databinding.PlayerSelectSourceAndSubsBinding
@@ -39,7 +43,6 @@ import com.lagradost.cloudstream3.ui.player.PlayerSubtitleHelper.Companion.toSub
 import com.lagradost.cloudstream3.ui.player.source_priority.QualityDataHelper
 import com.lagradost.cloudstream3.ui.player.source_priority.QualityProfileDialog
 import com.lagradost.cloudstream3.ui.result.*
-import com.lagradost.cloudstream3.ui.settings.Globals
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
@@ -286,7 +289,7 @@ class GeneratorPlayer : FullScreenPlayer() {
     }
 
     override fun openOnlineSubPicker(
-        context: Context, imdbId: String?, dismissCallback: (() -> Unit)
+        context: Context, loadResponse: LoadResponse?, dismissCallback: (() -> Unit)
     ) {
         val providers = subsProviders
         val isSingleProvider = subsProviders.size == 1
@@ -379,6 +382,7 @@ class GeneratorPlayer : FullScreenPlayer() {
         }
 
         val currentTempMeta = getMetaData()
+
         // bruh idk why it is not correct
         val color = ColorStateList.valueOf(context.colorFromAttribute(R.attr.colorAccent))
         binding.searchLoadingBar.progressTintList = color
@@ -426,7 +430,10 @@ class GeneratorPlayer : FullScreenPlayer() {
                     val search =
                         AbstractSubtitleEntities.SubtitleSearch(
                             query = query ?: return@ioSafe,
-                            imdb = imdbId ?: currentTempMeta.imdbId,
+                            imdbId = loadResponse?.getImdbId(),
+                            tmdbId = loadResponse?.getTMDbId()?.toInt(),
+                            malId = loadResponse?.getMalId()?.toInt(),
+                            aniListId = loadResponse?.getAniListId()?.toInt(),
                             epNumber = currentTempMeta.episode,
                             seasonNumber = currentTempMeta.season,
                             lang = currentLanguageTwoLetters.ifBlank { null },
@@ -635,6 +642,8 @@ class GeneratorPlayer : FullScreenPlayer() {
                 }
 
                 if (subsProvidersIsActive) {
+                    val currentLoadResponse = viewModel.getLoadResponse()
+
                     val loadFromOpenSubsFooter: TextView = layoutInflater.inflate(
                         R.layout.sort_bottom_footer_add_choice, null
                     ) as TextView
@@ -645,7 +654,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                     loadFromOpenSubsFooter.setOnClickListener {
                         shouldDismiss = false
                         sourceDialog.dismissSafe(activity)
-                        openOnlineSubPicker(it.context, null) {
+                        openOnlineSubPicker(it.context, currentLoadResponse) {
                             dismiss()
                         }
                     }

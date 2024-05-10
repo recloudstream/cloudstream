@@ -6,7 +6,6 @@ import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.subtitles.AbstractSubProvider
 import com.lagradost.cloudstream3.subtitles.AbstractSubtitleEntities
 import com.lagradost.cloudstream3.subtitles.SubtitleResource
-import com.lagradost.cloudstream3.utils.AppUtils
 
 class SubDL : AbstractSubProvider {
     //API Documentation: https://subdl.com/api-doc
@@ -21,20 +20,25 @@ class SubDL : AbstractSubProvider {
 
     override suspend fun search(query: AbstractSubtitleEntities.SubtitleSearch): List<AbstractSubtitleEntities.SubtitleEntity>? {
 
-        val imdbId = query.imdb
         val queryText = query.query
         val epNum = query.epNumber ?: 0
         val seasonNum = query.seasonNumber ?: 0
         val yearNum = query.year ?: 0
 
+        val idQuery = when {
+            query.imdbId != null -> "&imdb_id=${query.imdbId}"
+            query.tmdbId != null -> "&tmdb_id=${query.tmdbId}"
+            else -> null
+        }
+
         val epQuery = if (epNum > 0) "&episode_number=$epNum" else ""
         val seasonQuery = if (seasonNum > 0) "&season_number=$seasonNum" else ""
         val yearQuery = if (yearNum > 0) "&year=$yearNum" else ""
 
-        val searchQueryUrl = when (imdbId) {
-            //Use imdb_id to search if its valid
+        val searchQueryUrl = when (idQuery) {
+            //Use imdb/tmdb id to search if its valid
             null -> "$APIENDPOINT?api_key=$APIKEY&film_name=$queryText&languages=${query.lang}$epQuery$seasonQuery$yearQuery"
-            else -> "$APIENDPOINT?api_key=$APIKEY&imdb_id=$imdbId&languages=${query.lang}$epQuery$seasonQuery$yearQuery"
+            else -> "$APIENDPOINT?api_key=$APIKEY$idQuery&languages=${query.lang}$epQuery$seasonQuery$yearQuery"
         }
 
         val req = app.get(
@@ -44,40 +48,24 @@ class SubDL : AbstractSubProvider {
             )
         )
 
-        if (!req.isSuccessful) {
-            return null
+        return req.parsedSafe<ApiResponse>()?.subtitles?.map { subtitle ->
+            val name = subtitle.releaseName
+            val lang = subtitle.lang.replaceFirstChar { it.uppercase() }
+            val resEpNum = subtitle.episode ?: query.epNumber
+            val resSeasonNum = subtitle.season ?: query.seasonNumber
+            val type = if ((resSeasonNum ?: 0) > 0) TvType.TvSeries else TvType.Movie
+
+            AbstractSubtitleEntities.SubtitleEntity(
+                idPrefix = this.idPrefix,
+                name = name,
+                lang = lang,
+                data = "${DOWNLOADENDPOINT}${subtitle.url}",
+                type = type,
+                source = this.name,
+                epNumber = resEpNum,
+                seasonNumber = resSeasonNum,
+            )
         }
-
-        val results = mutableListOf<AbstractSubtitleEntities.SubtitleEntity>()
-
-        AppUtils.tryParseJson<ApiResponse>(req.text)?.let {resp ->
-
-            resp.subtitles?.forEach { subtitle ->
-
-                val name = subtitle.releaseName
-                val lang = subtitle.lang.replaceFirstChar { it.uppercase() }
-                val resEpNum = subtitle.episode ?: query.epNumber
-                val resSeasonNum = subtitle.season ?: query.seasonNumber
-                val year = resp.results?.firstOrNull()?.year ?: query.year
-                val type = if ((resSeasonNum ?: 0) > 0) TvType.TvSeries else TvType.Movie
-
-                results.add(
-                    AbstractSubtitleEntities.SubtitleEntity(
-                        idPrefix = this.idPrefix,
-                        name = name,
-                        lang = lang,
-                        data = "${DOWNLOADENDPOINT}${subtitle.url}",
-                        type = type,
-                        source = this.name,
-                        epNumber = resEpNum,
-                        seasonNumber = resSeasonNum,
-                        year = year,
-                    )
-                )
-            }
-        }
-
-        return results
     }
 
     override suspend fun SubtitleResource.getResources(data: AbstractSubtitleEntities.SubtitleEntity) {

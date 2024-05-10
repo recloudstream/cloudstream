@@ -2363,7 +2363,6 @@ class ResultViewModel2 : ViewModel() {
                         loadResponse.type,
                         mainId,
                         null,
-                        imdbId = loadResponse.getImdbId(),
                     )
                 )
             }
