@@ -274,7 +274,6 @@ class GeneratorPlayer : FullScreenPlayer() {
                     meta.season = newMeta.season
                 }
                 meta.name = newMeta.headerName
-                meta.imdbId = newMeta.imdbId
             }
 
             is ExtractorUri -> {
