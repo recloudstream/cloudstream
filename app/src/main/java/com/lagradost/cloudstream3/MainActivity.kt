@@ -677,7 +677,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener,
         }
     }
 
-    override fun dispatchKeyEvent(event: KeyEvent?): Boolean {
+    override fun dispatchKeyEvent(event: KeyEvent): Boolean {
         val response = CommonActivity.dispatchKeyEvent(this, event)
         if (response != null)
             return response
