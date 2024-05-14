@@ -609,8 +609,7 @@
     <string name="view_public_repositories_button">View community repositories</string>
     <string name="view_public_repositories_button_short">Public list</string>
     <string name="uppercase_all_subtitles">Uppercase all subtitles</string>
-    <string name="download_all_plugins_from_repo">%1$s has been added. You can install your desired extensions from 𝗦𝗲𝘁𝘁𝗶𝗻𝗴𝘀 > 𝗘𝘅𝘁𝗲𝗻𝘀𝗶𝗼𝗻𝘀 > %1$s.
-        CloudStream 3 does not takes any responsibility for using third-party extensions neither provides support for them.</string>
+    <string name="download_all_plugins_from_repo">CloudStream 3 does not takes any responsibility for using 3rd-party extensions neither provides support for them</string>
     <string name="single_plugin_disabled" formatted="true">%s (Disabled)</string>
     <string name="tracks">Tracks</string>
     <string name="audio_tracks">Audio tracks</string>
@@ -659,6 +658,8 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="ok">OK</string>
+    <string name="dismiss">Dismiss</string>
+    <string name="open_downloaded_repo">Open repository</string>
     <string name="battery_dialog_title">Disable Battery optimization</string>
     <string name="battery_dialog_message">To ensure uninterrupted downloads and notifications for subscribed
         TV shows, CloudStream needs permission to run in background. By pressing "OK", you\'ll be directed to App info.

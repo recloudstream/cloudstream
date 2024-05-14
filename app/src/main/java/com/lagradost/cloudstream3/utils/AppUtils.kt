@@ -431,16 +431,15 @@ object AppUtils {
     }
 
     fun Activity.addRepositoryDialog(repositoryName: String, isExtensionsFragment: Boolean) {
-        val message = String.format(resources.getString(
-            R.string.download_all_plugins_from_repo), repositoryName)
         val repos = RepositoryManager.getRepositories()
 
-        // navigate to newly added repository on pressing OK
+        // navigate to newly added repository on pressing Open Repository
         fun openAddedRepo() {
 
-            // don't redirect if user is adding from add repo button
+            // don't redirect if user is adding manually from add repository fab button
             if (!isExtensionsFragment && repos.isNotEmpty()) {
-                normalSafeApiCall { navigate(
+                normalSafeApiCall {
+                    navigate(
                     R.id.navigation_home_to_navigation_settings_plugins,
                     PluginsFragment.newInstance(
                         repositoryName,
@@ -451,14 +450,13 @@ object AppUtils {
         }
 
         runOnUiThread {
-            val builder : AlertDialog.Builder = AlertDialog.Builder(this)
-            builder.apply {
+            AlertDialog.Builder(this).apply {
                 setTitle(repositoryName)
-                setMessage(message)
-                setPositiveButton(R.string.ok) { _, _ ->
+                setMessage(R.string.download_all_plugins_from_repo)
+                setPositiveButton(R.string.open_downloaded_repo) { _, _ ->
                     openAddedRepo()
                 }
-                setCancelable(false)
+                setNegativeButton(R.string.dismiss, null)
                 show().setDefaultFocus()
             }
         }
