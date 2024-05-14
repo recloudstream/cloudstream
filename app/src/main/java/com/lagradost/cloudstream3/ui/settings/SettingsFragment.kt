@@ -1,13 +1,13 @@
 package com.lagradost.cloudstream3.ui.settings
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.annotation.StringRes
 import androidx.core.view.children
-import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import androidx.preference.Preference
@@ -18,12 +18,15 @@ import com.lagradost.cloudstream3.BuildConfig
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.MainSettingsBinding
 import com.lagradost.cloudstream3.mvvm.logError
+import com.lagradost.cloudstream3.syncproviders.AccountManager
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.accountManagers
 import com.lagradost.cloudstream3.ui.home.HomeFragment
 import com.lagradost.cloudstream3.ui.result.txt
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
+import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
+import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.UIHelper
 import com.lagradost.cloudstream3.utils.UIHelper.clipboardHelper
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
@@ -82,9 +85,11 @@ class SettingsFragment : Fragment() {
 
             settingsToolbar.apply {
                 setTitle(title)
-                setNavigationIcon(R.drawable.ic_baseline_arrow_back_24)
-                setNavigationOnClickListener {
-                    activity?.onBackPressedDispatcher?.onBackPressed()
+                if (isLayout(PHONE or EMULATOR)) {
+                    setNavigationIcon(R.drawable.ic_baseline_arrow_back_24)
+                    setNavigationOnClickListener {
+                        activity?.onBackPressedDispatcher?.onBackPressed()
+                    }
                 }
             }
             UIHelper.fixPaddingStatusbar(settingsToolbar)
@@ -96,10 +101,12 @@ class SettingsFragment : Fragment() {
 
             settingsToolbar.apply {
                 setTitle(title)
-                setNavigationIcon(R.drawable.ic_baseline_arrow_back_24)
-                children.firstOrNull { it is ImageView }?.tag = getString(R.string.tv_no_focus_tag)
-                setNavigationOnClickListener {
-                    activity?.onBackPressedDispatcher?.onBackPressed()
+                if (isLayout(PHONE or EMULATOR)) {
+                    setNavigationIcon(R.drawable.ic_baseline_arrow_back_24)
+                    children.firstOrNull { it is ImageView }?.tag = getString(R.string.tv_no_focus_tag)
+                    setNavigationOnClickListener {
+                        activity?.onBackPressedDispatcher?.onBackPressed()
+                    }
                 }
             }
             UIHelper.fixPaddingStatusbar(settingsToolbar)
@@ -133,7 +140,6 @@ class SettingsFragment : Fragment() {
         val localBinding = MainSettingsBinding.inflate(inflater, container, false)
         binding = localBinding
         return localBinding.root
-        //return inflater.inflate(R.layout.main_settings, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -141,21 +147,44 @@ class SettingsFragment : Fragment() {
             activity?.navigate(id, Bundle())
         }
 
-        // used to debug leaks showToast(activity,"${VideoDownloadManager.downloadStatusEvent.size} : ${VideoDownloadManager.downloadProgressEvent.size}")
+        /** used to debug leaks
+        showToast(activity,"${VideoDownloadManager.downloadStatusEvent.size} :
+        ${VideoDownloadManager.downloadProgressEvent.size}") **/
 
-        for (syncApi in accountManagers) {
-            val login = syncApi.loginInfo()
-            val pic = login?.profilePicture ?: continue
-            if (binding?.settingsProfilePic?.setImage(
-                    pic,
-                    errorImageDrawable = HomeFragment.errorProfilePic
-                ) == true
-            ) {
-                binding?.settingsProfileText?.text = login.name
-                binding?.settingsProfile?.isVisible = true
-                break
+        fun hasProfilePictureFromAccountManagers(accountManagers: List<AccountManager>): Boolean {
+            for (syncApi in accountManagers) {
+                val login = syncApi.loginInfo()
+                val pic = login?.profilePicture ?: continue
+
+                if (binding?.settingsProfilePic?.setImage(
+                        pic,
+                        errorImageDrawable = HomeFragment.errorProfilePic
+                    ) == true
+                ) {
+                    binding?.settingsProfileText?.text = login.name
+                    return true // sync profile exists
+                }
             }
+            return false // not syncing
         }
+
+        // display local account information if not syncing
+        if (!hasProfilePictureFromAccountManagers(accountManagers)) {
+            val activity = activity ?: return
+            val currentAccount = try {
+                DataStoreHelper.accounts.firstOrNull {
+                    it.keyIndex == DataStoreHelper.selectedKeyIndex
+                } ?: activity.let { DataStoreHelper.getDefaultAccount(activity) }
+
+            } catch (t: IllegalStateException) {
+                Log.e("AccountManager", "Activity not found", t)
+                null
+            }
+
+            binding?.settingsProfilePic?.setImage(currentAccount?.image)
+            binding?.settingsProfileText?.text = currentAccount?.name
+        }
+
         binding?.apply {
             listOf(
                 settingsGeneral to R.id.action_navigation_global_to_navigation_settings_general,

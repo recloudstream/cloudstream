@@ -743,8 +743,6 @@ fun base64Encode(array: ByteArray): String {
     }
 }
 
-class ErrorLoadingException(message: String? = null) : Exception(message)
-
 fun MainAPI.fixUrlNull(url: String?): String? {
     if (url.isNullOrEmpty()) {
         return null
@@ -1450,11 +1448,24 @@ fun TvType?.isEpisodeBased(): Boolean {
     return (this == TvType.TvSeries || this == TvType.Anime || this == TvType.AsianDrama)
 }
 
-
 data class NextAiring(
     val episode: Int,
     val unixTime: Long,
-)
+    val season: Int? = null,
+) {
+    /**
+     * Secondary constructor for backwards compatibility without season.
+     *  TODO Remove this constructor after there is a new stable release and extensions are updated to support season.
+     */
+    constructor(
+        episode: Int,
+        unixTime: Long,
+    ) : this (
+        episode,
+        unixTime,
+        null
+    )
+}
 
 /**
  * @param season To be mapped with episode season, not shown in UI if displaySeason is defined

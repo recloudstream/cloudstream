@@ -187,7 +187,7 @@ object VideoDownloadManager {
     private val DOWNLOAD_BAD_CONFIG =
         DownloadStatus(retrySame = false, tryNext = false, success = false)
 
-    private const val KEY_RESUME_PACKAGES = "download_resume"
+    const val KEY_RESUME_PACKAGES = "download_resume"
     const val KEY_DOWNLOAD_INFO = "download_info"
     private const val KEY_RESUME_QUEUE_PACKAGES = "download_q_resume"
 

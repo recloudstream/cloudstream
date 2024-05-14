@@ -25,9 +25,13 @@ open class Vidmoly : ExtractorApi() {
         subtitleCallback: (SubtitleFile) -> Unit,
         callback: (ExtractorLink) -> Unit
     ) {
-
+        val headers  = mapOf(
+            "User-Agent"     to "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Mobile Safari/537.36",
+            "Sec-Fetch-Dest" to "iframe"
+        )
         val script = app.get(
             url,
+            headers = headers,
             referer = referer,
         ).document.select("script")
             .find { it.data().contains("sources:") }?.data()

@@ -34,6 +34,9 @@ import com.lagradost.cloudstream3.ui.search.SearchAdapter
 import com.lagradost.cloudstream3.ui.search.SearchClickCallback
 import com.lagradost.cloudstream3.ui.search.SearchHelper
 import com.lagradost.cloudstream3.ui.search.SearchViewModel
+import com.lagradost.cloudstream3.ui.settings.Globals
+import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
+import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.utils.AppUtils.ownShow
@@ -274,8 +277,13 @@ class QuickSearchFragment : Fragment() {
         //        UIHelper.showInputMethod(view.findFocus())
         //    }
         //}
-        binding?.quickSearchBack?.setOnClickListener {
-            activity?.popCurrentPage()
+        if (isLayout(PHONE or EMULATOR)) {
+            binding?.quickSearchBack?.apply {
+                isVisible = true
+                setOnClickListener {
+                    activity?.popCurrentPage()
+                }
+            }
         }
 
         if (isLayout(TV)) {

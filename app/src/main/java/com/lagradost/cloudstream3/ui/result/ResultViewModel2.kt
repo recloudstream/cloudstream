@@ -83,6 +83,10 @@ import com.lagradost.cloudstream3.utils.DataStoreHelper.setVideoWatchState
 import com.lagradost.cloudstream3.utils.DataStoreHelper.updateSubscribedData
 import com.lagradost.cloudstream3.utils.UIHelper.clipboardHelper
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
+import com.lagradost.cloudstream3.utils.fcast.FcastManager
+import com.lagradost.cloudstream3.utils.fcast.FcastSession
+import com.lagradost.cloudstream3.utils.fcast.Opcode
+import com.lagradost.cloudstream3.utils.fcast.PlayMessage
 import kotlinx.coroutines.*
 import java.io.File
 import java.util.concurrent.TimeUnit
@@ -197,7 +201,11 @@ fun LoadResponse.toResultData(repo: APIRepository): ResultData {
 
                 else -> null
             }?.also {
-                nextAiringEpisode = txt(R.string.next_episode_format, airing.episode)
+                nextAiringEpisode = when (airing.season) {
+
+                    null -> txt(R.string.next_episode_format, airing.episode)
+                    else -> txt(R.string.next_season_episode_format, airing.season, airing.episode)
+                }
             }
         }
     }
@@ -1099,13 +1107,14 @@ class ResultViewModel2 : ViewModel() {
 
         val duplicateEntries = data.filter { it: DataStoreHelper.LibrarySearchResponse ->
             val librarySyncData = it.syncData
+            val yearCheck = year == it.year || year == null || it.year == null
 
             val checks = listOf(
                 { imdbId != null && getImdbIdFromSyncData(librarySyncData) == imdbId },
                 { tmdbId != null && getTMDbIdFromSyncData(librarySyncData) == tmdbId },
                 { malId != null && librarySyncData?.get(AccountManager.malApi.idPrefix) == malId },
                 { aniListId != null && librarySyncData?.get(AccountManager.aniListApi.idPrefix) == aniListId },
-                { normalizedName == normalizeString(it.name) && year == it.year }
+                { normalizedName == normalizeString(it.name) && yearCheck }
             )
 
             checks.any { it() }
@@ -1514,6 +1523,13 @@ class ResultViewModel2 : ViewModel() {
                         )
                     )
                 }
+
+                if (FcastManager.currentDevices.isNotEmpty()) {
+                    options.add(
+                        txt(R.string.player_settings_play_in_fcast) to ACTION_FCAST
+                    )
+                }
+
                 options.add(txt(R.string.episode_action_play_in_app) to ACTION_PLAY_EPISODE_IN_PLAYER)
 
                 for (app in apps) {
@@ -1686,6 +1702,39 @@ class ResultViewModel2 : ViewModel() {
                     txt(R.string.episode_action_chromecast_mirror)
                 ) { (result, index) ->
                     startChromecast(activity, click.data, result.links, result.subs, index)
+                }
+            }
+
+            ACTION_FCAST -> {
+                val devices = FcastManager.currentDevices.toList()
+                postPopup(
+                    txt(R.string.player_settings_select_cast_device),
+                    devices.map { txt(it.name) }) { index ->
+                    if (index == null) return@postPopup
+                    val device = devices.getOrNull(index)
+
+                    acquireSingleLink(
+                        click.data,
+                        LoadType.Fcast,
+                        txt(R.string.episode_action_cast_mirror)
+                    ) { (result, index) ->
+                        val host = device?.host ?: return@acquireSingleLink
+                        val link = result.links.firstOrNull() ?: return@acquireSingleLink
+
+                        FcastSession(host).use { session ->
+                            session.sendMessage(
+                                Opcode.Play,
+                                PlayMessage(
+                                    link.type.getMimeType(),
+                                    link.url,
+                                    headers = mapOf(
+                                        "referer" to link.referer,
+                                        "user-agent" to USER_AGENT
+                                    ) + link.headers
+                                )
+                            )
+                        }
+                    }
                 }
             }
 
@@ -2277,7 +2326,8 @@ class ResultViewModel2 : ViewModel() {
                                     fillers.getOrDefault(episode, false),
                                     loadResponse.type,
                                     mainId,
-                                    totalIndex
+                                    totalIndex,
+                                    airDate = i.date
                                 )
 
                             val season = eps.seasonIndex ?: 0
@@ -2326,7 +2376,8 @@ class ResultViewModel2 : ViewModel() {
                                 null,
                                 loadResponse.type,
                                 mainId,
-                                totalIndex
+                                totalIndex,
+                                airDate = episode.date
                             )
 
                         val season = ep.seasonIndex ?: 0
