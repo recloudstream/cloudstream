@@ -444,7 +444,8 @@ object AppUtils {
                     PluginsFragment.newInstance(
                         repositoryName,
                         repos.last().url,
-                        false))
+                        false)
+                    )
                 }
             }
         }
@@ -453,8 +454,11 @@ object AppUtils {
             AlertDialog.Builder(this).apply {
                 setTitle(repositoryName)
                 setMessage(R.string.download_all_plugins_from_repo)
-                setPositiveButton(R.string.open_downloaded_repo) { _, _ ->
-                    openAddedRepo()
+                // won't show "open button" when adding from settings
+                if (!isExtensionsFragment) {
+                    setPositiveButton(R.string.open_downloaded_repo) { _, _ ->
+                        openAddedRepo()
+                    }
                 }
                 setNegativeButton(R.string.dismiss, null)
                 show().setDefaultFocus()
