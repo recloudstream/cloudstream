@@ -265,7 +265,6 @@ class GeneratorPlayer : FullScreenPlayer() {
 
         when (val newMeta = currentMeta) {
             is ResultEpisode -> {
-                Log.d("King", "TempMeta => $newMeta")
                 if (!newMeta.tvType.isMovieType()) {
                     meta.episode = newMeta.episode
                     meta.season = newMeta.seasonIndex
