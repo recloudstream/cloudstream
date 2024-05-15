@@ -2,8 +2,6 @@ import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
 import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.archivesName
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import org.jetbrains.kotlin.gradle.utils.provider
-import org.jetbrains.kotlin.konan.properties.Properties
 import java.io.ByteArrayOutputStream
 import java.net.URL
 
