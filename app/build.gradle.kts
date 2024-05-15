@@ -69,15 +69,7 @@ android {
         resValue("bool", "is_prerelease", "false")
 
         // Reads local.properties
-        val localPropertiesProvider = objects.fileProperty()
-        localPropertiesProvider.set(File(rootDir, "local.properties"))
-        val localProperties = localPropertiesProvider.map { file ->
-            val properties = Properties()
-            if (file.asFile.exists()) {
-                file.asFile.inputStream().use { properties.load(it) }
-            }
-            properties
-        }
+        val localProperties = gradleLocalProperties(rootDir, providers)
 
         buildConfigField(
             "String",
@@ -87,12 +79,12 @@ android {
         buildConfigField(
             "String",
             "SIMKL_CLIENT_ID",
-            "\"" + (System.getenv("SIMKL_CLIENT_ID") ?: localProperties.get().getProperty("simkl.id")) + "\""
+            "\"" + (System.getenv("SIMKL_CLIENT_ID") ?: localProperties["simkl.id"]) + "\""
         )
         buildConfigField(
             "String",
             "SIMKL_CLIENT_SECRET",
-            "\"" + (System.getenv("SIMKL_CLIENT_SECRET") ?: localProperties.get().getProperty("simkl.secret")) + "\""
+            "\"" + (System.getenv("SIMKL_CLIENT_SECRET") ?: localProperties["simkl.secret"]) + "\""
         )
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -164,7 +156,7 @@ repositories {
 dependencies {
     // Testing
     testImplementation("junit:junit:4.13.2")
-    testImplementation("org.json:json:20231013")
+    testImplementation("org.json:json:20240303")
     androidTestImplementation("androidx.test:core")
     implementation("androidx.test.ext:junit-ktx:1.1.5")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
@@ -192,7 +184,7 @@ dependencies {
 
     // For KSP -> Official Annotation Processors are Not Yet Supported for KSP
     ksp("dev.zacsweers.autoservice:auto-service-ksp:1.1.0")
-    implementation("com.google.guava:guava:33.0.0-android")
+    implementation("com.google.guava:guava:32.1.3-android")
     implementation("dev.zacsweers.autoservice:auto-service-ksp:1.1.0")
 
     // Media 3 (ExoPlayer)
