@@ -115,8 +115,7 @@
     <string name="player_subtitles_settings_des">Pengaturan subtitle pemutar</string>
     <string name="chromecast_subtitles_settings">Subtitle Chromecast</string>
     <string name="chromecast_subtitles_settings_des">Pengaturan subtitle Chromecast</string>
-    <string name="eigengraumode_settings">Mode Eigengravy</string>
-    <string name="eigengraumode_settings_des">Menambahkan opsi kecepatan di pemutar</string>
+    <string name="eigengraumode_settings">Kecepatan pemutaran</string>
     <string name="swipe_to_seek_settings">Geser untuk mengubah waktu</string>
     <string name="swipe_to_seek_settings_des">Geser dari sisi ke sisi untuk mengontrol posisi dalam video</string>
     <string name="swipe_to_change_settings">Geser untuk mengubah pengaturan</string>
@@ -138,8 +137,8 @@
     <string name="backup_failed">Izin penyimpanan tidak ditemukan, mohon coba lagi.</string>
     <string name="backup_failed_error_format">Error saat mencadang %s</string>
     <string name="search">Cari</string>
-    <string name="category_account">Kredit dan akun</string>
-    <string name="category_updates">Update dan cadangan</string>
+    <string name="category_account">Akun dan Keamanan</string>
+    <string name="category_updates">Update dan Cadangan</string>
     <string name="settings_info">Info</string>
     <string name="advanced_search">Pencarian Lanjutan</string>
     <string name="advanced_search_des">Memberikan hasil pencarian yang dipisahkan berdasarkan provider</string>
@@ -263,8 +262,8 @@
     <string name="legal_notice_text" translatable="false">Any legal issues regarding the content on this application should be taken up with the actual file hosts and providers themselves as we are not affiliated with them. In case of copyright infringement, please directly contact the responsible parties or the streaming websites. The app is purely for educational and personal use. CloudStream 3 does not host any content on the app, and has no control over what media is put up or taken down. CloudStream 3 functions like any other search engine, such as Google. CloudStream 3 does not host, upload or manage any videos, films or content. It simply crawls, aggregates and displayes links in a convenient, user-friendly interface. It merely scrapes 3rd-party websites that are publicly accessable via any regular web browser. It is the responsibility of user to avoid any actions that might violate the laws governing his/her locality. Use CloudStream 3 at your own risk.</string>
     <string name="category_general">Umum</string>
     <string name="random_button_settings">Tombol Acak</string>
-    <string name="random_button_settings_desc">Tampilkan tombol acak di Beranda</string>
-    <string name="provider_lang_settings">Bahasa provider</string>
+    <string name="random_button_settings_desc">Tampilkan tombol acak di Beranda dan Pustaka</string>
+    <string name="provider_lang_settings">Bahasa ekstensi</string>
     <string name="app_layout">Tata Letak Aplikasi</string>
     <string name="preferred_media_settings">Media yang lebih diinginkan</string>
     <string name="category_ui">Antarmuka pengguna</string>
@@ -373,10 +372,10 @@
     <string name="pref_category_defaults">Bawaan</string>
     <string name="pref_category_looks">Tampilan</string>
     <string name="pref_category_ui_features">Fitur</string>
-    <string name="enable_nsfw_on_providers">Tampilkan konten NSFW</string>
+    <string name="enable_nsfw_on_providers">Mengaktifkan NSFW pada Ekstensi yang didukung</string>
     <string name="play_trailer_button">Putar Cuplikan</string>
     <string name="play_livestream_button">Putar Siaran</string>
-    <string name="stream">Siaran</string>
+    <string name="stream">Aliran jaringan</string>
     <string name="subs_subtitle_languages">Bahasa Subtitel</string>
     <string name="autoplay_next_settings">Putar otomatis episode selanjutnya</string>
     <string name="autoplay_next_settings_des">Putar episode selanjutnya, setelah ini berakhir</string>
@@ -398,22 +397,20 @@
     <string name="season_format">%1$s %2$d%3$s</string>
     <string name="livestreams">Siaran langsung</string>
     <string name="remove_site_pref">Hapus Website</string>
-    <string name="example_username">UsernameKeren</string>
+    <string name="example_username">Username</string>
     <string name="example_email">contoh@email.com</string>
     <string name="example_ip">127.0.0.1</string>
-    <string name="example_site_name">Websiteku</string>
-    <string name="example_site_url">contoh.com</string>
+    <string name="example_site_name">NamaSitus Baru</string>
+    <string name="example_site_url">https://contoh.com</string>
     <string name="extras">Ekstra</string>
     <string name="preferred_media_subtext">Apa yang ingin anda lihat</string>
     <string name="plugin_deleted">Plugin terhapus</string>
     <string name="plugins_updated" formatted="true">%d plugin diperbarui</string>
     <string name="view_public_repositories_button">Lihat Repositori dari Group</string>
     <string name="view_public_repositories_button_short">List Umum</string>
-    <string name="blank_repo_message">CloudStream tidak memiliki sumber video secara bawaan. Kamu harus menginstall dari repositori.
+    <string name="blank_repo_message">CloudStream tidak memiliki situs yang terinstal secara default. Anda perlu menginstal situs-situs dari repositori.
 \n
-\nKarena banyak laporan dari banyak pihak berwajib, kami tidak dapat memberikannya secara langsung.
-\n
-\nGabung dengan group Discord atau cari di internet.</string>
+\nBergabunglah dengan Discord kami atau cari secara online.</string>
     <string name="repository_url_hint">Alamat Repositori</string>
     <string name="create_account">Buat Akun</string>
     <string name="error">Error</string>
@@ -435,7 +432,7 @@
     <string name="safe_mode_title">Semua Umur</string>
     <string name="single_plugin_disabled" formatted="true">%s (Tidak aktif)</string>
     <string name="tracks">Trek</string>
-    <string name="apply_on_restart">Terapkan saat dimuat ulang</string>
+    <string name="apply_on_restart">Terapkan saat dimuat ulang untuk melihat perubahan.</string>
     <string name="extension_description">Keterangan</string>
     <string name="extension_version">Versi</string>
     <string name="extension_status">Status</string>
@@ -457,7 +454,7 @@
     <string name="delete_repository_plugins">Pilih ini untuk menghapus semua repositori plugin</string>
     <string name="skip_setup">Lewati pengaturan</string>
     <string name="error_invalid_url">Alamat salah</string>
-    <string name="network_adress_example">Alamat streaming</string>
+    <string name="network_adress_example">https://contoh.com/contoh.mp4</string>
     <string name="next">Selanjutnya</string>
     <string name="previous">Sebelumnya</string>
     <string name="app_layout_subtext">Ubah tampilan aplikasi</string>
@@ -482,7 +479,7 @@
     <string name="pref_category_gestures">Gerakan</string>
     <string name="apk_installer_settings_des">Beberapa perangkat tidak mendukung penginstal paket mode baru. Coba mode lama jika pembaruan tidak dapat diinstal.</string>
     <string name="pref_category_actions">Aksi</string>
-    <string name="referer">Referer</string>
+    <string name="referer">Memberi referensi (opsional)</string>
     <string name="yes">Ya</string>
     <string name="extension_install_first">Install ekstensi terlebih dahulu</string>
     <string name="all_languages_preference">Semua Bahasa</string>
@@ -545,9 +542,9 @@
     <string name="subscription_new">Berlangganan ke %s</string>
     <string name="subscription_deleted">Berhenti berlangganan di %s</string>
     <string name="subscription_episode_released">Episode %d telah rilis!</string>
-    <string name="jsdelivr_proxy">Proxy raw.githubusercontent.com</string>
+    <string name="jsdelivr_proxy">Proxy GitHub</string>
     <string name="jsdelivr_enabled">Tidak dapat menjangkau GitHub. Mengaktifkan proxy jsDelivr…</string>
-    <string name="jsdelivr_proxy_summary">Melewati pemblokiran GitHub menggunakan jsDelivr. Dapat menyebabkan pembaruan tertunda beberapa hari.</string>
+    <string name="jsdelivr_proxy_summary">Lewati pemblokiran raw URL github menggunakan jsDelivr. Dapat menyebabkan pembaruan tertunda selama beberapa hari.</string>
     <string name="pref_category_bypass">Bypass ISP</string>
     <string name="revert">Pulihkan</string>
     <string name="watch_quality_pref_data">Kualitas nonton yang diinginkan (Data Seluler)</string>
@@ -607,4 +604,38 @@
     <string name="skip_startup_account_select_pref">Lewati pemilihan akun saat startup</string>
     <string name="manage_accounts">Kelola Akun</string>
     <string name="edit_account">Edit akun</string>
+    <string name="rotate_video">Putar</string>
+    <string name="rotate_video_desc">Menampilkan tombol sakelar untuk orientasi layar</string>
+    <string name="links_reloaded_toast">Tautan Dimuat Ulang</string>
+    <string name="auto_rotate_video_desc">Mengaktifkan peralihan otomatis orientasi layar berdasarkan orientasi video</string>
+    <string name="auto_rotate_video">Putar otomatis</string>
+    <string name="result_search_tooltip">Cari di ekstensi lainnya</string>
+    <string name="speed_setting_summary">Menambahkan opsi percepat di pemutar</string>
+    <string name="test_extensions_summary">Tes ini hanya ditujukan untuk pengembang dan tidak memverifikasi atau menolak kerja ekstensi apa pun.</string>
+    <string name="subscribe_tooltip">Notifikasi episode baru</string>
+    <string name="recommendations_tooltip">Tampilkan rekomendasi</string>
+    <string name="test_extensions">Menguji semua Ekstensi</string>
+    <string name="biometric_warning">Data CloudStream Anda telah dicadangkan. Meskipun peluang terjadinya kasus ini sangat kecil dan jarang terjadi, tetapi semua perangkat berperilaku berbeda. Jika Anda ada dalam situasi terburuk, misalnya gagal untuk mengakses aplikasi, segera hapus data aplikasi sepenuhnya dan pulihkan data cadangan. Kami mohon maaf atas segala ketidaknyamanan yang mungkin ditimbulkan.</string>
+    <string name="password_pin_authentication_title">Otentikasi Kata Sandi/PIN</string>
+    <string name="biometric_unsupported">Otentikasi biometrik tidak didukung di perangkat ini</string>
+    <string name="biometric_setting_summary">Buka kunci aplikasi dengan Sidik Jari, ID Wajah, PIN, Pola, dan Kata Sandi.</string>
+    <string name="biometric_prompt_description">Layar ini ditutup setelah mengalami beberapa kali percobaan yang gagal. Anda harus memulai ulang aplikasi ini.</string>
+    <string name="unfavorite">Batalkan favorit</string>
+    <string name="biometric_authentication_title">Buka kunci CloudStream</string>
+    <string name="resume_remaining" formatted="true">%s
+\ntersisa</string>
+    <string name="favorite">Favorit</string>
+    <string name="biometric_setting">Kunci dengan Biometrik</string>
+    <string name="repo_copy_label">Nama dan URL repositori</string>
+    <string name="clipboard_permission_error">Gagal mengakses Papan Klip, mohon coba lagi.</string>
+    <string name="toast_copied">disalin!</string>
+    <string name="clipboard_unknown_error">Gagal menyalin, mohon salin logcat dan hubungi pengembang aplikasi.</string>
+    <string name="ok">Oke</string>
+    <string name="battery_dialog_title">Matikan pengoptimalan Baterai</string>
+    <string name="app_unrestricted_toast">Pemakaian baterai untuk aplikasi ini sudah diatur menjadi tidak dibatasi</string>
+    <string name="app_info_intent_error">Gagal membuka info aplikasi CloudStream.</string>
+    <string name="music_singlar">Musik</string>
+    <string name="audio_book_singular">Buku Audio</string>
+    <string name="custom_media_singluar">Media</string>
+    <string name="battery_dialog_message">Untuk memastikan unduhan dan pemberitahuan tanpa gangguan untuk acara TV berlangganan, CloudStream memerlukan izin untuk berjalan di latar belakang. Dengan menekan OK, Anda akan diarahkan ke Info aplikasi. Di sana, gulir ke Penggunaan baterai aplikasi dan atur penggunaan baterai ke Tidak Terbatas. Harap dicatat, izin ini tidak berarti CS3 akan menguras baterai Anda. Ini hanya akan beroperasi di latar belakang ketika diperlukan, seperti ketika menerima pemberitahuan atau mengunduh video dari ekstensi resmi. Jika Anda memilih untuk membatalkannya, Anda dapat menyesuaikan pengaturan ini nanti di Pengaturan Umum.</string>
 </resources>

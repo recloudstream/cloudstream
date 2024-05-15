@@ -50,7 +50,7 @@ class JsUnpacker(packedJS: String?) {
                     throw Exception("Unknown p.a.c.k.e.r. encoding")
                 }
                 val unbase = Unbase(radix)
-                p = Pattern.compile("\\b\\w+\\b")
+                p = Pattern.compile("""\b[a-zA-Z0-9_]+\b""")
                 m = p.matcher(payload)
                 val decoded = StringBuilder(payload)
                 var replaceOffset = 0

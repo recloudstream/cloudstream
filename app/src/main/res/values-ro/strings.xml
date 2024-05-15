@@ -120,8 +120,7 @@
     <string name="player_subtitles_settings_des">Setări de subtitrare</string>
     <string name="chromecast_subtitles_settings">Subtitrări Chromecast</string>
     <string name="chromecast_subtitles_settings_des">Setări pentru subtitrare Chromecast</string>
-    <string name="eigengraumode_settings">Modul Eigengravy</string>
-    <string name="eigengraumode_settings_des">Adăugați opțiunea de viteză în player</string>
+    <string name="eigengraumode_settings">viteza de redare</string>
     <string name="swipe_to_seek_settings">Derulați spre înainte/înapoi</string>
     <string name="swipe_to_seek_settings_des">Derulați dintr-o parte în alta pentru a controla timpul de difuzare a videoclipului</string>
     <string name="swipe_to_change_settings">Derulați pentru a modifica setările</string>
@@ -273,7 +272,7 @@
     <string name="legal_notice_text">Orice probleme legale privind conținutul acestei aplicații ar trebui să fie rezolvate cu furnizorii și gazdele actuale de fișiere, întrucât noi nu suntem afiliați cu aceștia. În caz de încălcare a drepturilor de autor, vă rugăm să contactați direct părțile responsabile sau site-urile de streaming. Aplicația este destinată exclusiv utilizării educaționale și personale. CloudStream 3 nu găzduiește niciun fel de conținut în aplicație și nu are niciun control asupra conținutului media care este pus sau retras. CloudStream 3 funcționează ca orice alt motor de căutare, cum ar fi Google. CloudStream 3 nu găzduiește, nu încarcă și nu gestionează niciun videoclip, film sau conținut. Pur și simplu navighează, adună și afișează linkuri într-o interfață convenabilă și ușor de utilizat. Pur și simplu, acesta extrage paginile web ale unor terțe părți care sunt accesibile publicului prin intermediul oricărui browser web obișnuit. Este responsabilitatea utilizatorului de a evita orice acțiune care ar putea încălca legile care guvernează locația sa. Utilizați CloudStream 3 pe propria răspundere.</string>
     <string name="category_general">General</string>
     <string name="random_button_settings">Aleatoriu</string>
-    <string name="random_button_settings_desc">Afișați butonul Aleatoriu pe pagina de start</string>
+    <string name="random_button_settings_desc">Afișați butonul aleatoriu pe pagina de start și în bibliotecă</string>
     <string name="provider_lang_settings">Limba furnizorului</string>
     <string name="app_layout">Aplicație de prezentare</string>
     <string name="preferred_media_settings">Media preferată</string>
@@ -289,11 +288,11 @@
     <string name="bottom_title_settings_des">Locația titlului de pe poster</string>
     <!-- account stuff -->
     <string name="example_password">parola123</string>
-    <string name="example_username">David Popovici</string>
+    <string name="example_username">Numele utilizatorului/utilizatoarei</string>
     <string name="example_email">davidpopovici@gmail.com</string>
     <string name="example_ip">127.0.0.1</string>
-    <string name="example_site_name">David Popovici</string>
-    <string name="example_site_url">davidpopovici.com</string>
+    <string name="example_site_name">NouNumeSite</string>
+    <string name="example_site_url">https://exemplu.com</string>
     <string name="example_lang_name">Cod limbă (RO)</string>
     <string name="login_format" formatted="true">%1$s %2$s</string>
     <string name="account">Cont</string>
@@ -309,7 +308,7 @@
     <string name="sync_score_format" formatted="true">%d / 10</string>
     <string name="sync_total_episodes_none">/\?\?</string>
     <string name="sync_total_episodes_some" formatted="true">/%d</string>
-    <string name="authenticated_user" formatted="true">%s autentificat</string>
+    <string name="authenticated_user" formatted="true">%s autentificat/ă</string>
     <string name="authenticated_user_fail" formatted="true">Nu s-a putut autentifica la %s</string>
     <!-- ============ -->
     <string name="none">Nu există</string>
@@ -396,11 +395,11 @@
     <string name="nsfw">NSFW</string>
     <string name="episodes_range">%1$d-%2$d</string>
     <string name="android_tv_interface_on_seek_settings">Player Afișat - Căutați Suma</string>
-    <string name="android_tv_interface_off_seek_settings">Player Ascuns - Căutați Suma</string>
+    <string name="android_tv_interface_off_seek_settings">Player Ascuns/ă - Căutați Suma</string>
     <string name="livestreams">Livestream-uri</string>
     <string name="nsfw_singular">NSFW</string>
     <string name="test_failed">Eșuat</string>
-    <string name="android_tv_interface_on_seek_settings_summary">Cantitatea de căutare utilizată atunci când playerul este vizibil</string>
+    <string name="android_tv_interface_on_seek_settings_summary">Suma căutată și utilizată atunci când player-ul este vizibil/ă</string>
     <string name="live_singular">Livestream</string>
     <string name="android_tv_interface_off_seek_settings_summary">Cantitatea de căutare utilizată atunci când playerul este ascuns</string>
     <string name="watch_quality_pref_data">Calitatea preferată (Date Mobile)</string>
@@ -484,11 +483,9 @@
     <string name="safe_mode_description">Toate extensiile au fost dezactivate din cauza unei defecțiuni pentru a vă ajuta să o găsiți pe cea care cauzează probleme.</string>
     <string name="update_notification_downloading">Se descarcă actualizarea aplicației…</string>
     <string name="player_settings_play_in_browser">Browser web</string>
-    <string name="blank_repo_message">CloudStream nu are niciun site instalat în mod implicit. Trebuie să instalați site-urile din depozite.
+    <string name="blank_repo_message">CloudStream nu are niciun site instalat din start. Trebuie să instalați site-urile din depozite.
 \n
-\nDin cauza unui DMCA takedown fără creier de către Sky UK Limited 🤮 nu putem lega site-ul de depozit în aplicație.
-\n
-\nAlăturați-vă Discordului nostru sau căutați online.</string>
+\nAlăturați-vă Discord-ului nostru sau căutați online.</string>
     <string name="batch_download_start_format" formatted="true">A început să descarce %1$d %2$s…</string>
     <string name="safe_mode_title">Mod sigur pornit</string>
     <string name="safe_mode_file">Fișier Mod Sigur găsit!
@@ -513,8 +510,8 @@
     <string name="restart">Repornește</string>
     <string name="enable_nsfw_on_providers">Activează NSFW la furnizori suportate</string>
     <string name="jsdelivr_enabled">Nu s-a putut ajunge la GitHub. Se activează proxy-ul jsDelivr…</string>
-    <string name="jsdelivr_proxy">Proxy raw.githubusercontent.com</string>
-    <string name="jsdelivr_proxy_summary">Depășește blocarea GitHub folosind jsdelivr, poate cauza întârzieri de câteva zile la actualizări.</string>
+    <string name="jsdelivr_proxy">Proxy GitHub</string>
+    <string name="jsdelivr_proxy_summary">Depășește blocarea GitHub folosind jsDelivr. Poate cauza întârzieri de câteva zile la actualizări.</string>
     <string name="next">Următorul</string>
     <string name="batch_download_nothing_to_download_format" formatted="true">Toate %s deja descărcate</string>
     <string name="plugins_downloaded" formatted="true">S-a descărcat: %d</string>
@@ -528,7 +525,7 @@
     <string name="apk_installer_legacy">Moştenit</string>
     <string name="category_provider_test">Test de furnizor</string>
     <string name="category_providers">Furnizori</string>
-    <string name="network_adress_example">Link către stream</string>
+    <string name="network_adress_example">https://example.com/example.mp4</string>
     <string name="delete_repository_plugins">Acest lucru va șterge, de asemenea, toate plugin-urile din depozit</string>
     <string name="update_notification_installing">Se instalează actualizarea aplicației…</string>
     <string name="batch_download_finish_format" formatted="true">S-a descărcat %1$d %2$s</string>
@@ -569,4 +566,31 @@
     <string name="unable_to_inflate">UI nu a putut fi creată corect, acesta este un BUG MAJOR și trebuie raportat imediat %s</string>
     <string name="automatic_plugin_download_mode_title">Selectați modul de filtrare a descărcării plugin-urilor</string>
     <string name="already_voted">Ați votat deja</string>
+    <string name="duplicate_message_multiple" formatted="true">Elemente potențial duplicate au fost găsite în biblioteca ta:
+\n
+\n%s
+\n
+\nÎn ciuda acestui fapt, ai dori să adaugi acest alement, să le înlocuiești pe cele existente, sau să anulezi acțiunea?</string>
+    <string name="favorite_added">%s a fost adăugat la favoriți/te</string>
+    <string name="favorite_removed">%s a fost eliminat din favoriți/te</string>
+    <string name="action_add_to_favorites">Adaugă la favoriți/te</string>
+    <string name="action_remove_from_favorites">Elimină din favoriți/te</string>
+    <string name="duplicate_message_single" formatted="true">Se pare că un element potențial duplicat deja există în biblioteca ta: \'%s.\'
+\n
+\nÎn ciuda aceasta, ai dori să adaugi acest element, să îl înlocuiești pe cel existent, sau să anulezi acțiunea?</string>
+    <string name="enter_pin_with_name" formatted="true">Introduce PIN-ul pentru %s</string>
+    <string name="enter_current_pin">Introduce PIN-ul actual</string>
+    <string name="enter_pin">Introduce PIN-ul</string>
+    <string name="lock_profile">Blochează Profilul</string>
+    <string name="action_unsubscribe">Dezabonează-te</string>
+    <string name="action_subscribe">Abonează-te</string>
+    <string name="duplicate_add">Adaugă</string>
+    <string name="duplicate_replace">Înlocuiește</string>
+    <string name="duplicate_replace_all">Înlocuiește tot</string>
+    <string name="duplicate_title">Posibil Duplicat Găsit</string>
+    <string name="subscribe_tooltip">Notificare episod nou</string>
+    <string name="recommendations_tooltip">Arată sugestii</string>
+    <string name="speed_setting_summary">Adaugă o opțiune de viteză la player</string>
+    <string name="favorites_list_name">Favoriți/te</string>
+    <string name="backup_frequency">Frecvența de backup</string>
 </resources>

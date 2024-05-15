@@ -9,10 +9,16 @@ import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.M3u8Helper.Companion.generateM3u8
 import java.net.URL
 
+class Geodailymotion : Dailymotion() {
+    override val name = "GeoDailymotion"
+    override val mainUrl = "https://geo.dailymotion.com"
+}
+
 open class Dailymotion : ExtractorApi() {
     override val mainUrl = "https://www.dailymotion.com"
     override val name = "Dailymotion"
     override val requiresReferer = false
+    private val baseUrl = "https://www.dailymotion.com"
 
     @Suppress("RegExpSimplifiable")
     private val videoIdRegex = "^[kx][a-zA-Z0-9]+\$".toRegex()
@@ -34,7 +40,7 @@ open class Dailymotion : ExtractorApi() {
         val dmV1st = config.dmInternalData.v1st
         val dmTs = config.dmInternalData.ts
         val embedder = config.context.embedder
-        val metaDataUrl = "$mainUrl/player/metadata/video/$id?embedder=$embedder&locale=en-US&dmV1st=$dmV1st&dmTs=$dmTs&is_native_app=0"
+        val metaDataUrl = "$baseUrl/player/metadata/video/$id?embedder=$embedder&locale=en-US&dmV1st=$dmV1st&dmTs=$dmTs&is_native_app=0"
         val metaData = app.get(metaDataUrl, referer = embedUrl, cookies = req.cookies)
             .parsedSafe<MetaData>() ?: return
         metaData.qualities.forEach { (_, video) ->
@@ -45,16 +51,19 @@ open class Dailymotion : ExtractorApi() {
     }
 
     private fun getEmbedUrl(url: String): String? {
-        if (url.contains("/embed/")) {
-            return url
-        }
-        val vid = getVideoId(url) ?: return null
-        return "$mainUrl/embed/video/$vid"
+		if (url.contains("/embed/") || url.contains("/video/")) {
+        return url
     }
+		if (url.contains("geo.dailymotion.com")) {
+			val videoId = url.substringAfter("video=")
+			return "$baseUrl/embed/video/$videoId"
+		}
+		return null
+	}
 
     private fun getVideoId(url: String): String? {
         val path = URL(url).path
-        val id = path.substringAfter("video/")
+        val id = path.substringAfter("/video/")
         if (id.matches(videoIdRegex)) {
             return id
         }

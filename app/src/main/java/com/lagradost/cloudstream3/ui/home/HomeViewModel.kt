@@ -53,6 +53,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.withContext
 import java.util.EnumSet
+import java.util.concurrent.CopyOnWriteArrayList
 import kotlin.collections.set
 
 class HomeViewModel : ViewModel() {
@@ -125,7 +126,7 @@ class HomeViewModel : ViewModel() {
 
     private val _resumeWatching = MutableLiveData<List<SearchResponse>>()
     private val _preview = MutableLiveData<Resource<Pair<Boolean, List<LoadResponse>>>>()
-    private val previewResponses = mutableListOf<LoadResponse>()
+    private val previewResponses = CopyOnWriteArrayList<LoadResponse>()
     private val previewResponsesAdded = mutableSetOf<String>()
 
     val resumeWatching: LiveData<List<SearchResponse>> = _resumeWatching
@@ -327,7 +328,13 @@ class HomeViewModel : ViewModel() {
                             val filteredList =
                                 context?.filterHomePageListByFilmQuality(list) ?: list
                             expandable[list.name] =
-                                ExpandableHomepageList(filteredList, 1, home.hasNext)
+                                ExpandableHomepageList(
+                                    filteredList.copy(
+                                        list = CopyOnWriteArrayList(
+                                            filteredList.list
+                                        )
+                                    ), 1, home.hasNext
+                                )
                         }
                     }
 
@@ -342,8 +349,7 @@ class HomeViewModel : ViewModel() {
                         val currentList =
                             items.shuffled().filter { it.list.isNotEmpty() }
                                 .flatMap { it.list }
-                                .distinctBy { it.url }
-                                .toList()
+                                .distinctBy { it.url }.toList()
 
                         if (currentList.isNotEmpty()) {
                             val randomItems =

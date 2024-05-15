@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="subtitles_settings">Preferenzi tas-sottotitli</string>
+    <string name="subs_text_color">Kulur tal-kitba</string>
+    <string name="subs_window_color">Kulur tat-Tieqa</string>
+    <string name="search_provider_text_types">Fittex bl-użu ta \'tipi</string>
+    <string name="subs_import_text" formatted="true">Importa fonts billi tpoġġihom ġo %s</string>
+    <string name="vpn_torrent">Dan il-fornitur huwa torrent, VPN huwa rakkomandat</string>
+    <string name="cast_format" formatted="true">Atturi: %s</string>
+    <string name="next_episode_format" formatted="true">L-episodju %d ha johrog fil</string>
+    <string name="next_episode_time_hour_format" formatted="true">%1$dh %2$dm</string>
+    <string name="next_episode_time_min_format" formatted="true">%dm</string>
+    <string name="result_poster_img_des">Kartellun</string>
+    <string name="search_poster_img_des">Kartellun</string>
+    <string name="episode_poster_img_des">Kartellun tal-episodju</string>
+    <string name="home_main_poster_img_des">Kartellun Principali</string>
+    <string name="home_next_random_img_des">Li jmiss bl\'addoċċ</string>
+    <string name="home_change_provider_img_des">Ibdel Il-fornitur</string>
+    <string name="player_speed_text_format" formatted="true">veloċità (%.2fx)</string>
+    <string name="rated_format" formatted="true">Klassifikazzjoni: %.1f</string>
+    <string name="new_update_format" formatted="true">Aġġornament ġdid misjub!
+\n%1$s -&gt; %2$s</string>
+    <string name="duration_format" formatted="true">%d min</string>
+    <string name="app_name">CloudStream</string>
+    <string name="play_with_app_name">Ara bil-CloudStream</string>
+    <string name="title_home">Dar</string>
+    <string name="title_search">Fittex</string>
+    <string name="title_downloads">Imnizzel</string>
+    <string name="title_settings">Preferenzi</string>
+    <string name="search_hint">Fittex…</string>
+    <string name="search_hint_site" formatted="true">Fittex%s…</string>
+    <string name="no_data">Bla dejta</string>
+    <string name="episode_more_options_des">Iktar Preferenzi</string>
+    <string name="next_episode">L-episodju li\'jmiss</string>
+    <string name="result_tags">Ġeneri</string>
+    <string name="result_share">Aqsam</string>
+    <string name="result_open_in_browser">Iftah fil-brawser</string>
+    <string name="browser">Brawser</string>
+    <string name="skip_loading">Aqbez it-tagħbija</string>
+    <string name="loading">Tagħbija…</string>
+    <string name="type_watching">Jaraw</string>
+    <string name="type_on_hold">Stenna ftit</string>
+    <string name="type_completed">Lest</string>
+    <string name="type_dropped">Imwaqqa</string>
+    <string name="type_plan_to_watch">Pjana biex tara</string>
+    <string name="type_re_watching">Terġa\' tara</string>
+    <string name="play_trailer_button">Ibda t-trejler</string>
+    <string name="play_livestream_button">Ibda l-livestream</string>
+    <string name="play_torrent_button">Stream Torrent</string>
+    <string name="pick_source">Sorsi</string>
+    <string name="reload_error">Erġa\' pprova l-konnessjoni…</string>
+    <string name="go_back">Mur lura</string>
+    <string name="play_episode">Ibda l-episodju</string>
+    <string name="download_paused">Tniżżila ppawzata</string>
+    <string name="downloading">Qed jinżlu</string>
+    <string name="downloaded">Imniżżel</string>
+    <string name="download_canceled">Tniżżil ikkanċellat</string>
+    <string name="download_done">Lest it-tniżżil</string>
+    <string name="update_started">Beda l-aġġornament</string>
+    <string name="stream">Network stream</string>
+    <string name="error_loading_links_toast">Tagħbija tal-Links falliet</string>
+    <string name="links_reloaded_toast">Links regaw gew mogħbija</string>
+    <string name="download_storage_text">Ħażna Interna</string>
+    <string name="app_dubbed_text">Dub</string>
+    <string name="home_play">Ibda</string>
+    <string name="home_info">Info</string>
+    <string name="action_add_to_bookmarks">Issettja l-istatus ta-rajtux</string>
+    <string name="sort_apply">Applika</string>
+    <string name="sort_copy">Ikkopja</string>
+    <string name="sort_close">Għalaq</string>
+    <string name="sort_clear">Neħħi</string>
+    <string name="sort_save">Issevja</string>
+    <string name="repo_copy_label">Isem tar-repożitorju u URL</string>
+    <string name="toast_copied">Ikkupjat!</string>
+    <string name="subscribe_tooltip">Notifika ta\' episodju ġdid</string>
+    <string name="result_search_tooltip">Fittex f\'estensjonijiet oħra</string>
+    <string name="recommendations_tooltip">Uri r-rakkomandazzjonijiet</string>
+    <string name="player_speed">Veloċità tal-Plejer</string>
+    <string name="subs_outline_color">Kulur tal-Kontorn</string>
+    <string name="subs_background_color">Kulur tal-Isfond</string>
+    <string name="subs_edge_type">Tip tat-tarf</string>
+    <string name="subs_subtitle_elevation">Elevazzjoni tas-Sottotitolu</string>
+    <string name="subs_font">Font</string>
+    <string name="subs_font_size">Daqs tal-font</string>
+    <string name="search_provider_text_providers">Fittex bl-użu ta\' fornituri</string>
+    <string name="benene_count_text">%d Benenes mogħtija lil devs</string>
+    <string name="benene_count_text_none">Ebda Benenes mogħtija</string>
+    <string name="subs_auto_select_language">Agħżel il-Lingwa Awtomatikament</string>
+    <string name="subs_download_languages">Niżżel Lingwi</string>
+    <string name="subs_subtitle_languages">Lingwa tas-sottotitolu</string>
+    <string name="subs_hold_to_reset_to_default">Żomm biex tirrisettja għal default</string>
+    <string name="continue_watching">Kompli Ara</string>
+    <string name="action_remove_watching">Neħħi</string>
+    <string name="action_open_watching">Iktar informazzjoni</string>
+    <string name="action_open_play">@string/home_play</string>
+    <string name="vpn_might_be_needed">Jista\' jkun hemm bżonn ta\' VPN biex dan il-fornitur jaħdem b\'mod korrett</string>
+    <string name="provider_info_meta">Il-metadata mhix ipprovduta mis-sit, it-tagħbija tal-vidjo se tfalli jekk ma teżistix fuq is-sit.</string>
+    <string name="torrent_plot">Deskrizzjoni</string>
+    <string name="normal_no_plot">Lebda Plot misjub</string>
+    <string name="torrent_no_plot">Lebda Deskrizzjoni misjuba</string>
+    <string name="show_log_cat">Uri Logcat 🐈</string>
+    <string name="test_log">ġurnal</string>
+    <string name="picture_in_picture">Stampa f-istampa</string>
+    <string name="picture_in_picture_des">Ikompli d-daqq fi player minjatura fuq apps oħra</string>
+    <string name="app_dub_sub_episode_text_format" formatted="true">%1$s Ep %2$d</string>
+    <string name="next_episode_time_day_format" formatted="true">%1$dd %2$dh %3$dm</string>
+    <string name="go_back_img_des">Mur Lura</string>
+    <string name="preview_background_img_des">Ara l\'isfond</string>
+    <string name="filler" formatted="true">Mili</string>
+    <string name="play_movie_button">Ibda l-film</string>
+    <string name="pick_subtitle">Sottotitli</string>
+    <string name="app_subbed_text">Sut</string>
+    <string name="popup_play_file">Ibda l-fajl</string>
+    <string name="download">Niżżel</string>
+    <string name="popup_delete_file">Hassar il-fajl</string>
+    <string name="popup_resume_download">Kompli Nizzel</string>
+    <string name="popup_pause_download">Ieqaf Nizzel</string>
+    <string name="pref_disable_acra">Iddiżattiva r-rappurtar awtomatiku tal-bugs</string>
+    <string name="home_more_info">Iktar Informazzjoni</string>
+    <string name="home_expanded_hide">Aħbi</string>
+    <string name="filter_bookmarks">Iffiltra l-Bookmarks</string>
+    <string name="download_started">Beda t-tniżżil</string>
+    <string name="error_bookmarks_text">Bookmarks</string>
+    <string name="action_remove_from_bookmarks">Neħħi</string>
+    <string name="download_failed">Falla t-tniżżil</string>
+</resources>

@@ -13,6 +13,10 @@ import javax.crypto.spec.SecretKeySpec
 // Code found in https://github.com/KillerDogeEmpire/vidplay-keys
 // special credits to @KillerDogeEmpire for providing key
 
+class AnyVidplay(hostUrl: String) : Vidplay() {
+    override val mainUrl = hostUrl
+}
+
 class MyCloud : Vidplay() {
     override val name = "MyCloud"
     override val mainUrl = "https://mcloud.bz"
@@ -66,7 +70,7 @@ open class Vidplay : ExtractorApi() {
     }
 
     private suspend fun callFutoken(id: String, url: String): String? {
-        val script = app.get("$mainUrl/futoken").text
+        val script = app.get("$mainUrl/futoken", referer = url).text
         val k = "k='(\\S+)'".toRegex().find(script)?.groupValues?.get(1) ?: return null
         val a = mutableListOf(k)
         for (i in id.indices) {

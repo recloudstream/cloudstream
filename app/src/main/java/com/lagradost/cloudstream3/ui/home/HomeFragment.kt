@@ -451,10 +451,6 @@ class HomeFragment : Fragment() {
     }
 
     override fun onDestroyView() {
-        homeMasterAdapter?.onSaveInstanceState(
-            instanceState,
-            binding?.homeMasterRecycler
-        )
 
         bottomSheetDialog?.ownHide()
         binding = null
@@ -517,11 +513,9 @@ class HomeFragment : Fragment() {
                 }
             }
             homeMasterAdapter = HomeParentItemAdapterPreview(
-                mutableListOf(),
+                fragment = this@HomeFragment,
                 homeViewModel,
-            ).apply {
-                onRestoreInstanceState(instanceState)
-            }
+            )
             homeMasterRecycler.adapter = homeMasterAdapter
             //fixPaddingStatusbar(homeLoadingStatusbar)
 
@@ -572,10 +566,11 @@ class HomeFragment : Fragment() {
                         val mutableListOfResponse = mutableListOf<SearchResponse>()
                         listHomepageItems.clear()
 
-                        (homeMasterRecycler.adapter as? ParentItemAdapter)?.updateList(
-                            d.values.toMutableList(),
-                            homeMasterRecycler
-                        )
+                        (homeMasterRecycler.adapter as? ParentItemAdapter)?.submitList(d.values.map {
+                            it.copy(
+                                list = it.list.copy(list = it.list.list.toMutableList())
+                            )
+                        }.toMutableList())
 
                         homeLoading.isVisible = false
                         homeLoadingError.isVisible = false
@@ -624,7 +619,7 @@ class HomeFragment : Fragment() {
                     }
 
                     is Resource.Loading -> {
-                        (homeMasterRecycler.adapter as? ParentItemAdapter)?.updateList(listOf())
+                        (homeMasterRecycler.adapter as? ParentItemAdapter)?.submitList(listOf())
                         homeLoadingShimmer.startShimmer()
                         homeLoading.isVisible = true
                         homeLoadingError.isVisible = false

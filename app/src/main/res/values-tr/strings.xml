@@ -76,7 +76,7 @@
     <string name="download_canceled">İndirme iptal edildi</string>
     <string name="download_done">İndirme bitti</string>
     <string name="download_format" translatable="false">%s - %s</string>
-    <string name="stream">Yayınla</string>
+    <string name="stream">Ağ akışı</string>
     <string name="error_loading_links_toast">Bağlantılar yüklenirken hata oluştu</string>
     <string name="download_storage_text">Dahili depolama</string>
     <string name="app_dubbed_text">Dublajlı</string>
@@ -137,8 +137,7 @@
     <string name="player_subtitles_settings_des">Oynatıcı alt yazı ayarları</string>
     <string name="chromecast_subtitles_settings">Chromecast alt yazıları</string>
     <string name="chromecast_subtitles_settings_des">Chromecast alt yazı ayarları</string>
-    <string name="eigengraumode_settings">Eigengrau modu</string>
-    <string name="eigengraumode_settings_des">Oynatıcıya hız seçeneği ekler</string>
+    <string name="eigengraumode_settings">Oynatma hızı</string>
     <string name="swipe_to_seek_settings">Atlamak için kaydır</string>
     <string name="swipe_to_seek_settings_des">Zamanı ayarlamak için yanlardan kaydır</string>
     <string name="swipe_to_change_settings">Ayarları değiştirmek için kaydır</string>
@@ -162,8 +161,8 @@
     <string name="backup_failed">Depolama izinleri eksik. Lütfen tekrar deneyin.</string>
     <string name="backup_failed_error_format">%s yedeklenirken hata</string>
     <string name="search">Ara</string>
-    <string name="category_account">Hesaplar</string>
-    <string name="category_updates">Güncellemeler ve yedekleme</string>
+    <string name="category_account">Hesaplar ve Güvenlik</string>
+    <string name="category_updates">Güncellemeler ve Yedekleme</string>
     <string name="settings_info">Bilgi</string>
     <string name="advanced_search">Gelişmiş arama</string>
     <string name="advanced_search_des">Arama sonuçlarını sağlayıcıya göre ayırır</string>
@@ -309,10 +308,10 @@
     <string name="category_general">Genel</string>
     <string name="random_button_settings">Rastgele İçerik</string>
     <string name="random_button_settings_desc">Anasayfada ve Kütüphanede rastgele düğmesini göster</string>
-    <string name="provider_lang_settings">Sağlayıcı dilleri</string>
+    <string name="provider_lang_settings">Uzantı dilleri</string>
     <string name="app_layout">Uygulama düzeni</string>
     <string name="preferred_media_settings">Tercih edilen medya</string>
-    <string name="enable_nsfw_on_providers">Desteklenen sağlayıcılarda +18 içeriği etkinleştir</string>
+    <string name="enable_nsfw_on_providers">Desteklenen Uzantılarda NSFW\'yi etkinleştirin</string>
     <string name="subtitles_encoding">Alt yazı kodlaması</string>
     <string name="category_providers">Sağlayıcılar</string>
     <string name="category_ui">Düzen</string>
@@ -330,11 +329,11 @@
     <string name="opensubtitles_key" translatable="false">opensubtitles_key</string>
     <string name="nginx_key" translatable="false">nginx_key</string>
     <string name="example_password">şifre123</string>
-    <string name="example_username">HavalıKullanıcıAdı</string>
+    <string name="example_username">Kullanıcı Adı</string>
     <string name="example_email">hello@world.com</string>
     <string name="example_ip">127.0.0.1</string>
-    <string name="example_site_name">MyCoolSite</string>
-    <string name="example_site_url">ornek.com</string>
+    <string name="example_site_name">YeniSiteAdı</string>
+    <string name="example_site_url">https://ornek.com</string>
     <string name="example_lang_name">Dil kodu (tr)</string>
     <!--
     <string name="mal_account_settings" translatable="false">MAL</string>
@@ -425,8 +424,8 @@
     <string name="subtitles_filter_lang">Tercih edilen medya diline göre filtrele</string>
     <string name="extras">Ek içerikler</string>
     <string name="trailer">Fragman</string>
-    <string name="network_adress_example">Yayına bağlan</string>
-    <string name="referer">Yönlendiren</string>
+    <string name="network_adress_example">https://ornek.com/ornek.mp4</string>
+    <string name="referer">Yönlendiren (opsiyonel)</string>
     <string name="next">İleri</string>
     <string name="provider_languages_tip">Videoları bu dillerde izle</string>
     <string name="previous">Geri</string>
@@ -456,9 +455,7 @@
     <string name="plugins_disabled" formatted="true">Devre dışı: %d</string>
     <string name="plugins_not_downloaded" formatted="true">İndirilmeyen: %d</string>
     <string name="plugins_updated" formatted="true">%d eklenti(ler) güncellendi</string>
-    <string name="blank_repo_message">CloudStream\'in varsayılan olarak yüklü sitesi yoktur. Siteleri depolardan kurmanız gerekir.
-\n
-\nSky UK Limited tarafından beyinsiz bir DMCA yayından kaldırma 🤮 nedeniyle uygulama içinde depo linklerini bulunduramıyoruz.
+    <string name="blank_repo_message">CloudStream, varsayılan olarak hiçbir site ile gelmez. Siteleri depolardan kurmanız gerekir.
 \n
 \nDiscord\'umuza katılın veya çevrimiçi arama yapın.</string>
     <string name="view_public_repositories_button">Topluluk depolarını görüntüle</string>
@@ -469,7 +466,7 @@
     <string name="tracks">Parçalar</string>
     <string name="audio_tracks">Ses parçaları</string>
     <string name="video_tracks">Video parçaları</string>
-    <string name="apply_on_restart">Yeniden başlatmada uygula</string>
+    <string name="apply_on_restart">Değişiklikleri görmek için uygulamayı yeniden başlatın.</string>
     <string name="safe_mode_title">Güvenli mod açık</string>
     <string name="safe_mode_description">Çöküşe neden olan eklentiyi bulmaya yardımcı olabilmek için tüm eklentiler kapatıldı.</string>
     <string name="safe_mode_crash_info">Çökme bilgisini göster</string>
@@ -558,11 +555,11 @@
     <string name="jsdelivr_enabled">GitHub\'a ulaşılamadı. jsDelivr vekil sunucusu etkinleştiriliyor…</string>
     <string name="start">Başlat</string>
     <string name="test_passed">Başarılı oldu</string>
-    <string name="jsdelivr_proxy">raw.githubusercontent.com vekil sunucusu (proxy)</string>
+    <string name="jsdelivr_proxy">GitHub Proxy</string>
     <string name="watch_quality_pref_data">Tercih edilen görüntü kalitesi (Mobil veri)</string>
     <string name="android_tv_interface_on_seek_settings">Oynatıcı görünürken atlanacak süre</string>
     <string name="android_tv_interface_off_seek_settings_summary">Oynatıcı gizli durumdayken atlanacak süre miktarı</string>
-    <string name="jsdelivr_proxy_summary">jsdelivr kullanarak GitHub kısıtlamasını kaldırır, güncellemelerin birkaç gün gecikmesine neden olabilir.</string>
+    <string name="jsdelivr_proxy_summary">jsDelivr kullanarak ham github URL\'lerinin engellenmesini atlayın. Güncellemelerin birkaç gün gecikmesine neden olabilir.</string>
     <string name="pref_category_android_tv">Android TV</string>
     <string name="subscription_episode_released">Yeni bölüm %d yayınlandı!</string>
     <string name="category_provider_test">Sağlayıcıyı kontrol et</string>
@@ -638,5 +635,33 @@
     <string name="rotate_video">Döndür</string>
     <string name="auto_rotate_video_desc">Video yönüne göre ekran yönünün otomatik olarak değişmesini sağla</string>
     <string name="links_reloaded_toast">Bağlantılar Yeniden Yüklendi</string>
-    <string name="copyTitle">Başlık kopyalandı!</string>
+    <string name="result_search_tooltip">Diğer uzantılarda ara</string>
+    <string name="recommendations_tooltip">Önerileri göster</string>
+    <string name="speed_setting_summary">Oynatıcıya bir hız seçeneği ekler</string>
+    <string name="test_extensions">Bütün eklentileri test edin</string>
+    <string name="test_extensions_summary">Bu Test yalnızca geliştiricilere yöneliktir ve herhangi bir uzantının çalışmasını doğrulamaz veya reddetmez.</string>
+    <string name="subscribe_tooltip">Yeni bölüm bildirimi</string>
+    <string name="biometric_authentication_title">CloudStream\'in Kilidini aç</string>
+    <string name="biometric_setting">Biyometri ile Kilitle</string>
+    <string name="password_pin_authentication_title">Şifre/PIN Kimlik Doğrulama</string>
+    <string name="biometric_unsupported">Biyometrik kimlik doğrulama bu cihazda desteklenmiyor</string>
+    <string name="biometric_setting_summary">Parmak İzi, Yüz Kimliği, PIN, Desen ve Parola ile uygulamanın kilidini açın.</string>
+    <string name="biometric_prompt_description">Bu pencere çok sayıda başarısız deneme nedeniyle kapandı. Lütfen uygulamayı yeniden başlatın.</string>
+    <string name="biometric_warning">CloudStream verileriniz artık yedeklenmiştir. Bunun olasılığı çok düşük olsa da tüm cihazlar farklı davranabilir. Nadiren de olsa uygulamaya erişiminizin kilitlenmesi durumunda, uygulama verilerini tamamen temizleyin ve bir yedekten geri yükleyin. Bu durumdan kaynaklanan rahatsızlıklardan dolayı çok üzgünüz.</string>
+    <string name="favorite">Favori</string>
+    <string name="unfavorite">Favorilerden kaldır</string>
+    <string name="resume_remaining" formatted="true">%s
+\ngeriye kalan</string>
+    <string name="repo_copy_label">Depo adı ve URL\'si</string>
+    <string name="toast_copied">kopyalandı!</string>
+    <string name="clipboard_permission_error">Panoya erişimde hata oluştu. Lütfen tekrar deneyin.</string>
+    <string name="clipboard_unknown_error">Kopyalama hatası. Lütfen logcat\'i kopyalayın ve uygulama desteğiyle iletişime geçin.</string>
+    <string name="ok">Tamam</string>
+    <string name="battery_dialog_title">Pil optimizasyonunu devre dışı bırak</string>
+    <string name="app_info_intent_error">CloudStream\'in Uygulama bilgileri açılamıyor.</string>
+    <string name="music_singlar">Müzik</string>
+    <string name="audio_book_singular">Sesli Kitap</string>
+    <string name="custom_media_singluar">Medya</string>
+    <string name="battery_dialog_message">Abone olunan TV şovları için kesintisiz indirmeleri ve bildirimleri sağlamak için, CloudStream\'in arka planda çalışmasına izin vermeniz gerekmektedir. Tamam\'a basarak Uygulama bilgilerine yönlendirileceksiniz. Orada, 𝘼𝙥𝙥 𝙗𝙖𝙩𝙩𝙚𝙧𝙮 𝙪𝙨𝙖𝙜𝙚 (Uygulama pil kullanımı) kısmına gidip pil kullanımını 𝙐𝙣𝙧𝙚𝙨𝙩𝙧𝙞𝙘𝙩𝙚𝙙 (Sınırsız) olarak ayarlayın. Bu iznin CS3\'ün pilinizi hızlıca tüketeceği anlamına gelmediğini lütfen unutmayın. Sadece gerektiğinde, resmi eklentilerden bildirim almak veya videoları indirmek gibi durumlarda arka planda çalışacaktır. İptal etmeyi seçerseniz, bu ayarı daha sonra 𝙂𝙚𝙣𝙚𝙧𝙖𝙡 𝙎𝙚𝙩𝙩𝙞𝙣𝙜𝙨 (Genel Ayarlar) bölümünden ayarlayabilirsiniz.</string>
+    <string name="app_unrestricted_toast">Uygulama pil kullanımı zaten sınırsız olarak ayarlanmış</string>
 </resources>

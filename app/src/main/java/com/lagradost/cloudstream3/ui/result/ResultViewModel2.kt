@@ -5,6 +5,7 @@ import android.content.*
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.text.format.Formatter.formatFileSize
 import android.util.Log
 import android.widget.Toast
 import androidx.annotation.MainThread
@@ -20,7 +21,6 @@ import com.lagradost.cloudstream3.APIHolder.apis
 import com.lagradost.cloudstream3.APIHolder.getId
 import com.lagradost.cloudstream3.APIHolder.unixTime
 import com.lagradost.cloudstream3.APIHolder.unixTimeMS
-import com.lagradost.cloudstream3.AcraApplication.Companion.context
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.CommonActivity.activity
 import com.lagradost.cloudstream3.CommonActivity.getCastSession
@@ -83,6 +83,10 @@ import com.lagradost.cloudstream3.utils.DataStoreHelper.setVideoWatchState
 import com.lagradost.cloudstream3.utils.DataStoreHelper.updateSubscribedData
 import com.lagradost.cloudstream3.utils.UIHelper.clipboardHelper
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
+import com.lagradost.cloudstream3.utils.fcast.FcastManager
+import com.lagradost.cloudstream3.utils.fcast.FcastSession
+import com.lagradost.cloudstream3.utils.fcast.Opcode
+import com.lagradost.cloudstream3.utils.fcast.PlayMessage
 import kotlinx.coroutines.*
 import java.io.File
 import java.util.concurrent.TimeUnit
@@ -197,7 +201,11 @@ fun LoadResponse.toResultData(repo: APIRepository): ResultData {
 
                 else -> null
             }?.also {
-                nextAiringEpisode = txt(R.string.next_episode_format, airing.episode)
+                nextAiringEpisode = when (airing.season) {
+
+                    null -> txt(R.string.next_episode_format, airing.episode)
+                    else -> txt(R.string.next_season_episode_format, airing.season, airing.episode)
+                }
             }
         }
     }
@@ -246,6 +254,9 @@ fun LoadResponse.toResultData(repo: APIRepository): ResultData {
                 TvType.Live -> R.string.live_singular
                 TvType.Others -> R.string.other_singular
                 TvType.NSFW -> R.string.nsfw_singular
+                TvType.Music -> R.string.music_singlar
+                TvType.AudioBook -> R.string.audio_book_singular
+                TvType.CustomMedia -> R.string.custom_media_singluar
             }
         ),
         yearText = txt(year?.toString()),
@@ -627,6 +638,9 @@ class ResultViewModel2 : ViewModel() {
                 TvType.Live -> "LiveStreams"
                 TvType.NSFW -> "NSFW"
                 TvType.Others -> "Others"
+                TvType.Music -> "Music"
+                TvType.AudioBook -> "AudioBooks"
+                TvType.CustomMedia -> "Media"
             }
         }
 
@@ -1093,13 +1107,14 @@ class ResultViewModel2 : ViewModel() {
 
         val duplicateEntries = data.filter { it: DataStoreHelper.LibrarySearchResponse ->
             val librarySyncData = it.syncData
+            val yearCheck = year == it.year || year == null || it.year == null
 
             val checks = listOf(
                 { imdbId != null && getImdbIdFromSyncData(librarySyncData) == imdbId },
                 { tmdbId != null && getTMDbIdFromSyncData(librarySyncData) == tmdbId },
                 { malId != null && librarySyncData?.get(AccountManager.malApi.idPrefix) == malId },
                 { aniListId != null && librarySyncData?.get(AccountManager.aniListApi.idPrefix) == aniListId },
-                { normalizedName == normalizeString(it.name) && year == it.year }
+                { normalizedName == normalizeString(it.name) && yearCheck }
             )
 
             checks.any { it() }
@@ -1274,9 +1289,14 @@ class ResultViewModel2 : ViewModel() {
         callback: (Pair<LinkLoadingResult, Int>) -> Unit,
     ) {
         loadLinks(result, isVisible = true, type) { links ->
+            // Could not find a better way to do this
+            val context = AcraApplication.context
             postPopup(
                 text,
-                links.links.map { txt("${it.name} ${Qualities.getStringByInt(it.quality)}") }) {
+                links.links.apmap {
+                    val size = it.getVideoSize()?.let { size -> " " + formatFileSize(context, size) } ?: ""
+                    txt("${it.name} ${Qualities.getStringByInt(it.quality)}$size")
+                }) {
                 callback.invoke(links to (it ?: return@postPopup))
             }
         }
@@ -1503,6 +1523,13 @@ class ResultViewModel2 : ViewModel() {
                         )
                     )
                 }
+
+                if (FcastManager.currentDevices.isNotEmpty()) {
+                    options.add(
+                        txt(R.string.player_settings_play_in_fcast) to ACTION_FCAST
+                    )
+                }
+
                 options.add(txt(R.string.episode_action_play_in_app) to ACTION_PLAY_EPISODE_IN_PLAYER)
 
                 for (app in apps) {
@@ -1678,6 +1705,39 @@ class ResultViewModel2 : ViewModel() {
                 }
             }
 
+            ACTION_FCAST -> {
+                val devices = FcastManager.currentDevices.toList()
+                postPopup(
+                    txt(R.string.player_settings_select_cast_device),
+                    devices.map { txt(it.name) }) { index ->
+                    if (index == null) return@postPopup
+                    val device = devices.getOrNull(index)
+
+                    acquireSingleLink(
+                        click.data,
+                        LoadType.Fcast,
+                        txt(R.string.episode_action_cast_mirror)
+                    ) { (result, index) ->
+                        val host = device?.host ?: return@acquireSingleLink
+                        val link = result.links.firstOrNull() ?: return@acquireSingleLink
+
+                        FcastSession(host).use { session ->
+                            session.sendMessage(
+                                Opcode.Play,
+                                PlayMessage(
+                                    link.type.getMimeType(),
+                                    link.url,
+                                    headers = mapOf(
+                                        "referer" to link.referer,
+                                        "user-agent" to USER_AGENT
+                                    ) + link.headers
+                                )
+                            )
+                        }
+                    }
+                }
+            }
+
             ACTION_PLAY_EPISODE_IN_BROWSER -> acquireSingleLink(
                 click.data,
                 LoadType.Browser,
@@ -1759,20 +1819,28 @@ class ResultViewModel2 : ViewModel() {
                 val data = currentResponse?.syncData?.toList() ?: emptyList()
                 val list =
                     HashMap<String, String>().apply { putAll(data) }
-
-                activity?.navigate(
-                    R.id.global_to_navigation_player,
-                    GeneratorPlayer.newInstance(
-                        generator?.also {
-                            it.getAll() // I know kinda shit to iterate all, but it is 100% sure to work
-                                ?.indexOfFirst { value -> value is ResultEpisode && value.id == click.data.id }
-                                ?.let { index ->
-                                    if (index >= 0)
-                                        it.goto(index)
-                                }
-                        } ?: return, list
+                generator?.also {
+                    it.getAll() // I know kinda shit to iterate all, but it is 100% sure to work
+                        ?.indexOfFirst { value -> value is ResultEpisode && value.id == click.data.id }
+                        ?.let { index ->
+                            if (index >= 0)
+                                it.goto(index)
+                        }
+                }
+                if (currentResponse?.type == TvType.CustomMedia) {
+                    generator?.generateLinks(
+                        clearCache = true,
+                        LoadType.Unknown,
+                        callback = {},
+                        subtitleCallback = {})
+                } else {
+                    activity?.navigate(
+                        R.id.global_to_navigation_player,
+                        GeneratorPlayer.newInstance(
+                            generator ?: return, list
+                        )
                     )
-                )
+                }
             }
 
             ACTION_MARK_AS_WATCHED -> {
@@ -2258,7 +2326,8 @@ class ResultViewModel2 : ViewModel() {
                                     fillers.getOrDefault(episode, false),
                                     loadResponse.type,
                                     mainId,
-                                    totalIndex
+                                    totalIndex,
+                                    airDate = i.date
                                 )
 
                             val season = eps.seasonIndex ?: 0
@@ -2307,7 +2376,8 @@ class ResultViewModel2 : ViewModel() {
                                 null,
                                 loadResponse.type,
                                 mainId,
-                                totalIndex
+                                totalIndex,
+                                airDate = episode.date
                             )
 
                         val season = ep.seasonIndex ?: 0

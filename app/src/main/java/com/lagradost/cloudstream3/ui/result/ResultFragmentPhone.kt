@@ -30,7 +30,7 @@ import com.google.android.gms.cast.framework.CastState
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.lagradost.cloudstream3.APIHolder
 import com.lagradost.cloudstream3.APIHolder.updateHasTrailers
-import com.lagradost.cloudstream3.CommonActivity
+import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.DubStatus
 import com.lagradost.cloudstream3.LoadResponse
 import com.lagradost.cloudstream3.MainActivity.Companion.afterPluginsLoadedEvent
@@ -61,6 +61,7 @@ import com.lagradost.cloudstream3.utils.AppUtils.getNameFull
 import com.lagradost.cloudstream3.utils.AppUtils.isCastApiAvailable
 import com.lagradost.cloudstream3.utils.AppUtils.loadCache
 import com.lagradost.cloudstream3.utils.AppUtils.openBrowser
+import com.lagradost.cloudstream3.utils.BatteryOptimizationChecker.openBatteryOptimizationSettings
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialogInstant
@@ -442,8 +443,9 @@ open class ResultFragmentPhone : FullScreenPlayer() {
 
                         val name = (viewModel.page.value as? Resource.Success)?.value?.title
                             ?: txt(R.string.no_data).asStringNull(context) ?: ""
-                        CommonActivity.showToast(txt(message, name), Toast.LENGTH_SHORT)
+                        showToast(txt(message, name), Toast.LENGTH_SHORT)
                 }
+                context?.let { openBatteryOptimizationSettings(it) }
             }
             resultFavorite.setOnClickListener {
                 viewModel.toggleFavoriteStatus(context) { newStatus: Boolean? ->
@@ -457,7 +459,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
 
                     val name = (viewModel.page.value as? Resource.Success)?.value?.title
                         ?: txt(R.string.no_data).asStringNull(context) ?: ""
-                    CommonActivity.showToast(txt(message, name), Toast.LENGTH_SHORT)
+                    showToast(txt(message, name), Toast.LENGTH_SHORT)
                 }
             }
             mediaRouteButton.apply {
@@ -465,7 +467,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                 alpha = if (chromecastSupport) 1f else 0.3f
                 if (!chromecastSupport) {
                     setOnClickListener {
-                        CommonActivity.showToast(
+                        showToast(
                             R.string.no_chromecast_support_toast,
                             Toast.LENGTH_LONG
                         )
@@ -640,6 +642,8 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                         ),
                         null
                     ) { click ->
+                        context?.let { openBatteryOptimizationSettings(it) }
+
                         when (click.action) {
                             DOWNLOAD_ACTION_DOWNLOAD -> {
                                 viewModel.handleAction(

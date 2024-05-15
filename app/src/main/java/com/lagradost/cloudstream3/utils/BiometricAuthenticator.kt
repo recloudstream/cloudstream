@@ -12,20 +12,20 @@ import androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_WEAK
 import androidx.biometric.BiometricManager.Authenticators.DEVICE_CREDENTIAL
 import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.getString
 import androidx.fragment.app.FragmentActivity
+import androidx.preference.PreferenceManager
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.R
 
 object BiometricAuthenticator {
 
+    const val TAG = "cs3Auth"
     private const val MAX_FAILED_ATTEMPTS = 3
     private var failedAttempts = 0
-    const val TAG = "cs3Auth"
-
     private var biometricManager: BiometricManager? = null
     var biometricPrompt: BiometricPrompt? = null
     var promptInfo: BiometricPrompt.PromptInfo? = null
-
     var authCallback: BiometricAuthCallback? = null // listen to authentication success
 
     private fun initializeBiometrics(activity: Activity) {
@@ -37,20 +37,12 @@ object BiometricAuthenticator {
             activity as FragmentActivity,
             executor,
             object : BiometricPrompt.AuthenticationCallback() {
-
                 override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
                     super.onAuthenticationError(errorCode, errString)
                     showToast("$errString")
                     Log.e(TAG, "$errorCode")
-                    failedAttempts++
-
-                    if (failedAttempts >= MAX_FAILED_ATTEMPTS) {
-                        failedAttempts = 0
-                        activity.finish()
-                    } else {
-                        failedAttempts = 0
-                        activity.finish()
-                    }
+                    authCallback?.onAuthenticationError()
+                        //activity.finish()
                 }
 
                 override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
@@ -89,7 +81,6 @@ object BiometricAuthenticator {
                     .setDescription(description)
                     .setAllowedAuthenticators(authFlag)
                     .build()
-
             } else {
                 // for apis < 30
                 promptInfo = BiometricPrompt.PromptInfo.Builder()
@@ -98,7 +89,6 @@ object BiometricAuthenticator {
                     .setDeviceCredentialAllowed(true)
                     .build()
             }
-
         } else {
             // fallback for A12+ when both fingerprint & Face unlock is absent but PIN is set
             promptInfo = BiometricPrompt.PromptInfo.Builder()
@@ -114,7 +104,6 @@ object BiometricAuthenticator {
         var result = false
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-
             when (biometricManager?.canAuthenticate(
                 DEVICE_CREDENTIAL or BIOMETRIC_STRONG or BIOMETRIC_WEAK
             )) {
@@ -126,7 +115,6 @@ object BiometricAuthenticator {
                 BiometricManager.BIOMETRIC_ERROR_UNSUPPORTED -> result = true
                 BiometricManager.BIOMETRIC_STATUS_UNKNOWN -> result = false
             }
-
         } else {
             @Suppress("DEPRECATION")
             when (biometricManager?.canAuthenticate()) {
@@ -153,12 +141,11 @@ object BiometricAuthenticator {
     // function to start authentication in any fragment or activity
     fun startBiometricAuthentication(activity: Activity, title: Int, setDeviceCred: Boolean) {
         initializeBiometrics(activity)
-
+        authCallback = activity as? BiometricAuthCallback
         if (isBiometricHardWareAvailable()) {
             authCallback = activity as? BiometricAuthCallback
             authenticationDialog(activity, title, setDeviceCred)
             promptInfo?.let { biometricPrompt?.authenticate(it) }
-
         } else {
             if (deviceHasPasswordPinLock(activity)) {
                 authCallback = activity as? BiometricAuthCallback
@@ -171,7 +158,15 @@ object BiometricAuthenticator {
         }
     }
 
+    fun isAuthEnabled(ctx: Context):Boolean {
+        return ctx.let {
+            PreferenceManager.getDefaultSharedPreferences(ctx)
+                .getBoolean(getString(ctx, R.string.biometric_key), false)
+        }
+    }
+
     interface BiometricAuthCallback {
         fun onAuthenticationSuccess()
+        fun onAuthenticationError()
     }
 }

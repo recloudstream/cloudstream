@@ -46,6 +46,7 @@ import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.ui.APIRepository
+import com.lagradost.cloudstream3.ui.BaseAdapter
 import com.lagradost.cloudstream3.ui.home.HomeFragment
 import com.lagradost.cloudstream3.ui.home.HomeFragment.Companion.bindChips
 import com.lagradost.cloudstream3.ui.home.HomeFragment.Companion.currentSpan
@@ -161,7 +162,8 @@ class SearchFragment : Fragment() {
      **/
     fun search(query: String?) {
         if (query == null) return
-
+        // don't resume state from prev search
+        (binding?.searchMasterRecycler?.adapter as? BaseAdapter<*,*>)?.clear()
         context?.let { ctx ->
             val default = enumValues<TvType>().sorted().filter { it != TvType.NSFW }
                 .map { it.ordinal.toString() }.toSet()
@@ -506,8 +508,8 @@ class SearchFragment : Fragment() {
         }*/
         //main_search.onActionViewExpanded()*/
 
-        val masterAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder> =
-            ParentItemAdapter(mutableListOf(), { callback ->
+        val masterAdapter =
+            ParentItemAdapter(fragment = this, id = "masterAdapter".hashCode(), { callback ->
                 SearchHelper.handleSearchClickCallback(callback)
             }, { item ->
                 bottomSheetDialog = activity?.loadHomepageList(item, dismissCallback = {

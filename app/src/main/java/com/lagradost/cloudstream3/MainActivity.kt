@@ -135,7 +135,10 @@ import com.lagradost.cloudstream3.utils.AppUtils.setDefaultFocus
 import com.lagradost.cloudstream3.utils.BackupUtils.backup
 import com.lagradost.cloudstream3.utils.BackupUtils.setUpBackup
 import com.lagradost.cloudstream3.utils.BiometricAuthenticator
+import com.lagradost.cloudstream3.utils.BiometricAuthenticator.biometricPrompt
 import com.lagradost.cloudstream3.utils.BiometricAuthenticator.deviceHasPasswordPinLock
+import com.lagradost.cloudstream3.utils.BiometricAuthenticator.isAuthEnabled
+import com.lagradost.cloudstream3.utils.BiometricAuthenticator.promptInfo
 import com.lagradost.cloudstream3.utils.BiometricAuthenticator.startBiometricAuthentication
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.main
@@ -158,6 +161,7 @@ import com.lagradost.cloudstream3.utils.UIHelper.requestRW
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import com.lagradost.cloudstream3.utils.USER_PROVIDER_API
 import com.lagradost.cloudstream3.utils.USER_SELECTED_HOMEPAGE_API
+import com.lagradost.cloudstream3.utils.fcast.FcastManager
 import com.lagradost.nicehttp.Requests
 import com.lagradost.nicehttp.ResponseParser
 import com.lagradost.safefile.SafeFile
@@ -1231,18 +1235,17 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener,
         changeStatusBarState(isLayout(EMULATOR))
 
         /** Biometric stuff for users without accounts **/
-        val authEnabled = settingsManager.getBoolean(getString(R.string.biometric_key), false)
         val noAccounts = settingsManager.getBoolean(
             getString(R.string.skip_startup_account_select_key),
             false
         ) || accounts.count() <= 1
 
-        if (isLayout(PHONE) && authEnabled && noAccounts) {
+        if (isLayout(PHONE) && isAuthEnabled(this) && noAccounts) {
             if (deviceHasPasswordPinLock(this)) {
                 startBiometricAuthentication(this, R.string.biometric_authentication_title, false)
 
-                BiometricAuthenticator.promptInfo?.let { promt ->
-                    BiometricAuthenticator.biometricPrompt?.authenticate(promt)
+                promptInfo?.let { prompt ->
+                    biometricPrompt?.authenticate(prompt)
                 }
 
                 // hide background while authenticating, Sorry moms & dads 🙏
@@ -1754,6 +1757,8 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener,
             runAutoUpdate()
         }
 
+        FcastManager().init(this, false)
+
         APIRepository.dubStatusActive = getApiDubstatusSettings()
 
         try {
@@ -1790,8 +1795,6 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener,
             }
         } catch (e: Exception) {
             logError(e)
-        } finally {
-            setKey(HAS_DONE_SETUP_KEY, true)
         }
 
 //        Used to check current focus for TV
@@ -1825,6 +1828,10 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener,
     override fun onAuthenticationSuccess() {
         // make background (nav host fragment) visible again
         binding?.navHostFragment?.isInvisible = false
+    }
+
+    override fun onAuthenticationError() {
+            finish()
     }
 
     private var backPressedCallback: OnBackPressedCallback? = null
