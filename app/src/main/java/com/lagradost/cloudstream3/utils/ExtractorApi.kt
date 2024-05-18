@@ -53,6 +53,7 @@ import com.lagradost.cloudstream3.extractors.FileMoonIn
 import com.lagradost.cloudstream3.extractors.FileMoonSx
 import com.lagradost.cloudstream3.extractors.Filesim
 import com.lagradost.cloudstream3.extractors.Fplayer
+import com.lagradost.cloudstream3.extractors.Geodailymotion
 import com.lagradost.cloudstream3.extractors.GMPlayer
 import com.lagradost.cloudstream3.extractors.Gdriveplayer
 import com.lagradost.cloudstream3.extractors.Gdriveplayerapi
@@ -83,6 +84,7 @@ import com.lagradost.cloudstream3.extractors.Maxstream
 import com.lagradost.cloudstream3.extractors.Mcloud
 import com.lagradost.cloudstream3.extractors.Megacloud
 import com.lagradost.cloudstream3.extractors.Meownime
+import com.lagradost.cloudstream3.extractors.MetaGnathTuggers
 import com.lagradost.cloudstream3.extractors.Minoplres
 import com.lagradost.cloudstream3.extractors.MixDrop
 import com.lagradost.cloudstream3.extractors.MixDropBz
@@ -139,6 +141,7 @@ import com.lagradost.cloudstream3.extractors.Sbspeed
 import com.lagradost.cloudstream3.extractors.Sbthe
 import com.lagradost.cloudstream3.extractors.Sendvid
 import com.lagradost.cloudstream3.extractors.ShaveTape
+import com.lagradost.cloudstream3.extractors.Simpulumlamerop
 import com.lagradost.cloudstream3.extractors.Solidfiles
 import com.lagradost.cloudstream3.extractors.Ssbstream
 import com.lagradost.cloudstream3.extractors.StreamM4u
@@ -175,6 +178,7 @@ import com.lagradost.cloudstream3.extractors.UpstreamExtractor
 import com.lagradost.cloudstream3.extractors.Uqload
 import com.lagradost.cloudstream3.extractors.Uqload1
 import com.lagradost.cloudstream3.extractors.Uqload2
+import com.lagradost.cloudstream3.extractors.Urochsunloath
 import com.lagradost.cloudstream3.extractors.Userload
 import com.lagradost.cloudstream3.extractors.Userscloud
 import com.lagradost.cloudstream3.extractors.Uservideo
@@ -182,10 +186,12 @@ import com.lagradost.cloudstream3.extractors.Vanfem
 import com.lagradost.cloudstream3.extractors.Vicloud
 import com.lagradost.cloudstream3.extractors.VidSrcExtractor
 import com.lagradost.cloudstream3.extractors.VidSrcExtractor2
+import com.lagradost.cloudstream3.extractors.VidSrcTo
 import com.lagradost.cloudstream3.extractors.VideoVard
 import com.lagradost.cloudstream3.extractors.VideovardSX
 import com.lagradost.cloudstream3.extractors.Vidgomunime
 import com.lagradost.cloudstream3.extractors.Vidgomunimesb
+import com.lagradost.cloudstream3.extractors.Vidguardto
 import com.lagradost.cloudstream3.extractors.VidhideExtractor
 import com.lagradost.cloudstream3.extractors.Vidmoly
 import com.lagradost.cloudstream3.extractors.Vidmolyme
@@ -207,6 +213,7 @@ import com.lagradost.cloudstream3.extractors.Watchx
 import com.lagradost.cloudstream3.extractors.WcoStream
 import com.lagradost.cloudstream3.extractors.Wibufile
 import com.lagradost.cloudstream3.extractors.XStreamCdn
+import com.lagradost.cloudstream3.extractors.Yipsu
 import com.lagradost.cloudstream3.extractors.YourUpload
 import com.lagradost.cloudstream3.extractors.YoutubeExtractor
 import com.lagradost.cloudstream3.extractors.YoutubeMobileExtractor
@@ -301,7 +308,18 @@ enum class ExtractorLinkType {
     /** No support at the moment */
     TORRENT,
     /** No support at the moment */
-    MAGNET,
+    MAGNET;
+
+    // See https://www.iana.org/assignments/media-types/media-types.xhtml
+    fun getMimeType(): String {
+        return when (this) {
+            VIDEO -> "video/mp4"
+            M3U8 -> "application/x-mpegURL"
+            DASH -> "application/dash+xml"
+            TORRENT -> "application/x-bittorrent"
+            MAGNET -> "application/x-bittorrent"
+        }
+    }
 }
 
 private fun inferTypeFromUrl(url: String): ExtractorLinkType {
@@ -871,6 +889,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     Streamlare(),
     VidSrcExtractor(),
     VidSrcExtractor2(),
+    VidSrcTo(),
     PlayLtXyz(),
     AStreamHub(),
     Vidplay(),
@@ -888,7 +907,14 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     StreamWishExtractor(),
     EmturbovidExtractor(),
     Vtbe(),
-    EPlayExtractor()
+    EPlayExtractor(),
+    Vidguardto(),
+    Simpulumlamerop(),
+    Urochsunloath(),
+    Yipsu(),
+    MetaGnathTuggers(),
+    Geodailymotion(),
+    
 )
 
 

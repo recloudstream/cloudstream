@@ -105,6 +105,7 @@ open class TmdbProvider : MainAPI() {
                             this.id,
                             episode.episode_number,
                             episode.season_number,
+                            this.name ?: this.original_name,
                         ).toJson(),
                         episode.name,
                         episode.season_number,
@@ -122,6 +123,7 @@ open class TmdbProvider : MainAPI() {
                             this.id,
                             episodeNum,
                             season.season_number,
+                            this.name ?: this.original_name,
                         ).toJson(),
                         season = season.season_number
                     )

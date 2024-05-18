@@ -13,6 +13,10 @@ import javax.crypto.spec.SecretKeySpec
 // Code found in https://github.com/KillerDogeEmpire/vidplay-keys
 // special credits to @KillerDogeEmpire for providing key
 
+class AnyVidplay(hostUrl: String) : Vidplay() {
+    override val mainUrl = hostUrl
+}
+
 class MyCloud : Vidplay() {
     override val name = "MyCloud"
     override val mainUrl = "https://mcloud.bz"
