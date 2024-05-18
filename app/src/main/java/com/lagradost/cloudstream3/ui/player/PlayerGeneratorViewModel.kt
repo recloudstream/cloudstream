@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.lagradost.cloudstream3.LoadResponse
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.launchSafe
 import com.lagradost.cloudstream3.mvvm.logError
@@ -110,6 +111,9 @@ class PlayerGeneratorViewModel : ViewModel() {
                 }
             }
         }
+    }
+    fun getLoadResponse(): LoadResponse? {
+        return normalSafeApiCall { (generator as? RepoLinkGenerator?)?.page }
     }
 
     fun getMeta(): Any? {

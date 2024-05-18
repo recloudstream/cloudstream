@@ -27,6 +27,7 @@ import com.lagradost.cloudstream3.CommonActivity.getCastSession
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.LoadResponse.Companion.addTrailer
 import com.lagradost.cloudstream3.LoadResponse.Companion.getAniListId
+import com.lagradost.cloudstream3.LoadResponse.Companion.getImdbId
 import com.lagradost.cloudstream3.LoadResponse.Companion.getMalId
 import com.lagradost.cloudstream3.LoadResponse.Companion.isMovie
 import com.lagradost.cloudstream3.MainActivity.Companion.MPV
@@ -2417,7 +2418,7 @@ class ResultViewModel2 : ViewModel() {
                         null,
                         loadResponse.type,
                         mainId,
-                        null
+                        null,
                     )
                 )
             }
