@@ -4,6 +4,7 @@ import android.net.Uri
 import com.lagradost.cloudstream3.*
 import com.fasterxml.jackson.annotation.JsonAlias
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.lagradost.cloudstream3.APIHolder.unixTimeMS
 import com.lagradost.cloudstream3.LoadResponse.Companion.addImdbId
 import com.lagradost.cloudstream3.LoadResponse.Companion.addTMDbId
 import com.lagradost.cloudstream3.LoadResponse.Companion.addTrailer
@@ -166,6 +167,7 @@ open class TraktProvider : MainAPI() {
             val episodes = mutableListOf<Episode>()
             val seasons = parseJson<List<Seasons>>(resSeasons)
             val seasonsNames = mutableListOf<SeasonData>()
+            var nextAir:  NextAiring? = null
 
             seasons.forEach { season ->
 
@@ -215,6 +217,13 @@ open class TraktProvider : MainAPI() {
                             description = episode.overview,
                         ).apply {
                             this.addDate(episode.firstAired)
+                            if (nextAir == null && this.date != null && this.date!! > unixTimeMS) {
+                                nextAir = NextAiring(
+                                    episode = this.episode!!,
+                                    unixTime = this.date!!.div(1000L),
+                                    season = if (this.season == 1) null else this.season,
+                                )
+                            }
                         }
                     )
                 }
@@ -240,6 +249,7 @@ open class TraktProvider : MainAPI() {
                 this.actors = actors
                 this.comingSoon = isUpcoming(mediaDetails.released)
                 //posterHeaders
+                this.nextAiring = nextAir
                 this.seasonNames = seasonsNames
                 this.backgroundPosterUrl = getOriginalWidthImageUrl(backDropUrl)
                 this.contentRating = mediaDetails.certification
