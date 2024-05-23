@@ -1728,7 +1728,7 @@ class ResultViewModel2 : ViewModel() {
                         txt(R.string.episode_action_cast_mirror)
                     ) { (result, index) ->
                         val host = device?.host ?: return@acquireSingleLink
-                        val link = result.links.firstOrNull() ?: return@acquireSingleLink
+                        val link = result.links.getOrNull(index) ?: return@acquireSingleLink
 
                         FcastSession(host).use { session ->
                             session.sendMessage(
