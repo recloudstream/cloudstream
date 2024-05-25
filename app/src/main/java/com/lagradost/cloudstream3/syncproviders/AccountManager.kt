@@ -3,7 +3,6 @@ package com.lagradost.cloudstream3.syncproviders
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.removeKeys
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
-import com.lagradost.cloudstream3.syncproviders.providers.SubScene
 import com.lagradost.cloudstream3.syncproviders.providers.*
 import java.util.concurrent.TimeUnit
 
@@ -15,7 +14,7 @@ abstract class AccountManager(private val defIndex: Int) : AuthAPI {
         val simklApi = SimklApi(0)
         val indexSubtitlesApi = IndexSubtitleApi()
         val addic7ed = Addic7ed()
-        val subScene = SubScene()
+        val subDl = SubDL()
         val localListApi = LocalList()
 
         // used to login via app intent
@@ -44,7 +43,7 @@ abstract class AccountManager(private val defIndex: Int) : AuthAPI {
                 openSubtitlesApi,
                 indexSubtitlesApi, // they got anti scraping measures in place :(
                 addic7ed,
-                subScene
+                subDl
             )
 
         const val appString = "cloudstreamapp"

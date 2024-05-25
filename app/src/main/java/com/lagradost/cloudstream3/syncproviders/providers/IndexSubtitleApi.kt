@@ -98,7 +98,7 @@ class IndexSubtitleApi : AbstractSubApi {
     }
 
     override suspend fun search(query: AbstractSubtitleEntities.SubtitleSearch): List<AbstractSubtitleEntities.SubtitleEntity> {
-        val imdbId = query.imdb ?: 0
+        val imdbId = query.imdbId?.replace("tt", "")?.toLong() ?: 0
         val lang = query.lang
         val queryLang = SubtitleHelper.fromTwoLettersToLanguage(lang.toString())
         val queryText = query.query
