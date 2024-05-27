@@ -110,6 +110,7 @@ import com.lagradost.cloudstream3.extractors.Hotlinger
 import com.lagradost.cloudstream3.extractors.FourCX
 import com.lagradost.cloudstream3.extractors.PlayRu
 import com.lagradost.cloudstream3.extractors.FourPlayRu
+import com.lagradost.cloudstream3.extractors.FourPichive
 import com.lagradost.cloudstream3.extractors.HDMomPlayer
 import com.lagradost.cloudstream3.extractors.HDPlayerSystem
 import com.lagradost.cloudstream3.extractors.VideoSeyred
@@ -748,6 +749,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     FourCX(),
     PlayRu(),
     FourPlayRu(),
+    FourPichive(),
     HDMomPlayer(),
     HDPlayerSystem(),
     VideoSeyred(),
