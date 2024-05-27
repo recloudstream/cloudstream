@@ -21,7 +21,7 @@ class SubDlApi(index: Int) : InAppAuthAPIManager(index), AbstractSubApi {
     override val name = "SubDL"
     override val icon = R.drawable.subdl_logo_big
     override val requiresPassword = true
-    override val requiresUsername = true
+    override val requiresEmail = true
     override val createAccountUrl = "https://subdl.com/login"
 
     companion object {
@@ -42,11 +42,11 @@ class SubDlApi(index: Int) : InAppAuthAPIManager(index), AbstractSubApi {
         currentSession = getAuthKey()
     }
     override suspend fun login(data: InAppAuthAPI.LoginData): Boolean {
-        val username = data.username ?: throw ErrorLoadingException("Requires Username")
+        val email = data.email ?: throw ErrorLoadingException("Requires Email")
         val password = data.password ?: throw ErrorLoadingException("Requires Password")
         switchToNewAccount()
         try {
-            if (initLogin(username, password)) {
+            if (initLogin(email, password)) {
                 registerAccount()
                 return true
             }
@@ -61,7 +61,7 @@ class SubDlApi(index: Int) : InAppAuthAPIManager(index), AbstractSubApi {
     override fun getLatestLoginData(): InAppAuthAPI.LoginData? {
         val current = getAuthKey() ?: return null
         return InAppAuthAPI.LoginData(
-            username = current.user,
+            email = current.userEmail,
             password = current.pass
         )
     }
@@ -70,7 +70,7 @@ class SubDlApi(index: Int) : InAppAuthAPIManager(index), AbstractSubApi {
         getAuthKey()?.let { user ->
             return LoginInfo(
                 profilePicture = null,
-                name = user.name ?: user.user,
+                name = user.name ?: user.userEmail,
                 accountIndex = accountIndex
             )
         }
@@ -134,12 +134,12 @@ class SubDlApi(index: Int) : InAppAuthAPIManager(index), AbstractSubApi {
         }
     }
 
-    private suspend fun initLogin(username: String, password: String): Boolean {
+    private suspend fun initLogin(useremail: String, password: String): Boolean {
 
         val tokenResponse = app.post(
             url = "$APIURL/login",
             data = mapOf(
-                "email" to username,
+                "email" to useremail,
                 "password" to password
             )
         ).parsedSafe<OAuthTokenResponse>()
@@ -157,7 +157,7 @@ class SubDlApi(index: Int) : InAppAuthAPIManager(index), AbstractSubApi {
 
         setAuthKey(
             SubtitleOAuthEntity(
-                user = username,
+                userEmail = useremail,
                 pass = password,
                 name = tokenResponse.userData?.username ?: tokenResponse.userData?.name,
                 accessToken = tokenResponse.token,
@@ -181,7 +181,7 @@ class SubDlApi(index: Int) : InAppAuthAPIManager(index), AbstractSubApi {
     }
 
     data class SubtitleOAuthEntity(
-        var user: String,
+        var userEmail: String,
         var pass: String,
         var name: String? = null,
         var accessToken: String? = null,
