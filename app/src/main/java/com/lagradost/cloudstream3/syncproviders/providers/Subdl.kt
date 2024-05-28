@@ -181,11 +181,11 @@ class SubDlApi(index: Int) : InAppAuthAPIManager(index), AbstractSubApi {
     }
 
     data class SubtitleOAuthEntity(
-        var userEmail: String,
-        var pass: String,
-        var name: String? = null,
-        var accessToken: String? = null,
-        var apiKey: String? = null,
+        @JsonProperty("userEmail") var userEmail: String,
+        @JsonProperty("pass") var pass: String,
+        @JsonProperty("name") var name: String? = null,
+        @JsonProperty("accessToken") var accessToken: String? = null,
+        @JsonProperty("apiKey") var apiKey: String? = null,
     )
 
     data class OAuthTokenResponse(
