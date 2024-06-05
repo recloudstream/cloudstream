@@ -27,8 +27,17 @@ import com.lagradost.cloudstream3.CommonActivity.getCastSession
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.LoadResponse.Companion.addTrailer
 import com.lagradost.cloudstream3.LoadResponse.Companion.getAniListId
+import com.lagradost.cloudstream3.LoadResponse.Companion.getImdbId
 import com.lagradost.cloudstream3.LoadResponse.Companion.getMalId
 import com.lagradost.cloudstream3.LoadResponse.Companion.isMovie
+import com.lagradost.cloudstream3.MainActivity.Companion.MPV
+import com.lagradost.cloudstream3.MainActivity.Companion.MPV_COMPONENT
+import com.lagradost.cloudstream3.MainActivity.Companion.MPV_PACKAGE
+import com.lagradost.cloudstream3.MainActivity.Companion.VLC
+import com.lagradost.cloudstream3.MainActivity.Companion.VLC_COMPONENT
+import com.lagradost.cloudstream3.MainActivity.Companion.VLC_PACKAGE
+import com.lagradost.cloudstream3.MainActivity.Companion.WEB_VIDEO
+import com.lagradost.cloudstream3.MainActivity.Companion.WEB_VIDEO_CAST_PACKAGE
 import com.lagradost.cloudstream3.metaproviders.SyncRedirector
 import com.lagradost.cloudstream3.mvvm.*
 import com.lagradost.cloudstream3.syncproviders.AccountManager
@@ -1354,7 +1363,7 @@ class ResultViewModel2 : ViewModel() {
 
     private fun launchActivity(
         activity: Activity?,
-        resumeApp: ResultResume,
+        resumeApp: MainActivity.Companion.ResultResume,
         id: Int? = null,
         work: suspend (Intent.(Activity) -> Unit)
     ): Job? {
@@ -1719,7 +1728,7 @@ class ResultViewModel2 : ViewModel() {
                         txt(R.string.episode_action_cast_mirror)
                     ) { (result, index) ->
                         val host = device?.host ?: return@acquireSingleLink
-                        val link = result.links.firstOrNull() ?: return@acquireSingleLink
+                        val link = result.links.getOrNull(index) ?: return@acquireSingleLink
 
                         FcastSession(host).use { session ->
                             session.sendMessage(
@@ -2409,7 +2418,7 @@ class ResultViewModel2 : ViewModel() {
                         null,
                         loadResponse.type,
                         mainId,
-                        null
+                        null,
                     )
                 )
             }

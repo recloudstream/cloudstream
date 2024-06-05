@@ -5,8 +5,13 @@ buildscript {
     }
 
     dependencies {
+<<<<<<< agp
         classpath("com.android.tools.build:gradle:8.4.0")
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.22")
+=======
+        classpath("com.android.tools.build:gradle:8.2.2")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.23")
+>>>>>>> master
         classpath("org.jetbrains.dokka:dokka-gradle-plugin:1.9.10")
         // Universal build config
         classpath("com.codingfeline.buildkonfig:buildkonfig-gradle-plugin:0.15.1")

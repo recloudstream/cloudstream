@@ -12,6 +12,7 @@ import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import com.lagradost.cloudstream3.CommonActivity.screenHeight
 import com.lagradost.cloudstream3.CommonActivity.screenWidth
+import com.lagradost.cloudstream3.LoadResponse
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.ui.player.CSPlayerEvent
 import com.lagradost.cloudstream3.ui.player.PlayerEventSource
@@ -110,7 +111,7 @@ open class ResultTrailerPlayer : ResultFragmentPhone() {
 
     override fun openOnlineSubPicker(
         context: Context,
-        imdbId: Long?,
+        loadResponse: LoadResponse?,
         dismissCallback: () -> Unit
     ) {
     }
