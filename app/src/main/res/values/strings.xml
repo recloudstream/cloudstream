@@ -774,4 +774,5 @@
     <string name="audio_book_singular">Audio Book</string>
     <string name="custom_media_singluar">Media</string>
     <string name="reset_btn">Reset</string>
+    <string name="cs3wiki">CloudStream Wiki</string>
 </resources>
