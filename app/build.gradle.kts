@@ -69,7 +69,7 @@ android {
         resValue("bool", "is_prerelease", "false")
 
         // Reads local.properties
-        val localProperties = gradleLocalProperties(rootDir, providers)
+        val localProperties = gradleLocalProperties(rootDir)
 
         buildConfigField(
             "long",
