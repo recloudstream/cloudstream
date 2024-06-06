@@ -53,6 +53,7 @@ import com.lagradost.cloudstream3.extractors.FileMoonIn
 import com.lagradost.cloudstream3.extractors.FileMoonSx
 import com.lagradost.cloudstream3.extractors.Filesim
 import com.lagradost.cloudstream3.extractors.Fplayer
+import com.lagradost.cloudstream3.extractors.Geodailymotion
 import com.lagradost.cloudstream3.extractors.GMPlayer
 import com.lagradost.cloudstream3.extractors.Gdriveplayer
 import com.lagradost.cloudstream3.extractors.Gdriveplayerapi
@@ -109,6 +110,7 @@ import com.lagradost.cloudstream3.extractors.Hotlinger
 import com.lagradost.cloudstream3.extractors.FourCX
 import com.lagradost.cloudstream3.extractors.PlayRu
 import com.lagradost.cloudstream3.extractors.FourPlayRu
+import com.lagradost.cloudstream3.extractors.FourPichive
 import com.lagradost.cloudstream3.extractors.HDMomPlayer
 import com.lagradost.cloudstream3.extractors.HDPlayerSystem
 import com.lagradost.cloudstream3.extractors.VideoSeyred
@@ -307,7 +309,18 @@ enum class ExtractorLinkType {
     /** No support at the moment */
     TORRENT,
     /** No support at the moment */
-    MAGNET,
+    MAGNET;
+
+    // See https://www.iana.org/assignments/media-types/media-types.xhtml
+    fun getMimeType(): String {
+        return when (this) {
+            VIDEO -> "video/mp4"
+            M3U8 -> "application/x-mpegURL"
+            DASH -> "application/dash+xml"
+            TORRENT -> "application/x-bittorrent"
+            MAGNET -> "application/x-bittorrent"
+        }
+    }
 }
 
 private fun inferTypeFromUrl(url: String): ExtractorLinkType {
@@ -736,6 +749,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     FourCX(),
     PlayRu(),
     FourPlayRu(),
+    FourPichive(),
     HDMomPlayer(),
     HDPlayerSystem(),
     VideoSeyred(),
@@ -900,7 +914,9 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     Simpulumlamerop(),
     Urochsunloath(),
     Yipsu(),
-    MetaGnathTuggers()
+    MetaGnathTuggers(),
+    Geodailymotion(),
+    
 )
 
 

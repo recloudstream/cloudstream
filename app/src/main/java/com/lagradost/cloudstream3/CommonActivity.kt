@@ -29,6 +29,7 @@ import com.google.android.material.chip.ChipGroup
 import com.google.android.material.navigationrail.NavigationRailView
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
+import com.lagradost.cloudstream3.MainActivity.Companion.resumeApps
 import com.lagradost.cloudstream3.databinding.ToastBinding
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.ui.player.PlayerEventType

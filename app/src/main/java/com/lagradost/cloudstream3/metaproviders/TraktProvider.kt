@@ -4,6 +4,7 @@ import android.net.Uri
 import com.lagradost.cloudstream3.*
 import com.fasterxml.jackson.annotation.JsonAlias
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.lagradost.cloudstream3.APIHolder.unixTimeMS
 import com.lagradost.cloudstream3.LoadResponse.Companion.addImdbId
 import com.lagradost.cloudstream3.LoadResponse.Companion.addTMDbId
 import com.lagradost.cloudstream3.LoadResponse.Companion.addTrailer
@@ -118,8 +119,12 @@ open class TraktProvider : MainAPI() {
 
             val linkData = LinkData(
                 id = mediaDetails?.ids?.tmdb,
+                traktId = mediaDetails?.ids?.trakt,
+                traktSlug = mediaDetails?.ids?.slug,
+                tmdbId = mediaDetails?.ids?.tmdb,
                 imdbId = mediaDetails?.ids?.imdb.toString(),
                 tvdbId = mediaDetails?.ids?.tvdb,
+                tvrageId = mediaDetails?.ids?.tvrage,
                 type = data.type.toString(),
                 title = mediaDetails?.title,
                 year = mediaDetails?.year,
@@ -139,7 +144,6 @@ open class TraktProvider : MainAPI() {
                 type = if (isAnime) TvType.AnimeMovie else TvType.Movie,
             ) {
                 this.name = mediaDetails.title
-                this.apiName = "Trakt"
                 this.type = if (isAnime) TvType.AnimeMovie else TvType.Movie
                 this.posterUrl = getOriginalWidthImageUrl(posterUrl)
                 this.year = mediaDetails.year
@@ -163,6 +167,7 @@ open class TraktProvider : MainAPI() {
             val episodes = mutableListOf<Episode>()
             val seasons = parseJson<List<Seasons>>(resSeasons)
             val seasonsNames = mutableListOf<SeasonData>()
+            var nextAir:  NextAiring? = null
 
             seasons.forEach { season ->
 
@@ -177,8 +182,12 @@ open class TraktProvider : MainAPI() {
 
                     val linkData = LinkData(
                         id = mediaDetails?.ids?.tmdb,
+                        traktId = mediaDetails?.ids?.trakt,
+                        traktSlug = mediaDetails?.ids?.slug,
+                        tmdbId = mediaDetails?.ids?.tmdb,
                         imdbId = mediaDetails?.ids?.imdb.toString(),
                         tvdbId = mediaDetails?.ids?.tvdb,
+                        tvrageId = mediaDetails?.ids?.tvrage,
                         type = data.type.toString(),
                         season = episode.season,
                         episode = episode.number,
@@ -208,6 +217,13 @@ open class TraktProvider : MainAPI() {
                             description = episode.overview,
                         ).apply {
                             this.addDate(episode.firstAired)
+                            if (nextAir == null && this.date != null && this.date!! > unixTimeMS) {
+                                nextAir = NextAiring(
+                                    episode = this.episode!!,
+                                    unixTime = this.date!!.div(1000L),
+                                    season = if (this.season == 1) null else this.season,
+                                )
+                            }
                         }
                     )
                 }
@@ -220,7 +236,6 @@ open class TraktProvider : MainAPI() {
                 episodes = episodes
             ) {
                 this.name = mediaDetails.title
-                this.apiName = "Trakt"
                 this.type = if (isAnime) TvType.Anime else TvType.TvSeries
                 this.episodes = episodes
                 this.posterUrl = getOriginalWidthImageUrl(posterUrl)
@@ -234,6 +249,7 @@ open class TraktProvider : MainAPI() {
                 this.actors = actors
                 this.comingSoon = isUpcoming(mediaDetails.released)
                 //posterHeaders
+                this.nextAiring = nextAir
                 this.seasonNames = seasonsNames
                 this.backgroundPosterUrl = getOriginalWidthImageUrl(backDropUrl)
                 this.contentRating = mediaDetails.certification
@@ -406,8 +422,12 @@ open class TraktProvider : MainAPI() {
 
     data class LinkData(
         val id: Int? = null,
+        val traktId: Int? = null,
+        val traktSlug: String? = null,
+        val tmdbId: Int? = null,
         val imdbId: String? = null,
         val tvdbId: Int? = null,
+        val tvrageId: String? = null,
         val type: String? = null,
         val season: Int? = null,
         val episode: Int? = null,

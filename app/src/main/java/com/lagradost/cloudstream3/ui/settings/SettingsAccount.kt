@@ -27,6 +27,7 @@ import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.aniList
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.malApi
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.openSubtitlesApi
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.simklApi
+import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.subDlApi
 import com.lagradost.cloudstream3.syncproviders.AuthAPI
 import com.lagradost.cloudstream3.syncproviders.InAppAuthAPI
 import com.lagradost.cloudstream3.syncproviders.OAuth2API
@@ -324,6 +325,7 @@ class SettingsAccount : PreferenceFragmentCompat(), BiometricAuthenticator.Biome
                 R.string.anilist_key to aniListApi,
                 R.string.simkl_key to simklApi,
                 R.string.opensubtitles_key to openSubtitlesApi,
+                R.string.subdl_key to subDlApi,
             )
 
         for ((key, api) in syncApis) {

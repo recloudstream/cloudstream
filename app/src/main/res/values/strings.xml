@@ -84,6 +84,7 @@
     <string name="app_dub_sub_episode_text_format" formatted="true">%1$s Ep %2$d</string>
     <string name="cast_format" formatted="true">Cast: %s</string>
     <string name="next_episode_format" formatted="true">Episode %d will be released in</string>
+    <string name="next_season_episode_format" formatted="true">Season %1$d Episode %2$d will be released in</string>
     <string name="next_episode_time_day_format" formatted="true">%1$dd %2$dh %3$dm</string>
     <string name="next_episode_time_hour_format" formatted="true">%1$dh %2$dm</string>
     <string name="next_episode_time_min_format" formatted="true">%dm</string>
@@ -356,6 +357,7 @@
     <string name="storage_error">Download error, check storage permissions</string>
     <string name="episode_action_chromecast_episode">Chromecast episode</string>
     <string name="episode_action_chromecast_mirror">Chromecast mirror</string>
+    <string name="episode_action_cast_mirror">Cast mirror</string>
     <string name="episode_action_play_in_app">Play in app</string>
     <string name="episode_action_play_in_format">Play in %s</string>
     <string name="episode_action_play_in_browser">Play in browser</string>
@@ -469,6 +471,7 @@
     <string name="simkl_key" translatable="false">simkl_key</string>
     <string name="mal_key" translatable="false">mal_key</string>
     <string name="opensubtitles_key" translatable="false">opensubtitles_key</string>
+    <string name="subdl_key" translatable="false">subdl_key</string>
     <string name="nginx_key" translatable="false">nginx_key</string>
     <string name="example_password">password123</string>
     <string name="example_username">Username</string>
@@ -633,7 +636,9 @@
     <string name="player_settings_play_in_vlc">VLC</string>
     <string name="player_settings_play_in_mpv">MPV</string>
     <string name="player_settings_play_in_web">Web Video Cast</string>
+    <string name="player_settings_play_in_fcast">Fcast</string>
     <string name="player_settings_play_in_browser">Web browser</string>
+    <string name="player_settings_select_cast_device">Select cast device</string>
     <string name="app_not_found_error">App not found</string>
     <string name="all_languages_preference">All Languages</string>
     <string name="skip_type_format" formatted="true">Skip %s</string>
@@ -769,4 +774,5 @@
     <string name="audio_book_singular">Audio Book</string>
     <string name="custom_media_singluar">Media</string>
     <string name="reset_btn">Reset</string>
+    <string name="cs3wiki">CloudStream Wiki</string>
 </resources>

@@ -86,6 +86,14 @@
                     android:action="android.intent.action.VIEW"
                     android:data="https://discord.gg/5Hus6fM" />
         </Preference>
+        <Preference
+            android:title="@string/cs3wiki"
+            android:icon="@drawable/baseline_description_24"
+            app:summary="https://cloudstream.miraheze.org/">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="https://cloudstream.miraheze.org/" />
+        </Preference>
     
     </PreferenceCategory>
 </PreferenceScreen>

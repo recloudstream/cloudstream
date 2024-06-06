@@ -31,18 +31,15 @@ import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.absoluteValue
 
-const val USER_AGENT =
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36"
-
-//val baseHeader = mapOf("User-Agent" to USER_AGENT)
-val mapper = JsonMapper.builder().addModule(kotlinModule())
-    .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false).build()!!
-
 /**
  * Defines the constant for the all languages preference, if this is set then it is
  * the equivalent of all languages being set
  **/
 const val AllLanguagesName = "universal"
+
+//val baseHeader = mapOf("User-Agent" to USER_AGENT)
+val mapper = JsonMapper.builder().addModule(kotlinModule())
+    .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false).build()!!
 
 object APIHolder {
     val unixTime: Long
@@ -121,7 +118,8 @@ object APIHolder {
 
     fun LoadResponse.getId(): Int {
         // this fixes an issue with outdated api as getLoadResponseIdFromUrl might be fucked
-        return (if (this is ResultViewModel2.LoadResponseFromSearch) this.id else null) ?: getLoadResponseIdFromUrl(url, apiName)
+        return (if (this is ResultViewModel2.LoadResponseFromSearch) this.id else null)
+            ?: getLoadResponseIdFromUrl(url, apiName)
     }
 
     /**
@@ -222,10 +220,15 @@ object APIHolder {
                 } ?: false
 
                 val matchingTypes = types?.any { it.name.equals(media.format, true) } == true
-                if(lessAccurate) matchingTitles || matchingTypes && matchingYears else matchingTitles && matchingTypes && matchingYears
+                if (lessAccurate) matchingTitles || matchingTypes && matchingYears else matchingTitles && matchingTypes && matchingYears
             } ?: return null
 
-            Tracker(res.idMal, res.id.toString(), res.coverImage?.extraLarge ?: res.coverImage?.large, res.bannerImage)
+            Tracker(
+                res.idMal,
+                res.id.toString(),
+                res.coverImage?.extraLarge ?: res.coverImage?.large,
+                res.bannerImage
+            )
         } catch (t: Throwable) {
             logError(t)
             null
@@ -866,6 +869,7 @@ enum class TvType(value: Int?) {
     Others(12),
     Music(13),
     AudioBook(14),
+
     /** Wont load the built in player, make your own interaction */
     CustomMedia(15),
 }
@@ -1253,13 +1257,15 @@ interface LoadResponse {
 
         fun LoadResponse.getImdbId(): String? {
             return normalSafeApiCall {
-                SimklApi.readIdFromString(this.syncData[simklIdPrefix])?.get(SimklApi.Companion.SyncServices.Imdb)
+                SimklApi.readIdFromString(this.syncData[simklIdPrefix])
+                    ?.get(SimklApi.Companion.SyncServices.Imdb)
             }
         }
 
         fun LoadResponse.getTMDbId(): String? {
             return normalSafeApiCall {
-                SimklApi.readIdFromString(this.syncData[simklIdPrefix])?.get(SimklApi.Companion.SyncServices.Tmdb)
+                SimklApi.readIdFromString(this.syncData[simklIdPrefix])
+                    ?.get(SimklApi.Companion.SyncServices.Tmdb)
             }
         }
 
@@ -1448,11 +1454,24 @@ fun TvType?.isEpisodeBased(): Boolean {
     return (this == TvType.TvSeries || this == TvType.Anime || this == TvType.AsianDrama)
 }
 
-
 data class NextAiring(
     val episode: Int,
     val unixTime: Long,
-)
+    val season: Int? = null,
+) {
+    /**
+     * Secondary constructor for backwards compatibility without season.
+     *  TODO Remove this constructor after there is a new stable release and extensions are updated to support season.
+     */
+    constructor(
+        episode: Int,
+        unixTime: Long,
+    ) : this (
+        episode,
+        unixTime,
+        null
+    )
+}
 
 /**
  * @param season To be mapped with episode season, not shown in UI if displaySeason is defined
@@ -1543,8 +1562,26 @@ data class TorrentLoadResponse(
         posterHeaders: Map<String, String>? = null,
         backgroundPosterUrl: String? = null,
     ) : this(
-        name, url, apiName, magnet, torrent, plot, type, posterUrl, year, rating, tags, duration, trailers,
-        recommendations, actors, comingSoon, syncData, posterHeaders, backgroundPosterUrl, null
+        name,
+        url,
+        apiName,
+        magnet,
+        torrent,
+        plot,
+        type,
+        posterUrl,
+        year,
+        rating,
+        tags,
+        duration,
+        trailers,
+        recommendations,
+        actors,
+        comingSoon,
+        syncData,
+        posterHeaders,
+        backgroundPosterUrl,
+        null
     )
 }
 
@@ -1596,7 +1633,8 @@ data class AnimeLoadResponse(
         return this.episodes.maxOf { (_, episodes) ->
             episodes.count { episodeData ->
                 // Prioritize display season as actual season may be something random to fit multiple seasons into one.
-                val episodeSeason = displayMap[episodeData.season] ?: episodeData.season ?: Int.MIN_VALUE
+                val episodeSeason =
+                    displayMap[episodeData.season] ?: episodeData.season ?: Int.MIN_VALUE
                 // Count all episodes from season 1 to below the current season.
                 episodeSeason in 1..<season
             }
@@ -1633,9 +1671,31 @@ data class AnimeLoadResponse(
         seasonNames: List<SeasonData>? = null,
         backgroundPosterUrl: String? = null,
     ) : this(
-        engName, japName, name, url, apiName, type, posterUrl, year, episodes, showStatus, plot, tags,
-        synonyms, rating, duration, trailers, recommendations, actors, comingSoon, syncData, posterHeaders,
-        nextAiring, seasonNames, backgroundPosterUrl, null
+        engName,
+        japName,
+        name,
+        url,
+        apiName,
+        type,
+        posterUrl,
+        year,
+        episodes,
+        showStatus,
+        plot,
+        tags,
+        synonyms,
+        rating,
+        duration,
+        trailers,
+        recommendations,
+        actors,
+        comingSoon,
+        syncData,
+        posterHeaders,
+        nextAiring,
+        seasonNames,
+        backgroundPosterUrl,
+        null
     )
 }
 
@@ -1767,7 +1827,7 @@ data class MovieLoadResponse(
         backgroundPosterUrl: String? = null,
     ) : this(
         name, url, apiName, type, dataUrl, posterUrl, year, plot, rating, tags, duration, trailers,
-        recommendations, actors, comingSoon, syncData, posterHeaders, backgroundPosterUrl,null
+        recommendations, actors, comingSoon, syncData, posterHeaders, backgroundPosterUrl, null
     )
 }
 
@@ -1910,7 +1970,8 @@ data class TvSeriesLoadResponse(
 
         return episodes.count { episodeData ->
             // Prioritize display season as actual season may be something random to fit multiple seasons into one.
-            val episodeSeason = displayMap[episodeData.season] ?: episodeData.season ?: Int.MIN_VALUE
+            val episodeSeason =
+                displayMap[episodeData.season] ?: episodeData.season ?: Int.MIN_VALUE
             // Count all episodes from season 1 to below the current season.
             episodeSeason in 1..<season
         } + episode
@@ -1943,9 +2004,28 @@ data class TvSeriesLoadResponse(
         seasonNames: List<SeasonData>? = null,
         backgroundPosterUrl: String? = null,
     ) : this(
-        name, url, apiName, type, episodes, posterUrl, year, plot, showStatus, rating, tags, duration,
-        trailers, recommendations, actors, comingSoon, syncData, posterHeaders, nextAiring, seasonNames,
-        backgroundPosterUrl, null
+        name,
+        url,
+        apiName,
+        type,
+        episodes,
+        posterUrl,
+        year,
+        plot,
+        showStatus,
+        rating,
+        tags,
+        duration,
+        trailers,
+        recommendations,
+        actors,
+        comingSoon,
+        syncData,
+        posterHeaders,
+        nextAiring,
+        seasonNames,
+        backgroundPosterUrl,
+        null
     )
 }
 
@@ -2009,6 +2089,7 @@ data class AniSearch(
                     @JsonProperty("extraLarge") var extraLarge: String? = null,
                     @JsonProperty("large") var large: String? = null,
                 )
+
                 data class Title(
                     @JsonProperty("romaji") var romaji: String? = null,
                     @JsonProperty("english") var english: String? = null,

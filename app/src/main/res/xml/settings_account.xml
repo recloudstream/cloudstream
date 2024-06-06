@@ -17,6 +17,10 @@
         android:icon="@drawable/open_subtitles_icon"
         android:key="@string/opensubtitles_key" />
 
+    <Preference
+        android:icon="@drawable/subdl_logo_big"
+        android:key="@string/subdl_key" />
+
     <SwitchPreference
         android:defaultValue="false"
         android:icon="@drawable/ic_outline_account_circle_24"

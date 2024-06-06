@@ -164,7 +164,7 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
 
     // Android Core & Lifecycle
-    implementation("androidx.core:core-ktx:1.12.0")
+    implementation("androidx.core:core-ktx:1.13.1")
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("androidx.navigation:navigation-ui-ktx:2.7.7")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.7.0")
@@ -174,7 +174,7 @@ dependencies {
     // Design & UI
     implementation("jp.wasabeef:glide-transformations:4.3.0")
     implementation("androidx.preference:preference-ktx:1.2.1")
-    implementation("com.google.android.material:material:1.11.0")
+    implementation("com.google.android.material:material:1.12.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
 
@@ -185,7 +185,7 @@ dependencies {
 
     // For KSP -> Official Annotation Processors are Not Yet Supported for KSP
     ksp("dev.zacsweers.autoservice:auto-service-ksp:1.1.0")
-    implementation("com.google.guava:guava:32.1.3-android")
+    implementation("com.google.guava:guava:33.2.0-android")
     implementation("dev.zacsweers.autoservice:auto-service-ksp:1.1.0")
 
     // Media 3 (ExoPlayer)
@@ -202,7 +202,7 @@ dependencies {
     // PlayBack
     implementation("com.jaredrummler:colorpicker:1.1.0") // Subtitle Color Picker
     implementation("com.github.recloudstream:media-ffmpeg:1.1.0") // Custom FF-MPEG Lib for Audio Codecs
-    implementation("com.github.TeamNewPipe.NewPipeExtractor:NewPipeExtractor:6dc25f7b97") /* For Trailers
+    implementation("com.github.teamnewpipe:NewPipeExtractor:fafd471") /* For Trailers
     ^ Update to Latest Commits if Trailers Misbehave, github.com/TeamNewPipe/NewPipeExtractor/commits/dev */
     implementation("com.github.albfernandez:juniversalchardet:2.4.0") // Subtitle Decoding
 
@@ -219,9 +219,7 @@ dependencies {
     implementation("com.github.rubensousa:previewseekbar-media3:1.1.1.0") // SeekBar Preview
 
     // Extensions & Other Libs
-    implementation("org.mozilla:rhino:1.7.13") /* run JavaScript
-    ^ Don't Bump RhinoJS to 1.7.14,`NoClassDefFoundError` Occurs and Trailers won't play (even with Desugaring)
-     NewPipeExtractor Issue */
+    implementation("org.mozilla:rhino:1.7.15") // run JavaScript
     implementation("me.xdrop:fuzzywuzzy:1.4.0") // Library/Ext Searching with Levenshtein Distance
     implementation("com.github.LagradOst:SafeFile:0.0.6") // To Prevent the URI File Fu*kery
     implementation("org.conscrypt:conscrypt-android:2.5.2") // To Fix SSL Fu*kery on Android 9
