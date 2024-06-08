@@ -8,6 +8,8 @@ import android.view.inputmethod.EditorInfo
 import android.widget.TextView
 import androidx.annotation.UiThread
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.toBitmapOrNull
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentActivity
@@ -60,8 +62,10 @@ import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.utils.UIHelper.setImage
+import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import kotlinx.coroutines.delay
 import qrcode.QRCode
+import java.io.ByteArrayOutputStream
 
 class SettingsAccount : PreferenceFragmentCompat(), BiometricAuthenticator.BiometricAuthCallback {
     companion object {
@@ -149,10 +153,13 @@ class SettingsAccount : PreferenceFragmentCompat(), BiometricAuthenticator.Biome
                                 AlertDialog.Builder(activity)
                                     .setView(binding.root)
 
-                            builder.setNegativeButton(R.string.cancel) { _, _ -> }
-                            builder.setPositiveButton(R.string.auth_locally) { _, _ ->
-                                api.authenticate(activity)
+                            builder.apply {
+                                setNegativeButton(R.string.cancel) { _, _ -> }
+                                setPositiveButton(R.string.auth_locally) { _, _ ->
+                                    api.authenticate(activity)
+                                }
                             }
+
                             val dialog = builder.create()
 
                             ioSafe {
@@ -168,18 +175,30 @@ class SettingsAccount : PreferenceFragmentCompat(), BiometricAuthenticator.Biome
                                         return@ioSafe
                                     }
 
+                                    val logoBytes = ContextCompat.getDrawable(
+                                        activity,
+                                        R.drawable.cloud_2_solid
+                                    )?.toBitmapOrNull()?.let { bitmap ->
+                                        val csLogo = ByteArrayOutputStream()
+                                        bitmap.compress(Bitmap.CompressFormat.PNG, 100, csLogo)
+                                        csLogo.toByteArray()
+                                    }
+
                                     val qrCodeImage = QRCode.ofRoundedSquares()
                                         .withColor(activity.colorFromAttribute(R.attr.colorPrimary))
+                                        .withLogo(logoBytes, 200.toPx, 200.toPx)
                                         .build(pinCodeData.verificationUrl)
                                         .render().nativeImage() as Bitmap
 
                                     activity.runOnUiThread {
                                         dialog.show()
-                                        binding.devicePinCode.setText(txt(pinCodeData.userCode))
-                                        binding.deviceAuthMessage.setText(txt(R.string.device_pin_url_message, pinCodeData.verificationUrl))
-                                        binding.deviceAuthQrcode.setImage(
-                                            img(qrCodeImage)
-                                        )
+                                        binding.apply {
+                                            devicePinCode.setText(txt(pinCodeData.userCode))
+                                            deviceAuthMessage.setText(txt(R.string.device_pin_url_message, pinCodeData.verificationUrl))
+                                            deviceAuthQrcode.setImage(
+                                                img(qrCodeImage)
+                                            )
+                                        }
                                     }
 
                                     var expirationCounter = pinCodeData.expiresIn
