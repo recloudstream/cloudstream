@@ -1,6 +1,5 @@
 package com.lagradost.cloudstream3.ui.download
 
-import android.app.Activity
 import android.content.DialogInterface
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -21,6 +20,10 @@ import com.lagradost.cloudstream3.utils.VideoDownloadManager
 
 object DownloadButtonSetup {
     fun handleDownloadClick(click: DownloadClickEvent) {
+        handleDownloadClick(click) {}
+    }
+
+    fun handleDownloadClick(click: DownloadClickEvent, deleteCallback: (Boolean) -> Unit) {
         val id = click.data.id
         if (click.data !is VideoDownloadHelper.DownloadEpisodeCached) return
         when (click.action) {
@@ -32,8 +35,10 @@ object DownloadButtonSetup {
                             when (which) {
                                 DialogInterface.BUTTON_POSITIVE -> {
                                     VideoDownloadManager.deleteFileAndUpdateSettings(ctx, id)
+                                    deleteCallback.invoke(true)
                                 }
                                 DialogInterface.BUTTON_NEGATIVE -> {
+                                    deleteCallback.invoke(false)
                                 }
                             }
                         }

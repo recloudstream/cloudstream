@@ -1,8 +1,13 @@
 package com.lagradost.cloudstream3.ui.download
 
+import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.ClipboardManager
 import android.content.Context
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
+import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
 import android.text.format.Formatter.formatShortFileSize
@@ -12,11 +17,13 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.R
@@ -44,6 +51,9 @@ import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.setAppBarNoScrollFlagsOnTV
 import com.lagradost.cloudstream3.utils.VideoDownloadHelper
 import com.lagradost.cloudstream3.utils.VideoDownloadManager
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.net.URI
 
 
@@ -61,6 +71,7 @@ class DownloadFragment : Fragment() {
         this.layoutParams = param
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun setList(list: List<VisualDownloadHeaderCached>) {
         main {
             (binding?.downloadList?.adapter as DownloadHeaderAdapter?)?.cardList = list
@@ -182,7 +193,6 @@ class DownloadFragment : Fragment() {
             if (list != null) {
                 if (list.any { it.data.id == id }) {
                     context?.let { ctx ->
-                        setList(ArrayList())
                         downloadsViewModel.updateList(ctx)
                     }
                 }
@@ -192,6 +202,8 @@ class DownloadFragment : Fragment() {
         downloadDeleteEventListener?.let { VideoDownloadManager.downloadDeleteEvent += it }
 
         binding?.downloadList?.apply {
+            setHasFixedSize(true)
+            setItemViewCacheSize(20)
             this.adapter = adapter
             setLinearListLayout(
                 isHorizontal = false,
@@ -200,6 +212,9 @@ class DownloadFragment : Fragment() {
                 nextDown = FOCUS_SELF
             )
             //layoutManager = GridLayoutManager(context, 1)
+
+            val itemTouchHelper = ItemTouchHelper(SwipeToDeleteCallback(this.adapter as DownloadHeaderAdapter))
+            itemTouchHelper.attachToRecyclerView(binding?.downloadList)
         }
 
         // Should be visible in emulator layout
@@ -279,5 +294,85 @@ class DownloadFragment : Fragment() {
         downloadsViewModel.updateList(requireContext())
 
         fixPaddingStatusbar(binding?.downloadRoot)
+    }
+}
+
+class SwipeToDeleteCallback(private val adapter: DownloadHeaderAdapter) :
+    ItemTouchHelper.SimpleCallback(ItemTouchHelper.LEFT, 0) {
+
+    private var isActive = false
+
+    override fun onMove(
+        recyclerView: RecyclerView,
+        viewHolder: RecyclerView.ViewHolder,
+        target: RecyclerView.ViewHolder
+    ): Boolean {
+        return false
+    }
+
+    override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+        val position = viewHolder.bindingAdapterPosition
+        val item = adapter.cardList[position]
+
+        CoroutineScope(Dispatchers.Main).launch {
+            item.child?.let { clickEvent ->
+                handleDownloadClick(
+                    DownloadClickEvent(
+                        DOWNLOAD_ACTION_DELETE_FILE,
+                        clickEvent
+                    )
+                ) {
+                    if (it) adapter.notifyItemRemoved(viewHolder.absoluteAdapterPosition)
+                    isActive = false
+                }
+            }
+        }
+    }
+
+    override fun onChildDraw(
+        c: Canvas,
+        recyclerView: RecyclerView,
+        viewHolder: RecyclerView.ViewHolder,
+        dX: Float,
+        dY: Float,
+        actionState: Int,
+        isCurrentlyActive: Boolean
+    ) {
+        super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
+
+        val deleteIcon: Drawable? = ContextCompat.getDrawable(recyclerView.context, R.drawable.ic_baseline_delete_outline_24)
+        val background: ColorDrawable = ColorDrawable(Color.RED)
+
+        val itemView = viewHolder.itemView
+        val backgroundCornerOffset = 20
+
+        val iconMargin = (itemView.height - deleteIcon?.intrinsicHeight!!) / 2
+        val iconTop = itemView.top + (itemView.height - deleteIcon.intrinsicHeight) / 2
+        val iconBottom = iconTop + deleteIcon.intrinsicHeight
+
+        if (dX < 0) { // Swiping to the left
+            val iconLeft = itemView.right - iconMargin - deleteIcon.intrinsicWidth
+            val iconRight = itemView.right - iconMargin
+            deleteIcon.setBounds(iconLeft, iconTop, iconRight, iconBottom)
+
+            background.setBounds(
+                itemView.right + dX.toInt() - backgroundCornerOffset,
+                itemView.top,
+                itemView.right,
+                itemView.bottom
+            )
+        } else background.setBounds(0, 0, 0, 0)
+
+        background.draw(c)
+        deleteIcon.draw(c)
+
+        val swipeDistance = itemView.width / 3
+
+        if (dX <= -swipeDistance && !isCurrentlyActive && !isActive) {
+            // If the item is dragged by at least one-third of its width to the left
+            // Trigger onSwiped action
+            onSwiped(viewHolder, ItemTouchHelper.LEFT)
+            isActive = true
+        }
     }
 }
