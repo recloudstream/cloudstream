@@ -1,8 +1,9 @@
 package com.lagradost.cloudstream3.ui.settings
 
+import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.View
-import android.view.View.*
+import android.view.View.FOCUS_DOWN
 import android.view.inputmethod.EditorInfo
 import android.widget.TextView
 import androidx.annotation.UiThread
@@ -21,6 +22,7 @@ import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.AccountManagmentBinding
 import com.lagradost.cloudstream3.databinding.AccountSwitchBinding
 import com.lagradost.cloudstream3.databinding.AddAccountInputBinding
+import com.lagradost.cloudstream3.databinding.DeviceAuthBinding
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.syncproviders.AccountManager
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.aniListApi
@@ -31,6 +33,10 @@ import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.subDlAp
 import com.lagradost.cloudstream3.syncproviders.AuthAPI
 import com.lagradost.cloudstream3.syncproviders.InAppAuthAPI
 import com.lagradost.cloudstream3.syncproviders.OAuth2API
+import com.lagradost.cloudstream3.ui.result.img
+import com.lagradost.cloudstream3.ui.result.setImage
+import com.lagradost.cloudstream3.ui.result.setText
+import com.lagradost.cloudstream3.ui.result.txt
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
 import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
@@ -50,9 +56,12 @@ import com.lagradost.cloudstream3.utils.BiometricAuthenticator.promptInfo
 import com.lagradost.cloudstream3.utils.BiometricAuthenticator.startBiometricAuthentication
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialogText
+import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.utils.UIHelper.setImage
+import kotlinx.coroutines.delay
+import qrcode.QRCode
 
 class SettingsAccount : PreferenceFragmentCompat(), BiometricAuthenticator.BiometricAuthCallback {
     companion object {
@@ -133,7 +142,85 @@ class SettingsAccount : PreferenceFragmentCompat(), BiometricAuthenticator.Biome
             try {
                 when (api) {
                     is OAuth2API -> {
-                        api.authenticate(activity)
+                        if (isLayout(TV or EMULATOR) && api.supportDeviceAuth && activity != null) {
+                            val binding: DeviceAuthBinding =
+                                DeviceAuthBinding.inflate(activity.layoutInflater, null, false)
+                            val builder =
+                                AlertDialog.Builder(activity)
+                                    .setView(binding.root)
+
+                            builder.setNegativeButton(R.string.cancel) { _, _ -> }
+                            builder.setPositiveButton(R.string.auth_locally) { _, _ ->
+                                api.authenticate(activity)
+                            }
+                            val dialog = builder.create()
+
+                            ioSafe {
+                                try {
+                                    val pinCodeData = api.getDevicePin()
+                                    if (pinCodeData == null) {
+                                        activity.runOnUiThread {
+                                            showToast(
+                                                activity.getString(R.string.device_pin_error_message)
+                                            )
+                                        }
+                                        api.authenticate(activity)
+                                        return@ioSafe
+                                    }
+
+                                    val qrCodeImage = QRCode.ofRoundedSquares()
+                                        .withColor(activity.colorFromAttribute(R.attr.colorPrimary))
+                                        .build(pinCodeData.verificationUrl)
+                                        .render().nativeImage() as Bitmap
+
+                                    activity.runOnUiThread {
+                                        dialog.show()
+                                        binding.devicePinCode.setText(txt(pinCodeData.userCode))
+                                        binding.deviceAuthMessage.setText(txt(R.string.device_pin_url_message, pinCodeData.verificationUrl))
+                                        binding.deviceAuthQrcode.setImage(
+                                            img(qrCodeImage)
+                                        )
+                                    }
+
+                                    var expirationCounter = pinCodeData.expiresIn
+
+                                    while (expirationCounter > 0) {
+                                        activity.runOnUiThread {
+                                            binding.deviceAuthValidationCounter.setText(
+                                                txt(
+                                                    R.string.device_pin_counter_text, expirationCounter.div(60) , expirationCounter.rem(60)
+                                                )
+                                            )
+                                        }
+
+                                        if (expirationCounter.rem(pinCodeData.interval)  == 0 && api.handleDeviceAuth(pinCodeData)) {
+                                            activity.runOnUiThread {
+                                                    showToast(
+                                                        activity.getString(R.string.authenticated_user)
+                                                            .format(
+                                                                api.name
+                                                            )
+                                                    )
+                                                dialog.dismissSafe(activity)
+                                            }
+                                            return@ioSafe
+                                        }
+                                        delay(1000)
+                                        expirationCounter--
+                                    }
+                                    activity.runOnUiThread {
+                                        showToast(
+                                            activity.getString(R.string.device_pin_expired_message)
+                                        )
+                                        dialog.dismissSafe(activity)
+                                    }
+                                } catch (e: Exception) {
+                                    logError(e)
+                                }
+                            }
+                        } else {
+                            api.authenticate(activity)
+                        }
                     }
 
                     is InAppAuthAPI -> {

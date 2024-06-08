@@ -217,6 +217,7 @@ dependencies {
     implementation("com.github.discord:OverlappingPanels:0.1.5") // Gestures
     implementation ("androidx.biometric:biometric:1.2.0-alpha05") // Fingerprint Authentication
     implementation("com.github.rubensousa:previewseekbar-media3:1.1.1.0") // SeekBar Preview
+    implementation("io.github.g0dkar:qrcode-kotlin:4.1.1") // QR code for PIN Auth on TV
 
     // Extensions & Other Libs
     implementation("org.mozilla:rhino:1.7.15") // run JavaScript

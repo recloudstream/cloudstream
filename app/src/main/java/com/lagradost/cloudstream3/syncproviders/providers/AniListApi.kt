@@ -32,6 +32,7 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
     override val redirectUrl = "anilistlogin"
     override val idPrefix = "anilist"
     override var requireLibraryRefresh = true
+    override val supportDeviceAuth = false
     override var mainUrl = "https://anilist.co"
     override val icon = R.drawable.ic_anilist_icon
     override val requiresLogin = false

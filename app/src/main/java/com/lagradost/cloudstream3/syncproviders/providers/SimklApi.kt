@@ -22,6 +22,7 @@ import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.suspendSafeApiCall
 import com.lagradost.cloudstream3.syncproviders.AccountManager
 import com.lagradost.cloudstream3.syncproviders.AuthAPI
+import com.lagradost.cloudstream3.syncproviders.OAuth2API
 import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.syncproviders.SyncIdName
 import com.lagradost.cloudstream3.ui.SyncWatchType
@@ -45,6 +46,7 @@ class SimklApi(index: Int) : AccountManager(index), SyncAPI {
     override var name = "Simkl"
     override val key = "simkl-key"
     override val redirectUrl = "simkl"
+    override val supportDeviceAuth = true
     override val idPrefix = "simkl"
     override var requireLibraryRefresh = true
     override var mainUrl = "https://api.simkl.com"
@@ -266,6 +268,21 @@ class SimklApi(index: Int) : AccountManager(index), SyncAPI {
                 val avatar: String
             )
         }
+
+        data class PinAuthResponse(
+            @JsonProperty("result") val result: String,
+            @JsonProperty("device_code") val deviceCode: String,
+            @JsonProperty("user_code") val userCode: String,
+            @JsonProperty("verification_url") val verificationUrl: String,
+            @JsonProperty("expires_in") val expiresIn: Int,
+            @JsonProperty("interval") val interval: Int,
+        )
+
+        data class PinExchangeResponse(
+            @JsonProperty("result") val result: String,
+            @JsonProperty("message") val message: String? = null,
+            @JsonProperty("access_token") val accessToken: String? = null,
+        )
 
         // -------------------
         data class ActivitiesResponse(
@@ -1043,6 +1060,44 @@ class SimklApi(index: Int) : AccountManager(index), SyncAPI {
     override fun getIdFromUrl(url: String): String {
         val simklUrlRegex = Regex("""https://simkl\.com/[^/]*/(\d+).*""")
         return simklUrlRegex.find(url)?.groupValues?.get(1) ?: ""
+    }
+
+    override suspend fun getDevicePin(): OAuth2API.PinAuthData? {
+        val pinAuthResp = app.get(
+            "$mainUrl/oauth/pin?client_id=$clientId&redirect_uri=$appString://${redirectUrl}"
+        ).parsedSafe<PinAuthResponse>() ?: return null
+
+        return OAuth2API.PinAuthData(
+            deviceCode = pinAuthResp.deviceCode,
+            userCode = pinAuthResp.userCode,
+            verificationUrl = pinAuthResp.verificationUrl,
+            expiresIn = pinAuthResp.expiresIn,
+            interval = pinAuthResp.interval
+        )
+    }
+
+    override suspend fun handleDeviceAuth(pinAuthData: OAuth2API.PinAuthData): Boolean {
+        val pinAuthResp = app.get(
+            "$mainUrl/oauth/pin/${pinAuthData.userCode}?client_id=$clientId"
+        ).parsedSafe<PinExchangeResponse>() ?: return false
+
+        if (pinAuthResp.accessToken != null) {
+            switchToNewAccount()
+            setKey(accountId, SIMKL_TOKEN_KEY, pinAuthResp.accessToken)
+
+            val user = getUser()
+            if (user == null) {
+                removeKey(accountId, SIMKL_TOKEN_KEY)
+                switchToOldAccount()
+                return false
+            }
+
+            setKey(accountId, SIMKL_USER_KEY, user)
+            registerAccount()
+            requireLibraryRefresh = true
+            return true
+        }
+        return false
     }
 
     override suspend fun handleRedirect(url: String): Boolean {
