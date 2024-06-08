@@ -166,17 +166,9 @@ open class TraktProvider : MainAPI() {
             val resSeasons = getApi("$traktApiUrl/shows/${mediaDetails?.ids?.trakt.toString()}/seasons?extended=cloud9,full,episodes")
             val episodes = mutableListOf<Episode>()
             val seasons = parseJson<List<Seasons>>(resSeasons)
-            val seasonsNames = mutableListOf<SeasonData>()
             var nextAir:  NextAiring? = null
 
             seasons.forEach { season ->
-
-                seasonsNames.add(
-                    SeasonData(
-                        season.number!!,
-                        season.title
-                    )
-                )
 
                 season.episodes?.map { episode ->
 
@@ -250,7 +242,6 @@ open class TraktProvider : MainAPI() {
                 this.comingSoon = isUpcoming(mediaDetails.released)
                 //posterHeaders
                 this.nextAiring = nextAir
-                this.seasonNames = seasonsNames
                 this.backgroundPosterUrl = getOriginalWidthImageUrl(backDropUrl)
                 this.contentRating = mediaDetails.certification
                 addTrailer(mediaDetails.trailer)
