@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.amap
 import com.lagradost.cloudstream3.app
+import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import java.net.URLDecoder
@@ -26,12 +27,16 @@ class VidSrcTo : ExtractorApi() {
         val res = app.get("$mainUrl/ajax/embed/episode/$mediaId/sources").parsedSafe<VidsrctoEpisodeSources>() ?: return
         if (res.status != 200) return
         res.result?.amap { source ->
-            val embedRes = app.get("$mainUrl/ajax/embed/source/${source.id}").parsedSafe<VidsrctoEmbedSource>() ?: return@amap
-            val finalUrl = DecryptUrl(embedRes.result.encUrl)
-            if(finalUrl.equals(embedRes.result.encUrl)) return@amap
-            when (source.title) {
-                "Vidplay" -> AnyVidplay(finalUrl.substringBefore("/e/")).getUrl(finalUrl, referer, subtitleCallback, callback)
-                "Filemoon" -> FileMoon().getUrl(finalUrl, referer, subtitleCallback, callback)
+            try {
+                val embedRes = app.get("$mainUrl/ajax/embed/source/${source.id}").parsedSafe<VidsrctoEmbedSource>() ?: return@amap
+                val finalUrl = DecryptUrl(embedRes.result.encUrl)
+                if(finalUrl.equals(embedRes.result.encUrl)) return@amap
+                when (source.title) {
+                    "Vidplay" -> AnyVidplay(finalUrl.substringBefore("/e/")).getUrl(finalUrl, referer, subtitleCallback, callback)
+                    "Filemoon" -> FileMoon().getUrl(finalUrl, referer, subtitleCallback, callback)
+                }
+            } catch (e: Exception) {
+                logError(e)
             }
         }
     }
