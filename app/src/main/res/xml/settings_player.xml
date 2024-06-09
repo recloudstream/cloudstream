@@ -101,7 +101,8 @@
     </PreferenceCategory>
     
     <PreferenceCategory
-        android:title="@string/pref_category_gestures">
+        android:title="@string/pref_category_gestures"
+        app:key="@string/pref_category_gestures_key">
         <SwitchPreference
             android:icon="@drawable/ic_baseline_ondemand_video_24"
             android:summary="@string/swipe_to_seek_settings_des"
@@ -166,7 +167,8 @@
             android:title="@string/video_buffer_clear_settings" />
     </PreferenceCategory>
     <PreferenceCategory
-        android:title="@string/pref_category_android_tv">
+        android:title="@string/pref_category_android_tv"
+        android:key="@string/pref_category_android_tv_key" >
         <SeekBarPreference
             android:defaultValue="10"
             android:max="60"
