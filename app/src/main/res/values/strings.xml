@@ -778,7 +778,7 @@
     <string name="reset_btn">Reset</string>
     <string name="cs3wiki">CloudStream Wiki</string>
     <string name="device_pin_url_message">Visit <b>%s</b> on your smartphone or computer and enter the above code</string>
-    <string name="device_pin_error_message">Can't get the device PIN code, try local authentication</string>
+    <string name="device_pin_error_message">Can\'t get the device PIN code, try local authentication</string>
     <string name="device_pin_expired_message">PIN code is now expired !</string>
     <string name="device_pin_counter_text">Code expires in %1$dm %2$ds</string>
 </resources>
