@@ -6,6 +6,8 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
+import android.graphics.Path
+import android.graphics.RectF
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.os.Build
@@ -29,6 +31,7 @@ import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.FragmentDownloadsBinding
 import com.lagradost.cloudstream3.databinding.StreamInputBinding
+import com.lagradost.cloudstream3.isEpisodeBased
 import com.lagradost.cloudstream3.isMovieType
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.mvvm.observe
@@ -297,20 +300,36 @@ class DownloadFragment : Fragment() {
     }
 }
 
-class SwipeToDeleteCallback(private val adapter: DownloadHeaderAdapter) :
-    ItemTouchHelper.SimpleCallback(ItemTouchHelper.LEFT, 0) {
+class SwipeToDeleteCallback(private val adapter: DownloadHeaderAdapter) : ItemTouchHelper.Callback() {
 
-    private var isActive = false
+    private var deleteInitiated = false
+
+    override fun getMovementFlags(
+        recyclerView: RecyclerView,
+        viewHolder: RecyclerView.ViewHolder
+    ): Int {
+        val position = viewHolder.bindingAdapterPosition
+        val item = adapter.cardList[position]
+        if (item.data.type.isEpisodeBased()) return 0
+        return makeMovementFlags(ItemTouchHelper.LEFT, 0)
+    }
+
+    override fun isLongPressDragEnabled(): Boolean = true
+
+    override fun isItemViewSwipeEnabled(): Boolean = false
 
     override fun onMove(
         recyclerView: RecyclerView,
         viewHolder: RecyclerView.ViewHolder,
         target: RecyclerView.ViewHolder
-    ): Boolean {
-        return false
-    }
+    ): Boolean = false
 
-    override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+    override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {}
+
+    private fun handleDelete(viewHolder: RecyclerView.ViewHolder) {
+        if (deleteInitiated) return
+
+        deleteInitiated = true
         val position = viewHolder.bindingAdapterPosition
         val item = adapter.cardList[position]
 
@@ -321,10 +340,7 @@ class SwipeToDeleteCallback(private val adapter: DownloadHeaderAdapter) :
                         DOWNLOAD_ACTION_DELETE_FILE,
                         clickEvent
                     )
-                ) {
-                    if (it) adapter.notifyItemRemoved(viewHolder.absoluteAdapterPosition)
-                    isActive = false
-                }
+                ) { adapter.notifyItemRemoved(viewHolder.absoluteAdapterPosition) }
             }
         }
     }
@@ -338,25 +354,46 @@ class SwipeToDeleteCallback(private val adapter: DownloadHeaderAdapter) :
         actionState: Int,
         isCurrentlyActive: Boolean
     ) {
-        super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
+        val deleteIcon: Drawable = ContextCompat.getDrawable(
+            recyclerView.context,
+            R.drawable.ic_baseline_delete_outline_24
+        ) ?: return
 
-        val deleteIcon: Drawable? = ContextCompat.getDrawable(recyclerView.context, R.drawable.ic_baseline_delete_outline_24)
-        val background: ColorDrawable = ColorDrawable(Color.RED)
+        val background = ColorDrawable(Color.RED)
 
         val itemView = viewHolder.itemView
-        val backgroundCornerOffset = 20
 
-        val iconMargin = (itemView.height - deleteIcon?.intrinsicHeight!!) / 2
-        val iconTop = itemView.top + (itemView.height - deleteIcon.intrinsicHeight) / 2
-        val iconBottom = iconTop + deleteIcon.intrinsicHeight
+        val scaleFactor = 1.5f
+        val iconWidth = (deleteIcon.intrinsicWidth * scaleFactor).toInt()
+        val iconHeight = (deleteIcon.intrinsicHeight * scaleFactor).toInt()
 
-        if (dX < 0) { // Swiping to the left
-            val iconLeft = itemView.right - iconMargin - deleteIcon.intrinsicWidth
+        val iconMargin = (itemView.height - iconHeight) / 2
+        val iconTop = itemView.top + (itemView.height - iconHeight) / 2
+        val iconBottom = iconTop + iconHeight
+
+        val swipeDistance = itemView.width / 4
+        val limitedDX = if (dX < -swipeDistance) -swipeDistance.toFloat() else dX
+
+        if (limitedDX < 0) { // Swiping to the left
+            val iconLeft = itemView.right - iconMargin - iconWidth
             val iconRight = itemView.right - iconMargin
             deleteIcon.setBounds(iconLeft, iconTop, iconRight, iconBottom)
 
+            val path = Path()
+            val rectF = RectF(
+                itemView.right + limitedDX,
+                itemView.top.toFloat(),
+                itemView.right.toFloat(),
+                itemView.bottom.toFloat()
+            )
+
+            val radii = floatArrayOf(0f, 0f, 20f, 20f, 20f, 20f, 0f, 0f)
+
+            path.addRoundRect(rectF, radii, Path.Direction.CW)
+            c.clipPath(path)
+
             background.setBounds(
-                itemView.right + dX.toInt() - backgroundCornerOffset,
+                itemView.right + limitedDX.toInt(),
                 itemView.top,
                 itemView.right,
                 itemView.bottom
@@ -366,13 +403,13 @@ class SwipeToDeleteCallback(private val adapter: DownloadHeaderAdapter) :
         background.draw(c)
         deleteIcon.draw(c)
 
-        val swipeDistance = itemView.width / 3
+        if (dX <= -swipeDistance && !isCurrentlyActive) {
+            handleDelete(viewHolder)
+        } else super.onChildDraw(c, recyclerView, viewHolder, limitedDX, dY, actionState, isCurrentlyActive)
+    }
 
-        if (dX <= -swipeDistance && !isCurrentlyActive && !isActive) {
-            // If the item is dragged by at least one-third of its width to the left
-            // Trigger onSwiped action
-            onSwiped(viewHolder, ItemTouchHelper.LEFT)
-            isActive = true
-        }
+    override fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
+        super.clearView(recyclerView, viewHolder)
+        deleteInitiated = false
     }
 }
