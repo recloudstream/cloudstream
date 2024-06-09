@@ -7,8 +7,14 @@ import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError
+import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
+import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
+import com.lagradost.cloudstream3.ui.settings.Globals.TV
+import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.getFolderSize
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.getPref
+import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.hideOn
+import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.hidePrefs
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setPaddingBottom
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setToolBarScrollFlags
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setUpToolbar
@@ -30,6 +36,18 @@ class SettingsPlayer : PreferenceFragmentCompat() {
         hideKeyboard()
         setPreferencesFromResource(R.xml.settings_player, rootKey)
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(requireContext())
+
+        //Hide specific prefs on TV/EMULATOR
+        hidePrefs(
+            listOf(
+                R.string.pref_category_gestures_key,
+                R.string.rotate_video_key,
+                R.string.auto_rotate_video_key
+            ),
+            TV or EMULATOR
+        )
+
+        getPref(R.string.pref_category_android_tv_key)?.hideOn(PHONE)
 
         getPref(R.string.video_buffer_length_key)?.setOnPreferenceClickListener {
             val prefNames = resources.getStringArray(R.array.video_buffer_length_names)
@@ -227,6 +245,5 @@ class SettingsPlayer : PreferenceFragmentCompat() {
                 return@setOnPreferenceClickListener true
             }
         }
-
     }
 }

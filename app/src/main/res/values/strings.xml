@@ -438,7 +438,9 @@
     <string name="pref_category_actions">Actions</string>
     <string name="pref_category_cache">Cache</string>
     <string name="pref_category_android_tv">Android TV</string>
+    <string name="pref_category_android_tv_key" translatable="false" >pref_category_android_tv_key</string>
     <string name="pref_category_gestures">Gestures</string>
+    <string name="pref_category_gestures_key" translatable="false">pref_category_gestures_key</string>
     <string name="pref_category_player_features">Player features</string>
     <string name="pref_category_subtitles">Subtitles</string>
     <string name="pref_category_player_layout">Layout</string>
