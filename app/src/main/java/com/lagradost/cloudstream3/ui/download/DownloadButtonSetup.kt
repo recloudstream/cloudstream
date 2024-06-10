@@ -19,7 +19,6 @@ import com.lagradost.cloudstream3.utils.VideoDownloadHelper
 import com.lagradost.cloudstream3.utils.VideoDownloadManager
 
 object DownloadButtonSetup {
-
     fun handleDownloadClick(click: DownloadClickEvent, deleteCallback: () -> Unit = {}) {
         val id = click.data.id
         if (click.data !is VideoDownloadHelper.DownloadEpisodeCached) return

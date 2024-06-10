@@ -45,6 +45,7 @@ import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.utils.AppUtils.loadResult
 import com.lagradost.cloudstream3.utils.Coroutines.main
+import com.lagradost.cloudstream3.utils.Coroutines.runOnMainThread
 import com.lagradost.cloudstream3.utils.DOWNLOAD_EPISODE_CACHE
 import com.lagradost.cloudstream3.utils.DataStore
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
@@ -54,9 +55,6 @@ import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.setAppBarNoScrollFlagsOnTV
 import com.lagradost.cloudstream3.utils.VideoDownloadHelper
 import com.lagradost.cloudstream3.utils.VideoDownloadManager
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import java.net.URI
 
 
@@ -324,7 +322,10 @@ class SwipeToDeleteCallback(private val adapter: DownloadHeaderAdapter) : ItemTo
         target: RecyclerView.ViewHolder
     ): Boolean = false
 
-    override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {}
+    override fun onSwiped(
+        viewHolder: RecyclerView.ViewHolder,
+        direction: Int
+    ) {}
 
     private fun handleDelete(viewHolder: RecyclerView.ViewHolder) {
         if (deleteInitiated) return
@@ -333,7 +334,7 @@ class SwipeToDeleteCallback(private val adapter: DownloadHeaderAdapter) : ItemTo
         val position = viewHolder.bindingAdapterPosition
         val item = adapter.cardList[position]
 
-        CoroutineScope(Dispatchers.Main).launch {
+        runOnMainThread {
             item.child?.let { clickEvent ->
                 handleDownloadClick(
                     DownloadClickEvent(
@@ -408,7 +409,10 @@ class SwipeToDeleteCallback(private val adapter: DownloadHeaderAdapter) : ItemTo
         } else super.onChildDraw(c, recyclerView, viewHolder, limitedDX, dY, actionState, isCurrentlyActive)
     }
 
-    override fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
+    override fun clearView(
+        recyclerView: RecyclerView,
+        viewHolder: RecyclerView.ViewHolder
+    ) {
         super.clearView(recyclerView, viewHolder)
         deleteInitiated = false
     }
