@@ -9,7 +9,9 @@ import androidx.fragment.app.FragmentActivity
 import androidx.viewbinding.ViewBinding
 import com.google.android.material.button.MaterialButton
 import com.lagradost.cloudstream3.syncproviders.AuthAPI
-import com.lagradost.cloudstream3.ui.settings.SettingsFragment
+import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
+import com.lagradost.cloudstream3.ui.settings.Globals.TV
+import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 
 abstract class DialogBuilder<T : ViewBinding>(
@@ -82,7 +84,7 @@ abstract class DialogBuilder<T : ViewBinding>(
     private fun setItemVisibility(dialog: AlertDialog) {
         val visibilityMap = getVisibilityMap(dialog)
 
-        if (SettingsFragment.isTvSettings()) {
+        if (isLayout(TV or EMULATOR)) {
             visibilityMap.forEach { (input, isVisible) ->
                 input.isVisible = isVisible
 
