@@ -10,8 +10,10 @@ import com.lagradost.cloudstream3.AcraApplication.Companion.getKeyClass
 import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKeyClass
 import com.lagradost.cloudstream3.mvvm.logError
+import com.lagradost.cloudstream3.syncproviders.BackupAPI
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
+import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 
 const val DOWNLOAD_HEADER_CACHE = "download_header_cache"
 
@@ -22,6 +24,7 @@ const val USER_SELECTED_HOMEPAGE_API = "home_api_used"
 const val USER_PROVIDER_API = "user_custom_sites"
 
 const val PREFERENCES_NAME = "rebuild_preference"
+const val SYNC_PREFERENCES_NAME = "rebuild_sync_preference"
 
 // TODO degelgate by value for get & set
 
@@ -29,6 +32,7 @@ class PreferenceDelegate<T : Any>(
     val key: String, val default: T //, private val klass: KClass<T>
 ) {
     private val klass: KClass<out T> = default::class
+
     // simple cache to make it not get the key every time it is accessed, however this requires
     // that ONLY this changes the key
     private var cache: T? = null
@@ -50,34 +54,21 @@ class PreferenceDelegate<T : Any>(
     }
 }
 
-/** When inserting many keys use this function, this is because apply for every key is very expensive on memory */
-data class Editor(
-    val editor : SharedPreferences.Editor
-) {
-    /** Always remember to call apply after */
-    fun<T> setKeyRaw(path: String, value: T) {
-        when (value) {
-            is Boolean -> editor.putBoolean(path, value)
-            is Int -> editor.putInt(path, value)
-            is String -> editor.putString(path, value)
-            is Float -> editor.putFloat(path, value)
-            is Long -> editor.putLong(path, value)
-            (value as? Set<String> != null) -> editor.putStringSet(path, value as Set<String>)
-        }
-    }
-
-    fun apply() {
-        editor.apply()
-        System.gc()
-    }
-}
-
 object DataStore {
+    private val backupScheduler = Scheduler.createBackupScheduler()
     val mapper: JsonMapper = JsonMapper.builder().addModule(kotlinModule())
         .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false).build()
 
     private fun getPreferences(context: Context): SharedPreferences {
         return context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE)
+    }
+
+    private fun getSyncPreferences(context: Context): SharedPreferences {
+        return context.getSharedPreferences(SYNC_PREFERENCES_NAME, Context.MODE_PRIVATE)
+    }
+
+    fun Context.getSyncPrefs(): SharedPreferences {
+        return getSyncPreferences(this)
     }
 
     fun Context.getSharedPrefs(): SharedPreferences {
@@ -88,10 +79,38 @@ object DataStore {
         return "${folder}/${path}"
     }
 
-    fun editor(context : Context, isEditingAppSettings: Boolean = false) : Editor {
-        val editor: SharedPreferences.Editor =
-            if (isEditingAppSettings) context.getDefaultSharedPrefs().edit() else context.getSharedPrefs().edit()
-        return Editor(editor)
+    fun <T> Context.setKeyRaw(path: String, value: T, restoreSource: BackupUtils.RestoreSource) {
+        try {
+            val editor = when (restoreSource) {
+                BackupUtils.RestoreSource.DATA -> getSharedPrefs().edit()
+                BackupUtils.RestoreSource.SETTINGS -> getDefaultSharedPrefs().edit()
+                BackupUtils.RestoreSource.SYNC -> getSyncPrefs().edit()
+            }
+
+            when (value) {
+                is Boolean -> editor.putBoolean(path, value)
+                is Int -> editor.putInt(path, value)
+                is String -> editor.putString(path, value)
+                is Float -> editor.putFloat(path, value)
+                is Long -> editor.putLong(path, value)
+                (value as? Set<String> != null) -> editor.putStringSet(path, value as Set<String>)
+            }
+            editor.apply()
+        } catch (e: Exception) {
+            logError(e)
+        }
+    }
+
+    fun Context.removeKeyRaw(path: String, restoreSource: BackupUtils.RestoreSource) {
+        try {
+            when (restoreSource) {
+                BackupUtils.RestoreSource.DATA -> getSharedPrefs().edit()
+                BackupUtils.RestoreSource.SETTINGS -> getDefaultSharedPrefs().edit()
+                BackupUtils.RestoreSource.SYNC -> getSyncPrefs().edit()
+            }.remove(path).apply()
+        } catch (e: Exception) {
+            logError(e)
+        }
     }
 
     fun Context.getDefaultSharedPrefs(): SharedPreferences {
@@ -119,9 +138,23 @@ object DataStore {
         try {
             val prefs = getSharedPrefs()
             if (prefs.contains(path)) {
+                val oldValueExists = prefs.getString(path, null) != null
+
                 val editor: SharedPreferences.Editor = prefs.edit()
                 editor.remove(path)
                 editor.apply()
+
+                ioSafe {
+                    backupScheduler.work(
+                        BackupAPI.PreferencesSchedulerData(
+                            getSyncPrefs(),
+                            path,
+                            oldValueExists,
+                            false,
+                            BackupUtils.RestoreSource.DATA
+                        )
+                    )
+                }
             }
         } catch (e: Exception) {
             logError(e)
@@ -138,9 +171,25 @@ object DataStore {
 
     fun <T> Context.setKey(path: String, value: T) {
         try {
-            val editor: SharedPreferences.Editor = getSharedPrefs().edit()
-            editor.putString(path, mapper.writeValueAsString(value))
+            val prefs = getSharedPrefs()
+            val oldValue = prefs.getString(path, null)
+            val newValue = mapper.writeValueAsString(value)
+
+            val editor: SharedPreferences.Editor = prefs.edit()
+            editor.putString(path, newValue)
             editor.apply()
+
+            ioSafe {
+                backupScheduler.work(
+                    BackupAPI.PreferencesSchedulerData(
+                        getSyncPrefs(),
+                        path,
+                        oldValue,
+                        newValue,
+                        BackupUtils.RestoreSource.DATA
+                    )
+                )
+            }
         } catch (e: Exception) {
             logError(e)
         }
@@ -158,6 +207,7 @@ object DataStore {
     fun <T> Context.setKey(folder: String, path: String, value: T) {
         setKey(getFolderName(folder, path), value)
     }
+
 
     inline fun <reified T : Any> String.toKotlinObject(): T {
         return mapper.readValue(this, T::class.java)

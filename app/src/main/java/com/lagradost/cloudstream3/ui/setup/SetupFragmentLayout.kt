@@ -14,6 +14,8 @@ import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.FragmentSetupLayoutBinding
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
+import com.lagradost.cloudstream3.utils.Scheduler.Companion.attachBackupListener
+import com.lagradost.cloudstream3.utils.DataStore.getSyncPrefs
 import org.acra.ACRA
 
 
@@ -44,6 +46,7 @@ class SetupFragmentLayout : Fragment() {
             val ctx = context ?: return@normalSafeApiCall
 
             val settingsManager = PreferenceManager.getDefaultSharedPreferences(ctx)
+                 .attachBackupListener(ctx.getSyncPrefs()).self
 
             val prefNames = resources.getStringArray(R.array.app_layout)
             val prefValues = resources.getIntArray(R.array.app_layout_values)

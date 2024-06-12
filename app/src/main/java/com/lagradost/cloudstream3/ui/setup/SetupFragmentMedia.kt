@@ -10,13 +10,14 @@ import androidx.core.util.forEach
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceManager
-import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.databinding.FragmentSetupMediaBinding
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
+import com.lagradost.cloudstream3.utils.Scheduler.Companion.attachBackupListener
+import com.lagradost.cloudstream3.utils.DataStore.getSyncPrefs
 
 
 class SetupFragmentMedia : Fragment() {
@@ -45,6 +46,7 @@ class SetupFragmentMedia : Fragment() {
 
             val ctx = context ?: return@normalSafeApiCall
             val settingsManager = PreferenceManager.getDefaultSharedPreferences(ctx)
+                 .attachBackupListener(ctx.getSyncPrefs()).self
 
             val arrayAdapter =
                 ArrayAdapter<String>(ctx, R.layout.sort_bottom_single_choice)

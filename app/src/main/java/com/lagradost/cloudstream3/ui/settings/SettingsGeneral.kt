@@ -26,6 +26,7 @@ import com.lagradost.cloudstream3.databinding.AddSiteInputBinding
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.network.initClient
+import com.lagradost.cloudstream3.utils.Scheduler.Companion.attachBackupListener
 import com.lagradost.cloudstream3.ui.EasterEggMonke
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
 import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
@@ -39,6 +40,7 @@ import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setTool
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setUpToolbar
 import com.lagradost.cloudstream3.utils.BatteryOptimizationChecker.isAppRestricted
 import com.lagradost.cloudstream3.utils.BatteryOptimizationChecker.showBatteryOptimizationDialog
+import com.lagradost.cloudstream3.utils.DataStore.getSyncPrefs
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showMultiDialog
@@ -166,13 +168,19 @@ class SettingsGeneral : PreferenceFragmentCompat() {
             // Stores the real URI using download_path_key
             // Important that the URI is stored instead of filepath due to permissions.
             PreferenceManager.getDefaultSharedPreferences(context)
-                .edit().putString(getString(R.string.download_path_key), uri.toString()).apply()
+                .attachBackupListener(context.getSyncPrefs()).self
+                .edit()
+                .putString(getString(R.string.download_path_key), uri.toString())
+                .apply()
 
             // From URI -> File path
             // File path here is purely for cosmetic purposes in settings
             (filePath ?: uri.toString()).let {
                 PreferenceManager.getDefaultSharedPreferences(context)
-                    .edit().putString(getString(R.string.download_path_pref), it).apply()
+                    .attachBackupListener(context.getSyncPrefs()).self
+                    .edit()
+                    .putString(getString(R.string.download_path_pref), it)
+                    .apply()
             }
         }
 
@@ -180,6 +188,7 @@ class SettingsGeneral : PreferenceFragmentCompat() {
         hideKeyboard()
         setPreferencesFromResource(R.xml.settings_general, rootKey)
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(requireContext())
+            .attachBackupListener(requireContext().getSyncPrefs()).self
 
         fun getCurrent(): MutableList<CustomSite> {
             return getKey<Array<CustomSite>>(USER_PROVIDER_API)?.toMutableList()

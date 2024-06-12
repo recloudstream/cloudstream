@@ -31,6 +31,8 @@ import com.lagradost.cloudstream3.databinding.SubtitleSettingsBinding
 import com.lagradost.cloudstream3.ui.settings.Globals
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
+import com.lagradost.cloudstream3.utils.Scheduler.Companion.attachBackupListener
+import com.lagradost.cloudstream3.utils.DataStore.getSyncPrefs
 import com.lagradost.cloudstream3.utils.DataStore.setKey
 import com.lagradost.cloudstream3.utils.Event
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showDialog
@@ -458,6 +460,7 @@ class SubtitlesFragment : Fragment() {
             subtitlesFilterSubLang.setOnCheckedChangeListener { _, b ->
                 context?.let { ctx ->
                     PreferenceManager.getDefaultSharedPreferences(ctx)
+                        .attachBackupListener(ctx.getSyncPrefs()).self
                         .edit()
                         .putBoolean(getString(R.string.filter_sub_lang_key), b)
                         .apply()

@@ -90,9 +90,9 @@ class OpenSubtitlesApi(index: Int) : InAppAuthAPIManager(index), AbstractSubApi 
         return null
     }
 
-    override fun getLatestLoginData(): InAppAuthAPI.LoginData? {
+    override fun getUserData(): InAppAuthAPI.UserData? {
         val current = getAuthKey() ?: return null
-        return InAppAuthAPI.LoginData(username = current.user, current.pass)
+        return InAppAuthAPI.UserData(username = current.user, current.pass)
     }
 
     /*
@@ -143,7 +143,7 @@ class OpenSubtitlesApi(index: Int) : InAppAuthAPIManager(index), AbstractSubApi 
         return false
     }
 
-    override suspend fun login(data: InAppAuthAPI.LoginData): Boolean {
+    override suspend fun login(data: InAppAuthAPI.UserData): Boolean {
         val username = data.username ?: throw ErrorLoadingException("Requires Username")
         val password = data.password ?: throw ErrorLoadingException("Requires Password")
         switchToNewAccount()

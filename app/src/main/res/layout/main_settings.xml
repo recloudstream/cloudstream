@@ -44,9 +44,10 @@
 
                 <TextView
                     android:id="@+id/settings_profile_text"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
+                    android:layout_weight="1"
                     android:gravity="center_vertical"
                     android:paddingStart="10dp"
                     android:paddingEnd="10dp"
@@ -54,6 +55,16 @@
                     android:textSize="18sp"
                     android:textStyle="normal"
                     tools:text="Quick Brown Fox" />
+
+                <ImageView
+                    android:id="@+id/force_sync_data_btt"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="center_vertical"
+                    android:contentDescription="@string/sync_data"
+                    android:padding="8dp"
+                    android:src="@drawable/quantum_ic_refresh_white_24" />
+
             </LinearLayout>
 
             <TextView
