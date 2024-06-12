@@ -67,6 +67,7 @@ import com.lagradost.cloudstream3.extractors.Gdriveplayerorg
 import com.lagradost.cloudstream3.extractors.Gdriveplayerus
 import com.lagradost.cloudstream3.extractors.Gofile
 import com.lagradost.cloudstream3.extractors.GuardareStream
+import com.lagradost.cloudstream3.extractors.GoodstreamExtractor
 import com.lagradost.cloudstream3.extractors.Guccihide
 import com.lagradost.cloudstream3.extractors.Hxfile
 import com.lagradost.cloudstream3.extractors.JWPlayer
@@ -879,6 +880,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     Gdriveplayerorg(),
     Gdriveplayerus(),
     Gdriveplayerco(),
+    GoodstreamExtractor(),
     Gdriveplayer(),
     DatabaseGdrive(),
     DatabaseGdrive2(),
