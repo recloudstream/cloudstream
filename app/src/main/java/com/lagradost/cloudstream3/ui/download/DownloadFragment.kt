@@ -300,6 +300,9 @@ class DownloadFragment : Fragment() {
 }
 
 class SwipeToDeleteCallback(private val adapter: DownloadHeaderAdapter) : ItemTouchHelper.Callback() {
+
+    private val swipeOpenItems: MutableSet<Int> = mutableSetOf()
+
     override fun getMovementFlags(
         recyclerView: RecyclerView,
         viewHolder: RecyclerView.ViewHolder
@@ -325,8 +328,7 @@ class SwipeToDeleteCallback(private val adapter: DownloadHeaderAdapter) : ItemTo
         direction: Int
     ) {}
 
-    private fun handleDelete(viewHolder: RecyclerView.ViewHolder) {
-        val position = viewHolder.bindingAdapterPosition
+    private fun handleDelete(position: Int) {
         val item = adapter.cardList[position]
 
         runOnMainThread {
@@ -336,7 +338,7 @@ class SwipeToDeleteCallback(private val adapter: DownloadHeaderAdapter) : ItemTo
                         DOWNLOAD_ACTION_DELETE_FILE,
                         clickEvent
                     )
-                ) { adapter.notifyItemRemoved(viewHolder.absoluteAdapterPosition) }
+                ) { adapter.notifyItemRemoved(position) }
             }
         }
     }
@@ -355,6 +357,8 @@ class SwipeToDeleteCallback(private val adapter: DownloadHeaderAdapter) : ItemTo
             super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
             return
         }
+
+        val position = viewHolder.bindingAdapterPosition
 
         val deleteIcon: Drawable = ContextCompat.getDrawable(
             recyclerView.context,
@@ -375,9 +379,7 @@ class SwipeToDeleteCallback(private val adapter: DownloadHeaderAdapter) : ItemTo
 
         val maxSwipeDistance = 230f
         val minSwipeDistance = itemView.width / 4.5f
-        val swipeDistance = if (minSwipeDistance <= maxSwipeDistance) {
-            minSwipeDistance
-        } else maxSwipeDistance
+        val swipeDistance = minOf(minSwipeDistance, maxSwipeDistance)
 
         val limitedDX = if (dX < -swipeDistance) -swipeDistance else if (dX >= 0) 0f else dX
 
@@ -410,25 +412,37 @@ class SwipeToDeleteCallback(private val adapter: DownloadHeaderAdapter) : ItemTo
         deleteIcon.draw(c)
 
         if (dX <= -swipeDistance && !isCurrentlyActive) {
+            swipeOpenItems.add(position)
+        } else {
+            swipeOpenItems.remove(position)
+            super.onChildDraw(c, recyclerView, viewHolder, limitedDX, dY, actionState, isCurrentlyActive)
+        }
+
+        if (swipeOpenItems.isNotEmpty()) {
             recyclerView.setOnTouchListener { _, event ->
                 if (event.action == MotionEvent.ACTION_UP) {
                     val x = event.x.toInt()
                     val y = event.y.toInt()
+                    var handled = false
 
-                    val backgroundLeft = itemView.right + limitedDX.toInt()
-                    val backgroundRight = itemView.right
-                    val backgroundTop = itemView.top
-                    val backgroundBottom = itemView.bottom
+                    swipeOpenItems.forEach { pos ->
+                        val vh = recyclerView.findViewHolderForAdapterPosition(pos)
+                        if (vh != null) {
+                            val swipeItemView = vh.itemView
+                            val backgroundLeft = swipeItemView.right - swipeDistance.toInt()
+                            val backgroundRight = swipeItemView.right
+                            val backgroundTop = swipeItemView.top
+                            val backgroundBottom = swipeItemView.bottom
 
-                    if (x in backgroundLeft..backgroundRight && y >= backgroundTop && y <= backgroundBottom) {
-                        handleDelete(viewHolder)
-                        true
-                    } else false
+                            if (x in backgroundLeft..backgroundRight && y in backgroundTop .. backgroundBottom) {
+                                handleDelete(pos)
+                                handled = true
+                            }
+                        }
+                    }
+                    handled
                 } else false
             }
-        } else {
-            recyclerView.setOnTouchListener(null)
-            super.onChildDraw(c, recyclerView, viewHolder, limitedDX, dY, actionState, isCurrentlyActive)
-        }
+        } else recyclerView.setOnTouchListener(null)
     }
 }
