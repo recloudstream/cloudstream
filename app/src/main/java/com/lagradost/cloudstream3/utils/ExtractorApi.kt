@@ -17,6 +17,7 @@ import com.lagradost.cloudstream3.extractors.BullStream
 import com.lagradost.cloudstream3.extractors.ByteShare
 import com.lagradost.cloudstream3.extractors.Cda
 import com.lagradost.cloudstream3.extractors.Cdnplayer
+import com.lagradost.cloudstream3.extractors.CdnwishCom
 import com.lagradost.cloudstream3.extractors.Chillx
 import com.lagradost.cloudstream3.extractors.CineGrabber
 import com.lagradost.cloudstream3.extractors.Cinestart
@@ -105,6 +106,9 @@ import com.lagradost.cloudstream3.extractors.Odnoklassniki
 import com.lagradost.cloudstream3.extractors.TauVideo
 import com.lagradost.cloudstream3.extractors.SibNet
 import com.lagradost.cloudstream3.extractors.ContentX
+import com.lagradost.cloudstream3.extractors.D0000d
+import com.lagradost.cloudstream3.extractors.D000dCom
+import com.lagradost.cloudstream3.extractors.DoodstreamCom
 import com.lagradost.cloudstream3.extractors.EmturbovidExtractor
 import com.lagradost.cloudstream3.extractors.Hotlinger
 import com.lagradost.cloudstream3.extractors.FourCX
@@ -226,7 +230,10 @@ import com.lagradost.cloudstream3.extractors.Zplayer
 import com.lagradost.cloudstream3.extractors.ZplayerV2
 import com.lagradost.cloudstream3.extractors.Ztreamhub
 import com.lagradost.cloudstream3.extractors.EPlayExtractor
+import com.lagradost.cloudstream3.extractors.FlaswishCom
+import com.lagradost.cloudstream3.extractors.SfastwishCom
 import com.lagradost.cloudstream3.extractors.Vtbe
+import com.lagradost.cloudstream3.extractors.WishembedPro
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import kotlinx.coroutines.delay
@@ -776,6 +783,9 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     DoodSoExtractor(),
     DoodLaExtractor(),
     Dooood(),
+    D0000d(),
+    D000dCom(),
+    DoodstreamCom(),
     DoodWsExtractor(),
     DoodShExtractor(),
     DoodWatchExtractor(),
@@ -853,6 +863,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     Guccihide(),
     FileMoon(),
     FileMoonSx(),
+
     Vido(),
     Linkbox(),
     Acefile(),
@@ -907,6 +918,10 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     Megacloud(),
     VidhideExtractor(),
     StreamWishExtractor(),
+    WishembedPro(),
+    CdnwishCom(),
+    FlaswishCom(),
+    SfastwishCom(),
     EmturbovidExtractor(),
     Vtbe(),
     EPlayExtractor(),
