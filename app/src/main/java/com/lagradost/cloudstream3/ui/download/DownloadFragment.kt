@@ -411,7 +411,7 @@ class SwipeToDeleteCallback(private val adapter: DownloadHeaderAdapter) : ItemTo
 
         if (dX <= -swipeDistance && !isCurrentlyActive) {
             recyclerView.setOnTouchListener { _, event ->
-                if (event.action == MotionEvent.ACTION_DOWN) {
+                if (event.action == MotionEvent.ACTION_UP) {
                     val x = event.x.toInt()
                     val y = event.y.toInt()
 
