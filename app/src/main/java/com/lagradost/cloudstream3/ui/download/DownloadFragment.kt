@@ -14,6 +14,7 @@ import android.os.Build
 import android.os.Bundle
 import android.text.format.Formatter.formatShortFileSize
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
@@ -299,9 +300,6 @@ class DownloadFragment : Fragment() {
 }
 
 class SwipeToDeleteCallback(private val adapter: DownloadHeaderAdapter) : ItemTouchHelper.Callback() {
-
-    private var deleteInitiated = false
-
     override fun getMovementFlags(
         recyclerView: RecyclerView,
         viewHolder: RecyclerView.ViewHolder
@@ -309,12 +307,12 @@ class SwipeToDeleteCallback(private val adapter: DownloadHeaderAdapter) : ItemTo
         val position = viewHolder.bindingAdapterPosition
         val item = adapter.cardList[position]
         if (item.data.type.isEpisodeBased()) return 0
-        return makeMovementFlags(ItemTouchHelper.LEFT, 0)
+        return makeMovementFlags(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT)
     }
 
-    override fun isLongPressDragEnabled(): Boolean = true
+    override fun isLongPressDragEnabled(): Boolean = false
 
-    override fun isItemViewSwipeEnabled(): Boolean = false
+    override fun isItemViewSwipeEnabled(): Boolean = true
 
     override fun onMove(
         recyclerView: RecyclerView,
@@ -328,9 +326,6 @@ class SwipeToDeleteCallback(private val adapter: DownloadHeaderAdapter) : ItemTo
     ) {}
 
     private fun handleDelete(viewHolder: RecyclerView.ViewHolder) {
-        if (deleteInitiated) return
-
-        deleteInitiated = true
         val position = viewHolder.bindingAdapterPosition
         val item = adapter.cardList[position]
 
@@ -346,6 +341,7 @@ class SwipeToDeleteCallback(private val adapter: DownloadHeaderAdapter) : ItemTo
         }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onChildDraw(
         c: Canvas,
         recyclerView: RecyclerView,
@@ -355,65 +351,84 @@ class SwipeToDeleteCallback(private val adapter: DownloadHeaderAdapter) : ItemTo
         actionState: Int,
         isCurrentlyActive: Boolean
     ) {
+        if (dX == 0f) {
+            super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
+            return
+        }
+
         val deleteIcon: Drawable = ContextCompat.getDrawable(
             recyclerView.context,
             R.drawable.ic_baseline_delete_outline_24
         ) ?: return
 
         val background = ColorDrawable(Color.RED)
+        background.alpha = 160
 
         val itemView = viewHolder.itemView
 
-        val scaleFactor = 1.5f
+        val scaleFactor = 1.25f
         val iconWidth = (deleteIcon.intrinsicWidth * scaleFactor).toInt()
         val iconHeight = (deleteIcon.intrinsicHeight * scaleFactor).toInt()
 
-        val iconMargin = (itemView.height - iconHeight) / 2
         val iconTop = itemView.top + (itemView.height - iconHeight) / 2
         val iconBottom = iconTop + iconHeight
 
-        val swipeDistance = itemView.width / 4
-        val limitedDX = if (dX < -swipeDistance) -swipeDistance.toFloat() else dX
+        val maxSwipeDistance = 230f
+        val minSwipeDistance = itemView.width / 4.5f
+        val swipeDistance = if (minSwipeDistance <= maxSwipeDistance) {
+            minSwipeDistance
+        } else maxSwipeDistance
+
+        val limitedDX = if (dX < -swipeDistance) -swipeDistance else if (dX >= 0) 0f else dX
 
         if (limitedDX < 0) { // Swiping to the left
-            val iconLeft = itemView.right - iconMargin - iconWidth
-            val iconRight = itemView.right - iconMargin
+            val backgroundLeft = itemView.right + limitedDX.toInt()
+            val backgroundRight = itemView.right
+            val backgroundTop = itemView.top
+            val backgroundBottom = itemView.bottom
+
+            val iconLeft = backgroundLeft + (backgroundRight - backgroundLeft - iconWidth) / 2
+            val iconRight = iconLeft + iconWidth
             deleteIcon.setBounds(iconLeft, iconTop, iconRight, iconBottom)
 
             val path = Path()
             val rectF = RectF(
-                itemView.right + limitedDX,
-                itemView.top.toFloat(),
-                itemView.right.toFloat(),
-                itemView.bottom.toFloat()
+                backgroundLeft.toFloat(),
+                backgroundTop.toFloat(),
+                backgroundRight.toFloat(),
+                backgroundBottom.toFloat()
             )
 
             val radii = floatArrayOf(0f, 0f, 20f, 20f, 20f, 20f, 0f, 0f)
-
             path.addRoundRect(rectF, radii, Path.Direction.CW)
             c.clipPath(path)
 
-            background.setBounds(
-                itemView.right + limitedDX.toInt(),
-                itemView.top,
-                itemView.right,
-                itemView.bottom
-            )
+            background.setBounds(backgroundLeft, backgroundTop, backgroundRight, backgroundBottom)
         } else background.setBounds(0, 0, 0, 0)
 
         background.draw(c)
         deleteIcon.draw(c)
 
         if (dX <= -swipeDistance && !isCurrentlyActive) {
-            handleDelete(viewHolder)
-        } else super.onChildDraw(c, recyclerView, viewHolder, limitedDX, dY, actionState, isCurrentlyActive)
-    }
+            recyclerView.setOnTouchListener { _, event ->
+                if (event.action == MotionEvent.ACTION_DOWN) {
+                    val x = event.x.toInt()
+                    val y = event.y.toInt()
 
-    override fun clearView(
-        recyclerView: RecyclerView,
-        viewHolder: RecyclerView.ViewHolder
-    ) {
-        super.clearView(recyclerView, viewHolder)
-        deleteInitiated = false
+                    val backgroundLeft = itemView.right + limitedDX.toInt()
+                    val backgroundRight = itemView.right
+                    val backgroundTop = itemView.top
+                    val backgroundBottom = itemView.bottom
+
+                    if (x in backgroundLeft..backgroundRight && y >= backgroundTop && y <= backgroundBottom) {
+                        handleDelete(viewHolder)
+                        true
+                    } else false
+                } else false
+            }
+        } else {
+            recyclerView.setOnTouchListener(null)
+            super.onChildDraw(c, recyclerView, viewHolder, limitedDX, dY, actionState, isCurrentlyActive)
+        }
     }
 }
