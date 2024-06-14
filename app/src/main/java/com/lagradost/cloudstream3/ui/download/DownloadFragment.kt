@@ -434,7 +434,7 @@ class SwipeToDeleteCallback(private val adapter: DownloadHeaderAdapter) : ItemTo
                             val backgroundTop = swipeItemView.top
                             val backgroundBottom = swipeItemView.bottom
 
-                            if (x in backgroundLeft..backgroundRight && y in backgroundTop .. backgroundBottom) {
+                            if (x in backgroundLeft..backgroundRight && y in backgroundTop..backgroundBottom) {
                                 handleDelete(pos)
                                 handled = true
                             }
