@@ -4,23 +4,15 @@ import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.ClipboardManager
 import android.content.Context
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Path
-import android.graphics.RectF
-import android.graphics.drawable.ColorDrawable
-import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
 import android.text.format.Formatter.formatShortFileSize
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
@@ -32,7 +24,6 @@ import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.FragmentDownloadsBinding
 import com.lagradost.cloudstream3.databinding.StreamInputBinding
-import com.lagradost.cloudstream3.isEpisodeBased
 import com.lagradost.cloudstream3.isMovieType
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.mvvm.observe
@@ -46,7 +37,6 @@ import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.utils.AppUtils.loadResult
 import com.lagradost.cloudstream3.utils.Coroutines.main
-import com.lagradost.cloudstream3.utils.Coroutines.runOnMainThread
 import com.lagradost.cloudstream3.utils.DOWNLOAD_EPISODE_CACHE
 import com.lagradost.cloudstream3.utils.DataStore
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
@@ -215,7 +205,12 @@ class DownloadFragment : Fragment() {
             )
             //layoutManager = GridLayoutManager(context, 1)
 
-            val itemTouchHelper = ItemTouchHelper(SwipeToDeleteCallback(this.adapter as DownloadHeaderAdapter))
+            val itemTouchHelper = ItemTouchHelper(
+                DownloadSwipeToDeleteCallback(
+                    this.adapter as DownloadHeaderAdapter,
+                    context
+                )
+            )
             itemTouchHelper.attachToRecyclerView(binding?.downloadList)
         }
 
@@ -296,153 +291,5 @@ class DownloadFragment : Fragment() {
         downloadsViewModel.updateList(requireContext())
 
         fixPaddingStatusbar(binding?.downloadRoot)
-    }
-}
-
-class SwipeToDeleteCallback(private val adapter: DownloadHeaderAdapter) : ItemTouchHelper.Callback() {
-
-    private val swipeOpenItems: MutableSet<Int> = mutableSetOf()
-
-    override fun getMovementFlags(
-        recyclerView: RecyclerView,
-        viewHolder: RecyclerView.ViewHolder
-    ): Int {
-        val position = viewHolder.bindingAdapterPosition
-        val item = adapter.cardList[position]
-        if (item.data.type.isEpisodeBased()) return 0
-        return makeMovementFlags(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT)
-    }
-
-    override fun isLongPressDragEnabled(): Boolean = false
-
-    override fun isItemViewSwipeEnabled(): Boolean = true
-
-    override fun onMove(
-        recyclerView: RecyclerView,
-        viewHolder: RecyclerView.ViewHolder,
-        target: RecyclerView.ViewHolder
-    ): Boolean = false
-
-    override fun onSwiped(
-        viewHolder: RecyclerView.ViewHolder,
-        direction: Int
-    ) {}
-
-    private fun handleDelete(position: Int) {
-        val item = adapter.cardList[position]
-
-        runOnMainThread {
-            item.child?.let { clickEvent ->
-                handleDownloadClick(
-                    DownloadClickEvent(
-                        DOWNLOAD_ACTION_DELETE_FILE,
-                        clickEvent
-                    )
-                ) { adapter.notifyItemRemoved(position) }
-            }
-        }
-    }
-
-    @SuppressLint("ClickableViewAccessibility")
-    override fun onChildDraw(
-        c: Canvas,
-        recyclerView: RecyclerView,
-        viewHolder: RecyclerView.ViewHolder,
-        dX: Float,
-        dY: Float,
-        actionState: Int,
-        isCurrentlyActive: Boolean
-    ) {
-        if (dX == 0f) {
-            super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
-            return
-        }
-
-        val position = viewHolder.bindingAdapterPosition
-
-        val deleteIcon: Drawable = ContextCompat.getDrawable(
-            recyclerView.context,
-            R.drawable.ic_baseline_delete_outline_24
-        ) ?: return
-
-        val background = ColorDrawable(Color.RED)
-        background.alpha = 160
-
-        val itemView = viewHolder.itemView
-
-        val scaleFactor = 1.25f
-        val iconWidth = (deleteIcon.intrinsicWidth * scaleFactor).toInt()
-        val iconHeight = (deleteIcon.intrinsicHeight * scaleFactor).toInt()
-
-        val iconTop = itemView.top + (itemView.height - iconHeight) / 2
-        val iconBottom = iconTop + iconHeight
-
-        val maxSwipeDistance = 230f
-        val minSwipeDistance = itemView.width / 4.5f
-        val swipeDistance = minOf(minSwipeDistance, maxSwipeDistance)
-
-        val limitedDX = if (dX < -swipeDistance) -swipeDistance else if (dX >= 0) 0f else dX
-
-        if (limitedDX < 0) { // Swiping to the left
-            val backgroundLeft = itemView.right + limitedDX.toInt()
-            val backgroundRight = itemView.right
-            val backgroundTop = itemView.top
-            val backgroundBottom = itemView.bottom
-
-            val iconLeft = backgroundLeft + (backgroundRight - backgroundLeft - iconWidth) / 2
-            val iconRight = iconLeft + iconWidth
-            deleteIcon.setBounds(iconLeft, iconTop, iconRight, iconBottom)
-
-            val path = Path()
-            val rectF = RectF(
-                backgroundLeft.toFloat(),
-                backgroundTop.toFloat(),
-                backgroundRight.toFloat(),
-                backgroundBottom.toFloat()
-            )
-
-            val radii = floatArrayOf(0f, 0f, 20f, 20f, 20f, 20f, 0f, 0f)
-            path.addRoundRect(rectF, radii, Path.Direction.CW)
-            c.clipPath(path)
-
-            background.setBounds(backgroundLeft, backgroundTop, backgroundRight, backgroundBottom)
-        } else background.setBounds(0, 0, 0, 0)
-
-        background.draw(c)
-        deleteIcon.draw(c)
-
-        if (dX <= -swipeDistance && !isCurrentlyActive) {
-            swipeOpenItems.add(position)
-        } else {
-            swipeOpenItems.remove(position)
-            super.onChildDraw(c, recyclerView, viewHolder, limitedDX, dY, actionState, isCurrentlyActive)
-        }
-
-        if (swipeOpenItems.isNotEmpty()) {
-            recyclerView.setOnTouchListener { _, event ->
-                if (event.action == MotionEvent.ACTION_UP) {
-                    val x = event.x.toInt()
-                    val y = event.y.toInt()
-                    var handled = false
-
-                    swipeOpenItems.forEach { pos ->
-                        val vh = recyclerView.findViewHolderForAdapterPosition(pos)
-                        if (vh != null) {
-                            val swipeItemView = vh.itemView
-                            val backgroundLeft = swipeItemView.right - swipeDistance.toInt()
-                            val backgroundRight = swipeItemView.right
-                            val backgroundTop = swipeItemView.top
-                            val backgroundBottom = swipeItemView.bottom
-
-                            if (x in backgroundLeft..backgroundRight && y in backgroundTop..backgroundBottom) {
-                                handleDelete(pos)
-                                handled = true
-                            }
-                        }
-                    }
-                    handled
-                } else false
-            }
-        } else recyclerView.setOnTouchListener(null)
     }
 }
