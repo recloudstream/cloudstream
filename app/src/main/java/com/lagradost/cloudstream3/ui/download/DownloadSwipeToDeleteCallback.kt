@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.isEpisodeBased
+import com.lagradost.cloudstream3.ui.download.DownloadButtonSetup.handleDownloadClick
 import com.lagradost.cloudstream3.utils.Coroutines.runOnMainThread
 
 class DownloadSwipeToDeleteCallback(
@@ -161,7 +162,7 @@ class DownloadSwipeToDeleteCallback(
         val item = adapter.cardList[position]
         runOnMainThread {
             item.child?.let { clickEvent ->
-                DownloadButtonSetup.handleDownloadClick(
+                handleDownloadClick(
                     DownloadClickEvent(
                         DOWNLOAD_ACTION_DELETE_FILE,
                         clickEvent
