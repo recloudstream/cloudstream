@@ -66,7 +66,7 @@ class DownloadFragment : Fragment() {
     @SuppressLint("NotifyDataSetChanged")
     private fun setList(list: List<VisualDownloadHeaderCached>) {
         main {
-            (binding?.downloadList?.adapter as DownloadHeaderAdapter?)?.cardList = list
+            (binding?.downloadList?.adapter as DownloadHeaderAdapter?)?.cardList = list.toMutableList()
             binding?.downloadList?.adapter?.notifyDataSetChanged()
         }
     }
@@ -147,7 +147,7 @@ class DownloadFragment : Fragment() {
                     when (click.action) {
                         0 -> {
                             if (click.data.type.isMovieType()) {
-                                //wont be called
+                                // Won't be called
                             } else {
                                 val folder = DataStore.getFolderName(
                                     DOWNLOAD_EPISODE_CACHE,
@@ -173,25 +173,20 @@ class DownloadFragment : Fragment() {
                     if (downloadClickEvent.data !is VideoDownloadHelper.DownloadEpisodeCached) return@DownloadHeaderAdapter
                     handleDownloadClick(downloadClickEvent)
                     if (downloadClickEvent.action == DOWNLOAD_ACTION_DELETE_FILE) {
-                        context?.let { ctx ->
-                            downloadsViewModel.updateList(ctx)
+                        downloadDeleteEventListener = { id ->
+                            val list = (binding?.downloadList?.adapter as DownloadHeaderAdapter?)?.cardList
+                            if (list != null) {
+                                if (list.any { it.data.id == id }) {
+                                    context?.let { ctx ->
+                                        downloadsViewModel.updateList(ctx)
+                                    }
+                                }
+                            }
                         }
+                        downloadDeleteEventListener?.let { VideoDownloadManager.downloadDeleteEvent += it }
                     }
                 }
             )
-
-        downloadDeleteEventListener = { id ->
-            val list = (binding?.downloadList?.adapter as DownloadHeaderAdapter?)?.cardList
-            if (list != null) {
-                if (list.any { it.data.id == id }) {
-                    context?.let { ctx ->
-                        downloadsViewModel.updateList(ctx)
-                    }
-                }
-            }
-        }
-
-        downloadDeleteEventListener?.let { VideoDownloadManager.downloadDeleteEvent += it }
 
         binding?.downloadList?.apply {
             setHasFixedSize(true)
@@ -203,10 +198,9 @@ class DownloadFragment : Fragment() {
                 nextUp = FOCUS_SELF,
                 nextDown = FOCUS_SELF
             )
-            //layoutManager = GridLayoutManager(context, 1)
 
             val itemTouchHelper = ItemTouchHelper(
-                DownloadSwipeToDeleteCallback(
+                DownloadSwipeDeleteCallback(
                     this.adapter as DownloadHeaderAdapter,
                     context
                 )

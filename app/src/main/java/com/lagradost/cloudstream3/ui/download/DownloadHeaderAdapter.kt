@@ -29,7 +29,7 @@ data class DownloadHeaderClickEvent(
 )
 
 class DownloadHeaderAdapter(
-    var cardList: List<VisualDownloadHeaderCached>,
+    var cardList: MutableList<VisualDownloadHeaderCached>,
     private val clickCallback: (DownloadHeaderClickEvent) -> Unit,
     private val movieClickCallback: (DownloadClickEvent) -> Unit,
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -55,7 +55,7 @@ class DownloadHeaderAdapter(
     }
 
     override fun getItemCount(): Int {
-        return cardList.size
+        return cardList.count()
     }
 
     class DownloadHeaderViewHolder
@@ -94,7 +94,7 @@ class DownloadHeaderAdapter(
                 if (card.child != null) {
                     //downloadHeaderProgressDownloaded.visibility = View.VISIBLE
 
-                   // downloadHeaderEpisodeDownload.visibility = View.VISIBLE
+                    // downloadHeaderEpisodeDownload.visibility = View.VISIBLE
                     binding.downloadHeaderGotoChild.visibility = View.GONE
 
                     downloadButton.setDefaultClickListener(card.child, downloadHeaderInfo, movieClickCallback)
@@ -119,8 +119,8 @@ class DownloadHeaderAdapter(
                     }
                 } else {
                     downloadButton.isVisible = false
-                   // downloadHeaderProgressDownloaded.visibility = View.GONE
-                   // downloadHeaderEpisodeDownload.visibility = View.GONE
+                    // downloadHeaderProgressDownloaded.visibility = View.GONE
+                    // downloadHeaderEpisodeDownload.visibility = View.GONE
                     binding.downloadHeaderGotoChild.visibility = View.VISIBLE
 
                     try {
