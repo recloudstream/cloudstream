@@ -1,37 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <Preference
-        android:icon="@drawable/mal_logo"
-        android:key="@string/mal_key" />
+    <PreferenceCategory
+        android:title="@string/pref_category_accounts">
 
-    <Preference
-        android:icon="@drawable/ic_anilist_icon"
-        android:key="@string/anilist_key" />
+        <Preference
+            android:icon="@drawable/mal_logo"
+            android:key="@string/mal_key" />
 
-    <Preference
-        android:icon="@drawable/simkl_logo"
-        android:key="@string/simkl_key" />
+        <Preference
+            android:icon="@drawable/ic_anilist_icon"
+            android:key="@string/anilist_key" />
 
-    <Preference
-        android:icon="@drawable/open_subtitles_icon"
-        android:key="@string/opensubtitles_key" />
+        <Preference
+            android:icon="@drawable/simkl_logo"
+            android:key="@string/simkl_key" />
 
-    <Preference
-        android:icon="@drawable/subdl_logo_big"
-        android:key="@string/subdl_key" />
+        <Preference
+            android:icon="@drawable/open_subtitles_icon"
+            android:key="@string/opensubtitles_key" />
 
-    <SwitchPreference
-        android:defaultValue="false"
-        android:icon="@drawable/ic_outline_account_circle_24"
-        android:key="@string/skip_startup_account_select_key"
-        android:title="@string/skip_startup_account_select_pref" />
+        <Preference
+            android:icon="@drawable/subdl_logo_big"
+            android:key="@string/subdl_key" />
 
-    <SwitchPreferenceCompat
-        android:key="@string/biometric_key"
-        android:defaultValue="false"
-        android:summary="@string/biometric_setting_summary"
-        android:icon="@drawable/ic_fingerprint"
-        android:title="@string/biometric_setting" />
+        <SwitchPreference
+            android:defaultValue="false"
+            android:icon="@drawable/ic_outline_account_circle_24"
+            android:key="@string/skip_startup_account_select_key"
+            android:title="@string/skip_startup_account_select_pref" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/pref_category_security"
+        app:key="@string/pref_category_security_key">
+
+        <SwitchPreferenceCompat
+            android:key="@string/biometric_key"
+            android:defaultValue="false"
+            android:summary="@string/biometric_setting_summary"
+            android:icon="@drawable/ic_fingerprint"
+            android:title="@string/biometric_setting" />
+
+    </PreferenceCategory>
 
 </PreferenceScreen>
