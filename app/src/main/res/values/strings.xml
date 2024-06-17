@@ -96,6 +96,7 @@
     <string name="home_next_random_img_des">Next Random</string>
     <string name="episode_play_img_des" translatable="false">@string/play_episode</string>
     <string name="go_back_img_des">Go back</string>
+    <string name="play_from_beginning_img_des">Play from the Beginning</string>
     <string name="change_providers_img_des" translatable="false">@string/home_change_provider_img_des</string>
     <string name="home_change_provider_img_des">Change Provider</string>
     <string name="preview_background_img_des">Preview Background</string>
