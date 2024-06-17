@@ -243,7 +243,6 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
         val playerSourceMove = if (isShowing) 0f else -50.toPx.toFloat()
 
-
         playerBinding?.apply {
             playerOpenSource.let {
                 ObjectAnimator.ofFloat(it, "translationY", playerSourceMove).apply {
@@ -705,7 +704,6 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
             //player_media_route_button?.isClickable = !isGone
             playerGoBackHolder.isGone = isGone
             playerSourcesBtt.isGone = isGone
-            playerSkipEpisode.isClickable = !isGone
         }
     }
 
@@ -1224,7 +1222,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
         // if nothing has loaded these buttons should not be visible
         playerBinding?.apply {
-            playerSkipEpisode.isVisible = false
+            playerGoForward.isVisible = false
             playerTracksBtt.isVisible = false
             playerSkipOp.isVisible = false
             shadowOverlay.isVisible = false
@@ -1296,6 +1294,10 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
                 PlayerEventType.SeekBack -> {
                     player.handleEvent(CSPlayerEvent.SeekBack)
+                }
+
+                PlayerEventType.Restart -> {
+                    player.handleEvent(CSPlayerEvent.Restart)
                 }
 
                 PlayerEventType.ToggleMute -> {
@@ -1457,9 +1459,14 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                 skipOp()
             }
 
-            playerSkipEpisode.setOnClickListener {
+            playerGoForward.setOnClickListener {
                 autoHide()
                 player.handleEvent(CSPlayerEvent.NextEpisode)
+            }
+
+            playerRestart.setOnClickListener {
+                autoHide()
+                player.handleEvent(CSPlayerEvent.Restart)
             }
 
             playerLock.setOnClickListener {
