@@ -441,6 +441,9 @@
     <string name="pref_category_android_tv_key" translatable="false" >pref_category_android_tv_key</string>
     <string name="pref_category_gestures">Gestures</string>
     <string name="pref_category_gestures_key" translatable="false">pref_category_gestures_key</string>
+    <string name="pref_category_security">Security</string>
+    <string name="pref_category_security_key" translatable="false">pref_category_security_key</string>
+    <string name="pref_category_accounts">Accounts</string>
     <string name="pref_category_player_features">Player features</string>
     <string name="pref_category_subtitles">Subtitles</string>
     <string name="pref_category_player_layout">Layout</string>

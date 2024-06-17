@@ -299,6 +299,9 @@ class SettingsAccount : PreferenceFragmentCompat(), BiometricAuthenticator.Biome
         hideKeyboard()
         setPreferencesFromResource(R.xml.settings_account, rootKey)
 
+        //Hides the security  category on TV as it's only Biometric for now
+        getPref(R.string.pref_category_security_key)?.hideOn(TV or EMULATOR)
+
         getPref(R.string.biometric_key)?.hideOn(TV or EMULATOR)?.setOnPreferenceClickListener {
             val ctx = context ?: return@setOnPreferenceClickListener false
 
@@ -328,8 +331,7 @@ class SettingsAccount : PreferenceFragmentCompat(), BiometricAuthenticator.Biome
 
         for ((key, api) in syncApis) {
             getPref(key)?.apply {
-                title =
-                    getString(R.string.login_format).format(api.name, getString(R.string.account))
+                title = api.name
                 setOnPreferenceClickListener {
                     val info = api.loginInfo()
                     if (info != null) {
