@@ -1096,7 +1096,8 @@ class GeneratorPlayer : FullScreenPlayer() {
         }
 
         playerBinding?.playerSkipOp?.isVisible = isOpVisible
-        playerBinding?.playerSkipEpisode?.isVisible =
+
+        playerBinding?.playerGoForward?.isVisible =
             !isOpVisible && viewModel.hasNextEpisode() == true
 
         if (percentage >= PRELOAD_NEXT_EPISODE_PERCENTAGE) {
@@ -1253,7 +1254,7 @@ class GeneratorPlayer : FullScreenPlayer() {
     fun setPlayerDimen(widthHeight: Pair<Int, Int>?) {
         val extra = if (widthHeight != null) {
             val (width, height) = widthHeight
-            "${width}x${height}"
+            "- ${width}x${height}"
         } else {
             ""
         }
@@ -1264,7 +1265,7 @@ class GeneratorPlayer : FullScreenPlayer() {
             0 -> ""
             1 -> extra
             2 -> source
-            3 -> "$source - $extra"
+            3 -> "$source $extra"
             else -> ""
         }
         playerBinding?.playerVideoTitleRez?.apply {
