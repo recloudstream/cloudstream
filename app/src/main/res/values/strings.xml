@@ -441,7 +441,12 @@
     <string name="pref_category_actions">Actions</string>
     <string name="pref_category_cache">Cache</string>
     <string name="pref_category_android_tv">Android TV</string>
+    <string name="pref_category_android_tv_key" translatable="false" >pref_category_android_tv_key</string>
     <string name="pref_category_gestures">Gestures</string>
+    <string name="pref_category_gestures_key" translatable="false">pref_category_gestures_key</string>
+    <string name="pref_category_security">Security</string>
+    <string name="pref_category_security_key" translatable="false">pref_category_security_key</string>
+    <string name="pref_category_accounts">Accounts</string>
     <string name="pref_category_player_features">Player features</string>
     <string name="pref_category_subtitles">Subtitles</string>
     <string name="pref_category_player_layout">Layout</string>
@@ -474,6 +479,7 @@
     <string name="simkl_key" translatable="false">simkl_key</string>
     <string name="mal_key" translatable="false">mal_key</string>
     <string name="opensubtitles_key" translatable="false">opensubtitles_key</string>
+    <string name="subdl_key" translatable="false">subdl_key</string>
     <string name="nginx_key" translatable="false">nginx_key</string>
     <string name="example_password">password123</string>
     <string name="example_username">Username</string>
@@ -775,4 +781,5 @@
     <string name="biometric_prompt_description">After a few failed attempts, the prompt will close. Simply restart the app to try again.</string>
     <string name="biometric_warning">Your CloudStream data has been backed up now. Although the possibility of this is very low, all devices can behave differently. In the rare case, that you get locked out from accessing the app, clear the app data completely and restore from a backup. We are very sorry for any inconvenience arising from this.</string>
     <string name="reset_btn">Reset</string>
+    <string name="cs3wiki">CloudStream Wiki</string>
 </resources>

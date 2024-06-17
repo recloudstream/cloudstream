@@ -26,6 +26,7 @@ import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
 import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
+import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.getPref
 import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.UIHelper
 import com.lagradost.cloudstream3.utils.UIHelper.clipboardHelper
@@ -51,6 +52,30 @@ class SettingsFragment : Fragment() {
                 logError(e)
                 null
             }
+        }
+
+        /**
+         * Hide many Preferences on selected layouts.
+         **/
+        fun PreferenceFragmentCompat?.hidePrefs(ids: List<Int>, layoutFlags: Int) {
+            if (this == null) return
+
+            try {
+                ids.forEach {
+                    getPref(it)?.isVisible = !isLayout(layoutFlags)
+                }
+            } catch (e: Exception) {
+                logError(e)
+            }
+        }
+
+        /**
+         * Hide the Preference on selected layouts.
+         **/
+        fun Preference?.hideOn(layoutFlags: Int): Preference? {
+            if (this == null) return null
+            this.isVisible = !isLayout(layoutFlags)
+            return this
         }
 
         /**

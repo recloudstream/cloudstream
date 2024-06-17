@@ -27,6 +27,7 @@ import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.aniList
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.malApi
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.openSubtitlesApi
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.simklApi
+import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.subDlApi
 import com.lagradost.cloudstream3.syncproviders.AuthAPI
 import com.lagradost.cloudstream3.syncproviders.InAppAuthAPI
 import com.lagradost.cloudstream3.syncproviders.OAuth2API
@@ -35,6 +36,7 @@ import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.getPref
+import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.hideOn
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setPaddingBottom
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setToolBarScrollFlags
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setUpToolbar
@@ -297,10 +299,10 @@ class SettingsAccount : PreferenceFragmentCompat(), BiometricCallback {
         hideKeyboard()
         setPreferencesFromResource(R.xml.settings_account, rootKey)
 
-        // hide preference on tvs and emulators
-        getPref(R.string.biometric_key)?.isEnabled = isLayout(PHONE)
+        //Hides the security  category on TV as it's only Biometric for now
+        getPref(R.string.pref_category_security_key)?.hideOn(TV or EMULATOR)
 
-        getPref(R.string.biometric_key)?.setOnPreferenceClickListener {
+        getPref(R.string.biometric_key)?.hideOn(TV or EMULATOR)?.setOnPreferenceClickListener {
             val ctx = context ?: return@setOnPreferenceClickListener false
 
             if (deviceHasPasswordPinLock(ctx)) {
@@ -324,12 +326,12 @@ class SettingsAccount : PreferenceFragmentCompat(), BiometricCallback {
                 R.string.anilist_key to aniListApi,
                 R.string.simkl_key to simklApi,
                 R.string.opensubtitles_key to openSubtitlesApi,
+                R.string.subdl_key to subDlApi,
             )
 
         for ((key, api) in syncApis) {
             getPref(key)?.apply {
-                title =
-                    getString(R.string.login_format).format(api.name, getString(R.string.account))
+                title = api.name
                 setOnPreferenceClickListener {
                     val info = api.loginInfo()
                     if (info != null) {

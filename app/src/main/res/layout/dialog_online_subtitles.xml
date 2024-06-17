@@ -107,6 +107,7 @@
                         android:layout_margin="10dp"
                         android:background="?selectableItemBackgroundBorderless"
                         android:contentDescription="@string/change_providers_img_des"
+                        android:focusable="true"
                         android:nextFocusLeft="@id/year_btt"
                         android:nextFocusRight="@id/main_search"
                         android:nextFocusUp="@id/nav_rail_view"

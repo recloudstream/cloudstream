@@ -17,7 +17,7 @@ import com.lagradost.safefile.SafeFile
 const val DTAG = "PlayerActivity"
 
 class DownloadedPlayerActivity : AppCompatActivity() {
-    override fun dispatchKeyEvent(event: KeyEvent?): Boolean {
+    override fun dispatchKeyEvent(event: KeyEvent): Boolean {
         CommonActivity.dispatchKeyEvent(this, event)?.let {
             return it
         }

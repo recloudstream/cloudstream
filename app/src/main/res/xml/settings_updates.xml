@@ -1,13 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <SwitchPreference
-        android:defaultValue="true"
-        android:icon="@drawable/ic_baseline_bug_report_24"
-        android:key="acra.disable"
-        android:summaryOff="@string/bug_report_settings_off"
-        android:summaryOn="@string/bug_report_settings_on"
-        android:title="@string/pref_disable_acra" />
 
     <PreferenceCategory
         android:title="@string/pref_category_app_updates">
@@ -80,5 +73,12 @@
             android:icon="@drawable/ic_baseline_construction_24"
             android:title="@string/redo_setup_process"
             app:key="@string/redo_setup_key" />
+        <SwitchPreference
+            android:defaultValue="true"
+            android:icon="@drawable/ic_baseline_bug_report_24"
+            android:key="acra.disable"
+            android:summaryOff="@string/bug_report_settings_off"
+            android:summaryOn="@string/bug_report_settings_on"
+            android:title="@string/pref_disable_acra" />
     </PreferenceCategory>
 </PreferenceScreen>
