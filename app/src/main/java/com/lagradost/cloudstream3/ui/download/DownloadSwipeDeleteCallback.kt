@@ -82,6 +82,15 @@ class DownloadSwipeDeleteCallback(
         val swipeDistance = minOf(minSwipeDistance, maxSwipeDistance)
         val limitedDX = if (dX < -swipeDistance) -swipeDistance else if (dX >= 0) 0f else dX
 
+        val position = viewHolder.bindingAdapterPosition
+
+        if (swipeOpenItems.contains(position)) {
+            // If the item is already swiped we need to restore that
+            // state so that you can delete items without the state
+            // resetting, making it easier to quickly delete multiple items.
+            super.onChildDraw(c, recyclerView, viewHolder, limitedDX, dY, actionState, isCurrentlyActive)
+        }
+
         if (limitedDX < 0) { // Swiping to the left
             val icon = deleteIcon ?: return
 
@@ -126,11 +135,11 @@ class DownloadSwipeDeleteCallback(
             icon.draw(c)
         } else background.setBounds(0, 0, 0, 0)
 
-        if (dX <= -swipeDistance && !isCurrentlyActive) {
-            swipeOpenItems.add(viewHolder.bindingAdapterPosition)
+        if (dX <= -swipeDistance && !isCurrentlyActive && adapter.cardList.getOrNull(position) != null) {
+            swipeOpenItems.add(position)
             setRecyclerViewTouchListener(recyclerView, swipeDistance)
         } else {
-            swipeOpenItems.remove(viewHolder.bindingAdapterPosition)
+            swipeOpenItems.remove(position)
             if (swipeOpenItems.isEmpty()) removeRecyclerViewTouchListener(recyclerView)
             super.onChildDraw(c, recyclerView, viewHolder, limitedDX, dY, actionState, isCurrentlyActive)
         }
@@ -153,9 +162,7 @@ class DownloadSwipeDeleteCallback(
             if (event.action == MotionEvent.ACTION_UP) {
                 val x = event.x.toInt()
                 val y = event.y.toInt()
-                // We use toList() to avoid a very rare edge case
-                // where it gives concurrent modification errors
-                swipeOpenItems.toList().forEach { pos ->
+                swipeOpenItems.forEach { pos ->
                     val vh = recyclerView.findViewHolderForAdapterPosition(pos)
                     vh?.itemView?.let { swipeItemView ->
                         val backgroundLeft: Int = swipeItemView.right - swipeDistance.toInt()
@@ -163,7 +170,7 @@ class DownloadSwipeDeleteCallback(
                         val backgroundYRange: IntRange = swipeItemView.top..swipeItemView.bottom
                         if (x in backgroundXRange && y in backgroundYRange) {
                             handleDeleteAction(pos)
-                            addDownloadDeleteEvent(pos, recyclerView)
+                            addDownloadDeleteEvent(pos)
                             return@setOnTouchListener true
                         }
                     }
@@ -200,10 +207,7 @@ class DownloadSwipeDeleteCallback(
         }
     }
 
-    private fun addDownloadDeleteEvent(
-        position: Int,
-        recyclerView: RecyclerView
-    ) {
+    private fun addDownloadDeleteEvent(position: Int) {
         // Clear any old events as we don't want to get
         // concurrent modification errors
         clearDownloadDeleteEvent()
@@ -221,29 +225,30 @@ class DownloadSwipeDeleteCallback(
                  * and performant solution to it since we do have access to
                  * the position we need to target here.
                  */
-                adapter.cardList.removeAt(position)
+                if (list.getOrNull(position) != null) {
+                    adapter.cardList.removeAt(position)
+                }
                 adapter.notifyItemRemoved(position)
-                adapter.notifyItemRangeChanged(
-                    position,
-                    adapter.cardList.size
-                ) // rebind to new positions
-
-                /**
-                 * we need to clear the listener now since nothing should be open
-                 * and it was closed outside of on onChildDraw so we don't
-                 * want to have random unexpected touch events.
-                 */
-                removeRecyclerViewTouchListener(recyclerView)
             }
         }
 
-        downloadDeleteEventListener?.let { downloadDeleteEvent += it }
+        // We use synchronized to ensure we are thread-safe and
+        // to avoid potential race conditions that may cause
+        // concurrent modification errors
+        synchronized(this) {
+            downloadDeleteEventListener?.let { downloadDeleteEvent += it }
+        }
     }
 
     private fun clearDownloadDeleteEvent() {
-        if (downloadDeleteEventListener != null) {
-            downloadDeleteEvent -= downloadDeleteEventListener!!
-            downloadDeleteEventListener = null
+        // We use synchronized to ensure we are thread-safe and
+        // to avoid potential race conditions that may cause
+        // concurrent modification errors
+        synchronized(this) {
+            if (downloadDeleteEventListener != null) {
+                downloadDeleteEvent -= downloadDeleteEventListener!!
+                downloadDeleteEventListener = null
+            }
         }
     }
 }

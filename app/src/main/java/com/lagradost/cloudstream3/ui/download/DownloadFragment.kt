@@ -33,6 +33,8 @@ import com.lagradost.cloudstream3.ui.player.GeneratorPlayer
 import com.lagradost.cloudstream3.ui.player.LinkGenerator
 import com.lagradost.cloudstream3.ui.result.FOCUS_SELF
 import com.lagradost.cloudstream3.ui.result.setLinearListLayout
+import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
+import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.utils.AppUtils.loadResult
@@ -199,13 +201,15 @@ class DownloadFragment : Fragment() {
                 nextDown = FOCUS_SELF
             )
 
-            val itemTouchHelper = ItemTouchHelper(
-                DownloadSwipeDeleteCallback(
-                    this.adapter as DownloadHeaderAdapter,
-                    context
+            if (isLayout(PHONE or EMULATOR)) {
+                val itemTouchHelper = ItemTouchHelper(
+                    DownloadSwipeDeleteCallback(
+                        this.adapter as DownloadHeaderAdapter,
+                        context
+                    )
                 )
-            )
-            itemTouchHelper.attachToRecyclerView(binding?.downloadList)
+                itemTouchHelper.attachToRecyclerView(binding?.downloadList)
+            }
         }
 
         // Should be visible in emulator layout
