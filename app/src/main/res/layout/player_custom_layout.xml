@@ -650,7 +650,7 @@
                                 android:nextFocusLeft="@id/player_sources_btt"
                                 android:nextFocusRight="@id/player_skip_op"
                                 android:text="@string/tracks"
-                                app:icon="@drawable/ic_baseline_playlist_play_24" />
+                                app:icon="@drawable/ic_baseline_equalizer_24" />
 
                             <com.google.android.material.button.MaterialButton
                                 android:id="@+id/player_skip_op"
