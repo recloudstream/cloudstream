@@ -104,7 +104,6 @@
     <string name="chromecast_subtitles_settings">Chromecast ترجمہ</string>
     <string name="chromecast_subtitles_settings_des">Chromecast ترجمہ کی ترتیبات</string>
     <string name="eigengraumode_settings">پلیئر کی رفتار</string>
-    <string name="eigengraumode_settings_des">پلیئر میں رفتار کا اختیار شامل</string>
     <string name="swipe_to_seek_settings">ویڈیو کو آگے سوائپ کریں</string>
     <string name="swipe_to_change_settings">ترتیبات کو تبدیل کرنے کے لیے سوائپ کریں</string>
     <string name="autoplay_next_settings">اگلا ایپی سوڈ خود بخود چلائیں</string>
@@ -293,7 +292,7 @@
     <string name="pref_category_ui_features">خصوصیات</string>
     <string name="category_general">عمومی</string>
     <string name="random_button_settings">بے ترتیب بٹن</string>
-    <string name="random_button_settings_desc">ہوم پیج پر بے ترتیب بٹن نمایش کریں</string>
+    <string name="random_button_settings_desc">ہوم پیج پر بے ترتیب بٹن نمایاں کریں</string>
     <string name="provider_lang_settings">فراہم کنندہ کی زبانیں</string>
     <string name="app_layout">ایپ لے آؤٹ</string>
     <string name="preferred_media_settings">ترجیحی میڈیا</string>
@@ -551,4 +550,42 @@
 \nاس کا مجموعی ویڈیو پرائیورٹی 10 ہوتی ہے۔
 \n
 \nنوٹ: اگر مجموعہ 10 یا اس سے زیادہ ہو تو پلیر وہ لنک لوڈ کرنے کو خود بخود چھوڑ دے گا!</string>
+    <string name="favorites_list_name">پسندیدہ</string>
+    <string name="favorite_added">%s کو پسندیدہ میں شامل کیا گیا</string>
+    <string name="favorite_removed">%s کو پسندیدہ سے ختم کیا گیا</string>
+    <string name="action_remove_from_favorites">پسندیدہ سے ختم کریں</string>
+    <string name="enter_pin">پن ڈالیں</string>
+    <string name="action_add_to_favorites">پسندیدہ میں شامل کریں</string>
+    <string name="enter_pin_with_name" formatted="true">%s کے لیے PIN درج کریں</string>
+    <string name="select_an_account">ایک اکاؤنٹ منتخب کریں</string>
+    <string name="manage_accounts">اکاؤنٹس کا نظم کریں</string>
+    <string name="edit_account">اکاؤنٹ میں ترمیم کریں</string>
+    <string name="rotate_video">گھمائیں</string>
+    <string name="rotate_video_desc">اسکرین کی سمت بندی کے لیے ٹوگل بٹن دکھائیں</string>
+    <string name="backup_frequency">بیک اپ فریکوئنسی</string>
+    <string name="pin">پن</string>
+    <string name="pin_error_incorrect">غلط پن۔ دوبارہ کوشش کریں۔</string>
+    <string name="pin_error_length">پن چار حروف کا ہونا چاہیے</string>
+    <string name="enter_current_pin">موجودہ پن درج کریں</string>
+    <string name="use_default_account">ڈیفالٹ اکاؤنٹ استعمال کریں</string>
+    <string name="logged_account" formatted="true">%s کے بطور لاگ ان ہوا</string>
+    <string name="links_reloaded_toast">لنکس دوبارہ لوڈ ہو گئے</string>
+    <string name="action_subscribe">سبسکرائب</string>
+    <string name="action_unsubscribe">ان سبسکرائب</string>
+    <string name="duplicate_title">ممکنہ ڈپلیکیٹ ملا</string>
+    <string name="duplicate_add">جمع کریں</string>
+    <string name="duplicate_replace_all">سب کو بدل دیں</string>
+    <string name="duplicate_replace">بدل دیں</string>
+    <string name="duplicate_message_multiple" formatted="true">آپ کی لائبریری میں ممکنہ ڈپلیکیٹ آئٹمز مل گئے ہیں:
+\n
+\n%s
+\n
+\nکیا آپ بہرحال اس آئٹم کو شامل کرنا چاہیں گے، موجودہ کو تبدیل کرنا چاہیں گے، یا کارروائی کو منسوخ کریں گے؟</string>
+    <string name="duplicate_message_single" formatted="true">ایسا معلوم ہوتا ہے کہ آپ کی لائبریری میں ممکنہ طور پر ڈپلیکیٹ آئٹم پہلے سے موجود ہے: \'%s۔\'
+\n
+\nکیا آپ بہرحال اس آئٹم کو شامل کرنا چاہیں گے، موجودہ کو تبدیل کرنا چاہیں گے، یا کارروائی کو منسوخ کریں گے؟</string>
+    <string name="lock_profile">پروفائل لاک کریں</string>
+    <string name="skip_startup_account_select_pref">آغاز پر اکاؤنٹ کا انتخاب چھوڑ دیں</string>
+    <string name="auto_rotate_video_desc">ویڈیو واقفیت کی بنیاد پر اسکرین کی سمت بندی کی خودکار سوئچنگ کو فعال کریں</string>
+    <string name="auto_rotate_video">خود بخود گھومنا</string>
 </resources>

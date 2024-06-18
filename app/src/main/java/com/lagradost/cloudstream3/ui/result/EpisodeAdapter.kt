@@ -9,18 +9,24 @@ import androidx.core.view.isVisible
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.lagradost.cloudstream3.APIHolder.unixTimeMS
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.ResultEpisodeBinding
 import com.lagradost.cloudstream3.databinding.ResultEpisodeLargeBinding
+import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.secondsToReadable
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_ACTION_DOWNLOAD
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_ACTION_LONG_CLICK
 import com.lagradost.cloudstream3.ui.download.DownloadClickEvent
-import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTrueTvSettings
-import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
+import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
+import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
+import com.lagradost.cloudstream3.ui.settings.Globals.TV
+import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.utils.AppUtils.html
 import com.lagradost.cloudstream3.utils.UIHelper.setImage
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import com.lagradost.cloudstream3.utils.VideoDownloadHelper
+import java.text.DateFormat
+import java.text.SimpleDateFormat
 import java.util.*
 
 const val ACTION_PLAY_EPISODE_IN_PLAYER = 1
@@ -49,6 +55,8 @@ const val ACTION_PLAY_EPISODE_IN_WEB_VIDEO = 16
 const val ACTION_PLAY_EPISODE_IN_MPV = 17
 
 const val ACTION_MARK_AS_WATCHED = 18
+const val ACTION_FCAST = 19
+
 const val TV_EP_SIZE_LARGE = 400
 const val TV_EP_SIZE_SMALL = 300
 data class EpisodeClickEvent(val action: Int, val data: ResultEpisode)
@@ -102,7 +110,7 @@ class EpisodeAdapter(
 
     override fun getItemViewType(position: Int): Int {
         val item = getItem(position)
-        return if (item.poster.isNullOrBlank()) 0 else 1
+        return if (item.poster.isNullOrBlank() && item.description.isNullOrBlank()) 0 else 1
     }
 
 
@@ -172,15 +180,13 @@ class EpisodeAdapter(
         @SuppressLint("SetTextI18n")
         fun bind(card: ResultEpisode) {
             localCard = card
-
             val setWidth =
-                if (isTvSettings()) TV_EP_SIZE_LARGE.toPx else ViewGroup.LayoutParams.MATCH_PARENT
+                if (isLayout(TV or EMULATOR)) TV_EP_SIZE_LARGE.toPx else ViewGroup.LayoutParams.MATCH_PARENT
 
             binding.episodeLinHolder.layoutParams.width = setWidth
             binding.episodeHolderLarge.layoutParams.width = setWidth
             binding.episodeHolder.layoutParams.width = setWidth
 
-            val isTrueTv = isTrueTvSettings()
 
             binding.apply {
                 downloadButton.isVisible = hasDownloadSupport
@@ -249,7 +255,7 @@ class EpisodeAdapter(
 
                     var isExpanded = false
                     setOnClickListener {
-                        if (isTrueTv) {
+                        if (isLayout(TV)) {
                             clickCallback.invoke(EpisodeClickEvent(ACTION_SHOW_DESCRIPTION, card))
                         } else {
                             isExpanded = !isExpanded
@@ -260,7 +266,34 @@ class EpisodeAdapter(
                     }
                 }
 
-                if (!isTrueTv) {
+                if (card.airDate != null) {
+                    val isUpcoming = unixTimeMS < card.airDate
+
+                    if (isUpcoming) {
+                        episodePlayIcon.isVisible = false
+                        episodeUpcomingIcon.isVisible = !episodePoster.isVisible
+                        episodeDate.setText(
+                            txt(
+                                R.string.episode_upcoming_format,
+                                secondsToReadable(card.airDate.minus(unixTimeMS).div(1000).toInt(), "")
+                            )
+                        )
+                    } else {
+                        episodeUpcomingIcon.isVisible = false
+
+                        val formattedAirDate = SimpleDateFormat.getDateInstance(
+                            DateFormat.LONG,
+                            Locale.getDefault()
+                        ).apply {
+                        }.format(Date(card.airDate))
+
+                        episodeDate.setText(txt(formattedAirDate))
+                    }
+                } else {
+                    episodeDate.isVisible = false
+                }
+
+                if (isLayout(EMULATOR or PHONE)) {
                     episodePoster.setOnClickListener {
                         clickCallback.invoke(EpisodeClickEvent(ACTION_CLICK_DEFAULT, card))
                     }
@@ -271,11 +304,12 @@ class EpisodeAdapter(
                     }
                 }
             }
+
             itemView.setOnClickListener {
                 clickCallback.invoke(EpisodeClickEvent(ACTION_CLICK_DEFAULT, card))
             }
 
-            if (isTrueTv) {
+            if (isLayout(TV)) {
                 itemView.isFocusable = true
                 itemView.isFocusableInTouchMode = true
                 //itemView.touchscreenBlocksFocus = false
@@ -300,11 +334,9 @@ class EpisodeAdapter(
     ) : RecyclerView.ViewHolder(binding.root) {
         @SuppressLint("SetTextI18n")
         fun bind(card: ResultEpisode) {
-            val isTrueTv = isTrueTvSettings()
-
             binding.episodeHolder.layoutParams.apply {
                 width =
-                    if (isTvSettings()) TV_EP_SIZE_SMALL.toPx else ViewGroup.LayoutParams.MATCH_PARENT
+                    if (isLayout(TV or EMULATOR)) TV_EP_SIZE_SMALL.toPx else ViewGroup.LayoutParams.MATCH_PARENT
             }
 
             binding.apply {
@@ -361,7 +393,7 @@ class EpisodeAdapter(
                     clickCallback.invoke(EpisodeClickEvent(ACTION_CLICK_DEFAULT, card))
                 }
 
-                if (isTrueTv) {
+                if (isLayout(TV)) {
                     itemView.isFocusable = true
                     itemView.isFocusableInTouchMode = true
                     //itemView.touchscreenBlocksFocus = false

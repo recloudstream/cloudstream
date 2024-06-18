@@ -1,5 +1,6 @@
 import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
 import org.jetbrains.dokka.gradle.DokkaTask
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.archivesName
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.ByteArrayOutputStream
 import java.net.URL
@@ -15,6 +16,7 @@ plugins {
 
 val tmpFilePath = System.getProperty("user.home") + "/work/_temp/keystore/"
 val prereleaseStoreFile: File? = File(tmpFilePath).listFiles()?.first()
+var isLibraryDebug = false
 
 fun String.execute() = ByteArrayOutputStream().use { baot ->
     if (project.exec {
@@ -71,7 +73,7 @@ android {
         targetSdk = 33 /* Android 14 is Fu*ked
         ^ https://developer.android.com/about/versions/14/behavior-changes-14#safer-dynamic-code-loading*/
         versionCode = 63
-        versionName = "4.3.1"
+        versionName = "4.3.2"
 
         resValue("string", "app_version", "${defaultConfig.versionName}${versionNameSuffix ?: ""}")
         resValue("string", "commit_hash", "git rev-parse --short HEAD".execute() ?: "")
@@ -81,9 +83,9 @@ android {
         val localProperties = gradleLocalProperties(rootDir)
 
         buildConfigField(
-            "String",
-            "BUILDDATE",
-            "new java.text.SimpleDateFormat(\"yyyy-MM-dd HH:mm\").format(new java.util.Date(" + System.currentTimeMillis() + "L));"
+            "long",
+            "BUILD_DATE",
+            "${System.currentTimeMillis()}"
         )
         buildConfigField(
             "String",
@@ -114,6 +116,7 @@ android {
             )
         }
         debug {
+            isLibraryDebug = true
             isDebuggable = true
             applicationIdSuffix = ".debug"
             proguardFiles(
@@ -175,24 +178,24 @@ repositories {
 dependencies {
     // Testing
     testImplementation("junit:junit:4.13.2")
-    testImplementation("org.json:json:20231013")
+    testImplementation("org.json:json:20240303")
     androidTestImplementation("androidx.test:core")
     implementation("androidx.test.ext:junit-ktx:1.1.5")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
 
     // Android Core & Lifecycle
-    implementation("androidx.core:core-ktx:1.12.0")
+    implementation("androidx.core:core-ktx:1.13.1")
     implementation("androidx.appcompat:appcompat:1.6.1")
-    implementation("androidx.navigation:navigation-ui-ktx:2.7.6")
+    implementation("androidx.navigation:navigation-ui-ktx:2.7.7")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.7.0")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0")
-    implementation("androidx.navigation:navigation-fragment-ktx:2.7.6")
+    implementation("androidx.navigation:navigation-fragment-ktx:2.7.7")
 
     // Design & UI
     implementation("jp.wasabeef:glide-transformations:4.3.0")
     implementation("androidx.preference:preference-ktx:1.2.1")
-    implementation("com.google.android.material:material:1.10.0")
+    implementation("com.google.android.material:material:1.12.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
 
@@ -203,7 +206,7 @@ dependencies {
 
     // For KSP -> Official Annotation Processors are Not Yet Supported for KSP
     ksp("dev.zacsweers.autoservice:auto-service-ksp:1.1.0")
-    implementation("com.google.guava:guava:32.1.3-android")
+    implementation("com.google.guava:guava:33.2.0-android")
     implementation("dev.zacsweers.autoservice:auto-service-ksp:1.1.0")
 
     // Media 3 (ExoPlayer)
@@ -220,7 +223,7 @@ dependencies {
     // PlayBack
     implementation("com.jaredrummler:colorpicker:1.1.0") // Subtitle Color Picker
     implementation("com.github.recloudstream:media-ffmpeg:1.1.0") // Custom FF-MPEG Lib for Audio Codecs
-    implementation("com.github.teamnewpipe:NewPipeExtractor:6dc25f7") /* For Trailers
+    implementation("com.github.teamnewpipe:NewPipeExtractor:fafd471") /* For Trailers
     ^ Update to Latest Commits if Trailers Misbehave, github.com/TeamNewPipe/NewPipeExtractor/commits/dev */
     implementation("com.github.albfernandez:juniversalchardet:2.4.0") // Subtitle Decoding
 
@@ -237,9 +240,7 @@ dependencies {
     implementation("com.github.rubensousa:previewseekbar-media3:1.1.1.0") // SeekBar Preview
 
     // Extensions & Other Libs
-    implementation("org.mozilla:rhino:1.7.13") /* run JavaScript
-    ^ Don't Bump RhinoJS to 1.7.14,`NoClassDefFoundError` Occurs and Trailers won't play (even with Desugaring)
-     NewPipeExtractor Issue */
+    implementation("org.mozilla:rhino:1.7.15") // run JavaScript
     implementation("me.xdrop:fuzzywuzzy:1.4.0") // Library/Ext Searching with Levenshtein Distance
     implementation("com.github.LagradOst:SafeFile:0.0.6") // To Prevent the URI File Fu*kery
     implementation("org.conscrypt:conscrypt-android:2.5.2") // To Fix SSL Fu*kery on Android 9
@@ -273,19 +274,37 @@ dependencies {
     implementation("androidx.work:work-runtime:2.9.0")
     implementation("androidx.work:work-runtime-ktx:2.9.0")
     implementation("com.github.Blatzar:NiceHttp:0.4.11") // HTTP Lib
+
+    implementation(project(":library") {
+        this.extra.set("isDebug", isLibraryDebug)
+    })
 }
 
-
-tasks.register("androidSourcesJar", Jar::class) {
+tasks.register<Jar>("androidSourcesJar") {
     archiveClassifier.set("sources")
     from(android.sourceSets.getByName("main").java.srcDirs) // Full Sources
 }
 
-// For GradLew Plugin
-tasks.register("makeJar", Copy::class) {
-    from("build/intermediates/compile_app_classes_jar/prereleaseDebug")
-    into("build")
-    include("classes.jar")
+tasks.register<Copy>("copyJar") {
+    from(
+        "build/intermediates/compile_app_classes_jar/prereleaseDebug",
+        "../library/build/libs"
+    )
+    into("build/app-classes")
+    include("classes.jar", "library-jvm*.jar")
+    // Remove the version
+    rename("library-jvm.*.jar", "library-jvm.jar")
+}
+
+// Merge the app classes and the library classes into classes.jar
+tasks.register<Jar>("makeJar") {
+    dependsOn(tasks.getByName("copyJar"))
+    from(
+        zipTree("build/app-classes/classes.jar"),
+        zipTree("build/app-classes/library-jvm.jar")
+    )
+    destinationDirectory.set(layout.buildDirectory)
+    archivesName = "classes"
 }
 
 tasks.withType<KotlinCompile> {

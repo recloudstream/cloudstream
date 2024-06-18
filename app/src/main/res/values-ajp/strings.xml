@@ -68,8 +68,8 @@
     <string name="provider_info_meta">هيدا المصدر مش عاطي \"ميتا داتا\". إذا مش موجودة بالمصدر، ما رح يمشي الڤيديو.</string>
     <string name="no_season">ما في أجزاء</string>
     <string name="play_episode_toast">مشّي الحلقة</string>
-    <string name="category_account">أكونتات</string>
-    <string name="eigengraumode_settings">سرعة \"إيگن گرايڤي\"</string>
+    <string name="category_account">الحسابات والأمان</string>
+    <string name="eigengraumode_settings">سرعة الڤيديو</string>
     <string name="resume">كَمِّل</string>
     <string name="test_log">سِجِل</string>
     <string name="torrent_no_plot">ما نلاقى الوصف</string>
@@ -80,7 +80,6 @@
     <string name="delete">محي</string>
     <string name="start">بلش</string>
     <string name="apk_installer_settings_des">في تِلِفونات ما فيا تعوز الطريقة الجديدة لتجديد الآپات. جربو \"الطريقة القديمة\" إذا ما عم تنزل التجديدات.</string>
-    <string name="eigengraumode_settings_des">بتزيد أوپسيونات لتحدد سرعة الڤيديو</string>
     <string name="picture_in_picture_des">بعد ما تسكر \"كلود ستريم\"، بكفي الڤيديو بشِباك زغير فوق غير آپ</string>
     <string name="no_chromecast_support_toast">هيدا المصدر ما بيدعم \"كروم كاست\"</string>
     <string name="advanced_search">تنبيش منظّم</string>
@@ -124,7 +123,7 @@
     <string name="episodes_range">%1$d–%2$d</string>
     <string name="benene">عطي المطورين موزززة</string>
     <string name="restore_settings">عوز النسخة الإحتياطية</string>
-    <string name="select_an_account">نقى أكونت</string>
+    <string name="select_an_account">نقي أكونت</string>
     <string name="swipe_to_change_settings_des">سحابو ل فوق وتحت من اليمين أو الشمال ل تتحكمو بقوة الصوت أو قوة الضو</string>
     <string name="copy_link_toast">ننسخ الرابط</string>
     <string name="torrent_plot">الوصف</string>
@@ -144,7 +143,7 @@
     <string name="loading">لودينگ…</string>
     <string name="action_remove_watching">شيل</string>
     <string name="action_open_watching">بَعِد مَعلومات</string>
-    <string name="category_updates">التجديد والنسخات الاحتياطية</string>
+    <string name="category_updates">التجديدات والنسخات الاحتياطية</string>
     <string name="pref_filter_search_quality">خبي هيدي الجودات من نتائج التنبيش</string>
     <string name="type_on_hold">موقف موقتًا</string>
     <string name="app_name">كلود ستريم</string>
@@ -199,7 +198,7 @@
     <string name="check_for_update">شوف إذا في تجديد</string>
     <string name="render_error">في مشكلة بجهاز العرض (Renderer error)</string>
     <string name="show_title">العِنوان</string>
-    <string name="jsdelivr_proxy">پروكسي raw.githubusercontent.com</string>
+    <string name="jsdelivr_proxy">پروكسي \"گِت هَب\"</string>
     <string name="limit_title_rez">جودة مشغل الڤيديو</string>
     <string name="show_sub">ملصق الترجمة</string>
     <string name="ova_singular">أوڤا</string>
@@ -252,7 +251,7 @@
     <string name="limit_title">الحد الأعلى للحروف بعنوان الڤيديو</string>
     <string name="pref_category_looks">المظاهر</string>
     <string name="pref_category_app_updates">تجديدات الآپ</string>
-    <string name="provider_lang_settings">لغات المصادر</string>
+    <string name="provider_lang_settings">لغات الإضافات</string>
     <string name="category_general">عام</string>
     <string name="download_path_pref">ممر التنزيل</string>
     <string name="legal_notice">إخلاء مسؤولية</string>
@@ -265,7 +264,7 @@
     <string name="display_subbed_dubbed_settings">فرجي أنمي المدبلج-المترجم</string>
     <string name="pref_category_backup">النسخ الإحتياطي</string>
     <string name="pref_category_actions">الإجراءات</string>
-    <string name="jsdelivr_proxy_summary">بتتجاوز منع \"گِت هَب\" بستعمال JSDelivr. معقول تقدي لتأخير بتجديدات الآپ بكم يوم.</string>
+    <string name="jsdelivr_proxy_summary">تجاوز منع روابط \"گِت هَب\" الـ\"raw\" بستعمال JSDelivr. معقول تقدي لتأخير تجديدات الآپ بكم يوم.</string>
     <string name="pref_category_player_features">ميزات مشغل الڤيديوات</string>
     <string name="remove_site_pref">شيل موقع</string>
     <string name="pref_category_player_layout">مظهر</string>
@@ -289,7 +288,7 @@
     <string name="category_ui">الشكل</string>
     <string name="next_episode_time_hour_format" formatted="true">%1$d ساعة %2$d ديقة</string>
     <string name="sort_clear">فضّى</string>
-    <string name="example_username">إسم أكونتي الكول</string>
+    <string name="example_username">إسم الأكونت</string>
     <string name="filter_bookmarks">فَلتِر الإشارات المرجعية</string>
     <string name="update_started">بَلَش التجديد</string>
     <string name="sort_copy">نسخ</string>
@@ -305,9 +304,9 @@
     <string name="play_episode">مشّي الحلقة</string>
     <string name="player_speed">سرعة الڤيديو</string>
     <string name="manage_accounts">تحكمو بالأكونتات</string>
-    <string name="example_lang_name">رمز اللغة (apc/ar/en)</string>
+    <string name="example_lang_name">رمز اللغة (ar)</string>
     <string name="create_account">عمول أكونت</string>
-    <string name="enable_nsfw_on_providers">فرجي المحتوى الـ18+ بالمصادر يلي بتحتوي</string>
+    <string name="enable_nsfw_on_providers">تمكين محتوى 18+ في الامتدادات الداعمة</string>
     <string name="preferred_media_settings">المحتوى المفضل</string>
     <string name="switch_account">غَيِر الأكونت</string>
     <string name="popup_pause_download">حط پوز على التنزيل</string>
@@ -334,8 +333,8 @@
     <string name="example_email">إي مايل (ع شكل: email@example.com)</string>
     <string name="next_episode_time_min_format" formatted="true">%d ديقة</string>
     <string name="category_provider_test">فحص المصادر</string>
-    <string name="example_site_url">example.com</string>
-    <string name="example_site_name">إسم الوبسيت الكول تبعي</string>
+    <string name="example_site_url">https://example.com</string>
+    <string name="example_site_name">إسم الوب سيت الجديدة</string>
     <string name="popup_play_file">فتاح ومَشّي الملف</string>
     <string name="app_theme_settings">نوع الألون</string>
     <string name="go_back">رجاع</string>
@@ -348,7 +347,7 @@
     <string name="primary_color_settings">اللون الاساسي</string>
     <string name="login">فوت ع الأكونت</string>
     <string name="app_subbed_text">مترجم</string>
-    <string name="stream">بِث</string>
+    <string name="stream">بِث من الإنترنت</string>
     <string name="home_play">مشي</string>
     <string name="download_storage_text">التخزين الجُواني</string>
     <string name="add_account">زيد أكونت</string>
@@ -382,11 +381,9 @@
     <string name="enter_pin_with_name" formatted="true">حطو الأرقام السرية لـ\"%s\"</string>
     <string name="apk_installer_legacy">الطريقة القديمة</string>
     <string name="subtitles_raised">معلى</string>
-    <string name="blank_repo_message">\"كلود ستريم\" ما بتجي مع مصادر ڤيديوات. لازم تنزلو المصادر من ريپوز.
+    <string name="blank_repo_message">\"كلود ستريم\" ما بتجي مع مصادر ڤيديوات. لازم تنزلو المصادر من ريپويات.
 \n
-\nفي معلومات على الـ\"ديسكورد\" تبعنا، أو فيكون تنبشو ع معلومات على الإنترنت.
-\n
-\nما فينا تحط الروابط تبع ريپوز المصادر هون من ورا \"سكاي يو كي المحدودة\" 🤮، يلي عازت تفكيرا المحدود لتجرب توقف هيدا الآپ بإستعمال \"قانون الألفية للملكية الرقميَّة\".</string>
+\nفي معلومات على الـ\"ديسكورد\" تبعنا، أو فيكن تنبشو ع معلومات على الإنترنت.</string>
     <string name="add_sync">زبد تتبع</string>
     <string name="mobile_data">3G/4G…</string>
     <string name="player_loaded_subtitles" formatted="true">نفَتح %s</string>
@@ -410,7 +407,7 @@
     <string name="quality_hdr">HDR</string>
     <string name="plugins_not_downloaded" formatted="true">مش منزل: %d</string>
     <string name="next">ل بعدو</string>
-    <string name="network_adress_example">رابط الڤيديو</string>
+    <string name="network_adress_example">https://example.com/example.mp4</string>
     <string name="select_library">نقي الرفّ</string>
     <string name="subscription_deleted">وقفتو الإشتراك لـ\"%s\"</string>
     <string name="quality_workprint">WP</string>
@@ -451,7 +448,7 @@
     <string name="skip_type_recap">التلخيص</string>
     <string name="yes">إِيه</string>
     <string name="actor_main">الرئيسي</string>
-    <string name="apply_on_restart">طبّق وقتما سكّر الآپ</string>
+    <string name="apply_on_restart">سكر الآپ حتى تطبق التغيرات</string>
     <string name="help">ساعدوني</string>
     <string name="subtitle_offset_extra_hint_before_format">عوز هيدا إذا عم بتبين الترجمة %d ميلي ثانية بعدما لازم</string>
     <string name="app_not_found_error">ما نلاقا الآپ</string>
@@ -569,7 +566,7 @@
     <string name="quality_dvd">دي ڤي دي</string>
     <string name="resolution">الجودة</string>
     <string name="set_default">عين الافتراضي</string>
-    <string name="referer">المرجع</string>
+    <string name="referer">المرجع (إختياري)</string>
     <string name="player_settings_play_in_app">المشغل يلي بـ\"كلود ستريم\"</string>
     <string name="setup_extensions_subtext">نزل لايحة المواقع يلي بدك تعوزن</string>
     <string name="enter_pin">حطو الأرقام السرية</string>
@@ -595,5 +592,34 @@
     <string name="rotate_video">برومو</string>
     <string name="auto_rotate_video_desc">غير إتجاه الشاشة أوتوماتيكيًا حسب شكل الڤيديو</string>
     <string name="links_reloaded_toast">رجع نعمل لاود لاللينك</string>
-    <string name="copyTitle">نعمل كَپي للعنوان!</string>
+    <string name="result_search_tooltip">نبش بغير مصادر</string>
+    <string name="subscribe_tooltip">نوتيفيكايشن عن حلقات جديدة</string>
+    <string name="recommendations_tooltip">فرجي الاقترحات</string>
+    <string name="speed_setting_summary">بتزيد خيار السرعة بالمشغل</string>
+    <string name="test_extensions">فحاص كل المصادر</string>
+    <string name="test_extensions_summary">هيدا الفحص معمول للمطورين وما بأكد لحالو إزا المصدر عم يشتغل.</string>
+    <string name="favorite">المفضلة</string>
+    <string name="biometric_authentication_title">فتح قفل كلودستريم</string>
+    <string name="biometric_setting">قفل بواسطة المقاييس الحيوية</string>
+    <string name="password_pin_authentication_title">رمز/كلمة مرور للمصادقة</string>
+    <string name="biometric_setting_summary">فتاح التطبيق باستعمال البصمة، آي دي الوج، پِن، النمط، إو الپاسورد.</string>
+    <string name="biometric_prompt_description">تسَكرت هيدي الواجهة من ورا محاولات فاشلة عديدة. پليز، سكر الآپ ورجاع فتحه.</string>
+    <string name="resume_remaining" formatted="true">%s
+\nباقي</string>
+    <string name="biometric_unsupported">المصادقة البيومترية مش مدعومة ع هالجهاز</string>
+    <string name="unfavorite">شيله من المفضل</string>
+    <string name="repo_copy_label">اسم وعنوان الريپوزيتوري</string>
+    <string name="toast_copied">نتسخ!</string>
+    <string name="clipboard_permission_error">في ارور بالوصول ل الكليپبورد. پليز جرب مرة أخرى.</string>
+    <string name="clipboard_unknown_error">في ارور بالنسخ. پليز نسوخ الـLogcat 🐈 وبعته ل المسؤولين عن دعم الآپ.</string>
+    <string name="biometric_warning">هلّق نعمل نسخة احتياطية للداتا تبع \"كلود ستريم\". إذا مابق ينفتح ويمشي الآپ، فيك تعمل كلير للداتا تبعه وترَجع الداتا من النسخة الاحتياطية اللي هلّق عملنالك ياها.
+\nالاحتمال انو مابق ينفتح الآپ احتمالية زغيرة كتير، بس كل جهاز بيتصرف بشكل مختلف، ونحنا منعتذر إذا سببنا أي إزعاج.</string>
+    <string name="ok">أوكي</string>
+    <string name="battery_dialog_title">وقف اپتميزايشن بطارية جهازك</string>
+    <string name="app_unrestricted_toast">بطارية الآپ اصلًا محطوطة ع «غير مقيد» \"Unrestricted\"</string>
+    <string name="app_info_intent_error">ما قدرنا نفتح معلومات الآپ تبع \"كلود ستريم\".</string>
+    <string name="music_singlar">موسيقى</string>
+    <string name="audio_book_singular">أوديو بوك</string>
+    <string name="custom_media_singluar">الميديا</string>
+    <string name="battery_dialog_message">لتضمن عدم انقطاع التنزيلات والنوتيفيكايشنات للبرامج التلفزيونية يلي مشتركلها، الآپ \"كلود ستريم\" بده إذن ليمشي بـ الباكگروند. ازا كبست أوكي، رح تتوجه ع صفحة معلومات التطبيق. هونيك، نزال حتى توصل ل «استخدام بطارية التطبيق» \"App battery usage\" وحط استخدام البطارية ع «غير مقيد» \"Unrestricted\". ملاحظة إنو هيدا الإذن ما بيعني إنو \"كلود ستريم 3\" رح تستنزف البطارية. ومش رح يشتغل الآن بـ الباكگروند إلّا عند الضرورة، متل لمّا تتلقا نوتيفيكايشن أو تنزل ڤيديو من الريپو الاصلي. فيك ترجع ترد هيدا الستنگ بـ«الإعدادات العامة» \"General settings\"، إزا غيرت رأيك.</string>
 </resources>

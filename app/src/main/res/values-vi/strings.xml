@@ -123,8 +123,7 @@
     <string name="player_subtitles_settings_des">Cài đặt phụ đề</string>
     <string name="chromecast_subtitles_settings">Phụ đề Chromecast</string>
     <string name="chromecast_subtitles_settings_des">Cài đặt phụ đề Chromecast</string>
-    <string name="eigengraumode_settings">Chỉnh tốc độ phim</string>
-    <string name="eigengraumode_settings_des">Có thể điều chỉnh tốc độ phát phim</string>
+    <string name="eigengraumode_settings">Tốc độ phát</string>
     <string name="swipe_to_seek_settings">Vuốt để tua nhanh</string>
     <string name="swipe_to_seek_settings_des">Vuốt sang trái hoặc phải để tua video</string>
     <string name="swipe_to_change_settings">Vuốt để chỉnh độ sáng và âm lượng</string>
@@ -148,8 +147,8 @@
     <string name="backup_failed">Thiếu quyền truy cập bộ nhớ, hãy thử lại.</string>
     <string name="backup_failed_error_format">Lỗi khi sao lưu %s</string>
     <string name="search">Tìm kiếm</string>
-    <string name="category_account">Tài khoản</string>
-    <string name="category_updates">Cập nhật và sao lưu</string>
+    <string name="category_account">Tài khoản và Bảo mật</string>
+    <string name="category_updates">Cập nhật và Sao lưu</string>
     <string name="settings_info">Thông tin</string>
     <string name="advanced_search">Tìm kiếm nâng cao</string>
     <string name="advanced_search_des">Cho phép tìm kiếm theo bộ lọc từng nhà cung cấp</string>
@@ -287,7 +286,7 @@
     <string name="legal_notice">Disclaimer</string>
     <string name="category_general">Tổng quan</string>
     <string name="random_button_settings">Nút ngẫu nhiên</string>
-    <string name="random_button_settings_desc">Hiện nút ngẫu nhiên trên trang chủ</string>
+    <string name="random_button_settings_desc">Hiện nút ngẫu nhiên trên Trang chủ và Thư viện</string>
     <string name="provider_lang_settings">Ngôn ngữ nguồn phim</string>
     <string name="app_layout">Giao diện App</string>
     <string name="preferred_media_settings">Thể loại ưu tiên</string>
@@ -308,8 +307,8 @@
     <string name="example_username">Tài khoản</string>
     <string name="example_email">Email</string>
     <string name="example_ip">127.0.0.1</string>
-    <string name="example_site_name">Địa chỉ trang web</string>
-    <string name="example_site_url">example.com</string>
+    <string name="example_site_name">Địa chỉ trang web­</string>
+    <string name="example_site_url">https://example.com</string>
     <string name="example_lang_name">Mã ngôn ngữ (vi)</string>
     <string name="login_format" formatted="true">%1$s %2$s</string>
     <string name="account">tài khoản</string>
@@ -391,8 +390,8 @@
     <string name="subtitles_filter_lang">Lọc theo ngôn ngữ media được chuộng hơn</string>
     <string name="extras">Thêm</string>
     <string name="trailer">Xem trước</string>
-    <string name="network_adress_example">Liên kết trực tiếp</string>
-    <string name="referer">Đề xuất</string>
+    <string name="network_adress_example">https://example.com/example.mp4</string>
+    <string name="referer">Đề xuất (tuỳ chọn)</string>
     <string name="next">Tiếp theo</string>
     <string name="provider_languages_tip">Xem video bằng các ngôn ngữ này</string>
     <string name="previous">Trước đó</string>
@@ -423,8 +422,6 @@
     <string name="plugins_not_downloaded" formatted="true">Không tải: %d</string>
     <string name="blank_repo_message">CloudStream không có sẵn trang web nào. Bạn cần cài đặt các trang web từ kho lưu trữ.
 \n
-\nDo Sky UK Limited đã gỡ xuống theo DMCA một cách thiếu suy nghĩ 🤮 chúng tôi không thể cài sẵn trang web.
-\n
 \nHãy tham gia Discord của chúng tôi hoặc tìm kiếm trực tuyến.</string>
     <string name="view_public_repositories_button">Xem kho lưu trữ của cộng đồng</string>
     <string name="view_public_repositories_button_short">Danh sách công khai</string>
@@ -434,7 +431,7 @@
     <string name="tracks">Thêm</string>
     <string name="audio_tracks">Âm thanh</string>
     <string name="video_tracks">Chất lượng Video</string>
-    <string name="apply_on_restart">Áp dụng khi khởi động lại</string>
+    <string name="apply_on_restart">Áp dụng khi khởi động lại.</string>
     <string name="safe_mode_title">Chế độ an toàn được bật</string>
     <string name="safe_mode_description">Đã xảy ra sự cố và chúng tôi đã tự động tắt tất cả các tiện ích mở rộng, hãy tìm và xóa tiện ích mở rộng đang gây ra sự cố.</string>
     <string name="safe_mode_crash_info">Xem thông tin sự cố</string>
@@ -524,7 +521,7 @@
     <string name="test_passed">Thành công</string>
     <string name="start">Bắt đầu</string>
     <string name="category_provider_test">Kiểm tra nguồn phim</string>
-    <string name="jsdelivr_proxy">raw.githubusercontent.com Proxy</string>
+    <string name="jsdelivr_proxy">GitHub Proxy</string>
     <string name="jsdelivr_enabled">Không thể kết nối được tới GitHub. Đang bật jsDelivr proxy…</string>
     <string name="pref_category_android_tv">Android TV</string>
     <string name="restart">Khởi động lại</string>
@@ -538,7 +535,7 @@
 \nKhông tải bất cứ tiện ích mở rộng nào khi khởi động cho đến khi loại bỏ tệp.</string>
     <string name="revert">Đảo ngược lại</string>
     <string name="subscription_in_progress_notification">Đang cập nhật các phim đã đăng kí</string>
-    <string name="jsdelivr_proxy_summary">Bỏ qua chặn GitHub bằng cách dùng jsDelivr. Có thể gây ra việc cập nhật bị chậm vài ngày.</string>
+    <string name="jsdelivr_proxy_summary">Bỏ qua chặn đường link GitHub bằng cách dùng jsDelivr. Có thể gây ra việc cập nhật bị chậm vài ngày.</string>
     <string name="android_tv_interface_off_seek_settings_summary">Lượng tua thêm được sử dụng khi trình phát ẩn</string>
     <string name="android_tv_interface_off_seek_settings">Lượng tua thêm</string>
     <string name="android_tv_interface_on_seek_settings_summary">Lượng tua thêm được sử dụng khi trình phát hiện lên</string>
@@ -599,4 +596,37 @@
     <string name="skip_startup_account_select_pref">Bỏ qua lựa chọn tài khoản khi khởi động</string>
     <string name="manage_accounts">Quản lý tài khoản</string>
     <string name="edit_account">Chỉnh sửa tài khoản</string>
+    <string name="links_reloaded_toast">Tải lại link</string>
+    <string name="result_search_tooltip">Tìm kiếm tiện ích khác</string>
+    <string name="recommendations_tooltip">Hiển thị đề xuất</string>
+    <string name="test_extensions">Kiểm tra nguồn phim</string>
+    <string name="rotate_video">Xoay</string>
+    <string name="subscribe_tooltip">Thông báo tập mới</string>
+    <string name="speed_setting_summary">Chỉnh tốc độ trong trình phát</string>
+    <string name="rotate_video_desc">Hiển thị nút xoay màn hình</string>
+    <string name="auto_rotate_video_desc">Kích hoạt chế độ xoay màn hình tự động</string>
+    <string name="auto_rotate_video">Tự động xoay</string>
+    <string name="toast_copied">đã sao chép!</string>
+    <string name="clipboard_permission_error">Vấn đề truy cập Bảng ghi tạm, Hãy thử lại.</string>
+    <string name="clipboard_unknown_error">Lỗi sao chép, Hãy sao chép logcat và liên hệ hỗ trợ ứng dụng.</string>
+    <string name="favorite">Yêu thích</string>
+    <string name="ok">OK</string>
+    <string name="battery_dialog_title">Vô hiệu Tối ưu pin</string>
+    <string name="app_info_intent_error">Không thể mở thông tin ứng dụng của CloudStream.</string>
+    <string name="unfavorite">Không thích</string>
+    <string name="biometric_authentication_title">Mở khóa Cloudstream</string>
+    <string name="music_singlar">Nhạc</string>
+    <string name="audio_book_singular">Sách nói</string>
+    <string name="biometric_setting">Khóa với sinh trắc học</string>
+    <string name="resume_remaining" formatted="true">%s
+\ncòn lại</string>
+    <string name="biometric_unsupported">Xác thực bằng sinh trắc học không được hỗ trợ trên thiết bị này</string>
+    <string name="password_pin_authentication_title">Mật khẩu/PIN Xác thực</string>
+    <string name="biometric_warning">Dữ liệu CloudStream của bạn đã được sao lưu. Dù khả năng rất thấp, nhưng mỗi thiết bị có thể hoạt động khác nhau. Trong trường hợp thiểu số, bạn sẽ bị khóa khỏi ứng dụng, hãy xóa dữ liệu ứng dụng và khởi tạo từ bản sao lưu. Chúng tôi rất xin lỗi vì bất kỳ sự bất tiện nào.</string>
+    <string name="biometric_setting_summary">Mở khóa ứng dụng bằng Vân tay, Khuôn mặt, PIN, Hình vẽ và Mật khẩu.</string>
+    <string name="biometric_prompt_description">Màn hình bị đóng sau nhiều lần thử thất bại. Hãy khởi động lại ứng dụng.</string>
+    <string name="test_extensions_summary">Phần kiểm thử này chỉ dành cho nhà phát triển và không xác nhận hay từ chối việc hoạt động của nguồn phim.</string>
+    <string name="app_unrestricted_toast">Chế độ tiêu thụ pin của ứng dụng đã được đặt ở mức không giới hạn</string>
+    <string name="custom_media_singluar">… 
+\n———</string>
 </resources>

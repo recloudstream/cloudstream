@@ -429,7 +429,6 @@ object PluginManager {
      **/
     fun loadAllLocalPlugins(context: Context, forceReload: Boolean) {
         val dir = File(LOCAL_PLUGINS_PATH)
-        removeKey(PLUGINS_KEY_LOCAL)
 
         if (!dir.exists()) {
             val res = dir.mkdirs()

@@ -117,8 +117,7 @@
     <string name="player_subtitles_settings_des">Nastavení titulků přehrávače</string>
     <string name="chromecast_subtitles_settings">Titulky Chromecastu</string>
     <string name="chromecast_subtitles_settings_des">Natavení titulků Chromecastu</string>
-    <string name="eigengraumode_settings">Rychlostní režim</string>
-    <string name="eigengraumode_settings_des">Přidá do přehrávače možnost rychlosti</string>
+    <string name="eigengraumode_settings">Rychlost přehrávání</string>
     <string name="swipe_to_seek_settings">Přejet pro posun</string>
     <string name="swipe_to_seek_settings_des">Přejeďte prstem ze strany na stranu pro ovládání své pozice ve videu</string>
     <string name="swipe_to_change_settings">Přejet pro změnu nastavení</string>
@@ -140,7 +139,7 @@
     <string name="backup_failed">Chybí oprávnění k úložišti. Zkuste to prosím znovu.</string>
     <string name="backup_failed_error_format">Chyba při zálohování %s</string>
     <string name="search">Search</string>
-    <string name="category_account">Účty</string>
+    <string name="category_account">Účty a zabezpečení</string>
     <string name="category_updates">Aktualizace a záloha</string>
     <string name="settings_info">Informace</string>
     <string name="advanced_search">Pokročilé hledání</string>
@@ -266,7 +265,7 @@
     <string name="category_general">Obecné</string>
     <string name="random_button_settings">Náhodné tlačítko</string>
     <string name="random_button_settings_desc">Zobrazit na domovské stránce a v knihovně náhodné tlačítko</string>
-    <string name="provider_lang_settings">Jazyk poskytovatelů</string>
+    <string name="provider_lang_settings">Jazyky rozšíření</string>
     <string name="app_layout">Rozložení aplikace</string>
     <string name="preferred_media_settings">Preferovaná média</string>
     <string name="subtitles_encoding">Kódování titulků</string>
@@ -281,7 +280,7 @@
     <string name="bottom_title_settings_des">Umístit název pod plakát</string>
     <!-- account stuff -->
     <string name="example_password">heslo123</string>
-    <string name="example_username">MojeSuperJmeno</string>
+    <string name="example_username">Uživatelské jméno</string>
     <string name="example_email">ahoj@svete.cz</string>
     <string name="example_ip">127.0.0.1</string>
     <!--
@@ -384,7 +383,7 @@
     <string name="plugins_downloaded" formatted="true">Staženo: %d</string>
     <string name="audio_tracks">Zvukové stopy</string>
     <string name="video_tracks">Videostopy</string>
-    <string name="apply_on_restart">Použít při restartu</string>
+    <string name="apply_on_restart">Restartujte aplikaci pro použití změn.</string>
     <string name="safe_mode_title">Bezpečný režim povolen</string>
     <string name="extension_size">Velikost</string>
     <string name="extension_authors">Autoři</string>
@@ -393,7 +392,7 @@
     <string name="automatic_plugin_download_summary">Automaticky instalovat všechny dosud nenainstalované doplňky z přidaných repozitářů.</string>
     <string name="others">Ostatní</string>
     <string name="trailer">Trailer</string>
-    <string name="network_adress_example">Odkaz na stream</string>
+    <string name="network_adress_example">https://example.com/priklad.mp4</string>
     <string name="skip_setup">Přeskočit nastavení</string>
     <string name="add_repository">Přidat repozitář</string>
     <string name="plugin_deleted">Doplněk odstraněn</string>
@@ -427,8 +426,8 @@
     <string name="pref_category_looks">Vzhled</string>
     <string name="pref_category_links">Odkazy</string>
     <string name="pref_category_ui_features">Funkce</string>
-    <string name="example_site_name">MůjSuperWeb</string>
-    <string name="enable_nsfw_on_providers">Povolit NSFW u podporovaných poskytovatelů</string>
+    <string name="example_site_name">NovýNázevWebu</string>
+    <string name="enable_nsfw_on_providers">Povolit NSFW u podporovaných rozšíření</string>
     <string name="category_providers">Poskytovatelé</string>
     <string name="crash_reporting_title">Hlášení pádů</string>
     <string name="previous">Předchozí</string>
@@ -437,11 +436,9 @@
     <string name="plugin_downloaded">Doplněk stažen</string>
     <string name="is_adult">18+</string>
     <string name="batch_download_start_format" formatted="true">Spuštěno stahování %1$d %2$s…</string>
-    <string name="blank_repo_message">CloudStream nemá ve výchozím nastavení nainstalované žádné weby. Stránky je třeba nainstalovat z úložišť.
+    <string name="blank_repo_message">CloudStream nemá ve výchozím nastavení nainstalované žádné zdroje. Je třeba je nainstalovat z repozitářů.
 \n
-\nKvůli nesmyslnému podání stížnosti DMCA společností Sky UK Limited 🤮 nemůžeme v aplikaci propojit stránky repozitářů.
-\n
-\nPřipojte se k našemu Discordu nebo hledejte na internetu.</string>
+\nPřipojte se na náš Discord nebo hledejte na internetu.</string>
     <string name="plugins_disabled" formatted="true">Zakázáno: %d</string>
     <string name="plugins_updated" formatted="true">Aktualizováno %d doplňků</string>
     <string name="safe_mode_crash_info">Zobrazit informace o pádu</string>
@@ -490,7 +487,7 @@
     <string name="pref_category_gestures">Gesta</string>
     <string name="add_site_pref">Klonovat web</string>
     <string name="add_site_summary">Přidat klon existujícího webu s jinou adresou URL</string>
-    <string name="example_site_url">example.com</string>
+    <string name="example_site_url">https://example.com</string>
     <string name="example_lang_name">Kód jazyka (cs)</string>
     <string name="download_all_plugins_from_repo">Stáhnout všechny doplňky z tohoto repozitáře\?</string>
     <string name="single_plugin_disabled" formatted="true">%s (zakázáno)</string>
@@ -513,11 +510,11 @@
     <string name="next_episode_time_day_format" formatted="true">%1$dd %2$dh %3$dm</string>
     <string name="view_public_repositories_button">Zobrazit komunitní repozitáře</string>
     <string name="update_started">Aktualizace zahájena</string>
-    <string name="stream">Stream</string>
+    <string name="stream">Síťový stream</string>
     <string name="autoplay_next_settings">Automaticky přehrát další epizodu</string>
     <string name="livestreams">Živé přenosy</string>
     <string name="subtitles_filter_lang">Filtrování podle preferovaného jazyka médií</string>
-    <string name="referer">Referent</string>
+    <string name="referer">Referent (volitelný)</string>
     <string name="next">Další</string>
     <string name="provider_languages_tip">Sledovat videa v těchto jazycích</string>
     <string name="batch_download_finish_format" formatted="true">Staženo %1$d %2$s</string>
@@ -546,11 +543,11 @@
     <string name="subscription_deleted">Odhlášen odběr od %s</string>
     <string name="subscription_episode_released">Byla vydána epizoda %d!</string>
     <string name="subscription_list_name">Odebíráno</string>
-    <string name="jsdelivr_proxy">Proxy raw.githubusercontent.com</string>
+    <string name="jsdelivr_proxy">Proxy GitHub</string>
     <string name="jsdelivr_enabled">Nelze se připojit k serveru GitHub. Zapínání proxy jsDelivr…</string>
     <string name="watch_quality_pref_data">Upřednostněná kvalita sledování (mobilní data)</string>
     <string name="revert">Vrátit zpět</string>
-    <string name="jsdelivr_proxy_summary">Obchází blokování GitHubu pomocí jsDelivr. Může způsobit zpoždění aktualizací o několik dní.</string>
+    <string name="jsdelivr_proxy_summary">Obejít blokování přímých adres GitHub pomocí jsDelivr. Může způsobit zpoždění aktualizací o několik dní.</string>
     <string name="pref_category_bypass">Obcházení ISP</string>
     <string name="profile_number">Profil %d</string>
     <string name="wifi">Wi-Fi</string>
@@ -615,5 +612,33 @@
     <string name="auto_rotate_video">Automatické otáčení</string>
     <string name="rotate_video">Otočení</string>
     <string name="auto_rotate_video_desc">Zapnout automatické otáčení obrazovky v závislosti na orientaci videa</string>
-    <string name="copyTitle">Název zkopírován!</string>
+    <string name="test_extensions">Otestovat všechna rozšíření</string>
+    <string name="test_extensions_summary">Tento test slouží pouze pro vývojáře a neověřuje funkčnost jakéhokoli rozšíření.</string>
+    <string name="result_search_tooltip">Hledat v ostatních rozšířeních</string>
+    <string name="subscribe_tooltip">Oznámení o nové epizodě</string>
+    <string name="recommendations_tooltip">Zobrazit doporučené</string>
+    <string name="speed_setting_summary">Přidá nastavení rychlosti do přehrávače</string>
+    <string name="biometric_authentication_title">Odemknout CloudStream</string>
+    <string name="biometric_setting">Zamknout biometrikou</string>
+    <string name="password_pin_authentication_title">Ověření heslem/PINem</string>
+    <string name="biometric_unsupported">Biometrické ověření není na tomto zařízení podporováno</string>
+    <string name="biometric_setting_summary">Odemkněte aplikaci otiskem prstu, obličejem, PINem, gestem nebo heslem.</string>
+    <string name="biometric_prompt_description">Tato obrazovka byla po několika nezdařilých pokusech uzavřena. Restartujte prosím aplikaci.</string>
+    <string name="biometric_warning">Vaše data z aplikace CloudStream byla nyní zálohována. Ačkoli je tato možnost velmi malá, různá zařízení se mohou chovat různě. Ve výjimečném případě, že se vám přístup k aplikaci zablokuje, data aplikace zcela vymažte a obnovte je ze zálohy. Velmi se omlouváme za případné nepříjemnosti z toho plynoucí.</string>
+    <string name="unfavorite">Odebrat z oblíbených</string>
+    <string name="resume_remaining" formatted="true">%s
+\nzbývá</string>
+    <string name="favorite">Přidat do oblíbených</string>
+    <string name="repo_copy_label">Název a adresa repozitáře</string>
+    <string name="clipboard_unknown_error">Chyba při kopírování, zkopírujte prosím protokol a kontaktujte podporu aplikace.</string>
+    <string name="toast_copied">Zkopírováno!</string>
+    <string name="clipboard_permission_error">Chyba při přístupu ke schránce, zkuste to prosím znovu.</string>
+    <string name="ok">OK</string>
+    <string name="app_unrestricted_toast">Využití baterie aplikací je již nastaveno na neomezené</string>
+    <string name="app_info_intent_error">Nepodařilo se otevřít informace o aplikaci CloudStream.</string>
+    <string name="music_singlar">Hudba</string>
+    <string name="custom_media_singluar">Média</string>
+    <string name="battery_dialog_title">Zakažte optimalizace baterie</string>
+    <string name="battery_dialog_message">Aby bylo zajištěno nepřetržité stahování a upozornění na odebírané seriály, potřebuje aplikace CloudStream povolení ke spuštění na pozadí. Stisknutím tlačítka OK budete přesměrováni na informace o aplikaci. Tam přejděte na položku Využití baterie aplikací a nastavte možnost Využití baterie na hodnotu Neomezené. Upozorňujeme, že toto povolení neznamená, že CS3 bude vybíjet baterii. Na pozadí bude pracovat pouze v případě potřeby, například při přijímání oznámení nebo stahování videí z oficiálních rozšíření. Pokud se rozhodnete toto nastavení zrušit, můžete jej později upravit v Obecných nastaveních.</string>
+    <string name="audio_book_singular">Audiokniha</string>
 </resources>

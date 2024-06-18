@@ -7,18 +7,20 @@
         android:layout_height="match_parent">
 
     <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/account_list"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            android:background="?attr/primaryBlackBackground"
-            tools:listitem="@layout/account_single"
-            android:layout_width="match_parent"
-            android:layout_rowWeight="1"
-            android:layout_height="wrap_content" />
+        android:id="@+id/account_list"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        android:background="?attr/primaryBlackBackground"
+        tools:listitem="@layout/account_single"
+        android:layout_width="match_parent"
+        android:layout_rowWeight="1"
+        android:layout_height="wrap_content"
+        android:focusable="true"/>
 
     <TextView
-            android:id="@+id/account_add"
-            android:text="@string/add_account"
-            style="@style/SettingsItem">
+        android:id="@+id/account_add"
+        android:text="@string/add_account"
+        style="@style/SettingsItem"
+        android:focusable="true">
 
         <requestFocus />
     </TextView>

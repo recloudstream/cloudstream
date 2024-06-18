@@ -1,10 +1,7 @@
 package com.lagradost.cloudstream3.ui.settings
 
-import android.app.UiModeManager
-import android.content.Context
-import android.content.res.Configuration
-import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,36 +9,43 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.core.view.children
-import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
-import androidx.preference.PreferenceManager
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.MaterialToolbar
+import com.lagradost.cloudstream3.BuildConfig
 import com.lagradost.cloudstream3.CommonActivity.showToast
-import com.lagradost.cloudstream3.AcraApplication.Companion.context
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.MainSettingsBinding
 import com.lagradost.cloudstream3.mvvm.logError
+import com.lagradost.cloudstream3.syncproviders.AccountManager
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.BackupApis
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.accountManagers
 import com.lagradost.cloudstream3.ui.home.HomeFragment
 import com.lagradost.cloudstream3.ui.result.txt
+import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
+import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
+import com.lagradost.cloudstream3.ui.settings.Globals.TV
+import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
+import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.getPref
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
-import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
+import com.lagradost.cloudstream3.utils.DataStoreHelper
+import com.lagradost.cloudstream3.utils.UIHelper
+import com.lagradost.cloudstream3.utils.UIHelper.clipboardHelper
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.setImage
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import java.io.File
+import java.text.DateFormat
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+import java.util.TimeZone
 
 class SettingsFragment : Fragment() {
     companion object {
-        var beneneCount = 0
-
-        private var isTv: Boolean = false
-        private var isTrueTv: Boolean = false
 
         fun PreferenceFragmentCompat?.getPref(id: Int): Preference? {
             if (this == null) return null
@@ -55,15 +59,39 @@ class SettingsFragment : Fragment() {
         }
 
         /**
+         * Hide many Preferences on selected layouts.
+         **/
+        fun PreferenceFragmentCompat?.hidePrefs(ids: List<Int>, layoutFlags: Int) {
+            if (this == null) return
+
+            try {
+                ids.forEach {
+                    getPref(it)?.isVisible = !isLayout(layoutFlags)
+                }
+            } catch (e: Exception) {
+                logError(e)
+            }
+        }
+
+        /**
+         * Hide the Preference on selected layouts.
+         **/
+        fun Preference?.hideOn(layoutFlags: Int): Preference? {
+            if (this == null) return null
+            this.isVisible = !isLayout(layoutFlags)
+            return this
+        }
+
+        /**
          * On TV you cannot properly scroll to the bottom of settings, this fixes that.
          * */
         fun PreferenceFragmentCompat.setPaddingBottom() {
-            if (isTvSettings()) {
+            if (isLayout(TV or EMULATOR)) {
                 listView?.setPadding(0, 0, 0, 100.toPx)
             }
         }
         fun PreferenceFragmentCompat.setToolBarScrollFlags() {
-            if (isTvSettings()) {
+            if (isLayout(TV or EMULATOR)) {
                 val settingsAppbar = view?.findViewById<MaterialToolbar>(R.id.settings_toolbar)
 
                 settingsAppbar?.updateLayoutParams<AppBarLayout.LayoutParams> {
@@ -72,7 +100,7 @@ class SettingsFragment : Fragment() {
             }
         }
         fun Fragment?.setToolBarScrollFlags() {
-            if (isTvSettings()) {
+            if (isLayout(TV or EMULATOR)) {
                 val settingsAppbar = this?.view?.findViewById<MaterialToolbar>(R.id.settings_toolbar)
 
                 settingsAppbar?.updateLayoutParams<AppBarLayout.LayoutParams> {
@@ -87,12 +115,14 @@ class SettingsFragment : Fragment() {
 
             settingsToolbar.apply {
                 setTitle(title)
-                setNavigationIcon(R.drawable.ic_baseline_arrow_back_24)
-                setNavigationOnClickListener {
-                    activity?.onBackPressedDispatcher?.onBackPressed()
+                if (isLayout(PHONE or EMULATOR)) {
+                    setNavigationIcon(R.drawable.ic_baseline_arrow_back_24)
+                    setNavigationOnClickListener {
+                        activity?.onBackPressedDispatcher?.onBackPressed()
+                    }
                 }
             }
-            fixPaddingStatusbar(settingsToolbar)
+            UIHelper.fixPaddingStatusbar(settingsToolbar)
         }
 
         fun Fragment?.setUpToolbar(@StringRes title: Int) {
@@ -102,13 +132,15 @@ class SettingsFragment : Fragment() {
 
             settingsToolbar.apply {
                 setTitle(title)
-                setNavigationIcon(R.drawable.ic_baseline_arrow_back_24)
-                children.firstOrNull { it is ImageView }?.tag = getString(R.string.tv_no_focus_tag)
-                setNavigationOnClickListener {
-                    activity?.onBackPressedDispatcher?.onBackPressed()
+                if (isLayout(PHONE or EMULATOR)) {
+                    setNavigationIcon(R.drawable.ic_baseline_arrow_back_24)
+                    children.firstOrNull { it is ImageView }?.tag = getString(R.string.tv_no_focus_tag)
+                    setNavigationOnClickListener {
+                        activity?.onBackPressedDispatcher?.onBackPressed()
+                    }
                 }
             }
-            fixPaddingStatusbar(settingsToolbar)
+            UIHelper.fixPaddingStatusbar(settingsToolbar)
         }
 
         fun getFolderSize(dir: File): Long {
@@ -124,60 +156,7 @@ class SettingsFragment : Fragment() {
 
             return size
         }
-
-        private fun Context.getLayoutInt(): Int {
-            val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
-            return settingsManager.getInt(this.getString(R.string.app_layout_key), -1)
-        }
-
-        private fun Context.isTvSettings(): Boolean {
-            var value = getLayoutInt()
-            if (value == -1) {
-                value = if (isAutoTv()) 1 else 0
-            }
-            return value == 1 || value == 2
-        }
-
-        private fun Context.isTrueTvSettings(): Boolean {
-            var value = getLayoutInt()
-            if (value == -1) {
-                value = if (isAutoTv()) 1 else 0
-            }
-            return value == 1
-        }
-
-        fun Context.updateTv() {
-            isTrueTv = isTrueTvSettings()
-            isTv = isTvSettings()
-        }
-
-        fun isTrueTvSettings(): Boolean {
-            return isTrueTv
-        }
-
-        fun isTvSettings(): Boolean {
-            return isTv
-        }
-
-        fun Context.isEmulatorSettings(): Boolean {
-            return getLayoutInt() == 2
-        }
-
-        // phone exclusive
-        fun isTruePhone(): Boolean {
-            return !isTrueTvSettings() && !isTvSettings() && context?.isEmulatorSettings() != true
-        }
-
-        private fun Context.isAutoTv(): Boolean {
-            val uiModeManager = getSystemService(Context.UI_MODE_SERVICE) as UiModeManager?
-            // AFT = Fire TV
-            val model = Build.MODEL.lowercase()
-            return uiModeManager?.currentModeType == Configuration.UI_MODE_TYPE_TELEVISION || Build.MODEL.contains(
-                "AFT"
-            ) || model.contains("firestick") || model.contains("fire tv") || model.contains("chromecast")
-        }
     }
-
     override fun onDestroyView() {
         binding = null
         super.onDestroyView()
@@ -192,7 +171,6 @@ class SettingsFragment : Fragment() {
         val localBinding = MainSettingsBinding.inflate(inflater, container, false)
         binding = localBinding
         return localBinding.root
-        //return inflater.inflate(R.layout.main_settings, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -200,23 +178,44 @@ class SettingsFragment : Fragment() {
             activity?.navigate(id, Bundle())
         }
 
-        // used to debug leaks showToast(activity,"${VideoDownloadManager.downloadStatusEvent.size} : ${VideoDownloadManager.downloadProgressEvent.size}")
+        /** used to debug leaks
+        showToast(activity,"${VideoDownloadManager.downloadStatusEvent.size} :
+        ${VideoDownloadManager.downloadProgressEvent.size}") **/
 
-        val isTrueTv = isTrueTvSettings()
+        fun hasProfilePictureFromAccountManagers(accountManagers: List<AccountManager>): Boolean {
+            for (syncApi in accountManagers) {
+                val login = syncApi.loginInfo()
+                val pic = login?.profilePicture ?: continue
 
-        for (syncApi in accountManagers) {
-            val login = syncApi.loginInfo()
-            val pic = login?.profilePicture ?: continue
-            if (binding?.settingsProfilePic?.setImage(
-                    pic,
-                    errorImageDrawable = HomeFragment.errorProfilePic
-                ) == true
-            ) {
-                binding?.settingsProfileText?.text = login.name
-                binding?.settingsProfile?.isVisible = true
-                break
+                if (binding?.settingsProfilePic?.setImage(
+                        pic,
+                        errorImageDrawable = HomeFragment.errorProfilePic
+                    ) == true
+                ) {
+                    binding?.settingsProfileText?.text = login.name
+                    return true // sync profile exists
+                }
             }
+            return false // not syncing
         }
+
+        // display local account information if not syncing
+        if (!hasProfilePictureFromAccountManagers(accountManagers)) {
+            val activity = activity ?: return
+            val currentAccount = try {
+                DataStoreHelper.accounts.firstOrNull {
+                    it.keyIndex == DataStoreHelper.selectedKeyIndex
+                } ?: activity.let { DataStoreHelper.getDefaultAccount(activity) }
+
+            } catch (t: IllegalStateException) {
+                Log.e("AccountManager", "Activity not found", t)
+                null
+            }
+
+            binding?.settingsProfilePic?.setImage(currentAccount?.image)
+            binding?.settingsProfileText?.text = currentAccount?.name
+        }
+
         binding?.apply {
             listOf(
                 settingsGeneral to R.id.action_navigation_global_to_navigation_settings_general,
@@ -231,7 +230,7 @@ class SettingsFragment : Fragment() {
                     setOnClickListener {
                         navigate(navigationId)
                     }
-                    if (isTrueTv) {
+                    if (isLayout(TV)) {
                         isFocusable = true
                         isFocusableInTouchMode = true
                     }
@@ -255,9 +254,22 @@ class SettingsFragment : Fragment() {
             }
 
             // Default focus on TV
-            if (isTrueTv) {
+            if (isLayout(TV)) {
                 settingsGeneral.requestFocus()
             }
+        }
+
+        val appVersion = getString(R.string.app_version)
+        val commitInfo = getString(R.string.commit_hash)
+        val buildTimestamp = SimpleDateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG,
+            Locale.getDefault()
+        ).apply { timeZone = TimeZone.getTimeZone("UTC")
+        }.format(Date(BuildConfig.BUILD_DATE)).replace("UTC", "")
+
+        binding?.buildDate?.text = buildTimestamp
+        binding?.appVersionInfo?.setOnLongClickListener {
+            clipboardHelper(txt(R.string.extension_version), "$appVersion $commitInfo $buildTimestamp")
+            true
         }
     }
 }

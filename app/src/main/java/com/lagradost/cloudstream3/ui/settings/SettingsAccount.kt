@@ -9,6 +9,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentActivity
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
+import androidx.preference.SwitchPreferenceCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.lagradost.cloudstream3.AcraApplication.Companion.openBrowser
 import com.lagradost.cloudstream3.CommonActivity.onDialogDismissedEvent
@@ -25,12 +26,17 @@ import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.malApi
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.openSubtitlesApi
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.pcloudApi
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.simklApi
+import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.subDlApi
 import com.lagradost.cloudstream3.syncproviders.AuthAPI
 import com.lagradost.cloudstream3.syncproviders.InAppAuthAPI
 import com.lagradost.cloudstream3.syncproviders.InAppOAuth2API
 import com.lagradost.cloudstream3.syncproviders.OAuth2API
+import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
+import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
+import com.lagradost.cloudstream3.ui.settings.Globals.TV
+import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.getPref
-import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
+import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.hideOn
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setPaddingBottom
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setToolBarScrollFlags
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setUpToolbar
@@ -38,13 +44,20 @@ import com.lagradost.cloudstream3.ui.settings.helpers.settings.account.InAppAuth
 import com.lagradost.cloudstream3.ui.settings.helpers.settings.account.InAppOAuth2DialogBuilder
 import com.lagradost.cloudstream3.utils.AppUtils.html
 import com.lagradost.cloudstream3.utils.BackupUtils
+import com.lagradost.cloudstream3.utils.BiometricAuthenticator
+import com.lagradost.cloudstream3.utils.BiometricAuthenticator.authCallback
+import com.lagradost.cloudstream3.utils.BiometricAuthenticator.biometricPrompt
+import com.lagradost.cloudstream3.utils.BiometricAuthenticator.deviceHasPasswordPinLock
+import com.lagradost.cloudstream3.utils.BiometricAuthenticator.isAuthEnabled
+import com.lagradost.cloudstream3.utils.BiometricAuthenticator.promptInfo
+import com.lagradost.cloudstream3.utils.BiometricAuthenticator.startBiometricAuthentication
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialogText
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.utils.UIHelper.setImage
 
-class SettingsAccount : PreferenceFragmentCompat() {
+class SettingsAccount : PreferenceFragmentCompat(), BiometricAuthenticator.BiometricAuthCallback {
     companion object {
         /** Used by nginx plugin too */
         fun showLoginInfo(
@@ -78,7 +91,7 @@ class SettingsAccount : PreferenceFragmentCompat() {
                 showAccountSwitch(activity, api)
             }
 
-            if (isTvSettings()) {
+            if (isLayout(TV or EMULATOR)) {
                 binding.accountSwitchAccount.requestFocus()
             }
         }
@@ -135,6 +148,31 @@ class SettingsAccount : PreferenceFragmentCompat() {
         }
     }
 
+    private fun updateAuthPreference(enabled: Boolean) {
+        val biometricKey = getString(R.string.biometric_key)
+
+        PreferenceManager.getDefaultSharedPreferences(context ?: return).edit()
+            .putBoolean(biometricKey, enabled).apply()
+        findPreference<SwitchPreferenceCompat>(biometricKey)?.isChecked = enabled
+    }
+
+    override fun onAuthenticationError() {
+        updateAuthPreference(!isAuthEnabled(context ?: return))
+    }
+
+    override fun onAuthenticationSuccess() {
+        if (isAuthEnabled(context?: return)) {
+            updateAuthPreference(true)
+            BackupUtils.backup(activity)
+            activity?.showBottomDialogText(
+                getString(R.string.biometric_setting),
+                getString(R.string.biometric_warning).html()
+            ) { onDialogDismissedEvent }
+        } else {
+            updateAuthPreference(false)
+        }
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setUpToolbar(R.string.category_account)
@@ -146,22 +184,22 @@ class SettingsAccount : PreferenceFragmentCompat() {
         hideKeyboard()
         setPreferencesFromResource(R.xml.settings_account, rootKey)
 
-        getPref(R.string.biometric_key)?.setOnPreferenceClickListener {
-            val authEnabled = PreferenceManager.getDefaultSharedPreferences(
-                context ?: return@setOnPreferenceClickListener false
-            )
-                .getBoolean(getString(R.string.biometric_key), false)
+        getPref(R.string.biometric_key)?.hideOn(TV or EMULATOR)?.setOnPreferenceClickListener {
+            val ctx = context ?: return@setOnPreferenceClickListener false
 
-            if (authEnabled) {
-                BackupUtils.backup(activity)
-                val title = activity?.getString(R.string.biometric_setting)
-                val warning = activity?.getString(R.string.biometric_warning)
-                activity?.showBottomDialogText(
-                    title as String,
-                    warning.html()
-                ) { onDialogDismissedEvent }
+            if (deviceHasPasswordPinLock(ctx)) {
+                startBiometricAuthentication(
+                    activity?: return@setOnPreferenceClickListener false,
+                    R.string.biometric_authentication_title,
+                    false
+                    )
+                promptInfo?.let {
+                    authCallback = this
+                    biometricPrompt?.authenticate(it)
+                }
             }
-            true
+
+            false
         }
 
         val syncApis =
@@ -170,8 +208,9 @@ class SettingsAccount : PreferenceFragmentCompat() {
                 R.string.anilist_key to aniListApi,
                 R.string.simkl_key to simklApi,
                 R.string.opensubtitles_key to openSubtitlesApi,
+                R.string.subdl_key to subDlApi,
                 R.string.gdrive_key to googleDriveApi,
-                R.string.pcloud_key to pcloudApi
+                R.string.pcloud_key to pcloudApi,
             )
 
         for ((key, api) in syncApis) {

@@ -1,5 +1,7 @@
 package com.lagradost.cloudstream3.ui.home
 
+import android.os.Bundle
+import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -7,6 +9,7 @@ import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.findViewTreeLifecycleOwner
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
@@ -26,6 +29,7 @@ import com.lagradost.cloudstream3.databinding.FragmentHomeHeadTvBinding
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.debugException
 import com.lagradost.cloudstream3.mvvm.observe
+import com.lagradost.cloudstream3.ui.ViewHolderState
 import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.account.AccountHelper.showAccountSelectLinear
 import com.lagradost.cloudstream3.ui.home.HomeFragment.Companion.selectHomepage
@@ -36,8 +40,9 @@ import com.lagradost.cloudstream3.ui.result.setLinearListLayout
 import com.lagradost.cloudstream3.ui.search.SEARCH_ACTION_LOAD
 import com.lagradost.cloudstream3.ui.search.SEARCH_ACTION_SHOW_METADATA
 import com.lagradost.cloudstream3.ui.search.SearchClickCallback
-import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isEmulatorSettings
-import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
+import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
+import com.lagradost.cloudstream3.ui.settings.Globals.TV
+import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showOptionSelectStringRes
@@ -46,113 +51,87 @@ import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbarView
 import com.lagradost.cloudstream3.utils.UIHelper.populateChips
 
 class HomeParentItemAdapterPreview(
-    items: MutableList<HomeViewModel.ExpandableHomepageList>,
+    override val fragment: Fragment,
     private val viewModel: HomeViewModel,
-) : ParentItemAdapter(items, clickCallback = {
-    viewModel.click(it)
-}, moreInfoClickCallback = {
-    viewModel.popup(it)
-}, expandCallback = {
-    viewModel.expand(it)
-}) {
-    val headItems = 1
+) : ParentItemAdapter(fragment, id = "HomeParentItemAdapterPreview".hashCode(),
+    clickCallback = {
+        viewModel.click(it)
+    }, moreInfoClickCallback = {
+        viewModel.popup(it)
+    }, expandCallback = {
+        viewModel.expand(it)
+    }) {
+    override val headers = 1
+    override fun onCreateHeader(parent: ViewGroup): ViewHolderState<Bundle> {
+        val inflater = LayoutInflater.from(parent.context)
+        val binding = if (isLayout(TV or EMULATOR)) FragmentHomeHeadTvBinding.inflate(
+            inflater,
+            parent,
+            false
+        ) else FragmentHomeHeadBinding.inflate(inflater, parent, false)
 
-    companion object {
-        private const val VIEW_TYPE_HEADER = 2
-        private const val VIEW_TYPE_ITEM = 1
-    }
+        if (binding is FragmentHomeHeadTvBinding && isLayout(EMULATOR)) {
+            binding.homeBookmarkParentItemMoreInfo.isVisible = true
 
-    override fun getItemViewType(position: Int) = when (position) {
-        0 -> VIEW_TYPE_HEADER
-        else -> VIEW_TYPE_ITEM
-    }
+            val marginInDp = 50
+            val density = binding.horizontalScrollChips.context.resources.displayMetrics.density
+            val marginInPixels = (marginInDp * density).toInt()
 
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        when (holder) {
-            is HeaderViewHolder -> {}
-            else -> super.onBindViewHolder(holder, position - headItems)
+            val params = binding.horizontalScrollChips.layoutParams as ViewGroup.MarginLayoutParams
+            params.marginEnd = marginInPixels
+            binding.horizontalScrollChips.layoutParams = params
+            binding.homeWatchParentItemTitle.setCompoundDrawablesWithIntrinsicBounds(
+                null,
+                null,
+                ContextCompat.getDrawable(
+                    parent.context,
+                    R.drawable.ic_baseline_arrow_forward_24
+                ),
+                null
+            )
         }
+
+        return HeaderViewHolder(binding, viewModel, fragment = fragment)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return when (viewType) {
-            VIEW_TYPE_HEADER -> {
-                val inflater = LayoutInflater.from(parent.context)
-                val binding = if (isTvSettings()) FragmentHomeHeadTvBinding.inflate(
-                    inflater,
-                    parent,
-                    false
-                ) else FragmentHomeHeadBinding.inflate(inflater, parent, false)
+    override fun onBindHeader(holder: ViewHolderState<Bundle>) {
+        (holder as? HeaderViewHolder)?.bind()
+    }
 
-                if (binding is FragmentHomeHeadTvBinding && parent.context.isEmulatorSettings()) {
-                    binding.homeBookmarkParentItemMoreInfo.isVisible = true
+    private class HeaderViewHolder(
+        val binding: ViewBinding, val viewModel: HomeViewModel, fragment: Fragment,
+    ) :
+        ViewHolderState<Bundle>(binding) {
 
-                    val marginInDp = 50
-                    val density = binding.horizontalScrollChips.context.resources.displayMetrics.density
-                    val marginInPixels = (marginInDp * density).toInt()
-
-                    val params = binding.horizontalScrollChips.layoutParams as ViewGroup.MarginLayoutParams
-                    params.marginEnd = marginInPixels
-                    binding.horizontalScrollChips.layoutParams = params
-                    binding.homeWatchParentItemTitle.setCompoundDrawablesWithIntrinsicBounds(
-                        null,
-                        null,
-                        ContextCompat.getDrawable(
-                            parent.context,
-                            R.drawable.ic_baseline_arrow_forward_24
-                        ),
-                        null
-                    )
-                }
-
-                HeaderViewHolder(
-                    binding,
-                    viewModel,
+        override fun save(): Bundle =
+            Bundle().apply {
+                putParcelable(
+                    "resumeRecyclerView",
+                    resumeRecyclerView.layoutManager?.onSaveInstanceState()
                 )
+                putParcelable(
+                    "bookmarkRecyclerView",
+                    bookmarkRecyclerView.layoutManager?.onSaveInstanceState()
+                )
+                //putInt("previewViewpager", previewViewpager.currentItem)
             }
 
-            VIEW_TYPE_ITEM -> super.onCreateViewHolder(parent, viewType)
-            else -> error("Unhandled viewType=$viewType")
-        }
-    }
-
-    override fun getItemCount(): Int {
-        return super.getItemCount() + headItems
-    }
-
-    override fun getItemId(position: Int): Long {
-        if (position == 0) return 0//previewData.hashCode().toLong()
-        return super.getItemId(position - headItems)
-    }
-
-    override fun onViewDetachedFromWindow(holder: RecyclerView.ViewHolder) {
-        when (holder) {
-            is HeaderViewHolder -> {
-                holder.onViewDetachedFromWindow()
+        override fun restore(state: Bundle) {
+            state.getParcelable<Parcelable>("resumeRecyclerView")?.let { recycle ->
+                resumeRecyclerView.layoutManager?.onRestoreInstanceState(recycle)
             }
-
-            else -> super.onViewDetachedFromWindow(holder)
-        }
-    }
-
-    override fun onViewAttachedToWindow(holder: RecyclerView.ViewHolder) {
-        when (holder) {
-            is HeaderViewHolder -> {
-                holder.onViewAttachedToWindow()
+            state.getParcelable<Parcelable>("bookmarkRecyclerView")?.let { recycle ->
+                bookmarkRecyclerView.layoutManager?.onRestoreInstanceState(recycle)
             }
-
-            else -> super.onViewAttachedToWindow(holder)
+            //state.getInt("previewViewpager").let { recycle ->
+            //    previewViewpager.setCurrentItem(recycle,true)
+            //}
         }
-    }
 
-    class HeaderViewHolder
-    constructor(
-        val binding: ViewBinding,
-        val viewModel: HomeViewModel,
-    ) : RecyclerView.ViewHolder(binding.root) {
-        private var previewAdapter: HomeScrollAdapter = HomeScrollAdapter()
-        private var resumeAdapter: HomeChildItemAdapter = HomeChildItemAdapter(
-            ArrayList(),
+        val previewAdapter = HomeScrollAdapter(fragment = fragment)
+        private val resumeAdapter = HomeChildItemAdapter(
+            fragment,
+            id = "resumeAdapter".hashCode(),
             nextFocusUp = itemView.nextFocusUpId,
             nextFocusDown = itemView.nextFocusDownId
         ) { callback ->
@@ -207,8 +186,9 @@ class HomeParentItemAdapterPreview(
                 }
             }
         }
-        private var bookmarkAdapter: HomeChildItemAdapter = HomeChildItemAdapter(
-            ArrayList(),
+        private val bookmarkAdapter = HomeChildItemAdapter(
+            fragment,
+            id = "bookmarkAdapter".hashCode(),
             nextFocusUp = itemView.nextFocusUpId,
             nextFocusDown = itemView.nextFocusDownId
         ) { callback ->
@@ -217,7 +197,10 @@ class HomeParentItemAdapterPreview(
                 return@HomeChildItemAdapter
             }
 
-            (callback.view.context?.getActivity() as? MainActivity)?.loadPopup(callback.card, load = false)
+            (callback.view.context?.getActivity() as? MainActivity)?.loadPopup(
+                callback.card,
+                load = false
+            )
             /*
             callback.view.context?.getActivity()?.showOptionSelectStringRes(
                 callback.view,
@@ -267,7 +250,6 @@ class HomeParentItemAdapterPreview(
             */
         }
 
-
         private val previewViewpager: ViewPager2 =
             itemView.findViewById(R.id.home_preview_viewpager)
 
@@ -275,37 +257,23 @@ class HomeParentItemAdapterPreview(
             itemView.findViewById(R.id.home_preview_viewpager_text)
 
         // private val previewHeader: FrameLayout = itemView.findViewById(R.id.home_preview)
-        private var resumeHolder: View = itemView.findViewById(R.id.home_watch_holder)
-        private var resumeRecyclerView: RecyclerView =
+        private val resumeHolder: View = itemView.findViewById(R.id.home_watch_holder)
+        private val resumeRecyclerView: RecyclerView =
             itemView.findViewById(R.id.home_watch_child_recyclerview)
-        private var bookmarkHolder: View = itemView.findViewById(R.id.home_bookmarked_holder)
-        private var bookmarkRecyclerView: RecyclerView =
+        private val bookmarkHolder: View = itemView.findViewById(R.id.home_bookmarked_holder)
+        private val bookmarkRecyclerView: RecyclerView =
             itemView.findViewById(R.id.home_bookmarked_child_recyclerview)
 
-        private var homeAccount: View? =
-            itemView.findViewById(R.id.home_preview_switch_account)
-        private var alternativeHomeAccount: View? =
+        private val homeAccount: View? = itemView.findViewById(R.id.home_preview_switch_account)
+        private val alternativeHomeAccount: View? =
             itemView.findViewById(R.id.alternative_switch_account)
 
-        private var topPadding: View? = itemView.findViewById(R.id.home_padding)
+        private val topPadding: View? = itemView.findViewById(R.id.home_padding)
 
-        private var alternativeAccountPadding: View? = itemView.findViewById(R.id.alternative_account_padding)
+        private val alternativeAccountPadding: View? =
+            itemView.findViewById(R.id.alternative_account_padding)
 
         private val homeNonePadding: View = itemView.findViewById(R.id.home_none_padding)
-
-        private val previewCallback: ViewPager2.OnPageChangeCallback =
-            object : ViewPager2.OnPageChangeCallback() {
-                override fun onPageSelected(position: Int) {
-                    previewAdapter.apply {
-                        if (position >= itemCount - 1 && hasMoreItems) {
-                            hasMoreItems = false // don't make two requests
-                            viewModel.loadMoreHomeScrollResponses()
-                        }
-                    }
-                    val item = previewAdapter.getItem(position) ?: return
-                    onSelect(item, position)
-                }
-            }
 
         fun onSelect(item: LoadResponse, position: Int) {
             (binding as? FragmentHomeHeadTvBinding)?.apply {
@@ -379,14 +347,14 @@ class HomeParentItemAdapterPreview(
 
                 homePreviewBookmark.setOnClickListener { fab ->
                     fab.context.getActivity()?.showBottomDialog(
-                        WatchType.values()
+                        WatchType.entries
                             .map { fab.context.getString(it.stringRes) }
                             .toList(),
                         DataStoreHelper.getResultWatchState(id).ordinal,
                         fab.context.getString(R.string.action_add_to_bookmarks),
                         showApply = false,
                         {}) {
-                        val newValue = WatchType.values()[it]
+                        val newValue = WatchType.entries[it]
 
                         ResultViewModel2().updateWatchStatus(
                             newValue,
@@ -411,38 +379,22 @@ class HomeParentItemAdapterPreview(
             }
         }
 
-        fun onViewDetachedFromWindow() {
-            previewViewpager.unregisterOnPageChangeCallback(previewCallback)
-        }
-
-        fun onViewAttachedToWindow() {
-            previewViewpager.registerOnPageChangeCallback(previewCallback)
-
-            binding.root.findViewTreeLifecycleOwner()?.apply {
-                observe(viewModel.preview) {
-                    updatePreview(it)
-                }
-                if (binding is FragmentHomeHeadTvBinding) {
-                    observe(viewModel.apiName) { name ->
-                        binding.homePreviewChangeApi.text = name
-                    }
-                }
-                observe(viewModel.resumeWatching) {
-                    updateResume(it)
-                }
-                observe(viewModel.bookmarks) {
-                    updateBookmarks(it)
-                }
-                observe(viewModel.availableWatchStatusTypes) { (checked, visible) ->
-                    for ((chip, watch) in toggleList) {
-                        chip.apply {
-                            isVisible = visible.contains(watch)
-                            isChecked = checked.contains(watch)
+        private val previewCallback: ViewPager2.OnPageChangeCallback =
+            object : ViewPager2.OnPageChangeCallback() {
+                override fun onPageSelected(position: Int) {
+                    previewAdapter.apply {
+                        if (position >= itemCount - 1 && hasMoreItems) {
+                            hasMoreItems = false // don't make two requests
+                            viewModel.loadMoreHomeScrollResponses()
                         }
                     }
-                    toggleListHolder?.isGone = visible.isEmpty()
+                    val item = previewAdapter.getItemOrNull(position) ?: return
+                    onSelect(item, position)
                 }
-            } ?: debugException { "Expected findViewTreeLifecycleOwner" }
+            }
+
+        override fun onViewDetachedFromWindow() {
+            previewViewpager.unregisterOnPageChangeCallback(previewCallback)
         }
 
         private val toggleList = listOf<Pair<Chip, WatchType>>(
@@ -454,6 +406,8 @@ class HomeParentItemAdapterPreview(
         )
 
         private val toggleListHolder: ChipGroup? = itemView.findViewById(R.id.home_type_holder)
+
+        fun bind() = Unit
 
         init {
             previewViewpager.setPageTransformer(HomeScrollTransformer())
@@ -561,7 +515,9 @@ class HomeParentItemAdapterPreview(
 
             when (preview) {
                 is Resource.Success -> {
-                    if (!previewAdapter.setItems(
+                    previewAdapter.submitList(preview.value.second)
+                    previewAdapter.hasMoreItems = preview.value.first
+                    /*if (!.setItems(
                             preview.value.second,
                             preview.value.first
                         )
@@ -573,15 +529,16 @@ class HomeParentItemAdapterPreview(
                         previewViewpager.fakeDragBy(1f)
                         previewViewpager.endFakeDrag()
                         previewCallback.onPageSelected(0)
-                        previewViewpager.isVisible = true
-                        previewViewpagerText.isVisible = true
-                        alternativeAccountPadding?.isVisible = false
                         //previewHeader.isVisible = true
-                    }
+                    }*/
+
+                    previewViewpager.isVisible = true
+                    previewViewpagerText.isVisible = true
+                    alternativeAccountPadding?.isVisible = false
                 }
 
                 else -> {
-                    previewAdapter.setItems(listOf(), false)
+                    previewAdapter.submitList(listOf())
                     previewViewpager.setCurrentItem(0, false)
                     previewViewpager.isVisible = false
                     previewViewpagerText.isVisible = false
@@ -593,12 +550,12 @@ class HomeParentItemAdapterPreview(
 
         private fun updateResume(resumeWatching: List<SearchResponse>) {
             resumeHolder.isVisible = resumeWatching.isNotEmpty()
-            resumeAdapter.updateList(resumeWatching)
+            resumeAdapter.submitList(resumeWatching)
 
             if (
                 binding is FragmentHomeHeadBinding ||
                 binding is FragmentHomeHeadTvBinding &&
-                binding.root.context.isEmulatorSettings()
+                isLayout(EMULATOR)
             ) {
                 val title = (binding as? FragmentHomeHeadBinding)?.homeWatchParentItemTitle
                     ?: (binding as? FragmentHomeHeadTvBinding)?.homeWatchParentItemTitle
@@ -623,12 +580,12 @@ class HomeParentItemAdapterPreview(
         private fun updateBookmarks(data: Pair<Boolean, List<SearchResponse>>) {
             val (visible, list) = data
             bookmarkHolder.isVisible = visible
-            bookmarkAdapter.updateList(list)
+            bookmarkAdapter.submitList(list)
 
             if (
                 binding is FragmentHomeHeadBinding ||
                 binding is FragmentHomeHeadTvBinding &&
-                binding.root.context.isEmulatorSettings()
+                isLayout(EMULATOR)
             ) {
                 val title = (binding as? FragmentHomeHeadBinding)?.homeBookmarkParentItemTitle
                     ?: (binding as? FragmentHomeHeadTvBinding)?.homeBookmarkParentItemTitle
@@ -652,6 +609,36 @@ class HomeParentItemAdapterPreview(
                     )
                 }
             }
+        }
+
+        override fun onViewAttachedToWindow() {
+            previewViewpager.registerOnPageChangeCallback(previewCallback)
+
+            binding.root.findViewTreeLifecycleOwner()?.apply {
+                observe(viewModel.preview) {
+                    updatePreview(it)
+                }
+                if (binding is FragmentHomeHeadTvBinding) {
+                    observe(viewModel.apiName) { name ->
+                        binding.homePreviewChangeApi.text = name
+                    }
+                }
+                observe(viewModel.resumeWatching) {
+                    updateResume(it)
+                }
+                observe(viewModel.bookmarks) {
+                    updateBookmarks(it)
+                }
+                observe(viewModel.availableWatchStatusTypes) { (checked, visible) ->
+                    for ((chip, watch) in toggleList) {
+                        chip.apply {
+                            isVisible = visible.contains(watch)
+                            isChecked = checked.contains(watch)
+                        }
+                    }
+                    toggleListHolder?.isGone = visible.isEmpty()
+                }
+            } ?: debugException { "Expected findViewTreeLifecycleOwner" }
         }
     }
 }

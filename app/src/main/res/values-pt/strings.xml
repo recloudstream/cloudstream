@@ -59,7 +59,7 @@
     <string name="download_failed">Falha no Download</string>
     <string name="download_canceled">Download cancelado</string>
     <string name="download_done">Download concluído</string>
-    <string name="stream">Stream</string>
+    <string name="stream">Transmitir</string>
     <string name="error_loading_links_toast">Erro a Carregar Links</string>
     <string name="download_storage_text">Armazenamento Interno</string>
     <string name="app_dubbed_text">Dob</string>
@@ -118,8 +118,7 @@
     <string name="player_subtitles_settings_des">Configurações de legendas do player</string>
     <string name="chromecast_subtitles_settings">Legendas do Chromecast</string>
     <string name="chromecast_subtitles_settings_des">Configurações de legendas do Chromecast</string>
-    <string name="eigengraumode_settings">Modo Eigengravy</string>
-    <string name="eigengraumode_settings_des">Acrescenta uma opção de velocidade no player</string>
+    <string name="eigengraumode_settings">Velocidade de reprodução</string>
     <string name="swipe_to_seek_settings">Deslize para andar</string>
     <string name="swipe_to_seek_settings_des">Deslize para os lados para controlar a posição em um vídeo</string>
     <string name="swipe_to_change_settings">Deslize para mudar as configurações</string>
@@ -143,8 +142,8 @@
     <string name="backup_failed">Permissão de armazenamento não encontrada, por favor tente novamente.</string>
     <string name="backup_failed_error_format">Erro no backup de %s</string>
     <string name="search">Procurar</string>
-    <string name="category_account">Contas</string>
-    <string name="category_updates">Atualizações e backup</string>
+    <string name="category_account">Contas e segurança</string>
+    <string name="category_updates">Atualizações e cópias de segurança</string>
     <string name="settings_info">Info</string>
     <string name="advanced_search">Procura Avançada</string>
     <string name="advanced_search_des">Mostra resultados separados por fornecedor</string>
@@ -273,10 +272,10 @@
     <string name="category_general">Geral</string>
     <string name="random_button_settings">Botão Aleatório</string>
     <string name="random_button_settings_desc">Mostrar botão aleatório na página inicial</string>
-    <string name="provider_lang_settings">Idioma dos fornecedores</string>
+    <string name="provider_lang_settings">Línguas de extensão</string>
     <string name="app_layout">Layout da App</string>
     <string name="preferred_media_settings">Mídia preferida</string>
-    <string name="enable_nsfw_on_providers">Ativar NSFW em fornecedores compatíveis</string>
+    <string name="enable_nsfw_on_providers">Ativar NSFW nas Extensões suportadas</string>
     <string name="subtitles_encoding">Codificação das legendas</string>
     <string name="category_providers">Fornecedores</string>
     <string name="category_ui">Layout</string>
@@ -289,11 +288,11 @@
     <string name="bottom_title_settings">Local do título do poster</string>
     <string name="bottom_title_settings_des">Coloca o título debaixo do poster</string>
     <string name="example_password">senha123</string>
-    <string name="example_username">MeuNomeFixe</string>
+    <string name="example_username">Nome de utilizador</string>
     <string name="example_email">ola@mundo.com</string>
     <string name="example_ip">127.0.0.1</string>
-    <string name="example_site_name">MeuSiteFixe</string>
-    <string name="example_site_url">examplo.com</string>
+    <string name="example_site_name">NovoNomedoSite</string>
+    <string name="example_site_url">https://example.com</string>
     <string name="example_lang_name">Codigo da Língua (pt)</string>
     <string name="account">Conta</string>
     <string name="logout">Sair</string>
@@ -374,9 +373,7 @@
     <string name="plugins_downloaded" formatted="true">Transferido: %d</string>
     <string name="plugins_disabled" formatted="true">Desativado: %d</string>
     <string name="plugins_not_downloaded" formatted="true">Não transferido: %d</string>
-    <string name="blank_repo_message">O CloudStream não possui sites instalados por padrão. Você precisa instalar os sites a partir de repositórios.
-\n
-\nDevido a uma restrição sem sentido de direitos autorais (DMCA) pela Sky UK Limited 🤮 não podemos vincular o site do repositório no aplicativo.
+    <string name="blank_repo_message">O CloudStream não tem sites instalados por padrão. É necessário instalar os sites a partir de repositórios.
 \n
 \nJunte-se ao nosso Discord ou pesquise online.</string>
     <string name="view_public_repositories_button">Ver repositórios da comunidade</string>
@@ -443,7 +440,7 @@
     <string name="quality_cam">Cam</string>
     <string name="skip_type_intro">Abertura</string>
     <string name="select_library">Selecionar Biblioteca</string>
-    <string name="jsdelivr_proxy_summary">Ignora o bloqueio do GitHub usando jsDelivr. Pode fazer com que as actualizações sejam atrasadas por alguns dias.</string>
+    <string name="jsdelivr_proxy_summary">Contorna o bloqueio de URLs raw do GitHub usando jsDelivr. Pode atrasar as atualizações por uns dias.</string>
     <string name="player_settings_play_in_vlc">VLC</string>
     <string name="all_languages_preference">Todas as linguagens</string>
     <string name="sort_updated_new">Atualizado (Novo para Antigo)</string>
@@ -461,10 +458,10 @@
     <string name="subscription_deleted">Inscrição cancelada em %s</string>
     <string name="skip_type_mixed_ed">Final misto</string>
     <string name="sort_rating_desc">Avaliações (Decrescente)</string>
-    <string name="apply_on_restart">Aplicar ao reiniciar</string>
-    <string name="referer">Referente</string>
+    <string name="apply_on_restart">Reinicie a aplicação para ver as alterações.</string>
+    <string name="referer">Referenciador (opcional)</string>
     <string name="android_tv_interface_off_seek_settings">Player oculto - Quantidade de Busca</string>
-    <string name="jsdelivr_proxy">raw.githubusercontent.com Proxy</string>
+    <string name="jsdelivr_proxy">Proxy do GitHub</string>
     <string name="quality_blueray">Blu-ray</string>
     <string name="pref_category_looks">Aparência</string>
     <string name="subtitle_offset_hint">1000 ms</string>
@@ -476,7 +473,7 @@
     <string name="safe_mode_crash_info">Ver informações sobre falha</string>
     <string name="app_not_found_error">Aplicativo não encontrado</string>
     <string name="revert">Reverter</string>
-    <string name="network_adress_example">Link para transmitir</string>
+    <string name="network_adress_example">https://example.com/example.mp4</string>
     <string name="plugin_downloaded">Plugins baixados</string>
     <string name="plugins_updated" formatted="true">%d plugins atualizados</string>
     <string name="skip_type_format" formatted="true">Pular %s</string>
@@ -551,4 +548,71 @@
     <string name="no_plugins_found_error">Não foram encontrados plugins no repositório</string>
     <string name="no_repository_found_error">Repositório não encontrado, verifique o URL e tente a VPN</string>
     <string name="already_voted">Você já votou</string>
+    <string name="action_unsubscribe">Cancelar Inscrição</string>
+    <string name="action_subscribe">Subscrever</string>
+    <string name="favorites_list_name">Favoritos</string>
+    <string name="links_reloaded_toast">A recarregar links</string>
+    <string name="backup_frequency">Frequência de Backup</string>
+    <string name="favorite_removed">%s removido dos favoritos</string>
+    <string name="action_add_to_favorites">Adicionar aos favoritos</string>
+    <string name="duplicate_title">Possível duplicata encontrada</string>
+    <string name="favorite_added">%s adicionado aos favoritos</string>
+    <string name="action_remove_from_favorites">Remover dos favoritos</string>
+    <string name="duplicate_replace">Substituir</string>
+    <string name="duplicate_replace_all">Substituir Tudo</string>
+    <string name="enter_current_pin">Insira o PIN atual</string>
+    <string name="pin">PIN</string>
+    <string name="pin_error_incorrect">PIN incorreto. Por favor, tente novamente.</string>
+    <string name="pin_error_length">O PIN deve ter 4 caracteres</string>
+    <string name="edit_account">Editar conta</string>
+    <string name="logged_account" formatted="true">Conectado como %s</string>
+    <string name="skip_startup_account_select_pref">Ignorar a seleção da conta na inicialização</string>
+    <string name="rotate_video">Girar</string>
+    <string name="enter_pin_with_name" formatted="true">Digite o PIN para %s</string>
+    <string name="lock_profile">Bloquear Perfil</string>
+    <string name="select_an_account">Selecione uma conta</string>
+    <string name="manage_accounts">Gerenciar contas</string>
+    <string name="use_default_account">Usar conta padrão</string>
+    <string name="duplicate_message_multiple" formatted="true">Potenciais itens duplicados foram encontrados na sua biblioteca:
+\n
+\n%s
+\n
+\nDeseja adicionar esse item mesmo assim, subtituir os existentes, ou cancelar a ação?</string>
+    <string name="duplicate_message_single" formatted="true">Parece que já existe um item potencialmente duplicado na sua biblioteca: \'%s.\'
+\n
+\nDeseja adicionar esse item mesmo assim, subtituir o existente, ou cancelar a ação?</string>
+    <string name="recommendations_tooltip">Mostrar recomendações</string>
+    <string name="speed_setting_summary">Adiciona uma opção de velocidade no leitor</string>
+    <string name="test_extensions">Testar todas as extensões</string>
+    <string name="test_extensions_summary">Este teste destina-se apenas a programadores e não verifica ou nega o funcionamento de qualquer extensão.</string>
+    <string name="duplicate_add">Adicionar</string>
+    <string name="enter_pin">Insira o PIN</string>
+    <string name="subscribe_tooltip">Notificação de novo episódio</string>
+    <string name="result_search_tooltip">Procurar noutras extensões</string>
+    <string name="rotate_video_desc">Apresentar um botão de alternância para a orientação do ecrã</string>
+    <string name="auto_rotate_video_desc">Ativar a mudança automática da orientação do ecrã com base na orientação do vídeo</string>
+    <string name="auto_rotate_video">Rotação automática</string>
+    <string name="repo_copy_label">Nome do repositório e URL</string>
+    <string name="favorite">Favorito</string>
+    <string name="unfavorite">Desfavorito</string>
+    <string name="biometric_setting">Bloqueio com biometria</string>
+    <string name="toast_copied">copiado!</string>
+    <string name="resume_remaining" formatted="true">%s
+\nrestante</string>
+    <string name="clipboard_permission_error">Erro ao aceder à área de transferência, tente novamente.</string>
+    <string name="clipboard_unknown_error">Erro ao copiar, copie o logcat e contacte o suporte da aplicação.</string>
+    <string name="biometric_authentication_title">Desbloquear o CloudStream</string>
+    <string name="password_pin_authentication_title">Autenticação por palavra-passe/PIN</string>
+    <string name="biometric_unsupported">A autenticação biométrica não é suportada neste dispositivo</string>
+    <string name="biometric_setting_summary">Desbloqueie a aplicação com impressão digital, ID facial, PIN, padrão e palavra-passe.</string>
+    <string name="biometric_prompt_description">Este ecrã foi encerrado devido a várias tentativas falhadas. Reinicie a aplicação.</string>
+    <string name="biometric_warning">Os dados do seu CloudStream já foram copiados. Embora a possibilidade de isto acontecer ser muito baixa, todos os dispositivos podem comportar-se de forma diferente. No caso raro de ficar impedido de aceder à aplicação, limpe completamente os dados da aplicação e restaure a partir de uma cópia de segurança. Lamentamos qualquer incómodo causado por esta situação.</string>
+    <string name="ok">OK</string>
+    <string name="app_unrestricted_toast">A utilização da bateria da aplicação já está definida como sem restrições</string>
+    <string name="app_info_intent_error">Não é possível abrir a informação da aplicação CloudStream.</string>
+    <string name="music_singlar">Música</string>
+    <string name="audio_book_singular">Livro Aúdio</string>
+    <string name="custom_media_singluar">Multimédia</string>
+    <string name="battery_dialog_title">Desativar a otimização da bateria</string>
+    <string name="battery_dialog_message">Para garantir descarregamentos ininterruptos e notificações de programas de TV subscritos, o CloudStream precisa de permissão para ser executado em segundo plano. Ao premir OK, será direcionado para informações da aplicação. Aí, desloque-se para utilização da bateria da aplicação e defina a utilização da bateria para sem restrições. Tenha em atenção que esta permissão não significa que o CS3 irá esgotar a sua bateria. Este só funcionará em segundo plano quando necessário, como ao receber notificações ou baixar vídeos de extensões oficiais. Se optar por cancelar, pode ajustar esta definição mais tarde em definições gerais.</string>
 </resources>

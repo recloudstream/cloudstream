@@ -31,6 +31,7 @@ import com.lagradost.cloudstream3.syncproviders.providers.MALApi.Companion.MAL_T
 import com.lagradost.cloudstream3.syncproviders.providers.MALApi.Companion.MAL_UNIXTIME_KEY
 import com.lagradost.cloudstream3.syncproviders.providers.MALApi.Companion.MAL_USER_KEY
 import com.lagradost.cloudstream3.syncproviders.providers.OpenSubtitlesApi.Companion.OPEN_SUBTITLES_USER_KEY
+import com.lagradost.cloudstream3.syncproviders.providers.SubDlApi.Companion.SUBDL_SUBTITLES_USER_KEY
 import com.lagradost.cloudstream3.ui.result.txt
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.main
@@ -48,7 +49,7 @@ import java.io.OutputStream
 import java.io.PrintWriter
 import java.lang.System.currentTimeMillis
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
 
 object BackupUtils {
     enum class RestoreSource {
@@ -80,10 +81,13 @@ object BackupUtils {
         PLUGINS_KEY_LOCAL,
 
         OPEN_SUBTITLES_USER_KEY,
+        SUBDL_SUBTITLES_USER_KEY,
+
         DOWNLOAD_EPISODE_CACHE,
 
         "biometric_key", // can lock down users if backup is shared on a incompatible device
-        "nginx_user" // Nginx user key
+        "nginx_user", // Nginx user key
+        "download_path_key" // No access rights after restore data from backup
     )
 
     /** false if key should not be contained in backup */

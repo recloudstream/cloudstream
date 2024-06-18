@@ -124,7 +124,6 @@
     <string name="chromecast_subtitles_settings">Chromecast Ondertitels</string>
     <string name="chromecast_subtitles_settings_des">Chromecast ondertitels instellingen</string>
     <string name="eigengraumode_settings">Eigengravy Modus</string>
-    <string name="eigengraumode_settings_des">Voegt een snelheidsoptie toe in de speler</string>
     <string name="swipe_to_seek_settings">Swipe to seek</string>
     <string name="swipe_to_seek_settings_des">Veeg naar links of rechts om de tijd in de videospeler te regelen</string>
     <string name="swipe_to_change_settings">Veeg om instellingen te wijzigen</string>
@@ -606,4 +605,7 @@
     <string name="enter_pin">PIN invoeren</string>
     <string name="pin">PIN</string>
     <string name="enter_current_pin">Huidige PIN invoeren</string>
+    <string name="links_reloaded_toast">Link opnieuw geladen</string>
+    <string name="auto_rotate_video">Autoroteer</string>
+    <string name="rotate_video">Roteer</string>
 </resources>

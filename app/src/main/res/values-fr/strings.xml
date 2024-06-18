@@ -48,7 +48,7 @@
     <string name="popup_resume_download">Reprendre le téléchargement</string>
     <string name="popup_pause_download">Mettre en pause le téléchargement</string>
     <string name="pref_disable_acra">Désactiver le rapport de bug automatique</string>
-    <string name="home_more_info">Plus d\'informations</string>
+    <string name="home_more_info">Plus d\'information</string>
     <string name="home_expanded_hide">Cacher</string>
     <string name="home_main_poster_img_des">Affiche principale</string>
     <string name="home_play">Lecture</string>
@@ -146,7 +146,7 @@
     <string name="resize_fit">Adapter à l\'écran</string>
     <string name="app_layout">Disposition de l\'application</string>
     <string name="tv_layout">Disposition TV</string>
-    <string name="provider_lang_settings">Language des fournisseurs</string>
+    <string name="provider_lang_settings">Langues des extensions</string>
     <string name="preferred_media_settings">Médias préférées</string>
     <string name="automatic">Auto</string>
     <string name="cast_format">Distribution : %s</string>
@@ -171,7 +171,7 @@
     <string name="video_ram_description">Causera des crashs si la valeur choisie est trop élevée sur un appareil avec peu de ram comme une télévision android.</string>
     <string name="video_disk_description">Cause des problèmes si la valeur choisie est trop élevée sur un appareil avec peu de stockage comme une télévision android.</string>
     <string name="random_button_settings">Bouton aléatoire</string>
-    <string name="random_button_settings_desc">Afficher un bouton aléatoire sur la page d\'accueil</string>
+    <string name="random_button_settings_desc">Afficher un bouton aléatoire sur la page d\'accueil et la librairie</string>
     <string name="emulator_layout">Disposition émulateur</string>
     <string name="bottom_title_settings">Position du titre du poster</string>
     <string name="bottom_title_settings_des">Mettre le titre sous le poster</string>
@@ -255,8 +255,7 @@
     <string name="player_subtitles_settings_des">Paramètres des sous-titres du lecteur</string>
     <string name="chromecast_subtitles_settings">Sous-titres Chromecast</string>
     <string name="chromecast_subtitles_settings_des">Paramètres des sous-titres Chromecast</string>
-    <string name="eigengraumode_settings">Mode Eigengravy</string>
-    <string name="eigengraumode_settings_des">Ajout d\'une option de vitesse dans le lecteur</string>
+    <string name="eigengraumode_settings">Vitesse de lecture</string>
     <string name="swipe_to_seek_settings">Balayez pour chercher</string>
     <string name="swipe_to_seek_settings_des">Balayez d\'un côté ou de l\'autre pour contrôler la position dans la vidéo</string>
     <string name="swipe_to_change_settings">Balayez pour modifier les paramètres</string>
@@ -280,7 +279,7 @@
     <string name="backup_failed">Permissions de stockage manquantes. Veuillez réessayer.</string>
     <string name="backup_failed_error_format">Erreur de sauvegarde %s</string>
     <string name="search">Recherche</string>
-    <string name="category_account">Comptes</string>
+    <string name="category_account">Comptes et Sécurité</string>
     <string name="category_updates">Mises à jour et sauvegarde</string>
     <string name="settings_info">Info</string>
     <string name="advanced_search">Recherche avancée</string>
@@ -327,7 +326,7 @@
     <string name="remove_site_pref">Supprimer le site</string>
     <string name="add_site_summary">Ajoute un clone à un site déjà existant, avec une URL différente</string>
     <string name="nginx_url_pref">URL du serveur NGINX</string>
-    <string name="example_site_name">MonSiteTresCool</string>
+    <string name="example_site_name">Nouveau Nom du site</string>
     <string name="error_invalid_id">ID invalide</string>
     <string name="automatic_plugin_download_summary">Installer automatiquement les plugins qui sont dans les repository mais qui n\'ont pas encore été installés.</string>
     <string name="resume_time_left" formatted="true">%dm
@@ -339,9 +338,9 @@
     <string name="show_dub">Étiquette Dub (doublage anglais)</string>
     <string name="show_sub">Étiquette sous titre</string>
     <string name="show_title">Titre</string>
-    <string name="enable_nsfw_on_providers">Active le NSFW sur les fournisseurs ayant cette option</string>
+    <string name="enable_nsfw_on_providers">Activer NSFW sur les extensions prises en charge</string>
     <string name="example_password">motdepasse123</string>
-    <string name="example_username">MonNomDutilisateur</string>
+    <string name="example_username">Nom d\'utilisateur</string>
     <string name="example_lang_name">Code de la langue (fr)</string>
     <string name="create_account">Créer un compte</string>
     <string name="player_load_subtitles_online">Charger depuis internet</string>
@@ -357,7 +356,7 @@
     <string name="subtitles_encoding">Encodage des sous titres</string>
     <string name="category_providers">Fournisseurs</string>
     <string name="category_ui">Disposition</string>
-    <string name="example_site_url">exemple.com</string>
+    <string name="example_site_url">https://exemple.com</string>
     <string name="title">Titre</string>
     <string name="resolution">Résolution</string>
     <string name="quality_ts">TS</string>
@@ -390,8 +389,8 @@
     <string name="login_format" formatted="true">%1$s %2$s</string>
     <string name="subtitles_filter_lang">Filtrez par langue préférée</string>
     <string name="extras">Extras</string>
-    <string name="network_adress_example">Lien vers le stream</string>
-    <string name="referer">Référenceur</string>
+    <string name="network_adress_example">https://exemple.com/exemple.mp4</string>
+    <string name="referer">Référent (facultatif)</string>
     <string name="apk_installer_settings">Installeur APK</string>
     <string name="go_forward_30">+30</string>
     <string name="quality_cam">Cam</string>
@@ -461,9 +460,7 @@
     <string name="apk_installer_package_installer">Installateur de paquet</string>
     <string name="plugin">plugins</string>
     <string name="delete_repository_plugins">Cela supprimera également tous les plugins du repository</string>
-    <string name="blank_repo_message">CloudStream n\'a pas de sites installés par défaut. Vous devez installer les sites à partir de dépôts.
-\n
-\nEn raison d\'un retrait DMCA irréfléchi de Sky UK Limited 🤮, nous ne pouvons pas lier le site du dépôt dans l\'application.
+    <string name="blank_repo_message">CloudStream n\'a aucun site installé par défaut. Vous devez installer les sites à partir de dépôts.
 \n
 \nRejoignez notre Discord ou cherchez en ligne.</string>
     <string name="extension_language">Langage</string>
@@ -518,7 +515,7 @@
     <string name="subscription_deleted">Désabonné de %s</string>
     <string name="restart">Redémarrer</string>
     <string name="subscription_list_name">Abonné</string>
-    <string name="jsdelivr_proxy">Proxy raw.githubusercontent.com</string>
+    <string name="jsdelivr_proxy">Proxy GitHub</string>
     <string name="pref_category_bypass">Contournements de FAI</string>
     <string name="subscription_episode_released">L\'épisode %d est sorti !</string>
     <string name="test_failed">Échec</string>
@@ -585,4 +582,17 @@
 \n
 \nSouhaitez-vous ajouter cet élément, remplacer l\'élément existant ou annuler l\'action ?</string>
     <string name="enter_current_pin">Entrer le code PIN actuel</string>
+    <string name="rotate_video">Pivoter</string>
+    <string name="links_reloaded_toast">Les liens ont été rechargés</string>
+    <string name="rotate_video_desc">Afficher un bouton pour l’orientation de l’écran</string>
+    <string name="auto_rotate_video">Rotation automatique</string>
+    <string name="auto_rotate_video_desc">Activer la rotation automatique de l’écran en fonction de l’orientation vidéo</string>
+    <string name="subscribe_tooltip">Notification de nouvel épisode</string>
+    <string name="result_search_tooltip">Rechercher dans d\'autres extensions</string>
+    <string name="speed_setting_summary">Ajoute une option de vitesse dans le lecteur</string>
+    <string name="test_extensions">Testez toutes les extensions</string>
+    <string name="recommendations_tooltip">Afficher les recommandations</string>
+    <string name="test_extensions_summary">Ce test est destiné uniquement aux développeurs et ne vérifie ni n\'empêche le fonctionnement d\'aucune extension.</string>
+    <string name="toast_copied">Copié !</string>
+    <string name="repo_copy_label">Nom du dépôt et adresse internet</string>
 </resources>

@@ -237,9 +237,9 @@
     <string name="player_subtitles_settings_des">プレーヤーの字幕設定</string>
     <string name="chromecast_subtitles_settings">Chromecastの字幕</string>
     <string name="chromecast_subtitles_settings_des">Chromecastの字幕設定</string>
-    <string name="eigengraumode_settings_des">プレーヤーに速度オプションを追加します</string>
     <string name="swipe_to_seek_settings">スワイプして探す</string>
     <string name="autoplay_next_settings">次のエピソードを自動再生する</string>
     <string name="autoplay_next_settings_des">現在のエピソードが終了したら次のエピソードを開始する</string>
     <string name="subs_hold_to_reset_to_default">長押しするとデフォルトにリセットされます</string>
+    <string name="popup_resume_download">ダウンロードを再開</string>
 </resources>

@@ -86,6 +86,7 @@ import com.lagradost.cloudstream3.plugins.PluginManager
 import com.lagradost.cloudstream3.plugins.PluginManager.loadAllOnlinePlugins
 import com.lagradost.cloudstream3.plugins.PluginManager.loadSinglePlugin
 import com.lagradost.cloudstream3.receivers.VideoDownloadRestartReceiver
+import com.lagradost.cloudstream3.services.SubscriptionWorkManager
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.BackupApis
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.OAuth2Apis
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.accountManagers
@@ -113,11 +114,11 @@ import com.lagradost.cloudstream3.ui.result.setText
 import com.lagradost.cloudstream3.ui.result.txt
 import com.lagradost.cloudstream3.ui.search.SearchFragment
 import com.lagradost.cloudstream3.ui.search.SearchResultBuilder
-import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isEmulatorSettings
-import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTruePhone
-import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTrueTvSettings
-import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.isTvSettings
-import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.updateTv
+import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
+import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
+import com.lagradost.cloudstream3.ui.settings.Globals.TV
+import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
+import com.lagradost.cloudstream3.ui.settings.Globals.updateTv
 import com.lagradost.cloudstream3.ui.settings.SettingsGeneral
 import com.lagradost.cloudstream3.ui.setup.HAS_DONE_SETUP_KEY
 import com.lagradost.cloudstream3.ui.setup.SetupFragmentExtensions
@@ -135,7 +136,10 @@ import com.lagradost.cloudstream3.utils.AppUtils.setDefaultFocus
 import com.lagradost.cloudstream3.utils.BackupUtils.backup
 import com.lagradost.cloudstream3.utils.BackupUtils.setUpBackup
 import com.lagradost.cloudstream3.utils.BiometricAuthenticator
+import com.lagradost.cloudstream3.utils.BiometricAuthenticator.biometricPrompt
 import com.lagradost.cloudstream3.utils.BiometricAuthenticator.deviceHasPasswordPinLock
+import com.lagradost.cloudstream3.utils.BiometricAuthenticator.isAuthEnabled
+import com.lagradost.cloudstream3.utils.BiometricAuthenticator.promptInfo
 import com.lagradost.cloudstream3.utils.BiometricAuthenticator.startBiometricAuthentication
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.main
@@ -158,6 +162,7 @@ import com.lagradost.cloudstream3.utils.UIHelper.requestRW
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import com.lagradost.cloudstream3.utils.USER_PROVIDER_API
 import com.lagradost.cloudstream3.utils.USER_SELECTED_HOMEPAGE_API
+import com.lagradost.cloudstream3.utils.fcast.FcastManager
 import com.lagradost.nicehttp.Requests
 import com.lagradost.nicehttp.ResponseParser
 import com.lagradost.safefile.SafeFile
@@ -170,7 +175,6 @@ import java.net.URLDecoder
 import java.nio.charset.Charset
 import kotlin.math.abs
 import kotlin.math.absoluteValue
-import kotlin.reflect.KClass
 import kotlin.system.exitProcess
 
 //https://github.com/videolan/vlc-android/blob/3706c4be2da6800b3d26344fc04fab03ffa4b860/application/vlc-android/src/org/videolan/vlc/gui/video/VideoPlayerActivity.kt#L1898
@@ -183,116 +187,93 @@ import kotlin.system.exitProcess
 
 //https://github.com/jellyfin/jellyfin-android/blob/6cbf0edf84a3da82347c8d59b5d5590749da81a9/app/src/main/java/org/jellyfin/mobile/bridge/ExternalPlayer.kt#L225
 
-const val VLC_PACKAGE = "org.videolan.vlc"
-const val MPV_PACKAGE = "is.xyz.mpv"
-const val WEB_VIDEO_CAST_PACKAGE = "com.instantbits.cast.webvideo"
-
-val VLC_COMPONENT = ComponentName(VLC_PACKAGE, "$VLC_PACKAGE.gui.video.VideoPlayerActivity")
-val MPV_COMPONENT = ComponentName(MPV_PACKAGE, "$MPV_PACKAGE.MPVActivity")
-
-//TODO REFACTOR AF
-open class ResultResume(
-    val packageString: String,
-    val action: String = Intent.ACTION_VIEW,
-    val position: String? = null,
-    val duration: String? = null,
-    var launcher: ActivityResultLauncher<Intent>? = null,
-) {
-    val defaultTime = -1L
-
-    val lastId get() = "${packageString}_last_open_id"
-    suspend fun launch(id: Int?, callback: suspend Intent.() -> Unit) {
-        val intent = Intent(action)
-
-        if (id != null)
-            setKey(lastId, id)
-        else
-            removeKey(lastId)
-
-        intent.setPackage(packageString)
-        callback.invoke(intent)
-        launcher?.launch(intent)
-    }
-
-    open fun getPosition(intent: Intent?): Long {
-        return defaultTime
-    }
-
-    open fun getDuration(intent: Intent?): Long {
-        return defaultTime
-    }
-}
-
-val VLC = object : ResultResume(
-    VLC_PACKAGE,
-    // Android 13 intent restrictions fucks up specifically launching the VLC player
-    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
-        "org.videolan.vlc.player.result"
-    } else {
-        Intent.ACTION_VIEW
-    },
-    "extra_position",
-    "extra_duration",
-) {
-    override fun getPosition(intent: Intent?): Long {
-        return intent?.getLongExtra(this.position, defaultTime) ?: defaultTime
-    }
-
-    override fun getDuration(intent: Intent?): Long {
-        return intent?.getLongExtra(this.duration, defaultTime) ?: defaultTime
-    }
-}
-
-val MPV = object : ResultResume(
-    MPV_PACKAGE,
-    //"is.xyz.mpv.MPVActivity.result", // resume not working :pensive:
-    position = "position",
-    duration = "duration",
-) {
-    override fun getPosition(intent: Intent?): Long {
-        return intent?.getIntExtra(this.position, defaultTime.toInt())?.toLong() ?: defaultTime
-    }
-
-    override fun getDuration(intent: Intent?): Long {
-        return intent?.getIntExtra(this.duration, defaultTime.toInt())?.toLong() ?: defaultTime
-    }
-}
-
-val WEB_VIDEO = ResultResume(WEB_VIDEO_CAST_PACKAGE)
-
-val resumeApps = arrayOf(
-    VLC, MPV, WEB_VIDEO
-)
-
-// Short name for requests client to make it nicer to use
-
-var app = Requests(responseParser = object : ResponseParser {
-    val mapper: ObjectMapper = jacksonObjectMapper().configure(
-        DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,
-        false
-    )
-
-    override fun <T : Any> parse(text: String, kClass: KClass<T>): T {
-        return mapper.readValue(text, kClass.java)
-    }
-
-    override fun <T : Any> parseSafe(text: String, kClass: KClass<T>): T? {
-        return try {
-            mapper.readValue(text, kClass.java)
-        } catch (e: Exception) {
-            null
-        }
-    }
-
-    override fun writeValueAsString(obj: Any): String {
-        return mapper.writeValueAsString(obj)
-    }
-}).apply {
-    defaultHeaders = mapOf("user-agent" to USER_AGENT)
-}
-
-class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricAuthenticator.BiometricAuthCallback {
+class MainActivity : AppCompatActivity(), ColorPickerDialogListener,
+    BiometricAuthenticator.BiometricAuthCallback {
     companion object {
+        const val VLC_PACKAGE = "org.videolan.vlc"
+        const val MPV_PACKAGE = "is.xyz.mpv"
+        const val WEB_VIDEO_CAST_PACKAGE = "com.instantbits.cast.webvideo"
+
+        val VLC_COMPONENT = ComponentName(VLC_PACKAGE, "$VLC_PACKAGE.gui.video.VideoPlayerActivity")
+        val MPV_COMPONENT = ComponentName(MPV_PACKAGE, "$MPV_PACKAGE.MPVActivity")
+
+        //TODO REFACTOR AF
+        open class ResultResume(
+            val packageString: String,
+            val action: String = Intent.ACTION_VIEW,
+            val position: String? = null,
+            val duration: String? = null,
+            var launcher: ActivityResultLauncher<Intent>? = null,
+        ) {
+            val defaultTime = -1L
+
+            val lastId get() = "${packageString}_last_open_id"
+            suspend fun launch(id: Int?, callback: suspend Intent.() -> Unit) {
+                val intent = Intent(action)
+
+                if (id != null)
+                    setKey(lastId, id)
+                else
+                    removeKey(lastId)
+
+                intent.setPackage(packageString)
+                callback.invoke(intent)
+                launcher?.launch(intent)
+            }
+
+            open fun getPosition(intent: Intent?): Long {
+                return defaultTime
+            }
+
+            open fun getDuration(intent: Intent?): Long {
+                return defaultTime
+            }
+        }
+
+        val VLC = object : ResultResume(
+            VLC_PACKAGE,
+            // Android 13 intent restrictions fucks up specifically launching the VLC player
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+                "org.videolan.vlc.player.result"
+            } else {
+                Intent.ACTION_VIEW
+            },
+            "extra_position",
+            "extra_duration",
+        ) {
+            override fun getPosition(intent: Intent?): Long {
+                return intent?.getLongExtra(this.position, defaultTime) ?: defaultTime
+            }
+
+            override fun getDuration(intent: Intent?): Long {
+                return intent?.getLongExtra(this.duration, defaultTime) ?: defaultTime
+            }
+        }
+
+        val MPV = object : ResultResume(
+            MPV_PACKAGE,
+            //"is.xyz.mpv.MPVActivity.result", // resume not working :pensive:
+            position = "position",
+            duration = "duration",
+        ) {
+            override fun getPosition(intent: Intent?): Long {
+                return intent?.getIntExtra(this.position, defaultTime.toInt())?.toLong()
+                    ?: defaultTime
+            }
+
+            override fun getDuration(intent: Intent?): Long {
+                return intent?.getIntExtra(this.duration, defaultTime.toInt())?.toLong()
+                    ?: defaultTime
+            }
+        }
+
+        val WEB_VIDEO = ResultResume(WEB_VIDEO_CAST_PACKAGE)
+
+        val resumeApps = arrayOf(
+            VLC, MPV, WEB_VIDEO
+        )
+
+
         const val TAG = "MAINACT"
         const val ANIMATED_OUTLINE: Boolean = false
         var lastError: String? = null
@@ -338,10 +319,12 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricAu
 
         // kinda shitty solution, but cant com main->home otherwise for popups
         val bookmarksUpdatedEvent = Event<Boolean>()
+
         /**
          * Used by DataStoreHelper to fully reload home when switching accounts
          */
         val reloadHomeEvent = Event<Boolean>()
+
         /**
          * Used by DataStoreHelper to fully reload library when switching accounts
          */
@@ -469,7 +452,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricAu
     }
 
     var lastPopup: SearchResponse? = null
-    fun loadPopup(result: SearchResponse, load : Boolean = true) {
+    fun loadPopup(result: SearchResponse, load: Boolean = true) {
         lastPopup = result
         val syncName = syncViewModel.syncName(result.apiName)
 
@@ -490,8 +473,8 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricAu
                         .contains(DubStatus.Dubbed)
                 ) DubStatus.Dubbed else DubStatus.Subbed, null
             )
-        }else {
-            viewModel.loadSmall(this,result)
+        } else {
+            viewModel.loadSmall(this, result)
         }
     }
 
@@ -556,7 +539,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricAu
         binding?.navHostFragment?.apply {
             val params = layoutParams as ConstraintLayout.LayoutParams
             val push =
-                if (!dontPush && isTvSettings()) resources.getDimensionPixelSize(R.dimen.navbar_width) else 0
+                if (!dontPush && isLayout(TV or EMULATOR)) resources.getDimensionPixelSize(R.dimen.navbar_width) else 0
 
             if (!this.isLtr()) {
                 params.setMargins(
@@ -583,7 +566,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricAu
             }
 
             Configuration.ORIENTATION_PORTRAIT -> {
-                isTvSettings()
+                isLayout(TV or EMULATOR)
             }
 
             else -> {
@@ -671,7 +654,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricAu
         }
     }
 
-    override fun dispatchKeyEvent(event: KeyEvent?): Boolean {
+    override fun dispatchKeyEvent(event: KeyEvent): Boolean {
         val response = CommonActivity.dispatchKeyEvent(this, event)
         if (response != null)
             return response
@@ -791,9 +774,10 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricAu
     }
 
     lateinit var viewModel: ResultViewModel2
-    lateinit var syncViewModel : SyncViewModel
+    lateinit var syncViewModel: SyncViewModel
+
     /** kinda dirty, however it signals that we should use the watch status as sync or not*/
-    var isLocalList : Boolean = false
+    var isLocalList: Boolean = false
     override fun onCreateView(name: String, context: Context, attrs: AttributeSet): View? {
         viewModel =
             ViewModelProvider(this)[ResultViewModel2::class.java]
@@ -1109,8 +1093,8 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricAu
         }
     }
 
-    private fun centerView(view : View?) {
-        if(view == null) return
+    private fun centerView(view: View?) {
+        if (view == null) return
         try {
             Log.v(TAG, "centerView: $view")
             val r = Rect(0, 0, 0, 0)
@@ -1176,11 +1160,11 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricAu
 
         // just in case, MAIN SHOULD *NEVER* BOOT LOOP CRASH
         binding = try {
-            if (isTvSettings()) {
+            if (isLayout(TV or EMULATOR)) {
                 val newLocalBinding = ActivityMainTvBinding.inflate(layoutInflater, null, false)
                 setContentView(newLocalBinding.root)
 
-                if (isTrueTvSettings() && ANIMATED_OUTLINE) {
+                if (isLayout(TV) && ANIMATED_OUTLINE) {
                     TvFocus.focusOutline = WeakReference(newLocalBinding.focusOutline)
                     newLocalBinding.root.viewTreeObserver.addOnScrollChangedListener {
                         TvFocus.updateFocusView(TvFocus.lastFocus.get(), same = true)
@@ -1192,7 +1176,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricAu
                     newLocalBinding.focusOutline.isVisible = false
                 }
 
-                if(isTrueTvSettings()) {
+                if (isLayout(TV)) {
                     // Put here any button you don't want focusing it to center the view
                     val exceptionButtons = listOf(
                         R.id.home_preview_play_btt,
@@ -1209,7 +1193,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricAu
                         R.id.result_search_Button,
                         R.id.result_episodes_show_button,
                     )
-                    
+
                     newLocalBinding.root.viewTreeObserver.addOnGlobalFocusChangeListener { _, newFocus ->
                         if (exceptionButtons.contains(newFocus?.id)) return@addOnGlobalFocusChangeListener
                         centerView(newFocus)
@@ -1227,18 +1211,20 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricAu
             null
         }
 
-        changeStatusBarState(isEmulatorSettings())
+        changeStatusBarState(isLayout(EMULATOR))
 
         /** Biometric stuff for users without accounts **/
-        val authEnabled = settingsManager.getBoolean(getString(R.string.biometric_key), false)
-        val noAccounts = settingsManager.getBoolean(getString(R.string.skip_startup_account_select_key), false) || accounts.count() <= 1
+        val noAccounts = settingsManager.getBoolean(
+            getString(R.string.skip_startup_account_select_key),
+            false
+        ) || accounts.count() <= 1
 
-        if (isTruePhone() && authEnabled && noAccounts) {
+        if (isLayout(PHONE) && isAuthEnabled(this) && noAccounts) {
             if (deviceHasPasswordPinLock(this)) {
                 startBiometricAuthentication(this, R.string.biometric_authentication_title, false)
 
-                BiometricAuthenticator.promptInfo?.let {
-                    BiometricAuthenticator.biometricPrompt?.authenticate(it)
+                promptInfo?.let { prompt ->
+                    biometricPrompt?.authenticate(prompt)
                 }
 
                 // hide background while authenticating, Sorry moms & dads 🙏
@@ -1330,7 +1316,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricAu
         }
 
 
-        fun setUserData(status : Resource<SyncAPI.AbstractSyncStatus>?) {
+        fun setUserData(status: Resource<SyncAPI.AbstractSyncStatus>?) {
             if (isLocalList) return
             bottomPreviewBinding?.apply {
                 when (status) {
@@ -1355,7 +1341,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricAu
             }
         }
 
-        fun setWatchStatus(state : WatchType?) {
+        fun setWatchStatus(state: WatchType?) {
             if (!isLocalList || state == null) return
 
             bottomPreviewBinding?.resultviewPreviewBookmark?.apply {
@@ -1364,12 +1350,41 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricAu
             }
         }
 
-        observe(viewModel.watchStatus) { state ->
-            setWatchStatus(state)
+        fun setSubscribeStatus(state: Boolean?) {
+            bottomPreviewBinding?.resultviewPreviewSubscribe?.apply {
+                if (state != null) {
+                    val drawable = if (state) {
+                        R.drawable.ic_baseline_notifications_active_24
+                    } else {
+                        R.drawable.baseline_notifications_none_24
+                    }
+                    setImageResource(drawable)
+                }
+                isVisible = state != null
+
+                setOnClickListener {
+                    viewModel.toggleSubscriptionStatus(context) { newStatus: Boolean? ->
+                        if (newStatus == null) return@toggleSubscriptionStatus
+
+                        val message = if (newStatus) {
+                            // Kinda icky to have this here, but it works.
+                            SubscriptionWorkManager.enqueuePeriodicWork(context)
+                            R.string.subscription_new
+                        } else {
+                            R.string.subscription_deleted
+                        }
+
+                        val name = (viewModel.page.value as? Resource.Success)?.value?.title
+                            ?: txt(R.string.no_data).asStringNull(context) ?: ""
+                        showToast(txt(message, name), Toast.LENGTH_SHORT)
+                    }
+                }
+            }
         }
-        observe(syncViewModel.userData) { status ->
-            setUserData(status)
-        }
+
+        observe(viewModel.watchStatus, ::setWatchStatus)
+        observe(syncViewModel.userData, ::setUserData)
+        observeNullable(viewModel.subscribeStatus, ::setSubscribeStatus)
 
         observeNullable(viewModel.page) { resource ->
             if (resource == null) {
@@ -1412,6 +1427,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricAu
 
                         setUserData(syncViewModel.userData.value)
                         setWatchStatus(viewModel.watchStatus.value)
+                        setSubscribeStatus(viewModel.subscribeStatus.value)
 
                         resultviewPreviewBookmark.setOnClickListener {
                             //viewModel.updateWatchStatus(WatchType.PLANTOWATCH)
@@ -1430,7 +1446,9 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricAu
                                     )
                                 }
                             } else {
-                                val value = (syncViewModel.userData.value as? Resource.Success)?.value?.status ?: SyncWatchType.NONE
+                                val value =
+                                    (syncViewModel.userData.value as? Resource.Success)?.value?.status
+                                        ?: SyncWatchType.NONE
 
                                 this@MainActivity.showBottomDialog(
                                     SyncWatchType.values().map { getString(it.stringRes) }.toList(),
@@ -1457,7 +1475,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricAu
                             resultviewPreviewFavorite.setImageResource(drawable)
                         }
 
-                        resultviewPreviewFavorite.setOnClickListener{
+                        resultviewPreviewFavorite.setOnClickListener {
                             viewModel.toggleFavoriteStatus(this@MainActivity) { newStatus: Boolean? ->
                                 if (newStatus == null) return@toggleFavoriteStatus
 
@@ -1473,7 +1491,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricAu
                             }
                         }
 
-                        if (!isTvSettings()) // dont want this clickable on tv layout
+                        if (isLayout(PHONE)) // dont want this clickable on tv layout
                             resultviewPreviewDescription.setOnClickListener { view ->
                                 view.context?.let { ctx ->
                                     val builder: AlertDialog.Builder =
@@ -1548,7 +1566,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricAu
                 }
             }
 
-            if (isTvSettings()) {
+            if (isLayout(TV or EMULATOR)) {
                 if (navDestination.matchDestination(R.id.navigation_home)) {
                     attachBackPressedCallback()
                 } else detachBackPressedCallback()
@@ -1584,7 +1602,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricAu
             itemRippleColor = rippleColor
             itemActiveIndicatorColor = rippleColor
             setupWithNavController(navController)
-            if (isTvSettings()) {
+            if (isLayout(TV or EMULATOR)) {
                 background?.alpha = 200
             } else {
                 background?.alpha = 255
@@ -1718,6 +1736,8 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricAu
             runAutoUpdate()
         }
 
+        FcastManager().init(this, false)
+
         APIRepository.dubStatusActive = getApiDubstatusSettings()
 
         try {
@@ -1754,8 +1774,6 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricAu
             }
         } catch (e: Exception) {
             logError(e)
-        } finally {
-            setKey(HAS_DONE_SETUP_KEY, true)
         }
 
 //        Used to check current focus for TV
@@ -1789,6 +1807,10 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricAu
     override fun onAuthenticationSuccess() {
         // make background (nav host fragment) visible again
         binding?.navHostFragment?.isInvisible = false
+    }
+
+    override fun onAuthenticationError() {
+        finish()
     }
 
     private var backPressedCallback: OnBackPressedCallback? = null
