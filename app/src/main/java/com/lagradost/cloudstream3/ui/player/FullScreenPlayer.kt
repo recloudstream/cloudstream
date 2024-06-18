@@ -704,6 +704,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
             //player_media_route_button?.isClickable = !isGone
             playerGoBackHolder.isGone = isGone
             playerSourcesBtt.isGone = isGone
+            playerSkipEpisode.isClickable = !isGone
         }
     }
 
@@ -1222,6 +1223,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
         // if nothing has loaded these buttons should not be visible
         playerBinding?.apply {
+            playerSkipEpisode.isVisible = false
             playerGoForward.isVisible = false
             playerTracksBtt.isVisible = false
             playerSkipOp.isVisible = false
@@ -1457,6 +1459,11 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
             playerSkipOp.setOnClickListener {
                 autoHide()
                 skipOp()
+            }
+
+            playerSkipEpisode.setOnClickListener {
+                autoHide()
+                player.handleEvent(CSPlayerEvent.NextEpisode)
             }
 
             playerGoForward.setOnClickListener {
