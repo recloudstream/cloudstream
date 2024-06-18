@@ -518,7 +518,7 @@ object PluginManager {
                 return true
             }
 
-            pluginInstance.__filename = fileName
+            pluginInstance.__filepath = file.absolutePath
             if (manifest.requiresResources) {
                 Log.d(TAG, "Loading resources for ${data.internalName}")
                 // based on https://stackoverflow.com/questions/7483568/dynamic-resource-loading-from-other-apk
@@ -567,14 +567,14 @@ object PluginManager {
 
         // remove all registered apis
         synchronized(APIHolder.apis) {
-            APIHolder.apis.filter { api -> api.sourcePlugin == plugin.__filename }.forEach {
+            APIHolder.apis.filter { api -> api.sourcePluginPath == plugin.__filepath }.forEach {
                 removePluginMapping(it)
             }
         }
         synchronized(APIHolder.allProviders) {
-            APIHolder.allProviders.removeIf { provider: MainAPI -> provider.sourcePlugin == plugin.__filename }
+            APIHolder.allProviders.removeIf { provider: MainAPI -> provider.sourcePluginPath == plugin.__filepath }
         }
-        extractorApis.removeIf { provider: ExtractorApi -> provider.sourcePlugin == plugin.__filename }
+        extractorApis.removeIf { provider: ExtractorApi -> provider.sourcePluginPath == plugin.__filepath }
 
         classLoaders.values.removeIf { v -> v == plugin }
 

@@ -623,7 +623,7 @@ abstract class MainAPI {
     open val usesWebView = false
 
     /** Determines which plugin a given provider is from */
-    var sourcePlugin: String? = null
+    var sourcePluginPath: String? = null
 
     open val hasMainPage = false
     open val hasQuickSearch = false

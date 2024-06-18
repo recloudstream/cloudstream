@@ -1001,7 +1001,7 @@ abstract class ExtractorApi {
     abstract val requiresReferer: Boolean
 
     /** Determines which plugin a given extractor is from */
-    var sourcePlugin: String? = null
+    var sourcePluginPath: String? = null
 
     //suspend fun getSafeUrl(url: String, referer: String? = null): List<ExtractorLink>? {
     //    return suspendSafeApiCall { getUrl(url, referer) }

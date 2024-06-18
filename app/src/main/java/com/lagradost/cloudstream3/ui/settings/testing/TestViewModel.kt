@@ -95,7 +95,7 @@ class TestViewModel : ViewModel() {
         providers.clear()
         updateProgress()
 
-        TestingUtils.getDeferredProviderTests(scope ?: return, apis, ::println) { api, result ->
+        TestingUtils.getDeferredProviderTests(scope ?: return, apis) { api, result ->
             addProvider(api, result)
         }
     }
