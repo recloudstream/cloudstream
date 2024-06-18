@@ -314,7 +314,7 @@
                         android:layout_width="30dp"
                         android:layout_height="30dp"
                         android:layout_marginStart="40dp"
-                        android:src="@drawable/ic_baseline_restart_24"
+                        android:src="@drawable/ic_baseline_replay_24"
                         app:tint="@android:color/white"
                         android:background="@drawable/video_tap_button_always_white"
                         android:clickable="true"
@@ -331,7 +331,7 @@
                         android:layout_width="30dp"
                         android:layout_height="30dp"
                         android:layout_marginStart="80dp"
-                        android:src="@drawable/ic_baseline_arrow_forward_24"
+                        android:src="@drawable/ic_baseline_skip_next_rounded_24"
                         app:tint="@android:color/white"
                         android:background="@drawable/video_tap_button_always_white"
                         android:clickable="true"
@@ -703,6 +703,18 @@
                             android:nextFocusDown="@id/player_skip_episode"
                             android:text="@string/video_skip_op"
                             app:icon="@drawable/ic_baseline_fast_forward_24" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/player_skip_episode"
+                            style="@style/VideoButtonTV"
+                            android:nextFocusLeft="@id/player_skip_op"
+                            android:nextFocusRight="@id/player_resize_btt"
+                            android:nextFocusUp="@id/player_pause_play"
+                            android:nextFocusDown="@id/player_resize_btt"
+                            android:text="@string/next_episode"
+                            app:icon="@drawable/ic_baseline_skip_next_24"
+                            android:visibility="gone"
+                            tools:visibility="visible"/>
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/player_resize_btt"
