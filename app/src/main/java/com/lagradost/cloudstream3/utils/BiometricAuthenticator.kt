@@ -26,7 +26,7 @@ object BiometricAuthenticator {
     private var biometricManager: BiometricManager? = null
     var biometricPrompt: BiometricPrompt? = null
     var promptInfo: BiometricPrompt.PromptInfo? = null
-    var authCallback: BiometricAuthCallback? = null // listen to authentication success
+    var authCallback: BiometricCallback? = null // listen to authentication success
 
     private fun initializeBiometrics(activity: Activity) {
         val executor = ContextCompat.getMainExecutor(activity)
@@ -141,14 +141,14 @@ object BiometricAuthenticator {
     // function to start authentication in any fragment or activity
     fun startBiometricAuthentication(activity: Activity, title: Int, setDeviceCred: Boolean) {
         initializeBiometrics(activity)
-        authCallback = activity as? BiometricAuthCallback
+        authCallback = activity as? BiometricCallback
         if (isBiometricHardWareAvailable()) {
-            authCallback = activity as? BiometricAuthCallback
+            authCallback = activity as? BiometricCallback
             authenticationDialog(activity, title, setDeviceCred)
             promptInfo?.let { biometricPrompt?.authenticate(it) }
         } else {
             if (deviceHasPasswordPinLock(activity)) {
-                authCallback = activity as? BiometricAuthCallback
+                authCallback = activity as? BiometricCallback
                 authenticationDialog(activity, R.string.password_pin_authentication_title, true)
                 promptInfo?.let { biometricPrompt?.authenticate(it) }
 
@@ -165,7 +165,7 @@ object BiometricAuthenticator {
         }
     }
 
-    interface BiometricAuthCallback {
+    interface BiometricCallback {
         fun onAuthenticationSuccess()
         fun onAuthenticationError()
     }
