@@ -7,6 +7,18 @@ import com.lagradost.cloudstream3.utils.Qualities
 import com.lagradost.cloudstream3.utils.getQualityFromName
 import kotlinx.coroutines.delay
 
+class D0000d : DoodLaExtractor() {
+    override var mainUrl = "https://d0000d.com"
+}
+
+class D000dCom : DoodLaExtractor() {
+    override var mainUrl = "https://d000d.com"
+}
+
+class DoodstreamCom : DoodLaExtractor() {
+    override var mainUrl = "https://doodstream.com"
+}
+
 class Dooood : DoodLaExtractor() {
     override var mainUrl = "https://dooood.com"
 }
@@ -56,9 +68,10 @@ open class DoodLaExtractor : ExtractorApi() {
     }
 
     override suspend fun getUrl(url: String, referer: String?): List<ExtractorLink>? {
-        val response0 = app.get(url).text // html of DoodStream page to look for /pass_md5/...
-        val md5 =mainUrl+(Regex("/pass_md5/[^']*").find(response0)?.value ?: return null)  // get https://dood.ws/pass_md5/...
-        val trueUrl = app.get(md5, referer = url).text + "zUEJeL3mUN?token=" + md5.substringAfterLast("/")   //direct link to extract  (zUEJeL3mUN is random)
+        val newUrl= url.replace(mainUrl, "https://d0000d.com")
+        val response0 = app.get(newUrl).text // html of DoodStream page to look for /pass_md5/...
+        val md5 ="https://d0000d.com"+(Regex("/pass_md5/[^']*").find(response0)?.value ?: return null)  // get https://dood.ws/pass_md5/...
+        val trueUrl = app.get(md5, referer = newUrl).text + "zUEJeL3mUN?token=" + md5.substringAfterLast("/")   //direct link to extract  (zUEJeL3mUN is random)
         val quality = Regex("\\d{3,4}p").find(response0.substringAfter("<title>").substringBefore("</title>"))?.groupValues?.get(0)
         return listOf(
             ExtractorLink(
