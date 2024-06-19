@@ -40,6 +40,7 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
     private val apiUrl = "https://api.myanimelist.net"
     override val icon = R.drawable.mal_logo
     override val requiresLogin = false
+    override val supportDeviceAuth = false
     override val syncIdName = SyncIdName.MyAnimeList
     override var requireLibraryRefresh = true
     override val createAccountUrl = "$mainUrl/register.php"

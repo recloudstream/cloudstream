@@ -497,6 +497,7 @@
     <string name="account">account</string>
     <string name="logout">Log out</string>
     <string name="login">Log in</string>
+    <string name="auth_locally">Auth Locally</string>
     <string name="switch_account">Switch account</string>
     <string name="add_account">Add account</string>
     <string name="create_account">Create account</string>
@@ -562,6 +563,7 @@
     <string name="quality_sdr">SDR</string>
     <string name="quality_webrip">Web</string>
     <string name="poster_image">Poster Image</string>
+    <string name="qr_image">QR Code Image</string>
     <string name="category_player">Player</string>
     <string name="resolution_and_title">Resolution and title</string>
     <string name="title">Title</string>
@@ -780,4 +782,8 @@
     <string name="custom_media_singluar">Media</string>
     <string name="reset_btn">Reset</string>
     <string name="cs3wiki">CloudStream Wiki</string>
+    <string name="device_pin_url_message">Visit <b>%s</b> on your smartphone or computer and enter the above code</string>
+    <string name="device_pin_error_message">Can\'t get the device PIN code, try local authentication</string>
+    <string name="device_pin_expired_message">PIN code is now expired !</string>
+    <string name="device_pin_counter_text">Code expires in %1$dm %2$ds</string>
 </resources>
