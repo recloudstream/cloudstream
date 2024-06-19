@@ -71,7 +71,7 @@ class DownloadChildFragment : Fragment() {
             }
 
             (binding?.downloadChildList?.adapter as DownloadAdapter? ?: return@main).cardList =
-                eps.toMutableList()
+                eps
             binding?.downloadChildList?.adapter?.notifyDataSetChanged()
         }
     }

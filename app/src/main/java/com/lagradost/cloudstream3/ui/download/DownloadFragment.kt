@@ -64,7 +64,7 @@ class DownloadFragment : Fragment() {
     @SuppressLint("NotifyDataSetChanged")
     private fun setList(list: List<VisualDownloadHeaderCached>) {
         main {
-            (binding?.downloadList?.adapter as DownloadAdapter?)?.cardList = list.toMutableList()
+            (binding?.downloadList?.adapter as DownloadAdapter?)?.cardList = list
             binding?.downloadList?.adapter?.notifyDataSetChanged()
         }
     }

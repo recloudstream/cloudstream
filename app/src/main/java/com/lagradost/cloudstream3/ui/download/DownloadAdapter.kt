@@ -39,8 +39,8 @@ data class VisualDownloadChildCached(
 ): VisualDownloadCachedAbstract(currentBytes, totalBytes, data)
 
 data class VisualDownloadHeaderCached(
-    override val totalBytes: Long,
     override val currentBytes: Long,
+    override val totalBytes: Long,
     override val data: VideoDownloadHelper.DownloadHeaderCached,
     val child: VideoDownloadHelper.DownloadEpisodeCached?,
     val currentOngoingDownloads: Int,
@@ -58,7 +58,7 @@ data class DownloadHeaderClickEvent(
 )
 
 class DownloadAdapter(
-    var cardList: MutableList<VisualDownloadCachedAbstract>,
+    var cardList: List<VisualDownloadCachedAbstract>,
     private val clickCallback: (DownloadHeaderClickEvent) -> Unit,
     private val movieClickCallback: (DownloadClickEvent) -> Unit,
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
