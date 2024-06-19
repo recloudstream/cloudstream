@@ -18,7 +18,6 @@ import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.R
@@ -33,8 +32,6 @@ import com.lagradost.cloudstream3.ui.player.GeneratorPlayer
 import com.lagradost.cloudstream3.ui.player.LinkGenerator
 import com.lagradost.cloudstream3.ui.result.FOCUS_SELF
 import com.lagradost.cloudstream3.ui.result.setLinearListLayout
-import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
-import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.utils.AppUtils.loadResult
@@ -198,16 +195,6 @@ class DownloadFragment : Fragment() {
                 nextUp = FOCUS_SELF,
                 nextDown = FOCUS_SELF
             )
-
-            if (isLayout(PHONE or EMULATOR)) {
-                val itemTouchHelper = ItemTouchHelper(
-                    DownloadSwipeDeleteCallback(
-                        this.adapter as DownloadAdapter,
-                        context
-                    )
-                )
-                itemTouchHelper.attachToRecyclerView(binding?.downloadList)
-            }
         }
 
         // Should be visible in emulator layout

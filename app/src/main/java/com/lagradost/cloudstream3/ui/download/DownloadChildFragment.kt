@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.FragmentChildDownloadsBinding
@@ -131,16 +130,6 @@ class DownloadChildFragment : Fragment() {
                 nextRight = FOCUS_SELF,
                 nextDown = FOCUS_SELF
             )
-
-            if (isLayout(PHONE or EMULATOR)) {
-                val itemTouchHelper = ItemTouchHelper(
-                    DownloadSwipeDeleteCallback(
-                        this.adapter as DownloadAdapter,
-                        context ?: return@apply
-                    )
-                )
-                itemTouchHelper.attachToRecyclerView(binding?.downloadChildList)
-            }
         }
 
         updateList(folder)
