@@ -91,12 +91,12 @@ class DownloadViewModel : ViewModel() {
                         getFolderName(it.id.toString(), it.id.toString())
                     )
                 VisualDownloadHeaderCached(
-                    0,
-                    downloads,
-                    bytes,
                     currentBytes,
+                    bytes,
                     it,
-                    movieEpisode
+                    movieEpisode,
+                    0,
+                    downloads
                 )
             }.sortedBy {
                 (it.child?.episode ?: 0) + (it.child?.season?.times(10000) ?: 0)
