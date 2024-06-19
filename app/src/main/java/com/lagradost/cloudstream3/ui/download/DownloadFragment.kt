@@ -46,7 +46,6 @@ import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.setAppBarNoScrollFlagsOnTV
-import com.lagradost.cloudstream3.utils.VideoDownloadHelper
 import com.lagradost.cloudstream3.utils.VideoDownloadManager
 import java.net.URI
 
@@ -68,7 +67,7 @@ class DownloadFragment : Fragment() {
     @SuppressLint("NotifyDataSetChanged")
     private fun setList(list: List<VisualDownloadHeaderCached>) {
         main {
-            (binding?.downloadList?.adapter as DownloadHeaderAdapter?)?.cardList = list.toMutableList()
+            (binding?.downloadList?.adapter as DownloadAdapter?)?.cardList = list.toMutableList()
             binding?.downloadList?.adapter?.notifyDataSetChanged()
         }
     }
@@ -88,7 +87,7 @@ class DownloadFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         downloadsViewModel =
             ViewModelProvider(this)[DownloadViewModel::class.java]
 
@@ -143,7 +142,7 @@ class DownloadFragment : Fragment() {
         }
 
         val adapter: RecyclerView.Adapter<RecyclerView.ViewHolder> =
-            DownloadHeaderAdapter(
+            DownloadAdapter(
                 ArrayList(),
                 { click ->
                     when (click.action) {
@@ -172,11 +171,10 @@ class DownloadFragment : Fragment() {
 
                 },
                 { downloadClickEvent ->
-                    if (downloadClickEvent.data !is VideoDownloadHelper.DownloadEpisodeCached) return@DownloadHeaderAdapter
                     handleDownloadClick(downloadClickEvent)
                     if (downloadClickEvent.action == DOWNLOAD_ACTION_DELETE_FILE) {
                         downloadDeleteEventListener = { id ->
-                            val list = (binding?.downloadList?.adapter as DownloadHeaderAdapter?)?.cardList
+                            val list = (binding?.downloadList?.adapter as DownloadAdapter?)?.cardList
                             if (list != null) {
                                 if (list.any { it.data.id == id }) {
                                     context?.let { ctx ->
@@ -204,7 +202,7 @@ class DownloadFragment : Fragment() {
             if (isLayout(PHONE or EMULATOR)) {
                 val itemTouchHelper = ItemTouchHelper(
                     DownloadSwipeDeleteCallback(
-                        this.adapter as DownloadHeaderAdapter,
+                        this.adapter as DownloadAdapter,
                         context
                     )
                 )

@@ -1,10 +1,12 @@
 package com.lagradost.cloudstream3.ui.download
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.FragmentChildDownloadsBinding
@@ -51,6 +53,7 @@ class DownloadChildFragment : Fragment() {
         return localBinding.root//inflater.inflate(R.layout.fragment_child_downloads, container, false)
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun updateList(folder: String) = main {
         context?.let { ctx ->
             val data = withContext(Dispatchers.IO) { ctx.getKeys(folder) }
@@ -68,8 +71,8 @@ class DownloadChildFragment : Fragment() {
                 return@main
             }
 
-            (binding?.downloadChildList?.adapter as DownloadChildAdapter? ?: return@main).cardList =
-                eps
+            (binding?.downloadChildList?.adapter as DownloadAdapter? ?: return@main).cardList =
+                eps.toMutableList()
             binding?.downloadChildList?.adapter?.notifyDataSetChanged()
         }
     }
@@ -99,29 +102,46 @@ class DownloadChildFragment : Fragment() {
         }
 
         val adapter: RecyclerView.Adapter<RecyclerView.ViewHolder> =
-            DownloadChildAdapter(
+            DownloadAdapter(
                 ArrayList(),
-            ) { click ->
-                handleDownloadClick(click)
-            }
+                {}
+            ) { downloadClickEvent ->
+                handleDownloadClick(downloadClickEvent)
+                if (downloadClickEvent.action == DOWNLOAD_ACTION_DELETE_FILE) {
+                    downloadDeleteEventListener = { id: Int ->
+                        val list =
+                            (binding?.downloadChildList?.adapter as DownloadAdapter?)?.cardList
+                        if (list != null) {
+                            if (list.any { it.data.id == id }) {
+                                updateList(folder)
+                            }
+                        }
+                    }
 
-        downloadDeleteEventListener = { id: Int ->
-            val list = (binding?.downloadChildList?.adapter as DownloadChildAdapter?)?.cardList
-            if (list != null) {
-                if (list.any { it.data.id == id }) {
-                    updateList(folder)
+                    downloadDeleteEventListener?.let { VideoDownloadManager.downloadDeleteEvent += it }
                 }
             }
+
+        binding?.downloadChildList?.apply {
+            setHasFixedSize(true)
+            setItemViewCacheSize(20)
+            this.adapter = adapter
+            setLinearListLayout(
+                isHorizontal = false,
+                nextRight = FOCUS_SELF,
+                nextDown = FOCUS_SELF
+            )
+
+            if (isLayout(PHONE or EMULATOR)) {
+                val itemTouchHelper = ItemTouchHelper(
+                    DownloadSwipeDeleteCallback(
+                        this.adapter as DownloadAdapter,
+                        context ?: return@apply
+                    )
+                )
+                itemTouchHelper.attachToRecyclerView(binding?.downloadChildList)
+            }
         }
-
-        downloadDeleteEventListener?.let { VideoDownloadManager.downloadDeleteEvent += it }
-
-        binding?.downloadChildList?.adapter = adapter
-        binding?.downloadChildList?.setLinearListLayout(
-            isHorizontal = false,
-            nextDown = FOCUS_SELF,
-            nextRight = FOCUS_SELF
-        )//layoutManager = GridLayoutManager(context, 1)
 
         updateList(folder)
     }

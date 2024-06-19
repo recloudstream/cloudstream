@@ -16,10 +16,11 @@ import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.isEpisodeBased
 import com.lagradost.cloudstream3.ui.download.DownloadButtonSetup.handleDownloadClick
 import com.lagradost.cloudstream3.utils.Coroutines.runOnMainThread
+import com.lagradost.cloudstream3.utils.VideoDownloadHelper
 import com.lagradost.cloudstream3.utils.VideoDownloadManager.downloadDeleteEvent
 
 class DownloadSwipeDeleteCallback(
-    private val adapter: DownloadHeaderAdapter,
+    private val adapter: DownloadAdapter,
     private val context: Context
 ) : ItemTouchHelper.Callback() {
 
@@ -39,10 +40,12 @@ class DownloadSwipeDeleteCallback(
         recyclerView: RecyclerView,
         viewHolder: RecyclerView.ViewHolder
     ): Int {
+        val swipeFlags = ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
+
         val position = viewHolder.bindingAdapterPosition
         val item = adapter.cardList[position]
+        if (item !is VisualDownloadHeaderCached) return makeMovementFlags(0, swipeFlags)
         return if (item.data.type.isEpisodeBased()) 0 else {
-            val swipeFlags = ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
             makeMovementFlags(0, swipeFlags)
         }
     }
@@ -196,7 +199,10 @@ class DownloadSwipeDeleteCallback(
     private fun handleDeleteAction(position: Int) {
         val item = adapter.cardList[position]
         runOnMainThread {
-            item.child?.let { clickEvent ->
+            val data: VideoDownloadHelper.DownloadEpisodeCached? = if (item is VisualDownloadHeaderCached) item.child else {
+                item.data as VideoDownloadHelper.DownloadEpisodeCached?
+            }
+            data?.let { clickEvent ->
                 handleDownloadClick(
                     DownloadClickEvent(
                         DOWNLOAD_ACTION_DELETE_FILE,
