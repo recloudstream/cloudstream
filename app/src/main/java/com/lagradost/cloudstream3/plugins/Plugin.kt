@@ -34,7 +34,7 @@ abstract class Plugin {
      */
     fun registerMainAPI(element: MainAPI) {
         Log.i(PLUGIN_TAG, "Adding ${element.name} (${element.mainUrl}) MainAPI")
-        element.sourcePlugin = this.__filepath
+        element.sourcePlugin = this.__filename
         // Race condition causing which would case duplicates if not for distinctBy
         synchronized(APIHolder.allProviders) {
             APIHolder.allProviders.add(element)
@@ -48,7 +48,7 @@ abstract class Plugin {
      */
     fun registerExtractorAPI(element: ExtractorApi) {
         Log.i(PLUGIN_TAG, "Adding ${element.name} (${element.mainUrl}) ExtractorApi")
-        element.sourcePlugin = this.__filepath
+        element.sourcePlugin = this.__filename
         extractorApis.add(element)
     }
 
@@ -67,7 +67,8 @@ abstract class Plugin {
      * This will contain your resources if you specified requiresResources in gradle
      */
     var resources: Resources? = null
-    var __filepath: String? = null
+    /** Full file path to the plugin. */
+    var __filename: String? = null
 
     /**
      * This will add a button in the settings allowing you to add custom settings
