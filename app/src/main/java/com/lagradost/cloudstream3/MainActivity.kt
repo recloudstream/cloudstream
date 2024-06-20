@@ -580,11 +580,9 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
             fun setLibraryIcon(drawable: Int) {
                 navRailView.apply {
                     menu.findItem(R.id.navigation_library)?.setIcon(drawable)
-                    invalidate()
                 }
                 navView.apply {
                     menu.findItem(R.id.navigation_library)?.setIcon(drawable)
-                    invalidate()
                 }
             }
 
@@ -593,10 +591,11 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                     "MAL" -> setLibraryIcon(R.drawable.mal_logo)
                     "AniList" -> setLibraryIcon(R.drawable.ic_anilist_icon)
                     "Simkl" -> setLibraryIcon(R.drawable.simkl_logo)
+                    else -> setLibraryIcon(R.drawable.library_icon)
                 }
             }
 
-            // observing library vm changes icon without needing app restart
+            // observing library vm changes icon without app restart
             libraryViewModel.currentApiName.observe(this@MainActivity) {
                 changeLibraryIcon()
             }
