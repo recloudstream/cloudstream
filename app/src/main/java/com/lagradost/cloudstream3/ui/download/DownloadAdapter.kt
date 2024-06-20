@@ -91,23 +91,11 @@ class DownloadAdapter(
                     downloadHeaderTitle.text = d.name
                     val mbString = formatShortFileSize(itemView.context, card.totalBytes)
 
-                    // val isMovie = d.type.isMovieType()
                     if (card.child != null) {
-                        // downloadHeaderProgressDownloaded.visibility = View.VISIBLE
-                        // downloadHeaderEpisodeDownload.visibility = View.VISIBLE
                         downloadHeaderGotoChild.visibility = View.GONE
 
                         downloadButton.setDefaultClickListener(card.child, downloadHeaderInfo, mediaClickCallback)
                         downloadButton.isVisible = true
-                        /* setUpButton(
-                            card.currentBytes,
-                            card.totalBytes,
-                            downloadBar,
-                            downloadImage,
-                            extraInfo,
-                            card.child,
-                            mediaClickCallback
-                        ) */
 
                         episodeHolder.setOnClickListener {
                             mediaClickCallback.invoke(
@@ -119,8 +107,6 @@ class DownloadAdapter(
                         }
                     } else {
                         downloadButton.isVisible = false
-                        // downloadHeaderProgressDownloaded.visibility = View.GONE
-                        // downloadHeaderEpisodeDownload.visibility = View.GONE
                         downloadHeaderGotoChild.visibility = View.VISIBLE
 
                         try {
