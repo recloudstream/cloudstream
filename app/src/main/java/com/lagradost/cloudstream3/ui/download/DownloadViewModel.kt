@@ -125,3 +125,4 @@ class DownloadViewModel : ViewModel() {
             _headerCards.postValue(visual)
         }
     }
+}
