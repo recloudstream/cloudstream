@@ -80,7 +80,7 @@ class DownloadViewModel : ViewModel() {
         }
 
         val visual = withContext(Dispatchers.IO) {
-            cached.mapNotNull { // TODO FIX
+            cached.mapNotNull {
                 val downloads = totalDownloads[it.id] ?: 0
                 val bytes = totalBytesUsedByChild[it.id] ?: 0
                 val currentBytes = currentBytesUsedByChild[it.id] ?: 0
@@ -101,7 +101,7 @@ class DownloadViewModel : ViewModel() {
                 )
             }.sortedBy {
                 (it.child?.episode ?: 0) + (it.child?.season?.times(10000) ?: 0)
-            } // episode sorting by episode, lowest to highest
+            } // Episode sorting by episode, lowest to highest
         }
 
         // Only update list if different from the previous one to prevent duplicate initialization

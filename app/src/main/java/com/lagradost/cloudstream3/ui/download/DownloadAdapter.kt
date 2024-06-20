@@ -3,7 +3,6 @@ package com.lagradost.cloudstream3.ui.download
 import android.annotation.SuppressLint
 import android.text.format.Formatter.formatShortFileSize
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
@@ -92,7 +91,7 @@ class DownloadAdapter(
                     val mbString = formatShortFileSize(itemView.context, card.totalBytes)
 
                     if (card.child != null) {
-                        downloadHeaderGotoChild.visibility = View.GONE
+                        downloadHeaderGotoChild.isVisible = false
 
                         downloadButton.setDefaultClickListener(card.child, downloadHeaderInfo, mediaClickCallback)
                         downloadButton.isVisible = true
@@ -107,7 +106,7 @@ class DownloadAdapter(
                         }
                     } else {
                         downloadButton.isVisible = false
-                        downloadHeaderGotoChild.visibility = View.VISIBLE
+                        downloadHeaderGotoChild.isVisible = true
 
                         try {
                             downloadHeaderInfo.text =
@@ -143,8 +142,8 @@ class DownloadAdapter(
                             val visualPos = posDur.fixVisual()
                             max = (visualPos.duration / 1000).toInt()
                             progress = (visualPos.position / 1000).toInt()
-                            visibility = View.VISIBLE
-                        } else visibility = View.GONE
+                            isVisible = true
+                        } else isVisible = false
                     }
 
                     downloadButton.setDefaultClickListener(card.data, downloadChildEpisodeTextExtra, mediaClickCallback)
