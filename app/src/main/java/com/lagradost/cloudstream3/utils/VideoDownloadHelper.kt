@@ -3,7 +3,7 @@ package com.lagradost.cloudstream3.utils
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.TvType
 object VideoDownloadHelper {
-    abstract class DownloadCachedAbstract(
+    abstract class DownloadCached(
         @JsonProperty("id") open val id: Int,
     )
 
@@ -17,7 +17,7 @@ object VideoDownloadHelper {
         @JsonProperty("description") val description: String?,
         @JsonProperty("cacheTime") val cacheTime: Long,
         override val id: Int,
-    ): DownloadCachedAbstract(id)
+    ): DownloadCached(id)
 
     data class DownloadHeaderCached(
         @JsonProperty("apiName") val apiName: String,
@@ -27,7 +27,7 @@ object VideoDownloadHelper {
         @JsonProperty("poster") val poster: String?,
         @JsonProperty("cacheTime") val cacheTime: Long,
         override val id: Int,
-    ): DownloadCachedAbstract(id)
+    ): DownloadCached(id)
 
     data class ResumeWatching(
         @JsonProperty("parentId") val parentId: Int,
