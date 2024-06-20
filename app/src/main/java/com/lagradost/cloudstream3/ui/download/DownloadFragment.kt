@@ -165,7 +165,6 @@ class DownloadFragment : Fragment() {
                             )
                         }
                     }
-
                 },
                 { downloadClickEvent ->
                     handleDownloadClick(downloadClickEvent)

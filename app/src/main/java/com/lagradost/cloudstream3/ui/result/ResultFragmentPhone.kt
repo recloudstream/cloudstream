@@ -185,8 +185,6 @@ open class ResultFragmentPhone : FullScreenPlayer() {
             }
             binding?.resultFullscreenHolder?.isVisible = !isSuccess && isFullScreenPlayer
         }
-
-
         //player_view?.apply {
         //alpha = 0.0f
         //ObjectAnimator.ofFloat(player_view, "alpha", 1f).apply {
@@ -200,9 +198,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
         //    fillAfter = true
         //}
         //startAnimation(fadeIn)
-        // }
-
-
+        //}
     }
 
     private fun setTrailers(trailers: List<ExtractorLink>?) {
