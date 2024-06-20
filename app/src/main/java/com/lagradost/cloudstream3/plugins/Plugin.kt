@@ -34,7 +34,7 @@ abstract class Plugin {
      */
     fun registerMainAPI(element: MainAPI) {
         Log.i(PLUGIN_TAG, "Adding ${element.name} (${element.mainUrl}) MainAPI")
-        element.sourcePluginPath = this.__filepath
+        element.sourcePlugin = this.__filepath
         // Race condition causing which would case duplicates if not for distinctBy
         synchronized(APIHolder.allProviders) {
             APIHolder.allProviders.add(element)
@@ -48,7 +48,7 @@ abstract class Plugin {
      */
     fun registerExtractorAPI(element: ExtractorApi) {
         Log.i(PLUGIN_TAG, "Adding ${element.name} (${element.mainUrl}) ExtractorApi")
-        element.sourcePluginPath = this.__filepath
+        element.sourcePlugin = this.__filepath
         extractorApis.add(element)
     }
 

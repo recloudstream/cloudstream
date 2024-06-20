@@ -2,7 +2,6 @@ package com.lagradost.cloudstream3.ui.settings.testing
 
 import android.app.AlertDialog
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
@@ -89,7 +88,7 @@ class TestResultAdapter(override val items: MutableList<Pair<MainAPI, TestingUti
                     // Ok button just closes the dialog
                     .setPositiveButton(R.string.ok) { _, _ -> }
 
-                api.sourcePluginPath?.let { path ->
+                api.sourcePlugin?.let { path ->
                     val pluginFile = File(path)
                     // Cannot delete a deleted plugin
                     if (!pluginFile.exists()) return@let

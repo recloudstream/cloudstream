@@ -18,7 +18,6 @@ import com.lagradost.cloudstream3.APIHolder.getApiProviderLangSettings
 import com.lagradost.cloudstream3.APIHolder.removePluginMapping
 import com.lagradost.cloudstream3.AcraApplication.Companion.getActivity
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
-import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.MainAPI.Companion.settingsForProvider
@@ -567,14 +566,14 @@ object PluginManager {
 
         // remove all registered apis
         synchronized(APIHolder.apis) {
-            APIHolder.apis.filter { api -> api.sourcePluginPath == plugin.__filepath }.forEach {
+            APIHolder.apis.filter { api -> api.sourcePlugin == plugin.__filepath }.forEach {
                 removePluginMapping(it)
             }
         }
         synchronized(APIHolder.allProviders) {
-            APIHolder.allProviders.removeIf { provider: MainAPI -> provider.sourcePluginPath == plugin.__filepath }
+            APIHolder.allProviders.removeIf { provider: MainAPI -> provider.sourcePlugin == plugin.__filepath }
         }
-        extractorApis.removeIf { provider: ExtractorApi -> provider.sourcePluginPath == plugin.__filepath }
+        extractorApis.removeIf { provider: ExtractorApi -> provider.sourcePlugin == plugin.__filepath }
 
         classLoaders.values.removeIf { v -> v == plugin }
 
