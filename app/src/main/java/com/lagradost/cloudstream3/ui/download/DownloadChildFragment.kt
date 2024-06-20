@@ -62,7 +62,11 @@ class DownloadChildFragment : Fragment() {
                 }.mapNotNull {
                     val info = VideoDownloadManager.getDownloadFileInfoAndUpdateSettings(ctx, it.id)
                         ?: return@mapNotNull null
-                    VisualDownloadChildCached(info.fileLength, info.totalBytes, it)
+                    VisualDownloadChildCached(
+                        currentBytes = info.fileLength,
+                        totalBytes = info.totalBytes,
+                        data = it,
+                    )
                 }
             }.sortedBy { it.data.episode + (it.data.season ?: 0) * 100000 }
             if (eps.isEmpty()) {
@@ -100,7 +104,7 @@ class DownloadChildFragment : Fragment() {
             setAppBarNoScrollFlagsOnTV()
         }
 
-        val adapter: RecyclerView.Adapter<RecyclerView.ViewHolder> =
+        val adapter: RecyclerView.Adapter<DownloadAdapter.DownloadViewHolder> =
             DownloadAdapter(
                 ArrayList(),
                 {}

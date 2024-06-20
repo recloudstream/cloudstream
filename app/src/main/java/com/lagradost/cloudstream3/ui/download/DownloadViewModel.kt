@@ -39,6 +39,8 @@ class DownloadViewModel : ViewModel() {
     val availableBytes: LiveData<Long> = _availableBytes
     val downloadBytes: LiveData<Long> = _downloadBytes
 
+    private var previousVisual: List<VisualDownloadHeaderCached>? = null
+
     fun updateList(context: Context) = viewModelScope.launchSafe {
         val children = withContext(Dispatchers.IO) {
             val headers = context.getKeys(DOWNLOAD_EPISODE_CACHE)
@@ -52,7 +54,6 @@ class DownloadViewModel : ViewModel() {
         val currentBytesUsedByChild = HashMap<Int, Long>()
         // parentId : downloadsCount
         val totalDownloads = HashMap<Int, Int>()
-
 
         // Gets all children downloads
         withContext(Dispatchers.IO) {
@@ -69,7 +70,7 @@ class DownloadViewModel : ViewModel() {
             }
         }
 
-        val cached = withContext(Dispatchers.IO) { // wont fetch useless keys
+        val cached = withContext(Dispatchers.IO) { // Won't fetch useless keys
             totalDownloads.entries.filter { it.value > 0 }.mapNotNull {
                 context.getKey<VideoDownloadHelper.DownloadHeaderCached>(
                     DOWNLOAD_HEADER_CACHE,
@@ -91,32 +92,36 @@ class DownloadViewModel : ViewModel() {
                         getFolderName(it.id.toString(), it.id.toString())
                     )
                 VisualDownloadHeaderCached(
-                    currentBytes,
-                    bytes,
-                    it,
-                    movieEpisode,
-                    0,
-                    downloads
+                    currentBytes = currentBytes,
+                    totalBytes = bytes,
+                    data = it,
+                    child = movieEpisode,
+                    currentOngoingDownloads = 0,
+                    totalDownloads = downloads,
                 )
             }.sortedBy {
                 (it.child?.episode ?: 0) + (it.child?.season?.times(10000) ?: 0)
             } // episode sorting by episode, lowest to highest
         }
-        try {
-            val stat = StatFs(Environment.getExternalStorageDirectory().path)
 
-            val localBytesAvailable = stat.availableBytes//stat.blockSizeLong * stat.blockCountLong
-            val localTotalBytes = stat.blockSizeLong * stat.blockCountLong
-            val localDownloadedBytes = visual.sumOf { it.totalBytes }
+        // Only update list if different from the previous one to prevent duplicate initialization
+        if (visual != previousVisual) {
+            previousVisual = visual
 
-            _usedBytes.postValue(localTotalBytes - localBytesAvailable - localDownloadedBytes)
-            _availableBytes.postValue(localBytesAvailable)
-            _downloadBytes.postValue(localDownloadedBytes)
-        } catch (t : Throwable) {
-            _downloadBytes.postValue(0)
-            logError(t)
+            try {
+                val stat = StatFs(Environment.getExternalStorageDirectory().path)
+                val localBytesAvailable = stat.availableBytes
+                val localTotalBytes = stat.blockSizeLong * stat.blockCountLong
+                val localDownloadedBytes = visual.sumOf { it.totalBytes }
+
+                _usedBytes.postValue(localTotalBytes - localBytesAvailable - localDownloadedBytes)
+                _availableBytes.postValue(localBytesAvailable)
+                _downloadBytes.postValue(localDownloadedBytes)
+            } catch (t: Throwable) {
+                _downloadBytes.postValue(0)
+                logError(t)
+            }
+
+            _headerCards.postValue(visual)
         }
-
-        _headerCards.postValue(visual)
     }
-}

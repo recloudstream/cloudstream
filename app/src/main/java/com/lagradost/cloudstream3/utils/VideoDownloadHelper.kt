@@ -12,11 +12,11 @@ object VideoDownloadHelper {
         @JsonProperty("poster") val poster: String?,
         @JsonProperty("episode") val episode: Int,
         @JsonProperty("season") val season: Int?,
-        override val id: Int,
         @JsonProperty("parentId") val parentId: Int,
         @JsonProperty("rating") val rating: Int?,
         @JsonProperty("description") val description: String?,
         @JsonProperty("cacheTime") val cacheTime: Long,
+        override val id: Int,
     ): DownloadCachedAbstract(id)
 
     data class DownloadHeaderCached(
@@ -25,8 +25,8 @@ object VideoDownloadHelper {
         @JsonProperty("type") val type: TvType,
         @JsonProperty("name") val name: String,
         @JsonProperty("poster") val poster: String?,
-        override val id: Int,
         @JsonProperty("cacheTime") val cacheTime: Long,
+        override val id: Int,
     ): DownloadCachedAbstract(id)
 
     data class ResumeWatching(

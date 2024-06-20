@@ -61,80 +61,33 @@ class DownloadAdapter(
     var cardList: List<VisualDownloadCachedAbstract>,
     private val clickCallback: (DownloadHeaderClickEvent) -> Unit,
     private val movieClickCallback: (DownloadClickEvent) -> Unit,
-) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+) : RecyclerView.Adapter<DownloadAdapter.DownloadViewHolder>() {
 
     companion object {
         private const val VIEW_TYPE_HEADER = 0
         private const val VIEW_TYPE_CHILD = 1
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return DownloadViewHolder(
-            binding = when (viewType) {
-                VIEW_TYPE_HEADER -> {
-                    DownloadHeaderEpisodeBinding.inflate(
-                        LayoutInflater.from(parent.context),
-                        parent,
-                        false
-                    )
-                }
-                VIEW_TYPE_CHILD -> {
-                    DownloadChildEpisodeBinding.inflate(
-                        LayoutInflater.from(parent.context),
-                        parent,
-                        false
-                    )
-                }
-                else -> throw IllegalArgumentException("Invalid view type")
-            },
-            clickCallback,
-            movieClickCallback
-        )
-    }
-
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        when (holder) {
-            is DownloadViewHolder -> {
-                holder.bind(cardList[position])
-            }
-        }
-    }
-
-    var viewType = 0
-
-    override fun getItemViewType(position: Int): Int {
-        if (viewType != 0) {
-            return viewType
-        }
-
-        val isEpisodeBased = cardList[position] !is VisualDownloadHeaderCached
-        return if (isEpisodeBased) VIEW_TYPE_CHILD else VIEW_TYPE_HEADER
-    }
-
-    override fun getItemCount(): Int {
-        return cardList.count()
-    }
-
-    class DownloadViewHolder(
+    inner class DownloadViewHolder(
         private val binding: ViewBinding,
         private val clickCallback: (DownloadHeaderClickEvent) -> Unit,
         private val movieClickCallback: (DownloadClickEvent) -> Unit,
-        ) : RecyclerView.ViewHolder(binding.root) {
+    ) : RecyclerView.ViewHolder(binding.root) {
 
-        /*private val poster: ImageView? = itemView.download_header_poster
+        /* private val poster: ImageView? = itemView.download_header_poster
         private val title: TextView = itemView.download_header_title
         private val extraInfo: TextView = itemView.download_header_info
         private val holder: CardView = itemView.episode_holder
 
         private val downloadBar: ContentLoadingProgressBar = itemView.download_header_progress_downloaded
         private val downloadImage: ImageView = itemView.download_header_episode_download
-        private val normalImage: ImageView = itemView.download_header_goto_child*/
+        private val normalImage: ImageView = itemView.download_header_goto_child */
 
         @SuppressLint("SetTextI18n")
-        fun bind(card: VisualDownloadCachedAbstract) {
+        fun bind(card: VisualDownloadCachedAbstract?) {
             when (binding) {
                 is DownloadHeaderEpisodeBinding -> binding.apply {
-                    if (card !is VisualDownloadHeaderCached) return
+                    if (card == null || card !is VisualDownloadHeaderCached) return@apply
                     val d = card.data
 
                     downloadHeaderPoster.apply {
@@ -147,10 +100,9 @@ class DownloadAdapter(
                     downloadHeaderTitle.text = d.name
                     val mbString = formatShortFileSize(itemView.context, card.totalBytes)
 
-                    //val isMovie = d.type.isMovieType()
+                    // val isMovie = d.type.isMovieType()
                     if (card.child != null) {
-                        //downloadHeaderProgressDownloaded.visibility = View.VISIBLE
-
+                        // downloadHeaderProgressDownloaded.visibility = View.VISIBLE
                         // downloadHeaderEpisodeDownload.visibility = View.VISIBLE
                         downloadHeaderGotoChild.visibility = View.GONE
 
@@ -197,19 +149,19 @@ class DownloadAdapter(
                                         mbString
                                     )
                         } catch (t: Throwable) {
-                            // you probably formatted incorrectly
+                            // You probably formatted incorrectly
                             downloadHeaderInfo.text = "Error"
                             logError(t)
                         }
-
 
                         episodeHolder.setOnClickListener {
                             clickCallback.invoke(DownloadHeaderClickEvent(0, d))
                         }
                     }
                 }
+
                 is DownloadChildEpisodeBinding -> binding.apply {
-                    if (card !is VisualDownloadChildCached) return
+                    if (card == null || card !is VisualDownloadChildCached) return@apply
                     val d = card.data
 
                     val posDur = DataStoreHelper.getViewPos(d.id)
@@ -219,16 +171,14 @@ class DownloadAdapter(
                             max = (visualPos.duration / 1000).toInt()
                             progress = (visualPos.position / 1000).toInt()
                             visibility = View.VISIBLE
-                        } else {
-                            visibility = View.GONE
-                        }
+                        } else visibility = View.GONE
                     }
 
                     downloadButton.setDefaultClickListener(card.data, downloadChildEpisodeTextExtra, movieClickCallback)
 
                     downloadChildEpisodeText.apply {
                         text = context.getNameFull(d.name, d.episode, d.season)
-                        isSelected = true // is needed for text repeating
+                        isSelected = true // Needed for text repeating
                     }
 
                     downloadChildEpisodeHolder.setOnClickListener {
@@ -237,5 +187,45 @@ class DownloadAdapter(
                 }
             }
         }
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DownloadViewHolder =
+        DownloadViewHolder(
+            binding = when (viewType) {
+                VIEW_TYPE_HEADER -> {
+                    DownloadHeaderEpisodeBinding.inflate(
+                        LayoutInflater.from(parent.context),
+                        parent,
+                        false
+                    )
+                }
+                VIEW_TYPE_CHILD -> {
+                    DownloadChildEpisodeBinding.inflate(
+                        LayoutInflater.from(parent.context),
+                        parent,
+                        false
+                    )
+                }
+                else -> throw IllegalArgumentException("Invalid view type")
+            },
+            clickCallback,
+            movieClickCallback
+        )
+
+    override fun onBindViewHolder(holder: DownloadViewHolder, position: Int) {
+        holder.bind(cardList.getOrNull(position))
+    }
+
+    var viewType = 0
+
+    override fun getItemViewType(position: Int): Int {
+        if (viewType != 0) return viewType
+
+        val isChildView = cardList[position] !is VisualDownloadHeaderCached
+        return if (isChildView) VIEW_TYPE_CHILD else VIEW_TYPE_HEADER
+    }
+
+    override fun getItemCount(): Int {
+        return cardList.count()
     }
 }
