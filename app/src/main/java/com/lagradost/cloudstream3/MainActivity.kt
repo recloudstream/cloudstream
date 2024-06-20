@@ -44,9 +44,6 @@ import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.RecyclerView
-import com.fasterxml.jackson.databind.DeserializationFeature
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.google.android.gms.cast.framework.CastContext
 import com.google.android.gms.cast.framework.Session
 import com.google.android.gms.cast.framework.SessionManager
@@ -101,6 +98,8 @@ import com.lagradost.cloudstream3.ui.SyncWatchType
 import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_NAVIGATE_TO
 import com.lagradost.cloudstream3.ui.home.HomeViewModel
+import com.lagradost.cloudstream3.ui.library.LAST_SYNC_API_KEY
+import com.lagradost.cloudstream3.ui.library.LibraryViewModel
 import com.lagradost.cloudstream3.ui.player.BasicLink
 import com.lagradost.cloudstream3.ui.player.GeneratorPlayer
 import com.lagradost.cloudstream3.ui.player.LinkGenerator
@@ -146,6 +145,7 @@ import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStore.setKey
 import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.DataStoreHelper.accounts
+import com.lagradost.cloudstream3.utils.DataStoreHelper.currentAccount
 import com.lagradost.cloudstream3.utils.DataStoreHelper.migrateResumeWatching
 import com.lagradost.cloudstream3.utils.Event
 import com.lagradost.cloudstream3.utils.InAppUpdater.Companion.runAutoUpdate
@@ -162,8 +162,6 @@ import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import com.lagradost.cloudstream3.utils.USER_PROVIDER_API
 import com.lagradost.cloudstream3.utils.USER_SELECTED_HOMEPAGE_API
 import com.lagradost.cloudstream3.utils.fcast.FcastManager
-import com.lagradost.nicehttp.Requests
-import com.lagradost.nicehttp.ResponseParser
 import com.lagradost.safefile.SafeFile
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -570,18 +568,38 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                 false
             }
         }
+
         binding?.apply {
-            navView.isVisible = isNavVisible && !landscape
             navRailView.isVisible = isNavVisible && landscape
+            navView.isVisible = isNavVisible && !landscape
 
-            // Hide library on TV since it is not supported yet :(
-            //val isTrueTv = isTrueTvSettings()
-            //navView.menu.findItem(R.id.navigation_library)?.isVisible = !isTrueTv
-            //navRailView.menu.findItem(R.id.navigation_library)?.isVisible = !isTrueTv
+            // Change library icon with logo of current api in sync
+            val libraryViewModel = ViewModelProvider(this@MainActivity)[LibraryViewModel::class.java]
+            val lastAPI = getKey<String>("$currentAccount/$LAST_SYNC_API_KEY").toString()
 
-            // Hide downloads on TV
-            //navView.menu.findItem(R.id.navigation_downloads)?.isVisible = !isTrueTv
-            //navRailView.menu.findItem(R.id.navigation_downloads)?.isVisible = !isTrueTv
+            fun setLibraryIcon(drawable: Int) {
+                navRailView.apply {
+                    menu.findItem(R.id.navigation_library)?.setIcon(drawable)
+                    invalidate()
+                }
+                navView.apply {
+                    menu.findItem(R.id.navigation_library)?.setIcon(drawable)
+                    invalidate()
+                }
+            }
+
+            fun changeLibraryIcon() {
+                when (lastAPI) {
+                    "MAL" -> setLibraryIcon(R.drawable.mal_logo)
+                    "AniList" -> setLibraryIcon(R.drawable.ic_anilist_icon)
+                    "Simkl" -> setLibraryIcon(R.drawable.simkl_logo)
+                }
+            }
+
+            // observing library vm changes icon without needing app restart
+            libraryViewModel.currentApiName.observe(this@MainActivity) {
+                changeLibraryIcon()
+            }
         }
     }
 
