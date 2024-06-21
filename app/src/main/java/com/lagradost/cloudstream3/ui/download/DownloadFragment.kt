@@ -102,14 +102,14 @@ class DownloadFragment : Fragment() {
             binding?.downloadLoading?.isVisible = false
         }
         observe(downloadsViewModel.availableBytes) {
-            updateStorageInfo(view.context, it, binding?.downloadFreeTxt, binding?.downloadFree)
+            updateStorageInfo(view.context, it, R.string.free_storage, binding?.downloadFreeTxt, binding?.downloadFree)
         }
         observe(downloadsViewModel.usedBytes) {
-            updateStorageInfo(view.context, it, binding?.downloadUsedTxt, binding?.downloadUsed)
+            updateStorageInfo(view.context, it, R.string.used_storage, binding?.downloadUsedTxt, binding?.downloadUsed)
             binding?.downloadStorageAppbar?.isVisible = it > 0
         }
         observe(downloadsViewModel.downloadBytes) {
-            updateStorageInfo(view.context, it, binding?.downloadAppTxt, binding?.downloadApp)
+            updateStorageInfo(view.context, it, R.string.app_storage, binding?.downloadAppTxt, binding?.downloadApp)
         }
 
         val adapter = DownloadAdapter(
@@ -177,8 +177,14 @@ class DownloadFragment : Fragment() {
         downloadDeleteEventListener?.let { VideoDownloadManager.downloadDeleteEvent += it }
     }
 
-    private fun updateStorageInfo(context: Context, bytes: Long, textView: TextView?, view: View?) {
-        textView?.text = getString(R.string.storage_size_format).format(getString(R.string.free_storage), formatShortFileSize(context, bytes))
+    private fun updateStorageInfo(
+        context: Context,
+        bytes: Long,
+        stringRes: Int,
+        textView: TextView?,
+        view: View?
+    ) {
+        textView?.text = getString(R.string.storage_size_format).format(getString(stringRes), formatShortFileSize(context, bytes))
         view?.setLayoutWidth(bytes)
     }
 
