@@ -5,6 +5,8 @@ import android.text.format.Formatter.formatShortFileSize
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.view.isVisible
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
 import com.lagradost.cloudstream3.R
@@ -17,7 +19,6 @@ import com.lagradost.cloudstream3.utils.DataStoreHelper.fixVisual
 import com.lagradost.cloudstream3.utils.UIHelper.setImage
 import com.lagradost.cloudstream3.utils.VideoDownloadHelper
 
-
 const val DOWNLOAD_ACTION_PLAY_FILE = 0
 const val DOWNLOAD_ACTION_DELETE_FILE = 1
 const val DOWNLOAD_ACTION_RESUME_DOWNLOAD = 2
@@ -29,7 +30,20 @@ abstract class VisualDownloadCached(
     open val currentBytes: Long,
     open val totalBytes: Long,
     open val data: VideoDownloadHelper.DownloadCached
-)
+) {
+
+    // Just to be extra-safe with areContentsTheSame
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is VisualDownloadCached) return false
+
+        if (currentBytes != other.currentBytes) return false
+        if (totalBytes != other.totalBytes) return false
+        if (data != other.data) return false
+
+        return true
+    }
+}
 
 data class VisualDownloadChildCached(
     override val currentBytes: Long,
@@ -57,10 +71,9 @@ data class DownloadHeaderClickEvent(
 )
 
 class DownloadAdapter(
-    var cardList: List<VisualDownloadCached>,
     private val clickCallback: (DownloadHeaderClickEvent) -> Unit,
     private val mediaClickCallback: (DownloadClickEvent) -> Unit,
-) : RecyclerView.Adapter<DownloadAdapter.DownloadViewHolder>() {
+) : ListAdapter<VisualDownloadCached, DownloadAdapter.DownloadViewHolder>(DiffCallback()) {
 
     companion object {
         private const val VIEW_TYPE_HEADER = 0
@@ -161,45 +174,43 @@ class DownloadAdapter(
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DownloadViewHolder =
-        DownloadViewHolder(
-            binding = when (viewType) {
-                VIEW_TYPE_HEADER -> {
-                    DownloadHeaderEpisodeBinding.inflate(
-                        LayoutInflater.from(parent.context),
-                        parent,
-                        false
-                    )
-                }
-                VIEW_TYPE_CHILD -> {
-                    DownloadChildEpisodeBinding.inflate(
-                        LayoutInflater.from(parent.context),
-                        parent,
-                        false
-                    )
-                }
-                else -> throw IllegalArgumentException("Invalid view type")
-            },
-            clickCallback,
-            mediaClickCallback
-        )
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DownloadViewHolder {
+        val binding = when (viewType) {
+            VIEW_TYPE_HEADER -> {
+                DownloadHeaderEpisodeBinding.inflate(
+                    LayoutInflater.from(parent.context),
+                    parent,
+                    false
+                )
+            }
+            VIEW_TYPE_CHILD -> {
+                DownloadChildEpisodeBinding.inflate(
+                    LayoutInflater.from(parent.context),
+                    parent,
+                    false
+                )
+            }
+            else -> throw IllegalArgumentException("Invalid view type")
+        }
+        return DownloadViewHolder(binding, clickCallback, mediaClickCallback)
+    }
 
     override fun onBindViewHolder(holder: DownloadViewHolder, position: Int) {
-        holder.bind(cardList.getOrNull(position))
+        holder.bind(getItem(position))
     }
-
-    var viewType = 0
 
     override fun getItemViewType(position: Int): Int {
-        if (viewType != 0) return viewType
-
-        val card = cardList.getOrNull(position) ?: return 0
-
-        val isChildView = card is VisualDownloadChildCached
-        return if (isChildView) VIEW_TYPE_CHILD else VIEW_TYPE_HEADER
+        val card = getItem(position)
+        return if (card is VisualDownloadChildCached) VIEW_TYPE_CHILD else VIEW_TYPE_HEADER
     }
 
-    override fun getItemCount(): Int {
-        return cardList.count()
+    class DiffCallback : DiffUtil.ItemCallback<VisualDownloadCached>() {
+        override fun areItemsTheSame(oldItem: VisualDownloadCached, newItem: VisualDownloadCached): Boolean {
+            return oldItem.data.id == newItem.data.id
+        }
+
+        override fun areContentsTheSame(oldItem: VisualDownloadCached, newItem: VisualDownloadCached): Boolean {
+            return oldItem == newItem
+        }
     }
 }
