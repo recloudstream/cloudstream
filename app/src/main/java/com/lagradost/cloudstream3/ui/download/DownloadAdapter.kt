@@ -43,6 +43,13 @@ abstract class VisualDownloadCached(
 
         return true
     }
+
+    override fun hashCode(): Int {
+        var result = currentBytes.hashCode()
+        result = 31 * result + totalBytes.hashCode()
+        result = 31 * result + data.hashCode()
+        return result
+    }
 }
 
 data class VisualDownloadChildCached(
