@@ -12,6 +12,7 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
@@ -180,7 +181,7 @@ class DownloadFragment : Fragment() {
     private fun updateStorageInfo(
         context: Context,
         bytes: Long,
-        stringRes: Int,
+        @StringRes stringRes: Int,
         textView: TextView?,
         view: View?
     ) {
