@@ -112,7 +112,7 @@
     <string name="type_watching">Sledujem</string>
     <string name="torrent_no_plot">Popis sa nenašiel</string>
     <string name="home_next_random_img_des">Ďalší náhodný</string>
-    <string name="stream">Stream</string>
+    <string name="stream">Sieťový stream</string>
     <string name="type_on_hold">Podržané</string>
     <string name="show_log_cat">Zobraziť Logcat 🐈</string>
     <string name="test_log">Protokol</string>
@@ -355,4 +355,26 @@
     <string name="limit_title">Maximálny počet znakov v názve prehrávača</string>
     <string name="video_disk_description">Spôsobuje problémy, ak je nastavená príliš vysoko v zariadeniach s malým ukladacím priestorom, ako je napríklad Android TV.</string>
     <string name="backup_frequency">Frekvencia zálohovania</string>
+    <string name="delete_repository_plugins">Toto tiež odstráni všetky doplnky repozitára</string>
+    <string name="next_season_episode_format" formatted="true">Sezóna %1$d Epizóda %2$d bude vydaná za</string>
+    <string name="no_plugins_found_error">V repozitári neboli nájdené žiadne doplnky</string>
+    <string name="update_notification_downloading">Sťahuje sa aktualizácia aplikácie…</string>
+    <string name="update_notification_installing">Inštaluje sa aktualizácia aplikácie…</string>
+    <string name="toast_copied">skopírované!</string>
+    <string name="repo_copy_label">Názov a URL repozitára</string>
+    <string name="subscription_in_progress_notification">Aktualizujú sa odoberané relácie</string>
+    <string name="subscribe_tooltip">Upozornenie na novú epizódu</string>
+    <string name="no_repository_found_error">Repozitár nebol nájdený, skontrolujte URL adresu a skúste VPN</string>
+    <string name="links_reloaded_toast">Odkazy sa znovu načítali</string>
+    <string name="delete_repository">Zmazať repozitár</string>
+    <string name="repository_url_hint">URL adresa repozitára</string>
+    <string name="view_public_repositories_button_short">Verejný zoznam</string>
+    <string name="blank_repo_message">CloudStream nemá nainštalované žiadne stránky v predvolenom nastavení. Musíte nainštalovať stránky z repozitára.
+\n
+\nPripojte sa k nášmu Discord alebo vyhľadajte online.</string>
+    <string name="update_notification_failed">Nepodarilo sa nainštalovať novú verziu aplikácie</string>
+    <string name="download_all_plugins_from_repo">Stiahnuť všetky doplnky z tohto repozitára?</string>
+    <string name="add_repository">Pridať repozitár</string>
+    <string name="repository_name_hint">Názov repozitára</string>
+    <string name="view_public_repositories_button">Zobraziť komunitné repozitáre</string>
 </resources>

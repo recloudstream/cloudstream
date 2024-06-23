@@ -422,7 +422,7 @@
     <string name="view_public_repositories_button">Вижте хранилищата на общността</string>
     <string name="view_public_repositories_button_short">Публичен списък</string>
     <string name="uppercase_all_subtitles">Всички субтитри с главни букви</string>
-    <string name="download_all_plugins_from_repo">Изтегляне на всички добавки от това хранилище\?</string>
+    <string name="download_all_plugins_from_repo">Изтегляне на всички добавки от това хранилище?</string>
     <string name="single_plugin_disabled" formatted="true">%s (Деактивиран)</string>
     <string name="tracks">Потоци</string>
     <string name="audio_tracks">Аудио потоци</string>

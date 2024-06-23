@@ -133,7 +133,7 @@
     <string name="backup_failed_error_format">백업 중 오류 %s</string>
     <string name="search">검색</string>
     <string name="library">라이브러리</string>
-    <string name="category_account">계정</string>
+    <string name="category_account">계정 및 보안</string>
     <string name="advanced_search_des">소스별로 구분된 검색 결과를 제공합니다</string>
     <string name="show_trailers_settings">예고편 보기</string>
     <string name="kitsu_settings">Kitsu에서 포스터 보기</string>
@@ -311,7 +311,7 @@
     <string name="view_public_repositories_button">커뮤니티 저장소 보기</string>
     <string name="view_public_repositories_button_short">공개 목록</string>
     <string name="uppercase_all_subtitles">모든 자막 대문자화</string>
-    <string name="download_all_plugins_from_repo">이 저장소에서 모든 플러그인을 다운로드하시겠습니까\?</string>
+    <string name="download_all_plugins_from_repo">이 저장소에서 모든 플러그인을 다운로드하시겠습니까?</string>
     <string name="single_plugin_disabled" formatted="true">%s (사용불가)</string>
     <string name="add_repository">저장소 추가</string>
     <string name="repository_name_hint">저장소 이름</string>
@@ -338,7 +338,7 @@
     <string name="restore_success">로드된 백업 파일</string>
     <string name="settings_info">정보</string>
     <string name="advanced_search">고급 검색</string>
-    <string name="bug_report_settings_on">데이터를 보내지 않음</string>
+    <string name="bug_report_settings_on">데이터를 보내지 않습니다</string>
     <string name="redo_setup_process">설정 프로세스 다시 실행</string>
     <string name="apk_installer_settings">APK 인스톨러</string>
     <string name="github">Github</string>
@@ -527,4 +527,111 @@
     <string name="subscription_list_name">구독중</string>
     <string name="subscription_new">구독 %s</string>
     <string name="subscription_deleted">구독 취소 %s</string>
+    <string name="pref_category_security">보안</string>
+    <string name="pref_category_accounts">장부</string>
+    <string name="no_plugins_found_error">리포지토리에서 플러그인을 찾을 수 없습니다</string>
+    <string name="toast_copied">복사됨!</string>
+    <string name="repo_copy_label">레포지토리 이름 및 URL</string>
+    <string name="test_extensions_summary">본 테스트는 개발자만을 대상으로 하며, 확장자의 작업을 확인하거나 거부하지 않습니다.</string>
+    <string name="cs3wiki">클라우스스트림 위키</string>
+    <string name="links_reloaded_toast">다시 기록된 링크</string>
+    <string name="backup_frequency">백업 빈도</string>
+    <string name="favorites_list_name">즐겨찾기</string>
+    <string name="qr_image">QR 이미지</string>
+    <string name="test_extensions">모든 확장프로그램 테스트</string>
+    <string name="auth_locally">로컬 인증</string>
+    <string name="clipboard_permission_error">클립보드에 액세스하는 중 오류가 발생했습니다. 다시 시도하십시오.</string>
+    <string name="dismiss">취소</string>
+    <string name="open_downloaded_repo">저장소 열기</string>
+    <string name="enter_current_pin">현재 PIN 입력</string>
+    <string name="auto_rotate_video_desc">비디오 방향에 따라 화면 방향을 자동으로 전환합니다</string>
+    <string name="device_pin_error_message">장치 PIN 코드를 가져올 수 없습니다, 로컬 인증을 시도하세요</string>
+    <string name="device_pin_expired_message">PIN 코드가 만료되었습니다!</string>
+    <string name="device_pin_counter_text">코드 만료까지 남은 시간: %1$dm %2$ds</string>
+    <string name="no_repository_found_error">리포지토리를 찾을 수 없습니다. URL을 확인하고 VPN을 시도하십시오</string>
+    <string name="already_voted">이미 투표했습니다</string>
+    <string name="unable_to_inflate">UI를 올바르게 만들 수 없습니다. 이것은 주요 버그이며 %s 즉시 보고해야 합니다</string>
+    <string name="action_add_to_favorites">즐겨찾기에 추가</string>
+    <string name="wifi">와이파이</string>
+    <string name="help">도움</string>
+    <string name="qualities">품질</string>
+    <string name="edit">편집</string>
+    <string name="profiles">프로필</string>
+    <string name="ok">확인</string>
+    <string name="battery_dialog_title">배터리 최적화 사용 안 함</string>
+    <string name="app_unrestricted_toast">앱 배터리 사용량이 이미 무제한으로 설정되었습니다</string>
+    <string name="app_info_intent_error">CloudStream의 App 정보를 열 수 없습니다.</string>
+    <string name="favorite_added">즐겨찾기에 %s 추가</string>
+    <string name="profile_number">프로필 %d</string>
+    <string name="profile_background_des">프로필 배경</string>
+    <string name="duplicate_replace">대체</string>
+    <string name="enter_pin">PIN 입력</string>
+    <string name="pin">PIN</string>
+    <string name="pin_error_length">PIN은 4자여야 합니다</string>
+    <string name="logged_account" formatted="true">%s으로 로그인 됨</string>
+    <string name="skip_startup_account_select_pref">시작 시 계정 선택 건너뛰기</string>
+    <string name="favorite">즐겨찾기</string>
+    <string name="unfavorite">즐겨찾기 해제</string>
+    <string name="biometric_authentication_title">잠금 해제</string>
+    <string name="biometric_setting">생체 인식으로 잠금</string>
+    <string name="music_singlar">음악</string>
+    <string name="audio_book_singular">오디오책</string>
+    <string name="auto_rotate_video">자동 회전</string>
+    <string name="mobile_data">모바일 데이터</string>
+    <string name="disable">사용 불가능</string>
+    <string name="player_settings_play_in_fcast">fcast</string>
+    <string name="player_settings_select_cast_device">캐스트 장치 선택</string>
+    <string name="clipboard_unknown_error">복사하는 중 오류가 발생했습니다. 로그캣을 복사하고 문의하십시오.</string>
+    <string name="action_unsubscribe">구독 취소</string>
+    <string name="set_default">기본값 설정</string>
+    <string name="action_subscribe">구독</string>
+    <string name="use">사용</string>
+    <string name="duplicate_message_single" formatted="true">당신의 라이브러리에 이미 잠재적으로 중복된 항목이 존재합니다: \'%s\'.
+\n
+\n이 항목을 그래도 추가하시겠습니까, 기존 항목을 교체하시겠습니까, 아니면 작업을 취소하시겠습니까?</string>
+    <string name="duplicate_replace_all">전부 대체</string>
+    <string name="duplicate_add">추가</string>
+    <string name="favorite_removed">즐겨찾기에서 %s 제거</string>
+    <string name="duplicate_message_multiple" formatted="true">당신의 라이브러리에 잠재적으로 중복된 항목이 발견되었습니다:
+\n
+\n%s
+\n
+\n이 항목을 그래도 추가하시겠습니까, 기존 항목을 교체하시겠습니까, 아니면 작업을 취소하시겠습니까?</string>
+    <string name="select_an_account">계정 선택</string>
+    <string name="use_default_account">기본 계정 사용</string>
+    <string name="rotate_video">회전</string>
+    <string name="rotate_video_desc">화면 방향을 전환할 토글 버튼 표시</string>
+    <string name="manage_accounts">계정 관리</string>
+    <string name="lock_profile">프로필 잠금</string>
+    <string name="pin_error_incorrect">잘못된 PIN입니다. 다시 시도하세요.</string>
+    <string name="edit_account">계정 편집</string>
+    <string name="custom_media_singluar">미디어</string>
+    <string name="password_pin_authentication_title">비밀번호/PIN 인증</string>
+    <string name="biometric_unsupported">이 장치에서는 생체 인식이 지원되지 않습니다</string>
+    <string name="biometric_setting_summary">지문, 얼굴 ID, PIN, 패턴 또는 비밀번호로 앱을 잠급니다.</string>
+    <string name="biometric_prompt_description">여러 번 실패하면 프롬프트가 닫힙니다. 다시 시도하려면 앱을 다시 시작하세요.</string>
+    <string name="reset_btn">재설정</string>
+    <string name="automatic_plugin_download_mode_title">플러그인 다운로드를 필터링할 모드 선택</string>
+    <string name="biometric_warning">데이터가 백업되었습니다. 장치에 따라 동작이 다를 수 있으며 앱 접근이 차단될 경우 앱 데이터를 완전히 지우고 백업에서 복원하세요. 이로 인해 발생하는 불편을 사과드립니다.</string>
+    <string name="device_pin_url_message">스마트폰이나 컴퓨터에서 <b>%s</b>를 방문하여 위의 코드를 입력하세요</string>
+    <string name="battery_dialog_message">구독 TV 프로그램에 대한 중단 없는 다운로드 및 알림을 보장하기 위해 CloudStream은 백그라운드에서 실행할 수 있는 권한이 필요합니다. 확인을 누르면 App info로 이동합니다. 거기서 𝘼𝙥𝙥 𝙗𝙖𝙩𝙩𝙚𝙧𝙮 𝙪𝙨𝙖𝙜𝙚로 스크롤하여 배터리 사용량을 𝙐𝙣𝙧𝙚𝙨𝙩𝙧𝙞𝙘𝙩𝙚𝙙로 설정합니다. 이 권한은 CS3가 배터리를 소모한다는 의미가 아닙니다. 알림을 받거나 공식 확장에서 동영상을 다운로드하는 등 필요할 때만 백그라운드에서 작동합니다. 취소를 선택한 경우 나중에 𝙂𝙚𝙣𝙚𝙧𝙖𝙡 𝙎𝙚𝙩𝙩𝙞𝙣𝙜𝙨에서 이 설정을 조정할 수 있습니다.</string>
+    <string name="quality_profile_help">여기서 소스의 순서를 변경할 수 있습니다. 비디오의 우선 순위가 높은 경우에는 소스 선택에 더 높게 나타납니다. 소스 우선 순위와 품질 우선 순위의 합이 비디오 우선 순위입니다.
+\n
+\n참고 A: 3
+\n품질 B: 7
+\n총 비디오 우선 순위는 10입니다.
+\n
+\n참고: 합이 10 이상이면 해당 링크가 로드되면 플레이어는 자동으로 로드를 건너뜁니다!</string>
+    <string name="next_season_episode_format" formatted="true">시즌 %1$d 에피소드 %2$d이(가) 출시됩니다</string>
+    <string name="result_search_tooltip">다른 확장자에서 검색</string>
+    <string name="subscribe_tooltip">새로운 에피소드 알림</string>
+    <string name="recommendations_tooltip">권장 사항 표시</string>
+    <string name="speed_setting_summary">플레이어에 속도 옵션을 추가합니다</string>
+    <string name="episode_upcoming_format" formatted="true">%s로 출시 예정</string>
+    <string name="resume_remaining" formatted="true">%s
+\n남음</string>
+    <string name="duplicate_title">잠재적 중복 발견</string>
+    <string name="enter_pin_with_name" formatted="true">%s의 PIN 입력</string>
+    <string name="action_remove_from_favorites">즐겨찾기에서 제거</string>
+    <string name="episode_action_cast_mirror">캐스트미러</string>
 </resources>

@@ -63,7 +63,7 @@
     <string name="download_failed">Tải lỗi</string>
     <string name="download_canceled">Đã hủy</string>
     <string name="download_done">Tải thành công</string>
-    <string name="stream">Trực tiếp</string>
+    <string name="stream">Luồng mạng</string>
     <string name="error_loading_links_toast">Đã có lỗi xảy ra</string>
     <string name="download_storage_text">Bộ nhớ trong</string>
     <string name="app_dubbed_text">Lồng Tiếng</string>
@@ -196,7 +196,7 @@
 \nBạn có chắc chắn muốn xóa\?</string>
     <string name="resume_time_left" formatted="true">%dm
 \ncòn lại</string>
-    <string name="status_ongoing">Đang Chiếu</string>
+    <string name="status_ongoing">Đang chiếu</string>
     <string name="status_completed">Hoàn Thành</string>
     <string name="status">Trạng Thái</string>
     <string name="year">Năm</string>
@@ -287,10 +287,10 @@
     <string name="category_general">Tổng quan</string>
     <string name="random_button_settings">Nút ngẫu nhiên</string>
     <string name="random_button_settings_desc">Hiện nút ngẫu nhiên trên Trang chủ và Thư viện</string>
-    <string name="provider_lang_settings">Ngôn ngữ nguồn phim</string>
+    <string name="provider_lang_settings">Ngôn ngữ mở rộng</string>
     <string name="app_layout">Giao diện App</string>
     <string name="preferred_media_settings">Thể loại ưu tiên</string>
-    <string name="enable_nsfw_on_providers">Kích hoạt NSFW với nguồn phim hỗ trợ</string>
+    <string name="enable_nsfw_on_providers">Kích hoạt NSFW trên các tiện ích mở rộng được hỗ trợ</string>
     <string name="subtitles_encoding">Mã hoá phụ đề</string>
     <string name="category_providers">Nguồn phim</string>
     <string name="category_ui">Giao diện</string>
@@ -426,7 +426,7 @@
     <string name="view_public_repositories_button">Xem kho lưu trữ của cộng đồng</string>
     <string name="view_public_repositories_button_short">Danh sách công khai</string>
     <string name="uppercase_all_subtitles">In hoa toàn bộ phụ đề</string>
-    <string name="download_all_plugins_from_repo">Tải toàn bộ plugin từ kho lưu trữ này\?</string>
+    <string name="download_all_plugins_from_repo">Cảnh báo: CloudStream 3 không chịu trách nhiệm về các tiện ích bên thứ ba và không cung cấp bất kỳ sự hỗ trợ nào!</string>
     <string name="single_plugin_disabled" formatted="true">%s (Đã vô hiệu)</string>
     <string name="tracks">Thêm</string>
     <string name="audio_tracks">Âm thanh</string>
@@ -622,11 +622,25 @@
 \ncòn lại</string>
     <string name="biometric_unsupported">Xác thực bằng sinh trắc học không được hỗ trợ trên thiết bị này</string>
     <string name="password_pin_authentication_title">Mật khẩu/PIN Xác thực</string>
-    <string name="biometric_warning">Dữ liệu CloudStream của bạn đã được sao lưu. Dù khả năng rất thấp, nhưng mỗi thiết bị có thể hoạt động khác nhau. Trong trường hợp thiểu số, bạn sẽ bị khóa khỏi ứng dụng, hãy xóa dữ liệu ứng dụng và khởi tạo từ bản sao lưu. Chúng tôi rất xin lỗi vì bất kỳ sự bất tiện nào.</string>
+    <string name="biometric_warning">Dữ liệu CloudStream của bạn hiện đã được sao lưu. Mặc dù khả năng xảy ra điều này là rất thấp nhưng tất cả các thiết bị đều có thể hoạt động khác nhau. Trong trường hợp hiếm gặp là bạn bị khóa truy cập ứng dụng, hãy xóa hoàn toàn dữ liệu ứng dụng và khôi phục từ bản sao lưu. Chúng tôi rất xin lỗi vì bất kỳ sự bất tiện nào phát sinh từ việc này.</string>
     <string name="biometric_setting_summary">Mở khóa ứng dụng bằng Vân tay, Khuôn mặt, PIN, Hình vẽ và Mật khẩu.</string>
     <string name="biometric_prompt_description">Màn hình bị đóng sau nhiều lần thử thất bại. Hãy khởi động lại ứng dụng.</string>
     <string name="test_extensions_summary">Phần kiểm thử này chỉ dành cho nhà phát triển và không xác nhận hay từ chối việc hoạt động của nguồn phim.</string>
     <string name="app_unrestricted_toast">Chế độ tiêu thụ pin của ứng dụng đã được đặt ở mức không giới hạn</string>
-    <string name="custom_media_singluar">… 
-\n———</string>
+    <string name="custom_media_singluar">Phương tiện</string>
+    <string name="repo_copy_label">Tên và URL kho lưu trữ</string>
+    <string name="reset_btn">Đặt lại</string>
+    <string name="battery_dialog_message">Để đảm bảo quá trình tải xuống và thông báo cho các chương trình truyền hình đã đăng ký không bị gián đoạn, CloudStream cần có quyền chạy ở chế độ nền. Bằng cách nhấn OK, bạn sẽ được chuyển đến Thông tin ứng dụng. Ở đó, cuộn đến 𝘼𝙥𝙥 𝙗𝙖𝙩𝙩𝙚𝙧𝙮 𝙪𝙨𝙖𝙜𝙚 và đặt mức sử dụng pin thành 𝙐𝙣𝙧𝙚𝙨𝙩𝙧𝙞𝙘𝙩𝙚𝙙. Xin lưu ý, quyền này không có nghĩa là CS3 sẽ làm hao pin của bạn. Nó sẽ chỉ hoạt động ở chế độ nền khi cần thiết, chẳng hạn như khi nhận được thông báo hoặc tải xuống video từ các tiện ích mở rộng chính thức. Nếu bạn chọn hủy, bạn có thể điều chỉnh cài đặt này sau trong 𝙂𝙚𝙣𝙚𝙧𝙖𝙡 𝙎𝙚𝙩𝙩𝙞𝙣𝙜𝙨.</string>
+    <string name="next_season_episode_format" formatted="true">Mùa %1$d Tập %2$d sẽ được phát hành vào</string>
+    <string name="episode_upcoming_format" formatted="true">Sắp tới sau %s</string>
+    <string name="player_settings_select_cast_device">Chọn thiết bị truyền</string>
+    <string name="pref_category_security">Bảo mật</string>
+    <string name="pref_category_accounts">Tài khoản</string>
+    <string name="qr_image">Mã QR</string>
+    <string name="dismiss">Bỏ qua</string>
+    <string name="open_downloaded_repo">Mở tiện ích mở rộng</string>
+    <string name="cs3wiki">CloudStream Wiki</string>
+    <string name="device_pin_url_message">Truy cập <b>%s</b> trên điện thoại hoặc máy tính và nhập mã bên trên</string>
+    <string name="device_pin_expired_message">Mã PIN đã hết hạn!</string>
+    <string name="device_pin_counter_text">Mã sẽ hết hạn trong %1$dm %2$ds</string>
 </resources>

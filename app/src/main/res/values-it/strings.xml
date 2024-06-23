@@ -239,7 +239,7 @@
     <string name="render_error">Errore del renderer</string>
     <string name="unexpected_error">Errore inaspettato nel player video</string>
     <string name="storage_error">Errore download, controlla i permessi di archiviazione</string>
-    <string name="episode_action_chromecast_episode">Chromecast</string>
+    <string name="episode_action_chromecast_episode">Episodio Chromecast</string>
     <string name="episode_action_chromecast_mirror">Mirror Chromecast</string>
     <string name="episode_action_play_in_app">Riproduci in app</string>
     <string name="episode_action_play_in_format">Riproduci in %s</string>
@@ -427,7 +427,7 @@
     <string name="view_public_repositories_button">Vedi le repository della community</string>
     <string name="view_public_repositories_button_short">Lista pubblica</string>
     <string name="uppercase_all_subtitles">Tutti i sottotitoli in maiuscolo</string>
-    <string name="download_all_plugins_from_repo">Scaricare tutti i plugin da questa repository\?</string>
+    <string name="download_all_plugins_from_repo">Attenzione: CloudStream 3 non si assume alcuna responsabilità per l\'utilizzo di estensioni di terze parti e non fornisce alcun supporto per esse!</string>
     <string name="single_plugin_disabled" formatted="true">%s (Disabilitato)</string>
     <string name="tracks">Tracce</string>
     <string name="audio_tracks">Traccia audio</string>
@@ -619,7 +619,7 @@
     <string name="password_pin_authentication_title">Autenticazione con password/PIN</string>
     <string name="biometric_unsupported">L\'autenticazione biometrica non è supportata su questo dispositivo</string>
     <string name="biometric_setting_summary">Sblocca app con impronta digitale, Face ID, PIN, sequenza e password.</string>
-    <string name="biometric_prompt_description">Questa schermata è stata chiusa a causa di più tentativi falliti. Riavvia l\'app.</string>
+    <string name="biometric_prompt_description">Dopo alcuni tentativi falliti, il prompt si chiuderà. Riavvia semplicemente l\'app per riprovare.</string>
     <string name="biometric_warning">È stato eseguito il backup dei tuoi dati CloudStream. Sebbene questa possibilità sia molto bassa, tutti i dispositivi possono comportarsi in modo diverso. Nel raro caso in cui ti venga bloccato l\'accesso all\'app, cancella completamente i dati dell\'app e ripristina da un backup. Siamo molto spiacenti per qualsiasi inconveniente derivanti da questo.</string>
     <string name="unfavorite">Non preferito</string>
     <string name="resume_remaining" formatted="true">%s
@@ -637,4 +637,21 @@
     <string name="app_unrestricted_toast">L\'utilizzo della batteria dell\'app è già impostato su \"Senza restrizioni\"</string>
     <string name="music_singlar">Musica</string>
     <string name="audio_book_singular">Audiolibro</string>
+    <string name="reset_btn">Reimposta</string>
+    <string name="episode_upcoming_format" formatted="true">Prossimamente tra %s</string>
+    <string name="next_season_episode_format" formatted="true">L\'episodio %2$d della stagione %1$d uscirà tra</string>
+    <string name="episode_action_cast_mirror">Mirror cast</string>
+    <string name="player_settings_select_cast_device">Seleziona dispositivo per cast</string>
+    <string name="player_settings_play_in_fcast">Fcast</string>
+    <string name="cs3wiki">Wiki di CloudStream</string>
+    <string name="pref_category_accounts">Conti</string>
+    <string name="pref_category_security">Sicurezza</string>
+    <string name="auth_locally">Autenticazione locale</string>
+    <string name="qr_image">Immagine codice QR</string>
+    <string name="dismiss">Respingi</string>
+    <string name="open_downloaded_repo">Apri repository</string>
+    <string name="device_pin_url_message">Visita <b>%s</b> sul tuo smartphone o computer e inserisci il codice sopra</string>
+    <string name="device_pin_error_message">Impossibile ottenere il codice PIN del dispositivo, prova l\'autenticazione locale</string>
+    <string name="device_pin_expired_message">Il codice PIN è scaduto!</string>
+    <string name="device_pin_counter_text">Il codice scadrà tra %1$dm %2$ds</string>
 </resources>

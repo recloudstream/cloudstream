@@ -422,7 +422,7 @@
     <string name="view_public_repositories_button">Ver repositórios da comunidade</string>
     <string name="view_public_repositories_button_short">Lista pública</string>
     <string name="uppercase_all_subtitles">Todas as legendas em maiúsculas</string>
-    <string name="download_all_plugins_from_repo">Transferir todos os plugins deste repositório\?</string>
+    <string name="download_all_plugins_from_repo">Atenção: CloudStream 3 não assume nenhuma responsabilidade pelo uso de extensões de terceiros e não fornece nenhum suporte para elas!</string>
     <string name="single_plugin_disabled" formatted="true">%s (Desativado)</string>
     <string name="autoplay_next_settings">Reproduzir automaticamente próximo episódio</string>
     <string name="autoplay_next_settings_des">Começa o próximo episódio quando o atual termina</string>
@@ -622,7 +622,7 @@
     <string name="password_pin_authentication_title">Autenticação de Senha/PIN</string>
     <string name="biometric_unsupported">A autenticação biométrica não é compatível com este dispositivo</string>
     <string name="biometric_setting_summary">Desbloquear o aplicativo com impressão digital, ID facial, PIN, padrão e senha.</string>
-    <string name="biometric_prompt_description">Esta tela foi fechada devido a diversas tentativas malsucedidas. Por favor reinicie o aplicativo.</string>
+    <string name="biometric_prompt_description">Após algumas tentativas fracassadas, o prompt será fechado. Basta reiniciar o aplicativo para tentar novamente.</string>
     <string name="resume_remaining" formatted="true">%s
 \nrestante(s)</string>
     <string name="favorite">Favorito</string>
@@ -639,4 +639,21 @@
     <string name="music_singlar">Música</string>
     <string name="audio_book_singular">Áudio-livro</string>
     <string name="custom_media_singluar">Mídia</string>
+    <string name="reset_btn">Redefinir</string>
+    <string name="episode_upcoming_format" formatted="true">Próximos em %s</string>
+    <string name="next_season_episode_format" formatted="true">Temporada %1$d Episódio %2$d será lançado em</string>
+    <string name="player_settings_play_in_fcast">Fcast</string>
+    <string name="player_settings_select_cast_device">Selecione o dispositivo de transmissão</string>
+    <string name="episode_action_cast_mirror">Espelhar transmissão</string>
+    <string name="cs3wiki">CloudStream Wiki</string>
+    <string name="pref_category_security">Segurança</string>
+    <string name="pref_category_accounts">Contas</string>
+    <string name="auth_locally">Autenticação local</string>
+    <string name="qr_image">Imagem do código QR</string>
+    <string name="dismiss">Descartar</string>
+    <string name="open_downloaded_repo">Abrir repositório</string>
+    <string name="device_pin_url_message">Acesse <b>%s</b> em seu smartphone ou computador e digite o código acima</string>
+    <string name="device_pin_error_message">Não é possível obter o código PIN do dispositivo, tente a autenticação local</string>
+    <string name="device_pin_expired_message">O código PIN expirou!</string>
+    <string name="device_pin_counter_text">O código expira em %1$dm %2$ds</string>
 </resources>
