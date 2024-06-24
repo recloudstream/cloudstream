@@ -177,7 +177,7 @@
     <string name="vpn_torrent">এই প্ৰদাতা এটা ট\'ৰেণ্ট হৈছে, এটা VPN পৰামৰ্শ দিয়া হল</string>
     <string name="subs_import_text" formatted="true">ফন্ট ইম্প\'ৰ্ট কৰিবলৈ %sত ত থকা প্ৰতিষ্ঠান কৰক</string>
     <string name="action_open_watching">অধিক তথ্য</string>
-    <string name="action_open_play">\@string/home_play</string>
+    <string name="action_open_play">@string/home_play</string>
     <string name="provider_info_meta">মেটাডাটা ঠিকানাৰ সৈতে প্ৰদান কৰা নাই, যদি এটা ঠিকানাৰ মেটাডাটা নাই তেন্তি ভিডিঅ\' ল\'ড হোৱা নাই।</string>
     <string name="normal_no_plot">কোনো বিবৰণ পোৱা নাই</string>
     <string name="torrent_no_plot">কোনো বিৱৰণ পোৱা নাই</string>
