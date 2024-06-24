@@ -586,18 +586,14 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                 }
             }
 
-            fun changeLibraryIcon() {
+            // observing library vm changes icon without app restart
+            libraryViewModel.currentApiName.observe(this@MainActivity) {
                 when (lastAPI) {
                     "MAL" -> setLibraryIcon(R.drawable.mal_logo)
                     "AniList" -> setLibraryIcon(R.drawable.ic_anilist_icon)
                     "Simkl" -> setLibraryIcon(R.drawable.simkl_logo)
                     else -> setLibraryIcon(R.drawable.library_icon)
                 }
-            }
-
-            // observing library vm changes icon without app restart
-            libraryViewModel.currentApiName.observe(this@MainActivity) {
-                changeLibraryIcon()
             }
         }
     }
