@@ -428,7 +428,7 @@
     <string name="uppercase_all_subtitles">Ganti subtitle jadi huruf besar semua</string>
     <string name="plugins_downloaded" formatted="true">Terunduh: %d</string>
     <string name="plugins_not_downloaded" formatted="true">Tidak terunduh: %d</string>
-    <string name="download_all_plugins_from_repo">Unduh semua plugin dari repositori ini\?</string>
+    <string name="download_all_plugins_from_repo">Unduh semua plugin dari repositori ini?</string>
     <string name="safe_mode_title">Semua Umur</string>
     <string name="single_plugin_disabled" formatted="true">%s (Tidak aktif)</string>
     <string name="tracks">Trek</string>
@@ -638,4 +638,13 @@
     <string name="audio_book_singular">Buku Audio</string>
     <string name="custom_media_singluar">Media</string>
     <string name="battery_dialog_message">Untuk memastikan unduhan dan pemberitahuan tanpa gangguan untuk acara TV berlangganan, CloudStream memerlukan izin untuk berjalan di latar belakang. Dengan menekan OK, Anda akan diarahkan ke Info aplikasi. Di sana, gulir ke Penggunaan baterai aplikasi dan atur penggunaan baterai ke Tidak Terbatas. Harap dicatat, izin ini tidak berarti CS3 akan menguras baterai Anda. Ini hanya akan beroperasi di latar belakang ketika diperlukan, seperti ketika menerima pemberitahuan atau mengunduh video dari ekstensi resmi. Jika Anda memilih untuk membatalkannya, Anda dapat menyesuaikan pengaturan ini nanti di Pengaturan Umum.</string>
+    <string name="reset_btn">Mengatur ulang</string>
+    <string name="next_season_episode_format" formatted="true">Musim %1$d Episode %2$d akan dirilis pada</string>
+    <string name="episode_upcoming_format" formatted="true">Akan datang di %s</string>
+    <string name="episode_action_cast_mirror">Cermin Cast</string>
+    <string name="player_settings_select_cast_device">Pilih perangkat cast</string>
+    <string name="player_settings_play_in_fcast">Fcast</string>
+    <string name="cs3wiki">CloudStream Wiki</string>
+    <string name="pref_category_security">Keamanan</string>
+    <string name="pref_category_accounts">Akun</string>
 </resources>

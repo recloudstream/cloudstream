@@ -91,7 +91,7 @@
     <string name="player_subtitles_settings_des">Ρυθμίσεις υποτίτλων του προγράμματος αναπαραγωγής</string>
     <string name="chromecast_subtitles_settings">Υπότιτλοι για Chromecast</string>
     <string name="chromecast_subtitles_settings_des">Ρυθμίσεις υποτίτλων για Chromecast</string>
-    <string name="eigengraumode_settings">Eigengravy Mode</string>
+    <string name="eigengraumode_settings">Ταχύτητα Προβολής</string>
     <string name="swipe_to_seek_settings">Σύρετε για αναζήτηση</string>
     <string name="swipe_to_seek_settings_des">Σύρετε από πλευρά σε πλευρά για να ελέγξετε το σημείο του βίντεο στο οποίο βρίσκεστε</string>
     <string name="swipe_to_change_settings">Σύρετε για να αλλάξετε ρυθμίσεις</string>
@@ -130,7 +130,7 @@
     <string name="backup_success">Τα δεδομένα αποθηκεύτηκαν</string>
     <string name="backup_failed">Δεν έχει δοθεί άδεια για πρόσβαση στον αποθηκευτικό χώρο. Παρακαλώ προσπαθήστε ξανά.</string>
     <string name="backup_failed_error_format">Σφάλμα δημιουργίας αντιγράφων ασφαλείας %s</string>
-    <string name="category_account">Λογαριασμοί</string>
+    <string name="category_account">Λογαριασμοί και Ασφάλεια</string>
     <string name="category_updates">Ενημερώσεις και αντίγραφα ασφαλείας</string>
     <string name="show_fillers_settings">Εμφάνιση filler επεισοδίου για άνιμε</string>
     <string name="show_trailers_settings">Εμφάνιση trailer</string>
@@ -201,7 +201,7 @@
     <string name="episode_action_reload_links">Επαναφόρτωση συνδέσμων</string>
     <string name="episode_action_download_subtitle">Λήψη υποτίτλων</string>
     <string name="show_hd">Ποιότητα</string>
-    <string name="show_dub">Dub</string>
+    <string name="show_dub">Ετικέτα Dub</string>
     <string name="show_sub">Sub</string>
     <string name="show_title">Τίτλος</string>
     <string name="poster_ui_settings">Εναλλαγή γραφικών στοιχείων στην αφίσα</string>
@@ -233,11 +233,11 @@
     <string name="legal_notice">Αποποίηση ευθυνών</string>
     <string name="category_general">Γενικά</string>
     <string name="random_button_settings">Κουμπί τυχαίας δράσης</string>
-    <string name="random_button_settings_desc">Εμφάνιση κουμπιού τυχαίας δράσης στην Αρχική Οθόνη</string>
+    <string name="random_button_settings_desc">Εμφάνιση κουμπιού τυχαίας προβολής στην Αρχική Οθόνη</string>
     <string name="provider_lang_settings">Γλώσσες παρόχων</string>
     <string name="app_layout">Διάταξη εφαρμογής</string>
     <string name="preferred_media_settings">Προτιμώμενα μέσα</string>
-    <string name="enable_nsfw_on_providers">Ενεργοποίηση NSFW σε υποστηριζόμενους παρόχους</string>
+    <string name="enable_nsfw_on_providers">Ενεργοποίηση ακατάλληλου περιεχομένου σε υποστηριζόμενους παρόχους</string>
     <string name="subtitles_encoding">Κωδικοποίηση υποτίτλων</string>
     <string name="category_providers">Πάροχοι</string>
     <string name="category_ui">Διάταξη</string>
@@ -302,8 +302,8 @@
     <string name="subtitles_filter_lang">Φιλτράρισμα ανά την προτεινόμενη γλώσσα του μέσου</string>
     <string name="extras">Έξτρα</string>
     <string name="trailer">Τρέιλερ</string>
-    <string name="network_adress_example">Σύνδεσμος για stream</string>
-    <string name="referer">Παραπομπή</string>
+    <string name="network_adress_example">Https://Παράδειγμα.com/Παράδειγμα.mp4</string>
+    <string name="referer">Παραπομπή (προαιρετική)</string>
     <string name="next">Επόμενο</string>
     <string name="provider_languages_tip">Παρακολούθηση βίντεο σε αυτή την γλώσσα</string>
     <string name="previous">Προηγούμενο</string>
@@ -334,8 +334,6 @@
     <string name="plugins_updated" formatted="true">Ενημερώθηκαν %d πρόσθετα</string>
     <string name="blank_repo_message">Το CloudStream δεν έχει προεγκατεστημένους ιστότοπους. Πρέπει να εγκαταστήσετε ιστότοπους μέσω ορισμένων αποθετηρίων.
 \n
-\nΛόγω ενός χαζού DMCA takedown από μέρους των Sky UK Limited 🤮 δεν μπορούμε να προσθέσουμε απευθείας σύνδεσμο προς τα προαναφερόμενα αποθετήρια εντός της εφαρμογής.
-\n
 \nΒρείτε μας στο Discord ή ψάξτε στο διαδίκτυο.</string>
     <string name="view_public_repositories_button">Προβολή αποθετηρίων κοινότητας</string>
     <string name="view_public_repositories_button_short">Δημόσια λίστα</string>
@@ -345,7 +343,7 @@
     <string name="tracks">Κομμάτια</string>
     <string name="audio_tracks">Ηχητικά κομμάτια</string>
     <string name="video_tracks">Κομμάτια βίντεο</string>
-    <string name="apply_on_restart">Εφαρμογή στην επανεκκίνηση</string>
+    <string name="apply_on_restart">Κάντε επανεκκίνηση της εφαρμογής για να δείτε τις αλλαγές.</string>
     <string name="safe_mode_title">Η ασφαλής λειτουργία ενεργοποιήθηκε</string>
     <string name="safe_mode_description">Όλα τα extensions απενεργοποιήθηκαν , ώστε να μπορέσετε να διαπιστώσετε ποιο από αυτά προκάλεσε τη κατάρρευση.</string>
     <string name="safe_mode_crash_info">Προβολή πληροφορίας κατάρρευσης</string>
@@ -392,7 +390,7 @@
     <string name="automatic_plugin_updates">Αυτόματη ενημέρωση plugin</string>
     <string name="automatic_plugin_download">Αυτόματη λήψη plugin</string>
     <string name="dns_pref">DNS μέσω HTTPS</string>
-    <string name="example_site_url">παράδειγμα.com</string>
+    <string name="example_site_url">https://παράδειγμα.com</string>
     <string name="quality_hq">HQ</string>
     <string name="quality_ts">TS</string>
     <string name="quality_tc">TC</string>
@@ -412,7 +410,7 @@
     <string name="nsfw_singular">NSFW</string>
     <string name="episode_action_chromecast_mirror">Chromecast mirror</string>
     <string name="nginx_url_pref">Σύνδεσμος NGINX σέρβερ</string>
-    <string name="example_site_name">ΟΚουλΙστότοποςΜου</string>
+    <string name="example_site_name">ΝεοΟνομαΙστοτοπου</string>
     <string name="sync_total_episodes_none">/\?\?</string>
     <string name="sync_total_episodes_some" formatted="true">/%d</string>
     <string name="sync_score_format" formatted="true">%d / 10</string>
@@ -434,7 +432,7 @@
     <string name="no_update_found">Δεν βρέθηκε ενημέρωση</string>
     <string name="check_for_update">Έλεγχος για ενημέρωση</string>
     <string name="example_password">κωδικός123</string>
-    <string name="example_username">ΤοΚουλΨευδώνυμοΜου</string>
+    <string name="example_username">ΤοΚουλΟνομαΜου</string>
     <string name="example_email">γειασου@κόσμε.com</string>
     <string name="subtitles_example_text">Η γρήγορη, καφέ αλεπού πηδάει πάνω από τον τεμπέλη σκύλο / The quick brown fox jumps over the lazy dog</string>
     <string name="quality_cam">Cam</string>
@@ -521,7 +519,7 @@
 \nΣΗΜΕΙΩΣΗ: Εάν το άθροισμα είναι 10 ή περισσότερο, η συσκευή αναπαραγωγής θα παραλείψει αυτόματα τη φόρτωση όταν φορτωθεί αυτός ο σύνδεσμος!</string>
     <string name="category_provider_test">Δοκιμή παρόχου</string>
     <string name="watch_quality_pref_data">Προτιμώμενη ποιότητας παρακολούθησης (Δεδομένα τηλεφώνου)</string>
-    <string name="jsdelivr_proxy">Διακομιστής μεσολάβησης raw.githubusercontent.com</string>
+    <string name="jsdelivr_proxy">Διακομιστής μεσολάβησης GitHub</string>
     <string name="pref_category_android_tv">Android TV</string>
     <string name="subscription_in_progress_notification">Ενημέρωση εγγεγραμμένων εκπομπών</string>
     <string name="subscription_new">Έγινε εγγραφή σε %s</string>
@@ -546,4 +544,85 @@
     <string name="automatic_plugin_download_mode_title">Επιλέξτε κατάσταση για φιλτράρισμα επεκτάσεων για λήψη</string>
     <string name="disable">Απενεργοποιημένο</string>
     <string name="stop">Τέλος</string>
+    <string name="backup_frequency">Συχνότητα δημιουργίας αντιγράφων ασφαλείας</string>
+    <string name="links_reloaded_toast">Οι σύνδεσμοι επαναφορτώθηκαν</string>
+    <string name="toast_copied">αντιγράφηκε!</string>
+    <string name="result_search_tooltip">Αναζήτηση σε άλλες επεκτάσεις</string>
+    <string name="subscribe_tooltip">Ειδοποίηση για νέο επεισόδιο</string>
+    <string name="enter_pin">Εισαγωγή Κωδικού</string>
+    <string name="repo_copy_label">Όνομα \"αποθήκης\" και λινκ</string>
+    <string name="recommendations_tooltip">Εμφάνιση προτάσεων</string>
+    <string name="action_add_to_favorites">Προσθήκη στα Αγαπημένα</string>
+    <string name="action_subscribe">Εγγραφή</string>
+    <string name="duplicate_replace_all">Αντικατάσταση Όλων</string>
+    <string name="use_default_account">Χρησιμοποίηση Βασικού λογαριασμού</string>
+    <string name="action_remove_from_favorites">Αφαίρεση από τα Αγαπημένα</string>
+    <string name="android_tv_interface_off_seek_settings">Κρυμμένο Πλέιερ - Δευτερόλεπτα Σκιπ</string>
+    <string name="android_tv_interface_off_seek_settings_summary">Δευτερόλεπτα Σκιπ όταν ο αναπαραγωγέας είναι κρυφός</string>
+    <string name="ok">Εντάξει</string>
+    <string name="battery_dialog_title">Απενεργοποιήση της εξοικονόμησης της μπαταρίας</string>
+    <string name="already_voted">Έχετε ήδη ψηφίσει</string>
+    <string name="duplicate_message_single" formatted="true">Φαίνεται πως ένα πιθανό αντίγραφο βρίσκεται στη βιβλιοθήκη σας: \'%s.\'
+\n
+\nΘα επιθυμούσατε να το προσθέσετε, να το αντικαταστήσετε, ή να ακυρώσετε την ενέργεια;</string>
+    <string name="enter_current_pin">Εισαγωγή Τρέχον Κωδικού</string>
+    <string name="lock_profile">Κλείδωμα Προφίλ</string>
+    <string name="biometric_authentication_title">Ξεκλείδωμα Cloudstream</string>
+    <string name="password_pin_authentication_title">ΚωδικόςPIN Αυθεντικότητας</string>
+    <string name="speed_setting_summary">Προσθέτει επιλογή ταχύτητας στον αναπαραγωγέα</string>
+    <string name="logged_account" formatted="true">Σύνδεση ως %s</string>
+    <string name="rotate_video">Περιστροφή</string>
+    <string name="action_unsubscribe">Απεγγραφή</string>
+    <string name="manage_accounts">Διαχείριση λογαριασμών</string>
+    <string name="auto_rotate_video_desc">Ενεργοποίηση αυτόματης περιστροφής οθόνης αναλόγως του βίντεο</string>
+    <string name="auto_rotate_video">Αυτόματη περιστροφή</string>
+    <string name="next_season_episode_format" formatted="true">Σεζόν %1$dΕπεισόδιο%2$d θα κυκλοφορήσει</string>
+    <string name="android_tv_interface_on_seek_settings_summary">Δευτερόλεπτα Σκιπ όταν φαίνεται ο αναπαραγωγέας (πλειερ)</string>
+    <string name="test_extensions">Δοκιμή όλων των παροχών</string>
+    <string name="test_extensions_summary">Αυτό το τεστ προορίζεται μόνο για τους προγραμματιστές και δε επαληθείει ούτε απορρίπτει την λειτουργία οποιουδήποτε παρόχου.</string>
+    <string name="player_settings_play_in_fcast">Fcast</string>
+    <string name="player_settings_select_cast_device">Επιλογή συσκευής για αναμετάδοση</string>
+    <string name="clipboard_permission_error">Πρόβλημα στην πρόσβαση στο Clipboard, Παρακαλώ προσπαθήστε ξανά.</string>
+    <string name="clipboard_unknown_error">Πρόβλημα στην αντιγραφή , Παρακαλούμε αντιγράψτε το logcat και επικοινωνήστε με την υποστήριξη.</string>
+    <string name="app_unrestricted_toast">Η χρήση μπαταρίας έχει ήδη τεθεί χωρίς περιορισμό</string>
+    <string name="app_info_intent_error">Αδύνατο άνοιγμα των στοιχείων της εφαρμογής Cloudstream.</string>
+    <string name="favorites_list_name">Αγαπημένα</string>
+    <string name="favorite_added">%s προστέθηκε στα αγαπημένα</string>
+    <string name="favorite_removed">%s αφαιρέθηκε από τα αγαπημένα</string>
+    <string name="duplicate_title">Πιθανό αντίγραφο βρέθηκε</string>
+    <string name="duplicate_add">Προσθήκη</string>
+    <string name="duplicate_replace">Αντικατάσταση</string>
+    <string name="duplicate_message_multiple" formatted="true">Πιθανά διπλά αρχεία βρέθηκαν στην βιβλιοθήκη:
+\n
+\n%s
+\n
+\nΘα επιθυμούσατε να προσθέσετε αυτό το αρχείο ούτως η άλλως, να αντικαταστήσετε τα ήδη υπάρχοντα, ή να ακυρώσετε την ενέργεια?</string>
+    <string name="enter_pin_with_name" formatted="true">Εισαγωγή Κωδικού για %s</string>
+    <string name="pin">Κωδικός</string>
+    <string name="pin_error_incorrect">Εσφαλμένος Κωδικός. Προσπαθήστε ξανά.</string>
+    <string name="pin_error_length">Ο κωδικός να περιέχει 4 χαρακτήρες</string>
+    <string name="select_an_account">Επιλογή λογαριασμού</string>
+    <string name="unfavorite">Αφαίρεση από αγαπημένα</string>
+    <string name="biometric_setting">Κλείδωμα με βιομετρικά</string>
+    <string name="episode_upcoming_format" formatted="true">Έρχεται σε %s</string>
+    <string name="android_tv_interface_on_seek_settings">Εμφάνιση Πλέιερ - Δευτερόλεπτα Σκιπ</string>
+    <string name="jsdelivr_proxy_summary">Παράκαμψη απαγόρευσης από raw github URLs χρησιμοποιώντας jsDelivr. Μπορεί να καθυστερήσει τις ενημερώσεις για μερικές μέρες.</string>
+    <string name="rotate_video_desc">Εμφάνιση κουμπιού για περιστροφή οθόνης</string>
+    <string name="favorite">Αγαπημένο</string>
+    <string name="resume_remaining" formatted="true">%s
+\nαπομένουν</string>
+    <string name="biometric_unsupported">Βιομετρική αυθεντικοποίηση δεν υποστηρίζεται από τη συσκευή</string>
+    <string name="episode_action_cast_mirror">Καστ ταινίας</string>
+    <string name="battery_dialog_message">Για να σιγουρέψουμε πως οι λήψεις ταινιών και οι ειδοποιήσεις για σειρές στο Cloudstream δεν έχουν πρόβλημα, το Cloudstream χρειάζεται άδεια να τρέχει στο παρασκήνιο. Πατώντας ΟΚ θα μεταφερθείτε στις λεπτομέρειες εφαρμογής, από κει πηγαίνετε στην Χρήση μπαταρίας από εφαρμογές και θέσετε την χρήση σε μη περιορισμένη. Να έχετε στο νου σας πως το Cloudstream δε θα καταναλώσει την μπαταρία σας. Απλά θα λειτουργήσει μόνο όταν χρειάζεται, όπως για την ειδοποίηση για ανερχόμενες σειρές ή της λήψεις σας μέσω των παροχών. Άμα θέλετε να ακυρώσετε, μπορείτε να αλλάξετε αυτή τη ρύθμιση μέσω των γενικών ρυθμίσεων.</string>
+    <string name="biometric_setting_summary">Ξεκλείδωμα εφαρμογής με δακτυλικό αποτύπωμα, Face ID, PIN, Μοτίβο και Κωδικό.</string>
+    <string name="biometric_prompt_description">Η οθόνη έκλεισε λόγω πολλαπλών ανεπιτυχών ενεργειών. Κάντε επανεκκίνηση της εφαρμογής.</string>
+    <string name="edit_account">Επεξεργασία λογαριασμού</string>
+    <string name="skip_startup_account_select_pref">Παράλειψη επιλογής λογαριασμού στην εκκίνηση της εφαρμογής</string>
+    <string name="music_singlar">Μουσική</string>
+    <string name="audio_book_singular">Ακουστικό Βιβλίο</string>
+    <string name="custom_media_singluar">Μέσα</string>
+    <string name="reset_btn">Επαναφορά</string>
+    <string name="biometric_warning">Τα δεδομένα σας στο CloudStream έχουν κάνει back up. Αν και η πιθανότητα είναι πολύ χαμηλή, όλες οι συσκευές συμπεριφέρονται διαφορετικά. Στη σπάνια περίπτωση, που απαγορευτεί η πρόσβασή σας από την εφαρμογή, διαγράψτε τα δεδομένα εφαρμογής και επαναφέρετέ τα από ένα ήδη υπάρχον backup. Συγνώμη για οποιαδήποτε ταλαιπωρία.</string>
+    <string name="pref_category_accounts">Λογαριασμοί</string>
+    <string name="pref_category_security">Ασφάλεια</string>
 </resources>

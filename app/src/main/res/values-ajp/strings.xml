@@ -76,7 +76,7 @@
     <string name="subtitles_settings">سَتِنگز الترجمة</string>
     <string name="subs_window_color">لون العلبة</string>
     <string name="play_torrent_button">عمول ستريم للتورنت</string>
-    <string name="automatic_plugin_download_summary">تلقائيًا نَزِل كل الإضافات من الريپويات يلي نزادِت.</string>
+    <string name="automatic_plugin_download_summary">تلقائيًا نَزِل كل الإضافات من الريپويات يللي نزادِت.</string>
     <string name="delete">محي</string>
     <string name="start">بلش</string>
     <string name="apk_installer_settings_des">في تِلِفونات ما فيا تعوز الطريقة الجديدة لتجديد الآپات. جربو \"الطريقة القديمة\" إذا ما عم تنزل التجديدات.</string>
@@ -90,7 +90,7 @@
     <string name="browser">متصفح الوَب</string>
     <string name="double_tap_to_seek_settings_des">كبوس مرتين على اليمين أو الشمال حتى تقرب أو ترَجِع الڤيديو</string>
     <string name="normal_no_plot">ما نلاقى وصف الأحداث</string>
-    <string name="next_episode">الحلقة يلي بَعدا</string>
+    <string name="next_episode">الحلقة يللي بَعدها</string>
     <string name="updates_settings">فرجي تجديدات الآپ</string>
     <string name="library">رفّ</string>
     <string name="lightnovel">آپ من نفس المطورين للروايات الخفيفة، بدل من الڤيديوات</string>
@@ -218,7 +218,7 @@
     <string name="live_singular">بث مباشر</string>
     <string name="android_tv_interface_on_seek_settings">المشغل مبين - مدة التقديم</string>
     <string name="unexpected_error">مشكلة مش متوقع بمشغل الڤيديو (Unexpected player error)</string>
-    <string name="video_disk_description">بسبب أعطال إذا نحط على مستوى عالي كتير على الأجهزة يلي ما بتساع كتير، متل تلفزيون \"أندرويد\".</string>
+    <string name="video_disk_description">بسبِب أعطال إذا نحط على مستوى عالي كتير على الأجهزة يللي ما بتساع كتير، متل تلفزيون \"أندرويد\".</string>
     <string name="others">شي غير</string>
     <string name="skip_update">أفي هيدا التجديد</string>
     <string name="episode_action_copy_link">نسوخ الرابط</string>
@@ -244,7 +244,7 @@
     <string name="video_buffer_length_settings">طول التخزين المتوقت</string>
     <string name="episode_action_chromecast_episode">حلقة \"كروم كاست\"</string>
     <string name="asian_drama_singular">دراما آسيوية</string>
-    <string name="video_ram_description">بسبب أعطال إذا نحط على مستوى عالي كتير على الأجهزة يلي ذِكرتا زغيرة، متل تلفزيون \"أندرويد\".</string>
+    <string name="video_ram_description">بسبِب أعطال إذا نحط على مستوى عالي كتير على الأجهزة يللي ذِكرتها زغيرة، متل تلفزيون \"أندرويد\".</string>
     <string name="source_error">مشكلة بالمصدر</string>
     <string name="video_buffer_disk_settings">التخزين الموقت للڤيديو على الديسك</string>
     <string name="documentaries_singular">فلم وثائقي</string>
@@ -283,7 +283,7 @@
     <string name="error_bookmarks_text">إشارات المرجعية</string>
     <string name="download_started">بَلَش التنزيل</string>
     <string name="logged_account" formatted="true">فتّو على الأكونت \"%s\"</string>
-    <string name="pref_disable_acra">وقِف الإعلان الأتوماتيكي عن المشاكل يلي بالآپ</string>
+    <string name="pref_disable_acra">وقِف الإعلان الأتوماتيكي عن المشاكل يللي بالآپ</string>
     <string name="bottom_title_settings">محل عنوان الپوستر</string>
     <string name="category_ui">الشكل</string>
     <string name="next_episode_time_hour_format" formatted="true">%1$d ساعة %2$d ديقة</string>
@@ -314,7 +314,7 @@
     <string name="app_dubbed_text">مدبلج</string>
     <string name="automatic">أوتوماتيك</string>
     <string name="edit_account">عدلو الأكونت</string>
-    <string name="pin_error_incorrect">الأرقام السرية يلي نحطت مش صحيحة. جرب مرة أخرى.</string>
+    <string name="pin_error_incorrect">الأرقام السرية يللي نحطت مش صحيحة. جرب مرة أخرى.</string>
     <string name="tv_layout">الشكل المعمول للتلفزيون</string>
     <string name="download_canceled">نلغى التنزيل</string>
     <string name="account">أكونت</string>
@@ -366,9 +366,9 @@
     <string name="added_sync_format" formatted="true">زِدت %s</string>
     <string name="favorites_list_name">المفضلين</string>
     <string name="favorite_added">\"%s\" نزاد ع المفضل</string>
-    <string name="home_next_random_img_des">العشوائي يلي بعدو</string>
+    <string name="home_next_random_img_des">العشوائي يللي بعده</string>
     <string name="subtitles_shadow">خيال</string>
-    <string name="subscription_in_progress_notification">عم نجدِد المثلثلات يلي مشتركينلا</string>
+    <string name="subscription_in_progress_notification">عم نجدِد المثلثلات يللي مشتركينلها</string>
     <string name="duplicate_message_multiple" formatted="true">مبين إنو في عنصر متل هيدا موجود بالمكتبة عندكن:
 \n
 \n%s
@@ -481,7 +481,7 @@
     <string name="batch_download">نزلو المصادر بالجملة</string>
     <string name="open_with">فتاح بـ</string>
     <string name="sync_score">راينيگ</string>
-    <string name="delete_repository_plugins">محي الريپو كمان بمحي الإضافات يلي في</string>
+    <string name="delete_repository_plugins">محي الريپو كمان بمحي الإضافات يللي فيه</string>
     <string name="extension_language">اللغة</string>
     <string name="action_subscribe">شترك</string>
     <string name="plugin_deleted">نمحت الإضافة</string>
@@ -490,7 +490,7 @@
     <string name="extensions">الإضافات</string>
     <string name="subtitles_remove_bloat">شيل الإعلانات من الترجمة</string>
     <string name="empty_library_no_accounts_message">رفّكن فاضي ☹
-\nفوتو على أكونت فيا رفّ الڤيديوات يلي حضرينا أو زيدو ڤيديوات بالرفّ المحلي.</string>
+\nفوتو على أكونت فيا رفّ الڤيديوات يللي حضرينها أو زيدو ڤيديوات بال رفّ المحلي.</string>
     <string name="repository_name_hint">إسم الريپوزيتاري</string>
     <string name="qualities">الجودات</string>
     <string name="error_invalid_data">بيانات مش صالحة</string>
@@ -530,13 +530,13 @@
     <string name="quality_blueray">Blu-ray</string>
     <string name="sync_score_format" formatted="true">%d/10</string>
     <string name="clipboard_too_large">النص كبير كتير. ما فينا ننسخو.</string>
-    <string name="plugins_updated" formatted="true">عدد الإضافيات يلي تجددت: %d</string>
+    <string name="plugins_updated" formatted="true">عدد الإضافيات يللي تجددت: %d</string>
     <string name="delayed_update_notice">رح يتجدد الآپ وقتا تطلعو مِنو</string>
     <string name="hls_playlist">پلاي ليست \"ايش أل أس\"</string>
     <string name="add_repository">زيد ريپوزيتوري</string>
     <string name="action_mark_as_watched">علم إنو حضرتو</string>
     <string name="preferred_media_subtext">شو بَدَك تشوف</string>
-    <string name="subtitles_remove_captions">شيل المعلومات يلي محطوطة بالترجمة ليلي عندن فقد سمعي</string>
+    <string name="subtitles_remove_captions">شيل المعلومات يللي محطوطة بال ترجمة ل يللي عندهن فقد سمعي</string>
     <string name="no_repository_found_error">ما لقينا ريپو. تأكدو إنو الرابط صح وجربو تعوزو \"ڤي پي أن\" (VPN)</string>
     <string name="authenticated_user_fail" formatted="true">فشل الفوت ع الأكونت \"%s\"</string>
     <string name="max">الحد الأعلى</string>
@@ -544,7 +544,7 @@
     <string name="plugin">إضافات</string>
     <string name="plugin_load_fail" formatted="true">ما قدرنا نفتح %s</string>
     <string name="extension_rating" formatted="true">رايتينگ: %s</string>
-    <string name="download_all_plugins_from_repo">بدكن تنزلو كل الإضافات من هيدا الريپو؟</string>
+    <string name="download_all_plugins_from_repo">تحزير: \"كلاود ستريم 3\" مش مسؤولة عن الإضافات المش رسمية، وما بتدعمن أبدًا!</string>
     <string name="extension_status">الحالة</string>
     <string name="delete_repository">محي الريپو</string>
     <string name="category_player">مشغل الڤيديو</string>
@@ -567,8 +567,8 @@
     <string name="resolution">الجودة</string>
     <string name="set_default">عين الافتراضي</string>
     <string name="referer">المرجع (إختياري)</string>
-    <string name="player_settings_play_in_app">المشغل يلي بـ\"كلود ستريم\"</string>
-    <string name="setup_extensions_subtext">نزل لايحة المواقع يلي بدك تعوزن</string>
+    <string name="player_settings_play_in_app">المشغل يللي ب \"كلود ستريم\"</string>
+    <string name="setup_extensions_subtext">نزل لايحة المواقع يللي بدك تعوزهن</string>
     <string name="enter_pin">حطو الأرقام السرية</string>
     <string name="subtitles_filter_lang">فَلتِر حسب اللغة المفضلة</string>
     <string name="confirm_exit_dialog">أكيد بدكون تطلعو؟</string>
@@ -576,13 +576,13 @@
     <string name="action_open_play">@string/home_play</string>
     <string name="action_remove_from_watched">شيلو من لايحة المحتوى الحاضرينو</string>
     <string name="skip_type_creddits">الإعتمادات</string>
-    <string name="quality_profile_help">فيكُن هون تغيرو طريقة ترتيب المصادر. المصدر يلي عندو أولوية أكتر بينحط أعلى بلايحت تنقايت المصدر. إنتو بتنقو الأولوية يإستعمال الأرقام. حطو الرقم الأعلى للمصادر والجودات يلي بتفضلوّا.
+    <string name="quality_profile_help">فيكُن هون تغيرو طريقة ترتيب المصادر. المصدر يللي عنده أولوية أكتر بينحط أعلى بلايحت تنقايت المصدر. إنتو بتنقو الأولوية يإستعمال الأرقام. حطو الرقم الأعلى للمصادر والجودات يللي بتفضلوها.
 \n
-\nمثلًا:
-\nإذا المصدر \"أ\" بتفضلوّ، بتعطوّ كتير نقات (مثلًا 8).
-\nإذا الجودة 480 ما بتحبوّا، بتعطوّا نقات قليلة (مثلًا 1).
+\nمتلًا:
+\nإزا المصدر \"أ\" بتفضلوه، بتعطوه كتير نقات (متلًا 8).
+\nإزا الجودة 480 ما بتحبوها، بتعطوها نقات قليلة (متلًا 1).
 \n
-\nعلامت المصدر والجودة تبعو بينجمعو مع بعض (8 + 1 = 9). يلي علامتو 10 أو أعلى، بينحط تلقائيًا، من دون ما ينعمل لود لكل المصادر!</string>
+\nعلامت المصدر وال جودة تبعه بينجمعو مع بعض (8 + 1 = 9). يللي علامته 10 أو أعلى، بينحط تلقائيًا، من دون ما ينعمل لود لكل المصادر!</string>
     <string name="enter_current_pin">حطو الأرقام السرية الحالية</string>
     <string name="audio_tracks">صوت</string>
     <string name="rotate_video_desc">حط كبسة لبرم إتجاه الشاشة</string>
@@ -603,7 +603,7 @@
     <string name="biometric_setting">قفل بواسطة المقاييس الحيوية</string>
     <string name="password_pin_authentication_title">رمز/كلمة مرور للمصادقة</string>
     <string name="biometric_setting_summary">فتاح التطبيق باستعمال البصمة، آي دي الوج، پِن، النمط، إو الپاسورد.</string>
-    <string name="biometric_prompt_description">تسَكرت هيدي الواجهة من ورا محاولات فاشلة عديدة. پليز، سكر الآپ ورجاع فتحه.</string>
+    <string name="biometric_prompt_description">بعد كذا محاولة فاشلة، هيدا الشباك رح يسكر. بكل بساطة، سكر الآپ ورجاع فتحه حتى تجرب بعد مرة.</string>
     <string name="resume_remaining" formatted="true">%s
 \nباقي</string>
     <string name="biometric_unsupported">المصادقة البيومترية مش مدعومة ع هالجهاز</string>
@@ -621,5 +621,23 @@
     <string name="music_singlar">موسيقى</string>
     <string name="audio_book_singular">أوديو بوك</string>
     <string name="custom_media_singluar">الميديا</string>
-    <string name="battery_dialog_message">لتضمن عدم انقطاع التنزيلات والنوتيفيكايشنات للبرامج التلفزيونية يلي مشتركلها، الآپ \"كلود ستريم\" بده إذن ليمشي بـ الباكگروند. ازا كبست أوكي، رح تتوجه ع صفحة معلومات التطبيق. هونيك، نزال حتى توصل ل «استخدام بطارية التطبيق» \"App battery usage\" وحط استخدام البطارية ع «غير مقيد» \"Unrestricted\". ملاحظة إنو هيدا الإذن ما بيعني إنو \"كلود ستريم 3\" رح تستنزف البطارية. ومش رح يشتغل الآن بـ الباكگروند إلّا عند الضرورة، متل لمّا تتلقا نوتيفيكايشن أو تنزل ڤيديو من الريپو الاصلي. فيك ترجع ترد هيدا الستنگ بـ«الإعدادات العامة» \"General settings\"، إزا غيرت رأيك.</string>
+    <string name="battery_dialog_message">ت تضمن عدم انقطاع التنزيلات والنوتيفيكايشنات للبرامج التلفزيونية يللي مشتركلها، الآپ \"كلود ستريم\" بده إذن ليمشي ب الباكگراوند. ازا كبست أوكي، رح تتوجه ع صفحة معلومات التطبيق. هونيك، نزال حتى توصل ل «استخدام بطارية التطبيق» \"App battery usage\" وحط استخدام البطارية ع «غير مقيد» \"Unrestricted\".
+\nملاحظة إنو هيدا الإذن ما بيعني إنو \"كلود ستريم 3\" رح تستنزف البطارية. ومش رح يشتغل الآپ بال باكگراوند إلّا عند الضرورة، متل لمّا تتلقا نوتيفيكايشن أو تنزل ڤيديو من الريپو الاصلي. فيك ترجع ترد هيدا الستنگ ب «الإعدادات العامة» \"General settings\"، إزا غيرت رأيك.</string>
+    <string name="reset_btn">ريسات</string>
+    <string name="episode_upcoming_format" formatted="true">رح ينزل ب %s</string>
+    <string name="next_season_episode_format" formatted="true">الحلقة ال %2$d من الجزء ال%1$d رح تنزل ب</string>
+    <string name="episode_action_cast_mirror">كاست مراية</string>
+    <string name="player_settings_play_in_fcast">إف كاست</string>
+    <string name="player_settings_select_cast_device">نقي جهاز الكاست</string>
+    <string name="cs3wiki">ويكي \"كلود ستريم\"</string>
+    <string name="pref_category_accounts">أكونتات</string>
+    <string name="pref_category_security">سكوريتي</string>
+    <string name="qr_image">صورة الـ\"كيو آر\" كود</string>
+    <string name="device_pin_error_message">فشلنا ب فتح پِن الجهاز، جرب تفوت ع أكونت محليًا</string>
+    <string name="device_pin_expired_message">خلصت مدة الپِن!</string>
+    <string name="device_pin_counter_text">بتخلص مدة الپِن ب %1$d دقايق و%2$d ثانية</string>
+    <string name="auth_locally">فوت عال أكونت محليًا</string>
+    <string name="dismiss">تجاهل</string>
+    <string name="open_downloaded_repo">متاح الريپوزيتوري</string>
+    <string name="device_pin_url_message">فتاح <b>%s</b> ع تلفونك أو كمپيوترك، وحط الكود اللي فوق</string>
 </resources>

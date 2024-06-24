@@ -76,7 +76,7 @@
     <string name="download_canceled">下載取消</string>
     <string name="download_done">下載完畢</string>
     <string name="download_format" translatable="false">%s - %s</string>
-    <string name="stream">播放</string>
+    <string name="stream">網路串流</string>
     <string name="error_loading_links_toast">載入連結錯誤</string>
     <string name="download_storage_text">內部儲存空間</string>
     <string name="app_dubbed_text">配音</string>
@@ -161,8 +161,8 @@
     <string name="backup_failed">缺少儲存權限，請再試一次。</string>
     <string name="backup_failed_error_format">備份 %s 錯誤</string>
     <string name="search">搜尋</string>
-    <string name="category_account">帳號</string>
-    <string name="category_updates">更新與備份</string>
+    <string name="category_account">帳戶和安全</string>
+    <string name="category_updates">更新和備份</string>
     <string name="settings_info">資訊</string>
     <string name="advanced_search">進階搜尋</string>
     <string name="advanced_search_des">為您提供按片源分開的搜尋結果</string>
@@ -307,11 +307,11 @@
     <string name="legal_notice_text" translatable="false">Any legal issues regarding the content on this application should be taken up with the actual file hosts and providers themselves as we are not affiliated with them. In case of copyright infringement, please directly contact the responsible parties or the streaming websites. The app is purely for educational and personal use. CloudStream 3 does not host any content on the app, and has no control over what media is put up or taken down. CloudStream 3 functions like any other search engine, such as Google. CloudStream 3 does not host, upload or manage any videos, films or content. It simply crawls, aggregates and displayes links in a convenient, user-friendly interface. It merely scrapes 3rd-party websites that are publicly accessable via any regular web browser. It is the responsibility of user to avoid any actions that might violate the laws governing his/her locality. Use CloudStream 3 at your own risk.</string>
     <string name="category_general">通用</string>
     <string name="random_button_settings">隨機按鈕</string>
-    <string name="random_button_settings_desc">在主畫面中顯示隨機按鈕</string>
-    <string name="provider_lang_settings">片源語言</string>
+    <string name="random_button_settings_desc">在主畫面與媒體庫中顯示隨機按鈕</string>
+    <string name="provider_lang_settings">擴充功能語言</string>
     <string name="app_layout">應用程式版面配置</string>
     <string name="preferred_media_settings">偏好類型</string>
-    <string name="enable_nsfw_on_providers">在支援的片源中啟用 NSFW 內容</string>
+    <string name="enable_nsfw_on_providers">在支援的擴充功能上啟用 NSFW</string>
     <string name="subtitles_encoding">字幕編碼</string>
     <string name="category_providers">片源</string>
     <string name="category_ui">佈局</string>
@@ -329,11 +329,11 @@
     <string name="opensubtitles_key" translatable="false">opensubtitles_key</string>
     <string name="nginx_key" translatable="false">nginx_key</string>
     <string name="example_password">密碼</string>
-    <string name="example_username">用戶名</string>
+    <string name="example_username">使用者名稱</string>
     <string name="example_email">電子郵件</string>
     <string name="example_ip">IP</string>
-    <string name="example_site_name">網站名稱</string>
-    <string name="example_site_url">網站連結</string>
+    <string name="example_site_name">新網站名稱</string>
+    <string name="example_site_url">https://example.com</string>
     <string name="example_lang_name">語言代號 (zh_TW)</string>
     <!--
     <string name="mal_account_settings" translatable="false">MAL</string>
@@ -424,8 +424,8 @@
     <string name="subtitles_filter_lang">按偏好的片源語言篩選</string>
     <string name="extras">附加</string>
     <string name="trailer">預告片</string>
-    <string name="network_adress_example">播放連結</string>
-    <string name="referer">推薦</string>
+    <string name="network_adress_example">https://example.com/example.mp4</string>
+    <string name="referer">推薦人（選填）</string>
     <string name="next">下一個</string>
     <string name="provider_languages_tip">觀看這些語言的影片</string>
     <string name="previous">上一個</string>
@@ -455,20 +455,18 @@
     <string name="plugins_disabled" formatted="true">已停用：%d</string>
     <string name="plugins_not_downloaded" formatted="true">未下載：%d</string>
     <string name="plugins_updated" formatted="true">已更新 %d 外掛程式</string>
-    <string name="blank_repo_message">CloudStream 預設沒有安裝任何片源。您需要從資源庫安裝站點。
+    <string name="blank_repo_message">CloudStream 預設沒有安裝網站。你需要從儲存庫安裝網站。
 \n
-\n由於 Sky UK Limited 的無腦 DMCA 刪除🤮，我們無法在應用程式中連結資源庫站點。
-\n
-\n加入我們的 Discord 或自己在網路上搜尋。</string>
+\n加入我們的 Discord 或在網路上搜尋。</string>
     <string name="view_public_repositories_button">查看</string>
-    <string name="view_public_repositories_button_short">公開列表</string>
+    <string name="view_public_repositories_button_short">公開清單</string>
     <string name="uppercase_all_subtitles">字幕全大寫</string>
     <string name="download_all_plugins_from_repo">從此資源庫下載所有外掛程式？</string>
     <string name="single_plugin_disabled" formatted="true">%s （停用）</string>
     <string name="tracks">軌道</string>
     <string name="audio_tracks">音頻軌道</string>
     <string name="video_tracks">影片軌道</string>
-    <string name="apply_on_restart">重新啟動時生效</string>
+    <string name="apply_on_restart">重新啟動應用程式以查看變更。</string>
     <string name="safe_mode_title">安全模式已啟用</string>
     <string name="safe_mode_description">由於程式崩潰，所有外掛程式皆已關閉，以協助您找到導致問題的程式。</string>
     <string name="safe_mode_crash_info">查看程式崩潰資訊</string>
@@ -513,8 +511,8 @@
     <string name="update_notification_installing">正在安裝應用程式更新…</string>
     <string name="apk_installer_package_installer">套件安裝程式</string>
     <string name="action_mark_as_watched">標記為已觀看</string>
-    <string name="no">否』</string>
-    <string name="apk_installer_legacy">傳統』</string>
+    <string name="no">否</string>
+    <string name="apk_installer_legacy">傳統</string>
     <string name="pref_category_player_features">播放器功能</string>
     <string name="pref_category_subtitles">字幕</string>
     <string name="play_trailer_button">播放預告片</string>
@@ -552,7 +550,7 @@
     <string name="sort_alphabetical_z">按字母順序（Z 到 A）</string>
     <string name="select_library">選擇媒體庫</string>
     <string name="safe_mode_file">找到安全模式檔案！
-\n在刪除檔案之前不在啟動時載入任何擴充功能。</string>
+\n在刪除此檔案之前，將不會在啟動時載入任何擴充功能。</string>
     <string name="test_log">日誌</string>
     <string name="test_failed">失敗</string>
     <string name="test_passed">通過</string>
@@ -565,14 +563,14 @@
     <string name="subscription_new">已訂閱 %s</string>
     <string name="subscription_deleted">已取消訂閱 %s</string>
     <string name="watch_quality_pref_data">偏好播放畫質 (行動數據)</string>
-    <string name="jsdelivr_proxy">raw.githubusercontent.com Proxy</string>
+    <string name="jsdelivr_proxy">GitHub 代理</string>
     <string name="pref_category_bypass">繞過 ISP</string>
     <string name="revert">還原</string>
     <string name="jsdelivr_enabled">無法存取 GitHub。 正在開啟 jsDelivr proxy…</string>
-    <string name="jsdelivr_proxy_summary">使用 jsDelivr 繞過 GitHub 的阻擋。 可能導致更新延遲幾天。</string>
-    <string name="empty_library_no_accounts_message">您的媒體庫是空的:(
+    <string name="jsdelivr_proxy_summary">使用 jsDelivr 繞過直接使用 GitHub 網址時的存取封鎖。 可能導致更新延遲數天。</string>
+    <string name="empty_library_no_accounts_message">您的媒體庫是空的 :(
 \n登入媒體庫帳號或將節目新增到您本機的媒體庫。</string>
-    <string name="empty_library_logged_in_message">此列表是空的。 嘗試切換到另一個。</string>
+    <string name="empty_library_logged_in_message">您的媒體庫是空的。可嘗試以不同的帳號登入。</string>
     <string name="subscription_in_progress_notification">正在更新訂閱節目</string>
     <string name="backup_frequency">備份頻率</string>
     <string name="favorite_removed">%s 已由我的最愛移除</string>
@@ -637,4 +635,40 @@
     <string name="rotate_video">旋轉</string>
     <string name="auto_rotate_video_desc">根據影片方向自動切換畫面方向</string>
     <string name="links_reloaded_toast">連結已重新載入</string>
+    <string name="repo_copy_label">儲存庫名稱和網址</string>
+    <string name="toast_copied">已複製！</string>
+    <string name="favorite">喜歡</string>
+    <string name="unfavorite">不喜歡</string>
+    <string name="biometric_setting">使用生物辨識技術鎖定</string>
+    <string name="app_unrestricted_toast">應用程式電池使用已設定為無限制</string>
+    <string name="biometric_authentication_title">解除鎖定 CloudStream</string>
+    <string name="custom_media_singluar">媒體</string>
+    <string name="reset_btn">重置</string>
+    <string name="recommendations_tooltip">顯示推薦</string>
+    <string name="speed_setting_summary">在播放器中新增速度選項</string>
+    <string name="episode_upcoming_format" formatted="true">即將在 %s 推出</string>
+    <string name="resume_remaining" formatted="true">%s
+\n剩餘</string>
+    <string name="test_extensions">測試所有擴充功能</string>
+    <string name="battery_dialog_title">停用電池優化</string>
+    <string name="audio_book_singular">有聲書</string>
+    <string name="music_singlar">音樂</string>
+    <string name="next_season_episode_format" formatted="true">第 %1$d 季第 %2$d 集即將發佈於</string>
+    <string name="result_search_tooltip">在其他擴充功能中搜尋</string>
+    <string name="subscribe_tooltip">新集數通知</string>
+    <string name="episode_action_cast_mirror">投放鏡像</string>
+    <string name="player_settings_select_cast_device">選擇投放裝置</string>
+    <string name="ok">好的</string>
+    <string name="password_pin_authentication_title">密碼／PIN 驗證</string>
+    <string name="biometric_setting_summary">使用指紋、面容 ID、PIN、圖案和密碼解除鎖定應用程式。</string>
+    <string name="biometric_prompt_description">由於多次嘗試失敗，此畫面已關閉。請重新啟動應用程式。</string>
+    <string name="clipboard_permission_error">剪貼簿存取失敗，請再試一次。</string>
+    <string name="player_settings_play_in_fcast">Fcast</string>
+    <string name="clipboard_unknown_error">複製失敗，請複製 logcat 內容並聯繫應用程式支援者。</string>
+    <string name="app_info_intent_error">無法開啟 CloudStream 的應用程式資訊頁面。</string>
+    <string name="biometric_warning">您的 CloudStream 資料已完成備份。儘管可能性非常低，但因不同裝置的行為都有所不同，在極少數情況下，您可能會無法存取本應用程式。此時請完全清除本應用程式的資料，再使用已有的備份進行還原。若因此造成任何不便，我們深感抱歉。</string>
+    <string name="test_extensions_summary">此測試是供開發人員參考，而不是用以驗證任何擴充功能的正常運作與否。</string>
+    <string name="battery_dialog_message">為了確保下載與通知已訂閱的電視節目的不間斷，CloudStream 需要取得在背景執行的權限。若點選「確定」，將移至「應用程式資訊」，請找到「應用程式電池使用」並將電池用量設置為「無限制」。請注意，取得此權限並不表示 CS3 會明顯增加電池用量，而是只在必要時在背景執行，例如取得通知或使用官方擴充功能下載影片時。若選擇「取消」，您可以稍後在「一般設定」中調整此設定。</string>
+    <string name="cs3wiki">CloudStream Wiki</string>
+    <string name="biometric_unsupported">此裝置不支援生物特徵認證</string>
 </resources>

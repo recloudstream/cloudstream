@@ -89,7 +89,7 @@
     <string name="player_size_settings_des">Отстранете ги црните граници</string>
     <string name="player_subtitles_settings">Преводи</string>
     <string name="player_subtitles_settings_des">Поставки на плеерот за преводи</string>
-    <string name="eigengraumode_settings">Режим на Eigengravy</string>
+    <string name="eigengraumode_settings">Брзина на репродукција</string>
     <string name="swipe_to_seek_settings">Повлечете за да барате</string>
     <string name="swipe_to_seek_settings_des">Повлечете од страна на страна за да ја контролирате вашата позиција во видеото</string>
     <string name="swipe_to_change_settings">Повлечете за да ги промените поставките</string>
@@ -186,7 +186,7 @@
     <string name="resize_zoom">Зумирај</string>
     <string name="legal_notice">Disclaimer</string>
     <string name="category_general">Општи поставки</string>
-    <string name="provider_lang_settings">Јазици на провајдерите</string>
+    <string name="provider_lang_settings">Јазици на екстензиите</string>
     <string name="app_layout">Распоред на апликацијата</string>
     <string name="preferred_media_settings">Претпочитани медиуми</string>
     <string name="automatic">Автоматски</string>
@@ -239,7 +239,7 @@
     <string name="other_singular">Видео</string>
     <string name="sort_clear">Исчисти</string>
     <string name="test_passed">Положен</string>
-    <string name="example_site_name">MyCoolSite</string>
+    <string name="example_site_name">Име на сајт</string>
     <string name="error_invalid_data">Неважечки податоци</string>
     <string name="actor_supporting">Поддршка</string>
     <string name="pref_category_player_features">Функции на плеерот</string>
@@ -250,11 +250,11 @@
     <string name="extension_description">Опис</string>
     <string name="delayed_update_notice">Апликацијата ќе се ажурира по излегувањето</string>
     <string name="subscription_deleted">Отпишана е од %s</string>
-    <string name="jsdelivr_proxy">прокси raw.githubusercontent.com</string>
+    <string name="jsdelivr_proxy">GitHub прокси</string>
     <string name="quality_tc">TC</string>
     <string name="subscription_new">Претплатен на %s</string>
     <string name="pref_category_subtitles">Преводи</string>
-    <string name="download_all_plugins_from_repo">Да се преземат сите приклучоци од ова складиште\?</string>
+    <string name="download_all_plugins_from_repo">Да се преземат сите приклучоци од ова складиште?</string>
     <string name="backup_failed">Недостасуваат дозволи за складирање. Обидете се повторно.</string>
     <string name="sort_save">Зачувај</string>
     <string name="player_load_subtitles">Вчитај од датотека</string>
@@ -299,7 +299,7 @@
     <string name="player_settings_play_in_mpv">MPV</string>
     <string name="apk_installer_package_installer">Инсталатор на пакети</string>
     <string name="ova_singular">ОВА</string>
-    <string name="category_updates">Ажурирања и резервни копии</string>
+    <string name="category_updates">Ажурирање и резервна копија</string>
     <string name="empty_library_no_accounts_message">Вашата библиотека е празна :(
 \nНајавете се на корисничка сметка или додадете серии.</string>
     <string name="no_episodes_found">Не се пронајдени епизоди</string>
@@ -337,7 +337,7 @@
     <string name="extras">Додатоци</string>
     <string name="random_button_settings_desc">Прикажи случајно копче на почетната страница и библиотеката</string>
     <string name="extension_types">Поддржано</string>
-    <string name="category_account">Сметки</string>
+    <string name="category_account">Сметки и безбедност</string>
     <string name="skip_type_intro">Вовед</string>
     <string name="create_account">Креирај сметка</string>
     <string name="action_remove_from_watched">Отстрани од гледаното</string>
@@ -349,7 +349,7 @@
     <string name="plugins_updated" formatted="true">Ажурирани %d приклучоци</string>
     <string name="skip_type_mixed_op">Мешано отворање</string>
     <string name="pref_category_extensions">Екстензии</string>
-    <string name="enable_nsfw_on_providers">Овозможете NSFW на поддржани провајдери</string>
+    <string name="enable_nsfw_on_providers">Овозможете NSFW на поддржани екстензии</string>
     <string name="jsdelivr_enabled">Не успеа да стигне до GitHub. Вклучувам jsDelivr прокси…</string>
     <string name="subtitles_filter_lang">Филтрирајте по претпочитан медиумски јазик</string>
     <string name="action_open_play">@string/home_play</string>
@@ -381,7 +381,7 @@
     <string name="kitsu_settings">Прикажи постери од Kitsu</string>
     <string name="confirm_exit_dialog">Дали сте сигурни дека сакате да излезете\?</string>
     <string name="video_disk_description">Предизвикува проблеми ако е превисоко поставено на уреди со мал простор за складирање, како што е Android TV.</string>
-    <string name="jsdelivr_proxy_summary">Користејќи jsDelivr, блокирањето на GitHub може да се заобиколи. Може да ги одложи ажурирањата за неколку дена.</string>
+    <string name="jsdelivr_proxy_summary">Заобиколете го блокирањето на необработени URL-адреси на github користејќи jsDelivr. Може да предизвика ажурирањата да се одложат за неколку дена.</string>
     <string name="yes">Да</string>
     <string name="sort_alphabetical_z">Азбучно (Ш до А)</string>
     <string name="quality_workprint">WP</string>
@@ -398,7 +398,7 @@
     <string name="apk_installer_settings">Инсталатор на APK</string>
     <string name="extensions">Екстензии</string>
     <string name="quality_uhd">UHD</string>
-    <string name="referer">Референт</string>
+    <string name="referer">Референт (опционално)</string>
     <string name="skip_type_op">Се отвора</string>
     <string name="example_ip">127.0.0.1</string>
     <string name="delete_repository_plugins">Ова исто така ќе се избрише сите приклучоци за складиште</string>
@@ -409,7 +409,7 @@
     <string name="restore_failed_format" formatted="true">Не успеа да ги врати податоците од датотеката %s</string>
     <string name="test_failed">Не успеа</string>
     <string name="documentaries_singular">Документарец</string>
-    <string name="stream">Стрим</string>
+    <string name="stream">Мрежен проток</string>
     <string name="duration_format" formatted="true">%d мин</string>
     <string name="play_with_app_name">Играј со CloudStream</string>
     <string name="play_trailer_button">Пушти трејлер</string>
@@ -433,7 +433,7 @@
     <string name="resume_time_left" formatted="true">%dm
 \nпреостанува</string>
     <string name="video_buffer_disk_settings">Видео кеш на дискот</string>
-    <string name="network_adress_example">Поврзување до пренос</string>
+    <string name="network_adress_example">https://example.com/example.mp4</string>
     <string name="setup_done">Готово</string>
     <string name="add_repository">Додај складиште</string>
     <string name="is_adult">18+</string>
@@ -449,7 +449,7 @@
     <string name="quality_sdr">SDR</string>
     <string name="player_settings_play_in_browser">Веб-прелистувач</string>
     <string name="app_not_found_error">Апликацијата не е пронајдена</string>
-    <string name="example_username">MyCoolUsername</string>
+    <string name="example_username">Корисничко име</string>
     <string name="open_with">Отвори со</string>
     <string name="season_format">%1$s %2$d%3$s</string>
     <string name="redo_setup_process">Повторете го процесот на поставување</string>
@@ -480,9 +480,7 @@
     <string name="plugin_downloaded">Приклучокот е преземен</string>
     <string name="plugin_load_fail" formatted="true">Не може да се вчита %s</string>
     <string name="setup_extensions_subtext">Преземете ја листата на сајтови што сакате да ги користите</string>
-    <string name="blank_repo_message">CloudStream нема стандардно инсталирани локации. Треба да ги инсталирате сајтовите од складиштата.
-\n
-\nПоради отстранување на DMCA без мозок од страна на Sky UK Limited 🤮 не можеме да ја поврземе локацијата на складиштето во апликацијата.
+    <string name="blank_repo_message">CloudStream нема стандардно инсталирани екстензии. Треба сами да инсталирате екстензии.
 \n
 \nПридружете се на нашиот Discord или барајте онлајн.</string>
     <string name="tracks">Песни</string>
@@ -507,9 +505,9 @@
     <string name="skip_type_ed">Завршува</string>
     <string name="skip_type_mixed_ed">Измешан крај</string>
     <string name="quality_hdr">HDR</string>
-    <string name="example_site_url">example.com</string>
+    <string name="example_site_url">https://example.com</string>
     <string name="subtitle_offset">Синхронизирај преводи</string>
-    <string name="apply_on_restart">Примени при рестартирање</string>
+    <string name="apply_on_restart">Рестартирајте ја апликацијата за да ги видите промените.</string>
     <string name="limit_title">Наслов на видео плеер максимални знаци</string>
     <string name="subs_import_text" formatted="true">Увезете фонтови ставајќи ги во %s</string>
     <string name="restore_settings">Врати ги податоците од резервна копија</string>
@@ -591,4 +589,39 @@
     <string name="backup_frequency">Зачестеност на зачувување на бекап</string>
     <string name="auto_rotate_video_desc">Овозможете автоматско префрлување на ориентацијата на екранот врз основа на видео ориентација</string>
     <string name="auto_rotate_video">Автоматска ротација</string>
+    <string name="repo_copy_label">Име и URL на складиштето</string>
+    <string name="toast_copied">копирано!</string>
+    <string name="test_extensions">Тестирај ги сите екстензии</string>
+    <string name="ok">ОК</string>
+    <string name="app_unrestricted_toast">Користењето на батеријата на апликацијата е веќе поставено на неограничено</string>
+    <string name="unfavorite">Неомилен</string>
+    <string name="favorite">Омилен</string>
+    <string name="biometric_setting">Заклучување со биометрика</string>
+    <string name="music_singlar">Музика</string>
+    <string name="subscribe_tooltip">Известување за нова епизода</string>
+    <string name="result_search_tooltip">Пребарајте во други екстензии</string>
+    <string name="recommendations_tooltip">Прикажи препораки</string>
+    <string name="speed_setting_summary">Додава опција за брзина во плеерот</string>
+    <string name="episode_action_cast_mirror">Cast mirror</string>
+    <string name="test_extensions_summary">Овој тест е наменет само за програмери и не ја потврдува или негира работата на која било екстензија.</string>
+    <string name="app_info_intent_error">Не може да се отворат информациите за апликацијата CloudStream.</string>
+    <string name="password_pin_authentication_title">Лозинка/ПИН автентикација</string>
+    <string name="biometric_setting_summary">Отклучете ја апликацијата со отпечаток од прст, ID на лице, PIN, шема и лозинка.</string>
+    <string name="biometric_warning">Сега е направена резервна копија на вашите податоци на CloudStream. Иако можноста за ова е многу мала, сите уреди можат да се однесуваат поинаку. Во ретки случаи, кога ќе се заклучите од пристап до апликацијата, целосно исчистете ги податоците на апликацијата и вратете ги од резервна копија. Многу ни е жал за какви било непријатности што произлегуваат од ова.</string>
+    <string name="reset_btn">Ресетирај</string>
+    <string name="next_season_episode_format" formatted="true">Сезона %1$d Епизода %2$d ќе биде објавена за</string>
+    <string name="player_settings_play_in_fcast">Fcast</string>
+    <string name="player_settings_select_cast_device">Одбери уред да кастираш</string>
+    <string name="battery_dialog_title">Оневозможи оптимизација на батерија</string>
+    <string name="biometric_authentication_title">Отклучи CloudStream</string>
+    <string name="biometric_unsupported">Биометриската автентикација не е поддржана на овој уред</string>
+    <string name="biometric_prompt_description">Овој екран беше затворен поради повеќе неуспешни обиди. Ве молиме рестартирајте ја апликацијата.</string>
+    <string name="custom_media_singluar">Медиуми</string>
+    <string name="episode_upcoming_format" formatted="true">Претстои во %s</string>
+    <string name="resume_remaining" formatted="true">%s
+\nпреостанати</string>
+    <string name="battery_dialog_message">За да обезбеди непрекинато преземања и известувања за претплатени ТВ-серии, на CloudStream му треба дозвола да работи во заднина. Со притискање на ОК, ќе бидете упатени до информации за апликацијата. Таму, дојдете до 𝘼𝙥𝙥 𝙗𝙖𝙩𝙩𝙚𝙧𝙮 𝙪𝙨𝙖𝙜𝙚 и поставете ја употребата на батеријата на Неограничено. Ве молиме имајте предвид, оваа дозвола не значи дека CS3 ќе ви ја испразни батеријата. Ќе работи само во заднина кога е потребно, како на пример при примање известувања или преземање видеа од официјални екстензии. Ако изберете да откажете, може да ја прилагодите оваа поставка подоцна во 𝙂𝙚𝙣𝙚𝙧𝙖𝙡 𝙎𝙚𝙩𝙩𝙞𝙣𝙜𝙨.</string>
+    <string name="clipboard_permission_error">Грешка при пристапот до таблата со исечоци, обидете се повторно.</string>
+    <string name="clipboard_unknown_error">Грешка при копирање, копирајте го logcat и контактирајте со поддршката за апликацијата.</string>
+    <string name="audio_book_singular">Аудио книга</string>
 </resources>

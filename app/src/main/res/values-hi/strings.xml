@@ -192,4 +192,21 @@
     <string name="links_reloaded_toast">लिंक पुन्ह खुली</string>
     <string name="enter_current_pin">वर्तमान पिन दर्ज करें</string>
     <string name="stream">नेटवर्क स्ट्रीम</string>
+    <string name="sort_clear">साफ़ करें</string>
+    <string name="subtitles_settings">उपशीर्षक सेटिंग्स</string>
+    <string name="subs_font_size">अक्षर का माप</string>
+    <string name="sort_close">बंद करें</string>
+    <string name="repo_copy_label">रिपॉजिटरी का नाम और यूआरएल</string>
+    <string name="toast_copied">कॉपी!</string>
+    <string name="sort_save">सहेजें</string>
+    <string name="subscribe_tooltip">नये एपिसोड की अधिसूचना</string>
+    <string name="result_search_tooltip">अन्य एक्सटेंशन में खोजें</string>
+    <string name="recommendations_tooltip">सुझाव दिखाएं</string>
+    <string name="subs_background_color">पृष्ठभूमि का रंग</string>
+    <string name="subs_edge_type">रूपरेखा प्रकार</string>
+    <string name="subs_text_color">अक्षर का रंग</string>
+    <string name="subs_window_color">बॉक्स का रंग</string>
+    <string name="subs_outline_color">रूपरेखा रंग</string>
+    <string name="subs_subtitle_elevation">उपशीर्षक ऊंचाई</string>
+    <string name="subs_font">अक्षर शैली</string>
 </resources>

@@ -415,7 +415,7 @@
     <string name="view_public_repositories_button">Skatīt kopienas krātuves</string>
     <string name="view_public_repositories_button_short">Publisks saraksts</string>
     <string name="uppercase_all_subtitles">Visi subtitri ar lielajiem burtiem</string>
-    <string name="download_all_plugins_from_repo">Vai lejupielādēt visus spraudņus no šīs krātuves\?</string>
+    <string name="download_all_plugins_from_repo">Vai lejupielādēt visus spraudņus no šīs krātuves?</string>
     <string name="single_plugin_disabled" formatted="true">%s (atspējots)</string>
     <string name="tracks">Tracks</string>
     <string name="audio_tracks">Audio dziesmas</string>
