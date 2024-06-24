@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.RecyclerView
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.FragmentChildDownloadsBinding
 import com.lagradost.cloudstream3.ui.download.DownloadButtonSetup.handleDownloadClick
@@ -40,7 +39,8 @@ class DownloadChildFragment : Fragment() {
         super.onDestroyView()
     }
 
-    var binding: FragmentChildDownloadsBinding? = null
+    private var binding: FragmentChildDownloadsBinding? = null
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -48,7 +48,7 @@ class DownloadChildFragment : Fragment() {
     ): View {
         val localBinding = FragmentChildDownloadsBinding.inflate(inflater, container, false)
         binding = localBinding
-        return localBinding.root//inflater.inflate(R.layout.fragment_child_downloads, container, false)
+        return localBinding.root
     }
 
     private fun updateList(folder: String) = main {
@@ -60,7 +60,11 @@ class DownloadChildFragment : Fragment() {
                 }.mapNotNull {
                     val info = VideoDownloadManager.getDownloadFileInfoAndUpdateSettings(ctx, it.id)
                         ?: return@mapNotNull null
-                    VisualDownloadChildCached(info.fileLength, info.totalBytes, it)
+                    VisualDownloadChildCached(
+                        currentBytes = info.fileLength,
+                        totalBytes = info.totalBytes,
+                        data = it,
+                    )
                 }
             }.sortedBy { it.data.episode + (it.data.season ?: 0) * 100000 }
             if (eps.isEmpty()) {
@@ -68,9 +72,7 @@ class DownloadChildFragment : Fragment() {
                 return@main
             }
 
-            (binding?.downloadChildList?.adapter as DownloadChildAdapter? ?: return@main).cardList =
-                eps
-            binding?.downloadChildList?.adapter?.notifyDataSetChanged()
+            (binding?.downloadChildList?.adapter as? DownloadAdapter)?.submitList(eps)
         }
     }
 
@@ -98,31 +100,39 @@ class DownloadChildFragment : Fragment() {
             setAppBarNoScrollFlagsOnTV()
         }
 
-        val adapter: RecyclerView.Adapter<RecyclerView.ViewHolder> =
-            DownloadChildAdapter(
-                ArrayList(),
-            ) { click ->
-                handleDownloadClick(click)
+        val adapter = DownloadAdapter(
+            {},
+            { downloadClickEvent ->
+                handleDownloadClick(downloadClickEvent)
+                if (downloadClickEvent.action == DOWNLOAD_ACTION_DELETE_FILE) {
+                    setUpDownloadDeleteListener(folder)
+                }
             }
+        )
 
+        binding?.downloadChildList?.apply {
+            setHasFixedSize(true)
+            setItemViewCacheSize(20)
+            this.adapter = adapter
+            setLinearListLayout(
+                isHorizontal = false,
+                nextRight = FOCUS_SELF,
+                nextDown = FOCUS_SELF,
+            )
+        }
+
+        updateList(folder)
+    }
+
+    private fun setUpDownloadDeleteListener(folder: String) {
         downloadDeleteEventListener = { id: Int ->
-            val list = (binding?.downloadChildList?.adapter as DownloadChildAdapter?)?.cardList
+            val list = (binding?.downloadChildList?.adapter as? DownloadAdapter)?.currentList
             if (list != null) {
                 if (list.any { it.data.id == id }) {
                     updateList(folder)
                 }
             }
         }
-
         downloadDeleteEventListener?.let { VideoDownloadManager.downloadDeleteEvent += it }
-
-        binding?.downloadChildList?.adapter = adapter
-        binding?.downloadChildList?.setLinearListLayout(
-            isHorizontal = false,
-            nextDown = FOCUS_SELF,
-            nextRight = FOCUS_SELF
-        )//layoutManager = GridLayoutManager(context, 1)
-
-        updateList(folder)
     }
 }

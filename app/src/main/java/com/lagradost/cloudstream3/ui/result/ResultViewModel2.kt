@@ -705,13 +705,13 @@ class ResultViewModel2 : ViewModel() {
                     DOWNLOAD_HEADER_CACHE,
                     parentId.toString(),
                     VideoDownloadHelper.DownloadHeaderCached(
-                        apiName,
-                        url,
-                        currentType,
-                        currentHeaderName,
-                        currentPoster,
-                        parentId,
-                        System.currentTimeMillis(),
+                        apiName = apiName,
+                        url = url,
+                        type = currentType,
+                        name = currentHeaderName,
+                        poster = currentPoster,
+                        id = parentId,
+                        cacheTime = System.currentTimeMillis(),
                     )
                 )
 
@@ -722,15 +722,15 @@ class ResultViewModel2 : ViewModel() {
                     ), // 3 deep folder for faster acess
                     episode.id.toString(),
                     VideoDownloadHelper.DownloadEpisodeCached(
-                        episode.name,
-                        episode.poster,
-                        episode.episode,
-                        episode.season,
-                        episode.id,
-                        parentId,
-                        episode.rating,
-                        episode.description,
-                        System.currentTimeMillis(),
+                        name = episode.name,
+                        poster = episode.poster,
+                        episode = episode.episode,
+                        season = episode.season,
+                        id = episode.id,
+                        parentId = parentId,
+                        rating = episode.rating,
+                        description = episode.description,
+                        cacheTime = System.currentTimeMillis(),
                     )
                 )
 
@@ -2776,13 +2776,13 @@ class ResultViewModel2 : ViewModel() {
                         DOWNLOAD_HEADER_CACHE,
                         mainId.toString(),
                         VideoDownloadHelper.DownloadHeaderCached(
-                            apiName,
-                            validUrl,
-                            loadResponse.type,
-                            loadResponse.name,
-                            loadResponse.posterUrl,
-                            mainId,
-                            System.currentTimeMillis(),
+                            apiName = apiName,
+                            url = validUrl,
+                            type = loadResponse.type,
+                            name = loadResponse.name,
+                            poster = loadResponse.posterUrl,
+                            id = mainId,
+                            cacheTime = System.currentTimeMillis(),
                         )
                     )
                     if (loadTrailers)
