@@ -67,6 +67,7 @@ abstract class Plugin {
      * This will contain your resources if you specified requiresResources in gradle
      */
     var resources: Resources? = null
+    /** Full file path to the plugin. */
     var __filename: String? = null
 
     /**
