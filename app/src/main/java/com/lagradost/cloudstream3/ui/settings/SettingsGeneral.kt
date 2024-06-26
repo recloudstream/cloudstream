@@ -27,10 +27,13 @@ import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.network.initClient
 import com.lagradost.cloudstream3.ui.EasterEggMonke
+import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
 import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
+import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.beneneCount
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.getPref
+import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.hideOn
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setPaddingBottom
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setToolBarScrollFlags
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setUpToolbar
@@ -71,6 +74,7 @@ val appLanguages = arrayListOf(
     Triple("", "አማርኛ", "am"),
     Triple("", "العربية", "ar"),
     Triple("", "اللهجة النجدية", "ars"),
+    Triple("", "অসমীয়া", "as"),
     Triple("", "български", "bg"),
     Triple("", "বাংলা", "bn"),
     Triple("\uD83C\uDDE7\uD83C\uDDF7", "português brasileiro", "bp"),
@@ -208,9 +212,7 @@ class SettingsGeneral : PreferenceFragmentCompat() {
             return@setOnPreferenceClickListener true
         }
 
-        // disable preference on tvs and emulators
-        getPref(R.string.battery_optimisation_key)?.isEnabled = isLayout(PHONE)
-        getPref(R.string.battery_optimisation_key)?.setOnPreferenceClickListener {
+        getPref(R.string.battery_optimisation_key)?.hideOn(TV or EMULATOR)?.setOnPreferenceClickListener {
             val ctx = context ?: return@setOnPreferenceClickListener false
 
             if (isAppRestricted(ctx)) {

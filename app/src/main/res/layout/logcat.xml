@@ -6,20 +6,20 @@
         android:layout_height="match_parent">
 
     <ScrollView
-            android:layout_marginBottom="60dp"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+        android:layout_marginBottom="60dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:nextFocusRight="@id/save_btt">
 
         <TextView
-                android:id="@+id/text1"
-                android:padding="15dp"
-
-                android:textSize="15sp"
-                android:textColor="?attr/textColor"
-                android:layout_width="match_parent"
-                android:layout_rowWeight="1"
-                tools:text="Test"
-                android:layout_height="wrap_content" />
+            android:id="@+id/text1"
+            android:padding="15dp"
+            android:textSize="15sp"
+            android:textColor="?attr/textColor"
+            android:layout_width="match_parent"
+            android:layout_rowWeight="1"
+            tools:text="Test"
+            android:layout_height="wrap_content"/>
     </ScrollView>
 
     <HorizontalScrollView

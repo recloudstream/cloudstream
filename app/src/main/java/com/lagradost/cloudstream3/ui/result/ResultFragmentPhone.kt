@@ -185,8 +185,6 @@ open class ResultFragmentPhone : FullScreenPlayer() {
             }
             binding?.resultFullscreenHolder?.isVisible = !isSuccess && isFullScreenPlayer
         }
-
-
         //player_view?.apply {
         //alpha = 0.0f
         //ObjectAnimator.ofFloat(player_view, "alpha", 1f).apply {
@@ -200,9 +198,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
         //    fillAfter = true
         //}
         //startAnimation(fadeIn)
-        // }
-
-
+        //}
     }
 
     private fun setTrailers(trailers: List<ExtractorLink>?) {
@@ -630,15 +626,15 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                     }
                     downloadButton.setDefaultClickListener(
                         VideoDownloadHelper.DownloadEpisodeCached(
-                            ep.name,
-                            ep.poster,
-                            0,
-                            null,
-                            ep.id,
-                            ep.id,
-                            null,
-                            null,
-                            System.currentTimeMillis(),
+                            name = ep.name,
+                            poster = ep.poster,
+                            episode = 0,
+                            season = null,
+                            id = ep.id,
+                            parentId = ep.id,
+                            rating = null,
+                            description = null,
+                            cacheTime = System.currentTimeMillis(),
                         ),
                         null
                     ) { click ->

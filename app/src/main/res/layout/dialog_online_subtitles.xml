@@ -40,7 +40,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="30dp"
                         android:layout_gravity="center_vertical"
-                        android:layout_marginEnd="30dp">
+                        android:layout_marginEnd="40dp">
 
                         <androidx.appcompat.widget.SearchView
                             android:id="@+id/subtitles_search"
@@ -91,7 +91,8 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="match_parent"
                                 android:layout_gravity="center_vertical|end"
-                                android:layout_marginEnd="20dp"
+                                android:nextFocusLeft="@id/subtitles_search"
+                                android:nextFocusRight="@id/search_filter"
                                 android:text="@string/none"
                                 />
                         </LinearLayout>
@@ -106,7 +107,8 @@
                         android:layout_margin="10dp"
                         android:background="?selectableItemBackgroundBorderless"
                         android:contentDescription="@string/change_providers_img_des"
-                        android:nextFocusLeft="@id/main_search"
+                        android:focusable="true"
+                        android:nextFocusLeft="@id/year_btt"
                         android:nextFocusRight="@id/main_search"
                         android:nextFocusUp="@id/nav_rail_view"
                         android:nextFocusDown="@id/search_autofit_results"

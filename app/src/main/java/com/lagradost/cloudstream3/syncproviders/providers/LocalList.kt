@@ -21,6 +21,7 @@ class LocalList : SyncAPI {
     override val name = "Local"
     override val icon: Int = R.drawable.ic_baseline_storage_24
     override val requiresLogin = false
+    override val supportDeviceAuth = false
     override val createAccountUrl: Nothing? = null
     override val idPrefix = "local"
     override var requireLibraryRefresh = true

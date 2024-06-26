@@ -111,6 +111,27 @@
             app:argType="boolean" />
     </action>
 
+    <action
+        android:id="@+id/global_to_navigation_settings_plugins"
+        app:destination="@id/navigation_settings_plugins"
+        app:enterAnim="@anim/enter_anim"
+        app:exitAnim="@anim/exit_anim"
+        app:popEnterAnim="@anim/enter_anim"
+        app:popExitAnim="@anim/exit_anim">
+        <argument
+            android:name="name"
+            android:defaultValue="@null"
+            app:argType="string" />
+        <argument
+            android:name="url"
+            android:defaultValue="@null"
+            app:argType="string" />
+        <argument
+            android:name="isLocal"
+            android:defaultValue="false"
+            app:argType="boolean" />
+    </action>
+
     <fragment
         android:id="@+id/navigation_settings_player"
         android:name="com.lagradost.cloudstream3.ui.settings.SettingsPlayer"

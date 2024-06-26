@@ -379,7 +379,7 @@
     <string name="view_public_repositories_button">Ver repositórios da comunidade</string>
     <string name="view_public_repositories_button_short">Lista pública</string>
     <string name="uppercase_all_subtitles">Todas as legendas em maiúsculas</string>
-    <string name="download_all_plugins_from_repo">Transferir todos os plugins deste repositório\?</string>
+    <string name="download_all_plugins_from_repo">Transferir todos os plugins deste repositório?</string>
     <string name="single_plugin_disabled" formatted="true">%s (Desativado)</string>
     <string name="apk_installer_settings">Instalador APK</string>
     <string name="duration_format" formatted="true">%d min</string>
@@ -615,4 +615,10 @@
     <string name="custom_media_singluar">Multimédia</string>
     <string name="battery_dialog_title">Desativar a otimização da bateria</string>
     <string name="battery_dialog_message">Para garantir descarregamentos ininterruptos e notificações de programas de TV subscritos, o CloudStream precisa de permissão para ser executado em segundo plano. Ao premir OK, será direcionado para informações da aplicação. Aí, desloque-se para utilização da bateria da aplicação e defina a utilização da bateria para sem restrições. Tenha em atenção que esta permissão não significa que o CS3 irá esgotar a sua bateria. Este só funcionará em segundo plano quando necessário, como ao receber notificações ou baixar vídeos de extensões oficiais. Se optar por cancelar, pode ajustar esta definição mais tarde em definições gerais.</string>
+    <string name="reset_btn">Reiniciar</string>
+    <string name="next_season_episode_format" formatted="true">Episódio %1$d Episódio %2$d vai ser lançado em</string>
+    <string name="episode_upcoming_format" formatted="true">Por vir em</string>
+    <string name="player_settings_play_in_fcast">Fcast</string>
+    <string name="player_settings_select_cast_device">Escolha o dispositivo</string>
+    <string name="episode_action_cast_mirror">Transmitir</string>
 </resources>

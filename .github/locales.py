@@ -53,6 +53,8 @@ for file in glob.glob(f"{XML_NAME}*/strings.xml"):
     try:
         tree = ET.parse(file)
         for child in tree.getroot():
+            if not child.text:
+                continue
             if child.text.startswith("\\@string/"):
                 print(f"[{file}] fixing {child.attrib['name']}")
                 child.text = child.text.replace("\\@string/", "@string/")

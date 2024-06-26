@@ -59,12 +59,12 @@
 
         <ImageView
             android:id="@+id/download_header_goto_child"
-            android:layout_width="50dp"
-            android:layout_height="match_parent"
+            android:layout_width="@dimen/download_size"
+            android:layout_height="@dimen/download_size"
             android:layout_gravity="center_vertical|end"
             android:layout_marginStart="-50dp"
             android:contentDescription="@string/download"
-            android:padding="50dp"
+            android:padding="10dp"
             android:src="@drawable/ic_baseline_keyboard_arrow_right_24" />
 
         <com.lagradost.cloudstream3.ui.download.button.PieFetchButton

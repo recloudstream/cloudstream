@@ -167,7 +167,7 @@
     <string name="watch_quality_pref">ഔചിത്യ വീഡിയോ ക്വാളിറ്റി</string>
     <string name="history">ചരിത്രം</string>
     <string name="action_mark_as_watched">കണ്ടതാണെന്ന് അടയാളപ്പെടുത്തുക</string>
-    <string name="next_episode_time_day_format" formatted="true">%d ദിവസങ്ങൾ %d മണിക്കൂർ %d മിനിറ്റ്</string>
+    <string name="next_episode_time_day_format" formatted="true">%1$d ദിവസങ്ങൾ %2$d മണിക്കൂർ %3$d മിനിറ്റ്</string>
     <string name="next_episode_format" formatted="true">അധ്യായം%dൽ റിലീസ് ചെയ്യും</string>
     <string name="next_episode_time_hour_format" formatted="true">%1$d മണിക്കൂർ %2$d മിനിറ്റ്</string>
     <string name="app_dub_sub_episode_text_format" formatted="true">%1$sഅധ്യാ%2$d</string>

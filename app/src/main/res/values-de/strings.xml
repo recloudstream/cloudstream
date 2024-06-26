@@ -151,7 +151,7 @@
     <string name="backup_failed">Speicherberechtigungen fehlen. Bitte erneut versuchen.</string>
     <string name="search">Suche</string>
     <string name="category_account">Konten und Sicherheit</string>
-    <string name="category_updates">Updates und Datensicherung</string>
+    <string name="category_updates">Aktualisierungen und Datensicherung</string>
     <string name="settings_info">Info</string>
     <string name="advanced_search">Erweiterte Suche</string>
     <string name="advanced_search_des">Liefert die Suchergebnisse getrennt nach Anbietern</string>
@@ -416,12 +416,12 @@
     <string name="view_public_repositories_button">Community-Repositories anzeigen</string>
     <string name="view_public_repositories_button_short">Öffentliche Liste</string>
     <string name="uppercase_all_subtitles">Alle Untertitel in Großbuchstaben</string>
-    <string name="download_all_plugins_from_repo">Alle Plugins aus diesem Repository herunterladen\?</string>
+    <string name="download_all_plugins_from_repo">Alle Plugins aus diesem Repository herunterladen?</string>
     <string name="single_plugin_disabled" formatted="true">%s (Deaktiviert)</string>
     <string name="tracks">Spuren</string>
     <string name="audio_tracks">Audiospuren</string>
     <string name="video_tracks">Videospuren</string>
-    <string name="apply_on_restart">Bei Neustart anwenden</string>
+    <string name="apply_on_restart">Starte die App neu, um die Änderungen zu sehen.</string>
     <string name="safe_mode_title">Abgesicherter Modus aktiviert</string>
     <string name="safe_mode_description">Alle Erweiterungen wurden aufgrund eines Absturzes deaktiviert, damit Sie diejenige finden können, welche Probleme verursacht.</string>
     <string name="safe_mode_crash_info">Absturzinfo ansehen</string>
@@ -607,4 +607,12 @@
     <string name="clipboard_unknown_error">Beim kopieren ist ein Fehler aufgetreten, bitte kopieren sie logical und wenden sich an den Support.</string>
     <string name="clipboard_permission_error">Fehler beim zugriff auf die Zwischenablage, bitte erneut versuchen.</string>
     <string name="repo_copy_label">Repository Name und URL</string>
+    <string name="ok">OK</string>
+    <string name="battery_dialog_title">Akku-Optimierung deaktivieren</string>
+    <string name="music_singlar">Musik</string>
+    <string name="audio_book_singular">Hörbuch</string>
+    <string name="custom_media_singluar">Medien</string>
+    <string name="reset_btn">Zurücksetzen</string>
+    <string name="app_unrestricted_toast">Akkuverbrauch der App ist bereits auf unbeschränkt eingestellt</string>
+    <string name="app_info_intent_error">CloudStreams App-Info kann nicht geöffnet werden.</string>
 </resources>

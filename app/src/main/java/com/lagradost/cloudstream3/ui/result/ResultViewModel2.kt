@@ -27,8 +27,17 @@ import com.lagradost.cloudstream3.CommonActivity.getCastSession
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.LoadResponse.Companion.addTrailer
 import com.lagradost.cloudstream3.LoadResponse.Companion.getAniListId
+import com.lagradost.cloudstream3.LoadResponse.Companion.getImdbId
 import com.lagradost.cloudstream3.LoadResponse.Companion.getMalId
 import com.lagradost.cloudstream3.LoadResponse.Companion.isMovie
+import com.lagradost.cloudstream3.MainActivity.Companion.MPV
+import com.lagradost.cloudstream3.MainActivity.Companion.MPV_COMPONENT
+import com.lagradost.cloudstream3.MainActivity.Companion.MPV_PACKAGE
+import com.lagradost.cloudstream3.MainActivity.Companion.VLC
+import com.lagradost.cloudstream3.MainActivity.Companion.VLC_COMPONENT
+import com.lagradost.cloudstream3.MainActivity.Companion.VLC_PACKAGE
+import com.lagradost.cloudstream3.MainActivity.Companion.WEB_VIDEO
+import com.lagradost.cloudstream3.MainActivity.Companion.WEB_VIDEO_CAST_PACKAGE
 import com.lagradost.cloudstream3.metaproviders.SyncRedirector
 import com.lagradost.cloudstream3.mvvm.*
 import com.lagradost.cloudstream3.syncproviders.AccountManager
@@ -83,6 +92,10 @@ import com.lagradost.cloudstream3.utils.DataStoreHelper.setVideoWatchState
 import com.lagradost.cloudstream3.utils.DataStoreHelper.updateSubscribedData
 import com.lagradost.cloudstream3.utils.UIHelper.clipboardHelper
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
+import com.lagradost.cloudstream3.utils.fcast.FcastManager
+import com.lagradost.cloudstream3.utils.fcast.FcastSession
+import com.lagradost.cloudstream3.utils.fcast.Opcode
+import com.lagradost.cloudstream3.utils.fcast.PlayMessage
 import kotlinx.coroutines.*
 import java.io.File
 import java.util.concurrent.TimeUnit
@@ -197,7 +210,11 @@ fun LoadResponse.toResultData(repo: APIRepository): ResultData {
 
                 else -> null
             }?.also {
-                nextAiringEpisode = txt(R.string.next_episode_format, airing.episode)
+                nextAiringEpisode = when (airing.season) {
+
+                    null -> txt(R.string.next_episode_format, airing.episode)
+                    else -> txt(R.string.next_season_episode_format, airing.season, airing.episode)
+                }
             }
         }
     }
@@ -688,13 +705,13 @@ class ResultViewModel2 : ViewModel() {
                     DOWNLOAD_HEADER_CACHE,
                     parentId.toString(),
                     VideoDownloadHelper.DownloadHeaderCached(
-                        apiName,
-                        url,
-                        currentType,
-                        currentHeaderName,
-                        currentPoster,
-                        parentId,
-                        System.currentTimeMillis(),
+                        apiName = apiName,
+                        url = url,
+                        type = currentType,
+                        name = currentHeaderName,
+                        poster = currentPoster,
+                        id = parentId,
+                        cacheTime = System.currentTimeMillis(),
                     )
                 )
 
@@ -705,15 +722,15 @@ class ResultViewModel2 : ViewModel() {
                     ), // 3 deep folder for faster acess
                     episode.id.toString(),
                     VideoDownloadHelper.DownloadEpisodeCached(
-                        episode.name,
-                        episode.poster,
-                        episode.episode,
-                        episode.season,
-                        episode.id,
-                        parentId,
-                        episode.rating,
-                        episode.description,
-                        System.currentTimeMillis(),
+                        name = episode.name,
+                        poster = episode.poster,
+                        episode = episode.episode,
+                        season = episode.season,
+                        id = episode.id,
+                        parentId = parentId,
+                        rating = episode.rating,
+                        description = episode.description,
+                        cacheTime = System.currentTimeMillis(),
                     )
                 )
 
@@ -1346,7 +1363,7 @@ class ResultViewModel2 : ViewModel() {
 
     private fun launchActivity(
         activity: Activity?,
-        resumeApp: ResultResume,
+        resumeApp: MainActivity.Companion.ResultResume,
         id: Int? = null,
         work: suspend (Intent.(Activity) -> Unit)
     ): Job? {
@@ -1515,6 +1532,13 @@ class ResultViewModel2 : ViewModel() {
                         )
                     )
                 }
+
+                if (FcastManager.currentDevices.isNotEmpty()) {
+                    options.add(
+                        txt(R.string.player_settings_play_in_fcast) to ACTION_FCAST
+                    )
+                }
+
                 options.add(txt(R.string.episode_action_play_in_app) to ACTION_PLAY_EPISODE_IN_PLAYER)
 
                 for (app in apps) {
@@ -1687,6 +1711,39 @@ class ResultViewModel2 : ViewModel() {
                     txt(R.string.episode_action_chromecast_mirror)
                 ) { (result, index) ->
                     startChromecast(activity, click.data, result.links, result.subs, index)
+                }
+            }
+
+            ACTION_FCAST -> {
+                val devices = FcastManager.currentDevices.toList()
+                postPopup(
+                    txt(R.string.player_settings_select_cast_device),
+                    devices.map { txt(it.name) }) { index ->
+                    if (index == null) return@postPopup
+                    val device = devices.getOrNull(index)
+
+                    acquireSingleLink(
+                        click.data,
+                        LoadType.Fcast,
+                        txt(R.string.episode_action_cast_mirror)
+                    ) { (result, index) ->
+                        val host = device?.host ?: return@acquireSingleLink
+                        val link = result.links.getOrNull(index) ?: return@acquireSingleLink
+
+                        FcastSession(host).use { session ->
+                            session.sendMessage(
+                                Opcode.Play,
+                                PlayMessage(
+                                    link.type.getMimeType(),
+                                    link.url,
+                                    headers = mapOf(
+                                        "referer" to link.referer,
+                                        "user-agent" to USER_AGENT
+                                    ) + link.headers
+                                )
+                            )
+                        }
+                    }
                 }
             }
 
@@ -2361,7 +2418,7 @@ class ResultViewModel2 : ViewModel() {
                         null,
                         loadResponse.type,
                         mainId,
-                        null
+                        null,
                     )
                 )
             }
@@ -2719,13 +2776,13 @@ class ResultViewModel2 : ViewModel() {
                         DOWNLOAD_HEADER_CACHE,
                         mainId.toString(),
                         VideoDownloadHelper.DownloadHeaderCached(
-                            apiName,
-                            validUrl,
-                            loadResponse.type,
-                            loadResponse.name,
-                            loadResponse.posterUrl,
-                            mainId,
-                            System.currentTimeMillis(),
+                            apiName = apiName,
+                            url = validUrl,
+                            type = loadResponse.type,
+                            name = loadResponse.name,
+                            poster = loadResponse.posterUrl,
+                            id = mainId,
+                            cacheTime = System.currentTimeMillis(),
                         )
                     )
                     if (loadTrailers)

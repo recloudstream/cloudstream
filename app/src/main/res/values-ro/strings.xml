@@ -59,7 +59,7 @@
     <string name="download_failed">Descărcare eșuată</string>
     <string name="download_canceled">Descărcare anulată</string>
     <string name="download_done">Descărcare finalizată</string>
-    <string name="stream">Stream</string>
+    <string name="stream">Stream de rețea</string>
     <string name="error_loading_links_toast">Eroare la încărcarea linkurilor</string>
     <string name="download_storage_text">Stocare internă</string>
     <string name="app_dubbed_text">Dub</string>
@@ -142,7 +142,7 @@
     <string name="backup_failed">Permisiunea de arhivare lipșe, vă rugăm să încercați din nou.</string>
     <string name="backup_failed_error_format">Eroare de backup %s</string>
     <string name="search">Căutare</string>
-    <string name="category_account">Conturi și credite</string>
+    <string name="category_account">Conturi și Securitate</string>
     <string name="category_updates">Actualizări și copii de rezervă</string>
     <string name="settings_info">Informații</string>
     <string name="advanced_search">Căutare avansată</string>
@@ -255,8 +255,8 @@
     <string name="video_buffer_length_settings">Lungimea buffer-ului video</string>
     <string name="video_buffer_disk_settings">Dimensiunea cache-ului video pe disc</string>
     <string name="video_buffer_clear_settings">Ștergeți memoria cache de imagine și video</string>
-    <string name="video_ram_description">Provoacă blocaje dacă este setată la un nivel prea ridicat pe dispozitive cu memorie redusă, cum ar fi Android TV.</string>
-    <string name="video_disk_description">Cauzează probleme dacă este setat la un nivel prea ridicat pe dispozitive cu spațiu de stocare redus, cum ar fi Android TV.</string>
+    <string name="video_ram_description">Cauzează blocări dacă este setat prea mare pe dispozitive cu memorie redusă, cum ar fi Android TV.</string>
+    <string name="video_disk_description">Cauzează probleme dacă este setat prea mare pe dispozitive cu spațiu de stocare redus, cum ar fi Android TV.</string>
     <string name="dns_pref">DNS peste HTTPS</string>
     <string name="dns_pref_summary">Folositor pentru evitarea blocajelor ISP</string>
     <string name="add_site_pref">Adaugați site-ul</string>
@@ -272,8 +272,8 @@
     <string name="legal_notice_text">Orice probleme legale privind conținutul acestei aplicații ar trebui să fie rezolvate cu furnizorii și gazdele actuale de fișiere, întrucât noi nu suntem afiliați cu aceștia. În caz de încălcare a drepturilor de autor, vă rugăm să contactați direct părțile responsabile sau site-urile de streaming. Aplicația este destinată exclusiv utilizării educaționale și personale. CloudStream 3 nu găzduiește niciun fel de conținut în aplicație și nu are niciun control asupra conținutului media care este pus sau retras. CloudStream 3 funcționează ca orice alt motor de căutare, cum ar fi Google. CloudStream 3 nu găzduiește, nu încarcă și nu gestionează niciun videoclip, film sau conținut. Pur și simplu navighează, adună și afișează linkuri într-o interfață convenabilă și ușor de utilizat. Pur și simplu, acesta extrage paginile web ale unor terțe părți care sunt accesibile publicului prin intermediul oricărui browser web obișnuit. Este responsabilitatea utilizatorului de a evita orice acțiune care ar putea încălca legile care guvernează locația sa. Utilizați CloudStream 3 pe propria răspundere.</string>
     <string name="category_general">General</string>
     <string name="random_button_settings">Aleatoriu</string>
-    <string name="random_button_settings_desc">Afișați butonul aleatoriu pe pagina de start și în bibliotecă</string>
-    <string name="provider_lang_settings">Limba furnizorului</string>
+    <string name="random_button_settings_desc">Afișează butonul pentru aleatoriu pe Pagina Principală și în Bibliotecă</string>
+    <string name="provider_lang_settings">Limbi ale extensiei</string>
     <string name="app_layout">Aplicație de prezentare</string>
     <string name="preferred_media_settings">Media preferată</string>
     <string name="subtitles_encoding">Codificarea subtitrărilor</string>
@@ -309,7 +309,7 @@
     <string name="sync_total_episodes_none">/\?\?</string>
     <string name="sync_total_episodes_some" formatted="true">/%d</string>
     <string name="authenticated_user" formatted="true">%s autentificat/ă</string>
-    <string name="authenticated_user_fail" formatted="true">Nu s-a putut autentifica la %s</string>
+    <string name="authenticated_user_fail" formatted="true">Nu am putut să mă autentific la %s</string>
     <!-- ============ -->
     <string name="none">Nu există</string>
     <string name="normal">Normal</string>
@@ -332,7 +332,7 @@
 	https://en.wikipedia.org/w/index.php?title=Pangram&oldid=225849300
 	https://en.wikipedia.org/wiki/The_quick_brown_fox_jumps_over_the_lazy_dog
     -->
-    <string name="subtitles_example_text">Vând muzică de jazz și haine de bun-gust în New-York și Quebec la preț fix.</string>
+    <string name="subtitles_example_text">Vulpea maro iute sare peste câinele leneș</string>
     <string name="recommended">Recomandări</string>
     <string name="player_loaded_subtitles" formatted="true">A fost încărcat %s</string>
     <string name="player_load_subtitles">Încărcați din fișier</string>
@@ -343,7 +343,7 @@
     <string name="actor_background">Secundar</string>
     <string name="home_source">Sursa</string>
     <string name="home_random">Aleatoriu</string>
-    <string name="coming_soon">În curând</string>
+    <string name="coming_soon">În curând…</string>
     <string name="quality_cam">Cam</string>
     <string name="quality_cam_rip">Cam</string>
     <string name="quality_cam_hd">Cam</string>
@@ -365,7 +365,7 @@
     <string name="resolution_and_title">Titlu și rezoluție</string>
     <string name="title">Titlu</string>
     <string name="resolution">Rezoluție</string>
-    <string name="error_invalid_id">ID invalid</string>
+    <string name="error_invalid_id">ID-ul invalid</string>
     <string name="error_invalid_data">Date invalide</string>
     <string name="error">Eroare</string>
     <!--<string name="subtitles_remove_captions">Remove closed captions from subtitles</string>-->
@@ -394,14 +394,14 @@
     <string name="episode_format" formatted="true">%1$d %2$s</string>
     <string name="nsfw">NSFW</string>
     <string name="episodes_range">%1$d-%2$d</string>
-    <string name="android_tv_interface_on_seek_settings">Player Afișat - Căutați Suma</string>
-    <string name="android_tv_interface_off_seek_settings">Player Ascuns/ă - Căutați Suma</string>
+    <string name="android_tv_interface_on_seek_settings">Jucătorul afișat - Cantitatea de căutare</string>
+    <string name="android_tv_interface_off_seek_settings">Jucător ascuns - Sumă de căutare</string>
     <string name="livestreams">Livestream-uri</string>
     <string name="nsfw_singular">NSFW</string>
     <string name="test_failed">Eșuat</string>
-    <string name="android_tv_interface_on_seek_settings_summary">Suma căutată și utilizată atunci când player-ul este vizibil/ă</string>
+    <string name="android_tv_interface_on_seek_settings_summary">Suma de căutare utilizată atunci când jucătorul este vizibil</string>
     <string name="live_singular">Livestream</string>
-    <string name="android_tv_interface_off_seek_settings_summary">Cantitatea de căutare utilizată atunci când playerul este ascuns</string>
+    <string name="android_tv_interface_off_seek_settings_summary">Cantitatea de căutare folosită când jucătorul este ascuns</string>
     <string name="watch_quality_pref_data">Calitatea preferată (Date Mobile)</string>
     <string name="other_singular">Video</string>
     <string name="apk_installer_settings">Instalator APK</string>
@@ -426,11 +426,11 @@
     <string name="subscription_deleted">Dezabonat de la %s</string>
     <string name="plugins_not_downloaded" formatted="true">Nu s-a descărcat: %d</string>
     <string name="view_public_repositories_button">Vezi depozite din comunitate</string>
-    <string name="apk_installer_package_installer">PackageInstaller (Instalare a pachetelor)</string>
+    <string name="apk_installer_package_installer">Instalator de pachete</string>
     <string name="extension_status">Stare</string>
     <string name="plugin_load_fail" formatted="true">Nu se poate încărca %s</string>
     <string name="audio_tracks">Piste audio</string>
-    <string name="referer">Referent</string>
+    <string name="referer">Referer (opțional)</string>
     <string name="skip_type_op">Deschidere</string>
     <string name="pref_category_extensions">Extensii</string>
     <string name="pref_category_player_layout">Layout</string>
@@ -440,7 +440,8 @@
     <string name="extension_authors">Autori</string>
     <string name="crash_reporting_title">Raportarea accidentelor</string>
     <string name="add_repository">Adaugă depozit</string>
-    <string name="empty_library_no_accounts_message">Se pare că biblioteca ta este goală :( Conectează-te la un cont de bibliotecă sau adaugă emisiuni în biblioteca ta locală.</string>
+    <string name="empty_library_no_accounts_message">Biblioteca ta este goală :(
+\nConectați-vă într-un cont de bibliotecă sau adăugați emisiuni la biblioteca locală.</string>
     <string name="subtitles_remove_captions">Eliminați subtitrările închise din subtitrări</string>
     <string name="setup_extensions_subtext">Descărcați lista de site-uri pe care doriți să le utilizați</string>
     <string name="sort_rating_desc">Evaluare (Ridicat la Scăzut)</string>
@@ -453,7 +454,7 @@
     <string name="safe_mode_crash_info">Vezi informații despre accident</string>
     <string name="open_with">Deschideți cu</string>
     <string name="subtitles_remove_bloat">Eliminați bloat din subtitrări</string>
-    <string name="plugins_updated" formatted="true">Actualizat %d plugin-uri</string>
+    <string name="plugins_updated" formatted="true">S-au actualizat %d plugin-uri</string>
     <string name="sort_rating_asc">Evaluare (Scăzut la Ridicat)</string>
     <string name="setup_done">Terminat</string>
     <string name="extension_version">Versiune</string>
@@ -472,11 +473,11 @@
     <string name="sort">Sortează</string>
     <string name="select_library">Selectați Biblioteca</string>
     <string name="subtitles_filter_lang">Filtrați în funcție de limba media preferată</string>
-    <string name="subscription_episode_released">Episodul %d lansat!</string>
+    <string name="subscription_episode_released">Episodul %d a fost lansat!</string>
     <string name="pref_category_android_tv">Android TV</string>
     <string name="player_settings_play_in_vlc">VLC</string>
     <string name="provider_languages_tip">Urmăriți videoclipuri în aceste limbi</string>
-    <string name="revert">Reveniți</string>
+    <string name="revert">Revenire</string>
     <string name="pref_category_actions">Acțiuni</string>
     <string name="sort_alphabetical_z">Alfabetic (Z la A)</string>
     <string name="error_invalid_url">URL invalid</string>
@@ -492,7 +493,7 @@
 \nNu încarcă nicio extensie la pornire până când fișierul nu este eliminat.</string>
     <string name="action_remove_from_watched">Scoateți de la urmărit</string>
     <string name="sort_updated_old">Actualizat (Vechi la Nou)</string>
-    <string name="apply_on_restart">Aplică la repornire</string>
+    <string name="apply_on_restart">Reporniți aplicația pentru a vedea schimbările.</string>
     <string name="extension_description">Descriere</string>
     <string name="plugin_downloaded">Plugin Descărcat</string>
     <string name="confirm_exit_dialog">Sunteți sigur că vreți să ieșiți\?</string>
@@ -508,16 +509,16 @@
     <string name="update_notification_failed">Nu s-a putut instala noua versiune a aplicației</string>
     <string name="tracks">Piste</string>
     <string name="restart">Repornește</string>
-    <string name="enable_nsfw_on_providers">Activează NSFW la furnizori suportate</string>
+    <string name="enable_nsfw_on_providers">Activează conținutul pentru adulți pe extensiile suportate</string>
     <string name="jsdelivr_enabled">Nu s-a putut ajunge la GitHub. Se activează proxy-ul jsDelivr…</string>
     <string name="jsdelivr_proxy">Proxy GitHub</string>
-    <string name="jsdelivr_proxy_summary">Depășește blocarea GitHub folosind jsDelivr. Poate cauza întârzieri de câteva zile la actualizări.</string>
+    <string name="jsdelivr_proxy_summary">Ocolește blocarea URL-urilor brute de pe GitHub folosind jsDelivr. Poate cauza întârzieri în actualizări cu câteva zile.</string>
     <string name="next">Următorul</string>
     <string name="batch_download_nothing_to_download_format" formatted="true">Toate %s deja descărcate</string>
-    <string name="plugins_downloaded" formatted="true">S-a descărcat: %d</string>
+    <string name="plugins_downloaded" formatted="true">Descărcat: %d</string>
     <string name="plugins_disabled" formatted="true">Dezactivat: %d</string>
     <string name="uppercase_all_subtitles">Toate subtitrările cu majuscule</string>
-    <string name="download_all_plugins_from_repo">Descărcați toate plugin-urile din acest depozit\?</string>
+    <string name="download_all_plugins_from_repo">Descărcați toate plugin-urile din acest depozit?</string>
     <string name="subscription_in_progress_notification">Se actualizează emisiunile abonate</string>
     <string name="subscription_list_name">Abonat</string>
     <string name="view_public_repositories_button_short">Lista publică</string>
@@ -532,7 +533,7 @@
     <string name="extension_types">Suportat</string>
     <string name="hls_playlist">Playlist HLS</string>
     <string name="video_tracks">Piste video</string>
-    <string name="enable_skip_op_from_database_des">Arată Afișați pop-up-uri de săritură pentru deschidere/încheiere</string>
+    <string name="enable_skip_op_from_database_des">Afișează opțiunea de omitere a ferestrelor pop-up pentru început/sfârșit</string>
     <string name="all_languages_preference">Toate limbile</string>
     <string name="skip_type_mixed_op">Deschidere mixat</string>
     <string name="skip_type_creddits">Credite</string>
@@ -593,4 +594,51 @@
     <string name="speed_setting_summary">Adaugă o opțiune de viteză la player</string>
     <string name="favorites_list_name">Favoriți/te</string>
     <string name="backup_frequency">Frecvența de backup</string>
+    <string name="repo_copy_label">Numele și URL-ul depozitului</string>
+    <string name="toast_copied">Copiat!</string>
+    <string name="clipboard_permission_error">Eroare la accesarea Clipboard-ului. Te rog să încerci din nou.</string>
+    <string name="clipboard_unknown_error">Eroare la copiere. Te rog să copiezi logcat-ul și să contactezi suportul aplicației.</string>
+    <string name="pin_error_incorrect">PIN incorect. Te rog să încerci din nou.</string>
+    <string name="pin">PIN</string>
+    <string name="select_an_account">Selectați un cont</string>
+    <string name="manage_accounts">Administrați conturile</string>
+    <string name="edit_account">Editare cont</string>
+    <string name="logged_account" formatted="true">Conectat ca %s</string>
+    <string name="rotate_video">Rotire</string>
+    <string name="unfavorite">Nefavorite</string>
+    <string name="biometric_authentication_title">Deblocați CloudStream</string>
+    <string name="skip_startup_account_select_pref">Omiteți selecția contului la pornire</string>
+    <string name="links_reloaded_toast">Linkuri reîncărcate</string>
+    <string name="use_default_account">Utilizați contul implicit</string>
+    <string name="test_extensions_summary">Această testare este destinată doar dezvoltatorilor și nu verifică sau respinge funcționarea oricărei extensii.</string>
+    <string name="battery_dialog_message">Pentru a asigura descărcările neîntrerupte și notificările pentru serialele TV la care ești abonat, CloudStream are nevoie de permisiunea de a rula în fundal. Apăsând pe OK, vei fi direcționat către informațiile aplicației. Acolo, derulează la \"App battery usage\" și setează utilizarea bateriei la \"Unrestricted\". Te rog să reții, această permisiune nu înseamnă că CS3 îți va consuma bateria. Va opera în fundal doar când este necesar, cum ar fi atunci când primește notificări sau descarcă videoclipuri din extensiile oficiale. Dacă alegi să anulezi, poți ajusta această setare mai târziu în \"General Settings\".</string>
+    <string name="pin_error_length">PIN-ul trebuie să fie format din 4 caractere</string>
+    <string name="rotate_video_desc">Afișează un buton de comutare pentru orientarea ecranului</string>
+    <string name="password_pin_authentication_title">Autentificare parolă/PIN</string>
+    <string name="biometric_unsupported">Autentificarea biometrică nu este acceptată pe acest dispozitiv</string>
+    <string name="biometric_setting_summary">Deblocați aplicația cu amprentă digitală, ID facial, PIN, model și parolă.</string>
+    <string name="biometric_prompt_description">Acest ecran a fost închis din cauza mai multor încercări eșuate. Vă rugăm să reporniți aplicația.</string>
+    <string name="biometric_warning">Datele dvs. CloudStream au fost salvate acum. Deși posibilitatea acestui lucru este foarte mică, toate dispozitivele se pot comporta diferit. În cazul rar, în care nu aveți acces la aplicație, ștergeți complet datele aplicației și restaurați dintr-o copie de rezervă. Ne pare foarte rău pentru orice neplăcere care decurge din aceasta.</string>
+    <string name="ok">Ok</string>
+    <string name="battery_dialog_title">Dezactivează optimizarea bateriei</string>
+    <string name="app_unrestricted_toast">Utilizarea bateriei pentru aplicație este deja setată ca fiind nelimitată</string>
+    <string name="app_info_intent_error">Imposibil de deschis informațiile aplicației CloudStream.</string>
+    <string name="favorite">Favorite</string>
+    <string name="music_singlar">Muzică</string>
+    <string name="audio_book_singular">Carte audio</string>
+    <string name="custom_media_singluar">Media</string>
+    <string name="result_search_tooltip">Caută în alte extensii</string>
+    <string name="test_extensions">Testează toate extensiile</string>
+    <string name="auto_rotate_video">Rotire automată</string>
+    <string name="reset_btn">Resetați</string>
+    <string name="auto_rotate_video_desc">Activați comutarea automată a orientării ecranului pe baza orientării video</string>
+    <string name="biometric_setting">Blocare cu biometrie</string>
+    <string name="resume_remaining" formatted="true">%s
+\nrămase</string>
+    <string name="episode_upcoming_format" formatted="true">Următorul în %s</string>
+    <string name="cs3wiki">CloudStream Wiki</string>
+    <string name="next_season_episode_format" formatted="true">Sezonul %1$d Episod %2$d va fi lansat în</string>
+    <string name="player_settings_select_cast_device">Selectați divece-ul pe care doriți să faceți cast</string>
+    <string name="episode_action_cast_mirror">Cast mirror</string>
+    <string name="player_settings_play_in_fcast">Fcast</string>
 </resources>

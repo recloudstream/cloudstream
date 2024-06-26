@@ -13,16 +13,55 @@ object TestingUtils {
         }
     }
 
-    class TestResultSearch(val results: List<SearchResponse>) : TestResult(true)
-    class TestResultLoad(val extractorData: String) : TestResult(true)
+    class Logger {
+        enum class LogLevel {
+            Normal,
+            Warning,
+            Error;
+        }
 
-    class TestResultProvider(success: Boolean, val log: String, val exception: Throwable?) :
+        data class Message(val level: LogLevel, val message: String) {
+            override fun toString(): String {
+                val level = when (this.level) {
+                    LogLevel.Normal -> ""
+                    LogLevel.Warning -> "Warning: "
+                    LogLevel.Error -> "Error: "
+                }
+                return "$level$message"
+            }
+        }
+
+        private val messageLog = mutableListOf<Message>()
+
+        fun getRawLog(): List<Message> = messageLog
+
+        fun log(message: String) {
+            messageLog.add(Message(LogLevel.Normal, message))
+        }
+
+        fun warn(message: String) {
+            messageLog.add(Message(LogLevel.Warning, message))
+        }
+
+        fun error(message: String) {
+            messageLog.add(Message(LogLevel.Error, message))
+        }
+    }
+
+    class TestResultList(val results: List<SearchResponse>) : TestResult(true)
+    class TestResultLoad(val extractorData: String, val shouldLoadLinks: Boolean) : TestResult(true)
+
+    class TestResultProvider(
+        success: Boolean,
+        val log: List<Logger.Message>,
+        val exception: Throwable?
+    ) :
         TestResult(success)
 
     @Throws(AssertionError::class, CancellationException::class)
     suspend fun testHomepage(
         api: MainAPI,
-        logger: (String) -> Unit
+        logger: Logger
     ): TestResult {
         if (api.hasMainPage) {
             try {
@@ -31,22 +70,33 @@ object TestingUtils {
                     api.getMainPage(1, MainPageRequest(f.name, f.data, f.horizontalImages))
                 when {
                     homepage == null -> {
-                        logger.invoke("Homepage provider ${api.name} did not correctly load homepage!")
+                        logger.error("Provider ${api.name} did not correctly load homepage!")
                     }
+
                     homepage.items.isEmpty() -> {
-                        logger.invoke("Homepage provider ${api.name} does not contain any items!")
+                        logger.warn("Provider ${api.name} does not contain any homepage rows!")
                     }
+
                     homepage.items.any { it.list.isEmpty() } -> {
-                        logger.invoke("Homepage provider ${api.name} does not have any items on result!")
+                        logger.warn("Provider ${api.name} does not have any items in a homepage row!")
                     }
                 }
+                val homePageList = homepage?.items?.flatMap { it.list } ?: emptyList()
+                return TestResultList(homePageList)
             } catch (e: Throwable) {
-                if (e is NotImplementedError) {
-                    Assert.fail("Provider marked as hasMainPage, while in reality is has not been implemented")
-                } else if (e is CancellationException) {
-                    throw e
+                when (e) {
+                    is NotImplementedError -> {
+                        Assert.fail("Provider marked as hasMainPage, while in reality is has not been implemented")
+                    }
+
+                    is CancellationException -> {
+                        throw e
+                    }
+
+                    else -> {
+                        e.message?.let { logger.warn("Exception thrown when loading homepage: \"$it\"") }
+                    }
                 }
-                logError(e)
             }
         }
         return TestResult.Pass
@@ -54,11 +104,13 @@ object TestingUtils {
 
     @Throws(AssertionError::class, CancellationException::class)
     private suspend fun testSearch(
-        api: MainAPI
+        api: MainAPI,
+        testQueries: List<String>,
+        logger: Logger,
     ): TestResult {
-        val searchQueries = listOf("over", "iron", "guy")
-        val searchResults = searchQueries.firstNotNullOfOrNull { query ->
+        val searchResults = testQueries.firstNotNullOfOrNull { query ->
             try {
+                logger.log("Searching for: $query")
                 api.search(query).takeIf { !it.isNullOrEmpty() }
             } catch (e: Throwable) {
                 if (e is NotImplementedError) {
@@ -72,12 +124,11 @@ object TestingUtils {
         }
 
         return if (searchResults.isNullOrEmpty()) {
-            Assert.fail("Api ${api.name} did not return any valid search responses")
+            Assert.fail("Api ${api.name} did not return any search responses")
             TestResult.Fail // Should not be reached
         } else {
-            TestResultSearch(searchResults)
+            TestResultList(searchResults)
         }
-
     }
 
 
@@ -85,31 +136,27 @@ object TestingUtils {
     private suspend fun testLoad(
         api: MainAPI,
         result: SearchResponse,
-        logger: (String) -> Unit
+        logger: Logger
     ): TestResult {
         try {
-            Assert.assertEquals(
-                "Invalid apiName on SearchResponse on ${api.name}",
-                result.apiName,
-                api.name
-            )
+            if (result.apiName != api.name) {
+                logger.warn("Wrong apiName on SearchResponse: ${api.name} != ${result.apiName}")
+            }
 
             val loadResponse = api.load(result.url)
 
             if (loadResponse == null) {
-                logger.invoke("Returned null loadResponse on ${result.url} on ${api.name}")
+                logger.error("Returned null loadResponse on ${result.url} on ${api.name}")
                 return TestResult.Fail
             }
 
-            Assert.assertEquals(
-                "Invalid apiName on LoadResponse on ${api.name}",
-                loadResponse.apiName,
-                result.apiName
-            )
-            Assert.assertTrue(
-                "Api ${api.name} on load does not contain any of the supportedTypes: ${loadResponse.type}",
-                api.supportedTypes.contains(loadResponse.type)
-            )
+            if (loadResponse.apiName != api.name) {
+                logger.warn("Wrong apiName on LoadResponse: ${api.name} != ${loadResponse.apiName}")
+            }
+
+            if (!api.supportedTypes.contains(loadResponse.type)) {
+                logger.warn("Api ${api.name} on load does not contain any of the supportedTypes: ${loadResponse.type}")
+            }
 
             val url = when (loadResponse) {
                 is AnimeLoadResponse -> {
@@ -117,39 +164,43 @@ object TestingUtils {
                         loadResponse.episodes.keys.isEmpty() || loadResponse.episodes.keys.any { loadResponse.episodes[it].isNullOrEmpty() }
 
                     if (gotNoEpisodes) {
-                        logger.invoke("Api ${api.name} got no episodes on ${loadResponse.url}")
+                        logger.error("Api ${api.name} got no episodes on ${loadResponse.url}")
                         return TestResult.Fail
                     }
 
                     (loadResponse.episodes[loadResponse.episodes.keys.firstOrNull()])?.firstOrNull()?.data
                 }
+
                 is MovieLoadResponse -> {
                     val gotNoEpisodes = loadResponse.dataUrl.isBlank()
                     if (gotNoEpisodes) {
-                        logger.invoke("Api ${api.name} got no movie on ${loadResponse.url}")
+                        logger.error("Api ${api.name} got no movie on ${loadResponse.url}")
                         return TestResult.Fail
                     }
 
                     loadResponse.dataUrl
                 }
+
                 is TvSeriesLoadResponse -> {
                     val gotNoEpisodes = loadResponse.episodes.isEmpty()
                     if (gotNoEpisodes) {
-                        logger.invoke("Api ${api.name} got no episodes on ${loadResponse.url}")
+                        logger.error("Api ${api.name} got no episodes on ${loadResponse.url}")
                         return TestResult.Fail
                     }
                     loadResponse.episodes.firstOrNull()?.data
                 }
+
                 is LiveStreamLoadResponse -> {
                     loadResponse.dataUrl
                 }
+
                 else -> {
-                    logger.invoke("Unknown load response: ${loadResponse.javaClass.name}")
+                    logger.error("Unknown load response: ${loadResponse.javaClass.name}")
                     return TestResult.Fail
                 }
             } ?: return TestResult.Fail
 
-            return TestResultLoad(url)
+            return TestResultLoad(url, loadResponse.type != TvType.CustomMedia)
 
 //            val loadTest = testLoadResponse(api, load, logger)
 //            if (loadTest is TestResultLoad) {
@@ -174,7 +225,7 @@ object TestingUtils {
     private suspend fun testLinkLoading(
         api: MainAPI,
         url: String?,
-        logger: (String) -> Unit
+        logger: Logger
     ): TestResult {
         Assert.assertNotNull("Api ${api.name} has invalid url on episode", url)
         if (url == null) return TestResult.Fail // Should never trigger
@@ -182,7 +233,7 @@ object TestingUtils {
         var linksLoaded = 0
         try {
             val success = api.loadLinks(url, false, {}) { link ->
-                logger.invoke("Video loaded: ${link.name}")
+                logger.log("Video loaded: ${link.name}")
                 Assert.assertTrue(
                     "Api ${api.name} returns link with invalid url ${link.url}",
                     link.url.length > 4
@@ -190,7 +241,7 @@ object TestingUtils {
                 linksLoaded++
             }
             if (success) {
-                logger.invoke("Links loaded: $linksLoaded")
+                logger.log("Links loaded: $linksLoaded")
                 return TestResult(linksLoaded > 0)
             } else {
                 Assert.fail("Api ${api.name} returns false on loadLinks() with $linksLoaded links loaded")
@@ -200,8 +251,9 @@ object TestingUtils {
                 is NotImplementedError -> {
                     Assert.fail("Provider has not implemented loadLinks()")
                 }
+
                 else -> {
-                    logger.invoke("Failed link loading on ${api.name} using data: $url")
+                    logger.error("Failed link loading on ${api.name} using data: $url")
                     throw e
                 }
             }
@@ -212,53 +264,57 @@ object TestingUtils {
     fun getDeferredProviderTests(
         scope: CoroutineScope,
         providers: Array<MainAPI>,
-        logger: (String) -> Unit,
         callback: (MainAPI, TestResultProvider) -> Unit
     ) {
         providers.forEach { api ->
             scope.launch {
-                var log = ""
-                fun addToLog(string: String) {
-                    log += string + "\n"
-                    logger.invoke(string)
-                }
-                fun getLog(): String {
-                    return log.removeSuffix("\n")
-                }
+                val logger = Logger()
 
                 val result = try {
-                    addToLog("Trying ${api.name}")
+                    logger.log("Trying ${api.name}")
 
                     // Test Homepage
-                    val homepage = testHomepage(api, logger).success
-                    Assert.assertTrue("Homepage failed to load", homepage)
+                    val homepage = testHomepage(api, logger)
+                    Assert.assertTrue("Homepage failed to load", homepage.success)
+                    val homePageList = (homepage as? TestResultList)?.results ?: emptyList()
 
                     // Test Search Results
-                    val searchResults = testSearch(api)
+                    val searchQueries =
+                        // Use the first 3 home page results as queries since they are guaranteed to exist
+                        (homePageList.take(3).map { it.name } +
+                                // If home page is sparse then use generic search queries
+                                listOf("over", "iron", "guy")).take(3)
+
+                    val searchResults = testSearch(api, searchQueries, logger)
                     Assert.assertTrue("Failed to get search results", searchResults.success)
-                    searchResults as TestResultSearch
+                    searchResults as TestResultList
 
                     // Test Load and LoadLinks
                     // Only try the first 3 search results to prevent spamming
                     val success = searchResults.results.take(3).any { searchResponse ->
-                        addToLog("Testing search result: ${searchResponse.url}")
-                        val loadResponse = testLoad(api, searchResponse, ::addToLog)
+                        logger.log("Testing search result: ${searchResponse.url}")
+                        val loadResponse = testLoad(api, searchResponse, logger)
                         if (loadResponse !is TestResultLoad) {
                             false
                         } else {
-                            testLinkLoading(api, loadResponse.extractorData, ::addToLog).success
+                            if (loadResponse.shouldLoadLinks) {
+                                testLinkLoading(api, loadResponse.extractorData, logger).success
+                            } else {
+                                logger.log("Skipping link loading test")
+                                true
+                            }
                         }
                     }
 
                     if (success) {
-                        logger.invoke("Success ${api.name}")
-                        TestResultProvider(true, getLog(), null)
+                        logger.log("Success ${api.name}")
+                        TestResultProvider(true, logger.getRawLog(), null)
                     } else {
-                        logger.invoke("Error ${api.name}")
-                        TestResultProvider(false, getLog(), null)
+                        logger.error("Link loading failed")
+                        TestResultProvider(false, logger.getRawLog(), null)
                     }
                 } catch (e: Throwable) {
-                    TestResultProvider(false, getLog(), e)
+                    TestResultProvider(false, logger.getRawLog(), e)
                 }
                 callback.invoke(api, result)
             }

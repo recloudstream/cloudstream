@@ -176,7 +176,7 @@
     <string name="subs_edge_type">Tipo de Borde</string>
     <string name="subs_subtitle_elevation">Elevación de Subtítulo</string>
     <string name="search_provider_text_providers">Buscar usando proveedores</string>
-    <string name="picture_in_picture_des">Continúa la reproducción en un reproductor miniatura encima de otras aplicaciones</string>
+    <string name="picture_in_picture_des">Continúa la reproducción en una imagen pequeña encima de otras aplicaciones</string>
     <string name="player_size_settings">Botón de cambio de tamaño del reproductor</string>
     <string name="player_size_settings_des">Eliminar bordes negros</string>
     <string name="subs_auto_select_language">Seleccionar idioma automáticamente</string>
@@ -232,7 +232,7 @@
     <string name="advanced_search_des">Mostrar los resultados de la búsqueda por proveedor</string>
     <string name="bug_report_settings_off">Solo envíar los datos si la App se cierra / falla inesperadamente</string>
     <string name="bug_report_settings_on">No enviar datos</string>
-    <string name="show_trailers_settings">Mostrar los trailers</string>
+    <string name="show_trailers_settings">Mostrar avances</string>
     <string name="kitsu_settings">Mostrar pósters de Kitsu</string>
     <string name="uprereleases_settings">Actualizar a las versiones preliminares</string>
     <string name="uprereleases_settings_des">Buscar actualizaciones preliminares (beta) en lugar de solo versiones completas (stable releases)</string>
@@ -289,7 +289,7 @@
     <string name="blank_repo_message">CloudStream no tiene sitios instalados por defecto. Necesitas instalar los sitios desde los repositorios.
 \n
 \nÚnase a nuestro Discord o busque en línea.</string>
-    <string name="download_all_plugins_from_repo">¿Descargar todos los plugins de este repositorio?</string>
+    <string name="download_all_plugins_from_repo">Advertencia: ¡CloudStream 3 no asume ninguna responsabilidad por el uso de extensiones de terceros y no brinda ningún soporte para ellas!</string>
     <string name="updates_settings">Mostrar actualizaciones de la aplicación</string>
     <string name="apk_installer_settings">Instalador de APK</string>
     <string name="apk_installer_settings_des">Algunos dispositivos no soportan el nuevo instalador de paquetes. Pruebe la opción antigua (legacy) si las actualizaciones no se instalan.</string>
@@ -339,7 +339,7 @@
     <string name="poster_ui_settings">Alternar elementos de la interfaz de usuario en el póster</string>
     <string name="no_update_found">No se encontró ninguna actualización</string>
     <string name="category_general">General</string>
-    <string name="primary_color_settings">Color primario</string>
+    <string name="primary_color_settings">Color principal</string>
     <string name="app_theme_settings">Tema de la aplicación</string>
     <string name="example_email">hola@mundo.com</string>
     <string name="login_format" formatted="true">%1$s %2$s</string>
@@ -449,13 +449,13 @@
     <string name="batch_download">Descarga por lotes</string>
     <string name="plugin_singular">plugin</string>
     <string name="plugin">plugins</string>
-    <string name="plugins_updated" formatted="true">Actualizados %d plugins</string>
+    <string name="plugins_updated" formatted="true">%d plugins actualizados</string>
     <string name="view_public_repositories_button">Ver repositorios de la comunidad</string>
     <string name="view_public_repositories_button_short">Lista pública</string>
     <string name="tracks">Pistas</string>
     <string name="audio_tracks">Pistas de audio</string>
     <string name="video_tracks">Pistas de video</string>
-    <string name="safe_mode_title">Modo seguro ON</string>
+    <string name="safe_mode_title">Modo seguro activado</string>
     <string name="safe_mode_crash_info">Ver información de fallos</string>
     <string name="extension_rating" formatted="true">Puntaje:%s</string>
     <string name="extension_version">Versión</string>
@@ -483,7 +483,7 @@
     <string name="yes">Si</string>
     <string name="delayed_update_notice">La aplicación se actualizará al salir</string>
     <string name="update_started">Actualización iniciada</string>
-    <string name="plugin_downloaded">Complemento descargado</string>
+    <string name="plugin_downloaded">Plugin descargado</string>
     <string name="action_remove_from_watched">Quitar de visto</string>
     <string name="sort_by">Ordenar por</string>
     <string name="sort">Ordenar</string>
@@ -512,7 +512,7 @@
     <string name="test_log">Registro</string>
     <string name="start">Empezar</string>
     <string name="test_passed">Aprobado</string>
-    <string name="category_provider_test">Prueba del proveedor</string>
+    <string name="category_provider_test">Verificar al proveedor</string>
     <string name="restart">Reiniciar</string>
     <string name="subscription_list_name">Suscrito</string>
     <string name="subscription_new">Suscrito a %s</string>
@@ -545,7 +545,7 @@
     <string name="unable_to_inflate">La interfaz de usuario no se ha podido crear correctamente, se trata de un GRAN BUG y debe ser reportado inmediatamente %s</string>
     <string name="automatic_plugin_download_mode_title">Seleccionar modo para filtrar los plugins descargados</string>
     <string name="disable">Deshabilitar</string>
-    <string name="no_plugins_found_error">No se encontraron complementos en el repositorio</string>
+    <string name="no_plugins_found_error">No se encontraron plugins en el repositorio</string>
     <string name="no_repository_found_error">Repositorio no encontrado, comprueba la URL y prueba la VPN</string>
     <string name="already_voted">Ya has votado</string>
     <string name="backup_frequency">Frecuencia de la copia de seguridad</string>
@@ -599,7 +599,7 @@
     <string name="biometric_setting_summary">Desbloquea la aplicación con huella dactilar, Face ID, PIN, patrón y contraseña.</string>
     <string name="biometric_authentication_title">Desbloquear CloudStream</string>
     <string name="biometric_unsupported">La autenticación biométrica no es compatible con este dispositivo</string>
-    <string name="biometric_prompt_description">Esta pantalla se cerró después de algunos intentos fallidos. Reinicie la aplicación.</string>
+    <string name="biometric_prompt_description">Después de algunos intentos fallidos, el mensaje se cerrará. Simplemente reinicie la aplicación para volver a intentarlo.</string>
     <string name="biometric_warning">Ahora se ha realizado una copia de seguridad de sus datos de CloudStream. Aunque la posibilidad de que esto ocurra es muy baja, todos los dispositivos pueden comportarse de forma diferente. En el raro caso de que no puedas acceder a la aplicación, borra completamente los datos de la aplicación y restaura desde una copia de seguridad. Sentimos mucho las molestias que esto pueda ocasionarte.</string>
     <string name="favorite">Favorito</string>
     <string name="unfavorite">No favorito</string>
@@ -616,5 +616,22 @@
     <string name="app_info_intent_error">No se puede abrir la información de la aplicación CloudStream.</string>
     <string name="custom_media_singluar">Media</string>
     <string name="audio_book_singular">Audiolibro</string>
-    <string name="battery_dialog_message">Para garantizar descargas y notificaciones ininterrumpidas para programas de televisión suscritos, CloudStream necesita permiso para ejecutarse en segundo plano. Al presionar OK, se le dirigirá a información de la aplicación. Allí, desplácese hasta Uso de la batería de la aplicación y establezca el uso de la batería en Sin restricciones. Tenga en cuenta que este permiso no significa que CS3 agotará su batería. Solo funcionará en segundo plano cuando sea necesario, como cuando reciba notificaciones o descargue videos de extensiones oficiales. Si decide cancelar, puede ajustar esta configuración más adelante en los ajustes generales.</string>
+    <string name="battery_dialog_message">Para garantizar descargas y notificaciones ininterrumpidas para programas de televisión suscritos, CloudStream necesita permiso para ejecutarse en segundo plano. Al presionar OK, se le dirigirá a información de la aplicación. Allí, desplácese hasta 𝙐𝙨𝙤 𝙙𝙚 𝙡𝙖 𝙗𝙖𝙩𝙚𝙧í𝙖 𝙙𝙚 𝙡𝙖 𝙖𝙥𝙡𝙞𝙘𝙖𝙘𝙞ó𝙣 y establezca el uso de la batería en 𝙎𝙞𝙣 𝙧𝙚𝙨𝙩𝙧𝙞𝙘𝙘𝙞𝙤𝙣𝙚𝙨. Tenga en cuenta que este permiso no significa que CS3 agotará su batería. Solo funcionará en segundo plano cuando sea necesario, como cuando reciba notificaciones o descargue videos de extensiones oficiales. Si decide cancelar, puede ajustar esta configuración más adelante en 𝙡𝙤𝙨 𝙖𝙟𝙪𝙨𝙩𝙚𝙨 𝙜𝙚𝙣𝙚𝙧𝙖𝙡𝙚𝙨.</string>
+    <string name="reset_btn">Reset</string>
+    <string name="episode_upcoming_format" formatted="true">Próximamente en %s</string>
+    <string name="next_season_episode_format" formatted="true">La temporada %1$d y el episodio %2$d se estrenarán en</string>
+    <string name="player_settings_select_cast_device">Seleccionar el dispositivo para transmitir</string>
+    <string name="player_settings_play_in_fcast">Fcast</string>
+    <string name="episode_action_cast_mirror">Espejo de transmisión</string>
+    <string name="cs3wiki">Wiki de CloudStream</string>
+    <string name="pref_category_security">Seguridad</string>
+    <string name="pref_category_accounts">Cuentas</string>
+    <string name="auth_locally">Autenticación local</string>
+    <string name="qr_image">Imagen del código QR</string>
+    <string name="dismiss">Descartar</string>
+    <string name="open_downloaded_repo">Repositorio abierto</string>
+    <string name="device_pin_url_message">Visita <b> %s </b> en tu smartphone o ordenador e introduce el código anterior</string>
+    <string name="device_pin_expired_message">¡El código PIN ya ha caducado!</string>
+    <string name="device_pin_counter_text">El código caduca en %1$d mín y %2$d s</string>
+    <string name="device_pin_error_message">No puedo obtener el código PIN del dispositivo; intente con la autenticación local</string>
 </resources>

@@ -1,12 +1,11 @@
 package com.lagradost.cloudstream3.utils
 
-import android.os.Handler
-import android.os.Looper
 import com.lagradost.cloudstream3.mvvm.launchSafe
 import com.lagradost.cloudstream3.mvvm.logError
 import kotlinx.coroutines.*
 import java.util.Collections.synchronizedList
 
+expect fun runOnMainThreadNative(work: (() -> Unit))
 object Coroutines {
     fun <T> T.main(work: suspend ((T) -> Unit)): Job {
         val value = this
@@ -50,10 +49,7 @@ object Coroutines {
     }
 
     fun runOnMainThread(work: (() -> Unit)) {
-        val mainHandler = Handler(Looper.getMainLooper())
-        mainHandler.post {
-            work()
-        }
+        runOnMainThreadNative(work)
     }
 
     /**

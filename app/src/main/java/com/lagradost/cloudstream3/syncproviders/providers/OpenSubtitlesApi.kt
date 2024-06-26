@@ -185,7 +185,7 @@ class OpenSubtitlesApi(index: Int) : InAppAuthAPIManager(index), AbstractSubApi 
         throwIfCantDoRequest()
         val fixedLang = fixLanguage(query.lang)
 
-        val imdbId = query.imdb ?: 0
+        val imdbId = query.imdbId?.replace("tt", "")?.toInt() ?: 0
         val queryText = query.query
         val epNum = query.epNumber ?: 0
         val seasonNum = query.seasonNumber ?: 0

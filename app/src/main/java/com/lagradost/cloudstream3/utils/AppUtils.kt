@@ -62,7 +62,8 @@ import com.lagradost.cloudstream3.syncproviders.providers.Kitsu
 import com.lagradost.cloudstream3.ui.WebviewFragment
 import com.lagradost.cloudstream3.ui.result.ResultFragment
 import com.lagradost.cloudstream3.ui.settings.Globals
-import com.lagradost.cloudstream3.ui.settings.extensions.PluginsViewModel.Companion.downloadAll
+import com.lagradost.cloudstream3.ui.settings.extensions.ExtensionsFragment
+import com.lagradost.cloudstream3.ui.settings.extensions.PluginsFragment
 import com.lagradost.cloudstream3.ui.settings.extensions.RepositoryData
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.main
@@ -386,7 +387,7 @@ object AppUtils {
                 )
             }
             afterRepositoryLoadedEvent.invoke(true)
-            downloadAllPluginsDialog(url, repo.name)
+            addRepositoryDialog(repo.name, url)
         }
     }
 
@@ -429,25 +430,36 @@ object AppUtils {
         }
     }
 
+    fun Activity.addRepositoryDialog(
+        repositoryName: String,
+        repositoryURL: String,
+    ) {
+        val repos = RepositoryManager.getRepositories()
 
-    fun Activity.downloadAllPluginsDialog(repositoryUrl: String, repositoryName: String) {
-        runOnUiThread {
-            val context = this
-            val builder: AlertDialog.Builder = AlertDialog.Builder(this)
-            builder.setTitle(
-                repositoryName
-            )
-            builder.setMessage(
-                R.string.download_all_plugins_from_repo
-            )
-            builder.apply {
-                setPositiveButton(R.string.download) { _, _ ->
-                    downloadAll(context, repositoryUrl, null)
-                }
-
-                setNegativeButton(R.string.no) { _, _ -> }
+        // navigate to newly added repository on pressing Open Repository
+        fun openAddedRepo() {
+            if (repos.isNotEmpty()) {
+                navigate(
+                    R.id.global_to_navigation_settings_plugins,
+                    PluginsFragment.newInstance(
+                        repositoryName,
+                        repositoryURL,
+                        false,
+                    )
+                )
             }
-            builder.show().setDefaultFocus()
+        }
+
+        runOnUiThread {
+            AlertDialog.Builder(this).apply {
+                setTitle(repositoryName)
+                setMessage(R.string.download_all_plugins_from_repo)
+                setPositiveButton(R.string.open_downloaded_repo) { _, _ ->
+                    openAddedRepo()
+                }
+                setNegativeButton(R.string.dismiss, null)
+                show().setDefaultFocus()
+            }
         }
     }
 

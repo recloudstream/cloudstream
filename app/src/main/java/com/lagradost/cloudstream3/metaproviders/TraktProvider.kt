@@ -1,17 +1,39 @@
 package com.lagradost.cloudstream3.metaproviders
 
 import android.net.Uri
-import com.lagradost.cloudstream3.*
 import com.fasterxml.jackson.annotation.JsonAlias
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.lagradost.cloudstream3.APIHolder
+import com.lagradost.cloudstream3.APIHolder.unixTimeMS
+import com.lagradost.cloudstream3.Actor
+import com.lagradost.cloudstream3.ActorData
+import com.lagradost.cloudstream3.Episode
+import com.lagradost.cloudstream3.HomePageResponse
+import com.lagradost.cloudstream3.LoadResponse
 import com.lagradost.cloudstream3.LoadResponse.Companion.addImdbId
 import com.lagradost.cloudstream3.LoadResponse.Companion.addTMDbId
 import com.lagradost.cloudstream3.LoadResponse.Companion.addTrailer
+import com.lagradost.cloudstream3.MainAPI
+import com.lagradost.cloudstream3.MainPageRequest
+import com.lagradost.cloudstream3.NextAiring
+import com.lagradost.cloudstream3.ProviderType
+import com.lagradost.cloudstream3.SearchResponse
+import com.lagradost.cloudstream3.ShowStatus
+import com.lagradost.cloudstream3.TvType
+import com.lagradost.cloudstream3.addDate
+import com.lagradost.cloudstream3.app
+import com.lagradost.cloudstream3.base64Decode
+import com.lagradost.cloudstream3.mainPageOf
 import com.lagradost.cloudstream3.mvvm.logError
+import com.lagradost.cloudstream3.newHomePageResponse
+import com.lagradost.cloudstream3.newMovieLoadResponse
+import com.lagradost.cloudstream3.newMovieSearchResponse
+import com.lagradost.cloudstream3.newTvSeriesLoadResponse
+import com.lagradost.cloudstream3.newTvSeriesSearchResponse
 import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
-import java.util.Locale
 import java.text.SimpleDateFormat
+import java.util.Locale
 import kotlin.math.roundToInt
 
 open class TraktProvider : MainAPI() {
@@ -24,7 +46,8 @@ open class TraktProvider : MainAPI() {
         TvType.Anime,
     )
 
-    private val traktClientId = base64Decode("N2YzODYwYWQzNGI4ZTZmOTdmN2I5MTA0ZWQzMzEwOGI0MmQ3MTdlMTM0MmM2NGMxMTg5NGE1MjUyYTQ3NjE3Zg==")
+    private val traktClientId =
+        base64Decode("N2YzODYwYWQzNGI4ZTZmOTdmN2I5MTA0ZWQzMzEwOGI0MmQ3MTdlMTM0MmM2NGMxMTg5NGE1MjUyYTQ3NjE3Zg==")
     private val traktApiUrl = base64Decode("aHR0cHM6Ly9hcGl6LnRyYWt0LnR2")
 
     override val mainPage = mainPageOf(
@@ -76,7 +99,8 @@ open class TraktProvider : MainAPI() {
     }
 
     override suspend fun search(query: String): List<SearchResponse>? {
-        val apiResponse = getApi("$traktApiUrl/search/movie,show?extended=cloud9,full&limit=20&page=1&query=$query")
+        val apiResponse =
+            getApi("$traktApiUrl/search/movie,show?extended=cloud9,full&limit=20&page=1&query=$query")
 
         val results = parseJson<List<MediaDetails>>(apiResponse).map { element ->
             element.toSearchResponse()
@@ -84,6 +108,7 @@ open class TraktProvider : MainAPI() {
 
         return results
     }
+
     override suspend fun load(url: String): LoadResponse {
 
         val data = parseJson<Data>(url)
@@ -93,7 +118,8 @@ open class TraktProvider : MainAPI() {
         val posterUrl = mediaDetails?.images?.poster?.firstOrNull()
         val backDropUrl = mediaDetails?.images?.fanart?.firstOrNull()
 
-        val resActor = getApi("$traktApiUrl/$moviesOrShows/${mediaDetails?.ids?.trakt}/people?extended=cloud9,full")
+        val resActor =
+            getApi("$traktApiUrl/$moviesOrShows/${mediaDetails?.ids?.trakt}/people?extended=cloud9,full")
 
         val actors = parseJson<People>(resActor).cast?.map {
             ActorData(
@@ -105,12 +131,15 @@ open class TraktProvider : MainAPI() {
             )
         }
 
-        val resRelated = getApi("$traktApiUrl/$moviesOrShows/${mediaDetails?.ids?.trakt}/related?extended=cloud9,full&limit=20")
+        val resRelated =
+            getApi("$traktApiUrl/$moviesOrShows/${mediaDetails?.ids?.trakt}/related?extended=cloud9,full&limit=20")
 
         val relatedMedia = parseJson<List<MediaDetails>>(resRelated).map { it.toSearchResponse() }
 
-        val isCartoon = mediaDetails?.genres?.contains("animation") == true || mediaDetails?.genres?.contains("anime") == true
-        val isAnime = isCartoon && (mediaDetails?.language == "zh" || mediaDetails?.language == "ja")
+        val isCartoon =
+            mediaDetails?.genres?.contains("animation") == true || mediaDetails?.genres?.contains("anime") == true
+        val isAnime =
+            isCartoon && (mediaDetails?.language == "zh" || mediaDetails?.language == "ja")
         val isAsian = !isAnime && (mediaDetails?.language == "zh" || mediaDetails?.language == "ko")
         val isBollywood = mediaDetails?.country == "in"
 
@@ -118,8 +147,12 @@ open class TraktProvider : MainAPI() {
 
             val linkData = LinkData(
                 id = mediaDetails?.ids?.tmdb,
+                traktId = mediaDetails?.ids?.trakt,
+                traktSlug = mediaDetails?.ids?.slug,
+                tmdbId = mediaDetails?.ids?.tmdb,
                 imdbId = mediaDetails?.ids?.imdb.toString(),
                 tvdbId = mediaDetails?.ids?.tvdb,
+                tvrageId = mediaDetails?.ids?.tvrage,
                 type = data.type.toString(),
                 title = mediaDetails?.title,
                 year = mediaDetails?.year,
@@ -139,7 +172,6 @@ open class TraktProvider : MainAPI() {
                 type = if (isAnime) TvType.AnimeMovie else TvType.Movie,
             ) {
                 this.name = mediaDetails.title
-                this.apiName = "Trakt"
                 this.type = if (isAnime) TvType.AnimeMovie else TvType.Movie
                 this.posterUrl = getOriginalWidthImageUrl(posterUrl)
                 this.year = mediaDetails.year
@@ -159,26 +191,24 @@ open class TraktProvider : MainAPI() {
             }
         } else {
 
-            val resSeasons = getApi("$traktApiUrl/shows/${mediaDetails?.ids?.trakt.toString()}/seasons?extended=cloud9,full,episodes")
+            val resSeasons =
+                getApi("$traktApiUrl/shows/${mediaDetails?.ids?.trakt.toString()}/seasons?extended=cloud9,full,episodes")
             val episodes = mutableListOf<Episode>()
             val seasons = parseJson<List<Seasons>>(resSeasons)
-            val seasonsNames = mutableListOf<SeasonData>()
+            var nextAir: NextAiring? = null
 
             seasons.forEach { season ->
-
-                seasonsNames.add(
-                    SeasonData(
-                        season.number!!,
-                        season.title
-                    )
-                )
 
                 season.episodes?.map { episode ->
 
                     val linkData = LinkData(
                         id = mediaDetails?.ids?.tmdb,
+                        traktId = mediaDetails?.ids?.trakt,
+                        traktSlug = mediaDetails?.ids?.slug,
+                        tmdbId = mediaDetails?.ids?.tmdb,
                         imdbId = mediaDetails?.ids?.imdb.toString(),
                         tvdbId = mediaDetails?.ids?.tvdb,
+                        tvrageId = mediaDetails?.ids?.tvrage,
                         type = data.type.toString(),
                         season = episode.season,
                         episode = episode.number,
@@ -207,7 +237,14 @@ open class TraktProvider : MainAPI() {
                             rating = episode.rating?.times(10)?.roundToInt(),
                             description = episode.overview,
                         ).apply {
-                            this.addDate(episode.firstAired)
+                            this.addDate(episode.firstAired, "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
+                            if (nextAir == null && this.date != null && this.date!! > unixTimeMS) {
+                                nextAir = NextAiring(
+                                    episode = this.episode!!,
+                                    unixTime = this.date!!.div(1000L),
+                                    season = if (this.season == 1) null else this.season,
+                                )
+                            }
                         }
                     )
                 }
@@ -220,7 +257,6 @@ open class TraktProvider : MainAPI() {
                 episodes = episodes
             ) {
                 this.name = mediaDetails.title
-                this.apiName = "Trakt"
                 this.type = if (isAnime) TvType.Anime else TvType.TvSeries
                 this.episodes = episodes
                 this.posterUrl = getOriginalWidthImageUrl(posterUrl)
@@ -234,7 +270,7 @@ open class TraktProvider : MainAPI() {
                 this.actors = actors
                 this.comingSoon = isUpcoming(mediaDetails.released)
                 //posterHeaders
-                this.seasonNames = seasonsNames
+                this.nextAiring = nextAir
                 this.backgroundPosterUrl = getOriginalWidthImageUrl(backDropUrl)
                 this.contentRating = mediaDetails.certification
                 addTrailer(mediaDetails.trailer)
@@ -244,7 +280,7 @@ open class TraktProvider : MainAPI() {
         }
     }
 
-    private suspend fun getApi(url: String) : String {
+    private suspend fun getApi(url: String): String {
         return app.get(
             url = url,
             headers = mapOf(
@@ -279,14 +315,14 @@ open class TraktProvider : MainAPI() {
         return "https://$url"
     }
 
-    private fun getWidthImageUrl(path: String?, width: String) : String? {
+    private fun getWidthImageUrl(path: String?, width: String): String? {
         if (path == null) return null
         if (!path.contains("image.tmdb.org")) return fixPath(path)
         val fileName = Uri.parse(path).lastPathSegment ?: return null
         return "https://image.tmdb.org/t/p/${width}/${fileName}"
     }
 
-    private fun getOriginalWidthImageUrl(path: String?) : String? {
+    private fun getOriginalWidthImageUrl(path: String?): String? {
         if (path == null) return null
         if (!path.contains("image.tmdb.org")) return fixPath(path)
         return getWidthImageUrl(path, "original")
@@ -406,8 +442,12 @@ open class TraktProvider : MainAPI() {
 
     data class LinkData(
         val id: Int? = null,
+        val traktId: Int? = null,
+        val traktSlug: String? = null,
+        val tmdbId: Int? = null,
         val imdbId: String? = null,
         val tvdbId: Int? = null,
+        val tvrageId: String? = null,
         val type: String? = null,
         val season: Int? = null,
         val episode: Int? = null,

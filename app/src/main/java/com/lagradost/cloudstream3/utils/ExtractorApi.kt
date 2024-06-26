@@ -17,6 +17,7 @@ import com.lagradost.cloudstream3.extractors.BullStream
 import com.lagradost.cloudstream3.extractors.ByteShare
 import com.lagradost.cloudstream3.extractors.Cda
 import com.lagradost.cloudstream3.extractors.Cdnplayer
+import com.lagradost.cloudstream3.extractors.CdnwishCom
 import com.lagradost.cloudstream3.extractors.Chillx
 import com.lagradost.cloudstream3.extractors.CineGrabber
 import com.lagradost.cloudstream3.extractors.Cinestart
@@ -53,6 +54,7 @@ import com.lagradost.cloudstream3.extractors.FileMoonIn
 import com.lagradost.cloudstream3.extractors.FileMoonSx
 import com.lagradost.cloudstream3.extractors.Filesim
 import com.lagradost.cloudstream3.extractors.Fplayer
+import com.lagradost.cloudstream3.extractors.Geodailymotion
 import com.lagradost.cloudstream3.extractors.GMPlayer
 import com.lagradost.cloudstream3.extractors.Gdriveplayer
 import com.lagradost.cloudstream3.extractors.Gdriveplayerapi
@@ -66,6 +68,7 @@ import com.lagradost.cloudstream3.extractors.Gdriveplayerorg
 import com.lagradost.cloudstream3.extractors.Gdriveplayerus
 import com.lagradost.cloudstream3.extractors.Gofile
 import com.lagradost.cloudstream3.extractors.GuardareStream
+import com.lagradost.cloudstream3.extractors.GoodstreamExtractor
 import com.lagradost.cloudstream3.extractors.Guccihide
 import com.lagradost.cloudstream3.extractors.Hxfile
 import com.lagradost.cloudstream3.extractors.JWPlayer
@@ -104,11 +107,15 @@ import com.lagradost.cloudstream3.extractors.Odnoklassniki
 import com.lagradost.cloudstream3.extractors.TauVideo
 import com.lagradost.cloudstream3.extractors.SibNet
 import com.lagradost.cloudstream3.extractors.ContentX
+import com.lagradost.cloudstream3.extractors.D0000d
+import com.lagradost.cloudstream3.extractors.D000dCom
+import com.lagradost.cloudstream3.extractors.DoodstreamCom
 import com.lagradost.cloudstream3.extractors.EmturbovidExtractor
 import com.lagradost.cloudstream3.extractors.Hotlinger
 import com.lagradost.cloudstream3.extractors.FourCX
 import com.lagradost.cloudstream3.extractors.PlayRu
 import com.lagradost.cloudstream3.extractors.FourPlayRu
+import com.lagradost.cloudstream3.extractors.FourPichive
 import com.lagradost.cloudstream3.extractors.HDMomPlayer
 import com.lagradost.cloudstream3.extractors.HDPlayerSystem
 import com.lagradost.cloudstream3.extractors.VideoSeyred
@@ -185,6 +192,7 @@ import com.lagradost.cloudstream3.extractors.Vanfem
 import com.lagradost.cloudstream3.extractors.Vicloud
 import com.lagradost.cloudstream3.extractors.VidSrcExtractor
 import com.lagradost.cloudstream3.extractors.VidSrcExtractor2
+import com.lagradost.cloudstream3.extractors.VidSrcTo
 import com.lagradost.cloudstream3.extractors.VideoVard
 import com.lagradost.cloudstream3.extractors.VideovardSX
 import com.lagradost.cloudstream3.extractors.Vidgomunime
@@ -223,7 +231,10 @@ import com.lagradost.cloudstream3.extractors.Zplayer
 import com.lagradost.cloudstream3.extractors.ZplayerV2
 import com.lagradost.cloudstream3.extractors.Ztreamhub
 import com.lagradost.cloudstream3.extractors.EPlayExtractor
+import com.lagradost.cloudstream3.extractors.FlaswishCom
+import com.lagradost.cloudstream3.extractors.SfastwishCom
 import com.lagradost.cloudstream3.extractors.Vtbe
+import com.lagradost.cloudstream3.extractors.WishembedPro
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import kotlinx.coroutines.delay
@@ -306,7 +317,18 @@ enum class ExtractorLinkType {
     /** No support at the moment */
     TORRENT,
     /** No support at the moment */
-    MAGNET,
+    MAGNET;
+
+    // See https://www.iana.org/assignments/media-types/media-types.xhtml
+    fun getMimeType(): String {
+        return when (this) {
+            VIDEO -> "video/mp4"
+            M3U8 -> "application/x-mpegURL"
+            DASH -> "application/dash+xml"
+            TORRENT -> "application/x-bittorrent"
+            MAGNET -> "application/x-bittorrent"
+        }
+    }
 }
 
 private fun inferTypeFromUrl(url: String): ExtractorLinkType {
@@ -735,6 +757,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     FourCX(),
     PlayRu(),
     FourPlayRu(),
+    FourPichive(),
     HDMomPlayer(),
     HDPlayerSystem(),
     VideoSeyred(),
@@ -761,6 +784,9 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     DoodSoExtractor(),
     DoodLaExtractor(),
     Dooood(),
+    D0000d(),
+    D000dCom(),
+    DoodstreamCom(),
     DoodWsExtractor(),
     DoodShExtractor(),
     DoodWatchExtractor(),
@@ -838,6 +864,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     Guccihide(),
     FileMoon(),
     FileMoonSx(),
+
     Vido(),
     Linkbox(),
     Acefile(),
@@ -864,6 +891,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     Gdriveplayerorg(),
     Gdriveplayerus(),
     Gdriveplayerco(),
+    GoodstreamExtractor(),
     Gdriveplayer(),
     DatabaseGdrive(),
     DatabaseGdrive2(),
@@ -876,6 +904,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     Streamlare(),
     VidSrcExtractor(),
     VidSrcExtractor2(),
+    VidSrcTo(),
     PlayLtXyz(),
     AStreamHub(),
     Vidplay(),
@@ -891,6 +920,10 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     Megacloud(),
     VidhideExtractor(),
     StreamWishExtractor(),
+    WishembedPro(),
+    CdnwishCom(),
+    FlaswishCom(),
+    SfastwishCom(),
     EmturbovidExtractor(),
     Vtbe(),
     EPlayExtractor(),
@@ -898,7 +931,9 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     Simpulumlamerop(),
     Urochsunloath(),
     Yipsu(),
-    MetaGnathTuggers()
+    MetaGnathTuggers(),
+    Geodailymotion(),
+    
 )
 
 
@@ -980,7 +1015,7 @@ abstract class ExtractorApi {
     abstract val mainUrl: String
     abstract val requiresReferer: Boolean
 
-    /** Determines which plugin a given extractor is from */
+    /** Determines which plugin a given provider is from. This is the full path to the plugin. */
     var sourcePlugin: String? = null
 
     //suspend fun getSafeUrl(url: String, referer: String? = null): List<ExtractorLink>? {
