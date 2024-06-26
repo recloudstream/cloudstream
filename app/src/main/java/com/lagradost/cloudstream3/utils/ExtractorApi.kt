@@ -101,6 +101,7 @@ import com.lagradost.cloudstream3.extractors.Mp4Upload
 import com.lagradost.cloudstream3.extractors.Mvidoo
 import com.lagradost.cloudstream3.extractors.MwvnVizcloudInfo
 import com.lagradost.cloudstream3.extractors.MyCloud
+import com.lagradost.cloudstream3.extractors.MegaF
 import com.lagradost.cloudstream3.extractors.Neonime7n
 import com.lagradost.cloudstream3.extractors.Neonime8n
 import com.lagradost.cloudstream3.extractors.Odnoklassniki
@@ -910,6 +911,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     Vidplay(),
     VidplayOnline(),
     MyCloud(),
+    MegaF(),
 
     Cda(),
     Dailymotion(),
