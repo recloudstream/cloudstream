@@ -22,6 +22,11 @@ class MyCloud : Vidplay() {
     override val mainUrl = "https://mcloud.bz"
 }
 
+class MegaF : Vidplay() {
+    override val name = "MegaF"
+    override val mainUrl = "https://megaf.cc"
+}
+
 class VidplayOnline : Vidplay() {
     override val mainUrl = "https://vidplay.online"
 }
