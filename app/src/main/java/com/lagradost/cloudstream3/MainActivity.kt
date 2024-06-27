@@ -758,6 +758,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
 
     lateinit var viewModel: ResultViewModel2
     lateinit var syncViewModel: SyncViewModel
+    private var libraryViewModel: LibraryViewModel? = null
 
     /** kinda dirty, however it signals that we should use the watch status as sync or not*/
     var isLocalList: Boolean = false
