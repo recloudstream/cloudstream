@@ -2,7 +2,6 @@ package com.lagradost.cloudstream3.ui.download
 
 import android.app.Activity
 import android.app.Dialog
-import android.content.ActivityNotFoundException
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
@@ -33,7 +32,6 @@ import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.ui.download.DownloadButtonSetup.handleDownloadClick
 import com.lagradost.cloudstream3.ui.player.BasicLink
-import com.lagradost.cloudstream3.ui.player.DownloadedPlayerActivity
 import com.lagradost.cloudstream3.ui.player.GeneratorPlayer
 import com.lagradost.cloudstream3.ui.player.LinkGenerator
 import com.lagradost.cloudstream3.ui.player.OfflinePlaybackHelper.playUri
@@ -280,6 +278,6 @@ class DownloadFragment : Fragment() {
     ) { result ->
         if (result.resultCode != Activity.RESULT_OK) return@registerForActivityResult
         val selectedVideoUri = result?.data?.data ?: return@registerForActivityResult
-        playUri(context ?: return@registerForActivityResult, selectedVideoUri)
+        playUri(activity ?: return@registerForActivityResult, selectedVideoUri)
     }
 }

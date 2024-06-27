@@ -54,11 +54,11 @@ class DownloadedPlayerActivity : AppCompatActivity() {
             if (item?.uri != null)
                 playUri(this, item.uri)
             else if (url != null)
-                playLink(url)
+                playLink(this, url)
             else if (data != null)
                 playUri(this, data)
             else if (extraText != null)
-                playLink(extraText)
+                playLink(this, extraText)
             else {
                 finish()
                 return
