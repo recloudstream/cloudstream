@@ -33,9 +33,10 @@ import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.ui.download.DownloadButtonSetup.handleDownloadClick
 import com.lagradost.cloudstream3.ui.player.BasicLink
-import com.lagradost.cloudstream3.ui.player.DownloadFileGenerator
+import com.lagradost.cloudstream3.ui.player.DownloadedPlayerActivity
 import com.lagradost.cloudstream3.ui.player.GeneratorPlayer
 import com.lagradost.cloudstream3.ui.player.LinkGenerator
+import com.lagradost.cloudstream3.ui.player.OfflinePlaybackHelper.playUri
 import com.lagradost.cloudstream3.ui.result.FOCUS_SELF
 import com.lagradost.cloudstream3.ui.result.setLinearListLayout
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
@@ -44,14 +45,12 @@ import com.lagradost.cloudstream3.utils.AppUtils.loadResult
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.DOWNLOAD_EPISODE_CACHE
 import com.lagradost.cloudstream3.utils.DataStore
-import com.lagradost.cloudstream3.utils.ExtractorUri
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.setAppBarNoScrollFlagsOnTV
 import com.lagradost.cloudstream3.utils.VideoDownloadManager
-import com.lagradost.safefile.SafeFile
 import java.net.URI
 
 const val DOWNLOAD_NAVIGATE_TO = "downloadpage"
@@ -206,15 +205,13 @@ class DownloadFragment : Fragment() {
             .setType("video/*")
             .addCategory(Intent.CATEGORY_OPENABLE)
             .addFlags(FLAG_GRANT_READ_URI_PERMISSION) // Request temporary access
-        try {
+        normalSafeApiCall {
             videoResultLauncher.launch(
                 Intent.createChooser(
                     intent,
                     getString(R.string.open_local_video)
                 )
             )
-        } catch (t: ActivityNotFoundException) {
-            t.printStackTrace()
         }
     }
 
@@ -281,28 +278,8 @@ class DownloadFragment : Fragment() {
     private val videoResultLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
-            val intentData = result?.data?.data
-            intentData.let { selectedVideoUri ->
-                val name = SafeFile.fromUri(
-                    context ?: return@let ,
-                    selectedVideoUri ?: return@registerForActivityResult
-                )?.name()
-
-                activity?.navigate(
-                    R.id.global_to_navigation_player,
-                    GeneratorPlayer.newInstance(
-                        DownloadFileGenerator(
-                            listOf(
-                                ExtractorUri(
-                                    uri = selectedVideoUri,
-                                    name = name ?: "Local video: $selectedVideoUri"
-                                )
-                            ),
-                        )
-                    )
-                )
-            }
-        }
+        if (result.resultCode != Activity.RESULT_OK) return@registerForActivityResult
+        val selectedVideoUri = result?.data?.data ?: return@registerForActivityResult
+        playUri(context ?: return@registerForActivityResult, selectedVideoUri)
     }
 }
