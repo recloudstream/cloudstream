@@ -476,7 +476,7 @@
     <string name="plugin_deleted">Плагін видалено</string>
     <string name="is_adult">18+</string>
     <string name="audio_tracks">Аудіо доріжки</string>
-    <string name="download_all_plugins_from_repo">Завантажити всі плагіни з цього репозиторію\?</string>
+    <string name="download_all_plugins_from_repo">Увага: CloudStream 3 не несе жодної відповідальності за використання сторонніх розширень і не надає жодної підтримки для них!</string>
     <string name="player_pref">Бажаний відеоплеєр</string>
     <string name="safe_mode_title">Увімкнено безпечний режим</string>
     <string name="extension_authors">Автори</string>
@@ -600,7 +600,7 @@
     <string name="biometric_setting_summary">Розблокуйте застосунок за допомогою відбитка пальця, Face ID, PIN-коду, графічного ключа та пароля.</string>
     <string name="biometric_warning">Резервне копіювання даних CloudStream виконано. Хоча ймовірність цього дуже низька, всі пристрої можуть вести себе по-різному. У рідкісних випадках, коли ви не можете отримати доступ до застосунку, повністю очистіть дані застосунку та відновіть їх з резервної копії. Просимо вибачення за незручності, пов \'язані з цим.</string>
     <string name="biometric_unsupported">Біометрична автентифікація не підтримується на цьому пристрої</string>
-    <string name="biometric_prompt_description">Цей екран було закрито через кілька невдалих спроб. Будь ласка, перезапустіть застосунок.</string>
+    <string name="biometric_prompt_description">Після кількох невдалих спроб підказка закриється. Просто перезапустіть застосунок, щоб спробувати ще раз.</string>
     <string name="resume_remaining" formatted="true">%s
 \nзалишилося</string>
     <string name="unfavorite">Вилучити з обраного</string>
@@ -617,4 +617,21 @@
     <string name="audio_book_singular">Аудіо книга</string>
     <string name="music_singlar">Музика</string>
     <string name="custom_media_singluar">Медіа</string>
+    <string name="reset_btn">Скинути</string>
+    <string name="episode_upcoming_format" formatted="true">Наступний через %s</string>
+    <string name="next_season_episode_format" formatted="true">%1$d сезон %2$d епізод вийде через</string>
+    <string name="player_settings_play_in_fcast">Fcast</string>
+    <string name="player_settings_select_cast_device">Виберіть пристрій для трансляції</string>
+    <string name="episode_action_cast_mirror">Трансляція через дзеркало</string>
+    <string name="cs3wiki">CloudStream Wiki</string>
+    <string name="pref_category_security">Безпека</string>
+    <string name="pref_category_accounts">Облікові записи</string>
+    <string name="qr_image">Зображення QR-коду</string>
+    <string name="open_downloaded_repo">Відкрити репозиторій</string>
+    <string name="device_pin_url_message">Відвідайте <b>%s</b> на своєму смартфоні або комп\'ютері та введіть вищевказаний код</string>
+    <string name="device_pin_error_message">Не вдається отримати PIN-код пристрою, спробуйте автентифікацію по місцю</string>
+    <string name="device_pin_expired_message">Термін дії PIN-коду минув!</string>
+    <string name="device_pin_counter_text">Термін дії коду закінчується через %1$dхв %2$dс</string>
+    <string name="auth_locally">Автентифікація по місцю</string>
+    <string name="dismiss">Відхилити</string>
 </resources>

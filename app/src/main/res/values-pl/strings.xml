@@ -400,7 +400,7 @@
     <string name="view_public_repositories_button">Zobacz repozytoria społeczności</string>
     <string name="view_public_repositories_button_short">Publiczna lista</string>
     <string name="uppercase_all_subtitles">Wszystkie napisy wielką literą</string>
-    <string name="download_all_plugins_from_repo">Pobrać wszystkie rozszerzenia z tego repozytorium\?</string>
+    <string name="download_all_plugins_from_repo">Uwaga: CloudStream 3 nie ponosi żadnej odpowiedzialności za korzystanie z rozszerzeń innych dostawców i nie zapewnia dla nich żadnego wsparcia!</string>
     <string name="single_plugin_disabled" formatted="true">%s (Wyłączone)</string>
     <string name="tracks">Ścieżki</string>
     <string name="audio_tracks">Ścieżki audio</string>
@@ -597,7 +597,7 @@
     <string name="test_extensions_summary">Ten test jest przeznaczony wyłącznie dla programistów i nie weryfikuje ani nie zaprzecza działaniu żadnego rozszerzenia.</string>
     <string name="biometric_setting">Zablokuj za pomocą biometrii</string>
     <string name="password_pin_authentication_title">Uwierzytelnianie hasłem/kodem PIN</string>
-    <string name="biometric_prompt_description">Ten ekran został zamknięty z powodu wielu nieudanych prób. Uruchom ponownie aplikację.</string>
+    <string name="biometric_prompt_description">Po kilku nieudanych próbach monit zostanie zamknięty. Aby spróbować ponownie, po prostu uruchom ponownie aplikację.</string>
     <string name="biometric_authentication_title">Odblokuj CloudStream</string>
     <string name="biometric_unsupported">To urządzenie nie obsługuje uwierzytelniania biometrycznego</string>
     <string name="biometric_setting_summary">Odblokuj aplikację za pomocą odcisku palca, identyfikatora twarzy, kodu PIN, wzoru i hasła.</string>
@@ -618,4 +618,21 @@
     <string name="custom_media_singluar">Multimedia</string>
     <string name="app_unrestricted_toast">Użycie akumulatora przez aplikację jest już ustawione na nieograniczone</string>
     <string name="battery_dialog_message">Aby zapewnić nieprzerwane pobieranie i powiadomienia o subskrybowanych programach telewizyjnych, CloudStream potrzebuje pozwolenia na działanie w tle. Naciskając OK, zostaniesz przekierowany do informacji o aplikacji. Tam przewiń do użycia akumulatora przez aplikację i ustaw je na nieograniczone. Pamiętaj, że to pozwolenie nie oznacza, że CS3 będzie zużywać akumulator. Będzie działać w tle tylko wtedy, gdy będzie to konieczne, na przykład podczas odbierania powiadomień lub pobierania filmów z oficjalnych rozszerzeń. Jeśli zdecydujesz się anulować, możesz dostosować to ustawienie później w ustawieniach głównych.</string>
+    <string name="reset_btn">Resetuj</string>
+    <string name="episode_upcoming_format" formatted="true">Nadchodzące w %s</string>
+    <string name="next_season_episode_format" formatted="true">Odcinek %2$d sezonu %1$d wyjdzie za</string>
+    <string name="player_settings_play_in_fcast">Fcast</string>
+    <string name="player_settings_select_cast_device">Wybierz urządzenie do transmisji</string>
+    <string name="episode_action_cast_mirror">Mirror transmisji</string>
+    <string name="cs3wiki">Wiki CloudStream</string>
+    <string name="pref_category_security">Bezpieczeństwo</string>
+    <string name="pref_category_accounts">Konta</string>
+    <string name="auth_locally">Uwierzytelniaj lokalnie</string>
+    <string name="qr_image">Obraz kodu QR</string>
+    <string name="device_pin_error_message">Nie można uzyskać kodu PIN urządzenia. Spróbuj uwierzytelnienia lokalnego</string>
+    <string name="device_pin_expired_message">Kod PIN stracił ważność!</string>
+    <string name="device_pin_counter_text">Kod wygasa za %1$dm %2$ds</string>
+    <string name="dismiss">Odrzuć</string>
+    <string name="open_downloaded_repo">Otwórz repozytorium</string>
+    <string name="device_pin_url_message">Odwiedź <b>%s</b> na swoim smartfonie lub komputerze i wprowadź powyższy kod</string>
 </resources>

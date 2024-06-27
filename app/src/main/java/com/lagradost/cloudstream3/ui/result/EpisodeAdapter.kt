@@ -192,15 +192,15 @@ class EpisodeAdapter(
                 downloadButton.isVisible = hasDownloadSupport
                 downloadButton.setDefaultClickListener(
                     VideoDownloadHelper.DownloadEpisodeCached(
-                        card.name,
-                        card.poster,
-                        card.episode,
-                        card.season,
-                        card.id,
-                        card.parentId,
-                        card.rating,
-                        card.description,
-                        System.currentTimeMillis(),
+                        name = card.name,
+                        poster = card.poster,
+                        episode = card.episode,
+                        season = card.season,
+                        id = card.id,
+                        parentId = card.parentId,
+                        rating = card.rating,
+                        description = card.description,
+                        cacheTime = System.currentTimeMillis(),
                     ), null
                 ) {
                     when (it.action) {
@@ -343,15 +343,15 @@ class EpisodeAdapter(
                 downloadButton.isVisible = hasDownloadSupport
                 downloadButton.setDefaultClickListener(
                     VideoDownloadHelper.DownloadEpisodeCached(
-                        card.name,
-                        card.poster,
-                        card.episode,
-                        card.season,
-                        card.id,
-                        card.parentId,
-                        card.rating,
-                        card.description,
-                        System.currentTimeMillis(),
+                        name = card.name,
+                        poster = card.poster,
+                        episode = card.episode,
+                        season = card.season,
+                        id = card.id,
+                        parentId = card.parentId,
+                        rating = card.rating,
+                        description = card.description,
+                        cacheTime = System.currentTimeMillis(),
                     ), null
                 ) {
                     when (it.action) {

@@ -33,7 +33,7 @@
     <string name="reload_error">Försök ansluta igen…</string>
     <string name="go_back">Gå tillbaka</string>
     <string name="episode_poster_img_des">@string/result_poster_img_des</string>
-    <string name="play_episode">Spela Avsnitt</string>
+    <string name="play_episode">Spela avsnitt</string>
     <string name="download">Ladda ner</string>
     <string name="download_storage_text">Intern lagring</string>
     <string name="app_dubbed_text">Dub</string>
@@ -71,7 +71,7 @@
     <string name="subs_hold_to_reset_to_default">Håll inne för att återställa till standard</string>
     <string name="continue_watching">Fortsätt titta</string>
     <string name="action_remove_watching">Ta bort</string>
-    <string name="action_open_watching">Mer information</string>
+    <string name="action_open_watching">Mer info</string>
     <string name="vpn_might_be_needed">En VPN kan behövas för att den här leverantören ska fungera korrekt</string>
     <string name="vpn_torrent">Denna leverantör är en torrent, en VPN rekommenderas</string>
     <string name="torrent_plot">Beskrivning</string>
@@ -162,12 +162,12 @@
     <string name="dont_show_again">Visa inte igen</string>
     <string name="update">Uppdatera</string>
     <string name="download_started">Nerladdningar startad</string>
-    <string name="download_failed">Nerladdning Misslyckades</string>
+    <string name="download_failed">Nerladdning misslyckades</string>
     <string name="downloaded">Nerladdad</string>
     <string name="downloading">Laddar ner</string>
-    <string name="download_paused">Nerladdning Pausad</string>
-    <string name="download_canceled">Nerladdning Avbryten</string>
-    <string name="download_done">Nerladdning Färdig</string>
+    <string name="download_paused">Nerladdning pausad</string>
+    <string name="download_canceled">Nerladdning avbryten</string>
+    <string name="download_done">Nerladdning färdig</string>
     <string name="popup_resume_download">Återupta nerladdning</string>
     <string name="popup_pause_download">Pausa nerladdning</string>
     <string name="pause">Pausa</string>
@@ -204,7 +204,7 @@
     <string name="logout">Logga ut</string>
     <string name="account">konto</string>
     <string name="download_path_pref">Nerladdningsplats</string>
-    <string name="type_re_watching">Tittar på nytt</string>
+    <string name="type_re_watching">Ser om</string>
     <string name="automatic">Automatisk</string>
     <string name="dns_pref">DNS över HTTPS</string>
     <string name="dns_pref_summary">" "</string>
@@ -217,7 +217,7 @@
     <string name="double_tap_to_pause_settings_des">Dubbeltryck i mitten för att pausa</string>
     <string name="restore_settings">Återställ data från backup</string>
     <string name="category_account">Konton och säkerhet</string>
-    <string name="category_updates">Uppdateringar och backup</string>
+    <string name="category_updates">Uppdateringar och säkerhetskopiering</string>
     <string name="automatic_plugin_updates">Automatiska pluginuppdateringar</string>
     <string name="next_episode_time_day_format" formatted="true">%1$dd %2$dh %3$dm</string>
     <string name="search_hint_site" formatted="true">Sök %s…</string>
@@ -230,7 +230,7 @@
     <string name="autoplay_next_settings">Autospela nästa episod</string>
     <string name="play_trailer_button">Spela Trailer</string>
     <string name="autoplay_next_settings_des">Starta nästa episod när nuvarande slutar</string>
-    <string name="next_episode_format" formatted="true">Episod %d kommer släppas om</string>
+    <string name="next_episode_format" formatted="true">Episod %d kommer att släppas om</string>
     <string name="duration_format" formatted="true">%d min</string>
     <string name="show_trailers_settings">Visa trailers</string>
     <string name="action_open_play">@string/home_play</string>
@@ -366,7 +366,7 @@
     <string name="provider_languages_tip">Titta på videor på dessa språk</string>
     <string name="previous">Föregående</string>
     <string name="tracks">Spår</string>
-    <string name="update_started">Uppdatering påbörjad</string>
+    <string name="update_started">Uppdatering startad</string>
     <string name="test_log">Logg</string>
     <string name="double_tap_to_seek_amount_settings">Videospelarens hoppsträcka (Sekunder)</string>
     <string name="action_add_to_bookmarks">Ändra status</string>
@@ -436,7 +436,7 @@
     <string name="batch_download_nothing_to_download_format" formatted="true">All %s har redan laddats ner</string>
     <string name="download_all_plugins_from_repo">Ladda ner alla tillägg från den här databasen?</string>
     <string name="safe_mode_title">Felsäkert läge på</string>
-    <string name="apply_on_restart">Applicera vid omstart</string>
+    <string name="apply_on_restart">Starta om appen för att se ändringar.</string>
     <string name="player_settings_play_in_app">Intern spelare</string>
     <string name="quality_cam_hd">Kamera HD</string>
     <string name="plugin_downloaded">Tillägg nedladdad</string>
@@ -460,7 +460,7 @@
     <string name="subscription_episode_released">Avsnitt %d släppt!</string>
     <string name="empty_library_logged_in_message">Den här listan är tom. Försök byta till en annan.</string>
     <string name="plugin_deleted">Tillägg borttagen</string>
-    <string name="plugin_loaded">Tillägg laddade</string>
+    <string name="plugin_loaded">Tillägg laddad</string>
     <string name="plugin_singular">Tillägg</string>
     <string name="backup_frequency">Säkerhetskopierings antal</string>
     <string name="episode_sync_settings">Uppdatera visnings förlopp</string>
@@ -490,7 +490,7 @@
     <string name="quality_webrip">Web</string>
     <string name="poster_image">Affischbild</string>
     <string name="preferred_media_subtext">Vad vill du se</string>
-    <string name="add_repository">Lägg till databas</string>
+    <string name="add_repository">Lägg till tillägg</string>
     <string name="plugins_updated" formatted="true">Uppdaterade %d tillägg</string>
     <string name="batch_download_finish_format" formatted="true">Nedladdat %1$d %2$s</string>
     <string name="plugins_disabled" formatted="true">Inaktiverad: %d</string>
@@ -524,7 +524,7 @@
     <string name="pref_category_bypass">Förbikoppla ISP</string>
     <string name="quality_cam_rip">Kamera</string>
     <string name="quality_cam">Kamera</string>
-    <string name="safe_mode_description">Alla tillägg stängdes av på grund av en krasch för att hjälpa dig hitta den som orsakar problem.</string>
+    <string name="safe_mode_description">Alla tillägg stängdes av på grund av en krasch för att hjälpa dig hitta det tillägget som orsakar problem.</string>
     <string name="extension_size">Storlek</string>
     <string name="extension_authors">Författarna</string>
     <string name="extension_types">Stödd</string>
@@ -599,9 +599,31 @@
     <string name="biometric_setting_summary">Lås upp appen med Fingerprint, Face ID, PIN, mönster eller lösenord.</string>
     <string name="biometric_authentication_title">Lås upp CloudStream</string>
     <string name="biometric_unsupported">Biometrisk autentisering stöds inte på den här enheten</string>
-    <string name="biometric_prompt_description">Detta fönster stängs efter några misslyckade försök. Du måste starta om appen.</string>
+    <string name="biometric_prompt_description">Skärmen stängdes av på grund av flera misslyckade försök. Starta om applikationen.</string>
     <string name="favorite">Favorit</string>
     <string name="unfavorite">Ta bort från favoriter</string>
     <string name="resume_remaining" formatted="true">%s
 \nkvarstår</string>
+    <string name="toast_copied">kopierad!</string>
+    <string name="repo_copy_label">Tilläggs namn och URL</string>
+    <string name="battery_dialog_message">För att säkerställa oavbrutna nedladdningar och aviseringar för prenumererade tv-program behöver CloudStream tillstånd att köras i bakgrunden. Genom att trycka på OK kommer du till App info. Där bläddrar du till appens batterianvändning och ställer in batterianvändningen på obegränsad. Observera att denna behörighet inte betyder att CS3 kommer att tömma ditt batteri. Den fungerar bara i bakgrunden när det behövs, till exempel när du tar emot aviseringar eller laddar ner videor från officiella tillägg. Om du väljer att avbryta kan du ändra denna inställning senare i allmänna inställningar.</string>
+    <string name="biometric_warning">Din CloudStream-data har säkerhetskopierats nu. Även om möjligheten till detta är mycket liten, kan alla enheter bete sig olika. I det sällsynta fallet att du blir utelåst från att komma åt appen, rensa appdata helt och återställ från en säkerhetskopia. Vi ber om ursäkt för eventuella besvär som detta uppstår.</string>
+    <string name="audio_book_singular">Ljudbok</string>
+    <string name="clipboard_permission_error">Det gick inte att komma åt urklipp. Försök igen.</string>
+    <string name="ok">OK</string>
+    <string name="battery_dialog_title">Inaktivera batterioptimering</string>
+    <string name="app_unrestricted_toast">Appens batterianvändning är redan inställd på obegränsad</string>
+    <string name="app_info_intent_error">Det gick inte att öppna CloudStreams appinformation.</string>
+    <string name="music_singlar">Musik</string>
+    <string name="reset_btn">Återställ</string>
+    <string name="episode_upcoming_format" formatted="true">Kommer ut om %s</string>
+    <string name="clipboard_unknown_error">Fel vid kopiering, kopiera logcat och kontakta appsupport.</string>
+    <string name="custom_media_singluar">Media</string>
+    <string name="player_settings_play_in_fcast">Fcast</string>
+    <string name="episode_action_cast_mirror">Cast mirror</string>
+    <string name="next_season_episode_format" formatted="true">Säsong %1$d Avsnitt %2$d kommer att släppas om</string>
+    <string name="player_settings_select_cast_device">Välj cast-enhet</string>
+    <string name="cs3wiki">CloudStream Wiki</string>
+    <string name="pref_category_accounts">Konton</string>
+    <string name="pref_category_security">Säkerhet</string>
 </resources>

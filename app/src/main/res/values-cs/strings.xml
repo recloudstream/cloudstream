@@ -489,7 +489,7 @@
     <string name="add_site_summary">Přidat klon existujícího webu s jinou adresou URL</string>
     <string name="example_site_url">https://example.com</string>
     <string name="example_lang_name">Kód jazyka (cs)</string>
-    <string name="download_all_plugins_from_repo">Stáhnout všechny doplňky z tohoto repozitáře\?</string>
+    <string name="download_all_plugins_from_repo">Varování: CloudStream 3 nenese žádnou zodpovědnost za používání rozšíření třetích stran a neposkytuje pro ně žádnou podporu!</string>
     <string name="single_plugin_disabled" formatted="true">%s (zakázáno)</string>
     <string name="tracks">Stopy</string>
     <string name="nsfw">NSFW</string>
@@ -623,7 +623,7 @@
     <string name="password_pin_authentication_title">Ověření heslem/PINem</string>
     <string name="biometric_unsupported">Biometrické ověření není na tomto zařízení podporováno</string>
     <string name="biometric_setting_summary">Odemkněte aplikaci otiskem prstu, obličejem, PINem, gestem nebo heslem.</string>
-    <string name="biometric_prompt_description">Tato obrazovka byla po několika nezdařilých pokusech uzavřena. Restartujte prosím aplikaci.</string>
+    <string name="biometric_prompt_description">Po několika nezdařilých pokusech se okno zavře. Pro opětovný pokus restartujte aplikaci.</string>
     <string name="biometric_warning">Vaše data z aplikace CloudStream byla nyní zálohována. Ačkoli je tato možnost velmi malá, různá zařízení se mohou chovat různě. Ve výjimečném případě, že se vám přístup k aplikaci zablokuje, data aplikace zcela vymažte a obnovte je ze zálohy. Velmi se omlouváme za případné nepříjemnosti z toho plynoucí.</string>
     <string name="unfavorite">Odebrat z oblíbených</string>
     <string name="resume_remaining" formatted="true">%s
@@ -641,4 +641,21 @@
     <string name="battery_dialog_title">Zakažte optimalizace baterie</string>
     <string name="battery_dialog_message">Aby bylo zajištěno nepřetržité stahování a upozornění na odebírané seriály, potřebuje aplikace CloudStream povolení ke spuštění na pozadí. Stisknutím tlačítka OK budete přesměrováni na informace o aplikaci. Tam přejděte na položku Využití baterie aplikací a nastavte možnost Využití baterie na hodnotu Neomezené. Upozorňujeme, že toto povolení neznamená, že CS3 bude vybíjet baterii. Na pozadí bude pracovat pouze v případě potřeby, například při přijímání oznámení nebo stahování videí z oficiálních rozšíření. Pokud se rozhodnete toto nastavení zrušit, můžete jej později upravit v Obecných nastaveních.</string>
     <string name="audio_book_singular">Audiokniha</string>
+    <string name="reset_btn">Resetovat</string>
+    <string name="episode_upcoming_format" formatted="true">Vychází %s</string>
+    <string name="next_season_episode_format" formatted="true">Epizoda %2$d ze série %1$d bude vydána za</string>
+    <string name="episode_action_cast_mirror">Vysílat zrcadlení</string>
+    <string name="player_settings_play_in_fcast">Fcast</string>
+    <string name="player_settings_select_cast_device">Vyberte zařízení k vysílání</string>
+    <string name="cs3wiki">CloudStream Wiki</string>
+    <string name="pref_category_security">Zabezpečení</string>
+    <string name="qr_image">Obrázek QR kódu</string>
+    <string name="dismiss">Zavřít</string>
+    <string name="open_downloaded_repo">Otevřít repozitář</string>
+    <string name="device_pin_url_message">Navštivte <b>%s</b> na vašem zařízení nebo počítači a zadejte kód výše</string>
+    <string name="device_pin_error_message">Nepodařilo se získat PIN kód, zkuste místní ověření</string>
+    <string name="device_pin_counter_text">Kód vyprší za %1$dm %2$ds</string>
+    <string name="pref_category_accounts">Účty</string>
+    <string name="auth_locally">Lokální ověření</string>
+    <string name="device_pin_expired_message">PIN kód vypršel!</string>
 </resources>

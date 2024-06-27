@@ -1,12 +1,10 @@
-CloudStream-3 memudahkan Anda streaming dan mengunduh Film, Seri TV, dan Anime.
+CloudStream-3 memungkinkan Anda melakukan streaming dan mengunduh Film, Serial TV, dan Anime.
 
-
-Aplikasi ini hadir tanpa iklan dan pelacak analitik dan
-mendukung beberapa situs trailer & film, dan
-masih banyak lagi, misalnya
+Aplikasi ini hadir tanpa iklan dan analitik apa pun dan
+mendukung beberapa situs cuplikan & film, dan banyak lagi, misalnya.
 
 Bookmark
 
-Mengunduh subtitle
+Pengunduhan subtitle
 
 Dukungan Chromecast

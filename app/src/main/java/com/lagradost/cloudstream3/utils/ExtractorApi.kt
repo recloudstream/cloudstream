@@ -101,6 +101,7 @@ import com.lagradost.cloudstream3.extractors.Mp4Upload
 import com.lagradost.cloudstream3.extractors.Mvidoo
 import com.lagradost.cloudstream3.extractors.MwvnVizcloudInfo
 import com.lagradost.cloudstream3.extractors.MyCloud
+import com.lagradost.cloudstream3.extractors.MegaF
 import com.lagradost.cloudstream3.extractors.Neonime7n
 import com.lagradost.cloudstream3.extractors.Neonime8n
 import com.lagradost.cloudstream3.extractors.Odnoklassniki
@@ -910,6 +911,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     Vidplay(),
     VidplayOnline(),
     MyCloud(),
+    MegaF(),
 
     Cda(),
     Dailymotion(),
@@ -1015,7 +1017,7 @@ abstract class ExtractorApi {
     abstract val mainUrl: String
     abstract val requiresReferer: Boolean
 
-    /** Determines which plugin a given extractor is from */
+    /** Determines which plugin a given provider is from. This is the full path to the plugin. */
     var sourcePlugin: String? = null
 
     //suspend fun getSafeUrl(url: String, referer: String? = null): List<ExtractorLink>? {

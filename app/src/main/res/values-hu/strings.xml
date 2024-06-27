@@ -365,7 +365,7 @@
     <string name="network_adress_example">https://példa.hu/példa.mp4</string>
     <string name="plugin_load_fail" formatted="true">Nem sikerült betölteni: %s</string>
     <string name="batch_download_start_format" formatted="true">Elkezdődött a(z) %1$d %2$s letöltése…</string>
-    <string name="download_all_plugins_from_repo">Töltse le az összes bővítményt ebből a tárolóból\?</string>
+    <string name="download_all_plugins_from_repo">Töltse le az összes bővítményt ebből a tárolóból?</string>
     <string name="safe_mode_title">Biztonságos mód bekapcsolva</string>
     <string name="extension_size">Méret</string>
     <string name="player_settings_play_in_mpv">MPV</string>

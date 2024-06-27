@@ -487,7 +487,7 @@
     <string name="pref_category_extensions">Uitbreidingen</string>
     <string name="skip_type_intro">Intro</string>
     <string name="view_public_repositories_button_short">Publieke lijst</string>
-    <string name="download_all_plugins_from_repo">Alle plugins uit deze repository downloaden\?</string>
+    <string name="download_all_plugins_from_repo">Alle plugins uit deze repository downloaden?</string>
     <string name="extension_rating" formatted="true">Beoordeling: %s</string>
     <string name="safe_mode_description">Alle extensies zijn uitgeschakeld door een crash om u te helpen degene te vinden die problemen veroorzaakt.</string>
     <string name="safe_mode_crash_info">Bekijk de crash info</string>

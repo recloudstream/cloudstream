@@ -53,7 +53,7 @@
     <string name="download_canceled">डाउनलोड रद्द गरियो</string>
     <string name="download_done">डाउनलोड भयो</string>
     <string name="update_started">अपडेट सुरु</string>
-    <string name="stream">स्ट्रिम</string>
+    <string name="stream">नेटवर्क स्ट्रीम</string>
     <string name="error_loading_links_toast">लिङ्क लोड गर्दा त्रुटि भयो</string>
     <string name="links_reloaded_toast">लिङ्कहरू रिलोड गरियो</string>
     <string name="download_storage_text">भित्री स्टोरेज</string>
@@ -70,7 +70,7 @@
     <string name="filter_bookmarks">बुकमार्कहरू फिल्टर गर्नुहोस्</string>
     <string name="error_bookmarks_text">बुकमार्कहरू</string>
     <string name="action_remove_from_bookmarks">हटाउनुहोस्</string>
-    <string name="action_add_to_bookmarks">हेरेको स्थिति राख्नुहोस्</string>
+    <string name="action_add_to_bookmarks">हेरेको स्थिति निर्धारण गर्नुहोस्</string>
     <string name="sort_copy">कपी</string>
     <string name="sort_close">बन्द</string>
     <string name="sort_clear">खाली गर्नुहोस्</string>
@@ -85,4 +85,47 @@
     <string name="pick_source">स्रोतहरू</string>
     <string name="pref_disable_acra">स्वचालित बग रिपोर्टिङ असक्षम गर्नुहोस्</string>
     <string name="sort_apply">लागू गर्नुहोस्</string>
+    <string name="provider_info_meta">साइट ले मेटाडाटा दिएको छैन,मेटाडाटा बिना भिडियो लोड नहुन सक्छ।</string>
+    <string name="next_season_episode_format" formatted="true">प्रकरण %1$d प्रसङ्ग %2$d प्रशारण हुनेवाला छ</string>
+    <string name="search_provider_text_providers">प्रोभाईडर उपयोग गरी खोज्नुहोस्</string>
+    <string name="subs_download_languages">भाषा डाउनलाेड गर्नुहोस्</string>
+    <string name="subs_subtitle_languages">उपशीर्षकको भाषा</string>
+    <string name="vpn_torrent">यो प्रोभाईडर torrent हो त्यसैले VPN प्रयाेग गर्नुहुन सिफारिश गरिन्छ</string>
+    <string name="torrent_plot">वर्णन</string>
+    <string name="normal_no_plot">केही विषय भेटिएन</string>
+    <string name="chromecast_subtitles_settings">Chromecast को उपशीर्षकहरु</string>
+    <string name="torrent_no_plot">केहीपनि वर्णन भेटिएन</string>
+    <string name="show_log_cat">Logcat देखाउनुहोस</string>
+    <string name="test_log">Log</string>
+    <string name="picture_in_picture">Picture-in-picture</string>
+    <string name="picture_in_picture_des">अरु एप माथी सानो प्लेयरमा पलेब्याक जारी राख्दछ</string>
+    <string name="player_speed">प्लेयर स्पीड</string>
+    <string name="subtitles_settings">उपशीर्षकको सेटिङ</string>
+    <string name="subs_window_color">विन्डोको रंग</string>
+    <string name="subs_subtitle_elevation">उपशीर्षक ऊंचाई</string>
+    <string name="subs_font_size">अक्षरको नाप</string>
+    <string name="subs_font">फन्ट</string>
+    <string name="search_provider_text_types">प्रकारको उपयोग गरी खोज्नुहोस्</string>
+    <string name="benene_count_text">%d केरा डेभलपर लाई दिइयो</string>
+    <string name="benene_count_text_none">एउटै पनी केरा दिइएन</string>
+    <string name="continue_watching">हेर्न सुचारु राख्नुहोस</string>
+    <string name="action_remove_watching">हटाउनुहोस्</string>
+    <string name="player_size_settings_des">कालो सीमा हटाउनुहोस</string>
+    <string name="player_subtitles_settings">उपशीर्षक</string>
+    <string name="subscribe_tooltip">नयाँ प्रसङ्ग को सूचना</string>
+    <string name="result_search_tooltip">अन्य एक्सटेन्सन मा खोज्नुहोस्</string>
+    <string name="recommendations_tooltip">सुुझाव हरु</string>
+    <string name="subs_text_color">अक्षरको रंग</string>
+    <string name="subs_outline_color">बाहिरी रेखा को रंग</string>
+    <string name="subs_background_color">पृष्ठभूमिको रंग</string>
+    <string name="subs_edge_type">धारको प्रकार</string>
+    <string name="subs_auto_select_language">भाषा अटो छनौट</string>
+    <string name="subs_hold_to_reset_to_default">रिसेट गर्न स्क्रिनमा थिचिराख्नुहोस्</string>
+    <string name="subs_import_text" formatted="true">फन्ट देखाउन %s मा राख्नुहोस्</string>
+    <string name="action_open_watching">अधिक जानकारी</string>
+    <string name="vpn_might_be_needed">यो प्रोभाईडर सही ढंगले प्रयोग गर्न VPN प्रयोग गर्नुपर्ने हुन सक्छ</string>
+    <string name="player_size_settings">प्लेयर resize गर्ने वटन</string>
+    <string name="player_subtitles_settings_des">प्लेयरको उपशीर्षकको सेटिङ</string>
+    <string name="repo_copy_label">रिपोजिटरी को नाम र यूआरएल</string>
+    <string name="toast_copied">कपी गरियो!</string>
 </resources>

@@ -18,7 +18,6 @@ import com.lagradost.cloudstream3.APIHolder.getApiProviderLangSettings
 import com.lagradost.cloudstream3.APIHolder.removePluginMapping
 import com.lagradost.cloudstream3.AcraApplication.Companion.getActivity
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
-import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.MainAPI.Companion.settingsForProvider
@@ -518,7 +517,7 @@ object PluginManager {
                 return true
             }
 
-            pluginInstance.__filename = fileName
+            pluginInstance.__filename = file.absolutePath
             if (manifest.requiresResources) {
                 Log.d(TAG, "Loading resources for ${data.internalName}")
                 // based on https://stackoverflow.com/questions/7483568/dynamic-resource-loading-from-other-apk

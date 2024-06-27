@@ -442,7 +442,7 @@
     <string name="update_notification_failed">לא ניתן להתקין את הגרסה החדשה של האפליקציה</string>
     <string name="batch_download">הורדת אצווה</string>
     <string name="plugin_singular">תוסף</string>
-    <string name="download_all_plugins_from_repo">הורד את כל התוספים ממאגר זה\?</string>
+    <string name="download_all_plugins_from_repo">הורד את כל התוספים ממאגר זה?</string>
     <string name="audio_tracks">רצועות שמע</string>
     <string name="tracks">מסלולים</string>
     <string name="player_settings_play_in_web">Web Video Cast</string>
