@@ -92,6 +92,7 @@ import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.appStri
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.appStringResumeWatching
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.appStringSearch
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.inAppAuths
+import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.localListApi
 import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.ui.APIRepository
 import com.lagradost.cloudstream3.ui.SyncWatchType
@@ -1115,8 +1116,8 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         libraryViewModel = ViewModelProvider(this)[LibraryViewModel::class.java]
         libraryViewModel?.currentApiName?.observe(this) {
             val syncAPI =  libraryViewModel?.currentSyncApi
-            Log.i("SYNC_API", syncAPI?.name.toString())
-            val icon = if (syncAPI?.name == "Local") {
+            Log.i("SYNC_API", "${syncAPI?.name}, ${syncAPI?.idPrefix}")
+            val icon = if (syncAPI?.idPrefix ==  localListApi.idPrefix) {
                 R.drawable.library_icon
             } else {
                 syncAPI?.icon ?: R.drawable.library_icon
