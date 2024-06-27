@@ -1,6 +1,5 @@
 package com.lagradost.cloudstream3.ui.download
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Dialog
 import android.content.ActivityNotFoundException
@@ -17,7 +16,6 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.result.ActivityResultCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
@@ -36,11 +34,8 @@ import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.ui.download.DownloadButtonSetup.handleDownloadClick
 import com.lagradost.cloudstream3.ui.player.BasicLink
 import com.lagradost.cloudstream3.ui.player.DownloadFileGenerator
-import com.lagradost.cloudstream3.ui.player.FullScreenPlayer
 import com.lagradost.cloudstream3.ui.player.GeneratorPlayer
-import com.lagradost.cloudstream3.ui.player.IPlayer
 import com.lagradost.cloudstream3.ui.player.LinkGenerator
-import com.lagradost.cloudstream3.ui.quicksearch.QuickSearchFragment.Companion.clickCallback
 import com.lagradost.cloudstream3.ui.result.FOCUS_SELF
 import com.lagradost.cloudstream3.ui.result.setLinearListLayout
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
@@ -103,7 +98,6 @@ class DownloadFragment : Fragment() {
 
     private var downloadDeleteEventListener: ((Int) -> Unit)? = null
 
-    @SuppressLint("StringFormatInvalid")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         hideKeyboard()
@@ -151,9 +145,12 @@ class DownloadFragment : Fragment() {
             )
         }
 
-        binding?.downloadStreamButton?.apply {
-            isGone = isLayout(TV)
-            setOnClickListener { showStreamInputDialog(it.context) }
+        binding?.apply {
+            openLocalVideoButton.setOnClickListener { openLocalVideo() }
+            downloadStreamButton.apply {
+                isGone = isLayout(TV)
+                setOnClickListener { showStreamInputDialog(it.context) }
+            }
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -201,6 +198,24 @@ class DownloadFragment : Fragment() {
     ) {
         textView?.text = getString(R.string.storage_size_format).format(getString(stringRes), formatShortFileSize(context, bytes))
         view?.setLayoutWidth(bytes)
+    }
+
+    private fun openLocalVideo() {
+        val intent = Intent()
+            .setAction(Intent.ACTION_GET_CONTENT)
+            .setType("video/*")
+            .addCategory(Intent.CATEGORY_OPENABLE)
+            .addFlags(FLAG_GRANT_READ_URI_PERMISSION) // Request temporary access
+        try {
+            videoResultLauncher.launch(
+                Intent.createChooser(
+                    intent,
+                    getString(R.string.open_local_video)
+                )
+            )
+        } catch (t: ActivityNotFoundException) {
+            t.printStackTrace()
+        }
     }
 
     private fun showStreamInputDialog(context: Context) {
@@ -259,34 +274,6 @@ class DownloadFragment : Fragment() {
             binding?.downloadStreamButton?.shrink()
         } else if (dy < -5) {
             binding?.downloadStreamButton?.extend()
-            binding.cancelBtt.setOnClickListener {
-                dialog.dismissSafe(activity)
-            }
-        }
-
-        binding?.openLocalVideoButton?.setOnClickListener {
-            val intent = Intent()
-                .setAction(Intent.ACTION_GET_CONTENT)
-                .setType("video/*")
-                .addCategory(Intent.CATEGORY_OPENABLE)
-                .addFlags(FLAG_GRANT_READ_URI_PERMISSION) // Request temporary access
-            try {
-                videoResultLauncher.launch(Intent.createChooser(intent, getString(R.string.open_local_video)))
-            }
-            catch (t: ActivityNotFoundException) {
-                t.printStackTrace()
-            }
-        }
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            binding?.downloadList?.setOnScrollChangeListener { _, _, scrollY, _, oldScrollY ->
-                val dy = scrollY - oldScrollY
-                if (dy > 0) { //check for scroll down
-                    binding?.downloadStreamButton?.shrink() // hide
-                } else if (dy < -5) {
-                    binding?.downloadStreamButton?.extend() // show
-                }
-            }
         }
     }
 
@@ -295,27 +282,27 @@ class DownloadFragment : Fragment() {
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
-                val intentData = result?.data?.data
-                intentData.let { selectedVideoUri ->
-                    val name = SafeFile.fromUri(
-                        context ?: return@let ,
-                        selectedVideoUri ?: return@registerForActivityResult
-                    )?.name()
+            val intentData = result?.data?.data
+            intentData.let { selectedVideoUri ->
+                val name = SafeFile.fromUri(
+                    context ?: return@let ,
+                    selectedVideoUri ?: return@registerForActivityResult
+                )?.name()
 
-                    activity?.navigate(
-                        R.id.global_to_navigation_player,
-                        GeneratorPlayer.newInstance(
-                            DownloadFileGenerator(
-                                listOf(
-                                    ExtractorUri(
-                                        uri = selectedVideoUri,
-                                        name = name ?: "Local video: $selectedVideoUri"
-                                    )
-                                ),
-                            )
+                activity?.navigate(
+                    R.id.global_to_navigation_player,
+                    GeneratorPlayer.newInstance(
+                        DownloadFileGenerator(
+                            listOf(
+                                ExtractorUri(
+                                    uri = selectedVideoUri,
+                                    name = name ?: "Local video: $selectedVideoUri"
+                                )
+                            ),
                         )
                     )
-                }
+                )
             }
         }
+    }
 }
