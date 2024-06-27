@@ -1,8 +1,13 @@
 package com.lagradost.cloudstream3.ui.download
 
+import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.Dialog
+import android.content.ActivityNotFoundException
 import android.content.ClipboardManager
 import android.content.Context
+import android.content.Intent
+import android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION
 import android.os.Build
 import android.os.Bundle
 import android.text.format.Formatter.formatShortFileSize
@@ -11,6 +16,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.Toast
+import androidx.activity.result.ActivityResultCallback
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
@@ -27,8 +34,12 @@ import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.ui.download.DownloadButtonSetup.handleDownloadClick
 import com.lagradost.cloudstream3.ui.player.BasicLink
+import com.lagradost.cloudstream3.ui.player.DownloadFileGenerator
+import com.lagradost.cloudstream3.ui.player.FullScreenPlayer
 import com.lagradost.cloudstream3.ui.player.GeneratorPlayer
+import com.lagradost.cloudstream3.ui.player.IPlayer
 import com.lagradost.cloudstream3.ui.player.LinkGenerator
+import com.lagradost.cloudstream3.ui.quicksearch.QuickSearchFragment.Companion.clickCallback
 import com.lagradost.cloudstream3.ui.result.FOCUS_SELF
 import com.lagradost.cloudstream3.ui.result.setLinearListLayout
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
@@ -37,6 +48,7 @@ import com.lagradost.cloudstream3.utils.AppUtils.loadResult
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.DOWNLOAD_EPISODE_CACHE
 import com.lagradost.cloudstream3.utils.DataStore
+import com.lagradost.cloudstream3.utils.ExtractorUri
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
@@ -44,8 +56,8 @@ import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.setAppBarNoScrollFlagsOnTV
 import com.lagradost.cloudstream3.utils.VideoDownloadHelper
 import com.lagradost.cloudstream3.utils.VideoDownloadManager
+import com.lagradost.safefile.SafeFile
 import java.net.URI
-
 
 const val DOWNLOAD_NAVIGATE_TO = "downloadpage"
 
@@ -89,11 +101,12 @@ class DownloadFragment : Fragment() {
 
         val localBinding = FragmentDownloadsBinding.inflate(inflater, container, false)
         binding = localBinding
-        return localBinding.root//inflater.inflate(R.layout.fragment_downloads, container, false)
+        return localBinding.root
     }
 
     private var downloadDeleteEventListener: ((Int) -> Unit)? = null
 
+    @SuppressLint("StringFormatInvalid")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         hideKeyboard()
@@ -266,6 +279,21 @@ class DownloadFragment : Fragment() {
                 dialog.dismissSafe(activity)
             }
         }
+
+        binding?.openLocalVideoButton?.setOnClickListener {
+            val intent = Intent()
+                .setAction(Intent.ACTION_GET_CONTENT)
+                .setType("video/*")
+                .addCategory(Intent.CATEGORY_OPENABLE)
+                .addFlags(FLAG_GRANT_READ_URI_PERMISSION) // Request temporary access
+            try {
+                videoResultLauncher.launch(Intent.createChooser(intent, getString(R.string.open_local_video)))
+            }
+            catch (t: ActivityNotFoundException) {
+                t.printStackTrace()
+            }
+        }
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             binding?.downloadList?.setOnScrollChangeListener { _, _, scrollY, _, oldScrollY ->
                 val dy = scrollY - oldScrollY
@@ -280,4 +308,33 @@ class DownloadFragment : Fragment() {
 
         fixPaddingStatusbar(binding?.downloadRoot)
     }
+
+    // Open local video from files using content provider x safeFile
+    private val videoResultLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+                val intentData = result?.data?.data
+                intentData.let { selectedVideoUri ->
+                    val name = SafeFile.fromUri(
+                        context ?: return@let ,
+                        selectedVideoUri ?: return@registerForActivityResult
+                    )?.name()
+
+                    activity?.navigate(
+                        R.id.global_to_navigation_player,
+                        GeneratorPlayer.newInstance(
+                            DownloadFileGenerator(
+                                listOf(
+                                    ExtractorUri(
+                                        uri = selectedVideoUri,
+                                        name = name ?: "Local video: $selectedVideoUri"
+                                    )
+                                ),
+                            )
+                        )
+                    )
+                }
+            }
+        }
 }
