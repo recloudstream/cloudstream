@@ -1114,7 +1114,13 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         // Change library icon with logo of current api in sync
         libraryViewModel = ViewModelProvider(this)[LibraryViewModel::class.java]
         libraryViewModel?.currentApiName?.observe(this) {
-            val icon = libraryViewModel?.currentSyncApi?.icon ?: R.drawable.library_icon
+            val syncAPI =  libraryViewModel?.currentSyncApi
+            Log.i("SYNC_API", syncAPI?.name.toString())
+            val icon = if (syncAPI?.name == "Local") {
+                R.drawable.library_icon
+            } else {
+                syncAPI?.icon ?: R.drawable.library_icon
+            }
 
             binding?.apply {
                 navRailView.menu.findItem(R.id.navigation_library)?.setIcon(icon)
