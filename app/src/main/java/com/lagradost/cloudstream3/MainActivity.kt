@@ -98,7 +98,6 @@ import com.lagradost.cloudstream3.ui.SyncWatchType
 import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_NAVIGATE_TO
 import com.lagradost.cloudstream3.ui.home.HomeViewModel
-import com.lagradost.cloudstream3.ui.library.LAST_SYNC_API_KEY
 import com.lagradost.cloudstream3.ui.library.LibraryViewModel
 import com.lagradost.cloudstream3.ui.player.BasicLink
 import com.lagradost.cloudstream3.ui.player.GeneratorPlayer
@@ -145,7 +144,6 @@ import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStore.setKey
 import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.DataStoreHelper.accounts
-import com.lagradost.cloudstream3.utils.DataStoreHelper.currentAccount
 import com.lagradost.cloudstream3.utils.DataStoreHelper.migrateResumeWatching
 import com.lagradost.cloudstream3.utils.Event
 import com.lagradost.cloudstream3.utils.InAppUpdater.Companion.runAutoUpdate
@@ -572,29 +570,6 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         binding?.apply {
             navRailView.isVisible = isNavVisible && landscape
             navView.isVisible = isNavVisible && !landscape
-
-            // Change library icon with logo of current api in sync
-            val libraryViewModel = ViewModelProvider(this@MainActivity)[LibraryViewModel::class.java]
-            val lastAPI = getKey<String>("$currentAccount/$LAST_SYNC_API_KEY").toString()
-
-            fun setLibraryIcon(drawable: Int) {
-                navRailView.apply {
-                    menu.findItem(R.id.navigation_library)?.setIcon(drawable)
-                }
-                navView.apply {
-                    menu.findItem(R.id.navigation_library)?.setIcon(drawable)
-                }
-            }
-
-            // observing library vm changes icon without app restart
-            libraryViewModel.currentApiName.observe(this@MainActivity) {
-                when (lastAPI) {
-                    "MAL" -> setLibraryIcon(R.drawable.mal_logo)
-                    "AniList" -> setLibraryIcon(R.drawable.ic_anilist_icon)
-                    "Simkl" -> setLibraryIcon(R.drawable.simkl_logo)
-                    else -> setLibraryIcon(R.drawable.library_icon)
-                }
-            }
         }
     }
 
@@ -787,10 +762,9 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
     /** kinda dirty, however it signals that we should use the watch status as sync or not*/
     var isLocalList: Boolean = false
     override fun onCreateView(name: String, context: Context, attrs: AttributeSet): View? {
-        viewModel =
-            ViewModelProvider(this)[ResultViewModel2::class.java]
-        syncViewModel =
-            ViewModelProvider(this)[SyncViewModel::class.java]
+
+        viewModel = ViewModelProvider(this)[ResultViewModel2::class.java]
+        syncViewModel = ViewModelProvider(this)[SyncViewModel::class.java]
 
         return super.onCreateView(name, context, attrs)
     }
@@ -1135,6 +1109,17 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
             settingsManager.getBoolean(getString(R.string.enable_nsfw_on_providers_key), false)
 
         MainAPI.settingsForProvider = settingsForProvider
+
+        // Change library icon with logo of current api in sync
+        libraryViewModel = ViewModelProvider(this)[LibraryViewModel::class.java]
+        libraryViewModel?.currentApiName?.observe(this) {
+            val icon = libraryViewModel?.currentSyncApi?.icon ?: R.drawable.library_icon
+
+            binding?.apply {
+                navRailView.menu.findItem(R.id.navigation_library)?.setIcon(icon)
+                navView.menu.findItem(R.id.navigation_library)?.setIcon(icon)
+            }
+        }
 
         loadThemes(this)
         updateLocale()
