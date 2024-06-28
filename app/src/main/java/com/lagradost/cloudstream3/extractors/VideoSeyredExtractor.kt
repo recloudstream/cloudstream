@@ -41,7 +41,7 @@ open class VideoSeyred : ExtractorApi() {
                     source  = this.name,
                     name    = this.name,
                     url     = source.file,
-                    referer = ext_ref,
+                    referer = "${mainUrl}/",
                     quality = Qualities.Unknown.value,
                     type    = INFER_TYPE
                 )
