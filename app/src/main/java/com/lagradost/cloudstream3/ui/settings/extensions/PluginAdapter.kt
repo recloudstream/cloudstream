@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.lagradost.cloudstream3.AcraApplication.Companion.getActivity
 import com.lagradost.cloudstream3.PROVIDER_STATUS_DOWN
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.databinding.RepositoryItemBinding
 import com.lagradost.cloudstream3.plugins.PluginManager
 import com.lagradost.cloudstream3.plugins.VotingApi.getVotes
@@ -150,7 +151,7 @@ class PluginAdapter(
                 R.drawable.ic_baseline_delete_outline_24
             else R.drawable.netflix_download
 
-            binding.nsfwMarker.isVisible = metadata.tvTypes?.contains("NSFW") ?: false
+            binding.nsfwMarker.isVisible = metadata.tvTypes?.contains(TvType.NSFW.name) ?: false
             binding.actionButton.setImageResource(drawableInt)
 
             binding.actionButton.setOnClickListener {
