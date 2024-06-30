@@ -44,9 +44,6 @@ import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.RecyclerView
-import com.fasterxml.jackson.databind.DeserializationFeature
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.google.android.gms.cast.framework.CastContext
 import com.google.android.gms.cast.framework.Session
 import com.google.android.gms.cast.framework.SessionManager
@@ -95,12 +92,14 @@ import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.appStri
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.appStringResumeWatching
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.appStringSearch
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.inAppAuths
+import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.localListApi
 import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.ui.APIRepository
 import com.lagradost.cloudstream3.ui.SyncWatchType
 import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_NAVIGATE_TO
 import com.lagradost.cloudstream3.ui.home.HomeViewModel
+import com.lagradost.cloudstream3.ui.library.LibraryViewModel
 import com.lagradost.cloudstream3.ui.player.BasicLink
 import com.lagradost.cloudstream3.ui.player.GeneratorPlayer
 import com.lagradost.cloudstream3.ui.player.LinkGenerator
@@ -162,8 +161,6 @@ import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import com.lagradost.cloudstream3.utils.USER_PROVIDER_API
 import com.lagradost.cloudstream3.utils.USER_SELECTED_HOMEPAGE_API
 import com.lagradost.cloudstream3.utils.fcast.FcastManager
-import com.lagradost.nicehttp.Requests
-import com.lagradost.nicehttp.ResponseParser
 import com.lagradost.safefile.SafeFile
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -570,18 +567,10 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                 false
             }
         }
+
         binding?.apply {
-            navView.isVisible = isNavVisible && !landscape
             navRailView.isVisible = isNavVisible && landscape
-
-            // Hide library on TV since it is not supported yet :(
-            //val isTrueTv = isTrueTvSettings()
-            //navView.menu.findItem(R.id.navigation_library)?.isVisible = !isTrueTv
-            //navRailView.menu.findItem(R.id.navigation_library)?.isVisible = !isTrueTv
-
-            // Hide downloads on TV
-            //navView.menu.findItem(R.id.navigation_downloads)?.isVisible = !isTrueTv
-            //navRailView.menu.findItem(R.id.navigation_downloads)?.isVisible = !isTrueTv
+            navView.isVisible = isNavVisible && !landscape
         }
     }
 
@@ -770,14 +759,14 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
 
     lateinit var viewModel: ResultViewModel2
     lateinit var syncViewModel: SyncViewModel
+    private var libraryViewModel: LibraryViewModel? = null
 
     /** kinda dirty, however it signals that we should use the watch status as sync or not*/
     var isLocalList: Boolean = false
     override fun onCreateView(name: String, context: Context, attrs: AttributeSet): View? {
-        viewModel =
-            ViewModelProvider(this)[ResultViewModel2::class.java]
-        syncViewModel =
-            ViewModelProvider(this)[SyncViewModel::class.java]
+
+        viewModel = ViewModelProvider(this)[ResultViewModel2::class.java]
+        syncViewModel = ViewModelProvider(this)[SyncViewModel::class.java]
 
         return super.onCreateView(name, context, attrs)
     }
@@ -1122,6 +1111,23 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
             settingsManager.getBoolean(getString(R.string.enable_nsfw_on_providers_key), false)
 
         MainAPI.settingsForProvider = settingsForProvider
+
+        // Change library icon with logo of current api in sync
+        libraryViewModel = ViewModelProvider(this)[LibraryViewModel::class.java]
+        libraryViewModel?.currentApiName?.observe(this) {
+            val syncAPI =  libraryViewModel?.currentSyncApi
+            Log.i("SYNC_API", "${syncAPI?.name}, ${syncAPI?.idPrefix}")
+            val icon = if (syncAPI?.idPrefix ==  localListApi.idPrefix) {
+                R.drawable.library_icon
+            } else {
+                syncAPI?.icon ?: R.drawable.library_icon
+            }
+
+            binding?.apply {
+                navRailView.menu.findItem(R.id.navigation_library)?.setIcon(icon)
+                navView.menu.findItem(R.id.navigation_library)?.setIcon(icon)
+            }
+        }
 
         loadThemes(this)
         updateLocale()
