@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.network
 
+import android.util.Base64
 import android.util.Log
 import android.webkit.CookieManager
 import androidx.annotation.AnyThread
@@ -96,6 +97,8 @@ class CloudflareKiller : Interceptor {
         val userAgentMap = WebViewResolver.getWebViewUserAgent()?.let {
             mapOf("user-agent" to it)
         } ?: emptyMap()
+
+        Base64.URL_SAFE
 
         val headers =
             getHeaders(request.headers.toMap() + userAgentMap, cookies + request.cookies)

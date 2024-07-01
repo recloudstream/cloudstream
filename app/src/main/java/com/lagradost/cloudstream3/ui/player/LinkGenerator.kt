@@ -1,9 +1,27 @@
 package com.lagradost.cloudstream3.ui.player
 
+import android.net.Uri
+import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.amap
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.utils.*
 import java.net.URI
+
+data class ExtractorUri(
+    val uri: Uri,
+    val name: String,
+
+    val basePath: String? = null,
+    val relativePath: String? = null,
+    val displayName: String? = null,
+
+    val id: Int? = null,
+    val parentId: Int? = null,
+    val episode: Int? = null,
+    val season: Int? = null,
+    val headerName: String? = null,
+    val tvType: TvType? = null,
+)
 
 /**
  * Used to open the player more easily with the LinkGenerator

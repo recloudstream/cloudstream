@@ -6,7 +6,6 @@ import android.util.Rational
 import com.lagradost.cloudstream3.ui.subtitles.SaveCaptionStyle
 import com.lagradost.cloudstream3.utils.EpisodeSkip
 import com.lagradost.cloudstream3.utils.ExtractorLink
-import com.lagradost.cloudstream3.utils.ExtractorUri
 
 enum class PlayerEventType(val value: Int) {
     //Stop(-1),

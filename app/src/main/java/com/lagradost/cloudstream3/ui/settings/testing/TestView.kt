@@ -13,7 +13,7 @@ import androidx.core.view.isVisible
 import androidx.core.widget.ContentLoadingProgressBar
 import com.google.android.material.button.MaterialButton
 import com.lagradost.cloudstream3.R
-import com.lagradost.cloudstream3.utils.AppUtils.animateProgressTo
+import com.lagradost.cloudstream3.utils.AppContextUtils.animateProgressTo
 
 class TestView @JvmOverloads constructor(
     context: Context,
