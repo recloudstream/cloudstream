@@ -98,8 +98,6 @@ class CloudflareKiller : Interceptor {
             mapOf("user-agent" to it)
         } ?: emptyMap()
 
-        Base64.URL_SAFE
-
         val headers =
             getHeaders(request.headers.toMap() + userAgentMap, cookies + request.cookies)
         return app.baseClient.newCall(
