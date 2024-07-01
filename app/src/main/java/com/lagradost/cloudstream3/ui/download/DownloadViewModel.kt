@@ -18,7 +18,6 @@ import com.lagradost.cloudstream3.utils.DataStore.getKeys
 import com.lagradost.cloudstream3.utils.VideoDownloadHelper
 import com.lagradost.cloudstream3.utils.VideoDownloadManager
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class DownloadViewModel : ViewModel() {
@@ -43,8 +42,8 @@ class DownloadViewModel : ViewModel() {
 
     fun updateList(context: Context) = viewModelScope.launchSafe {
         val children = withContext(Dispatchers.IO) {
-            val headers = context.getKeys(DOWNLOAD_EPISODE_CACHE)
-            headers.mapNotNull { context.getKey<VideoDownloadHelper.DownloadEpisodeCached>(it) }
+            context.getKeys(DOWNLOAD_EPISODE_CACHE)
+                .mapNotNull { context.getKey<VideoDownloadHelper.DownloadEpisodeCached>(it) }
                 .distinctBy { it.id } // Remove duplicates
         }
 
@@ -57,10 +56,10 @@ class DownloadViewModel : ViewModel() {
 
         // Gets all children downloads
         withContext(Dispatchers.IO) {
-            for (c in children) {
-                val childFile = VideoDownloadManager.getDownloadFileInfoAndUpdateSettings(context, c.id) ?: continue
+            children.forEach { c ->
+                val childFile = VideoDownloadManager.getDownloadFileInfoAndUpdateSettings(context, c.id) ?: return@forEach
 
-                if (childFile.fileLength <= 1) continue
+                if (childFile.fileLength <= 1) return@forEach
                 val len = childFile.totalBytes
                 val flen = childFile.fileLength
 

@@ -167,7 +167,6 @@ open class PieFetchButton(context: Context, attributeSet: AttributeSet) :
         callback: (DownloadClickEvent) -> Unit
     ) {
         this.progressText = textView
-        this.setPersistentId(card.id)
         view.setOnClickListener {
             if (isZeroBytes) {
                 removeKey(KEY_RESUME_PACKAGES, card.id.toString())

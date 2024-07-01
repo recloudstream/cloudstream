@@ -114,6 +114,7 @@ class DownloadAdapter(
                         downloadHeaderGotoChild.isVisible = false
 
                         downloadButton.setDefaultClickListener(card.child, downloadHeaderInfo, mediaClickCallback)
+                        downloadButton.setProgress(card.currentBytes, card.totalBytes)
                         downloadButton.isVisible = true
 
                         episodeHolder.setOnClickListener {
@@ -167,6 +168,7 @@ class DownloadAdapter(
                     }
 
                     downloadButton.setDefaultClickListener(card.data, downloadChildEpisodeTextExtra, mediaClickCallback)
+                    downloadButton.setProgress(card.currentBytes, card.totalBytes)
 
                     downloadChildEpisodeText.apply {
                         text = context.getNameFull(d.name, d.episode, d.season)

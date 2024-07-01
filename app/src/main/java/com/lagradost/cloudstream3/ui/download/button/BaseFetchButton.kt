@@ -64,42 +64,18 @@ abstract class BaseFetchButton(context: Context, attributeSet: AttributeSet) :
     var currentMetaData: DownloadMetadata =
         DownloadMetadata(0, 0, 0, null)
 
-    fun setPersistentId(id: Int) {
-        persistentId = id
-        currentMetaData.id = id
-
-        VideoDownloadManager.getDownloadFileInfoAndUpdateSettings(context, id)?.let { savedData ->
-            val downloadedBytes = savedData.fileLength
-            val totalBytes = savedData.totalBytes
-
-            /*lastRequest = savedData.uriRequest
-            files = savedData.files
-
-            var totalBytes: Long = 0
-            var downloadedBytes: Long = 0
-            for (file in savedData.files) {
-                downloadedBytes += file.completedLength
-                totalBytes += file.length
-            }*/
-            setProgress(downloadedBytes, totalBytes)
-            // some extra padding for just in case
-            val status = VideoDownloadManager.downloadStatus[id]
-                ?: if (downloadedBytes > 1024L && downloadedBytes + 1024L >= totalBytes) DownloadStatusTell.IsDone else DownloadStatusTell.IsPaused
-            currentMetaData.apply {
-                this.id = id
-                this.downloadedLength = downloadedBytes
-                this.totalLength = totalBytes
-                this.status = status
-            }
-            setStatus(status)
-        } ?: run {
-            resetView()
-        }
-    }
-
     abstract fun setStatus(status: VideoDownloadManager.DownloadType?)
 
     open fun setProgress(downloadedBytes: Long, totalBytes: Long) {
+        val status = VideoDownloadManager.downloadStatus[id]
+            ?: if (downloadedBytes > 1024L && downloadedBytes + 1024L >= totalBytes) DownloadStatusTell.IsDone else DownloadStatusTell.IsPaused
+        currentMetaData.apply {
+            this.id = id
+            this.downloadedLength = downloadedBytes
+            this.totalLength = totalBytes
+            this.status = status
+        }
+        setStatus(status)
         isZeroBytes = downloadedBytes == 0L
         progressBar.post {
             val steps = 10000L
@@ -174,7 +150,7 @@ abstract class BaseFetchButton(context: Context, attributeSet: AttributeSet) :
         val pid = persistentId
         if (pid != null) {
             // refresh in case of onDetachedFromWindow -> onAttachedToWindow while still being ???????
-            setPersistentId(pid)
+            currentMetaData.id = pid
         }
 
         super.onAttachedToWindow()
@@ -198,5 +174,4 @@ abstract class BaseFetchButton(context: Context, attributeSet: AttributeSet) :
      * Get a clean slate again, might be useful in recyclerview?
      * */
     abstract fun resetView()
-
 }
