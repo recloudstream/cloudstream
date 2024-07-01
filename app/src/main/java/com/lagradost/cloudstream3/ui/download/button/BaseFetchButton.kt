@@ -9,6 +9,8 @@ import androidx.annotation.LayoutRes
 import androidx.core.view.isVisible
 import androidx.core.widget.ContentLoadingProgressBar
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
+import com.lagradost.cloudstream3.utils.Coroutines.mainWork
 import com.lagradost.cloudstream3.utils.VideoDownloadManager
 
 typealias DownloadStatusTell = VideoDownloadManager.DownloadType
@@ -64,11 +66,42 @@ abstract class BaseFetchButton(context: Context, attributeSet: AttributeSet) :
     var currentMetaData: DownloadMetadata =
         DownloadMetadata(0, 0, 0, null)
 
+    private var progressSet = false
+    var setProgressText = true
+
+    fun setPersistentId(id: Int) {
+        persistentId = id
+        currentMetaData.id = id
+
+        if (progressSet) return
+
+        ioSafe {
+            val savedData = VideoDownloadManager.getDownloadFileInfoAndUpdateSettings(context, id)
+
+            mainWork {
+                if (savedData != null) {
+                    val downloadedBytes = savedData.fileLength
+                    val totalBytes = savedData.totalBytes
+
+                    setProgress(downloadedBytes, totalBytes)
+                    applyMetaData(id, downloadedBytes, totalBytes)
+                } else run { resetView() }
+            }
+        }
+    }
+
     abstract fun setStatus(status: VideoDownloadManager.DownloadType?)
 
-    open fun setProgress(downloadedBytes: Long, totalBytes: Long) {
-        val status = VideoDownloadManager.downloadStatus[id]
-            ?: if (downloadedBytes > 1024L && downloadedBytes + 1024L >= totalBytes) DownloadStatusTell.IsDone else DownloadStatusTell.IsPaused
+    fun getStatus(id:Int, downloadedBytes: Long, totalBytes: Long): DownloadStatusTell {
+        return VideoDownloadManager.downloadStatus[id]
+            ?: if (downloadedBytes > 1024L && downloadedBytes + 1024L >= totalBytes) {
+                DownloadStatusTell.IsDone
+            } else DownloadStatusTell.IsPaused
+    }
+
+    fun applyMetaData(id:Int, downloadedBytes: Long, totalBytes: Long) {
+        val status = getStatus(id, downloadedBytes, totalBytes)
+
         currentMetaData.apply {
             this.id = id
             this.downloadedLength = downloadedBytes
@@ -76,6 +109,10 @@ abstract class BaseFetchButton(context: Context, attributeSet: AttributeSet) :
             this.status = status
         }
         setStatus(status)
+    }
+
+    open fun setProgress(downloadedBytes: Long, totalBytes: Long) {
+        progressSet = true
         isZeroBytes = downloadedBytes == 0L
         progressBar.post {
             val steps = 10000L
@@ -100,13 +137,16 @@ abstract class BaseFetchButton(context: Context, attributeSet: AttributeSet) :
             if (isZeroBytes) {
                 progressText?.isVisible = false
             } else {
-                progressText?.apply {
-                    val currentMbString = Formatter.formatShortFileSize(context, downloadedBytes)
-                    val totalMbString = Formatter.formatShortFileSize(context, totalBytes)
-                    text =
-                            //if (isTextPercentage) "%d%%".format(setCurrentBytes * 100L / setTotalBytes) else
-                        context?.getString(R.string.download_size_format)
-                            ?.format(currentMbString, totalMbString)
+                if (setProgressText) {
+                    progressText?.apply {
+                        val currentMbString =
+                            Formatter.formatShortFileSize(context, downloadedBytes)
+                        val totalMbString = Formatter.formatShortFileSize(context, totalBytes)
+                        text =
+                                //if (isTextPercentage) "%d%%".format(setCurrentBytes * 100L / setTotalBytes) else
+                            context?.getString(R.string.download_size_format)
+                                ?.format(currentMbString, totalMbString)
+                    }
                 }
             }
 
@@ -150,7 +190,7 @@ abstract class BaseFetchButton(context: Context, attributeSet: AttributeSet) :
         val pid = persistentId
         if (pid != null) {
             // refresh in case of onDetachedFromWindow -> onAttachedToWindow while still being ???????
-            currentMetaData.id = pid
+            setPersistentId(pid)
         }
 
         super.onAttachedToWindow()

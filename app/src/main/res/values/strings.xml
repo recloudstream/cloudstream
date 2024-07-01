@@ -339,6 +339,10 @@
     <string name="livestreams">Livestreams</string>
     <string name="nsfw">NSFW</string>
     <string name="others">Others</string>
+    <plurals name="episodes">
+        <item quantity="one">Episode</item>
+        <item quantity="other">Episodes</item>
+    </plurals>
     <!--singular-->
     <string name="movies_singular">Movie</string>
     <string name="tv_series_singular">Series</string>
