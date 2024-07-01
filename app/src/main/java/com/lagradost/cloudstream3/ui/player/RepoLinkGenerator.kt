@@ -7,7 +7,6 @@ import com.lagradost.cloudstream3.LoadResponse
 import com.lagradost.cloudstream3.ui.APIRepository
 import com.lagradost.cloudstream3.ui.result.ResultEpisode
 import com.lagradost.cloudstream3.utils.ExtractorLink
-import com.lagradost.cloudstream3.utils.ExtractorUri
 import kotlin.math.max
 import kotlin.math.min
 

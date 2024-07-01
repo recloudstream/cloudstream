@@ -13,7 +13,7 @@ import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.DownloadChildEpisodeBinding
 import com.lagradost.cloudstream3.databinding.DownloadHeaderEpisodeBinding
 import com.lagradost.cloudstream3.mvvm.logError
-import com.lagradost.cloudstream3.utils.AppUtils.getNameFull
+import com.lagradost.cloudstream3.utils.AppContextUtils.getNameFull
 import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.DataStoreHelper.fixVisual
 import com.lagradost.cloudstream3.utils.UIHelper.setImage

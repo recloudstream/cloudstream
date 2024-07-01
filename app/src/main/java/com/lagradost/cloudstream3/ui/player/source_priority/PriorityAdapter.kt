@@ -4,7 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.lagradost.cloudstream3.databinding.PlayerPrioritizeItemBinding
-import com.lagradost.cloudstream3.utils.AppUtils
+import com.lagradost.cloudstream3.utils.AppContextUtils
 
 data class SourcePriority<T>(
     val data: T,
@@ -13,7 +13,7 @@ data class SourcePriority<T>(
 )
 
 class PriorityAdapter<T>(override val items: MutableList<SourcePriority<T>>) :
-    AppUtils.DiffAdapter<SourcePriority<T>>(items) {
+    AppContextUtils.DiffAdapter<SourcePriority<T>>(items) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return PriorityViewHolder(
             PlayerPrioritizeItemBinding.inflate(LayoutInflater.from(parent.context),parent,false),

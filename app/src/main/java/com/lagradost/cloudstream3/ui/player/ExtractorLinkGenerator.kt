@@ -1,7 +1,6 @@
 package com.lagradost.cloudstream3.ui.player
 
 import com.lagradost.cloudstream3.utils.ExtractorLink
-import com.lagradost.cloudstream3.utils.ExtractorUri
 
 class ExtractorLinkGenerator(
     private val links: List<ExtractorLink>,

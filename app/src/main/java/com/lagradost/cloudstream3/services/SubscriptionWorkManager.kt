@@ -10,13 +10,13 @@ import androidx.core.app.NotificationCompat
 import androidx.core.net.toUri
 import androidx.work.*
 import com.lagradost.cloudstream3.*
-import com.lagradost.cloudstream3.APIHolder.getApiDubstatusSettings
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.plugins.PluginManager
 import com.lagradost.cloudstream3.ui.result.txt
-import com.lagradost.cloudstream3.utils.AppUtils.createNotificationChannel
+import com.lagradost.cloudstream3.utils.AppContextUtils.createNotificationChannel
+import com.lagradost.cloudstream3.utils.AppContextUtils.getApiDubstatusSettings
 import com.lagradost.cloudstream3.utils.Coroutines.ioWork
 import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getAllSubscriptions

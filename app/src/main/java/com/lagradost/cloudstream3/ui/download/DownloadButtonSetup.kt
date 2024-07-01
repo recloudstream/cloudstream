@@ -9,11 +9,11 @@ import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.ui.player.DownloadFileGenerator
+import com.lagradost.cloudstream3.ui.player.ExtractorUri
 import com.lagradost.cloudstream3.ui.player.GeneratorPlayer
-import com.lagradost.cloudstream3.utils.AppUtils.getNameFull
-import com.lagradost.cloudstream3.utils.AppUtils.setDefaultFocus
+import com.lagradost.cloudstream3.utils.AppContextUtils.getNameFull
+import com.lagradost.cloudstream3.utils.AppContextUtils.setDefaultFocus
 import com.lagradost.cloudstream3.utils.DOWNLOAD_HEADER_CACHE
-import com.lagradost.cloudstream3.utils.ExtractorUri
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.VideoDownloadHelper
 import com.lagradost.cloudstream3.utils.VideoDownloadManager

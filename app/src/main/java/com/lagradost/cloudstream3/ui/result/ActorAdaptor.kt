@@ -138,7 +138,7 @@ class ActorAdaptor(
                     voiceActorImageHolder.isVisible = false
                     voiceActorName.isVisible = false
                 } else {
-                    voiceActorName.text = actor.voiceActor.name
+                    voiceActorName.text = actor.voiceActor?.name
                     voiceActorImageHolder.isVisible = voiceActorImage.setImage(vaImage)
                 }
             }

@@ -1,4 +1,5 @@
 import com.codingfeline.buildkonfig.compiler.FieldSpec
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 
 plugins {
     kotlin("multiplatform")
@@ -12,6 +13,11 @@ kotlin {
     androidTarget()
     jvm()
 
+    @OptIn(ExperimentalKotlinGradlePluginApi::class)
+    compilerOptions {
+        freeCompilerArgs.add("-Xexpect-actual-classes")
+    }
+
     sourceSets {
         commonMain.dependencies {
             implementation("com.github.Blatzar:NiceHttp:0.4.11") // HTTP Lib
@@ -19,6 +25,9 @@ kotlin {
             ^ Don't Bump Jackson above 2.13.1 , Crashes on Android TV's and FireSticks that have Min API
             Level 25 or Less. */
             implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")
+            implementation("me.xdrop:fuzzywuzzy:1.4.0") // Match extractors
+            implementation("org.mozilla:rhino:1.7.15") // run JavaScript
+            implementation("com.github.teamnewpipe:NewPipeExtractor:fafd471")
         }
     }
 }

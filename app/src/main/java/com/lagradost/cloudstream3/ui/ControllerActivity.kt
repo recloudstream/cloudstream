@@ -23,13 +23,13 @@ import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.safeApiCall
-import com.lagradost.cloudstream3.sortSubs
 import com.lagradost.cloudstream3.sortUrls
 import com.lagradost.cloudstream3.ui.player.LoadType
 import com.lagradost.cloudstream3.ui.player.RepoLinkGenerator
 import com.lagradost.cloudstream3.ui.player.SubtitleData
 import com.lagradost.cloudstream3.ui.result.ResultEpisode
 import com.lagradost.cloudstream3.ui.subtitles.ChromecastSubtitlesFragment
+import com.lagradost.cloudstream3.utils.AppContextUtils.sortSubs
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
 import com.lagradost.cloudstream3.utils.CastHelper.awaitLinks
 import com.lagradost.cloudstream3.utils.CastHelper.getMediaInfo

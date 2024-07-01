@@ -24,7 +24,7 @@ import okio.sink
 import java.io.File
 import android.text.TextUtils
 import com.lagradost.cloudstream3.MainActivity.Companion.deleteFileOnExit
-import com.lagradost.cloudstream3.utils.AppUtils.setDefaultFocus
+import com.lagradost.cloudstream3.utils.AppContextUtils.setDefaultFocus
 import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStreamReader

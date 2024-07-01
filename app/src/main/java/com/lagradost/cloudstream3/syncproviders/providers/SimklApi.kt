@@ -12,7 +12,9 @@ import com.lagradost.cloudstream3.AcraApplication.Companion.openBrowser
 import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.BuildConfig
+import com.lagradost.cloudstream3.LoadResponse.Companion.readIdFromString
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.SimklSyncServices
 import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.mapper
@@ -29,7 +31,6 @@ import com.lagradost.cloudstream3.ui.SyncWatchType
 import com.lagradost.cloudstream3.ui.library.ListSorting
 import com.lagradost.cloudstream3.ui.result.txt
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
-import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
 import okhttp3.Interceptor
 import okhttp3.Response
 import java.math.BigInteger
@@ -184,32 +185,6 @@ class SimklApi(index: Int) : AccountManager(index), SyncAPI {
             }
         }
 
-        /**
-         * Set of sync services simkl is compatible with.
-         * Add more as required: https://simkl.docs.apiary.io/#reference/search/id-lookup/get-items-by-id
-         */
-        enum class SyncServices(val originalName: String) {
-            Simkl("simkl"),
-            Imdb("imdb"),
-            Tmdb("tmdb"),
-            AniList("anilist"),
-            Mal("mal"),
-        }
-
-        /**
-         * The ID string is a way to keep a collection of services in one single ID using a map
-         * This adds a database service (like imdb) to the string and returns the new string.
-         */
-        fun addIdToString(idString: String?, database: SyncServices, id: String?): String? {
-            if (id == null) return idString
-            return (readIdFromString(idString) + mapOf(database to id)).toJson()
-        }
-
-        /** Read the id string to get all other ids */
-        fun readIdFromString(idString: String?): Map<SyncServices, String> {
-            return tryParseJson(idString) ?: return emptyMap()
-        }
-
         fun getPosterUrl(poster: String): String {
             return "https://wsrv.nl/?url=https://simkl.in/posters/${poster}_m.webp"
         }
@@ -361,13 +336,13 @@ class SimklApi(index: Int) : AccountManager(index), SyncAPI {
                 @JsonProperty("anilist") val anilist: String? = null,
             ) {
                 companion object {
-                    fun fromMap(map: Map<SyncServices, String>): Ids {
+                    fun fromMap(map: Map<SimklSyncServices, String>): Ids {
                         return Ids(
-                            simkl = map[SyncServices.Simkl]?.toIntOrNull(),
-                            imdb = map[SyncServices.Imdb],
-                            tmdb = map[SyncServices.Tmdb],
-                            mal = map[SyncServices.Mal],
-                            anilist = map[SyncServices.AniList]
+                            simkl = map[SimklSyncServices.Simkl]?.toIntOrNull(),
+                            imdb = map[SimklSyncServices.Imdb],
+                            tmdb = map[SimklSyncServices.Tmdb],
+                            mal = map[SimklSyncServices.Mal],
+                            anilist = map[SimklSyncServices.AniList]
                         )
                     }
                 }
@@ -749,13 +724,13 @@ class SimklApi(index: Int) : AccountManager(index), SyncAPI {
                         @JsonProperty("anilist") val anilist: String?,
                         @JsonProperty("traktslug") val traktslug: String?
                     ) {
-                        fun matchesId(database: SyncServices, id: String): Boolean {
+                        fun matchesId(database: SimklSyncServices, id: String): Boolean {
                             return when (database) {
-                                SyncServices.Simkl -> this.simkl == id.toIntOrNull()
-                                SyncServices.AniList -> this.anilist == id
-                                SyncServices.Mal -> this.mal == id
-                                SyncServices.Tmdb -> this.tmdb == id
-                                SyncServices.Imdb -> this.imdb == id
+                                SimklSyncServices.Simkl -> this.simkl == id.toIntOrNull()
+                                SimklSyncServices.AniList -> this.anilist == id
+                                SimklSyncServices.Mal -> this.mal == id
+                                SimklSyncServices.Tmdb -> this.tmdb == id
+                                SimklSyncServices.Imdb -> this.imdb == id
                             }
                         }
                     }
@@ -916,7 +891,7 @@ class SimklApi(index: Int) : AccountManager(index), SyncAPI {
 
 
     /** See https://simkl.docs.apiary.io/#reference/search/id-lookup/get-items-by-id */
-    suspend fun searchByIds(serviceMap: Map<SyncServices, String>): Array<MediaObject>? {
+    suspend fun searchByIds(serviceMap: Map<SimklSyncServices, String>): Array<MediaObject>? {
         if (serviceMap.isEmpty()) return emptyArray()
 
         return app.get(

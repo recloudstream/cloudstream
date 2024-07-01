@@ -3,15 +3,22 @@ package com.lagradost.cloudstream3.syncproviders
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.removeKeys
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
+import com.lagradost.cloudstream3.LoadResponse
 import com.lagradost.cloudstream3.syncproviders.providers.*
 import java.util.concurrent.TimeUnit
 
 abstract class AccountManager(private val defIndex: Int) : AuthAPI {
     companion object {
-        val malApi = MALApi(0)
-        val aniListApi = AniListApi(0)
+        val malApi = MALApi(0).also { api ->
+            LoadResponse.Companion.malIdPrefix = api.idPrefix
+        }
+        val aniListApi = AniListApi(0).also { api ->
+            LoadResponse.Companion.aniListIdPrefix = api.idPrefix
+        }
+        val simklApi = SimklApi(0).also { api ->
+            LoadResponse.Companion.simklIdPrefix = api.idPrefix
+        }
         val openSubtitlesApi = OpenSubtitlesApi(0)
-        val simklApi = SimklApi(0)
         val addic7ed = Addic7ed()
         val subDlApi = SubDlApi(0)
         val localListApi = LocalList()

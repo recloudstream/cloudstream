@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.network
 
+import android.util.Base64
 import android.util.Log
 import android.webkit.CookieManager
 import androidx.annotation.AnyThread

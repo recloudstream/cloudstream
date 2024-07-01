@@ -6,9 +6,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lagradost.cloudstream3.APIHolder.apis
-import com.lagradost.cloudstream3.APIHolder.filterHomePageListByFilmQuality
-import com.lagradost.cloudstream3.APIHolder.filterProviderByPreferredMedia
-import com.lagradost.cloudstream3.APIHolder.filterSearchResultByFilmQuality
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
 import com.lagradost.cloudstream3.AcraApplication.Companion.context
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
@@ -36,8 +33,11 @@ import com.lagradost.cloudstream3.ui.search.SearchClickCallback
 import com.lagradost.cloudstream3.ui.search.SearchHelper
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
-import com.lagradost.cloudstream3.utils.AppUtils.addProgramsToContinueWatching
-import com.lagradost.cloudstream3.utils.AppUtils.loadResult
+import com.lagradost.cloudstream3.utils.AppContextUtils.addProgramsToContinueWatching
+import com.lagradost.cloudstream3.utils.AppContextUtils.filterHomePageListByFilmQuality
+import com.lagradost.cloudstream3.utils.AppContextUtils.filterProviderByPreferredMedia
+import com.lagradost.cloudstream3.utils.AppContextUtils.filterSearchResultByFilmQuality
+import com.lagradost.cloudstream3.utils.AppContextUtils.loadResult
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.DOWNLOAD_HEADER_CACHE
 import com.lagradost.cloudstream3.utils.DataStoreHelper

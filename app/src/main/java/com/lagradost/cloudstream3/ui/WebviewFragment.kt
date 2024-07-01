@@ -15,7 +15,7 @@ import com.lagradost.cloudstream3.MainActivity
 import com.lagradost.cloudstream3.USER_AGENT
 import com.lagradost.cloudstream3.databinding.FragmentWebviewBinding
 import com.lagradost.cloudstream3.network.WebViewResolver
-import com.lagradost.cloudstream3.utils.AppUtils.loadRepository
+import com.lagradost.cloudstream3.utils.AppContextUtils.loadRepository
 
 
 class WebviewFragment : Fragment() {

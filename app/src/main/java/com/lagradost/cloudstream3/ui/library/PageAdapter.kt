@@ -16,7 +16,7 @@ import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.ui.AutofitRecyclerView
 import com.lagradost.cloudstream3.ui.search.SearchClickCallback
 import com.lagradost.cloudstream3.ui.search.SearchResultBuilder
-import com.lagradost.cloudstream3.utils.AppUtils
+import com.lagradost.cloudstream3.utils.AppContextUtils
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import kotlin.math.roundToInt
 
@@ -26,7 +26,7 @@ class PageAdapter(
     private val resView: AutofitRecyclerView,
     val clickCallback: (SearchClickCallback) -> Unit
 ) :
-    AppUtils.DiffAdapter<SyncAPI.LibraryItem>(items) {
+    AppContextUtils.DiffAdapter<SyncAPI.LibraryItem>(items) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return LibraryItemViewHolder(

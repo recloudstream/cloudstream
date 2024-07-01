@@ -23,6 +23,7 @@ import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
 import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.BuildConfig
+import com.lagradost.cloudstream3.IDownloadableMinimum
 import com.lagradost.cloudstream3.MainActivity
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.TvType
@@ -105,16 +106,6 @@ object VideoDownloadManager {
         Pause,
         Resume,
         Stop,
-    }
-
-    interface IDownloadableMinimum {
-        val url: String
-        val referer: String
-        val headers: Map<String, String>
-    }
-
-    fun IDownloadableMinimum.getId(): Int {
-        return url.hashCode()
     }
 
     data class DownloadEpisodeMetadata(
