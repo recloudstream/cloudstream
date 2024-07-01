@@ -143,7 +143,10 @@ class DownloadFragment : Fragment() {
         }
 
         binding?.apply {
-            openLocalVideoButton.setOnClickListener { openLocalVideo() }
+            openLocalVideoButton.apply {
+                isGone = isLayout(TV)
+                setOnClickListener { openLocalVideo() }
+            }
             downloadStreamButton.apply {
                 isGone = isLayout(TV)
                 setOnClickListener { showStreamInputDialog(it.context) }
