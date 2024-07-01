@@ -1,9 +1,12 @@
 package com.lagradost.cloudstream3.ui.player
 
 import com.lagradost.cloudstream3.amap
-import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
-import com.lagradost.cloudstream3.utils.*
-import java.net.URI
+import com.lagradost.cloudstream3.utils.ExtractorLink
+import com.lagradost.cloudstream3.utils.ExtractorUri
+import com.lagradost.cloudstream3.utils.INFER_TYPE
+import com.lagradost.cloudstream3.utils.Qualities
+import com.lagradost.cloudstream3.utils.loadExtractor
+import com.lagradost.cloudstream3.utils.unshortenLinkSafe
 
 /**
  * Used to open the player more easily with the LinkGenerator
