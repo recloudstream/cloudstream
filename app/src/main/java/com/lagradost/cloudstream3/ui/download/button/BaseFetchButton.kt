@@ -1,7 +1,7 @@
 package com.lagradost.cloudstream3.ui.download.button
 
 import android.content.Context
-import android.text.format.Formatter
+import android.text.format.Formatter.formatShortFileSize
 import android.util.AttributeSet
 import android.widget.FrameLayout
 import android.widget.TextView
@@ -36,7 +36,7 @@ abstract class BaseFetchButton(context: Context, attributeSet: AttributeSet) :
     lateinit var progressBar: ContentLoadingProgressBar
     var progressText: TextView? = null
 
-    /*val gid: String? get() = sessionIdToGid[persistentId]
+    /* val gid: String? get() = sessionIdToGid[persistentId]
 
     // used for resuming data
     var _lastRequestOverride: UriRequest? = null
@@ -46,7 +46,7 @@ abstract class BaseFetchButton(context: Context, attributeSet: AttributeSet) :
             _lastRequestOverride = value
         }
 
-    var files: List<AbstractClient.JsonFile> = emptyList()*/
+    var files: List<AbstractClient.JsonFile> = emptyList() */
     protected var isZeroBytes: Boolean = true
 
     fun inflate(@LayoutRes layout: Int) {
@@ -93,6 +93,7 @@ abstract class BaseFetchButton(context: Context, attributeSet: AttributeSet) :
     abstract fun setStatus(status: VideoDownloadManager.DownloadType?)
 
     fun getStatus(id:Int, downloadedBytes: Long, totalBytes: Long): DownloadStatusTell {
+        // some extra padding for just in case
         return VideoDownloadManager.downloadStatus[id]
             ?: if (downloadedBytes > 1024L && downloadedBytes + 1024L >= totalBytes) {
                 DownloadStatusTell.IsDone
@@ -138,13 +139,12 @@ abstract class BaseFetchButton(context: Context, attributeSet: AttributeSet) :
             } else {
                 if (doSetProgress) {
                     progressText?.apply {
-                        val currentMbString =
-                            Formatter.formatShortFileSize(context, downloadedBytes)
-                        val totalMbString = Formatter.formatShortFileSize(context, totalBytes)
+                        val currentFormattedSizeString = formatShortFileSize(context, downloadedBytes)
+                        val totalFormattedSizeString = formatShortFileSize(context, totalBytes)
                         text =
-                                //if (isTextPercentage) "%d%%".format(setCurrentBytes * 100L / setTotalBytes) else
+                                // if (isTextPercentage) "%d%%".format(setCurrentBytes * 100L / setTotalBytes) else
                             context?.getString(R.string.download_size_format)
-                                ?.format(currentMbString, totalMbString)
+                                ?.format(currentFormattedSizeString, totalFormattedSizeString)
                     }
                 }
             }
@@ -182,8 +182,8 @@ abstract class BaseFetchButton(context: Context, attributeSet: AttributeSet) :
 
     override fun onAttachedToWindow() {
         VideoDownloadManager.downloadStatusEvent += ::downloadStatusEvent
-        //VideoDownloadManager.downloadDeleteEvent += ::downloadDeleteEvent
-        //VideoDownloadManager.downloadEvent += ::downloadEvent
+        // VideoDownloadManager.downloadDeleteEvent += ::downloadDeleteEvent
+        // VideoDownloadManager.downloadEvent += ::downloadEvent
         VideoDownloadManager.downloadProgressEvent += ::downloadProgressEvent
 
         val pid = persistentId
@@ -197,8 +197,8 @@ abstract class BaseFetchButton(context: Context, attributeSet: AttributeSet) :
 
     override fun onDetachedFromWindow() {
         VideoDownloadManager.downloadStatusEvent -= ::downloadStatusEvent
-        //VideoDownloadManager.downloadDeleteEvent -= ::downloadDeleteEvent
-        //VideoDownloadManager.downloadEvent -= ::downloadEvent
+        // VideoDownloadManager.downloadDeleteEvent -= ::downloadDeleteEvent
+        // VideoDownloadManager.downloadEvent -= ::downloadEvent
         VideoDownloadManager.downloadProgressEvent -= ::downloadProgressEvent
 
         super.onDetachedFromWindow()

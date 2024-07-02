@@ -16,7 +16,7 @@ import com.lagradost.cloudstream3.utils.DataStore.getFolderName
 import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStore.getKeys
 import com.lagradost.cloudstream3.utils.VideoDownloadHelper
-import com.lagradost.cloudstream3.utils.VideoDownloadManager
+import com.lagradost.cloudstream3.utils.VideoDownloadManager.getDownloadFileInfoAndUpdateSettings
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -57,7 +57,7 @@ class DownloadViewModel : ViewModel() {
         // Gets all children downloads
         withContext(Dispatchers.IO) {
             children.forEach { c ->
-                val childFile = VideoDownloadManager.getDownloadFileInfoAndUpdateSettings(context, c.id) ?: return@forEach
+                val childFile = getDownloadFileInfoAndUpdateSettings(context, c.id) ?: return@forEach
 
                 if (childFile.fileLength <= 1) return@forEach
                 val len = childFile.totalBytes

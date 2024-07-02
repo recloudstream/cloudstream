@@ -15,8 +15,8 @@ import com.lagradost.cloudstream3.databinding.DownloadHeaderEpisodeBinding
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.ui.download.button.DownloadStatusTell
 import com.lagradost.cloudstream3.utils.AppUtils.getNameFull
-import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.DataStoreHelper.fixVisual
+import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
 import com.lagradost.cloudstream3.utils.UIHelper.setImage
 import com.lagradost.cloudstream3.utils.VideoDownloadHelper
 
@@ -116,7 +116,7 @@ class DownloadAdapter(
                 }
 
                 downloadHeaderTitle.text = d.name
-                val mbString = formatShortFileSize(itemView.context, card.totalBytes)
+                val formattedSizeString = formatShortFileSize(itemView.context, card.totalBytes)
 
                 if (card.child != null) {
                     downloadHeaderGotoChild.isVisible = false
@@ -131,7 +131,7 @@ class DownloadAdapter(
                         downloadButton.applyMetaData(card.child.id, card.currentBytes, card.totalBytes)
                         // We will let the view model handle this
                         downloadButton.doSetProgress = false
-                        downloadHeaderInfo.text = formatShortFileSize(downloadHeaderInfo.context, card.totalBytes)
+                        downloadHeaderInfo.text = formattedSizeString
                     } else downloadButton.doSetProgress = true
 
                     downloadButton.setDefaultClickListener(card.child, downloadHeaderInfo, mediaClickCallback)
@@ -152,7 +152,7 @@ class DownloadAdapter(
                                     R.plurals.episodes,
                                     card.totalDownloads
                                 ),
-                                mbString
+                                formattedSizeString
                             )
                     } catch (e: Exception) {
                         // You probably formatted incorrectly
@@ -173,7 +173,7 @@ class DownloadAdapter(
             val d = card.data
 
             binding.apply {
-                val posDur = DataStoreHelper.getViewPos(d.id)
+                val posDur = getViewPos(d.id)
                 downloadChildEpisodeProgress.apply {
                     isVisible = posDur != null
                     posDur?.let {
