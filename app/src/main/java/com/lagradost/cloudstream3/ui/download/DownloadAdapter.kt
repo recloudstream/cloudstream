@@ -130,9 +130,9 @@ class DownloadAdapter(
                         downloadButton.setProgress(card.currentBytes, card.totalBytes)
                         downloadButton.applyMetaData(card.child.id, card.currentBytes, card.totalBytes)
                         // We will let the view model handle this
-                        downloadButton.setProgressText = false
+                        downloadButton.doSetProgress = false
                         downloadHeaderInfo.text = formatShortFileSize(downloadHeaderInfo.context, card.totalBytes)
-                    } else downloadButton.setProgressText = true
+                    } else downloadButton.doSetProgress = true
 
                     downloadButton.setDefaultClickListener(card.child, downloadHeaderInfo, mediaClickCallback)
                     downloadButton.isVisible = true
@@ -192,9 +192,9 @@ class DownloadAdapter(
                     downloadButton.setProgress(card.currentBytes, card.totalBytes)
                     downloadButton.applyMetaData(d.id, card.currentBytes, card.totalBytes)
                     // We will let the view model handle this
-                    downloadButton.setProgressText = false
+                    downloadButton.doSetProgress = false
                     downloadChildEpisodeTextExtra.text = formatShortFileSize(downloadChildEpisodeTextExtra.context, card.totalBytes)
-                } else downloadButton.setProgressText = true
+                } else downloadButton.doSetProgress = true
 
                 downloadButton.setDefaultClickListener(d, downloadChildEpisodeTextExtra, mediaClickCallback)
                 downloadButton.isVisible = true

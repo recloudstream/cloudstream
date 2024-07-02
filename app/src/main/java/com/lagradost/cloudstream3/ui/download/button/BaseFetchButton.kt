@@ -57,23 +57,23 @@ abstract class BaseFetchButton(context: Context, attributeSet: AttributeSet) :
         resetViewData()
     }
 
+    var doSetProgress = true
+
     open fun resetViewData() {
         // lastRequest = null
         isZeroBytes = true
+        doSetProgress = true
         persistentId = null
     }
 
     var currentMetaData: DownloadMetadata =
         DownloadMetadata(0, 0, 0, null)
 
-    private var progressSet = false
-    var setProgressText = true
-
     fun setPersistentId(id: Int) {
         persistentId = id
         currentMetaData.id = id
 
-        if (progressSet) return
+        if (!doSetProgress) return
 
         ioSafe {
             val savedData = VideoDownloadManager.getDownloadFileInfoAndUpdateSettings(context, id)
@@ -112,7 +112,6 @@ abstract class BaseFetchButton(context: Context, attributeSet: AttributeSet) :
     }
 
     open fun setProgress(downloadedBytes: Long, totalBytes: Long) {
-        progressSet = true
         isZeroBytes = downloadedBytes == 0L
         progressBar.post {
             val steps = 10000L
@@ -137,7 +136,7 @@ abstract class BaseFetchButton(context: Context, attributeSet: AttributeSet) :
             if (isZeroBytes) {
                 progressText?.isVisible = false
             } else {
-                if (setProgressText) {
+                if (doSetProgress) {
                     progressText?.apply {
                         val currentMbString =
                             Formatter.formatShortFileSize(context, downloadedBytes)

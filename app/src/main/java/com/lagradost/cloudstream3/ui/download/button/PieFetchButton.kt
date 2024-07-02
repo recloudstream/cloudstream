@@ -301,6 +301,7 @@ open class PieFetchButton(context: Context, attributeSet: AttributeSet) :
         setStatus(null)
         currentMetaData = DownloadMetadata(0, 0, 0, null)
         isZeroBytes = true
+        doSetProgress = true
         progressBar.progress = 0
     }
 
