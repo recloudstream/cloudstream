@@ -1,7 +1,7 @@
 package com.lagradost.cloudstream3.ui.download.button
 
 import android.content.Context
-import android.text.format.Formatter
+import android.text.format.Formatter.formatShortFileSize
 import android.util.AttributeSet
 import android.widget.FrameLayout
 import android.widget.TextView
@@ -9,6 +9,8 @@ import androidx.annotation.LayoutRes
 import androidx.core.view.isVisible
 import androidx.core.widget.ContentLoadingProgressBar
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
+import com.lagradost.cloudstream3.utils.Coroutines.mainWork
 import com.lagradost.cloudstream3.utils.VideoDownloadManager
 
 typealias DownloadStatusTell = VideoDownloadManager.DownloadType
@@ -34,7 +36,7 @@ abstract class BaseFetchButton(context: Context, attributeSet: AttributeSet) :
     lateinit var progressBar: ContentLoadingProgressBar
     var progressText: TextView? = null
 
-    /*val gid: String? get() = sessionIdToGid[persistentId]
+    /* val gid: String? get() = sessionIdToGid[persistentId]
 
     // used for resuming data
     var _lastRequestOverride: UriRequest? = null
@@ -44,7 +46,7 @@ abstract class BaseFetchButton(context: Context, attributeSet: AttributeSet) :
             _lastRequestOverride = value
         }
 
-    var files: List<AbstractClient.JsonFile> = emptyList()*/
+    var files: List<AbstractClient.JsonFile> = emptyList() */
     protected var isZeroBytes: Boolean = true
 
     fun inflate(@LayoutRes layout: Int) {
@@ -55,9 +57,12 @@ abstract class BaseFetchButton(context: Context, attributeSet: AttributeSet) :
         resetViewData()
     }
 
+    var doSetProgress = true
+
     open fun resetViewData() {
         // lastRequest = null
         isZeroBytes = true
+        doSetProgress = true
         persistentId = null
     }
 
@@ -68,36 +73,44 @@ abstract class BaseFetchButton(context: Context, attributeSet: AttributeSet) :
         persistentId = id
         currentMetaData.id = id
 
-        VideoDownloadManager.getDownloadFileInfoAndUpdateSettings(context, id)?.let { savedData ->
-            val downloadedBytes = savedData.fileLength
-            val totalBytes = savedData.totalBytes
+        if (!doSetProgress) return
 
-            /*lastRequest = savedData.uriRequest
-            files = savedData.files
+        ioSafe {
+            val savedData = VideoDownloadManager.getDownloadFileInfoAndUpdateSettings(context, id)
 
-            var totalBytes: Long = 0
-            var downloadedBytes: Long = 0
-            for (file in savedData.files) {
-                downloadedBytes += file.completedLength
-                totalBytes += file.length
-            }*/
-            setProgress(downloadedBytes, totalBytes)
-            // some extra padding for just in case
-            val status = VideoDownloadManager.downloadStatus[id]
-                ?: if (downloadedBytes > 1024L && downloadedBytes + 1024L >= totalBytes) DownloadStatusTell.IsDone else DownloadStatusTell.IsPaused
-            currentMetaData.apply {
-                this.id = id
-                this.downloadedLength = downloadedBytes
-                this.totalLength = totalBytes
-                this.status = status
+            mainWork {
+                if (savedData != null) {
+                    val downloadedBytes = savedData.fileLength
+                    val totalBytes = savedData.totalBytes
+
+                    setProgress(downloadedBytes, totalBytes)
+                    applyMetaData(id, downloadedBytes, totalBytes)
+                } else run { resetView() }
             }
-            setStatus(status)
-        } ?: run {
-            resetView()
         }
     }
 
     abstract fun setStatus(status: VideoDownloadManager.DownloadType?)
+
+    fun getStatus(id:Int, downloadedBytes: Long, totalBytes: Long): DownloadStatusTell {
+        // some extra padding for just in case
+        return VideoDownloadManager.downloadStatus[id]
+            ?: if (downloadedBytes > 1024L && downloadedBytes + 1024L >= totalBytes) {
+                DownloadStatusTell.IsDone
+            } else DownloadStatusTell.IsPaused
+    }
+
+    fun applyMetaData(id:Int, downloadedBytes: Long, totalBytes: Long) {
+        val status = getStatus(id, downloadedBytes, totalBytes)
+
+        currentMetaData.apply {
+            this.id = id
+            this.downloadedLength = downloadedBytes
+            this.totalLength = totalBytes
+            this.status = status
+        }
+        setStatus(status)
+    }
 
     open fun setProgress(downloadedBytes: Long, totalBytes: Long) {
         isZeroBytes = downloadedBytes == 0L
@@ -124,13 +137,15 @@ abstract class BaseFetchButton(context: Context, attributeSet: AttributeSet) :
             if (isZeroBytes) {
                 progressText?.isVisible = false
             } else {
-                progressText?.apply {
-                    val currentMbString = Formatter.formatShortFileSize(context, downloadedBytes)
-                    val totalMbString = Formatter.formatShortFileSize(context, totalBytes)
-                    text =
-                            //if (isTextPercentage) "%d%%".format(setCurrentBytes * 100L / setTotalBytes) else
-                        context?.getString(R.string.download_size_format)
-                            ?.format(currentMbString, totalMbString)
+                if (doSetProgress) {
+                    progressText?.apply {
+                        val currentFormattedSizeString = formatShortFileSize(context, downloadedBytes)
+                        val totalFormattedSizeString = formatShortFileSize(context, totalBytes)
+                        text =
+                                // if (isTextPercentage) "%d%%".format(setCurrentBytes * 100L / setTotalBytes) else
+                            context?.getString(R.string.download_size_format)
+                                ?.format(currentFormattedSizeString, totalFormattedSizeString)
+                    }
                 }
             }
 
@@ -167,8 +182,8 @@ abstract class BaseFetchButton(context: Context, attributeSet: AttributeSet) :
 
     override fun onAttachedToWindow() {
         VideoDownloadManager.downloadStatusEvent += ::downloadStatusEvent
-        //VideoDownloadManager.downloadDeleteEvent += ::downloadDeleteEvent
-        //VideoDownloadManager.downloadEvent += ::downloadEvent
+        // VideoDownloadManager.downloadDeleteEvent += ::downloadDeleteEvent
+        // VideoDownloadManager.downloadEvent += ::downloadEvent
         VideoDownloadManager.downloadProgressEvent += ::downloadProgressEvent
 
         val pid = persistentId
@@ -182,8 +197,8 @@ abstract class BaseFetchButton(context: Context, attributeSet: AttributeSet) :
 
     override fun onDetachedFromWindow() {
         VideoDownloadManager.downloadStatusEvent -= ::downloadStatusEvent
-        //VideoDownloadManager.downloadDeleteEvent -= ::downloadDeleteEvent
-        //VideoDownloadManager.downloadEvent -= ::downloadEvent
+        // VideoDownloadManager.downloadDeleteEvent -= ::downloadDeleteEvent
+        // VideoDownloadManager.downloadEvent -= ::downloadEvent
         VideoDownloadManager.downloadProgressEvent -= ::downloadProgressEvent
 
         super.onDetachedFromWindow()
@@ -198,5 +213,4 @@ abstract class BaseFetchButton(context: Context, attributeSet: AttributeSet) :
      * Get a clean slate again, might be useful in recyclerview?
      * */
     abstract fun resetView()
-
 }
