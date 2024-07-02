@@ -27,9 +27,7 @@ body:
       label: Acknowledgements
       description: Your issue will be closed if you haven't done these steps.
       options:
+        - label: My suggestion is **NOT** about adding a new provider
+          required: true
         - label: I have searched the existing issues and this is a new ticket, **NOT** a duplicate or related to another open issue.
-          required: true
-        - label: I have written a short but informative title.
-          required: true
-        - label: I will fill out all of the requested information in this form.
           required: true
