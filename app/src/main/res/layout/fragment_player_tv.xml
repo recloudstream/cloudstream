@@ -68,7 +68,9 @@
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toTopOf="parent"
+            android:visibility="gone"
+            tools:visibility="visible">
 
             <ImageView
                 android:layout_width="30dp"
@@ -82,12 +84,11 @@
                 android:id="@+id/player_loading_go_back"
                 android:layout_width="70dp"
                 android:layout_height="70dp"
-
                 android:layout_gravity="center"
                 android:background="@drawable/video_tap_button_always_white"
-                android:clickable="true"
-                android:focusable="true"
-                android:focusableInTouchMode="true"
+                android:clickable="false"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
                 android:nextFocusRight="@id/overlay_loading_skip_button"
                 android:nextFocusDown="@id/overlay_loading_skip_button" />
         </FrameLayout>

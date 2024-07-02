@@ -172,27 +172,51 @@
                     android:id="@+id/player_go_back_holder"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_margin="5dp"
+                    android:layout_margin="20dp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent">
 
                     <ImageView
+                        android:id="@+id/player_go_back"
                         android:layout_width="30dp"
                         android:layout_height="30dp"
-                        android:layout_gravity="center"
-                        android:contentDescription="@string/go_back_img_des"
                         android:src="@drawable/ic_baseline_arrow_back_24"
-                        app:tint="@android:color/white" />
-
-                    <ImageView
-                        android:id="@+id/player_go_back"
-                        android:layout_width="70dp"
-                        android:layout_height="70dp"
-                        android:layout_gravity="center"
+                        app:tint="@android:color/white"
                         android:background="@drawable/video_tap_button_always_white"
                         android:clickable="true"
                         android:contentDescription="@string/go_back_img_des"
-                        android:focusable="true" />
+                        android:focusable="true"
+                        android:tag="@string/tv_no_focus_tag" />
+
+                    <ImageView
+                        android:id="@+id/player_restart"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_marginStart="40dp"
+                        android:src="@drawable/ic_baseline_replay_24"
+                        app:tint="@android:color/white"
+                        android:background="@drawable/video_tap_button_always_white"
+                        android:clickable="true"
+                        android:contentDescription="@string/go_back_img_des"
+                        android:focusable="true"
+                        android:visibility="gone"
+                        tools:visibility="visible"
+                        android:tag="@string/tv_no_focus_tag" />
+
+                    <ImageView
+                        android:id="@+id/player_go_forward"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_marginStart="80dp"
+                        android:src="@drawable/ic_baseline_skip_next_rounded_24"
+                        app:tint="@android:color/white"
+                        android:background="@drawable/video_tap_button_always_white"
+                        android:clickable="true"
+                        android:contentDescription="@string/go_back_img_des"
+                        android:focusable="true"
+                        android:visibility="gone"
+                        tools:visibility="visible"
+                        android:tag="@string/tv_no_focus_tag" />
                 </FrameLayout>
 
 
@@ -626,7 +650,7 @@
                                 android:nextFocusLeft="@id/player_sources_btt"
                                 android:nextFocusRight="@id/player_skip_op"
                                 android:text="@string/tracks"
-                                app:icon="@drawable/ic_baseline_playlist_play_24" />
+                                app:icon="@drawable/ic_baseline_equalizer_24" />
 
                             <com.google.android.material.button.MaterialButton
                                 android:id="@+id/player_skip_op"
@@ -641,10 +665,10 @@
                                 android:id="@+id/player_skip_episode"
                                 style="@style/VideoButton"
                                 android:nextFocusLeft="@id/player_skip_op"
-
                                 android:nextFocusRight="@id/player_lock"
                                 android:text="@string/next_episode"
                                 app:icon="@drawable/ic_baseline_skip_next_24" />
+
                         </LinearLayout>
                     </LinearLayout>
                 </HorizontalScrollView>

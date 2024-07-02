@@ -27,6 +27,7 @@ enum class PlayerEventType(val value: Int) {
     Resize(13),
     SearchSubtitlesOnline(14),
     SkipOp(15),
+    Restart(16),
 }
 
 enum class CSPlayerEvent(val value: Int) {
@@ -40,6 +41,7 @@ enum class CSPlayerEvent(val value: Int) {
     PrevEpisode(6),
     PlayPauseToggle(7),
     ToggleMute(8),
+    Restart(9),
 }
 
 enum class CSPlayerLoading {

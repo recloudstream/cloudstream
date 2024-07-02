@@ -231,7 +231,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="80dp"
+                    android:layout_marginStart="32dp"
                     android:layout_marginTop="20dp"
                     android:layout_marginEnd="32dp"
                     android:orientation="vertical">
@@ -240,6 +240,7 @@
                         android:id="@+id/player_video_title"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:textAlignment="viewEnd"
                         android:gravity="end"
                         android:textColor="@color/white"
                         android:textSize="16sp"
@@ -250,6 +251,7 @@
                         android:id="@+id/player_video_title_rez"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:textAlignment="viewEnd"
                         android:gravity="end"
                         android:textColor="@color/white"
                         android:textSize="16sp"
@@ -285,28 +287,62 @@
                     android:id="@+id/player_go_back_holder"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_margin="5dp"
+                    android:layout_marginStart="32dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginEnd="32dp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent">
 
                     <ImageView
+                        android:id="@+id/player_go_back"
                         android:layout_width="30dp"
                         android:layout_height="30dp"
-                        android:layout_gravity="center"
-                        android:contentDescription="@string/go_back_img_des"
                         android:src="@drawable/ic_baseline_arrow_back_24"
-                        app:tint="@android:color/white" />
-
-                    <ImageView
-                        android:id="@+id/player_go_back"
-                        android:layout_width="70dp"
-                        android:layout_height="70dp"
-                        android:layout_gravity="center"
+                        app:tint="@android:color/white"
                         android:background="@drawable/video_tap_button_always_white"
                         android:clickable="true"
                         android:contentDescription="@string/go_back_img_des"
                         android:focusable="true"
+                        android:nextFocusRight="@id/player_restart"
+                        android:nextFocusLeft="@id/player_go_back"
+                        android:nextFocusDown="@id/player_pause_play"
+                        android:nextFocusUp="@id/player_go_back"
                         android:tag="@string/tv_no_focus_tag" />
+
+                    <ImageView
+                        android:id="@+id/player_restart"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_marginStart="40dp"
+                        android:src="@drawable/ic_baseline_replay_24"
+                        app:tint="@android:color/white"
+                        android:background="@drawable/video_tap_button_always_white"
+                        android:clickable="true"
+                        android:contentDescription="@string/go_back_img_des"
+                        android:focusable="true"
+                        android:nextFocusRight="@id/player_go_forward"
+                        android:nextFocusLeft="@id/player_go_back"
+                        android:nextFocusDown="@id/player_pause_play"
+                        android:nextFocusUp="@id/player_restart"
+                        android:tag="@string/tv_no_focus_tag" />
+
+                    <ImageView
+                        android:id="@+id/player_go_forward"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_marginStart="80dp"
+                        android:src="@drawable/ic_baseline_skip_next_rounded_24"
+                        app:tint="@android:color/white"
+                        android:background="@drawable/video_tap_button_always_white"
+                        android:clickable="true"
+                        android:nextFocusRight="@id/player_go_forward"
+                        android:nextFocusLeft="@id/player_restart"
+                        android:nextFocusDown="@id/player_pause_play"
+                        android:nextFocusUp="@id/player_go_forward"
+                        android:contentDescription="@string/go_back_img_des"
+                        android:focusable="true"
+                        android:tag="@string/tv_no_focus_tag" />
+
                 </FrameLayout>
             </FrameLayout>
 
@@ -520,7 +556,7 @@
                         android:focusable="true"
                         android:focusableInTouchMode="true"
                         android:nextFocusUp="@id/skip_chapter_button"
-                        android:nextFocusDown="@id/player_skip_op"
+                        android:nextFocusDown="@id/player_lock_holder"
                         android:src="@drawable/netflix_pause"
 
                         android:tag="@string/tv_no_focus_tag"
@@ -672,12 +708,13 @@
                             android:id="@+id/player_skip_episode"
                             style="@style/VideoButtonTV"
                             android:nextFocusLeft="@id/player_skip_op"
-
                             android:nextFocusRight="@id/player_resize_btt"
                             android:nextFocusUp="@id/player_pause_play"
                             android:nextFocusDown="@id/player_resize_btt"
                             android:text="@string/next_episode"
-                            app:icon="@drawable/ic_baseline_skip_next_24" />
+                            app:icon="@drawable/ic_baseline_skip_next_24"
+                            android:visibility="gone"
+                            tools:visibility="visible"/>
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/player_resize_btt"
@@ -732,7 +769,7 @@
                             android:nextFocusRight="@id/player_skip_op"
                             android:nextFocusUp="@id/player_pause_play"
                             android:text="@string/tracks"
-                            app:icon="@drawable/ic_baseline_playlist_play_24" />
+                            app:icon="@drawable/ic_baseline_equalizer_24" />
                     </LinearLayout>
                 </HorizontalScrollView>
             </LinearLayout>
