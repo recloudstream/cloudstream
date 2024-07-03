@@ -12,7 +12,7 @@
     <string name="rating_format" formatted="true" translatable="false">%.1f/10.0</string>
     <string name="year_format" formatted="true" translatable="false">%d</string>
     <string name="app_dub_sub_episode_text_format" formatted="true">%1$s B. %2$d</string>
-    <string name="cast_format" formatted="true">Cast: %s</string>
+    <string name="cast_format" formatted="true">Oyuncular: %s</string>
     <string name="next_episode_format" formatted="true">Bölüm %d şu tarihte yayınlanacak</string>
     <string name="next_episode_time_day_format" formatted="true">%1$dg %2$ds %3$dd</string>
     <string name="next_episode_time_hour_format" formatted="true">%1$ds %2$dd</string>
@@ -26,8 +26,8 @@
     <string name="episode_play_img_des" translatable="false">@string/play_episode</string>
     <string name="go_back_img_des">Geri git</string>
     <string name="change_providers_img_des" translatable="false">@string/home_change_provider_img_des</string>
-    <string name="home_change_provider_img_des">Change Provider</string>
-    <string name="preview_background_img_des">Preview Background</string>
+    <string name="home_change_provider_img_des">Sağlayıcıyı Değiştir</string>
+    <string name="preview_background_img_des">Arka Plan Önizlemesi</string>
     <!-- TRANSLATE, BUT DON'T FORGET FORMAT -->
     <string name="player_speed_text_format" formatted="true">Hız (%.2fx)</string>
     <string name="rated_format" formatted="true">Puan: %.1f</string>
@@ -589,7 +589,7 @@
 \nNOT: Toplam 10 veya daha fazlaysa, bu bağlantı yüklendiğinde oynatıcı otomatik olarak yüklemeyi atlayacaktır!</string>
     <string name="qualities">Kaliteler</string>
     <string name="profile_background_des">Profil arkaplanı</string>
-    <string name="unable_to_inflate">UI was unable to be created correctly, this is a MAJOR BUG and should be reported immediately %s</string>
+    <string name="unable_to_inflate">Kullanıcı arayüzü doğru şekilde oluşturulamadı, bu BÜYÜK BİR HATA'dır ve derhal rapor edilmelidir %s</string>
     <string name="automatic_plugin_download_mode_title">Select mode to filter plugins download</string>
     <string name="favorite_removed">%s favorilerden çıkarıldı</string>
     <string name="favorites_list_name">Favoriler</string>
@@ -676,7 +676,7 @@
     <string name="auth_locally">Yerel Olarak Doğrula</string>
     <string name="qr_image">QR Kod Görüntüsü</string>
     <string name="dismiss">Yoksay</string>
-    <string name="open_downloaded_repo">Açık depo</string>
+    <string name="open_downloaded_repo">Depoyu Aç</string>
     <string name="device_pin_url_message">Akıllı telefonunuzda veya bilgisayarınızda <b>%s</b> adresini ziyaret edin ve yukarıdaki kodu girin</string>
     <string name="device_pin_error_message">Cihaz PIN kodu alınamıyor, yerel kimlik doğrulamayı deneyin</string>
     <string name="device_pin_expired_message">PIN kodunun süresi doldu!</string>
