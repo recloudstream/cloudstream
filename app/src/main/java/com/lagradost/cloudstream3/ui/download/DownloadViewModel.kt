@@ -21,11 +21,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class DownloadViewModel : ViewModel() {
-    private val _noDownloadsText = MutableLiveData<String>().apply {
-        value = ""
-    }
-    val noDownloadsText: LiveData<String> = _noDownloadsText
-
     private val _headerCards =
         MutableLiveData<List<VisualDownloadHeaderCached>>().apply { listOf<VisualDownloadHeaderCached>() }
     val headerCards: LiveData<List<VisualDownloadHeaderCached>> = _headerCards
