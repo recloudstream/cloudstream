@@ -148,7 +148,6 @@
         android:layout_gravity="center"
         android:layout_margin="30dp"
         android:text="@string/downloads_empty"
-        android:textSize="15sp"
         android:gravity="center"
         android:visibility="gone"
         tools:visibility="visible" />
