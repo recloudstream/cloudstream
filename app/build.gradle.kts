@@ -14,7 +14,6 @@ plugins {
 
 val tmpFilePath = System.getProperty("user.home") + "/work/_temp/keystore/"
 val prereleaseStoreFile: File? = File(tmpFilePath).listFiles()?.first()
-var isLibraryDebug = false
 
 fun String.execute() = ByteArrayOutputStream().use { baot ->
     if (project.exec {
@@ -105,7 +104,6 @@ android {
             )
         }
         debug {
-            isLibraryDebug = true
             isDebuggable = true
             applicationIdSuffix = ".debug"
             proguardFiles(
@@ -236,7 +234,14 @@ dependencies {
     implementation("com.github.Blatzar:NiceHttp:0.4.11") // HTTP Lib
 
     implementation(project(":library") {
-        this.extra.set("isDebug", isLibraryDebug)
+        // There does not seem to be a good way of getting the android flavor.
+        val isDebug = gradle.startParameter.taskRequests.any { task ->
+            task.args.any { arg ->
+                arg.contains("debug", true)
+            }
+        }
+
+        this.extra.set("isDebug", isDebug)
     })
 }
 

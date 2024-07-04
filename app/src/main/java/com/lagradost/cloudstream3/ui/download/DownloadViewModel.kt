@@ -16,17 +16,11 @@ import com.lagradost.cloudstream3.utils.DataStore.getFolderName
 import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStore.getKeys
 import com.lagradost.cloudstream3.utils.VideoDownloadHelper
-import com.lagradost.cloudstream3.utils.VideoDownloadManager
+import com.lagradost.cloudstream3.utils.VideoDownloadManager.getDownloadFileInfoAndUpdateSettings
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class DownloadViewModel : ViewModel() {
-    private val _noDownloadsText = MutableLiveData<String>().apply {
-        value = ""
-    }
-    val noDownloadsText: LiveData<String> = _noDownloadsText
-
     private val _headerCards =
         MutableLiveData<List<VisualDownloadHeaderCached>>().apply { listOf<VisualDownloadHeaderCached>() }
     val headerCards: LiveData<List<VisualDownloadHeaderCached>> = _headerCards
@@ -43,8 +37,8 @@ class DownloadViewModel : ViewModel() {
 
     fun updateList(context: Context) = viewModelScope.launchSafe {
         val children = withContext(Dispatchers.IO) {
-            val headers = context.getKeys(DOWNLOAD_EPISODE_CACHE)
-            headers.mapNotNull { context.getKey<VideoDownloadHelper.DownloadEpisodeCached>(it) }
+            context.getKeys(DOWNLOAD_EPISODE_CACHE)
+                .mapNotNull { context.getKey<VideoDownloadHelper.DownloadEpisodeCached>(it) }
                 .distinctBy { it.id } // Remove duplicates
         }
 
@@ -57,10 +51,10 @@ class DownloadViewModel : ViewModel() {
 
         // Gets all children downloads
         withContext(Dispatchers.IO) {
-            for (c in children) {
-                val childFile = VideoDownloadManager.getDownloadFileInfoAndUpdateSettings(context, c.id) ?: continue
+            children.forEach { c ->
+                val childFile = getDownloadFileInfoAndUpdateSettings(context, c.id) ?: return@forEach
 
-                if (childFile.fileLength <= 1) continue
+                if (childFile.fileLength <= 1) return@forEach
                 val len = childFile.totalBytes
                 val flen = childFile.fileLength
 

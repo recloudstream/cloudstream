@@ -80,13 +80,13 @@ body:
       label: Acknowledgements
       description: Your issue will be closed if you haven't done these steps.
       options:
+        - label: I am sure my issue is related to the app and **NOT some extension**.
+          required: true
         - label: I have searched the existing issues and this is a new ticket, **NOT** a duplicate or related to another open issue.
           required: true
         - label: I have written a short but informative title.
           required: true
         - label: I have updated the app to pre-release version **[Latest](https://github.com/recloudstream/cloudstream/releases)**.
-          required: true
-        - label: If related to a provider, I have checked the site and it works, but not the app. 
           required: true
         - label: I will fill out all of the requested information in this form.
           required: true

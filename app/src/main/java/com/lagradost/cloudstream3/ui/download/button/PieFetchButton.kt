@@ -13,7 +13,6 @@ import androidx.annotation.MainThread
 import androidx.core.content.ContextCompat
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
-import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError
@@ -28,7 +27,6 @@ import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIcons
 import com.lagradost.cloudstream3.utils.VideoDownloadHelper
 import com.lagradost.cloudstream3.utils.VideoDownloadManager
 import com.lagradost.cloudstream3.utils.VideoDownloadManager.KEY_RESUME_PACKAGES
-
 
 open class PieFetchButton(context: Context, attributeSet: AttributeSet) :
     BaseFetchButton(context, attributeSet) {
@@ -303,6 +301,7 @@ open class PieFetchButton(context: Context, attributeSet: AttributeSet) :
         setStatus(null)
         currentMetaData = DownloadMetadata(0, 0, 0, null)
         isZeroBytes = true
+        doSetProgress = true
         progressBar.progress = 0
     }
 

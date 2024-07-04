@@ -3,9 +3,12 @@ package com.lagradost.cloudstream3.ui.player
 import android.net.Uri
 import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.amap
-import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
-import com.lagradost.cloudstream3.utils.*
-import java.net.URI
+import com.lagradost.cloudstream3.utils.ExtractorLink
+import com.lagradost.cloudstream3.utils.ExtractorUri
+import com.lagradost.cloudstream3.utils.INFER_TYPE
+import com.lagradost.cloudstream3.utils.Qualities
+import com.lagradost.cloudstream3.utils.loadExtractor
+import com.lagradost.cloudstream3.utils.unshortenLinkSafe
 
 data class ExtractorUri(
     val uri: Uri,

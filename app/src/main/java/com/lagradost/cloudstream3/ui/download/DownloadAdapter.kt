@@ -15,7 +15,9 @@ import com.lagradost.cloudstream3.databinding.DownloadHeaderEpisodeBinding
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.utils.AppContextUtils.getNameFull
 import com.lagradost.cloudstream3.utils.DataStoreHelper
+import com.lagradost.cloudstream3.ui.download.button.DownloadStatusTell
 import com.lagradost.cloudstream3.utils.DataStoreHelper.fixVisual
+import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
 import com.lagradost.cloudstream3.utils.UIHelper.setImage
 import com.lagradost.cloudstream3.utils.VideoDownloadHelper
 
@@ -25,6 +27,9 @@ const val DOWNLOAD_ACTION_RESUME_DOWNLOAD = 2
 const val DOWNLOAD_ACTION_PAUSE_DOWNLOAD = 3
 const val DOWNLOAD_ACTION_DOWNLOAD = 4
 const val DOWNLOAD_ACTION_LONG_CLICK = 5
+
+const val DOWNLOAD_ACTION_GO_TO_CHILD = 0
+const val DOWNLOAD_ACTION_LOAD_RESULT = 1
 
 abstract class VisualDownloadCached(
     open val currentBytes: Long,
@@ -93,110 +98,128 @@ class DownloadAdapter(
         private val mediaClickCallback: (DownloadClickEvent) -> Unit,
     ) : RecyclerView.ViewHolder(binding.root) {
 
-        @SuppressLint("SetTextI18n")
         fun bind(card: VisualDownloadCached?) {
             when (binding) {
-                is DownloadHeaderEpisodeBinding -> binding.apply {
-                    if (card == null || card !is VisualDownloadHeaderCached) return@apply
-                    val d = card.data
+                is DownloadHeaderEpisodeBinding -> bindHeader(card as? VisualDownloadHeaderCached)
+                is DownloadChildEpisodeBinding -> bindChild(card as? VisualDownloadChildCached)
+            }
+        }
 
-                    downloadHeaderPoster.apply {
-                        setImage(d.poster)
-                        setOnClickListener {
-                            clickCallback.invoke(DownloadHeaderClickEvent(1, d))
-                        }
-                    }
+        @SuppressLint("SetTextI18n")
+        private fun bindHeader(card: VisualDownloadHeaderCached?) {
+            if (binding !is DownloadHeaderEpisodeBinding) return
+            card ?: return
+            val d = card.data
 
-                    downloadHeaderTitle.text = d.name
-                    val mbString = formatShortFileSize(itemView.context, card.totalBytes)
-
-                    if (card.child != null) {
-                        downloadHeaderGotoChild.isVisible = false
-
-                        downloadButton.setDefaultClickListener(card.child, downloadHeaderInfo, mediaClickCallback)
-                        downloadButton.isVisible = true
-
-                        episodeHolder.setOnClickListener {
-                            mediaClickCallback.invoke(
-                                DownloadClickEvent(
-                                    DOWNLOAD_ACTION_PLAY_FILE,
-                                    card.child
-                                )
-                            )
-                        }
-                    } else {
-                        downloadButton.isVisible = false
-                        downloadHeaderGotoChild.isVisible = true
-
-                        try {
-                            downloadHeaderInfo.text =
-                                downloadHeaderInfo.context.getString(R.string.extra_info_format)
-                                    .format(
-                                        card.totalDownloads,
-                                        if (card.totalDownloads == 1) downloadHeaderInfo.context.getString(
-                                            R.string.episode
-                                        ) else downloadHeaderInfo.context.getString(
-                                            R.string.episodes
-                                        ),
-                                        mbString
-                                    )
-                        } catch (t: Throwable) {
-                            // You probably formatted incorrectly
-                            downloadHeaderInfo.text = "Error"
-                            logError(t)
-                        }
-
-                        episodeHolder.setOnClickListener {
-                            clickCallback.invoke(DownloadHeaderClickEvent(0, d))
-                        }
+            binding.apply {
+                downloadHeaderPoster.apply {
+                    setImage(d.poster)
+                    setOnClickListener {
+                        clickCallback.invoke(DownloadHeaderClickEvent(DOWNLOAD_ACTION_LOAD_RESULT, d))
                     }
                 }
 
-                is DownloadChildEpisodeBinding -> binding.apply {
-                    if (card == null || card !is VisualDownloadChildCached) return@apply
-                    val d = card.data
+                downloadHeaderTitle.text = d.name
+                val formattedSizeString = formatShortFileSize(itemView.context, card.totalBytes)
 
-                    val posDur = DataStoreHelper.getViewPos(d.id)
-                    downloadChildEpisodeProgress.apply {
-                        if (posDur != null) {
-                            val visualPos = posDur.fixVisual()
-                            max = (visualPos.duration / 1000).toInt()
-                            progress = (visualPos.position / 1000).toInt()
-                            isVisible = true
-                        } else isVisible = false
+                if (card.child != null) {
+                    downloadHeaderGotoChild.isVisible = false
+
+                    val status = downloadButton.getStatus(card.child.id, card.currentBytes, card.totalBytes)
+                    if (status == DownloadStatusTell.IsDone) {
+                        // We do this here instead if we are finished downloading
+                        // so that we can use the value from the view model
+                        // rather than extra unneeded disk operations and to prevent a
+                        // delay in updating download icon state.
+                        downloadButton.setProgress(card.currentBytes, card.totalBytes)
+                        downloadButton.applyMetaData(card.child.id, card.currentBytes, card.totalBytes)
+                        // We will let the view model handle this
+                        downloadButton.doSetProgress = false
+                        downloadHeaderInfo.text = formattedSizeString
+                    } else downloadButton.doSetProgress = true
+
+                    downloadButton.setDefaultClickListener(card.child, downloadHeaderInfo, mediaClickCallback)
+                    downloadButton.isVisible = true
+
+                    episodeHolder.setOnClickListener {
+                        mediaClickCallback.invoke(DownloadClickEvent(DOWNLOAD_ACTION_PLAY_FILE, card.child))
+                    }
+                } else {
+                    downloadButton.isVisible = false
+                    downloadHeaderGotoChild.isVisible = true
+
+                    try {
+                        downloadHeaderInfo.text = downloadHeaderInfo.context.getString(R.string.extra_info_format)
+                            .format(
+                                card.totalDownloads,
+                                downloadHeaderInfo.context.resources.getQuantityString(
+                                    R.plurals.episodes,
+                                    card.totalDownloads
+                                ),
+                                formattedSizeString
+                            )
+                    } catch (e: Exception) {
+                        // You probably formatted incorrectly
+                        downloadHeaderInfo.text = "Error"
+                        logError(e)
                     }
 
-                    downloadButton.setDefaultClickListener(card.data, downloadChildEpisodeTextExtra, mediaClickCallback)
-
-                    downloadChildEpisodeText.apply {
-                        text = context.getNameFull(d.name, d.episode, d.season)
-                        isSelected = true // Needed for text repeating
+                    episodeHolder.setOnClickListener {
+                        clickCallback.invoke(DownloadHeaderClickEvent(DOWNLOAD_ACTION_GO_TO_CHILD, d))
                     }
+                }
+            }
+        }
 
-                    downloadChildEpisodeHolder.setOnClickListener {
-                        mediaClickCallback.invoke(DownloadClickEvent(DOWNLOAD_ACTION_PLAY_FILE, d))
+        private fun bindChild(card: VisualDownloadChildCached?) {
+            if (binding !is DownloadChildEpisodeBinding) return
+            card ?: return
+            val d = card.data
+
+            binding.apply {
+                val posDur = getViewPos(d.id)
+                downloadChildEpisodeProgress.apply {
+                    isVisible = posDur != null
+                    posDur?.let {
+                        val visualPos = it.fixVisual()
+                        max = (visualPos.duration / 1000).toInt()
+                        progress = (visualPos.position / 1000).toInt()
                     }
+                }
+
+                val status = downloadButton.getStatus(d.id, card.currentBytes, card.totalBytes)
+                if (status == DownloadStatusTell.IsDone) {
+                    // We do this here instead if we are finished downloading
+                    // so that we can use the value from the view model
+                    // rather than extra unneeded disk operations and to prevent a
+                    // delay in updating download icon state.
+                    downloadButton.setProgress(card.currentBytes, card.totalBytes)
+                    downloadButton.applyMetaData(d.id, card.currentBytes, card.totalBytes)
+                    // We will let the view model handle this
+                    downloadButton.doSetProgress = false
+                    downloadChildEpisodeTextExtra.text = formatShortFileSize(downloadChildEpisodeTextExtra.context, card.totalBytes)
+                } else downloadButton.doSetProgress = true
+
+                downloadButton.setDefaultClickListener(d, downloadChildEpisodeTextExtra, mediaClickCallback)
+                downloadButton.isVisible = true
+
+                downloadChildEpisodeText.apply {
+                    text = context.getNameFull(d.name, d.episode, d.season)
+                    isSelected = true // Needed for text repeating
+                }
+
+                downloadChildEpisodeHolder.setOnClickListener {
+                    mediaClickCallback.invoke(DownloadClickEvent(DOWNLOAD_ACTION_PLAY_FILE, d))
                 }
             }
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DownloadViewHolder {
+        val inflater = LayoutInflater.from(parent.context)
         val binding = when (viewType) {
-            VIEW_TYPE_HEADER -> {
-                DownloadHeaderEpisodeBinding.inflate(
-                    LayoutInflater.from(parent.context),
-                    parent,
-                    false
-                )
-            }
-            VIEW_TYPE_CHILD -> {
-                DownloadChildEpisodeBinding.inflate(
-                    LayoutInflater.from(parent.context),
-                    parent,
-                    false
-                )
-            }
+            VIEW_TYPE_HEADER -> DownloadHeaderEpisodeBinding.inflate(inflater, parent, false)
+            VIEW_TYPE_CHILD -> DownloadChildEpisodeBinding.inflate(inflater, parent, false)
             else -> throw IllegalArgumentException("Invalid view type")
         }
         return DownloadViewHolder(binding, clickCallback, mediaClickCallback)
@@ -207,8 +230,11 @@ class DownloadAdapter(
     }
 
     override fun getItemViewType(position: Int): Int {
-        val card = getItem(position)
-        return if (card is VisualDownloadChildCached) VIEW_TYPE_CHILD else VIEW_TYPE_HEADER
+        return when (getItem(position)) {
+            is VisualDownloadChildCached -> VIEW_TYPE_CHILD
+            is VisualDownloadHeaderCached -> VIEW_TYPE_HEADER
+            else -> throw IllegalArgumentException("Invalid data type at position $position")
+        }
     }
 
     class DiffCallback : DiffUtil.ItemCallback<VisualDownloadCached>() {

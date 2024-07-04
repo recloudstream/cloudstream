@@ -149,8 +149,10 @@
     <string name="download_canceled">Download Canceled</string>
     <string name="download_done">Download Done</string>
     <string name="download_format" translatable="false">%s - %s</string>
+    <string name="downloads_empty">There are currently no downloads.</string>
     <string name="update_started">Update Started</string>
     <string name="stream">Network stream</string>
+    <string name="open_local_video">Open local video</string>
     <string name="error_loading_links_toast">Error Loading Links</string>
     <string name="links_reloaded_toast">Links Reloaded</string>
     <string name="download_storage_text">Internal Storage</string>
@@ -339,6 +341,10 @@
     <string name="livestreams">Livestreams</string>
     <string name="nsfw">NSFW</string>
     <string name="others">Others</string>
+    <plurals name="episodes" translatable="false">
+        <item quantity="one">@string/episode</item>
+        <item quantity="other">@string/episodes</item>
+    </plurals>
     <!--singular-->
     <string name="movies_singular">Movie</string>
     <string name="tv_series_singular">Series</string>
