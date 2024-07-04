@@ -27,6 +27,9 @@ const val DOWNLOAD_ACTION_PAUSE_DOWNLOAD = 3
 const val DOWNLOAD_ACTION_DOWNLOAD = 4
 const val DOWNLOAD_ACTION_LONG_CLICK = 5
 
+const val DOWNLOAD_ACTION_GO_TO_CHILD = 0
+const val DOWNLOAD_ACTION_LOAD_RESULT = 1
+
 abstract class VisualDownloadCached(
     open val currentBytes: Long,
     open val totalBytes: Long,
@@ -111,7 +114,7 @@ class DownloadAdapter(
                 downloadHeaderPoster.apply {
                     setImage(d.poster)
                     setOnClickListener {
-                        clickCallback.invoke(DownloadHeaderClickEvent(1, d))
+                        clickCallback.invoke(DownloadHeaderClickEvent(DOWNLOAD_ACTION_LOAD_RESULT, d))
                     }
                 }
 
@@ -161,7 +164,7 @@ class DownloadAdapter(
                     }
 
                     episodeHolder.setOnClickListener {
-                        clickCallback.invoke(DownloadHeaderClickEvent(DOWNLOAD_ACTION_PLAY_FILE, d))
+                        clickCallback.invoke(DownloadHeaderClickEvent(DOWNLOAD_ACTION_GO_TO_CHILD, d))
                     }
                 }
             }

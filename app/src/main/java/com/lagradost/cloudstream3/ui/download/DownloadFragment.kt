@@ -142,7 +142,7 @@ class DownloadFragment : Fragment() {
 
     private fun handleItemClick(click: DownloadHeaderClickEvent) {
         when (click.action) {
-            0 -> {
+            DOWNLOAD_ACTION_GO_TO_CHILD -> {
                 if (!click.data.type.isMovieType()) {
                     val folder = DataStore.getFolderName(DOWNLOAD_EPISODE_CACHE, click.data.id.toString())
                     activity?.navigate(
@@ -151,7 +151,7 @@ class DownloadFragment : Fragment() {
                     )
                 }
             }
-            1 -> {
+            DOWNLOAD_ACTION_LOAD_RESULT -> {
                 (activity as AppCompatActivity?)?.loadResult(click.data.url, click.data.apiName)
             }
         }
