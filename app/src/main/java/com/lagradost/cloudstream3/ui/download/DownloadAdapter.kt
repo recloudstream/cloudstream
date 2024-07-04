@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.text.format.Formatter.formatShortFileSize
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -13,9 +14,8 @@ import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.DownloadChildEpisodeBinding
 import com.lagradost.cloudstream3.databinding.DownloadHeaderEpisodeBinding
 import com.lagradost.cloudstream3.mvvm.logError
-import com.lagradost.cloudstream3.utils.AppContextUtils.getNameFull
-import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.ui.download.button.DownloadStatusTell
+import com.lagradost.cloudstream3.utils.AppContextUtils.getNameFull
 import com.lagradost.cloudstream3.utils.DataStoreHelper.fixVisual
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
 import com.lagradost.cloudstream3.utils.UIHelper.setImage
@@ -135,8 +135,15 @@ class DownloadAdapter(
                         downloadButton.applyMetaData(card.child.id, card.currentBytes, card.totalBytes)
                         // We will let the view model handle this
                         downloadButton.doSetProgress = false
+                        downloadButton.progressBar.progressDrawable =
+                            downloadButton.getDrawableFromStatus(status)
+                                ?.let { ContextCompat.getDrawable(downloadButton.context, it) }
                         downloadHeaderInfo.text = formattedSizeString
-                    } else downloadButton.doSetProgress = true
+                    } else {
+                        downloadButton.doSetProgress = true
+                        downloadButton.progressBar.progressDrawable =
+                            ContextCompat.getDrawable(downloadButton.context, downloadButton.progressDrawable)
+                    }
 
                     downloadButton.setDefaultClickListener(card.child, downloadHeaderInfo, mediaClickCallback)
                     downloadButton.isVisible = true
@@ -197,8 +204,15 @@ class DownloadAdapter(
                     downloadButton.applyMetaData(d.id, card.currentBytes, card.totalBytes)
                     // We will let the view model handle this
                     downloadButton.doSetProgress = false
+                    downloadButton.progressBar.progressDrawable =
+                        downloadButton.getDrawableFromStatus(status)
+                            ?.let { ContextCompat.getDrawable(downloadButton.context, it) }
                     downloadChildEpisodeTextExtra.text = formatShortFileSize(downloadChildEpisodeTextExtra.context, card.totalBytes)
-                } else downloadButton.doSetProgress = true
+                } else {
+                    downloadButton.doSetProgress = true
+                    downloadButton.progressBar.progressDrawable =
+                        ContextCompat.getDrawable(downloadButton.context, downloadButton.progressDrawable)
+                }
 
                 downloadButton.setDefaultClickListener(d, downloadChildEpisodeTextExtra, mediaClickCallback)
                 downloadButton.isVisible = true
