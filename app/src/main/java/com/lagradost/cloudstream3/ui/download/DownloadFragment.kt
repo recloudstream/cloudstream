@@ -108,14 +108,18 @@ class DownloadFragment : Fragment() {
         }
 
         val adapter = DownloadAdapter(
+            { actionEvent ->
+                if (actionEvent.action == DOWNLOAD_ACTION_DELETE_FILE) {
+                    val downloadDeleteEvent = DownloadDeleteEvent(
+                        action = DOWNLOAD_ACTION_DELETE_FILE,
+                        items = listOf(actionEvent.data)
+                    )
+                    handleDownloadClick(downloadDeleteEvent)
+                    setUpDownloadDeleteListener()
+                } else handleDownloadClick(actionEvent)
+            },
             { click ->
                 handleItemClick(click)
-            },
-            { downloadClickEvent ->
-                handleDownloadClick(downloadClickEvent)
-                if (downloadClickEvent.action == DOWNLOAD_ACTION_DELETE_FILE) {
-                    setUpDownloadDeleteListener()
-                }
             }
         )
 

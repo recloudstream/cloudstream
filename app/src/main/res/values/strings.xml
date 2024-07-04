@@ -300,6 +300,7 @@
     <string name="episode_short">E</string>
     <string name="no_episodes_found">No Episodes found</string>
     <string name="delete_file">Delete File</string>
+    <string name="delete_files">Delete Files</string>
     <string name="delete">Delete</string>
     <string name="cancel">Cancel</string>
     <string name="pause">Pause</string>
@@ -311,6 +312,7 @@
     <string name="go_back_30">-30</string>
     <string name="go_forward_30">+30</string>
     <string name="delete_message" formatted="true">This will permanently delete %s\nAre you sure?</string>
+    <string name="delete_multiple_message" formatted="true">This will permanently delete all of: %s\nAre you sure?</string>
     <string name="resume_time_left" formatted="true">%dm\nremaining</string>
     <string name="resume_remaining" formatted="true">%s\nremaining</string>
     <string name="status_ongoing">Ongoing</string>

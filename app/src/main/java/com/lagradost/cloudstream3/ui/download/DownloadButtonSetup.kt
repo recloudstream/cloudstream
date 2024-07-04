@@ -17,19 +17,21 @@ import com.lagradost.cloudstream3.utils.DOWNLOAD_HEADER_CACHE
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.VideoDownloadHelper
 import com.lagradost.cloudstream3.utils.VideoDownloadManager
+import kotlinx.coroutines.MainScope
 
 object DownloadButtonSetup {
-    fun handleDownloadClick(click: DownloadClickEvent) {
-        val id = click.data.id
+    fun handleDownloadClick(click: DownloadActionEventBase) {
         when (click.action) {
             DOWNLOAD_ACTION_DELETE_FILE -> {
+                if (click !is DownloadDeleteEvent) return
+                val id = click.items.firstOrNull()?.id ?: return
                 activity?.let { ctx ->
                     val builder: AlertDialog.Builder = AlertDialog.Builder(ctx)
                     val dialogClickListener =
                         DialogInterface.OnClickListener { _, which ->
                             when (which) {
                                 DialogInterface.BUTTON_POSITIVE -> {
-                                    VideoDownloadManager.deleteFileAndUpdateSettings(ctx, id)
+                                    VideoDownloadManager.deleteFilesAndUpdateSettings(ctx, listOf(id), MainScope())
                                 }
                                 DialogInterface.BUTTON_NEGATIVE -> {
                                 }
@@ -41,9 +43,9 @@ object DownloadButtonSetup {
                             .setMessage(
                                 ctx.getString(R.string.delete_message).format(
                                     ctx.getNameFull(
-                                        click.data.name,
-                                        click.data.episode,
-                                        click.data.season
+                                        click.items.firstOrNull()?.name,
+                                        click.items.firstOrNull()?.episode,
+                                        click.items.firstOrNull()?.season
                                     )
                                 )
                             )
@@ -57,15 +59,17 @@ object DownloadButtonSetup {
                 }
             }
             DOWNLOAD_ACTION_PAUSE_DOWNLOAD -> {
+                val id = click.data?.id ?: return
                 VideoDownloadManager.downloadEvent.invoke(
-                    Pair(click.data.id, VideoDownloadManager.DownloadActionType.Pause)
+                    Pair(id, VideoDownloadManager.DownloadActionType.Pause)
                 )
             }
             DOWNLOAD_ACTION_RESUME_DOWNLOAD -> {
+                val id = click.data?.id ?: return
                 activity?.let { ctx ->
                     if (VideoDownloadManager.downloadStatus.containsKey(id) && VideoDownloadManager.downloadStatus[id] == VideoDownloadManager.DownloadType.IsPaused) {
                         VideoDownloadManager.downloadEvent.invoke(
-                            Pair(click.data.id, VideoDownloadManager.DownloadActionType.Resume)
+                            Pair(id, VideoDownloadManager.DownloadActionType.Resume)
                         )
                     } else {
                         val pkg = VideoDownloadManager.getDownloadResumePackage(ctx, id)
@@ -73,18 +77,19 @@ object DownloadButtonSetup {
                             VideoDownloadManager.downloadFromResumeUsingWorker(ctx, pkg)
                         } else {
                             VideoDownloadManager.downloadEvent.invoke(
-                                Pair(click.data.id, VideoDownloadManager.DownloadActionType.Resume)
+                                Pair(id, VideoDownloadManager.DownloadActionType.Resume)
                             )
                         }
                     }
                 }
             }
             DOWNLOAD_ACTION_LONG_CLICK -> {
+                val id = click.data?.id ?: return
                 activity?.let { act ->
                     val length =
                         VideoDownloadManager.getDownloadFileInfoAndUpdateSettings(
                             act,
-                            click.data.id
+                            id
                         )?.fileLength
                             ?: 0
                     if (length > 0) {
@@ -95,19 +100,20 @@ object DownloadButtonSetup {
                 }
             }
             DOWNLOAD_ACTION_PLAY_FILE -> {
+                val id = click.data?.id ?: return
                 activity?.let { act ->
                     val info =
                         VideoDownloadManager.getDownloadFileInfoAndUpdateSettings(
                             act,
-                            click.data.id
+                            id
                         ) ?: return
                     val keyInfo = getKey<VideoDownloadManager.DownloadedFileInfo>(
                         VideoDownloadManager.KEY_DOWNLOAD_INFO,
-                        click.data.id.toString()
+                        id.toString()
                     ) ?: return
                     val parent = getKey<VideoDownloadHelper.DownloadHeaderCached>(
                         DOWNLOAD_HEADER_CACHE,
-                        click.data.parentId.toString()
+                        click.data?.parentId.toString()
                     ) ?: return
 
                     act.navigate(
@@ -117,11 +123,11 @@ object DownloadButtonSetup {
                                     ExtractorUri(
                                         uri = info.path,
 
-                                        id = click.data.id,
-                                        parentId = click.data.parentId,
+                                        id = id,
+                                        parentId = click.data?.parentId,
                                         name = act.getString(R.string.downloaded_file), //click.data.name ?: keyInfo.displayName
-                                        season = click.data.season,
-                                        episode = click.data.episode,
+                                        season = click.data?.season,
+                                        episode = click.data?.episode,
                                         headerName = parent.name,
                                         tvType = parent.type,
 
@@ -138,15 +144,45 @@ object DownloadButtonSetup {
                         //        keyInfo.basePath,
                         //        keyInfo.relativePath,
                         //        keyInfo.displayName,
-                        //        click.data.parentId,
-                        //        click.data.id,
+                        //        click.data?.parentId,
+                        //        click.data?.id,
                         //        headerName ?: "null",
                         //        if (click.data.episode <= 0) null else click.data.episode,
                         //        click.data.season
                         //    ),
-                        //    getViewPos(click.data.id)?.position ?: 0
+                        //    getViewPos(click.data?.id)?.position ?: 0
                         //)
                     )
+                }
+            }
+            DOWNLOAD_ACTION_DELETE_MULTIPLE_FILES -> {
+                activity?.let { ctx ->
+                    if (click !is DownloadDeleteEvent) return
+                    val ids: List<Int> = click.items.mapNotNull { it?.id }
+                        .takeIf { it.isNotEmpty() } ?: return@let
+                    val builder: AlertDialog.Builder = AlertDialog.Builder(ctx)
+                    val dialogClickListener =
+                        DialogInterface.OnClickListener { _, which ->
+                            when (which) {
+                                DialogInterface.BUTTON_POSITIVE -> {
+                                    VideoDownloadManager.deleteFilesAndUpdateSettings(ctx, ids, MainScope())
+                                }
+                                DialogInterface.BUTTON_NEGATIVE -> {
+                                }
+                            }
+                        }
+
+                    try {
+                        builder.setTitle(R.string.delete_files)
+                            .setMessage(
+                                ctx.getString(R.string.delete_multiple_message)
+                            )
+                            .setPositiveButton(R.string.delete, dialogClickListener)
+                            .setNegativeButton(R.string.cancel, dialogClickListener)
+                            .show().setDefaultFocus()
+                    } catch (e: Exception) {
+                        logError(e)
+                    }
                 }
             }
         }

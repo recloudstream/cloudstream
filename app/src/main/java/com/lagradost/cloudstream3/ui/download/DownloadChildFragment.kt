@@ -102,13 +102,17 @@ class DownloadChildFragment : Fragment() {
         }
 
         val adapter = DownloadAdapter(
-            {},
-            { downloadClickEvent ->
-                handleDownloadClick(downloadClickEvent)
-                if (downloadClickEvent.action == DOWNLOAD_ACTION_DELETE_FILE) {
+            { actionEvent ->
+                if (actionEvent.action == DOWNLOAD_ACTION_DELETE_FILE) {
+                    val downloadDeleteEvent = DownloadDeleteEvent(
+                        action = DOWNLOAD_ACTION_DELETE_FILE,
+                        items = listOf(actionEvent.data)
+                    )
+                    handleDownloadClick(downloadDeleteEvent)
                     setUpDownloadDeleteListener(folder)
-                }
-            }
+                } else handleDownloadClick(actionEvent)
+            },
+            {}
         )
 
         binding?.downloadChildList?.apply {

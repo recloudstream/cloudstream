@@ -20,6 +20,7 @@ import androidx.work.WorkManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.model.GlideUrl
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.lagradost.api.Log
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
 import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
@@ -29,6 +30,7 @@ import com.lagradost.cloudstream3.MainActivity
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.app
+import com.lagradost.cloudstream3.mvvm.launchSafe
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.services.VideoDownloadService
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
@@ -42,6 +44,8 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
@@ -1705,7 +1709,28 @@ object VideoDownloadManager {
         }
     }
 
-    fun deleteFileAndUpdateSettings(context: Context, id: Int): Boolean {
+    fun deleteFilesAndUpdateSettings(context: Context, ids: List<Int>, scope: CoroutineScope) {
+        scope.launchSafe(Dispatchers.IO) {
+            val deleteJobs = ids.map { id ->
+                async {
+                    id to deleteFileAndUpdateSettings(context, id)
+                }
+            }
+            val results = deleteJobs.awaitAll()
+
+            val failedDeletes = results.filterNot { it.second }
+            if (failedDeletes.isNotEmpty()) {
+                failedDeletes.forEach { (id, _) ->
+                    // TODO show a toast if some failed?
+                    Log.e("FileDeletion", "Failed to delete file with ID: $id")
+                }
+            } else {
+                Log.i("FileDeletion", "All files deleted successfully")
+            }
+        }
+    }
+
+    private fun deleteFileAndUpdateSettings(context: Context, id: Int): Boolean {
         val success = deleteFile(context, id)
         if (success) context.removeKey(KEY_DOWNLOAD_INFO, id.toString())
         return success

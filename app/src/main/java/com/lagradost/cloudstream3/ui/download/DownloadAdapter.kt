@@ -27,6 +27,7 @@ const val DOWNLOAD_ACTION_RESUME_DOWNLOAD = 2
 const val DOWNLOAD_ACTION_PAUSE_DOWNLOAD = 3
 const val DOWNLOAD_ACTION_DOWNLOAD = 4
 const val DOWNLOAD_ACTION_LONG_CLICK = 5
+const val DOWNLOAD_ACTION_DELETE_MULTIPLE_FILES = 6
 
 const val DOWNLOAD_ACTION_GO_TO_CHILD = 0
 const val DOWNLOAD_ACTION_LOAD_RESULT = 1
@@ -57,6 +58,11 @@ abstract class VisualDownloadCached(
     }
 }
 
+abstract class DownloadActionEventBase(
+    open val action: Int,
+    open val data: VideoDownloadHelper.DownloadEpisodeCached?
+)
+
 data class VisualDownloadChildCached(
     override val currentBytes: Long,
     override val totalBytes: Long,
@@ -73,9 +79,14 @@ data class VisualDownloadHeaderCached(
 ): VisualDownloadCached(currentBytes, totalBytes, data)
 
 data class DownloadClickEvent(
-    val action: Int,
-    val data: VideoDownloadHelper.DownloadEpisodeCached
-)
+    override val action: Int,
+    override val data: VideoDownloadHelper.DownloadEpisodeCached
+): DownloadActionEventBase(action, data)
+
+data class DownloadDeleteEvent(
+    override val action: Int,
+    val items: List<VideoDownloadHelper.DownloadEpisodeCached?>
+): DownloadActionEventBase(action, null)
 
 data class DownloadHeaderClickEvent(
     val action: Int,
@@ -83,8 +94,8 @@ data class DownloadHeaderClickEvent(
 )
 
 class DownloadAdapter(
+    private val actionCallback: (DownloadActionEventBase) -> Unit,
     private val clickCallback: (DownloadHeaderClickEvent) -> Unit,
-    private val mediaClickCallback: (DownloadClickEvent) -> Unit,
 ) : ListAdapter<VisualDownloadCached, DownloadAdapter.DownloadViewHolder>(DiffCallback()) {
 
     companion object {
@@ -94,8 +105,8 @@ class DownloadAdapter(
 
     inner class DownloadViewHolder(
         private val binding: ViewBinding,
+        private val actionCallback: (DownloadActionEventBase) -> Unit,
         private val clickCallback: (DownloadHeaderClickEvent) -> Unit,
-        private val mediaClickCallback: (DownloadClickEvent) -> Unit,
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(card: VisualDownloadCached?) {
@@ -145,11 +156,11 @@ class DownloadAdapter(
                             ContextCompat.getDrawable(downloadButton.context, downloadButton.progressDrawable)
                     }
 
-                    downloadButton.setDefaultClickListener(card.child, downloadHeaderInfo, mediaClickCallback)
+                    downloadButton.setDefaultClickListener(card.child, downloadHeaderInfo, actionCallback)
                     downloadButton.isVisible = true
 
                     episodeHolder.setOnClickListener {
-                        mediaClickCallback.invoke(DownloadClickEvent(DOWNLOAD_ACTION_PLAY_FILE, card.child))
+                        actionCallback.invoke(DownloadClickEvent(DOWNLOAD_ACTION_PLAY_FILE, card.child))
                     }
                 } else {
                     downloadButton.isVisible = false
@@ -214,7 +225,7 @@ class DownloadAdapter(
                         ContextCompat.getDrawable(downloadButton.context, downloadButton.progressDrawable)
                 }
 
-                downloadButton.setDefaultClickListener(d, downloadChildEpisodeTextExtra, mediaClickCallback)
+                downloadButton.setDefaultClickListener(d, downloadChildEpisodeTextExtra, actionCallback)
                 downloadButton.isVisible = true
 
                 downloadChildEpisodeText.apply {
@@ -223,7 +234,7 @@ class DownloadAdapter(
                 }
 
                 downloadChildEpisodeHolder.setOnClickListener {
-                    mediaClickCallback.invoke(DownloadClickEvent(DOWNLOAD_ACTION_PLAY_FILE, d))
+                    actionCallback.invoke(DownloadClickEvent(DOWNLOAD_ACTION_PLAY_FILE, d))
                 }
             }
         }
@@ -236,7 +247,7 @@ class DownloadAdapter(
             VIEW_TYPE_CHILD -> DownloadChildEpisodeBinding.inflate(inflater, parent, false)
             else -> throw IllegalArgumentException("Invalid view type")
         }
-        return DownloadViewHolder(binding, clickCallback, mediaClickCallback)
+        return DownloadViewHolder(binding, actionCallback, clickCallback)
     }
 
     override fun onBindViewHolder(holder: DownloadViewHolder, position: Int) {
