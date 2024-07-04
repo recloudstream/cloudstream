@@ -161,7 +161,7 @@ class DownloadAdapter(
                     }
 
                     episodeHolder.setOnClickListener {
-                        clickCallback.invoke(DownloadHeaderClickEvent(0, d))
+                        clickCallback.invoke(DownloadHeaderClickEvent(DOWNLOAD_ACTION_PLAY_FILE, d))
                     }
                 }
             }
