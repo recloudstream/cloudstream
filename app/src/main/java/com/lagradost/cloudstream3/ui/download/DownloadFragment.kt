@@ -40,7 +40,6 @@ import com.lagradost.cloudstream3.ui.result.setLinearListLayout
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.utils.AppUtils.loadResult
-import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.DOWNLOAD_EPISODE_CACHE
 import com.lagradost.cloudstream3.utils.DataStore
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
@@ -65,16 +64,8 @@ class DownloadFragment : Fragment() {
         this.layoutParams = param
     }
 
-    private fun setList(list: List<VisualDownloadHeaderCached>) {
-        main {
-            (binding?.downloadList?.adapter as? DownloadAdapter)?.submitList(list)
-        }
-    }
-
     override fun onDestroyView() {
-        downloadDeleteEventListener?.let {
-            VideoDownloadManager.downloadDeleteEvent -= it
-        }
+        downloadDeleteEventListener?.let { VideoDownloadManager.downloadDeleteEvent -= it }
         downloadDeleteEventListener = null
         binding = null
         super.onDestroyView()
@@ -100,12 +91,10 @@ class DownloadFragment : Fragment() {
         hideKeyboard()
         binding?.downloadStorageAppbar?.setAppBarNoScrollFlagsOnTV()
 
-        observe(downloadsViewModel.noDownloadsText) {
-            binding?.textNoDownloads?.text = it
-        }
         observe(downloadsViewModel.headerCards) {
-            setList(it)
+            (binding?.downloadList?.adapter as? DownloadAdapter)?.submitList(it)
             binding?.downloadLoading?.isVisible = false
+            binding?.textNoDownloads?.isVisible = it.isEmpty()
         }
         observe(downloadsViewModel.availableBytes) {
             updateStorageInfo(view.context, it, R.string.free_storage, binding?.downloadFreeTxt, binding?.downloadFree)
@@ -164,7 +153,7 @@ class DownloadFragment : Fragment() {
 
     private fun handleItemClick(click: DownloadHeaderClickEvent) {
         when (click.action) {
-            0 -> {
+            DOWNLOAD_ACTION_GO_TO_CHILD -> {
                 if (!click.data.type.isMovieType()) {
                     val folder = DataStore.getFolderName(DOWNLOAD_EPISODE_CACHE, click.data.id.toString())
                     activity?.navigate(
@@ -173,7 +162,7 @@ class DownloadFragment : Fragment() {
                     )
                 }
             }
-            1 -> {
+            DOWNLOAD_ACTION_LOAD_RESULT -> {
                 (activity as AppCompatActivity?)?.loadResult(click.data.url, click.data.apiName)
             }
         }
