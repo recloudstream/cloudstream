@@ -16,6 +16,8 @@ import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.os.TransactionTooLargeException
 import android.util.Log
 import android.view.*
@@ -475,7 +477,23 @@ object UIHelper {
     }
 
     fun FragmentActivity.popCurrentPage() {
-        this.onBackPressedDispatcher.onBackPressed()
+        // Post the back press action to the main thread handler to ensure it executes
+        // after any currently pending UI updates or fragment transactions.
+        Handler(Looper.getMainLooper()).post {
+            // Check if the FragmentManager state is saved. If it is, we cannot perform
+            // fragment transactions safely because the state may be inconsistent.
+            if (!supportFragmentManager.isStateSaved) {
+                // If the state is not saved, it's safe to perform the back press action.
+                this.onBackPressedDispatcher.onBackPressed()
+            } else {
+                // If the state is saved, retry the back press action after a slight delay.
+                // This gives the FragmentManager time to complete any ongoing state-saving
+                // operations or transactions, ensuring that we do not encounter an IllegalStateException.
+                Handler(Looper.getMainLooper()).postDelayed({
+                    this.onBackPressedDispatcher.onBackPressed()
+                }, 100)
+            }
+        }
     }
 
     fun Context.getStatusBarHeight(): Int {
