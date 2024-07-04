@@ -263,6 +263,8 @@ tasks.register<Copy>("copyJar") {
 
 // Merge the app classes and the library classes into classes.jar
 tasks.register<Jar>("makeJar") {
+    // Duplicates cause hard to catch errors, better to fail at compile time.
+    duplicatesStrategy = DuplicatesStrategy.FAIL
     dependsOn(tasks.getByName("copyJar"))
     from(
         zipTree("build/app-classes/classes.jar"),

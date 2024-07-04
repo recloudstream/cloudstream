@@ -10,7 +10,7 @@ import androidx.work.PeriodicWorkRequest
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import com.lagradost.cloudstream3.R
-import com.lagradost.cloudstream3.utils.AppUtils.createNotificationChannel
+import com.lagradost.cloudstream3.utils.AppContextUtils.createNotificationChannel
 import com.lagradost.cloudstream3.utils.BackupUtils
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
 import java.util.concurrent.TimeUnit

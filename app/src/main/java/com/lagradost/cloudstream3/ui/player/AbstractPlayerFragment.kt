@@ -44,8 +44,8 @@ import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.unixTimeMs
 import com.lagradost.cloudstream3.ui.subtitles.SaveCaptionStyle
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment
-import com.lagradost.cloudstream3.utils.AppUtils
-import com.lagradost.cloudstream3.utils.AppUtils.requestLocalAudioFocus
+import com.lagradost.cloudstream3.utils.AppContextUtils
+import com.lagradost.cloudstream3.utils.AppContextUtils.requestLocalAudioFocus
 import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.EpisodeSkip
 import com.lagradost.cloudstream3.utils.UIHelper
@@ -258,7 +258,7 @@ abstract class AbstractPlayerFragment(
 
     private fun requestAudioFocus() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            activity?.requestLocalAudioFocus(AppUtils.getFocusRequest())
+            activity?.requestLocalAudioFocus(AppContextUtils.getFocusRequest())
         }
     }
 

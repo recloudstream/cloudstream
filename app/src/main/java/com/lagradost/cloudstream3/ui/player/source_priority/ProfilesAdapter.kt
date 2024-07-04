@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.PlayerQualityProfileItemBinding
 import com.lagradost.cloudstream3.ui.result.UiImage
-import com.lagradost.cloudstream3.utils.AppUtils
+import com.lagradost.cloudstream3.utils.AppContextUtils
 import com.lagradost.cloudstream3.utils.UIHelper.setImage
 
 class ProfilesAdapter(
@@ -21,7 +21,7 @@ class ProfilesAdapter(
     val usedProfile: Int,
     val clickCallback: (oldIndex: Int?, newIndex: Int) -> Unit,
 ) :
-    AppUtils.DiffAdapter<QualityDataHelper.QualityProfile>(
+    AppContextUtils.DiffAdapter<QualityDataHelper.QualityProfile>(
         items,
         comparison = { first: QualityDataHelper.QualityProfile, second: QualityDataHelper.QualityProfile ->
             first.id == second.id

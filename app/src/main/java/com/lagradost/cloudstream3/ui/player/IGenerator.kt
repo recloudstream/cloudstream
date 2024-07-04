@@ -2,7 +2,6 @@ package com.lagradost.cloudstream3.ui.player
 
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.ExtractorLinkType
-import com.lagradost.cloudstream3.utils.ExtractorUri
 
 enum class LoadType {
     Unknown,

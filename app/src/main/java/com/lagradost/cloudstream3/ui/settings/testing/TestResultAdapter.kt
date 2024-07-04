@@ -15,7 +15,7 @@ import com.lagradost.cloudstream3.databinding.ProviderTestItemBinding
 import com.lagradost.cloudstream3.mvvm.getAllMessages
 import com.lagradost.cloudstream3.mvvm.getStackTracePretty
 import com.lagradost.cloudstream3.plugins.PluginManager
-import com.lagradost.cloudstream3.utils.AppUtils
+import com.lagradost.cloudstream3.utils.AppContextUtils
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.runOnMainThread
 import com.lagradost.cloudstream3.utils.SubtitleHelper.getFlagFromIso
@@ -23,7 +23,7 @@ import com.lagradost.cloudstream3.utils.TestingUtils
 import java.io.File
 
 class TestResultAdapter(override val items: MutableList<Pair<MainAPI, TestingUtils.TestResultProvider>>) :
-    AppUtils.DiffAdapter<Pair<MainAPI, TestingUtils.TestResultProvider>>(items) {
+    AppContextUtils.DiffAdapter<Pair<MainAPI, TestingUtils.TestResultProvider>>(items) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return ProviderTestViewHolder(
             ProviderTestItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)

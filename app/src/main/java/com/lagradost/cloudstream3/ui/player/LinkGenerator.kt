@@ -1,12 +1,30 @@
 package com.lagradost.cloudstream3.ui.player
 
+import android.net.Uri
+import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.amap
 import com.lagradost.cloudstream3.utils.ExtractorLink
-import com.lagradost.cloudstream3.utils.ExtractorUri
+import com.lagradost.cloudstream3.ui.player.ExtractorUri
 import com.lagradost.cloudstream3.utils.INFER_TYPE
 import com.lagradost.cloudstream3.utils.Qualities
 import com.lagradost.cloudstream3.utils.loadExtractor
 import com.lagradost.cloudstream3.utils.unshortenLinkSafe
+
+data class ExtractorUri(
+    val uri: Uri,
+    val name: String,
+
+    val basePath: String? = null,
+    val relativePath: String? = null,
+    val displayName: String? = null,
+
+    val id: Int? = null,
+    val parentId: Int? = null,
+    val episode: Int? = null,
+    val season: Int? = null,
+    val headerName: String? = null,
+    val tvType: TvType? = null,
+)
 
 /**
  * Used to open the player more easily with the LinkGenerator
