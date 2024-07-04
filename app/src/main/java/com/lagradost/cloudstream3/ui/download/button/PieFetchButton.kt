@@ -1,7 +1,6 @@
 package com.lagradost.cloudstream3.ui.download.button
 
 import android.content.Context
-import android.graphics.drawable.Drawable
 import android.os.Looper
 import android.util.AttributeSet
 import android.util.Log
@@ -44,6 +43,8 @@ open class PieFetchButton(context: Context, attributeSet: AttributeSet) :
     private var iconRemoved: Int = 0
     private var iconPaused: Int = 0
     private var hideWhenIcon: Boolean = true
+
+    var progressDrawable: Int = 0
 
     var overrideLayout: Int? = null
 
@@ -115,10 +116,10 @@ open class PieFetchButton(context: Context, attributeSet: AttributeSet) :
                 R.styleable.PieFetchButton_download_icon_complete, R.drawable.download_icon_done
             )
             iconPaused = getResourceId(
-                R.styleable.PieFetchButton_download_icon_paused, 0//R.drawable.download_icon_pause
+                R.styleable.PieFetchButton_download_icon_paused, 0 // R.drawable.download_icon_pause
             )
             iconActive = getResourceId(
-                R.styleable.PieFetchButton_download_icon_active, 0 //R.drawable.download_icon_load
+                R.styleable.PieFetchButton_download_icon_active, 0 // R.drawable.download_icon_load
             )
             iconWaiting = getResourceId(
                 R.styleable.PieFetchButton_download_icon_waiting, 0
@@ -129,7 +130,7 @@ open class PieFetchButton(context: Context, attributeSet: AttributeSet) :
 
             val fillIndex = getInt(R.styleable.PieFetchButton_download_fill, 0)
 
-            val progressDrawable = getResourceId(
+            progressDrawable = getResourceId(
                 R.styleable.PieFetchButton_download_fill_override, fillArray[fillIndex]
             )
 
@@ -170,7 +171,7 @@ open class PieFetchButton(context: Context, attributeSet: AttributeSet) :
             if (isZeroBytes) {
                 removeKey(KEY_RESUME_PACKAGES, card.id.toString())
                 callback(DownloadClickEvent(DOWNLOAD_ACTION_DOWNLOAD, card))
-                //callback.invoke(DownloadClickEvent(DOWNLOAD_ACTION_DOWNLOAD, data))
+                // callback.invoke(DownloadClickEvent(DOWNLOAD_ACTION_DOWNLOAD, data))
             } else {
                 val list = arrayListOf(
                     Pair(DOWNLOAD_ACTION_PLAY_FILE, R.string.popup_play_file),
@@ -197,7 +198,7 @@ open class PieFetchButton(context: Context, attributeSet: AttributeSet) :
                     list
                 ) {
                     callback(DownloadClickEvent(itemId, card))
-                    //callback.invoke(DownloadClickEvent(itemId, data))
+                    // callback.invoke(DownloadClickEvent(itemId, data))
                 }
             }
         }
@@ -205,7 +206,7 @@ open class PieFetchButton(context: Context, attributeSet: AttributeSet) :
         view.setOnLongClickListener {
             callback(DownloadClickEvent(DOWNLOAD_ACTION_LONG_CLICK, card))
 
-            //clickCallback.invoke(DownloadClickEvent(DOWNLOAD_ACTION_LONG_CLICK, data))
+            // clickCallback.invoke(DownloadClickEvent(DOWNLOAD_ACTION_LONG_CLICK, data))
             return@setOnLongClickListener true
         }
     }
@@ -218,7 +219,7 @@ open class PieFetchButton(context: Context, attributeSet: AttributeSet) :
         setDefaultClickListener(this, textView, card, callback)
     }
 
-    /*open fun setDefaultClickListener(requestGetter: suspend BaseFetchButton.() -> List<UriRequest>) {
+    /* open fun setDefaultClickListener(requestGetter: suspend BaseFetchButton.() -> List<UriRequest>) {
         this.setOnClickListener {
             when (this.currentStatus) {
                 null -> {
@@ -244,7 +245,7 @@ open class PieFetchButton(context: Context, attributeSet: AttributeSet) :
                 else -> {}
             }
         }
-    }*/
+    } */
 
     @MainThread
     private fun setStatusInternal(status : DownloadStatusTell?) {
@@ -262,7 +263,8 @@ open class PieFetchButton(context: Context, attributeSet: AttributeSet) :
         progressBarBackground.background =
             ContextCompat.getDrawable(context, progressDrawable)
 
-        val drawable = getDrawableFromStatus(status)
+        val drawable =
+            getDrawableFromStatus(status)?.let { ContextCompat.getDrawable(this.context, it) }
         statusView.setImageDrawable(drawable)
         val isDrawable = drawable != null
 
@@ -280,12 +282,12 @@ open class PieFetchButton(context: Context, attributeSet: AttributeSet) :
     override fun setStatus(status: DownloadStatusTell?) {
         currentStatus = status
 
-        // runs on the main thread, but also instant if it already is
+        // Runs on the main thread, but also instant if it already is
         if (Looper.myLooper() == Looper.getMainLooper()) {
             try {
                 setStatusInternal(status)
             } catch (t : Throwable) {
-                logError(t) // just in case setStatusInternal throws because thread
+                logError(t) // Just in case setStatusInternal throws because thread
                 progressBarBackground.post {
                     setStatusInternal(status)
                 }
@@ -325,19 +327,13 @@ open class PieFetchButton(context: Context, attributeSet: AttributeSet) :
         }
     }
 
-    open fun getDrawableFromStatus(status: DownloadStatusTell?): Drawable? {
-        val drawableInt = when (status) {
-            DownloadStatusTell.IsPaused -> iconPaused
-            DownloadStatusTell.IsPending -> iconWaiting
-            DownloadStatusTell.IsDownloading -> iconActive
-            DownloadStatusTell.IsFailed -> iconError
-            DownloadStatusTell.IsDone -> iconComplete
-            DownloadStatusTell.IsStopped -> iconRemoved
-            null -> iconInit
-        }
-        if (drawableInt == 0) {
-            return null
-        }
-        return ContextCompat.getDrawable(this.context, drawableInt)
-    }
+    open fun getDrawableFromStatus(status: DownloadStatusTell?): Int? = when (status) {
+        DownloadStatusTell.IsPaused -> iconPaused
+        DownloadStatusTell.IsPending -> iconWaiting
+        DownloadStatusTell.IsDownloading -> iconActive
+        DownloadStatusTell.IsFailed -> iconError
+        DownloadStatusTell.IsDone -> iconComplete
+        DownloadStatusTell.IsStopped -> iconRemoved
+        else -> iconInit
+    }.takeIf { it != 0 }
 }
