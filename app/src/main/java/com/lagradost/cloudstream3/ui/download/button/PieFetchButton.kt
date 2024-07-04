@@ -128,15 +128,13 @@ open class PieFetchButton(context: Context, attributeSet: AttributeSet) :
                 R.styleable.PieFetchButton_download_icon_removed, R.drawable.netflix_download
             )
 
-            if (doSetProgress) {
-                val fillIndex = getInt(R.styleable.PieFetchButton_download_fill, 0)
+            val fillIndex = getInt(R.styleable.PieFetchButton_download_fill, 0)
 
-                progressDrawable = getResourceId(
-                    R.styleable.PieFetchButton_download_fill_override, fillArray[fillIndex]
-                )
+            progressDrawable = getResourceId(
+                R.styleable.PieFetchButton_download_fill_override, fillArray[fillIndex]
+            )
 
-                progressBar.progressDrawable = ContextCompat.getDrawable(context, progressDrawable)
-            }
+            progressBar.progressDrawable = ContextCompat.getDrawable(context, progressDrawable)
 
             recycle()
         }
