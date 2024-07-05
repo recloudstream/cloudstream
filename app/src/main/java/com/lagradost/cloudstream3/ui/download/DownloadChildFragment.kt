@@ -129,7 +129,7 @@ class DownloadChildFragment : Fragment() {
         downloadDeleteEventListener = { id: Int ->
             val adapter = binding?.downloadChildList?.adapter as? DownloadAdapter
             val list = adapter?.currentList
-            if (list?.any { it.data.id == id }) {
+            if (list?.any { it.data.id == id } == true) {
                 adapter.removeItem(id)
                 updateList(folder)
             }
