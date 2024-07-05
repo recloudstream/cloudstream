@@ -1112,23 +1112,6 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
 
         MainAPI.settingsForProvider = settingsForProvider
 
-        // Change library icon with logo of current api in sync
-        libraryViewModel = ViewModelProvider(this)[LibraryViewModel::class.java]
-        libraryViewModel?.currentApiName?.observe(this) {
-            val syncAPI =  libraryViewModel?.currentSyncApi
-            Log.i("SYNC_API", "${syncAPI?.name}, ${syncAPI?.idPrefix}")
-            val icon = if (syncAPI?.idPrefix ==  localListApi.idPrefix) {
-                R.drawable.library_icon
-            } else {
-                syncAPI?.icon ?: R.drawable.library_icon
-            }
-
-            binding?.apply {
-                navRailView.menu.findItem(R.id.navigation_library)?.setIcon(icon)
-                navView.menu.findItem(R.id.navigation_library)?.setIcon(icon)
-            }
-        }
-
         loadThemes(this)
         updateLocale()
         super.onCreate(savedInstanceState)
@@ -1536,6 +1519,26 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                     api.initialize()
                 } catch (e: Exception) {
                     logError(e)
+                }
+            }
+            
+            // we need to run this after we init all apis, otherwise currentSyncApi will fuck itself
+            this@MainActivity.runOnUiThread {
+                // Change library icon with logo of current api in sync
+                libraryViewModel = ViewModelProvider(this@MainActivity)[LibraryViewModel::class.java]
+                libraryViewModel?.currentApiName?.observe(this@MainActivity) {
+                    val syncAPI =  libraryViewModel?.currentSyncApi
+                    Log.i("SYNC_API", "${syncAPI?.name}, ${syncAPI?.idPrefix}")
+                    val icon = if (syncAPI?.idPrefix ==  localListApi.idPrefix) {
+                        R.drawable.library_icon
+                    } else {
+                        syncAPI?.icon ?: R.drawable.library_icon
+                    }
+
+                    binding?.apply {
+                        navRailView.menu.findItem(R.id.navigation_library)?.setIcon(icon)
+                        navView.menu.findItem(R.id.navigation_library)?.setIcon(icon)
+                    }
                 }
             }
         }
