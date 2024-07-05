@@ -101,10 +101,10 @@ class DownloadFragment : Fragment() {
         }
         observe(downloadsViewModel.usedBytes) {
             updateStorageInfo(view.context, it, R.string.used_storage, binding?.downloadUsedTxt, binding?.downloadUsed)
-            binding?.downloadStorageAppbar?.isVisible = it > 0
         }
         observe(downloadsViewModel.downloadBytes) {
             updateStorageInfo(view.context, it, R.string.app_storage, binding?.downloadAppTxt, binding?.downloadApp)
+            binding?.downloadStorageAppbar?.isVisible = it > 0
         }
 
         val adapter = DownloadAdapter(
