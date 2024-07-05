@@ -106,52 +106,65 @@ class DownloadViewModel : ViewModel() {
         // Only update list if different from the previous one to prevent duplicate initialization
         if (visual != previousVisual) {
             previousVisual = visual
-
-            try {
-                val stat = StatFs(Environment.getExternalStorageDirectory().path)
-                val localBytesAvailable = stat.availableBytes
-                val localTotalBytes = stat.blockSizeLong * stat.blockCountLong
-                val localDownloadedBytes = visual.sumOf { it.totalBytes }
-
-                _usedBytes.postValue(localTotalBytes - localBytesAvailable - localDownloadedBytes)
-                _availableBytes.postValue(localBytesAvailable)
-                _downloadBytes.postValue(localDownloadedBytes)
-            } catch (t: Throwable) {
-                _downloadBytes.postValue(0)
-                logError(t)
-            }
-
+            updateStorageStats(visual)
             _headerCards.postValue(visual)
         }
     }
 
+    private fun updateStorageStats(visual: List<VisualDownloadHeaderCached>) {
+        try {
+            val stat = StatFs(Environment.getExternalStorageDirectory().path)
+            val localBytesAvailable = stat.availableBytes
+            val localTotalBytes = stat.blockSizeLong * stat.blockCountLong
+            val localDownloadedBytes = visual.sumOf { it.totalBytes }
+
+            _usedBytes.postValue(localTotalBytes - localBytesAvailable - localDownloadedBytes)
+            _availableBytes.postValue(localBytesAvailable)
+            _downloadBytes.postValue(localDownloadedBytes)
+        } catch (t: Throwable) {
+            _downloadBytes.postValue(0)
+            logError(t)
+        }
+    }
+
     fun handleMultiDelete(context: Context, event: DownloadDeleteEvent) = viewModelScope.launchSafe {
-        context.let { ctx ->
-            val ids: List<Int> = event.items.mapNotNull { it?.id }
-                .takeIf { it.isNotEmpty() } ?: return@let
-            val builder: AlertDialog.Builder = AlertDialog.Builder(ctx)
-            val dialogClickListener =
-                DialogInterface.OnClickListener { _, which ->
-                    when (which) {
-                        DialogInterface.BUTTON_POSITIVE -> {
-                            deleteFilesAndUpdateSettings(ctx, ids, this@launchSafe)
-                        }
-                        DialogInterface.BUTTON_NEGATIVE -> {
+        val ids: List<Int> = event.items.mapNotNull { it?.id }
+            .takeIf { it.isNotEmpty() } ?: return@launchSafe
+
+        val names: List<String> = event.items.mapNotNull { it?.name }
+            .takeIf { it.isNotEmpty() } ?: return@launchSafe
+
+        showDeleteConfirmationDialog(context, ids, names)
+    }
+
+    private fun showDeleteConfirmationDialog(context: Context, ids: List<Int>, names: List<String>) {
+        val formattedNames = names.joinToString(separator = "\n") { "- $it" }
+        val message = context.getString(R.string.delete_message_multiple).format(formattedNames)
+
+        val builder: AlertDialog.Builder = AlertDialog.Builder(context)
+        val dialogClickListener =
+            DialogInterface.OnClickListener { _, which ->
+                when (which) {
+                    DialogInterface.BUTTON_POSITIVE -> {
+                        viewModelScope.launchSafe {
+                            deleteFilesAndUpdateSettings(context, ids, this)
+                            updateList(context)
                         }
                     }
+                    DialogInterface.BUTTON_NEGATIVE -> {
+                        // Do nothing on cancel
+                    }
                 }
-
-            try {
-                builder.setTitle(R.string.delete_files)
-                    .setMessage(
-                        ctx.getString(R.string.delete_multiple_message)
-                    )
-                    .setPositiveButton(R.string.delete, dialogClickListener)
-                    .setNegativeButton(R.string.cancel, dialogClickListener)
-                    .show().setDefaultFocus()
-            } catch (e: Exception) {
-                logError(e)
             }
+
+        try {
+            builder.setTitle(R.string.delete_files)
+                .setMessage(message)
+                .setPositiveButton(R.string.delete, dialogClickListener)
+                .setNegativeButton(R.string.cancel, dialogClickListener)
+                .show().setDefaultFocus()
+        } catch (e: Exception) {
+            logError(e)
         }
     }
 }
