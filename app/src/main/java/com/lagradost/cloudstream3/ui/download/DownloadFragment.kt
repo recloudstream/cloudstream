@@ -170,9 +170,11 @@ class DownloadFragment : Fragment() {
 
     private fun setUpDownloadDeleteListener() {
         downloadDeleteEventListener = { id ->
-            val list = (binding?.downloadList?.adapter as? DownloadAdapter)?.currentList
+            val adapter = binding?.downloadList?.adapter as? DownloadAdapter
+            val list = adapter?.currentList
             if (list?.any { it.data.id == id } == true) {
-                context?.let { downloadsViewModel.updateList(it) }
+                adapter.removeItem(id)
+                downloadsViewModel.removeItem(id)
             }
         }
         downloadDeleteEventListener?.let { VideoDownloadManager.downloadDeleteEvent += it }

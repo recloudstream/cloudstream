@@ -251,6 +251,15 @@ class DownloadAdapter(
         }
     }
 
+    fun removeItem(itemId: Int) {
+        val currentList = currentList.toMutableList()
+        val position = currentList.indexOfFirst { it.data.id == itemId }
+        if (position != -1) {
+            currentList.removeAt(position)
+            notifyItemRemoved(position)
+        }
+    }
+
     class DiffCallback : DiffUtil.ItemCallback<VisualDownloadCached>() {
         override fun areItemsTheSame(oldItem: VisualDownloadCached, newItem: VisualDownloadCached): Boolean {
             return oldItem.data.id == newItem.data.id

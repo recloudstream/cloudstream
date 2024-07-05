@@ -35,74 +35,96 @@ class DownloadViewModel : ViewModel() {
 
     private var previousVisual: List<VisualDownloadHeaderCached>? = null
 
-    fun updateList(context: Context) = viewModelScope.launchSafe {
-        val children = withContext(Dispatchers.IO) {
-            context.getKeys(DOWNLOAD_EPISODE_CACHE)
-                .mapNotNull { context.getKey<VideoDownloadHelper.DownloadEpisodeCached>(it) }
-                .distinctBy { it.id } // Remove duplicates
-        }
+    fun updateList(context: Context) {
+        viewModelScope.launchSafe {
+            try {
+                val children = withContext(Dispatchers.IO) {
+                    fetchDownloadedEpisodes(context)
+                }
+                val visual = withContext(Dispatchers.IO) {
+                    generateVisualList(context, children)
+                }
 
-        // parentId : bytes
+                if (visual != previousVisual) {
+                    previousVisual = visual
+                    updateBytes(context, visual)
+                    _headerCards.postValue(visual)
+                }
+            } catch (e: Exception) {
+                logError(e)
+            }
+        }
+    }
+
+    private fun fetchDownloadedEpisodes(context: Context): List<VideoDownloadHelper.DownloadEpisodeCached> {
+        return context.getKeys(DOWNLOAD_EPISODE_CACHE)
+            .mapNotNull { context.getKey<VideoDownloadHelper.DownloadEpisodeCached>(it) }
+            .distinctBy { it.id }
+    }
+
+    private suspend fun generateVisualList(
+        context: Context,
+        children: List<VideoDownloadHelper.DownloadEpisodeCached>
+    ): List<VisualDownloadHeaderCached> {
         val totalBytesUsedByChild = HashMap<Int, Long>()
-        // parentId : bytes
         val currentBytesUsedByChild = HashMap<Int, Long>()
-        // parentId : downloadsCount
         val totalDownloads = HashMap<Int, Int>()
 
-        // Gets all children downloads
         withContext(Dispatchers.IO) {
             children.forEach { c ->
-                val childFile = getDownloadFileInfoAndUpdateSettings(context, c.id) ?: return@forEach
+                val childFile =
+                    getDownloadFileInfoAndUpdateSettings(context, c.id) ?: return@forEach
 
                 if (childFile.fileLength <= 1) return@forEach
+
                 val len = childFile.totalBytes
                 val flen = childFile.fileLength
 
-                totalBytesUsedByChild[c.parentId] = totalBytesUsedByChild[c.parentId]?.plus(len) ?: len
-                currentBytesUsedByChild[c.parentId] = currentBytesUsedByChild[c.parentId]?.plus(flen) ?: flen
+                totalBytesUsedByChild[c.parentId] =
+                    totalBytesUsedByChild[c.parentId]?.plus(len) ?: len
+                currentBytesUsedByChild[c.parentId] =
+                    currentBytesUsedByChild[c.parentId]?.plus(flen) ?: flen
                 totalDownloads[c.parentId] = totalDownloads[c.parentId]?.plus(1) ?: 1
             }
         }
 
-        val cached = withContext(Dispatchers.IO) { // Won't fetch useless keys
-            totalDownloads.entries.filter { it.value > 0 }.mapNotNull {
+        return totalDownloads.entries
+            .filter { it.value > 0 }
+            .mapNotNull {
                 context.getKey<VideoDownloadHelper.DownloadHeaderCached>(
                     DOWNLOAD_HEADER_CACHE,
                     it.key.toString()
                 )
             }
-        }
-
-        val visual = withContext(Dispatchers.IO) {
-            cached.mapNotNull {
+            .mapNotNull {
                 val downloads = totalDownloads[it.id] ?: 0
                 val bytes = totalBytesUsedByChild[it.id] ?: 0
                 val currentBytes = currentBytesUsedByChild[it.id] ?: 0
-                if (bytes <= 0 || downloads <= 0) return@mapNotNull null
-                val movieEpisode =
-                    if (!it.type.isMovieType()) null
+
+                if (bytes <= 0 || downloads <= 0) null
+                else {
+                    val movieEpisode = if (!it.type.isMovieType()) null
                     else context.getKey<VideoDownloadHelper.DownloadEpisodeCached>(
                         DOWNLOAD_EPISODE_CACHE,
                         getFolderName(it.id.toString(), it.id.toString())
                     )
-                VisualDownloadHeaderCached(
-                    currentBytes = currentBytes,
-                    totalBytes = bytes,
-                    data = it,
-                    child = movieEpisode,
-                    currentOngoingDownloads = 0,
-                    totalDownloads = downloads,
-                )
-            }.sortedBy {
-                (it.child?.episode ?: 0) + (it.child?.season?.times(10000) ?: 0)
-            } // Episode sorting by episode, lowest to highest
-        }
 
-        // Only update list if different from the previous one to prevent duplicate initialization
-        if (visual != previousVisual) {
-            previousVisual = visual
+                    VisualDownloadHeaderCached(
+                        currentBytes = currentBytes,
+                        totalBytes = bytes,
+                        data = it,
+                        child = movieEpisode,
+                        currentOngoingDownloads = 0,
+                        totalDownloads = downloads,
+                    )
+                }
+            }
+            .sortedBy { (it.child?.episode ?: 0) + (it.child?.season?.times(10000) ?: 0) }
+    }
 
-            try {
+    private suspend fun updateBytes(context: Context, visual: List<VisualDownloadHeaderCached>) {
+        try {
+            withContext(Dispatchers.IO) {
                 val stat = StatFs(Environment.getExternalStorageDirectory().path)
                 val localBytesAvailable = stat.availableBytes
                 val localTotalBytes = stat.blockSizeLong * stat.blockCountLong
@@ -111,12 +133,22 @@ class DownloadViewModel : ViewModel() {
                 _usedBytes.postValue(localTotalBytes - localBytesAvailable - localDownloadedBytes)
                 _availableBytes.postValue(localBytesAvailable)
                 _downloadBytes.postValue(localDownloadedBytes)
-            } catch (t: Throwable) {
-                _downloadBytes.postValue(0)
-                logError(t)
             }
+        } catch (t: Throwable) {
+            _downloadBytes.postValue(0)
+            logError(t)
+        }
+    }
 
-            _headerCards.postValue(visual)
+    fun removeItem(itemId: Int) {
+        val visual = _headerCards.value?.toMutableList() ?: mutableListOf()
+        val position = visual.indexOfFirst { it.data.id == itemId }
+        if (position != -1) {
+            visual.removeAt(position)
+            if (visual != previousVisual) {
+                previousVisual = visual
+                _headerCards.postValue(visual)
+            }
         }
     }
 }
