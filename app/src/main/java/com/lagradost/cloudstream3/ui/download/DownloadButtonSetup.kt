@@ -155,36 +155,6 @@ object DownloadButtonSetup {
                     )
                 }
             }
-            DOWNLOAD_ACTION_DELETE_MULTIPLE_FILES -> {
-                activity?.let { ctx ->
-                    if (click !is DownloadDeleteEvent) return
-                    val ids: List<Int> = click.items.mapNotNull { it?.id }
-                        .takeIf { it.isNotEmpty() } ?: return@let
-                    val builder: AlertDialog.Builder = AlertDialog.Builder(ctx)
-                    val dialogClickListener =
-                        DialogInterface.OnClickListener { _, which ->
-                            when (which) {
-                                DialogInterface.BUTTON_POSITIVE -> {
-                                    VideoDownloadManager.deleteFilesAndUpdateSettings(ctx, ids, MainScope())
-                                }
-                                DialogInterface.BUTTON_NEGATIVE -> {
-                                }
-                            }
-                        }
-
-                    try {
-                        builder.setTitle(R.string.delete_files)
-                            .setMessage(
-                                ctx.getString(R.string.delete_multiple_message)
-                            )
-                            .setPositiveButton(R.string.delete, dialogClickListener)
-                            .setNegativeButton(R.string.cancel, dialogClickListener)
-                            .show().setDefaultFocus()
-                    } catch (e: Exception) {
-                        logError(e)
-                    }
-                }
-            }
         }
     }
 }

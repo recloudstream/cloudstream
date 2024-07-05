@@ -1,10 +1,12 @@
 package com.lagradost.cloudstream3.ui.download
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.FragmentChildDownloadsBinding
 import com.lagradost.cloudstream3.ui.download.DownloadButtonSetup.handleDownloadClick
@@ -24,6 +26,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class DownloadChildFragment : Fragment() {
+    private lateinit var downloadsViewModel: DownloadViewModel
+
     companion object {
         fun newInstance(headerName: String, folder: String): Bundle {
             return Bundle().apply {
@@ -47,6 +51,7 @@ class DownloadChildFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        downloadsViewModel = ViewModelProvider(this)[DownloadViewModel::class.java]
         val localBinding = FragmentChildDownloadsBinding.inflate(inflater, container, false)
         binding = localBinding
         return localBinding.root
@@ -102,16 +107,7 @@ class DownloadChildFragment : Fragment() {
         }
 
         val adapter = DownloadAdapter(
-            { actionEvent ->
-                if (actionEvent.action == DOWNLOAD_ACTION_DELETE_FILE) {
-                    val downloadDeleteEvent = DownloadDeleteEvent(
-                        action = DOWNLOAD_ACTION_DELETE_FILE,
-                        items = listOf(actionEvent.data)
-                    )
-                    handleDownloadClick(downloadDeleteEvent)
-                    setUpDownloadDeleteListener(folder)
-                } else handleDownloadClick(actionEvent)
-            },
+            { actionEvent -> handleActionEvent(folder, actionEvent, context) },
             {}
         )
 
@@ -127,6 +123,25 @@ class DownloadChildFragment : Fragment() {
         }
 
         updateList(folder)
+    }
+
+    private fun handleActionEvent(folder: String, actionEvent: DownloadActionEventBase, context: Context?) {
+        when (actionEvent.action) {
+            DOWNLOAD_ACTION_DELETE_MULTIPLE_FILES -> {
+                if (actionEvent is DownloadDeleteEvent) {
+                    context?.let { downloadsViewModel.handleMultiDelete(it, actionEvent) }
+                }
+            }
+            DOWNLOAD_ACTION_DELETE_FILE -> {
+                val downloadDeleteEvent = DownloadDeleteEvent(
+                    action = DOWNLOAD_ACTION_DELETE_FILE,
+                    items = listOf(actionEvent.data)
+                )
+                handleDownloadClick(downloadDeleteEvent)
+                setUpDownloadDeleteListener(folder)
+            }
+            else -> handleDownloadClick(actionEvent)
+        }
     }
 
     private fun setUpDownloadDeleteListener(folder: String) {

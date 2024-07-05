@@ -1,21 +1,26 @@
 package com.lagradost.cloudstream3.ui.download
 
 import android.content.Context
+import android.content.DialogInterface
 import android.os.Environment
 import android.os.StatFs
+import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.isMovieType
 import com.lagradost.cloudstream3.mvvm.launchSafe
 import com.lagradost.cloudstream3.mvvm.logError
+import com.lagradost.cloudstream3.utils.AppContextUtils.setDefaultFocus
 import com.lagradost.cloudstream3.utils.DOWNLOAD_EPISODE_CACHE
 import com.lagradost.cloudstream3.utils.DOWNLOAD_HEADER_CACHE
 import com.lagradost.cloudstream3.utils.DataStore.getFolderName
 import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStore.getKeys
 import com.lagradost.cloudstream3.utils.VideoDownloadHelper
+import com.lagradost.cloudstream3.utils.VideoDownloadManager.deleteFilesAndUpdateSettings
 import com.lagradost.cloudstream3.utils.VideoDownloadManager.getDownloadFileInfoAndUpdateSettings
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -117,6 +122,36 @@ class DownloadViewModel : ViewModel() {
             }
 
             _headerCards.postValue(visual)
+        }
+    }
+
+    fun handleMultiDelete(context: Context, event: DownloadDeleteEvent) = viewModelScope.launchSafe {
+        context.let { ctx ->
+            val ids: List<Int> = event.items.mapNotNull { it?.id }
+                .takeIf { it.isNotEmpty() } ?: return@let
+            val builder: AlertDialog.Builder = AlertDialog.Builder(ctx)
+            val dialogClickListener =
+                DialogInterface.OnClickListener { _, which ->
+                    when (which) {
+                        DialogInterface.BUTTON_POSITIVE -> {
+                            deleteFilesAndUpdateSettings(ctx, ids, this@launchSafe)
+                        }
+                        DialogInterface.BUTTON_NEGATIVE -> {
+                        }
+                    }
+                }
+
+            try {
+                builder.setTitle(R.string.delete_files)
+                    .setMessage(
+                        ctx.getString(R.string.delete_multiple_message)
+                    )
+                    .setPositiveButton(R.string.delete, dialogClickListener)
+                    .setNegativeButton(R.string.cancel, dialogClickListener)
+                    .show().setDefaultFocus()
+            } catch (e: Exception) {
+                logError(e)
+            }
         }
     }
 }
