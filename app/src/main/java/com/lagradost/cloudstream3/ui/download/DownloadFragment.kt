@@ -188,7 +188,7 @@ class DownloadFragment : Fragment() {
     }
 
     private fun handleSelectedChange(selected: HashMap<Int, String>) {
-        val adapter = (binding?.downloadList?.adapter as? DownloadAdapter)
+        val adapter = binding?.downloadList?.adapter as? DownloadAdapter
         if (selected.isNotEmpty()) {
             binding?.downloadDeleteToolbar?.downloadDeleteToolbar?.isVisible = true
             binding?.downloadStorageAppbar?.isVisible = false
