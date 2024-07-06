@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<com.google.android.material.appbar.AppBarLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?attr/primaryGrayBackground"
+    tools:layout_height="100dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="?attr/colorPrimary"
+        android:padding="8dp"
+        android:id="@+id/download_delete_toolbar"
+        android:visibility="gone">
+
+    <ImageView
+        android:id="@+id/btnCancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_baseline_close_24"
+        android:contentDescription="@string/cancel"
+        android:padding="8dp"
+        android:layout_gravity="center_vertical"
+        app:tint="@android:color/white" />
+
+    <Button
+        android:id="@+id/btnDelete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="?attr/selectableItemBackground"
+        android:text="@string/delete"
+        android:textColor="@android:color/white"
+        android:layout_gravity="center_vertical" />
+
+    </LinearLayout>
+</com.google.android.material.appbar.AppBarLayout>

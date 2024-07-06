@@ -107,8 +107,13 @@ class DownloadChildFragment : Fragment() {
         }
 
         val adapter = DownloadAdapter(
-            { actionEvent -> handleActionEvent(folder, actionEvent, context) },
-            {}
+            {},
+            { downloadClickEvent ->
+                handleDownloadClick(downloadClickEvent)
+                if (downloadClickEvent.action == DOWNLOAD_ACTION_DELETE_FILE) {
+                    setUpDownloadDeleteListener(folder)
+                }
+            }, { _, _, _ -> }
         )
 
         binding?.downloadChildList?.apply {
@@ -123,25 +128,6 @@ class DownloadChildFragment : Fragment() {
         }
 
         updateList(folder)
-    }
-
-    private fun handleActionEvent(folder: String, actionEvent: DownloadActionEventBase, context: Context?) {
-        when (actionEvent.action) {
-            DOWNLOAD_ACTION_DELETE_MULTIPLE_FILES -> {
-                if (actionEvent is DownloadDeleteEvent) {
-                    context?.let { downloadsViewModel.handleMultiDelete(it, actionEvent) }
-                }
-            }
-            DOWNLOAD_ACTION_DELETE_FILE -> {
-                val downloadDeleteEvent = DownloadDeleteEvent(
-                    action = DOWNLOAD_ACTION_DELETE_FILE,
-                    items = listOf(actionEvent.data)
-                )
-                handleDownloadClick(downloadDeleteEvent)
-                setUpDownloadDeleteListener(folder)
-            }
-            else -> handleDownloadClick(actionEvent)
-        }
     }
 
     private fun setUpDownloadDeleteListener(folder: String) {

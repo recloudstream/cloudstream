@@ -77,5 +77,16 @@
             android:focusable="true"
             android:nextFocusLeft="@id/episode_holder"
             android:padding="10dp" />
+
+        <CheckBox
+            android:id="@+id/delete_checkbox"
+            android:layout_width="@dimen/download_size"
+            android:layout_height="@dimen/download_size"
+            android:layout_gravity="center_vertical|end"
+            android:layout_marginStart="-50dp"
+            android:focusable="true"
+            android:nextFocusLeft="@id/episode_holder"
+            android:padding="10dp"
+            android:visibility="gone" />
     </LinearLayout>
 </androidx.cardview.widget.CardView>

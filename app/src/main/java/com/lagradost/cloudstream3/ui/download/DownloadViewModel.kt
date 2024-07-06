@@ -34,11 +34,41 @@ class DownloadViewModel : ViewModel() {
     private val _availableBytes = MutableLiveData<Long>()
     private val _downloadBytes = MutableLiveData<Long>()
 
+    private val _selectedIds = MutableLiveData<HashMap<Int, String>>(HashMap())
+
     val usedBytes: LiveData<Long> = _usedBytes
     val availableBytes: LiveData<Long> = _availableBytes
     val downloadBytes: LiveData<Long> = _downloadBytes
 
+    val selectedIds: LiveData<HashMap<Int, String>> = _selectedIds
+
     private var previousVisual: List<VisualDownloadHeaderCached>? = null
+
+    fun addSelected(id: Int, name: String) {
+        _selectedIds.value?.let { selectedIds ->
+            selectedIds[id] = name
+            _selectedIds.postValue(selectedIds)
+        }
+    }
+
+    fun removeSelected(id: Int) {
+        _selectedIds.value?.let { selectedIds ->
+            selectedIds.remove(id)
+            _selectedIds.postValue(selectedIds)
+        }
+    }
+
+    fun resetSelected() {
+        _selectedIds.postValue(HashMap())
+    }
+
+    private fun getSelectedIds(): List<Int> {
+        return _selectedIds.value?.keys?.toList() ?: emptyList()
+    }
+
+    private fun getSelectedNames(): List<String> {
+        return _selectedIds.value?.values?.toList() ?: emptyList()
+    }
 
     fun updateList(context: Context) = viewModelScope.launchSafe {
         val children = withContext(Dispatchers.IO) {
@@ -127,12 +157,9 @@ class DownloadViewModel : ViewModel() {
         }
     }
 
-    fun handleMultiDelete(context: Context, event: DownloadDeleteEvent) = viewModelScope.launchSafe {
-        val ids: List<Int> = event.items.mapNotNull { it?.id }
-            .takeIf { it.isNotEmpty() } ?: return@launchSafe
-
-        val names: List<String> = event.items.mapNotNull { it?.name }
-            .takeIf { it.isNotEmpty() } ?: return@launchSafe
+    fun handleMultiDelete(context: Context) = viewModelScope.launchSafe {
+        val ids: List<Int> = getSelectedIds()
+        val names: List<String> = getSelectedNames()
 
         showDeleteConfirmationDialog(context, ids, names)
     }

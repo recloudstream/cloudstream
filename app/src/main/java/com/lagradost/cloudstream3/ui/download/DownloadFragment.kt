@@ -91,6 +91,10 @@ class DownloadFragment : Fragment() {
         hideKeyboard()
         binding?.downloadStorageAppbar?.setAppBarNoScrollFlagsOnTV()
 
+        // We always want fresh selections
+        // when navigating to downloads
+        downloadsViewModel.resetSelected()
+
         observe(downloadsViewModel.headerCards) {
             (binding?.downloadList?.adapter as? DownloadAdapter)?.submitList(it)
             binding?.downloadLoading?.isVisible = false
@@ -106,10 +110,32 @@ class DownloadFragment : Fragment() {
         observe(downloadsViewModel.downloadBytes) {
             updateStorageInfo(view.context, it, R.string.app_storage, binding?.downloadAppTxt, binding?.downloadApp)
         }
+        observe(downloadsViewModel.selectedIds) {
+            handleSelectedChange(it)
+            updateSelectedState(it)
+            binding?.downloadDeleteToolbar?.btnDelete?.text =
+                getString(R.string.delete_count).format(it.count())
+        }
 
         val adapter = DownloadAdapter(
-            { actionEvent -> handleActionEvent(actionEvent, context) },
-            { click -> handleItemClick(click) }
+            { click -> handleItemClick(click) },
+            { downloadClickEvent ->
+                handleDownloadClick(downloadClickEvent)
+                when (downloadClickEvent.action) {
+                    DOWNLOAD_ACTION_DELETE_FILE -> setUpDownloadDeleteListener()
+                    DOWNLOAD_ACTION_LONG_CLICK -> downloadClickEvent.data.name?.let {
+                        downloadsViewModel.addSelected(
+                            downloadClickEvent.data.id,
+                            it
+                        )
+                    }
+                }
+            },
+            { id, name, isChecked ->
+                if (isChecked) {
+                    downloadsViewModel.addSelected(id, name)
+                } else downloadsViewModel.removeSelected(id)
+            }
         )
 
         binding?.downloadList?.apply {
@@ -144,25 +170,6 @@ class DownloadFragment : Fragment() {
         fixPaddingStatusbar(binding?.downloadRoot)
     }
 
-    private fun handleActionEvent(actionEvent: DownloadActionEventBase, context: Context?) {
-        when (actionEvent.action) {
-            DOWNLOAD_ACTION_DELETE_MULTIPLE_FILES -> {
-                if (actionEvent is DownloadDeleteEvent) {
-                    context?.let { downloadsViewModel.handleMultiDelete(it, actionEvent) }
-                }
-            }
-            DOWNLOAD_ACTION_DELETE_FILE -> {
-                val downloadDeleteEvent = DownloadDeleteEvent(
-                    action = DOWNLOAD_ACTION_DELETE_FILE,
-                    items = listOf(actionEvent.data)
-                )
-                handleDownloadClick(downloadDeleteEvent)
-                setUpDownloadDeleteListener()
-            }
-            else -> handleDownloadClick(actionEvent)
-        }
-    }
-
     private fun handleItemClick(click: DownloadHeaderClickEvent) {
         when (click.action) {
             DOWNLOAD_ACTION_GO_TO_CHILD -> {
@@ -178,6 +185,37 @@ class DownloadFragment : Fragment() {
                 (activity as AppCompatActivity?)?.loadResult(click.data.url, click.data.apiName)
             }
         }
+    }
+
+    private fun handleSelectedChange(selected: HashMap<Int, String>) {
+        val adapter = (binding?.downloadList?.adapter as? DownloadAdapter)
+        if (selected.isNotEmpty()) {
+            binding?.downloadDeleteToolbar?.downloadDeleteToolbar?.isVisible = true
+            binding?.downloadStorageAppbar?.isVisible = false
+            binding?.downloadDeleteToolbar?.btnDelete?.setOnClickListener {
+                context?.let { ctx -> downloadsViewModel.handleMultiDelete(ctx) }
+            }
+            binding?.downloadDeleteToolbar?.btnCancel?.setOnClickListener {
+                downloadsViewModel.resetSelected()
+            }
+
+            adapter?.setDeleteCheckboxVisibility(true)
+        } else {
+            binding?.downloadDeleteToolbar?.downloadDeleteToolbar?.isVisible = false
+            binding?.downloadStorageAppbar?.isVisible =
+                // Make sure we don't display it early
+                !downloadsViewModel.headerCards.value.isNullOrEmpty() &&
+                        downloadsViewModel.usedBytes.value?.let { it > 0 } == true
+            adapter?.setDeleteCheckboxVisibility(false)
+        }
+    }
+
+    private fun updateSelectedState(selected: HashMap<Int, String>) {
+        val currentList = downloadsViewModel.headerCards.value ?: return
+        val updatedList = currentList.map { header ->
+            header.copy(selected = selected.keys.contains(header.data.id))
+        }
+        (binding?.downloadList?.adapter as? DownloadAdapter)?.submitList(updatedList)
     }
 
     private fun setUpDownloadDeleteListener() {

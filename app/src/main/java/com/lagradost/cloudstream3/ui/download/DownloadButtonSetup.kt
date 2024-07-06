@@ -20,11 +20,10 @@ import com.lagradost.cloudstream3.utils.VideoDownloadManager
 import kotlinx.coroutines.MainScope
 
 object DownloadButtonSetup {
-    fun handleDownloadClick(click: DownloadActionEventBase) {
+    fun handleDownloadClick(click: DownloadClickEvent) {
+        val id = click.data.id
         when (click.action) {
             DOWNLOAD_ACTION_DELETE_FILE -> {
-                if (click !is DownloadDeleteEvent) return
-                val id = click.items.firstOrNull()?.id ?: return
                 activity?.let { ctx ->
                     val builder: AlertDialog.Builder = AlertDialog.Builder(ctx)
                     val dialogClickListener =
@@ -43,9 +42,9 @@ object DownloadButtonSetup {
                             .setMessage(
                                 ctx.getString(R.string.delete_message).format(
                                     ctx.getNameFull(
-                                        click.items.firstOrNull()?.name,
-                                        click.items.firstOrNull()?.episode,
-                                        click.items.firstOrNull()?.season
+                                        click.data.name,
+                                        click.data.episode,
+                                        click.data.season
                                     )
                                 )
                             )
@@ -59,17 +58,15 @@ object DownloadButtonSetup {
                 }
             }
             DOWNLOAD_ACTION_PAUSE_DOWNLOAD -> {
-                val id = click.data?.id ?: return
                 VideoDownloadManager.downloadEvent.invoke(
-                    Pair(id, VideoDownloadManager.DownloadActionType.Pause)
+                    Pair(click.data.id, VideoDownloadManager.DownloadActionType.Pause)
                 )
             }
             DOWNLOAD_ACTION_RESUME_DOWNLOAD -> {
-                val id = click.data?.id ?: return
                 activity?.let { ctx ->
                     if (VideoDownloadManager.downloadStatus.containsKey(id) && VideoDownloadManager.downloadStatus[id] == VideoDownloadManager.DownloadType.IsPaused) {
                         VideoDownloadManager.downloadEvent.invoke(
-                            Pair(id, VideoDownloadManager.DownloadActionType.Resume)
+                            Pair(click.data.id, VideoDownloadManager.DownloadActionType.Resume)
                         )
                     } else {
                         val pkg = VideoDownloadManager.getDownloadResumePackage(ctx, id)
@@ -77,19 +74,18 @@ object DownloadButtonSetup {
                             VideoDownloadManager.downloadFromResumeUsingWorker(ctx, pkg)
                         } else {
                             VideoDownloadManager.downloadEvent.invoke(
-                                Pair(id, VideoDownloadManager.DownloadActionType.Resume)
+                                Pair(click.data.id, VideoDownloadManager.DownloadActionType.Resume)
                             )
                         }
                     }
                 }
             }
             DOWNLOAD_ACTION_LONG_CLICK -> {
-                val id = click.data?.id ?: return
                 activity?.let { act ->
                     val length =
                         VideoDownloadManager.getDownloadFileInfoAndUpdateSettings(
                             act,
-                            id
+                            click.data.id
                         )?.fileLength
                             ?: 0
                     if (length > 0) {
@@ -100,20 +96,19 @@ object DownloadButtonSetup {
                 }
             }
             DOWNLOAD_ACTION_PLAY_FILE -> {
-                val id = click.data?.id ?: return
                 activity?.let { act ->
                     val info =
                         VideoDownloadManager.getDownloadFileInfoAndUpdateSettings(
                             act,
-                            id
+                            click.data.id
                         ) ?: return
                     val keyInfo = getKey<VideoDownloadManager.DownloadedFileInfo>(
                         VideoDownloadManager.KEY_DOWNLOAD_INFO,
-                        id.toString()
+                        click.data.id.toString()
                     ) ?: return
                     val parent = getKey<VideoDownloadHelper.DownloadHeaderCached>(
                         DOWNLOAD_HEADER_CACHE,
-                        click.data?.parentId.toString()
+                        click.data.parentId.toString()
                     ) ?: return
 
                     act.navigate(
@@ -123,11 +118,11 @@ object DownloadButtonSetup {
                                     ExtractorUri(
                                         uri = info.path,
 
-                                        id = id,
-                                        parentId = click.data?.parentId,
+                                        id = click.data.id,
+                                        parentId = click.data.parentId,
                                         name = act.getString(R.string.downloaded_file), //click.data.name ?: keyInfo.displayName
-                                        season = click.data?.season,
-                                        episode = click.data?.episode,
+                                        season = click.data.season,
+                                        episode = click.data.episode,
                                         headerName = parent.name,
                                         tvType = parent.type,
 
@@ -144,13 +139,13 @@ object DownloadButtonSetup {
                         //        keyInfo.basePath,
                         //        keyInfo.relativePath,
                         //        keyInfo.displayName,
-                        //        click.data?.parentId,
-                        //        click.data?.id,
+                        //        click.data.parentId,
+                        //        click.data.id,
                         //        headerName ?: "null",
                         //        if (click.data.episode <= 0) null else click.data.episode,
                         //        click.data.season
                         //    ),
-                        //    getViewPos(click.data?.id)?.position ?: 0
+                        //    getViewPos(click.data.id)?.position ?: 0
                         //)
                     )
                 }

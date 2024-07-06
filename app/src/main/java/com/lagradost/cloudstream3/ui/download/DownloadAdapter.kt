@@ -27,7 +27,6 @@ const val DOWNLOAD_ACTION_RESUME_DOWNLOAD = 2
 const val DOWNLOAD_ACTION_PAUSE_DOWNLOAD = 3
 const val DOWNLOAD_ACTION_DOWNLOAD = 4
 const val DOWNLOAD_ACTION_LONG_CLICK = 5
-const val DOWNLOAD_ACTION_DELETE_MULTIPLE_FILES = 6
 
 const val DOWNLOAD_ACTION_GO_TO_CHILD = 0
 const val DOWNLOAD_ACTION_LOAD_RESULT = 1
@@ -58,15 +57,11 @@ abstract class VisualDownloadCached(
     }
 }
 
-abstract class DownloadActionEventBase(
-    open val action: Int,
-    open val data: VideoDownloadHelper.DownloadEpisodeCached?
-)
-
 data class VisualDownloadChildCached(
     override val currentBytes: Long,
     override val totalBytes: Long,
     override val data: VideoDownloadHelper.DownloadEpisodeCached,
+    val selected: Boolean = false,
 ): VisualDownloadCached(currentBytes, totalBytes, data)
 
 data class VisualDownloadHeaderCached(
@@ -76,17 +71,13 @@ data class VisualDownloadHeaderCached(
     val child: VideoDownloadHelper.DownloadEpisodeCached?,
     val currentOngoingDownloads: Int,
     val totalDownloads: Int,
+    val selected: Boolean = false,
 ): VisualDownloadCached(currentBytes, totalBytes, data)
 
 data class DownloadClickEvent(
-    override val action: Int,
-    override val data: VideoDownloadHelper.DownloadEpisodeCached
-): DownloadActionEventBase(action, data)
-
-data class DownloadDeleteEvent(
-    override val action: Int,
-    val items: List<VideoDownloadHelper.DownloadEpisodeCached?>
-): DownloadActionEventBase(action, null)
+    val action: Int,
+    val data: VideoDownloadHelper.DownloadEpisodeCached
+)
 
 data class DownloadHeaderClickEvent(
     val action: Int,
@@ -94,9 +85,12 @@ data class DownloadHeaderClickEvent(
 )
 
 class DownloadAdapter(
-    private val actionCallback: (DownloadActionEventBase) -> Unit,
-    private val clickCallback: (DownloadHeaderClickEvent) -> Unit,
+    private val headerClickCallback: (DownloadHeaderClickEvent) -> Unit,
+    private val mediaClickCallback: (DownloadClickEvent) -> Unit,
+    private val selectedChangedCallback: (Int, String, Boolean) -> Unit,
 ) : ListAdapter<VisualDownloadCached, DownloadAdapter.DownloadViewHolder>(DiffCallback()) {
+
+    private var showDeleteCheckbox: Boolean = false
 
     companion object {
         private const val VIEW_TYPE_HEADER = 0
@@ -104,9 +98,7 @@ class DownloadAdapter(
     }
 
     inner class DownloadViewHolder(
-        private val binding: ViewBinding,
-        private val actionCallback: (DownloadActionEventBase) -> Unit,
-        private val clickCallback: (DownloadHeaderClickEvent) -> Unit,
+        private val binding: ViewBinding
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(card: VisualDownloadCached?) {
@@ -116,86 +108,105 @@ class DownloadAdapter(
             }
         }
 
-        @SuppressLint("SetTextI18n")
         private fun bindHeader(card: VisualDownloadHeaderCached?) {
-            if (binding !is DownloadHeaderEpisodeBinding) return
-            card ?: return
-            val d = card.data
+            if (binding !is DownloadHeaderEpisodeBinding || card == null) return
 
+            val data = card.data
             binding.apply {
                 downloadHeaderPoster.apply {
-                    setImage(d.poster)
+                    setImage(data.poster)
                     setOnClickListener {
-                        clickCallback.invoke(DownloadHeaderClickEvent(DOWNLOAD_ACTION_LOAD_RESULT, d))
+                        headerClickCallback.invoke(DownloadHeaderClickEvent(DOWNLOAD_ACTION_LOAD_RESULT, data))
                     }
                 }
-
-                downloadHeaderTitle.text = d.name
-                val formattedSizeString = formatShortFileSize(itemView.context, card.totalBytes)
+                downloadHeaderTitle.text = data.name
+                val formattedSize = formatShortFileSize(itemView.context, card.totalBytes)
 
                 if (card.child != null) {
-                    downloadHeaderGotoChild.isVisible = false
+                    handleChildDownload(card, formattedSize)
+                } else handleParentDownload(card, formattedSize)
+            }
+        }
 
-                    val status = downloadButton.getStatus(card.child.id, card.currentBytes, card.totalBytes)
-                    if (status == DownloadStatusTell.IsDone) {
-                        // We do this here instead if we are finished downloading
-                        // so that we can use the value from the view model
-                        // rather than extra unneeded disk operations and to prevent a
-                        // delay in updating download icon state.
-                        downloadButton.setProgress(card.currentBytes, card.totalBytes)
-                        downloadButton.applyMetaData(card.child.id, card.currentBytes, card.totalBytes)
-                        // We will let the view model handle this
-                        downloadButton.doSetProgress = false
-                        downloadButton.progressBar.progressDrawable =
-                            downloadButton.getDrawableFromStatus(status)
-                                ?.let { ContextCompat.getDrawable(downloadButton.context, it) }
-                        downloadHeaderInfo.text = formattedSizeString
-                    } else {
-                        downloadButton.doSetProgress = true
-                        downloadButton.progressBar.progressDrawable =
-                            ContextCompat.getDrawable(downloadButton.context, downloadButton.progressDrawable)
-                    }
+        private fun DownloadHeaderEpisodeBinding.handleChildDownload(
+            card: VisualDownloadHeaderCached,
+            formattedSize: String
+        ) {
+            card.child ?: return
+            downloadHeaderGotoChild.isVisible = false
 
-                    downloadButton.setDefaultClickListener(card.child, downloadHeaderInfo, actionCallback)
-                    downloadButton.isVisible = true
+            val status = downloadButton.getStatus(card.child.id, card.currentBytes, card.totalBytes)
+            if (status == DownloadStatusTell.IsDone) {
+                // We do this here instead if we are finished downloading
+                // so that we can use the value from the view model
+                // rather than extra unneeded disk operations and to prevent a
+                // delay in updating download icon state.
+                downloadButton.setProgress(card.currentBytes, card.totalBytes)
+                downloadButton.applyMetaData(card.child.id, card.currentBytes, card.totalBytes)
+                // We will let the view model handle this
+                downloadButton.doSetProgress = false
+                downloadButton.progressBar.progressDrawable =
+                    downloadButton.getDrawableFromStatus(status)
+                        ?.let { ContextCompat.getDrawable(downloadButton.context, it) }
+                downloadHeaderInfo.text = formattedSize
+            } else {
+                downloadButton.doSetProgress = true
+                downloadButton.progressBar.progressDrawable =
+                    ContextCompat.getDrawable(downloadButton.context, downloadButton.progressDrawable)
+            }
 
-                    episodeHolder.setOnClickListener {
-                        actionCallback.invoke(DownloadClickEvent(DOWNLOAD_ACTION_PLAY_FILE, card.child))
-                    }
-                } else {
-                    downloadButton.isVisible = false
-                    downloadHeaderGotoChild.isVisible = true
+            downloadButton.setDefaultClickListener(card.child, downloadHeaderInfo, mediaClickCallback)
+            downloadButton.isVisible = !showDeleteCheckbox
 
-                    try {
-                        downloadHeaderInfo.text = downloadHeaderInfo.context.getString(R.string.extra_info_format)
-                            .format(
-                                card.totalDownloads,
-                                downloadHeaderInfo.context.resources.getQuantityString(
-                                    R.plurals.episodes,
-                                    card.totalDownloads
-                                ),
-                                formattedSizeString
-                            )
-                    } catch (e: Exception) {
-                        // You probably formatted incorrectly
-                        downloadHeaderInfo.text = "Error"
-                        logError(e)
-                    }
+            episodeHolder.apply {
+                setOnClickListener {
+                    mediaClickCallback.invoke(DownloadClickEvent(DOWNLOAD_ACTION_PLAY_FILE, card.child))
+                }
+                setOnLongClickListener {
+                    mediaClickCallback.invoke(DownloadClickEvent(DOWNLOAD_ACTION_LONG_CLICK, card.child))
+                    true
+                }
+            }
 
-                    episodeHolder.setOnClickListener {
-                        clickCallback.invoke(DownloadHeaderClickEvent(DOWNLOAD_ACTION_GO_TO_CHILD, d))
-                    }
+            deleteCheckbox.apply {
+                isVisible = showDeleteCheckbox
+                isChecked = card.selected
+                setOnCheckedChangeListener { _, isChecked ->
+                    selectedChangedCallback.invoke(card.data.id, card.data.name, isChecked)
                 }
             }
         }
 
-        private fun bindChild(card: VisualDownloadChildCached?) {
-            if (binding !is DownloadChildEpisodeBinding) return
-            card ?: return
-            val d = card.data
+        @SuppressLint("SetTextI18n")
+        private fun DownloadHeaderEpisodeBinding.handleParentDownload(
+            card: VisualDownloadHeaderCached,
+            formattedSize: String
+        ) {
+            downloadButton.isVisible = false
+            downloadHeaderGotoChild.isVisible = true
 
+            try {
+                downloadHeaderInfo.text = downloadHeaderInfo.context.getString(R.string.extra_info_format).format(
+                    card.totalDownloads,
+                    downloadHeaderInfo.context.resources.getQuantityString(R.plurals.episodes, card.totalDownloads),
+                    formattedSize
+                )
+            } catch (e: Exception) {
+                downloadHeaderInfo.text = "Error"
+                logError(e)
+            }
+
+            episodeHolder.setOnClickListener {
+                headerClickCallback.invoke(DownloadHeaderClickEvent(DOWNLOAD_ACTION_GO_TO_CHILD, card.data))
+            }
+        }
+
+        private fun bindChild(card: VisualDownloadChildCached?) {
+            if (binding !is DownloadChildEpisodeBinding || card == null) return
+
+            val data = card.data
             binding.apply {
-                val posDur = getViewPos(d.id)
+                val posDur = getViewPos(data.id)
                 downloadChildEpisodeProgress.apply {
                     isVisible = posDur != null
                     posDur?.let {
@@ -205,14 +216,14 @@ class DownloadAdapter(
                     }
                 }
 
-                val status = downloadButton.getStatus(d.id, card.currentBytes, card.totalBytes)
+                val status = downloadButton.getStatus(data.id, card.currentBytes, card.totalBytes)
                 if (status == DownloadStatusTell.IsDone) {
                     // We do this here instead if we are finished downloading
                     // so that we can use the value from the view model
                     // rather than extra unneeded disk operations and to prevent a
                     // delay in updating download icon state.
                     downloadButton.setProgress(card.currentBytes, card.totalBytes)
-                    downloadButton.applyMetaData(d.id, card.currentBytes, card.totalBytes)
+                    downloadButton.applyMetaData(data.id, card.currentBytes, card.totalBytes)
                     // We will let the view model handle this
                     downloadButton.doSetProgress = false
                     downloadButton.progressBar.progressDrawable =
@@ -225,16 +236,16 @@ class DownloadAdapter(
                         ContextCompat.getDrawable(downloadButton.context, downloadButton.progressDrawable)
                 }
 
-                downloadButton.setDefaultClickListener(d, downloadChildEpisodeTextExtra, actionCallback)
+                downloadButton.setDefaultClickListener(data, downloadChildEpisodeTextExtra, mediaClickCallback)
                 downloadButton.isVisible = true
 
                 downloadChildEpisodeText.apply {
-                    text = context.getNameFull(d.name, d.episode, d.season)
+                    text = context.getNameFull(data.name, data.episode, data.season)
                     isSelected = true // Needed for text repeating
                 }
 
                 downloadChildEpisodeHolder.setOnClickListener {
-                    actionCallback.invoke(DownloadClickEvent(DOWNLOAD_ACTION_PLAY_FILE, d))
+                    mediaClickCallback.invoke(DownloadClickEvent(DOWNLOAD_ACTION_PLAY_FILE, data))
                 }
             }
         }
@@ -247,7 +258,7 @@ class DownloadAdapter(
             VIEW_TYPE_CHILD -> DownloadChildEpisodeBinding.inflate(inflater, parent, false)
             else -> throw IllegalArgumentException("Invalid view type")
         }
-        return DownloadViewHolder(binding, actionCallback, clickCallback)
+        return DownloadViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: DownloadViewHolder, position: Int) {
@@ -260,6 +271,12 @@ class DownloadAdapter(
             is VisualDownloadHeaderCached -> VIEW_TYPE_HEADER
             else -> throw IllegalArgumentException("Invalid data type at position $position")
         }
+    }
+
+    fun setDeleteCheckboxVisibility(visible: Boolean) {
+        if (showDeleteCheckbox == visible) return
+        showDeleteCheckbox = visible
+        notifyItemRangeChanged(0, itemCount)
     }
 
     class DiffCallback : DiffUtil.ItemCallback<VisualDownloadCached>() {

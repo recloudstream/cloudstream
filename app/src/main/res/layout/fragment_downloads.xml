@@ -8,6 +8,10 @@
     android:orientation="vertical"
     tools:context=".ui.download.DownloadFragment">
 
+    <include
+        layout="@layout/download_delete_toolbar"
+        android:id="@+id/download_delete_toolbar" />
+
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
