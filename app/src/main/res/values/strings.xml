@@ -302,6 +302,7 @@
     <string name="delete_file">Delete File</string>
     <string name="delete_files">Delete Files</string>
     <string name="delete">Delete</string>
+    <string name="delete_count">Delete (%d)</string>
     <string name="cancel">Cancel</string>
     <string name="pause">Pause</string>
     <string name="start">Start</string>
