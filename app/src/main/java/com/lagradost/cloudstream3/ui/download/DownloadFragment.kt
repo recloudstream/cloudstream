@@ -93,7 +93,7 @@ class DownloadFragment : Fragment() {
 
         // We always want fresh selections
         // when navigating to downloads
-        downloadsViewModel.resetSelected()
+        downloadsViewModel.clearSelectedIds()
 
         observe(downloadsViewModel.headerCards) {
             (binding?.downloadList?.adapter as? DownloadAdapter)?.submitList(it)
@@ -127,6 +127,10 @@ class DownloadFragment : Fragment() {
                         downloadsViewModel.addSelected(
                             downloadClickEvent.data.id,
                             it
+                        )
+                        (binding?.downloadList?.adapter as? DownloadAdapter)?.updateSelectedItem(
+                            downloadClickEvent.data.id,
+                            true
                         )
                     }
                 }
@@ -196,7 +200,7 @@ class DownloadFragment : Fragment() {
                 context?.let { ctx -> downloadsViewModel.handleMultiDelete(ctx) }
             }
             binding?.downloadDeleteToolbar?.btnCancel?.setOnClickListener {
-                downloadsViewModel.resetSelected()
+                downloadsViewModel.clearSelectedIds()
             }
 
             adapter?.setDeleteCheckboxVisibility(true)
@@ -206,16 +210,41 @@ class DownloadFragment : Fragment() {
                 // Make sure we don't display it early
                 !downloadsViewModel.headerCards.value.isNullOrEmpty() &&
                         downloadsViewModel.usedBytes.value?.let { it > 0 } == true
+
             adapter?.setDeleteCheckboxVisibility(false)
+            adapter?.clearSelectedIds()
+
+            downloadsViewModel.clearSelectedIds()
         }
     }
 
     private fun updateSelectedState(selected: HashMap<Int, String>) {
-        val currentList = downloadsViewModel.headerCards.value ?: return
-        val updatedList = currentList.map { header ->
-            header.copy(selected = selected.keys.contains(header.data.id))
+        if (selected == downloadsViewModel.selectedIds.value) return
+        val currentSelectedIds = downloadsViewModel.selectedIds.value ?: HashMap()
+
+        // Remove deselected items
+        currentSelectedIds.keys.retainAll(selected.keys)
+
+        // Add newly selected items
+        selected.forEach { (id, name) ->
+            currentSelectedIds[id] = name
         }
-        (binding?.downloadList?.adapter as? DownloadAdapter)?.submitList(updatedList)
+
+        downloadsViewModel.setSelected(currentSelectedIds)
+
+        val currentList = downloadsViewModel.headerCards.value ?: return
+        val updatedList = currentList.map { item ->
+            item.copy(selected = currentSelectedIds.containsKey(item.data.id))
+        }
+
+        val adapter = binding?.downloadList?.adapter as? DownloadAdapter
+
+        // Pass the IDs of the updated list to the ViewModel for filtering
+        val updatedIds = updatedList.filter { it.selected }.map { it.data.id }.toSet()
+        downloadsViewModel.filterSelectedIds(updatedIds)
+
+        val selectedItems = updatedList.filter { it.selected }
+        adapter?.updateSelectedItems(selectedItems)
     }
 
     private fun setUpDownloadDeleteListener() {

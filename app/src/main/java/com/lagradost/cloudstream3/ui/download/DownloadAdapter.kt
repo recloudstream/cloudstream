@@ -91,6 +91,7 @@ class DownloadAdapter(
 ) : ListAdapter<VisualDownloadCached, DownloadAdapter.DownloadViewHolder>(DiffCallback()) {
 
     private var showDeleteCheckbox: Boolean = false
+    private val selectedIds: HashMap<Int, Boolean> = HashMap()
 
     companion object {
         private const val VIEW_TYPE_HEADER = 0
@@ -125,6 +126,14 @@ class DownloadAdapter(
                 if (card.child != null) {
                     handleChildDownload(card, formattedSize)
                 } else handleParentDownload(card, formattedSize)
+
+                deleteCheckbox.apply {
+                    isVisible = showDeleteCheckbox
+                    isChecked = selectedIds[card.data.id] == true
+                    setOnCheckedChangeListener { _, isChecked ->
+                        selectedChangedCallback.invoke(card.data.id, card.data.name, isChecked)
+                    }
+                }
             }
         }
 
@@ -170,7 +179,7 @@ class DownloadAdapter(
 
             deleteCheckbox.apply {
                 isVisible = showDeleteCheckbox
-                isChecked = card.selected
+                isChecked = selectedIds[card.data.id] == true
                 setOnCheckedChangeListener { _, isChecked ->
                     selectedChangedCallback.invoke(card.data.id, card.data.name, isChecked)
                 }
@@ -183,7 +192,7 @@ class DownloadAdapter(
             formattedSize: String
         ) {
             downloadButton.isVisible = false
-            downloadHeaderGotoChild.isVisible = true
+            downloadHeaderGotoChild.isVisible = !showDeleteCheckbox
 
             try {
                 downloadHeaderInfo.text = downloadHeaderInfo.context.getString(R.string.extra_info_format).format(
@@ -198,6 +207,14 @@ class DownloadAdapter(
 
             episodeHolder.setOnClickListener {
                 headerClickCallback.invoke(DownloadHeaderClickEvent(DOWNLOAD_ACTION_GO_TO_CHILD, card.data))
+            }
+
+            deleteCheckbox.apply {
+                isVisible = showDeleteCheckbox
+                isChecked = selectedIds[card.data.id] == true
+                setOnCheckedChangeListener { _, isChecked ->
+                    selectedChangedCallback.invoke(card.data.id, card.data.name, isChecked)
+                }
             }
         }
 
@@ -277,6 +294,29 @@ class DownloadAdapter(
         if (showDeleteCheckbox == visible) return
         showDeleteCheckbox = visible
         notifyItemRangeChanged(0, itemCount)
+    }
+
+    fun updateSelectedItem(id: Int, isSelected: Boolean) {
+        if (isSelected) {
+            selectedIds[id] = true
+        } else selectedIds.remove(id)
+        val position = currentList.indexOfFirst { it.data.id == id }
+        if (position != -1) {
+            notifyItemChanged(position)
+        }
+    }
+
+    fun updateSelectedItems(updatedList: List<VisualDownloadCached>) {
+        updatedList.forEach { item ->
+            val position = currentList.indexOfFirst { it.data.id == item.data.id }
+            if (position != -1) {
+                notifyItemChanged(position)
+            }
+        }
+    }
+
+    fun clearSelectedIds() {
+        selectedIds.clear()
     }
 
     class DiffCallback : DiffUtil.ItemCallback<VisualDownloadCached>() {

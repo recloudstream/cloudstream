@@ -45,29 +45,39 @@ class DownloadViewModel : ViewModel() {
     private var previousVisual: List<VisualDownloadHeaderCached>? = null
 
     fun addSelected(id: Int, name: String) {
-        _selectedIds.value?.let { selectedIds ->
+        selectedIds.value?.let { selectedIds ->
             selectedIds[id] = name
             _selectedIds.postValue(selectedIds)
         }
     }
 
+    fun setSelected(selected: HashMap<Int, String>) {
+        _selectedIds.postValue(selected)
+    }
+
     fun removeSelected(id: Int) {
-        _selectedIds.value?.let { selectedIds ->
+        selectedIds.value?.let { selectedIds ->
             selectedIds.remove(id)
             _selectedIds.postValue(selectedIds)
         }
     }
 
-    fun resetSelected() {
+    fun filterSelectedIds(updatedIds: Set<Int>) {
+        val currentSelectedIds = _selectedIds.value ?: return
+        val filteredIds = currentSelectedIds.filterKeys { updatedIds.contains(it) }
+        _selectedIds.value = HashMap(filteredIds)
+    }
+
+    fun clearSelectedIds() {
         _selectedIds.postValue(HashMap())
     }
 
     private fun getSelectedIds(): List<Int> {
-        return _selectedIds.value?.keys?.toList() ?: emptyList()
+        return selectedIds.value?.keys?.toList() ?: emptyList()
     }
 
     private fun getSelectedNames(): List<String> {
-        return _selectedIds.value?.values?.toList() ?: emptyList()
+        return selectedIds.value?.values?.toList() ?: emptyList()
     }
 
     fun updateList(context: Context) = viewModelScope.launchSafe {
