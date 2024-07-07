@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.text.format.Formatter.formatShortFileSize
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.CheckBox
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
@@ -116,8 +117,19 @@ class DownloadAdapter(
             binding.apply {
                 downloadHeaderPoster.apply {
                     setImage(data.poster)
-                    setOnClickListener {
-                        headerClickCallback.invoke(DownloadHeaderClickEvent(DOWNLOAD_ACTION_LOAD_RESULT, data))
+                    if (isMultiDeleteState) {
+                        setOnClickListener {
+                            toggleIsChecked(deleteCheckbox, data.id, data.name)
+                        }
+                    } else {
+                        setOnClickListener {
+                            headerClickCallback.invoke(DownloadHeaderClickEvent(DOWNLOAD_ACTION_LOAD_RESULT, data))
+                        }
+                    }
+
+                    setOnLongClickListener {
+                        headerClickCallback.invoke(DownloadHeaderClickEvent(DOWNLOAD_ACTION_LONG_CLICK, data))
+                        true
                     }
                 }
                 downloadHeaderTitle.text = data.name
@@ -136,7 +148,7 @@ class DownloadAdapter(
 
                 deleteCheckbox.apply {
                     isVisible = isMultiDeleteState
-                    isChecked = selectedIds[card.data.id] == true
+                    isChecked = selectedIds[data.id] == true
                 }
             }
         }
@@ -174,10 +186,7 @@ class DownloadAdapter(
             episodeHolder.apply {
                 if (isMultiDeleteState) {
                     setOnClickListener {
-                        val isChecked = !deleteCheckbox.isChecked
-                        deleteCheckbox.isChecked = isChecked
-                        selectedIds[card.data.id] = isChecked
-                        selectedChangedCallback.invoke(card.data.id, card.data.name, isChecked)
+                        toggleIsChecked(deleteCheckbox, card.data.id, card.data.name)
                     }
                 } else {
                     setOnClickListener {
@@ -214,10 +223,7 @@ class DownloadAdapter(
             episodeHolder.apply {
                 if (isMultiDeleteState) {
                     setOnClickListener {
-                        val isChecked = !deleteCheckbox.isChecked
-                        deleteCheckbox.isChecked = isChecked
-                        selectedIds[card.data.id] = isChecked
-                        selectedChangedCallback.invoke(card.data.id, card.data.name, isChecked)
+                        toggleIsChecked(deleteCheckbox, card.data.id, card.data.name)
                     }
                 } else {
                     setOnClickListener {
@@ -322,6 +328,13 @@ class DownloadAdapter(
         if (position != -1) {
             notifyItemChanged(position)
         }
+    }
+
+    private fun toggleIsChecked(checkbox: CheckBox, id: Int, name: String) {
+        val isChecked = !checkbox.isChecked
+        checkbox.isChecked = isChecked
+        selectedIds[id] = isChecked
+        selectedChangedCallback.invoke(id, name, isChecked)
     }
 
     class DiffCallback : DiffUtil.ItemCallback<VisualDownloadCached>() {
