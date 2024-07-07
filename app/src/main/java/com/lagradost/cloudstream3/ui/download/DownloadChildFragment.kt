@@ -4,10 +4,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.FragmentChildDownloadsBinding
+import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.ui.download.DownloadButtonSetup.handleDownloadClick
 import com.lagradost.cloudstream3.ui.result.FOCUS_SELF
 import com.lagradost.cloudstream3.ui.result.setLinearListLayout
@@ -86,6 +88,10 @@ class DownloadChildFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // We always want fresh selections
+        // when navigating to downloads
+        downloadsViewModel.clearSelectedItems()
+
         val folder = arguments?.getString("folder")
         val name = arguments?.getString("name")
         if (folder == null) {
@@ -105,6 +111,12 @@ class DownloadChildFragment : Fragment() {
             setAppBarNoScrollFlagsOnTV()
         }
 
+        observe(downloadsViewModel.selectedItems) {
+            handleSelectedChange(it)
+            binding?.btnDelete?.text =
+                getString(R.string.delete_count).format(it.count())
+        }
+
         val adapter = DownloadAdapter(
             {},
             { downloadClickEvent ->
@@ -113,8 +125,19 @@ class DownloadChildFragment : Fragment() {
                     setUpDownloadDeleteListener(folder)
                 }
             },
-            { _, _ -> },
-            { _ -> }
+            { card, isChecked ->
+                if (isChecked) {
+                    downloadsViewModel.addSelected(card)
+                } else downloadsViewModel.removeSelected(card)
+            },
+            { card ->
+                if (card !is VisualDownloadItem.Child) return@DownloadAdapter
+                downloadsViewModel.addSelected(card)
+                (binding?.downloadChildList?.adapter as? DownloadAdapter)?.updateSelectedItem(
+                    card.child.data.id,
+                    true
+                )
+            }
         )
 
         binding?.downloadChildList?.apply {
@@ -129,6 +152,34 @@ class DownloadChildFragment : Fragment() {
         }
 
         updateList(folder)
+    }
+
+    private fun handleSelectedChange(selected: MutableList<VisualDownloadItem>) {
+        val adapter = binding?.downloadChildList?.adapter as? DownloadAdapter
+        if (selected.isNotEmpty()) {
+            binding?.downloadDeleteAppbar?.isVisible = true
+
+            binding?.btnDelete?.setOnClickListener {
+                context?.let { ctx -> downloadsViewModel.handleMultiDelete(ctx) }
+            }
+
+            binding?.btnCancel?.setOnClickListener {
+                adapter?.setIsMultiDeleteState(false)
+                downloadsViewModel.clearSelectedItems()
+            }
+
+            binding?.btnSelectAll?.setOnClickListener {
+                adapter?.selectAllItems()
+                downloadsViewModel.selectAllItems()
+            }
+
+            adapter?.setIsMultiDeleteState(true)
+        } else {
+            binding?.downloadDeleteAppbar?.isVisible = false
+
+            adapter?.setIsMultiDeleteState(false)
+            downloadsViewModel.clearSelectedItems()
+        }
     }
 
     private fun setUpDownloadDeleteListener(folder: String) {

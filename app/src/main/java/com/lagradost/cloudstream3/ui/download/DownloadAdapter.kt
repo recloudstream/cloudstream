@@ -285,7 +285,12 @@ class DownloadAdapter(
                 }
 
                 downloadButton.setDefaultClickListener(data, downloadChildEpisodeTextExtra, mediaClickCallback)
-                downloadButton.isVisible = true
+                downloadButton.isVisible = !isMultiDeleteState
+
+                downloadButton.setOnLongClickListener {
+                    multiDeleteStateCallback.invoke(VisualDownloadItem.Child(card))
+                    true
+                }
 
                 downloadChildEpisodeText.apply {
                     text = context.getNameFull(data.name, data.episode, data.season)
@@ -294,6 +299,35 @@ class DownloadAdapter(
 
                 downloadChildEpisodeHolder.setOnClickListener {
                     mediaClickCallback.invoke(DownloadClickEvent(DOWNLOAD_ACTION_PLAY_FILE, data))
+                }
+
+                downloadChildEpisodeHolder.apply {
+                    if (isMultiDeleteState) {
+                        setOnClickListener {
+                            toggleIsChecked(deleteCheckbox, VisualDownloadItem.Child(card))
+                        }
+                    } else {
+                        setOnClickListener {
+                            mediaClickCallback.invoke(DownloadClickEvent(DOWNLOAD_ACTION_PLAY_FILE, data))
+                        }
+                    }
+
+                    setOnLongClickListener {
+                        multiDeleteStateCallback.invoke(VisualDownloadItem.Child(card))
+                        true
+                    }
+                }
+
+                if (isMultiDeleteState) {
+                    deleteCheckbox.setOnCheckedChangeListener { _, isChecked ->
+                        selectedIds[data.id] = isChecked
+                        selectedChangedCallback.invoke(VisualDownloadItem.Child(card), isChecked)
+                    }
+                } else deleteCheckbox.setOnCheckedChangeListener(null)
+
+                deleteCheckbox.apply {
+                    isVisible = isMultiDeleteState
+                    isChecked = selectedIds[data.id] == true
                 }
             }
         }
