@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.ui.download
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Dialog
 import android.content.ClipboardManager
@@ -191,6 +192,7 @@ class DownloadFragment : Fragment() {
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun handleSelectedChange(selected: HashMap<Int, String>) {
         val adapter = binding?.downloadList?.adapter as? DownloadAdapter
         if (selected.isNotEmpty()) {
@@ -202,7 +204,7 @@ class DownloadFragment : Fragment() {
             binding?.downloadDeleteToolbar?.btnCancel?.setOnClickListener {
                 adapter?.setDeleteCheckboxVisibility(false)
                 adapter?.clearSelectedIds()
-                adapter?.notifyItemRangeChanged(0, adapter.itemCount)
+                adapter?.notifyDataSetChanged()
 
                 downloadsViewModel.clearSelectedIds()
             }
