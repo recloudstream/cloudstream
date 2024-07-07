@@ -34,41 +34,44 @@ class DownloadViewModel : ViewModel() {
     private val _availableBytes = MutableLiveData<Long>()
     private val _downloadBytes = MutableLiveData<Long>()
 
-    private val _selectedIds = MutableLiveData<HashMap<Int, String>>(HashMap())
+    private val _selectedItems = MutableLiveData<MutableList<VisualDownloadItem>>(mutableListOf())
 
     val usedBytes: LiveData<Long> = _usedBytes
     val availableBytes: LiveData<Long> = _availableBytes
     val downloadBytes: LiveData<Long> = _downloadBytes
 
-    val selectedIds: LiveData<HashMap<Int, String>> = _selectedIds
+    val selectedItems: LiveData<MutableList<VisualDownloadItem>> = _selectedItems
 
     private var previousVisual: List<VisualDownloadHeaderCached>? = null
 
-    fun addSelected(id: Int, name: String) {
-        val currentSelected = selectedIds.value ?: HashMap()
-        currentSelected[id] = name
-        _selectedIds.postValue(currentSelected)
+    fun addSelected(item: VisualDownloadItem) {
+        val currentSelected = selectedItems.value ?: mutableListOf()
+        if (!currentSelected.contains(item)) {
+            currentSelected.add(item)
+            _selectedItems.postValue(currentSelected)
+        }
     }
 
-    fun removeSelected(id: Int) {
-        selectedIds.value?.let { selectedIds ->
-            selectedIds.remove(id)
-            _selectedIds.postValue(selectedIds)
+    fun removeSelected(item: VisualDownloadItem) {
+        selectedItems.value?.let { selected ->
+            selected.remove(item)
+            _selectedItems.postValue(selected)
         }
     }
 
     fun selectAllItems() {
-        val currentSelected = selectedIds.value ?: HashMap()
+        val currentSelected = selectedItems.value ?: mutableListOf()
         val items = headerCards.value ?: return
         items.forEach { item ->
-            if (currentSelected.containsKey(item.data.id)) return@forEach
-            currentSelected[item.data.id] = item.data.name
+            if (!currentSelected.contains(VisualDownloadItem.Header(item))) {
+                currentSelected.add(VisualDownloadItem.Header(item))
+            }
         }
-        _selectedIds.postValue(currentSelected)
+        _selectedItems.postValue(currentSelected)
     }
 
-    fun clearSelectedIds() {
-        _selectedIds.postValue(HashMap())
+    fun clearSelectedItems() {
+        _selectedItems.postValue(mutableListOf())
     }
 
     fun updateList(context: Context) = viewModelScope.launchSafe {
@@ -159,8 +162,21 @@ class DownloadViewModel : ViewModel() {
     }
 
     fun handleMultiDelete(context: Context) = viewModelScope.launchSafe {
-        val ids: List<Int> = selectedIds.value?.keys?.toList() ?: emptyList()
-        val names: List<String> = selectedIds.value?.values?.toList() ?: emptyList()
+        val selectedItemsList = selectedItems.value ?: mutableListOf()
+
+        val ids = selectedItemsList.map {
+            when (it) {
+                is VisualDownloadItem.Header -> it.header.data.id
+                is VisualDownloadItem.Child -> it.child.data.id
+            }
+        }
+
+        val names = selectedItemsList.mapNotNull {
+            when (it) {
+                is VisualDownloadItem.Header -> it.header.data.name
+                is VisualDownloadItem.Child -> it.child.data.name
+            }
+        }
 
         showDeleteConfirmationDialog(context, ids, names)
     }

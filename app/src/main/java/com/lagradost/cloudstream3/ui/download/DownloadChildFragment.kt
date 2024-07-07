@@ -1,6 +1,5 @@
 package com.lagradost.cloudstream3.ui.download
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -113,7 +112,9 @@ class DownloadChildFragment : Fragment() {
                 if (downloadClickEvent.action == DOWNLOAD_ACTION_DELETE_FILE) {
                     setUpDownloadDeleteListener(folder)
                 }
-            }, { _, _, _ -> }
+            },
+            { _, _ -> },
+            { _ -> }
         )
 
         binding?.downloadChildList?.apply {

@@ -93,7 +93,7 @@ class DownloadFragment : Fragment() {
 
         // We always want fresh selections
         // when navigating to downloads
-        downloadsViewModel.clearSelectedIds()
+        downloadsViewModel.clearSelectedItems()
 
         observe(downloadsViewModel.headerCards) {
             (binding?.downloadList?.adapter as? DownloadAdapter)?.submitList(it)
@@ -110,7 +110,7 @@ class DownloadFragment : Fragment() {
         observe(downloadsViewModel.downloadBytes) {
             updateStorageInfo(view.context, it, R.string.app_storage, binding?.downloadAppTxt, binding?.downloadApp)
         }
-        observe(downloadsViewModel.selectedIds) {
+        observe(downloadsViewModel.selectedItems) {
             handleSelectedChange(it)
             binding?.btnDelete?.text =
                 getString(R.string.delete_count).format(it.count())
@@ -120,24 +120,22 @@ class DownloadFragment : Fragment() {
             { click -> handleItemClick(click) },
             { downloadClickEvent ->
                 handleDownloadClick(downloadClickEvent)
-                when (downloadClickEvent.action) {
-                    DOWNLOAD_ACTION_DELETE_FILE -> setUpDownloadDeleteListener()
-                    DOWNLOAD_ACTION_LONG_CLICK -> downloadClickEvent.data.name?.let {
-                        downloadsViewModel.addSelected(
-                            downloadClickEvent.data.id,
-                            it
-                        )
-                        (binding?.downloadList?.adapter as? DownloadAdapter)?.updateSelectedItem(
-                            downloadClickEvent.data.id,
-                            true
-                        )
-                    }
+                if (downloadClickEvent.action == DOWNLOAD_ACTION_DELETE_FILE) {
+                    setUpDownloadDeleteListener()
                 }
             },
-            { id, name, isChecked ->
+            { card, isChecked ->
                 if (isChecked) {
-                    downloadsViewModel.addSelected(id, name)
-                } else downloadsViewModel.removeSelected(id)
+                    downloadsViewModel.addSelected(card)
+                } else downloadsViewModel.removeSelected(card)
+            },
+            { card ->
+                if (card !is VisualDownloadItem.Header) return@DownloadAdapter
+                downloadsViewModel.addSelected(card)
+                (binding?.downloadList?.adapter as? DownloadAdapter)?.updateSelectedItem(
+                    card.header.data.id,
+                    true
+                )
             }
         )
 
@@ -187,20 +185,10 @@ class DownloadFragment : Fragment() {
             DOWNLOAD_ACTION_LOAD_RESULT -> {
                 (activity as AppCompatActivity?)?.loadResult(click.data.url, click.data.apiName)
             }
-            DOWNLOAD_ACTION_LONG_CLICK -> {
-                downloadsViewModel.addSelected(
-                    click.data.id,
-                    click.data.name
-                )
-                (binding?.downloadList?.adapter as? DownloadAdapter)?.updateSelectedItem(
-                    click.data.id,
-                    true
-                )
-            }
         }
     }
 
-    private fun handleSelectedChange(selected: HashMap<Int, String>) {
+    private fun handleSelectedChange(selected: MutableList<VisualDownloadItem>) {
         val adapter = binding?.downloadList?.adapter as? DownloadAdapter
         if (selected.isNotEmpty()) {
             binding?.downloadDeleteAppbar?.isVisible = true
@@ -212,7 +200,7 @@ class DownloadFragment : Fragment() {
 
             binding?.btnCancel?.setOnClickListener {
                 adapter?.setIsMultiDeleteState(false)
-                downloadsViewModel.clearSelectedIds()
+                downloadsViewModel.clearSelectedItems()
             }
 
             binding?.btnSelectAll?.setOnClickListener {
@@ -229,7 +217,7 @@ class DownloadFragment : Fragment() {
                         downloadsViewModel.usedBytes.value?.let { it > 0 } == true
 
             adapter?.setIsMultiDeleteState(false)
-            downloadsViewModel.clearSelectedIds()
+            downloadsViewModel.clearSelectedItems()
         }
     }
 
