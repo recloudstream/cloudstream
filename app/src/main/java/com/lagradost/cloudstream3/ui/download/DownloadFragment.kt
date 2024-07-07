@@ -200,6 +200,10 @@ class DownloadFragment : Fragment() {
                 context?.let { ctx -> downloadsViewModel.handleMultiDelete(ctx) }
             }
             binding?.downloadDeleteToolbar?.btnCancel?.setOnClickListener {
+                adapter?.setDeleteCheckboxVisibility(false)
+                adapter?.clearSelectedIds()
+                adapter?.notifyItemRangeChanged(0, adapter.itemCount)
+
                 downloadsViewModel.clearSelectedIds()
             }
 

@@ -45,10 +45,9 @@ class DownloadViewModel : ViewModel() {
     private var previousVisual: List<VisualDownloadHeaderCached>? = null
 
     fun addSelected(id: Int, name: String) {
-        selectedIds.value?.let { selectedIds ->
-            selectedIds[id] = name
-            _selectedIds.postValue(selectedIds)
-        }
+        val currentSelected = selectedIds.value ?: HashMap()
+        currentSelected[id] = name
+        _selectedIds.postValue(currentSelected)
     }
 
     fun setSelected(selected: HashMap<Int, String>) {
