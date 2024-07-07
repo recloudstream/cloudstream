@@ -1,11 +1,9 @@
 package com.lagradost.cloudstream3.ui.download
 
 import android.content.DialogInterface
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.CommonActivity.activity
-import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.ui.player.DownloadFileGenerator
