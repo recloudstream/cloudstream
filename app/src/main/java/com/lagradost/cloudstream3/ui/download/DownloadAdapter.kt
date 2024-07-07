@@ -62,7 +62,6 @@ data class VisualDownloadChildCached(
     override val currentBytes: Long,
     override val totalBytes: Long,
     override val data: VideoDownloadHelper.DownloadEpisodeCached,
-    val selected: Boolean = false,
 ): VisualDownloadCached(currentBytes, totalBytes, data)
 
 data class VisualDownloadHeaderCached(
@@ -72,7 +71,6 @@ data class VisualDownloadHeaderCached(
     val child: VideoDownloadHelper.DownloadEpisodeCached?,
     val currentOngoingDownloads: Int,
     val totalDownloads: Int,
-    val selected: Boolean = false,
 ): VisualDownloadCached(currentBytes, totalBytes, data)
 
 data class DownloadClickEvent(
