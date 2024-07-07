@@ -71,14 +71,6 @@ class DownloadViewModel : ViewModel() {
         _selectedIds.postValue(HashMap())
     }
 
-    private fun getSelectedIds(): List<Int> {
-        return selectedIds.value?.keys?.toList() ?: emptyList()
-    }
-
-    private fun getSelectedNames(): List<String> {
-        return selectedIds.value?.values?.toList() ?: emptyList()
-    }
-
     fun updateList(context: Context) = viewModelScope.launchSafe {
         val children = withContext(Dispatchers.IO) {
             context.getKeys(DOWNLOAD_EPISODE_CACHE)
@@ -167,14 +159,14 @@ class DownloadViewModel : ViewModel() {
     }
 
     fun handleMultiDelete(context: Context) = viewModelScope.launchSafe {
-        val ids: List<Int> = getSelectedIds()
-        val names: List<String> = getSelectedNames()
+        val ids: List<Int> = selectedIds.value?.keys?.toList() ?: emptyList()
+        val names: List<String> = selectedIds.value?.values?.toList() ?: emptyList()
 
         showDeleteConfirmationDialog(context, ids, names)
     }
 
     private fun showDeleteConfirmationDialog(context: Context, ids: List<Int>, names: List<String>) {
-        val formattedNames = names.joinToString(separator = "\n") { "- $it" }
+        val formattedNames = names.joinToString(separator = "\n") { "• $it" }
         val message = context.getString(R.string.delete_message_multiple).format(formattedNames)
 
         val builder: AlertDialog.Builder = AlertDialog.Builder(context)
