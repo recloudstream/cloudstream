@@ -172,9 +172,19 @@ class DownloadAdapter(
             downloadButton.isVisible = !isMultiDeleteState
 
             episodeHolder.apply {
-                setOnClickListener {
-                    mediaClickCallback.invoke(DownloadClickEvent(DOWNLOAD_ACTION_PLAY_FILE, card.child))
+                if (isMultiDeleteState) {
+                    setOnClickListener {
+                        val isChecked = !deleteCheckbox.isChecked
+                        deleteCheckbox.isChecked = isChecked
+                        selectedIds[card.data.id] = isChecked
+                        selectedChangedCallback.invoke(card.data.id, card.data.name, isChecked)
+                    }
+                } else {
+                    setOnClickListener {
+                        mediaClickCallback.invoke(DownloadClickEvent(DOWNLOAD_ACTION_PLAY_FILE, card.child))
+                    }
                 }
+
                 setOnLongClickListener {
                     mediaClickCallback.invoke(DownloadClickEvent(DOWNLOAD_ACTION_LONG_CLICK, card.child))
                     true
@@ -201,8 +211,24 @@ class DownloadAdapter(
                 logError(e)
             }
 
-            episodeHolder.setOnClickListener {
-                headerClickCallback.invoke(DownloadHeaderClickEvent(DOWNLOAD_ACTION_GO_TO_CHILD, card.data))
+            episodeHolder.apply {
+                if (isMultiDeleteState) {
+                    setOnClickListener {
+                        val isChecked = !deleteCheckbox.isChecked
+                        deleteCheckbox.isChecked = isChecked
+                        selectedIds[card.data.id] = isChecked
+                        selectedChangedCallback.invoke(card.data.id, card.data.name, isChecked)
+                    }
+                } else {
+                    setOnClickListener {
+                        headerClickCallback.invoke(DownloadHeaderClickEvent(DOWNLOAD_ACTION_GO_TO_CHILD, card.data))
+                    }
+                }
+
+                setOnLongClickListener {
+                    headerClickCallback.invoke(DownloadHeaderClickEvent(DOWNLOAD_ACTION_LONG_CLICK, card.data))
+                    true
+                }
             }
         }
 

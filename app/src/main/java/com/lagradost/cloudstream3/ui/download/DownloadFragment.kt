@@ -187,6 +187,16 @@ class DownloadFragment : Fragment() {
             DOWNLOAD_ACTION_LOAD_RESULT -> {
                 (activity as AppCompatActivity?)?.loadResult(click.data.url, click.data.apiName)
             }
+            DOWNLOAD_ACTION_LONG_CLICK -> {
+                downloadsViewModel.addSelected(
+                    click.data.id,
+                    click.data.name
+                )
+                (binding?.downloadList?.adapter as? DownloadAdapter)?.updateSelectedItem(
+                    click.data.id,
+                    true
+                )
+            }
         }
     }
 
