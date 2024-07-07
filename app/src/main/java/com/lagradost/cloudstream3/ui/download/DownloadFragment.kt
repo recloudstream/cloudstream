@@ -205,12 +205,19 @@ class DownloadFragment : Fragment() {
         if (selected.isNotEmpty()) {
             binding?.downloadDeleteToolbar?.downloadDeleteToolbar?.isVisible = true
             binding?.downloadStorageAppbar?.isVisible = false
+
             binding?.downloadDeleteToolbar?.btnDelete?.setOnClickListener {
                 context?.let { ctx -> downloadsViewModel.handleMultiDelete(ctx) }
             }
+
             binding?.downloadDeleteToolbar?.btnCancel?.setOnClickListener {
                 adapter?.setIsMultiDeleteState(false)
                 downloadsViewModel.clearSelectedIds()
+            }
+
+            binding?.downloadDeleteToolbar?.btnSelectAll?.setOnClickListener {
+                adapter?.selectAllItems()
+                downloadsViewModel.selectAllItems()
             }
 
             adapter?.setIsMultiDeleteState(true)
