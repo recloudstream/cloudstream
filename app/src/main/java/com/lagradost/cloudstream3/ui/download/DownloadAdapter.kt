@@ -90,7 +90,7 @@ class DownloadAdapter(
     private val selectedChangedCallback: (Int, String, Boolean) -> Unit,
 ) : ListAdapter<VisualDownloadCached, DownloadAdapter.DownloadViewHolder>(DiffCallback()) {
 
-    private var showDeleteCheckbox: Boolean = false
+    private var isMultiDeleteState: Boolean = false
     private val selectedIds: HashMap<Int, Boolean> = HashMap()
 
     companion object {
@@ -127,20 +127,16 @@ class DownloadAdapter(
                     handleChildDownload(card, formattedSize)
                 } else handleParentDownload(card, formattedSize)
 
-                // This is crappy but we disable view recycling for the
-                // ViewHolder when showDeleteCheckbox is true. This means
-                // that RecyclerView won't reuse these views when scrolling,
-                // thereby ensuring that the checkbox states are preserved.
-                setIsRecyclable(!showDeleteCheckbox)
+                if (isMultiDeleteState) {
+                    deleteCheckbox.setOnCheckedChangeListener { _, isChecked ->
+                        selectedIds[data.id] = isChecked
+                        selectedChangedCallback.invoke(data.id, data.name, isChecked)
+                    }
+                } else deleteCheckbox.setOnCheckedChangeListener(null)
 
                 deleteCheckbox.apply {
-                    isVisible = showDeleteCheckbox
+                    isVisible = isMultiDeleteState
                     isChecked = selectedIds[card.data.id] == true
-                    setOnCheckedChangeListener(null)
-                    setOnCheckedChangeListener { _, isChecked ->
-                        selectedIds[card.data.id] = isChecked
-                        selectedChangedCallback.invoke(card.data.id, card.data.name, isChecked)
-                    }
                 }
             }
         }
@@ -173,7 +169,7 @@ class DownloadAdapter(
             }
 
             downloadButton.setDefaultClickListener(card.child, downloadHeaderInfo, mediaClickCallback)
-            downloadButton.isVisible = !showDeleteCheckbox
+            downloadButton.isVisible = !isMultiDeleteState
 
             episodeHolder.apply {
                 setOnClickListener {
@@ -184,16 +180,6 @@ class DownloadAdapter(
                     true
                 }
             }
-
-            deleteCheckbox.apply {
-                isVisible = showDeleteCheckbox
-                isChecked = selectedIds[card.data.id] == true
-                setOnCheckedChangeListener(null)
-                setOnCheckedChangeListener { _, isChecked ->
-                    selectedIds[card.data.id] = isChecked
-                    selectedChangedCallback.invoke(card.data.id, card.data.name, isChecked)
-                }
-            }
         }
 
         @SuppressLint("SetTextI18n")
@@ -202,7 +188,7 @@ class DownloadAdapter(
             formattedSize: String
         ) {
             downloadButton.isVisible = false
-            downloadHeaderGotoChild.isVisible = !showDeleteCheckbox
+            downloadHeaderGotoChild.isVisible = !isMultiDeleteState
 
             try {
                 downloadHeaderInfo.text = downloadHeaderInfo.context.getString(R.string.extra_info_format).format(
@@ -217,16 +203,6 @@ class DownloadAdapter(
 
             episodeHolder.setOnClickListener {
                 headerClickCallback.invoke(DownloadHeaderClickEvent(DOWNLOAD_ACTION_GO_TO_CHILD, card.data))
-            }
-
-            deleteCheckbox.apply {
-                isVisible = showDeleteCheckbox
-                isChecked = selectedIds[card.data.id] == true
-                setOnCheckedChangeListener(null)
-                setOnCheckedChangeListener { _, isChecked ->
-                    selectedIds[card.data.id] = isChecked
-                    selectedChangedCallback.invoke(card.data.id, card.data.name, isChecked)
-                }
             }
         }
 
@@ -277,12 +253,6 @@ class DownloadAdapter(
                     mediaClickCallback.invoke(DownloadClickEvent(DOWNLOAD_ACTION_PLAY_FILE, data))
                 }
             }
-
-            // This is crappy but we disable view recycling for the
-            // ViewHolder when showDeleteCheckbox is true. This means
-            // that RecyclerView won't reuse these views when scrolling,
-            // thereby ensuring that the checkbox states are preserved.
-            setIsRecyclable(!showDeleteCheckbox)
         }
     }
 
@@ -308,10 +278,14 @@ class DownloadAdapter(
         }
     }
 
-    fun setDeleteCheckboxVisibility(visible: Boolean) {
-        if (showDeleteCheckbox == visible) return
-        showDeleteCheckbox = visible
-        notifyItemRangeChanged(0, itemCount)
+    @SuppressLint("NotifyDataSetChanged")
+    fun setIsMultiDeleteState(value: Boolean) {
+        if (isMultiDeleteState == value) return
+        isMultiDeleteState = value
+        if (!value) {
+            selectedIds.clear()
+            notifyDataSetChanged()
+        } else notifyItemRangeChanged(0, itemCount)
     }
 
     fun updateSelectedItem(id: Int, isSelected: Boolean) {
@@ -330,15 +304,6 @@ class DownloadAdapter(
             if (position != -1) {
                 notifyItemChanged(position)
             }
-        }
-    }
-
-    @SuppressLint("NotifyDataSetChanged")
-    fun clearSelectedIds() {
-        if (selectedIds.isNotEmpty()) {
-            selectedIds.clear()
-            showDeleteCheckbox = false
-            notifyDataSetChanged()
         }
     }
 

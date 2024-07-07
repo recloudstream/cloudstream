@@ -200,11 +200,11 @@ class DownloadFragment : Fragment() {
                 context?.let { ctx -> downloadsViewModel.handleMultiDelete(ctx) }
             }
             binding?.downloadDeleteToolbar?.btnCancel?.setOnClickListener {
-                adapter?.clearSelectedIds()
+                adapter?.setIsMultiDeleteState(false)
                 downloadsViewModel.clearSelectedIds()
             }
 
-            adapter?.setDeleteCheckboxVisibility(true)
+            adapter?.setIsMultiDeleteState(true)
         } else {
             binding?.downloadDeleteToolbar?.downloadDeleteToolbar?.isVisible = false
             binding?.downloadStorageAppbar?.isVisible =
@@ -212,9 +212,7 @@ class DownloadFragment : Fragment() {
                 !downloadsViewModel.headerCards.value.isNullOrEmpty() &&
                         downloadsViewModel.usedBytes.value?.let { it > 0 } == true
 
-            adapter?.setDeleteCheckboxVisibility(false)
-            adapter?.clearSelectedIds()
-
+            adapter?.setIsMultiDeleteState(false)
             downloadsViewModel.clearSelectedIds()
         }
     }

@@ -80,21 +80,6 @@ object DownloadButtonSetup {
                     }
                 }
             }
-            DOWNLOAD_ACTION_LONG_CLICK -> {
-                activity?.let { act ->
-                    val length =
-                        VideoDownloadManager.getDownloadFileInfoAndUpdateSettings(
-                            act,
-                            click.data.id
-                        )?.fileLength
-                            ?: 0
-                    if (length > 0) {
-                        showToast(R.string.delete, Toast.LENGTH_LONG)
-                    } else {
-                        showToast(R.string.download, Toast.LENGTH_LONG)
-                    }
-                }
-            }
             DOWNLOAD_ACTION_PLAY_FILE -> {
                 activity?.let { act ->
                     val info =

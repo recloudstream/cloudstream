@@ -62,9 +62,9 @@ class DownloadViewModel : ViewModel() {
     }
 
     fun filterSelectedIds(updatedIds: Set<Int>) {
-        val currentSelectedIds = _selectedIds.value ?: return
+        val currentSelectedIds = selectedIds.value ?: return
         val filteredIds = currentSelectedIds.filterKeys { updatedIds.contains(it) }
-        _selectedIds.value = HashMap(filteredIds)
+        _selectedIds.postValue(HashMap(filteredIds))
     }
 
     fun clearSelectedIds() {
