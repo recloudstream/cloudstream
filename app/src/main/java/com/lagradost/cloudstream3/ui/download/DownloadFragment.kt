@@ -112,7 +112,7 @@ class DownloadFragment : Fragment() {
         }
         observe(downloadsViewModel.selectedIds) {
             handleSelectedChange(it)
-            binding?.downloadDeleteToolbar?.btnDelete?.text =
+            binding?.btnDelete?.text =
                 getString(R.string.delete_count).format(it.count())
         }
 
@@ -203,26 +203,26 @@ class DownloadFragment : Fragment() {
     private fun handleSelectedChange(selected: HashMap<Int, String>) {
         val adapter = binding?.downloadList?.adapter as? DownloadAdapter
         if (selected.isNotEmpty()) {
-            binding?.downloadDeleteToolbar?.downloadDeleteToolbar?.isVisible = true
+            binding?.downloadDeleteAppbar?.isVisible = true
             binding?.downloadStorageAppbar?.isVisible = false
 
-            binding?.downloadDeleteToolbar?.btnDelete?.setOnClickListener {
+            binding?.btnDelete?.setOnClickListener {
                 context?.let { ctx -> downloadsViewModel.handleMultiDelete(ctx) }
             }
 
-            binding?.downloadDeleteToolbar?.btnCancel?.setOnClickListener {
+            binding?.btnCancel?.setOnClickListener {
                 adapter?.setIsMultiDeleteState(false)
                 downloadsViewModel.clearSelectedIds()
             }
 
-            binding?.downloadDeleteToolbar?.btnSelectAll?.setOnClickListener {
+            binding?.btnSelectAll?.setOnClickListener {
                 adapter?.selectAllItems()
                 downloadsViewModel.selectAllItems()
             }
 
             adapter?.setIsMultiDeleteState(true)
         } else {
-            binding?.downloadDeleteToolbar?.downloadDeleteToolbar?.isVisible = false
+            binding?.downloadDeleteAppbar?.isVisible = false
             binding?.downloadStorageAppbar?.isVisible =
                 // Make sure we don't display it early
                 !downloadsViewModel.headerCards.value.isNullOrEmpty() &&
