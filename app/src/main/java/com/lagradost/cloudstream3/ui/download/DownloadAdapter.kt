@@ -308,7 +308,6 @@ class DownloadAdapter(
         }
     }
 
-    @SuppressLint("NotifyDataSetChanged")
     fun setDeleteCheckboxVisibility(visible: Boolean) {
         if (showDeleteCheckbox == visible) return
         showDeleteCheckbox = visible
