@@ -298,15 +298,6 @@ class DownloadAdapter(
         }
     }
 
-    fun updateSelectedItems(updatedList: List<VisualDownloadCached>) {
-        updatedList.forEach { item ->
-            val position = currentList.indexOfFirst { it.data.id == item.data.id }
-            if (position != -1) {
-                notifyItemChanged(position)
-            }
-        }
-    }
-
     class DiffCallback : DiffUtil.ItemCallback<VisualDownloadCached>() {
         override fun areItemsTheSame(oldItem: VisualDownloadCached, newItem: VisualDownloadCached): Boolean {
             return oldItem.data.id == newItem.data.id

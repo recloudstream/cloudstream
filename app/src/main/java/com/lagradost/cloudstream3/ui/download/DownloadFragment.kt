@@ -112,7 +112,6 @@ class DownloadFragment : Fragment() {
         }
         observe(downloadsViewModel.selectedIds) {
             handleSelectedChange(it)
-            updateSelectedState(it)
             binding?.downloadDeleteToolbar?.btnDelete?.text =
                 getString(R.string.delete_count).format(it.count())
         }
@@ -215,35 +214,6 @@ class DownloadFragment : Fragment() {
             adapter?.setIsMultiDeleteState(false)
             downloadsViewModel.clearSelectedIds()
         }
-    }
-
-    private fun updateSelectedState(selected: HashMap<Int, String>) {
-        if (selected == downloadsViewModel.selectedIds.value) return
-        val currentSelectedIds = downloadsViewModel.selectedIds.value ?: HashMap()
-
-        // Remove deselected items
-        currentSelectedIds.keys.retainAll(selected.keys)
-
-        // Add newly selected items
-        selected.forEach { (id, name) ->
-            currentSelectedIds[id] = name
-        }
-
-        downloadsViewModel.setSelected(currentSelectedIds)
-
-        val currentList = downloadsViewModel.headerCards.value ?: return
-        val updatedList = currentList.map { item ->
-            item.copy(selected = currentSelectedIds.containsKey(item.data.id))
-        }
-
-        val adapter = binding?.downloadList?.adapter as? DownloadAdapter
-
-        // Pass the IDs of the updated list to the ViewModel for filtering
-        val updatedIds = updatedList.filter { it.selected }.map { it.data.id }.toSet()
-        downloadsViewModel.filterSelectedIds(updatedIds)
-
-        val selectedItems = updatedList.filter { it.selected }
-        adapter?.updateSelectedItems(selectedItems)
     }
 
     private fun setUpDownloadDeleteListener() {

@@ -50,21 +50,11 @@ class DownloadViewModel : ViewModel() {
         _selectedIds.postValue(currentSelected)
     }
 
-    fun setSelected(selected: HashMap<Int, String>) {
-        _selectedIds.postValue(selected)
-    }
-
     fun removeSelected(id: Int) {
         selectedIds.value?.let { selectedIds ->
             selectedIds.remove(id)
             _selectedIds.postValue(selectedIds)
         }
-    }
-
-    fun filterSelectedIds(updatedIds: Set<Int>) {
-        val currentSelectedIds = selectedIds.value ?: return
-        val filteredIds = currentSelectedIds.filterKeys { updatedIds.contains(it) }
-        _selectedIds.postValue(HashMap(filteredIds))
     }
 
     fun clearSelectedIds() {
