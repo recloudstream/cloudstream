@@ -13,13 +13,13 @@ open class Sobreatsesuyp : ExtractorApi() {
     override val requiresReferer = true
 
     override suspend fun getUrl(url: String, referer: String?, subtitleCallback: (SubtitleFile) -> Unit, callback: (ExtractorLink) -> Unit) {
-        val ext_ref = referer ?: ""
+        val extRef = referer ?: ""
 
-        val video_req = app.get(url, referer=ext_ref).text
+        val videoReq = app.get(url, referer = extRef).text
 
-        val file     = Regex("""file\":\"([^\"]+)""").find(video_req)?.groupValues?.get(1) ?: throw ErrorLoadingException("File not found")
+        val file     = Regex("""file\":\"([^\"]+)""").find(videoReq)?.groupValues?.get(1) ?: throw ErrorLoadingException("File not found")
         val postLink = "${mainUrl}/" + file.replace("\\", "")
-        val rawList  = app.post(postLink, referer=ext_ref).parsedSafe<List<Any>>() ?: throw ErrorLoadingException("Post link not found")
+        val rawList  = app.post(postLink, referer = extRef).parsedSafe<List<Any>>() ?: throw ErrorLoadingException("Post link not found")
 
         val postJson: List<SobreatsesuypVideoData> = rawList.drop(1).map { item ->
             val mapItem = item as Map<*, *>
@@ -30,35 +30,30 @@ open class Sobreatsesuyp : ExtractorApi() {
         }
         Log.d("Kekik_${this.name}", "postJson » ${postJson}")
 
-		val vid_links = mutableSetOf<String>()
-        val vid_map   = mutableListOf<Map<String, String>>()
+		val vidLinks = mutableSetOf<String>()
+        val vidPairs = mutableListOf<Pair<String, String>>()
         for (item in postJson) {
             if (item.file == null || item.title == null) continue
 
-            val fileUrl   = "${mainUrl}/playlist/" + item.file.substring(1) + ".txt"
-            val videoData = app.post(fileUrl, referer=ext_ref).text
+            val fileUrl   = "${mainUrl}/playlist/${item.file.substring(1)}.txt"
+            val videoData = app.post(fileUrl, referer = extRef).text
 
-			if (videoData in vid_links) { continue }
- 			vid_links.add(videoData)
+			if (videoData in vidLinks) { continue }
+ 			vidLinks.add(videoData)
 
-            vid_map.add(mapOf(
-                "title"     to item.title,
-                "videoData" to videoData
-            ))
+            vidPairs.add(Pair(item.title, videoData))
         }
 
-
-        for (mapEntry in vid_map) {
-            Log.d("Kekik_${this.name}", "mapEntry » ${mapEntry}")
-            val title    = mapEntry["title"] ?: continue
-            val m3u_link = mapEntry["videoData"] ?: continue
+        for (vidPair in vidPairs) {
+            Log.d("Kekik_${this.name}", "vidPair » ${vidPair}")
+            val (title, m3uLink) = vidPair
 
 	        callback.invoke(
                 ExtractorLink(
                     source  = this.name,
                     name    = "${this.name} - ${title}",
-                    url     = m3u_link,
-                    referer = ext_ref,
+                    url     = m3uLink,
+                    referer = extRef,
                     quality = Qualities.Unknown.value,
                     type    = INFER_TYPE
                 )
