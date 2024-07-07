@@ -57,6 +57,16 @@ class DownloadViewModel : ViewModel() {
         }
     }
 
+    fun selectAllItems() {
+        val currentSelected = selectedIds.value ?: HashMap()
+        val items = headerCards.value ?: return
+        items.forEach { item ->
+            if (currentSelected.containsKey(item.data.id)) return@forEach
+            currentSelected[item.data.id] = item.data.name
+        }
+        _selectedIds.postValue(currentSelected)
+    }
+
     fun clearSelectedIds() {
         _selectedIds.postValue(HashMap())
     }

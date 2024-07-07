@@ -330,6 +330,16 @@ class DownloadAdapter(
         }
     }
 
+    fun selectAllItems() {
+        currentList.forEachIndexed { index, item ->
+            val id = item.data.id
+            if (selectedIds[id] == true) return@forEachIndexed
+
+            selectedIds[id] = true
+            notifyItemChanged(index)
+        }
+    }
+
     private fun toggleIsChecked(checkbox: CheckBox, id: Int, name: String) {
         val isChecked = !checkbox.isChecked
         checkbox.isChecked = isChecked
