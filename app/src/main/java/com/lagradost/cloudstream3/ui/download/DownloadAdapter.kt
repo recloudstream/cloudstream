@@ -127,10 +127,18 @@ class DownloadAdapter(
                     handleChildDownload(card, formattedSize)
                 } else handleParentDownload(card, formattedSize)
 
+                // This is crappy but we disable view recycling for the
+                // ViewHolder when showDeleteCheckbox is true. This means
+                // that RecyclerView won't reuse these views when scrolling,
+                // thereby ensuring that the checkbox states are preserved.
+                setIsRecyclable(!showDeleteCheckbox)
+
                 deleteCheckbox.apply {
                     isVisible = showDeleteCheckbox
                     isChecked = selectedIds[card.data.id] == true
+                    setOnCheckedChangeListener(null)
                     setOnCheckedChangeListener { _, isChecked ->
+                        selectedIds[card.data.id] = isChecked
                         selectedChangedCallback.invoke(card.data.id, card.data.name, isChecked)
                     }
                 }
@@ -180,7 +188,9 @@ class DownloadAdapter(
             deleteCheckbox.apply {
                 isVisible = showDeleteCheckbox
                 isChecked = selectedIds[card.data.id] == true
+                setOnCheckedChangeListener(null)
                 setOnCheckedChangeListener { _, isChecked ->
+                    selectedIds[card.data.id] = isChecked
                     selectedChangedCallback.invoke(card.data.id, card.data.name, isChecked)
                 }
             }
@@ -212,7 +222,9 @@ class DownloadAdapter(
             deleteCheckbox.apply {
                 isVisible = showDeleteCheckbox
                 isChecked = selectedIds[card.data.id] == true
+                setOnCheckedChangeListener(null)
                 setOnCheckedChangeListener { _, isChecked ->
+                    selectedIds[card.data.id] = isChecked
                     selectedChangedCallback.invoke(card.data.id, card.data.name, isChecked)
                 }
             }
@@ -265,6 +277,12 @@ class DownloadAdapter(
                     mediaClickCallback.invoke(DownloadClickEvent(DOWNLOAD_ACTION_PLAY_FILE, data))
                 }
             }
+
+            // This is crappy but we disable view recycling for the
+            // ViewHolder when showDeleteCheckbox is true. This means
+            // that RecyclerView won't reuse these views when scrolling,
+            // thereby ensuring that the checkbox states are preserved.
+            setIsRecyclable(!showDeleteCheckbox)
         }
     }
 
@@ -294,7 +312,7 @@ class DownloadAdapter(
     fun setDeleteCheckboxVisibility(visible: Boolean) {
         if (showDeleteCheckbox == visible) return
         showDeleteCheckbox = visible
-        notifyDataSetChanged()
+        notifyItemRangeChanged(0, itemCount)
     }
 
     fun updateSelectedItem(id: Int, isSelected: Boolean) {
@@ -316,8 +334,13 @@ class DownloadAdapter(
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     fun clearSelectedIds() {
-        selectedIds.clear()
+        if (selectedIds.isNotEmpty()) {
+            selectedIds.clear()
+            showDeleteCheckbox = false
+            notifyDataSetChanged()
+        }
     }
 
     class DiffCallback : DiffUtil.ItemCallback<VisualDownloadCached>() {
