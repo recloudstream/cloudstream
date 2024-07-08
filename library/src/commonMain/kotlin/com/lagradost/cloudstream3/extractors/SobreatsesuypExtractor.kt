@@ -2,7 +2,6 @@
 
 package com.lagradost.cloudstream3.extractors
 
-import android.util.Log
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.utils.*
 import com.fasterxml.jackson.annotation.JsonProperty
@@ -28,15 +27,13 @@ open class Sobreatsesuyp : ExtractorApi() {
                 file  = mapItem["file"]  as? String
             )
         }
-        Log.d("Kekik_${this.name}", "postJson » ${postJson}")
 
         for (item in postJson) {
             if (item.file == null || item.title == null) continue
 
-            val fileUrl   = "${mainUrl}/playlist/${item.file.substring(1)}.txt"
-            val videoData = app.post(fileUrl, referer = extRef).text
+            val videoData = app.post("${mainUrl}/playlist/${item.file.substring(1)}.txt", referer = extRef).text
 
-	        callback.invoke(
+            callback.invoke(
                 ExtractorLink(
                     source  = this.name,
                     name    = "${this.name} - ${item.title}",
