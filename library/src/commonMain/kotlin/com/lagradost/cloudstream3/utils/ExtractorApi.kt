@@ -115,6 +115,7 @@ import com.lagradost.cloudstream3.extractors.Hotlinger
 import com.lagradost.cloudstream3.extractors.FourCX
 import com.lagradost.cloudstream3.extractors.PlayRu
 import com.lagradost.cloudstream3.extractors.FourPlayRu
+import com.lagradost.cloudstream3.extractors.Pichive
 import com.lagradost.cloudstream3.extractors.FourPichive
 import com.lagradost.cloudstream3.extractors.HDMomPlayer
 import com.lagradost.cloudstream3.extractors.HDPlayerSystem
@@ -124,6 +125,7 @@ import com.lagradost.cloudstream3.extractors.HDStreamAble
 import com.lagradost.cloudstream3.extractors.RapidVid
 import com.lagradost.cloudstream3.extractors.TRsTX
 import com.lagradost.cloudstream3.extractors.VidMoxy
+import com.lagradost.cloudstream3.extractors.Sobreatsesuyp
 import com.lagradost.cloudstream3.extractors.PixelDrain
 import com.lagradost.cloudstream3.extractors.MailRu
 import com.lagradost.cloudstream3.extractors.Mediafire
@@ -734,6 +736,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     FourCX(),
     PlayRu(),
     FourPlayRu(),
+    Pichive(),
     FourPichive(),
     HDMomPlayer(),
     HDPlayerSystem(),
@@ -743,6 +746,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     RapidVid(),
     TRsTX(),
     VidMoxy(),
+    Sobreatsesuyp(),
     PixelDrain(),
     MailRu(),
 
