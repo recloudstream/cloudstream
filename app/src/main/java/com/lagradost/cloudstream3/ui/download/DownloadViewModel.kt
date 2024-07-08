@@ -27,24 +27,24 @@ import kotlinx.coroutines.withContext
 
 class DownloadViewModel : ViewModel() {
     private val _headerCards =
-        MutableLiveData<List<VisualDownloadHeaderCached>>().apply { listOf<VisualDownloadHeaderCached>() }
-    val headerCards: LiveData<List<VisualDownloadHeaderCached>> = _headerCards
+        MutableLiveData<List<VisualDownloadCached.Header>>().apply { listOf<VisualDownloadCached.Header>() }
+    val headerCards: LiveData<List<VisualDownloadCached.Header>> = _headerCards
 
     private val _usedBytes = MutableLiveData<Long>()
     private val _availableBytes = MutableLiveData<Long>()
     private val _downloadBytes = MutableLiveData<Long>()
 
-    private val _selectedItems = MutableLiveData<MutableList<VisualDownloadItem>>(mutableListOf())
+    private val _selectedItems = MutableLiveData<MutableList<VisualDownloadCached>>(mutableListOf())
 
     val usedBytes: LiveData<Long> = _usedBytes
     val availableBytes: LiveData<Long> = _availableBytes
     val downloadBytes: LiveData<Long> = _downloadBytes
 
-    val selectedItems: LiveData<MutableList<VisualDownloadItem>> = _selectedItems
+    val selectedItems: LiveData<MutableList<VisualDownloadCached>> = _selectedItems
 
-    private var previousVisual: List<VisualDownloadHeaderCached>? = null
+    private var previousVisual: List<VisualDownloadCached.Header>? = null
 
-    fun addSelected(item: VisualDownloadItem) {
+    fun addSelected(item: VisualDownloadCached) {
         val currentSelected = selectedItems.value ?: mutableListOf()
         if (!currentSelected.contains(item)) {
             currentSelected.add(item)
@@ -52,7 +52,7 @@ class DownloadViewModel : ViewModel() {
         }
     }
 
-    fun removeSelected(item: VisualDownloadItem) {
+    fun removeSelected(item: VisualDownloadCached) {
         selectedItems.value?.let { selected ->
             selected.remove(item)
             _selectedItems.postValue(selected)
@@ -63,8 +63,8 @@ class DownloadViewModel : ViewModel() {
         val currentSelected = selectedItems.value ?: mutableListOf()
         val items = headerCards.value ?: return
         items.forEach { item ->
-            if (!currentSelected.contains(VisualDownloadItem.Header(item))) {
-                currentSelected.add(VisualDownloadItem.Header(item))
+            if (!currentSelected.contains(item)) {
+                currentSelected.add(item)
             }
         }
         _selectedItems.postValue(currentSelected)
@@ -124,7 +124,7 @@ class DownloadViewModel : ViewModel() {
                         DOWNLOAD_EPISODE_CACHE,
                         getFolderName(it.id.toString(), it.id.toString())
                     )
-                VisualDownloadHeaderCached(
+                VisualDownloadCached.Header(
                     currentBytes = currentBytes,
                     totalBytes = bytes,
                     data = it,
@@ -145,7 +145,7 @@ class DownloadViewModel : ViewModel() {
         }
     }
 
-    private fun updateStorageStats(visual: List<VisualDownloadHeaderCached>) {
+    private fun updateStorageStats(visual: List<VisualDownloadCached.Header>) {
         try {
             val stat = StatFs(Environment.getExternalStorageDirectory().path)
             val localBytesAvailable = stat.availableBytes
@@ -164,17 +164,12 @@ class DownloadViewModel : ViewModel() {
     fun handleMultiDelete(context: Context) = viewModelScope.launchSafe {
         val selectedItemsList = selectedItems.value ?: mutableListOf()
 
-        val ids = selectedItemsList.map {
-            when (it) {
-                is VisualDownloadItem.Header -> it.header.data.id
-                is VisualDownloadItem.Child -> it.child.data.id
-            }
-        }
+        val ids = selectedItemsList.map { it.data.id }
 
         val names = selectedItemsList.mapNotNull {
             when (it) {
-                is VisualDownloadItem.Header -> it.header.data.name
-                is VisualDownloadItem.Child -> it.child.data.name
+                is VisualDownloadCached.Header -> it.data.name
+                is VisualDownloadCached.Child -> it.data.name
             }
         }
 

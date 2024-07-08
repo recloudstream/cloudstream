@@ -130,10 +130,9 @@ class DownloadFragment : Fragment() {
                 } else downloadsViewModel.removeSelected(card)
             },
             { card ->
-                if (card !is VisualDownloadItem.Header) return@DownloadAdapter
                 downloadsViewModel.addSelected(card)
                 (binding?.downloadList?.adapter as? DownloadAdapter)?.updateSelectedItem(
-                    card.header.data.id,
+                    card.data.id,
                     true
                 )
             }
@@ -188,7 +187,7 @@ class DownloadFragment : Fragment() {
         }
     }
 
-    private fun handleSelectedChange(selected: MutableList<VisualDownloadItem>) {
+    private fun handleSelectedChange(selected: MutableList<VisualDownloadCached>) {
         val adapter = binding?.downloadList?.adapter as? DownloadAdapter
         if (selected.isNotEmpty()) {
             binding?.downloadDeleteAppbar?.isVisible = true
@@ -211,10 +210,10 @@ class DownloadFragment : Fragment() {
             adapter?.setIsMultiDeleteState(true)
         } else {
             binding?.downloadDeleteAppbar?.isVisible = false
-            binding?.downloadStorageAppbar?.isVisible =
-                // Make sure we don't display it early
-                !downloadsViewModel.headerCards.value.isNullOrEmpty() &&
-                        downloadsViewModel.usedBytes.value?.let { it > 0 } == true
+            // Make sure we don't display it early
+            if (downloadsViewModel.usedBytes.value?.let { it > 0 } == true) {
+                binding?.downloadStorageAppbar?.isVisible = true
+            }
 
             adapter?.setIsMultiDeleteState(false)
             downloadsViewModel.clearSelectedItems()

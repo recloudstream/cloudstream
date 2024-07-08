@@ -67,7 +67,7 @@ class DownloadChildFragment : Fragment() {
                 }.mapNotNull {
                     val info = VideoDownloadManager.getDownloadFileInfoAndUpdateSettings(ctx, it.id)
                         ?: return@mapNotNull null
-                    VisualDownloadChildCached(
+                    VisualDownloadCached.Child(
                         currentBytes = info.fileLength,
                         totalBytes = info.totalBytes,
                         data = it,
@@ -131,10 +131,9 @@ class DownloadChildFragment : Fragment() {
                 } else downloadsViewModel.removeSelected(card)
             },
             { card ->
-                if (card !is VisualDownloadItem.Child) return@DownloadAdapter
                 downloadsViewModel.addSelected(card)
                 (binding?.downloadChildList?.adapter as? DownloadAdapter)?.updateSelectedItem(
-                    card.child.data.id,
+                    card.data.id,
                     true
                 )
             }
@@ -154,7 +153,7 @@ class DownloadChildFragment : Fragment() {
         updateList(folder)
     }
 
-    private fun handleSelectedChange(selected: MutableList<VisualDownloadItem>) {
+    private fun handleSelectedChange(selected: MutableList<VisualDownloadCached>) {
         val adapter = binding?.downloadChildList?.adapter as? DownloadAdapter
         if (selected.isNotEmpty()) {
             binding?.downloadDeleteAppbar?.isVisible = true
