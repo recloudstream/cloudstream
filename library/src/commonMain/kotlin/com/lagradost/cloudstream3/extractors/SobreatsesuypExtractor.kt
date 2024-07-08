@@ -38,7 +38,6 @@ open class Sobreatsesuyp : ExtractorApi() {
             val fileUrl   = "${mainUrl}/playlist/${item.file.substring(1)}.txt"
             val videoData = app.post(fileUrl, referer = extRef).text
 
-			if (videoData in vidLinks) { continue }
  			vidLinks.add(videoData)
 
             vidPairs.add(Pair(item.title, videoData))
