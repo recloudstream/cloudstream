@@ -30,25 +30,17 @@ open class Sobreatsesuyp : ExtractorApi() {
         }
         Log.d("Kekik_${this.name}", "postJson » ${postJson}")
 
-        val vidPairs = mutableListOf<Pair<String, String>>()
         for (item in postJson) {
             if (item.file == null || item.title == null) continue
 
             val fileUrl   = "${mainUrl}/playlist/${item.file.substring(1)}.txt"
             val videoData = app.post(fileUrl, referer = extRef).text
 
-            vidPairs.add(Pair(item.title, videoData))
-        }
-
-        for (vidPair in vidPairs) {
-            Log.d("Kekik_${this.name}", "vidPair » ${vidPair}")
-            val (title, m3uLink) = vidPair
-
 	        callback.invoke(
                 ExtractorLink(
                     source  = this.name,
-                    name    = "${this.name} - ${title}",
-                    url     = m3uLink,
+                    name    = "${this.name} - ${item.title}",
+                    url     = videoData,
                     referer = extRef,
                     quality = Qualities.Unknown.value,
                     type    = INFER_TYPE
