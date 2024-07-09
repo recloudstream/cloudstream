@@ -44,6 +44,9 @@ class DownloadViewModel : ViewModel() {
     private val _downloadBytes = MutableLiveData<Long>()
     val downloadBytes: LiveData<Long> = _downloadBytes
 
+    private val _selectedBytes = MutableLiveData<Long>(0)
+    val selectedBytes: LiveData<Long> = _selectedBytes
+
     private val _isMultiDeleteState = MutableLiveData(false)
     val isMultiDeleteState: LiveData<Boolean> = _isMultiDeleteState
 
@@ -61,6 +64,7 @@ class DownloadViewModel : ViewModel() {
         if (!currentSelected.contains(item)) {
             currentSelected.add(item)
             _selectedItems.postValue(currentSelected)
+            updateSelectedBytes()
         }
     }
 
@@ -68,6 +72,7 @@ class DownloadViewModel : ViewModel() {
         selectedItems.value?.let { selected ->
             selected.remove(item)
             _selectedItems.postValue(selected)
+            updateSelectedBytes()
         }
     }
 
@@ -81,6 +86,7 @@ class DownloadViewModel : ViewModel() {
             }
         }
         _selectedItems.postValue(currentSelected)
+        updateSelectedBytes()
     }
 
     fun clearSelectedItems() {
@@ -102,6 +108,25 @@ class DownloadViewModel : ViewModel() {
                 childItems.containsAll(currentSelected)) return true
 
         return false
+    }
+
+    private fun updateSelectedBytes() = viewModelScope.launchSafe {
+        val selectedItemsList = selectedItems.value ?: return@launchSafe
+        var totalSelectedBytes = 0L
+
+        selectedItemsList.forEach { item ->
+            totalSelectedBytes += when (item) {
+                is VisualDownloadCached.Header -> {
+                    item.totalBytes
+                }
+
+                is VisualDownloadCached.Child -> {
+                    item.totalBytes
+                }
+            }
+        }
+
+        _selectedBytes.postValue(totalSelectedBytes)
     }
 
     fun updateList(context: Context) = viewModelScope.launchSafe {
