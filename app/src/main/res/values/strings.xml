@@ -153,6 +153,7 @@
     <string name="downloads_empty">There are currently no downloads.</string>
     <string name="offline_file">Available for watching offline</string>
     <string name="select_all">Select All</string>
+    <string name="deselect_all">Deselect All</string>
     <string name="update_started">Update Started</string>
     <string name="stream">Network stream</string>
     <string name="open_local_video">Open local video</string>

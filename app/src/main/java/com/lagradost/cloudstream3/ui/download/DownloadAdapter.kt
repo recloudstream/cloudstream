@@ -315,13 +315,11 @@ class DownloadAdapter(
         }
     }
 
-    @SuppressLint("NotifyDataSetChanged")
     fun setIsMultiDeleteState(value: Boolean) {
         if (isMultiDeleteState == value) return
         isMultiDeleteState = value
         if (!value) {
-            selectedIds.clear()
-            notifyDataSetChanged()
+            clearSelectedItems()
         } else notifyItemRangeChanged(0, itemCount)
     }
 
@@ -333,6 +331,12 @@ class DownloadAdapter(
             selectedIds[id] = true
             notifyItemChanged(index)
         }
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun clearSelectedItems() {
+        selectedIds.clear()
+        notifyDataSetChanged()
     }
 
     private fun toggleIsChecked(checkbox: CheckBox, item: VisualDownloadCached) {

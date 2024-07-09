@@ -31,6 +31,10 @@ class DownloadViewModel : ViewModel() {
         MutableLiveData<List<VisualDownloadCached.Header>>().apply { listOf<VisualDownloadCached.Header>() }
     val headerCards: LiveData<List<VisualDownloadCached.Header>> = _headerCards
 
+    private val _childCards =
+        MutableLiveData<List<VisualDownloadCached.Child>>().apply { listOf<VisualDownloadCached.Child>() }
+    val childCards: LiveData<List<VisualDownloadCached.Child>> = _childCards
+
     private val _usedBytes = MutableLiveData<Long>()
     val usedBytes: LiveData<Long> = _usedBytes
 
@@ -46,7 +50,7 @@ class DownloadViewModel : ViewModel() {
     private val _selectedItems = MutableLiveData<MutableList<VisualDownloadCached>>(mutableListOf())
     val selectedItems: LiveData<MutableList<VisualDownloadCached>> = _selectedItems
 
-    private var previousVisual: List<VisualDownloadCached.Header>? = null
+    private var previousVisual: List<VisualDownloadCached>? = null
 
     fun setIsMultiDeleteState(value: Boolean) {
         _isMultiDeleteState.postValue(value)
@@ -69,7 +73,8 @@ class DownloadViewModel : ViewModel() {
 
     fun selectAllItems() {
         val currentSelected = selectedItems.value ?: mutableListOf()
-        val items = headerCards.value ?: return
+        val items = (headerCards.value ?: emptyList()) + (childCards.value ?: emptyList())
+        if(items.isEmpty()) return
         items.forEach { item ->
             if (!currentSelected.contains(item)) {
                 currentSelected.add(item)
@@ -80,6 +85,22 @@ class DownloadViewModel : ViewModel() {
 
     fun clearSelectedItems() {
         _selectedItems.postValue(mutableListOf())
+    }
+
+    fun isAllSelected(): Boolean {
+        val currentSelected = selectedItems.value ?: return false
+        val headerItems = headerCards.value
+        val childItems = childCards.value
+
+        val isAllHeadersSelected = headerItems != null &&
+                headerItems.count() == currentSelected.count() &&
+                headerItems.containsAll(currentSelected)
+
+        val isAllChildrenSelected = childItems != null &&
+                childItems.count() == currentSelected.count() &&
+                childItems.containsAll(currentSelected)
+
+        return isAllHeadersSelected || isAllChildrenSelected
     }
 
     fun updateList(context: Context) = viewModelScope.launchSafe {
@@ -150,6 +171,28 @@ class DownloadViewModel : ViewModel() {
             previousVisual = visual
             updateStorageStats(visual)
             _headerCards.postValue(visual)
+        }
+    }
+
+    fun updateChildList(context: Context, folder: String) = viewModelScope.launchSafe {
+        val data = withContext(Dispatchers.IO) { context.getKeys(folder) }
+        val visual = withContext(Dispatchers.IO) {
+            data.mapNotNull { key ->
+                context.getKey<VideoDownloadHelper.DownloadEpisodeCached>(key)
+            }.mapNotNull {
+                val info = getDownloadFileInfoAndUpdateSettings(context, it.id)
+                    ?: return@mapNotNull null
+                VisualDownloadCached.Child(
+                    currentBytes = info.fileLength,
+                    totalBytes = info.totalBytes,
+                    data = it,
+                )
+            }
+        }.sortedBy { it.data.episode + (it.data.season ?: 0) * 100000 }
+
+        if (previousVisual != visual) {
+            previousVisual = visual
+            _childCards.postValue(visual)
         }
     }
 

@@ -60,31 +60,6 @@ class DownloadChildFragment : Fragment() {
         return localBinding.root
     }
 
-    private fun updateList(folder: String) = main {
-        context?.let { ctx ->
-            val data = withContext(Dispatchers.IO) { ctx.getKeys(folder) }
-            val eps = withContext(Dispatchers.IO) {
-                data.mapNotNull { key ->
-                    context?.getKey<VideoDownloadHelper.DownloadEpisodeCached>(key)
-                }.mapNotNull {
-                    val info = VideoDownloadManager.getDownloadFileInfoAndUpdateSettings(ctx, it.id)
-                        ?: return@mapNotNull null
-                    VisualDownloadCached.Child(
-                        currentBytes = info.fileLength,
-                        totalBytes = info.totalBytes,
-                        data = it,
-                    )
-                }
-            }.sortedBy { it.data.episode + (it.data.season ?: 0) * 100000 }
-            if (eps.isEmpty()) {
-                activity?.onBackPressedDispatcher?.onBackPressed()
-                return@main
-            }
-
-            (binding?.downloadChildList?.adapter as? DownloadAdapter)?.submitList(eps)
-        }
-    }
-
     private var downloadDeleteEventListener: ((Int) -> Unit)? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -113,6 +88,14 @@ class DownloadChildFragment : Fragment() {
             setAppBarNoScrollFlagsOnTV()
         }
 
+        observe(downloadsViewModel.childCards) {
+            if (it.isEmpty()) {
+                activity?.onBackPressedDispatcher?.onBackPressed()
+                return@observe
+            }
+
+            (binding?.downloadChildList?.adapter as? DownloadAdapter)?.submitList(it)
+        }
         observe(downloadsViewModel.isMultiDeleteState) { isMultiDeleteState ->
             val adapter = binding?.downloadChildList?.adapter as? DownloadAdapter
             adapter?.setIsMultiDeleteState(isMultiDeleteState)
@@ -158,7 +141,7 @@ class DownloadChildFragment : Fragment() {
             )
         }
 
-        updateList(folder)
+        downloadsViewModel.updateChildList(requireContext(), folder)
     }
 
     private fun handleSelectedChange(selected: MutableList<VisualDownloadCached>) {
@@ -174,9 +157,20 @@ class DownloadChildFragment : Fragment() {
                 downloadsViewModel.setIsMultiDeleteState(false)
             }
 
+            binding?.btnSelectAll?.isVisible = !downloadsViewModel.isAllSelected()
+            binding?.btnDeselectAll?.isVisible = downloadsViewModel.isAllSelected()
+
             binding?.btnSelectAll?.setOnClickListener {
                 (binding?.downloadChildList?.adapter as? DownloadAdapter)?.selectAllItems()
                 downloadsViewModel.selectAllItems()
+            }
+
+            binding?.btnDeselectAll?.setOnClickListener {
+                (binding?.downloadChildList?.adapter as? DownloadAdapter)?.clearSelectedItems()
+                downloadsViewModel.clearSelectedItems()
+
+                binding?.btnSelectAll?.isVisible = true
+                binding?.btnDeselectAll?.isVisible = false
             }
 
             downloadsViewModel.setIsMultiDeleteState(true)
@@ -187,7 +181,7 @@ class DownloadChildFragment : Fragment() {
         downloadDeleteEventListener = { id: Int ->
             val list = (binding?.downloadChildList?.adapter as? DownloadAdapter)?.currentList
             if (list?.any { it.data.id == id } == true) {
-                updateList(folder)
+                context?.let { downloadsViewModel.updateChildList(it, folder) }
             }
         }
         downloadDeleteEventListener?.let { VideoDownloadManager.downloadDeleteEvent += it }

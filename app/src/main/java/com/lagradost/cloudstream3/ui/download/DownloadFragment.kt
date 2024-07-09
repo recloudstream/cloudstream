@@ -213,9 +213,20 @@ class DownloadFragment : Fragment() {
                 downloadsViewModel.setIsMultiDeleteState(false)
             }
 
+            binding?.btnSelectAll?.isVisible = !downloadsViewModel.isAllSelected()
+            binding?.btnDeselectAll?.isVisible = downloadsViewModel.isAllSelected()
+
             binding?.btnSelectAll?.setOnClickListener {
                 (binding?.downloadList?.adapter as? DownloadAdapter)?.selectAllItems()
                 downloadsViewModel.selectAllItems()
+            }
+
+            binding?.btnDeselectAll?.setOnClickListener {
+                (binding?.downloadList?.adapter as? DownloadAdapter)?.clearSelectedItems()
+                downloadsViewModel.clearSelectedItems()
+
+                binding?.btnSelectAll?.isVisible = true
+                binding?.btnDeselectAll?.isVisible = false
             }
 
             downloadsViewModel.setIsMultiDeleteState(true)
