@@ -241,7 +241,20 @@ class DownloadViewModel : ViewModel() {
     fun handleMultiDelete(context: Context) = viewModelScope.launchSafe {
         val selectedItemsList = selectedItems.value ?: mutableListOf()
 
-        val ids = selectedItemsList.map { it.data.id }
+        val ids = selectedItemsList.flatMap { item ->
+            when (item) {
+                is VisualDownloadCached.Header -> {
+                    if (item.data.type.isEpisodeBased()) {
+                        context.getKeys(DOWNLOAD_EPISODE_CACHE)
+                            .mapNotNull { context.getKey<VideoDownloadHelper.DownloadEpisodeCached>(it) }
+                            .filter { it.parentId == item.data.id }
+                            .map { it.id }
+                    } else listOf(item.data.id)
+                }
+
+                is VisualDownloadCached.Child -> listOf(item.data.id)
+            }
+        }
 
         val (seriesNames, names) = selectedItemsList.map { item ->
             when (item) {
