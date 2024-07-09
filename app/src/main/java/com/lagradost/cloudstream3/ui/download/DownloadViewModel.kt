@@ -74,7 +74,7 @@ class DownloadViewModel : ViewModel() {
     fun selectAllItems() {
         val currentSelected = selectedItems.value ?: mutableListOf()
         val items = (headerCards.value ?: emptyList()) + (childCards.value ?: emptyList())
-        if(items.isEmpty()) return
+        if (items.isEmpty()) return
         items.forEach { item ->
             if (!currentSelected.contains(item)) {
                 currentSelected.add(item)
@@ -89,18 +89,19 @@ class DownloadViewModel : ViewModel() {
 
     fun isAllSelected(): Boolean {
         val currentSelected = selectedItems.value ?: return false
+
         val headerItems = headerCards.value
         val childItems = childCards.value
 
-        val isAllHeadersSelected = headerItems != null &&
+        if (headerItems != null &&
                 headerItems.count() == currentSelected.count() &&
-                headerItems.containsAll(currentSelected)
+                headerItems.containsAll(currentSelected)) return true
 
-        val isAllChildrenSelected = childItems != null &&
+        if (childItems != null &&
                 childItems.count() == currentSelected.count() &&
-                childItems.containsAll(currentSelected)
+                childItems.containsAll(currentSelected)) return true
 
-        return isAllHeadersSelected || isAllChildrenSelected
+        return false
     }
 
     fun updateList(context: Context) = viewModelScope.launchSafe {
