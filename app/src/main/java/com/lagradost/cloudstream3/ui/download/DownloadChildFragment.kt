@@ -1,6 +1,8 @@
 package com.lagradost.cloudstream3.ui.download
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -65,9 +67,20 @@ class DownloadChildFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // We never want to retain multi-delete state
-        // when navigating to downloads
-        downloadsViewModel.setIsMultiDeleteState(false)
+        /**
+         * We never want to retain multi-delete state
+         * when navigating to downloads. Setting this state
+         * immediately can sometimes result in the observer
+         * not being notified in time to update the UI.
+         *
+         * By posting to the main looper, we ensure that this
+         * operation is executed after the view has been fully created
+         * and all initializations are completed, allowing the
+         * observer to properly receive and handle the state change.
+         */
+        Handler(Looper.getMainLooper()).post {
+            downloadsViewModel.setIsMultiDeleteState(false)
+        }
 
         val folder = arguments?.getString("folder")
         val name = arguments?.getString("name")

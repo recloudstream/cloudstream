@@ -8,6 +8,8 @@ import android.content.Intent
 import android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.format.Formatter.formatShortFileSize
 import android.view.LayoutInflater
 import android.view.View
@@ -93,9 +95,20 @@ class DownloadFragment : Fragment() {
         hideKeyboard()
         binding?.downloadStorageAppbar?.setAppBarNoScrollFlagsOnTV()
 
-        // We never want to retain multi-delete state
-        // when navigating to downloads
-        downloadsViewModel.setIsMultiDeleteState(false)
+        /**
+         * We never want to retain multi-delete state
+         * when navigating to downloads. Setting this state
+         * immediately can sometimes result in the observer
+         * not being notified in time to update the UI.
+         *
+         * By posting to the main looper, we ensure that this
+         * operation is executed after the view has been fully created
+         * and all initializations are completed, allowing the
+         * observer to properly receive and handle the state change.
+         */
+        Handler(Looper.getMainLooper()).post {
+            downloadsViewModel.setIsMultiDeleteState(false)
+        }
 
         observe(downloadsViewModel.headerCards) {
             (binding?.downloadList?.adapter as? DownloadAdapter)?.submitList(it)
