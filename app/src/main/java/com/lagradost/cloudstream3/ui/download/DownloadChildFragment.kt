@@ -3,6 +3,7 @@ package com.lagradost.cloudstream3.ui.download
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.text.format.Formatter.formatShortFileSize
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,15 +20,9 @@ import com.lagradost.cloudstream3.ui.result.setLinearListLayout
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
 import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
-import com.lagradost.cloudstream3.utils.Coroutines.main
-import com.lagradost.cloudstream3.utils.DataStore.getKey
-import com.lagradost.cloudstream3.utils.DataStore.getKeys
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
 import com.lagradost.cloudstream3.utils.UIHelper.setAppBarNoScrollFlagsOnTV
-import com.lagradost.cloudstream3.utils.VideoDownloadHelper
 import com.lagradost.cloudstream3.utils.VideoDownloadManager
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 
 class DownloadChildFragment : Fragment() {
     private lateinit var downloadsViewModel: DownloadViewModel
@@ -118,10 +113,12 @@ class DownloadChildFragment : Fragment() {
                 downloadsViewModel.clearSelectedItems()
             }
         }
+        observe(downloadsViewModel.selectedBytes) {
+            updateDeleteButton(downloadsViewModel.selectedItems.value?.count() ?: 0, it)
+        }
         observe(downloadsViewModel.selectedItems) {
             handleSelectedChange(it)
-            binding?.btnDelete?.text =
-                getString(R.string.delete_count).format(it.count())
+            updateDeleteButton(it.count(), downloadsViewModel.selectedBytes.value ?: 0L)
 
             binding?.btnDelete?.isVisible = it.isNotEmpty()
             binding?.selectItemsText?.isVisible = it.isEmpty()
@@ -186,6 +183,12 @@ class DownloadChildFragment : Fragment() {
 
             downloadsViewModel.setIsMultiDeleteState(true)
         }
+    }
+
+    private fun updateDeleteButton(count: Int, selectedBytes: Long) {
+        val formattedSize = formatShortFileSize(context, selectedBytes)
+        binding?.btnDelete?.text =
+            getString(R.string.delete_format).format(count, formattedSize)
     }
 
     private fun setUpDownloadDeleteListener(folder: String) {

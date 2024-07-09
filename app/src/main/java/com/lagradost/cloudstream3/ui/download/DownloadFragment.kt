@@ -125,6 +125,9 @@ class DownloadFragment : Fragment() {
         observe(downloadsViewModel.downloadBytes) {
             updateStorageInfo(view.context, it, R.string.app_storage, binding?.downloadAppTxt, binding?.downloadApp)
         }
+        observe(downloadsViewModel.selectedBytes) {
+            updateDeleteButton(downloadsViewModel.selectedItems.value?.count() ?: 0, it)
+        }
         observe(downloadsViewModel.isMultiDeleteState) { isMultiDeleteState ->
             val adapter = binding?.downloadList?.adapter as? DownloadAdapter
             adapter?.setIsMultiDeleteState(isMultiDeleteState)
@@ -140,8 +143,7 @@ class DownloadFragment : Fragment() {
         }
         observe(downloadsViewModel.selectedItems) {
             handleSelectedChange(it)
-            binding?.btnDelete?.text =
-                getString(R.string.delete_count).format(it.count())
+            updateDeleteButton(it.count(), downloadsViewModel.selectedBytes.value ?: 0L)
 
             binding?.btnDelete?.isVisible = it.isNotEmpty()
             binding?.selectItemsText?.isVisible = it.isEmpty()
@@ -216,8 +218,8 @@ class DownloadFragment : Fragment() {
         }
     }
 
-    private fun handleSelectedChange(selected: MutableList<VisualDownloadCached>) {
-        if (selected.isNotEmpty()) {
+    private fun handleSelectedChange(selectedItems: MutableList<VisualDownloadCached>) {
+        if (selectedItems.isNotEmpty()) {
             binding?.downloadDeleteAppbar?.isVisible = true
             binding?.downloadStorageAppbar?.isVisible = false
             attachBackPressedCallback()
@@ -242,6 +244,12 @@ class DownloadFragment : Fragment() {
 
             downloadsViewModel.setIsMultiDeleteState(true)
         }
+    }
+
+    private fun updateDeleteButton(count: Int, selectedBytes: Long) {
+        val formattedSize = formatShortFileSize(context, selectedBytes)
+        binding?.btnDelete?.text =
+            getString(R.string.delete_format).format(count, formattedSize)
     }
 
     private fun setUpDownloadDeleteListener() {
