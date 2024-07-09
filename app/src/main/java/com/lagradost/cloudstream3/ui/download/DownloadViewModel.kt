@@ -32,18 +32,25 @@ class DownloadViewModel : ViewModel() {
     val headerCards: LiveData<List<VisualDownloadCached.Header>> = _headerCards
 
     private val _usedBytes = MutableLiveData<Long>()
-    private val _availableBytes = MutableLiveData<Long>()
-    private val _downloadBytes = MutableLiveData<Long>()
-
-    private val _selectedItems = MutableLiveData<MutableList<VisualDownloadCached>>(mutableListOf())
-
     val usedBytes: LiveData<Long> = _usedBytes
+
+    private val _availableBytes = MutableLiveData<Long>()
     val availableBytes: LiveData<Long> = _availableBytes
+
+    private val _downloadBytes = MutableLiveData<Long>()
     val downloadBytes: LiveData<Long> = _downloadBytes
 
+    private val _isMultiDeleteState = MutableLiveData(false)
+    val isMultiDeleteState: LiveData<Boolean> = _isMultiDeleteState
+
+    private val _selectedItems = MutableLiveData<MutableList<VisualDownloadCached>>(mutableListOf())
     val selectedItems: LiveData<MutableList<VisualDownloadCached>> = _selectedItems
 
     private var previousVisual: List<VisualDownloadCached.Header>? = null
+
+    fun setIsMultiDeleteState(value: Boolean) {
+        _isMultiDeleteState.postValue(value)
+    }
 
     fun addSelected(item: VisualDownloadCached) {
         val currentSelected = selectedItems.value ?: mutableListOf()
@@ -215,7 +222,7 @@ class DownloadViewModel : ViewModel() {
                     DialogInterface.BUTTON_POSITIVE -> {
                         viewModelScope.launchSafe {
                             deleteFilesAndUpdateSettings(context, ids, this)
-                            clearSelectedItems()
+                            setIsMultiDeleteState(false)
                             updateList(context)
                         }
                     }

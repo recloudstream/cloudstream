@@ -112,6 +112,19 @@ class DownloadFragment : Fragment() {
         observe(downloadsViewModel.downloadBytes) {
             updateStorageInfo(view.context, it, R.string.app_storage, binding?.downloadAppTxt, binding?.downloadApp)
         }
+        observe(downloadsViewModel.isMultiDeleteState) { isMultiDeleteState ->
+            val adapter = binding?.downloadList?.adapter as? DownloadAdapter
+            adapter?.setIsMultiDeleteState(isMultiDeleteState)
+            binding?.downloadDeleteAppbar?.isVisible = isMultiDeleteState
+            if (!isMultiDeleteState) {
+                detachBackPressedCallback()
+                downloadsViewModel.clearSelectedItems()
+                // Make sure we don't display it early
+                if (downloadsViewModel.usedBytes.value?.let { it > 0 } == true) {
+                    binding?.downloadStorageAppbar?.isVisible = true
+                }
+            }
+        }
         observe(downloadsViewModel.selectedItems) {
             handleSelectedChange(it)
             binding?.btnDelete?.text =
@@ -195,8 +208,7 @@ class DownloadFragment : Fragment() {
             }
 
             binding?.btnCancel?.setOnClickListener {
-                adapter?.setIsMultiDeleteState(false)
-                downloadsViewModel.clearSelectedItems()
+                downloadsViewModel.setIsMultiDeleteState(false)
             }
 
             binding?.btnSelectAll?.setOnClickListener {
@@ -204,17 +216,7 @@ class DownloadFragment : Fragment() {
                 downloadsViewModel.selectAllItems()
             }
 
-            adapter?.setIsMultiDeleteState(true)
-        } else {
-            binding?.downloadDeleteAppbar?.isVisible = false
-            // Make sure we don't display it early
-            if (downloadsViewModel.usedBytes.value?.let { it > 0 } == true) {
-                binding?.downloadStorageAppbar?.isVisible = true
-            }
-
-            detachBackPressedCallback()
-            adapter?.setIsMultiDeleteState(false)
-            downloadsViewModel.clearSelectedItems()
+            downloadsViewModel.setIsMultiDeleteState(true)
         }
     }
 
@@ -329,8 +331,7 @@ class DownloadFragment : Fragment() {
         if (backPressedCallback == null) {
             backPressedCallback = object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
-                    (binding?.downloadList?.adapter as? DownloadAdapter)?.setIsMultiDeleteState(false)
-                    downloadsViewModel.clearSelectedItems()
+                    downloadsViewModel.setIsMultiDeleteState(false)
                 }
             }
         }
