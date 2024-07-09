@@ -42,6 +42,7 @@ class DownloadChildFragment : Fragment() {
     override fun onDestroyView() {
         downloadDeleteEventListener?.let { VideoDownloadManager.downloadDeleteEvent -= it }
         downloadDeleteEventListener = null
+        detachBackPressedCallback()
         binding = null
         super.onDestroyView()
     }
@@ -131,13 +132,7 @@ class DownloadChildFragment : Fragment() {
                     downloadsViewModel.addSelected(card)
                 } else downloadsViewModel.removeSelected(card)
             },
-            { card ->
-                downloadsViewModel.addSelected(card)
-                (binding?.downloadChildList?.adapter as? DownloadAdapter)?.updateSelectedItem(
-                    card.data.id,
-                    true
-                )
-            }
+            { card -> downloadsViewModel.addSelected(card) }
         )
 
         binding?.downloadChildList?.apply {

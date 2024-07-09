@@ -2,6 +2,7 @@ package com.lagradost.cloudstream3.ui.download
 
 import android.content.DialogInterface
 import androidx.appcompat.app.AlertDialog
+import com.google.android.material.snackbar.Snackbar
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.CommonActivity.activity
 import com.lagradost.cloudstream3.R
@@ -12,6 +13,7 @@ import com.lagradost.cloudstream3.ui.player.GeneratorPlayer
 import com.lagradost.cloudstream3.utils.AppContextUtils.getNameFull
 import com.lagradost.cloudstream3.utils.AppContextUtils.setDefaultFocus
 import com.lagradost.cloudstream3.utils.DOWNLOAD_HEADER_CACHE
+import com.lagradost.cloudstream3.utils.SnackbarHelper.showSnackbar
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.VideoDownloadHelper
 import com.lagradost.cloudstream3.utils.VideoDownloadManager
@@ -75,6 +77,23 @@ object DownloadButtonSetup {
                                 Pair(click.data.id, VideoDownloadManager.DownloadActionType.Resume)
                             )
                         }
+                    }
+                }
+            }
+            DOWNLOAD_ACTION_LONG_CLICK -> {
+                activity?.let { act ->
+                    val length =
+                        VideoDownloadManager.getDownloadFileInfoAndUpdateSettings(
+                            act,
+                            click.data.id
+                        )?.fileLength
+                            ?: 0
+                    if (length > 0) {
+                        showSnackbar(
+                            act,
+                            R.string.offline_file,
+                            Snackbar.LENGTH_LONG
+                        )
                     }
                 }
             }

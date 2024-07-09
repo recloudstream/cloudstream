@@ -94,6 +94,20 @@ class DownloadAdapter(
 
             val data = card.data
             binding.apply {
+                episodeHolder.apply {
+                    if (isMultiDeleteState) {
+                        setOnClickListener {
+                            toggleIsChecked(deleteCheckbox, card)
+                        }
+                    }
+
+                    setOnLongClickListener {
+                        multiDeleteStateCallback.invoke(card)
+                        toggleIsChecked(deleteCheckbox, card)
+                        true
+                    }
+                }
+
                 downloadHeaderPoster.apply {
                     setImage(data.poster)
                     if (isMultiDeleteState) {
@@ -108,6 +122,7 @@ class DownloadAdapter(
 
                     setOnLongClickListener {
                         multiDeleteStateCallback.invoke(card)
+                        toggleIsChecked(deleteCheckbox, card)
                         true
                     }
                 }
@@ -162,25 +177,9 @@ class DownloadAdapter(
             downloadButton.setDefaultClickListener(card.child, downloadHeaderInfo, mediaClickCallback)
             downloadButton.isVisible = !isMultiDeleteState
 
-            downloadButton.setOnLongClickListener {
-                multiDeleteStateCallback.invoke(card)
-                true
-            }
-
-            episodeHolder.apply {
-                if (isMultiDeleteState) {
-                    setOnClickListener {
-                        toggleIsChecked(deleteCheckbox, card)
-                    }
-                } else {
-                    setOnClickListener {
-                        mediaClickCallback.invoke(DownloadClickEvent(DOWNLOAD_ACTION_PLAY_FILE, card.child))
-                    }
-                }
-
-                setOnLongClickListener {
-                    multiDeleteStateCallback.invoke(card)
-                    true
+            if (!isMultiDeleteState) {
+                episodeHolder.setOnClickListener {
+                    mediaClickCallback.invoke(DownloadClickEvent(DOWNLOAD_ACTION_PLAY_FILE, card.child))
                 }
             }
         }
@@ -204,20 +203,9 @@ class DownloadAdapter(
                 logError(e)
             }
 
-            episodeHolder.apply {
-                if (isMultiDeleteState) {
-                    setOnClickListener {
-                        toggleIsChecked(deleteCheckbox, card)
-                    }
-                } else {
-                    setOnClickListener {
-                        headerClickCallback.invoke(DownloadHeaderClickEvent(DOWNLOAD_ACTION_GO_TO_CHILD, card.data))
-                    }
-                }
-
-                setOnLongClickListener {
-                    multiDeleteStateCallback.invoke(card)
-                    true
+            if (!isMultiDeleteState) {
+                episodeHolder.setOnClickListener {
+                    headerClickCallback.invoke(DownloadHeaderClickEvent(DOWNLOAD_ACTION_GO_TO_CHILD, card.data))
                 }
             }
         }
@@ -260,11 +248,6 @@ class DownloadAdapter(
                 downloadButton.setDefaultClickListener(data, downloadChildEpisodeTextExtra, mediaClickCallback)
                 downloadButton.isVisible = !isMultiDeleteState
 
-                downloadButton.setOnLongClickListener {
-                    multiDeleteStateCallback.invoke(card)
-                    true
-                }
-
                 downloadChildEpisodeText.apply {
                     text = context.getNameFull(data.name, data.episode, data.season)
                     isSelected = true // Needed for text repeating
@@ -275,18 +258,22 @@ class DownloadAdapter(
                 }
 
                 downloadChildEpisodeHolder.apply {
-                    if (isMultiDeleteState) {
-                        setOnClickListener {
-                            toggleIsChecked(deleteCheckbox, card)
+                    when {
+                        isMultiDeleteState -> {
+                            setOnClickListener {
+                                toggleIsChecked(deleteCheckbox, card)
+                            }
                         }
-                    } else {
-                        setOnClickListener {
-                            mediaClickCallback.invoke(DownloadClickEvent(DOWNLOAD_ACTION_PLAY_FILE, data))
+                        else -> {
+                            setOnClickListener {
+                                mediaClickCallback.invoke(DownloadClickEvent(DOWNLOAD_ACTION_PLAY_FILE, data))
+                            }
                         }
                     }
 
                     setOnLongClickListener {
                         multiDeleteStateCallback.invoke(card)
+                        toggleIsChecked(deleteCheckbox, card)
                         true
                     }
                 }
@@ -336,16 +323,6 @@ class DownloadAdapter(
             selectedIds.clear()
             notifyDataSetChanged()
         } else notifyItemRangeChanged(0, itemCount)
-    }
-
-    fun updateSelectedItem(id: Int, isSelected: Boolean) {
-        if (isSelected) {
-            selectedIds[id] = true
-        } else selectedIds.remove(id)
-        val position = currentList.indexOfFirst { it.data.id == id }
-        if (position != -1) {
-            notifyItemChanged(position)
-        }
     }
 
     fun selectAllItems() {

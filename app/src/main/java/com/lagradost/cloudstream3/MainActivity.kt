@@ -149,6 +149,7 @@ import com.lagradost.cloudstream3.utils.DataStoreHelper.migrateResumeWatching
 import com.lagradost.cloudstream3.utils.Event
 import com.lagradost.cloudstream3.utils.InAppUpdater.Companion.runAutoUpdate
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
+import com.lagradost.cloudstream3.utils.SnackbarHelper.showSnackbar
 import com.lagradost.cloudstream3.utils.UIHelper.changeStatusBarState
 import com.lagradost.cloudstream3.utils.UIHelper.checkWrite
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
@@ -1240,17 +1241,13 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                     this.setKey(getString(R.string.jsdelivr_proxy_key), false)
                 } else {
                     this.setKey(getString(R.string.jsdelivr_proxy_key), true)
-                    val parentView: View = findViewById(android.R.id.content)
-                    Snackbar.make(parentView, R.string.jsdelivr_enabled, Snackbar.LENGTH_LONG)
-                        .let { snackbar ->
-                            snackbar.setAction(R.string.revert) {
-                                setKey(getString(R.string.jsdelivr_proxy_key), false)
-                            }
-                            snackbar.setBackgroundTint(colorFromAttribute(R.attr.primaryGrayBackground))
-                            snackbar.setTextColor(colorFromAttribute(R.attr.textColor))
-                            snackbar.setActionTextColor(colorFromAttribute(R.attr.colorPrimary))
-                            snackbar.show()
-                        }
+                    showSnackbar(
+                        this@MainActivity,
+                        R.string.jsdelivr_enabled,
+                        Snackbar.LENGTH_LONG,
+                        getString(R.string.revert)) {
+                        setKey(getString(R.string.jsdelivr_proxy_key), false)
+                    }
                 }
             }
         }
