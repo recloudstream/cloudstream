@@ -145,6 +145,10 @@ class DownloadFragment : Fragment() {
 
             binding?.btnDelete?.isVisible = it.isNotEmpty()
             binding?.selectItemsText?.isVisible = it.isEmpty()
+
+            val allSelected = downloadsViewModel.isAllSelected()
+            binding?.btnSelectAll?.isVisible = !allSelected
+            binding?.btnDeselectAll?.isVisible = allSelected
         }
 
         val adapter = DownloadAdapter(
@@ -226,9 +230,6 @@ class DownloadFragment : Fragment() {
                 downloadsViewModel.setIsMultiDeleteState(false)
             }
 
-            binding?.btnSelectAll?.isVisible = !downloadsViewModel.isAllSelected()
-            binding?.btnDeselectAll?.isVisible = downloadsViewModel.isAllSelected()
-
             binding?.btnSelectAll?.setOnClickListener {
                 (binding?.downloadList?.adapter as? DownloadAdapter)?.selectAllItems()
                 downloadsViewModel.selectAllItems()
@@ -237,9 +238,6 @@ class DownloadFragment : Fragment() {
             binding?.btnDeselectAll?.setOnClickListener {
                 (binding?.downloadList?.adapter as? DownloadAdapter)?.clearSelectedItems()
                 downloadsViewModel.clearSelectedItems()
-
-                binding?.btnSelectAll?.isVisible = true
-                binding?.btnDeselectAll?.isVisible = false
             }
 
             downloadsViewModel.setIsMultiDeleteState(true)
