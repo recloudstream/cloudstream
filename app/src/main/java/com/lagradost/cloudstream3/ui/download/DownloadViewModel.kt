@@ -10,6 +10,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.isEpisodeBased
 import com.lagradost.cloudstream3.isMovieType
 import com.lagradost.cloudstream3.mvvm.launchSafe
 import com.lagradost.cloudstream3.mvvm.logError
@@ -166,19 +167,46 @@ class DownloadViewModel : ViewModel() {
 
         val ids = selectedItemsList.map { it.data.id }
 
-        val names = selectedItemsList.mapNotNull {
-            when (it) {
-                is VisualDownloadCached.Header -> it.data.name
-                is VisualDownloadCached.Child -> it.data.name
-            }
-        }
+        val (seriesNames, names) = selectedItemsList.map { item ->
+            when (item) {
+                is VisualDownloadCached.Header -> {
+                    if (item.data.type.isEpisodeBased()) {
+                        val episodeInfo = "${item.data.name} (${item.totalDownloads} ${
+                            context.resources.getQuantityString(
+                                R.plurals.episodes,
+                                item.totalDownloads
+                            ).lowercase()
+                        })"
+                        episodeInfo to null
+                    } else null to item.data.name
+                }
 
-        showDeleteConfirmationDialog(context, ids, names)
+                is VisualDownloadCached.Child -> null to item.data.name
+            }
+        }.unzip()
+
+        showDeleteConfirmationDialog(context, ids, names.filterNotNull(), seriesNames.filterNotNull())
     }
 
-    private fun showDeleteConfirmationDialog(context: Context, ids: List<Int>, names: List<String>) {
+    private fun showDeleteConfirmationDialog(
+        context: Context,
+        ids: List<Int>,
+        names: List<String>,
+        seriesNames: List<String>
+    ) {
         val formattedNames = names.joinToString(separator = "\n") { "• $it" }
-        val message = context.getString(R.string.delete_message_multiple).format(formattedNames)
+        val formattedSeriesNames = seriesNames.joinToString(separator = "\n") { "• $it" }
+
+        val message = when {
+            seriesNames.isNotEmpty() && names.isEmpty() -> {
+                context.getString(R.string.delete_message_series_only).format(formattedSeriesNames)
+            }
+            seriesNames.isNotEmpty() -> {
+                val seriesSection = context.getString(R.string.delete_message_series_section).format(formattedSeriesNames)
+                context.getString(R.string.delete_message_multiple).format(formattedNames) + "\n\n" + seriesSection
+            }
+            else -> context.getString(R.string.delete_message_multiple).format(formattedNames)
+        }
 
         val builder: AlertDialog.Builder = AlertDialog.Builder(context)
         val dialogClickListener =
