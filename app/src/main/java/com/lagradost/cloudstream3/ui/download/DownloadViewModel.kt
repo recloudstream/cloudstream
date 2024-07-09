@@ -215,6 +215,7 @@ class DownloadViewModel : ViewModel() {
                     DialogInterface.BUTTON_POSITIVE -> {
                         viewModelScope.launchSafe {
                             deleteFilesAndUpdateSettings(context, ids, this)
+                            clearSelectedItems()
                             updateList(context)
                         }
                     }
