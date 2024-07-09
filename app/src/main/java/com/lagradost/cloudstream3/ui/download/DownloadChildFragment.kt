@@ -126,6 +126,9 @@ class DownloadChildFragment : Fragment() {
             handleSelectedChange(it)
             binding?.btnDelete?.text =
                 getString(R.string.delete_count).format(it.count())
+
+            binding?.btnDelete?.isVisible = it.isNotEmpty()
+            binding?.selectItemsText?.isVisible = it.isEmpty()
         }
 
         val adapter = DownloadAdapter(
@@ -159,7 +162,6 @@ class DownloadChildFragment : Fragment() {
     }
 
     private fun handleSelectedChange(selected: MutableList<VisualDownloadCached>) {
-        val adapter = binding?.downloadChildList?.adapter as? DownloadAdapter
         if (selected.isNotEmpty()) {
             binding?.downloadDeleteAppbar?.isVisible = true
             attachBackPressedCallback()
@@ -173,7 +175,7 @@ class DownloadChildFragment : Fragment() {
             }
 
             binding?.btnSelectAll?.setOnClickListener {
-                adapter?.selectAllItems()
+                (binding?.downloadChildList?.adapter as? DownloadAdapter)?.selectAllItems()
                 downloadsViewModel.selectAllItems()
             }
 

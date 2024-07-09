@@ -50,6 +50,16 @@
                     android:textColor="@android:color/white"
                     android:layout_gravity="center_vertical" />
 
+                <TextView
+                    android:id="@+id/selectItemsText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="?attr/selectableItemBackground"
+                    android:text="@string/downloads_delete_select"
+                    android:textColor="@android:color/white"
+                    android:layout_gravity="center_vertical"
+                    android:visibility="gone" />
+
                 <View
                     android:layout_width="0dp"
                     android:layout_height="0dp"
