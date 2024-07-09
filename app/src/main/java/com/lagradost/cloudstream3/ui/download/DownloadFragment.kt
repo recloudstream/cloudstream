@@ -15,6 +15,7 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
@@ -192,6 +193,7 @@ class DownloadFragment : Fragment() {
         if (selected.isNotEmpty()) {
             binding?.downloadDeleteAppbar?.isVisible = true
             binding?.downloadStorageAppbar?.isVisible = false
+            attachBackPressedCallback()
 
             binding?.btnDelete?.setOnClickListener {
                 context?.let { ctx -> downloadsViewModel.handleMultiDelete(ctx) }
@@ -215,6 +217,7 @@ class DownloadFragment : Fragment() {
                 binding?.downloadStorageAppbar?.isVisible = true
             }
 
+            detachBackPressedCallback()
             adapter?.setIsMultiDeleteState(false)
             downloadsViewModel.clearSelectedItems()
         }
@@ -323,5 +326,29 @@ class DownloadFragment : Fragment() {
         if (result.resultCode != Activity.RESULT_OK) return@registerForActivityResult
         val selectedVideoUri = result?.data?.data ?: return@registerForActivityResult
         playUri(activity ?: return@registerForActivityResult, selectedVideoUri)
+    }
+
+    private var backPressedCallback: OnBackPressedCallback? = null
+
+    private fun attachBackPressedCallback() {
+        if (backPressedCallback == null) {
+            backPressedCallback = object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    (binding?.downloadList?.adapter as? DownloadAdapter)?.setIsMultiDeleteState(false)
+                    downloadsViewModel.clearSelectedItems()
+                }
+            }
+        }
+
+        backPressedCallback?.isEnabled = true
+
+        activity?.onBackPressedDispatcher?.addCallback(
+            activity ?: return,
+            backPressedCallback ?: return
+        )
+    }
+
+    private fun detachBackPressedCallback() {
+        backPressedCallback?.isEnabled = false
     }
 }

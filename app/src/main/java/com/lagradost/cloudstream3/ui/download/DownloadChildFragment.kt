@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -157,6 +158,7 @@ class DownloadChildFragment : Fragment() {
         val adapter = binding?.downloadChildList?.adapter as? DownloadAdapter
         if (selected.isNotEmpty()) {
             binding?.downloadDeleteAppbar?.isVisible = true
+            attachBackPressedCallback()
 
             binding?.btnDelete?.setOnClickListener {
                 context?.let { ctx -> downloadsViewModel.handleMultiDelete(ctx) }
@@ -176,6 +178,7 @@ class DownloadChildFragment : Fragment() {
         } else {
             binding?.downloadDeleteAppbar?.isVisible = false
 
+            detachBackPressedCallback()
             adapter?.setIsMultiDeleteState(false)
             downloadsViewModel.clearSelectedItems()
         }
@@ -191,5 +194,29 @@ class DownloadChildFragment : Fragment() {
             }
         }
         downloadDeleteEventListener?.let { VideoDownloadManager.downloadDeleteEvent += it }
+    }
+
+    private var backPressedCallback: OnBackPressedCallback? = null
+
+    private fun attachBackPressedCallback() {
+        if (backPressedCallback == null) {
+            backPressedCallback = object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    (binding?.downloadChildList?.adapter as? DownloadAdapter)?.setIsMultiDeleteState(false)
+                    downloadsViewModel.clearSelectedItems()
+                }
+            }
+        }
+
+        backPressedCallback?.isEnabled = true
+
+        activity?.onBackPressedDispatcher?.addCallback(
+            activity ?: return,
+            backPressedCallback ?: return
+        )
+    }
+
+    private fun detachBackPressedCallback() {
+        backPressedCallback?.isEnabled = false
     }
 }
