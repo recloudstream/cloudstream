@@ -93,9 +93,9 @@ class DownloadFragment : Fragment() {
         hideKeyboard()
         binding?.downloadStorageAppbar?.setAppBarNoScrollFlagsOnTV()
 
-        // We always want fresh selections
+        // We never want to retain multi-delete state
         // when navigating to downloads
-        downloadsViewModel.clearSelectedItems()
+        downloadsViewModel.setIsMultiDeleteState(false)
 
         observe(downloadsViewModel.headerCards) {
             (binding?.downloadList?.adapter as? DownloadAdapter)?.submitList(it)

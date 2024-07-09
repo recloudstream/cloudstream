@@ -65,9 +65,9 @@ class DownloadChildFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // We always want fresh selections
+        // We never want to retain multi-delete state
         // when navigating to downloads
-        downloadsViewModel.clearSelectedItems()
+        downloadsViewModel.setIsMultiDeleteState(false)
 
         val folder = arguments?.getString("folder")
         val name = arguments?.getString("name")
