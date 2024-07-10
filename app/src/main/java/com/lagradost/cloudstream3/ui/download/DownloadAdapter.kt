@@ -331,8 +331,10 @@ class DownloadAdapter(
 
     @SuppressLint("NotifyDataSetChanged")
     fun clearSelectedItems() {
-        selectedIds.clear()
-        notifyDataSetChanged()
+        if (selectedIds.isNotEmpty()) {
+            selectedIds.clear()
+            notifyDataSetChanged()
+        }
     }
 
     private fun toggleIsChecked(checkbox: CheckBox, item: VisualDownloadCached) {
