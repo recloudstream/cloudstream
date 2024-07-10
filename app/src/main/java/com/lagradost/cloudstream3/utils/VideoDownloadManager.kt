@@ -1760,7 +1760,54 @@ object VideoDownloadManager {
         downloadProgressEvent.invoke(Triple(id, 0, 0))
         downloadStatusEvent.invoke(id to DownloadType.IsStopped)
         downloadDeleteEvent.invoke(id)
-        return info.toFile(context)?.delete() ?: false
+
+        val isFileDeleted = info.toFile(context)?.delete() ?: false
+        if (isFileDeleted) deleteSubtitles(context, info)
+
+        return isFileDeleted
+    }
+
+    private fun deleteSubtitles(context: Context, info: DownloadedFileInfo): Boolean {
+        val relative = info.relativePath
+        val display = info.displayName
+
+        val cleanDisplay = cleanDisplayName(display)
+
+        val subtitleFiles = getFolder(context, relative, info.basePath)
+            ?.mapNotNull { (name, uri) ->
+                if (listOf(
+                        ".vtt",
+                        ".srt",
+                        ".txt",
+                        ".ass",
+                        ".ttml",
+                        ".sbv",
+                        ".dfxp"
+                    ).none { name.contains(it, true) }
+                ) return@mapNotNull null
+
+                if (name.equals(display, true)) return@mapNotNull null
+
+                val cleanName = cleanDisplayName(name)
+
+                if (!cleanName.startsWith(cleanDisplay, true)) return@mapNotNull null
+
+                SafeFile.fromUri(context, uri)
+            } ?: return false
+
+        var allDeleted = true
+        subtitleFiles.forEach { subtitleFile ->
+            if (!subtitleFile.delete()) {
+                Log.e("SubtitleDeletion", "Failed to delete subtitle file: ${subtitleFile.name()}")
+                allDeleted = false
+            }
+        }
+
+        return allDeleted
+    }
+
+    fun cleanDisplayName(name: String): String {
+        return name.substringBeforeLast('.').trim()
     }
 
     fun getDownloadResumePackage(context: Context, id: Int): DownloadResumePackage? {

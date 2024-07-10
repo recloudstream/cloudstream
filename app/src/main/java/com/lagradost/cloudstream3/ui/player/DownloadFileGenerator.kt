@@ -5,6 +5,7 @@ import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.ui.player.PlayerSubtitleHelper.Companion.toSubtitleMimeType
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.VideoDownloadManager
+import com.lagradost.cloudstream3.utils.VideoDownloadManager.cleanDisplayName
 import kotlin.math.max
 import kotlin.math.min
 
@@ -47,10 +48,6 @@ class DownloadFileGenerator(
 
     override fun getAll(): List<Any>? {
         return null
-    }
-
-    fun cleanDisplayName(name: String): String {
-        return name.substringBeforeLast('.').trim()
     }
 
     override suspend fun generateLinks(
