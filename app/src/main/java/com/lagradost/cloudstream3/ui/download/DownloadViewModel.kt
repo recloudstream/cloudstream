@@ -314,20 +314,18 @@ class DownloadViewModel : ViewModel() {
         data: DeleteConfirmationData,
         onDeleteConfirm: () -> Unit
     ) {
-        val (parentName, seriesNames, names) = data
-
-        val formattedNames = names.joinToString(separator = "\n") { "• $it" }
-        val formattedSeriesNames = seriesNames.joinToString(separator = "\n") { "• $it" }
+        val formattedNames = data.names.joinToString(separator = "\n") { "• $it" }
+        val formattedSeriesNames = data.seriesNames.joinToString(separator = "\n") { "• $it" }
 
         val message = when {
-            seriesNames.isNotEmpty() && names.isEmpty() -> {
+            data.seriesNames.isNotEmpty() && data.names.isEmpty() -> {
                 context.getString(R.string.delete_message_series_only).format(formattedSeriesNames)
             }
-            parentName != null && names.isNotEmpty() -> {
+            data.parentName != null && data.names.isNotEmpty() -> {
                 context.getString(R.string.delete_message_series_episodes)
-                    .format(parentName, formattedNames)
+                    .format(data.parentName, formattedNames)
             }
-            seriesNames.isNotEmpty() -> {
+            data.seriesNames.isNotEmpty() -> {
                 val seriesSection = context.getString(R.string.delete_message_series_section)
                     .format(formattedSeriesNames)
                 context.getString(R.string.delete_message_multiple)
