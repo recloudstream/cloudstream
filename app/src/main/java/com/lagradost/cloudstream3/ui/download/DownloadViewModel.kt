@@ -239,7 +239,7 @@ class DownloadViewModel : ViewModel() {
         }
     }
 
-    fun handleMultiDelete(context: Context) = viewModelScope.launchSafe {
+    fun handleMultiDelete(context: Context, onDeleteConfirm: () -> Unit) = viewModelScope.launchSafe {
         val selectedItemsList = selectedItems.value ?: mutableListOf()
 
         val ids = selectedItemsList.flatMap { item ->
@@ -279,14 +279,21 @@ class DownloadViewModel : ViewModel() {
             }
         }.unzip()
 
-        showDeleteConfirmationDialog(context, ids, names.filterNotNull(), seriesNames.filterNotNull())
+        showDeleteConfirmationDialog(
+            context,
+            ids,
+            names.filterNotNull(),
+            seriesNames.filterNotNull(),
+            onDeleteConfirm
+        )
     }
 
     private fun showDeleteConfirmationDialog(
         context: Context,
         ids: List<Int>,
         names: List<String>,
-        seriesNames: List<String>
+        seriesNames: List<String>,
+        onDeleteConfirm: () -> Unit
     ) {
         val formattedNames = names.joinToString(separator = "\n") { "• $it" }
         val formattedSeriesNames = seriesNames.joinToString(separator = "\n") { "• $it" }
@@ -310,7 +317,7 @@ class DownloadViewModel : ViewModel() {
                         viewModelScope.launchSafe {
                             deleteFilesAndUpdateSettings(context, ids, this)
                             setIsMultiDeleteState(false)
-                            updateList(context)
+                            onDeleteConfirm.invoke()
                         }
                     }
                     DialogInterface.BUTTON_NEGATIVE -> {

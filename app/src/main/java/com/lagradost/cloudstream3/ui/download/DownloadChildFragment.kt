@@ -163,7 +163,12 @@ class DownloadChildFragment : Fragment() {
             attachBackPressedCallback()
 
             binding?.btnDelete?.setOnClickListener {
-                context?.let { ctx -> downloadsViewModel.handleMultiDelete(ctx) }
+                context?.let { ctx ->
+                    downloadsViewModel.handleMultiDelete(ctx) {
+                        arguments?.getString("folder")
+                            ?.let { folder -> downloadsViewModel.updateChildList(ctx, folder) }
+                    }
+                }
             }
 
             binding?.btnCancel?.setOnClickListener {

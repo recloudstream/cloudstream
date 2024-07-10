@@ -224,7 +224,11 @@ class DownloadFragment : Fragment() {
             attachBackPressedCallback()
 
             binding?.btnDelete?.setOnClickListener {
-                context?.let { ctx -> downloadsViewModel.handleMultiDelete(ctx) }
+                context?.let { ctx ->
+                    downloadsViewModel.handleMultiDelete(ctx) {
+                        downloadsViewModel.updateList(ctx)
+                    }
+                }
             }
 
             binding?.btnCancel?.setOnClickListener {
