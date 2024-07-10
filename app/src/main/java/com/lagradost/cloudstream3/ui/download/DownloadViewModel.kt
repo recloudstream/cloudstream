@@ -28,6 +28,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class DownloadViewModel : ViewModel() {
+
     private val _headerCards =
         MutableLiveData<List<VisualDownloadCached.Header>>().apply { listOf<VisualDownloadCached.Header>() }
     val headerCards: LiveData<List<VisualDownloadCached.Header>> = _headerCards
@@ -249,23 +250,23 @@ class DownloadViewModel : ViewModel() {
             val selectedItemsList = selectedItems.value ?: emptyList()
 
             val ids = mutableListOf<Int>()
-
-            var parentName: String? = null
             val seriesNames = mutableListOf<String>()
             val names = mutableListOf<String>()
+            var parentName: String? = null
 
             selectedItemsList.forEach { item ->
                 when (item) {
                     is VisualDownloadCached.Header -> {
                         if (item.data.type.isEpisodeBased()) {
-                            context.getKeys(DOWNLOAD_EPISODE_CACHE)
+                            val episodes = context.getKeys(DOWNLOAD_EPISODE_CACHE)
                                 .mapNotNull {
                                     context.getKey<VideoDownloadHelper.DownloadEpisodeCached>(
                                         it
                                     )
                                 }
                                 .filter { it.parentId == item.data.id }
-                                .mapTo(ids) { it.id }
+                                .map { it.id }
+                            ids.addAll(episodes)
 
                             val episodeInfo = "${item.data.name} (${item.totalDownloads} ${
                                 context.resources.getQuantityString(
@@ -298,14 +299,14 @@ class DownloadViewModel : ViewModel() {
                 }
             }
 
-            val data = Triple(parentName, seriesNames.toList(), names.toList())
+            val data = DeleteConfirmationData(parentName, seriesNames.toList(), names.toList())
             showDeleteConfirmationDialog(context, ids, data, onDeleteConfirm)
-        }
+    }
 
     private fun showDeleteConfirmationDialog(
         context: Context,
         ids: List<Int>,
-        data: Triple<String?, List<String>, List<String>>,
+        data: DeleteConfirmationData,
         onDeleteConfirm: () -> Unit
     ) {
         val (parentName, seriesNames, names) = data
@@ -317,19 +318,16 @@ class DownloadViewModel : ViewModel() {
             seriesNames.isNotEmpty() && names.isEmpty() -> {
                 context.getString(R.string.delete_message_series_only).format(formattedSeriesNames)
             }
-
             parentName != null && names.isNotEmpty() -> {
                 context.getString(R.string.delete_message_series_episodes)
                     .format(parentName, formattedNames)
             }
-
             seriesNames.isNotEmpty() -> {
                 val seriesSection = context.getString(R.string.delete_message_series_section)
                     .format(formattedSeriesNames)
                 context.getString(R.string.delete_message_multiple)
                     .format(formattedNames) + "\n\n" + seriesSection
             }
-
             else -> context.getString(R.string.delete_message_multiple).format(formattedNames)
         }
 
@@ -344,7 +342,6 @@ class DownloadViewModel : ViewModel() {
                             onDeleteConfirm.invoke()
                         }
                     }
-
                     DialogInterface.BUTTON_NEGATIVE -> {
                         // Do nothing on cancel
                     }
@@ -361,4 +358,10 @@ class DownloadViewModel : ViewModel() {
             logError(e)
         }
     }
+
+    private data class DeleteConfirmationData(
+        val parentName: String?,
+        val seriesNames: List<String>,
+        val names: List<String>
+    )
 }
