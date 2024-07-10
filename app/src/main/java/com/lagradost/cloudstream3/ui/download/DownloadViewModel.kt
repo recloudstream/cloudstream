@@ -14,6 +14,7 @@ import com.lagradost.cloudstream3.isEpisodeBased
 import com.lagradost.cloudstream3.isMovieType
 import com.lagradost.cloudstream3.mvvm.launchSafe
 import com.lagradost.cloudstream3.mvvm.logError
+import com.lagradost.cloudstream3.utils.AppContextUtils.getNameFull
 import com.lagradost.cloudstream3.utils.AppContextUtils.setDefaultFocus
 import com.lagradost.cloudstream3.utils.DOWNLOAD_EPISODE_CACHE
 import com.lagradost.cloudstream3.utils.DOWNLOAD_HEADER_CACHE
@@ -270,7 +271,11 @@ class DownloadViewModel : ViewModel() {
                     } else null to item.data.name
                 }
 
-                is VisualDownloadCached.Child -> null to item.data.name
+                is VisualDownloadCached.Child -> null to context.getNameFull(
+                    item.data.name,
+                    item.data.episode,
+                    item.data.season
+                )
             }
         }.unzip()
 
