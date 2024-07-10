@@ -165,8 +165,7 @@ class DownloadFragment : Fragment() {
                 if (isChecked) {
                     downloadsViewModel.addSelected(card)
                 } else downloadsViewModel.removeSelected(card)
-            },
-            { card -> downloadsViewModel.addSelected(card) }
+            }
         )
 
         binding?.downloadList?.apply {

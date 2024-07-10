@@ -140,8 +140,7 @@ class DownloadChildFragment : Fragment() {
                 if (isChecked) {
                     downloadsViewModel.addSelected(card)
                 } else downloadsViewModel.removeSelected(card)
-            },
-            { card -> downloadsViewModel.addSelected(card) }
+            }
         )
 
         binding?.downloadChildList?.apply {
