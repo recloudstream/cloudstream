@@ -311,11 +311,13 @@ class DownloadAdapter(
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     fun setIsMultiDeleteState(value: Boolean) {
         if (isMultiDeleteState == value) return
         isMultiDeleteState = value
         if (!value) {
-            clearSelectedItems()
+            selectedIds.clear()
+            notifyDataSetChanged()
         } else notifyItemRangeChanged(0, itemCount)
     }
 
@@ -329,11 +331,13 @@ class DownloadAdapter(
         }
     }
 
-    @SuppressLint("NotifyDataSetChanged")
     fun clearSelectedItems() {
-        if (selectedIds.isNotEmpty()) {
-            selectedIds.clear()
-            notifyDataSetChanged()
+        val selectedPositions = selectedIds.keys.mapNotNull { id ->
+            currentList.indexOfFirst { it.data.id == id }.takeIf { it != -1 }
+        }
+        selectedIds.clear()
+        selectedPositions.forEach {
+            notifyItemChanged(it)
         }
     }
 
