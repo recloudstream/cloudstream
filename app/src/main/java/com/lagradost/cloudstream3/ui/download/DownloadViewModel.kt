@@ -207,7 +207,10 @@ class DownloadViewModel : ViewModel() {
         }
     }
 
-    fun updateChildList(context: Context, folder: String) = viewModelScope.launchSafe {
+    fun updateChildList(
+        context: Context,
+        folder: String
+    ) = viewModelScope.launchSafe {
         val data = withContext(Dispatchers.IO) { context.getKeys(folder) }
         val visual = withContext(Dispatchers.IO) {
             data.mapNotNull { key ->
@@ -245,62 +248,64 @@ class DownloadViewModel : ViewModel() {
         }
     }
 
-    fun handleMultiDelete(context: Context, onDeleteConfirm: () -> Unit) =
-        viewModelScope.launchSafe {
-            val selectedItemsList = selectedItems.value ?: emptyList()
+    fun handleMultiDelete(
+        context: Context,
+        onDeleteConfirm: () -> Unit
+    ) = viewModelScope.launchSafe {
+        val selectedItemsList = selectedItems.value ?: emptyList()
 
-            val ids = mutableListOf<Int>()
-            val seriesNames = mutableListOf<String>()
-            val names = mutableListOf<String>()
-            var parentName: String? = null
+        val ids = mutableListOf<Int>()
+        val seriesNames = mutableListOf<String>()
+        val names = mutableListOf<String>()
+        var parentName: String? = null
 
-            selectedItemsList.forEach { item ->
-                when (item) {
-                    is VisualDownloadCached.Header -> {
-                        if (item.data.type.isEpisodeBased()) {
-                            val episodes = context.getKeys(DOWNLOAD_EPISODE_CACHE)
-                                .mapNotNull {
-                                    context.getKey<VideoDownloadHelper.DownloadEpisodeCached>(
-                                        it
-                                    )
-                                }
-                                .filter { it.parentId == item.data.id }
-                                .map { it.id }
-                            ids.addAll(episodes)
+        selectedItemsList.forEach { item ->
+            when (item) {
+                is VisualDownloadCached.Header -> {
+                    if (item.data.type.isEpisodeBased()) {
+                        val episodes = context.getKeys(DOWNLOAD_EPISODE_CACHE)
+                            .mapNotNull {
+                                context.getKey<VideoDownloadHelper.DownloadEpisodeCached>(
+                                    it
+                                )
+                            }
+                            .filter { it.parentId == item.data.id }
+                            .map { it.id }
+                        ids.addAll(episodes)
 
-                            val episodeInfo = "${item.data.name} (${item.totalDownloads} ${
-                                context.resources.getQuantityString(
-                                    R.plurals.episodes,
-                                    item.totalDownloads
-                                ).lowercase()
-                            })"
-                            seriesNames.add(episodeInfo)
-                        } else {
-                            ids.add(item.data.id)
-                            names.add(item.data.name)
-                        }
-                    }
-
-                    is VisualDownloadCached.Child -> {
+                        val episodeInfo = "${item.data.name} (${item.totalDownloads} ${
+                            context.resources.getQuantityString(
+                                R.plurals.episodes,
+                                item.totalDownloads
+                            ).lowercase()
+                        })"
+                        seriesNames.add(episodeInfo)
+                    } else {
                         ids.add(item.data.id)
-                        val parent = context.getKey<VideoDownloadHelper.DownloadHeaderCached>(
-                            DOWNLOAD_HEADER_CACHE,
-                            item.data.parentId.toString()
-                        )
-                        parentName = parent?.name
-                        names.add(
-                            context.getNameFull(
-                                item.data.name,
-                                item.data.episode,
-                                item.data.season
-                            )
-                        )
+                        names.add(item.data.name)
                     }
                 }
-            }
 
-            val data = DeleteConfirmationData(parentName, seriesNames.toList(), names.toList())
-            showDeleteConfirmationDialog(context, ids, data, onDeleteConfirm)
+                is VisualDownloadCached.Child -> {
+                    ids.add(item.data.id)
+                    val parent = context.getKey<VideoDownloadHelper.DownloadHeaderCached>(
+                        DOWNLOAD_HEADER_CACHE,
+                        item.data.parentId.toString()
+                    )
+                    parentName = parent?.name
+                    names.add(
+                        context.getNameFull(
+                            item.data.name,
+                            item.data.episode,
+                            item.data.season
+                        )
+                    )
+                }
+            }
+        }
+
+        val data = DeleteConfirmationData(parentName, seriesNames.toList(), names.toList())
+        showDeleteConfirmationDialog(context, ids, data, onDeleteConfirm)
     }
 
     private fun showDeleteConfirmationDialog(
