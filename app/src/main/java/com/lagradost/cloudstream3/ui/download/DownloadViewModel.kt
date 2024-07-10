@@ -101,12 +101,14 @@ class DownloadViewModel : ViewModel() {
         val childItems = childCards.value
 
         if (headerItems != null &&
-                headerItems.count() == currentSelected.count() &&
-                headerItems.containsAll(currentSelected)) return true
+            headerItems.count() == currentSelected.count() &&
+            headerItems.containsAll(currentSelected)
+        ) return true
 
         if (childItems != null &&
-                childItems.count() == currentSelected.count() &&
-                childItems.containsAll(currentSelected)) return true
+            childItems.count() == currentSelected.count() &&
+            childItems.containsAll(currentSelected)
+        ) return true
 
         return false
     }
@@ -147,14 +149,17 @@ class DownloadViewModel : ViewModel() {
         // Gets all children downloads
         withContext(Dispatchers.IO) {
             children.forEach { c ->
-                val childFile = getDownloadFileInfoAndUpdateSettings(context, c.id) ?: return@forEach
+                val childFile =
+                    getDownloadFileInfoAndUpdateSettings(context, c.id) ?: return@forEach
 
                 if (childFile.fileLength <= 1) return@forEach
                 val len = childFile.totalBytes
                 val flen = childFile.fileLength
 
-                totalBytesUsedByChild[c.parentId] = totalBytesUsedByChild[c.parentId]?.plus(len) ?: len
-                currentBytesUsedByChild[c.parentId] = currentBytesUsedByChild[c.parentId]?.plus(flen) ?: flen
+                totalBytesUsedByChild[c.parentId] =
+                    totalBytesUsedByChild[c.parentId]?.plus(len) ?: len
+                currentBytesUsedByChild[c.parentId] =
+                    currentBytesUsedByChild[c.parentId]?.plus(flen) ?: flen
                 totalDownloads[c.parentId] = totalDownloads[c.parentId]?.plus(1) ?: 1
             }
         }
@@ -239,62 +244,72 @@ class DownloadViewModel : ViewModel() {
         }
     }
 
-    fun handleMultiDelete(context: Context, onDeleteConfirm: () -> Unit) = viewModelScope.launchSafe {
-        val selectedItemsList = selectedItems.value ?: mutableListOf()
+    fun handleMultiDelete(context: Context, onDeleteConfirm: () -> Unit) =
+        viewModelScope.launchSafe {
+            val selectedItemsList = selectedItems.value ?: emptyList()
 
-        val ids = selectedItemsList.flatMap { item ->
-            when (item) {
-                is VisualDownloadCached.Header -> {
-                    if (item.data.type.isEpisodeBased()) {
-                        context.getKeys(DOWNLOAD_EPISODE_CACHE)
-                            .mapNotNull { context.getKey<VideoDownloadHelper.DownloadEpisodeCached>(it) }
-                            .filter { it.parentId == item.data.id }
-                            .map { it.id }
-                    } else listOf(item.data.id)
+            val ids = mutableListOf<Int>()
+
+            var parentName: String? = null
+            val seriesNames = mutableListOf<String>()
+            val names = mutableListOf<String>()
+
+            selectedItemsList.forEach { item ->
+                when (item) {
+                    is VisualDownloadCached.Header -> {
+                        if (item.data.type.isEpisodeBased()) {
+                            context.getKeys(DOWNLOAD_EPISODE_CACHE)
+                                .mapNotNull {
+                                    context.getKey<VideoDownloadHelper.DownloadEpisodeCached>(
+                                        it
+                                    )
+                                }
+                                .filter { it.parentId == item.data.id }
+                                .mapTo(ids) { it.id }
+
+                            val episodeInfo = "${item.data.name} (${item.totalDownloads} ${
+                                context.resources.getQuantityString(
+                                    R.plurals.episodes,
+                                    item.totalDownloads
+                                ).lowercase()
+                            })"
+                            seriesNames.add(episodeInfo)
+                        } else {
+                            ids.add(item.data.id)
+                            names.add(item.data.name)
+                        }
+                    }
+
+                    is VisualDownloadCached.Child -> {
+                        ids.add(item.data.id)
+                        val parent = context.getKey<VideoDownloadHelper.DownloadHeaderCached>(
+                            DOWNLOAD_HEADER_CACHE,
+                            item.data.parentId.toString()
+                        )
+                        parentName = parent?.name
+                        names.add(
+                            context.getNameFull(
+                                item.data.name,
+                                item.data.episode,
+                                item.data.season
+                            )
+                        )
+                    }
                 }
-
-                is VisualDownloadCached.Child -> listOf(item.data.id)
             }
+
+            val data = Triple(parentName, seriesNames.toList(), names.toList())
+            showDeleteConfirmationDialog(context, ids, data, onDeleteConfirm)
         }
-
-        val (seriesNames, names) = selectedItemsList.map { item ->
-            when (item) {
-                is VisualDownloadCached.Header -> {
-                    if (item.data.type.isEpisodeBased()) {
-                        val episodeInfo = "${item.data.name} (${item.totalDownloads} ${
-                            context.resources.getQuantityString(
-                                R.plurals.episodes,
-                                item.totalDownloads
-                            ).lowercase()
-                        })"
-                        episodeInfo to null
-                    } else null to item.data.name
-                }
-
-                is VisualDownloadCached.Child -> null to context.getNameFull(
-                    item.data.name,
-                    item.data.episode,
-                    item.data.season
-                )
-            }
-        }.unzip()
-
-        showDeleteConfirmationDialog(
-            context,
-            ids,
-            names.filterNotNull(),
-            seriesNames.filterNotNull(),
-            onDeleteConfirm
-        )
-    }
 
     private fun showDeleteConfirmationDialog(
         context: Context,
         ids: List<Int>,
-        names: List<String>,
-        seriesNames: List<String>,
+        data: Triple<String?, List<String>, List<String>>,
         onDeleteConfirm: () -> Unit
     ) {
+        val (parentName, seriesNames, names) = data
+
         val formattedNames = names.joinToString(separator = "\n") { "• $it" }
         val formattedSeriesNames = seriesNames.joinToString(separator = "\n") { "• $it" }
 
@@ -302,14 +317,23 @@ class DownloadViewModel : ViewModel() {
             seriesNames.isNotEmpty() && names.isEmpty() -> {
                 context.getString(R.string.delete_message_series_only).format(formattedSeriesNames)
             }
-            seriesNames.isNotEmpty() -> {
-                val seriesSection = context.getString(R.string.delete_message_series_section).format(formattedSeriesNames)
-                context.getString(R.string.delete_message_multiple).format(formattedNames) + "\n\n" + seriesSection
+
+            parentName != null && names.isNotEmpty() -> {
+                context.getString(R.string.delete_message_series_episodes)
+                    .format(parentName, formattedNames)
             }
+
+            seriesNames.isNotEmpty() -> {
+                val seriesSection = context.getString(R.string.delete_message_series_section)
+                    .format(formattedSeriesNames)
+                context.getString(R.string.delete_message_multiple)
+                    .format(formattedNames) + "\n\n" + seriesSection
+            }
+
             else -> context.getString(R.string.delete_message_multiple).format(formattedNames)
         }
 
-        val builder: AlertDialog.Builder = AlertDialog.Builder(context)
+        val builder = AlertDialog.Builder(context)
         val dialogClickListener =
             DialogInterface.OnClickListener { _, which ->
                 when (which) {
@@ -320,6 +344,7 @@ class DownloadViewModel : ViewModel() {
                             onDeleteConfirm.invoke()
                         }
                     }
+
                     DialogInterface.BUTTON_NEGATIVE -> {
                         // Do nothing on cancel
                     }
