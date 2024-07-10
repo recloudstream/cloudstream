@@ -306,7 +306,7 @@
     <string name="delete">Delete</string>
     <string name="delete_file">Delete File</string>
     <string name="delete_files">Delete Files</string>
-    <string name="delete_format">Delete (%1$d | %2$s)</string>
+    <string name="delete_format" formatted="true">Delete (%1$d | %2$s)</string>
     <string name="cancel">Cancel</string>
     <string name="pause">Pause</string>
     <string name="start">Start</string>
