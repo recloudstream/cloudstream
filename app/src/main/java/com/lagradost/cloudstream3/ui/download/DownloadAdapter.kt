@@ -102,7 +102,6 @@ class DownloadAdapter(
 
                     setOnLongClickListener {
                         toggleIsChecked(deleteCheckbox, card)
-                        onItemSelectionChanged.invoke(card, selectedIds[data.id] ?: false)
                         true
                     }
                 }
@@ -121,7 +120,6 @@ class DownloadAdapter(
 
                     setOnLongClickListener {
                         toggleIsChecked(deleteCheckbox, card)
-                        onItemSelectionChanged.invoke(card, selectedIds[data.id] ?: false)
                         true
                     }
                 }
@@ -272,7 +270,6 @@ class DownloadAdapter(
 
                     setOnLongClickListener {
                         toggleIsChecked(deleteCheckbox, card)
-                        onItemSelectionChanged.invoke(card, selectedIds[data.id] ?: false)
                         true
                     }
                 }
