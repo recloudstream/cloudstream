@@ -119,15 +119,7 @@ class DownloadViewModel : ViewModel() {
         var totalSelectedBytes = 0L
 
         selectedItemsList.forEach { item ->
-            totalSelectedBytes += when (item) {
-                is VisualDownloadCached.Header -> {
-                    item.totalBytes
-                }
-
-                is VisualDownloadCached.Child -> {
-                    item.totalBytes
-                }
-            }
+            totalSelectedBytes += item.totalBytes
         }
 
         _selectedBytes.postValue(totalSelectedBytes)
