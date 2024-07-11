@@ -112,6 +112,7 @@ class DownloadChildFragment : Fragment() {
             if (!isMultiDeleteState) {
                 detachBackPressedCallback()
                 downloadsViewModel.clearSelectedItems()
+                binding?.downloadChildToolbar?.isVisible = true
             }
         }
         observe(downloadsViewModel.selectedBytes) {
@@ -161,6 +162,7 @@ class DownloadChildFragment : Fragment() {
     private fun handleSelectedChange(selected: MutableList<VisualDownloadCached>) {
         if (selected.isNotEmpty()) {
             binding?.downloadDeleteAppbar?.isVisible = true
+            binding?.downloadChildToolbar?.isVisible = false
             activity?.attachBackPressedCallback {
                 downloadsViewModel.setIsMultiDeleteState(false)
             }

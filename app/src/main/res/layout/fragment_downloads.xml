@@ -17,185 +17,179 @@
         For Scroll add to LinearLayout
         app:layout_scrollFlags="scroll|enterAlways"
         -->
-
-        <FrameLayout
+        <LinearLayout
+            android:id="@+id/download_delete_appbar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="?attr/colorPrimary"
+            android:padding="8dp"
+            android:visibility="gone">
 
-            <LinearLayout
-                android:id="@+id/download_delete_appbar"
-                android:layout_width="match_parent"
+            <ImageView
+                android:id="@+id/btnCancel"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:background="?attr/colorPrimary"
+                android:background="?attr/selectableItemBackground"
+                android:src="@drawable/ic_baseline_close_24"
+                android:contentDescription="@string/cancel"
                 android:padding="8dp"
-                android:visibility="gone">
+                android:layout_gravity="center_vertical"
+                app:tint="@android:color/white" />
 
-                <ImageView
-                    android:id="@+id/btnCancel"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="?attr/selectableItemBackground"
-                    android:src="@drawable/ic_baseline_close_24"
-                    android:contentDescription="@string/cancel"
-                    android:padding="8dp"
-                    android:layout_gravity="center_vertical"
-                    app:tint="@android:color/white" />
-
-                <Button
-                    android:id="@+id/btnDelete"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="?attr/selectableItemBackground"
-                    android:text="@string/delete"
-                    android:textColor="@android:color/white"
-                    android:layout_gravity="center_vertical" />
-
-                <TextView
-                    android:id="@+id/selectItemsText"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="?attr/selectableItemBackground"
-                    android:text="@string/downloads_delete_select"
-                    android:textColor="@android:color/white"
-                    android:layout_gravity="center_vertical"
-                    android:visibility="gone" />
-
-                <View
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:layout_weight="1" />
-
-                <Button
-                    android:id="@+id/btnSelectAll"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="?attr/selectableItemBackground"
-                    android:text="@string/select_all"
-                    android:textColor="@android:color/white"
-                    android:layout_marginEnd="8dp" />
-
-                <Button
-                    android:id="@+id/btnDeselectAll"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="?attr/selectableItemBackground"
-                    android:text="@string/deselect_all"
-                    android:textColor="@android:color/white"
-                    android:layout_marginEnd="8dp"
-                    android:visibility="gone" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/download_storage_appbar"
-                android:layout_width="match_parent"
+            <Button
+                android:id="@+id/btnDelete"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:orientation="vertical"
-                android:visibility="gone"
-                tools:visibility="visible">
+                android:background="?attr/selectableItemBackground"
+                android:text="@string/delete"
+                android:textColor="@android:color/white"
+                android:layout_gravity="center_vertical" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="5dp"
-                    android:text="@string/download_storage_text"
-                    android:textColor="?attr/textColor" />
+            <TextView
+                android:id="@+id/selectItemsText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackground"
+                android:text="@string/downloads_delete_select"
+                android:textColor="@android:color/white"
+                android:layout_gravity="center_vertical"
+                android:visibility="gone" />
 
-                <androidx.cardview.widget.CardView
-                    android:layout_width="fill_parent"
-                    android:layout_height="12dp"
-                    android:layout_marginBottom="5dp"
-                    android:elevation="0dp"
-                    app:cardCornerRadius="@dimen/storage_radius"
-                    app:cardElevation="0dp"
-                    app:cardMaxElevation="0dp">
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="horizontal">
+            <Button
+                android:id="@+id/btnSelectAll"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackground"
+                android:text="@string/select_all"
+                android:textColor="@android:color/white"
+                android:layout_marginEnd="8dp" />
 
-                        <View
-                            android:id="@+id/download_used"
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:layout_weight="0.5"
-                            android:background="@drawable/storage_bar_left" />
+            <Button
+                android:id="@+id/btnDeselectAll"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackground"
+                android:text="@string/deselect_all"
+                android:textColor="@android:color/white"
+                android:layout_marginEnd="8dp"
+                android:visibility="gone" />
+        </LinearLayout>
 
-                        <View
-                            android:id="@+id/download_app"
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:layout_weight="0.10"
-                            android:background="@drawable/storage_bar_mid" />
+        <LinearLayout
+            android:id="@+id/download_storage_appbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:orientation="vertical"
+            android:visibility="gone"
+            tools:visibility="visible">
 
-                        <View
-                            android:id="@+id/download_free"
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:layout_weight="0.10"
-                            android:background="@drawable/storage_bar_right" />
-                    </LinearLayout>
-                </androidx.cardview.widget.CardView>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:text="@string/download_storage_text"
+                android:textColor="?attr/textColor" />
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="fill_parent"
+                android:layout_height="12dp"
+                android:layout_marginBottom="5dp"
+                android:elevation="0dp"
+                app:cardCornerRadius="@dimen/storage_radius"
+                app:cardElevation="0dp"
+                app:cardMaxElevation="0dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:orientation="horizontal">
 
                     <View
-                        android:layout_width="10dp"
-                        android:layout_height="10dp"
-                        android:layout_gravity="center_vertical"
-                        android:layout_marginTop="5dp"
-                        android:layout_marginEnd="5dp"
-                        android:layout_marginBottom="5dp"
-                        android:background="@drawable/storage_bar_left_box" />
-
-                    <TextView
-                        android:id="@+id/download_used_txt"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:textColor="?attr/textColor"
-                        android:textSize="12sp"
-                        tools:text="Used • 30.58GB" />
+                        android:id="@+id/download_used"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="0.5"
+                        android:background="@drawable/storage_bar_left" />
 
                     <View
-                        android:layout_width="10dp"
-                        android:layout_height="10dp"
-                        android:layout_gravity="center_vertical"
-                        android:layout_margin="5dp"
-                        android:background="@drawable/storage_bar_mid_box" />
-
-                    <TextView
-                        android:id="@+id/download_app_txt"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:textColor="?attr/textColor"
-                        android:textSize="12sp"
-                        tools:text="App • 30.58GB" />
+                        android:id="@+id/download_app"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="0.10"
+                        android:background="@drawable/storage_bar_mid" />
 
                     <View
-                        android:layout_width="10dp"
-                        android:layout_height="10dp"
-                        android:layout_gravity="center_vertical"
-                        android:layout_margin="5dp"
-                        android:background="@drawable/storage_bar_right_box" />
-
-                    <TextView
-                        android:id="@+id/download_free_txt"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:textColor="?attr/textColor"
-                        android:textSize="12sp"
-                        tools:text="Free • 30.58GB" />
+                        android:id="@+id/download_free"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="0.10"
+                        android:background="@drawable/storage_bar_right" />
                 </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <View
+                    android:layout_width="10dp"
+                    android:layout_height="10dp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginEnd="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:background="@drawable/storage_bar_left_box" />
+
+                <TextView
+                    android:id="@+id/download_used_txt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:textColor="?attr/textColor"
+                    android:textSize="12sp"
+                    tools:text="Used • 30.58GB" />
+
+                <View
+                    android:layout_width="10dp"
+                    android:layout_height="10dp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_margin="5dp"
+                    android:background="@drawable/storage_bar_mid_box" />
+
+                <TextView
+                    android:id="@+id/download_app_txt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:textColor="?attr/textColor"
+                    android:textSize="12sp"
+                    tools:text="App • 30.58GB" />
+
+                <View
+                    android:layout_width="10dp"
+                    android:layout_height="10dp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_margin="5dp"
+                    android:background="@drawable/storage_bar_right_box" />
+
+                <TextView
+                    android:id="@+id/download_free_txt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:textColor="?attr/textColor"
+                    android:textSize="12sp"
+                    tools:text="Free • 30.58GB" />
             </LinearLayout>
-        </FrameLayout>
+        </LinearLayout>
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.recyclerview.widget.RecyclerView
@@ -224,11 +218,11 @@
 
     <!--
     <ProgressBar
-            android:visibility="visible"
-            tools:visibility="gone"
-            android:id="@+id/download_loading"
-            android:layout_gravity="center"
-            android:layout_width="50dp" android:layout_height="50dp">
+        android:visibility="visible"
+        tools:visibility="gone"
+        android:id="@+id/download_loading"
+        android:layout_gravity="center"
+        android:layout_width="50dp" android:layout_height="50dp">
     </ProgressBar>-->
 
     <com.facebook.shimmer.ShimmerFrameLayout
