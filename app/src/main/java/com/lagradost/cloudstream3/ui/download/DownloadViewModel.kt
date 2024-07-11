@@ -321,16 +321,19 @@ class DownloadViewModel : ViewModel() {
             data.seriesNames.isNotEmpty() && data.names.isEmpty() -> {
                 context.getString(R.string.delete_message_series_only).format(formattedSeriesNames)
             }
+
             data.parentName != null && data.names.isNotEmpty() -> {
                 context.getString(R.string.delete_message_series_episodes)
                     .format(data.parentName, formattedNames)
             }
+
             data.seriesNames.isNotEmpty() -> {
                 val seriesSection = context.getString(R.string.delete_message_series_section)
                     .format(formattedSeriesNames)
                 context.getString(R.string.delete_message_multiple)
                     .format(formattedNames) + "\n\n" + seriesSection
             }
+
             else -> context.getString(R.string.delete_message_multiple).format(formattedNames)
         }
 
@@ -345,6 +348,7 @@ class DownloadViewModel : ViewModel() {
                             onDeleteConfirm.invoke()
                         }
                     }
+
                     DialogInterface.BUTTON_NEGATIVE -> {
                         // Do nothing on cancel
                     }

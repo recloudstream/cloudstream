@@ -116,14 +116,32 @@ class DownloadFragment : Fragment() {
             binding?.textNoDownloads?.isVisible = it.isEmpty()
         }
         observe(downloadsViewModel.availableBytes) {
-            updateStorageInfo(view.context, it, R.string.free_storage, binding?.downloadFreeTxt, binding?.downloadFree)
+            updateStorageInfo(
+                view.context,
+                it,
+                R.string.free_storage,
+                binding?.downloadFreeTxt,
+                binding?.downloadFree
+            )
         }
         observe(downloadsViewModel.usedBytes) {
-            updateStorageInfo(view.context, it, R.string.used_storage, binding?.downloadUsedTxt, binding?.downloadUsed)
+            updateStorageInfo(
+                view.context,
+                it,
+                R.string.used_storage,
+                binding?.downloadUsedTxt,
+                binding?.downloadUsed
+            )
             binding?.downloadStorageAppbar?.isVisible = it > 0
         }
         observe(downloadsViewModel.downloadBytes) {
-            updateStorageInfo(view.context, it, R.string.app_storage, binding?.downloadAppTxt, binding?.downloadApp)
+            updateStorageInfo(
+                view.context,
+                it,
+                R.string.app_storage,
+                binding?.downloadAppTxt,
+                binding?.downloadApp
+            )
         }
         observe(downloadsViewModel.selectedBytes) {
             updateDeleteButton(downloadsViewModel.selectedItems.value?.count() ?: 0, it)
@@ -204,13 +222,15 @@ class DownloadFragment : Fragment() {
         when (click.action) {
             DOWNLOAD_ACTION_GO_TO_CHILD -> {
                 if (!click.data.type.isMovieType()) {
-                    val folder = DataStore.getFolderName(DOWNLOAD_EPISODE_CACHE, click.data.id.toString())
+                    val folder =
+                        DataStore.getFolderName(DOWNLOAD_EPISODE_CACHE, click.data.id.toString())
                     activity?.navigate(
                         R.id.action_navigation_downloads_to_navigation_download_child,
                         DownloadChildFragment.newInstance(click.data.name, folder)
                     )
                 }
             }
+
             DOWNLOAD_ACTION_LOAD_RESULT -> {
                 (activity as AppCompatActivity?)?.loadResult(click.data.url, click.data.apiName)
             }
@@ -272,7 +292,10 @@ class DownloadFragment : Fragment() {
         textView: TextView?,
         view: View?
     ) {
-        textView?.text = getString(R.string.storage_size_format).format(getString(stringRes), formatShortFileSize(context, bytes))
+        textView?.text = getString(R.string.storage_size_format).format(
+            getString(stringRes),
+            formatShortFileSize(context, bytes)
+        )
         view?.setLayoutWidth(bytes)
     }
 
@@ -305,7 +328,9 @@ class DownloadFragment : Fragment() {
             if (!preventAutoSwitching) activateSwitchOnHls(text?.toString(), binding)
         }
 
-        (activity?.getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager)?.primaryClip?.getItemAt(0)?.text?.toString()?.let { copy ->
+        (activity?.getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager)?.primaryClip?.getItemAt(
+            0
+        )?.text?.toString()?.let { copy ->
             val fixedText = copy.trim()
             binding.streamUrl.setText(fixedText)
             activateSwitchOnHls(fixedText, binding)

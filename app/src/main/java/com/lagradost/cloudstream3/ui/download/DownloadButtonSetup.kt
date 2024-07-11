@@ -30,8 +30,13 @@ object DownloadButtonSetup {
                         DialogInterface.OnClickListener { _, which ->
                             when (which) {
                                 DialogInterface.BUTTON_POSITIVE -> {
-                                    VideoDownloadManager.deleteFilesAndUpdateSettings(ctx, listOf(id), MainScope())
+                                    VideoDownloadManager.deleteFilesAndUpdateSettings(
+                                        ctx,
+                                        listOf(id),
+                                        MainScope()
+                                    )
                                 }
+
                                 DialogInterface.BUTTON_NEGATIVE -> {
                                 }
                             }
@@ -57,11 +62,13 @@ object DownloadButtonSetup {
                     }
                 }
             }
+
             DOWNLOAD_ACTION_PAUSE_DOWNLOAD -> {
                 VideoDownloadManager.downloadEvent.invoke(
                     Pair(click.data.id, VideoDownloadManager.DownloadActionType.Pause)
                 )
             }
+
             DOWNLOAD_ACTION_RESUME_DOWNLOAD -> {
                 activity?.let { ctx ->
                     if (VideoDownloadManager.downloadStatus.containsKey(id) && VideoDownloadManager.downloadStatus[id] == VideoDownloadManager.DownloadType.IsPaused) {
@@ -80,6 +87,7 @@ object DownloadButtonSetup {
                     }
                 }
             }
+
             DOWNLOAD_ACTION_LONG_CLICK -> {
                 activity?.let { act ->
                     val length =
@@ -97,6 +105,7 @@ object DownloadButtonSetup {
                     }
                 }
             }
+
             DOWNLOAD_ACTION_PLAY_FILE -> {
                 activity?.let { act ->
                     val info =

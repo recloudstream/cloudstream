@@ -1,6 +1,5 @@
 package com.lagradost.cloudstream3.ui.download
 
-import android.annotation.SuppressLint
 import android.text.format.Formatter.formatShortFileSize
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -114,7 +113,12 @@ class DownloadAdapter(
                         }
                     } else {
                         setOnClickListener {
-                            onHeaderClickEvent.invoke(DownloadHeaderClickEvent(DOWNLOAD_ACTION_LOAD_RESULT, data))
+                            onHeaderClickEvent.invoke(
+                                DownloadHeaderClickEvent(
+                                    DOWNLOAD_ACTION_LOAD_RESULT,
+                                    data
+                                )
+                            )
                         }
                     }
 
@@ -168,7 +172,10 @@ class DownloadAdapter(
             } else {
                 downloadButton.doSetProgress = true
                 downloadButton.progressBar.progressDrawable =
-                    ContextCompat.getDrawable(downloadButton.context, downloadButton.progressDrawable)
+                    ContextCompat.getDrawable(
+                        downloadButton.context,
+                        downloadButton.progressDrawable
+                    )
             }
 
             downloadButton.setDefaultClickListener(card.child, downloadHeaderInfo, onItemClickEvent)
@@ -176,12 +183,16 @@ class DownloadAdapter(
 
             if (!isMultiDeleteState) {
                 episodeHolder.setOnClickListener {
-                    onItemClickEvent.invoke(DownloadClickEvent(DOWNLOAD_ACTION_PLAY_FILE, card.child))
+                    onItemClickEvent.invoke(
+                        DownloadClickEvent(
+                            DOWNLOAD_ACTION_PLAY_FILE,
+                            card.child
+                        )
+                    )
                 }
             }
         }
 
-        @SuppressLint("SetTextI18n")
         private fun DownloadHeaderEpisodeBinding.handleParentDownload(
             card: VisualDownloadCached.Header,
             formattedSize: String
@@ -190,19 +201,28 @@ class DownloadAdapter(
             downloadHeaderGotoChild.isVisible = !isMultiDeleteState
 
             try {
-                downloadHeaderInfo.text = downloadHeaderInfo.context.getString(R.string.extra_info_format).format(
-                    card.totalDownloads,
-                    downloadHeaderInfo.context.resources.getQuantityString(R.plurals.episodes, card.totalDownloads),
-                    formattedSize
-                )
+                downloadHeaderInfo.text =
+                    downloadHeaderInfo.context.getString(R.string.extra_info_format).format(
+                        card.totalDownloads,
+                        downloadHeaderInfo.context.resources.getQuantityString(
+                            R.plurals.episodes,
+                            card.totalDownloads
+                        ),
+                        formattedSize
+                    )
             } catch (e: Exception) {
-                downloadHeaderInfo.text = "Error"
+                downloadHeaderInfo.text = ""
                 logError(e)
             }
 
             if (!isMultiDeleteState) {
                 episodeHolder.setOnClickListener {
-                    onHeaderClickEvent.invoke(DownloadHeaderClickEvent(DOWNLOAD_ACTION_GO_TO_CHILD, card.data))
+                    onHeaderClickEvent.invoke(
+                        DownloadHeaderClickEvent(
+                            DOWNLOAD_ACTION_GO_TO_CHILD,
+                            card.data
+                        )
+                    )
                 }
             }
         }
@@ -235,14 +255,22 @@ class DownloadAdapter(
                     downloadButton.progressBar.progressDrawable =
                         downloadButton.getDrawableFromStatus(status)
                             ?.let { ContextCompat.getDrawable(downloadButton.context, it) }
-                    downloadChildEpisodeTextExtra.text = formatShortFileSize(downloadChildEpisodeTextExtra.context, card.totalBytes)
+                    downloadChildEpisodeTextExtra.text =
+                        formatShortFileSize(downloadChildEpisodeTextExtra.context, card.totalBytes)
                 } else {
                     downloadButton.doSetProgress = true
                     downloadButton.progressBar.progressDrawable =
-                        ContextCompat.getDrawable(downloadButton.context, downloadButton.progressDrawable)
+                        ContextCompat.getDrawable(
+                            downloadButton.context,
+                            downloadButton.progressDrawable
+                        )
                 }
 
-                downloadButton.setDefaultClickListener(data, downloadChildEpisodeTextExtra, onItemClickEvent)
+                downloadButton.setDefaultClickListener(
+                    data,
+                    downloadChildEpisodeTextExtra,
+                    onItemClickEvent
+                )
                 downloadButton.isVisible = !isMultiDeleteState
 
                 downloadChildEpisodeText.apply {
@@ -261,9 +289,15 @@ class DownloadAdapter(
                                 toggleIsChecked(deleteCheckbox, card)
                             }
                         }
+
                         else -> {
                             setOnClickListener {
-                                onItemClickEvent.invoke(DownloadClickEvent(DOWNLOAD_ACTION_PLAY_FILE, data))
+                                onItemClickEvent.invoke(
+                                    DownloadClickEvent(
+                                        DOWNLOAD_ACTION_PLAY_FILE,
+                                        data
+                                    )
+                                )
                             }
                         }
                     }
@@ -311,13 +345,14 @@ class DownloadAdapter(
         }
     }
 
-    @SuppressLint("NotifyDataSetChanged")
     fun setIsMultiDeleteState(value: Boolean) {
         if (isMultiDeleteState == value) return
         isMultiDeleteState = value
         if (!value) {
             selectedIds.clear()
-            notifyDataSetChanged()
+            currentList.forEachIndexed { index, _ ->
+                notifyItemChanged(index)
+            }
         } else notifyItemRangeChanged(0, itemCount)
     }
 
@@ -349,11 +384,17 @@ class DownloadAdapter(
     }
 
     class DiffCallback : DiffUtil.ItemCallback<VisualDownloadCached>() {
-        override fun areItemsTheSame(oldItem: VisualDownloadCached, newItem: VisualDownloadCached): Boolean {
+        override fun areItemsTheSame(
+            oldItem: VisualDownloadCached,
+            newItem: VisualDownloadCached
+        ): Boolean {
             return oldItem.data.id == newItem.data.id
         }
 
-        override fun areContentsTheSame(oldItem: VisualDownloadCached, newItem: VisualDownloadCached): Boolean {
+        override fun areContentsTheSame(
+            oldItem: VisualDownloadCached,
+            newItem: VisualDownloadCached
+        ): Boolean {
             return oldItem == newItem
         }
     }
