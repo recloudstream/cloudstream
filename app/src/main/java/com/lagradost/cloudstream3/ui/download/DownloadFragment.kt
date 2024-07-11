@@ -17,7 +17,6 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
@@ -43,6 +42,8 @@ import com.lagradost.cloudstream3.ui.result.setLinearListLayout
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.utils.AppContextUtils.loadResult
+import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper.attachBackPressedCallback
+import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper.detachBackPressedCallback
 import com.lagradost.cloudstream3.utils.DOWNLOAD_EPISODE_CACHE
 import com.lagradost.cloudstream3.utils.DataStore
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
@@ -241,7 +242,9 @@ class DownloadFragment : Fragment() {
         if (selectedItems.isNotEmpty()) {
             binding?.downloadDeleteAppbar?.isVisible = true
             binding?.downloadStorageAppbar?.isVisible = false
-            attachBackPressedCallback()
+            activity?.attachBackPressedCallback {
+                downloadsViewModel.setIsMultiDeleteState(false)
+            }
 
             binding?.btnDelete?.setOnClickListener {
                 context?.let { ctx ->
@@ -383,28 +386,5 @@ class DownloadFragment : Fragment() {
         if (result.resultCode != Activity.RESULT_OK) return@registerForActivityResult
         val selectedVideoUri = result?.data?.data ?: return@registerForActivityResult
         playUri(activity ?: return@registerForActivityResult, selectedVideoUri)
-    }
-
-    private var backPressedCallback: OnBackPressedCallback? = null
-
-    private fun attachBackPressedCallback() {
-        if (backPressedCallback == null) {
-            backPressedCallback = object : OnBackPressedCallback(true) {
-                override fun handleOnBackPressed() {
-                    downloadsViewModel.setIsMultiDeleteState(false)
-                }
-            }
-        }
-
-        backPressedCallback?.isEnabled = true
-
-        activity?.onBackPressedDispatcher?.addCallback(
-            activity ?: return,
-            backPressedCallback ?: return
-        )
-    }
-
-    private fun detachBackPressedCallback() {
-        backPressedCallback?.isEnabled = false
     }
 }

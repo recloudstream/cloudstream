@@ -131,6 +131,8 @@ import com.lagradost.cloudstream3.utils.AppContextUtils.loadResult
 import com.lagradost.cloudstream3.utils.AppContextUtils.loadSearchResult
 import com.lagradost.cloudstream3.utils.AppContextUtils.setDefaultFocus
 import com.lagradost.cloudstream3.utils.AppContextUtils.updateHasTrailers
+import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper.attachBackPressedCallback
+import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper.detachBackPressedCallback
 import com.lagradost.cloudstream3.utils.BackupUtils.backup
 import com.lagradost.cloudstream3.utils.BackupUtils.setUpBackup
 import com.lagradost.cloudstream3.utils.BiometricAuthenticator.BiometricCallback
@@ -1566,7 +1568,12 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
 
             if (isLayout(TV or EMULATOR)) {
                 if (navDestination.matchDestination(R.id.navigation_home)) {
-                    attachBackPressedCallback()
+                    attachBackPressedCallback {
+                        showConfirmExitDialog()
+                        window?.navigationBarColor =
+                            colorFromAttribute(R.attr.primaryGrayBackground)
+                        updateLocale()
+                    }
                 } else detachBackPressedCallback()
             }
         }
@@ -1809,28 +1816,6 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
 
     override fun onAuthenticationError() {
         finish()
-    }
-
-    private var backPressedCallback: OnBackPressedCallback? = null
-
-    private fun attachBackPressedCallback() {
-        if (backPressedCallback == null) {
-            backPressedCallback = object : OnBackPressedCallback(true) {
-                override fun handleOnBackPressed() {
-                    showConfirmExitDialog()
-                    window?.navigationBarColor =
-                        colorFromAttribute(R.attr.primaryGrayBackground)
-                    updateLocale()
-                }
-            }
-        }
-
-        backPressedCallback?.isEnabled = true
-        onBackPressedDispatcher.addCallback(this, backPressedCallback ?: return)
-    }
-
-    private fun detachBackPressedCallback() {
-        backPressedCallback?.isEnabled = false
     }
 
     suspend fun checkGithubConnectivity(): Boolean {

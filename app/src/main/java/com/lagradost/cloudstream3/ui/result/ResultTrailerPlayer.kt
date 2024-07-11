@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
-import androidx.activity.OnBackPressedCallback
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import com.lagradost.cloudstream3.CommonActivity.screenHeight
@@ -17,6 +16,8 @@ import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.ui.player.CSPlayerEvent
 import com.lagradost.cloudstream3.ui.player.PlayerEventSource
 import com.lagradost.cloudstream3.ui.player.SubtitleData
+import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper.attachBackPressedCallback
+import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper.detachBackPressedCallback
 
 open class ResultTrailerPlayer : ResultFragmentPhone() {
 
@@ -156,7 +157,9 @@ open class ResultTrailerPlayer : ResultFragmentPhone() {
         uiReset()
 
         if (isFullScreenPlayer) {
-            attachBackPressedCallback()
+            activity?.attachBackPressedCallback {
+                updateFullscreen(false)
+            }
         } else detachBackPressedCallback()
     }
 
@@ -174,28 +177,5 @@ open class ResultTrailerPlayer : ResultFragmentPhone() {
             updateUIVisibility()
             fixPlayerSize()
         }
-    }
-
-    private var backPressedCallback: OnBackPressedCallback? = null
-
-    private fun attachBackPressedCallback() {
-        if (backPressedCallback == null) {
-            backPressedCallback = object : OnBackPressedCallback(true) {
-                override fun handleOnBackPressed() {
-                    updateFullscreen(false)
-                }
-            }
-        }
-
-        backPressedCallback?.isEnabled = true
-
-        activity?.onBackPressedDispatcher?.addCallback(
-            activity ?: return,
-            backPressedCallback ?: return
-        )
-    }
-
-    private fun detachBackPressedCallback() {
-        backPressedCallback?.isEnabled = false
     }
 }

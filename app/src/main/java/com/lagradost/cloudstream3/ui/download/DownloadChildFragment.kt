@@ -7,7 +7,6 @@ import android.text.format.Formatter.formatShortFileSize
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.OnBackPressedCallback
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -20,6 +19,8 @@ import com.lagradost.cloudstream3.ui.result.setLinearListLayout
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
 import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
+import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper.attachBackPressedCallback
+import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper.detachBackPressedCallback
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
 import com.lagradost.cloudstream3.utils.UIHelper.setAppBarNoScrollFlagsOnTV
 import com.lagradost.cloudstream3.utils.VideoDownloadManager
@@ -160,7 +161,9 @@ class DownloadChildFragment : Fragment() {
     private fun handleSelectedChange(selected: MutableList<VisualDownloadCached>) {
         if (selected.isNotEmpty()) {
             binding?.downloadDeleteAppbar?.isVisible = true
-            attachBackPressedCallback()
+            activity?.attachBackPressedCallback {
+                downloadsViewModel.setIsMultiDeleteState(false)
+            }
 
             binding?.btnDelete?.setOnClickListener {
                 context?.let { ctx ->
@@ -203,28 +206,5 @@ class DownloadChildFragment : Fragment() {
             }
         }
         downloadDeleteEventListener?.let { VideoDownloadManager.downloadDeleteEvent += it }
-    }
-
-    private var backPressedCallback: OnBackPressedCallback? = null
-
-    private fun attachBackPressedCallback() {
-        if (backPressedCallback == null) {
-            backPressedCallback = object : OnBackPressedCallback(true) {
-                override fun handleOnBackPressed() {
-                    downloadsViewModel.setIsMultiDeleteState(false)
-                }
-            }
-        }
-
-        backPressedCallback?.isEnabled = true
-
-        activity?.onBackPressedDispatcher?.addCallback(
-            activity ?: return,
-            backPressedCallback ?: return
-        )
-    }
-
-    private fun detachBackPressedCallback() {
-        backPressedCallback?.isEnabled = false
     }
 }
