@@ -1,6 +1,7 @@
 package com.lagradost.cloudstream3.extractors
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.lagradost.cloudstream3.ErrorLoadingException
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.base64Encode
@@ -9,6 +10,7 @@ import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.M3u8Helper
 import javax.crypto.Cipher
 import javax.crypto.spec.SecretKeySpec
+import kotlin.run
 
 // Code found in https://github.com/KillerDogeEmpire/vidplay-keys
 // special credits to @KillerDogeEmpire for providing key
@@ -35,8 +37,25 @@ open class Vidplay : ExtractorApi() {
     override val name = "Vidplay"
     override val mainUrl = "https://vidplay.site"
     override val requiresReferer = true
-    open val key =
-        "https://raw.githubusercontent.com/KillerDogeEmpire/vidplay-keys/keys/keys.json"
+
+    companion object {
+        private val keySource = "https://rowdy-avocado.github.io/multi-keys/"
+
+        private var keys: List<String>? = null
+
+        private suspend fun getKeys(): List<String> {
+            return keys
+                    ?: run {
+                        val res =
+                                app.get(keySource).parsedSafe<KeysData>()
+                                        ?: throw ErrorLoadingException("Unable to get keys")
+                        keys = res.keys
+                        res.keys
+                    }
+        }
+
+        private data class KeysData(@JsonProperty("vidplay") val keys: List<String>)
+    }
 
     override suspend fun getUrl(
         url: String,
@@ -68,10 +87,6 @@ open class Vidplay : ExtractorApi() {
             )
         }
 
-    }
-
-    private suspend fun getKeys(): List<String> {
-        return app.get(key).parsed()
     }
 
     private suspend fun callFutoken(id: String, url: String): String? {
