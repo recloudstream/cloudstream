@@ -19,7 +19,6 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.StringRes
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
@@ -45,7 +44,7 @@ import com.lagradost.cloudstream3.utils.AppContextUtils.loadResult
 import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper.attachBackPressedCallback
 import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper.detachBackPressedCallback
 import com.lagradost.cloudstream3.utils.DOWNLOAD_EPISODE_CACHE
-import com.lagradost.cloudstream3.utils.DataStore
+import com.lagradost.cloudstream3.utils.DataStore.getFolderName
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
@@ -224,7 +223,7 @@ class DownloadFragment : Fragment() {
             DOWNLOAD_ACTION_GO_TO_CHILD -> {
                 if (!click.data.type.isMovieType()) {
                     val folder =
-                        DataStore.getFolderName(DOWNLOAD_EPISODE_CACHE, click.data.id.toString())
+                        getFolderName(DOWNLOAD_EPISODE_CACHE, click.data.id.toString())
                     activity?.navigate(
                         R.id.action_navigation_downloads_to_navigation_download_child,
                         DownloadChildFragment.newInstance(click.data.name, folder)
@@ -233,7 +232,7 @@ class DownloadFragment : Fragment() {
             }
 
             DOWNLOAD_ACTION_LOAD_RESULT -> {
-                (activity as AppCompatActivity?)?.loadResult(click.data.url, click.data.apiName)
+                activity?.loadResult(click.data.url, click.data.apiName)
             }
         }
     }
