@@ -10,8 +10,6 @@ import com.lagradost.cloudstream3.utils.M3u8Helper
 import javax.crypto.Cipher
 import javax.crypto.spec.SecretKeySpec
 
-// Code found in https://github.com/KillerDogeEmpire/vidplay-keys
-// special credits to @KillerDogeEmpire for providing key
 
 class AnyVidplay(hostUrl: String) : Vidplay() {
     override val mainUrl = hostUrl
@@ -36,7 +34,7 @@ open class Vidplay : ExtractorApi() {
     override val mainUrl = "https://vidplay.site"
     override val requiresReferer = true
     open val key =
-        "https://raw.githubusercontent.com/KillerDogeEmpire/vidplay-keys/keys/keys.json"
+        "https://raw.githubusercontent.com/Rowdy-Avocado/multi-keys/keys/index.html"
 
     override suspend fun getUrl(
         url: String,
