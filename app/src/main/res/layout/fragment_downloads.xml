@@ -26,7 +26,7 @@
             android:padding="8dp"
             android:visibility="gone">
 
-            <ImageView
+            <ImageButton
                 android:id="@+id/btnCancel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -35,6 +35,7 @@
                 android:contentDescription="@string/cancel"
                 android:padding="8dp"
                 android:layout_gravity="center_vertical"
+                android:nextFocusLeft="@id/nav_rail_view"
                 app:tint="@android:color/white" />
 
             <Button
@@ -62,23 +63,14 @@
                 android:layout_weight="1" />
 
             <Button
-                android:id="@+id/btnSelectAll"
+                android:id="@+id/btnToggleAll"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="?attr/selectableItemBackground"
                 android:text="@string/select_all"
                 android:textColor="@android:color/white"
-                android:layout_marginEnd="8dp" />
-
-            <Button
-                android:id="@+id/btnDeselectAll"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="?attr/selectableItemBackground"
-                android:text="@string/deselect_all"
-                android:textColor="@android:color/white"
                 android:layout_marginEnd="8dp"
-                android:visibility="gone" />
+                android:nextFocusDown="@id/download_list" />
         </LinearLayout>
 
         <LinearLayout

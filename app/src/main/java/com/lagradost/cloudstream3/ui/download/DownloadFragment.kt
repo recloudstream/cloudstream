@@ -94,6 +94,7 @@ class DownloadFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         hideKeyboard()
         binding?.downloadStorageAppbar?.setAppBarNoScrollFlagsOnTV()
+        binding?.downloadDeleteAppbar?.setAppBarNoScrollFlagsOnTV()
 
         /**
          * We never want to retain multi-delete state
@@ -167,8 +168,9 @@ class DownloadFragment : Fragment() {
             binding?.selectItemsText?.isVisible = it.isEmpty()
 
             val allSelected = downloadsViewModel.isAllSelected()
-            binding?.btnSelectAll?.isVisible = !allSelected
-            binding?.btnDeselectAll?.isVisible = allSelected
+            if (allSelected) {
+                binding?.btnToggleAll?.setText(R.string.deselect_all)
+            } else binding?.btnToggleAll?.setText(R.string.select_all)
         }
 
         val adapter = DownloadAdapter(
@@ -193,7 +195,6 @@ class DownloadFragment : Fragment() {
             setLinearListLayout(
                 isHorizontal = false,
                 nextRight = FOCUS_SELF,
-                nextUp = FOCUS_SELF,
                 nextDown = FOCUS_SELF,
             )
         }
@@ -257,14 +258,16 @@ class DownloadFragment : Fragment() {
                 downloadsViewModel.setIsMultiDeleteState(false)
             }
 
-            binding?.btnSelectAll?.setOnClickListener {
-                (binding?.downloadList?.adapter as? DownloadAdapter)?.selectAllItems()
-                downloadsViewModel.selectAllItems()
-            }
-
-            binding?.btnDeselectAll?.setOnClickListener {
-                (binding?.downloadList?.adapter as? DownloadAdapter)?.clearSelectedItems()
-                downloadsViewModel.clearSelectedItems()
+            binding?.btnToggleAll?.setOnClickListener {
+                val allSelected = downloadsViewModel.isAllSelected()
+                val binding = binding?.downloadList?.adapter as? DownloadAdapter
+                if (allSelected) {
+                    binding?.clearSelectedItems()
+                    downloadsViewModel.clearSelectedItems()
+                } else {
+                    binding?.selectAllItems()
+                    downloadsViewModel.selectAllItems()
+                }
             }
 
             downloadsViewModel.setIsMultiDeleteState(true)

@@ -97,6 +97,8 @@ class DownloadChildFragment : Fragment() {
             setAppBarNoScrollFlagsOnTV()
         }
 
+        binding?.downloadDeleteAppbar?.setAppBarNoScrollFlagsOnTV()
+
         observe(downloadsViewModel.childCards) {
             if (it.isEmpty()) {
                 activity?.onBackPressedDispatcher?.onBackPressed()
@@ -126,8 +128,9 @@ class DownloadChildFragment : Fragment() {
             binding?.selectItemsText?.isVisible = it.isEmpty()
 
             val allSelected = downloadsViewModel.isAllSelected()
-            binding?.btnSelectAll?.isVisible = !allSelected
-            binding?.btnDeselectAll?.isVisible = allSelected
+            if (allSelected) {
+                binding?.btnToggleAll?.setText(R.string.deselect_all)
+            } else binding?.btnToggleAll?.setText(R.string.select_all)
         }
 
         val adapter = DownloadAdapter(
@@ -180,14 +183,16 @@ class DownloadChildFragment : Fragment() {
                 downloadsViewModel.setIsMultiDeleteState(false)
             }
 
-            binding?.btnSelectAll?.setOnClickListener {
-                (binding?.downloadChildList?.adapter as? DownloadAdapter)?.selectAllItems()
-                downloadsViewModel.selectAllItems()
-            }
-
-            binding?.btnDeselectAll?.setOnClickListener {
-                (binding?.downloadChildList?.adapter as? DownloadAdapter)?.clearSelectedItems()
-                downloadsViewModel.clearSelectedItems()
+            binding?.btnToggleAll?.setOnClickListener {
+                val allSelected = downloadsViewModel.isAllSelected()
+                val binding = binding?.downloadChildList?.adapter as? DownloadAdapter
+                if (allSelected) {
+                    binding?.clearSelectedItems()
+                    downloadsViewModel.clearSelectedItems()
+                } else {
+                    binding?.selectAllItems()
+                    downloadsViewModel.selectAllItems()
+                }
             }
 
             downloadsViewModel.setIsMultiDeleteState(true)

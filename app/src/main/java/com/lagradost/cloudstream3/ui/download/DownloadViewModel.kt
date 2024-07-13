@@ -92,7 +92,9 @@ class DownloadViewModel : ViewModel() {
     }
 
     fun clearSelectedItems() {
-        _selectedItems.postValue(mutableListOf())
+        // We need this to be done immediately
+        // so we can't use postValue
+        _selectedItems.value = mutableListOf()
     }
 
     fun isAllSelected(): Boolean {
