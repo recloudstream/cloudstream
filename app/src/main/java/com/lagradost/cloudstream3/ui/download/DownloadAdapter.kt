@@ -368,6 +368,7 @@ class DownloadAdapter(
     }
 
     override fun onBindViewHolder(holder: DownloadViewHolder, position: Int, payloads: MutableList<Any>) {
+        holder.bind(getItem(position))
         if (payloads.isNotEmpty()) {
             val payload = payloads.firstOrNull() as? Int
             if (payload == PAYLOAD_SELECTION_CHANGED) {
@@ -375,7 +376,7 @@ class DownloadAdapter(
                     holder.animateSelection(selectedIds[getItem(position).data.id] == true)
                 }
             }
-        } else holder.bind(getItem(position))
+        }
     }
 
     override fun getItemViewType(position: Int): Int {
@@ -392,9 +393,9 @@ class DownloadAdapter(
         if (!value) {
             selectedIds.clear()
             currentList.forEachIndexed { index, _ ->
-                notifyItemChanged(index)
+                notifyItemChanged(index, PAYLOAD_SELECTION_CHANGED)
             }
-        } else notifyItemRangeChanged(0, itemCount)
+        } else notifyItemRangeChanged(0, itemCount, PAYLOAD_SELECTION_CHANGED)
     }
 
     fun selectAllItems() {
@@ -403,7 +404,7 @@ class DownloadAdapter(
             if (selectedIds[id] == true) return@forEachIndexed
 
             selectedIds[id] = true
-            notifyItemChanged(index)
+            notifyItemChanged(index, PAYLOAD_SELECTION_CHANGED)
         }
     }
 
@@ -413,7 +414,7 @@ class DownloadAdapter(
         }
         selectedIds.clear()
         selectedPositions.forEach {
-            notifyItemChanged(it)
+            notifyItemChanged(it, PAYLOAD_SELECTION_CHANGED)
         }
     }
 
