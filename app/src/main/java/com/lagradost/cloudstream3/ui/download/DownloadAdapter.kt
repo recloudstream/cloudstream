@@ -1,6 +1,5 @@
 package com.lagradost.cloudstream3.ui.download
 
-import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.text.format.Formatter.formatShortFileSize
 import android.view.LayoutInflater
@@ -342,11 +341,8 @@ class DownloadAdapter(
         }
 
         fun animateSelection(isSelected: Boolean) {
-            val scaleValue = if (isSelected) 0.95f else 1.0f
-            val scaleX = ObjectAnimator.ofFloat(itemView, View.SCALE_X, scaleValue)
-            val scaleY = ObjectAnimator.ofFloat(itemView, View.SCALE_Y, scaleValue)
-            AnimatorSet().apply {
-                playTogether(scaleX, scaleY)
+            val alphaValue = if (isSelected) 0.5f else 1.0f
+            ObjectAnimator.ofFloat(itemView, View.ALPHA, alphaValue).apply {
                 duration = 200
                 start()
             }
