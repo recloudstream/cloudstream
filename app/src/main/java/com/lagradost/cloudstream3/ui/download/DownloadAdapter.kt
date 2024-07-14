@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.ui.download
 
+import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.text.format.Formatter.formatShortFileSize
 import android.view.LayoutInflater
@@ -17,6 +18,8 @@ import com.lagradost.cloudstream3.databinding.DownloadChildEpisodeBinding
 import com.lagradost.cloudstream3.databinding.DownloadHeaderEpisodeBinding
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.ui.download.button.DownloadStatusTell
+import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
+import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.utils.AppContextUtils.getNameFull
 import com.lagradost.cloudstream3.utils.DataStoreHelper.fixVisual
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
@@ -74,7 +77,7 @@ class DownloadAdapter(
     private val selectedIds: HashMap<Int, Boolean> = HashMap()
 
     companion object {
-        private const val PAYLOAD_SELECTION_CHANGED = 0
+        private const val PAYLOAD_SELECTION_CHANGED = 1
 
         private const val VIEW_TYPE_HEADER = 0
         private const val VIEW_TYPE_CHILD = 1
@@ -341,6 +344,28 @@ class DownloadAdapter(
         }
 
         fun animateSelection(isSelected: Boolean) {
+            if (isLayout(PHONE)) {
+                // Pivot animation looks better on phone
+                // than it does on TV or Emulator
+                val scaleValue = if (isSelected) 0.95f else 1.0f
+
+                itemView.apply {
+                    pivotX = width.toFloat()
+                    pivotY = height / 2f
+                }
+
+                val scaleX = ObjectAnimator.ofFloat(itemView, View.SCALE_X, scaleValue)
+                val scaleY = ObjectAnimator.ofFloat(itemView, View.SCALE_Y, 1.0f)
+
+                AnimatorSet().apply {
+                    playTogether(scaleX, scaleY)
+                    duration = 200
+                    start()
+                }
+
+                return
+            }
+
             val alphaValue = if (isSelected) 0.5f else 1.0f
             ObjectAnimator.ofFloat(itemView, View.ALPHA, alphaValue).apply {
                 duration = 200
@@ -387,10 +412,7 @@ class DownloadAdapter(
         if (isMultiDeleteState == value) return
         isMultiDeleteState = value
         if (!value) {
-            selectedIds.clear()
-            currentList.forEachIndexed { index, _ ->
-                notifyItemChanged(index, PAYLOAD_SELECTION_CHANGED)
-            }
+            clearSelectedItems()
         } else notifyItemRangeChanged(0, itemCount, PAYLOAD_SELECTION_CHANGED)
     }
 
@@ -405,12 +427,9 @@ class DownloadAdapter(
     }
 
     fun clearSelectedItems() {
-        val selectedPositions = selectedIds.keys.mapNotNull { id ->
-            currentList.indexOfFirst { it.data.id == id }.takeIf { it != -1 }
-        }
         selectedIds.clear()
-        selectedPositions.forEach {
-            notifyItemChanged(it, PAYLOAD_SELECTION_CHANGED)
+        currentList.forEachIndexed { index, _ ->
+            notifyItemChanged(index, PAYLOAD_SELECTION_CHANGED)
         }
     }
 
