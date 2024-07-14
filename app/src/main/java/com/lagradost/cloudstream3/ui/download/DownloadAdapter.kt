@@ -1,10 +1,7 @@
 package com.lagradost.cloudstream3.ui.download
 
-import android.animation.AnimatorSet
-import android.animation.ObjectAnimator
 import android.text.format.Formatter.formatShortFileSize
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
 import androidx.core.content.ContextCompat
@@ -18,8 +15,6 @@ import com.lagradost.cloudstream3.databinding.DownloadChildEpisodeBinding
 import com.lagradost.cloudstream3.databinding.DownloadHeaderEpisodeBinding
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.ui.download.button.DownloadStatusTell
-import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
-import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.utils.AppContextUtils.getNameFull
 import com.lagradost.cloudstream3.utils.DataStoreHelper.fixVisual
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
@@ -77,8 +72,6 @@ class DownloadAdapter(
     private val selectedIds: HashMap<Int, Boolean> = HashMap()
 
     companion object {
-        private const val PAYLOAD_SELECTION_CHANGED = 1
-
         private const val VIEW_TYPE_HEADER = 0
         private const val VIEW_TYPE_CHILD = 1
     }
@@ -145,7 +138,6 @@ class DownloadAdapter(
                     deleteCheckbox.setOnCheckedChangeListener { _, isChecked ->
                         selectedIds[data.id] = isChecked
                         onItemSelectionChanged.invoke(card, isChecked)
-                        animateSelection(isChecked)
                     }
                 } else deleteCheckbox.setOnCheckedChangeListener(null)
 
@@ -320,7 +312,6 @@ class DownloadAdapter(
                     deleteCheckbox.setOnCheckedChangeListener { _, isChecked ->
                         selectedIds[data.id] = isChecked
                         onItemSelectionChanged.invoke(card, isChecked)
-                        animateSelection(isChecked)
                     }
                 } else deleteCheckbox.setOnCheckedChangeListener(null)
 
@@ -328,48 +319,6 @@ class DownloadAdapter(
                     isVisible = isMultiDeleteState
                     isChecked = selectedIds[data.id] == true
                 }
-            }
-        }
-
-        private fun toggleIsChecked(checkbox: CheckBox, item: VisualDownloadCached) {
-            val isChecked = !checkbox.isChecked
-            checkbox.isChecked = isChecked
-            selectedIds[item.data.id] = isChecked
-            onItemSelectionChanged.invoke(item, isChecked)
-
-            val index = currentList.indexOf(item)
-            if (index != -1) {
-                notifyItemChanged(index, PAYLOAD_SELECTION_CHANGED)
-            }
-        }
-
-        fun animateSelection(isSelected: Boolean) {
-            if (isLayout(PHONE)) {
-                // Pivot animation looks better on phone
-                // than it does on TV or Emulator
-                val scaleValue = if (isSelected) 0.95f else 1.0f
-
-                itemView.apply {
-                    pivotX = width.toFloat()
-                    pivotY = height / 2f
-                }
-
-                val scaleX = ObjectAnimator.ofFloat(itemView, View.SCALE_X, scaleValue)
-                val scaleY = ObjectAnimator.ofFloat(itemView, View.SCALE_Y, 1.0f)
-
-                AnimatorSet().apply {
-                    playTogether(scaleX, scaleY)
-                    duration = 200
-                    start()
-                }
-
-                return
-            }
-
-            val alphaValue = if (isSelected) 0.5f else 1.0f
-            ObjectAnimator.ofFloat(itemView, View.ALPHA, alphaValue).apply {
-                duration = 200
-                start()
             }
         }
     }
@@ -388,18 +337,6 @@ class DownloadAdapter(
         holder.bind(getItem(position))
     }
 
-    override fun onBindViewHolder(holder: DownloadViewHolder, position: Int, payloads: MutableList<Any>) {
-        holder.bind(getItem(position))
-        if (payloads.isNotEmpty()) {
-            val payload = payloads.firstOrNull() as? Int
-            if (payload == PAYLOAD_SELECTION_CHANGED) {
-                holder.itemView.apply {
-                    holder.animateSelection(selectedIds[getItem(position).data.id] == true)
-                }
-            }
-        }
-    }
-
     override fun getItemViewType(position: Int): Int {
         return when (getItem(position)) {
             is VisualDownloadCached.Child -> VIEW_TYPE_CHILD
@@ -412,8 +349,11 @@ class DownloadAdapter(
         if (isMultiDeleteState == value) return
         isMultiDeleteState = value
         if (!value) {
-            clearSelectedItems()
-        } else notifyItemRangeChanged(0, itemCount, PAYLOAD_SELECTION_CHANGED)
+            selectedIds.clear()
+            currentList.forEachIndexed { index, _ ->
+                notifyItemChanged(index)
+            }
+        } else notifyItemRangeChanged(0, itemCount)
     }
 
     fun selectAllItems() {
@@ -422,15 +362,25 @@ class DownloadAdapter(
             if (selectedIds[id] == true) return@forEachIndexed
 
             selectedIds[id] = true
-            notifyItemChanged(index, PAYLOAD_SELECTION_CHANGED)
+            notifyItemChanged(index)
         }
     }
 
     fun clearSelectedItems() {
-        selectedIds.clear()
-        currentList.forEachIndexed { index, _ ->
-            notifyItemChanged(index, PAYLOAD_SELECTION_CHANGED)
+        val selectedPositions = selectedIds.keys.mapNotNull { id ->
+            currentList.indexOfFirst { it.data.id == id }.takeIf { it != -1 }
         }
+        selectedIds.clear()
+        selectedPositions.forEach {
+            notifyItemChanged(it)
+        }
+    }
+
+    private fun toggleIsChecked(checkbox: CheckBox, item: VisualDownloadCached) {
+        val isChecked = !checkbox.isChecked
+        checkbox.isChecked = isChecked
+        selectedIds[item.data.id] = isChecked
+        onItemSelectionChanged.invoke(item, isChecked)
     }
 
     class DiffCallback : DiffUtil.ItemCallback<VisualDownloadCached>() {
