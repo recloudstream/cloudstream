@@ -26,7 +26,13 @@ class VidSrcTo : ExtractorApi() {
             callback: (ExtractorLink) -> Unit
     ) {
         val mediaId = app.get(url).document.selectFirst("ul.episodes li a")?.attr("data-id") ?: return
-        val res = app.get("$mainUrl/ajax/embed/episode/$mediaId/sources").parsedSafe<VidsrctoEpisodeSources>() ?: return
+        val subtitlesLink = "$mainUrl/ajax/embed/episode/$mediaId/subtitles"
+        val subRes = app.get(subtitlesLink).parsedSafe<Array<VidsrctoSubtitles>>()
+        subRes?.forEach {
+            if (it.kind.equals("captions")) subtitleCallback.invoke(SubtitleFile(it.label, it.file))
+        }
+        val sourcesLink = "$mainUrl/ajax/embed/episode/$mediaId/sources"
+        val res = app.get(sourcesLink).parsedSafe<VidsrctoEpisodeSources>() ?: return
         if (res.status != 200) return
         res.result?.amap { source ->
             try {
@@ -66,6 +72,12 @@ class VidSrcTo : ExtractorApi() {
     data class VidsrctoEmbedSource(
             @JsonProperty("status") val status: Int,
             @JsonProperty("result") val result: VidsrctoUrl
+    )
+
+    data class VidsrctoSubtitles(
+            @JsonProperty("file") val file: String,
+            @JsonProperty("label") val label: String,
+            @JsonProperty("kind") val kind: String
     )
 
     data class VidsrctoUrl(@JsonProperty("url") val encUrl: String)
