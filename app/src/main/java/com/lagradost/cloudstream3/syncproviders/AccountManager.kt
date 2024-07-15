@@ -22,6 +22,7 @@ abstract class AccountManager(private val defIndex: Int) : AuthAPI {
         val addic7ed = Addic7ed()
         val subDlApi = SubDlApi(0)
         val localListApi = LocalList()
+        val subSourceApi = SubSourceApi()
 
         // used to login via app intent
         val OAuth2Apis
@@ -51,7 +52,8 @@ abstract class AccountManager(private val defIndex: Int) : AuthAPI {
             get() = listOf(
                 openSubtitlesApi,
                 addic7ed,
-                subDlApi
+                subDlApi,
+                subSourceApi
             )
 
         const val appString = "cloudstreamapp"
