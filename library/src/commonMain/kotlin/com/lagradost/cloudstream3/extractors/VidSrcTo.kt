@@ -28,7 +28,7 @@ class VidSrcTo : ExtractorApi() {
         val mediaId = app.get(url).document.selectFirst("ul.episodes li a")?.attr("data-id") ?: return
         val subtitlesLink = "$mainUrl/ajax/embed/episode/$mediaId/subtitles"
         val subRes = app.get(subtitlesLink).parsedSafe<Array<VidsrctoSubtitles>>()
-        subRes?.toList()?.amap {
+        subRes?.forEach {
             if (it.kind.equals("captions")) subtitleCallback.invoke(SubtitleFile(it.label, it.file))
         }
         val sourcesLink = "$mainUrl/ajax/embed/episode/$mediaId/sources"
