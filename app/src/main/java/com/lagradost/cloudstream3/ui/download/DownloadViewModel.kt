@@ -67,6 +67,7 @@ class DownloadViewModel : ViewModel() {
             currentSelected.add(item)
             _selectedItems.postValue(currentSelected)
             updateSelectedBytes()
+            updateSelectedCards()
         }
     }
 
@@ -75,6 +76,7 @@ class DownloadViewModel : ViewModel() {
             selected.remove(item)
             _selectedItems.postValue(selected)
             updateSelectedBytes()
+            updateSelectedCards()
         }
     }
 
@@ -89,12 +91,14 @@ class DownloadViewModel : ViewModel() {
         }
         _selectedItems.postValue(currentSelected)
         updateSelectedBytes()
+        updateSelectedCards()
     }
 
     fun clearSelectedItems() {
         // We need this to be done immediately
         // so we can't use postValue
         _selectedItems.value = mutableListOf()
+        updateSelectedCards()
     }
 
     fun isAllSelected(): Boolean {
@@ -125,6 +129,27 @@ class DownloadViewModel : ViewModel() {
         }
 
         _selectedBytes.postValue(totalSelectedBytes)
+    }
+
+    private fun updateSelectedCards() = viewModelScope.launchSafe {
+        val currentSelected = selectedItems.value ?: return@launchSafe
+        val updatedHeaderCards = headerCards.value?.toMutableList()
+        val updatedChildCards = childCards.value?.toMutableList()
+
+        updatedHeaderCards?.forEach { header ->
+            header.isSelected = currentSelected.any {
+                it.data.id == header.data.id
+            }
+        }
+
+        updatedChildCards?.forEach { child ->
+            child.isSelected = currentSelected.any {
+                it.data.id == child.data.id
+            }
+        }
+
+        _headerCards.postValue(updatedHeaderCards)
+        _childCards.postValue(updatedChildCards)
     }
 
     fun updateList(context: Context) = viewModelScope.launchSafe {
@@ -174,6 +199,9 @@ class DownloadViewModel : ViewModel() {
                 val bytes = totalBytesUsedByChild[it.id] ?: 0
                 val currentBytes = currentBytesUsedByChild[it.id] ?: 0
                 if (bytes <= 0 || downloads <= 0) return@mapNotNull null
+                val isSelected = selectedItems.value?.any { header ->
+                    it.id == header.data.id
+                } ?: false
                 val movieEpisode =
                     if (!it.type.isMovieType()) null
                     else context.getKey<VideoDownloadHelper.DownloadEpisodeCached>(
@@ -187,6 +215,7 @@ class DownloadViewModel : ViewModel() {
                     child = movieEpisode,
                     currentOngoingDownloads = 0,
                     totalDownloads = downloads,
+                    isSelected = isSelected,
                 )
             }.sortedBy {
                 (it.child?.episode ?: 0) + (it.child?.season?.times(10000) ?: 0)
@@ -212,9 +241,13 @@ class DownloadViewModel : ViewModel() {
             }.mapNotNull {
                 val info = getDownloadFileInfoAndUpdateSettings(context, it.id)
                     ?: return@mapNotNull null
+                val isSelected = selectedItems.value?.any { child ->
+                    it.id == child.data.id
+                } ?: false
                 VisualDownloadCached.Child(
                     currentBytes = info.fileLength,
                     totalBytes = info.totalBytes,
+                    isSelected = isSelected,
                     data = it,
                 )
             }

@@ -133,7 +133,13 @@ class DownloadFragment : Fragment() {
                 binding?.downloadUsedTxt,
                 binding?.downloadUsed
             )
-            binding?.downloadStorageAppbar?.isVisible = it > 0
+
+            // Prevent race condition and make sure
+            // we don't display it early
+            if (
+                downloadsViewModel.isMultiDeleteState.value == null ||
+                downloadsViewModel.isMultiDeleteState.value == false
+            ) binding?.downloadStorageAppbar?.isVisible = it > 0
         }
         observe(downloadsViewModel.downloadBytes) {
             updateStorageInfo(
@@ -154,7 +160,8 @@ class DownloadFragment : Fragment() {
             if (!isMultiDeleteState) {
                 detachBackPressedCallback()
                 downloadsViewModel.clearSelectedItems()
-                // Make sure we don't display it early
+                // Prevent race condition and make sure
+                // we don't display it early
                 if (downloadsViewModel.usedBytes.value?.let { it > 0 } == true) {
                     binding?.downloadStorageAppbar?.isVisible = true
                 }
@@ -260,12 +267,12 @@ class DownloadFragment : Fragment() {
 
             binding?.btnToggleAll?.setOnClickListener {
                 val allSelected = downloadsViewModel.isAllSelected()
-                val binding = binding?.downloadList?.adapter as? DownloadAdapter
+                val adapter = binding?.downloadList?.adapter as? DownloadAdapter
                 if (allSelected) {
-                    binding?.clearSelectedItems()
+                    adapter?.notifySelectionStates()
                     downloadsViewModel.clearSelectedItems()
                 } else {
-                    binding?.selectAllItems()
+                    adapter?.notifyAllSelected()
                     downloadsViewModel.selectAllItems()
                 }
             }

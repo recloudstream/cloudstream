@@ -35,20 +35,23 @@ sealed class VisualDownloadCached {
     abstract val currentBytes: Long
     abstract val totalBytes: Long
     abstract val data: VideoDownloadHelper.DownloadCached
+    abstract var isSelected: Boolean
 
     data class Child(
         override val currentBytes: Long,
         override val totalBytes: Long,
         override val data: VideoDownloadHelper.DownloadEpisodeCached,
+        override var isSelected: Boolean,
     ) : VisualDownloadCached()
 
     data class Header(
         override val currentBytes: Long,
         override val totalBytes: Long,
         override val data: VideoDownloadHelper.DownloadHeaderCached,
+        override var isSelected: Boolean,
         val child: VideoDownloadHelper.DownloadEpisodeCached?,
         val currentOngoingDownloads: Int,
-        val totalDownloads: Int
+        val totalDownloads: Int,
     ) : VisualDownloadCached()
 }
 
@@ -69,7 +72,6 @@ class DownloadAdapter(
 ) : ListAdapter<VisualDownloadCached, DownloadAdapter.DownloadViewHolder>(DiffCallback()) {
 
     private var isMultiDeleteState: Boolean = false
-    private val selectedIds: HashMap<Int, Boolean> = HashMap()
 
     companion object {
         private const val VIEW_TYPE_HEADER = 0
@@ -136,14 +138,13 @@ class DownloadAdapter(
 
                 if (isMultiDeleteState) {
                     deleteCheckbox.setOnCheckedChangeListener { _, isChecked ->
-                        selectedIds[data.id] = isChecked
                         onItemSelectionChanged.invoke(card, isChecked)
                     }
                 } else deleteCheckbox.setOnCheckedChangeListener(null)
 
                 deleteCheckbox.apply {
                     isVisible = isMultiDeleteState
-                    isChecked = selectedIds[data.id] == true
+                    isChecked = card.isSelected
                 }
             }
         }
@@ -310,14 +311,13 @@ class DownloadAdapter(
 
                 if (isMultiDeleteState) {
                     deleteCheckbox.setOnCheckedChangeListener { _, isChecked ->
-                        selectedIds[data.id] = isChecked
                         onItemSelectionChanged.invoke(card, isChecked)
                     }
                 } else deleteCheckbox.setOnCheckedChangeListener(null)
 
                 deleteCheckbox.apply {
                     isVisible = isMultiDeleteState
-                    isChecked = selectedIds[data.id] == true
+                    isChecked = card.isSelected
                 }
             }
         }
@@ -349,37 +349,30 @@ class DownloadAdapter(
         if (isMultiDeleteState == value) return
         isMultiDeleteState = value
         if (!value) {
-            selectedIds.clear()
             currentList.forEachIndexed { index, _ ->
                 notifyItemChanged(index)
             }
         } else notifyItemRangeChanged(0, itemCount)
     }
 
-    fun selectAllItems() {
+    fun notifyAllSelected() {
         currentList.forEachIndexed { index, item ->
-            val id = item.data.id
-            if (selectedIds[id] == true) return@forEachIndexed
-
-            selectedIds[id] = true
+            if (item.isSelected) return@forEachIndexed
             notifyItemChanged(index)
         }
     }
 
-    fun clearSelectedItems() {
-        val selectedPositions = selectedIds.keys.mapNotNull { id ->
-            currentList.indexOfFirst { it.data.id == id }.takeIf { it != -1 }
-        }
-        selectedIds.clear()
-        selectedPositions.forEach {
-            notifyItemChanged(it)
+    fun notifySelectionStates() {
+        currentList.indices.forEach { index ->
+            if (currentList[index].isSelected) {
+                notifyItemChanged(index)
+            }
         }
     }
 
     private fun toggleIsChecked(checkbox: CheckBox, item: VisualDownloadCached) {
         val isChecked = !checkbox.isChecked
         checkbox.isChecked = isChecked
-        selectedIds[item.data.id] = isChecked
         onItemSelectionChanged.invoke(item, isChecked)
     }
 

@@ -185,12 +185,12 @@ class DownloadChildFragment : Fragment() {
 
             binding?.btnToggleAll?.setOnClickListener {
                 val allSelected = downloadsViewModel.isAllSelected()
-                val binding = binding?.downloadChildList?.adapter as? DownloadAdapter
+                val adapter = binding?.downloadChildList?.adapter as? DownloadAdapter
                 if (allSelected) {
-                    binding?.clearSelectedItems()
+                    adapter?.notifySelectionStates()
                     downloadsViewModel.clearSelectedItems()
                 } else {
-                    binding?.selectAllItems()
+                    adapter?.notifyAllSelected()
                     downloadsViewModel.selectAllItems()
                 }
             }
