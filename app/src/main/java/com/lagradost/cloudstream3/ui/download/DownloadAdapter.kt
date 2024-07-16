@@ -349,16 +349,17 @@ class DownloadAdapter(
         if (isMultiDeleteState == value) return
         isMultiDeleteState = value
         if (!value) {
-            currentList.forEachIndexed { index, _ ->
+            currentList.indices.forEach { index ->
                 notifyItemChanged(index)
             }
         } else notifyItemRangeChanged(0, itemCount)
     }
 
     fun notifyAllSelected() {
-        currentList.forEachIndexed { index, item ->
-            if (item.isSelected) return@forEachIndexed
-            notifyItemChanged(index)
+        currentList.indices.forEach { index ->
+            if (!currentList[index].isSelected) {
+                notifyItemChanged(index)
+            }
         }
     }
 
