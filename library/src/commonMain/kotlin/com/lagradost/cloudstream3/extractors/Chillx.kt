@@ -6,6 +6,7 @@ import com.lagradost.cloudstream3.extractors.helper.AesHelper.cryptoAESHandler
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.M3u8Helper
+import kotlin.run
 
 class Moviesapi : Chillx() {
     override val name = "Moviesapi"
@@ -28,17 +29,22 @@ open class Chillx : ExtractorApi() {
     override val requiresReferer = true
 
     companion object {
+        private val keySource = "https://rowdy-avocado.github.io/multi-keys/"
+
         private var key: String? = null
 
-        suspend fun fetchKey(): String {
-            return if (key != null) {
-                key!!
-            } else {
-                val fetch = app.get("https://raw.githubusercontent.com/rushi-chavan/multi-keys/keys/keys.json").parsedSafe<Keys>()?.key?.get(0) ?: throw ErrorLoadingException("Unable to get key")
-                key = fetch
-                key!!
-            }
+        private suspend fun fetchKey(): String {
+            return key
+                    ?: run {
+                        val res =
+                                app.get(keySource).parsedSafe<KeysData>()
+                                        ?: throw ErrorLoadingException("Unable to get keys")
+                        key = res.keys.get(0)
+                        res.keys.get(0)
+                    }
         }
+
+        private data class KeysData(@JsonProperty("chillx") val keys: List<String>)
     }
 
     @Suppress("NAME_SHADOWING")
@@ -97,11 +103,4 @@ open class Chillx : ExtractorApi() {
             it.groupValues[1].toInt(16).toChar().toString()
         }
     }
-
-
-
-    data class Keys(
-        @JsonProperty("chillx") val key: List<String>
-    )
-
 }

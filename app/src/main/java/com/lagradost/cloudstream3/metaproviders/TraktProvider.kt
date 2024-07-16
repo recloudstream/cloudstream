@@ -238,7 +238,7 @@ open class TraktProvider : MainAPI() {
                             description = episode.overview,
                         ).apply {
                             this.addDate(episode.firstAired, "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
-                            if (nextAir == null && this.date != null && this.date!! > unixTimeMS) {
+                            if (nextAir == null && this.date != null && this.date!! > unixTimeMS && this.season != 0) {
                                 nextAir = NextAiring(
                                     episode = this.episode!!,
                                     unixTime = this.date!!.div(1000L),
