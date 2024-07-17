@@ -38,8 +38,7 @@ class DownloadChildFragment : Fragment() {
     }
 
     override fun onDestroyView() {
-        downloadDeleteEventListener?.let { VideoDownloadManager.downloadDeleteEvent -= it }
-        downloadDeleteEventListener = null
+        unsetDownloadDeleteListener()
         detachBackPressedCallback()
         binding = null
         super.onDestroyView()
@@ -171,6 +170,10 @@ class DownloadChildFragment : Fragment() {
             }
 
             binding?.btnDelete?.setOnClickListener {
+                // We want to unset it here if we have it so
+                // that we don't have to run it for every download,
+                // we just do it once here.
+                unsetDownloadDeleteListener()
                 context?.let { ctx ->
                     downloadsViewModel.handleMultiDelete(ctx) {
                         arguments?.getString("folder")
@@ -213,5 +216,12 @@ class DownloadChildFragment : Fragment() {
             }
         }
         downloadDeleteEventListener?.let { VideoDownloadManager.downloadDeleteEvent += it }
+    }
+
+    private fun unsetDownloadDeleteListener() {
+        downloadDeleteEventListener?.let {
+            VideoDownloadManager.downloadDeleteEvent -= it
+        }
+        downloadDeleteEventListener = null
     }
 }

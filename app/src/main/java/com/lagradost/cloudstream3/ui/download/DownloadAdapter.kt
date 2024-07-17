@@ -371,10 +371,10 @@ class DownloadAdapter(
         }
     }
 
-    private fun toggleIsChecked(checkbox: CheckBox, id: Int) {
+    private fun toggleIsChecked(checkbox: CheckBox, itemId: Int) {
         val isChecked = !checkbox.isChecked
         checkbox.isChecked = isChecked
-        onItemSelectionChanged.invoke(id, isChecked)
+        onItemSelectionChanged.invoke(itemId, isChecked)
     }
 
     class DiffCallback : DiffUtil.ItemCallback<VisualDownloadCached>() {
