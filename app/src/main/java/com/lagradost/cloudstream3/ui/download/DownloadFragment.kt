@@ -50,7 +50,6 @@ import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.setAppBarNoScrollFlagsOnTV
-import com.lagradost.cloudstream3.utils.VideoDownloadManager
 import java.net.URI
 
 const val DOWNLOAD_NAVIGATE_TO = "downloadpage"
@@ -68,7 +67,6 @@ class DownloadFragment : Fragment() {
     }
 
     override fun onDestroyView() {
-        unsetDownloadDeleteListener()
         detachBackPressedCallback()
         binding = null
         super.onDestroyView()
@@ -86,8 +84,6 @@ class DownloadFragment : Fragment() {
         binding = localBinding
         return localBinding.root
     }
-
-    private var downloadDeleteEventListener: ((Int) -> Unit)? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -181,11 +177,14 @@ class DownloadFragment : Fragment() {
 
         val adapter = DownloadAdapter(
             { click -> handleItemClick(click) },
-            { downloadClickEvent ->
-                handleDownloadClick(downloadClickEvent)
-                if (downloadClickEvent.action == DOWNLOAD_ACTION_DELETE_FILE) {
-                    setUpDownloadDeleteListener()
-                }
+            { click ->
+                if (click.action == DOWNLOAD_ACTION_DELETE_FILE) {
+                    context?.let { ctx ->
+                        downloadsViewModel.handleSingleDelete(ctx, click.data.id) {
+                            downloadsViewModel.updateList(ctx)
+                        }
+                    }
+                } else handleDownloadClick(click)
             },
             { itemId, isChecked ->
                 if (isChecked) {
@@ -253,10 +252,6 @@ class DownloadFragment : Fragment() {
             }
 
             binding?.btnDelete?.setOnClickListener {
-                // We want to unset it here if we have it so
-                // that we don't have to run it for every download,
-                // we just do it once here.
-                unsetDownloadDeleteListener()
                 context?.let { ctx ->
                     downloadsViewModel.handleMultiDelete(ctx) {
                         downloadsViewModel.updateList(ctx)
@@ -288,23 +283,6 @@ class DownloadFragment : Fragment() {
         val formattedSize = formatShortFileSize(context, selectedBytes)
         binding?.btnDelete?.text =
             getString(R.string.delete_format).format(count, formattedSize)
-    }
-
-    private fun setUpDownloadDeleteListener() {
-        downloadDeleteEventListener = { id ->
-            val list = (binding?.downloadList?.adapter as? DownloadAdapter)?.currentList
-            if (list?.any { it.data.id == id } == true) {
-                context?.let { downloadsViewModel.updateList(it) }
-            }
-        }
-        downloadDeleteEventListener?.let { VideoDownloadManager.downloadDeleteEvent += it }
-    }
-
-    private fun unsetDownloadDeleteListener() {
-        downloadDeleteEventListener?.let {
-            VideoDownloadManager.downloadDeleteEvent -= it
-        }
-        downloadDeleteEventListener = null
     }
 
     private fun updateStorageInfo(

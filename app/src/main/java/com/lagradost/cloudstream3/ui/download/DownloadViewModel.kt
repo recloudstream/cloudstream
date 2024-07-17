@@ -277,6 +277,17 @@ class DownloadViewModel : ViewModel() {
         showDeleteConfirmationDialog(context, message, deleteData.ids, onDeleteConfirm)
     }
 
+    fun handleSingleDelete(
+        context: Context,
+        itemId: Int,
+        onDeleteConfirm: () -> Unit
+    ) = viewModelScope.launchSafe {
+        val itemData = getItemDataFromId(itemId)
+        val deleteData = processSelectedItems(context, itemData)
+        val message = buildDeleteMessage(context, deleteData)
+        showDeleteConfirmationDialog(context, message, deleteData.ids, onDeleteConfirm)
+    }
+
     private fun getSelectedItemsData(): List<VisualDownloadCached>? {
         val selectedIds = selectedItemIds.value ?: return null
         val headers = headerCards.value ?: emptyList()
@@ -284,6 +295,15 @@ class DownloadViewModel : ViewModel() {
 
         return (headers + children).filter { item ->
             selectedIds.contains(item.data.id)
+        }
+    }
+
+    private fun getItemDataFromId(itemId: Int): List<VisualDownloadCached> {
+        val headers = headerCards.value ?: emptyList()
+        val children = childCards.value ?: emptyList()
+
+        return (headers + children).filter { item ->
+            item.data.id == itemId
         }
     }
 

@@ -23,7 +23,6 @@ import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper.attachBackPres
 import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper.detachBackPressedCallback
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
 import com.lagradost.cloudstream3.utils.UIHelper.setAppBarNoScrollFlagsOnTV
-import com.lagradost.cloudstream3.utils.VideoDownloadManager
 
 class DownloadChildFragment : Fragment() {
     private lateinit var downloadsViewModel: DownloadViewModel
@@ -38,7 +37,6 @@ class DownloadChildFragment : Fragment() {
     }
 
     override fun onDestroyView() {
-        unsetDownloadDeleteListener()
         detachBackPressedCallback()
         binding = null
         super.onDestroyView()
@@ -56,8 +54,6 @@ class DownloadChildFragment : Fragment() {
         binding = localBinding
         return localBinding.root
     }
-
-    private var downloadDeleteEventListener: ((Int) -> Unit)? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -134,11 +130,14 @@ class DownloadChildFragment : Fragment() {
 
         val adapter = DownloadAdapter(
             {},
-            { downloadClickEvent ->
-                handleDownloadClick(downloadClickEvent)
-                if (downloadClickEvent.action == DOWNLOAD_ACTION_DELETE_FILE) {
-                    setUpDownloadDeleteListener(folder)
-                }
+            { click ->
+                if (click.action == DOWNLOAD_ACTION_DELETE_FILE) {
+                    context?.let { ctx ->
+                        downloadsViewModel.handleSingleDelete(ctx, click.data.id) {
+                            downloadsViewModel.updateChildList(ctx, folder)
+                        }
+                    }
+                } else handleDownloadClick(click)
             },
             { itemId, isChecked ->
                 if (isChecked) {
@@ -170,10 +169,6 @@ class DownloadChildFragment : Fragment() {
             }
 
             binding?.btnDelete?.setOnClickListener {
-                // We want to unset it here if we have it so
-                // that we don't have to run it for every download,
-                // we just do it once here.
-                unsetDownloadDeleteListener()
                 context?.let { ctx ->
                     downloadsViewModel.handleMultiDelete(ctx) {
                         arguments?.getString("folder")
@@ -206,22 +201,5 @@ class DownloadChildFragment : Fragment() {
         val formattedSize = formatShortFileSize(context, selectedBytes)
         binding?.btnDelete?.text =
             getString(R.string.delete_format).format(count, formattedSize)
-    }
-
-    private fun setUpDownloadDeleteListener(folder: String) {
-        downloadDeleteEventListener = { id: Int ->
-            val list = (binding?.downloadChildList?.adapter as? DownloadAdapter)?.currentList
-            if (list?.any { it.data.id == id } == true) {
-                context?.let { downloadsViewModel.updateChildList(it, folder) }
-            }
-        }
-        downloadDeleteEventListener?.let { VideoDownloadManager.downloadDeleteEvent += it }
-    }
-
-    private fun unsetDownloadDeleteListener() {
-        downloadDeleteEventListener?.let {
-            VideoDownloadManager.downloadDeleteEvent -= it
-        }
-        downloadDeleteEventListener = null
     }
 }
