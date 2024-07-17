@@ -151,7 +151,7 @@ class DownloadFragment : Fragment() {
             )
         }
         observe(downloadsViewModel.selectedBytes) {
-            updateDeleteButton(downloadsViewModel.selectedItems.value?.count() ?: 0, it)
+            updateDeleteButton(downloadsViewModel.selectedItemIds.value?.count() ?: 0, it)
         }
         observe(downloadsViewModel.isMultiDeleteState) { isMultiDeleteState ->
             val adapter = binding?.downloadList?.adapter as? DownloadAdapter
@@ -167,7 +167,7 @@ class DownloadFragment : Fragment() {
                 }
             }
         }
-        observe(downloadsViewModel.selectedItems) {
+        observe(downloadsViewModel.selectedItemIds) {
             handleSelectedChange(it)
             updateDeleteButton(it.count(), downloadsViewModel.selectedBytes.value ?: 0L)
 
@@ -188,10 +188,10 @@ class DownloadFragment : Fragment() {
                     setUpDownloadDeleteListener()
                 }
             },
-            { card, isChecked ->
+            { itemId, isChecked ->
                 if (isChecked) {
-                    downloadsViewModel.addSelected(card)
-                } else downloadsViewModel.removeSelected(card)
+                    downloadsViewModel.addSelected(itemId)
+                } else downloadsViewModel.removeSelected(itemId)
             }
         )
 
@@ -245,8 +245,8 @@ class DownloadFragment : Fragment() {
         }
     }
 
-    private fun handleSelectedChange(selectedItems: MutableList<VisualDownloadCached>) {
-        if (selectedItems.isNotEmpty()) {
+    private fun handleSelectedChange(selected: MutableSet<Int>) {
+        if (selected.isNotEmpty()) {
             binding?.downloadDeleteAppbar?.isVisible = true
             binding?.downloadStorageAppbar?.isVisible = false
             activity?.attachBackPressedCallback {

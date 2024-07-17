@@ -118,9 +118,9 @@ class DownloadChildFragment : Fragment() {
             }
         }
         observe(downloadsViewModel.selectedBytes) {
-            updateDeleteButton(downloadsViewModel.selectedItems.value?.count() ?: 0, it)
+            updateDeleteButton(downloadsViewModel.selectedItemIds.value?.count() ?: 0, it)
         }
-        observe(downloadsViewModel.selectedItems) {
+        observe(downloadsViewModel.selectedItemIds) {
             handleSelectedChange(it)
             updateDeleteButton(it.count(), downloadsViewModel.selectedBytes.value ?: 0L)
 
@@ -141,10 +141,10 @@ class DownloadChildFragment : Fragment() {
                     setUpDownloadDeleteListener(folder)
                 }
             },
-            { card, isChecked ->
+            { itemId, isChecked ->
                 if (isChecked) {
-                    downloadsViewModel.addSelected(card)
-                } else downloadsViewModel.removeSelected(card)
+                    downloadsViewModel.addSelected(itemId)
+                } else downloadsViewModel.removeSelected(itemId)
             }
         )
 
@@ -162,7 +162,7 @@ class DownloadChildFragment : Fragment() {
         downloadsViewModel.updateChildList(requireContext(), folder)
     }
 
-    private fun handleSelectedChange(selected: MutableList<VisualDownloadCached>) {
+    private fun handleSelectedChange(selected: MutableSet<Int>) {
         if (selected.isNotEmpty()) {
             binding?.downloadDeleteAppbar?.isVisible = true
             binding?.downloadChildToolbar?.isVisible = false

@@ -52,8 +52,8 @@ class DownloadViewModel : ViewModel() {
     private val _isMultiDeleteState = MutableLiveData(false)
     val isMultiDeleteState: LiveData<Boolean> = _isMultiDeleteState
 
-    private val _selectedItems = MutableLiveData<MutableList<VisualDownloadCached>>(mutableListOf())
-    val selectedItems: LiveData<MutableList<VisualDownloadCached>> = _selectedItems
+    private val _selectedItemIds = MutableLiveData<MutableSet<Int>>(mutableSetOf())
+    val selectedItemIds: LiveData<MutableSet<Int>> = _selectedItemIds
 
     private var previousVisual: List<VisualDownloadCached>? = null
 
@@ -61,35 +61,35 @@ class DownloadViewModel : ViewModel() {
         _isMultiDeleteState.postValue(value)
     }
 
-    fun addSelected(item: VisualDownloadCached) {
-        val currentSelected = selectedItems.value ?: mutableListOf()
-        if (!currentSelected.contains(item)) {
-            currentSelected.add(item)
-            _selectedItems.postValue(currentSelected)
+    fun addSelected(itemId: Int) {
+        val currentSelected = selectedItemIds.value ?: mutableSetOf()
+        if (!currentSelected.contains(itemId)) {
+            currentSelected.add(itemId)
+            _selectedItemIds.postValue(currentSelected)
             updateSelectedBytes()
             updateSelectedCards()
         }
     }
 
-    fun removeSelected(item: VisualDownloadCached) {
-        selectedItems.value?.let { selected ->
-            selected.remove(item)
-            _selectedItems.postValue(selected)
+    fun removeSelected(itemId: Int) {
+        selectedItemIds.value?.let { selected ->
+            selected.remove(itemId)
+            _selectedItemIds.postValue(selected)
             updateSelectedBytes()
             updateSelectedCards()
         }
     }
 
     fun selectAllItems() {
-        val currentSelected = selectedItems.value ?: mutableListOf()
+        val currentSelected = selectedItemIds.value ?: mutableSetOf()
         val items = (headerCards.value ?: emptyList()) + (childCards.value ?: emptyList())
         if (items.isEmpty()) return
         items.forEach { item ->
-            if (!currentSelected.contains(item)) {
-                currentSelected.add(item)
+            if (!currentSelected.contains(item.data.id)) {
+                currentSelected.add(item.data.id)
             }
         }
-        _selectedItems.postValue(currentSelected)
+        _selectedItemIds.postValue(currentSelected)
         updateSelectedBytes()
         updateSelectedCards()
     }
@@ -97,31 +97,31 @@ class DownloadViewModel : ViewModel() {
     fun clearSelectedItems() {
         // We need this to be done immediately
         // so we can't use postValue
-        _selectedItems.value = mutableListOf()
+        _selectedItemIds.value = mutableSetOf()
         updateSelectedCards()
     }
 
     fun isAllSelected(): Boolean {
-        val currentSelected = selectedItems.value ?: return false
+        val currentSelected = selectedItemIds.value ?: return false
 
         val headerItems = headerCards.value
         val childItems = childCards.value
 
         if (headerItems != null &&
             headerItems.count() == currentSelected.count() &&
-            headerItems.containsAll(currentSelected)
+            headerItems.map { it.data.id }.containsAll(currentSelected)
         ) return true
 
         if (childItems != null &&
             childItems.count() == currentSelected.count() &&
-            childItems.containsAll(currentSelected)
+            childItems.map { it.data.id }.containsAll(currentSelected)
         ) return true
 
         return false
     }
 
     private fun updateSelectedBytes() = viewModelScope.launchSafe {
-        val selectedItemsList = selectedItems.value ?: return@launchSafe
+        val selectedItemsList = getSelectedItemsData() ?: return@launchSafe
         var totalSelectedBytes = 0L
 
         selectedItemsList.forEach { item ->
@@ -132,20 +132,16 @@ class DownloadViewModel : ViewModel() {
     }
 
     private fun updateSelectedCards() = viewModelScope.launchSafe {
-        val currentSelected = selectedItems.value ?: return@launchSafe
+        val currentSelected = selectedItemIds.value ?: return@launchSafe
         val updatedHeaderCards = headerCards.value?.toMutableList()
         val updatedChildCards = childCards.value?.toMutableList()
 
         updatedHeaderCards?.forEach { header ->
-            header.isSelected = currentSelected.any {
-                it.data.id == header.data.id
-            }
+            header.isSelected = currentSelected.contains(header.data.id)
         }
 
         updatedChildCards?.forEach { child ->
-            child.isSelected = currentSelected.any {
-                it.data.id == child.data.id
-            }
+            child.isSelected = currentSelected.contains(child.data.id)
         }
 
         _headerCards.postValue(updatedHeaderCards)
@@ -199,9 +195,7 @@ class DownloadViewModel : ViewModel() {
                 val bytes = totalBytesUsedByChild[it.id] ?: 0
                 val currentBytes = currentBytesUsedByChild[it.id] ?: 0
                 if (bytes <= 0 || downloads <= 0) return@mapNotNull null
-                val isSelected = selectedItems.value?.any { header ->
-                    it.id == header.data.id
-                } ?: false
+                val isSelected = selectedItemIds.value?.contains(it.id) ?: false
                 val movieEpisode =
                     if (!it.type.isMovieType()) null
                     else context.getKey<VideoDownloadHelper.DownloadEpisodeCached>(
@@ -239,11 +233,9 @@ class DownloadViewModel : ViewModel() {
             data.mapNotNull { key ->
                 context.getKey<VideoDownloadHelper.DownloadEpisodeCached>(key)
             }.mapNotNull {
+                val isSelected = selectedItemIds.value?.contains(it.id) ?: false
                 val info = getDownloadFileInfoAndUpdateSettings(context, it.id)
                     ?: return@mapNotNull null
-                val isSelected = selectedItems.value?.any { child ->
-                    it.id == child.data.id
-                } ?: false
                 VisualDownloadCached.Child(
                     currentBytes = info.fileLength,
                     totalBytes = info.totalBytes,
@@ -279,8 +271,26 @@ class DownloadViewModel : ViewModel() {
         context: Context,
         onDeleteConfirm: () -> Unit
     ) = viewModelScope.launchSafe {
-        val selectedItemsList = selectedItems.value ?: emptyList()
+        val selectedItemsList = getSelectedItemsData() ?: emptyList()
+        val deleteData = processSelectedItems(context, selectedItemsList)
+        val message = buildDeleteMessage(context, deleteData)
+        showDeleteConfirmationDialog(context, message, deleteData.ids, onDeleteConfirm)
+    }
 
+    private fun getSelectedItemsData(): List<VisualDownloadCached>? {
+        val selectedIds = selectedItemIds.value ?: return null
+        val headers = headerCards.value ?: emptyList()
+        val children = childCards.value ?: emptyList()
+
+        return (headers + children).filter { item ->
+            selectedIds.contains(item.data.id)
+        }
+    }
+
+    private fun processSelectedItems(
+        context: Context,
+        selectedItemsList: List<VisualDownloadCached>
+    ): DeleteData {
         val ids = mutableListOf<Int>()
         val seriesNames = mutableListOf<String>()
         val names = mutableListOf<String>()
@@ -331,20 +341,17 @@ class DownloadViewModel : ViewModel() {
             }
         }
 
-        val data = DeleteConfirmationData(parentName, seriesNames.toList(), names.toList())
-        showDeleteConfirmationDialog(context, ids, data, onDeleteConfirm)
+        return DeleteData(ids, seriesNames, names, parentName)
     }
 
-    private fun showDeleteConfirmationDialog(
+    private fun buildDeleteMessage(
         context: Context,
-        ids: List<Int>,
-        data: DeleteConfirmationData,
-        onDeleteConfirm: () -> Unit
-    ) {
+        data: DeleteData
+    ): String {
         val formattedNames = data.names.joinToString(separator = "\n") { "• $it" }
         val formattedSeriesNames = data.seriesNames.joinToString(separator = "\n") { "• $it" }
 
-        val message = when {
+        return when {
             data.seriesNames.isNotEmpty() && data.names.isEmpty() -> {
                 context.getString(R.string.delete_message_series_only).format(formattedSeriesNames)
             }
@@ -363,7 +370,14 @@ class DownloadViewModel : ViewModel() {
 
             else -> context.getString(R.string.delete_message_multiple).format(formattedNames)
         }
+    }
 
+    private fun showDeleteConfirmationDialog(
+        context: Context,
+        message: String,
+        ids: List<Int>,
+        onDeleteConfirm: () -> Unit
+    ) {
         val builder = AlertDialog.Builder(context)
         val dialogClickListener =
             DialogInterface.OnClickListener { _, which ->
@@ -393,9 +407,10 @@ class DownloadViewModel : ViewModel() {
         }
     }
 
-    private data class DeleteConfirmationData(
-        val parentName: String?,
+    private data class DeleteData(
+        val ids: List<Int>,
         val seriesNames: List<String>,
-        val names: List<String>
+        val names: List<String>,
+        val parentName: String?
     )
 }

@@ -68,7 +68,7 @@ data class DownloadHeaderClickEvent(
 class DownloadAdapter(
     private val onHeaderClickEvent: (DownloadHeaderClickEvent) -> Unit,
     private val onItemClickEvent: (DownloadClickEvent) -> Unit,
-    private val onItemSelectionChanged: (VisualDownloadCached, Boolean) -> Unit,
+    private val onItemSelectionChanged: (Int, Boolean) -> Unit,
 ) : ListAdapter<VisualDownloadCached, DownloadAdapter.DownloadViewHolder>(DiffCallback()) {
 
     private var isMultiDeleteState: Boolean = false
@@ -97,12 +97,12 @@ class DownloadAdapter(
                 episodeHolder.apply {
                     if (isMultiDeleteState) {
                         setOnClickListener {
-                            toggleIsChecked(deleteCheckbox, card)
+                            toggleIsChecked(deleteCheckbox, data.id)
                         }
                     }
 
                     setOnLongClickListener {
-                        toggleIsChecked(deleteCheckbox, card)
+                        toggleIsChecked(deleteCheckbox, data.id)
                         true
                     }
                 }
@@ -111,7 +111,7 @@ class DownloadAdapter(
                     setImage(data.poster)
                     if (isMultiDeleteState) {
                         setOnClickListener {
-                            toggleIsChecked(deleteCheckbox, card)
+                            toggleIsChecked(deleteCheckbox, data.id)
                         }
                     } else {
                         setOnClickListener {
@@ -125,7 +125,7 @@ class DownloadAdapter(
                     }
 
                     setOnLongClickListener {
-                        toggleIsChecked(deleteCheckbox, card)
+                        toggleIsChecked(deleteCheckbox, data.id)
                         true
                     }
                 }
@@ -138,7 +138,7 @@ class DownloadAdapter(
 
                 if (isMultiDeleteState) {
                     deleteCheckbox.setOnCheckedChangeListener { _, isChecked ->
-                        onItemSelectionChanged.invoke(card, isChecked)
+                        onItemSelectionChanged.invoke(data.id, isChecked)
                     }
                 } else deleteCheckbox.setOnCheckedChangeListener(null)
 
@@ -287,7 +287,7 @@ class DownloadAdapter(
                     when {
                         isMultiDeleteState -> {
                             setOnClickListener {
-                                toggleIsChecked(deleteCheckbox, card)
+                                toggleIsChecked(deleteCheckbox, data.id)
                             }
                         }
 
@@ -304,14 +304,14 @@ class DownloadAdapter(
                     }
 
                     setOnLongClickListener {
-                        toggleIsChecked(deleteCheckbox, card)
+                        toggleIsChecked(deleteCheckbox, data.id)
                         true
                     }
                 }
 
                 if (isMultiDeleteState) {
                     deleteCheckbox.setOnCheckedChangeListener { _, isChecked ->
-                        onItemSelectionChanged.invoke(card, isChecked)
+                        onItemSelectionChanged.invoke(data.id, isChecked)
                     }
                 } else deleteCheckbox.setOnCheckedChangeListener(null)
 
@@ -371,10 +371,10 @@ class DownloadAdapter(
         }
     }
 
-    private fun toggleIsChecked(checkbox: CheckBox, item: VisualDownloadCached) {
+    private fun toggleIsChecked(checkbox: CheckBox, id: Int) {
         val isChecked = !checkbox.isChecked
         checkbox.isChecked = isChecked
-        onItemSelectionChanged.invoke(item, isChecked)
+        onItemSelectionChanged.invoke(id, isChecked)
     }
 
     class DiffCallback : DiffUtil.ItemCallback<VisualDownloadCached>() {
