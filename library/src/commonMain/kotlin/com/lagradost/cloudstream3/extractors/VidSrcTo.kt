@@ -40,7 +40,7 @@ class VidSrcTo : ExtractorApi() {
                 val finalUrl = DecryptUrl(embedRes.result.encUrl)
                 if(finalUrl.equals(embedRes.result.encUrl)) return@amap
                 when (source.title) {
-                    "Vidplay" -> AnyVidplay(finalUrl.substringBefore("/e/")).getUrl(finalUrl, referer, subtitleCallback, callback)
+                    "F2Cloud" -> AnyVidplay(finalUrl.substringBefore("/e/")).getUrl(finalUrl, referer, subtitleCallback, callback)
                     "Filemoon" -> FileMoon().getUrl(finalUrl, referer, subtitleCallback, callback)
                 }
             } catch (e: Exception) {
