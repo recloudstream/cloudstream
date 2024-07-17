@@ -352,6 +352,12 @@ class DownloadViewModel : ViewModel() {
         val formattedSeriesNames = data.seriesNames.joinToString(separator = "\n") { "• $it" }
 
         return when {
+            data.ids.count() == 1 -> {
+                context.getString(R.string.delete_message).format(
+                    data.names.firstOrNull()
+                )
+            }
+
             data.seriesNames.isNotEmpty() && data.names.isEmpty() -> {
                 context.getString(R.string.delete_message_series_only).format(formattedSeriesNames)
             }
@@ -397,7 +403,10 @@ class DownloadViewModel : ViewModel() {
             }
 
         try {
-            builder.setTitle(R.string.delete_files)
+            val title = if (ids.count() == 1) {
+                R.string.delete_file
+            } else R.string.delete_files
+            builder.setTitle(title)
                 .setMessage(message)
                 .setPositiveButton(R.string.delete, dialogClickListener)
                 .setNegativeButton(R.string.cancel, dialogClickListener)
