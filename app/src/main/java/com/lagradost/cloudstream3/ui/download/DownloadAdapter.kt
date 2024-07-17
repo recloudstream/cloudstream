@@ -171,7 +171,9 @@ class DownloadAdapter(
                         ?.let { ContextCompat.getDrawable(downloadButton.context, it) }
                 downloadHeaderInfo.text = formattedSize
             } else {
-                downloadButton.doSetProgress = true
+                // We need to make sure we restore the correct progress
+                // when we refresh data in the adapter.
+                downloadButton.resetView()
                 downloadButton.progressBar.progressDrawable =
                     ContextCompat.getDrawable(
                         downloadButton.context,
@@ -259,7 +261,9 @@ class DownloadAdapter(
                     downloadChildEpisodeTextExtra.text =
                         formatShortFileSize(downloadChildEpisodeTextExtra.context, card.totalBytes)
                 } else {
-                    downloadButton.doSetProgress = true
+                    // We need to make sure we restore the correct progress
+                    // when we refresh data in the adapter.
+                    downloadButton.resetView()
                     downloadButton.progressBar.progressDrawable =
                         ContextCompat.getDrawable(
                             downloadButton.context,
