@@ -180,9 +180,7 @@ class DownloadFragment : Fragment() {
             { click ->
                 if (click.action == DOWNLOAD_ACTION_DELETE_FILE) {
                     context?.let { ctx ->
-                        downloadsViewModel.handleSingleDelete(ctx, click.data.id) {
-                            downloadsViewModel.updateList(ctx)
-                        }
+                        downloadsViewModel.handleSingleDelete(ctx, click.data.id)
                     }
                 } else handleDownloadClick(click)
             },
@@ -253,9 +251,7 @@ class DownloadFragment : Fragment() {
 
             binding?.btnDelete?.setOnClickListener {
                 context?.let { ctx ->
-                    downloadsViewModel.handleMultiDelete(ctx) {
-                        downloadsViewModel.updateList(ctx)
-                    }
+                    downloadsViewModel.handleMultiDelete(ctx)
                 }
             }
 

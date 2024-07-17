@@ -133,9 +133,7 @@ class DownloadChildFragment : Fragment() {
             { click ->
                 if (click.action == DOWNLOAD_ACTION_DELETE_FILE) {
                     context?.let { ctx ->
-                        downloadsViewModel.handleSingleDelete(ctx, click.data.id) {
-                            downloadsViewModel.updateChildList(ctx, folder)
-                        }
+                        downloadsViewModel.handleSingleDelete(ctx, click.data.id)
                     }
                 } else handleDownloadClick(click)
             },
@@ -170,10 +168,7 @@ class DownloadChildFragment : Fragment() {
 
             binding?.btnDelete?.setOnClickListener {
                 context?.let { ctx ->
-                    downloadsViewModel.handleMultiDelete(ctx) {
-                        arguments?.getString("folder")
-                            ?.let { folder -> downloadsViewModel.updateChildList(ctx, folder) }
-                    }
+                    downloadsViewModel.handleMultiDelete(ctx)
                 }
             }
 

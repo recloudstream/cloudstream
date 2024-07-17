@@ -1710,7 +1710,12 @@ object VideoDownloadManager {
         }
     }
 
-    fun deleteFilesAndUpdateSettings(context: Context, ids: List<Int>, scope: CoroutineScope) {
+    fun deleteFilesAndUpdateSettings(
+        context: Context,
+        ids: List<Int>,
+        scope: CoroutineScope,
+        onComplete: (List<Int>) -> Unit = {}
+    ) {
         scope.launchSafe(Dispatchers.IO) {
             val deleteJobs = ids.map { id ->
                 async {
@@ -1719,7 +1724,9 @@ object VideoDownloadManager {
             }
             val results = deleteJobs.awaitAll()
 
+            val successfulDeletes = results.filter { it.second }.map { it.first }
             val failedDeletes = results.filterNot { it.second }
+
             if (failedDeletes.isNotEmpty()) {
                 failedDeletes.forEach { (id, _) ->
                     // TODO show a toast if some failed?
@@ -1728,6 +1735,8 @@ object VideoDownloadManager {
             } else {
                 Log.i("FileDeletion", "All files deleted successfully")
             }
+
+            onComplete.invoke(successfulDeletes)
         }
     }
 
