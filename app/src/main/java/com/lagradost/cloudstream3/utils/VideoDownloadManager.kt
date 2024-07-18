@@ -546,7 +546,8 @@ object VideoDownloadManager {
         tryResume: Boolean,
     ): StreamData {
         return setupStream(
-            context.getBasePath().first ?: getDefaultDir(context) ?: throw IOException("Bad config"),
+            context.getBasePath().first ?: getDefaultDir(context)
+            ?: throw IOException("Bad config"),
             name,
             folder,
             extension,
@@ -945,7 +946,7 @@ object VideoDownloadManager {
         bufferSize: Int = DEFAULT_BUFFER_SIZE,
         /** how many bytes bytes it should require to use the parallel downloader instead,
          * if we download a very small file we don't want it parallel */
-        maximumSmallSize : Long = chuckSize * 2
+        maximumSmallSize: Long = chuckSize * 2
     ): LazyStreamDownloadData {
         // we don't want to make a separate connection for every 1kb
         require(chuckSize > 1000)
@@ -1028,7 +1029,10 @@ object VideoDownloadManager {
         tryResume: Boolean,
         parentId: Int?,
         createNotificationCallback: (CreateNotificationMetadata) -> Unit,
-        parallelConnections: Int = 3
+        parallelConnections: Int = 3,
+        /** how many bytes a valid file must be in bytes,
+         * this should be different for subtitles and video */
+        minimumSize: Long = 100
     ): DownloadStatus = withContext(Dispatchers.IO) {
         if (parallelConnections < 1) {
             return@withContext DOWNLOAD_INVALID_INPUT
@@ -1073,6 +1077,13 @@ object VideoDownloadManager {
                     )
                 )
             )
+
+            if (items.totalLength != null && items.totalLength < minimumSize) {
+                fileStream.closeQuietly()
+                metadata.onDelete()
+                stream.delete()
+                return@withContext DOWNLOAD_INVALID_INPUT
+            }
 
             metadata.totalBytes = items.totalLength
             metadata.type = DownloadType.IsDownloading
@@ -1223,6 +1234,16 @@ object VideoDownloadManager {
                 return@withContext DOWNLOAD_STOPPED
             }
 
+            // in case the head request lies about content-size,
+            // then we don't want shit output
+            if (metadata.bytesDownloaded < minimumSize) {
+                // we need to close before delete
+                fileStream.closeQuietly()
+                metadata.onDelete()
+                stream.delete()
+                return@withContext DOWNLOAD_INVALID_INPUT
+            }
+
             metadata.type = DownloadType.IsDone
             return@withContext DOWNLOAD_SUCCESS
         } catch (e: IOException) {
@@ -1274,6 +1295,7 @@ object VideoDownloadManager {
             val displayName = getDisplayName(name, extension)
             val stream =
                 setupStream(baseFile, name, folder, extension, startAt > 0)
+
             if (!stream.resume) startAt = 0
             fileStream = stream.open()
 
@@ -1300,6 +1322,7 @@ object VideoDownloadManager {
                     ) + if (link.referer.isNotBlank()) mapOf("referer" to link.referer) else emptyMap()
                 )
             )
+
             val items = M3u8Helper2.hslLazy(listOf(m3u8))
 
             metadata.hlsTotal = items.size
@@ -1397,7 +1420,7 @@ object VideoDownloadManager {
                             try {
                                 // may cause java.lang.IllegalStateException: Mutex is not locked because of cancelling
                                 fileMutex.unlock()
-                            } catch (t : Throwable) {
+                            } catch (t: Throwable) {
                                 logError(t)
                             }
                         }
@@ -1524,7 +1547,7 @@ object VideoDownloadManager {
         tryResume: Boolean = false,
     ): DownloadStatus {
         // no support for these file formats
-        if(link.type == ExtractorLinkType.MAGNET || link.type == ExtractorLinkType.TORRENT || link.type == ExtractorLinkType.DASH) {
+        if (link.type == ExtractorLinkType.MAGNET || link.type == ExtractorLinkType.TORRENT || link.type == ExtractorLinkType.DASH) {
             return DOWNLOAD_INVALID_INPUT
         }
 
@@ -1556,7 +1579,7 @@ object VideoDownloadManager {
         }
 
         try {
-            when(link.type) {
+            when (link.type) {
                 ExtractorLinkType.M3U8 -> {
                     val startIndex = if (tryResume) {
                         context.getKey<DownloadedFileInfo>(
@@ -1576,6 +1599,7 @@ object VideoDownloadManager {
                         callback, parallelConnections = maxConcurrentConnections
                     )
                 }
+
                 ExtractorLinkType.VIDEO -> {
                     return downloadThing(
                         context,
@@ -1585,9 +1609,13 @@ object VideoDownloadManager {
                         "mp4",
                         tryResume,
                         ep.id,
-                        callback, parallelConnections = maxConcurrentConnections
+                        callback,
+                        parallelConnections = maxConcurrentConnections,
+                        /** We require at least 10 MB video files */
+                        minimumSize = (1 shl 20) * 10
                     )
                 }
+
                 else -> throw IllegalArgumentException("unsuported download type")
             }
         } catch (t: Throwable) {
