@@ -29,12 +29,10 @@ import kotlinx.coroutines.withContext
 
 class DownloadViewModel : ViewModel() {
 
-    private val _headerCards =
-        MutableLiveData<List<VisualDownloadCached.Header>>().apply { listOf<VisualDownloadCached.Header>() }
+    private val _headerCards = MutableLiveData<List<VisualDownloadCached.Header>>()
     val headerCards: LiveData<List<VisualDownloadCached.Header>> = _headerCards
 
-    private val _childCards =
-        MutableLiveData<List<VisualDownloadCached.Child>>().apply { listOf<VisualDownloadCached.Child>() }
+    private val _childCards = MutableLiveData<List<VisualDownloadCached.Child>>()
     val childCards: LiveData<List<VisualDownloadCached.Child>> = _childCards
 
     private val _usedBytes = MutableLiveData<Long>()
@@ -62,161 +60,81 @@ class DownloadViewModel : ViewModel() {
     }
 
     fun addSelected(itemId: Int) {
-        val currentSelected = selectedItemIds.value ?: mutableSetOf()
-        if (!currentSelected.contains(itemId)) {
-            currentSelected.add(itemId)
-            _selectedItemIds.postValue(currentSelected)
-            updateSelectedBytes()
-            updateSelectedCards()
-        }
+        updateSelectedItems { it.add(itemId) }
     }
 
     fun removeSelected(itemId: Int) {
-        selectedItemIds.value?.let { selected ->
-            selected.remove(itemId)
-            _selectedItemIds.postValue(selected)
-            updateSelectedBytes()
-            updateSelectedCards()
-        }
+        updateSelectedItems { it.remove(itemId) }
     }
 
     fun selectAllItems() {
-        val currentSelected = selectedItemIds.value ?: mutableSetOf()
-        val items = (headerCards.value ?: emptyList()) + (childCards.value ?: emptyList())
-        if (items.isEmpty()) return
-        items.forEach { item ->
-            if (!currentSelected.contains(item.data.id)) {
-                currentSelected.add(item.data.id)
-            }
-        }
-        _selectedItemIds.postValue(currentSelected)
-        updateSelectedBytes()
-        updateSelectedCards()
+        val items = (headerCards.value.orEmpty() + childCards.value.orEmpty())
+        updateSelectedItems { it.addAll(items.map { item -> item.data.id }) }
     }
 
     fun clearSelectedItems() {
         // We need this to be done immediately
         // so we can't use postValue
         _selectedItemIds.value = mutableSetOf()
-        updateSelectedCards()
+        updateSelectedItems { it.clear() }
     }
 
     fun isAllSelected(): Boolean {
         val currentSelected = selectedItemIds.value ?: return false
+        val items = headerCards.value.orEmpty() + childCards.value.orEmpty()
+        return items.count() == currentSelected.count() && items.all { it.data.id in currentSelected }
+    }
 
-        val headerItems = headerCards.value
-        val childItems = childCards.value
-
-        if (headerItems != null &&
-            headerItems.count() == currentSelected.count() &&
-            headerItems.map { it.data.id }.containsAll(currentSelected)
-        ) return true
-
-        if (childItems != null &&
-            childItems.count() == currentSelected.count() &&
-            childItems.map { it.data.id }.containsAll(currentSelected)
-        ) return true
-
-        return false
+    private fun updateSelectedItems(action: (MutableSet<Int>) -> Unit) {
+        val currentSelected = selectedItemIds.value ?: mutableSetOf()
+        action(currentSelected)
+        _selectedItemIds.postValue(currentSelected)
+        updateSelectedBytes()
+        updateSelectedCards()
     }
 
     private fun updateSelectedBytes() = viewModelScope.launchSafe {
         val selectedItemsList = getSelectedItemsData() ?: return@launchSafe
-        var totalSelectedBytes = 0L
-
-        selectedItemsList.forEach { item ->
-            totalSelectedBytes += item.totalBytes
-        }
-
+        val totalSelectedBytes = selectedItemsList.sumOf { it.totalBytes }
         _selectedBytes.postValue(totalSelectedBytes)
     }
 
     private fun updateSelectedCards() = viewModelScope.launchSafe {
         val currentSelected = selectedItemIds.value ?: return@launchSafe
-        val updatedHeaderCards = headerCards.value?.toMutableList()
-        val updatedChildCards = childCards.value?.toMutableList()
 
-        updatedHeaderCards?.forEach { header ->
-            header.isSelected = currentSelected.contains(header.data.id)
+        headerCards.value?.let { headers ->
+            headers.forEach { header ->
+                header.isSelected = header.data.id in currentSelected
+            }
+            _headerCards.postValue(headers)
+            return@launchSafe
         }
 
-        updatedChildCards?.forEach { child ->
-            child.isSelected = currentSelected.contains(child.data.id)
+        childCards.value?.let { children ->
+            children.forEach { child ->
+                child.isSelected = child.data.id in currentSelected
+            }
+            _childCards.postValue(children)
         }
-
-        _headerCards.postValue(updatedHeaderCards)
-        _childCards.postValue(updatedChildCards)
     }
 
     fun updateList(context: Context) = viewModelScope.launchSafe {
-        val children = withContext(Dispatchers.IO) {
-            context.getKeys(DOWNLOAD_EPISODE_CACHE)
+        val visual = withContext(Dispatchers.IO) {
+            val children = context.getKeys(DOWNLOAD_EPISODE_CACHE)
                 .mapNotNull { context.getKey<VideoDownloadHelper.DownloadEpisodeCached>(it) }
                 .distinctBy { it.id } // Remove duplicates
+
+            val (totalBytesUsedByChild, currentBytesUsedByChild, totalDownloads) =
+                calculateDownloadStats(context, children)
+
+            val cached = context.getKeys(DOWNLOAD_HEADER_CACHE)
+                .mapNotNull { context.getKey<VideoDownloadHelper.DownloadHeaderCached>(it) }
+
+            createVisualDownloadList(
+                context, cached, totalBytesUsedByChild, currentBytesUsedByChild, totalDownloads
+            )
         }
 
-        // parentId : bytes
-        val totalBytesUsedByChild = HashMap<Int, Long>()
-        // parentId : bytes
-        val currentBytesUsedByChild = HashMap<Int, Long>()
-        // parentId : downloadsCount
-        val totalDownloads = HashMap<Int, Int>()
-
-        // Gets all children downloads
-        withContext(Dispatchers.IO) {
-            children.forEach { c ->
-                val childFile =
-                    getDownloadFileInfoAndUpdateSettings(context, c.id) ?: return@forEach
-
-                if (childFile.fileLength <= 1) return@forEach
-                val len = childFile.totalBytes
-                val flen = childFile.fileLength
-
-                totalBytesUsedByChild[c.parentId] =
-                    totalBytesUsedByChild[c.parentId]?.plus(len) ?: len
-                currentBytesUsedByChild[c.parentId] =
-                    currentBytesUsedByChild[c.parentId]?.plus(flen) ?: flen
-                totalDownloads[c.parentId] = totalDownloads[c.parentId]?.plus(1) ?: 1
-            }
-        }
-
-        val cached = withContext(Dispatchers.IO) { // Won't fetch useless keys
-            totalDownloads.entries.filter { it.value > 0 }.mapNotNull {
-                context.getKey<VideoDownloadHelper.DownloadHeaderCached>(
-                    DOWNLOAD_HEADER_CACHE,
-                    it.key.toString()
-                )
-            }
-        }
-
-        val visual = withContext(Dispatchers.IO) {
-            cached.mapNotNull {
-                val downloads = totalDownloads[it.id] ?: 0
-                val bytes = totalBytesUsedByChild[it.id] ?: 0
-                val currentBytes = currentBytesUsedByChild[it.id] ?: 0
-                if (bytes <= 0 || downloads <= 0) return@mapNotNull null
-                val isSelected = selectedItemIds.value?.contains(it.id) ?: false
-                val movieEpisode =
-                    if (!it.type.isMovieType()) null
-                    else context.getKey<VideoDownloadHelper.DownloadEpisodeCached>(
-                        DOWNLOAD_EPISODE_CACHE,
-                        getFolderName(it.id.toString(), it.id.toString())
-                    )
-                VisualDownloadCached.Header(
-                    currentBytes = currentBytes,
-                    totalBytes = bytes,
-                    data = it,
-                    child = movieEpisode,
-                    currentOngoingDownloads = 0,
-                    totalDownloads = downloads,
-                    isSelected = isSelected,
-                )
-            }.sortedBy {
-                (it.child?.episode ?: 0) + (it.child?.season?.times(10000) ?: 0)
-            } // Episode sorting by episode, lowest to highest
-        }
-
-        // Only update list if different from the previous one to prevent duplicate initialization
         if (visual != previousVisual) {
             previousVisual = visual
             updateStorageStats(visual)
@@ -224,18 +142,80 @@ class DownloadViewModel : ViewModel() {
         }
     }
 
-    fun updateChildList(
+    private fun calculateDownloadStats(
         context: Context,
-        folder: String
-    ) = viewModelScope.launchSafe {
-        val data = withContext(Dispatchers.IO) { context.getKeys(folder) }
+        children: List<VideoDownloadHelper.DownloadEpisodeCached>
+    ): Triple<Map<Int, Long>, Map<Int, Long>, Map<Int, Int>> {
+        // parentId : bytes
+        val totalBytesUsedByChild = mutableMapOf<Int, Long>()
+        // parentId : bytes
+        val currentBytesUsedByChild = mutableMapOf<Int, Long>()
+        // parentId : downloadsCount
+        val totalDownloads = mutableMapOf<Int, Int>()
+
+        children.forEach { c ->
+            val childFile = getDownloadFileInfoAndUpdateSettings(context, c.id) ?: return@forEach
+            if (childFile.fileLength <= 1) return@forEach
+
+            val len = childFile.totalBytes
+            val flen = childFile.fileLength
+
+            totalBytesUsedByChild.merge(c.parentId, len, Long::plus)
+            currentBytesUsedByChild.merge(c.parentId, flen, Long::plus)
+            totalDownloads.merge(c.parentId, 1, Int::plus)
+        }
+        return Triple(totalBytesUsedByChild, currentBytesUsedByChild, totalDownloads)
+    }
+
+    private fun createVisualDownloadList(
+        context: Context,
+        cached: List<VideoDownloadHelper.DownloadHeaderCached>,
+        totalBytesUsedByChild: Map<Int, Long>,
+        currentBytesUsedByChild: Map<Int, Long>,
+        totalDownloads: Map<Int, Int>
+    ): List<VisualDownloadCached.Header> {
+        return cached.mapNotNull {
+            val downloads = totalDownloads[it.id] ?: 0
+            val bytes = totalBytesUsedByChild[it.id] ?: 0
+            val currentBytes = currentBytesUsedByChild[it.id] ?: 0
+            if (bytes <= 0 || downloads <= 0) return@mapNotNull null
+
+            val isSelected = selectedItemIds.value?.contains(it.id) ?: false
+            val movieEpisode = if (!it.type.isMovieType()) null else context.getKey<VideoDownloadHelper.DownloadEpisodeCached>(
+                DOWNLOAD_EPISODE_CACHE,
+                getFolderName(it.id.toString(), it.id.toString())
+            )
+
+            VisualDownloadCached.Header(
+                currentBytes = currentBytes,
+                totalBytes = bytes,
+                data = it,
+                child = movieEpisode,
+                currentOngoingDownloads = 0,
+                totalDownloads = downloads,
+                isSelected = isSelected,
+            )
+            // Prevent order being almost completely random,
+            // making things difficult to find.
+        }.sortedWith(compareBy<VisualDownloadCached.Header> {
+            // Sort by isEpisodeBased() ascending. We put those that
+            // are episode based at the bottom for UI purposes and to
+            // make it easier to find by grouping them together.
+            it.data.type.isEpisodeBased()
+        }.thenBy {
+            // Then we sort alphabetically by name (case-insensitive).
+            // Again, we do this to make things easier to find.
+            it.data.name.lowercase()
+        })
+    }
+
+    fun updateChildList(context: Context, folder: String) = viewModelScope.launchSafe {
         val visual = withContext(Dispatchers.IO) {
-            data.mapNotNull { key ->
+            context.getKeys(folder).mapNotNull { key ->
                 context.getKey<VideoDownloadHelper.DownloadEpisodeCached>(key)
             }.mapNotNull {
                 val isSelected = selectedItemIds.value?.contains(it.id) ?: false
-                val info = getDownloadFileInfoAndUpdateSettings(context, it.id)
-                    ?: return@mapNotNull null
+                val info = getDownloadFileInfoAndUpdateSettings(context, it.id) ?: return@mapNotNull null
                 VisualDownloadCached.Child(
                     currentBytes = info.fileLength,
                     totalBytes = info.totalBytes,
@@ -252,12 +232,8 @@ class DownloadViewModel : ViewModel() {
     }
 
     private fun removeItems(idsToRemove: List<Int>) = viewModelScope.launchSafe {
-        val currentHeaders = headerCards.value ?: emptyList()
-        val currentChildren = childCards.value ?: emptyList()
-
-        val updatedHeaders = currentHeaders.filter { !idsToRemove.contains(it.data.id) }
-        val updatedChildren = currentChildren.filter { !idsToRemove.contains(it.data.id) }
-
+        val updatedHeaders = headerCards.value.orEmpty().filter { it.data.id !in idsToRemove }
+        val updatedChildren = childCards.value.orEmpty().filter { it.data.id !in idsToRemove }
         _headerCards.postValue(updatedHeaders)
         _childCards.postValue(updatedChildren)
     }
@@ -268,18 +244,18 @@ class DownloadViewModel : ViewModel() {
             val localBytesAvailable = stat.availableBytes
             val localTotalBytes = stat.blockSizeLong * stat.blockCountLong
             val localDownloadedBytes = visual.sumOf { it.totalBytes }
-
-            _usedBytes.postValue(localTotalBytes - localBytesAvailable - localDownloadedBytes)
+            val localUsedBytes = localTotalBytes - localBytesAvailable
+            _usedBytes.postValue(localUsedBytes)
             _availableBytes.postValue(localBytesAvailable)
             _downloadBytes.postValue(localDownloadedBytes)
-        } catch (t: Throwable) {
+        } catch (e: Exception) {
             _downloadBytes.postValue(0)
-            logError(t)
+            logError(e)
         }
     }
 
     fun handleMultiDelete(context: Context) = viewModelScope.launchSafe {
-        val selectedItemsList = getSelectedItemsData() ?: emptyList()
+        val selectedItemsList = getSelectedItemsData().orEmpty()
         val deleteData = processSelectedItems(context, selectedItemsList)
         val message = buildDeleteMessage(context, deleteData)
         showDeleteConfirmationDialog(context, message, deleteData.ids, deleteData.parentIds)
@@ -293,25 +269,6 @@ class DownloadViewModel : ViewModel() {
         val deleteData = processSelectedItems(context, itemData)
         val message = buildDeleteMessage(context, deleteData)
         showDeleteConfirmationDialog(context, message, deleteData.ids, deleteData.parentIds)
-    }
-
-    private fun getSelectedItemsData(): List<VisualDownloadCached>? {
-        val selectedIds = selectedItemIds.value ?: return null
-        val headers = headerCards.value ?: emptyList()
-        val children = childCards.value ?: emptyList()
-
-        return (headers + children).filter { item ->
-            selectedIds.contains(item.data.id)
-        }
-    }
-
-    private fun getItemDataFromId(itemId: Int): List<VisualDownloadCached> {
-        val headers = headerCards.value ?: emptyList()
-        val children = childCards.value ?: emptyList()
-
-        return (headers + children).filter { item ->
-            item.data.id == itemId
-        }
     }
 
     private fun processSelectedItems(
@@ -377,8 +334,10 @@ class DownloadViewModel : ViewModel() {
         context: Context,
         data: DeleteData
     ): String {
-        val formattedNames = data.names.joinToString(separator = "\n") { "• $it" }
-        val formattedSeriesNames = data.seriesNames.joinToString(separator = "\n") { "• $it" }
+        val formattedNames = data.names.sortedBy { it.lowercase() }
+            .joinToString(separator = "\n") { "• $it" }
+        val formattedSeriesNames = data.seriesNames.sortedBy { it.lowercase() }
+            .joinToString(separator = "\n") { "• $it" }
 
         return when {
             data.ids.count() == 1 -> {
@@ -447,6 +406,22 @@ class DownloadViewModel : ViewModel() {
         } catch (e: Exception) {
             logError(e)
         }
+    }
+
+    private fun getSelectedItemsData(): List<VisualDownloadCached>? {
+        val currentHeaders = headerCards.value.orEmpty()
+        val currentChildren = childCards.value.orEmpty()
+
+        return selectedItemIds.value?.mapNotNull { id ->
+            currentHeaders.find { it.data.id == id } ?: currentChildren.find { it.data.id == id }
+        }
+    }
+
+    private fun getItemDataFromId(itemId: Int): List<VisualDownloadCached> {
+        val headers = headerCards.value.orEmpty()
+        val children = childCards.value.orEmpty()
+
+        return (headers + children).filter { it.data.id == itemId }
     }
 
     private data class DeleteData(
