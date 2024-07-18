@@ -1,11 +1,9 @@
 package com.lagradost.cloudstream3.extractors
 
-import android.util.Base64
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.ErrorLoadingException
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.app
-import com.lagradost.cloudstream3.base64Encode
 import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
@@ -13,7 +11,7 @@ import com.lagradost.cloudstream3.utils.M3u8Helper
 import java.net.URLDecoder
 import javax.crypto.Cipher
 import javax.crypto.spec.SecretKeySpec
-import kotlin.run
+import kotlin.io.encoding.Base64
 
 // Code found in https://github.com/KillerDogeEmpire/vidplay-keys
 // special credits to @KillerDogeEmpire for providing key
@@ -36,6 +34,7 @@ class VidplayOnline : Vidplay() {
     override val mainUrl = "https://vidplay.online"
 }
 
+@OptIn(kotlin.io.encoding.ExperimentalEncodingApi::class)
 open class Vidplay : ExtractorApi() {
     override val name = "Vidplay"
     override val mainUrl = "https://vidplay.site"
@@ -79,8 +78,7 @@ open class Vidplay : ExtractorApi() {
         val decodedRes = decode(encodedRes, myKeys.get(2))
         val res = tryParseJson<Result>(decodedRes)
         res?.sources?.map {
-            M3u8Helper.generateM3u8(this.name, it.file ?: return@map, "$mainUrl/")
-                    .forEach(callback)
+            M3u8Helper.generateM3u8(this.name, it.file ?: return@map, "$mainUrl/").forEach(callback)
         }
 
         res?.tracks?.filter { it.kind == "captions" }?.map {
@@ -89,27 +87,21 @@ open class Vidplay : ExtractorApi() {
     }
 
     private fun encode(input: String, key: String): String {
-        val rc4Key = SecretKeySpec(key.toByteArray(), "RC4")
+        val rc4Key = SecretKeySpec(key.toByteArray(Charsets.UTF_8), "RC4")
         val cipher = Cipher.getInstance("RC4")
-        cipher.init(Cipher.DECRYPT_MODE, rc4Key, cipher.parameters)
-
-        var vrf = cipher.doFinal(input.toByteArray())
-        vrf = Base64.encode(vrf, Base64.URL_SAFE or Base64.NO_WRAP)
-        val stringVrf = java.net.URLEncoder.encode(vrf.toString(Charsets.UTF_8), "utf-8")
-
-        return stringVrf
+        cipher.init(Cipher.ENCRYPT_MODE, rc4Key)
+        val encryptedBytes = cipher.doFinal(input.toByteArray(Charsets.UTF_8))
+        return Base64.UrlSafe.encode(encryptedBytes)
     }
 
     fun decode(input: String, key: String): String {
-        var vrf = input.toByteArray()
-        vrf = Base64.decode(vrf, Base64.URL_SAFE)
-
-        val rc4Key = SecretKeySpec(key.toByteArray(), "RC4")
+        val decodedBytes = Base64.UrlSafe.decode(input)
+        val rc4Key = SecretKeySpec(key.toByteArray(Charsets.UTF_8), "RC4")
         val cipher = Cipher.getInstance("RC4")
-        cipher.init(Cipher.DECRYPT_MODE, rc4Key, cipher.parameters)
-        vrf = cipher.doFinal(vrf)
-
-        return URLDecoder.decode(vrf.toString(Charsets.UTF_8), "utf-8")
+        cipher.init(Cipher.DECRYPT_MODE, rc4Key)
+        val decryptedBytes = cipher.doFinal(decodedBytes)
+        val decodedString = String(decryptedBytes, Charsets.UTF_8)
+        return URLDecoder.decode(decodedString, "UTF-8")
     }
 
     data class Tracks(
