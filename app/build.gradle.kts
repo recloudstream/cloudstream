@@ -294,7 +294,7 @@ tasks.withType<DokkaTask>().configureEach {
                 localDirectory.set(file("src/main/java"))
 
                 // URL showing where the source code can be accessed through the web browser
-                remoteUrl.set(URL("https://github.com/recloudstream/cloudstream/tree/master/app/src/main/java"))
+                remoteUrl.set(URL("https://github.com/3a4oT/cloudstream/tree/master/app/src/main/java"))
 
                 // Suffix which is used to append the line number to the URL. Use #L for GitHub
                 remoteLineSuffix.set("#L")

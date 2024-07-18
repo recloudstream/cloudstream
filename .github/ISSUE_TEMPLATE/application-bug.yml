@@ -86,7 +86,7 @@ body:
           required: true
         - label: I have written a short but informative title.
           required: true
-        - label: I have updated the app to pre-release version **[Latest](https://github.com/recloudstream/cloudstream/releases)**.
+        - label: I have updated the app to pre-release version **[Latest](https://github.com/3a4oT/cloudstream/releases)**.
           required: true
         - label: I will fill out all of the requested information in this form.
           required: true
