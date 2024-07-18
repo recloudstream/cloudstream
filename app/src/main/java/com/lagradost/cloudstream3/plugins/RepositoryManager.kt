@@ -71,7 +71,13 @@ data class SitePlugin(
 object RepositoryManager {
     const val ONLINE_PLUGINS_FOLDER = "Extensions"
     val PREBUILT_REPOSITORIES: Array<RepositoryData> by lazy {
-        getKey("PREBUILT_REPOSITORIES") ?: emptyArray()
+        getKey("PREBUILT_REPOSITORIES") ?:
+        arrayOf(
+            RepositoryData(
+                name = "піратити це - погано, ризикуєш? :)",
+                url = "https://raw.githubusercontent.com/3a4oT/cloudstream-extensions-uk/master/repo.json"
+            )
+        )
     }
     private val GH_REGEX = Regex("^https://raw.githubusercontent.com/([A-Za-z0-9-]+)/([A-Za-z0-9_.-]+)/(.*)$")
 
