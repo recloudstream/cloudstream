@@ -40,7 +40,6 @@ import com.lagradost.cloudstream3.ui.result.FOCUS_SELF
 import com.lagradost.cloudstream3.ui.result.setLinearListLayout
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
-import com.lagradost.cloudstream3.utils.AppContextUtils.isNetworkAvailable
 import com.lagradost.cloudstream3.utils.AppContextUtils.loadResult
 import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper.attachBackPressedCallback
 import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper.detachBackPressedCallback
@@ -237,9 +236,7 @@ class DownloadFragment : Fragment() {
             }
 
             DOWNLOAD_ACTION_LOAD_RESULT -> {
-                if (context?.isNetworkAvailable() == true) {
-                    activity?.loadResult(click.data.url, click.data.apiName)
-                }
+                activity?.loadResult(click.data.url, click.data.apiName)
             }
         }
     }
