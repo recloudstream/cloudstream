@@ -176,47 +176,104 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent">
 
-                    <ImageView
-                        android:id="@+id/player_go_back"
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:src="@drawable/ic_baseline_arrow_back_24"
-                        app:tint="@android:color/white"
-                        android:background="@drawable/video_tap_button_always_white"
-                        android:clickable="true"
-                        android:contentDescription="@string/go_back_img_des"
-                        android:focusable="true"
-                        android:tag="@string/tv_no_focus_tag" />
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="10dp"
+                        android:id="@+id/player_go_back_root"
+                        android:orientation="vertical">
 
-                    <ImageView
-                        android:id="@+id/player_restart"
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
+                        <ImageView
+                            android:id="@+id/player_go_back"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_baseline_arrow_back_24"
+                            app:tint="@android:color/white"
+                            android:background="@drawable/video_tap_button_always_white"
+                            android:clickable="true"
+                            android:contentDescription="@string/go_back_img_des"
+                            android:focusable="true"
+                            android:nextFocusRight="@id/player_restart"
+                            android:nextFocusLeft="@id/player_go_back"
+                            android:nextFocusDown="@id/player_pause_play"
+                            android:nextFocusUp="@id/player_go_back"
+                            android:tag="@string/tv_no_focus_tag" />
+
+                        <TextView
+                            android:id="@+id/player_go_back_text"
+                            style="@style/ResultMarqueeButtonText"
+                            android:text="@string/go_back_img_des"
+                            android:visibility="gone"/>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:layout_marginStart="40dp"
-                        android:src="@drawable/ic_baseline_replay_24"
-                        app:tint="@android:color/white"
-                        android:background="@drawable/video_tap_button_always_white"
-                        android:clickable="true"
-                        android:contentDescription="@string/go_back_img_des"
-                        android:focusable="true"
-                        android:visibility="gone"
-                        tools:visibility="visible"
-                        android:tag="@string/tv_no_focus_tag" />
+                        android:layout_marginEnd="10dp"
+                        android:id="@+id/player_restart_root"
+                        android:orientation="vertical">
 
-                    <ImageView
-                        android:id="@+id/player_go_forward"
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
+                        <ImageView
+                            android:id="@+id/player_restart"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_baseline_replay_24"
+                            app:tint="@android:color/white"
+                            android:background="@drawable/video_tap_button_always_white"
+                            android:clickable="true"
+                            android:contentDescription="@string/restart"
+                            android:focusable="true"
+                            android:nextFocusRight="@id/player_go_forward"
+                            android:nextFocusLeft="@id/player_go_back"
+                            android:nextFocusDown="@id/player_pause_play"
+                            android:nextFocusUp="@id/player_restart"
+                            android:tag="@string/tv_no_focus_tag" />
+
+                        <TextView
+                            android:id="@+id/player_restart_text"
+                            style="@style/ResultMarqueeButtonText"
+                            android:text="@string/restart"
+                            android:visibility="gone"/>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:layout_marginStart="80dp"
-                        android:src="@drawable/ic_baseline_skip_next_rounded_24"
-                        app:tint="@android:color/white"
-                        android:background="@drawable/video_tap_button_always_white"
-                        android:clickable="true"
-                        android:contentDescription="@string/go_back_img_des"
-                        android:focusable="true"
-                        android:visibility="gone"
-                        tools:visibility="visible"
-                        android:tag="@string/tv_no_focus_tag" />
+                        android:layout_marginEnd="10dp"
+                        android:id="@+id/player_go_forward_root"
+                        android:orientation="vertical">
+
+                        <ImageView
+                            android:id="@+id/player_go_forward"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_baseline_skip_next_rounded_24"
+                            app:tint="@android:color/white"
+                            android:background="@drawable/video_tap_button_always_white"
+                            android:clickable="true"
+                            android:nextFocusRight="@id/player_go_forward"
+                            android:nextFocusLeft="@id/player_restart"
+                            android:nextFocusDown="@id/player_pause_play"
+                            android:nextFocusUp="@id/player_go_forward"
+                            android:contentDescription="@string/next_episode"
+                            android:focusable="true"
+                            android:tag="@string/tv_no_focus_tag" />
+
+                        <TextView
+                            android:id="@+id/player_go_forward_text"
+                            style="@style/ResultMarqueeButtonText"
+                            android:text="@string/next_episode"
+                            android:visibility="gone"/>
+
+                    </LinearLayout>
+
                 </FrameLayout>
 
 

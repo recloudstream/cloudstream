@@ -77,7 +77,8 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
     protected open var isFullScreenPlayer = true
     protected var playerBinding: PlayerCustomLayoutBinding? = null
 
-    private var durationMode : Boolean by UserPreferenceDelegate("duration_mode", false)
+    private var durationMode: Boolean by UserPreferenceDelegate("duration_mode", false)
+
     // state of player UI
     protected var isShowing = false
     protected var isLocked = false
@@ -283,7 +284,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
             player.getCurrentPreferredSubtitle() == null
     }
 
-    private fun restoreOrientationWithSensor(activity: Activity){
+    private fun restoreOrientationWithSensor(activity: Activity) {
         val currentOrientation = activity.resources.configuration.orientation
         var orientation = 0
         when (currentOrientation) {
@@ -299,7 +300,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         activity.requestedOrientation = orientation
     }
 
-    private fun toggleOrientationWithSensor(activity: Activity){
+    private fun toggleOrientationWithSensor(activity: Activity) {
         val currentOrientation = activity.resources.configuration.orientation
         var orientation = 0
         when (currentOrientation) {
@@ -344,12 +345,11 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
     private fun updateOrientation(ignoreDynamicOrientation: Boolean = false) {
         activity?.apply {
-            if(lockRotation) {
-                if(isLocked) {
+            if (lockRotation) {
+                if (isLocked) {
                     lockOrientation(this)
-                }
-                else {
-                    if(ignoreDynamicOrientation){
+                } else {
+                    if (ignoreDynamicOrientation) {
                         // restore when lock is disabled
                         restoreOrientationWithSensor(this)
                     } else {
@@ -948,7 +948,10 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                                         }
 
                                         else -> {
-                                            player.handleEvent(CSPlayerEvent.PlayPauseToggle, PlayerEventSource.UI)
+                                            player.handleEvent(
+                                                CSPlayerEvent.PlayPauseToggle,
+                                                PlayerEventSource.UI
+                                            )
                                         }
                                     }
                                 } else if (doubleTapEnabled && isFullScreenPlayer) {
@@ -1423,6 +1426,25 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         }
 
         playerBinding?.apply {
+
+            if (isLayout(TV or EMULATOR)) {
+                mapOf(
+                    playerGoBack to playerGoBackText,
+                    playerRestart to playerRestartText,
+                    playerGoForward to playerGoForwardText
+                ).forEach { (button, text) ->
+                    button.setOnFocusChangeListener { _, hasFocus ->
+                        if (!hasFocus) {
+                            text.isSelected = false
+                            text.isVisible = false
+                            return@setOnFocusChangeListener
+                        }
+                        text.isSelected = true
+                        text.isVisible = true
+                    }
+                }
+            }
+
             playerPausePlay.setOnClickListener {
                 autoHide()
                 player.handleEvent(CSPlayerEvent.PlayPauseToggle)
@@ -1569,7 +1591,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
     private fun setRemainingTimeCounter(showRemaining: Boolean) {
         durationMode = showRemaining
-        playerBinding?.exoDuration?.isInvisible= showRemaining
+        playerBinding?.exoDuration?.isInvisible = showRemaining
         playerBinding?.timeLeft?.isVisible = showRemaining
     }
 
