@@ -28,7 +28,7 @@ import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.FragmentDownloadsBinding
 import com.lagradost.cloudstream3.databinding.StreamInputBinding
-import com.lagradost.cloudstream3.isMovieType
+import com.lagradost.cloudstream3.isEpisodeBased
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.ui.download.DownloadButtonSetup.handleDownloadClick
@@ -225,7 +225,7 @@ class DownloadFragment : Fragment() {
     private fun handleItemClick(click: DownloadHeaderClickEvent) {
         when (click.action) {
             DOWNLOAD_ACTION_GO_TO_CHILD -> {
-                if (!click.data.type.isMovieType()) {
+                if (click.data.type.isEpisodeBased()) {
                     val folder =
                         getFolderName(DOWNLOAD_EPISODE_CACHE, click.data.id.toString())
                     activity?.navigate(
