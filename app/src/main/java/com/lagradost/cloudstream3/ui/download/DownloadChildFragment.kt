@@ -78,7 +78,6 @@ class DownloadChildFragment : Fragment() {
             activity?.onBackPressedDispatcher?.onBackPressed() // TODO FIX
             return
         }
-        fixPaddingStatusbar(binding?.downloadChildRoot)
 
         binding?.downloadChildToolbar?.apply {
             title = name
@@ -155,6 +154,7 @@ class DownloadChildFragment : Fragment() {
         }
 
         context?.let { downloadsViewModel.updateChildList(it, folder) }
+        fixPaddingStatusbar(binding?.downloadChildRoot)
     }
 
     private fun handleSelectedChange(selected: MutableSet<Int>) {

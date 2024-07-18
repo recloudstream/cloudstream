@@ -217,6 +217,7 @@ class DownloadFragment : Fragment() {
                 handleScroll(scrollY - oldScrollY)
             }
         }
+
         context?.let { downloadsViewModel.updateHeaderList(it) }
         fixPaddingStatusbar(binding?.downloadRoot)
     }
