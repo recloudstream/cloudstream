@@ -247,9 +247,9 @@ class DownloadViewModel : ViewModel() {
             _usedBytes.postValue(localUsedBytes)
             _availableBytes.postValue(localBytesAvailable)
             _downloadBytes.postValue(localDownloadedBytes)
-        } catch (e: Exception) {
+        } catch (t: Throwable) {
             _downloadBytes.postValue(0)
-            logError(e)
+            logError(t)
         }
     }
 
