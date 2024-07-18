@@ -42,8 +42,8 @@ android {
     }*/
 
     signingConfigs {
-        if (prereleaseStoreFile != null) {
-            create("prerelease") {
+        create("prerelease") {
+            if (prereleaseStoreFile != null) {
                 storeFile = file(prereleaseStoreFile)
                 storePassword = System.getenv("SIGNING_STORE_PASSWORD")
                 keyAlias = System.getenv("SIGNING_KEY_ALIAS")
@@ -60,8 +60,8 @@ android {
         minSdk = 21
         targetSdk = 33 /* Android 14 is Fu*ked
         ^ https://developer.android.com/about/versions/14/behavior-changes-14#safer-dynamic-code-loading*/
-        versionCode = 64
-        versionName = "4.4.0"
+        versionCode = 63
+        versionName = "4.3.333"
 
         resValue("string", "app_version", "${defaultConfig.versionName}${versionNameSuffix ?: ""}")
         resValue("string", "commit_hash", "git rev-parse --short HEAD".execute() ?: "")
@@ -124,11 +124,7 @@ android {
             resValue("bool", "is_prerelease", "true")
             buildConfigField("boolean", "BETA", "true")
             applicationIdSuffix = ".prerelease"
-            if (signingConfigs.names.contains("prerelease")) {
-                signingConfig = signingConfigs.getByName("prerelease")
-            } else {
-                logger.warn("No prerelease signing config!")
-            }
+            signingConfig = signingConfigs.getByName("prerelease")
             versionNameSuffix = "-PRE"
             versionCode = (System.currentTimeMillis() / 60000).toInt()
         }
@@ -144,7 +140,7 @@ android {
         abortOnError = false
         checkReleaseBuilds = false
     }
-
+    
     buildFeatures {
         buildConfig = true
     }
@@ -204,7 +200,7 @@ dependencies {
     // PlayBack
     implementation("com.jaredrummler:colorpicker:1.1.0") // Subtitle Color Picker
     implementation("com.github.recloudstream:media-ffmpeg:1.1.0") // Custom FF-MPEG Lib for Audio Codecs
-    implementation("com.github.teamnewpipe:NewPipeExtractor:176da72") /* For Trailers
+    implementation("com.github.teamnewpipe:NewPipeExtractor:592f159") /* For Trailers
     ^ Update to Latest Commits if Trailers Misbehave, github.com/TeamNewPipe/NewPipeExtractor/commits/dev */
     implementation("com.github.albfernandez:juniversalchardet:2.5.0") // Subtitle Decoding
 
@@ -217,7 +213,7 @@ dependencies {
     implementation("androidx.palette:palette-ktx:1.0.0") // Palette For Images -> Colors
     implementation("androidx.tvprovider:tvprovider:1.0.0")
     implementation("com.github.discord:OverlappingPanels:0.1.5") // Gestures
-    implementation("androidx.biometric:biometric:1.2.0-alpha05") // Fingerprint Authentication
+    implementation ("androidx.biometric:biometric:1.2.0-alpha05") // Fingerprint Authentication
     implementation("com.github.rubensousa:previewseekbar-media3:1.1.1.0") // SeekBar Preview
     implementation("io.github.g0dkar:qrcode-kotlin:4.2.0") // QR code for PIN Auth on TV
 
@@ -227,7 +223,7 @@ dependencies {
     implementation("com.github.LagradOst:SafeFile:0.0.6") // To Prevent the URI File Fu*kery
     implementation("org.conscrypt:conscrypt-android:2.5.2") // To Fix SSL Fu*kery on Android 9
     implementation("com.uwetrottmann.tmdb2:tmdb-java:2.11.0") // TMDB API v3 Wrapper Made with RetroFit
-    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs_nio:2.0.4") //nio flavor needed for NewPipeExtractor
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.1") /* JSON Parser
     ^ Don't Bump Jackson above 2.13.1 , Crashes on Android TV's and FireSticks that have Min API
     Level 25 or Less. */
