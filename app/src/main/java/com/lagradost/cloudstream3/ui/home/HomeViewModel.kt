@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.lagradost.cloudstream3.APIHolder.allProviders
 import com.lagradost.cloudstream3.APIHolder.apis
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
 import com.lagradost.cloudstream3.AcraApplication.Companion.context
@@ -492,7 +493,20 @@ class HomeViewModel : ViewModel() {
                 return@ioSafe
             }
 
-            val api = getApiFromNameNull(preferredApiName)
+            var api = getApiFromNameNull(preferredApiName)
+            // So if we have PREBUILD - try to hack default selection :)
+            if (preferredApiName == null && allProviders.isEmpty() == false && fromUI == false) {
+                val littleDefault = allProviders.firstOrNull { it.name == "UASerial" } // ["UASerial", "UASerial.club", "UASerialsPro", "UAserialsVip"]
+                if (littleDefault != null) {
+                    api = getApiFromNameNull(littleDefault.name)
+                    if (api != null) {
+                        DataStoreHelper.currentHomePage = api.name
+                        loadAndCancel(api)
+                        return@ioSafe
+                    }
+                }
+            }
+
             if (preferredApiName == noneApi.name) {
                 // just set to random
                 if (fromUI) DataStoreHelper.currentHomePage = noneApi.name
