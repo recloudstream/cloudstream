@@ -107,7 +107,6 @@ class DownloadViewModel : ViewModel() {
                 header.isSelected = header.data.id in currentSelected
             }
             _headerCards.postValue(headers)
-            return@launchSafe
         }
 
         childCards.value?.let { children ->
