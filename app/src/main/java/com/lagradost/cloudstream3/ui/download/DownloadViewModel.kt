@@ -230,7 +230,7 @@ class DownloadViewModel : ViewModel() {
         }
     }
 
-    private fun removeItems(idsToRemove: List<Int>) = viewModelScope.launchSafe {
+    private fun removeItems(idsToRemove: Set<Int>) = viewModelScope.launchSafe {
         val updatedHeaders = headerCards.value.orEmpty().filter { it.data.id !in idsToRemove }
         val updatedChildren = childCards.value.orEmpty().filter { it.data.id !in idsToRemove }
         _headerCards.postValue(updatedHeaders)
@@ -274,10 +274,12 @@ class DownloadViewModel : ViewModel() {
         context: Context,
         selectedItemsList: List<VisualDownloadCached>
     ): DeleteData {
-        val ids = mutableListOf<Int>()
-        val parentIds = mutableListOf<Int>()
-        val seriesNames = mutableListOf<String>()
         val names = mutableListOf<String>()
+        val seriesNames = mutableListOf<String>()
+
+        val ids = mutableSetOf<Int>()
+        val parentIds = mutableSetOf<Int>()
+
         var parentName: String? = null
 
         selectedItemsList.forEach { item ->
@@ -368,8 +370,8 @@ class DownloadViewModel : ViewModel() {
     private fun showDeleteConfirmationDialog(
         context: Context,
         message: String,
-        ids: List<Int>,
-        parentIds: List<Int>
+        ids: Set<Int>,
+        parentIds: Set<Int>
     ) {
         val builder = AlertDialog.Builder(context)
         val dialogClickListener =
@@ -424,8 +426,8 @@ class DownloadViewModel : ViewModel() {
     }
 
     private data class DeleteData(
-        val ids: List<Int>,
-        val parentIds: List<Int>,
+        val ids: Set<Int>,
+        val parentIds: Set<Int>,
         val seriesNames: List<String>,
         val names: List<String>,
         val parentName: String?

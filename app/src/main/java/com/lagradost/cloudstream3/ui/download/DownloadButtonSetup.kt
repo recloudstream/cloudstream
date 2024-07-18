@@ -32,7 +32,7 @@ object DownloadButtonSetup {
                                 DialogInterface.BUTTON_POSITIVE -> {
                                     VideoDownloadManager.deleteFilesAndUpdateSettings(
                                         ctx,
-                                        listOf(id),
+                                        setOf(id),
                                         MainScope()
                                     )
                                 }
