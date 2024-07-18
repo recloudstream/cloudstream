@@ -68,7 +68,7 @@ class DownloadViewModel : ViewModel() {
     }
 
     fun selectAllItems() {
-        val items = (headerCards.value.orEmpty() + childCards.value.orEmpty())
+        val items = headerCards.value.orEmpty() + childCards.value.orEmpty()
         updateSelectedItems { it.addAll(items.map { item -> item.data.id }) }
     }
 
