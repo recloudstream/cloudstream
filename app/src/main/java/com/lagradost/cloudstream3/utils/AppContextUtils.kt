@@ -684,7 +684,7 @@ object AppContextUtils {
             networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
         } else {
             @Suppress("DEPRECATION")
-            connectivityManager.activeNetworkInfo?.isConnectedOrConnecting == true
+            connectivityManager.activeNetworkInfo?.isConnected == true
         }
     }
 
