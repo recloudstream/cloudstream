@@ -38,6 +38,7 @@ object DownloadButtonSetup {
                                 }
 
                                 DialogInterface.BUTTON_NEGATIVE -> {
+                                    // Do nothing on cancel
                                 }
                             }
                         }
@@ -131,7 +132,7 @@ object DownloadButtonSetup {
 
                                         id = click.data.id,
                                         parentId = click.data.parentId,
-                                        name = act.getString(R.string.downloaded_file), //click.data.name ?: keyInfo.displayName
+                                        name = act.getString(R.string.downloaded_file), // click.data.name ?: keyInfo.displayName
                                         season = click.data.season,
                                         episode = click.data.episode,
                                         headerName = parent.name,
@@ -144,7 +145,7 @@ object DownloadButtonSetup {
                                 )
                             )
                         )
-                        //R.id.global_to_navigation_player, PlayerFragment.newInstance(
+                        // R.id.global_to_navigation_player, PlayerFragment.newInstance(
                         //    UriData(
                         //        info.path.toString(),
                         //        keyInfo.basePath,
@@ -157,7 +158,7 @@ object DownloadButtonSetup {
                         //        click.data.season
                         //    ),
                         //    getViewPos(click.data.id)?.position ?: 0
-                        //)
+                        // )
                     )
                 }
             }

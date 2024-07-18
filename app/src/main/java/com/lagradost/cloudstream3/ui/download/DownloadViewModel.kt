@@ -117,7 +117,7 @@ class DownloadViewModel : ViewModel() {
         }
     }
 
-    fun updateList(context: Context) = viewModelScope.launchSafe {
+    fun updateHeaderList(context: Context) = viewModelScope.launchSafe {
         val visual = withContext(Dispatchers.IO) {
             val children = context.getKeys(DOWNLOAD_EPISODE_CACHE)
                 .mapNotNull { context.getKey<VideoDownloadHelper.DownloadEpisodeCached>(it) }
@@ -152,16 +152,16 @@ class DownloadViewModel : ViewModel() {
         // parentId : downloadsCount
         val totalDownloads = mutableMapOf<Int, Int>()
 
-        children.forEach { c ->
-            val childFile = getDownloadFileInfoAndUpdateSettings(context, c.id) ?: return@forEach
+        children.forEach { child ->
+            val childFile = getDownloadFileInfoAndUpdateSettings(context, child.id) ?: return@forEach
             if (childFile.fileLength <= 1) return@forEach
 
             val len = childFile.totalBytes
             val flen = childFile.fileLength
 
-            totalBytesUsedByChild.merge(c.parentId, len, Long::plus)
-            currentBytesUsedByChild.merge(c.parentId, flen, Long::plus)
-            totalDownloads.merge(c.parentId, 1, Int::plus)
+            totalBytesUsedByChild.merge(child.parentId, len, Long::plus)
+            currentBytesUsedByChild.merge(child.parentId, flen, Long::plus)
+            totalDownloads.merge(child.parentId, 1, Int::plus)
         }
         return Triple(totalBytesUsedByChild, currentBytesUsedByChild, totalDownloads)
     }
@@ -408,11 +408,11 @@ class DownloadViewModel : ViewModel() {
     }
 
     private fun getSelectedItemsData(): List<VisualDownloadCached>? {
-        val currentHeaders = headerCards.value.orEmpty()
-        val currentChildren = childCards.value.orEmpty()
+        val headers = headerCards.value.orEmpty()
+        val children = childCards.value.orEmpty()
 
         return selectedItemIds.value?.mapNotNull { id ->
-            currentHeaders.find { it.data.id == id } ?: currentChildren.find { it.data.id == id }
+            headers.find { it.data.id == id } ?: children.find { it.data.id == id }
         }
     }
 

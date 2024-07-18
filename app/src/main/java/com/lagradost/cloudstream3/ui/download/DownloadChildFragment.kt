@@ -26,6 +26,7 @@ import com.lagradost.cloudstream3.utils.UIHelper.setAppBarNoScrollFlagsOnTV
 
 class DownloadChildFragment : Fragment() {
     private lateinit var downloadsViewModel: DownloadViewModel
+    private var binding: FragmentChildDownloadsBinding? = null
 
     companion object {
         fun newInstance(headerName: String, folder: String): Bundle {
@@ -41,8 +42,6 @@ class DownloadChildFragment : Fragment() {
         binding = null
         super.onDestroyView()
     }
-
-    private var binding: FragmentChildDownloadsBinding? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -155,7 +154,7 @@ class DownloadChildFragment : Fragment() {
             )
         }
 
-        downloadsViewModel.updateChildList(requireContext(), folder)
+        context?.let { downloadsViewModel.updateChildList(it, folder) }
     }
 
     private fun handleSelectedChange(selected: MutableSet<Int>) {

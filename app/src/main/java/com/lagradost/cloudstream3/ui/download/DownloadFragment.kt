@@ -56,6 +56,7 @@ const val DOWNLOAD_NAVIGATE_TO = "downloadpage"
 
 class DownloadFragment : Fragment() {
     private lateinit var downloadsViewModel: DownloadViewModel
+    private var binding: FragmentDownloadsBinding? = null
 
     private fun View.setLayoutWidth(weight: Long) {
         val param = LinearLayout.LayoutParams(
@@ -71,8 +72,6 @@ class DownloadFragment : Fragment() {
         binding = null
         super.onDestroyView()
     }
-
-    private var binding: FragmentDownloadsBinding? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -218,7 +217,7 @@ class DownloadFragment : Fragment() {
                 handleScroll(scrollY - oldScrollY)
             }
         }
-        downloadsViewModel.updateList(requireContext())
+        context?.let { downloadsViewModel.updateHeaderList(it) }
         fixPaddingStatusbar(binding?.downloadRoot)
     }
 
