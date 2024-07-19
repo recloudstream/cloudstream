@@ -1230,9 +1230,8 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                         this@MainActivity,
                         R.string.jsdelivr_enabled,
                         Snackbar.LENGTH_LONG,
-                        getString(R.string.revert)) {
-                        setKey(getString(R.string.jsdelivr_proxy_key), false)
-                    }
+                        R.string.revert
+                    ) { setKey(getString(R.string.jsdelivr_proxy_key), false) }
                 }
             }
         }

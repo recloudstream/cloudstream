@@ -8,6 +8,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.lagradost.api.Log
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError
+import com.lagradost.cloudstream3.ui.result.UiText
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
 
 object SnackbarHelper {
@@ -18,13 +19,27 @@ object SnackbarHelper {
     @MainThread
     fun showSnackbar(
         act: Activity?,
-        @StringRes message: Int,
+        message: UiText,
         duration: Int = Snackbar.LENGTH_SHORT,
-        actionText: String? = null,
+        actionText: UiText? = null,
         actionCallback: (() -> Unit)? = null
     ) {
         if (act == null) return
-        showSnackbar(act, act.getString(message), duration, actionText, actionCallback)
+        showSnackbar(act, message.asString(act), duration,
+            actionText?.asString(act), actionCallback)
+    }
+
+    @MainThread
+    fun showSnackbar(
+        act: Activity?,
+        @StringRes message: Int,
+        duration: Int = Snackbar.LENGTH_SHORT,
+        @StringRes actionText: Int? = null,
+        actionCallback: (() -> Unit)? = null
+    ) {
+        if (act == null) return
+        showSnackbar(act, act.getString(message), duration,
+            actionText?.let { act.getString(it) }, actionCallback)
     }
 
     @MainThread
