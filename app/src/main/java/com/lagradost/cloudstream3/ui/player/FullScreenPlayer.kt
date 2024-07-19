@@ -14,7 +14,13 @@ import android.os.Bundle
 import android.provider.Settings
 import android.text.Editable
 import android.text.format.DateUtils
-import android.view.*
+import android.view.KeyEvent
+import android.view.LayoutInflater
+import android.view.MotionEvent
+import android.view.Surface
+import android.view.View
+import android.view.ViewGroup
+import android.view.WindowManager
 import android.view.WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
 import android.view.animation.AlphaAnimation
 import android.view.animation.Animation
@@ -46,7 +52,6 @@ import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.utils.AppContextUtils.isUsingMobileData
-import com.lagradost.cloudstream3.utils.AppContextUtils.setDefaultFocus
 import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showDialog
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
@@ -59,8 +64,11 @@ import com.lagradost.cloudstream3.utils.UIHelper.showSystemUI
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import com.lagradost.cloudstream3.utils.UserPreferenceDelegate
 import com.lagradost.cloudstream3.utils.Vector2
-import kotlin.math.*
-import kotlin.system.exitProcess
+import kotlin.math.abs
+import kotlin.math.ceil
+import kotlin.math.max
+import kotlin.math.min
+import kotlin.math.round
 
 const val MINIMUM_SEEK_TIME = 7000L         // when swipe seeking
 const val MINIMUM_VERTICAL_SWIPE = 2.0f     // in percentage
@@ -494,17 +502,9 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                 player.seekTime(1L)
             }
             resetBtt.setOnClickListener {
-                val resetSubsBuilder: AlertDialog.Builder = AlertDialog.Builder(ctx)
-                resetSubsBuilder.setTitle(R.string.confirm_reset_subs_dialog)
-                resetSubsBuilder.apply {
-                    setNegativeButton(R.string.no) { _, _ -> }
-                    setPositiveButton(R.string.yes) { _, _ ->
-                        subtitleDelay = 0
-                        dialog.dismissSafe(activity)
-                        player.seekTime(1L)
-                    }
-                }
-                resetSubsBuilder.show().setDefaultFocus()
+                subtitleDelay = 0
+                dialog.dismissSafe(activity)
+                player.seekTime(1L)
             }
             cancelBtt.setOnClickListener {
                 subtitleDelay = beforeOffset
