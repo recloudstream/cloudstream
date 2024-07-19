@@ -214,7 +214,8 @@
                         android:layout_marginStart="40dp"
                         android:layout_marginEnd="10dp"
                         android:id="@+id/player_restart_root"
-                        android:orientation="vertical">
+                        android:orientation="vertical"
+                        android:visibility="gone">
 
                         <ImageView
                             android:id="@+id/player_restart"
@@ -236,8 +237,7 @@
                         <TextView
                             android:id="@+id/player_restart_text"
                             style="@style/ResultMarqueeButtonText"
-                            android:text="@string/restart"
-                            android:visibility="gone"/>
+                            android:text="@string/restart" />
 
                     </LinearLayout>
 
@@ -247,7 +247,8 @@
                         android:layout_marginStart="80dp"
                         android:layout_marginEnd="10dp"
                         android:id="@+id/player_go_forward_root"
-                        android:orientation="vertical">
+                        android:orientation="vertical"
+                        android:visibility="gone">
 
                         <ImageView
                             android:id="@+id/player_go_forward"
@@ -269,8 +270,7 @@
                         <TextView
                             android:id="@+id/player_go_forward_text"
                             style="@style/ResultMarqueeButtonText"
-                            android:text="@string/next_episode"
-                            android:visibility="gone"/>
+                            android:text="@string/next_episode" />
 
                     </LinearLayout>
 

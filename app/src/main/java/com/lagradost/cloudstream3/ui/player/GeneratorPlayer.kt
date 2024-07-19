@@ -1100,7 +1100,7 @@ class GeneratorPlayer : FullScreenPlayer() {
 
         when {
             isLayout(PHONE) ->
-                playerBinding?.playerGoForward?.isVisible =
+                playerBinding?.playerSkipEpisode?.isVisible =
                     !isOpVisible && viewModel.hasNextEpisode() == true
 
             else ->
