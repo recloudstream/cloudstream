@@ -58,7 +58,7 @@ open class PieFetchButton(context: Context, attributeSet: AttributeSet) :
     }
 
     private var progressBarBackground: View
-    private var statusView: ImageView
+    var statusView: ImageView
 
     open fun onInflate() {}
 

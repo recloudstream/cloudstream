@@ -174,6 +174,10 @@ class DownloadAdapter(
                 // We need to make sure we restore the correct progress
                 // when we refresh data in the adapter.
                 downloadButton.resetView()
+                val drawable = downloadButton.getDrawableFromStatus(status)?.let {
+                    ContextCompat.getDrawable(downloadButton.context, it)
+                }
+                downloadButton.statusView.setImageDrawable(drawable)
                 downloadButton.progressBar.progressDrawable =
                     ContextCompat.getDrawable(
                         downloadButton.context,
@@ -264,6 +268,10 @@ class DownloadAdapter(
                     // We need to make sure we restore the correct progress
                     // when we refresh data in the adapter.
                     downloadButton.resetView()
+                    val drawable = downloadButton.getDrawableFromStatus(status)?.let {
+                        ContextCompat.getDrawable(downloadButton.context, it)
+                    }
+                    downloadButton.statusView.setImageDrawable(drawable)
                     downloadButton.progressBar.progressDrawable =
                         ContextCompat.getDrawable(
                             downloadButton.context,
