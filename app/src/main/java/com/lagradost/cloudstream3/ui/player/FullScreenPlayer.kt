@@ -728,6 +728,15 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
     private var currentTapIndex = 0
     protected fun autoHide() {
         currentTapIndex++
+        delayHide()
+    }
+
+    override fun playerStatusChanged() {
+        super.playerStatusChanged()
+        delayHide()
+    }
+
+    private fun delayHide() {
         val index = currentTapIndex
         playerBinding?.playerHolder?.postDelayed({
             if (!isCurrentTouchValid && isShowing && index == currentTapIndex && player.getIsPlaying()) {

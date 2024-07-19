@@ -158,6 +158,7 @@ class GeneratorPlayer : FullScreenPlayer() {
     }
 
     override fun playerStatusChanged() {
+        super.playerStatusChanged()
         if (player.getIsPlaying()) {
             viewModel.forceClearCache = false
         }
