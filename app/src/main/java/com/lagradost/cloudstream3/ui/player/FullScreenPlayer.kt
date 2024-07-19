@@ -14,7 +14,13 @@ import android.os.Bundle
 import android.provider.Settings
 import android.text.Editable
 import android.text.format.DateUtils
-import android.view.*
+import android.view.KeyEvent
+import android.view.LayoutInflater
+import android.view.MotionEvent
+import android.view.Surface
+import android.view.View
+import android.view.ViewGroup
+import android.view.WindowManager
 import android.view.WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
 import android.view.animation.AlphaAnimation
 import android.view.animation.Animation
@@ -58,7 +64,11 @@ import com.lagradost.cloudstream3.utils.UIHelper.showSystemUI
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import com.lagradost.cloudstream3.utils.UserPreferenceDelegate
 import com.lagradost.cloudstream3.utils.Vector2
-import kotlin.math.*
+import kotlin.math.abs
+import kotlin.math.ceil
+import kotlin.math.max
+import kotlin.math.min
+import kotlin.math.round
 
 const val MINIMUM_SEEK_TIME = 7000L         // when swipe seeking
 const val MINIMUM_VERTICAL_SWIPE = 2.0f     // in percentage
@@ -77,7 +87,8 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
     protected open var isFullScreenPlayer = true
     protected var playerBinding: PlayerCustomLayoutBinding? = null
 
-    private var durationMode : Boolean by UserPreferenceDelegate("duration_mode", false)
+    private var durationMode: Boolean by UserPreferenceDelegate("duration_mode", false)
+
     // state of player UI
     protected var isShowing = false
     protected var isLocked = false
@@ -243,7 +254,6 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
         val playerSourceMove = if (isShowing) 0f else -50.toPx.toFloat()
 
-
         playerBinding?.apply {
             playerOpenSource.let {
                 ObjectAnimator.ofFloat(it, "translationY", playerSourceMove).apply {
@@ -284,7 +294,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
             player.getCurrentPreferredSubtitle() == null
     }
 
-    private fun restoreOrientationWithSensor(activity: Activity){
+    private fun restoreOrientationWithSensor(activity: Activity) {
         val currentOrientation = activity.resources.configuration.orientation
         var orientation = 0
         when (currentOrientation) {
@@ -300,7 +310,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         activity.requestedOrientation = orientation
     }
 
-    private fun toggleOrientationWithSensor(activity: Activity){
+    private fun toggleOrientationWithSensor(activity: Activity) {
         val currentOrientation = activity.resources.configuration.orientation
         var orientation = 0
         when (currentOrientation) {
@@ -345,12 +355,11 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
     private fun updateOrientation(ignoreDynamicOrientation: Boolean = false) {
         activity?.apply {
-            if(lockRotation) {
-                if(isLocked) {
+            if (lockRotation) {
+                if (isLocked) {
                     lockOrientation(this)
-                }
-                else {
-                    if(ignoreDynamicOrientation){
+                } else {
+                    if (ignoreDynamicOrientation) {
                         // restore when lock is disabled
                         restoreOrientationWithSensor(this)
                     } else {
@@ -958,7 +967,10 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                                         }
 
                                         else -> {
-                                            player.handleEvent(CSPlayerEvent.PlayPauseToggle, PlayerEventSource.UI)
+                                            player.handleEvent(
+                                                CSPlayerEvent.PlayPauseToggle,
+                                                PlayerEventSource.UI
+                                            )
                                         }
                                     }
                                 } else if (doubleTapEnabled && isFullScreenPlayer) {
@@ -1234,6 +1246,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         // if nothing has loaded these buttons should not be visible
         playerBinding?.apply {
             playerSkipEpisode.isVisible = false
+            playerGoForward.isVisible = false
             playerTracksBtt.isVisible = false
             playerSkipOp.isVisible = false
             shadowOverlay.isVisible = false
@@ -1305,6 +1318,10 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
                 PlayerEventType.SeekBack -> {
                     player.handleEvent(CSPlayerEvent.SeekBack)
+                }
+
+                PlayerEventType.Restart -> {
+                    player.handleEvent(CSPlayerEvent.Restart)
                 }
 
                 PlayerEventType.ToggleMute -> {
@@ -1428,6 +1445,25 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         }
 
         playerBinding?.apply {
+
+            if (isLayout(TV or EMULATOR)) {
+                mapOf(
+                    playerGoBack to playerGoBackText,
+                    playerRestart to playerRestartText,
+                    playerGoForward to playerGoForwardText
+                ).forEach { (button, text) ->
+                    button.setOnFocusChangeListener { _, hasFocus ->
+                        if (!hasFocus) {
+                            text.isSelected = false
+                            text.isVisible = false
+                            return@setOnFocusChangeListener
+                        }
+                        text.isSelected = true
+                        text.isVisible = true
+                    }
+                }
+            }
+
             playerPausePlay.setOnClickListener {
                 autoHide()
                 player.handleEvent(CSPlayerEvent.PlayPauseToggle)
@@ -1469,6 +1505,16 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
             playerSkipEpisode.setOnClickListener {
                 autoHide()
                 player.handleEvent(CSPlayerEvent.NextEpisode)
+            }
+
+            playerGoForward.setOnClickListener {
+                autoHide()
+                player.handleEvent(CSPlayerEvent.NextEpisode)
+            }
+
+            playerRestart.setOnClickListener {
+                autoHide()
+                player.handleEvent(CSPlayerEvent.Restart)
             }
 
             playerLock.setOnClickListener {
@@ -1564,7 +1610,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
     private fun setRemainingTimeCounter(showRemaining: Boolean) {
         durationMode = showRemaining
-        playerBinding?.exoDuration?.isInvisible= showRemaining
+        playerBinding?.exoDuration?.isInvisible = showRemaining
         playerBinding?.timeLeft?.isVisible = showRemaining
     }
 

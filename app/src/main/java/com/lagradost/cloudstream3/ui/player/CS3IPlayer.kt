@@ -912,7 +912,11 @@ class CS3IPlayer : IPlayer {
                     }
 
                     CSPlayerEvent.SeekForward -> seekTime(seekActionTime, source)
+
                     CSPlayerEvent.SeekBack -> seekTime(-seekActionTime, source)
+
+                    CSPlayerEvent.Restart -> seekTo(0, source)
+
                     CSPlayerEvent.NextEpisode -> event(
                         EpisodeSeekEvent(
                             offset = 1,

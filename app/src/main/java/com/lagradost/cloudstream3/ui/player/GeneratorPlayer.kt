@@ -44,6 +44,7 @@ import com.lagradost.cloudstream3.ui.player.source_priority.QualityDataHelper
 import com.lagradost.cloudstream3.ui.player.source_priority.QualityProfileDialog
 import com.lagradost.cloudstream3.ui.result.*
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
+import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.ui.subtitles.SUBTITLE_AUTO_SELECT_KEY
@@ -1097,8 +1098,15 @@ class GeneratorPlayer : FullScreenPlayer() {
         }
 
         playerBinding?.playerSkipOp?.isVisible = isOpVisible
-        playerBinding?.playerSkipEpisode?.isVisible =
-            !isOpVisible && viewModel.hasNextEpisode() == true
+
+        when {
+            isLayout(PHONE) ->
+                playerBinding?.playerSkipEpisode?.isVisible =
+                    !isOpVisible && viewModel.hasNextEpisode() == true
+
+            else ->
+                playerBinding?.playerGoForward?.isVisible = viewModel.hasNextEpisode() == true
+        }
 
         if (percentage >= PRELOAD_NEXT_EPISODE_PERCENTAGE) {
             viewModel.preLoadNextLinks()
@@ -1254,7 +1262,7 @@ class GeneratorPlayer : FullScreenPlayer() {
     fun setPlayerDimen(widthHeight: Pair<Int, Int>?) {
         val extra = if (widthHeight != null) {
             val (width, height) = widthHeight
-            "${width}x${height}"
+            "- ${width}x${height}"
         } else {
             ""
         }
@@ -1265,7 +1273,7 @@ class GeneratorPlayer : FullScreenPlayer() {
             0 -> ""
             1 -> extra
             2 -> source
-            3 -> "$source - $extra"
+            3 -> "$source $extra"
             else -> ""
         }
         playerBinding?.playerVideoTitleRez?.apply {
@@ -1290,7 +1298,8 @@ class GeneratorPlayer : FullScreenPlayer() {
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         // this is used instead of layout-television to follow the settings and some TV devices are not classified as TV for some reason
-        layout = if (isLayout(TV or EMULATOR)) R.layout.fragment_player_tv else R.layout.fragment_player
+        layout =
+            if (isLayout(TV or EMULATOR)) R.layout.fragment_player_tv else R.layout.fragment_player
 
         viewModel = ViewModelProvider(this)[PlayerGeneratorViewModel::class.java]
         sync = ViewModelProvider(this)[SyncViewModel::class.java]
