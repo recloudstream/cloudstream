@@ -180,7 +180,7 @@ object VideoDownloadManager {
 
     const val KEY_RESUME_PACKAGES = "download_resume"
     const val KEY_DOWNLOAD_INFO = "download_info"
-    private const val KEY_RESUME_QUEUE_PACKAGES = "download_q_resume"
+    const val KEY_RESUME_QUEUE_PACKAGES = "download_q_resume"
 
     val downloadStatus = HashMap<Int, DownloadType>()
     val downloadStatusEvent = Event<Pair<Int, DownloadType>>()

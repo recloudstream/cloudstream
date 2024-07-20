@@ -35,6 +35,9 @@ import com.lagradost.cloudstream3.utils.DataStore.getSharedPrefs
 import com.lagradost.cloudstream3.utils.DataStore.mapper
 import com.lagradost.cloudstream3.utils.UIHelper.checkWrite
 import com.lagradost.cloudstream3.utils.UIHelper.requestRW
+import com.lagradost.cloudstream3.utils.VideoDownloadManager.KEY_DOWNLOAD_INFO
+import com.lagradost.cloudstream3.utils.VideoDownloadManager.KEY_RESUME_PACKAGES
+import com.lagradost.cloudstream3.utils.VideoDownloadManager.KEY_RESUME_QUEUE_PACKAGES
 import com.lagradost.cloudstream3.utils.VideoDownloadManager.setupStream
 import okhttp3.internal.closeQuietly
 import java.io.OutputStream
@@ -68,6 +71,10 @@ object BackupUtils {
         SUBDL_SUBTITLES_USER_KEY,
 
         DOWNLOAD_EPISODE_CACHE,
+        DOWNLOAD_HEADER_CACHE,
+        KEY_DOWNLOAD_INFO,
+        KEY_RESUME_PACKAGES,
+        KEY_RESUME_QUEUE_PACKAGES,
 
         "biometric_key", // can lock down users if backup is shared on a incompatible device
         "nginx_user", // Nginx user key
