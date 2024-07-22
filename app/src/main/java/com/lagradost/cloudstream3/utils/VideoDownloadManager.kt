@@ -1794,12 +1794,14 @@ object VideoDownloadManager {
     private fun deleteFile(context: Context, id: Int): Boolean {
         val info =
             context.getKey<DownloadedFileInfo>(KEY_DOWNLOAD_INFO, id.toString()) ?: return false
+        val file = info.toFile(context)
+
         downloadEvent.invoke(id to DownloadActionType.Stop)
         downloadProgressEvent.invoke(Triple(id, 0, 0))
         downloadStatusEvent.invoke(id to DownloadType.IsStopped)
         downloadDeleteEvent.invoke(id)
 
-        val isFileDeleted = info.toFile(context)?.delete() ?: false
+        val isFileDeleted = file?.delete() == true || file?.exists() == false
         if (isFileDeleted) deleteMatchingSubtitles(context, info)
 
         return isFileDeleted
