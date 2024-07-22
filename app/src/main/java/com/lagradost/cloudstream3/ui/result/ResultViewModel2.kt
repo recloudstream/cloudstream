@@ -2371,7 +2371,8 @@ class ResultViewModel2 : ViewModel() {
                                     loadResponse.type,
                                     mainId,
                                     totalIndex,
-                                    airDate = i.date
+                                    airDate = i.date,
+                                    runTime = i.runTime,
                                 )
 
                             val season = eps.seasonIndex ?: 0
@@ -2426,7 +2427,8 @@ class ResultViewModel2 : ViewModel() {
                                 loadResponse.type,
                                 mainId,
                                 totalIndex,
-                                airDate = episode.date
+                                airDate = episode.date,
+                                runTime = episode.runTime,
                             )
 
                         val season = ep.seasonIndex ?: 0
