@@ -277,13 +277,15 @@
     </string-array>
 
     <string-array name="themes_names">
+        <item>Sistem</item>
         <item>Koyu</item>
         <item>Gri</item>
         <item>Amoled</item>
         <item>Flaş Bombası</item>
-        <item>Material You</item>
+        <item>Material You (Android 12+)</item>
     </string-array>
     <string-array name="themes_names_values">
+        <item>System</item>
         <item>AmoledLight</item>
         <item>Black</item>
         <item>Amoled</item>
