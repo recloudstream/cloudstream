@@ -28,6 +28,11 @@ object SubtitleUtils {
         }
     }
 
+    /**
+     * @param name the file name of the subtitle
+     * @param display the file name of the video
+     * @param cleanDisplay the cleanDisplayName of the video file name
+     */
     fun isMatchingSubtitle(
         name: String,
         display: String,
@@ -36,7 +41,7 @@ object SubtitleUtils {
         // Check if the file has a valid subtitle extension
         val hasValidExtension = allowedExtensions.any { name.contains(it, ignoreCase = true) }
 
-        // Ensure the file name is not exactly the same as the display name
+        // We can't have the exact same file as a subtitle
         val isNotDisplayName = !name.equals(display, ignoreCase = true)
 
         // Check if the file name starts with a cleaned version of the display name
