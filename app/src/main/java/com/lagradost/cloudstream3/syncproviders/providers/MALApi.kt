@@ -19,14 +19,18 @@ import com.lagradost.cloudstream3.syncproviders.SyncIdName
 import com.lagradost.cloudstream3.ui.SyncWatchType
 import com.lagradost.cloudstream3.ui.library.ListSorting
 import com.lagradost.cloudstream3.ui.result.txt
-import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 import com.lagradost.cloudstream3.utils.AppContextUtils.splitQuery
+import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 import com.lagradost.cloudstream3.utils.DataStore.toKotlinObject
 import java.net.URL
 import java.security.SecureRandom
 import java.text.ParseException
 import java.text.SimpleDateFormat
-import java.util.*
+import java.time.Instant
+import java.time.format.DateTimeFormatter
+import java.util.Calendar
+import java.util.Date
+import java.util.TimeZone
 
 /** max 100 via https://myanimelist.net/apiconfig/references/api/v2#tag/anime */
 const val MAL_MAX_SEARCH_LIMIT = 25
@@ -247,7 +251,7 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
             getDataAboutMalId(internalId)?.my_list_status //?: throw ErrorLoadingException("No my_list_status")
         return SyncAPI.SyncStatus(
             score = data?.score,
-            status = SyncWatchType.fromInternalId(malStatusAsString.indexOf(data?.status)) ,
+            status = SyncWatchType.fromInternalId(malStatusAsString.indexOf(data?.status)),
             isFavorite = null,
             watchedEpisodes = data?.num_episodes_watched,
         )
@@ -445,6 +449,12 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
                 null,
                 null,
                 plot = this.node.synopsis,
+                releaseDate = if (this.node.start_date == null) null else Date.from(
+                    Instant.from(
+                        DateTimeFormatter.ofPattern(if (this.node.start_date.length == 4) "yyyy" else if (this.node.start_date.length == 7) "yyyy-MM" else "yyyy-MM-dd")
+                            .parse(this.node.start_date)
+                    )
+                )
             )
         }
     }
@@ -509,6 +519,8 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
                 ListSorting.AlphabeticalZ,
                 ListSorting.UpdatedNew,
                 ListSorting.UpdatedOld,
+                ListSorting.ReleaseDateNew,
+                ListSorting.ReleaseDateOld,
                 ListSorting.RatingHigh,
                 ListSorting.RatingLow,
             )

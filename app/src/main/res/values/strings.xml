@@ -797,4 +797,6 @@
     <string name="device_pin_error_message">Can\'t get the device PIN code, try local authentication</string>
     <string name="device_pin_expired_message">PIN code is now expired !</string>
     <string name="device_pin_counter_text">Code expires in %1$dm %2$ds</string>
+    <string name="sort_release_date_new">Release Date (New to Old)</string>
+    <string name="sort_release_date_old">Release Date (Old to New)</string>
 </resources>

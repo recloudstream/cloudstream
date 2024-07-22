@@ -31,6 +31,7 @@ import com.lagradost.cloudstream3.ui.SyncWatchType
 import com.lagradost.cloudstream3.ui.library.ListSorting
 import com.lagradost.cloudstream3.ui.result.txt
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
+import com.lagradost.cloudstream3.utils.DataStoreHelper.toYear
 import okhttp3.Interceptor
 import okhttp3.Response
 import java.math.BigInteger
@@ -669,7 +670,8 @@ class SimklApi(index: Int) : AccountManager(index), SyncAPI {
                         this.movie.poster?.let { getPosterUrl(it) },
                         null,
                         null,
-                        movie.ids.simkl,
+                        this.movie.year?.toYear(),
+                        movie.ids.simkl
                     )
                 }
             }
@@ -701,6 +703,7 @@ class SimklApi(index: Int) : AccountManager(index), SyncAPI {
                         this.show.poster?.let { getPosterUrl(it) },
                         null,
                         null,
+                        this.show.year?.toYear(),
                         show.ids.simkl
                     )
                 }
@@ -1026,6 +1029,8 @@ class SimklApi(index: Int) : AccountManager(index), SyncAPI {
                 ListSorting.AlphabeticalZ,
                 ListSorting.UpdatedNew,
                 ListSorting.UpdatedOld,
+                ListSorting.ReleaseDateNew,
+                ListSorting.ReleaseDateOld,
                 ListSorting.RatingHigh,
                 ListSorting.RatingLow,
             )
