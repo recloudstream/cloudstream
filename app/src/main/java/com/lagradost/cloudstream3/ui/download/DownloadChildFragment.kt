@@ -75,7 +75,7 @@ class DownloadChildFragment : Fragment() {
         val folder = arguments?.getString("folder")
         val name = arguments?.getString("name")
         if (folder == null) {
-            activity?.onBackPressedDispatcher?.onBackPressed() // TODO FIX
+            activity?.onBackPressedDispatcher?.onBackPressed()
             return
         }
 
