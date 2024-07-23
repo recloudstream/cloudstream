@@ -635,4 +635,5 @@
     <string name="dismiss">Odrzuć</string>
     <string name="open_downloaded_repo">Otwórz repozytorium</string>
     <string name="device_pin_url_message">Odwiedź <b>%s</b> na swoim smartfonie lub komputerze i wprowadź powyższy kod</string>
+    <string name="hide_player_control_names_key">hide_player_control_names_key</string>
 </resources>

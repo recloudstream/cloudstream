@@ -681,4 +681,5 @@
     <string name="device_pin_error_message">Cihaz PIN kodu alınamıyor, yerel kimlik doğrulamayı deneyin</string>
     <string name="device_pin_expired_message">PIN kodunun süresi doldu!</string>
     <string name="device_pin_counter_text">Kodun süresi %1$dm %2$ds içinde doluyor</string>
+    <string name="hide_player_control_names_key">hide_player_control_names_key</string>
 </resources>

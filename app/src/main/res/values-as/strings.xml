@@ -621,4 +621,5 @@
     <string name="pick_subtitle">ছাবটাইটেল বাছনি কৰক</string>
     <string name="play_episode">পৰ্ব খেলাওক</string>
     <string name="sort_apply">প্ৰয়োগ কৰক</string>
+    <string name="hide_player_control_names_key">hide_player_control_names_key</string>
 </resources>

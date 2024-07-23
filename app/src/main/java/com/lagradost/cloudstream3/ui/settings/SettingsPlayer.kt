@@ -87,10 +87,6 @@ class SettingsPlayer : PreferenceFragmentCompat() {
             return@setOnPreferenceClickListener true
         }
 
-        /*(getPref(R.string.double_tap_seek_time_key) as? SeekBarPreference?)?.let {
-
-        }*/
-
         getPref(R.string.prefer_limit_title_rez_key)?.setOnPreferenceClickListener {
             val prefNames = resources.getStringArray(R.array.limit_title_rez_pref_names)
             val prefValues = resources.getIntArray(R.array.limit_title_rez_pref_values)

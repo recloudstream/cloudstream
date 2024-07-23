@@ -57,4 +57,5 @@
     <string name="sort_close">Tutup</string>
     <string name="app_dub_sub_episode_text_format" formatted="true">Ep</string>
     <string name="next_season_episode_format" formatted="true">cuba</string>
+    <string name="hide_player_control_names_key">hide_player_control_names_key</string>
 </resources>

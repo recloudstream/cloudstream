@@ -25,15 +25,18 @@ import android.view.WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHO
 import android.view.animation.AlphaAnimation
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
+import android.widget.LinearLayout
 import androidx.appcompat.app.AlertDialog
 import androidx.core.graphics.blue
 import androidx.core.graphics.green
 import androidx.core.graphics.red
+import androidx.core.view.children
 import androidx.core.view.isGone
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
 import androidx.preference.PreferenceManager
+import com.google.android.material.button.MaterialButton
 import com.lagradost.cloudstream3.CommonActivity.keyEventListener
 import com.lagradost.cloudstream3.CommonActivity.playerEventListener
 import com.lagradost.cloudstream3.CommonActivity.screenHeight
@@ -120,6 +123,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
     protected var doubleTapPauseEnabled = true
     protected var playerRotateEnabled = false
     protected var autoPlayerRotateEnabled = false
+    private var hideControlsNames = false
 
     protected var subtitleDelay
         set(value) = try {
@@ -1419,6 +1423,8 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                         false
                     )
 
+                hideControlsNames = settingsManager.getBoolean(ctx.getString(R.string.hide_player_control_names_key), false)
+
                 val profiles = QualityDataHelper.getProfiles()
                 val type = if (ctx.isUsingMobileData())
                     QualityDataHelper.QualityProfileType.Data
@@ -1439,6 +1445,9 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                 playerSpeedBtt.isVisible = playBackSpeedEnabled
                 playerResizeBtt.isVisible = playerResizeEnabled
                 playerRotateBtt.isVisible = playerRotateEnabled
+                if (hideControlsNames) {
+                    hideControlsNames()
+                }
             }
         } catch (e: Exception) {
             logError(e)
@@ -1589,6 +1598,19 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         activity?.let {
             toggleOrientationWithSensor(it)
         }
+    }
+
+    private fun PlayerCustomLayoutBinding.hideControlsNames() {
+        fun iterate(layout: LinearLayout) {
+            layout.children.forEach {
+                if (it is MaterialButton) {
+                    it.textSize = 0f
+                } else if (it is LinearLayout) {
+                    iterate(it)
+                }
+            }
+        }
+        iterate(playerLockHolder.parent as LinearLayout)
     }
 
     override fun playerDimensionsLoaded(width: Int, height: Int) {

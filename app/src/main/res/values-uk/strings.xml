@@ -634,4 +634,5 @@
     <string name="device_pin_counter_text">Термін дії коду закінчується через %1$dхв %2$dс</string>
     <string name="auth_locally">Автентифікація по місцю</string>
     <string name="dismiss">Відхилити</string>
+    <string name="hide_player_control_names_key">hide_player_control_names_key</string>
 </resources>
