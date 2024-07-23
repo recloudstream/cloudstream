@@ -1700,7 +1700,17 @@ suspend fun MainAPI.newMovieLoadResponse(
     builder.initializer()
     return builder
 }
-
+/** Episode information that will be passed to LoadLinks function & showed on UI
+ * @property data string used as main LoadLinks fun parameter.
+ * @property name Name of the Episode.
+ * @property season Season number.
+ * @property episode Episode number.
+ * @property posterUrl URL of Episode's poster image.
+ * @property rating Episode rating.
+ * @property date Episode air date, see addDate.
+ * @property runTime Episode runtime in seconds.
+ * @see[addDate]
+ * */
 data class Episode(
     var data: String,
     var name: String? = null,
