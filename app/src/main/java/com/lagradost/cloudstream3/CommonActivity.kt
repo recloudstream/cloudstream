@@ -164,7 +164,7 @@ object CommonActivity {
             val toast = Toast(act)
             toast.duration = duration ?: Toast.LENGTH_SHORT
             toast.setGravity(Gravity.CENTER_HORIZONTAL or Gravity.BOTTOM, 0, 5.toPx)
-            toast.view = binding.root //fixme Find an alternative using default Snackbars
+            toast.view = binding.root //fixme Find an alternative using default Toasts since custom toasts are deprecated and won't appear with api30 set as minSDK version.
             currentToast = toast
             toast.show()
 
