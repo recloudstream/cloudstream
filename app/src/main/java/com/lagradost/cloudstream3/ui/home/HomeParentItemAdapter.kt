@@ -1,6 +1,8 @@
 package com.lagradost.cloudstream3.ui.home
 
+import android.os.Build
 import android.os.Bundle
+import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -53,12 +55,12 @@ open class ParentItemAdapter(
                 "value",
                 recyclerView?.layoutManager?.onSaveInstanceState()
             )
-            (recyclerView?.adapter as? BaseAdapter<*,*>)?.save(recyclerView)
+            (recyclerView?.adapter as? BaseAdapter<*, *>)?.save(recyclerView)
         }
 
         override fun restore(state: Bundle) {
             (binding as? HomepageParentBinding)?.homeChildRecyclerview?.layoutManager?.onRestoreInstanceState(
-                state.getParcelable("value")
+                    state.getSafeParcelable<Parcelable>("value")
             )
         }
     }
@@ -170,3 +172,8 @@ open class ParentItemAdapter(
             .toMutableList())
     }
 }
+
+@Suppress("DEPRECATION")
+inline fun <reified T> Bundle.getSafeParcelable(key: String): T? =
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) getParcelable(key)
+    else getParcelable(key, T::class.java)

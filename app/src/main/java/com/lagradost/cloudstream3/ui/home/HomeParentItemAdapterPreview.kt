@@ -117,15 +117,12 @@ class HomeParentItemAdapterPreview(
             }
 
         override fun restore(state: Bundle) {
-            state.getParcelable<Parcelable>("resumeRecyclerView")?.let { recycle ->
+            state.getSafeParcelable<Parcelable>("resumeRecyclerView")?.let { recycle ->
                 resumeRecyclerView.layoutManager?.onRestoreInstanceState(recycle)
             }
-            state.getParcelable<Parcelable>("bookmarkRecyclerView")?.let { recycle ->
+            state.getSafeParcelable<Parcelable>("bookmarkRecyclerView")?.let { recycle ->
                 bookmarkRecyclerView.layoutManager?.onRestoreInstanceState(recycle)
             }
-            //state.getInt("previewViewpager").let { recycle ->
-            //    previewViewpager.setCurrentItem(recycle,true)
-            //}
         }
 
         val previewAdapter = HomeScrollAdapter(fragment = fragment)

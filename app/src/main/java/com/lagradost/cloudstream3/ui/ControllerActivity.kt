@@ -6,6 +6,7 @@ import android.view.Menu
 import android.view.View.*
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
+import androidx.media3.common.util.UnstableApi
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.module.kotlin.kotlinModule
@@ -263,6 +264,7 @@ class SelectSourceController(val view: ImageView, val activity: ControllerActivi
 
     var isLoadingMore = false
 
+    @UnstableApi
     override fun onMediaStatusUpdated() {
         super.onMediaStatusUpdated()
         val meta = getCurrentMetaData()

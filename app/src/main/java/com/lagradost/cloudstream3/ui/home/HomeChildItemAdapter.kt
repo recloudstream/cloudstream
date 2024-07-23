@@ -15,7 +15,7 @@ import com.lagradost.cloudstream3.ui.search.SearchClickCallback
 import com.lagradost.cloudstream3.ui.search.SearchResultBuilder
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
-import com.lagradost.cloudstream3.utils.UIHelper.IsBottomLayout
+import com.lagradost.cloudstream3.utils.UIHelper.isBottomLayout
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
 
 class HomeScrollViewHolderState(view: ViewBinding) : ViewHolderState<Boolean>(view) {
@@ -54,7 +54,7 @@ class HomeChildItemAdapter(
     var hasNext: Boolean = false
 
     override fun onCreateContent(parent: ViewGroup): ViewHolderState<Boolean> {
-        val expanded = parent.context.IsBottomLayout()
+        val expanded = parent.context.isBottomLayout()
         /* val layout = if (bottom) R.layout.home_result_grid_expanded else R.layout.home_result_grid
 
          val root = LayoutInflater.from(parent.context).inflate(layout, parent, false)
@@ -133,7 +133,6 @@ class HomeChildItemAdapter(
             item,
             position,
             holder.itemView,
-            null, // nextFocusBehavior,
             nextFocusUp,
             nextFocusDown
         )

@@ -65,7 +65,7 @@ class QualityProfileDialog(
 
             setDefaultBtt.setOnClickListener {
                 val currentProfile = getCurrentProfile() ?: return@setOnClickListener
-                val choices = QualityDataHelper.QualityProfileType.values()
+                val choices = QualityDataHelper.QualityProfileType.entries
                     .filter { it != QualityDataHelper.QualityProfileType.None }
                 val choiceNames = choices.map { txt(it.stringRes).asString(context) }
 

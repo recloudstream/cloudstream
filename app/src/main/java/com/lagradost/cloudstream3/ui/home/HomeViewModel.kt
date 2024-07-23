@@ -152,7 +152,7 @@ class HomeViewModel : ViewModel() {
             }
         }?.distinctBy { it.first } ?: return@launchSafe
 
-        val length = WatchType.values().size
+        val length = WatchType.entries.size
         val currentWatchTypes = mutableSetOf<WatchType>()
 
         for (watch in watchStatusIds) {
@@ -387,7 +387,9 @@ class HomeViewModel : ViewModel() {
             }
 
             is Resource.Failure -> {
+                @Suppress("UNNECESSARY_NOT_NULL_ASSERTION")
                 _page.postValue(data!!)
+                @Suppress("UNNECESSARY_NOT_NULL_ASSERTION")
                 _preview.postValue(data!!)
             }
 
@@ -397,9 +399,7 @@ class HomeViewModel : ViewModel() {
     }
 
     fun click(callback: SearchClickCallback) {
-        if (callback.action == SEARCH_ACTION_FOCUSED) {
-            //focusCallback(callback.card)
-        } else {
+        if (callback.action != SEARCH_ACTION_FOCUSED) {
             SearchHelper.handleSearchClickCallback(callback)
         }
     }
@@ -516,7 +516,7 @@ class HomeViewModel : ViewModel() {
                 } else {
                     _page.postValue(Resource.Loading())
                     if (preferredApiName != null)
-                        _apiName.postValue(preferredApiName)
+                        _apiName.postValue(preferredApiName!!)
                 }
             } else {
                 // if the api is found, then set it to it and save key

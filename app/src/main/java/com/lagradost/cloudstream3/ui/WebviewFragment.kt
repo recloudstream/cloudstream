@@ -10,6 +10,7 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
+import androidx.media3.common.util.UnstableApi
 import androidx.navigation.fragment.findNavController
 import com.lagradost.cloudstream3.MainActivity
 import com.lagradost.cloudstream3.USER_AGENT
@@ -29,6 +30,7 @@ class WebviewFragment : Fragment() {
         }
 
         binding?.webView?.webViewClient = object : WebViewClient() {
+            @UnstableApi
             override fun shouldOverrideUrlLoading(
                 view: WebView?,
                 request: WebResourceRequest?

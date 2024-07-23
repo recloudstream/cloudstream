@@ -15,6 +15,7 @@ import androidx.core.view.isVisible
 import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.media3.common.util.UnstableApi
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.lagradost.cloudstream3.CommonActivity
@@ -56,7 +57,7 @@ import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.setImage
 
 class ResultFragmentTv : Fragment() {
-    protected lateinit var viewModel: ResultViewModel2
+    private lateinit var viewModel: ResultViewModel2
     private var binding: FragmentResultTvBinding? = null
 
     override fun onDestroyView() {
@@ -230,6 +231,7 @@ class ResultFragmentTv : Fragment() {
         }
     }
 
+    @UnstableApi
     @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -417,10 +419,6 @@ class ResultFragmentTv : Fragment() {
                 )
 
             resultCastItems.layoutManager = object : LinearListLayout(view.context) {
-
-                override fun onInterceptFocusSearch(focused: View, direction: Int): View? {
-                    return super.onInterceptFocusSearch(focused, direction)
-                }
 
                 override fun onRequestChildFocus(
                     parent: RecyclerView,
@@ -649,7 +647,7 @@ class ResultFragmentTv : Fragment() {
 
             binding?.apply {
 
-                (data as? Resource.Success)?.value?.let { (text, ep) ->
+                (data as? Resource.Success)?.value?.let { (_, ep) ->
 
                     resultPlayMovieButton.setOnClickListener {
                         viewModel.handleAction(
@@ -817,45 +815,8 @@ class ResultFragmentTv : Fragment() {
                         }
                     }
 
-                    /*
-                     * Okay so what is this fuckery?
-                     * Basically Android TV will crash if you request a new focus while
-                     * the adapter gets updated.
-                     *
-                     * This means that if you load thumbnails and request a next focus at the same time
-                     * the app will crash without any way to catch it!
-                     *
-                     * How to bypass this?
-                     * This code basically steals the focus for 500ms and puts it in an inescapable view
-                     * then lets out the focus by requesting focus to result_episodes
-                     */
-
-                    val hasEpisodes =
-                        !(resultEpisodes.adapter as? EpisodeAdapter?)?.cardList.isNullOrEmpty()
-                    /*val focus = activity?.currentFocus
-
-                    if (hasEpisodes) {
-                        // Make it impossible to focus anywhere else!
-                        temporaryNoFocus.isFocusable = true
-                        temporaryNoFocus.requestFocus()
-                    }*/
 
                     (resultEpisodes.adapter as? EpisodeAdapter)?.updateList(episodes.value)
-
-                    /* if (hasEpisodes) main {
-
-                         delay(500)
-                         // This might make some people sad as it changes the focus when leaving an episode :(
-                         if(focus?.requestFocus() == true) {
-                             temporaryNoFocus.isFocusable = false
-                             return@main
-                         }
-                         temporaryNoFocus.isFocusable = false
-                         temporaryNoFocus.requestFocus()
-                     }
-
-                     if (hasNoFocus())
-                         binding?.resultEpisodes?.requestFocus()*/
                 }
             }
         }

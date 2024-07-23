@@ -6,6 +6,7 @@ import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -21,6 +22,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
 import androidx.media3.common.Format.NO_VALUE
 import androidx.media3.common.MimeTypes
+import androidx.media3.common.util.UnstableApi
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
@@ -63,9 +65,11 @@ import com.lagradost.cloudstream3.utils.UIHelper.popCurrentPage
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import com.lagradost.safefile.SafeFile
 import kotlinx.coroutines.Job
+import java.io.Serializable
 import java.util.*
 import kotlin.math.abs
 
+@UnstableApi
 class GeneratorPlayer : FullScreenPlayer() {
     companion object {
         private var lastUsedGenerator: IGenerator? = null
@@ -234,7 +238,7 @@ class GeneratorPlayer : FullScreenPlayer() {
 
     private fun closestQuality(target: Int?): Qualities {
         if (target == null) return Qualities.Unknown
-        return Qualities.values().minBy { abs(it.value - target) }
+        return Qualities.entries.minBy { abs(it.value - target) }
     }
 
     private fun getLinkPriority(
@@ -367,8 +371,6 @@ class GeneratorPlayer : FullScreenPlayer() {
 
         binding.subtitleAdapter.choiceMode = AbsListView.CHOICE_MODE_SINGLE
         binding.subtitleAdapter.adapter = arrayAdapter
-        val adapter =
-            binding.subtitleAdapter.adapter as? ArrayAdapter<AbstractSubtitleEntities.SubtitleEntity>
 
         binding.subtitleAdapter.setOnItemClickListener { _, _, position, _ ->
             currentSubtitle = currentSubtitles.getOrNull(position) ?: return@setOnItemClickListener
@@ -379,8 +381,8 @@ class GeneratorPlayer : FullScreenPlayer() {
 
         fun setSubtitlesList(list: List<AbstractSubtitleEntities.SubtitleEntity>) {
             currentSubtitles = list
-            adapter?.clear()
-            adapter?.addAll(currentSubtitles)
+            arrayAdapter.clear()
+            arrayAdapter.addAll(currentSubtitles)
         }
 
         val currentTempMeta = getMetaData()
@@ -1290,7 +1292,7 @@ class GeneratorPlayer : FullScreenPlayer() {
     private fun unwrapBundle(savedInstanceState: Bundle?) {
         Log.i(TAG, "unwrapBundle = $savedInstanceState")
         savedInstanceState?.let { bundle ->
-            sync.addSyncs(bundle.getSerializable("syncData") as? HashMap<String, String>?)
+            sync.addSyncs(bundle.getSafeSerializable<HashMap<String, String>>("syncData"))
         }
     }
 
@@ -1507,3 +1509,6 @@ class GeneratorPlayer : FullScreenPlayer() {
         }
     }
 }
+
+@Suppress("DEPRECATION")
+inline fun <reified T : Serializable> Bundle.getSafeSerializable(key: String) : T? = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) getSerializable(key) as? T else getSerializable(key, T::class.java)

@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.ui.search
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.view.View
 import android.widget.ImageView
@@ -37,16 +38,12 @@ object SearchResultBuilder {
         }
     }
 
-    /**
-     * @param nextFocusBehavior True if first, False if last, Null if between.
-     * Used to prevent escaping the adapter horizontally (focus wise).
-     */
+    @SuppressLint("StringFormatInvalid")
     fun bind(
         clickCallback: (SearchClickCallback) -> Unit,
         card: SearchResponse,
         position: Int,
         itemView: View,
-        nextFocusBehavior: Boolean? = null,
         nextFocusUp: Int? = null,
         nextFocusDown: Int? = null,
         colorCallback : ((Palette) -> Unit)? = null

@@ -72,7 +72,7 @@ class CustomDecoder(private val fallbackFormat: Format?) : SubtitleDecoder {
                     RegexOption.IGNORE_CASE
                 ),
             )
-        val captionRegex = listOf(Regex("""(-\s?|)[\[({][\w\d\s]*?[])}]\s*"""))
+        val captionRegex = listOf(Regex("""(-\s?|)[\[({][\w\s]*?[])}]\s*"""))
 
         //https://emptycharacter.com/
         //https://www.fileformat.info/info/unicode/char/200b/index.htm

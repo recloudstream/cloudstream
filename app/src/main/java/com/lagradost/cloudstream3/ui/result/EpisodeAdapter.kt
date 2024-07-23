@@ -167,8 +167,7 @@ class EpisodeAdapter(
         return cardList.size
     }
 
-    class EpisodeCardViewHolderLarge
-    constructor(
+    class EpisodeCardViewHolderLarge(
         val binding: ResultEpisodeLargeBinding,
         private val hasDownloadSupport: Boolean,
         private val clickCallback: (EpisodeClickEvent) -> Unit,
@@ -324,8 +323,7 @@ class EpisodeAdapter(
         }
     }
 
-    class EpisodeCardViewHolderSmall
-    constructor(
+    class EpisodeCardViewHolderSmall(
         val binding: ResultEpisodeBinding,
         private val hasDownloadSupport: Boolean,
         private val clickCallback: (EpisodeClickEvent) -> Unit,

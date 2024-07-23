@@ -74,7 +74,7 @@ public class NonFinalTextRenderer extends BaseRenderer implements Callback {
     /**
      * @param trackType     The track type that the renderer handles. One of the {@link C} {@code
      *                      TRACK_TYPE_*} constants.
-     * @param outputHandler
+     * @param outputHandler todo description
      */
     public NonFinalTextRenderer(int trackType, @Nullable Handler outputHandler) {
         super(trackType);
@@ -416,13 +416,11 @@ public class NonFinalTextRenderer extends BaseRenderer implements Callback {
     @SuppressWarnings("unchecked")
     @Override
     public boolean handleMessage(Message msg) {
-        switch (msg.what) {
-            case MSG_UPDATE_OUTPUT:
-                invokeUpdateOutputInternal((List<Cue>) msg.obj);
-                return true;
-            default:
-                throw new IllegalStateException();
+        if (msg.what == MSG_UPDATE_OUTPUT) {
+            invokeUpdateOutputInternal((List<Cue>) msg.obj);
+            return true;
         }
+        throw new IllegalStateException();
     }
 
     private void invokeUpdateOutputInternal(List<Cue> cues) {
@@ -441,7 +439,6 @@ public class NonFinalTextRenderer extends BaseRenderer implements Callback {
                 }
         ).collect(Collectors.toList());
 
-        output.onCues(fixedCues);
         output.onCues(new CueGroup(fixedCues, 0L));
     }
 

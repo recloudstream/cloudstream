@@ -1,6 +1,7 @@
 package com.lagradost.cloudstream3.ui.player
 
 import android.util.Log
+import androidx.media3.common.util.UnstableApi
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
 import com.lagradost.cloudstream3.APIHolder.unixTime
 import com.lagradost.cloudstream3.LoadResponse
@@ -71,6 +72,7 @@ class RepoLinkGenerator(
     //var linkCache = Array<Set<ExtractorLink>>(size = episodes.size, init = { setOf() })
     //var subsCache = Array<Set<SubtitleData>>(size = episodes.size, init = { setOf() })
 
+    @UnstableApi
     override suspend fun generateLinks(
         clearCache: Boolean,
         type: LoadType,

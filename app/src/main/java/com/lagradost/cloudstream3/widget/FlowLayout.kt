@@ -19,7 +19,7 @@ class FlowLayout : ViewGroup {
     @SuppressLint("CustomViewStyleable")
     internal constructor(c: Context, attrs: AttributeSet?) : super(c, attrs) {
         val t = c.obtainStyledAttributes(attrs, R.styleable.FlowLayout_Layout)
-        itemSpacing = t.getDimensionPixelSize(R.styleable.FlowLayout_Layout_itemSpacing, 0);
+        itemSpacing = t.getDimensionPixelSize(R.styleable.FlowLayout_Layout_itemSpacing, 0)
         t.recycle()
     }
 

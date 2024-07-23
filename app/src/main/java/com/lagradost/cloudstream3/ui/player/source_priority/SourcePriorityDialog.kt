@@ -47,7 +47,7 @@ class SourcePriorityDialog(
         )
 
         qualitiesRecyclerView.adapter = PriorityAdapter(
-            Qualities.values().mapNotNull {
+            Qualities.entries.mapNotNull {
                 SourcePriority(
                     it,
                     Qualities.getStringByIntFull(it.value).ifBlank { return@mapNotNull null },

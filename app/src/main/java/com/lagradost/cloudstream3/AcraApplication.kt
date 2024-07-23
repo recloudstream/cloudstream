@@ -35,6 +35,7 @@ import java.io.File
 import java.io.FileNotFoundException
 import java.io.PrintStream
 import java.lang.ref.WeakReference
+import java.util.Locale
 import kotlin.concurrent.thread
 import kotlin.system.exitProcess
 
@@ -84,6 +85,7 @@ class ExceptionHandler(val errorFile: File, val onError: (() -> Unit)) :
                 ps.println(String.format("Currently loading extension: ${PluginManager.currentlyLoading ?: "none"}"))
                 ps.println(
                     String.format(
+                        Locale.US,
                         "Fatal exception on thread %s (%d)",
                         thread.name,
                         thread.id

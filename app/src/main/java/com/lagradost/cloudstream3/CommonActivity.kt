@@ -164,7 +164,7 @@ object CommonActivity {
             val toast = Toast(act)
             toast.duration = duration ?: Toast.LENGTH_SHORT
             toast.setGravity(Gravity.CENTER_HORIZONTAL or Gravity.BOTTOM, 0, 5.toPx)
-            toast.view = binding.root
+            toast.view = binding.root //fixme Find an alternative using default Snackbars
             currentToast = toast
             toast.show()
 
@@ -464,20 +464,6 @@ object CommonActivity {
 
 
     fun onKeyDown(act: Activity?, keyCode: Int, event: KeyEvent?) {
-        //println("Keycode: $keyCode")
-        //showToast(
-        //    this,
-        //    "Got Keycode $keyCode | ${KeyEvent.keyCodeToString(keyCode)} \n ${event?.action}",
-        //    Toast.LENGTH_LONG
-        //)
-
-        // Tested keycodes on remote:
-        // KeyEvent.KEYCODE_MEDIA_FAST_FORWARD
-        // KeyEvent.KEYCODE_MEDIA_REWIND
-        // KeyEvent.KEYCODE_MENU
-        // KeyEvent.KEYCODE_MEDIA_NEXT
-        // KeyEvent.KEYCODE_MEDIA_PREVIOUS
-        // KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE
 
         // 149 keycode_numpad 5
         when (keyCode) {
