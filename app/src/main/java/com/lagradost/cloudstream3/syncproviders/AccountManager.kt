@@ -73,10 +73,7 @@ abstract class AccountManager(private val defIndex: Int) : AuthAPI {
 
         const val maxStale = 60 * 10
 
-        fun secondsToReadable(seconds: Int?, completedValue: String?): String? {
-
-            seconds ?: return null
-
+        fun secondsToReadable(seconds: Int, completedValue: String): String {
             var secondsLong = seconds.toLong()
             val days = TimeUnit.SECONDS
                 .toDays(secondsLong)
