@@ -10,7 +10,6 @@ import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.safefile.SafeFile
 
 object OfflinePlaybackHelper {
-    @UnstableApi
     fun playLink(activity: Activity, url: String) {
         activity.navigate(
             R.id.global_to_navigation_player, GeneratorPlayer.newInstance(
@@ -23,7 +22,6 @@ object OfflinePlaybackHelper {
         )
     }
 
-    @UnstableApi
     fun playUri(activity: Activity, uri: Uri) {
         val name = SafeFile.fromUri(activity, uri)?.name()
         activity.navigate(

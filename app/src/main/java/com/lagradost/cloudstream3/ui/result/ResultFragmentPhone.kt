@@ -22,7 +22,6 @@ import androidx.core.view.isVisible
 import androidx.core.widget.NestedScrollView
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.ViewModelProvider
-import androidx.media3.common.util.UnstableApi
 import com.discord.panels.OverlappingPanelsLayout
 import com.discord.panels.PanelsChildGestureRegionObserver
 import com.google.android.gms.cast.framework.CastButtonFactory
@@ -78,7 +77,6 @@ import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIconsAndNoStringRes
 import com.lagradost.cloudstream3.utils.UIHelper.setImage
 import com.lagradost.cloudstream3.utils.VideoDownloadHelper
 
-@UnstableApi
 open class ResultFragmentPhone : FullScreenPlayer() {
     private val gestureRegionsListener =
         object : PanelsChildGestureRegionObserver.GestureRegionsListener {

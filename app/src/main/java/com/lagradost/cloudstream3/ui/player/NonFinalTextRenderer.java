@@ -29,6 +29,7 @@ import android.os.Message;
 import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.OptIn;
 import androidx.media3.common.C;
 import androidx.media3.common.Format;
 import androidx.media3.common.text.Cue;
@@ -66,7 +67,7 @@ import java.util.stream.Collectors;
  * obtained from a {@link SubtitleDecoderFactory}. The actual rendering of the subtitle {@link Cue}s
  * is delegated to a {@link TextOutput}.
  */
-@UnstableApi
+@OptIn(markerClass = UnstableApi.class)
 public class NonFinalTextRenderer extends BaseRenderer implements Callback {
 
     private static final String TAG = "TextRenderer";

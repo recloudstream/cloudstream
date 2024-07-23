@@ -33,7 +33,6 @@ import androidx.core.view.isVisible
 import androidx.core.view.marginStart
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProvider
-import androidx.media3.common.util.UnstableApi
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
@@ -83,13 +82,13 @@ import com.lagradost.cloudstream3.plugins.PluginManager.loadAllOnlinePlugins
 import com.lagradost.cloudstream3.plugins.PluginManager.loadSinglePlugin
 import com.lagradost.cloudstream3.receivers.VideoDownloadRestartReceiver
 import com.lagradost.cloudstream3.services.SubscriptionWorkManager
-import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.OAuth2Apis
-import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.accountManagers
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.APP_STRING
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.APP_STRING_PLAYER
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.APP_STRING_REPO
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.APP_STRING_RESUME_WATCHING
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.APP_STRING_SEARCH
+import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.OAuth2Apis
+import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.accountManagers
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.inAppAuths
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.localListApi
 import com.lagradost.cloudstream3.syncproviders.SyncAPI
@@ -331,7 +330,6 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
          * @return true if the str has launched an app task (be it successful or not)
          * @param isWebview does not handle providers and opening download page if true. Can still add repos and login.
          * */
-        @UnstableApi
         fun handleAppIntentUrl(
             activity: FragmentActivity?,
             str: String?,
@@ -691,13 +689,11 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         super.onDestroy()
     }
 
-    @UnstableApi
     override fun onNewIntent(intent: Intent?) {
         handleAppIntent(intent)
         super.onNewIntent(intent)
     }
 
-    @UnstableApi
     private fun handleAppIntent(intent: Intent?) {
         if (intent == null) return
         val str = intent.dataString
@@ -1099,7 +1095,6 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         }
     }
 
-    @UnstableApi
     override fun onCreate(savedInstanceState: Bundle?) {
         app.initClient(this)
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)

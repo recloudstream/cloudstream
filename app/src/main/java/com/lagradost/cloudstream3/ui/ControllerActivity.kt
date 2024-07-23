@@ -264,7 +264,7 @@ class SelectSourceController(val view: ImageView, val activity: ControllerActivi
 
     var isLoadingMore = false
 
-    @UnstableApi
+
     override fun onMediaStatusUpdated() {
         super.onMediaStatusUpdated()
         val meta = getCurrentMetaData()

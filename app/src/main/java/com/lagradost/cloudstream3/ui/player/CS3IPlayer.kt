@@ -9,6 +9,7 @@ import android.os.Looper
 import android.util.Log
 import android.util.Rational
 import android.widget.FrameLayout
+import androidx.annotation.OptIn
 import androidx.media3.common.C.TIME_UNSET
 import androidx.media3.common.C.TRACK_TYPE_AUDIO
 import androidx.media3.common.C.TRACK_TYPE_TEXT
@@ -87,8 +88,7 @@ const val toleranceBeforeUs = 300_000L
  * seek position, in microseconds. Must be non-negative.
  */
 const val toleranceAfterUs = 300_000L
-
-@UnstableApi
+@OptIn(UnstableApi::class)
 class CS3IPlayer : IPlayer {
     private var isPlaying = false
     private var exoPlayer: ExoPlayer? = null

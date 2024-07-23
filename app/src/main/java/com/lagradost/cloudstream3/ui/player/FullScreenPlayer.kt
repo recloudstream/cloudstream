@@ -25,6 +25,7 @@ import android.view.WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHO
 import android.view.animation.AlphaAnimation
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
+import androidx.annotation.OptIn
 import androidx.appcompat.app.AlertDialog
 import androidx.core.graphics.blue
 import androidx.core.graphics.green
@@ -81,7 +82,6 @@ const val DOUBLE_TAB_PAUSE_PERCENTAGE = 0.15        // in both directions
 private const val SUBTITLE_DELAY_BUNDLE_KEY = "subtitle_delay"
 
 // All the UI Logic for the player
-@UnstableApi
 open class FullScreenPlayer : AbstractPlayerFragment() {
     private var isVerticalOrientation: Boolean = false
     protected open var lockRotation = true
@@ -242,6 +242,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         fadeAnimation.duration = 100
         fadeAnimation.fillAfter = true
 
+        @OptIn(UnstableApi::class)
         val sView = subView
         val sStyle = subStyle
         if (sView != null && sStyle != null) {

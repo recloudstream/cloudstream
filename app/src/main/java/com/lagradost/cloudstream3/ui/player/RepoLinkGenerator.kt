@@ -72,7 +72,6 @@ class RepoLinkGenerator(
     //var linkCache = Array<Set<ExtractorLink>>(size = episodes.size, init = { setOf() })
     //var subsCache = Array<Set<SubtitleData>>(size = episodes.size, init = { setOf() })
 
-    @UnstableApi
     override suspend fun generateLinks(
         clearCache: Boolean,
         type: LoadType,

@@ -14,6 +14,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.OptIn
 import androidx.core.animation.addListener
 import androidx.core.content.ContextCompat
 import androidx.core.view.isGone
@@ -69,7 +70,6 @@ import java.io.Serializable
 import java.util.*
 import kotlin.math.abs
 
-@UnstableApi
 class GeneratorPlayer : FullScreenPlayer() {
     companion object {
         private var lastUsedGenerator: IGenerator? = null
@@ -524,7 +524,7 @@ class GeneratorPlayer : FullScreenPlayer() {
         //TODO: Set year text from currently loaded movie on Player
         //dialog.subtitles_search_year?.setText(currentTempMeta.year)
     }
-
+    @OptIn(UnstableApi::class)
     private fun openSubPicker() {
         try {
             subsPathPicker.launch(
@@ -797,7 +797,6 @@ class GeneratorPlayer : FullScreenPlayer() {
                         settingsManager.edit().putString(
                             ctx.getString(R.string.subtitles_encoding_key), prefValues[it]
                         ).apply()
-
                         updateForcedEncoding(ctx)
                         dismiss()
                         player.seekTime(-1) // to update subtitles, a dirty trick

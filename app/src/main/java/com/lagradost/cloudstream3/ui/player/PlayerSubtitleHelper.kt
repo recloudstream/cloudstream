@@ -4,6 +4,7 @@ import android.util.Log
 import android.util.TypedValue
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import androidx.annotation.OptIn
 import androidx.media3.common.MimeTypes
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.ui.SubtitleView
@@ -48,7 +49,7 @@ data class SubtitleData(
     }
 }
 
-@UnstableApi
+@OptIn(UnstableApi::class)
 class PlayerSubtitleHelper {
     private var activeSubtitles: Set<SubtitleData> = emptySet()
     private var allSubtitles: Set<SubtitleData> = emptySet()
