@@ -299,7 +299,7 @@ class EpisodeAdapter(
 
                 episodeRuntime.setText(
                     txt(
-                        card.runTime?.times(60L)?.let { secondsToReadable(it.toInt(), "0 mins") }
+                        secondsToReadable(card.runTime?.times(60L)?.toInt(), null)
                     )
                 )
 
