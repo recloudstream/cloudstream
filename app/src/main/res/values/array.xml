@@ -319,7 +319,7 @@
         <item>Gray</item>
         <item>Amoled</item>
         <item>Flashbang</item>
-        <item>Material You (Android 12+)</item>
+        <item>Material You</item>
     </string-array>
     <string-array name="themes_names_values">
         <item>System</item>
