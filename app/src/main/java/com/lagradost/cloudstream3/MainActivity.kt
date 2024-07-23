@@ -576,7 +576,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
     }
 
     //private var mCastSession: CastSession? = null
-    lateinit var mSessionManager: SessionManager
+    private var mSessionManager: SessionManager? = null
     private val mSessionManagerListener: SessionManagerListener<Session> by lazy { SessionManagerListenerImpl() }
 
     private inner class SessionManagerListenerImpl : SessionManagerListener<Session> {
@@ -616,8 +616,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         setActivityInstance(this)
         try {
             if (isCastApiAvailable()) {
-                //mCastSession = mSessionManager.currentCastSession
-                mSessionManager.addSessionManagerListener(mSessionManagerListener)
+                mSessionManager?.addSessionManagerListener(mSessionManagerListener)
             }
         } catch (e: Exception) {
             logError(e)
@@ -633,7 +632,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         }
         try {
             if (isCastApiAvailable()) {
-                mSessionManager.removeSessionManagerListener(mSessionManagerListener)
+                mSessionManager?.removeSessionManagerListener(mSessionManagerListener)
                 //mCastSession = null
             }
         } catch (e: Exception) {

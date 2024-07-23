@@ -68,6 +68,10 @@ abstract class Plugin {
      */
     var resources: Resources? = null
     /** Full file path to the plugin. */
+    @Deprecated("Renamed to `filename` to follow conventions", replaceWith = ReplaceWith("filename"))
+    var __filename: String?
+        get() = filename
+        set(value) {filename = value}
     var filename: String? = null
 
     /**
