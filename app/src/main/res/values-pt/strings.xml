@@ -621,5 +621,5 @@
     <string name="player_settings_play_in_fcast">Fcast</string>
     <string name="player_settings_select_cast_device">Escolha o dispositivo</string>
     <string name="episode_action_cast_mirror">Transmitir</string>
-    <string name="hide_player_control_names_key">hide_player_control_names_key</string>
+    <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
 </resources>

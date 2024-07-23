@@ -377,5 +377,5 @@
     <string name="add_repository">Pridať repozitár</string>
     <string name="repository_name_hint">Názov repozitára</string>
     <string name="view_public_repositories_button">Zobraziť komunitné repozitáre</string>
-    <string name="hide_player_control_names_key">hide_player_control_names_key</string>
+    <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
 </resources>

@@ -538,5 +538,5 @@
     <string name="use">Bruk</string>
     <string name="help">Hjelp</string>
     <string name="profile_background_des">Profilbakgrunn</string>
-    <string name="hide_player_control_names_key">hide_player_control_names_key</string>
+    <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
 </resources>

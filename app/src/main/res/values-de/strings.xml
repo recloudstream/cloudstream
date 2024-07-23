@@ -615,5 +615,5 @@
     <string name="reset_btn">Zurücksetzen</string>
     <string name="app_unrestricted_toast">Akkuverbrauch der App ist bereits auf unbeschränkt eingestellt</string>
     <string name="app_info_intent_error">CloudStreams App-Info kann nicht geöffnet werden.</string>
-    <string name="hide_player_control_names_key">hide_player_control_names_key</string>
+    <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
 </resources>

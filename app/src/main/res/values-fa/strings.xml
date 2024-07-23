@@ -191,5 +191,5 @@
     <string name="action_default">پیش‌فرض</string>
     <string name="cartoons_singular">کارتون</string>
     <string name="torrent_singular">تورنت</string>
-    <string name="hide_player_control_names_key">hide_player_control_names_key</string>
+    <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
 </resources>

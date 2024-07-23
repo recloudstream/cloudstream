@@ -634,5 +634,5 @@
     <string name="device_pin_expired_message">¡El código PIN ya ha caducado!</string>
     <string name="device_pin_counter_text">El código caduca en %1$d mín y %2$d s</string>
     <string name="device_pin_error_message">No puedo obtener el código PIN del dispositivo; intente con la autenticación local</string>
-    <string name="hide_player_control_names_key">hide_player_control_names_key</string>
+    <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
 </resources>

@@ -658,5 +658,5 @@
     <string name="pref_category_accounts">Účty</string>
     <string name="auth_locally">Lokální ověření</string>
     <string name="device_pin_expired_message">PIN kód vypršel!</string>
-    <string name="hide_player_control_names_key">hide_player_control_names_key</string>
+    <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
 </resources>

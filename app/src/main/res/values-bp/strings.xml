@@ -656,5 +656,5 @@
     <string name="device_pin_error_message">Não é possível obter o código PIN do dispositivo, tente a autenticação local</string>
     <string name="device_pin_expired_message">O código PIN expirou!</string>
     <string name="device_pin_counter_text">O código expira em %1$dm %2$ds</string>
-    <string name="hide_player_control_names_key">hide_player_control_names_key</string>
+    <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
 </resources>
