@@ -105,6 +105,14 @@ class DownloadFragment : Fragment() {
             downloadsViewModel.setIsMultiDeleteState(false)
         }
 
+        /**
+         * We have to make sure selected items are
+         * cleared here as well so we don't run in an
+         * inconsistent state where selected items do
+         * not match the multi delete state we are in.
+         */
+        downloadsViewModel.clearSelectedItems()
+
         observe(downloadsViewModel.headerCards) {
             (binding?.downloadList?.adapter as? DownloadAdapter)?.submitList(it)
             binding?.downloadLoading?.isVisible = false

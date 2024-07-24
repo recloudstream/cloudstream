@@ -72,6 +72,14 @@ class DownloadChildFragment : Fragment() {
             downloadsViewModel.setIsMultiDeleteState(false)
         }
 
+        /**
+         * We have to make sure selected items are
+         * cleared here as well so we don't run in an
+         * inconsistent state where selected items do
+         * not match the multi delete state we are in.
+         */
+        downloadsViewModel.clearSelectedItems()
+
         val folder = arguments?.getString("folder")
         val name = arguments?.getString("name")
         if (folder == null) {
