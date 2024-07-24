@@ -154,7 +154,7 @@ class ExampleInstrumentedTest {
     fun providerCorrectHomepage() {
         runBlocking {
             getAllProviders().toList().amap { api ->
-                TestingUtils.testHomepage(api, ::println)
+                TestingUtils.testHomepage(api, TestingUtils.Logger())
             }
         }
         println("Done providerCorrectHomepage")
@@ -166,7 +166,6 @@ class ExampleInstrumentedTest {
             TestingUtils.getDeferredProviderTests(
                 this,
                 getAllProviders(),
-                ::println
             ) { _, _ -> }
         }
     }
