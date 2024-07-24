@@ -105,6 +105,8 @@ class SettingsPlayer : PreferenceFragmentCompat() {
             return@setOnPreferenceClickListener true
         }
 
+        getPref(R.string.hide_player_control_names_key)?.hideOn(TV)
+
         getPref(R.string.quality_pref_key)?.setOnPreferenceClickListener {
             val prefValues = Qualities.values().map { it.value }.reversed().toMutableList()
             prefValues.remove(Qualities.Unknown.value)
