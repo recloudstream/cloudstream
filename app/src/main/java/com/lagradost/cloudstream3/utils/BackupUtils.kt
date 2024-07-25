@@ -67,8 +67,6 @@ object BackupUtils {
         OPEN_SUBTITLES_USER_KEY,
         SUBDL_SUBTITLES_USER_KEY,
 
-        DOWNLOAD_EPISODE_CACHE,
-
         "biometric_key", // can lock down users if backup is shared on a incompatible device
         "nginx_user", // Nginx user key
         "download_path_key" // No access rights after restore data from backup

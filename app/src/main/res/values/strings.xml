@@ -96,6 +96,7 @@
     <string name="home_next_random_img_des">Next Random</string>
     <string name="episode_play_img_des" translatable="false">@string/play_episode</string>
     <string name="go_back_img_des">Go back</string>
+    <string name="play_from_beginning_img_des">Play from the Beginning</string>
     <string name="change_providers_img_des" translatable="false">@string/home_change_provider_img_des</string>
     <string name="home_change_provider_img_des">Change Provider</string>
     <string name="preview_background_img_des">Preview Background</string>
@@ -806,4 +807,6 @@
     <string name="device_pin_error_message">Can\'t get the device PIN code, try local authentication</string>
     <string name="device_pin_expired_message">PIN code is now expired !</string>
     <string name="device_pin_counter_text">Code expires in %1$dm %2$ds</string>
+    <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
+    <string name="hide_player_control_names">Hide names of the player\'s controls</string>
 </resources>

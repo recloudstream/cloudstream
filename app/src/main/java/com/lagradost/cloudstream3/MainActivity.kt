@@ -107,6 +107,7 @@ import com.lagradost.cloudstream3.ui.result.START_ACTION_RESUME_LATEST
 import com.lagradost.cloudstream3.ui.result.SyncViewModel
 import com.lagradost.cloudstream3.ui.result.setImage
 import com.lagradost.cloudstream3.ui.result.setText
+import com.lagradost.cloudstream3.ui.result.setTextHtml
 import com.lagradost.cloudstream3.ui.result.txt
 import com.lagradost.cloudstream3.ui.search.SearchFragment
 import com.lagradost.cloudstream3.ui.search.SearchResultBuilder
@@ -1402,7 +1403,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                         resultviewPreviewMetaDuration.setText(d.durationText)
                         resultviewPreviewMetaRating.setText(d.ratingText)
 
-                        resultviewPreviewDescription.setText(d.plotText)
+                        resultviewPreviewDescription.setTextHtml(d.plotText)
                         resultviewPreviewPoster.setImage(
                             d.posterImage ?: d.posterBackgroundImage
                         )
