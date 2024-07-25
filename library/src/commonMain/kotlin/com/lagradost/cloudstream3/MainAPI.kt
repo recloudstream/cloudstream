@@ -1700,7 +1700,17 @@ suspend fun MainAPI.newMovieLoadResponse(
     builder.initializer()
     return builder
 }
-
+/** Episode information that will be passed to LoadLinks function & showed on UI
+ * @property data string used as main LoadLinks fun parameter.
+ * @property name Name of the Episode.
+ * @property season Season number.
+ * @property episode Episode number.
+ * @property posterUrl URL of Episode's poster image.
+ * @property rating Episode rating.
+ * @property date Episode air date, see addDate.
+ * @property runTime Episode runtime in seconds.
+ * @see[addDate]
+ * */
 data class Episode(
     var data: String,
     var name: String? = null,
@@ -1710,7 +1720,25 @@ data class Episode(
     var rating: Int? = null,
     var description: String? = null,
     var date: Long? = null,
-)
+    var runTime: Int? = null,
+) {
+    /**
+     * Secondary constructor for backwards compatibility without runTime.
+     *  TODO Remove this constructor after there is a new stable release and extensions are updated to support runTime.
+     */
+    constructor(
+        data: String,
+        name: String? = null,
+        season: Int? = null,
+        episode: Int? = null,
+        posterUrl: String? = null,
+        rating: Int? = null,
+        description: String? = null,
+        date: Long? = null,
+    ) : this(
+        data, name, season, episode, posterUrl, rating, description, date, null
+    )
+}
 
 fun Episode.addDate(date: String?, format: String = "yyyy-MM-dd") {
     try {

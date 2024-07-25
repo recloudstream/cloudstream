@@ -27,7 +27,8 @@ import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import com.lagradost.cloudstream3.utils.VideoDownloadHelper
 import java.text.DateFormat
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
+import java.util.Locale
 
 const val ACTION_PLAY_EPISODE_IN_PLAYER = 1
 const val ACTION_PLAY_EPISODE_IN_VLC_PLAYER = 2
@@ -58,6 +59,7 @@ const val ACTION_MARK_AS_WATCHED = 18
 const val ACTION_FCAST = 19
 
 const val TV_EP_SIZE = 400
+
 data class EpisodeClickEvent(val action: Int, val data: ResultEpisode)
 
 class EpisodeAdapter(
@@ -274,7 +276,10 @@ class EpisodeAdapter(
                         episodeDate.setText(
                             txt(
                                 R.string.episode_upcoming_format,
-                                secondsToReadable(card.airDate.minus(unixTimeMS).div(1000).toInt(), "")
+                                secondsToReadable(
+                                    card.airDate.minus(unixTimeMS).div(1000).toInt(),
+                                    ""
+                                )
                             )
                         )
                     } else {
@@ -291,6 +296,12 @@ class EpisodeAdapter(
                 } else {
                     episodeDate.isVisible = false
                 }
+
+                episodeRuntime.setText(
+                    txt(
+                        card.runTime?.times(60L)?.toInt()?.let { secondsToReadable(it, "") }
+                    )
+                )
 
                 if (isLayout(EMULATOR or PHONE)) {
                     episodePoster.setOnClickListener {
