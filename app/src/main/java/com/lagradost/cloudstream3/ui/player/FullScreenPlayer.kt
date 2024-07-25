@@ -1605,6 +1605,9 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
             layout.children.forEach {
                 if (it is MaterialButton) {
                     it.textSize = 0f
+                    it.iconPadding = 0
+                    it.iconGravity = MaterialButton.ICON_GRAVITY_TEXT_START
+                    it.setPadding(0,0,0,0)
                 } else if (it is LinearLayout) {
                     iterate(it)
                 }
