@@ -5,6 +5,7 @@ import android.text.format.Formatter.formatShortFileSize
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
@@ -95,7 +96,8 @@ class PluginAdapter(
     }
 
     companion object {
-        private tailrec fun findClosestBase2(target: Int, current: Int = 16, max: Int = 512): Int {
+        @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+        tailrec fun findClosestBase2(target: Int, current: Int = 16, max: Int = 512): Int {
             if (current >= max) return max
             if (current >= target) return current
             return findClosestBase2(target, current * 2, max)
