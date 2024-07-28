@@ -86,10 +86,6 @@ class SettingsPlayer : PreferenceFragmentCompat() {
             return@setOnPreferenceClickListener true
         }
 
-        /*(getPref(R.string.double_tap_seek_time_key) as? SeekBarPreference?)?.let {
-
-        }*/
-
         getPref(R.string.prefer_limit_title_rez_key)?.setOnPreferenceClickListener {
             val prefNames = resources.getStringArray(R.array.limit_title_rez_pref_names)
             val prefValues = resources.getIntArray(R.array.limit_title_rez_pref_values)
@@ -107,6 +103,8 @@ class SettingsPlayer : PreferenceFragmentCompat() {
             }
             return@setOnPreferenceClickListener true
         }
+
+        getPref(R.string.hide_player_control_names_key)?.hideOn(TV)
 
         getPref(R.string.quality_pref_key)?.setOnPreferenceClickListener {
             val prefValues = Qualities.entries.map { it.value }.reversed().toMutableList()

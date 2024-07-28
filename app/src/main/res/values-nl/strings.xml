@@ -608,4 +608,5 @@
     <string name="links_reloaded_toast">Link opnieuw geladen</string>
     <string name="auto_rotate_video">Autoroteer</string>
     <string name="rotate_video">Roteer</string>
+    <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
 </resources>

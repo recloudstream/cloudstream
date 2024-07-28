@@ -236,6 +236,7 @@ open class TraktProvider : MainAPI() {
                             posterUrl = fixPath(episode.images?.screenshot?.firstOrNull()),
                             rating = episode.rating?.times(10)?.roundToInt(),
                             description = episode.overview,
+                            runTime = episode.runtime
                         ).apply {
                             this.addDate(episode.firstAired, "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
                             if (nextAir == null && this.date != null && this.date!! > unixTimeMS && this.season != 0) {

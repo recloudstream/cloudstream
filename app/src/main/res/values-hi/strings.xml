@@ -209,4 +209,5 @@
     <string name="subs_outline_color">रूपरेखा रंग</string>
     <string name="subs_subtitle_elevation">उपशीर्षक ऊंचाई</string>
     <string name="subs_font">अक्षर शैली</string>
+    <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
 </resources>

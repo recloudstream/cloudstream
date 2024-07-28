@@ -37,6 +37,12 @@
             android:icon="@drawable/ic_baseline_text_format_24"
             android:key="@string/prefer_limit_title_rez_key"
             android:title="@string/limit_title_rez" />
+        <SwitchPreference
+            android:icon="@drawable/ic_baseline_text_format_24"
+            android:key="@string/hide_player_control_names_key"
+            android:title="@string/hide_player_control_names"
+            android:defaultValue="false"
+            />
     </PreferenceCategory>
 
     <PreferenceCategory
