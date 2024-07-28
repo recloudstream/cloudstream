@@ -335,6 +335,9 @@ open class ResultFragmentPhone : FullScreenPlayer() {
         syncModel.addFromUrl(storedData.url)
         val api = APIHolder.getApiFromNameNull(storedData.apiName)
 
+        // This may not be 100% reliable, and may delay for small period
+        // before resultCastItems will be scrollable again, but this does work
+        // most of the time.
         binding?.resultOverlappingPanels?.registerEndPanelStateListeners(
             object : OverlappingPanelsLayout.PanelStateListener {
                 override fun onPanelStateChange(panelState: PanelState) {
