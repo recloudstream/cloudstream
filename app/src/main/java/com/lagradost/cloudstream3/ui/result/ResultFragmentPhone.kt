@@ -23,6 +23,7 @@ import androidx.core.widget.NestedScrollView
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.ViewModelProvider
 import com.discord.panels.OverlappingPanelsLayout
+import com.discord.panels.PanelState
 import com.discord.panels.PanelsChildGestureRegionObserver
 import com.google.android.gms.cast.framework.CastButtonFactory
 import com.google.android.gms.cast.framework.CastContext
@@ -115,6 +116,14 @@ open class ResultFragmentPhone : FullScreenPlayer() {
         }
 
         return root
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        PanelsChildGestureRegionObserver.Provider.get().apply {
+            resultBinding?.resultCastItems?.let { register(it) }
+        }
     }
 
     var currentTrailers: List<ExtractorLink> = emptyList()
@@ -324,6 +333,16 @@ open class ResultFragmentPhone : FullScreenPlayer() {
         setUrl(storedData.url)
         syncModel.addFromUrl(storedData.url)
         val api = APIHolder.getApiFromNameNull(storedData.apiName)
+
+        binding?.resultOverlappingPanels?.registerEndPanelStateListeners(
+            object : OverlappingPanelsLayout.PanelStateListener {
+                override fun onPanelStateChange(panelState: PanelState) {
+                    PanelsChildGestureRegionObserver.Provider.get().apply {
+                        resultBinding?.resultCastItems?.let { register(it) }
+                    }
+                }
+            }
+        )
 
         // ===== ===== =====
 
@@ -656,7 +675,6 @@ open class ResultFragmentPhone : FullScreenPlayer() {
             resultBinding?.apply {
                 PanelsChildGestureRegionObserver.Provider.get().apply {
                     register(resultCastItems)
-                    addGestureRegionsUpdateListener(gestureRegionsListener)
                 }
                 (data as? Resource.Success)?.value?.let { d ->
                     resultVpn.setText(d.vpnText)
