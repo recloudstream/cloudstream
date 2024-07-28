@@ -244,19 +244,19 @@
 
 
     <string-array name="themes_names">
-        <item>Hệ thống</item>
         <item>Tối</item>
         <item>Xám</item>
         <item>Amoled</item>
         <item>Sáng</item>
+        <item>Hệ thống</item>
         <item>Material You</item>
     </string-array>
     <string-array name="themes_names_values">
-        <item>System</item>
         <item>AmoledLight</item>
         <item>Black</item>
         <item>Amoled</item>
         <item>Light</item>
+        <item>System</item>
         <item>Monet</item>
     </string-array>
 
