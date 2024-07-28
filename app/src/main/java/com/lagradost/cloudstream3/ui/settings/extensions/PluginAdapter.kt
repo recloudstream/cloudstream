@@ -33,7 +33,8 @@ import java.text.DecimalFormat
 import kotlin.math.floor
 import kotlin.math.log10
 import kotlin.math.pow
-
+import org.junit.Test
+import org.junit.Assert
 
 data class PluginViewData(
     val plugin: Plugin,
@@ -96,11 +97,21 @@ class PluginAdapter(
     }
 
     companion object {
-        @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-        tailrec fun findClosestBase2(target: Int, current: Int = 16, max: Int = 512): Int {
+        private tailrec fun findClosestBase2(target: Int, current: Int = 16, max: Int = 512): Int {
             if (current >= max) return max
             if (current >= target) return current
             return findClosestBase2(target, current * 2, max)
+        }
+
+        // DO NOT MOVE, as running this test will result in ExceptionInInitializerError on prerelease due to static variables using Resources.getSystem()
+        // this test function is only to show how the function works
+        @Test
+        fun testFindClosestBase2() {
+            Assert.assertEquals(16, findClosestBase2(0))
+            Assert.assertEquals(256, findClosestBase2(170))
+            Assert.assertEquals(256, findClosestBase2(256))
+            Assert.assertEquals(512, findClosestBase2(257))
+            Assert.assertEquals(512, findClosestBase2(700))
         }
 
         private val iconSizeExact = 32.toPx
