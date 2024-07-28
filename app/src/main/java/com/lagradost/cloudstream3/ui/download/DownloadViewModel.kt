@@ -11,7 +11,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.isEpisodeBased
-import com.lagradost.cloudstream3.isMovieType
 import com.lagradost.cloudstream3.mvvm.launchSafe
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.utils.AppContextUtils.getNameFull
@@ -180,7 +179,7 @@ class DownloadViewModel : ViewModel() {
             if (bytes <= 0 || downloads <= 0) return@mapNotNull null
 
             val isSelected = selectedItemIds.value?.contains(it.id) ?: false
-            val movieEpisode = if (!it.type.isMovieType()) null else context.getKey<VideoDownloadHelper.DownloadEpisodeCached>(
+            val movieEpisode = if (it.type.isEpisodeBased()) null else context.getKey<VideoDownloadHelper.DownloadEpisodeCached>(
                 DOWNLOAD_EPISODE_CACHE,
                 getFolderName(it.id.toString(), it.id.toString())
             )
@@ -222,7 +221,12 @@ class DownloadViewModel : ViewModel() {
                     data = it,
                 )
             }
-        }.sortedBy { it.data.episode + (it.data.season ?: 0) * 100000 }
+        }.sortedWith(compareBy(
+            // Sort by season first, and then by episode number,
+            // to ensure sorting is consistent.
+            { it.data.season ?: 0 },
+            { it.data.episode }
+        ))
 
         if (previousVisual != visual) {
             previousVisual = visual
