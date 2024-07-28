@@ -256,6 +256,7 @@
         <item>Szary</item>
         <item>Amoled</item>
         <item>Flashbang</item>
+        <item>System</item>
         <item>Material You</item>
     </string-array>
     <string-array name="themes_names_values">
@@ -263,6 +264,7 @@
         <item>Black</item>
         <item>Amoled</item>
         <item>Light</item>
+        <item>System</item>
         <item>Monet</item>
     </string-array>
 

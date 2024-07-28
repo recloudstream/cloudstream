@@ -5,6 +5,7 @@ import android.app.Activity
 import android.app.PictureInPictureParams
 import android.content.Context
 import android.content.pm.PackageManager
+import android.content.res.Configuration
 import android.content.res.Resources
 import android.os.Build
 import android.util.DisplayMetrics
@@ -276,12 +277,35 @@ object CommonActivity {
         }
     }
 
+    fun updateTheme(act: Activity) {
+        val settingsManager = PreferenceManager.getDefaultSharedPreferences(act)
+        if (settingsManager
+            .getString(act.getString(R.string.app_theme_key), "AmoledLight") == "System"
+            && Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            loadThemes(act)
+        }
+    }
+
+    private fun mapSystemTheme(act: Activity): Int {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            val currentNightMode =
+                act.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+            return when (currentNightMode) {
+                Configuration.UI_MODE_NIGHT_NO -> R.style.LightMode // Night mode is not active, we're using the light theme
+                else -> R.style.AppTheme // Night mode is active, we're using dark theme
+            }
+        } else {
+            return R.style.AppTheme
+        }
+    }
+
     fun loadThemes(act: Activity?) {
         if (act == null) return
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(act)
 
         val currentTheme =
             when (settingsManager.getString(act.getString(R.string.app_theme_key), "AmoledLight")) {
+                "System" -> mapSystemTheme(act)
                 "Black" -> R.style.AppTheme
                 "Light" -> R.style.LightMode
                 "Amoled" -> R.style.AmoledMode
@@ -352,8 +376,8 @@ object CommonActivity {
         currentLook = currentLook.parent as? View ?: break
     }*/
 
-    private fun View.hasContent() : Boolean {
-        return isShown && when(this) {
+    private fun View.hasContent(): Boolean {
+        return isShown && when (this) {
             //is RecyclerView -> this.childCount > 0
             is ViewGroup -> this.childCount > 0
             else -> true
