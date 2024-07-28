@@ -57,7 +57,7 @@ import com.lagradost.cloudstream3.MainActivity.Companion.afterRepositoryLoadedEv
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.plugins.RepositoryManager
-import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.appStringResumeWatching
+import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.APP_STRING_RESUME_WATCHING
 import com.lagradost.cloudstream3.syncproviders.providers.Kitsu
 import com.lagradost.cloudstream3.ui.WebviewFragment
 import com.lagradost.cloudstream3.ui.player.SubtitleData
@@ -160,7 +160,7 @@ object AppContextUtils {
             .setTitle(title)
             .setPosterArtUri(Uri.parse(card.posterUrl))
             .setIntentUri(Uri.parse(card.id?.let {
-                "$appStringResumeWatching://$it"
+                "$APP_STRING_RESUME_WATCHING://$it"
             } ?: card.url))
             .setInternalProviderId(card.url)
             .setLastEngagementTimeUtcMillis(

@@ -239,7 +239,11 @@ private class M3u8PreviewGenerator(override var params: ImageParams) : IPreviewG
     // generated images 1:1 to idx of hsl
     private var images: Array<Bitmap?> = arrayOf()
 
-    private val TAG = "PreviewImgM3u8"
+    companion object {
+        private const val TAG = "PreviewImgM3u8"
+    }
+
+
 
     // prefixSum[i] = sum(hsl.ts[0..i].time)
     // where [0] = 0, [1] = hsl.ts[0].time aka time at start of segment, do [b] - [a] for range a,b
@@ -388,13 +392,6 @@ private class M3u8PreviewGenerator(override var params: ImageParams) : IPreviewG
                             logError(t)
                             continue
                         }
-
-                        /*
-                        val buffer = hsl.resolveLinkSafe(index) ?: continue
-                        tmpFile?.writeBytes(buffer)
-                        val buff = FileOutputStream(tmpFile)
-                        retriever.setDataSource(buff.fd)
-                        val frame = retriever.getFrameAtTime(0L)*/
                     }
                 }
 
@@ -412,13 +409,15 @@ private class Mp4PreviewGenerator(override var params: ImageParams) : IPreviewGe
         null
     }
 
+    companion object {
+        private const val TAG = "PreviewImgMp4"
+    }
+
     override fun hasPreview(): Boolean {
         synchronized(images) {
             return loadedLod >= MIN_LOD
         }
     }
-
-    val TAG = "PreviewImgMp4"
 
     override fun getPreviewImage(fraction: Float): Bitmap? {
         synchronized(images) {
@@ -524,7 +523,7 @@ private class Mp4PreviewGenerator(override var params: ImageParams) : IPreviewGe
                 val fraction = (1.0f.div((1 shl l).toFloat()) + i * 1.0f.div(items.toFloat()))
                 Log.i(TAG, "Generating preview for ${fraction * 100}%")
                 val frame = durationUs * fraction
-                val img = retriever.image(frame.toLong(), params);
+                val img = retriever.image(frame.toLong(), params)
                 if (!scope.isActive) return
                 if (img == null || img.width <= 1 || img.height <= 1) continue
                 synchronized(images) {

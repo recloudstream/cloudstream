@@ -3,8 +3,6 @@ package com.lagradost.cloudstream3.ui.result
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.annotation.IdRes
-import androidx.annotation.LayoutRes
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -70,8 +68,7 @@ class ActorAdaptor(
         }
     }
 
-    private inner class CardViewHolder
-    constructor(
+    private inner class CardViewHolder(
         val binding: CastItemBinding,
         private val focusCallback: (View?) -> Unit = {}
     ) :

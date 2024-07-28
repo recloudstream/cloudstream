@@ -54,6 +54,7 @@ abstract class BaseFetchButton(context: Context, attributeSet: AttributeSet) :
     }
 
     init {
+        @Suppress("LeakingThis")
         resetViewData()
     }
 

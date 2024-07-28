@@ -12,8 +12,6 @@ import com.lagradost.cloudstream3.ui.player.OfflinePlaybackHelper.playLink
 import com.lagradost.cloudstream3.ui.player.OfflinePlaybackHelper.playUri
 import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper.attachBackPressedCallback
 
-const val DTAG = "PlayerActivity"
-
 class DownloadedPlayerActivity : AppCompatActivity() {
     private val dTAG = "DownloadedPlayerAct"
 

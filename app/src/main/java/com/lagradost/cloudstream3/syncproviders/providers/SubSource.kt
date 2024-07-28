@@ -59,6 +59,7 @@ class SubSourceApi : AbstractSubProvider {
                 it?.subs?.filter { sub ->
                     sub.releaseName!!.contains(
                         String.format(
+                            null,
                             "E%02d",
                             query.epNumber
                         )

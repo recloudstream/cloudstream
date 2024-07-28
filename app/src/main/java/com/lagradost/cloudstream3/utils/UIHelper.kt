@@ -553,7 +553,7 @@ object UIHelper {
         return result
     }
 
-    fun Context?.IsBottomLayout(): Boolean {
+    fun Context?.isBottomLayout(): Boolean {
         if (this == null) return true
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
         return settingsManager.getBoolean(getString(R.string.bottom_title_key), true)

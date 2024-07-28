@@ -83,7 +83,7 @@ object EpisodeSkip {
                         startMs = start,
                         endMs = end
                     )
-                }?.let { list ->
+                }.let { list ->
                     out.addAll(list)
                 }
             }

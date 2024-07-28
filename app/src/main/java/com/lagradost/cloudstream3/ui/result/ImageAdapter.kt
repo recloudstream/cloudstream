@@ -8,18 +8,6 @@ import com.lagradost.cloudstream3.databinding.ResultMiniImageBinding
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 
-/*
-class ImageAdapter(context: Context, val resource: Int) : ArrayAdapter<Int>(context, resource) {
-    override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-        val newConvertView = convertView ?: run {
-            val mInflater = context
-                .getSystemService(Activity.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-            mInflater.inflate(resource, null)
-        }
-        getItem(position)?.let { (newConvertView as? ImageView?)?.setImageResource(it) }
-        return newConvertView
-    }
-}*/
 const val IMAGE_CLICK = 0
 const val IMAGE_LONG_CLICK = 1
 
@@ -66,8 +54,7 @@ class ImageAdapter(
         diffResult.dispatchUpdatesTo(this)
     }
 
-    class ImageViewHolder
-    constructor(val binding: ResultMiniImageBinding) :
+    class ImageViewHolder(val binding: ResultMiniImageBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(
             img: Int,

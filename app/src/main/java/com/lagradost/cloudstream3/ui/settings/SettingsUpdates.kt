@@ -128,7 +128,7 @@ class SettingsUpdates : PreferenceFragmentCompat() {
             }
 
             binding.saveBtt.setOnClickListener {
-                val date = SimpleDateFormat("yyyy_MM_dd_HH_mm").format(Date(currentTimeMillis()))
+                val date = SimpleDateFormat("yyyy_MM_dd_HH_mm", Locale.getDefault()).format(Date(currentTimeMillis()))
                 var fileStream: OutputStream? = null
                 try {
                     fileStream = VideoDownloadManager.setupStream(
@@ -169,10 +169,10 @@ class SettingsUpdates : PreferenceFragmentCompat() {
                 prefValues.indexOf(currentInstaller),
                 getString(R.string.apk_installer_settings),
                 true,
-                {}) {
+                {}) { num ->
                 try {
                     settingsManager.edit()
-                        .putInt(getString(R.string.apk_installer_key), prefValues[it])
+                        .putInt(getString(R.string.apk_installer_key), prefValues[num])
                         .apply()
                 } catch (e: Exception) {
                     logError(e)
@@ -209,9 +209,9 @@ class SettingsUpdates : PreferenceFragmentCompat() {
                 prefValues.indexOf(current),
                 getString(R.string.automatic_plugin_download_mode_title),
                 true,
-                {}) {
+                {}) { num ->
                 settingsManager.edit()
-                    .putInt(getString(R.string.auto_download_plugins_key), prefValues[it]).apply()
+                    .putInt(getString(R.string.auto_download_plugins_key), prefValues[num]).apply()
                 (context ?: AcraApplication.context)?.let { ctx -> app.initClient(ctx) }
             }
             return@setOnPreferenceClickListener true

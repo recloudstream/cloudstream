@@ -600,8 +600,4 @@ class LibraryFragment : Fragment() {
     }
 }
 
-class MenuSearchView(context: Context) : SearchView(context) {
-    override fun onActionViewCollapsed() {
-        super.onActionViewCollapsed()
-    }
-}
+class MenuSearchView(context: Context) : SearchView(context)

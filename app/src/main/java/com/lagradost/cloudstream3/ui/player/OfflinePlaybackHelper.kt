@@ -4,8 +4,8 @@ import android.app.Activity
 import android.content.ContentUris
 import android.net.Uri
 import androidx.core.content.ContextCompat.getString
+import androidx.media3.common.util.UnstableApi
 import com.lagradost.cloudstream3.R
-import com.lagradost.cloudstream3.ui.player.ExtractorUri
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.safefile.SafeFile
 

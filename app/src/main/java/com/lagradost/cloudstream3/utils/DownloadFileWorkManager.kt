@@ -7,7 +7,6 @@ import androidx.work.ForegroundInfo
 import androidx.work.WorkerParameters
 import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
 import com.lagradost.cloudstream3.mvvm.logError
-import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.VideoDownloadManager.WORK_KEY_INFO

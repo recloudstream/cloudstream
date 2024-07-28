@@ -18,13 +18,13 @@ class Addic7ed : AbstractSubApi {
     override fun logOut() {}
 
     companion object {
-        const val host = "https://www.addic7ed.com"
+        const val HOST = "https://www.addic7ed.com"
         const val TAG = "ADDIC7ED"
     }
 
     private fun fixUrl(url: String): String {
-        return if (url.startsWith("/")) host + url
-        else if (!url.startsWith("http")) "$host/$url"
+        return if (url.startsWith("/")) HOST + url
+        else if (!url.startsWith("http")) "$HOST/$url"
         else url
 
     }
@@ -62,7 +62,7 @@ class Addic7ed : AbstractSubApi {
         }
 
         val title = queryText.substringBefore("(").trim()
-        val url = "$host/search.php?search=${title}&Submit=Search"
+        val url = "$HOST/search.php?search=${title}&Submit=Search"
         val hostDocument = app.get(url).document
         var searchResult = ""
         if (!hostDocument.select("span:contains($title)").isNullOrEmpty()) searchResult = url
@@ -74,8 +74,8 @@ class Addic7ed : AbstractSubApi {
                 hostDocument.selectFirst("#sl button")?.attr("onmouseup")?.substringAfter("(")
                     ?.substringBefore(",")
             val doc = app.get(
-                "$host/ajax_loadShow.php?show=$show&season=$seasonNum&langs=&hd=undefined&hi=undefined",
-                referer = "$host/"
+                "$HOST/ajax_loadShow.php?show=$show&season=$seasonNum&langs=&hd=undefined&hi=undefined",
+                referer = "$HOST/"
             ).document
             doc.select("#season tr:contains($queryLang)").mapNotNull { node ->
                 if (node.selectFirst("td")?.text()
@@ -97,7 +97,7 @@ class Addic7ed : AbstractSubApi {
             val link = fixUrl(node.select("a.buttonDownload").attr("href"))
             val isHearingImpaired =
                 !node.parent()!!.select("tr:last-child [title=\"Hearing Impaired\"]").isNullOrEmpty()
-            cleanResources(results, name, link, mapOf("referer" to "$host/"), isHearingImpaired)
+            cleanResources(results, name, link, mapOf("referer" to "$HOST/"), isHearingImpaired)
         }
         return results
     }

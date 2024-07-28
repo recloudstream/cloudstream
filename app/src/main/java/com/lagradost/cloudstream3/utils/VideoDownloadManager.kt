@@ -298,6 +298,7 @@ object VideoDownloadManager {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                         PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
                     } else {
+                        //fixme Specify a better flag
                         PendingIntent.getActivity(context, 0, intent, 0)
                     }
                 builder.setContentIntent(pendingIntent)
@@ -480,10 +481,10 @@ object VideoDownloadManager {
         }
     }
 
-    private const val reservedChars = "|\\?*<\":>+[]/\'"
+    private const val RESERVED_CHARS = "|\\?*<\":>+[]/\'"
     fun sanitizeFilename(name: String, removeSpaces: Boolean = false): String {
         var tempName = name
-        for (c in reservedChars) {
+        for (c in RESERVED_CHARS) {
             tempName = tempName.replace(c, ' ')
         }
         if (removeSpaces) tempName = tempName.replace(" ", "")
@@ -1704,7 +1705,7 @@ object VideoDownloadManager {
      }
  */
     fun getDownloadFileInfoAndUpdateSettings(context: Context, id: Int): DownloadedFileInfoResult? =
-        getDownloadFileInfo(context, id, removeKeys = true)
+        getDownloadFileInfo(context, id)
 
     private fun DownloadedFileInfo.toFile(context: Context): SafeFile? {
         return basePathToFile(context, this.basePath)?.gotoDirectory(relativePath)
@@ -1714,7 +1715,6 @@ object VideoDownloadManager {
     private fun getDownloadFileInfo(
         context: Context,
         id: Int,
-        removeKeys: Boolean = false
     ): DownloadedFileInfoResult? {
         try {
             val info =

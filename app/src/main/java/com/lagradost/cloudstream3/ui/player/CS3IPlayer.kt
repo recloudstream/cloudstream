@@ -9,7 +9,11 @@ import android.os.Looper
 import android.util.Log
 import android.util.Rational
 import android.widget.FrameLayout
-import androidx.media3.common.C.*
+import androidx.annotation.OptIn
+import androidx.media3.common.C.TIME_UNSET
+import androidx.media3.common.C.TRACK_TYPE_AUDIO
+import androidx.media3.common.C.TRACK_TYPE_TEXT
+import androidx.media3.common.C.TRACK_TYPE_VIDEO
 import androidx.media3.common.Format
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MimeTypes
@@ -19,9 +23,10 @@ import androidx.media3.common.TrackGroup
 import androidx.media3.common.TrackSelectionOverride
 import androidx.media3.common.Tracks
 import androidx.media3.common.VideoSize
+import androidx.media3.common.util.UnstableApi
 import androidx.media3.database.StandaloneDatabaseProvider
 import androidx.media3.datasource.DataSource
-import androidx.media3.datasource.DefaultDataSourceFactory
+import androidx.media3.datasource.DefaultDataSource
 import androidx.media3.datasource.DefaultHttpDataSource
 import androidx.media3.datasource.HttpDataSource
 import androidx.media3.datasource.cache.CacheDataSource
@@ -66,7 +71,6 @@ import com.lagradost.cloudstream3.utils.ExtractorLinkPlayList
 import com.lagradost.cloudstream3.utils.ExtractorLinkType
 import com.lagradost.cloudstream3.utils.SubtitleHelper.fromTwoLettersToLanguage
 import java.io.File
-import java.lang.IllegalArgumentException
 import java.util.UUID
 import javax.net.ssl.HttpsURLConnection
 import javax.net.ssl.SSLContext
@@ -84,7 +88,7 @@ const val toleranceBeforeUs = 300_000L
  * seek position, in microseconds. Must be non-negative.
  */
 const val toleranceAfterUs = 300_000L
-
+@OptIn(UnstableApi::class)
 class CS3IPlayer : IPlayer {
     private var isPlaying = false
     private var exoPlayer: ExoPlayer? = null
@@ -257,7 +261,6 @@ class CS3IPlayer : IPlayer {
 
     private var currentSubtitles: SubtitleData? = null
 
-    @SuppressLint("UnsafeOptInUsageError")
     private fun List<Tracks.Group>.getTrack(id: String?): Pair<TrackGroup, Int>? {
         if (id == null) return null
         // This beast of an expression does:
@@ -342,7 +345,6 @@ class CS3IPlayer : IPlayer {
         }.flatten()
     }
 
-    @SuppressLint("UnsafeOptInUsageError")
     private fun Tracks.Group.getFormats(): List<Pair<Format, Int>> {
         return (0 until this.mediaTrackGroup.length).mapNotNull { i ->
             if (this.isSupported)
@@ -371,7 +373,6 @@ class CS3IPlayer : IPlayer {
         )
     }
 
-    @SuppressLint("UnsafeOptInUsageError")
     override fun getVideoTracks(): CurrentTracks {
         val allTracks = exoPlayer?.currentTracks?.groups ?: emptyList()
         val videoTracks = allTracks.filter { it.type == TRACK_TYPE_VIDEO }
@@ -391,7 +392,6 @@ class CS3IPlayer : IPlayer {
     /**
      * @return True if the player should be reloaded
      * */
-    @SuppressLint("UnsafeOptInUsageError")
     override fun setPreferredSubtitles(subtitle: SubtitleData?): Boolean {
         Log.i(TAG, "setPreferredSubtitles init $subtitle")
         currentSubtitles = subtitle
@@ -451,7 +451,7 @@ class CS3IPlayer : IPlayer {
         } ?: false
     }
 
-    var currentSubtitleOffset: Long = 0
+    private var currentSubtitleOffset: Long = 0
 
     override fun setSubtitleOffset(offset: Long) {
         currentSubtitleOffset = offset
@@ -459,7 +459,7 @@ class CS3IPlayer : IPlayer {
     }
 
     override fun getSubtitleOffset(): Long {
-        return currentSubtitleOffset //currentTextRenderer?.getRenderOffsetMs() ?: currentSubtitleOffset
+        return currentSubtitleOffset
     }
 
     override fun getCurrentPreferredSubtitle(): SubtitleData? {
@@ -470,7 +470,6 @@ class CS3IPlayer : IPlayer {
         }
     }
 
-    @SuppressLint("UnsafeOptInUsageError")
     override fun getAspectRatio(): Rational? {
         return exoPlayer?.videoFormat?.let { format ->
             Rational(format.width, format.height)
@@ -481,14 +480,13 @@ class CS3IPlayer : IPlayer {
         subtitleHelper.setSubStyle(style)
     }
 
-    @SuppressLint("UnsafeOptInUsageError")
     override fun saveData() {
         Log.i(TAG, "saveData")
         updatedTime()
 
         exoPlayer?.let { exo ->
             playbackPosition = exo.currentPosition
-            currentWindow = exo.currentWindowIndex
+            currentWindow = exo.currentMediaItemIndex
             isPlaying = exo.isPlaying
         }
     }
@@ -500,7 +498,7 @@ class CS3IPlayer : IPlayer {
             updatedTime()
 
         exoPlayer?.apply {
-            setPlayWhenReady(false)
+            playWhenReady = false
             stop()
             release()
         }
@@ -563,7 +561,6 @@ class CS3IPlayer : IPlayer {
 
         var requestSubtitleUpdate: (() -> Unit)? = null
 
-        @SuppressLint("UnsafeOptInUsageError")
         private fun createOnlineSource(headers: Map<String, String>): HttpDataSource.Factory {
             val source = OkHttpDataSource.Factory(app.baseClient).setUserAgent(USER_AGENT)
             return source.apply {
@@ -571,7 +568,6 @@ class CS3IPlayer : IPlayer {
             }
         }
 
-        @SuppressLint("UnsafeOptInUsageError")
         private fun createOnlineSource(link: ExtractorLink): HttpDataSource.Factory {
             val provider = getApiFromNameNull(link.source)
             val interceptor = provider?.getVideoInterceptor(link)
@@ -604,53 +600,10 @@ class CS3IPlayer : IPlayer {
             }
         }
 
-        @SuppressLint("UnsafeOptInUsageError")
         private fun Context.createOfflineSource(): DataSource.Factory {
-            return DefaultDataSourceFactory(this, USER_AGENT)
+            return DefaultDataSource.Factory(this, DefaultHttpDataSource.Factory().setUserAgent(USER_AGENT))
         }
 
-        /*private fun getSubSources(
-            onlineSourceFactory: DataSource.Factory?,
-            offlineSourceFactory: DataSource.Factory?,
-            subHelper: PlayerSubtitleHelper,
-        ): Pair<List<SingleSampleMediaSource>, List<SubtitleData>> {
-            val activeSubtitles = ArrayList<SubtitleData>()
-            val subSources = subHelper.getAllSubtitles().mapNotNull { sub ->
-                val subConfig = MediaItem.SubtitleConfiguration.Builder(Uri.parse(sub.url))
-                    .setMimeType(sub.mimeType)
-                    .setLanguage("_${sub.name}")
-                    .setSelectionFlags(C.SELECTION_FLAG_DEFAULT)
-                    .build()
-                when (sub.origin) {
-                    SubtitleOrigin.DOWNLOADED_FILE -> {
-                        if (offlineSourceFactory != null) {
-                            activeSubtitles.add(sub)
-                            SingleSampleMediaSource.Factory(offlineSourceFactory)
-                                .createMediaSource(subConfig, C.TIME_UNSET)
-                        } else {
-                            null
-                        }
-                    }
-                    SubtitleOrigin.URL -> {
-                        if (onlineSourceFactory != null) {
-                            activeSubtitles.add(sub)
-                            SingleSampleMediaSource.Factory(onlineSourceFactory)
-                                .createMediaSource(subConfig, C.TIME_UNSET)
-                        } else {
-                            null
-                        }
-                    }
-                    SubtitleOrigin.OPEN_SUBTITLES -> {
-                        // TODO
-                        throw NotImplementedError()
-                    }
-                }
-            }
-            println("SUBSRC: ${subSources.size} activeSubtitles : ${activeSubtitles.size} of ${subHelper.getAllSubtitles().size} ")
-            return Pair(subSources, activeSubtitles)
-        }*/
-
-        @SuppressLint("UnsafeOptInUsageError")
         private fun getCache(context: Context, cacheSize: Long): SimpleCache? {
             return try {
                 val databaseProvider = StandaloneDatabaseProvider(context)
@@ -682,7 +635,6 @@ class CS3IPlayer : IPlayer {
             return getMediaItemBuilder(mimeType).setUri(url).build()
         }
 
-        @SuppressLint("UnsafeOptInUsageError")
         private fun getTrackSelector(context: Context, maxVideoHeight: Int?): TrackSelector {
             val trackSelector = DefaultTrackSelector(context)
             trackSelector.parameters = trackSelector.buildUponParameters()
@@ -696,7 +648,6 @@ class CS3IPlayer : IPlayer {
 
         var currentTextRenderer: CustomTextRenderer? = null
 
-        @SuppressLint("UnsafeOptInUsageError")
         private fun buildExoPlayer(
             context: Context,
             mediaItemSlices: List<MediaItemSlice>,
@@ -736,7 +687,7 @@ class CS3IPlayer : IPlayer {
                                     textRendererOutput,
                                     eventHandler.looper,
                                     CustomSubtitleDecoderFactory()
-                                ).also { this.currentTextRenderer = it }
+                                ).also { renderer -> this.currentTextRenderer = renderer }
                                 currentTextRenderer
                             } else it
                         }.toTypedArray()
@@ -1033,7 +984,7 @@ class CS3IPlayer : IPlayer {
                     }
                 }
 
-                @SuppressLint("UnsafeOptInUsageError")
+                //fixme: Use onPlaybackStateChanged(int) and onPlayWhenReadyChanged(boolean, int) instead.
                 override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
                     exoPlayer?.let { exo ->
                         event(
@@ -1169,7 +1120,6 @@ class CS3IPlayer : IPlayer {
 
     private var lastTimeStamps: List<EpisodeSkip.SkipStamp> = emptyList()
 
-    @SuppressLint("UnsafeOptInUsageError")
     override fun addTimeStamps(timeStamps: List<EpisodeSkip.SkipStamp>) {
         lastTimeStamps = timeStamps
         timeStamps.forEach { timestamp ->
@@ -1187,7 +1137,6 @@ class CS3IPlayer : IPlayer {
         updatedTime(source = PlayerEventSource.Player)
     }
 
-    @SuppressLint("UnsafeOptInUsageError")
     fun onRenderFirst() {
         if (hasUsedFirstRender) { // this insures that we only call this once per player load
             return
@@ -1254,7 +1203,6 @@ class CS3IPlayer : IPlayer {
         }
     }
 
-    @SuppressLint("UnsafeOptInUsageError")
     private fun getSubSources(
         onlineSourceFactory: HttpDataSource.Factory?,
         offlineSourceFactory: DataSource.Factory?,

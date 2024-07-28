@@ -1,6 +1,5 @@
 package com.lagradost.cloudstream3.ui.player.source_priority
 
-import android.content.Context
 import androidx.annotation.StringRes
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
@@ -104,7 +103,7 @@ object QualityDataHelper {
      * Must under all circumstances at least return one profile
      **/
     fun getProfiles(): List<QualityProfile> {
-        val availableTypes = QualityProfileType.values().toMutableList()
+        val availableTypes = QualityProfileType.entries.toMutableList()
         val profiles = (1..PROFILE_COUNT).map { profileNumber ->
             // Get the real type
             val type = getQualityProfileType(profileNumber)
@@ -140,12 +139,12 @@ object QualityDataHelper {
                 }
         }
 
-        QualityProfileType.values().forEach {
+        QualityProfileType.entries.forEach {
             if (it.unique) insertType(profiles, it)
         }
 
         debugAssert({
-            !QualityProfileType.values().all { type ->
+            !QualityProfileType.entries.all { type ->
                 !type.unique || profiles.any { it.type == type }
             }
         }, { "All unique quality types do not exist" })

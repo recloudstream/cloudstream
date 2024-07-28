@@ -1,9 +1,11 @@
 package com.lagradost.cloudstream3.ui.settings.extensions
 
+import android.annotation.SuppressLint
 import android.text.format.Formatter.formatShortFileSize
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
@@ -27,11 +29,10 @@ import com.lagradost.cloudstream3.utils.SubtitleHelper.fromTwoLettersToLanguage
 import com.lagradost.cloudstream3.utils.SubtitleHelper.getFlagFromIso
 import com.lagradost.cloudstream3.utils.UIHelper.setImage
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
-import org.junit.Assert
-import org.junit.Test
 import java.text.DecimalFormat
 import kotlin.math.floor
 import kotlin.math.log10
+import kotlin.math.pow
 
 
 data class PluginViewData(
@@ -95,19 +96,11 @@ class PluginAdapter(
     }
 
     companion object {
-        private tailrec fun findClosestBase2(target: Int, current: Int = 16, max: Int = 512): Int {
+        @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+        tailrec fun findClosestBase2(target: Int, current: Int = 16, max: Int = 512): Int {
             if (current >= max) return max
             if (current >= target) return current
             return findClosestBase2(target, current * 2, max)
-        }
-
-        @Test
-        fun testFindClosestBase2() {
-            Assert.assertEquals(16, findClosestBase2(0))
-            Assert.assertEquals(256, findClosestBase2(170))
-            Assert.assertEquals(256, findClosestBase2(256))
-            Assert.assertEquals(512, findClosestBase2(257))
-            Assert.assertEquals(512, findClosestBase2(700))
         }
 
         private val iconSizeExact = 32.toPx
@@ -122,10 +115,7 @@ class PluginAdapter(
             val base = value / 3
             return if (value >= 3 && base < suffix.size) {
                 DecimalFormat("#0.00").format(
-                    numValue / Math.pow(
-                        10.0,
-                        (base * 3).toDouble()
-                    )
+                    numValue / 10.0.pow((base * 3).toDouble())
                 ) + suffix[base]
             } else {
                 DecimalFormat().format(numValue)
@@ -136,6 +126,7 @@ class PluginAdapter(
     inner class PluginViewHolder(val binding: RepositoryItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
+        @SuppressLint("SetTextI18n")
         fun bind(
             data: PluginViewData,
         ) {
