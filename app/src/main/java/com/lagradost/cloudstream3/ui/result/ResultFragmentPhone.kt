@@ -209,9 +209,6 @@ open class ResultFragmentPhone : FullScreenPlayer() {
     }
 
     override fun onDestroyView() {
-
-        //somehow this still leaks and I dont know why????
-        // todo look at https://github.com/discord/OverlappingPanels/blob/70b4a7cf43c6771873b1e091029d332896d41a1a/sample_app/src/main/java/com/discord/sampleapp/MainActivity.kt
         PanelsChildGestureRegionObserver.Provider.get().let { obs ->
             resultBinding?.resultCastItems?.let {
                 obs.unregister(it)
@@ -327,15 +324,6 @@ open class ResultFragmentPhone : FullScreenPlayer() {
         setUrl(storedData.url)
         syncModel.addFromUrl(storedData.url)
         val api = APIHolder.getApiFromNameNull(storedData.apiName)
-
-        PanelsChildGestureRegionObserver.Provider.get().apply {
-            resultBinding?.resultCastItems?.let {
-                register(it)
-            }
-            addGestureRegionsUpdateListener(gestureRegionsListener)
-        }
-
-
 
         // ===== ===== =====
 
@@ -666,6 +654,10 @@ open class ResultFragmentPhone : FullScreenPlayer() {
         observe(viewModel.page) { data ->
             if (data == null) return@observe
             resultBinding?.apply {
+                PanelsChildGestureRegionObserver.Provider.get().apply {
+                    register(resultCastItems)
+                    addGestureRegionsUpdateListener(gestureRegionsListener)
+                }
                 (data as? Resource.Success)?.value?.let { d ->
                     resultVpn.setText(d.vpnText)
                     resultInfo.setText(d.metaText)
