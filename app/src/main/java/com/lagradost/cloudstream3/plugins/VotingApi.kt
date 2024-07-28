@@ -15,7 +15,7 @@ import kotlinx.coroutines.sync.withLock
 object VotingApi { // please do not cheat the votes lol
     private const val LOGKEY = "VotingApi"
 
-    private const val apiDomain = "https://counterapi.com/api"
+    private const val API_DOMAIN = "https://counterapi.com/api"
 
     private fun transformUrl(url: String): String = // dont touch or all votes get reset
         MessageDigest
@@ -49,13 +49,13 @@ object VotingApi { // please do not cheat the votes lol
         .joinToString("-")
 
     private suspend fun readVote(pluginUrl: String): Int {
-        var url = "${apiDomain}/cs-${getRepository(pluginUrl)}/vote/${transformUrl(pluginUrl)}?readOnly=true"
+        val url = "${API_DOMAIN}/cs-${getRepository(pluginUrl)}/vote/${transformUrl(pluginUrl)}?readOnly=true"
         Log.d(LOGKEY, "Requesting: $url")
         return app.get(url).parsedSafe<Result>()?.value ?: 0
     }
 
     private suspend fun writeVote(pluginUrl: String): Boolean {
-        var url = "${apiDomain}/cs-${getRepository(pluginUrl)}/vote/${transformUrl(pluginUrl)}"
+        val url = "${API_DOMAIN}/cs-${getRepository(pluginUrl)}/vote/${transformUrl(pluginUrl)}"
         Log.d(LOGKEY, "Requesting: $url")
         return app.get(url).parsedSafe<Result>()?.value != null
     }
@@ -69,8 +69,7 @@ object VotingApi { // please do not cheat the votes lol
         getKey("cs3-votes/${transformUrl(pluginUrl)}") ?: false
 
     fun canVote(pluginUrl: String): Boolean {
-        if (!PluginManager.urlPlugins.contains(pluginUrl)) return false
-        return true
+        return PluginManager.urlPlugins.contains(pluginUrl)
     }
 
     private val voteLock = Mutex()

@@ -3,11 +3,9 @@ package com.lagradost.cloudstream3.ui.search
 import com.lagradost.cloudstream3.SearchQuality
 import com.lagradost.cloudstream3.SearchResponse
 import com.lagradost.cloudstream3.TvType
-import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.SyncApis
 
+//TODO Relevance of this class since it's not used
 class SyncSearchViewModel {
-    private val repos = SyncApis
-
     data class SyncSearchResultSearchResponse(
         override val name: String,
         override val url: String,

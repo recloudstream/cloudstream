@@ -190,7 +190,7 @@ class PluginsFragment : Fragment() {
             bindChips(
                 binding?.tvtypesChipsScroll?.tvtypesChips,
                 emptyList(),
-                TvType.values().toList(),
+                TvType.entries.toList(),
                 callback = { list ->
                     pluginViewModel.tvTypes.clear()
                     pluginViewModel.tvTypes.addAll(list.map { it.name })

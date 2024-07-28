@@ -17,7 +17,6 @@ import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.*
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -234,7 +233,7 @@ class HomeFragment : Fragment() {
             return bottomSheetDialogBuilder
         }
 
-        fun getPairList(
+        private fun getPairList(
             anime: Chip?,
             cartoons: Chip?,
             tvs: Chip?,

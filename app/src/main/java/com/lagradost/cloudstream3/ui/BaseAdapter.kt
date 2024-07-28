@@ -112,6 +112,7 @@ abstract class BaseAdapter<
         holder.onViewDetachedFromWindow()
     }
 
+    @Suppress("UNCHECKED_CAST")
     fun save(recyclerView: RecyclerView) {
         for (child in recyclerView.children) {
             val holder =
@@ -124,6 +125,7 @@ abstract class BaseAdapter<
         stateViewModel.layoutManagerStates[id]?.clear()
     }
 
+    @Suppress("UNCHECKED_CAST")
     private fun getState(holder: ViewHolderState<S>): S? =
         stateViewModel.layoutManagerStates[id]?.get(holder.absoluteAdapterPosition) as? S
 

@@ -2723,7 +2723,7 @@ class ResultViewModel2 : ViewModel() {
         val id: Int?,
     ) : LoadResponse
 
-    fun loadSmall(activity: Activity?, searchResponse: SearchResponse) = ioSafe {
+    fun loadSmall(searchResponse: SearchResponse) = ioSafe {
         val url = searchResponse.url
         _page.postValue(Resource.Loading(url))
         _episodes.postValue(Resource.Loading())

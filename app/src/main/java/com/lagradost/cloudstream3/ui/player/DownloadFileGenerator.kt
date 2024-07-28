@@ -49,7 +49,7 @@ class DownloadFileGenerator(
         return null
     }
 
-    fun cleanDisplayName(name: String): String {
+    private fun cleanDisplayName(name: String): String {
         return name.substringBeforeLast('.').trim()
     }
 

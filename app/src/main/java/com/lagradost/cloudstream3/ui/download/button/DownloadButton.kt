@@ -13,7 +13,7 @@ import com.lagradost.cloudstream3.utils.VideoDownloadHelper
 class DownloadButton(context: Context, attributeSet: AttributeSet) :
     PieFetchButton(context, attributeSet) {
 
-    var mainText: TextView? = null
+    private var mainText: TextView? = null
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
         progressText = findViewById(R.id.result_movie_download_text_precentage)

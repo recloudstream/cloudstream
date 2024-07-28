@@ -25,6 +25,7 @@ import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.media3.common.PlaybackException
+import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.session.MediaSession
 import androidx.media3.ui.*
@@ -216,7 +217,7 @@ abstract class AbstractPlayerFragment(
                             return
                         }
                         player.handleEvent(
-                            CSPlayerEvent.values()[intent.getIntExtra(
+                            CSPlayerEvent.entries[intent.getIntExtra(
                                 EXTRA_CONTROL_TYPE,
                                 0
                             )], source = PlayerEventSource.UI
@@ -603,12 +604,12 @@ abstract class AbstractPlayerFragment(
     }
 
     fun nextResize() {
-        resizeMode = (resizeMode + 1) % PlayerResize.values().size
+        resizeMode = (resizeMode + 1) % PlayerResize.entries.size
         resize(resizeMode, true)
     }
 
     fun resize(resize: Int, showToast: Boolean) {
-        resize(PlayerResize.values()[resize], showToast)
+        resize(PlayerResize.entries[resize], showToast)
     }
 
     @SuppressLint("UnsafeOptInUsageError")

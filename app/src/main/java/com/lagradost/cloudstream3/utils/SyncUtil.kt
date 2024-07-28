@@ -73,8 +73,8 @@ object SyncUtil {
             val response = app.get(url, cacheTime = 1, cacheUnit = TimeUnit.DAYS).text
             val mapped = parseJson<MalSyncPage?>(response)
 
-            val overrideMal = mapped?.malId ?: mapped?.Mal?.id ?: mapped?.Anilist?.malId
-            val overrideAnilist = mapped?.aniId ?: mapped?.Anilist?.id
+            val overrideMal = mapped?.malId ?: mapped?.mal?.id ?: mapped?.anilist?.malId
+            val overrideAnilist = mapped?.aniId ?: mapped?.anilist?.id
 
             if (overrideMal != null) {
                 return overrideMal.toString() to overrideAnilist?.toString()
@@ -135,8 +135,8 @@ object SyncUtil {
         @JsonProperty("createdAt") val createdAt: String?,
         @JsonProperty("updatedAt") val updatedAt: String?,
         @JsonProperty("deletedAt") val deletedAt: String?,
-        @JsonProperty("Mal") val Mal: Mal?,
-        @JsonProperty("Anilist") val Anilist: Anilist?,
+        @JsonProperty("Mal") val mal: Mal?,
+        @JsonProperty("Anilist") val anilist: Anilist?,
         @JsonProperty("malUrl") val malUrl: String?
     )
 

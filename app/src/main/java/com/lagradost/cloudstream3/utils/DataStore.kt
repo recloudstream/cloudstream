@@ -56,14 +56,25 @@ data class Editor(
 ) {
     /** Always remember to call apply after */
     fun<T> setKeyRaw(path: String, value: T) {
-        when (value) {
-            is Boolean -> editor.putBoolean(path, value)
-            is Int -> editor.putInt(path, value)
-            is String -> editor.putString(path, value)
-            is Float -> editor.putFloat(path, value)
-            is Long -> editor.putLong(path, value)
-            (value as? Set<String> != null) -> editor.putStringSet(path, value as Set<String>)
+        @Suppress("UNCHECKED_CAST")
+        if (isStringSet(value)) {
+            editor.putStringSet(path, value as Set<String>)
+        } else {
+            when (value) {
+                is Boolean -> editor.putBoolean(path, value)
+                is Int -> editor.putInt(path, value)
+                is String -> editor.putString(path, value)
+                is Float -> editor.putFloat(path, value)
+                is Long -> editor.putLong(path, value)
+            }
         }
+    }
+
+    private fun isStringSet(value: Any?) : Boolean {
+        if (value is Set<*>) {
+            return value.filterIsInstance<String>().size == value.size
+        }
+        return false
     }
 
     fun apply() {

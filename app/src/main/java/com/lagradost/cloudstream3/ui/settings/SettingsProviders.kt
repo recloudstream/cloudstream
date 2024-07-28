@@ -34,7 +34,7 @@ class SettingsProviders : PreferenceFragmentCompat() {
 
         getPref(R.string.display_sub_key)?.setOnPreferenceClickListener {
             activity?.getApiDubstatusSettings()?.let { current ->
-                val dublist = DubStatus.values()
+                val dublist = DubStatus.entries
                 val names = dublist.map { it.name }
 
                 val currentList = ArrayList<Int>()

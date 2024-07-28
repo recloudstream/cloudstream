@@ -11,7 +11,7 @@ import com.lagradost.cloudstream3.SearchResponse
 import com.lagradost.cloudstream3.databinding.SearchResultGridBinding
 import com.lagradost.cloudstream3.databinding.SearchResultGridExpandedBinding
 import com.lagradost.cloudstream3.ui.AutofitRecyclerView
-import com.lagradost.cloudstream3.utils.UIHelper.IsBottomLayout
+import com.lagradost.cloudstream3.utils.UIHelper.isBottomLayout
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import kotlin.math.roundToInt
 
@@ -41,7 +41,7 @@ class SearchAdapter(
         val inflater = LayoutInflater.from(parent.context)
 
         val layout =
-            if (parent.context.IsBottomLayout()) SearchResultGridExpandedBinding.inflate(
+            if (parent.context.isBottomLayout()) SearchResultGridExpandedBinding.inflate(
                 inflater,
                 parent,
                 false
@@ -83,8 +83,7 @@ class SearchAdapter(
         diffResult.dispatchUpdatesTo(this)
     }
 
-    class CardViewHolder
-    constructor(
+    class CardViewHolder(
         val binding: ViewBinding,
         private val clickCallback: (SearchClickCallback) -> Unit,
         resView: AutofitRecyclerView

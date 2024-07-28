@@ -13,7 +13,7 @@ enum class WatchType(val internalId: Int, @StringRes val stringRes: Int, @Drawab
     NONE(5, R.string.type_none, R.drawable.ic_baseline_add_24);
 
     companion object {
-        fun fromInternalId(id: Int?) = values().find { value -> value.internalId == id } ?: NONE
+        fun fromInternalId(id: Int?) = entries.find { value -> value.internalId == id } ?: NONE
     }
 }
 
@@ -36,6 +36,6 @@ enum class SyncWatchType(val internalId: Int, @StringRes val stringRes: Int, @Dr
     REWATCHING(5, R.string.type_re_watching, R.drawable.ic_baseline_bookmark_24);
 
     companion object {
-        fun fromInternalId(id: Int?) = values().find { value -> value.internalId == id } ?: NONE
+        fun fromInternalId(id: Int?) = entries.find { value -> value.internalId == id } ?: NONE
     }
 }
