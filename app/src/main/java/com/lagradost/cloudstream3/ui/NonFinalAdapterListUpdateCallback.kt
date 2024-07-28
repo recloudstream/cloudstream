@@ -15,7 +15,7 @@ open class NonFinalAdapterListUpdateCallback
 /**
  * Creates an AdapterListUpdateCallback that will dispatch update events to the given adapter.
  *
- * @param adapter The Adapter to send updates to.
+ * @param mAdapter The Adapter to send updates to.
  */(private var mAdapter: RecyclerView.Adapter<*>) :
     ListUpdateCallback {
 

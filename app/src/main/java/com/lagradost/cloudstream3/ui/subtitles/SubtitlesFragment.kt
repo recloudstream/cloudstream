@@ -14,11 +14,13 @@ import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.FontRes
+import androidx.annotation.OptIn
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceManager
 import com.fasterxml.jackson.annotation.JsonProperty
 import androidx.media3.common.text.Cue
+import androidx.media3.common.util.UnstableApi
 import androidx.media3.ui.CaptionStyleCompat
 import com.jaredrummler.android.colorpicker.ColorPickerDialog
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
@@ -28,7 +30,6 @@ import com.lagradost.cloudstream3.CommonActivity.onDialogDismissedEvent
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.SubtitleSettingsBinding
-import com.lagradost.cloudstream3.ui.settings.Globals
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.utils.DataStore.setKey
@@ -46,7 +47,7 @@ const val SUBTITLE_KEY = "subtitle_settings"
 const val SUBTITLE_AUTO_SELECT_KEY = "subs_auto_select"
 const val SUBTITLE_DOWNLOAD_KEY = "subs_auto_download"
 
-data class SaveCaptionStyle(
+data class SaveCaptionStyle @OptIn(UnstableApi::class) constructor(
     @JsonProperty("foregroundColor") var foregroundColor: Int,
     @JsonProperty("backgroundColor") var backgroundColor: Int,
     @JsonProperty("windowColor") var windowColor: Int,
@@ -67,7 +68,7 @@ data class SaveCaptionStyle(
 
 const val DEF_SUBS_ELEVATION = 20
 
-@androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
+@OptIn(androidx.media3.common.util.UnstableApi::class)
 class SubtitlesFragment : Fragment() {
     companion object {
         val applyStyleEvent = Event<SaveCaptionStyle>()
@@ -167,7 +168,7 @@ class SubtitlesFragment : Fragment() {
             activity?.hideSystemUI()
     }
 
-    private fun onDialogDismissed(id: Int) {
+    private fun onDialogDismissed(@Suppress("UNUSED_PARAMETER") id: Int) {
         if (hide)
             activity?.hideSystemUI()
     }

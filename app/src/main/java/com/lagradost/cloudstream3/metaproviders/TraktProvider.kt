@@ -236,6 +236,7 @@ open class TraktProvider : MainAPI() {
                             posterUrl = fixPath(episode.images?.screenshot?.firstOrNull()),
                             rating = episode.rating?.times(10)?.roundToInt(),
                             description = episode.overview,
+                            runTime = episode.runtime
                         ).apply {
                             this.addDate(episode.firstAired, "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
                             if (nextAir == null && this.date != null && this.date!! > unixTimeMS && this.season != 0) {
@@ -295,7 +296,7 @@ open class TraktProvider : MainAPI() {
         return try {
             val format = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
             val dateTime = dateString?.let { format.parse(it)?.time } ?: return false
-            APIHolder.unixTimeMS < dateTime
+            unixTimeMS < dateTime
         } catch (t: Throwable) {
             logError(t)
             false

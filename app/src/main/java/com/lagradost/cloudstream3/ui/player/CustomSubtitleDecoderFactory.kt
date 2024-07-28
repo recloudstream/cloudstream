@@ -2,6 +2,7 @@ package com.lagradost.cloudstream3.ui.player
 
 import android.content.Context
 import android.util.Log
+import androidx.annotation.OptIn
 import androidx.preference.PreferenceManager
 import androidx.media3.common.Format
 import androidx.media3.common.MimeTypes
@@ -31,7 +32,7 @@ import java.nio.charset.Charset
  * @param fallbackFormat used to create a decoder based on mimetype if the subtitle string is not
  * enough to identify the subtitle format.
  **/
-@UnstableApi
+@OptIn(UnstableApi::class)
 class CustomDecoder(private val fallbackFormat: Format?) : SubtitleDecoder {
     companion object {
         fun updateForcedEncoding(context: Context) {
@@ -72,7 +73,7 @@ class CustomDecoder(private val fallbackFormat: Format?) : SubtitleDecoder {
                     RegexOption.IGNORE_CASE
                 ),
             )
-        val captionRegex = listOf(Regex("""(-\s?|)[\[({][\w\d\s]*?[])}]\s*"""))
+        val captionRegex = listOf(Regex("""(-\s?|)[\[({][\w\s]*?[])}]\s*"""))
 
         //https://emptycharacter.com/
         //https://www.fileformat.info/info/unicode/char/200b/index.htm
@@ -262,7 +263,7 @@ class CustomDecoder(private val fallbackFormat: Format?) : SubtitleDecoder {
 }
 
 /** See https://github.com/google/ExoPlayer/blob/release-v2/library/core/src/main/java/com/google/android/exoplayer2/text/SubtitleDecoderFactory.java */
-@UnstableApi
+@OptIn(UnstableApi::class)
 class CustomSubtitleDecoderFactory : SubtitleDecoderFactory {
     override fun supportsFormat(format: Format): Boolean {
 //        return SubtitleDecoderFactory.DEFAULT.supportsFormat(format)

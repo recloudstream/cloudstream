@@ -59,7 +59,7 @@ class SubtitleResource {
         return file
     }
 
-    fun unzip(file: File): List<Pair<String, File>> {
+    private fun unzip(file: File): List<Pair<String, File>> {
         val entries = mutableListOf<Pair<String, File>>()
 
         ZipInputStream(file.inputStream()).use { zipInputStream ->

@@ -17,7 +17,6 @@ class PriorityAdapter<T>(override val items: MutableList<SourcePriority<T>>) :
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return PriorityViewHolder(
             PlayerPrioritizeItemBinding.inflate(LayoutInflater.from(parent.context),parent,false),
-            //LayoutInflater.from(parent.context).inflate(R.layout.player_prioritize_item, parent, false)
         )
     }
 
@@ -31,10 +30,6 @@ class PriorityAdapter<T>(override val items: MutableList<SourcePriority<T>>) :
         val binding: PlayerPrioritizeItemBinding,
     ) : RecyclerView.ViewHolder(binding.root) {
         fun <T> bind(item: SourcePriority<T>) {
-           /* val plusButton: ImageView = itemView.add_button
-            val subtractButton: ImageView = itemView.subtract_button
-            val priorityText: TextView = itemView.priority_text
-            val priorityNumber: TextView = itemView.priority_number*/
             binding.priorityText.text = item.name
 
             fun updatePriority() {

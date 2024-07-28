@@ -25,15 +25,20 @@ import android.view.WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHO
 import android.view.animation.AlphaAnimation
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
+import androidx.annotation.OptIn
+import android.widget.LinearLayout
 import androidx.appcompat.app.AlertDialog
 import androidx.core.graphics.blue
 import androidx.core.graphics.green
 import androidx.core.graphics.red
+import androidx.core.view.children
 import androidx.core.view.isGone
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
+import androidx.media3.common.util.UnstableApi
 import androidx.preference.PreferenceManager
+import com.google.android.material.button.MaterialButton
 import com.lagradost.cloudstream3.CommonActivity.keyEventListener
 import com.lagradost.cloudstream3.CommonActivity.playerEventListener
 import com.lagradost.cloudstream3.CommonActivity.screenHeight
@@ -47,7 +52,6 @@ import com.lagradost.cloudstream3.ui.player.GeneratorPlayer.Companion.subsProvid
 import com.lagradost.cloudstream3.ui.player.source_priority.QualityDataHelper
 import com.lagradost.cloudstream3.ui.result.setText
 import com.lagradost.cloudstream3.ui.result.txt
-import com.lagradost.cloudstream3.ui.settings.Globals
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
@@ -120,6 +124,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
     protected var doubleTapPauseEnabled = true
     protected var playerRotateEnabled = false
     protected var autoPlayerRotateEnabled = false
+    private var hideControlsNames = false
 
     protected var subtitleDelay
         set(value) = try {
@@ -241,6 +246,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         fadeAnimation.duration = 100
         fadeAnimation.fillAfter = true
 
+        @OptIn(UnstableApi::class)
         val sView = subView
         val sStyle = subStyle
         if (sView != null && sStyle != null) {
@@ -296,42 +302,40 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
     private fun restoreOrientationWithSensor(activity: Activity) {
         val currentOrientation = activity.resources.configuration.orientation
-        var orientation = 0
-        when (currentOrientation) {
+        val orientation = when (currentOrientation) {
             Configuration.ORIENTATION_LANDSCAPE ->
-                orientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
-
-            Configuration.ORIENTATION_SQUARE, Configuration.ORIENTATION_UNDEFINED ->
-                orientation = dynamicOrientation()
+                ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
 
             Configuration.ORIENTATION_PORTRAIT ->
-                orientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT
+                ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT
+
+            else -> dynamicOrientation()
         }
         activity.requestedOrientation = orientation
     }
 
     private fun toggleOrientationWithSensor(activity: Activity) {
         val currentOrientation = activity.resources.configuration.orientation
-        var orientation = 0
-        when (currentOrientation) {
+        val orientation: Int = when (currentOrientation) {
             Configuration.ORIENTATION_LANDSCAPE ->
-                orientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT
-
-            Configuration.ORIENTATION_SQUARE, Configuration.ORIENTATION_UNDEFINED ->
-                orientation = dynamicOrientation()
+                ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT
 
             Configuration.ORIENTATION_PORTRAIT ->
-                orientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
+                ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
+
+            else -> dynamicOrientation()
         }
         activity.requestedOrientation = orientation
     }
 
     open fun lockOrientation(activity: Activity) {
-        val display =
+        @Suppress("DEPRECATION")
+        val display = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R)
             (activity.getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay
+            else activity.display!!
         val rotation = display.rotation
         val currentOrientation = activity.resources.configuration.orientation
-        var orientation = 0
+        val orientation: Int
         when (currentOrientation) {
             Configuration.ORIENTATION_LANDSCAPE ->
                 orientation =
@@ -340,15 +344,14 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                     else
                         ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE
 
-            Configuration.ORIENTATION_SQUARE, Configuration.ORIENTATION_UNDEFINED ->
-                orientation = dynamicOrientation()
-
             Configuration.ORIENTATION_PORTRAIT ->
                 orientation =
                     if (rotation == Surface.ROTATION_0 || rotation == Surface.ROTATION_270)
                         ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
                     else
                         ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT
+
+            else -> orientation = dynamicOrientation()
         }
         activity.requestedOrientation = orientation
     }
@@ -1163,6 +1166,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         return true
     }
 
+    @SuppressLint("GestureBackNavigation")
     private fun handleKeyEvent(event: KeyEvent, hasNavigated: Boolean): Boolean {
         if (hasNavigated) {
             autoHide()
@@ -1419,6 +1423,8 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                         false
                     )
 
+                hideControlsNames = settingsManager.getBoolean(ctx.getString(R.string.hide_player_control_names_key), false)
+
                 val profiles = QualityDataHelper.getProfiles()
                 val type = if (ctx.isUsingMobileData())
                     QualityDataHelper.QualityProfileType.Data
@@ -1439,6 +1445,9 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                 playerSpeedBtt.isVisible = playBackSpeedEnabled
                 playerResizeBtt.isVisible = playerResizeEnabled
                 playerRotateBtt.isVisible = playerRotateEnabled
+                if (hideControlsNames) {
+                    hideControlsNames()
+                }
             }
         } catch (e: Exception) {
             logError(e)
@@ -1572,7 +1581,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
             }
         }
         // cs3 is peak media center
-        setRemainingTimeCounter(durationMode || Globals.isLayout(Globals.TV))
+        setRemainingTimeCounter(durationMode || isLayout(TV))
         playerBinding?.exoPosition?.doOnTextChanged { _, _, _, _ ->
             updateRemainingTime()
         }
@@ -1589,6 +1598,22 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         activity?.let {
             toggleOrientationWithSensor(it)
         }
+    }
+
+    private fun PlayerCustomLayoutBinding.hideControlsNames() {
+        fun iterate(layout: LinearLayout) {
+            layout.children.forEach {
+                if (it is MaterialButton) {
+                    it.textSize = 0f
+                    it.iconPadding = 0
+                    it.iconGravity = MaterialButton.ICON_GRAVITY_TEXT_START
+                    it.setPadding(0,0,0,0)
+                } else if (it is LinearLayout) {
+                    iterate(it)
+                }
+            }
+        }
+        iterate(playerLockHolder.parent as LinearLayout)
     }
 
     override fun playerDimensionsLoaded(width: Int, height: Int) {

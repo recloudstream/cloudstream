@@ -673,4 +673,5 @@
     <string name="player_settings_select_cast_device">选择投射设备</string>
     <string name="next_season_episode_format" formatted="true">%1$d季%2$d集将在</string>
     <string name="episode_action_cast_mirror">投射镜像</string>
+    <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
 </resources>

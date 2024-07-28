@@ -81,12 +81,12 @@ object BackupUtils {
 
     // Kinda hack, but I couldn't think of a better way
     data class BackupVars(
-        @JsonProperty("_Bool") val _Bool: Map<String, Boolean>?,
-        @JsonProperty("_Int") val _Int: Map<String, Int>?,
-        @JsonProperty("_String") val _String: Map<String, String>?,
-        @JsonProperty("_Float") val _Float: Map<String, Float>?,
-        @JsonProperty("_Long") val _Long: Map<String, Long>?,
-        @JsonProperty("_StringSet") val _StringSet: Map<String, Set<String>?>?,
+        @JsonProperty("_Bool") val bool: Map<String, Boolean>?,
+        @JsonProperty("_Int") val int: Map<String, Int>?,
+        @JsonProperty("_String") val string: Map<String, String>?,
+        @JsonProperty("_Float") val float: Map<String, Float>?,
+        @JsonProperty("_Long") val long: Map<String, Long>?,
+        @JsonProperty("_StringSet") val stringSet: Map<String, Set<String>?>?,
     )
 
     data class BackupFile(
@@ -134,21 +134,21 @@ object BackupUtils {
     ) {
         if (context == null) return
         if (restoreSettings) {
-            context.restoreMap(backupFile.settings._Bool, true)
-            context.restoreMap(backupFile.settings._Int, true)
-            context.restoreMap(backupFile.settings._String, true)
-            context.restoreMap(backupFile.settings._Float, true)
-            context.restoreMap(backupFile.settings._Long, true)
-            context.restoreMap(backupFile.settings._StringSet, true)
+            context.restoreMap(backupFile.settings.bool, true)
+            context.restoreMap(backupFile.settings.int, true)
+            context.restoreMap(backupFile.settings.string, true)
+            context.restoreMap(backupFile.settings.float, true)
+            context.restoreMap(backupFile.settings.long, true)
+            context.restoreMap(backupFile.settings.stringSet, true)
         }
 
         if (restoreDataStore) {
-            context.restoreMap(backupFile.datastore._Bool)
-            context.restoreMap(backupFile.datastore._Int)
-            context.restoreMap(backupFile.datastore._String)
-            context.restoreMap(backupFile.datastore._Float)
-            context.restoreMap(backupFile.datastore._Long)
-            context.restoreMap(backupFile.datastore._StringSet)
+            context.restoreMap(backupFile.datastore.bool)
+            context.restoreMap(backupFile.datastore.int)
+            context.restoreMap(backupFile.datastore.string)
+            context.restoreMap(backupFile.datastore.float)
+            context.restoreMap(backupFile.datastore.long)
+            context.restoreMap(backupFile.datastore.stringSet)
         }
     }
 

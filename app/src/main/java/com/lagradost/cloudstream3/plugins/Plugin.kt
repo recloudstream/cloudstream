@@ -34,7 +34,7 @@ abstract class Plugin {
      */
     fun registerMainAPI(element: MainAPI) {
         Log.i(PLUGIN_TAG, "Adding ${element.name} (${element.mainUrl}) MainAPI")
-        element.sourcePlugin = this.__filename
+        element.sourcePlugin = this.filename
         // Race condition causing which would case duplicates if not for distinctBy
         synchronized(APIHolder.allProviders) {
             APIHolder.allProviders.add(element)
@@ -48,7 +48,7 @@ abstract class Plugin {
      */
     fun registerExtractorAPI(element: ExtractorApi) {
         Log.i(PLUGIN_TAG, "Adding ${element.name} (${element.mainUrl}) ExtractorApi")
-        element.sourcePlugin = this.__filename
+        element.sourcePlugin = this.filename
         extractorApis.add(element)
     }
 
@@ -68,7 +68,11 @@ abstract class Plugin {
      */
     var resources: Resources? = null
     /** Full file path to the plugin. */
-    var __filename: String? = null
+    @Deprecated("Renamed to `filename` to follow conventions", replaceWith = ReplaceWith("filename"))
+    var __filename: String?
+        get() = filename
+        set(value) {filename = value}
+    var filename: String? = null
 
     /**
      * This will add a button in the settings allowing you to add custom settings

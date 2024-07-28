@@ -78,11 +78,12 @@ import com.lagradost.cloudstream3.utils.UIHelper.setImage
 import com.lagradost.cloudstream3.utils.VideoDownloadHelper
 
 open class ResultFragmentPhone : FullScreenPlayer() {
-    private val gestureRegionsListener = object : PanelsChildGestureRegionObserver.GestureRegionsListener {
-        override fun onGestureRegionsUpdate(gestureRegions: List<Rect>) {
-            binding?.resultOverlappingPanels?.setChildGestureRegions(gestureRegions)
+    private val gestureRegionsListener =
+        object : PanelsChildGestureRegionObserver.GestureRegionsListener {
+            override fun onGestureRegionsUpdate(gestureRegions: List<Rect>) {
+                binding?.resultOverlappingPanels?.setChildGestureRegions(gestureRegions)
+            }
         }
-    }
 
     protected lateinit var viewModel: ResultViewModel2
     protected lateinit var syncModel: SyncViewModel
@@ -336,7 +337,6 @@ open class ResultFragmentPhone : FullScreenPlayer() {
         }
 
 
-
         // ===== ===== =====
 
         resultBinding?.apply {
@@ -430,16 +430,16 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                     if (newStatus == null) return@toggleSubscriptionStatus
 
                     val message = if (newStatus) {
-                            // Kinda icky to have this here, but it works.
-                            SubscriptionWorkManager.enqueuePeriodicWork(context)
-                            R.string.subscription_new
-                        } else {
-                            R.string.subscription_deleted
-                        }
+                        // Kinda icky to have this here, but it works.
+                        SubscriptionWorkManager.enqueuePeriodicWork(context)
+                        R.string.subscription_new
+                    } else {
+                        R.string.subscription_deleted
+                    }
 
-                        val name = (viewModel.page.value as? Resource.Success)?.value?.title
-                            ?: txt(R.string.no_data).asStringNull(context) ?: ""
-                        showToast(txt(message, name), Toast.LENGTH_SHORT)
+                    val name = (viewModel.page.value as? Resource.Success)?.value?.title
+                        ?: txt(R.string.no_data).asStringNull(context) ?: ""
+                    showToast(txt(message, name), Toast.LENGTH_SHORT)
                 }
                 context?.let { openBatteryOptimizationSettings(it) }
             }
@@ -473,8 +473,16 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                     if (act.isCastApiAvailable()) {
                         try {
                             CastButtonFactory.setUpMediaRouteButton(act, this)
-                            val castContext = CastContext.getSharedInstance(act.applicationContext)
-                            isGone = castContext.castState == CastState.NO_DEVICES_AVAILABLE
+                            CastContext.getSharedInstance(act.applicationContext) {
+                                it.run()
+                            }.addOnCompleteListener {
+                                isGone = if (it.isSuccessful) {
+                                    it.result.castState == CastState.NO_DEVICES_AVAILABLE
+                                } else {
+                                    true
+                                }
+
+                            }
                             // this shit leaks for some reason
                             //castContext.addCastStateListener { state ->
                             //    media_route_button?.isGone = state == CastState.NO_DEVICES_AVAILABLE
@@ -961,12 +969,12 @@ open class ResultFragmentPhone : FullScreenPlayer() {
 
                 setOnClickListener { fab ->
                     activity?.showBottomDialog(
-                        WatchType.values().map { fab.context.getString(it.stringRes) }.toList(),
+                        WatchType.entries.map { fab.context.getString(it.stringRes) }.toList(),
                         watchType.ordinal,
                         fab.context.getString(R.string.action_add_to_bookmarks),
                         showApply = false,
                         {}) {
-                        viewModel.updateWatchStatus(WatchType.values()[it], context)
+                        viewModel.updateWatchStatus(WatchType.entries[it], context)
                     }
                 }
             }
@@ -1046,7 +1054,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                                 text?.asStringNull(ctx) ?: return@mapNotNull null
                             )
                         }) {
-                        viewModel.changeDubStatus(DubStatus.values()[itemId])
+                        viewModel.changeDubStatus(DubStatus.entries[itemId])
                     }
                 }
             }
@@ -1103,7 +1111,8 @@ open class ResultFragmentPhone : FullScreenPlayer() {
 
     override fun onPause() {
         super.onPause()
-        PanelsChildGestureRegionObserver.Provider.get().addGestureRegionsUpdateListener(gestureRegionsListener)
+        PanelsChildGestureRegionObserver.Provider.get()
+            .addGestureRegionsUpdateListener(gestureRegionsListener)
     }
 
     private fun setRecommendations(rec: List<SearchResponse>?, validApiName: String?) {

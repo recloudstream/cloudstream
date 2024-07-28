@@ -624,4 +624,5 @@
     <string name="clipboard_permission_error">Грешка при пристапот до таблата со исечоци, обидете се повторно.</string>
     <string name="clipboard_unknown_error">Грешка при копирање, копирајте го logcat и контактирајте со поддршката за апликацијата.</string>
     <string name="audio_book_singular">Аудио книга</string>
+    <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
 </resources>

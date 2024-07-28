@@ -29,6 +29,7 @@ import android.os.Message;
 import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.OptIn;
 import androidx.media3.common.C;
 import androidx.media3.common.Format;
 import androidx.media3.common.text.Cue;
@@ -66,7 +67,7 @@ import java.util.stream.Collectors;
  * obtained from a {@link SubtitleDecoderFactory}. The actual rendering of the subtitle {@link Cue}s
  * is delegated to a {@link TextOutput}.
  */
-@UnstableApi
+@OptIn(markerClass = UnstableApi.class)
 public class NonFinalTextRenderer extends BaseRenderer implements Callback {
 
     private static final String TAG = "TextRenderer";
@@ -74,7 +75,7 @@ public class NonFinalTextRenderer extends BaseRenderer implements Callback {
     /**
      * @param trackType     The track type that the renderer handles. One of the {@link C} {@code
      *                      TRACK_TYPE_*} constants.
-     * @param outputHandler
+     * @param outputHandler todo description
      */
     public NonFinalTextRenderer(int trackType, @Nullable Handler outputHandler) {
         super(trackType);
@@ -416,13 +417,11 @@ public class NonFinalTextRenderer extends BaseRenderer implements Callback {
     @SuppressWarnings("unchecked")
     @Override
     public boolean handleMessage(Message msg) {
-        switch (msg.what) {
-            case MSG_UPDATE_OUTPUT:
-                invokeUpdateOutputInternal((List<Cue>) msg.obj);
-                return true;
-            default:
-                throw new IllegalStateException();
+        if (msg.what == MSG_UPDATE_OUTPUT) {
+            invokeUpdateOutputInternal((List<Cue>) msg.obj);
+            return true;
         }
+        throw new IllegalStateException();
     }
 
     private void invokeUpdateOutputInternal(List<Cue> cues) {
@@ -441,7 +440,6 @@ public class NonFinalTextRenderer extends BaseRenderer implements Callback {
                 }
         ).collect(Collectors.toList());
 
-        output.onCues(fixedCues);
         output.onCues(new CueGroup(fixedCues, 0L));
     }
 

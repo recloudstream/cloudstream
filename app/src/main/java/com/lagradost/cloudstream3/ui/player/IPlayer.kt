@@ -8,7 +8,6 @@ import com.lagradost.cloudstream3.utils.EpisodeSkip
 import com.lagradost.cloudstream3.utils.ExtractorLink
 
 enum class PlayerEventType(val value: Int) {
-    //Stop(-1),
     Pause(0),
     Play(1),
     SeekForward(2),

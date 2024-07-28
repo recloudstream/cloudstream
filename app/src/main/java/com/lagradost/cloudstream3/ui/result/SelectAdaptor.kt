@@ -63,8 +63,7 @@ class SelectAdaptor(val callback: (Any) -> Unit) : RecyclerView.Adapter<Recycler
     }
 
 
-    private class SelectViewHolder
-    constructor(
+    private class SelectViewHolder(
         binding: ResultSelectionBinding,
     ) :
         RecyclerView.ViewHolder(binding.root) {
