@@ -35,6 +35,7 @@ import java.io.File
 import java.io.FileNotFoundException
 import java.io.PrintStream
 import java.lang.ref.WeakReference
+import java.util.Locale
 import kotlin.concurrent.thread
 import kotlin.system.exitProcess
 
@@ -81,14 +82,8 @@ class ExceptionHandler(val errorFile: File, val onError: (() -> Unit)) :
         ACRA.errorReporter.handleException(error)
         try {
             PrintStream(errorFile).use { ps ->
-                ps.println(String.format("Currently loading extension: ${PluginManager.currentlyLoading ?: "none"}"))
-                ps.println(
-                    String.format(
-                        "Fatal exception on thread %s (%d)",
-                        thread.name,
-                        thread.id
-                    )
-                )
+                ps.println("Currently loading extension: ${PluginManager.currentlyLoading ?: "none"}")
+                ps.println("Fatal exception on thread ${thread.name} (${thread.id})")
                 error.printStackTrace(ps)
             }
         } catch (ignored: FileNotFoundException) {
@@ -106,7 +101,6 @@ class AcraApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        //NativeCrashHandler.initCrashHandler()
         ExceptionHandler(filesDir.resolve("last_error")) {
             val intent = context!!.packageManager.getLaunchIntentForPackage(context!!.packageName)
             startActivity(Intent.makeRestartActivityTask(intent!!.component))

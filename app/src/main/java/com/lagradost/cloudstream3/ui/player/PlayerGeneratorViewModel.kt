@@ -20,7 +20,7 @@ import kotlinx.coroutines.launch
 
 class PlayerGeneratorViewModel : ViewModel() {
     companion object {
-        val TAG = "PlayViewGen"
+        const val TAG = "PlayViewGen"
     }
 
     private var generator: IGenerator? = null

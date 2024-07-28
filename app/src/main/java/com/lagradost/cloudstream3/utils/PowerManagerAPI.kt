@@ -17,8 +17,8 @@ import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 
-const val packageName = BuildConfig.APPLICATION_ID
-const val TAG = "PowerManagerAPI"
+private const val PACKAGE_NAME = BuildConfig.APPLICATION_ID
+private const val TAG = "PowerManagerAPI"
 
 object BatteryOptimizationChecker {
 
@@ -72,7 +72,7 @@ object BatteryOptimizationChecker {
         val intent = Intent()
         try {
             intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
-                .setData(Uri.fromParts("package", packageName, null))
+                .setData(Uri.fromParts("package", PACKAGE_NAME, null))
             context.startActivity(intent, Bundle())
         } catch (t: Throwable) {
             Log.e(TAG, "Unable to invoke any intent", t)

@@ -1,11 +1,12 @@
 package com.lagradost.cloudstream3.ui.player
 
 import android.os.Looper
+import androidx.annotation.OptIn
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.text.SubtitleDecoderFactory
 import androidx.media3.exoplayer.text.TextOutput
 
-@UnstableApi
+@OptIn(UnstableApi::class)
 class CustomTextRenderer(
     offset: Long,
     output: TextOutput?,

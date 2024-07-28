@@ -29,8 +29,6 @@ class ProfilesAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return ProfilesViewHolder(
             PlayerQualityProfileItemBinding.inflate(LayoutInflater.from(parent.context),parent,false)
-            //LayoutInflater.from(parent.context)
-            //    .inflate(R.layout.player_quality_profile_item, parent, false)
         )
     }
 

@@ -1,16 +1,11 @@
 package com.lagradost.cloudstream3.ui.search
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.TvType
-import com.lagradost.cloudstream3.databinding.AccountSingleBinding
 import com.lagradost.cloudstream3.databinding.SearchHistoryItemBinding
 
 data class SearchHistoryItem(
@@ -63,8 +58,7 @@ class SearchHistoryAdaptor(
         diffResult.dispatchUpdatesTo(this)
     }
 
-    class CardViewHolder
-    constructor(
+    class CardViewHolder(
         val binding: SearchHistoryItemBinding,
         private val clickCallback: (SearchHistoryCallback) -> Unit,
     ) :

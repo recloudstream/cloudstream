@@ -2163,7 +2163,7 @@ class ResultViewModel2 : ViewModel() {
         // lets say that we have subscribed, then we must be able to unsubscribe no matter what
         else if (data != null) {
             _subscribeStatus.postValue(true)
-        }
+        } else _subscribeStatus.postValue(null)
     }
 
     private fun postFavorites(loadResponse: LoadResponse) {
@@ -2723,7 +2723,7 @@ class ResultViewModel2 : ViewModel() {
         val id: Int?,
     ) : LoadResponse
 
-    fun loadSmall(activity: Activity?, searchResponse: SearchResponse) = ioSafe {
+    fun loadSmall(searchResponse: SearchResponse) = ioSafe {
         val url = searchResponse.url
         _page.postValue(Resource.Loading(url))
         _episodes.postValue(Resource.Loading())

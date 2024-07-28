@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.ui.settings
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,7 +14,7 @@ import com.lagradost.cloudstream3.utils.UIHelper.setImage
 class AccountClickCallback(val action: Int, val view: View, val card: AuthAPI.LoginInfo)
 
 class AccountAdapter(
-    val cardList: List<AuthAPI.LoginInfo>,
+    private val cardList: List<AuthAPI.LoginInfo>,
     private val clickCallback: (AccountClickCallback) -> Unit
 ) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -42,12 +43,12 @@ class AccountAdapter(
         return cardList[position].accountIndex.toLong()
     }
 
-    class CardViewHolder
-    constructor(val binding: AccountSingleBinding, private val clickCallback: (AccountClickCallback) -> Unit) :
+    class CardViewHolder(val binding: AccountSingleBinding, private val clickCallback: (AccountClickCallback) -> Unit) :
         RecyclerView.ViewHolder(binding.root) {
       //  private val pfp: ImageView = itemView.findViewById(R.id.account_profile_picture)!!
        // private val accountName: TextView = itemView.findViewById(R.id.account_name)!!
 
+        @SuppressLint("StringFormatInvalid")
         fun bind(card: AuthAPI.LoginInfo) {
             // just in case name is null account index will show, should never happened
             binding.accountName.text = card.name ?: "%s %d".format(

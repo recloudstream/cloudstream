@@ -1,6 +1,5 @@
 package com.lagradost.cloudstream3.subtitles
 
-import com.lagradost.cloudstream3.LoadResponse
 import com.lagradost.cloudstream3.TvType
 
 class AbstractSubtitleEntities {

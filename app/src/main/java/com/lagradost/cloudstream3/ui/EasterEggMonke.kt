@@ -51,7 +51,7 @@ class EasterEggMonke : AppCompatActivity() {
             FrameLayout.LayoutParams.WRAP_CONTENT)
         binding.frame.addView(newStar)
 
-        newStar.scaleX = Math.random().toFloat() * 1.5f +  newStar.scaleX
+        newStar.scaleX += Math.random().toFloat() * 1.5f
         newStar.scaleY = newStar.scaleX
         starW *= newStar.scaleX
         starH *= newStar.scaleY

@@ -8,8 +8,8 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlin.math.abs
 
-class GrdLayoutManager(val context: Context, _spanCount: Int) :
-    GridLayoutManager(context, _spanCount) {
+class GrdLayoutManager(val context: Context, spanCount: Int) :
+    GridLayoutManager(context, spanCount) {
     override fun onFocusSearchFailed(
         focused: View,
         focusDirection: Int,

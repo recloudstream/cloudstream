@@ -11,7 +11,6 @@ import android.os.Build
 import android.widget.Toast
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError
-import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import java.io.InputStream
 
@@ -57,7 +56,7 @@ class ApkInstaller(private val service: PackageInstallerService) {
                 PackageInstaller.STATUS_FAILURE
             )) {
                 PackageInstaller.STATUS_PENDING_USER_ACTION -> {
-                    val userAction = intent.getParcelableExtra<Intent>(Intent.EXTRA_INTENT)
+                    val userAction = intent.getSafeParcelableExtra<Intent>(Intent.EXTRA_INTENT)
                     userAction?.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                     context.startActivity(userAction)
                 }
@@ -146,3 +145,5 @@ class ApkInstaller(private val service: PackageInstallerService) {
     }
 }
 
+@Suppress("DEPRECATION")
+inline fun <reified T> Intent.getSafeParcelableExtra(key: String): T? = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) getParcelableExtra(key) else getParcelableExtra(key, T::class.java)
