@@ -1,0 +1,14 @@
+-- Merging decision tree log ---
+manifest
+ADDED from C:\Users\fantv\OneDrive\Documents\GitHub\cloudstream\library\src\androidMain\AndroidManifest.xml:2:1-13
+INJECTED from C:\Users\fantv\OneDrive\Documents\GitHub\cloudstream\library\src\androidMain\AndroidManifest.xml:2:1-13
+	package
+		INJECTED from C:\Users\fantv\OneDrive\Documents\GitHub\cloudstream\library\src\androidMain\AndroidManifest.xml
+uses-sdk
+INJECTED from C:\Users\fantv\OneDrive\Documents\GitHub\cloudstream\library\src\androidMain\AndroidManifest.xml reason: use-sdk injection requested
+INJECTED from C:\Users\fantv\OneDrive\Documents\GitHub\cloudstream\library\src\androidMain\AndroidManifest.xml
+INJECTED from C:\Users\fantv\OneDrive\Documents\GitHub\cloudstream\library\src\androidMain\AndroidManifest.xml
+	android:targetSdkVersion
+		INJECTED from C:\Users\fantv\OneDrive\Documents\GitHub\cloudstream\library\src\androidMain\AndroidManifest.xml
+	android:minSdkVersion
+		INJECTED from C:\Users\fantv\OneDrive\Documents\GitHub\cloudstream\library\src\androidMain\AndroidManifest.xml

@@ -5,11 +5,11 @@ buildscript {
     }
 
     dependencies {
-        classpath("com.android.tools.build:gradle:8.2.2")
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.23")
-        classpath("org.jetbrains.dokka:dokka-gradle-plugin:1.9.10")
+        classpath(libs.gradle)
+        classpath(libs.kotlin.gradle.plugin)
+        classpath(libs.dokka.gradle.plugin)
         // Universal build config
-        classpath("com.codingfeline.buildkonfig:buildkonfig-gradle-plugin:0.15.1")
+        classpath(libs.buildkonfig.gradle.plugin)
     }
 }
 
@@ -21,7 +21,7 @@ allprojects {
 }
 
 plugins {
-    id("com.google.devtools.ksp") version "1.9.22-1.0.17" apply false
+    id("com.google.devtools.ksp") version "1.9.23-1.0.20" apply false
 }
 
 //tasks.register<Delete>("clean") {
