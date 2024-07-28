@@ -16,15 +16,16 @@ import com.lagradost.cloudstream3.syncproviders.SyncIdName
 import com.lagradost.cloudstream3.ui.SyncWatchType
 import com.lagradost.cloudstream3.ui.library.ListSorting
 import com.lagradost.cloudstream3.ui.result.txt
-import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 import com.lagradost.cloudstream3.utils.AppContextUtils.splitQuery
+import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
 import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.DataStore.toKotlinObject
+import com.lagradost.cloudstream3.utils.DataStoreHelper.toYear
 import java.net.URL
 import java.net.URLEncoder
-import java.util.*
+import java.util.Locale
 
 class AniListApi(index: Int) : AccountManager(index), SyncAPI {
     override var name = "AniList"
@@ -631,8 +632,9 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
                 ?: this.media.coverImage.medium,
                 null,
                 null,
+                this.media.seasonYear.toYear(),
                 null,
-                plot = this.media.description
+                plot = this.media.description,
             )
         }
     }
@@ -689,6 +691,8 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
                 ListSorting.AlphabeticalZ,
                 ListSorting.UpdatedNew,
                 ListSorting.UpdatedOld,
+                ListSorting.ReleaseDateNew,
+                ListSorting.ReleaseDateOld,
                 ListSorting.RatingHigh,
                 ListSorting.RatingLow,
             )

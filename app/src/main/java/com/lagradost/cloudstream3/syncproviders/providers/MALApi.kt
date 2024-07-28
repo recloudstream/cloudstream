@@ -27,6 +27,7 @@ import java.security.SecureRandom
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.time.Instant
+import java.time.format.DateTimeFormatter
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
@@ -448,6 +449,12 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
                 null,
                 null,
                 plot = this.node.synopsis,
+                releaseDate = if (this.node.startDate == null) null else try {Date.from(
+                    Instant.from(
+                        DateTimeFormatter.ofPattern(if (this.node.startDate.length == 4) "yyyy" else if (this.node.startDate.length == 7) "yyyy-MM" else "yyyy-MM-dd")
+                            .parse(this.node.startDate)
+                    )
+                )} catch (_: RuntimeException) {null}
             )
         }
     }
@@ -512,6 +519,8 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
                 ListSorting.AlphabeticalZ,
                 ListSorting.UpdatedNew,
                 ListSorting.UpdatedOld,
+                ListSorting.ReleaseDateNew,
+                ListSorting.ReleaseDateOld,
                 ListSorting.RatingHigh,
                 ListSorting.RatingLow,
             )

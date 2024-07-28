@@ -119,6 +119,11 @@ class LocalList : SyncAPI {
                 ListSorting.AlphabeticalZ,
                 ListSorting.UpdatedNew,
                 ListSorting.UpdatedOld,
+                ListSorting.ReleaseDateNew,
+                ListSorting.ReleaseDateOld,
+//                ListSorting.RatingHigh,
+//                ListSorting.RatingLow,
+
             )
         )
     }
