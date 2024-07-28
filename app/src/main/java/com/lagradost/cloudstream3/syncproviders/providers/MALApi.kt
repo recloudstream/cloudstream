@@ -449,10 +449,10 @@ class MALApi(index: Int) : AccountManager(index), SyncAPI {
                 null,
                 null,
                 plot = this.node.synopsis,
-                releaseDate = if (this.node.start_date == null) null else try {Date.from(
+                releaseDate = if (this.node.startDate == null) null else try {Date.from(
                     Instant.from(
-                        DateTimeFormatter.ofPattern(if (this.node.start_date.length == 4) "yyyy" else if (this.node.start_date.length == 7) "yyyy-MM" else "yyyy-MM-dd")
-                            .parse(this.node.start_date)
+                        DateTimeFormatter.ofPattern(if (this.node.startDate.length == 4) "yyyy" else if (this.node.startDate.length == 7) "yyyy-MM" else "yyyy-MM-dd")
+                            .parse(this.node.startDate)
                     )
                 )} catch (_: RuntimeException) {null}
             )
