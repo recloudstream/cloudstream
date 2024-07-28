@@ -2163,7 +2163,7 @@ class ResultViewModel2 : ViewModel() {
         // lets say that we have subscribed, then we must be able to unsubscribe no matter what
         else if (data != null) {
             _subscribeStatus.postValue(true)
-        }
+        } else _subscribeStatus.postValue(null)
     }
 
     private fun postFavorites(loadResponse: LoadResponse) {
