@@ -282,7 +282,7 @@ object TestingUtils {
                     // Test Search Results
                     val searchQueries =
                         // Use the random 3 home page results as queries since they are guaranteed to exist
-                        (homePageList.shuffled(Random).take(3).map { it.name } +
+                        (homePageList.shuffled(Random).take(3).map { it.name.split(" ").first() } +
                                 // If home page is sparse then use generic search queries
                                 listOf("over", "iron", "guy")).take(4)
 
