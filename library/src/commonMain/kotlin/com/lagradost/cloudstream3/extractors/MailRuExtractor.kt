@@ -13,28 +13,25 @@ open class MailRu : ExtractorApi() {
     override val requiresReferer = false
 
     override suspend fun getUrl(url: String, referer: String?, subtitleCallback: (SubtitleFile) -> Unit, callback: (ExtractorLink) -> Unit) {
-        val ext_ref = referer ?: ""
-        Log.d("Kekik_${this.name}", "url » ${url}")
+        val extRef = referer ?: ""
 
-        val vid_id     = url.substringAfter("video/embed/").trim()
-        val video_req  = app.get("${mainUrl}/+/video/meta/${vid_id}", referer=url)
-        val video_key  = video_req.cookies["video_key"].toString()
-        Log.d("Kekik_${this.name}", "video_key » ${video_key}")
+        val vidId     = url.substringAfter("video/embed/").trim()
+        val videoReq  = app.get("${mainUrl}/+/video/meta/${vidId}", referer=url)
+        val videoKey  = videoReq.cookies["video_key"].toString()
 
-        val video_data = AppUtils.tryParseJson<MailRuData>(video_req.text) ?: throw ErrorLoadingException("Video not found")
+        val videoData = AppUtils.tryParseJson<MailRuData>(videoReq.text) ?: throw ErrorLoadingException("Video not found")
 
-        for (video in video_data.videos) {
-            Log.d("Kekik_${this.name}", "video » ${video}")
+        for (video in videoData.videos) {
 
-            val video_url = if (video.url.startsWith("//")) "https:${video.url}" else video.url
+            val videoUrl = if (video.url.startsWith("//")) "https:${video.url}" else video.url
 
             callback.invoke(
                 ExtractorLink(
                     source  = this.name,
                     name    = this.name,
-                    url     = video_url,
+                    url     = videoUrl,
                     referer = url,
-                    headers = mapOf("Cookie" to "video_key=${video_key}"),
+                    headers = mapOf("Cookie" to "video_key=${videoKey}"),
                     quality = getQualityFromName(video.key),
                     isM3u8  = false
                 )

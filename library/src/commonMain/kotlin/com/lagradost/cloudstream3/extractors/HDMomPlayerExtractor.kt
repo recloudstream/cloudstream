@@ -16,24 +16,23 @@ open class HDMomPlayer : ExtractorApi() {
     override val requiresReferer = true
 
     override suspend fun getUrl(url: String, referer: String?, subtitleCallback: (SubtitleFile) -> Unit, callback: (ExtractorLink) -> Unit) {
-        val m3u_link:String?
-        val ext_ref  = referer ?: ""
-        val i_source = app.get(url, referer=ext_ref).text
+        val m3uLink:String?
+        val extRef  = referer ?: ""
+        val iSource = app.get(url, referer=extRef).text
 
-        val bePlayer = Regex("""bePlayer\('([^']+)',\s*'(\{[^\}]+\})'\);""").find(i_source)?.groupValues
+        val bePlayer = Regex("""bePlayer\('([^']+)',\s*'(\{[^\}]+\})'\);""").find(iSource)?.groupValues
         if (bePlayer != null) {
             val bePlayerPass = bePlayer.get(1)
             val bePlayerData = bePlayer.get(2)
             val encrypted    = AesHelper.cryptoAESHandler(bePlayerData, bePlayerPass.toByteArray(), false)?.replace("\\", "") ?: throw ErrorLoadingException("failed to decrypt")
-            Log.d("Kekik_${this.name}", "encrypted » ${encrypted}")
 
-            m3u_link = Regex("""video_location\":\"([^\"]+)""").find(encrypted)?.groupValues?.get(1)
+            m3uLink = Regex("""video_location\":\"([^\"]+)""").find(encrypted)?.groupValues?.get(1)
         } else {
-            m3u_link = Regex("""file:\"([^\"]+)""").find(i_source)?.groupValues?.get(1)
+            m3uLink = Regex("""file:\"([^\"]+)""").find(iSource)?.groupValues?.get(1)
 
-            val track_str = Regex("""tracks:\[([^\]]+)""").find(i_source)?.groupValues?.get(1)
-            if (track_str != null) {
-                val tracks:List<Track> = jacksonObjectMapper().readValue("[${track_str}]")
+            val trackStr = Regex("""tracks:\[([^\]]+)""").find(iSource)?.groupValues?.get(1)
+            if (trackStr != null) {
+                val tracks:List<Track> = jacksonObjectMapper().readValue("[${trackStr}]")
 
                 for (track in tracks) {
                     if (track.file == null || track.label == null) continue
@@ -53,7 +52,7 @@ open class HDMomPlayer : ExtractorApi() {
             ExtractorLink(
                 source  = this.name,
                 name    = this.name,
-                url     = m3u_link ?: throw ErrorLoadingException("m3u link not found"),
+                url     = m3uLink ?: throw ErrorLoadingException("m3u link not found"),
                 referer = url,
                 quality = Qualities.Unknown.value,
                 isM3u8  = true

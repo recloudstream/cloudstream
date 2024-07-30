@@ -12,36 +12,45 @@ open class VidMoxy : ExtractorApi() {
     override val requiresReferer = true
 
     override suspend fun getUrl(url: String, referer: String?, subtitleCallback: (SubtitleFile) -> Unit, callback: (ExtractorLink) -> Unit) {
-        val ext_ref   = referer ?: ""
-        val video_req = app.get(url, referer=ext_ref).text
+        val extRef   = referer ?: ""
+        val videoReq = app.get(url, referer=extRef).text
 
-		val sub_urls = mutableSetOf<String>()
-        Regex("""captions\",\"file\":\"([^\"]+)\",\"label\":\"([^\"]+)\"""").findAll(video_req).forEach {
-            val (sub_url, sub_lang) = it.destructured
+		val subUrls = mutableSetOf<String>()
+        Regex("""captions\",\"file\":\"([^\"]+)\",\"label\":\"([^\"]+)\"""").findAll(videoReq).forEach {
+            val (subUrl, subLang) = it.destructured
 
-			if (sub_url in sub_urls) { return@forEach }
- 			sub_urls.add(sub_url)
+			if (subUrl in subUrls) { return@forEach }
+ 			subUrls.add(subUrl)
 
             subtitleCallback.invoke(
                 SubtitleFile(
-                    lang = sub_lang.replace("\\u0131", "ı").replace("\\u0130", "İ").replace("\\u00fc", "ü").replace("\\u00e7", "ç"),
-                    url  = fixUrl(sub_url.replace("\\", ""))
+                    lang = subLang.replace("\\u0131", "ı").replace("\\u0130", "İ").replace("\\u00fc", "ü").replace("\\u00e7", "ç"),
+                    url  = fixUrl(subUrl.replace("\\", ""))
                 )
             )
         }
 
-        val extracted_value = Regex("""file": "(.*)",""").find(video_req)?.groupValues?.get(1) ?: throw ErrorLoadingException("File not found")
+        var extractedValue  = Regex("""file": "(.*)",""").find(videoReq)?.groupValues?.get(1)
+        var decoded: String? = null
 
-        val bytes   = extracted_value.split("\\x").filter { it.isNotEmpty() }.map { it.toInt(16).toByte() }.toByteArray()
-        val decoded = String(bytes, Charsets.UTF_8)
-        Log.d("Kekik_${this.name}", "decoded » ${decoded}")
+        if (extractedValue != null) {
+            val bytes = extractedValue.split("\\x").filter { it.isNotEmpty() }.map { it.toInt(16).toByte() }.toByteArray()
+            decoded   = String(bytes, Charsets.UTF_8) ?: throw ErrorLoadingException("File not found")
+        } else {
+            val evaljwSetup = Regex("""\};\s*(eval\(function[\s\S]*?)var played = \d+;""").find(videoReq)?.groupValues?.get(1) ?: throw ErrorLoadingException("File not found")
+            val jwSetup     = getAndUnpack(getAndUnpack(evaljwSetup)).replace("\\\\", "\\")
+            extractedValue  = Regex("""file":"(.*)","label""").find(jwSetup)?.groupValues?.get(1)?.replace("\\\\x", "")
+
+            val bytes = extractedValue?.chunked(2)?.map { it.toInt(16).toByte() }?.toByteArray()
+            decoded   = bytes?.toString(Charsets.UTF_8) ?: throw ErrorLoadingException("File not found")
+        }
 
         callback.invoke(
             ExtractorLink(
                 source  = this.name,
                 name    = this.name,
                 url     = decoded,
-                referer = ext_ref,
+                referer = extRef,
                 quality = Qualities.Unknown.value,
                 isM3u8  = true
             )
