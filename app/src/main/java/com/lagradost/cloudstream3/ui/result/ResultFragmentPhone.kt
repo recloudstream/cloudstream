@@ -23,6 +23,7 @@ import androidx.core.widget.NestedScrollView
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.ViewModelProvider
 import com.discord.panels.OverlappingPanelsLayout
+import com.discord.panels.PanelState
 import com.discord.panels.PanelsChildGestureRegionObserver
 import com.google.android.gms.cast.framework.CastButtonFactory
 import com.google.android.gms.cast.framework.CastContext
@@ -118,6 +119,14 @@ open class ResultFragmentPhone : FullScreenPlayer() {
         return root
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        PanelsChildGestureRegionObserver.Provider.get().apply {
+            resultBinding?.resultCastItems?.let { register(it) }
+        }
+    }
+
     var currentTrailers: List<ExtractorLink> = emptyList()
     var currentTrailerIndex = 0
 
@@ -210,9 +219,6 @@ open class ResultFragmentPhone : FullScreenPlayer() {
     }
 
     override fun onDestroyView() {
-
-        //somehow this still leaks and I dont know why????
-        // todo look at https://github.com/discord/OverlappingPanels/blob/70b4a7cf43c6771873b1e091029d332896d41a1a/sample_app/src/main/java/com/discord/sampleapp/MainActivity.kt
         PanelsChildGestureRegionObserver.Provider.get().let { obs ->
             resultBinding?.resultCastItems?.let {
                 obs.unregister(it)
@@ -329,13 +335,18 @@ open class ResultFragmentPhone : FullScreenPlayer() {
         syncModel.addFromUrl(storedData.url)
         val api = APIHolder.getApiFromNameNull(storedData.apiName)
 
-        PanelsChildGestureRegionObserver.Provider.get().apply {
-            resultBinding?.resultCastItems?.let {
-                register(it)
+        // This may not be 100% reliable, and may delay for small period
+        // before resultCastItems will be scrollable again, but this does work
+        // most of the time.
+        binding?.resultOverlappingPanels?.registerEndPanelStateListeners(
+            object : OverlappingPanelsLayout.PanelStateListener {
+                override fun onPanelStateChange(panelState: PanelState) {
+                    PanelsChildGestureRegionObserver.Provider.get().apply {
+                        resultBinding?.resultCastItems?.let { register(it) }
+                    }
+                }
             }
-            addGestureRegionsUpdateListener(gestureRegionsListener)
-        }
-
+        )
 
         // ===== ===== =====
 
@@ -674,6 +685,9 @@ open class ResultFragmentPhone : FullScreenPlayer() {
         observe(viewModel.page) { data ->
             if (data == null) return@observe
             resultBinding?.apply {
+                PanelsChildGestureRegionObserver.Provider.get().apply {
+                    register(resultCastItems)
+                }
                 (data as? Resource.Success)?.value?.let { d ->
                     resultVpn.setText(d.vpnText)
                     resultInfo.setText(d.metaText)
