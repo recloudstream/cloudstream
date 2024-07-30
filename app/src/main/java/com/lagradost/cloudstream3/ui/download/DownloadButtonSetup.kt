@@ -1,9 +1,11 @@
 package com.lagradost.cloudstream3.ui.download
 
 import android.content.DialogInterface
+import android.net.Uri
 import androidx.appcompat.app.AlertDialog
 import com.google.android.material.snackbar.Snackbar
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
+import com.lagradost.cloudstream3.AcraApplication.Companion.getKeys
 import com.lagradost.cloudstream3.CommonActivity.activity
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError
@@ -12,6 +14,7 @@ import com.lagradost.cloudstream3.ui.player.ExtractorUri
 import com.lagradost.cloudstream3.ui.player.GeneratorPlayer
 import com.lagradost.cloudstream3.utils.AppContextUtils.getNameFull
 import com.lagradost.cloudstream3.utils.AppContextUtils.setDefaultFocus
+import com.lagradost.cloudstream3.utils.DOWNLOAD_EPISODE_CACHE
 import com.lagradost.cloudstream3.utils.DOWNLOAD_HEADER_CACHE
 import com.lagradost.cloudstream3.utils.SnackbarHelper.showSnackbar
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
@@ -109,56 +112,69 @@ object DownloadButtonSetup {
 
             DOWNLOAD_ACTION_PLAY_FILE -> {
                 activity?.let { act ->
-                    val info =
-                        VideoDownloadManager.getDownloadFileInfoAndUpdateSettings(
-                            act,
-                            click.data.id
-                        ) ?: return
-                    val keyInfo = getKey<VideoDownloadManager.DownloadedFileInfo>(
-                        VideoDownloadManager.KEY_DOWNLOAD_INFO,
-                        click.data.id.toString()
-                    ) ?: return
                     val parent = getKey<VideoDownloadHelper.DownloadHeaderCached>(
                         DOWNLOAD_HEADER_CACHE,
                         click.data.parentId.toString()
                     ) ?: return
 
-                    act.navigate(
-                        R.id.global_to_navigation_player, GeneratorPlayer.newInstance(
-                            DownloadFileGenerator(
-                                listOf(
-                                    ExtractorUri(
-                                        uri = info.path,
+                    val episodes = getKeys(DOWNLOAD_EPISODE_CACHE)
+                        ?.mapNotNull {
+                            getKey<VideoDownloadHelper.DownloadEpisodeCached>(it)
+                        }
+                        ?.filter { it.parentId == click.data.parentId }
 
-                                        id = click.data.id,
-                                        parentId = click.data.parentId,
-                                        name = act.getString(R.string.downloaded_file), // click.data.name ?: keyInfo.displayName
-                                        season = click.data.season,
-                                        episode = click.data.episode,
-                                        headerName = parent.name,
-                                        tvType = parent.type,
+                    val currentSeason = click.data.season ?: 0
+                    val currentEpisode = click.data.episode
 
-                                        basePath = keyInfo.basePath,
-                                        displayName = keyInfo.displayName,
-                                        relativePath = keyInfo.relativePath,
-                                    )
-                                )
+                    val items = mutableListOf<ExtractorUri>()
+
+                    // Make sure we only get this episode and episodes after it,
+                    // and that we can go to the next season if we need to.
+                    val allRelevantEpisodes = episodes
+                        ?.sortedWith(
+                            compareByDescending<VideoDownloadHelper.DownloadEpisodeCached> { it.id == click.data.id }
+                                .thenBy { it.season ?: 0 }
+                                .thenBy { it.episode }
+                        )
+                        ?.filter {
+                            if (it.season == null) return@filter true
+                            val isCurrentOrLaterInSeason = it.season == currentSeason && (it.episode >= currentEpisode || it.id == click.data.id)
+                            val isInFutureSeasons = it.season > currentSeason
+
+                            isCurrentOrLaterInSeason || isInFutureSeasons
+                        }
+
+                    allRelevantEpisodes?.forEach {
+                        val keyInfo = getKey<VideoDownloadManager.DownloadedFileInfo>(
+                            VideoDownloadManager.KEY_DOWNLOAD_INFO,
+                            it.id.toString()
+                        ) ?: return@forEach
+
+                        items.add(
+                            ExtractorUri(
+                                // We just use a temporary placeholder for the URI,
+                                // it will be updated in generateLinks().
+                                // We just do this for performance since getting
+                                // all paths at once can be quite expensive.
+                                uri = Uri.EMPTY,
+                                id = it.id,
+                                parentId = it.parentId,
+                                name = act.getString(R.string.downloaded_file),
+                                season = it.season,
+                                episode = it.episode,
+                                headerName = parent.name,
+                                tvType = parent.type,
+                                basePath = keyInfo.basePath,
+                                displayName = keyInfo.displayName,
+                                relativePath = keyInfo.relativePath,
                             )
                         )
-                        // R.id.global_to_navigation_player, PlayerFragment.newInstance(
-                        //    UriData(
-                        //        info.path.toString(),
-                        //        keyInfo.basePath,
-                        //        keyInfo.relativePath,
-                        //        keyInfo.displayName,
-                        //        click.data.parentId,
-                        //        click.data.id,
-                        //        headerName ?: "null",
-                        //        if (click.data.episode <= 0) null else click.data.episode,
-                        //        click.data.season
-                        //    ),
-                        //    getViewPos(click.data.id)?.position ?: 0
-                        // )
+                    }
+
+                    act.navigate(
+                        R.id.global_to_navigation_player, GeneratorPlayer.newInstance(
+                            DownloadFileGenerator(items)
+                        )
                     )
                 }
             }

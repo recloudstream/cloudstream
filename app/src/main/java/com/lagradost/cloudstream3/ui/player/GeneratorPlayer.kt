@@ -1462,7 +1462,7 @@ class GeneratorPlayer : FullScreenPlayer() {
 
         observe(viewModel.currentLinks) {
             currentLinks = it
-            val turnVisible = it.isNotEmpty()
+            val turnVisible = it.isNotEmpty() && lastUsedGenerator?.canSkipLoading == true
             val wasGone = binding?.overlayLoadingSkipButton?.isGone == true
             binding?.overlayLoadingSkipButton?.isVisible = turnVisible
 
