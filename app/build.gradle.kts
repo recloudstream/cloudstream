@@ -140,7 +140,7 @@ android {
         abortOnError = false
         checkReleaseBuilds = false
     }
-    
+
     buildFeatures {
         buildConfig = true
     }
@@ -200,7 +200,7 @@ dependencies {
     // PlayBack
     implementation("com.jaredrummler:colorpicker:1.1.0") // Subtitle Color Picker
     implementation("com.github.recloudstream:media-ffmpeg:1.1.0") // Custom FF-MPEG Lib for Audio Codecs
-    implementation("com.github.teamnewpipe:NewPipeExtractor:2d36945") /* For Trailers
+    implementation("com.github.teamnewpipe:NewPipeExtractor:176da72") /* For Trailers
     ^ Update to Latest Commits if Trailers Misbehave, github.com/TeamNewPipe/NewPipeExtractor/commits/dev */
     implementation("com.github.albfernandez:juniversalchardet:2.5.0") // Subtitle Decoding
 
@@ -213,7 +213,7 @@ dependencies {
     implementation("androidx.palette:palette-ktx:1.0.0") // Palette For Images -> Colors
     implementation("androidx.tvprovider:tvprovider:1.0.0")
     implementation("com.github.discord:OverlappingPanels:0.1.5") // Gestures
-    implementation ("androidx.biometric:biometric:1.2.0-alpha05") // Fingerprint Authentication
+    implementation("androidx.biometric:biometric:1.2.0-alpha05") // Fingerprint Authentication
     implementation("com.github.rubensousa:previewseekbar-media3:1.1.1.0") // SeekBar Preview
     implementation("io.github.g0dkar:qrcode-kotlin:4.2.0") // QR code for PIN Auth on TV
 
@@ -223,7 +223,7 @@ dependencies {
     implementation("com.github.LagradOst:SafeFile:0.0.6") // To Prevent the URI File Fu*kery
     implementation("org.conscrypt:conscrypt-android:2.5.2") // To Fix SSL Fu*kery on Android 9
     implementation("com.uwetrottmann.tmdb2:tmdb-java:2.11.0") // TMDB API v3 Wrapper Made with RetroFit
-    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs_nio:2.0.4") //nio flavor needed for NewPipeExtractor
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.1") /* JSON Parser
     ^ Don't Bump Jackson above 2.13.1 , Crashes on Android TV's and FireSticks that have Min API
     Level 25 or Less. */
