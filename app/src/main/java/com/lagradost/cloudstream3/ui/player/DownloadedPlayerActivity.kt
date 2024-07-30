@@ -4,13 +4,13 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.KeyEvent
-import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import com.lagradost.cloudstream3.CommonActivity
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.ui.player.OfflinePlaybackHelper.playLink
 import com.lagradost.cloudstream3.ui.player.OfflinePlaybackHelper.playUri
+import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper.attachBackPressedCallback
 
 class DownloadedPlayerActivity : AppCompatActivity() {
     private val dTAG = "DownloadedPlayerAct"
@@ -70,14 +70,7 @@ class DownloadedPlayerActivity : AppCompatActivity() {
             return
         }
 
-        onBackPressedDispatcher.addCallback(
-            this,
-            object : OnBackPressedCallback(true) {
-                override fun handleOnBackPressed() {
-                    finish()
-                }
-            }
-        )
+        attachBackPressedCallback { finish() }
     }
 
     override fun onResume() {

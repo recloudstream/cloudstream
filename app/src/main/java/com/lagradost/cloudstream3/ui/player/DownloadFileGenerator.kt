@@ -4,7 +4,9 @@ import com.lagradost.cloudstream3.AcraApplication.Companion.context
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.ui.player.PlayerSubtitleHelper.Companion.toSubtitleMimeType
 import com.lagradost.cloudstream3.utils.ExtractorLink
-import com.lagradost.cloudstream3.utils.VideoDownloadManager
+import com.lagradost.cloudstream3.utils.SubtitleUtils.cleanDisplayName
+import com.lagradost.cloudstream3.utils.SubtitleUtils.isMatchingSubtitle
+import com.lagradost.cloudstream3.utils.VideoDownloadManager.getFolder
 import kotlin.math.max
 import kotlin.math.min
 
@@ -49,10 +51,6 @@ class DownloadFileGenerator(
         return null
     }
 
-    private fun cleanDisplayName(name: String): String {
-        return name.substringBeforeLast('.').trim()
-    }
-
     override suspend fun generateLinks(
         clearCache: Boolean,
         type: LoadType,
@@ -69,28 +67,9 @@ class DownloadFileGenerator(
 
         val cleanDisplay = cleanDisplayName(display)
 
-        VideoDownloadManager.getFolder(ctx, relative, meta.basePath)
-            ?.forEach { (name, uri) ->
-                // only these files are allowed, so no videos as subtitles
-                if (listOf(
-                        ".vtt",
-                        ".srt",
-                        ".txt",
-                        ".ass",
-                        ".ttml",
-                        ".sbv",
-                        ".dfxp"
-                    ).none { name.contains(it, true) }
-                ) return@forEach
-
-                // cant have the exact same file as a subtitle
-                if (name.equals(display, true)) return@forEach
-
+        getFolder(ctx, relative, meta.basePath)?.forEach { (name, uri) ->
+            if (isMatchingSubtitle(name, display, cleanDisplay)) {
                 val cleanName = cleanDisplayName(name)
-
-                // we only want files with the approx same name
-                if (!cleanName.startsWith(cleanDisplay, true)) return@forEach
-
                 val realName = cleanName.removePrefix(cleanDisplay)
 
                 subtitleCallback(
@@ -104,6 +83,7 @@ class DownloadFileGenerator(
                     )
                 )
             }
+        }
 
         return true
     }

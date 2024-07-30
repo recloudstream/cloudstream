@@ -20,6 +20,7 @@ import androidx.work.WorkManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.model.GlideUrl
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.lagradost.api.Log
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
 import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
@@ -29,12 +30,14 @@ import com.lagradost.cloudstream3.MainActivity
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.app
+import com.lagradost.cloudstream3.mvvm.launchSafe
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.services.VideoDownloadService
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStore.removeKey
+import com.lagradost.cloudstream3.utils.SubtitleUtils.deleteMatchingSubtitles
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
 import com.lagradost.safefile.MediaFileContentType
 import com.lagradost.safefile.SafeFile
@@ -42,6 +45,8 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
@@ -1733,7 +1738,37 @@ object VideoDownloadManager {
         }
     }
 
-    fun deleteFileAndUpdateSettings(context: Context, id: Int): Boolean {
+    fun deleteFilesAndUpdateSettings(
+        context: Context,
+        ids: Set<Int>,
+        scope: CoroutineScope,
+        onComplete: (Set<Int>) -> Unit = {}
+    ) {
+        scope.launchSafe(Dispatchers.IO) {
+            val deleteJobs = ids.map { id ->
+                async {
+                    id to deleteFileAndUpdateSettings(context, id)
+                }
+            }
+            val results = deleteJobs.awaitAll()
+
+            val (successfulResults, failedResults) = results.partition { it.second }
+            val successfulIds = successfulResults.map { it.first }.toSet()
+
+            if (failedResults.isNotEmpty()) {
+                failedResults.forEach { (id, _) ->
+                    // TODO show a toast if some failed?
+                    Log.e("FileDeletion", "Failed to delete file with ID: $id")
+                }
+            } else {
+                Log.i("FileDeletion", "All files deleted successfully")
+            }
+
+            onComplete.invoke(successfulIds)
+        }
+    }
+
+    private fun deleteFileAndUpdateSettings(context: Context, id: Int): Boolean {
         val success = deleteFile(context, id)
         if (success) context.removeKey(KEY_DOWNLOAD_INFO, id.toString())
         return success
@@ -1759,11 +1794,17 @@ object VideoDownloadManager {
     private fun deleteFile(context: Context, id: Int): Boolean {
         val info =
             context.getKey<DownloadedFileInfo>(KEY_DOWNLOAD_INFO, id.toString()) ?: return false
+        val file = info.toFile(context)
+
         downloadEvent.invoke(id to DownloadActionType.Stop)
         downloadProgressEvent.invoke(Triple(id, 0, 0))
         downloadStatusEvent.invoke(id to DownloadType.IsStopped)
         downloadDeleteEvent.invoke(id)
-        return info.toFile(context)?.delete() ?: false
+
+        val isFileDeleted = file?.delete() == true || file?.exists() == false
+        if (isFileDeleted) deleteMatchingSubtitles(context, info)
+
+        return isFileDeleted
     }
 
     fun getDownloadResumePackage(context: Context, id: Int): DownloadResumePackage? {

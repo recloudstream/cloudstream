@@ -133,6 +133,8 @@ import com.lagradost.cloudstream3.utils.AppContextUtils.loadResult
 import com.lagradost.cloudstream3.utils.AppContextUtils.loadSearchResult
 import com.lagradost.cloudstream3.utils.AppContextUtils.setDefaultFocus
 import com.lagradost.cloudstream3.utils.AppContextUtils.updateHasTrailers
+import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper.attachBackPressedCallback
+import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper.detachBackPressedCallback
 import com.lagradost.cloudstream3.utils.BackupUtils.backup
 import com.lagradost.cloudstream3.utils.BackupUtils.setUpBackup
 import com.lagradost.cloudstream3.utils.BiometricAuthenticator.BiometricCallback
@@ -151,6 +153,7 @@ import com.lagradost.cloudstream3.utils.DataStoreHelper.migrateResumeWatching
 import com.lagradost.cloudstream3.utils.Event
 import com.lagradost.cloudstream3.utils.InAppUpdater.Companion.runAutoUpdate
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
+import com.lagradost.cloudstream3.utils.SnackbarHelper.showSnackbar
 import com.lagradost.cloudstream3.utils.UIHelper.changeStatusBarState
 import com.lagradost.cloudstream3.utils.UIHelper.checkWrite
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
@@ -1254,17 +1257,12 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                     this.setKey(getString(R.string.jsdelivr_proxy_key), false)
                 } else {
                     this.setKey(getString(R.string.jsdelivr_proxy_key), true)
-                    val parentView: View = findViewById(android.R.id.content)
-                    Snackbar.make(parentView, R.string.jsdelivr_enabled, Snackbar.LENGTH_LONG)
-                        .let { snackbar ->
-                            snackbar.setAction(R.string.revert) {
-                                setKey(getString(R.string.jsdelivr_proxy_key), false)
-                            }
-                            snackbar.setBackgroundTint(colorFromAttribute(R.attr.primaryGrayBackground))
-                            snackbar.setTextColor(colorFromAttribute(R.attr.textColor))
-                            snackbar.setActionTextColor(colorFromAttribute(R.attr.colorPrimary))
-                            snackbar.show()
-                        }
+                    showSnackbar(
+                        this@MainActivity,
+                        R.string.jsdelivr_enabled,
+                        Snackbar.LENGTH_LONG,
+                        R.string.revert
+                    ) { setKey(getString(R.string.jsdelivr_proxy_key), false) }
                 }
             }
         }
@@ -1603,7 +1601,12 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
 
             if (isLayout(TV or EMULATOR)) {
                 if (navDestination.matchDestination(R.id.navigation_home)) {
-                    attachBackPressedCallback()
+                    attachBackPressedCallback {
+                        showConfirmExitDialog()
+                        window?.navigationBarColor =
+                            colorFromAttribute(R.attr.primaryGrayBackground)
+                        updateLocale()
+                    }
                 } else detachBackPressedCallback()
             }
         }
@@ -1846,28 +1849,6 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
 
     override fun onAuthenticationError() {
         finish()
-    }
-
-    private var backPressedCallback: OnBackPressedCallback? = null
-
-    private fun attachBackPressedCallback() {
-        if (backPressedCallback == null) {
-            backPressedCallback = object : OnBackPressedCallback(true) {
-                override fun handleOnBackPressed() {
-                    showConfirmExitDialog()
-                    window?.navigationBarColor =
-                        colorFromAttribute(R.attr.primaryGrayBackground)
-                    updateLocale()
-                }
-            }
-        }
-
-        backPressedCallback?.isEnabled = true
-        onBackPressedDispatcher.addCallback(this, backPressedCallback ?: return)
-    }
-
-    private fun detachBackPressedCallback() {
-        backPressedCallback?.isEnabled = false
     }
 
     suspend fun checkGithubConnectivity(): Boolean {

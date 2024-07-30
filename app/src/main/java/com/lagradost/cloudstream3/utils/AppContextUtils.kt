@@ -677,9 +677,15 @@ object AppContextUtils {
     }
 
     fun Context.isNetworkAvailable(): Boolean {
-        val manager = this.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val activeNetworkInfo = manager.activeNetworkInfo
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected || manager.allNetworkInfo?.any { it.isConnected } ?: false
+        val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            val network = connectivityManager.activeNetwork ?: return false
+            val networkCapabilities = connectivityManager.getNetworkCapabilities(network) ?: return false
+            networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+        } else {
+            @Suppress("DEPRECATION")
+            connectivityManager.activeNetworkInfo?.isConnected == true
+        }
     }
 
     fun splitQuery(url: URL): Map<String, String> {

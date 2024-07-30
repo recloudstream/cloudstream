@@ -8,6 +8,8 @@ import android.content.Intent
 import android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.format.Formatter.formatShortFileSize
 import android.view.LayoutInflater
 import android.view.View
@@ -17,7 +19,6 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.StringRes
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
@@ -27,7 +28,7 @@ import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.FragmentDownloadsBinding
 import com.lagradost.cloudstream3.databinding.StreamInputBinding
-import com.lagradost.cloudstream3.isMovieType
+import com.lagradost.cloudstream3.isEpisodeBased
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.ui.download.DownloadButtonSetup.handleDownloadClick
@@ -40,20 +41,22 @@ import com.lagradost.cloudstream3.ui.result.setLinearListLayout
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.utils.AppContextUtils.loadResult
+import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper.attachBackPressedCallback
+import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper.detachBackPressedCallback
 import com.lagradost.cloudstream3.utils.DOWNLOAD_EPISODE_CACHE
-import com.lagradost.cloudstream3.utils.DataStore
+import com.lagradost.cloudstream3.utils.DataStore.getFolderName
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.fixPaddingStatusbar
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.setAppBarNoScrollFlagsOnTV
-import com.lagradost.cloudstream3.utils.VideoDownloadManager
 import java.net.URI
 
 const val DOWNLOAD_NAVIGATE_TO = "downloadpage"
 
 class DownloadFragment : Fragment() {
     private lateinit var downloadsViewModel: DownloadViewModel
+    private var binding: FragmentDownloadsBinding? = null
 
     private fun View.setLayoutWidth(weight: Long) {
         val param = LinearLayout.LayoutParams(
@@ -65,13 +68,10 @@ class DownloadFragment : Fragment() {
     }
 
     override fun onDestroyView() {
-        downloadDeleteEventListener?.let { VideoDownloadManager.downloadDeleteEvent -= it }
-        downloadDeleteEventListener = null
+        detachBackPressedCallback()
         binding = null
         super.onDestroyView()
     }
-
-    private var binding: FragmentDownloadsBinding? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -84,12 +84,34 @@ class DownloadFragment : Fragment() {
         return localBinding.root
     }
 
-    private var downloadDeleteEventListener: ((Int) -> Unit)? = null
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         hideKeyboard()
         binding?.downloadStorageAppbar?.setAppBarNoScrollFlagsOnTV()
+        binding?.downloadDeleteAppbar?.setAppBarNoScrollFlagsOnTV()
+
+        /**
+         * We never want to retain multi-delete state
+         * when navigating to downloads. Setting this state
+         * immediately can sometimes result in the observer
+         * not being notified in time to update the UI.
+         *
+         * By posting to the main looper, we ensure that this
+         * operation is executed after the view has been fully created
+         * and all initializations are completed, allowing the
+         * observer to properly receive and handle the state change.
+         */
+        Handler(Looper.getMainLooper()).post {
+            downloadsViewModel.setIsMultiDeleteState(false)
+        }
+
+        /**
+         * We have to make sure selected items are
+         * cleared here as well so we don't run in an
+         * inconsistent state where selected items do
+         * not match the multi delete state we are in.
+         */
+        downloadsViewModel.clearSelectedItems()
 
         observe(downloadsViewModel.headerCards) {
             (binding?.downloadList?.adapter as? DownloadAdapter)?.submitList(it)
@@ -97,25 +119,82 @@ class DownloadFragment : Fragment() {
             binding?.textNoDownloads?.isVisible = it.isEmpty()
         }
         observe(downloadsViewModel.availableBytes) {
-            updateStorageInfo(view.context, it, R.string.free_storage, binding?.downloadFreeTxt, binding?.downloadFree)
+            updateStorageInfo(
+                view.context,
+                it,
+                R.string.free_storage,
+                binding?.downloadFreeTxt,
+                binding?.downloadFree
+            )
         }
         observe(downloadsViewModel.usedBytes) {
-            updateStorageInfo(view.context, it, R.string.used_storage, binding?.downloadUsedTxt, binding?.downloadUsed)
-            binding?.downloadStorageAppbar?.isVisible = it > 0
+            updateStorageInfo(
+                view.context,
+                it,
+                R.string.used_storage,
+                binding?.downloadUsedTxt,
+                binding?.downloadUsed
+            )
+
+            // Prevent race condition and make sure
+            // we don't display it early
+            if (
+                downloadsViewModel.isMultiDeleteState.value == null ||
+                downloadsViewModel.isMultiDeleteState.value == false
+            ) binding?.downloadStorageAppbar?.isVisible = it > 0
         }
         observe(downloadsViewModel.downloadBytes) {
-            updateStorageInfo(view.context, it, R.string.app_storage, binding?.downloadAppTxt, binding?.downloadApp)
+            updateStorageInfo(
+                view.context,
+                it,
+                R.string.app_storage,
+                binding?.downloadAppTxt,
+                binding?.downloadApp
+            )
+        }
+        observe(downloadsViewModel.selectedBytes) {
+            updateDeleteButton(downloadsViewModel.selectedItemIds.value?.count() ?: 0, it)
+        }
+        observe(downloadsViewModel.isMultiDeleteState) { isMultiDeleteState ->
+            val adapter = binding?.downloadList?.adapter as? DownloadAdapter
+            adapter?.setIsMultiDeleteState(isMultiDeleteState)
+            binding?.downloadDeleteAppbar?.isVisible = isMultiDeleteState
+            if (!isMultiDeleteState) {
+                detachBackPressedCallback()
+                downloadsViewModel.clearSelectedItems()
+                // Prevent race condition and make sure
+                // we don't display it early
+                if (downloadsViewModel.usedBytes.value?.let { it > 0 } == true) {
+                    binding?.downloadStorageAppbar?.isVisible = true
+                }
+            }
+        }
+        observe(downloadsViewModel.selectedItemIds) {
+            handleSelectedChange(it)
+            updateDeleteButton(it.count(), downloadsViewModel.selectedBytes.value ?: 0L)
+
+            binding?.btnDelete?.isVisible = it.isNotEmpty()
+            binding?.selectItemsText?.isVisible = it.isEmpty()
+
+            val allSelected = downloadsViewModel.isAllSelected()
+            if (allSelected) {
+                binding?.btnToggleAll?.setText(R.string.deselect_all)
+            } else binding?.btnToggleAll?.setText(R.string.select_all)
         }
 
         val adapter = DownloadAdapter(
+            { click -> handleItemClick(click) },
             { click ->
-                handleItemClick(click)
+                if (click.action == DOWNLOAD_ACTION_DELETE_FILE) {
+                    context?.let { ctx ->
+                        downloadsViewModel.handleSingleDelete(ctx, click.data.id)
+                    }
+                } else handleDownloadClick(click)
             },
-            { downloadClickEvent ->
-                handleDownloadClick(downloadClickEvent)
-                if (downloadClickEvent.action == DOWNLOAD_ACTION_DELETE_FILE) {
-                    setUpDownloadDeleteListener()
-                }
+            { itemId, isChecked ->
+                if (isChecked) {
+                    downloadsViewModel.addSelected(itemId)
+                } else downloadsViewModel.removeSelected(itemId)
             }
         )
 
@@ -126,7 +205,6 @@ class DownloadFragment : Fragment() {
             setLinearListLayout(
                 isHorizontal = false,
                 nextRight = FOCUS_SELF,
-                nextUp = FOCUS_SELF,
                 nextDown = FOCUS_SELF,
             )
         }
@@ -147,35 +225,68 @@ class DownloadFragment : Fragment() {
                 handleScroll(scrollY - oldScrollY)
             }
         }
-        downloadsViewModel.updateList(requireContext())
+
+        context?.let { downloadsViewModel.updateHeaderList(it) }
         fixPaddingStatusbar(binding?.downloadRoot)
     }
 
     private fun handleItemClick(click: DownloadHeaderClickEvent) {
         when (click.action) {
             DOWNLOAD_ACTION_GO_TO_CHILD -> {
-                if (!click.data.type.isMovieType()) {
-                    val folder = DataStore.getFolderName(DOWNLOAD_EPISODE_CACHE, click.data.id.toString())
+                if (click.data.type.isEpisodeBased()) {
+                    val folder =
+                        getFolderName(DOWNLOAD_EPISODE_CACHE, click.data.id.toString())
                     activity?.navigate(
                         R.id.action_navigation_downloads_to_navigation_download_child,
                         DownloadChildFragment.newInstance(click.data.name, folder)
                     )
                 }
             }
+
             DOWNLOAD_ACTION_LOAD_RESULT -> {
-                (activity as AppCompatActivity?)?.loadResult(click.data.url, click.data.apiName)
+                activity?.loadResult(click.data.url, click.data.apiName)
             }
         }
     }
 
-    private fun setUpDownloadDeleteListener() {
-        downloadDeleteEventListener = { id ->
-            val list = (binding?.downloadList?.adapter as? DownloadAdapter)?.currentList
-            if (list?.any { it.data.id == id } == true) {
-                context?.let { downloadsViewModel.updateList(it) }
+    private fun handleSelectedChange(selected: MutableSet<Int>) {
+        if (selected.isNotEmpty()) {
+            binding?.downloadDeleteAppbar?.isVisible = true
+            binding?.downloadStorageAppbar?.isVisible = false
+            activity?.attachBackPressedCallback {
+                downloadsViewModel.setIsMultiDeleteState(false)
             }
+
+            binding?.btnDelete?.setOnClickListener {
+                context?.let { ctx ->
+                    downloadsViewModel.handleMultiDelete(ctx)
+                }
+            }
+
+            binding?.btnCancel?.setOnClickListener {
+                downloadsViewModel.setIsMultiDeleteState(false)
+            }
+
+            binding?.btnToggleAll?.setOnClickListener {
+                val allSelected = downloadsViewModel.isAllSelected()
+                val adapter = binding?.downloadList?.adapter as? DownloadAdapter
+                if (allSelected) {
+                    adapter?.notifySelectionStates()
+                    downloadsViewModel.clearSelectedItems()
+                } else {
+                    adapter?.notifyAllSelected()
+                    downloadsViewModel.selectAllItems()
+                }
+            }
+
+            downloadsViewModel.setIsMultiDeleteState(true)
         }
-        downloadDeleteEventListener?.let { VideoDownloadManager.downloadDeleteEvent += it }
+    }
+
+    private fun updateDeleteButton(count: Int, selectedBytes: Long) {
+        val formattedSize = formatShortFileSize(context, selectedBytes)
+        binding?.btnDelete?.text =
+            getString(R.string.delete_format).format(count, formattedSize)
     }
 
     private fun updateStorageInfo(
@@ -185,7 +296,10 @@ class DownloadFragment : Fragment() {
         textView: TextView?,
         view: View?
     ) {
-        textView?.text = getString(R.string.storage_size_format).format(getString(stringRes), formatShortFileSize(context, bytes))
+        textView?.text = getString(R.string.storage_size_format).format(
+            getString(stringRes),
+            formatShortFileSize(context, bytes)
+        )
         view?.setLayoutWidth(bytes)
     }
 
@@ -218,7 +332,9 @@ class DownloadFragment : Fragment() {
             if (!preventAutoSwitching) activateSwitchOnHls(text?.toString(), binding)
         }
 
-        (activity?.getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager)?.primaryClip?.getItemAt(0)?.text?.toString()?.let { copy ->
+        (activity?.getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager)?.primaryClip?.getItemAt(
+            0
+        )?.text?.toString()?.let { copy ->
             val fixedText = copy.trim()
             binding.streamUrl.setText(fixedText)
             activateSwitchOnHls(fixedText, binding)

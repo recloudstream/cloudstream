@@ -150,7 +150,11 @@
     <string name="download_canceled">Download Canceled</string>
     <string name="download_done">Download Done</string>
     <string name="download_format" translatable="false">%s - %s</string>
+    <string name="downloads_delete_select">Select Items to Delete</string>
     <string name="downloads_empty">There are currently no downloads.</string>
+    <string name="offline_file">Available for watching offline</string>
+    <string name="select_all">Select All</string>
+    <string name="deselect_all">Deselect All</string>
     <string name="update_started">Update Started</string>
     <string name="stream">Network stream</string>
     <string name="open_local_video">Open local video</string>
@@ -300,8 +304,10 @@
     <string name="season_short">S</string>
     <string name="episode_short">E</string>
     <string name="no_episodes_found">No Episodes found</string>
-    <string name="delete_file">Delete File</string>
     <string name="delete">Delete</string>
+    <string name="delete_file">Delete File</string>
+    <string name="delete_files">Delete Files</string>
+    <string name="delete_format" formatted="true">Delete (%1$d | %2$s)</string>
     <string name="cancel">Cancel</string>
     <string name="pause">Pause</string>
     <string name="start">Start</string>
@@ -312,6 +318,10 @@
     <string name="go_back_30">-30</string>
     <string name="go_forward_30">+30</string>
     <string name="delete_message" formatted="true">This will permanently delete %s\nAre you sure?</string>
+    <string name="delete_message_multiple" formatted="true">Are you sure you want to permanently delete the following items?\n\n%s</string>
+    <string name="delete_message_series_episodes" formatted="true">Are you sure you want to permanently delete the following episodes in %1$s?\n\n%2$s</string>
+    <string name="delete_message_series_section" formatted="true">You will also permanently delete all episodes in the following series:\n\n%s</string>
+    <string name="delete_message_series_only" formatted="true">Are you sure you want to permanently delete all episodes in the following series?\n\n%s</string>
     <string name="resume_time_left" formatted="true">%dm\nremaining</string>
     <string name="resume_remaining" formatted="true">%s\nremaining</string>
     <string name="status_ongoing">Ongoing</string>
