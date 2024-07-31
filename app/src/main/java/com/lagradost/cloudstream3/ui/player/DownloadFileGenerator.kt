@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.ui.player
 
+import android.net.Uri
 import com.lagradost.cloudstream3.AcraApplication.Companion.context
 import com.lagradost.cloudstream3.CommonActivity.activity
 import com.lagradost.cloudstream3.R
@@ -63,17 +64,19 @@ class DownloadFileGenerator(
     ): Boolean {
         val meta = episodes[currentIndex + offset]
 
-        // We do this here so that we only load it when
-        // we actually need it as it can be more expensive.
-        val info = meta.id?.let { id ->
-            activity?.let { act ->
-                getDownloadFileInfoAndUpdateSettings(act, id)
+        if (meta.uri == Uri.EMPTY) {
+            // We do this here so that we only load it when
+            // we actually need it as it can be more expensive.
+            val info = meta.id?.let { id ->
+                activity?.let { act ->
+                    getDownloadFileInfoAndUpdateSettings(act, id)
+                }
             }
-        }
 
-        if (info != null) {
-            val newMeta = meta.copy(uri = info.path)
-            callback(null to newMeta)
+            if (info != null) {
+                val newMeta = meta.copy(uri = info.path)
+                callback(null to newMeta)
+            } else callback(null to meta)
         } else callback(null to meta)
 
         val ctx = context ?: return true
