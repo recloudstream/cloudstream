@@ -229,7 +229,7 @@ class DownloadAdapter(
                         formattedSize
                     )
             } catch (e: Exception) {
-                downloadHeaderInfo.text = ""
+                downloadHeaderInfo.text = null
                 logError(e)
             }
 
