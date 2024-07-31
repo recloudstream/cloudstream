@@ -61,5 +61,6 @@ for file in glob.glob(f"{XML_NAME}*/strings.xml"):
         with open(file, 'wb') as fp:
             fp.write(b'<?xml version="1.0" encoding="utf-8"?>\n')
             tree.write(fp, encoding="utf-8", method="xml", pretty_print=True, xml_declaration=False)
+            fp.write(b'\n')
     except ET.ParseError as ex:
         print(f"[{file}] {ex}")
