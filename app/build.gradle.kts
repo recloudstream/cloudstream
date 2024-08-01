@@ -42,8 +42,8 @@ android {
     }*/
 
     signingConfigs {
-        create("prerelease") {
-            if (prereleaseStoreFile != null) {
+        if (prereleaseStoreFile != null) {
+            create("prerelease") {
                 storeFile = file(prereleaseStoreFile)
                 storePassword = System.getenv("SIGNING_STORE_PASSWORD")
                 keyAlias = System.getenv("SIGNING_KEY_ALIAS")
@@ -124,7 +124,11 @@ android {
             resValue("bool", "is_prerelease", "true")
             buildConfigField("boolean", "BETA", "true")
             applicationIdSuffix = ".prerelease"
-            signingConfig = signingConfigs.getByName("prerelease")
+            if (signingConfigs.names.contains("prerelease")) {
+                signingConfig = signingConfigs.getByName("prerelease")
+            } else {
+                logger.warn("No prerelease signing config!")
+            }
             versionNameSuffix = "-PRE"
             versionCode = (System.currentTimeMillis() / 60000).toInt()
         }
