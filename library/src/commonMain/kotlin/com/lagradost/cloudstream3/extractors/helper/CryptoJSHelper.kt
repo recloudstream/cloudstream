@@ -4,7 +4,7 @@ import java.net.*
 import java.util.*
 import java.security.*
 import kotlin.math.min
-import android.util.Base64
+import java.util.Base64
 import javax.crypto.Cipher
 import javax.crypto.spec.SecretKeySpec
 import javax.crypto.spec.IvParameterSpec
@@ -35,7 +35,7 @@ object CryptoJS {
         val saltBytes = generateSalt(8)
         val key       = ByteArray(KEY_SIZE / 8)
         val iv        = ByteArray(IV_SIZE / 8)
-        EvpKDF(password.toByteArray(), KEY_SIZE, IV_SIZE, saltBytes, key, iv)
+        evpkdf(password.toByteArray(), KEY_SIZE, IV_SIZE, saltBytes, key, iv)
 
         val keyS   = SecretKeySpec(key, AES)
         val cipher = Cipher.getInstance(HASH_CIPHER)
@@ -51,7 +51,7 @@ object CryptoJS {
         System.arraycopy(saltBytes, 0, b, sBytes.size, saltBytes.size)
         System.arraycopy(cipherText, 0, b, sBytes.size + saltBytes.size, cipherText.size)
 
-        val bEncode = Base64.encode(b, Base64.NO_WRAP)
+        val bEncode = Base64.getEncoder().encode(b)
         return String(bEncode)
     }
 
@@ -62,13 +62,13 @@ object CryptoJS {
      * @param cipherText encrypted string
      */
     fun decrypt(password: String, cipherText: String): String {
-        val ctBytes         = Base64.decode(cipherText.toByteArray(), Base64.NO_WRAP)
+        val ctBytes         = Base64.getDecoder().decode(cipherText.toByteArray())
         val saltBytes       = Arrays.copyOfRange(ctBytes, 8, 16)
         val cipherTextBytes = Arrays.copyOfRange(ctBytes, 16, ctBytes.size)
 
         val key = ByteArray(KEY_SIZE / 8)
         val iv  = ByteArray(IV_SIZE / 8)
-        EvpKDF(password.toByteArray(), KEY_SIZE, IV_SIZE, saltBytes, key, iv)
+        evpkdf(password.toByteArray(), KEY_SIZE, IV_SIZE, saltBytes, key, iv)
 
         val cipher = Cipher.getInstance(HASH_CIPHER)
         val keyS   = SecretKeySpec(key, AES)
@@ -78,12 +78,12 @@ object CryptoJS {
         return String(plainText)
     }
 
-    private fun EvpKDF(password: ByteArray, keySize: Int, ivSize: Int, salt: ByteArray, resultKey: ByteArray, resultIv: ByteArray): ByteArray {
-        return EvpKDF(password, keySize, ivSize, salt, 1, KDF_DIGEST, resultKey, resultIv)
+    private fun evpkdf(password: ByteArray, keySize: Int, ivSize: Int, salt: ByteArray, resultKey: ByteArray, resultIv: ByteArray): ByteArray {
+        return evpkdf(password, keySize, ivSize, salt, 1, KDF_DIGEST, resultKey, resultIv)
     }
 
     @Suppress("NAME_SHADOWING")
-    private fun EvpKDF(password: ByteArray, keySize: Int, ivSize: Int, salt: ByteArray, iterations: Int, hashAlgorithm: String, resultKey: ByteArray, resultIv: ByteArray): ByteArray {
+    private fun evpkdf(password: ByteArray, keySize: Int, ivSize: Int, salt: ByteArray, iterations: Int, hashAlgorithm: String, resultKey: ByteArray, resultIv: ByteArray): ByteArray {
         val keySize              = keySize / 32
         val ivSize               = ivSize / 32
         val targetKeySize        = keySize + ivSize
