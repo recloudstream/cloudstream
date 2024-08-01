@@ -183,7 +183,7 @@
     <string name="go_back_30">-٣٠</string>
     <string name="go_forward_30">+٣٠</string>
     <string name="delete_message">سوف يتم الحذف نهائيا %s
-\nهل أنت متأكد\?</string>
+\nهل أنت متأكد?</string>
     <string name="resume_time_left" formatted="true">%dm
 \nمتبقية</string>
     <string name="status_ongoing">جاري التنفيذ</string>
@@ -330,7 +330,7 @@
     <string name="upload_sync">مزامنة</string>
     <string name="sync_score">تقييم</string>
     <string name="sync_score_format" formatted="true">%d / 10</string>
-    <string name="sync_total_episodes_none">/\?\?</string>
+    <string name="sync_total_episodes_none">/??</string>
     <string name="sync_total_episodes_some" formatted="true">/%d</string>
     <string name="authenticated_user" formatted="true">%s تم التوثيق</string>
     <string name="authenticated_user_fail" formatted="true">تعذر تسجيل الدخول في %s</string>
@@ -340,7 +340,7 @@
     <string name="all">الكل</string>
     <string name="max">الحد الاقصي</string>
     <string name="min">الحد الأدنى</string>
-    <string name="subtitles_none" translatable="false">@string/none</string>
+    <string name="subtitles_none" translatable="false">\@string/none</string>
     <string name="subtitles_outline">الخطوط المحيطة</string>
     <string name="subtitles_depressed">النمط المنخفض</string>
     <string name="subtitles_shadow">ظل</string>
@@ -667,5 +667,30 @@
     <string name="device_pin_error_message">لا يمكن الحصول على رمز PIN للجهاز، حاول المصادقة المحلية</string>
     <string name="device_pin_counter_text">تنتهي صلاحية الرمز خلال %1$dm %2$ds</string>
     <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
+    <string name="play_from_beginning_img_des">تشغيل من البداية</string>
+    <string name="open_local_video">فتح فيديو محلي</string>
+    <string name="test_warning">تحذير</string>
+    <string name="delete_plugin">حذف الإضافة</string>
+    <string name="hide_player_control_names">إخفاء الأسم من عناصر تحكم المشغل</string>
+    <string name="downloads_empty">لا يوجد حالياً اى تنزيلات.</string>
+    <string name="sort_release_date_new">تاريخ الإصدار (من الأحدث إلى الأقدم)</string>
+    <string name="sort_release_date_old">تاريخ الإصدار (القديم إلى الجديد)</string>
+    <string name="downloads_delete_select">الرجاء تحديد العناصر للحذف</string>
+    <string name="select_all">تحديد الكل</string>
+    <string name="delete_files">حذف الملفات</string>
+    <string name="delete_message_series_episodes" formatted="true">هل أنت متأكد أنك تريد حذف الحلقات التالية نهائيًا في %1$s ؟
+\n
+\n%2$s</string>
+    <string name="delete_message_series_section" formatted="true">ستقوم أيضًا بحذف جميع الحلقات في السلسلة التالية نهائيًا:
+\n
+\n%s</string>
+    <string name="delete_format" formatted="true">حذف (%1$d | %2$s)</string>
+    <string name="offline_file">متاح للمشاهدة في وضع عدم الاتصال</string>
+    <string name="deselect_all">إلغاء تحديد الكل</string>
+    <string name="delete_message_multiple" formatted="true">هل أنت متأكد أنك تريد حذف العناصر التالية نهائيًا ؟
+\n
+\n%s</string>
+    <string name="delete_message_series_only" formatted="true">هل أنت متأكد أنك تريد حذف جميع الحلقات في السلسلة التالية نهائيًا ؟
+\n
+\n%s</string>
 </resources>
-

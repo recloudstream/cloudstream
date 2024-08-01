@@ -114,7 +114,7 @@
     <string name="chromecast_subtitles_settings">כתוביות כרומקאסט</string>
     <string name="picture_in_picture_des">ממשיך ניגון בנגן מינימלי מעל ישומים אחרים</string>
     <string name="player_subtitles_settings">כתוביות</string>
-    <string name="action_open_play">@string/home_play</string>
+    <string name="action_open_play">\@string/home_play</string>
     <string name="history">היסטוריה</string>
     <string name="apk_installer_legacy">מורשת</string>
     <string name="no">לא</string>
@@ -152,7 +152,7 @@
     <string name="resume_time_left" formatted="true">%dדקות
 \nנותרו</string>
     <string name="delete_message" formatted="true">‬פעולה זאת תמחק לצמיתות את %s
-\nהאם אתם בטוחים\?</string>
+\nהאם אתם בטוחים?</string>
     <string name="status_ongoing">מתמשך</string>
     <string name="duration">משך זמן</string>
     <string name="rating">דירוג</string>
@@ -163,8 +163,8 @@
     <string name="used_storage">משומש</string>
     <string name="tv_series">סדרת טלוויזיה</string>
     <string name="cartoons">סדרות/סרטים מצוירים</string>
-    <string name="anime_singular">@string/anime</string>
-    <string name="ova_singular">@string/ova</string>
+    <string name="anime_singular">\@string/anime</string>
+    <string name="ova_singular">\@string/ova</string>
     <string name="asian_drama_singular">דרמה אסייתית</string>
     <string name="episode_action_chromecast_episode">כרומקאסט את הפרק</string>
     <string name="episode_action_chromecast_mirror">כרומקאסט את המראה</string>
@@ -378,7 +378,7 @@
     <string name="upload_sync">סנכרן</string>
     <string name="sync_score">מדורג</string>
     <string name="sync_score_format" formatted="true">%d / 10</string>
-    <string name="sync_total_episodes_none">/\?\?</string>
+    <string name="sync_total_episodes_none">/??</string>
     <string name="authenticated_user" formatted="true">%s מאומת</string>
     <string name="authenticated_user_fail" formatted="true">לא ניתן להתחבר ב %s</string>
     <string name="normal">רגיל</string>
@@ -491,7 +491,7 @@
     <string name="clear_history">נקה היסטוריה</string>
     <string name="clipboard_too_large">יותר מדי טקסט. לא ניתן לשמור ללוח.</string>
     <string name="action_remove_from_watched">הסר מצפייה</string>
-    <string name="confirm_exit_dialog">האם אתם בטוחים שאתם רוצים לצאת\?</string>
+    <string name="confirm_exit_dialog">האם אתם בטוחים שאתם רוצים לצאת?</string>
     <string name="update_notification_downloading">מוריד עדכון אפליקציה…</string>
     <string name="update_notification_installing">מתקין עדכון אפליקציה…</string>
     <string name="delayed_update_notice">האפליקציה תעודכן עם היציאה</string>
@@ -552,4 +552,3 @@
 \nשימו לב: אם הסכום הוא 10 או יותר, הנגן ידלג על טעינת הסרטון כאשר הלינק נטען!</string>
     <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
 </resources>
-

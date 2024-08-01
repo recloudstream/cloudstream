@@ -57,7 +57,7 @@
     <string name="continue_watching">ဆက်လက်ကြည့်ရှုမည်</string>
     <string name="action_remove_watching">ဖယ်ရှားရန်</string>
     <string name="action_open_watching">ပိုမို၍</string>
-    <string name="action_open_play">@string/home_play</string>
+    <string name="action_open_play">\@string/home_play</string>
     <string name="vpn_torrent">ဒီဟာကတောရပ်တစ်ခုပါ ဗီပီအန်တစ်ခုသုံးဖို့အကြံပြုပါတယ်</string>
     <string name="torrent_plot">ဖော်ပြချက်</string>
     <string name="normal_no_plot">ဇာတ်လမ်းသွား မတွေ့ပါ</string>
@@ -496,7 +496,7 @@
     <string name="added_sync_format" formatted="true">ထည့်ပြီး %s</string>
     <string name="sync_score">အဆင့်သတ်မှတ်ထားပြီး</string>
     <string name="sync_score_format" formatted="true">%d / 10</string>
-    <string name="sync_total_episodes_none">/\?\?</string>
+    <string name="sync_total_episodes_none">/??</string>
     <string name="authenticated_user" formatted="true">%s ချိတ်ဆက်ပြီး</string>
     <string name="disable">ပိတ်ပါ</string>
     <string name="normal">ပုံမှန်</string>
@@ -552,4 +552,3 @@
     <string name="open_with">ဖြင့်ဖွင့်မည်</string>
     <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
 </resources>
-

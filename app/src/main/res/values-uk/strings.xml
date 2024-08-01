@@ -122,7 +122,7 @@
     <string name="swipe_to_seek_settings_des">Проведіть з боку в бік, щоб керувати своїм положенням у відео</string>
     <string name="benene_count_text">%d бананів для розробників</string>
     <string name="player_size_settings">Кнопка зміни розміру плеєра</string>
-    <string name="action_open_play">@string/home_play</string>
+    <string name="action_open_play">\@string/home_play</string>
     <string name="vpn_might_be_needed">Для коректної роботи цього постачальника може знадобитися VPN</string>
     <string name="provider_info_meta">Метадані не надаються сайтом, завантаження відео не відбудеться, якщо їх немає на сайті.</string>
     <string name="picture_in_picture">Картинка в картинці</string>
@@ -175,7 +175,7 @@
     <string name="resume">Відновити</string>
     <string name="go_back_30">-30</string>
     <string name="delete_message" formatted="true">Це назавжди видалить %s
-\nВи впевнені\?</string>
+\nВи впевнені?</string>
     <string name="resume_time_left" formatted="true">%dхв
 \nзалишилося</string>
     <string name="status_ongoing">Триває</string>
@@ -184,7 +184,7 @@
     <string name="duration">Тривалість</string>
     <string name="queued">у черзі</string>
     <string name="no_subtitles">Без субтитрів</string>
-    <string name="action_default">За замовчуванням</string>
+    <string name="action_default">Типово</string>
     <string name="free_storage">Вільно</string>
     <string name="used_storage">Зайнято</string>
     <string name="app_storage">Застосунок</string>
@@ -276,7 +276,7 @@
     <string name="pref_category_gestures">Жести</string>
     <string name="pref_category_player_features">Особливості плеєра</string>
     <string name="pref_category_subtitles">Субтитри</string>
-    <string name="pref_category_defaults">За замовчуванням</string>
+    <string name="pref_category_defaults">Типово</string>
     <string name="pref_category_looks">Вигляд</string>
     <string name="pref_category_ui_features">Особливості</string>
     <string name="category_general">Загальне</string>
@@ -368,7 +368,7 @@
     <string name="account">обліковий запис</string>
     <string name="create_account">Створити</string>
     <string name="added_sync_format" formatted="true">Додано %s</string>
-    <string name="sync_total_episodes_none">/\?\?</string>
+    <string name="sync_total_episodes_none">/??</string>
     <string name="sync_score">Оцінений</string>
     <string name="player_load_subtitles">Завантажити з файлу</string>
     <string name="max">Макс.</string>
@@ -425,9 +425,9 @@
     <string name="plugins_disabled" formatted="true">Вимкнено: %d</string>
     <string name="plugins_not_downloaded" formatted="true">Не завантажено: %d</string>
     <string name="plugins_updated" formatted="true">Оновлено %d плагіни</string>
-    <string name="blank_repo_message">За замовчуванням у CloudStream не встановлено жодного сайту. Вам потрібно встановити сайти з репозиторіїв.
+    <string name="blank_repo_message">Типово у CloudStream не встановлено жодного сайту. Вам потрібно встановити сайти з репозиторіїв.
 \n
-\nПриєднуйтесь до нашого Discord або шукайте в Інтернеті.</string>
+\nПриєднуйтесь до нашого Discord або шукайте в інтернеті.</string>
     <string name="view_public_repositories_button">Переглянути репозиторії спільноти</string>
     <string name="view_public_repositories_button_short">Публічний список</string>
     <string name="uppercase_all_subtitles">Усі субтитри у верхньому регістрі</string>
@@ -461,7 +461,7 @@
     <string name="enable_skip_op_from_database_des">Показує спливаюче вікно для пропуску опенінґу/ендінґу</string>
     <string name="clipboard_too_large">Забагато тексту. Не вдалося зберегти в буфер обміну.</string>
     <string name="action_mark_as_watched">Позначити як переглянуте</string>
-    <string name="confirm_exit_dialog">Ви впевнені що хочете вийти\?</string>
+    <string name="confirm_exit_dialog">Ви впевнені що хочете вийти?</string>
     <string name="yes">Так</string>
     <string name="no">Ні</string>
     <string name="update_notification_installing">Встановлення оновлення застосунку…</string>
@@ -556,7 +556,7 @@
 \n
 \n%s
 \n
-\nВсе одно хочете додати цей елемент, замінити наявні чи скасувати дію\?</string>
+\nВсе одно хочете додати цей елемент, замінити наявні чи скасувати дію?</string>
     <string name="duplicate_title">Знайдено потенційний дублікат</string>
     <string name="lock_profile">Розблокувати профіль</string>
     <string name="action_add_to_favorites">Додати до обраного</string>
@@ -621,7 +621,7 @@
     <string name="episode_upcoming_format" formatted="true">Наступний через %s</string>
     <string name="next_season_episode_format" formatted="true">%1$d сезон %2$d епізод вийде через</string>
     <string name="player_settings_play_in_fcast">Fcast</string>
-    <string name="player_settings_select_cast_device">Виберіть пристрій для трансляції</string>
+    <string name="player_settings_select_cast_device">Оберіть пристрій для трансляції</string>
     <string name="episode_action_cast_mirror">Трансляція через дзеркало</string>
     <string name="cs3wiki">CloudStream Wiki</string>
     <string name="pref_category_security">Безпека</string>
@@ -635,5 +635,30 @@
     <string name="auth_locally">Автентифікація по місцю</string>
     <string name="dismiss">Відхилити</string>
     <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
+    <string name="play_from_beginning_img_des">Відтворювати з початку</string>
+    <string name="test_warning">Попередження</string>
+    <string name="delete_plugin">Видалити розширення</string>
+    <string name="downloads_empty">Наразі завантажень немає.</string>
+    <string name="hide_player_control_names">Приховувати назви елемнтів керування у плеєрі</string>
+    <string name="open_local_video">Відкрити локальне відео</string>
+    <string name="sort_release_date_new">Дата випуску (від нових до старих)</string>
+    <string name="sort_release_date_old">Дата випуску (від старих до нових)</string>
+    <string name="downloads_delete_select">Оберіть елементи для видалення</string>
+    <string name="select_all">Обрати все</string>
+    <string name="deselect_all">Зняти виділення зі всього</string>
+    <string name="delete_format" formatted="true">Видалити (%1$d | %2$s)</string>
+    <string name="delete_message_series_episodes" formatted="true">Впевнені, що хочете назавжди видалити наступні епізоди \"%1$s\"?
+\n
+\n%2$s</string>
+    <string name="delete_message_series_section" formatted="true">Ви також назавжди видалите всі епізоди в наступному серіалі:
+\n
+\n%s</string>
+    <string name="offline_file">Доступно для перегляду в автономному режимі</string>
+    <string name="delete_files">Видалити файли</string>
+    <string name="delete_message_multiple" formatted="true">Ви впевнені, що хочете назавжди видалити наступні елементи?
+\n
+\n%s</string>
+    <string name="delete_message_series_only" formatted="true">Ви впевнені, що хочете назавжди видалити всі епізоди в наступному серіалі?
+\n
+\n%s</string>
 </resources>
-

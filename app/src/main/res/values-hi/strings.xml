@@ -93,7 +93,7 @@
     <string name="pause">रोकें</string>
     <string name="resume">फिर से चलाएं</string>
     <string name="delete_message">इससे %s स्थायी रूप से हट जाएगा
-\nक्या आपका निर्णय निश्चित है \?</string>
+\nक्या आपका निर्णय निश्चित है ?</string>
     <string name="status_ongoing">अभी चालू है</string>
     <string name="status_completed">मुकम्मल हुया</string>
     <string name="status">स्थिति</string>
@@ -211,4 +211,3 @@
     <string name="subs_font">अक्षर शैली</string>
     <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
 </resources>
-

@@ -108,7 +108,7 @@
     <string name="continue_watching">Tiếp tục xem</string>
     <string name="action_remove_watching">Loại bỏ</string>
     <string name="action_open_watching">Thông tin thêm</string>
-    <string name="action_open_play">@string/home_play</string>
+    <string name="action_open_play">\@string/home_play</string>
     <string name="vpn_might_be_needed">Bạn có thể sẽ cần sử dụng VPN để xem phim này</string>
     <string name="vpn_torrent">Phim này được chiếu dưới dạng Torrent. Hãy sử dụng VPN để xem</string>
     <string name="torrent_plot">Thông tin phim</string>
@@ -193,7 +193,7 @@
     <string name="go_back_30">-30</string>
     <string name="go_forward_30">+30</string>
     <string name="delete_message">%s sẽ bị xoá vĩnh viễn
-\nBạn có chắc chắn muốn xóa\?</string>
+\nBạn có chắc chắn muốn xóa?</string>
     <string name="resume_time_left" formatted="true">%dm
 \ncòn lại</string>
     <string name="status_ongoing">Đang chiếu</string>
@@ -322,7 +322,7 @@
     <string name="upload_sync">Đồng bộ</string>
     <string name="sync_score">Đánh giá</string>
     <string name="sync_score_format" formatted="true">%d / 10</string>
-    <string name="sync_total_episodes_none">/\?\?</string>
+    <string name="sync_total_episodes_none">/??</string>
     <string name="sync_total_episodes_some" formatted="true">/%d</string>
     <string name="authenticated_user" formatted="true">Đã xác thực %s</string>
     <string name="authenticated_user_fail" formatted="true">Không thể xác thực %s</string>
@@ -490,7 +490,7 @@
     <string name="enable_skip_op_from_database_des">Hiển thị nút tua nhanh cho mở đầu/kết thúc</string>
     <string name="clipboard_too_large">Văn bản quá dài. Không thể lưu vào khay nhớ tạm.</string>
     <string name="action_remove_from_watched">Xoá khỏi đã xem</string>
-    <string name="confirm_exit_dialog">Bạn có chắc muốn thoát\?</string>
+    <string name="confirm_exit_dialog">Bạn có chắc muốn thoát?</string>
     <string name="yes">Có</string>
     <string name="update_notification_downloading">Đang tải bản cập nhật…</string>
     <string name="update_notification_installing">Đang cài bản cập nhật…</string>
@@ -570,7 +570,7 @@
 \n
 \n%s
 \n
-\nBạn vẫn muốn thêm mục này, thay thế những mục hiện có hay hủy hành động\?</string>
+\nBạn vẫn muốn thêm mục này, thay thế những mục hiện có hay hủy hành động?</string>
     <string name="backup_frequency">Tần suất sao lưu</string>
     <string name="duplicate_title">Đã tìm thấy bản sao tiềm năng</string>
     <string name="lock_profile">Khóa hồ sơ</string>
@@ -645,4 +645,3 @@
     <string name="device_pin_counter_text">Mã sẽ hết hạn trong %1$dm %2$ds</string>
     <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
 </resources>
-

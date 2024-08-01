@@ -7,12 +7,12 @@
     <!-- IS NOT NEEDED TO TRANSLATE AS THEY ARE ONLY USED FOR SCREEN READERS AND WONT SHOW UP TO NORMAL USERS -->
     <string name="result_poster_img_des">Plakát</string>
     <string name="search_poster_img_des">Plakát</string>
-    <string name="episode_poster_img_des">Episode Poster</string>
-    <string name="home_main_poster_img_des">Main Poster</string>
-    <string name="home_next_random_img_des">Next Random</string>
-    <string name="go_back_img_des">Go back</string>
-    <string name="home_change_provider_img_des">Change Provider</string>
-    <string name="preview_background_img_des">Preview Background</string>
+    <string name="episode_poster_img_des">Plakát epizody</string>
+    <string name="home_main_poster_img_des">Hlavní plakát</string>
+    <string name="home_next_random_img_des">Další náhodný</string>
+    <string name="go_back_img_des">Přejít zpět</string>
+    <string name="home_change_provider_img_des">Změnit poskytovatele</string>
+    <string name="preview_background_img_des">Náhled pozadí</string>
     <!-- TRANSLATE, BUT DON'T FORGET FORMAT -->
     <string name="player_speed_text_format" formatted="true">Rychlost (%.2fx)</string>
     <string name="rated_format" formatted="true">Hodnocení: %.1f</string>
@@ -101,7 +101,7 @@
     <string name="continue_watching">Pokračovat ve sledování</string>
     <string name="action_remove_watching">Odebrat</string>
     <string name="action_open_watching">Další informace</string>
-    <string name="action_open_play">@string/home_play</string>
+    <string name="action_open_play">\@string/home_play</string>
     <string name="vpn_might_be_needed">Aby tento poskytovatel fungoval správně, budete možná potřebovat VPN</string>
     <string name="vpn_torrent">Tento poskytovatel je torrent, je doporučená VPN</string>
     <string name="provider_info_meta">Web neposkytnul žádná metadata, načítání videa selže, pokud na webu neexistuje.</string>
@@ -179,7 +179,7 @@
     <string name="go_back_30">-30</string>
     <string name="go_forward_30">+30</string>
     <string name="delete_message" formatted="true">Toto nevratně smaže %s
-\nJste si jisti\?</string>
+\nJste si jisti?</string>
     <string name="resume_time_left" formatted="true">%dm
 \nzbývá</string>
     <string name="status_ongoing">Probíhající</string>
@@ -303,7 +303,7 @@
     <string name="upload_sync">Synchronizovat</string>
     <string name="sync_score">Hodnoceno</string>
     <string name="sync_score_format" formatted="true">%d / 10</string>
-    <string name="sync_total_episodes_none">/\?\?</string>
+    <string name="sync_total_episodes_none">/??</string>
     <string name="sync_total_episodes_some" formatted="true">/%d</string>
     <string name="authenticated_user" formatted="true">Přihlášeno k %s</string>
     <string name="authenticated_user_fail" formatted="true">Nepodařilo se přihlásit k %s</string>
@@ -464,7 +464,7 @@
     <string name="skip_type_intro">Znělka</string>
     <string name="enable_skip_op_from_database_des">Zobrazit vyskakovací okna pro přeskočení úvodu/konce</string>
     <string name="update_notification_downloading">Stahování aktualizace aplikace…</string>
-    <string name="confirm_exit_dialog">Opravdu chcete opustit aplikaci\?</string>
+    <string name="confirm_exit_dialog">Opravdu chcete opustit aplikaci?</string>
     <string name="update_notification_failed">Nepodařilo se nainstalovat novou verzi aplikace</string>
     <string name="apk_installer_legacy">Původní</string>
     <string name="delayed_update_notice">Aplikace bude po ukončení aktualizována</string>
@@ -579,7 +579,7 @@
 \n
 \n%s
 \n
-\nChcete přesto přidat tuto položku, nahradit existující nebo zrušit akci\?</string>
+\nChcete přesto přidat tuto položku, nahradit existující nebo zrušit akci?</string>
     <string name="backup_frequency">Frekvence záloh</string>
     <string name="duplicate_title">Nalezena potenciální duplicita</string>
     <string name="lock_profile">Zamknout profil</string>
@@ -659,5 +659,10 @@
     <string name="auth_locally">Lokální ověření</string>
     <string name="device_pin_expired_message">PIN kód vypršel!</string>
     <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
+    <string name="play_from_beginning_img_des">Přehrát od začátku</string>
+    <string name="downloads_empty">Aktuálně neprobíhají žádná stahování.</string>
+    <string name="open_local_video">Otevřít místní video</string>
+    <string name="delete_plugin">Odstranit doplněk</string>
+    <string name="hide_player_control_names">Skrýt názvy ovládání přehrávače</string>
+    <string name="test_warning">Varování</string>
 </resources>
-

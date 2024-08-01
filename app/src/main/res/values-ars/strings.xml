@@ -233,7 +233,7 @@
     <string name="sort_apply">قدم</string>
     <string name="torrent_plot">وصف</string>
     <string name="picture_in_picture_des">يستمر التشغيل في مشغل مصغر فوق التطبيقات الأخرى</string>
-    <string name="delete_message" formatted="true">نهائيا %sسيؤدي هذا الى حذف 
+    <string name="delete_message" formatted="true">نهائيا %sسيؤدي هذا الى حذف
 \nهل أنت متأكد؟</string>
     <string name="subs_font">الخط</string>
     <string name="subs_font_size">حجم الخط</string>
@@ -354,4 +354,3 @@
     <string name="limit_title">عنوان مشغل الفيديو بحد أقصى لعدد الأحرف</string>
     <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
 </resources>
-

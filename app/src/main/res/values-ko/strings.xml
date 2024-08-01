@@ -166,7 +166,7 @@
     <string name="rating">평점</string>
     <string name="go_forward_30">+30</string>
     <string name="delete_message" formatted="true">%s가 영구 삭제됩니다
-\n정말 삭제하시겠습니까\?</string>
+\n정말 삭제하시겠습니까?</string>
     <string name="resume_time_left" formatted="true">%d분
 \n남음</string>
     <string name="site">사이트</string>
@@ -248,7 +248,7 @@
     <string name="added_sync_format" formatted="true">추가 %s</string>
     <string name="upload_sync">동기화</string>
     <string name="sync_score_format" formatted="true">%d / 10</string>
-    <string name="sync_total_episodes_none">/\?\?</string>
+    <string name="sync_total_episodes_none">/??</string>
     <string name="sync_total_episodes_some" formatted="true">/%d</string>
     <string name="authenticated_user" formatted="true">%s 인증됨</string>
     <string name="authenticated_user_fail" formatted="true">다음에 로그인할 수 없음 %s</string>
@@ -460,7 +460,7 @@
     <string name="enable_skip_op_from_database_des">오프닝/엔딩 시 건너뛰기 팝업 표시</string>
     <string name="clipboard_too_large">텍스트가 너무 많습니다. 클립보드에 저장할 수 없습니다.</string>
     <string name="action_remove_from_watched">시청에서 삭제</string>
-    <string name="confirm_exit_dialog">정말 종료하시겠습니까\?</string>
+    <string name="confirm_exit_dialog">정말 종료하시겠습니까?</string>
     <string name="yes">네</string>
     <string name="no">아니요</string>
     <string name="update_notification_downloading">앱 업데이트 다운로드 중…</string>
@@ -495,7 +495,7 @@
     <string name="benene_count_text">개발자에게 %d 바나나 줌</string>
     <string name="benene_count_text_none">바나나를 주지 않음</string>
     <string name="action_open_watching">상세 정보</string>
-    <string name="action_open_play">@string/home_play</string>
+    <string name="action_open_play">\@string/home_play</string>
     <string name="normal_no_plot">플롯을 찾을 수 없음</string>
     <string name="torrent_no_plot">설명을 찾을 수 없음</string>
     <string name="show_log_cat">Logcat 🐈 표시</string>
@@ -636,4 +636,3 @@
     <string name="episode_action_cast_mirror">캐스트미러</string>
     <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
 </resources>
-

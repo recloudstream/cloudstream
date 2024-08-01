@@ -158,7 +158,7 @@
     <string name="dont_show_again">Ne rodyti dar kartą</string>
     <string name="video_skip_op">Praleisti OP</string>
     <string name="live_singular">Gyva transliacija</string>
-    <string name="sync_total_episodes_none">/\?\?</string>
+    <string name="sync_total_episodes_none">/??</string>
     <string name="unexpected_error">Netikėta grotuvo klaida</string>
     <string name="sync_score">Įvertinta</string>
     <string name="skip_update">Praleisti šį atnaujinimą</string>
@@ -257,9 +257,8 @@
     <string name="player_settings_play_in_app">Integruotas grotuvas</string>
     <string name="setup_extensions_subtext">Atsisiųskite sąrašą puslapiu jūs norite naudoti</string>
     <string name="app_dub_sub_episode_text_format" formatted="true">%1$s Ser %2$d</string>
-    <string name="confirm_exit_dialog">Ar tikrai norite išeiti\?</string>
+    <string name="confirm_exit_dialog">Ar tikrai norite išeiti?</string>
     <string name="action_remove_from_watched">Pašalinti iš žiūrimų</string>
     <string name="audio_tracks">Garso takelis</string>
     <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
 </resources>
-

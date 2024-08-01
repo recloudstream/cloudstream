@@ -32,7 +32,7 @@
     <string name="pick_subtitle">Undertexter</string>
     <string name="reload_error">Försök ansluta igen…</string>
     <string name="go_back">Gå tillbaka</string>
-    <string name="episode_poster_img_des">@string/result_poster_img_des</string>
+    <string name="episode_poster_img_des">\@string/result_poster_img_des</string>
     <string name="play_episode">Spela avsnitt</string>
     <string name="download">Ladda ner</string>
     <string name="download_storage_text">Intern lagring</string>
@@ -43,7 +43,7 @@
     <string name="pref_disable_acra">Inaktivera automatisk felrapportering</string>
     <string name="home_more_info">Mer information</string>
     <string name="home_expanded_hide">Göm</string>
-    <string name="home_main_poster_img_des">@string/result_poster_img_des</string>
+    <string name="home_main_poster_img_des">\@string/result_poster_img_des</string>
     <string name="home_play">Spela upp</string>
     <string name="home_info">Info</string>
     <string name="home_next_random_img_des">Nästa</string>
@@ -124,7 +124,7 @@
     <string name="delete">Ta bort</string>
     <string name="cancel">Avbryt</string>
     <string name="delete_message">%s kommer att raderas permanent
-\nÄr du helt säker\?</string>
+\nÄr du helt säker?</string>
     <string name="status_ongoing">Pågående</string>
     <string name="status_completed">Färdig</string>
     <string name="status">Status</string>
@@ -233,7 +233,7 @@
     <string name="next_episode_format" formatted="true">Episod %d kommer att släppas om</string>
     <string name="duration_format" formatted="true">%d min</string>
     <string name="show_trailers_settings">Visa trailers</string>
-    <string name="action_open_play">@string/home_play</string>
+    <string name="action_open_play">\@string/home_play</string>
     <string name="ova">OVA</string>
     <string name="episodes_range">%1$d-%2$d</string>
     <string name="episode_format" formatted="true">%1$d %2$s</string>
@@ -285,7 +285,7 @@
     <string name="tv_layout">TV-layout</string>
     <string name="create_account">Skapa konto</string>
     <string name="sync_score_format" formatted="true">%d / 10</string>
-    <string name="sync_total_episodes_none">/\?\?</string>
+    <string name="sync_total_episodes_none">/??</string>
     <string name="sync_total_episodes_some" formatted="true">/%d</string>
     <string name="subtitle_offset_extra_hint_later_format">Använd detta om undertexterna visas %d ms för tidigt</string>
     <string name="quality_hd">HD</string>
@@ -373,7 +373,7 @@
     <string name="browser">Webbläsare</string>
     <string name="nginx_url_pref">NGINX server URL</string>
     <string name="emulator_layout">Emulator-layout</string>
-    <string name="confirm_exit_dialog">Är du säker på att du vill avsluta\?</string>
+    <string name="confirm_exit_dialog">Är du säker på att du vill avsluta?</string>
     <string name="update_notification_downloading">Laddar ner uppdatering till appen…</string>
     <string name="random_button_settings">Slumpknapp</string>
     <string name="show_sub">Visa sub</string>
@@ -502,7 +502,7 @@
 \n
 \nGå med i vår Discord eller sök online.</string>
     <string name="select_library">Välj bibliotek</string>
-    <string name="empty_library_no_accounts_message">Ditt bibliotek är tomt :( 
+    <string name="empty_library_no_accounts_message">Ditt bibliotek är tomt :(
 \nLogga in på ett bibliotekskonto eller lägg till program i ditt lokala bibliotek.</string>
     <string name="enable_skip_op_from_database_des">Visa hoppa över popups för introduktion/eftertexter</string>
     <string name="action_remove_from_watched">Ta bort från sett</string>
@@ -573,7 +573,7 @@
     <string name="rotate_video_key">rotera_video_nyckel</string>
     <string name="pin">PIN-kod</string>
     <string name="android_tv_interface_off_seek_settings_summary">Sök mängden som används när spelaren är dold</string>
-    <string name="duplicate_message_multiple" formatted="true">Det verkar som om ett potentiellt duplicerat objekt redan finns i ditt bibliotek: 
+    <string name="duplicate_message_multiple" formatted="true">Det verkar som om ett potentiellt duplicerat objekt redan finns i ditt bibliotek:
 \n
 \n\'%s.\'
 \n
@@ -628,4 +628,3 @@
     <string name="pref_category_security">Säkerhet</string>
     <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
 </resources>
-

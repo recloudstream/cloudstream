@@ -118,7 +118,7 @@
     <string name="go_back_30">-30</string>
     <string name="go_forward_30">+30</string>
     <string name="delete_message" formatted="true">Dette vil slette %s permanent.
-\nEr du sikker på dette\?</string>
+\nEr du sikker på dette?</string>
     <string name="resume_time_left" formatted="true">%dm
 \ngjenstår</string>
     <string name="status_ongoing">Pågåande</string>
@@ -197,4 +197,3 @@
     <string name="reload_error">Prøv tilkopling på nytt…</string>
     <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
 </resources>
-

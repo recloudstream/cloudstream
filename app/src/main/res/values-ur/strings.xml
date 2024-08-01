@@ -196,7 +196,7 @@
     <string name="go_back_30">-30</string>
     <string name="go_forward_30">+30</string>
     <string name="delete_message" formatted="true">یہ مستقل طور پر حذف ہوجائے گا %s
-\nتمھيں يقين ہے\?</string>
+\nتمھيں يقين ہے?</string>
     <string name="resume_time_left" formatted="true">%dm
 \nباقی</string>
     <string name="status_ongoing">احوال</string>
@@ -318,7 +318,7 @@
     <string name="account">اكاؤنٹ</string>
     <string name="logout">لاگ آوٹ</string>
     <string name="login">لاگ ان کریں</string>
-    <string name="sync_total_episodes_none">/\?\?</string>
+    <string name="sync_total_episodes_none">/??</string>
     <string name="sync_total_episodes_some" formatted="true">/%d</string>
     <string name="authenticated_user" formatted="true">%s تصدیق شدہ</string>
     <string name="authenticated_user_fail" formatted="true">%s پر لاگ ان نہیں ہو سکا</string>
@@ -619,4 +619,3 @@
     <string name="biometric_warning">آپ کے CloudStream ڈیٹا کا اب بیک اپ لیا گیا ہے۔ اگرچہ اس کا امکان بہت کم ہے، لیکن مختلف ڈیوائس مختلف طریقے سے کام کر سکتے ہیں۔ اگر آپ ایپ تک رسائی حاصل کرنے سے قاصر ہیں تو، ایپ کا ڈیٹا مکمل طور پر صاف کریں اور بیک اپ سے بحال کریں۔ اس سے ہونے والی کسی بھی تکلیف کے لیے ہم بہت معذرت خواہ ہیں۔</string>
     <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
 </resources>
-

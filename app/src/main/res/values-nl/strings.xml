@@ -107,7 +107,7 @@
     <string name="continue_watching">Doorgaan met kijken</string>
     <string name="action_remove_watching">Verwijder</string>
     <string name="action_open_watching">Meer Info</string>
-    <string name="action_open_play">@string/home_play</string>
+    <string name="action_open_play">\@string/home_play</string>
     <string name="vpn_might_be_needed">Een VPN kan nodig zijn om deze provider correct te laten werken</string>
     <string name="vpn_torrent">Deze provider is een torrent, een VPN wordt aanbevolen</string>
     <string name="provider_info_meta">Metadata wordt niet geleverd door de site, het laden van video\'s zal mislukken als deze niet op de site bestaat.</string>
@@ -189,7 +189,7 @@
     <string name="go_back_30">-30</string>
     <string name="go_forward_30">+30</string>
     <string name="delete_message" formatted="true">Dit wordt zeker permanent verwijderd %s
-\nWeet u het zeker\?</string>
+\nWeet u het zeker?</string>
     <string name="resume_time_left" formatted="true">%dm
 \nremaining</string>
     <string name="status_ongoing">Voortdurende</string>
@@ -320,7 +320,7 @@
     <string name="upload_sync">Sync</string>
     <string name="sync_score">gewaardeerd</string>
     <string name="sync_score_format" formatted="true">%d / 10</string>
-    <string name="sync_total_episodes_none">/\?\?</string>
+    <string name="sync_total_episodes_none">/??</string>
     <string name="sync_total_episodes_some" formatted="true">/%d</string>
     <string name="authenticated_user" formatted="true">%s geverifieerd</string>
     <string name="authenticated_user_fail" formatted="true">Kon niet inloggen op %s</string>
@@ -493,7 +493,7 @@
     <string name="safe_mode_crash_info">Bekijk de crash info</string>
     <string name="empty_library_logged_in_message">Deze lijst is leeg. Probeer een andere.</string>
     <string name="sort_alphabetical_a">Alfabetisch (A tot Z)</string>
-    <string name="confirm_exit_dialog">Weet je zeker dat je wilt afsluiten\?</string>
+    <string name="confirm_exit_dialog">Weet je zeker dat je wilt afsluiten?</string>
     <string name="sort_updated_old">Bijgewerkt (Oud naar Nieuw)</string>
     <string name="sort_rating_desc">Beoordeling ( Hoog naar Laag)</string>
     <string name="apk_installer_legacy">Erfenis</string>
@@ -610,4 +610,3 @@
     <string name="rotate_video">Roteer</string>
     <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
 </resources>
-

@@ -191,7 +191,7 @@
     <string name="resume">Sii wado</string>
     <string name="go_back_30">-30</string>
     <string name="delete_message" formatted="true">Dhamaantii waa la saari doona %s
-\nSow ma hubtid\?</string>
+\nSow ma hubtid?</string>
     <string name="source_error">Fashil ka yimi xigashada</string>
     <string name="resume_time_left" formatted="true">%ddq
 \nAyaa hadhsan</string>
@@ -339,7 +339,7 @@
     <string name="enable_skip_op_from_database_des">Tusi badhin aad iska dhaafin karto bilowga/dhamaadka</string>
     <string name="action_mark_as_watched">Ku caalamadi in la daawaday</string>
     <string name="update_notification_downloading">Dejinaya cusbooneysiinta appka…</string>
-    <string name="confirm_exit_dialog">Ma hubtaa inaad ka baxdid\?</string>
+    <string name="confirm_exit_dialog">Ma hubtaa inaad ka baxdid?</string>
     <string name="no">May</string>
     <string name="apk_installer_package_installer">PackageInstaller</string>
     <string name="update_notification_installing">Rakibaya cusbooneysiinta…</string>
@@ -368,7 +368,7 @@
     <string name="add_sync">Ku dar raad-raace</string>
     <string name="sync_total_episodes_some" formatted="true">/%d</string>
     <string name="sync_score_format" formatted="true">%d / 10</string>
-    <string name="sync_total_episodes_none">/\?\?</string>
+    <string name="sync_total_episodes_none">/??</string>
     <string name="authenticated_user_fail" formatted="true">Waa lagu guuldarraystey inaad ku gasho %s</string>
     <string name="normal">Caadi</string>
     <string name="max">Ugu weyn</string>
@@ -487,4 +487,3 @@
     <string name="skip_type_creddits">Qoraalka dhamaadka</string>
     <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
 </resources>
-

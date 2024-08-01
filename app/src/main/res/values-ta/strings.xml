@@ -186,7 +186,7 @@
     <string name="discord">முரண்பாட்டில் சேரவும்</string>
     <string name="asian_drama">ஆசிய நாடகங்கள்</string>
     <string name="rated_format" formatted="true">மதிப்பிடப்பட்டது: %.1 எஃப்</string>
-    <string name="action_open_play">@string/home_play</string>
+    <string name="action_open_play">\@string/home_play</string>
     <string name="rating">செயல்வரம்பு</string>
     <string name="search">தேடல்</string>
     <string name="show_trailers_settings">டிரெய்லர்களைக் காட்டு</string>
@@ -280,7 +280,7 @@
     <string name="duplicate_add">கூட்டு</string>
     <string name="duplicate_replace">மாற்றவும்</string>
     <string name="duplicate_replace_all">அனைத்தையும் மாற்று</string>
-    <string name="duplicate_message_single" formatted="true">உங்கள் நூலகத்தில் ஏற்கனவே ஒரு நகல் உருப்படி இருப்பதாகத் தெரிகிறது: \'%கள்.\' 
+    <string name="duplicate_message_single" formatted="true">உங்கள் நூலகத்தில் ஏற்கனவே ஒரு நகல் உருப்படி இருப்பதாகத் தெரிகிறது: \'%கள்.\'
 \n இந்த உருப்படியை எப்படியும் சேர்க்க விரும்புகிறீர்களா, இருக்கும் ஒன்றை மாற்ற விரும்புகிறீர்களா அல்லது செயலை ரத்து செய்ய விரும்புகிறீர்களா?</string>
     <string name="action_add_to_bookmarks">கடிகார நிலையை அமைக்கவும்</string>
     <string name="subs_edge_type">விளிம்பு வகை</string>
@@ -371,7 +371,7 @@
     <string name="downloaded_file">பதிவிறக்கம் செய்யப்பட்ட கோப்பு</string>
     <string name="resolution">பகுத்தல்</string>
     <string name="player_settings_play_in_mpv">எம்.பி.வி.</string>
-    <string name="empty_library_no_accounts_message">உங்கள் நூலகம் காலியாக உள்ளது :( 
+    <string name="empty_library_no_accounts_message">உங்கள் நூலகம் காலியாக உள்ளது :(
 \n நூலகக் கணக்கில் உள்நுழைக அல்லது உங்கள் உள்ளக நூலகத்தில் காட்சிகளைச் சேர்க்கவும்.</string>
     <string name="action_unsubscribe">குழுவிலகவும்</string>
     <string name="profiles">சுயவிவரங்கள்</string>
@@ -526,7 +526,7 @@
     <string name="apply_on_restart">மாற்றங்களைக் காண பயன்பாட்டை மறுதொடக்கம் செய்யுங்கள்.</string>
     <string name="safe_mode_crash_info">செயலிழப்பு தகவலைக் காண்க</string>
     <string name="delete_repository">களஞ்சியத்தை நீக்கு</string>
-    <string name="blank_repo_message">கிளவுட்ச்ட்ரீமில் இயல்புநிலையாக எந்த தளங்களும் நிறுவப்படவில்லை. நீங்கள் களஞ்சியங்களிலிருந்து தளங்களை நிறுவ வேண்டும். 
+    <string name="blank_repo_message">கிளவுட்ச்ட்ரீமில் இயல்புநிலையாக எந்த தளங்களும் நிறுவப்படவில்லை. நீங்கள் களஞ்சியங்களிலிருந்து தளங்களை நிறுவ வேண்டும்.
 \n எங்கள் முரண்பாட்டில் சேரவும் அல்லது ஆன்லைனில் தேடுங்கள்.</string>
     <string name="extension_status">நிலை</string>
     <string name="extension_size">அளவு</string>
@@ -537,8 +537,8 @@
     <string name="all_languages_preference">அனைத்து மொழிகளும்</string>
     <string name="yes">ஆம்</string>
     <string name="battery_dialog_title">பேட்டரி தேர்வுமுறை முடக்கு</string>
-    <string name="duplicate_message_multiple" formatted="true">உங்கள் நூலகத்தில் சாத்தியமான நகல் உருப்படிகள் கண்டறியப்பட்டுள்ளன: 
-\n %கள் 
+    <string name="duplicate_message_multiple" formatted="true">உங்கள் நூலகத்தில் சாத்தியமான நகல் உருப்படிகள் கண்டறியப்பட்டுள்ளன:
+\n %கள்
 \n இந்த உருப்படியை எப்படியும் சேர்க்க விரும்புகிறீர்களா, ஏற்கனவே உள்ளவற்றை மாற்ற விரும்புகிறீர்களா அல்லது செயலை ரத்து செய்ய விரும்புகிறீர்களா?</string>
     <string name="enter_pin">முள் உள்ளிடவும்</string>
     <string name="lock_profile">பூட்டு சுயவிவரம்</string>
@@ -599,17 +599,17 @@
     <string name="sort_rating_asc">மதிப்பீடு (குறைந்த முதல் உயர் வரை)</string>
     <string name="sort_updated_new">புதுப்பிக்கப்பட்டது (பழையது புதியது)</string>
     <string name="empty_library_logged_in_message">இந்த பட்டியல் காலியாக உள்ளது. இன்னொரு இடத்திற்கு மாற முயற்சிக்கவும்.</string>
-    <string name="safe_mode_file">பாதுகாப்பான பயன்முறை கோப்பு கிடைத்தது! 
+    <string name="safe_mode_file">பாதுகாப்பான பயன்முறை கோப்பு கிடைத்தது!
 \n கோப்பு அகற்றப்படும் வரை தொடக்கத்தில் எந்த நீட்டிப்புகளையும் ஏற்றவில்லை.</string>
     <string name="subscription_in_progress_notification">சந்தா காட்சிகளைப் புதுப்பித்தல்</string>
     <string name="subscription_list_name">சந்தா</string>
     <string name="subscription_episode_released">எபிசோட் %d வெளியானது!</string>
     <string name="mobile_data">மொபைல் தரவு</string>
     <string name="set_default">இயல்புநிலையை அமைக்கவும்</string>
-    <string name="quality_profile_help">ஆதாரங்கள் எவ்வாறு உத்தரவிடப்படுகின்றன என்பதை இங்கே மாற்றலாம். ஒரு வீடியோவுக்கு அதிக முன்னுரிமை இருந்தால், அது மூல தேர்வில் அதிகமாகத் தோன்றும். மூல முன்னுரிமையின் தொகை மற்றும் தரமான முன்னுரிமை ஆகியவை வீடியோ முன்னுரிமை. 
-\n சான்று A: 3 
-\n தகுதி பி: 7 
-\n 10 இன் ஒருங்கிணைந்த வீடியோ முன்னுரிமை இருக்கும். 
+    <string name="quality_profile_help">ஆதாரங்கள் எவ்வாறு உத்தரவிடப்படுகின்றன என்பதை இங்கே மாற்றலாம். ஒரு வீடியோவுக்கு அதிக முன்னுரிமை இருந்தால், அது மூல தேர்வில் அதிகமாகத் தோன்றும். மூல முன்னுரிமையின் தொகை மற்றும் தரமான முன்னுரிமை ஆகியவை வீடியோ முன்னுரிமை.
+\n சான்று A: 3
+\n தகுதி பி: 7
+\n 10 இன் ஒருங்கிணைந்த வீடியோ முன்னுரிமை இருக்கும்.
 \n குறிப்பு: தொகை 10 அல்லது அதற்கு மேற்பட்டதாக இருந்தால், அந்த இணைப்பு ஏற்றப்படும்போது பிளேயர் தானாகவே ஏற்றுவதைத் தவிர்க்கும்!</string>
     <string name="unable_to_inflate">இடைமுகம் ஐ சரியாக உருவாக்க முடியவில்லை, இது ஒரு பெரிய பிழை மற்றும் உடனடியாக %கள் தெரிவிக்க வேண்டும்</string>
     <string name="favorite_removed">%கள் பிடித்தவைகளிலிருந்து அகற்றப்பட்டன</string>
@@ -617,4 +617,3 @@
     <string name="custom_media_singluar">ஊடகம்</string>
     <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
 </resources>
-
