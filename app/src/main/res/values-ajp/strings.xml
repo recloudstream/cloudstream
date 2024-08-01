@@ -642,3 +642,4 @@
     <string name="device_pin_url_message">فتاح <b>%s</b> ع تلفونك أو كمپيوترك، وحط الكود اللي فوق</string>
     <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
 </resources>
+

@@ -637,3 +637,4 @@
     <string name="device_pin_url_message">Odwiedź <b>%s</b> na swoim smartfonie lub komputerze i wprowadź powyższy kod</string>
     <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
 </resources>
+

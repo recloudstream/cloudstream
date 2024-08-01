@@ -617,3 +617,4 @@
     <string name="app_info_intent_error">CloudStreams App-Info kann nicht geöffnet werden.</string>
     <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
 </resources>
+
