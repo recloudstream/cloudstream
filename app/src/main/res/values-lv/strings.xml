@@ -106,7 +106,7 @@
     <string name="continue_watching">Turpini skatīties</string>
     <string name="action_remove_watching">Noņemt</string>
     <string name="action_open_watching">Vairāk informācijas</string>
-    <string name="action_open_play">@string/home_play</string>
+    <string name="action_open_play">\@string/home_play</string>
     <string name="vpn_might_be_needed">VPNs varētu būt vajadzīgs lai šis devējs strādātu pareizi</string>
     <string name="vpn_torrent">Šis devējs ir Torrents vpn ir rekomendēts</string>
     <string name="provider_info_meta">Dati nav doti no saites, video lādēšanas neizdosies ja neiksestē saitē.</string>
@@ -198,7 +198,7 @@
     <string name="go_back_30">-30</string>
     <string name="go_forward_30">+30</string>
     <string name="delete_message" formatted="true">Šis pilnibā dzesīs %s
-\nEsat parliecināts\?</string>
+\nEsat parliecināts?</string>
     <string name="resume_time_left" formatted="true">%dm
 \natlikušas</string>
     <string name="status_completed">Pabeigts</string>
@@ -330,7 +330,7 @@
     <string name="upload_sync">Sync</string>
     <string name="sync_score">Lidzīgi</string>
     <string name="sync_score_format" formatted="true">%d / 10</string>
-    <string name="sync_total_episodes_none">/\?\?</string>
+    <string name="sync_total_episodes_none">/??</string>
     <string name="sync_total_episodes_some" formatted="true">/%d</string>
     <string name="authenticated_user" formatted="true">%s autentificēts</string>
     <string name="authenticated_user_fail" formatted="true">Nevarēja ieiet %s</string>
@@ -519,7 +519,7 @@
     <string name="skip_type_format" formatted="true">Izlaist %s</string>
     <string name="action_remove_from_watched">Noņemt no skatītajiem</string>
     <string name="action_mark_as_watched">Atzīmēt kā skatītu</string>
-    <string name="confirm_exit_dialog">Vai tiešām vēlaties iziet\?</string>
+    <string name="confirm_exit_dialog">Vai tiešām vēlaties iziet?</string>
     <string name="empty_library_logged_in_message">Šķiet, ka šis saraksts ir tukšs, mēģiniet pārslēgties uz citu.</string>
     <string name="safe_mode_file">Atrasts drošā režīma fails!
 \n Paplašinājumi netiek ielādēti startēšanas laikā, kamēr fails nav noņemts.</string>
@@ -529,4 +529,3 @@
     <string name="subscription_new">Abonēts %s</string>
     <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
 </resources>
-

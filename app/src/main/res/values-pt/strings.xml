@@ -183,7 +183,7 @@
     <string name="pause">Pôr em Pausa</string>
     <string name="resume">Retomar</string>
     <string name="delete_message" formatted="true">Isto apagará %s permanentemente
-\nTem a certeza\?</string>
+\nTem a certeza?</string>
     <string name="resume_time_left" formatted="true">%dm
 \nem falta</string>
     <string name="status_ongoing">Em Curso</string>
@@ -305,7 +305,7 @@
     <string name="upload_sync">Sincronizar</string>
     <string name="sync_score">Nota</string>
     <string name="sync_score_format" formatted="true">%d / 10</string>
-    <string name="sync_total_episodes_none">/\?\?</string>
+    <string name="sync_total_episodes_none">/??</string>
     <string name="sync_total_episodes_some" formatted="true">/%d</string>
     <string name="authenticated_user" formatted="true">%s autenticado</string>
     <string name="authenticated_user_fail" formatted="true">Falha em autenticar para %s</string>
@@ -409,7 +409,7 @@
     <string name="anime_singular">Anime</string>
     <string name="android_tv_interface_on_seek_settings">Player visível - Procurar valor</string>
     <string name="update_notification_installing">Instalando atualização do app…</string>
-    <string name="confirm_exit_dialog">Você tem certeza que deseja sair\?</string>
+    <string name="confirm_exit_dialog">Você tem certeza que deseja sair?</string>
     <string name="extension_version">Versão</string>
     <string name="skip_type_ed">Encerramento</string>
     <string name="clear_history">Limpar histórico</string>
@@ -623,4 +623,3 @@
     <string name="episode_action_cast_mirror">Transmitir</string>
     <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
 </resources>
-

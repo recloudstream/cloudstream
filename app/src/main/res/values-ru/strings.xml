@@ -176,7 +176,7 @@
     <string name="go_back_30">-30</string>
     <string name="go_forward_30">+30</string>
     <string name="delete_message" formatted="true">Это будет удалено безвозвратно%s
-\nВы уверены\?</string>
+\nВы уверены?</string>
     <string name="resume_time_left" formatted="true">%d мин.
 \nосталось</string>
     <string name="status_completed">Завершено</string>
@@ -261,7 +261,7 @@
     <string name="app_theme_settings">Тема приложения</string>
     <string name="add_repository">Добавить репозиторий</string>
     <string name="action_remove_from_watched">Убрать отметку</string>
-    <string name="confirm_exit_dialog">Вы уверены, что хотите выйти\?</string>
+    <string name="confirm_exit_dialog">Вы уверены, что хотите выйти?</string>
     <string name="plugin_downloaded">Плагин скачан</string>
     <string name="plugin_deleted">Плагин удален</string>
     <string name="extension_description">Описание</string>
@@ -361,9 +361,9 @@
     <string name="extensions">Расширения</string>
     <string name="repository_url_hint">URL репозитория</string>
     <string name="plugin_loaded">Плагин загружен</string>
-    <string name="action_open_play">@string/home_play</string>
+    <string name="action_open_play">\@string/home_play</string>
     <string name="double_tap_to_seek_settings">Перемотка двойным нажатием</string>
-    <string name="sync_total_episodes_none">/\?\?</string>
+    <string name="sync_total_episodes_none">/??</string>
     <string name="sync_total_episodes_some" formatted="true">/%d</string>
     <string name="is_adult">18+</string>
     <string name="plugin_load_fail" formatted="true">Не удалось загрузить %s</string>
@@ -623,5 +623,7 @@
     <string name="player_settings_play_in_fcast">Fcast</string>
     <string name="player_settings_select_cast_device">Выберите девайс для трансляции</string>
     <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
+    <string name="downloads_empty">В настоящее время нет загрузок.</string>
+    <string name="play_from_beginning_img_des">Играть с самого начала</string>
+    <string name="open_local_video">Открыть локальное видео</string>
 </resources>
-

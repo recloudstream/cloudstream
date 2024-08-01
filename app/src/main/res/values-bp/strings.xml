@@ -106,7 +106,7 @@
     <string name="continue_watching">Continuar assistindo</string>
     <string name="action_remove_watching">Remover</string>
     <string name="action_open_watching">Mais Info</string>
-    <string name="action_open_play">@string/home_play</string>
+    <string name="action_open_play">\@string/home_play</string>
     <string name="vpn_might_be_needed">Uma VPN pode ser necessária para esse fornecedor funcionar corretamente</string>
     <string name="vpn_torrent">Esse fornecedor é um torrent, uma VPN é recomendada</string>
     <string name="provider_info_meta">Metadados não são oferecidas pelo site, o carregamento do video pode falhar se ele não existir no site.</string>
@@ -188,7 +188,7 @@
     <string name="go_back_30">-30</string>
     <string name="go_forward_30">+30</string>
     <string name="delete_message" formatted="true">Isso apagará %s permanentemente
-\nVocê tem certeza\?</string>
+\nVocê tem certeza?</string>
     <string name="resume_time_left" formatted="true">%dm
 \nsobrando</string>
     <string name="status_ongoing">Em andamento</string>
@@ -321,7 +321,7 @@
     <string name="upload_sync">Sincronizar</string>
     <string name="sync_score">Nota</string>
     <string name="sync_score_format" formatted="true">%d / 10</string>
-    <string name="sync_total_episodes_none">/\?\?</string>
+    <string name="sync_total_episodes_none">/??</string>
     <string name="sync_total_episodes_some" formatted="true">/%d</string>
     <string name="authenticated_user" formatted="true">%s autenticado</string>
     <string name="authenticated_user_fail" formatted="true">Não foi possível fazer login em %s</string>
@@ -450,7 +450,7 @@
     <string name="android_tv_interface_on_seek_settings_summary">A Barra de Progresso pode ser usada quando o player estiver visível</string>
     <string name="sort">Organizar</string>
     <string name="yes">Sim</string>
-    <string name="confirm_exit_dialog">Você tem certeza que deseja sair\?</string>
+    <string name="confirm_exit_dialog">Você tem certeza que deseja sair?</string>
     <string name="update_notification_installing">Instalando atualização do aplicativo…</string>
     <string name="edit">Editar</string>
     <string name="profiles">Perfis</string>
@@ -657,5 +657,30 @@
     <string name="device_pin_expired_message">O código PIN expirou!</string>
     <string name="device_pin_counter_text">O código expira em %1$dm %2$ds</string>
     <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
+    <string name="play_from_beginning_img_des">Reproduzir do começo</string>
+    <string name="test_warning">Atenção</string>
+    <string name="delete_plugin">Excluir plugin</string>
+    <string name="downloads_empty">Não há downloads no momento.</string>
+    <string name="hide_player_control_names">Ocultar os nomes dos controles do player</string>
+    <string name="open_local_video">Abrir vídeo local</string>
+    <string name="sort_release_date_new">Data de lançamento (do novo ao antigo)</string>
+    <string name="sort_release_date_old">Data de lançamento (do antigo para o novo)</string>
+    <string name="downloads_delete_select">Selecionar itens para excluir</string>
+    <string name="delete_files">Excluir arquivos</string>
+    <string name="offline_file">Disponível para assistir offline</string>
+    <string name="select_all">Selecionar todos</string>
+    <string name="delete_message_multiple" formatted="true">Tem certeza de que deseja excluir permanentemente os seguintes itens?
+\n
+\n%s</string>
+    <string name="delete_message_series_episodes" formatted="true">Tem certeza de que deseja excluir permanentemente os seguintes episódios em %1$s?
+\n
+\n%2$s</string>
+    <string name="delete_message_series_section" formatted="true">Você também excluirá permanentemente todos os episódios da seguinte série:
+\n
+\n%s</string>
+    <string name="delete_message_series_only" formatted="true">Tem certeza de que deseja excluir permanentemente todos os episódios da seguinte série?
+\n
+\n%s</string>
+    <string name="delete_format" formatted="true">Excluir (%1$d | %2$s)</string>
+    <string name="deselect_all">Desmarcar todos</string>
 </resources>
-

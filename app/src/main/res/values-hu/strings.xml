@@ -110,7 +110,7 @@
     <string name="subs_import_text" formatted="true">Betűtípusok importálása %s</string>
     <string name="action_remove_watching">Eltávolítás</string>
     <string name="action_open_watching">Több információ</string>
-    <string name="action_open_play">@string/home_play</string>
+    <string name="action_open_play">\@string/home_play</string>
     <string name="vpn_might_be_needed">VPN szükséges lehet ehhez a szolgáltató megfelelő működéséhez</string>
     <string name="vpn_torrent">Ez a szolgáltató torrent, VPN ajánlott</string>
     <string name="torrent_plot">Leírás</string>
@@ -213,7 +213,7 @@
     <string name="no_season">Nincs évad</string>
     <string name="go_forward_30">+30</string>
     <string name="delete_message" formatted="true">Ezzel véglegesen törli a %s
-\nBiztosan törli\?</string>
+\nBiztosan törli?</string>
     <string name="status_ongoing">Folyamatban levő</string>
     <string name="year">Év</string>
     <string name="site">Webhely</string>
@@ -346,7 +346,7 @@
     <string name="subtitle_offset_extra_hint_none_format">Nincs felirat késleltetés</string>
     <string name="extension_description">Leírás</string>
     <string name="update">Frissítés</string>
-    <string name="sync_total_episodes_none">/\?\?</string>
+    <string name="sync_total_episodes_none">/??</string>
     <string name="subtitles_shadow">Árnyék</string>
     <string name="trailer">Előzetes</string>
     <string name="preferred_media_subtext">Mit szeretnél látni</string>
@@ -421,7 +421,7 @@
     <string name="subscription_deleted">Leiratkozott a következőről: %s</string>
     <string name="subtitles_remove_bloat">Szükségtelen elemek eltávolítása a feliratokról</string>
     <string name="subtitles_filter_lang">Szűrés előnyben részesített médianyelv szerint</string>
-    <string name="confirm_exit_dialog">Biztos vagy benne, hogy ki akarsz lépni\?</string>
+    <string name="confirm_exit_dialog">Biztos vagy benne, hogy ki akarsz lépni?</string>
     <string name="sort">Rendezés</string>
     <string name="revert">Visszaállít</string>
     <string name="error_invalid_url">Érvénytelen URL</string>
@@ -594,4 +594,3 @@
     <string name="auto_rotate_video_desc">Az automatikus videó orientáció alapján való képernyő elforgatás bekapcsolása</string>
     <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
 </resources>
-

@@ -106,7 +106,7 @@
     <string name="continue_watching">Continua a guardare</string>
     <string name="action_remove_watching">Rimuovi</string>
     <string name="action_open_watching">Più info</string>
-    <string name="action_open_play">@string/home_play</string>
+    <string name="action_open_play">\@string/home_play</string>
     <string name="vpn_might_be_needed">Potrebbe essere necessaria una VPN per far funzionare correttamente questo provider</string>
     <string name="vpn_torrent">Questo provider è un torrent, si raccomanda una VPN</string>
     <string name="provider_info_meta">I metadati non sono forniti dal sito, il caricamento del video fallirà se non esiste sul sito.</string>
@@ -193,7 +193,7 @@
     <string name="go_back_30">-30</string>
     <string name="go_forward_30">+30</string>
     <string name="delete_message" formatted="true">Stai per eliminare permanentemente %s
-\nSei sicuro\?</string>
+\nSei sicuro?</string>
     <string name="resume_time_left" formatted="true">%dm
 \nrimanenti</string>
     <string name="status_ongoing">In corso</string>
@@ -322,7 +322,7 @@
     <string name="upload_sync">Sincronizza</string>
     <string name="sync_score">Valutato</string>
     <string name="sync_score_format" formatted="true">%d / 10</string>
-    <string name="sync_total_episodes_none">/\?\?</string>
+    <string name="sync_total_episodes_none">/??</string>
     <string name="sync_total_episodes_some" formatted="true">/%d</string>
     <string name="authenticated_user" formatted="true">%s autenticato</string>
     <string name="authenticated_user_fail" formatted="true">Impossibile autenticarsi a %s</string>
@@ -479,7 +479,7 @@
     <string name="skip_type_mixed_ed">Ending misto</string>
     <string name="skip_type_intro">Intro</string>
     <string name="action_mark_as_watched">Segna come visto</string>
-    <string name="confirm_exit_dialog">Sei sicuro di voler uscire\?</string>
+    <string name="confirm_exit_dialog">Sei sicuro di voler uscire?</string>
     <string name="yes">Sì</string>
     <string name="no">No</string>
     <string name="update_notification_downloading">Scaricando l\'aggiornamento dell\'app…</string>
@@ -577,7 +577,7 @@
 \n
 \n%s
 \n
-\nVorresti aggiungere l\'oggetto alla libreria comunque, rimpiazzare l\'esistente, o cancellare l\'azione\?</string>
+\nVorresti aggiungere l\'oggetto alla libreria comunque, rimpiazzare l\'esistente, o cancellare l\'azione?</string>
     <string name="backup_frequency">Frequenza di backup</string>
     <string name="duplicate_title">Trovato Possibile Duplicato</string>
     <string name="action_add_to_favorites">Aggiungi ai preferiti</string>
@@ -655,5 +655,30 @@
     <string name="device_pin_expired_message">Il codice PIN è scaduto!</string>
     <string name="device_pin_counter_text">Il codice scadrà tra %1$dm %2$ds</string>
     <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
+    <string name="open_local_video">Apri il video locale</string>
+    <string name="downloads_empty">Al momento non ci sono download.</string>
+    <string name="play_from_beginning_img_des">Riproduci dall\'inizio</string>
+    <string name="test_warning">Avvertimento</string>
+    <string name="delete_plugin">Elimina plugin</string>
+    <string name="hide_player_control_names">Nascondi i nomi dei controlli del lettore</string>
+    <string name="sort_release_date_new">Data di rilascio (dal più nuovo)</string>
+    <string name="downloads_delete_select">Seleziona elementi da eliminare</string>
+    <string name="offline_file">Disponibile per la visione offline</string>
+    <string name="select_all">Seleziona tutto</string>
+    <string name="deselect_all">Deseleziona tutto</string>
+    <string name="delete_format" formatted="true">Elimina (%1$d | %2$s)</string>
+    <string name="delete_message_series_episodes" formatted="true">Sei sicuro di voler eliminare definitivamente i seguenti episodi in %1$s?
+\n
+\n%2$s</string>
+    <string name="delete_message_series_section" formatted="true">Eliminerai definitivamente anche tutti gli episodi delle seguenti serie:
+\n
+\n%s</string>
+    <string name="delete_message_series_only" formatted="true">Sei sicuro di voler eliminare definitivamente tutti gli episodi delle seguenti serie?
+\n
+\n%s</string>
+    <string name="sort_release_date_old">Data di rilascio (dal più vecchio)</string>
+    <string name="delete_files">Elimina file</string>
+    <string name="delete_message_multiple" formatted="true">Sei sicuro di voler eliminare definitivamente i seguenti elementi?
+\n
+\n%s</string>
 </resources>
-

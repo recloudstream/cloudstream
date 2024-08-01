@@ -14,7 +14,7 @@
     <string name="update_notification_downloading">Memuat turun kemaskini aplikasi…</string>
     <string name="no">Tidak</string>
     <string name="yes">Ya</string>
-    <string name="confirm_exit_dialog">Adakah anda pasti anda ingin keluar\?</string>
+    <string name="confirm_exit_dialog">Adakah anda pasti anda ingin keluar?</string>
     <string name="action_remove_from_watched">Keluarkan daripada ditonton</string>
     <string name="action_mark_as_watched">Tanda sebagai sudah ditonton</string>
     <string name="enable_skip_op_from_database_des">Tunjukkan pop timbul yang dilangkau untuk pembukaan/pengakhiran</string>
@@ -59,4 +59,3 @@
     <string name="next_season_episode_format" formatted="true">cuba</string>
     <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
 </resources>
-

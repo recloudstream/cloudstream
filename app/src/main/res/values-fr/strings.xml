@@ -82,7 +82,7 @@
     <string name="pause">Pause</string>
     <string name="resume">Reprendre</string>
     <string name="delete_message">Cela va supprimer définitivement %s
-\nÊtes-vous sûr \?</string>
+\nÊtes-vous sûr ?</string>
     <string name="status_ongoing">En cours</string>
     <string name="status_completed">Terminé</string>
     <string name="status">Statut</string>
@@ -239,7 +239,7 @@
     <string name="continue_watching">Continuer à regarder</string>
     <string name="action_remove_watching">Retirer</string>
     <string name="action_open_watching">Plus d\'informations</string>
-    <string name="action_open_play">@string/home_play</string>
+    <string name="action_open_play">\@string/home_play</string>
     <string name="vpn_might_be_needed">Un VPN peut être nécessaire pour que ce fournisseur fonctionne correctement</string>
     <string name="vpn_torrent">Ce fournisseur est un torrent, un VPN est recommandé</string>
     <string name="provider_info_meta">Les métadonnées ne sont pas fournies par le site, le chargement de la vidéo échouera si elles n\'existent pas sur le site.</string>
@@ -316,7 +316,7 @@
     <string name="yes">Oui</string>
     <string name="next_episode_time_day_format" formatted="true">%1$d j %2$d h %3$d min</string>
     <string name="stream">Stream</string>
-    <string name="confirm_exit_dialog">Êtes-vous sûr·e de vouloir quitter \?</string>
+    <string name="confirm_exit_dialog">Êtes-vous sûr·e de vouloir quitter ?</string>
     <string name="no">Non</string>
     <string name="update_notification_downloading">Téléchargement de la mise à jour…</string>
     <string name="next_episode_format" formatted="true">L\'épisode %d sera publié dans</string>
@@ -371,7 +371,7 @@
     <string name="nsfw">NSFW</string>
     <string name="example_ip">127.0.0.1</string>
     <string name="sync_score_format" formatted="true">%d / 10</string>
-    <string name="sync_total_episodes_none">/\?\?</string>
+    <string name="sync_total_episodes_none">/??</string>
     <string name="sync_total_episodes_some" formatted="true">/%d</string>
     <string name="quality_sd">SD</string>
     <string name="quality_uhd">UHD</string>
@@ -383,7 +383,7 @@
     <string name="quality_4k">4K</string>
     <string name="quality_webrip">Web</string>
     <string name="go_back_30">-30</string>
-    <string name="anime_singular">@string/anime</string>
+    <string name="anime_singular">\@string/anime</string>
     <string name="ova_singular">OAV</string>
     <string name="nsfw_singular">NSFW</string>
     <string name="login_format" formatted="true">%1$s %2$s</string>
@@ -622,4 +622,3 @@
     <string name="next_season_episode_format" formatted="true">Saison %1$d Episode %2$d sera publié dans</string>
     <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
 </resources>
-

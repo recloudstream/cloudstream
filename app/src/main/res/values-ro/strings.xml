@@ -104,7 +104,7 @@
     <string name="continue_watching">Continuați să urmăriți</string>
     <string name="action_remove_watching">Eliminați</string>
     <string name="action_open_watching">Mai multe informații</string>
-    <string name="action_open_play">@string/home_play</string>
+    <string name="action_open_play">\@string/home_play</string>
     <string name="vpn_might_be_needed">Există probabilitatea necesitații unui VPN pentru ca acest furnizor să funcționeze corespunzător</string>
     <string name="vpn_torrent">Acest furnizor este un torrent, se recomandă un VPN</string>
     <string name="provider_info_meta">Metadatele nu sunt furnizate de către site, există posibilitatea ca încărcarea videoclipului să eșueze.</string>
@@ -184,7 +184,7 @@
     <string name="go_back_30">-30</string>
     <string name="go_forward_30">+30</string>
     <string name="delete_message" formatted="true">Sunteți pe cale să ștergeți definitiv %s
-\nSunteți sigur\?</string>
+\nSunteți sigur?</string>
     <string name="resume_time_left" formatted="true">%dm
 \nrămas</string>
     <string name="status_ongoing">În curs de desfășurare</string>
@@ -306,7 +306,7 @@
     <string name="upload_sync">Sincronizare</string>
     <string name="sync_score">Recenzie</string>
     <string name="sync_score_format" formatted="true">%d / 10</string>
-    <string name="sync_total_episodes_none">/\?\?</string>
+    <string name="sync_total_episodes_none">/??</string>
     <string name="sync_total_episodes_some" formatted="true">/%d</string>
     <string name="authenticated_user" formatted="true">%s autentificat/ă</string>
     <string name="authenticated_user_fail" formatted="true">Nu am putut să mă autentific la %s</string>
@@ -496,7 +496,7 @@
     <string name="apply_on_restart">Reporniți aplicația pentru a vedea schimbările.</string>
     <string name="extension_description">Descriere</string>
     <string name="plugin_downloaded">Plugin Descărcat</string>
-    <string name="confirm_exit_dialog">Sunteți sigur că vreți să ieșiți\?</string>
+    <string name="confirm_exit_dialog">Sunteți sigur că vreți să ieșiți?</string>
     <string name="empty_library_logged_in_message">Se pare că această listă este goală, încercați să treceți la o alta.</string>
     <string name="sort_by">Sortați după</string>
     <string name="player_settings_play_in_app">Player intern</string>
@@ -643,4 +643,3 @@
     <string name="player_settings_play_in_fcast">Fcast</string>
     <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
 </resources>
-

@@ -4,6 +4,7 @@
     <string name="player_speed_text_format" formatted="true">Брзина (%.2fx)</string>
     <string name="rated_format" formatted="true">Оценето: %.1f</string>
     <string name="new_update_format" formatted="true">"Пронајдена нова верзија!
+\n
 \n%1$s -&gt;  %2$s"</string>
     <string name="filler" formatted="true">Филтер</string>
     <string name="app_name">CloudStream</string>
@@ -134,7 +135,7 @@
     <string name="pause">Паузирај</string>
     <string name="resume">Продолжи</string>
     <string name="delete_message">Ова трајно ќе го избрише %s
-\nДали си сигурен\?</string>
+\nДали си сигурен?</string>
     <string name="status_ongoing">Во тек</string>
     <string name="status_completed">Завршени</string>
     <string name="status">Статус</string>
@@ -352,7 +353,7 @@
     <string name="enable_nsfw_on_providers">Овозможете NSFW на поддржани екстензии</string>
     <string name="jsdelivr_enabled">Не успеа да стигне до GitHub. Вклучувам jsDelivr прокси…</string>
     <string name="subtitles_filter_lang">Филтрирајте по претпочитан медиумски јазик</string>
-    <string name="action_open_play">@string/home_play</string>
+    <string name="action_open_play">\@string/home_play</string>
     <string name="movies_singular">Филм</string>
     <string name="added_sync_format" formatted="true">Додаден %s</string>
     <string name="plugin">приклучоци</string>
@@ -379,7 +380,7 @@
     <string name="repository_url_hint">URL на складиштето</string>
     <string name="update_notification_failed">Не може да се инсталира новата верзија на апликацијата</string>
     <string name="kitsu_settings">Прикажи постери од Kitsu</string>
-    <string name="confirm_exit_dialog">Дали сте сигурни дека сакате да излезете\?</string>
+    <string name="confirm_exit_dialog">Дали сте сигурни дека сакате да излезете?</string>
     <string name="video_disk_description">Предизвикува проблеми ако е превисоко поставено на уреди со мал простор за складирање, како што е Android TV.</string>
     <string name="jsdelivr_proxy_summary">Заобиколете го блокирањето на необработени URL-адреси на github користејќи jsDelivr. Може да предизвика ажурирањата да се одложат за неколку дена.</string>
     <string name="yes">Да</string>
@@ -421,7 +422,7 @@
     <string name="subtitle_offset_hint">1000 ms</string>
     <string name="nsfw_singular">NSFW</string>
     <string name="sync_total_episodes_some" formatted="true">/%d</string>
-    <string name="sync_total_episodes_none">/\?\?</string>
+    <string name="sync_total_episodes_none">/??</string>
     <string name="example_email">hello@world.com</string>
     <string name="go_forward_30">+30</string>
     <string name="player_settings_play_in_vlc">VLC</string>
@@ -626,4 +627,3 @@
     <string name="audio_book_singular">Аудио книга</string>
     <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
 </resources>
-

@@ -184,7 +184,7 @@
     <string name="go_back_30">-30</string>
     <string name="go_forward_30">+30</string>
     <string name="delete_message" formatted="true">Spowoduje to trwałe usunięcie %s
-\nCzy jesteś pewien\?</string>
+\nCzy jesteś pewien?</string>
     <string name="resume_time_left" formatted="true">%dm
 \npozostało</string>
     <string name="status_ongoing">Bieżący</string>
@@ -441,7 +441,7 @@
     <string name="update_notification_installing">Instalowanie aktualizacji aplikacji…</string>
     <string name="next_episode_time_min_format" formatted="true">%dm</string>
     <string name="action_mark_as_watched">Oznacz jako obejrzane</string>
-    <string name="confirm_exit_dialog">Czy na pewno chcesz wyjść\?</string>
+    <string name="confirm_exit_dialog">Czy na pewno chcesz wyjść?</string>
     <string name="update_notification_downloading">Pobieranie aktualizacji aplikacji…</string>
     <string name="sync_total_episodes_some" formatted="true">/%d</string>
     <string name="cast_format" formatted="true">Obsada: %s</string>
@@ -451,17 +451,17 @@
     <string name="apk_installer_settings">Instalator APK</string>
     <string name="apk_installer_settings_des">Niektóre telefony nie obsługują nowego instalatora pakietów. Wypróbuj tryb legacy, jeśli aktualizacje nie zostaną zainstalowane.</string>
     <string name="example_password">hasło123</string>
-    <string name="ova_singular">@string/ova</string>
+    <string name="ova_singular">\@string/ova</string>
     <string name="example_site_name">NowaNazwaWitryny</string>
     <string name="example_username">Nazwa użytkownika</string>
     <string name="example_ip">127.0.0.1</string>
     <string name="apk_installer_legacy">Tryb kompatybilności</string>
     <string name="example_site_url">https://example.com</string>
-    <string name="sync_total_episodes_none">/\?\?</string>
+    <string name="sync_total_episodes_none">/??</string>
     <string name="apk_installer_package_installer">Instalator pakietów</string>
-    <string name="action_open_play">@string/home_play</string>
+    <string name="action_open_play">\@string/home_play</string>
     <string name="example_email">witaj@poczta.pl</string>
-    <string name="anime_singular">@string/anime</string>
+    <string name="anime_singular">\@string/anime</string>
     <string name="skip_type_op">Opening</string>
     <string name="skip_type_ed">Ending</string>
     <string name="skip_type_mixed_op">Mixed opening</string>
@@ -610,14 +610,14 @@
     <string name="clipboard_permission_error">Błąd dostępu do schowka. Spróbuj ponownie.</string>
     <string name="toast_copied">skopiowano!</string>
     <string name="clipboard_unknown_error">Błąd podczas kopiowania. Skopiuj logcat i skontaktuj się z pomocą techniczną aplikacji.</string>
-    <string name="battery_dialog_title">Wyłącz optymalizację akumulatora</string>
+    <string name="battery_dialog_title">Wyłącz optymalizację baterii</string>
     <string name="app_info_intent_error">Nie można otworzyć informacji o aplikacji CloudStream.</string>
     <string name="music_singlar">Muzyka</string>
     <string name="audio_book_singular">Audiobook</string>
     <string name="ok">OK</string>
     <string name="custom_media_singluar">Multimedia</string>
-    <string name="app_unrestricted_toast">Użycie akumulatora przez aplikację jest już ustawione na nieograniczone</string>
-    <string name="battery_dialog_message">Aby zapewnić nieprzerwane pobieranie i powiadomienia o subskrybowanych programach telewizyjnych, CloudStream potrzebuje pozwolenia na działanie w tle. Naciskając OK, zostaniesz przekierowany do informacji o aplikacji. Tam przewiń do użycia akumulatora przez aplikację i ustaw je na nieograniczone. Pamiętaj, że to pozwolenie nie oznacza, że CS3 będzie zużywać akumulator. Będzie działać w tle tylko wtedy, gdy będzie to konieczne, na przykład podczas odbierania powiadomień lub pobierania filmów z oficjalnych rozszerzeń. Jeśli zdecydujesz się anulować, możesz dostosować to ustawienie później w ustawieniach głównych.</string>
+    <string name="app_unrestricted_toast">Użycie baterii przez aplikację jest już ustawione na nieograniczone</string>
+    <string name="battery_dialog_message">Aby zapewnić nieprzerwane pobieranie i powiadomienia o subskrybowanych programach, CloudStream potrzebuje pozwolenia na działanie w tle. Naciskając OK, zostaniesz przekierowany do ustawień aplikacji. Tam przewiń do użycia baterii przez aplikację i ustaw je na nieograniczone. Pamiętaj, że to pozwolenie nie oznacza, że CS3 będzie zużywać baterię. Będzie działać w tle tylko wtedy, gdy będzie to konieczne, na przykład podczas odbierania powiadomień lub pobierania filmów z oficjalnych rozszerzeń. Jeśli zdecydujesz się anulować, możesz dostosować to ustawienie później w ustawieniach .</string>
     <string name="reset_btn">Resetuj</string>
     <string name="episode_upcoming_format" formatted="true">Nadchodzące w %s</string>
     <string name="next_season_episode_format" formatted="true">Odcinek %2$d sezonu %1$d wyjdzie za</string>
@@ -636,5 +636,30 @@
     <string name="open_downloaded_repo">Otwórz repozytorium</string>
     <string name="device_pin_url_message">Odwiedź <b>%s</b> na swoim smartfonie lub komputerze i wprowadź powyższy kod</string>
     <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
+    <string name="play_from_beginning_img_des">Odtwarzaj od początku</string>
+    <string name="delete_plugin">Usuń wtyczkę</string>
+    <string name="test_warning">Uwaga</string>
+    <string name="open_local_video">Otwórz lokalne wideo</string>
+    <string name="downloads_empty">Obecnie nie ma żadnych pobrań.</string>
+    <string name="hide_player_control_names">Ukryj nazwy elementów sterujących odtwarzacza</string>
+    <string name="sort_release_date_old">Data wydania (od najstarszej do najnowszej)</string>
+    <string name="sort_release_date_new">Data wydania (od najnowszej do najstarszej)</string>
+    <string name="offline_file">Dostępne do oglądania offline</string>
+    <string name="select_all">Zaznacz wszystkie</string>
+    <string name="downloads_delete_select">Zaznacz elementy do usunięcia</string>
+    <string name="deselect_all">Odznacz wszystkie</string>
+    <string name="delete_message_multiple" formatted="true">Czy na pewno chcesz na stałe usunąć następujące elementy?
+\n
+\n%s</string>
+    <string name="delete_message_series_section" formatted="true">Usuniesz na stale wszystkie odcinki następującego serialu:
+\n
+\n%s</string>
+    <string name="delete_message_series_only" formatted="true">Czy na pewno chcesz na stałe usunąć wszystkie odcinki następującego serialu?
+\n
+\n%s</string>
+    <string name="delete_files">Usuń pliki</string>
+    <string name="delete_message_series_episodes" formatted="true">Czy na pewno chcesz na stałe usunąć następujące odcinki %1$s?
+\n
+\n%2$s</string>
+    <string name="delete_format" formatted="true">Usuń (%1$d | %2$s)</string>
 </resources>
-

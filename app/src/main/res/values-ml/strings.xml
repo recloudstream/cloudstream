@@ -122,7 +122,7 @@
     <string name="pause">നിർത്തുക</string>
     <string name="resume">തുടരുക</string>
     <string name="delete_message">സ്ഥിരമായി %sനെ ഡിലീറ്റ് ചെയ്യുക
-\nഉറപ്പാണോ\?</string>
+\nഉറപ്പാണോ?</string>
     <string name="status_ongoing">തുടരുന്നു</string>
     <string name="status_completed">പൂർത്തിയായി</string>
     <string name="status">അവസ്ഥ</string>
@@ -282,4 +282,3 @@
     <string name="subs_background_color">പശ്ചാത്തല നിറം</string>
     <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
 </resources>
-

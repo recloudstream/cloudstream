@@ -84,11 +84,11 @@
     <string name="episode_action_auto_download">Descarga automática</string>
     <string name="episode_action_download_mirror">Descargar desde servidor alternativo</string>
     <string name="episode_action_reload_links">Recargar enlaces</string>
-    <string name="sync_total_episodes_none">/\?\?</string>
+    <string name="sync_total_episodes_none">/??</string>
     <string name="sync_total_episodes_some" formatted="true">/%d</string>
     <string name="delete_message" formatted="true">Esto eliminará %s permanentemente
-\nEstá seguro\?</string>
-    <string name="confirm_exit_dialog">Está seguro que quiere salir\?</string>
+\nEstá seguro?</string>
+    <string name="confirm_exit_dialog">Está seguro que quiere salir?</string>
     <string name="popup_resume_download">Continuar Descarga</string>
     <string name="example_lang_name">Código de idioma (es_LA)</string>
     <string name="home_main_poster_img_des">Poster Principal</string>
@@ -191,7 +191,7 @@
     <string name="continue_watching">Continuar Viendo</string>
     <string name="action_remove_watching">Remover</string>
     <string name="action_open_watching">Más info</string>
-    <string name="action_open_play">@string/home_play</string>
+    <string name="action_open_play">\@string/home_play</string>
     <string name="vpn_might_be_needed">Tal vez se requiera una VPN para que este proveedor funcione correctamente</string>
     <string name="vpn_torrent">Este proveedor es un torrent, se recomienda una VPN</string>
     <string name="provider_info_meta">El sitio no proporciona los metadatos, la carga del video fallará si no existe en el sitio.</string>
@@ -556,7 +556,7 @@
 \n
 \n%s
 \n
-\n¿Desea añadir este elemento de todos modos, sustituir los existentes o cancelar la acción\?</string>
+\n¿Desea añadir este elemento de todos modos, sustituir los existentes o cancelar la acción?</string>
     <string name="duplicate_title">Posible duplicado encontrado</string>
     <string name="lock_profile">Perfil de bloqueo</string>
     <string name="action_add_to_favorites">Añadido a favoritos</string>
@@ -571,7 +571,7 @@
     <string name="select_an_account">Seleccione una cuenta</string>
     <string name="duplicate_message_single">Parece que ya existe un elemento potencialmente duplicado en su biblioteca: \'%s.\'
 \n
-\n¿Desea añadir este elemento de todos modos, sustituir el existente o cancelar la acción\?</string>
+\n¿Desea añadir este elemento de todos modos, sustituir el existente o cancelar la acción?</string>
     <string name="enter_pin">Introducir el PIN</string>
     <string name="pin">PIN</string>
     <string name="enter_current_pin">Introduzca el PIN actual</string>
@@ -635,5 +635,30 @@
     <string name="device_pin_counter_text">El código caduca en %1$d mín y %2$d s</string>
     <string name="device_pin_error_message">No puedo obtener el código PIN del dispositivo; intente con la autenticación local</string>
     <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
+    <string name="play_from_beginning_img_des">Reproducir desde el principio</string>
+    <string name="open_local_video">Abrir vídeo de forma local</string>
+    <string name="test_warning">Advertencia</string>
+    <string name="downloads_empty">Actualmente no hay descargas disponibles.</string>
+    <string name="delete_plugin">Eliminar complemento</string>
+    <string name="hide_player_control_names">Ocultar los nombres de los controles del reproductor</string>
+    <string name="sort_release_date_old">Fecha de lanzamiento (antigua a nueva)</string>
+    <string name="sort_release_date_new">Fecha de lanzamiento (de nueva a antigua)</string>
+    <string name="delete_message_series_only" formatted="true">¿Estás seguro de que quieres borrar permanentemente todos los episodios de la serie?
+\n
+\n%s</string>
+    <string name="downloads_delete_select">Seleccionar elementos para eliminar</string>
+    <string name="offline_file">Disponible para visualizar sin conexión</string>
+    <string name="select_all">Seleccionar todo</string>
+    <string name="deselect_all">Deseleccionar todo</string>
+    <string name="delete_files">Borrar archivos</string>
+    <string name="delete_format" formatted="true">Borrar (%1$d | %2$s)</string>
+    <string name="delete_message_multiple" formatted="true">¿Seguro que quieres borrar de forma permanente los siguientes elementos?
+\n
+\n%s</string>
+    <string name="delete_message_series_episodes" formatted="true">¿Estás seguro de que deseas eliminar permanentemente los siguientes episodios en %1$s?
+\n
+\n%2$s</string>
+    <string name="delete_message_series_section" formatted="true">También borrará permanentemente todos los episodios de las siguientes series:
+\n
+\n%s</string>
 </resources>
-

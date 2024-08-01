@@ -97,7 +97,7 @@
     <string name="vpn_torrent">Tento poskytovateľ je torrent, odporúča sa VPN</string>
     <string name="subs_import_text" formatted="true">Importovať písma ich umiestnením do %s</string>
     <string name="action_open_watching">Viac informácií</string>
-    <string name="action_open_play">@string/home_play</string>
+    <string name="action_open_play">\@string/home_play</string>
     <string name="continue_watching">Pokračovať v sledovaní</string>
     <string name="vpn_might_be_needed">Na správne fungovanie tohto poskytovateľa môže byť potrebná VPN</string>
     <string name="provider_info_meta">Stránka neposkytla žiadne metadáta, načítanie videa zlyhá, ak na stránke neexistuje.</string>
@@ -283,7 +283,7 @@
     <string name="torrent_singular">Torrent</string>
     <string name="ova_singular">OVA</string>
     <string name="skip_update">Preskočiť túto aktualizáciu</string>
-    <string name="sync_total_episodes_none">/\?\?</string>
+    <string name="sync_total_episodes_none">/??</string>
     <string name="movies_singular">Film</string>
     <string name="example_ip">127.0.0.1</string>
     <string name="account">účet</string>
@@ -341,7 +341,7 @@
     <string name="legal_notice">Vylúčenie zodpovednosti</string>
     <string name="nsfw">NSFW</string>
     <string name="delete_message" formatted="true">Týmto sa natrvalo vymaže %s
-\nSte si istý\?</string>
+\nSte si istý?</string>
     <string name="resume_time_left" formatted="true">%dm
 \nzostáva</string>
     <string name="status_ongoing">Prebieha</string>
@@ -379,4 +379,3 @@
     <string name="view_public_repositories_button">Zobraziť komunitné repozitáre</string>
     <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
 </resources>
-

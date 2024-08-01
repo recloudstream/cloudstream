@@ -117,7 +117,7 @@
     <string name="continue_watching">Nastavi gledati</string>
     <string name="action_remove_watching">Ukloni</string>
     <string name="action_open_watching">Više informacija</string>
-    <string name="action_open_play">@string/home_play</string>
+    <string name="action_open_play">\@string/home_play</string>
     <string name="vpn_might_be_needed">Za ispravan rad ovog pružatelja usluga je možda potreban VPN</string>
     <string name="vpn_torrent">Ovaj pružatelj usluga je torrent, preporučuje se VPN</string>
     <string name="provider_info_meta">Stranica ne sadrži metapodatke. Učitavanje videa neće uspjeti ako ne postoje na stranici.</string>
@@ -203,7 +203,7 @@
     <string name="go_back_30">−30</string>
     <string name="go_forward_30">+30</string>
     <string name="delete_message" formatted="true">Ovo će trajno izbrisati %s
-\nJeste li sigurni\?</string>
+\nJeste li sigurni?</string>
     <string name="resume_time_left" formatted="true">%dmin
 \npreostalo</string>
     <string name="status_ongoing">U tijeku</string>
@@ -333,7 +333,7 @@
     <string name="upload_sync">Sinkroniziraj</string>
     <string name="sync_score">Ocijenjeno</string>
     <string name="sync_score_format" formatted="true">%d / 10</string>
-    <string name="sync_total_episodes_none">/\?\?</string>
+    <string name="sync_total_episodes_none">/??</string>
     <string name="sync_total_episodes_some" formatted="true">/%d</string>
     <string name="authenticated_user" formatted="true">%s ovjeren</string>
     <string name="authenticated_user_fail" formatted="true">Nije moguće prijaviti se na %s</string>
@@ -471,7 +471,7 @@
     <string name="enable_skip_op_from_database_des">Prikaži skočni prozor za uvod/kraj</string>
     <string name="yes">Da</string>
     <string name="update_notification_downloading">Preuzimanje ažuriranja aplikacije …</string>
-    <string name="confirm_exit_dialog">Jeste li sigurni da želite izaći\?</string>
+    <string name="confirm_exit_dialog">Jeste li sigurni da želite izaći?</string>
     <string name="no">Ne</string>
     <string name="update_notification_installing">Instaliranje ažuriranja aplikacije …</string>
     <string name="update_notification_failed">Nije moguće instalirati novu verziju aplikacije</string>
@@ -653,4 +653,3 @@
     <string name="pref_category_security">Sigurnost</string>
     <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
 </resources>
-
