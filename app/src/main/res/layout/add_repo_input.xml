@@ -72,7 +72,7 @@
             android:inputType="text"
             android:nextFocusLeft="@id/apply_btt"
             android:nextFocusRight="@id/cancel_btt"
-            android:nextFocusDown="@id/site_url_input"
+            android:nextFocusDown="@id/repo_url_input"
             android:requiresFadingEdge="vertical"
             android:textColorHint="?attr/grayTextColor"
             tools:ignore="LabelFor" />
@@ -85,9 +85,8 @@
             android:inputType="textUri"
             android:nextFocusLeft="@id/apply_btt"
             android:nextFocusRight="@id/cancel_btt"
-
-            android:nextFocusUp="@id/site_name_input"
-            android:nextFocusDown="@id/site_lang_input"
+            android:nextFocusUp="@id/repo_name_input"
+            android:nextFocusDown="@id/apply_btt"
             android:requiresFadingEdge="vertical"
             android:textColorHint="?attr/grayTextColor"
             tools:ignore="LabelFor" />
