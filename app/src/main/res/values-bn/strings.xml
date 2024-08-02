@@ -361,4 +361,3 @@
     <string name="episode_format" formatted="true">%1$d%2$s</string>
     <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
 </resources>
-
