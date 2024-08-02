@@ -501,7 +501,7 @@
     <string name="already_voted">uuh uuhh uuuuggg uuuhh</string>
     <string name="favorite_added">%s ooogg oh oooohhhog</string>
     <string name="duplicate_replace_all">aaaahhh uuh</string>
-    <string name="duplicate_message_single" formatted="true">oh ooooggg oogg k uuuuuukaahh uuuugggag uuhh ooooggg oooogg ah oogg library: s
+    <string name="duplicate_message_single" formatted="true">oh ooooggg oogg k uuuuuukaahh uuuugggag uuhh ooooggg oooogg ah oogg library: \'%s\'
 \n
 \n
 \nWould uug uugg uh aak oogg oohh anyway, oooohhh uuh oooohhhg one, oh aaaagg eek action?</string>
@@ -662,4 +662,3 @@
     <string name="pin_error_length">ooh oogg uh 4 uuuuhhhooh</string>
     <string name="select_an_account">uuuugg oh oooohhh</string>
 </resources>
-
