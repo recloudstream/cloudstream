@@ -79,7 +79,9 @@ class FcastManager {
                 override fun onServiceResolved(serviceInfo: NsdServiceInfo?) {
                     if (serviceInfo == null) return
 
-                    currentDevices.add(PublicDeviceInfo(serviceInfo))
+                    synchronized(_currentDevices) {
+                        _currentDevices.add(PublicDeviceInfo(serviceInfo))
+                    }
 
                     Log.d(
                         tag,
@@ -93,8 +95,10 @@ class FcastManager {
             if (serviceInfo == null) return
 
             // May remove duplicates, but net and port is null here, preventing device specific identification
-            currentDevices.removeAll {
-                it.rawName == serviceInfo.serviceName
+            synchronized(_currentDevices) {
+                _currentDevices.removeAll {
+                    it.rawName == serviceInfo.serviceName
+                }
             }
 
             Log.d(tag, "Service lost: ${serviceInfo.serviceName}")
@@ -103,7 +107,8 @@ class FcastManager {
 
     companion object {
         const val APP_PREFIX = "CloudStream"
-        val currentDevices: MutableList<PublicDeviceInfo> = mutableListOf()
+        private val _currentDevices: MutableList<PublicDeviceInfo> = mutableListOf()
+        val currentDevices: List<PublicDeviceInfo> = _currentDevices
 
         class DefaultRegistrationListener : NsdManager.RegistrationListener {
             val tag = "DiscoveryService"
