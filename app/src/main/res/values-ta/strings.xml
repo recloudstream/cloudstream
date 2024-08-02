@@ -186,7 +186,7 @@
     <string name="discord">முரண்பாட்டில் சேரவும்</string>
     <string name="asian_drama">ஆசிய நாடகங்கள்</string>
     <string name="rated_format" formatted="true">மதிப்பிடப்பட்டது: %.1 எஃப்</string>
-    <string name="action_open_play">\@string/home_play</string>
+    <string name="action_open_play">@string/home_play</string>
     <string name="rating">செயல்வரம்பு</string>
     <string name="search">தேடல்</string>
     <string name="show_trailers_settings">டிரெய்லர்களைக் காட்டு</string>
@@ -617,3 +617,4 @@
     <string name="custom_media_singluar">ஊடகம்</string>
     <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
 </resources>
+

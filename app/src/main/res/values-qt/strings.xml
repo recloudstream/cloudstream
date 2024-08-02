@@ -245,7 +245,7 @@
     <string name="nsfw">AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAOOOGGAGHAGHAAA</string>
     <string name="clear_history">aoaaaaaoooghhh</string>
     <string name="sort_save">oooooh uuaagh</string>
-    <string name="action_open_play">\@string/home_play</string>
+    <string name="action_open_play">@string/home_play</string>
     <string name="chromecast_subtitles_settings">oouuhhh ahhooo-ahah</string>
     <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
     <string name="restore_success">uuuugg aaaahh oogg</string>
@@ -662,3 +662,4 @@
     <string name="pin_error_length">ooh oogg uh 4 uuuuhhhooh</string>
     <string name="select_an_account">uuuugg oh oooohhh</string>
 </resources>
+

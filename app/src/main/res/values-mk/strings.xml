@@ -353,7 +353,7 @@
     <string name="enable_nsfw_on_providers">Овозможете NSFW на поддржани екстензии</string>
     <string name="jsdelivr_enabled">Не успеа да стигне до GitHub. Вклучувам jsDelivr прокси…</string>
     <string name="subtitles_filter_lang">Филтрирајте по претпочитан медиумски јазик</string>
-    <string name="action_open_play">\@string/home_play</string>
+    <string name="action_open_play">@string/home_play</string>
     <string name="movies_singular">Филм</string>
     <string name="added_sync_format" formatted="true">Додаден %s</string>
     <string name="plugin">приклучоци</string>
@@ -627,3 +627,4 @@
     <string name="audio_book_singular">Аудио книга</string>
     <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
 </resources>
+

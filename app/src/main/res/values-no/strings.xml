@@ -410,7 +410,7 @@
     <string name="poster_ui_settings">Slå av/på grensesnittselementer på plakat</string>
     <string name="skip_update">Hopp over denne oppdateringen</string>
     <string name="video_ram_description">Kan forårsake krasj hvis satt for høyt på enheter med lite minne, for eksempel en Android TV.</string>
-    <string name="action_open_play">\@string/home_play</string>
+    <string name="action_open_play">@string/home_play</string>
     <string name="backup_settings">Sikkerhetskopier data</string>
     <string name="backup_success">Data lagret</string>
     <string name="authenticated_user_fail" formatted="true">Kunne ikke logge inn på %s</string>
@@ -420,11 +420,11 @@
     <string name="nsfw">Sensurerbart</string>
     <string name="quality_webrip">Vev</string>
     <string name="network_adress_example">Lenke til strøm</string>
-    <string name="anime_singular">\@string/anime</string>
+    <string name="anime_singular">@string/anime</string>
     <string name="pref_filter_search_quality">Skjul valgt videokvalitet i søkeresultater</string>
     <string name="restore_success">Lastet inn sikkerhetkopifil</string>
     <string name="category_updates">Oppdateringer og sikkerhetskopier</string>
-    <string name="ova_singular">\@string/ova</string>
+    <string name="ova_singular">@string/ova</string>
     <string name="confirm_exit_dialog">Avslutt?</string>
     <string name="nsfw_singular">Sensurerbart</string>
     <string name="batch_download_nothing_to_download_format" formatted="true">Alle %s er allerede nedlastet</string>
@@ -540,3 +540,4 @@
     <string name="profile_background_des">Profilbakgrunn</string>
     <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
 </resources>
+

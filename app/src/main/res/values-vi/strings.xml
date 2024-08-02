@@ -108,7 +108,7 @@
     <string name="continue_watching">Tiếp tục xem</string>
     <string name="action_remove_watching">Loại bỏ</string>
     <string name="action_open_watching">Thông tin thêm</string>
-    <string name="action_open_play">\@string/home_play</string>
+    <string name="action_open_play">@string/home_play</string>
     <string name="vpn_might_be_needed">Bạn có thể sẽ cần sử dụng VPN để xem phim này</string>
     <string name="vpn_torrent">Phim này được chiếu dưới dạng Torrent. Hãy sử dụng VPN để xem</string>
     <string name="torrent_plot">Thông tin phim</string>
@@ -645,3 +645,4 @@
     <string name="device_pin_counter_text">Mã sẽ hết hạn trong %1$dm %2$ds</string>
     <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
 </resources>
+

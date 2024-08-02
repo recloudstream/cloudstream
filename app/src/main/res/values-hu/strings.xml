@@ -110,7 +110,7 @@
     <string name="subs_import_text" formatted="true">Betűtípusok importálása %s</string>
     <string name="action_remove_watching">Eltávolítás</string>
     <string name="action_open_watching">Több információ</string>
-    <string name="action_open_play">\@string/home_play</string>
+    <string name="action_open_play">@string/home_play</string>
     <string name="vpn_might_be_needed">VPN szükséges lehet ehhez a szolgáltató megfelelő működéséhez</string>
     <string name="vpn_torrent">Ez a szolgáltató torrent, VPN ajánlott</string>
     <string name="torrent_plot">Leírás</string>
@@ -594,3 +594,4 @@
     <string name="auto_rotate_video_desc">Az automatikus videó orientáció alapján való képernyő elforgatás bekapcsolása</string>
     <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
 </resources>
+

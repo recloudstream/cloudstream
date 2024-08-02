@@ -451,7 +451,7 @@
     <string name="apk_installer_settings">Instalator APK</string>
     <string name="apk_installer_settings_des">Niektóre telefony nie obsługują nowego instalatora pakietów. Wypróbuj tryb legacy, jeśli aktualizacje nie zostaną zainstalowane.</string>
     <string name="example_password">hasło123</string>
-    <string name="ova_singular">\@string/ova</string>
+    <string name="ova_singular">@string/ova</string>
     <string name="example_site_name">NowaNazwaWitryny</string>
     <string name="example_username">Nazwa użytkownika</string>
     <string name="example_ip">127.0.0.1</string>
@@ -459,9 +459,9 @@
     <string name="example_site_url">https://example.com</string>
     <string name="sync_total_episodes_none">/??</string>
     <string name="apk_installer_package_installer">Instalator pakietów</string>
-    <string name="action_open_play">\@string/home_play</string>
+    <string name="action_open_play">@string/home_play</string>
     <string name="example_email">witaj@poczta.pl</string>
-    <string name="anime_singular">\@string/anime</string>
+    <string name="anime_singular">@string/anime</string>
     <string name="skip_type_op">Opening</string>
     <string name="skip_type_ed">Ending</string>
     <string name="skip_type_mixed_op">Mixed opening</string>
@@ -663,3 +663,4 @@
 \n%2$s</string>
     <string name="delete_format" formatted="true">Usuń (%1$d | %2$s)</string>
 </resources>
+
