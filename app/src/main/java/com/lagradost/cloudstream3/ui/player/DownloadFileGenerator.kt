@@ -1,11 +1,14 @@
 package com.lagradost.cloudstream3.ui.player
 
+import android.net.Uri
 import com.lagradost.cloudstream3.AcraApplication.Companion.context
+import com.lagradost.cloudstream3.CommonActivity.activity
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.ui.player.PlayerSubtitleHelper.Companion.toSubtitleMimeType
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.SubtitleUtils.cleanDisplayName
 import com.lagradost.cloudstream3.utils.SubtitleUtils.isMatchingSubtitle
+import com.lagradost.cloudstream3.utils.VideoDownloadManager.getDownloadFileInfoAndUpdateSettings
 import com.lagradost.cloudstream3.utils.VideoDownloadManager.getFolder
 import kotlin.math.max
 import kotlin.math.min
@@ -15,6 +18,7 @@ class DownloadFileGenerator(
     private var currentIndex: Int = 0
 ) : IGenerator {
     override val hasCache = false
+    override val canSkipLoading = false
 
     override fun hasNext(): Boolean {
         return currentIndex < episodes.size - 1
@@ -59,7 +63,21 @@ class DownloadFileGenerator(
         offset: Int
     ): Boolean {
         val meta = episodes[currentIndex + offset]
-        callback(null to meta)
+
+        if (meta.uri == Uri.EMPTY) {
+            // We do this here so that we only load it when
+            // we actually need it as it can be more expensive.
+            val info = meta.id?.let { id ->
+                activity?.let { act ->
+                    getDownloadFileInfoAndUpdateSettings(act, id)
+                }
+            }
+
+            if (info != null) {
+                val newMeta = meta.copy(uri = info.path)
+                callback(null to newMeta)
+            } else callback(null to meta)
+        } else callback(null to meta)
 
         val ctx = context ?: return true
         val relative = meta.relativePath ?: return true

@@ -29,6 +29,7 @@ class RepoLinkGenerator(
     }
 
     override val hasCache = true
+    override val canSkipLoading = true
 
     override fun hasNext(): Boolean {
         return currentIndex < episodes.size - 1
