@@ -29,6 +29,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.GravityCompat
 import androidx.core.view.children
 import androidx.core.view.isGone
 import androidx.core.view.isInvisible
@@ -1220,7 +1221,6 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                     )
 
                     newLocalBinding.root.viewTreeObserver.addOnGlobalFocusChangeListener { _, newFocus ->
-                        //Log.d("King", "Focus => $newFocus")
                         if (exceptionButtons.contains(newFocus?.id)) return@addOnGlobalFocusChangeListener
                         centerView(newFocus)
                     }
@@ -1680,13 +1680,17 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                 showAccountSelectLinear()
             }
 
-            val profileImage = DataStoreHelper.getCurrentAccount()?.image
+            val profileImage = DataStoreHelper.getCurrentAccount()?.image ?: DataStoreHelper.getDefaultAccount(context).image
 
             if (navProfilePic != null) {
                 navProfilePic.setImage(profileImage)
             } else {
                 navProfileRoot?.isGone = true
             }
+
+            /*headerView?.findViewById<ImageView>(R.id.nav_header_notification)?.setOnClickListener {
+                binding?.homeRoot?.openDrawer(GravityCompat.END, true)
+            }*/
         }
 
         loadCache()
