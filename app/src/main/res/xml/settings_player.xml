@@ -99,11 +99,11 @@
             android:summary="@string/rotate_video_desc"
             app:key="@string/rotate_video_key" />
         <SwitchPreference
-            android:icon="@drawable/screen_rotation"
-            android:title="@string/auto_rotate_video"
+            android:icon="@drawable/preview_seekbar_icon"
+            android:title="@string/preview_seekbar"
             app:defaultValue="false"
-            android:summary="@string/auto_rotate_video_desc"
-            app:key="@string/auto_rotate_video_key" />
+            android:summary="@string/preview_seekbar_desc"
+            app:key="@string/preview_seekbar_key" />
     </PreferenceCategory>
     
     <PreferenceCategory

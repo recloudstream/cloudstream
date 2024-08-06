@@ -25,10 +25,13 @@ import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.media3.common.PlaybackException
-import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.session.MediaSession
-import androidx.media3.ui.*
+import androidx.media3.ui.AspectRatioFrameLayout
+import androidx.media3.ui.DefaultTimeBar
+import androidx.media3.ui.PlayerView
+import androidx.media3.ui.SubtitleView
+import androidx.media3.ui.TimeBar
 import androidx.preference.PreferenceManager
 import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
 import com.github.rubensousa.previewseekbar.PreviewBar
@@ -482,11 +485,13 @@ abstract class AbstractPlayerFragment(
         )
 
         if (player is CS3IPlayer) {
+            val ctx = context ?: return
             // preview bar
             val progressBar: PreviewTimeBar? = playerView?.findViewById(R.id.exo_progress)
             val previewImageView: ImageView? = playerView?.findViewById(R.id.previewImageView)
             val previewFrameLayout: FrameLayout? = playerView?.findViewById(R.id.previewFrameLayout)
-            if (progressBar != null && previewImageView != null && previewFrameLayout != null) {
+            val previewSeekThumb = PreferenceManager.getDefaultSharedPreferences(ctx)?.getBoolean(ctx.getString(R.string.preview_seekbar_key),false) == true
+            if (progressBar != null && previewImageView != null && previewFrameLayout != null && previewSeekThumb) {
                 var resume = false
                 progressBar.addOnScrubListener(object : PreviewBar.OnScrubListener {
                     override fun onScrubStart(previewBar: PreviewBar?) {
