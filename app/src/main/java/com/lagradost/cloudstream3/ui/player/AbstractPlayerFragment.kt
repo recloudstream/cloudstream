@@ -485,13 +485,11 @@ abstract class AbstractPlayerFragment(
         )
 
         if (player is CS3IPlayer) {
-            val ctx = context ?: return
             // preview bar
             val progressBar: PreviewTimeBar? = playerView?.findViewById(R.id.exo_progress)
             val previewImageView: ImageView? = playerView?.findViewById(R.id.previewImageView)
             val previewFrameLayout: FrameLayout? = playerView?.findViewById(R.id.previewFrameLayout)
-            val previewSeekThumb = PreferenceManager.getDefaultSharedPreferences(ctx)?.getBoolean(ctx.getString(R.string.preview_seekbar_key),false) == true
-            if (progressBar != null && previewImageView != null && previewFrameLayout != null && previewSeekThumb) {
+            if (progressBar != null && previewImageView != null && previewFrameLayout != null) {
                 var resume = false
                 progressBar.addOnScrubListener(object : PreviewBar.OnScrubListener {
                     override fun onScrubStart(previewBar: PreviewBar?) {

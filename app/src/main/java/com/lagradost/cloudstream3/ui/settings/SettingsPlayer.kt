@@ -41,7 +41,8 @@ class SettingsPlayer : PreferenceFragmentCompat() {
             listOf(
                 R.string.pref_category_gestures_key,
                 R.string.rotate_video_key,
-                R.string.auto_rotate_video_key
+                R.string.auto_rotate_video_key,
+                R.string.preview_seekbar_key
             ),
             TV or EMULATOR
         )

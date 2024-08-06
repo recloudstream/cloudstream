@@ -811,7 +811,7 @@
     <string name="sort_release_date_old">Release Date (Old to New)</string>
     <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
     <string name="hide_player_control_names">Hide names of the player\'s controls</string>
+    <string name="preview_seekbar_key" translatable="false">preview_seekbar_key</string>
     <string name="preview_seekbar">Seekbar preview</string>
     <string name="preview_seekbar_desc">Enable preview thumbnail on seekbar</string>
-    <string name="preview_seekbar_key">false</string>
 </resources>
