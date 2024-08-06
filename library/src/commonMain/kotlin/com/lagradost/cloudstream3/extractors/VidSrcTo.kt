@@ -16,7 +16,7 @@ import kotlin.io.encoding.ExperimentalEncodingApi
 
 class VidSrcTo : ExtractorApi() {
     override val name = "VidSrcTo"
-    override val mainUrl = "https://vidsrc.to"
+    override val mainUrl = "https://vidsrc.cc"
     override val requiresReferer = true
 
     override suspend fun getUrl(
