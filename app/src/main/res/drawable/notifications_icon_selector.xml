@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@drawable/ic_filled_notifications_24dp" android:state_checked="true"/>
+    <item android:drawable="@drawable/ic_filled_notifications_24dp" android:state_focused="true"/>
+    <item android:drawable="@drawable/ic_outline_notifications_24dp"/>
+</selector>

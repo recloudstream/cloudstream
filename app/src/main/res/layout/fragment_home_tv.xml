@@ -114,7 +114,9 @@
                 android:gravity="center_vertical"
                 android:nextFocusLeft="@id/nav_rail_view"
                 android:nextFocusRight="@id/home_preview_search_button"
-                android:nextFocusDown="@id/home_preview_play_btt" />
+                android:nextFocusDown="@id/home_preview_play_btt" >
+            <requestFocus />
+            </com.google.android.material.button.MaterialButton>
 
             <ImageView
                 android:id="@+id/home_preview_search_button"
@@ -134,6 +136,7 @@
                 app:tint="@color/player_on_button_tv_attr" />
 
             <ImageView
+                android:visibility="gone"
                 android:id="@+id/home_switch_account"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"

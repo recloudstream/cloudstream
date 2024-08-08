@@ -166,6 +166,7 @@ object DataStoreHelper {
         showToast(context?.getString(R.string.logged_account, account.name) ?: account.name)
         MainActivity.bookmarksUpdatedEvent(true)
         MainActivity.reloadLibraryEvent(true)
+        MainActivity.reloadAccountEvent(true)
         val oldAccount = accounts.find { it.keyIndex == account.keyIndex }
         if (oldAccount != null && currentHomePage != homepage) {
             // This is not a new account, and the homepage has changed, reload it
@@ -188,6 +189,18 @@ object DataStoreHelper {
             val item = getDefaultAccount(context)
             remove(item)
             add(0, item)
+        }
+    }
+
+    fun getAccount(accountIndex: Int): Account? {
+        return accounts.firstOrNull {
+            it.keyIndex == accountIndex
+        }
+    }
+
+    fun getCurrentAccount(): Account? {
+        return accounts.firstOrNull {
+            it.keyIndex == selectedKeyIndex
         }
     }
 

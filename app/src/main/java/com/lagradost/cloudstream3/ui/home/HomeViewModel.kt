@@ -45,6 +45,7 @@ import com.lagradost.cloudstream3.utils.DataStoreHelper.deleteAllResumeStateIds
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getAllResumeStateIds
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getAllWatchStateIds
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getBookmarkedData
+import com.lagradost.cloudstream3.utils.DataStoreHelper.getCurrentAccount
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getLastWatched
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getResultWatchState
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
@@ -107,6 +108,9 @@ class HomeViewModel : ViewModel() {
 
     private val _apiName = MutableLiveData<String>()
     val apiName: LiveData<String> = _apiName
+
+    private val _currentAccount = MutableLiveData<DataStoreHelper.Account?>()
+    val currentAccount: MutableLiveData<DataStoreHelper.Account?> = _currentAccount
 
     private val _randomItems = MutableLiveData<List<SearchResponse>?>(null)
     val randomItems: LiveData<List<SearchResponse>?> = _randomItems
@@ -404,7 +408,6 @@ class HomeViewModel : ViewModel() {
         }
     }
 
-
     private val _popup = MutableLiveData<Pair<ExpandableHomepageList, (() -> Unit)?>?>(null)
     val popup: LiveData<Pair<ExpandableHomepageList, (() -> Unit)?>?> = _popup
 
@@ -431,11 +434,18 @@ class HomeViewModel : ViewModel() {
         loadAndCancel(DataStoreHelper.currentHomePage, true)
     }
 
+    private fun reloadAccount(unused: Boolean = false) {
+        _currentAccount.postValue(
+            getCurrentAccount()
+        )
+    }
+
     init {
         MainActivity.bookmarksUpdatedEvent += ::bookmarksUpdated
         MainActivity.afterPluginsLoadedEvent += ::afterPluginsLoaded
         MainActivity.mainPluginsLoadedEvent += ::afterMainPluginsLoaded
         MainActivity.reloadHomeEvent += ::reloadHome
+        MainActivity.reloadAccountEvent += ::reloadAccount
     }
 
     override fun onCleared() {
@@ -443,6 +453,7 @@ class HomeViewModel : ViewModel() {
         MainActivity.afterPluginsLoadedEvent -= ::afterPluginsLoaded
         MainActivity.mainPluginsLoadedEvent -= ::afterMainPluginsLoaded
         MainActivity.reloadHomeEvent -= ::reloadHome
+        MainActivity.reloadAccountEvent -= ::reloadAccount
         super.onCleared()
     }
 
