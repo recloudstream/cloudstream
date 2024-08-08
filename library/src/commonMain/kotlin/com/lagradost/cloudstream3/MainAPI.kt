@@ -978,7 +978,7 @@ data class TvSeriesSearchResponse(
     override var type: TvType? = null,
 
     override var posterUrl: String? = null,
-    val year: Int? = null,
+    var year: Int? = null,
     val episodes: Int? = null,
     override var id: Int? = null,
     override var quality: SearchQuality? = null,
