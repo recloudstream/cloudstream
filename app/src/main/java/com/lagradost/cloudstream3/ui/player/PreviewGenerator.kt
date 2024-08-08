@@ -8,6 +8,9 @@ import android.os.Build
 import android.util.Log
 import androidx.annotation.WorkerThread
 import androidx.core.graphics.scale
+import androidx.preference.PreferenceManager
+import com.lagradost.cloudstream3.AcraApplication
+import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
@@ -62,8 +65,12 @@ interface IPreviewGenerator {
 
     companion object {
         fun new(): IPreviewGenerator {
+            val userDisabled = AcraApplication.context?.let { ctx ->
+                PreferenceManager.getDefaultSharedPreferences(ctx)?.getBoolean(
+                    ctx.getString(R.string.preview_seekbar_key), true) == false
+            } ?: false
             /** because TV has low ram + not show we disable this for now */
-            return if (isLayout(TV)) {
+            return if (isLayout(TV) || userDisabled) {
                 empty()
             } else {
                 PreviewGenerator()
