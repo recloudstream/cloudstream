@@ -160,7 +160,7 @@ open class ResultTrailerPlayer : ResultFragmentPhone() {
             activity?.attachBackPressedCallback {
                 updateFullscreen(false)
             }
-        } else detachBackPressedCallback()
+        } else activity?.detachBackPressedCallback()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

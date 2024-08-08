@@ -2,29 +2,27 @@ package com.lagradost.cloudstream3.utils
 
 import androidx.activity.ComponentActivity
 import androidx.activity.OnBackPressedCallback
+import java.util.WeakHashMap
 
 object BackPressedCallbackHelper {
-    private var backPressedCallback: OnBackPressedCallback? = null
+    private val backPressedCallbacks = WeakHashMap<ComponentActivity, OnBackPressedCallback>()
 
     fun ComponentActivity.attachBackPressedCallback(callback: () -> Unit) {
-        if (backPressedCallback == null) {
-            backPressedCallback = object : OnBackPressedCallback(true) {
+        if (backPressedCallbacks[this] == null) {
+            val newCallback = object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
                     callback.invoke()
                 }
             }
+            backPressedCallbacks[this] = newCallback
+            onBackPressedDispatcher.addCallback(this, newCallback)
         }
 
-        backPressedCallback?.isEnabled = true
-
-        onBackPressedDispatcher.addCallback(
-            this@attachBackPressedCallback,
-            backPressedCallback ?: return
-        )
+        backPressedCallbacks[this]?.isEnabled = true
     }
 
-    fun detachBackPressedCallback() {
-        backPressedCallback?.isEnabled = false
-        backPressedCallback = null
+    fun ComponentActivity.detachBackPressedCallback() {
+        backPressedCallbacks[this]?.isEnabled = false
+        backPressedCallbacks.remove(this)
     }
 }
