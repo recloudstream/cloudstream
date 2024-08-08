@@ -41,12 +41,12 @@ class SettingsPlayer : PreferenceFragmentCompat() {
             listOf(
                 R.string.pref_category_gestures_key,
                 R.string.rotate_video_key,
-                R.string.auto_rotate_video_key,
-                R.string.preview_seekbar_key
+                R.string.auto_rotate_video_key
             ),
             TV or EMULATOR
         )
-
+        
+        getPref(R.string.preview_seekbar_key)?.hideOn(TV)
         getPref(R.string.pref_category_android_tv_key)?.hideOn(PHONE)
 
         getPref(R.string.video_buffer_length_key)?.setOnPreferenceClickListener {
