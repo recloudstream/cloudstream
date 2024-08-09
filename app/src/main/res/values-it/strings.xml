@@ -681,4 +681,6 @@
     <string name="delete_message_multiple" formatted="true">Sei sicuro di voler eliminare definitivamente i seguenti elementi?
 \n
 \n%s</string>
+    <string name="preview_seekbar">Anteprima barra di ricerca</string>
+    <string name="preview_seekbar_desc">Abilita miniatura di anteprima sulla barra di ricerca</string>
 </resources>

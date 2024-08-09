@@ -667,4 +667,6 @@
     <string name="delete_message_series_only" formatted="true">متأكد إنو بدك تمحي كل الحلقات اللي بهيدا المسلسل؟
 \n
 \n%s</string>
+    <string name="preview_seekbar">صورة زغيرة مع التقريب وال تبعيد</string>
+    <string name="preview_seekbar_desc">بت حط صورة زغير من الڤيديو إنت و عم بت قرب أو ترجع بال ڤيديو</string>
 </resources>

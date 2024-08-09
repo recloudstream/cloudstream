@@ -665,4 +665,24 @@
     <string name="delete_plugin">Odstranit doplněk</string>
     <string name="hide_player_control_names">Skrýt názvy ovládání přehrávače</string>
     <string name="test_warning">Varování</string>
+    <string name="sort_release_date_new">Datum vydání (od nových)</string>
+    <string name="sort_release_date_old">Datum vydání (od starých)</string>
+    <string name="downloads_delete_select">Zvolte položky k odstranění</string>
+    <string name="offline_file">Dostupné pro sledování offline</string>
+    <string name="select_all">Vybrat vše</string>
+    <string name="delete_message_multiple" formatted="true">Opravdu chcete trvale odstranit následující položky?
+\n
+\n%s</string>
+    <string name="delete_message_series_episodes" formatted="true">Opravdu chcete trvale odstranit následující epizody v %1$s?
+\n
+\n%2$s</string>
+    <string name="delete_message_series_only" formatted="true">Opravdu chcete trvale odstranit všechny epizody v následujících sériích?
+\n
+\n%s</string>
+    <string name="deselect_all">Zrušit výběr všeho</string>
+    <string name="delete_files">Odstranit soubory</string>
+    <string name="delete_message_series_section" formatted="true">Také trvale odstraníte všechny epizody v následujících sériích:
+\n
+\n%s</string>
+    <string name="delete_format" formatted="true">Odstranit (%1$d | %2$s)</string>
 </resources>

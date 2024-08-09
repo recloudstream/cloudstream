@@ -243,4 +243,6 @@
     <string name="subs_hold_to_reset_to_default">長押しするとデフォルトにリセットされます</string>
     <string name="popup_resume_download">ダウンロードを再開</string>
     <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
+    <string name="filter_bookmarks">ブックマークのフィルタ</string>
+    <string name="normal_no_plot">プロットが見つかりません</string>
 </resources>
