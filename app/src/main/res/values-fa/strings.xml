@@ -192,4 +192,32 @@
     <string name="cartoons_singular">کارتون</string>
     <string name="torrent_singular">تورنت</string>
     <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
+    <string name="vpn_torrent">این ارائه‌دهنده تورنتی است، استفاده از VPN توصیه می‌شود</string>
+    <string name="restore_success">بارگزاری پرونده پشتیبانی‌</string>
+    <string name="subs_subtitle_elevation">ارتفاع زیرنویس</string>
+    <string name="search_provider_text_providers">جستجو از طریق ارائه دهنده</string>
+    <string name="backup_frequency">فرکانس پشتیبان‌گیری</string>
+    <string name="swipe_to_seek_settings">برای جلورفتن بکشید</string>
+    <string name="backup_success">داده ذخیره‌سازی شده</string>
+    <string name="render_error">خطای پردازنده</string>
+    <string name="others">سایر</string>
+    <string name="duration">طول</string>
+    <string name="vpn_might_be_needed">شاید برای درست کارکردن این ارائه‌دهنده به VPN نیاز باشد</string>
+    <string name="use_system_brightness_settings">استفاده از میزان روشنایی دستگاه</string>
+    <string name="subs_edge_type">نوع لبه</string>
+    <string name="no_season">بدون فصل</string>
+    <string name="show_fillers_settings">نمایش فیلتر قسمت برای انیمه</string>
+    <string name="type_dropped">رها شده</string>
+    <string name="app_subbed_text">زیرنویس</string>
+    <string name="home_info">درباره</string>
+    <string name="search_provider_text_types">جستجو از طریق نوع</string>
+    <string name="backup_settings">پشتیبان‌گیری داده</string>
+    <string name="restore_failed_format" formatted="true">مشکل در بازگردانی داده از پرونده %s</string>
+    <string name="site">وبگاه</string>
+    <string name="benene_des">انعام دادن</string>
+    <string name="discord">عضویت در دیسکورد</string>
+    <string name="benene">هدیه انعام به توسعه‌دهندگان</string>
+    <string name="status_completed">تمام‌شده</string>
+    <string name="no_subtitles">بدون زیرنویس</string>
+    <string name="test_passed">متوقف‌شده</string>
 </resources>

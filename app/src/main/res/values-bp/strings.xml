@@ -683,4 +683,6 @@
 \n%s</string>
     <string name="delete_format" formatted="true">Excluir (%1$d | %2$s)</string>
     <string name="deselect_all">Desmarcar todos</string>
+    <string name="preview_seekbar_desc">Ativar visualização de miniatura na barra de busca</string>
+    <string name="preview_seekbar">Visualização da barra de busca</string>
 </resources>

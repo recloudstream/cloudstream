@@ -389,7 +389,7 @@
     <string name="subtitles_remove_bloat">Loại bỏ mã hoá phụ đề</string>
     <string name="subtitles_filter_lang">Lọc theo ngôn ngữ media được chuộng hơn</string>
     <string name="extras">Thêm</string>
-    <string name="trailer">Xem trước</string>
+    <string name="trailer">Trailer</string>
     <string name="network_adress_example">https://example.com/example.mp4</string>
     <string name="referer">Đề xuất (tuỳ chọn)</string>
     <string name="next">Tiếp theo</string>
@@ -442,7 +442,7 @@
     <string name="apk_installer_settings">Bộ cài APK</string>
     <string name="apk_installer_settings_des">Một số máy không hỗ trợ trình cài đặt gói mới. Hãy thử tùy chọn cũ nếu các bản cập nhật không cài đặt.</string>
     <string name="season_format">%1$s %2$d%3$s</string>
-    <string name="play_trailer_button">Xem giới thiệu</string>
+    <string name="play_trailer_button">Xem Trailer</string>
     <string name="automatic_plugin_download_summary">Tự động tải plugin còn thiếu.</string>
     <string name="update_started">Bắt đầu cập nhật</string>
     <string name="pref_category_links">Liên kết</string>
@@ -644,4 +644,34 @@
     <string name="device_pin_expired_message">Mã PIN đã hết hạn!</string>
     <string name="device_pin_counter_text">Mã sẽ hết hạn trong %1$dm %2$ds</string>
     <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
+    <string name="device_pin_error_message">Không lấy được mã PIN, hãy thử xác thực cục bộ</string>
+    <string name="downloads_empty">Hiện không có bản tải xuống nào.</string>
+    <string name="auth_locally">Xác thực cục bộ</string>
+    <string name="episode_action_cast_mirror">Cast mirror</string>
+    <string name="play_from_beginning_img_des">Xem từ đầu</string>
+    <string name="open_local_video">Mở video có sẵn</string>
+    <string name="test_warning">Cảnh báo</string>
+    <string name="sort_release_date_new">Ngày phát hành (Mới đến Cũ)</string>
+    <string name="downloads_delete_select">Chọn mục để xoá</string>
+    <string name="offline_file">Có thể xem ngoại tuyến</string>
+    <string name="select_all">Chọn tất cả</string>
+    <string name="deselect_all">Bỏ chọn tất cả</string>
+    <string name="delete_files">Xoá tập tin</string>
+    <string name="delete_format" formatted="true">Xoá (%1$d | %2$s)</string>
+    <string name="delete_message_multiple" formatted="true">Bạn có chắc chắn muốn xóa vĩnh viễn các mục sau không?
+\n
+\n%s</string>
+    <string name="delete_message_series_episodes" formatted="true">Bạn có chắc chắn muốn xóa vĩnh viễn các tập trong %1$s?
+\n
+\n%2$s</string>
+    <string name="delete_message_series_section" formatted="true">Bạn cũng sẽ xóa vĩnh viễn tất cả các tập trong loạt phim sau:
+\n
+\n%s</string>
+    <string name="delete_message_series_only" formatted="true">Bạn có chắc chắn muốn xóa vĩnh viễn tất cả các tập trong loạt phim này không?
+\n
+\n%s</string>
+    <string name="delete_plugin">Xóa plugin</string>
+    <string name="player_settings_play_in_fcast">Fcast</string>
+    <string name="sort_release_date_old">Ngày phát hành (Cũ đến mới)</string>
+    <string name="hide_player_control_names">Ẩn tên các nút điều khiển</string>
 </resources>
