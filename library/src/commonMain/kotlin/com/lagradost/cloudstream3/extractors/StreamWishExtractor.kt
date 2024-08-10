@@ -9,126 +9,126 @@ import com.lagradost.cloudstream3.utils.M3u8Helper
 import com.lagradost.cloudstream3.utils.getAndUnpack
 import com.lagradost.cloudstream3.utils.getPacked
 
-class Mwish : StreamwishExt() {
+class Mwish : StreamWishExtractor() {
     override val name = "Mwish"
     override val mainUrl = "https://mwish.pro"
 }
 
-class Dwish : StreamwishExt() {
+class Dwish : StreamWishExtractor() {
     override val name = "Dwish"
     override val mainUrl = "https://dwish.pro"
 }
 
-class Ewish : StreamwishExt() {
+class Ewish : StreamWishExtractor() {
     override val name = "Embedwish"
     override val mainUrl = "https://embedwish.com"
 }
 
-class Wishembed : StreamwishExt() {
+class Wishembed : StreamWishExtractor() {
     override val name = "Wishembed"
     override val mainUrl = "https://wishembed.pro"
 }
 
-class Kswplayer : StreamwishExt() {
+class Kswplayer : StreamWishExtractor() {
     override val name = "Kswplayer"
     override val mainUrl = "https://kswplayer.info"
 }
 
-class Wishfast: StreamwishExt() {
+class Wishfast: StreamWishExtractor() {
     override val name = "Wishfast"
     override val mainUrl = "https://wishfast.top"
 }
 
-class Streamwish2 : StreamwishExt() {
+class Streamwish2 : StreamWishExtractor() {
     override val mainUrl = "https://streamwish.site"
 }
 
-class Sfastwish : StreamwishExt() {
+class Sfastwish : StreamWishExtractor() {
     override val name = "Sfastwish"
     override val mainUrl = "https://sfastwish.com"
 }
 
-class Strwish : StreamwishExt() {
+class Strwish : StreamWishExtractor() {
     override val name = "Strwish"
     override val mainUrl = "https://strwish.xyz"
 }
 
-class Strwish2 : StreamwishExt() {
+class Strwish2 : StreamWishExtractor() {
     override val name = "Strwish"
     override val mainUrl = "https://strwish.com"
 }
 
-class Flaswish : StreamwishExt() {
+class Flaswish : StreamWishExtractor() {
     override val name = "Flaswish"
     override val mainUrl = "https://flaswish.com"
 }
 
-class Awish : StreamwishExt() {
+class Awish : StreamWishExtractor() {
     override val name = "Awish"
     override val mainUrl = "https://awish.pro"
 }
 
-class Obeywish : StreamwishExt() {
+class Obeywish : StreamWishExtractor() {
     override val name = "Obeywish"
     override val mainUrl = "https://obeywish.com"
 }
 
-class Jodwish : StreamwishExt() {
+class Jodwish : StreamWishExtractor() {
     override val name = "Jodwish"
     override val mainUrl = "https://jodwish.com"
 }
 
-class Swhoi : StreamwishExt() {
+class Swhoi : StreamWishExtractor() {
     override val name = "Swhoi"
     override val mainUrl = "https://swhoi.com"
 }
 
-class Multimovies : StreamwishExt() {
+class Multimovies : StreamWishExtractor() {
     override val name = "Multimovies"
     override val mainUrl = "https://multimovies.cloud"
 }
 
-class UqloadsXyz : StreamwishExt() {
+class UqloadsXyz : StreamWishExtractor() {
     override val name = "Uqloads"
     override val mainUrl = "https://uqloads.xyz"
 }
 
-class Doodporn : StreamwishExt() {
+class Doodporn : StreamWishExtractor() {
     override val name = "Doodporn"
     override val mainUrl = "https://doodporn.xyz"
 }
 
-class Cdnwish : StreamwishExt() {
+class Cdnwish : StreamWishExtractor() {
     override val name = "Cdnwish"
     override val mainUrl = "https://cdnwish.com"
 }
 
-class Asnwish : StreamwishExt() {
+class Asnwish : StreamWishExtractor() {
     override val name = "Asnwish"
     override val mainUrl = "https://asnwish.com"
 }
 
-class Nekowish : StreamwishExt() {
+class Nekowish : StreamWishExtractor() {
     override val name = "Nekowish"
     override val mainUrl = "https://nekowish.my.id"
 }
 
-class Nekostream : StreamwishExt() {
+class Nekostream : StreamWishExtractor() {
     override val name = "Nekostream"
     override val mainUrl = "https://neko-stream.click"
 }
 
-class Swdyu : StreamwishExt() {
+class Swdyu : StreamWishExtractor() {
     override val name = "Swdyu"
     override val mainUrl = "https://swdyu.com"
 }
 
-class Wishonly : StreamwishExt() {
+class Wishonly : StreamWishExtractor() {
     override val name = "Wishonly"
     override val mainUrl = "https://wishonly.site"
 }
 
-open class StreamwishExt : ExtractorApi() {
+open class StreamWishExtractor : ExtractorApi() {
     override val name = "Streamwish"
     override val mainUrl = "https://streamwish.to"
     override val requiresReferer = true
