@@ -24,7 +24,7 @@ class Ewish : StreamWishExtractor() {
     override val mainUrl = "https://embedwish.com"
 }
 
-class Wishembed : StreamWishExtractor() {
+class WishembedPro : StreamWishExtractor() {
     override val name = "Wishembed"
     override val mainUrl = "https://wishembed.pro"
 }
@@ -43,7 +43,7 @@ class Streamwish2 : StreamWishExtractor() {
     override val mainUrl = "https://streamwish.site"
 }
 
-class Sfastwish : StreamWishExtractor() {
+class SfastwishCom : StreamWishExtractor() {
     override val name = "Sfastwish"
     override val mainUrl = "https://sfastwish.com"
 }
@@ -58,7 +58,7 @@ class Strwish2 : StreamWishExtractor() {
     override val mainUrl = "https://strwish.com"
 }
 
-class Flaswish : StreamWishExtractor() {
+class FlaswishCom : StreamWishExtractor() {
     override val name = "Flaswish"
     override val mainUrl = "https://flaswish.com"
 }
@@ -98,7 +98,7 @@ class Doodporn : StreamWishExtractor() {
     override val mainUrl = "https://doodporn.xyz"
 }
 
-class Cdnwish : StreamWishExtractor() {
+class CdnwishCom : StreamWishExtractor() {
     override val name = "Cdnwish"
     override val mainUrl = "https://cdnwish.com"
 }
