@@ -13,7 +13,7 @@ data class Files(
 
 open class Supervideo : ExtractorApi() {
     override var name = "Supervideo"
-    override var mainUrl = "https://supervideo.tv"
+    override var mainUrl = "https://supervideo.cc"
     override val requiresReferer = false
     override suspend fun getUrl(url: String, referer: String?): List<ExtractorLink>? {
         val extractedLinksList: MutableList<ExtractorLink> = mutableListOf()
