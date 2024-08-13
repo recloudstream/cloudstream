@@ -662,4 +662,6 @@
 \n
 \n%2$s</string>
     <string name="delete_format" formatted="true">Usuń (%1$d | %2$s)</string>
+    <string name="preview_seekbar">Podgląd paska przewijania</string>
+    <string name="preview_seekbar_desc">Włącz podgląd miniatury na pasku wyszukiwania</string>
 </resources>

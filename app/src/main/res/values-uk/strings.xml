@@ -7,7 +7,7 @@
     <string name="go_back_img_des">Назад</string>
     <string name="rated_format" formatted="true">Рейтинг: %.1f</string>
     <string name="cast_format" formatted="true">Актори: %s</string>
-    <string name="next_episode_format" formatted="true">Епізод %d вийде через</string>
+    <string name="next_episode_format" formatted="true">%d епізод вийде через</string>
     <string name="result_poster_img_des">Poster</string>
     <string name="app_dub_sub_episode_text_format" formatted="true">%1$s Еп. %2$d</string>
     <string name="next_episode_time_day_format" formatted="true">%1$dд %2$dгод %3$dхв</string>
@@ -15,7 +15,7 @@
     <string name="next_episode_time_min_format" formatted="true">%dхв</string>
     <string name="home_main_poster_img_des">Головний постер</string>
     <string name="home_next_random_img_des">Наступний випадковий</string>
-    <string name="preview_background_img_des">Попередній перегляд фону</string>
+    <string name="preview_background_img_des">Попередній перегляд тла</string>
     <string name="player_speed_text_format" formatted="true">Швидкість (%.2fx)</string>
     <string name="new_update_format" formatted="true">Знайдено нове оновлення!
 \n%1$s –&gt; %2$s</string>
@@ -54,7 +54,7 @@
     <string name="home_info">Інфо</string>
     <string name="error_bookmarks_text">Закладки</string>
     <string name="action_remove_from_bookmarks">Вилучити</string>
-    <string name="action_add_to_bookmarks">Змінити статус перегляду</string>
+    <string name="action_add_to_bookmarks">Змінити стан перегляду</string>
     <string name="sort_apply">Застосувати</string>
     <string name="sort_copy">Скопіювати</string>
     <string name="sort_close">Закрити</string>
@@ -80,15 +80,15 @@
     <string name="normal_no_plot">Сюжет не знайдено</string>
     <string name="torrent_no_plot">Опис не знайдено</string>
     <string name="show_log_cat">Показати Logcat 🐈</string>
-    <string name="picture_in_picture_des">Продовжує відтворення в мініатюрному плеєрі поверх інших застосунків</string>
-    <string name="player_size_settings_des">Прибирає чорні рамки</string>
+    <string name="picture_in_picture_des">Продовжувати відтворення в мініатюрному плеєрі поверх інших застосунків</string>
+    <string name="player_size_settings_des">Прибрати чорні рамки</string>
     <string name="player_subtitles_settings">Субтитри</string>
     <string name="chromecast_subtitles_settings">Субтитри Chromecast</string>
     <string name="chromecast_subtitles_settings_des">Налаштування субтитрів Chromecast</string>
     <string name="eigengraumode_settings">Швидкість відтворення</string>
     <string name="swipe_to_change_settings">Проведіть, щоб змінити налаштування</string>
     <string name="swipe_to_change_settings_des">Проведіть вгору або вниз з лівого або правого боку, щоб змінити яскравість чи гучність</string>
-    <string name="autoplay_next_settings_des">Відтворює наступний епізод після закінчення поточного</string>
+    <string name="autoplay_next_settings_des">Відтворювати наступний епізод після закінчення поточного</string>
     <string name="title_home">Головна</string>
     <string name="app_name">CloudStream</string>
     <string name="filler" formatted="true">Філер</string>
@@ -114,7 +114,7 @@
     <string name="filter_bookmarks">Фільтр закладок</string>
     <string name="sort_clear">Очистити</string>
     <string name="subtitles_settings">Налаштування субтитрів</string>
-    <string name="subs_background_color">Колір фону</string>
+    <string name="subs_background_color">Колір тла</string>
     <string name="subs_subtitle_elevation">Висота субтитрів</string>
     <string name="subs_text_color">Колір тексту</string>
     <string name="subs_outline_color">Колір контуру</string>
@@ -131,7 +131,7 @@
     <string name="double_tap_to_seek_settings">Двічі торкніться, щоб перемотати</string>
     <string name="double_tap_to_pause_settings">Двічі торкніться для паузи</string>
     <string name="double_tap_to_seek_amount_settings">Крок перемотки (секунди)</string>
-    <string name="double_tap_to_pause_settings_des">Натисніть двічі посередині, щоб призупинити відтворення відео</string>
+    <string name="double_tap_to_pause_settings_des">Двічі натисніть посередині, щоб призупинити відтворення відео</string>
     <string name="use_system_brightness_settings">Використовувати яскравість системи</string>
     <string name="episode_sync_settings">Оновлювати прогрес перегляду</string>
     <string name="restore_settings">Відновлення даних з резервної копії</string>
@@ -144,7 +144,7 @@
     <string name="category_updates">Оновлення та резервне копіювання</string>
     <string name="settings_info">Інформація</string>
     <string name="advanced_search">Розширений пошук</string>
-    <string name="advanced_search_des">Надає результати пошуку, розділені за постачальниками</string>
+    <string name="advanced_search_des">Надавати результати пошуку, розділені за постачальниками</string>
     <string name="bug_report_settings_off">Надсилає дані лише про збої</string>
     <string name="bug_report_settings_on">Не надсилає даних</string>
     <string name="show_fillers_settings">Показувати філери до аніме</string>
@@ -153,7 +153,7 @@
     <string name="automatic_plugin_download">Автоматичне завантаження плагінів</string>
     <string name="updates_settings">Показувати оновлення застосунку</string>
     <string name="redo_setup_process">Повторний процес налаштування</string>
-    <string name="uprereleases_settings_des">Пошук лише попередніх оновлень, а не повних релізів</string>
+    <string name="uprereleases_settings_des">Шукати лише попередні оновлення замість повних випусків</string>
     <string name="apk_installer_settings">Встановлювач APK</string>
     <string name="github">Github</string>
     <string name="lightnovel">Застосунок для легких новел від тих же розробників</string>
@@ -219,19 +219,19 @@
     <string name="show_title">Заголовок</string>
     <string name="poster_ui_settings">Перемикання елементів інтерфейсу на постері</string>
     <string name="no_update_found">Оновлення не знайдено</string>
-    <string name="double_tap_to_seek_settings_des">Двічі торкніться праворуч або ліворуч, щоб перемотати відео вперед або назад</string>
-    <string name="use_system_brightness_settings_des">Використовуйте системну яскравість у плеєрі замість темної накладки</string>
+    <string name="double_tap_to_seek_settings_des">Двічі натисніть праворуч або ліворуч, щоб перемотати відео вперед або назад</string>
+    <string name="use_system_brightness_settings_des">Використовувати системну яскравість у плеєрі замість темної накладки</string>
     <string name="restore_success">Завантажено файл резервної копії</string>
     <string name="torrent">Торенти</string>
-    <string name="episode_sync_settings_des">Автоматична синхронізація прогресу поточного епізоду</string>
+    <string name="episode_sync_settings_des">Автоматично синхронізувати прогрес поточного епізоду</string>
     <string name="backup_failed">Відсутні дозволи на зберігання. Будь ласка, спробуйте ще раз.</string>
     <string name="kitsu_settings">Показувати постери від Kitsu</string>
     <string name="automatic_plugin_updates">Автоматичне оновлення плагінів</string>
     <string name="automatic_plugin_download_summary">Автоматично встановлювати всі ще не встановлені плагіни з доданих репозиторіїв.</string>
-    <string name="updates_settings_des">Автоматично шукає нові оновлення після запуску застосунку.</string>
+    <string name="updates_settings_des">Автоматично шукати нові оновлення після запуску застосунку.</string>
     <string name="uprereleases_settings">Оновлення до бета-версій</string>
     <string name="copy_link_toast">Посилання скопійовано в буфер обміну</string>
-    <string name="apk_installer_settings_des">Деякі телефони не підтримують новий встановлювач пакетів. Спробуйте стару версію, якщо оновлення не встановлюються.</string>
+    <string name="apk_installer_settings_des">Деякі телефони не підтримують новий встановлювач пакунків. Спробуйте стару версію, якщо оновлення не встановлюються.</string>
     <string name="discord">Приєднуйтесь до Discord</string>
     <string name="benene_des">Дано бананів</string>
     <string name="year">Рік</string>
@@ -243,7 +243,7 @@
     <string name="no_episodes_found">Епізодів не знайдено</string>
     <string name="pause">Пауза</string>
     <string name="season">Сезон</string>
-    <string name="status">Статус</string>
+    <string name="status">Стан</string>
     <string name="site">Сайт</string>
     <string name="video_aspect_ratio_resize">Змінити розмір</string>
     <string name="synopsis">Короткий зміст</string>
@@ -438,7 +438,7 @@
     <string name="extension_rating" formatted="true">Рейтинг: %s</string>
     <string name="extension_description">Опис</string>
     <string name="extension_version">Версія</string>
-    <string name="extension_status">Статус</string>
+    <string name="extension_status">Стан</string>
     <string name="extension_size">Розмір</string>
     <string name="extension_types">Підтримується</string>
     <string name="extension_language">Мова</string>
@@ -458,7 +458,7 @@
     <string name="skip_type_intro">Вступ</string>
     <string name="clear_history">Очистити історію</string>
     <string name="history">Історія</string>
-    <string name="enable_skip_op_from_database_des">Показує спливаюче вікно для пропуску опенінґу/ендінґу</string>
+    <string name="enable_skip_op_from_database_des">Показувати спливаюче вікно для пропуску опенінґу/ендінґу</string>
     <string name="clipboard_too_large">Забагато тексту. Не вдалося зберегти в буфер обміну.</string>
     <string name="action_mark_as_watched">Позначити як переглянуте</string>
     <string name="confirm_exit_dialog">Ви впевнені що хочете вийти?</string>
@@ -509,7 +509,7 @@
     <string name="android_tv_interface_off_seek_settings_summary">Обсяг перемотки, який використовується, коли плеєр прихований</string>
     <string name="test_failed">Тест провалено</string>
     <string name="test_passed">Тест пройдено</string>
-    <string name="restart">Перезапуск</string>
+    <string name="restart">Перезапустити</string>
     <string name="test_log">Журнал</string>
     <string name="start">Почати</string>
     <string name="stop">Зупинити</string>
@@ -596,8 +596,8 @@
     <string name="subscribe_tooltip">Сповіщення про новий епізод</string>
     <string name="password_pin_authentication_title">Автентифікація паролем/PIN-кодом</string>
     <string name="biometric_authentication_title">Розблокувати CloudStream</string>
-    <string name="biometric_setting">Блокування за допомогою біометрії</string>
-    <string name="biometric_setting_summary">Розблокуйте застосунок за допомогою відбитка пальця, Face ID, PIN-коду, графічного ключа та пароля.</string>
+    <string name="biometric_setting">Біометричне блокування</string>
+    <string name="biometric_setting_summary">Розблоковуйте застосунок за допомогою відбитка пальця, Face ID, PIN-коду, графічного ключа та пароля.</string>
     <string name="biometric_warning">Резервне копіювання даних CloudStream виконано. Хоча ймовірність цього дуже низька, всі пристрої можуть вести себе по-різному. У рідкісних випадках, коли ви не можете отримати доступ до застосунку, повністю очистіть дані застосунку та відновіть їх з резервної копії. Просимо вибачення за незручності, пов \'язані з цим.</string>
     <string name="biometric_unsupported">Біометрична автентифікація не підтримується на цьому пристрої</string>
     <string name="biometric_prompt_description">Після кількох невдалих спроб підказка закриється. Просто перезапустіть застосунок, щоб спробувати ще раз.</string>
@@ -645,9 +645,9 @@
     <string name="sort_release_date_old">Дата випуску (від старих до нових)</string>
     <string name="downloads_delete_select">Оберіть елементи для видалення</string>
     <string name="select_all">Обрати все</string>
-    <string name="deselect_all">Зняти виділення зі всього</string>
+    <string name="deselect_all">Скасувати вибір</string>
     <string name="delete_format" formatted="true">Видалити (%1$d | %2$s)</string>
-    <string name="delete_message_series_episodes" formatted="true">Впевнені, що хочете назавжди видалити наступні епізоди \"%1$s\"?
+    <string name="delete_message_series_episodes" formatted="true">Ви впевнені, що хочете назавжди видалити наступні епізоди \"%1$s\"?
 \n
 \n%2$s</string>
     <string name="delete_message_series_section" formatted="true">Ви також назавжди видалите всі епізоди в наступному серіалі:
@@ -661,4 +661,6 @@
     <string name="delete_message_series_only" formatted="true">Ви впевнені, що хочете назавжди видалити всі епізоди в наступному серіалі?
 \n
 \n%s</string>
+    <string name="preview_seekbar">Попередній перегляд повзунка</string>
+    <string name="preview_seekbar_desc">Ввімкнути мініатюру попереднього перегляду на повзунку</string>
 </resources>
