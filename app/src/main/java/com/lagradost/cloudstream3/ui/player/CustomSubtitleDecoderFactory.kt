@@ -233,12 +233,12 @@ class CustomSubtitleDecoderFactory : SubtitleDecoderFactory {
             MimeTypes.APPLICATION_TTML,
             MimeTypes.APPLICATION_MP4VTT,
             MimeTypes.APPLICATION_SUBRIP,
-            //MimeTypes.APPLICATION_TX3G,
+            MimeTypes.APPLICATION_TX3G,
             //MimeTypes.APPLICATION_CEA608,
             //MimeTypes.APPLICATION_MP4CEA608,
             //MimeTypes.APPLICATION_CEA708,
-            //MimeTypes.APPLICATION_DVBSUBS,
-            //MimeTypes.APPLICATION_PGS,
+            MimeTypes.APPLICATION_DVBSUBS,
+            MimeTypes.APPLICATION_PGS,
             //MimeTypes.TEXT_EXOPLAYER_CUES
         ).contains(format.sampleMimeType)
     }
