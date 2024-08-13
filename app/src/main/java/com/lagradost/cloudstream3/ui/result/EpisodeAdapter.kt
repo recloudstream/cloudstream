@@ -54,6 +54,7 @@ const val ACTION_DOWNLOAD_EPISODE_SUBTITLE_MIRROR = 14
 
 const val ACTION_PLAY_EPISODE_IN_WEB_VIDEO = 16
 const val ACTION_PLAY_EPISODE_IN_MPV = 17
+const val ACTION_PLAY_EPISODE_IN_MPV_YTDL = 20
 
 const val ACTION_MARK_AS_WATCHED = 18
 const val ACTION_FCAST = 19
@@ -81,6 +82,7 @@ class EpisodeAdapter(
                 3 -> ACTION_PLAY_EPISODE_IN_BROWSER
                 4 -> ACTION_PLAY_EPISODE_IN_WEB_VIDEO
                 5 -> ACTION_PLAY_EPISODE_IN_MPV
+                6 -> ACTION_PLAY_EPISODE_IN_MPV_YTDL
                 else -> ACTION_PLAY_EPISODE_IN_PLAYER
             }
         }
