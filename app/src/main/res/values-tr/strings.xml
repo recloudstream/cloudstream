@@ -690,4 +690,24 @@
     <string name="sort_release_date_old">Yayınlanma Tarihi (Eskiden Yeniye)</string>
     <string name="hide_player_control_names">Oyuncunun kontrollerinin adlarını gizle</string>
     <string name="play_from_beginning_img_des">Baştan Oynat</string>
+    <string name="select_all">Tümünü Seçin</string>
+    <string name="delete_message_multiple" formatted="true">Aşağıdaki öğeleri kalıcı olarak silmek istediğinizden emin misiniz?
+\n
+\n%s</string>
+    <string name="delete_message_series_episodes" formatted="true">%1$s içindeki aşağıdaki bölümleri kalıcı olarak silmek istediğinizden emin misiniz?
+\n
+\n%2$s</string>
+    <string name="delete_files">Dosyaları Silin</string>
+    <string name="delete_format" formatted="true">Sil (%1$d | %2$s)</string>
+    <string name="delete_message_series_only" formatted="true">Aşağıdaki dizideki tüm bölümleri kalıcı olarak silmek istediğinizden emin misiniz?
+\n
+\n%s</string>
+    <string name="delete_message_series_section" formatted="true">Ayrıca aşağıdaki dizideki tüm bölümleri kalıcı olarak sileceksiniz:
+\n
+\n%s</string>
+    <string name="downloads_delete_select">Silinecek Öğeleri Seçin</string>
+    <string name="deselect_all">Tümünün Seçimini Kaldır</string>
+    <string name="offline_file">Çevrimdışı izlemek için kullanılabilir</string>
+    <string name="preview_seekbar">Seekbar önizleme</string>
+    <string name="preview_seekbar_desc">Arama çubuğunda önizleme küçük resmini etkinleştir</string>
 </resources>

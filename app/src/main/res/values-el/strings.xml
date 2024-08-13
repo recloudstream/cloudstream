@@ -338,7 +338,7 @@
     <string name="view_public_repositories_button">Προβολή αποθετηρίων κοινότητας</string>
     <string name="view_public_repositories_button_short">Δημόσια λίστα</string>
     <string name="uppercase_all_subtitles">Κεφαλοποίηση υποτίτλων</string>
-    <string name="download_all_plugins_from_repo">Λήψη όλων των προσθέτων από αυτό το αποθετήριο;</string>
+    <string name="download_all_plugins_from_repo">Προειδοποίηση: Το CloudStream 3 δεν αναλαμβάνει καμία ευθύνη για τη χρήση επεκτάσεων τρίτων και δεν παρέχει καμία υποστήριξη για αυτές!</string>
     <string name="single_plugin_disabled" formatted="true">%s (Απενεργοποιήθηκε)</string>
     <string name="tracks">Κομμάτια</string>
     <string name="audio_tracks">Ηχητικά κομμάτια</string>

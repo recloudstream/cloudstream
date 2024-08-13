@@ -642,4 +642,21 @@
     <string name="delete_format" formatted="true">Löschen (%1$d | %2$s)</string>
     <string name="select_all">Alle auswählen</string>
     <string name="deselect_all">Alle abwählen</string>
+    <string name="play_from_beginning_img_des">Vom Beginn an spielen</string>
+    <string name="downloads_delete_select">Elemente zum Löschen auswählen</string>
+    <string name="offline_file">Zum Offline-Ansehen verfügbar</string>
+    <string name="delete_message_multiple" formatted="true">Bist du dir sicher, dass du die folgenden Elemente permanent löschen willst?
+\n
+\n%s</string>
+    <string name="delete_message_series_episodes" formatted="true">Bist du dir sicher, dass du die folgenden Episoden in %1$s permanent löschen willst?
+\n
+\n%2$s</string>
+    <string name="delete_message_series_section" formatted="true">Du wirst ebenfalls alle Episoden der folgenden Serien permanent löschen:
+\n
+\n%s</string>
+    <string name="delete_message_series_only" formatted="true">Bist du dir sicher, dass du alle Episoden der folgenden Serien permanent löschen willst?
+\n
+\n%s</string>
+    <string name="sort_release_date_new">Veröffentlichungsdatum (von neu nach alt)</string>
+    <string name="sort_release_date_old">Veröffentlichungsdatum (von alt nach neu)</string>
 </resources>
