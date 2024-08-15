@@ -237,6 +237,26 @@ import com.lagradost.cloudstream3.extractors.FlaswishCom
 import com.lagradost.cloudstream3.extractors.SfastwishCom
 import com.lagradost.cloudstream3.extractors.Vtbe
 import com.lagradost.cloudstream3.extractors.WishembedPro
+import com.lagradost.cloudstream3.extractors.Mwish
+import com.lagradost.cloudstream3.extractors.Dwish
+import com.lagradost.cloudstream3.extractors.Ewish
+import com.lagradost.cloudstream3.extractors.Kswplayer
+import com.lagradost.cloudstream3.extractors.Wishfast
+import com.lagradost.cloudstream3.extractors.Streamwish2
+import com.lagradost.cloudstream3.extractors.Strwish
+import com.lagradost.cloudstream3.extractors.Strwish2
+import com.lagradost.cloudstream3.extractors.Awish
+import com.lagradost.cloudstream3.extractors.Obeywish
+import com.lagradost.cloudstream3.extractors.Jodwish
+import com.lagradost.cloudstream3.extractors.Swhoi
+import com.lagradost.cloudstream3.extractors.Multimovies
+import com.lagradost.cloudstream3.extractors.UqloadsXyz
+import com.lagradost.cloudstream3.extractors.Doodporn
+import com.lagradost.cloudstream3.extractors.Asnwish
+import com.lagradost.cloudstream3.extractors.Nekowish
+import com.lagradost.cloudstream3.extractors.Nekostream
+import com.lagradost.cloudstream3.extractors.Swdyu
+import com.lagradost.cloudstream3.extractors.Wishonly
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import kotlinx.coroutines.delay
@@ -915,6 +935,26 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     Yipsu(),
     MetaGnathTuggers(),
     Geodailymotion(),
+    Mwish(),
+    Dwish(),
+    Ewish(),
+    Kswplayer(),
+    Wishfast(),
+    Streamwish2(),
+    Strwish(),
+    Strwish2(),
+    Awish(),
+    Obeywish(),
+    Jodwish(),
+    Swhoi(),
+    Multimovies(),
+    UqloadsXyz(),
+    Doodporn(),
+    Asnwish(),
+    Nekowish(),
+    Nekostream(),
+    Swdyu(),
+    Wishonly(),
     
 )
 
