@@ -36,6 +36,8 @@ import androidx.media3.datasource.okhttp.OkHttpDataSource
 import androidx.media3.exoplayer.DefaultLoadControl
 import androidx.media3.exoplayer.DefaultRenderersFactory
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.Renderer.STATE_ENABLED
+import androidx.media3.exoplayer.Renderer.STATE_STARTED
 import androidx.media3.exoplayer.SeekParameters
 import androidx.media3.exoplayer.dash.DashMediaSource
 import androidx.media3.exoplayer.drm.DefaultDrmSessionManager
@@ -480,7 +482,13 @@ class CS3IPlayer : IPlayer {
     override fun setSubtitleOffset(offset: Long) {
         currentSubtitleOffset = offset
         CustomDecoder.subtitleOffset = offset
-        currentTextRenderer?.reset()
+        if (currentTextRenderer?.state == STATE_ENABLED || currentTextRenderer?.state == STATE_STARTED) {
+            exoPlayer?.currentPosition?.let { pos ->
+                // This seems to properly refresh all subtitles
+                // It needs to be done as all subtitle cues with timings are pre-processed
+                currentTextRenderer?.resetPosition(pos)
+            }
+        }
     }
 
     override fun getSubtitleOffset(): Long {
