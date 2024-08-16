@@ -197,7 +197,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
 
         val VLC_COMPONENT = ComponentName(VLC_PACKAGE, "$VLC_PACKAGE.gui.video.VideoPlayerActivity")
         val MPV_COMPONENT = ComponentName(MPV_PACKAGE, "$MPV_PACKAGE.MPVActivity")
-        val MPV_YTDL_COMPONENT = ComponentName(MPV_YTDL_PACKAGE, "is.xyz.mpv.ytdl/is.xyz.mpv.MPVActivity")
+        val MPV_YTDL_COMPONENT = ComponentName(MPV_YTDL_PACKAGE, "$MPV_PACKAGE.MPVActivity")
 
         //TODO REFACTOR AF
         open class ResultResume(
