@@ -1,0 +1,22 @@
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    labels: []
+    directory: /
+    target-branch: master
+    schedule:
+      interval: monthly
+
+  - package-ecosystem: npm
+    labels: []
+    directory: /
+    target-branch: master
+    schedule:
+      interval: monthly
+
+  - package-ecosystem: gradle
+    labels: []
+    directory: /
+    target-branch: master
+    schedule:
+      interval: monthly
