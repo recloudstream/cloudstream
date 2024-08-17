@@ -36,6 +36,7 @@ import androidx.core.view.isGone
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
+import androidx.media3.common.MimeTypes
 import androidx.media3.common.util.UnstableApi
 import androidx.preference.PreferenceManager
 import com.google.android.material.button.MaterialButton
@@ -296,8 +297,12 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
     }
 
     override fun subtitlesChanged() {
-        playerBinding?.playerSubtitleOffsetBtt?.isGone =
-            player.getCurrentPreferredSubtitle() == null
+        val tracks = player.getVideoTracks()
+        val isBuiltinSubtitles = tracks.currentTextTracks.all { track ->
+             track.mimeType == MimeTypes.APPLICATION_MEDIA3_CUES
+        }
+        // Subtitle offset is not possible on built-in media3 tracks
+        playerBinding?.playerSubtitleOffsetBtt?.isGone = isBuiltinSubtitles || tracks.currentTextTracks.isEmpty()
     }
 
     private fun restoreOrientationWithSensor(activity: Activity) {
@@ -569,7 +574,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                 playerRewHolder.alpha = 1f
 
                 val rotateLeft = AnimationUtils.loadAnimation(context, R.anim.rotate_left)
-                exoRew.startAnimation(rotateLeft)
+                playerRew.startAnimation(rotateLeft)
 
                 val goLeft = AnimationUtils.loadAnimation(context, R.anim.go_left)
                 goLeft.setAnimationListener(object : Animation.AnimationListener {
@@ -602,7 +607,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                 playerFfwdHolder.alpha = 1f
 
                 val rotateRight = AnimationUtils.loadAnimation(context, R.anim.rotate_right)
-                exoFfwd.startAnimation(rotateRight)
+                playerFfwd.startAnimation(rotateRight)
 
                 val goRight = AnimationUtils.loadAnimation(context, R.anim.go_right)
                 goRight.setAnimationListener(object : Animation.AnimationListener {
@@ -1535,12 +1540,12 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                 showSubtitleOffsetDialog()
             }
 
-            exoRew.setOnClickListener {
+            playerRew.setOnClickListener {
                 autoHide()
                 rewind()
             }
 
-            exoFfwd.setOnClickListener {
+            playerFfwd.setOnClickListener {
                 autoHide()
                 fastForward()
             }

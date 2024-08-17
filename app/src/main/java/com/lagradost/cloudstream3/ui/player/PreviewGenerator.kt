@@ -271,7 +271,7 @@ private class M3u8PreviewGenerator(override var params: ImageParams) : IPreviewG
         var bestDiff = Double.MAX_VALUE
         synchronized(images) {
             // just find the best one in a for loop, we don't care about bin searching rn
-            for (i in 0..images.size) {
+            for (i in images.indices) {
                 val diff = prefixSum[i].minus(fraction).absoluteValue
                 if (diff > bestDiff) {
                     break

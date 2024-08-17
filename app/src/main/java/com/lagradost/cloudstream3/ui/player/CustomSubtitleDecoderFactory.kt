@@ -3,37 +3,36 @@ package com.lagradost.cloudstream3.ui.player
 import android.content.Context
 import android.util.Log
 import androidx.annotation.OptIn
-import androidx.preference.PreferenceManager
 import androidx.media3.common.Format
 import androidx.media3.common.MimeTypes
+import androidx.media3.common.util.Consumer
 import androidx.media3.common.util.UnstableApi
-import androidx.media3.exoplayer.text.ExoplayerCuesDecoder
 import androidx.media3.exoplayer.text.SubtitleDecoderFactory
+import androidx.media3.extractor.text.CuesWithTiming
+import androidx.media3.extractor.text.SimpleSubtitleDecoder
+import androidx.media3.extractor.text.Subtitle
 import androidx.media3.extractor.text.SubtitleDecoder
-import androidx.media3.extractor.text.SubtitleInputBuffer
-import androidx.media3.extractor.text.SubtitleOutputBuffer
-import androidx.media3.extractor.text.cea.Cea608Decoder
-import androidx.media3.extractor.text.cea.Cea708Decoder
-import androidx.media3.extractor.text.dvb.DvbDecoder
-import androidx.media3.extractor.text.pgs.PgsDecoder
-import androidx.media3.extractor.text.ssa.SsaDecoder
-import androidx.media3.extractor.text.subrip.SubripDecoder
-import androidx.media3.extractor.text.ttml.TtmlDecoder
-import androidx.media3.extractor.text.tx3g.Tx3gDecoder
-import androidx.media3.extractor.text.webvtt.Mp4WebvttDecoder
-import androidx.media3.extractor.text.webvtt.WebvttDecoder
+import androidx.media3.extractor.text.SubtitleParser
+import androidx.media3.extractor.text.dvb.DvbParser
+import androidx.media3.extractor.text.pgs.PgsParser
+import androidx.media3.extractor.text.ssa.SsaParser
+import androidx.media3.extractor.text.subrip.SubripParser
+import androidx.media3.extractor.text.ttml.TtmlParser
+import androidx.media3.extractor.text.tx3g.Tx3gParser
+import androidx.media3.extractor.text.webvtt.Mp4WebvttParser
+import androidx.media3.extractor.text.webvtt.WebvttParser
+import androidx.preference.PreferenceManager
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError
 import org.mozilla.universalchardet.UniversalDetector
-import java.nio.ByteBuffer
 import java.nio.charset.Charset
 
 /**
  * @param fallbackFormat used to create a decoder based on mimetype if the subtitle string is not
  * enough to identify the subtitle format.
  **/
-@OptIn(UnstableApi::class)
-class CustomDecoder(private val fallbackFormat: Format?) : SubtitleDecoder {
+@UnstableApi
+class CustomDecoder(private val fallbackFormat: Format?) : SubtitleParser {
     companion object {
         fun updateForcedEncoding(context: Context) {
             val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
@@ -48,6 +47,8 @@ class CustomDecoder(private val fallbackFormat: Format?) : SubtitleDecoder {
             }
         }
 
+        /** Subtitle offset in milliseconds */
+        var subtitleOffset: Long = 0
         private const val UTF_8 = "UTF-8"
         private const val TAG = "CustomDecoder"
         private var overrideEncoding: String? = null
@@ -85,16 +86,7 @@ class CustomDecoder(private val fallbackFormat: Format?) : SubtitleDecoder {
         }
     }
 
-    private var realDecoder: SubtitleDecoder? = null
-
-    override fun getName(): String {
-        return realDecoder?.name ?: this::javaClass.name
-    }
-
-    override fun dequeueInputBuffer(): SubtitleInputBuffer {
-        Log.i(TAG, "dequeueInputBuffer")
-        return realDecoder?.dequeueInputBuffer() ?: SubtitleInputBuffer()
-    }
+    private var realDecoder: SubtitleParser? = null
 
     private fun getStr(byteArray: ByteArray): Pair<String, Charset> {
         val encoding = try {
@@ -128,101 +120,76 @@ class CustomDecoder(private val fallbackFormat: Format?) : SubtitleDecoder {
         }
     }
 
-    private fun getStr(input: SubtitleInputBuffer): String? {
-        try {
-            val data = input.data ?: return null
-            data.position(0)
-            val fullDataArr = ByteArray(data.remaining())
-            data.get(fullDataArr)
-            return trimStr(getStr(fullDataArr).first)
-        } catch (e: Exception) {
-            Log.e(TAG, "Failed to parse text returning plain data")
-            logError(e)
-            return null
-        }
-    }
+    private fun getSubtitleParser(data: String): SubtitleParser? {
+        // this way we read the subtitle file and decide what decoder to use instead of relying fully on mimetype
+        //https://github.com/LagradOst/CloudStream-2/blob/ddd774ee66810137ff7bd65dae70bcf3ba2d2489/CloudStreamForms/CloudStreamForms/Script/MainChrome.cs#L388
+        val subtitleParser = when {
+            // "WEBVTT" can be hidden behind invisible characters not filtered by trim
+            data.substring(0, 10).contains("WEBVTT", ignoreCase = true) -> WebvttParser()
+            data.startsWith("<?xml version=\"", ignoreCase = true) -> TtmlParser()
+            (data.startsWith(
+                "[Script Info]",
+                ignoreCase = true
+            ) || data.startsWith(
+                "Title:",
+                ignoreCase = true
+            )) -> SsaParser(fallbackFormat?.initializationData)
 
-    private fun SubtitleInputBuffer.setSubtitleText(text: String) {
-//        println("Set subtitle text -----\n$text\n-----")
-        this.data = ByteBuffer.wrap(text.toByteArray(charset(UTF_8)))
-    }
-
-    override fun queueInputBuffer(inputBuffer: SubtitleInputBuffer) {
-        Log.i(TAG, "queueInputBuffer")
-        try {
-            val inputString = getStr(inputBuffer)
-            if (realDecoder == null && !inputString.isNullOrBlank()) {
-                var str: String = inputString
-                // this way we read the subtitle file and decide what decoder to use instead of relying fully on mimetype
-                Log.i(TAG, "Got data from queueInputBuffer")
-                //https://github.com/LagradOst/CloudStream-2/blob/ddd774ee66810137ff7bd65dae70bcf3ba2d2489/CloudStreamForms/CloudStreamForms/Script/MainChrome.cs#L388
-                realDecoder = when {
-                    str.startsWith("WEBVTT", ignoreCase = true) -> WebvttDecoder()
-                    str.startsWith("<?xml version=\"", ignoreCase = true) -> TtmlDecoder()
-                    (str.startsWith(
-                        "[Script Info]",
-                        ignoreCase = true
-                    ) || str.startsWith("Title:", ignoreCase = true)) -> SsaDecoder(fallbackFormat?.initializationData)
-                    str.startsWith("1", ignoreCase = true) -> SubripDecoder()
-                    fallbackFormat != null -> {
-                        when (val mimeType = fallbackFormat.sampleMimeType) {
-                            MimeTypes.TEXT_VTT -> WebvttDecoder()
-                            MimeTypes.TEXT_SSA -> SsaDecoder(fallbackFormat.initializationData)
-                            MimeTypes.APPLICATION_MP4VTT -> Mp4WebvttDecoder()
-                            MimeTypes.APPLICATION_TTML -> TtmlDecoder()
-                            MimeTypes.APPLICATION_SUBRIP -> SubripDecoder()
-                            MimeTypes.APPLICATION_TX3G -> Tx3gDecoder(fallbackFormat.initializationData)
-                            MimeTypes.APPLICATION_CEA608, MimeTypes.APPLICATION_MP4CEA608 -> Cea608Decoder(
-                                mimeType,
-                                fallbackFormat.accessibilityChannel,
-                                Cea608Decoder.MIN_DATA_CHANNEL_TIMEOUT_MS
-                            )
-                            MimeTypes.APPLICATION_CEA708 -> Cea708Decoder(
-                                fallbackFormat.accessibilityChannel,
-                                fallbackFormat.initializationData
-                            )
-                            MimeTypes.APPLICATION_DVBSUBS -> DvbDecoder(fallbackFormat.initializationData)
-                            MimeTypes.APPLICATION_PGS -> PgsDecoder()
-                            MimeTypes.TEXT_EXOPLAYER_CUES -> ExoplayerCuesDecoder()
-                            else -> null
-                        }
-                    }
+            data.startsWith("1", ignoreCase = true) -> SubripParser()
+            fallbackFormat != null -> {
+                when (val mimeType = fallbackFormat.sampleMimeType) {
+                    MimeTypes.TEXT_VTT -> WebvttParser()
+                    MimeTypes.TEXT_SSA -> SsaParser(fallbackFormat.initializationData)
+                    MimeTypes.APPLICATION_MP4VTT -> Mp4WebvttParser()
+                    MimeTypes.APPLICATION_TTML -> TtmlParser()
+                    MimeTypes.APPLICATION_SUBRIP -> SubripParser()
+                    MimeTypes.APPLICATION_TX3G -> Tx3gParser(fallbackFormat.initializationData)
+                    // These decoders are not converted to parsers yet
+                    // TODO
+//                            MimeTypes.APPLICATION_CEA608, MimeTypes.APPLICATION_MP4CEA608 -> Cea608Decoder(
+//                                mimeType,
+//                                fallbackFormat.accessibilityChannel,
+//                                Cea608Decoder.MIN_DATA_CHANNEL_TIMEOUT_MS
+//                            )
+//                            MimeTypes.APPLICATION_CEA708 -> Cea708Decoder(
+//                                fallbackFormat.accessibilityChannel,
+//                                fallbackFormat.initializationData
+//                            )
+                    MimeTypes.APPLICATION_DVBSUBS -> DvbParser(fallbackFormat.initializationData)
+                    MimeTypes.APPLICATION_PGS -> PgsParser()
                     else -> null
                 }
+            }
+
+            else -> null
+        }
+        return subtitleParser
+    }
+
+    override fun parse(
+        data: ByteArray,
+        offset: Int,
+        length: Int,
+        outputOptions: SubtitleParser.OutputOptions,
+        output: Consumer<CuesWithTiming>
+    ) {
+        val customOutput = Consumer<CuesWithTiming> { o ->
+            val updatedCues = CuesWithTiming(o.cues, o.startTimeUs - subtitleOffset.times(1000), o.durationUs)
+            output.accept(updatedCues)
+        }
+        Log.i(TAG, "Parse subtitle, current parser: $realDecoder")
+        try {
+            val inputString = getStr(data).first
+            Log.i(TAG, "Subtitle preview: ${inputString.substring(0, 30)}")
+            if (inputString.isNotBlank()) {
+                var str: String = trimStr(inputString)
+                realDecoder = realDecoder ?: getSubtitleParser(inputString)
                 Log.i(
                     TAG,
-                    "Decoder selected: $realDecoder"
+                    "Parser selected: $realDecoder"
                 )
                 realDecoder?.let { decoder ->
-                    decoder.dequeueInputBuffer()?.let { buff ->
-                        if (decoder !is SsaDecoder) {
-                            if (regexSubtitlesToRemoveCaptions)
-                                captionRegex.forEach { rgx ->
-                                    str = str.replace(rgx, "\n")
-                                }
-                            if (regexSubtitlesToRemoveBloat)
-                                bloatRegex.forEach { rgx ->
-                                    str = str.replace(rgx, "\n")
-                                }
-                        }
-                        buff.setSubtitleText(str)
-                        decoder.queueInputBuffer(buff)
-                        Log.i(
-                            TAG,
-                            "Decoder queueInputBuffer successfully"
-                        )
-                    }
-                    CS3IPlayer.requestSubtitleUpdate?.invoke()
-                }
-            } else {
-                Log.i(
-                    TAG,
-                    "Decoder else queueInputBuffer successfully"
-                )
-
-                if (!inputString.isNullOrBlank()) {
-                    var str: String = inputString
-                    if (realDecoder !is SsaDecoder) {
+                    if (decoder !is SsaParser) {
                         if (regexSubtitlesToRemoveCaptions)
                             captionRegex.forEach { rgx ->
                                 str = str.replace(rgx, "\n")
@@ -235,55 +202,69 @@ class CustomDecoder(private val fallbackFormat: Format?) : SubtitleDecoder {
                             str = str.uppercase()
                         }
                     }
-                    inputBuffer.setSubtitleText(str)
                 }
-
-                realDecoder?.queueInputBuffer(inputBuffer)
+                val array = str.toByteArray()
+                realDecoder?.parse(
+                    array,
+                    minOf(array.size, offset),
+                    minOf(array.size, length),
+                    outputOptions,
+                    customOutput
+                )
             }
         } catch (e: Exception) {
             logError(e)
         }
     }
 
-    override fun dequeueOutputBuffer(): SubtitleOutputBuffer? {
-        return realDecoder?.dequeueOutputBuffer()
-    }
-
-    override fun flush() {
-        realDecoder?.flush()
-    }
-
-    override fun release() {
-        realDecoder?.release()
-    }
-
-    override fun setPositionUs(positionUs: Long) {
-        realDecoder?.setPositionUs(positionUs)
+    override fun getCueReplacementBehavior(): Int {
+        return realDecoder?.cueReplacementBehavior ?: Format.CUE_REPLACEMENT_BEHAVIOR_REPLACE
     }
 }
 
 /** See https://github.com/google/ExoPlayer/blob/release-v2/library/core/src/main/java/com/google/android/exoplayer2/text/SubtitleDecoderFactory.java */
 @OptIn(UnstableApi::class)
 class CustomSubtitleDecoderFactory : SubtitleDecoderFactory {
+
     override fun supportsFormat(format: Format): Boolean {
-//        return SubtitleDecoderFactory.DEFAULT.supportsFormat(format)
         return listOf(
             MimeTypes.TEXT_VTT,
             MimeTypes.TEXT_SSA,
             MimeTypes.APPLICATION_TTML,
             MimeTypes.APPLICATION_MP4VTT,
             MimeTypes.APPLICATION_SUBRIP,
-            //MimeTypes.APPLICATION_TX3G,
+            MimeTypes.APPLICATION_TX3G,
             //MimeTypes.APPLICATION_CEA608,
             //MimeTypes.APPLICATION_MP4CEA608,
             //MimeTypes.APPLICATION_CEA708,
-            //MimeTypes.APPLICATION_DVBSUBS,
-            //MimeTypes.APPLICATION_PGS,
+            MimeTypes.APPLICATION_DVBSUBS,
+            MimeTypes.APPLICATION_PGS,
             //MimeTypes.TEXT_EXOPLAYER_CUES
         ).contains(format.sampleMimeType)
     }
 
+    /**
+     * Decoders created here persists across reset()
+     * Do not save state in the decoder which you want to reset (e.g subtitle offset)
+     **/
     override fun createDecoder(format: Format): SubtitleDecoder {
-        return CustomDecoder(format)
+        val parser = CustomDecoder(format)
+
+        return DelegatingSubtitleDecoder(
+            parser::class.simpleName + "Decoder", parser
+        )
+    }
+}
+
+@OptIn(UnstableApi::class)
+/** We need to convert the newer SubtitleParser to an older SubtitleDecoder */
+class DelegatingSubtitleDecoder(name: String, private val parser: SubtitleParser) :
+    SimpleSubtitleDecoder(name) {
+
+    override fun decode(data: ByteArray, length: Int, reset: Boolean): Subtitle {
+        if (reset) {
+            parser.reset()
+        }
+        return parser.parseToLegacySubtitle(data, 0, length);
     }
 }

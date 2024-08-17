@@ -442,13 +442,13 @@
                         tools:text="10" />
 
                     <ImageButton
-                        android:id="@id/exo_rew"
+                        android:id="@id/player_rew"
                         android:layout_width="70dp"
                         android:layout_height="70dp"
                         android:layout_gravity="center"
 
                         android:background="@drawable/video_tap_button_skip"
-                        android:nextFocusLeft="@id/exo_rew"
+                        android:nextFocusLeft="@id/player_rew"
                         android:nextFocusUp="@id/player_go_back"
                         android:nextFocusDown="@id/player_pause_play"
                         android:padding="10dp"
@@ -484,13 +484,13 @@
                         tools:text="10" />
 
                     <ImageButton
-                        android:id="@id/exo_ffwd"
+                        android:id="@id/player_ffwd"
                         android:layout_width="70dp"
                         android:layout_height="70dp"
                         android:layout_gravity="center"
 
                         android:background="@drawable/video_tap_button_skip"
-                        android:nextFocusRight="@id/exo_rew"
+                        android:nextFocusRight="@id/player_rew"
                         android:nextFocusUp="@id/player_go_back"
                         android:nextFocusDown="@id/player_pause_play"
                         android:padding="10dp"

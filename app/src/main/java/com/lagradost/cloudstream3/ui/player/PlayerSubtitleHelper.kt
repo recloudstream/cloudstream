@@ -47,6 +47,19 @@ data class SubtitleData(
         return if (origin == SubtitleOrigin.EMBEDDED_IN_VIDEO) url
         else "$url|$name"
     }
+
+    /**
+     * Gets the URL, but tries to fix it if it is malformed.
+     */
+    fun getFixedUrl(): String {
+        // Some extensions fail to include the protocol, this helps with that.
+        val fixedSubUrl = if (this.url.startsWith("//")) {
+            "https:${this.url}"
+        } else {
+            this.url
+        }
+        return fixedSubUrl
+    }
 }
 
 @OptIn(UnstableApi::class)

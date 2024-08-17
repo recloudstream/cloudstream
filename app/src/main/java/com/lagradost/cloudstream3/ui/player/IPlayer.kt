@@ -168,15 +168,12 @@ interface Track {
      **/
     val id: String?
     val label: String?
-
-    //    val isCurrentlyPlaying: Boolean
     val language: String?
 }
 
 data class VideoTrack(
     override val id: String?,
     override val label: String?,
-//    override val isCurrentlyPlaying: Boolean,
     override val language: String?,
     val width: Int?,
     val height: Int?,
@@ -185,15 +182,24 @@ data class VideoTrack(
 data class AudioTrack(
     override val id: String?,
     override val label: String?,
-//    override val isCurrentlyPlaying: Boolean,
     override val language: String?,
 ) : Track
+
+data class TextTrack(
+    override val id: String?,
+    override val label: String?,
+    override val language: String?,
+    val mimeType: String?,
+) : Track
+
 
 data class CurrentTracks(
     val currentVideoTrack: VideoTrack?,
     val currentAudioTrack: AudioTrack?,
+    val currentTextTracks: List<TextTrack>,
     val allVideoTracks: List<VideoTrack>,
     val allAudioTracks: List<AudioTrack>,
+    val allTextTracks: List<TextTrack>,
 )
 
 class InvalidFileException(msg: String) : Exception(msg)
