@@ -163,6 +163,11 @@ open class ResultTrailerPlayer : ResultFragmentPhone() {
         } else activity?.detachBackPressedCallback()
     }
 
+    override fun updateUIVisibility() {
+        super.updateUIVisibility()
+        playerBinding?.playerGoBackHolder?.isVisible = false
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         playerBinding?.playerFullscreen?.setOnClickListener {
