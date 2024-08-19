@@ -64,6 +64,7 @@ import com.lagradost.cloudstream3.APIHolder.initAll
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
+import com.lagradost.cloudstream3.CommonActivity.activity
 import com.lagradost.cloudstream3.CommonActivity.loadThemes
 import com.lagradost.cloudstream3.CommonActivity.onColorSelectedEvent
 import com.lagradost.cloudstream3.CommonActivity.onDialogDismissedEvent
@@ -165,6 +166,7 @@ import com.lagradost.cloudstream3.utils.UIHelper.getResourceColor
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.requestRW
+import com.lagradost.cloudstream3.utils.UIHelper.setImage
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import com.lagradost.cloudstream3.utils.USER_PROVIDER_API
 import com.lagradost.cloudstream3.utils.USER_SELECTED_HOMEPAGE_API
@@ -1680,17 +1682,20 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                 showAccountSelectLinear()
             }
 
-            val profileImage = DataStoreHelper.getCurrentAccount()?.image ?: DataStoreHelper.getDefaultAccount(context).image
+            val homeViewModel =
+                ViewModelProvider(this@MainActivity)[HomeViewModel::class.java]
 
-            if (navProfilePic != null) {
-                navProfilePic.setImage(profileImage)
-            } else {
-                navProfileRoot?.isGone = true
+            observe(homeViewModel.currentAccount) { currentAccount ->
+                if (currentAccount != null) {
+                    navProfilePic?.setImage(
+                        currentAccount.image
+                    )
+                    navProfileRoot.isVisible = true
+                } else {
+                    navProfileRoot.isGone = true
+                }
             }
 
-            /*headerView?.findViewById<ImageView>(R.id.nav_header_notification)?.setOnClickListener {
-                binding?.homeRoot?.openDrawer(GravityCompat.END, true)
-            }*/
         }
 
         loadCache()

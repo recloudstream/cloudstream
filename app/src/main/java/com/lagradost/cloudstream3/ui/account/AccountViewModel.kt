@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.lagradost.cloudstream3.AcraApplication.Companion.context
 import com.lagradost.cloudstream3.AcraApplication.Companion.removeKeys
+import com.lagradost.cloudstream3.MainActivity
 import com.lagradost.cloudstream3.ui.account.AccountHelper.showPinInputDialog
 import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getAccounts
@@ -62,6 +63,7 @@ class AccountViewModel : ViewModel() {
 
         _accounts.postValue(getAccounts(context))
         _selectedKeyIndex.postValue(getAccounts(context).indexOf(account))
+        MainActivity.reloadAccountEvent(true)
     }
 
     fun handleAccountDelete(
@@ -84,6 +86,7 @@ class AccountViewModel : ViewModel() {
         _selectedKeyIndex.postValue(getAllAccounts().indexOfFirst {
             it.keyIndex == DataStoreHelper.selectedKeyIndex
         })
+        MainActivity.reloadAccountEvent(true)
     }
 
     fun handleAccountSelect(
@@ -95,6 +98,7 @@ class AccountViewModel : ViewModel() {
         if (reloadForActivity) {
             _accounts.postValue(getAccounts(context))
             _selectedKeyIndex.postValue(getAccounts(context).indexOf(account))
+            MainActivity.reloadAccountEvent(true)
             return
         }
 
@@ -112,12 +116,14 @@ class AccountViewModel : ViewModel() {
                 _isAllowedLogin.postValue(true)
                 _selectedKeyIndex.postValue(getAccounts(context).indexOf(account))
                 setAccount(account)
+                MainActivity.reloadAccountEvent(true)
             }
         } else {
             // No PIN set for the selected account, proceed
             _isAllowedLogin.postValue(true)
             _selectedKeyIndex.postValue(getAccounts(context).indexOf(account))
             setAccount(account)
+            MainActivity.reloadAccountEvent(true)
         }
     }
 }

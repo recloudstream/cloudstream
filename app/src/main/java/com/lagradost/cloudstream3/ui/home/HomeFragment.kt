@@ -557,13 +557,6 @@ class HomeFragment : Fragment() {
             binding?.homeChangeApi?.text = apiName
         }
 
-        observe(homeViewModel.currentAccount) { currentAccount ->
-            val navProfilePic = (activity as MainActivity).binding?.navRailView?.findViewById<ImageView>(R.id.nav_footer_profile_pic)
-            navProfilePic?.setImage(
-                currentAccount?.image
-            )
-        }
-
         observe(homeViewModel.page) { data ->
             binding?.apply {
                 when (data) {
