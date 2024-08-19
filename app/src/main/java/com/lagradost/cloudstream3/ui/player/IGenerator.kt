@@ -45,6 +45,7 @@ fun LoadType.toSet() : Set<ExtractorLinkType> {
 
 interface IGenerator {
     val hasCache: Boolean
+    val canSkipLoading: Boolean
 
     fun hasNext(): Boolean
     fun hasPrev(): Boolean

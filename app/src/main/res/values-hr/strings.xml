@@ -34,7 +34,7 @@
     <string name="filler" formatted="true">Umetak</string>
     <string name="duration_format" formatted="true">%d min</string>
     <string name="app_name">CloudStream</string>
-    <string name="play_with_app_name">Reproduciraj s CloudStreamom</string>
+    <string name="play_with_app_name">Pokreni s CloudStreamom</string>
     <string name="title_home">Početna stranica</string>
     <string name="title_search">Traži</string>
     <string name="title_downloads">Preuzimanja</string>
@@ -78,7 +78,7 @@
     <string name="app_dubbed_text">Sinkronizacija</string>
     <string name="app_subbed_text">Titlovi</string>
     <string name="popup_delete_file">Izbriši datoteku</string>
-    <string name="popup_play_file">Otvori datoteku</string>
+    <string name="popup_play_file">Pokreni datoteku</string>
     <string name="popup_resume_download">Nastavi preuzimanje</string>
     <string name="popup_pause_download">Pauziraj preuzimanje</string>
     <string name="pref_disable_acra">Onemogući automatsko izvješćivanje o greškama</string>
@@ -437,7 +437,7 @@
     <string name="view_public_repositories_button">Prikaži repozitorije zajednice</string>
     <string name="view_public_repositories_button_short">Javni popis</string>
     <string name="uppercase_all_subtitles">Koristi velika slova za sve titlove</string>
-    <string name="download_all_plugins_from_repo">Preuzeti sve dodatke iz ovog repozitorija?</string>
+    <string name="download_all_plugins_from_repo">Upozorenje: CloudStream 3 ne preuzima odgovornost za korištenje proširenja trećih strana i ne pruža podršku za njih!</string>
     <string name="single_plugin_disabled" formatted="true">%s (onemogućeno)</string>
     <string name="tracks">Zapisi</string>
     <string name="audio_tracks">Audio zapis</string>
@@ -647,9 +647,43 @@
     <string name="next_season_episode_format" formatted="true">Sezona %1$d epizoda %2$d izlazi</string>
     <string name="episode_action_cast_mirror">Cast mirror</string>
     <string name="player_settings_play_in_fcast">Fcast</string>
-    <string name="player_settings_select_cast_device">Odaberite uređaj za emitiranje</string>
+    <string name="player_settings_select_cast_device">Odaberi uređaj za emitiranje</string>
     <string name="cs3wiki">CloudStream Wiki</string>
     <string name="pref_category_accounts">Računi</string>
     <string name="pref_category_security">Sigurnost</string>
     <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
+    <string name="auth_locally">Lokalna autentifikacija</string>
+    <string name="open_local_video">Otvori lokalni video</string>
+    <string name="device_pin_url_message">Posjeti <b>%s</b> na svom mobitelu ili računalu i unesi gore navedeni kod</string>
+    <string name="dismiss">Odbaci</string>
+    <string name="play_from_beginning_img_des">Pokreni od početka</string>
+    <string name="downloads_empty">Trenutačno nema preuzimanja.</string>
+    <string name="device_pin_counter_text">Kod isteče za %1$d min %2$d s</string>
+    <string name="qr_image">Slika QR koda</string>
+    <string name="hide_player_control_names">Sakrij nazive kontrola playera</string>
+    <string name="open_downloaded_repo">Otvori repozitorij</string>
+    <string name="device_pin_expired_message">PIN kod je sada istekao!</string>
+    <string name="sort_release_date_new">Datum izdanja (od novog do starog)</string>
+    <string name="sort_release_date_old">Datum izdanja (od starog do novog)</string>
+    <string name="device_pin_error_message">Neuspjelo dobivanje PIN koda uređaja, pokušaj s lokalnom autentifikacijom</string>
+    <string name="test_warning">Upozorenje</string>
+    <string name="delete_plugin">Izbriši dodatak</string>
+    <string name="offline_file">Dostupno za gledanje offline</string>
+    <string name="select_all">Označi sve</string>
+    <string name="delete_message_multiple" formatted="true">Stvarno želite trajno izbrisati sljedeće stavke?
+\n
+\n%s</string>
+    <string name="delete_message_series_episodes" formatted="true">Stvarno želite trajno izbrisati sljedeće epizode u %1$s?
+\n
+\n%2$s</string>
+    <string name="delete_message_series_section" formatted="true">Trajno ćete izbrisati i sve epizode u sljedećim serijama:
+\n
+\n%s</string>
+    <string name="downloads_delete_select">Odaberi stavke za brisanje</string>
+    <string name="deselect_all">Odznači sve</string>
+    <string name="delete_format" formatted="true">Izbriši (%1$d | %2$s)</string>
+    <string name="delete_files">Izbriši datoteke</string>
+    <string name="delete_message_series_only" formatted="true">Stvarno želite trajno izbrisati sve epizode u sljedećoj seriji?
+\n
+\n%s</string>
 </resources>

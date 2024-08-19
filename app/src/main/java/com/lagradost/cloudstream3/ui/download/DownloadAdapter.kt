@@ -156,6 +156,16 @@ class DownloadAdapter(
             card.child ?: return
             downloadHeaderGotoChild.isVisible = false
 
+            val posDur = getViewPos(card.data.id)
+            downloadHeaderEpisodeProgress.apply {
+                isVisible = posDur != null
+                posDur?.let {
+                    val visualPos = it.fixVisual()
+                    max = (visualPos.duration / 1000).toInt()
+                    progress = (visualPos.position / 1000).toInt()
+                }
+            }
+
             val status = downloadButton.getStatus(card.child.id, card.currentBytes, card.totalBytes)
             if (status == DownloadStatusTell.IsDone) {
                 // We do this here instead if we are finished downloading
@@ -205,6 +215,7 @@ class DownloadAdapter(
             formattedSize: String
         ) {
             downloadButton.isVisible = false
+            downloadHeaderEpisodeProgress.isVisible = false
             downloadHeaderGotoChild.isVisible = !isMultiDeleteState
 
             try {
@@ -218,7 +229,7 @@ class DownloadAdapter(
                         formattedSize
                     )
             } catch (e: Exception) {
-                downloadHeaderInfo.text = ""
+                downloadHeaderInfo.text = null
                 logError(e)
             }
 

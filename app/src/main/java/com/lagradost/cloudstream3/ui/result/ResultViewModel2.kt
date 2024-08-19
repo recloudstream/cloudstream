@@ -33,6 +33,9 @@ import com.lagradost.cloudstream3.LoadResponse.Companion.readIdFromString
 import com.lagradost.cloudstream3.MainActivity.Companion.MPV
 import com.lagradost.cloudstream3.MainActivity.Companion.MPV_COMPONENT
 import com.lagradost.cloudstream3.MainActivity.Companion.MPV_PACKAGE
+import com.lagradost.cloudstream3.MainActivity.Companion.MPV_YTDL
+import com.lagradost.cloudstream3.MainActivity.Companion.MPV_YTDL_COMPONENT
+import com.lagradost.cloudstream3.MainActivity.Companion.MPV_YTDL_PACKAGE
 import com.lagradost.cloudstream3.MainActivity.Companion.VLC
 import com.lagradost.cloudstream3.MainActivity.Companion.VLC_COMPONENT
 import com.lagradost.cloudstream3.MainActivity.Companion.VLC_PACKAGE
@@ -1454,6 +1457,25 @@ class ResultViewModel2 : ViewModel() {
             putExtra("position", position.toInt())
     }
 
+    private fun playWithMpvYtdl(
+        activity: Activity?,
+        id: Int,
+        link: ExtractorLink,
+        subtitles: List<SubtitleData>,
+        resume: Boolean = true,
+    ) = launchActivity(activity, MPV_YTDL, id) {
+        putExtra("subs", subtitles.map { it.url.toUri() }.toTypedArray())
+        putExtra("subs.name", subtitles.map { it.name }.toTypedArray())
+        putExtra("subs.filename", subtitles.map { it.name }.toTypedArray())
+        setDataAndType(Uri.parse(link.url), "video/*")
+        component = MPV_YTDL_COMPONENT
+        putExtra("secure_uri", true)
+        putExtra("return_result", true)
+        val position = getViewPos(id)?.position
+        if (resume && position != null)
+            putExtra("position", position.toInt())
+    }
+
     // https://wiki.videolan.org/Android_Player_Intents/
     private fun playWithVlc(
         activity: Activity?,
@@ -1538,6 +1560,11 @@ class ResultViewModel2 : ViewModel() {
             MPV_PACKAGE,
             R.string.player_settings_play_in_mpv,
             ACTION_PLAY_EPISODE_IN_MPV
+        ),
+        ExternalApp(
+            MPV_YTDL_PACKAGE,
+            R.string.player_settings_play_in_mpvytdl,
+            ACTION_PLAY_EPISODE_IN_MPV_YTDL
         )
     )
 
@@ -1842,6 +1869,22 @@ class ResultViewModel2 : ViewModel() {
                 )
             ) { (result, index) ->
                 playWithMpv(
+                    activity,
+                    click.data.id,
+                    result.links[index],
+                    result.subs
+                )
+            }
+
+            ACTION_PLAY_EPISODE_IN_MPV_YTDL -> acquireSingleLink(
+                click.data,
+                LoadType.Chromecast,
+                txt(
+                    R.string.episode_action_play_in_format,
+                    txt(R.string.player_settings_play_in_mpvytdl)
+                )
+            ) { (result, index) ->
+                playWithMpvYtdl(
                     activity,
                     click.data.id,
                     result.links[index],

@@ -68,7 +68,7 @@ class DownloadFragment : Fragment() {
     }
 
     override fun onDestroyView() {
-        detachBackPressedCallback()
+        activity?.detachBackPressedCallback()
         binding = null
         super.onDestroyView()
     }
@@ -160,7 +160,7 @@ class DownloadFragment : Fragment() {
             adapter?.setIsMultiDeleteState(isMultiDeleteState)
             binding?.downloadDeleteAppbar?.isVisible = isMultiDeleteState
             if (!isMultiDeleteState) {
-                detachBackPressedCallback()
+                activity?.detachBackPressedCallback()
                 downloadsViewModel.clearSelectedItems()
                 // Prevent race condition and make sure
                 // we don't display it early

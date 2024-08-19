@@ -192,10 +192,12 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
     companion object {
         const val VLC_PACKAGE = "org.videolan.vlc"
         const val MPV_PACKAGE = "is.xyz.mpv"
+        const val MPV_YTDL_PACKAGE = "is.xyz.mpv.ytdl"
         const val WEB_VIDEO_CAST_PACKAGE = "com.instantbits.cast.webvideo"
 
         val VLC_COMPONENT = ComponentName(VLC_PACKAGE, "$VLC_PACKAGE.gui.video.VideoPlayerActivity")
         val MPV_COMPONENT = ComponentName(MPV_PACKAGE, "$MPV_PACKAGE.MPVActivity")
+        val MPV_YTDL_COMPONENT = ComponentName(MPV_YTDL_PACKAGE, "$MPV_PACKAGE.MPVActivity")
 
         //TODO REFACTOR AF
         open class ResultResume(
@@ -267,10 +269,27 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
             }
         }
 
+        val MPV_YTDL = object : ResultResume(
+            MPV_YTDL_PACKAGE,
+            //"is.xyz.mpv.ytdl/is.xyz.mpv.MPVActivity.result", // resume not working :pensive:
+            position = "position",
+            duration = "duration",
+        ) {
+            override fun getPosition(intent: Intent?): Long {
+                return intent?.getIntExtra(this.position, defaultTime.toInt())?.toLong()
+                    ?: defaultTime
+            }
+
+            override fun getDuration(intent: Intent?): Long {
+                return intent?.getIntExtra(this.duration, defaultTime.toInt())?.toLong()
+                    ?: defaultTime
+            }
+        }
+
         val WEB_VIDEO = ResultResume(WEB_VIDEO_CAST_PACKAGE)
 
         val resumeApps = arrayOf(
-            VLC, MPV, WEB_VIDEO
+            VLC, MPV, MPV_YTDL, WEB_VIDEO
         )
 
 

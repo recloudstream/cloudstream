@@ -695,7 +695,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         updateLockUI()
     }
 
-    fun updateUIVisibility() {
+    open fun updateUIVisibility() {
         val isGone = isLocked || !isShowing
         var togglePlayerTitleGone = isGone
         context?.let {

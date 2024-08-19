@@ -39,6 +39,7 @@ class LinkGenerator(
     private val isM3u8: Boolean? = null
 ) : IGenerator {
     override val hasCache = false
+    override val canSkipLoading = true
 
     override fun getCurrentId(): Int? {
         return null

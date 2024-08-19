@@ -693,4 +693,6 @@
     <string name="delete_message_series_only" formatted="true">هل أنت متأكد أنك تريد حذف جميع الحلقات في السلسلة التالية نهائيًا ؟
 \n
 \n%s</string>
+    <string name="preview_seekbar">معاينة شريط البحث</string>
+    <string name="preview_seekbar_desc">تمكين معاينة الصورة المصغرة على شريط البحث</string>
 </resources>

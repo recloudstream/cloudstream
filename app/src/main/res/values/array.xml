@@ -54,6 +54,7 @@
         <item>@string/player_settings_play_in_app</item>
         <item>@string/player_settings_play_in_vlc</item>
         <item>@string/player_settings_play_in_mpv</item>
+        <item>@string/player_settings_play_in_mpvytdl</item>
         <item>@string/player_settings_play_in_web</item>
         <item>@string/player_settings_play_in_browser</item>
     </array>
@@ -62,6 +63,7 @@
         <item>1</item>
         <item>2</item>
         <item>5</item>
+        <item>6</item>
         <item>4</item>
         <item>3</item>
     </array>

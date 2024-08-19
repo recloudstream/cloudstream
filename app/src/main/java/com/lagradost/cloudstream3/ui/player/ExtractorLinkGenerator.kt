@@ -7,6 +7,7 @@ class ExtractorLinkGenerator(
     private val subtitles: List<SubtitleData>,
 ) : IGenerator {
     override val hasCache = false
+    override val canSkipLoading = true
 
     override fun getCurrentId(): Int? {
         return null
