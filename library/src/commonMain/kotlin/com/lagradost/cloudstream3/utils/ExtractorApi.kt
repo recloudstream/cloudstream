@@ -256,6 +256,10 @@ import com.lagradost.cloudstream3.extractors.Asnwish
 import com.lagradost.cloudstream3.extractors.Nekowish
 import com.lagradost.cloudstream3.extractors.Nekostream
 import com.lagradost.cloudstream3.extractors.Swdyu
+import com.lagradost.cloudstream3.extractors.VidHidePro
+import com.lagradost.cloudstream3.extractors.VidHidePro1
+import com.lagradost.cloudstream3.extractors.VidHidePro2
+import com.lagradost.cloudstream3.extractors.VidHidePro3
 import com.lagradost.cloudstream3.extractors.Wishonly
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
@@ -921,6 +925,10 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     Dokicloud(),
     Megacloud(),
     VidhideExtractor(),
+    VidHidePro(),
+    VidHidePro1(),
+    VidHidePro2(),
+    VidHidePro3(),
     StreamWishExtractor(),
     WishembedPro(),
     CdnwishCom(),
