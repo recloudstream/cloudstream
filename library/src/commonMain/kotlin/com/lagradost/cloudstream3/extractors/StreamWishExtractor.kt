@@ -34,7 +34,7 @@ class Kswplayer : StreamWishExtractor() {
     override val mainUrl = "https://kswplayer.info"
 }
 
-class Wishfast: StreamWishExtractor() {
+class Wishfast : StreamWishExtractor() {
     override val name = "Wishfast"
     override val mainUrl = "https://wishfast.top"
 }
@@ -148,9 +148,16 @@ open class StreamWishExtractor : ExtractorApi() {
             "Origin" to "$mainUrl/",
             "User-Agent" to USER_AGENT
         )
-		val response = app.get(getEmbedUrl(url), referer = referer)
+        val response = app.get(getEmbedUrl(url), referer = referer)
         val script = if (!getPacked(response.text).isNullOrEmpty()) {
             getAndUnpack(response.text)
+        } else if (!response.document.select("script").firstOrNull {
+                it.html().contains("jwplayer(\"vplayer\").setup(")
+            }?.html().isNullOrEmpty()
+        ) {
+            response.document.select("script").firstOrNull {
+                it.html().contains("jwplayer(\"vplayer\").setup(")
+            }?.html()
         } else {
             response.document.selectFirst("script:containsData(sources:)")?.data()
         }
@@ -160,11 +167,11 @@ open class StreamWishExtractor : ExtractorApi() {
             name,
             m3u8 ?: return,
             mainUrl,
-			headers = headers
-        ).forEach(callback)		
+            headers = headers
+        ).forEach(callback)
     }
-	
-	private fun getEmbedUrl(url: String): String {
+
+    private fun getEmbedUrl(url: String): String {
         return if (url.contains("/f/")) {
             val videoId = url.substringAfter("/f/")
             "$mainUrl/$videoId"
