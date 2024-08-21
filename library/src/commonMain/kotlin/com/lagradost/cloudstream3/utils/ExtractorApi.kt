@@ -262,6 +262,15 @@ import com.lagradost.cloudstream3.extractors.VidHidePro1
 import com.lagradost.cloudstream3.extractors.VidHidePro2
 import com.lagradost.cloudstream3.extractors.VidHidePro3
 import com.lagradost.cloudstream3.extractors.Wishonly
+import com.lagradost.cloudstream3.extractors.Beastx 
+import com.lagradost.cloudstream3.extractors.Playerx
+import com.lagradost.cloudstream3.extractors.AnimesagaStream
+import com.lagradost.cloudstream3.extractors.Anplay
+import com.lagradost.cloudstream3.extractors.Kinogeru
+import com.lagradost.cloudstream3.extractors.Vidxstream
+import com.lagradost.cloudstream3.extractors.Boltx
+import com.lagradost.cloudstream3.extractors.Vectorx
+import com.lagradost.cloudstream3.extractors.Boosterx
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import kotlinx.coroutines.delay
@@ -965,6 +974,15 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     Nekostream(),
     Swdyu(),
     Wishonly(),
+    Beastx(),
+    Playerx(),
+    AnimesagaStream(),
+    Anplay(),
+    Kinogeru(),
+    Vidxstream(),
+    Boltx(),
+    Vectorx(),
+    Boosterx(),
     
 )
 
