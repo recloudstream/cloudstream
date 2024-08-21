@@ -261,6 +261,7 @@ import com.lagradost.cloudstream3.extractors.VidHidePro
 import com.lagradost.cloudstream3.extractors.VidHidePro1
 import com.lagradost.cloudstream3.extractors.VidHidePro2
 import com.lagradost.cloudstream3.extractors.VidHidePro3
+import com.lagradost.cloudstream3.extractors.Voe1
 import com.lagradost.cloudstream3.extractors.Wishonly
 import com.lagradost.cloudstream3.extractors.Beastx 
 import com.lagradost.cloudstream3.extractors.Playerx
@@ -892,6 +893,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     Vidmoly(),
     Vidmolyme(),
     Voe(),
+    Voe1(),
     Tubeless(),
     Moviehab(),
     MoviehabNet(),

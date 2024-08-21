@@ -34,13 +34,19 @@ class MetaGnathTuggers : Voe() {
     override val mainUrl = "https://metagnathtuggers.com"
 }
 
+class Voe1 : Voe() {
+    override val mainUrl = "https://donaldlineelse.com"
+}
+
 open class Voe : ExtractorApi() {
     override val name = "Voe"
     override val mainUrl = "https://voe.sx"
     override val requiresReferer = true
-	
-	private val linkRegex = "(http|https)://([\\w_-]+(?:\\.[\\w_-]+)+)([\\w.,@?^=%&:/~+#-]*[\\w@?^=%&/~+#-])".toRegex()
+
+    private val linkRegex =
+        "(http|https)://([\\w_-]+(?:\\.[\\w_-]+)+)([\\w.,@?^=%&:/~+#-]*[\\w@?^=%&/~+#-])".toRegex()
     private val base64Regex = Regex("'.*'")
+    private val redirectRegex = Regex("""window.location.href = '([^']+)';""")
 
     override suspend fun getUrl(
         url: String,
@@ -49,11 +55,26 @@ open class Voe : ExtractorApi() {
         callback: (ExtractorLink) -> Unit
     ) {
         val res = app.get(url, referer = referer).document
-        val script = res.select("script").find { it.data().contains("sources =") }?.data()
-        val link = Regex("[\"']hls[\"']:\\s*[\"'](.*)[\"']").find(script ?: return)?.groupValues?.get(1)
+
+        val script =
+            if (!res.select("script").firstOrNull() { it.data().contains("sources =") }?.data()
+                    .isNullOrEmpty()
+            ) {
+                res.select("script").find { it.data().contains("sources =") }?.data()
+            } else {
+                redirectRegex.find(res.data())?.groupValues?.get(1)?.let { redirectUrl ->
+                    app.get(
+                        redirectUrl,
+                        referer = referer
+                    ).document.select("script").find { it.data().contains("sources =") }?.data()
+                }
+            }
+
+        val link =
+            Regex("[\"']hls[\"']:\\s*[\"'](.*)[\"']").find(script ?: return)?.groupValues?.get(1)
 
         val videoLinks = mutableListOf<String>()
-        
+
         if (!link.isNullOrBlank()) {
             videoLinks.add(
                 when {
@@ -61,13 +82,13 @@ open class Voe : ExtractorApi() {
                     else -> base64Decode(link)
                 }
             )
-        } else {            
+        } else {
             val link2 = base64Regex.find(script)?.value ?: return
             val decoded = base64Decode(link2)
             val videoLinkDTO = AppUtils.parseJson<WcoSources>(decoded)
             videoLinkDTO.let { videoLinks.add(it.toString()) }
         }
-        
+
         videoLinks.forEach { videoLink ->
             M3u8Helper.generateM3u8(
                 name,
@@ -77,8 +98,8 @@ open class Voe : ExtractorApi() {
             ).forEach(callback)
         }
     }
-	
-	data class WcoSources(
+
+    data class WcoSources(
         @JsonProperty("VideoLinkDTO") val VideoLinkDTO: String,
     )
 }
