@@ -255,6 +255,7 @@ import com.lagradost.cloudstream3.extractors.Doodporn
 import com.lagradost.cloudstream3.extractors.Asnwish
 import com.lagradost.cloudstream3.extractors.Nekowish
 import com.lagradost.cloudstream3.extractors.Nekostream
+import com.lagradost.cloudstream3.extractors.StreamSilk
 import com.lagradost.cloudstream3.extractors.Swdyu
 import com.lagradost.cloudstream3.extractors.VidHidePro
 import com.lagradost.cloudstream3.extractors.VidHidePro1
@@ -707,6 +708,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     StreamSB(),
     Sblona(),
     Vidgomunimesb(),
+    StreamSilk(),
     StreamSB1(),
     StreamSB2(),
     StreamSB3(),
