@@ -16,7 +16,9 @@ open class StreamSilk : ExtractorApi() {
         subtitleCallback: (SubtitleFile) -> Unit,
         callback: (ExtractorLink) -> Unit
     ) {
-        val response = app.get(url, referer = referer)
+        val response = app.get(url, headers = mapOf(
+                                "Accept" to "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+                        ),)
         response.document.select("script").firstOrNull {
             it.html().contains("h,u,n,t,e,r")
         }?.html()?.let { hunted ->
@@ -25,7 +27,7 @@ open class StreamSilk : ExtractorApi() {
                     M3u8Helper.generateM3u8(
                         name,
                         link,
-                        mainUrl,
+                        "$mainUrl/"
                     ).forEach(callback)
                 }
             }
