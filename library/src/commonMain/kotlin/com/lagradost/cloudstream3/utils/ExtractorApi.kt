@@ -274,6 +274,12 @@ import com.lagradost.cloudstream3.extractors.Vectorx
 import com.lagradost.cloudstream3.extractors.Boosterx
 import com.lagradost.cloudstream3.extractors.Vidguardto1
 import com.lagradost.cloudstream3.extractors.Vidguardto2
+import com.lagradost.cloudstream3.extractors.VidHidePro4
+import com.lagradost.cloudstream3.extractors.VidHidePro5
+import com.lagradost.cloudstream3.extractors.VidHidePro6
+import com.lagradost.cloudstream3.extractors.Lulustream1
+import com.lagradost.cloudstream3.extractors.Lulustream2
+import com.lagradost.cloudstream3.extractors.Lulustream3
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import kotlinx.coroutines.delay
@@ -944,6 +950,12 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     VidHidePro1(),
     VidHidePro2(),
     VidHidePro3(),
+    VidHidePro4(),
+    VidHidePro5(),
+    VidHidePro6(),
+    Lulustream1(),
+    Lulustream2(),
+    Lulustream3(),
     StreamWishExtractor(),
     WishembedPro(),
     CdnwishCom(),
