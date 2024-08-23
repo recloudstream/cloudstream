@@ -14,6 +14,14 @@ import org.mozilla.javascript.NativeObject
 import org.mozilla.javascript.Scriptable
 import java.util.Base64
 
+class Vidguardto1 : Vidguardto() {
+    override val mainUrl = "https://bembed.net"
+}
+
+class Vidguardto2 : Vidguardto() {
+    override val mainUrl = "https://listeamed.net"
+}
+
 open class Vidguardto : ExtractorApi() {
     override val name = "Vidguard"
     override val mainUrl = "https://vidguard.to"
@@ -25,8 +33,8 @@ open class Vidguardto : ExtractorApi() {
         subtitleCallback: (SubtitleFile) -> Unit,
         callback: (ExtractorLink) -> Unit
     ) {
-	val res = app.get(url)
-	val resc = res.document.select("script:containsData(eval)").firstOrNull()?.data()
+        val res = app.get(url)
+        val resc = res.document.select("script:containsData(eval)").firstOrNull()?.data()
         resc?.let {
             val jsonStr2 = AppUtils.parseJson<SvgObject>(runJS2(it))
             val watchlink = sigDecode(jsonStr2.stream)
@@ -69,28 +77,41 @@ open class Vidguardto : ExtractorApi() {
     }
 
     private fun runJS2(hideMyHtmlContent: String): String {
-        Log.d("runJS", "start")
-        val rhino = Context.enter()
-        rhino.initSafeStandardObjects()
-        rhino.optimizationLevel = -1
-        val scope: Scriptable = rhino.initSafeStandardObjects()
-        scope.put("window", scope, scope)
         var result = ""
-        try {
-            Log.d("runJS", "Executing JavaScript: $hideMyHtmlContent")
-            rhino.evaluateString(scope, hideMyHtmlContent, "JavaScript", 1, null)
-            val svgObject = scope.get("svg", scope)
-            result = if (svgObject is NativeObject) {
-                NativeJSON.stringify(Context.getCurrentContext(), scope, svgObject, null, null).toString()
-            } else {
-                Context.toString(svgObject)
+        val r = Runnable {
+            Log.d("runJS", "start")
+            val rhino = Context.enter()
+            rhino.initSafeStandardObjects()
+            rhino.optimizationLevel = -1
+            val scope: Scriptable = rhino.initSafeStandardObjects()
+            scope.put("window", scope, scope)
+            try {
+                Log.d("runJS", "Executing JavaScript: $hideMyHtmlContent")
+                rhino.evaluateString(
+                    scope,
+                    hideMyHtmlContent,
+                    "JavaScript",
+                    1,
+                    null
+                )
+                val svgObject = scope.get("svg", scope)
+                result = if (svgObject is NativeObject) {
+                    NativeJSON.stringify(Context.getCurrentContext(), scope, svgObject, null, null)
+                        .toString()
+                } else {
+                    Context.toString(svgObject)
+                }
+                Log.d("runJS", "Result: $result")
+            } catch (e: Exception) {
+                Log.e("runJS", "Error executing JavaScript: ${e.message}")
+            } finally {
+                Context.exit()
             }
-            Log.d("runJS", "Result: $result")
-        } catch (e: Exception) {
-            Log.e("runJS", "Error executing JavaScript: ${e.message}")
-        } finally {
-            Context.exit()
         }
+        val t = Thread(ThreadGroup("A"), r, "thread_rhino", 2000000)// StackSize 2Mb: Run in a thread because rhino requires more stack size for large scripts.
+        t.start();
+        t.join()
+        t.interrupt()
         return result
     }
 
