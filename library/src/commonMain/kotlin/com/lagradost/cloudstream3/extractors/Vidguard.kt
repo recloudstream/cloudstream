@@ -22,6 +22,10 @@ class Vidguardto2 : Vidguardto() {
     override val mainUrl = "https://listeamed.net"
 }
 
+class Vidguardto3 : Vidguardto() {
+    override val mainUrl = "https://vgfplay.com"
+}
+
 open class Vidguardto : ExtractorApi() {
     override val name = "Vidguard"
     override val mainUrl = "https://vidguard.to"

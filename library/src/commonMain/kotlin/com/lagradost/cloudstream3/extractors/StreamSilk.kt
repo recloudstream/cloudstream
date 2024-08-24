@@ -1,6 +1,7 @@
 package com.lagradost.cloudstream3.extractors
 
 import com.lagradost.cloudstream3.SubtitleFile
+import com.lagradost.cloudstream3.USER_AGENT
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.utils.*
 
@@ -16,18 +17,22 @@ open class StreamSilk : ExtractorApi() {
         subtitleCallback: (SubtitleFile) -> Unit,
         callback: (ExtractorLink) -> Unit
     ) {
-        val response = app.get(url, headers = mapOf(
-                                "Accept" to "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
-                        ),)
+        val response = app.get(url, headers = mapOf("Accept" to "*/*"))
         response.document.select("script").firstOrNull {
             it.html().contains("h,u,n,t,e,r")
         }?.html()?.let { hunted ->
             JsHunter(hunted).dehunt()?.let { script ->
                 srcRegex.find(script)?.groupValues?.get(1)?.trim()?.let { link ->
+                    val headers = mapOf(
+                        "Origin" to mainUrl,
+                        "Referer" to "$mainUrl/",
+                        "User-Agent" to USER_AGENT,
+                    )
                     M3u8Helper.generateM3u8(
                         name,
                         link,
-                        "$mainUrl/"
+                        "$mainUrl/",
+                        headers = headers
                     ).forEach(callback)
                 }
             }

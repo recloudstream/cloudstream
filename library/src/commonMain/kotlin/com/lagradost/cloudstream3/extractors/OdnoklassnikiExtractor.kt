@@ -13,11 +13,17 @@ open class Odnoklassniki : ExtractorApi() {
     override val requiresReferer = false
 
     override suspend fun getUrl(url: String, referer: String?, subtitleCallback: (SubtitleFile) -> Unit, callback: (ExtractorLink) -> Unit) {
-        val extRef    = referer ?: ""
+        val headers = mapOf(
+            "Accept" to "*/*",
+            "Connection" to "keep-alive",
+            "Sec-Fetch-Dest" to "empty",
+            "Sec-Fetch-Mode" to "cors",
+            "Sec-Fetch-Site" to "cross-site",
+            "Origin" to mainUrl,
+            "User-Agent" to USER_AGENT,
+        )
 
-        val userAgent = mapOf("User-Agent" to "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Mobile Safari/537.36")
-
-        val videoReq  = app.get(url, headers=userAgent).text.replace("\\&quot;", "\"").replace("\\\\", "\\")
+        val videoReq  = app.get(url, headers=headers).text.replace("\\&quot;", "\"").replace("\\\\", "\\")
             .replace(Regex("\\\\u([0-9A-Fa-f]{4})")) { matchResult ->
                 Integer.parseInt(matchResult.groupValues[1], 16).toChar().toString()
             }
@@ -43,10 +49,10 @@ open class Odnoklassniki : ExtractorApi() {
                     source  = this.name,
                     name    = this.name,
                     url     = videoUrl,
-                    referer = url,
+                    referer = "$mainUrl/",
                     quality = getQualityFromName(quality),
-                    headers = userAgent,
-                    isM3u8  = false
+                    headers = headers,
+                    isM3u8  = false,
                 )
             )
         }
