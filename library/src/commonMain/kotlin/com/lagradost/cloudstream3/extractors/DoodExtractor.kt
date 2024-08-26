@@ -106,12 +106,13 @@ open class DoodLaExtractor : ExtractorApi() {
     }
 	
 private fun createHashTable(): String {
-        return buildString {
-            repeat(10) {
-                append(alphabet[Random.nextInt(alphabet.length)])
-            }
+    return buildString {
+        repeat(10) {
+            append(alphabet.random())
         }
     }
+}
+
 	
 private fun getBaseUrl(url: String): String {
         return URI(url).let {
