@@ -73,7 +73,7 @@ open class DoodLaExtractor : ExtractorApi() {
     override var mainUrl = "https://dood.la"
     override val requiresReferer = false
 	
-	private val alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+    private val alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
 
     override suspend fun getUrl(
         url: String,
@@ -84,15 +84,15 @@ open class DoodLaExtractor : ExtractorApi() {
 		val req = app.get(url)
         val host = getBaseUrl(req.url)
         val response0 = req.text
-		val md5 = host + (Regex("/pass_md5/[^']*").find(response0)?.value ?: return)
+	val md5 = host + (Regex("/pass_md5/[^']*").find(response0)?.value ?: return)
         val trueUrl = app.get(md5, referer = req.url).text + createHashTable() + "?token=" + md5.substringAfterLast("/")
 		
-		val quality = Regex("\\d{3,4}p")
+	val quality = Regex("\\d{3,4}p")
             .find(response0.substringAfter("<title>").substringBefore("</title>"))
             ?.groupValues
             ?.getOrNull(0)
 		
-		callback.invoke(
+	callback.invoke(
             ExtractorLink(
                 this.name,
                 this.name,
@@ -105,7 +105,7 @@ open class DoodLaExtractor : ExtractorApi() {
 
     }
 	
-	private fun createHashTable(): String {
+private fun createHashTable(): String {
         return buildString {
             repeat(10) {
                 append(alphabet[Random.nextInt(alphabet.length)])
@@ -113,7 +113,7 @@ open class DoodLaExtractor : ExtractorApi() {
         }
     }
 	
-	private fun getBaseUrl(url: String): String {
+private fun getBaseUrl(url: String): String {
         return URI(url).let {
             "${it.scheme}://${it.host}"
         }
