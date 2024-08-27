@@ -25,6 +25,7 @@ import androidx.preference.PreferenceManager
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError
 import org.mozilla.universalchardet.UniversalDetector
+import java.lang.ref.WeakReference
 import java.nio.charset.Charset
 
 /**
@@ -166,6 +167,8 @@ class CustomDecoder(private val fallbackFormat: Format?) : SubtitleParser {
         return subtitleParser
     }
 
+    val currentSubtitleCues = mutableListOf<SubtitleCue>()
+
     override fun parse(
         data: ByteArray,
         offset: Int,
@@ -173,8 +176,17 @@ class CustomDecoder(private val fallbackFormat: Format?) : SubtitleParser {
         outputOptions: SubtitleParser.OutputOptions,
         output: Consumer<CuesWithTiming>
     ) {
-        val customOutput = Consumer<CuesWithTiming> { o ->
-            val updatedCues = CuesWithTiming(o.cues, o.startTimeUs - subtitleOffset.times(1000), o.durationUs)
+        val customOutput = Consumer<CuesWithTiming> { cue ->
+            currentSubtitleCues.add(
+                SubtitleCue(
+                    cue.startTimeUs / 1000,
+                    cue.durationUs / 1000,
+                    cue.cues.map { it.text.toString() })
+            )
+
+            val updatedCues =
+                CuesWithTiming(cue.cues, cue.startTimeUs - subtitleOffset.times(1000), cue.durationUs)
+
             output.accept(updatedCues)
         }
         Log.i(TAG, "Parse subtitle, current parser: $realDecoder")
@@ -218,7 +230,13 @@ class CustomDecoder(private val fallbackFormat: Format?) : SubtitleParser {
     }
 
     override fun getCueReplacementBehavior(): Int {
+        // CUE_REPLACEMENT_BEHAVIOR_REPLACE seems most compatible, change if required
         return realDecoder?.cueReplacementBehavior ?: Format.CUE_REPLACEMENT_BEHAVIOR_REPLACE
+    }
+
+    override fun reset() {
+        currentSubtitleCues.clear()
+        super.reset()
     }
 }
 
@@ -243,12 +261,20 @@ class CustomSubtitleDecoderFactory : SubtitleDecoderFactory {
         ).contains(format.sampleMimeType)
     }
 
+    private var latestDecoder: WeakReference<CustomDecoder>? = null
+
+    fun getSubtitleCues(): List<SubtitleCue>? {
+        return latestDecoder?.get()?.currentSubtitleCues
+    }
+
     /**
      * Decoders created here persists across reset()
      * Do not save state in the decoder which you want to reset (e.g subtitle offset)
      **/
     override fun createDecoder(format: Format): SubtitleDecoder {
         val parser = CustomDecoder(format)
+        // Allow garbage collection if player releases the decoder
+        latestDecoder = WeakReference(parser)
 
         return DelegatingSubtitleDecoder(
             parser::class.simpleName + "Decoder", parser

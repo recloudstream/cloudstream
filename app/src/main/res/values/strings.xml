@@ -815,4 +815,5 @@
     <string name="preview_seekbar_key" translatable="false">preview_seekbar_key</string>
     <string name="preview_seekbar">Seekbar preview</string>
     <string name="preview_seekbar_desc">Enable preview thumbnail on seekbar</string>
+    <string name="no_subtitles_loaded">No subtitles loaded yet</string>
 </resources>

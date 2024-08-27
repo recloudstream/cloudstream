@@ -495,6 +495,10 @@ class CS3IPlayer : IPlayer {
         return currentSubtitleOffset
     }
 
+    override fun getSubtitleCues(): List<SubtitleCue> {
+        return currentSubtitleDecoder?.getSubtitleCues() ?: emptyList()
+    }
+
     override fun getCurrentPreferredSubtitle(): SubtitleData? {
         return subtitleHelper.getAllSubtitles().firstOrNull { sub ->
             playerSelectedSubtitleTracks.any { (id, isSelected) ->
