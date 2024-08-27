@@ -957,16 +957,21 @@ object VideoDownloadManager {
         // we don't want to make a separate connection for every 1kb
         require(chuckSize > 1000)
 
-        var contentLength =
-            app.head(url = url, headers = headers, referer = referer, verify = false).size
+        val headResponse =
+            app.head(url = url, headers = headers.plus(Pair("Range", "bytes=0-4")),
+                referer = referer, verify = false)
+        var contentLength = headResponse.size
         if (contentLength != null && contentLength <= 0) contentLength = null
 
         var downloadLength: Long? = null
         var totalLength: Long? = null
+        val rangeSupported: Boolean = headResponse.code == 206
 
-        val ranges = if (contentLength == null || contentLength < maximumSmallSize) {
+        val ranges = if (contentLength == null || contentLength < maximumSmallSize ||
+            !rangeSupported) {
             // is the equivalent of [startByte..EOF] as we don't know the size we can only do one
             // connection
+            if (!rangeSupported && contentLength != null) { totalLength = contentLength }
             LongArray(1) { startByte }
         } else {
             downloadLength = contentLength - startByte
