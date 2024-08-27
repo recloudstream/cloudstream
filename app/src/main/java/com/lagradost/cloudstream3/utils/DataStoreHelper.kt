@@ -191,15 +191,17 @@ object DataStoreHelper {
         }
     }
 
-    fun getAccount(accountIndex: Int): Account? {
-        return accounts.firstOrNull {
-            it.keyIndex == accountIndex
-        }
-    }
-
+    /** Gets the current selected account (or default), may return null if context is null and the user is using the default account */
     fun getCurrentAccount(): Account? {
-        return getAccount(selectedKeyIndex)
-
+        return (context?.let {
+            getAccounts(it)
+        } ?: accounts.toList()).firstNotNullOfOrNull { account ->
+            if (account.keyIndex == selectedKeyIndex) {
+                account
+            } else {
+                null
+            }
+        }
     }
 
     data class PosDur(
