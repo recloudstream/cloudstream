@@ -18,6 +18,8 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.ActivityResultLauncher
@@ -25,7 +27,9 @@ import androidx.annotation.IdRes
 import androidx.annotation.MainThread
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.GravityCompat
 import androidx.core.view.children
 import androidx.core.view.isGone
 import androidx.core.view.isInvisible
@@ -60,6 +64,7 @@ import com.lagradost.cloudstream3.APIHolder.initAll
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
+import com.lagradost.cloudstream3.CommonActivity.activity
 import com.lagradost.cloudstream3.CommonActivity.loadThemes
 import com.lagradost.cloudstream3.CommonActivity.onColorSelectedEvent
 import com.lagradost.cloudstream3.CommonActivity.onDialogDismissedEvent
@@ -96,6 +101,8 @@ import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.ui.APIRepository
 import com.lagradost.cloudstream3.ui.SyncWatchType
 import com.lagradost.cloudstream3.ui.WatchType
+import com.lagradost.cloudstream3.ui.account.AccountHelper.showAccountSelectLinear
+import com.lagradost.cloudstream3.ui.account.AccountViewModel
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_NAVIGATE_TO
 import com.lagradost.cloudstream3.ui.home.HomeViewModel
 import com.lagradost.cloudstream3.ui.library.LibraryViewModel
@@ -162,6 +169,7 @@ import com.lagradost.cloudstream3.utils.UIHelper.getResourceColor
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.requestRW
+import com.lagradost.cloudstream3.utils.UIHelper.setImage
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import com.lagradost.cloudstream3.utils.USER_PROVIDER_API
 import com.lagradost.cloudstream3.utils.USER_SELECTED_HOMEPAGE_API
@@ -348,6 +356,10 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
          */
         val reloadLibraryEvent = Event<Boolean>()
 
+        /**
+         * Used by DataStoreHelper to fully reload Navigation Rail header picture
+         */
+        val reloadAccountEvent = Event<Boolean>()
 
         /**
          * @return true if the str has launched an app task (be it successful or not)
@@ -813,6 +825,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
     lateinit var viewModel: ResultViewModel2
     lateinit var syncViewModel: SyncViewModel
     private var libraryViewModel: LibraryViewModel? = null
+    private var accountViewModel: AccountViewModel? = null
 
     /** kinda dirty, however it signals that we should use the watch status as sync or not*/
     var isLocalList: Boolean = false
@@ -1569,18 +1582,19 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                     logError(e)
                 }
             }
-            
+
             // we need to run this after we init all apis, otherwise currentSyncApi will fuck itself
             this@MainActivity.runOnUiThread {
                 // Change library icon with logo of current api in sync
-                libraryViewModel = ViewModelProvider(this@MainActivity)[LibraryViewModel::class.java]
+                libraryViewModel =
+                    ViewModelProvider(this@MainActivity)[LibraryViewModel::class.java]
                 libraryViewModel?.currentApiName?.observe(this@MainActivity) {
-                    val syncAPI =  libraryViewModel?.currentSyncApi
+                    val syncAPI = libraryViewModel?.currentSyncApi
                     Log.i("SYNC_API", "${syncAPI?.name}, ${syncAPI?.idPrefix}")
-                    val icon = if (syncAPI?.idPrefix ==  localListApi.idPrefix) {
-                        R.drawable.library_icon
+                    val icon = if (syncAPI?.idPrefix == localListApi.idPrefix) {
+                        R.drawable.library_icon_selector
                     } else {
-                        syncAPI?.icon ?: R.drawable.library_icon
+                        syncAPI?.icon ?: R.drawable.library_icon_selector
                     }
 
                     binding?.apply {
@@ -1680,7 +1694,30 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                     }
                 }
             }
-            noFocus(this)
+            //noFocus(this)
+
+            val navProfileRoot = findViewById<LinearLayout>(R.id.nav_footer_root)
+            val navProfilePic = findViewById<ImageView>(R.id.nav_footer_profile_pic)
+            val navProfileCard = findViewById<CardView>(R.id.nav_footer_profile_card)
+
+            navProfileCard?.setOnClickListener {
+                showAccountSelectLinear()
+            }
+
+            val homeViewModel =
+                ViewModelProvider(this@MainActivity)[HomeViewModel::class.java]
+
+            observe(homeViewModel.currentAccount) { currentAccount ->
+                if (currentAccount != null) {
+                    navProfilePic?.setImage(
+                        currentAccount.image
+                    )
+                    navProfileRoot.isVisible = true
+                } else {
+                    navProfileRoot.isGone = true
+                }
+            }
+
         }
 
         loadCache()

@@ -281,6 +281,8 @@ import com.lagradost.cloudstream3.extractors.Lulustream1
 import com.lagradost.cloudstream3.extractors.Lulustream2
 import com.lagradost.cloudstream3.extractors.Lulustream3
 import com.lagradost.cloudstream3.extractors.Vidguardto3
+import com.lagradost.cloudstream3.extractors.Ds2play
+import com.lagradost.cloudstream3.extractors.Ds2video
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import kotlinx.coroutines.delay
@@ -1003,6 +1005,8 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     Boltx(),
     Vectorx(),
     Boosterx(),
+    Ds2play(),
+    Ds2video(),
     
 )
 

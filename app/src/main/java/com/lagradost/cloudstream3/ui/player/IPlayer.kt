@@ -214,7 +214,9 @@ interface IPlayer {
     fun setPlaybackSpeed(speed: Float)
 
     fun getIsPlaying(): Boolean
+    /** Current player duration in milliseconds */
     fun getDuration(): Long?
+    /** Current player position in milliseconds */
     fun getPosition(): Long?
 
     fun seekTime(time: Long, source: PlayerEventSource = PlayerEventSource.UI)
@@ -288,4 +290,7 @@ interface IPlayer {
 
     /** If no trackLanguage is set it'll default to first track. Specifying the id allows for track overrides as the language can be identical. */
     fun setPreferredAudioTrack(trackLanguage: String?, id: String? = null)
+
+    /** Get the current subtitle cues, for use with syncing */
+    fun getSubtitleCues(): List<SubtitleCue>
 }

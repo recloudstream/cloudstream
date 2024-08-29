@@ -16,6 +16,8 @@ import androidx.viewbinding.ViewBinding
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
+import com.google.android.material.navigation.NavigationBarItemView
+import com.google.android.material.navigationrail.NavigationRailMenuView
 import com.lagradost.cloudstream3.AcraApplication.Companion.getActivity
 import com.lagradost.cloudstream3.CommonActivity.activity
 import com.lagradost.cloudstream3.HomePageList
@@ -476,7 +478,8 @@ class HomeParentItemAdapterPreview(
                 homePreviewHiddenPrevFocus.setOnFocusChangeListener { _, hasFocus ->
                     if (!hasFocus) return@setOnFocusChangeListener
                     if (previewViewpager.currentItem <= 0) {
-                        (activity as? MainActivity)?.binding?.navRailView?.requestFocus()
+                        //Focus the Home item as the default focus will be the header item
+                        (activity as? MainActivity)?.binding?.navRailView?.findViewById<NavigationBarItemView>(R.id.navigation_home)?.requestFocus()
                     } else {
                         previewViewpager.setCurrentItem(previewViewpager.currentItem - 1, true)
                         binding.homePreviewPlayBtt.requestFocus()
