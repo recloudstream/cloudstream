@@ -1697,27 +1697,31 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
             //noFocus(this)
 
             val navProfileRoot = findViewById<LinearLayout>(R.id.nav_footer_root)
-            val navProfilePic = findViewById<ImageView>(R.id.nav_footer_profile_pic)
-            val navProfileCard = findViewById<CardView>(R.id.nav_footer_profile_card)
 
-            navProfileCard?.setOnClickListener {
-                showAccountSelectLinear()
-            }
+            if (isLayout(TV or EMULATOR)) {
+                val navProfilePic = findViewById<ImageView>(R.id.nav_footer_profile_pic)
+                val navProfileCard = findViewById<CardView>(R.id.nav_footer_profile_card)
 
-            val homeViewModel =
-                ViewModelProvider(this@MainActivity)[HomeViewModel::class.java]
-
-            observe(homeViewModel.currentAccount) { currentAccount ->
-                if (currentAccount != null) {
-                    navProfilePic?.setImage(
-                        currentAccount.image
-                    )
-                    navProfileRoot.isVisible = true
-                } else {
-                    navProfileRoot.isGone = true
+                navProfileCard?.setOnClickListener {
+                    showAccountSelectLinear()
                 }
-            }
 
+                val homeViewModel =
+                    ViewModelProvider(this@MainActivity)[HomeViewModel::class.java]
+
+                observe(homeViewModel.currentAccount) { currentAccount ->
+                    if (currentAccount != null) {
+                        navProfilePic?.setImage(
+                            currentAccount.image
+                        )
+                        navProfileRoot.isVisible = true
+                    } else {
+                        navProfileRoot.isGone = true
+                    }
+                }
+            } else {
+                navProfileRoot.isGone = true
+            }
         }
 
         loadCache()

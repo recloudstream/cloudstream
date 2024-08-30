@@ -439,6 +439,8 @@ class HomeParentItemAdapterPreview(
                 }
             }
 
+            homeAccount?.isGone = isLayout(TV or EMULATOR)
+
             homeAccount?.setOnClickListener {
                 activity?.showAccountSelectLinear()
             }
