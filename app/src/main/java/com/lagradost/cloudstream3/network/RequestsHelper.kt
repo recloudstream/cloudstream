@@ -2,14 +2,13 @@ package com.lagradost.cloudstream3.network
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.os.Build
 import androidx.preference.PreferenceManager
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.USER_AGENT
-import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.nicehttp.Requests
 import com.lagradost.nicehttp.ignoreAllSSLErrors
 import okhttp3.Cache
+import okhttp3.ConnectionSpec
 import okhttp3.Headers
 import okhttp3.Headers.Companion.toHeaders
 import okhttp3.OkHttpClient
@@ -27,9 +26,12 @@ fun Requests.initClient(context: Context): OkHttpClient {
     val dns = settingsManager.getInt(context.getString(R.string.dns_pref), 0)
 
     val builder = OkHttpClient.Builder()
+        .ignoreAllSSLErrors()
+        .sslSocketFactory(getUnsafeSSLSocketFactory(), TrustAllCerts())
+        .hostnameVerifier { _, _ -> true }
+        .connectionSpecs(listOf(ConnectionSpec.MODERN_TLS, ConnectionSpec.COMPATIBLE_TLS))
         .followRedirects(true)
         .followSslRedirects(true)
-        .ignoreAllSSLErrors()
         .cache(
             // Note that you need to add a ResponseInterceptor to make this 100% active.
             // The server response dictates if and when stuff should be cached.
@@ -47,21 +49,11 @@ fun Requests.initClient(context: Context): OkHttpClient {
         6 -> builder.addQuad9Dns()
     }
 
-    // Apply the custom SSL settings on Android versions <= 9 (API level 28)
-    if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) {
-        normalSafeApiCall {
-            val sslSocketFactory = getUnsafeSSLSocketFactory()
-            builder.sslSocketFactory(sslSocketFactory, TrustAllCerts())
-            builder.hostnameVerifier { _, _ -> true }
-        }
-    }
-
     baseClient = builder.build()
     return baseClient
 }
 
-// Trust is an expensive thing, Cheap people can't afford it
-
+// Trust is an expensive thing, Cheap people can't afford it, lol;
 /** So what happens in older android versions like 9 is that their network security provider is
  * not much robust, and some extensions store data in non protected cheap servers and urls, thus
  * the app rejects connection, We used google conscrypt provider lib earlier but its version 5.2.3
@@ -104,7 +96,7 @@ fun getUnsafeSSLSocketFactory(): SSLSocketFactory {
     return sslContext.socketFactory
 }
 
-private val DEFAULT_HEADERS = mapOf("User-Agent" to USER_AGENT)
+private val DEFAULT_HEADERS = hashMapOf("User-Agent" to USER_AGENT)
 
 /**
  * Set headers > Set cookies > Default headers > Default Cookies
