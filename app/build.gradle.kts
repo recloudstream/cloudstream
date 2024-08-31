@@ -169,8 +169,8 @@ dependencies {
     implementation("androidx.core:core-ktx:1.13.1")
     implementation("androidx.appcompat:appcompat:1.7.0")
     implementation("androidx.navigation:navigation-ui-ktx:2.7.7")
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.8.3")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.3")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.8.4")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.4")
     implementation("androidx.navigation:navigation-fragment-ktx:2.7.7")
 
     // Design & UI
@@ -187,7 +187,7 @@ dependencies {
 
     // For KSP -> Official Annotation Processors are Not Yet Supported for KSP
     ksp("dev.zacsweers.autoservice:auto-service-ksp:1.2.0")
-    implementation("com.google.guava:guava:33.2.1-android")
+    implementation("com.google.guava:guava:33.3.0-android")
     implementation("dev.zacsweers.autoservice:auto-service-ksp:1.2.0")
 
     // Media 3 (ExoPlayer)
@@ -204,7 +204,7 @@ dependencies {
     // PlayBack
     implementation("com.jaredrummler:colorpicker:1.1.0") // Subtitle Color Picker
     implementation("com.github.recloudstream:media-ffmpeg:1.1.0") // Custom FF-MPEG Lib for Audio Codecs
-    implementation("com.github.teamnewpipe:NewPipeExtractor:176da72") /* For Trailers
+    implementation("com.github.teamnewpipe:NewPipeExtractor:6e3a4a6") /* For Trailers
     ^ Update to Latest Commits if Trailers Misbehave, github.com/TeamNewPipe/NewPipeExtractor/commits/dev */
     implementation("com.github.albfernandez:juniversalchardet:2.5.0") // Subtitle Decoding
 
@@ -227,14 +227,14 @@ dependencies {
     implementation("com.github.LagradOst:SafeFile:0.0.6") // To Prevent the URI File Fu*kery
     implementation("org.conscrypt:conscrypt-android:2.5.2") // To Fix SSL Fu*kery on Android 9
     implementation("com.uwetrottmann.tmdb2:tmdb-java:2.11.0") // TMDB API v3 Wrapper Made with RetroFit
-    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs_nio:2.0.4") //nio flavor needed for NewPipeExtractor
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs_nio:2.1.1") // NIO flavour needed for NewPipeExtractor
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.1") /* JSON Parser
     ^ Don't Bump Jackson above 2.13.1 , Crashes on Android TV's and FireSticks that have Min API
     Level 25 or Less. */
 
     // Downloading & Networking
-    implementation("androidx.work:work-runtime:2.9.0")
-    implementation("androidx.work:work-runtime-ktx:2.9.0")
+    implementation("androidx.work:work-runtime:2.9.1")
+    implementation("androidx.work:work-runtime-ktx:2.9.1")
     implementation("com.github.Blatzar:NiceHttp:0.4.11") // HTTP Lib
 
     implementation(project(":library") {
