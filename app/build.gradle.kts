@@ -213,7 +213,8 @@ dependencies {
     implementation("ch.acra:acra-toast:5.11.3")
 
     // UI Stuff
-    implementation("com.facebook.shimmer:shimmer:0.5.0") // Shimmering Effect (Loading Skeleton)
+    implementation("dev.volo.shimmer:shimmer:0.6.0-alpha01") /* Shimmering Effect (Loading Skeleton)
+    https://github.com/facebookarchive/shimmer-android/issues/133 */
     implementation("androidx.palette:palette-ktx:1.0.0") // Palette For Images -> Colors
     implementation("androidx.tvprovider:tvprovider:1.0.0")
     implementation("com.github.discord:OverlappingPanels:0.1.5") // Gestures
