@@ -8,6 +8,7 @@ import android.content.*
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
+import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -20,7 +21,6 @@ import androidx.work.WorkManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.model.GlideUrl
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.lagradost.api.Log
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
 import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
@@ -30,23 +30,20 @@ import com.lagradost.cloudstream3.MainActivity
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.app
-import com.lagradost.cloudstream3.mvvm.launchSafe
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.services.VideoDownloadService
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStore.removeKey
-import com.lagradost.cloudstream3.utils.SubtitleUtils.deleteMatchingSubtitles
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
 import com.lagradost.safefile.MediaFileContentType
 import com.lagradost.safefile.SafeFile
+import com.lagradost.safefile.closeQuietly
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
@@ -54,7 +51,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
-import okhttp3.internal.closeQuietly
 import java.io.Closeable
 import java.io.File
 import java.io.IOException
@@ -70,6 +66,7 @@ object VideoDownloadManager {
     var maxConcurrentDownloads = 3
     var maxConcurrentConnections = 3
     private var currentDownloads = mutableListOf<Int>()
+    const val TAG = "VDM"
 
     private const val USER_AGENT =
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36"
@@ -849,6 +846,7 @@ object VideoDownloadManager {
         val downloadLength: Long?,
         val chuckSize: Long,
         val bufferSize: Int,
+        val isResumed : Boolean,
     ) {
         val size get() = chuckStartByte.size
 
@@ -937,7 +935,6 @@ object VideoDownloadManager {
             }
             return false
         }
-
     }
 
     @Throws
@@ -957,20 +954,74 @@ object VideoDownloadManager {
         // we don't want to make a separate connection for every 1kb
         require(chuckSize > 1000)
 
-        var contentLength =
-            app.head(url = url, headers = headers, referer = referer, verify = false).size
+        val headRequest = app.head(url = url, headers = headers, referer = referer, verify = false)
+        var contentLength = headRequest.size
         if (contentLength != null && contentLength <= 0) contentLength = null
 
-        var downloadLength: Long? = null
-        var totalLength: Long? = null
+        val hasRangeSupport = when(headRequest.headers["Accept-Ranges"]?.lowercase()?.trim()) {
+            // server has stated it has no support
+            "none" -> false
+            // server has stated it has support
+            "bytes" -> true
+            // if null or undefined (as bytes is the only range unit formally defined)
+            // If the get request returns partial content we support range
+            else -> {
+                headRequest.headers["Accept-Ranges"]?.let { range->
+                    Log.v(TAG, "Unknown Accept-Ranges tag: $range")
+                }
+                // as we don't poll the body this should be fine
+                val getRequest = app.get(
+                    url,
+                    headers = headers + mapOf(
+                        "Range" to "bytes=0-${
+                            // we don't want to request more than the actual file
+                            // but also more than 0 bytes
+                            contentLength?.let { max ->
+                                minOf(maxOf(max-1L,3L),1023L)
+                            } ?: 1023L
+                        }"
+                    ),
+                    referer = referer,
+                    verify = false
+                )
+                // if head request did not work then we can just look for the size here too
+                // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Range
+                if (contentLength == null) {
+                    contentLength = getRequest.headers["Content-Range"]?.trim()?.lowercase()?.let { range ->
+                        // we only support "bytes" unit
+                        if (range.startsWith("bytes")) {
+                            // may be '*' if unknown
+                            range.substringAfter("/").toLongOrNull()
+                        }
+                        else {
+                            Log.v(TAG, "Unknown Content-Range unit: $range")
+                            null
+                        }
+                    }
+                }
 
-        val ranges = if (contentLength == null || contentLength < maximumSmallSize) {
+                // supports range if status is partial content https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/206
+                getRequest.code == 206
+            }
+        }
+
+        Log.d(TAG, "Starting stream with url=$url, startByte=$startByte, contentLength=$contentLength, hasRangeSupport=$hasRangeSupport")
+
+        var downloadLength: Long? = null
+
+        val ranges = if (!hasRangeSupport) {
+            // is the equivalent of [0..EOF] as we cant resume, nor can parallelize it
+            downloadLength = contentLength
+            LongArray(1) { 0 }
+        } else if (contentLength == null || contentLength < maximumSmallSize) {
+            if (contentLength != null) {
+                downloadLength = contentLength - startByte
+            }
             // is the equivalent of [startByte..EOF] as we don't know the size we can only do one
             // connection
             LongArray(1) { startByte }
         } else {
             downloadLength = contentLength - startByte
-            totalLength = contentLength
             // div with ceiling as
             // this makes the last part "unknown ending" and it will break at EOF
             // so eg startByte = 0, downloadLength = 13, chuckSize = 10
@@ -986,9 +1037,11 @@ object VideoDownloadManager {
             referer = referer,
             chuckStartByte = ranges,
             downloadLength = downloadLength,
-            totalLength = totalLength,
+            totalLength = contentLength,
             chuckSize = chuckSize,
-            bufferSize = bufferSize
+            bufferSize = bufferSize,
+            // we have only resumed if we had a downloaded file and we can resume
+            isResumed = startByte > 0 && hasRangeSupport
         )
     }
 
@@ -1059,7 +1112,7 @@ object VideoDownloadManager {
             if (baseFile == null) return@withContext DOWNLOAD_BAD_CONFIG
 
             // set up the download file
-            val stream = setupStream(baseFile, name, folder, extension, tryResume)
+            var stream = setupStream(baseFile, name, folder, extension, tryResume)
 
             fileStream = stream.open()
 
@@ -1084,11 +1137,22 @@ object VideoDownloadManager {
                 )
             )
 
+            // too short file, treat it as a invalid link
             if (items.totalLength != null && items.totalLength < minimumSize) {
                 fileStream.closeQuietly()
                 metadata.onDelete()
                 stream.delete()
                 return@withContext DOWNLOAD_INVALID_INPUT
+            }
+
+            // if we have an output stream that cant be resumed then we delete the entire file
+            // and set up the stream again
+            if (!items.isResumed && stream.startAt > 0) {
+                fileStream.closeQuietly()
+                stream.delete()
+                metadata.setResumeLength(0)
+                stream = setupStream(baseFile, name, folder, extension, false)
+                fileStream = stream.open()
             }
 
             metadata.totalBytes = items.totalLength
