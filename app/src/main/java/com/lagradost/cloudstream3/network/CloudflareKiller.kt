@@ -45,10 +45,10 @@ class CloudflareKiller : Interceptor {
      * */
     fun getCookieHeaders(url: String): Headers {
         val userAgentHeaders = WebViewResolver.webViewUserAgent?.let {
-            mapOf("user-agent" to it)
+            hashMapOf("user-agent" to it)
         } ?: emptyMap()
 
-        return getHeaders(userAgentHeaders, savedCookies[URI(url).host] ?: emptyMap())
+        return getHeaders(HashMap(userAgentHeaders), HashMap(savedCookies[URI(url).host] ?: emptyMap()))
     }
 
     override fun intercept(chain: Interceptor.Chain): Response = runBlocking {
@@ -97,11 +97,10 @@ class CloudflareKiller : Interceptor {
 
     private suspend fun proceed(request: Request, cookies: Map<String, String>): Response {
         val userAgentMap = WebViewResolver.getWebViewUserAgent()?.let {
-            mapOf("user-agent" to it)
+            hashMapOf("user-agent" to it)
         } ?: emptyMap()
 
-        val headers =
-            getHeaders(request.headers.toMap() + userAgentMap, cookies + request.cookies)
+        val headers = getHeaders(HashMap(request.headers.toMap() + userAgentMap), HashMap(cookies + request.cookies))
         return app.baseClient.newCall(
             request.newBuilder()
                 .headers(headers)
