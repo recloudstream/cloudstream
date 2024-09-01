@@ -16,7 +16,7 @@ class VidSrcExtractor2 : VidSrcExtractor() {
 open class VidSrcExtractor : ExtractorApi() {
     override val name = "VidSrc"
     override val mainUrl = "https://vidsrc.net"
-    private val apiUrl = "https://vidsrc.stream"
+    private val apiUrl = "https://whisperingauroras.com"
     override val requiresReferer = false
 
     override suspend fun getUrl(
