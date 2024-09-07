@@ -150,10 +150,6 @@ android {
     namespace = "com.lagradost.cloudstream3"
 }
 
-repositories {
-    maven("https://jitpack.io")
-}
-
 dependencies {
     // Testing
     testImplementation("junit:junit:4.13.2")
