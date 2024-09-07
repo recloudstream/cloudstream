@@ -98,15 +98,6 @@ tasks.withType<DokkaTask>().configureEach {
                 remoteLineSuffix = "#L"
             }
 
-            externalDocumentationLink {
-                url = URL("https://square.github.io/okhttp/4.x/")
-                packageListUrl = URL("https://square.github.io/okhttp/4.x/okhttp/package-list")
-            }
-            externalDocumentationLink {
-                url = URL("https://kotlin.github.io/kotlinx.serialization/")
-                packageListUrl = URL("https://kotlin.github.io/kotlinx.serialization/package-list")
-            }
-
             dokkaImplementation.dependencies.forEach {
                 externalDocumentationLink {
                     url = URL("https://javadoc.io/doc/${it.group}/${it.name}/${it.version}")
