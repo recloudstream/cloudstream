@@ -55,11 +55,11 @@ jobs:
         run: |
           cd $GITHUB_WORKSPACE/src/
           chmod +x gradlew
-          ./gradlew app:dokkaHtml
+          ./gradlew docs:dokkaHtml
 
       - name: Copy Dokka
         run: |
-          cp -r $GITHUB_WORKSPACE/src/app/build/dokka/html/* $GITHUB_WORKSPACE/dokka/
+          cp -r $GITHUB_WORKSPACE/src/docs/build/dokka/html/* $GITHUB_WORKSPACE/dokka/
 
       - name: Push builds
         run: |

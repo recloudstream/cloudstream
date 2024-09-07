@@ -27,7 +27,7 @@ kotlin {
             implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")
             implementation("me.xdrop:fuzzywuzzy:1.4.0") // Match extractors
             implementation("org.mozilla:rhino:1.7.15") // run JavaScript
-            implementation("com.github.teamnewpipe:NewPipeExtractor:176da72")
+            implementation("com.github.teamnewpipe:NewPipeExtractor:v0.24.2")
         }
     }
 }
