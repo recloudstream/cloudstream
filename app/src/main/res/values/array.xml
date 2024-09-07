@@ -55,6 +55,8 @@
         <item>@string/player_settings_play_in_vlc</item>
         <item>@string/player_settings_play_in_mpv</item>
         <item>@string/player_settings_play_in_mpvytdl</item>
+        <item>@string/player_settings_play_in_mpvkt</item>
+        <item>@string/player_settings_play_in_mpvktpreview</item>
         <item>@string/player_settings_play_in_web</item>
         <item>@string/player_settings_play_in_browser</item>
     </array>
@@ -64,6 +66,8 @@
         <item>2</item>
         <item>5</item>
         <item>6</item>
+        <item>7</item>
+        <item>8</item>
         <item>4</item>
         <item>3</item>
     </array>

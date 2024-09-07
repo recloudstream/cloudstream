@@ -35,6 +35,8 @@
         <package android:name="com.instantbits.cast.webvideo" />
         <package android:name="is.xyz.mpv" />
         <package android:name="is.xyz.mpv.ytdl" />
+        <package android:name="live.mehiz.mpvkt" />
+        <package android:name="live.mehiz.mpvkt.preview" />
     </queries>
 
     <!-- Without the large heap Exoplayer buffering gets reset due to OOM. -->

@@ -36,6 +36,12 @@ import com.lagradost.cloudstream3.MainActivity.Companion.MPV_PACKAGE
 import com.lagradost.cloudstream3.MainActivity.Companion.MPV_YTDL
 import com.lagradost.cloudstream3.MainActivity.Companion.MPV_YTDL_COMPONENT
 import com.lagradost.cloudstream3.MainActivity.Companion.MPV_YTDL_PACKAGE
+import com.lagradost.cloudstream3.MainActivity.Companion.MPVKT
+import com.lagradost.cloudstream3.MainActivity.Companion.MPVKT_COMPONENT
+import com.lagradost.cloudstream3.MainActivity.Companion.MPVKT_PACKAGE
+import com.lagradost.cloudstream3.MainActivity.Companion.MPVKT_PREVIEW
+import com.lagradost.cloudstream3.MainActivity.Companion.MPVKT_PREVIEW_COMPONENT
+import com.lagradost.cloudstream3.MainActivity.Companion.MPVKT_PREVIEW_PACKAGE
 import com.lagradost.cloudstream3.MainActivity.Companion.VLC
 import com.lagradost.cloudstream3.MainActivity.Companion.VLC_COMPONENT
 import com.lagradost.cloudstream3.MainActivity.Companion.VLC_PACKAGE
@@ -1476,6 +1482,44 @@ class ResultViewModel2 : ViewModel() {
             putExtra("position", position.toInt())
     }
 
+    private fun playWithMpvKt(
+        activity: Activity?,
+        id: Int,
+        link: ExtractorLink,
+        subtitles: List<SubtitleData>,
+        resume: Boolean = true,
+    ) = launchActivity(activity, MPVKT, id) {
+        putExtra("subs", subtitles.map { it.url.toUri() }.toTypedArray())
+        putExtra("subs.name", subtitles.map { it.name }.toTypedArray())
+        putExtra("subs.filename", subtitles.map { it.name }.toTypedArray())
+        setDataAndType(Uri.parse(link.url), "video/*")
+        component = MPVKT_COMPONENT
+        putExtra("secure_uri", true)
+        putExtra("return_result", true)
+        val position = getViewPos(id)?.position
+        if (resume && position != null)
+            putExtra("position", position.toInt())
+    }
+
+    private fun playWithMpvKtPreview(
+        activity: Activity?,
+        id: Int,
+        link: ExtractorLink,
+        subtitles: List<SubtitleData>,
+        resume: Boolean = true,
+    ) = launchActivity(activity, MPVKT_PREVIEW, id) {
+        putExtra("subs", subtitles.map { it.url.toUri() }.toTypedArray())
+        putExtra("subs.name", subtitles.map { it.name }.toTypedArray())
+        putExtra("subs.filename", subtitles.map { it.name }.toTypedArray())
+        setDataAndType(Uri.parse(link.url), "video/*")
+        component = MPVKT_PREVIEW_COMPONENT
+        putExtra("secure_uri", true)
+        putExtra("return_result", true)
+        val position = getViewPos(id)?.position
+        if (resume && position != null)
+            putExtra("position", position.toInt())
+    }
+
     // https://wiki.videolan.org/Android_Player_Intents/
     private fun playWithVlc(
         activity: Activity?,
@@ -1565,6 +1609,11 @@ class ResultViewModel2 : ViewModel() {
             MPV_YTDL_PACKAGE,
             R.string.player_settings_play_in_mpvytdl,
             ACTION_PLAY_EPISODE_IN_MPV_YTDL
+        ),
+        ExternalApp(
+            MPVKT_PREVIEW_PACKAGE,
+            R.string.player_settings_play_in_mpvktpreview,
+            ACTION_PLAY_EPISODE_IN_MPVKT_PREVIEW
         )
     )
 
@@ -1885,6 +1934,38 @@ class ResultViewModel2 : ViewModel() {
                 )
             ) { (result, index) ->
                 playWithMpvYtdl(
+                    activity,
+                    click.data.id,
+                    result.links[index],
+                    result.subs
+                )
+            }
+
+            ACTION_PLAY_EPISODE_IN_MPVKT -> acquireSingleLink(
+                click.data,
+                LoadType.Chromecast,
+                txt(
+                    R.string.episode_action_play_in_format,
+                    txt(R.string.player_settings_play_in_mpvkt)
+                )
+            ) { (result, index) ->
+                playWithMpvKt(
+                    activity,
+                    click.data.id,
+                    result.links[index],
+                    result.subs
+                )
+            }
+
+            ACTION_PLAY_EPISODE_IN_MPVKT_PREVIEW -> acquireSingleLink(
+                click.data,
+                LoadType.Chromecast,
+                txt(
+                    R.string.episode_action_play_in_format,
+                    txt(R.string.player_settings_play_in_mpvktpreview)
+                )
+            ) { (result, index) ->
+                playWithMpvKtPreview(
                     activity,
                     click.data.id,
                     result.links[index],

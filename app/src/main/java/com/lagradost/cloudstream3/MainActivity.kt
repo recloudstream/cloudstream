@@ -201,11 +201,15 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         const val VLC_PACKAGE = "org.videolan.vlc"
         const val MPV_PACKAGE = "is.xyz.mpv"
         const val MPV_YTDL_PACKAGE = "is.xyz.mpv.ytdl"
+        const val MPVKT_PACKAGE = "live.mehiz.mpvkt"
+        const val MPVKT_PREVIEW_PACKAGE = "live.mehiz.mpvkt.preview"
         const val WEB_VIDEO_CAST_PACKAGE = "com.instantbits.cast.webvideo"
 
         val VLC_COMPONENT = ComponentName(VLC_PACKAGE, "$VLC_PACKAGE.gui.video.VideoPlayerActivity")
         val MPV_COMPONENT = ComponentName(MPV_PACKAGE, "$MPV_PACKAGE.MPVActivity")
         val MPV_YTDL_COMPONENT = ComponentName(MPV_YTDL_PACKAGE, "$MPV_PACKAGE.MPVActivity")
+        val MPVKT_COMPONENT = ComponentName(MPVKT_PACKAGE, "$MPVKT_PACKAGE.ui.player.PlayerActivity")
+        val MPVKT_PREVIEW_COMPONENT = ComponentName(MPVKT_PREVIEW_PACKAGE, "$MPVKT_PACKAGE.ui.player.PlayerActivity")
 
         //TODO REFACTOR AF
         open class ResultResume(
@@ -294,10 +298,42 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
             }
         }
 
+        val MPVKT = object : ResultResume(
+            MPVKT_PACKAGE,
+            position = "position",
+            duration = "duration",
+        ) {
+            override fun getPosition(intent: Intent?): Long {
+                return intent?.getIntExtra(this.position, defaultTime.toInt())?.toLong()
+                    ?: defaultTime
+            }
+
+            override fun getDuration(intent: Intent?): Long {
+                return intent?.getIntExtra(this.duration, defaultTime.toInt())?.toLong()
+                    ?: defaultTime
+            }
+        }
+
+        val MPVKT_PREVIEW = object : ResultResume(
+            MPVKT_PREVIEW_PACKAGE,
+            position = "position",
+            duration = "duration",
+        ) {
+            override fun getPosition(intent: Intent?): Long {
+                return intent?.getIntExtra(this.position, defaultTime.toInt())?.toLong()
+                    ?: defaultTime
+            }
+
+            override fun getDuration(intent: Intent?): Long {
+                return intent?.getIntExtra(this.duration, defaultTime.toInt())?.toLong()
+                    ?: defaultTime
+            }
+        }
+
         val WEB_VIDEO = ResultResume(WEB_VIDEO_CAST_PACKAGE)
 
         val resumeApps = arrayOf(
-            VLC, MPV, MPV_YTDL, WEB_VIDEO
+            VLC, MPV, MPV_YTDL, MPVKT, MPVKT_PREVIEW, WEB_VIDEO
         )
 
 

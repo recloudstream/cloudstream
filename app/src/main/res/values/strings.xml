@@ -665,6 +665,8 @@
     <string name="player_settings_play_in_vlc">VLC</string>
     <string name="player_settings_play_in_mpv">MPV</string>
     <string name="player_settings_play_in_mpvytdl">MPV YTDL</string>
+    <string name="player_settings_play_in_mpvkt">mpvKt</string>
+    <string name="player_settings_play_in_mpvktpreview">mpvKt Preview</string>
     <string name="player_settings_play_in_web">Web Video Cast</string>
     <string name="player_settings_play_in_fcast">Fcast</string>
     <string name="player_settings_play_in_browser">Web browser</string>
