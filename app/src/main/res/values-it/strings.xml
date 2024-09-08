@@ -683,4 +683,6 @@
 \n%s</string>
     <string name="preview_seekbar">Anteprima barra di ricerca</string>
     <string name="preview_seekbar_desc">Abilita miniatura di anteprima sulla barra di ricerca</string>
+    <string name="player_settings_play_in_mpvytdl">MPV YTDL</string>
+    <string name="no_subtitles_loaded">Nessun sottotitolo caricato</string>
 </resources>

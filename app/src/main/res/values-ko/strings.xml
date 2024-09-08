@@ -305,13 +305,13 @@
     <string name="plugins_downloaded" formatted="true">다운로드됨: %d</string>
     <string name="blank_repo_message">CloudStream에는 기본적으로 설치된 사이트가 없습니다. 저장소에서 사이트를 설치해야 합니다.
 \n
-\nSky UK Limited의 무분별한 DMCA 조치로 인해 🤮 앱에서 저장소 사이트를 연결할 수 없습니다.
+\nSky UK Limited의 무분별한 DMCA 게시 중단으로 인해 앱에서 저장소 사이트를 연결 할 수 없습니다.
 \n
-\nDiscord에 가입하거나 온라인에서 검색하세요.</string>
+\nDiscord에 가입하거나 온라인으로 검색해 보세요.</string>
     <string name="view_public_repositories_button">커뮤니티 저장소 보기</string>
     <string name="view_public_repositories_button_short">공개 목록</string>
     <string name="uppercase_all_subtitles">모든 자막 대문자화</string>
-    <string name="download_all_plugins_from_repo">이 저장소에서 모든 플러그인을 다운로드하시겠습니까?</string>
+    <string name="download_all_plugins_from_repo">이 저장소에서 모든 플러그인을 다운로드하시겠습니까?경고: CloudStream 3은 타 사 확장 프로그램 사용에 대해 책임을 지지 않으며 이를 지원하지 않습니다!</string>
     <string name="single_plugin_disabled" formatted="true">%s (사용불가)</string>
     <string name="add_repository">저장소 추가</string>
     <string name="repository_name_hint">저장소 이름</string>
@@ -322,7 +322,7 @@
     <string name="plugin_load_fail" formatted="true">로드할 수 없음 %s</string>
     <string name="audio_tracks">오디오 트랙</string>
     <string name="video_tracks">동영상 트랙</string>
-    <string name="apply_on_restart">재시작 시 적용</string>
+    <string name="apply_on_restart">재 시작 시 적용.</string>
     <string name="safe_mode_title">안전 모드 켜기</string>
     <string name="safe_mode_description">충돌로 인해 문제를 일으키는 확장 프로그램을 찾는 데 도움이 되도록 모든 확장 프로그램이 사용 중지되었습니다.</string>
     <string name="safe_mode_crash_info">충돌 정보 보기</string>
@@ -635,4 +635,32 @@
     <string name="action_remove_from_favorites">즐겨찾기에서 제거</string>
     <string name="episode_action_cast_mirror">캐스트미러</string>
     <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
+    <string name="delete_plugin">플러그인 삭제</string>
+    <string name="test_warning">경고</string>
+    <string name="preview_seekbar">탐색바 미리보기</string>
+    <string name="preview_seekbar_desc">탐색바에서 미리보기 화면 활성화</string>
+    <string name="play_from_beginning_img_des">처음부터 시작</string>
+    <string name="downloads_empty">현재 다운로드가 없습니다.</string>
+    <string name="downloads_delete_select">삭제할 항목을 선택하십시오</string>
+    <string name="offline_file">오프라인 시청가능</string>
+    <string name="select_all">모두 선택</string>
+    <string name="deselect_all">모두 선택해제</string>
+    <string name="open_local_video">로컬 비디오 열기</string>
+    <string name="delete_files">파일 삭제</string>
+    <string name="delete_format" formatted="true">삭제 (%1$d | %2$s)</string>
+    <string name="delete_message_multiple" formatted="true">다음 항목을 영구적으로 삭제 하시겠습니까??
+\n
+\n%s</string>
+    <string name="delete_message_series_episodes" formatted="true">다음 에피소드를 영구적으로 삭제 하시겠습니까? %1$s?
+\n
+\n%2$s</string>
+    <string name="delete_message_series_section" formatted="true">또한 다음 시리즈의 모든 에피소드를 영구적으로 삭제합니다:
+\n
+\n%s</string>
+    <string name="delete_message_series_only" formatted="true">다음 시리즈의 모든 에피소드를 영구적으로 삭제 하시겠습니까??
+\n
+\n%s</string>
+    <string name="sort_release_date_new">출시일 (새로운 것부터 오래된 것)</string>
+    <string name="sort_release_date_old">출시일 (오래된것부터 새로운것)</string>
+    <string name="hide_player_control_names">플레이어 컨트롤 이름 숨기기</string>
 </resources>

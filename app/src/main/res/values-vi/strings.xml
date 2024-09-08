@@ -676,4 +676,6 @@
     <string name="hide_player_control_names">Ẩn tên các nút điều khiển</string>
     <string name="preview_seekbar_desc">Bật chế độ xem trước hình thu nhỏ trên seekbar</string>
     <string name="preview_seekbar">Xem trước Seekbar</string>
+    <string name="player_settings_play_in_mpvytdl">MPV YTDL</string>
+    <string name="no_subtitles_loaded">Chưa tải phụ đề</string>
 </resources>
