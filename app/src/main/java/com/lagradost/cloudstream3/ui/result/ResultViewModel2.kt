@@ -41,6 +41,7 @@ import com.lagradost.cloudstream3.MainActivity.Companion.VLC_COMPONENT
 import com.lagradost.cloudstream3.MainActivity.Companion.VLC_PACKAGE
 import com.lagradost.cloudstream3.MainActivity.Companion.WEB_VIDEO
 import com.lagradost.cloudstream3.MainActivity.Companion.WEB_VIDEO_CAST_PACKAGE
+import com.lagradost.cloudstream3.actions.VideoClickActionHolder
 import com.lagradost.cloudstream3.metaproviders.SyncRedirector
 import com.lagradost.cloudstream3.mvvm.*
 import com.lagradost.cloudstream3.syncproviders.AccountManager
@@ -1576,6 +1577,9 @@ class ResultViewModel2 : ViewModel() {
         when (click.action) {
             ACTION_SHOW_OPTIONS -> {
                 val options = mutableListOf<Pair<UiText, Int>>()
+
+                VideoClickActionHolder.makeOptionMap(activity, click.data)
+
                 if (activity?.isConnectedToChromecast() == true) {
                     options.addAll(
                         listOf(
@@ -1613,6 +1617,10 @@ class ResultViewModel2 : ViewModel() {
                         txt(R.string.episode_action_download_subtitle) to ACTION_DOWNLOAD_EPISODE_SUBTITLE_MIRROR,
                         txt(R.string.episode_action_reload_links) to ACTION_RELOAD_EPISODE,
                     )
+                )
+
+                options.addAll(
+                    VideoClickActionHolder.makeOptionMap(activity, click.data)
                 )
 
                 // Do not add mark as watched on movies
@@ -1932,6 +1940,35 @@ class ResultViewModel2 : ViewModel() {
 
                 // Kinda dirty to reload all episodes :(
                 reloadEpisodes()
+            }
+
+            else -> {
+                val action = VideoClickActionHolder.getActionById(click.action) ?: return
+
+                // TODO: use action.sourceTypes
+                if (action.oneSource) {
+                    loadLinks(click.data, isVisible = true, LoadType.ExternalApp) { links ->
+                        action.runAction(
+                            activity,
+                            click.data,
+                            links,
+                            null
+                        )
+                    }
+                } else {
+                    acquireSingleLink(
+                        click.data,
+                        LoadType.ExternalApp,
+                        action.name
+                    ) { (result, index) ->
+                        action.runAction(
+                            activity,
+                            click.data,
+                            result,
+                            index
+                        )
+                    }
+                }
             }
         }
     }

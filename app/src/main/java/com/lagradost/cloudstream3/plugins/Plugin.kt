@@ -9,6 +9,8 @@ import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.extractorApis
 import android.util.Log
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.lagradost.cloudstream3.actions.VideoClickAction
+import com.lagradost.cloudstream3.actions.VideoClickActionHolder
 
 const val PLUGIN_TAG = "PluginInstance"
 
@@ -50,6 +52,18 @@ abstract class Plugin {
         Log.i(PLUGIN_TAG, "Adding ${element.name} (${element.mainUrl}) ExtractorApi")
         element.sourcePlugin = this.filename
         extractorApis.add(element)
+    }
+
+    /**
+     * Used to register VideoClickAction instances
+     * @param element VideoClickAction you want to register
+     */
+    fun registerVideoClickAction(element: VideoClickAction) {
+        Log.i(PLUGIN_TAG, "Adding ${element.name} VideoClickAction")
+        element.sourcePlugin = this.filename
+        synchronized(VideoClickActionHolder.allVideoClickActions) {
+            VideoClickActionHolder.allVideoClickActions.add(element)
+        }
     }
 
     class Manifest {

@@ -207,6 +207,8 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         val MPV_COMPONENT = ComponentName(MPV_PACKAGE, "$MPV_PACKAGE.MPVActivity")
         val MPV_YTDL_COMPONENT = ComponentName(MPV_YTDL_PACKAGE, "$MPV_PACKAGE.MPVActivity")
 
+        val activityResultLauncher: ActivityResultLauncher<Intent>? = null
+
         //TODO REFACTOR AF
         open class ResultResume(
             val packageString: String,

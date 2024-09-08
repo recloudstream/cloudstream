@@ -30,6 +30,11 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
+/**
+ * Ids >= 1000 are reserved for VideoClickActions
+ * @see VideoClickActionHolder
+ */
+
 const val ACTION_PLAY_EPISODE_IN_PLAYER = 1
 const val ACTION_PLAY_EPISODE_IN_VLC_PLAYER = 2
 const val ACTION_PLAY_EPISODE_IN_BROWSER = 3
