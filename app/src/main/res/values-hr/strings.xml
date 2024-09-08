@@ -663,8 +663,8 @@
     <string name="hide_player_control_names">Sakrij nazive kontrola playera</string>
     <string name="open_downloaded_repo">Otvori repozitorij</string>
     <string name="device_pin_expired_message">PIN kod je sada istekao!</string>
-    <string name="sort_release_date_new">Datum izdanja (od novog do starog)</string>
-    <string name="sort_release_date_old">Datum izdanja (od starog do novog)</string>
+    <string name="sort_release_date_new">Datum izdanja (od novog prema starom)</string>
+    <string name="sort_release_date_old">Datum izdanja (od starog prema novom)</string>
     <string name="device_pin_error_message">Neuspjelo dobivanje PIN koda uređaja, pokušaj s lokalnom autentifikacijom</string>
     <string name="test_warning">Upozorenje</string>
     <string name="delete_plugin">Izbriši dodatak</string>
@@ -686,4 +686,6 @@
     <string name="delete_message_series_only" formatted="true">Stvarno želite trajno izbrisati sve epizode u sljedećoj seriji?
 \n
 \n%s</string>
+    <string name="player_settings_play_in_mpvytdl">MPV YTDL</string>
+    <string name="no_subtitles_loaded">Još nije učitan nijedan titl</string>
 </resources>

@@ -320,7 +320,7 @@
     <string name="recommended">Рекомендовано</string>
     <string name="player_load_subtitles_online">Завантажити з інтернету</string>
     <string name="downloaded_file">Завантажений файл</string>
-    <string name="actor_main">Головна</string>
+    <string name="actor_main">Головний</string>
     <string name="home_source">Джерело</string>
     <string name="home_random">Випадковий</string>
     <string name="coming_soon">Скоро буде…</string>
@@ -377,7 +377,7 @@
     <string name="subtitle_offset_extra_hint_later_format">Використовуйте цей параметр, якщо субтитри з’являються на %d мс занадто рано</string>
     <string name="subtitle_offset_extra_hint_before_format">Використовуйте це, якщо субтитри з’являються із запізненням на %d мс</string>
     <string name="player_loaded_subtitles" formatted="true">Завантажено %s</string>
-    <string name="actor_supporting">Підтримка</string>
+    <string name="actor_supporting">Другорядний</string>
     <string name="actor_background">Фон</string>
     <string name="quality_blueray">Blu-ray</string>
     <string name="subtitles_remove_captions">Видаляти закриті титри з субтитрів</string>
@@ -663,4 +663,6 @@
 \n%s</string>
     <string name="preview_seekbar">Попередній перегляд повзунка</string>
     <string name="preview_seekbar_desc">Ввімкнути мініатюру попереднього перегляду на повзунку</string>
+    <string name="player_settings_play_in_mpvytdl">MPV YTDL</string>
+    <string name="no_subtitles_loaded">Субтитри ще не завантажено</string>
 </resources>

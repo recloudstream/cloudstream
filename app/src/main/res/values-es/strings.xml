@@ -663,4 +663,6 @@
 \n%s</string>
     <string name="preview_seekbar_desc">Activar la previsualización para las miniaturas en la barra de búsqueda</string>
     <string name="preview_seekbar">Previsualización de Seekbar</string>
+    <string name="player_settings_play_in_mpvytdl">MPV YTDL</string>
+    <string name="no_subtitles_loaded">Aún no hay subtítulos cargados</string>
 </resources>

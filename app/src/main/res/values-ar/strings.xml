@@ -211,7 +211,7 @@
     <string name="asian_drama">دراما آسيوية</string>
     <string name="livestreams">بث حي</string>
     <string name="nsfw">+18</string>
-    <string name="others">أخري</string>
+    <string name="others">أخرى</string>
     <!--singular-->
     <string name="movies_singular">فيلم</string>
     <string name="tv_series_singular">مسلسل</string>
@@ -695,4 +695,6 @@
 \n%s</string>
     <string name="preview_seekbar">معاينة شريط البحث</string>
     <string name="preview_seekbar_desc">تمكين معاينة الصورة المصغرة على شريط البحث</string>
+    <string name="player_settings_play_in_mpvytdl">MPV YTDL</string>
+    <string name="no_subtitles_loaded">لم يتم تحميل أي ترجمات بعد</string>
 </resources>

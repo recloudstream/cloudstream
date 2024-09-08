@@ -664,4 +664,6 @@
     <string name="delete_format" formatted="true">Usuń (%1$d | %2$s)</string>
     <string name="preview_seekbar">Podgląd paska przewijania</string>
     <string name="preview_seekbar_desc">Włącz podgląd miniatury na pasku wyszukiwania</string>
+    <string name="player_settings_play_in_mpvytdl">MPV YTDL</string>
+    <string name="no_subtitles_loaded">Nie wczytano jeszcze napisów</string>
 </resources>
