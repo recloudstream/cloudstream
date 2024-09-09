@@ -15,6 +15,7 @@ import com.lagradost.cloudstream3.ui.result.ResultEpisode
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.EpisodeSkip
 import com.lagradost.cloudstream3.utils.ExtractorLink
+import com.lagradost.cloudstream3.utils.ExtractorLinkType
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
@@ -94,7 +95,7 @@ class PlayerGeneratorViewModel : ViewModel() {
                 if (generator?.hasCache == true && generator?.hasNext() == true) {
                     safeApiCall {
                         generator?.generateLinks(
-                            type = LoadType.InApp,
+                            sourceTypes = LOADTYPE_INAPP,
                             clearCache = false,
                             callback = {},
                             subtitleCallback = {},
@@ -173,7 +174,7 @@ class PlayerGeneratorViewModel : ViewModel() {
         }
     }
 
-    fun loadLinks(type: LoadType = LoadType.InApp) {
+    fun loadLinks(sourceTypes: Set<ExtractorLinkType> = LOADTYPE_INAPP) {
         Log.i(TAG, "loadLinks")
         currentJob?.cancel()
 
@@ -188,7 +189,7 @@ class PlayerGeneratorViewModel : ViewModel() {
             // load more data
             _loadingLinks.postValue(Resource.Loading())
             val loadingState = safeApiCall {
-                generator?.generateLinks(type = type, clearCache = forceClearCache, callback = {
+                generator?.generateLinks(sourceTypes = sourceTypes, clearCache = forceClearCache, callback = {
                     currentLinks.add(it)
                     // Clone to prevent ConcurrentModificationException
                     normalSafeApiCall {
