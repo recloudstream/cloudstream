@@ -311,7 +311,8 @@ class SelectSourceController(val view: ImageView, val activity: ControllerActivi
                                     }
                                 }, subtitleCallback = {
                                     currentSubs.add(it)
-                                })
+                                },
+                                isCasting = true)
                         }
 
                         val sortedLinks = sortUrls(currentLinks)

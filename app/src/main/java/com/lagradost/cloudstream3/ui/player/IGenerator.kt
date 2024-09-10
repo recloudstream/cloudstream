@@ -20,12 +20,6 @@ val LOADTYPE_CHROMECAST = setOf(
     ExtractorLinkType.M3U8
 )
 
-val LOADTYPE_FCAST = setOf(
-    ExtractorLinkType.VIDEO,
-    ExtractorLinkType.DASH,
-    ExtractorLinkType.M3U8
-)
-
 val LOADTYPE_ALL = ExtractorLinkType.entries.toSet()
 
 

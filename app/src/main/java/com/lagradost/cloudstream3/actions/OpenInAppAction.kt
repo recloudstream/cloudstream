@@ -3,6 +3,7 @@ package com.lagradost.cloudstream3.actions
 import android.app.Activity
 import android.content.ActivityNotFoundException
 import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
 import android.widget.Toast
 import androidx.core.content.FileProvider
@@ -36,9 +37,10 @@ fun updateDurationAndPosition(position: Long, duration: Long) {
  * Util method that may be helpful for creating intents for apps that support m3u8 files.
  * All sources are written to a temporary m3u8 file, which is then sent to the app.
  */
-fun makeTempM3U8Intent(activity: Activity,
-                       intent: Intent,
-                       result: LinkLoadingResult) {
+fun makeTempM3U8Intent(
+    context: Context,
+    intent: Intent,
+    result: LinkLoadingResult) {
     intent.apply {
         addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION)
         addFlags(Intent.FLAG_GRANT_PREFIX_URI_PERMISSION)
@@ -46,33 +48,35 @@ fun makeTempM3U8Intent(activity: Activity,
         addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
     }
 
-    val outputDir = activity.cacheDir
+    val outputDir = context.cacheDir
 
     if (result.links.size == 1) {
         intent.setDataAndType(result.links.first().url.toUri(), "video/*")
     } else {
         val outputFile = File.createTempFile("mirrorlist", ".m3u8", outputDir)
 
-        var text = "#EXTM3U"
+        var text = "#EXTM3U\n#EXT-X-VERSION:3"
 
-         //With subtitles it doesn't work for no reason :(
+        result.links.forEachIndexed { index, link ->
+            text += "\n#EXTINF:$index,${link.name}\n${link.url}"
+        }
+
+        //With subtitles it doesn't work for no reason :(
         /*for (sub in result.subs) {
             val normalizedName = sub.name.replace("[^a-zA-Z0-9 ]".toRegex(), "")
-            val language = fromLanguageToTwoLetters(sub.name, true) ?: "und"
-            text += "\n#EXT-X-MEDIA:TYPE=SUBTITLES,GROUP-ID=\"subs\",NAME=\"${normalizedName}\",DEFAULT=NO,AUTOSELECT=NO,FORCED=NO,LANGUAGE=\"${language}\",URI=\"${sub.url}\""
+            text += "\n#EXT-X-MEDIA:TYPE=SUBTITLES,GROUP-ID=\"subs\",NAME=\"${normalizedName}\",DEFAULT=NO,AUTOSELECT=NO,FORCED=NO,LANGUAGE=\"${sub.languageCode}\",URI=\"${sub.url}\""
         }*/
 
-        for (link in result.links) {
-            text += "\n#EXTINF:, ${link.name}\n${link.url}"
-        }
+        text += "\n#EXT-X-ENDLIST"
+
         outputFile.writeText(text)
 
         intent.setDataAndType(
             FileProvider.getUriForFile(
-                activity,
-                activity.applicationContext.packageName + ".provider",
+                context,
+                context.applicationContext.packageName + ".provider",
                 outputFile
-            ), "video/*"
+            ), "application/x-mpegURL"
         )
     }
 }
@@ -86,21 +90,23 @@ abstract class OpenInAppAction(
     override val name: UiText
         get() = txt(R.string.episode_action_play_in_format, appName)
 
-    override fun shouldShow(activity: Activity?, video: ResultEpisode) = activity?.isAppInstalled(packageName) == true
+    override val isPlayer = true
+
+    override fun shouldShow(context: Context?, video: ResultEpisode?) = context?.isAppInstalled(packageName) == true
 
     override fun runAction(
-        activity: Activity?,
+        context: Context?,
         video: ResultEpisode,
         result: LinkLoadingResult,
         index: Int?
     ) {
-        if (activity == null) return
+        if (context == null) return
         val intent = Intent(action)
         intent.setPackage(packageName)
         if (intentClass != null) {
             intent.component = ComponentName(packageName, intentClass)
         }
-        putExtra(activity, intent, video, result, index)
+        putExtra(context, intent, video, result, index)
         setKey("last_opened_id", video.id)
         try {
             CoroutineScope(Dispatchers.IO).launch {
@@ -122,11 +128,11 @@ abstract class OpenInAppAction(
      * Before intent is sent, this function is called to put extra data into the intent.
      * @see VideoClickAction.runAction
      * */
-    abstract fun putExtra(activity: Activity, intent: Intent, video: ResultEpisode, result: LinkLoadingResult, index: Int?)
+    abstract fun putExtra(context: Context, intent: Intent, video: ResultEpisode, result: LinkLoadingResult, index: Int?)
 
     /**
      * This function is called when the app is opened again after the intent was sent.
-     * You can use it to for example read duration and position.
+     * You can use it to for example update duration and position.
      * @see updateDurationAndPosition
      */
     abstract fun onResult(activity: Activity, intent: Intent?)

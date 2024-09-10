@@ -1,6 +1,7 @@
 package com.lagradost.cloudstream3.actions.temp
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import androidx.core.net.toUri
@@ -34,27 +35,28 @@ open class MpvKtPackage(
     )
 
     override fun putExtra(
-        activity: Activity,
+        context: Context,
         intent: Intent,
         video: ResultEpisode,
         result: LinkLoadingResult,
         index: Int?
     ) {
-        val link = result.links[index ?: 0]
+        val link = result.links.getOrNull(index ?: 0) ?: return
 
         intent.apply {
             putExtra("subs", result.subs.map { it.url.toUri() }.toTypedArray())
-            putExtra("subs.name", result.subs.map { it.name }.toTypedArray())
-            putExtra("subs.filename", result.subs.map { it.name }.toTypedArray())
             setDataAndType(Uri.parse(link.url), "video/*")
+
             // m3u8 plays, but changing sources feature is not available
             // makeTempM3U8Intent(activity, this, result)
-            putExtra("secure_uri", true)
-            putExtra("return_result", true)
+
             //putExtra("headers", link.headers.flatMap { listOf(it.key, it.value) }.toTypedArray())
+
             val position = getViewPos(video.id)?.position
             if (position != null)
                 putExtra("position", position.toInt())
+
+            putExtra("secure_uri", true)
         }
     }
 

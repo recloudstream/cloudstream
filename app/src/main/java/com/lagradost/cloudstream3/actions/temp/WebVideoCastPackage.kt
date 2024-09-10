@@ -1,6 +1,7 @@
 package com.lagradost.cloudstream3.actions.temp
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -11,6 +12,8 @@ import com.lagradost.cloudstream3.ui.result.LinkLoadingResult
 import com.lagradost.cloudstream3.ui.result.ResultEpisode
 import com.lagradost.cloudstream3.ui.result.txt
 import com.lagradost.cloudstream3.utils.ExtractorLinkType
+
+// https://www.webvideocaster.com/integrations
 
 class WebVideoCastPackage: OpenInAppAction(
     txt("Web Video Cast"),
@@ -26,7 +29,7 @@ class WebVideoCastPackage: OpenInAppAction(
     )
 
     override fun putExtra(
-        activity: Activity,
+        context: Context,
         intent: Intent,
         video: ResultEpisode,
         result: LinkLoadingResult,
@@ -55,7 +58,5 @@ class WebVideoCastPackage: OpenInAppAction(
         }
     }
 
-    override fun onResult(activity: Activity, intent: Intent?) {
-
-    }
+    override fun onResult(activity: Activity, intent: Intent?) = Unit
 }

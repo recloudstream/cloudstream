@@ -1,6 +1,7 @@
 package com.lagradost.cloudstream3.actions.temp
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import androidx.core.net.toUri
 import com.lagradost.api.Log
@@ -12,6 +13,9 @@ import com.lagradost.cloudstream3.ui.result.ResultEpisode
 import com.lagradost.cloudstream3.ui.result.txt
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
 import com.lagradost.cloudstream3.utils.ExtractorLinkType
+
+// https://github.com/mpv-android/mpv-android/blob/0eb3cdc6f1632636b9c30d52ec50e4b017661980/app/src/main/java/is/xyz/mpv/MPVActivity.kt#L904
+// https://mpv-android.github.io/mpv-android/intent.html
 
 class MpvYTDLPackage : MpvPackage("MPV YTDL", "is.xyz.mpv.ytdl") {
     override val sourceTypes = setOf(
@@ -26,14 +30,9 @@ open class MpvPackage(appName: String = "MPV", packageName: String = "is.xyz.mpv
     packageName,
     "is.xyz.mpv.MPVActivity"
 ) {
-    override val sourceTypes = setOf(
-        ExtractorLinkType.VIDEO,
-        ExtractorLinkType.DASH,
-        ExtractorLinkType.M3U8
-    )
 
     override fun putExtra(
-        activity: Activity,
+        context: Context,
         intent: Intent,
         video: ResultEpisode,
         result: LinkLoadingResult,
@@ -41,14 +40,15 @@ open class MpvPackage(appName: String = "MPV", packageName: String = "is.xyz.mpv
     ) {
         intent.apply {
             putExtra("subs", result.subs.map { it.url.toUri() }.toTypedArray())
-            putExtra("subs.name", result.subs.map { it.name }.toTypedArray())
-            putExtra("subs.filename", result.subs.map { it.name }.toTypedArray())
-            makeTempM3U8Intent(activity, this, result)
-            putExtra("secure_uri", true)
-            putExtra("return_result", true)
+            putExtra("title", video.name)
+
+            makeTempM3U8Intent(context, this, result)
+
             val position = getViewPos(video.id)?.position
             if (position != null)
                 putExtra("position", position.toInt())
+
+            putExtra("secure_uri", true)
         }
     }
 

@@ -39,7 +39,6 @@ import com.lagradost.cloudstream3.ui.player.GeneratorPlayer
 import com.lagradost.cloudstream3.ui.player.IGenerator
 import com.lagradost.cloudstream3.ui.player.LOADTYPE_ALL
 import com.lagradost.cloudstream3.ui.player.LOADTYPE_CHROMECAST
-import com.lagradost.cloudstream3.ui.player.LOADTYPE_FCAST
 import com.lagradost.cloudstream3.ui.player.LOADTYPE_INAPP
 import com.lagradost.cloudstream3.ui.player.LOADTYPE_INAPP_DOWNLOAD
 import com.lagradost.cloudstream3.ui.player.RepoLinkGenerator
@@ -84,10 +83,6 @@ import com.lagradost.cloudstream3.utils.DataStoreHelper.setVideoWatchState
 import com.lagradost.cloudstream3.utils.DataStoreHelper.updateSubscribedData
 import com.lagradost.cloudstream3.utils.UIHelper.clipboardHelper
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
-import com.lagradost.cloudstream3.utils.fcast.FcastManager
-import com.lagradost.cloudstream3.utils.fcast.FcastSession
-import com.lagradost.cloudstream3.utils.fcast.Opcode
-import com.lagradost.cloudstream3.utils.fcast.PlayMessage
 import kotlinx.coroutines.*
 import java.util.concurrent.TimeUnit
 
@@ -790,7 +785,7 @@ class ResultViewModel2 : ViewModel() {
                 val generator = RepoLinkGenerator(listOf(episode))
                 val currentLinks = mutableSetOf<ExtractorLink>()
                 val currentSubs = mutableSetOf<SubtitleData>()
-                generator.generateLinks(clearCache = false, allowedTypes = LOADTYPE_CHROMECAST, callback = {
+                generator.generateLinks(clearCache = false, allowedTypes = LOADTYPE_INAPP_DOWNLOAD, callback = {
                     it.first?.let { link ->
                         currentLinks.add(link)
                     }
@@ -941,7 +936,7 @@ class ResultViewModel2 : ViewModel() {
         isVisible: Boolean = true
     ) {
         if (activity == null) return
-        loadLinks(result, isVisible = isVisible, sourceTypes = LOADTYPE_CHROMECAST) { data ->
+        loadLinks(result, isVisible = isVisible, sourceTypes = LOADTYPE_CHROMECAST, isCasting = true) { data ->
             startChromecast(activity, result, data.links, data.subs, 0)
         }
     }
@@ -1251,7 +1246,7 @@ class ResultViewModel2 : ViewModel() {
         _loadedLinks.postValue(null)
     }
 
-    private fun postPopup(text: UiText, options: List<UiText>, callback: suspend (Int?) -> Unit) {
+    fun postPopup(text: UiText, options: List<UiText>, callback: suspend (Int?) -> Unit) {
         _selectPopup.postValue(
             SelectPopup.SelectText(
                 text,
@@ -1289,6 +1284,7 @@ class ResultViewModel2 : ViewModel() {
         isVisible: Boolean,
         sourceTypes: Set<ExtractorLinkType> = LOADTYPE_ALL,
         clearCache: Boolean = false,
+        isCasting: Boolean = false,
         work: suspend (CoroutineScope.(LinkLoadingResult) -> Unit)
     ) {
         currentLoadLinkJob?.cancel()
@@ -1297,7 +1293,8 @@ class ResultViewModel2 : ViewModel() {
                 result,
                 isVisible = isVisible,
                 sourceTypes = sourceTypes,
-                clearCache = clearCache
+                clearCache = clearCache,
+                isCasting = isCasting
             )
             if (!this.isActive) return@ioSafe
             work(links)
@@ -1309,9 +1306,10 @@ class ResultViewModel2 : ViewModel() {
         result: ResultEpisode,
         sourceTypes: Set<ExtractorLinkType>,
         text: UiText,
-        callback: (Pair<LinkLoadingResult, Int>) -> Unit,
+        isCasting: Boolean = false,
+        callback: (Pair<LinkLoadingResult, Int>) -> Unit
     ) {
-        loadLinks(result, isVisible = true, sourceTypes) { links ->
+        loadLinks(result, isVisible = true, sourceTypes, isCasting = isCasting) { links ->
             // Could not find a better way to do this
             val context = AcraApplication.context
             postPopup(
@@ -1346,6 +1344,7 @@ class ResultViewModel2 : ViewModel() {
         isVisible: Boolean,
         sourceTypes: Set<ExtractorLinkType> = LOADTYPE_ALL,
         clearCache: Boolean = false,
+        isCasting: Boolean = false
     ): LinkLoadingResult {
         val tempGenerator = RepoLinkGenerator(listOf(result))
 
@@ -1358,15 +1357,19 @@ class ResultViewModel2 : ViewModel() {
         }
         try {
             updatePage()
-            tempGenerator.generateLinks(clearCache, sourceTypes, { (link, _) ->
-                if (link != null) {
-                    links += link
-                    updatePage()
-                }
-            }, { sub ->
+            tempGenerator.generateLinks(clearCache,
+                allowedTypes = sourceTypes,
+                callback = { (link, _) ->
+                    if (link != null) {
+                        links += link
+                        updatePage()
+                    }
+                },
+                subtitleCallback = { sub ->
                 subs += sub
                 updatePage()
-            })
+            },
+                isCasting = isCasting)
         } catch (e: Exception) {
             logError(e)
         } finally {
@@ -1396,12 +1399,6 @@ class ResultViewModel2 : ViewModel() {
                             txt(R.string.episode_action_chromecast_episode) to ACTION_CHROME_CAST_EPISODE,
                             txt(R.string.episode_action_chromecast_mirror) to ACTION_CHROME_CAST_MIRROR,
                         )
-                    )
-                }
-
-                if (FcastManager.currentDevices.isNotEmpty()) {
-                    options.add(
-                        txt(R.string.player_settings_play_in_fcast) to ACTION_FCAST
                     )
                 }
 
@@ -1566,42 +1563,10 @@ class ResultViewModel2 : ViewModel() {
                 acquireSingleLink(
                     click.data,
                     LOADTYPE_CHROMECAST,
-                    txt(R.string.episode_action_chromecast_mirror)
+                    txt(R.string.episode_action_chromecast_mirror),
+                    isCasting = true
                 ) { (result, index) ->
                     startChromecast(activity, click.data, result.links, result.subs, index)
-                }
-            }
-
-            ACTION_FCAST -> {
-                val devices = FcastManager.currentDevices.toList()
-                postPopup(
-                    txt(R.string.player_settings_select_cast_device),
-                    devices.map { txt(it.name) }) { index ->
-                    if (index == null) return@postPopup
-                    val device = devices.getOrNull(index)
-
-                    acquireSingleLink(
-                        click.data,
-                        LOADTYPE_FCAST,
-                        txt(R.string.episode_action_cast_mirror)
-                    ) { (result, index) ->
-                        val host = device?.host ?: return@acquireSingleLink
-                        val link = result.links.getOrNull(index) ?: return@acquireSingleLink
-
-                        FcastSession(host).use { session ->
-                            session.sendMessage(
-                                Opcode.Play,
-                                PlayMessage(
-                                    link.type.getMimeType(),
-                                    link.url,
-                                    headers = mapOf(
-                                        "referer" to link.referer,
-                                        "user-agent" to USER_AGENT
-                                    ) + link.headers
-                                )
-                            )
-                        }
-                    }
                 }
             }
 
@@ -1666,7 +1631,6 @@ class ResultViewModel2 : ViewModel() {
                 val action = VideoClickActionHolder.getActionById(click.action) ?: return
 
                 activity?.setKey("last_click_action", action.uniqueId())
-                // TODO: use action.sourceTypes
                 if (action.oneSource) {
                     acquireSingleLink(
                         click.data,

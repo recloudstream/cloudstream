@@ -1,6 +1,7 @@
 package com.lagradost.cloudstream3.actions.temp
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.os.Build
 import com.lagradost.api.Log
@@ -11,6 +12,9 @@ import com.lagradost.cloudstream3.ui.result.LinkLoadingResult
 import com.lagradost.cloudstream3.ui.result.ResultEpisode
 import com.lagradost.cloudstream3.ui.result.txt
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
+
+// https://github.com/videolan/vlc-android/blob/3706c4be2da6800b3d26344fc04fab03ffa4b860/application/vlc-android/src/org/videolan/vlc/gui/video/VideoPlayerActivity.kt#L1898
+// https://wiki.videolan.org/Android_Player_Intents/
 
 class VlcPackage: OpenInAppAction(
     appName = txt("VLC"),
@@ -28,21 +32,21 @@ class VlcPackage: OpenInAppAction(
 ) {
     override val oneSource = false
 
-    // https://wiki.videolan.org/Android_Player_Intents/
     override fun putExtra(
-        activity: Activity,
+        context: Context,
         intent: Intent,
         video: ResultEpisode,
         result: LinkLoadingResult,
         index: Int?
     ) {
 
-        makeTempM3U8Intent(activity, intent, result)
+        makeTempM3U8Intent(context, intent, result)
 
         val position = getViewPos(video.id)?.position ?: 0L
 
         intent.putExtra("from_start", false)
         intent.putExtra("position", position)
+        intent.putExtra("secure_uri", true)
     }
 
     override fun onResult(activity: Activity, intent: Intent?) {

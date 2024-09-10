@@ -1,6 +1,6 @@
 package com.lagradost.cloudstream3.actions.temp
 
-import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import com.lagradost.cloudstream3.actions.VideoClickAction
@@ -15,25 +15,27 @@ class PlayInBrowserAction: VideoClickAction() {
 
     override val oneSource = true
 
+    override val isPlayer = true
+
     override val sourceTypes: Set<ExtractorLinkType> = setOf(
         ExtractorLinkType.VIDEO,
         ExtractorLinkType.DASH,
         ExtractorLinkType.M3U8
     )
 
-    override fun shouldShow(activity: Activity?, video: ResultEpisode) = true
+    override fun shouldShow(context: Context?, video: ResultEpisode?) = true
 
     override fun runAction(
-        activity: Activity?,
+        context: Context?,
         video: ResultEpisode,
         result: LinkLoadingResult,
         index: Int?
     ) {
-        if (index == null) return
+        val link = result.links.getOrNull(index ?: 0) ?: return
         try {
             val i = Intent(Intent.ACTION_VIEW)
-            i.data = Uri.parse(result.links[index].url)
-            activity?.startActivity(i)
+            i.data = Uri.parse(link.url)
+            context?.startActivity(i)
         } catch (e: Exception) {
             logError(e)
         }
