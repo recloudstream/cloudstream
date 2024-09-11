@@ -123,26 +123,8 @@ object DownloadButtonSetup {
                         }
                         ?.filter { it.parentId == click.data.parentId }
 
-                    val currentSeason = click.data.season ?: 0
-                    val currentEpisode = click.data.episode
-
                     val items = mutableListOf<ExtractorUri>()
-
-                    // Make sure we only get this episode and episodes after it,
-                    // and that we can go to the next season if we need to.
-                    val allRelevantEpisodes = episodes
-                        ?.sortedWith(
-                            compareByDescending<VideoDownloadHelper.DownloadEpisodeCached> { it.id == click.data.id }
-                                .thenBy { it.season ?: 0 }
-                                .thenBy { it.episode }
-                        )
-                        ?.filter {
-                            if (it.season == null) return@filter true
-                            val isCurrentOrLaterInSeason = it.season == currentSeason && (it.episode >= currentEpisode || it.id == click.data.id)
-                            val isInFutureSeasons = it.season > currentSeason
-
-                            isCurrentOrLaterInSeason || isInFutureSeasons
-                        }
+                    val allRelevantEpisodes = episodes?.sortedWith(compareBy<VideoDownloadHelper.DownloadEpisodeCached> { it.season ?: 0 }.thenBy { it.episode })
 
                     allRelevantEpisodes?.forEach {
                         val keyInfo = getKey<VideoDownloadManager.DownloadedFileInfo>(
@@ -170,10 +152,9 @@ object DownloadButtonSetup {
                             )
                         )
                     }
-
                     act.navigate(
                         R.id.global_to_navigation_player, GeneratorPlayer.newInstance(
-                            DownloadFileGenerator(items)
+                            DownloadFileGenerator(items).apply { goto(items.indexOfFirst { it.id == click.data.id }) }
                         )
                     )
                 }
