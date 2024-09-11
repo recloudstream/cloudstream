@@ -610,8 +610,8 @@
     <string name="setup_done">Done</string>
     <string name="extensions">Extensions</string>
     <string name="add_repository">Add repository</string>
-    <string name="repository_name_hint">Repository name</string>
-    <string name="repository_url_hint">Repository URL</string>
+    <string name="repository_name_hint">Repository name (Optional)</string>
+    <string name="repository_url_hint">Repository URL or Shortcode</string>
     <string name="plugin_loaded">Plugin Loaded</string>
     <string name="plugin_downloaded">Plugin Downloaded</string>
     <string name="plugin_deleted">Plugin Deleted</string>
