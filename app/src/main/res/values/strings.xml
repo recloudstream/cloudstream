@@ -433,13 +433,14 @@
     <string name="resize_fit">Fit to screen</string>
     <string name="resize_fill">Stretch</string>
     <string name="resize_zoom">Zoom</string>
-    <string name="resize_sixteen_by_nine">SixteenByNine</string>
-    <string name="resize_nine_by_sixteen">NineBySixteen</string>
-    <string name="resize_one_by_one">OneByOne</string>
-    <string name="resize_imax">IMAX</string>
-    <string name="resize_dolby_vision">Dolby Vision</string>
+    <string name="resize_sixteen_by_nine">Widescreen 16:9</string>
+    <string name="resize_nine_by_sixteen">Vertical 9:16</string>
+    <string name="resize_one_by_one">Square 1:1</string>
+    <string name="resize_imax">IMAX 1.43:1</string>
+    <string name="resize_dolby_vision">Dolby Vision 2.39:1</string>
     <string name="resize_ultra_wide">UltraWide 21:9</string>
     <string name="resize_expanded">Expanded 1.90:1</string>
+    <string name="choose_aspect_ratio">Choose Aspect Ratio</string>
     <string name="legal_notice">Disclaimer</string>
     <string name="legal_notice_key" translatable="false">legal_notice_key</string>
     <string name="legal_notice_text" translatable="false">Any legal issues regarding the content on this application

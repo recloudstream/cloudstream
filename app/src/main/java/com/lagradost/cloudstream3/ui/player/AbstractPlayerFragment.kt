@@ -1,6 +1,7 @@
 package com.lagradost.cloudstream3.ui.player
 
 import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -615,13 +616,40 @@ abstract class AbstractPlayerFragment(
     }
 
     fun nextResize() {
-        resizeMode = (resizeMode + 1) % PlayerResize.entries.size
-        resize(resizeMode, true)
+//        resizeMode = (resizeMode + 1) % PlayerResize.entries.size
+//        resize(resizeMode, true)
+        showAspectRatioDialog()
     }
 
     fun resize(resize: Int, showToast: Boolean) {
         resize(PlayerResize.entries[resize], showToast)
     }
+
+    private fun showAspectRatioDialog() {
+        // Pause the player when the dialog is shown using the handleEvent method
+        player.handleEvent(CSPlayerEvent.Pause, PlayerEventSource.UI)
+
+        val aspectRatioOptions = PlayerResize.values().map { getString(it.nameRes) }.toTypedArray()
+
+        // Create and show the dialog
+        AlertDialog.Builder(requireContext())
+            .setTitle(getString(R.string.choose_aspect_ratio))
+            .setItems(aspectRatioOptions) { _, which ->
+                val selectedOption = PlayerResize.values()[which]
+                resize(selectedOption, true)
+
+                player.handleEvent(CSPlayerEvent.Play, PlayerEventSource.UI)
+            }
+            .setOnCancelListener {
+                player.handleEvent(CSPlayerEvent.Play, PlayerEventSource.UI)
+            }
+            .setNegativeButton(android.R.string.cancel) { _, _ ->
+                player.handleEvent(CSPlayerEvent.Play, PlayerEventSource.UI)
+            }
+            .show()
+    }
+
+
 
     @SuppressLint("UnsafeOptInUsageError")
     fun resize(resize: PlayerResize, showToast: Boolean) {
@@ -633,17 +661,18 @@ abstract class AbstractPlayerFragment(
             PlayerResize.SixteenByNine -> 16.0f/9.0f
             PlayerResize.NineBySixteen -> 9.0f/16.0f
             PlayerResize.OneByOne -> 1.0f/1.0f
-            PlayerResize.IMAX -> 1.43f / 1.0f
-            PlayerResize.DolbyVision -> 2.39f / 1.0f
-            PlayerResize.UltraWide -> 21.0f / 9.0f
-            PlayerResize.Expanded -> 1.90f / 1.0f
+            PlayerResize.IMAX -> 1.43f/1.0f
+            PlayerResize.DolbyVision -> 2.39f/1.0f
+            PlayerResize.UltraWide -> 21.0f/9.0f
+            PlayerResize.Expanded -> 1.90f/1.0f
         }
         if(type is Float){
             playerView?.resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FIT
             aspectRatioFrameLayout?.setAspectRatio(type)
-        }else {
-            playerView?.resizeMode = type as Int
+        }else if(type is Int) {
+            playerView?.resizeMode = type
         }
+
         if (showToast)
             showToast(resize.nameRes, Toast.LENGTH_SHORT)
     }
