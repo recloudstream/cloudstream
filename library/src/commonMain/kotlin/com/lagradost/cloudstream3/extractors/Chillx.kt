@@ -86,8 +86,7 @@ open class Chillx : ExtractorApi() {
         subtitleCallback: (SubtitleFile) -> Unit,
         callback: (ExtractorLink) -> Unit
     ) {		
-	val master = Regex("\\s*=\\s*'([^']+)").find(
-            app.get(
+	val doc = app.get(
                 url,
                 referer = referer ?: "",
                 headers = mapOf(
@@ -95,12 +94,13 @@ open class Chillx : ExtractorApi() {
                     "Accept-Language" to "en-US,en;q=0.5",
                 )
             ).text
-        )?.groupValues?.get(1)
 		
+	val master = Regex("\\s*=\\s*'([^']+)").find(doc)?.groupValues?.get(1)		
 	val key = fetchKey() ?: throw ErrorLoadingException("Unable to get key")
 		
         val decrypt = cryptoAESHandler(master ?: return, key.toByteArray(), false)
-            ?.replace("\\", "")
+            ?.replace("\\n", "\n")
+	    ?.replace("\\", "")
             ?: throw ErrorLoadingException("failed to decrypt")        
 
         val subtitlePattern = """\{"file":"([^"]+)","label":"([^"]+)","kind":"captions","default":\w+\}""".toRegex()
