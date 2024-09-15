@@ -53,6 +53,7 @@ import com.lagradost.cloudstream3.utils.AppContextUtils
 import com.lagradost.cloudstream3.utils.AppContextUtils.requestLocalAudioFocus
 import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.EpisodeSkip
+import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showDialog
 import com.lagradost.cloudstream3.utils.UIHelper
 import com.lagradost.cloudstream3.utils.UIHelper.hideSystemUI
 import com.lagradost.cloudstream3.utils.UIHelper.popCurrentPage
@@ -626,27 +627,27 @@ abstract class AbstractPlayerFragment(
     }
 
     private fun showAspectRatioDialog() {
-        // Pause the player when the dialog is shown using the handleEvent method
+        // Pause the player when the dialog is shown
         player.handleEvent(CSPlayerEvent.Pause, PlayerEventSource.UI)
 
-        val aspectRatioOptions = PlayerResize.values().map { getString(it.nameRes) }.toTypedArray()
+        val aspectRatioOptions = PlayerResize.values().map { getString(it.nameRes) }
 
-        // Create and show the dialog
-        AlertDialog.Builder(requireContext())
-            .setTitle(getString(R.string.choose_aspect_ratio))
-            .setItems(aspectRatioOptions) { _, which ->
-                val selectedOption = PlayerResize.values()[which]
+        // Using activity?.showDialog with a safe call
+        activity?.showDialog(
+            aspectRatioOptions,
+            -1, // Use -1 if there's no pre-selected item
+            getString(R.string.choose_aspect_ratio),
+            false, // Immediate selection without an Apply button
+            dismissCallback = {
+                // Resume the player when the dialog is dismissed without selection
+                player.handleEvent(CSPlayerEvent.Play, PlayerEventSource.UI)
+            },
+            callback = { selectedIndex ->
+                val selectedOption = PlayerResize.values()[selectedIndex]
                 resize(selectedOption, true)
-
                 player.handleEvent(CSPlayerEvent.Play, PlayerEventSource.UI)
             }
-            .setOnCancelListener {
-                player.handleEvent(CSPlayerEvent.Play, PlayerEventSource.UI)
-            }
-            .setNegativeButton(android.R.string.cancel) { _, _ ->
-                player.handleEvent(CSPlayerEvent.Play, PlayerEventSource.UI)
-            }
-            .show()
+        )
     }
 
 
