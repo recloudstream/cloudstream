@@ -617,8 +617,6 @@ abstract class AbstractPlayerFragment(
     }
 
     fun nextResize() {
-//        resizeMode = (resizeMode + 1) % PlayerResize.entries.size
-//        resize(resizeMode, true)
         showAspectRatioDialog()
     }
 
@@ -627,19 +625,16 @@ abstract class AbstractPlayerFragment(
     }
 
     private fun showAspectRatioDialog() {
-        // Pause the player when the dialog is shown
         player.handleEvent(CSPlayerEvent.Pause, PlayerEventSource.UI)
 
         val aspectRatioOptions = PlayerResize.values().map { getString(it.nameRes) }
 
-        // Using activity?.showDialog with a safe call
         activity?.showDialog(
             aspectRatioOptions,
-            -1, // Use -1 if there's no pre-selected item
+            -1,
             getString(R.string.choose_aspect_ratio),
             false, // Immediate selection without an Apply button
             dismissCallback = {
-                // Resume the player when the dialog is dismissed without selection
                 player.handleEvent(CSPlayerEvent.Play, PlayerEventSource.UI)
             },
             callback = { selectedIndex ->
