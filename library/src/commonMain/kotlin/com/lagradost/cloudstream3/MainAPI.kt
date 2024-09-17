@@ -1217,6 +1217,30 @@ interface LoadResponse {
         }
     }
 }
+/**
+ * Extracts a four-digit year from a string, prioritizing years in parentheses and ensuring no word characters follow.
+ *
+ * Example:
+ *
+ * "This is (2023) movie" -> 2023
+ *
+ * "This is 1920x1080p movie" -> null
+ *
+ * "This is 2023 movie" -> 2023
+ *
+ * "This is 1999-2010 TvSeries" -> 1999
+ *
+ * @param check The input string.
+ * @return The year as an integer, or `null` if no match is found.
+ */
+fun getYearFromString(check: String?): Int? {
+    return check?.let {
+        parenthesesYear.find(it)?.value?.toIntOrNull()
+            ?: withoutParenthesesYear.find(it)?.value?.toIntOrNull()
+    }
+}
+private val parenthesesYear = "(?<=\\()\\d{4}(?=\\))".toRegex()
+private val withoutParenthesesYear = "(19|20)\\d{2}(?!\\w)".toRegex()
 
 fun getDurationFromString(input: String?): Int? {
     val cleanInput = input?.trim()?.replace(" ", "") ?: return null
