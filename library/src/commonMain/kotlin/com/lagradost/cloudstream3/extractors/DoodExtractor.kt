@@ -60,6 +60,10 @@ class DoodYtExtractor : DoodLaExtractor() {
     override var mainUrl = "https://dood.yt"
 }
 
+class DoodLiExtractor : DoodLaExtractor() {
+    override var mainUrl = "https://dood.li"
+}
+
 class Ds2play : DoodLaExtractor() {
     override var mainUrl = "https://ds2play.com"
 }
