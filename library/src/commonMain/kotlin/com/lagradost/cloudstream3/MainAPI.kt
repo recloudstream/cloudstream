@@ -1235,10 +1235,12 @@ interface LoadResponse {
  */
 fun getYearFromString(check: String?): Int? {
     return check?.let {
-        "(?<=\\()\\d{4}(?=\\))".toRegex().find(it)?.value?.toIntOrNull()
-            ?: "(19|20)\\d{2}(?!\\w)".toRegex().find(it)?.value?.toIntOrNull()
+        parenthesesYear.find(it)?.value?.toIntOrNull()
+            ?: withoutParenthesesYear.find(it)?.value?.toIntOrNull()
     }
 }
+private val parenthesesYear = "(?<=\\()\\d{4}(?=\\))".toRegex()
+private val withoutParenthesesYear = "(19|20)\\d{2}(?!\\w)".toRegex()
 
 fun getDurationFromString(input: String?): Int? {
     val cleanInput = input?.trim()?.replace(" ", "") ?: return null
