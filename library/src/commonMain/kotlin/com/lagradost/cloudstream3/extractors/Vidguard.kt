@@ -37,7 +37,8 @@ open class Vidguardto : ExtractorApi() {
         subtitleCallback: (SubtitleFile) -> Unit,
         callback: (ExtractorLink) -> Unit
     ) {
-        val res = app.get(url)
+        val embedUrl = url.replace("/d/", "/e/")
+        val res = app.get(embedUrl)
         val resc = res.document.select("script:containsData(eval)").firstOrNull()?.data()
         resc?.let {
             val jsonStr2 = AppUtils.parseJson<SvgObject>(runJS2(it))
