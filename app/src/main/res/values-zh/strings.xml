@@ -259,8 +259,6 @@
     <string name="episode_action_chromecast_mirror">Chromecast 镜像</string>
     <string name="episode_action_play_in_app">在应用中播放</string>
     <string name="episode_action_play_in_format">在 %s 中播放</string>
-    <string name="episode_action_play_in_browser">在浏览器中播放</string>
-    <string name="episode_action_copy_link">复制链接</string>
     <string name="episode_action_auto_download">自动下载</string>
     <string name="episode_action_download_mirror">下载镜像</string>
     <string name="episode_action_reload_links">重新加载链接</string>
@@ -483,10 +481,6 @@
     <string name="hls_playlist">HLS 播放列表</string>
     <string name="player_pref">首选视频播放器</string>
     <string name="player_settings_play_in_app">内部播放器</string>
-    <string name="player_settings_play_in_vlc">VLC</string>
-    <string name="player_settings_play_in_mpv">MPV</string>
-    <string name="player_settings_play_in_web">投屏</string>
-    <string name="player_settings_play_in_browser">浏览器</string>
     <string name="app_not_found_error">未找到应用</string>
     <string name="all_languages_preference">所有语言</string>
     <string name="skip_type_format" formatted="true">跳过 %s</string>
@@ -665,7 +659,6 @@
     <string name="biometric_prompt_description">在多次尝试失败后，提示将关闭。只需重启应用程序再试。</string>
     <string name="episode_upcoming_format" formatted="true">即将在 %s</string>
     <string name="cs3wiki">CloudStream Wiki</string>
-    <string name="player_settings_play_in_fcast">Fcast</string>
     <string name="player_settings_select_cast_device">选择投射设备</string>
     <string name="next_season_episode_format" formatted="true">%1$d季%2$d集将在</string>
     <string name="episode_action_cast_mirror">投射镜像</string>
@@ -674,7 +667,6 @@
     <string name="open_local_video">打开本地视频</string>
     <string name="pref_category_security">安全</string>
     <string name="device_pin_url_message">访问智能手机或电脑上的 <b>%s</b> 并输入上述代码</string>
-    <string name="player_settings_play_in_mpvytdl">MPV YTDL</string>
     <string name="preview_seekbar">进度条预览</string>
     <string name="preview_seekbar_desc">启用进度条预览缩略图</string>
     <string name="delete_plugin">删除插件</string>

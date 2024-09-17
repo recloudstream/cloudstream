@@ -238,8 +238,6 @@
     <string name="episode_action_chromecast_mirror">Chromecast огледало</string>
     <string name="episode_action_play_in_app">Пусни в приложението</string>
     <string name="episode_action_play_in_format">Пусни в %s</string>
-    <string name="episode_action_play_in_browser">Пусни в браузър</string>
-    <string name="episode_action_copy_link">Копирай връзка</string>
     <string name="episode_action_auto_download">Автоматично изтегляне</string>
     <string name="episode_action_download_mirror">Изтегляне на огледало</string>
     <string name="episode_action_reload_links">Презареждане на връзки</string>
@@ -443,10 +441,6 @@
     <string name="hls_playlist">HLS плейлист</string>
     <string name="player_pref">Предпочитан видео плеър</string>
     <string name="player_settings_play_in_app">Вътрешен плеър</string>
-    <string name="player_settings_play_in_vlc">VLC</string>
-    <string name="player_settings_play_in_mpv">MPV</string>
-    <string name="player_settings_play_in_web">Уеб видео предаване</string>
-    <string name="player_settings_play_in_browser">Уеб браузър</string>
     <string name="app_not_found_error">Приложението не е намерено</string>
     <string name="automatic_plugin_download">Автоматично изтегли добавки</string>
     <string name="all_languages_preference">Всички езици</string>

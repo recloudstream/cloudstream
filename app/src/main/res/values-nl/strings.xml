@@ -235,8 +235,6 @@
     <string name="episode_action_chromecast_mirror">Chromecast mirror</string>
     <string name="episode_action_play_in_app">Speel in app</string>
     <string name="episode_action_play_in_format">Speel in %s</string>
-    <string name="episode_action_play_in_browser">Speel in browser</string>
-    <string name="episode_action_copy_link">Kopieer link</string>
     <string name="episode_action_auto_download">Automatisch downloaden</string>
     <string name="episode_action_download_mirror">Download mirror</string>
     <string name="episode_action_reload_links">Herlaad Linkss</string>
@@ -409,7 +407,6 @@
     <string name="plugin_load_fail" formatted="true">Kan %s niet laden</string>
     <string name="batch_download_nothing_to_download_format" formatted="true">Alle %s reeds gedownload</string>
     <string name="plugin_singular">plugin</string>
-    <string name="player_settings_play_in_vlc">VLC</string>
     <string name="skip_type_format" formatted="true">Sla %s over</string>
     <string name="pref_category_links">Links</string>
     <string name="pref_category_app_updates">App updates</string>
@@ -468,10 +465,7 @@
     <string name="redo_setup_process">Herhaal installatieproces</string>
     <string name="automatic_plugin_updates">Automatisch bijwerken plugin</string>
     <string name="apk_installer_settings_des">Sommige telefoons ondersteunen het nieuwe installatieprogramma niet. Probeer de oude optie als de updates niet worden geïnstalleerd.</string>
-    <string name="player_settings_play_in_web">Web Video Cast</string>
     <string name="player_settings_play_in_app">Interne speler</string>
-    <string name="player_settings_play_in_mpv">MPV</string>
-    <string name="player_settings_play_in_browser">Web browser</string>
     <string name="skip_type_mixed_ed">Gemengd einde</string>
     <string name="skip_type_recap">Herhaling</string>
     <string name="start">Start</string>

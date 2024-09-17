@@ -311,11 +311,9 @@
     <string name="others">اخرون</string>
     <string name="skip_update">تخطي هذا التحديث</string>
     <string name="jsdelivr_proxy_summary">.قد يتسبب في تأخير التحديثات لبضعة أيام .jsDelivr باستخدام GitHubيتجاوز حظر</string>
-    <string name="episode_action_copy_link">انسخ الرابط</string>
     <string name="asian_drama">الدرامات الآسيوية</string>
     <string name="queued">في قائمة الانتظار</string>
     <string name="episode_action_play_in_app">افتح في التطبيق</string>
-    <string name="episode_action_play_in_browser">افتح في المتصفح</string>
     <string name="dns_pref_summary">مفيد لتجاوز حجب مزودي خدمة الإنترنت</string>
     <string name="tv_series_singular">مسلسل</string>
     <string name="rating">تقييم</string>

@@ -232,8 +232,6 @@
     <string name="episode_action_chromecast_mirror">Mirror dla Chromecast</string>
     <string name="episode_action_play_in_app">Odtwórz w aplikacji</string>
     <string name="episode_action_play_in_format">Odtwórz w %s</string>
-    <string name="episode_action_play_in_browser">Odtwórz w przeglądarce</string>
-    <string name="episode_action_copy_link">Kopiuj link</string>
     <string name="episode_action_auto_download">Automatyczne pobieranie</string>
     <string name="episode_action_download_mirror">Pobierz mirror</string>
     <string name="episode_action_reload_links">Odśwież linki</string>
@@ -421,10 +419,6 @@
     <string name="hls_playlist">Playlista HLS</string>
     <string name="player_pref">Preferowany odtwarzacz wideo</string>
     <string name="player_settings_play_in_app">Odtwarzacz wewnętrzny</string>
-    <string name="player_settings_play_in_vlc">VLC</string>
-    <string name="player_settings_play_in_mpv">MPV</string>
-    <string name="player_settings_play_in_web">Web Video Cast</string>
-    <string name="player_settings_play_in_browser">Przeglądarka</string>
     <string name="app_not_found_error">Aplikacja nie została znaleziona</string>
     <string name="all_languages_preference">Wszystkie języki</string>
     <string name="clear_history">Wyczyść historię</string>
@@ -621,7 +615,6 @@
     <string name="reset_btn">Resetuj</string>
     <string name="episode_upcoming_format" formatted="true">Nadchodzące w %s</string>
     <string name="next_season_episode_format" formatted="true">Odcinek %2$d sezonu %1$d wyjdzie za</string>
-    <string name="player_settings_play_in_fcast">Fcast</string>
     <string name="player_settings_select_cast_device">Wybierz urządzenie do transmisji</string>
     <string name="episode_action_cast_mirror">Mirror transmisji</string>
     <string name="cs3wiki">Wiki CloudStream</string>
@@ -664,6 +657,5 @@
     <string name="delete_format" formatted="true">Usuń (%1$d | %2$s)</string>
     <string name="preview_seekbar">Podgląd paska przewijania</string>
     <string name="preview_seekbar_desc">Włącz podgląd miniatury na pasku wyszukiwania</string>
-    <string name="player_settings_play_in_mpvytdl">MPV YTDL</string>
     <string name="no_subtitles_loaded">Nie wczytano jeszcze napisów</string>
 </resources>

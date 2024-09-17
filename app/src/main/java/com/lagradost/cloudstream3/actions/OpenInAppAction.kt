@@ -20,7 +20,6 @@ import com.lagradost.cloudstream3.ui.result.ResultFragment
 import com.lagradost.cloudstream3.ui.result.UiText
 import com.lagradost.cloudstream3.ui.result.txt
 import com.lagradost.cloudstream3.utils.AppContextUtils.isAppInstalled
-import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.DataStoreHelper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -112,15 +111,11 @@ abstract class OpenInAppAction(
             CoroutineScope(Dispatchers.IO).launch {
                 activityResultLauncher?.launch(intent)
             }
+        } catch (_: ActivityNotFoundException) {
+            showToast(R.string.app_not_found_error, Toast.LENGTH_LONG)
         } catch (t: Throwable) {
             logError(t)
-            main {
-                if (t is ActivityNotFoundException) {
-                    showToast(txt(R.string.app_not_found_error), Toast.LENGTH_LONG)
-                } else {
-                    showToast(t.toString(), Toast.LENGTH_LONG)
-                }
-            }
+            showToast(t.toString(), Toast.LENGTH_LONG)
         }
     }
 

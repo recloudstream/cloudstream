@@ -2,6 +2,7 @@ package com.lagradost.cloudstream3.actions.temp.fcast
 
 import android.content.Context
 import com.lagradost.cloudstream3.AcraApplication.Companion.getActivity
+import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.USER_AGENT
 import com.lagradost.cloudstream3.actions.VideoClickAction
 import com.lagradost.cloudstream3.ui.result.LinkLoadingResult
@@ -13,7 +14,7 @@ import com.lagradost.cloudstream3.utils.ExtractorLinkType
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 
 class FcastAction: VideoClickAction() {
-    override val name = txt("Fcast")
+    override val name = txt("Fcast to device")
 
     override val oneSource = true
 
@@ -36,7 +37,7 @@ class FcastAction: VideoClickAction() {
         context?.getActivity()?.showBottomDialog(
             devices.map { it.name },
             -1,
-            "Select device",
+            txt(R.string.player_settings_select_cast_device).asString(context),
             false,
             {}) {
             val position = getViewPos(video.id)?.position
@@ -52,7 +53,7 @@ class FcastAction: VideoClickAction() {
             session.sendMessage(
                 Opcode.Play,
                 PlayMessage(
-                    "application/vnd.apple.mpegurl",
+                    "video/*",
                     link.url,
                     time = position?.let { it / 1000.0 },
                     headers = mapOf(

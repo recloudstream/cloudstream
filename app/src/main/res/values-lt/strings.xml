@@ -163,10 +163,8 @@
     <string name="sync_score">Įvertinta</string>
     <string name="skip_update">Praleisti šį atnaujinimą</string>
     <string name="pref_category_actions">Veiksmai</string>
-    <string name="episode_action_copy_link">Kopijuoti nuorodą</string>
     <string name="episode_action_play_in_app">Paleisti programoje</string>
     <string name="upload_sync">Sinchronizuoti</string>
-    <string name="episode_action_play_in_browser">Paleisti naršyklėje</string>
     <string name="remove_site_pref">Pašalinti puslapį</string>
     <string name="episode_action_reload_links">Perkrauti nuorodos</string>
     <string name="disable">Išjungti</string>
@@ -192,7 +190,6 @@
     <string name="mobile_data">Mobilūs duomenys</string>
     <string name="example_username">šaunusPrisijungimoVardas</string>
     <string name="extension_authors">Autoriai</string>
-    <string name="player_settings_play_in_browser">Naršyklė</string>
     <string name="all_languages_preference">Visos kalbos</string>
     <string name="quality_4k">4K</string>
     <string name="batch_download_start_format" formatted="true">Pradėta siųsti %1$d %2$s…</string>
@@ -206,7 +203,6 @@
     <string name="example_lang_name">Kalbos kodas (lt)</string>
     <string name="setup_done">Baigta</string>
     <string name="clear_history">Išvalyti istoriją</string>
-    <string name="player_settings_play_in_vlc">VLC</string>
     <string name="edit">Redaguoti</string>
     <string name="wifi">Wi-Fi</string>
     <string name="coming_soon">Greitai būs…</string>
@@ -227,7 +223,6 @@
     <string name="quality_uhd">UHD</string>
     <string name="extension_size">Dydis</string>
     <string name="extension_types">Palaikoma</string>
-    <string name="player_settings_play_in_mpv">MPV</string>
     <string name="example_site_name">ManoŠaunusPuslapis</string>
     <string name="trailer">Anonsas</string>
     <string name="history">Istorija</string>

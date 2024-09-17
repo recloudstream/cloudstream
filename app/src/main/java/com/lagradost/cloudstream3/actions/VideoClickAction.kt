@@ -3,12 +3,13 @@ package com.lagradost.cloudstream3.actions
 import android.app.Activity
 import android.content.Context
 import com.lagradost.api.Log
+import com.lagradost.cloudstream3.actions.temp.CopyClipboardAction
 import com.lagradost.cloudstream3.actions.temp.MpvKtPackage
 import com.lagradost.cloudstream3.actions.temp.MpvKtPreviewPackage
 import com.lagradost.cloudstream3.actions.temp.MpvPackage
 import com.lagradost.cloudstream3.actions.temp.MpvYTDLPackage
 import com.lagradost.cloudstream3.actions.temp.PlayInBrowserAction
-import com.lagradost.cloudstream3.actions.temp.TestAction
+import com.lagradost.cloudstream3.actions.temp.ViewM3U8Action
 import com.lagradost.cloudstream3.actions.temp.VlcPackage
 import com.lagradost.cloudstream3.actions.temp.WebVideoCastPackage
 import com.lagradost.cloudstream3.actions.temp.fcast.FcastAction
@@ -21,7 +22,8 @@ import kotlin.reflect.jvm.jvmName
 
 object VideoClickActionHolder {
     val allVideoClickActions = threadSafeListOf<VideoClickAction>(
-        PlayInBrowserAction(), VlcPackage(), TestAction(),
+        PlayInBrowserAction(), CopyClipboardAction(),
+        VlcPackage(), ViewM3U8Action(),
         MpvPackage(), MpvYTDLPackage(),
         WebVideoCastPackage(), MpvKtPackage(), MpvKtPreviewPackage(),
         FcastAction()

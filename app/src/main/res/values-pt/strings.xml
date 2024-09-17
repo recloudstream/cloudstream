@@ -228,8 +228,6 @@
     <string name="episode_action_chromecast_mirror">Alternativa pelo Chromecast</string>
     <string name="episode_action_play_in_app">Reproduzir na app</string>
     <string name="episode_action_play_in_format">Reproduzir no %s</string>
-    <string name="episode_action_play_in_browser">Reproduzir no navegador</string>
-    <string name="episode_action_copy_link">Copiar link</string>
     <string name="episode_action_auto_download">Transferência Automática</string>
     <string name="episode_action_download_mirror">Transferir por servidor alternativo</string>
     <string name="episode_action_reload_links">Recarregar links</string>
@@ -441,18 +439,14 @@
     <string name="skip_type_intro">Abertura</string>
     <string name="select_library">Selecionar Biblioteca</string>
     <string name="jsdelivr_proxy_summary">Contorna o bloqueio de URLs raw do GitHub usando jsDelivr. Pode atrasar as atualizações por uns dias.</string>
-    <string name="player_settings_play_in_vlc">VLC</string>
     <string name="all_languages_preference">Todas as linguagens</string>
     <string name="sort_updated_new">Atualizado (Novo para Antigo)</string>
     <string name="subscription_list_name">Inscrito</string>
     <string name="quality_hdr">HDR</string>
     <string name="restart">Reiniciar</string>
-    <string name="player_settings_play_in_browser">Navegador Web</string>
     <string name="sort_updated_old">Atualizado (Antigo para Novo)</string>
-    <string name="player_settings_play_in_web">Web Video Cast</string>
     <string name="quality_dvd">DVD</string>
     <string name="apk_installer_package_installer">Instalador de pacotes</string>
-    <string name="player_settings_play_in_mpv">MPV</string>
     <string name="action_remove_from_watched">Remover dos assistidos</string>
     <string name="update_notification_failed">Não foi possível instalar a nova versão do aplicativo</string>
     <string name="subscription_deleted">Inscrição cancelada em %s</string>
@@ -617,7 +611,6 @@
     <string name="battery_dialog_message">Para garantir descarregamentos ininterruptos e notificações de programas de TV subscritos, o CloudStream precisa de permissão para ser executado em segundo plano. Ao premir OK, será direcionado para informações da aplicação. Aí, desloque-se para utilização da bateria da aplicação e defina a utilização da bateria para sem restrições. Tenha em atenção que esta permissão não significa que o CS3 irá esgotar a sua bateria. Este só funcionará em segundo plano quando necessário, como ao receber notificações ou baixar vídeos de extensões oficiais. Se optar por cancelar, pode ajustar esta definição mais tarde em definições gerais.</string>
     <string name="reset_btn">Reiniciar</string>
     <string name="next_season_episode_format" formatted="true">Episódio %1$d Episódio %2$d vai ser lançado em</string>
-    <string name="player_settings_play_in_fcast">Fcast</string>
     <string name="player_settings_select_cast_device">Escolha o dispositivo</string>
     <string name="episode_action_cast_mirror">Transmitir</string>
     <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>

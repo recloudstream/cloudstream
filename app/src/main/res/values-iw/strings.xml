@@ -168,7 +168,6 @@
     <string name="asian_drama_singular">דרמה אסייתית</string>
     <string name="episode_action_chromecast_episode">כרומקאסט את הפרק</string>
     <string name="episode_action_chromecast_mirror">כרומקאסט את המראה</string>
-    <string name="episode_action_play_in_browser">נגן בדפדפן</string>
     <string name="show_sub">תווית כתוביות</string>
     <string name="poster_ui_settings">החלף רכיבי ממשק משתמש בפוסטר</string>
     <string name="video_skip_op">דלג על הפתיח</string>
@@ -326,7 +325,6 @@
     <string name="storage_error">שגיאת הורדה, בדוק הרשאות אחסון</string>
     <string name="episode_action_play_in_app">נגן באפליקציה</string>
     <string name="episode_action_play_in_format">נגן ב %s</string>
-    <string name="episode_action_copy_link">העתק קישור</string>
     <string name="episode_action_auto_download">הורדה אוטומטית</string>
     <string name="episode_action_reload_links">טען מחדש קישורים</string>
     <string name="show_hd">תווית איכות</string>
@@ -431,7 +429,6 @@
     <string name="batch_download_nothing_to_download_format" formatted="true">כל %s כבר הורד</string>
     <string name="extension_authors">מחברים</string>
     <string name="extension_language">שפה</string>
-    <string name="player_settings_play_in_mpv">MPV</string>
     <string name="skip_type_creddits">קרדיטים</string>
     <string name="sort">מיין</string>
     <string name="select_library">בחר ספרייה</string>
@@ -445,8 +442,6 @@
     <string name="download_all_plugins_from_repo">הורד את כל התוספים ממאגר זה?</string>
     <string name="audio_tracks">רצועות שמע</string>
     <string name="tracks">מסלולים</string>
-    <string name="player_settings_play_in_web">Web Video Cast</string>
-    <string name="player_settings_play_in_browser">דפדפן אינטרנט</string>
     <string name="safe_mode_description">כל התוספים נכבו עקב התרסקות כדי לעזור לך למצוא את האחד הגורם לצרות.</string>
     <string name="apk_installer_package_installer">מוריד החבילות</string>
     <string name="plugins_updated" formatted="true">עודכן %d תוספים</string>
@@ -479,7 +474,6 @@
     <string name="hls_playlist">פלייליסט HLS</string>
     <string name="player_pref">נגן וידאו מועדף</string>
     <string name="player_settings_play_in_app">נגן פנימי</string>
-    <string name="player_settings_play_in_vlc">VLC</string>
     <string name="app_not_found_error">האפליקציה לא נמצאה</string>
     <string name="all_languages_preference">כל השפות</string>
     <string name="skip_type_format" formatted="true">דלג %s</string>

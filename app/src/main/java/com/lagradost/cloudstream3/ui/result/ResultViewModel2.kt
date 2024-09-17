@@ -1406,7 +1406,6 @@ class ResultViewModel2 : ViewModel() {
 
                 options.addAll(
                     listOf(
-                        txt(R.string.episode_action_copy_link) to ACTION_COPY_LINK,
                         txt(R.string.episode_action_auto_download) to ACTION_DOWNLOAD_EPISODE,
                         txt(R.string.episode_action_download_mirror) to ACTION_DOWNLOAD_MIRROR,
                         txt(R.string.episode_action_download_subtitle) to ACTION_DOWNLOAD_EPISODE_SUBTITLE_MIRROR,
@@ -1567,17 +1566,6 @@ class ResultViewModel2 : ViewModel() {
                     isCasting = true
                 ) { (result, index) ->
                     startChromecast(activity, click.data, result.links, result.subs, index)
-                }
-            }
-
-            ACTION_COPY_LINK -> {
-                acquireSingleLink(
-                    click.data,
-                    LOADTYPE_ALL,
-                    txt(R.string.episode_action_copy_link)
-                ) { (result, index) ->
-                    val link = result.links[index]
-                    clipboardHelper(txt(link.name), link.url)
                 }
             }
 

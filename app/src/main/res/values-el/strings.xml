@@ -194,8 +194,6 @@
     <string name="episode_action_chromecast_episode">Chromecast επεισόδιο</string>
     <string name="episode_action_play_in_app">Αναπαραγωγή εντός της εφαρμογής</string>
     <string name="episode_action_play_in_format">Αναπαραγωγή σε %s</string>
-    <string name="episode_action_play_in_browser">Αναπαραγωγή στον περιηγητή</string>
-    <string name="episode_action_copy_link">Αντιγραφή συνδέσμου</string>
     <string name="episode_action_auto_download">Αυτόματη λήψη</string>
     <string name="episode_action_download_mirror">Λήψη mirror</string>
     <string name="episode_action_reload_links">Επαναφόρτωση συνδέσμων</string>
@@ -359,10 +357,6 @@
     <string name="hls_playlist">HLS Playlist</string>
     <string name="player_pref">Προτεινόμενο πρόγραμμα αναπαραγωγής</string>
     <string name="player_settings_play_in_app">Ενσωματωμένο πρόγραμμα αναπαραγωγής</string>
-    <string name="player_settings_play_in_vlc">VLC</string>
-    <string name="player_settings_play_in_mpv">MPV</string>
-    <string name="player_settings_play_in_web">Web Video Cast</string>
-    <string name="player_settings_play_in_browser">Περιηγητής</string>
     <string name="app_not_found_error">Η εφαρμογή δεν βρέθηκε</string>
     <string name="app_dub_sub_episode_text_format" formatted="true">%1$s Επ %2$d</string>
     <string name="next_episode_format" formatted="true">Το επεισόδιο %d θα κυκλοφορήσει σε</string>
@@ -580,7 +574,6 @@
     <string name="android_tv_interface_on_seek_settings_summary">Δευτερόλεπτα Σκιπ όταν φαίνεται ο αναπαραγωγέας (πλειερ)</string>
     <string name="test_extensions">Δοκιμή όλων των παροχών</string>
     <string name="test_extensions_summary">Αυτό το τεστ προορίζεται μόνο για τους προγραμματιστές και δε επαληθείει ούτε απορρίπτει την λειτουργία οποιουδήποτε παρόχου.</string>
-    <string name="player_settings_play_in_fcast">Fcast</string>
     <string name="player_settings_select_cast_device">Επιλογή συσκευής για αναμετάδοση</string>
     <string name="clipboard_permission_error">Πρόβλημα στην πρόσβαση στο Clipboard, Παρακαλώ προσπαθήστε ξανά.</string>
     <string name="clipboard_unknown_error">Πρόβλημα στην αντιγραφή , Παρακαλούμε αντιγράψτε το logcat και επικοινωνήστε με την υποστήριξη.</string>

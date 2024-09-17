@@ -157,8 +157,6 @@
     <string name="episode_action_chromecast_mirror">Chromecast ဖန်သားပြင်</string>
     <string name="episode_action_play_in_app">အက်ပ်တွင်းဖွင့်</string>
     <string name="episode_action_play_in_format">ဖွင့်ရန် %s</string>
-    <string name="episode_action_play_in_browser">ဘရောက်ဇာထဲမှာ ဖွင့်ရန်</string>
-    <string name="episode_action_copy_link">လင့်ကူးယူရန်</string>
     <string name="episode_action_auto_download">အလိုအလျောက်ဒေါင်းလုဒ်</string>
     <string name="episode_action_reload_links">လင့်များကို ပြန်စစ်ရန်</string>
     <string name="show_hd">အရည်အသွေး အမှတ်အသား</string>
@@ -338,7 +336,6 @@
     <string name="previous">နောက်သို့</string>
     <string name="plugins_updated" formatted="true">အပ်ဒိတ်လုပ်ပြီး %d ဖြည့်စွက်များ</string>
     <string name="plugins_not_downloaded" formatted="true">ဒေါင်းလုဒ်မလုပ်ရသေး: %d</string>
-    <string name="player_settings_play_in_browser">ဝဘ်ဘရောက်ဇာ</string>
     <string name="app_not_found_error">အက်ပ်မတွေ့ပါ</string>
     <string name="all_languages_preference">ဘာသာစကားအားလုံး</string>
     <string name="skip_type_format" formatted="true">ကျော်ရန် %s</string>
@@ -422,9 +419,6 @@
     <string name="extension_types">ထောက်ပံ့ထားသော</string>
     <string name="extension_language">ဘာသာစကား</string>
     <string name="extension_install_first">အဆက်များကိုအရင်သွင်းပါ</string>
-    <string name="player_settings_play_in_vlc">VLC</string>
-    <string name="player_settings_play_in_mpv">MPV</string>
-    <string name="player_settings_play_in_web">ဝဘ်ထဲတွင်ဖွင့်ရန်</string>
     <string name="skip_type_op">အစပိုင်း</string>
     <string name="skip_type_ed">အဆုံးပိုင်း</string>
     <string name="clear_history">ကြည့်ရှုခဲ့သည်များကိုရှင်းရန်</string>

@@ -5,12 +5,14 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import com.lagradost.api.Log
+import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.actions.OpenInAppAction
 import com.lagradost.cloudstream3.actions.makeTempM3U8Intent
 import com.lagradost.cloudstream3.actions.updateDurationAndPosition
 import com.lagradost.cloudstream3.ui.result.LinkLoadingResult
 import com.lagradost.cloudstream3.ui.result.ResultEpisode
 import com.lagradost.cloudstream3.ui.result.txt
+import com.lagradost.cloudstream3.ui.subtitles.SUBTITLE_AUTO_SELECT_KEY
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
 
 // https://github.com/videolan/vlc-android/blob/3706c4be2da6800b3d26344fc04fab03ffa4b860/application/vlc-android/src/org/videolan/vlc/gui/video/VideoPlayerActivity.kt#L1898
@@ -47,6 +49,14 @@ class VlcPackage: OpenInAppAction(
         intent.putExtra("from_start", false)
         intent.putExtra("position", position)
         intent.putExtra("secure_uri", true)
+        intent.putExtra("title", video.name)
+
+        val subsLang =  getKey(SUBTITLE_AUTO_SELECT_KEY) ?: "en"
+        result.subs.firstOrNull {
+            subsLang == it.languageCode
+        }?.let {
+            intent.putExtra("subtitles_location", it.url)
+        }
     }
 
     override fun onResult(activity: Activity, intent: Intent?) {
@@ -55,5 +65,4 @@ class VlcPackage: OpenInAppAction(
         Log.d("VLC", "Position: $position, Duration: $duration")
         updateDurationAndPosition(position, duration)
     }
-
 }

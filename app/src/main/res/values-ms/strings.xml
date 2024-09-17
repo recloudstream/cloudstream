@@ -2,7 +2,6 @@
 <resources>
     <string name="all_languages_preference">Semua bahasa</string>
     <string name="skip_type_format" formatted="true">Langkau %s</string>
-    <string name="player_settings_play_in_browser">Pelayar web</string>
     <string name="history">Sejarah</string>
     <string name="clear_history">Kosongkan sejarah</string>
     <string name="skip_type_intro">Pengenalan</string>
@@ -232,7 +231,6 @@
     <string name="subtitles_raised">Dinaikkan</string>
     <string name="provider_languages_tip">Lihat video dalam bahasa-bahasa ini</string>
     <string name="normal">Normal</string>
-    <string name="episode_action_play_in_browser">Main dalam pelayar</string>
     <string name="duplicate_add">Tambah</string>
     <string name="used_storage">Diguna</string>
     <string name="anime">Anime</string>
@@ -323,7 +321,6 @@
     <string name="episode_action_chromecast_episode">Chromecast episod</string>
     <string name="episode_action_play_in_format">Main dalam %s</string>
     <string name="storage_error">Muat turun gagal, cek keizinan storan</string>
-    <string name="episode_action_copy_link">Salin pautan</string>
     <string name="episode_action_download_mirror">Muat turun cermin</string>
     <string name="episode_action_download_subtitle">Muat turun sari kata</string>
     <string name="show_sub">Label sub</string>
@@ -449,8 +446,6 @@
     <string name="password_pin_authentication_title">Pengesahan Password/PIN</string>
     <string name="no_subtitles_loaded">Sari kata belum tetapkan lagi</string>
     <string name="extension_types">Disokong</string>
-    <string name="player_settings_play_in_mpv">MPV</string>
-    <string name="player_settings_play_in_fcast">Fcast</string>
     <string name="clipboard_permission_error">Ralat tidak dapat akses Clipboard, Sila cuba sekali lagi.</string>
     <string name="clipboard_unknown_error">Ralat menyalin, Sila salin logcat dan hubungi penyokong aplikasi.</string>
     <string name="test_warning">Amaran</string>
@@ -462,8 +457,6 @@
     <string name="max">Maks</string>
     <string name="download_all_plugins_from_repo">Amaran: CloudStream 3 tidak bertanggungjawab atas penggunaan tambahan pihak ketiga dan tidak memberi sumbang kepada mereka!</string>
     <string name="apply_on_restart">Mula semula aplikasi untuk lihat perubahan.</string>
-    <string name="player_settings_play_in_vlc">VLC</string>
-    <string name="player_settings_play_in_mpvytdl">MPV YTDL</string>
     <string name="empty_library_logged_in_message">Senarai ini kosong. Sila tukar yang lain.</string>
     <string name="mobile_data">Data mudah alih</string>
     <string name="action_add_to_favorites">Tambah ke kegemaran</string>
