@@ -11,12 +11,12 @@ open class PixelDrain : ExtractorApi() {
     override val requiresReferer = true
 
     override suspend fun getUrl(url: String, referer: String?, subtitleCallback: (SubtitleFile) -> Unit, callback: (ExtractorLink) -> Unit) {
-        val mId = Regex("/([ul]/[\\da-zA-Z\\-]+)(?:\\?download)?").find(url)?.groupValues?.get(1)?.split("/")
+        val mId = Regex("/u/(.*)").find(url)?.groupValues?.get(1)?.split("/")
         callback.invoke(
             ExtractorLink(
                 this.name,
                 this.name,
-                "$mainUrl/api/file/${mId?.last() ?: return}?download",
+                "$mainUrl/api/file/${mId}?download",
                 url,
                 Qualities.Unknown.value,
             )
