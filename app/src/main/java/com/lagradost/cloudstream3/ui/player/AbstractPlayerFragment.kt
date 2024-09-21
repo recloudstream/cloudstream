@@ -627,7 +627,7 @@ abstract class AbstractPlayerFragment(
     private fun showAspectRatioDialog() {
         player.handleEvent(CSPlayerEvent.Pause, PlayerEventSource.UI)
 
-        val aspectRatioOptions = PlayerResize.values().map { getString(it.nameRes) }
+        val aspectRatioOptions = PlayerResize.entries.map { getString(it.nameRes) }
 
         activity?.showDialog(
             aspectRatioOptions,
