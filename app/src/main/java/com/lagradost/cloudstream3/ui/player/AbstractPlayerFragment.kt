@@ -631,7 +631,7 @@ abstract class AbstractPlayerFragment(
 
         activity?.showDialog(
             aspectRatioOptions,
-            -1,
+            DataStoreHelper.resizeMode,
             getString(R.string.choose_aspect_ratio),
             false, // Immediate selection without an Apply button
             dismissCallback = {
