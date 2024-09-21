@@ -638,7 +638,7 @@ abstract class AbstractPlayerFragment(
                 player.handleEvent(CSPlayerEvent.Play, PlayerEventSource.UI)
             },
             callback = { selectedIndex ->
-                val selectedOption = PlayerResize.values()[selectedIndex]
+                val selectedOption = PlayerResize.entries[selectedIndex]
                 resize(selectedOption, true)
                 player.handleEvent(CSPlayerEvent.Play, PlayerEventSource.UI)
             }
