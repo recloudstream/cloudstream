@@ -5,8 +5,12 @@
         android:key="@string/locale_key"
         android:title="@string/app_language"
         android:icon="@drawable/ic_baseline_language_24" />
-
-
+    <SwitchPreference
+        android:defaultValue="true"
+        android:icon="@drawable/ic_baseline_exit_24"
+        android:key="@string/confirm_exit_key"
+        android:title="@string/confirm_before_exiting_title"
+        android:summary="@string/confirm_before_exiting_desc" />
 
     <Preference
             android:key="@string/legal_notice_key"

@@ -808,4 +808,7 @@
     <string name="preview_seekbar">Seekbar preview</string>
     <string name="preview_seekbar_desc">Enable preview thumbnail on seekbar</string>
     <string name="no_subtitles_loaded">No subtitles loaded yet</string>
+    <string name="confirm_before_exiting_title">Confirm before exiting</string>
+    <string name="confirm_before_exiting_desc">Ask before exiting the app</string>
+    <string name="confirm_exit_key" translatable="false">confirm_exit_key</string>
 </resources>

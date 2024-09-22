@@ -210,6 +210,15 @@ class SettingsGeneral : PreferenceFragmentCompat() {
             return@setOnPreferenceClickListener true
         }
 
+        settingsManager.edit().putBoolean(
+            getString(R.string.confirm_exit_key),
+            getKey(getString(R.string.confirm_exit_key), true) ?: true
+        ).apply()
+        getPref(R.string.confirm_exit_key)?.setOnPreferenceChangeListener { _, newValue ->
+            setKey(getString(R.string.confirm_exit_key), newValue)
+            return@setOnPreferenceChangeListener true
+        }
+
         getPref(R.string.battery_optimisation_key)?.hideOn(TV or EMULATOR)?.setOnPreferenceClickListener {
             val ctx = context ?: return@setOnPreferenceClickListener false
 
