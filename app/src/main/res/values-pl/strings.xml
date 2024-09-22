@@ -375,8 +375,8 @@
     <string name="setup_done">Gotowe</string>
     <string name="extensions">Rozszerzenia</string>
     <string name="add_repository">Dodaj repozytorium</string>
-    <string name="repository_name_hint">Nazwa repozytorium</string>
-    <string name="repository_url_hint">Adres URL repozytorium</string>
+    <string name="repository_name_hint">Nazwa repozytorium (opcjonalna)</string>
+    <string name="repository_url_hint">Adres URL repozytorium lub krótki kod</string>
     <string name="plugin_loaded">Załadowano rozszerzenie</string>
     <string name="plugin_deleted">Usunięto rozszerzenie</string>
     <string name="plugin_load_fail" formatted="true">Błąd ładowania %s</string>

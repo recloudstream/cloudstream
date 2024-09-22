@@ -379,7 +379,7 @@
     <string name="view_public_repositories_button">Ver repositórios da comunidade</string>
     <string name="view_public_repositories_button_short">Lista pública</string>
     <string name="uppercase_all_subtitles">Todas as legendas em maiúsculas</string>
-    <string name="download_all_plugins_from_repo">Transferir todos os plugins deste repositório?</string>
+    <string name="download_all_plugins_from_repo">Aviso: O CloudStream 3 não se responsabiliza pelo uso de extensões de terceiros e não fornece qualquer suporte às mesmas!</string>
     <string name="single_plugin_disabled" formatted="true">%s (Desativado)</string>
     <string name="apk_installer_settings">Instalador APK</string>
     <string name="duration_format" formatted="true">%d min</string>
@@ -605,7 +605,7 @@
     <string name="password_pin_authentication_title">Autenticação por palavra-passe/PIN</string>
     <string name="biometric_unsupported">A autenticação biométrica não é suportada neste dispositivo</string>
     <string name="biometric_setting_summary">Desbloqueie a aplicação com impressão digital, ID facial, PIN, padrão e palavra-passe.</string>
-    <string name="biometric_prompt_description">Este ecrã foi encerrado devido a várias tentativas falhadas. Reinicie a aplicação.</string>
+    <string name="biometric_prompt_description">Após algumas tentativas falhadas, a janela irá fechar. Reinicie a aplicação para tentar outra vez.</string>
     <string name="biometric_warning">Os dados do seu CloudStream já foram copiados. Embora a possibilidade de isto acontecer ser muito baixa, todos os dispositivos podem comportar-se de forma diferente. No caso raro de ficar impedido de aceder à aplicação, limpe completamente os dados da aplicação e restaure a partir de uma cópia de segurança. Lamentamos qualquer incómodo causado por esta situação.</string>
     <string name="ok">OK</string>
     <string name="app_unrestricted_toast">A utilização da bateria da aplicação já está definida como sem restrições</string>
@@ -616,9 +616,51 @@
     <string name="battery_dialog_title">Desativar a otimização da bateria</string>
     <string name="battery_dialog_message">Para garantir descarregamentos ininterruptos e notificações de programas de TV subscritos, o CloudStream precisa de permissão para ser executado em segundo plano. Ao premir OK, será direcionado para informações da aplicação. Aí, desloque-se para utilização da bateria da aplicação e defina a utilização da bateria para sem restrições. Tenha em atenção que esta permissão não significa que o CS3 irá esgotar a sua bateria. Este só funcionará em segundo plano quando necessário, como ao receber notificações ou baixar vídeos de extensões oficiais. Se optar por cancelar, pode ajustar esta definição mais tarde em definições gerais.</string>
     <string name="reset_btn">Reiniciar</string>
-    <string name="next_season_episode_format" formatted="true">Episódio %1$d Episódio %2$d vai ser lançado em</string>
+    <string name="next_season_episode_format" formatted="true">Episódio %2$d da Temporada %1$d vai ser lançado em</string>
     <string name="player_settings_play_in_fcast">Fcast</string>
     <string name="player_settings_select_cast_device">Escolha o dispositivo</string>
     <string name="episode_action_cast_mirror">Transmitir</string>
     <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
+    <string name="open_local_video">Abrir vídeo local</string>
+    <string name="device_pin_error_message">Não é possível receber o PIN do dispositivo, tentando autenticação local</string>
+    <string name="preview_seekbar">Pré-visualização na barra de progresso</string>
+    <string name="preview_seekbar_desc">Ativar a miniatura de pré-visualização na barra de progresso</string>
+    <string name="auth_locally">Autenticação Local</string>
+    <string name="delete_message_series_section" formatted="true">Irá também eliminar permanentemente todos os episódios da seguinte série:
+\n
+\n%s</string>
+    <string name="player_settings_play_in_mpvytdl">MPV YTDL</string>
+    <string name="delete_format" formatted="true">Eliminar (%1$d | %2$s)</string>
+    <string name="device_pin_url_message">Visite <b>%s</b> no seu smartphone ou computador e introduza o código acima</string>
+    <string name="play_from_beginning_img_des">Recomeçar</string>
+    <string name="hide_player_control_names">Esconde os nomes dos botões do player</string>
+    <string name="downloads_delete_select">Selecionar Items para Eliminar</string>
+    <string name="downloads_empty">Não existem downloads disponíveis.</string>
+    <string name="offline_file">Disponível para ver offline</string>
+    <string name="select_all">Selecionar Todos</string>
+    <string name="deselect_all">Desselecionar todos</string>
+    <string name="episode_upcoming_format" formatted="true">Próximo em %s</string>
+    <string name="delete_files">Eliminar Ficheiros</string>
+    <string name="test_warning">Aviso</string>
+    <string name="delete_message_multiple" formatted="true">Tem a certeza que pretende eliminar permanentemente os seguintes items?
+\n
+\n%s</string>
+    <string name="delete_message_series_episodes" formatted="true">Tem a certeza que pretende eliminar permanentemente os seguintes episódios em %1$s?
+\n
+\n%2$s</string>
+    <string name="delete_message_series_only" formatted="true">Tem a certeza que pretende eliminar permanentemente todos os episódios da seguinte série?
+\n
+\n%s</string>
+    <string name="pref_category_security">Segurança</string>
+    <string name="pref_category_accounts">Contas</string>
+    <string name="qr_image">QR Code</string>
+    <string name="delete_plugin">Eliminar plugin</string>
+    <string name="device_pin_counter_text">O código expira em %1$dm %2$ds</string>
+    <string name="sort_release_date_new">Data de Lançamento (Novo para Antigo)</string>
+    <string name="sort_release_date_old">Data de Lançamento (Antigo para Novo)</string>
+    <string name="cs3wiki">Wiki do CloudStream</string>
+    <string name="device_pin_expired_message">O código PIN está agora expirado !</string>
+    <string name="no_subtitles_loaded">Ainda sem legendadas carregadas</string>
+    <string name="open_downloaded_repo">Abrir repositório</string>
+    <string name="dismiss">Dispensar</string>
 </resources>

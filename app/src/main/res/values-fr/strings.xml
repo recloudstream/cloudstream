@@ -7,7 +7,7 @@
     <string name="title_settings">Paramètres</string>
     <string name="search_hint">Rechercher…</string>
     <string name="search_poster_img_des">Affiche</string>
-    <string name="no_data">Aucune Donnée</string>
+    <string name="no_data">Aucune donnée</string>
     <string name="episode_more_options_des">Plus d\'options</string>
     <string name="go_back_img_des">Retour</string>
     <string name="next_episode">Épisode suivant</string>
@@ -229,8 +229,8 @@
     <string name="subs_font_size">Taille de la police</string>
     <string name="search_provider_text_providers">Recherche par fournisseur</string>
     <string name="search_provider_text_types">Recherche par types</string>
-    <string name="benene_count_text">%d Donner une banane aux devs</string>
-    <string name="benene_count_text_none">Aucun Benenes données</string>
+    <string name="benene_count_text">%d bananes offertes aux devs</string>
+    <string name="benene_count_text_none">Aucune banane n\'a été offerte</string>
     <string name="subs_auto_select_language">Sélection automatique de la langue</string>
     <string name="subs_download_languages">Télécharger les langues</string>
     <string name="subs_subtitle_languages">Langue des sous-titres</string>
@@ -403,7 +403,7 @@
     <string name="view_public_repositories_button">Voir les repository de la communauté</string>
     <string name="view_public_repositories_button_short">Liste publique</string>
     <string name="action_mark_as_watched">Marquer comme vu</string>
-    <string name="repository_url_hint">Url du repository</string>
+    <string name="repository_url_hint">URL de dépôt ou code court</string>
     <string name="setup_done">Finir</string>
     <string name="add_repository">Ajouter le repository</string>
     <string name="preferred_media_subtext">Ce que vous voulez voir</string>
@@ -440,7 +440,7 @@
     <string name="previous">Précédent</string>
     <string name="skip_setup">Ignorer la configuration</string>
     <string name="crash_reporting_title">Rapport de crash</string>
-    <string name="repository_name_hint">Nom du repository</string>
+    <string name="repository_name_hint">Nom de dépôt (optionnel)</string>
     <string name="plugin_singular">plugin</string>
     <string name="delete_repository">Supprimer le repository</string>
     <string name="plugins_disabled" formatted="true">Désactivé : %d</string>
@@ -631,4 +631,14 @@
     <string name="select_all">Tout sélectionner</string>
     <string name="deselect_all">Tout désélectionner</string>
     <string name="delete_format" formatted="true">Supprimer (%1$d | %2$s)</string>
+    <string name="open_downloaded_repo">Ouvrir le dépôt</string>
+    <string name="device_pin_counter_text">Code expire dans %1$dm %2$ds</string>
+    <string name="cs3wiki">Wiki de CloudStream</string>
+    <string name="player_settings_play_in_mpvytdl">MPV YTDL</string>
+    <string name="device_pin_expired_message">Le code PIN est maintenant expiré !</string>
+    <string name="qr_image">Image du code QR</string>
+    <string name="delete_plugin">Supprimer l\'extension</string>
+    <string name="delete_message_multiple" formatted="true">Êtes-vous sûr de vouloir supprimer définitivement les éléments suivants?
+\n
+\n%s</string>
 </resources>
