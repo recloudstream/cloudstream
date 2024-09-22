@@ -125,7 +125,7 @@ import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.ui.settings.Globals.updateTv
 import com.lagradost.cloudstream3.ui.settings.SettingsGeneral
-import com.lagradost.cloudstream3.ui.settings.getExitDialogSupportedLayouts
+import com.lagradost.cloudstream3.ui.settings.SettingsUI
 import com.lagradost.cloudstream3.ui.setup.HAS_DONE_SETUP_KEY
 import com.lagradost.cloudstream3.ui.setup.SetupFragmentExtensions
 import com.lagradost.cloudstream3.utils.ApkInstaller
@@ -616,7 +616,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
     @SuppressLint("ApplySharedPref") // commit since the op needs to be synchronous
     private fun showConfirmExitDialog() {
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
-        val confirmBeforeExit = settingsManager.getBoolean(getString(R.string.confirm_exit_key), true)
+        val confirmBeforeExit = settingsManager.getBoolean(getString(R.string.confirm_exit_key), SettingsUI.getConfirmExitDialogDefault())
         if (!confirmBeforeExit) {
             exitProcess(0)
             return
@@ -1535,16 +1535,14 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                 }
             }
 
-            if (isLayout(getExitDialogSupportedLayouts())) {
-                if (navDestination.matchDestination(R.id.navigation_home)) {
-                    attachBackPressedCallback {
-                        showConfirmExitDialog()
-                        window?.navigationBarColor =
-                            colorFromAttribute(R.attr.primaryGrayBackground)
-                        updateLocale()
-                    }
-                } else detachBackPressedCallback()
-            }
+            if (navDestination.matchDestination(R.id.navigation_home)) {
+                attachBackPressedCallback {
+                    showConfirmExitDialog()
+                    window?.navigationBarColor =
+                        colorFromAttribute(R.attr.primaryGrayBackground)
+                    updateLocale()
+                }
+            } else detachBackPressedCallback()
         }
 
         //val navController = findNavController(R.id.nav_host_fragment)
