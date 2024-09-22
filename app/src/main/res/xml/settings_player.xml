@@ -22,7 +22,7 @@
 
         <Preference
             android:icon="@drawable/netflix_play"
-            android:key="@string/player_pref_key"
+            android:key="@string/player_default_key"
             android:title="@string/player_pref" />
     </PreferenceCategory>
 

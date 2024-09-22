@@ -173,7 +173,7 @@ import com.lagradost.cloudstream3.utils.UIHelper.setImage
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import com.lagradost.cloudstream3.utils.USER_PROVIDER_API
 import com.lagradost.cloudstream3.utils.USER_SELECTED_HOMEPAGE_API
-import com.lagradost.cloudstream3.utils.fcast.FcastManager
+import com.lagradost.cloudstream3.actions.temp.fcast.FcastManager
 import com.lagradost.safefile.SafeFile
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -186,120 +186,9 @@ import kotlin.math.abs
 import kotlin.math.absoluteValue
 import kotlin.system.exitProcess
 
-//https://github.com/videolan/vlc-android/blob/3706c4be2da6800b3d26344fc04fab03ffa4b860/application/vlc-android/src/org/videolan/vlc/gui/video/VideoPlayerActivity.kt#L1898
-//https://wiki.videolan.org/Android_Player_Intents/
-
-//https://github.com/mpv-android/mpv-android/blob/0eb3cdc6f1632636b9c30d52ec50e4b017661980/app/src/main/java/is/xyz/mpv/MPVActivity.kt#L904
-//https://mpv-android.github.io/mpv-android/intent.html
-
-// https://www.webvideocaster.com/integrations
-
-//https://github.com/jellyfin/jellyfin-android/blob/6cbf0edf84a3da82347c8d59b5d5590749da81a9/app/src/main/java/org/jellyfin/mobile/bridge/ExternalPlayer.kt#L225
-
 class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCallback {
     companion object {
-        const val VLC_PACKAGE = "org.videolan.vlc"
-        const val MPV_PACKAGE = "is.xyz.mpv"
-        const val MPV_YTDL_PACKAGE = "is.xyz.mpv.ytdl"
-        const val WEB_VIDEO_CAST_PACKAGE = "com.instantbits.cast.webvideo"
-
-        val VLC_COMPONENT = ComponentName(VLC_PACKAGE, "$VLC_PACKAGE.gui.video.VideoPlayerActivity")
-        val MPV_COMPONENT = ComponentName(MPV_PACKAGE, "$MPV_PACKAGE.MPVActivity")
-        val MPV_YTDL_COMPONENT = ComponentName(MPV_YTDL_PACKAGE, "$MPV_PACKAGE.MPVActivity")
-
-        //TODO REFACTOR AF
-        open class ResultResume(
-            val packageString: String,
-            val action: String = Intent.ACTION_VIEW,
-            val position: String? = null,
-            val duration: String? = null,
-            var launcher: ActivityResultLauncher<Intent>? = null,
-        ) {
-            val defaultTime = -1L
-
-            val lastId get() = "${packageString}_last_open_id"
-            suspend fun launch(id: Int?, callback: suspend Intent.() -> Unit) {
-                val intent = Intent(action)
-
-                if (id != null)
-                    setKey(lastId, id)
-                else
-                    removeKey(lastId)
-
-                intent.setPackage(packageString)
-                callback.invoke(intent)
-                launcher?.launch(intent)
-            }
-
-            open fun getPosition(intent: Intent?): Long {
-                return defaultTime
-            }
-
-            open fun getDuration(intent: Intent?): Long {
-                return defaultTime
-            }
-        }
-
-        val VLC = object : ResultResume(
-            VLC_PACKAGE,
-            // Android 13 intent restrictions fucks up specifically launching the VLC player
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
-                "org.videolan.vlc.player.result"
-            } else {
-                Intent.ACTION_VIEW
-            },
-            "extra_position",
-            "extra_duration",
-        ) {
-            override fun getPosition(intent: Intent?): Long {
-                return intent?.getLongExtra(this.position, defaultTime) ?: defaultTime
-            }
-
-            override fun getDuration(intent: Intent?): Long {
-                return intent?.getLongExtra(this.duration, defaultTime) ?: defaultTime
-            }
-        }
-
-        val MPV = object : ResultResume(
-            MPV_PACKAGE,
-            //"is.xyz.mpv.MPVActivity.result", // resume not working :pensive:
-            position = "position",
-            duration = "duration",
-        ) {
-            override fun getPosition(intent: Intent?): Long {
-                return intent?.getIntExtra(this.position, defaultTime.toInt())?.toLong()
-                    ?: defaultTime
-            }
-
-            override fun getDuration(intent: Intent?): Long {
-                return intent?.getIntExtra(this.duration, defaultTime.toInt())?.toLong()
-                    ?: defaultTime
-            }
-        }
-
-        val MPV_YTDL = object : ResultResume(
-            MPV_YTDL_PACKAGE,
-            //"is.xyz.mpv.ytdl/is.xyz.mpv.MPVActivity.result", // resume not working :pensive:
-            position = "position",
-            duration = "duration",
-        ) {
-            override fun getPosition(intent: Intent?): Long {
-                return intent?.getIntExtra(this.position, defaultTime.toInt())?.toLong()
-                    ?: defaultTime
-            }
-
-            override fun getDuration(intent: Intent?): Long {
-                return intent?.getIntExtra(this.duration, defaultTime.toInt())?.toLong()
-                    ?: defaultTime
-            }
-        }
-
-        val WEB_VIDEO = ResultResume(WEB_VIDEO_CAST_PACKAGE)
-
-        val resumeApps = arrayOf(
-            VLC, MPV, MPV_YTDL, WEB_VIDEO
-        )
-
+        var activityResultLauncher: ActivityResultLauncher<Intent>? = null
 
         const val TAG = "MAINACT"
         const val ANIMATED_OUTLINE: Boolean = false

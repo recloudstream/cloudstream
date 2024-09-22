@@ -248,7 +248,6 @@
     <string name="video_aspect_ratio_resize">Змінити розмір</string>
     <string name="synopsis">Короткий зміст</string>
     <string name="movies">Фільми</string>
-    <string name="episode_action_copy_link">Скопіювати посилання</string>
     <string name="episode_action_reload_links">Перезавантажити посилання</string>
     <string name="documentaries">Документальні фільми</string>
     <string name="nsfw">NSFW</string>
@@ -257,7 +256,6 @@
     <string name="torrent_singular">Торент</string>
     <string name="show_hd">Мітка якості</string>
     <string name="nsfw_singular">NSFW</string>
-    <string name="episode_action_play_in_browser">Переглянути в браузері</string>
     <string name="unexpected_error">Несподівана помилка плеєра</string>
     <string name="storage_error">Помилка завантаження, перевірте дозволи на зберігання</string>
     <string name="episode_action_chromecast_episode">Епізод Chromecast</string>
@@ -445,10 +443,6 @@
     <string name="extension_install_first">Спочатку встановіть розширення</string>
     <string name="hls_playlist">Список відтворення HLS</string>
     <string name="player_settings_play_in_app">Вбудований плеєр</string>
-    <string name="player_settings_play_in_vlc">VLC</string>
-    <string name="player_settings_play_in_mpv">MPV</string>
-    <string name="player_settings_play_in_web">Web Video Cast</string>
-    <string name="player_settings_play_in_browser">Веббраузер</string>
     <string name="skip_type_ed">Ендінґ</string>
     <string name="skip_type_recap">Коротке повторення</string>
     <string name="skip_type_format" formatted="true">Пропустити %s</string>
@@ -620,7 +614,6 @@
     <string name="reset_btn">Скинути</string>
     <string name="episode_upcoming_format" formatted="true">Наступний через %s</string>
     <string name="next_season_episode_format" formatted="true">%1$d сезон %2$d епізод вийде через</string>
-    <string name="player_settings_play_in_fcast">Fcast</string>
     <string name="player_settings_select_cast_device">Оберіть пристрій для трансляції</string>
     <string name="episode_action_cast_mirror">Трансляція через дзеркало</string>
     <string name="cs3wiki">CloudStream Wiki</string>
@@ -663,6 +656,5 @@
 \n%s</string>
     <string name="preview_seekbar">Попередній перегляд повзунка</string>
     <string name="preview_seekbar_desc">Ввімкнути мініатюру попереднього перегляду на повзунку</string>
-    <string name="player_settings_play_in_mpvytdl">MPV YTDL</string>
     <string name="no_subtitles_loaded">Субтитри ще не завантажено</string>
 </resources>

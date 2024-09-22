@@ -3,45 +3,25 @@ package com.lagradost.cloudstream3.ui.player
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.ExtractorLinkType
 
-enum class LoadType {
-    Unknown,
-    InApp,
-    InAppDownload,
-    ExternalApp,
-    Browser,
-    Chromecast,
-    Fcast
-}
+val LOADTYPE_INAPP = setOf(
+    ExtractorLinkType.VIDEO,
+    ExtractorLinkType.DASH,
+    ExtractorLinkType.M3U8
+)
 
-fun LoadType.toSet() : Set<ExtractorLinkType> {
-    return when(this) {
-        LoadType.InApp -> setOf(
-            ExtractorLinkType.VIDEO,
-            ExtractorLinkType.DASH,
-            ExtractorLinkType.M3U8
-        )
-        LoadType.Browser -> setOf(
-            ExtractorLinkType.VIDEO,
-            ExtractorLinkType.DASH,
-            ExtractorLinkType.M3U8
-        )
-        LoadType.InAppDownload -> setOf(
-            ExtractorLinkType.VIDEO,
-            ExtractorLinkType.M3U8
-        )
-        LoadType.ExternalApp, LoadType.Unknown -> ExtractorLinkType.entries.toSet()
-        LoadType.Chromecast -> setOf(
-            ExtractorLinkType.VIDEO,
-            ExtractorLinkType.DASH,
-            ExtractorLinkType.M3U8
-        )
-        LoadType.Fcast -> setOf(
-            ExtractorLinkType.VIDEO,
-            ExtractorLinkType.DASH,
-            ExtractorLinkType.M3U8
-        )
-    }
-}
+val LOADTYPE_INAPP_DOWNLOAD = setOf(
+    ExtractorLinkType.VIDEO,
+    ExtractorLinkType.M3U8
+)
+
+val LOADTYPE_CHROMECAST = setOf(
+    ExtractorLinkType.VIDEO,
+    ExtractorLinkType.DASH,
+    ExtractorLinkType.M3U8
+)
+
+val LOADTYPE_ALL = ExtractorLinkType.entries.toSet()
+
 
 interface IGenerator {
     val hasCache: Boolean
@@ -60,9 +40,10 @@ interface IGenerator {
     /* not safe, must use try catch */
     suspend fun generateLinks(
         clearCache: Boolean,
-        type: LoadType,
+        sourceTypes: Set<ExtractorLinkType>,
         callback: (Pair<ExtractorLink?, ExtractorUri?>) -> Unit,
         subtitleCallback: (SubtitleData) -> Unit,
         offset: Int = 0,
+        isCasting: Boolean = false
     ): Boolean
 }

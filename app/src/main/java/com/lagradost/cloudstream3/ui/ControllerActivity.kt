@@ -3,10 +3,15 @@ package com.lagradost.cloudstream3.ui
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
-import android.view.View.*
-import android.widget.*
+import android.view.View.GONE
+import android.view.View.INVISIBLE
+import android.view.View.VISIBLE
+import android.widget.AbsListView
+import android.widget.ArrayAdapter
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.ListView
 import androidx.appcompat.app.AlertDialog
-import androidx.media3.common.util.UnstableApi
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.module.kotlin.kotlinModule
@@ -25,7 +30,7 @@ import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.safeApiCall
 import com.lagradost.cloudstream3.sortUrls
-import com.lagradost.cloudstream3.ui.player.LoadType
+import com.lagradost.cloudstream3.ui.player.LOADTYPE_CHROMECAST
 import com.lagradost.cloudstream3.ui.player.RepoLinkGenerator
 import com.lagradost.cloudstream3.ui.player.SubtitleData
 import com.lagradost.cloudstream3.ui.result.ResultEpisode
@@ -298,14 +303,16 @@ class SelectSourceController(val view: ImageView, val activity: ControllerActivi
 
                         val isSuccessful = safeApiCall {
                             generator.generateLinks(
-                                clearCache = false, type = LoadType.Chromecast,
+                                clearCache = false,
+                                allowedTypes = LOADTYPE_CHROMECAST,
                                 callback = {
                                     it.first?.let { link ->
                                         currentLinks.add(link)
                                     }
                                 }, subtitleCallback = {
                                     currentSubs.add(it)
-                                })
+                                },
+                                isCasting = true)
                         }
 
                         val sortedLinks = sortUrls(currentLinks)

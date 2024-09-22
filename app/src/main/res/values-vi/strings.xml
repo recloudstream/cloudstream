@@ -243,8 +243,6 @@
     <string name="episode_action_chromecast_mirror">Chiếu Chromecast</string>
     <string name="episode_action_play_in_app">Xem với trình phát mặc định</string>
     <string name="episode_action_play_in_format">Xem với trình phát %s</string>
-    <string name="episode_action_play_in_browser">Xem tại trình duyệt</string>
-    <string name="episode_action_copy_link">Sao chép liên kết</string>
     <string name="episode_action_auto_download">Tự động tải xuống</string>
     <string name="episode_action_download_mirror">Nguồn tải xuống</string>
     <string name="episode_action_reload_links">Lấy link mới nhất</string>
@@ -472,10 +470,6 @@
     <string name="extension_types">Hỗ trợ</string>
     <string name="extension_language">Ngôn ngữ</string>
     <string name="extension_install_first">Cài đặt tiện ích trước</string>
-    <string name="player_settings_play_in_vlc">VLC</string>
-    <string name="player_settings_play_in_mpv">MPV</string>
-    <string name="player_settings_play_in_web">Web Video Cast</string>
-    <string name="player_settings_play_in_browser">Trình duyệt web</string>
     <string name="app_not_found_error">Không thấy ứng dụng</string>
     <string name="all_languages_preference">Tất cả ngôn ngữ</string>
     <string name="skip_type_format" formatted="true">Tua %s</string>
@@ -671,11 +665,9 @@
 \n
 \n%s</string>
     <string name="delete_plugin">Xóa plugin</string>
-    <string name="player_settings_play_in_fcast">Fcast</string>
     <string name="sort_release_date_old">Ngày phát hành (Cũ đến mới)</string>
     <string name="hide_player_control_names">Ẩn tên các nút điều khiển</string>
     <string name="preview_seekbar_desc">Bật chế độ xem trước hình thu nhỏ trên seekbar</string>
     <string name="preview_seekbar">Xem trước Seekbar</string>
-    <string name="player_settings_play_in_mpvytdl">MPV YTDL</string>
     <string name="no_subtitles_loaded">Chưa tải phụ đề</string>
 </resources>

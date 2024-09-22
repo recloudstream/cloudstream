@@ -17,7 +17,7 @@
     <string name="subtitle_settings_chromecast_key" translatable="false">subtitle_settings_chromecast_key</string>
     <string name="quality_pref_key" translatable="false">quality_pref_key</string>
     <string name="quality_pref_mobile_data_key" translatable="false">quality_pref_mobile_data_key</string>
-    <string name="player_pref_key" translatable="false">player_pref_key</string>
+    <string name="player_default_key" translatable="false">player_default_key</string>
     <string name="prefer_limit_title_key" translatable="false">prefer_limit_title_key</string>
     <string name="prefer_limit_title_rez_key" translatable="false">prefer_limit_title_rez_key</string>
     <string name="apk_installer_key" translatable="false">apk_installer_key</string>
@@ -381,8 +381,6 @@
     <string name="episode_action_cast_mirror">Cast mirror</string>
     <string name="episode_action_play_in_app">Play in app</string>
     <string name="episode_action_play_in_format">Play in %s</string>
-    <string name="episode_action_play_in_browser">Play in browser</string>
-    <string name="episode_action_copy_link">Copy link</string>
     <string name="episode_action_auto_download">Auto download</string>
     <string name="episode_action_download_mirror">Download mirror</string>
     <string name="episode_action_reload_links">Reload links</string>
@@ -662,12 +660,6 @@
     <string name="hls_playlist">HLS Playlist</string>
     <string name="player_pref">Preferred video player</string>
     <string name="player_settings_play_in_app">Internal player</string>
-    <string name="player_settings_play_in_vlc">VLC</string>
-    <string name="player_settings_play_in_mpv">MPV</string>
-    <string name="player_settings_play_in_mpvytdl">MPV YTDL</string>
-    <string name="player_settings_play_in_web">Web Video Cast</string>
-    <string name="player_settings_play_in_fcast">Fcast</string>
-    <string name="player_settings_play_in_browser">Web browser</string>
     <string name="player_settings_select_cast_device">Select cast device</string>
     <string name="app_not_found_error">App not found</string>
     <string name="all_languages_preference">All Languages</string>

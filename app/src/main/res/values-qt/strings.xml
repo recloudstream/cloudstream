@@ -144,8 +144,6 @@
     <string name="episode_action_chromecast_mirror">aoohaaahhu ahouuhhh</string>
     <string name="episode_action_play_in_app">ooo-ahahaauuh aaahhu</string>
     <string name="episode_action_play_in_format">ooo-ahah ohaauuh %s</string>
-    <string name="episode_action_play_in_browser">ahoha ooo-ahahohoohah oooohh</string>
-    <string name="episode_action_copy_link">aauugghhahhaauugghh</string>
     <string name="episode_action_auto_download">aaaghhoooohh aaahhu ahooo</string>
     <string name="episode_action_download_mirror">ohooo-ahahaohaohahhhoouuh</string>
     <string name="episode_action_reload_links">ahoooaaahhuahaaahhuoha</string>
@@ -318,7 +316,6 @@
     <string name="batch_download">aaahh uuuugggh</string>
     <string name="delete_repository">oooohh oooogggoog</string>
     <string name="extension_description">uuuuhhhaagg</string>
-    <string name="player_settings_play_in_mpv">uuh</string>
     <string name="clipboard_too_large">uuh aahh uugg oooogg ag aagg ug ooooggguh</string>
     <string name="profile_number">ooooggg %d</string>
     <string name="edit">aahh</string>
@@ -472,8 +469,6 @@
     <string name="safe_mode_description">ooh oooohhhooh oogg oooogg ooh uuh uh g ooogg oh uuhh uug uuhh ooh aah uuuuggg ooooggg</string>
     <string name="extension_authors">ooooggg</string>
     <string name="player_settings_play_in_app">aaaagggh uuuugg</string>
-    <string name="player_settings_play_in_web">ooh uuuhh aahh</string>
-    <string name="player_settings_play_in_browser">uuh uuuuhhh</string>
     <string name="app_not_found_error">aah ooh uuugg</string>
     <string name="skip_type_op">uuuuhhh</string>
     <string name="action_remove_from_watched">uuuuhh aagg oooohhh</string>
@@ -617,8 +612,6 @@
     <string name="single_plugin_disabled" formatted="true">%s (Disabled)</string>
     <string name="extension_rating" formatted="true">Rating: %s</string>
     <string name="extension_status">aaaagg</string>
-    <string name="player_settings_play_in_vlc">oog</string>
-    <string name="player_settings_play_in_fcast">uuuhh</string>
     <string name="player_settings_select_cast_device">aaaagg aahh oooohh</string>
     <string name="skip_type_ed">uuuuuk</string>
     <string name="skip_type_mixed_op">aaagg aaaahhh</string>

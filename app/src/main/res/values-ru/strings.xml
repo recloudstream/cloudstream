@@ -190,7 +190,6 @@
     <string name="torrent">Торренты</string>
     <string name="others">Другое</string>
     <string name="storage_error">Ошибка загрузки, проверьте разрешения хранилища</string>
-    <string name="episode_action_copy_link">Копировать ссылку</string>
     <string name="episode_action_auto_download">Автоскачивание</string>
     <string name="episode_action_download_mirror">Загрузка. Зеркало</string>
     <string name="season">Сезон</string>
@@ -270,8 +269,6 @@
     <string name="extension_size">Размер</string>
     <string name="extension_authors">Авторы</string>
     <string name="extension_types">Поддерживается</string>
-    <string name="player_settings_play_in_vlc">VLC</string>
-    <string name="player_settings_play_in_mpv">MPV</string>
     <string name="skip_type_format" formatted="true">Пропустить %s</string>
     <string name="skip_type_ed">Концовка</string>
     <string name="use_system_brightness_settings_des">Используйте яркость системы в проигрывателе приложения вместо темного наложения</string>
@@ -293,7 +290,6 @@
     <string name="unexpected_error">Неожиданная ошибка плеера</string>
     <string name="episode_action_chromecast_episode">Эпизод Chromecast</string>
     <string name="episode_action_play_in_format">Воспроизведение на %s</string>
-    <string name="episode_action_play_in_browser">Воспроизвести в браузере</string>
     <string name="episode_action_download_subtitle">Скачать субтитры</string>
     <string name="show_hd">Знак качества</string>
     <string name="poster_ui_settings">Переключение элементов интерфейса на плакате</string>
@@ -309,7 +305,6 @@
     <string name="sync_score_format" formatted="true">%d из 10</string>
     <string name="safe_mode_crash_info">Посмотреть информацию о сбое</string>
     <string name="player_pref">Предпочитаемый видеоплеер</string>
-    <string name="player_settings_play_in_browser">Веб-браузер</string>
     <string name="app_not_found_error">Приложение не найдено</string>
     <string name="all_languages_preference">Все языки</string>
     <string name="skip_type_op">Вступление</string>
@@ -492,7 +487,6 @@
     <string name="random_button_settings_desc">Отображать рандомную кнопку в библиотеке и главной странице</string>
     <string name="random_button_settings">Рандомная кнопка</string>
     <string name="apk_installer_legacy">Legacy (старый)</string>
-    <string name="player_settings_play_in_web">Web Video Cast</string>
     <string name="bug_report_settings_on">Не отправляет данные</string>
     <string name="episode_action_reload_links">Перезагрузить ссылки</string>
     <string name="preferred_media_settings">Предпочтительные медиа</string>
@@ -620,7 +614,6 @@
     <string name="reset_btn">Сброс</string>
     <string name="next_season_episode_format" formatted="true">Сезон %1$d Эпизод %2$d выйдет</string>
     <string name="episode_upcoming_format" formatted="true">Выйдет %s</string>
-    <string name="player_settings_play_in_fcast">Fcast</string>
     <string name="player_settings_select_cast_device">Выберите девайс для трансляции</string>
     <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
     <string name="downloads_empty">В данный момент загрузок нет.</string>

@@ -241,8 +241,6 @@
     <string name="storage_error">Downloadfehler, bitte überprüfen sie die Speicherberechtigungen</string>
     <string name="episode_action_chromecast_episode">Chromecast-Episode</string>
     <string name="episode_action_play_in_format">In %s wiedergeben</string>
-    <string name="episode_action_play_in_browser">In Browser wiedergeben</string>
-    <string name="episode_action_copy_link">Link kopieren</string>
     <string name="episode_action_auto_download">Auto-Download</string>
     <string name="episode_action_download_mirror">Alternativer Download</string>
     <string name="episode_action_reload_links">Links neu laden</string>
@@ -437,10 +435,6 @@
     <string name="hls_playlist">HLS-Playlist</string>
     <string name="player_pref">Bevorzugter Videoplayer</string>
     <string name="player_settings_play_in_app">Interner Player</string>
-    <string name="player_settings_play_in_vlc">VLC</string>
-    <string name="player_settings_play_in_mpv">MPV</string>
-    <string name="player_settings_play_in_web">Web Video Cast</string>
-    <string name="player_settings_play_in_browser">Browser</string>
     <string name="app_not_found_error">App nicht gefunden</string>
     <string name="all_languages_preference">Alle Sprachen</string>
     <string name="skip_type_format" formatted="true">Überspringen %s</string>
@@ -618,7 +612,6 @@
     <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
     <string name="next_season_episode_format" formatted="true">Staffel %1$d Episode %2$d wird veröffentlicht in</string>
     <string name="episode_upcoming_format" formatted="true">Wird veröffentlicht in %s</string>
-    <string name="player_settings_play_in_fcast">Fcast</string>
     <string name="pref_category_security">Sicherheit</string>
     <string name="pref_category_accounts">Konten</string>
     <string name="open_downloaded_repo">Repository öffnen</string>

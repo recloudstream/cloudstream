@@ -148,8 +148,6 @@
     <string name="episode_action_chromecast_mirror">Chromecasta en Länk</string>
     <string name="episode_action_play_in_app">Spela upp i appen</string>
     <string name="episode_action_play_in_format">Spela upp i %s</string>
-    <string name="episode_action_play_in_browser">Spela upp i webbläsaren</string>
-    <string name="episode_action_copy_link">Kopiera länk</string>
     <string name="episode_action_auto_download">Automatisk nerladdning</string>
     <string name="episode_action_download_mirror">Ladda ner en specifik länk</string>
     <string name="episode_action_reload_links">Ladda om alla länkar</string>
@@ -379,13 +377,11 @@
     <string name="show_sub">Visa sub</string>
     <string name="app_not_found_error">Kunde inte öppna appen</string>
     <string name="jsdelivr_proxy">GitHub Proxy</string>
-    <string name="player_settings_play_in_browser">Webbläsarens videospelare</string>
     <string name="update_notification_installing">Installerar uppdatering till appen…</string>
     <string name="jsdelivr_enabled">Kunde inte nå GitHub, sätter på jsDelivr proxy…</string>
     <string name="category_providers">Leverantörer</string>
     <string name="example_site_name">Nytt webbplatsnamn</string>
     <string name="subtitles_remove_bloat">Ta bort reklam från undertexter</string>
-    <string name="player_settings_play_in_vlc">VLC</string>
     <string name="all_languages_preference">Alla språk</string>
     <string name="clear_history">Rensa historik</string>
     <string name="apk_installer_package_installer">PackageInstaller</string>
@@ -409,8 +405,6 @@
     <string name="category_player">Videospelare</string>
     <string name="open_with">Öppna med</string>
     <string name="subtitle_offset">Synkronisera undertexter</string>
-    <string name="player_settings_play_in_mpv">MPV</string>
-    <string name="player_settings_play_in_web">Web Video Cast</string>
     <string name="test_failed">Misslyckades</string>
     <string name="yes">Ja</string>
     <string name="video_tracks">Videospår</string>
@@ -619,7 +613,6 @@
     <string name="episode_upcoming_format" formatted="true">Kommer ut om %s</string>
     <string name="clipboard_unknown_error">Fel vid kopiering, kopiera logcat och kontakta appsupport.</string>
     <string name="custom_media_singluar">Media</string>
-    <string name="player_settings_play_in_fcast">Fcast</string>
     <string name="episode_action_cast_mirror">Cast mirror</string>
     <string name="next_season_episode_format" formatted="true">Säsong %1$d Avsnitt %2$d kommer att släppas om</string>
     <string name="player_settings_select_cast_device">Välj cast-enhet</string>

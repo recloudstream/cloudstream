@@ -164,8 +164,6 @@
     <string name="episode_action_chromecast_mirror">Огледало на Chromecastr</string>
     <string name="episode_action_play_in_app">Пушти во апликацијата</string>
     <string name="episode_action_play_in_format">Пушти на %s</string>
-    <string name="episode_action_play_in_browser">Пушти на прелистувач</string>
-    <string name="episode_action_copy_link">Копирај линк</string>
     <string name="episode_action_auto_download">Авто превземање</string>
     <string name="episode_action_download_mirror">Превземи Mirror</string>
     <string name="episode_action_reload_links">Вчитај повторно врски</string>
@@ -297,7 +295,6 @@
     <string name="android_tv_interface_off_seek_settings_summary">Износот на барањето што се користи кога плеерот е скриен</string>
     <string name="episode_action_download_subtitle">Преземи преводи</string>
     <string name="view_public_repositories_button_short">Јавна листа</string>
-    <string name="player_settings_play_in_mpv">MPV</string>
     <string name="apk_installer_package_installer">Инсталатор на пакети</string>
     <string name="ova_singular">ОВА</string>
     <string name="category_updates">Ажурирање и резервна копија</string>
@@ -425,7 +422,6 @@
     <string name="sync_total_episodes_none">/??</string>
     <string name="example_email">hello@world.com</string>
     <string name="go_forward_30">+30</string>
-    <string name="player_settings_play_in_vlc">VLC</string>
     <string name="restart">Рестартирај</string>
     <string name="cartoons_singular">Цртан филм</string>
     <string name="batch_download_start_format" formatted="true">Почна да презема %1$d %2$s…</string>
@@ -448,7 +444,6 @@
     <string name="quality_cam_rip">Камера</string>
     <string name="quality_cam_hd">Камера</string>
     <string name="quality_sdr">SDR</string>
-    <string name="player_settings_play_in_browser">Веб-прелистувач</string>
     <string name="app_not_found_error">Апликацијата не е пронајдена</string>
     <string name="example_username">Корисничко име</string>
     <string name="open_with">Отвори со</string>
@@ -488,7 +483,6 @@
     <string name="safe_mode_description">Сите екстензии беа исклучени поради пад за да ви помогнат да ја пронајдете онаа што предизвикува проблеми.</string>
     <string name="extension_rating" formatted="true">Оцена: %s</string>
     <string name="extension_size">Големина</string>
-    <string name="player_settings_play_in_web">Веб-видео Cast</string>
     <string name="all_languages_preference">Сите јазици</string>
     <string name="clear_history">Исчисти историја</string>
     <string name="action_mark_as_watched">Обележи како гледано</string>
@@ -611,7 +605,6 @@
     <string name="biometric_warning">Сега е направена резервна копија на вашите податоци на CloudStream. Иако можноста за ова е многу мала, сите уреди можат да се однесуваат поинаку. Во ретки случаи, кога ќе се заклучите од пристап до апликацијата, целосно исчистете ги податоците на апликацијата и вратете ги од резервна копија. Многу ни е жал за какви било непријатности што произлегуваат од ова.</string>
     <string name="reset_btn">Ресетирај</string>
     <string name="next_season_episode_format" formatted="true">Сезона %1$d Епизода %2$d ќе биде објавена за</string>
-    <string name="player_settings_play_in_fcast">Fcast</string>
     <string name="player_settings_select_cast_device">Одбери уред да кастираш</string>
     <string name="battery_dialog_title">Оневозможи оптимизација на батерија</string>
     <string name="biometric_authentication_title">Отклучи CloudStream</string>

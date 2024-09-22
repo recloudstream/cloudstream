@@ -111,8 +111,6 @@
     <string name="episode_action_chromecast_mirror">Miroir Chromecast</string>
     <string name="episode_action_play_in_app">Lecture dans l\'application</string>
     <string name="episode_action_play_in_format">Lecture dans %s</string>
-    <string name="episode_action_play_in_browser">Lecture dans le navigateur</string>
-    <string name="episode_action_copy_link">Copier le lien</string>
     <string name="episode_action_auto_download">Téléchargement automatique</string>
     <string name="episode_action_download_mirror">Télécharger depuis le miroir</string>
     <string name="episode_action_reload_links">Recharger les liens</string>
@@ -140,7 +138,7 @@
     <string name="dns_pref">DNS avec HTTPS</string>
     <string name="display_subbed_dubbed_settings">Afficher les animés en Anglais (Dub) / sous-titrés</string>
     <string name="phone_layout">Disposition en mode téléphone</string>
-    <string name="app_dub_sub_episode_text_format">%1$s Episode %2$d</string>
+    <string name="app_dub_sub_episode_text_format">episode_action_copy_link</string>
     <string name="rated_format" formatted="true">Note : %.1f</string>
     <string name="resize_zoom">Zoom</string>
     <string name="resize_fit">Adapter à l\'écran</string>
@@ -430,12 +428,10 @@
     <string name="extension_install_first">Installer l\'extension d\'abord</string>
     <string name="hls_playlist">Playlist HLS</string>
     <string name="player_pref">Lecteur vidéo préféré</string>
-    <string name="player_settings_play_in_vlc">VLC</string>
     <string name="skip_type_mixed_ed">Fin mitigée</string>
     <string name="skip_type_mixed_op">Introduction mitigée</string>
     <string name="update_notification_installing">Installation de la mise a jour de l\'application…</string>
     <string name="update_notification_failed">Impossible d\'installer la nouvelle version de l\'application</string>
-    <string name="player_settings_play_in_browser">Navigateur Web</string>
     <string name="apk_installer_settings_des">Certains téléphones ne supporte pas le nouvel installateur d\'application. Essayez l\'option de l\'ancien installateur si les mises-à-jour ne s\'installe pas.</string>
     <string name="previous">Précédent</string>
     <string name="skip_setup">Ignorer la configuration</string>
@@ -456,7 +452,6 @@
     <string name="player_settings_play_in_app">Lecteur interne</string>
     <string name="app_not_found_error">Application introuvable</string>
     <string name="clipboard_too_large">Trop de texte. Impossible de sauvegarder dans le presse papier.</string>
-    <string name="player_settings_play_in_mpv">MPV</string>
     <string name="apk_installer_package_installer">Installateur de paquet</string>
     <string name="plugin">plugins</string>
     <string name="delete_repository_plugins">Cela supprimera également tous les plugins du repository</string>
@@ -466,7 +461,6 @@
     <string name="extension_language">Langage</string>
     <string name="enable_skip_op_from_database_des">Afficher les popups skip pour les intro / fins</string>
     <string name="apk_installer_legacy">Ancienne méthode d\'installation</string>
-    <string name="player_settings_play_in_web">Web Video Cast</string>
     <string name="pref_category_links">Liens</string>
     <string name="pref_category_gestures">Gestes</string>
     <string name="pref_category_player_features">Fonctionnalités du lecteur</string>

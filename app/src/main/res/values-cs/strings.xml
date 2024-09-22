@@ -223,8 +223,6 @@
     <string name="episode_action_chromecast_mirror">Chromecast jako zrcadlo</string>
     <string name="episode_action_play_in_app">Přehrát v aplikace</string>
     <string name="episode_action_play_in_format">Přehrát ve %s</string>
-    <string name="episode_action_play_in_browser">Přehrát v prohlížeči</string>
-    <string name="episode_action_copy_link">Zkopírovat odkaz</string>
     <string name="episode_action_auto_download">Automaticky stáhnout</string>
     <string name="episode_action_download_mirror">Zrcadlo stahování</string>
     <string name="episode_action_reload_links">Obnovit odkazy</string>
@@ -400,8 +398,6 @@
     <string name="view_public_repositories_button_short">Veřejný seznam</string>
     <string name="uppercase_all_subtitles">Velká písmena u všech titulků</string>
     <string name="hls_playlist">Playlist HLS</string>
-    <string name="player_settings_play_in_mpv">MPV</string>
-    <string name="player_settings_play_in_web">Webové vysílání videa</string>
     <string name="app_not_found_error">Aplikace nenalezena</string>
     <string name="skip_type_format" formatted="true">Přeskočit %s</string>
     <string name="skip_type_op">Úvod</string>
@@ -451,13 +447,11 @@
     <string name="extension_description">Popis</string>
     <string name="extension_status">Stav</string>
     <string name="extension_install_first">Nejprve nainstalujte rozšíření</string>
-    <string name="player_settings_play_in_vlc">VLC</string>
     <string name="skip_type_mixed_ed">Smíšený konec</string>
     <string name="extension_language">Jazyk</string>
     <string name="player_settings_play_in_app">Interní přehrávač</string>
     <string name="skip_type_recap">Rekapitulace</string>
     <string name="clear_history">Vymazat historii</string>
-    <string name="player_settings_play_in_browser">Webový prohlížeč</string>
     <string name="all_languages_preference">Všechny jazyky</string>
     <string name="skip_type_mixed_op">Smíšený úvod</string>
     <string name="skip_type_creddits">Poděkování</string>
@@ -645,7 +639,6 @@
     <string name="episode_upcoming_format" formatted="true">Vychází %s</string>
     <string name="next_season_episode_format" formatted="true">Epizoda %2$d ze série %1$d bude vydána za</string>
     <string name="episode_action_cast_mirror">Vysílat zrcadlení</string>
-    <string name="player_settings_play_in_fcast">Fcast</string>
     <string name="player_settings_select_cast_device">Vyberte zařízení k vysílání</string>
     <string name="cs3wiki">CloudStream Wiki</string>
     <string name="pref_category_security">Zabezpečení</string>
@@ -687,6 +680,5 @@
     <string name="delete_format" formatted="true">Odstranit (%1$d | %2$s)</string>
     <string name="preview_seekbar">Náhled v liště přehrávače</string>
     <string name="preview_seekbar_desc">Povolit náhled miniatur na liště přehrávače</string>
-    <string name="player_settings_play_in_mpvytdl">MPV YTDL</string>
     <string name="no_subtitles_loaded">Zatím nenačteny žádné titulky</string>
 </resources>

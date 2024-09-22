@@ -253,8 +253,6 @@
     <string name="episode_action_chromecast_mirror">Chromecast mirror</string>
     <string name="episode_action_play_in_app">Pokreni u aplikaciji</string>
     <string name="episode_action_play_in_format">Pokreni u %s</string>
-    <string name="episode_action_play_in_browser">Pokreni u pregledniku</string>
-    <string name="episode_action_copy_link">Kopiraj poveznicu</string>
     <string name="episode_action_auto_download">Automatsko preuzimanje</string>
     <string name="episode_action_download_mirror">Preuzmi zrcalo</string>
     <string name="episode_action_reload_links">Ponovo učitaj poveznice</string>
@@ -461,9 +459,6 @@
     <string name="player_pref">Preferirani video player</string>
     <string name="player_settings_play_in_app">Interni player</string>
     <string name="extension_install_first">Najprije instaliraj proširenje</string>
-    <string name="player_settings_play_in_vlc">VLC</string>
-    <string name="player_settings_play_in_mpv">MPV</string>
-    <string name="player_settings_play_in_web">Emitiranje na webu</string>
     <string name="app_not_found_error">Aplikacija nije pronađena</string>
     <string name="all_languages_preference">Svi jezici</string>
     <string name="clipboard_too_large">Previše teksta. Nije moguće spremiti u međuspremnik.</string>
@@ -495,7 +490,6 @@
     <string name="pref_category_defaults">Zadane postavke</string>
     <string name="pref_category_looks">Izgledi</string>
     <string name="pref_category_ui_features">Značajke</string>
-    <string name="player_settings_play_in_browser">Web preglednik</string>
     <string name="skip_type_format" formatted="true">Preskoči %s</string>
     <string name="skip_type_ed">Kraj</string>
     <string name="skip_type_recap">Sažetak</string>
@@ -646,7 +640,6 @@
     <string name="biometric_warning">Vaši CloudStream podaci su sada spremljeni u sigurnosnu kopiju. Iako je vjerojatnost mala, neki se uređaji mogu ponašati drugačije. Ako izgubite pristup aplikaciji, potpuno izbrišite podatke aplikacije i obnovite ih pomoću sigurnosne kopije. Ispričavamo se zbog mogućih neugodnosti.</string>
     <string name="next_season_episode_format" formatted="true">Sezona %1$d epizoda %2$d izlazi</string>
     <string name="episode_action_cast_mirror">Cast mirror</string>
-    <string name="player_settings_play_in_fcast">Fcast</string>
     <string name="player_settings_select_cast_device">Odaberi uređaj za emitiranje</string>
     <string name="cs3wiki">CloudStream Wiki</string>
     <string name="pref_category_accounts">Računi</string>
@@ -686,6 +679,5 @@
     <string name="delete_message_series_only" formatted="true">Stvarno želite trajno izbrisati sve epizode u sljedećoj seriji?
 \n
 \n%s</string>
-    <string name="player_settings_play_in_mpvytdl">MPV YTDL</string>
     <string name="no_subtitles_loaded">Još nije učitan nijedan titl</string>
 </resources>

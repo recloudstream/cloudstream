@@ -186,8 +186,6 @@
     <string name="episode_action_chromecast_mirror">Chromecast 미러링</string>
     <string name="episode_action_play_in_app">앱에서 재생</string>
     <string name="episode_action_play_in_format">%s에서 재생</string>
-    <string name="episode_action_play_in_browser">브라우저에서 재생</string>
-    <string name="episode_action_copy_link">링크 복사</string>
     <string name="episode_action_auto_download">자동 다운로드</string>
     <string name="episode_action_download_mirror">다운로드 미러</string>
     <string name="episode_action_reload_links">링크 새로고침</string>
@@ -445,7 +443,6 @@
     <string name="extension_description">소개</string>
     <string name="extension_types">유형</string>
     <string name="extension_install_first">먼저 확장 프로그램을 설치하세요</string>
-    <string name="player_settings_play_in_browser">웹 브라우저</string>
     <string name="app_not_found_error">앱을 찾을 수 없음</string>
     <string name="all_languages_preference">모든 언어</string>
     <string name="skip_type_format" formatted="true">건너뛰기 %s</string>
@@ -482,11 +479,8 @@
 \n파일이 제거될 때까지 시작 시 확장 프로그램을 로드하지 않습니다.</string>
     <string name="hls_playlist">HLS 재생목록</string>
     <string name="player_settings_play_in_app">내부 플레이어</string>
-    <string name="player_settings_play_in_mpv">MPV</string>
     <string name="player_pref">선호하는 동영상 플레이어</string>
-    <string name="player_settings_play_in_vlc">VLC</string>
     <string name="select_library">라이브러리 선택</string>
-    <string name="player_settings_play_in_web">웹 동영상 캐스트</string>
     <string name="empty_library_logged_in_message">이 목록이 비어 있습니다. 다른 목록으로 전환해 보세요.</string>
     <string name="filler" formatted="true">필러</string>
     <string name="play_livestream_button">라이브 스트리밍 재생</string>
@@ -579,7 +573,6 @@
     <string name="auto_rotate_video">자동 회전</string>
     <string name="mobile_data">모바일 데이터</string>
     <string name="disable">사용 불가능</string>
-    <string name="player_settings_play_in_fcast">fcast</string>
     <string name="player_settings_select_cast_device">캐스트 장치 선택</string>
     <string name="clipboard_unknown_error">복사하는 중 오류가 발생했습니다. 로그캣을 복사하고 문의하십시오.</string>
     <string name="action_unsubscribe">구독 취소</string>

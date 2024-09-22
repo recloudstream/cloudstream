@@ -182,7 +182,6 @@
     <string name="documentaries_singular">Dokumentumfilm</string>
     <string name="asian_drama_singular">Ázsiai dráma</string>
     <string name="episode_action_reload_links">Linkek újratöltése</string>
-    <string name="episode_action_copy_link">Link másolás</string>
     <string name="episode_action_download_mirror">Letöltés mirror</string>
     <string name="episode_action_auto_download">Automatikus letöltés</string>
     <string name="backup_success">Adatok eltárolva</string>
@@ -227,7 +226,6 @@
     <string name="episode_action_chromecast_mirror">Chromecast mirror</string>
     <string name="episode_action_play_in_app">Lejátszás az alkalmazásban</string>
     <string name="episode_action_play_in_format">Lejátszás %s</string>
-    <string name="episode_action_play_in_browser">Lejátszás böngészőben</string>
     <string name="episode_action_download_subtitle">Feliratok letöltése</string>
     <string name="reload_error">Újracsatlakozás…</string>
     <string name="swipe_to_seek_settings_des">Húzd balra vagy jobbra a videólejátszóban az idő vezérléséhez</string>
@@ -352,7 +350,6 @@
     <string name="preferred_media_subtext">Mit szeretnél látni</string>
     <string name="batch_download_nothing_to_download_format" formatted="true">Minden %s már letöltött</string>
     <string name="extension_install_first">Először telepítse a bővítményt</string>
-    <string name="player_settings_play_in_browser">Webböngésző</string>
     <string name="pref_category_looks">Kinézet</string>
     <string name="app_layout">Alkalmazás elrendezés</string>
     <string name="upload_sync">Szinkronizálás</string>
@@ -368,7 +365,6 @@
     <string name="download_all_plugins_from_repo">Töltse le az összes bővítményt ebből a tárolóból?</string>
     <string name="safe_mode_title">Biztonságos mód bekapcsolva</string>
     <string name="extension_size">Méret</string>
-    <string name="player_settings_play_in_mpv">MPV</string>
     <string name="app_not_found_error">Alkalmazás nem található</string>
     <string name="apk_installer_package_installer">PackageInstaller</string>
     <string name="sort_by">Rendezés e szerint</string>
@@ -403,7 +399,6 @@
     <string name="subtitles_raised">Emelt</string>
     <string name="quality_hd">HD</string>
     <string name="hls_playlist">HLS lejátszási lista</string>
-    <string name="player_settings_play_in_vlc">VLC</string>
     <string name="update_notification_failed">Nem sikerült telepíteni az alkalmazás új verzióját</string>
     <string name="authenticated_user" formatted="true">%s hitelesítve</string>
     <string name="subtitles_outline">Körvonal</string>
@@ -528,7 +523,6 @@
     <string name="referer">Hivatkozó (opcionális)</string>
     <string name="no_plugins_found_error">Nem találhatóak pluginek a repóban</string>
     <string name="no_repository_found_error">Repó nem található, ellenőrizze a címet vagy próbálja VPN-el</string>
-    <string name="player_settings_play_in_web">Web Videó Cast</string>
     <string name="skip_type_format" formatted="true">%s kihagyása</string>
     <string name="enable_skip_op_from_database_des">A kihagyási felugró ablakok mutatása nyitás/zárás esetén</string>
     <string name="set_default">Alapbeállítás</string>
