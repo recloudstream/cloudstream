@@ -28,14 +28,7 @@ ksp = "4.16.0"
 lifecycleLivedataKtx = "2.8.3"
 lifecycleViewmodelKtx = "2.8.3"
 material = "1.12.0"
-media3Cast = "1.4.0"
-media3Common = "1.4.0"
-media3DatasourceOkhttp = "1.4.0"
-media3Exoplayer = "1.4.0"
-media3ExoplayerDash = "1.4.0"
-media3ExoplayerHls = "1.4.0"
-media3Session = "1.4.0"
-media3Ui = "1.4.0"
+media3 = "1.4.0"
 mediaFfmpeg = "1.1.0"
 navigationFragmentKtx = "2.7.7"
 navigationUiKtx = "2.7.7"
@@ -90,14 +83,14 @@ lifecycle-livedata-ktx = { module = "androidx.lifecycle:lifecycle-livedata-ktx",
 lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "lifecycleViewmodelKtx" }
 material = { module = "com.google.android.material:material", version.ref = "material" }
 media-ffmpeg = { module = "com.github.recloudstream:media-ffmpeg", version.ref = "mediaFfmpeg" }
-media3-cast = { module = "androidx.media3:media3-cast", version.ref = "media3Cast" }
-media3-common = { module = "androidx.media3:media3-common", version.ref = "media3Common" }
-media3-datasource-okhttp = { module = "androidx.media3:media3-datasource-okhttp", version.ref = "media3DatasourceOkhttp" }
-media3-exoplayer = { module = "androidx.media3:media3-exoplayer", version.ref = "media3Exoplayer" }
-media3-exoplayer-dash = { module = "androidx.media3:media3-exoplayer-dash", version.ref = "media3ExoplayerDash" }
-media3-exoplayer-hls = { module = "androidx.media3:media3-exoplayer-hls", version.ref = "media3ExoplayerHls" }
-media3-session = { module = "androidx.media3:media3-session", version.ref = "media3Session" }
-media3-ui = { module = "androidx.media3:media3-ui", version.ref = "media3Ui" }
+media3-cast = { module = "androidx.media3:media3-cast", version.ref = "media3" }
+media3-common = { module = "androidx.media3:media3-common", version.ref = "media3" }
+media3-datasource-okhttp = { module = "androidx.media3:media3-datasource-okhttp", version.ref = "media3" }
+media3-exoplayer = { module = "androidx.media3:media3-exoplayer", version.ref = "media3" }
+media3-exoplayer-dash = { module = "androidx.media3:media3-exoplayer-dash", version.ref = "media3" }
+media3-exoplayer-hls = { module = "androidx.media3:media3-exoplayer-hls", version.ref = "media3" }
+media3-session = { module = "androidx.media3:media3-session", version.ref = "media3" }
+media3-ui = { module = "androidx.media3:media3-ui", version.ref = "media3" }
 navigation-fragment-ktx = { module = "androidx.navigation:navigation-fragment-ktx", version.ref = "navigationFragmentKtx" }
 navigation-ui-ktx = { module = "androidx.navigation:navigation-ui-ktx", version.ref = "navigationUiKtx" }
 newpipeextractor = { module = "com.github.teamnewpipe:NewPipeExtractor", version.ref = "newpipeextractor" }
@@ -119,4 +112,7 @@ work-runtime = { module = "androidx.work:work-runtime", version.ref = "workRunti
 work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "workRuntimeKtx" }
 
 [plugins]
+
+[bundles]
+media3 = ["media3-cast", "media3-common", "media3-datasource-okhttp", "media3-exoplayer", "media3-exoplayer-dash", "media3-exoplayer-hls", "media3-session", "media3-ui"]
 
