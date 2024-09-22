@@ -127,6 +127,8 @@ val appLanguages = arrayListOf(
 /* end language list */
 ).sortedBy { it.second.lowercase() } //ye, we go alphabetical, so ppl don't put their lang on top
 
+fun getExitDialogSupportedLayouts() = TV or EMULATOR
+
 class SettingsGeneral : PreferenceFragmentCompat() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -210,14 +212,18 @@ class SettingsGeneral : PreferenceFragmentCompat() {
             return@setOnPreferenceClickListener true
         }
 
-        settingsManager.edit().putBoolean(
-            getString(R.string.confirm_exit_key),
-            getKey(getString(R.string.confirm_exit_key), true) ?: true
-        ).apply()
-        getPref(R.string.confirm_exit_key)?.setOnPreferenceChangeListener { _, newValue ->
-            setKey(getString(R.string.confirm_exit_key), newValue)
-            return@setOnPreferenceChangeListener true
-        }
+        getPref(R.string.confirm_exit_key)
+            ?.hideOn(getExitDialogSupportedLayouts().inv())
+            ?.let { pref ->
+                settingsManager.edit().putBoolean(
+                    getString(R.string.confirm_exit_key),
+                    getKey(getString(R.string.confirm_exit_key), true) ?: true
+                ).apply()
+                pref
+            }?.setOnPreferenceChangeListener { _, newValue ->
+                setKey(getString(R.string.confirm_exit_key), newValue)
+                return@setOnPreferenceChangeListener true
+            }
 
         getPref(R.string.battery_optimisation_key)?.hideOn(TV or EMULATOR)?.setOnPreferenceClickListener {
             val ctx = context ?: return@setOnPreferenceClickListener false

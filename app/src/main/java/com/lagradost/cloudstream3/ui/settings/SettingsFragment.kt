@@ -70,11 +70,12 @@ class SettingsFragment : Fragment() {
 
         /**
          * Hide the Preference on selected layouts.
+         * @return [Preference] if visible otherwise null
          **/
         fun Preference?.hideOn(layoutFlags: Int): Preference? {
             if (this == null) return null
             this.isVisible = !isLayout(layoutFlags)
-            return this
+            return if(this.isVisible) this else null
         }
 
         /**

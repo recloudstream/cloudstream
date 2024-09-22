@@ -125,6 +125,7 @@ import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.ui.settings.Globals.updateTv
 import com.lagradost.cloudstream3.ui.settings.SettingsGeneral
+import com.lagradost.cloudstream3.ui.settings.getExitDialogSupportedLayouts
 import com.lagradost.cloudstream3.ui.setup.HAS_DONE_SETUP_KEY
 import com.lagradost.cloudstream3.ui.setup.SetupFragmentExtensions
 import com.lagradost.cloudstream3.utils.ApkInstaller
@@ -1534,7 +1535,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                 }
             }
 
-            if (isLayout(TV or EMULATOR)) {
+            if (isLayout(getExitDialogSupportedLayouts())) {
                 if (navDestination.matchDestination(R.id.navigation_home)) {
                     attachBackPressedCallback {
                         showConfirmExitDialog()
