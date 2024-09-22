@@ -250,7 +250,7 @@
     <string name="update">Обновить</string>
     <string name="primary_color_settings">Основной цвет</string>
     <string name="provider_lang_settings">Языки провайдеров</string>
-    <string name="repository_name_hint">Название репозитория</string>
+    <string name="repository_name_hint">Название репозитория (необязательно)</string>
     <string name="clear_history">Очистить историю</string>
     <string name="referer">Реферер (необязательно)</string>
     <string name="benene">Дайте бенен разрабам</string>
@@ -354,7 +354,7 @@
     <string name="pref_category_gestures">Жесты</string>
     <string name="setup_done">Готово</string>
     <string name="extensions">Расширения</string>
-    <string name="repository_url_hint">URL репозитория</string>
+    <string name="repository_url_hint">URL или код репозитория</string>
     <string name="plugin_loaded">Плагин загружен</string>
     <string name="action_open_play">@string/home_play</string>
     <string name="double_tap_to_seek_settings">Перемотка двойным нажатием</string>
@@ -544,7 +544,7 @@
 \nПРИМЕЧАНИЕ. Если сумма равна 10 или более, плеер автоматически пропустит загрузку при загрузке этой ссылки!</string>
     <string name="links_reloaded_toast">Ссылки перезагружены</string>
     <string name="select_an_account">Выбрать аккаунт</string>
-    <string name="favorite_removed">%s убран из избранных</string>
+    <string name="favorite_removed">%s убрано из избранных</string>
     <string name="enter_pin">Введите пин-код</string>
     <string name="lock_profile">Защитить профиль</string>
     <string name="pin">Пин-код</string>
@@ -564,7 +564,7 @@
 \n\'%s.\'
 \n
 \nВы хотите добавить этот элемент, заменить существующие или отменить это действие?</string>
-    <string name="action_remove_from_favorites">Убрать из избранных</string>
+    <string name="action_remove_from_favorites">Убрать из избранного</string>
     <string name="action_add_to_favorites">Добавить в избранное</string>
     <string name="auto_rotate_video_desc">Включить автоматическую смену ориентации экрана на основе ориентации видео</string>
     <string name="auto_rotate_video">Автоповорот</string>
@@ -575,7 +575,7 @@
     <string name="enter_current_pin">Введите текущий пин-код</string>
     <string name="auto_rotate_video_key">auto_rotate_video_key</string>
     <string name="favorites_list_name">Избранное</string>
-    <string name="favorite_added">%s добавлен в избранное</string>
+    <string name="favorite_added">%s добавлено в избранное</string>
     <string name="enter_pin_with_name" formatted="true">Введите пин-код от %s</string>
     <string name="action_subscribe">Подписаться</string>
     <string name="backup_frequency">Частота резервного копирования</string>
@@ -617,7 +617,7 @@
     <string name="player_settings_select_cast_device">Выберите девайс для трансляции</string>
     <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
     <string name="downloads_empty">В данный момент загрузок нет.</string>
-    <string name="play_from_beginning_img_des">Играть с самого начала</string>
+    <string name="play_from_beginning_img_des">Играть с начала</string>
     <string name="open_local_video">Открыть локальное видео</string>
     <string name="pref_category_security">Меры безопасности</string>
     <string name="pref_category_accounts">Аккаунты</string>
@@ -653,4 +653,9 @@
     <string name="sort_release_date_old">Дата выхода (Со Старого к Новому)</string>
     <string name="hide_player_control_names">Скрыть имена контроля игроков</string>
     <string name="dismiss">Пропустить</string>
+    <string name="auth_locally">Войти локально</string>
+    <string name="preview_seekbar">Предосмотр поисковой строки</string>
+    <string name="preview_seekbar_desc">Включить предосмотр миниатюр в поисковой строке</string>
+    <string name="player_settings_play_in_mpvytdl">MPV YTDL</string>
+    <string name="no_subtitles_loaded">Субтитры еще не загружены</string>
 </resources>

@@ -406,8 +406,8 @@
     <string name="setup_done">Готово</string>
     <string name="extensions">Розширення</string>
     <string name="add_repository">Додати репозиторій</string>
-    <string name="repository_name_hint">Назва репозиторію</string>
-    <string name="repository_url_hint">URL-адреса репозиторію</string>
+    <string name="repository_name_hint">Назва репозиторію (Необов\'язково)</string>
+    <string name="repository_url_hint">URL-адреса репозиторію або короткий код</string>
     <string name="plugin_loaded">Плагін завантажено</string>
     <string name="plugin_downloaded">Плагін завантажено</string>
     <string name="plugin_load_fail" formatted="true">Не вдалося завантажити %s</string>

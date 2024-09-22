@@ -409,8 +409,8 @@
     <string name="setup_done">تم</string>
     <string name="extensions">الإضافات</string>
     <string name="add_repository">إضافة مستودع</string>
-    <string name="repository_name_hint">إسم المستودع</string>
-    <string name="repository_url_hint">عنوان URL للمستودع</string>
+    <string name="repository_name_hint">إسم المستودع (اختياري)</string>
+    <string name="repository_url_hint">عنوان URL للمستودع أو الشفرة القصيرة</string>
     <string name="plugin_loaded">تم تحميل الإضافة</string>
     <string name="plugin_deleted">تم إزالة الإضافة</string>
     <string name="plugin_load_fail" formatted="true">تعذر التحميل %s</string>

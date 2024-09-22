@@ -22,7 +22,7 @@ class SubDlApi(index: Int) : InAppAuthAPIManager(index), AbstractSubApi {
     override val icon = R.drawable.subdl_logo_big
     override val requiresPassword = true
     override val requiresEmail = true
-    override val createAccountUrl = "https://subdl.com/login"
+    override val createAccountUrl = "https://subdl.com/panel/register"
 
     companion object {
         const val APIURL = "https://api.subdl.com"

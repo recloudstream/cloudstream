@@ -375,7 +375,7 @@
     <string name="remove_site_pref">Odebrat web</string>
     <string name="error_invalid_data">Neplatné údaje</string>
     <string name="error">Chyba</string>
-    <string name="repository_name_hint">Název repozitáře</string>
+    <string name="repository_name_hint">Název repozitáře (volitelné)</string>
     <string name="plugin_loaded">Doplněk načten</string>
     <string name="setup_extensions_subtext">Stáhněte si seznam webů, které chcete používat</string>
     <string name="plugins_downloaded" formatted="true">Staženo: %d</string>
@@ -385,7 +385,7 @@
     <string name="safe_mode_title">Bezpečný režim povolen</string>
     <string name="extension_size">Velikost</string>
     <string name="extension_authors">Autoři</string>
-    <string name="repository_url_hint">Adresa URL repozitáře</string>
+    <string name="repository_url_hint">Adresa URL nebo krátký kód repozitáře</string>
     <string name="error_invalid_url">Neplatná adresa URL</string>
     <string name="automatic_plugin_download_summary">Automaticky instalovat všechny dosud nenainstalované doplňky z přidaných repozitářů.</string>
     <string name="others">Ostatní</string>

@@ -283,6 +283,8 @@ import com.lagradost.cloudstream3.extractors.Lulustream3
 import com.lagradost.cloudstream3.extractors.Vidguardto3
 import com.lagradost.cloudstream3.extractors.Ds2play
 import com.lagradost.cloudstream3.extractors.Ds2video
+import com.lagradost.cloudstream3.extractors.GamoVideo
+import com.lagradost.cloudstream3.extractors.Playerwish
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import kotlinx.coroutines.delay
@@ -911,6 +913,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     Jeniusplay(),
     StreamoUpload(),
 
+    GamoVideo(),
     Gdriveplayerapi(),
     Gdriveplayerapp(),
     Gdriveplayerfun(),
@@ -964,6 +967,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     CdnwishCom(),
     FlaswishCom(),
     SfastwishCom(),
+    Playerwish(),
     EmturbovidExtractor(),
     Vtbe(),
     EPlayExtractor(),

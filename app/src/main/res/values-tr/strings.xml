@@ -434,8 +434,8 @@
     <string name="setup_done">Bitti</string>
     <string name="extensions">Eklentiler</string>
     <string name="add_repository">Depo ekle</string>
-    <string name="repository_name_hint">Depo ismi</string>
-    <string name="repository_url_hint">Depo URL\'si</string>
+    <string name="repository_name_hint">Depo adı (İsteğe bağlı)</string>
+    <string name="repository_url_hint">Depo URL\'si veya Kısa Kod</string>
     <string name="plugin_loaded">Eklenti yüklendi</string>
     <string name="plugin_deleted">Eklenti silindi</string>
     <string name="plugin_load_fail" formatted="true">%s yüklenemedi</string>
@@ -703,4 +703,6 @@
     <string name="offline_file">Çevrimdışı izlemek için kullanılabilir</string>
     <string name="preview_seekbar">Seekbar önizleme</string>
     <string name="preview_seekbar_desc">Arama çubuğunda önizleme küçük resmini etkinleştir</string>
+    <string name="player_settings_play_in_mpvytdl">MPV YTDL</string>
+    <string name="no_subtitles_loaded">Henüz altyazı yüklenmedi</string>
 </resources>

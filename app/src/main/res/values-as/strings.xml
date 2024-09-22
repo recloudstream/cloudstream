@@ -443,8 +443,8 @@
     <string name="preferred_media_subtext">আপুনি কি চাব বিচাৰে</string>
     <string name="extensions">বৃদ্ধিসকল</string>
     <string name="add_repository">ৰিপ\'জিট\'ৰি যোগ কৰক</string>
-    <string name="repository_name_hint">ৰিপ\'জিট\'ৰিৰ নাম</string>
-    <string name="repository_url_hint">ৰিপ\'জিট\'ৰিৰ URL</string>
+    <string name="repository_name_hint">ৰিপ\'জিট\'ৰিৰ নাম (বৈকল্পিক)</string>
+    <string name="repository_url_hint">ৰিপ\'জিট\'ৰিৰ URL বা চৰ্টকোড</string>
     <string name="plugin_loaded">প্লাগইন লোড কৰা হ\'ল</string>
     <string name="plugin_downloaded">প্লাগইন ডাউনলোড কৰা হ\'ল</string>
     <string name="plugin_deleted">প্লাগইন ডিলিট কৰা হ\'ল</string>

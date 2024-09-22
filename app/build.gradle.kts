@@ -185,15 +185,15 @@ dependencies {
     implementation("dev.zacsweers.autoservice:auto-service-ksp:1.2.0")
 
     // Media 3 (ExoPlayer)
-    implementation("androidx.media3:media3-ui:1.4.0")
-    implementation("androidx.media3:media3-cast:1.4.0")
-    implementation("androidx.media3:media3-common:1.4.0")
-    implementation("androidx.media3:media3-session:1.4.0")
-    implementation("androidx.media3:media3-exoplayer:1.4.0")
+    implementation("androidx.media3:media3-ui:1.4.1")
+    implementation("androidx.media3:media3-cast:1.4.1")
+    implementation("androidx.media3:media3-common:1.4.1")
+    implementation("androidx.media3:media3-session:1.4.1")
+    implementation("androidx.media3:media3-exoplayer:1.4.1")
     implementation("com.google.android.mediahome:video:1.0.0")
-    implementation("androidx.media3:media3-exoplayer-hls:1.4.0")
-    implementation("androidx.media3:media3-exoplayer-dash:1.4.0")
-    implementation("androidx.media3:media3-datasource-okhttp:1.4.0")
+    implementation("androidx.media3:media3-exoplayer-hls:1.4.1")
+    implementation("androidx.media3:media3-exoplayer-dash:1.4.1")
+    implementation("androidx.media3:media3-datasource-okhttp:1.4.1")
 
     // PlayBack
     implementation("com.jaredrummler:colorpicker:1.1.0") // Subtitle Color Picker
