@@ -399,8 +399,8 @@
     <string name="setup_done">Feito</string>
     <string name="extensions">Extensões</string>
     <string name="add_repository">Adicionar repositório</string>
-    <string name="repository_name_hint">Nome do repositório</string>
-    <string name="repository_url_hint">URL do repositório</string>
+    <string name="repository_name_hint">Nome do repositório (opcional)</string>
+    <string name="repository_url_hint">URL do repositório ou link curto</string>
     <string name="plugin_loaded">Plugin Carregado</string>
     <string name="plugin_deleted">Plugin Apagado</string>
     <string name="plugin_load_fail" formatted="true">Não consegui carregar %s :-(</string>

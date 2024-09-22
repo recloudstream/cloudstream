@@ -357,7 +357,7 @@
     <string name="bottom_title_settings_des">حط العنوان تحت الپوستر</string>
     <string name="category_providers">المصادر</string>
     <string name="cast_format" formatted="true">ممثلين: %s</string>
-    <string name="repository_url_hint">رابط الريپو</string>
+    <string name="repository_url_hint">رابط أو كود الريپو</string>
     <string name="subtitles_depressed">مدپرس</string>
     <string name="safe_mode_description">من ورا عطل، كل الإضفات نطفت لنساعدكن تلاقو أيا إضافة عم بتسبب المشكلة.</string>
     <string name="view_public_repositories_button_short">لايحة عامة</string>
@@ -491,7 +491,7 @@
     <string name="subtitles_remove_bloat">شيل الإعلانات من الترجمة</string>
     <string name="empty_library_no_accounts_message">رفّكن فاضي ☹
 \nفوتو على أكونت فيها رفّ الڤيديوات يللي حضرينها أو زيدو ڤيديوات بال رفّ المحلي.</string>
-    <string name="repository_name_hint">اسم الريپو</string>
+    <string name="repository_name_hint">اسم الريپو (مش ضروري)</string>
     <string name="qualities">الجودات</string>
     <string name="error_invalid_data">بيانات مش صالحة</string>
     <string name="use">عوز</string>

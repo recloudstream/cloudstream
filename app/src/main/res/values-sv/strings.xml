@@ -38,7 +38,7 @@
     <string name="download_storage_text">Intern lagring</string>
     <string name="app_dubbed_text">Dub</string>
     <string name="app_subbed_text">Sub</string>
-    <string name="popup_delete_file">Ta bort</string>
+    <string name="popup_delete_file">Radera fil</string>
     <string name="popup_play_file">Spela upp fil</string>
     <string name="pref_disable_acra">Inaktivera automatisk felrapportering</string>
     <string name="home_more_info">Mer information</string>
@@ -55,20 +55,20 @@
     <string name="player_speed">Spelarhastighet</string>
     <string name="subtitles_settings">Undertextinställningar</string>
     <string name="subs_text_color">Textfärg</string>
-    <string name="subs_outline_color">Kantfärg</string>
+    <string name="subs_outline_color">Konturfärg</string>
     <string name="subs_background_color">Bakgrundsfärg</string>
-    <string name="subs_window_color">Textfönsterfärg</string>
+    <string name="subs_window_color">Fönster färg</string>
     <string name="subs_edge_type">Kanttyp</string>
-    <string name="subs_subtitle_elevation">Undertextförflyttning</string>
+    <string name="subs_subtitle_elevation">Undertextens höjd</string>
     <string name="preview_background_img_des">Förhandsgranska bakgrund</string>
     <string name="subs_font">Font</string>
-    <string name="search_provider_text_providers">Sök med följande leverantörer</string>
-    <string name="search_provider_text_types">Sök med följande filmtyper</string>
+    <string name="search_provider_text_providers">Sök med hjälp av leverantörer</string>
+    <string name="search_provider_text_types">Sök med hjälp av typer</string>
     <string name="benene_count_text">%d bananer donerade till utvecklarna</string>
     <string name="benene_count_text_none">Inga bananer givna</string>
-    <string name="subs_auto_select_language">Automatisk val av undertextspråk</string>
-    <string name="subs_download_languages">Automatisk nedladdning av språk</string>
-    <string name="subs_hold_to_reset_to_default">Håll inne för att återställa till standard</string>
+    <string name="subs_auto_select_language">Välj språk automatiskt</string>
+    <string name="subs_download_languages">Ladda ner språk</string>
+    <string name="subs_hold_to_reset_to_default">Håll ned för att återställa till standardinställningen</string>
     <string name="continue_watching">Fortsätt titta</string>
     <string name="action_remove_watching">Ta bort</string>
     <string name="action_open_watching">Mer info</string>
@@ -161,21 +161,21 @@
     <string name="video_skip_op">Hoppa över OP</string>
     <string name="dont_show_again">Visa inte igen</string>
     <string name="update">Uppdatera</string>
-    <string name="download_started">Nerladdningar startad</string>
+    <string name="download_started">Nedladdning startade</string>
     <string name="download_failed">Nerladdning misslyckades</string>
     <string name="downloaded">Nerladdad</string>
     <string name="downloading">Laddar ner</string>
     <string name="download_paused">Nerladdning pausad</string>
-    <string name="download_canceled">Nerladdning avbryten</string>
+    <string name="download_canceled">Nerladdning avbruten</string>
     <string name="download_done">Nerladdning färdig</string>
-    <string name="popup_resume_download">Återupta nerladdning</string>
+    <string name="popup_resume_download">Återuppta nedladdning</string>
     <string name="popup_pause_download">Pausa nerladdning</string>
     <string name="pause">Pausa</string>
     <string name="resume">Återuppta</string>
     <string name="storage_error">Ett nerladdningsfel uppstod, kolla om appen har lagringsbehörigheter</string>
     <string name="watch_quality_pref">Föredragen videokvalitet (WiFi)</string>
     <string name="category_general">Allmänna Inställningar</string>
-    <string name="subs_font_size">Textstorlek</string>
+    <string name="subs_font_size">Fontstorlek</string>
     <string name="use_system_brightness_settings">Använd system ljusstyrka</string>
     <string name="use_system_brightness_settings_des">Använder systemets ljusstyrka instället för en svart överlaga</string>
     <string name="show_fillers_settings">Visa filler avsnitt för anime</string>
@@ -369,7 +369,7 @@
     <string name="update_started">Uppdatering startad</string>
     <string name="test_log">Logg</string>
     <string name="double_tap_to_seek_amount_settings">Videospelarens hoppsträcka (Sekunder)</string>
-    <string name="action_add_to_bookmarks">Ändra status</string>
+    <string name="action_add_to_bookmarks">Ange visningsstatus</string>
     <string name="browser">Webbläsare</string>
     <string name="nginx_url_pref">NGINX server URL</string>
     <string name="emulator_layout">Emulator-layout</string>
@@ -431,10 +431,10 @@
     <string name="profiles">Profiler</string>
     <string name="help">Hjälp</string>
     <string name="qualities">Kvalitet</string>
-    <string name="stream">Nätverks Stream</string>
+    <string name="stream">Nätverksflöde</string>
     <string name="repository_name_hint">Databasens namn</string>
     <string name="batch_download_nothing_to_download_format" formatted="true">All %s har redan laddats ner</string>
-    <string name="download_all_plugins_from_repo">Ladda ner alla tillägg från den här databasen?</string>
+    <string name="download_all_plugins_from_repo">Varning: CloudStream 3 tar inget ansvar för att använda tredjepartstillägg och ger inget stöd för dem!</string>
     <string name="safe_mode_title">Felsäkert läge på</string>
     <string name="apply_on_restart">Starta om appen för att se ändringar.</string>
     <string name="player_settings_play_in_app">Intern spelare</string>
@@ -588,7 +588,7 @@
 \nKommer att ha en kombinerad videoprioritet på 10.
 \n
 \nOBS: Om summan är 10 eller mer kommer spelaren automatiskt att hoppa över laddningen när den länken laddas!</string>
-    <string name="subscribe_tooltip">Meddelande om nytt avsnitt</string>
+    <string name="subscribe_tooltip">Avisering om nytt avsnitt</string>
     <string name="result_search_tooltip">Sök i andra tillägg</string>
     <string name="recommendations_tooltip">Visa rekommendationer</string>
     <string name="speed_setting_summary">Lägger till ett hastighetsalternativ i spelaren</string>
@@ -599,13 +599,13 @@
     <string name="biometric_setting_summary">Lås upp appen med Fingerprint, Face ID, PIN, mönster eller lösenord.</string>
     <string name="biometric_authentication_title">Lås upp CloudStream</string>
     <string name="biometric_unsupported">Biometrisk autentisering stöds inte på den här enheten</string>
-    <string name="biometric_prompt_description">Skärmen stängdes av på grund av flera misslyckade försök. Starta om applikationen.</string>
+    <string name="biometric_prompt_description">Efter några misslyckade försök stängs prompten. Starta bara om appen för att försöka igen.</string>
     <string name="favorite">Favorit</string>
     <string name="unfavorite">Ta bort från favoriter</string>
     <string name="resume_remaining" formatted="true">%s
 \nkvarstår</string>
     <string name="toast_copied">kopierad!</string>
-    <string name="repo_copy_label">Tilläggs namn och URL</string>
+    <string name="repo_copy_label">Lagringsnamn och URL</string>
     <string name="battery_dialog_message">För att säkerställa oavbrutna nedladdningar och aviseringar för prenumererade tv-program behöver CloudStream tillstånd att köras i bakgrunden. Genom att trycka på OK kommer du till App info. Där bläddrar du till appens batterianvändning och ställer in batterianvändningen på obegränsad. Observera att denna behörighet inte betyder att CS3 kommer att tömma ditt batteri. Den fungerar bara i bakgrunden när det behövs, till exempel när du tar emot aviseringar eller laddar ner videor från officiella tillägg. Om du väljer att avbryta kan du ändra denna inställning senare i allmänna inställningar.</string>
     <string name="biometric_warning">Din CloudStream-data har säkerhetskopierats nu. Även om möjligheten till detta är mycket liten, kan alla enheter bete sig olika. I det sällsynta fallet att du blir utelåst från att komma åt appen, rensa appdata helt och återställ från en säkerhetskopia. Vi ber om ursäkt för eventuella besvär som detta uppstår.</string>
     <string name="audio_book_singular">Ljudbok</string>
@@ -627,4 +627,42 @@
     <string name="pref_category_accounts">Konton</string>
     <string name="pref_category_security">Säkerhet</string>
     <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
+    <string name="dismiss">Avfärda</string>
+    <string name="open_downloaded_repo">Öppna databasen</string>
+    <string name="device_pin_counter_text">Koden löper ut om %1$dm %2$ds</string>
+    <string name="test_warning">Varning</string>
+    <string name="auth_locally">Autentisera lokalt</string>
+    <string name="qr_image">QR-kodbild</string>
+    <string name="device_pin_expired_message">PIN-koden har upphört att gälla!</string>
+    <string name="delete_message_series_episodes" formatted="true">Är du säker på att du vill radera följande avsnitt permanent i %1$s?
+\n
+\n%2$s</string>
+    <string name="preview_seekbar_desc">Aktivera förhandsgranskningsminiatyr i sökfältet</string>
+    <string name="preview_seekbar">Förhandsgranskning av sökfältet</string>
+    <string name="player_settings_play_in_mpvytdl">MPV YTDL</string>
+    <string name="play_from_beginning_img_des">Spela från början</string>
+    <string name="sort_release_date_new">Releasedatum (Ny till äldre)</string>
+    <string name="sort_release_date_old">Releasedatum (Äldre till nytt)</string>
+    <string name="select_all">Välj alla</string>
+    <string name="open_local_video">Öppna lokal video</string>
+    <string name="downloads_delete_select">Välj objekt att ta bort</string>
+    <string name="downloads_empty">Det finns för närvarande inga nedladdningar.</string>
+    <string name="offline_file">Tillgänglig för att titta offline</string>
+    <string name="deselect_all">Avmarkera alla</string>
+    <string name="delete_files">Radera Filer</string>
+    <string name="delete_format" formatted="true">Radera (%1$d | %2$s)</string>
+    <string name="delete_message_multiple" formatted="true">Är du säker på att du vill ta bort följande objekt permanent?
+\n
+\n%s</string>
+    <string name="delete_message_series_section" formatted="true">Du kommer också permanent att radera alla avsnitt i följande serie:
+\n
+\n%s</string>
+    <string name="delete_message_series_only" formatted="true">Är du säker på att du permanent vill radera alla avsnitt i följande serie?
+\n
+\n%s</string>
+    <string name="delete_plugin">Ta bort insticksprogram</string>
+    <string name="hide_player_control_names">Dölj namnen på spelarens kontroller</string>
+    <string name="device_pin_url_message">Besök <b>%s</b> på din smartphone eller dator och ange koden ovan</string>
+    <string name="device_pin_error_message">Det går inte att hämta enhetens PIN-kod, prova lokal autentisering</string>
+    <string name="no_subtitles_loaded">Inga undertexter laddade än</string>
 </resources>

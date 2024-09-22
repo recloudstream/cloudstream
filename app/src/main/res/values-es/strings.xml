@@ -16,10 +16,10 @@
     <string name="batch_download_nothing_to_download_format" formatted="true">Todo %s ha sido descargado</string>
     <string name="plugins_not_downloaded" formatted="true">No descargado:%d</string>
     <string name="single_plugin_disabled" formatted="true">%s (Desactivado)</string>
-    <string name="repository_url_hint">URL del repositorio</string>
+    <string name="repository_url_hint">URL o código corto del repositorio</string>
     <string name="plugins_disabled" formatted="true">Desactivado:%d</string>
     <string name="add_repository">Agregar repositorio</string>
-    <string name="repository_name_hint">Nombre del repositorio</string>
+    <string name="repository_name_hint">Nombre del repositorio (opcional)</string>
     <string name="delete_repository_plugins">Esto también eliminará todos los plugins del repositorio</string>
     <string name="pref_filter_search_quality">Ocultar la calidad de video en los resultados de búsqueda</string>
     <string name="pref_category_player_layout">Diseño</string>
@@ -443,7 +443,7 @@
     <string name="next">Siguiente</string>
     <string name="previous">Anterior</string>
     <string name="setup_done">Hecho</string>
-    <string name="plugin_loaded">Plugin Cargado</string>
+    <string name="plugin_loaded">Plugin cargado</string>
     <string name="is_adult">18+</string>
     <string name="batch_download_start_format" formatted="true">Comenzó la descarga de %1$d %2$s…</string>
     <string name="batch_download">Descarga por lotes</string>
