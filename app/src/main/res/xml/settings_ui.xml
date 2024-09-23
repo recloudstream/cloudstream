@@ -57,7 +57,7 @@
                 android:title="@string/random_button_settings"
                 android:summary="@string/random_button_settings_desc"
                 app:defaultValue="false" />
-        <SwitchPreference
+        <Preference
             android:icon="@drawable/ic_baseline_exit_24"
             android:key="@string/confirm_exit_key"
             android:title="@string/confirm_before_exiting_title"

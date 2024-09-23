@@ -5,14 +5,10 @@ import android.os.Bundle
 import android.view.View
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
-import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.SearchQuality
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.ui.search.SearchResultBuilder
-import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
-import com.lagradost.cloudstream3.ui.settings.Globals.TV
-import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.ui.settings.Globals.updateTv
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.getPref
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setPaddingBottom
@@ -24,9 +20,6 @@ import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showMultiDialog
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 
 class SettingsUI : PreferenceFragmentCompat() {
-    companion object {
-        fun getConfirmExitDialogDefault() = isLayout(TV or EMULATOR)
-    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setUpToolbar(R.string.category_ui)
@@ -74,21 +67,23 @@ class SettingsUI : PreferenceFragmentCompat() {
                 settingsManager.getInt(getString(R.string.app_layout_key), -1)
 
             activity?.showBottomDialog(
-                prefNames.toList(),
-                prefValues.indexOf(currentLayout),
-                getString(R.string.app_layout),
-                true,
-                {}) {
-                try {
-                    settingsManager.edit()
-                        .putInt(getString(R.string.app_layout_key), prefValues[it])
-                        .apply()
-                    context?.updateTv()
-                    activity?.recreate()
-                } catch (e: Exception) {
-                    logError(e)
+                items = prefNames.toList(),
+                selectedIndex = prefValues.indexOf(currentLayout),
+                name = getString(R.string.app_layout),
+                showApply = true,
+                dismissCallback = {},
+                callback = {
+                    try {
+                        settingsManager.edit()
+                            .putInt(getString(R.string.app_layout_key), prefValues[it])
+                            .apply()
+                        context?.updateTv()
+                        activity?.recreate()
+                    } catch (e: Exception) {
+                        logError(e)
+                    }
                 }
-            }
+            )
             return@setOnPreferenceClickListener true
         }
 
@@ -194,12 +189,24 @@ class SettingsUI : PreferenceFragmentCompat() {
             return@setOnPreferenceClickListener true
         }
 
-        setKey( // default value is layout specific
-            getString(R.string.confirm_exit_key),
-            settingsManager.getBoolean(
-                getString(R.string.confirm_exit_key),
-                getConfirmExitDialogDefault()
+        getPref(R.string.confirm_exit_key)?.setOnPreferenceClickListener {
+            val prefNames = resources.getStringArray(R.array.confirm_exit)
+            val prefValues = resources.getIntArray(R.array.confirm_exit_values)
+            val confirmExit = settingsManager.getInt(getString(R.string.confirm_exit_key), -1)
+
+            activity?.showBottomDialog(
+                items = prefNames.toList(),
+                selectedIndex = prefValues.indexOf(confirmExit),
+                name = getString(R.string.confirm_before_exiting_title),
+                showApply = true,
+                dismissCallback = {},
+                callback = { selectedOption ->
+                    settingsManager.edit()
+                        .putInt(getString(R.string.confirm_exit_key), prefValues[selectedOption])
+                        .apply()
+                }
             )
-        )
+            return@setOnPreferenceClickListener true
+        }
     }
 }

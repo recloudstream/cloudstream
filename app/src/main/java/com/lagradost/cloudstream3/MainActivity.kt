@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.res.ColorStateList
 import android.content.res.Configuration
 import android.graphics.Rect
@@ -125,7 +126,6 @@ import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.ui.settings.Globals.updateTv
 import com.lagradost.cloudstream3.ui.settings.SettingsGeneral
-import com.lagradost.cloudstream3.ui.settings.SettingsUI
 import com.lagradost.cloudstream3.ui.setup.HAS_DONE_SETUP_KEY
 import com.lagradost.cloudstream3.ui.setup.SetupFragmentExtensions
 import com.lagradost.cloudstream3.utils.ApkInstaller
@@ -614,12 +614,15 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
     }
 
     @SuppressLint("ApplySharedPref") // commit since the op needs to be synchronous
-    private fun showConfirmExitDialog() {
-        val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
-        val confirmBeforeExit = settingsManager.getBoolean(getString(R.string.confirm_exit_key), SettingsUI.getConfirmExitDialogDefault())
-        if (!confirmBeforeExit) {
-            exitProcess(0)
-            return
+    private fun showConfirmExitDialog(settingsManager: SharedPreferences) {
+        val confirmBeforeExit = settingsManager.getInt(getString(R.string.confirm_exit_key), -1)
+        when(confirmBeforeExit) {
+            // AUTO - Confirm exit is shown only on TV or EMULATOR by default
+            -1 -> if(isLayout(PHONE)) exitProcess(0)
+            // DON'T SHOW
+            1 -> exitProcess(0)
+            // 0 -> SHOW
+            else -> { /*NO-OP : Continue*/ }
         }
 
         val dialogView = layoutInflater.inflate(R.layout.confirm_exit_dialog, null)
@@ -630,7 +633,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
             .setNegativeButton(R.string.no) { _, _ -> /*NO-OP*/}
             .setPositiveButton(R.string.yes) { _, _ ->
                 if(dontShowAgainCheck.isChecked) {
-                    settingsManager.edit().putBoolean(getString(R.string.confirm_exit_key), false).commit()
+                    settingsManager.edit().putInt(getString(R.string.confirm_exit_key), 1).commit()
                 }
                 exitProcess(0)
             }
@@ -1537,7 +1540,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
 
             if (navDestination.matchDestination(R.id.navigation_home)) {
                 attachBackPressedCallback {
-                    showConfirmExitDialog()
+                    showConfirmExitDialog(settingsManager)
                     window?.navigationBarColor =
                         colorFromAttribute(R.attr.primaryGrayBackground)
                     updateLocale()
