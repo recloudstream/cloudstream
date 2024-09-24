@@ -14,7 +14,7 @@ class CopyClipboardAction: VideoClickAction() {
 
     override fun shouldShow(context: Context?, video: ResultEpisode?) = true
 
-    override fun runAction(
+    override suspend fun runAction(
         context: Context?,
         video: ResultEpisode,
         result: LinkLoadingResult,

@@ -5,7 +5,6 @@ import android.content.Intent
 import android.net.Uri
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.actions.VideoClickAction
-import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.ui.result.LinkLoadingResult
 import com.lagradost.cloudstream3.ui.result.ResultEpisode
 import com.lagradost.cloudstream3.ui.result.txt
@@ -26,19 +25,15 @@ class PlayInBrowserAction: VideoClickAction() {
 
     override fun shouldShow(context: Context?, video: ResultEpisode?) = true
 
-    override fun runAction(
+    override suspend fun runAction(
         context: Context?,
         video: ResultEpisode,
         result: LinkLoadingResult,
         index: Int?
     ) {
         val link = result.links.getOrNull(index ?: 0) ?: return
-        try {
-            val i = Intent(Intent.ACTION_VIEW)
-            i.data = Uri.parse(link.url)
-            context?.startActivity(i)
-        } catch (e: Exception) {
-            logError(e)
-        }
+        val i = Intent(Intent.ACTION_VIEW)
+        i.data = Uri.parse(link.url)
+        context?.startActivity(i)
     }
 }

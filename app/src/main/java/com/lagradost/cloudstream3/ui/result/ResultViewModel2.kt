@@ -1625,7 +1625,7 @@ class ResultViewModel2 : ViewModel() {
                         action.sourceTypes,
                         action.name
                     ) { (result, index) ->
-                        action.runAction(
+                        action.runActionSafe(
                             activity,
                             click.data,
                             result,
@@ -1634,7 +1634,7 @@ class ResultViewModel2 : ViewModel() {
                     }
                 } else {
                     loadLinks(click.data, isVisible = true, action.sourceTypes) { links ->
-                        action.runAction(
+                        action.runActionSafe(
                             activity,
                             click.data,
                             links,

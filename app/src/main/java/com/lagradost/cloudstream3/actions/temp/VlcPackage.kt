@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import androidx.core.net.toUri
 import com.lagradost.api.Log
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.actions.OpenInAppAction
@@ -32,18 +33,21 @@ class VlcPackage: OpenInAppAction(
         Intent.ACTION_VIEW
     }
 ) {
-    override val oneSource = false
+    // while VLC supports multi links, it has poor support, so we disable it for now
+    override val oneSource = true
 
-    override fun putExtra(
+    override suspend fun putExtra(
         context: Context,
         intent: Intent,
         video: ResultEpisode,
         result: LinkLoadingResult,
         index: Int?
     ) {
-
-        makeTempM3U8Intent(context, intent, result)
-
+        if (index != null) {
+            intent.setDataAndType(result.links[index].url.toUri(), "video/*")
+        } else {
+            makeTempM3U8Intent(context, intent, result)
+        }
         val position = getViewPos(video.id)?.position ?: 0L
 
         intent.putExtra("from_start", false)
@@ -51,7 +55,7 @@ class VlcPackage: OpenInAppAction(
         intent.putExtra("secure_uri", true)
         intent.putExtra("title", video.name)
 
-        val subsLang =  getKey(SUBTITLE_AUTO_SELECT_KEY) ?: "en"
+        val subsLang = getKey(SUBTITLE_AUTO_SELECT_KEY) ?: "en"
         result.subs.firstOrNull {
             subsLang == it.languageCode
         }?.let {

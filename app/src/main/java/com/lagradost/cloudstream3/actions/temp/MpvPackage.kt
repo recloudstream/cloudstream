@@ -31,7 +31,7 @@ open class MpvPackage(appName: String = "MPV", packageName: String = "is.xyz.mpv
     "is.xyz.mpv.MPVActivity"
 ) {
 
-    override fun putExtra(
+    override suspend fun putExtra(
         context: Context,
         intent: Intent,
         video: ResultEpisode,

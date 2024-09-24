@@ -26,7 +26,7 @@ class FcastAction: VideoClickAction() {
 
     override fun shouldShow(context: Context?, video: ResultEpisode?) = FcastManager.currentDevices.isNotEmpty()
 
-    override fun runAction(
+    override suspend fun runAction(
         context: Context?,
         video: ResultEpisode,
         result: LinkLoadingResult,

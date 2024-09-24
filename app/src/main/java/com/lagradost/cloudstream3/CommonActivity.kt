@@ -222,7 +222,7 @@ object CommonActivity {
                 val actionUid = getKey<String>("last_click_action") ?: return@registerForActivityResult
                 Log.d(TAG, "Loading action $actionUid result handler")
                 val action = VideoClickActionHolder.getByUniqueId(actionUid) as? OpenInAppAction ?: return@registerForActivityResult
-                action.onResult(act, result.data)
+                action.onResultSafe(act, result.data)
                 removeKey("last_click_action")
                 removeKey("last_opened_id")
             }

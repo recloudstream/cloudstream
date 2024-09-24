@@ -28,7 +28,7 @@ class WebVideoCastPackage: OpenInAppAction(
         ExtractorLinkType.M3U8
     )
 
-    override fun putExtra(
+    override suspend fun putExtra(
         context: Context,
         intent: Intent,
         video: ResultEpisode,
