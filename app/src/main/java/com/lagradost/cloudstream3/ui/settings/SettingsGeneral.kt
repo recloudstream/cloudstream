@@ -7,7 +7,6 @@ import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
@@ -35,6 +34,7 @@ import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.hideOn
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setPaddingBottom
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setToolBarScrollFlags
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setUpToolbar
+import com.lagradost.cloudstream3.ui.settings.utils.getChooseFolderLauncher
 import com.lagradost.cloudstream3.utils.BatteryOptimizationChecker.isAppRestricted
 import com.lagradost.cloudstream3.utils.BatteryOptimizationChecker.showBatteryOptimizationDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
@@ -46,7 +46,6 @@ import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.utils.USER_PROVIDER_API
 import com.lagradost.cloudstream3.utils.VideoDownloadManager
 import com.lagradost.cloudstream3.utils.VideoDownloadManager.getBasePath
-import com.lagradost.safefile.SafeFile
 
 // Change local language settings in the app.
 fun getCurrentLocale(context: Context): String {
@@ -146,34 +145,15 @@ class SettingsGeneral : PreferenceFragmentCompat() {
         val lang: String,
     )
 
-    // Open file picker
-    private val pathPicker =
-        registerForActivityResult(ActivityResultContracts.OpenDocumentTree()) { uri ->
-            // It lies, it can be null if file manager quits.
-            if (uri == null) return@registerForActivityResult
-            val context = context ?: AcraApplication.context ?: return@registerForActivityResult
-            // RW perms for the path
-            val flags = Intent.FLAG_GRANT_READ_URI_PERMISSION or
-                    Intent.FLAG_GRANT_WRITE_URI_PERMISSION
-
-            context.contentResolver.takePersistableUriPermission(uri, flags)
-
-            val file = SafeFile.fromUri(context, uri)
-            val filePath = file?.filePath()
-            println("Selected URI path: $uri - Full path: $filePath")
-
-            // Stores the real URI using download_path_key
-            // Important that the URI is stored instead of filepath due to permissions.
-            PreferenceManager.getDefaultSharedPreferences(context)
-                .edit().putString(getString(R.string.download_path_key), uri.toString()).apply()
-
-            // From URI -> File path
-            // File path here is purely for cosmetic purposes in settings
-            (filePath ?: uri.toString()).let {
-                PreferenceManager.getDefaultSharedPreferences(context)
-                    .edit().putString(getString(R.string.download_path_pref), it).apply()
-            }
+    private val pathPicker = getChooseFolderLauncher { uri, path ->
+        val context = context ?: AcraApplication.context ?: return@getChooseFolderLauncher
+        (path ?: uri.toString()).let {
+            PreferenceManager.getDefaultSharedPreferences(context).edit()
+                .putString(getString(R.string.download_path_key), uri.toString())
+                .putString(getString(R.string.download_path_pref), it)
+                .apply()
         }
+    }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         hideKeyboard()
@@ -371,7 +351,7 @@ class SettingsGeneral : PreferenceFragmentCompat() {
                     ?: context?.let { ctx -> VideoDownloadManager.getDefaultDir(ctx)?.filePath() }
 
             activity?.showBottomDialog(
-                dirs + listOf("Custom"),
+                dirs + listOf(getString(R.string.custom)),
                 dirs.indexOf(currentDir),
                 getString(R.string.download_path_pref),
                 true,

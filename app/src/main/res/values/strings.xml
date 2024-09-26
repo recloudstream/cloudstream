@@ -808,6 +808,10 @@
     <string name="preview_seekbar">Seekbar preview</string>
     <string name="preview_seekbar_desc">Enable preview thumbnail on seekbar</string>
     <string name="no_subtitles_loaded">No subtitles loaded yet</string>
+    <string name="backup_path_key" translatable="false">backup_path_key</string>
+    <string name="backup_path_title">Backup folder location</string>
+    <string name="backup_dir_key" translatable="false">backup_dir_key</string>
+    <string name="custom">Custom</string>
     <!--confirm exit dialog-->
     <string name="confirm_before_exiting_title">Confirm before exiting</string>
     <string name="confirm_before_exiting_desc">Show dialog before exiting the app</string>
