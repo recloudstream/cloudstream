@@ -51,6 +51,7 @@ import com.google.android.gms.common.wrappers.Wrappers
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.APIHolder.apis
+import com.lagradost.cloudstream3.AcraApplication.Companion.getActivity
 import com.lagradost.cloudstream3.CommonActivity.activity
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.MainActivity.Companion.afterRepositoryLoadedEvent
@@ -645,7 +646,7 @@ object AppContextUtils {
         url: String,
         fallbackWebview: Boolean = false,
         fragment: Fragment? = null,
-    ) {
+    ) = (this.getActivity() ?: activity)?.runOnUiThread {
         try {
             val intent = Intent(Intent.ACTION_VIEW)
             intent.data = Uri.parse(url)
@@ -677,10 +678,12 @@ object AppContextUtils {
     }
 
     fun Context.isNetworkAvailable(): Boolean {
-        val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val connectivityManager =
+            getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             val network = connectivityManager.activeNetwork ?: return false
-            val networkCapabilities = connectivityManager.getNetworkCapabilities(network) ?: return false
+            val networkCapabilities =
+                connectivityManager.getNetworkCapabilities(network) ?: return false
             networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
         } else {
             @Suppress("DEPRECATION")

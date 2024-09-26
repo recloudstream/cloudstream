@@ -34,6 +34,6 @@ class PlayInBrowserAction: VideoClickAction() {
         val link = result.links.getOrNull(index ?: 0) ?: return
         val i = Intent(Intent.ACTION_VIEW)
         i.data = Uri.parse(link.url)
-        context?.startActivity(i)
+        launch(i)
     }
 }
