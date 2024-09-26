@@ -53,7 +53,7 @@ class FcastAction: VideoClickAction() {
             session.sendMessage(
                 Opcode.Play,
                 PlayMessage(
-                    "video/*",
+                    link.type.getMimeType(),
                     link.url,
                     time = position?.let { it / 1000.0 },
                     headers = mapOf(
