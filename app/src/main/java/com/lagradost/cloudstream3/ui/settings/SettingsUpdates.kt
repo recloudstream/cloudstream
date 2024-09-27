@@ -113,7 +113,7 @@ class SettingsUpdates : PreferenceFragmentCompat() {
             activity?.showBottomDialog(
                 dirs + listOf(getString(R.string.custom)),
                 dirs.indexOf(currentDir),
-                getString(R.string.backup_dir_key),
+                getString(R.string.backup_path_title),
                 true,
                 {}) {
                 // Last = custom
