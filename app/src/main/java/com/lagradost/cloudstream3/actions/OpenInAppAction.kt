@@ -100,7 +100,7 @@ abstract class OpenInAppAction(
         }
         putExtra(context, intent, video, result, index)
         setKey("last_opened_id", video.id)
-        activityResultLauncher?.launch(intent)
+        launchResult(intent)
     }
 
     /**

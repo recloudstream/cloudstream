@@ -25,6 +25,6 @@ class ViewM3U8Action: VideoClickAction() {
         if (context == null) return
         val i = Intent(Intent.ACTION_VIEW)
         makeTempM3U8Intent(context, i, result)
-        context.startActivity(i)
+        launch(i)
     }
 }

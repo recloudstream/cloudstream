@@ -3,6 +3,7 @@ package com.lagradost.cloudstream3.actions.temp
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import androidx.core.net.toUri
 import com.lagradost.api.Log
 import com.lagradost.cloudstream3.actions.OpenInAppAction
@@ -30,7 +31,7 @@ open class MpvPackage(appName: String = "MPV", packageName: String = "is.xyz.mpv
     packageName,
     "is.xyz.mpv.MPVActivity"
 ) {
-
+    override val oneSource = true // mpv has poor playlist support on TV
     override suspend fun putExtra(
         context: Context,
         intent: Intent,
@@ -42,7 +43,11 @@ open class MpvPackage(appName: String = "MPV", packageName: String = "is.xyz.mpv
             putExtra("subs", result.subs.map { it.url.toUri() }.toTypedArray())
             putExtra("title", video.name)
 
-            makeTempM3U8Intent(context, this, result)
+            if (index != null) {
+                setDataAndType(Uri.parse(result.links.getOrNull(index)?.url ?: return), "video/*")
+            } else {
+                makeTempM3U8Intent(context, this, result)
+            }
 
             val position = getViewPos(video.id)?.position
             if (position != null)

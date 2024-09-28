@@ -3,10 +3,14 @@ package com.lagradost.cloudstream3.actions
 import android.app.Activity
 import android.content.ActivityNotFoundException
 import android.content.Context
+import android.content.Intent
+import android.os.Bundle
 import android.widget.Toast
+import androidx.core.app.ActivityOptionsCompat
 import com.lagradost.api.Log
 import com.lagradost.cloudstream3.CommonActivity
 import com.lagradost.cloudstream3.ErrorLoadingException
+import com.lagradost.cloudstream3.MainActivity
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.actions.temp.CopyClipboardAction
 import com.lagradost.cloudstream3.actions.temp.MpvKtPackage
@@ -25,15 +29,29 @@ import com.lagradost.cloudstream3.ui.result.UiText
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.threadSafeListOf
 import com.lagradost.cloudstream3.utils.ExtractorLinkType
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import java.util.concurrent.Callable
+import java.util.concurrent.FutureTask
 import kotlin.reflect.jvm.jvmName
 
 object VideoClickActionHolder {
-    val allVideoClickActions = threadSafeListOf<VideoClickAction>(
-        PlayInBrowserAction(), CopyClipboardAction(),
-        VlcPackage(), ViewM3U8Action(),
-        MpvPackage(), MpvYTDLPackage(),
-        WebVideoCastPackage(), MpvKtPackage(), MpvKtPreviewPackage(),
-        FcastAction()
+    val allVideoClickActions = threadSafeListOf(
+        // Default
+        PlayInBrowserAction(),
+        CopyClipboardAction(),
+        ViewM3U8Action(),
+        // main support external apps
+        VlcPackage(),
+        MpvPackage(),
+        FcastAction(),
+        // forks/backup apps
+        WebVideoCastPackage(),
+        MpvYTDLPackage(),
+        MpvKtPackage(),
+        MpvKtPreviewPackage(),
+        // added by plugins
+        // ...
     )
 
     init {
@@ -78,6 +96,50 @@ abstract class VideoClickAction {
 
     /** Determines which plugin a given provider is from. This is the full path to the plugin. */
     var sourcePlugin: String? = null
+
+    /** Even if VideoClickAction should not run any UI code, startActivity requires it,
+     * this is a wrapper for runOnUiThread in a suspended safe context that bubble up exceptions  */
+    @Throws
+    suspend fun <T> uiThread(callable : Callable<T>) : T? {
+        val future = FutureTask{
+            try {
+                Result.success(callable.call())
+            } catch (t : Throwable) {
+                Result.failure(t)
+            }
+        }
+        CommonActivity.activity?.runOnUiThread(future) ?: throw ErrorLoadingException("No UI Activity, this should never happened")
+        val result = withContext(Dispatchers.IO) {
+            return@withContext future.get()
+        }
+        return result.getOrThrow()
+    }
+
+    /** Internally uses activityResultLauncher,
+     * use this when the activity has a result like watched position */
+    @Throws
+    suspend fun launchResult(intent : Intent?, options : ActivityOptionsCompat? = null) {
+        if (intent == null) {
+            return
+        }
+
+        uiThread {
+            MainActivity.activityResultLauncher?.launch(intent,options)
+        }
+    }
+
+    /** Internally uses startActivity, use this when you don't
+     * have any result that needs to be stored when exiting the activity  */
+    @Throws
+    suspend fun launch(intent : Intent?, bundle : Bundle? = null) {
+        if (intent == null) {
+            return
+        }
+
+        uiThread {
+            CommonActivity.activity?.startActivity(intent, bundle)
+        }
+    }
 
     fun uniqueId() = "$sourcePlugin:${this::class.jvmName}"
 
