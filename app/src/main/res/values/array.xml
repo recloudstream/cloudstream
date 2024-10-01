@@ -222,6 +222,17 @@
         <item>2</item>
     </array>
 
+    <array name="confirm_exit">
+        <item>@string/automatic</item>
+        <item>@string/show</item>
+        <item>@string/dont_show</item>
+    </array>
+    <array name="confirm_exit_values">
+        <item>-1</item>
+        <item>0</item>
+        <item>1</item>
+    </array>
+
     <string-array name="themes_overlay_names">
         <item>Normal</item>
         <item>Dandelion Yellow</item>

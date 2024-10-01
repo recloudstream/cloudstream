@@ -58,6 +58,11 @@
                 android:summary="@string/random_button_settings_desc"
                 app:defaultValue="false" />
         <Preference
+            android:icon="@drawable/ic_baseline_exit_24"
+            android:key="@string/confirm_exit_key"
+            android:title="@string/confirm_before_exiting_title"
+            android:summary="@string/confirm_before_exiting_desc" />
+        <Preference
             android:icon="@drawable/ic_baseline_filter_list_24"
             android:key="@string/pref_filter_search_quality_key"
             android:title="@string/pref_filter_search_quality" />

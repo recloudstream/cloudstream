@@ -67,21 +67,23 @@ class SettingsUI : PreferenceFragmentCompat() {
                 settingsManager.getInt(getString(R.string.app_layout_key), -1)
 
             activity?.showBottomDialog(
-                prefNames.toList(),
-                prefValues.indexOf(currentLayout),
-                getString(R.string.app_layout),
-                true,
-                {}) {
-                try {
-                    settingsManager.edit()
-                        .putInt(getString(R.string.app_layout_key), prefValues[it])
-                        .apply()
-                    context?.updateTv()
-                    activity?.recreate()
-                } catch (e: Exception) {
-                    logError(e)
+                items = prefNames.toList(),
+                selectedIndex = prefValues.indexOf(currentLayout),
+                name = getString(R.string.app_layout),
+                showApply = true,
+                dismissCallback = {},
+                callback = {
+                    try {
+                        settingsManager.edit()
+                            .putInt(getString(R.string.app_layout_key), prefValues[it])
+                            .apply()
+                        context?.updateTv()
+                        activity?.recreate()
+                    } catch (e: Exception) {
+                        logError(e)
+                    }
                 }
-            }
+            )
             return@setOnPreferenceClickListener true
         }
 
@@ -187,5 +189,24 @@ class SettingsUI : PreferenceFragmentCompat() {
             return@setOnPreferenceClickListener true
         }
 
+        getPref(R.string.confirm_exit_key)?.setOnPreferenceClickListener {
+            val prefNames = resources.getStringArray(R.array.confirm_exit)
+            val prefValues = resources.getIntArray(R.array.confirm_exit_values)
+            val confirmExit = settingsManager.getInt(getString(R.string.confirm_exit_key), -1)
+
+            activity?.showBottomDialog(
+                items = prefNames.toList(),
+                selectedIndex = prefValues.indexOf(confirmExit),
+                name = getString(R.string.confirm_before_exiting_title),
+                showApply = true,
+                dismissCallback = {},
+                callback = { selectedOption ->
+                    settingsManager.edit()
+                        .putInt(getString(R.string.confirm_exit_key), prefValues[selectedOption])
+                        .apply()
+                }
+            )
+            return@setOnPreferenceClickListener true
+        }
     }
 }

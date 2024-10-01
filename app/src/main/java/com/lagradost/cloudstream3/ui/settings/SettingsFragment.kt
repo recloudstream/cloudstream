@@ -69,12 +69,16 @@ class SettingsFragment : Fragment() {
         }
 
         /**
-         * Hide the Preference on selected layouts.
+         * Hide the [Preference] on selected layouts.
+         * @return [Preference] if visible otherwise null.
+         *
+         * [hideOn] is usually followed by some actions on the preference which are mostly
+         * unnecessary when the preference is disabled for the said layout thus returning null.
          **/
         fun Preference?.hideOn(layoutFlags: Int): Preference? {
             if (this == null) return null
             this.isVisible = !isLayout(layoutFlags)
-            return this
+            return if(this.isVisible) this else null
         }
 
         /**

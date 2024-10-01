@@ -1,9 +1,11 @@
 package com.lagradost.cloudstream3
 
 import android.animation.ValueAnimator
+import android.annotation.SuppressLint
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.res.ColorStateList
 import android.content.res.Configuration
 import android.graphics.Rect
@@ -18,6 +20,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.Toast
@@ -29,7 +32,6 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.view.GravityCompat
 import androidx.core.view.children
 import androidx.core.view.isGone
 import androidx.core.view.isInvisible
@@ -64,7 +66,6 @@ import com.lagradost.cloudstream3.APIHolder.initAll
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
-import com.lagradost.cloudstream3.CommonActivity.activity
 import com.lagradost.cloudstream3.CommonActivity.loadThemes
 import com.lagradost.cloudstream3.CommonActivity.onColorSelectedEvent
 import com.lagradost.cloudstream3.CommonActivity.onDialogDismissedEvent
@@ -169,7 +170,6 @@ import com.lagradost.cloudstream3.utils.UIHelper.getResourceColor
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.requestRW
-import com.lagradost.cloudstream3.utils.UIHelper.setImage
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import com.lagradost.cloudstream3.utils.USER_PROVIDER_API
 import com.lagradost.cloudstream3.utils.USER_SELECTED_HOMEPAGE_API
@@ -613,14 +613,31 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         onUserLeaveHint(this)
     }
 
-    private fun showConfirmExitDialog() {
-        val builder: AlertDialog.Builder = AlertDialog.Builder(this)
-        builder.setTitle(R.string.confirm_exit_dialog)
-        builder.apply {
-            // Forceful exit since back button can actually go back to setup
-            setPositiveButton(R.string.yes) { _, _ -> exitProcess(0) }
-            setNegativeButton(R.string.no) { _, _ -> }
+    @SuppressLint("ApplySharedPref") // commit since the op needs to be synchronous
+    private fun showConfirmExitDialog(settingsManager: SharedPreferences) {
+        val confirmBeforeExit = settingsManager.getInt(getString(R.string.confirm_exit_key), -1)
+        when(confirmBeforeExit) {
+            // AUTO - Confirm exit is shown only on TV or EMULATOR by default
+            -1 -> if(isLayout(PHONE)) exitProcess(0)
+            // DON'T SHOW
+            1 -> exitProcess(0)
+            // 0 -> SHOW
+            else -> { /*NO-OP : Continue*/ }
         }
+
+        val dialogView = layoutInflater.inflate(R.layout.confirm_exit_dialog, null)
+        val dontShowAgainCheck: CheckBox = dialogView.findViewById(R.id.checkboxDontShowAgain)
+        val builder: AlertDialog.Builder = AlertDialog.Builder(this)
+        builder.setView(dialogView)
+            .setTitle(R.string.confirm_exit_dialog)
+            .setNegativeButton(R.string.no) { _, _ -> /*NO-OP*/}
+            .setPositiveButton(R.string.yes) { _, _ ->
+                if(dontShowAgainCheck.isChecked) {
+                    settingsManager.edit().putInt(getString(R.string.confirm_exit_key), 1).commit()
+                }
+                exitProcess(0)
+            }
+
         builder.show().setDefaultFocus()
     }
 
@@ -1521,16 +1538,14 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                 }
             }
 
-            if (isLayout(TV or EMULATOR)) {
-                if (navDestination.matchDestination(R.id.navigation_home)) {
-                    attachBackPressedCallback {
-                        showConfirmExitDialog()
-                        window?.navigationBarColor =
-                            colorFromAttribute(R.attr.primaryGrayBackground)
-                        updateLocale()
-                    }
-                } else detachBackPressedCallback()
-            }
+            if (navDestination.matchDestination(R.id.navigation_home)) {
+                attachBackPressedCallback {
+                    showConfirmExitDialog(settingsManager)
+                    window?.navigationBarColor =
+                        colorFromAttribute(R.attr.primaryGrayBackground)
+                    updateLocale()
+                }
+            } else detachBackPressedCallback()
         }
 
         //val navController = findNavController(R.id.nav_host_fragment)
