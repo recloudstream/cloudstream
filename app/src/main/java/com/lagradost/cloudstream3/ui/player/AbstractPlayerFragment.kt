@@ -1,7 +1,6 @@
 package com.lagradost.cloudstream3.ui.player
 
 import android.annotation.SuppressLint
-import android.app.AlertDialog
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -59,9 +58,7 @@ import com.lagradost.cloudstream3.utils.UIHelper.hideSystemUI
 import com.lagradost.cloudstream3.utils.UIHelper.popCurrentPage
 
 enum class PlayerResize(@StringRes val nameRes: Int) {
-    Fit(R.string.resize_fit),
     Fill(R.string.resize_fill),
-    Zoom(R.string.resize_zoom),
     SixteenByNine(R.string.resize_sixteen_by_nine),
     NineBySixteen(R.string.resize_nine_by_sixteen),
     OneByOne(R.string.resize_one_by_one),
@@ -481,7 +478,7 @@ abstract class AbstractPlayerFragment(
     @SuppressLint("SetTextI18n", "UnsafeOptInUsageError")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         resizeMode = DataStoreHelper.resizeMode
-        resize(resizeMode, false)
+        resize(resizeMode)
 
         player.releaseCallbacks()
         player.initCallbacks(
@@ -620,8 +617,8 @@ abstract class AbstractPlayerFragment(
         showAspectRatioDialog()
     }
 
-    fun resize(resize: Int, showToast: Boolean) {
-        resize(PlayerResize.entries[resize], showToast)
+    fun resize(resize: Int) {
+        resize(PlayerResize.entries[resize])
     }
 
     private fun showAspectRatioDialog() {
@@ -639,7 +636,7 @@ abstract class AbstractPlayerFragment(
             },
             callback = { selectedIndex ->
                 val selectedOption = PlayerResize.entries[selectedIndex]
-                resize(selectedOption, true)
+                resize(selectedOption)
                 player.handleEvent(CSPlayerEvent.Play, PlayerEventSource.UI)
             }
         )
@@ -648,12 +645,10 @@ abstract class AbstractPlayerFragment(
 
 
     @SuppressLint("UnsafeOptInUsageError")
-    fun resize(resize: PlayerResize, showToast: Boolean) {
+    fun resize(resize: PlayerResize) {
         DataStoreHelper.resizeMode = resize.ordinal
         val type = when (resize) {
             PlayerResize.Fill -> AspectRatioFrameLayout.RESIZE_MODE_FILL
-            PlayerResize.Fit -> AspectRatioFrameLayout.RESIZE_MODE_FIT
-            PlayerResize.Zoom -> AspectRatioFrameLayout.RESIZE_MODE_ZOOM
             PlayerResize.SixteenByNine -> 16.0f/9.0f
             PlayerResize.NineBySixteen -> 9.0f/16.0f
             PlayerResize.OneByOne -> 1.0f/1.0f
@@ -667,12 +662,9 @@ abstract class AbstractPlayerFragment(
             aspectRatioFrameLayout?.setAspectRatio(type)
         }else if(type is Int) {
             playerView?.resizeMode = type
+            aspectRatioFrameLayout?.setAspectRatio(0f)
         }
-
-        if (showToast)
-            showToast(resize.nameRes, Toast.LENGTH_SHORT)
     }
-
     override fun onStop() {
         player.onStop()
         super.onStop()
