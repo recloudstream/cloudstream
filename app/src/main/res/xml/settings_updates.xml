@@ -46,6 +46,11 @@
             android:icon="@drawable/baseline_restore_page_24"
             android:key="@string/restore_key"
             android:title="@string/restore_settings" />
+
+        <Preference
+            android:icon="@drawable/ic_baseline_folder_open_24"
+            android:key="@string/backup_path_key"
+            android:title="@string/backup_path_title" />
     </PreferenceCategory>
 
     <PreferenceCategory
