@@ -57,11 +57,11 @@ import com.lagradost.cloudstream3.utils.BiometricAuthenticator.isAuthEnabled
 import com.lagradost.cloudstream3.utils.BiometricAuthenticator.promptInfo
 import com.lagradost.cloudstream3.utils.BiometricAuthenticator.startBiometricAuthentication
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
+import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialogText
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
-import com.lagradost.cloudstream3.utils.UIHelper.setImage
 import qrcode.QRCode
 
 class SettingsAccount : PreferenceFragmentCompat(), BiometricCallback {
@@ -80,8 +80,10 @@ class SettingsAccount : PreferenceFragmentCompat(), BiometricCallback {
                     .setView(binding.root)
             val dialog = builder.show()
 
-            binding.accountMainProfilePictureHolder.isVisible =
-                binding.accountMainProfilePicture.setImage(info.profilePicture)
+            if (!info.profilePicture.isNullOrEmpty()) {
+                binding.accountMainProfilePictureHolder.isVisible = true
+                binding.accountMainProfilePicture.loadImage(info.profilePicture)
+            }
 
             binding.accountLogout.setOnClickListener {
                 api.logOut()

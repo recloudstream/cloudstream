@@ -30,6 +30,7 @@ import com.lagradost.cloudstream3.ui.result.setLinearListLayout
 import com.lagradost.cloudstream3.utils.AppContextUtils.setDefaultFocus
 import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getDefaultAccount
+import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.showInputMethod
 
@@ -90,12 +91,12 @@ object AccountHelper {
         }
 
         // Handle the profile picture and its interactions
-        binding.accountImage.setImage(account.image)
+        binding.accountImage.loadImage(account.image)
         binding.accountImage.setOnClickListener {
             // Roll the image forwards once
             currentEditAccount =
                 currentEditAccount.copy(defaultImageIndex = (currentEditAccount.defaultImageIndex + 1) % DataStoreHelper.profileImages.size)
-            binding.accountImage.setImage(currentEditAccount.image)
+            binding.accountImage.loadImage(currentEditAccount.image)
         }
 
         // Handle applying changes

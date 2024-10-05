@@ -23,7 +23,7 @@ import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.utils.AppContextUtils.html
-import com.lagradost.cloudstream3.utils.UIHelper.setImage
+import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import com.lagradost.cloudstream3.utils.VideoDownloadHelper
 import java.text.DateFormat
@@ -225,7 +225,7 @@ class EpisodeAdapter(
                     episodeProgress.isVisible = displayPos > 0L
                 }
 
-                episodePoster.isVisible = episodePoster.setImage(card.poster) == true
+                episodePoster.loadImage(card.poster)
 
                 if (card.rating != null) {
                     episodeRating.text = episodeRating.context?.getString(R.string.rated_format)

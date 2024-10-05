@@ -11,7 +11,7 @@ import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.utils.AppContextUtils.html
-import com.lagradost.cloudstream3.utils.UIHelper.setImage
+import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
 
 sealed class UiText {
     companion object {
@@ -101,19 +101,20 @@ fun ImageView?.setImage(value: UiImage?, fadeIn: Boolean = true) {
 
 fun ImageView?.setImageImage(value: UiImage.Image, fadeIn: Boolean = true) {
     if (this == null) return
-    this.isVisible = setImage(value.url, value.headers, value.errorDrawable, fadeIn)
+    this.isVisible = true;
+    loadImage(value.url, value.headers) { value.errorDrawable?.let { error(it) } }
 }
 
 fun ImageView?.setImageDrawable(value: UiImage.Drawable) {
     if (this == null) return
     this.isVisible = true
-    this.setImage(UiImage.Drawable(value.resId))
+    this.loadImage(value.resId)
 }
 
 fun ImageView?.setImageBitmap(value: UiImage.Bitmap) {
     if (this == null) return
     this.isVisible = true
-    this.setImageBitmap(value.bitmap)
+    this.loadImage(value.bitmap)
 }
 
 @JvmName("imgNull")

@@ -46,6 +46,7 @@ import com.lagradost.cloudstream3.utils.AppContextUtils.html
 import com.lagradost.cloudstream3.utils.AppContextUtils.isRtl
 import com.lagradost.cloudstream3.utils.AppContextUtils.loadCache
 import com.lagradost.cloudstream3.utils.AppContextUtils.updateHasTrailers
+import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialogInstant
 import com.lagradost.cloudstream3.utils.UIHelper
@@ -53,7 +54,6 @@ import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
-import com.lagradost.cloudstream3.utils.UIHelper.setImage
 
 class ResultFragmentTv : Fragment() {
     private lateinit var viewModel: ResultViewModel2
@@ -874,11 +874,9 @@ class ResultFragmentTv : Fragment() {
                         //Change poster crop area to 20% from Top
                         backgroundPoster.cropYCenterOffsetPct = 0.20F
                         
-                        backgroundPoster.setImage(
-                            d.posterBackgroundImage ?: UiImage.Drawable(error),
-                            radius = 0,
-                            errorImageDrawable = error
-                        )
+                        backgroundPoster.loadImage(
+                            d.posterBackgroundImage
+                        ) { error(error) }
                         comingSoon = d.comingSoon
                         resultTvComingSoon.isVisible = d.comingSoon
 

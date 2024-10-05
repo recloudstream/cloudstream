@@ -174,6 +174,7 @@ import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import com.lagradost.cloudstream3.utils.USER_PROVIDER_API
 import com.lagradost.cloudstream3.utils.USER_SELECTED_HOMEPAGE_API
 import com.lagradost.cloudstream3.actions.temp.fcast.FcastManager
+import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
 import com.lagradost.safefile.SafeFile
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -1615,7 +1616,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
 
                 observe(homeViewModel.currentAccount) { currentAccount ->
                     if (currentAccount != null) {
-                        navProfilePic?.setImage(
+                        navProfilePic?.loadImage(
                             currentAccount.image
                         )
                         navProfileRoot.isVisible = true

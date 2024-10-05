@@ -133,10 +133,7 @@ object DataStoreHelper {
         @JsonProperty("lockPin")
         val lockPin: String? = null,
     ) {
-        val image: UiImage
-            get() = customImage?.let { UiImage.Image(it) } ?: UiImage.Drawable(
-                profileImages.getOrNull(defaultImageIndex) ?: profileImages.first()
-            )
+        val image get() = customImage ?: profileImages.getOrNull(defaultImageIndex) ?: profileImages.first()
     }
 
     const val TAG = "data_store_helper"

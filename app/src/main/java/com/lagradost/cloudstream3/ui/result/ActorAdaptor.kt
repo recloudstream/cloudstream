@@ -10,7 +10,7 @@ import com.lagradost.cloudstream3.ActorData
 import com.lagradost.cloudstream3.ActorRole
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.CastItemBinding
-import com.lagradost.cloudstream3.utils.UIHelper.setImage
+import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
 
 class ActorAdaptor(
     private var nextFocusUpId: Int? = null,
@@ -102,7 +102,7 @@ class ActorAdaptor(
             }
 
             binding.apply {
-                actorImage.setImage(mainImg)
+                actorImage.loadImage(mainImg)
 
                 actorName.text = actor.actor.name
                 actor.role?.let {
@@ -136,7 +136,9 @@ class ActorAdaptor(
                     voiceActorName.isVisible = false
                 } else {
                     voiceActorName.text = actor.voiceActor?.name
-                    voiceActorImageHolder.isVisible = voiceActorImage.setImage(vaImage)
+                    if (!vaImage.isNullOrEmpty())
+                    voiceActorImageHolder.isVisible = true
+                    voiceActorImage.loadImage(vaImage)
                 }
             }
         }
