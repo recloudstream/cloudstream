@@ -12,14 +12,16 @@ import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.graphics.drawable.toBitmap
 import androidx.core.net.toUri
 import androidx.preference.PreferenceManager
 import androidx.work.Data
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.model.GlideUrl
+import coil.ImageLoader
+import coil.request.ImageRequest
+import coil.request.SuccessResult
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
 import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
@@ -52,6 +54,7 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
@@ -59,7 +62,6 @@ import java.io.Closeable
 import java.io.File
 import java.io.IOException
 import java.io.OutputStream
-import java.lang.IllegalArgumentException
 import java.util.*
 
 const val DOWNLOAD_CHANNEL_ID = "cloudstream3.general"
@@ -231,15 +233,27 @@ object VideoDownloadManager {
                 return cachedBitmaps[url]
             }
 
-            val bitmap = Glide.with(this)
-                .asBitmap()
-                .load(GlideUrl(url) { headers ?: emptyMap() })
-                .submit(720, 720)
-                .get()
+            val imageLoader = ImageLoader(this)
 
-            if (bitmap != null) {
-                cachedBitmaps[url] = bitmap
+            val request = ImageRequest.Builder(this)
+                .data(url)
+                .apply {
+                    headers?.forEach { (key, value) ->
+                        addHeader(key, value)
+                    }
+                }
+                .allowHardware(false) // Disable hardware bitmaps for compatibility
+                .build()
+
+            val bitmap = runBlocking {
+                val result = imageLoader.execute(request)
+                (result as? SuccessResult)?.drawable?.toBitmap()
             }
+
+            bitmap?.let {
+                cachedBitmaps[url] = it
+            }
+
             return bitmap
         } catch (e: Exception) {
             logError(e)

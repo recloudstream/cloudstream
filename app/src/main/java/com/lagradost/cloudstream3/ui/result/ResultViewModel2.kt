@@ -81,7 +81,6 @@ import com.lagradost.cloudstream3.utils.DataStoreHelper.setResultWatchState
 import com.lagradost.cloudstream3.utils.DataStoreHelper.setSubscribedData
 import com.lagradost.cloudstream3.utils.DataStoreHelper.setVideoWatchState
 import com.lagradost.cloudstream3.utils.DataStoreHelper.updateSubscribedData
-import com.lagradost.cloudstream3.utils.UIHelper.clipboardHelper
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import kotlinx.coroutines.*
 import java.util.concurrent.TimeUnit
@@ -114,8 +113,8 @@ data class ResultData(
     val title: String,
     var syncData: Map<String, String>,
 
-    val posterImage: UiImage?,
-    val posterBackgroundImage: UiImage?,
+    val posterImage: String?,
+    val posterBackgroundImage: String?,
     val plotText: UiText,
     val apiName: UiText,
     val ratingText: UiText?,
@@ -131,6 +130,7 @@ data class ResultData(
     val nextAiringDate: UiText?,
     val nextAiringEpisode: UiText?,
     val plotHeaderText: UiText,
+    val posterHeaders: Map<String, String>? = null,
 )
 
 data class CheckDuplicateData(
@@ -215,12 +215,9 @@ fun LoadResponse.toResultData(repo: APIRepository): ResultData {
         ),
         nextAiringDate = nextAiringDate,
         nextAiringEpisode = nextAiringEpisode,
-        posterImage = img(
-            posterUrl, posterHeaders
-        ) ?: img(R.drawable.default_cover),
-        posterBackgroundImage = img(
-            backgroundPosterUrl ?: posterUrl, posterHeaders
-        ) ?: img(R.drawable.default_cover),
+        posterImage = posterUrl ?: backgroundPosterUrl,
+        posterHeaders = posterHeaders,
+        posterBackgroundImage = backgroundPosterUrl ?: posterUrl,
         titleText = txt(name),
         url = url,
         tags = tags ?: emptyList(),

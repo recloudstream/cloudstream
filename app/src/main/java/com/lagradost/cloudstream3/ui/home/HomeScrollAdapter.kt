@@ -13,7 +13,7 @@ import com.lagradost.cloudstream3.ui.ViewHolderState
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
-import com.lagradost.cloudstream3.utils.UIHelper.setImage
+import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
 
 class HomeScrollAdapter(
     fragment: Fragment
@@ -47,7 +47,7 @@ class HomeScrollAdapter(
 
         when (binding) {
             is HomeScrollViewBinding -> {
-                binding.homeScrollPreview.setImage(posterUrl)
+                binding.homeScrollPreview.loadImage(posterUrl)
                 binding.homeScrollPreviewTags.apply {
                     text = item.tags?.joinToString(" • ") ?: ""
                     isGone = item.tags.isNullOrEmpty()
@@ -57,7 +57,7 @@ class HomeScrollAdapter(
             }
 
             is HomeScrollViewTvBinding -> {
-                binding.homeScrollPreview.setImage(posterUrl)
+                binding.homeScrollPreview.loadImage(posterUrl)
             }
         }
     }
