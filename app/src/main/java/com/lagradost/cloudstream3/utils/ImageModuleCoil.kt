@@ -29,7 +29,7 @@ object ImageLoader {
 
     private fun buildImageLoader(context: Context): ImageLoader {
         val okHttpClient = OkHttpClient.Builder()
-            .addInterceptor(DdosGuardKiller(alwaysBypass = false)) // Add DdosGuardKiller Interceptor
+            .addInterceptor(DdosGuardKiller(alwaysBypass = false))
             .build()
 
         return ImageLoader.Builder(context)
@@ -53,23 +53,23 @@ object ImageLoader {
                     .build()
             }
             .diskCachePolicy(CachePolicy.ENABLED)
-            /** ! Pass interceptors with care, unnecessary passing a token to servers
-             * or other image service causes unauthorized exceptions **/
+            /** Pass interceptors with care, unnecessary passing tokens to servers
+            or image hosting services causes unauthorized exceptions **/
             .okHttpClient(okHttpClient)
             .eventListener(object : EventListener {
                 override fun onStart(request: ImageRequest) {
                     super.onStart(request)
-                    Log.d("ImageLoader", "Loading Image ${request.data}")
+                    Log.i("CoilImageLoader", "Loading Image ${request.data}")
                 }
 
                 override fun onSuccess(request: ImageRequest, result: SuccessResult) {
                     super.onSuccess(request, result)
-                    Log.d("ImageLoader", "Image Loading successful")
+                    Log.d("CoilImageLoader", "Image Loading successful")
                 }
 
                 override fun onError(request: ImageRequest, result: ErrorResult) {
                     super.onError(request, result)
-                    Log.e("ImageLoadError", "Error loading image: ${result.throwable}")
+                    Log.e("CoilImageLoadError", "Error loading image: ${result.throwable}")
                 }
             })
             .build()
@@ -80,12 +80,12 @@ object ImageLoader {
     fun ImageView.loadImage(
         imageData: Any?,
         headers: Map<String, String>? = null,
-        builder: ImageRequest.Builder.() -> Unit = {} // 'in' case extra config is needed somewhere
+        builder: ImageRequest.Builder.() -> Unit = {} // for placeholder, error & transformations
     ) {
-        // clear image to avoid loading issues at fast scrolling
-        this.setImageBitmap(null)
+        // clear image to avoid loading issues at fast scrolling (e.g, an image recycler)
+        this.load(null)
 
-        // Use Coil's built-in load method but with the shared ImageLoader instance
+        // Use Coil's built-in load method but with our custom module
         this.load(imageData, instance ?: return) {
             addHeader("User-Agent", USER_AGENT)
             headers?.forEach { (key, value) ->

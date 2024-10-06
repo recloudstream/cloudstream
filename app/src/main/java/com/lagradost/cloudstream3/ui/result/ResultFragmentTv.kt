@@ -54,6 +54,8 @@ import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
+import com.lagradost.cloudstream3.utils.setText
+import com.lagradost.cloudstream3.utils.setTextHtml
 
 class ResultFragmentTv : Fragment() {
     private lateinit var viewModel: ResultViewModel2
@@ -150,7 +152,9 @@ class ResultFragmentTv : Fragment() {
             rec?.map { it.apiName }?.distinct()?.let { apiNames ->
                 // very dirty selection
                 resultRecommendationsFilterSelection.isVisible = apiNames.size > 1
-                resultRecommendationsFilterSelection.update(apiNames.map { txt(it) to it })
+                resultRecommendationsFilterSelection.update(apiNames.map { com.lagradost.cloudstream3.utils.txt(
+                    it
+                ) to it })
                 resultRecommendationsFilterSelection.select(apiNames.indexOf(matchAgainst))
             } ?: run {
                 resultRecommendationsFilterSelection.isVisible = false
@@ -579,8 +583,12 @@ class ResultFragmentTv : Fragment() {
                         }
 
                         val name = (viewModel.page.value as? Resource.Success)?.value?.title
-                            ?: txt(R.string.no_data).asStringNull(context) ?: ""
-                        CommonActivity.showToast(txt(message, name), Toast.LENGTH_SHORT)
+                            ?: com.lagradost.cloudstream3.utils.txt(R.string.no_data).asStringNull(context) ?: ""
+                        CommonActivity.showToast(
+                            com.lagradost.cloudstream3.utils.txt(
+                                message,
+                                name
+                            ), Toast.LENGTH_SHORT)
                     }
                 }
             }
@@ -622,8 +630,12 @@ class ResultFragmentTv : Fragment() {
                         }
 
                         val name = (viewModel.page.value as? Resource.Success)?.value?.title
-                            ?: txt(R.string.no_data).asStringNull(context) ?: ""
-                        CommonActivity.showToast(txt(message, name), Toast.LENGTH_SHORT)
+                            ?: com.lagradost.cloudstream3.utils.txt(R.string.no_data).asStringNull(context) ?: ""
+                        CommonActivity.showToast(
+                            com.lagradost.cloudstream3.utils.txt(
+                                message,
+                                name
+                            ), Toast.LENGTH_SHORT)
                     }
                 }
 
@@ -839,7 +851,7 @@ class ResultFragmentTv : Fragment() {
                         resultCastText.setText(d.actorsText)
                         resultNextAiring.setText(d.nextAiringEpisode)
                         resultNextAiringTime.setText(d.nextAiringDate)
-                        resultPoster.setImage(d.posterImage)
+                        resultPoster.loadImage(d.posterImage)
 
                         var isExpanded = false
                         resultDescription.apply {

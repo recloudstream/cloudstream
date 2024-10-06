@@ -152,7 +152,6 @@ android {
 
 dependencies {
     // Testing
-    implementation("androidx.test:runner:1.6.1")
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.json:json:20240303")
     androidTestImplementation("androidx.test:core")

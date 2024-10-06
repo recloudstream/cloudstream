@@ -34,10 +34,6 @@ import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.subDlAp
 import com.lagradost.cloudstream3.syncproviders.AuthAPI
 import com.lagradost.cloudstream3.syncproviders.InAppAuthAPI
 import com.lagradost.cloudstream3.syncproviders.OAuth2API
-import com.lagradost.cloudstream3.ui.result.img
-import com.lagradost.cloudstream3.ui.result.setImage
-import com.lagradost.cloudstream3.ui.result.setText
-import com.lagradost.cloudstream3.ui.result.txt
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
 import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
@@ -62,6 +58,8 @@ import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialogTe
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
+import com.lagradost.cloudstream3.utils.setText
+import com.lagradost.cloudstream3.utils.txt
 import qrcode.QRCode
 
 class SettingsAccount : PreferenceFragmentCompat(), BiometricCallback {
@@ -200,9 +198,7 @@ class SettingsAccount : PreferenceFragmentCompat(), BiometricCallback {
                                                     pinCodeData.verificationUrl
                                                 )
                                             )
-                                            deviceAuthQrcode.setImage(
-                                                img(qrCodeImage)
-                                            )
+                                            deviceAuthQrcode.loadImage(qrCodeImage)
                                         }
 
                                         val expirationMillis =
