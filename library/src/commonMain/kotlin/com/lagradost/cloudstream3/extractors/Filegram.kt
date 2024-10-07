@@ -38,11 +38,11 @@ open class Filegram : ExtractorApi() {
 		    val videoUrl = Regex("""file:\s*"([^"]+\.m3u8[^"]*)"""").find(unpackedJs)?.groupValues?.get(1)
         if (videoUrl != null) {
             M3u8Helper.generateM3u8(
-				      this.name,
-				      fixUrl(videoUrl),
-				      "$mainUrl/",
-				      headers = header
-			      ).forEach(callback)
+		this.name,
+		fixUrl(videoUrl),
+		"$mainUrl/",
+		headers = header
+	   ).forEach(callback)
         }
     }
 
@@ -51,13 +51,13 @@ open class Filegram : ExtractorApi() {
           ?.data()?.let { getAndUnpack(it) }
   }
 	
-	private fun getEmbedUrl(url: String): String {
-		  return if (!url.contains("/embed-")) {
-			    val videoId = url.substringAfter("$mainUrl/")
-			    "$mainUrl/embed-$videoId"
-		  } else {
-			    url
-		  }
+  private fun getEmbedUrl(url: String): String {
+     return if (!url.contains("/embed-")) {
+	   val videoId = url.substringAfter("$mainUrl/")
+	   "$mainUrl/embed-$videoId"
+     } else {
+	   url
 	}
+     }
 
 }
