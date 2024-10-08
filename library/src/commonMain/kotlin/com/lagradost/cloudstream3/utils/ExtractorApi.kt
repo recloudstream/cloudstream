@@ -52,6 +52,7 @@ import com.lagradost.cloudstream3.extractors.FileMoon
 import com.lagradost.cloudstream3.extractors.FileMoonIn
 import com.lagradost.cloudstream3.extractors.FileMoonSx
 import com.lagradost.cloudstream3.extractors.Filesim
+import com.lagradost.cloudstream3.extractors.Filegram
 import com.lagradost.cloudstream3.extractors.Fplayer
 import com.lagradost.cloudstream3.extractors.Geodailymotion
 import com.lagradost.cloudstream3.extractors.GMPlayer
@@ -1011,6 +1012,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     Boosterx(),
     Ds2play(),
     Ds2video(),
+    Filegram(),
     
 )
 
