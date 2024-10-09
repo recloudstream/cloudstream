@@ -390,8 +390,8 @@
     <string name="setup_done">Fertig</string>
     <string name="extensions">Erweiterungen</string>
     <string name="add_repository">Repository hinzufügen</string>
-    <string name="repository_name_hint">Repository-Name</string>
-    <string name="repository_url_hint">Repository-URL</string>
+    <string name="repository_name_hint">Repository Name (Optional)</string>
+    <string name="repository_url_hint">Repository-URL oder Kurz Code</string>
     <string name="plugin_loaded">Plugin geladen</string>
     <string name="plugin_deleted">Plugin gelöscht</string>
     <string name="plugin_load_fail" formatted="true">Fehler beim Laden von %s</string>
@@ -652,4 +652,7 @@
 \n%s</string>
     <string name="sort_release_date_new">Veröffentlichungsdatum (von neu nach alt)</string>
     <string name="sort_release_date_old">Veröffentlichungsdatum (von alt nach neu)</string>
+    <string name="preview_seekbar">Suchleisten Vorschau</string>
+    <string name="preview_seekbar_desc">Vorschau Bilder in der Suchleiste einschalten</string>
+    <string name="no_subtitles_loaded">Keine Untertitel geladen</string>
 </resources>

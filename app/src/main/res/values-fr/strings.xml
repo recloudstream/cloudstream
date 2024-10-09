@@ -628,7 +628,6 @@
     <string name="open_downloaded_repo">Ouvrir le dépôt</string>
     <string name="device_pin_counter_text">Code expire dans %1$dm %2$ds</string>
     <string name="cs3wiki">Wiki de CloudStream</string>
-    <string name="player_settings_play_in_mpvytdl">MPV YTDL</string>
     <string name="device_pin_expired_message">Le code PIN est maintenant expiré !</string>
     <string name="qr_image">Image du code QR</string>
     <string name="delete_plugin">Supprimer l\'extension</string>

@@ -681,4 +681,8 @@
     <string name="preview_seekbar">Náhled v liště přehrávače</string>
     <string name="preview_seekbar_desc">Povolit náhled miniatur na liště přehrávače</string>
     <string name="no_subtitles_loaded">Zatím nenačteny žádné titulky</string>
+    <string name="confirm_before_exiting_title">Potvrdit před ukončením</string>
+    <string name="confirm_before_exiting_desc">Zobrazit dialog před ukončením aplikace</string>
+    <string name="show">Zobrazit</string>
+    <string name="dont_show">Nezobrazovat</string>
 </resources>
