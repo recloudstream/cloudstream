@@ -657,4 +657,8 @@
     <string name="preview_seekbar_desc">Activar la previsualización para las miniaturas en la barra de búsqueda</string>
     <string name="preview_seekbar">Previsualización de Seekbar</string>
     <string name="no_subtitles_loaded">Aún no hay subtítulos cargados</string>
+    <string name="confirm_before_exiting_desc">Mostrar el diálogo antes de salir de la aplicación</string>
+    <string name="show">Mostrar</string>
+    <string name="dont_show">No mostrar</string>
+    <string name="confirm_before_exiting_title">Confirmar antes de salir</string>
 </resources>

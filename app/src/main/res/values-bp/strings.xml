@@ -679,4 +679,8 @@
     <string name="preview_seekbar_desc">Ativar visualização de miniatura na barra de busca</string>
     <string name="preview_seekbar">Visualização da barra de busca</string>
     <string name="no_subtitles_loaded">Ainda não há legendas carregadas</string>
+    <string name="show">Mostrar</string>
+    <string name="confirm_before_exiting_title">Confirmar antes de sair</string>
+    <string name="confirm_before_exiting_desc">Mostrar caixa de diálogo antes de sair do aplicativo</string>
+    <string name="dont_show">Não mostrar</string>
 </resources>

@@ -6,7 +6,7 @@
     <string name="title_downloads">التنزيلات</string>
     <string name="app_dub_sub_episode_text_format" formatted="true">%1$sالحلقة %2$d</string>
     <string name="delete_file">محي الملف</string>
-    <string name="acra_report_toast">سوري، الآپ تعطل. رح ينبعت تقرير عن المشكلة للمطورين.</string>
+    <string name="acra_report_toast">سوري، الآپ تعطل. رح ينبعت تقرير عن المشكلة للمطورين</string>
     <string name="episode_format" formatted="true">%1$d %2$s</string>
     <string name="bug_report_settings_off">بس بعات البيانات وقت ما يتعطل الآپ</string>
     <string name="preview_background_img_des">شوف الخلفية</string>
@@ -443,7 +443,7 @@
     <string name="skip_type_recap">التلخيص</string>
     <string name="yes">إِيه</string>
     <string name="actor_main">الرئيسي</string>
-    <string name="apply_on_restart">سكر الآپ حتى تطبق التغيرات</string>
+    <string name="apply_on_restart">سكر الآپ حتى تطبق التغيرات.</string>
     <string name="help">ساعدوني</string>
     <string name="subtitle_offset_extra_hint_before_format">عوز هيدا إذا عم بتبين الترجمة %d ميلي ثانية بعد ما لازم</string>
     <string name="app_not_found_error">م نلاقا الآپ</string>
@@ -452,7 +452,7 @@
     <string name="recommended">مقترح</string>
     <string name="quality_ts">TS</string>
     <string name="player_load_subtitles_online">فتاح من الإنترنت</string>
-    <string name="app_layout_subtext">غَبر شكل الآپ حتى يتناسب مع جهازك</string>
+    <string name="app_layout_subtext">غَير شكل الآپ حتى يتناسب مع جهازك</string>
     <string name="plugins_disabled" formatted="true">مطفي: %d</string>
     <string name="stop">وقف</string>
     <string name="empty_library_logged_in_message">هيدي للايحة فاضية. جربو تبدلو ع غيرا.</string>
@@ -637,7 +637,7 @@
     <string name="play_from_beginning_img_des">بلشه من الأول</string>
     <string name="test_warning">تحذير</string>
     <string name="open_local_video">فتاح الڤيديو اللي ع جهازك</string>
-    <string name="downloads_empty">مافي تنزيلات هلّق</string>
+    <string name="downloads_empty">مافي تنزيلات هلّق.</string>
     <string name="delete_plugin">محي الإضافة</string>
     <string name="hide_player_control_names">محي اسامي كبسات صيطرة مشغل الڤيديو</string>
     <string name="sort_release_date_new">نهار اللي نزل (من جديد ل قديم)</string>
@@ -663,4 +663,8 @@
     <string name="preview_seekbar">صورة زغيرة مع التقريب وال تبعيد</string>
     <string name="preview_seekbar_desc">بت حط صورة زغير من الڤيديو إنت و عم بت قرب أو ترجع بال ڤيديو</string>
     <string name="no_subtitles_loaded">بعد مش معمول لود لولا ترجمة</string>
+    <string name="show">فرجي</string>
+    <string name="dont_show">م تفرجي</string>
+    <string name="confirm_before_exiting_desc">طلوب تأكيد قبلما تطلع من الآپ</string>
+    <string name="confirm_before_exiting_title">أكّد إنو بدك تطلع</string>
 </resources>

@@ -632,7 +632,6 @@
 \n%2$s</string>
     <string name="preview_seekbar_desc">Aktivera förhandsgranskningsminiatyr i sökfältet</string>
     <string name="preview_seekbar">Förhandsgranskning av sökfältet</string>
-    <string name="player_settings_play_in_mpvytdl">MPV YTDL</string>
     <string name="play_from_beginning_img_des">Spela från början</string>
     <string name="sort_release_date_new">Releasedatum (Ny till äldre)</string>
     <string name="sort_release_date_old">Releasedatum (Äldre till nytt)</string>

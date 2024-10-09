@@ -689,4 +689,8 @@
     <string name="preview_seekbar">معاينة شريط البحث</string>
     <string name="preview_seekbar_desc">تمكين معاينة الصورة المصغرة على شريط البحث</string>
     <string name="no_subtitles_loaded">لم يتم تحميل أي ترجمات بعد</string>
+    <string name="confirm_before_exiting_title">تأكيد قبل الخروج</string>
+    <string name="confirm_before_exiting_desc">عرض مربع الحوار قبل الخروج من التطبيق</string>
+    <string name="show">أظهِر</string>
+    <string name="dont_show">لا تظهر</string>
 </resources>

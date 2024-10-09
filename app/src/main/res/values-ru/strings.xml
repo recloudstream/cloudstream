@@ -656,6 +656,5 @@
     <string name="auth_locally">Войти локально</string>
     <string name="preview_seekbar">Предосмотр поисковой строки</string>
     <string name="preview_seekbar_desc">Включить предосмотр миниатюр в поисковой строке</string>
-    <string name="player_settings_play_in_mpvytdl">MPV YTDL</string>
     <string name="no_subtitles_loaded">Субтитры еще не загружены</string>
 </resources>

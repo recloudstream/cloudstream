@@ -647,7 +647,6 @@
     <string name="dismiss">Mengabaikan</string>
     <string name="device_pin_counter_text">Kode kedaluwarsa dalam %1$dm %2$ds</string>
     <string name="auth_locally">Otorisasi Lokal</string>
-    <string name="player_settings_play_in_mpvytdl">MPV YTDL</string>
     <string name="device_pin_url_message">Kunjungi <b>%s</b> di ponsel pintar atau komputer Anda dan masukkan kode di atas</string>
     <string name="preview_seekbar">Pratinjau bilah pencarian</string>
     <string name="preview_seekbar_desc">Aktifkan pratinjau gambar mini di bilah pencarian</string>
