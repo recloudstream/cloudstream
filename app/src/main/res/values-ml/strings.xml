@@ -1,282 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <!-- TRANSLATE, BUT DON'T FORGET FORMAT -->
-    <string name="player_speed_text_format" formatted="true">വേഗം (%.2fx)</string>
-    <string name="rated_format" formatted="true">റേറ്റിംഗ്: %.1f</string>
-    <string name="new_update_format" formatted="true">പുതിയ അപ്ഡേറ്റ്!
-\n%1$s -&gt; %2$s</string>
-    <string name="app_name">ക്ലൗഡ് സ്ട്രീം</string>
-    <string name="title_home">ഹോം</string>
-    <string name="title_search">തിരയുക</string>
-    <string name="title_downloads">ഡൗൺലോഡ്സ്</string>
-    <string name="title_settings">സെറ്റിങ്‌സ്</string>
-    <string name="search_hint">തിരയുക…</string>
-    <string name="no_data">ടാറ്റ ലഭ്യമല്ല</string>
-    <string name="episode_more_options_des">കൂടുതൽ ഓപ്ഷൻസ്</string>
-    <string name="next_episode">അടുത്ത എപ്പിസോഡ്</string>
-    <string name="result_tags">തരം</string>
-    <string name="result_share">ഷെയർ</string>
-    <string name="result_open_in_browser">ബ്രൗസറിൽ തുറക്കുക</string>
-    <string name="type_watching">കാണുന്നു</string>
-    <string name="type_on_hold">കണ്ടു നിർത്തി</string>
-    <string name="type_completed">കണ്ടു തീർന്നു</string>
-    <string name="type_dropped">കണ്ടു മതിയാക്കി</string>
-    <string name="type_plan_to_watch">കാണാൻ പോകുന്നു</string>
-    <string name="play_movie_button">സിനിമ പ്ലേ ചെയ്യുക</string>
-    <string name="play_torrent_button">ടോറൻറ് സ്ട്രീം ചെയ്യുക</string>
-    <string name="pick_source">സ്രോതസുകൾ</string>
-    <string name="pick_subtitle">സബ്ടൈറ്റിലുകൾ</string>
-    <string name="reload_error">വീണ്ടും കണക്ട് ചെയ്യുക…</string>
-    <string name="go_back">പിന്നോട്ട് പോകുക</string>
-    <string name="play_episode">എപ്പിസോഡ് പ്ലേയ് ചെയ്യുക</string>
-    <string name="download">ഡൌൺലോഡ്</string>
-    <string name="downloaded">ഡൌൺലോഡ് ചെയ്തവ</string>
-    <string name="downloading">ഡൌൺലോഡ് ചെയ്യുന്നു</string>
-    <string name="download_paused">ഡൌൺലോഡ് നിർത്തി</string>
-    <string name="download_started">ഡൌൺലോഡ് ആരംഭിച്ചു</string>
-    <string name="download_failed">ഡൌൺലോഡ് മുടങ്ങി</string>
-    <string name="download_canceled">ഡൌൺലോഡ് റദ്ദാക്കി</string>
-    <string name="download_done">ഡൌൺലോഡ് പൂർത്തിയായി</string>
-    <string name="error_loading_links_toast">ലിങ്കിൽ തകരാർ</string>
-    <string name="download_storage_text">ആന്തരിക സ്റ്റോറേജ്</string>
-    <string name="app_dubbed_text">ഡബ്</string>
-    <string name="app_subbed_text">സബ്</string>
-    <string name="popup_delete_file">ഫയൽ ഡിലീറ്റ് ചെയ്യുക</string>
-    <string name="popup_play_file">ഫയൽ പ്ലേയ് ചെയ്യുക</string>
-    <string name="popup_resume_download">ഡൌൺലോഡ് തുടരുക</string>
-    <string name="popup_pause_download">ഡൌൺലോഡ് നിർത്തുക</string>
-    <string name="pref_disable_acra">ഓട്ടോമാറ്റിക് ബഗ് റിപ്പോർട്ടിംഗ് പ്രവർത്തനരഹിതമാക്കുക</string>
-    <string name="home_more_info">കൂടുതൽ വിവരം</string>
-    <string name="home_expanded_hide">ഒളിക്കുക</string>
-    <string name="home_play">പ്ലേയ്</string>
-    <string name="home_info">വിവരം</string>
-    <string name="filter_bookmarks">ബുക്മാർക് ഫിൽറ്റർ ചെയ്യുക</string>
-    <string name="error_bookmarks_text">ബുക്മാർക്</string>
-    <string name="action_remove_from_bookmarks">നീക്കം ചെയ്യുക</string>
-    <string name="sort_apply">പ്രയോഗിക്കുക</string>
-    <string name="player_speed">പ്ലേയർ വേഗത</string>
-    <!-- <string name="subtitles_settings">Subtitle Settings</string>
-    <string name="subs_text_color">Text Color</string>
-    <string name="subs_outline_color">Outline Color</string>
-    <string name="subs_background_color">Background Color</string>
-    <string name="subs_window_color">Window Color</string>
-    <string name="subs_edge_type">Edge Type</string>
-    <string name="subs_subtitle_elevation">Subtitle Elevation</string>
-    <string name="subs_font">Font</string> -->
-    <string name="search_provider_text_providers">സ്രോതസ് അടിസ്ഥാനത്തിൽ തിരയുക</string>
-    <string name="search_provider_text_types">തരം അടിസ്ഥാനത്തിൽ തിരയുക</string>
-    <string name="benene_count_text">%d പഴം കൊടുത്തു</string>
-    <string name="benene_count_text_none">പഴം കൊടുത്തിട്ടില്ല</string>
-    <!-- <string name="subs_auto_select_language">Auto Select Language</string>
-    <string name="subs_download_languages">Download Languages</string> -->
-    <string name="subs_hold_to_reset_to_default">റീസെറ് ചെയ്യാൻ അമർത്തിപ്പിടിക്കുക</string>
-    <string name="continue_watching">തുടർന്നു കാണുക</string>
-    <string name="action_remove_watching">നീക്കം ചെയ്യുക</string>
-    <string name="action_open_watching">കൂടുതൽ വിവരം</string>
-    <string name="vpn_might_be_needed">ഈ സ്രോതസ് പ്രവൃത്തിക്കാൻ VPN ഉപയോഗിക്കേണ്ടിവന്നേക്കാം</string>
-    <string name="vpn_torrent">ഈ ടോറന്റ് സ്രോതസ് ഉപയോഗിക്കാൻ VPN ശുപാർശചെയ്യുന്നു</string>
-    <string name="torrent_plot">വിവരണം</string>
-    <string name="normal_no_plot">വിവരണം ലഭ്യമല്ല</string>
-    <string name="torrent_no_plot">വിവരണം ലഭ്യമല്ല</string>
-    <!-- <string name="picture_in_picture">Picture-in-picture</string> -->
-    <string name="picture_in_picture_des">മറ്റ് ആപ്പുകളുടെ മുകളിൽ ഒരു മിനിയേച്ചർ പ്ലെയറിൽ പ്ലേബാക്ക് തുടരുക</string>
-    <!-- <string name="player_size_settings">Player resize button</string> -->
-    <string name="player_size_settings_des">കറുത്ത അതിർത്തി നീക്കംചെയ്യുക</string>
-    <!-- <string name="player_subtitles_settings">Subtitles</string> -->
-    <string name="player_subtitles_settings_des">പ്ലേയർ സബ്‌ടൈറ്റിലുകളുടെ സെറ്റിങ്‌സ്</string>
-    <!-- <string name="swipe_to_seek_setthings">Swipe to seek</string> -->
-    <string name="swipe_to_seek_settings_des">വീഡിയോപ്ലേയറിൽ സമയം നിയന്ത്രിക്കാൻ ഇടത്തോട്ടോ വലത്തോട്ടോ സ്വൈപ്പുചെയ്യുക</string>
-    <!-- <string name="swipe_to_change_settings">Swipe to change settings</string> -->
-    <string name="swipe_to_change_settings_des">തെളിച്ചം അല്ലെങ്കിൽ വോളിയം മാറ്റാൻ ഇടത്തോട്ടോ വലത്തോട്ടോ സ്വൈപ്പുചെയ്യുക</string>
-    <!-- <string name="double_tap_to_seek_setthings">Double tap to seek</string> -->
-    <string name="double_tap_to_seek_settings_des">മുന്നോട്ട് അല്ലെങ്കിൽ പിന്നിലേക്ക് നീങ്ങാൻ വലത്തോട്ടോ ഇടത്തോട്ടോ രണ്ടുതവണ ടാപ്പുചെയ്യുക</string>
-    <string name="search">തിരയുക</string>
-    <string name="settings_info">വിവരം</string>
-    <!-- <string name="advanced_search">Advanced Search</string> -->
-    <string name="advanced_search_des">സ്ട്രോതസായി തിരിച്ച ഫലം തരുക</string>
-    <string name="bug_report_settings_off">ക്രാഷാകുമ്പോൾ മാത്രം അയക്കുക</string>
-    <string name="bug_report_settings_on">ടാറ്റ അയക്കാതിരിക്കുക</string>
-    <string name="updates_settings">അപ്ഡേറ്റുകൾ അറിയിക്കുക</string>
-    <string name="updates_settings_des">ആരംഭത്തിൽ അപ്ഡേറ്റുകൾ തിരയുക</string>
-    <string name="uprereleases_settings">പരീക്ഷണാത്മക അപ്ഡേറ്</string>
-    <string name="uprereleases_settings_des">പരീക്ഷണാത്മക അപ്ഡേറ്റുകൾ മാത്രം സ്വീകരിക്കുക</string>
-    <string name="github">ഗിറ്റ്ഹബ്</string>
-    <string name="lightnovel">നമ്മുടെ ലൈറ്റ് നോവൽ ആപ്പ്</string>
-    <string name="anim">നമ്മുടെ ആനിമേ ആപ്പ്</string>
-    <string name="discord">ഡിസ്‌കോർഡിലേക്ക് സ്വാഗതം</string>
-    <string name="benene">പഴം കൊടുക്കു</string>
-    <string name="benene_des">പഴം കൊടുത്ത എണ്ണം</string>
-    <string name="app_language">ആപ്പിന്റെ ഭാഷ</string>
-    <string name="no_chromecast_support_toast">ഈ സ്രോതസ് ക്രോംകാസ്റ് അനുവദിക്കുന്നില്ല</string>
-    <string name="no_links_found_toast">ലിങ്കുകൾ ലഭ്യമല്ല</string>
-    <string name="copy_link_toast">ലിങ്ക് പകർത്തിയിരിക്കുന്നു</string>
-    <string name="play_episode_toast">എപ്പിസോഡ് പ്ലേയ് ചെയ്യുക</string>
-    <string name="acra_report_toast">ആപ്പ് നിശ്ചലമായിരിക്കുന്നതിന് ക്ഷമിക്കണം</string>
-    <string name="season">സീസൺ</string>
-    <string name="no_season">സീസണില്ല</string>
-    <string name="episode">എപ്പിസോഡ്</string>
-    <string name="episodes">എപ്പിസോഡുകൾ</string>
-    <string name="delete_file">ഫയൽ ഡിലീറ്റ് ചെയ്യുക</string>
-    <string name="delete">ഡിലീറ്റ്</string>
-    <string name="cancel">റദ്ദാക്കുക</string>
-    <string name="pause">നിർത്തുക</string>
-    <string name="resume">തുടരുക</string>
-    <string name="delete_message">സ്ഥിരമായി %sനെ ഡിലീറ്റ് ചെയ്യുക
-\nഉറപ്പാണോ?</string>
-    <string name="status_ongoing">തുടരുന്നു</string>
-    <string name="status_completed">പൂർത്തിയായി</string>
-    <string name="status">അവസ്ഥ</string>
-    <string name="year">വർഷം</string>
-    <string name="rating">റേറ്റിംഗ്</string>
-    <string name="duration">ദൈര്ഘം</string>
-    <string name="site">സ്രോതസ്</string>
-    <string name="synopsis">സംഗ്രഹം</string>
-    <!-- <string name="queued">queued</string>
-    <string name="no_subtitles">No Subtitles</string>
-    <string name="action_default">Default</string> -->
-    <string name="free_storage">ഒഴിവ്</string>
-    <string name="used_storage">ഉപയോഗത്തിൽ</string>
-    <string name="app_storage">ആപ്പ്</string>
-    <string name="movies">സിനിമ</string>
-    <string name="tv_series">ടീവീ സീരീസ്</string>
-    <string name="cartoons">കാർട്ടൂൺസ്</string>
-    <string name="anime">ആനിമേ</string>
-    <string name="torrent">ടോറൻറ്</string>
-    <!-- <string name="source_error">Source error</string>
-    <string name="remote_error">Remote error</string>
-    <string name="render_error">Renderer error</string>
-    <string name="unexpected_error">Unexpected player error</string>
-    <string name="storage_error">Download error, check storage permissions</string> -->
-    <!-- <string name="episode_action_chomecast_episode">Chromecast Episode</string>
-    <string name="episode_action_chomecast_mirror">Chromecast Mirror</string> -->
-    <string name="episode_action_play_in_app">ആപ്പിൽ പ്ലേയ് ചെയ്യുക</string>
-    <string name="episode_action_play_in_format">%sയിൽ പ്ലേയ് ചെയ്യുക</string>
-    <string name="episode_action_auto_download">ഡൌൺലോഡ് ചെയ്യൂ</string>
-    <string name="episode_action_download_mirror">മിറർ ഡൗണ്ലോഡ്</string>
-    <string name="episode_action_reload_links">ലിങ്ക്സ് വീണ്ടും ലോഡുചെയ്യുക</string>
-    <string name="no_update_found">അപ്ഡേറ്റ് ലഭ്യമല്ല</string>
-    <string name="check_for_update">അപ്ഡേറ്റിനായി തിരയുക</string>
-    <string name="video_lock">പൂട്ടുക</string>
-    <string name="video_aspect_ratio_resize">വലുപ്പം മാറ്റുക</string>
-    <string name="video_source">സ്രോതസ്</string>
-    <string name="video_skip_op">OP ഒഴിവാക്കു</string>
-    <string name="dont_show_again">ഇനിയും കാണിക്കരുത്</string>
-    <string name="update">അപ്ഡേറ്റ്</string>
-    <string name="watch_quality_pref">ഔചിത്യ വീഡിയോ ക്വാളിറ്റി</string>
-    <string name="history">ചരിത്രം</string>
-    <string name="action_mark_as_watched">കണ്ടതാണെന്ന് അടയാളപ്പെടുത്തുക</string>
-    <string name="next_episode_time_day_format" formatted="true">%1$d ദിവസങ്ങൾ %2$d മണിക്കൂർ %3$d മിനിറ്റ്</string>
-    <string name="next_episode_format" formatted="true">അധ്യായം%dൽ റിലീസ് ചെയ്യും</string>
-    <string name="next_episode_time_hour_format" formatted="true">%1$d മണിക്കൂർ %2$d മിനിറ്റ്</string>
-    <string name="app_dub_sub_episode_text_format" formatted="true">%1$sഅധ്യാ%2$d</string>
-    <string name="cast_format" formatted="true">കാസ്റ്റ്:%s</string>
-    <string name="create_account">അക്കൗണ്ട് ഉണ്ടാക്കുക</string>
-    <string name="delayed_update_notice">പുറത്ത്പോകുന്നതോടുകൂടി ആപ് അപ്ഡേറ്റ് ആവുന്നതാണ്</string>
-    <string name="select_library">ലൈബ്രറി തിരഞ്ഞെടുക്കുക</string>
-    <string name="open_with">ഇത് ഉപയോഗിച്ച് തുറക്കുക</string>
-    <string name="play_trailer_button">ട്രെയിലർ പ്ലേ ചെയ്യുക</string>
-    <string name="play_livestream_button">ലൈവ് സ്ട്രീം പ്ലേ ചെയ്യുക</string>
-    <string name="filler" formatted="true">ഫില്ലർ</string>
-    <string name="duration_format" formatted="true">%d മിനിറ്റ്</string>
-    <string name="play_with_app_name">ക്ലൗഡ് സ്ട്രീം ഉപയോഗിച്ച് പ്രവർത്തിപ്പിക്കുക</string>
-    <string name="home_next_random_img_des">അടുത്ത ക്രമരഹിതമായ</string>
-    <string name="episode_poster_img_des">എപ്പിസോഡ് പോസ്റ്റർ</string>
-    <string name="update_started">അപ്ഡേറ്റ് ആരംഭിച്ചു</string>
-    <string name="home_main_poster_img_des">പ്രധാന പോസ്റ്റർ</string>
-    <string name="search_poster_img_des">പോസ്റ്റർ</string>
-    <string name="skip_loading">ലോഡിംഗ് ഒഴിവാക്കുക</string>
-    <string name="search_hint_site" formatted="true">തിരയുക %s…</string>
-    <string name="next_episode_time_min_format" formatted="true">%dമിനിറ്റ്</string>
-    <string name="go_back_img_des">മടങ്ങിപ്പോവുക</string>
-    <string name="preview_background_img_des">പശ്ചാത്തല പ്രിവ്യൂ</string>
-    <string name="result_poster_img_des">പോസ്റ്റർ</string>
-    <string name="home_change_provider_img_des">ദാതാവിനെ മാറ്റുക</string>
-    <string name="loading">ലോഡിംഗ്…</string>
-    <string name="browser">ബ്രൗസർ</string>
-    <string name="type_re_watching">വീണ്ടും കാണുക</string>
-    <string name="stream">സ്ട്രീം</string>
-    <string name="subs_import_text" formatted="true">%s ൽ ഫോൻ്റ്‌സ് വെച്ചു കൊണ്ട് ഇംപോർട്ട് ചെയ്യുക</string>
-    <string name="safe_mode_description">പ്രശ്‌നമുണ്ടാക്കുന്ന ഒന്ന് കണ്ടെത്താൻ നിങ്ങളെ സഹായിക്കുന്നതിന് ഒരു ക്രാഷ് കാരണം എല്ലാ വിപുലീകരണങ്ങളും ഓഫാക്കി.</string>
-    <string name="view_public_repositories_button_short">പൊതു പട്ടിക</string>
-    <string name="blank_repo_message">CloudStream-ന് സ്ഥിരസ്ഥിതിയായി സൈറ്റുകളൊന്നും ഇൻസ്റ്റാൾ ചെയ്തിട്ടില്ല. നിങ്ങൾ റിപ്പോസിറ്ററികളിൽ നിന്ന് സൈറ്റുകൾ ഇൻസ്റ്റാൾ ചെയ്യേണ്ടതുണ്ട്.
-\n
-\nഞങ്ങളുടെ ഡിസ്കോർഡിൽ ചേരുക അല്ലെങ്കിൽ ഓൺലൈനിൽ തിരയുക.</string>
-    <string name="sort_copy">പകർത്തുക</string>
-    <string name="uppercase_all_subtitles">എല്ലാ സബ്‌ടൈറ്റിലുകളും വലിയക്ഷരമാക്കുക</string>
-    <string name="render_error">റെൻഡറർ പിശക്</string>
-    <string name="lock_profile">പ്രൊഫൈൽ ലോക്ക് ചെയ്യുക</string>
-    <string name="view_public_repositories_button">കമ്മ്യൂണിറ്റി റിപ്പോസിറ്ററികൾ കാണുക</string>
-    <string name="safe_mode_title">സുരക്ഷിത മോഡ് ഓണാണ്</string>
-    <string name="manage_accounts">അക്കൗണ്ടുകൾ കൈകാര്യം ചെയ്യുക</string>
-    <string name="coming_soon">ഉടൻ വരുന്നു…</string>
-    <string name="apply_on_restart">പുനരാരംഭിക്കുമ്പോൾ പ്രയോഗിക്കുക</string>
-    <string name="edit_account">അക്കൗണ്ട് തിരുത്തുക</string>
-    <string name="pin_error_incorrect">തെറ്റായ പിൻ. ദയവായി വീണ്ടും ശ്രമിക്കുക.</string>
-    <string name="stop">നിർത്തുക</string>
-    <string name="tracks">ട്രാക്കുകൾ</string>
-    <string name="pin_error_length">പിൻ 4 പ്രതീകങ്ങൾ ആയിരിക്കണം</string>
-    <string name="unexpected_error">അപ്രതീക്ഷിത പ്ലെയർ പിശക്</string>
-    <string name="previous">മുമ്പത്തെ</string>
-    <string name="delete_repository_plugins">ഇത് എല്ലാ റിപ്പോസിറ്ററി പ്ലഗിന്നുകളും ഇല്ലാതാക്കും</string>
-    <string name="restart">പുനരാരംഭിക്കുക</string>
-    <string name="safe_mode_crash_info">ക്രാഷ് വിവരം കാണുക</string>
-    <string name="provider_languages_tip">ഈ ഭാഷകളിലെ വീഡിയോകൾ കാണുക</string>
-    <string name="select_an_account">ഒരു അക്കൗണ്ട് തിരഞ്ഞെടുക്കുക</string>
-    <string name="home_source">ഉറവിടം</string>
-    <string name="video_tracks">വീഡിയോ ട്രാക്കുകൾ</string>
-    <string name="episode_action_chromecast_mirror">Chromecast മിറർ</string>
-    <string name="download_all_plugins_from_repo">ഈ ശേഖരത്തിൽ നിന്ന് എല്ലാ പ്ലഗിന്നുകളും ഡൗൺലോഡ് ചെയ്യണോ?</string>
-    <string name="delete_repository">ശേഖരം ഇല്ലാതാക്കുക</string>
-    <string name="home_random">ക്രമരഹിതം</string>
-    <string name="quality_cam">ക്യാമറ</string>
-    <string name="storage_error">ഡൗൺലോഡ് പിശക്, സംഭരണ അനുമതികൾ പരിശോധിക്കുക</string>
-    <string name="remote_error">റിമോട്ട് പിശക്</string>
-    <string name="episode_action_chromecast_episode">Chromecast എപ്പിസോഡ്</string>
-    <string name="setup_extensions_subtext">നിങ്ങൾ ഉപയോഗിക്കാൻ ആഗ്രഹിക്കുന്ന സൈറ്റുകളുടെ ലിസ്റ്റ് ഡൗൺലോഡ് ചെയ്യുക</string>
-    <string name="enter_pin">പിൻ നൽകുക</string>
-    <string name="sort_close">അടയ്ക്കുക</string>
-    <string name="action_add_to_bookmarks">വാച്ച് സ്റ്റാറ്റസ് സജ്ജീകരിക്കുക</string>
-    <string name="pin">പിൻ</string>
-    <string name="links_reloaded_toast">ലിങ്കുകൾ വീണ്ടും ലോഡുചെയ്‌തു</string>
-    <string name="source_error">ഉറവിട പിശക്</string>
-    <string name="enter_current_pin">നിലവിലെ പിൻ നൽകുക</string>
-    <string name="audio_tracks">ഓഡിയോ ട്രാക്കുകൾ</string>
-    <string name="picture_in_picture">ചിത്രം-ഇൻ-ചിത്രം</string>
-    <string name="sort_updated_old">പുതുക്കിയത് (പഴയത് മുതൽ പുതിയത് വരെ)</string>
-    <string name="sort_rating_desc">റേറ്റിംഗ് (ഉയർന്നത് മുതൽ താഴ്ന്നത്)</string>
-    <string name="apk_installer_legacy">പാരമ്പര്യം</string>
-    <string name="subs_window_color">വിൻഡോ നിറം</string>
-    <string name="sort_clear">ക്ലിയർ</string>
-    <string name="test_log">ലോഗ്</string>
-    <string name="recommendations_tooltip">ശുപാർശകൾ കാണിക്കുക</string>
-    <string name="logged_account" formatted="true">%s ആയി ലോഗിൻ ചെയ്തു</string>
-    <string name="sort_by">ഇങ്ങനെ അടുക്കുക</string>
-    <string name="sort">അടുക്കുക</string>
-    <string name="edit">തിരുത്തുക</string>
-    <string name="sort_updated_new">പുതുക്കിയത് (പുതിയത് മുതൽ പഴയത് വരെ)</string>
-    <string name="nsfw_singular">NSFW</string>
-    <string name="update_notification_installing">ആപ്പ് അപ്ഡേറ്റ് ഇൻസ്റ്റാൾ ചെയ്യുന്നു…</string>
-    <string name="category_updates">അപ്ഡേറ്റുകളും ഒപ്പം ബാക്കപ്പും</string>
-    <string name="single_plugin_disabled" formatted="true">%s(അപ്രാപ്തമാക്കി)</string>
-    <string name="sort_rating_asc">റേറ്റിംഗ് (താഴ്ന്നത് മുതൽ ഉയർന്നത് വരെ)</string>
-    <string name="subs_text_color">വാചക നിറം</string>
-    <string name="update_notification_failed">ആപ്പിൻ്റെ പുതിയ പതിപ്പ് ഇൻസ്റ്റാൾ ചെയ്യാനായില്ല</string>
-    <string name="apk_installer_package_installer">പാക്കേജ് ഇൻസ്റ്റാളർ</string>
-    <string name="sort_alphabetical_a">അക്ഷരമാലാക്രമം (A മുതൽ Z വരെ)</string>
-    <string name="sort_alphabetical_z">അക്ഷരമാലാക്രമം (Z മുതൽ A വരെ)</string>
-    <string name="empty_library_logged_in_message">ഈ ലിസ്റ്റ് ശൂന്യമാണ്. മറ്റൊന്നിലേക്ക് മാറാൻ ശ്രമിക്കുക.</string>
-    <string name="clear_history">ചരിത്രം മായ്ക്കുക</string>
-    <string name="show_log_cat">ലോഗ്കാറ്റ് കാണിക്കുക 🐈</string>
-    <string name="empty_library_no_accounts_message">നിങ്ങളുടെ ലൈബ്രറി ശൂന്യമാണ് :(
-\nഒരു ലൈബ്രറി അക്കൗണ്ടിൽ ലോഗിൻ ചെയ്യുക അല്ലെങ്കിൽ നിങ്ങളുടെ പ്രാദേശിക ലൈബ്രറിയിലേക്ക് ഷോകൾ ചേർക്കുക.</string>
-    <string name="other_singular">വീഡിയോ</string>
-    <string name="repo_copy_label">റിപ്പോസിറ്ററി നാമവും URL ഉം</string>
-    <string name="toast_copied">പകർത്തി!</string>
-    <string name="subscribe_tooltip">പുതിയ എപ്പിസോഡ് അറിയിപ്പ്</string>
-    <string name="result_search_tooltip">മറ്റ് വിപുലീകരണങ്ങളിൽ തിരയുക</string>
-    <string name="subtitles_settings">ഉപശീർഷകം ക്രമീകരണങ്ങൾ</string>
-    <string name="subs_edge_type">എഡ്ജ് തരം</string>
-    <string name="subs_outline_color">ഔട്ട്ലൈൻ നിറം</string>
-    <string name="subs_background_color">പശ്ചാത്തല നിറം</string>
-    <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
-</resources>
