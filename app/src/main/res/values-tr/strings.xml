@@ -703,6 +703,5 @@
     <string name="offline_file">Çevrimdışı izlemek için kullanılabilir</string>
     <string name="preview_seekbar">Seekbar önizleme</string>
     <string name="preview_seekbar_desc">Arama çubuğunda önizleme küçük resmini etkinleştir</string>
-    <string name="player_settings_play_in_mpvytdl">MPV YTDL</string>
     <string name="no_subtitles_loaded">Henüz altyazı yüklenmedi</string>
 </resources>

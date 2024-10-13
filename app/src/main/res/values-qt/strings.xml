@@ -153,7 +153,7 @@
     <string name="video_aspect_ratio_resize">ohaooo-ahahouuhhh</string>
     <string name="video_source">ahohooh</string>
     <string name="video_skip_op">aaaaaohaah ooh</string>
-    <string name="dont_show_again">ahh haa ah ooooo</string>
+    <string name="dont_show_again">Boooooo ooooo</string>
     <string name="update">aaahhuooh ahh</string>
     <string name="download_started">aaaaa oooohh aauugghh</string>
     <string name="download_failed">aaaghhahhooo-ahahahhha aaaghh</string>
@@ -311,7 +311,7 @@
     <string name="quality_4k">4K</string>
     <string name="preferred_media_subtext">oohh ah uuk aagg ag aah</string>
     <string name="add_repository">uug uuuugggoog</string>
-    <string name="repository_name_hint">uuuuggguug uugg</string>
+    <string name="repository_name_hint">uuuuggguug uugg (uuooal)</string>
     <string name="batch_download_finish_format" formatted="true">aaaahhhaah %1$d %2$s</string>
     <string name="batch_download">aaahh uuuugggh</string>
     <string name="delete_repository">oooohh oooogggoog</string>
@@ -604,7 +604,7 @@
     <string name="provider_languages_tip">aaagg oooogg og uuugg aaaagggag</string>
     <string name="skip_setup">aaak ooohh</string>
     <string name="app_layout_subtext">uuuuuk aag aaak uh ooh aah oh oogg oohh uuuugg</string>
-    <string name="repository_url_hint">aaaaggguuh uug</string>
+    <string name="repository_url_hint">aaaaggguuh uug o aaooolllo</string>
     <string name="plugin_deleted">uuuugg uuuuhhh</string>
     <string name="plugin_load_fail" formatted="true">ooogg eek oogg %s</string>
     <string name="plugin_singular">aaaagg</string>
@@ -654,4 +654,11 @@
     <string name="action_mark_as_watched">uuhh ug oooohhh</string>
     <string name="pin_error_length">ooh oogg uh 4 uuuuhhhooh</string>
     <string name="select_an_account">uuuugg oh oooohhh</string>
+    <string name="no_subtitles_loaded">Oo hoo-hoo haaa-oo ar-ar</string>
+    <string name="preview_seekbar_desc">ee-ee-ar-ar pee-ee-oo-oo kik-kik oo kik-hoo</string>
+    <string name="preview_seekbar">kik-kik-kik pee-ee-oo-oo</string>
+    <string name="confirm_before_exiting_desc">Boo kik-kik oo-chit ar-ar coo haa</string>
+    <string name="show">Boo</string>
+    <string name="confirm_before_exiting_title">Oo-ahh oo-chit ar-ar</string>
+    <string name="dont_show">Boooooo</string>
 </resources>

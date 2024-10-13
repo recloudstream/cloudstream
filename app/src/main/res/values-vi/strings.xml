@@ -400,8 +400,8 @@
     <string name="setup_done">Hoàn tất</string>
     <string name="extensions">Tiện ích mở rộng</string>
     <string name="add_repository">Thêm kho lưu trữ</string>
-    <string name="repository_name_hint">Tên kho lưu trữ</string>
-    <string name="repository_url_hint">Đường dẫn kho lưu trữ</string>
+    <string name="repository_name_hint">Tên kho lưu trữ (Tùy chọn)</string>
+    <string name="repository_url_hint">Đường dẫn kho lưu trữ hoặc Mã ngắn</string>
     <string name="plugin_loaded">Đã tải plugin</string>
     <string name="plugin_deleted">Plugin đã xoá</string>
     <string name="plugin_load_fail" formatted="true">Không tải được %s</string>
@@ -670,4 +670,8 @@
     <string name="preview_seekbar_desc">Bật chế độ xem trước hình thu nhỏ trên seekbar</string>
     <string name="preview_seekbar">Xem trước Seekbar</string>
     <string name="no_subtitles_loaded">Chưa tải phụ đề</string>
+    <string name="confirm_before_exiting_title">Xác nhận trước khi thoát</string>
+    <string name="confirm_before_exiting_desc">Hiện hộp thoại trước khi thoát ứng dụng</string>
+    <string name="dont_show">Không hiển thị</string>
+    <string name="show">Hiển thị</string>
 </resources>
