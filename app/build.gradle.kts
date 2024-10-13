@@ -90,6 +90,7 @@ android {
             arg("exportSchema", "true")
         }
     }
+    
 
     buildTypes {
         release {
