@@ -6,8 +6,8 @@ import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.debugAssert
-import com.lagradost.cloudstream3.ui.result.UiText
-import com.lagradost.cloudstream3.ui.result.txt
+import com.lagradost.cloudstream3.utils.UiText
+import com.lagradost.cloudstream3.utils.txt
 import com.lagradost.cloudstream3.utils.DataStoreHelper.currentAccount
 import com.lagradost.cloudstream3.utils.Qualities
 

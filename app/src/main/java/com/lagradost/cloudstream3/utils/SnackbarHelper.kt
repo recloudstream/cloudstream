@@ -8,7 +8,6 @@ import com.google.android.material.snackbar.Snackbar
 import com.lagradost.api.Log
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError
-import com.lagradost.cloudstream3.ui.result.UiText
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
 
 object SnackbarHelper {

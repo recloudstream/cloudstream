@@ -173,11 +173,7 @@ dependencies {
     implementation("com.google.android.material:material:1.12.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
-
-    // Glide Module
-    ksp("com.github.bumptech.glide:ksp:4.16.0")
-    implementation("com.github.bumptech.glide:glide:4.16.0")
-    implementation("com.github.bumptech.glide:okhttp3-integration:4.16.0")
+    implementation("io.coil-kt:coil:2.7.0") // Coil Image Loading
 
     // For KSP -> Official Annotation Processors are Not Yet Supported for KSP
     ksp("dev.zacsweers.autoservice:auto-service-ksp:1.2.0")

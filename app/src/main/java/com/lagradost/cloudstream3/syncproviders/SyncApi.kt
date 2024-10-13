@@ -3,7 +3,7 @@ package com.lagradost.cloudstream3.syncproviders
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.ui.SyncWatchType
 import com.lagradost.cloudstream3.ui.library.ListSorting
-import com.lagradost.cloudstream3.ui.result.UiText
+import com.lagradost.cloudstream3.utils.UiText
 import me.xdrop.fuzzywuzzy.FuzzySearch
 import java.util.Date
 

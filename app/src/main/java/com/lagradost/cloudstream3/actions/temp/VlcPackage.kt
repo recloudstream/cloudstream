@@ -12,7 +12,7 @@ import com.lagradost.cloudstream3.actions.makeTempM3U8Intent
 import com.lagradost.cloudstream3.actions.updateDurationAndPosition
 import com.lagradost.cloudstream3.ui.result.LinkLoadingResult
 import com.lagradost.cloudstream3.ui.result.ResultEpisode
-import com.lagradost.cloudstream3.ui.result.txt
+import com.lagradost.cloudstream3.utils.txt
 import com.lagradost.cloudstream3.ui.subtitles.SUBTITLE_AUTO_SELECT_KEY
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
 

@@ -24,9 +24,9 @@ import com.lagradost.cloudstream3.databinding.OptionsPopupTvBinding
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
+import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIconsAndNoStringRes
-import com.lagradost.cloudstream3.utils.UIHelper.setImage
 
 object SingleSelectionHelper {
     fun Activity?.showOptionSelectStringRes(
@@ -79,7 +79,7 @@ object SingleSelectionHelper {
 
             binding.imageView.apply {
                 isGone = poster.isNullOrEmpty()
-                setImage(poster)
+                loadImage(poster)
             }
         } else {
             view?.popupMenuNoIconsAndNoStringRes(options.mapIndexed { index, s ->

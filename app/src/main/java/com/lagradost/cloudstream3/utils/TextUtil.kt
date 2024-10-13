@@ -1,17 +1,13 @@
-package com.lagradost.cloudstream3.ui.result
+package com.lagradost.cloudstream3.utils
 
 import android.content.Context
-import android.graphics.Bitmap
 import android.util.Log
-import android.widget.ImageView
 import android.widget.TextView
-import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.utils.AppContextUtils.html
-import com.lagradost.cloudstream3.utils.UIHelper.setImage
 
 sealed class UiText {
     companion object {
@@ -75,71 +71,6 @@ sealed class UiText {
             }
         }
     }
-}
-
-sealed class UiImage {
-    data class Image(
-        val url: String,
-        val headers: Map<String, String>? = null,
-        @DrawableRes val errorDrawable: Int? = null
-    ) : UiImage()
-
-    data class Drawable(@DrawableRes val resId: Int) : UiImage()
-    data class Bitmap(val bitmap: android.graphics.Bitmap) : UiImage()
-}
-
-fun ImageView?.setImage(value: UiImage?, fadeIn: Boolean = true) {
-    when (value) {
-        is UiImage.Image -> setImageImage(value, fadeIn)
-        is UiImage.Drawable -> setImageDrawable(value)
-        is UiImage.Bitmap -> setImageBitmap(value)
-        null -> {
-            this?.isVisible = false
-        }
-    }
-}
-
-fun ImageView?.setImageImage(value: UiImage.Image, fadeIn: Boolean = true) {
-    if (this == null) return
-    this.isVisible = setImage(value.url, value.headers, value.errorDrawable, fadeIn)
-}
-
-fun ImageView?.setImageDrawable(value: UiImage.Drawable) {
-    if (this == null) return
-    this.isVisible = true
-    this.setImage(UiImage.Drawable(value.resId))
-}
-
-fun ImageView?.setImageBitmap(value: UiImage.Bitmap) {
-    if (this == null) return
-    this.isVisible = true
-    this.setImageBitmap(value.bitmap)
-}
-
-@JvmName("imgNull")
-fun img(
-    url: String?,
-    headers: Map<String, String>? = null,
-    @DrawableRes errorDrawable: Int? = null
-): UiImage? {
-    if (url.isNullOrBlank()) return null
-    return UiImage.Image(url, headers, errorDrawable)
-}
-
-fun img(
-    url: String,
-    headers: Map<String, String>? = null,
-    @DrawableRes errorDrawable: Int? = null
-): UiImage {
-    return UiImage.Image(url, headers, errorDrawable)
-}
-
-fun img(@DrawableRes drawable: Int): UiImage {
-    return UiImage.Drawable(drawable)
-}
-
-fun img(bitmap: Bitmap): UiImage {
-    return UiImage.Bitmap(bitmap)
 }
 
 fun txt(value: String): UiText {

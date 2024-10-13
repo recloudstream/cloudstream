@@ -27,7 +27,6 @@ import com.lagradost.cloudstream3.syncproviders.providers.MALApi.Companion.MAL_U
 import com.lagradost.cloudstream3.syncproviders.providers.MALApi.Companion.MAL_USER_KEY
 import com.lagradost.cloudstream3.syncproviders.providers.OpenSubtitlesApi.Companion.OPEN_SUBTITLES_USER_KEY
 import com.lagradost.cloudstream3.syncproviders.providers.SubDlApi.Companion.SUBDL_SUBTITLES_USER_KEY
-import com.lagradost.cloudstream3.ui.result.txt
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.DataStore.getDefaultSharedPrefs

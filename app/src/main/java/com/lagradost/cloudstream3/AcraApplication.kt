@@ -22,6 +22,7 @@ import com.lagradost.cloudstream3.utils.DataStore.getKeys
 import com.lagradost.cloudstream3.utils.DataStore.removeKey
 import com.lagradost.cloudstream3.utils.DataStore.removeKeys
 import com.lagradost.cloudstream3.utils.DataStore.setKey
+import com.lagradost.cloudstream3.utils.ImageLoader
 import kotlinx.coroutines.runBlocking
 import org.acra.ACRA
 import org.acra.ReportField
@@ -101,6 +102,8 @@ class AcraApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        ImageLoader.initializeCoilImageLoader(this)
+
         ExceptionHandler(filesDir.resolve("last_error")) {
             val intent = context!!.packageManager.getLaunchIntentForPackage(context!!.packageName)
             startActivity(Intent.makeRestartActivityTask(intent!!.component))
