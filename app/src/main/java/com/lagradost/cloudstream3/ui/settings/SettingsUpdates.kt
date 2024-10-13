@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.ui.settings
 
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -14,13 +15,18 @@ import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.databinding.LogcatBinding
 import com.lagradost.cloudstream3.mvvm.logError
+import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.network.initClient
 import com.lagradost.cloudstream3.services.BackupWorkManager
 import com.lagradost.cloudstream3.ui.result.txt
+import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
+import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.getPref
+import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.hideOn
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setPaddingBottom
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setToolBarScrollFlags
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.setUpToolbar
+import com.lagradost.cloudstream3.ui.settings.utils.getChooseFolderLauncher
 import com.lagradost.cloudstream3.utils.BackupUtils
 import com.lagradost.cloudstream3.utils.BackupUtils.restorePrompt
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
@@ -37,7 +43,8 @@ import java.io.InputStreamReader
 import java.io.OutputStream
 import java.lang.System.currentTimeMillis
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
+import java.util.Locale
 
 class SettingsUpdates : PreferenceFragmentCompat() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -47,10 +54,20 @@ class SettingsUpdates : PreferenceFragmentCompat() {
         setToolBarScrollFlags()
     }
 
+    private val pathPicker = getChooseFolderLauncher { uri, path ->
+        val context = context ?: AcraApplication.context ?: return@getChooseFolderLauncher
+        (path ?: uri.toString()).let {
+            PreferenceManager.getDefaultSharedPreferences(context).edit()
+                .putString(getString(R.string.backup_path_key), uri.toString())
+                .putString(getString(R.string.backup_dir_key), it)
+                .apply()
+        }
+    }
+
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         hideKeyboard()
         setPreferencesFromResource(R.xml.settings_updates, rootKey)
-        //val settingsManager = PreferenceManager.getDefaultSharedPreferences(requireContext())
+        val settingsManager = PreferenceManager.getDefaultSharedPreferences(requireContext())
 
         getPref(R.string.backup_key)?.setOnPreferenceClickListener {
             BackupUtils.backup(activity)
@@ -58,8 +75,6 @@ class SettingsUpdates : PreferenceFragmentCompat() {
         }
 
         getPref(R.string.automatic_backup_key)?.setOnPreferenceClickListener {
-            val settingsManager = PreferenceManager.getDefaultSharedPreferences(requireContext())
-
             val prefNames = resources.getStringArray(R.array.periodic_work_names)
             val prefValues = resources.getIntArray(R.array.periodic_work_values)
             val current = settingsManager.getInt(getString(R.string.automatic_backup_key), 0)
@@ -89,6 +104,38 @@ class SettingsUpdates : PreferenceFragmentCompat() {
             activity?.restorePrompt()
             return@setOnPreferenceClickListener true
         }
+        getPref(R.string.backup_path_key)?.hideOn(TV or EMULATOR)?.setOnPreferenceClickListener {
+            val dirs = getBackupDirsForDisplay()
+            val currentDir =
+                settingsManager.getString(getString(R.string.backup_dir_key), null)
+                    ?: context?.let { ctx -> BackupUtils.getDefaultBackupDir(ctx)?.filePath() }
+
+            activity?.showBottomDialog(
+                dirs + listOf(getString(R.string.custom)),
+                dirs.indexOf(currentDir),
+                getString(R.string.backup_path_title),
+                true,
+                {}) {
+                // Last = custom
+                if (it == dirs.size) {
+                    try {
+                        pathPicker.launch(Uri.EMPTY)
+                    } catch (e: Exception) {
+                        logError(e)
+                    }
+                } else {
+                    // Sets both visual and actual paths.
+                    // path = used uri
+                    // dir = dir path
+                    settingsManager.edit()
+                        .putString(getString(R.string.backup_path_key), dirs[it])
+                        .putString(getString(R.string.backup_dir_key), dirs[it])
+                        .apply()
+                }
+            }
+            return@setOnPreferenceClickListener true
+        }
+
         getPref(R.string.show_logcat_key)?.setOnPreferenceClickListener { pref ->
             val builder =
                 AlertDialog.Builder(pref.context, R.style.AlertDialogCustom)
@@ -156,8 +203,6 @@ class SettingsUpdates : PreferenceFragmentCompat() {
         }
 
         getPref(R.string.apk_installer_key)?.setOnPreferenceClickListener {
-            val settingsManager = PreferenceManager.getDefaultSharedPreferences(it.context)
-
             val prefNames = resources.getStringArray(R.array.apk_installer_pref)
             val prefValues = resources.getIntArray(R.array.apk_installer_values)
 
@@ -196,8 +241,6 @@ class SettingsUpdates : PreferenceFragmentCompat() {
         }
 
         getPref(R.string.auto_download_plugins_key)?.setOnPreferenceClickListener {
-            val settingsManager = PreferenceManager.getDefaultSharedPreferences(it.context)
-
             val prefNames = resources.getStringArray(R.array.auto_download_plugin)
             val prefValues =
                 enumValues<AutoDownloadMode>().sortedBy { x -> x.value }.map { x -> x.value }
@@ -216,5 +259,19 @@ class SettingsUpdates : PreferenceFragmentCompat() {
             }
             return@setOnPreferenceClickListener true
         }
+    }
+
+    private fun getBackupDirsForDisplay(): List<String> {
+        return normalSafeApiCall {
+            context?.let { ctx ->
+                val defaultDir = BackupUtils.getDefaultBackupDir(ctx)?.filePath()
+                val first = listOf(defaultDir)
+                (runCatching {
+                    first + BackupUtils.getCurrentBackupDir(ctx).let {
+                                it.first?.filePath() ?: it.second
+                            }
+                }.getOrNull() ?: first).filterNotNull().distinct()
+            }
+        } ?: emptyList()
     }
 }
