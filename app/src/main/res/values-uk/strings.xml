@@ -406,7 +406,7 @@
     <string name="setup_done">Готово</string>
     <string name="extensions">Розширення</string>
     <string name="add_repository">Додати репозиторій</string>
-    <string name="repository_name_hint">Назва репозиторію (Необов\'язково)</string>
+    <string name="repository_name_hint">Назва репозиторію (необов\'язково)</string>
     <string name="repository_url_hint">URL-адреса репозиторію або короткий код</string>
     <string name="plugin_loaded">Плагін завантажено</string>
     <string name="plugin_downloaded">Плагін завантажено</string>
@@ -657,4 +657,8 @@
     <string name="preview_seekbar">Попередній перегляд повзунка</string>
     <string name="preview_seekbar_desc">Ввімкнути мініатюру попереднього перегляду на повзунку</string>
     <string name="no_subtitles_loaded">Субтитри ще не завантажено</string>
+    <string name="confirm_before_exiting_title">Підтвердити перед виходом</string>
+    <string name="show">Показувати</string>
+    <string name="confirm_before_exiting_desc">Показувати діалог перед виходом із застосунку</string>
+    <string name="dont_show">Не показувати</string>
 </resources>

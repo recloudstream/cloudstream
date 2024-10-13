@@ -658,4 +658,8 @@
     <string name="preview_seekbar">Podgląd paska przewijania</string>
     <string name="preview_seekbar_desc">Włącz podgląd miniatury na pasku wyszukiwania</string>
     <string name="no_subtitles_loaded">Nie wczytano jeszcze napisów</string>
+    <string name="confirm_before_exiting_desc">Pokaż okno dialogowe przed wyjściem z aplikacji</string>
+    <string name="show">Pokaż</string>
+    <string name="confirm_before_exiting_title">Potwierdź przed wyjściem</string>
+    <string name="dont_show">Nie pokazuj</string>
 </resources>

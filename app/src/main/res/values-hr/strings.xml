@@ -411,8 +411,8 @@
     <string name="setup_done">Gotovo</string>
     <string name="extensions">Proširenja</string>
     <string name="add_repository">Dodaj repozitorij</string>
-    <string name="repository_name_hint">Ime repozitorija</string>
-    <string name="repository_url_hint">URL repozitorija</string>
+    <string name="repository_name_hint">Ime repozitorija (Neobavezno)</string>
+    <string name="repository_url_hint">URL repozitorija ili kratki kod</string>
     <string name="plugin_loaded">Dodatak učitan</string>
     <string name="plugin_deleted">Dodatak izbrisan</string>
     <string name="plugin_load_fail" formatted="true">Nije moguće učitati %s</string>
@@ -680,4 +680,10 @@
 \n
 \n%s</string>
     <string name="no_subtitles_loaded">Još nije učitan nijedan titl</string>
+    <string name="preview_seekbar">Pretpregled trake za traženje</string>
+    <string name="preview_seekbar_desc">Omogući minijaturu pregleda na traci za pretraživanje</string>
+    <string name="confirm_before_exiting_title">Potvrdi prije izlaza</string>
+    <string name="confirm_before_exiting_desc">Prikaži dijaloški okvir prije izlaska iz aplikacije</string>
+    <string name="show">Prikaži</string>
+    <string name="dont_show">Ne prikazuj</string>
 </resources>
