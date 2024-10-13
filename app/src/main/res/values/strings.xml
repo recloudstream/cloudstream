@@ -46,6 +46,7 @@
     <string name="dns_key" translatable="false">dns_key</string>
     <string name="jsdelivr_proxy_key" translatable="false">jsdelivr_proxy_key</string>
     <string name="download_path_key" translatable="false">download_path_key</string>
+    <string name="download_path_key_visual" translatable="false">download_path_key_visual</string>
     <string name="app_name_download_path" translatable="false">Cloudstream</string>
     <string name="app_layout_key" translatable="false">app_layout_key</string>
     <string name="primary_color_key" translatable="false">primary_color_key</string>
@@ -808,6 +809,10 @@
     <string name="preview_seekbar">Seekbar preview</string>
     <string name="preview_seekbar_desc">Enable preview thumbnail on seekbar</string>
     <string name="no_subtitles_loaded">No subtitles loaded yet</string>
+    <string name="backup_path_key" translatable="false">backup_path_key</string>
+    <string name="backup_path_title">Backup folder location</string>
+    <string name="backup_dir_key" translatable="false">backup_dir_key</string>
+    <string name="custom">Custom</string>
     <!--confirm exit dialog-->
     <string name="confirm_before_exiting_title">Confirm before exiting</string>
     <string name="confirm_before_exiting_desc">Show dialog before exiting the app</string>
