@@ -579,7 +579,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
 
     override fun onPause() {
         super.onPause()
-
+    }
        
 
     override fun dispatchKeyEvent(event: KeyEvent): Boolean {
