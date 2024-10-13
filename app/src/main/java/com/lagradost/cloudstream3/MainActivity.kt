@@ -663,7 +663,6 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
 
     // Remove the event listener
     afterPluginsLoadedEvent -= ::onAllPluginsLoaded
-
     super.onDestroy()
 }
 
@@ -1473,6 +1472,8 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
             }
         }
 
+    super.onDestroy()
+    }
 //        ioSafe {
 //            val plugins =
 //                RepositoryParser.getRepoPlugins("https://raw.githubusercontent.com/recloudstream/TestPlugin/master/repo.json")
