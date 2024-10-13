@@ -580,19 +580,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
     override fun onPause() {
         super.onPause()
 
-        // Start any delayed updates
-        if (ApkInstaller.delayedInstaller?.startInstallation() == true) {
-            Toast.makeText(this, R.string.update_started, Toast.LENGTH_LONG).show()
-        }
-        try {
-            if (isCastApiAvailable()) {
-                mSessionManager?.removeSessionManagerListener(mSessionManagerListener)
-                //mCastSession = null
-            }
-        } catch (e: Exception) {
-            logError(e)
-        }
-    }
+       
 
     override fun dispatchKeyEvent(event: KeyEvent): Boolean {
         val response = CommonActivity.dispatchKeyEvent(this, event)
@@ -642,22 +630,42 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
     }
 
     override fun onDestroy() {
-        filesToDelete.forEach { path ->
-            val result = File(path).deleteRecursively()
-            if (result) {
-                Log.d(TAG, "Deleted temporary file: $path")
-            } else {
-                Log.d(TAG, "Failed to delete temporary file: $path")
-            }
-        }
-        filesToDelete = setOf()
-        val broadcastIntent = Intent()
-        broadcastIntent.action = "restart_service"
-        broadcastIntent.setClass(this, VideoDownloadRestartReceiver::class.java)
-        this.sendBroadcast(broadcastIntent)
-        afterPluginsLoadedEvent -= ::onAllPluginsLoaded
-        super.onDestroy()
+    // Start any delayed updates
+    if (ApkInstaller.delayedInstaller?.startInstallation() == true) {
+        Toast.makeText(this, R.string.update_started, Toast.LENGTH_LONG).show()
     }
+
+    try {
+        if (isCastApiAvailable()) {
+            mSessionManager?.removeSessionManagerListener(mSessionManagerListener)
+            // Uncomment if needed: mCastSession = null
+        }
+    } catch (e: Exception) {
+        logError(e)
+    }
+
+    // Delete temporary files
+    filesToDelete.forEach { path ->
+        val result = File(path).deleteRecursively()
+        if (result) {
+            Log.d(TAG, "Deleted temporary file: $path")
+        } else {
+            Log.d(TAG, "Failed to delete temporary file: $path")
+        }
+    }
+
+    // Clear the filesToDelete set
+    filesToDelete = setOf()
+
+    // Send a broadcast to restart the service
+    val broadcastIntent = Intent("restart_service").setClass(this, VideoDownloadRestartReceiver::class.java)
+    sendBroadcast(broadcastIntent)
+
+    // Remove the event listener
+    afterPluginsLoadedEvent -= ::onAllPluginsLoaded
+
+    super.onDestroy()
+}
 
     override fun onNewIntent(intent: Intent?) {
         handleAppIntent(intent)
