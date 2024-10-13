@@ -80,7 +80,7 @@ object BackupUtils {
 
         // No access rights after restore data from backup
         "download_path_key",
-        "download_path_pref",
+        "download_path_key_visual",
         "backup_path_key",
         "backup_dir_path_key"
     )

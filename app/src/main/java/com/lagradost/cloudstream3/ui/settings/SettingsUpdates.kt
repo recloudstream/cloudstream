@@ -128,9 +128,9 @@ class SettingsUpdates : PreferenceFragmentCompat() {
                     // path = used uri
                     // dir = dir path
                     settingsManager.edit()
-                        .putString(getString(R.string.backup_path_key), dirs[it]).apply()
-                    settingsManager.edit()
-                        .putString(getString(R.string.backup_dir_key), dirs[it]).apply()
+                        .putString(getString(R.string.backup_path_key), dirs[it])
+                        .putString(getString(R.string.backup_dir_key), dirs[it])
+                        .apply()
                 }
             }
             return@setOnPreferenceClickListener true

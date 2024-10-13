@@ -150,7 +150,7 @@ class SettingsGeneral : PreferenceFragmentCompat() {
         (path ?: uri.toString()).let {
             PreferenceManager.getDefaultSharedPreferences(context).edit()
                 .putString(getString(R.string.download_path_key), uri.toString())
-                .putString(getString(R.string.download_path_pref), it)
+                .putString(getString(R.string.download_path_key_visual), it)
                 .apply()
         }
     }
@@ -347,7 +347,7 @@ class SettingsGeneral : PreferenceFragmentCompat() {
             val dirs = getDownloadDirs()
 
             val currentDir =
-                settingsManager.getString(getString(R.string.download_path_pref), null)
+                settingsManager.getString(getString(R.string.download_path_key_visual), null)
                     ?: context?.let { ctx -> VideoDownloadManager.getDefaultDir(ctx)?.filePath() }
 
             activity?.showBottomDialog(
@@ -366,11 +366,11 @@ class SettingsGeneral : PreferenceFragmentCompat() {
                 } else {
                     // Sets both visual and actual paths.
                     // key = used path
-                    // pref = visual path
+                    // visual = visual path
                     settingsManager.edit()
-                        .putString(getString(R.string.download_path_key), dirs[it]).apply()
-                    settingsManager.edit()
-                        .putString(getString(R.string.download_path_pref), dirs[it]).apply()
+                        .putString(getString(R.string.download_path_key), dirs[it])
+                        .putString(getString(R.string.download_path_key_visual), dirs[it])
+                        .apply()
                 }
             }
             return@setOnPreferenceClickListener true
