@@ -68,7 +68,7 @@ class SetupFragmentLayout : Fragment() {
                         .apply()
                     activity?.recreate()
                 }
-                acraSwitch.setOnCheckedChangeListener { _, enableCrashReporting ->
+                /*acraSwitch.setOnCheckedChangeListener { _, enableCrashReporting ->
                     // Use same pref as in settings
                     settingsManager.edit().putBoolean(ACRA.PREF_DISABLE_ACRA, !enableCrashReporting)
                         .apply()
@@ -83,7 +83,7 @@ class SetupFragmentLayout : Fragment() {
                 crashReportingText.text =
                     getText(
                         if (enableCrashReporting) R.string.bug_report_settings_off else R.string.bug_report_settings_on
-                    )
+                    )*/
 
 
                 nextBtt.setOnClickListener {
