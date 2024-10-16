@@ -42,7 +42,7 @@ class OpenSubtitlesApi(index: Int) : InAppAuthAPIManager(index), AbstractSubApi 
     /** Automatically adds required api headers */
     private class OpenSubtitleInterceptor : Interceptor {
         /** Required user agent! */
-        private val userAgent = "Cloudstream3 v0.1"
+        private val userAgent = "Cloudstream3 v0.2"
         override fun intercept(chain: Interceptor.Chain): Response {
             return chain.proceed(
                 chain.request().newBuilder()
@@ -118,7 +118,7 @@ class OpenSubtitlesApi(index: Int) : InAppAuthAPIManager(index), AbstractSubApi 
             headers = mapOf(
                 "Content-Type" to "application/json",
             ),
-            data = mapOf(
+            json = mapOf(
                 "username" to username,
                 "password" to password
             ),
