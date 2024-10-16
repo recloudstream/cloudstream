@@ -681,4 +681,6 @@
     <string name="confirm_before_exiting_desc">Mostra finestra di dialogo prima di uscire dall\'app</string>
     <string name="show">Mostra</string>
     <string name="dont_show">Non mostrare</string>
+    <string name="backup_path_title">Posizione cartella di backup</string>
+    <string name="custom">Personalizzato</string>
 </resources>
