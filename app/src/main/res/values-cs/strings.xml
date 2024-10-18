@@ -685,4 +685,6 @@
     <string name="confirm_before_exiting_desc">Zobrazit dialog před ukončením aplikace</string>
     <string name="show">Zobrazit</string>
     <string name="dont_show">Nezobrazovat</string>
+    <string name="backup_path_title">Umístění složky záloh</string>
+    <string name="custom">Vlastní</string>
 </resources>

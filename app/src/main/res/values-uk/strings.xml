@@ -661,4 +661,6 @@
     <string name="show">Показувати</string>
     <string name="confirm_before_exiting_desc">Показувати діалог перед виходом із застосунку</string>
     <string name="dont_show">Не показувати</string>
+    <string name="backup_path_title">Розташування теки резервної копії</string>
+    <string name="custom">Власний</string>
 </resources>
