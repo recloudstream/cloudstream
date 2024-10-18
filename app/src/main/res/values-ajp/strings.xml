@@ -195,7 +195,7 @@
     <string name="movies_singular">فيلم</string>
     <string name="torrent_singular">تورنت</string>
     <string name="no_update_found">م لقينا تجديد</string>
-    <string name="check_for_update">شوف إذا في تجديد</string>
+    <string name="check_for_update">شوف إزا فيه تجديد</string>
     <string name="render_error">في مشكلة بجهاز العرض (Renderer error)</string>
     <string name="show_title">العِنوان</string>
     <string name="jsdelivr_proxy">پروكسي \"گِت هَب\"</string>
@@ -667,4 +667,6 @@
     <string name="dont_show">م تفرجي</string>
     <string name="confirm_before_exiting_desc">طلوب تأكيد قبلما تطلع من الآپ</string>
     <string name="confirm_before_exiting_title">أكّد إنو بدك تطلع</string>
+    <string name="backup_path_title">محل النسخة الاحتياطية</string>
+    <string name="custom">حدد غير محل</string>
 </resources>

@@ -655,4 +655,10 @@
     <string name="preview_seekbar">Suchleisten Vorschau</string>
     <string name="preview_seekbar_desc">Vorschau Bilder in der Suchleiste einschalten</string>
     <string name="no_subtitles_loaded">Keine Untertitel geladen</string>
+    <string name="backup_path_title">Backup-Speicherort</string>
+    <string name="confirm_before_exiting_title">Bestätigung zum Verlassen</string>
+    <string name="custom">Benutzerdefiniert</string>
+    <string name="confirm_before_exiting_desc">Vor dem Verlassen der App einen Dialog anzeigen</string>
+    <string name="show">Anzeigen</string>
+    <string name="dont_show">Nicht anzeigen</string>
 </resources>

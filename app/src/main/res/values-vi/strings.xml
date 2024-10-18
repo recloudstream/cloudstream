@@ -674,4 +674,6 @@
     <string name="confirm_before_exiting_desc">Hiện hộp thoại trước khi thoát ứng dụng</string>
     <string name="dont_show">Không hiển thị</string>
     <string name="show">Hiển thị</string>
+    <string name="backup_path_title">Vị trí thư mục sao lưu</string>
+    <string name="custom">Tuỳ chỉnh</string>
 </resources>
