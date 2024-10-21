@@ -635,4 +635,5 @@
     <string name="player_settings_select_cast_device">Selectați divece-ul pe care doriți să faceți cast</string>
     <string name="episode_action_cast_mirror">Cast mirror</string>
     <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
+    <string name="play_from_beginning_img_des">Redă de la început</string>
 </resources>

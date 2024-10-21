@@ -662,4 +662,6 @@
     <string name="show">Pokaż</string>
     <string name="confirm_before_exiting_title">Potwierdź przed wyjściem</string>
     <string name="dont_show">Nie pokazuj</string>
+    <string name="backup_path_title">Lokalizacja folderu kopii zapasowej</string>
+    <string name="custom">Własna</string>
 </resources>

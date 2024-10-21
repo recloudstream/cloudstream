@@ -661,4 +661,6 @@
     <string name="show">Mostrar</string>
     <string name="dont_show">No mostrar</string>
     <string name="confirm_before_exiting_title">Confirmar antes de salir</string>
+    <string name="backup_path_title">Ubicación de la carpeta de respaldo</string>
+    <string name="custom">Personalizada</string>
 </resources>
