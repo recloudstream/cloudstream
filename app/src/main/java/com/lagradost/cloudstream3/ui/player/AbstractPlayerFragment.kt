@@ -52,14 +52,20 @@ import com.lagradost.cloudstream3.utils.AppContextUtils
 import com.lagradost.cloudstream3.utils.AppContextUtils.requestLocalAudioFocus
 import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.EpisodeSkip
+import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showDialog
 import com.lagradost.cloudstream3.utils.UIHelper
 import com.lagradost.cloudstream3.utils.UIHelper.hideSystemUI
 import com.lagradost.cloudstream3.utils.UIHelper.popCurrentPage
 
 enum class PlayerResize(@StringRes val nameRes: Int) {
-    Fit(R.string.resize_fit),
     Fill(R.string.resize_fill),
-    Zoom(R.string.resize_zoom),
+    SixteenByNine(R.string.resize_sixteen_by_nine),
+    NineBySixteen(R.string.resize_nine_by_sixteen),
+    OneByOne(R.string.resize_one_by_one),
+    IMAX(R.string.resize_imax),
+    DolbyVision(R.string.resize_dolby_vision),
+    UltraWide(R.string.resize_ultra_wide), 
+    Expanded(R.string.resize_expanded)
 }
 
 // when the player should switch skip op to next episode
@@ -77,6 +83,7 @@ const val UPDATE_SYNC_PROGRESS_PERCENTAGE = 80
 abstract class AbstractPlayerFragment(
     val player: IPlayer = CS3IPlayer()
 ) : Fragment() {
+    var aspectRatioFrameLayout: AspectRatioFrameLayout? = null
     var resizeMode: Int = 0
     var subStyle: SaveCaptionStyle? = null
     var subView: SubtitleView? = null
@@ -471,7 +478,7 @@ abstract class AbstractPlayerFragment(
     @SuppressLint("SetTextI18n", "UnsafeOptInUsageError")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         resizeMode = DataStoreHelper.resizeMode
-        resize(resizeMode, false)
+        resize(resizeMode)
 
         player.releaseCallbacks()
         player.initCallbacks(
@@ -607,28 +614,57 @@ abstract class AbstractPlayerFragment(
     }
 
     fun nextResize() {
-        resizeMode = (resizeMode + 1) % PlayerResize.entries.size
-        resize(resizeMode, true)
+        showAspectRatioDialog()
     }
 
-    fun resize(resize: Int, showToast: Boolean) {
-        resize(PlayerResize.entries[resize], showToast)
+    fun resize(resize: Int) {
+        resize(PlayerResize.entries[resize])
     }
+
+    private fun showAspectRatioDialog() {
+        player.handleEvent(CSPlayerEvent.Pause, PlayerEventSource.UI)
+
+        val aspectRatioOptions = PlayerResize.entries.map { getString(it.nameRes) }
+
+        activity?.showDialog(
+            aspectRatioOptions,
+            DataStoreHelper.resizeMode,
+            getString(R.string.choose_aspect_ratio),
+            false, // Immediate selection without an Apply button
+            dismissCallback = {
+                player.handleEvent(CSPlayerEvent.Play, PlayerEventSource.UI)
+            },
+            callback = { selectedIndex ->
+                val selectedOption = PlayerResize.entries[selectedIndex]
+                resize(selectedOption)
+                player.handleEvent(CSPlayerEvent.Play, PlayerEventSource.UI)
+            }
+        )
+    }
+
+
 
     @SuppressLint("UnsafeOptInUsageError")
-    fun resize(resize: PlayerResize, showToast: Boolean) {
+    fun resize(resize: PlayerResize) {
         DataStoreHelper.resizeMode = resize.ordinal
         val type = when (resize) {
             PlayerResize.Fill -> AspectRatioFrameLayout.RESIZE_MODE_FILL
-            PlayerResize.Fit -> AspectRatioFrameLayout.RESIZE_MODE_FIT
-            PlayerResize.Zoom -> AspectRatioFrameLayout.RESIZE_MODE_ZOOM
+            PlayerResize.SixteenByNine -> 16.0f/9.0f
+            PlayerResize.NineBySixteen -> 9.0f/16.0f
+            PlayerResize.OneByOne -> 1.0f/1.0f
+            PlayerResize.IMAX -> 1.43f/1.0f
+            PlayerResize.DolbyVision -> 2.39f/1.0f
+            PlayerResize.UltraWide -> 21.0f/9.0f
+            PlayerResize.Expanded -> 1.90f/1.0f
         }
-        playerView?.resizeMode = type
-
-        if (showToast)
-            showToast(resize.nameRes, Toast.LENGTH_SHORT)
+        if(type is Float){
+            playerView?.resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FIT
+            aspectRatioFrameLayout?.setAspectRatio(type)
+        }else if(type is Int) {
+            playerView?.resizeMode = type
+            aspectRatioFrameLayout?.setAspectRatio(0f)
+        }
     }
-
     override fun onStop() {
         player.onStop()
         super.onStop()
@@ -654,6 +690,7 @@ abstract class AbstractPlayerFragment(
         playerView = root.findViewById(R.id.player_view)
         piphide = root.findViewById(R.id.piphide)
         subtitleHolder = root.findViewById(R.id.subtitle_holder)
+        aspectRatioFrameLayout = root.findViewById(R.id.exo_content_frame)
         return root
     }
 }
