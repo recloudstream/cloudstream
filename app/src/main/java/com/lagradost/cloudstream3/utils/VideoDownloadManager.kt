@@ -1593,16 +1593,16 @@ object VideoDownloadManager {
         return sanitizeFilename(
             if (epName == null) {
                 if (season != null) {
-                    "${context.getString(R.string.season)} $season ${context.getString(R.string.episode)} $episode"
+                    "${context.getString(R.string.season)}$season${context.getString(R.string.episode)}$episode"
                 } else {
-                    "${context.getString(R.string.episode)} $episode"
+                    "${context.getString(R.string.episode)}$episode"
                 }
             } else {
                 if (episode != null) {
                     if (season != null) {
-                        "${context.getString(R.string.season)} $season ${context.getString(R.string.episode)} $episode - $epName"
+                        "${context.getString(R.string.season)}$season${context.getString(R.string.episode)}$episode - $epName"
                     } else {
-                        "${context.getString(R.string.episode)} $episode - $epName"
+                        "${context.getString(R.string.episode)}$episode - $epName"
                     }
                 } else {
                     epName
