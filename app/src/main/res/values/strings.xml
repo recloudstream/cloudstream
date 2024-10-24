@@ -294,10 +294,10 @@
     <string name="acra_report_toast">Sorry, the application crashed. An anonymous bug report will be sent to the
         developers
     </string>
-    <string name="season">Season</string>
+    <string name="season">S</string>
     <string name="season_format">%1$s %2$d%3$s</string>
     <string name="no_season">No Season</string>
-    <string name="episode">Episode</string>
+    <string name="episode">E</string>
     <string name="episodes">Episodes</string>
     <string name="episodes_range">%1$d-%2$d</string>
     <string name="episode_format" formatted="true">%1$d %2$s</string>
