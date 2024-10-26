@@ -64,6 +64,7 @@ import com.lagradost.cloudstream3.utils.AppContextUtils.openBrowser
 import com.lagradost.cloudstream3.utils.AppContextUtils.updateHasTrailers
 import com.lagradost.cloudstream3.utils.BatteryOptimizationChecker.openBatteryOptimizationSettings
 import com.lagradost.cloudstream3.utils.ExtractorLink
+import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialogInstant
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showDialog
@@ -75,8 +76,9 @@ import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.utils.UIHelper.popCurrentPage
 import com.lagradost.cloudstream3.utils.UIHelper.populateChips
 import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIconsAndNoStringRes
-import com.lagradost.cloudstream3.utils.UIHelper.setImage
 import com.lagradost.cloudstream3.utils.VideoDownloadHelper
+import com.lagradost.cloudstream3.utils.setText
+import com.lagradost.cloudstream3.utils.setTextHtml
 
 open class ResultFragmentPhone : FullScreenPlayer() {
     private val gestureRegionsListener =
@@ -449,8 +451,8 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                     }
 
                     val name = (viewModel.page.value as? Resource.Success)?.value?.title
-                        ?: txt(R.string.no_data).asStringNull(context) ?: ""
-                    showToast(txt(message, name), Toast.LENGTH_SHORT)
+                        ?: com.lagradost.cloudstream3.utils.txt(R.string.no_data).asStringNull(context) ?: ""
+                    showToast(com.lagradost.cloudstream3.utils.txt(message, name), Toast.LENGTH_SHORT)
                 }
                 context?.let { openBatteryOptimizationSettings(it) }
             }
@@ -465,8 +467,8 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                     }
 
                     val name = (viewModel.page.value as? Resource.Success)?.value?.title
-                        ?: txt(R.string.no_data).asStringNull(context) ?: ""
-                    showToast(txt(message, name), Toast.LENGTH_SHORT)
+                        ?: com.lagradost.cloudstream3.utils.txt(R.string.no_data).asStringNull(context) ?: ""
+                    showToast(com.lagradost.cloudstream3.utils.txt(message, name), Toast.LENGTH_SHORT)
                 }
             }
             mediaRouteButton.apply {
@@ -703,8 +705,12 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                     resultCastText.setText(d.actorsText)
                     resultNextAiring.setText(d.nextAiringEpisode)
                     resultNextAiringTime.setText(d.nextAiringDate)
-                    resultPoster.setImage(d.posterImage)
-                    resultPosterBackground.setImage(d.posterBackgroundImage)
+                    resultPoster.loadImage(d.posterImage, headers = d.posterHeaders) {
+                        error(R.drawable.default_cover)
+                    }
+                    resultPosterBackground.loadImage(d.posterBackgroundImage, headers = d.posterHeaders) {
+                        error(R.drawable.default_cover)
+                    }
 
                     var isExpanded = false
                     resultDescription.apply {
@@ -776,7 +782,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                 resultReloadConnectionOpenInBrowser.isVisible = data is Resource.Failure
 
                 resultTitle.setOnLongClickListener {
-                    clipboardHelper(txt(R.string.title), resultTitle.text)
+                    clipboardHelper(com.lagradost.cloudstream3.utils.txt(R.string.title), resultTitle.text)
                     true
                 }
             }

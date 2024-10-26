@@ -20,17 +20,17 @@ import com.lagradost.cloudstream3.databinding.MainSettingsBinding
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.syncproviders.AccountManager
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.accountManagers
-import com.lagradost.cloudstream3.ui.home.HomeFragment
-import com.lagradost.cloudstream3.ui.result.txt
+import com.lagradost.cloudstream3.ui.home.HomeFragment.Companion.errorProfilePic
+import com.lagradost.cloudstream3.utils.txt
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
 import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.utils.DataStoreHelper
+import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
 import com.lagradost.cloudstream3.utils.UIHelper
 import com.lagradost.cloudstream3.utils.UIHelper.clipboardHelper
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
-import com.lagradost.cloudstream3.utils.UIHelper.setImage
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import java.io.File
 import java.text.DateFormat
@@ -184,14 +184,14 @@ class SettingsFragment : Fragment() {
                 val login = syncApi.loginInfo()
                 val pic = login?.profilePicture ?: continue
 
-                if (binding?.settingsProfilePic?.setImage(
-                        pic,
-                        errorImageDrawable = HomeFragment.errorProfilePic
-                    ) == true
-                ) {
-                    binding?.settingsProfileText?.text = login.name
-                    return true // sync profile exists
+                binding?.settingsProfilePic?.let { imageView ->
+                    imageView.loadImage(pic) {
+                        crossfade(true)  // Optional: for a fade-in animation
+                        error(errorProfilePic)  // Fallback to random error drawable
+                    }
                 }
+                return true // sync profile exists
+
             }
             return false // not syncing
         }
@@ -209,7 +209,7 @@ class SettingsFragment : Fragment() {
                 null
             }
 
-            binding?.settingsProfilePic?.setImage(currentAccount?.image)
+            binding?.settingsProfilePic?.loadImage(currentAccount?.image)
             binding?.settingsProfileText?.text = currentAccount?.name
         }
 

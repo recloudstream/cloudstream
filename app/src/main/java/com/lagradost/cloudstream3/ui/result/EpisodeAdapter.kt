@@ -23,9 +23,11 @@ import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.utils.AppContextUtils.html
-import com.lagradost.cloudstream3.utils.UIHelper.setImage
+import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import com.lagradost.cloudstream3.utils.VideoDownloadHelper
+import com.lagradost.cloudstream3.utils.setText
+import com.lagradost.cloudstream3.utils.txt
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -225,7 +227,7 @@ class EpisodeAdapter(
                     episodeProgress.isVisible = displayPos > 0L
                 }
 
-                episodePoster.isVisible = episodePoster.setImage(card.poster) == true
+                episodePoster.loadImage(card.poster)
 
                 if (card.rating != null) {
                     episodeRating.text = episodeRating.context?.getString(R.string.rated_format)
@@ -260,7 +262,7 @@ class EpisodeAdapter(
                         episodePlayIcon.isVisible = false
                         episodeUpcomingIcon.isVisible = !episodePoster.isVisible
                         episodeDate.setText(
-                            txt(
+                            com.lagradost.cloudstream3.utils.txt(
                                 R.string.episode_upcoming_format,
                                 secondsToReadable(
                                     card.airDate.minus(unixTimeMS).div(1000).toInt(),

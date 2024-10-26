@@ -34,10 +34,6 @@ import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.subDlAp
 import com.lagradost.cloudstream3.syncproviders.AuthAPI
 import com.lagradost.cloudstream3.syncproviders.InAppAuthAPI
 import com.lagradost.cloudstream3.syncproviders.OAuth2API
-import com.lagradost.cloudstream3.ui.result.img
-import com.lagradost.cloudstream3.ui.result.setImage
-import com.lagradost.cloudstream3.ui.result.setText
-import com.lagradost.cloudstream3.ui.result.txt
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
 import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
@@ -57,11 +53,13 @@ import com.lagradost.cloudstream3.utils.BiometricAuthenticator.isAuthEnabled
 import com.lagradost.cloudstream3.utils.BiometricAuthenticator.promptInfo
 import com.lagradost.cloudstream3.utils.BiometricAuthenticator.startBiometricAuthentication
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
+import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialogText
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
-import com.lagradost.cloudstream3.utils.UIHelper.setImage
+import com.lagradost.cloudstream3.utils.setText
+import com.lagradost.cloudstream3.utils.txt
 import qrcode.QRCode
 
 class SettingsAccount : PreferenceFragmentCompat(), BiometricCallback {
@@ -80,8 +78,9 @@ class SettingsAccount : PreferenceFragmentCompat(), BiometricCallback {
                     .setView(binding.root)
             val dialog = builder.show()
 
-            binding.accountMainProfilePictureHolder.isVisible =
-                binding.accountMainProfilePicture.setImage(info.profilePicture)
+            binding.accountMainProfilePictureHolder.isVisible = !info.profilePicture.isNullOrEmpty()
+            binding.accountMainProfilePicture.loadImage(info.profilePicture)
+
 
             binding.accountLogout.setOnClickListener {
                 api.logOut()
@@ -198,9 +197,7 @@ class SettingsAccount : PreferenceFragmentCompat(), BiometricCallback {
                                                     pinCodeData.verificationUrl
                                                 )
                                             )
-                                            deviceAuthQrcode.setImage(
-                                                img(qrCodeImage)
-                                            )
+                                            deviceAuthQrcode.loadImage(qrCodeImage)
                                         }
 
                                         val expirationMillis =
