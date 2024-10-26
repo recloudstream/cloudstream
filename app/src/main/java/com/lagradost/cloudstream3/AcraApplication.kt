@@ -43,11 +43,11 @@ import kotlin.system.exitProcess
 class CustomReportSender : ReportSender {
     // Sends all your crashes to google forms
     override fun send(context: Context, errorContent: CrashReportData) {
-        println("Sending report")
+        /*println("Sending report")
         val url =
-            "https://docs.google.com/forms/d/e/1FAIpQLSfO4r353BJ79TTY_-t5KWSIJT2xfqcQWY81xjAA1-1N0U2eSg/formResponse"
+            "https://docs.google.com/forms/d/e/$id/formResponse"
         val data = mapOf(
-            "entry.1993829403" to errorContent.toJSON()
+            "entry.$entry" to errorContent.toJSON()
         )
 
         thread { // to not run it on main thread
@@ -63,7 +63,7 @@ class CustomReportSender : ReportSender {
             normalSafeApiCall {
                 Toast.makeText(context, R.string.acra_report_toast, Toast.LENGTH_SHORT).show()
             }
-        }
+        }*/
     }
 }
 

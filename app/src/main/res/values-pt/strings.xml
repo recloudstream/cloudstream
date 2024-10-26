@@ -354,8 +354,8 @@
     <string name="setup_done">Feito</string>
     <string name="extensions">Extensões</string>
     <string name="add_repository">Adicionar repositório</string>
-    <string name="repository_name_hint">Nome do repositório</string>
-    <string name="repository_url_hint">URL do repositório</string>
+    <string name="repository_name_hint">Nome do repositório (Opcional)</string>
+    <string name="repository_url_hint">URL do repositório or Referência</string>
     <string name="plugin_loaded">Plugin Carregado</string>
     <string name="plugin_deleted">Plugin Apagado</string>
     <string name="plugin_load_fail" formatted="true">Falha ao carregar %s</string>
@@ -622,7 +622,6 @@
     <string name="delete_message_series_section" formatted="true">Irá também eliminar permanentemente todos os episódios da seguinte série:
 \n
 \n%s</string>
-    <string name="player_settings_play_in_mpvytdl">MPV YTDL</string>
     <string name="delete_format" formatted="true">Eliminar (%1$d | %2$s)</string>
     <string name="device_pin_url_message">Visite <b>%s</b> no seu smartphone ou computador e introduza o código acima</string>
     <string name="play_from_beginning_img_des">Recomeçar</string>
@@ -656,4 +655,8 @@
     <string name="no_subtitles_loaded">Ainda sem legendadas carregadas</string>
     <string name="open_downloaded_repo">Abrir repositório</string>
     <string name="dismiss">Dispensar</string>
+    <string name="confirm_before_exiting_title">Confirmar antes de sair</string>
+    <string name="confirm_before_exiting_desc">Mostrar diálogo antes de sair da aplicação</string>
+    <string name="show">Mostrar</string>
+    <string name="dont_show">Não mostrar</string>
 </resources>

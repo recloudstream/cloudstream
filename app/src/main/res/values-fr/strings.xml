@@ -138,7 +138,7 @@
     <string name="dns_pref">DNS avec HTTPS</string>
     <string name="display_subbed_dubbed_settings">Afficher les animés en Anglais (Dub) / sous-titrés</string>
     <string name="phone_layout">Disposition en mode téléphone</string>
-    <string name="app_dub_sub_episode_text_format">episode_action_copy_link</string>
+    <string name="app_dub_sub_episode_text_format">%1$s Ep %2$d</string>
     <string name="rated_format" formatted="true">Note : %.1f</string>
     <string name="resize_zoom">Zoom</string>
     <string name="resize_fit">Adapter à l\'écran</string>
@@ -628,7 +628,6 @@
     <string name="open_downloaded_repo">Ouvrir le dépôt</string>
     <string name="device_pin_counter_text">Code expire dans %1$dm %2$ds</string>
     <string name="cs3wiki">Wiki de CloudStream</string>
-    <string name="player_settings_play_in_mpvytdl">MPV YTDL</string>
     <string name="device_pin_expired_message">Le code PIN est maintenant expiré !</string>
     <string name="qr_image">Image du code QR</string>
     <string name="delete_plugin">Supprimer l\'extension</string>

@@ -46,6 +46,11 @@
             android:icon="@drawable/baseline_restore_page_24"
             android:key="@string/restore_key"
             android:title="@string/restore_settings" />
+
+        <Preference
+            android:icon="@drawable/ic_baseline_folder_open_24"
+            android:key="@string/backup_path_key"
+            android:title="@string/backup_path_title" />
     </PreferenceCategory>
 
     <PreferenceCategory
@@ -73,12 +78,12 @@
             android:icon="@drawable/ic_baseline_construction_24"
             android:title="@string/redo_setup_process"
             app:key="@string/redo_setup_key" />
-        <SwitchPreference
+        <!--<SwitchPreference
             android:defaultValue="true"
             android:icon="@drawable/ic_baseline_bug_report_24"
             android:key="acra.disable"
             android:summaryOff="@string/bug_report_settings_off"
             android:summaryOn="@string/bug_report_settings_on"
-            android:title="@string/pref_disable_acra" />
+            android:title="@string/pref_disable_acra" />-->
     </PreferenceCategory>
 </PreferenceScreen>
