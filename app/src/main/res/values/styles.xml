@@ -99,6 +99,12 @@
         <item name="chipMinTouchTargetSize">0dp</item>
     </style>
 
+    <style name="RoundProgressbar">
+        <item name="indicatorTrackGapSize">0dp</item>
+        <item name="trackStopIndicatorSize">0dp</item>
+        <item name="trackColor">@color/color_primary_transparent</item>
+    </style>
+
     <style name="ChipFilledSemiTransparent" parent="@style/ChipFilled">
         <item name="chipBackgroundColor">@color/transparent</item>
         <item name="chipSurfaceColor">@color/white_attr_20</item>
