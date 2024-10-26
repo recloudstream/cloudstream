@@ -188,7 +188,6 @@ class SettingsFragment : Fragment() {
                     imageView.loadImage(pic) {
                         crossfade(true)  // Optional: for a fade-in animation
                         error(errorProfilePic)  // Fallback to random error drawable
-                        placeholder(errorProfilePic)  // Set the same as the placeholder during loading
                     }
                 }
                 return true // sync profile exists

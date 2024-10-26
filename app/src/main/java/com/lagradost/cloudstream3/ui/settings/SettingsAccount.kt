@@ -78,10 +78,9 @@ class SettingsAccount : PreferenceFragmentCompat(), BiometricCallback {
                     .setView(binding.root)
             val dialog = builder.show()
 
-            if (!info.profilePicture.isNullOrEmpty()) {
-                binding.accountMainProfilePictureHolder.isVisible = true
-                binding.accountMainProfilePicture.loadImage(info.profilePicture)
-            }
+            binding.accountMainProfilePictureHolder.isVisible = !info.profilePicture.isNullOrEmpty()
+            binding.accountMainProfilePicture.loadImage(info.profilePicture)
+
 
             binding.accountLogout.setOnClickListener {
                 api.logOut()

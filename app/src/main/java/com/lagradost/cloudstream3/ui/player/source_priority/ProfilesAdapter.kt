@@ -82,7 +82,7 @@ class ProfilesAdapter(
 
             outline.isVisible = currentItem?.second?.id == item.id
 
-            profileBg.loadImage(art) {
+            profileBg.loadImage(art[index % art.size]) {
                 target { drawable ->
                     // Convert drawable to bitmap to extract palette colors
                     val bitmap = drawable.toBitmap()

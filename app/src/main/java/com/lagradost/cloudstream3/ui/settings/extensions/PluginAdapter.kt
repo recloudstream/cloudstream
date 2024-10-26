@@ -88,10 +88,7 @@ class PluginAdapter(
     // Clear glide image because setImageResource doesn't override
     override fun onViewRecycled(holder: RecyclerView.ViewHolder) {
         if (holder is PluginViewHolder) {
-            holder.binding.entryIcon.let { pluginIcon ->
-                pluginIcon.loadImage(pluginIcon)
-               // com.bumptech.glide.Glide.with(pluginIcon).clear(pluginIcon)
-            }
+            holder.binding.entryIcon.loadImage(R.drawable.ic_github_logo)
         }
         super.onViewRecycled(holder)
     }

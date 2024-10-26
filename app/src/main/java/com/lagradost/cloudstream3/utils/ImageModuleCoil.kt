@@ -1,8 +1,12 @@
 package com.lagradost.cloudstream3.utils
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.drawable.Drawable
+import android.net.Uri
 import android.util.Log
 import android.widget.ImageView
+import androidx.annotation.DrawableRes
 import coil.EventListener
 import coil.ImageLoader
 import coil.load
@@ -13,7 +17,10 @@ import coil.request.ImageRequest
 import coil.request.SuccessResult
 import com.lagradost.cloudstream3.USER_AGENT
 import com.lagradost.cloudstream3.network.DdosGuardKiller
+import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
+import java.io.File
+import java.nio.ByteBuffer
 
 object ImageLoader {
 
@@ -75,9 +82,67 @@ object ImageLoader {
             .build()
     }
 
+    fun ImageView.loadImage(
+        imageData: UiImage?,
+        builder: ImageRequest.Builder.() -> Unit = {}
+    ) = when(imageData) {
+        is UiImage.Image -> loadImageInternal(imageData = imageData.url, headers = imageData.headers, builder = builder)
+        is UiImage.Bitmap -> loadImageInternal(imageData = imageData.bitmap, builder = builder)
+        is UiImage.Drawable -> loadImageInternal(imageData = imageData.resId, builder = builder)
+        null -> loadImageInternal(null, builder = builder)
+    }
+
+    fun ImageView.loadImage(
+        imageData: String?,
+        headers: Map<String, String>? = null,
+        builder: ImageRequest.Builder.() -> Unit = {}
+    ) = loadImageInternal(imageData = imageData, headers = headers, builder = builder)
+
+    fun ImageView.loadImage(
+        imageData: Uri?,
+        headers: Map<String, String>? = null,
+        builder: ImageRequest.Builder.() -> Unit = {}
+    ) = loadImageInternal(imageData = imageData,headers = headers, builder = builder)
+
+    fun ImageView.loadImage(
+        imageData: HttpUrl?,
+        headers: Map<String, String>? = null,
+        builder: ImageRequest.Builder.() -> Unit = {}
+    ) = loadImageInternal(imageData = imageData, headers = headers, builder = builder)
+
+    fun ImageView.loadImage(
+        imageData: File?,
+        builder: ImageRequest.Builder.() -> Unit = {}
+    ) = loadImageInternal(imageData = imageData, builder = builder)
+
+    fun ImageView.loadImage(
+        @DrawableRes imageData: Int?,
+        builder: ImageRequest.Builder.() -> Unit = {}
+    ) = loadImageInternal(imageData = imageData, builder = builder)
+
+    fun ImageView.loadImage(
+        imageData: Drawable?,
+        builder: ImageRequest.Builder.() -> Unit = {}
+    ) = loadImageInternal(imageData = imageData, builder = builder)
+
+    fun ImageView.loadImage(
+        imageData: Bitmap?,
+        builder: ImageRequest.Builder.() -> Unit = {}
+    ) = loadImageInternal(imageData = imageData, builder = builder)
+
+    fun ImageView.loadImage(
+        imageData: ByteArray?,
+        builder: ImageRequest.Builder.() -> Unit = {}
+    ) = loadImageInternal(imageData = imageData, builder = builder)
+
+    fun ImageView.loadImage(
+        imageData: ByteBuffer?,
+        builder: ImageRequest.Builder.() -> Unit = {}
+    ) = loadImageInternal(imageData = imageData, builder = builder)
+
     /** we use coil's built in loader with our global synchronized instance, this way we achieve
     latest and complete functionality as well as stability **/
-    fun ImageView.loadImage(
+    private fun ImageView.loadImageInternal(
         imageData: Any?,
         headers: Map<String, String>? = null,
         builder: ImageRequest.Builder.() -> Unit = {} // for placeholder, error & transformations
