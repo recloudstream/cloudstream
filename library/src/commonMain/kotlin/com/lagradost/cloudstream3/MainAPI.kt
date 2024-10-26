@@ -968,7 +968,7 @@ data class LiveSearchResponse(
     override var id: Int? = null,
     override var quality: SearchQuality? = null,
     override var posterHeaders: Map<String, String>? = null,
-    val lang: String? = null,
+    var lang: String? = null,
 ) : SearchResponse
 
 data class TvSeriesSearchResponse(
@@ -979,7 +979,7 @@ data class TvSeriesSearchResponse(
 
     override var posterUrl: String? = null,
     var year: Int? = null,
-    val episodes: Int? = null,
+    var episodes: Int? = null,
     override var id: Int? = null,
     override var quality: SearchQuality? = null,
     override var posterHeaders: Map<String, String>? = null,
