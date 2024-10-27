@@ -5,7 +5,6 @@ import java.io.ByteArrayOutputStream
 
 plugins {
     id("com.android.application")
-    id("com.google.devtools.ksp")
     id("kotlin-android")
     id("org.jetbrains.dokka")
 }
@@ -84,11 +83,6 @@ android {
             "\"" + (System.getenv("SIMKL_CLIENT_SECRET") ?: localProperties["simkl.secret"]) + "\""
         )
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-
-        ksp {
-            arg("room.schemaLocation", "$projectDir/schemas")
-            arg("exportSchema", "true")
-        }
     }
 
     buildTypes {
@@ -168,17 +162,11 @@ dependencies {
     implementation("androidx.navigation:navigation-fragment-ktx:2.7.7")
 
     // Design & UI
-    implementation("jp.wasabeef:glide-transformations:4.3.0")
     implementation("androidx.preference:preference-ktx:1.2.1")
     implementation("com.google.android.material:material:1.12.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
     implementation("io.coil-kt:coil:2.7.0") // Coil Image Loading
-
-    // For KSP -> Official Annotation Processors are Not Yet Supported for KSP
-    ksp("dev.zacsweers.autoservice:auto-service-ksp:1.2.0")
-    implementation("com.google.guava:guava:33.2.1-android")
-    implementation("dev.zacsweers.autoservice:auto-service-ksp:1.2.0")
 
     // Media 3 (ExoPlayer)
     implementation("androidx.media3:media3-ui:1.4.1")
