@@ -41,13 +41,13 @@ object ImageLoader {
             .build()
 
         return ImageLoader.Builder(context)
-            .crossfade(300)
+            .crossfade(250)
             .respectCacheHeaders(false)
             /** !Only use default placeholders and errors, if not using this instance for local
              * image buttons because when animating this will appear or in more cases **/
             //.placeholder(R.drawable.logo)
             //.error(R.drawable.logo)
-            //.allowHardware(true) // takes a toll on battery (only allow if app is like instagram or photos)
+            .allowHardware(false) // takes a toll on battery (only allow if app is like instagram or photos)
             .memoryCache {
                 MemoryCache.Builder(context)
                     .maxSizePercent(0.10) // Use 10 % of the app's available memory for caching
@@ -60,7 +60,7 @@ object ImageLoader {
                     .maxSizePercent(0.04) // Use 4% of the device's storage space for disk caching
                     .build()
             }
-            .diskCachePolicy(CachePolicy.READ_ONLY)
+            .diskCachePolicy(CachePolicy.ENABLED)
             /** Pass interceptors with care, unnecessary passing tokens to servers
             or image hosting services causes unauthorized exceptions **/
             .okHttpClient(okHttpClient)
