@@ -25,10 +25,11 @@ import java.nio.ByteBuffer
 object ImageLoader {
 
     private var instance: ImageLoader? = null
+    private const val TAG = "CoilImgLoader"
 
     fun initializeCoilImageLoader(context: Context) {
         if (instance == null) {
-            synchronized(this) {
+            synchronized(lock = this) {
                 instance = buildImageLoader(context.applicationContext)
             }
         }
@@ -40,23 +41,23 @@ object ImageLoader {
             .build()
 
         return ImageLoader.Builder(context)
-            .crossfade(true)
+            .crossfade(250)
             .respectCacheHeaders(false)
             /** !Only use default placeholders and errors, if not using this instance for local
              * image buttons because when animating this will appear or in more cases **/
             //.placeholder(R.drawable.logo)
             //.error(R.drawable.logo)
-            .allowHardware(true)
+            .allowHardware(false) // takes a toll on battery (only allow if app is like instagram or photos)
             .memoryCache {
                 MemoryCache.Builder(context)
-                    .maxSizePercent(0.15) // Use 15% of the app's available memory for image caching
+                    .maxSizePercent(0.10) // Use 10 % of the app's available memory for caching
                     .build()
             }
             .diskCache {
                 coil.disk.DiskCache.Builder()
-                    .maxSizeBytes(128 * 1024 * 1024) // 128 MB
+                    .maxSizeBytes(256 * 1024 * 1024) // 256 MB
                     .directory(context.cacheDir.resolve("cs3_image_cache"))
-                    .maxSizePercent(0.02) // Use 2% of the device's storage space for disk caching
+                    .maxSizePercent(0.04) // Use 4% of the device's storage space for disk caching
                     .build()
             }
             .diskCachePolicy(CachePolicy.ENABLED)
@@ -66,17 +67,17 @@ object ImageLoader {
             .eventListener(object : EventListener {
                 override fun onStart(request: ImageRequest) {
                     super.onStart(request)
-                    Log.i("CoilImageLoader", "Loading Image ${request.data}")
+                    Log.i(TAG, "Loading Image ${request.data}")
                 }
 
                 override fun onSuccess(request: ImageRequest, result: SuccessResult) {
                     super.onSuccess(request, result)
-                    Log.d("CoilImageLoader", "Image Loading successful")
+                    Log.d(TAG, "Image Loading successful")
                 }
 
                 override fun onError(request: ImageRequest, result: ErrorResult) {
                     super.onError(request, result)
-                    Log.e("CoilImageLoadError", "Error loading image: ${result.throwable}")
+                    Log.e(TAG, "Error loading image: ${result.throwable}")
                 }
             })
             .build()
