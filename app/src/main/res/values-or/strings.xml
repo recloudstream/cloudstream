@@ -28,14 +28,12 @@
     <string name="episodes">ଟି ଅଧ୍ୟାୟ</string>
     <string name="episode">ଅଧ୍ୟାୟ</string>
     <string name="episode_action_play_in_format">%s‌ରେ ଚଲାଅ</string>
-    <string name="episode_action_play_in_browser">ବ୍ରାଉଜର୍‌ରେ ଚଲାଅ</string>
     <string name="episode_action_download_subtitle">ଉପଶୀର୍ଷକ ଡାଉନଲୋଡ୍ କରିବା</string>
     <string name="sync_total_episodes_some" formatted="true">/%d</string>
     <string name="sync_total_episodes_none">/??</string>
     <string name="subscription_episode_released">ଅଧ୍ୟାୟ %d ମୁକ୍ତିଲାଭ କଲା!</string>
     <string name="episode_action_auto_download">ସ୍ୱତଃ ଡାଉନଲୋଡ୍</string>
     <string name="episode_action_reload_links">ଲିଙ୍କ୍‌ଗୁଡ଼ିକୁ ପୁନଃଲୋଡ୍ କରିବା</string>
-    <string name="episode_action_copy_link">ଲିଙ୍କ୍ କପି କରିନେବା</string>
     <string name="episode_action_play_in_app">ଆପ୍‌ରେ ଚଲାଅ</string>
     <string name="episode_action_chromecast_episode">Chromecast ଅଧ୍ୟାୟ</string>
     <string name="episode_short">ଅ</string>
@@ -61,8 +59,6 @@
     <string name="skip_type_ed">ପ୍ରାନ୍ତ</string>
     <string name="app_not_found_error">ଆପ୍ ମିଳିଲା ନାହିଁ</string>
     <string name="all_languages_preference">ସବୁ ଭାଷା</string>
-    <string name="player_settings_play_in_vlc">VLC</string>
-    <string name="player_settings_play_in_mpv">MPV</string>
     <string name="skip_type_mixed_ed">ମିଶ୍ରିତ ପ୍ରାନ୍ତ</string>
     <string name="skip_type_mixed_op">ମିଶ୍ରିତ ଆଦ୍ୟ</string>
     <string name="skip_type_creddits">ଶ୍ରେୟ</string>

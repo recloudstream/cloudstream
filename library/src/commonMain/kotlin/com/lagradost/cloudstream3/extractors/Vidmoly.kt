@@ -2,9 +2,11 @@ package com.lagradost.cloudstream3.extractors
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.SubtitleFile
+import com.lagradost.cloudstream3.USER_AGENT
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.utils.*
 import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
+import kotlinx.coroutines.delay
 
 class Vidmolyme : Vidmoly() {
     override val mainUrl = "https://vidmoly.me"
@@ -26,15 +28,25 @@ open class Vidmoly : ExtractorApi() {
         callback: (ExtractorLink) -> Unit
     ) {
         val headers  = mapOf(
-            "User-Agent"     to "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Mobile Safari/537.36",
+            "user-agent"     to USER_AGENT,
             "Sec-Fetch-Dest" to "iframe"
         )
-        val script = app.get(
-            url,
-            headers = headers,
-            referer = referer,
-        ).document.select("script")
-            .find { it.data().contains("sources:") }?.data()
+        val newUrl = if(url.contains("/w/"))
+            url.replaceFirst("/w/", "/embed-")+"-920x360.html"
+            else url
+        var script: String? = null;
+        var attemps = 0
+        while (attemps < 10 && script.isNullOrEmpty()){
+            attemps++
+            script = app.get(
+                newUrl,
+                headers = headers,
+                referer = referer,
+            ).document.select("script")
+                .firstOrNull { it.data().contains("sources:") }?.data()
+            if(script.isNullOrEmpty())
+                delay(500)
+        }
         val videoData = script?.substringAfter("sources: [")
             ?.substringBefore("],")?.addMarks("file")
         val subData = script?.substringAfter("tracks: [")?.substringBefore("]")?.addMarks("file")

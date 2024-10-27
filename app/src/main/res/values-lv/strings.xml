@@ -241,8 +241,6 @@
     <string name="episode_action_chromecast_mirror">Chromecast morror</string>
     <string name="episode_action_play_in_app">Palaist aplikācijā</string>
     <string name="episode_action_play_in_format">Atskaņot uekšā %s</string>
-    <string name="episode_action_play_in_browser">Atskaņot internetā</string>
-    <string name="episode_action_copy_link">Kopēt linku</string>
     <string name="episode_action_auto_download">Automātiski ielādēt</string>
     <string name="episode_action_download_mirror">Ielādēt spoguli</string>
     <string name="episode_action_reload_links">Pārlādēt saites</string>
@@ -437,8 +435,6 @@
     <string name="hls_playlist">HLS atskaņošanas saraksts</string>
     <string name="player_pref">Vēlamais video atskaņotājs</string>
     <string name="player_settings_play_in_app">Iekšējais atskaņotājs</string>
-    <string name="player_settings_play_in_mpv">MPV</string>
-    <string name="player_settings_play_in_web">Web video apraide</string>
     <string name="app_not_found_error">Aplikācijs nav atrasta</string>
     <string name="all_languages_preference">Visas valodas</string>
     <string name="skip_type_ed">Beigas</string>
@@ -513,8 +509,6 @@
     <string name="setup_extensions_subtext">Lejupielādējiet to vietņu sarakstu, kuras vēlaties izmantot</string>
     <string name="extension_install_first">Vispirms instalējiet paplašinājumu</string>
     <string name="skip_type_op">Atvēršana</string>
-    <string name="player_settings_play_in_vlc">VLC</string>
-    <string name="player_settings_play_in_browser">Interneta mekletājs</string>
     <string name="skip_type_intro">Sākums</string>
     <string name="skip_type_format" formatted="true">Izlaist %s</string>
     <string name="action_remove_from_watched">Noņemt no skatītajiem</string>

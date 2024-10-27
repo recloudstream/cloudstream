@@ -211,7 +211,7 @@
     <string name="asian_drama">دراما آسيوية</string>
     <string name="livestreams">بث حي</string>
     <string name="nsfw">+18</string>
-    <string name="others">أخري</string>
+    <string name="others">أخرى</string>
     <!--singular-->
     <string name="movies_singular">فيلم</string>
     <string name="tv_series_singular">مسلسل</string>
@@ -233,8 +233,6 @@
     <string name="episode_action_chromecast_mirror">مرآة كروم كاست</string>
     <string name="episode_action_play_in_app">تشغيل في التطبيق</string>
     <string name="episode_action_play_in_format">%s تشغيل في</string>
-    <string name="episode_action_play_in_browser">تشغيل في الويب</string>
-    <string name="episode_action_copy_link">نسخ الرابط</string>
     <string name="episode_action_auto_download">التحميل التلقائي</string>
     <string name="episode_action_download_mirror">تحميل بجودات مختلفة</string>
     <string name="episode_action_reload_links">إعادة تحميل الروابط</string>
@@ -411,8 +409,8 @@
     <string name="setup_done">تم</string>
     <string name="extensions">الإضافات</string>
     <string name="add_repository">إضافة مستودع</string>
-    <string name="repository_name_hint">إسم المستودع</string>
-    <string name="repository_url_hint">عنوان URL للمستودع</string>
+    <string name="repository_name_hint">إسم المستودع (اختياري)</string>
+    <string name="repository_url_hint">عنوان URL للمستودع أو الشفرة القصيرة</string>
     <string name="plugin_loaded">تم تحميل الإضافة</string>
     <string name="plugin_deleted">تم إزالة الإضافة</string>
     <string name="plugin_load_fail" formatted="true">تعذر التحميل %s</string>
@@ -464,10 +462,6 @@
     <string name="action_open_play">فتح(تشغيل)</string>
     <string name="season_format">%1$s %2$d%3$s</string>
     <string name="plugins_updated" formatted="true">المكونات الإضافية المحدثة %d</string>
-    <string name="player_settings_play_in_vlc">VLC</string>
-    <string name="player_settings_play_in_mpv">MPV</string>
-    <string name="player_settings_play_in_web">اسقاط فيديو الويب</string>
-    <string name="player_settings_play_in_browser">متصفح الإنترنت</string>
     <string name="skip_type_format" formatted="true">تخطي %s</string>
     <string name="skip_type_op">الافتتاح</string>
     <string name="skip_type_ed">النهاية</string>
@@ -653,7 +647,6 @@
     <string name="episode_upcoming_format" formatted="true">قادم خلال %s</string>
     <string name="next_season_episode_format" formatted="true">سيتم إصدار الحلقة %1$d من الموسم %2$d في</string>
     <string name="episode_action_cast_mirror">مرآة البث</string>
-    <string name="player_settings_play_in_fcast">بث ف</string>
     <string name="player_settings_select_cast_device">حدد جهاز البث</string>
     <string name="cs3wiki">CloudStream ويكي</string>
     <string name="pref_category_security">إعدادات الأمان</string>
@@ -695,4 +688,9 @@
 \n%s</string>
     <string name="preview_seekbar">معاينة شريط البحث</string>
     <string name="preview_seekbar_desc">تمكين معاينة الصورة المصغرة على شريط البحث</string>
+    <string name="no_subtitles_loaded">لم يتم تحميل أي ترجمات بعد</string>
+    <string name="confirm_before_exiting_title">تأكيد قبل الخروج</string>
+    <string name="confirm_before_exiting_desc">عرض مربع الحوار قبل الخروج من التطبيق</string>
+    <string name="show">أظهِر</string>
+    <string name="dont_show">لا تظهر</string>
 </resources>

@@ -171,8 +171,6 @@
     <string name="episode_action_chromecast_mirror">Støpt Speil</string>
     <string name="episode_action_play_in_app">Spill i appen</string>
     <string name="episode_action_play_in_format">Spill i %s</string>
-    <string name="episode_action_play_in_browser">Spill i nettleseren</string>
-    <string name="episode_action_copy_link">Kopier link</string>
     <string name="episode_action_auto_download">Automatisk nedlasting</string>
     <string name="episode_action_download_mirror">Last ned speil</string>
     <string name="episode_action_reload_links">Last inn lenker på nytt</string>
@@ -250,7 +248,6 @@
     <string name="hls_playlist">HLS-spilleliste</string>
     <string name="player_pref">Foretrukket videospiller</string>
     <string name="player_settings_play_in_app">Intern spiller</string>
-    <string name="player_settings_play_in_vlc">VLC</string>
     <string name="all_languages_preference">Alle språk</string>
     <string name="skip_type_format" formatted="true">Hopp over %s</string>
     <string name="clear_history">Tøm historikk</string>
@@ -283,7 +280,6 @@
     <string name="extension_description">Beskrivelse</string>
     <string name="add_account">Legg til konto</string>
     <string name="normal">Normal</string>
-    <string name="player_settings_play_in_mpv">MPV</string>
     <string name="double_tap_to_pause_settings">Dobbelttrykk for å sette på pause</string>
     <string name="go_forward_30">+30</string>
     <string name="subtitles_shadow">Skygge</string>
@@ -416,7 +412,6 @@
     <string name="authenticated_user_fail" formatted="true">Kunne ikke logge inn på %s</string>
     <string name="uppercase_all_subtitles">Store bokstaver i undertekster</string>
     <string name="extension_authors">Utviklere</string>
-    <string name="player_settings_play_in_browser">Nettleser</string>
     <string name="nsfw">Sensurerbart</string>
     <string name="quality_webrip">Vev</string>
     <string name="network_adress_example">Lenke til strøm</string>
@@ -450,7 +445,6 @@
     <string name="subtitles_remove_bloat">Fjern unødvendig informasjon fra undertekster</string>
     <string name="extras">Ekstra</string>
     <string name="subtitles_filter_lang">Filtrer etter foretrukket mediaspråk</string>
-    <string name="player_settings_play_in_web">Vev-videosending</string>
     <string name="skip_type_recap">Tilbakeblikk</string>
     <string name="quality_sd">SD</string>
     <string name="trailer">Forfilm</string>

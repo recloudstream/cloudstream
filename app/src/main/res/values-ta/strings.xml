@@ -266,8 +266,6 @@
     <string name="restart">மறுதொடக்கம்</string>
     <string name="extension_description">விவரம்</string>
     <string name="extension_authors">ஆசிரியர்கள்</string>
-    <string name="player_settings_play_in_web">வலை வீடியோ நடிகர்கள்</string>
-    <string name="player_settings_play_in_browser">இணைய உலாவி</string>
     <string name="skip_type_format" formatted="true">%s ஐத் தவிர்க்கவும்</string>
     <string name="skip_type_recap">மறுபரிசீலனை செய்யுங்கள்</string>
     <string name="skip_type_intro">அறிமுகம்</string>
@@ -365,7 +363,6 @@
     <string name="emulator_layout">முன்மாதிரி தளவமைப்பு</string>
     <string name="downloaded_file">பதிவிறக்கம் செய்யப்பட்ட கோப்பு</string>
     <string name="resolution">பகுத்தல்</string>
-    <string name="player_settings_play_in_mpv">எம்.பி.வி.</string>
     <string name="empty_library_no_accounts_message">உங்கள் நூலகம் காலியாக உள்ளது :(
 \n நூலகக் கணக்கில் உள்நுழைக அல்லது உங்கள் உள்ளக நூலகத்தில் காட்சிகளைச் சேர்க்கவும்.</string>
     <string name="action_unsubscribe">குழுவிலகவும்</string>
@@ -431,8 +428,6 @@
     <string name="source_error">மூல பிழை</string>
     <string name="remote_error">தொலை பிழை</string>
     <string name="render_error">ரெண்டரர் பிழை</string>
-    <string name="episode_action_play_in_browser">உலாவியில் விளையாடுங்கள்</string>
-    <string name="episode_action_copy_link">இணைப்பை நகலெடுக்கவும்</string>
     <string name="episode_action_auto_download">ஆட்டோ பதிவிறக்கம்</string>
     <string name="episode_action_download_mirror">கண்ணாடியைப் பதிவிறக்கவும்</string>
     <string name="episode_action_reload_links">இணைப்புகளை மீண்டும் ஏற்றவும்</string>
@@ -520,7 +515,6 @@
     <string name="extension_size">அளவு</string>
     <string name="extension_types">ஆதரிக்கப்பட்டது</string>
     <string name="extension_install_first">முதலில் நீட்டிப்பை நிறுவவும்</string>
-    <string name="player_settings_play_in_fcast">Fcast</string>
     <string name="player_settings_select_cast_device">காச்ட் சாதனத்தைத் தேர்ந்தெடுக்கவும்</string>
     <string name="all_languages_preference">அனைத்து மொழிகளும்</string>
     <string name="yes">ஆம்</string>
@@ -551,7 +545,6 @@
     <string name="plugins_not_downloaded" formatted="true">பதிவிறக்கம் செய்யப்படவில்லை: %d</string>
     <string name="plugins_updated" formatted="true">புதுப்பிக்கப்பட்டது %d செருகுநிரல்கள்</string>
     <string name="player_settings_play_in_app">உள் வீரர்</string>
-    <string name="player_settings_play_in_vlc">வி.எல்.சி.</string>
     <string name="skip_type_op">திறப்பு</string>
     <string name="skip_type_mixed_op">கலப்பு திறப்பு</string>
     <string name="skip_type_creddits">வரவு</string>

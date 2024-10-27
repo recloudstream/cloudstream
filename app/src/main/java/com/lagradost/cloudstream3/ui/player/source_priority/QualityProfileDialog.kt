@@ -7,7 +7,7 @@ import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.PlayerQualityProfileDialogBinding
 import com.lagradost.cloudstream3.ui.player.source_priority.QualityDataHelper.getProfileName
 import com.lagradost.cloudstream3.ui.player.source_priority.QualityDataHelper.getProfiles
-import com.lagradost.cloudstream3.ui.result.txt
+import com.lagradost.cloudstream3.utils.txt
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe

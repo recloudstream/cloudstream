@@ -7,7 +7,9 @@ import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.WorkerThread
+import androidx.core.net.toUri
 import androidx.fragment.app.FragmentActivity
+import androidx.preference.PreferenceManager
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.lagradost.cloudstream3.AcraApplication.Companion.getActivity
@@ -27,7 +29,6 @@ import com.lagradost.cloudstream3.syncproviders.providers.MALApi.Companion.MAL_U
 import com.lagradost.cloudstream3.syncproviders.providers.MALApi.Companion.MAL_USER_KEY
 import com.lagradost.cloudstream3.syncproviders.providers.OpenSubtitlesApi.Companion.OPEN_SUBTITLES_USER_KEY
 import com.lagradost.cloudstream3.syncproviders.providers.SubDlApi.Companion.SUBDL_SUBTITLES_USER_KEY
-import com.lagradost.cloudstream3.ui.result.txt
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.DataStore.getDefaultSharedPrefs
@@ -35,8 +36,14 @@ import com.lagradost.cloudstream3.utils.DataStore.getSharedPrefs
 import com.lagradost.cloudstream3.utils.DataStore.mapper
 import com.lagradost.cloudstream3.utils.UIHelper.checkWrite
 import com.lagradost.cloudstream3.utils.UIHelper.requestRW
+import com.lagradost.cloudstream3.utils.VideoDownloadManager.StreamData
+import com.lagradost.cloudstream3.utils.VideoDownloadManager.getBasePath
 import com.lagradost.cloudstream3.utils.VideoDownloadManager.setupStream
+import com.lagradost.safefile.MediaFileContentType
+import com.lagradost.safefile.SafeFile
 import okhttp3.internal.closeQuietly
+import java.io.File
+import java.io.IOException
 import java.io.OutputStream
 import java.io.PrintWriter
 import java.lang.System.currentTimeMillis
@@ -69,7 +76,12 @@ object BackupUtils {
 
         "biometric_key", // can lock down users if backup is shared on a incompatible device
         "nginx_user", // Nginx user key
-        "download_path_key" // No access rights after restore data from backup
+
+        // No access rights after restore data from backup
+        "download_path_key",
+        "download_path_key_visual",
+        "backup_path_key",
+        "backup_dir_path_key"
     )
 
     /** false if key should not be contained in backup */
@@ -166,10 +178,9 @@ object BackupUtils {
             }
 
             val date = SimpleDateFormat("yyyy_MM_dd_HH_mm").format(Date(currentTimeMillis()))
-            val ext = "txt"
             val displayName = "CS3_Backup_${date}"
             val backupFile = getBackup(context)
-            val stream = setupStream(context, displayName, null, ext, false)
+            val stream = setupBackupStream(context, displayName)
 
             fileStream = stream.openNew()
             printStream = PrintWriter(fileStream)
@@ -193,6 +204,18 @@ object BackupUtils {
             printStream?.closeQuietly()
             fileStream?.closeQuietly()
         }
+    }
+
+    @Throws(IOException::class)
+    private fun setupBackupStream(context: Context, name: String, ext: String = "txt"): StreamData {
+        return setupStream(
+            baseFile = getCurrentBackupDir(context).first ?: getDefaultBackupDir(context)
+            ?: throw IOException("Bad config"),
+            name,
+            folder = null,
+            extension = ext,
+            tryResume = false
+        )
     }
 
     fun FragmentActivity.setUpBackup() {
@@ -263,5 +286,28 @@ object BackupUtils {
             }
         }
         editor.apply()
+    }
+
+    /**
+     * Copy of [VideoDownloadManager.basePathToFile], [VideoDownloadManager.getDefaultDir] and [VideoDownloadManager.getBasePath]
+     * modded for backup specific paths
+     * */
+
+    fun getDefaultBackupDir(context: Context): SafeFile? {
+        return SafeFile.fromMedia(context, MediaFileContentType.Downloads)
+    }
+
+    fun getCurrentBackupDir(context: Context): Pair<SafeFile?, String?> {
+        val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
+        val basePathSetting = settingsManager.getString(context.getString(R.string.backup_path_key), null)
+        return baseBackupPathToFile(context, basePathSetting) to basePathSetting
+    }
+
+    private fun baseBackupPathToFile(context: Context, path: String?): SafeFile? {
+        return when {
+            path.isNullOrBlank() -> getDefaultBackupDir(context)
+            path.startsWith("content://") -> SafeFile.fromUri(context, path.toUri())
+            else -> SafeFile.fromFile(context, File(path))
+        }
     }
 }

@@ -243,7 +243,6 @@
     <string name="episode_action_chromecast_mirror">Chromecast mirror</string>
     <string name="episode_action_play_in_app">ایپ میں چلائیں</string>
     <string name="episode_action_play_in_format">%s میں چلائیں</string>
-    <string name="episode_action_copy_link">کاپی لنک</string>
     <string name="episode_action_download_mirror">ڈاؤنلوڈ mirror</string>
     <string name="episode_action_reload_links">لنکس کو دوبارہ لوڈ کریں</string>
     <string name="episode_action_download_subtitle">سب ٹائٹلز ڈاؤن لوڈ</string>
@@ -336,7 +335,6 @@
     <string name="subtitle_offset_extra_hint_none_format">کوئی زیرنویس میں دیری نہیں</string>
     <string name="nsfw_singular">این ایس ایف ڈبلیو</string>
     <string name="episode_action_auto_download">آٹو ڈاؤن لوڈ</string>
-    <string name="episode_action_play_in_browser">browser میں چلائیں</string>
     <string name="video_ram_description">بہت زیادہ سیٹ ہونے پر کم میموری والی ڈیوائس(جیسے کہ Android TV) پر کریشوں کا سبب بنتا ہے.</string>
     <string name="remove_site_pref">Remove site</string>
     <string name="add_site_summary">Add a clone of an existing site, with a different URL</string>
@@ -361,7 +359,6 @@
     <string name="resolution_and_title">قرارداد اور عنوان</string>
     <string name="quality_hdr">HDR</string>
     <string name="subscription_deleted">%s سے ان سبسکرائب کیا گیا</string>
-    <string name="player_settings_play_in_web">ویب ویڈیو کاسٹ</string>
     <string name="is_adult">18+</string>
     <string name="test_log">لاگ</string>
     <string name="network_adress_example">https://example.com/example.mp4</string>
@@ -427,11 +424,8 @@
     <string name="extension_status">حالت</string>
     <string name="extension_size">سائز</string>
     <string name="extension_language">زبان</string>
-    <string name="player_settings_play_in_vlc">وی ایل سی</string>
     <string name="player_pref">ترجیحی ویڈیو پلیئر</string>
     <string name="player_settings_play_in_app">اندرونی پلیئر</string>
-    <string name="player_settings_play_in_mpv">ایم پی وی</string>
-    <string name="player_settings_play_in_browser">ویب براؤزر</string>
     <string name="app_not_found_error">ایپ نہیں ملی</string>
     <string name="skip_type_recap">Recap</string>
     <string name="skip_type_mixed_ed">مخلوط اختتام</string>

@@ -258,8 +258,6 @@
     <string name="episode_action_chromecast_mirror">Bağlantıyı Chromecast ile yayınla</string>
     <string name="episode_action_play_in_app">Burada oynat</string>
     <string name="episode_action_play_in_format">%s üzerinden oynat</string>
-    <string name="episode_action_play_in_browser">Tarayıcıda oynat</string>
-    <string name="episode_action_copy_link">Bağlantıyı kopyala</string>
     <string name="episode_action_auto_download">Otomatik indir</string>
     <string name="episode_action_download_mirror">Şu kaynaktan indir</string>
     <string name="episode_action_reload_links">Bağlantıları yenile</string>
@@ -436,8 +434,8 @@
     <string name="setup_done">Bitti</string>
     <string name="extensions">Eklentiler</string>
     <string name="add_repository">Depo ekle</string>
-    <string name="repository_name_hint">Depo ismi</string>
-    <string name="repository_url_hint">Depo URL\'si</string>
+    <string name="repository_name_hint">Depo adı (İsteğe bağlı)</string>
+    <string name="repository_url_hint">Depo URL\'si veya Kısa Kod</string>
     <string name="plugin_loaded">Eklenti yüklendi</string>
     <string name="plugin_deleted">Eklenti silindi</string>
     <string name="plugin_load_fail" formatted="true">%s yüklenemedi</string>
@@ -482,10 +480,6 @@
     <string name="hls_playlist">HLS Oynatma Listesi</string>
     <string name="player_pref">Tercih edilen video oynatıcısı</string>
     <string name="player_settings_play_in_app">Dahili oynatıcı</string>
-    <string name="player_settings_play_in_vlc">VLC</string>
-    <string name="player_settings_play_in_mpv">MPV</string>
-    <string name="player_settings_play_in_web">Web Video Yayını</string>
-    <string name="player_settings_play_in_browser">İnternet tarayıcısı</string>
     <string name="app_not_found_error">Uygulama bulunamadı</string>
     <string name="history">Geçmiş</string>
     <string name="action_mark_as_watched">İzlendi olarak işaretle</string>
@@ -669,7 +663,6 @@
     <string name="next_season_episode_format" formatted="true">Sezon %1$d Bölüm %2$d tarihinde yayınlanacak</string>
     <string name="player_settings_select_cast_device">Yansıtılacak cihaz seç</string>
     <string name="episode_action_cast_mirror">Ekran yansıtma</string>
-    <string name="player_settings_play_in_fcast">Fcast</string>
     <string name="cs3wiki">CloudStream Viki</string>
     <string name="pref_category_security">Güvenlik</string>
     <string name="pref_category_accounts">Hesaplar</string>
@@ -710,4 +703,5 @@
     <string name="offline_file">Çevrimdışı izlemek için kullanılabilir</string>
     <string name="preview_seekbar">Seekbar önizleme</string>
     <string name="preview_seekbar_desc">Arama çubuğunda önizleme küçük resmini etkinleştir</string>
+    <string name="no_subtitles_loaded">Henüz altyazı yüklenmedi</string>
 </resources>

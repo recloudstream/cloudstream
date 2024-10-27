@@ -248,7 +248,6 @@
     <string name="video_aspect_ratio_resize">Змінити розмір</string>
     <string name="synopsis">Короткий зміст</string>
     <string name="movies">Фільми</string>
-    <string name="episode_action_copy_link">Скопіювати посилання</string>
     <string name="episode_action_reload_links">Перезавантажити посилання</string>
     <string name="documentaries">Документальні фільми</string>
     <string name="nsfw">NSFW</string>
@@ -257,7 +256,6 @@
     <string name="torrent_singular">Торент</string>
     <string name="show_hd">Мітка якості</string>
     <string name="nsfw_singular">NSFW</string>
-    <string name="episode_action_play_in_browser">Переглянути в браузері</string>
     <string name="unexpected_error">Несподівана помилка плеєра</string>
     <string name="storage_error">Помилка завантаження, перевірте дозволи на зберігання</string>
     <string name="episode_action_chromecast_episode">Епізод Chromecast</string>
@@ -320,7 +318,7 @@
     <string name="recommended">Рекомендовано</string>
     <string name="player_load_subtitles_online">Завантажити з інтернету</string>
     <string name="downloaded_file">Завантажений файл</string>
-    <string name="actor_main">Головна</string>
+    <string name="actor_main">Головний</string>
     <string name="home_source">Джерело</string>
     <string name="home_random">Випадковий</string>
     <string name="coming_soon">Скоро буде…</string>
@@ -377,7 +375,7 @@
     <string name="subtitle_offset_extra_hint_later_format">Використовуйте цей параметр, якщо субтитри з’являються на %d мс занадто рано</string>
     <string name="subtitle_offset_extra_hint_before_format">Використовуйте це, якщо субтитри з’являються із запізненням на %d мс</string>
     <string name="player_loaded_subtitles" formatted="true">Завантажено %s</string>
-    <string name="actor_supporting">Підтримка</string>
+    <string name="actor_supporting">Другорядний</string>
     <string name="actor_background">Фон</string>
     <string name="quality_blueray">Blu-ray</string>
     <string name="subtitles_remove_captions">Видаляти закриті титри з субтитрів</string>
@@ -408,8 +406,8 @@
     <string name="setup_done">Готово</string>
     <string name="extensions">Розширення</string>
     <string name="add_repository">Додати репозиторій</string>
-    <string name="repository_name_hint">Назва репозиторію</string>
-    <string name="repository_url_hint">URL-адреса репозиторію</string>
+    <string name="repository_name_hint">Назва репозиторію (необов\'язково)</string>
+    <string name="repository_url_hint">URL-адреса репозиторію або короткий код</string>
     <string name="plugin_loaded">Плагін завантажено</string>
     <string name="plugin_downloaded">Плагін завантажено</string>
     <string name="plugin_load_fail" formatted="true">Не вдалося завантажити %s</string>
@@ -445,10 +443,6 @@
     <string name="extension_install_first">Спочатку встановіть розширення</string>
     <string name="hls_playlist">Список відтворення HLS</string>
     <string name="player_settings_play_in_app">Вбудований плеєр</string>
-    <string name="player_settings_play_in_vlc">VLC</string>
-    <string name="player_settings_play_in_mpv">MPV</string>
-    <string name="player_settings_play_in_web">Web Video Cast</string>
-    <string name="player_settings_play_in_browser">Веббраузер</string>
     <string name="skip_type_ed">Ендінґ</string>
     <string name="skip_type_recap">Коротке повторення</string>
     <string name="skip_type_format" formatted="true">Пропустити %s</string>
@@ -620,7 +614,6 @@
     <string name="reset_btn">Скинути</string>
     <string name="episode_upcoming_format" formatted="true">Наступний через %s</string>
     <string name="next_season_episode_format" formatted="true">%1$d сезон %2$d епізод вийде через</string>
-    <string name="player_settings_play_in_fcast">Fcast</string>
     <string name="player_settings_select_cast_device">Оберіть пристрій для трансляції</string>
     <string name="episode_action_cast_mirror">Трансляція через дзеркало</string>
     <string name="cs3wiki">CloudStream Wiki</string>
@@ -663,4 +656,9 @@
 \n%s</string>
     <string name="preview_seekbar">Попередній перегляд повзунка</string>
     <string name="preview_seekbar_desc">Ввімкнути мініатюру попереднього перегляду на повзунку</string>
+    <string name="no_subtitles_loaded">Субтитри ще не завантажено</string>
+    <string name="confirm_before_exiting_title">Підтвердити перед виходом</string>
+    <string name="show">Показувати</string>
+    <string name="confirm_before_exiting_desc">Показувати діалог перед виходом із застосунку</string>
+    <string name="dont_show">Не показувати</string>
 </resources>

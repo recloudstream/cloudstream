@@ -149,8 +149,6 @@
     <string name="source_error">Kjeldefeil</string>
     <string name="episode_action_play_in_app">Spel av i programmet</string>
     <string name="episode_action_play_in_format">Spel av i %s</string>
-    <string name="episode_action_play_in_browser">Spel av i nettlesaren</string>
-    <string name="episode_action_copy_link">Kopier lenke</string>
     <string name="episode_action_auto_download">Automatisk nedlasting</string>
     <string name="episode_action_reload_links">Last inn lenker på nytt</string>
     <string name="episode_action_download_subtitle">Last ned undertekstar</string>

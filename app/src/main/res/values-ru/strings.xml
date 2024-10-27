@@ -190,7 +190,6 @@
     <string name="torrent">Торренты</string>
     <string name="others">Другое</string>
     <string name="storage_error">Ошибка загрузки, проверьте разрешения хранилища</string>
-    <string name="episode_action_copy_link">Копировать ссылку</string>
     <string name="episode_action_auto_download">Автоскачивание</string>
     <string name="episode_action_download_mirror">Загрузка. Зеркало</string>
     <string name="season">Сезон</string>
@@ -251,7 +250,7 @@
     <string name="update">Обновить</string>
     <string name="primary_color_settings">Основной цвет</string>
     <string name="provider_lang_settings">Языки провайдеров</string>
-    <string name="repository_name_hint">Название репозитория</string>
+    <string name="repository_name_hint">Название репозитория (необязательно)</string>
     <string name="clear_history">Очистить историю</string>
     <string name="referer">Реферер (необязательно)</string>
     <string name="benene">Дайте бенен разрабам</string>
@@ -270,8 +269,6 @@
     <string name="extension_size">Размер</string>
     <string name="extension_authors">Авторы</string>
     <string name="extension_types">Поддерживается</string>
-    <string name="player_settings_play_in_vlc">VLC</string>
-    <string name="player_settings_play_in_mpv">MPV</string>
     <string name="skip_type_format" formatted="true">Пропустить %s</string>
     <string name="skip_type_ed">Концовка</string>
     <string name="use_system_brightness_settings_des">Используйте яркость системы в проигрывателе приложения вместо темного наложения</string>
@@ -293,7 +290,6 @@
     <string name="unexpected_error">Неожиданная ошибка плеера</string>
     <string name="episode_action_chromecast_episode">Эпизод Chromecast</string>
     <string name="episode_action_play_in_format">Воспроизведение на %s</string>
-    <string name="episode_action_play_in_browser">Воспроизвести в браузере</string>
     <string name="episode_action_download_subtitle">Скачать субтитры</string>
     <string name="show_hd">Знак качества</string>
     <string name="poster_ui_settings">Переключение элементов интерфейса на плакате</string>
@@ -309,7 +305,6 @@
     <string name="sync_score_format" formatted="true">%d из 10</string>
     <string name="safe_mode_crash_info">Посмотреть информацию о сбое</string>
     <string name="player_pref">Предпочитаемый видеоплеер</string>
-    <string name="player_settings_play_in_browser">Веб-браузер</string>
     <string name="app_not_found_error">Приложение не найдено</string>
     <string name="all_languages_preference">Все языки</string>
     <string name="skip_type_op">Вступление</string>
@@ -359,7 +354,7 @@
     <string name="pref_category_gestures">Жесты</string>
     <string name="setup_done">Готово</string>
     <string name="extensions">Расширения</string>
-    <string name="repository_url_hint">URL репозитория</string>
+    <string name="repository_url_hint">URL или код репозитория</string>
     <string name="plugin_loaded">Плагин загружен</string>
     <string name="action_open_play">@string/home_play</string>
     <string name="double_tap_to_seek_settings">Перемотка двойным нажатием</string>
@@ -492,7 +487,6 @@
     <string name="random_button_settings_desc">Отображать рандомную кнопку в библиотеке и главной странице</string>
     <string name="random_button_settings">Рандомная кнопка</string>
     <string name="apk_installer_legacy">Legacy (старый)</string>
-    <string name="player_settings_play_in_web">Web Video Cast</string>
     <string name="bug_report_settings_on">Не отправляет данные</string>
     <string name="episode_action_reload_links">Перезагрузить ссылки</string>
     <string name="preferred_media_settings">Предпочтительные медиа</string>
@@ -550,7 +544,7 @@
 \nПРИМЕЧАНИЕ. Если сумма равна 10 или более, плеер автоматически пропустит загрузку при загрузке этой ссылки!</string>
     <string name="links_reloaded_toast">Ссылки перезагружены</string>
     <string name="select_an_account">Выбрать аккаунт</string>
-    <string name="favorite_removed">%s убран из избранных</string>
+    <string name="favorite_removed">%s убрано из избранных</string>
     <string name="enter_pin">Введите пин-код</string>
     <string name="lock_profile">Защитить профиль</string>
     <string name="pin">Пин-код</string>
@@ -570,7 +564,7 @@
 \n\'%s.\'
 \n
 \nВы хотите добавить этот элемент, заменить существующие или отменить это действие?</string>
-    <string name="action_remove_from_favorites">Убрать из избранных</string>
+    <string name="action_remove_from_favorites">Убрать из избранного</string>
     <string name="action_add_to_favorites">Добавить в избранное</string>
     <string name="auto_rotate_video_desc">Включить автоматическую смену ориентации экрана на основе ориентации видео</string>
     <string name="auto_rotate_video">Автоповорот</string>
@@ -581,7 +575,7 @@
     <string name="enter_current_pin">Введите текущий пин-код</string>
     <string name="auto_rotate_video_key">auto_rotate_video_key</string>
     <string name="favorites_list_name">Избранное</string>
-    <string name="favorite_added">%s добавлен в избранное</string>
+    <string name="favorite_added">%s добавлено в избранное</string>
     <string name="enter_pin_with_name" formatted="true">Введите пин-код от %s</string>
     <string name="action_subscribe">Подписаться</string>
     <string name="backup_frequency">Частота резервного копирования</string>
@@ -620,11 +614,10 @@
     <string name="reset_btn">Сброс</string>
     <string name="next_season_episode_format" formatted="true">Сезон %1$d Эпизод %2$d выйдет</string>
     <string name="episode_upcoming_format" formatted="true">Выйдет %s</string>
-    <string name="player_settings_play_in_fcast">Fcast</string>
     <string name="player_settings_select_cast_device">Выберите девайс для трансляции</string>
     <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
     <string name="downloads_empty">В данный момент загрузок нет.</string>
-    <string name="play_from_beginning_img_des">Играть с самого начала</string>
+    <string name="play_from_beginning_img_des">Играть с начала</string>
     <string name="open_local_video">Открыть локальное видео</string>
     <string name="pref_category_security">Меры безопасности</string>
     <string name="pref_category_accounts">Аккаунты</string>
@@ -660,4 +653,12 @@
     <string name="sort_release_date_old">Дата выхода (Со Старого к Новому)</string>
     <string name="hide_player_control_names">Скрыть имена контроля игроков</string>
     <string name="dismiss">Пропустить</string>
+    <string name="auth_locally">Войти локально</string>
+    <string name="preview_seekbar">Предосмотр поисковой строки</string>
+    <string name="preview_seekbar_desc">Включить предосмотр миниатюр в поисковой строке</string>
+    <string name="no_subtitles_loaded">Субтитры еще не загружены</string>
+    <string name="confirm_before_exiting_title">Подтвердить перед выходом</string>
+    <string name="confirm_before_exiting_desc">Показать диалог перед выходом из апликации</string>
+    <string name="show">Показать</string>
+    <string name="dont_show">Не показывать</string>
 </resources>

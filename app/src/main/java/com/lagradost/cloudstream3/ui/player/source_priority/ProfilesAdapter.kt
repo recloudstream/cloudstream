@@ -8,13 +8,14 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.toBitmap
 import androidx.core.view.isVisible
+import androidx.palette.graphics.Palette
 import androidx.recyclerview.widget.RecyclerView
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.PlayerQualityProfileItemBinding
-import com.lagradost.cloudstream3.ui.result.UiImage
 import com.lagradost.cloudstream3.utils.AppContextUtils
-import com.lagradost.cloudstream3.utils.UIHelper.setImage
+import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
 
 class ProfilesAdapter(
     override val items: MutableList<QualityDataHelper.QualityProfile>,
@@ -81,15 +82,25 @@ class ProfilesAdapter(
 
             outline.isVisible = currentItem?.second?.id == item.id
 
-            profileBg.setImage(UiImage.Drawable(art[index % art.size]), null, false) { palette ->
-                val color = palette.getDarkVibrantColor(
-                    ContextCompat.getColor(
-                        itemView.context,
-                        R.color.dubColorBg
-                    )
-                )
-                wifiText.backgroundTintList = ColorStateList.valueOf(color)
-                dataText.backgroundTintList = ColorStateList.valueOf(color)
+            profileBg.loadImage(art[index % art.size]) {
+                target { drawable ->
+                    // Convert drawable to bitmap to extract palette colors
+                    val bitmap = drawable.toBitmap()
+
+                    Palette.from(bitmap).generate { palette ->
+                        palette?.let {
+                            val color = it.getDarkVibrantColor(
+                                ContextCompat.getColor(
+                                    itemView.context,
+                                    R.color.dubColorBg
+                                )
+                            )
+
+                            wifiText.backgroundTintList = ColorStateList.valueOf(color)
+                            dataText.backgroundTintList = ColorStateList.valueOf(color)
+                        }
+                    }
+                }
             }
 
             val textStyle =

@@ -1,4 +1,4 @@
-package com.lagradost.cloudstream3.utils.fcast
+package com.lagradost.cloudstream3.actions.temp.fcast
 
 import android.content.Context
 import android.net.nsd.NsdManager

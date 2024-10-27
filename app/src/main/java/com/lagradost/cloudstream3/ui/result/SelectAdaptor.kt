@@ -8,6 +8,8 @@ import com.google.android.material.button.MaterialButton
 import com.lagradost.cloudstream3.databinding.ResultSelectionBinding
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
+import com.lagradost.cloudstream3.utils.UiText
+import com.lagradost.cloudstream3.utils.setText
 
 typealias SelectData = Pair<UiText?, Any>
 

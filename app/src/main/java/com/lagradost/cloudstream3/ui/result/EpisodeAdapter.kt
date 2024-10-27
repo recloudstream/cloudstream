@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.lagradost.cloudstream3.APIHolder.unixTimeMS
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.actions.VideoClickActionHolder
 import com.lagradost.cloudstream3.databinding.ResultEpisodeBinding
 import com.lagradost.cloudstream3.databinding.ResultEpisodeLargeBinding
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.secondsToReadable
@@ -22,17 +23,21 @@ import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.utils.AppContextUtils.html
-import com.lagradost.cloudstream3.utils.UIHelper.setImage
+import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import com.lagradost.cloudstream3.utils.VideoDownloadHelper
+import com.lagradost.cloudstream3.utils.setText
+import com.lagradost.cloudstream3.utils.txt
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
+/**
+ * Ids >= 1000 are reserved for VideoClickActions
+ * @see VideoClickActionHolder
+ */
 const val ACTION_PLAY_EPISODE_IN_PLAYER = 1
-const val ACTION_PLAY_EPISODE_IN_VLC_PLAYER = 2
-const val ACTION_PLAY_EPISODE_IN_BROWSER = 3
 
 const val ACTION_CHROME_CAST_EPISODE = 4
 const val ACTION_CHROME_CAST_MIRROR = 5
@@ -41,7 +46,6 @@ const val ACTION_DOWNLOAD_EPISODE = 6
 const val ACTION_DOWNLOAD_MIRROR = 7
 
 const val ACTION_RELOAD_EPISODE = 8
-const val ACTION_COPY_LINK = 9
 
 const val ACTION_SHOW_OPTIONS = 10
 
@@ -52,12 +56,7 @@ const val ACTION_SHOW_DESCRIPTION = 15
 const val ACTION_DOWNLOAD_EPISODE_SUBTITLE = 13
 const val ACTION_DOWNLOAD_EPISODE_SUBTITLE_MIRROR = 14
 
-const val ACTION_PLAY_EPISODE_IN_WEB_VIDEO = 16
-const val ACTION_PLAY_EPISODE_IN_MPV = 17
-const val ACTION_PLAY_EPISODE_IN_MPV_YTDL = 20
-
 const val ACTION_MARK_AS_WATCHED = 18
-const val ACTION_FCAST = 19
 
 const val TV_EP_SIZE = 400
 
@@ -69,22 +68,10 @@ class EpisodeAdapter(
     private val downloadClickCallback: (DownloadClickEvent) -> Unit,
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     companion object {
-        /**
-         * @return ACTION_PLAY_EPISODE_IN_PLAYER, ACTION_PLAY_EPISODE_IN_BROWSER or ACTION_PLAY_EPISODE_IN_VLC_PLAYER depending on player settings.
-         * See array.xml/player_pref_values
-         **/
         fun getPlayerAction(context: Context): Int {
-
             val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
-            return when (settingsManager.getInt(context.getString(R.string.player_pref_key), 1)) {
-                1 -> ACTION_PLAY_EPISODE_IN_PLAYER
-                2 -> ACTION_PLAY_EPISODE_IN_VLC_PLAYER
-                3 -> ACTION_PLAY_EPISODE_IN_BROWSER
-                4 -> ACTION_PLAY_EPISODE_IN_WEB_VIDEO
-                5 -> ACTION_PLAY_EPISODE_IN_MPV
-                6 -> ACTION_PLAY_EPISODE_IN_MPV_YTDL
-                else -> ACTION_PLAY_EPISODE_IN_PLAYER
-            }
+            val playerPref = settingsManager.getString(context.getString(R.string.player_default_key), "")
+            return VideoClickActionHolder.uniqueIdToId(playerPref) ?: ACTION_PLAY_EPISODE_IN_PLAYER
         }
     }
 
@@ -240,7 +227,7 @@ class EpisodeAdapter(
                     episodeProgress.isVisible = displayPos > 0L
                 }
 
-                episodePoster.isVisible = episodePoster.setImage(card.poster) == true
+                episodePoster.loadImage(card.poster)
 
                 if (card.rating != null) {
                     episodeRating.text = episodeRating.context?.getString(R.string.rated_format)
@@ -275,7 +262,7 @@ class EpisodeAdapter(
                         episodePlayIcon.isVisible = false
                         episodeUpcomingIcon.isVisible = !episodePoster.isVisible
                         episodeDate.setText(
-                            txt(
+                            com.lagradost.cloudstream3.utils.txt(
                                 R.string.episode_upcoming_format,
                                 secondsToReadable(
                                     card.airDate.minus(unixTimeMS).div(1000).toInt(),

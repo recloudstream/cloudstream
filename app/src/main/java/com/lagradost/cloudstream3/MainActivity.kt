@@ -1,14 +1,14 @@
 package com.lagradost.cloudstream3
 
 import android.animation.ValueAnimator
-import android.content.ComponentName
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.res.ColorStateList
 import android.content.res.Configuration
 import android.graphics.Rect
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.util.AttributeSet
 import android.util.Log
@@ -18,6 +18,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.Toast
@@ -29,7 +30,6 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.view.GravityCompat
 import androidx.core.view.children
 import androidx.core.view.isGone
 import androidx.core.view.isInvisible
@@ -64,7 +64,6 @@ import com.lagradost.cloudstream3.APIHolder.initAll
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
-import com.lagradost.cloudstream3.CommonActivity.activity
 import com.lagradost.cloudstream3.CommonActivity.loadThemes
 import com.lagradost.cloudstream3.CommonActivity.onColorSelectedEvent
 import com.lagradost.cloudstream3.CommonActivity.onDialogDismissedEvent
@@ -113,10 +112,9 @@ import com.lagradost.cloudstream3.ui.result.LinearListLayout
 import com.lagradost.cloudstream3.ui.result.ResultViewModel2
 import com.lagradost.cloudstream3.ui.result.START_ACTION_RESUME_LATEST
 import com.lagradost.cloudstream3.ui.result.SyncViewModel
-import com.lagradost.cloudstream3.ui.result.setImage
-import com.lagradost.cloudstream3.ui.result.setText
-import com.lagradost.cloudstream3.ui.result.setTextHtml
-import com.lagradost.cloudstream3.ui.result.txt
+import com.lagradost.cloudstream3.utils.setText
+import com.lagradost.cloudstream3.utils.setTextHtml
+import com.lagradost.cloudstream3.utils.txt
 import com.lagradost.cloudstream3.ui.search.SearchFragment
 import com.lagradost.cloudstream3.ui.search.SearchResultBuilder
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
@@ -169,11 +167,11 @@ import com.lagradost.cloudstream3.utils.UIHelper.getResourceColor
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.requestRW
-import com.lagradost.cloudstream3.utils.UIHelper.setImage
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import com.lagradost.cloudstream3.utils.USER_PROVIDER_API
 import com.lagradost.cloudstream3.utils.USER_SELECTED_HOMEPAGE_API
-import com.lagradost.cloudstream3.utils.fcast.FcastManager
+import com.lagradost.cloudstream3.actions.temp.fcast.FcastManager
+import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
 import com.lagradost.safefile.SafeFile
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -186,120 +184,9 @@ import kotlin.math.abs
 import kotlin.math.absoluteValue
 import kotlin.system.exitProcess
 
-//https://github.com/videolan/vlc-android/blob/3706c4be2da6800b3d26344fc04fab03ffa4b860/application/vlc-android/src/org/videolan/vlc/gui/video/VideoPlayerActivity.kt#L1898
-//https://wiki.videolan.org/Android_Player_Intents/
-
-//https://github.com/mpv-android/mpv-android/blob/0eb3cdc6f1632636b9c30d52ec50e4b017661980/app/src/main/java/is/xyz/mpv/MPVActivity.kt#L904
-//https://mpv-android.github.io/mpv-android/intent.html
-
-// https://www.webvideocaster.com/integrations
-
-//https://github.com/jellyfin/jellyfin-android/blob/6cbf0edf84a3da82347c8d59b5d5590749da81a9/app/src/main/java/org/jellyfin/mobile/bridge/ExternalPlayer.kt#L225
-
 class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCallback {
     companion object {
-        const val VLC_PACKAGE = "org.videolan.vlc"
-        const val MPV_PACKAGE = "is.xyz.mpv"
-        const val MPV_YTDL_PACKAGE = "is.xyz.mpv.ytdl"
-        const val WEB_VIDEO_CAST_PACKAGE = "com.instantbits.cast.webvideo"
-
-        val VLC_COMPONENT = ComponentName(VLC_PACKAGE, "$VLC_PACKAGE.gui.video.VideoPlayerActivity")
-        val MPV_COMPONENT = ComponentName(MPV_PACKAGE, "$MPV_PACKAGE.MPVActivity")
-        val MPV_YTDL_COMPONENT = ComponentName(MPV_YTDL_PACKAGE, "$MPV_PACKAGE.MPVActivity")
-
-        //TODO REFACTOR AF
-        open class ResultResume(
-            val packageString: String,
-            val action: String = Intent.ACTION_VIEW,
-            val position: String? = null,
-            val duration: String? = null,
-            var launcher: ActivityResultLauncher<Intent>? = null,
-        ) {
-            val defaultTime = -1L
-
-            val lastId get() = "${packageString}_last_open_id"
-            suspend fun launch(id: Int?, callback: suspend Intent.() -> Unit) {
-                val intent = Intent(action)
-
-                if (id != null)
-                    setKey(lastId, id)
-                else
-                    removeKey(lastId)
-
-                intent.setPackage(packageString)
-                callback.invoke(intent)
-                launcher?.launch(intent)
-            }
-
-            open fun getPosition(intent: Intent?): Long {
-                return defaultTime
-            }
-
-            open fun getDuration(intent: Intent?): Long {
-                return defaultTime
-            }
-        }
-
-        val VLC = object : ResultResume(
-            VLC_PACKAGE,
-            // Android 13 intent restrictions fucks up specifically launching the VLC player
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
-                "org.videolan.vlc.player.result"
-            } else {
-                Intent.ACTION_VIEW
-            },
-            "extra_position",
-            "extra_duration",
-        ) {
-            override fun getPosition(intent: Intent?): Long {
-                return intent?.getLongExtra(this.position, defaultTime) ?: defaultTime
-            }
-
-            override fun getDuration(intent: Intent?): Long {
-                return intent?.getLongExtra(this.duration, defaultTime) ?: defaultTime
-            }
-        }
-
-        val MPV = object : ResultResume(
-            MPV_PACKAGE,
-            //"is.xyz.mpv.MPVActivity.result", // resume not working :pensive:
-            position = "position",
-            duration = "duration",
-        ) {
-            override fun getPosition(intent: Intent?): Long {
-                return intent?.getIntExtra(this.position, defaultTime.toInt())?.toLong()
-                    ?: defaultTime
-            }
-
-            override fun getDuration(intent: Intent?): Long {
-                return intent?.getIntExtra(this.duration, defaultTime.toInt())?.toLong()
-                    ?: defaultTime
-            }
-        }
-
-        val MPV_YTDL = object : ResultResume(
-            MPV_YTDL_PACKAGE,
-            //"is.xyz.mpv.ytdl/is.xyz.mpv.MPVActivity.result", // resume not working :pensive:
-            position = "position",
-            duration = "duration",
-        ) {
-            override fun getPosition(intent: Intent?): Long {
-                return intent?.getIntExtra(this.position, defaultTime.toInt())?.toLong()
-                    ?: defaultTime
-            }
-
-            override fun getDuration(intent: Intent?): Long {
-                return intent?.getIntExtra(this.duration, defaultTime.toInt())?.toLong()
-                    ?: defaultTime
-            }
-        }
-
-        val WEB_VIDEO = ResultResume(WEB_VIDEO_CAST_PACKAGE)
-
-        val resumeApps = arrayOf(
-            VLC, MPV, MPV_YTDL, WEB_VIDEO
-        )
-
+        var activityResultLauncher: ActivityResultLauncher<Intent>? = null
 
         const val TAG = "MAINACT"
         const val ANIMATED_OUTLINE: Boolean = false
@@ -724,14 +611,31 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         onUserLeaveHint(this)
     }
 
-    private fun showConfirmExitDialog() {
-        val builder: AlertDialog.Builder = AlertDialog.Builder(this)
-        builder.setTitle(R.string.confirm_exit_dialog)
-        builder.apply {
-            // Forceful exit since back button can actually go back to setup
-            setPositiveButton(R.string.yes) { _, _ -> exitProcess(0) }
-            setNegativeButton(R.string.no) { _, _ -> }
+    @SuppressLint("ApplySharedPref") // commit since the op needs to be synchronous
+    private fun showConfirmExitDialog(settingsManager: SharedPreferences) {
+        val confirmBeforeExit = settingsManager.getInt(getString(R.string.confirm_exit_key), -1)
+        when(confirmBeforeExit) {
+            // AUTO - Confirm exit is shown only on TV or EMULATOR by default
+            -1 -> if(isLayout(PHONE)) exitProcess(0)
+            // DON'T SHOW
+            1 -> exitProcess(0)
+            // 0 -> SHOW
+            else -> { /*NO-OP : Continue*/ }
         }
+
+        val dialogView = layoutInflater.inflate(R.layout.confirm_exit_dialog, null)
+        val dontShowAgainCheck: CheckBox = dialogView.findViewById(R.id.checkboxDontShowAgain)
+        val builder: AlertDialog.Builder = AlertDialog.Builder(this)
+        builder.setView(dialogView)
+            .setTitle(R.string.confirm_exit_dialog)
+            .setNegativeButton(R.string.no) { _, _ -> /*NO-OP*/}
+            .setPositiveButton(R.string.yes) { _, _ ->
+                if(dontShowAgainCheck.isChecked) {
+                    settingsManager.edit().putInt(getString(R.string.confirm_exit_key), 1).commit()
+                }
+                exitProcess(0)
+            }
+
         builder.show().setDefaultFocus()
     }
 
@@ -1466,7 +1370,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                         resultviewPreviewMetaRating.setText(d.ratingText)
 
                         resultviewPreviewDescription.setTextHtml(d.plotText)
-                        resultviewPreviewPoster.setImage(
+                        resultviewPreviewPoster.loadImage(
                             d.posterImage ?: d.posterBackgroundImage
                         )
 
@@ -1632,16 +1536,14 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                 }
             }
 
-            if (isLayout(TV or EMULATOR)) {
-                if (navDestination.matchDestination(R.id.navigation_home)) {
-                    attachBackPressedCallback {
-                        showConfirmExitDialog()
-                        window?.navigationBarColor =
-                            colorFromAttribute(R.attr.primaryGrayBackground)
-                        updateLocale()
-                    }
-                } else detachBackPressedCallback()
-            }
+            if (navDestination.matchDestination(R.id.navigation_home)) {
+                attachBackPressedCallback {
+                    showConfirmExitDialog(settingsManager)
+                    window?.navigationBarColor =
+                        colorFromAttribute(R.attr.primaryGrayBackground)
+                    updateLocale()
+                }
+            } else detachBackPressedCallback()
         }
 
         //val navController = findNavController(R.id.nav_host_fragment)
@@ -1711,7 +1613,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
 
                 observe(homeViewModel.currentAccount) { currentAccount ->
                     if (currentAccount != null) {
-                        navProfilePic?.setImage(
+                        navProfilePic?.loadImage(
                             currentAccount.image
                         )
                         navProfileRoot.isVisible = true

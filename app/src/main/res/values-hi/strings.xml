@@ -114,8 +114,6 @@
     <string name="episode_action_chromecast_mirror">क्रोमकास्ट मिरर</string>
     <string name="episode_action_play_in_app">एप्प में चलाएं</string>
     <string name="episode_action_play_in_format">%s में चलाएं</string>
-    <string name="episode_action_play_in_browser">Browser में चलाएं</string>
-    <string name="episode_action_copy_link">लिंक कॉपी करें</string>
     <string name="episode_action_auto_download">डाउनलोड करें</string>
     <string name="episode_action_download_mirror">मिरर डाउनलोड</string>
     <string name="episode_action_reload_links">लिंक दोबारा लोड करें</string>
@@ -129,7 +127,7 @@
     <string name="update">अपडेट</string>
     <string name="watch_quality_pref">देखने की तरजीही क्वालिटी (वाईफ़ाई)</string>
     <string name="dns_pref_summary">ISP ब्लॉक से छुटकारा पाएं</string>
-    <string name="provider_lang_settings">प्रोवाइडर की भाषाएं</string>
+    <string name="provider_lang_settings">एक्सटेंशन की भाषाएं</string>
     <string name="app_layout">ऐप का लेआउट</string>
     <string name="preferred_media_settings">तरजीही मीडिया</string>
     <string name="download_path_pref">डाउनलोड पथ</string>
@@ -208,6 +206,38 @@
     <string name="subs_window_color">बॉक्स का रंग</string>
     <string name="subs_outline_color">रूपरेखा रंग</string>
     <string name="subs_subtitle_elevation">उपशीर्षक ऊंचाई</string>
-    <string name="subs_font">अक्षर शैली</string>
+    <string name="subs_font">मुद्रलिपि</string>
     <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
+    <string name="downloads_empty">वर्तमान में कोई डाउनलोड नहीं है।</string>
+    <string name="play_from_beginning_img_des">आरम्भ से शुरू करें</string>
+    <string name="downloads_delete_select">मिटाने के लिए वस्तु चुनें</string>
+    <string name="subs_import_text" formatted="true">फ़ॉन्ट को %s में रखकर आयात करें</string>
+    <string name="test_log">अभिलेख</string>
+    <string name="open_local_video">स्थानीय वीडियो खोलें</string>
+    <string name="subs_subtitle_languages">उपशीर्षक भाषा</string>
+    <string name="player_size_settings">प्लेयर आकार परिवर्तन बटन</string>
+    <string name="eigengraumode_settings">प्रतिश्रवण गति</string>
+    <string name="autoplay_next_settings">आगामी प्रकरण स्वतः चलाएं</string>
+    <string name="autoplay_next_settings_des">वर्तमान प्रकरण समाप्त होने पर आगामी प्रकरण चलाएं</string>
+    <string name="app_subbed_text">सब</string>
+    <string name="action_add_to_bookmarks">दर्शन स्थिति सेट करें</string>
+    <string name="swipe_to_seek_settings">आगे पीछे जाने के लिए स्वाइप करें</string>
+    <string name="subs_auto_select_language">स्वतः चयन भाषा</string>
+    <string name="show_log_cat">लोगकैट दिखाएं</string>
+    <string name="sort_copy">प्रतिलिपि</string>
+    <string name="provider_info_meta">मेटाडाटा साइट द्वारा प्रदान नहीं किया गया है, अगर यह साइट पर विद्यमान नहीं है तो वीडियो लोडिंग विफल हो जाएगी।</string>
+    <string name="next_season_episode_format" formatted="true">सीजन %1$d एपिसोड %2$d में जारी किया जाएगा</string>
+    <string name="picture_in_picture">चित्र में चित्र</string>
+    <string name="chromecast_subtitles_settings">क्रोमकास्ट उपशीर्षक</string>
+    <string name="chromecast_subtitles_settings_des">क्रोमकास्ट उपशीर्षक सेटिंग्स</string>
+    <string name="double_tap_to_seek_settings">आगे पीछे जाने के लिए दो बार टैप करें</string>
+    <string name="double_tap_to_pause_settings">रुकने के लिए दो बार टैप करें</string>
+    <string name="offline_file">ऑफ़लाइन देखने के लिए उपलब्ध</string>
+    <string name="select_all">सभी चुनें</string>
+    <string name="deselect_all">सभी अचयनित करें</string>
+    <string name="app_dubbed_text">डब</string>
+    <string name="subs_download_languages">भाषा डाउनलोड करें</string>
+    <string name="player_subtitles_settings">उपशीर्षक</string>
+    <string name="speed_setting_summary">प्लेयर में गति विकल्प जोड़ता है</string>
+    <string name="swipe_to_change_settings">सेटिंग्स परिवर्तित करने के लिए स्वाइप करें</string>
 </resources>

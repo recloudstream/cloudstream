@@ -19,10 +19,10 @@ import com.lagradost.cloudstream3.plugins.VotingApi.hasVoted
 import com.lagradost.cloudstream3.plugins.VotingApi.vote
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.main
+import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
 import com.lagradost.cloudstream3.utils.SubtitleHelper.fromTwoLettersToLanguage
 import com.lagradost.cloudstream3.utils.SubtitleHelper.getFlagFromIso
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
-import com.lagradost.cloudstream3.utils.UIHelper.setImage
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
 
 
@@ -61,19 +61,9 @@ class PluginDetailsFragment(val data: PluginViewData) : BottomSheetDialogFragmen
         super.onViewCreated(view, savedInstanceState)
         val metadata = data.plugin.second
         binding?.apply {
-            if (!pluginIcon.setImage(//plugin_icon?.height ?:
-                    metadata.iconUrl?.replace(
-                        "%size%",
-                        "$iconSize"
-                    )?.replace(
-                        "%exact_size%",
-                        "$iconSizeExact"
-                    ),
-                    null,
-                    errorImageDrawable = R.drawable.ic_baseline_extension_24
-                )
-            ) {
-                pluginIcon.setImageResource(R.drawable.ic_baseline_extension_24)
+            pluginIcon.loadImage(metadata.iconUrl?.replace("%size%", "$iconSize")
+                ?.replace("%exact_size%", "$iconSizeExact")) {
+                error(R.drawable.ic_baseline_extension_24)
             }
             pluginName.text = metadata.name.removeSuffix("Provider")
             pluginVersion.text = metadata.version.toString()

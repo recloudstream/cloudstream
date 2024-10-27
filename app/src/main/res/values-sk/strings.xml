@@ -188,7 +188,6 @@
     <string name="no_subtitles">Žiadne titulky</string>
     <string name="anime">Anime</string>
     <string name="cartoons">Kreslené</string>
-    <string name="episode_action_copy_link">Skopírovať odkaz</string>
     <string name="episode_action_auto_download">Automaticky stiahnuť</string>
     <string name="episode_action_download_mirror">Zrkadlo sťahovania</string>
     <string name="video_lock">Zamknúť</string>
@@ -320,7 +319,6 @@
     <string name="asian_drama">Ázijské drámy</string>
     <string name="anime_singular">Anime</string>
     <string name="source_error">Chyba zdroja</string>
-    <string name="episode_action_play_in_browser">Prehrať v prehliadači</string>
     <string name="show_dub">Štítok dabingu</string>
     <string name="show_sub">Štítok titulkov</string>
     <string name="show_title">Názov</string>

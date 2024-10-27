@@ -23,8 +23,8 @@ import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.utils.AppContextUtils.getNameFull
 import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.DataStoreHelper.fixVisual
+import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
 import com.lagradost.cloudstream3.utils.SubtitleHelper
-import com.lagradost.cloudstream3.utils.UIHelper.setImage
 
 object SearchResultBuilder {
     private val showCache: MutableMap<String, Boolean> = mutableMapOf()
@@ -120,10 +120,7 @@ object SearchResultBuilder {
         cardText?.text = card.name
         cardText?.isVisible = showTitle
         cardView.isVisible = true
-
-        if (!cardView.setImage(card.posterUrl, card.posterHeaders, colorCallback = colorCallback)) {
-            cardView.setImageResource(R.drawable.default_cover)
-        }
+        cardView.loadImage(card.posterUrl) { error(R.drawable.default_cover) }
 
         fun click(view: View?) {
             clickCallback.invoke(

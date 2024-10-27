@@ -10,7 +10,7 @@ import com.lagradost.cloudstream3.fixTitle
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.INFER_TYPE
-import com.lagradost.cloudstream3.utils.Qualities
+import com.lagradost.cloudstream3.utils.getQualityFromName
 import java.net.URI
 
 class Watchx : Chillx() {
@@ -86,8 +86,7 @@ open class Chillx : ExtractorApi() {
         subtitleCallback: (SubtitleFile) -> Unit,
         callback: (ExtractorLink) -> Unit
     ) {		
-		val master = Regex("\\s*=\\s*'([^']+)").find(
-            app.get(
+	val doc = app.get(
                 url,
                 referer = referer ?: "",
                 headers = mapOf(
@@ -95,33 +94,31 @@ open class Chillx : ExtractorApi() {
                     "Accept-Language" to "en-US,en;q=0.5",
                 )
             ).text
-        )?.groupValues?.get(1)
 		
-		val key = fetchKey() ?: throw ErrorLoadingException("Unable to get key")
+	val master = Regex("\\s*=\\s*'([^']+)").find(doc)?.groupValues?.get(1)		
+	val key = fetchKey() ?: throw ErrorLoadingException("Unable to get key")
 		
         val decrypt = cryptoAESHandler(master ?: return, key.toByteArray(), false)
-            ?.replace("\\", "")
-            ?: throw ErrorLoadingException("failed to decrypt")
+            ?.replace("\\n", "\n")
+	    ?.replace("\\", "")
+            ?: throw ErrorLoadingException("failed to decrypt")        
 
-        val source = Regex(""""?file"?:\s*"([^"]+)""").find(decrypt)?.groupValues?.get(1)
-        val name = url.getHost()
+        val subtitlePattern = """\{"file":"([^"]+)","label":"([^"]+)","kind":"captions","default":\w+\}""".toRegex()
+	val matches = subtitlePattern.findAll(decrypt)
 
-        val subtitles = Regex("""subtitle"?:\s*"([^"]+)""").find(decrypt)?.groupValues?.get(1)
-        val subtitlePattern = """\[(.*?)\](https?://[^\s,]+)""".toRegex()
-        val matches = subtitlePattern.findAll(subtitles ?: "")
-        val languageUrlPairs = matches.map { matchResult ->
-            val (language, url) = matchResult.destructured
-            decodeUnicodeEscape(language) to url
-        }.toList()
+	val languageUrlPairs = matches.map { matchResult ->
+		val (url, label) = matchResult.destructured
+		decodeUnicodeEscape(label) to url
+	}.toList()
 
-        languageUrlPairs.forEach{ (name, file) ->
-            subtitleCallback.invoke(
-                SubtitleFile(
-                    name,
-                    file
-                )
-            )
-        }
+	languageUrlPairs.forEach { (name, file) ->
+		subtitleCallback.invoke(
+			SubtitleFile(
+				name,
+				file
+			)
+		)
+	}
 		
         val header =
             mapOf(
@@ -136,14 +133,21 @@ open class Chillx : ExtractorApi() {
                 "user-agent" to USER_AGENT,
             )
 
-		callback.invoke(
+	val source = Regex(""""?file"?:\s*"([^"]+)""").find(decrypt)?.groupValues?.get(1)
+        val name = url.getHost()
+	val quality = Regex("\\d{3,4}p")
+            .find(doc.substringAfter("<title>").substringBefore("</title>"))
+            ?.groupValues
+            ?.getOrNull(0)
+
+	callback.invoke(
             ExtractorLink(
                 name,
                 name,
                 url = source ?: return,
                 referer = "$mainUrl/",
-                quality = Qualities.Unknown.value,
-				INFER_TYPE,
+                quality = getQualityFromName(quality),
+		INFER_TYPE,
                 headers = header,
             )
         )

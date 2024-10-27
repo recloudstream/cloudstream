@@ -259,8 +259,6 @@
     <string name="episode_action_chromecast_mirror">Chromecast 镜像</string>
     <string name="episode_action_play_in_app">在应用中播放</string>
     <string name="episode_action_play_in_format">在 %s 中播放</string>
-    <string name="episode_action_play_in_browser">在浏览器中播放</string>
-    <string name="episode_action_copy_link">复制链接</string>
     <string name="episode_action_auto_download">自动下载</string>
     <string name="episode_action_download_mirror">下载镜像</string>
     <string name="episode_action_reload_links">重新加载链接</string>
@@ -456,22 +454,18 @@
     <string name="plugins_disabled" formatted="true">已禁用：%d</string>
     <string name="plugins_not_downloaded" formatted="true">未下载：%d</string>
     <string name="plugins_updated" formatted="true">已更新 %d 插件</string>
-    <string name="blank_repo_message">CloudStream 默认不安装片源。您需要从仓库中安装片源。\t
-\n …「」『』­‐­­­‐–—
-\n\t
-\n
-\n由于 Sky UK Limited 的无脑 DMCA 下架 🤮 我们不能在应用内提供仓库链接。
+    <string name="blank_repo_message">CloudStream 默认不安装片源。您需要从仓库中安装片源。
 \n
 \n加入我们的 Discord 或在网上搜索。</string>
     <string name="view_public_repositories_button">查看社区仓库</string>
     <string name="view_public_repositories_button_short">公开列表</string>
     <string name="uppercase_all_subtitles">字幕全大写</string>
-    <string name="download_all_plugins_from_repo">从此仓库下载所有插件？</string>
+    <string name="download_all_plugins_from_repo">警告： CloudStream 3 对使用第三方插件不承担任何责任和提供任何支持！</string>
     <string name="single_plugin_disabled" formatted="true">%s（禁用）</string>
     <string name="tracks">轨道</string>
     <string name="audio_tracks">音频轨道</string>
     <string name="video_tracks">视频轨道</string>
-    <string name="apply_on_restart">重启生效</string>
+    <string name="apply_on_restart">重启生效。</string>
     <string name="safe_mode_title">安全模式已启用</string>
     <string name="safe_mode_description">由于崩溃，所有扩展都已关闭，以帮助您找到导致问题的扩展。</string>
     <string name="safe_mode_crash_info">查看崩溃信息</string>
@@ -487,10 +481,6 @@
     <string name="hls_playlist">HLS 播放列表</string>
     <string name="player_pref">首选视频播放器</string>
     <string name="player_settings_play_in_app">内部播放器</string>
-    <string name="player_settings_play_in_vlc">VLC</string>
-    <string name="player_settings_play_in_mpv">MPV</string>
-    <string name="player_settings_play_in_web">投屏</string>
-    <string name="player_settings_play_in_browser">浏览器</string>
     <string name="app_not_found_error">未找到应用</string>
     <string name="all_languages_preference">所有语言</string>
     <string name="skip_type_format" formatted="true">跳过 %s</string>
@@ -666,12 +656,50 @@
     <string name="clipboard_unknown_error">复制错误，请复制 logcat 并联系应用程序支持。</string>
     <string name="ok">好的</string>
     <string name="reset_btn">重置</string>
-    <string name="biometric_prompt_description">由于多次尝试失败，此屏幕已关闭。 请重新启动应用程序。</string>
+    <string name="biometric_prompt_description">在多次尝试失败后，提示将关闭。只需重启应用程序再试。</string>
     <string name="episode_upcoming_format" formatted="true">即将在 %s</string>
     <string name="cs3wiki">CloudStream Wiki</string>
-    <string name="player_settings_play_in_fcast">Fcast</string>
     <string name="player_settings_select_cast_device">选择投射设备</string>
     <string name="next_season_episode_format" formatted="true">%1$d季%2$d集将在</string>
     <string name="episode_action_cast_mirror">投射镜像</string>
     <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
+    <string name="downloads_empty">目前尚无下载。</string>
+    <string name="open_local_video">打开本地视频</string>
+    <string name="pref_category_security">安全</string>
+    <string name="device_pin_url_message">访问智能手机或电脑上的 <b>%s</b> 并输入上述代码</string>
+    <string name="preview_seekbar">进度条预览</string>
+    <string name="preview_seekbar_desc">启用进度条预览缩略图</string>
+    <string name="delete_plugin">删除插件</string>
+    <string name="auth_locally">本地授权</string>
+    <string name="play_from_beginning_img_des">从头播放</string>
+    <string name="qr_image">二维码图像</string>
+    <string name="test_warning">警告</string>
+    <string name="pref_category_accounts">账户</string>
+    <string name="dismiss">取消</string>
+    <string name="open_downloaded_repo">开源仓库</string>
+    <string name="sort_release_date_old">发布日期（由旧到新）</string>
+    <string name="hide_player_control_names">隐藏播放器控件名称</string>
+    <string name="downloads_delete_select">选择要删除的项</string>
+    <string name="offline_file">可脱机观看</string>
+    <string name="select_all">全选</string>
+    <string name="deselect_all">全不选</string>
+    <string name="delete_files">删除文件</string>
+    <string name="delete_format" formatted="true">删除 (%1$d | %2$s)</string>
+    <string name="delete_message_multiple" formatted="true">您确定要永久删除以下项目吗？
+\n
+\n%s</string>
+    <string name="delete_message_series_episodes" formatted="true">您确定要永久删除 %1$s中的下述剧集吗？
+\n
+\n%2$s</string>
+    <string name="delete_message_series_section" formatted="true">您还将永久删除下述系列中的所有剧集：
+\n
+\n%s</string>
+    <string name="delete_message_series_only" formatted="true">您确定要永久删除下述系列的所有剧集吗？
+\n
+\n%s</string>
+    <string name="sort_release_date_new">发布日期（从新至旧）</string>
+    <string name="device_pin_error_message">无法获取设备 PIN 码，尝试本地身份验证</string>
+    <string name="device_pin_expired_message">PIN 码现已过期！</string>
+    <string name="device_pin_counter_text">验证码 %1$dm %2$ds 后过期</string>
+    <string name="no_subtitles_loaded">字幕尚未载入</string>
 </resources>

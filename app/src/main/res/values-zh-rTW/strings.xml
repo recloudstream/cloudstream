@@ -258,8 +258,6 @@
     <string name="episode_action_chromecast_mirror">Chromecast 鏡像</string>
     <string name="episode_action_play_in_app">在應用程式中播放</string>
     <string name="episode_action_play_in_format">在 %s 中播放</string>
-    <string name="episode_action_play_in_browser">在瀏覽器中播放</string>
-    <string name="episode_action_copy_link">複製連結</string>
     <string name="episode_action_auto_download">自動下載</string>
     <string name="episode_action_download_mirror">下載鏡像</string>
     <string name="episode_action_reload_links">重新載入連結</string>
@@ -482,10 +480,6 @@
     <string name="hls_playlist">HLS 播放清單</string>
     <string name="player_pref">偏好影片播放器</string>
     <string name="player_settings_play_in_app">內部播放器</string>
-    <string name="player_settings_play_in_vlc">VLC</string>
-    <string name="player_settings_play_in_mpv">MPV</string>
-    <string name="player_settings_play_in_web">網路影片播放</string>
-    <string name="player_settings_play_in_browser">網頁瀏覽器</string>
     <string name="app_not_found_error">未找到應用程式</string>
     <string name="all_languages_preference">所有語言</string>
     <string name="skip_type_format" formatted="true">跳過 %s</string>
@@ -663,7 +657,6 @@
     <string name="biometric_setting_summary">使用指紋、面容 ID、PIN、圖案和密碼解除鎖定應用程式。</string>
     <string name="biometric_prompt_description">由於多次嘗試失敗，此畫面已關閉。請重新啟動應用程式。</string>
     <string name="clipboard_permission_error">剪貼簿存取失敗，請再試一次。</string>
-    <string name="player_settings_play_in_fcast">Fcast</string>
     <string name="clipboard_unknown_error">複製失敗，請複製 logcat 內容並聯繫應用程式支援者。</string>
     <string name="app_info_intent_error">無法開啟 CloudStream 的應用程式資訊頁面。</string>
     <string name="biometric_warning">您的 CloudStream 資料已完成備份。儘管可能性非常低，但因不同裝置的行為都有所不同，在極少數情況下，您可能會無法存取本應用程式。此時請完全清除本應用程式的資料，再使用已有的備份進行還原。若因此造成任何不便，我們深感抱歉。</string>
