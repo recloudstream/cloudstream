@@ -161,6 +161,17 @@ data class VideoEndedEvent(
     override val source: PlayerEventSource = PlayerEventSource.Player
 ) : PlayerEvent()
 
+/** Used for torrent to pre-download a video before playing it */
+data class DownloadEvent(
+    val downloadedBytes: Long,
+    val totalBytes: Long,
+    /** bytes / sec */
+    val downloadSpeed: Long,
+    val connections: Int?,
+
+    override val source: PlayerEventSource = PlayerEventSource.Player
+) : PlayerEvent()
+
 interface Track {
     /**
      * Unique among the class, used to check which track is used.

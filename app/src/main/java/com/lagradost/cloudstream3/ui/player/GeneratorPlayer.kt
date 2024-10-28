@@ -196,11 +196,58 @@ class GeneratorPlayer : FullScreenPlayer() {
         }
     }
 
+    override fun onDownload(event: DownloadEvent) {
+        super.onDownload(event)
+        showDownloadProgress(event)
+    }
+
+    private fun showDownloadProgress(event: DownloadEvent) {
+        activity?.runOnUiThread {
+            playerBinding?.downloadedProgress?.apply {
+                val indeterminate = event.totalBytes <= 0 || event.downloadedBytes <= 0
+                isIndeterminate = indeterminate
+                if (!indeterminate) {
+                    max = (event.totalBytes / 1000).toInt()
+                    progress = (event.downloadedBytes / 1000).toInt()
+                }
+            }
+            playerBinding?.downloadedProgressText.setText(
+                txt(
+                    R.string.download_size_format,
+                    android.text.format.Formatter.formatShortFileSize(
+                        context,
+                        event.downloadedBytes
+                    ),
+                    android.text.format.Formatter.formatShortFileSize(context, event.totalBytes)
+                )
+            )
+            val downloadSpeed =
+                android.text.format.Formatter.formatShortFileSize(context, event.downloadSpeed)
+            playerBinding?.downloadedProgressSpeedText?.text =
+                    // todo string fmt
+                event.connections?.let { connections ->
+                    "%s/s - %d Connections".format(downloadSpeed, connections)
+                } ?: downloadSpeed
+
+            // don't display when done
+            playerBinding?.downloadedProgressSpeedText?.isGone =
+                event.downloadedBytes != 0L && event.downloadedBytes - 1024 >= event.totalBytes
+        }
+    }
+
     private fun loadLink(link: Pair<ExtractorLink?, ExtractorUri?>?, sameEpisode: Boolean) {
         if (link == null) return
 
         // manage UI
         binding?.playerLoadingOverlay?.isVisible = false
+        val isTorrent =
+            link.first?.type == ExtractorLinkType.MAGNET || link.first?.type == ExtractorLinkType.TORRENT
+
+        playerBinding?.downloadHeader?.isVisible = false
+        playerBinding?.downloadHeaderToggle?.isVisible = isTorrent
+
+        showDownloadProgress(DownloadEvent(0, 0, 0, null))
+
         uiReset()
         currentSelectedLink = link
         currentMeta = viewModel.getMeta()
@@ -524,6 +571,7 @@ class GeneratorPlayer : FullScreenPlayer() {
         //TODO: Set year text from currently loaded movie on Player
         //dialog.subtitles_search_year?.setText(currentTempMeta.year)
     }
+
     @OptIn(UnstableApi::class)
     private fun openSubPicker() {
         try {
@@ -1106,7 +1154,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                     !isOpVisible && viewModel.hasNextEpisode() == true
 
             else ->
-                playerBinding?.playerGoForward?.isVisible = viewModel.hasNextEpisode() == true
+                playerBinding?.playerGoForwardRoot?.isVisible = viewModel.hasNextEpisode() == true
         }
 
         if (percentage >= PRELOAD_NEXT_EPISODE_PERCENTAGE) {
@@ -1435,6 +1483,16 @@ class GeneratorPlayer : FullScreenPlayer() {
             activity?.popCurrentPage()
         }
 
+        playerBinding?.downloadHeader?.setOnClickListener {
+            it?.isVisible = false
+        }
+
+        playerBinding?.downloadHeaderToggle?.setOnClickListener {
+            playerBinding?.downloadHeader?.let {
+                it.isVisible = !it.isVisible
+            }
+        }
+
         observe(viewModel.currentStamps) { stamps ->
             player.addTimeStamps(stamps)
         }
@@ -1510,4 +1568,8 @@ class GeneratorPlayer : FullScreenPlayer() {
 }
 
 @Suppress("DEPRECATION")
-inline fun <reified T : Serializable> Bundle.getSafeSerializable(key: String) : T? = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) getSerializable(key) as? T else getSerializable(key, T::class.java)
+inline fun <reified T : Serializable> Bundle.getSafeSerializable(key: String): T? =
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) getSerializable(key) as? T else getSerializable(
+        key,
+        T::class.java
+    )

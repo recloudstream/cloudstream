@@ -35,9 +35,11 @@ import com.lagradost.cloudstream3.actions.VideoClickActionHolder
 import com.lagradost.cloudstream3.databinding.ToastBinding
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.ui.player.PlayerEventType
+import com.lagradost.cloudstream3.ui.player.Torrent
 import com.lagradost.cloudstream3.utils.UiText
 import com.lagradost.cloudstream3.ui.settings.Globals.updateTv
 import com.lagradost.cloudstream3.utils.AppContextUtils.isRtl
+import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Event
 import com.lagradost.cloudstream3.utils.UIHelper
 import com.lagradost.cloudstream3.utils.UIHelper.hasPIPPermission
@@ -203,6 +205,7 @@ object CommonActivity {
 
     fun init(act: Activity) {
         setActivityInstance(act)
+        ioSafe { Torrent.deleteAllOldFiles() }
 
         val componentActivity = activity as? ComponentActivity ?: return
 

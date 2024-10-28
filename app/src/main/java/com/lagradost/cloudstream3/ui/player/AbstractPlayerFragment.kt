@@ -384,12 +384,20 @@ abstract class AbstractPlayerFragment(
     //    }
     //}
 
+    open fun onDownload(event : DownloadEvent) = Unit
+
     /** This receives the events from the player, if you want to append functionality you do it here,
      * do note that this only receives events for UI changes,
      * and returning early WONT stop it from changing in eg the player time or pause status */
     open fun mainCallback(event: PlayerEvent) {
-        Log.i(TAG, "Handle event: $event")
+        // we don't want to spam DownloadEvent
+        if(event !is DownloadEvent) {
+            Log.i(TAG, "Handle event: $event")
+        }
         when (event) {
+            is DownloadEvent -> {
+                onDownload(event)
+            }
             is ResizedEvent -> {
                 playerDimensionsLoaded(event.width, event.height)
             }

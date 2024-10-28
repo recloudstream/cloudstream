@@ -222,6 +222,9 @@ dependencies {
     ^ Don't Bump Jackson above 2.13.1 , Crashes on Android TV's and FireSticks that have Min API
     Level 25 or Less. */
 
+    // torrent support
+    implementation("com.github.recloudstream:Aria2cStream:0.0.3")
+
     // Downloading & Networking
     implementation("androidx.work:work-runtime:2.9.0")
     implementation("androidx.work:work-runtime-ktx:2.9.0")

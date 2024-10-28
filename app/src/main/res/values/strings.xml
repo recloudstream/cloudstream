@@ -136,6 +136,7 @@
     <string name="play_trailer_button">Play Trailer</string>
     <string name="play_livestream_button">Play Livestream</string>
     <string name="play_torrent_button">Stream Torrent</string>
+    <string name="torrent_info">This video is a Torrent, this means that your video activity can be tracked.\nMake sure you understand Torrenting before continuing.</string>
     <string name="pick_source">Sources</string>
     <string name="pick_subtitle">Subtitles</string>
     <string name="reload_error">Retry connection…</string>
