@@ -12,6 +12,7 @@ import androidx.core.graphics.drawable.toBitmap
 import androidx.core.view.isVisible
 import androidx.palette.graphics.Palette
 import androidx.recyclerview.widget.RecyclerView
+import coil3.asDrawable
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.PlayerQualityProfileItemBinding
 import com.lagradost.cloudstream3.utils.AppContextUtils
@@ -81,12 +82,12 @@ class ProfilesAdapter(
             }
 
             outline.isVisible = currentItem?.second?.id == item.id
-
             profileBg.loadImage(art[index % art.size]) {
-                target { drawable ->
-                    // Convert drawable to bitmap to extract palette colors
-                    val bitmap = drawable.toBitmap()
+                target { image ->
+                    // Convert Image to Bitmap
+                    val bitmap = image.asDrawable(itemView.context.resources).toBitmap()
 
+                    // Use Palette to extract colors from the bitmap
                     Palette.from(bitmap).generate { palette ->
                         palette?.let {
                             val color = it.getDarkVibrantColor(

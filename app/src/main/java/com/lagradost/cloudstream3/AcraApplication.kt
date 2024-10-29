@@ -8,6 +8,8 @@ import android.content.Intent
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
+import coil3.PlatformContext
+import coil3.SingletonImageLoader
 import com.lagradost.api.setContext
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.mvvm.suspendSafeApiCall
@@ -98,11 +100,13 @@ class ExceptionHandler(val errorFile: File, val onError: (() -> Unit)) :
 
 }
 
-class AcraApplication : Application() {
+class AcraApplication : Application(), SingletonImageLoader.Factory {
 
     override fun onCreate() {
         super.onCreate()
-        ImageLoader.initializeCoilImageLoader(this)
+        // if we want to initialise coil at earliest
+        // (maybe when loading an image or gif using in splash screen activity)
+        //ImageLoader.buildImageLoader(applicationContext)
 
         ExceptionHandler(filesDir.resolve("last_error")) {
             val intent = context!!.packageManager.getLaunchIntentForPackage(context!!.packageName)
@@ -135,6 +139,11 @@ class AcraApplication : Application() {
                 //opening this block automatically enables the plugin.
             }*/
         }
+    }
+
+    override fun newImageLoader(context: PlatformContext): coil3.ImageLoader {
+        // Coil Module will be initialized & setSafe globally when first loadImage() is invoked
+        return ImageLoader.buildImageLoader(applicationContext)
     }
 
     companion object {

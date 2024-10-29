@@ -186,7 +186,6 @@ class SettingsFragment : Fragment() {
 
                 binding?.settingsProfilePic?.let { imageView ->
                     imageView.loadImage(pic) {
-                        crossfade(true)  // Optional: for a fade-in animation
                         error(errorProfilePic)  // Fallback to random error drawable
                     }
                 }

@@ -28,6 +28,7 @@ import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
 import com.lagradost.cloudstream3.utils.SubtitleHelper.fromTwoLettersToLanguage
 import com.lagradost.cloudstream3.utils.SubtitleHelper.getFlagFromIso
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
+import com.lagradost.cloudstream3.utils.getImageFromDrawable
 import org.junit.Assert
 import org.junit.Test
 import java.text.DecimalFormat
@@ -205,7 +206,7 @@ class PluginAdapter(
                         "%exact_size%",
                         "$iconSizeExact"
                     )
-                ) { error(R.drawable.ic_baseline_extension_24) }
+                ) { error(getImageFromDrawable(itemView.context, R.drawable.ic_baseline_extension_24)) }
 
             binding.extVersion.isVisible = true
             binding.extVersion.text = "v${metadata.version}"
