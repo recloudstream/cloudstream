@@ -366,7 +366,7 @@ object Torrent {
                 activity = act,
                 Aria2Settings(
                     UUID.randomUUID().toString(),
-                    4337,
+                    6800, // https://github.com/devgianlu/aria2lib/blob/d34fd083835775cdf65f170437575604e96b602e/src/main/java/com/gianlu/aria2lib/internal/Aria2.java#L382
                     defaultDirectory,
                 )
             )
