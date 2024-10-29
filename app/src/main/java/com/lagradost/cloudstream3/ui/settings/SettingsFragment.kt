@@ -32,6 +32,7 @@ import com.lagradost.cloudstream3.utils.UIHelper
 import com.lagradost.cloudstream3.utils.UIHelper.clipboardHelper
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
+import com.lagradost.cloudstream3.utils.getImageFromDrawable
 import java.io.File
 import java.text.DateFormat
 import java.text.SimpleDateFormat
@@ -186,7 +187,8 @@ class SettingsFragment : Fragment() {
 
                 binding?.settingsProfilePic?.let { imageView ->
                     imageView.loadImage(pic) {
-                        error(errorProfilePic)  // Fallback to random error drawable
+                        // Fallback to random error drawable
+                        error { getImageFromDrawable(context ?: return@error null, errorProfilePic) }
                     }
                 }
                 return true // sync profile exists
