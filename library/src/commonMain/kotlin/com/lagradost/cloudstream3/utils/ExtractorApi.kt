@@ -264,7 +264,7 @@ import com.lagradost.cloudstream3.extractors.VidHidePro2
 import com.lagradost.cloudstream3.extractors.VidHidePro3
 import com.lagradost.cloudstream3.extractors.Voe1
 import com.lagradost.cloudstream3.extractors.Wishonly
-import com.lagradost.cloudstream3.extractors.Beastx 
+import com.lagradost.cloudstream3.extractors.Beastx
 import com.lagradost.cloudstream3.extractors.Playerx
 import com.lagradost.cloudstream3.extractors.AnimesagaStream
 import com.lagradost.cloudstream3.extractors.Anplay
@@ -361,12 +361,16 @@ data class ExtractorLinkPlayList(
 enum class ExtractorLinkType {
     /** Single stream of bytes no matter the actual file type */
     VIDEO,
+
     /** Split into several .ts files, has support for encrypted m3u8s */
     M3U8,
+
     /** Like m3u8 but uses xml, currently no download support */
     DASH,
+
     /** No support at the moment */
     TORRENT,
+
     /** No support at the moment */
     MAGNET;
 
@@ -383,7 +387,12 @@ enum class ExtractorLinkType {
 }
 
 private fun inferTypeFromUrl(url: String): ExtractorLinkType {
-    val path = normalSafeApiCall { URL(url).path }
+    val path = try {
+        URL(url).path
+    } catch (_: Throwable) {
+        // don't log magnet links as errors
+        null
+    }
     return when {
         path?.endsWith(".m3u8") == true -> ExtractorLinkType.M3U8
         path?.endsWith(".mpd") == true -> ExtractorLinkType.DASH
@@ -392,7 +401,8 @@ private fun inferTypeFromUrl(url: String): ExtractorLinkType {
         else -> ExtractorLinkType.VIDEO
     }
 }
-val INFER_TYPE : ExtractorLinkType? = null
+
+val INFER_TYPE: ExtractorLinkType? = null
 
 /**
  * UUID for the ClearKey DRM scheme.
@@ -429,12 +439,12 @@ open class DrmExtractorLink private constructor(
     /** Used for getExtractorVerifierJob() */
     override val extractorData: String? = null,
     override val type: ExtractorLinkType,
-    open val kid : String,
-    open val key : String,
-    open val uuid : UUID,
-    open val kty : String,
+    open val kid: String,
+    open val key: String,
+    open val uuid: UUID,
+    open val kty: String,
 
-    open val keyRequestParameters : HashMap<String, String>
+    open val keyRequestParameters: HashMap<String, String>
 ) : ExtractorLink(
     source, name, url, referer, quality, type, headers, extractorData
 ) {
@@ -449,11 +459,11 @@ open class DrmExtractorLink private constructor(
         headers: Map<String, String> = mapOf(),
         /** Used for getExtractorVerifierJob() */
         extractorData: String? = null,
-        kid : String,
-        key : String,
-        uuid : UUID = CLEARKEY_UUID,
-        kty : String = "oct",
-        keyRequestParameters : HashMap<String, String> = hashMapOf(),
+        kid: String,
+        key: String,
+        uuid: UUID = CLEARKEY_UUID,
+        kty: String = "oct",
+        keyRequestParameters: HashMap<String, String> = hashMapOf(),
     ) : this(
         source = source,
         name = name,
@@ -506,7 +516,7 @@ open class ExtractorLink constructor(
     }
 
     @JsonIgnore
-    fun getAllHeaders() : Map<String, String> {
+    fun getAllHeaders(): Map<String, String> {
         if (referer.isBlank()) {
             return headers
         } else if (headers.keys.none { it.equals("referer", ignoreCase = true) }) {
@@ -1013,8 +1023,8 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     Ds2play(),
     Ds2video(),
     Filegram(),
-    
-)
+
+    )
 
 
 fun getExtractorApiFromName(name: String): ExtractorApi {

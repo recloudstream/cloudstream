@@ -223,7 +223,7 @@ dependencies {
     Level 25 or Less. */
 
     // torrent support
-    implementation("com.github.recloudstream:Aria2cStream:0.0.3")
+    implementation("com.github.recloudstream:Aria2cStream:0.0.6")
 
     // Downloading & Networking
     implementation("androidx.work:work-runtime:2.9.0")

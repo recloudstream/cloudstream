@@ -97,6 +97,8 @@ object Torrent {
     ): ExtractorUri {
         val minimumBytes: Long = 30 shl 20
         var hasFileChecked = false
+        val defaultWait = 10
+        var extraWait = defaultWait
         while (true) {
             val gid = DownloadListener.sessionIdToGid[requestId]
 
@@ -115,13 +117,41 @@ object Torrent {
                     connections = metadata.items.sumOf { it.connections }
                 )
             )
+            if(metadata.status != DownloadStatusTell.Complete) {
+                extraWait = defaultWait
+            }
             when (metadata.status) {
                 // if completed/error/removed then we don't have to wait anymore
-                DownloadStatusTell.Complete,
                 DownloadStatusTell.Error,
                 DownloadStatusTell.Removed -> {
                     Log.i(TAG, "awaitAria2c, Completed with status = $metadata")
                     break
+                }
+
+                // some things are downloaded in multiple parts, and is therefore important
+                // to wait a bit extra
+                DownloadStatusTell.Complete -> {
+                    // we have waited extra, but no extra data is found
+                    if (extraWait < 0) {
+                        break
+                    }
+                    val gids = metadata.items.map { it.gid }
+
+                    // if any follower is not found in the gids,
+                    // then Complete is invalid, and we wait a bit extra
+                    if (metadata.items.any { item ->
+                            item.followedBy.any { follow ->
+                                !gids.contains(
+                                    follow
+                                )
+                            }
+                        }) {
+                        extraWait -= 1
+                        delay(500)
+                        continue
+                    } else {
+                        break
+                    }
                 }
 
                 // if waiting to be added, wait more
@@ -159,15 +189,6 @@ object Torrent {
                     continue
                 }
 
-                // if downloading then check if we have reached a stable file length
-                /*DownloadStatusTell.Active -> {
-                    if (getPlayableFile(metadata, minimumBytes = 50 shl 20) != null) {
-                        break
-                    }
-                    delay(1000)
-                    continue
-                }*/
-
                 // unpause any pending files
                 DownloadStatusTell.Paused -> {
                     Aria2Starter.unpause(gid)
@@ -190,9 +211,15 @@ object Torrent {
         when (metadata.status) {
             DownloadStatusTell.Active, DownloadStatusTell.Complete -> {
                 val uri = getPlayableFile(metadata, minimumBytes = minimumBytes)
-                    ?: throw Exception("Not downloaded enough")
+                    ?: throw Exception(
+                        if (metadata.status == DownloadStatusTell.Active) {
+                            "No playable file found, this should never happened"
+                        } else {
+                            "Completed, but no playable file of ${minimumBytes shr 20}MB found"
+                        }
+                    )
                 return ExtractorUri(
-                    // we require at least 10MB to play the file
+                    // we require at least x MB to play the file
                     uri = uri,
                     name = link.name,
                     tvType = TvType.Torrent
@@ -221,7 +248,7 @@ object Torrent {
         }
     }
 
-    fun release() = ioSafe {
+    fun release() {
         pauseAll()
         // TODO move this into Aria2Starter
         /*normalSafeApiCall { (Aria2Starter.client as? WebsocketClient)?.close() }
@@ -231,14 +258,8 @@ object Torrent {
         Aria2Starter.aria2 = null*/
     }
 
-    private suspend fun pauseAll() {
-        if (Aria2Starter.client == null) return
-        for ((_, gid) in DownloadListener.sessionIdToGid) {
-            val current = DownloadListener.getInfo(gid)
-            if (current.status == null || current.status == DownloadStatusTell.Active) {
-                Aria2Starter.client?.pauseAsync(gid, true)
-            }
-        }
+    private fun pauseAll() {
+        Aria2Starter.pauseAll()
     }
 
     @Throws
@@ -361,18 +382,15 @@ object Torrent {
         val defaultDirectory = "${act.cacheDir.path}/torrent_tmp"
 
         // start the client if not active, lazy init
-        if (Aria2Starter.aria2 == null) {
-            Aria2Starter.start(
-                activity = act,
-                Aria2Settings(
-                    UUID.randomUUID().toString(),
-                    6800, // https://github.com/devgianlu/aria2lib/blob/d34fd083835775cdf65f170437575604e96b602e/src/main/java/com/gianlu/aria2lib/internal/Aria2.java#L382
-                    defaultDirectory,
-                )
+        Aria2Starter.start(
+            activity = act,
+            Aria2Settings(
+                UUID.randomUUID().toString(),
+                6800, // https://github.com/devgianlu/aria2lib/blob/d34fd083835775cdf65f170437575604e96b602e/src/main/java/com/gianlu/aria2lib/internal/Aria2.java#L382
+                defaultDirectory,
             )
-            // remove all the cache
-            //File(defaultDirectory).deleteRecursively()
-        }
+        )
+
         return playAria2c(link, event)
     }
 }

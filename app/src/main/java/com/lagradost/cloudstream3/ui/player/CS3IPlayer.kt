@@ -973,6 +973,7 @@ class CS3IPlayer : IPlayer {
         eventLooperIndex += 1
         val currentIndex = eventLooperIndex
         while (currentIndex == eventLooperIndex) {
+            Aria2Starter.refresh()
             DownloadListener.sessionIdToGid[activeTorrentRequest?.requestId]?.let { gid ->
                 val metadata = DownloadListener.getInfo(gid)
                 event(
