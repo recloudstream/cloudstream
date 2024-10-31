@@ -4,9 +4,9 @@ import android.net.Uri
 import androidx.core.net.toUri
 import com.lagradost.api.Log
 import com.lagradost.cloudstream3.CommonActivity
+import com.lagradost.cloudstream3.ErrorLoadingException
 import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.mvvm.logError
-import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.fetchbutton.aria2c.Aria2Args
 import com.lagradost.fetchbutton.aria2c.Aria2Settings
@@ -117,7 +117,7 @@ object Torrent {
                     connections = metadata.items.sumOf { it.connections }
                 )
             )
-            if(metadata.status != DownloadStatusTell.Complete) {
+            if (metadata.status != DownloadStatusTell.Complete) {
                 extraWait = defaultWait
             }
             when (metadata.status) {
@@ -336,7 +336,31 @@ object Torrent {
 
         when (metadata?.status) {
             DownloadStatusTell.Removed, DownloadStatusTell.Error, null -> {
-                Aria2Starter.download(uriReq)
+                var isValid = false
+                // use incremental delay in the case of weird behavior of startup time or something
+                for (i in 0..10) {
+                    val response = Aria2Starter.instance?.client?.sendUri(uriReq)
+                    DownloadListener.sessionIdToLastRequest[requestId] = uriReq
+                    // instance not started
+                    if (response == null) {
+                        Aria2Starter.refresh()
+                        delay(100L * i)
+                        continue
+                    }
+                    // send error, due to closed or timeout
+                    val gid = response.getOrNull()
+                    if (gid == null) {
+                        Aria2Starter.refresh()
+                        delay(100L * i)
+                        continue
+                    }
+                    DownloadListener.insert(gid, requestId)
+                    isValid = true
+                    break
+                }
+                if (!isValid) {
+                    throw ErrorLoadingException("Unable to connect to internal server")
+                }
             }
 
             else -> Unit
