@@ -18,6 +18,7 @@ import android.view.WindowManager
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.ProgressBar
+import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.LayoutRes
 import androidx.annotation.StringRes
@@ -89,6 +90,7 @@ abstract class AbstractPlayerFragment(
     var playerView: PlayerView? = null
     var piphide: FrameLayout? = null
     var subtitleHolder: FrameLayout? = null
+    var currentTimeTextView: TextView? = null // P7d6f
 
     @LayoutRes
     protected open var layout: Int = R.layout.fragment_player
@@ -189,6 +191,15 @@ abstract class AbstractPlayerFragment(
             } else {
                 playerPausePlay?.setImageResource(if (isPlayingRightNow) R.drawable.netflix_pause else R.drawable.netflix_play)
             }
+        }
+
+        if (isPausedRightNow) {
+            val currentTime = System.currentTimeMillis()
+            val formattedTime = java.text.SimpleDateFormat("HH:mm", java.util.Locale.getDefault()).format(currentTime)
+            currentTimeTextView?.text = formattedTime
+            currentTimeTextView?.isVisible = true
+        } else {
+            currentTimeTextView?.isVisible = false
         }
 
         canEnterPipMode = isPlayingRightNow && hasPipModeSupport
@@ -662,6 +673,7 @@ abstract class AbstractPlayerFragment(
         playerView = root.findViewById(R.id.player_view)
         piphide = root.findViewById(R.id.piphide)
         subtitleHolder = root.findViewById(R.id.subtitle_holder)
+        currentTimeTextView = root.findViewById(R.id.current_time_text_view) // P72d6
         return root
     }
 }
