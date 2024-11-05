@@ -8,15 +8,14 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
-import androidx.core.graphics.drawable.toBitmap
 import androidx.core.view.isVisible
 import androidx.palette.graphics.Palette
 import androidx.recyclerview.widget.RecyclerView
-import coil3.asDrawable
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.PlayerQualityProfileItemBinding
 import com.lagradost.cloudstream3.utils.AppContextUtils
 import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
+import com.lagradost.cloudstream3.utils.drawableToBitmap
 
 class ProfilesAdapter(
     override val items: MutableList<QualityDataHelper.QualityProfile>,
@@ -82,11 +81,14 @@ class ProfilesAdapter(
             }
 
             outline.isVisible = currentItem?.second?.id == item.id
-            profileBg.loadImage(art[index % art.size]) {
-                target { image ->
-                    // Convert Image to Bitmap
-                    val bitmap = image.asDrawable(itemView.context.resources).toBitmap()
+            val drawableResId = art[index % art.size]
+            profileBg.loadImage(drawableResId)
 
+            val drawable = ContextCompat.getDrawable(itemView.context, drawableResId)
+            if (drawable != null) {
+                // Convert Drawable to Bitmap
+                val bitmap = drawableToBitmap(drawable)
+                if (bitmap != null) {
                     // Use Palette to extract colors from the bitmap
                     Palette.from(bitmap).generate { palette ->
                         val color = palette?.getDarkVibrantColor(
@@ -96,8 +98,10 @@ class ProfilesAdapter(
                             )
                         )
 
-                        wifiText.backgroundTintList = ColorStateList.valueOf(color ?: return@generate)
-                        dataText.backgroundTintList = ColorStateList.valueOf(color)
+                        if (color != null) {
+                            wifiText.backgroundTintList = ColorStateList.valueOf(color)
+                            dataText.backgroundTintList = ColorStateList.valueOf(color)
+                        }
                     }
                 }
             }

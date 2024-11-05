@@ -154,22 +154,22 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
 
     // Android Core & Lifecycle
-    implementation("androidx.core:core-ktx:1.13.1")
+    implementation("androidx.core:core-ktx:1.13.1") // need sdk 35 and agp 8.2 for 1.15
     implementation("androidx.appcompat:appcompat:1.7.0")
     implementation("androidx.navigation:navigation-ui-ktx:2.8.3")
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.8.6")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.6")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.8.7")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.7")
     implementation("androidx.navigation:navigation-fragment-ktx:2.8.3")
 
     // Design & UI
     implementation("androidx.preference:preference-ktx:1.2.1")
     implementation("com.google.android.material:material:1.12.0")
-    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
+    implementation("androidx.constraintlayout:constraintlayout:2.2.0")
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
 
     // Coil Image Loading
-    implementation("io.coil-kt.coil3:coil:3.0.0-rc02")
-    implementation("io.coil-kt.coil3:coil-network-okhttp:3.0.0-rc02")
+    implementation("io.coil-kt.coil3:coil:3.0.0")
+    implementation("io.coil-kt.coil3:coil-network-okhttp:3.0.0")
 
     // Media 3 (ExoPlayer)
     implementation("androidx.media3:media3-ui:1.4.1")
@@ -214,8 +214,8 @@ dependencies {
     Level 25 or Less. */
 
     // Downloading & Networking
-    implementation("androidx.work:work-runtime:2.9.1")
-    implementation("androidx.work:work-runtime-ktx:2.9.1")
+    implementation("androidx.work:work-runtime:2.9.1") // need sdk 35 and agp 8.2 for 1.15
+    implementation("androidx.work:work-runtime-ktx:2.9.1") // need sdk 35 and agp 8.2 for 1.15
     implementation("com.github.Blatzar:NiceHttp:0.4.11") // HTTP Lib
 
     implementation(project(":library") {

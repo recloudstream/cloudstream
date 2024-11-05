@@ -21,6 +21,7 @@ import coil3.request.ErrorResult
 import coil3.request.ImageRequest
 import coil3.request.SuccessResult
 import coil3.request.allowHardware
+import coil3.request.bitmapConfig
 import coil3.request.crossfade
 import com.lagradost.cloudstream3.USER_AGENT
 import com.lagradost.cloudstream3.network.DdosGuardKiller
@@ -34,7 +35,7 @@ object ImageLoader {
 
     private const val TAG = "CoilImgLoader"
 
-    fun buildImageLoader(context: PlatformContext): ImageLoader {
+    internal fun buildImageLoader(context: PlatformContext): ImageLoader {
         val okHttpClient = OkHttpClient.Builder()
             .addInterceptor(DdosGuardKiller(alwaysBypass = false))
             .build()
@@ -45,7 +46,8 @@ object ImageLoader {
              * image buttons because when animating this will appear or in more cases **/
             //.placeholder { getImageFromDrawable(context, R.drawable.x) }
             //.error { getImageFromDrawable(context, R.drawable.x) }
-            .allowHardware(SDK_INT >= 28)
+            .allowHardware(false)
+            //^SDK_INT >= 28 will replace with this when coil solves problem with software bitmap render
             .memoryCache {
                 MemoryCache.Builder()
                     .maxSizePercent(context, 0.1) // Use 10 % of the app's available memory for caching
