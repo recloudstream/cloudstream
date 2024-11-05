@@ -7,6 +7,10 @@ class MixDropBz : MixDrop(){
     override var mainUrl = "https://mixdrop.bz"
 }
 
+class MixDropAg : MixDrop(){
+    override var mainUrl = "https://mixdrop.ag"
+}
+
 class MixDropCh : MixDrop(){
     override var mainUrl = "https://mixdrop.ch"
 }

@@ -92,6 +92,7 @@ import com.lagradost.cloudstream3.extractors.MixDrop
 import com.lagradost.cloudstream3.extractors.MixDropBz
 import com.lagradost.cloudstream3.extractors.MixDropCh
 import com.lagradost.cloudstream3.extractors.MixDropTo
+import com.lagradost.cloudstream3.extractors.MixDropAg
 import com.lagradost.cloudstream3.extractors.Movhide
 import com.lagradost.cloudstream3.extractors.Moviehab
 import com.lagradost.cloudstream3.extractors.MoviehabNet
@@ -733,6 +734,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     MixDropBz(),
     MixDropCh(),
     MixDropTo(),
+    MixDropAg(),
 
     MixDrop(),
 
