@@ -89,17 +89,15 @@ class ProfilesAdapter(
 
                     // Use Palette to extract colors from the bitmap
                     Palette.from(bitmap).generate { palette ->
-                        palette?.let {
-                            val color = it.getDarkVibrantColor(
-                                ContextCompat.getColor(
-                                    itemView.context,
-                                    R.color.dubColorBg
-                                )
+                        val color = palette?.getDarkVibrantColor(
+                            ContextCompat.getColor(
+                                itemView.context,
+                                R.color.dubColorBg
                             )
+                        )
 
-                            wifiText.backgroundTintList = ColorStateList.valueOf(color)
-                            dataText.backgroundTintList = ColorStateList.valueOf(color)
-                        }
+                        wifiText.backgroundTintList = ColorStateList.valueOf(color ?: return@generate)
+                        dataText.backgroundTintList = ColorStateList.valueOf(color)
                     }
                 }
             }
