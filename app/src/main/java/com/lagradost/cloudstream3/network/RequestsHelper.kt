@@ -17,9 +17,13 @@ import java.security.Security
 
 fun Requests.initClient(context: Context): OkHttpClient {
     normalSafeApiCall { Security.insertProviderAt(Conscrypt.newProvider(), 1) }
+    return buildDefaultClient(context)
+}
+
+fun buildDefaultClient(context: Context): OkHttpClient {
     val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
     val dns = settingsManager.getInt(context.getString(R.string.dns_pref), 0)
-    baseClient = OkHttpClient.Builder()
+    val baseClient = OkHttpClient.Builder()
         .followRedirects(true)
         .followSslRedirects(true)
         .ignoreAllSSLErrors()

@@ -168,8 +168,8 @@ dependencies {
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
 
     // Coil Image Loading
-    implementation("io.coil-kt.coil3:coil:3.0.0")
-    implementation("io.coil-kt.coil3:coil-network-okhttp:3.0.0")
+    implementation("io.coil-kt.coil3:coil:3.0.3")
+    implementation("io.coil-kt.coil3:coil-network-okhttp:3.0.3")
 
     // Media 3 (ExoPlayer)
     implementation("androidx.media3:media3-ui:1.4.1")
