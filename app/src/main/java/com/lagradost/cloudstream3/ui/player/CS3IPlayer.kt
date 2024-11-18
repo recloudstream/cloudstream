@@ -1158,9 +1158,13 @@ class CS3IPlayer : IPlayer {
                             )
                         )
 
+                        // `isPlaying = true` as we want to autoplay, because errors only happends when
+                        // we are not paused
+
                         // we have manually deleted the file without notifying the Aria2 instance
                         if (error.errorCode == PlaybackException.ERROR_CODE_IO_FILE_NOT_FOUND) {
                             Aria2Starter.delete(gid, request.requestId)
+                            isPlaying = true
                             loadOnlinePlayer(context, request.request)
                             return
                         }
@@ -1170,6 +1174,7 @@ class CS3IPlayer : IPlayer {
                             // if we have released the player while it is waiting, then do nothing
                             if(exoPlayer == null) return@postDelayed
                             playbackPosition = exoPlayer?.currentPosition ?: 0L
+                            isPlaying = true
                             loadOnlinePlayer(context, request.request, retry = true)
                         }, 3000)
                         return
@@ -1438,6 +1443,10 @@ class CS3IPlayer : IPlayer {
                 ExtractorLinkType.DASH -> MimeTypes.APPLICATION_MPD
                 ExtractorLinkType.VIDEO -> MimeTypes.VIDEO_MP4
                 ExtractorLinkType.TORRENT, ExtractorLinkType.MAGNET -> {
+                    if(Torrent.hasAcceptedTorrentForThisSession == false) {
+                        event(ErrorEvent(ErrorLoadingException("Not accepted torrent")))
+                        return
+                    }
                     // load the initial UI, we require an exoPlayer to be alive
                     if(!retry) {
                         // this causes a *bug* that restarts all torrents from 0
