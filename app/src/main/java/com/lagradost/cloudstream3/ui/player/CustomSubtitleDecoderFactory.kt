@@ -124,21 +124,28 @@ class CustomDecoder(private val fallbackFormat: Format?) : SubtitleParser {
     }
 
     private fun getSubtitleParser(data: String): SubtitleParser? {
-        // this way we read the subtitle file and decide what decoder to use instead of relying fully on mimetype
+        // This way we read the subtitle file and decide what decoder to use instead of relying fully on mimetype
+
+        // First we remove all invisible characters at the start, this is an issue in some subtitle files
+        // Cntrl is control characters: https://en.wikipedia.org/wiki/Unicode_control_characters
+        // Cf is formatting characters: https://www.compart.com/en/unicode/category/Cf
+        val controlCharsRegex = Regex("""[\p{Cntrl}\p{Cf}]""")
+        val trimmedText = data.trimStart { it.isWhitespace() || controlCharsRegex.matches(it.toString()) }
+
         //https://github.com/LagradOst/CloudStream-2/blob/ddd774ee66810137ff7bd65dae70bcf3ba2d2489/CloudStreamForms/CloudStreamForms/Script/MainChrome.cs#L388
         val subtitleParser = when {
             // "WEBVTT" can be hidden behind invisible characters not filtered by trim
-            data.substring(0, 10).contains("WEBVTT", ignoreCase = true) -> WebvttParser()
-            data.startsWith("<?xml version=\"", ignoreCase = true) -> TtmlParser()
-            (data.startsWith(
+            trimmedText.substring(0, 10).contains("WEBVTT", ignoreCase = true) -> WebvttParser()
+            trimmedText.startsWith("<?xml version=\"", ignoreCase = true) -> TtmlParser()
+            (trimmedText.startsWith(
                 "[Script Info]",
                 ignoreCase = true
-            ) || data.startsWith(
+            ) || trimmedText.startsWith(
                 "Title:",
                 ignoreCase = true
             )) -> SsaParser(fallbackFormat?.initializationData)
 
-            data.startsWith("1", ignoreCase = true) -> SubripParser()
+            trimmedText.startsWith("1", ignoreCase = true) -> SubripParser()
             fallbackFormat != null -> {
                 when (val mimeType = fallbackFormat.sampleMimeType) {
                     MimeTypes.TEXT_VTT -> WebvttParser()
