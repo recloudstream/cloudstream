@@ -12,6 +12,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.Window
 import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.OptIn
@@ -24,6 +25,7 @@ import androidx.preference.PreferenceManager
 import androidx.media3.common.Format.NO_VALUE
 import androidx.media3.common.MimeTypes
 import androidx.media3.common.util.UnstableApi
+import androidx.navigation.findNavController
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
@@ -36,6 +38,7 @@ import com.lagradost.cloudstream3.databinding.DialogOnlineSubtitlesBinding
 import com.lagradost.cloudstream3.databinding.FragmentPlayerBinding
 import com.lagradost.cloudstream3.databinding.PlayerSelectSourceAndSubsBinding
 import com.lagradost.cloudstream3.databinding.PlayerSelectTracksBinding
+import com.lagradost.cloudstream3.databinding.SubtitleSettingsDialogBinding
 import com.lagradost.cloudstream3.mvvm.*
 import com.lagradost.cloudstream3.subtitles.AbstractSubApi
 import com.lagradost.cloudstream3.subtitles.AbstractSubtitleEntities
@@ -51,6 +54,7 @@ import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.ui.subtitles.SUBTITLE_AUTO_SELECT_KEY
+import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment.Companion.getAutoSelectLanguageISO639_1
 import com.lagradost.cloudstream3.utils.*
 import com.lagradost.cloudstream3.utils.AppContextUtils.sortSubs
@@ -686,6 +690,12 @@ class GeneratorPlayer : FullScreenPlayer() {
 
                 var shouldDismiss = true
 
+                binding.subtitleSettingsBtt.setOnClickListener {
+                    normalSafeApiCall {
+                        SubtitlesFragment().show(this.parentFragmentManager, "SubtitleSettings")
+                    }
+                }
+
                 fun dismiss() {
                     if (isPlaying) {
                         player.handleEvent(CSPlayerEvent.Play)
@@ -823,7 +833,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                     text = prefNames[if (index == -1) 0 else index]
                 }
 
-                binding.subtitlesClickSettings.setOnClickListener {
+                binding.subtitlesEncodingFormat.setOnClickListener {
                     val settingsManager = PreferenceManager.getDefaultSharedPreferences(ctx)
 
                     val prefNames = ctx.resources.getStringArray(R.array.subtitles_encoding_list)
