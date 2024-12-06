@@ -340,6 +340,8 @@ abstract class AbstractPlayerFragment(
     private fun onSubStyleChanged(style: SaveCaptionStyle) {
         if (player is CS3IPlayer) {
             player.updateSubtitleStyle(style)
+            // Forcefully update the subtitle encoding in case the edge size is changed
+            player.seekTime(-1)
         }
     }
 

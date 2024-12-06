@@ -19,7 +19,7 @@ import androidx.annotation.FontRes
 import androidx.annotation.OptIn
 import androidx.annotation.Px
 import androidx.core.content.res.ResourcesCompat
-import androidx.fragment.app.Fragment
+import androidx.fragment.app.DialogFragment
 import androidx.media3.common.text.Cue
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.ui.CaptionStyleCompat
@@ -76,7 +76,7 @@ data class SaveCaptionStyle @OptIn(UnstableApi::class) constructor(
 const val DEF_SUBS_ELEVATION = 20
 
 @OptIn(androidx.media3.common.util.UnstableApi::class)
-class SubtitlesFragment : Fragment() {
+class SubtitlesFragment : DialogFragment() {
     companion object {
         val applyStyleEvent = Event<SaveCaptionStyle>()
 
@@ -114,6 +114,7 @@ class SubtitlesFragment : Fragment() {
         fun push(activity: Activity?, hide: Boolean = true) {
             activity.navigate(R.id.global_to_navigation_subtitles, Bundle().apply {
                 putBoolean("hide", hide)
+                putBoolean("popFragment", true)
             })
         }
 
@@ -265,9 +266,19 @@ class SubtitlesFragment : Fragment() {
         onColorSelectedEvent -= ::onColorSelected
     }
 
+    override fun onStart() {
+        super.onStart()
+        dialog?.window?.setWindowAnimations(R.style.DialogFullscreen)
+    }
+
+    override fun getTheme(): Int {
+        return R.style.DialogFullscreen
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         hide = arguments?.getBoolean("hide") ?: true
+        val popFragment = arguments?.getBoolean("popFragment") ?: false
         onColorSelectedEvent += ::onColorSelected
         onDialogDismissedEvent += ::onDialogDismissed
         binding?.subsImportText?.text = getString(R.string.subs_import_text).format(
@@ -578,14 +589,22 @@ class SubtitlesFragment : Fragment() {
             }
 
             cancelBtt.setOnClickListener {
-                activity?.popCurrentPage()
+                if (popFragment) {
+                    activity?.popCurrentPage()
+                } else {
+                    dismiss()
+                }
             }
 
             applyBtt.setOnClickListener {
                 it.context.saveStyle(state)
                 applyStyleEvent.invoke(state)
                 it.context.fromSaveToStyle(state)
-                activity?.popCurrentPage()
+                if (popFragment) {
+                    activity?.popCurrentPage()
+                } else {
+                    dismiss()
+                }
             }
         }
     }
