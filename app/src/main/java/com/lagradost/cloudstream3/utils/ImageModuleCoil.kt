@@ -42,7 +42,7 @@ object ImageLoader {
              * image buttons because when animating this will appear or in more cases **/
             //.placeholder { getImageFromDrawable(context, R.drawable.x) }
             //.error { getImageFromDrawable(context, R.drawable.x) }
-            .allowHardware(SDK_INT >= 28)
+            .allowHardware(false) // SDK_INT >= 28, cant use hardware bitmaps for Palette Builder
             .memoryCache {
                 MemoryCache.Builder()
                     .maxSizePercent(context, 0.1) // Use 10 % of the app's available memory for caching
