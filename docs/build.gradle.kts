@@ -58,7 +58,7 @@ dependencies {
     dokkaImplementation("androidx.media3:media3-datasource-okhttp:1.4.0")
     dokkaImplementation("com.jaredrummler:colorpicker:1.1.0") // Subtitle Color Picker
     dokkaImplementation("com.github.recloudstream:media-ffmpeg:1.1.0") // Custom FF-MPEG Lib for Audio Codecs
-    dokkaImplementation("com.github.teamnewpipe:NewPipeExtractor:v0.24.2")
+    dokkaImplementation("com.github.teamnewpipe:NewPipeExtractor:v0.24.3")
     dokkaImplementation("com.github.albfernandez:juniversalchardet:2.5.0") // Subtitle Decoding
     dokkaImplementation("ch.acra:acra-core:5.11.3")
     dokkaImplementation("ch.acra:acra-toast:5.11.3")
