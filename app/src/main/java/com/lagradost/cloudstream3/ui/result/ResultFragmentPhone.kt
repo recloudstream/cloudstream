@@ -77,6 +77,7 @@ import com.lagradost.cloudstream3.utils.UIHelper.popCurrentPage
 import com.lagradost.cloudstream3.utils.UIHelper.populateChips
 import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIconsAndNoStringRes
 import com.lagradost.cloudstream3.utils.VideoDownloadHelper
+import com.lagradost.cloudstream3.utils.getImageFromDrawable
 import com.lagradost.cloudstream3.utils.setText
 import com.lagradost.cloudstream3.utils.setTextHtml
 
@@ -706,10 +707,10 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                     resultNextAiring.setText(d.nextAiringEpisode)
                     resultNextAiringTime.setText(d.nextAiringDate)
                     resultPoster.loadImage(d.posterImage, headers = d.posterHeaders) {
-                        error(R.drawable.default_cover)
+                        error{ getImageFromDrawable(context?: return@error null, R.drawable.default_cover) }
                     }
                     resultPosterBackground.loadImage(d.posterBackgroundImage, headers = d.posterHeaders) {
-                        error(R.drawable.default_cover)
+                        error{ getImageFromDrawable(context?: return@error null, R.drawable.default_cover) }
                     }
 
                     var isExpanded = false

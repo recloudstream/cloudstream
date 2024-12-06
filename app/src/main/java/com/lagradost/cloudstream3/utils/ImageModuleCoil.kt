@@ -1,87 +1,106 @@
 package com.lagradost.cloudstream3.utils
 
-import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.net.Uri
+import android.os.Build.VERSION.SDK_INT
 import android.util.Log
 import android.widget.ImageView
 import androidx.annotation.DrawableRes
-import coil.EventListener
-import coil.ImageLoader
-import coil.load
-import coil.memory.MemoryCache
-import coil.request.CachePolicy
-import coil.request.ErrorResult
-import coil.request.ImageRequest
-import coil.request.SuccessResult
+import coil3.EventListener
+import coil3.Extras
+import coil3.ImageLoader
+import coil3.PlatformContext
+import coil3.SingletonImageLoader
+import coil3.disk.DiskCache
+import coil3.load
+import coil3.memory.MemoryCache
+import coil3.network.okhttp.OkHttpNetworkFetcherFactory
+import coil3.request.CachePolicy
+import coil3.request.ErrorResult
+import coil3.request.ImageRequest
+import coil3.request.SuccessResult
+import coil3.request.allowHardware
+import coil3.request.crossfade
 import com.lagradost.cloudstream3.USER_AGENT
-import com.lagradost.cloudstream3.network.DdosGuardKiller
+import com.lagradost.cloudstream3.network.buildDefaultClient
 import okhttp3.HttpUrl
-import okhttp3.OkHttpClient
+import okio.Path.Companion.toOkioPath
 import java.io.File
 import java.nio.ByteBuffer
 
 object ImageLoader {
 
-    private var instance: ImageLoader? = null
+    private const val TAG = "CoilImgLoader"
 
-    fun initializeCoilImageLoader(context: Context) {
-        if (instance == null) {
-            synchronized(this) {
-                instance = buildImageLoader(context.applicationContext)
-            }
-        }
-    }
-
-    private fun buildImageLoader(context: Context): ImageLoader {
-        val okHttpClient = OkHttpClient.Builder()
-            .addInterceptor(DdosGuardKiller(alwaysBypass = false))
-            .build()
+    internal fun buildImageLoader(context: PlatformContext): ImageLoader {
+        val okHttpClient = buildDefaultClient(context)
 
         return ImageLoader.Builder(context)
-            .crossfade(true)
-            .respectCacheHeaders(false)
+            .crossfade(250)
             /** !Only use default placeholders and errors, if not using this instance for local
              * image buttons because when animating this will appear or in more cases **/
-            //.placeholder(R.drawable.logo)
-            //.error(R.drawable.logo)
-            .allowHardware(true)
+            //.placeholder { getImageFromDrawable(context, R.drawable.x) }
+            //.error { getImageFromDrawable(context, R.drawable.x) }
+            .allowHardware(false) // SDK_INT >= 28, cant use hardware bitmaps for Palette Builder
             .memoryCache {
-                MemoryCache.Builder(context)
-                    .maxSizePercent(0.15) // Use 15% of the app's available memory for image caching
+                MemoryCache.Builder()
+                    .maxSizePercent(context, 0.1) // Use 10 % of the app's available memory for caching
                     .build()
             }
             .diskCache {
-                coil.disk.DiskCache.Builder()
-                    .maxSizeBytes(128 * 1024 * 1024) // 128 MB
-                    .directory(context.cacheDir.resolve("cs3_image_cache"))
-                    .maxSizePercent(0.02) // Use 2% of the device's storage space for disk caching
+                DiskCache.Builder()
+                    .directory(context.cacheDir.resolve("cs3_image_cache").toOkioPath())
+                    .maxSizeBytes(256 * 1024 * 1024) // 256 MB
+                    .maxSizePercent(0.04) // Use 4% of the device's storage space for disk caching
                     .build()
             }
             .diskCachePolicy(CachePolicy.ENABLED)
+            .networkCachePolicy(CachePolicy.ENABLED)
             /** Pass interceptors with care, unnecessary passing tokens to servers
             or image hosting services causes unauthorized exceptions **/
-            .okHttpClient(okHttpClient)
-            .eventListener(object : EventListener {
+            .components { add(OkHttpNetworkFetcherFactory(callFactory = { okHttpClient })) }
+            .eventListener(object : EventListener() {
                 override fun onStart(request: ImageRequest) {
                     super.onStart(request)
-                    Log.i("CoilImageLoader", "Loading Image ${request.data}")
+                    Log.i(TAG, "Loading Image ${request.data}")
                 }
 
                 override fun onSuccess(request: ImageRequest, result: SuccessResult) {
                     super.onSuccess(request, result)
-                    Log.d("CoilImageLoader", "Image Loading successful")
+                    Log.d(TAG, "Image Loading successful")
                 }
 
                 override fun onError(request: ImageRequest, result: ErrorResult) {
                     super.onError(request, result)
-                    Log.e("CoilImageLoadError", "Error loading image: ${result.throwable}")
+                    Log.e(TAG, "Error loading image: ${result.throwable}")
                 }
             })
             .build()
     }
 
+    /** we use coil's built in loader with our global synchronized instance, this way we achieve
+    latest and complete functionality as well as stability **/
+    private fun ImageView.loadImageInternal(
+        imageData: Any?,
+        headers: Map<String, String>? = null,
+        builder: ImageRequest.Builder.() -> Unit = {} // for placeholder, error & transformations
+    ) {
+        // clear image to avoid loading & flickering issue at fast scrolling (e.g, an image recycler)
+        this.load(null)
+
+        // Use Coil's built-in load method but with our custom module
+        this.load(imageData, SingletonImageLoader.get(context)) {
+            headers?.forEach { (key, value) ->
+                extras[Extras.Key<String>("User-Agent")] = USER_AGENT
+                extras[Extras.Key<String>(key)] = value
+            }
+
+            builder() // if passed
+        }
+    }
+
+    /** TYPE_SAFE_LOADERS **/
     fun ImageView.loadImage(
         imageData: UiImage?,
         builder: ImageRequest.Builder.() -> Unit = {}
@@ -139,24 +158,4 @@ object ImageLoader {
         imageData: ByteBuffer?,
         builder: ImageRequest.Builder.() -> Unit = {}
     ) = loadImageInternal(imageData = imageData, builder = builder)
-
-    /** we use coil's built in loader with our global synchronized instance, this way we achieve
-    latest and complete functionality as well as stability **/
-    private fun ImageView.loadImageInternal(
-        imageData: Any?,
-        headers: Map<String, String>? = null,
-        builder: ImageRequest.Builder.() -> Unit = {} // for placeholder, error & transformations
-    ) {
-        // clear image to avoid loading issues at fast scrolling (e.g, an image recycler)
-        this.load(null)
-
-        // Use Coil's built-in load method but with our custom module
-        this.load(imageData, instance ?: return) {
-            addHeader("User-Agent", USER_AGENT)
-            headers?.forEach { (key, value) ->
-                addHeader(key, value)
-            }
-            builder()  // if passed
-        }
-    }
 }
