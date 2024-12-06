@@ -356,7 +356,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                             synchronized(apis) {
                                 for (api in apis) {
                                     if (str.startsWith(api.mainUrl)) {
-                                        loadResult(str, api.name)
+                                        loadResult(str, api.name, "")
                                         return true
                                     }
                                 }

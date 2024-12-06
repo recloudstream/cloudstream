@@ -481,7 +481,7 @@ class HomeViewModel : ViewModel() {
     }
 
     fun click(load: LoadClickCallback) {
-        loadResult(load.response.url, load.response.apiName, load.action)
+        loadResult(load.response.url, load.response.apiName, load.response.name, load.action)
     }
 
     // only save the key if it is from UI, as we don't want internal functions changing the setting

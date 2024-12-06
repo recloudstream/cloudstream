@@ -353,6 +353,11 @@ open class ResultFragmentPhone : FullScreenPlayer() {
 
         // ===== ===== =====
 
+        binding?.resultSearch?.isGone = storedData.name.isBlank()
+        binding?.resultSearch?.setOnClickListener {
+            QuickSearchFragment.pushSearch(activity, storedData.name)
+        }
+        
         resultBinding?.apply {
             resultReloadConnectionerror.setOnClickListener {
                 viewModel.load(
@@ -745,6 +750,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                     }
 
                     binding?.apply {
+                        resultSearch.isGone = d.title.isBlank()
                         resultSearch.setOnClickListener {
                             QuickSearchFragment.pushSearch(activity, d.title)
                         }
