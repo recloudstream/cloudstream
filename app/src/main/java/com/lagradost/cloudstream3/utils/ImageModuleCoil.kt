@@ -15,6 +15,8 @@ import coil3.SingletonImageLoader
 import coil3.disk.DiskCache
 import coil3.load
 import coil3.memory.MemoryCache
+import coil3.network.NetworkHeaders
+import coil3.network.httpHeaders
 import coil3.network.okhttp.OkHttpNetworkFetcherFactory
 import coil3.request.CachePolicy
 import coil3.request.ErrorResult
@@ -91,10 +93,12 @@ object ImageLoader {
 
         // Use Coil's built-in load method but with our custom module
         this.load(imageData, SingletonImageLoader.get(context)) {
-            headers?.forEach { (key, value) ->
-                extras[Extras.Key<String>("User-Agent")] = USER_AGENT
-                extras[Extras.Key<String>(key)] = value
-            }
+            this.httpHeaders(NetworkHeaders.Builder().also { headerBuilder ->
+                headerBuilder.add("User-Agent", USER_AGENT)
+                headers?.forEach { (key, value) ->
+                    headerBuilder.add(key,value)
+                }
+            }.build())
 
             builder() // if passed
         }
