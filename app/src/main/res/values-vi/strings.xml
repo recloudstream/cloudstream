@@ -66,8 +66,8 @@
     <string name="stream">Luồng mạng</string>
     <string name="error_loading_links_toast">Đã có lỗi xảy ra</string>
     <string name="download_storage_text">Bộ nhớ trong</string>
-    <string name="app_dubbed_text">Lồng Tiếng</string>
-    <string name="app_subbed_text">Phụ Đề</string>
+    <string name="app_dubbed_text">L.Tiếng</string>
+    <string name="app_subbed_text">P.Đề</string>
     <string name="popup_delete_file">Xóa Tệp</string>
     <string name="popup_play_file">Xem Tệp</string>
     <string name="popup_resume_download">Tiếp tục tải</string>
@@ -674,4 +674,8 @@
     <string name="confirm_before_exiting_desc">Hiện hộp thoại trước khi thoát ứng dụng</string>
     <string name="dont_show">Không hiển thị</string>
     <string name="show">Hiển thị</string>
+    <string name="backup_path_title">Vị trí thư mục sao lưu</string>
+    <string name="custom">Tuỳ chỉnh</string>
+    <string name="subs_edge_size">Kích thước cạnh</string>
+    <string name="torrent_info">Video này là Torrent, điều này có nghĩa là hoạt động video của bạn có thể được theo dõi.\nHãy đảm bảo rằng bạn hiểu về Torrent trước khi tiếp tục.</string>
 </resources>

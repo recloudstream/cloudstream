@@ -678,4 +678,12 @@
     <string name="delete_plugin">Hapus Plugin</string>
     <string name="device_pin_error_message">Tidak bisa mendapatkan kode PIN perangkat, coba autentikasi lokal</string>
     <string name="no_subtitles_loaded">Belum ada subtitle yg dimuat</string>
+    <string name="subs_edge_size">Ukuran Tepi</string>
+    <string name="torrent_info">Video ini berformat Torrent, artinya aktivitas video Anda dapat dilacak.\nPastikan Anda memahami Torrent sebelum melanjutkan.</string>
+    <string name="backup_path_title">Lokasi folder cadangan</string>
+    <string name="custom">Pilihan sendiri</string>
+    <string name="confirm_before_exiting_title">Konfirmasi sebelum keluar</string>
+    <string name="confirm_before_exiting_desc">Tampilkan dialog sebelum keluar dari aplikasi</string>
+    <string name="dont_show">Jangan Tampilkan</string>
+    <string name="show">Perlihatkan</string>
 </resources>
