@@ -124,7 +124,7 @@ object SearchResultBuilder {
         cardText?.text = card.name
         cardText?.isVisible = showTitle
         cardView.isVisible = true
-        cardView.loadImage(card.posterUrl) {
+        cardView.loadImage(card.posterUrl, card.posterHeaders) {
             error { getImageFromDrawable(itemView.context, R.drawable.default_cover) }
             val posterUrl = card.posterUrl
             if (posterUrl != null && colorCallback != null) {
