@@ -661,4 +661,8 @@
     <string name="show">Показувати</string>
     <string name="confirm_before_exiting_desc">Показувати діалог перед виходом із застосунку</string>
     <string name="dont_show">Не показувати</string>
+    <string name="backup_path_title">Розташування теки резервної копії</string>
+    <string name="custom">Власний</string>
+    <string name="torrent_info">Це відео є торрентом, це означає, що ваша активність у відео може бути відстежена.\nПереконайтеся, що ви розумієте, що таке торрент, перш ніж продовжити.</string>
+    <string name="subs_edge_size">Розмір кромки</string>
 </resources>
