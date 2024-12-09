@@ -63,18 +63,18 @@
     <string name="play_torrent_button">Torrent oynat</string>
     <string name="pick_source">Kaynaklar</string>
     <string name="pick_subtitle">Altyazılar</string>
-    <string name="reload_error">Yeniden bağlan…</string>
-    <string name="go_back">Geri dön</string>
-    <string name="play_episode">Bölümü oynat</string>
+    <string name="reload_error">Yeniden bağlanın…</string>
+    <string name="go_back">Geri Dön</string>
+    <string name="play_episode">Bölümü Oynat</string>
     <!--<string name="need_storage">Allow to download episodes</string>-->
     <string name="download">İndir</string>
     <string name="downloaded">İndirildi</string>
     <string name="downloading">İndiriliyor</string>
-    <string name="download_paused">İndirme duraklatıldı</string>
-    <string name="download_started">İndirme başladı</string>
-    <string name="download_failed">İndirme başarısız oldu</string>
-    <string name="download_canceled">İndirme iptal edildi</string>
-    <string name="download_done">İndirme bitti</string>
+    <string name="download_paused">İndirme Duraklatıldı</string>
+    <string name="download_started">İndirme Başladı</string>
+    <string name="download_failed">İndirme Başarısız Oldu</string>
+    <string name="download_canceled">İndirme İptal Edildi</string>
+    <string name="download_done">İndirme Bitti</string>
     <string name="download_format" translatable="false">%s - %s</string>
     <string name="stream">Ağ akışı</string>
     <string name="error_loading_links_toast">Bağlantılar yüklenirken hata oluştu</string>
@@ -704,4 +704,12 @@
     <string name="preview_seekbar">Seekbar önizleme</string>
     <string name="preview_seekbar_desc">Arama çubuğunda önizleme küçük resmini etkinleştir</string>
     <string name="no_subtitles_loaded">Henüz altyazı yüklenmedi</string>
+    <string name="backup_path_title">Yedekleme klasörü konumu</string>
+    <string name="custom">Özel</string>
+    <string name="confirm_before_exiting_title">Çıkmadan önce onaylayın</string>
+    <string name="show">Göster</string>
+    <string name="confirm_before_exiting_desc">Uygulamadan çıkmadan önce iletişim kutusunu göster</string>
+    <string name="dont_show">Gizle</string>
+    <string name="subs_edge_size">Köşe Büyüklüğü</string>
+    <string name="torrent_info">Bu video Torrent\'tir, bu video aktivitenizin takip edilebileceği anlamına gelir.\nDevam etmeden önce Torrentlemeyi iyi anladığınızdan emin olun.</string>
 </resources>

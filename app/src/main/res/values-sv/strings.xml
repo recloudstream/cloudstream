@@ -657,4 +657,5 @@
     <string name="device_pin_url_message">Besök <b>%s</b> på din smartphone eller dator och ange koden ovan</string>
     <string name="device_pin_error_message">Det går inte att hämta enhetens PIN-kod, prova lokal autentisering</string>
     <string name="no_subtitles_loaded">Inga undertexter laddade än</string>
+    <string name="torrent_info">Den här videon är en torrent, det betyder att din videoaktivitet kan spåras.\nFörsäkra dig om att du förstår Torrenting innan du fortsätter.</string>
 </resources>
