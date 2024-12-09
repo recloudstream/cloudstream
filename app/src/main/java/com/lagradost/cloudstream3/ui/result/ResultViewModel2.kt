@@ -496,7 +496,7 @@ class ResultViewModel2 : ViewModel() {
 
         private fun filterName(name: String?): String? {
             if (name == null) return null
-            Regex("[eE]pisode [0-9]*(.*)").find(name)?.groupValues?.get(1)?.let {
+            Regex("^[eE]pisode [0-9]*(.*)").find(name)?.groupValues?.get(1)?.let {
                 if (it.isEmpty())
                     return null
             }
