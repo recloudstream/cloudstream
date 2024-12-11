@@ -693,4 +693,8 @@
     <string name="confirm_before_exiting_desc">عرض مربع الحوار قبل الخروج من التطبيق</string>
     <string name="show">أظهِر</string>
     <string name="dont_show">لا تظهر</string>
+    <string name="backup_path_title">موقع مجلد النسخ الاحتياطي</string>
+    <string name="custom">مخصص</string>
+    <string name="torrent_info">هذا الفيديو موجود على شبكة تورنت، مما يعني ان الاستخدام يمكن تعقبه.\nتأكد من فهم شبكات التورنت قبل الاستكمال.</string>
+    <string name="subs_edge_size">حجم الحافة</string>
 </resources>

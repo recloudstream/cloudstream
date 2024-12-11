@@ -662,4 +662,8 @@
     <string name="show">Pokaż</string>
     <string name="confirm_before_exiting_title">Potwierdź przed wyjściem</string>
     <string name="dont_show">Nie pokazuj</string>
+    <string name="backup_path_title">Lokalizacja folderu kopii zapasowej</string>
+    <string name="custom">Własna</string>
+    <string name="torrent_info">Ten film jest torrentem, co oznacza, że Twoja aktywność wideo może być śledzona.\nUpewnij się, że rozumiesz czym są torrenty, zanim przejdziesz dalej.</string>
+    <string name="subs_edge_size">Rozmiar krawędzi</string>
 </resources>

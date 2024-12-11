@@ -435,8 +435,8 @@
     <string name="setup_done">完成</string>
     <string name="extensions">扩展</string>
     <string name="add_repository">添加仓库</string>
-    <string name="repository_name_hint">仓库名称</string>
-    <string name="repository_url_hint">仓库链接</string>
+    <string name="repository_name_hint">仓库名称（可选）</string>
+    <string name="repository_url_hint">仓库链接或短代码</string>
     <string name="plugin_loaded">插件已加载</string>
     <string name="plugin_deleted">插件已删除</string>
     <string name="plugin_load_fail" formatted="true">无法加载 %s</string>
@@ -702,4 +702,12 @@
     <string name="device_pin_expired_message">PIN 码现已过期！</string>
     <string name="device_pin_counter_text">验证码 %1$dm %2$ds 后过期</string>
     <string name="no_subtitles_loaded">字幕尚未载入</string>
+    <string name="custom">自定义</string>
+    <string name="confirm_before_exiting_title">退出前确认</string>
+    <string name="confirm_before_exiting_desc">退出 App 前弹窗确认</string>
+    <string name="show">显示</string>
+    <string name="dont_show">不显示</string>
+    <string name="torrent_info">这是个 Torrent 的视频，这意味着您的视频活动可以被追踪。\n请确认您了解 Torrenting 后，再继续。</string>
+    <string name="backup_path_title">备份文件夹位置</string>
+    <string name="subs_edge_size">边缘大小</string>
 </resources>
