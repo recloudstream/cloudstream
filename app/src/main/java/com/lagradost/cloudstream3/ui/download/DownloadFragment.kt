@@ -244,7 +244,7 @@ class DownloadFragment : Fragment() {
             }
 
             DOWNLOAD_ACTION_LOAD_RESULT -> {
-                activity?.loadResult(click.data.url, click.data.apiName)
+                activity?.loadResult(click.data.url, click.data.apiName, click.data.name)
             }
         }
     }

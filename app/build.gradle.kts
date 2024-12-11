@@ -5,7 +5,6 @@ import java.io.ByteArrayOutputStream
 
 plugins {
     id("com.android.application")
-    id("com.google.devtools.ksp")
     id("kotlin-android")
     id("org.jetbrains.dokka")
 }
@@ -59,7 +58,7 @@ android {
         targetSdk = 33 /* Android 14 is Fu*ked
         ^ https://developer.android.com/about/versions/14/behavior-changes-14#safer-dynamic-code-loading*/
         versionCode = 64
-        versionName = "4.4.0"
+        versionName = "4.4.1"
 
         resValue("string", "app_version", "${defaultConfig.versionName}${versionNameSuffix ?: ""}")
         resValue("string", "commit_hash", "git rev-parse --short HEAD".execute() ?: "")
@@ -84,11 +83,6 @@ android {
             "\"" + (System.getenv("SIMKL_CLIENT_SECRET") ?: localProperties["simkl.secret"]) + "\""
         )
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-
-        ksp {
-            arg("room.schemaLocation", "$projectDir/schemas")
-            arg("exportSchema", "true")
-        }
     }
 
     buildTypes {
@@ -160,25 +154,22 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
 
     // Android Core & Lifecycle
-    implementation("androidx.core:core-ktx:1.13.1")
+    implementation("androidx.core:core-ktx:1.13.1") // need sdk 35 and agp 8.2 for 1.15
     implementation("androidx.appcompat:appcompat:1.7.0")
-    implementation("androidx.navigation:navigation-ui-ktx:2.7.7")
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.8.3")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.3")
-    implementation("androidx.navigation:navigation-fragment-ktx:2.7.7")
+    implementation("androidx.navigation:navigation-ui-ktx:2.8.3")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.8.7")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.7")
+    implementation("androidx.navigation:navigation-fragment-ktx:2.8.3")
 
     // Design & UI
-    implementation("jp.wasabeef:glide-transformations:4.3.0")
     implementation("androidx.preference:preference-ktx:1.2.1")
     implementation("com.google.android.material:material:1.12.0")
-    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
+    implementation("androidx.constraintlayout:constraintlayout:2.2.0")
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
-    implementation("io.coil-kt:coil:2.7.0") // Coil Image Loading
 
-    // For KSP -> Official Annotation Processors are Not Yet Supported for KSP
-    ksp("dev.zacsweers.autoservice:auto-service-ksp:1.2.0")
-    implementation("com.google.guava:guava:33.2.1-android")
-    implementation("dev.zacsweers.autoservice:auto-service-ksp:1.2.0")
+    // Coil Image Loading
+    implementation("io.coil-kt.coil3:coil:3.0.3")
+    implementation("io.coil-kt.coil3:coil-network-okhttp:3.0.3")
 
     // Media 3 (ExoPlayer)
     implementation("androidx.media3:media3-ui:1.4.1")
@@ -194,7 +185,7 @@ dependencies {
     // PlayBack
     implementation("com.jaredrummler:colorpicker:1.1.0") // Subtitle Color Picker
     implementation("com.github.recloudstream:media-ffmpeg:1.1.0") // Custom FF-MPEG Lib for Audio Codecs
-    implementation("com.github.teamnewpipe:NewPipeExtractor:v0.24.2") /* For Trailers
+    implementation("com.github.teamnewpipe:NewPipeExtractor:v0.24.3") /* For Trailers
     ^ Update to Latest Commits if Trailers Misbehave, github.com/TeamNewPipe/NewPipeExtractor/commits/dev */
     implementation("com.github.albfernandez:juniversalchardet:2.5.0") // Subtitle Decoding
 
@@ -217,7 +208,7 @@ dependencies {
     implementation("com.github.LagradOst:SafeFile:0.0.6") // To Prevent the URI File Fu*kery
     implementation("org.conscrypt:conscrypt-android:2.5.2") // To Fix SSL Fu*kery on Android 9
     implementation("com.uwetrottmann.tmdb2:tmdb-java:2.11.0") // TMDB API v3 Wrapper Made with RetroFit
-    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs_nio:2.0.4") //nio flavor needed for NewPipeExtractor
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs_nio:2.1.2") //nio flavor needed for NewPipeExtractor
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.1") /* JSON Parser
     ^ Don't Bump Jackson above 2.13.1 , Crashes on Android TV's and FireSticks that have Min API
     Level 25 or Less. */
@@ -226,8 +217,8 @@ dependencies {
     implementation("com.github.recloudstream:Aria2cStream:0.0.6")
 
     // Downloading & Networking
-    implementation("androidx.work:work-runtime:2.9.0")
-    implementation("androidx.work:work-runtime-ktx:2.9.0")
+    implementation("androidx.work:work-runtime:2.9.1") // need sdk 35 and agp 8.2 for 1.15
+    implementation("androidx.work:work-runtime-ktx:2.9.1") // need sdk 35 and agp 8.2 for 1.15
     implementation("com.github.Blatzar:NiceHttp:0.4.11") // HTTP Lib
 
     implementation(project(":library") {

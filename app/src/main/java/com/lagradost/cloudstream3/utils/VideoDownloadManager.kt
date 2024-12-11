@@ -8,6 +8,7 @@ import android.content.*
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
+import android.os.Build.VERSION.SDK_INT
 import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.core.app.NotificationCompat
@@ -19,9 +20,13 @@ import androidx.work.Data
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
-import coil.ImageLoader
-import coil.request.ImageRequest
-import coil.request.SuccessResult
+import coil3.Extras
+import coil3.ImageLoader
+import coil3.SingletonImageLoader
+import coil3.asDrawable
+import coil3.request.ImageRequest
+import coil3.request.SuccessResult
+import coil3.request.allowHardware
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
 import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
@@ -233,21 +238,20 @@ object VideoDownloadManager {
                 return cachedBitmaps[url]
             }
 
-            val imageLoader = ImageLoader(this)
+            val imageLoader = SingletonImageLoader.get(this)
 
             val request = ImageRequest.Builder(this)
                 .data(url)
                 .apply {
                     headers?.forEach { (key, value) ->
-                        addHeader(key, value)
+                        extras[Extras.Key<String>(key)] = value
                     }
                 }
-                .allowHardware(false) // Disable hardware bitmaps for compatibility
                 .build()
 
             val bitmap = runBlocking {
                 val result = imageLoader.execute(request)
-                (result as? SuccessResult)?.drawable?.toBitmap()
+                (result as? SuccessResult)?.image?.asDrawable(applicationContext.resources)?.toBitmap()
             }
 
             bitmap?.let {

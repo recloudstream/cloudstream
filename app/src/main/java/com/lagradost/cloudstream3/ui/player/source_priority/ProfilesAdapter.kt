@@ -8,7 +8,6 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
-import androidx.core.graphics.drawable.toBitmap
 import androidx.core.view.isVisible
 import androidx.palette.graphics.Palette
 import androidx.recyclerview.widget.RecyclerView
@@ -16,6 +15,7 @@ import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.PlayerQualityProfileItemBinding
 import com.lagradost.cloudstream3.utils.AppContextUtils
 import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
+import com.lagradost.cloudstream3.utils.drawableToBitmap
 
 class ProfilesAdapter(
     override val items: MutableList<QualityDataHelper.QualityProfile>,
@@ -81,21 +81,24 @@ class ProfilesAdapter(
             }
 
             outline.isVisible = currentItem?.second?.id == item.id
+            val drawableResId = art[index % art.size]
+            profileBg.loadImage(drawableResId)
 
-            profileBg.loadImage(art[index % art.size]) {
-                target { drawable ->
-                    // Convert drawable to bitmap to extract palette colors
-                    val bitmap = drawable.toBitmap()
-
+            val drawable = ContextCompat.getDrawable(itemView.context, drawableResId)
+            if (drawable != null) {
+                // Convert Drawable to Bitmap
+                val bitmap = drawableToBitmap(drawable)
+                if (bitmap != null) {
+                    // Use Palette to extract colors from the bitmap
                     Palette.from(bitmap).generate { palette ->
-                        palette?.let {
-                            val color = it.getDarkVibrantColor(
-                                ContextCompat.getColor(
-                                    itemView.context,
-                                    R.color.dubColorBg
-                                )
+                        val color = palette?.getDarkVibrantColor(
+                            ContextCompat.getColor(
+                                itemView.context,
+                                R.color.dubColorBg
                             )
+                        )
 
+                        if (color != null) {
                             wifiText.backgroundTintList = ColorStateList.valueOf(color)
                             dataText.backgroundTintList = ColorStateList.valueOf(color)
                         }

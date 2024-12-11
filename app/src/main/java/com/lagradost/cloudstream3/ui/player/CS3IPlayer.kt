@@ -62,6 +62,7 @@ import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.ErrorLoadingException
 import com.lagradost.cloudstream3.MainActivity.Companion.deleteFileOnExit
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.USER_AGENT
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.mvvm.debugAssert
@@ -1443,6 +1444,29 @@ class CS3IPlayer : IPlayer {
                 ExtractorLinkType.DASH -> MimeTypes.APPLICATION_MPD
                 ExtractorLinkType.VIDEO -> MimeTypes.VIDEO_MP4
                 ExtractorLinkType.TORRENT, ExtractorLinkType.MAGNET -> {
+                    // we check settings first, todo cleanup
+                    val default = TvType.entries.toTypedArray()
+                        .sorted()
+                        .filter { it != TvType.NSFW }
+                        .map { it.ordinal }
+
+                    val defaultSet = default.map { it.toString() }.toSet()
+                    val currentPrefMedia = try {
+                        PreferenceManager.getDefaultSharedPreferences(context)
+                            .getStringSet(
+                                context.getString(R.string.prefer_media_type_key),
+                                defaultSet
+                            )
+                            ?.mapNotNull { it.toIntOrNull() ?: return@mapNotNull null }
+                    } catch (e: Throwable) {
+                        null
+                    } ?: default
+
+                    if(!currentPrefMedia.contains(TvType.Torrent.ordinal)) {
+                        event(ErrorEvent(ErrorLoadingException("Preferred media do not contain torrent")))
+                        return
+                    }
+
                     if(Torrent.hasAcceptedTorrentForThisSession == false) {
                         event(ErrorEvent(ErrorLoadingException("Not accepted torrent")))
                         return

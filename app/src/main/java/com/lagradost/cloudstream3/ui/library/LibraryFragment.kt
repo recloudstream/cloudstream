@@ -561,6 +561,7 @@ class LibraryFragment : Fragment() {
                     activity?.loadResult(
                         card.url,
                         apiName,
+                        card.name
                     )
                 }
 

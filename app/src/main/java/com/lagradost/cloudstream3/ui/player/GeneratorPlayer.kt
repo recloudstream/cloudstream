@@ -8,6 +8,7 @@ import android.content.Intent
 import android.content.res.ColorStateList
 import android.os.Build
 import android.os.Bundle
+import android.text.Spanned
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -57,6 +58,7 @@ import com.lagradost.cloudstream3.ui.subtitles.SUBTITLE_AUTO_SELECT_KEY
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment.Companion.getAutoSelectLanguageISO639_1
 import com.lagradost.cloudstream3.utils.*
+import com.lagradost.cloudstream3.utils.AppContextUtils.html
 import com.lagradost.cloudstream3.utils.AppContextUtils.sortSubs
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.runOnMainThread
@@ -766,9 +768,9 @@ class GeneratorPlayer : FullScreenPlayer() {
                 val subtitleIndexStart = currentSubtitles.indexOf(currentSelectedSubtitles) + 1
                 var subtitleIndex = subtitleIndexStart
 
-                val subsArrayAdapter = ArrayAdapter<String>(ctx, R.layout.sort_bottom_single_choice)
-                subsArrayAdapter.add(ctx.getString(R.string.no_subtitles))
-                subsArrayAdapter.addAll(currentSubtitles.map { it.name })
+                val subsArrayAdapter = ArrayAdapter<Spanned>(ctx, R.layout.sort_bottom_single_choice)
+                subsArrayAdapter.add(ctx.getString(R.string.no_subtitles).html())
+                subsArrayAdapter.addAll(currentSubtitles.map { it.name.html() })
 
                 subtitleList.adapter = subsArrayAdapter
                 subtitleList.choiceMode = AbsListView.CHOICE_MODE_SINGLE
