@@ -596,4 +596,19 @@
     <string name="speed_setting_summary">Добавя опция за промяна на скоростта в плеъра</string>
     <string name="test_extensions_summary">Този тест е направен за програмисти и не проверява работата на никакви добавки.</string>
     <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
+    <string name="episode_upcoming_format" formatted="true">Предстоящо в %s</string>
+    <string name="repo_copy_label">Име на хранилището и URL адрес</string>
+    <string name="toast_copied">копирани!</string>
+    <string name="delete_format" formatted="true">Изтриване (%1$d | %2$s)</string>
+    <string name="delete_files">Изтриване на файлове</string>
+    <string name="play_from_beginning_img_des">Пусни от самото начало</string>
+    <string name="open_local_video">Отваряне на местно видео</string>
+    <string name="downloads_empty">В момента няма изтегляния.</string>
+    <string name="next_season_episode_format" formatted="true">Сезон %1$d Епизод %2$d ще бъде пуснат на</string>
+    <string name="downloads_delete_select">Изберете елементите за изтриване</string>
+    <string name="offline_file">Наличен за гледане офлайн</string>
+    <string name="select_all">Изберете всички</string>
+    <string name="deselect_all">Премахване на избора на всички</string>
+    <string name="test_warning">Предупреждение</string>
+    <string name="delete_message_multiple" formatted="true">Сигурни ли сте, че искате да изтриете трайно следните елементи?\n\n %s</string>
 </resources>
