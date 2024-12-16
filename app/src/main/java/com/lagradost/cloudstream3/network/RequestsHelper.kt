@@ -15,12 +15,13 @@ import org.conscrypt.Conscrypt
 import java.io.File
 import java.security.Security
 
-fun Requests.initClient(context: Context): OkHttpClient {
-    normalSafeApiCall { Security.insertProviderAt(Conscrypt.newProvider(), 1) }
-    return buildDefaultClient(context)
+fun Requests.initClient(context: Context) {
+    this.baseClient = buildDefaultClient(context)
 }
 
 fun buildDefaultClient(context: Context): OkHttpClient {
+    normalSafeApiCall { Security.insertProviderAt(Conscrypt.newProvider(), 1) }
+    
     val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
     val dns = settingsManager.getInt(context.getString(R.string.dns_pref), 0)
     val baseClient = OkHttpClient.Builder()
