@@ -681,4 +681,8 @@
     <string name="confirm_before_exiting_desc">Mostra finestra di dialogo prima di uscire dall\'app</string>
     <string name="show">Mostra</string>
     <string name="dont_show">Non mostrare</string>
+    <string name="backup_path_title">Posizione cartella di backup</string>
+    <string name="custom">Personalizzato</string>
+    <string name="torrent_info">Questo video è un Torrent, il che significa che la tua attività video può essere tracciata.\nAssicurati di aver capito il significato di scaricare tramite Torrent prima di continuare.</string>
+    <string name="subs_edge_size">Dimensione bordo</string>
 </resources>

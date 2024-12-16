@@ -655,4 +655,12 @@
     <string name="deselect_all">সকলো বাদ দিয়ক</string>
     <string name="sort_release_date_new">মুক্তিৰ তাৰিখ (নতুনৰ পৰা পুৰণা)</string>
     <string name="no_subtitles_loaded">এতিয়ালৈকে কোনো চাবটাইটেল লোড কৰা হোৱা নাই</string>
+    <string name="custom">কাষ্টম</string>
+    <string name="dont_show">নেদেখুৱাওক</string>
+    <string name="confirm_before_exiting_desc">এপ্‌ট পৰা উলাই যোৱা আগতে বাৰ্তা দেখুৱাওক</string>
+    <string name="confirm_before_exiting_title">উলাই যোৱা আগতে নিশ্চিত কৰক</string>
+    <string name="backup_path_title">ব্যাকআপ ফ\'ল্ডাৰ স্থান</string>
+    <string name="show">দেখুৱাওক</string>
+    <string name="torrent_info">এই ভিডিওটো টৰেন্ট। এই অৰ্থ হৈছে যে আপোনাৰ ভিডিও কাৰ্যকলাপ ট্ৰেক কৰা হ\'ব পাৰে।\nআগবঢ়িবলৈ আগতে টৰেণ্টিং বুজি পোৱা নিশ্চিত কৰক।</string>
+    <string name="subs_edge_size">চুকৰ মাপ</string>
 </resources>
