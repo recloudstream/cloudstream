@@ -685,4 +685,8 @@
     <string name="confirm_before_exiting_desc">Zobrazit dialog před ukončením aplikace</string>
     <string name="show">Zobrazit</string>
     <string name="dont_show">Nezobrazovat</string>
+    <string name="backup_path_title">Umístění složky záloh</string>
+    <string name="custom">Vlastní</string>
+    <string name="torrent_info">Toto video je torrent, což znamená, že lze sledovat vaší aktivitu v něm.\nPřed pokračováním se ujistěte, že chápete, co to je torrentování.</string>
+    <string name="subs_edge_size">Velikost okraje</string>
 </resources>

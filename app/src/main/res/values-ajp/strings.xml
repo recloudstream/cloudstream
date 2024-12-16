@@ -168,7 +168,7 @@
     <string name="movies">أفلام</string>
     <string name="free_storage">فاضي</string>
     <string name="year">سنة</string>
-    <string name="no_subtitles">مافي ترجمة</string>
+    <string name="no_subtitles">طفي الترجمة</string>
     <string name="synopsis">القصة</string>
     <string name="used_storage">مستعمل</string>
     <string name="resume_time_left" formatted="true">%dد
@@ -195,7 +195,7 @@
     <string name="movies_singular">فيلم</string>
     <string name="torrent_singular">تورنت</string>
     <string name="no_update_found">م لقينا تجديد</string>
-    <string name="check_for_update">شوف إذا في تجديد</string>
+    <string name="check_for_update">شوف إزا فيه تجديد</string>
     <string name="render_error">في مشكلة بجهاز العرض (Renderer error)</string>
     <string name="show_title">العِنوان</string>
     <string name="jsdelivr_proxy">پروكسي \"گِت هَب\"</string>
@@ -667,4 +667,8 @@
     <string name="dont_show">م تفرجي</string>
     <string name="confirm_before_exiting_desc">طلوب تأكيد قبلما تطلع من الآپ</string>
     <string name="confirm_before_exiting_title">أكّد إنو بدك تطلع</string>
+    <string name="backup_path_title">محل النسخة الاحتياطية</string>
+    <string name="custom">حدد غير محل</string>
+    <string name="torrent_info">هيدا الڤيديو تورينت. هيدا بيعني إنه فيه ينعمله تراك، يعني بينعرف شو عم تحضر.\nإزا م بتعرف شو التورينت، م تستعمله.</string>
+    <string name="subs_edge_size">حجم الحفّة</string>
 </resources>

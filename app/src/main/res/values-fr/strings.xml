@@ -442,7 +442,7 @@
     <string name="plugins_disabled" formatted="true">Désactivé : %d</string>
     <string name="plugins_not_downloaded" formatted="true">Non téléchargé : %d</string>
     <string name="plugins_updated" formatted="true">%d plugins mis-à-jour</string>
-    <string name="download_all_plugins_from_repo">Télécharger tous les plugins de ce repository ?</string>
+    <string name="download_all_plugins_from_repo">Avertissement : CloudStream 3 décline toute responsabilité concernant l’utilisation d’extensions tierces et ne fournit aucun support pour celles-ci !</string>
     <string name="single_plugin_disabled" formatted="true">%s (Désactivé)</string>
     <string name="tracks">Pistes</string>
     <string name="audio_tracks">Pistes audio</string>
@@ -604,7 +604,7 @@
     <string name="password_pin_authentication_title">Mot de passe/Code PIN</string>
     <string name="clipboard_unknown_error">Erreur de copie, Veuillez copier le logcat et contacter le support de l\'application.</string>
     <string name="biometric_setting_summary">Déverrouiller l\'appli avec l\'empreinte digitale, l\'identification faciale, le code PIN, le motif et le mot de passe.</string>
-    <string name="biometric_prompt_description">Cet écran a été fermé en raison de plusieurs tentatives infructueuses. Veuillez relancer l\'application.</string>
+    <string name="biometric_prompt_description">Après quelques tentatives infructueuses, le message se fermera. Redémarrez simplement l’application pour réessayer.</string>
     <string name="battery_dialog_message">Pour garantir des téléchargements ininterrompus et des notifications pour les émissions de télévision auxquelles vous êtes abonné, CloudStream a besoin d\'une autorisation pour fonctionner en arrière-plan. En appuyant sur OK, vous serez dirigé vers App info. Faites défiler jusqu\'à 𝘼𝙥𝙥 𝙗𝙖𝙩𝙩𝙚𝙧𝙮 𝙪𝙨𝙖𝙜𝙚 et réglez l\'utilisation de la batterie sur 𝙐𝙣𝙧𝙚𝙨𝙩𝙧𝙞𝙘𝙩𝙚𝙙. Veuillez noter que cette autorisation ne signifie pas que CS3 épuisera votre batterie. Il ne fonctionnera en arrière-plan que lorsque cela sera nécessaire, par exemple lors de la réception de notifications ou du téléchargement de vidéos à partir d\'extensions officielles. Si vous choisissez d\'annuler, vous pouvez ajuster ce paramètre ultérieurement dans 𝙂𝙚𝙣𝙚𝙧𝙖𝙡 𝙎𝙚𝙩𝙩𝙞𝙣𝙜𝙨.</string>
     <string name="app_unrestricted_toast">L\'utilisation de la batterie de l\'application est déjà réglée sur illimitée</string>
     <string name="unfavorite">Supprimer des favoris</string>
@@ -634,4 +634,28 @@
     <string name="delete_message_multiple" formatted="true">Êtes-vous sûr de vouloir supprimer définitivement les éléments suivants?
 \n
 \n%s</string>
+    <string name="auth_locally">Authentification locale</string>
+    <string name="sort_release_date_old">Date de sortie (du plus ancien au plus récent)</string>
+    <string name="sort_release_date_new">Date de sortie (du plus récent au plus ancien)</string>
+    <string name="preview_seekbar">Aperçu de la barre de recherche</string>
+    <string name="pref_category_security">Sécurité</string>
+    <string name="device_pin_url_message">Visitez <b>%s</b> sur votre téléphone ou votre ordinateur et saisissez le code ci-dessus</string>
+    <string name="preview_seekbar_desc">Activer l’aperçu des miniatures sur la barre de recherche</string>
+    <string name="subs_edge_size">Taille du bord</string>
+    <string name="show">Afficher</string>
+    <string name="dont_show">Ne pas afficher</string>
+    <string name="hide_player_control_names">Masquer les noms des commandes du lecteur</string>
+    <string name="device_pin_error_message">Impossible d’obtenir le code PIN de l’appareil, essayez l’authentification locale</string>
+    <string name="pref_category_accounts">Comptes</string>
+    <string name="torrent_info">Cette vidéo est un torrent, ce qui signifie que votre activité vidéo peut être suivie.\nAssurez-vous de comprendre le fonctionnement des torrents avant de continuer.</string>
+    <string name="dismiss">Ignorer</string>
+    <string name="delete_message_series_section" formatted="true">Vous allez également supprimer définitivement tous les épisodes des séries suivantes :\n\n%s</string>
+    <string name="delete_message_series_only" formatted="true">Êtes-vous sûr de vouloir supprimer définitivement tous les épisodes des séries suivantes ?\n\n%s</string>
+    <string name="delete_message_series_episodes" formatted="true">Êtes-vous sûr de vouloir supprimer définitivement les épisodes suivants dans %1$s ?\n\n%2$s</string>
+    <string name="episode_action_cast_mirror">Recopier l’écran</string>
+    <string name="no_subtitles_loaded">Aucun sous-titre n’a encore été chargé</string>
+    <string name="backup_path_title">Emplacement du dossier de sauvegarde</string>
+    <string name="custom">Personnalisé</string>
+    <string name="confirm_before_exiting_desc">Afficher une boîte de dialogue avant de quitter l’application</string>
+    <string name="confirm_before_exiting_title">Confirmer avant de quitter</string>
 </resources>
