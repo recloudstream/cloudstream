@@ -328,9 +328,10 @@ class SubtitlesFragment : DialogFragment() {
 
             subsSubtitleElevation.setFocusableInTv()
             subsSubtitleElevation.setOnClickListener { textView ->
+                // tbh this should not be a dialog if it has so many values
                 val elevationTypes = listOf(
                     0 to textView.context.getString(R.string.none)
-                ) + (1..10).map { x ->
+                ) + (1..30).map { x ->
                     val i = x * 10
                     i to "${i}dp"
                 }
