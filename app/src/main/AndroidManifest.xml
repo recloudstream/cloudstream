@@ -194,8 +194,9 @@
         </activity>
 
         <activity
-            android:name=".ui.EasterEggMonke"
-            android:exported="true" />
+            android:name=".ui.EasterEggMonkeActivity"
+            android:exported="false"
+            android:noHistory="true" />
 
         <receiver
             android:name=".receivers.VideoDownloadRestartReceiver"
