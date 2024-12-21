@@ -430,6 +430,51 @@ val WIDEVINE_UUID = UUID(-0x121074568629b532L, -0x5c37d8232ae2de13L)
  */
 val PLAYREADY_UUID = UUID(-0x65fb0f8667bfbd7aL, -0x546d19a41f77a06bL)
 
+open class OnlineDrmExtractorLink(
+    override val source: String,
+    override val name: String,
+    override val url: String,
+    override val referer: String,
+    override val quality: Int,
+    override val headers: Map<String, String> = mapOf(),
+    /** Used for getExtractorVerifierJob() */
+    override val extractorData: String? = null,
+    override val type: ExtractorLinkType,
+    open val keyUrl: String,
+    open val uuid: UUID,
+    open val keyRequestParameters: HashMap<String, String>
+) : ExtractorLink(
+    source, name, url, referer, quality, type, headers, extractorData
+) {
+    constructor(
+        source: String,
+        name: String,
+        url: String,
+        referer: String,
+        quality: Int,
+        /** the type of the media, use INFER_TYPE if you want to auto infer the type from the url */
+        type: ExtractorLinkType?,
+        headers: Map<String, String> = mapOf(),
+        /** Used for getExtractorVerifierJob() */
+        extractorData: String? = null,
+        keyUrl: String,
+        uuid: UUID = WIDEVINE_UUID,
+        keyRequestParameters: HashMap<String, String> = hashMapOf(),
+    ) : this(
+        source = source,
+        name = name,
+        url = url,
+        referer = referer,
+        quality = quality,
+        headers = headers,
+        extractorData = extractorData,
+        type = type ?: inferTypeFromUrl(url),
+        keyUrl = keyUrl,
+        uuid = uuid,
+        keyRequestParameters = keyRequestParameters,
+    )
+}
+
 open class DrmExtractorLink private constructor(
     override val source: String,
     override val name: String,
