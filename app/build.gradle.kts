@@ -31,13 +31,6 @@ android {
         enable = true
     }
 
-    /* disable this for now
-    externalNativeBuild {
-        cmake {
-            path("CMakeLists.txt")
-        }
-    }*/
-
     signingConfigs {
         if (prereleaseStoreFile != null) {
             create("prerelease") {
@@ -49,13 +42,13 @@ android {
         }
     }
 
-    compileSdk = 34
-    buildToolsVersion = "34.0.0"
+    compileSdk = 35
+  //  buildToolsVersion = "34.0.0"
 
     defaultConfig {
         applicationId = "com.lagradost.cloudstream3"
         minSdk = 21
-        targetSdk = 33 /* Android 14 is Fu*ked
+        targetSdk = 35 /* Android 14 is Fu*ked
         ^ https://developer.android.com/about/versions/14/behavior-changes-14#safer-dynamic-code-loading*/
         versionCode = 64
         versionName = "4.4.1"
@@ -154,12 +147,7 @@ dependencies {
     androidTestImplementation(libs.espresso.core)
 
     // Android Core & Lifecycle
-    implementation(libs.core.ktx) {
-        version {
-            strictly("1.13.1")
-        }
-        because("Need SDK 35 and AGP 8.2 for 1.15")
-    }
+    implementation(libs.core.ktx)
     implementation(libs.appcompat)
     implementation(libs.navigation.ui.ktx)
     implementation(libs.lifecycle.livedata.ktx)
@@ -218,8 +206,8 @@ dependencies {
     implementation(libs.aria2cstream)
 
     // Downloading & Networking
-    implementation(libs.work.runtime) // need sdk 35 and agp 8.2 for 1.15
-    implementation(libs.work.runtime.ktx) // need sdk 35 and agp 8.2 for 1.15
+    implementation(libs.work.runtime)
+    implementation(libs.work.runtime.ktx)
     implementation(libs.nicehttp) // HTTP Lib
 
     implementation(project(":library") {
