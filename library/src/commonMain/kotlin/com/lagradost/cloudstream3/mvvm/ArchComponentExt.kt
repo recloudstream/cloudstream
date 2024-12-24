@@ -58,12 +58,12 @@ sealed class Resource<out T> {
     data class Loading(val url: String? = null) : Resource<Nothing>()
 }
 
-fun logError(throwable: Throwable, tag: String? = "APIError") {
-    Log.d("$tag", "----------------------------------------------------------------")
-    Log.d("$tag", "safeAPICall: " + throwable.localizedMessage)
-    Log.d("$tag", "safeAPICall: " + throwable.message)
+fun logError(throwable: Throwable, tag: String = "APIError") {
+    Log.d(tag, "----------------------------------------------------------------")
+    Log.d(tag, "safeAPICall: " + throwable.localizedMessage)
+    Log.d(tag, "safeAPICall: " + throwable.message)
     throwable.printStackTrace()
-    Log.d("$tag", "----------------------------------------------------------------")
+    Log.d(tag, "----------------------------------------------------------------")
 }
 
 fun <T> normalSafeApiCall(apiCall: () -> T): T? {
