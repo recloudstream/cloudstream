@@ -1,9 +1,9 @@
 package com.lagradost.cloudstream3.utils
 
 import android.content.Context
+import android.net.Uri
 import com.lagradost.api.Log
 import com.lagradost.cloudstream3.utils.VideoDownloadManager.getFolder
-import com.lagradost.safefile.SafeFile
 
 object SubtitleUtils {
 
@@ -20,11 +20,19 @@ object SubtitleUtils {
 
         getFolder(context, relative, info.basePath)?.forEach { (name, uri) ->
             if (isMatchingSubtitle(name, display, cleanDisplay)) {
-                val subtitleFile = SafeFile.fromUri(context, uri)
-                if (subtitleFile == null || !subtitleFile.delete()) {
-                    Log.e("SubtitleDeletion", "Failed to delete subtitle file: ${subtitleFile?.name()}")
-                }
+                deleteSubtitleFile(context, uri)
             }
+        }
+    }
+
+    private fun deleteSubtitleFile(context: Context, uri: Uri) {
+        try {
+            val rowsDeleted = context.contentResolver.delete(uri, null, null)
+            if (rowsDeleted <= 0) {
+                Log.e("SubtitleDeletion", "Failed to delete subtitle file: $uri")
+            }
+        } catch (e: Exception) {
+            Log.e("SubtitleDeletion", "Error deleting subtitle file: ${e.message}")
         }
     }
 
