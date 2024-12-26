@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.Uri
 import com.lagradost.api.Log
 import com.lagradost.cloudstream3.utils.VideoDownloadManager.getFolder
+import com.lagradost.safefile.SafeFile
 
 object SubtitleUtils {
 
@@ -27,9 +28,17 @@ object SubtitleUtils {
 
     private fun deleteSubtitleFile(context: Context, uri: Uri) {
         try {
-            val rowsDeleted = context.contentResolver.delete(uri, null, null)
-            if (rowsDeleted <= 0) {
-                Log.e("SubtitleDeletion", "Failed to delete subtitle file: $uri")
+            val subtitleFile = SafeFile.fromUri(context, uri)
+            if (subtitleFile == null || !subtitleFile.delete()) {
+                // If we are in a scoped storage directories (e.g. Downloads)
+                // SafeFile will fail, so we try contentResolver.
+                // However, contentResolver will also fail if we are outside
+                // a content:// URI which is why we try SafeFile first and only
+                // fallback to contentResolver if SafeFile fails.
+                val rowsDeleted = context.contentResolver.delete(uri, null, null)
+                if (rowsDeleted <= 0) {
+                    Log.e("SubtitleDeletion", "Failed to delete subtitle file: $uri")
+                }
             }
         } catch (e: Exception) {
             Log.e("SubtitleDeletion", "Error deleting subtitle file: ${e.message}")
