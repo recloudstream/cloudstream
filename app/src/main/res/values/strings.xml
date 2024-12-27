@@ -821,5 +821,10 @@
     <string name="show">Show</string>
     <string name="dont_show">Don\'t Show</string>
     <string name="subs_edge_size">Edge Size</string>
+    <string name="result_open_downloads">Open Downloads</string>
+    <string name="no_internet_connection">
+        No internet connection.
+        \n\nPlease connect to the internet and try again or watch your downloads while you are offline.
+    </string>
     <!--confirm exit dialog-->
 </resources>

@@ -45,6 +45,7 @@ import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.utils.AppContextUtils.filterProviderByPreferredMedia
 import com.lagradost.cloudstream3.utils.AppContextUtils.getApiProviderLangSettings
+import com.lagradost.cloudstream3.utils.AppContextUtils.isNetworkAvailable
 import com.lagradost.cloudstream3.utils.AppContextUtils.isRecyclerScrollable
 import com.lagradost.cloudstream3.utils.AppContextUtils.loadSearchResult
 import com.lagradost.cloudstream3.utils.AppContextUtils.ownHide
@@ -56,6 +57,7 @@ import com.lagradost.cloudstream3.utils.Event
 import com.lagradost.cloudstream3.utils.SubtitleHelper.getFlagFromIso
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.getSpanCount
+import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIconsAndNoStringRes
 import java.util.*
 
@@ -590,7 +592,16 @@ class HomeFragment : Fragment() {
 
                     is Resource.Failure -> {
                         homeLoadingShimmer.stopShimmer()
-                        resultErrorText.text = data.errorString
+                        var errorString =  data.errorString
+                        if (context?.isNetworkAvailable() == false) {
+                            errorString = getString(R.string.no_internet_connection)
+                            homeReloadConnectionOpenInBrowser.isVisible = false
+                            homeReloadConnectionOpenDownloads.isVisible = true
+                            homeReloadConnectionOpenDownloads.setOnClickListener {
+                                activity.navigate(R.id.navigation_downloads)
+                            }
+                        }
+                        resultErrorText.text = errorString
                         homeReloadConnectionerror.setOnClickListener(apiChangeClickListener)
                         homeReloadConnectionOpenInBrowser.setOnClickListener { view ->
                             val validAPIs = apis//.filter { api -> api.hasMainPage }
