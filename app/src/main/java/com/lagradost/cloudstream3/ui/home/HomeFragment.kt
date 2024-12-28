@@ -596,8 +596,8 @@ class HomeFragment : Fragment() {
                         if (context?.isNetworkAvailable() == false) {
                             errorString = getString(R.string.no_internet_connection)
                             homeReloadConnectionOpenInBrowser.isVisible = false
-                            homeReloadConnectionOpenDownloads.isVisible = true
-                            homeReloadConnectionOpenDownloads.setOnClickListener {
+                            homeReloadConnectionGoToDownloads.isVisible = true
+                            homeReloadConnectionGoToDownloads.setOnClickListener {
                                 activity.navigate(R.id.navigation_downloads)
                             }
                         }

@@ -178,7 +178,7 @@
             app:icon="@drawable/ic_baseline_public_24" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/home_reload_connection_open_downloads"
+            android:id="@+id/home_reload_connection_go_to_downloads"
             style="@style/BlackButton"
 
             android:layout_width="wrap_content"
@@ -186,7 +186,7 @@
             android:layout_gravity="center"
             android:layout_margin="5dp"
             android:minWidth="200dp"
-            android:text="@string/result_open_downloads"
+            android:text="@string/result_go_to_downloads"
             android:visibility="gone"
             app:icon="@drawable/netflix_download" />
 
