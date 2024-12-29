@@ -643,7 +643,7 @@ class ResultViewModel2 : ViewModel() {
                 TvType.Cartoon -> "Cartoons/$sanitizedFileName"
                 TvType.Torrent -> "Torrent"
                 TvType.Documentary -> "Documentaries"
-                TvType.AsianDrama -> "AsianDrama"
+                TvType.AsianDrama -> "AsianDrama/$sanitizedFileName"
                 TvType.Live -> "LiveStreams"
                 TvType.NSFW -> "NSFW"
                 TvType.Others -> "Others"
