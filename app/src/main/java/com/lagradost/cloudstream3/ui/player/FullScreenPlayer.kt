@@ -1193,7 +1193,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
                                         // Update progress bar
                                         playerProgressbarLeft.max = 200 // 200% max
-                                        playerProgressbarLeft.progress = (currentVolumePercentage).toInt()
+                                        playerProgressbarLeft.progress = currentVolumePercentage.toInt()
 
                                         // Change color for >100%
                                         val color = if (currentVolumePercentage > 100) {
