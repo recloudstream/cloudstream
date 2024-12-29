@@ -981,15 +981,14 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                         getBrightness()?.let {
                             currentRequestedBrightness = it
                         }
-                        TouchAction.Volume
-                        /*(activity?.getSystemService(Context.AUDIO_SERVICE) as? AudioManager)?.let { audioManager ->
+                        (activity?.getSystemService(Context.AUDIO_SERVICE) as? AudioManager)?.let { audioManager ->
                             val currentVolume =
                                 audioManager.getStreamVolume(AudioManager.STREAM_MUSIC)
                             val maxVolume =
                                 audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
 
                             currentRequestedVolume = currentVolume.toFloat() / maxVolume.toFloat()
-                        }*/
+                        }
                     }
                 }
 
