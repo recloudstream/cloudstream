@@ -702,21 +702,23 @@ public enum class AutoDownloadMode(val value: Int) {
 }
 
 fun TvType.isMovieType(): Boolean {
-    return this in listOf(
+    return when (this) {
         TvType.AnimeMovie,
         TvType.Live,
         TvType.Movie,
-        TvType.Torrent
-    )
+        TvType.Torrent -> true
+        else -> false
+    }
 }
 
 fun TvType.isAudioType(): Boolean {
-    return this in listOf(
+    return when (this) {
         TvType.Audio,
         TvType.AudioBook,
         TvType.Music,
-        TvType.Podcast
-    )
+        TvType.Podcast -> true
+        else -> false
+    }
 }
 
 fun TvType.isLiveStream(): Boolean {
