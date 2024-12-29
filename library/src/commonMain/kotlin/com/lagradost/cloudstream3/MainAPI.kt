@@ -1273,13 +1273,13 @@ fun LoadResponse?.isAnimeBased(): Boolean {
 }
 
 fun TvType?.isEpisodeBased(): Boolean {
-    if (this == null) return false
-    return this in listOf(
+    return when (this) {
         TvType.Anime,
         TvType.AsianDrama,
         TvType.Cartoon,
-        TvType.TvSeries
-    )
+        TvType.TvSeries -> true
+        else -> false
+    }
 }
 
 data class NextAiring(
