@@ -987,7 +987,10 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                             val maxVolume =
                                 audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
 
-                            currentRequestedVolume = currentVolume.toFloat() / maxVolume.toFloat()
+                            if (currentRequestedVolume == 0.0f) {
+                                currentRequestedVolume =
+                                    currentVolume.toFloat() / maxVolume.toFloat()
+                            }
                         }
                     }
                 }
@@ -1211,7 +1214,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
                                         // Apply loudness enhancer for volumes >100%
                                         if (currentRequestedVolume > 1.0f) {
-                                            val boostFactor = ((currentRequestedVolume - 1.0f) * 1000).toInt() // Boost in millibels
+                                            val boostFactor = (currentRequestedVolume * 1000).toInt() // Boost in millibels
                                             if (loudnessEnhancer == null) {
                                                 val audioSessionId = (playerView?.player as? ExoPlayer)?.audioSessionId ?:
                                                     it.generateAudioSessionId()
