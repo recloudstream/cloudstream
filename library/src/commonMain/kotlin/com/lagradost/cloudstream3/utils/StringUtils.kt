@@ -5,10 +5,10 @@ import java.net.URLEncoder
 
 object StringUtils {
     fun String.encodeUri(): String {
-        URLEncoder.encode(this, "UTF-8")
+        return URLEncoder.encode(this, "UTF-8")
     }
 
     fun String.decodeUri(): String {
-        URLDecoder.decode(this, "UTF-8")
+        return URLDecoder.decode(this, "UTF-8")
     }
 }
