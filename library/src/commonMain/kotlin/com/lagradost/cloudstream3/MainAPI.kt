@@ -681,8 +681,11 @@ enum class TvType(value: Int?) {
     Music(13),
     AudioBook(14),
 
-    /** Wont load the built in player, make your own interaction */
+    /** Won't load the built in player, make your own interaction */
     CustomMedia(15),
+
+    Audio(16),
+    Podcast(17),
 }
 
 public enum class AutoDownloadMode(val value: Int) {
@@ -698,9 +701,22 @@ public enum class AutoDownloadMode(val value: Int) {
     }
 }
 
-// IN CASE OF FUTURE ANIME MOVIE OR SMTH
 fun TvType.isMovieType(): Boolean {
-    return this == TvType.Movie || this == TvType.AnimeMovie || this == TvType.Torrent || this == TvType.Live
+    return this in listOf(
+        TvType.AnimeMovie,
+        TvType.Live,
+        TvType.Movie,
+        TvType.Torrent
+    )
+}
+
+fun TvType.isAudioType(): Boolean {
+    return this in listOf(
+        TvType.Audio,
+        TvType.AudioBook,
+        TvType.Music,
+        TvType.Podcast
+    )
 }
 
 fun TvType.isLiveStream(): Boolean {
