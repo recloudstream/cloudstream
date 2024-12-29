@@ -4,31 +4,35 @@ appcompat = "1.7.0"
 aria2cstream = "0.0.6"
 autoServiceKsp = "1.2.0"
 biometric = "1.2.0-alpha05"
-coil = "3.0.3"
+buildkonfigGradlePlugin = "0.15.1"
+coil = "3.0.4"
 colorpicker = "1.1.0"
 conscryptAndroid = "2.5.2"
 constraintlayout = "2.2.0"
-coreKtx = "1.13.1"
-desugar_jdk_libs_nio = "2.1.2"
+coreKtx = "1.15.0"
+desugar_jdk_libs_nio = "2.1.4"
+dokkaGradlePlugin = "1.9.10"
 espressoCore = "3.6.1"
 fuzzywuzzy = "1.4.0"
 glide = "4.16.0"
 glideTransformations = "4.3.0"
-guava = "33.2.1-android"
+gradle = "8.2.2"
+guava = "33.3.1-android"
 jacksonModuleKotlin = "2.13.1"
 json = "20240303"
 junit = "4.13.2"
 junitKtx = "1.2.1"
 junitVersion = "1.2.1"
 juniversalchardet = "2.5.0"
-kotlinxCoroutinesCore = "1.8.0"
+kotlinGradlePluginVersion = "1.9.23"
+kotlinxCoroutinesCore = "1.9.0"
 lifecycleLivedataKtx = "2.8.7"
 lifecycleViewmodelKtx = "2.8.7"
 material = "1.12.0"
-media3 = "1.4.1"
+media3 = "1.5.1"
 mediaFfmpeg = "1.1.0"
-navigationFragmentKtx = "2.8.3"
-navigationUiKtx = "2.8.3"
+navigationFragmentKtx = "2.8.5"
+navigationUiKtx = "2.8.5"
 newpipeextractor = "v0.24.3"
 nicehttp = "0.4.11"
 okhttp3Integration = "4.16.0"
@@ -44,8 +48,8 @@ swiperefreshlayout = "1.1.0"
 tmdbJava = "2.11.0"
 tvprovider = "1.0.0"
 video = "1.0.0"
-workRuntime = "2.9.1"
-workRuntimeKtx = "2.9.1"
+workRuntime = "2.10.0"
+workRuntimeKtx = "2.10.0"
 
 [libraries]
 acra-core = { module = "ch.acra:acra-core", version.ref = "acraCore" }
@@ -54,6 +58,7 @@ appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat"
 aria2cstream = { module = "com.github.recloudstream:Aria2cStream", version.ref = "aria2cstream" }
 auto-service-ksp = { module = "dev.zacsweers.autoservice:auto-service-ksp", version.ref = "autoServiceKsp" }
 biometric = { module = "androidx.biometric:biometric", version.ref = "biometric" }
+buildkonfig-gradle-plugin = { module = "com.codingfeline.buildkonfig:buildkonfig-gradle-plugin", version.ref = "buildkonfigGradlePlugin" }
 coil = { module = "io.coil-kt.coil3:coil", version.ref = "coil" }
 coil-network-okhttp = { module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "coil" }
 colorpicker = { module = "com.jaredrummler:colorpicker", version.ref = "colorpicker" }
@@ -62,13 +67,16 @@ constraintlayout = { module = "androidx.constraintlayout:constraintlayout", vers
 core = { module = "androidx.test:core" }
 core-ktx = { module = "androidx.core:core-ktx", version.ref = "coreKtx" }
 desugar_jdk_libs_nio = { module = "com.android.tools:desugar_jdk_libs_nio", version.ref = "desugar_jdk_libs_nio" }
+dokka-gradle-plugin = { module = "org.jetbrains.dokka:dokka-gradle-plugin", version.ref = "dokkaGradlePlugin" }
 espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref = "espressoCore" }
 ext-junit = { module = "androidx.test.ext:junit", version.ref = "junitVersion" }
 fuzzywuzzy = { module = "me.xdrop:fuzzywuzzy", version.ref = "fuzzywuzzy" }
 glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
 glide-transformations = { module = "jp.wasabeef:glide-transformations", version.ref = "glideTransformations" }
+gradle = { module = "com.android.tools.build:gradle", version.ref = "gradle" }
 guava = { module = "com.google.guava:guava", version.ref = "guava" }
 jackson-module-kotlin = { module = "com.fasterxml.jackson.module:jackson-module-kotlin", version.ref = "jacksonModuleKotlin" }
+jetbrains-kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlinGradlePluginVersion" }
 json = { module = "org.json:json", version.ref = "json" }
 junit = { module = "junit:junit", version.ref = "junit" }
 junit-ktx = { module = "androidx.test.ext:junit-ktx", version.ref = "junitKtx" }
