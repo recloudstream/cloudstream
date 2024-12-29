@@ -1,5 +1,4 @@
 import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.archivesName
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.ByteArrayOutputStream
 
@@ -43,7 +42,7 @@ android {
     }
 
     compileSdk = 35
-  //  buildToolsVersion = "34.0.0"
+    //  buildToolsVersion = "34.0.0"
 
     defaultConfig {
         applicationId = "com.lagradost.cloudstream3"
@@ -170,10 +169,13 @@ dependencies {
 
     // PlayBack
     implementation(libs.colorpicker) // Subtitle Color Picker
-    implementation(libs.media.ffmpeg) // Custom FF-MPEG Lib for Audio Codecs
+    //implementation(libs.media.ffmpeg) // Custom FF-MPEG Lib for Audio Codecs
     implementation(libs.newpipeextractor) /* For Trailers
     ^ Update to Latest Commits if Trailers Misbehave, github.com/TeamNewPipe/NewPipeExtractor/commits/dev */
     implementation(libs.juniversalchardet) // Subtitle Decoding
+    // ffmpeg decoding
+    implementation(libs.nextlib.media3ext)
+    implementation(libs.nextlib.mediainfo)
 
     // Crash Reports (AcraApplication.kt)
     implementation(libs.acra.core)
@@ -248,7 +250,8 @@ tasks.register<Jar>("makeJar") {
         zipTree("build/app-classes/library-jvm.jar")
     )
     destinationDirectory.set(layout.buildDirectory)
-    archivesName = "classes"
+    archiveBaseName = "classes"
+    //archiveName = "classes"
 }
 
 tasks.withType<KotlinCompile> {

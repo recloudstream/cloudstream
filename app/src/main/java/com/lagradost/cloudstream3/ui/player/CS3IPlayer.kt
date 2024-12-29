@@ -37,7 +37,6 @@ import androidx.media3.datasource.cache.LeastRecentlyUsedCacheEvictor
 import androidx.media3.datasource.cache.SimpleCache
 import androidx.media3.datasource.okhttp.OkHttpDataSource
 import androidx.media3.exoplayer.DefaultLoadControl
-import androidx.media3.exoplayer.DefaultRenderersFactory
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.Renderer.STATE_ENABLED
 import androidx.media3.exoplayer.Renderer.STATE_STARTED
@@ -83,6 +82,7 @@ import com.lagradost.cloudstream3.utils.SubtitleHelper.fromTwoLettersToLanguage
 import com.lagradost.fetchbutton.aria2c.Aria2Starter
 import com.lagradost.fetchbutton.aria2c.DownloadListener
 import com.lagradost.fetchbutton.aria2c.DownloadStatusTell
+import io.github.anilbeesetti.nextlib.media3ext.ffdecoder.NextRenderersFactory
 import kotlinx.coroutines.delay
 import java.io.File
 import java.util.UUID
@@ -726,11 +726,12 @@ class CS3IPlayer : IPlayer {
             val exoPlayerBuilder =
                 ExoPlayer.Builder(context)
                     .setRenderersFactory { eventHandler, videoRendererEventListener, audioRendererEventListener, textRendererOutput, metadataRendererOutput ->
-                        DefaultRenderersFactory(context).apply {
+
+                        NextRenderersFactory(context)/*.apply {
                             setEnableDecoderFallback(true)
                             // Enable Ffmpeg extension.
                             setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER)
-                        }.createRenderers(
+                        }*/.createRenderers(
                             eventHandler,
                             videoRendererEventListener,
                             audioRendererEventListener,
@@ -1042,7 +1043,7 @@ class CS3IPlayer : IPlayer {
             // we want to avoid an empty exoplayer from sending events
             // this is because we need PlayerAttachedEvent to be called to render the UI
             // but don't really want the rest like Player.STATE_ENDED calling next episode
-            if(mediaSlices.isEmpty() && subSources.isEmpty()) {
+            if (mediaSlices.isEmpty() && subSources.isEmpty()) {
                 return
             }
 
@@ -1173,7 +1174,7 @@ class CS3IPlayer : IPlayer {
                         // give information when buffering, and after a set timeout we run again
                         Handler(Looper.myLooper() ?: Looper.getMainLooper()).postDelayed({
                             // if we have released the player while it is waiting, then do nothing
-                            if(exoPlayer == null) return@postDelayed
+                            if (exoPlayer == null) return@postDelayed
                             playbackPosition = exoPlayer?.currentPosition ?: 0L
                             isPlaying = true
                             loadOnlinePlayer(context, request.request, retry = true)
@@ -1411,6 +1412,7 @@ class CS3IPlayer : IPlayer {
     }
 
     var activeTorrentRequest: TorrentRequest? = null
+
     @MainThread
     private fun loadTorrent(context: Context, link: ExtractorLink) {
         ioSafe {
@@ -1418,12 +1420,12 @@ class CS3IPlayer : IPlayer {
             // the user has left the player, in the case that the user click back when this is
             // happening
             try {
-                if(exoPlayer == null) return@ioSafe
+                if (exoPlayer == null) return@ioSafe
                 val request = Torrent.loadTorrent(link, eventHandler)
-                if(exoPlayer == null) return@ioSafe
+                if (exoPlayer == null) return@ioSafe
                 activeTorrentRequest = request
                 runOnMainThread {
-                    if(exoPlayer == null) return@runOnMainThread
+                    if (exoPlayer == null) return@runOnMainThread
                     releasePlayer()
                     loadOfflinePlayer(context, request.data)
                     torrentEventLooper()
@@ -1433,9 +1435,10 @@ class CS3IPlayer : IPlayer {
             }
         }
     }
+
     @SuppressLint("UnsafeOptInUsageError")
     @MainThread
-    private fun loadOnlinePlayer(context: Context, link: ExtractorLink, retry : Boolean = false) {
+    private fun loadOnlinePlayer(context: Context, link: ExtractorLink, retry: Boolean = false) {
         Log.i(TAG, "loadOnlinePlayer $link")
         try {
             activeTorrentRequest = null
@@ -1462,21 +1465,21 @@ class CS3IPlayer : IPlayer {
                         null
                     } ?: default
 
-                    if(!currentPrefMedia.contains(TvType.Torrent.ordinal)) {
+                    if (!currentPrefMedia.contains(TvType.Torrent.ordinal)) {
                         event(ErrorEvent(ErrorLoadingException("Preferred media do not contain torrent")))
                         return
                     }
 
-                    if(Torrent.hasAcceptedTorrentForThisSession == false) {
+                    if (Torrent.hasAcceptedTorrentForThisSession == false) {
                         event(ErrorEvent(ErrorLoadingException("Not accepted torrent")))
                         return
                     }
                     // load the initial UI, we require an exoPlayer to be alive
-                    if(!retry) {
+                    if (!retry) {
                         // this causes a *bug* that restarts all torrents from 0
                         // but I would call this a feature
                         releasePlayer()
-                        loadExo(context, listOf(), listOf(),null)
+                        loadExo(context, listOf(), listOf(), null)
                     }
                     event(
                         StatusEvent(
@@ -1485,8 +1488,8 @@ class CS3IPlayer : IPlayer {
                         )
                     )
 
-                    if(Torrent.hasAcceptedTorrentForThisSession == true) {
-                        loadTorrent(context,link)
+                    if (Torrent.hasAcceptedTorrentForThisSession == true) {
+                        loadTorrent(context, link)
                         return
                     }
 
