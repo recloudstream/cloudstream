@@ -228,7 +228,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
             val insets = rootWindowInsets.getInsetsIgnoringVisibility(WindowInsets.Type.systemBars())
             val isOutsideHeight = rawY < insets.top || rawY > (realScreenHeight - insets.bottom)
             val isOutsideWidth = if(windowMetrics == null) rawX < screenWidth
-                else rawX < insets.left || rawX > (realScreenWidth - insets.right)
+            else rawX < insets.left || rawX > (realScreenWidth - insets.right)
 
             return !(isOutsideWidth || isOutsideHeight)
         } else {
@@ -954,9 +954,6 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         }
     }
 
-    private var loudnessEnhancer: LoudnessEnhancer? = null
-
-    @OptIn(UnstableApi::class)
     @SuppressLint("SetTextI18n")
     private fun handleMotionEvent(view: View?, event: MotionEvent?): Boolean {
         if (event == null || view == null) return false
@@ -1182,54 +1179,12 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                                 }
 
                                 TouchAction.Volume -> {
-                                    val audioManager = activity?.getSystemService(Context.AUDIO_SERVICE) as? AudioManager
-                                    audioManager?.let {
-                                        playerProgressbarLeftHolder.isVisible = true
-
-                                        val maxVolume = it.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
-                                        val currentVolume = it.getStreamVolume(AudioManager.STREAM_MUSIC)
-
-                                        // Adjust currentRequestedVolume for sliding (up to 200%)
-                                        currentRequestedVolume = min(2.0f, max(currentRequestedVolume + verticalAddition, 0.0f))
-                                        val currentVolumePercentage = currentRequestedVolume * 100f
-
-                                        // Update progress bar
-                                        playerProgressbarLeft.max = 200 // 200% max
-                                        playerProgressbarLeft.progress = currentVolumePercentage.toInt()
-
-                                        // Change color for >100%
-                                        val color = if (currentVolumePercentage > 100) {
-                                            Color.parseColor("#FFA500") // Orange color hex
-                                        } else Color.parseColor("#FFFFFF")
-                                        playerProgressbarLeft.progressDrawable.setColorFilter(color, PorterDuff.Mode.SRC_IN)
-
-                                        // Adjust system volume up to 100%
-                                        val desiredVolume = round(currentRequestedVolume.coerceAtMost(1.0f) * maxVolume).toInt() // Clamp to 100%
-                                        if (desiredVolume != currentVolume) {
-                                            val newVolumeAdjusted = if (desiredVolume < currentVolume) {
-                                                AudioManager.ADJUST_LOWER
-                                            } else AudioManager.ADJUST_RAISE
-                                            it.adjustStreamVolume(AudioManager.STREAM_MUSIC, newVolumeAdjusted, 0)
-                                        }
-
-                                        // Apply loudness enhancer for volumes >100%
-                                        if (currentRequestedVolume > 1.0f) {
-                                            val boostFactor = (currentRequestedVolume * 1000).toInt() // Boost in millibels
-                                            if (loudnessEnhancer == null) {
-                                                val audioSessionId = (playerView?.player as? ExoPlayer)?.audioSessionId ?:
-                                                    it.generateAudioSessionId()
-                                                if (audioSessionId != AudioManager.ERROR) {
-                                                    loudnessEnhancer = LoudnessEnhancer(audioSessionId).apply {
-                                                        setTargetGain(boostFactor)
-                                                        enabled = true
-                                                    }
-                                                }
-                                            }
-                                        } else {
-                                            loudnessEnhancer?.release()
-                                            loudnessEnhancer = null
-                                        }
-                                    }
+                                    handleVolumeAdjustment(
+                                        isVolumeUp = false, // Since it's a motion event, we assume no button presses
+                                        verticalAddition = verticalAddition,
+                                        maxVolume = (activity?.getSystemService(Context.AUDIO_SERVICE) as? AudioManager)?.getStreamMaxVolume(AudioManager.STREAM_MUSIC) ?: 0,
+                                        volumeStep = 0f // Not used in motion events
+                                    )
                                 }
 
                                 else -> Unit
@@ -1314,11 +1269,93 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                             return true
                         }
                     }
+
+                    KeyEvent.KEYCODE_VOLUME_DOWN,
+                    KeyEvent.KEYCODE_VOLUME_UP -> {
+                        val audioManager = activity?.getSystemService(Context.AUDIO_SERVICE) as? AudioManager
+                        val isVolumeUp = keyCode == KeyEvent.KEYCODE_VOLUME_UP
+                        audioManager?.getStreamMaxVolume(AudioManager.STREAM_MUSIC)?.let { maxVolume ->
+                            handleVolumeAdjustment(
+                                isVolumeUp = isVolumeUp,
+                                verticalAddition = 0f, // Not used for volume key events
+                                maxVolume = maxVolume,
+                                volumeStep = 0.05f
+                            )
+                        }
+                        return true
+                    }
                 }
             }
         }
 
         return false
+    }
+
+    private var loudnessEnhancer: LoudnessEnhancer? = null
+    private var progressBarHideRunnable: Runnable? = null
+
+    @OptIn(UnstableApi::class)
+    private fun handleVolumeAdjustment(isVolumeUp: Boolean, verticalAddition: Float, maxVolume: Int, volumeStep: Float) {
+        val audioManager = activity?.getSystemService(Context.AUDIO_SERVICE) as? AudioManager ?: return
+        val currentVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC)
+
+        // Adjust currentRequestedVolume based on the event (up or down)
+        currentRequestedVolume = if (isVolumeUp) {
+            // Volume up button
+            (currentRequestedVolume + volumeStep).coerceAtMost(2.0f) // Clamp to 200%
+        } else if (verticalAddition == 0f) {
+            // Volume down button
+            (currentRequestedVolume - volumeStep).coerceAtLeast(0.0f) // Clamp to 0%
+        } else {
+            // TouchAction.Volume
+            (currentRequestedVolume + verticalAddition).coerceAtLeast(0.0f) // Clamp to 0%
+        }
+
+        val currentVolumePercentage = (currentRequestedVolume * 100).toInt()
+
+        // Set system volume (up to 100%)
+        val desiredVolume = (currentRequestedVolume.coerceAtMost(1.0f) * maxVolume).toInt()
+        if (desiredVolume != currentVolume) {
+            audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, desiredVolume, 0)
+        }
+
+        // Update the progress bar
+        playerBinding?.playerProgressbarLeft?.apply {
+            max = 200
+            progress = currentVolumePercentage
+            // Temp
+            progressDrawable.setColorFilter(
+                if (currentRequestedVolume > 1.0f) {
+                    Color.parseColor("#FFA500") // Orange color hex
+                } else Color.parseColor("#FFFFFF"),
+                PorterDuff.Mode.SRC_IN
+            )
+        }
+
+        // Show the progress bar for 2 seconds
+        playerBinding?.playerProgressbarLeftHolder?.apply {
+            isVisible = true
+            progressBarHideRunnable?.let { removeCallbacks(it) }
+            progressBarHideRunnable = Runnable { isVisible = false }
+            postDelayed(progressBarHideRunnable, 2000)
+        }
+
+        // Apply loudness enhancer for volumes > 100%
+        if (currentRequestedVolume > 1.0f) {
+            val boostFactor = (currentRequestedVolume * 1000).toInt()
+            if (loudnessEnhancer == null) {
+                val audioSessionId = (playerView?.player as? ExoPlayer)?.audioSessionId
+                if (audioSessionId != null && audioSessionId != AudioManager.ERROR) {
+                    loudnessEnhancer = LoudnessEnhancer(audioSessionId).apply {
+                        setTargetGain(boostFactor)
+                        enabled = true
+                    }
+                }
+            } else loudnessEnhancer?.setTargetGain(boostFactor)
+        } else {
+            loudnessEnhancer?.release()
+            loudnessEnhancer = null
+        }
     }
 
     protected fun uiReset() {
