@@ -6,6 +6,7 @@ import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.Qualities
 import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import java.net.URLDecoder
 
 open class InternetArchive : ExtractorApi() {
