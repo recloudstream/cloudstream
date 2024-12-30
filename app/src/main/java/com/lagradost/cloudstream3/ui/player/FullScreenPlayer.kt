@@ -8,6 +8,8 @@ import android.content.Context
 import android.content.pm.ActivityInfo
 import android.content.res.ColorStateList
 import android.content.res.Configuration
+import android.graphics.BlendMode
+import android.graphics.BlendModeColorFilter
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.media.AudioManager
@@ -31,6 +33,7 @@ import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.LinearLayout
 import androidx.annotation.OptIn
+import androidx.core.content.ContextCompat
 import androidx.core.graphics.blue
 import androidx.core.graphics.green
 import androidx.core.graphics.red
@@ -1327,13 +1330,17 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         playerBinding?.playerProgressbarLeft?.apply {
             max = 200
             progress = currentVolumePercentage
-            // Temp
-            progressDrawable.setColorFilter(
-                if (currentRequestedVolume > 1.0f) {
-                    Color.parseColor("#FFA500") // Orange color hex
-                } else Color.parseColor("#FFFFFF"),
-                PorterDuff.Mode.SRC_IN
-            )
+            val color = if (currentRequestedVolume > 1.0f) {
+                ContextCompat.getColor(context, R.color.colorPrimaryOrange)
+            } else Color.WHITE
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                val colorFilter = BlendModeColorFilter(color, BlendMode.SRC_IN)
+                progressDrawable.colorFilter = colorFilter
+            } else {
+                // For lower API levels, fall back to the older PorterDuff method
+                @Suppress( "DEPRECATION")
+                progressDrawable.setColorFilter(color, PorterDuff.Mode.SRC_IN)
+            }
         }
 
         // Show the progress bar for 2 seconds
