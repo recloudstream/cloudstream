@@ -227,8 +227,9 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
             val insets = rootWindowInsets.getInsetsIgnoringVisibility(WindowInsets.Type.systemBars())
             val isOutsideHeight = rawY < insets.top || rawY > (realScreenHeight - insets.bottom)
-            val isOutsideWidth = if(windowMetrics == null) rawX < screenWidth
-            else rawX < insets.left || rawX > (realScreenWidth - insets.right)
+            val isOutsideWidth = if(windowMetrics == null) {
+                rawX < screenWidth
+            } else rawX < insets.left || rawX > (realScreenWidth - insets.right)
 
             return !(isOutsideWidth || isOutsideHeight)
         } else {
