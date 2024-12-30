@@ -5,8 +5,10 @@ import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
+import android.app.Service
 import android.content.*
 import android.content.pm.PackageManager
+import android.content.pm.ServiceInfo
 import android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC
 import android.graphics.Bitmap
 import android.net.Uri
@@ -43,6 +45,7 @@ import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.mvvm.launchSafe
 import com.lagradost.cloudstream3.mvvm.logError
+import com.lagradost.cloudstream3.services.PackageInstallerService.Companion.UPDATE_NOTIFICATION_ID
 import com.lagradost.cloudstream3.services.VideoDownloadService
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.main
@@ -207,22 +210,34 @@ object VideoDownloadManager {
     val downloadQueue = LinkedList<DownloadResumePackage>()
 
     private var hasCreatedNotChanel = false
-    private fun Context.createNotificationChannel() {
-        hasCreatedNotChanel = true
-        // Create the NotificationChannel, but only on API 26+ because
-        // the NotificationChannel class is new and not in the support library
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val name = DOWNLOAD_CHANNEL_NAME //getString(R.string.channel_name)
-            val descriptionText = DOWNLOAD_CHANNEL_DESCRIPT//getString(R.string.channel_description)
-            val importance = NotificationManager.IMPORTANCE_DEFAULT
-            val channel = NotificationChannel(DOWNLOAD_CHANNEL_ID, name, importance).apply {
-                description = descriptionText
+
+    fun startServiceForeground(service: Service) {
+        val notification = createNotification(service)
+        service.startForeground(1, notification, FOREGROUND_SERVICE_TYPE_DATA_SYNC)
+    }
+
+    private fun createNotificationChannel(context: Context) {
+        if (SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
+                DOWNLOAD_CHANNEL_ID,
+                DOWNLOAD_CHANNEL_NAME,
+                NotificationManager.IMPORTANCE_DEFAULT
+            ).apply {
+                description = DOWNLOAD_CHANNEL_DESCRIPT
             }
-            // Register the channel with the system
-            val notificationManager: NotificationManager =
-                this.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            val notificationManager = context.getSystemService(NotificationManager::class.java)
             notificationManager.createNotificationChannel(channel)
         }
+        hasCreatedNotChanel = true
+    }
+
+    private fun createNotification(context: Context): Notification {
+        val builder = NotificationCompat.Builder(context, DOWNLOAD_CHANNEL_ID)
+            .setContentTitle("Downloading Video")
+            .setContentText("Your video is downloading in the background.")
+
+        // Add actions (e.g., Resume, Pause, Stop) if needed
+        return builder.build()
     }
 
     ///** Will return IsDone if not found or error */
@@ -318,7 +333,7 @@ object VideoDownloadManager {
                     flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 }
                 val pendingIntent: PendingIntent =
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    if (SDK_INT >= Build.VERSION_CODES.M) {
                         PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
                     } else {
                         //fixme Specify a better flag
@@ -343,7 +358,7 @@ object VideoDownloadManager {
             }
             val downloadFormat = context.getString(R.string.download_format)
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            if (SDK_INT >= Build.VERSION_CODES.O) {
                 if (ep.poster != null) {
                     val poster = withContext(Dispatchers.IO) {
                         context.getImageBitmapFromUrl(ep.poster)
@@ -488,7 +503,7 @@ object VideoDownloadManager {
             }
 
             if (!hasCreatedNotChanel) {
-                context.createNotificationChannel()
+                createNotificationChannel(context)
             }
 
             val notification = builder.build()

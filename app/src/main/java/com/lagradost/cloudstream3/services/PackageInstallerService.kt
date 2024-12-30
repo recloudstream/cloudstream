@@ -1,4 +1,4 @@
-package com.lagradost.cloudstream3.utils
+package com.lagradost.cloudstream3.services
 
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -15,6 +15,7 @@ import com.lagradost.cloudstream3.MainActivity
 import com.lagradost.cloudstream3.MainActivity.Companion.deleteFileOnExit
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.app
+import com.lagradost.cloudstream3.utils.ApkInstaller
 import com.lagradost.cloudstream3.utils.AppContextUtils.createNotificationChannel
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
@@ -27,7 +28,7 @@ class PackageInstallerService : Service() {
     var installer: ApkInstaller? = null
 
     private val baseNotification by lazy {
-        val flag = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        val flag = if (SDK_INT >= Build.VERSION_CODES.S) {
             PendingIntent.FLAG_MUTABLE
         } else 0
 
