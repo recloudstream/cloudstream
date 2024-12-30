@@ -1,16 +1,20 @@
 package com.lagradost.cloudstream3.utils
 
+import android.Manifest
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.*
+import android.content.pm.PackageManager
+import android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
 import android.os.Build.VERSION.SDK_INT
 import android.util.Log
 import androidx.annotation.DrawableRes
+import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.graphics.drawable.toBitmap
@@ -433,7 +437,7 @@ object VideoDownloadManager {
                 builder.setContentText(txt)
             }
 
-            if ((state == DownloadType.IsDownloading || state == DownloadType.IsPaused) && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            if ((state == DownloadType.IsDownloading || state == DownloadType.IsPaused) && SDK_INT >= Build.VERSION_CODES.O) {
                 val actionTypes: MutableList<DownloadActionType> = ArrayList()
                 // INIT
                 if (state == DownloadType.IsDownloading) {
@@ -491,6 +495,13 @@ object VideoDownloadManager {
             notificationCallback(ep.id, notification)
             with(NotificationManagerCompat.from(context)) {
                 // notificationId is a unique int for each notification that you must define
+                if (ActivityCompat.checkSelfPermission(
+                        context,
+                        Manifest.permission.POST_NOTIFICATIONS
+                    ) != PackageManager.PERMISSION_GRANTED
+                ) {
+                    return null
+                }
                 notify(ep.id, notification)
             }
             return notification

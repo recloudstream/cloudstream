@@ -1,7 +1,9 @@
 package com.lagradost.cloudstream3.services
+
 import android.app.Service
 import android.content.Intent
 import android.os.IBinder
+import android.util.Log
 import com.lagradost.cloudstream3.utils.VideoDownloadManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -40,6 +42,11 @@ class VideoDownloadService : Service() {
     override fun onDestroy() {
         downloadScope.coroutineContext.cancel()
         super.onDestroy()
+    }
+
+    override fun onTimeout(reason: Int) {
+        stopSelf()
+        Log.e("VideoDownloadService", "Service stopped due to timeout: $reason")
     }
 }
 //    override fun onHandleIntent(intent: Intent?) {

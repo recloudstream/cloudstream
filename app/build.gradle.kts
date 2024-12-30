@@ -47,8 +47,7 @@ android {
     defaultConfig {
         applicationId = "com.lagradost.cloudstream3"
         minSdk = 21
-        targetSdk = 35 /* Android 14 is Fu*ked
-        ^ https://developer.android.com/about/versions/14/behavior-changes-14#safer-dynamic-code-loading*/
+        targetSdk = 35
         versionCode = 64
         versionName = "4.4.2"
 
