@@ -636,20 +636,20 @@ class ResultViewModel2 : ViewModel() {
             val sanitizedFileName = VideoDownloadManager.sanitizeFilename(titleName)
             return when (currentType) {
                 TvType.Anime -> "Anime/$sanitizedFileName"
-                TvType.Movie -> "Movies"
                 TvType.AnimeMovie -> "Movies"
-                TvType.TvSeries -> "TVSeries/$sanitizedFileName"
-                TvType.OVA -> "OVA"
-                TvType.Cartoon -> "Cartoons/$sanitizedFileName"
-                TvType.Torrent -> "Torrent"
-                TvType.Documentary -> "Documentaries"
-                TvType.AsianDrama -> "AsianDrama/$sanitizedFileName"
-                TvType.Live -> "LiveStreams"
-                TvType.NSFW -> "NSFW"
-                TvType.Others -> "Others"
-                TvType.Music -> "Music"
+                TvType.AsianDrama -> "AsianDramas/$sanitizedFileName"
                 TvType.AudioBook -> "AudioBooks"
+                TvType.Cartoon -> "Cartoons/$sanitizedFileName"
                 TvType.CustomMedia -> "Media"
+                TvType.Documentary -> "Documentaries"
+                TvType.Live -> "LiveStreams"
+                TvType.Movie -> "Movies"
+                TvType.Music -> "Music"
+                TvType.NSFW -> "NSFW"
+                TvType.OVA -> "OVAs"
+                TvType.Others -> "Others"
+                TvType.Torrent -> "Torrents"
+                TvType.TvSeries -> "TVSeries/$sanitizedFileName"
             }
         }
 
