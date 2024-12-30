@@ -52,6 +52,7 @@ import com.lagradost.cloudstream3.CommonActivity.keyEventListener
 import com.lagradost.cloudstream3.CommonActivity.playerEventListener
 import com.lagradost.cloudstream3.CommonActivity.screenHeight
 import com.lagradost.cloudstream3.CommonActivity.screenWidth
+import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.LoadResponse
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.PlayerCustomLayoutBinding
@@ -1293,6 +1294,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         return false
     }
 
+    private var hasShowVolumeToast: Boolean = false
     private var loudnessEnhancer: LoudnessEnhancer? = null
     private var progressBarHideRunnable: Runnable? = null
 
@@ -1306,10 +1308,13 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         val audioManager = activity?.getSystemService(Context.AUDIO_SERVICE) as? AudioManager ?: return
         val currentVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC)
 
+        // Max volume percentage including boost
+        val maxVolumePercentage = 200
+
         // Adjust currentRequestedVolume based on the event (up or down)
         currentRequestedVolume = if (isVolumeUp) {
             // Volume up button
-            (currentRequestedVolume + volumeStep).coerceAtMost(2.0f) // Clamp to 200%
+            (currentRequestedVolume + volumeStep).coerceAtMost(maxVolumePercentage / 100.0f) // Clamp to maxVolumePercentage / 100.0f
         } else if (verticalAddition == 0f) {
             // Volume down button
             (currentRequestedVolume - volumeStep).coerceAtLeast(0.0f) // Clamp to 0%
@@ -1328,7 +1333,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
         // Update the progress bar
         playerBinding?.playerProgressbarLeft?.apply {
-            max = 200
+            max = maxVolumePercentage
             progress = currentVolumePercentage
             val color = if (currentRequestedVolume > 1.0f) {
                 ContextCompat.getColor(context, R.color.colorPrimaryOrange)
@@ -1353,7 +1358,15 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
         // Apply loudness enhancer for volumes > 100%
         if (currentRequestedVolume > 1.0f) {
-            val boostFactor = (currentRequestedVolume * 1000).toInt()
+            val boostFactor = ((currentRequestedVolume - 1.0f) * 1000).toInt()
+
+            // Show the toast only the first time the volume exceeds 100%
+            // or after it drops below 100% and goes above again.
+            if (!hasShowVolumeToast) {
+                showToast(R.string.volume_exceeded_100)
+                hasShowVolumeToast = true
+            }
+
             if (loudnessEnhancer == null) {
                 val audioSessionId = (playerView?.player as? ExoPlayer)?.audioSessionId
                 if (audioSessionId != null && audioSessionId != AudioManager.ERROR) {
@@ -1366,6 +1379,9 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         } else {
             loudnessEnhancer?.release()
             loudnessEnhancer = null
+
+            // Reset the toast flag when the volume drops below 100%
+            hasShowVolumeToast = false
         }
     }
 

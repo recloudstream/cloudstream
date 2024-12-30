@@ -821,5 +821,5 @@
     <string name="show">Show</string>
     <string name="dont_show">Don\'t Show</string>
     <string name="subs_edge_size">Edge Size</string>
-    <!--confirm exit dialog-->
+    <string name="volume_exceeded_100">Volume has exceeded 100%.</string>
 </resources>
