@@ -212,6 +212,12 @@
             android:foregroundServiceType="dataSync"
             android:exported="false" />
 
+        <!-- Necessary for WorkManager services: https://stackoverflow.com/a/77186316 -->
+        <service
+            android:name="androidx.work.impl.foreground.SystemForegroundService"
+            android:foregroundServiceType="dataSync"
+            tools:node="merge" />
+
         <activity
             android:name=".ui.ControllerActivity"
             android:exported="false" />
