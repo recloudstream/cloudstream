@@ -1291,8 +1291,13 @@ fun LoadResponse?.isAnimeBased(): Boolean {
 }
 
 fun TvType?.isEpisodeBased(): Boolean {
-    if (this == null) return false
-    return (this == TvType.TvSeries || this == TvType.Anime || this == TvType.AsianDrama)
+    return when (this) {
+        TvType.Anime,
+        TvType.AsianDrama,
+        TvType.Cartoon,
+        TvType.TvSeries -> true
+        else -> false
+    }
 }
 
 data class NextAiring(
