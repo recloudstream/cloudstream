@@ -1248,6 +1248,18 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                                     return true
                                 }
                             }
+
+                            KeyEvent.KEYCODE_VOLUME_DOWN,
+                            KeyEvent.KEYCODE_VOLUME_UP -> {
+                                val audioManager = activity?.getSystemService(Context.AUDIO_SERVICE) as? AudioManager
+                                handleVolumeAdjustment(
+                                    isVolumeUp = keyCode == KeyEvent.KEYCODE_VOLUME_UP,
+                                    verticalAddition = 0f, // Not used for volume key events
+                                    maxVolume = audioManager?.getStreamMaxVolume(AudioManager.STREAM_MUSIC) ?: 0,
+                                    volumeStep = 0.05f
+                                )
+                                return true
+                            }
                         }
                     }
                 }
@@ -1274,18 +1286,6 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                             onClickChange()
                             return true
                         }
-                    }
-
-                    KeyEvent.KEYCODE_VOLUME_DOWN,
-                    KeyEvent.KEYCODE_VOLUME_UP -> {
-                        val audioManager = activity?.getSystemService(Context.AUDIO_SERVICE) as? AudioManager
-                        handleVolumeAdjustment(
-                            isVolumeUp = keyCode == KeyEvent.KEYCODE_VOLUME_UP,
-                            verticalAddition = 0f, // Not used for volume key events
-                            maxVolume = audioManager?.getStreamMaxVolume(AudioManager.STREAM_MUSIC) ?: 0,
-                            volumeStep = 0.05f
-                        )
-                        return true
                     }
                 }
             }
