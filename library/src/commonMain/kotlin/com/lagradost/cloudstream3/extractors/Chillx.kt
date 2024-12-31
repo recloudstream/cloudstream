@@ -1,6 +1,6 @@
 package com.lagradost.cloudstream3.extractors
 
-import com.fasterxml.jackson.annotation.JsonProperty
+
 import com.lagradost.cloudstream3.ErrorLoadingException
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.USER_AGENT
@@ -79,7 +79,19 @@ open class Chillx : ExtractorApi() {
     override val name = "Chillx"
     override val mainUrl = "https://chillx.top"
     override val requiresReferer = true
-    private var key: String? = null
+
+    companion object {
+        private val keySource = "https://rowdy-avocado.github.io/multi-keys/"
+        private var keys: KeysData? = null
+
+        private suspend fun getKeys(): KeysData {
+            return keys ?: run {
+                keys = app.get(keySource).parsedSafe<KeysData>()
+                    ?: throw ErrorLoadingException("Unable to get keys")
+                keys!!
+            }
+        }
+    }
 
     override suspend fun getUrl(
         url: String,
@@ -92,7 +104,8 @@ open class Chillx : ExtractorApi() {
             Regex("Encrypted\\s*=\\s*'(.*?)';").find(res)?.groupValues?.get(1)?.replace("_", "/")
                 ?.replace("-", "+")
                 ?: ""
-        val fetchkey = fetchKey() ?: throw ErrorLoadingException("Unable to get key")
+        val keysData = getKeys()
+        val fetchkey = keysData.chillx.firstOrNull() ?: throw ErrorLoadingException("No Chillx key found")
         val key = logSha256Checksum(fetchkey)
         val decodedBytes: ByteArray = decodeBase64WithPadding(encodedString)
         val byteList: List<Int> = decodedBytes.map { it.toInt() and 0xFF }
@@ -148,7 +161,7 @@ open class Chillx : ExtractorApi() {
 
         for (i in 0 until length) {
             val byteValue = byteList[i]
-            val keyValue = xorKey[i % xorKey.size]  
+            val keyValue = xorKey[i % xorKey.size]
             val xorResult = byteValue xor keyValue
             result.append(xorResult.toChar())
         }
@@ -156,10 +169,8 @@ open class Chillx : ExtractorApi() {
         return result.toString()
     }
 
-    private suspend fun fetchKey(): String? {
-        return app.get("https://raw.githubusercontent.com/Rowdy-Avocado/multi-keys/refs/heads/keys/index.html")
-            .parsedSafe<Keys>()?.key?.get(0)?.also { key = it }
-    }
-    data class Keys(
-        @JsonProperty("chillx") val key: List<String>)
+    data class KeysData(
+        val chillx: List<String>
+    )
+
 }
