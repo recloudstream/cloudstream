@@ -29,7 +29,7 @@ class PackageInstallerService : Service() {
 
     private val baseNotification by lazy {
         val flag = if (SDK_INT >= Build.VERSION_CODES.S) {
-            PendingIntent.FLAG_MUTABLE
+            PendingIntent.FLAG_IMMUTABLE
         } else 0
 
         val intent = Intent(this, MainActivity::class.java)
