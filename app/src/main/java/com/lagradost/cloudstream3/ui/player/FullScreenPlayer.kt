@@ -1184,11 +1184,9 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                                 }
 
                                 TouchAction.Volume -> {
-                                    val audioManager = activity?.getSystemService(Context.AUDIO_SERVICE) as? AudioManager
                                     handleVolumeAdjustment(
                                         isVolumeUp = false, // Since it's a motion event, we assume no button presses
                                         verticalAddition = verticalAddition,
-                                        maxVolume = audioManager?.getStreamMaxVolume(AudioManager.STREAM_MUSIC) ?: 0,
                                         volumeStep = 0f // Not used in motion events
                                     )
                                 }
@@ -1251,11 +1249,9 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
                             KeyEvent.KEYCODE_VOLUME_DOWN,
                             KeyEvent.KEYCODE_VOLUME_UP -> {
-                                val audioManager = activity?.getSystemService(Context.AUDIO_SERVICE) as? AudioManager
                                 handleVolumeAdjustment(
                                     isVolumeUp = keyCode == KeyEvent.KEYCODE_VOLUME_UP,
                                     verticalAddition = 0f, // Not used for volume key events
-                                    maxVolume = audioManager?.getStreamMaxVolume(AudioManager.STREAM_MUSIC) ?: 0,
                                     volumeStep = 0.05f
                                 )
                                 return true
@@ -1302,11 +1298,11 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
     private fun handleVolumeAdjustment(
         isVolumeUp: Boolean,
         verticalAddition: Float,
-        maxVolume: Int,
         volumeStep: Float
     ) {
         val audioManager = activity?.getSystemService(Context.AUDIO_SERVICE) as? AudioManager ?: return
         val currentVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC)
+        val maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
 
         // Max volume percentage including boost
         val maxVolumePercentage = 200
