@@ -1,17 +1,20 @@
 package com.lagradost.cloudstream3.extractors
 
+import android.annotation.TargetApi
+import android.os.Build
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.ErrorLoadingException
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.USER_AGENT
 import com.lagradost.cloudstream3.app
-import com.lagradost.cloudstream3.extractors.helper.AesHelper.cryptoAESHandler
-import com.lagradost.cloudstream3.fixTitle
+import com.lagradost.cloudstream3.base64Decode
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.INFER_TYPE
-import com.lagradost.cloudstream3.utils.getQualityFromName
-import java.net.URI
+import com.lagradost.cloudstream3.utils.Qualities
+import java.security.MessageDigest
+import java.util.Base64
+
 
 class Watchx : Chillx() {
     override val name = "Watchx"
@@ -73,53 +76,31 @@ class Boosterx : Chillx() {
     override val mainUrl = "https://boosterx.stream"
 }
 
+
 open class Chillx : ExtractorApi() {
     override val name = "Chillx"
     override val mainUrl = "https://chillx.top"
     override val requiresReferer = true
-	private var key: String? = null
+    private var key: String? = null
 
-    @Suppress("NAME_SHADOWING")
-	override suspend fun getUrl(
+    override suspend fun getUrl(
         url: String,
         referer: String?,
         subtitleCallback: (SubtitleFile) -> Unit,
         callback: (ExtractorLink) -> Unit
-    ) {		
-	val doc = app.get(
-                url,
-                referer = referer ?: "",
-                headers = mapOf(
-                    "Accept" to "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
-                    "Accept-Language" to "en-US,en;q=0.5",
-                )
-            ).text
-		
-	val master = Regex("\\s*=\\s*'([^']+)").find(doc)?.groupValues?.get(1)		
-	val key = fetchKey() ?: throw ErrorLoadingException("Unable to get key")
-		
-        val decrypt = cryptoAESHandler(master ?: return, key.toByteArray(), false)
-            ?.replace("\\n", "\n")
-	    ?.replace("\\", "")
-            ?: throw ErrorLoadingException("failed to decrypt")        
-
-        val subtitlePattern = """\{"file":"([^"]+)","label":"([^"]+)","kind":"captions","default":\w+\}""".toRegex()
-	val matches = subtitlePattern.findAll(decrypt)
-
-	val languageUrlPairs = matches.map { matchResult ->
-		val (url, label) = matchResult.destructured
-		decodeUnicodeEscape(label) to url
-	}.toList()
-
-	languageUrlPairs.forEach { (name, file) ->
-		subtitleCallback.invoke(
-			SubtitleFile(
-				name,
-				file
-			)
-		)
-	}
-		
+    ) {
+        val res = app.get(url,referer=referer).toString()
+        val encodedString =
+            Regex("Encrypted\\s*=\\s*'(.*?)';").find(res)?.groupValues?.get(1)?.replace("_", "/")
+                ?.replace("-", "+")
+                ?: ""
+        val fetchkey = fetchKey() ?: throw ErrorLoadingException("Unable to get key")
+        val key = logSha256Checksum(fetchkey)
+        val decodedBytes: ByteArray = decodeBase64WithPadding(encodedString)
+        val byteList: List<Int> = decodedBytes.map { it.toInt() and 0xFF }
+        val processedResult = decryptWithXor(byteList, key)
+        val decoded= base64Decode(processedResult)
+        val m3u8 =Regex(""?file"?:\s*"([^"]+)").find(decoded)?.groupValues?.get(1) ?:""
         val header =
             mapOf(
                 "accept" to "*/*",
@@ -132,45 +113,56 @@ open class Chillx : ExtractorApi() {
                 "Sec-Fetch-Site" to "cross-site",
                 "user-agent" to USER_AGENT,
             )
-
-	val source = Regex(""""?file"?:\s*"([^"]+)""").find(decrypt)?.groupValues?.get(1)
-        val name = url.getHost()
-	val quality = Regex("\\d{3,4}p")
-            .find(doc.substringAfter("<title>").substringBefore("</title>"))
-            ?.groupValues
-            ?.getOrNull(0)
-
-	callback.invoke(
+        callback.invoke(
             ExtractorLink(
                 name,
                 name,
-                url = source ?: return,
-                referer = "$mainUrl/",
-                quality = getQualityFromName(quality),
-		INFER_TYPE,
-                headers = header,
+                m3u8,
+                mainUrl,
+                Qualities.P1080.value,
+                INFER_TYPE,
+                headers = header
             )
         )
-    }	
+    }
+
+    private fun logSha256Checksum(input: String): List<Int> {
+        val messageDigest = MessageDigest.getInstance("SHA-256")
+        val sha256Hash = messageDigest.digest(input.toByteArray())
+        val unsignedIntArray = sha256Hash.map { it.toInt() and 0xFF }
+        return unsignedIntArray
+    }
+
+    @TargetApi(Build.VERSION_CODES.O)
+    private fun decodeBase64WithPadding(xIdJ2lG: String): ByteArray {
+        // Ensure padding for Base64 encoding (if necessary)
+        var paddedString = xIdJ2lG
+        while (paddedString.length % 4 != 0) {
+            paddedString += '=' // Add necessary padding
+        }
+
+        // Decode using standard Base64 (RFC4648)
+        return Base64.getDecoder().decode(paddedString)
+    }
+
+    private fun decryptWithXor(byteList: List<Int>, xorKey: List<Int>): String {
+        val result = StringBuilder()
+        val length = byteList.size
+
+        for (i in 0 until length) {
+            val byteValue = byteList[i]
+            val keyValue = xorKey[i % xorKey.size]  // Modulo operation to cycle through NDlDrF
+            val xorResult = byteValue xor keyValue  // XOR operation
+            result.append(xorResult.toChar())  // Convert result to char and append to the result string
+        }
+
+        return result.toString()
+    }
 
     private suspend fun fetchKey(): String? {
-        return app.get("https://raw.githubusercontent.com/Rowdy-Avocado/multi-keys/keys/index.html")
+        return app.get("https://raw.githubusercontent.com/Rowdy-Avocado/multi-keys/refs/heads/keys/index.html")
             .parsedSafe<Keys>()?.key?.get(0)?.also { key = it }
     }
-	
-	private fun decodeUnicodeEscape(input: String): String {
-        val regex = Regex("u([0-9a-fA-F]{4})")
-        return regex.replace(input) {
-            it.groupValues[1].toInt(16).toChar().toString()
-        }
-    }
-	
-	private fun String.getHost(): String {
-		return fixTitle(URI(this).host.substringBeforeLast(".").substringAfterLast("."))
-	}
-	
-	data class Keys(
-        @JsonProperty("chillx") val key: List<String>
-    )
-    
+    data class Keys(
+        @JsonProperty("chillx") val key: List<String>)
 }
