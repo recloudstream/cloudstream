@@ -19,7 +19,6 @@ import java.io.InputStream
 
 const val INSTALL_ACTION = "ApkInstaller.INSTALL_ACTION"
 
-
 class ApkInstaller(private val service: PackageInstallerService) {
 
     companion object {
@@ -28,6 +27,7 @@ class ApkInstaller(private val service: PackageInstallerService) {
          **/
         var delayedInstaller: DelayedInstaller? = null
         private var isReceiverRegistered = false
+        private const val TAG = "ApkInstaller"
     }
 
     inner class DelayedInstaller(
@@ -144,6 +144,7 @@ class ApkInstaller(private val service: PackageInstallerService) {
     }
 
     init {
+        // Might be dangerous
         registerInstallActionReceiver()
     }
 
@@ -152,7 +153,7 @@ class ApkInstaller(private val service: PackageInstallerService) {
             val intentFilter = IntentFilter().apply {
                 addAction(INSTALL_ACTION)
             }
-            Log.d("PackageInstallerClazz", "Registering GATT event receiver")
+            Log.d(TAG, "Registering install action event receiver")
             context?.registerBroadcastReceiver(installActionReceiver, intentFilter)
             isReceiverRegistered = true
         }
@@ -160,7 +161,7 @@ class ApkInstaller(private val service: PackageInstallerService) {
 
     fun unregisterInstallActionReceiver() {
         if (isReceiverRegistered) {
-            Log.d("PackageInstallerClazz", "Unregistering GATT event receiver")
+            Log.d(TAG, "Unregistering install action event receiver")
             context?.unregisterReceiver(installActionReceiver)
             isReceiverRegistered = false
         }
