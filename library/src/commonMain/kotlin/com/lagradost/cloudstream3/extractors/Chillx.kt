@@ -77,8 +77,8 @@ class Boosterx : Chillx() {
 }
 
 
-open class Chillxv2 : ExtractorApi() {
-    override val name = "Chillxv2"
+open class Chillx : ExtractorApi() {
+    override val name = "Chillx"
     override val mainUrl = "https://chillx.top"
     override val requiresReferer = true
     private var key: String? = null
