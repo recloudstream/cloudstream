@@ -83,6 +83,7 @@ import com.lagradost.fetchbutton.aria2c.Aria2Starter
 import com.lagradost.fetchbutton.aria2c.DownloadListener
 import com.lagradost.fetchbutton.aria2c.DownloadStatusTell
 import io.github.anilbeesetti.nextlib.media3ext.ffdecoder.NextRenderersFactory
+import androidx.media3.exoplayer.DefaultRenderersFactory
 import kotlinx.coroutines.delay
 import java.io.File
 import java.util.UUID
@@ -727,11 +728,10 @@ class CS3IPlayer : IPlayer {
                 ExoPlayer.Builder(context)
                     .setRenderersFactory { eventHandler, videoRendererEventListener, audioRendererEventListener, textRendererOutput, metadataRendererOutput ->
 
-                        NextRenderersFactory(context)/*.apply {
+                        NextRenderersFactory(context).apply {
                             setEnableDecoderFallback(true)
-                            // Enable Ffmpeg extension.
-                            setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER)
-                        }*/.createRenderers(
+                            setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_ON)
+                        }.createRenderers(
                             eventHandler,
                             videoRendererEventListener,
                             audioRendererEventListener,

@@ -249,6 +249,8 @@ fun LoadResponse.toResultData(repo: APIRepository): ResultData {
                 TvType.Music -> R.string.music_singlar
                 TvType.AudioBook -> R.string.audio_book_singular
                 TvType.CustomMedia -> R.string.custom_media_singluar
+                TvType.Audio -> R.string.audio_singluar
+                TvType.Podcast -> R.string.podcast_singluar
             }
         ),
         yearText = txt(year?.toString()),
@@ -638,6 +640,7 @@ class ResultViewModel2 : ViewModel() {
                 TvType.Anime -> "Anime/$sanitizedFileName"
                 TvType.AnimeMovie -> "Movies"
                 TvType.AsianDrama -> "AsianDramas/$sanitizedFileName"
+                TvType.Audio -> "Audio"
                 TvType.AudioBook -> "AudioBooks"
                 TvType.Cartoon -> "Cartoons/$sanitizedFileName"
                 TvType.CustomMedia -> "Media"
@@ -648,6 +651,7 @@ class ResultViewModel2 : ViewModel() {
                 TvType.NSFW -> "NSFW"
                 TvType.OVA -> "OVAs"
                 TvType.Others -> "Others"
+                TvType.Podcast -> "Podcasts"
                 TvType.Torrent -> "Torrents"
                 TvType.TvSeries -> "TVSeries/$sanitizedFileName"
             }
