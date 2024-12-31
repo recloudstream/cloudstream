@@ -112,7 +112,7 @@ class ApkInstaller(private val service: PackageInstallerService) {
                 service,
                 activeSession,
                 Intent(INSTALL_ACTION),
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) PendingIntent.FLAG_MUTABLE else 0,
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) PendingIntent.FLAG_IMMUTABLE else 0,
             ).intentSender
 
             // Use delayed installations on android 13 and only if "allow from unknown sources" is enabled
