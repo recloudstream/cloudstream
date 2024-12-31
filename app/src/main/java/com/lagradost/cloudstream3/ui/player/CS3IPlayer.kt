@@ -729,9 +729,8 @@ class CS3IPlayer : IPlayer {
                     .setRenderersFactory { eventHandler, videoRendererEventListener, audioRendererEventListener, textRendererOutput, metadataRendererOutput ->
 
                         NextRenderersFactory(context).apply {
-                            // setEnableDecoderFallback(true) // we dont use ffmpeg audio
-                            // Enable Ffmpeg extension.
-                            setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER)
+                            setEnableDecoderFallback(true)
+                            setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_ON)
                         }.createRenderers(
                             eventHandler,
                             videoRendererEventListener,
