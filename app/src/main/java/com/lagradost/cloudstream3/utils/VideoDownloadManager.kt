@@ -75,6 +75,7 @@ import java.io.File
 import java.io.IOException
 import java.io.OutputStream
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 const val DOWNLOAD_CHANNEL_ID = "cloudstream3.general"
 const val DOWNLOAD_CHANNEL_NAME = "Downloads"
@@ -380,10 +381,16 @@ object VideoDownloadManager {
                         " ($mbFormat/s)".format(bytesPerSecond.toFloat() / 1000000f)
                     } else ""
 
+                val timeRemainingString =
+                    if (state == DownloadType.IsDownloading && bytesPerSecond > 0) {
+                        val timeRemaining = calculateTimeRemaining(total - progress, bytesPerSecond)
+                        " (~${timeRemaining})"
+                    } else ""
+
                 val bigText =
                     when (state) {
                         DownloadType.IsDownloading, DownloadType.IsPaused -> {
-                            (if (linkName == null) "" else "$linkName\n") + "$rowTwo\n$progressPercentage % ($progressMbString/$totalMbString)$suffix$mbPerSecondString"
+                            (if (linkName == null) "" else "$linkName\n") + "$rowTwo\n$progressPercentage % ($progressMbString/$totalMbString)$suffix$mbPerSecondString$timeRemainingString"
                         }
 
                         DownloadType.IsPending -> {
@@ -2027,4 +2034,11 @@ object VideoDownloadManager {
         @JsonProperty("ep") val ep: DownloadEpisodeMetadata,
         @JsonProperty("links") val links: List<ExtractorLink>
     )
+
+    private fun calculateTimeRemaining(bytesRemaining: Long, bytesPerSecond: Long): String {
+        val secondsRemaining = bytesRemaining / bytesPerSecond
+        val minutes = TimeUnit.SECONDS.toMinutes(secondsRemaining)
+        val seconds = secondsRemaining % 60
+        return String.format("%dm%ds", minutes, seconds)
+    }
 }

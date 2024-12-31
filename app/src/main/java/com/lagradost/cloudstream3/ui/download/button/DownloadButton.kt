@@ -14,10 +14,13 @@ class DownloadButton(context: Context, attributeSet: AttributeSet) :
     PieFetchButton(context, attributeSet) {
 
     private var mainText: TextView? = null
+    private var timeRemainingText: TextView? = null
+
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
         progressText = findViewById(R.id.result_movie_download_text_precentage)
         mainText = findViewById(R.id.result_movie_download_text)
+        timeRemainingText = findViewById(R.id.result_movie_download_time_remaining)
     }
 
     override fun setStatus(status: DownloadStatusTell?) {
@@ -31,7 +34,20 @@ class DownloadButton(context: Context, attributeSet: AttributeSet) :
             mainText?.setText(txt)
         }
         super.setStatus(status)
+    }
 
+    @SuppressLint("SetTextI18n")
+    override fun updateViewOnDownload(metadata: DownloadMetadata) {
+        super.updateViewOnDownload(metadata)
+
+        val isVis = metadata.progressPercentage > 0
+        progressText?.isVisible = isVis
+        if (isVis) {
+            progressText?.text = "${metadata.progressPercentage}%"
+            val timeRemaining = metadata.timeRemaining
+            timeRemainingText?.isVisible = timeRemaining != null
+            timeRemainingText?.text = timeRemaining?.let { "~$it" } ?: ""
+        }
     }
 
     override fun setDefaultClickListener(
@@ -45,15 +61,5 @@ class DownloadButton(context: Context, attributeSet: AttributeSet) :
             card,
             callback
         )
-    }
-
-    @SuppressLint("SetTextI18n")
-    override fun updateViewOnDownload(metadata: DownloadMetadata) {
-        super.updateViewOnDownload(metadata)
-
-        val isVis = metadata.progressPercentage > 0
-        progressText?.isVisible = isVis
-        if (isVis)
-            progressText?.text = "${metadata.progressPercentage}%"
     }
 }
