@@ -81,15 +81,22 @@ open class Chillx : ExtractorApi() {
     override val requiresReferer = true
 
     companion object {
-        private val keySource = "https://rowdy-avocado.github.io/multi-keys/"
+        private const val keySource = "https://rowdy-avocado.github.io/multi-keys/"
+
         private var keys: KeysData? = null
 
+        private suspend fun fetchKeys(): KeysData {
+            return app.get(keySource).parsedSafe<KeysData>()
+                ?: throw ErrorLoadingException("Unable to get keys")
+        }
+
+        // This will initialize the keys in a suspend context.
         private suspend fun getKeys(): KeysData {
-            return keys ?: run {
-                keys = app.get(keySource).parsedSafe<KeysData>()
-                    ?: throw ErrorLoadingException("Unable to get keys")
-                keys!!
+            // Ensure the keys are initialized only once.
+            if (keys == null) {
+                keys = fetchKeys()
             }
+            return keys!!
         }
     }
 
