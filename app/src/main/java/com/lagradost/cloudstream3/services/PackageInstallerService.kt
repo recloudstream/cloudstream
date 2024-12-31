@@ -25,7 +25,7 @@ import kotlinx.coroutines.sync.withLock
 import kotlin.math.roundToInt
 
 class PackageInstallerService : Service() {
-    var installer: ApkInstaller? = null
+    private var installer: ApkInstaller? = null
 
     private val baseNotification by lazy {
         val flag = if (SDK_INT >= Build.VERSION_CODES.S) {
@@ -161,6 +161,7 @@ class PackageInstallerService : Service() {
 
     override fun onDestroy() {
         installer?.unregisterInstallActionReceiver()
+        installer = null
         this.stopSelf()
         super.onDestroy()
     }
