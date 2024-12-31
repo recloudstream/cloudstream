@@ -1,13 +1,13 @@
-package com.lagradost.cloudstream3.utils
+package com.lagradost.cloudstream3.services
 
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
-import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC
 import android.os.Build
+import android.os.Build.VERSION.SDK_INT
 import android.os.IBinder
 import android.util.Log
 import androidx.core.app.NotificationCompat
@@ -15,6 +15,7 @@ import com.lagradost.cloudstream3.MainActivity
 import com.lagradost.cloudstream3.MainActivity.Companion.deleteFileOnExit
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.app
+import com.lagradost.cloudstream3.utils.ApkInstaller
 import com.lagradost.cloudstream3.utils.AppContextUtils.createNotificationChannel
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
@@ -23,12 +24,11 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlin.math.roundToInt
 
-
 class PackageInstallerService : Service() {
-    val receivers = mutableListOf<BroadcastReceiver>()
+    private var installer: ApkInstaller? = null
 
     private val baseNotification by lazy {
-        val flag = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        val flag = if (SDK_INT >= Build.VERSION_CODES.S) {
             PendingIntent.FLAG_MUTABLE
         } else 0
 
@@ -55,18 +55,16 @@ class PackageInstallerService : Service() {
             UPDATE_CHANNEL_NAME,
             UPDATE_CHANNEL_DESCRIPTION
         )
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            startForeground(UPDATE_NOTIFICATION_ID, baseNotification.build(), FOREGROUND_SERVICE_TYPE_DATA_SYNC)
-        } else{
-            startForeground(UPDATE_NOTIFICATION_ID, baseNotification.build())
-        }
+        if (SDK_INT >= 29)
+        startForeground(UPDATE_NOTIFICATION_ID, baseNotification.build(), FOREGROUND_SERVICE_TYPE_DATA_SYNC)
+        else startForeground(UPDATE_NOTIFICATION_ID, baseNotification.build())
     }
 
     private val updateLock = Mutex()
 
     private suspend fun downloadUpdate(url: String): Boolean {
         try {
-            Log.d(LOG_TAG, "Downloading update: $url")
+            Log.d("PackageInstallerService", "Downloading update: $url")
 
             // Delete all old updates
             ioSafe {
@@ -88,11 +86,11 @@ class PackageInstallerService : Service() {
 
                 val body = app.get(url).body
                 val inputStream = body.byteStream()
-                val installer = ApkInstaller(this)
+                installer = ApkInstaller(this)
                 val totalSize = body.contentLength()
                 var currentSize = 0
 
-                installer.installApk(this, inputStream, totalSize, {
+                installer?.installApk(this, inputStream, totalSize, {
                     currentSize += it
                     // Prevent div 0
                     if (totalSize == 0L) return@installApk
@@ -140,7 +138,7 @@ class PackageInstallerService : Service() {
             .build()
 
         val notificationManager =
-            getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            getSystemService(NOTIFICATION_SERVICE) as NotificationManager
 
         // Persistent notification on failure
         val id =
@@ -162,21 +160,21 @@ class PackageInstallerService : Service() {
     }
 
     override fun onDestroy() {
-        receivers.forEach {
-            try {
-                this.unregisterReceiver(it)
-            } catch (_: IllegalArgumentException) {
-                // Receiver not registered
-            }
-        }
+        installer?.unregisterInstallActionReceiver()
+        installer = null
+        this.stopSelf()
         super.onDestroy()
     }
 
     override fun onBind(i: Intent?): IBinder? = null
 
+    override fun onTimeout(reason: Int) {
+        stopSelf()
+        Log.e("PackageInstallerService", "Service stopped due to timeout: $reason")
+    }
+
     companion object {
         private const val EXTRA_URL = "EXTRA_URL"
-        private const val LOG_TAG = "PackageInstallerService"
 
         const val UPDATE_CHANNEL_ID = "cloudstream3.updates"
         const val UPDATE_CHANNEL_NAME = "App Updates"

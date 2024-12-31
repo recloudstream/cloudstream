@@ -7,15 +7,14 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" /> <!-- Downloads -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /> <!-- Downloads on low api devices -->
     <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" tools:ignore="ScopedStorage" /> <!-- Plugin API -->
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" /> <!-- some dependency needs this -->
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" /> <!-- Used for player vertical slide -->
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" /> <!-- Used for app update -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" /> <!-- Used for app notifications on Android 13+ -->
     <uses-permission android:name="com.android.providers.tv.permission.WRITE_EPG_DATA" /> <!-- Used for Android TV watch next -->
     <uses-permission android:name="android.permission.UPDATE_PACKAGES_WITHOUT_USER_ACTION" /> <!-- Used for updates without prompt -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" /> <!-- Used for update service -->
-    <uses-permission android:name="android.permission.USE_BIOMETRIC" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
+    <uses-permission android:name="android.permission.USE_BIOMETRIC" />
 
     <!-- Required for OpenInAppAction and getting arbitrary Aniyomi packages  -->
     <uses-permission
@@ -65,7 +64,8 @@
             android:screenOrientation="userLandscape"
             android:supportsPictureInPicture="true"
             android:taskAffinity="com.lagradost.cloudstream3.downloadedplayer"
-            android:launchMode="singleTask">
+            android:launchMode="singleTask"
+            tools:ignore="DiscouragedApi">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -207,18 +207,24 @@
         </receiver>
 
         <service
-            android:foregroundServiceType="dataSync"
             android:name=".services.VideoDownloadService"
             android:enabled="true"
+            android:foregroundServiceType="dataSync"
             android:exported="false" />
+
+        <!-- Necessary for WorkManager services: https://stackoverflow.com/a/77186316 -->
+        <service
+            android:name="androidx.work.impl.foreground.SystemForegroundService"
+            android:foregroundServiceType="dataSync"
+            tools:node="merge" />
 
         <activity
             android:name=".ui.ControllerActivity"
             android:exported="false" />
 
         <service
+            android:name=".services.PackageInstallerService"
             android:foregroundServiceType="dataSync"
-            android:name=".utils.PackageInstallerService"
             android:exported="false" />
 
         <provider

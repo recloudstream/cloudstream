@@ -24,6 +24,7 @@ import okio.sink
 import java.io.File
 import android.text.TextUtils
 import com.lagradost.cloudstream3.MainActivity.Companion.deleteFileOnExit
+import com.lagradost.cloudstream3.services.PackageInstallerService
 import com.lagradost.cloudstream3.utils.AppContextUtils.setDefaultFocus
 import java.io.BufferedReader
 import java.io.IOException
@@ -331,7 +332,7 @@ class InAppUpdater {
                                     when (currentInstaller) {
                                         // New method
                                         0 -> {
-                                            val intent = PackageInstallerService.getIntent(
+                                            val intent = PackageInstallerService.Companion.getIntent(
                                                 context,
                                                 update.updateURL
                                             )
