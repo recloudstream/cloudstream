@@ -1,11 +1,11 @@
 package com.lagradost.cloudstream3.extractors
 
 import com.lagradost.cloudstream3.SubtitleFile
+import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.Qualities
-import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import java.net.URLDecoder
 
@@ -24,6 +24,8 @@ open class InternetArchive : ExtractorApi() {
         return "$mainUrl/details/$id"
     }
 
+    // https://archive.org/details/the-the-infected
+    // https://archive.org/details/TheEdgeOfTheEarth
     override suspend fun getUrl(
         url: String,
         referer: String?,
@@ -32,7 +34,7 @@ open class InternetArchive : ExtractorApi() {
     ) {
         val document = archivedItems[url] ?: run {
             try {
-                val doc = Jsoup.connect(url).get()
+                val doc = app.get(url).document
                 archivedItems[url] = doc
                 doc
             } catch (e: Exception) {
