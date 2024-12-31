@@ -211,12 +211,7 @@ object VideoDownloadManager {
 
     private var hasCreatedNotChanel = false
 
-    fun startServiceForeground(service: Service) {
-        val notification = createNotification(service)
-        service.startForeground(1, notification, FOREGROUND_SERVICE_TYPE_DATA_SYNC)
-    }
-
-   private fun Context.createNotificationChannel() {
+    private fun Context.createNotificationChannel() {
         hasCreatedNotChanel = true
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is new and not in the support library
