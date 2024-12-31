@@ -1,6 +1,8 @@
 package com.lagradost.cloudstream3.services
 
 import android.content.Context
+import android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC
+import android.os.Build.VERSION.SDK_INT
 import androidx.core.app.NotificationCompat
 import androidx.work.Constraints
 import androidx.work.CoroutineWorker
@@ -82,12 +84,11 @@ class BackupWorkManager(val context: Context, workerParams: WorkerParameters) :
             BACKUP_CHANNEL_DESCRIPTION
         )
 
-        setForeground(
+        val foregroundInfo = if (SDK_INT >= 29)
             ForegroundInfo(
-                BACKUP_NOTIFICATION_ID,
-                backupNotificationBuilder.build()
-            )
-        )
+                BACKUP_NOTIFICATION_ID, backupNotificationBuilder.build(), FOREGROUND_SERVICE_TYPE_DATA_SYNC
+            ) else  ForegroundInfo(BACKUP_NOTIFICATION_ID, backupNotificationBuilder.build())
+        setForeground(foregroundInfo)
 
         BackupUtils.backup(context)
 

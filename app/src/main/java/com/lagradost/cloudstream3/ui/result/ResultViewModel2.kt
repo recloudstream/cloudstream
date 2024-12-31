@@ -496,7 +496,7 @@ class ResultViewModel2 : ViewModel() {
 
         private fun filterName(name: String?): String? {
             if (name == null) return null
-            Regex("[eE]pisode [0-9]*(.*)").find(name)?.groupValues?.get(1)?.let {
+            Regex("^[eE]pisode [0-9]*(.*)").find(name)?.groupValues?.get(1)?.let {
                 if (it.isEmpty())
                     return null
             }
@@ -643,7 +643,7 @@ class ResultViewModel2 : ViewModel() {
                 TvType.Cartoon -> "Cartoons/$sanitizedFileName"
                 TvType.Torrent -> "Torrent"
                 TvType.Documentary -> "Documentaries"
-                TvType.AsianDrama -> "AsianDrama"
+                TvType.AsianDrama -> "AsianDrama/$sanitizedFileName"
                 TvType.Live -> "LiveStreams"
                 TvType.NSFW -> "NSFW"
                 TvType.Others -> "Others"

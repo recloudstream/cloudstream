@@ -6,7 +6,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
-import coil.transform.RoundedCornersTransformation
+import coil3.transform.RoundedCornersTransformation
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.AccountListItemAddBinding
 import com.lagradost.cloudstream3.databinding.AccountListItemBinding

@@ -1,15 +1,22 @@
 package com.lagradost.cloudstream3.utils
 
+import android.Manifest
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
+import android.app.Service
 import android.content.*
+import android.content.pm.PackageManager
+import android.content.pm.ServiceInfo
+import android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
+import android.os.Build.VERSION.SDK_INT
 import android.util.Log
 import androidx.annotation.DrawableRes
+import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.graphics.drawable.toBitmap
@@ -19,9 +26,13 @@ import androidx.work.Data
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
-import coil.ImageLoader
-import coil.request.ImageRequest
-import coil.request.SuccessResult
+import coil3.Extras
+import coil3.ImageLoader
+import coil3.SingletonImageLoader
+import coil3.asDrawable
+import coil3.request.ImageRequest
+import coil3.request.SuccessResult
+import coil3.request.allowHardware
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
 import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
@@ -34,6 +45,7 @@ import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.mvvm.launchSafe
 import com.lagradost.cloudstream3.mvvm.logError
+import com.lagradost.cloudstream3.services.PackageInstallerService.Companion.UPDATE_NOTIFICATION_ID
 import com.lagradost.cloudstream3.services.VideoDownloadService
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.main
@@ -198,6 +210,7 @@ object VideoDownloadManager {
     val downloadQueue = LinkedList<DownloadResumePackage>()
 
     private var hasCreatedNotChanel = false
+
     private fun Context.createNotificationChannel() {
         hasCreatedNotChanel = true
         // Create the NotificationChannel, but only on API 26+ because
@@ -233,21 +246,20 @@ object VideoDownloadManager {
                 return cachedBitmaps[url]
             }
 
-            val imageLoader = ImageLoader(this)
+            val imageLoader = SingletonImageLoader.get(this)
 
             val request = ImageRequest.Builder(this)
                 .data(url)
                 .apply {
                     headers?.forEach { (key, value) ->
-                        addHeader(key, value)
+                        extras[Extras.Key<String>(key)] = value
                     }
                 }
-                .allowHardware(false) // Disable hardware bitmaps for compatibility
                 .build()
 
             val bitmap = runBlocking {
                 val result = imageLoader.execute(request)
-                (result as? SuccessResult)?.drawable?.toBitmap()
+                (result as? SuccessResult)?.image?.asDrawable(applicationContext.resources)?.toBitmap()
             }
 
             bitmap?.let {
@@ -310,7 +322,7 @@ object VideoDownloadManager {
                     flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 }
                 val pendingIntent: PendingIntent =
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    if (SDK_INT >= Build.VERSION_CODES.M) {
                         PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
                     } else {
                         //fixme Specify a better flag
@@ -335,7 +347,7 @@ object VideoDownloadManager {
             }
             val downloadFormat = context.getString(R.string.download_format)
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            if (SDK_INT >= Build.VERSION_CODES.O) {
                 if (ep.poster != null) {
                     val poster = withContext(Dispatchers.IO) {
                         context.getImageBitmapFromUrl(ep.poster)
@@ -429,7 +441,7 @@ object VideoDownloadManager {
                 builder.setContentText(txt)
             }
 
-            if ((state == DownloadType.IsDownloading || state == DownloadType.IsPaused) && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            if ((state == DownloadType.IsDownloading || state == DownloadType.IsPaused) && SDK_INT >= Build.VERSION_CODES.O) {
                 val actionTypes: MutableList<DownloadActionType> = ArrayList()
                 // INIT
                 if (state == DownloadType.IsDownloading) {
@@ -487,6 +499,13 @@ object VideoDownloadManager {
             notificationCallback(ep.id, notification)
             with(NotificationManagerCompat.from(context)) {
                 // notificationId is a unique int for each notification that you must define
+                if (ActivityCompat.checkSelfPermission(
+                        context,
+                        Manifest.permission.POST_NOTIFICATIONS
+                    ) != PackageManager.PERMISSION_GRANTED
+                ) {
+                    return null
+                }
                 notify(ep.id, notification)
             }
             return notification

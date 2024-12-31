@@ -54,6 +54,7 @@ import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
+import com.lagradost.cloudstream3.utils.getImageFromDrawable
 import com.lagradost.cloudstream3.utils.setText
 import com.lagradost.cloudstream3.utils.setTextHtml
 
@@ -886,9 +887,9 @@ class ResultFragmentTv : Fragment() {
                         //Change poster crop area to 20% from Top
                         backgroundPoster.cropYCenterOffsetPct = 0.20F
                         
-                        backgroundPoster.loadImage(
-                            d.posterBackgroundImage
-                        ) { error(error) }
+                        backgroundPoster.loadImage(d.posterBackgroundImage) {
+                            error { getImageFromDrawable(context ?: return@error null, error) }
+                        }
                         comingSoon = d.comingSoon
                         resultTvComingSoon.isVisible = d.comingSoon
 
