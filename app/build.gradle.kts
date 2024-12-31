@@ -204,7 +204,7 @@ dependencies {
     } //JSON Parser
 
     // torrent support
-    implementation(libs.aria2cstream)
+    implementation(libs.torrentserver.aniyomi)
 
     // Downloading & Networking
     implementation(libs.work.runtime)

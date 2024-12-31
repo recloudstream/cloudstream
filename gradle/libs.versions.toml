@@ -1,7 +1,6 @@
 [versions]
 acraCore = "5.11.3"
 appcompat = "1.7.0"
-aria2cstream = "0.0.6"
 autoServiceKsp = "1.2.0"
 biometric = "1.2.0-alpha05"
 buildkonfigGradlePlugin = "0.15.1"
@@ -52,12 +51,13 @@ tvprovider = "1.0.0"
 video = "1.0.0"
 workRuntime = "2.10.0"
 workRuntimeKtx = "2.10.0"
+torrentserverAniyomi = "c18f58e51b"
 
 [libraries]
+torrentserver-aniyomi = { module = "com.github.Diegopyl1209:torrentserver-aniyomi", version.ref = "torrentserverAniyomi" }
 acra-core = { module = "ch.acra:acra-core", version.ref = "acraCore" }
 acra-toast = { module = "ch.acra:acra-toast", version.ref = "acraCore" }
 appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
-aria2cstream = { module = "com.github.recloudstream:Aria2cStream", version.ref = "aria2cstream" }
 auto-service-ksp = { module = "dev.zacsweers.autoservice:auto-service-ksp", version.ref = "autoServiceKsp" }
 biometric = { module = "androidx.biometric:biometric", version.ref = "biometric" }
 buildkonfig-gradle-plugin = { module = "com.codingfeline.buildkonfig:buildkonfig-gradle-plugin", version.ref = "buildkonfigGradlePlugin" }
