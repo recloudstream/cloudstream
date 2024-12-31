@@ -80,26 +80,6 @@ open class Chillx : ExtractorApi() {
     override val mainUrl = "https://chillx.top"
     override val requiresReferer = true
 
-    companion object {
-        private const val keySource = "https://rowdy-avocado.github.io/multi-keys/"
-
-        private var keys: KeysData? = null
-
-        private suspend fun fetchKeys(): KeysData {
-            return app.get(keySource).parsedSafe<KeysData>()
-                ?: throw ErrorLoadingException("Unable to get keys")
-        }
-
-        // This will initialize the keys in a suspend context.
-        private suspend fun getKeys(): KeysData {
-            // Ensure the keys are initialized only once.
-            if (keys == null) {
-                keys = fetchKeys()
-            }
-            return keys!!
-        }
-    }
-
     override suspend fun getUrl(
         url: String,
         referer: String?,
@@ -111,7 +91,7 @@ open class Chillx : ExtractorApi() {
             Regex("Encrypted\\s*=\\s*'(.*?)';").find(res)?.groupValues?.get(1)?.replace("_", "/")
                 ?.replace("-", "+")
                 ?: ""
-        val keysData = getKeys()
+        val keysData = RowdyAvocadoKeys.getKeys()
         val fetchkey = keysData.chillx.firstOrNull() ?: throw ErrorLoadingException("No Chillx key found")
         val key = logSha256Checksum(fetchkey)
         val decodedBytes: ByteArray = decodeBase64WithPadding(encodedString)
@@ -175,9 +155,4 @@ open class Chillx : ExtractorApi() {
 
         return result.toString()
     }
-
-    data class KeysData(
-        val chillx: List<String>
-    )
-
 }
