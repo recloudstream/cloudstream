@@ -224,7 +224,6 @@
 
         <service
             android:name=".services.PackageInstallerService"
-            android:enabled="false"
             android:foregroundServiceType="dataSync"
             android:exported="false" />
 
