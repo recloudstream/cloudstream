@@ -216,28 +216,22 @@ object VideoDownloadManager {
         service.startForeground(1, notification, FOREGROUND_SERVICE_TYPE_DATA_SYNC)
     }
 
-    private fun createNotificationChannel(context: Context) {
-        if (SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(
-                DOWNLOAD_CHANNEL_ID,
-                DOWNLOAD_CHANNEL_NAME,
-                NotificationManager.IMPORTANCE_DEFAULT
-            ).apply {
-                description = DOWNLOAD_CHANNEL_DESCRIPT
+   private fun Context.createNotificationChannel() {
+        hasCreatedNotChanel = true
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val name = DOWNLOAD_CHANNEL_NAME //getString(R.string.channel_name)
+            val descriptionText = DOWNLOAD_CHANNEL_DESCRIPT//getString(R.string.channel_description)
+            val importance = NotificationManager.IMPORTANCE_DEFAULT
+            val channel = NotificationChannel(DOWNLOAD_CHANNEL_ID, name, importance).apply {
+                description = descriptionText
             }
-            val notificationManager = context.getSystemService(NotificationManager::class.java)
+            // Register the channel with the system
+            val notificationManager: NotificationManager =
+                this.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.createNotificationChannel(channel)
         }
-        hasCreatedNotChanel = true
-    }
-
-    private fun createNotification(context: Context): Notification {
-        val builder = NotificationCompat.Builder(context, DOWNLOAD_CHANNEL_ID)
-            .setContentTitle("Downloading Video")
-            .setContentText("Your video is downloading in the background.")
-
-        // Add actions (e.g., Resume, Pause, Stop) if needed
-        return builder.build()
     }
 
     ///** Will return IsDone if not found or error */
@@ -503,7 +497,7 @@ object VideoDownloadManager {
             }
 
             if (!hasCreatedNotChanel) {
-                createNotificationChannel(context)
+                context.createNotificationChannel()
             }
 
             val notification = builder.build()
