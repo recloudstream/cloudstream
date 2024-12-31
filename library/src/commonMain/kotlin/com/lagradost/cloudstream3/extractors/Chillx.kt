@@ -1,7 +1,5 @@
 package com.lagradost.cloudstream3.extractors
 
-import android.annotation.TargetApi
-import android.os.Build
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.ErrorLoadingException
 import com.lagradost.cloudstream3.SubtitleFile
@@ -133,7 +131,6 @@ open class Chillx : ExtractorApi() {
         return unsignedIntArray
     }
 
-    @TargetApi(Build.VERSION_CODES.O)
     private fun decodeBase64WithPadding(xIdJ2lG: String): ByteArray {
         // Ensure padding for Base64 encoding (if necessary)
         var paddedString = xIdJ2lG
