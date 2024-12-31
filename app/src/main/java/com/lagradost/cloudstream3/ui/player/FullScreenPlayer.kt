@@ -1294,7 +1294,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         return false
     }
 
-    private var hasShowVolumeToast: Boolean = false
+    private var hasShownVolumeToast: Boolean = false
     private var loudnessEnhancer: LoudnessEnhancer? = null
     private var progressBarHideRunnable: Runnable? = null
 
@@ -1320,7 +1320,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
             (currentRequestedVolume - volumeStep).coerceAtLeast(0.0f) // Clamp to 0%
         } else {
             // TouchAction.Volume
-            (currentRequestedVolume + verticalAddition).coerceAtLeast(0.0f) // Clamp to 0%
+            (currentRequestedVolume + verticalAddition).coerceIn(0.0f, maxVolumePercentage / 100.0f) // Clamp to 0%, maxVolumePercentage / 100.0f
         }
 
         val currentVolumePercentage = (currentRequestedVolume * 100).toInt()
@@ -1332,28 +1332,41 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         }
 
         // Update the progress bar
-        playerBinding?.playerProgressbarLeft?.apply {
-            max = maxVolumePercentage
-            progress = currentVolumePercentage
-            val color = if (currentRequestedVolume > 1.0f) {
-                ContextCompat.getColor(context, R.color.colorPrimaryOrange)
-            } else Color.WHITE
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                val colorFilter = BlendModeColorFilter(color, BlendMode.SRC_IN)
-                progressDrawable.colorFilter = colorFilter
-            } else {
-                // For lower API levels, fall back to the older PorterDuff method
-                @Suppress( "DEPRECATION")
-                progressDrawable.setColorFilter(color, PorterDuff.Mode.SRC_IN)
+        playerBinding?.apply {
+            playerProgressbarLeft.apply {
+                max = maxVolumePercentage
+                progress = currentVolumePercentage
+                val color = if (currentRequestedVolume > 1.0f) {
+                    ContextCompat.getColor(context, R.color.colorPrimaryOrange)
+                } else Color.WHITE
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    val colorFilter = BlendModeColorFilter(color, BlendMode.SRC_IN)
+                    progressDrawable.colorFilter = colorFilter
+                } else {
+                    // For lower API levels, fall back to the older PorterDuff method
+                    @Suppress( "DEPRECATION")
+                    progressDrawable.setColorFilter(color, PorterDuff.Mode.SRC_IN)
+                }
             }
-        }
 
-        // Show the progress bar for 2 seconds
-        playerBinding?.playerProgressbarLeftHolder?.apply {
-            isVisible = true
-            progressBarHideRunnable?.let { removeCallbacks(it) }
-            progressBarHideRunnable = Runnable { isVisible = false }
-            postDelayed(progressBarHideRunnable, 2000)
+            // Update icon
+            playerProgressbarLeftIcon.setImageResource(
+                volumeIcons[min( // clamp the value just in case
+                    volumeIcons.size - 1,
+                    max(
+                        0,
+                        round(currentRequestedVolume * (volumeIcons.size - 1)).toInt()
+                    )
+                )]
+            )
+
+            // Show the progress bar for 2 seconds
+            playerProgressbarLeftHolder.apply {
+                isVisible = true
+                progressBarHideRunnable?.let { removeCallbacks(it) }
+                progressBarHideRunnable = Runnable { isVisible = false }
+                postDelayed(progressBarHideRunnable, 2000)
+            }
         }
 
         // Apply loudness enhancer for volumes > 100%
@@ -1362,9 +1375,9 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
             // Show the toast only the first time the volume exceeds 100%
             // or after it drops below 100% and goes above again.
-            if (!hasShowVolumeToast) {
+            if (!hasShownVolumeToast) {
                 showToast(R.string.volume_exceeded_100)
-                hasShowVolumeToast = true
+                hasShownVolumeToast = true
             }
 
             if (loudnessEnhancer == null) {
@@ -1381,7 +1394,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
             loudnessEnhancer = null
 
             // Reset the toast flag when the volume drops below 100%
-            hasShowVolumeToast = false
+            hasShownVolumeToast = false
         }
     }
 
