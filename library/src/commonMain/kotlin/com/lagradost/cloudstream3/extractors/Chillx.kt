@@ -98,7 +98,7 @@ open class Chillx : ExtractorApi() {
         val byteList: List<Int> = decodedBytes.map { it.toInt() and 0xFF }
         val processedResult = decryptWithXor(byteList, key)
         val decoded= base64Decode(processedResult)
-        val m3u8 =Regex(""?file"?:\s*"([^"]+)").find(decoded)?.groupValues?.get(1) ?:""
+        val m3u8 =Regex("""file:\s*"(.*?)"""").find(decoded)?.groupValues?.get(1) ?:""
         val header =
             mapOf(
                 "accept" to "*/*",
