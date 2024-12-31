@@ -249,6 +249,8 @@ fun LoadResponse.toResultData(repo: APIRepository): ResultData {
                 TvType.Music -> R.string.music_singlar
                 TvType.AudioBook -> R.string.audio_book_singular
                 TvType.CustomMedia -> R.string.custom_media_singluar
+                TvType.Audio -> R.string.audio_singluar
+                TvType.Podcast -> R.string.podcast_singluar
             }
         ),
         yearText = txt(year?.toString()),
@@ -650,6 +652,8 @@ class ResultViewModel2 : ViewModel() {
                 TvType.Music -> "Music"
                 TvType.AudioBook -> "AudioBooks"
                 TvType.CustomMedia -> "Media"
+                TvType.Audio -> "Audio"
+                TvType.Podcast -> "Podcasts"
             }
         }
 
