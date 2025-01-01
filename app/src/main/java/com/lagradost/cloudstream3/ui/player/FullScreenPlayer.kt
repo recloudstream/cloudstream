@@ -964,6 +964,9 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
     private var isAdjustingVolume: Boolean = false
 
+    private var progressBarLeftHideRunnable: Runnable? = null
+    private var progressBarRightHideRunnable: Runnable? = null
+
     @SuppressLint("SetTextI18n")
     private fun handleMotionEvent(view: View?, event: MotionEvent?): Boolean {
         if (event == null || view == null) return false
@@ -1088,7 +1091,6 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
                     // resets UI
                     playerTimeText.isVisible = false
-                    playerProgressbarRightHolder.isVisible = false
 
                     currentLastTouchEndTime = System.currentTimeMillis()
                 }
@@ -1132,7 +1134,6 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
                             // update UI
                             playerTimeText.isVisible = false
-                            playerProgressbarRightHolder.isVisible = false
 
                             when (currentTouchAction) {
                                 TouchAction.Time -> {
@@ -1159,7 +1160,25 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                                 }
 
                                 TouchAction.Brightness -> {
-                                    playerProgressbarRightHolder.isVisible = true
+                                    playerBinding?.playerProgressbarRightHolder?.apply {
+                                        if (!isVisible || alpha < 1f) {
+                                            alpha = 1f
+                                            isVisible = true
+                                        }
+
+                                        progressBarRightHideRunnable?.let { removeCallbacks(it) }
+                                        progressBarRightHideRunnable = Runnable {
+                                            // Fade out the progress bar
+                                            animate()
+                                                .alpha(0f)
+                                                .setDuration(300)
+                                                .withEndAction { isVisible = false }
+                                                .start()
+                                        }
+                                        // Show the progress bar for 1.5 seconds
+                                        postDelayed(progressBarRightHideRunnable, 1500)
+                                    }
+
                                     val lastRequested = currentRequestedBrightness
                                     currentRequestedBrightness =
                                         min(
@@ -1299,7 +1318,6 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
     private var hasShownVolumeToast: Boolean = false
     private var loudnessEnhancer: LoudnessEnhancer? = null
-    private var progressBarHideRunnable: Runnable? = null
 
     @OptIn(UnstableApi::class)
     private fun handleVolumeAdjustment(
@@ -1320,8 +1338,8 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                 isVisible = true
             }
 
-            progressBarHideRunnable?.let { removeCallbacks(it) }
-            progressBarHideRunnable = Runnable {
+            progressBarLeftHideRunnable?.let { removeCallbacks(it) }
+            progressBarLeftHideRunnable = Runnable {
                 // Fade out the progress bar
                 animate()
                     .alpha(0f)
@@ -1329,8 +1347,8 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                     .withEndAction { isVisible = false }
                     .start()
             }
-            // Show the progress bar for 2 seconds
-            postDelayed(progressBarHideRunnable, 2000)
+            // Show the progress bar for 1.5 seconds
+            postDelayed(progressBarLeftHideRunnable, 1500)
         }
 
         if (verticalAddition >= 0f) {
