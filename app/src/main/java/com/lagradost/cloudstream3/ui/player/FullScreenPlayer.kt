@@ -1398,7 +1398,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
             // or after it drops below 100% and goes above again.
             // We only do this if the volume buttons are pressed as
             // we handle sliding a bit different.
-            if (!hasShownVolumeToast && isVolumeUp) {
+            if (!hasShownVolumeToast && isVolumeUp && currentVolume < maxVolume) {
                 showToast(R.string.volume_exceeded_100)
                 hasShownVolumeToast = true
             }
