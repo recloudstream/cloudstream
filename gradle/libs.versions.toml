@@ -53,7 +53,7 @@ workRuntime = "2.10.0"
 workRuntimeKtx = "2.10.0"
 torrentserverAniyomi = "c18f58e51b"
 
-jvmTarget = "17"
+jvmTarget = "1.8"
 minSdk = "21"
 compileSdk = "35"
 targetSdk = "35"
