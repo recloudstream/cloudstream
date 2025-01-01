@@ -373,6 +373,8 @@
     <string name="music_singlar">Music</string>
     <string name="audio_book_singular">Audio Book</string>
     <string name="custom_media_singluar">Media</string>
+    <string name="audio_singluar">Audio</string>
+    <string name="podcast_singluar">Podcast</string>
     <string name="source_error">Source error</string>
     <string name="remote_error">Remote error</string>
     <string name="render_error">Renderer error</string>

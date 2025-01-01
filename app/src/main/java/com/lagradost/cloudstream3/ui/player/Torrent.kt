@@ -1,420 +1,363 @@
-package com.lagradost.cloudstream3.ui.player
-
-import android.net.Uri
-import androidx.core.net.toUri
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.api.Log
 import com.lagradost.cloudstream3.CommonActivity
 import com.lagradost.cloudstream3.ErrorLoadingException
-import com.lagradost.cloudstream3.TvType
+import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.utils.ExtractorLink
-import com.lagradost.fetchbutton.aria2c.Aria2Args
-import com.lagradost.fetchbutton.aria2c.Aria2Settings
-import com.lagradost.fetchbutton.aria2c.Aria2Starter
-import com.lagradost.fetchbutton.aria2c.BtPieceSelector
-import com.lagradost.fetchbutton.aria2c.DownloadListener
-import com.lagradost.fetchbutton.aria2c.DownloadStatusTell
-import com.lagradost.fetchbutton.aria2c.FileAllocationType
-import com.lagradost.fetchbutton.aria2c.FollowMetaLinkType
-import com.lagradost.fetchbutton.aria2c.Metadata
-import com.lagradost.fetchbutton.aria2c.UriRequest
-import kotlinx.coroutines.delay
+import com.lagradost.cloudstream3.utils.ExtractorLinkType
+import torrServer.TorrServer
 import java.io.File
-import java.util.UUID
-
-data class TorrentRequest(
-    val request: ExtractorLink,
-    val requestId: Long,
-    val data: ExtractorUri,
-)
+import java.net.ConnectException
+import java.net.URLEncoder
 
 object Torrent {
     var hasAcceptedTorrentForThisSession: Boolean? = null
-    private fun getPlayableFile(
-        data: Metadata,
-        minimumBytes: Long
-    ): Uri? {
-        for (item in data.items) {
-            for (file in item.files) {
-                // only allow files with a length above minimumBytes
-                if (file.completedLength < minimumBytes) continue
-                // only allow video formats
-                if (videoFormats.none { suf ->
-                        file.path.contains(
-                            suf,
-                            ignoreCase = true
-                        )
-                    }) continue
+    private const val TORRENT_SERVER_PATH: String = "torrent_tmp"
+    private const val TIMEOUT: Long = 3
+    private const val TAG: String = "Torrent"
 
-                return file.path.toUri()
-            }
-        }
-        return null
-    }
-
-    private val videoFormats = arrayOf(
-        ".3g2",
-        ".3gp",
-        ".amv",
-        ".asf",
-        ".avi",
-        ".drc",
-        ".flv",
-        ".f4v",
-        ".f4p",
-        ".f4a",
-        ".f4b",
-        ".gif",
-        ".gifv",
-        ".m4v",
-        ".mkv",
-        ".mng",
-        ".mov",
-        ".qt",
-        ".mp4",
-        ".m4p",
-        ".mpg", ".mp2", ".mpeg", ".mpe", ".mpv",
-        ".mpg", ".mpeg", ".m2v",
-        ".MTS", ".M2TS", ".TS",
-        ".mxf",
-        ".nsv",
-        ".ogv", ".ogg",
-        //".rm", // Made for RealPlayer
-        //".rmvb", // Made for RealPlayer
-        ".svi",
-        ".viv",
-        ".vob",
-        ".webm",
-        ".wmv",
-        ".yuv"
-    )
-
+    /** Cleans up both old aria2c files and newer go server, (even if the new is also self cleaning) */
     @Throws
-    private suspend fun awaitAria2c(
-        link: ExtractorLink,
-        requestId: Long,
-        event: ((PlayerEvent) -> Unit)?
-    ): ExtractorUri {
-        val minimumBytes: Long = 30 shl 20
-        var hasFileChecked = false
-        val defaultWait = 10
-        var extraWait = defaultWait
-        while (true) {
-            val gid = DownloadListener.sessionIdToGid[requestId]
-
-            // request has not yet been processed, wait for it to do
-            if (gid == null) {
-                delay(1000)
-                continue
-            }
-
-            val metadata = DownloadListener.getInfo(gid)
-            event?.invoke(
-                DownloadEvent(
-                    downloadedBytes = metadata.downloadedLength,
-                    downloadSpeed = metadata.downloadSpeed,
-                    totalBytes = metadata.totalLength,
-                    connections = metadata.items.sumOf { it.connections }
-                )
-            )
-            if (metadata.status != DownloadStatusTell.Complete) {
-                extraWait = defaultWait
-            }
-            when (metadata.status) {
-                // if completed/error/removed then we don't have to wait anymore
-                DownloadStatusTell.Error,
-                DownloadStatusTell.Removed -> {
-                    Log.i(TAG, "awaitAria2c, Completed with status = $metadata")
-                    break
-                }
-
-                // some things are downloaded in multiple parts, and is therefore important
-                // to wait a bit extra
-                DownloadStatusTell.Complete -> {
-                    // we have waited extra, but no extra data is found
-                    if (extraWait < 0) {
-                        break
-                    }
-                    val gids = metadata.items.map { it.gid }
-
-                    // if any follower is not found in the gids,
-                    // then Complete is invalid, and we wait a bit extra
-                    if (metadata.items.any { item ->
-                            item.followedBy.any { follow ->
-                                !gids.contains(
-                                    follow
-                                )
-                            }
-                        }) {
-                        extraWait -= 1
-                        delay(500)
-                        continue
-                    } else {
-                        break
-                    }
-                }
-
-                // if waiting to be added, wait more
-                DownloadStatusTell.Waiting -> {
-                    delay(1000)
-                    continue
-                }
-
-                DownloadStatusTell.Active -> {
-                    //metadata.downloadedLength >= metadata.totalLength &&
-                    if (getPlayableFile(
-                            metadata,
-                            minimumBytes = minimumBytes
-                        ) != null
-                    ) {
-                        Log.i(TAG, "awaitAria2c, No playable file")
-                        break
-                    }
-
-                    // as we don't want to waste the users time with torrents that is useless
-                    // we do this to check that at a video file exists
-                    if (!hasFileChecked && metadata.totalLength > minimumBytes) {
-                        hasFileChecked = true
-                        if (getPlayableFile(
-                                metadata,
-                                minimumBytes = -1
-                            ) == null
-                        ) {
-                            throw Exception("Download file has no video")
-                        }
-                    }
-
-                    //println("downloaded ${metadata.downloadedLength}/${metadata.totalLength}")
-                    delay(1000)
-                    continue
-                }
-
-                // unpause any pending files
-                DownloadStatusTell.Paused -> {
-                    Aria2Starter.unpause(gid)
-                    delay(1000)
-                    continue
-                }
-
-                null -> {
-                    delay(1000)
-                    continue
-                }
-            }
-        }
-
-        val gid = DownloadListener.sessionIdToGid[requestId]
-            ?: throw Exception("Unable to start download")
-
-        val metadata = DownloadListener.getInfo(gid)
-
-        when (metadata.status) {
-            DownloadStatusTell.Active, DownloadStatusTell.Complete -> {
-                val uri = getPlayableFile(metadata, minimumBytes = minimumBytes)
-                    ?: throw Exception(
-                        if (metadata.status == DownloadStatusTell.Active) {
-                            "No playable file found, this should never happened"
-                        } else {
-                            "Completed, but no playable file of ${minimumBytes shr 20}MB found"
-                        }
-                    )
-                return ExtractorUri(
-                    // we require at least x MB to play the file
-                    uri = uri,
-                    name = link.name,
-                    tvType = TvType.Torrent
-                )
-            }
-
-            DownloadStatusTell.Waiting -> {
-                throw Exception("Download was unable to be started")
-            }
-
-            DownloadStatusTell.Paused -> {
-                throw Exception("Download is paused")
-            }
-
-            DownloadStatusTell.Error -> {
-                throw Exception("Download error")
-            }
-
-            DownloadStatusTell.Removed -> {
-                throw Exception("Download removed")
-            }
-
-            null -> {
-                throw Exception("Unexpected download error")
-            }
-        }
-    }
-
-    fun release() {
-        pauseAll()
-        // TODO move this into Aria2Starter
-        /*normalSafeApiCall { (Aria2Starter.client as? WebsocketClient)?.close() }
-        normalSafeApiCall { Aria2Starter.aria2?.delete() }
-
-        Aria2Starter.client = null
-        Aria2Starter.aria2 = null*/
-    }
-
-    private fun pauseAll() {
-        Aria2Starter.pauseAll()
-    }
-
-    @Throws
-    private suspend fun playAria2c(
-        link: ExtractorLink,
-        event: ((PlayerEvent) -> Unit)?
-    ): TorrentRequest {
-        // ephemeral id based on url to make it unique
-        val requestId = link.url.hashCode().toLong()
-
-        val uriReq = UriRequest(
-            id = requestId,
-            uris = listOf(link.url),
-            args = Aria2Args(
-                headers = link.headers,
-                referer = link.referer,
-                /** torrent specifics to make it possible to stream */
-                seedRatio = 0.0f,
-                seedTimeMin = 0.0f,
-                btPieceSelector = BtPieceSelector.Inorder,
-                followTorrent = FollowMetaLinkType.Mem,
-                fileAllocation = FileAllocationType.None,
-                btPrioritizePiece = "head=30M,tail=30M",
-                allowOverwrite = true,
-                autoSaveIntervalSec = 10,
-                forceSave = true,
-                removeControlFile = false,
-                /** Best trackers to make it faster */
-                btTracker = listOf(
-                    "udp://tracker.opentrackr.org:1337/announce",
-                    "https://tracker2.ctix.cn/announce",
-                    "https://tracker1.520.jp:443/announce",
-                    "udp://opentracker.i2p.rocks:6969/announce",
-                    "udp://open.tracker.cl:1337/announce",
-                    "udp://open.demonii.com:1337/announce",
-                    "http://tracker.openbittorrent.com:80/announce",
-                    "udp://tracker.openbittorrent.com:6969/announce",
-                    "udp://open.stealth.si:80/announce",
-                    "udp://exodus.desync.com:6969/announce",
-                    "udp://tracker-udp.gbitt.info:80/announce",
-                    "udp://explodie.org:6969/announce",
-                    "https://tracker.gbitt.info:443/announce",
-                    "http://tracker.gbitt.info:80/announce",
-                    "udp://uploads.gamecoast.net:6969/announce",
-                    "udp://tracker1.bt.moack.co.kr:80/announce",
-                    "udp://tracker.tiny-vps.com:6969/announce",
-                    "udp://tracker.theoks.net:6969/announce",
-                    "udp://tracker.dump.cl:6969/announce",
-                    "udp://tracker.bittor.pw:1337/announce",
-                    "https://tracker1.520.jp:443/announce",
-                    "udp://opentracker.i2p.rocks:6969/announce",
-                    "udp://open.tracker.cl:1337/announce",
-                    "udp://open.demonii.com:1337/announce",
-                    "http://tracker.openbittorrent.com:80/announce",
-                    "udp://tracker.openbittorrent.com:6969/announce",
-                    "udp://open.stealth.si:80/announce",
-                    "udp://exodus.desync.com:6969/announce",
-                    "udp://tracker-udp.gbitt.info:80/announce",
-                    "udp://explodie.org:6969/announce",
-                    "https://tracker.gbitt.info:443/announce",
-                    "http://tracker.gbitt.info:80/announce",
-                    "udp://uploads.gamecoast.net:6969/announce",
-                    "udp://tracker1.bt.moack.co.kr:80/announce",
-                    "udp://tracker.tiny-vps.com:6969/announce",
-                    "udp://tracker.theoks.net:6969/announce",
-                    "udp://tracker.dump.cl:6969/announce",
-                    "udp://tracker.bittor.pw:1337/announce"
-                )
-            )
-        )
-
-        val metadata =
-            DownloadListener.sessionIdToGid[requestId]?.let { gid -> DownloadListener.getInfo(gid) }
-
-        when (metadata?.status) {
-            DownloadStatusTell.Removed, DownloadStatusTell.Error, null -> {
-                var isValid = false
-                // use incremental delay in the case of weird behavior of startup time or something
-                for (i in 0..10) {
-                    val response = Aria2Starter.instance?.client?.sendUri(uriReq)
-                    DownloadListener.sessionIdToLastRequest[requestId] = uriReq
-                    // instance not started
-                    if (response == null) {
-                        Aria2Starter.refresh()
-                        delay(100L * i)
-                        continue
-                    }
-                    // send error, due to closed or timeout
-                    val gid = response.getOrNull()
-                    if (gid == null) {
-                        Aria2Starter.refresh()
-                        delay(100L * i)
-                        continue
-                    }
-                    DownloadListener.insert(gid, requestId)
-                    isValid = true
-                    break
-                }
-                if (!isValid) {
-                    throw ErrorLoadingException("Unable to connect to internal server")
-                }
-            }
-
-            else -> Unit
-        }
-
-        try {
-            return TorrentRequest(
-                data = awaitAria2c(link, requestId, event),
-                requestId = requestId,
-                request = link
-            )
-        } catch (t: Throwable) {
-            // if we detect any download error then we delete it as we don't want any useless background tasks
-            Aria2Starter.delete(DownloadListener.sessionIdToGid[requestId], requestId)
-            throw t
-        }
-    }
-
     fun deleteAllFiles(): Boolean {
         val act = CommonActivity.activity ?: return false
-        val defaultDirectory = "${act.cacheDir.path}/torrent_tmp"
+        val defaultDirectory = "${act.cacheDir.path}/$TORRENT_SERVER_PATH"
         return File(defaultDirectory).deleteRecursively()
     }
 
-    fun deleteAllOldFiles(): Boolean {
-        try {
-            val act = CommonActivity.activity ?: return false
-            val defaultDirectory = "${act.cacheDir.path}/torrent_tmp"
-            return File(defaultDirectory).walkBottomUp().fold(
-                true
-                // recursively: lastModified + 4H > time or else delete
-            ) { res, it -> ((it.lastModified() + (1000L * 60L * 60L * 4L) > System.currentTimeMillis()) || it.delete() || !it.exists()) && res }
+    private const val TORRENT_SERVER_URL =
+        "http://127.0.0.1:8090" // https://github.com/Diegopyl1209/torrentserver-aniyomi/blob/main/server.go#L23
+
+    /** Returns true if the server is up */
+    private suspend fun echo(): Boolean {
+        return try {
+            app.get(
+                "$TORRENT_SERVER_URL/echo",
+            ).text.isNotEmpty()
+        } catch (e: ConnectException) {
+            // `Failed to connect to /127.0.0.1:8090` if the server is down
+            false
         } catch (t: Throwable) {
             logError(t)
-            return false
+            false
         }
     }
 
-    @Throws
-    suspend fun loadTorrent(link: ExtractorLink, event: ((PlayerEvent) -> Unit)?): TorrentRequest {
-        val act = CommonActivity.activity ?: throw IllegalArgumentException("No activity")
-
-        val defaultDirectory = "${act.cacheDir.path}/torrent_tmp"
-
-        // start the client if not active, lazy init
-        Aria2Starter.start(
-            activity = act,
-            Aria2Settings(
-                UUID.randomUUID().toString(),
-                6800, // https://github.com/devgianlu/aria2lib/blob/d34fd083835775cdf65f170437575604e96b602e/src/main/java/com/gianlu/aria2lib/internal/Aria2.java#L382
-                defaultDirectory,
-            )
-        )
-
-        return playAria2c(link, event)
+    // https://github.com/Diegopyl1209/torrentserver-aniyomi/blob/c18f58e51b6738f053261bc863177078aa9c1c98/web/api/shutdown.go#L22
+    /** Gracefully shutdown the server.
+     * should not be used because I am unable to start it again, and the stopTorrentServer() crashes the app */
+    suspend fun shutdown(): Boolean {
+        return try {
+            app.get(
+                "$TORRENT_SERVER_URL/shutdown",
+            ).isSuccessful
+        } catch (t: Throwable) {
+            logError(t)
+            false
+        }
     }
+
+    /** Lists all torrents by the server */
+    @Throws
+    private suspend fun list(): Array<TorrentStatus> {
+        return app.post(
+            "$TORRENT_SERVER_URL/torrents",
+            json = TorrentRequest(
+                action = "list",
+            ),
+            timeout = TIMEOUT,
+            headers = emptyMap()
+        ).parsed<Array<TorrentStatus>>()
+    }
+
+    /** Drops a single torrent, (I think) this means closing the stream. Returns returns if it is successful */
+    private suspend fun drop(hash: String): Boolean {
+        return try {
+            return app.post(
+                "$TORRENT_SERVER_URL/torrents",
+                json = TorrentRequest(
+                    action = "drop",
+                    hash = hash
+                ),
+                timeout = TIMEOUT,
+                headers = emptyMap()
+            ).isSuccessful
+        } catch (t: Throwable) {
+            logError(t)
+            false
+        }
+    }
+
+    /** Removes a single torrent from the server registry */
+    private suspend fun rem(hash: String): Boolean {
+        return try {
+            return app.post(
+                "$TORRENT_SERVER_URL/torrents",
+                json = TorrentRequest(
+                    action = "rem",
+                    hash = hash
+                ),
+                timeout = TIMEOUT,
+                headers = emptyMap()
+            ).isSuccessful
+        } catch (t: Throwable) {
+            logError(t)
+            false
+        }
+    }
+
+
+    /** Removes all torrents from the server, and returns if it is successful */
+    suspend fun clearAll(): Boolean {
+        return try {
+            val items = list()
+            var allSuccess = true
+            for (item in items) {
+                val hash = item.hash
+                if (hash == null) {
+                    Log.i(TAG, "No hash on ${item.name}")
+                    allSuccess = false
+                    continue
+                }
+                if (drop(hash)) {
+                    Log.i(TAG, "Successfully dropped ${item.name}")
+                } else {
+                    Log.i(TAG, "Failed to drop ${item.name}")
+                    allSuccess = false
+                    continue
+                }
+                if (rem(hash)) {
+                    Log.i(TAG, "Successfully removed ${item.name}")
+                } else {
+                    Log.i(TAG, "Failed to remove ${item.name}")
+                    allSuccess = false
+                    continue
+                }
+            }
+            allSuccess
+        } catch (t: Throwable) {
+            logError(t)
+            false
+        }
+    }
+
+    /** Gets all the metadata of a torrent, will throw if that hash does not exists
+     * https://github.com/Diegopyl1209/torrentserver-aniyomi/blob/c18f58e51b6738f053261bc863177078aa9c1c98/web/api/torrents.go#L126 */
+    @Throws
+    suspend fun get(
+        hash: String,
+    ): TorrentStatus {
+        return app.post(
+            "$TORRENT_SERVER_URL/torrents",
+            json = TorrentRequest(
+                action = "get",
+                hash = hash,
+            ),
+            timeout = TIMEOUT,
+            headers = emptyMap()
+        ).parsed<TorrentStatus>()
+    }
+
+    /** Adds a torrent to the server, this is needed for us to get the hash for further modification, as well as start streaming it*/
+    @Throws
+    private suspend fun add(url: String): TorrentStatus {
+        return app.post(
+            "$TORRENT_SERVER_URL/torrents",
+            json = TorrentRequest(
+                action = "add",
+                link = url,
+            ),
+            headers = emptyMap()
+        ).parsed<TorrentStatus>()
+    }
+
+    /** Spins up the torrent server.
+     *
+     * FYI this will throw a os.Exit(1) if port is taken and is not currently checked,
+     * so if someone complains then add an extra check. */
+    private suspend fun setup(dir: String): Boolean {
+        if (echo()) {
+            return true
+        }
+        TorrServer.startTorrentServer(dir)
+        TorrServer.addTrackers(trackers.joinToString(separator = ",\n"))
+        return echo()
+    }
+
+    /** Transforms a torrent link into a streamable link via the server */
+    @Throws
+    suspend fun transformLink(link: ExtractorLink): Pair<ExtractorLink, TorrentStatus> {
+        val act = CommonActivity.activity ?: throw IllegalArgumentException("No activity")
+        val defaultDirectory = "${act.cacheDir.path}/$TORRENT_SERVER_PATH"
+        File(defaultDirectory).mkdir()
+        if (!setup(defaultDirectory)) {
+            throw ErrorLoadingException("Unable to setup the torrent server")
+        }
+        val status = add(link.url)
+
+        return ExtractorLink(
+            source = link.source,
+            link.name,
+            url = status.streamUrl(link.url),
+            type = ExtractorLinkType.VIDEO,
+            referer = "",
+            quality = link.quality
+        ) to status
+    }
+
+    private val trackers = listOf(
+        "udp://tracker.opentrackr.org:1337/announce",
+        "https://tracker2.ctix.cn/announce",
+        "https://tracker1.520.jp:443/announce",
+        "udp://opentracker.i2p.rocks:6969/announce",
+        "udp://open.tracker.cl:1337/announce",
+        "udp://open.demonii.com:1337/announce",
+        "http://tracker.openbittorrent.com:80/announce",
+        "udp://tracker.openbittorrent.com:6969/announce",
+        "udp://open.stealth.si:80/announce",
+        "udp://exodus.desync.com:6969/announce",
+        "udp://tracker-udp.gbitt.info:80/announce",
+        "udp://explodie.org:6969/announce",
+        "https://tracker.gbitt.info:443/announce",
+        "http://tracker.gbitt.info:80/announce",
+        "udp://uploads.gamecoast.net:6969/announce",
+        "udp://tracker1.bt.moack.co.kr:80/announce",
+        "udp://tracker.tiny-vps.com:6969/announce",
+        "udp://tracker.theoks.net:6969/announce",
+        "udp://tracker.dump.cl:6969/announce",
+        "udp://tracker.bittor.pw:1337/announce",
+        "https://tracker1.520.jp:443/announce",
+        "udp://opentracker.i2p.rocks:6969/announce",
+        "udp://open.tracker.cl:1337/announce",
+        "udp://open.demonii.com:1337/announce",
+        "http://tracker.openbittorrent.com:80/announce",
+        "udp://tracker.openbittorrent.com:6969/announce",
+        "udp://open.stealth.si:80/announce",
+        "udp://exodus.desync.com:6969/announce",
+        "udp://tracker-udp.gbitt.info:80/announce",
+        "udp://explodie.org:6969/announce",
+        "https://tracker.gbitt.info:443/announce",
+        "http://tracker.gbitt.info:80/announce",
+        "udp://uploads.gamecoast.net:6969/announce",
+        "udp://tracker1.bt.moack.co.kr:80/announce",
+        "udp://tracker.tiny-vps.com:6969/announce",
+        "udp://tracker.theoks.net:6969/announce",
+        "udp://tracker.dump.cl:6969/announce",
+        "udp://tracker.bittor.pw:1337/announce"
+    )
+
+
+    // https://github.com/Diegopyl1209/torrentserver-aniyomi/blob/c18f58e51b6738f053261bc863177078aa9c1c98/web/api/torrents.go#L18
+    // https://github.com/Diegopyl1209/torrentserver-aniyomi/blob/main/web/api/route.go#L7
+    data class TorrentRequest(
+        @JsonProperty("action")
+        val action: String,
+        @JsonProperty("hash")
+        val hash: String = "",
+        @JsonProperty("link")
+        val link: String = "",
+        @JsonProperty("title")
+        val title: String = "",
+        @JsonProperty("poster")
+        val poster: String = "",
+        @JsonProperty("data")
+        val data: String = "",
+        @JsonProperty("save_to_db")
+        val saveToDB: Boolean = false,
+    )
+
+    // https://github.com/Diegopyl1209/torrentserver-aniyomi/blob/c18f58e51b6738f053261bc863177078aa9c1c98/torr/state/state.go#L33
+    // omitempty = nullable
+    data class TorrentStatus(
+        @JsonProperty("title")
+        var title: String,
+        @JsonProperty("poster")
+        var poster: String,
+        @JsonProperty("data")
+        var data: String?,
+        @JsonProperty("timestamp")
+        var timestamp: Long,
+        @JsonProperty("name")
+        var name: String?,
+        @JsonProperty("hash")
+        var hash: String?,
+        @JsonProperty("stat")
+        var stat: Int,
+        @JsonProperty("stat_string")
+        var statString: String,
+        @JsonProperty("loaded_size")
+        var loadedSize: Long?,
+        @JsonProperty("torrent_size")
+        var torrentSize: Long?,
+        @JsonProperty("preloaded_bytes")
+        var preloadedBytes: Long?,
+        @JsonProperty("preload_size")
+        var preloadSize: Long?,
+        @JsonProperty("download_speed")
+        var downloadSpeed: Double?,
+        @JsonProperty("upload_speed")
+        var uploadSpeed: Double?,
+        @JsonProperty("total_peers")
+        var totalPeers: Int?,
+        @JsonProperty("pending_peers")
+        var pendingPeers: Int?,
+        @JsonProperty("active_peers")
+        var activePeers: Int?,
+        @JsonProperty("connected_seeders")
+        var connectedSeeders: Int?,
+        @JsonProperty("half_open_peers")
+        var halfOpenPeers: Int?,
+        @JsonProperty("bytes_written")
+        var bytesWritten: Long?,
+        @JsonProperty("bytes_written_data")
+        var bytesWrittenData: Long?,
+        @JsonProperty("bytes_read")
+        var bytesRead: Long?,
+        @JsonProperty("bytes_read_data")
+        var bytesReadData: Long?,
+        @JsonProperty("bytes_read_useful_data")
+        var bytesReadUsefulData: Long?,
+        @JsonProperty("chunks_written")
+        var chunksWritten: Long?,
+        @JsonProperty("chunks_read")
+        var chunksRead: Long?,
+        @JsonProperty("chunks_read_useful")
+        var chunksReadUseful: Long?,
+        @JsonProperty("chunks_read_wasted")
+        var chunksReadWasted: Long?,
+        @JsonProperty("pieces_dirtied_good")
+        var piecesDirtiedGood: Long?,
+        @JsonProperty("pieces_dirtied_bad")
+        var piecesDirtiedBad: Long?,
+        @JsonProperty("duration_seconds")
+        var durationSeconds: Double?,
+        @JsonProperty("bit_rate")
+        var bitRate: String?,
+        @JsonProperty("file_stats")
+        var fileStats: List<TorrentFileStat>?,
+        @JsonProperty("trackers")
+        var trackers: List<String>?,
+    ) {
+        fun streamUrl(url: String): String {
+            val fileName =
+                this.fileStats?.first { !it.path.isNullOrBlank() }?.path
+                    ?: throw ErrorLoadingException("Null path")
+
+            val index = url.substringAfter("index=").substringBefore("&").toIntOrNull() ?: 0
+
+            //  https://github.com/Diegopyl1209/torrentserver-aniyomi/blob/c18f58e51b6738f053261bc863177078aa9c1c98/web/api/stream.go#L18
+            return "$TORRENT_SERVER_URL/stream/${
+                URLEncoder.encode(fileName, "utf-8")
+            }?link=${this.hash}&index=$index&play"
+        }
+    }
+
+    data class TorrentFileStat(
+        @JsonProperty("id")
+        val id: Int?,
+        @JsonProperty("path")
+        val path: String?,
+        @JsonProperty("length")
+        val length: Long?,
+    )
 }

@@ -37,7 +37,6 @@ import androidx.media3.datasource.cache.LeastRecentlyUsedCacheEvictor
 import androidx.media3.datasource.cache.SimpleCache
 import androidx.media3.datasource.okhttp.OkHttpDataSource
 import androidx.media3.exoplayer.DefaultLoadControl
-import androidx.media3.exoplayer.DefaultRenderersFactory
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.Renderer.STATE_ENABLED
 import androidx.media3.exoplayer.Renderer.STATE_STARTED
@@ -80,9 +79,8 @@ import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.ExtractorLinkPlayList
 import com.lagradost.cloudstream3.utils.ExtractorLinkType
 import com.lagradost.cloudstream3.utils.SubtitleHelper.fromTwoLettersToLanguage
-import com.lagradost.fetchbutton.aria2c.Aria2Starter
-import com.lagradost.fetchbutton.aria2c.DownloadListener
-import com.lagradost.fetchbutton.aria2c.DownloadStatusTell
+import io.github.anilbeesetti.nextlib.media3ext.ffdecoder.NextRenderersFactory
+import androidx.media3.exoplayer.DefaultRenderersFactory
 import kotlinx.coroutines.delay
 import java.io.File
 import java.util.UUID
@@ -175,6 +173,7 @@ class CS3IPlayer : IPlayer {
     }
 
     override fun releaseCallbacks() {
+        ioSafe { Torrent.clearAll() }
         eventHandler = null
     }
 
@@ -581,8 +580,6 @@ class CS3IPlayer : IPlayer {
 
     override fun release() {
         imageGenerator.release()
-        Torrent.release()
-        Torrent.deleteAllOldFiles()
         releasePlayer()
     }
 
@@ -726,10 +723,10 @@ class CS3IPlayer : IPlayer {
             val exoPlayerBuilder =
                 ExoPlayer.Builder(context)
                     .setRenderersFactory { eventHandler, videoRendererEventListener, audioRendererEventListener, textRendererOutput, metadataRendererOutput ->
-                        DefaultRenderersFactory(context).apply {
+
+                        NextRenderersFactory(context).apply {
                             setEnableDecoderFallback(true)
-                            // Enable Ffmpeg extension.
-                            setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER)
+                            setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_ON)
                         }.createRenderers(
                             eventHandler,
                             videoRendererEventListener,
@@ -969,30 +966,29 @@ class CS3IPlayer : IPlayer {
     // we want to push metadata when loading torrents, so we just set up a looper that loops until
     // the index changes, this way only 1 looper is active at a time, and modifying eventLooperIndex
     // will kill any active loopers
+    @Volatile
     private var eventLooperIndex = 0
-    private fun torrentEventLooper() = ioSafe {
-        eventLooperIndex += 1
-        val currentIndex = eventLooperIndex
-        while (currentIndex == eventLooperIndex) {
-            Aria2Starter.refresh()
-            DownloadListener.sessionIdToGid[activeTorrentRequest?.requestId]?.let { gid ->
-                val metadata = DownloadListener.getInfo(gid)
+    private fun torrentEventLooper(hash: String) = ioSafe {
+        eventLooperIndex += 2
+        // very shitty, but should work fine
+        // release player is called once for the new link
+        val currentIndex = eventLooperIndex + 1
+        while (eventLooperIndex <= currentIndex && eventHandler != null) {
+            try {
+                val status = Torrent.get(hash)
                 event(
                     DownloadEvent(
-                        downloadedBytes = metadata.downloadedLength,
-                        downloadSpeed = metadata.downloadSpeed,
-                        totalBytes = metadata.totalLength,
-                        connections = metadata.items.sumOf { it.connections }
+                        connections = status.activePeers,
+                        downloadSpeed = status.downloadSpeed?.toLong()!!,
+                        totalBytes = status.torrentSize!!,
+                        downloadedBytes = status.bytesRead!!,
                     )
                 )
-                when (metadata.status) {
-                    DownloadStatusTell.Waiting -> delay(500)
-                    DownloadStatusTell.Paused -> delay(1000)
-                    DownloadStatusTell.Error, DownloadStatusTell.Removed, DownloadStatusTell.Complete -> return@ioSafe
-                    null, DownloadStatusTell.Active -> Unit
-                }
+            } catch (_: NullPointerException) {
+            } catch (t: Throwable) {
+                logError(t)
             }
-            delay(100)
+            delay(1000)
         }
     }
 
@@ -1042,7 +1038,7 @@ class CS3IPlayer : IPlayer {
             // we want to avoid an empty exoplayer from sending events
             // this is because we need PlayerAttachedEvent to be called to render the UI
             // but don't really want the rest like Player.STATE_ENDED calling next episode
-            if(mediaSlices.isEmpty() && subSources.isEmpty()) {
+            if (mediaSlices.isEmpty() && subSources.isEmpty()) {
                 return
             }
 
@@ -1132,55 +1128,6 @@ class CS3IPlayer : IPlayer {
                 }
 
                 override fun onPlayerError(error: PlaybackException) {
-                    val request = activeTorrentRequest
-
-                    // if we are loading an torrent, then we will get these errors, in that case
-                    // we just treat it as buffering
-                    if (request != null &&
-                        (error.errorCode == PlaybackException.ERROR_CODE_IO_READ_POSITION_OUT_OF_RANGE
-                                || error.errorCode == PlaybackException.ERROR_CODE_IO_UNSPECIFIED
-                                || error.errorCode == PlaybackException.ERROR_CODE_PARSING_MANIFEST_MALFORMED
-                                || error.errorCode == PlaybackException.ERROR_CODE_PARSING_CONTAINER_MALFORMED
-                                || error.errorCode == PlaybackException.ERROR_CODE_PARSING_CONTAINER_UNSUPPORTED
-                                || error.errorCode == PlaybackException.ERROR_CODE_AUDIO_TRACK_INIT_FAILED
-                                || error.errorCode == PlaybackException.ERROR_CODE_IO_FILE_NOT_FOUND)
-                    ) {
-                        val gid = DownloadListener.sessionIdToGid[request.requestId]
-                        if (gid == null) {
-                            event(ErrorEvent(error))
-                            super.onPlayerError(error)
-                            return
-                        }
-
-                        event(
-                            StatusEvent(
-                                wasPlaying = CSPlayerLoading.IsPlaying,
-                                isPlaying = CSPlayerLoading.IsBuffering
-                            )
-                        )
-
-                        // `isPlaying = true` as we want to autoplay, because errors only happends when
-                        // we are not paused
-
-                        // we have manually deleted the file without notifying the Aria2 instance
-                        if (error.errorCode == PlaybackException.ERROR_CODE_IO_FILE_NOT_FOUND) {
-                            Aria2Starter.delete(gid, request.requestId)
-                            isPlaying = true
-                            loadOnlinePlayer(context, request.request)
-                            return
-                        }
-
-                        // give information when buffering, and after a set timeout we run again
-                        Handler(Looper.myLooper() ?: Looper.getMainLooper()).postDelayed({
-                            // if we have released the player while it is waiting, then do nothing
-                            if(exoPlayer == null) return@postDelayed
-                            playbackPosition = exoPlayer?.currentPosition ?: 0L
-                            isPlaying = true
-                            loadOnlinePlayer(context, request.request, retry = true)
-                        }, 3000)
-                        return
-                    }
-
                     // If the Network fails then ignore the exception if the duration is set.
                     // This is to switch mirrors automatically if the stream has not been fetched, but
                     // allow playing the buffer without internet as then the duration is fetched.
@@ -1410,7 +1357,7 @@ class CS3IPlayer : IPlayer {
         return exoPlayer != null
     }
 
-    var activeTorrentRequest: TorrentRequest? = null
+
     @MainThread
     private fun loadTorrent(context: Context, link: ExtractorLink) {
         ioSafe {
@@ -1418,27 +1365,29 @@ class CS3IPlayer : IPlayer {
             // the user has left the player, in the case that the user click back when this is
             // happening
             try {
-                if(exoPlayer == null) return@ioSafe
-                val request = Torrent.loadTorrent(link, eventHandler)
-                if(exoPlayer == null) return@ioSafe
-                activeTorrentRequest = request
+                if (exoPlayer == null) return@ioSafe
+                val (newLink, status) = Torrent.transformLink(link)
+                val hash = status.hash
+                if (exoPlayer == null) return@ioSafe
                 runOnMainThread {
-                    if(exoPlayer == null) return@runOnMainThread
+                    if (exoPlayer == null) return@runOnMainThread
                     releasePlayer()
-                    loadOfflinePlayer(context, request.data)
-                    torrentEventLooper()
+                    if (hash != null) {
+                        torrentEventLooper(hash)
+                    }
+                    loadOnlinePlayer(context, newLink)
                 }
             } catch (t: Throwable) {
                 event(ErrorEvent(t))
             }
         }
     }
+
     @SuppressLint("UnsafeOptInUsageError")
     @MainThread
-    private fun loadOnlinePlayer(context: Context, link: ExtractorLink, retry : Boolean = false) {
+    private fun loadOnlinePlayer(context: Context, link: ExtractorLink, retry: Boolean = false) {
         Log.i(TAG, "loadOnlinePlayer $link")
         try {
-            activeTorrentRequest = null
             val mime = when (link.type) {
                 ExtractorLinkType.M3U8 -> MimeTypes.APPLICATION_M3U8
                 ExtractorLinkType.DASH -> MimeTypes.APPLICATION_MPD
@@ -1462,21 +1411,21 @@ class CS3IPlayer : IPlayer {
                         null
                     } ?: default
 
-                    if(!currentPrefMedia.contains(TvType.Torrent.ordinal)) {
+                    if (!currentPrefMedia.contains(TvType.Torrent.ordinal)) {
                         event(ErrorEvent(ErrorLoadingException("Preferred media do not contain torrent")))
                         return
                     }
 
-                    if(Torrent.hasAcceptedTorrentForThisSession == false) {
+                    if (Torrent.hasAcceptedTorrentForThisSession == false) {
                         event(ErrorEvent(ErrorLoadingException("Not accepted torrent")))
                         return
                     }
                     // load the initial UI, we require an exoPlayer to be alive
-                    if(!retry) {
+                    if (!retry) {
                         // this causes a *bug* that restarts all torrents from 0
                         // but I would call this a feature
                         releasePlayer()
-                        loadExo(context, listOf(), listOf(),null)
+                        loadExo(context, listOf(), listOf(), null)
                     }
                     event(
                         StatusEvent(
@@ -1485,8 +1434,8 @@ class CS3IPlayer : IPlayer {
                         )
                     )
 
-                    if(Torrent.hasAcceptedTorrentForThisSession == true) {
-                        loadTorrent(context,link)
+                    if (Torrent.hasAcceptedTorrentForThisSession == true) {
+                        loadTorrent(context, link)
                         return
                     }
 
