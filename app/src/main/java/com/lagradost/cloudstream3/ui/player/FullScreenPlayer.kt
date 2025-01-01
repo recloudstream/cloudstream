@@ -959,6 +959,8 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         }
     }
 
+    private var isAdjustingVolume: Boolean = false
+
     @SuppressLint("SetTextI18n")
     private fun handleMotionEvent(view: View?, event: MotionEvent?): Boolean {
         if (event == null || view == null) return false
@@ -1073,6 +1075,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
                     // reset variables
                     isCurrentTouchValid = false
+                    isAdjustingVolume = false
                     currentTouchStart = null
                     currentLastTouchAction = currentTouchAction
                     currentTouchAction = null
@@ -1082,7 +1085,6 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
                     // resets UI
                     playerTimeText.isVisible = false
-                    playerProgressbarLeftHolder.isVisible = false
                     playerProgressbarRightHolder.isVisible = false
 
                     currentLastTouchEndTime = System.currentTimeMillis()
@@ -1127,7 +1129,6 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
                             // update UI
                             playerTimeText.isVisible = false
-                            playerProgressbarLeftHolder.isVisible = false
                             playerProgressbarRightHolder.isVisible = false
 
                             when (currentTouchAction) {
@@ -1189,6 +1190,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                                         verticalAddition = verticalAddition,
                                         volumeStep = 0f // Not used in motion events
                                     )
+                                    isAdjustingVolume = true
                                 }
 
                                 else -> Unit
@@ -1307,16 +1309,47 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         // Max volume percentage including boost
         val maxVolumePercentage = 200
 
-        // Adjust currentRequestedVolume based on the event (up or down)
-        currentRequestedVolume = if (isVolumeUp) {
-            // Volume up button
-            (currentRequestedVolume + volumeStep).coerceAtMost(maxVolumePercentage / 100.0f) // Clamp to maxVolumePercentage / 100.0f
-        } else if (verticalAddition == 0f) {
-            // Volume down button
-            (currentRequestedVolume - volumeStep).coerceAtLeast(0.0f) // Clamp to 0%
-        } else {
-            // TouchAction.Volume
-            (currentRequestedVolume + verticalAddition).coerceIn(0.0f, maxVolumePercentage / 100.0f) // Clamp to 0%, maxVolumePercentage / 100.0f
+        playerBinding?.playerProgressbarLeftHolder?.apply {
+            if (!isVisible || alpha < 1f) {
+                alpha = 1f
+                isVisible = true
+            }
+
+            progressBarHideRunnable?.let { removeCallbacks(it) }
+            progressBarHideRunnable = Runnable {
+                // Fade out the progress bar
+                animate()
+                    .alpha(0f)
+                    .setDuration(300)
+                    .withEndAction { isVisible = false }
+                    .start()
+            }
+            // Show the progress bar for 2 seconds
+            postDelayed(progressBarHideRunnable, 2000)
+        }
+
+        if (verticalAddition >= 0f) {
+            val nextVolume = currentRequestedVolume + verticalAddition
+            if (isAdjustingVolume && currentVolume < maxVolume && nextVolume >= 1.0f) {
+                showToast(R.string.slide_up_again_to_exceed_100)
+                return
+            }
+        }
+
+        // Adjust currentRequestedVolume based on the event (up, down, or touch)
+        currentRequestedVolume = when {
+            isVolumeUp -> {
+                // Volume up button pressed, increase volume but clamp to maxVolumePercentage / 100.0f
+                (currentRequestedVolume + volumeStep).coerceAtMost(maxVolumePercentage / 100.0f)
+            }
+            verticalAddition == 0f -> {
+                // Volume down button pressed, decrease volume but clamp to 0.0%
+                (currentRequestedVolume - volumeStep).coerceAtLeast(0.0f)
+            }
+            else -> {
+                // Touch action adjusts the volume, clamp to range [0.0f, maxVolumePercentage / 100.0f]
+                (currentRequestedVolume + verticalAddition).coerceIn(0.0f, maxVolumePercentage / 100.0f)
+            }
         }
 
         val currentVolumePercentage = (currentRequestedVolume * 100).toInt()
@@ -1355,14 +1388,6 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                     )
                 )]
             )
-
-            // Show the progress bar for 2 seconds
-            playerProgressbarLeftHolder.apply {
-                isVisible = true
-                progressBarHideRunnable?.let { removeCallbacks(it) }
-                progressBarHideRunnable = Runnable { isVisible = false }
-                postDelayed(progressBarHideRunnable, 2000)
-            }
         }
 
         // Apply loudness enhancer for volumes > 100%
@@ -1371,7 +1396,9 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
             // Show the toast only the first time the volume exceeds 100%
             // or after it drops below 100% and goes above again.
-            if (!hasShownVolumeToast) {
+            // We only do this if the volume buttons are pressed as
+            // we handle sliding a bit different.
+            if (!hasShownVolumeToast && isVolumeUp) {
                 showToast(R.string.volume_exceeded_100)
                 hasShownVolumeToast = true
             }
