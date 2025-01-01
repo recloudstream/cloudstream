@@ -1,6 +1,6 @@
 import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import java.net.URL
+import java.net.URI
 
 plugins {
     id("com.android.library")
@@ -97,14 +97,14 @@ tasks.withType<DokkaTask>().configureEach {
 
             sourceLink {
                 localDirectory = file("..")
-                remoteUrl = URL("https://github.com/recloudstream/cloudstream/tree/master")
+                remoteUrl = URI("https://github.com/recloudstream/cloudstream/tree/master").toURL()
                 remoteLineSuffix = "#L"
             }
 
             dokkaImplementation.dependencies.forEach {
                 externalDocumentationLink {
-                    url = URL("https://javadoc.io/doc/${it.group}/${it.name}/${it.version}")
-                    packageListUrl = URL("https://javadoc.io/doc/${it.group}/${it.name}/${it.version}/package-list")
+                    url = URI("https://javadoc.io/doc/${it.group}/${it.name}/${it.version}").toURL()
+                    packageListUrl = URI("https://javadoc.io/doc/${it.group}/${it.name}/${it.version}/package-list").toURL()
                 }
             }
         }

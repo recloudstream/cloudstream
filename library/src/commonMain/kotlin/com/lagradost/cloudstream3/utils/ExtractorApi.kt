@@ -292,7 +292,7 @@ import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import kotlinx.coroutines.delay
 import me.xdrop.fuzzywuzzy.FuzzySearch
 import org.jsoup.Jsoup
-import java.net.URL
+import java.net.URI
 import java.util.UUID
 
 /**
@@ -389,7 +389,7 @@ enum class ExtractorLinkType {
 
 private fun inferTypeFromUrl(url: String): ExtractorLinkType {
     val path = try {
-        URL(url).path
+        URI(url).path
     } catch (_: Throwable) {
         // don't log magnet links as errors
         null
