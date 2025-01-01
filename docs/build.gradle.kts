@@ -1,4 +1,5 @@
 import org.jetbrains.dokka.gradle.DokkaTask
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import java.net.URL
 
 plugins {
@@ -7,20 +8,22 @@ plugins {
     id("org.jetbrains.dokka")
 }
 
+val javaTarget = JvmTarget.fromTarget(libs.versions.jvmTarget.get())
+
 android {
-    compileSdk = 35
+    compileSdk = libs.versions.compileSdk.get().toInt()
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
 
     defaultConfig {
-        minSdk = 21
-        targetSdk = 35
+        minSdk = libs.versions.minSdk.get().toInt()
+        targetSdk = libs.versions.targetSdk.get().toInt()
     }
 
     namespace = "com.lagradost.api"
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.toVersion(javaTarget.target)
+        targetCompatibility = JavaVersion.toVersion(javaTarget.target)
     }
 }
 
@@ -61,12 +64,12 @@ dependencies {
     dokkaImplementation(libs.biometric) // Fingerprint Authentication
     dokkaImplementation(libs.previewseekbar.media3) // SeekBar Preview
     dokkaImplementation(libs.qrcode.kotlin) // QR code for PIN Auth on TV
-    dokkaImplementation(libs.rhino) // run JavaScript
+    dokkaImplementation(libs.rhino) // Run JavaScript
     dokkaImplementation(libs.fuzzywuzzy) // Library/Ext Searching with Levenshtein Distance
     dokkaImplementation(libs.safefile) // To Prevent the URI File Fu*kery
     dokkaImplementation(libs.conscrypt.android) // To Fix SSL Fu*kery on Android 9
     dokkaImplementation(libs.tmdb.java) // TMDB API v3 Wrapper Made with RetroFit
-    dokkaImplementation(libs.jackson.module.kotlin) //JSON Parser
+    dokkaImplementation(libs.jackson.module.kotlin) // JSON Parser
     dokkaImplementation(libs.work.runtime)
     dokkaImplementation(libs.work.runtime.ktx)
     dokkaImplementation(libs.nicehttp) // HTTP Lib

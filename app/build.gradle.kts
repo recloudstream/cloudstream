@@ -1,4 +1,5 @@
 import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.ByteArrayOutputStream
 
@@ -8,6 +9,7 @@ plugins {
     id("org.jetbrains.dokka")
 }
 
+val javaTarget = JvmTarget.fromTarget(libs.versions.jvmTarget.get())
 val tmpFilePath = System.getProperty("user.home") + "/work/_temp/keystore/"
 val prereleaseStoreFile: File? = File(tmpFilePath).listFiles()?.first()
 
@@ -41,13 +43,12 @@ android {
         }
     }
 
-    compileSdk = 35
-    //  buildToolsVersion = "34.0.0"
+    compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
         applicationId = "com.lagradost.cloudstream3"
-        minSdk = 21
-        targetSdk = 35
+        minSdk = libs.versions.minSdk.get().toInt()
+        targetSdk = libs.versions.targetSdk.get().toInt()
         versionCode = 64
         versionName = "4.4.2"
 
@@ -119,8 +120,8 @@ android {
 
     compileOptions {
         isCoreLibraryDesugaringEnabled = true
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.toVersion(javaTarget.target)
+        targetCompatibility = JavaVersion.toVersion(javaTarget.target)
     }
 
     lint {
@@ -190,20 +191,20 @@ dependencies {
     implementation(libs.qrcode.kotlin) // QR code for PIN Auth on TV
 
     // Extensions & Other Libs
-    implementation(libs.rhino) // run JavaScript
+    implementation(libs.rhino) // Run JavaScript
     implementation(libs.fuzzywuzzy) // Library/Ext Searching with Levenshtein Distance
     implementation(libs.safefile) // To Prevent the URI File Fu*kery
     implementation(libs.conscrypt.android) // To Fix SSL Fu*kery on Android 9
     implementation(libs.tmdb.java) // TMDB API v3 Wrapper Made with RetroFit
-    coreLibraryDesugaring(libs.desugar.jdk.libs.nio) //nio flavor needed for NewPipeExtractor
+    coreLibraryDesugaring(libs.desugar.jdk.libs.nio) // nio flavor needed for NewPipeExtractor
     implementation(libs.jackson.module.kotlin) {
         version {
             strictly("2.13.1")
         }
         because("Don't Bump Jackson above 2.13.1 , Crashes on Android TV's and FireSticks that have Min API Level 25 or Less.")
-    } //JSON Parser
+    } // JSON Parser
 
-    // torrent support
+    // Torrent support
     implementation(libs.torrentserver.aniyomi)
 
     // Downloading & Networking
@@ -255,7 +256,7 @@ tasks.register<Jar>("makeJar") {
 
 tasks.withType<KotlinCompile> {
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = javaTarget.target
         freeCompilerArgs = listOf("-Xjvm-default=all-compatibility")
     }
 }
