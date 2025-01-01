@@ -63,6 +63,7 @@ import com.lagradost.cloudstream3.ui.player.source_priority.QualityDataHelper
 import com.lagradost.cloudstream3.utils.setText
 import com.lagradost.cloudstream3.utils.txt
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
+import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.utils.AppContextUtils.isUsingMobileData
@@ -83,6 +84,7 @@ import kotlin.math.ceil
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.round
+import kotlin.math.roundToInt
 
 
 const val MINIMUM_SEEK_TIME = 7000L         // when swipe seeking
@@ -330,6 +332,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         }
     }
 
+    @OptIn(UnstableApi::class)
     override fun subtitlesChanged() {
         val tracks = player.getVideoTracks()
         val isBuiltinSubtitles = tracks.currentTextTracks.all { track ->
@@ -1251,12 +1254,14 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
                             KeyEvent.KEYCODE_VOLUME_DOWN,
                             KeyEvent.KEYCODE_VOLUME_UP -> {
-                                handleVolumeAdjustment(
-                                    isVolumeUp = keyCode == KeyEvent.KEYCODE_VOLUME_UP,
-                                    verticalAddition = 0f, // Not used for volume key events
-                                    volumeStep = 0.05f
-                                )
-                                return true
+                                if (isLayout(PHONE or EMULATOR)) {
+                                    handleVolumeAdjustment(
+                                        isVolumeUp = keyCode == KeyEvent.KEYCODE_VOLUME_UP,
+                                        verticalAddition = 0f, // Not used for volume key events
+                                        volumeStep = 0.05f
+                                    )
+                                    return true
+                                }
                             }
                         }
                     }
@@ -1362,32 +1367,53 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
         // Update the progress bar
         playerBinding?.apply {
-            playerProgressbarLeft.apply {
-                max = maxVolumePercentage
-                progress = currentVolumePercentage
-                val color = if (currentRequestedVolume > 1.0f) {
-                    ContextCompat.getColor(context, R.color.colorPrimaryOrange)
-                } else Color.WHITE
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                    val colorFilter = BlendModeColorFilter(color, BlendMode.SRC_IN)
-                    progressDrawable.colorFilter = colorFilter
-                } else {
-                    // For lower API levels, fall back to the older PorterDuff method
-                    @Suppress( "DEPRECATION")
-                    progressDrawable.setColorFilter(color, PorterDuff.Mode.SRC_IN)
+            val level1ProgressBar = playerProgressbarLeftLevel1
+            val level2ProgressBar = playerProgressbarLeftLevel2
+
+            when {
+                currentVolumePercentage <= 100 -> {
+                    // All volume is within the base range
+                    level1ProgressBar.progress = currentVolumePercentage
+                    level2ProgressBar.progress = 0
+                }
+                else -> {
+                    // Volume spans base and first boost range
+                    level1ProgressBar.progress = 100
+                    level2ProgressBar.progress = currentVolumePercentage - 100
                 }
             }
 
-            // Update icon
-            playerProgressbarLeftIcon.setImageResource(
-                volumeIcons[min( // clamp the value just in case
-                    volumeIcons.size - 1,
-                    max(
-                        0,
-                        round(currentRequestedVolume * (volumeIcons.size - 1)).toInt()
+            val level1Color = Color.WHITE
+            val level2Color = context?.let { ContextCompat.getColor(it, R.color.colorPrimaryOrange) }
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                level1ProgressBar.progressDrawable.colorFilter =
+                    BlendModeColorFilter(level1Color, BlendMode.SRC_IN)
+                level2ProgressBar.progressDrawable.colorFilter =
+                    level2Color?.let { BlendModeColorFilter(it, BlendMode.SRC_IN) }
+            } else {
+                @Suppress("DEPRECATION")
+                level1ProgressBar.progressDrawable.setColorFilter(
+                    level1Color,
+                    PorterDuff.Mode.SRC_IN
+                )
+
+                if (level2Color != null) {
+                    @Suppress("DEPRECATION")
+                    level2ProgressBar.progressDrawable.setColorFilter(
+                        level2Color,
+                        PorterDuff.Mode.SRC_IN
                     )
-                )]
-            )
+                }
+            }
+
+            // Calculate the clamped index for the volume icon based on the requested volume
+            val iconIndex = (currentRequestedVolume * (volumeIcons.size - 1))
+                .roundToInt()
+                .coerceIn(0, volumeIcons.size - 1)
+
+            // Update icon
+            playerProgressbarLeftIcon.setImageResource(volumeIcons[iconIndex])
         }
 
         // Apply loudness enhancer for volumes > 100%
