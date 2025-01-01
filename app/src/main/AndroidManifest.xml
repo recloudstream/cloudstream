@@ -34,7 +34,7 @@
     <!-- Without the large heap Exoplayer buffering gets reset due to OOM. -->
     <!--TODO https://stackoverflow.com/questions/41799732/chromecast-button-not-visible-in-android-->
     <application
-        android:name=".AcraApplication"
+        android:name=".CloudStreamApp"
         android:allowBackup="true"
         android:enableOnBackInvokedCallback="true"
         android:appCategory="video"

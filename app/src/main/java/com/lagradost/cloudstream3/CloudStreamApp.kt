@@ -5,102 +5,32 @@ import android.app.Application
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import coil3.PlatformContext
 import coil3.SingletonImageLoader
 import com.lagradost.api.setContext
-import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
-import com.lagradost.cloudstream3.mvvm.suspendSafeApiCall
 import com.lagradost.cloudstream3.plugins.PluginManager
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.utils.AppContextUtils.openBrowser
-import com.lagradost.cloudstream3.utils.Coroutines.runOnMainThread
 import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStore.getKeys
 import com.lagradost.cloudstream3.utils.DataStore.removeKey
 import com.lagradost.cloudstream3.utils.DataStore.removeKeys
 import com.lagradost.cloudstream3.utils.DataStore.setKey
 import com.lagradost.cloudstream3.utils.ImageLoader
-import kotlinx.coroutines.runBlocking
-import org.acra.ACRA
-import org.acra.ReportField
-import org.acra.config.CoreConfiguration
-import org.acra.data.CrashReportData
-import org.acra.data.StringFormat
-import org.acra.ktx.initAcra
-import org.acra.sender.ReportSender
-import org.acra.sender.ReportSenderFactory
+//import org.acra.ReportField
+//import org.acra.data.StringFormat
+//import org.acra.ktx.initAcra
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.PrintStream
 import java.lang.ref.WeakReference
-import java.util.Locale
-import kotlin.concurrent.thread
 import kotlin.system.exitProcess
 
-class CustomReportSender : ReportSender {
-    // Sends all your crashes to google forms
-    override fun send(context: Context, errorContent: CrashReportData) {
-        /*println("Sending report")
-        val url =
-            "https://docs.google.com/forms/d/e/$id/formResponse"
-        val data = mapOf(
-            "entry.$entry" to errorContent.toJSON()
-        )
-
-        thread { // to not run it on main thread
-            runBlocking {
-                suspendSafeApiCall {
-                    app.post(url, data = data)
-                    //println("Report response: $post")
-                }
-            }
-        }
-
-        runOnMainThread { // to run it on main looper
-            normalSafeApiCall {
-                Toast.makeText(context, R.string.acra_report_toast, Toast.LENGTH_SHORT).show()
-            }
-        }*/
-    }
-}
-
-class CustomSenderFactory : ReportSenderFactory {
-    override fun create(context: Context, config: CoreConfiguration): ReportSender {
-        return CustomReportSender()
-    }
-
-    override fun enabled(config: CoreConfiguration): Boolean {
-        return true
-    }
-}
-
-class ExceptionHandler(val errorFile: File, val onError: (() -> Unit)) :
-    Thread.UncaughtExceptionHandler {
-    override fun uncaughtException(thread: Thread, error: Throwable) {
-        ACRA.errorReporter.handleException(error)
-        try {
-            PrintStream(errorFile).use { ps ->
-                ps.println("Currently loading extension: ${PluginManager.currentlyLoading ?: "none"}")
-                ps.println("Fatal exception on thread ${thread.name} (${thread.id})")
-                error.printStackTrace(ps)
-            }
-        } catch (ignored: FileNotFoundException) {
-        }
-        try {
-            onError.invoke()
-        } catch (ignored: Exception) {
-        }
-        exitProcess(1)
-    }
-
-}
-
-class AcraApplication : Application(), SingletonImageLoader.Factory {
+class CloudStreamApp : Application(), SingletonImageLoader.Factory {
 
     override fun onCreate() {
         super.onCreate()
@@ -121,24 +51,24 @@ class AcraApplication : Application(), SingletonImageLoader.Factory {
         super.attachBaseContext(base)
         context = base
 
-        initAcra {
-            //core configuration:
-            buildConfigClass = BuildConfig::class.java
-            reportFormat = StringFormat.JSON
-
-            reportContent = listOf(
-                ReportField.BUILD_CONFIG, ReportField.USER_CRASH_DATE,
-                ReportField.ANDROID_VERSION, ReportField.PHONE_MODEL,
-                ReportField.STACK_TRACE,
-            )
-
-            // removed this due to bug when starting the app, moved it to when it actually crashes
-            //each plugin you chose above can be configured in a block like this:
-            /*toast {
-                text = getString(R.string.acra_report_toast)
-                //opening this block automatically enables the plugin.
-            }*/
-        }
+//        initAcra {
+//            //core configuration:
+//            buildConfigClass = BuildConfig::class.java
+//            reportFormat = StringFormat.JSON
+//
+//            reportContent = listOf(
+//                ReportField.BUILD_CONFIG, ReportField.USER_CRASH_DATE,
+//                ReportField.ANDROID_VERSION, ReportField.PHONE_MODEL,
+//                ReportField.STACK_TRACE,
+//            )
+//
+//            // removed this due to bug when starting the app, moved it to when it actually crashes
+//            //each plugin you chose above can be configured in a block like this:
+//            /*toast {
+//                text = getString(R.string.acra_report_toast)
+//                //opening this block automatically enables the plugin.
+//            }*/
+//        }
     }
 
     override fun newImageLoader(context: PlatformContext): coil3.ImageLoader {
@@ -225,4 +155,63 @@ class AcraApplication : Application(), SingletonImageLoader.Factory {
             )
         }
     }
+}
+
+
+//class CustomReportSender : ReportSender {
+//    // Sends all your crashes to google forms
+//    override fun send(context: Context, errorContent: CrashReportData) {
+//        /*println("Sending report")
+//        val url =
+//            "https://docs.google.com/forms/d/e/$id/formResponse"
+//        val data = mapOf(
+//            "entry.$entry" to errorContent.toJSON()
+//        )
+//
+//        thread { // to not run it on main thread
+//            runBlocking {
+//                suspendSafeApiCall {
+//                    app.post(url, data = data)
+//                    //println("Report response: $post")
+//                }
+//            }
+//        }
+//
+//        runOnMainThread { // to run it on main looper
+//            normalSafeApiCall {
+//                Toast.makeText(context, R.string.acra_report_toast, Toast.LENGTH_SHORT).show()
+//            }
+//        }*/
+//    }
+//}
+
+//class CustomSenderFactory : ReportSenderFactory {
+//    override fun create(context: Context, config: CoreConfiguration): ReportSender {
+//        return CustomReportSender()
+//    }
+//
+//    override fun enabled(config: CoreConfiguration): Boolean {
+//        return true
+//    }
+//}
+
+class ExceptionHandler(val errorFile: File, val onError: (() -> Unit)) :
+    Thread.UncaughtExceptionHandler {
+    override fun uncaughtException(thread: Thread, error: Throwable) {
+       // ACRA.errorReporter.handleException(error)
+        try {
+            PrintStream(errorFile).use { ps ->
+                ps.println("Currently loading extension: ${PluginManager.currentlyLoading ?: "none"}")
+                ps.println("Fatal exception on thread ${thread.name} (${thread.id})")
+                error.printStackTrace(ps)
+            }
+        } catch (ignored: FileNotFoundException) {
+        }
+        try {
+            onError.invoke()
+        } catch (ignored: Exception) {
+        }
+        exitProcess(1)
+    }
+
 }

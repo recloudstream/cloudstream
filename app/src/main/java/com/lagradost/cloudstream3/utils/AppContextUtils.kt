@@ -51,7 +51,7 @@ import com.google.android.gms.common.wrappers.Wrappers
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.APIHolder.apis
-import com.lagradost.cloudstream3.AcraApplication.Companion.getActivity
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.getActivity
 import com.lagradost.cloudstream3.CommonActivity.activity
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.MainActivity.Companion.afterRepositoryLoadedEvent

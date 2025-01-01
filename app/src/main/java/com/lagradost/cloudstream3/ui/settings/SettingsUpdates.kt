@@ -8,7 +8,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
-import com.lagradost.cloudstream3.AcraApplication
+import com.lagradost.cloudstream3.CloudStreamApp
 import com.lagradost.cloudstream3.AutoDownloadMode
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.R
@@ -55,7 +55,7 @@ class SettingsUpdates : PreferenceFragmentCompat() {
     }
 
     private val pathPicker = getChooseFolderLauncher { uri, path ->
-        val context = context ?: AcraApplication.context ?: return@getChooseFolderLauncher
+        val context = context ?: CloudStreamApp.context ?: return@getChooseFolderLauncher
         (path ?: uri.toString()).let {
             PreferenceManager.getDefaultSharedPreferences(context).edit()
                 .putString(getString(R.string.backup_path_key), uri.toString())
@@ -88,7 +88,7 @@ class SettingsUpdates : PreferenceFragmentCompat() {
                 settingsManager.edit()
                     .putInt(getString(R.string.automatic_backup_key), prefValues[index]).apply()
                 BackupWorkManager.enqueuePeriodicWork(
-                    context ?: AcraApplication.context,
+                    context ?: CloudStreamApp.context,
                     prefValues[index].toLong()
                 )
             }
@@ -255,7 +255,7 @@ class SettingsUpdates : PreferenceFragmentCompat() {
                 {}) { num ->
                 settingsManager.edit()
                     .putInt(getString(R.string.auto_download_plugins_key), prefValues[num]).apply()
-                (context ?: AcraApplication.context)?.let { ctx -> app.initClient(ctx) }
+                (context ?: CloudStreamApp.context)?.let { ctx -> app.initClient(ctx) }
             }
             return@setOnPreferenceClickListener true
         }

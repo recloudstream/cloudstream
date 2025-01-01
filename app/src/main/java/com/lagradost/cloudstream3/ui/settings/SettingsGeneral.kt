@@ -12,9 +12,9 @@ import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.APIHolder.allProviders
-import com.lagradost.cloudstream3.AcraApplication
-import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
-import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
+import com.lagradost.cloudstream3.CloudStreamApp
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.getKey
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.setKey
 import com.lagradost.cloudstream3.CommonActivity
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.MainActivity
@@ -146,7 +146,7 @@ class SettingsGeneral : PreferenceFragmentCompat() {
     )
 
     private val pathPicker = getChooseFolderLauncher { uri, path ->
-        val context = context ?: AcraApplication.context ?: return@getChooseFolderLauncher
+        val context = context ?: CloudStreamApp.context ?: return@getChooseFolderLauncher
         (path ?: uri.toString()).let {
             PreferenceManager.getDefaultSharedPreferences(context).edit()
                 .putString(getString(R.string.download_path_key), uri.toString())
@@ -313,7 +313,7 @@ class SettingsGeneral : PreferenceFragmentCompat() {
                 true,
                 {}) {
                 settingsManager.edit().putInt(getString(R.string.dns_pref), prefValues[it]).apply()
-                (context ?: AcraApplication.context)?.let { ctx -> app.initClient(ctx) }
+                (context ?: CloudStreamApp.context)?.let { ctx -> app.initClient(ctx) }
             }
             return@setOnPreferenceClickListener true
         }

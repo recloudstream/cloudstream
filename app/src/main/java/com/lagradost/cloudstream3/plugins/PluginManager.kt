@@ -18,9 +18,9 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.google.gson.Gson
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.APIHolder.removePluginMapping
-import com.lagradost.cloudstream3.AcraApplication.Companion.getActivity
-import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
-import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.getActivity
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.getKey
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.setKey
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.MainAPI.Companion.settingsForProvider
 import com.lagradost.cloudstream3.MainActivity.Companion.afterPluginsLoadedEvent

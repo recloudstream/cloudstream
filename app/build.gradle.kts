@@ -176,9 +176,9 @@ dependencies {
     implementation(libs.nextlib.media3ext)
     implementation(libs.nextlib.mediainfo)
 
-    // Crash Reports (AcraApplication.kt)
+    /* Crash Reports (AcraApplication.kt) // UNUSED IMPLEMENTATION
     implementation(libs.acra.core)
-    implementation(libs.acra.toast)
+    implementation(libs.acra.toast) */
 
     // UI Stuff
     implementation(libs.shimmer) // Shimmering Effect (Loading Skeleton)

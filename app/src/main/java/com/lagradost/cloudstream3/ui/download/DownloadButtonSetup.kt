@@ -4,8 +4,8 @@ import android.content.DialogInterface
 import android.net.Uri
 import androidx.appcompat.app.AlertDialog
 import com.google.android.material.snackbar.Snackbar
-import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
-import com.lagradost.cloudstream3.AcraApplication.Companion.getKeys
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.getKey
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.getKeys
 import com.lagradost.cloudstream3.CommonActivity.activity
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError

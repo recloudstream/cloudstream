@@ -1,7 +1,7 @@
 package com.lagradost.cloudstream3.ui.player
 
 import android.net.Uri
-import com.lagradost.cloudstream3.AcraApplication.Companion.context
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.context
 import com.lagradost.cloudstream3.CommonActivity.activity
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.ui.player.PlayerSubtitleHelper.Companion.toSubtitleMimeType

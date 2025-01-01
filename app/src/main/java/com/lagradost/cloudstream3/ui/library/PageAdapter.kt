@@ -9,7 +9,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.graphics.ColorUtils
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
-import com.lagradost.cloudstream3.AcraApplication
+import com.lagradost.cloudstream3.CloudStreamApp
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.SearchResultGridExpandedBinding
 import com.lagradost.cloudstream3.syncproviders.SyncAPI
@@ -74,7 +74,7 @@ class PageAdapter(
                 position,
                 itemView,
                 colorCallback = { palette ->
-                    AcraApplication.context?.let { ctx ->
+                    CloudStreamApp.context?.let { ctx ->
                         val defColor = ContextCompat.getColor(ctx, R.color.ratingColorBg)
                         var bg = palette.getDarkVibrantColor(defColor)
                         if (bg == defColor) {

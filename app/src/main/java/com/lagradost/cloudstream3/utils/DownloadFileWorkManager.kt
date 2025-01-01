@@ -7,7 +7,7 @@ import android.os.Build.VERSION.SDK_INT
 import androidx.work.CoroutineWorker
 import androidx.work.ForegroundInfo
 import androidx.work.WorkerParameters
-import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.removeKey
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.DataStore.getKey
