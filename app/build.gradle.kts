@@ -1,6 +1,6 @@
 import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 import java.io.ByteArrayOutputStream
 
 plugins {
@@ -13,17 +13,26 @@ val javaTarget = JvmTarget.fromTarget(libs.versions.jvmTarget.get())
 val tmpFilePath = System.getProperty("user.home") + "/work/_temp/keystore/"
 val prereleaseStoreFile: File? = File(tmpFilePath).listFiles()?.first()
 
-fun String.execute() = ByteArrayOutputStream().use { baot ->
-    if (project.exec {
-            workingDir = projectDir
-            commandLine = this@execute.split(Regex("\\s"))
-            standardOutput = baot
-        }.exitValue == 0)
-        String(baot.toByteArray()).trim()
-    else null
+fun String.execute(): String? {
+    val output = ByteArrayOutputStream()
+
+    val process = ProcessBuilder()
+        .command(this.split(" "))
+        .redirectOutput(ProcessBuilder.Redirect.PIPE)
+        .start()
+
+    val exitValue = process.inputStream.use { input ->
+        input.copyTo(output)
+        process.waitFor()
+    }
+
+    return if (exitValue == 0) {
+        output.toString().trim()
+    } else null
 }
 
 android {
+    @Suppress("UnstableApiUsage")
     testOptions {
         unitTests.isReturnDefaultValues = true
     }
@@ -57,7 +66,7 @@ android {
         resValue("bool", "is_prerelease", "false")
 
         // Reads local.properties
-        val localProperties = gradleLocalProperties(rootDir)
+        val localProperties = gradleLocalProperties(rootDir, project.providers)
 
         buildConfigField(
             "long",
@@ -169,11 +178,10 @@ dependencies {
 
     // PlayBack
     implementation(libs.colorpicker) // Subtitle Color Picker
-    //implementation(libs.media.ffmpeg) // Custom FF-MPEG Lib for Audio Codecs
-    implementation(libs.newpipeextractor) /* For Trailers
-    ^ Update to Latest Commits if Trailers Misbehave, github.com/TeamNewPipe/NewPipeExtractor/commits/dev */
+    //implementation(libs.media.ffmpeg) // Custom FFmpeg Lib for Audio Codecs
+    implementation(libs.newpipeextractor) // For Trailers
     implementation(libs.juniversalchardet) // Subtitle Decoding
-    // ffmpeg decoding
+    // FFmpeg Decoding
     implementation(libs.nextlib.media3ext)
     implementation(libs.nextlib.mediainfo)
 
@@ -183,12 +191,12 @@ dependencies {
 
     // UI Stuff
     implementation(libs.shimmer) // Shimmering Effect (Loading Skeleton)
-    implementation(libs.palette.ktx) // Palette For Images -> Colors
+    implementation(libs.palette.ktx) // Palette for Images -> Colors
     implementation(libs.tvprovider)
     implementation(libs.overlappingpanels) // Gestures
     implementation(libs.biometric) // Fingerprint Authentication
     implementation(libs.previewseekbar.media3) // SeekBar Preview
-    implementation(libs.qrcode.kotlin) // QR code for PIN Auth on TV
+    implementation(libs.qrcode.kotlin) // QR Code for PIN Auth on TV
 
     // Extensions & Other Libs
     implementation(libs.rhino) // Run JavaScript
@@ -196,15 +204,15 @@ dependencies {
     implementation(libs.safefile) // To Prevent the URI File Fu*kery
     implementation(libs.conscrypt.android) // To Fix SSL Fu*kery on Android 9
     implementation(libs.tmdb.java) // TMDB API v3 Wrapper Made with RetroFit
-    coreLibraryDesugaring(libs.desugar.jdk.libs.nio) // nio flavor needed for NewPipeExtractor
+    coreLibraryDesugaring(libs.desugar.jdk.libs.nio) // NIO Flavor Needed for NewPipeExtractor
     implementation(libs.jackson.module.kotlin) {
         version {
             strictly("2.13.1")
         }
-        because("Don't Bump Jackson above 2.13.1 , Crashes on Android TV's and FireSticks that have Min API Level 25 or Less.")
+        because("Don't Bump Jackson above 2.13.1, Crashes on Android TV's and FireSticks that have Min API Level 25 or Less.")
     } // JSON Parser
 
-    // Torrent support
+    // Torrent Support
     implementation(libs.torrentserver.aniyomi)
 
     // Downloading & Networking
@@ -251,12 +259,11 @@ tasks.register<Jar>("makeJar") {
     )
     destinationDirectory.set(layout.buildDirectory)
     archiveBaseName = "classes"
-    //archiveName = "classes"
 }
 
-tasks.withType<KotlinCompile> {
-    kotlinOptions {
-        jvmTarget = javaTarget.target
-        freeCompilerArgs = listOf("-Xjvm-default=all-compatibility")
+tasks.withType<KotlinJvmCompile> {
+    compilerOptions {
+        jvmTarget.set(javaTarget)
+        freeCompilerArgs.add("-Xjvm-default=all-compatibility")
     }
 }

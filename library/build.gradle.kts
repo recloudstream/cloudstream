@@ -1,7 +1,6 @@
 import com.codingfeline.buildkonfig.compiler.FieldSpec
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 plugins {
     kotlin("multiplatform")
@@ -17,7 +16,6 @@ kotlin {
     androidTarget()
     jvm()
 
-    @OptIn(ExperimentalKotlinGradlePluginApi::class)
     compilerOptions {
         freeCompilerArgs.add("-Xexpect-actual-classes")
     }
@@ -27,15 +25,17 @@ kotlin {
             implementation(libs.nicehttp) // HTTP Lib
             implementation(libs.jackson.module.kotlin) // JSON Parser
             implementation(libs.kotlinx.coroutines.core)
-            implementation(libs.fuzzywuzzy) // Match extractors
+            implementation(libs.fuzzywuzzy) // Match Extractors
             implementation(libs.rhino) // Run JavaScript
             implementation(libs.newpipeextractor)
         }
     }
 }
 
-tasks.withType<KotlinCompile> {
-    kotlinOptions.jvmTarget = javaTarget.target
+tasks.withType<KotlinJvmCompile> {
+    compilerOptions {
+        jvmTarget.set(javaTarget)
+    }
 }
 
 buildkonfig {
@@ -59,7 +59,6 @@ android {
 
     defaultConfig {
         minSdk = libs.versions.minSdk.get().toInt()
-        targetSdk = libs.versions.targetSdk.get().toInt()
     }
 
     // If this is the same com.lagradost.cloudstream3.R stops working
@@ -69,7 +68,17 @@ android {
         sourceCompatibility = JavaVersion.toVersion(javaTarget.target)
         targetCompatibility = JavaVersion.toVersion(javaTarget.target)
     }
+
+    @Suppress("UnstableApiUsage")
+    testOptions {
+        targetSdk = libs.versions.targetSdk.get().toInt()
+    }
+
+    lint {
+        targetSdk = libs.versions.targetSdk.get().toInt()
+    }
 }
+
 publishing {
     publications {
         withType<MavenPublication> {

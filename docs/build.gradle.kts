@@ -16,7 +16,6 @@ android {
 
     defaultConfig {
         minSdk = libs.versions.minSdk.get().toInt()
-        targetSdk = libs.versions.targetSdk.get().toInt()
     }
 
     namespace = "com.lagradost.api"
@@ -25,9 +24,18 @@ android {
         sourceCompatibility = JavaVersion.toVersion(javaTarget.target)
         targetCompatibility = JavaVersion.toVersion(javaTarget.target)
     }
+
+    @Suppress("UnstableApiUsage")
+    testOptions {
+        targetSdk = libs.versions.targetSdk.get().toInt()
+    }
+
+    lint {
+        targetSdk = libs.versions.targetSdk.get().toInt()
+    }
 }
 
-val dokkaImplementation by configurations.creating {
+val dokkaImplementation: Configuration by configurations.creating {
     // This ensures you can access artifacts
     isCanBeResolved = true
     isTransitive = true
@@ -52,18 +60,18 @@ dependencies {
     dokkaImplementation(libs.auto.service.ksp)
     dokkaImplementation(libs.bundles.media3)
     dokkaImplementation(libs.colorpicker) // Subtitle Color Picker
-    dokkaImplementation(libs.media.ffmpeg) // Custom FF-MPEG Lib for Audio Codecs
+    dokkaImplementation(libs.media.ffmpeg) // Custom FFmpeg Lib for Audio Codecs
     dokkaImplementation(libs.newpipeextractor)
     dokkaImplementation(libs.juniversalchardet) // Subtitle Decoding
     dokkaImplementation(libs.acra.core)
     dokkaImplementation(libs.acra.toast)
     dokkaImplementation(libs.shimmer) // Shimmering Effect (Loading Skeleton)
-    dokkaImplementation(libs.palette.ktx) // Palette For Images -> Colors
+    dokkaImplementation(libs.palette.ktx) // Palette for Images -> Colors
     dokkaImplementation(libs.tvprovider)
     dokkaImplementation(libs.overlappingpanels) // Gestures
     dokkaImplementation(libs.biometric) // Fingerprint Authentication
     dokkaImplementation(libs.previewseekbar.media3) // SeekBar Preview
-    dokkaImplementation(libs.qrcode.kotlin) // QR code for PIN Auth on TV
+    dokkaImplementation(libs.qrcode.kotlin) // QR Code for PIN Auth on TV
     dokkaImplementation(libs.rhino) // Run JavaScript
     dokkaImplementation(libs.fuzzywuzzy) // Library/Ext Searching with Levenshtein Distance
     dokkaImplementation(libs.safefile) // To Prevent the URI File Fu*kery
