@@ -744,7 +744,7 @@ data class HomePageList(
 )
 
 enum class SearchQuality(value: Int?) {
-    //https://en.wikipedia.org/wiki/Pirated_movie_release_types
+    // https://en.wikipedia.org/wiki/Pirated_movie_release_types
     Cam(1),
     CamRip(2),
     HdCam(3),
@@ -819,6 +819,25 @@ interface SearchResponse {
     var quality: SearchQuality?
 }
 
+fun MainAPI.newTorrentSearchResponse(
+    name: String,
+    url: String,
+    type: TvType? = null,
+    posterUrl: String? = null,
+    fix: Boolean = true,
+    initializer: TorrentSearchResponse.() -> Unit = { },
+): TorrentSearchResponse {
+    val builder = TorrentSearchResponse(
+        name = name,
+        url = if (fix) fixUrl(url) else url,
+        apiName = this.name,
+        type = type,
+        posterUrl = posterUrl
+    )
+    builder.initializer()
+    return builder
+}
+
 fun MainAPI.newMovieSearchResponse(
     name: String,
     url: String,
@@ -829,6 +848,23 @@ fun MainAPI.newMovieSearchResponse(
     val builder = MovieSearchResponse(name, if (fix) fixUrl(url) else url, this.name, type)
     builder.initializer()
 
+    return builder
+}
+
+fun MainAPI.newLiveSearchResponse(
+    name: String,
+    url: String,
+    type: TvType? = null,
+    fix: Boolean = true,
+    initializer: LiveSearchResponse.() -> Unit = { },
+): LiveSearchResponse {
+    val builder = LiveSearchResponse(
+        name = name,
+        url = if (fix) fixUrl(url) else url,
+        apiName = this.name,
+        type = type
+    )
+    builder.initializer()
     return builder
 }
 
@@ -844,7 +880,6 @@ fun MainAPI.newTvSeriesSearchResponse(
 
     return builder
 }
-
 
 fun MainAPI.newAnimeSearchResponse(
     name: String,
@@ -1007,8 +1042,8 @@ data class TrailerData(
     val extractorUrl: String,
     val referer: String?,
     val raw: Boolean,
-    //var mirros: List<ExtractorLink>,
-    //var subtitles: List<SubtitleFile> = emptyList(),
+    // var mirrors: List<ExtractorLink>,
+    // var subtitles: List<SubtitleFile> = emptyList(),
 )
 
 interface LoadResponse {
@@ -1431,6 +1466,27 @@ data class TorrentLoadResponse(
     )
 }
 
+suspend fun MainAPI.newTorrentLoadResponse(
+    name: String,
+    url: String,
+    magnet: String? = null,
+    torrent: String? = null,
+    plot: String? = null,
+    initializer: suspend TorrentLoadResponse.() -> Unit = { }
+): TorrentLoadResponse {
+    val builder = TorrentLoadResponse(
+        name = name,
+        url = url,
+        apiName = this.name,
+        magnet = magnet,
+        torrent = torrent,
+        plot = plot,
+        comingSoon = magnet.isNullOrBlank() && torrent.isNullOrBlank()
+    )
+    builder.initializer()
+    return builder
+}
+
 data class AnimeLoadResponse(
     var engName: String? = null,
     var japName: String? = null,
@@ -1623,6 +1679,23 @@ data class LiveStreamLoadResponse(
         name, url, apiName, dataUrl, posterUrl, year, plot, type, rating, tags, duration, trailers,
         recommendations, actors, comingSoon, syncData, posterHeaders, backgroundPosterUrl, null
     )
+}
+
+suspend fun MainAPI.newLiveStreamLoadResponse(
+    name: String,
+    url: String,
+    dataUrl: String,
+    initializer: suspend LiveStreamLoadResponse.() -> Unit = { }
+): LiveStreamLoadResponse {
+    val builder = LiveStreamLoadResponse(
+        name = name,
+        url = url,
+        apiName = this.name,
+        dataUrl = dataUrl,
+        comingSoon = dataUrl.isBlank()
+    )
+    builder.initializer()
+    return builder
 }
 
 data class MovieLoadResponse(
