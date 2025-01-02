@@ -378,6 +378,8 @@
     <string name="source_error">Source error</string>
     <string name="remote_error">Remote error</string>
     <string name="render_error">Renderer error</string>
+    <string name="encoding_error">Encoding error</string>
+    <string name="unsupported_error">Unsupported error</string>
     <string name="unexpected_error">Unexpected player error</string>
     <string name="storage_error">Download error, check storage permissions</string>
     <string name="episode_action_chromecast_episode">Chromecast episode</string>
