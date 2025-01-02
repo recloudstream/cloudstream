@@ -1199,17 +1199,19 @@ class ResultViewModel2 : ViewModel() {
 
     private fun getImdbIdFromSyncData(syncData: Map<String, String>?): String? {
         return normalSafeApiCall {
-            readIdFromString(
+            val imdbId = readIdFromString(
                 syncData?.get(AccountManager.simklApi.idPrefix)
             )[SimklSyncServices.Imdb]
+            if (imdbId == "null") null else imdbId
         }
     }
 
     private fun getTMDbIdFromSyncData(syncData: Map<String, String>?): String? {
         return normalSafeApiCall {
-            readIdFromString(
+            val tmdbId = readIdFromString(
                 syncData?.get(AccountManager.simklApi.idPrefix)
             )[SimklSyncServices.Tmdb]
+            if (tmdbId == "null") null else tmdbId
         }
     }
 
