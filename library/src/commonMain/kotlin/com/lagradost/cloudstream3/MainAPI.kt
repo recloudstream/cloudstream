@@ -823,7 +823,6 @@ fun MainAPI.newTorrentSearchResponse(
     name: String,
     url: String,
     type: TvType = TvType.Torrent,
-    posterUrl: String? = null,
     fix: Boolean = true,
     initializer: TorrentSearchResponse.() -> Unit = { },
 ): TorrentSearchResponse {
@@ -832,7 +831,8 @@ fun MainAPI.newTorrentSearchResponse(
         url = if (fix) fixUrl(url) else url,
         apiName = this.name,
         type = type,
-        posterUrl = posterUrl
+        // The initializer will handle this
+        posterUrl = null
     )
     builder.initializer()
     return builder
@@ -1471,7 +1471,6 @@ suspend fun MainAPI.newTorrentLoadResponse(
     url: String,
     magnet: String? = null,
     torrent: String? = null,
-    plot: String? = null,
     initializer: suspend TorrentLoadResponse.() -> Unit = { }
 ): TorrentLoadResponse {
     val builder = TorrentLoadResponse(
@@ -1480,7 +1479,8 @@ suspend fun MainAPI.newTorrentLoadResponse(
         apiName = this.name,
         magnet = magnet,
         torrent = torrent,
-        plot = plot,
+        // The initializer will handle this
+        plot = null,
         comingSoon = magnet.isNullOrBlank() && torrent.isNullOrBlank()
     )
     builder.initializer()
