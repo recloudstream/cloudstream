@@ -71,6 +71,7 @@ import com.lagradost.cloudstream3.extractors.GuardareStream
 import com.lagradost.cloudstream3.extractors.GoodstreamExtractor
 import com.lagradost.cloudstream3.extractors.Guccihide
 import com.lagradost.cloudstream3.extractors.Hxfile
+import com.lagradost.cloudstream3.extractors.InternetArchive
 import com.lagradost.cloudstream3.extractors.JWPlayer
 import com.lagradost.cloudstream3.extractors.Jawcloud
 import com.lagradost.cloudstream3.extractors.Jeniusplay
@@ -1025,6 +1026,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     Ds2play(),
     Ds2video(),
     Filegram(),
+    InternetArchive(),
 
     )
 
