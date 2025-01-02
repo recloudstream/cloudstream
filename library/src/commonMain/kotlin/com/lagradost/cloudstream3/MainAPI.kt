@@ -822,7 +822,7 @@ interface SearchResponse {
 fun MainAPI.newTorrentSearchResponse(
     name: String,
     url: String,
-    type: TvType? = null,
+    type: TvType = TvType.Torrent,
     posterUrl: String? = null,
     fix: Boolean = true,
     initializer: TorrentSearchResponse.() -> Unit = { },
@@ -854,7 +854,7 @@ fun MainAPI.newMovieSearchResponse(
 fun MainAPI.newLiveSearchResponse(
     name: String,
     url: String,
-    type: TvType? = null,
+    type: TvType = TvType.Live,
     fix: Boolean = true,
     initializer: LiveSearchResponse.() -> Unit = { },
 ): LiveSearchResponse {
