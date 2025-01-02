@@ -837,7 +837,7 @@
             </ImageView>
 
             <ProgressBar
-                android:id="@+id/player_progressbar_left"
+                android:id="@+id/player_progressbar_left_level1"
                 style="@android:style/Widget.Material.ProgressBar.Horizontal"
                 android:layout_width="4dp"
                 android:layout_height="150dp"
@@ -849,6 +849,20 @@
                 android:progress="100"
                 android:progressDrawable="@drawable/progress_drawable_vertical"
                 tools:progress="30" />
+
+            <ProgressBar
+                android:id="@+id/player_progressbar_left_level2"
+                style="@android:style/Widget.Material.ProgressBar.Horizontal"
+                android:layout_width="4dp"
+                android:layout_height="150dp"
+                android:layout_centerInParent="true"
+                android:layout_gravity="end|center_vertical"
+                android:layout_marginStart="40dp"
+                android:indeterminate="false"
+                android:max="100"
+                android:progress="0"
+                android:progressDrawable="@drawable/progress_drawable_vertical"
+                tools:progress="0" />
         </RelativeLayout>
 
         <RelativeLayout

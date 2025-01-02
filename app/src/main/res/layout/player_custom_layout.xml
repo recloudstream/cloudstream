@@ -835,7 +835,8 @@
                 app:layout_constraintTop_toTopOf="parent"
                 tools:alpha="1"
                 tools:visibility="visible">
-                <!--VERY hacky layout -->
+
+                <!-- VERY hacky layout -->
                 <ImageView
                     android:id="@+id/player_progressbar_left_icon"
                     android:layout_width="wrap_content"
@@ -844,12 +845,10 @@
                     android:layout_marginBottom="220dp"
                     android:src="@drawable/ic_baseline_volume_up_24"
                     app:tint="@android:color/white"
-                    tools:ignore="ContentDescription">
-
-                </ImageView>
+                    tools:ignore="ContentDescription" />
 
                 <ProgressBar
-                    android:id="@+id/player_progressbar_left"
+                    android:id="@+id/player_progressbar_left_level1"
                     style="@android:style/Widget.Material.ProgressBar.Horizontal"
                     android:layout_width="5dp"
                     android:layout_height="150dp"
@@ -861,7 +860,22 @@
                     android:progress="100"
                     android:progressDrawable="@drawable/progress_drawable_vertical"
                     tools:progress="30" />
+
+                <ProgressBar
+                    android:id="@+id/player_progressbar_left_level2"
+                    style="@android:style/Widget.Material.ProgressBar.Horizontal"
+                    android:layout_width="5dp"
+                    android:layout_height="150dp"
+                    android:layout_centerInParent="true"
+                    android:layout_gravity="end|center_vertical"
+                    android:layout_marginStart="40dp"
+                    android:indeterminate="false"
+                    android:max="100"
+                    android:progress="0"
+                    android:progressDrawable="@drawable/progress_drawable_vertical"
+                    tools:progress="0" />
             </RelativeLayout>
+
 
             <RelativeLayout
                 android:id="@+id/player_progressbar_right_holder"
