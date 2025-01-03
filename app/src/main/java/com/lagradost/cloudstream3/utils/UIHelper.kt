@@ -13,23 +13,25 @@ import android.content.res.Configuration
 import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.Color
-import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.os.TransactionTooLargeException
 import android.util.Log
-import android.view.*
+import android.view.Gravity
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import android.view.ViewGroup.MarginLayoutParams
+import android.view.WindowInsets
+import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
-import android.widget.ImageView
 import android.widget.ListAdapter
 import android.widget.ListView
 import android.widget.Toast.LENGTH_LONG
 import androidx.annotation.AttrRes
 import androidx.annotation.ColorInt
-import androidx.annotation.DrawableRes
 import androidx.annotation.IdRes
 import androidx.annotation.StyleRes
 import androidx.appcompat.view.ContextThemeWrapper
@@ -40,7 +42,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.getSystemService
 import androidx.core.graphics.alpha
 import androidx.core.graphics.blue
-import androidx.core.graphics.drawable.toBitmapOrNull
 import androidx.core.graphics.green
 import androidx.core.graphics.red
 import androidx.core.view.marginBottom
@@ -53,14 +54,6 @@ import androidx.fragment.app.FragmentActivity
 import androidx.navigation.fragment.NavHostFragment
 import androidx.palette.graphics.Palette
 import androidx.preference.PreferenceManager
-import com.bumptech.glide.load.DataSource
-import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.load.engine.GlideException
-import com.bumptech.glide.load.model.GlideUrl
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
-import com.bumptech.glide.request.RequestListener
-import com.bumptech.glide.request.RequestOptions.bitmapTransform
-import com.bumptech.glide.request.target.Target
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipDrawable
@@ -70,13 +63,9 @@ import com.lagradost.cloudstream3.CommonActivity.activity
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError
-import com.lagradost.cloudstream3.ui.result.UiImage
-import com.lagradost.cloudstream3.ui.result.UiText
-import com.lagradost.cloudstream3.ui.result.txt
 import com.lagradost.cloudstream3.ui.settings.Globals
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
-import jp.wasabeef.glide.transformations.BlurTransformation
 import kotlin.math.roundToInt
 
 object UIHelper {
@@ -266,172 +255,6 @@ object UIHelper {
         }
     }
 
-    /*inline fun <reified T : ViewBinding> bindViewBinding(
-        inflater: LayoutInflater?,
-        container: ViewGroup?,
-        layout: Int
-    ): Pair<T?, UiText?> {
-        return try {
-            val localInflater = inflater ?: container?.context?.let { LayoutInflater.from(it) }
-            ?: return null to txt(
-                R.string.unable_to_inflate,
-                "Requires inflater OR container"
-            )//throw IllegalArgumentException("Requires inflater OR container"))
-
-            //println("methods: ${T::class.java.methods.map { it.name }}")
-            val bind = T::class.java.methods.first { it.name == "bind" }
-            //val inflate = T::class.java.methods.first { it.name == "inflate" }
-            val root = localInflater.inflate(layout, container, false)
-            bind.invoke(null, root) as T to null
-        } catch (t: Throwable) {
-            logError(t)
-            val message = txt(R.string.unable_to_inflate, t.message ?: "Primary constructor")
-            // if the desired layout is not found then we inflate the casted layout
-            /*try {
-                val localInflater = inflater ?: container?.context?.let { LayoutInflater.from(it) }
-                ?: return null to txt(
-                    R.string.unable_to_inflate,
-                    "Requires inflater OR container"
-                )//throw IllegalArgumentException("Requires inflater OR container"))
-
-                // we don't know what method to use as there are 2, but first *should* always be true
-                return try {
-                    val inflate = T::class.java.methods.first { it.name == "inflate" }
-                    inflate.invoke(null, localInflater, container, false) as T
-                } catch (_: Throwable) {
-                    val inflate = T::class.java.methods.last { it.name == "inflate" }
-                    inflate.invoke(null, localInflater, container, false) as T
-                } to message
-            } catch (t: Throwable) {
-                logError(t)
-            }*/
-
-            null to message
-        }
-    }*/
-
-    fun ImageView?.setImage(
-        url: String?,
-        headers: Map<String, String>? = null,
-        @DrawableRes
-        errorImageDrawable: Int? = null,
-        fadeIn: Boolean = true,
-        radius: Int = 0,
-        sample: Int = 3,
-        colorCallback: ((Palette) -> Unit)? = null
-    ): Boolean {
-        if (url.isNullOrBlank()) return false
-        this.setImage(
-            UiImage.Image(url, headers, errorImageDrawable),
-            errorImageDrawable,
-            fadeIn,
-            radius,
-            sample,
-            colorCallback
-        )
-        return true
-    }
-
-    fun ImageView?.setImage(
-        uiImage: UiImage?,
-        @DrawableRes
-        errorImageDrawable: Int? = null,
-        fadeIn: Boolean = true,
-        radius: Int = 0,
-        sample: Int = 3,
-        colorCallback: ((Palette) -> Unit)? = null,
-    ): Boolean {
-        if (this == null || uiImage == null) return false
-
-        val (glideImage, identifier) =
-            (uiImage as? UiImage.Drawable)?.resId?.let {
-                it to it.toString()
-            } ?: (uiImage as? UiImage.Image)?.let { image ->
-                GlideUrl(image.url) { image.headers ?: emptyMap() } to image.url
-            } ?: return false
-
-        return try {
-            var builder = com.bumptech.glide.Glide.with(this)
-                .load(glideImage)
-                .skipMemoryCache(true)
-                .diskCacheStrategy(DiskCacheStrategy.ALL).let { req ->
-                    if (fadeIn)
-                        req.transition(DrawableTransitionOptions.withCrossFade())
-                    else req
-                }
-
-            if (radius > 0) {
-                builder = builder.apply(bitmapTransform(BlurTransformation(radius, sample)))
-            }
-
-            if (colorCallback != null) {
-                builder = builder.listener(object : RequestListener<Drawable> {
-
-                    override fun onResourceReady(
-                        resource: Drawable,
-                        model: Any,
-                        target: Target<Drawable>?,
-                        dataSource: DataSource,
-                        isFirstResource: Boolean
-                    ): Boolean {
-                        resource.toBitmapOrNull()
-                            ?.let { bitmap ->
-                                createPaletteAsync(
-                                    identifier,
-                                    bitmap,
-                                    colorCallback
-                                )
-                            }
-                        return false
-                    }
-
-                    override fun onLoadFailed(
-                        e: GlideException?,
-                        model: Any?,
-                        target: Target<Drawable>,
-                        isFirstResource: Boolean
-                    ): Boolean {
-                        return false
-                    }
-                })
-            }
-
-            val res = if (errorImageDrawable != null)
-                builder.error(errorImageDrawable).into(this)
-            else
-                builder.into(this)
-            res.clearOnDetach()
-
-            true
-        } catch (e: Exception) {
-            logError(e)
-            false
-        }
-    }
-
-    fun ImageView?.setImageBlur(
-        url: String?,
-        radius: Int,
-        sample: Int = 3,
-        headers: Map<String, String>? = null
-    ) {
-        if (this == null || url.isNullOrBlank()) return
-        try {
-            val res = com.bumptech.glide.Glide.with(this)
-                .load(GlideUrl(url) { headers ?: emptyMap() })
-                .apply(bitmapTransform(BlurTransformation(radius, sample)))
-                .transition(
-                    DrawableTransitionOptions.withCrossFade()
-                )
-                .skipMemoryCache(true)
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .into(this)
-            res.clearOnDetach()
-        } catch (e: Exception) {
-            logError(e)
-        }
-    }
-
     fun adjustAlpha(@ColorInt color: Int, factor: Float): Int {
         val alpha = (Color.alpha(color) * factor).roundToInt()
         val red = Color.red(color)
@@ -553,7 +376,7 @@ object UIHelper {
         return result
     }
 
-    fun Context?.IsBottomLayout(): Boolean {
+    fun Context?.isBottomLayout(): Boolean {
         if (this == null) return true
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(this)
         return settingsManager.getBoolean(getString(R.string.bottom_title_key), true)

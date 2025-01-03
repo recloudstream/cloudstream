@@ -1,6 +1,7 @@
 import re
 import glob
 import requests
+import os
 import lxml.etree as ET  # builtin library doesn't preserve comments
 
 
@@ -61,5 +62,8 @@ for file in glob.glob(f"{XML_NAME}*/strings.xml"):
         with open(file, 'wb') as fp:
             fp.write(b'<?xml version="1.0" encoding="utf-8"?>\n')
             tree.write(fp, encoding="utf-8", method="xml", pretty_print=True, xml_declaration=False)
+            # Remove trailing new line to be consistent with weblate
+            fp.seek(-1, os.SEEK_END)
+            fp.truncate()
     except ET.ParseError as ex:
         print(f"[{file}] {ex}")

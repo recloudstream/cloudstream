@@ -45,6 +45,7 @@ import com.lagradost.cloudstream3.utils.DataStoreHelper.deleteAllResumeStateIds
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getAllResumeStateIds
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getAllWatchStateIds
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getBookmarkedData
+import com.lagradost.cloudstream3.utils.DataStoreHelper.getCurrentAccount
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getLastWatched
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getResultWatchState
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
@@ -108,6 +109,9 @@ class HomeViewModel : ViewModel() {
     private val _apiName = MutableLiveData<String>()
     val apiName: LiveData<String> = _apiName
 
+    private val _currentAccount = MutableLiveData<DataStoreHelper.Account?>()
+    val currentAccount: MutableLiveData<DataStoreHelper.Account?> = _currentAccount
+
     private val _randomItems = MutableLiveData<List<SearchResponse>?>(null)
     val randomItems: LiveData<List<SearchResponse>?> = _randomItems
 
@@ -152,7 +156,7 @@ class HomeViewModel : ViewModel() {
             }
         }?.distinctBy { it.first } ?: return@launchSafe
 
-        val length = WatchType.values().size
+        val length = WatchType.entries.size
         val currentWatchTypes = mutableSetOf<WatchType>()
 
         for (watch in watchStatusIds) {
@@ -387,7 +391,9 @@ class HomeViewModel : ViewModel() {
             }
 
             is Resource.Failure -> {
+                @Suppress("UNNECESSARY_NOT_NULL_ASSERTION")
                 _page.postValue(data!!)
+                @Suppress("UNNECESSARY_NOT_NULL_ASSERTION")
                 _preview.postValue(data!!)
             }
 
@@ -397,13 +403,10 @@ class HomeViewModel : ViewModel() {
     }
 
     fun click(callback: SearchClickCallback) {
-        if (callback.action == SEARCH_ACTION_FOCUSED) {
-            //focusCallback(callback.card)
-        } else {
+        if (callback.action != SEARCH_ACTION_FOCUSED) {
             SearchHelper.handleSearchClickCallback(callback)
         }
     }
-
 
     private val _popup = MutableLiveData<Pair<ExpandableHomepageList, (() -> Unit)?>?>(null)
     val popup: LiveData<Pair<ExpandableHomepageList, (() -> Unit)?>?> = _popup
@@ -431,11 +434,18 @@ class HomeViewModel : ViewModel() {
         loadAndCancel(DataStoreHelper.currentHomePage, true)
     }
 
+    private fun reloadAccount(unused: Boolean = false) {
+        _currentAccount.postValue(
+            getCurrentAccount()
+        )
+    }
+
     init {
         MainActivity.bookmarksUpdatedEvent += ::bookmarksUpdated
         MainActivity.afterPluginsLoadedEvent += ::afterPluginsLoaded
         MainActivity.mainPluginsLoadedEvent += ::afterMainPluginsLoaded
         MainActivity.reloadHomeEvent += ::reloadHome
+        MainActivity.reloadAccountEvent += ::reloadAccount
     }
 
     override fun onCleared() {
@@ -443,6 +453,7 @@ class HomeViewModel : ViewModel() {
         MainActivity.afterPluginsLoadedEvent -= ::afterPluginsLoaded
         MainActivity.mainPluginsLoadedEvent -= ::afterMainPluginsLoaded
         MainActivity.reloadHomeEvent -= ::reloadHome
+        MainActivity.reloadAccountEvent -= ::reloadAccount
         super.onCleared()
     }
 
@@ -470,7 +481,7 @@ class HomeViewModel : ViewModel() {
     }
 
     fun click(load: LoadClickCallback) {
-        loadResult(load.response.url, load.response.apiName, load.action)
+        loadResult(load.response.url, load.response.apiName, load.response.name, load.action)
     }
 
     // only save the key if it is from UI, as we don't want internal functions changing the setting
@@ -516,12 +527,13 @@ class HomeViewModel : ViewModel() {
                 } else {
                     _page.postValue(Resource.Loading())
                     if (preferredApiName != null)
-                        _apiName.postValue(preferredApiName)
+                        _apiName.postValue(preferredApiName!!)
                 }
             } else {
                 // if the api is found, then set it to it and save key
                 if (fromUI) DataStoreHelper.currentHomePage = api.name
                 loadAndCancel(api)
+                reloadAccount()
             }
         }
 }

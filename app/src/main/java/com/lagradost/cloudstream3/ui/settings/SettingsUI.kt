@@ -67,31 +67,32 @@ class SettingsUI : PreferenceFragmentCompat() {
                 settingsManager.getInt(getString(R.string.app_layout_key), -1)
 
             activity?.showBottomDialog(
-                prefNames.toList(),
-                prefValues.indexOf(currentLayout),
-                getString(R.string.app_layout),
-                true,
-                {}) {
-                try {
-                    settingsManager.edit()
-                        .putInt(getString(R.string.app_layout_key), prefValues[it])
-                        .apply()
-                    context?.updateTv()
-                    activity?.recreate()
-                } catch (e: Exception) {
-                    logError(e)
+                items = prefNames.toList(),
+                selectedIndex = prefValues.indexOf(currentLayout),
+                name = getString(R.string.app_layout),
+                showApply = true,
+                dismissCallback = {},
+                callback = {
+                    try {
+                        settingsManager.edit()
+                            .putInt(getString(R.string.app_layout_key), prefValues[it])
+                            .apply()
+                        context?.updateTv()
+                        activity?.recreate()
+                    } catch (e: Exception) {
+                        logError(e)
+                    }
                 }
-            }
+            )
             return@setOnPreferenceClickListener true
         }
 
         getPref(R.string.app_theme_key)?.setOnPreferenceClickListener {
             val prefNames = resources.getStringArray(R.array.themes_names).toMutableList()
             val prefValues = resources.getStringArray(R.array.themes_names_values).toMutableList()
-
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) { // remove monet on android 11 and less
+            val removeIncompatible = { text: String ->
                 val toRemove = prefValues
-                    .mapIndexed { idx, s -> if (s.startsWith("Monet")) idx else null }
+                    .mapIndexed { idx, s -> if (s.startsWith(text)) idx else null }
                     .filterNotNull()
                 var offset = 0
                 toRemove.forEach { idx ->
@@ -99,6 +100,12 @@ class SettingsUI : PreferenceFragmentCompat() {
                     prefValues.removeAt(idx - offset)
                     offset += 1
                 }
+            }
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) { // remove monet on android 11 and less
+                removeIncompatible("Monet")
+            }
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) { // Remove system on android 9 and less
+                removeIncompatible("System")
             }
 
             val currentLayout =
@@ -123,7 +130,8 @@ class SettingsUI : PreferenceFragmentCompat() {
         }
         getPref(R.string.primary_color_key)?.setOnPreferenceClickListener {
             val prefNames = resources.getStringArray(R.array.themes_overlay_names).toMutableList()
-            val prefValues = resources.getStringArray(R.array.themes_overlay_names_values).toMutableList()
+            val prefValues =
+                resources.getStringArray(R.array.themes_overlay_names_values).toMutableList()
 
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) { // remove monet on android 11 and less
                 val toRemove = prefValues
@@ -181,5 +189,24 @@ class SettingsUI : PreferenceFragmentCompat() {
             return@setOnPreferenceClickListener true
         }
 
+        getPref(R.string.confirm_exit_key)?.setOnPreferenceClickListener {
+            val prefNames = resources.getStringArray(R.array.confirm_exit)
+            val prefValues = resources.getIntArray(R.array.confirm_exit_values)
+            val confirmExit = settingsManager.getInt(getString(R.string.confirm_exit_key), -1)
+
+            activity?.showBottomDialog(
+                items = prefNames.toList(),
+                selectedIndex = prefValues.indexOf(confirmExit),
+                name = getString(R.string.confirm_before_exiting_title),
+                showApply = true,
+                dismissCallback = {},
+                callback = { selectedOption ->
+                    settingsManager.edit()
+                        .putInt(getString(R.string.confirm_exit_key), prefValues[selectedOption])
+                        .apply()
+                }
+            )
+            return@setOnPreferenceClickListener true
+        }
     }
 }

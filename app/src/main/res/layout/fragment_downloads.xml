@@ -18,6 +18,62 @@
         app:layout_scrollFlags="scroll|enterAlways"
         -->
         <LinearLayout
+            android:id="@+id/download_delete_appbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="?attr/colorPrimary"
+            android:padding="8dp"
+            android:visibility="gone">
+
+            <ImageButton
+                android:id="@+id/btnCancel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackground"
+                android:src="@drawable/ic_baseline_close_24"
+                android:contentDescription="@string/cancel"
+                android:padding="8dp"
+                android:layout_gravity="center_vertical"
+                android:nextFocusLeft="@id/nav_rail_view"
+                app:tint="@android:color/white" />
+
+            <Button
+                android:id="@+id/btnDelete"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackground"
+                android:text="@string/delete"
+                android:textColor="@android:color/white"
+                android:layout_gravity="center_vertical" />
+
+            <TextView
+                android:id="@+id/selectItemsText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackground"
+                android:text="@string/downloads_delete_select"
+                android:textColor="@android:color/white"
+                android:layout_gravity="center_vertical"
+                android:visibility="gone" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+            <Button
+                android:id="@+id/btnToggleAll"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackground"
+                android:text="@string/select_all"
+                android:textColor="@android:color/white"
+                android:layout_marginEnd="8dp"
+                android:nextFocusDown="@id/download_list" />
+        </LinearLayout>
+
+        <LinearLayout
             android:id="@+id/download_storage_appbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -137,7 +193,7 @@
         android:background="?attr/primaryBlackBackground"
         android:descendantFocusability="afterDescendants"
         android:nextFocusLeft="@id/nav_rail_view"
-        android:tag = "@string/tv_no_focus_tag"
+        android:tag="@string/tv_no_focus_tag"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         tools:listitem="@layout/download_header_episode" />
 
@@ -154,11 +210,11 @@
 
     <!--
     <ProgressBar
-            android:visibility="visible"
-            tools:visibility="gone"
-            android:id="@+id/download_loading"
-            android:layout_gravity="center"
-            android:layout_width="50dp" android:layout_height="50dp">
+        android:visibility="visible"
+        tools:visibility="gone"
+        android:id="@+id/download_loading"
+        android:layout_gravity="center"
+        android:layout_width="50dp" android:layout_height="50dp">
     </ProgressBar>-->
 
     <com.facebook.shimmer.ShimmerFrameLayout
@@ -182,15 +238,10 @@
             android:orientation="vertical">
 
             <include layout="@layout/loading_downloads" />
-
             <include layout="@layout/loading_downloads" />
-
             <include layout="@layout/loading_downloads" />
-
             <include layout="@layout/loading_downloads" />
-
             <include layout="@layout/loading_downloads" />
-
             <include layout="@layout/loading_downloads" />
         </LinearLayout>
     </com.facebook.shimmer.ShimmerFrameLayout>
@@ -201,24 +252,24 @@
         android:orientation="vertical"
         android:layout_gravity="bottom|end">
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/open_local_video_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        style="?attr/floatingActionButtonSmallStyle"
-        android:backgroundTint="?attr/primaryGrayBackground"
-        android:src="@drawable/netflix_play"
-        android:layout_marginEnd="16dp"
-        android:tooltipText="@string/open_local_video"
-        android:layout_gravity="bottom|end"
-        android:contentDescription="@string/open_local_video" />
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/open_local_video_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="?attr/floatingActionButtonSmallStyle"
+            android:backgroundTint="?attr/primaryGrayBackground"
+            android:src="@drawable/netflix_play"
+            android:layout_marginEnd="16dp"
+            android:tooltipText="@string/open_local_video"
+            android:layout_gravity="bottom|end"
+            android:contentDescription="@string/open_local_video" />
 
-    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-        android:id="@+id/download_stream_button"
-        style="@style/ExtendedFloatingActionButton"
-        android:text="@string/stream"
-        android:textColor="?attr/textColor"
-        app:icon="@drawable/ic_network_stream"
-        android:contentDescription="@string/stream" />
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            android:id="@+id/download_stream_button"
+            style="@style/ExtendedFloatingActionButton"
+            android:text="@string/stream"
+            android:textColor="?attr/textColor"
+            app:icon="@drawable/ic_network_stream"
+            android:contentDescription="@string/stream" />
     </LinearLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

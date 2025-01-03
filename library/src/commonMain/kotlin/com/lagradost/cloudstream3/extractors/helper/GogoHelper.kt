@@ -107,8 +107,7 @@ object GogoHelper {
                 "$mainUrl/encrypt-ajax.php?$encryptRequestData",
                 headers = mapOf("X-Requested-With" to "XMLHttpRequest")
             )
-        val dataencrypted =
-            jsonResponse.text.substringAfter("{\"data\":\"").substringBefore("\"}")
+        val dataencrypted = jsonResponse.parsedSafe<GogoJsonData>()?.data ?: return@safeApiCall
         val datadecrypted = cryptoHandler(dataencrypted, foundIv, foundDecryptKey, false)
         val sources = AppUtils.parseJson<GogoSources>(datadecrypted)
 
@@ -154,5 +153,9 @@ object GogoHelper {
         @JsonProperty("label") val label: String?,
         @JsonProperty("type") val type: String?,
         @JsonProperty("default") val default: String? = null
+    )
+
+    data class GogoJsonData(
+        @JsonProperty("data") val data: String? = null
     )
 }

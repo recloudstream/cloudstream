@@ -8,15 +8,16 @@ import android.content.IntentFilter
 import android.content.IntentSender
 import android.content.pm.PackageInstaller
 import android.os.Build
+import android.util.Log
 import android.widget.Toast
+import com.lagradost.cloudstream3.AcraApplication.Companion.context
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError
-import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
+import com.lagradost.cloudstream3.services.PackageInstallerService
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import java.io.InputStream
 
 const val INSTALL_ACTION = "ApkInstaller.INSTALL_ACTION"
-
 
 class ApkInstaller(private val service: PackageInstallerService) {
 
@@ -25,6 +26,8 @@ class ApkInstaller(private val service: PackageInstallerService) {
          * Used for postponed installations
          **/
         var delayedInstaller: DelayedInstaller? = null
+        private var isReceiverRegistered = false
+        private const val TAG = "ApkInstaller"
     }
 
     inner class DelayedInstaller(
@@ -57,7 +60,7 @@ class ApkInstaller(private val service: PackageInstallerService) {
                 PackageInstaller.STATUS_FAILURE
             )) {
                 PackageInstaller.STATUS_PENDING_USER_ACTION -> {
-                    val userAction = intent.getParcelableExtra<Intent>(Intent.EXTRA_INTENT)
+                    val userAction = intent.getSafeParcelableExtra<Intent>(Intent.EXTRA_INTENT)
                     userAction?.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                     context.startActivity(userAction)
                 }
@@ -109,7 +112,7 @@ class ApkInstaller(private val service: PackageInstallerService) {
                 service,
                 activeSession,
                 Intent(INSTALL_ACTION),
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) PendingIntent.FLAG_MUTABLE else 0,
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) PendingIntent.FLAG_IMMUTABLE else 0,
             ).intentSender
 
             // Use delayed installations on android 13 and only if "allow from unknown sources" is enabled
@@ -141,8 +144,26 @@ class ApkInstaller(private val service: PackageInstallerService) {
     }
 
     init {
-        service.registerReceiver(installActionReceiver, IntentFilter(INSTALL_ACTION))
-        service.receivers.add(installActionReceiver)
+        // Might be dangerous
+        registerInstallActionReceiver()
+    }
+
+    private fun registerInstallActionReceiver() {
+        if (!isReceiverRegistered) {
+            val intentFilter = IntentFilter().apply {
+                addAction(INSTALL_ACTION)
+            }
+            Log.d(TAG, "Registering install action event receiver")
+            context?.registerBroadcastReceiver(installActionReceiver, intentFilter)
+            isReceiverRegistered = true
+        }
+    }
+
+    fun unregisterInstallActionReceiver() {
+        if (isReceiverRegistered) {
+            Log.d(TAG, "Unregistering install action event receiver")
+            context?.unregisterReceiver(installActionReceiver)
+            isReceiverRegistered = false
+        }
     }
 }
-

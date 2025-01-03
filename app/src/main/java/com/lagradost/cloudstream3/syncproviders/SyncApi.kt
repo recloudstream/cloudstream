@@ -3,8 +3,9 @@ package com.lagradost.cloudstream3.syncproviders
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.ui.SyncWatchType
 import com.lagradost.cloudstream3.ui.library.ListSorting
-import com.lagradost.cloudstream3.ui.result.UiText
+import com.lagradost.cloudstream3.utils.UiText
 import me.xdrop.fuzzywuzzy.FuzzySearch
+import java.util.Date
 
 interface SyncAPI : OAuth2API {
     /**
@@ -124,6 +125,8 @@ interface SyncAPI : OAuth2API {
                 ListSorting.AlphabeticalZ -> items.sortedBy { it.name }.reversed()
                 ListSorting.UpdatedNew -> items.sortedBy { it.lastUpdatedUnixTime?.times(-1) }
                 ListSorting.UpdatedOld -> items.sortedBy { it.lastUpdatedUnixTime }
+                ListSorting.ReleaseDateNew -> items.sortedByDescending { it.releaseDate }
+                ListSorting.ReleaseDateOld -> items.sortedBy { it.releaseDate }
                 else -> items
             }
         }
@@ -158,9 +161,10 @@ interface SyncAPI : OAuth2API {
         override var posterUrl: String?,
         override var posterHeaders: Map<String, String>?,
         override var quality: SearchQuality?,
+        val releaseDate: Date?,
         override var id: Int? = null,
         val plot : String? = null,
         val rating: Int? = null,
-        val tags: List<String>? = null,
+        val tags: List<String>? = null
     ) : SearchResponse
 }

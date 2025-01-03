@@ -6,13 +6,17 @@ import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
+import android.os.Build
 import android.os.Bundle
+import android.text.Spanned
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.Window
 import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.OptIn
 import androidx.core.animation.addListener
 import androidx.core.content.ContextCompat
 import androidx.core.view.isGone
@@ -21,6 +25,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
 import androidx.media3.common.Format.NO_VALUE
 import androidx.media3.common.MimeTypes
+import androidx.media3.common.util.UnstableApi
+import androidx.navigation.findNavController
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
@@ -33,6 +39,7 @@ import com.lagradost.cloudstream3.databinding.DialogOnlineSubtitlesBinding
 import com.lagradost.cloudstream3.databinding.FragmentPlayerBinding
 import com.lagradost.cloudstream3.databinding.PlayerSelectSourceAndSubsBinding
 import com.lagradost.cloudstream3.databinding.PlayerSelectTracksBinding
+import com.lagradost.cloudstream3.databinding.SubtitleSettingsDialogBinding
 import com.lagradost.cloudstream3.mvvm.*
 import com.lagradost.cloudstream3.subtitles.AbstractSubApi
 import com.lagradost.cloudstream3.subtitles.AbstractSubtitleEntities
@@ -48,8 +55,10 @@ import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.ui.subtitles.SUBTITLE_AUTO_SELECT_KEY
+import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment.Companion.getAutoSelectLanguageISO639_1
 import com.lagradost.cloudstream3.utils.*
+import com.lagradost.cloudstream3.utils.AppContextUtils.html
 import com.lagradost.cloudstream3.utils.AppContextUtils.sortSubs
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.runOnMainThread
@@ -63,6 +72,7 @@ import com.lagradost.cloudstream3.utils.UIHelper.popCurrentPage
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import com.lagradost.safefile.SafeFile
 import kotlinx.coroutines.Job
+import java.io.Serializable
 import java.util.*
 import kotlin.math.abs
 
@@ -192,11 +202,58 @@ class GeneratorPlayer : FullScreenPlayer() {
         }
     }
 
+    override fun onDownload(event: DownloadEvent) {
+        super.onDownload(event)
+        showDownloadProgress(event)
+    }
+
+    private fun showDownloadProgress(event: DownloadEvent) {
+        activity?.runOnUiThread {
+            playerBinding?.downloadedProgress?.apply {
+                val indeterminate = event.totalBytes <= 0 || event.downloadedBytes <= 0
+                isIndeterminate = indeterminate
+                if (!indeterminate) {
+                    max = (event.totalBytes / 1000).toInt()
+                    progress = (event.downloadedBytes / 1000).toInt()
+                }
+            }
+            playerBinding?.downloadedProgressText.setText(
+                txt(
+                    R.string.download_size_format,
+                    android.text.format.Formatter.formatShortFileSize(
+                        context,
+                        event.downloadedBytes
+                    ),
+                    android.text.format.Formatter.formatShortFileSize(context, event.totalBytes)
+                )
+            )
+            val downloadSpeed =
+                android.text.format.Formatter.formatShortFileSize(context, event.downloadSpeed)
+            playerBinding?.downloadedProgressSpeedText?.text =
+                    // todo string fmt
+                event.connections?.let { connections ->
+                    "%s/s - %d Connections".format(downloadSpeed, connections)
+                } ?: downloadSpeed
+
+            // don't display when done
+            playerBinding?.downloadedProgressSpeedText?.isGone =
+                event.downloadedBytes != 0L && event.downloadedBytes - 1024 >= event.totalBytes
+        }
+    }
+
     private fun loadLink(link: Pair<ExtractorLink?, ExtractorUri?>?, sameEpisode: Boolean) {
         if (link == null) return
 
         // manage UI
         binding?.playerLoadingOverlay?.isVisible = false
+        val isTorrent =
+            link.first?.type == ExtractorLinkType.MAGNET || link.first?.type == ExtractorLinkType.TORRENT
+
+        playerBinding?.downloadHeader?.isVisible = false
+        playerBinding?.downloadHeaderToggle?.isVisible = isTorrent
+
+        showDownloadProgress(DownloadEvent(0, 0, 0, null))
+
         uiReset()
         currentSelectedLink = link
         currentMeta = viewModel.getMeta()
@@ -234,7 +291,7 @@ class GeneratorPlayer : FullScreenPlayer() {
 
     private fun closestQuality(target: Int?): Qualities {
         if (target == null) return Qualities.Unknown
-        return Qualities.values().minBy { abs(it.value - target) }
+        return Qualities.entries.minBy { abs(it.value - target) }
     }
 
     private fun getLinkPriority(
@@ -367,8 +424,6 @@ class GeneratorPlayer : FullScreenPlayer() {
 
         binding.subtitleAdapter.choiceMode = AbsListView.CHOICE_MODE_SINGLE
         binding.subtitleAdapter.adapter = arrayAdapter
-        val adapter =
-            binding.subtitleAdapter.adapter as? ArrayAdapter<AbstractSubtitleEntities.SubtitleEntity>
 
         binding.subtitleAdapter.setOnItemClickListener { _, _, position, _ ->
             currentSubtitle = currentSubtitles.getOrNull(position) ?: return@setOnItemClickListener
@@ -379,8 +434,8 @@ class GeneratorPlayer : FullScreenPlayer() {
 
         fun setSubtitlesList(list: List<AbstractSubtitleEntities.SubtitleEntity>) {
             currentSubtitles = list
-            adapter?.clear()
-            adapter?.addAll(currentSubtitles)
+            arrayAdapter.clear()
+            arrayAdapter.addAll(currentSubtitles)
         }
 
         val currentTempMeta = getMetaData()
@@ -523,6 +578,7 @@ class GeneratorPlayer : FullScreenPlayer() {
         //dialog.subtitles_search_year?.setText(currentTempMeta.year)
     }
 
+    @OptIn(UnstableApi::class)
     private fun openSubPicker() {
         try {
             subsPathPicker.launch(
@@ -636,6 +692,12 @@ class GeneratorPlayer : FullScreenPlayer() {
 
                 var shouldDismiss = true
 
+                binding.subtitleSettingsBtt.setOnClickListener {
+                    normalSafeApiCall {
+                        SubtitlesFragment().show(this.parentFragmentManager, "SubtitleSettings")
+                    }
+                }
+
                 fun dismiss() {
                     if (isPlaying) {
                         player.handleEvent(CSPlayerEvent.Play)
@@ -706,9 +768,9 @@ class GeneratorPlayer : FullScreenPlayer() {
                 val subtitleIndexStart = currentSubtitles.indexOf(currentSelectedSubtitles) + 1
                 var subtitleIndex = subtitleIndexStart
 
-                val subsArrayAdapter = ArrayAdapter<String>(ctx, R.layout.sort_bottom_single_choice)
-                subsArrayAdapter.add(ctx.getString(R.string.no_subtitles))
-                subsArrayAdapter.addAll(currentSubtitles.map { it.name })
+                val subsArrayAdapter = ArrayAdapter<Spanned>(ctx, R.layout.sort_bottom_single_choice)
+                subsArrayAdapter.add(ctx.getString(R.string.no_subtitles).html())
+                subsArrayAdapter.addAll(currentSubtitles.map { it.name.html() })
 
                 subtitleList.adapter = subsArrayAdapter
                 subtitleList.choiceMode = AbsListView.CHOICE_MODE_SINGLE
@@ -773,7 +835,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                     text = prefNames[if (index == -1) 0 else index]
                 }
 
-                binding.subtitlesClickSettings.setOnClickListener {
+                binding.subtitlesEncodingFormat.setOnClickListener {
                     val settingsManager = PreferenceManager.getDefaultSharedPreferences(ctx)
 
                     val prefNames = ctx.resources.getStringArray(R.array.subtitles_encoding_list)
@@ -795,7 +857,6 @@ class GeneratorPlayer : FullScreenPlayer() {
                         settingsManager.edit().putString(
                             ctx.getString(R.string.subtitles_encoding_key), prefValues[it]
                         ).apply()
-
                         updateForcedEncoding(ctx)
                         dismiss()
                         player.seekTime(-1) // to update subtitles, a dirty trick
@@ -1105,7 +1166,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                     !isOpVisible && viewModel.hasNextEpisode() == true
 
             else ->
-                playerBinding?.playerGoForward?.isVisible = viewModel.hasNextEpisode() == true
+                playerBinding?.playerGoForwardRoot?.isVisible = viewModel.hasNextEpisode() == true
         }
 
         if (percentage >= PRELOAD_NEXT_EPISODE_PERCENTAGE) {
@@ -1290,7 +1351,7 @@ class GeneratorPlayer : FullScreenPlayer() {
     private fun unwrapBundle(savedInstanceState: Bundle?) {
         Log.i(TAG, "unwrapBundle = $savedInstanceState")
         savedInstanceState?.let { bundle ->
-            sync.addSyncs(bundle.getSerializable("syncData") as? HashMap<String, String>?)
+            sync.addSyncs(bundle.getSafeSerializable<HashMap<String, String>>("syncData"))
         }
     }
 
@@ -1434,6 +1495,16 @@ class GeneratorPlayer : FullScreenPlayer() {
             activity?.popCurrentPage()
         }
 
+        playerBinding?.downloadHeader?.setOnClickListener {
+            it?.isVisible = false
+        }
+
+        playerBinding?.downloadHeaderToggle?.setOnClickListener {
+            playerBinding?.downloadHeader?.let {
+                it.isVisible = !it.isVisible
+            }
+        }
+
         observe(viewModel.currentStamps) { stamps ->
             player.addTimeStamps(stamps)
         }
@@ -1461,7 +1532,7 @@ class GeneratorPlayer : FullScreenPlayer() {
 
         observe(viewModel.currentLinks) {
             currentLinks = it
-            val turnVisible = it.isNotEmpty()
+            val turnVisible = it.isNotEmpty() && lastUsedGenerator?.canSkipLoading == true
             val wasGone = binding?.overlayLoadingSkipButton?.isGone == true
             binding?.overlayLoadingSkipButton?.isVisible = turnVisible
 
@@ -1507,3 +1578,10 @@ class GeneratorPlayer : FullScreenPlayer() {
         }
     }
 }
+
+@Suppress("DEPRECATION")
+inline fun <reified T : Serializable> Bundle.getSafeSerializable(key: String): T? =
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) getSerializable(key) as? T else getSerializable(
+        key,
+        T::class.java
+    )

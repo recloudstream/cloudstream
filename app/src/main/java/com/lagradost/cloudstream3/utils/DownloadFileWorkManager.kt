@@ -2,12 +2,13 @@ package com.lagradost.cloudstream3.utils
 
 import android.app.Notification
 import android.content.Context
+import android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC
+import android.os.Build.VERSION.SDK_INT
 import androidx.work.CoroutineWorker
 import androidx.work.ForegroundInfo
 import androidx.work.WorkerParameters
 import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
 import com.lagradost.cloudstream3.mvvm.logError
-import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.main
 import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.VideoDownloadManager.WORK_KEY_INFO
@@ -94,7 +95,10 @@ class DownloadFileWorkManager(val context: Context, private val workerParams: Wo
 
     private fun handleNotification(id: Int, notification: Notification) {
         main {
-            setForegroundAsync(ForegroundInfo(id, notification))
+            if (SDK_INT >= 29)
+            setForegroundAsync(ForegroundInfo(id, notification, FOREGROUND_SERVICE_TYPE_DATA_SYNC))
+            else setForegroundAsync(ForegroundInfo(id, notification))
+
         }
     }
 }

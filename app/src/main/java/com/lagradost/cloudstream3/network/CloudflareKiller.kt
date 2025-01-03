@@ -1,6 +1,5 @@
 package com.lagradost.cloudstream3.network
 
-import android.util.Base64
 import android.util.Log
 import android.webkit.CookieManager
 import androidx.annotation.AnyThread
@@ -10,7 +9,10 @@ import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.nicehttp.Requests.Companion.await
 import com.lagradost.nicehttp.cookies
 import kotlinx.coroutines.runBlocking
-import okhttp3.*
+import okhttp3.Headers
+import okhttp3.Interceptor
+import okhttp3.Request
+import okhttp3.Response
 import java.net.URI
 
 

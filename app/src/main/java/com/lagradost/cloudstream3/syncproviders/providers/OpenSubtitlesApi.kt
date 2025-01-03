@@ -15,7 +15,6 @@ import com.lagradost.cloudstream3.subtitles.AbstractSubtitleEntities
 import com.lagradost.cloudstream3.syncproviders.AuthAPI
 import com.lagradost.cloudstream3.syncproviders.InAppAuthAPI
 import com.lagradost.cloudstream3.syncproviders.InAppAuthAPIManager
-import com.lagradost.cloudstream3.utils.AppContextUtils
 import com.lagradost.cloudstream3.utils.AppUtils
 import okhttp3.Interceptor
 import okhttp3.Response
@@ -30,10 +29,10 @@ class OpenSubtitlesApi(index: Int) : InAppAuthAPIManager(index), AbstractSubApi 
 
     companion object {
         const val OPEN_SUBTITLES_USER_KEY: String = "open_subtitles_user" // user data like profile
-        const val apiKey = "uyBLgFD17MgrYmA0gSXoKllMJBelOYj2"
-        const val host = "https://api.opensubtitles.com/api/v1"
+        const val API_KEY = "uyBLgFD17MgrYmA0gSXoKllMJBelOYj2"
+        const val HOST = "https://api.opensubtitles.com/api/v1"
         const val TAG = "OPENSUBS"
-        const val coolDownDuration: Long = 1000L * 30L // CoolDown if 429 error code in ms
+        const val COOLDOWN_DURATION: Long = 1000L * 30L // CoolDown if 429 error code in ms
         var currentCoolDown: Long = 0L
         var currentSession: SubtitleOAuthEntity? = null
     }
@@ -43,13 +42,13 @@ class OpenSubtitlesApi(index: Int) : InAppAuthAPIManager(index), AbstractSubApi 
     /** Automatically adds required api headers */
     private class OpenSubtitleInterceptor : Interceptor {
         /** Required user agent! */
-        private val userAgent = "Cloudstream3 v0.1"
+        private val userAgent = "Cloudstream3 v0.2"
         override fun intercept(chain: Interceptor.Chain): Response {
             return chain.proceed(
                 chain.request().newBuilder()
                     .removeHeader("user-agent")
                     .addHeader("user-agent", userAgent)
-                    .addHeader("Api-Key", apiKey)
+                    .addHeader("Api-Key", API_KEY)
                     .build()
             )
         }
@@ -66,7 +65,7 @@ class OpenSubtitlesApi(index: Int) : InAppAuthAPIManager(index), AbstractSubApi 
     }
 
     private fun throwGotTooManyRequests() {
-        currentCoolDown = unixTimeMs + coolDownDuration
+        currentCoolDown = unixTimeMs + COOLDOWN_DURATION
         throw ErrorLoadingException("Too many requests")
     }
 
@@ -115,11 +114,11 @@ class OpenSubtitlesApi(index: Int) : InAppAuthAPIManager(index), AbstractSubApi 
     private suspend fun initLogin(username: String, password: String): Boolean {
         //Log.i(TAG, "DATA = [$username] [$password]")
         val response = app.post(
-            url = "$host/login",
+            url = "$HOST/login",
             headers = mapOf(
                 "Content-Type" to "application/json",
             ),
-            data = mapOf(
+            json = mapOf(
                 "username" to username,
                 "password" to password
             ),
@@ -134,7 +133,7 @@ class OpenSubtitlesApi(index: Int) : InAppAuthAPIManager(index), AbstractSubApi 
                     SubtitleOAuthEntity(
                         user = username,
                         pass = password,
-                        access_token = token.token ?: run {
+                        accessToken = token.token ?: run {
                             return false
                         })
                 )
@@ -197,8 +196,8 @@ class OpenSubtitlesApi(index: Int) : InAppAuthAPIManager(index), AbstractSubApi 
 
         val searchQueryUrl = when (imdbId > 0) {
             //Use imdb_id to search if its valid
-            true -> "$host/subtitles?imdb_id=$imdbId&languages=${fixedLang}$yearQuery$epQuery$seasonQuery"
-            false -> "$host/subtitles?query=${queryText}&languages=${fixedLang}$yearQuery$epQuery$seasonQuery"
+            true -> "$HOST/subtitles?imdb_id=$imdbId&languages=${fixedLang}$yearQuery$epQuery$seasonQuery"
+            false -> "$HOST/subtitles?query=${queryText}&languages=${fixedLang}$yearQuery$epQuery$seasonQuery"
         }
 
         val req = app.get(
@@ -233,7 +232,7 @@ class OpenSubtitlesApi(index: Int) : InAppAuthAPIManager(index), AbstractSubApi 
                 val resSeasonNum = featureDetails?.seasonNumber ?: query.seasonNumber
                 val year = featureDetails?.year ?: query.year
                 val type = if ((resSeasonNum ?: 0) > 0) TvType.TvSeries else TvType.Movie
-                val isHearingImpaired = attr.hearing_impaired ?: false
+                val isHearingImpaired = attr.hearingImpaired ?: false
                 //Log.i(TAG, "Result id/name => ${item.id} / $name")
                 item.attributes?.files?.forEach { file ->
                     val resultData = file.fileId?.toString() ?: ""
@@ -266,11 +265,11 @@ class OpenSubtitlesApi(index: Int) : InAppAuthAPIManager(index), AbstractSubApi 
         throwIfCantDoRequest()
 
         val req = app.post(
-            url = "$host/download",
+            url = "$HOST/download",
             headers = mapOf(
                 Pair(
                     "Authorization",
-                    "Bearer ${currentSession?.access_token ?: throw ErrorLoadingException("No access token active in current session")}"
+                    "Bearer ${currentSession?.accessToken ?: throw ErrorLoadingException("No access token active in current session")}"
                 ),
                 Pair("Content-Type", "application/json"),
                 Pair("Accept", "*/*")
@@ -299,7 +298,7 @@ class OpenSubtitlesApi(index: Int) : InAppAuthAPIManager(index), AbstractSubApi 
     data class SubtitleOAuthEntity(
         var user: String,
         var pass: String,
-        var access_token: String,
+        var accessToken: String,
     )
 
     data class OAuthToken(
@@ -324,7 +323,7 @@ class OpenSubtitlesApi(index: Int) : InAppAuthAPIManager(index), AbstractSubApi 
         @JsonProperty("url") var url: String? = null,
         @JsonProperty("files") var files: List<ResultFiles>? = listOf(),
         @JsonProperty("feature_details") var featDetails: ResultFeatureDetails? = ResultFeatureDetails(),
-        @JsonProperty("hearing_impaired") var hearing_impaired: Boolean? = null,
+        @JsonProperty("hearing_impaired") var hearingImpaired: Boolean? = null,
     )
 
     data class ResultFiles(

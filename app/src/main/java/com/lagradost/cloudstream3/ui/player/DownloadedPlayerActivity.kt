@@ -4,17 +4,13 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.KeyEvent
-import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import com.lagradost.cloudstream3.CommonActivity
 import com.lagradost.cloudstream3.R
-import com.lagradost.cloudstream3.utils.UIHelper.navigate
-import com.lagradost.safefile.SafeFile
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.ui.player.OfflinePlaybackHelper.playLink
 import com.lagradost.cloudstream3.ui.player.OfflinePlaybackHelper.playUri
-
-const val DTAG = "PlayerActivity"
+import com.lagradost.cloudstream3.utils.BackPressedCallbackHelper.attachBackPressedCallback
 
 class DownloadedPlayerActivity : AppCompatActivity() {
     private val dTAG = "DownloadedPlayerAct"
@@ -46,7 +42,7 @@ class DownloadedPlayerActivity : AppCompatActivity() {
 
         val data = intent.data
 
-        if (intent?.action == Intent.ACTION_SEND) {
+        if (intent?.action == Intent.ACTION_SEND || intent?.action == Intent.ACTION_OPEN_DOCUMENT || intent?.action == Intent.ACTION_VIEW) {
             val extraText = normalSafeApiCall { // I dont trust android
                 intent.getStringExtra(Intent.EXTRA_TEXT)
             }
@@ -74,14 +70,7 @@ class DownloadedPlayerActivity : AppCompatActivity() {
             return
         }
 
-        onBackPressedDispatcher.addCallback(
-            this,
-            object : OnBackPressedCallback(true) {
-                override fun handleOnBackPressed() {
-                    finish()
-                }
-            }
-        )
+        attachBackPressedCallback { finish() }
     }
 
     override fun onResume() {

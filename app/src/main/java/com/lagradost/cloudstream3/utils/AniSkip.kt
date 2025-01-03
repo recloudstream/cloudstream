@@ -7,7 +7,6 @@ import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.LoadResponse.Companion.getMalId
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.ui.result.ResultEpisode
-import com.lagradost.cloudstream3.ui.result.txt
 import java.lang.Long.min
 
 object EpisodeSkip {
@@ -83,7 +82,7 @@ object EpisodeSkip {
                         startMs = start,
                         endMs = end
                     )
-                }?.let { list ->
+                }.let { list ->
                     out.addAll(list)
                 }
             }

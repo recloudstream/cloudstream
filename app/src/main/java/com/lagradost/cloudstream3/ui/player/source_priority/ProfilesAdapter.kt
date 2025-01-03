@@ -9,12 +9,13 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
+import androidx.palette.graphics.Palette
 import androidx.recyclerview.widget.RecyclerView
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.PlayerQualityProfileItemBinding
-import com.lagradost.cloudstream3.ui.result.UiImage
 import com.lagradost.cloudstream3.utils.AppContextUtils
-import com.lagradost.cloudstream3.utils.UIHelper.setImage
+import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
+import com.lagradost.cloudstream3.utils.drawableToBitmap
 
 class ProfilesAdapter(
     override val items: MutableList<QualityDataHelper.QualityProfile>,
@@ -29,8 +30,6 @@ class ProfilesAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return ProfilesViewHolder(
             PlayerQualityProfileItemBinding.inflate(LayoutInflater.from(parent.context),parent,false)
-            //LayoutInflater.from(parent.context)
-            //    .inflate(R.layout.player_quality_profile_item, parent, false)
         )
     }
 
@@ -82,16 +81,29 @@ class ProfilesAdapter(
             }
 
             outline.isVisible = currentItem?.second?.id == item.id
+            val drawableResId = art[index % art.size]
+            profileBg.loadImage(drawableResId)
 
-            profileBg.setImage(UiImage.Drawable(art[index % art.size]), null, false) { palette ->
-                val color = palette.getDarkVibrantColor(
-                    ContextCompat.getColor(
-                        itemView.context,
-                        R.color.dubColorBg
-                    )
-                )
-                wifiText.backgroundTintList = ColorStateList.valueOf(color)
-                dataText.backgroundTintList = ColorStateList.valueOf(color)
+            val drawable = ContextCompat.getDrawable(itemView.context, drawableResId)
+            if (drawable != null) {
+                // Convert Drawable to Bitmap
+                val bitmap = drawableToBitmap(drawable)
+                if (bitmap != null) {
+                    // Use Palette to extract colors from the bitmap
+                    Palette.from(bitmap).generate { palette ->
+                        val color = palette?.getDarkVibrantColor(
+                            ContextCompat.getColor(
+                                itemView.context,
+                                R.color.dubColorBg
+                            )
+                        )
+
+                        if (color != null) {
+                            wifiText.backgroundTintList = ColorStateList.valueOf(color)
+                            dataText.backgroundTintList = ColorStateList.valueOf(color)
+                        }
+                    }
+                }
             }
 
             val textStyle =

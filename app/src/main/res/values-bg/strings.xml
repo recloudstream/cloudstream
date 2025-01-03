@@ -190,7 +190,7 @@
     <string name="go_back_30">-30</string>
     <string name="go_forward_30">30</string>
     <string formatted="true" name="delete_message">Това ще изтрие за постоянно %s
-\nСигурни ли сте\?</string>
+\nСигурни ли сте?</string>
     <string formatted="true" name="resume_time_left">%dm
 \nостава</string>
     <string name="status_ongoing">Продължава</string>
@@ -238,8 +238,6 @@
     <string name="episode_action_chromecast_mirror">Chromecast огледало</string>
     <string name="episode_action_play_in_app">Пусни в приложението</string>
     <string name="episode_action_play_in_format">Пусни в %s</string>
-    <string name="episode_action_play_in_browser">Пусни в браузър</string>
-    <string name="episode_action_copy_link">Копирай връзка</string>
     <string name="episode_action_auto_download">Автоматично изтегляне</string>
     <string name="episode_action_download_mirror">Изтегляне на огледало</string>
     <string name="episode_action_reload_links">Презареждане на връзки</string>
@@ -318,7 +316,7 @@
     <string name="upload_sync">Синхронизиране</string>
     <string name="sync_score">Оценен</string>
     <string name="sync_score_format" formatted="true">%d / 10</string>
-    <string name="sync_total_episodes_none">/\?\?</string>
+    <string name="sync_total_episodes_none">/??</string>
     <string name="sync_total_episodes_some" formatted="true">/%d</string>
     <string formatted="true" name="authenticated_user">%s удостоверен</string>
     <string formatted="true" name="authenticated_user_fail">Не можах да вляза в %s</string>
@@ -443,10 +441,6 @@
     <string name="hls_playlist">HLS плейлист</string>
     <string name="player_pref">Предпочитан видео плеър</string>
     <string name="player_settings_play_in_app">Вътрешен плеър</string>
-    <string name="player_settings_play_in_vlc">VLC</string>
-    <string name="player_settings_play_in_mpv">MPV</string>
-    <string name="player_settings_play_in_web">Уеб видео предаване</string>
-    <string name="player_settings_play_in_browser">Уеб браузър</string>
     <string name="app_not_found_error">Приложението не е намерено</string>
     <string name="automatic_plugin_download">Автоматично изтегли добавки</string>
     <string name="all_languages_preference">Всички езици</string>
@@ -457,7 +451,7 @@
     <string name="history">История</string>
     <string name="clipboard_too_large">Твърде много текст. Не може да се запази в клипборда.</string>
     <string name="action_mark_as_watched">Маркирай като гледано</string>
-    <string name="confirm_exit_dialog">Сигурни ли сте, че искате да излезете\?</string>
+    <string name="confirm_exit_dialog">Сигурни ли сте, че искате да излезете?</string>
     <string name="yes">Да</string>
     <string name="no">Не</string>
     <string name="update_notification_installing">Инсталиране на актуализация на приложението…</string>

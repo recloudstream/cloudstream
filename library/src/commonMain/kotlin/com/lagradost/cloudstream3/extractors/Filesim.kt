@@ -65,7 +65,8 @@ open class Filesim : ExtractorApi() {
         subtitleCallback: (SubtitleFile) -> Unit,
         callback: (ExtractorLink) -> Unit
     ) {
-        val response = app.get(url, referer = referer)
+        val embedUrl = url.replace("/download/", "/e/")
+        val response = app.get(embedUrl, referer = referer)
         val script = if (!getPacked(response.text).isNullOrEmpty()) {
             getAndUnpack(response.text)
         } else {

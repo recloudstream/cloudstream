@@ -20,21 +20,14 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-            implementation("com.github.Blatzar:NiceHttp:0.4.11") // HTTP Lib
-            implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.1") /* JSON Parser
-            ^ Don't Bump Jackson above 2.13.1 , Crashes on Android TV's and FireSticks that have Min API
-            Level 25 or Less. */
-            implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")
-            implementation("me.xdrop:fuzzywuzzy:1.4.0") // Match extractors
-            implementation("org.mozilla:rhino:1.7.15") // run JavaScript
-            implementation("com.github.teamnewpipe:NewPipeExtractor:fafd471")
+            implementation(libs.nicehttp) // HTTP Lib
+            implementation(libs.jackson.module.kotlin) //JSON Parser
+            implementation(libs.kotlinx.coroutines.core)
+            implementation(libs.fuzzywuzzy) // Match extractors
+            implementation(libs.rhino) // run JavaScript
+            implementation(libs.newpipeextractor)
         }
     }
-}
-
-repositories {
-    mavenLocal()
-    maven("https://jitpack.io")
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
@@ -57,12 +50,12 @@ buildkonfig {
 }
 
 android {
-    compileSdk = 34
+    compileSdk = 35
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
 
     defaultConfig {
         minSdk = 21
-        targetSdk = 33
+        targetSdk = 35
     }
 
     // If this is the same com.lagradost.cloudstream3.R stops working

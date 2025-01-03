@@ -46,6 +46,7 @@ import com.lagradost.cloudstream3.utils.AppContextUtils.html
 import com.lagradost.cloudstream3.utils.AppContextUtils.isRtl
 import com.lagradost.cloudstream3.utils.AppContextUtils.loadCache
 import com.lagradost.cloudstream3.utils.AppContextUtils.updateHasTrailers
+import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialog
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showBottomDialogInstant
 import com.lagradost.cloudstream3.utils.UIHelper
@@ -53,10 +54,12 @@ import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
-import com.lagradost.cloudstream3.utils.UIHelper.setImage
+import com.lagradost.cloudstream3.utils.getImageFromDrawable
+import com.lagradost.cloudstream3.utils.setText
+import com.lagradost.cloudstream3.utils.setTextHtml
 
 class ResultFragmentTv : Fragment() {
-    protected lateinit var viewModel: ResultViewModel2
+    private lateinit var viewModel: ResultViewModel2
     private var binding: FragmentResultTvBinding? = null
 
     override fun onDestroyView() {
@@ -150,7 +153,9 @@ class ResultFragmentTv : Fragment() {
             rec?.map { it.apiName }?.distinct()?.let { apiNames ->
                 // very dirty selection
                 resultRecommendationsFilterSelection.isVisible = apiNames.size > 1
-                resultRecommendationsFilterSelection.update(apiNames.map { txt(it) to it })
+                resultRecommendationsFilterSelection.update(apiNames.map { com.lagradost.cloudstream3.utils.txt(
+                    it
+                ) to it })
                 resultRecommendationsFilterSelection.select(apiNames.indexOf(matchAgainst))
             } ?: run {
                 resultRecommendationsFilterSelection.isVisible = false
@@ -418,10 +423,6 @@ class ResultFragmentTv : Fragment() {
 
             resultCastItems.layoutManager = object : LinearListLayout(view.context) {
 
-                override fun onInterceptFocusSearch(focused: View, direction: Int): View? {
-                    return super.onInterceptFocusSearch(focused, direction)
-                }
-
                 override fun onRequestChildFocus(
                     parent: RecyclerView,
                     state: RecyclerView.State,
@@ -583,8 +584,12 @@ class ResultFragmentTv : Fragment() {
                         }
 
                         val name = (viewModel.page.value as? Resource.Success)?.value?.title
-                            ?: txt(R.string.no_data).asStringNull(context) ?: ""
-                        CommonActivity.showToast(txt(message, name), Toast.LENGTH_SHORT)
+                            ?: com.lagradost.cloudstream3.utils.txt(R.string.no_data).asStringNull(context) ?: ""
+                        CommonActivity.showToast(
+                            com.lagradost.cloudstream3.utils.txt(
+                                message,
+                                name
+                            ), Toast.LENGTH_SHORT)
                     }
                 }
             }
@@ -626,8 +631,12 @@ class ResultFragmentTv : Fragment() {
                         }
 
                         val name = (viewModel.page.value as? Resource.Success)?.value?.title
-                            ?: txt(R.string.no_data).asStringNull(context) ?: ""
-                        CommonActivity.showToast(txt(message, name), Toast.LENGTH_SHORT)
+                            ?: com.lagradost.cloudstream3.utils.txt(R.string.no_data).asStringNull(context) ?: ""
+                        CommonActivity.showToast(
+                            com.lagradost.cloudstream3.utils.txt(
+                                message,
+                                name
+                            ), Toast.LENGTH_SHORT)
                     }
                 }
 
@@ -649,7 +658,7 @@ class ResultFragmentTv : Fragment() {
 
             binding?.apply {
 
-                (data as? Resource.Success)?.value?.let { (text, ep) ->
+                (data as? Resource.Success)?.value?.let { (_, ep) ->
 
                     resultPlayMovieButton.setOnClickListener {
                         viewModel.handleAction(
@@ -817,45 +826,8 @@ class ResultFragmentTv : Fragment() {
                         }
                     }
 
-                    /*
-                     * Okay so what is this fuckery?
-                     * Basically Android TV will crash if you request a new focus while
-                     * the adapter gets updated.
-                     *
-                     * This means that if you load thumbnails and request a next focus at the same time
-                     * the app will crash without any way to catch it!
-                     *
-                     * How to bypass this?
-                     * This code basically steals the focus for 500ms and puts it in an inescapable view
-                     * then lets out the focus by requesting focus to result_episodes
-                     */
-
-                    val hasEpisodes =
-                        !(resultEpisodes.adapter as? EpisodeAdapter?)?.cardList.isNullOrEmpty()
-                    /*val focus = activity?.currentFocus
-
-                    if (hasEpisodes) {
-                        // Make it impossible to focus anywhere else!
-                        temporaryNoFocus.isFocusable = true
-                        temporaryNoFocus.requestFocus()
-                    }*/
 
                     (resultEpisodes.adapter as? EpisodeAdapter)?.updateList(episodes.value)
-
-                    /* if (hasEpisodes) main {
-
-                         delay(500)
-                         // This might make some people sad as it changes the focus when leaving an episode :(
-                         if(focus?.requestFocus() == true) {
-                             temporaryNoFocus.isFocusable = false
-                             return@main
-                         }
-                         temporaryNoFocus.isFocusable = false
-                         temporaryNoFocus.requestFocus()
-                     }
-
-                     if (hasNoFocus())
-                         binding?.resultEpisodes?.requestFocus()*/
                 }
             }
         }
@@ -880,7 +852,7 @@ class ResultFragmentTv : Fragment() {
                         resultCastText.setText(d.actorsText)
                         resultNextAiring.setText(d.nextAiringEpisode)
                         resultNextAiringTime.setText(d.nextAiringDate)
-                        resultPoster.setImage(d.posterImage)
+                        resultPoster.loadImage(d.posterImage)
 
                         var isExpanded = false
                         resultDescription.apply {
@@ -915,11 +887,9 @@ class ResultFragmentTv : Fragment() {
                         //Change poster crop area to 20% from Top
                         backgroundPoster.cropYCenterOffsetPct = 0.20F
                         
-                        backgroundPoster.setImage(
-                            d.posterBackgroundImage ?: UiImage.Drawable(error),
-                            radius = 0,
-                            errorImageDrawable = error
-                        )
+                        backgroundPoster.loadImage(d.posterBackgroundImage) {
+                            error { getImageFromDrawable(context ?: return@error null, error) }
+                        }
                         comingSoon = d.comingSoon
                         resultTvComingSoon.isVisible = d.comingSoon
 

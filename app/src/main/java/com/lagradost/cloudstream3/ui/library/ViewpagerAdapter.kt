@@ -15,6 +15,7 @@ import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.ui.BaseAdapter
 import com.lagradost.cloudstream3.ui.BaseDiffCallback
 import com.lagradost.cloudstream3.ui.ViewHolderState
+import com.lagradost.cloudstream3.ui.home.getSafeParcelable
 import com.lagradost.cloudstream3.ui.search.SearchClickCallback
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
@@ -32,7 +33,7 @@ class ViewpagerAdapterViewHolderState(val binding: LibraryViewpagerPageBinding) 
         }
 
     override fun restore(state: Bundle) {
-        state.getParcelable<Parcelable>("pageRecyclerview")?.let { recycle ->
+        state.getSafeParcelable<Parcelable>("pageRecyclerview")?.let { recycle ->
             binding.pageRecyclerview.layoutManager?.onRestoreInstanceState(recycle)
         }
     }

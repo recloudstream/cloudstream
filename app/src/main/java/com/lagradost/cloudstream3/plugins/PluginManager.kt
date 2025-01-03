@@ -1,13 +1,16 @@
 package com.lagradost.cloudstream3.plugins
 
+import android.Manifest
 import android.app.*
 import android.content.Context
+import android.content.pm.PackageManager
 import android.content.res.AssetManager
 import android.content.res.Resources
 import android.os.Build
 import android.os.Environment
 import android.util.Log
 import android.widget.Toast
+import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.fragment.app.FragmentActivity
@@ -21,6 +24,8 @@ import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.MainAPI.Companion.settingsForProvider
 import com.lagradost.cloudstream3.MainActivity.Companion.afterPluginsLoadedEvent
+import com.lagradost.cloudstream3.actions.VideoClickAction
+import com.lagradost.cloudstream3.actions.VideoClickActionHolder
 import com.lagradost.cloudstream3.mvvm.debugPrint
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
@@ -28,8 +33,8 @@ import com.lagradost.cloudstream3.plugins.RepositoryManager.ONLINE_PLUGINS_FOLDE
 import com.lagradost.cloudstream3.plugins.RepositoryManager.PREBUILT_REPOSITORIES
 import com.lagradost.cloudstream3.plugins.RepositoryManager.downloadPluginToFile
 import com.lagradost.cloudstream3.plugins.RepositoryManager.getRepoPlugins
-import com.lagradost.cloudstream3.ui.result.UiText
-import com.lagradost.cloudstream3.ui.result.txt
+import com.lagradost.cloudstream3.utils.UiText
+import com.lagradost.cloudstream3.utils.txt
 import com.lagradost.cloudstream3.ui.settings.extensions.REPOSITORIES_KEY
 import com.lagradost.cloudstream3.ui.settings.extensions.RepositoryData
 import com.lagradost.cloudstream3.utils.AppContextUtils.getApiProviderLangSettings
@@ -163,7 +168,7 @@ object PluginManager {
 
     private val LOCAL_PLUGINS_PATH = CLOUD_STREAM_FOLDER + "plugins"
 
-    public var currentlyLoading: String? = null
+    var currentlyLoading: String? = null
 
     // Maps filepath to plugin
     val plugins: MutableMap<String, Plugin> =
@@ -291,6 +296,9 @@ object PluginManager {
         main {
             val uitext = txt(R.string.plugins_updated, updatedPlugins.size)
             createNotification(activity, uitext, updatedPlugins)
+            /*val navBadge = (activity as MainActivity).binding?.navRailView?.getOrCreateBadge(R.id.navigation_settings)
+            navBadge?.isVisible = true
+            navBadge?.number = 5*/
         }
 
         // ioSafe {
@@ -339,7 +347,7 @@ object PluginManager {
 
             //Omit non-NSFW if mode is set to NSFW only
             if (mode == AutoDownloadMode.NsfwOnly) {
-                if (tvtypes.contains(TvType.NSFW.name) == false) {
+                if (!tvtypes.contains(TvType.NSFW.name)) {
                     return@mapNotNull null
                 }
             }
@@ -504,10 +512,12 @@ object PluginManager {
             val version: Int = manifest.version ?: PLUGIN_VERSION_NOT_SET.also {
                 Log.d(TAG, "No manifest version for ${data.internalName}")
             }
+
+            @Suppress("UNCHECKED_CAST")
             val pluginClass: Class<*> =
                 loader.loadClass(manifest.pluginClassName) as Class<out Plugin?>
             val pluginInstance: Plugin =
-                pluginClass.newInstance() as Plugin
+                pluginClass.getDeclaredConstructor().newInstance() as Plugin
 
             // Sets with the proper version
             setPluginData(data.copy(version = version))
@@ -517,14 +527,16 @@ object PluginManager {
                 return true
             }
 
-            pluginInstance.__filename = file.absolutePath
+            pluginInstance.filename = file.absolutePath
             if (manifest.requiresResources) {
                 Log.d(TAG, "Loading resources for ${data.internalName}")
                 // based on https://stackoverflow.com/questions/7483568/dynamic-resource-loading-from-other-apk
-                val assets = AssetManager::class.java.newInstance()
+                val assets = AssetManager::class.java.getDeclaredConstructor().newInstance()
                 val addAssetPath =
                     AssetManager::class.java.getMethod("addAssetPath", String::class.java)
                 addAssetPath.invoke(assets, file.absolutePath)
+
+                @Suppress("DEPRECATION")
                 pluginInstance.resources = Resources(
                     assets,
                     context.resources.displayMetrics,
@@ -566,14 +578,19 @@ object PluginManager {
 
         // remove all registered apis
         synchronized(APIHolder.apis) {
-            APIHolder.apis.filter { api -> api.sourcePlugin == plugin.__filename }.forEach {
+            APIHolder.apis.filter { api -> api.sourcePlugin == plugin.filename }.forEach {
                 removePluginMapping(it)
             }
         }
         synchronized(APIHolder.allProviders) {
-            APIHolder.allProviders.removeIf { provider: MainAPI -> provider.sourcePlugin == plugin.__filename }
+            APIHolder.allProviders.removeIf { provider: MainAPI -> provider.sourcePlugin == plugin.filename }
         }
-        extractorApis.removeIf { provider: ExtractorApi -> provider.sourcePlugin == plugin.__filename }
+
+        extractorApis.removeIf { provider: ExtractorApi -> provider.sourcePlugin == plugin.filename }
+
+        synchronized(VideoClickActionHolder.allVideoClickActions) {
+            VideoClickActionHolder.allVideoClickActions.removeIf { action: VideoClickAction -> action.sourcePlugin == plugin.filename }
+        }
 
         classLoaders.values.removeIf { v -> v == plugin }
 
@@ -720,9 +737,14 @@ object PluginManager {
             }
 
             val notification = builder.build()
-            with(NotificationManagerCompat.from(context)) {
-                // notificationId is a unique int for each notification that you must define
-                notify((System.currentTimeMillis() / 1000).toInt(), notification)
+            // notificationId is a unique int for each notification that you must define
+            if (ActivityCompat.checkSelfPermission(
+                    context,
+                    Manifest.permission.POST_NOTIFICATIONS
+                ) == PackageManager.PERMISSION_GRANTED
+            ) {
+                NotificationManagerCompat.from(context)
+                    .notify((System.currentTimeMillis() / 1000).toInt(), notification)
             }
             return notification
         } catch (e: Exception) {

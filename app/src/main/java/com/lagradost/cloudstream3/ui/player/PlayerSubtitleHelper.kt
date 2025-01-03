@@ -4,14 +4,13 @@ import android.util.Log
 import android.util.TypedValue
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import androidx.annotation.OptIn
 import androidx.media3.common.MimeTypes
+import androidx.media3.common.util.UnstableApi
 import androidx.media3.ui.SubtitleView
 import com.lagradost.cloudstream3.SubtitleFile
-import com.lagradost.cloudstream3.ui.player.CustomDecoder.Companion.regexSubtitlesToRemoveBloat
-import com.lagradost.cloudstream3.ui.player.CustomDecoder.Companion.regexSubtitlesToRemoveCaptions
-import com.lagradost.cloudstream3.ui.player.CustomDecoder.Companion.uppercaseSubtitles
 import com.lagradost.cloudstream3.ui.subtitles.SaveCaptionStyle
-import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment.Companion.fromSaveToStyle
+import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment.Companion.setSubtitleViewStyle
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
 
 enum class SubtitleStatus {
@@ -45,8 +44,22 @@ data class SubtitleData(
         return if (origin == SubtitleOrigin.EMBEDDED_IN_VIDEO) url
         else "$url|$name"
     }
+
+    /**
+     * Gets the URL, but tries to fix it if it is malformed.
+     */
+    fun getFixedUrl(): String {
+        // Some extensions fail to include the protocol, this helps with that.
+        val fixedSubUrl = if (this.url.startsWith("//")) {
+            "https:${this.url}"
+        } else {
+            this.url
+        }
+        return fixedSubUrl
+    }
 }
 
+@OptIn(UnstableApi::class)
 class PlayerSubtitleHelper {
     private var activeSubtitles: Set<SubtitleData> = emptySet()
     private var allSubtitles: Set<SubtitleData> = emptySet()
@@ -99,20 +112,15 @@ class PlayerSubtitleHelper {
     }
 
     fun setSubStyle(style: SaveCaptionStyle) {
-        regexSubtitlesToRemoveBloat = style.removeBloat
-        uppercaseSubtitles = style.upperCase
-        regexSubtitlesToRemoveCaptions = style.removeCaptions
-        subtitleView?.context?.let { ctx ->
-            subStyle = style
-            Log.i(TAG, "SET STYLE = $style")
-            subtitleView?.setStyle(ctx.fromSaveToStyle(style))
-            subtitleView?.translationY = -style.elevation.toPx.toFloat()
-            val size = style.fixedTextSize
-            if (size != null) {
-                subtitleView?.setFixedTextSize(TypedValue.COMPLEX_UNIT_SP, size)
-            } else {
-                subtitleView?.setUserDefaultTextSize()
-            }
+        subStyle = style
+        Log.i(TAG, "SET STYLE = $style")
+        setSubtitleViewStyle(subtitleView, style)
+        subtitleView?.translationY = -style.elevation.toPx.toFloat()
+        val size = style.fixedTextSize
+        if (size != null) {
+            subtitleView?.setFixedTextSize(TypedValue.COMPLEX_UNIT_SP, size)
+        } else {
+            subtitleView?.setUserDefaultTextSize()
         }
     }
 

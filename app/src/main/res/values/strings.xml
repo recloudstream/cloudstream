@@ -17,7 +17,7 @@
     <string name="subtitle_settings_chromecast_key" translatable="false">subtitle_settings_chromecast_key</string>
     <string name="quality_pref_key" translatable="false">quality_pref_key</string>
     <string name="quality_pref_mobile_data_key" translatable="false">quality_pref_mobile_data_key</string>
-    <string name="player_pref_key" translatable="false">player_pref_key</string>
+    <string name="player_default_key" translatable="false">player_default_key</string>
     <string name="prefer_limit_title_key" translatable="false">prefer_limit_title_key</string>
     <string name="prefer_limit_title_rez_key" translatable="false">prefer_limit_title_rez_key</string>
     <string name="apk_installer_key" translatable="false">apk_installer_key</string>
@@ -46,6 +46,7 @@
     <string name="dns_key" translatable="false">dns_key</string>
     <string name="jsdelivr_proxy_key" translatable="false">jsdelivr_proxy_key</string>
     <string name="download_path_key" translatable="false">download_path_key</string>
+    <string name="download_path_key_visual" translatable="false">download_path_key_visual</string>
     <string name="app_name_download_path" translatable="false">Cloudstream</string>
     <string name="app_layout_key" translatable="false">app_layout_key</string>
     <string name="primary_color_key" translatable="false">primary_color_key</string>
@@ -135,6 +136,7 @@
     <string name="play_trailer_button">Play Trailer</string>
     <string name="play_livestream_button">Play Livestream</string>
     <string name="play_torrent_button">Stream Torrent</string>
+    <string name="torrent_info">This video is a Torrent, this means that your video activity can be tracked.\nMake sure you understand Torrenting before continuing.</string>
     <string name="pick_source">Sources</string>
     <string name="pick_subtitle">Subtitles</string>
     <string name="reload_error">Retry connection…</string>
@@ -150,7 +152,11 @@
     <string name="download_canceled">Download Canceled</string>
     <string name="download_done">Download Done</string>
     <string name="download_format" translatable="false">%s - %s</string>
+    <string name="downloads_delete_select">Select Items to Delete</string>
     <string name="downloads_empty">There are currently no downloads.</string>
+    <string name="offline_file">Available for watching offline</string>
+    <string name="select_all">Select All</string>
+    <string name="deselect_all">Deselect All</string>
     <string name="update_started">Update Started</string>
     <string name="stream">Network stream</string>
     <string name="open_local_video">Open local video</string>
@@ -300,8 +306,10 @@
     <string name="season_short">S</string>
     <string name="episode_short">E</string>
     <string name="no_episodes_found">No Episodes found</string>
-    <string name="delete_file">Delete File</string>
     <string name="delete">Delete</string>
+    <string name="delete_file">Delete File</string>
+    <string name="delete_files">Delete Files</string>
+    <string name="delete_format" formatted="true">Delete (%1$d | %2$s)</string>
     <string name="cancel">Cancel</string>
     <string name="pause">Pause</string>
     <string name="start">Start</string>
@@ -312,6 +320,10 @@
     <string name="go_back_30">-30</string>
     <string name="go_forward_30">+30</string>
     <string name="delete_message" formatted="true">This will permanently delete %s\nAre you sure?</string>
+    <string name="delete_message_multiple" formatted="true">Are you sure you want to permanently delete the following items?\n\n%s</string>
+    <string name="delete_message_series_episodes" formatted="true">Are you sure you want to permanently delete the following episodes in %1$s?\n\n%2$s</string>
+    <string name="delete_message_series_section" formatted="true">You will also permanently delete all episodes in the following series:\n\n%s</string>
+    <string name="delete_message_series_only" formatted="true">Are you sure you want to permanently delete all episodes in the following series?\n\n%s</string>
     <string name="resume_time_left" formatted="true">%dm\nremaining</string>
     <string name="resume_remaining" formatted="true">%s\nremaining</string>
     <string name="status_ongoing">Ongoing</string>
@@ -361,9 +373,13 @@
     <string name="music_singlar">Music</string>
     <string name="audio_book_singular">Audio Book</string>
     <string name="custom_media_singluar">Media</string>
+    <string name="audio_singluar">Audio</string>
+    <string name="podcast_singluar">Podcast</string>
     <string name="source_error">Source error</string>
     <string name="remote_error">Remote error</string>
     <string name="render_error">Renderer error</string>
+    <string name="encoding_error">Encoding error</string>
+    <string name="unsupported_error">Unsupported error</string>
     <string name="unexpected_error">Unexpected player error</string>
     <string name="storage_error">Download error, check storage permissions</string>
     <string name="episode_action_chromecast_episode">Chromecast episode</string>
@@ -371,8 +387,6 @@
     <string name="episode_action_cast_mirror">Cast mirror</string>
     <string name="episode_action_play_in_app">Play in app</string>
     <string name="episode_action_play_in_format">Play in %s</string>
-    <string name="episode_action_play_in_browser">Play in browser</string>
-    <string name="episode_action_copy_link">Copy link</string>
     <string name="episode_action_auto_download">Auto download</string>
     <string name="episode_action_download_mirror">Download mirror</string>
     <string name="episode_action_reload_links">Reload links</string>
@@ -600,8 +614,8 @@
     <string name="setup_done">Done</string>
     <string name="extensions">Extensions</string>
     <string name="add_repository">Add repository</string>
-    <string name="repository_name_hint">Repository name</string>
-    <string name="repository_url_hint">Repository URL</string>
+    <string name="repository_name_hint">Repository name (Optional)</string>
+    <string name="repository_url_hint">Repository URL or Shortcode</string>
     <string name="plugin_loaded">Plugin Loaded</string>
     <string name="plugin_downloaded">Plugin Downloaded</string>
     <string name="plugin_deleted">Plugin Deleted</string>
@@ -652,11 +666,6 @@
     <string name="hls_playlist">HLS Playlist</string>
     <string name="player_pref">Preferred video player</string>
     <string name="player_settings_play_in_app">Internal player</string>
-    <string name="player_settings_play_in_vlc">VLC</string>
-    <string name="player_settings_play_in_mpv">MPV</string>
-    <string name="player_settings_play_in_web">Web Video Cast</string>
-    <string name="player_settings_play_in_fcast">Fcast</string>
-    <string name="player_settings_play_in_browser">Web browser</string>
     <string name="player_settings_select_cast_device">Select cast device</string>
     <string name="app_not_found_error">App not found</string>
     <string name="all_languages_preference">All Languages</string>
@@ -797,6 +806,24 @@
     <string name="device_pin_error_message">Can\'t get the device PIN code, try local authentication</string>
     <string name="device_pin_expired_message">PIN code is now expired !</string>
     <string name="device_pin_counter_text">Code expires in %1$dm %2$ds</string>
+    <string name="sort_release_date_new">Release Date (New to Old)</string>
+    <string name="sort_release_date_old">Release Date (Old to New)</string>
     <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
     <string name="hide_player_control_names">Hide names of the player\'s controls</string>
+    <string name="preview_seekbar_key" translatable="false">preview_seekbar_key</string>
+    <string name="preview_seekbar">Seekbar preview</string>
+    <string name="preview_seekbar_desc">Enable preview thumbnail on seekbar</string>
+    <string name="no_subtitles_loaded">No subtitles loaded yet</string>
+    <string name="backup_path_key" translatable="false">backup_path_key</string>
+    <string name="backup_path_title">Backup folder location</string>
+    <string name="backup_dir_key" translatable="false">backup_dir_key</string>
+    <string name="custom">Custom</string>
+    <!--confirm exit dialog-->
+    <string name="confirm_before_exiting_title">Confirm before exiting</string>
+    <string name="confirm_before_exiting_desc">Show dialog before exiting the app</string>
+    <string name="confirm_exit_key" translatable="false">confirm_exit_key</string>
+    <string name="show">Show</string>
+    <string name="dont_show">Don\'t Show</string>
+    <string name="subs_edge_size">Edge Size</string>
+    <!--confirm exit dialog-->
 </resources>

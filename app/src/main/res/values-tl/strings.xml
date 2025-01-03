@@ -145,7 +145,7 @@
     <string name="pause">I-pause</string>
     <string name="resume">I-resume</string>
     <string name="delete_message">This will permanently delete %s
-\nAre you sure\?</string>
+\nAre you sure?</string>
     <string name="status_ongoing">Patuloy</string>
     <string name="status_completed">Tapos na</string>
     <string name="status">Katayuan</string>
@@ -174,8 +174,6 @@
     <string name="episode_action_chromecast_mirror">Chromecast Mirror</string>
     <string name="episode_action_play_in_app">I-play sa App</string>
     <string name="episode_action_play_in_format">I-play sa %s</string>
-    <string name="episode_action_play_in_browser">I-play sa browser</string>
-    <string name="episode_action_copy_link">Kopyahin ang Link</string>
     <string name="episode_action_auto_download">Awtomatiking i-download</string>
     <string name="episode_action_download_mirror">Download mirror</string>
     <string name="episode_action_reload_links">Subukan muli</string>

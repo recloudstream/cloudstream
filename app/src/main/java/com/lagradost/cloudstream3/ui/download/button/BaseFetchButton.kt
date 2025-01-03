@@ -54,6 +54,7 @@ abstract class BaseFetchButton(context: Context, attributeSet: AttributeSet) :
     }
 
     init {
+        @Suppress("LeakingThis")
         resetViewData()
     }
 
@@ -92,7 +93,7 @@ abstract class BaseFetchButton(context: Context, attributeSet: AttributeSet) :
 
     abstract fun setStatus(status: VideoDownloadManager.DownloadType?)
 
-    fun getStatus(id:Int, downloadedBytes: Long, totalBytes: Long): DownloadStatusTell {
+    fun getStatus(id: Int, downloadedBytes: Long, totalBytes: Long): DownloadStatusTell {
         // some extra padding for just in case
         return VideoDownloadManager.downloadStatus[id]
             ?: if (downloadedBytes > 1024L && downloadedBytes + 1024L >= totalBytes) {
@@ -100,7 +101,7 @@ abstract class BaseFetchButton(context: Context, attributeSet: AttributeSet) :
             } else DownloadStatusTell.IsPaused
     }
 
-    fun applyMetaData(id:Int, downloadedBytes: Long, totalBytes: Long) {
+    fun applyMetaData(id: Int, downloadedBytes: Long, totalBytes: Long) {
         val status = getStatus(id, downloadedBytes, totalBytes)
 
         currentMetaData.apply {
@@ -139,7 +140,8 @@ abstract class BaseFetchButton(context: Context, attributeSet: AttributeSet) :
             } else {
                 if (doSetProgress) {
                     progressText?.apply {
-                        val currentFormattedSizeString = formatShortFileSize(context, downloadedBytes)
+                        val currentFormattedSizeString =
+                            formatShortFileSize(context, downloadedBytes)
                         val totalFormattedSizeString = formatShortFileSize(context, totalBytes)
                         text =
                                 // if (isTextPercentage) "%d%%".format(setCurrentBytes * 100L / setTotalBytes) else

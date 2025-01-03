@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.ui.search
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.view.View
 import android.widget.ImageView
@@ -9,6 +10,8 @@ import androidx.cardview.widget.CardView
 import androidx.core.view.isVisible
 import androidx.palette.graphics.Palette
 import androidx.preference.PreferenceManager
+import coil3.request.error
+import coil3.toBitmap
 import com.lagradost.cloudstream3.AnimeSearchResponse
 import com.lagradost.cloudstream3.DubStatus
 import com.lagradost.cloudstream3.LiveSearchResponse
@@ -22,8 +25,10 @@ import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.utils.AppContextUtils.getNameFull
 import com.lagradost.cloudstream3.utils.DataStoreHelper
 import com.lagradost.cloudstream3.utils.DataStoreHelper.fixVisual
+import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
 import com.lagradost.cloudstream3.utils.SubtitleHelper
-import com.lagradost.cloudstream3.utils.UIHelper.setImage
+import com.lagradost.cloudstream3.utils.UIHelper.createPaletteAsync
+import com.lagradost.cloudstream3.utils.getImageFromDrawable
 
 object SearchResultBuilder {
     private val showCache: MutableMap<String, Boolean> = mutableMapOf()
@@ -37,16 +42,12 @@ object SearchResultBuilder {
         }
     }
 
-    /**
-     * @param nextFocusBehavior True if first, False if last, Null if between.
-     * Used to prevent escaping the adapter horizontally (focus wise).
-     */
+    @SuppressLint("StringFormatInvalid")
     fun bind(
         clickCallback: (SearchClickCallback) -> Unit,
         card: SearchResponse,
         position: Int,
         itemView: View,
-        nextFocusBehavior: Boolean? = null,
         nextFocusUp: Int? = null,
         nextFocusDown: Int? = null,
         colorCallback : ((Palette) -> Unit)? = null
@@ -123,11 +124,17 @@ object SearchResultBuilder {
         cardText?.text = card.name
         cardText?.isVisible = showTitle
         cardView.isVisible = true
-
-        if (!cardView.setImage(card.posterUrl, card.posterHeaders, colorCallback = colorCallback)) {
-            cardView.setImageResource(R.drawable.default_cover)
+        cardView.loadImage(card.posterUrl, card.posterHeaders) {
+            error { getImageFromDrawable(itemView.context, R.drawable.default_cover) }
+            val posterUrl = card.posterUrl
+            if (posterUrl != null && colorCallback != null) {
+                this.listener(onSuccess = { _,success ->
+                    val bitmap = success.image.toBitmap()
+                    createPaletteAsync(posterUrl, bitmap, colorCallback)
+                })
+            }
         }
-
+        
         fun click(view: View?) {
             clickCallback.invoke(
                 SearchClickCallback(

@@ -144,9 +144,6 @@
     <string name="status_completed">完成</string>
     <string name="status_ongoing">進行中</string>
     <string name="normal">デフォルト</string>
-    <string name="player_settings_play_in_browser">ウェブブラウザ</string>
-    <string name="player_settings_play_in_vlc">VLC</string>
-    <string name="player_settings_play_in_mpv">MPV</string>
     <string name="extension_language">言語</string>
     <string name="extension_authors">作成者</string>
     <string name="extension_size">サイズ</string>
@@ -243,4 +240,6 @@
     <string name="subs_hold_to_reset_to_default">長押しするとデフォルトにリセットされます</string>
     <string name="popup_resume_download">ダウンロードを再開</string>
     <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
+    <string name="filter_bookmarks">ブックマークのフィルタ</string>
+    <string name="normal_no_plot">プロットが見つかりません</string>
 </resources>

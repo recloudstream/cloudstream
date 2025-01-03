@@ -122,7 +122,7 @@
     <string name="pause">നിർത്തുക</string>
     <string name="resume">തുടരുക</string>
     <string name="delete_message">സ്ഥിരമായി %sനെ ഡിലീറ്റ് ചെയ്യുക
-\nഉറപ്പാണോ\?</string>
+\nഉറപ്പാണോ?</string>
     <string name="status_ongoing">തുടരുന്നു</string>
     <string name="status_completed">പൂർത്തിയായി</string>
     <string name="status">അവസ്ഥ</string>
@@ -151,8 +151,6 @@
     <string name="episode_action_chomecast_mirror">Chromecast Mirror</string> -->
     <string name="episode_action_play_in_app">ആപ്പിൽ പ്ലേയ് ചെയ്യുക</string>
     <string name="episode_action_play_in_format">%sയിൽ പ്ലേയ് ചെയ്യുക</string>
-    <string name="episode_action_play_in_browser">ബ്രൗസറിൽ പ്ലേയ് ചെയ്യുക</string>
-    <string name="episode_action_copy_link">ലിങ്ക് പകർത്തുക</string>
     <string name="episode_action_auto_download">ഡൌൺലോഡ് ചെയ്യൂ</string>
     <string name="episode_action_download_mirror">മിറർ ഡൗണ്ലോഡ്</string>
     <string name="episode_action_reload_links">ലിങ്ക്സ് വീണ്ടും ലോഡുചെയ്യുക</string>

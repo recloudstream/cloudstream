@@ -7,7 +7,7 @@ import androidx.annotation.StyleRes
 import androidx.appcompat.app.AlertDialog
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.PlayerSelectSourcePriorityBinding
-import com.lagradost.cloudstream3.ui.result.txt
+import com.lagradost.cloudstream3.utils.txt
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.Qualities
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
@@ -47,7 +47,7 @@ class SourcePriorityDialog(
         )
 
         qualitiesRecyclerView.adapter = PriorityAdapter(
-            Qualities.values().mapNotNull {
+            Qualities.entries.mapNotNull {
                 SourcePriority(
                     it,
                     Qualities.getStringByIntFull(it.value).ifBlank { return@mapNotNull null },

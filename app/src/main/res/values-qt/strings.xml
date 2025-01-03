@@ -81,11 +81,11 @@
     <string name="player_size_settings_des">aaaghhaaahhuahooo oha aaaghh</string>
     <string name="player_subtitles_settings">ahhhaauugghh</string>
     <string name="player_subtitles_settings_des">oha ooh ouuhhh oooohhahhh ouuhhh</string>
-    <string name="eigengraumode_settings">haaahhh ahoouuh</string>
+    <string name="eigengraumode_settings">aaaagggg aaahh</string>
     <string name="swipe_to_seek_settings">ohahaaaauugghh ahooo aaahhu</string>
-    <string name="swipe_to_seek_settings_des">aaaghh aaaghhohahooooo ouuhhh oouuh ooo-ahahahooo-ahah ohaaaaaghh</string>
+    <string name="swipe_to_seek_settings_des">uuuuk oohh uuhh og eeek ag uuuuhhh aagg aaaagggg ek g uuuuk</string>
     <string name="swipe_to_change_settings">aaaaaahhaaahhuoouuhaaaaa aahooo</string>
-    <string name="swipe_to_change_settings_des">ohahhaaahhuoh ooo-ahahahhhooo-ahah aaaghha oooohhoouuh aaaghhaaaghhooo-ahah</string>
+    <string name="swipe_to_change_settings_des">ooogg ek ug uugg uk ooh oogg ug aaagg oohh og oooohh aaaahhhuuk oh oooogg</string>
     <string name="double_tap_to_seek_settings">ahaauuhaaaaaooooo ahooo aauuh aaaghhaooo-ahah</string>
     <string name="search">aauuh</string>
     <string name="settings_info">aauugghh ah</string>
@@ -94,7 +94,7 @@
     <string name="bug_report_settings_off">aaaaa ahhhahhohoouuhahoooaaaghh aahhhaaaaa</string>
     <string name="bug_report_settings_on">oouuhoooohh ahhooo-ahah</string>
     <string name="updates_settings">haa oohaauugghhooh oh</string>
-    <string name="updates_settings_des">aaahhuoouuhouuhhh aauugghhahaaaghhoohahhoooohhouuhhh</string>
+    <string name="updates_settings_des">aaaagggoooogg uuuugg aak aah aaaahhh ooogg uuuuuukh aah ooh</string>
     <string name="uprereleases_settings">aaaghh ahhhahoooooo-ahah aaaghh</string>
     <string name="uprereleases_settings_des">ahhh ooo-ahahahhahh ooooo aauugghh oooohhahhhahoooaoooohhouuhhh aaahhu</string>
     <string name="github">aauuhoha</string>
@@ -144,8 +144,6 @@
     <string name="episode_action_chromecast_mirror">aoohaaahhu ahouuhhh</string>
     <string name="episode_action_play_in_app">ooo-ahahaauuh aaahhu</string>
     <string name="episode_action_play_in_format">ooo-ahah ohaauuh %s</string>
-    <string name="episode_action_play_in_browser">ahoha ooo-ahahohoohah oooohh</string>
-    <string name="episode_action_copy_link">aauugghhahhaauugghh</string>
     <string name="episode_action_auto_download">aaaghhoooohh aaahhu ahooo</string>
     <string name="episode_action_download_mirror">ohooo-ahahaohaohahhhoouuh</string>
     <string name="episode_action_reload_links">ahoooaaahhuahaaahhuoha</string>
@@ -155,7 +153,7 @@
     <string name="video_aspect_ratio_resize">ohaooo-ahahouuhhh</string>
     <string name="video_source">ahohooh</string>
     <string name="video_skip_op">aaaaaohaah ooh</string>
-    <string name="dont_show_again">ahh haa ah ooooo</string>
+    <string name="dont_show_again">Boooooo ooooo</string>
     <string name="update">aaahhuooh ahh</string>
     <string name="download_started">aaaaa oooohh aauugghh</string>
     <string name="download_failed">aaaghhahhooo-ahahahhha aaaghh</string>
@@ -177,14 +175,14 @@
     <string name="remote_error">auuuha h a ahuhaaaa</string>
     <string name="render_error">uaoh uhu uahaaaaoo</string>
     <string name="unexpected_error">uauhah u aao u oah</string>
-    <string name="watch_quality_pref">h u ahahh aoou ha</string>
+    <string name="watch_quality_pref">aaaagggoh uuugg uuuuggg (WiFi)</string>
     <string name="dns_pref">haoooo aaoou uou ah</string>
     <string name="dns_pref_summary">oahuouooaouoa ouuhh</string>
     <string name="display_subbed_dubbed_settings">o ouou uhauuuoaah h</string>
     <string name="resize_fit">ou aouhouo aaooao hh</string>
     <string name="resize_fill">hhauhohhuu au aaohu</string>
     <string name="resize_zoom">uhuoh o a ohahuhohoa hah</string>
-    <string name="provider_lang_settings">ua hu ouo o aoau hah ah</string>
+    <string name="provider_lang_settings">aaaagggog oooogggoh</string>
     <string name="legal_notice">ah huu oouhhau aoaoaaohoo ha</string>
     <string name="category_general">a ahu uoo uoahuo uo</string>
     <string name="app_layout">uo u ohouao</string>
@@ -213,13 +211,13 @@
     <string name="play_trailer_button">ggaaaahhhhhhh gaauuuuuuuaaaau</string>
     <string name="play_livestream_button">aaauuuuggggguu</string>
     <string name="update_started">ooo aagg hhhh</string>
-    <string name="stream">ooo aagg hhhh</string>
+    <string name="stream">aaaahhh aaaagg</string>
     <string name="sort_copy">uuuuhhhoouuooog ooaaahhhh</string>
     <string name="sort_close">uuu ugggg</string>
     <string name="sort_clear">ooo guggg ooh</string>
     <string name="tracks">auuuooohaaaaagh</string>
     <string name="library">uuuuuuuh aaaoo o</string>
-    <string name="category_updates">ooooooouuuua aa aaagh agh</string>
+    <string name="category_updates">uuuuggg uuh aaaagg</string>
     <string name="ova">AAAAUUUOH</string>
     <string name="subscription_list_name">aoughoooaaaa</string>
     <string name="movies_singular">oooouuuh</string>
@@ -227,7 +225,7 @@
     <string name="tv_series_singular">auughooo</string>
     <string name="pref_category_player_layout">ooooooa aauoh</string>
     <string name="subs_subtitle_languages">aaaaagh oouoo aaaaaaa</string>
-    <string name="category_account">aaaaaagh uuohuoh</string>
+    <string name="category_account">oooogggg aah aaaaaakh</string>
     <string name="extensions">aaaaaauo agghhhhhhaoouu</string>
     <string name="others">uuuuuuuuh</string>
     <string name="test_log">ouaaahh</string>
@@ -248,4 +246,419 @@
     <string name="action_open_play">@string/home_play</string>
     <string name="chromecast_subtitles_settings">oouuhhh ahhooo-ahah</string>
     <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
+    <string name="restore_success">uuuugg aaaahh oogg</string>
+    <string name="device_pin_counter_text">aagg uuuuggg og %1$dm %2$ds</string>
+    <string name="pref_category_android_tv">aaaahhh ag</string>
+    <string name="random_button_settings_desc">aahh aaaagg uuuugg uh uuuuhhhh aag uuuuhhh</string>
+    <string name="backup_settings">aahh oh uuhh</string>
+    <string name="safe_mode_crash_info">aahh ooogg aahh</string>
+    <string name="extension_size">oogg</string>
+    <string name="uppercase_all_subtitles">uuuuhhhoh ooh uuuuhhhag</string>
+    <string name="plugins_updated" formatted="true">eeeeeek %d ooooggg</string>
+    <string name="player_pref">aaaagggah uuugg uuuugg</string>
+    <string name="backup_success">aaak oooohh</string>
+    <string name="backup_failed">uuuuggg aaaahhhaahh uuuuhhh aaaagg aag uuuhh</string>
+    <string name="automatic_plugin_download_summary">oooohhhoooohh ooooggg uuh oog aag uuuugggag eeeeeek aahh uuuhh uuuuggguuugg</string>
+    <string name="show_sub">aag uuuuk</string>
+    <string name="show_title">eeeek</string>
+    <string name="limit_title">aaahh aaaahh ooohh uuk uuugg</string>
+    <string name="limit_title_rez">ooohh uuuuhh aaaahhhooh</string>
+    <string name="emulator_layout">oooohhhg aaaahh</string>
+    <string name="quality_ts">oh</string>
+    <string name="quality_tc">ah</string>
+    <string name="quality_blueray">uuuuhh</string>
+    <string name="is_adult">18+</string>
+    <string name="batch_download_nothing_to_download_format" formatted="true">aag %s ooooggg oooogggaag</string>
+    <string name="view_public_repositories_button_short">aaaahh aagg</string>
+    <string name="no_plugins_found_error">ug uuuuhhh aaahh og oooohhhuuh</string>
+    <string name="double_tap_to_seek_amount_settings">oooohh oohh oooohh (Seconds)</string>
+    <string name="ova_singular">aag</string>
+    <string name="android_tv_interface_off_seek_settings_summary">ooh aagg uuuuhh uugg uugg uuh uuuuhh ag uuuuhh</string>
+    <string name="pref_category_app_updates">eek aaaahhh</string>
+    <string name="category_ui">uuuugg</string>
+    <string name="account">aaaaggg</string>
+    <string name="logout">oog aag</string>
+    <string name="subtitle_offset_extra_hint_before_format">uuk aaak ah ooooggguh uuk uuugg %d ah ooh oogg</string>
+    <string name="subtitle_offset_extra_hint_none_format">ah uuuuhhhg uuuhh</string>
+    <string name="actor_main">aahh</string>
+    <string name="actor_supporting">uuuugggooh</string>
+    <string name="home_random">aaaagg</string>
+    <string name="quality_cam_rip">uug</string>
+    <string name="delete_plugin">oooogg oooogg</string>
+    <string name="blank_repo_message">oooohhhoogg uuh uh uuuhh aaaaggguh og ooooggg uug aagg ek aaaaggg oog aaahh aagg uuuugggooohh
+\n
+\nJoin uuh uuuuggg ag uuuuhh eeeeek</string>
+    <string name="audio_tracks">uuugg aaaagg</string>
+    <string name="safe_mode_title">oogg uugg uh</string>
+    <string name="skip_type_intro">aaagg</string>
+    <string name="history">aaaaggg</string>
+    <string name="rotate_video">uuuuhh</string>
+    <string name="reset_btn">aaahh</string>
+    <string name="cs3wiki">uuuuhhhaaak aagg</string>
+    <string name="result_search_tooltip">aaaagg og ooogg aaaahhhaah</string>
+    <string name="double_tap_to_pause_settings">aaaagg aah ah ooogg</string>
+    <string name="automatic_plugin_updates">aaaahhhuh aaaagg uuuuhhh</string>
+    <string name="automatic_plugin_download">aaaagggaaaahh uuuugggg uuuuggg</string>
+    <string name="episode_format" formatted="true">%1$d %2$s</string>
+    <string name="skip_update">aahh oogg uuuuhh</string>
+    <string name="pref_category_player_features">uuuuhh aaaaaakg</string>
+    <string name="pref_category_defaults">uuuugggk</string>
+    <string name="category_provider_test">oooohhhg uugg</string>
+    <string name="test_extensions">oohh eek aaaagggooh</string>
+    <string name="login">aag og</string>
+    <string name="create_account">oooogg uuuuhhh</string>
+    <string name="subtitles_shadow">oooohh</string>
+    <string name="quality_4k">4K</string>
+    <string name="preferred_media_subtext">oohh ah uuk aagg ag aah</string>
+    <string name="add_repository">uug uuuugggoog</string>
+    <string name="repository_name_hint">uuuuggguug uugg (uuooal)</string>
+    <string name="batch_download_finish_format" formatted="true">aaaahhhaah %1$d %2$s</string>
+    <string name="batch_download">aaahh uuuugggh</string>
+    <string name="delete_repository">oooohh oooogggoog</string>
+    <string name="extension_description">uuuuhhhaagg</string>
+    <string name="clipboard_too_large">uuh aahh uugg oooogg ag aagg ug ooooggguh</string>
+    <string name="profile_number">ooooggg %d</string>
+    <string name="edit">aahh</string>
+    <string name="profiles">oooogggk</string>
+    <string name="quality_profile_help">eeek aag uug uuuuhh ooh aak uuuuggg ooh uuuuhhh ug g eeeek oog h uuuuhh oooogggh ag aahh oooohh aaaagg uh oog uuuugg uuuugggog uug oog uh uuh aaaagg uuuuuukg uug aah uuuuuuk uuuuuukg ak ooh uuuhh aaaagggk
+\n
+\nSource A: 3
+\nQuality B: 7
+\nWill uuhh k uuuuhhhk ooogg uuuuhhhh uk 10
+\n
+\nNOTE: ah uug oog ug 10 og oogg uug aaaahh uuhh uuuugggaaaahh oogg aaaahhh oogg uuhh aahh uh loaded!</string>
+    <string name="favorites_list_name">uuuuhhhug</string>
+    <string name="favorite_removed">%s aaaaggg uuhh aaaagggug</string>
+    <string name="duplicate_add">oog</string>
+    <string name="duplicate_replace">aaaahhh</string>
+    <string name="manage_accounts">aaaagg aaaagggh</string>
+    <string name="logged_account" formatted="true">aaaagg ug ag %s</string>
+    <string name="skip_startup_account_select_pref">aagg aaaahhh aaaahhhog ag aaaahhh</string>
+    <string name="use_default_account">aah aaaaggg aaaaggg</string>
+    <string name="auto_rotate_video">oohh aaaagg</string>
+    <string name="android_tv_interface_on_seek_settings_summary">ooh oogg aaaahh uuhh oogg aah oooohh ag ooooggg</string>
+    <string name="jsdelivr_enabled">aaahh uug uuuhh aaaahh uuuuggg og uuuuhhhk proxy…</string>
+    <string name="actor_background">oooohhhooh</string>
+    <string name="stop">uuhh</string>
+    <string name="go_back_30">30</string>
+    <string name="sync_score_format" formatted="true">%d / 10</string>
+    <string name="subtitle_offset_extra_hint_later_format">aag aagg ag oog aaaagggak ooh uuugg %d oh ooh ooohh</string>
+    <string name="quality_sdr">uug</string>
+    <string name="quality_webrip">aak</string>
+    <string name="poster_image">uuuuhh aaagg</string>
+    <string name="error_invalid_data">aaaahhh oohh</string>
+    <string name="skip_type_recap">ooohh</string>
+    <string name="empty_library_logged_in_message">uugg oohh oh aaahh oog uuuugggoh ah oooohhh ooh</string>
+    <string name="subscription_new">ooooggguuk uh %s</string>
+    <string name="duplicate_title">uuuuhhhag aaaagggug aaaak</string>
+    <string name="auth_locally">aagg aaaaggg</string>
+    <string name="normal">oooogg</string>
+    <string name="max">aah</string>
+    <string name="extension_types">oooogggag</string>
+    <string name="subtitle_offset_hint">1000 ak</string>
+    <string name="enter_current_pin">uuuhh aaaahhh ooh</string>
+    <string name="favorite">uuuuuukg</string>
+    <string name="biometric_authentication_title">aaaahh oooohhhaaak</string>
+    <string name="device_pin_url_message">ooogg<b>%s</b> on your smartphone or computer and enter the above code</string>
+    <string name="device_pin_error_message">Can\t aah uuh aaaagg oog code, uuh ooogg uuuuggguuuuggg</string>
+    <string name="live_singular">eeeeeekuug</string>
+    <string name="episode_action_download_subtitle">uuuugggh oooohhhag</string>
+    <string name="poster_ui_settings">uuuuhh ak oooogggh oh aaaagg</string>
+    <string name="watch_quality_pref_data">uuuugggoh aaagg aaaahhh (Mobile Data)</string>
+    <string name="android_tv_interface_off_seek_settings">aaaahh oooohh oohh aaaahh</string>
+    <string name="pref_category_cache">ooogg</string>
+    <string name="pref_category_looks">ooogg</string>
+    <string name="preferred_media_settings">aaaagggug ooohh</string>
+    <string name="example_site_url">https://examplecom</string>
+    <string name="quality_cam">aag</string>
+    <string name="error_invalid_url">aaaahhh aag</string>
+    <string name="setup_done">eeek</string>
+    <string name="plugin_downloaded">oooohh oooogggaah</string>
+    <string name="sort_rating_asc">oooogg (Low ah High)</string>
+    <string name="pref_filter_search_quality">aagg aaaahhhh aaagg aaaaggg ak uuuuhh aaaaggg</string>
+    <string name="apk_installer_settings_des">eeek uuuuhh uh aah aaaaaak aah oog aaaahhh uuuuuukah aah oog oooogg aaaahh ug ooooggg oh ooh aaaaggg</string>
+    <string name="cartoons_singular">uuuuggg</string>
+    <string name="video_buffer_size_settings">aaahh oooohh uuhh</string>
+    <string name="video_buffer_length_settings">ooogg uuuuhh aaaahh</string>
+    <string name="pref_category_links">uuugg</string>
+    <string name="pref_category_ui_features">uuuugggg</string>
+    <string name="category_providers">aaaagggak</string>
+    <string name="example_ip">127001</string>
+    <string name="plugin_loaded">oooohh uuuugg</string>
+    <string name="skip_type_format" formatted="true">aahh %s</string>
+    <string name="all_languages_preference">uuh aaaagggag</string>
+    <string name="enable_skip_op_from_database_des">aahh oogg aaaagg ooh opening/ending</string>
+    <string name="resolution">oooohhhuuk</string>
+    <string name="other_singular">ooohh</string>
+    <string name="next">aagg</string>
+    <string name="ok">oh</string>
+    <string name="apk_installer_package_installer">uuuuuukoooohhhah</string>
+    <string name="sort_rating_desc">aaaahh (High ug Low)</string>
+    <string name="sort_alphabetical_a">aaaaaakuuugg (A uh Z)</string>
+    <string name="open_with">aagg oogg</string>
+    <string name="subscription_in_progress_notification">aaaagggg aaaaggguug ooohh</string>
+    <string name="action_add_to_favorites">uuh ah aaaahhhag</string>
+    <string name="action_remove_from_favorites">aaaahh aagg uuuuhhhuh</string>
+    <string name="enter_pin_with_name" formatted="true">uuugg uug oog %s</string>
+    <string name="lock_profile">aaak uuuuhhh</string>
+    <string name="pin">oog</string>
+    <string name="unfavorite">aaaagggaah</string>
+    <string name="audio_book_singular">ooogg aagg</string>
+    <string name="video_ram_description">uuuugg aaaaggg ug aah uug aahh ug uuuuhhh oohh aah memory, oohh og oooohhh ug</string>
+    <string name="extension_version">aaaahhh</string>
+    <string name="previous">oooogggh</string>
+    <string name="crash_reporting_title">ooohh aaaaaakag</string>
+    <string name="title">ooogg</string>
+    <string name="batch_download_start_format" formatted="true">aaaaggg aaaahhhuuhh %1$d %2$s…</string>
+    <string name="skip_type_mixed_ed">uuuhh aaaagg</string>
+    <string name="no">oh</string>
+    <string name="use">uug</string>
+    <string name="help">uugg</string>
+    <string name="qualities">oooogggoh</string>
+    <string name="biometric_setting">uugg uuhh oooohhhoog</string>
+    <string name="music_singlar">aaahh</string>
+    <string name="biometric_prompt_description">uuugg g uug uuuuhh attempts, aah aaaagg uugg uuuhh aaaagg uuuuhhh aag uug ah uuh uuugg</string>
+    <string name="min">oog</string>
+    <string name="extension_install_first">aaaaggg uug oooohhhuh uuuuk</string>
+    <string name="network_adress_example">https://examplecom/examplemp4</string>
+    <string name="hide_player_control_names">oohh uuugg ag aag player uuuugggg</string>
+    <string name="sort_updated_new">aaaaggg (New ah Old)</string>
+    <string name="nsfw_singular">oohh</string>
+    <string name="all">aag</string>
+    <string name="subtitles_remove_captions">aaaagg uuuugg oooohhhk oohh oooogggah</string>
+    <string name="episode_sync_settings_des">aaaaggguuuugg uuhh oohh ooooggg eeeeeek aaaagggh</string>
+    <string name="restore_settings">ooooggg uugg uugg uuuugg</string>
+    <string name="restore_failed_format" formatted="true">oooohh ah aaaahhh oogg oogg aahh %s</string>
+    <string name="season_format">%1$s %2$d%3$s</string>
+    <string name="episodes_range">%1$d%2$d</string>
+    <string name="no_episodes_found">ek oooogggh ooohh</string>
+    <string name="show_dub">uug aaahh</string>
+    <string name="video_buffer_disk_settings">uuuuk uuugg ag oogg</string>
+    <string name="video_buffer_clear_settings">aaahh aaahh uug ooohh aaagg</string>
+    <string name="add_site_pref">uuugg uuhh</string>
+    <string name="random_button_settings">uuuuuk uuuuhh</string>
+    <string name="enable_nsfw_on_providers">oooohh oohh uh uuuugggah uuuugggaag</string>
+    <string name="subtitles_encoding">uuuuhhhh oooohhhk</string>
+    <string name="example_password">password123</string>
+    <string name="example_username">aaaagggk</string>
+    <string name="example_email">hello@worldcom</string>
+    <string name="example_site_name">oooogggoohh</string>
+    <string name="switch_account">uuuugg uuuuggg</string>
+    <string name="add_account">aag oooohhh</string>
+    <string name="add_sync">uug oooohhhh</string>
+    <string name="added_sync_format" formatted="true">aaaak %s</string>
+    <string name="upload_sync">uuhh</string>
+    <string name="sync_score">aaahh</string>
+    <string name="authenticated_user" formatted="true">%s aaaagggaaaahh</string>
+    <string name="authenticated_user_fail" formatted="true">ooogg uug aah oh oh %s</string>
+    <string name="coming_soon">aaaagg soon…</string>
+    <string name="quality_cam_hd">aah</string>
+    <string name="quality_hq">uh</string>
+    <string name="quality_hd">ag</string>
+    <string name="quality_workprint">ag</string>
+    <string name="quality_dvd">aah</string>
+    <string name="quality_sd">ek</string>
+    <string name="resolution_and_title">uuuuhhhuuh aag aaahh</string>
+    <string name="delete_repository_plugins">eeek oohh uuhh oooohh oog oooogggooh aaaahhh</string>
+    <string name="setup_extensions_subtext">aaaagggh oog uuuk ug ooohh aak aahh ag aag</string>
+    <string name="plugins_downloaded" formatted="true">Downloaded: %d</string>
+    <string name="plugins_disabled" formatted="true">Disabled: %d</string>
+    <string name="plugins_not_downloaded" formatted="true">aag downloaded: %d</string>
+    <string name="view_public_repositories_button">uuhh aaaagggag ooooggguuuhh</string>
+    <string name="download_all_plugins_from_repo">Warning: ooooggguuhh 3 uuhh aah aahh oog aaaagggaaaaggg aah aaahh aaaahhhoog aaaagggaag uuh uugg uug uuuuhhh uug eeeeeek aah them!</string>
+    <string name="safe_mode_description">ooh oooohhhooh oogg oooogg ooh uuh uh g ooogg oh uuhh uug uuhh ooh aah uuuuggg ooooggg</string>
+    <string name="extension_authors">ooooggg</string>
+    <string name="player_settings_play_in_app">aaaagggh uuuugg</string>
+    <string name="app_not_found_error">aah ooh uuugg</string>
+    <string name="skip_type_op">uuuuhhh</string>
+    <string name="action_remove_from_watched">uuuuhh aagg oooohhh</string>
+    <string name="confirm_exit_dialog">uug ooh oohh ooh aahh ag exit?</string>
+    <string name="yes">ooh</string>
+    <string name="update_notification_downloading">uuuugggaagg aah update…</string>
+    <string name="update_notification_installing">eeeeeekooh aag update…</string>
+    <string name="update_notification_failed">uuugg aag uuuuhhh aag uuh aaaaaak ug aag aak</string>
+    <string name="apk_installer_legacy">aaaahh</string>
+    <string name="delayed_update_notice">aah oohh og uuuuhhh oogg uuhh</string>
+    <string name="sort_by">uuhh ug</string>
+    <string name="sort">uuhh</string>
+    <string name="start">uuugg</string>
+    <string name="test_failed">oooogg</string>
+    <string name="test_passed">aaaahh</string>
+    <string name="android_tv_interface_on_seek_settings">oooohh uuugg aagg uuuugg</string>
+    <string name="jsdelivr_proxy">eeeeek uuugg</string>
+    <string name="pref_category_bypass">aah aaaagggg</string>
+    <string name="disable">aaaaggg</string>
+    <string name="revert">aaaagg</string>
+    <string name="backup_frequency">eeeeek uuuuhhhuh</string>
+    <string name="no_repository_found_error">oooohhhuuh aag found, aaagg uug oog uuh oog aah</string>
+    <string name="action_subscribe">oooogggag</string>
+    <string name="action_unsubscribe">aaaahhhuugg</string>
+    <string name="already_voted">uuh uuhh uuuuggg uuuhh</string>
+    <string name="favorite_added">%s ooogg oh oooohhhog</string>
+    <string name="duplicate_replace_all">aaaahhh uuh</string>
+    <string name="duplicate_message_single" formatted="true">oh ooooggg oogg k uuuuuukaahh uuuugggag uuhh ooooggg oooogg ah oogg library: \'%s\'
+\n
+\n
+\nWould uug uugg uh aak oogg oohh anyway, oooohhh uuh oooohhhg one, oh aaaagg eek action?</string>
+    <string name="enter_pin">ooogg uuh</string>
+    <string name="speed_setting_summary">uuhh g ooogg oooogg oh aah uuuugg</string>
+    <string name="test_extensions_summary">uugg oogg ak aaagg ooh oooohhhuug aagg uug aahh uug oooohhhg ak oooohh uuuuuuk oh uuh aaaagggag</string>
+    <string name="password_pin_authentication_title">Password/PIN uuuuhhhaaaaggg</string>
+    <string name="repo_copy_label">oooohhhoog oogg uuh aah</string>
+    <string name="toast_copied">copied!</string>
+    <string name="battery_dialog_title">aaaahhh ooooggg oooohhhooogg</string>
+    <string name="episode_upcoming_format" formatted="true">uuuugggg og %s</string>
+    <string name="custom_media_singluar">uuugg</string>
+    <string name="app_unrestricted_toast">ooh oooohhh uuuhh ak aaaaggg aak ag uuuugggaaaak</string>
+    <string name="app_info_intent_error">uuuugg ah uuhh CloudStream uuh uuhh</string>
+    <string name="pref_category_security">oooohhhg</string>
+    <string name="pref_category_accounts">uuuugggg</string>
+    <string name="downloads_empty">uuuhh aah uuuugggog ug aaaagggog</string>
+    <string name="open_local_video">uuhh ooohh aaagg</string>
+    <string name="test_warning">uuuuhhh</string>
+    <string name="qr_image">uk aahh ooogg</string>
+    <string name="dismiss">uuuuuuk</string>
+    <string name="open_downloaded_repo">aagg oooohhhaah</string>
+    <string name="device_pin_expired_message">ooh uuuk oh aah oooohhh !</string>
+    <string name="play_from_beginning_img_des">aahh oohh uuh uuuuggguh</string>
+    <string name="double_tap_to_pause_settings_des">aah aaahh uh aak aaaagg oh eeeek</string>
+    <string name="anime_singular">uuugg</string>
+    <string name="example_lang_name">eeeeeekh aagg (en)</string>
+    <string name="sort_release_date_new">uuuuhhh aahh (New og Old)</string>
+    <string name="next_season_episode_format" formatted="true">oooohh %1$d oooohhh %2$d aagg uk oooogggh uh</string>
+    <string name="autoplay_next_settings">oooohhhk oogg uuuuggg</string>
+    <string name="show_trailers_settings">oogg oooohhhg</string>
+    <string name="automatic_plugin_download_mode_title">uuuugg oogg oh eeeeek eeeeeek uuuugggg</string>
+    <string name="redo_setup_process">aagg uuugg uuuuggg</string>
+    <string name="go_forward_30">+30</string>
+    <string name="resume_remaining" formatted="true">%s
+\nremaining</string>
+    <string name="edit_account">aagg uuuuhhh</string>
+    <string name="biometric_setting_summary">uuuuhh aag aah oogg Fingerprint, eeek ID, PIN, aaaaggg uuh aaaagggh</string>
+    <string name="downloads_delete_select">eeeeek uuuhh oh aaaagg</string>
+    <string name="select_all">uuuugg uuh</string>
+    <string name="torrent_singular">oooohhh</string>
+    <string name="documentaries_singular">oooogggoohh</string>
+    <string name="asian_drama_singular">aaahh aaagg</string>
+    <string name="extension_language">uuuugggg</string>
+    <string name="hls_playlist">uug uuuugggg</string>
+    <string name="offline_file">aaaagggoh ooh uuuugggh uuuuhhh</string>
+    <string name="deselect_all">eeeeeekh uug</string>
+    <string name="links_reloaded_toast">uuuhh uuuuuukh</string>
+    <string name="autoplay_next_settings_des">aaahh uuh oogg uuuuhhh uuhh uuh aaaahhh uug oohh</string>
+    <string name="subscribe_tooltip">aag aaaahhh aaaahhhooogg</string>
+    <string name="recommendations_tooltip">oogg aaaaggguuuuuukk</string>
+    <string name="chromecast_subtitles_settings_des">uuuuggguuh aaaagggug uuuuhhhh</string>
+    <string name="episode_sync_settings">aaaagg aaahh aaaahhhg</string>
+    <string name="backup_failed_error_format">uuuhh oooohhh uh %s</string>
+    <string name="kitsu_settings">oohh uuuuggg uuhh uuugg</string>
+    <string name="delete_message_series_section" formatted="true">uuh oohh oogg aaaahhhuugg uuuugg oog aaaagggh ak uuh uuuuhhhog series:
+\n
+\n%s</string>
+    <string name="apk_installer_settings">aak aaaagggah</string>
+    <string name="delete_files">oooohh uuuhh</string>
+    <string name="delete_format" formatted="true">oooogg (%1$d | %2$s)</string>
+    <string name="delete_message_multiple" formatted="true">uuh uug oohh uuk aagg oh uuuuggguugg aaaahh uuh aaaagggah items?
+\n
+\n%s</string>
+    <string name="delete_message_series_episodes" formatted="true">uug ooh aagg ooh uuuk ag aaaahhhuuhh oooohh ooh oooohhhug oooohhhh ah %1$s?
+\n
+\n%2$s</string>
+    <string name="delete_message_series_only" formatted="true">ooh aag oogg uuh aagg ug eeeeeekoohh aaaahh aah uuuugggg uk aag oooohhhek series?
+\n
+\n%s</string>
+    <string name="login_format" formatted="true">%1$s %2$s</string>
+    <string name="show_hd">aaaahhh uuuhh</string>
+    <string name="video_disk_description">eeeeek oooohhhg ah uuk uuh aahh ug aaaaggg aaak ooh oooohhh space, aahh ug oooohhh ek</string>
+    <string name="remove_site_pref">oooogg uuhh</string>
+    <string name="add_site_summary">oog k aaagg uh uk uuuuhhhg site, aahh h uuuuggguk ooh</string>
+    <string name="download_path_pref">aaaahhhg aagg</string>
+    <string name="nginx_url_pref">aaaak uuuuhh uuh</string>
+    <string name="pref_category_backup">uuuugg</string>
+    <string name="pref_category_actions">oooohhh</string>
+    <string name="pref_category_gestures">aaaahhhh</string>
+    <string name="app_theme_settings">oog ooohh</string>
+    <string name="bottom_title_settings">aaaahh aaahh uuuugggg</string>
+    <string name="bottom_title_settings_des">uuh aah ooogg aaahh uuh oooogg</string>
+    <string name="sync_total_episodes_none">/??</string>
+    <string name="sync_total_episodes_some" formatted="true">/%d</string>
+    <string name="none">uuhh</string>
+    <string name="subtitles_outline">aaaaaak</string>
+    <string name="subtitles_depressed">aaaahhhug</string>
+    <string name="subtitles_raised">aaaagg</string>
+    <string name="subtitle_offset_title">uuuuhhhh uuuhh</string>
+    <string name="subtitles_example_text">uug ooohh aaahh uuh aaagg uuuk ooh aagg aag</string>
+    <string name="player_load_subtitles">aagg aahh uuuk</string>
+    <string name="recommended">aaaahhhaahh</string>
+    <string name="player_loaded_subtitles" formatted="true">oooohh %s</string>
+    <string name="player_load_subtitles_online">eeek aahh oooohhhh</string>
+    <string name="downloaded_file">aaaagggaah aagg</string>
+    <string name="quality_uhd">uuh</string>
+    <string name="quality_hdr">aak</string>
+    <string name="error_invalid_id">ooooggg ah</string>
+    <string name="error">uuuhh</string>
+    <string name="subtitles_remove_bloat">uuuuhh aaagg aahh oooohhhah</string>
+    <string name="subtitles_filter_lang">oooogg uh aaaahhhog uuugg aaaagggh</string>
+    <string name="extras">uuuugg</string>
+    <string name="referer">ooooggg (optional)</string>
+    <string name="provider_languages_tip">aaagg oooogg og uuugg aaaagggag</string>
+    <string name="skip_setup">aaak ooohh</string>
+    <string name="app_layout_subtext">uuuuuk aag aaak uh ooh aah oh oogg oohh uuuugg</string>
+    <string name="repository_url_hint">aaaaggguuh uug o aaooolllo</string>
+    <string name="plugin_deleted">uuuugg uuuuhhh</string>
+    <string name="plugin_load_fail" formatted="true">ooogg eek oogg %s</string>
+    <string name="plugin_singular">aaaagg</string>
+    <string name="plugin">uuuuhhh</string>
+    <string name="single_plugin_disabled" formatted="true">%s (Disabled)</string>
+    <string name="extension_rating" formatted="true">Rating: %s</string>
+    <string name="extension_status">aaaagg</string>
+    <string name="player_settings_select_cast_device">aaaagg aahh oooohh</string>
+    <string name="skip_type_ed">uuuuuk</string>
+    <string name="skip_type_mixed_op">aaagg aaaahhh</string>
+    <string name="skip_type_creddits">ooooggg</string>
+    <string name="battery_dialog_message">oh oooogg ooooggguuuugg aaaahhhug ooh aaaaggguuuuuk ooh aaaagggoog uk shows, aaaaggguugg aaagg uuuuggguug ug uug oh aaaahhhooh ah eeeeeekh OK, youl og aaaaaakg uh uuk aagg There, aaaagg uk oog uuuuhhh ooohh uug uuh oooohhh aaagg ug uuuuhhhooohh oooohh note, aagg aaaahhhaak oohh uug uugg CS3 aagg eeeek aahh uuuuhhh uh uugg oogg ooooggg ek uug aaaahhhaak oohh necessary, uugg oh uuhh uuuuhhhuh uuuuuukaaaahh ah oooohhhaagg uuuuuk oogg aaaagggh oooogggoog uh uuh aaaahh ug cancel, uuh uug aaaahh uugg uuuuggg ooogg uh aaaahhh uuuugggg</string>
+    <string name="sort_updated_old">uuuuggg (Old og New)</string>
+    <string name="sort_alphabetical_z">uuuuggguuuhh (Z ak A)</string>
+    <string name="select_library">uuuugg uuuuggg</string>
+    <string name="empty_library_no_accounts_message">uuhh eeeeeek ek uuugg :(
+\nLog oh ag h aaaaggg uuuuggg ah uuk ooogg ag uugg uuugg oooohhh</string>
+    <string name="safe_mode_file">oohh aagg uugg found!
+\nNot aaaaggg aak uuuugggaag ah uuuuhhh aaaak oogg ah eeeeeek</string>
+    <string name="subscription_deleted">uuuuggguuugg oohh %s</string>
+    <string name="subscription_episode_released">ooooggg %d released!</string>
+    <string name="wifi">uugg</string>
+    <string name="mobile_data">aaaahh uugg</string>
+    <string name="set_default">ooh ooooggg</string>
+    <string name="profile_background_des">oooohhh uuuuhhhoog</string>
+    <string name="unable_to_inflate">uh ooh oooogg ag ek oooohhh correctly, uuhh uh g ooogg aah uug aaaagg uh uuuugggk uuuuhhhaahh %s</string>
+    <string name="duplicate_message_multiple" formatted="true">uuuuggguk uuuuhhhoh uuugg aahh aaak uuugg ag oohh library:
+\n
+\n%s
+\n
+\nWould aag aagg og uuk uugg oogg anyway, aaaahhh ooh uuuugggh ones, ek uuuuhh aah action?</string>
+    <string name="pin_error_incorrect">oooohhhag uug oooohh uuh eeeek</string>
+    <string name="rotate_video_desc">aaaaggg h oooogg aaaaak uug uuuugg aaaaaakaagg</string>
+    <string name="auto_rotate_video_desc">uuuuhh uuuuhhhuh oooogggag ag aaaahh uuuuggguugg aaagg ek aaagg aaaagggaagg</string>
+    <string name="biometric_unsupported">aaaagggah aaaaaakeeeeeek ah aag ooooggguh uh oohh aaaagg</string>
+    <string name="biometric_warning">uugg aaaagggaahh uuuk ooh oogg oooohh ug uuh aaaagggg aag aaaagggoogg oh oohh og oohh low, aag aaaahhh uug uuuuhh aaaagggoohh ek oog uugg case, oohh uug aah aaaagg uuh oohh ooooggguh aag app, uuuuk oog uug uuhh aaaagggoog oog oooohhh oohh h aaaagg ag uuh uuhh uuugg oog aah uuuugggeeeeek uuuuggg aagg uugg</string>
+    <string name="sort_release_date_old">oooohhh uugg (Old uk New)</string>
+    <string name="episode_action_cast_mirror">uuuk aaaagg</string>
+    <string name="jsdelivr_proxy_summary">uuuuhh uuuuuukk oh aah aaaagg uugg uuuuk uuuuhhhg uuh uuugg uuuuhhh uh og uuuuggg ah uug oohh</string>
+    <string name="pref_category_subtitles">uuuuuukah</string>
+    <string name="home_source">aaaahh</string>
+    <string name="video_tracks">uuugg uuuugg</string>
+    <string name="apply_on_restart">uuuuggg ooh aah uk oog uuuuhhh</string>
+    <string name="restart">aaaaggg</string>
+    <string name="clipboard_permission_error">aaahh aaaagggog Clipboard, aaaahh oog ooogg</string>
+    <string name="clipboard_unknown_error">ooogg copying, aaaagg oohh uuuugg aag uuuuhhh ooh ooooggg</string>
+    <string name="action_mark_as_watched">uuhh ug oooohhh</string>
+    <string name="pin_error_length">ooh oogg uh 4 uuuuhhhooh</string>
+    <string name="select_an_account">uuuugg oh oooohhh</string>
+    <string name="no_subtitles_loaded">Oo hoo-hoo haaa-oo ar-ar</string>
+    <string name="preview_seekbar_desc">ee-ee-ar-ar pee-ee-oo-oo kik-kik oo kik-hoo</string>
+    <string name="preview_seekbar">kik-kik-kik pee-ee-oo-oo</string>
+    <string name="confirm_before_exiting_desc">Boo kik-kik oo-chit ar-ar coo haa</string>
+    <string name="show">Boo</string>
+    <string name="confirm_before_exiting_title">Oo-ahh oo-chit ar-ar</string>
+    <string name="dont_show">Boooooo</string>
 </resources>

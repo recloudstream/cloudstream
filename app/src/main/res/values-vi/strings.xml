@@ -193,7 +193,7 @@
     <string name="go_back_30">-30</string>
     <string name="go_forward_30">+30</string>
     <string name="delete_message">%s sẽ bị xoá vĩnh viễn
-\nBạn có chắc chắn muốn xóa\?</string>
+\nBạn có chắc chắn muốn xóa?</string>
     <string name="resume_time_left" formatted="true">%dm
 \ncòn lại</string>
     <string name="status_ongoing">Đang chiếu</string>
@@ -243,8 +243,6 @@
     <string name="episode_action_chromecast_mirror">Chiếu Chromecast</string>
     <string name="episode_action_play_in_app">Xem với trình phát mặc định</string>
     <string name="episode_action_play_in_format">Xem với trình phát %s</string>
-    <string name="episode_action_play_in_browser">Xem tại trình duyệt</string>
-    <string name="episode_action_copy_link">Sao chép liên kết</string>
     <string name="episode_action_auto_download">Tự động tải xuống</string>
     <string name="episode_action_download_mirror">Nguồn tải xuống</string>
     <string name="episode_action_reload_links">Lấy link mới nhất</string>
@@ -322,7 +320,7 @@
     <string name="upload_sync">Đồng bộ</string>
     <string name="sync_score">Đánh giá</string>
     <string name="sync_score_format" formatted="true">%d / 10</string>
-    <string name="sync_total_episodes_none">/\?\?</string>
+    <string name="sync_total_episodes_none">/??</string>
     <string name="sync_total_episodes_some" formatted="true">/%d</string>
     <string name="authenticated_user" formatted="true">Đã xác thực %s</string>
     <string name="authenticated_user_fail" formatted="true">Không thể xác thực %s</string>
@@ -389,7 +387,7 @@
     <string name="subtitles_remove_bloat">Loại bỏ mã hoá phụ đề</string>
     <string name="subtitles_filter_lang">Lọc theo ngôn ngữ media được chuộng hơn</string>
     <string name="extras">Thêm</string>
-    <string name="trailer">Xem trước</string>
+    <string name="trailer">Trailer</string>
     <string name="network_adress_example">https://example.com/example.mp4</string>
     <string name="referer">Đề xuất (tuỳ chọn)</string>
     <string name="next">Tiếp theo</string>
@@ -402,8 +400,8 @@
     <string name="setup_done">Hoàn tất</string>
     <string name="extensions">Tiện ích mở rộng</string>
     <string name="add_repository">Thêm kho lưu trữ</string>
-    <string name="repository_name_hint">Tên kho lưu trữ</string>
-    <string name="repository_url_hint">Đường dẫn kho lưu trữ</string>
+    <string name="repository_name_hint">Tên kho lưu trữ (Tùy chọn)</string>
+    <string name="repository_url_hint">Đường dẫn kho lưu trữ hoặc Mã ngắn</string>
     <string name="plugin_loaded">Đã tải plugin</string>
     <string name="plugin_deleted">Plugin đã xoá</string>
     <string name="plugin_load_fail" formatted="true">Không tải được %s</string>
@@ -442,7 +440,7 @@
     <string name="apk_installer_settings">Bộ cài APK</string>
     <string name="apk_installer_settings_des">Một số máy không hỗ trợ trình cài đặt gói mới. Hãy thử tùy chọn cũ nếu các bản cập nhật không cài đặt.</string>
     <string name="season_format">%1$s %2$d%3$s</string>
-    <string name="play_trailer_button">Xem giới thiệu</string>
+    <string name="play_trailer_button">Xem Trailer</string>
     <string name="automatic_plugin_download_summary">Tự động tải plugin còn thiếu.</string>
     <string name="update_started">Bắt đầu cập nhật</string>
     <string name="pref_category_links">Liên kết</string>
@@ -472,10 +470,6 @@
     <string name="extension_types">Hỗ trợ</string>
     <string name="extension_language">Ngôn ngữ</string>
     <string name="extension_install_first">Cài đặt tiện ích trước</string>
-    <string name="player_settings_play_in_vlc">VLC</string>
-    <string name="player_settings_play_in_mpv">MPV</string>
-    <string name="player_settings_play_in_web">Web Video Cast</string>
-    <string name="player_settings_play_in_browser">Trình duyệt web</string>
     <string name="app_not_found_error">Không thấy ứng dụng</string>
     <string name="all_languages_preference">Tất cả ngôn ngữ</string>
     <string name="skip_type_format" formatted="true">Tua %s</string>
@@ -490,7 +484,7 @@
     <string name="enable_skip_op_from_database_des">Hiển thị nút tua nhanh cho mở đầu/kết thúc</string>
     <string name="clipboard_too_large">Văn bản quá dài. Không thể lưu vào khay nhớ tạm.</string>
     <string name="action_remove_from_watched">Xoá khỏi đã xem</string>
-    <string name="confirm_exit_dialog">Bạn có chắc muốn thoát\?</string>
+    <string name="confirm_exit_dialog">Bạn có chắc muốn thoát?</string>
     <string name="yes">Có</string>
     <string name="update_notification_downloading">Đang tải bản cập nhật…</string>
     <string name="update_notification_installing">Đang cài bản cập nhật…</string>
@@ -570,7 +564,7 @@
 \n
 \n%s
 \n
-\nBạn vẫn muốn thêm mục này, thay thế những mục hiện có hay hủy hành động\?</string>
+\nBạn vẫn muốn thêm mục này, thay thế những mục hiện có hay hủy hành động?</string>
     <string name="backup_frequency">Tần suất sao lưu</string>
     <string name="duplicate_title">Đã tìm thấy bản sao tiềm năng</string>
     <string name="lock_profile">Khóa hồ sơ</string>
@@ -644,4 +638,40 @@
     <string name="device_pin_expired_message">Mã PIN đã hết hạn!</string>
     <string name="device_pin_counter_text">Mã sẽ hết hạn trong %1$dm %2$ds</string>
     <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
+    <string name="device_pin_error_message">Không lấy được mã PIN, hãy thử xác thực cục bộ</string>
+    <string name="downloads_empty">Hiện không có bản tải xuống nào.</string>
+    <string name="auth_locally">Xác thực cục bộ</string>
+    <string name="episode_action_cast_mirror">Cast mirror</string>
+    <string name="play_from_beginning_img_des">Xem từ đầu</string>
+    <string name="open_local_video">Mở video có sẵn</string>
+    <string name="test_warning">Cảnh báo</string>
+    <string name="sort_release_date_new">Ngày phát hành (Mới đến Cũ)</string>
+    <string name="downloads_delete_select">Chọn mục để xoá</string>
+    <string name="offline_file">Có thể xem ngoại tuyến</string>
+    <string name="select_all">Chọn tất cả</string>
+    <string name="deselect_all">Bỏ chọn tất cả</string>
+    <string name="delete_files">Xoá tập tin</string>
+    <string name="delete_format" formatted="true">Xoá (%1$d | %2$s)</string>
+    <string name="delete_message_multiple" formatted="true">Bạn có chắc chắn muốn xóa vĩnh viễn các mục sau không?
+\n
+\n%s</string>
+    <string name="delete_message_series_episodes" formatted="true">Bạn có chắc chắn muốn xóa vĩnh viễn các tập trong %1$s?
+\n
+\n%2$s</string>
+    <string name="delete_message_series_section" formatted="true">Bạn cũng sẽ xóa vĩnh viễn tất cả các tập trong loạt phim sau:
+\n
+\n%s</string>
+    <string name="delete_message_series_only" formatted="true">Bạn có chắc chắn muốn xóa vĩnh viễn tất cả các tập trong loạt phim này không?
+\n
+\n%s</string>
+    <string name="delete_plugin">Xóa plugin</string>
+    <string name="sort_release_date_old">Ngày phát hành (Cũ đến mới)</string>
+    <string name="hide_player_control_names">Ẩn tên các nút điều khiển</string>
+    <string name="preview_seekbar_desc">Bật chế độ xem trước hình thu nhỏ trên seekbar</string>
+    <string name="preview_seekbar">Xem trước Seekbar</string>
+    <string name="no_subtitles_loaded">Chưa tải phụ đề</string>
+    <string name="confirm_before_exiting_title">Xác nhận trước khi thoát</string>
+    <string name="confirm_before_exiting_desc">Hiện hộp thoại trước khi thoát ứng dụng</string>
+    <string name="dont_show">Không hiển thị</string>
+    <string name="show">Hiển thị</string>
 </resources>

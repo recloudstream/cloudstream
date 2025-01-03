@@ -5,6 +5,7 @@ import android.app.Activity
 import android.app.PictureInPictureParams
 import android.content.Context
 import android.content.pm.PackageManager
+import android.content.res.Configuration
 import android.content.res.Resources
 import android.os.Build
 import android.util.DisplayMetrics
@@ -29,15 +30,15 @@ import com.google.android.material.chip.ChipGroup
 import com.google.android.material.navigationrail.NavigationRailView
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
-import com.lagradost.cloudstream3.MainActivity.Companion.resumeApps
+import com.lagradost.cloudstream3.actions.OpenInAppAction
+import com.lagradost.cloudstream3.actions.VideoClickActionHolder
 import com.lagradost.cloudstream3.databinding.ToastBinding
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.ui.player.PlayerEventType
-import com.lagradost.cloudstream3.ui.result.ResultFragment
-import com.lagradost.cloudstream3.ui.result.UiText
+import com.lagradost.cloudstream3.utils.UiText
 import com.lagradost.cloudstream3.ui.settings.Globals.updateTv
 import com.lagradost.cloudstream3.utils.AppContextUtils.isRtl
-import com.lagradost.cloudstream3.utils.DataStoreHelper
+import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Event
 import com.lagradost.cloudstream3.utils.UIHelper
 import com.lagradost.cloudstream3.utils.UIHelper.hasPIPPermission
@@ -164,7 +165,7 @@ object CommonActivity {
             val toast = Toast(act)
             toast.duration = duration ?: Toast.LENGTH_SHORT
             toast.setGravity(Gravity.CENTER_HORIZONTAL or Gravity.BOTTOM, 0, 5.toPx)
-            toast.view = binding.root
+            toast.view = binding.root //fixme Find an alternative using default Toasts since custom toasts are deprecated and won't appear with api30 set as minSDK version.
             currentToast = toast
             toast.show()
 
@@ -203,6 +204,7 @@ object CommonActivity {
 
     fun init(act: Activity) {
         setActivityInstance(act)
+        ioSafe { Torrent.deleteAllFiles() }
 
         val componentActivity = activity as? ComponentActivity ?: return
 
@@ -217,20 +219,15 @@ object CommonActivity {
         componentActivity.updateTv()
         NewPipe.init(DownloaderTestImpl.getInstance())
 
-        for (resumeApp in resumeApps) {
-            resumeApp.launcher =
-                componentActivity.registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-                    val resultCode = result.resultCode
-                    val data = result.data
-                    if (resultCode == AppCompatActivity.RESULT_OK && data != null && resumeApp.position != null && resumeApp.duration != null) {
-                        val pos = resumeApp.getPosition(data)
-                        val dur = resumeApp.getDuration(data)
-                        if (dur > 0L && pos > 0L)
-                            DataStoreHelper.setViewPos(getKey(resumeApp.lastId), pos, dur)
-                        removeKey(resumeApp.lastId)
-                        ResultFragment.updateUI()
-                    }
-                }
+        MainActivity.activityResultLauncher = componentActivity.registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == AppCompatActivity.RESULT_OK) {
+                val actionUid = getKey<String>("last_click_action") ?: return@registerForActivityResult
+                Log.d(TAG, "Loading action $actionUid result handler")
+                val action = VideoClickActionHolder.getByUniqueId(actionUid) as? OpenInAppAction ?: return@registerForActivityResult
+                action.onResultSafe(act, result.data)
+                removeKey("last_click_action")
+                removeKey("last_opened_id")
+            }
         }
 
         // Ask for notification permissions on Android 13
@@ -276,12 +273,35 @@ object CommonActivity {
         }
     }
 
+    fun updateTheme(act: Activity) {
+        val settingsManager = PreferenceManager.getDefaultSharedPreferences(act)
+        if (settingsManager
+            .getString(act.getString(R.string.app_theme_key), "AmoledLight") == "System"
+            && Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            loadThemes(act)
+        }
+    }
+
+    private fun mapSystemTheme(act: Activity): Int {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            val currentNightMode =
+                act.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+            return when (currentNightMode) {
+                Configuration.UI_MODE_NIGHT_NO -> R.style.LightMode // Night mode is not active, we're using the light theme
+                else -> R.style.AppTheme // Night mode is active, we're using dark theme
+            }
+        } else {
+            return R.style.AppTheme
+        }
+    }
+
     fun loadThemes(act: Activity?) {
         if (act == null) return
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(act)
 
         val currentTheme =
             when (settingsManager.getString(act.getString(R.string.app_theme_key), "AmoledLight")) {
+                "System" -> mapSystemTheme(act)
                 "Black" -> R.style.AppTheme
                 "Light" -> R.style.LightMode
                 "Amoled" -> R.style.AmoledMode
@@ -352,8 +372,8 @@ object CommonActivity {
         currentLook = currentLook.parent as? View ?: break
     }*/
 
-    private fun View.hasContent() : Boolean {
-        return isShown && when(this) {
+    private fun View.hasContent(): Boolean {
+        return isShown && when (this) {
             //is RecyclerView -> this.childCount > 0
             is ViewGroup -> this.childCount > 0
             else -> true
@@ -464,20 +484,6 @@ object CommonActivity {
 
 
     fun onKeyDown(act: Activity?, keyCode: Int, event: KeyEvent?) {
-        //println("Keycode: $keyCode")
-        //showToast(
-        //    this,
-        //    "Got Keycode $keyCode | ${KeyEvent.keyCodeToString(keyCode)} \n ${event?.action}",
-        //    Toast.LENGTH_LONG
-        //)
-
-        // Tested keycodes on remote:
-        // KeyEvent.KEYCODE_MEDIA_FAST_FORWARD
-        // KeyEvent.KEYCODE_MEDIA_REWIND
-        // KeyEvent.KEYCODE_MENU
-        // KeyEvent.KEYCODE_MEDIA_NEXT
-        // KeyEvent.KEYCODE_MEDIA_PREVIOUS
-        // KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE
 
         // 149 keycode_numpad 5
         when (keyCode) {
@@ -489,11 +495,11 @@ object CommonActivity {
                 PlayerEventType.SeekBack
             }
 
-            KeyEvent.KEYCODE_MEDIA_NEXT, KeyEvent.KEYCODE_BUTTON_R1, KeyEvent.KEYCODE_N -> {
+            KeyEvent.KEYCODE_MEDIA_NEXT, KeyEvent.KEYCODE_BUTTON_R1, KeyEvent.KEYCODE_N, KeyEvent.KEYCODE_NUMPAD_2, KeyEvent.KEYCODE_CHANNEL_UP -> {
                 PlayerEventType.NextEpisode
             }
 
-            KeyEvent.KEYCODE_MEDIA_PREVIOUS, KeyEvent.KEYCODE_BUTTON_L1, KeyEvent.KEYCODE_B -> {
+            KeyEvent.KEYCODE_MEDIA_PREVIOUS, KeyEvent.KEYCODE_BUTTON_L1, KeyEvent.KEYCODE_B, KeyEvent.KEYCODE_NUMPAD_1, KeyEvent.KEYCODE_CHANNEL_DOWN -> {
                 PlayerEventType.PrevEpisode
             }
 

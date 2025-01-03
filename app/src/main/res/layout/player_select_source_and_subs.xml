@@ -67,8 +67,8 @@
                 android:layout_rowWeight="1"
                 android:background="?attr/primaryBlackBackground"
                 android:listSelector="@drawable/outline_drawable_forced"
-                android:nextFocusUp="@id/profiles_click_settings"
                 android:nextFocusRight="@id/sort_subtitles"
+                android:nextFocusUp="@id/profiles_click_settings"
                 android:nextFocusDown="@id/apply_btt"
                 android:requiresFadingEdge="vertical"
                 tools:layout_height="100dp"
@@ -90,21 +90,18 @@
                 android:orientation="horizontal"
                 tools:ignore="UseCompoundDrawables">
 
-                <LinearLayout
-                    android:id="@+id/subtitles_click_settings"
+                <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_rowWeight="1"
+                    android:layout_height="match_parent"
                     android:layout_marginTop="10dp"
-                    android:focusable="true"
-                    android:foreground="@drawable/outline_drawable_forced"
-                    android:orientation="horizontal"
-                    android:paddingTop="10dp"
-                    android:paddingBottom="10dp">
+                    android:orientation="horizontal">
 
                     <TextView
+                        android:id="@+id/subtitles_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_alignParentStart="true"
+                        android:paddingVertical="10dp"
                         android:paddingStart="?android:attr/listPreferredItemPaddingStart"
                         android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
                         android:text="@string/pick_subtitle"
@@ -116,12 +113,33 @@
                         android:id="@+id/subtitles_encoding_format"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
                         android:layout_gravity="center"
-                        android:gravity="center"
+                        android:layout_toStartOf="@+id/subtitle_settings_btt"
+                        android:layout_toEndOf="@id/subtitles_text"
+                        android:focusable="true"
+                        android:foreground="@drawable/outline_drawable_forced"
+                        android:gravity="start"
+                        android:maxLines="1"
+                        android:paddingHorizontal="10dp"
+                        android:paddingVertical="10dp"
                         android:textColor="?attr/textColor"
                         android:textSize="15sp"
                         tools:text="Thai (TIS 620-2533/ISO 8859-11)" />
-                </LinearLayout>
+
+                    <ImageView
+                        android:id="@+id/subtitle_settings_btt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="44dp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:layout_gravity="center"
+                        android:contentDescription="@string/subtitles_settings"
+                        android:foreground="@drawable/outline_drawable_forced"
+                        android:paddingHorizontal="10dp"
+                        android:paddingVertical="10dp"
+                        android:src="@drawable/ic_outline_settings_24" />
+                </RelativeLayout>
 
                 <ImageView
                     android:layout_width="25dp"
@@ -129,7 +147,6 @@
                     android:layout_gravity="end|center_vertical"
                     android:layout_marginTop="0dp"
                     android:layout_marginEnd="10dp"
-
                     android:contentDescription="@string/home_change_provider_img_des"
                     android:src="@drawable/ic_outline_settings_24"
                     android:visibility="gone" />
@@ -142,9 +159,9 @@
                 android:layout_rowWeight="1"
                 android:background="?attr/primaryBlackBackground"
                 android:listSelector="@drawable/outline_drawable_forced"
-                android:nextFocusUp="@id/subtitles_click_settings"
                 android:nextFocusLeft="@id/sort_providers"
                 android:nextFocusRight="@id/apply_btt"
+                android:nextFocusUp="@id/subtitles_click_settings"
                 android:nextFocusDown="@id/apply_btt"
                 android:requiresFadingEdge="vertical"
                 tools:layout_height="200dp"

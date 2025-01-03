@@ -6,17 +6,17 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
+import coil3.transform.RoundedCornersTransformation
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.AccountListItemAddBinding
 import com.lagradost.cloudstream3.databinding.AccountListItemBinding
 import com.lagradost.cloudstream3.databinding.AccountListItemEditBinding
 import com.lagradost.cloudstream3.ui.account.AccountHelper.showAccountEditDialog
-import com.lagradost.cloudstream3.ui.result.setImage
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.utils.DataStoreHelper
-import com.lagradost.cloudstream3.utils.UIHelper.setImage
+import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
 
 class AccountAdapter(
     private val accounts: List<DataStoreHelper.Account>,
@@ -45,7 +45,7 @@ class AccountAdapter(
                     val isLastUsedAccount = account.keyIndex == DataStoreHelper.selectedKeyIndex
 
                     accountName.text = account.name
-                    accountImage.setImage(account.image)
+                    accountImage.loadImage(account.image)
                     lockIcon.isVisible = account.lockPin != null
                     outline.isVisible = !isTv && isLastUsedAccount
 
@@ -87,11 +87,9 @@ class AccountAdapter(
                     val isLastUsedAccount = account.keyIndex == DataStoreHelper.selectedKeyIndex
 
                     accountName.text = account.name
-                    accountImage.setImage(
-                        account.image,
-                        fadeIn = false,
-                        radius = 10
-                    )
+                    accountImage.loadImage(account.image) {
+                        RoundedCornersTransformation(10f)
+                    }
                     lockIcon.isVisible = account.lockPin != null
                     outline.isVisible = !isTv && isLastUsedAccount
 

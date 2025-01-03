@@ -44,6 +44,9 @@
             android:name="apiName"
             app:argType="string" />
         <argument
+            android:name="name"
+            app:argType="string" />
+        <argument
             android:name="startAction"
             android:defaultValue="0"
             app:argType="integer" />

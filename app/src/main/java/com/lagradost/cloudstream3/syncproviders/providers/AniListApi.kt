@@ -15,16 +15,17 @@ import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.syncproviders.SyncIdName
 import com.lagradost.cloudstream3.ui.SyncWatchType
 import com.lagradost.cloudstream3.ui.library.ListSorting
-import com.lagradost.cloudstream3.ui.result.txt
-import com.lagradost.cloudstream3.utils.AppUtils.parseJson
+import com.lagradost.cloudstream3.utils.txt
 import com.lagradost.cloudstream3.utils.AppContextUtils.splitQuery
+import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
 import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.DataStore.toKotlinObject
+import com.lagradost.cloudstream3.utils.DataStoreHelper.toYear
 import java.net.URL
 import java.net.URLEncoder
-import java.util.*
+import java.util.Locale
 
 class AniListApi(index: Int) : AccountManager(index), SyncAPI {
     override var name = "AniList"
@@ -63,7 +64,7 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
 
     override suspend fun handleRedirect(url: String): Boolean {
         val sanitizer =
-            splitQuery(URL(url.replace(appString, "https").replace("/#", "?"))) // FIX ERROR
+            splitQuery(URL(url.replace(APP_STRING, "https").replace("/#", "?"))) // FIX ERROR
         val token = sanitizer["access_token"]!!
         val expiresIn = sanitizer["expires_in"]!!
 
@@ -87,7 +88,7 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
 
     override suspend fun search(name: String): List<SyncAPI.SyncSearchResult>? {
         val data = searchShows(name) ?: return null
-        return data.data?.Page?.media?.map {
+        return data.data?.page?.media?.map {
             SyncAPI.SyncSearchResult(
                 it.title.romaji ?: return null,
                 this.name,
@@ -101,7 +102,7 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
     override suspend fun getResult(id: String): SyncAPI.SyncResult {
         val internalId = (Regex("anilist\\.co/anime/(\\d*)").find(id)?.groupValues?.getOrNull(1)
             ?: id).toIntOrNull() ?: throw ErrorLoadingException("Invalid internalId")
-        val season = getSeason(internalId).data.Media
+        val season = getSeason(internalId).data.media
 
         return SyncAPI.SyncResult(
             season.id.toString(),
@@ -301,12 +302,12 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
             //println("NAME $name NEW NAME ${name.replace(blackListRegex, "")}")
             val shows = searchShows(name.replace(blackListRegex, ""))
 
-            shows?.data?.Page?.media?.find {
+            shows?.data?.page?.media?.find {
                 (malId ?: "NONE") == it.idMal.toString()
             }?.let { return it }
 
             val filtered =
-                shows?.data?.Page?.media?.filter {
+                shows?.data?.page?.media?.filter {
                     (((it.startDate.year ?: year.toString()) == year.toString()
                             || year == null))
                 }
@@ -496,7 +497,7 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
         val data = postApi(q, true)
         val d = parseJson<GetDataRoot>(data ?: return null)
 
-        val main = d.data?.Media
+        val main = d.data?.media
         if (main?.mediaListEntry != null) {
             return AniListTitleHolder(
                 title = main.title,
@@ -536,7 +537,7 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
                     headers = mapOf(
                         "Authorization" to "Bearer " + (getAuth()
                             ?: return@suspendSafeApiCall null),
-                        if (cache) "Cache-Control" to "max-stale=$maxStale" else "Cache-Control" to "no-cache"
+                        if (cache) "Cache-Control" to "max-stale=$MAX_STALE" else "Cache-Control" to "no-cache"
                     ),
                     cacheTime = 0,
                     data = mapOf(
@@ -631,8 +632,9 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
                 ?: this.media.coverImage.medium,
                 null,
                 null,
+                this.media.seasonYear.toYear(),
                 null,
-                plot = this.media.description
+                plot = this.media.description,
             )
         }
     }
@@ -647,7 +649,7 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
     )
 
     data class Data(
-        @JsonProperty("MediaListCollection") val MediaListCollection: MediaListCollection
+        @JsonProperty("MediaListCollection") val mediaListCollection: MediaListCollection
     )
 
     private fun getAniListListCached(): Array<Lists>? {
@@ -659,7 +661,7 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
 
         if (checkToken()) return null
         return if (requireLibraryRefresh) {
-            val list = getFullAniListList()?.data?.MediaListCollection?.lists?.toTypedArray()
+            val list = getFullAniListList()?.data?.mediaListCollection?.lists?.toTypedArray()
             if (list != null) {
                 setKey(ANILIST_CACHED_LIST, list)
             }
@@ -678,7 +680,7 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
 
         // To fill empty lists when AniList does not return them
         val baseMap =
-            AniListStatusType.values().filter { it.value >= 0 }.associate {
+            AniListStatusType.entries.filter { it.value >= 0 }.associate {
                 it.stringRes to emptyList<SyncAPI.LibraryItem>()
             }
 
@@ -689,6 +691,8 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
                 ListSorting.AlphabeticalZ,
                 ListSorting.UpdatedNew,
                 ListSorting.UpdatedOld,
+                ListSorting.ReleaseDateNew,
+                ListSorting.ReleaseDateOld,
                 ListSorting.RatingHigh,
                 ListSorting.RatingLow,
             )
@@ -764,7 +768,7 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
 
     /** Used to query a saved MediaItem on the list to get the id for removal */
     data class MediaListItemRoot(@JsonProperty("data") val data: MediaListItem? = null)
-    data class MediaListItem(@JsonProperty("MediaList") val MediaList: MediaListId? = null)
+    data class MediaListItem(@JsonProperty("MediaList") val mediaList: MediaListId? = null)
     data class MediaListId(@JsonProperty("id") val id: Long? = null)
 
     private suspend fun postDataAboutId(
@@ -787,7 +791,7 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
                 """
                 val response = postApi(idQuery)
                 val listId =
-                    tryParseJson<MediaListItemRoot>(response)?.data?.MediaList?.id ?: return false
+                    tryParseJson<MediaListItemRoot>(response)?.data?.mediaList?.id ?: return false
                 """
                     mutation(${'$'}id: Int = $listId) {
                         DeleteMediaListEntry(id: ${'$'}id) {
@@ -836,7 +840,7 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
         val data = postApi(q)
         if (data.isNullOrBlank()) return null
         val userData = parseJson<AniListRoot>(data)
-        val u = userData.data?.Viewer
+        val u = userData.data?.viewer
         val user = AniListUser(
             u?.id,
             u?.name,
@@ -858,8 +862,8 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
         suspend fun getSeasonRecursive(id: Int) {
             val season = getSeason(id)
             seasons.add(season)
-            if (season.data.Media.format?.startsWith("TV") == true) {
-                season.data.Media.relations?.edges?.forEach {
+            if (season.data.media.format?.startsWith("TV") == true) {
+                season.data.media.relations?.edges?.forEach {
                     if (it.node?.format != null) {
                         if (it.relationType == "SEQUEL" && it.node.format.startsWith("TV")) {
                             getSeasonRecursive(it.node.id)
@@ -878,7 +882,7 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
     )
 
     data class SeasonData(
-        @JsonProperty("Media") val Media: SeasonMedia,
+        @JsonProperty("Media") val media: SeasonMedia,
     )
 
     data class SeasonMedia(
@@ -1050,7 +1054,7 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
     )
 
     data class AniListData(
-        @JsonProperty("Viewer") val Viewer: AniListViewer?,
+        @JsonProperty("Viewer") val viewer: AniListViewer?,
     )
 
     data class AniListRoot(
@@ -1090,7 +1094,7 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
     )
 
     data class LikeData(
-        @JsonProperty("Viewer") val Viewer: LikeViewer?,
+        @JsonProperty("Viewer") val viewer: LikeViewer?,
     )
 
     data class LikeRoot(
@@ -1130,7 +1134,7 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
     )
 
     data class GetDataData(
-        @JsonProperty("Media") val Media: GetDataMedia?,
+        @JsonProperty("Media") val media: GetDataMedia?,
     )
 
     data class GetDataRoot(
@@ -1163,7 +1167,7 @@ class AniListApi(index: Int) : AccountManager(index), SyncAPI {
     )
 
     data class GetSearchPage(
-        @JsonProperty("Page") val Page: GetSearchData?,
+        @JsonProperty("Page") val page: GetSearchData?,
     )
 
     data class GetSearchData(

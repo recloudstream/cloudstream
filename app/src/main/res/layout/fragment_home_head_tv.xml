@@ -44,9 +44,11 @@
                 android:layout_marginEnd="0dp"
                 android:background="@drawable/player_button_tv_attr_no_bg"
                 android:gravity="center_vertical"
-                android:nextFocusLeft="@id/nav_rail_view"
+                android:nextFocusLeft="@id/home_preview_play_btt"
                 android:nextFocusRight="@id/home_preview_search_button"
-                android:nextFocusDown="@id/home_preview_play_btt" />
+                android:nextFocusDown="@id/home_preview_play_btt" >
+                <requestFocus />
+            </com.google.android.material.button.MaterialButton>
 
             <ImageView
                 android:id="@+id/home_preview_search_button"

@@ -233,7 +233,7 @@
     <string name="sort_apply">قدم</string>
     <string name="torrent_plot">وصف</string>
     <string name="picture_in_picture_des">يستمر التشغيل في مشغل مصغر فوق التطبيقات الأخرى</string>
-    <string name="delete_message" formatted="true">نهائيا %sسيؤدي هذا الى حذف 
+    <string name="delete_message" formatted="true">نهائيا %sسيؤدي هذا الى حذف
 \nهل أنت متأكد؟</string>
     <string name="subs_font">الخط</string>
     <string name="subs_font_size">حجم الخط</string>
@@ -311,11 +311,9 @@
     <string name="others">اخرون</string>
     <string name="skip_update">تخطي هذا التحديث</string>
     <string name="jsdelivr_proxy_summary">.قد يتسبب في تأخير التحديثات لبضعة أيام .jsDelivr باستخدام GitHubيتجاوز حظر</string>
-    <string name="episode_action_copy_link">انسخ الرابط</string>
     <string name="asian_drama">الدرامات الآسيوية</string>
     <string name="queued">في قائمة الانتظار</string>
     <string name="episode_action_play_in_app">افتح في التطبيق</string>
-    <string name="episode_action_play_in_browser">افتح في المتصفح</string>
     <string name="dns_pref_summary">مفيد لتجاوز حجب مزودي خدمة الإنترنت</string>
     <string name="tv_series_singular">مسلسل</string>
     <string name="rating">تقييم</string>
@@ -353,4 +351,5 @@
     <string name="site">موقع</string>
     <string name="limit_title">عنوان مشغل الفيديو بحد أقصى لعدد الأحرف</string>
     <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
+    <string name="dns_pref">DNS عبر HTTPS</string>
 </resources>

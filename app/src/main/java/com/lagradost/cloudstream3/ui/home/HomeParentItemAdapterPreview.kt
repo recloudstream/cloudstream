@@ -16,6 +16,8 @@ import androidx.viewbinding.ViewBinding
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
+import com.google.android.material.navigation.NavigationBarItemView
+import com.google.android.material.navigationrail.NavigationRailMenuView
 import com.lagradost.cloudstream3.AcraApplication.Companion.getActivity
 import com.lagradost.cloudstream3.CommonActivity.activity
 import com.lagradost.cloudstream3.HomePageList
@@ -117,15 +119,12 @@ class HomeParentItemAdapterPreview(
             }
 
         override fun restore(state: Bundle) {
-            state.getParcelable<Parcelable>("resumeRecyclerView")?.let { recycle ->
+            state.getSafeParcelable<Parcelable>("resumeRecyclerView")?.let { recycle ->
                 resumeRecyclerView.layoutManager?.onRestoreInstanceState(recycle)
             }
-            state.getParcelable<Parcelable>("bookmarkRecyclerView")?.let { recycle ->
+            state.getSafeParcelable<Parcelable>("bookmarkRecyclerView")?.let { recycle ->
                 bookmarkRecyclerView.layoutManager?.onRestoreInstanceState(recycle)
             }
-            //state.getInt("previewViewpager").let { recycle ->
-            //    previewViewpager.setCurrentItem(recycle,true)
-            //}
         }
 
         val previewAdapter = HomeScrollAdapter(fragment = fragment)
@@ -440,6 +439,8 @@ class HomeParentItemAdapterPreview(
                 }
             }
 
+            homeAccount?.isGone = isLayout(TV or EMULATOR)
+
             homeAccount?.setOnClickListener {
                 activity?.showAccountSelectLinear()
             }
@@ -479,7 +480,8 @@ class HomeParentItemAdapterPreview(
                 homePreviewHiddenPrevFocus.setOnFocusChangeListener { _, hasFocus ->
                     if (!hasFocus) return@setOnFocusChangeListener
                     if (previewViewpager.currentItem <= 0) {
-                        (activity as? MainActivity)?.binding?.navRailView?.requestFocus()
+                        //Focus the Home item as the default focus will be the header item
+                        (activity as? MainActivity)?.binding?.navRailView?.findViewById<NavigationBarItemView>(R.id.navigation_home)?.requestFocus()
                     } else {
                         previewViewpager.setCurrentItem(previewViewpager.currentItem - 1, true)
                         binding.homePreviewPlayBtt.requestFocus()

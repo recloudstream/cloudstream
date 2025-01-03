@@ -4,6 +4,7 @@ import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.mvvm.logError
 import kotlinx.coroutines.*
 import org.junit.Assert
+import kotlin.random.Random
 
 object TestingUtils {
     open class TestResult(val success: Boolean) {
@@ -280,8 +281,8 @@ object TestingUtils {
 
                     // Test Search Results
                     val searchQueries =
-                        // Use the first 3 home page results as queries since they are guaranteed to exist
-                        (homePageList.take(3).map { it.name } +
+                        // Use the random 3 home page results as queries since they are guaranteed to exist
+                        (homePageList.shuffled(Random).take(3).map { it.name.split(" ").first() } +
                                 // If home page is sparse then use generic search queries
                                 listOf("over", "iron", "guy")).take(3)
 

@@ -46,7 +46,7 @@ import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.syncproviders.SyncIdName
 import com.lagradost.cloudstream3.ui.AutofitRecyclerView
 import com.lagradost.cloudstream3.ui.quicksearch.QuickSearchFragment
-import com.lagradost.cloudstream3.ui.result.txt
+import com.lagradost.cloudstream3.utils.txt
 import com.lagradost.cloudstream3.ui.search.SEARCH_ACTION_LOAD
 import com.lagradost.cloudstream3.ui.search.SEARCH_ACTION_SHOW_METADATA
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
@@ -561,6 +561,7 @@ class LibraryFragment : Fragment() {
                     activity?.loadResult(
                         card.url,
                         apiName,
+                        card.name
                     )
                 }
 
@@ -600,8 +601,4 @@ class LibraryFragment : Fragment() {
     }
 }
 
-class MenuSearchView(context: Context) : SearchView(context) {
-    override fun onActionViewCollapsed() {
-        super.onActionViewCollapsed()
-    }
-}
+class MenuSearchView(context: Context) : SearchView(context)

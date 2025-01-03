@@ -7,6 +7,7 @@ import com.lagradost.cloudstream3.LoadResponse
 import com.lagradost.cloudstream3.ui.APIRepository
 import com.lagradost.cloudstream3.ui.result.ResultEpisode
 import com.lagradost.cloudstream3.utils.ExtractorLink
+import com.lagradost.cloudstream3.utils.ExtractorLinkType
 import kotlin.math.max
 import kotlin.math.min
 
@@ -28,6 +29,7 @@ class RepoLinkGenerator(
     }
 
     override val hasCache = true
+    override val canSkipLoading = true
 
     override fun hasNext(): Boolean {
         return currentIndex < episodes.size - 1
@@ -73,12 +75,12 @@ class RepoLinkGenerator(
 
     override suspend fun generateLinks(
         clearCache: Boolean,
-        type: LoadType,
+        allowedTypes: Set<ExtractorLinkType>,
         callback: (Pair<ExtractorLink?, ExtractorUri?>) -> Unit,
         subtitleCallback: (SubtitleData) -> Unit,
-        offset: Int
+        offset: Int,
+        isCasting: Boolean,
     ): Boolean {
-        val allowedTypes = type.toSet()
         val index = currentIndex
         val current = episodes.getOrNull(index + offset) ?: return false
 
@@ -121,7 +123,7 @@ class RepoLinkGenerator(
         val result = APIRepository(
             getApiFromNameNull(current.apiName) ?: throw Exception("This provider does not exist")
         ).loadLinks(current.data,
-            isCasting = LoadType.Chromecast == type,
+            isCasting = isCasting,
             subtitleCallback = { file ->
                 val correctFile = PlayerSubtitleHelper.getSubtitleData(file)
                 if (correctFile.url.isNotEmpty() && !currentSubsUrls.contains(correctFile.url)) {

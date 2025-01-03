@@ -58,7 +58,7 @@ open class PieFetchButton(context: Context, attributeSet: AttributeSet) :
     }
 
     private var progressBarBackground: View
-    private var statusView: ImageView
+    var statusView: ImageView
 
     open fun onInflate() {}
 
@@ -248,7 +248,7 @@ open class PieFetchButton(context: Context, attributeSet: AttributeSet) :
     } */
 
     @MainThread
-    private fun setStatusInternal(status : DownloadStatusTell?) {
+    private fun setStatusInternal(status: DownloadStatusTell?) {
         val isPreActive = isZeroBytes && status == DownloadStatusTell.IsDownloading
         if (animateWaiting && (status == DownloadStatusTell.IsPending || isPreActive)) {
             val animation = AnimationUtils.loadAnimation(context, waitingAnimation)
@@ -286,7 +286,7 @@ open class PieFetchButton(context: Context, attributeSet: AttributeSet) :
         if (Looper.myLooper() == Looper.getMainLooper()) {
             try {
                 setStatusInternal(status)
-            } catch (t : Throwable) {
+            } catch (t: Throwable) {
                 logError(t) // Just in case setStatusInternal throws because thread
                 progressBarBackground.post {
                     setStatusInternal(status)

@@ -2,6 +2,7 @@ package com.lagradost.cloudstream3.ui.player
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.DialogInterface
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Handler
@@ -9,7 +10,13 @@ import android.os.Looper
 import android.util.Log
 import android.util.Rational
 import android.widget.FrameLayout
-import androidx.media3.common.C.*
+import androidx.annotation.MainThread
+import androidx.annotation.OptIn
+import androidx.appcompat.app.AlertDialog
+import androidx.media3.common.C.TIME_UNSET
+import androidx.media3.common.C.TRACK_TYPE_AUDIO
+import androidx.media3.common.C.TRACK_TYPE_TEXT
+import androidx.media3.common.C.TRACK_TYPE_VIDEO
 import androidx.media3.common.Format
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MimeTypes
@@ -19,9 +26,10 @@ import androidx.media3.common.TrackGroup
 import androidx.media3.common.TrackSelectionOverride
 import androidx.media3.common.Tracks
 import androidx.media3.common.VideoSize
+import androidx.media3.common.util.UnstableApi
 import androidx.media3.database.StandaloneDatabaseProvider
 import androidx.media3.datasource.DataSource
-import androidx.media3.datasource.DefaultDataSourceFactory
+import androidx.media3.datasource.DefaultDataSource
 import androidx.media3.datasource.DefaultHttpDataSource
 import androidx.media3.datasource.HttpDataSource
 import androidx.media3.datasource.cache.CacheDataSource
@@ -29,9 +37,9 @@ import androidx.media3.datasource.cache.LeastRecentlyUsedCacheEvictor
 import androidx.media3.datasource.cache.SimpleCache
 import androidx.media3.datasource.okhttp.OkHttpDataSource
 import androidx.media3.exoplayer.DefaultLoadControl
-import androidx.media3.exoplayer.DefaultRenderersFactory
-import androidx.media3.exoplayer.DefaultRenderersFactory.EXTENSION_RENDERER_MODE_ON
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.Renderer.STATE_ENABLED
+import androidx.media3.exoplayer.Renderer.STATE_STARTED
 import androidx.media3.exoplayer.SeekParameters
 import androidx.media3.exoplayer.dash.DashMediaSource
 import androidx.media3.exoplayer.drm.DefaultDrmSessionManager
@@ -50,7 +58,10 @@ import androidx.preference.PreferenceManager
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
+import com.lagradost.cloudstream3.ErrorLoadingException
 import com.lagradost.cloudstream3.MainActivity.Companion.deleteFileOnExit
+import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.USER_AGENT
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.mvvm.debugAssert
@@ -58,6 +69,9 @@ import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.ui.subtitles.SaveCaptionStyle
 import com.lagradost.cloudstream3.utils.AppContextUtils.isUsingMobileData
+import com.lagradost.cloudstream3.utils.AppContextUtils.setDefaultFocus
+import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
+import com.lagradost.cloudstream3.utils.Coroutines.runOnMainThread
 import com.lagradost.cloudstream3.utils.DataStoreHelper.currentAccount
 import com.lagradost.cloudstream3.utils.DrmExtractorLink
 import com.lagradost.cloudstream3.utils.EpisodeSkip
@@ -65,8 +79,10 @@ import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.ExtractorLinkPlayList
 import com.lagradost.cloudstream3.utils.ExtractorLinkType
 import com.lagradost.cloudstream3.utils.SubtitleHelper.fromTwoLettersToLanguage
+import io.github.anilbeesetti.nextlib.media3ext.ffdecoder.NextRenderersFactory
+import androidx.media3.exoplayer.DefaultRenderersFactory
+import kotlinx.coroutines.delay
 import java.io.File
-import java.lang.IllegalArgumentException
 import java.util.UUID
 import javax.net.ssl.HttpsURLConnection
 import javax.net.ssl.SSLContext
@@ -85,6 +101,7 @@ const val toleranceBeforeUs = 300_000L
  */
 const val toleranceAfterUs = 300_000L
 
+@OptIn(UnstableApi::class)
 class CS3IPlayer : IPlayer {
     private var isPlaying = false
     private var exoPlayer: ExoPlayer? = null
@@ -143,7 +160,7 @@ class CS3IPlayer : IPlayer {
 
     /**
      * Tracks reported to be used by exoplayer, since sometimes it has a mind of it's own when selecting subs.
-     * String = id
+     * String = id (without exoplayer track number)
      * Boolean = if it's active
      * */
     private var playerSelectedSubtitleTracks = listOf<Pair<String, Boolean>>()
@@ -156,6 +173,7 @@ class CS3IPlayer : IPlayer {
     }
 
     override fun releaseCallbacks() {
+        ioSafe { Torrent.clearAll() }
         eventHandler = null
     }
 
@@ -182,6 +200,10 @@ class CS3IPlayer : IPlayer {
                 logError(e)
             }
         }
+    }
+
+    fun String.stripTrackId(): String {
+        return this.replace(Regex("""^\d+:"""), "")
     }
 
     fun initSubtitles(subView: SubtitleView?, subHolder: FrameLayout?, style: SaveCaptionStyle?) {
@@ -234,6 +256,7 @@ class CS3IPlayer : IPlayer {
                     gen.clear(sameEpisode)
                 }
             }
+
             loadOnlinePlayer(context, link)
         } else if (data != null) {
             (imageGenerator as? PreviewGenerator)?.let { gen ->
@@ -257,7 +280,6 @@ class CS3IPlayer : IPlayer {
 
     private var currentSubtitles: SubtitleData? = null
 
-    @SuppressLint("UnsafeOptInUsageError")
     private fun List<Tracks.Group>.getTrack(id: String?): Pair<TrackGroup, Int>? {
         if (id == null) return null
         // This beast of an expression does:
@@ -269,7 +291,11 @@ class CS3IPlayer : IPlayer {
         return this.firstNotNullOfOrNull { group ->
             (0 until group.mediaTrackGroup.length).map {
                 group.getTrackFormat(it) to it
-            }.firstOrNull { it.first.id == id }
+            }.firstOrNull {
+                // The format id system is "trackNumber:trackID"
+                // The track number is not generated by us so we filter it out
+                it.first.id?.stripTrackId() == id
+            }
                 ?.let { group.mediaTrackGroup to it.second }
         }
     }
@@ -342,7 +368,6 @@ class CS3IPlayer : IPlayer {
         }.flatten()
     }
 
-    @SuppressLint("UnsafeOptInUsageError")
     private fun Tracks.Group.getFormats(): List<Pair<Format, Int>> {
         return (0 until this.mediaTrackGroup.length).mapNotNull { i ->
             if (this.isSupported)
@@ -353,25 +378,31 @@ class CS3IPlayer : IPlayer {
 
     private fun Format.toAudioTrack(): AudioTrack {
         return AudioTrack(
-            this.id,
+            this.id?.stripTrackId(),
             this.label,
-//            isPlaying,
             this.language
+        )
+    }
+
+    private fun Format.toSubtitleTrack(): TextTrack {
+        return TextTrack(
+            this.id?.stripTrackId(),
+            this.label,
+            this.language,
+            this.sampleMimeType
         )
     }
 
     private fun Format.toVideoTrack(): VideoTrack {
         return VideoTrack(
-            this.id,
+            this.id?.stripTrackId(),
             this.label,
-//            isPlaying,
             this.language,
             this.width,
-            this.height
+            this.height,
         )
     }
 
-    @SuppressLint("UnsafeOptInUsageError")
     override fun getVideoTracks(): CurrentTracks {
         val allTracks = exoPlayer?.currentTracks?.groups ?: emptyList()
         val videoTracks = allTracks.filter { it.type == TRACK_TYPE_VIDEO }
@@ -380,18 +411,26 @@ class CS3IPlayer : IPlayer {
         val audioTracks = allTracks.filter { it.type == TRACK_TYPE_AUDIO }.getFormats()
             .map { it.first.toAudioTrack() }
 
+        val textTracks = allTracks.filter { it.type == TRACK_TYPE_TEXT }.getFormats()
+            .map { it.first.toSubtitleTrack() }
+
+        val currentTextTracks = textTracks.filter { track ->
+            playerSelectedSubtitleTracks.any { it.second && it.first == track.id }
+        }
+
         return CurrentTracks(
             exoPlayer?.videoFormat?.toVideoTrack(),
             exoPlayer?.audioFormat?.toAudioTrack(),
+            currentTextTracks,
             videoTracks,
-            audioTracks
+            audioTracks,
+            textTracks
         )
     }
 
     /**
      * @return True if the player should be reloaded
      * */
-    @SuppressLint("UnsafeOptInUsageError")
     override fun setPreferredSubtitles(subtitle: SubtitleData?): Boolean {
         Log.i(TAG, "setPreferredSubtitles init $subtitle")
         currentSubtitles = subtitle
@@ -451,15 +490,26 @@ class CS3IPlayer : IPlayer {
         } ?: false
     }
 
-    var currentSubtitleOffset: Long = 0
+    private var currentSubtitleOffset: Long = 0
 
     override fun setSubtitleOffset(offset: Long) {
         currentSubtitleOffset = offset
-        currentTextRenderer?.setRenderOffsetMs(offset)
+        CustomDecoder.subtitleOffset = offset
+        if (currentTextRenderer?.state == STATE_ENABLED || currentTextRenderer?.state == STATE_STARTED) {
+            exoPlayer?.currentPosition?.let { pos ->
+                // This seems to properly refresh all subtitles
+                // It needs to be done as all subtitle cues with timings are pre-processed
+                currentTextRenderer?.resetPosition(pos)
+            }
+        }
     }
 
     override fun getSubtitleOffset(): Long {
-        return currentSubtitleOffset //currentTextRenderer?.getRenderOffsetMs() ?: currentSubtitleOffset
+        return currentSubtitleOffset
+    }
+
+    override fun getSubtitleCues(): List<SubtitleCue> {
+        return currentSubtitleDecoder?.getSubtitleCues() ?: emptyList()
     }
 
     override fun getCurrentPreferredSubtitle(): SubtitleData? {
@@ -470,7 +520,6 @@ class CS3IPlayer : IPlayer {
         }
     }
 
-    @SuppressLint("UnsafeOptInUsageError")
     override fun getAspectRatio(): Rational? {
         return exoPlayer?.videoFormat?.let { format ->
             Rational(format.width, format.height)
@@ -481,31 +530,29 @@ class CS3IPlayer : IPlayer {
         subtitleHelper.setSubStyle(style)
     }
 
-    @SuppressLint("UnsafeOptInUsageError")
     override fun saveData() {
         Log.i(TAG, "saveData")
         updatedTime()
 
         exoPlayer?.let { exo ->
             playbackPosition = exo.currentPosition
-            currentWindow = exo.currentWindowIndex
+            currentWindow = exo.currentMediaItemIndex
             isPlaying = exo.isPlaying
         }
     }
 
     private fun releasePlayer(saveTime: Boolean = true) {
         Log.i(TAG, "releasePlayer")
-
+        eventLooperIndex += 1
         if (saveTime)
             updatedTime()
 
         exoPlayer?.apply {
-            setPlayWhenReady(false)
+            playWhenReady = false
             stop()
             release()
         }
         //simpleCache?.release()
-        currentTextRenderer = null
 
         exoPlayer = null
         //simpleCache = null
@@ -563,7 +610,6 @@ class CS3IPlayer : IPlayer {
 
         var requestSubtitleUpdate: (() -> Unit)? = null
 
-        @SuppressLint("UnsafeOptInUsageError")
         private fun createOnlineSource(headers: Map<String, String>): HttpDataSource.Factory {
             val source = OkHttpDataSource.Factory(app.baseClient).setUserAgent(USER_AGENT)
             return source.apply {
@@ -571,7 +617,6 @@ class CS3IPlayer : IPlayer {
             }
         }
 
-        @SuppressLint("UnsafeOptInUsageError")
         private fun createOnlineSource(link: ExtractorLink): HttpDataSource.Factory {
             val provider = getApiFromNameNull(link.source)
             val interceptor = provider?.getVideoInterceptor(link)
@@ -604,53 +649,13 @@ class CS3IPlayer : IPlayer {
             }
         }
 
-        @SuppressLint("UnsafeOptInUsageError")
         private fun Context.createOfflineSource(): DataSource.Factory {
-            return DefaultDataSourceFactory(this, USER_AGENT)
+            return DefaultDataSource.Factory(
+                this,
+                DefaultHttpDataSource.Factory().setUserAgent(USER_AGENT)
+            )
         }
 
-        /*private fun getSubSources(
-            onlineSourceFactory: DataSource.Factory?,
-            offlineSourceFactory: DataSource.Factory?,
-            subHelper: PlayerSubtitleHelper,
-        ): Pair<List<SingleSampleMediaSource>, List<SubtitleData>> {
-            val activeSubtitles = ArrayList<SubtitleData>()
-            val subSources = subHelper.getAllSubtitles().mapNotNull { sub ->
-                val subConfig = MediaItem.SubtitleConfiguration.Builder(Uri.parse(sub.url))
-                    .setMimeType(sub.mimeType)
-                    .setLanguage("_${sub.name}")
-                    .setSelectionFlags(C.SELECTION_FLAG_DEFAULT)
-                    .build()
-                when (sub.origin) {
-                    SubtitleOrigin.DOWNLOADED_FILE -> {
-                        if (offlineSourceFactory != null) {
-                            activeSubtitles.add(sub)
-                            SingleSampleMediaSource.Factory(offlineSourceFactory)
-                                .createMediaSource(subConfig, C.TIME_UNSET)
-                        } else {
-                            null
-                        }
-                    }
-                    SubtitleOrigin.URL -> {
-                        if (onlineSourceFactory != null) {
-                            activeSubtitles.add(sub)
-                            SingleSampleMediaSource.Factory(onlineSourceFactory)
-                                .createMediaSource(subConfig, C.TIME_UNSET)
-                        } else {
-                            null
-                        }
-                    }
-                    SubtitleOrigin.OPEN_SUBTITLES -> {
-                        // TODO
-                        throw NotImplementedError()
-                    }
-                }
-            }
-            println("SUBSRC: ${subSources.size} activeSubtitles : ${activeSubtitles.size} of ${subHelper.getAllSubtitles().size} ")
-            return Pair(subSources, activeSubtitles)
-        }*/
-
-        @SuppressLint("UnsafeOptInUsageError")
         private fun getCache(context: Context, cacheSize: Long): SimpleCache? {
             return try {
                 val databaseProvider = StandaloneDatabaseProvider(context)
@@ -682,7 +687,6 @@ class CS3IPlayer : IPlayer {
             return getMediaItemBuilder(mimeType).setUri(url).build()
         }
 
-        @SuppressLint("UnsafeOptInUsageError")
         private fun getTrackSelector(context: Context, maxVideoHeight: Int?): TrackSelector {
             val trackSelector = DefaultTrackSelector(context)
             trackSelector.parameters = trackSelector.buildUponParameters()
@@ -694,9 +698,9 @@ class CS3IPlayer : IPlayer {
             return trackSelector
         }
 
-        var currentTextRenderer: CustomTextRenderer? = null
+        private var currentSubtitleDecoder: CustomSubtitleDecoderFactory? = null
+        private var currentTextRenderer: TextRenderer? = null
 
-        @SuppressLint("UnsafeOptInUsageError")
         private fun buildExoPlayer(
             context: Context,
             mediaItemSlices: List<MediaItemSlice>,
@@ -719,10 +723,10 @@ class CS3IPlayer : IPlayer {
             val exoPlayerBuilder =
                 ExoPlayer.Builder(context)
                     .setRenderersFactory { eventHandler, videoRendererEventListener, audioRendererEventListener, textRendererOutput, metadataRendererOutput ->
-                        DefaultRenderersFactory(context).apply {
+
+                        NextRenderersFactory(context).apply {
                             setEnableDecoderFallback(true)
-                            // Enable Ffmpeg extension
-                            setExtensionRendererMode(EXTENSION_RENDERER_MODE_ON)
+                            setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_ON)
                         }.createRenderers(
                             eventHandler,
                             videoRendererEventListener,
@@ -731,14 +735,23 @@ class CS3IPlayer : IPlayer {
                             metadataRendererOutput
                         ).map {
                             if (it is TextRenderer) {
-                                val currentTextRenderer = CustomTextRenderer(
-                                    subtitleOffset,
+                                CustomDecoder.subtitleOffset = subtitleOffset
+                                val decoder = CustomSubtitleDecoderFactory()
+                                val currentTextRenderer = TextRenderer(
                                     textRendererOutput,
                                     eventHandler.looper,
-                                    CustomSubtitleDecoderFactory()
-                                ).also { this.currentTextRenderer = it }
+                                    decoder
+                                ).apply {
+                                    // Required to make the decoder work with old subtitles
+                                    // Upgrade CustomSubtitleDecoderFactory when media3 supports it
+                                    experimentalSetLegacyDecodingEnabled(true)
+                                }.also { renderer ->
+                                    this.currentTextRenderer = renderer
+                                    this.currentSubtitleDecoder = decoder
+                                }
                                 currentTextRenderer
-                            } else it
+                            } else
+                                it
                         }.toTypedArray()
                     }
                     .setTrackSelector(
@@ -950,6 +963,35 @@ class CS3IPlayer : IPlayer {
         }
     }
 
+    // we want to push metadata when loading torrents, so we just set up a looper that loops until
+    // the index changes, this way only 1 looper is active at a time, and modifying eventLooperIndex
+    // will kill any active loopers
+    @Volatile
+    private var eventLooperIndex = 0
+    private fun torrentEventLooper(hash: String) = ioSafe {
+        eventLooperIndex += 2
+        // very shitty, but should work fine
+        // release player is called once for the new link
+        val currentIndex = eventLooperIndex + 1
+        while (eventLooperIndex <= currentIndex && eventHandler != null) {
+            try {
+                val status = Torrent.get(hash)
+                event(
+                    DownloadEvent(
+                        connections = status.activePeers,
+                        downloadSpeed = status.downloadSpeed?.toLong()!!,
+                        totalBytes = status.torrentSize!!,
+                        downloadedBytes = status.bytesRead!!,
+                    )
+                )
+            } catch (_: NullPointerException) {
+            } catch (t: Throwable) {
+                logError(t)
+            }
+            delay(1000)
+        }
+    }
+
     private fun loadExo(
         context: Context,
         mediaSlices: List<MediaItemSlice>,
@@ -993,6 +1035,13 @@ class CS3IPlayer : IPlayer {
                 isPlaying = exo.isPlaying
             }
 
+            // we want to avoid an empty exoplayer from sending events
+            // this is because we need PlayerAttachedEvent to be called to render the UI
+            // but don't really want the rest like Player.STATE_ENDED calling next episode
+            if (mediaSlices.isEmpty() && subSources.isEmpty()) {
+                return
+            }
+
             exoPlayer?.addListener(object : Player.Listener {
                 override fun onTracksChanged(tracks: Tracks) {
                     normalSafeApiCall {
@@ -1001,7 +1050,8 @@ class CS3IPlayer : IPlayer {
                         playerSelectedSubtitleTracks =
                             textTracks.map { group ->
                                 group.getFormats().mapNotNull { (format, _) ->
-                                    (format.id ?: return@mapNotNull null) to group.isSelected
+                                    (format.id?.stripTrackId()
+                                        ?: return@mapNotNull null) to group.isSelected
                                 }
                             }.flatten()
 
@@ -1019,7 +1069,7 @@ class CS3IPlayer : IPlayer {
                                         fromTwoLettersToLanguage(format.language!!)
                                             ?: format.language!!,
                                         // See setPreferredTextLanguage
-                                        format.id!!,
+                                        format.id!!.stripTrackId(),
                                         SubtitleOrigin.EMBEDDED_IN_VIDEO,
                                         format.sampleMimeType ?: MimeTypes.APPLICATION_SUBRIP,
                                         emptyMap(),
@@ -1033,7 +1083,7 @@ class CS3IPlayer : IPlayer {
                     }
                 }
 
-                @SuppressLint("UnsafeOptInUsageError")
+                //fixme: Use onPlaybackStateChanged(int) and onPlayWhenReadyChanged(boolean, int) instead.
                 override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
                     exoPlayer?.let { exo ->
                         event(
@@ -1169,7 +1219,6 @@ class CS3IPlayer : IPlayer {
 
     private var lastTimeStamps: List<EpisodeSkip.SkipStamp> = emptyList()
 
-    @SuppressLint("UnsafeOptInUsageError")
     override fun addTimeStamps(timeStamps: List<EpisodeSkip.SkipStamp>) {
         lastTimeStamps = timeStamps
         timeStamps.forEach { timestamp ->
@@ -1187,7 +1236,6 @@ class CS3IPlayer : IPlayer {
         updatedTime(source = PlayerEventSource.Player)
     }
 
-    @SuppressLint("UnsafeOptInUsageError")
     fun onRenderFirst() {
         if (hasUsedFirstRender) { // this insures that we only call this once per player load
             return
@@ -1254,7 +1302,6 @@ class CS3IPlayer : IPlayer {
         }
     }
 
-    @SuppressLint("UnsafeOptInUsageError")
     private fun getSubSources(
         onlineSourceFactory: HttpDataSource.Factory?,
         offlineSourceFactory: DataSource.Factory?,
@@ -1262,7 +1309,7 @@ class CS3IPlayer : IPlayer {
     ): Pair<List<SingleSampleMediaSource>, List<SubtitleData>> {
         val activeSubtitles = ArrayList<SubtitleData>()
         val subSources = subHelper.getAllSubtitles().mapNotNull { sub ->
-            val subConfig = MediaItem.SubtitleConfiguration.Builder(Uri.parse(sub.url))
+            val subConfig = MediaItem.SubtitleConfiguration.Builder(Uri.parse(sub.getFixedUrl()))
                 .setMimeType(sub.mimeType)
                 .setLanguage("_${sub.name}")
                 .setId(sub.getId())
@@ -1310,10 +1357,119 @@ class CS3IPlayer : IPlayer {
         return exoPlayer != null
     }
 
+
+    @MainThread
+    private fun loadTorrent(context: Context, link: ExtractorLink) {
+        ioSafe {
+            // we check exoPlayer a lot here, and that is because we don't want to load exo after
+            // the user has left the player, in the case that the user click back when this is
+            // happening
+            try {
+                if (exoPlayer == null) return@ioSafe
+                val (newLink, status) = Torrent.transformLink(link)
+                val hash = status.hash
+                if (exoPlayer == null) return@ioSafe
+                runOnMainThread {
+                    if (exoPlayer == null) return@runOnMainThread
+                    releasePlayer()
+                    if (hash != null) {
+                        torrentEventLooper(hash)
+                    }
+                    loadOnlinePlayer(context, newLink)
+                }
+            } catch (t: Throwable) {
+                event(ErrorEvent(t))
+            }
+        }
+    }
+
     @SuppressLint("UnsafeOptInUsageError")
-    private fun loadOnlinePlayer(context: Context, link: ExtractorLink) {
+    @MainThread
+    private fun loadOnlinePlayer(context: Context, link: ExtractorLink, retry: Boolean = false) {
         Log.i(TAG, "loadOnlinePlayer $link")
         try {
+            val mime = when (link.type) {
+                ExtractorLinkType.M3U8 -> MimeTypes.APPLICATION_M3U8
+                ExtractorLinkType.DASH -> MimeTypes.APPLICATION_MPD
+                ExtractorLinkType.VIDEO -> MimeTypes.VIDEO_MP4
+                ExtractorLinkType.TORRENT, ExtractorLinkType.MAGNET -> {
+                    // we check settings first, todo cleanup
+                    val default = TvType.entries.toTypedArray()
+                        .sorted()
+                        .filter { it != TvType.NSFW }
+                        .map { it.ordinal }
+
+                    val defaultSet = default.map { it.toString() }.toSet()
+                    val currentPrefMedia = try {
+                        PreferenceManager.getDefaultSharedPreferences(context)
+                            .getStringSet(
+                                context.getString(R.string.prefer_media_type_key),
+                                defaultSet
+                            )
+                            ?.mapNotNull { it.toIntOrNull() ?: return@mapNotNull null }
+                    } catch (e: Throwable) {
+                        null
+                    } ?: default
+
+                    if (!currentPrefMedia.contains(TvType.Torrent.ordinal)) {
+                        event(ErrorEvent(ErrorLoadingException("Preferred media do not contain torrent")))
+                        return
+                    }
+
+                    if (Torrent.hasAcceptedTorrentForThisSession == false) {
+                        event(ErrorEvent(ErrorLoadingException("Not accepted torrent")))
+                        return
+                    }
+                    // load the initial UI, we require an exoPlayer to be alive
+                    if (!retry) {
+                        // this causes a *bug* that restarts all torrents from 0
+                        // but I would call this a feature
+                        releasePlayer()
+                        loadExo(context, listOf(), listOf(), null)
+                    }
+                    event(
+                        StatusEvent(
+                            wasPlaying = CSPlayerLoading.IsPlaying,
+                            isPlaying = CSPlayerLoading.IsBuffering
+                        )
+                    )
+
+                    if (Torrent.hasAcceptedTorrentForThisSession == true) {
+                        loadTorrent(context, link)
+                        return
+                    }
+
+                    val builder: AlertDialog.Builder = AlertDialog.Builder(context)
+
+                    val dialogClickListener =
+                        DialogInterface.OnClickListener { _, which ->
+                            when (which) {
+                                DialogInterface.BUTTON_POSITIVE -> {
+                                    Torrent.hasAcceptedTorrentForThisSession = true
+                                    loadTorrent(context, link)
+                                }
+
+                                DialogInterface.BUTTON_NEGATIVE -> {
+                                    Torrent.hasAcceptedTorrentForThisSession = false
+                                    event(ErrorEvent(ErrorLoadingException("Not accepted torrent")))
+                                }
+                            }
+                        }
+
+                    builder.setTitle(R.string.play_torrent_button)
+                        .setMessage(R.string.torrent_info)
+                        // Ensure that the user will not accidentally start a torrent session.
+                        .setCancelable(false).setOnCancelListener {
+                            event(ErrorEvent(ErrorLoadingException("Not accepted torrent")))
+                        }
+                        .setPositiveButton(R.string.ok, dialogClickListener)
+                        .setNegativeButton(R.string.go_back, dialogClickListener)
+                        .show().setDefaultFocus()
+
+                    return
+                }
+            }
+
             currentLink = link
 
             if (ignoreSSL) {
@@ -1325,14 +1481,6 @@ class CS3IPlayer : IPlayer {
                     true
                 }
                 HttpsURLConnection.setDefaultSSLSocketFactory(sslContext.socketFactory)
-            }
-
-            val mime = when (link.type) {
-                ExtractorLinkType.M3U8 -> MimeTypes.APPLICATION_M3U8
-                ExtractorLinkType.DASH -> MimeTypes.APPLICATION_MPD
-                ExtractorLinkType.VIDEO -> MimeTypes.VIDEO_MP4
-                ExtractorLinkType.TORRENT -> throw IllegalArgumentException("No torrent support")
-                ExtractorLinkType.MAGNET -> throw IllegalArgumentException("No magnet support")
             }
 
 

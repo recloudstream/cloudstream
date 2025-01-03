@@ -13,39 +13,38 @@ open class PeaceMakerst : ExtractorApi() {
     override val requiresReferer = true
 
     override suspend fun getUrl(url: String, referer: String?, subtitleCallback: (SubtitleFile) -> Unit, callback: (ExtractorLink) -> Unit) {
-        val m3u_link:String?
-        val ext_ref  = referer ?: ""
-        val post_url = "${url}?do=getVideo"
-        Log.d("Kekik_${this.name}", "post_url » ${post_url}")
+        val m3uLink:String?
+        val extRef  = referer ?: ""
+        val postUrl = "${url}?do=getVideo"
 
         val response = app.post(
-            post_url,
+            postUrl,
             data = mapOf(
                 "hash" to url.substringAfter("video/"),
-                "r"    to ext_ref,
+                "r"    to extRef,
                 "s"    to ""
             ),
-            referer = ext_ref,
+            referer = extRef,
             headers = mapOf(
                 "Content-Type"     to "application/x-www-form-urlencoded; charset=UTF-8",
                 "X-Requested-With" to "XMLHttpRequest"
             )
         )
         if (response.text.contains("teve2.com.tr\\/embed\\/")) {
-            val teve2_id       = response.text.substringAfter("teve2.com.tr\\/embed\\/").substringBefore("\"")
-            val teve2_response = app.get(
-                "https://www.teve2.com.tr/action/media/${teve2_id}",
-                referer = "https://www.teve2.com.tr/embed/${teve2_id}"
+            val teve2Id       = response.text.substringAfter("teve2.com.tr\\/embed\\/").substringBefore("\"")
+            val teve2Response = app.get(
+                "https://www.teve2.com.tr/action/media/${teve2Id}",
+                referer = "https://www.teve2.com.tr/embed/${teve2Id}"
             ).parsedSafe<Teve2ApiResponse>() ?: throw ErrorLoadingException("teve2 response is null")
 
-            m3u_link           = teve2_response.media.link.serviceUrl + "//" + teve2_response.media.link.securePath
+            m3uLink           = teve2Response.media.link.serviceUrl + "//" + teve2Response.media.link.securePath
         } else {
-            val video_response = response.parsedSafe<PeaceResponse>() ?: throw ErrorLoadingException("peace response is null")
-            val video_sources  = video_response.videoSources
-            if (video_sources.isNotEmpty()) {
-                m3u_link = video_sources.lastOrNull()?.file
+            val videoResponse = response.parsedSafe<PeaceResponse>() ?: throw ErrorLoadingException("peace response is null")
+            val videoSources  = videoResponse.videoSources
+            if (videoSources.isNotEmpty()) {
+                m3uLink = videoSources.lastOrNull()?.file
             } else {
-                m3u_link = null
+                m3uLink = null
             }
         }
 
@@ -53,8 +52,8 @@ open class PeaceMakerst : ExtractorApi() {
             ExtractorLink(
                 source  = this.name,
                 name    = this.name,
-                url     = m3u_link ?: throw ErrorLoadingException("m3u link not found"),
-                referer = ext_ref,
+                url     = m3uLink ?: throw ErrorLoadingException("m3u link not found"),
+                referer = extRef,
                 quality = Qualities.Unknown.value,
                 type    = INFER_TYPE
             )

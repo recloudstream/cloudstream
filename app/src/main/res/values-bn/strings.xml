@@ -230,7 +230,6 @@
     <string name="automatic_plugin_download_mode_title">প্লাগইন ডাউনলোড ফিল্টার করতে মোড নির্বাচন করুন</string>
     <string name="links_reloaded_toast">লিঙ্ক পুনরায় লোড হয়েছে</string>
     <string name="switch_account">সুইচ অ্যাকাউন্ট</string>
-    <string name="episode_action_play_in_browser">ব্রাউজারে প্লে করুন</string>
     <string name="legal_notice">দাবিত্যাগ</string>
     <string name="asian_drama_singular">এশিয়ান ড্রামা</string>
     <string name="video_source">সোর্স</string>
@@ -274,7 +273,6 @@
     <string name="torrent_singular">টরেন্ট</string>
     <string name="episode_action_chromecast_episode">এপিসোড ক্রোমকাস্ট করুন</string>
     <string name="episode_action_play_in_format">প্লে হচ্ছে %s সময়ের মধ্যে</string>
-    <string name="episode_action_copy_link">লিঙ্ক কপি করুন</string>
     <string name="episode_action_auto_download">স্বয়ংক্রিয় ডাউনলোড</string>
     <string name="show_title">টাইটেল</string>
     <string name="android_tv_interface_off_seek_settings">প্লেয়ার দেখা যাচ্ছে - সিকের পরিমাণ</string>

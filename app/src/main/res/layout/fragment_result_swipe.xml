@@ -45,7 +45,6 @@
                     android:focusable="false"
                     android:layout_gravity="center"
                     android:orientation="horizontal"
-                    android:paddingTop="5dp"
                     android:requiresFadingEdge="horizontal"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                     tools:itemCount="2"

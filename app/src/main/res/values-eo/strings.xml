@@ -14,7 +14,7 @@
     <string name="go_forward_30">+30</string>
     <string name="year">Jaro</string>
     <string name="sync_score_format" formatted="true">%d / 10</string>
-    <string name="sync_total_episodes_none">/\?\?</string>
+    <string name="sync_total_episodes_none">/??</string>
     <string name="sync_total_episodes_some" formatted="true">/%d</string>
     <string name="extension_language">Lingvo</string>
     <string name="extension_size">Grando</string>

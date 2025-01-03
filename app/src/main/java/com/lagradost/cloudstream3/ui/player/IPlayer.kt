@@ -8,7 +8,6 @@ import com.lagradost.cloudstream3.utils.EpisodeSkip
 import com.lagradost.cloudstream3.utils.ExtractorLink
 
 enum class PlayerEventType(val value: Int) {
-    //Stop(-1),
     Pause(0),
     Play(1),
     SeekForward(2),
@@ -162,6 +161,17 @@ data class VideoEndedEvent(
     override val source: PlayerEventSource = PlayerEventSource.Player
 ) : PlayerEvent()
 
+/** Used for torrent to pre-download a video before playing it */
+data class DownloadEvent(
+    val downloadedBytes: Long,
+    val totalBytes: Long,
+    /** bytes / sec */
+    val downloadSpeed: Long,
+    val connections: Int?,
+
+    override val source: PlayerEventSource = PlayerEventSource.Player
+) : PlayerEvent()
+
 interface Track {
     /**
      * Unique among the class, used to check which track is used.
@@ -169,15 +179,12 @@ interface Track {
      **/
     val id: String?
     val label: String?
-
-    //    val isCurrentlyPlaying: Boolean
     val language: String?
 }
 
 data class VideoTrack(
     override val id: String?,
     override val label: String?,
-//    override val isCurrentlyPlaying: Boolean,
     override val language: String?,
     val width: Int?,
     val height: Int?,
@@ -186,15 +193,24 @@ data class VideoTrack(
 data class AudioTrack(
     override val id: String?,
     override val label: String?,
-//    override val isCurrentlyPlaying: Boolean,
     override val language: String?,
 ) : Track
+
+data class TextTrack(
+    override val id: String?,
+    override val label: String?,
+    override val language: String?,
+    val mimeType: String?,
+) : Track
+
 
 data class CurrentTracks(
     val currentVideoTrack: VideoTrack?,
     val currentAudioTrack: AudioTrack?,
+    val currentTextTracks: List<TextTrack>,
     val allVideoTracks: List<VideoTrack>,
     val allAudioTracks: List<AudioTrack>,
+    val allTextTracks: List<TextTrack>,
 )
 
 class InvalidFileException(msg: String) : Exception(msg)
@@ -209,7 +225,9 @@ interface IPlayer {
     fun setPlaybackSpeed(speed: Float)
 
     fun getIsPlaying(): Boolean
+    /** Current player duration in milliseconds */
     fun getDuration(): Long?
+    /** Current player position in milliseconds */
     fun getPosition(): Long?
 
     fun seekTime(time: Long, source: PlayerEventSource = PlayerEventSource.UI)
@@ -283,4 +301,7 @@ interface IPlayer {
 
     /** If no trackLanguage is set it'll default to first track. Specifying the id allows for track overrides as the language can be identical. */
     fun setPreferredAudioTrack(trackLanguage: String?, id: String? = null)
+
+    /** Get the current subtitle cues, for use with syncing */
+    fun getSubtitleCues(): List<SubtitleCue>
 }

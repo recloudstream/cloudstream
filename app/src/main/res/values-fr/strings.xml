@@ -7,7 +7,7 @@
     <string name="title_settings">Paramètres</string>
     <string name="search_hint">Rechercher…</string>
     <string name="search_poster_img_des">Affiche</string>
-    <string name="no_data">Aucune Donnée</string>
+    <string name="no_data">Aucune donnée</string>
     <string name="episode_more_options_des">Plus d\'options</string>
     <string name="go_back_img_des">Retour</string>
     <string name="next_episode">Épisode suivant</string>
@@ -82,7 +82,7 @@
     <string name="pause">Pause</string>
     <string name="resume">Reprendre</string>
     <string name="delete_message">Cela va supprimer définitivement %s
-\nÊtes-vous sûr \?</string>
+\nÊtes-vous sûr ?</string>
     <string name="status_ongoing">En cours</string>
     <string name="status_completed">Terminé</string>
     <string name="status">Statut</string>
@@ -111,8 +111,6 @@
     <string name="episode_action_chromecast_mirror">Miroir Chromecast</string>
     <string name="episode_action_play_in_app">Lecture dans l\'application</string>
     <string name="episode_action_play_in_format">Lecture dans %s</string>
-    <string name="episode_action_play_in_browser">Lecture dans le navigateur</string>
-    <string name="episode_action_copy_link">Copier le lien</string>
     <string name="episode_action_auto_download">Téléchargement automatique</string>
     <string name="episode_action_download_mirror">Télécharger depuis le miroir</string>
     <string name="episode_action_reload_links">Recharger les liens</string>
@@ -140,7 +138,7 @@
     <string name="dns_pref">DNS avec HTTPS</string>
     <string name="display_subbed_dubbed_settings">Afficher les animés en Anglais (Dub) / sous-titrés</string>
     <string name="phone_layout">Disposition en mode téléphone</string>
-    <string name="app_dub_sub_episode_text_format">%1$s Episode %2$d</string>
+    <string name="app_dub_sub_episode_text_format">%1$s Ep %2$d</string>
     <string name="rated_format" formatted="true">Note : %.1f</string>
     <string name="resize_zoom">Zoom</string>
     <string name="resize_fit">Adapter à l\'écran</string>
@@ -229,8 +227,8 @@
     <string name="subs_font_size">Taille de la police</string>
     <string name="search_provider_text_providers">Recherche par fournisseur</string>
     <string name="search_provider_text_types">Recherche par types</string>
-    <string name="benene_count_text">%d Donner une banane aux devs</string>
-    <string name="benene_count_text_none">Aucun Benenes données</string>
+    <string name="benene_count_text">%d bananes offertes aux devs</string>
+    <string name="benene_count_text_none">Aucune banane n\'a été offerte</string>
     <string name="subs_auto_select_language">Sélection automatique de la langue</string>
     <string name="subs_download_languages">Télécharger les langues</string>
     <string name="subs_subtitle_languages">Langue des sous-titres</string>
@@ -316,7 +314,7 @@
     <string name="yes">Oui</string>
     <string name="next_episode_time_day_format" formatted="true">%1$d j %2$d h %3$d min</string>
     <string name="stream">Stream</string>
-    <string name="confirm_exit_dialog">Êtes-vous sûr·e de vouloir quitter \?</string>
+    <string name="confirm_exit_dialog">Êtes-vous sûr·e de vouloir quitter ?</string>
     <string name="no">Non</string>
     <string name="update_notification_downloading">Téléchargement de la mise à jour…</string>
     <string name="next_episode_format" formatted="true">L\'épisode %d sera publié dans</string>
@@ -371,7 +369,7 @@
     <string name="nsfw">NSFW</string>
     <string name="example_ip">127.0.0.1</string>
     <string name="sync_score_format" formatted="true">%d / 10</string>
-    <string name="sync_total_episodes_none">/\?\?</string>
+    <string name="sync_total_episodes_none">/??</string>
     <string name="sync_total_episodes_some" formatted="true">/%d</string>
     <string name="quality_sd">SD</string>
     <string name="quality_uhd">UHD</string>
@@ -403,7 +401,7 @@
     <string name="view_public_repositories_button">Voir les repository de la communauté</string>
     <string name="view_public_repositories_button_short">Liste publique</string>
     <string name="action_mark_as_watched">Marquer comme vu</string>
-    <string name="repository_url_hint">Url du repository</string>
+    <string name="repository_url_hint">URL de dépôt ou code court</string>
     <string name="setup_done">Finir</string>
     <string name="add_repository">Ajouter le repository</string>
     <string name="preferred_media_subtext">Ce que vous voulez voir</string>
@@ -430,17 +428,15 @@
     <string name="extension_install_first">Installer l\'extension d\'abord</string>
     <string name="hls_playlist">Playlist HLS</string>
     <string name="player_pref">Lecteur vidéo préféré</string>
-    <string name="player_settings_play_in_vlc">VLC</string>
     <string name="skip_type_mixed_ed">Fin mitigée</string>
     <string name="skip_type_mixed_op">Introduction mitigée</string>
     <string name="update_notification_installing">Installation de la mise a jour de l\'application…</string>
     <string name="update_notification_failed">Impossible d\'installer la nouvelle version de l\'application</string>
-    <string name="player_settings_play_in_browser">Navigateur Web</string>
     <string name="apk_installer_settings_des">Certains téléphones ne supporte pas le nouvel installateur d\'application. Essayez l\'option de l\'ancien installateur si les mises-à-jour ne s\'installe pas.</string>
     <string name="previous">Précédent</string>
     <string name="skip_setup">Ignorer la configuration</string>
     <string name="crash_reporting_title">Rapport de crash</string>
-    <string name="repository_name_hint">Nom du repository</string>
+    <string name="repository_name_hint">Nom de dépôt (optionnel)</string>
     <string name="plugin_singular">plugin</string>
     <string name="delete_repository">Supprimer le repository</string>
     <string name="plugins_disabled" formatted="true">Désactivé : %d</string>
@@ -456,7 +452,6 @@
     <string name="player_settings_play_in_app">Lecteur interne</string>
     <string name="app_not_found_error">Application introuvable</string>
     <string name="clipboard_too_large">Trop de texte. Impossible de sauvegarder dans le presse papier.</string>
-    <string name="player_settings_play_in_mpv">MPV</string>
     <string name="apk_installer_package_installer">Installateur de paquet</string>
     <string name="plugin">plugins</string>
     <string name="delete_repository_plugins">Cela supprimera également tous les plugins du repository</string>
@@ -466,7 +461,6 @@
     <string name="extension_language">Langage</string>
     <string name="enable_skip_op_from_database_des">Afficher les popups skip pour les intro / fins</string>
     <string name="apk_installer_legacy">Ancienne méthode d\'installation</string>
-    <string name="player_settings_play_in_web">Web Video Cast</string>
     <string name="pref_category_links">Liens</string>
     <string name="pref_category_gestures">Gestes</string>
     <string name="pref_category_player_features">Fonctionnalités du lecteur</string>
@@ -621,4 +615,23 @@
     <string name="player_settings_select_cast_device">Sélectionnez un appareil de diffusion</string>
     <string name="next_season_episode_format" formatted="true">Saison %1$d Episode %2$d sera publié dans</string>
     <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
+    <string name="play_from_beginning_img_des">Regarder depuis le début</string>
+    <string name="open_local_video">Ouvrir une vidéo locale</string>
+    <string name="test_warning">Attention</string>
+    <string name="downloads_empty">Aucun téléchargement.</string>
+    <string name="delete_files">Supprimer des fichiers</string>
+    <string name="downloads_delete_select">Sélectionner les éléments à supprimer</string>
+    <string name="offline_file">Disponible pour le visionnage hors-ligne</string>
+    <string name="select_all">Tout sélectionner</string>
+    <string name="deselect_all">Tout désélectionner</string>
+    <string name="delete_format" formatted="true">Supprimer (%1$d | %2$s)</string>
+    <string name="open_downloaded_repo">Ouvrir le dépôt</string>
+    <string name="device_pin_counter_text">Code expire dans %1$dm %2$ds</string>
+    <string name="cs3wiki">Wiki de CloudStream</string>
+    <string name="device_pin_expired_message">Le code PIN est maintenant expiré !</string>
+    <string name="qr_image">Image du code QR</string>
+    <string name="delete_plugin">Supprimer l\'extension</string>
+    <string name="delete_message_multiple" formatted="true">Êtes-vous sûr de vouloir supprimer définitivement les éléments suivants?
+\n
+\n%s</string>
 </resources>

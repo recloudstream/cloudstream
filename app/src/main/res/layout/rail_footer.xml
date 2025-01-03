@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/nav_footer_root"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:padding="1dp"
+    android:layout_marginBottom="10dp"
+    android:visibility="gone"
+    tools:visibility="visible"
+    android:layout_gravity="bottom|center_horizontal"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/nav_footer_profile_card"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="@color/transparent"
+        app:cardCornerRadius="20dp"
+        android:focusable="true"
+        android:foreground="@drawable/outline_drawable_round_20">
+
+        <ImageView
+            android:id="@+id/nav_footer_profile_pic"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            tools:src="@drawable/profile_bg_orange"
+            android:contentDescription="@string/account"/>
+
+    </androidx.cardview.widget.CardView>
+
+</LinearLayout>

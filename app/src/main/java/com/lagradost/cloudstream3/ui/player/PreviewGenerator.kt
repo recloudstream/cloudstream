@@ -8,6 +8,9 @@ import android.os.Build
 import android.util.Log
 import androidx.annotation.WorkerThread
 import androidx.core.graphics.scale
+import androidx.preference.PreferenceManager
+import com.lagradost.cloudstream3.AcraApplication
+import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
@@ -62,8 +65,12 @@ interface IPreviewGenerator {
 
     companion object {
         fun new(): IPreviewGenerator {
+            val userDisabled = AcraApplication.context?.let { ctx ->
+                PreferenceManager.getDefaultSharedPreferences(ctx)?.getBoolean(
+                    ctx.getString(R.string.preview_seekbar_key), true) == false
+            } ?: false
             /** because TV has low ram + not show we disable this for now */
-            return if (isLayout(TV)) {
+            return if (isLayout(TV) || userDisabled) {
                 empty()
             } else {
                 PreviewGenerator()
@@ -239,7 +246,11 @@ private class M3u8PreviewGenerator(override var params: ImageParams) : IPreviewG
     // generated images 1:1 to idx of hsl
     private var images: Array<Bitmap?> = arrayOf()
 
-    private val TAG = "PreviewImgM3u8"
+    companion object {
+        private const val TAG = "PreviewImgM3u8"
+    }
+
+
 
     // prefixSum[i] = sum(hsl.ts[0..i].time)
     // where [0] = 0, [1] = hsl.ts[0].time aka time at start of segment, do [b] - [a] for range a,b
@@ -260,7 +271,7 @@ private class M3u8PreviewGenerator(override var params: ImageParams) : IPreviewG
         var bestDiff = Double.MAX_VALUE
         synchronized(images) {
             // just find the best one in a for loop, we don't care about bin searching rn
-            for (i in 0..images.size) {
+            for (i in images.indices) {
                 val diff = prefixSum[i].minus(fraction).absoluteValue
                 if (diff > bestDiff) {
                     break
@@ -388,13 +399,6 @@ private class M3u8PreviewGenerator(override var params: ImageParams) : IPreviewG
                             logError(t)
                             continue
                         }
-
-                        /*
-                        val buffer = hsl.resolveLinkSafe(index) ?: continue
-                        tmpFile?.writeBytes(buffer)
-                        val buff = FileOutputStream(tmpFile)
-                        retriever.setDataSource(buff.fd)
-                        val frame = retriever.getFrameAtTime(0L)*/
                     }
                 }
 
@@ -412,13 +416,15 @@ private class Mp4PreviewGenerator(override var params: ImageParams) : IPreviewGe
         null
     }
 
+    companion object {
+        private const val TAG = "PreviewImgMp4"
+    }
+
     override fun hasPreview(): Boolean {
         synchronized(images) {
             return loadedLod >= MIN_LOD
         }
     }
-
-    val TAG = "PreviewImgMp4"
 
     override fun getPreviewImage(fraction: Float): Bitmap? {
         synchronized(images) {
@@ -524,7 +530,7 @@ private class Mp4PreviewGenerator(override var params: ImageParams) : IPreviewGe
                 val fraction = (1.0f.div((1 shl l).toFloat()) + i * 1.0f.div(items.toFloat()))
                 Log.i(TAG, "Generating preview for ${fraction * 100}%")
                 val frame = durationUs * fraction
-                val img = retriever.image(frame.toLong(), params);
+                val img = retriever.image(frame.toLong(), params)
                 if (!scope.isActive) return
                 if (img == null || img.width <= 1 || img.height <= 1) continue
                 synchronized(images) {

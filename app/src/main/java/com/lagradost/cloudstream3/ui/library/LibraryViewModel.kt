@@ -23,6 +23,8 @@ enum class ListSorting(@StringRes val stringRes: Int) {
     UpdatedOld(R.string.sort_updated_old),
     AlphabeticalA(R.string.sort_alphabetical_a),
     AlphabeticalZ(R.string.sort_alphabetical_z),
+    ReleaseDateNew(R.string.sort_release_date_new),
+    ReleaseDateOld(R.string.sort_release_date_old),
 }
 
 const val LAST_SYNC_API_KEY = "last_sync_api"

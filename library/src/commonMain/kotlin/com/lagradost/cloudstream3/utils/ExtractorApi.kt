@@ -52,6 +52,7 @@ import com.lagradost.cloudstream3.extractors.FileMoon
 import com.lagradost.cloudstream3.extractors.FileMoonIn
 import com.lagradost.cloudstream3.extractors.FileMoonSx
 import com.lagradost.cloudstream3.extractors.Filesim
+import com.lagradost.cloudstream3.extractors.Filegram
 import com.lagradost.cloudstream3.extractors.Fplayer
 import com.lagradost.cloudstream3.extractors.Geodailymotion
 import com.lagradost.cloudstream3.extractors.GMPlayer
@@ -91,6 +92,7 @@ import com.lagradost.cloudstream3.extractors.MixDrop
 import com.lagradost.cloudstream3.extractors.MixDropBz
 import com.lagradost.cloudstream3.extractors.MixDropCh
 import com.lagradost.cloudstream3.extractors.MixDropTo
+import com.lagradost.cloudstream3.extractors.MixDropAg
 import com.lagradost.cloudstream3.extractors.Movhide
 import com.lagradost.cloudstream3.extractors.Moviehab
 import com.lagradost.cloudstream3.extractors.MoviehabNet
@@ -237,6 +239,54 @@ import com.lagradost.cloudstream3.extractors.FlaswishCom
 import com.lagradost.cloudstream3.extractors.SfastwishCom
 import com.lagradost.cloudstream3.extractors.Vtbe
 import com.lagradost.cloudstream3.extractors.WishembedPro
+import com.lagradost.cloudstream3.extractors.Mwish
+import com.lagradost.cloudstream3.extractors.Dwish
+import com.lagradost.cloudstream3.extractors.Ewish
+import com.lagradost.cloudstream3.extractors.Kswplayer
+import com.lagradost.cloudstream3.extractors.Wishfast
+import com.lagradost.cloudstream3.extractors.Streamwish2
+import com.lagradost.cloudstream3.extractors.Strwish
+import com.lagradost.cloudstream3.extractors.Strwish2
+import com.lagradost.cloudstream3.extractors.Awish
+import com.lagradost.cloudstream3.extractors.Obeywish
+import com.lagradost.cloudstream3.extractors.Jodwish
+import com.lagradost.cloudstream3.extractors.Swhoi
+import com.lagradost.cloudstream3.extractors.Multimovies
+import com.lagradost.cloudstream3.extractors.UqloadsXyz
+import com.lagradost.cloudstream3.extractors.Doodporn
+import com.lagradost.cloudstream3.extractors.Asnwish
+import com.lagradost.cloudstream3.extractors.Nekowish
+import com.lagradost.cloudstream3.extractors.Nekostream
+import com.lagradost.cloudstream3.extractors.StreamSilk
+import com.lagradost.cloudstream3.extractors.Swdyu
+import com.lagradost.cloudstream3.extractors.VidHidePro
+import com.lagradost.cloudstream3.extractors.VidHidePro1
+import com.lagradost.cloudstream3.extractors.VidHidePro2
+import com.lagradost.cloudstream3.extractors.VidHidePro3
+import com.lagradost.cloudstream3.extractors.Voe1
+import com.lagradost.cloudstream3.extractors.Wishonly
+import com.lagradost.cloudstream3.extractors.Beastx
+import com.lagradost.cloudstream3.extractors.Playerx
+import com.lagradost.cloudstream3.extractors.AnimesagaStream
+import com.lagradost.cloudstream3.extractors.Anplay
+import com.lagradost.cloudstream3.extractors.Kinogeru
+import com.lagradost.cloudstream3.extractors.Vidxstream
+import com.lagradost.cloudstream3.extractors.Boltx
+import com.lagradost.cloudstream3.extractors.Vectorx
+import com.lagradost.cloudstream3.extractors.Boosterx
+import com.lagradost.cloudstream3.extractors.Vidguardto1
+import com.lagradost.cloudstream3.extractors.Vidguardto2
+import com.lagradost.cloudstream3.extractors.VidHidePro4
+import com.lagradost.cloudstream3.extractors.VidHidePro5
+import com.lagradost.cloudstream3.extractors.VidHidePro6
+import com.lagradost.cloudstream3.extractors.Lulustream1
+import com.lagradost.cloudstream3.extractors.Lulustream2
+import com.lagradost.cloudstream3.extractors.Lulustream3
+import com.lagradost.cloudstream3.extractors.Vidguardto3
+import com.lagradost.cloudstream3.extractors.Ds2play
+import com.lagradost.cloudstream3.extractors.Ds2video
+import com.lagradost.cloudstream3.extractors.GamoVideo
+import com.lagradost.cloudstream3.extractors.Playerwish
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import kotlinx.coroutines.delay
@@ -312,12 +362,16 @@ data class ExtractorLinkPlayList(
 enum class ExtractorLinkType {
     /** Single stream of bytes no matter the actual file type */
     VIDEO,
+
     /** Split into several .ts files, has support for encrypted m3u8s */
     M3U8,
+
     /** Like m3u8 but uses xml, currently no download support */
     DASH,
+
     /** No support at the moment */
     TORRENT,
+
     /** No support at the moment */
     MAGNET;
 
@@ -334,7 +388,12 @@ enum class ExtractorLinkType {
 }
 
 private fun inferTypeFromUrl(url: String): ExtractorLinkType {
-    val path = normalSafeApiCall { URL(url).path }
+    val path = try {
+        URL(url).path
+    } catch (_: Throwable) {
+        // don't log magnet links as errors
+        null
+    }
     return when {
         path?.endsWith(".m3u8") == true -> ExtractorLinkType.M3U8
         path?.endsWith(".mpd") == true -> ExtractorLinkType.DASH
@@ -343,7 +402,8 @@ private fun inferTypeFromUrl(url: String): ExtractorLinkType {
         else -> ExtractorLinkType.VIDEO
     }
 }
-val INFER_TYPE : ExtractorLinkType? = null
+
+val INFER_TYPE: ExtractorLinkType? = null
 
 /**
  * UUID for the ClearKey DRM scheme.
@@ -380,12 +440,12 @@ open class DrmExtractorLink private constructor(
     /** Used for getExtractorVerifierJob() */
     override val extractorData: String? = null,
     override val type: ExtractorLinkType,
-    open val kid : String,
-    open val key : String,
-    open val uuid : UUID,
-    open val kty : String,
+    open val kid: String,
+    open val key: String,
+    open val uuid: UUID,
+    open val kty: String,
 
-    open val keyRequestParameters : HashMap<String, String>
+    open val keyRequestParameters: HashMap<String, String>
 ) : ExtractorLink(
     source, name, url, referer, quality, type, headers, extractorData
 ) {
@@ -400,11 +460,11 @@ open class DrmExtractorLink private constructor(
         headers: Map<String, String> = mapOf(),
         /** Used for getExtractorVerifierJob() */
         extractorData: String? = null,
-        kid : String,
-        key : String,
-        uuid : UUID = CLEARKEY_UUID,
-        kty : String = "oct",
-        keyRequestParameters : HashMap<String, String> = hashMapOf(),
+        kid: String,
+        key: String,
+        uuid: UUID = CLEARKEY_UUID,
+        kty: String = "oct",
+        keyRequestParameters: HashMap<String, String> = hashMapOf(),
     ) : this(
         source = source,
         name = name,
@@ -457,7 +517,7 @@ open class ExtractorLink constructor(
     }
 
     @JsonIgnore
-    fun getAllHeaders() : Map<String, String> {
+    fun getAllHeaders(): Map<String, String> {
         if (referer.isBlank()) {
             return headers
         } else if (headers.keys.none { it.equals("referer", ignoreCase = true) }) {
@@ -674,6 +734,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     MixDropBz(),
     MixDropCh(),
     MixDropTo(),
+    MixDropAg(),
 
     MixDrop(),
 
@@ -683,6 +744,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     StreamSB(),
     Sblona(),
     Vidgomunimesb(),
+    StreamSilk(),
     StreamSB1(),
     StreamSB2(),
     StreamSB3(),
@@ -857,12 +919,14 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     Vidmoly(),
     Vidmolyme(),
     Voe(),
+    Voe1(),
     Tubeless(),
     Moviehab(),
     MoviehabNet(),
     Jeniusplay(),
     StreamoUpload(),
 
+    GamoVideo(),
     Gdriveplayerapi(),
     Gdriveplayerapp(),
     Gdriveplayerfun(),
@@ -901,22 +965,68 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     Dokicloud(),
     Megacloud(),
     VidhideExtractor(),
+    VidHidePro(),
+    VidHidePro1(),
+    VidHidePro2(),
+    VidHidePro3(),
+    VidHidePro4(),
+    VidHidePro5(),
+    VidHidePro6(),
+    Lulustream1(),
+    Lulustream2(),
+    Lulustream3(),
     StreamWishExtractor(),
     WishembedPro(),
     CdnwishCom(),
     FlaswishCom(),
     SfastwishCom(),
+    Playerwish(),
     EmturbovidExtractor(),
     Vtbe(),
     EPlayExtractor(),
     Vidguardto(),
+    Vidguardto1(),
+    Vidguardto2(),
+    Vidguardto3(),
     Simpulumlamerop(),
     Urochsunloath(),
     Yipsu(),
     MetaGnathTuggers(),
     Geodailymotion(),
-    
-)
+    Mwish(),
+    Dwish(),
+    Ewish(),
+    Kswplayer(),
+    Wishfast(),
+    Streamwish2(),
+    Strwish(),
+    Strwish2(),
+    Awish(),
+    Obeywish(),
+    Jodwish(),
+    Swhoi(),
+    Multimovies(),
+    UqloadsXyz(),
+    Doodporn(),
+    Asnwish(),
+    Nekowish(),
+    Nekostream(),
+    Swdyu(),
+    Wishonly(),
+    Beastx(),
+    Playerx(),
+    AnimesagaStream(),
+    Anplay(),
+    Kinogeru(),
+    Vidxstream(),
+    Boltx(),
+    Vectorx(),
+    Boosterx(),
+    Ds2play(),
+    Ds2video(),
+    Filegram(),
+
+    )
 
 
 fun getExtractorApiFromName(name: String): ExtractorApi {

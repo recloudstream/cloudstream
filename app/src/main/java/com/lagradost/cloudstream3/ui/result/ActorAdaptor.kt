@@ -3,8 +3,6 @@ package com.lagradost.cloudstream3.ui.result
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.annotation.IdRes
-import androidx.annotation.LayoutRes
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -12,7 +10,7 @@ import com.lagradost.cloudstream3.ActorData
 import com.lagradost.cloudstream3.ActorRole
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.CastItemBinding
-import com.lagradost.cloudstream3.utils.UIHelper.setImage
+import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
 
 class ActorAdaptor(
     private var nextFocusUpId: Int? = null,
@@ -70,8 +68,7 @@ class ActorAdaptor(
         }
     }
 
-    private inner class CardViewHolder
-    constructor(
+    private inner class CardViewHolder(
         val binding: CastItemBinding,
         private val focusCallback: (View?) -> Unit = {}
     ) :
@@ -105,7 +102,7 @@ class ActorAdaptor(
             }
 
             binding.apply {
-                actorImage.setImage(mainImg)
+                actorImage.loadImage(mainImg)
 
                 actorName.text = actor.actor.name
                 actor.role?.let {
@@ -139,7 +136,9 @@ class ActorAdaptor(
                     voiceActorName.isVisible = false
                 } else {
                     voiceActorName.text = actor.voiceActor?.name
-                    voiceActorImageHolder.isVisible = voiceActorImage.setImage(vaImage)
+                    if (!vaImage.isNullOrEmpty())
+                    voiceActorImageHolder.isVisible = true
+                    voiceActorImage.loadImage(vaImage)
                 }
             }
         }

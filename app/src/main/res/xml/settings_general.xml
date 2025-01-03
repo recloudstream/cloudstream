@@ -6,8 +6,6 @@
         android:title="@string/app_language"
         android:icon="@drawable/ic_baseline_language_24" />
 
-
-
     <Preference
             android:key="@string/legal_notice_key"
             android:title="@string/legal_notice"

@@ -13,37 +13,36 @@ open class HDPlayerSystem : ExtractorApi() {
     override val requiresReferer = true
 
     override suspend fun getUrl(url: String, referer: String?, subtitleCallback: (SubtitleFile) -> Unit, callback: (ExtractorLink) -> Unit) {
-        val ext_ref  = referer ?: ""
-        val vid_id   = if (url.contains("video/")) {
+        val extRef  = referer ?: ""
+        val vidId   = if (url.contains("video/")) {
             url.substringAfter("video/")
         } else {
             url.substringAfter("?data=")
         }
-        val post_url = "${mainUrl}/player/index.php?data=${vid_id}&do=getVideo"
-        Log.d("Kekik_${this.name}", "post_url » ${post_url}")
+        val postUrl = "${mainUrl}/player/index.php?data=${vidId}&do=getVideo"
 
         val response = app.post(
-            post_url,
+            postUrl,
             data = mapOf(
-                "hash" to vid_id,
-                "r"    to ext_ref
+                "hash" to vidId,
+                "r"    to extRef
             ),
-            referer = ext_ref,
+            referer = extRef,
             headers = mapOf(
                 "Content-Type"     to "application/x-www-form-urlencoded; charset=UTF-8",
                 "X-Requested-With" to "XMLHttpRequest"
             )
         )
 
-        val video_response = response.parsedSafe<SystemResponse>() ?: throw ErrorLoadingException("failed to parse response")
-        val m3u_link       = video_response.securedLink
+        val videoResponse = response.parsedSafe<SystemResponse>() ?: throw ErrorLoadingException("failed to parse response")
+        val m3uLink       = videoResponse.securedLink
 
         callback.invoke(
             ExtractorLink(
                 source  = this.name,
                 name    = this.name,
-                url     = m3u_link,
-                referer = ext_ref,
+                url     = m3uLink,
+                referer = extRef,
                 quality = Qualities.Unknown.value,
                 type    = INFER_TYPE
             )
