@@ -1,15 +1,18 @@
 package com.lagradost.cloudstream3.ui.result
 
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.lagradost.api.getContext
 import com.lagradost.cloudstream3.ActorData
 import com.lagradost.cloudstream3.ActorRole
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.CastItemBinding
+import com.lagradost.cloudstream3.utils.AppContextUtils.openBrowser
 import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
 
 class ActorAdaptor(
@@ -99,6 +102,12 @@ class ActorAdaptor(
 
             itemView.setOnClickListener {
                 callback(position)
+            }
+
+            itemView.setOnLongClickListener {
+                val searchUrl = "https://www.google.com/search?q=${Uri.encode(actor.actor.name)}"
+                itemView.context.openBrowser(url = searchUrl)
+                true
             }
 
             binding.apply {
