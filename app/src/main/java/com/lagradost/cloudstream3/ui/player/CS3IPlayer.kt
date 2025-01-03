@@ -77,9 +77,11 @@ import com.lagradost.cloudstream3.utils.DataStoreHelper.currentAccount
 import com.lagradost.cloudstream3.utils.DrmExtractorLink
 import com.lagradost.cloudstream3.utils.EpisodeSkip
 import com.lagradost.cloudstream3.utils.ExtractorLink
+import com.lagradost.cloudstream3.utils.CLEARKEY_UUID
+import com.lagradost.cloudstream3.utils.WIDEVINE_UUID
+import com.lagradost.cloudstream3.utils.PLAYREADY_UUID
 import com.lagradost.cloudstream3.utils.ExtractorLinkPlayList
 import com.lagradost.cloudstream3.utils.ExtractorLinkType
-import com.lagradost.cloudstream3.utils.OnlineDrmExtractorLink
 import com.lagradost.cloudstream3.utils.SubtitleHelper.fromTwoLettersToLanguage
 import io.github.anilbeesetti.nextlib.media3ext.ffdecoder.NextRenderersFactory
 import androidx.media3.exoplayer.DefaultRenderersFactory
@@ -144,10 +146,19 @@ class CS3IPlayer : IPlayer {
     data class MediaItemSlice(
         val mediaItem: MediaItem,
         val durationUs: Long,
-        val drm: GenericDrmMetadata? = null
+        val drm: DrmMetadata? = null
     )
 
-    data class OnlineDrmMetadata(
+    data class DrmMetadata(
+        val kid: String? = null,
+        val key: String? = null,
+        val uuid: UUID,
+        val kty: String? = null,
+        val licenseUrl: String? = null,
+        val keyRequestParameters: HashMap<String, String>,
+    )
+
+    /*data class OnlineDrmMetadata(
         val keyUrl: String,
         override val keyRequestParameters: HashMap<String, String>,
         override val uuid: UUID
@@ -164,7 +175,7 @@ class CS3IPlayer : IPlayer {
     interface GenericDrmMetadata {
         val keyRequestParameters: HashMap<String, String>
         val uuid: UUID
-    }
+    }*/
 
     override fun getDuration(): Long? = exoPlayer?.duration
     override fun getPosition(): Long? = exoPlayer?.currentPosition
@@ -809,8 +820,8 @@ class CS3IPlayer : IPlayer {
                 val item = mediaItemSlices.first()
 
                 item.drm?.let { drm ->
-                    when (drm) {
-                        is OfflineDrmMetadata -> {
+                    when (drm.uuid) {
+                        CLEARKEY_UUID -> {
                             val client =
                                 OkHttpDataSource.Factory(app.baseClient).setUserAgent(USER_AGENT)
                             val drmCallback =
@@ -830,10 +841,11 @@ class CS3IPlayer : IPlayer {
                                 .createMediaSource(item.mediaItem)
                         }
 
-                        is OnlineDrmMetadata -> {
+                        WIDEVINE_UUID,
+                        PLAYREADY_UUID -> {
                             val client =
                                 OkHttpDataSource.Factory(app.baseClient).setUserAgent(USER_AGENT)
-                            val drmCallback = HttpMediaDrmCallback(drm.keyUrl, client)
+                            val drmCallback = HttpMediaDrmCallback(drm.licenseUrl, client)
                             val manager = DefaultDrmSessionManager.Builder()
                                 .setPlayClearSamplesWithoutKeys(true)
                                 .setMultiSession(true)
@@ -1540,25 +1552,12 @@ class CS3IPlayer : IPlayer {
                         // Single sliced list with unset length
                         MediaItemSlice(
                             getMediaItem(mime, link.url), Long.MIN_VALUE,
-                            drm = OfflineDrmMetadata(
+                            drm = DrmMetadata(
                                 kid = link.kid,
                                 key = link.key,
                                 uuid = link.uuid,
                                 kty = link.kty,
-                                keyRequestParameters = link.keyRequestParameters
-                            )
-                        )
-                    )
-                }
-
-                is OnlineDrmExtractorLink -> {
-                    listOf(
-                        // Single sliced list with unset length
-                        MediaItemSlice(
-                            getMediaItem(mime, link.url), Long.MIN_VALUE,
-                            drm = OnlineDrmMetadata(
-                                keyUrl = link.keyUrl,
-                                uuid = link.uuid,
+                                licenseUrl = link.licenseUrl,
                                 keyRequestParameters = link.keyRequestParameters
                             )
                         )
