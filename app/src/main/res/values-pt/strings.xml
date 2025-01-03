@@ -659,4 +659,8 @@
     <string name="confirm_before_exiting_desc">Mostrar diálogo antes de sair da aplicação</string>
     <string name="show">Mostrar</string>
     <string name="dont_show">Não mostrar</string>
+    <string name="backup_path_title">Localização da pasta de backups</string>
+    <string name="subs_edge_size">Tamanho da borda</string>
+    <string name="torrent_info">Este vídeo é um Torrent, o que significa que sua atividade de vídeo pode ser rastreada.\nCertifique-se de entender o Torrent antes de continuar.</string>
+    <string name="custom">Personalizado</string>
 </resources>
