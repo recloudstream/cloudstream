@@ -157,10 +157,10 @@ open class ResultTrailerPlayer : ResultFragmentPhone() {
         uiReset()
 
         if (isFullScreenPlayer) {
-            activity?.attachBackPressedCallback {
+            activity?.attachBackPressedCallback("ResultTrailerPlayer") {
                 updateFullscreen(false)
             }
-        } else activity?.detachBackPressedCallback()
+        } else activity?.detachBackPressedCallback("ResultTrailerPlayer")
     }
 
     override fun updateUIVisibility() {

@@ -38,7 +38,7 @@ class DownloadChildFragment : Fragment() {
     }
 
     override fun onDestroyView() {
-        activity?.detachBackPressedCallback()
+        activity?.detachBackPressedCallback("Downloads")
         binding = null
         super.onDestroyView()
     }
@@ -113,7 +113,7 @@ class DownloadChildFragment : Fragment() {
             adapter?.setIsMultiDeleteState(isMultiDeleteState)
             binding?.downloadDeleteAppbar?.isVisible = isMultiDeleteState
             if (!isMultiDeleteState) {
-                activity?.detachBackPressedCallback()
+                activity?.detachBackPressedCallback("Downloads")
                 downloadsViewModel.clearSelectedItems()
                 binding?.downloadChildToolbar?.isVisible = true
             }
@@ -169,7 +169,7 @@ class DownloadChildFragment : Fragment() {
         if (selected.isNotEmpty()) {
             binding?.downloadDeleteAppbar?.isVisible = true
             binding?.downloadChildToolbar?.isVisible = false
-            activity?.attachBackPressedCallback {
+            activity?.attachBackPressedCallback("Downloads") {
                 downloadsViewModel.setIsMultiDeleteState(false)
             }
 

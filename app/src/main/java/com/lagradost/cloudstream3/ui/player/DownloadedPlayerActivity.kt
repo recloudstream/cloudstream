@@ -70,7 +70,7 @@ class DownloadedPlayerActivity : AppCompatActivity() {
             return
         }
 
-        attachBackPressedCallback { finish() }
+        attachBackPressedCallback("DownloadedPlayerActivity") { finish() }
     }
 
     override fun onResume() {

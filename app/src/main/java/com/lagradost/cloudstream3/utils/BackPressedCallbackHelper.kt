@@ -5,24 +5,33 @@ import androidx.activity.OnBackPressedCallback
 import java.util.WeakHashMap
 
 object BackPressedCallbackHelper {
-    private val backPressedCallbacks = WeakHashMap<ComponentActivity, OnBackPressedCallback>()
+    private val backPressedCallbacks = WeakHashMap<ComponentActivity, MutableMap<String, OnBackPressedCallback>>()
 
-    fun ComponentActivity.attachBackPressedCallback(callback: () -> Unit) {
-        if (backPressedCallbacks[this] == null) {
-            val newCallback = object : OnBackPressedCallback(true) {
-                override fun handleOnBackPressed() {
-                    callback.invoke()
-                }
+    fun ComponentActivity.attachBackPressedCallback(id: String, callback: () -> Unit) {
+        val callbackMap = backPressedCallbacks.getOrPut(this) { mutableMapOf() }
+
+        if (callbackMap.containsKey(id)) return
+
+        val newCallback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                callback.invoke()
             }
-            backPressedCallbacks[this] = newCallback
-            onBackPressedDispatcher.addCallback(this, newCallback)
         }
+        callbackMap[id] = newCallback
 
-        backPressedCallbacks[this]?.isEnabled = true
+        onBackPressedDispatcher.addCallback(this, newCallback)
     }
 
-    fun ComponentActivity.detachBackPressedCallback() {
-        backPressedCallbacks[this]?.isEnabled = false
-        backPressedCallbacks.remove(this)
+    fun ComponentActivity.detachBackPressedCallback(id: String) {
+        val callbackMap = backPressedCallbacks[this] ?: return
+
+        callbackMap[id]?.let { callback ->
+            callback.isEnabled = false
+            callbackMap.remove(id)
+        }
+
+        if (callbackMap.isEmpty()) {
+            backPressedCallbacks.remove(this)
+        }
     }
 }

@@ -1537,13 +1537,13 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
             }
 
             if (navDestination.matchDestination(R.id.navigation_home)) {
-                attachBackPressedCallback {
+                attachBackPressedCallback("MainActivity") {
                     showConfirmExitDialog(settingsManager)
                     window?.navigationBarColor =
                         colorFromAttribute(R.attr.primaryGrayBackground)
                     updateLocale()
                 }
-            } else detachBackPressedCallback()
+            } else detachBackPressedCallback("MainActivity")
         }
 
         //val navController = findNavController(R.id.nav_host_fragment)
