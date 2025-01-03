@@ -210,7 +210,7 @@
                 android:backgroundTint="@color/skipOpTransparent"
                 android:maxLines="1"
                 android:nextFocusLeft="@id/player_pause_play"
-                android:nextFocusUp="@id/player_go_back"
+                android:nextFocusUp="@id/player_restart"
                 android:nextFocusDown="@id/player_pause_play"
                 android:padding="10dp"
                 android:textColor="@color/white"
