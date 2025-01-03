@@ -672,7 +672,19 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
     private fun NavDestination.matchDestination(@IdRes destId: Int): Boolean =
         hierarchy.any { it.id == destId }
 
+    private var lastNavTime = 0L
     private fun onNavDestinationSelected(item: MenuItem, navController: NavController): Boolean {
+        val currentTime = System.currentTimeMillis()
+        // safeDebounce: Check if a previous tap happened within the last 400ms
+        if (currentTime - lastNavTime < 400) return false
+        lastNavTime = currentTime
+
+        val currentDestinationId = navController.currentDestination?.id
+        val destinationId = item.itemId
+
+        // Check if we are already at the selected destination
+        if(currentDestinationId == destinationId) return false
+
         val builder = NavOptions.Builder().setLaunchSingleTop(true).setRestoreState(true)
             .setEnterAnim(R.anim.enter_anim)
             .setExitAnim(R.anim.exit_anim)
@@ -689,7 +701,9 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         return try {
             navController.navigate(item.itemId, null, options)
             navController.currentDestination?.matchDestination(item.itemId) == true
+            true // transition handled
         } catch (e: IllegalArgumentException) {
+            Log.e("NavigationError", "Failed to navigate: ${e.message}")
             false
         }
     }
@@ -729,7 +743,6 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
     lateinit var viewModel: ResultViewModel2
     lateinit var syncViewModel: SyncViewModel
     private var libraryViewModel: LibraryViewModel? = null
-    private var accountViewModel: AccountViewModel? = null
 
     /** kinda dirty, however it signals that we should use the watch status as sync or not*/
     var isLocalList: Boolean = false
