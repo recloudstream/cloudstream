@@ -163,10 +163,10 @@ object PluginManager {
         return getKey(PLUGINS_KEY_LOCAL) ?: emptyArray()
     }
 
-    private val CLOUD_STREAM_FOLDER =
-        Environment.getExternalStorageDirectory().absolutePath + "/Cloudstream3/"
+    private val CLOUDSTREAM3_FOLDER =
+        Environment.getExternalStorageDirectory().absolutePath + "/CloudStream3/"
 
-    private val LOCAL_PLUGINS_PATH = CLOUD_STREAM_FOLDER + "plugins"
+    private val LOCAL_PLUGINS_PATH = CLOUDSTREAM3_FOLDER + "plugins"
 
     var currentlyLoading: String? = null
 
@@ -464,7 +464,7 @@ object PluginManager {
      **/
     fun checkSafeModeFile(): Boolean {
         return normalSafeApiCall {
-            val folder = File(CLOUD_STREAM_FOLDER)
+            val folder = File(CLOUDSTREAM3_FOLDER)
             if (!folder.exists()) return@normalSafeApiCall false
             val files = folder.listFiles { _, name ->
                 name.equals("safe", ignoreCase = true)
