@@ -686,4 +686,7 @@
     <string name="confirm_before_exiting_desc">Prikaži dijaloški okvir prije izlaska iz aplikacije</string>
     <string name="show">Prikaži</string>
     <string name="dont_show">Ne prikazuj</string>
+    <string name="subs_edge_size">Veličina ruba</string>
+    <string name="custom">Prilagođeno</string>
+    <string name="backup_path_title">Mjesto mape sigurnosnih kopija</string>
 </resources>
