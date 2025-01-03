@@ -158,25 +158,6 @@ class CS3IPlayer : IPlayer {
         val keyRequestParameters: HashMap<String, String>,
     )
 
-    /*data class OnlineDrmMetadata(
-        val keyUrl: String,
-        override val keyRequestParameters: HashMap<String, String>,
-        override val uuid: UUID
-    ) : GenericDrmMetadata
-
-    data class OfflineDrmMetadata(
-        val kid: String,
-        val key: String,
-        val kty: String,
-        override val keyRequestParameters: HashMap<String, String>,
-        override val uuid: UUID
-    ) : GenericDrmMetadata
-
-    interface GenericDrmMetadata {
-        val keyRequestParameters: HashMap<String, String>
-        val uuid: UUID
-    }*/
-
     override fun getDuration(): Long? = exoPlayer?.duration
     override fun getPosition(): Long? = exoPlayer?.currentPosition
     override fun getIsPlaying(): Boolean = isPlaying
