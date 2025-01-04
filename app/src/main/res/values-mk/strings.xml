@@ -29,7 +29,7 @@
     <string name="type_re_watching">Повторно гледање</string>
     <string name="play_movie_button">Пушти филм</string>
     <string name="play_torrent_button">Стримај торент</string>
-    <string name="pick_source">Извори</string>
+    <string name="pick_source">Извор на видео</string>
     <string name="pick_subtitle">Преводи</string>
     <string name="reload_error">Повтори конекција…</string>
     <string name="go_back">Оди назад</string>
@@ -142,7 +142,7 @@
     <string name="year">Година</string>
     <string name="rating">Рејтинг</string>
     <string name="duration">Времетраење</string>
-    <string name="site">Извор</string>
+    <string name="site">Страница</string>
     <string name="synopsis">Крат</string>
     <string name="queued">во редица</string>
     <string name="no_subtitles">Нема преводи</string>
@@ -155,7 +155,7 @@
     <string name="cartoons">Цртани</string>
     <string name="anime">Аниме</string>
     <string name="torrent">Торент</string>
-    <string name="source_error">Извор на проблемот</string>
+    <string name="source_error">Неуспешно вчитување на извор</string>
     <string name="remote_error">Грешка</string>
     <string name="render_error">Грешка</string>
     <string name="unexpected_error">Неочекувана грешка со плеерот</string>
@@ -171,7 +171,7 @@
     <string name="check_for_update">Проверете ажурирања</string>
     <string name="video_lock">Заклучи</string>
     <string name="video_aspect_ratio_resize">Променете ја големината</string>
-    <string name="video_source">Избор</string>
+    <string name="video_source">Извор</string>
     <string name="video_skip_op">Прескокни ОП</string>
     <string name="dont_show_again">Не прикажувај повторно</string>
     <string name="update">Ажурирај</string>
@@ -222,7 +222,7 @@
     <string name="example_lang_name">Јазичен код (мк)</string>
     <string name="subtitle_offset_title">Одложување на титловите</string>
     <string name="player_loaded_subtitles" formatted="true">Вчитан %s</string>
-    <string name="home_source">Извор</string>
+    <string name="home_source">Извор на видео и превод</string>
     <string name="home_random">Случајно</string>
     <string name="error">Грешка</string>
     <string name="view_public_repositories_button">Прикажи складишта на заедницата</string>
@@ -253,7 +253,7 @@
     <string name="quality_tc">TC</string>
     <string name="subscription_new">Претплатен на %s</string>
     <string name="pref_category_subtitles">Преводи</string>
-    <string name="download_all_plugins_from_repo">Да се преземат сите приклучоци од ова складиште?</string>
+    <string name="download_all_plugins_from_repo">Предупредување: CloudStream 3 не презема никаква одговорност за користење на екстензии од трети страни и не обезбедува никаква поддршка за нив!</string>
     <string name="backup_failed">Недостасуваат дозволи за складирање. Обидете се повторно.</string>
     <string name="sort_save">Зачувај</string>
     <string name="player_load_subtitles">Вчитај од датотека</string>
@@ -318,13 +318,13 @@
     <string name="watch_quality_pref_data">Префериран квалитет на гледање (мобилни податоци)</string>
     <string name="category_provider_test">Тест на провајдер</string>
     <string name="select_library">Изберете библиотека</string>
-    <string name="video_tracks">Видео песни</string>
+    <string name="video_tracks">Видео резолуција</string>
     <string name="asian_drama">Азиски драми</string>
     <string name="plugin_loaded">Приклучокот е вчитан</string>
     <string name="subtitles_remove_bloat">Remove bloat from subtitles</string>
     <string name="plugins_not_downloaded" formatted="true">Не е преземено: %d</string>
     <string name="subtitles_remove_captions">Remove closed captions from subtitles</string>
-    <string name="audio_tracks">Аудио песни</string>
+    <string name="audio_tracks">Аудио јазик</string>
     <string name="poster_ui_settings">Вклучете ги елементите на корисничкиот интерфејс на постерот</string>
     <string name="plugins_disabled" formatted="true">Оневозможено: %d</string>
     <string name="apk_installer_legacy">Легаси</string>
@@ -374,7 +374,7 @@
     <string name="backup_success">Зачувани податоци</string>
     <string name="video_ram_description">Предизвикува падови ако е превисоко поставено на уреди со слаба меморија, како што е Android TV.</string>
     <string name="update_notification_installing">Се инсталира ажурирање на апликацијата…</string>
-    <string name="repository_url_hint">URL на складиштето</string>
+    <string name="repository_url_hint">URL на складиштето или краток код</string>
     <string name="update_notification_failed">Не може да се инсталира новата верзија на апликацијата</string>
     <string name="kitsu_settings">Прикажи постери од Kitsu</string>
     <string name="confirm_exit_dialog">Дали сте сигурни дека сакате да излезете?</string>
@@ -472,14 +472,14 @@
     <string name="app_layout_subtext">Променете го изгледот на апликацијата за да одговара на вашиот уред</string>
     <string name="crash_reporting_title">Известување за пад</string>
     <string name="preferred_media_subtext">Што сакате да видите</string>
-    <string name="repository_name_hint">Име на складиштето</string>
+    <string name="repository_name_hint">Име на складиштето (Опционално)</string>
     <string name="plugin_downloaded">Приклучокот е преземен</string>
     <string name="plugin_load_fail" formatted="true">Не може да се вчита %s</string>
     <string name="setup_extensions_subtext">Преземете ја листата на сајтови што сакате да ги користите</string>
     <string name="blank_repo_message">CloudStream нема стандардно инсталирани екстензии. Треба сами да инсталирате екстензии.
 \n
 \nПридружете се на нашиот Discord или барајте онлајн.</string>
-    <string name="tracks">Песни</string>
+    <string name="tracks">Видео резолуција и аудио јазик</string>
     <string name="safe_mode_description">Сите екстензии беа исклучени поради пад за да ви помогнат да ја пронајдете онаа што предизвикува проблеми.</string>
     <string name="extension_rating" formatted="true">Оцена: %s</string>
     <string name="extension_size">Големина</string>
@@ -609,7 +609,7 @@
     <string name="battery_dialog_title">Оневозможи оптимизација на батерија</string>
     <string name="biometric_authentication_title">Отклучи CloudStream</string>
     <string name="biometric_unsupported">Биометриската автентикација не е поддржана на овој уред</string>
-    <string name="biometric_prompt_description">Овој екран беше затворен поради повеќе неуспешни обиди. Ве молиме рестартирајте ја апликацијата.</string>
+    <string name="biometric_prompt_description">По неколку неуспешни обиди, известувањето ќе се затвори. Едноставно рестартирајте ја апликацијата за да се обидете повторно.</string>
     <string name="custom_media_singluar">Медиуми</string>
     <string name="episode_upcoming_format" formatted="true">Претстои во %s</string>
     <string name="resume_remaining" formatted="true">%s
@@ -619,4 +619,48 @@
     <string name="clipboard_unknown_error">Грешка при копирање, копирајте го logcat и контактирајте со поддршката за апликацијата.</string>
     <string name="audio_book_singular">Аудио книга</string>
     <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
+    <string name="pref_category_security">Безбедност</string>
+    <string name="dismiss">Отфрли</string>
+    <string name="open_downloaded_repo">Отвори складиште</string>
+    <string name="preview_seekbar">Преглед на лентата за пребарување</string>
+    <string name="device_pin_url_message">Посетете го <b>%s</b> на вашиот паметен телефон или компјутер и внесете го горниот код</string>
+    <string name="subs_edge_size">Големина на раб</string>
+    <string name="delete_files">Избриши ги податоците</string>
+    <string name="delete_format" formatted="true">Избриши (%1$d | %2$s)</string>
+    <string name="sort_release_date_old">Датум на издавање (најстари до најнови)</string>
+    <string name="no_subtitles_loaded">Сè уште не се вчитани преводи</string>
+    <string name="backup_path_title">Локација на бекап</string>
+    <string name="custom">Прилагодено</string>
+    <string name="confirm_before_exiting_title">Потврдете пред да излезете</string>
+    <string name="confirm_before_exiting_desc">Прикажи го дијалог прозорецот пред да излезете од апликацијата</string>
+    <string name="show">Прикажи</string>
+    <string name="dont_show">Не прикажувај</string>
+    <string name="preview_seekbar_desc">Овозможете преглед на сликичката на лентата за пребарување</string>
+    <string name="pref_category_accounts">Кориснички сметки</string>
+    <string name="auth_locally">Локална автентикација</string>
+    <string name="qr_image">Слика со QR код</string>
+    <string name="play_from_beginning_img_des">Пушти од почеток</string>
+    <string name="open_local_video">Отвори локално видео</string>
+    <string name="test_warning">Предупредување</string>
+    <string name="downloads_empty">Во моментов нема преземања.</string>
+    <string name="deselect_all">Деселектирај сѐ</string>
+    <string name="select_all">Одбери ги сите</string>
+    <string name="offline_file">Достапно за гледање офлајн</string>
+    <string name="delete_message_series_section" formatted="true">Исто така, трајно ќе ги избришете сите епизоди во следната серија:\n\n%s</string>
+    <string name="delete_message_series_only" formatted="true">Дали сте сигурни дека сакате трајно да ги избришете сите епизоди во следните серии?\n\n%s</string>
+    <string name="device_pin_expired_message">ПИН-кодот сега е истечен!</string>
+    <string name="sort_release_date_new">Датум на издавање (најнови до најстари)</string>
+    <string name="torrent_info">Ова видео е Torrent, тоа значи дека вашата видео активност може да се следи.\nУверете се дека го разбирате Torrenting пред да продолжите.</string>
+    <string name="downloads_delete_select">Одбери ставки за бришење</string>
+    <string name="hide_player_control_names">Сокриј ги имињата на контролите на корисникот</string>
+    <string name="delete_message_multiple" formatted="true">Дали сте сигурни дека сакате трајно да ги избришете следните ставки?\n\n %s</string>
+    <string name="delete_plugin">Избришете го приклучокот</string>
+    <string name="device_pin_error_message">Не може да се добие PIN-кодот на уредот, обидете се со локална автентикација</string>
+    <string name="cs3wiki">CloudStream Wiki</string>
+    <string name="delete_message_series_episodes" formatted="true">Дали сте сигурни дека сакате трајно да ги избришете следните епизоди во %1$s?\n\n %2$s</string>
+    <string name="device_pin_counter_text">Кодот истекува за %1$d минута/и и %2$d секунда/и</string>
+    <string name="audio_singluar">Аудио</string>
+    <string name="podcast_singluar">Поткаст</string>
+    <string name="encoding_error">Грешка при кодирање на преводот</string>
+    <string name="unsupported_error">Неподдржана грешка</string>
 </resources>

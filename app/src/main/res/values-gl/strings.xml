@@ -105,7 +105,7 @@
     <string name="preview_background_img_des">Vista previa do fondo</string>
     <string name="player_speed_text_format" formatted="true">Velocidade (%.2fx)</string>
     <string name="pick_subtitle">Subtítulos</string>
-    <string name="stream">Transmitir</string>
+    <string name="stream">Fluxo de datos</string>
     <string name="error_loading_links_toast">Error Cargando Ligazón</string>
     <string name="app_dubbed_text">Dobrado</string>
     <string name="filter_bookmarks">Filtrar Marcadores</string>
@@ -120,7 +120,7 @@
     <string name="player_subtitles_settings_des">Configuración de subtítulos do reprodutor</string>
     <string name="chromecast_subtitles_settings">Subtítulos de Chromecast</string>
     <string name="chromecast_subtitles_settings_des">Configuración de subtítulos de Chromecast</string>
-    <string name="eigengraumode_settings">Modo Eigengravy</string>
+    <string name="eigengraumode_settings">Velocidade de reproducción</string>
     <string name="swipe_to_seek_settings">Deslice para avanzar/retroceder</string>
     <string name="swipe_to_seek_settings_des">Deslice o dedo de lado a lado para controlar a posición nun video</string>
     <string name="swipe_to_change_settings">Deslice para cambiar a configuración</string>
@@ -143,7 +143,7 @@
     <string name="backup_failed_error_format">Error respaldando de %s</string>
     <string name="search">Procurar</string>
     <string name="library">Biblioteca</string>
-    <string name="category_account">Contas</string>
+    <string name="category_account">Contas e seguridade</string>
     <string name="category_updates">Actualizacións e copias de seguridade</string>
     <string name="settings_info">Info</string>
     <string name="advanced_search">Procura Avanzada</string>
@@ -165,4 +165,138 @@
     <string name="automatic_plugin_download_summary">Instala automáticamente todos os complementos aínda non instalados dos repositorios engadidos.</string>
     <string name="updates_settings">Mostrar actualizacións da aplicación</string>
     <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
+    <string name="subs_default_reset_toast">Reiniciar aos valores predefinidos</string>
+    <string name="go_back_30">-30</string>
+    <string name="audio_book_singular">Audiolibro</string>
+    <string name="test_warning">Advertencia</string>
+    <string name="site">Páxina Web</string>
+    <string name="downloads_empty">Non hay descargas dispoñíbeis</string>
+    <string name="anim">Aplicativo de Anime dos mesmos desenvolvedores</string>
+    <string name="discord">Únete o Discord</string>
+    <string name="speed_setting_summary">Engade unha opción de velocidade no reproductor</string>
+    <string name="uprereleases_settings">Actualizar as versións preliminares</string>
+    <string name="lightnovel">Aplicativo de novela lixeira dos mesmos desenvolvedores</string>
+    <string name="no_episodes_found">Non se atoparon capítulos</string>
+    <string name="delete">Borrar</string>
+    <string name="resume">Continuar</string>
+    <string name="anime">Anime</string>
+    <string name="torrent">Torrents</string>
+    <string name="no_update_found">Non se atoparon actualizacións</string>
+    <string name="check_for_update">Buscar actualizacións</string>
+    <string name="video_lock">Bloquear</string>
+    <string name="episode_action_download_subtitle">Descargar subtítulos</string>
+    <string name="links_reloaded_toast">Ligazóns recargadas</string>
+    <string name="updates_settings_des">Busque de forma automática novas actualizacións despois de iniciar o aplicativo.</string>
+    <string name="apk_installer_settings_des">Algúns dispositivos non soportan o novo instalador de paquetes. Probe a opción antiga se as actualizacións non se instalan.</string>
+    <string name="delete_message_multiple" formatted="true">Está seguro de querer borrar permanentemente os seguintes elementos?\n\n%s</string>
+    <string name="delete_message" formatted="true">Esto borrarase %s permanentemente\nEstás seguro?</string>
+    <string name="cartoons_singular">Debuxo animado</string>
+    <string name="custom_media_singluar">Media</string>
+    <string name="season_format">%1$s %2$d%3$s</string>
+    <string name="cartoons">Debuxos animados</string>
+    <string name="render_error">Erro do renderizador</string>
+    <string name="benene_des">Banana dada</string>
+    <string name="app_language">Idioma do aplicativo</string>
+    <string name="redo_setup_process">Volver a facer o proceso de configuración inicial</string>
+    <string name="no_season">Nengunha temportada</string>
+    <string name="synopsis">Sinopse</string>
+    <string name="source_error">Erro na fonte</string>
+    <string name="action_default">Por defecto</string>
+    <string name="start">Comezar</string>
+    <string name="duration">Duración</string>
+    <string name="asian_drama_singular">Drama asiático</string>
+    <string name="toast_copied">¡Copiado!</string>
+    <string name="video_source">Fonte</string>
+    <string name="unexpected_error">Erro inesperado do reproductor</string>
+    <string name="episode">Capítulo</string>
+    <string name="music_singlar">Música</string>
+    <string name="episode_short">C</string>
+    <string name="resume_time_left" formatted="true">%dm\nrestantes</string>
+    <string name="status_ongoing">En curso</string>
+    <string name="queued">En cola</string>
+    <string name="status_completed">Rematado</string>
+    <string name="status">Estado</string>
+    <string name="year">Ano</string>
+    <string name="no_subtitles">Sen subtítulos</string>
+    <string name="rating">Puntuación</string>
+    <string name="asian_drama">Dramas asiáticos</string>
+    <string name="livestreams">Transmisións en vivo</string>
+    <string name="others">Outros</string>
+    <string name="episode_action_reload_links">Recargar ligazóns</string>
+    <string name="show_hd">Etiqueta de calidade</string>
+    <string name="show_dub">Etiqueta de doblaxe</string>
+    <string name="show_sub">Etiqueta de subtitulado</string>
+    <string name="show_title">Título</string>
+    <string name="backup_frequency">Frecuencia da copia de seguridade</string>
+    <string name="subscribe_tooltip">Notificación de novo capítulo</string>
+    <string name="repo_copy_label">Nome do repositorio e a sua URL</string>
+    <string name="play_from_beginning_img_des">Reproducir dende o comezo</string>
+    <string name="open_local_video">Abrir vídeo localmente</string>
+    <string name="apk_installer_settings">Instalador de APK</string>
+    <string name="next_season_episode_format" formatted="true">A temporada %1$d e o capítulo %2$d se estrearán en</string>
+    <string name="downloads_delete_select">Escolla os elementos para eliminar</string>
+    <string name="offline_file">Dispoñibel para visualizar sen conexión</string>
+    <string name="select_all">Seleccionar todo</string>
+    <string name="deselect_all">Deseleccionar todo</string>
+    <string name="result_search_tooltip">Buscar noutras extensións</string>
+    <string name="recommendations_tooltip">Amosar recomendacións</string>
+    <string name="delete_message_series_only" formatted="true">Está seguro de querer borrar permanentemente todos os episodios da serie?\n\n%s</string>
+    <string name="free_storage">Libre</string>
+    <string name="used_storage">Usado</string>
+    <string name="app_storage">Aplicativo</string>
+    <string name="movies">Películas</string>
+    <string name="tv_series">Series de Televisión</string>
+    <string name="documentaries">Documentales</string>
+    <string name="ova">OVA</string>
+    <string name="nsfw">NSFW</string>
+    <string name="movies_singular">Película</string>
+    <string name="tv_series_singular">Serie</string>
+    <string name="anime_singular">Anime</string>
+    <string name="ova_singular">OVA</string>
+    <string name="torrent_singular">Torrent</string>
+    <string name="documentaries_singular">Documental</string>
+    <string name="live_singular">Transmisión en vivo</string>
+    <string name="other_singular">Vídeo</string>
+    <string name="remote_error">Erro remoto</string>
+    <string name="storage_error">Erro de descarga, comproba os permisos de almacenamento</string>
+    <string name="episode_action_chromecast_episode">Capítulo no Chromecast</string>
+    <string name="episode_action_chromecast_mirror">Duplicar no Chromecast</string>
+    <string name="episode_action_cast_mirror">Transmitir en espello</string>
+    <string name="episode_action_play_in_app">Reproducir na aplicación</string>
+    <string name="episode_action_auto_download">Descarga automática</string>
+    <string name="episode_upcoming_format" formatted="true">Próximamente en %s</string>
+    <string name="delete_file">Borrar arquivo</string>
+    <string name="test_failed">Errou</string>
+    <string name="test_passed">Aprobado</string>
+    <string name="resume_remaining" formatted="true">%s\nrestante</string>
+    <string name="nsfw_singular">NSFW</string>
+    <string name="episode_action_play_in_format">Reproducir en %s</string>
+    <string name="uprereleases_settings_des">Buscar actualizacións preliminares no lugar de só versións completas</string>
+    <string name="github">Github</string>
+    <string name="benene">Dalle unha banana ós desenvolvedores</string>
+    <string name="no_chromecast_support_toast">Este provedor non ten soporte para Chromecast</string>
+    <string name="no_links_found_toast">Ligazóns non atopadas</string>
+    <string name="copy_link_toast">Ligazón copiada ó portapapeis</string>
+    <string name="play_episode_toast">Reproducir capítulo</string>
+    <string name="acra_report_toast">O sentimos, o aplicativo bloqueouse. Enviarase un informe de error anónimo aos desenvolvedores</string>
+    <string name="season">Temporada</string>
+    <plurals name="episodes" translatable="false">
+        <item quantity="one">Capítulos</item>
+        <item quantity="other"></item>
+    </plurals>
+    <string name="episodes_range">%1$d-%2$d</string>
+    <string name="episode_format" formatted="true">%1$d %2$s</string>
+    <string name="season_short">T</string>
+    <string name="delete_files">Borrar arquivos</string>
+    <string name="delete_format" formatted="true">Borrar (%1$d | %2$s)</string>
+    <string name="cancel">Cancelar</string>
+    <string name="pause">Pausar</string>
+    <string name="go_forward_30">+30</string>
+    <string name="delete_message_series_episodes" formatted="true">Está seguro de querer borrar permanentemente os seguientes capítulos en %1$s?\n\n%2$s</string>
+    <string name="delete_message_series_section" formatted="true">Tamén borrará permanentemente todos os capítulos das seguintes series:\n\n%s</string>
+    <string name="episode_action_download_mirror">Descargar dende un servidor alternativo</string>
+    <string name="poster_ui_settings">Alternar elementos da interfaz de usuario no póster</string>
+    <string name="video_aspect_ratio_resize">Redimensionar</string>
+    <string name="video_skip_op">Omitir introducción</string>
+    <string name="dont_show_again">Non volver a amosar</string>
 </resources>
