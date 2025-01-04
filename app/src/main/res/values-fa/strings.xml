@@ -220,7 +220,7 @@
     <string name="status_completed">تمام‌شده</string>
     <string name="no_subtitles">بدون زیرنویس</string>
     <string name="test_passed">متوقف‌شده</string>
-    <string name="action_open_play">\@string/home_play</string>
+    <string name="action_open_play">@string/home_play</string>
     <string name="open_local_video">باز کردن ویدیو محلی</string>
     <string name="provider_info_meta">متاداده توسط سایت ارائه نشده، اگه در سایت وجود نداشته باشد احتمال خطا در بارگیری وجود دارد</string>
     <string name="type_on_hold">در انتظار</string>
