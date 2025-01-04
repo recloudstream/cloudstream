@@ -71,6 +71,7 @@ import com.lagradost.cloudstream3.extractors.GuardareStream
 import com.lagradost.cloudstream3.extractors.GoodstreamExtractor
 import com.lagradost.cloudstream3.extractors.Guccihide
 import com.lagradost.cloudstream3.extractors.Hxfile
+import com.lagradost.cloudstream3.extractors.InternetArchive
 import com.lagradost.cloudstream3.extractors.JWPlayer
 import com.lagradost.cloudstream3.extractors.Jawcloud
 import com.lagradost.cloudstream3.extractors.Jeniusplay
@@ -292,7 +293,7 @@ import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import kotlinx.coroutines.delay
 import me.xdrop.fuzzywuzzy.FuzzySearch
 import org.jsoup.Jsoup
-import java.net.URL
+import java.net.URI
 import java.util.UUID
 
 /**
@@ -389,7 +390,7 @@ enum class ExtractorLinkType {
 
 private fun inferTypeFromUrl(url: String): ExtractorLinkType {
     val path = try {
-        URL(url).path
+        URI(url).path
     } catch (_: Throwable) {
         // don't log magnet links as errors
         null
@@ -1025,6 +1026,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     Ds2play(),
     Ds2video(),
     Filegram(),
+    InternetArchive(),
 
     )
 
