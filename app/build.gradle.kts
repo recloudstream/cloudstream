@@ -173,8 +173,7 @@ dependencies {
     ^ Update to Latest Commits if Trailers Misbehave, github.com/TeamNewPipe/NewPipeExtractor/commits/dev */
     implementation(libs.juniversalchardet) // Subtitle Decoding
     // ffmpeg decoding
-    implementation(libs.nextlib.media3ext)
-    implementation(libs.nextlib.mediainfo)
+    implementation(libs.bundles.nextlibMedia3)
 
     // Crash Reports (AcraApplication.kt)
     implementation(libs.acra.core)
