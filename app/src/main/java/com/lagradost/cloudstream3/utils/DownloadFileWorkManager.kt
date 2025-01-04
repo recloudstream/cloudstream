@@ -2,6 +2,8 @@ package com.lagradost.cloudstream3.utils
 
 import android.app.Notification
 import android.content.Context
+import android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC
+import android.os.Build.VERSION.SDK_INT
 import androidx.work.CoroutineWorker
 import androidx.work.ForegroundInfo
 import androidx.work.WorkerParameters
@@ -93,7 +95,10 @@ class DownloadFileWorkManager(val context: Context, private val workerParams: Wo
 
     private fun handleNotification(id: Int, notification: Notification) {
         main {
-            setForegroundAsync(ForegroundInfo(id, notification))
+            if (SDK_INT >= 29)
+            setForegroundAsync(ForegroundInfo(id, notification, FOREGROUND_SERVICE_TYPE_DATA_SYNC))
+            else setForegroundAsync(ForegroundInfo(id, notification))
+
         }
     }
 }

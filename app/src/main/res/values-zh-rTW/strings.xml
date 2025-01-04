@@ -117,7 +117,7 @@
     <string name="subs_download_languages">下載語言</string>
     <string name="subs_subtitle_languages">字幕語言</string>
     <string name="subs_hold_to_reset_to_default">按住重設為預設值</string>
-    <string name="subs_import_text" formatted="true">將字體導入到 %s</string>
+    <string name="subs_import_text" formatted="true">將字體匯入到 %s</string>
     <string name="continue_watching">繼續觀看</string>
     <string name="action_remove_watching">移除</string>
     <string name="action_open_watching">更多資訊</string>
@@ -272,7 +272,7 @@
     <string name="show_title_key" translatable="false">show_title_key</string>
     <string name="poster_ui_settings">封面內容</string>
     <string name="no_update_found">未找到更新</string>
-    <string name="check_for_update">检查更新</string>
+    <string name="check_for_update">檢查更新</string>
     <string name="video_lock">鎖定</string>
     <string name="video_aspect_ratio_resize">調整大小</string>
     <string name="video_source">來源</string>
@@ -285,7 +285,7 @@
     <string name="limit_title_rez">影片播放器標題</string>
     <string name="video_buffer_size_settings">影片緩衝大小</string>
     <string name="video_buffer_length_settings">影片緩衝長度</string>
-    <string name="video_buffer_disk_settings">影片快取存儲</string>
+    <string name="video_buffer_disk_settings">磁碟上的影片快取</string>
     <string name="video_buffer_clear_settings">清除影片和圖片快取</string>
     <string name="video_ram_description">如果在記憶體不足的裝置（例如 Android TV）上設定得太高會導致程式崩潰。</string>
     <string name="video_disk_description">如果在儲存空間較小的裝置（例如 Android TV）上設定過高會導致問題。</string>
@@ -293,7 +293,7 @@
     <string name="dns_pref_summary">用於繞過網路服務供應商的封鎖</string>
     <string name="add_site_pref">複製片源</string>
     <string name="remove_site_pref">移除片源</string>
-    <string name="add_site_summary">使用不同的 URL 添加現有站點的複製</string>
+    <string name="add_site_summary">使用不同的 URL 新增現有站點的複製</string>
     <string name="download_path_pref">下載路徑</string>
     <string name="nginx_url_pref">NGINX 伺服器 URL</string>
     <string name="display_subbed_dubbed_settings">顯示有配音/字幕的動漫</string>
@@ -433,9 +433,9 @@
     <string name="preferred_media_subtext">你想要看什麼</string>
     <string name="setup_done">完成</string>
     <string name="extensions">擴充功能</string>
-    <string name="add_repository">添加資源庫</string>
-    <string name="repository_name_hint">資源庫名稱</string>
-    <string name="repository_url_hint">資源庫 URL</string>
+    <string name="add_repository">新增資源庫</string>
+    <string name="repository_name_hint">資源庫名稱（選填）</string>
+    <string name="repository_url_hint">資源庫 URL 或簡碼</string>
     <string name="plugin_loaded">外掛程式已載入</string>
     <string name="plugin_deleted">外掛程式已刪除</string>
     <string name="plugin_load_fail" formatted="true">無法載入 %s</string>
@@ -459,7 +459,7 @@
     <string name="view_public_repositories_button">查看</string>
     <string name="view_public_repositories_button_short">公開清單</string>
     <string name="uppercase_all_subtitles">字幕全大寫</string>
-    <string name="download_all_plugins_from_repo">從此資源庫下載所有外掛程式？</string>
+    <string name="download_all_plugins_from_repo">警告：CloudStream 3 不對使用第三方擴充功能承擔任何責任，也不提供任何支援！</string>
     <string name="single_plugin_disabled" formatted="true">%s （停用）</string>
     <string name="tracks">軌道</string>
     <string name="audio_tracks">音頻軌道</string>
@@ -494,7 +494,7 @@
     <string name="history">歷史紀錄</string>
     <string name="automatic_plugin_download">自動下載外掛程式</string>
     <string name="confirm_exit_dialog">你確定要離開？</string>
-    <string name="automatic_plugin_download_summary">從添加的資源庫自動安裝所有尚未安裝的外掛程式。</string>
+    <string name="automatic_plugin_download_summary">從新增的資源庫自動安裝所有尚未安裝的外掛程式。</string>
     <string name="enable_skip_op_from_database_des">在開始/結束顯示跳過彈出視窗</string>
     <string name="update_notification_failed">無法安裝新版本的應用程式</string>
     <string name="apk_installer_settings">APK 安裝器</string>
@@ -655,7 +655,7 @@
     <string name="ok">好的</string>
     <string name="password_pin_authentication_title">密碼／PIN 驗證</string>
     <string name="biometric_setting_summary">使用指紋、面容 ID、PIN、圖案和密碼解除鎖定應用程式。</string>
-    <string name="biometric_prompt_description">由於多次嘗試失敗，此畫面已關閉。請重新啟動應用程式。</string>
+    <string name="biometric_prompt_description">多次嘗試失敗後，此提示將會關閉。只需重新啟動應用程式即可再次嘗試。</string>
     <string name="clipboard_permission_error">剪貼簿存取失敗，請再試一次。</string>
     <string name="clipboard_unknown_error">複製失敗，請複製 logcat 內容並聯繫應用程式支援者。</string>
     <string name="app_info_intent_error">無法開啟 CloudStream 的應用程式資訊頁面。</string>
@@ -665,4 +665,43 @@
     <string name="cs3wiki">CloudStream Wiki</string>
     <string name="biometric_unsupported">此裝置不支援生物特徵認證</string>
     <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
+    <string name="device_pin_error_message">無法取得裝置 PIN 碼，請嘗試本機驗證</string>
+    <string name="delete_plugin">刪除外掛程式</string>
+    <string name="open_downloaded_repo">開啟資源庫</string>
+    <string name="device_pin_expired_message">PIN 碼已過期！</string>
+    <string name="device_pin_counter_text">驗證碼將在 %1$d 分 %2$d 秒後過期</string>
+    <string name="sort_release_date_new">發行日期（由新到舊）</string>
+    <string name="sort_release_date_old">發行日期（由舊到新）</string>
+    <string name="hide_player_control_names">隱藏播放器控制項名稱</string>
+    <string name="preview_seekbar">進度條預覽</string>
+    <string name="preview_seekbar_desc">啟用進度條上的預覽縮圖</string>
+    <string name="downloads_empty">目前沒有任何下載。</string>
+    <string name="auth_locally">本機驗證</string>
+    <string name="dismiss">關閉</string>
+    <string name="backup_path_title">備份資料夾位置</string>
+    <string name="custom">自訂</string>
+    <string name="confirm_before_exiting_desc">退出應用程式前顯示對話框</string>
+    <string name="show">顯示</string>
+    <string name="dont_show">不顯示</string>
+    <string name="qr_image">QR Code 圖片</string>
+    <string name="device_pin_url_message">請在您的智慧型手機或電腦上造訪 <b>%s</b> 並輸入上方的驗證碼</string>
+    <string name="test_warning">警告</string>
+    <string name="delete_message_series_section" formatted="true">您也將永久刪除以下系列中的所有集數：\n\n%s</string>
+    <string name="confirm_before_exiting_title">退出前確認</string>
+    <string name="pref_category_accounts">帳號</string>
+    <string name="open_local_video">開啟本機影片</string>
+    <string name="play_from_beginning_img_des">從頭開始播放</string>
+    <string name="downloads_delete_select">選擇要刪除的項目</string>
+    <string name="offline_file">可離線觀看</string>
+    <string name="select_all">全選</string>
+    <string name="deselect_all">取消全選</string>
+    <string name="delete_files">刪除檔案</string>
+    <string name="delete_format" formatted="true">刪除（%1$d | %2$s）</string>
+    <string name="delete_message_multiple" formatted="true">您確定要永久刪除以下項目嗎？\n\n%s</string>
+    <string name="delete_message_series_episodes" formatted="true">您確定要永久刪除 %1$s 中的以下集數嗎？\n\n%2$s</string>
+    <string name="delete_message_series_only" formatted="true">您確定要永久刪除以下系列中的所有集數嗎？\n\n%s</string>
+    <string name="pref_category_security">安全</string>
+    <string name="no_subtitles_loaded">尚未載入字幕</string>
+    <string name="torrent_info">此影片是 Torrent，這意味著你的影片活動可以被追蹤。\n在繼續之前，請確保你瞭解 Torrenting。</string>
+    <string name="subs_edge_size">subs_edge_size</string>
 </resources>

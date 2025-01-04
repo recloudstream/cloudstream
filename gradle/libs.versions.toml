@@ -1,7 +1,6 @@
 [versions]
 acraCore = "5.11.3"
 appcompat = "1.7.0"
-aria2cstream = "0.0.6"
 autoServiceKsp = "1.2.0"
 biometric = "1.2.0-alpha05"
 buildkonfigGradlePlugin = "0.15.1"
@@ -16,7 +15,7 @@ espressoCore = "3.6.1"
 fuzzywuzzy = "1.4.0"
 glide = "4.16.0"
 glideTransformations = "4.3.0"
-gradle = "8.2.2"
+gradle = "8.7.3"
 guava = "33.3.1-android"
 jacksonModuleKotlin = "2.13.1"
 json = "20240303"
@@ -34,8 +33,7 @@ mediaFfmpeg = "1.1.0"
 navigationFragmentKtx = "2.8.5"
 navigationUiKtx = "2.8.5"
 newpipeextractor = "v0.24.3"
-nextlibMedia3ext = "0.8.4"
-nextlibMediainfo = "0.8.4"
+nextlibMedia3 = "0.8.4"
 nicehttp = "0.4.11"
 okhttp3Integration = "4.16.0"
 overlappingpanels = "0.1.5"
@@ -52,12 +50,18 @@ tvprovider = "1.0.0"
 video = "1.0.0"
 workRuntime = "2.10.0"
 workRuntimeKtx = "2.10.0"
+torrentserverAniyomi = "c18f58e51b"
+
+jvmTarget = "1.8"
+minSdk = "21"
+compileSdk = "35"
+targetSdk = "35"
 
 [libraries]
+torrentserver-aniyomi = { module = "com.github.Diegopyl1209:torrentserver-aniyomi", version.ref = "torrentserverAniyomi" }
 acra-core = { module = "ch.acra:acra-core", version.ref = "acraCore" }
 acra-toast = { module = "ch.acra:acra-toast", version.ref = "acraCore" }
 appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
-aria2cstream = { module = "com.github.recloudstream:Aria2cStream", version.ref = "aria2cstream" }
 auto-service-ksp = { module = "dev.zacsweers.autoservice:auto-service-ksp", version.ref = "autoServiceKsp" }
 biometric = { module = "androidx.biometric:biometric", version.ref = "biometric" }
 buildkonfig-gradle-plugin = { module = "com.codingfeline.buildkonfig:buildkonfig-gradle-plugin", version.ref = "buildkonfigGradlePlugin" }
@@ -99,8 +103,8 @@ media3-ui = { module = "androidx.media3:media3-ui", version.ref = "media3" }
 navigation-fragment-ktx = { module = "androidx.navigation:navigation-fragment-ktx", version.ref = "navigationFragmentKtx" }
 navigation-ui-ktx = { module = "androidx.navigation:navigation-ui-ktx", version.ref = "navigationUiKtx" }
 newpipeextractor = { module = "com.github.teamnewpipe:NewPipeExtractor", version.ref = "newpipeextractor" }
-nextlib-media3ext = { module = "com.github.anilbeesetti.nextlib:nextlib-media3ext", version.ref = "nextlibMedia3ext" }
-nextlib-mediainfo = { module = "com.github.anilbeesetti.nextlib:nextlib-mediainfo", version.ref = "nextlibMediainfo" }
+nextlib-media3ext = { module = "com.github.anilbeesetti.nextlib:nextlib-media3ext", version.ref = "nextlibMedia3" }
+nextlib-mediainfo = { module = "com.github.anilbeesetti.nextlib:nextlib-mediainfo", version.ref = "nextlibMedia3" }
 nicehttp = { module = "com.github.Blatzar:NiceHttp", version.ref = "nicehttp" }
 okhttp3-integration = { module = "com.github.bumptech.glide:okhttp3-integration", version.ref = "okhttp3Integration" }
 overlappingpanels = { module = "com.github.discord:OverlappingPanels", version.ref = "overlappingpanels" }
@@ -122,3 +126,4 @@ work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "w
 
 [bundles]
 media3 = ["media3-cast", "media3-common", "media3-datasource-okhttp", "media3-exoplayer", "media3-exoplayer-dash", "media3-exoplayer-hls", "media3-session", "media3-ui"]
+nextlibMedia3 = ["nextlib-media3ext", "nextlib-mediainfo"]

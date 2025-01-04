@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.amap
 import com.lagradost.cloudstream3.app
-import com.lagradost.cloudstream3.ErrorLoadingException
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
@@ -14,27 +13,11 @@ import javax.crypto.spec.SecretKeySpec
 import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
 
-
-@OptIn(kotlin.io.encoding.ExperimentalEncodingApi::class)
+@OptIn(ExperimentalEncodingApi::class)
 open class VidSrcTo : ExtractorApi() {
     override val name = "VidSrcTo"
     override val mainUrl = "https://vidsrc2.to"
     override val requiresReferer = true
-
-    companion object {
-        private val keySource = "https://rowdy-avocado.github.io/multi-keys/"
-
-        private var keys: KeysData? = null
-
-        private suspend fun getKeys(): KeysData {
-            return keys
-                    ?: run {
-                        keys = app.get(keySource).parsedSafe<KeysData>()
-                                        ?: throw ErrorLoadingException("Unable to get keys")
-                        keys!!
-                    }
-        }
-    }
 
     override suspend fun getUrl(
             url: String,
@@ -48,14 +31,14 @@ open class VidSrcTo : ExtractorApi() {
         subRes?.forEach {
             if (it.kind.equals("captions")) subtitleCallback.invoke(SubtitleFile(it.label, it.file))
         }
-        val sourcesLink = "$mainUrl/ajax/embed/episode/$mediaId/sources?token=${vrfEncrypt(getKeys(), mediaId)}"
+        val sourcesLink = "$mainUrl/ajax/embed/episode/$mediaId/sources?token=${vrfEncrypt(RowdyAvocadoKeys.getKeys(), mediaId)}"
         val res = app.get(sourcesLink).parsedSafe<VidsrctoEpisodeSources>() ?: return
         if (res.status != 200) return
         res.result?.amap { source ->
             try {
-                val embedResUrl = "$mainUrl/ajax/embed/source/${source.id}?token=${vrfEncrypt(getKeys(), source.id)}"
+                val embedResUrl = "$mainUrl/ajax/embed/source/${source.id}?token=${vrfEncrypt(RowdyAvocadoKeys.getKeys(), source.id)}"
                 val embedRes = app.get(embedResUrl).parsedSafe<VidsrctoEmbedSource>() ?: return@amap
-                val finalUrl = vrfDecrypt(getKeys(), embedRes.result.encUrl)
+                val finalUrl = vrfDecrypt(RowdyAvocadoKeys.getKeys(), embedRes.result.encUrl)
                 if(finalUrl.equals(embedRes.result.encUrl)) return@amap
                 when (source.title) {
                     "Server 1" -> AnyVidplay(finalUrl.substringBefore("/e/")).getUrl(finalUrl, referer, subtitleCallback, callback)
@@ -67,7 +50,7 @@ open class VidSrcTo : ExtractorApi() {
         }
     }
 
-    private fun vrfEncrypt(keys: KeysData, input: String): String {
+    private fun vrfEncrypt(keys: RowdyAvocadoKeys.KeysData, input: String): String {
         var vrf = input
         keys.vidsrcto.sortedBy { it.sequence }.forEach { step ->
             when(step.method) {
@@ -82,7 +65,7 @@ open class VidSrcTo : ExtractorApi() {
         return vrf
     }
 
-    private fun vrfDecrypt(keys: KeysData, input: String): String {
+    private fun vrfDecrypt(keys: RowdyAvocadoKeys.KeysData, input: String): String {
         var vrf = input
         keys.vidsrcto.sortedByDescending { it.sequence }.forEach { step ->
             when(step.method) {
@@ -149,12 +132,4 @@ open class VidSrcTo : ExtractorApi() {
     )
 
     data class VidsrctoUrl(@JsonProperty("url") val encUrl: String)
-
-    data class KeysData(@JsonProperty("vidsrcto") val vidsrcto: List<Step>)
-
-    data class Step(
-            @JsonProperty("sequence") val sequence: Int,
-            @JsonProperty("method") val method: String,
-            @JsonProperty("keys") val keys: List<String>? = null 
-    )
 }

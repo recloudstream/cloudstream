@@ -681,8 +681,11 @@ enum class TvType(value: Int?) {
     Music(13),
     AudioBook(14),
 
-    /** Wont load the built in player, make your own interaction */
+    /** Won't load the built in player, make your own interaction */
     CustomMedia(15),
+
+    Audio(16),
+    Podcast(17),
 }
 
 public enum class AutoDownloadMode(val value: Int) {
@@ -698,9 +701,24 @@ public enum class AutoDownloadMode(val value: Int) {
     }
 }
 
-// IN CASE OF FUTURE ANIME MOVIE OR SMTH
 fun TvType.isMovieType(): Boolean {
-    return this == TvType.Movie || this == TvType.AnimeMovie || this == TvType.Torrent || this == TvType.Live
+    return when (this) {
+        TvType.AnimeMovie,
+        TvType.Live,
+        TvType.Movie,
+        TvType.Torrent -> true
+        else -> false
+    }
+}
+
+fun TvType.isAudioType(): Boolean {
+    return when (this) {
+        TvType.Audio,
+        TvType.AudioBook,
+        TvType.Music,
+        TvType.Podcast -> true
+        else -> false
+    }
 }
 
 fun TvType.isLiveStream(): Boolean {
@@ -726,7 +744,7 @@ data class HomePageList(
 )
 
 enum class SearchQuality(value: Int?) {
-    //https://en.wikipedia.org/wiki/Pirated_movie_release_types
+    // https://en.wikipedia.org/wiki/Pirated_movie_release_types
     Cam(1),
     CamRip(2),
     HdCam(3),
@@ -801,6 +819,25 @@ interface SearchResponse {
     var quality: SearchQuality?
 }
 
+fun MainAPI.newTorrentSearchResponse(
+    name: String,
+    url: String,
+    type: TvType = TvType.Torrent,
+    fix: Boolean = true,
+    initializer: TorrentSearchResponse.() -> Unit = { },
+): TorrentSearchResponse {
+    val builder = TorrentSearchResponse(
+        name = name,
+        url = if (fix) fixUrl(url) else url,
+        apiName = this.name,
+        type = type,
+        // The initializer will handle this
+        posterUrl = null
+    )
+    builder.initializer()
+    return builder
+}
+
 fun MainAPI.newMovieSearchResponse(
     name: String,
     url: String,
@@ -811,6 +848,23 @@ fun MainAPI.newMovieSearchResponse(
     val builder = MovieSearchResponse(name, if (fix) fixUrl(url) else url, this.name, type)
     builder.initializer()
 
+    return builder
+}
+
+fun MainAPI.newLiveSearchResponse(
+    name: String,
+    url: String,
+    type: TvType = TvType.Live,
+    fix: Boolean = true,
+    initializer: LiveSearchResponse.() -> Unit = { },
+): LiveSearchResponse {
+    val builder = LiveSearchResponse(
+        name = name,
+        url = if (fix) fixUrl(url) else url,
+        apiName = this.name,
+        type = type
+    )
+    builder.initializer()
     return builder
 }
 
@@ -826,7 +880,6 @@ fun MainAPI.newTvSeriesSearchResponse(
 
     return builder
 }
-
 
 fun MainAPI.newAnimeSearchResponse(
     name: String,
@@ -989,8 +1042,8 @@ data class TrailerData(
     val extractorUrl: String,
     val referer: String?,
     val raw: Boolean,
-    //var mirros: List<ExtractorLink>,
-    //var subtitles: List<SubtitleFile> = emptyList(),
+    // var mirrors: List<ExtractorLink>,
+    // var subtitles: List<SubtitleFile> = emptyList(),
 )
 
 interface LoadResponse {
@@ -1273,8 +1326,13 @@ fun LoadResponse?.isAnimeBased(): Boolean {
 }
 
 fun TvType?.isEpisodeBased(): Boolean {
-    if (this == null) return false
-    return (this == TvType.TvSeries || this == TvType.Anime || this == TvType.AsianDrama)
+    return when (this) {
+        TvType.Anime,
+        TvType.AsianDrama,
+        TvType.Cartoon,
+        TvType.TvSeries -> true
+        else -> false
+    }
 }
 
 data class NextAiring(
@@ -1406,6 +1464,27 @@ data class TorrentLoadResponse(
         backgroundPosterUrl,
         null
     )
+}
+
+suspend fun MainAPI.newTorrentLoadResponse(
+    name: String,
+    url: String,
+    magnet: String? = null,
+    torrent: String? = null,
+    initializer: suspend TorrentLoadResponse.() -> Unit = { }
+): TorrentLoadResponse {
+    val builder = TorrentLoadResponse(
+        name = name,
+        url = url,
+        apiName = this.name,
+        magnet = magnet,
+        torrent = torrent,
+        // The initializer will handle this
+        plot = null,
+        comingSoon = magnet.isNullOrBlank() && torrent.isNullOrBlank()
+    )
+    builder.initializer()
+    return builder
 }
 
 data class AnimeLoadResponse(
@@ -1600,6 +1679,23 @@ data class LiveStreamLoadResponse(
         name, url, apiName, dataUrl, posterUrl, year, plot, type, rating, tags, duration, trailers,
         recommendations, actors, comingSoon, syncData, posterHeaders, backgroundPosterUrl, null
     )
+}
+
+suspend fun MainAPI.newLiveStreamLoadResponse(
+    name: String,
+    url: String,
+    dataUrl: String,
+    initializer: suspend LiveStreamLoadResponse.() -> Unit = { }
+): LiveStreamLoadResponse {
+    val builder = LiveStreamLoadResponse(
+        name = name,
+        url = url,
+        apiName = this.name,
+        dataUrl = dataUrl,
+        comingSoon = dataUrl.isBlank()
+    )
+    builder.initializer()
+    return builder
 }
 
 data class MovieLoadResponse(
