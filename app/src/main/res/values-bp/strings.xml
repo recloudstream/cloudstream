@@ -683,4 +683,8 @@
     <string name="confirm_before_exiting_title">Confirmar antes de sair</string>
     <string name="confirm_before_exiting_desc">Mostrar caixa de diálogo antes de sair do aplicativo</string>
     <string name="dont_show">Não mostrar</string>
+    <string name="backup_path_title">Local da pasta de backup</string>
+    <string name="custom">Personalizado</string>
+    <string name="subs_edge_size">Tamanho da borda</string>
+    <string name="torrent_info">Este vídeo é um Torrent, o que significa que sua atividade de vídeo pode ser rastreada.\nCertifique-se de que você entendeu o que é Torrenting antes de continuar.</string>
 </resources>

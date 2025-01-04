@@ -2,7 +2,7 @@
 <resources>
     <string name="search_hint">தேடுக…</string>
     <string name="search_hint_site" formatted="true">%s இல் தேடவும்…</string>
-    <string name="player_speed_text_format" formatted="true">வேகம் (%.2fx)</string>
+    <string name="player_speed_text_format" formatted="true">விரைவு (%.2fx)</string>
     <string name="title_home">முகப்பு</string>
     <string name="title_search">தேடு</string>
     <string name="title_downloads">பதிவிறக்கம்</string>
@@ -22,7 +22,7 @@
     <string name="pick_subtitle">வசன வரிகள்</string>
     <string name="go_back">திரும்பிச் செல்லுங்கள்</string>
     <string name="play_episode">அத்தியாயத்தை இயக்கு</string>
-    <string name="download">எபிசோட் பதிவிற்கான அனுமதி கொடுக்கவும்</string>
+    <string name="download">எபிசோட் பதிவிற்கான இசைவு கொடுக்கவும்</string>
     <string name="downloaded">பதிவிறக்கப்பட்டது</string>
     <string name="downloading">பதிவிறக்குகிறது</string>
     <string name="download_paused">பதிவிறக்கம் இடைநிறுத்தப்பட்டது</string>
@@ -76,7 +76,7 @@
     <string name="subtitles_settings">வசன அமைப்புகள்</string>
     <string name="popup_resume_download">பதிவிறக்கத்தை மீண்டும் தொடங்குங்கள்</string>
     <string name="filter_bookmarks">புக்மார்க்குகளை வடிகட்டவும்</string>
-    <string name="home_info">தகவல்</string>
+    <string name="home_info">செய்தி</string>
     <string name="player_speed">பிளேயர் விரைவு</string>
     <string name="error_bookmarks_text">புக்மார்க்குகள்</string>
     <string name="sort_apply">இடு</string>
@@ -111,13 +111,12 @@
     <string name="browser">உலாவி</string>
     <string name="duration_format" formatted="true">%d நிமி</string>
     <string name="play_with_app_name">CloudStream-உடன் இயக்கு</string>
-    <string name="new_update_format" formatted="true">புதிய புதுப்பிப்பு உள்ளது
-\n%1$s-&gt;%2$s</string>
+    <string name="new_update_format" formatted="true">புதிய புதுப்பிப்பு உள்ளது\n%1$s-&gt;%2$s</string>
     <string name="filler" formatted="true">நிரப்பி</string>
-    <string name="search_poster_img_des">போஸ்டர்</string>
-    <string name="episode_poster_img_des">எபிசோட்டின் போஸ்டர்</string>
-    <string name="result_poster_img_des">போஸ்டர்</string>
-    <string name="home_main_poster_img_des">பிரதான போஸ்டர்</string>
+    <string name="search_poster_img_des">போச்டர்</string>
+    <string name="episode_poster_img_des">எபிசோட்டின் போச்டர்</string>
+    <string name="result_poster_img_des">போச்டர்</string>
+    <string name="home_main_poster_img_des">முதன்மையான போச்டர்</string>
     <string name="app_dub_sub_episode_text_format" formatted="true">%1$s ep %2$d</string>
     <string name="plugin_load_fail" formatted="true">%s ஏற்ற முடியவில்லை</string>
     <string name="next_episode_time_day_format" formatted="true">%1$dd %2$dh %3$dm</string>
@@ -144,8 +143,7 @@
     <string name="automatic_plugin_download">செருகுநிரல்களை தானாக பதிவிறக்கவும்</string>
     <string name="episodes_range">%1$d-%2$d</string>
     <string name="go_forward_30">+30</string>
-    <string name="delete_message" formatted="true">இது %s நிரந்தரமாக நீக்கும
-\n நீ சொல்வது உறுதியா?</string>
+    <string name="delete_message" formatted="true">இது %s நிரந்தரமாக நீக்கும\n நீ சொல்வது உறுதியா?</string>
     <string name="year">ஆண்டு</string>
     <string name="unexpected_error">எதிர்பாராத பிளேயர் பிழை</string>
     <string name="episode_action_play_in_app">பயன்பாட்டில் விளையாடுங்கள்</string>
@@ -241,7 +239,7 @@
     <string name="primary_color_settings">முதன்மை நிறம்</string>
     <string name="app_theme_settings">பயன்பாட்டு கருப்பொருள்</string>
     <string name="bottom_title_settings">சுவரொட்டி தலைப்பு இடம்</string>
-    <string name="authenticated_user" formatted="true">%s கள் அங்கீகரிக்கப்பட்டவை</string>
+    <string name="authenticated_user" formatted="true">%s அங்கீகரிக்கப்பட்டவை</string>
     <string name="subtitle_offset_title">வசன நேரந்தவறுகை</string>
     <string name="subtitle_offset_extra_hint_later_format">வசன வரிகள் %d ms மிக விரைவாக காட்டப்பட்டால் இதைப் பயன்படுத்தவும்</string>
     <string name="recommended">பரிந்துரைக்கப்படுகிறது</string>
@@ -255,7 +253,7 @@
     <string name="subtitles_remove_bloat">வசனங்களிலிருந்து வீக்கத்தை அகற்று</string>
     <string name="previous">முந்தைய</string>
     <string name="extensions">நீட்டிப்புகள்</string>
-    <string name="repository_url_hint">களஞ்சிய முகவரி</string>
+    <string name="repository_url_hint">களஞ்சிய முகவரி அல்லது குறுக்குவழி</string>
     <string name="plugin_loaded">சொருகி ஏற்றப்பட்டது</string>
     <string name="batch_download_start_format" formatted="true">%1$d %2$s ஐ பதிவிறக்கத் தொடங்கியது…</string>
     <string name="batch_download_finish_format" formatted="true">பதிவிறக்கம் %1$d %2$s</string>
@@ -291,7 +289,7 @@
     <string name="no_repository_found_error">களஞ்சியம் கிடைக்கவில்லை, முகவரி ஐ சரிபார்த்து VPN ஐ முயற்சிக்கவும்</string>
     <string name="batch_download">தொகுதி பதிவிறக்கம்</string>
     <string name="plugin_singular">சொருகு</string>
-    <string name="download_all_plugins_from_repo">இந்த களஞ்சியத்திலிருந்து அனைத்து செருகுநிரல்களையும் பதிவிறக்கவா?</string>
+    <string name="download_all_plugins_from_repo">எச்சரிக்கை: கிளவுட்ச்ட்ரீம் 3 மூன்றாம் தரப்பு நீட்டிப்புகளைப் பயன்படுத்துவதற்கான எந்தப் பொறுப்பையும் ஏற்காது, அவர்களுக்கு எந்த ஆதரவையும் வழங்காது!</string>
     <string name="extension_language">மொழி</string>
     <string name="revert">திரும்பவும்</string>
     <string name="subscription_deleted">%s இலிருந்து குழுவிலகப்பட்டது</string>
@@ -383,7 +381,7 @@
     <string name="speed_setting_summary">பிளேயரில் வேக விருப்பத்தை சேர்க்கிறது</string>
     <string name="restore_failed_format" formatted="true">கோப்பு %s இலிருந்து தரவை மீட்டெடுப்பதில் தோல்வி</string>
     <string name="library">நூலகம்</string>
-    <string name="settings_info">தகவல்</string>
+    <string name="settings_info">செய்தி</string>
     <string name="advanced_search_des">வழங்குநரால் பிரிக்கப்பட்ட தேடல் முடிவுகளை உங்களுக்கு வழங்குகிறது</string>
     <string name="pref_filter_search_quality">தேடல் முடிவுகளில் தேர்ந்தெடுக்கப்பட்ட வீடியோ தரத்தை மறைக்கவும்</string>
     <string name="updates_settings">பயன்பாட்டு புதுப்பிப்புகளைக் காட்டு</string>
@@ -527,7 +525,7 @@
     <string name="password_pin_authentication_title">கடவுச்சொல்/முள் ஏற்பு</string>
     <string name="biometric_unsupported">இந்த சாதனத்தில் பயோமெட்ரிக் ஏற்பு ஆதரிக்கப்படவில்லை</string>
     <string name="biometric_setting_summary">கைரேகை, முகம் ஐடி, முள், முறை மற்றும் கடவுச்சொல் மூலம் பயன்பாட்டைத் திறக்கவும்.</string>
-    <string name="biometric_prompt_description">பல தோல்வியுற்ற முயற்சிகள் காரணமாக இந்த திரை மூடப்பட்டது. விண்ணப்பத்தை மறுதொடக்கம் செய்யுங்கள்.</string>
+    <string name="biometric_prompt_description">தோல்வியுற்ற சில முயற்சிகளுக்குப் பிறகு, வரியில் மூடப்படும். மீண்டும் முயற்சிக்க பயன்பாட்டை மறுதொடக்கம் செய்யுங்கள்.</string>
     <string name="episode_action_cast_mirror">காச்ட் மிரர்</string>
     <string name="no_update_found">புதுப்பிப்பு எதுவும் கிடைக்கவில்லை</string>
     <string name="example_site_name">செய்தித் பெயர்</string>
@@ -540,7 +538,7 @@
     <string name="app_layout_subtext">உங்கள் சாதனத்திற்கு ஏற்றவாறு பயன்பாட்டின் தோற்றத்தை மாற்றவும்</string>
     <string name="preferred_media_subtext">உனக்கு என்ன பார்க்க வேண்டும்</string>
     <string name="add_repository">களஞ்சியத்தைச் சேர்க்கவும்</string>
-    <string name="repository_name_hint">களஞ்சிய பெயர்</string>
+    <string name="repository_name_hint">களஞ்சிய பெயர் (விரும்பினால்)</string>
     <string name="is_adult">18+</string>
     <string name="plugins_not_downloaded" formatted="true">பதிவிறக்கம் செய்யப்படவில்லை: %d</string>
     <string name="plugins_updated" formatted="true">புதுப்பிக்கப்பட்டது %d செருகுநிரல்கள்</string>
@@ -591,4 +589,57 @@
     <string name="biometric_warning">உங்கள் கிளவுட்ச்ட்ரீம் தரவு இப்போது காப்புப் பிரதி எடுக்கப்பட்டுள்ளது. இதன் சாத்தியம் மிகக் குறைவு என்றாலும், எல்லா சாதனங்களும் வித்தியாசமாக நடந்து கொள்ளலாம். அரிய விசயத்தில், பயன்பாட்டை அணுகுவதிலிருந்து நீங்கள் பூட்டப்படுகிறீர்கள், பயன்பாட்டு தரவை முழுவதுமாக அழித்து, காப்புப்பிரதியிலிருந்து மீட்டெடுக்கவும். இதிலிருந்து எழும் ஏதேனும் சிரமத்திற்கு நாங்கள் மிகவும் வருந்துகிறோம்.</string>
     <string name="custom_media_singluar">ஊடகம்</string>
     <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
+    <string name="pref_category_accounts">கணக்குகள்</string>
+    <string name="test_warning">எச்சரிக்கை</string>
+    <string name="downloads_empty">தற்போது பதிவிறக்கங்கள் எதுவும் இல்லை.</string>
+    <string name="sort_release_date_old">வெளியீட்டு தேதி (பழையதிலிருந்து புதியது)</string>
+    <string name="dont_show">காட்ட வேண்டாம்</string>
+    <string name="show">காட்டு</string>
+    <string name="qr_image">QR குறியீடு படம்</string>
+    <string name="episode_upcoming_format" formatted="true">%s இல் வரவிருக்கும்</string>
+    <string name="delete_message_series_only" formatted="true">பின்வரும் தொடரில் உள்ள அனைத்து அத்தியாயங்களையும் நிரந்தரமாக நீக்க விரும்புகிறீர்களா?\n\n %s</string>
+    <string name="no_subtitles_loaded">இதுவரை வசன வரிகள் எதுவும் ஏற்றப்படவில்லை</string>
+    <string name="confirm_before_exiting_title">வெளியேறுவதற்கு முன் உறுதிப்படுத்தவும்</string>
+    <string name="favorite_added">%s பிடித்தவைகளில் சேர்க்கப்படுகின்றன</string>
+    <string name="favorite_removed">%s பிடித்தவைகளிலிருந்து அகற்றப்பட்டன</string>
+    <string name="play_from_beginning_img_des">முதலில் இருந்து ஆரம்பி</string>
+    <string name="pref_category_security">பாதுகாப்பு</string>
+    <string name="sort_release_date_new">வெளியீட்டு தேதி (பழையது புதியது)</string>
+    <string name="select_all">அனைத்தையும் தேர்ந்தெடுக்கவும்</string>
+    <string name="downloads_delete_select">அழிப்பதற்கு தேர்ந்தெடுக்கவும்</string>
+    <string name="delete_files">கோப்புகளை நீக்கு</string>
+    <string name="delete_message_multiple" formatted="true">இந்த தரவுகளை நிரந்தரமாக நீக்கலாமா?</string>
+    <string name="rated_format" formatted="true">மதிப்பிடப்பட்டது: %.1 எஃப்</string>
+    <string name="added_sync_format" formatted="true">சேர்க்கப்பட்டது %s</string>
+    <string name="extension_rating" formatted="true">மதிப்பீடு: %s</string>
+    <string name="resume_time_left" formatted="true">%d.எம\n மீதமுள்ள</string>
+    <string name="unable_to_inflate">இடைமுகம் ஐ சரியாக உருவாக்க முடியவில்லை, இது ஒரு பெரிய பிழை மற்றும் உடனடியாக %s தெரிவிக்க வேண்டும்</string>
+    <string name="resume_remaining" formatted="true">%கள\n மீதமுள்ள</string>
+    <string name="batch_download_nothing_to_download_format" formatted="true">அனைத்து %s ஏற்கனவே பதிவிறக்கம் செய்யப்பட்டுள்ளன</string>
+    <string name="single_plugin_disabled" formatted="true">%s (முடக்கப்பட்டவை)</string>
+    <string name="torrent_info">இந்த வீடியோ ஒரு நீரோடை, இதன் பொருள் உங்கள் வீடியோ செயல்பாட்டைக் கண்காணிக்க முடியும்.\n தொடர்வதற்கு முன் நீரோட்டத்தை நீங்கள் புரிந்துகொண்டுள்ளீர்கள் என்பதை உறுதிப்படுத்திக் கொள்ளுங்கள்.</string>
+    <string name="delete_plugin">சொருகி நீக்கு</string>
+    <string name="preview_seekbar_desc">சீக்பரில் முன்னோட்ட சிறுபடத்தை இயக்கவும்</string>
+    <string name="device_pin_counter_text">குறியீடு %1$dm %2$ds இல் காலாவதியாகிறது</string>
+    <string name="confirm_before_exiting_desc">பயன்பாட்டிலிருந்து வெளியேறுவதற்கு முன் உரையாடலைக் காட்டு</string>
+    <string name="auth_locally">உள்நாட்டில் அங்கீகரிக்கவும்</string>
+    <string name="dismiss">தள்ளுபடி</string>
+    <string name="device_pin_url_message">உங்கள் ச்மார்ட்போன் அல்லது கணினியில் <b>%s </b> ஐப் பார்வையிட்டு மேலே உள்ள குறியீட்டை உள்ளிடவும்</string>
+    <string name="device_pin_error_message">சாதன முள் குறியீட்டைப் பெற முடியாது, உள்ளக அங்கீகாரத்தை முயற்சிக்கவும்</string>
+    <string name="device_pin_expired_message">முள் குறியீடு இப்போது காலாவதியானது!</string>
+    <string name="subs_edge_size">விளிம்பு அளவு</string>
+    <string name="cs3wiki">கிளவுட்ச்ட்ரீம் விக்கி</string>
+    <string name="preview_seekbar">சீக்பார் முன்னோட்டம்</string>
+    <string name="backup_path_title">காப்பு கோப்புறை இருப்பிடம்</string>
+    <string name="open_local_video">உள்ளக வீடியோவைத் திறக்கவும்</string>
+    <string name="open_downloaded_repo">திறந்த களஞ்சியம்</string>
+    <string name="duplicate_message_single" formatted="true">உங்கள் நூலகத்தில் ஏற்கனவே ஒரு நகல் உருப்படி இருப்பதாகத் தெரிகிறது: \'%s.\'\n\n இந்த உருப்படியை எப்படியும் சேர்க்க விரும்புகிறீர்களா, இருக்கும் ஒன்றை மாற்ற விரும்புகிறீர்களா அல்லது செயலை ரத்து செய்ய விரும்புகிறீர்களா?</string>
+    <string name="duplicate_message_multiple" formatted="true">உங்கள் நூலகத்தில் சாத்தியமான நகல் உருப்படிகள் கண்டறியப்பட்டுள்ளன:\n\n %s\n\n இந்த உருப்படியை எப்படியும் சேர்க்க விரும்புகிறீர்களா, ஏற்கனவே உள்ளவற்றை மாற்ற விரும்புகிறீர்களா அல்லது செயலை ரத்து செய்ய விரும்புகிறீர்களா?</string>
+    <string name="hide_player_control_names">வீரரின் கட்டுப்பாடுகளின் பெயர்களை மறைக்கவும்</string>
+    <string name="custom">தனிப்பயன்</string>
+    <string name="deselect_all">அனைத்தையும் தேர்வு செய்யுங்கள்</string>
+    <string name="offline_file">ஆஃப்லைனில் பார்ப்பதற்கு கிடைக்கிறது</string>
+    <string name="delete_format" formatted="true">நீக்கு ( %1$d | %2$s)</string>
+    <string name="delete_message_series_episodes" formatted="true">பின்வரும் அத்தியாயங்களை %1$s இல் நிரந்தரமாக நீக்க விரும்புகிறீர்களா?\n\n %2$s</string>
+    <string name="delete_message_series_section" formatted="true">பின்வரும் தொடரில் உள்ள அனைத்து அத்தியாயங்களையும் நீங்கள் நிரந்தரமாக நீக்குவீர்கள்:\n\n %s</string>
 </resources>

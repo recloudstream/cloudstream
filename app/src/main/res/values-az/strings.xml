@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="cast_format" formatted="true">Oyunçu heyəti: %s</string>
+    <string name="next_episode_format" formatted="true">Bölüm %d bu tarixdə yayımlanacaq</string>
+    <string name="next_episode_time_day_format" formatted="true">%1$dg%2$ds%3$dd</string>
+    <string name="next_episode_time_min_format" formatted="true">%dd</string>
+    <string name="result_poster_img_des">Poster</string>
+    <string name="home_main_poster_img_des">Əsas Afişa</string>
+    <string name="episode_poster_img_des">Bölüm Afişası</string>
+    <string name="home_next_random_img_des">Sonrakı Təsadüfi</string>
+    <string name="go_back_img_des">Geri get</string>
+    <string name="play_from_beginning_img_des">Əvvəldən oynat</string>
+    <string name="home_change_provider_img_des">Provayderi dəyişdir</string>
+    <string name="preview_background_img_des">Arxaplana ilkin baxış keçir</string>
+    <string name="rated_format" formatted="true">Xal: %.1f</string>
+    <string name="new_update_format" formatted="true">Yeniləmə mövcuddur!\n%1$s -&gt; %2$s</string>
+    <string name="title_home">Ana səhifə</string>
+    <string name="title_search">Axtar</string>
+    <string name="title_downloads">Yükləmələr</string>
+    <string name="no_data">Məlumat yoxdur</string>
+    <string name="episode_more_options_des">Daha çox seçimlər</string>
+    <string name="next_episode">Sonrakı bölüm</string>
+    <string name="result_tags">Janrlar</string>
+    <string name="result_share">Paylaş</string>
+    <string name="result_open_in_browser">Brauzerdə aç</string>
+    <string name="browser">Brauzer</string>
+    <string name="skip_loading">Yükləməni keç</string>
+    <string name="loading">Yüklənir…</string>
+    <string name="type_watching">İzlənir</string>
+    <string name="type_on_hold">Gözləmədə</string>
+    <string name="type_dropped">Yarıda dayandırıldı</string>
+    <string name="type_plan_to_watch">İzləməyə planlandı</string>
+    <string name="type_re_watching">Yenidən izlənilir</string>
+    <string name="play_movie_button">Filmi oynat</string>
+    <string name="play_trailer_button">Fraqmanı Oynat</string>
+    <string name="play_livestream_button">Canlı Yayını oynat</string>
+    <string name="pick_source">Mənbələr</string>
+    <string name="pick_subtitle">Altyazılar</string>
+    <string name="reload_error">Yenidən bağlanmaya cəhd edin…</string>
+    <string name="go_back">Geri dön</string>
+    <string name="play_episode">Bölümü oynat</string>
+    <string name="downloaded">Yükləndi</string>
+    <string name="download_paused">Yükləmə dayandırıldı</string>
+    <string name="download_started">Yükləmə başladıldı</string>
+    <string name="download_failed">Yükləmə uğursuz oldu</string>
+    <string name="download_canceled">Yükləmə ləğv edildi</string>
+    <string name="downloads_delete_select">Silinəcək faylları seçin</string>
+    <string name="downloads_empty">Hal-hazırda heç bir yükləmə yoxdur.</string>
+    <string name="app_dub_sub_episode_text_format" formatted="true">%1$s Böl. %2$d</string>
+    <string name="duration_format" formatted="true">%d dəqiqə</string>
+    <string name="next_episode_time_hour_format" formatted="true">%1$ds %2$dd</string>
+    <string name="next_season_episode_format" formatted="true">Sezon %1$d Bölüm %2$d bu tarixdə yayımlanacaq</string>
+    <string name="search_poster_img_des">Afişa</string>
+    <string name="player_speed_text_format" formatted="true">Sürət (%.2fx)</string>
+    <string name="app_name">CloudStream</string>
+    <string name="play_with_app_name">CloudStream ilə oynat</string>
+    <string name="type_completed">Tamamlandı</string>
+    <string name="title_settings">Parametrlər</string>
+    <string name="search_hint">Axtar…</string>
+    <string name="download">Yüklə</string>
+    <string name="downloading">Yüklənir</string>
+    <string name="download_done">Yükləmə bitdi</string>
+</resources>

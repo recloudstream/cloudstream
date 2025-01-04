@@ -249,6 +249,8 @@ fun LoadResponse.toResultData(repo: APIRepository): ResultData {
                 TvType.Music -> R.string.music_singlar
                 TvType.AudioBook -> R.string.audio_book_singular
                 TvType.CustomMedia -> R.string.custom_media_singluar
+                TvType.Audio -> R.string.audio_singluar
+                TvType.Podcast -> R.string.podcast_singluar
             }
         ),
         yearText = txt(year?.toString()),
@@ -636,20 +638,22 @@ class ResultViewModel2 : ViewModel() {
             val sanitizedFileName = VideoDownloadManager.sanitizeFilename(titleName)
             return when (currentType) {
                 TvType.Anime -> "Anime/$sanitizedFileName"
-                TvType.Movie -> "Movies"
                 TvType.AnimeMovie -> "Movies"
-                TvType.TvSeries -> "TVSeries/$sanitizedFileName"
-                TvType.OVA -> "OVA"
-                TvType.Cartoon -> "Cartoons/$sanitizedFileName"
-                TvType.Torrent -> "Torrent"
-                TvType.Documentary -> "Documentaries"
-                TvType.AsianDrama -> "AsianDrama"
-                TvType.Live -> "LiveStreams"
-                TvType.NSFW -> "NSFW"
-                TvType.Others -> "Others"
-                TvType.Music -> "Music"
+                TvType.AsianDrama -> "AsianDramas/$sanitizedFileName"
+                TvType.Audio -> "Audio"
                 TvType.AudioBook -> "AudioBooks"
+                TvType.Cartoon -> "Cartoons/$sanitizedFileName"
                 TvType.CustomMedia -> "Media"
+                TvType.Documentary -> "Documentaries"
+                TvType.Live -> "LiveStreams"
+                TvType.Movie -> "Movies"
+                TvType.Music -> "Music"
+                TvType.NSFW -> "NSFW"
+                TvType.OVA -> "OVAs"
+                TvType.Others -> "Others"
+                TvType.Podcast -> "Podcasts"
+                TvType.Torrent -> "Torrents"
+                TvType.TvSeries -> "TVSeries/$sanitizedFileName"
             }
         }
 
@@ -1195,17 +1199,19 @@ class ResultViewModel2 : ViewModel() {
 
     private fun getImdbIdFromSyncData(syncData: Map<String, String>?): String? {
         return normalSafeApiCall {
-            readIdFromString(
+            val imdbId = readIdFromString(
                 syncData?.get(AccountManager.simklApi.idPrefix)
             )[SimklSyncServices.Imdb]
+            if (imdbId == "null") null else imdbId
         }
     }
 
     private fun getTMDbIdFromSyncData(syncData: Map<String, String>?): String? {
         return normalSafeApiCall {
-            readIdFromString(
+            val tmdbId = readIdFromString(
                 syncData?.get(AccountManager.simklApi.idPrefix)
             )[SimklSyncServices.Tmdb]
+            if (tmdbId == "null") null else tmdbId
         }
     }
 

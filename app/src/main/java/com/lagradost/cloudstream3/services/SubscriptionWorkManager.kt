@@ -5,7 +5,9 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC
 import android.os.Build
+import android.os.Build.VERSION.SDK_INT
 import androidx.core.app.NotificationCompat
 import androidx.core.net.toUri
 import androidx.work.*
@@ -108,12 +110,13 @@ class SubscriptionWorkManager(val context: Context, workerParams: WorkerParamete
                 SUBSCRIPTION_CHANNEL_DESCRIPTION
             )
 
-            setForeground(
+            val foregroundInfo = if (SDK_INT >= 29)
                 ForegroundInfo(
                     SUBSCRIPTION_NOTIFICATION_ID,
-                    progressNotificationBuilder.build()
-                )
-            )
+                    progressNotificationBuilder.build(),
+                    FOREGROUND_SERVICE_TYPE_DATA_SYNC
+                ) else ForegroundInfo(SUBSCRIPTION_NOTIFICATION_ID, progressNotificationBuilder.build(),)
+            setForeground(foregroundInfo)
 
             val subscriptions = getAllSubscriptions()
 
@@ -186,7 +189,7 @@ class SubscriptionWorkManager(val context: Context, workerParams: WorkerParamete
                         }
 
                         val pendingIntent =
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                            if (SDK_INT >= Build.VERSION_CODES.M) {
                                 PendingIntent.getActivity(
                                     context,
                                     0,
