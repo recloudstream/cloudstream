@@ -6,7 +6,7 @@ import com.lagradost.nicehttp.NiceResponse
 import java.net.URI
 import java.net.URLDecoder
 
-//Code heavily based on unshortenit.py form kodiondemand /addon
+// Code heavily based on unshortenit.py form kodiondemand /addon
 
 object ShortLink {
     data class ShortUrl(
@@ -185,7 +185,7 @@ object ShortLink {
     }
 
     fun unshortenDavisonbarker(uri: String): String {
-        return URLDecoder.decode(uri.substringAfter("dest="))
+        return URLDecoder.decode(uri.substringAfter("dest="), "UTF-8")
     }
     suspend fun unshortenIsecure(uri: String): String {
         val doc = app.get(uri).document

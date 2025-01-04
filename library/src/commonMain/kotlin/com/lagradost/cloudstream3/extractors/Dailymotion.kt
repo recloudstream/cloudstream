@@ -7,7 +7,7 @@ import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.M3u8Helper.Companion.generateM3u8
-import java.net.URL
+import java.net.URI
 
 class Geodailymotion : Dailymotion() {
     override val name = "GeoDailymotion"
@@ -62,7 +62,7 @@ open class Dailymotion : ExtractorApi() {
 	}
 
     private fun getVideoId(url: String): String? {
-        val path = URL(url).path
+        val path = URI(url).path
         val id = path.substringAfter("/video/")
         if (id.matches(videoIdRegex)) {
             return id
