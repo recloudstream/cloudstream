@@ -444,7 +444,7 @@
     <string name="extension_rating" formatted="true">Рейтинг: %s</string>
     <string name="batch_download_finish_format" formatted="true">Скачано %1$d %2$s</string>
     <string name="batch_download_nothing_to_download_format" formatted="true">Все %s уже скачаны</string>
-    <string name="batch_download_start_format" formatted="true">Начата загрузка %1$d %2$s…</string>
+    <string name="batch_download_start_format" formatted="true">Загрузка началась %1$d %2$s…</string>
     <string name="plugins_not_downloaded" formatted="true">Не скачано: %d</string>
     <string name="download_all_plugins_from_repo">Внимание: CloudStream 3 не несет ответсвенность за сторонние файлы и не поддерживает их!</string>
     <string name="safe_mode_title">Включен безопасный режим</string>
@@ -617,7 +617,7 @@
     <string name="player_settings_select_cast_device">Выберите девайс для трансляции</string>
     <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
     <string name="downloads_empty">В данный момент загрузок нет.</string>
-    <string name="play_from_beginning_img_des">Играть с начала</string>
+    <string name="play_from_beginning_img_des">Играть с самого начала</string>
     <string name="open_local_video">Открыть локальное видео</string>
     <string name="pref_category_security">Меры безопасности</string>
     <string name="pref_category_accounts">Аккаунты</string>
@@ -661,4 +661,8 @@
     <string name="confirm_before_exiting_desc">Показать диалог перед выходом из апликации</string>
     <string name="show">Показать</string>
     <string name="dont_show">Не показывать</string>
+    <string name="backup_path_title">Расположение резервных копий</string>
+    <string name="custom">Пользовательский</string>
+    <string name="torrent_info">Это видео является торрентом, это значит, что вашу видеоактивность можно отследить.\nУбедитесь, что вы понимаете работу торрентов, прежде чем продолжить.</string>
+    <string name="subs_edge_size">Размер Границ</string>
 </resources>

@@ -3,12 +3,12 @@
     <string name="delete">حذف</string>
     <string name="pause">مکث</string>
     <string name="queued">در صف</string>
-    <string name="download">بارگیری</string>
-    <string name="downloading">در حال بارگیری</string>
-    <string name="download_done">اتمام بارگیری</string>
+    <string name="download">دانلود</string>
+    <string name="downloading">در حال دانلود</string>
+    <string name="download_done">داتلود پایان یافت</string>
     <string name="stream">پخش آنلاین</string>
-    <string name="download_failed">بارگیری ناموفق بود</string>
-    <string name="filter_bookmarks">فیلتر کردن علاقه مندی ها</string>
+    <string name="download_failed">دانلود ناموفق بود</string>
+    <string name="filter_bookmarks">فیلتر کردن نشانک ها</string>
     <string name="search">جست‌وجو</string>
     <string name="resize_fit">اندازه‌کردن</string>
     <string name="resize_fill">پر کردن</string>
@@ -29,7 +29,7 @@
     <string name="next_episode_time_day_format" formatted="true">%1$dروز %2$dساعت %3$dدقیقه</string>
     <string name="app_dub_sub_episode_text_format" formatted="true">%1$s قسمت %2$d</string>
     <string name="cast_format" formatted="true">بازیگران: %s</string>
-    <string name="next_episode_format" formatted="true">قسمت %d پخش خواهد شد</string>
+    <string name="next_episode_format" formatted="true">قسمت %d پخش خواهد شد در</string>
     <string name="next_episode_time_hour_format" formatted="true">%1$dساعت %2$dدقیقه</string>
     <string name="next_episode_time_min_format" formatted="true">%dدقیقه</string>
     <string name="home_main_poster_img_des">پوستر اصلی</string>
@@ -50,11 +50,11 @@
     <string name="home_change_provider_img_des">تغییر ارائه دهنده</string>
     <string name="action_remove_watching">حذف</string>
     <string name="action_open_watching">اطلاعات بیشتر</string>
-    <string name="torrent_plot">شرح</string>
+    <string name="torrent_plot">توضیحات</string>
     <string name="subs_subtitle_languages">زبان زیرنویس</string>
     <string name="player_subtitles_settings">زیرنویس‌ها</string>
     <string name="action_remove_from_bookmarks">حذف</string>
-    <string name="download_started">بارگیری آغاز شد</string>
+    <string name="download_started">دانلود آغاز شد</string>
     <string name="pref_disable_acra">غیرفعال کردن گذارش باگ خودکار</string>
     <string name="sort_clear">پاک کردن</string>
     <string name="update_started">به‌روزرسانی آغاز شد</string>
@@ -62,21 +62,21 @@
     <string name="home_more_info">اطلاعات بیشتر</string>
     <string name="subs_auto_select_language">انتخاب زبان خودکار</string>
     <string name="continue_watching">ادامهٔ تماشا</string>
-    <string name="subs_download_languages">بارگیری زبان‌ها</string>
-    <string name="subs_background_color">زنگ پس‌زمینه</string>
-    <string name="popup_pause_download">توقف بارگیری</string>
+    <string name="subs_download_languages">دانلود زبان‌ها</string>
+    <string name="subs_background_color">رنگ پس‌زمینه</string>
+    <string name="popup_pause_download">توقف دانلود</string>
     <string name="app_dubbed_text">دوبله</string>
-    <string name="torrent_no_plot">شرحی یافت نشد</string>
+    <string name="torrent_no_plot">هیچ توضیحی یافت نشد</string>
     <string name="subtitles_settings">تنظیمات زیرنویس</string>
     <string name="subs_window_color">رنگ پنجره</string>
-    <string name="download_canceled">بارگیری لغو شد</string>
+    <string name="download_canceled">دانلود لغو شد</string>
     <string name="home_expanded_hide">پنهان کردن</string>
     <string name="sort_apply">اعمال کردن</string>
     <string name="normal_no_plot">پیرنگی یافت نشد</string>
-    <string name="download_paused">بارگیری متوقف شد</string>
+    <string name="download_paused">دانلود متوقف شده</string>
     <string name="popup_delete_file">حذف فایل</string>
-    <string name="downloaded">بارگرفتن</string>
-    <string name="popup_resume_download">ازسرگیری بارگیری</string>
+    <string name="downloaded">دانلود شده</string>
+    <string name="popup_resume_download">ازسرگیری دانلود</string>
     <string name="subs_text_color">رنگ متن</string>
     <string name="popup_play_file">نمایش فایل</string>
     <string name="go_back">بازگشت</string>
@@ -85,31 +85,31 @@
     <string name="autoplay_next_settings">پخش خودکار قسمت بعد</string>
     <string name="picture_in_picture">تصویر در تصویر</string>
     <string name="sort_close">بستن</string>
-    <string name="home_next_random_img_des">اتاق بعدی</string>
+    <string name="home_next_random_img_des">تصادفی بعدی</string>
     <string name="preview_background_img_des">پیش‌نمایش پس‌زمینه</string>
     <string name="filler" formatted="true">فیلتر</string>
     <string name="duration_format" formatted="true">%d دقیقه</string>
     <string name="app_name">CloudStream</string>
-    <string name="play_with_app_name">بازی با CloudStream</string>
+    <string name="play_with_app_name">پخش با CloudStream</string>
     <string name="title_home">خانه</string>
     <string name="title_search">جست‌وجو</string>
     <string name="title_settings">تنظیمات</string>
     <string name="search_hint">جست‌وجو…</string>
     <string name="search_hint_site" formatted="true">جست‌و‌جوی %s…</string>
     <string name="result_tags">ژانرها</string>
-    <string name="play_livestream_button">پخش پخش‌زنده</string>
+    <string name="play_livestream_button">پخش‌زنده</string>
     <string name="pick_subtitle">زیرنویس‌ها</string>
     <string name="reload_error">تلاش دوباره برای اتصال…</string>
     <string name="type_re_watching">تماشای دوباره</string>
     <string name="pick_source">منابع</string>
     <string name="no_data">داده‌ای نیست</string>
     <string name="episode_more_options_des">گزینه‌های بیشتر</string>
-    <string name="next_episode">قسمت پسین</string>
-    <string name="skip_loading">گذر از بارگذاری</string>
+    <string name="next_episode">قسمت بعدی</string>
+    <string name="skip_loading">پرش از بارگذاری</string>
     <string name="subscribe_tooltip">اعلان قسمت جدید</string>
     <string name="result_search_tooltip">جست‌و‌جو در سایر افزونه‌ها</string>
     <string name="recommendations_tooltip">نمایش پیشنهادات</string>
-    <string name="links_reloaded_toast">پیوندها بازبارگیری شدند</string>
+    <string name="links_reloaded_toast">پیوندها دوباره بارگیری شدند</string>
     <string name="player_speed">سرعت پخش‌کننده</string>
     <string name="type_watching">در حال تماشا</string>
     <string name="title_downloads">بارگیری‌ها</string>
@@ -122,10 +122,10 @@
     <string name="action_add_to_bookmarks">تنظیم وضعیت تماشا</string>
     <string name="download_storage_text">حافظه درونی(داخلی)</string>
     <string name="result_share">اشتراک‌گذاری</string>
-    <string name="play_trailer_button">پخش پیش‌پرده</string>
+    <string name="play_trailer_button">پخش تریلر</string>
     <string name="error_loading_links_toast">خطای بارگذاری پیوندها</string>
     <string name="error_bookmarks_text">نشانک‌ها</string>
-    <string name="type_completed">به پایان رسیده</string>
+    <string name="type_completed">کامل شده</string>
     <string name="result_open_in_browser">باز کردن در مرورگر</string>
     <string name="type_plan_to_watch">برنامه‌ریزی برای تماشا</string>
     <string name="subs_hold_to_reset_to_default">برای بازنشانی به پیشفرض نگه‌دارید</string>
@@ -134,7 +134,7 @@
     <string name="delete_message" formatted="true">این فرآیند بطور کامل %s را حذف می‌کند
 \nآیا از این کار اطمینان دارید؟</string>
     <string name="repo_copy_label">نام مخزن و نشانی</string>
-    <string name="toast_copied">رونویسی شد!</string>
+    <string name="toast_copied">کپی شد!</string>
     <string name="settings_info">درباره</string>
     <string name="subs_font">قلم</string>
     <string name="subs_font_size">اندازه قلم</string>
@@ -195,7 +195,7 @@
     <string name="vpn_torrent">این ارائه‌دهنده تورنتی است، استفاده از VPN توصیه می‌شود</string>
     <string name="restore_success">بارگزاری پرونده پشتیبانی‌</string>
     <string name="subs_subtitle_elevation">ارتفاع زیرنویس</string>
-    <string name="search_provider_text_providers">جستجو از طریق ارائه دهنده</string>
+    <string name="search_provider_text_providers">جستجو از طریق ارائه دهنده‌ها</string>
     <string name="backup_frequency">فرکانس پشتیبان‌گیری</string>
     <string name="swipe_to_seek_settings">برای جلورفتن بکشید</string>
     <string name="backup_success">داده ذخیره‌سازی شده</string>
@@ -204,13 +204,13 @@
     <string name="duration">طول</string>
     <string name="vpn_might_be_needed">شاید برای درست کارکردن این ارائه‌دهنده به VPN نیاز باشد</string>
     <string name="use_system_brightness_settings">استفاده از میزان روشنایی دستگاه</string>
-    <string name="subs_edge_type">نوع لبه</string>
+    <string name="subs_edge_type">نوع گوشه</string>
     <string name="no_season">بدون فصل</string>
     <string name="show_fillers_settings">نمایش فیلتر قسمت برای انیمه</string>
     <string name="type_dropped">رها شده</string>
     <string name="app_subbed_text">زیرنویس</string>
     <string name="home_info">درباره</string>
-    <string name="search_provider_text_types">جستجو از طریق نوع</string>
+    <string name="search_provider_text_types">جستجو از طریق انواع</string>
     <string name="backup_settings">پشتیبان‌گیری داده</string>
     <string name="restore_failed_format" formatted="true">مشکل در بازگردانی داده از پرونده %s</string>
     <string name="site">وبگاه</string>
@@ -220,4 +220,21 @@
     <string name="status_completed">تمام‌شده</string>
     <string name="no_subtitles">بدون زیرنویس</string>
     <string name="test_passed">متوقف‌شده</string>
+    <string name="action_open_play">\@string/home_play</string>
+    <string name="open_local_video">باز کردن ویدیو محلی</string>
+    <string name="provider_info_meta">متاداده توسط سایت ارائه نشده، اگه در سایت وجود نداشته باشد احتمال خطا در بارگیری وجود دارد</string>
+    <string name="type_on_hold">در انتظار</string>
+    <string name="play_from_beginning_img_des">پخش از ابتدا</string>
+    <string name="downloads_empty">در حال حاضر دانلودی نیست</string>
+    <string name="next_season_episode_format" formatted="true">فصل %1$d قسمت %2$d پخش خواهد شد در</string>
+    <string name="play_torrent_button">استریم تورنت</string>
+    <string name="downloads_delete_select">انتخاب برای حذف</string>
+    <string name="offline_file">در دسترس برای تماشای آفلاین</string>
+    <string name="select_all">انتخاب همه</string>
+    <string name="deselect_all">انتخاب نکردن همه</string>
+    <string name="benene_count_text">"%d Benenes به توسعه دهندگان داده  می‌شود"</string>
+    <string name="benene_count_text_none">بدون Benenes</string>
+    <string name="chromecast_subtitles_settings">زیرنویس Chromecast</string>
+    <string name="torrent_info">این ویدیو یک تورنت است، این بدان معنی است که فعالیت ویدیویی شما قابل ردیابی است. \nقبل از ادامه، مطمئن شوید که تورنت را درک کرده اید.</string>
+    <string name="picture_in_picture_des">پخش را در یک پخش کننده مینیاتوری در بالای برنامه های دیگر ادامه می دهد</string>
 </resources>
