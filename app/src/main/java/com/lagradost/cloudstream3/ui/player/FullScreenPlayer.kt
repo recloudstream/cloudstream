@@ -1354,7 +1354,10 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         if (verticalAddition >= 0f) {
             val nextVolume = currentRequestedVolume + verticalAddition
             if (isAdjustingVolume && currentVolume < maxVolume && nextVolume >= 1.0f) {
-                showToast(R.string.slide_up_again_to_exceed_100)
+                if (!hasShownVolumeToast) {
+                    showToast(R.string.slide_up_again_to_exceed_100)
+                    hasShownVolumeToast = true
+                }
                 return
             }
         }
@@ -1393,11 +1396,13 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                     // All volume is within the base range
                     level1ProgressBar.progress = currentVolumePercentage
                     level2ProgressBar.progress = 0
+                    level2ProgressBar.isVisible = false
                 }
                 else -> {
                     // Volume spans base and first boost range
                     level1ProgressBar.progress = 100
                     level2ProgressBar.progress = currentVolumePercentage - 100
+                    level2ProgressBar.isVisible = true
                 }
             }
 
