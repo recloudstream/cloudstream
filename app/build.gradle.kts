@@ -181,9 +181,9 @@ dependencies {
     //implementation(libs.media.ffmpeg) // Custom FFmpeg Lib for Audio Codecs
     implementation(libs.newpipeextractor) // For Trailers
     implementation(libs.juniversalchardet) // Subtitle Decoding
+
     // FFmpeg Decoding
-    implementation(libs.nextlib.media3ext)
-    implementation(libs.nextlib.mediainfo)
+    implementation(libs.bundles.nextlibMedia3)
 
     // Crash Reports (AcraApplication.kt)
     implementation(libs.acra.core)

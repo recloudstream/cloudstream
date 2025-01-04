@@ -291,23 +291,51 @@ abstract class AbstractPlayerFragment(
                 val msg = exception.message ?: ""
                 val errorName = exception.errorCodeName
                 when (val code = exception.errorCode) {
-                    PlaybackException.ERROR_CODE_IO_FILE_NOT_FOUND, PlaybackException.ERROR_CODE_PARSING_CONTAINER_UNSUPPORTED, PlaybackException.ERROR_CODE_IO_NO_PERMISSION, PlaybackException.ERROR_CODE_IO_UNSPECIFIED -> {
+                    PlaybackException.ERROR_CODE_IO_FILE_NOT_FOUND,
+                    PlaybackException.ERROR_CODE_PARSING_CONTAINER_UNSUPPORTED,
+                    PlaybackException.ERROR_CODE_IO_NO_PERMISSION,
+                    PlaybackException.ERROR_CODE_IO_UNSPECIFIED -> {
                         showToast(
                             "${ctx.getString(R.string.source_error)}\n$errorName ($code)\n$msg",
                             gotoNext = true
                         )
                     }
 
-                    PlaybackException.ERROR_CODE_REMOTE_ERROR, PlaybackException.ERROR_CODE_IO_BAD_HTTP_STATUS, PlaybackException.ERROR_CODE_TIMEOUT, PlaybackException.ERROR_CODE_IO_NETWORK_CONNECTION_FAILED, PlaybackException.ERROR_CODE_IO_INVALID_HTTP_CONTENT_TYPE -> {
+                    PlaybackException.ERROR_CODE_REMOTE_ERROR,
+                    PlaybackException.ERROR_CODE_IO_BAD_HTTP_STATUS,
+                    PlaybackException.ERROR_CODE_TIMEOUT,
+                    PlaybackException.ERROR_CODE_IO_NETWORK_CONNECTION_FAILED,
+                    PlaybackException.ERROR_CODE_IO_INVALID_HTTP_CONTENT_TYPE -> {
                         showToast(
                             "${ctx.getString(R.string.remote_error)}\n$errorName ($code)\n$msg",
                             gotoNext = true
                         )
                     }
 
-                    PlaybackException.ERROR_CODE_DECODING_FAILED, PlaybackErrorEvent.ERROR_AUDIO_TRACK_INIT_FAILED, PlaybackErrorEvent.ERROR_AUDIO_TRACK_OTHER, PlaybackException.ERROR_CODE_AUDIO_TRACK_WRITE_FAILED, PlaybackException.ERROR_CODE_DECODER_INIT_FAILED, PlaybackException.ERROR_CODE_DECODER_QUERY_FAILED -> {
+                    PlaybackErrorEvent.ERROR_AUDIO_TRACK_INIT_FAILED,
+                    PlaybackErrorEvent.ERROR_AUDIO_TRACK_OTHER,
+                    PlaybackException.ERROR_CODE_DECODING_FAILED,
+                    PlaybackException.ERROR_CODE_AUDIO_TRACK_WRITE_FAILED,
+                    PlaybackException.ERROR_CODE_DECODER_INIT_FAILED,
+                    PlaybackException.ERROR_CODE_DECODER_QUERY_FAILED -> {
                         showToast(
                             "${ctx.getString(R.string.render_error)}\n$errorName ($code)\n$msg",
+                            gotoNext = true
+                        )
+                    }
+
+                    PlaybackException.ERROR_CODE_DECODING_FORMAT_UNSUPPORTED,
+                    PlaybackException.ERROR_CODE_DECODING_FORMAT_EXCEEDS_CAPABILITIES -> {
+                        showToast(
+                            "${ctx.getString(R.string.unsupported_error)}\n$errorName ($code)\n$msg",
+                            gotoNext = true
+                        )
+                    }
+
+                    PlaybackException.ERROR_CODE_PARSING_CONTAINER_MALFORMED,
+                    PlaybackException.ERROR_CODE_PARSING_MANIFEST_MALFORMED -> {
+                        showToast(
+                            "${ctx.getString(R.string.encoding_error)}\n$errorName ($code)\n$msg",
                             gotoNext = true
                         )
                     }
