@@ -239,7 +239,7 @@ tasks.register<Jar>("androidSourcesJar") {
 
 tasks.register<Copy>("copyJar") {
     from(
-        "build/intermediates/compile_app_classes_jar/prereleaseDebug",
+        "build/intermediates/compile_app_classes_jar/prereleaseDebug/bundlePrereleaseDebugClassesToCompileJar",
         "../library/build/libs"
     )
     into("build/app-classes")
