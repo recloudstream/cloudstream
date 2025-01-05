@@ -1325,6 +1325,13 @@ fun LoadResponse?.isAnimeBased(): Boolean {
     return (this.type == TvType.Anime || this.type == TvType.OVA) // && (this is AnimeLoadResponse)
 }
 
+/**
+ * Extension function to determine if the [TvType] is episode-based.
+ * This function checks if the type corresponds to an episode-based format. Episode-based types will be placed
+ * in subfolders that include the sanitized title name. This check is used for other logic as well.
+ *
+ * @return true if the [TvType] is episode-based, otherwise false.
+ */
 fun TvType?.isEpisodeBased(): Boolean {
     return when (this) {
         TvType.Anime,
@@ -1332,6 +1339,39 @@ fun TvType?.isEpisodeBased(): Boolean {
         TvType.Cartoon,
         TvType.TvSeries -> true
         else -> false
+    }
+}
+
+/**
+ * Extension function to get the folder prefix based on the [TvType].
+ * Non-episode-based types will return a base folder name, while episode-based types will
+ * have their files placed in subfolders using a sanitized title name.
+ *
+ * For the actual folder path, refer to `ResultViewModel2().getFolder()`, which combines
+ * the folder prefix and, if necessary, the sanitized name to a sub-folder. The folder prefix
+ * will be used in the root directory of the configured downloads directory.
+ *
+ * @return the folder prefix corresponding to the [TvType], which is used as the root directory.
+ */
+fun TvType.getFolderPrefix(): String {
+    return when (this) {
+        TvType.Anime -> "Anime"
+        TvType.AnimeMovie -> "Movies"
+        TvType.AsianDrama -> "AsianDramas"
+        TvType.Audio -> "Audio"
+        TvType.AudioBook -> "AudioBooks"
+        TvType.Cartoon -> "Cartoons"
+        TvType.CustomMedia -> "Media"
+        TvType.Documentary -> "Documentaries"
+        TvType.Live -> "LiveStreams"
+        TvType.Movie -> "Movies"
+        TvType.Music -> "Music"
+        TvType.NSFW -> "NSFW"
+        TvType.OVA -> "OVAs"
+        TvType.Others -> "Others"
+        TvType.Podcast -> "Podcasts"
+        TvType.Torrent -> "Torrents"
+        TvType.TvSeries -> "TVSeries"
     }
 }
 
