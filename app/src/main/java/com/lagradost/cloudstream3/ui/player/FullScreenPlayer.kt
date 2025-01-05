@@ -1464,9 +1464,6 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         } else {
             loudnessEnhancer?.release()
             loudnessEnhancer = null
-
-            // Reset the toast flag when the volume drops below 100%
-            hasShownVolumeToast = false
         }
     }
 
