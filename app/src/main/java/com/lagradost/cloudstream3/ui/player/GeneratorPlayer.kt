@@ -13,43 +13,63 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.Window
-import android.widget.*
+import android.widget.AbsListView
+import android.widget.ArrayAdapter
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.MainThread
 import androidx.annotation.OptIn
 import androidx.core.animation.addListener
 import androidx.core.content.ContextCompat
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
-import androidx.preference.PreferenceManager
+import androidx.lifecycle.viewModelScope
 import androidx.media3.common.Format.NO_VALUE
 import androidx.media3.common.MimeTypes
 import androidx.media3.common.util.UnstableApi
-import androidx.navigation.findNavController
-import com.lagradost.cloudstream3.*
+import androidx.preference.PreferenceManager
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
+import com.lagradost.cloudstream3.AcraApplication
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.CommonActivity.showToast
+import com.lagradost.cloudstream3.LoadResponse
 import com.lagradost.cloudstream3.LoadResponse.Companion.getAniListId
 import com.lagradost.cloudstream3.LoadResponse.Companion.getImdbId
 import com.lagradost.cloudstream3.LoadResponse.Companion.getMalId
 import com.lagradost.cloudstream3.LoadResponse.Companion.getTMDbId
+import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.TvType
+import com.lagradost.cloudstream3.amap
 import com.lagradost.cloudstream3.databinding.DialogOnlineSubtitlesBinding
 import com.lagradost.cloudstream3.databinding.FragmentPlayerBinding
 import com.lagradost.cloudstream3.databinding.PlayerSelectSourceAndSubsBinding
 import com.lagradost.cloudstream3.databinding.PlayerSelectTracksBinding
-import com.lagradost.cloudstream3.databinding.SubtitleSettingsDialogBinding
-import com.lagradost.cloudstream3.mvvm.*
+import com.lagradost.cloudstream3.isAnimeOp
+import com.lagradost.cloudstream3.isEpisodeBased
+import com.lagradost.cloudstream3.isLiveStream
+import com.lagradost.cloudstream3.isMovieType
+import com.lagradost.cloudstream3.mvvm.Resource
+import com.lagradost.cloudstream3.mvvm.logError
+import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
+import com.lagradost.cloudstream3.mvvm.observe
+import com.lagradost.cloudstream3.mvvm.observeNullable
 import com.lagradost.cloudstream3.subtitles.AbstractSubApi
 import com.lagradost.cloudstream3.subtitles.AbstractSubtitleEntities
+import com.lagradost.cloudstream3.subtitles.AbstractSubtitleEntities.SubtitleSearch
+import com.lagradost.cloudstream3.subtitles.SubRepository
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.subtitleProviders
 import com.lagradost.cloudstream3.ui.player.CS3IPlayer.Companion.preferredAudioTrackLanguage
 import com.lagradost.cloudstream3.ui.player.CustomDecoder.Companion.updateForcedEncoding
 import com.lagradost.cloudstream3.ui.player.PlayerSubtitleHelper.Companion.toSubtitleMimeType
 import com.lagradost.cloudstream3.ui.player.source_priority.QualityDataHelper
 import com.lagradost.cloudstream3.ui.player.source_priority.QualityProfileDialog
-import com.lagradost.cloudstream3.ui.result.*
+import com.lagradost.cloudstream3.ui.result.ResultEpisode
+import com.lagradost.cloudstream3.ui.result.ResultFragment
+import com.lagradost.cloudstream3.ui.result.SyncViewModel
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
 import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
@@ -57,11 +77,15 @@ import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.ui.subtitles.SUBTITLE_AUTO_SELECT_KEY
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment
 import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment.Companion.getAutoSelectLanguageISO639_1
-import com.lagradost.cloudstream3.utils.*
 import com.lagradost.cloudstream3.utils.AppContextUtils.html
 import com.lagradost.cloudstream3.utils.AppContextUtils.sortSubs
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.runOnMainThread
+import com.lagradost.cloudstream3.utils.DataStoreHelper
+import com.lagradost.cloudstream3.utils.EpisodeSkip
+import com.lagradost.cloudstream3.utils.ExtractorLink
+import com.lagradost.cloudstream3.utils.ExtractorLinkType
+import com.lagradost.cloudstream3.utils.Qualities
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showDialog
 import com.lagradost.cloudstream3.utils.SubtitleHelper.fromTwoLettersToLanguage
 import com.lagradost.cloudstream3.utils.SubtitleHelper.languages
@@ -70,10 +94,14 @@ import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.hideSystemUI
 import com.lagradost.cloudstream3.utils.UIHelper.popCurrentPage
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
+import com.lagradost.cloudstream3.utils.setText
+import com.lagradost.cloudstream3.utils.txt
 import com.lagradost.safefile.SafeFile
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 import java.io.Serializable
-import java.util.*
+import java.util.Calendar
 import kotlin.math.abs
 
 class GeneratorPlayer : FullScreenPlayer() {
@@ -91,7 +119,7 @@ class GeneratorPlayer : FullScreenPlayer() {
             get() = subtitleProviders.filter { provider ->
                 (provider as? AbstractSubApi)?.let { !it.requiresLogin || it.loginInfo() != null }
                     ?: true
-            }
+            }.map { SubRepository(it) }
         val subsProvidersIsActive
             get() = subsProviders.isNotEmpty()
     }
@@ -347,6 +375,14 @@ class GeneratorPlayer : FullScreenPlayer() {
         return meta
     }
 
+    fun getName(entry: AbstractSubtitleEntities.SubtitleEntity, withLanguage: Boolean): String {
+        if (entry.lang.isBlank() || !withLanguage) {
+            return entry.name
+        }
+        val language = fromTwoLettersToLanguage(entry.lang.trim()) ?: entry.lang
+        return "$language ${entry.name}"
+    }
+
     override fun openOnlineSubPicker(
         context: Context, loadResponse: LoadResponse?, dismissCallback: (() -> Unit)
     ) {
@@ -361,13 +397,6 @@ class GeneratorPlayer : FullScreenPlayer() {
         var currentSubtitles: List<AbstractSubtitleEntities.SubtitleEntity> = emptyList()
         var currentSubtitle: AbstractSubtitleEntities.SubtitleEntity? = null
 
-        fun getName(entry: AbstractSubtitleEntities.SubtitleEntity, withLanguage: Boolean): String {
-            if (entry.lang.isBlank() || !withLanguage) {
-                return entry.name
-            }
-            val language = fromTwoLettersToLanguage(entry.lang.trim()) ?: entry.lang
-            return "$language ${entry.name}"
-        }
 
         val layout = R.layout.sort_bottom_single_choice_double_text
         val arrayAdapter =
@@ -485,7 +514,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                 binding.searchLoadingBar.show()
                 ioSafe {
                     val search =
-                        AbstractSubtitleEntities.SubtitleSearch(
+                        SubtitleSearch(
                             query = query ?: return@ioSafe,
                             imdbId = loadResponse?.getImdbId(),
                             tmdbId = loadResponse?.getTMDbId()?.toInt(),
@@ -496,13 +525,24 @@ class GeneratorPlayer : FullScreenPlayer() {
                             lang = currentLanguageTwoLetters.ifBlank { null },
                             year = viewModel.currentSubtitleYear.value
                         )
+
+                    // TODO Make ui a lot better, like search with tabs
                     val results = providers.amap {
-                        try {
-                            it.search(search)
-                        } catch (e: Exception) {
-                            null
+                        when (val response = it.search(search)) {
+                            is Resource.Success -> {
+                                response.value
+                            }
+
+                            is Resource.Loading -> {
+                                emptyList()
+                            }
+
+                            is Resource.Failure -> {
+                                showToast(response.errorString)
+                                emptyList()
+                            }
                         }
-                    }.filterNotNull()
+                    }
                     val max = results.maxOfOrNull { it.size } ?: return@ioSafe
 
                     // very ugly
@@ -546,20 +586,33 @@ class GeneratorPlayer : FullScreenPlayer() {
             currentSubtitle?.let { currentSubtitle ->
                 providers.firstOrNull { it.idPrefix == currentSubtitle.idPrefix }?.let { api ->
                     ioSafe {
-                        val subtitles =
-                            api.getResource(currentSubtitle).getSubtitles().map { resource ->
-                                SubtitleData(
-                                    name = resource.name ?: getName(currentSubtitle, true),
-                                    url = resource.url,
-                                    origin = resource.origin,
-                                    mimeType = resource.url.toSubtitleMimeType(),
-                                    headers = currentSubtitle.headers,
-                                    currentSubtitle.lang
-                                )
+                        when (val apiResource = api.getResource(currentSubtitle)) {
+                            is Resource.Success -> {
+                                val subtitles = apiResource.value.getSubtitles().map { resource ->
+                                    SubtitleData(
+                                        name = resource.name ?: getName(currentSubtitle, true),
+                                        url = resource.url,
+                                        origin = resource.origin,
+                                        mimeType = resource.url.toSubtitleMimeType(),
+                                        headers = currentSubtitle.headers,
+                                        currentSubtitle.lang
+                                    )
+                                }
+                                if (subtitles.isEmpty()) {
+                                    showToast(R.string.no_subtitles)
+                                    return@ioSafe
+                                }
+                                runOnMainThread {
+                                    addAndSelectSubtitles(*subtitles.toTypedArray())
+                                }
                             }
-                        if (subtitles.isNotEmpty()) {
-                            runOnMainThread {
-                                addAndSelectSubtitles(*subtitles.toTypedArray())
+
+                            is Resource.Failure -> {
+                                showToast(apiResource.errorString)
+                            }
+
+                            is Resource.Loading -> {
+                                // not possible
                             }
                         }
                     }
@@ -599,6 +652,7 @@ class GeneratorPlayer : FullScreenPlayer() {
         }
     }
 
+    @MainThread
     private fun addAndSelectSubtitles(
         vararg subtitleData: SubtitleData
     ) {
@@ -658,8 +712,91 @@ class GeneratorPlayer : FullScreenPlayer() {
             }
         }
 
-    var selectSourceDialog: Dialog? = null
+    private var selectSourceDialog: Dialog? = null
 //    var selectTracksDialog: AlertDialog? = null
+
+
+    /** Will toast both when an error is found and when a subtitle is selected,
+     * so only use from a user click and not a background process */
+    private fun addFirstSub(query: SubtitleSearch) =
+        viewModel.viewModelScope.launch {
+            // async should not have a race condition if they are on the same group
+            var hasSelectASubtitle = false
+
+            // first come first served with these subtitles
+            // we might want to change it to prefer different sources when used multiple times,
+            // however caching might make this random after the first click too
+            subsProviders.amap { provider ->
+                val success = when (val result = provider.search(
+                    query = query
+                )) {
+                    is Resource.Failure -> {
+                        // scope might cancel, so we do an extra check
+                        if (this.isActive) {
+                            showToast("${provider.idPrefix}${result.errorString}")
+                        }
+                        return@amap
+                    }
+
+                    is Resource.Loading -> {
+                        // unreachable
+                        return@amap
+                    }
+
+                    is Resource.Success -> {
+                        result.value
+                    }
+                }
+
+                // try to add every subtitle until we have added a new subtitle file
+                for (subtitleEntry in success) {
+                    if (hasSelectASubtitle || !this.isActive) {
+                        break
+                    }
+
+                    val subtitleResources =
+                        when (val result = provider.getResource(subtitleEntry)) {
+                            is Resource.Failure -> {
+                                continue
+                            }
+
+                            is Resource.Loading -> {
+                                // unreachable
+                                continue
+                            }
+
+                            is Resource.Success -> {
+                                result.value
+                            }
+                        }
+
+                    val subtitles = subtitleResources.getSubtitles().map { resource ->
+                        SubtitleData(
+                            name = resource.name ?: getName(subtitleEntry, true),
+                            url = resource.url,
+                            origin = resource.origin,
+                            mimeType = resource.url.toSubtitleMimeType(),
+                            headers = subtitleEntry.headers,
+                            languageCode = subtitleEntry.lang
+                        )
+                    }
+
+                    // checks for both a race condition and if any of the subs generated is new
+                    if (this.isActive && !currentSubs.containsAll(subtitles) && !hasSelectASubtitle) {
+                        hasSelectASubtitle = true
+                        runOnMainThread {
+                            addAndSelectSubtitles(*subtitles.toTypedArray())
+                        }
+                        break
+                    }
+                }
+            }
+            // maybe better error here?
+            if (!hasSelectASubtitle && this.isActive) {
+                showToast(R.string.no_subtitles)
+            }
+        }
+
 
     override fun showMirrorsDialogue() {
         try {
@@ -723,6 +860,38 @@ class GeneratorPlayer : FullScreenPlayer() {
                         }
                     }
                     subtitleList.addFooterView(loadFromOpenSubsFooter)
+
+                    // subs from 1 button here
+                    val metadata = getMetaData()
+                    val queryName = metadata.name ?: currentLoadResponse?.name
+                    if (queryName != null) {
+                        val currentLanguageTwoLetters: String = getAutoSelectLanguageISO639_1()
+                        val loadFromFirstSubsFooter: TextView = layoutInflater.inflate(
+                            R.layout.sort_bottom_footer_add_choice, null
+                        ) as TextView
+
+                        loadFromFirstSubsFooter.text =
+                            ctx.getString(R.string.player_load_one_subtitle_online)
+
+                        loadFromFirstSubsFooter.setOnClickListener {
+                            sourceDialog.dismissSafe(activity)
+                            showToast(R.string.loading)
+                            addFirstSub(
+                                SubtitleSearch(
+                                    query = queryName,
+                                    imdbId = currentLoadResponse?.getImdbId(),
+                                    tmdbId = currentLoadResponse?.getTMDbId()?.toInt(),
+                                    malId = currentLoadResponse?.getMalId()?.toInt(),
+                                    aniListId = currentLoadResponse?.getAniListId()?.toInt(),
+                                    epNumber = metadata.episode,
+                                    seasonNumber = metadata.season,
+                                    lang = currentLanguageTwoLetters.ifBlank { null },
+                                    year = viewModel.currentSubtitleYear.value
+                                )
+                            )
+                        }
+                        subtitleList.addFooterView(loadFromFirstSubsFooter)
+                    }
                 }
 
                 var sourceIndex = 0
@@ -768,7 +937,8 @@ class GeneratorPlayer : FullScreenPlayer() {
                 val subtitleIndexStart = currentSubtitles.indexOf(currentSelectedSubtitles) + 1
                 var subtitleIndex = subtitleIndexStart
 
-                val subsArrayAdapter = ArrayAdapter<Spanned>(ctx, R.layout.sort_bottom_single_choice)
+                val subsArrayAdapter =
+                    ArrayAdapter<Spanned>(ctx, R.layout.sort_bottom_single_choice)
                 subsArrayAdapter.add(ctx.getString(R.string.no_subtitles).html())
                 subsArrayAdapter.addAll(currentSubtitles.map { it.name.html() })
 
