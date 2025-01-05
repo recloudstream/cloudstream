@@ -1329,9 +1329,6 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         val currentVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC)
         val maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
 
-        // Max volume percentage including boost
-        val maxVolumePercentage = 200
-
         playerBinding?.playerProgressbarLeftHolder?.apply {
             if (!isVisible || alpha < 1f) {
                 alpha = 1f
@@ -1351,14 +1348,16 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
             postDelayed(progressBarLeftHideRunnable, 1500)
         }
 
+        // Max volume percentage including boost
+        var maxVolumePercentage = 200
         if (verticalAddition >= 0f) {
             val nextVolume = currentRequestedVolume + verticalAddition
-            if (isAdjustingVolume && currentVolume < maxVolume && nextVolume >= 1.0f) {
+            if (isAdjustingVolume && currentRequestedVolume <= 1.0f && nextVolume >= 1.0f) {
                 if (!hasShownVolumeToast) {
                     showToast(R.string.slide_up_again_to_exceed_100)
                     hasShownVolumeToast = true
                 }
-                return
+                maxVolumePercentage = 100
             }
         }
 
