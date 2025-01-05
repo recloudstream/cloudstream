@@ -561,7 +561,7 @@ abstract class AbstractPlayerFragment(
                 }
             }
 
-            subView = playerView?.findViewById(R.id.exo_subtitles)
+            subView = playerView?.findViewById(androidx.media3.ui.R.id.exo_subtitles)
             subStyle = SubtitlesFragment.getCurrentSavedStyle()
             player.initSubtitles(subView, subtitleHolder, subStyle)
             (player.imageGenerator as? PreviewGenerator)?.params = ImageParams.new16by9(screenWidth)

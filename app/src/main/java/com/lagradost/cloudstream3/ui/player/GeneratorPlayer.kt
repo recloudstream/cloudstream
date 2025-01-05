@@ -470,7 +470,7 @@ class GeneratorPlayer : FullScreenPlayer() {
         val currentTempMeta = getMetaData()
 
         // bruh idk why it is not correct
-        val color = ColorStateList.valueOf(context.colorFromAttribute(R.attr.colorAccent))
+        val color = ColorStateList.valueOf(context.colorFromAttribute(androidx.appcompat.R.attr.colorAccent))
         binding.searchLoadingBar.progressTintList = color
         binding.searchLoadingBar.indeterminateTintList = color
 
