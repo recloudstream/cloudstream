@@ -616,8 +616,7 @@ fun MainAPI.fixUrl(url: String): String {
 }
 
 /** Sort the urls based on quality
- * @param urls Set of Extractor links
- * @see ExtractorLink
+ * @param urls Set of [ExtractorLink]
  * */
 fun sortUrls(urls: Set<ExtractorLink>): List<ExtractorLink> {
     return urls.sortedBy { t -> -t.quality }
@@ -1172,7 +1171,7 @@ data class TvSeriesSearchResponse(
 /** Data class of Trailer data.
  * @property extractorUrl Url string of the Trailer video.
  * @property referer Nullable string of referer to be used in network request.
- * @property raw If the video is Raw or not.
+ * @property raw If the video is Raw or not. [Raw image format](https://en.wikipedia.org/wiki/Raw_image_format)
  * */
 data class TrailerData(
     val extractorUrl: String,
@@ -1319,7 +1318,7 @@ interface LoadResponse {
             addImdbId(imdbUrlToIdNullable(url))
         }
 
-        /**better to call addTrailer with mutible trailers directly instead of calling this multiple times*/
+        /**better to call addTrailer with multiple trailers directly instead of calling this multiple times*/
         suspend fun LoadResponse.addTrailer(
             trailerUrl: String?,
             referer: String? = null,
