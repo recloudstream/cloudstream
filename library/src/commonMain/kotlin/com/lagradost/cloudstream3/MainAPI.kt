@@ -58,6 +58,7 @@ object APIHolder {
         apiMap = null
     }
 
+    /** String extension function to Capitalize first char of string.*/
     fun String.capitalize(): String {
         return this.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
     }
@@ -220,6 +221,10 @@ object APIHolder {
         }
     }
 
+    /** Searches Anilist using title.
+     * @param title Title string of the show
+     * @return [AniSearch] data class holds search info.
+     * */
     private suspend fun searchAnilist(
         title: String?,
     ): AniSearch? {
@@ -351,12 +356,17 @@ data class MainPageRequest(
     //TODO genre selection or smth
 )
 
+/** Create [MainPageData] from url, name Strings & layout (Horizontal/Vertical) Boolean.
+ * @param url page Url string.
+ * @param name page Name string.
+ * @param horizontalImages Boolean to control item card layout.
+ * */
 fun mainPage(url: String, name: String, horizontalImages: Boolean = false): MainPageData {
     return MainPageData(name = name, data = url, horizontalImages = horizontalImages)
 }
 
 /** return list of MainPageData with url to name, make for more readable code
- * @param elements parameter to only get anime with a specific year */
+ * @param elements parameter of [MainPageData] class of data*/
 fun mainPageOf(vararg elements: MainPageData): List<MainPageData> {
     return elements.toList()
 }
@@ -680,20 +690,25 @@ fun imdbUrlToIdNullable(url: String?): String? {
     return imdbUrlToId(url)
 }
 
+/** enum class determines provider type:
+ *
+ * MetaProvider: When data is fetched from a 3rd party site like imdb
+ *
+ * DirectProvider: When all data is from the site
+ * */
 enum class ProviderType {
-    // When data is fetched from a 3rd party site like imdb
     MetaProvider,
-
-    // When all data is from the site
     DirectProvider,
 }
 
+/** enum class determines VPN status (Non, MightBeNeeded or Torrent) */
 enum class VPNStatus {
     None,
     MightBeNeeded,
     Torrent,
 }
 
+/** enum class determines Show status (Completed or Ongoing) */
 enum class ShowStatus {
     Completed,
     Ongoing,
@@ -793,6 +808,7 @@ data class SubtitleFile(val lang: String, val url: String)
  * @property items List of [HomePageList] items.
  * @property hasNext if there is a next page or not.
  * */
+@Deprecated("Use newHomePageResponse method", level = DeprecationLevel.WARNING)
 data class HomePageResponse(
     val items: List<HomePageList>,
     val hasNext: Boolean = false
@@ -1166,7 +1182,26 @@ data class TrailerData(
     // var subtitles: List<SubtitleFile> = emptyList(),
 )
 
-/** Abstract interface of LoadResponse responses */
+/** Abstract interface of LoadResponse responses
+ * @param name Title of the media, appears on result page.
+ * @param url Url of the media.
+ * @param apiName Plugin name, appears on result page.
+ * @param type [TvType] of the media .
+ * @param posterUrl Url of the media poster, appears on Top of result page.
+ * @param year Year of the media, appears on result page.
+ * @param plot Plot of the media, appears on result page.
+ * @param rating Rating of the media, appears on result page (0-10000).
+ * @param tags Tags of the media, appears on result page.
+ * @param duration duration of the media, appears on result page.
+ * @param trailers list of the media [TrailerData], used to load trailers.
+ * @param recommendations list of the [SearchResponse] related to media, appears on result page.
+ * @param actors list of the [ActorData] casted in the media, appears on result page.
+ * @param comingSoon determines if the media is released or coming soon.
+ * @param syncData Online sync services compatible with the media.
+ * @param posterHeaders headers map used by network request to get the poster.
+ * @param backgroundPosterUrl Url of the media background poster.
+ * @param contentRating content rating of the media, appears on result page.
+ * */
 interface LoadResponse {
     var name: String
     var url: String
