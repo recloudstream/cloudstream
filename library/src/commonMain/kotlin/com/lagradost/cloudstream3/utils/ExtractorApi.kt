@@ -442,7 +442,7 @@ val PLAYREADY_UUID = UUID(-0x65fb0f8667bfbd7aL, -0x546d19a41f77a06bL)
  * @property type the type of the media, use [INFER_TYPE] if you want to auto infer the type from the url
  * @property kid  Base64 value of The KID element (Key Id) contains the identifier of the key associated with a license.
  * @property key Base64 value of Key to be used to decrypt the media file.
- * @property uuid Drm UUID Widevine, Playready, ClearKey (by default) .. etc
+ * @property uuid Drm UUID [WIDEVINE_UUID], [PLAYREADY_UUID], [CLEARKEY_UUID] (by default) .. etc
  * @property kty Key type "oct" (octet sequence) by default
  * @property keyRequestParameters Parameters that will used to request the key.
  * */
