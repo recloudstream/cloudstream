@@ -448,10 +448,27 @@ object PluginManager {
         val sortedPlugins = dir.listFiles()
         // Always sort plugins alphabetically for reproducible results
 
-        Log.d(TAG, "Files in '${LOCAL_PLUGINS_PATH}' folder: $sortedPlugins")
+        Log.d(TAG, "Files in '${LOCAL_PLUGINS_PATH}' folder: ${sortedPlugins?.size}")
 
         sortedPlugins?.sortedBy { it.name }?.apmap { file ->
-            maybeLoadPlugin(context, file)
+            try {
+                // Use app-specific external files directory and copy the file there.
+                // We have to do this because on Android 14+, it otherwise gives SecurityException
+                // due to dex files and setReadOnly seems to have no effect unless it it here.
+                val pluginDirectory = File(context.getExternalFilesDir(null), "plugins")
+                if (!pluginDirectory.exists()) {
+                    pluginDirectory.mkdirs() // Ensure the plugins directory exists
+                }
+
+                // Copy the file to the app-specific plugin directory
+                val pluginFile = file.copyTo(File(pluginDirectory, file.name), overwrite = true)
+
+                // Load the plugin after it has been copied
+                maybeLoadPlugin(context, pluginFile)
+            } catch (t: Throwable) {
+                Log.e(TAG, "Failed to copy the file")
+                logError(t)
+            }
         }
 
         loadedLocalPlugins = true
@@ -483,11 +500,14 @@ object PluginManager {
         Log.i(TAG, "Loading plugin: $data")
 
         return try {
-            // in case of android 14 then
+            // In case of Android 14+ then
             try {
-                File(filePath).setReadOnly()
+                // Set the file as read-only and log if it fails
+                if (!file.setReadOnly()) {
+                    Log.e(TAG, "Failed to set read-only on plugin file: ${file.name}")
+                }
             } catch (t: Throwable) {
-                Log.e(TAG, "Failed to set dex as readonly")
+                Log.e(TAG, "Failed to set dex as read-only")
                 logError(t)
             }
 
