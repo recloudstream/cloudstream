@@ -1171,7 +1171,7 @@ data class TvSeriesSearchResponse(
 /** Data class of Trailer data.
  * @property extractorUrl Url string of the Trailer video.
  * @property referer Nullable string of referer to be used in network request.
- * @property raw If the video is Raw or not. [Raw image format](https://en.wikipedia.org/wiki/Raw_image_format)
+ * @property raw determines if [extractorUrl] should be used as direct Trailer video link instead of extracting it.
  * */
 data class TrailerData(
     val extractorUrl: String,
