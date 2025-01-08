@@ -6,7 +6,10 @@ import android.app.Activity
 import android.app.Activity.RESULT_CANCELED
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.content.*
+import android.content.ContentValues
+import android.content.Context
+import android.content.DialogInterface
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.database.Cursor
 import android.media.AudioAttributes
@@ -17,7 +20,11 @@ import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.Uri
-import android.os.*
+import android.os.Build
+import android.os.Environment
+import android.os.Handler
+import android.os.Looper
+import android.os.ParcelFileDescriptor
 import android.provider.MediaStore
 import android.text.Spanned
 import android.util.Log
@@ -30,7 +37,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.annotation.WorkerThread
 import androidx.appcompat.app.AlertDialog
-import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
 import androidx.core.text.toSpanned
 import androidx.core.widget.ContentLoadingProgressBar
@@ -41,7 +47,9 @@ import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.tvprovider.media.tv.*
+import androidx.tvprovider.media.tv.PreviewChannelHelper
+import androidx.tvprovider.media.tv.TvContractCompat
+import androidx.tvprovider.media.tv.WatchNextProgram
 import androidx.tvprovider.media.tv.WatchNextProgram.fromCursor
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.gms.cast.framework.CastContext
@@ -50,12 +58,20 @@ import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.common.wrappers.Wrappers
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.APIHolder.apis
 import com.lagradost.cloudstream3.AcraApplication.Companion.getActivity
+import com.lagradost.cloudstream3.AllLanguagesName
 import com.lagradost.cloudstream3.CommonActivity.activity
 import com.lagradost.cloudstream3.CommonActivity.showToast
+import com.lagradost.cloudstream3.DubStatus
+import com.lagradost.cloudstream3.HomePageList
+import com.lagradost.cloudstream3.LoadResponse
+import com.lagradost.cloudstream3.MainAPI
 import com.lagradost.cloudstream3.MainActivity.Companion.afterRepositoryLoadedEvent
+import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.SearchResponse
+import com.lagradost.cloudstream3.TvType
+import com.lagradost.cloudstream3.isMovieType
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.plugins.RepositoryManager
@@ -77,7 +93,11 @@ import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import okhttp3.Cache
-import java.io.*
+import java.io.File
+import java.io.FileNotFoundException
+import java.io.FileOutputStream
+import java.io.InputStream
+import java.io.OutputStream
 import java.net.URL
 import java.net.URLDecoder
 import java.util.concurrent.Executor
@@ -668,10 +688,7 @@ object AppContextUtils {
                         openWebView(fragment, url)
                     }
                 }.launch(intent)
-            } else {
-                ContextCompat.startActivity(this, intent, null)
-            }
-
+            } else this.startActivity(intent)
         } catch (e: Exception) {
             logError(e)
             if (fallbackWebview) {
