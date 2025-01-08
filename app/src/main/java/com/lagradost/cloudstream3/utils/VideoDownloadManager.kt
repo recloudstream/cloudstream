@@ -1737,7 +1737,7 @@ object VideoDownloadManager {
     ) {
         if (!(currentDownloads.size < maxConcurrentDownloads && downloadQueue.size > 0)) return
 
-        val pkg = downloadQueue.removeFirst()
+        val pkg = downloadQueue.removeAt(0)
         val item = pkg.item
         val id = item.ep.id
         if (currentDownloads.contains(id)) { // IF IT IS ALREADY DOWNLOADING, RESUME IT
