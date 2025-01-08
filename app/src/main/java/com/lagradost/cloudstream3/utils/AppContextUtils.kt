@@ -105,7 +105,7 @@ object AppContextUtils {
         this?.window?.setWindowAnimations(-1)
         this?.show()
         Handler(Looper.getMainLooper()).postDelayed({
-            this?.window?.setWindowAnimations(R.style.Animation_Design_BottomSheetDialog)
+            this?.window?.setWindowAnimations(com.google.android.material.R.style.Animation_Design_BottomSheetDialog)
         }, 200)
     }
 

@@ -12,7 +12,7 @@ desugar_jdk_libs_nio = "2.1.4"
 dokkaGradlePlugin = "1.9.10"
 espressoCore = "3.6.1"
 fuzzywuzzy = "1.4.0"
-gradle = "8.2.2"
+gradle = "8.7.3"
 jacksonModuleKotlin = "2.13.1"
 json = "20240303"
 junit = "4.13.2"
@@ -29,8 +29,7 @@ mediaFfmpeg = "1.1.0"
 navigationFragmentKtx = "2.8.5"
 navigationUiKtx = "2.8.5"
 newpipeextractor = "v0.24.3"
-nextlibMedia3ext = "0.8.4"
-nextlibMediainfo = "0.8.4"
+nextlibMedia3 = "0.8.4"
 nicehttp = "0.4.11"
 okhttp3Integration = "4.16.0"
 overlappingpanels = "0.1.5"
@@ -48,6 +47,11 @@ video = "1.0.0"
 workRuntime = "2.10.0"
 workRuntimeKtx = "2.10.0"
 torrentserverAniyomi = "c18f58e51b"
+
+jvmTarget = "1.8"
+minSdk = "21"
+compileSdk = "35"
+targetSdk = "35"
 
 [libraries]
 torrentserver-aniyomi = { module = "com.github.Diegopyl1209:torrentserver-aniyomi", version.ref = "torrentserverAniyomi" }
@@ -91,8 +95,8 @@ media3-ui = { module = "androidx.media3:media3-ui", version.ref = "media3" }
 navigation-fragment-ktx = { module = "androidx.navigation:navigation-fragment-ktx", version.ref = "navigationFragmentKtx" }
 navigation-ui-ktx = { module = "androidx.navigation:navigation-ui-ktx", version.ref = "navigationUiKtx" }
 newpipeextractor = { module = "com.github.teamnewpipe:NewPipeExtractor", version.ref = "newpipeextractor" }
-nextlib-media3ext = { module = "com.github.anilbeesetti.nextlib:nextlib-media3ext", version.ref = "nextlibMedia3ext" }
-nextlib-mediainfo = { module = "com.github.anilbeesetti.nextlib:nextlib-mediainfo", version.ref = "nextlibMediainfo" }
+nextlib-media3ext = { module = "com.github.anilbeesetti.nextlib:nextlib-media3ext", version.ref = "nextlibMedia3" }
+nextlib-mediainfo = { module = "com.github.anilbeesetti.nextlib:nextlib-mediainfo", version.ref = "nextlibMedia3" }
 nicehttp = { module = "com.github.Blatzar:NiceHttp", version.ref = "nicehttp" }
 okhttp3-integration = { module = "com.github.bumptech.glide:okhttp3-integration", version.ref = "okhttp3Integration" }
 overlappingpanels = { module = "com.github.discord:OverlappingPanels", version.ref = "overlappingpanels" }
@@ -114,3 +118,4 @@ work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "w
 
 [bundles]
 media3 = ["media3-cast", "media3-common", "media3-datasource-okhttp", "media3-exoplayer", "media3-exoplayer-dash", "media3-exoplayer-hls", "media3-session", "media3-ui"]
+nextlibMedia3 = ["nextlib-media3ext", "nextlib-mediainfo"]
