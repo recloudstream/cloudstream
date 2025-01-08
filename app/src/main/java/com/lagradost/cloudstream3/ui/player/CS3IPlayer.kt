@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.ui.player
 
+import Torrent
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.DialogInterface
@@ -37,6 +38,7 @@ import androidx.media3.datasource.cache.LeastRecentlyUsedCacheEvictor
 import androidx.media3.datasource.cache.SimpleCache
 import androidx.media3.datasource.okhttp.OkHttpDataSource
 import androidx.media3.exoplayer.DefaultLoadControl
+import androidx.media3.exoplayer.DefaultRenderersFactory
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.Renderer.STATE_ENABLED
 import androidx.media3.exoplayer.Renderer.STATE_STARTED
@@ -45,6 +47,8 @@ import androidx.media3.exoplayer.dash.DashMediaSource
 import androidx.media3.exoplayer.drm.DefaultDrmSessionManager
 import androidx.media3.exoplayer.drm.FrameworkMediaDrm
 import androidx.media3.exoplayer.drm.LocalMediaDrmCallback
+import androidx.media3.exoplayer.source.ClippingMediaSource
+import androidx.media3.exoplayer.source.ConcatenatingMediaSource2
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 import androidx.media3.exoplayer.source.MergingMediaSource
 import androidx.media3.exoplayer.source.SingleSampleMediaSource
@@ -78,7 +82,6 @@ import com.lagradost.cloudstream3.utils.ExtractorLinkPlayList
 import com.lagradost.cloudstream3.utils.ExtractorLinkType
 import com.lagradost.cloudstream3.utils.SubtitleHelper.fromTwoLettersToLanguage
 import io.github.anilbeesetti.nextlib.media3ext.ffdecoder.NextRenderersFactory
-import androidx.media3.exoplayer.DefaultRenderersFactory
 import kotlinx.coroutines.delay
 import java.io.File
 import java.util.UUID
@@ -813,21 +816,17 @@ class CS3IPlayer : IPlayer {
                     factory.createMediaSource(item.mediaItem)
                 }
             } else {
-                // Create a playlist of MediaItems
-                val mediaSources = mediaItemSlices.map { item ->
-                    val clippedMediaItem = item.mediaItem.buildUpon()
-                        .setClippingConfiguration(
-                            MediaItem.ClippingConfiguration.Builder()
-                                .setStartPositionUs(0)
-                                .setEndPositionUs(item.durationUs)
-                                .build()
+                val source = ConcatenatingMediaSource2.Builder()
+                mediaItemSlices.map { item ->
+                    source.add(
+                        // The duration MUST be known for it to work properly
+                        ClippingMediaSource(
+                            factory.createMediaSource(item.mediaItem),
+                            item.durationUs
                         )
-                        .build()
-
-                    factory.createMediaSource(clippedMediaItem)
+                    )
                 }
-
-                MergingMediaSource(*mediaSources.toTypedArray())
+                source.build()
             }
 
             //println("PLAYBACK POS $playbackPosition")
