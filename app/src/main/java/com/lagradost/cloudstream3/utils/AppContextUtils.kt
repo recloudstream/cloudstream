@@ -14,6 +14,7 @@ import android.media.AudioFocusRequest
 import android.media.AudioManager
 import android.media.tv.TvContract.Channels.COLUMN_INTERNAL_PROVIDER_ID
 import android.net.ConnectivityManager
+import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.Uri
 import android.os.*
@@ -79,6 +80,8 @@ import okhttp3.Cache
 import java.io.*
 import java.net.URL
 import java.net.URLDecoder
+import java.util.concurrent.Executor
+import java.util.concurrent.Executors
 
 object AppContextUtils {
     fun RecyclerView.setMaxViewPoolSize(maxViewTypeId: Int, maxPoolSize: Int) {
@@ -811,12 +814,18 @@ object AppContextUtils {
     }
 
     fun Activity.requestLocalAudioFocus(focusRequest: AudioFocusRequest?) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && focusRequest != null) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            if (focusRequest == null) {
+                Log.e("TAG", "focusRequest was null")
+                return
+            }
+
             val audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
             audioManager.requestAudioFocus(focusRequest)
         } else {
             val audioManager: AudioManager =
                 getSystemService(Context.AUDIO_SERVICE) as AudioManager
+            @Suppress("DEPRECATION")
             audioManager.requestAudioFocus(
                 null,
                 AudioManager.STREAM_MUSIC,
@@ -848,20 +857,27 @@ object AppContextUtils {
         val isCastApiAvailable =
             GoogleApiAvailability.getInstance()
                 .isGooglePlayServicesAvailable(applicationContext) == ConnectionResult.SUCCESS
+
+        val executor: Executor = Executors.newSingleThreadExecutor()
+
         try {
-            applicationContext?.let { CastContext.getSharedInstance(it) }
+            applicationContext?.let {
+                CastContext.getSharedInstance(it, executor)
+            }
         } catch (e: Exception) {
             println(e)
             // track non-fatal
             return false
         }
+
         return isCastApiAvailable
     }
 
     fun Context.isConnectedToChromecast(): Boolean {
         if (isCastApiAvailable()) {
-            val castContext = CastContext.getSharedInstance(this)
-            if (castContext.castState == CastState.CONNECTED) {
+            val executor: Executor = Executors.newSingleThreadExecutor()
+            val castContext = CastContext.getSharedInstance(this, executor)
+            if (castContext.result.castState == CastState.CONNECTED) {
                 return true
             }
         }
@@ -974,16 +990,16 @@ object AppContextUtils {
     }
 
     fun Context.isUsingMobileData(): Boolean {
-        val conManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val networkInfo = conManager.allNetworks
-        return networkInfo.any {
-            conManager.getNetworkCapabilities(it)
-                ?.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) == true
-        } &&
-                !networkInfo.any {
-                    conManager.getNetworkCapabilities(it)
-                        ?.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) == true
-                }
+        val connectionManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            val activeNetwork: Network? = connectionManager.activeNetwork
+            val networkCapabilities = connectionManager.getNetworkCapabilities(activeNetwork)
+            networkCapabilities?.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) == true &&
+                    !networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
+        } else {
+            @Suppress("DEPRECATION")
+            connectionManager.activeNetworkInfo?.type == ConnectivityManager.TYPE_MOBILE
+        }
     }
 
 
@@ -1024,9 +1040,7 @@ object AppContextUtils {
                 }
                 build()
             }
-        } else {
-            null
-        }
+        } else null
         return currentAudioFocusRequest
     }
 }

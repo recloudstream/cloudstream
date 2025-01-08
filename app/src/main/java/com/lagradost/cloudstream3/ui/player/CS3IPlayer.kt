@@ -45,8 +45,6 @@ import androidx.media3.exoplayer.dash.DashMediaSource
 import androidx.media3.exoplayer.drm.DefaultDrmSessionManager
 import androidx.media3.exoplayer.drm.FrameworkMediaDrm
 import androidx.media3.exoplayer.drm.LocalMediaDrmCallback
-import androidx.media3.exoplayer.source.ClippingMediaSource
-import androidx.media3.exoplayer.source.ConcatenatingMediaSource
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 import androidx.media3.exoplayer.source.MergingMediaSource
 import androidx.media3.exoplayer.source.SingleSampleMediaSource
@@ -744,6 +742,7 @@ class CS3IPlayer : IPlayer {
                                 ).apply {
                                     // Required to make the decoder work with old subtitles
                                     // Upgrade CustomSubtitleDecoderFactory when media3 supports it
+                                    @Suppress("DEPRECATION")
                                     experimentalSetLegacyDecodingEnabled(true)
                                 }.also { renderer ->
                                     this.currentTextRenderer = renderer
@@ -814,17 +813,21 @@ class CS3IPlayer : IPlayer {
                     factory.createMediaSource(item.mediaItem)
                 }
             } else {
-                val source = ConcatenatingMediaSource()
-                mediaItemSlices.map { item ->
-                    source.addMediaSource(
-                        // The duration MUST be known for it to work properly, see https://github.com/google/ExoPlayer/issues/4727
-                        ClippingMediaSource(
-                            factory.createMediaSource(item.mediaItem),
-                            item.durationUs
+                // Create a playlist of MediaItems
+                val mediaSources = mediaItemSlices.map { item ->
+                    val clippedMediaItem = item.mediaItem.buildUpon()
+                        .setClippingConfiguration(
+                            MediaItem.ClippingConfiguration.Builder()
+                                .setStartPositionUs(0)
+                                .setEndPositionUs(item.durationUs)
+                                .build()
                         )
-                    )
+                        .build()
+
+                    factory.createMediaSource(clippedMediaItem)
                 }
-                source
+
+                MergingMediaSource(*mediaSources.toTypedArray())
             }
 
             //println("PLAYBACK POS $playbackPosition")

@@ -150,8 +150,13 @@ class AcraApplication : Application(), SingletonImageLoader.Factory {
         var exceptionHandler: ExceptionHandler? = null
 
         /** Use to get activity from Context */
-        tailrec fun Context.getActivity(): Activity? = this as? Activity
-            ?: (this as? ContextWrapper)?.baseContext?.getActivity()
+        tailrec fun Context.getActivity(): Activity? {
+            return when (this) {
+                is Activity -> this
+                is ContextWrapper -> baseContext.getActivity()
+                else -> null
+            }
+        }
 
         private var _context: WeakReference<Context>? = null
         var context

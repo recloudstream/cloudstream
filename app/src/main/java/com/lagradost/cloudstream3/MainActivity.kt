@@ -1539,6 +1539,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
             if (navDestination.matchDestination(R.id.navigation_home)) {
                 attachBackPressedCallback("MainActivity") {
                     showConfirmExitDialog(settingsManager)
+                    @Suppress("DEPRECATION")
                     window?.navigationBarColor =
                         colorFromAttribute(R.attr.primaryGrayBackground)
                     updateLocale()
@@ -1789,6 +1790,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
             this,
             object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
+                    @Suppress("DEPRECATION")
                     window?.navigationBarColor = colorFromAttribute(R.attr.primaryGrayBackground)
                     updateLocale()
 

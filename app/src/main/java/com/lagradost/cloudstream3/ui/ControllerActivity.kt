@@ -15,6 +15,7 @@ import androidx.appcompat.app.AlertDialog
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.module.kotlin.kotlinModule
+import com.google.android.gms.cast.MediaLoadOptions
 import com.google.android.gms.cast.MediaQueueItem
 import com.google.android.gms.cast.MediaSeekOptions
 import com.google.android.gms.cast.MediaStatus.REPEAT_MODE_REPEAT_OFF
@@ -239,12 +240,22 @@ class SelectSourceController(val view: ImageView, val activity: ControllerActivi
                                         loadMirror(index + 1)
                                     }
                                 } else {
-                                    awaitLinks(remoteMediaClient?.load(mediaItem, true, startAt)) {
+                                    val mediaLoadOptions =
+                                        MediaLoadOptions.Builder()
+                                            .setPlayPosition(startAt)
+                                            .setAutoplay(true)
+                                            .build()
+                                    awaitLinks(remoteMediaClient?.load(mediaItem, mediaLoadOptions)) {
                                         loadMirror(index + 1)
                                     }
                                 }
                             } catch (e: Exception) {
-                                awaitLinks(remoteMediaClient?.load(mediaItem, true, startAt)) {
+                                val mediaLoadOptions =
+                                    MediaLoadOptions.Builder()
+                                        .setPlayPosition(startAt)
+                                        .setAutoplay(true)
+                                        .build()
+                                awaitLinks(remoteMediaClient?.load(mediaItem, mediaLoadOptions)) {
                                     loadMirror(index + 1)
                                 }
                             }
