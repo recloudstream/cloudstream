@@ -1,18 +1,19 @@
 package com.lagradost.cloudstream3.ui.result
 
-import android.net.Uri
+import android.app.SearchManager
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.lagradost.api.getContext
 import com.lagradost.cloudstream3.ActorData
 import com.lagradost.cloudstream3.ActorRole
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.CastItemBinding
-import com.lagradost.cloudstream3.utils.AppContextUtils.openBrowser
+import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
+import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
 
 class ActorAdaptor(
@@ -105,8 +106,17 @@ class ActorAdaptor(
             }
 
             itemView.setOnLongClickListener {
-                val searchUrl = "https://www.google.com/search?q=${Uri.encode(actor.actor.name)}"
-                itemView.context.openBrowser(url = searchUrl)
+                if (isLayout(PHONE)) {
+                    Intent(Intent.ACTION_WEB_SEARCH).apply {
+                        putExtra(SearchManager.QUERY, actor.actor.name)
+                    }.also { intent ->
+                        itemView.context.packageManager?.let { pm ->
+                            if (intent.resolveActivity(pm) != null) {
+                                itemView.context.startActivity(intent)
+                            }
+                        }
+                    }
+                }
                 true
             }
 
@@ -146,7 +156,7 @@ class ActorAdaptor(
                 } else {
                     voiceActorName.text = actor.voiceActor?.name
                     if (!vaImage.isNullOrEmpty())
-                    voiceActorImageHolder.isVisible = true
+                        voiceActorImageHolder.isVisible = true
                     voiceActorImage.loadImage(vaImage)
                 }
             }
