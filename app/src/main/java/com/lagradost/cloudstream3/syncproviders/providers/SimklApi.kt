@@ -5,12 +5,12 @@ import androidx.core.net.toUri
 import androidx.fragment.app.FragmentActivity
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.lagradost.cloudstream3.AcraApplication
-import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
-import com.lagradost.cloudstream3.AcraApplication.Companion.getKeys
-import com.lagradost.cloudstream3.AcraApplication.Companion.openBrowser
-import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
-import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
+import com.lagradost.cloudstream3.CloudStreamApp
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.getKey
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.getKeys
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.openBrowser
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.removeKey
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.setKey
 import com.lagradost.cloudstream3.BuildConfig
 import com.lagradost.cloudstream3.LoadResponse.Companion.readIdFromString
 import com.lagradost.cloudstream3.R
@@ -101,7 +101,7 @@ class SimklApi(index: Int) : AccountManager(index), SyncAPI {
 
         fun cleanOldCache() {
             getKeys(SIMKL_CACHE_KEY)?.forEach {
-                val isOld = AcraApplication.getKey<SimklCacheWrapper<Any>>(it)?.isFresh() == false
+                val isOld = CloudStreamApp.getKey<SimklCacheWrapper<Any>>(it)?.isFresh() == false
                 if (isOld) {
                     removeKey(it)
                 }

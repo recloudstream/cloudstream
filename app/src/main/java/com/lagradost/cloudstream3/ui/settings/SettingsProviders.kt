@@ -97,7 +97,7 @@ class SettingsProviders : PreferenceFragmentCompat() {
                     selectedList.map { it.toString() }.toMutableSet()
                 ).apply()
                 DataStoreHelper.currentHomePage = null
-                //(context ?: AcraApplication.context)?.let { ctx -> app.initClient(ctx) }
+                //(context ?: CloudStreamApp.context)?.let { ctx -> app.initClient(ctx) }
             }
 
             return@setOnPreferenceClickListener true

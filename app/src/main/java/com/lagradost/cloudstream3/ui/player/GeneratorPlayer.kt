@@ -32,9 +32,9 @@ import androidx.media3.common.Format.NO_VALUE
 import androidx.media3.common.MimeTypes
 import androidx.media3.common.util.UnstableApi
 import androidx.preference.PreferenceManager
+import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
-import com.lagradost.cloudstream3.AcraApplication
-import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
+import com.lagradost.cloudstream3.CloudStreamApp.Companion.setKey
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.LoadResponse
 import com.lagradost.cloudstream3.LoadResponse.Companion.getAniListId
@@ -686,7 +686,7 @@ class GeneratorPlayer : FullScreenPlayer() {
             normalSafeApiCall {
                 // It lies, it can be null if file manager quits.
                 if (uri == null) return@normalSafeApiCall
-                val ctx = context ?: AcraApplication.context ?: return@normalSafeApiCall
+                val ctx = context ?: CloudStreamApp.context ?: return@normalSafeApiCall
                 // RW perms for the path
                 ctx.contentResolver.takePersistableUriPermission(
                     uri,
