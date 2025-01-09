@@ -819,7 +819,7 @@ class CS3IPlayer : IPlayer {
                 val source = ConcatenatingMediaSource2.Builder()
                 mediaItemSlices.map { item ->
                     source.add(
-                        // The duration MUST be known for it to work properly
+                        // The duration MUST be known for it to work properly, see https://github.com/google/ExoPlayer/issues/4727
                         ClippingMediaSource(
                             factory.createMediaSource(item.mediaItem),
                             item.durationUs
