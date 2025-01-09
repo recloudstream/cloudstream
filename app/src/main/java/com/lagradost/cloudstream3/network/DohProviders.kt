@@ -85,3 +85,35 @@ fun OkHttpClient.Builder.addQuad9Dns() = (
             "149.112.112.112",
         )
     ))
+
+fun OkHttpClient.Builder.addDnsSbDns() = (
+        addGenericDns(
+            "https://doh.dns.sb/dns-query",
+
+            listOf(
+                "185.222.222.222",
+                "45.11.45.11",
+            )
+        ))
+
+fun OkHttpClient.Builder.addCanadianShieldDns() = (
+        addGenericDns(
+            "https://private.canadianshield.cira.ca/dns-query",
+
+            listOf(
+                "149.112.121.10",
+                "149.112.122.10",
+            )
+        ))
+
+fun OkHttpClient.Builder.addNextDns() = (
+        addGenericDns(
+            "https://dns.nextdns.io/457cc1",
+
+            listOf(
+                "45.90.28.47",
+                "45.90.30.47",
+                "2a07:a8c0::45:7cc1",
+                "2a07:a8c1::45:7cc1",
+            )
+        ))
