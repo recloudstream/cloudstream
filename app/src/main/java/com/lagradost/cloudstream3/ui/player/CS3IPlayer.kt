@@ -1412,7 +1412,7 @@ class CS3IPlayer : IPlayer {
                     } ?: default
 
                     if (!currentPrefMedia.contains(TvType.Torrent.ordinal)) {
-                        event(ErrorEvent(ErrorLoadingException("Preferred media do not contain torrent")))
+                        event(ErrorEvent(ErrorLoadingException("Enable torrent in Settings/Providers/Preferred media")))
                         return
                     }
 
