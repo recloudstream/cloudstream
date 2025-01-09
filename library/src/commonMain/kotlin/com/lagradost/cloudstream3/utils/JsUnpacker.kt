@@ -39,11 +39,11 @@ class JsUnpacker(packedJS: String?) {
                 var radix = 36
                 var count = 0
                 try {
-                    radix = radixStr.toIntOrNull() ?: radix
+                    radix = radixStr?.toIntOrNull() ?: radix
                 } catch (_: Exception) {
                 }
                 try {
-                    count = countStr.toIntOrNull() ?: 0
+                    count = countStr?.toIntOrNull() ?: 0
                 } catch (_: Exception) {
                 }
                 if (symtab.size != count) {
