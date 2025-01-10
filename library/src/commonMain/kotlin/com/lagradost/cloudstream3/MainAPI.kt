@@ -377,6 +377,7 @@ fun mainPageOf(vararg elements: Pair<String, String>): List<MainPageData> {
     return elements.map { (url, name) -> MainPageData(name = name, data = url) }
 }
 
+@Suppress("DEPRECATION")
 fun newHomePageResponse(
     name: String,
     list: List<SearchResponse>,
@@ -388,6 +389,7 @@ fun newHomePageResponse(
     )
 }
 
+@Suppress("DEPRECATION")
 fun newHomePageResponse(
     data: MainPageRequest,
     list: List<SearchResponse>,
@@ -399,10 +401,12 @@ fun newHomePageResponse(
     )
 }
 
+@Suppress("DEPRECATION")
 fun newHomePageResponse(list: HomePageList, hasNext: Boolean? = null): HomePageResponse {
     return HomePageResponse(listOf(list), hasNext = hasNext ?: list.list.isNotEmpty())
 }
 
+@Suppress("DEPRECATION")
 fun newHomePageResponse(list: List<HomePageList>, hasNext: Boolean? = null): HomePageResponse {
     return HomePageResponse(list, hasNext = hasNext ?: list.any { it.list.isNotEmpty() })
 }
@@ -499,6 +503,7 @@ abstract class MainAPI {
     open val mainPage = listOf(MainPageData("", "", false))
 
     // @WorkerThread
+    @Suppress("DEPRECATION")
     open suspend fun getMainPage(
         page: Int,
         request: MainPageRequest,
@@ -907,6 +912,7 @@ interface SearchResponse {
     var quality: SearchQuality?
 }
 
+@Suppress("DEPRECATION")
 fun MainAPI.newTorrentSearchResponse(
     name: String,
     url: String,
@@ -926,6 +932,7 @@ fun MainAPI.newTorrentSearchResponse(
     return builder
 }
 
+@Suppress("DEPRECATION")
 fun MainAPI.newMovieSearchResponse(
     name: String,
     url: String,
@@ -939,6 +946,7 @@ fun MainAPI.newMovieSearchResponse(
     return builder
 }
 
+@Suppress("DEPRECATION")
 fun MainAPI.newLiveSearchResponse(
     name: String,
     url: String,
@@ -956,6 +964,7 @@ fun MainAPI.newLiveSearchResponse(
     return builder
 }
 
+@Suppress("DEPRECATION")
 fun MainAPI.newTvSeriesSearchResponse(
     name: String,
     url: String,
@@ -969,6 +978,7 @@ fun MainAPI.newTvSeriesSearchResponse(
     return builder
 }
 
+@Suppress("DEPRECATION")
 fun MainAPI.newAnimeSearchResponse(
     name: String,
     url: String,
@@ -1058,6 +1068,7 @@ data class AnimeSearchResponse(
     override var posterHeaders: Map<String, String>? = null,
 ) : SearchResponse
 
+@Suppress("DEPRECATION")
 fun AnimeSearchResponse.addDubStatus(status: DubStatus, episodes: Int? = null) {
     this.dubStatus = dubStatus?.also { it.add(status) } ?: EnumSet.of(status)
     if (this.type?.isMovieType() != true)
@@ -1065,20 +1076,24 @@ fun AnimeSearchResponse.addDubStatus(status: DubStatus, episodes: Int? = null) {
             this.episodes[status] = episodes
 }
 
+@Suppress("DEPRECATION")
 fun AnimeSearchResponse.addDubStatus(isDub: Boolean, episodes: Int? = null) {
     addDubStatus(if (isDub) DubStatus.Dubbed else DubStatus.Subbed, episodes)
 }
 
+@Suppress("DEPRECATION")
 fun AnimeSearchResponse.addDub(episodes: Int?) {
     if (episodes == null || episodes <= 0) return
     addDubStatus(DubStatus.Dubbed, episodes)
 }
 
+@Suppress("DEPRECATION")
 fun AnimeSearchResponse.addSub(episodes: Int?) {
     if (episodes == null || episodes <= 0) return
     addDubStatus(DubStatus.Subbed, episodes)
 }
 
+@Suppress("DEPRECATION")
 fun AnimeSearchResponse.addDubStatus(
     dubExist: Boolean,
     subExist: Boolean,
@@ -1092,6 +1107,7 @@ fun AnimeSearchResponse.addDubStatus(
         addDubStatus(DubStatus.Subbed, subEpisodes)
 }
 
+@Suppress("DEPRECATION")
 fun AnimeSearchResponse.addDubStatus(status: String, episodes: Int? = null) {
     if (status.contains("(dub)", ignoreCase = true)) {
         addDubStatus(DubStatus.Dubbed, episodes)
@@ -1242,6 +1258,7 @@ interface LoadResponse {
             return tryParseJson(idString) ?: return emptyMap()
         }
 
+        @Suppress("DEPRECATION")
         fun LoadResponse.isMovie(): Boolean {
             return this.type.isMovieType() || this is MovieLoadResponse
         }
@@ -1643,6 +1660,7 @@ data class TorrentLoadResponse(
     )
 }
 
+@Suppress("DEPRECATION")
 suspend fun MainAPI.newTorrentLoadResponse(
     name: String,
     url: String,
@@ -1667,6 +1685,7 @@ suspend fun MainAPI.newTorrentLoadResponse(
 /** Data class of [LoadResponse] interface for Anime.
  * @see newAnimeLoadResponse
  * */
+@Suppress("DEPRECATION")
 @Deprecated("Use newAnimeLoadResponse method", level = DeprecationLevel.WARNING)
 data class AnimeLoadResponse(
     var engName: String? = null,
@@ -1785,11 +1804,13 @@ data class AnimeLoadResponse(
 /**
  * If episodes already exist appends the list.
  * */
+@Suppress("DEPRECATION")
 fun AnimeLoadResponse.addEpisodes(status: DubStatus, episodes: List<Episode>?) {
     if (episodes.isNullOrEmpty()) return
     this.episodes[status] = (this.episodes[status] ?: emptyList()) + episodes
 }
 
+@Suppress("DEPRECATION")
 suspend fun MainAPI.newAnimeLoadResponse(
     name: String,
     url: String,
@@ -1866,6 +1887,7 @@ data class LiveStreamLoadResponse(
     )
 }
 
+@Suppress("DEPRECATION")
 suspend fun MainAPI.newLiveStreamLoadResponse(
     name: String,
     url: String,
@@ -1939,6 +1961,7 @@ data class MovieLoadResponse(
     )
 }
 
+@Suppress("DEPRECATION")
 suspend fun <T> MainAPI.newMovieLoadResponse(
     name: String,
     url: String,
@@ -1967,6 +1990,7 @@ suspend fun <T> MainAPI.newMovieLoadResponse(
     return builder
 }
 
+@Suppress("DEPRECATION")
 suspend fun MainAPI.newMovieLoadResponse(
     name: String,
     url: String,
@@ -2027,6 +2051,7 @@ data class Episode(
     )
 }
 
+@Suppress("DEPRECATION")
 fun Episode.addDate(date: String?, format: String = "yyyy-MM-dd") {
     try {
         this.date = SimpleDateFormat(format)?.parse(date ?: return)?.time
@@ -2035,10 +2060,12 @@ fun Episode.addDate(date: String?, format: String = "yyyy-MM-dd") {
     }
 }
 
+@Suppress("DEPRECATION")
 fun Episode.addDate(date: Date?) {
     this.date = date?.time
 }
 
+@Suppress("DEPRECATION")
 fun MainAPI.newEpisode(
     url: String,
     initializer: Episode.() -> Unit = { },
@@ -2051,6 +2078,7 @@ fun MainAPI.newEpisode(
     return builder
 }
 
+@Suppress("DEPRECATION")
 fun <T> MainAPI.newEpisode(
     data: T,
     initializer: Episode.() -> Unit = { }
@@ -2092,6 +2120,7 @@ enum class SimklSyncServices(val originalName: String) {
 /** Data class of [LoadResponse] interface for Tv series.
  * @see newTvSeriesLoadResponse
  * */
+@Suppress("DEPRECATION")
 @Deprecated("Use newTvSeriesLoadResponse method", level = DeprecationLevel.WARNING)
 data class TvSeriesLoadResponse(
     override var name: String,
@@ -2193,6 +2222,7 @@ data class TvSeriesLoadResponse(
     )
 }
 
+@Suppress("DEPRECATION")
 suspend fun MainAPI.newTvSeriesLoadResponse(
     name: String,
     url: String,
