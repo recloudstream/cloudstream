@@ -200,6 +200,7 @@ dependencies {
 
     // Extensions & Other Libs
     implementation(libs.rhino) // Run JavaScript
+    implementation(libs.quickjs)
     implementation(libs.fuzzywuzzy) // Library/Ext Searching with Levenshtein Distance
     implementation(libs.safefile) // To Prevent the URI File Fu*kery
     implementation(libs.conscrypt.android) // To Fix SSL Fu*kery on Android 9
