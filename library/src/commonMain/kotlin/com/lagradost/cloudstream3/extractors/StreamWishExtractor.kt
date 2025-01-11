@@ -133,6 +133,11 @@ class Playerwish : StreamWishExtractor() {
     override val mainUrl = "https://playerwish.com"
 }
 
+class PeytonePre : StreamWishExtractor() {
+    override var name = "PeytonePre"
+    override var mainUrl = "https://peytonepre.com"
+}
+
 open class StreamWishExtractor : ExtractorApi() {
     override val name = "Streamwish"
     override val mainUrl = "https://streamwish.to"
