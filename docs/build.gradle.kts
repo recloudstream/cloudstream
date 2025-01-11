@@ -49,18 +49,18 @@ dependencies {
     dokkaImplementation(libs.lifecycle.livedata.ktx)
     dokkaImplementation(libs.lifecycle.viewmodel.ktx)
     dokkaImplementation(libs.navigation.fragment.ktx)
-    dokkaImplementation(libs.glide.transformations)
     dokkaImplementation(libs.preference.ktx)
     dokkaImplementation(libs.material)
     dokkaImplementation(libs.constraintlayout)
     dokkaImplementation(libs.swiperefreshlayout)
-    dokkaImplementation(libs.glide)
-    dokkaImplementation(libs.okhttp3.integration)
+    dokkaImplementation(libs.coil)
+    dokkaImplementation(libs.coil.network.okhttp)
     dokkaImplementation(libs.guava)
     dokkaImplementation(libs.auto.service.ksp)
     dokkaImplementation(libs.bundles.media3)
     dokkaImplementation(libs.colorpicker) // Subtitle Color Picker
-    dokkaImplementation(libs.media.ffmpeg) // Custom FFmpeg Lib for Audio Codecs
+    // dokkaImplementation(libs.media.ffmpeg) // Custom FFmpeg Lib for Audio Codecs
+    dokkaImplementation(libs.bundles.nextlibMedia3)
     dokkaImplementation(libs.newpipeextractor)
     dokkaImplementation(libs.juniversalchardet) // Subtitle Decoding
     dokkaImplementation(libs.acra.core)
