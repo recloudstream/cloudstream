@@ -535,7 +535,9 @@ object VideoDownloadManager {
         basePath: String?
     ): List<Pair<String, Uri>>? {
         val base = basePathToFile(context, basePath)
-        val folder = base?.gotoDirectory(relativePath, false) ?: return null
+        val folder =
+            base?.gotoDirectory(relativePath, createMissingDirectories = false) ?: return null
+        
         //if (folder.isDirectory() != false) return null
 
         return folder.listFiles()
@@ -568,7 +570,7 @@ object VideoDownloadManager {
         }
 
         fun delete(): Boolean {
-            return file.delete()
+            return file.delete() == true
         }
 
         val resume: Boolean get() = fileLength > 0L
@@ -609,7 +611,8 @@ object VideoDownloadManager {
     ): StreamData {
         val displayName = getDisplayName(name, extension)
 
-        val subDir = baseFile.gotoDirectoryOrThrow(folder)
+        val subDir = baseFile.gotoDirectory(folder, createMissingDirectories = true)
+            ?: throw IOException("Cant create directory")
         val foundFile = subDir.findFile(displayName)
 
         val (file, fileLength) = if (foundFile == null || foundFile.exists() != true) {
@@ -1597,7 +1600,7 @@ object VideoDownloadManager {
         return when {
             path.isNullOrBlank() -> getDefaultDir(context)
             path.startsWith("content://") -> SafeFile.fromUri(context, path.toUri())
-            else -> SafeFile.fromFile(context, File(path))
+            else -> SafeFile.fromFilePath(context, path)
         }
     }
 
@@ -1809,7 +1812,7 @@ object VideoDownloadManager {
         getDownloadFileInfo(context, id)
 
     private fun DownloadedFileInfo.toFile(context: Context): SafeFile? {
-        return basePathToFile(context, this.basePath)?.gotoDirectory(relativePath)
+        return basePathToFile(context, this.basePath)?.gotoDirectory(relativePath, createMissingDirectories = false)
             ?.findFile(displayName)
     }
 
