@@ -349,7 +349,9 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="8dp"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:visibility="gone"
+                    tools:visibility="visible">
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/result_play_trailer_button"
