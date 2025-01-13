@@ -13,8 +13,6 @@ desugar_jdk_libs_nio = "2.1.4"
 dokkaGradlePlugin = "1.9.10"
 espressoCore = "3.6.1"
 fuzzywuzzy = "1.4.0"
-glide = "4.16.0"
-glideTransformations = "4.3.0"
 gradle = "8.7.3"
 guava = "33.3.1-android"
 jacksonModuleKotlin = "2.13.1"
@@ -35,7 +33,6 @@ navigationUiKtx = "2.8.5"
 newpipeextractor = "v0.24.3"
 nextlibMedia3 = "0.8.4"
 nicehttp = "0.4.11"
-okhttp3Integration = "4.16.0"
 overlappingpanels = "0.1.5"
 paletteKtx = "1.0.0"
 preferenceKtx = "1.2.1"
@@ -77,8 +74,6 @@ dokka-gradle-plugin = { module = "org.jetbrains.dokka:dokka-gradle-plugin", vers
 espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref = "espressoCore" }
 ext-junit = { module = "androidx.test.ext:junit", version.ref = "junitVersion" }
 fuzzywuzzy = { module = "me.xdrop:fuzzywuzzy", version.ref = "fuzzywuzzy" }
-glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
-glide-transformations = { module = "jp.wasabeef:glide-transformations", version.ref = "glideTransformations" }
 gradle = { module = "com.android.tools.build:gradle", version.ref = "gradle" }
 guava = { module = "com.google.guava:guava", version.ref = "guava" }
 jackson-module-kotlin = { module = "com.fasterxml.jackson.module:jackson-module-kotlin", version.ref = "jacksonModuleKotlin" }
@@ -106,7 +101,6 @@ newpipeextractor = { module = "com.github.teamnewpipe:NewPipeExtractor", version
 nextlib-media3ext = { module = "com.github.anilbeesetti.nextlib:nextlib-media3ext", version.ref = "nextlibMedia3" }
 nextlib-mediainfo = { module = "com.github.anilbeesetti.nextlib:nextlib-mediainfo", version.ref = "nextlibMedia3" }
 nicehttp = { module = "com.github.Blatzar:NiceHttp", version.ref = "nicehttp" }
-okhttp3-integration = { module = "com.github.bumptech.glide:okhttp3-integration", version.ref = "okhttp3Integration" }
 overlappingpanels = { module = "com.github.discord:OverlappingPanels", version.ref = "overlappingpanels" }
 palette-ktx = { module = "androidx.palette:palette-ktx", version.ref = "paletteKtx" }
 preference-ktx = { module = "androidx.preference:preference-ktx", version.ref = "preferenceKtx" }
