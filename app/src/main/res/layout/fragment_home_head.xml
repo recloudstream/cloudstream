@@ -263,27 +263,27 @@
                         android:layout_height="wrap_content"
 
                         android:nextFocusLeft="@id/home_type_on_hold_btt"
-                        android:nextFocusRight="@id/home_type_not_interested_btt"
-                        android:text="@string/type_dropped" />
-
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/home_type_not_interested_btt"
-                        style="@style/ChipFilled"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-
-                        android:nextFocusLeft="@id/home_type_dropped_btt"
                         android:nextFocusRight="@id/home_type_completed_btt"
-                        android:text="@string/type_not_interested" />
+                        android:text="@string/type_dropped" />
 
                     <com.google.android.material.chip.Chip
                         android:id="@+id/home_type_completed_btt"
                         style="@style/ChipFilled"
                         android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+
+                        android:nextFocusLeft="@id/home_type_dropped_btt"
+                        android:nextFocusRight="@id/home_type_not_interested_btt"
+                        android:text="@string/type_completed" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/home_type_not_interested_btt"
+                        style="@style/ChipFilled"
+                        android:layout_width="wrap_content"
 
                         android:layout_height="wrap_content"
-                        android:nextFocusLeft="@id/home_type_not_interested_btt"
-                        android:text="@string/type_completed" />
+                        android:nextFocusLeft="@id/home_type_completed_btt"
+                        android:text="@string/type_not_interested" />
                 </com.google.android.material.chip.ChipGroup>
 
             </HorizontalScrollView>
