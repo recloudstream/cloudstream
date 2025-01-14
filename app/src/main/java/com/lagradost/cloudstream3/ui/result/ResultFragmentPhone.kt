@@ -945,8 +945,8 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                 R.string.type_on_hold,
                 R.string.type_dropped,
                 R.string.type_plan_to_watch,
-                R.string.type_re_watching,
-                R.string.type_not_interested
+                R.string.type_not_interested,
+                R.string.type_re_watching
             ).map { ctx.getString(it) }
             arrayAdapter.addAll(items)
             syncBinding?.apply {

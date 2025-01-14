@@ -233,11 +233,11 @@
                         android:layout_height="wrap_content"
 
                         android:nextFocusLeft="@id/nav_rail_view"
-                        android:nextFocusRight="@id/home_plan_to_watch_btt"
+                        android:nextFocusRight="@id/home_type_plan_to_watch_btt"
                         android:text="@string/type_watching" />
 
                     <com.google.android.material.chip.Chip
-                        android:id="@+id/home_plan_to_watch_btt"
+                        android:id="@+id/home_type_plan_to_watch_btt"
                         style="@style/ChipFilled"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -252,7 +252,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
 
-                        android:nextFocusLeft="@id/home_plan_to_watch_btt"
+                        android:nextFocusLeft="@id/home_type_plan_to_watch_btt"
                         android:nextFocusRight="@id/home_type_dropped_btt"
                         android:text="@string/type_on_hold" />
 
