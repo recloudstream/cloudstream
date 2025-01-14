@@ -402,6 +402,7 @@ class HomeParentItemAdapterPreview(
             Pair(itemView.findViewById(R.id.home_type_dropped_btt), WatchType.DROPPED),
             Pair(itemView.findViewById(R.id.home_type_on_hold_btt), WatchType.ONHOLD),
             Pair(itemView.findViewById(R.id.home_plan_to_watch_btt), WatchType.PLANTOWATCH),
+            Pair(itemView.findViewById(R.id.home_not_interested_btt), WatchType.NOTINTERESTED),
         )
 
         private val toggleListHolder: ChipGroup? = itemView.findViewById(R.id.home_type_holder)

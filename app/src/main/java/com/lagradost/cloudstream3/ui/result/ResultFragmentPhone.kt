@@ -928,15 +928,16 @@ open class ResultFragmentPhone : FullScreenPlayer() {
         }
         context?.let { ctx ->
             val arrayAdapter = ArrayAdapter<String>(ctx, R.layout.sort_bottom_single_choice)
-            /*
-            -1 -> None
-            0 -> Watching
-            1 -> Completed
-            2 -> OnHold
-            3 -> Dropped
-            4 -> PlanToWatch
-            5 -> ReWatching
-            */
+            /**
+             * -1 -> None
+             * 0 -> Watching
+             * 1 -> Completed
+             * 2 -> OnHold
+             * 3 -> Dropped
+             * 4 -> PlanToWatch
+             * 5 -> ReWatching
+             * 6 -> NotInterested
+             */
             val items = listOf(
                 R.string.none,
                 R.string.type_watching,
@@ -944,7 +945,8 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                 R.string.type_on_hold,
                 R.string.type_dropped,
                 R.string.type_plan_to_watch,
-                R.string.type_re_watching
+                R.string.type_re_watching,
+                R.string.type_not_interested
             ).map { ctx.getString(it) }
             arrayAdapter.addAll(items)
             syncBinding?.apply {
