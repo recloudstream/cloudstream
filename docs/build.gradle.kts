@@ -1,4 +1,3 @@
-import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import java.net.URI
 
@@ -53,13 +52,10 @@ dependencies {
     dokkaImplementation(libs.material)
     dokkaImplementation(libs.constraintlayout)
     dokkaImplementation(libs.swiperefreshlayout)
-    dokkaImplementation(libs.coil)
-    dokkaImplementation(libs.coil.network.okhttp)
     dokkaImplementation(libs.guava)
     dokkaImplementation(libs.auto.service.ksp)
     dokkaImplementation(libs.bundles.media3)
     dokkaImplementation(libs.colorpicker) // Subtitle Color Picker
-    // dokkaImplementation(libs.media.ffmpeg) // Custom FFmpeg Lib for Audio Codecs
     dokkaImplementation(libs.bundles.nextlibMedia3)
     dokkaImplementation(libs.newpipeextractor)
     dokkaImplementation(libs.juniversalchardet) // Subtitle Decoding
@@ -83,28 +79,30 @@ dependencies {
     dokkaImplementation(libs.nicehttp) // HTTP Lib
 }
 
-tasks.withType<DokkaTask>().configureEach {
+dokka {
     dokkaSourceSets {
         moduleName = "Cloudstream"
         register("cloudstream") {
             listOf("androidMain", "commonMain").forEach { srcName ->
-                sourceRoot("../library/src/$srcName/kotlin")
+                sourceRoots.from("../library/src/$srcName/kotlin")
             }
-            sourceRoot(file("../app/src/main/java"))
+            sourceRoots.from(file("../app/src/main/java"))
 
             classpath.from(android.bootClasspath)
             classpath.from(dokkaImplementation.files)
 
             sourceLink {
                 localDirectory = file("..")
-                remoteUrl = URI("https://github.com/recloudstream/cloudstream/tree/master").toURL()
+                remoteUrl("https://github.com/recloudstream/cloudstream/tree/master")
                 remoteLineSuffix = "#L"
             }
 
-            dokkaImplementation.dependencies.forEach {
-                externalDocumentationLink {
-                    url = URI("https://javadoc.io/doc/${it.group}/${it.name}/${it.version}").toURL()
-                    packageListUrl = URI("https://javadoc.io/doc/${it.group}/${it.name}/${it.version}/package-list").toURL()
+            externalDocumentationLinks {
+                dokkaImplementation.dependencies.forEach {
+                    register(it.name) {
+                        url = URI("https://javadoc.io/doc/${it.group}/${it.name}/${it.version}")
+                        packageListUrl = URI("https://javadoc.io/doc/${it.group}/${it.name}/${it.version}/package-list")
+                    }
                 }
             }
         }
