@@ -3,17 +3,17 @@ acraCore = "5.11.3"
 appcompat = "1.7.0"
 autoServiceKsp = "1.2.0"
 biometric = "1.2.0-alpha05"
-buildkonfigGradlePlugin = "0.15.1"
+buildkonfigGradlePlugin = "0.15.2"
 coil = "3.0.4"
 colorpicker = "1.1.0"
 conscryptAndroid = "2.5.2"
 constraintlayout = "2.2.0"
 coreKtx = "1.15.0"
 desugar_jdk_libs_nio = "2.1.4"
-dokkaGradlePlugin = "1.9.10"
+dokkaGradlePlugin = "2.0.0"
 espressoCore = "3.6.1"
 fuzzywuzzy = "1.4.0"
-gradle = "8.7.3"
+gradle = "8.8.0"
 guava = "33.3.1-android"
 jacksonModuleKotlin = "2.13.1"
 json = "20240303"
@@ -27,7 +27,6 @@ lifecycleLivedataKtx = "2.8.7"
 lifecycleViewmodelKtx = "2.8.7"
 material = "1.12.0"
 media3 = "1.5.1"
-mediaFfmpeg = "1.1.0"
 navigationFragmentKtx = "2.8.5"
 navigationUiKtx = "2.8.5"
 newpipeextractor = "v0.24.3"
@@ -86,7 +85,6 @@ kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-c
 lifecycle-livedata-ktx = { module = "androidx.lifecycle:lifecycle-livedata-ktx", version.ref = "lifecycleLivedataKtx" }
 lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "lifecycleViewmodelKtx" }
 material = { module = "com.google.android.material:material", version.ref = "material" }
-media-ffmpeg = { module = "com.github.recloudstream:media-ffmpeg", version.ref = "mediaFfmpeg" }
 media3-cast = { module = "androidx.media3:media3-cast", version.ref = "media3" }
 media3-common = { module = "androidx.media3:media3-common", version.ref = "media3" }
 media3-datasource-okhttp = { module = "androidx.media3:media3-datasource-okhttp", version.ref = "media3" }

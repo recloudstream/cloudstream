@@ -55,7 +55,7 @@ jobs:
         run: |
           cd $GITHUB_WORKSPACE/src/
           chmod +x gradlew
-          ./gradlew docs:dokkaHtml
+          ./gradlew docs:dokkaGeneratePublicationHtml
 
       - name: Copy Dokka
         run: |

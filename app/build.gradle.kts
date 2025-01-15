@@ -178,7 +178,6 @@ dependencies {
 
     // PlayBack
     implementation(libs.colorpicker) // Subtitle Color Picker
-    // implementation(libs.media.ffmpeg) // Custom FFmpeg Lib for Audio Codecs
     implementation(libs.newpipeextractor) // For Trailers
     implementation(libs.juniversalchardet) // Subtitle Decoding
 
