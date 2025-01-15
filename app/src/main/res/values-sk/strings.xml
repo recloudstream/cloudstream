@@ -371,9 +371,98 @@
 \n
 \nPripojte sa k nášmu Discord alebo vyhľadajte online.</string>
     <string name="update_notification_failed">Nepodarilo sa nainštalovať novú verziu aplikácie</string>
-    <string name="download_all_plugins_from_repo">Stiahnuť všetky doplnky z tohto repozitára?</string>
+    <string name="download_all_plugins_from_repo">Upozornenie: CloudStream 3 nenesie žiadnu zodpovednosť za používanie rozšírenia tretích strán a neposkytuje žiadnu podporu pre nich!</string>
     <string name="add_repository">Pridať repozitár</string>
     <string name="repository_name_hint">Názov repozitára</string>
     <string name="view_public_repositories_button">Zobraziť komunitné repozitáre</string>
     <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
+    <string name="quality_hd">HD</string>
+    <string name="category_player">Prehrávač</string>
+    <string name="resolution_and_title">Rozlíšenie a titul</string>
+    <string name="max">Maximum</string>
+    <string name="skip_setup">Preskočiť nastavenie</string>
+    <string name="error">Chyba</string>
+    <string name="test_extensions_summary">Tento test je určený len pre vývojárov a nepreveruje ani popiera prácu akéhokoľvek rozšírenia.</string>
+    <string name="subtitle_offset_hint">1000 ms</string>
+    <string name="quality_workprint">WP</string>
+    <string name="quality_dvd">DVD</string>
+    <string name="actor_background">Pozadie</string>
+    <string name="setup_done">Hotovo</string>
+    <string name="cartoons_singular">Kreslený</string>
+    <string name="music_singlar">Hudba</string>
+    <string name="custom_media_singluar">Médiá</string>
+    <string name="pref_category_accounts">Kontá</string>
+    <string name="pref_category_security">Bezpečnosť</string>
+    <string name="normal">Normálne</string>
+    <string name="min">Minimum</string>
+    <string name="subtitles_outline">Obrys</string>
+    <string name="subtitles_shadow">Tieň</string>
+    <string name="subtitle_offset_title">Oneskorenie tituliek</string>
+    <string name="subtitle_offset_extra_hint_later_format">Použite to, ak sú uvedené titulky %d ms príliš skoro</string>
+    <string name="provider_languages_tip">Sledujte videá v týchto jazykoch</string>
+    <string name="previous">Predchádzajúci</string>
+    <string name="delete_message_series_episodes" formatted="true">Ste si istí, že chcete trvalo odstrániť nasledujúce epizódy v %1$s?\n\n%2$s</string>
+    <string name="player_loaded_subtitles" formatted="true">Načítané %s</string>
+    <string name="delete_message_multiple" formatted="true">Ste si istí, že chcete trvalo odstrániť nasledujúce položky?\n\n%s</string>
+    <string name="downloads_delete_select">Vyberte položky na odstránenie</string>
+    <string name="subtitle_offset_extra_hint_before_format">Použite to, ak sú uvedené titulky %d ms príliš neskoro</string>
+    <string name="preferred_media_subtext">Čo chcete vidieť</string>
+    <string name="torrent_info">Toto video je Torrent, to znamená, že vaša video aktivita je možné sledovať.\nUistite sa, že ste pochopili Torrent pred pokračovaním.</string>
+    <string name="offline_file">K dispozícii pre sledovanie offline</string>
+    <string name="player_load_one_subtitle_online">Načítať prvé k dispozícii</string>
+    <string name="player_load_subtitles">Načítať z súboru</string>
+    <string name="coming_soon">Čoskoro…</string>
+    <string name="quality_hdr">HDR</string>
+    <string name="error_invalid_id">Neplatné ID</string>
+    <string name="none">Žiadne</string>
+    <string name="title">Titul</string>
+    <string name="resolution">Rozlíšenie</string>
+    <string name="quality_tc">TC</string>
+    <string name="disable">Zakázať</string>
+    <string name="recommended">Odporúčané</string>
+    <string name="quality_sd">SD</string>
+    <string name="delete_message_series_only" formatted="true">Ste si istí, že chcete trvalo odstrániť všetky epizódy v nasledujúcej sérii?\n\n%s</string>
+    <string name="authenticated_user_fail" formatted="true">Nemohol sa prihlásiť v %s</string>
+    <string name="player_load_subtitles_online">Načítať z internetu</string>
+    <string name="quality_uhd">UHD</string>
+    <string name="extensions">Rozšírenia</string>
+    <string name="delete_message_series_section" formatted="true">Takisto aj trvalo odstránite všetky epizódy v nasledujúcej sérii:\n\n%s</string>
+    <string name="audio_book_singular">Audio kniha</string>
+    <string name="authenticated_user" formatted="true">%s overené</string>
+    <string name="subtitles_example_text">V kŕdli čajok švihol ďateľ v ústí milej obžerky</string>
+    <string name="subtitle_offset_extra_hint_none_format">Žiadne oneskorenie tituliek</string>
+    <string name="actor_supporting">Podporuje</string>
+    <string name="error_invalid_data">Neplatné dáta</string>
+    <string name="error_invalid_url">Neplatná URL adresa</string>
+    <string name="subtitles_remove_captions">Odstráňte uzavreté titulky od titulkov</string>
+    <string name="crash_reporting_title">Správy zlyhania</string>
+    <string name="recommendations_tooltip">Zobraziť odporúčania</string>
+    <string name="test_extensions">Otestujte všetky rozšírenia</string>
+    <string name="episode_upcoming_format" formatted="true">Nadchádzajúce o %s</string>
+    <string name="qr_image">QR kód obrázok</string>
+    <string name="open_local_video">Otvoriť lokálne video</string>
+    <string name="test_warning">Varovanie</string>
+    <string name="play_from_beginning_img_des">Hrať od začiatku</string>
+    <string name="downloads_empty">Momentálne nie sú žiadne stiahnutia.</string>
+    <string name="downloaded_file">Stiahnutý súbor</string>
+    <string name="actor_main">Hlavné</string>
+    <string name="speed_setting_summary">Pridá možnosť rýchlosti do prehrávača</string>
+    <string name="resume_remaining" formatted="true">Zostáva\n%s</string>
+    <string name="delete_files">Odstrániť súbory</string>
+    <string name="delete_format" formatted="true">Odstrániť (%1$d | %2$s</string>
+    <string name="home_source">Zdroj</string>
+    <string name="home_random">Náhodné</string>
+    <string name="quality_hq">HQ</string>
+    <string name="quality_ts">TS</string>
+    <string name="quality_4k">4K</string>
+    <string name="quality_sdr">SDR</string>
+    <string name="quality_webrip">Web</string>
+    <string name="network_adress_example">https://example.com/example.mp4</string>
+    <string name="next">Ďalšie</string>
+    <string name="select_all">Vybrať Všetko</string>
+    <string name="deselect_all">Zrušiť výber všetkých</string>
+    <string name="audio_singluar">Zvuk</string>
+    <string name="podcast_singluar">Podcast</string>
+    <string name="all">Všetko</string>
+    <string name="encoding_error">Chyba kódovania</string>
 </resources>

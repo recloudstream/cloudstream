@@ -670,4 +670,7 @@
     <string name="audio_singluar">Audio</string>
     <string name="unsupported_error">Nieobsługiwany błąd</string>
     <string name="encoding_error">Błąd kodowania</string>
+    <string name="player_load_one_subtitle_online">Wczytaj pierwsze dostępne</string>
+    <string name="torrent_not_accepted">Niezaakceptowany torrent</string>
+    <string name="torrent_preferred_media">Włącz torrent w Ustawienia/Źródła/Preferowane multimedia</string>
 </resources>
