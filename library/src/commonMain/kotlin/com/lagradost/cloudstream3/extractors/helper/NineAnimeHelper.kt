@@ -1,6 +1,9 @@
 package com.lagradost.cloudstream3.extractors.helper
 
-// taken from https://github.com/saikou-app/saikou/blob/b35364c8c2a00364178a472fccf1ab72f09815b4/app/src/main/java/ani/saikou/parsers/anime/NineAnime.kt
+import com.lagradost.cloudstream3.utils.StringUtils.decodeUri
+import com.lagradost.cloudstream3.utils.StringUtils.encodeUri
+
+// Taken from https://github.com/saikou-app/saikou/blob/b35364c8c2a00364178a472fccf1ab72f09815b4/app/src/main/java/ani/saikou/parsers/anime/NineAnime.kt
 // GNU General Public License v3.0 https://github.com/saikou-app/saikou/blob/main/LICENSE.md
 object NineAnimeHelper {
     private const val nineAnimeKey =
@@ -106,7 +109,7 @@ object NineAnimeHelper {
     }
 
     fun encode(input: String): String =
-        java.net.URLEncoder.encode(input, "utf-8").replace("+", "%20")
+        input.encodeUri().replace("+", "%20")
 
-    private fun decode(input: String): String = java.net.URLDecoder.decode(input, "utf-8")
+    private fun decode(input: String): String = input.decodeUri()
 }

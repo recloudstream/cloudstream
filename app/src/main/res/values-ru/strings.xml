@@ -544,11 +544,11 @@
 \nПРИМЕЧАНИЕ. Если сумма равна 10 или более, плеер автоматически пропустит загрузку при загрузке этой ссылки!</string>
     <string name="links_reloaded_toast">Ссылки перезагружены</string>
     <string name="select_an_account">Выбрать аккаунт</string>
-    <string name="favorite_removed">%s убрано из избранных</string>
+    <string name="favorite_removed">%s убрано из любимого</string>
     <string name="enter_pin">Введите пин-код</string>
     <string name="lock_profile">Защитить профиль</string>
     <string name="pin">Пин-код</string>
-    <string name="duplicate_title">Найден возможный дубликат</string>
+    <string name="duplicate_title">Найден потенциальный дубликат</string>
     <string name="duplicate_add">Добавить</string>
     <string name="pin_error_incorrect">Неверный пин-код. Попробуйте снова.</string>
     <string name="pin_error_length">Пин-код должен состоять из 4 цифр</string>
@@ -558,14 +558,14 @@
     <string name="skip_startup_account_select_pref">Пропускать выбор аккаунта при запуске</string>
     <string name="rotate_video">Повернуть</string>
     <string name="rotate_video_desc">Показывать переключатель ориентации экрана</string>
-    <string name="duplicate_replace_all">Заменить все</string>
+    <string name="duplicate_replace_all">Заменить всё</string>
     <string name="duplicate_message_multiple" formatted="true">Потенциальные дубликаты элементов были найдены в вашей библиотеке:
 \n
 \n\'%s.\'
 \n
 \nВы хотите добавить этот элемент, заменить существующие или отменить это действие?</string>
-    <string name="action_remove_from_favorites">Убрать из избранного</string>
-    <string name="action_add_to_favorites">Добавить в избранное</string>
+    <string name="action_remove_from_favorites">Убрать из любимого</string>
+    <string name="action_add_to_favorites">Добавить в любимое</string>
     <string name="auto_rotate_video_desc">Включить автоматическую смену ориентации экрана на основе ориентации видео</string>
     <string name="auto_rotate_video">Автоповорот</string>
     <string name="rotate_video_key">rotate_video_key</string>
@@ -574,8 +574,8 @@
     <string name="duplicate_replace">Заменить</string>
     <string name="enter_current_pin">Введите текущий пин-код</string>
     <string name="auto_rotate_video_key">auto_rotate_video_key</string>
-    <string name="favorites_list_name">Избранное</string>
-    <string name="favorite_added">%s добавлено в избранное</string>
+    <string name="favorites_list_name">Любимое</string>
+    <string name="favorite_added">%s добавлено в любимое</string>
     <string name="enter_pin_with_name" formatted="true">Введите пин-код от %s</string>
     <string name="action_subscribe">Подписаться</string>
     <string name="backup_frequency">Частота резервного копирования</string>
@@ -665,4 +665,9 @@
     <string name="custom">Пользовательский</string>
     <string name="torrent_info">Это видео является торрентом, это значит, что вашу видеоактивность можно отследить.\nУбедитесь, что вы понимаете работу торрентов, прежде чем продолжить.</string>
     <string name="subs_edge_size">Размер Границ</string>
+    <string name="encoding_error">Ошибка кодировки</string>
+    <string name="unsupported_error">Не поддерживается</string>
+    <string name="player_load_one_subtitle_online">Загрузить первое доступное</string>
+    <string name="audio_singluar">Аудио</string>
+    <string name="podcast_singluar">Подкаст</string>
 </resources>

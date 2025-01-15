@@ -704,4 +704,7 @@
     <string name="no_subtitles_loaded">尚未載入字幕</string>
     <string name="torrent_info">此影片是 Torrent，這意味著你的影片活動可以被追蹤。\n在繼續之前，請確保你瞭解 Torrenting。</string>
     <string name="subs_edge_size">subs_edge_size</string>
+    <string name="audio_singluar">音樂</string>
+    <string name="encoding_error">編碼錯誤</string>
+    <string name="unsupported_error">因為不支持造成的錯誤</string>
 </resources>

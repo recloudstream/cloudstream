@@ -46,14 +46,6 @@ class RepoAdapter(
         }
     }
 
-    // Clear glide image because setImageResource doesn't override
-//    override fun onViewRecycled(holder: RecyclerView.ViewHolder) {
-//        holder.itemView.entry_icon?.let { repoIcon ->
-//            GlideApp.with(repoIcon).clear(repoIcon)
-//        }
-//        super.onViewRecycled(holder)
-//    }
-
     override fun getItemCount(): Int {
         return repositories.size
     }
