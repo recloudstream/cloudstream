@@ -689,4 +689,7 @@
     <string name="podcast_singluar">Podcast</string>
     <string name="unsupported_error">Errore non supportato</string>
     <string name="encoding_error">Errore di codifica</string>
+    <string name="player_load_one_subtitle_online">Carica il primo disponibile</string>
+    <string name="torrent_not_accepted">Torrent non accettato</string>
+    <string name="torrent_preferred_media">Abilita torrent in Impostazioni/Provider/Media preferiti</string>
 </resources>
