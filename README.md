@@ -72,7 +72,7 @@ We **happily** accept any contributions to our project. To find out where you ca
 <a id="issues"></a> 
  
 ### Issues: 
-While we **actively** accept issues and pull requests; We do require you fill out an [template](https://github.com/recloudstream/cloudstream/issues/new/choose) for issues, these include the following:
+While we **actively** accept issues and pull requests, we do require you fill out an [template](https://github.com/recloudstream/cloudstream/issues/new/choose) for issues. These include the following:
 
 <a id="bug_report"></a>
 
