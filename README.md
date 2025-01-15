@@ -2,9 +2,11 @@
 
 **⚠️ Warning: By default, this app doesn't provide any video sources; you have to install extensions to add functionality to the app.**
 
+[![Discord](https://invidget.switchblade.xyz/5Hus6fM)](https://discord.gg/5Hus6fM)
+
+
 ## Table of Contents: 
 + [About Us:](#about_us)
-+ [Discord Server:](#discord)
 + [Installation Steps:](#install_rules)
 + [Contributing:](#contributing)
 + [Issues:](#issues)
@@ -46,13 +48,6 @@ Our documentation is unmaintained and open to contributions; therefore, apps and
 + Chromecast
 + Extension system for personal customization
 
-<a id="discord"></a>
-
-### Discord Server: 
-
-We have a Discord server that hosts our passionate community; if you wish to talk with the project's maintainers, have questions about CloudStream, or just hang out, please join our Discord server through the link below. 
-
-[![Discord](https://invidget.switchblade.xyz/5Hus6fM)](https://discord.gg/5Hus6fM)
 
 <a id="install_rules"></a>
 
@@ -80,7 +75,7 @@ While we **actively** accept issues and pull requests, we do require you fill ou
   - For bug reports, we want as much info as possible, including your downloaded version of CloudeStream, device and updated version (if possible, current API),
     expected behavior of the program, and the actual behavior that the program did, most importantly we require clear, reproducible steps of the bug. If your bug can't be       reproduced, it is unlikely we'll work on your issue.
     
-<a id="#enhancment">
+<a id="enhancment"></a>
   
 - [Feature Request Template: ](https://github.com/recloudstream/cloudstream/issues/new?assignees=&labels=enhancement&projects=&template=feature-request.yml)
   - Before adding a feature request, please check to see if a feature request already has been requested.  
@@ -88,7 +83,7 @@ While we **actively** accept issues and pull requests, we do require you fill ou
 
 ### Extensions:
  
-**Further details on creating extensions for CloudStream are found in our documentation. **
+**Further details on creating extensions for CloudStream are found in our documentation.**
 
 [Guide: For Extension Developers](https://recloudstream.github.io/csdocs/devs/gettingstarted/) 
 
