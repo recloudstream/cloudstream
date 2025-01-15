@@ -58,7 +58,7 @@ We have a Discord server that hosts our passionate community; if you wish to tal
 
 ## Installation: 
 
-Our documentation provides the steps to Install Cloudstream. The steps are simple and extensively customizable for your streaming needs! 
+Our documentation provides the steps to install and configure CloudStream for your streaming needs.
 
 [Getting Started With CloudStream:](https://recloudstream.github.io/csdocs/)
 
