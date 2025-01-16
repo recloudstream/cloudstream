@@ -82,12 +82,8 @@ dependencies {
 dokka {
     dokkaSourceSets {
         moduleName = "Cloudstream"
-        register("cloudstream") {
-            listOf("androidMain", "commonMain").forEach { srcName ->
-                sourceRoots.from("../library/src/$srcName/kotlin")
-            }
-            sourceRoots.from(file("../app/src/main/java"))
 
+        configureEach {
             classpath.from(android.bootClasspath)
             classpath.from(dokkaImplementation.files)
 
@@ -98,13 +94,50 @@ dokka {
             }
 
             externalDocumentationLinks {
-                dokkaImplementation.dependencies.forEach {
-                    register(it.name) {
-                        url = URI("https://javadoc.io/doc/${it.group}/${it.name}/${it.version}")
-                        packageListUrl = URI("https://javadoc.io/doc/${it.group}/${it.name}/${it.version}/package-list")
-                    }
+                register("android") {
+                    url = URI("https://developer.android.com/reference/")
+                    packageListUrl = URI("https://developer.android.com/reference/package-list")
+                }
+                register("androidx") {
+                    url = URI("https://developer.android.com/reference/androidx/")
+                    packageListUrl = URI("https://developer.android.com/reference/androidx/package-list")
+                }
+                register("android.kotlin") {
+                    url = URI("https://developer.android.com/reference/kotlin/packages/")
+                    packageListUrl = URI("https://developer.android.com/reference/kotlin/package-list")
+                }
+                register("androidx.kotlin") {
+                    url = URI("https://developer.android.com/reference/kotlin/androidx/packages/")
+                    packageListUrl = URI("https://developer.android.com/reference/kotlin/androidx/package-list")
+                }
+                register("kotlinx.coroutines") {
+                    url = URI("https://kotlinlang.org/api/kotlinx.coroutines/")
+                }
+                register("kotlinx.datetime") {
+                    url = URI("https://kotlinlang.org/api/kotlinx-datetime/")
+                    packageListUrl = URI("https://kotlinlang.org/api/kotlinx-datetime/kotlinx-datetime/package-list")
+                }
+                register("okio") {
+                    url = URI("https://square.github.io/okio/3.x/okio/")
+                    packageListUrl = URI("https://square.github.io/okio/3.x/okio/okio/package-list")
+                }
+                register("okhttp") {
+                    url = URI("https://square.github.io/okhttp/5.x/okhttp/okhttp3/")
+                    packageListUrl = URI("https://square.github.io/okhttp/5.x/package-list")
                 }
             }
+        }
+
+        register("androidMain") {
+            sourceRoots.from("../library/src/androidMain/kotlin")
+        }
+
+        register("commonMain") {
+            sourceRoots.from("../library/src/commonMain/kotlin")
+        }
+
+        register("kotlinMain") {
+            sourceRoots.from("../app/src/main/java")
         }
     }
 }
