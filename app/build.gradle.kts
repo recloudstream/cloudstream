@@ -266,3 +266,16 @@ tasks.withType<KotlinJvmCompile> {
         freeCompilerArgs.add("-Xjvm-default=all-compatibility")
     }
 }
+
+dokka {
+    moduleName = "App"
+    dokkaSourceSets {
+        configureEach {
+            sourceLink {
+                localDirectory = rootDir
+                remoteUrl("https://github.com/recloudstream/cloudstream/tree/master")
+                remoteLineSuffix = "#L"
+            }
+        }
+    }
+}

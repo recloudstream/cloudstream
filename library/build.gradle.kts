@@ -7,6 +7,7 @@ plugins {
     id("maven-publish")
     id("com.android.library")
     id("com.codingfeline.buildkonfig")
+    id("org.jetbrains.dokka")
 }
 
 val javaTarget = JvmTarget.fromTarget(libs.versions.jvmTarget.get())
@@ -83,6 +84,19 @@ publishing {
     publications {
         withType<MavenPublication> {
             groupId = "com.lagradost.api"
+        }
+    }
+}
+
+dokka {
+    moduleName = "Library"
+    dokkaSourceSets {
+        configureEach {
+            sourceLink {
+                localDirectory = rootDir
+                remoteUrl("https://github.com/recloudstream/cloudstream/tree/master")
+                remoteLineSuffix = "#L"
+            }
         }
     }
 }
