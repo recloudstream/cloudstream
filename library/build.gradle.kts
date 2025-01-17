@@ -95,7 +95,6 @@ dokka {
     moduleName.set("Library")
     dokkaSourceSets {
         configureEach {
-            // Temporary workaround for https://github.com/Kotlin/dokka/issues/2876.
             analysisPlatform.set(KotlinPlatform.AndroidJVM)
             documentedVisibilities(
                 VisibilityModifier.Public,

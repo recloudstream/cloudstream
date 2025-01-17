@@ -274,7 +274,6 @@ dokka {
 
     dokkaSourceSets {
         main {
-            // Temporary workaround for https://github.com/Kotlin/dokka/issues/2876.
             analysisPlatform.set(KotlinPlatform.JVM)
             documentedVisibilities(
                 VisibilityModifier.Public,
