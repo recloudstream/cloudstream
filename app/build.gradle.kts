@@ -12,7 +12,7 @@ val javaTarget = JvmTarget.fromTarget(libs.versions.jvmTarget.get())
 val tmpFilePath = System.getProperty("user.home") + "/work/_temp/keystore/"
 val prereleaseStoreFile: File? = File(tmpFilePath).listFiles()?.first()
 
-fun getCommitHash(): String? {
+fun getGitCommitHash(): String? {
     val headFile = file("${project.rootDir}/.git/HEAD")
 
     // Read the commit hash from .git/HEAD
@@ -59,7 +59,7 @@ android {
         versionName = "4.4.2"
 
         resValue("string", "app_version", "${defaultConfig.versionName}${versionNameSuffix ?: ""}")
-        resValue("string", "commit_hash", getCommitHash() ?: "")
+        resValue("string", "commit_hash", getGitCommitHash() ?: "")
         resValue("bool", "is_prerelease", "false")
 
         // Reads local.properties
