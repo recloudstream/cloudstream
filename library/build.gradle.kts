@@ -1,6 +1,9 @@
 import com.codingfeline.buildkonfig.compiler.FieldSpec
+import org.jetbrains.dokka.gradle.engine.parameters.KotlinPlatform
+import org.jetbrains.dokka.gradle.engine.parameters.VisibilityModifier
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
+import java.net.URI
 
 plugins {
     kotlin("multiplatform")
@@ -89,13 +92,35 @@ publishing {
 }
 
 dokka {
-    moduleName = "Library"
+    moduleName.set("Library")
     dokkaSourceSets {
         configureEach {
+            // Temporary workaround for https://github.com/Kotlin/dokka/issues/2876.
+            analysisPlatform.set(KotlinPlatform.AndroidJVM)
+            documentedVisibilities(
+                VisibilityModifier.Public,
+                VisibilityModifier.Protected
+            )
+
             sourceLink {
-                localDirectory = rootDir
+                localDirectory.set(file(".."))
                 remoteUrl("https://github.com/recloudstream/cloudstream/tree/master")
                 remoteLineSuffix = "#L"
+            }
+
+            externalDocumentationLinks {
+                register("com.fasterxml.jackson.core") {
+                    url = URI("https://javadoc.io/doc/com.fasterxml.jackson.core/jackson-core/${libs.versions.jacksonModuleKotlin.get()}/")
+                    packageListUrl = URI("https://javadoc.io/doc/com.fasterxml.jackson.core/jackson-core/${libs.versions.jacksonModuleKotlin.get()}/package-list")
+                }
+                register("okio") {
+                    url = URI("https://square.github.io/okio/3.x/okio/")
+                    packageListUrl = URI("https://square.github.io/okio/3.x/okio/okio/package-list")
+                }
+                register("okhttp") {
+                    url = URI("https://square.github.io/okhttp/5.x/okhttp/okhttp3/")
+                    packageListUrl = URI("https://square.github.io/okhttp/5.x/package-list")
+                }
             }
         }
     }

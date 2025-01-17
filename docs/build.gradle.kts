@@ -7,3 +7,7 @@ dependencies {
     dokka(project(":app"))
     dokka(project(":library"))
 }
+
+dokka {
+    moduleName.set("Cloudstream")
+}

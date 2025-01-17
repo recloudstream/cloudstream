@@ -1,4 +1,6 @@
 import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
+import org.jetbrains.dokka.gradle.engine.parameters.KotlinPlatform
+import org.jetbrains.dokka.gradle.engine.parameters.VisibilityModifier
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 import java.io.ByteArrayOutputStream
@@ -268,13 +270,21 @@ tasks.withType<KotlinJvmCompile> {
 }
 
 dokka {
-    moduleName = "App"
+    moduleName.set("App")
+
     dokkaSourceSets {
-        configureEach {
+        main {
+            // Temporary workaround for https://github.com/Kotlin/dokka/issues/2876.
+            analysisPlatform.set(KotlinPlatform.JVM)
+            documentedVisibilities(
+                VisibilityModifier.Public,
+                VisibilityModifier.Protected
+            )
+
             sourceLink {
-                localDirectory = rootDir
+                localDirectory.set(file(".."))
                 remoteUrl("https://github.com/recloudstream/cloudstream/tree/master")
-                remoteLineSuffix = "#L"
+                remoteLineSuffix.set("#L")
             }
         }
     }
