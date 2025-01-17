@@ -4,10 +4,10 @@ plugins {
 }
 
 dependencies {
-    dokka(project(":app"))
-    dokka(project(":library"))
+    dokka(project(":app:"))
+    dokka(project(":library:"))
 }
 
 dokka {
-    moduleName.set("Cloudstream")
+    moduleName = "Cloudstream"
 }

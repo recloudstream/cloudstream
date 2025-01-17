@@ -270,20 +270,19 @@ tasks.withType<KotlinJvmCompile> {
 }
 
 dokka {
-    moduleName.set("App")
-
+    moduleName = "App"
     dokkaSourceSets {
         main {
-            analysisPlatform.set(KotlinPlatform.JVM)
+            analysisPlatform = KotlinPlatform.JVM
             documentedVisibilities(
                 VisibilityModifier.Public,
                 VisibilityModifier.Protected
             )
 
             sourceLink {
-                localDirectory.set(file(".."))
+                localDirectory = file("..")
                 remoteUrl("https://github.com/recloudstream/cloudstream/tree/master")
-                remoteLineSuffix.set("#L")
+                remoteLineSuffix = "#L"
             }
         }
     }
