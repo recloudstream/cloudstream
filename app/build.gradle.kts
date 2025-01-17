@@ -1,7 +1,6 @@
 import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
-import java.io.ByteArrayOutputStream
 
 plugins {
     id("com.android.application")
@@ -13,22 +12,20 @@ val javaTarget = JvmTarget.fromTarget(libs.versions.jvmTarget.get())
 val tmpFilePath = System.getProperty("user.home") + "/work/_temp/keystore/"
 val prereleaseStoreFile: File? = File(tmpFilePath).listFiles()?.first()
 
-fun String.execute(): String? {
-    val output = ByteArrayOutputStream()
+fun getCommitHash(): String? {
+    val headFile = file("${project.rootDir}/.git/HEAD")
 
-    val process = ProcessBuilder()
-        .command(this.split(" "))
-        .redirectOutput(ProcessBuilder.Redirect.PIPE)
-        .start()
-
-    val exitValue = process.inputStream.use { input ->
-        input.copyTo(output)
-        process.waitFor()
-    }
-
-    return if (exitValue == 0) {
-        output.toString().trim()
-    } else null
+    // Read the commit hash from .git/HEAD
+    return if (headFile.exists()) {
+        val headContent = headFile.readText().trim()
+        if (headContent.startsWith("ref:")) {
+            val refPath = headContent.substring(5) // e.g., refs/heads/main
+            val commitFile = file("${project.rootDir}/.git/$refPath")
+            if (commitFile.exists()) commitFile.readText().trim() else ""
+        } else headContent // If it's a detached HEAD (commit hash directly)
+    } else {
+        null // If .git/HEAD doesn't exist
+    }?.take(7)
 }
 
 android {
@@ -62,7 +59,7 @@ android {
         versionName = "4.4.2"
 
         resValue("string", "app_version", "${defaultConfig.versionName}${versionNameSuffix ?: ""}")
-        resValue("string", "commit_hash", "git rev-parse --short HEAD".execute() ?: "")
+        resValue("string", "commit_hash", getCommitHash() ?: "")
         resValue("bool", "is_prerelease", "false")
 
         // Reads local.properties
