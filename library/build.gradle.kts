@@ -104,7 +104,7 @@ dokka {
             sourceLink {
                 localDirectory.set(file(".."))
                 remoteUrl("https://github.com/recloudstream/cloudstream/tree/master")
-                remoteLineSuffix = "#L"
+                remoteLineSuffix.set("#L")
             }
 
             externalDocumentationLinks {
