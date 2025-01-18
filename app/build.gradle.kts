@@ -13,19 +13,23 @@ val tmpFilePath = System.getProperty("user.home") + "/work/_temp/keystore/"
 val prereleaseStoreFile: File? = File(tmpFilePath).listFiles()?.first()
 
 fun getGitCommitHash(): String {
-    val headFile = file("${project.rootDir}/.git/HEAD")
+    return try {
+        val headFile = file("${project.rootDir}/.git/HEAD")
 
-    // Read the commit hash from .git/HEAD
-    return if (headFile.exists()) {
-        val headContent = headFile.readText().trim()
-        if (headContent.startsWith("ref:")) {
-            val refPath = headContent.substring(5) // e.g., refs/heads/main
-            val commitFile = file("${project.rootDir}/.git/$refPath")
-            if (commitFile.exists()) commitFile.readText().trim() else ""
-        } else headContent // If it's a detached HEAD (commit hash directly)
-    } else {
-        "" // If .git/HEAD doesn't exist
-    }.take(7)
+        // Read the commit hash from .git/HEAD
+        if (headFile.exists()) {
+            val headContent = headFile.readText().trim()
+            if (headContent.startsWith("ref:")) {
+                val refPath = headContent.substring(5) // e.g., refs/heads/main
+                val commitFile = file("${project.rootDir}/.git/$refPath")
+                if (commitFile.exists()) commitFile.readText().trim() else ""
+            } else headContent // If it's a detached HEAD (commit hash directly)
+        } else {
+            "" // If .git/HEAD doesn't exist
+        }.take(7) // Return the short commit hash
+    } catch (_: Throwable) {
+        "" // Just return an empty string if any exception occurs
+    }
 }
 
 android {
