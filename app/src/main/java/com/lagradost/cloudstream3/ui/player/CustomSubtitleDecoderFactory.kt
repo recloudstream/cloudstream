@@ -1,6 +1,8 @@
 package com.lagradost.cloudstream3.ui.player
 
 import android.content.Context
+import android.text.Spannable
+import android.text.SpannableString
 import android.util.Log
 import androidx.annotation.OptIn
 import androidx.media3.common.Format
@@ -24,6 +26,8 @@ import androidx.media3.extractor.text.webvtt.WebvttParser
 import androidx.preference.PreferenceManager
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.mvvm.logError
+import com.lagradost.cloudstream3.ui.subtitles.SaveCaptionStyle
+import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment
 import org.mozilla.universalchardet.UniversalDetector
 import java.lang.ref.WeakReference
 import java.nio.charset.Charset
@@ -53,9 +57,7 @@ class CustomDecoder(private val fallbackFormat: Format?) : SubtitleParser {
         private const val UTF_8 = "UTF-8"
         private const val TAG = "CustomDecoder"
         private var overrideEncoding: String? = null
-        var regexSubtitlesToRemoveCaptions = false
-        var regexSubtitlesToRemoveBloat = false
-        var uppercaseSubtitles = false
+        val style: SaveCaptionStyle get() = SubtitlesFragment.getCurrentSavedStyle()
         val bloatRegex =
             listOf(
                 Regex(
@@ -122,21 +124,28 @@ class CustomDecoder(private val fallbackFormat: Format?) : SubtitleParser {
     }
 
     private fun getSubtitleParser(data: String): SubtitleParser? {
-        // this way we read the subtitle file and decide what decoder to use instead of relying fully on mimetype
+        // This way we read the subtitle file and decide what decoder to use instead of relying fully on mimetype
+
+        // First we remove all invisible characters at the start, this is an issue in some subtitle files
+        // Cntrl is control characters: https://en.wikipedia.org/wiki/Unicode_control_characters
+        // Cf is formatting characters: https://www.compart.com/en/unicode/category/Cf
+        val controlCharsRegex = Regex("""[\p{Cntrl}\p{Cf}]""")
+        val trimmedText = data.trimStart { it.isWhitespace() || controlCharsRegex.matches(it.toString()) }
+
         //https://github.com/LagradOst/CloudStream-2/blob/ddd774ee66810137ff7bd65dae70bcf3ba2d2489/CloudStreamForms/CloudStreamForms/Script/MainChrome.cs#L388
         val subtitleParser = when {
             // "WEBVTT" can be hidden behind invisible characters not filtered by trim
-            data.substring(0, 10).contains("WEBVTT", ignoreCase = true) -> WebvttParser()
-            data.startsWith("<?xml version=\"", ignoreCase = true) -> TtmlParser()
-            (data.startsWith(
+            trimmedText.substring(0, 10).contains("WEBVTT", ignoreCase = true) -> WebvttParser()
+            trimmedText.startsWith("<?xml version=\"", ignoreCase = true) -> TtmlParser()
+            (trimmedText.startsWith(
                 "[Script Info]",
                 ignoreCase = true
-            ) || data.startsWith(
+            ) || trimmedText.startsWith(
                 "Title:",
                 ignoreCase = true
             )) -> SsaParser(fallbackFormat?.initializationData)
 
-            data.startsWith("1", ignoreCase = true) -> SubripParser()
+            trimmedText.startsWith("1", ignoreCase = true) -> SubripParser()
             fallbackFormat != null -> {
                 when (val mimeType = fallbackFormat.sampleMimeType) {
                     MimeTypes.TEXT_VTT -> WebvttParser()
@@ -176,6 +185,7 @@ class CustomDecoder(private val fallbackFormat: Format?) : SubtitleParser {
         outputOptions: SubtitleParser.OutputOptions,
         output: Consumer<CuesWithTiming>
     ) {
+        val currentStyle = style
         val customOutput = Consumer<CuesWithTiming> { cue ->
             currentSubtitleCues.add(
                 SubtitleCue(
@@ -184,8 +194,29 @@ class CustomDecoder(private val fallbackFormat: Format?) : SubtitleParser {
                     cue.cues.map { it.text.toString() })
             )
 
+            // add an extra span here to change the subtitle
+            val edgeSize = currentStyle.edgeSize
+            val newCue = if (edgeSize == null) {
+                cue
+            } else {
+                CuesWithTiming(cue.cues.map { c ->
+                    c.buildUpon().apply {
+                        val customSpan = SpannableString.valueOf(text ?: return@apply)
+                        customSpan.setSpan(
+                            OutlineSpan(edgeSize), 0, customSpan.length,
+                            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                        )
+                        setText(customSpan)
+                    }.build()
+                }, cue.startTimeUs, cue.durationUs)
+            }
+
             val updatedCues =
-                CuesWithTiming(cue.cues, cue.startTimeUs - subtitleOffset.times(1000), cue.durationUs)
+                CuesWithTiming(
+                    newCue.cues,
+                    newCue.startTimeUs - subtitleOffset.times(1000),
+                    newCue.durationUs
+                )
 
             output.accept(updatedCues)
         }
@@ -202,15 +233,15 @@ class CustomDecoder(private val fallbackFormat: Format?) : SubtitleParser {
                 )
                 realDecoder?.let { decoder ->
                     if (decoder !is SsaParser) {
-                        if (regexSubtitlesToRemoveCaptions)
+                        if (currentStyle.removeCaptions)
                             captionRegex.forEach { rgx ->
                                 str = str.replace(rgx, "\n")
                             }
-                        if (regexSubtitlesToRemoveBloat)
+                        if (currentStyle.removeBloat)
                             bloatRegex.forEach { rgx ->
                                 str = str.replace(rgx, "\n")
                             }
-                        if (uppercaseSubtitles) {
+                        if (currentStyle.upperCase) {
                             str = str.uppercase()
                         }
                     }

@@ -214,7 +214,7 @@
     <string name="documentaries">Documentários</string>
     <string name="ova">OVA</string>
     <string name="asian_drama">Dramas Asiáticos</string>
-    <string name="livestreams">Transmissões em Direto</string>
+    <string name="livestreams">Transmissões ao vivo</string>
     <string name="others">Outros</string>
     <!--singular-->
     <string name="movies_singular">Filme</string>
@@ -225,7 +225,7 @@
     <string name="torrent_singular">Torrent</string>
     <string name="documentaries_singular">Documentário</string>
     <string name="asian_drama_singular">Drama Asiático</string>
-    <string name="live_singular">Transmissão em Direto</string>
+    <string name="live_singular">Transmissão ao vivo</string>
     <string name="source_error">Erro de fornecimento</string>
     <string name="remote_error">Erro remoto</string>
     <string name="render_error">Erro de renderização</string>
@@ -235,8 +235,6 @@
     <string name="episode_action_chromecast_mirror">Alternativa pelo Chromecast</string>
     <string name="episode_action_play_in_app">Assistir no App</string>
     <string name="episode_action_play_in_format">Assistir no %s</string>
-    <string name="episode_action_play_in_browser">Assistir no navegador</string>
-    <string name="episode_action_copy_link">Copiar link</string>
     <string name="episode_action_auto_download">Auto download</string>
     <string name="episode_action_download_mirror">Baixar por servidor alternativo</string>
     <string name="episode_action_reload_links">Recarregar links</string>
@@ -251,7 +249,7 @@
     <string name="video_lock">Bloquear</string>
     <string name="video_aspect_ratio_resize">Mudar Tamanho</string>
     <string name="video_source">Fonte</string>
-    <string name="video_skip_op">Pular OP</string>
+    <string name="video_skip_op">Pular Abertura</string>
     <string name="dont_show_again">Não mostrar de novo</string>
     <string name="skip_update">Pular essa Atualização</string>
     <string name="update">Atualizar</string>
@@ -399,8 +397,8 @@
     <string name="setup_done">Feito</string>
     <string name="extensions">Extensões</string>
     <string name="add_repository">Adicionar repositório</string>
-    <string name="repository_name_hint">Nome do repositório</string>
-    <string name="repository_url_hint">URL do repositório</string>
+    <string name="repository_name_hint">Nome do repositório (opcional)</string>
+    <string name="repository_url_hint">URL do repositório ou link curto</string>
     <string name="plugin_loaded">Plugin Carregado</string>
     <string name="plugin_deleted">Plugin Apagado</string>
     <string name="plugin_load_fail" formatted="true">Não consegui carregar %s :-(</string>
@@ -538,16 +536,13 @@
     <string name="start">Começar</string>
     <string name="extension_types">Suportado</string>
     <string name="extension_status">Status</string>
-    <string name="player_settings_play_in_mpv">MPV</string>
     <string name="skip_type_mixed_op">Abrindo mistura</string>
-    <string name="player_settings_play_in_vlc">VLC</string>
     <string name="apply_on_restart">Reinicie o aplicativo para ver as alterações.</string>
     <string name="safe_mode_crash_info">Visualização info de crash</string>
     <string name="audio_tracks">Faixas de áudio</string>
     <string name="sort_updated_new">Adicionado em (novo para antigo)</string>
     <string name="video_tracks">Faixas de video</string>
     <string name="pref_category_subtitles">Legendas</string>
-    <string name="player_settings_play_in_browser">Navegador</string>
     <string name="is_adult">18+</string>
     <string name="pref_category_links">Links</string>
     <string name="pref_category_player_features">Funcionalidades do Player</string>
@@ -563,7 +558,6 @@
     <string name="other_singular">Vídeo</string>
     <string name="pref_category_android_tv">Android TV</string>
     <string name="wifi">Wi-Fi</string>
-    <string name="player_settings_play_in_web">Lista de videos da web</string>
     <string name="unable_to_inflate">A interface de usuário não foi gerada corretamente. Isto se trata de um bug importante e deve ser reportado imediatamente %s</string>
     <string name="pref_category_ui_features">Características da interface de usuário</string>
     <string name="category_provider_test">Provedor de teste</string>
@@ -642,7 +636,6 @@
     <string name="reset_btn">Redefinir</string>
     <string name="episode_upcoming_format" formatted="true">Próximos em %s</string>
     <string name="next_season_episode_format" formatted="true">Temporada %1$d Episódio %2$d será lançado em</string>
-    <string name="player_settings_play_in_fcast">Fcast</string>
     <string name="player_settings_select_cast_device">Selecione o dispositivo de transmissão</string>
     <string name="episode_action_cast_mirror">Espelhar transmissão</string>
     <string name="cs3wiki">CloudStream Wiki</string>
@@ -685,4 +678,18 @@
     <string name="deselect_all">Desmarcar todos</string>
     <string name="preview_seekbar_desc">Ativar visualização de miniatura na barra de busca</string>
     <string name="preview_seekbar">Visualização da barra de busca</string>
+    <string name="no_subtitles_loaded">Ainda não há legendas carregadas</string>
+    <string name="show">Mostrar</string>
+    <string name="confirm_before_exiting_title">Confirmar antes de sair</string>
+    <string name="confirm_before_exiting_desc">Mostrar caixa de diálogo antes de sair do aplicativo</string>
+    <string name="dont_show">Não mostrar</string>
+    <string name="backup_path_title">Local da pasta de backup</string>
+    <string name="custom">Personalizado</string>
+    <string name="subs_edge_size">Tamanho da borda</string>
+    <string name="torrent_info">Este vídeo é um Torrent, o que significa que sua atividade de vídeo pode ser rastreada.\nCertifique-se de que você entendeu o que é Torrenting antes de continuar.</string>
+    <string name="encoding_error">Erro de codificação</string>
+    <string name="unsupported_error">Erro não suportado</string>
+    <string name="player_load_one_subtitle_online">Carregar primeiro disponível</string>
+    <string name="audio_singluar">Áudio</string>
+    <string name="podcast_singluar">Podcast</string>
 </resources>

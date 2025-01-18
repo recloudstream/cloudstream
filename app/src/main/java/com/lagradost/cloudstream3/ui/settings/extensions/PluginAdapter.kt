@@ -5,7 +5,6 @@ import android.text.format.Formatter.formatShortFileSize
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
@@ -18,23 +17,24 @@ import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.databinding.RepositoryItemBinding
 import com.lagradost.cloudstream3.plugins.PluginManager
 import com.lagradost.cloudstream3.plugins.VotingApi.getVotes
-import com.lagradost.cloudstream3.ui.result.setText
-import com.lagradost.cloudstream3.ui.result.txt
+import com.lagradost.cloudstream3.utils.setText
+import com.lagradost.cloudstream3.utils.txt
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.utils.AppContextUtils.html
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.main
+import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
 import com.lagradost.cloudstream3.utils.SubtitleHelper.fromTwoLettersToLanguage
 import com.lagradost.cloudstream3.utils.SubtitleHelper.getFlagFromIso
-import com.lagradost.cloudstream3.utils.UIHelper.setImage
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
+import com.lagradost.cloudstream3.utils.getImageFromDrawable
+import org.junit.Assert
+import org.junit.Test
 import java.text.DecimalFormat
 import kotlin.math.floor
 import kotlin.math.log10
 import kotlin.math.pow
-import org.junit.Test
-import org.junit.Assert
 
 data class PluginViewData(
     val plugin: Plugin,
@@ -86,12 +86,10 @@ class PluginAdapter(
         return PluginManager.getPluginsOnline().also { storedPlugins = it }
     }*/
 
-    // Clear glide image because setImageResource doesn't override
+    // Clear coil image because setImageResource doesn't override
     override fun onViewRecycled(holder: RecyclerView.ViewHolder) {
         if (holder is PluginViewHolder) {
-            holder.binding.entryIcon.let { pluginIcon ->
-                com.bumptech.glide.Glide.with(pluginIcon).clear(pluginIcon)
-            }
+            holder.binding.entryIcon.loadImage(R.drawable.ic_github_logo)
         }
         super.onViewRecycled(holder)
     }
@@ -200,20 +198,15 @@ class PluginAdapter(
                 binding.actionSettings.isVisible = false
             }
 
-            if (!binding.entryIcon.setImage(//itemView.entry_icon?.height ?:
+            binding.entryIcon.loadImage(
                     metadata.iconUrl?.replace(
                         "%size%",
                         "$iconSize"
                     )?.replace(
                         "%exact_size%",
                         "$iconSizeExact"
-                    ),
-                    null,
-                    errorImageDrawable = R.drawable.ic_baseline_extension_24
-                )
-            ) {
-                binding.entryIcon.setImageResource(R.drawable.ic_baseline_extension_24)
-            }
+                    )
+                ) { error(getImageFromDrawable(itemView.context, R.drawable.ic_baseline_extension_24)) }
 
             binding.extVersion.isVisible = true
             binding.extVersion.text = "v${metadata.version}"

@@ -1,25 +1,38 @@
 package com.lagradost.cloudstream3.utils
 
+import android.Manifest
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
+import android.app.Service
 import android.content.*
+import android.content.pm.PackageManager
+import android.content.pm.ServiceInfo
+import android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
+import android.os.Build.VERSION.SDK_INT
 import android.util.Log
 import androidx.annotation.DrawableRes
+import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.graphics.drawable.toBitmap
 import androidx.core.net.toUri
 import androidx.preference.PreferenceManager
 import androidx.work.Data
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.model.GlideUrl
+import coil3.Extras
+import coil3.ImageLoader
+import coil3.SingletonImageLoader
+import coil3.asDrawable
+import coil3.request.ImageRequest
+import coil3.request.SuccessResult
+import coil3.request.allowHardware
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
 import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
@@ -32,6 +45,7 @@ import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.mvvm.launchSafe
 import com.lagradost.cloudstream3.mvvm.logError
+import com.lagradost.cloudstream3.services.PackageInstallerService.Companion.UPDATE_NOTIFICATION_ID
 import com.lagradost.cloudstream3.services.VideoDownloadService
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Coroutines.main
@@ -52,6 +66,7 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
@@ -59,7 +74,6 @@ import java.io.Closeable
 import java.io.File
 import java.io.IOException
 import java.io.OutputStream
-import java.lang.IllegalArgumentException
 import java.util.*
 
 const val DOWNLOAD_CHANNEL_ID = "cloudstream3.general"
@@ -196,6 +210,7 @@ object VideoDownloadManager {
     val downloadQueue = LinkedList<DownloadResumePackage>()
 
     private var hasCreatedNotChanel = false
+
     private fun Context.createNotificationChannel() {
         hasCreatedNotChanel = true
         // Create the NotificationChannel, but only on API 26+ because
@@ -231,15 +246,26 @@ object VideoDownloadManager {
                 return cachedBitmaps[url]
             }
 
-            val bitmap = Glide.with(this)
-                .asBitmap()
-                .load(GlideUrl(url) { headers ?: emptyMap() })
-                .submit(720, 720)
-                .get()
+            val imageLoader = SingletonImageLoader.get(this)
 
-            if (bitmap != null) {
-                cachedBitmaps[url] = bitmap
+            val request = ImageRequest.Builder(this)
+                .data(url)
+                .apply {
+                    headers?.forEach { (key, value) ->
+                        extras[Extras.Key<String>(key)] = value
+                    }
+                }
+                .build()
+
+            val bitmap = runBlocking {
+                val result = imageLoader.execute(request)
+                (result as? SuccessResult)?.image?.asDrawable(applicationContext.resources)?.toBitmap()
             }
+
+            bitmap?.let {
+                cachedBitmaps[url] = it
+            }
+
             return bitmap
         } catch (e: Exception) {
             logError(e)
@@ -296,7 +322,7 @@ object VideoDownloadManager {
                     flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 }
                 val pendingIntent: PendingIntent =
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    if (SDK_INT >= Build.VERSION_CODES.M) {
                         PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
                     } else {
                         //fixme Specify a better flag
@@ -321,7 +347,7 @@ object VideoDownloadManager {
             }
             val downloadFormat = context.getString(R.string.download_format)
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            if (SDK_INT >= Build.VERSION_CODES.O) {
                 if (ep.poster != null) {
                     val poster = withContext(Dispatchers.IO) {
                         context.getImageBitmapFromUrl(ep.poster)
@@ -415,7 +441,7 @@ object VideoDownloadManager {
                 builder.setContentText(txt)
             }
 
-            if ((state == DownloadType.IsDownloading || state == DownloadType.IsPaused) && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            if ((state == DownloadType.IsDownloading || state == DownloadType.IsPaused) && SDK_INT >= Build.VERSION_CODES.O) {
                 val actionTypes: MutableList<DownloadActionType> = ArrayList()
                 // INIT
                 if (state == DownloadType.IsDownloading) {
@@ -473,6 +499,13 @@ object VideoDownloadManager {
             notificationCallback(ep.id, notification)
             with(NotificationManagerCompat.from(context)) {
                 // notificationId is a unique int for each notification that you must define
+                if (ActivityCompat.checkSelfPermission(
+                        context,
+                        Manifest.permission.POST_NOTIFICATIONS
+                    ) != PackageManager.PERMISSION_GRANTED
+                ) {
+                    return null
+                }
                 notify(ep.id, notification)
             }
             return notification
@@ -502,7 +535,9 @@ object VideoDownloadManager {
         basePath: String?
     ): List<Pair<String, Uri>>? {
         val base = basePathToFile(context, basePath)
-        val folder = base?.gotoDirectory(relativePath, false) ?: return null
+        val folder =
+            base?.gotoDirectory(relativePath, createMissingDirectories = false) ?: return null
+        
         //if (folder.isDirectory() != false) return null
 
         return folder.listFiles()
@@ -535,7 +570,7 @@ object VideoDownloadManager {
         }
 
         fun delete(): Boolean {
-            return file.delete()
+            return file.delete() == true
         }
 
         val resume: Boolean get() = fileLength > 0L
@@ -576,7 +611,8 @@ object VideoDownloadManager {
     ): StreamData {
         val displayName = getDisplayName(name, extension)
 
-        val subDir = baseFile.gotoDirectoryOrThrow(folder)
+        val subDir = baseFile.gotoDirectory(folder, createMissingDirectories = true)
+            ?: throw IOException("Cant create directory")
         val foundFile = subDir.findFile(displayName)
 
         val (file, fileLength) = if (foundFile == null || foundFile.exists() != true) {
@@ -1564,7 +1600,7 @@ object VideoDownloadManager {
         return when {
             path.isNullOrBlank() -> getDefaultDir(context)
             path.startsWith("content://") -> SafeFile.fromUri(context, path.toUri())
-            else -> SafeFile.fromFile(context, File(path))
+            else -> SafeFile.fromFilePath(context, path)
         }
     }
 
@@ -1704,7 +1740,7 @@ object VideoDownloadManager {
     ) {
         if (!(currentDownloads.size < maxConcurrentDownloads && downloadQueue.size > 0)) return
 
-        val pkg = downloadQueue.removeFirst()
+        val pkg = downloadQueue.removeAt(0)
         val item = pkg.item
         val id = item.ep.id
         if (currentDownloads.contains(id)) { // IF IT IS ALREADY DOWNLOADING, RESUME IT
@@ -1776,7 +1812,7 @@ object VideoDownloadManager {
         getDownloadFileInfo(context, id)
 
     private fun DownloadedFileInfo.toFile(context: Context): SafeFile? {
-        return basePathToFile(context, this.basePath)?.gotoDirectory(relativePath)
+        return basePathToFile(context, this.basePath)?.gotoDirectory(relativePath, createMissingDirectories = false)
             ?.findFile(displayName)
     }
 

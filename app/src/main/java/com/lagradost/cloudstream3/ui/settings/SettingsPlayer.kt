@@ -6,6 +6,7 @@ import android.view.View
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.actions.VideoClickActionHolder
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
 import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
@@ -155,10 +156,17 @@ class SettingsPlayer : PreferenceFragmentCompat() {
             return@setOnPreferenceClickListener true
         }
 
-        getPref(R.string.player_pref_key)?.setOnPreferenceClickListener {
-            val prefNames = resources.getStringArray(R.array.player_pref_names)
-            val prefValues = resources.getIntArray(R.array.player_pref_values)
-            val current = settingsManager.getInt(getString(R.string.player_pref_key), 1)
+        getPref(R.string.player_default_key)?.setOnPreferenceClickListener {
+            val players = VideoClickActionHolder.getPlayers(activity)
+            val prefNames = buildList {
+                add(getString(R.string.player_settings_play_in_app))
+                addAll(players.map { it.name.asStringNull(activity) ?: it.javaClass.simpleName })
+            }
+            val prefValues = buildList {
+                add("")
+                addAll(players.map { it.uniqueId() })
+            }
+            val current = settingsManager.getString(getString(R.string.player_default_key), "") ?: ""
 
             activity?.showBottomDialog(
                 prefNames.toList(),
@@ -166,7 +174,7 @@ class SettingsPlayer : PreferenceFragmentCompat() {
                 getString(R.string.player_pref),
                 true,
                 {}) {
-                settingsManager.edit().putInt(getString(R.string.player_pref_key), prefValues[it]).apply()
+                settingsManager.edit().putString(getString(R.string.player_default_key), prefValues[it]).apply()
             }
             return@setOnPreferenceClickListener true
         }

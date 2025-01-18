@@ -8,6 +8,8 @@ import android.content.Intent
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
+import coil3.PlatformContext
+import coil3.SingletonImageLoader
 import com.lagradost.api.setContext
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.mvvm.suspendSafeApiCall
@@ -22,6 +24,7 @@ import com.lagradost.cloudstream3.utils.DataStore.getKeys
 import com.lagradost.cloudstream3.utils.DataStore.removeKey
 import com.lagradost.cloudstream3.utils.DataStore.removeKeys
 import com.lagradost.cloudstream3.utils.DataStore.setKey
+import com.lagradost.cloudstream3.utils.ImageLoader
 import kotlinx.coroutines.runBlocking
 import org.acra.ACRA
 import org.acra.ReportField
@@ -42,11 +45,11 @@ import kotlin.system.exitProcess
 class CustomReportSender : ReportSender {
     // Sends all your crashes to google forms
     override fun send(context: Context, errorContent: CrashReportData) {
-        println("Sending report")
+        /*println("Sending report")
         val url =
-            "https://docs.google.com/forms/d/e/1FAIpQLSfO4r353BJ79TTY_-t5KWSIJT2xfqcQWY81xjAA1-1N0U2eSg/formResponse"
+            "https://docs.google.com/forms/d/e/$id/formResponse"
         val data = mapOf(
-            "entry.1993829403" to errorContent.toJSON()
+            "entry.$entry" to errorContent.toJSON()
         )
 
         thread { // to not run it on main thread
@@ -62,7 +65,7 @@ class CustomReportSender : ReportSender {
             normalSafeApiCall {
                 Toast.makeText(context, R.string.acra_report_toast, Toast.LENGTH_SHORT).show()
             }
-        }
+        }*/
     }
 }
 
@@ -97,10 +100,14 @@ class ExceptionHandler(val errorFile: File, val onError: (() -> Unit)) :
 
 }
 
-class AcraApplication : Application() {
+class AcraApplication : Application(), SingletonImageLoader.Factory {
 
     override fun onCreate() {
         super.onCreate()
+        // if we want to initialise coil at earliest
+        // (maybe when loading an image or gif using in splash screen activity)
+        //ImageLoader.buildImageLoader(applicationContext)
+
         ExceptionHandler(filesDir.resolve("last_error")) {
             val intent = context!!.packageManager.getLaunchIntentForPackage(context!!.packageName)
             startActivity(Intent.makeRestartActivityTask(intent!!.component))
@@ -132,6 +139,11 @@ class AcraApplication : Application() {
                 //opening this block automatically enables the plugin.
             }*/
         }
+    }
+
+    override fun newImageLoader(context: PlatformContext): coil3.ImageLoader {
+        // Coil Module will be initialized & setSafe globally when first loadImage() is invoked
+        return ImageLoader.buildImageLoader(applicationContext)
     }
 
     companion object {

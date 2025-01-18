@@ -51,6 +51,7 @@ import com.google.android.gms.common.wrappers.Wrappers
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.APIHolder.apis
+import com.lagradost.cloudstream3.AcraApplication.Companion.getActivity
 import com.lagradost.cloudstream3.CommonActivity.activity
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.MainActivity.Companion.afterRepositoryLoadedEvent
@@ -104,7 +105,7 @@ object AppContextUtils {
         this?.window?.setWindowAnimations(-1)
         this?.show()
         Handler(Looper.getMainLooper()).postDelayed({
-            this?.window?.setWindowAnimations(R.style.Animation_Design_BottomSheetDialog)
+            this?.window?.setWindowAnimations(com.google.android.material.R.style.Animation_Design_BottomSheetDialog)
         }, 200)
     }
 
@@ -645,7 +646,7 @@ object AppContextUtils {
         url: String,
         fallbackWebview: Boolean = false,
         fragment: Fragment? = null,
-    ) {
+    ) = (this.getActivity() ?: activity)?.runOnUiThread {
         try {
             val intent = Intent(Intent.ACTION_VIEW)
             intent.data = Uri.parse(url)
@@ -677,10 +678,12 @@ object AppContextUtils {
     }
 
     fun Context.isNetworkAvailable(): Boolean {
-        val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val connectivityManager =
+            getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             val network = connectivityManager.activeNetwork ?: return false
-            val networkCapabilities = connectivityManager.getNetworkCapabilities(network) ?: return false
+            val networkCapabilities =
+                connectivityManager.getNetworkCapabilities(network) ?: return false
             networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
         } else {
             @Suppress("DEPRECATION")
@@ -753,15 +756,17 @@ object AppContextUtils {
     fun loadResult(
         url: String,
         apiName: String,
+        name : String,
         startAction: Int = 0,
         startValue: Int = 0
     ) {
-        (activity as FragmentActivity?)?.loadResult(url, apiName, startAction, startValue)
+        (activity as FragmentActivity?)?.loadResult(url, apiName, name, startAction, startValue)
     }
 
     fun FragmentActivity.loadResult(
         url: String,
         apiName: String,
+        name : String,
         startAction: Int = 0,
         startValue: Int = 0
     ) {
@@ -777,7 +782,7 @@ object AppContextUtils {
             // viewModelStore.clear()
             this.navigate(
                 getResultsId(),
-                ResultFragment.newInstance(url, apiName, startAction, startValue)
+                ResultFragment.newInstance(url, apiName, name, startAction, startValue)
             )
         }
     }

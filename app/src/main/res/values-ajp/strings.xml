@@ -6,7 +6,7 @@
     <string name="title_downloads">التنزيلات</string>
     <string name="app_dub_sub_episode_text_format" formatted="true">%1$sالحلقة %2$d</string>
     <string name="delete_file">محي الملف</string>
-    <string name="acra_report_toast">سوري، الآپ تعطل. رح ينبعت تقرير عن المشكلة للمطورين.</string>
+    <string name="acra_report_toast">سوري، الآپ تعطل. رح ينبعت تقرير عن المشكلة للمطورين</string>
     <string name="episode_format" formatted="true">%1$d %2$s</string>
     <string name="bug_report_settings_off">بس بعات البيانات وقت ما يتعطل الآپ</string>
     <string name="preview_background_img_des">شوف الخلفية</string>
@@ -168,7 +168,7 @@
     <string name="movies">أفلام</string>
     <string name="free_storage">فاضي</string>
     <string name="year">سنة</string>
-    <string name="no_subtitles">مافي ترجمة</string>
+    <string name="no_subtitles">طفي الترجمة</string>
     <string name="synopsis">القصة</string>
     <string name="used_storage">مستعمل</string>
     <string name="resume_time_left" formatted="true">%dد
@@ -195,7 +195,7 @@
     <string name="movies_singular">فيلم</string>
     <string name="torrent_singular">تورنت</string>
     <string name="no_update_found">م لقينا تجديد</string>
-    <string name="check_for_update">شوف إذا في تجديد</string>
+    <string name="check_for_update">شوف إزا فيه تجديد</string>
     <string name="render_error">في مشكلة بجهاز العرض (Renderer error)</string>
     <string name="show_title">العِنوان</string>
     <string name="jsdelivr_proxy">پروكسي \"گِت هَب\"</string>
@@ -221,9 +221,7 @@
     <string name="video_disk_description">بسبِب أعطال إزا نحط على مستوى عالي كتير على الأجهزة يللي م بتساع كتير، متل تلفزيون \"أندرويد\".</string>
     <string name="others">شي غير</string>
     <string name="skip_update">أفي هيدا التجديد</string>
-    <string name="episode_action_copy_link">نسوخ الرابط</string>
     <string name="episode_action_play_in_app">مَشي بال آپ</string>
-    <string name="episode_action_play_in_browser">مشي بمتصفح الويب</string>
     <string name="dns_pref_summary">مفيد لتجاوز المنع من مزود خدمة الإنترنت</string>
     <string name="tv_series_singular">مسلسل</string>
     <string name="video_aspect_ratio_resize">غير الحجم</string>
@@ -357,7 +355,7 @@
     <string name="bottom_title_settings_des">حط العنوان تحت الپوستر</string>
     <string name="category_providers">المصادر</string>
     <string name="cast_format" formatted="true">ممثلين: %s</string>
-    <string name="repository_url_hint">رابط الريپوزيتاري</string>
+    <string name="repository_url_hint">رابط أو كود الريپو</string>
     <string name="subtitles_depressed">مدپرس</string>
     <string name="safe_mode_description">من ورا عطل، كل الإضفات نطفت لنساعدكن تلاقو أيا إضافة عم بتسبب المشكلة.</string>
     <string name="view_public_repositories_button_short">لايحة عامة</string>
@@ -390,10 +388,8 @@
     <string name="update_notification_failed">م قدرنا ننزل الإصدار الجديد تبع الآپ</string>
     <string name="extension_authors">المؤلفين</string>
     <string name="plugin_singular">إضافة</string>
-    <string name="player_settings_play_in_web">كاست ڤيديو ع الوَب</string>
     <string name="duplicate_title">معقول يكون موجود أصلًا</string>
     <string name="subscription_list_name">مشتركينلو</string>
-    <string name="player_settings_play_in_browser">متصفح الوَب</string>
     <string name="all_languages_preference">كل اللغات</string>
     <string name="uppercase_all_subtitles">دايمًا كتوب ب أحرف كاپيتال، A بدل a</string>
     <string name="player_pref">مشغل الڤيديو المفضل</string>
@@ -401,12 +397,12 @@
     <string name="batch_download_start_format" formatted="true">بَلَش تنزيل %1$d %2$s
 \n…</string>
     <string name="extension_description">الوصف</string>
-    <string name="view_public_repositories_button">شوف الريپوز تبع المجتمع</string>
+    <string name="view_public_repositories_button">شوف الريپويات تبع مجتمع \"كلاود ستريم\"</string>
     <string name="safe_mode_title">إنت هلّق بال وضع الآمن</string>
     <string name="revert">سترجاع</string>
     <string name="quality_hdr">HDR</string>
     <string name="plugins_not_downloaded" formatted="true">مش منزل: %d</string>
-    <string name="next">ل بعدو</string>
+    <string name="next">اللي بعده</string>
     <string name="network_adress_example">https://example.com/example.mp4</string>
     <string name="select_library">نقي الرفّ</string>
     <string name="subscription_deleted">وقفتو الإشتراك لـ\"%s\"</string>
@@ -422,7 +418,6 @@
     <string name="setup_done">خلصت</string>
     <string name="clear_history">محي السجل</string>
     <string name="sort_updated_old">تجَدَد (من قديم للجديد)</string>
-    <string name="player_settings_play_in_vlc">\"ڤي أل سي ميديا پلاير\"</string>
     <string name="quality_cam_rip">كاميرا</string>
     <string name="quality_webrip">وَب</string>
     <string name="sort_alphabetical_z">أبجديًا (من الياء للألف)</string>
@@ -448,7 +443,7 @@
     <string name="skip_type_recap">التلخيص</string>
     <string name="yes">إِيه</string>
     <string name="actor_main">الرئيسي</string>
-    <string name="apply_on_restart">سكر الآپ حتى تطبق التغيرات</string>
+    <string name="apply_on_restart">سكر الآپ حتى تطبق التغيرات.</string>
     <string name="help">ساعدوني</string>
     <string name="subtitle_offset_extra_hint_before_format">عوز هيدا إذا عم بتبين الترجمة %d ميلي ثانية بعد ما لازم</string>
     <string name="app_not_found_error">م نلاقا الآپ</string>
@@ -457,7 +452,7 @@
     <string name="recommended">مقترح</string>
     <string name="quality_ts">TS</string>
     <string name="player_load_subtitles_online">فتاح من الإنترنت</string>
-    <string name="app_layout_subtext">غَبر شكل الآپ حتى يتناسب مع جهازك</string>
+    <string name="app_layout_subtext">غَير شكل الآپ حتى يتناسب مع جهازك</string>
     <string name="plugins_disabled" formatted="true">مطفي: %d</string>
     <string name="stop">وقف</string>
     <string name="empty_library_logged_in_message">هيدي للايحة فاضية. جربو تبدلو ع غيرا.</string>
@@ -473,7 +468,7 @@
     <string name="sync_total_episodes_none">/؟؟</string>
     <string name="actor_background">الخلفية</string>
     <string name="sort_alphabetical_a">أبجديًا (من الألف للياء)</string>
-    <string name="previous">ل قبلو</string>
+    <string name="previous">اللي قبله</string>
     <string name="quality_hq">HQ</string>
     <string name="plugin_downloaded">تنزلت الإضافة</string>
     <string name="reload_error">رجاع جَرِب تعمل إتصال…</string>
@@ -491,7 +486,7 @@
     <string name="subtitles_remove_bloat">شيل الإعلانات من الترجمة</string>
     <string name="empty_library_no_accounts_message">رفّكن فاضي ☹
 \nفوتو على أكونت فيها رفّ الڤيديوات يللي حضرينها أو زيدو ڤيديوات بال رفّ المحلي.</string>
-    <string name="repository_name_hint">إسم الريپوزيتاري</string>
+    <string name="repository_name_hint">اسم الريپو (مش ضروري)</string>
     <string name="qualities">الجودات</string>
     <string name="error_invalid_data">بيانات مش صالحة</string>
     <string name="use">عوز</string>
@@ -504,7 +499,6 @@
     <string name="upload_sync">مزامنة</string>
     <string name="safe_mode_crash_info">شوفو معلومات عن المشكلة</string>
     <string name="extension_types">مدعوم</string>
-    <string name="player_settings_play_in_mpv">\"أم پي ڤي\"</string>
     <string name="subtitle_offset">ظبّط وقت الترجمة</string>
     <string name="skip_type_mixed_op">افتتاح مختلط</string>
     <string name="trailer">مقطع دعائي</string>
@@ -533,7 +527,7 @@
     <string name="plugins_updated" formatted="true">عدد الإضافيات يللي تجددت: %d</string>
     <string name="delayed_update_notice">رح يتجدد الآپ وقتا تطلعو مِنو</string>
     <string name="hls_playlist">پلاي ليست \"ايش أل أس\"</string>
-    <string name="add_repository">زيد ريپوزيتوري</string>
+    <string name="add_repository">زيد ريپو</string>
     <string name="action_mark_as_watched">علم إنو حضرتو</string>
     <string name="preferred_media_subtext">شو بَدَك تشوف</string>
     <string name="subtitles_remove_captions">شيل المعلومات يللي محطوطة بال ترجمة ل يللي عندن فقد سمعي</string>
@@ -608,7 +602,7 @@
 \nباقي</string>
     <string name="biometric_unsupported">المصادقة البيومترية مش مدعومة ع هالجهاز</string>
     <string name="unfavorite">شيله من المفضل</string>
-    <string name="repo_copy_label">اسم وعنوان الريپوزيتوري</string>
+    <string name="repo_copy_label">اسم وعنوان الريپو</string>
     <string name="toast_copied">نتسخ!</string>
     <string name="clipboard_permission_error">فيه ارور بال وصول ل الكليپ-بورد. پليز جرب مرة أخرى.</string>
     <string name="clipboard_unknown_error">فيه ارور بال نسخ. پليز نسوخ الـLogcat 🐈 وبعته ل المسؤولين عن دعم الآپ.</string>
@@ -627,7 +621,6 @@
     <string name="episode_upcoming_format" formatted="true">رح ينزل ب %s</string>
     <string name="next_season_episode_format" formatted="true">الحلقة ال %2$d من الجزء ال%1$d رح تنزل ب</string>
     <string name="episode_action_cast_mirror">كاست مراية</string>
-    <string name="player_settings_play_in_fcast">إف كاست</string>
     <string name="player_settings_select_cast_device">نقي جهاز الكاست</string>
     <string name="cs3wiki">ويكي \"كلود ستريم\"</string>
     <string name="pref_category_accounts">أكونتات</string>
@@ -638,13 +631,13 @@
     <string name="device_pin_counter_text">بتخلص مدة الپِن ب %1$d دقايق و%2$d ثانية</string>
     <string name="auth_locally">فوت عال أكونت محليًا</string>
     <string name="dismiss">تجاهل</string>
-    <string name="open_downloaded_repo">متاح الريپوزيتوري</string>
+    <string name="open_downloaded_repo">فتاح الريپو</string>
     <string name="device_pin_url_message">فتاح <b>%s</b> ع تلفونك أو كمپيوترك، وحط الكود اللي فوق</string>
     <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
     <string name="play_from_beginning_img_des">بلشه من الأول</string>
     <string name="test_warning">تحذير</string>
     <string name="open_local_video">فتاح الڤيديو اللي ع جهازك</string>
-    <string name="downloads_empty">مافي تنزيلات هلّق</string>
+    <string name="downloads_empty">مافي تنزيلات هلّق.</string>
     <string name="delete_plugin">محي الإضافة</string>
     <string name="hide_player_control_names">محي اسامي كبسات صيطرة مشغل الڤيديو</string>
     <string name="sort_release_date_new">نهار اللي نزل (من جديد ل قديم)</string>
@@ -669,4 +662,20 @@
 \n%s</string>
     <string name="preview_seekbar">صورة زغيرة مع التقريب وال تبعيد</string>
     <string name="preview_seekbar_desc">بت حط صورة زغير من الڤيديو إنت و عم بت قرب أو ترجع بال ڤيديو</string>
+    <string name="no_subtitles_loaded">بعد مش معمول لود لولا ترجمة</string>
+    <string name="show">فرجي</string>
+    <string name="dont_show">م تفرجي</string>
+    <string name="confirm_before_exiting_desc">طلوب تأكيد قبلما تطلع من الآپ</string>
+    <string name="confirm_before_exiting_title">أكّد إنو بدك تطلع</string>
+    <string name="backup_path_title">محل النسخة الاحتياطية</string>
+    <string name="custom">حدد غير محل</string>
+    <string name="torrent_info">هيدا الڤيديو تورينت. هيدا بيعني إنه فيه ينعمله تراك، يعني بينعرف شو عم تحضر.\nإزا م بتعرف شو التورينت، م تستعمله.</string>
+    <string name="subs_edge_size">حجم الحفّة</string>
+    <string name="podcast_singluar">پودكاست</string>
+    <string name="audio_singluar">صوت</string>
+    <string name="unsupported_error">أرور، مش مدعوم</string>
+    <string name="encoding_error">أرور بال إنكودينگ</string>
+    <string name="player_load_one_subtitle_online">أفّي اللودينگ تلقائيًا</string>
+    <string name="torrent_preferred_media">سماح ب إستعمال الـTorrent بال سَتِنگز/المصادر/المحتوى المفضل</string>
+    <string name="torrent_not_accepted">تورنت مش مدعوم</string>
 </resources>

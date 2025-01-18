@@ -4,6 +4,7 @@ import android.net.Uri
 import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.amap
 import com.lagradost.cloudstream3.utils.ExtractorLink
+import com.lagradost.cloudstream3.utils.ExtractorLinkType
 import com.lagradost.cloudstream3.utils.INFER_TYPE
 import com.lagradost.cloudstream3.utils.Qualities
 import com.lagradost.cloudstream3.utils.loadExtractor
@@ -69,10 +70,11 @@ class LinkGenerator(
 
     override suspend fun generateLinks(
         clearCache: Boolean,
-        type: LoadType,
+        sourceTypes: Set<ExtractorLinkType>,
         callback: (Pair<ExtractorLink?, ExtractorUri?>) -> Unit,
         subtitleCallback: (SubtitleData) -> Unit,
-        offset: Int
+        offset: Int,
+        isCasting: Boolean
     ): Boolean {
         links.amap { link ->
             if (!extract || !loadExtractor(link.url, referer, {

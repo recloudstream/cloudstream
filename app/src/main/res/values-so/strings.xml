@@ -119,7 +119,6 @@
     <string name="pref_category_defaults">Asalkiisa</string>
     <string name="episode_action_play_in_app">Isla appkan ku daawo</string>
     <string name="episode_action_play_in_format">Ku daawo %s</string>
-    <string name="episode_action_play_in_browser">Ku daawo barawsarka</string>
     <string name="episode_action_auto_download">Dejinta iskeed ah</string>
     <string name="episode_action_download_mirror">Deji toorentiga(mirror)</string>
     <string name="episode_action_reload_links">Cusbooneysii lifaaqyada</string>
@@ -239,7 +238,6 @@
     <string name="show_log_cat">Eeg xogaha hoose 🐈</string>
     <string name="player_size_settings">Badhinka xajmiga daaraha</string>
     <string name="render_error">Fashil ka yimi dhiibaha</string>
-    <string name="episode_action_copy_link">Koobu garee lifaaqa</string>
     <string name="torrent_no_plot">Sharraxaad ma leh</string>
     <string name="torrent_plot">Sharraxaadda</string>
     <string name="normal_no_plot">Duluc ma leh</string>
@@ -472,10 +470,6 @@
     <string name="extensions">Kordhiyeyaasha</string>
     <string name="view_public_repositories_button_short">Liiska bulshada kale</string>
     <string name="player_settings_play_in_app">Muqaal daaraha appka</string>
-    <string name="player_settings_play_in_vlc">VLC</string>
-    <string name="player_settings_play_in_mpv">MPV</string>
-    <string name="player_settings_play_in_web">Web Video Cast</string>
-    <string name="player_settings_play_in_browser">Barawsarka</string>
     <string name="app_not_found_error">Kuuguma jiro appkaasi</string>
     <string name="all_languages_preference">Dhammaan luuqadaha</string>
     <string name="skip_type_format" formatted="true">Is dhaafi %s</string>

@@ -68,7 +68,7 @@ class DownloadFragment : Fragment() {
     }
 
     override fun onDestroyView() {
-        activity?.detachBackPressedCallback()
+        activity?.detachBackPressedCallback("Downloads")
         binding = null
         super.onDestroyView()
     }
@@ -160,7 +160,7 @@ class DownloadFragment : Fragment() {
             adapter?.setIsMultiDeleteState(isMultiDeleteState)
             binding?.downloadDeleteAppbar?.isVisible = isMultiDeleteState
             if (!isMultiDeleteState) {
-                activity?.detachBackPressedCallback()
+                activity?.detachBackPressedCallback("Downloads")
                 downloadsViewModel.clearSelectedItems()
                 // Prevent race condition and make sure
                 // we don't display it early
@@ -244,7 +244,7 @@ class DownloadFragment : Fragment() {
             }
 
             DOWNLOAD_ACTION_LOAD_RESULT -> {
-                activity?.loadResult(click.data.url, click.data.apiName)
+                activity?.loadResult(click.data.url, click.data.apiName, click.data.name)
             }
         }
     }
@@ -253,7 +253,7 @@ class DownloadFragment : Fragment() {
         if (selected.isNotEmpty()) {
             binding?.downloadDeleteAppbar?.isVisible = true
             binding?.downloadStorageAppbar?.isVisible = false
-            activity?.attachBackPressedCallback {
+            activity?.attachBackPressedCallback("Downloads") {
                 downloadsViewModel.setIsMultiDeleteState(false)
             }
 

@@ -42,7 +42,7 @@ class DownloadedPlayerActivity : AppCompatActivity() {
 
         val data = intent.data
 
-        if (intent?.action == Intent.ACTION_SEND) {
+        if (intent?.action == Intent.ACTION_SEND || intent?.action == Intent.ACTION_OPEN_DOCUMENT || intent?.action == Intent.ACTION_VIEW) {
             val extraText = normalSafeApiCall { // I dont trust android
                 intent.getStringExtra(Intent.EXTRA_TEXT)
             }
@@ -70,7 +70,7 @@ class DownloadedPlayerActivity : AppCompatActivity() {
             return
         }
 
-        attachBackPressedCallback { finish() }
+        attachBackPressedCallback("DownloadedPlayerActivity") { finish() }
     }
 
     override fun onResume() {

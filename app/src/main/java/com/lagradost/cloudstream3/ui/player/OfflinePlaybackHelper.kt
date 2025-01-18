@@ -23,6 +23,10 @@ object OfflinePlaybackHelper {
     }
 
     fun playUri(activity: Activity, uri: Uri) {
+        if (uri.scheme == "magnet") {
+            playLink(activity, uri.toString())
+            return
+        }
         val name = SafeFile.fromUri(activity, uri)?.name()
         activity.navigate(
             R.id.global_to_navigation_player, GeneratorPlayer.newInstance(
@@ -33,7 +37,8 @@ object OfflinePlaybackHelper {
                             name = name ?: getString(activity, R.string.downloaded_file),
                             // well not the same as a normal id, but we take it as users may want to
                             // play downloaded files and save the location
-                            id = kotlin.runCatching { ContentUris.parseId(uri) }.getOrNull()?.hashCode()
+                            id = kotlin.runCatching { ContentUris.parseId(uri) }.getOrNull()
+                                ?.hashCode()
                         )
                     )
                 )

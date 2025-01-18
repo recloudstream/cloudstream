@@ -58,6 +58,7 @@ object APIHolder {
         apiMap = null
     }
 
+    /** String extension function to Capitalize first char of string.*/
     fun String.capitalize(): String {
         return this.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
     }
@@ -220,6 +221,10 @@ object APIHolder {
         }
     }
 
+    /** Searches Anilist using title.
+     * @param title Title string of the show
+     * @return [AniSearch] data class holds search info.
+     * */
     private suspend fun searchAnilist(
         title: String?,
     ): AniSearch? {
@@ -351,19 +356,28 @@ data class MainPageRequest(
     //TODO genre selection or smth
 )
 
+/** Create [MainPageData] from url, name Strings & layout (Horizontal/Vertical) Boolean.
+ * @param url page Url string.
+ * @param name page Name string.
+ * @param horizontalImages Boolean to control item card layout.
+ * */
 fun mainPage(url: String, name: String, horizontalImages: Boolean = false): MainPageData {
     return MainPageData(name = name, data = url, horizontalImages = horizontalImages)
 }
 
+/** return list of MainPageData with url to name, make for more readable code
+ * @param elements parameter of [MainPageData] class of data*/
 fun mainPageOf(vararg elements: MainPageData): List<MainPageData> {
     return elements.toList()
 }
 
-/** return list of MainPageData with url to name, make for more readable code */
+/** return list of MainPageData with url to name, make for more readable code
+ * @param elements parameter of <String, String> map of url and name */
 fun mainPageOf(vararg elements: Pair<String, String>): List<MainPageData> {
     return elements.map { (url, name) -> MainPageData(name = name, data = url) }
 }
 
+@Suppress("DEPRECATION")
 fun newHomePageResponse(
     name: String,
     list: List<SearchResponse>,
@@ -375,6 +389,7 @@ fun newHomePageResponse(
     )
 }
 
+@Suppress("DEPRECATION")
 fun newHomePageResponse(
     data: MainPageRequest,
     list: List<SearchResponse>,
@@ -386,10 +401,12 @@ fun newHomePageResponse(
     )
 }
 
+@Suppress("DEPRECATION")
 fun newHomePageResponse(list: HomePageList, hasNext: Boolean? = null): HomePageResponse {
     return HomePageResponse(listOf(list), hasNext = hasNext ?: list.list.isNotEmpty())
 }
 
+@Suppress("DEPRECATION")
 fun newHomePageResponse(list: List<HomePageList>, hasNext: Boolean? = null): HomePageResponse {
     return HomePageResponse(list, hasNext = hasNext ?: list.any { it.list.isNotEmpty() })
 }
@@ -415,7 +432,10 @@ abstract class MainAPI {
         this.storedCredentials = data.credentials
     }
 
+    /** Name of the plugin that will used in UI */
     open var name = "NONE"
+
+    /** Main Url of the plugin that can be used directly in code or to be replaced using Clone site feature in settings */
     open var mainUrl = "NONE"
     open var storedCredentials: String? = null
     open var canBeOverridden: Boolean = true
@@ -483,6 +503,7 @@ abstract class MainAPI {
     open val mainPage = listOf(MainPageData("", "", false))
 
     // @WorkerThread
+    @Suppress("DEPRECATION")
     open suspend fun getMainPage(
         page: Int,
         request: MainPageRequest,
@@ -523,7 +544,14 @@ abstract class MainAPI {
         throw NotImplementedError()
     }
 
-    /**Callback is fired once a link is found, will return true if method is executed successfully*/
+    /**Callback is fired once a link is found, will return true if method is executed successfully
+     * @param data dataUrl string returned from [load] function.
+     * @see newMovieLoadResponse
+     * @see newTvSeriesLoadResponse
+     * @see newLiveStreamLoadResponse
+     * @see newAnimeLoadResponse
+     * @see newTorrentLoadResponse
+     * */
     // @WorkerThread
     open suspend fun loadLinks(
         data: String,
@@ -552,10 +580,12 @@ abstract class MainAPI {
 fun base64Decode(string: String): String {
     return String(base64DecodeArray(string), Charsets.ISO_8859_1)
 }
+
 @OptIn(ExperimentalEncodingApi::class)
 fun base64DecodeArray(string: String): ByteArray {
     return Base64.decode(string)
 }
+
 @OptIn(ExperimentalEncodingApi::class)
 fun base64Encode(array: ByteArray): String {
     return Base64.encode(array)
@@ -590,14 +620,27 @@ fun MainAPI.fixUrl(url: String): String {
     }
 }
 
+/** Sort the urls based on quality
+ * @param urls Set of [ExtractorLink]
+ * */
 fun sortUrls(urls: Set<ExtractorLink>): List<ExtractorLink> {
     return urls.sortedBy { t -> -t.quality }
 }
 
+/** Capitalize the first letter of string.
+ * @param str String to be capitalized
+ * @return non-nullable String
+ * @see capitalizeStringNullable
+ * */
 fun capitalizeString(str: String): String {
     return capitalizeStringNullable(str) ?: str
 }
 
+/** Capitalize the first letter of string.
+ * @param str String to be capitalized
+ * @return nullable String
+ * @see capitalizeString
+ * */
 fun capitalizeStringNullable(str: String?): String? {
     if (str == null)
         return null
@@ -617,7 +660,9 @@ fun fixTitle(str: String): String {
 
 /**
  * Get rhino context in a safe way as it needs to be initialized on the main thread.
+ *
  * Make sure you get the scope using: val scope: Scriptable = rhino.initSafeStandardObjects()
+ *
  * Use like the following: rhino.evaluateString(scope, js, "JavaScript", 1, null)
  **/
 suspend fun getRhinoContext(): org.mozilla.javascript.Context {
@@ -629,31 +674,45 @@ suspend fun getRhinoContext(): org.mozilla.javascript.Context {
     }
 }
 
-/** https://www.imdb.com/title/tt2861424/ -> tt2861424 */
+/** https://www.imdb.com/title/tt2861424/ -> tt2861424
+ * @param url Imdb Url you need to get the Id from.
+ * @return imdb id formatted string
+ * @see imdbUrlToIdNullable
+ * */
 fun imdbUrlToId(url: String): String? {
     return Regex("/title/(tt[0-9]*)").find(url)?.groupValues?.get(1)
         ?: Regex("tt[0-9]{5,}").find(url)?.groupValues?.get(0)
 }
 
+/** https://www.imdb.com/title/tt2861424/ -> tt2861424
+ * @param url Imdb Url you need to get the Id from.
+ * @return imdb id formatted nullable string
+ * @see imdbUrlToId
+ * */
 fun imdbUrlToIdNullable(url: String?): String? {
     if (url == null) return null
     return imdbUrlToId(url)
 }
 
+/** enum class determines provider type:
+ *
+ * MetaProvider: When data is fetched from a 3rd party site like imdb
+ *
+ * DirectProvider: When all data is from the site
+ * */
 enum class ProviderType {
-    // When data is fetched from a 3rd party site like imdb
     MetaProvider,
-
-    // When all data is from the site
     DirectProvider,
 }
 
+/** enum class determines VPN status (Non, MightBeNeeded or Torrent) */
 enum class VPNStatus {
     None,
     MightBeNeeded,
     Torrent,
 }
 
+/** enum class determines Show status (Completed or Ongoing) */
 enum class ShowStatus {
     Completed,
     Ongoing,
@@ -681,8 +740,11 @@ enum class TvType(value: Int?) {
     Music(13),
     AudioBook(14),
 
-    /** Wont load the built in player, make your own interaction */
+    /** Won't load the built in player, make your own interaction */
     CustomMedia(15),
+
+    Audio(16),
+    Podcast(17),
 }
 
 public enum class AutoDownloadMode(val value: Int) {
@@ -698,35 +760,79 @@ public enum class AutoDownloadMode(val value: Int) {
     }
 }
 
-// IN CASE OF FUTURE ANIME MOVIE OR SMTH
+/** Extension function of [TvType] to check if the type is Movie.
+ * @return If the type is AnimeMovie, Live, Movie, Torrent returns true otherwise returns false.
+ * */
 fun TvType.isMovieType(): Boolean {
-    return this == TvType.Movie || this == TvType.AnimeMovie || this == TvType.Torrent || this == TvType.Live
+    return when (this) {
+        TvType.AnimeMovie,
+        TvType.Live,
+        TvType.Movie,
+        TvType.Torrent -> true
+
+        else -> false
+    }
 }
 
+/** Extension function of [TvType] to check if the type is Audio.
+ * @return If the type is Audio, AudioBook, Music, PodCast returns true otherwise returns false.
+ * */
+fun TvType.isAudioType(): Boolean {
+    return when (this) {
+        TvType.Audio,
+        TvType.AudioBook,
+        TvType.Music,
+        TvType.Podcast -> true
+
+        else -> false
+    }
+}
+
+/** Extension function of [TvType] to check if the type is Live stream.
+ * @return If the type is Live returns true, otherwise returns false.
+ * */
 fun TvType.isLiveStream(): Boolean {
     return this == TvType.Live
 }
 
-// returns if the type has an anime opening
+/** Extension function of [TvType] to check if the type has an Anime opening.
+ * @return If the type is Anime or OVA returns true otherwise returns false.
+ * */
 fun TvType.isAnimeOp(): Boolean {
     return this == TvType.Anime || this == TvType.OVA
 }
 
+/** Data class for the Subtitle file info.
+ * @property lang Subtitle file language.
+ * @property url Subtitle file url to download/load the file.
+ * */
 data class SubtitleFile(val lang: String, val url: String)
 
+/** Data class for the Homepage response info.
+ * @property items List of [HomePageList] items.
+ * @property hasNext if there is a next page or not.
+ * */
+@Deprecated("Use newHomePageResponse method", level = DeprecationLevel.WARNING)
 data class HomePageResponse(
     val items: List<HomePageList>,
     val hasNext: Boolean = false
 )
 
+/** Data class for the Homepage list info.
+ * @property name name of the category shows on homepage UI.
+ * @property list list of [SearchResponse] items that will be added to the category.
+ * @property isHorizontalImages here you can control how the items' cards will be appeared on the UI (Horizontal or Vertical) cards.
+ * */
 data class HomePageList(
     val name: String,
     var list: List<SearchResponse>,
     val isHorizontalImages: Boolean = false
 )
 
+/** enum class holds search quality.
+ *
+ * [Movie release types](https://en.wikipedia.org/wiki/Pirated_movie_release_types)**/
 enum class SearchQuality(value: Int?) {
-    //https://en.wikipedia.org/wiki/Pirated_movie_release_types
     Cam(1),
     CamRip(2),
     HdCam(3),
@@ -745,8 +851,11 @@ enum class SearchQuality(value: Int?) {
     WebRip(16)
 }
 
-/**Add anything to here if you find a site that uses some specific naming convention*/
+/** Returns [SearchQuality] from String.
+ * @param string String text that will be converted into [SearchQuality].
+ * */
 fun getQualityFromString(string: String?): SearchQuality? {
+    //Add anything to here if you find a site that uses some specific naming convention
     val check = (string ?: return null).trim().lowercase().replace(" ", "")
 
     return when (check) {
@@ -790,6 +899,8 @@ fun getQualityFromString(string: String?): SearchQuality? {
     }
 }
 
+/** Abstract interface of SearchResponse.
+ * */
 interface SearchResponse {
     val name: String
     val url: String
@@ -801,6 +912,27 @@ interface SearchResponse {
     var quality: SearchQuality?
 }
 
+@Suppress("DEPRECATION")
+fun MainAPI.newTorrentSearchResponse(
+    name: String,
+    url: String,
+    type: TvType = TvType.Torrent,
+    fix: Boolean = true,
+    initializer: TorrentSearchResponse.() -> Unit = { },
+): TorrentSearchResponse {
+    val builder = TorrentSearchResponse(
+        name = name,
+        url = if (fix) fixUrl(url) else url,
+        apiName = this.name,
+        type = type,
+        // The initializer will handle this
+        posterUrl = null
+    )
+    builder.initializer()
+    return builder
+}
+
+@Suppress("DEPRECATION")
 fun MainAPI.newMovieSearchResponse(
     name: String,
     url: String,
@@ -814,6 +946,25 @@ fun MainAPI.newMovieSearchResponse(
     return builder
 }
 
+@Suppress("DEPRECATION")
+fun MainAPI.newLiveSearchResponse(
+    name: String,
+    url: String,
+    type: TvType = TvType.Live,
+    fix: Boolean = true,
+    initializer: LiveSearchResponse.() -> Unit = { },
+): LiveSearchResponse {
+    val builder = LiveSearchResponse(
+        name = name,
+        url = if (fix) fixUrl(url) else url,
+        apiName = this.name,
+        type = type
+    )
+    builder.initializer()
+    return builder
+}
+
+@Suppress("DEPRECATION")
 fun MainAPI.newTvSeriesSearchResponse(
     name: String,
     url: String,
@@ -827,7 +978,7 @@ fun MainAPI.newTvSeriesSearchResponse(
     return builder
 }
 
-
+@Suppress("DEPRECATION")
 fun MainAPI.newAnimeSearchResponse(
     name: String,
     url: String,
@@ -841,31 +992,53 @@ fun MainAPI.newAnimeSearchResponse(
     return builder
 }
 
+/** Extension function that adds quality to [SearchResponse]
+ * @param quality as string
+ * */
 fun SearchResponse.addQuality(quality: String) {
     this.quality = getQualityFromString(quality)
 }
 
+/** Extension function that adds poster to [SearchResponse]
+ * @param url nullable string for poster url
+ * @param headers Optional <String, String> map of request headers
+ * */
 fun SearchResponse.addPoster(url: String?, headers: Map<String, String>? = null) {
     this.posterUrl = url
     this.posterHeaders = headers
 }
 
+/** Extension function that adds poster to [LoadResponse]
+ * @param url nullable string for poster url
+ * @param headers Optional <String, String> map of request headers
+ * */
 fun LoadResponse.addPoster(url: String?, headers: Map<String, String>? = null) {
     this.posterUrl = url
     this.posterHeaders = headers
 }
 
+/** enum class of Actor roles (Main, Supporting, Background).*/
 enum class ActorRole {
     Main,
     Supporting,
     Background,
 }
 
+/** Data class hold Actor personal information
+ * @property name Actor name.
+ * @property image Url nullable String to Actor image (Optional).
+ * */
 data class Actor(
     val name: String,
     val image: String? = null,
 )
 
+/** Data class hold Actor information
+ * @property actor [Actor] personal info, name & image.
+ * @property role [ActorRole] (Optional).
+ * @property roleString Actor role as a string (Optional).
+ * @property voiceActor Voice [Actor] personal info, can be used in case of Animation for voice actors. (Optional).
+ * */
 data class ActorData(
     val actor: Actor,
     val role: ActorRole? = null,
@@ -873,6 +1046,10 @@ data class ActorData(
     val voiceActor: Actor? = null,
 )
 
+/** Data class of [SearchResponse] interface for Anime.
+ * @see newAnimeSearchResponse
+ * */
+@Deprecated("Use newAnimeSearchResponse", level = DeprecationLevel.WARNING)
 data class AnimeSearchResponse(
     override val name: String,
     override val url: String,
@@ -891,6 +1068,7 @@ data class AnimeSearchResponse(
     override var posterHeaders: Map<String, String>? = null,
 ) : SearchResponse
 
+@Suppress("DEPRECATION")
 fun AnimeSearchResponse.addDubStatus(status: DubStatus, episodes: Int? = null) {
     this.dubStatus = dubStatus?.also { it.add(status) } ?: EnumSet.of(status)
     if (this.type?.isMovieType() != true)
@@ -898,20 +1076,24 @@ fun AnimeSearchResponse.addDubStatus(status: DubStatus, episodes: Int? = null) {
             this.episodes[status] = episodes
 }
 
+@Suppress("DEPRECATION")
 fun AnimeSearchResponse.addDubStatus(isDub: Boolean, episodes: Int? = null) {
     addDubStatus(if (isDub) DubStatus.Dubbed else DubStatus.Subbed, episodes)
 }
 
+@Suppress("DEPRECATION")
 fun AnimeSearchResponse.addDub(episodes: Int?) {
     if (episodes == null || episodes <= 0) return
     addDubStatus(DubStatus.Dubbed, episodes)
 }
 
+@Suppress("DEPRECATION")
 fun AnimeSearchResponse.addSub(episodes: Int?) {
     if (episodes == null || episodes <= 0) return
     addDubStatus(DubStatus.Subbed, episodes)
 }
 
+@Suppress("DEPRECATION")
 fun AnimeSearchResponse.addDubStatus(
     dubExist: Boolean,
     subExist: Boolean,
@@ -925,6 +1107,7 @@ fun AnimeSearchResponse.addDubStatus(
         addDubStatus(DubStatus.Subbed, subEpisodes)
 }
 
+@Suppress("DEPRECATION")
 fun AnimeSearchResponse.addDubStatus(status: String, episodes: Int? = null) {
     if (status.contains("(dub)", ignoreCase = true)) {
         addDubStatus(DubStatus.Dubbed, episodes)
@@ -933,6 +1116,10 @@ fun AnimeSearchResponse.addDubStatus(status: String, episodes: Int? = null) {
     }
 }
 
+/** Data class of [SearchResponse] interface for Torrent.
+ * @see newTorrentSearchResponse
+ * */
+@Deprecated("Use newTorrentSearchResponse", level = DeprecationLevel.WARNING)
 data class TorrentSearchResponse(
     override val name: String,
     override val url: String,
@@ -945,6 +1132,10 @@ data class TorrentSearchResponse(
     override var posterHeaders: Map<String, String>? = null,
 ) : SearchResponse
 
+/** Data class of [SearchResponse] interface for Movies.
+ * @see newMovieSearchResponse
+ * */
+@Deprecated("Use newMovieSearchResponse", level = DeprecationLevel.WARNING)
 data class MovieSearchResponse(
     override val name: String,
     override val url: String,
@@ -958,6 +1149,10 @@ data class MovieSearchResponse(
     override var posterHeaders: Map<String, String>? = null,
 ) : SearchResponse
 
+/** Data class of [SearchResponse] interface for Live streams.
+ * @see newLiveSearchResponse
+ * */
+@Deprecated("Use newLiveSearchResponse", level = DeprecationLevel.WARNING)
 data class LiveSearchResponse(
     override val name: String,
     override val url: String,
@@ -971,6 +1166,10 @@ data class LiveSearchResponse(
     val lang: String? = null,
 ) : SearchResponse
 
+/** Data class of [SearchResponse] interface for Tv series.
+ * @see newTvSeriesSearchResponse
+ * */
+@Deprecated("Use newTvSeriesSearchResponse", level = DeprecationLevel.WARNING)
 data class TvSeriesSearchResponse(
     override val name: String,
     override val url: String,
@@ -985,14 +1184,39 @@ data class TvSeriesSearchResponse(
     override var posterHeaders: Map<String, String>? = null,
 ) : SearchResponse
 
+/** Data class of Trailer data.
+ * @property extractorUrl Url string of the Trailer video.
+ * @property referer Nullable string of referer to be used in network request.
+ * @property raw determines if [extractorUrl] should be used as direct Trailer video link instead of extracting it.
+ * */
 data class TrailerData(
     val extractorUrl: String,
     val referer: String?,
     val raw: Boolean,
-    //var mirros: List<ExtractorLink>,
-    //var subtitles: List<SubtitleFile> = emptyList(),
+    // var mirrors: List<ExtractorLink>,
+    // var subtitles: List<SubtitleFile> = emptyList(),
 )
 
+/** Abstract interface of LoadResponse responses
+ * @param name Title of the media, appears on result page.
+ * @param url Url of the media.
+ * @param apiName Plugin name, appears on result page.
+ * @param type [TvType] of the media .
+ * @param posterUrl Url of the media poster, appears on Top of result page.
+ * @param year Year of the media, appears on result page.
+ * @param plot Plot of the media, appears on result page.
+ * @param rating Rating of the media, appears on result page (0-10000).
+ * @param tags Tags of the media, appears on result page.
+ * @param duration duration of the media, appears on result page.
+ * @param trailers list of the media [TrailerData], used to load trailers.
+ * @param recommendations list of the [SearchResponse] related to media, appears on result page.
+ * @param actors list of the [ActorData] casted in the media, appears on result page.
+ * @param comingSoon determines if the media is released or coming soon.
+ * @param syncData Online sync services compatible with the media.
+ * @param posterHeaders headers map used by network request to get the poster.
+ * @param backgroundPosterUrl Url of the media background poster.
+ * @param contentRating content rating of the media, appears on result page.
+ * */
 interface LoadResponse {
     var name: String
     var url: String
@@ -1034,6 +1258,7 @@ interface LoadResponse {
             return tryParseJson(idString) ?: return emptyMap()
         }
 
+        @Suppress("DEPRECATION")
         fun LoadResponse.isMovie(): Boolean {
             return this.type.isMovieType() || this is MovieLoadResponse
         }
@@ -1110,7 +1335,7 @@ interface LoadResponse {
             addImdbId(imdbUrlToIdNullable(url))
         }
 
-        /**better to call addTrailer with mutible trailers directly instead of calling this multiple times*/
+        /**better to call addTrailer with multiple trailers directly instead of calling this multiple times*/
         suspend fun LoadResponse.addTrailer(
             trailerUrl: String?,
             referer: String? = null,
@@ -1262,21 +1487,79 @@ fun getDurationFromString(input: String?): Int? {
     return null
 }
 
+/** Extension function of [LoadResponse] to check if it's Episode based.
+ * @return True if the response is [EpisodeResponse] and its type is Episode based.
+ * */
 fun LoadResponse?.isEpisodeBased(): Boolean {
     if (this == null) return false
     return this is EpisodeResponse && this.type.isEpisodeBased()
 }
 
+/** Extension function of [LoadResponse] to check if it's Anime based.
+ * @return True if the response type is Anime or OVA.
+ * @see TvType
+ * */
 fun LoadResponse?.isAnimeBased(): Boolean {
     if (this == null) return false
     return (this.type == TvType.Anime || this.type == TvType.OVA) // && (this is AnimeLoadResponse)
 }
 
+/**
+ * Extension function to determine if the [TvType] is episode-based.
+ * This function checks if the type corresponds to an episode-based format. Episode-based types will be placed
+ * in subfolders that include the sanitized title name. This check is used for other logic as well.
+ *
+ * @return true if the [TvType] is episode-based, otherwise false.
+ */
 fun TvType?.isEpisodeBased(): Boolean {
-    if (this == null) return false
-    return (this == TvType.TvSeries || this == TvType.Anime || this == TvType.AsianDrama)
+    return when (this) {
+        TvType.Anime,
+        TvType.AsianDrama,
+        TvType.Cartoon,
+        TvType.TvSeries -> true
+
+        else -> false
+    }
 }
 
+/**
+ * Extension function to get the folder prefix based on the [TvType].
+ * Non-episode-based types will return a base folder name, while episode-based types will
+ * have their files placed in subfolders using a sanitized title name.
+ *
+ * For the actual folder path, refer to `ResultViewModel2().getFolder()`, which combines
+ * the folder prefix and, if necessary, the sanitized name to a sub-folder. The folder prefix
+ * will be used in the root directory of the configured downloads directory.
+ *
+ * @return the folder prefix corresponding to the [TvType], which is used as the root directory.
+ */
+fun TvType.getFolderPrefix(): String {
+    return when (this) {
+        TvType.Anime -> "Anime"
+        TvType.AnimeMovie -> "Movies"
+        TvType.AsianDrama -> "AsianDramas"
+        TvType.Audio -> "Audio"
+        TvType.AudioBook -> "AudioBooks"
+        TvType.Cartoon -> "Cartoons"
+        TvType.CustomMedia -> "Media"
+        TvType.Documentary -> "Documentaries"
+        TvType.Live -> "LiveStreams"
+        TvType.Movie -> "Movies"
+        TvType.Music -> "Music"
+        TvType.NSFW -> "NSFW"
+        TvType.OVA -> "OVAs"
+        TvType.Others -> "Others"
+        TvType.Podcast -> "Podcasts"
+        TvType.Torrent -> "Torrents"
+        TvType.TvSeries -> "TVSeries"
+    }
+}
+
+/** Data class holds next airing Episode info.
+ * @param episode Next airing Episode number.
+ * @param unixTime Next airing Time in Unix time format.
+ * @param season Season number of next airing episode (Optional).
+ * */
 data class NextAiring(
     val episode: Int,
     val unixTime: Long,
@@ -1296,7 +1579,7 @@ data class NextAiring(
     )
 }
 
-/**
+/** Data class holds season info.
  * @param season To be mapped with episode season, not shown in UI if displaySeason is defined
  * @param name To be shown next to the season like "Season $displaySeason $name" but if displaySeason is null then "$name"
  * @param displaySeason What to be displayed next to the season name, if null then the name is the only thing shown.
@@ -1307,6 +1590,7 @@ data class SeasonData(
     val displaySeason: Int? = null, // will use season if null
 )
 
+/** Abstract interface of EpisodeResponse */
 interface EpisodeResponse {
     var showStatus: ShowStatus?
     var nextAiring: NextAiring?
@@ -1338,6 +1622,10 @@ fun EpisodeResponse.addSeasonNames(names: List<SeasonData>) {
     this.seasonNames = names.ifEmpty { null }
 }
 
+/** Data class of [LoadResponse] interface for Torrent.
+ * @see newTorrentLoadResponse
+ */
+@Deprecated("Use newTorrentLoadResponse method", level = DeprecationLevel.WARNING)
 data class TorrentLoadResponse(
     override var name: String,
     override var url: String,
@@ -1408,6 +1696,33 @@ data class TorrentLoadResponse(
     )
 }
 
+@Suppress("DEPRECATION")
+suspend fun MainAPI.newTorrentLoadResponse(
+    name: String,
+    url: String,
+    magnet: String? = null,
+    torrent: String? = null,
+    initializer: suspend TorrentLoadResponse.() -> Unit = { }
+): TorrentLoadResponse {
+    val builder = TorrentLoadResponse(
+        name = name,
+        url = url,
+        apiName = this.name,
+        magnet = magnet,
+        torrent = torrent,
+        // The initializer will handle this
+        plot = null,
+        comingSoon = magnet.isNullOrBlank() && torrent.isNullOrBlank()
+    )
+    builder.initializer()
+    return builder
+}
+
+/** Data class of [LoadResponse] interface for Anime.
+ * @see newAnimeLoadResponse
+ * */
+@Suppress("DEPRECATION")
+@Deprecated("Use newAnimeLoadResponse method", level = DeprecationLevel.WARNING)
 data class AnimeLoadResponse(
     var engName: String? = null,
     var japName: String? = null,
@@ -1525,11 +1840,13 @@ data class AnimeLoadResponse(
 /**
  * If episodes already exist appends the list.
  * */
+@Suppress("DEPRECATION")
 fun AnimeLoadResponse.addEpisodes(status: DubStatus, episodes: List<Episode>?) {
     if (episodes.isNullOrEmpty()) return
     this.episodes[status] = (this.episodes[status] ?: emptyList()) + episodes
 }
 
+@Suppress("DEPRECATION")
 suspend fun MainAPI.newAnimeLoadResponse(
     name: String,
     url: String,
@@ -1550,6 +1867,10 @@ suspend fun MainAPI.newAnimeLoadResponse(
     return builder
 }
 
+/** Data class of [LoadResponse] interface for Live streams.
+ * @see newLiveStreamLoadResponse
+ * */
+@Deprecated("Use newLiveStreamLoadResponse method", level = DeprecationLevel.WARNING)
 data class LiveStreamLoadResponse(
     override var name: String,
     override var url: String,
@@ -1602,6 +1923,28 @@ data class LiveStreamLoadResponse(
     )
 }
 
+@Suppress("DEPRECATION")
+suspend fun MainAPI.newLiveStreamLoadResponse(
+    name: String,
+    url: String,
+    dataUrl: String,
+    initializer: suspend LiveStreamLoadResponse.() -> Unit = { }
+): LiveStreamLoadResponse {
+    val builder = LiveStreamLoadResponse(
+        name = name,
+        url = url,
+        apiName = this.name,
+        dataUrl = dataUrl,
+        comingSoon = dataUrl.isBlank()
+    )
+    builder.initializer()
+    return builder
+}
+
+/** Data class of [LoadResponse] interface for Movies.
+ * @see newMovieLoadResponse
+ * */
+@Deprecated("Use newMovieLoadResponse method", level = DeprecationLevel.WARNING)
 data class MovieLoadResponse(
     override var name: String,
     override var url: String,
@@ -1654,6 +1997,7 @@ data class MovieLoadResponse(
     )
 }
 
+@Suppress("DEPRECATION")
 suspend fun <T> MainAPI.newMovieLoadResponse(
     name: String,
     url: String,
@@ -1682,6 +2026,7 @@ suspend fun <T> MainAPI.newMovieLoadResponse(
     return builder
 }
 
+@Suppress("DEPRECATION")
 suspend fun MainAPI.newMovieLoadResponse(
     name: String,
     url: String,
@@ -1700,6 +2045,7 @@ suspend fun MainAPI.newMovieLoadResponse(
     builder.initializer()
     return builder
 }
+
 /** Episode information that will be passed to LoadLinks function & showed on UI
  * @property data string used as main LoadLinks fun parameter.
  * @property name Name of the Episode.
@@ -1709,8 +2055,9 @@ suspend fun MainAPI.newMovieLoadResponse(
  * @property rating Episode rating.
  * @property date Episode air date, see addDate.
  * @property runTime Episode runtime in seconds.
- * @see[addDate]
+ * @see newEpisode
  * */
+@Deprecated("Use newEpisode", level = DeprecationLevel.WARNING)
 data class Episode(
     var data: String,
     var name: String? = null,
@@ -1740,6 +2087,7 @@ data class Episode(
     )
 }
 
+@Suppress("DEPRECATION")
 fun Episode.addDate(date: String?, format: String = "yyyy-MM-dd") {
     try {
         this.date = SimpleDateFormat(format)?.parse(date ?: return)?.time
@@ -1748,10 +2096,12 @@ fun Episode.addDate(date: String?, format: String = "yyyy-MM-dd") {
     }
 }
 
+@Suppress("DEPRECATION")
 fun Episode.addDate(date: Date?) {
     this.date = date?.time
 }
 
+@Suppress("DEPRECATION")
 fun MainAPI.newEpisode(
     url: String,
     initializer: Episode.() -> Unit = { },
@@ -1764,6 +2114,7 @@ fun MainAPI.newEpisode(
     return builder
 }
 
+@Suppress("DEPRECATION")
 fun <T> MainAPI.newEpisode(
     data: T,
     initializer: Episode.() -> Unit = { }
@@ -1802,6 +2153,11 @@ enum class SimklSyncServices(val originalName: String) {
     Mal("mal"),
 }
 
+/** Data class of [LoadResponse] interface for Tv series.
+ * @see newTvSeriesLoadResponse
+ * */
+@Suppress("DEPRECATION")
+@Deprecated("Use newTvSeriesLoadResponse method", level = DeprecationLevel.WARNING)
 data class TvSeriesLoadResponse(
     override var name: String,
     override var url: String,
@@ -1902,6 +2258,7 @@ data class TvSeriesLoadResponse(
     )
 }
 
+@Suppress("DEPRECATION")
 suspend fun MainAPI.newTvSeriesLoadResponse(
     name: String,
     url: String,

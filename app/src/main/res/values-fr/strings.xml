@@ -7,7 +7,7 @@
     <string name="title_settings">Paramètres</string>
     <string name="search_hint">Rechercher…</string>
     <string name="search_poster_img_des">Affiche</string>
-    <string name="no_data">Aucune Donnée</string>
+    <string name="no_data">Aucune donnée</string>
     <string name="episode_more_options_des">Plus d\'options</string>
     <string name="go_back_img_des">Retour</string>
     <string name="next_episode">Épisode suivant</string>
@@ -111,8 +111,6 @@
     <string name="episode_action_chromecast_mirror">Miroir Chromecast</string>
     <string name="episode_action_play_in_app">Lecture dans l\'application</string>
     <string name="episode_action_play_in_format">Lecture dans %s</string>
-    <string name="episode_action_play_in_browser">Lecture dans le navigateur</string>
-    <string name="episode_action_copy_link">Copier le lien</string>
     <string name="episode_action_auto_download">Téléchargement automatique</string>
     <string name="episode_action_download_mirror">Télécharger depuis le miroir</string>
     <string name="episode_action_reload_links">Recharger les liens</string>
@@ -140,7 +138,7 @@
     <string name="dns_pref">DNS avec HTTPS</string>
     <string name="display_subbed_dubbed_settings">Afficher les animés en Anglais (Dub) / sous-titrés</string>
     <string name="phone_layout">Disposition en mode téléphone</string>
-    <string name="app_dub_sub_episode_text_format">%1$s Episode %2$d</string>
+    <string name="app_dub_sub_episode_text_format">%1$s Ep %2$d</string>
     <string name="rated_format" formatted="true">Note : %.1f</string>
     <string name="resize_zoom">Zoom</string>
     <string name="resize_fit">Adapter à l\'écran</string>
@@ -229,8 +227,8 @@
     <string name="subs_font_size">Taille de la police</string>
     <string name="search_provider_text_providers">Recherche par fournisseur</string>
     <string name="search_provider_text_types">Recherche par types</string>
-    <string name="benene_count_text">%d Donner une banane aux devs</string>
-    <string name="benene_count_text_none">Aucun Benenes données</string>
+    <string name="benene_count_text">%d bananes offertes aux devs</string>
+    <string name="benene_count_text_none">Aucune banane n\'a été offerte</string>
     <string name="subs_auto_select_language">Sélection automatique de la langue</string>
     <string name="subs_download_languages">Télécharger les langues</string>
     <string name="subs_subtitle_languages">Langue des sous-titres</string>
@@ -403,7 +401,7 @@
     <string name="view_public_repositories_button">Voir les repository de la communauté</string>
     <string name="view_public_repositories_button_short">Liste publique</string>
     <string name="action_mark_as_watched">Marquer comme vu</string>
-    <string name="repository_url_hint">Url du repository</string>
+    <string name="repository_url_hint">URL de dépôt ou code court</string>
     <string name="setup_done">Finir</string>
     <string name="add_repository">Ajouter le repository</string>
     <string name="preferred_media_subtext">Ce que vous voulez voir</string>
@@ -430,23 +428,21 @@
     <string name="extension_install_first">Installer l\'extension d\'abord</string>
     <string name="hls_playlist">Playlist HLS</string>
     <string name="player_pref">Lecteur vidéo préféré</string>
-    <string name="player_settings_play_in_vlc">VLC</string>
     <string name="skip_type_mixed_ed">Fin mitigée</string>
     <string name="skip_type_mixed_op">Introduction mitigée</string>
     <string name="update_notification_installing">Installation de la mise a jour de l\'application…</string>
     <string name="update_notification_failed">Impossible d\'installer la nouvelle version de l\'application</string>
-    <string name="player_settings_play_in_browser">Navigateur Web</string>
     <string name="apk_installer_settings_des">Certains téléphones ne supporte pas le nouvel installateur d\'application. Essayez l\'option de l\'ancien installateur si les mises-à-jour ne s\'installe pas.</string>
     <string name="previous">Précédent</string>
     <string name="skip_setup">Ignorer la configuration</string>
     <string name="crash_reporting_title">Rapport de crash</string>
-    <string name="repository_name_hint">Nom du repository</string>
+    <string name="repository_name_hint">Nom de dépôt (optionnel)</string>
     <string name="plugin_singular">plugin</string>
     <string name="delete_repository">Supprimer le repository</string>
     <string name="plugins_disabled" formatted="true">Désactivé : %d</string>
     <string name="plugins_not_downloaded" formatted="true">Non téléchargé : %d</string>
     <string name="plugins_updated" formatted="true">%d plugins mis-à-jour</string>
-    <string name="download_all_plugins_from_repo">Télécharger tous les plugins de ce repository ?</string>
+    <string name="download_all_plugins_from_repo">Avertissement : CloudStream 3 décline toute responsabilité concernant l’utilisation d’extensions tierces et ne fournit aucun support pour celles-ci !</string>
     <string name="single_plugin_disabled" formatted="true">%s (Désactivé)</string>
     <string name="tracks">Pistes</string>
     <string name="audio_tracks">Pistes audio</string>
@@ -456,7 +452,6 @@
     <string name="player_settings_play_in_app">Lecteur interne</string>
     <string name="app_not_found_error">Application introuvable</string>
     <string name="clipboard_too_large">Trop de texte. Impossible de sauvegarder dans le presse papier.</string>
-    <string name="player_settings_play_in_mpv">MPV</string>
     <string name="apk_installer_package_installer">Installateur de paquet</string>
     <string name="plugin">plugins</string>
     <string name="delete_repository_plugins">Cela supprimera également tous les plugins du repository</string>
@@ -466,7 +461,6 @@
     <string name="extension_language">Langage</string>
     <string name="enable_skip_op_from_database_des">Afficher les popups skip pour les intro / fins</string>
     <string name="apk_installer_legacy">Ancienne méthode d\'installation</string>
-    <string name="player_settings_play_in_web">Web Video Cast</string>
     <string name="pref_category_links">Liens</string>
     <string name="pref_category_gestures">Gestes</string>
     <string name="pref_category_player_features">Fonctionnalités du lecteur</string>
@@ -610,7 +604,7 @@
     <string name="password_pin_authentication_title">Mot de passe/Code PIN</string>
     <string name="clipboard_unknown_error">Erreur de copie, Veuillez copier le logcat et contacter le support de l\'application.</string>
     <string name="biometric_setting_summary">Déverrouiller l\'appli avec l\'empreinte digitale, l\'identification faciale, le code PIN, le motif et le mot de passe.</string>
-    <string name="biometric_prompt_description">Cet écran a été fermé en raison de plusieurs tentatives infructueuses. Veuillez relancer l\'application.</string>
+    <string name="biometric_prompt_description">Après quelques tentatives infructueuses, le message se fermera. Redémarrez simplement l’application pour réessayer.</string>
     <string name="battery_dialog_message">Pour garantir des téléchargements ininterrompus et des notifications pour les émissions de télévision auxquelles vous êtes abonné, CloudStream a besoin d\'une autorisation pour fonctionner en arrière-plan. En appuyant sur OK, vous serez dirigé vers App info. Faites défiler jusqu\'à 𝘼𝙥𝙥 𝙗𝙖𝙩𝙩𝙚𝙧𝙮 𝙪𝙨𝙖𝙜𝙚 et réglez l\'utilisation de la batterie sur 𝙐𝙣𝙧𝙚𝙨𝙩𝙧𝙞𝙘𝙩𝙚𝙙. Veuillez noter que cette autorisation ne signifie pas que CS3 épuisera votre batterie. Il ne fonctionnera en arrière-plan que lorsque cela sera nécessaire, par exemple lors de la réception de notifications ou du téléchargement de vidéos à partir d\'extensions officielles. Si vous choisissez d\'annuler, vous pouvez ajuster ce paramètre ultérieurement dans 𝙂𝙚𝙣𝙚𝙧𝙖𝙡 𝙎𝙚𝙩𝙩𝙞𝙣𝙜𝙨.</string>
     <string name="app_unrestricted_toast">L\'utilisation de la batterie de l\'application est déjà réglée sur illimitée</string>
     <string name="unfavorite">Supprimer des favoris</string>
@@ -622,4 +616,46 @@
     <string name="next_season_episode_format" formatted="true">Saison %1$d Episode %2$d sera publié dans</string>
     <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
     <string name="play_from_beginning_img_des">Regarder depuis le début</string>
+    <string name="open_local_video">Ouvrir une vidéo locale</string>
+    <string name="test_warning">Attention</string>
+    <string name="downloads_empty">Aucun téléchargement.</string>
+    <string name="delete_files">Supprimer des fichiers</string>
+    <string name="downloads_delete_select">Sélectionner les éléments à supprimer</string>
+    <string name="offline_file">Disponible pour le visionnage hors-ligne</string>
+    <string name="select_all">Tout sélectionner</string>
+    <string name="deselect_all">Tout désélectionner</string>
+    <string name="delete_format" formatted="true">Supprimer (%1$d | %2$s)</string>
+    <string name="open_downloaded_repo">Ouvrir le dépôt</string>
+    <string name="device_pin_counter_text">Code expire dans %1$dm %2$ds</string>
+    <string name="cs3wiki">Wiki de CloudStream</string>
+    <string name="device_pin_expired_message">Le code PIN est maintenant expiré !</string>
+    <string name="qr_image">Image du code QR</string>
+    <string name="delete_plugin">Supprimer l\'extension</string>
+    <string name="delete_message_multiple" formatted="true">Êtes-vous sûr de vouloir supprimer définitivement les éléments suivants ? \n \n%s</string>
+    <string name="auth_locally">Authentification locale</string>
+    <string name="sort_release_date_old">Date de sortie (du plus ancien au plus récent)</string>
+    <string name="sort_release_date_new">Date de sortie (du plus récent au plus ancien)</string>
+    <string name="preview_seekbar">Aperçu de la barre de recherche</string>
+    <string name="pref_category_security">Sécurité</string>
+    <string name="device_pin_url_message">Visitez <b>%s</b> sur votre téléphone ou votre ordinateur et saisissez le code ci-dessus</string>
+    <string name="preview_seekbar_desc">Activer l’aperçu des miniatures sur la barre de recherche</string>
+    <string name="subs_edge_size">Taille du bord</string>
+    <string name="show">Afficher</string>
+    <string name="dont_show">Ne pas afficher</string>
+    <string name="hide_player_control_names">Masquer les noms des commandes du lecteur</string>
+    <string name="device_pin_error_message">Impossible d’obtenir le code PIN de l’appareil, essayez l’authentification locale</string>
+    <string name="pref_category_accounts">Comptes</string>
+    <string name="torrent_info">Cette vidéo est un torrent, ce qui signifie que votre activité vidéo peut être suivie.\nAssurez-vous de comprendre le fonctionnement des torrents avant de continuer.</string>
+    <string name="dismiss">Ignorer</string>
+    <string name="delete_message_series_section" formatted="true">Vous allez également supprimer définitivement tous les épisodes des séries suivantes :\n\n%s</string>
+    <string name="delete_message_series_only" formatted="true">Êtes-vous sûr de vouloir supprimer définitivement tous les épisodes des séries suivantes ?\n\n%s</string>
+    <string name="delete_message_series_episodes" formatted="true">Êtes-vous sûr de vouloir supprimer définitivement les épisodes suivants dans %1$s ?\n\n%2$s</string>
+    <string name="episode_action_cast_mirror">Recopier l’écran</string>
+    <string name="no_subtitles_loaded">Aucun sous-titre n’a encore été chargé</string>
+    <string name="backup_path_title">Emplacement du dossier de sauvegarde</string>
+    <string name="custom">Personnalisé</string>
+    <string name="confirm_before_exiting_desc">Afficher une boîte de dialogue avant de quitter l’application</string>
+    <string name="confirm_before_exiting_title">Confirmer avant de quitter</string>
+    <string name="unsupported_error">Erreur non supportée</string>
+    <string name="encoding_error">Erreur d\'encodage</string>
 </resources>

@@ -91,15 +91,13 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
             android:layout_gravity="center"
             android:alpha="0.8"
             android:scaleType="matrix"
-            tools:src="@drawable/profile_bg_dark_blue" >
-        </com.lagradost.cloudstream3.utils.PercentageCropImageView>
+            tools:src="@drawable/profile_bg_dark_blue" />
 
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="120dp"
             android:layout_gravity="bottom"
-            android:src="@drawable/background_shadow">
-        </ImageView>
+            android:src="@drawable/background_shadow" />
     </FrameLayout>
 
     <LinearLayout
@@ -163,8 +161,8 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginTop="225dp">
+                android:layout_marginTop="225dp"
+                android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/result_title"
@@ -187,8 +185,8 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
                     android:textSize="17sp"
                     android:textStyle="normal"
                     android:visibility="gone"
-                    tools:visibility="visible"
-                    tools:text="8 Episodes" />
+                    tools:text="8 Episodes"
+                    tools:visibility="visible" />
 
                 <LinearLayout
                     android:id="@+id/result_next_airing_holder"
@@ -201,11 +199,11 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
                         android:id="@+id/result_next_airing"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginEnd="5dp"
                         android:gravity="start"
                         android:textColor="?attr/grayTextColor"
                         android:textSize="17sp"
                         android:textStyle="normal"
-                        android:layout_marginEnd="5dp"
                         tools:text="Season 2 Episode 1022 will be released in" />
 
                     <TextView
@@ -219,40 +217,44 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
                         tools:text="5d 3h 30m" />
                 </LinearLayout>
 
-                    <LinearLayout
-                        android:id="@+id/result_resume_progress_holder"
+                <LinearLayout
+                    android:id="@+id/result_resume_progress_holder"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:orientation="horizontal"
+                    android:visibility="gone"
+                    tools:visibility="visible">
+
+                    <!--https://github.com/material-components/material-components-android/blob/master/docs/components/ProgressIndicator.md-->
+                    <com.google.android.material.progressindicator.LinearProgressIndicator
+                        android:id="@+id/result_resume_series_progress"
+
+                        style="@style/RoundProgressbar"
+
+                        android:layout_width="100dp"
+                        android:layout_height="20dp"
+                        android:layout_gravity="end|center_vertical"
+                        android:layout_weight="1"
+                        android:indeterminate="false"
+                        android:max="100"
+                        android:paddingEnd="10dp"
+                        android:progress="0"
+
+                        android:scrollbarStyle="outsideInset"
+                        tools:ignore="RtlSymmetry"
+                        tools:progress="25"
+                        tools:visibility="visible" />
+
+                    <TextView
+                        android:id="@+id/result_resume_series_progress_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="10dp"
-                        android:orientation="horizontal"
-                        android:visibility="gone"
-                        tools:visibility="visible">
-
-                        <com.google.android.material.progressindicator.LinearProgressIndicator
-                            android:id="@+id/result_resume_series_progress"
-                            app:trackCornerRadius="50dp"
-                            android:layout_width="100dp"
-                            android:layout_height="20dp"
-                            android:layout_gravity="end|center_vertical"
-                            android:layout_weight="1"
-                            android:indeterminate="false"
-                            android:max="100"
-                            android:paddingEnd="10dp"
-                            android:progress="0"
-                            android:progressBackgroundTint="?attr/colorPrimary"
-                            tools:progress="50"
-                            tools:visibility="visible"
-                            tools:ignore="RtlSymmetry" />
-
-                        <TextView
-                            android:id="@+id/result_resume_series_progress_text"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:maxLines="1"
-                            android:textColor="?attr/grayTextColor"
-                            tools:ignore="RtlSymmetry"
-                            tools:text="69m remaining" />
-                    </LinearLayout>
+                        android:maxLines="1"
+                        android:textColor="?attr/grayTextColor"
+                        tools:ignore="RtlSymmetry"
+                        tools:text="69m remaining" />
+                </LinearLayout>
             </LinearLayout>
 
             <LinearLayout
@@ -265,24 +267,23 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
                 android:orientation="horizontal">
 
                 <LinearLayout
+                    android:id="@+id/result_play_movie"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="8dp"
-                    android:id="@+id/result_play_movie"
                     android:orientation="vertical"
                     android:visibility="gone"
                     tools:visibility="visible">
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/result_play_movie_button"
-                        android:focusable="true"
                         style="@style/ResultSmallButtonTV"
-                        app:iconPadding="0dp"
-                        app:icon="@drawable/ic_baseline_play_arrow_24"
+                        android:focusable="true"
                         android:nextFocusUp="@id/result_play_movie_button"
                         android:nextFocusDown="@id/result_description"
-                        android:tag="@string/tv_no_focus_tag">
-                    </com.google.android.material.button.MaterialButton>
+                        android:tag="@string/tv_no_focus_tag"
+                        app:icon="@drawable/ic_baseline_play_arrow_24"
+                        app:iconPadding="0dp" />
 
                     <TextView
                         android:id="@+id/result_play_movie_text"
@@ -292,24 +293,23 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/result_play_series"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="8dp"
-                    android:id="@+id/result_play_series"
+                    android:orientation="vertical"
                     android:visibility="gone"
-                    tools:visibility="visible"
-                    android:orientation="vertical">
+                    tools:visibility="visible">
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/result_play_series_button"
-                        android:focusable="true"
                         style="@style/ResultSmallButtonTV"
-                        app:iconPadding="0dp"
-                        app:icon="@drawable/ic_baseline_play_arrow_24"
+                        android:focusable="true"
                         android:nextFocusUp="@id/result_play_series_button"
                         android:nextFocusDown="@id/result_description"
-                        android:tag="@string/tv_no_focus_tag">
-                    </com.google.android.material.button.MaterialButton>
+                        android:tag="@string/tv_no_focus_tag"
+                        app:icon="@drawable/ic_baseline_play_arrow_24"
+                        app:iconPadding="0dp" />
 
                     <TextView
                         android:id="@+id/result_play_series_text"
@@ -329,14 +329,13 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/result_resume_series_button"
-                        android:focusable="true"
                         style="@style/ResultSmallButtonTV"
-                        app:iconPadding="0dp"
-                        app:icon="@drawable/ic_baseline_resume_arrow2"
+                        android:focusable="true"
                         android:nextFocusUp="@id/result_resume_series_button"
                         android:nextFocusDown="@id/result_description"
-                        android:tag="@string/tv_no_focus_tag">
-                    </com.google.android.material.button.MaterialButton>
+                        android:tag="@string/tv_no_focus_tag"
+                        app:icon="@drawable/ic_baseline_resume_arrow2"
+                        app:iconPadding="0dp" />
 
                     <TextView
                         android:id="@+id/result_resume_series_text"
@@ -350,18 +349,19 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="8dp"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:visibility="gone"
+                    tools:visibility="visible">
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/result_play_trailer_button"
-                        android:focusable="true"
                         style="@style/ResultSmallButtonTV"
-                        app:iconPadding="0dp"
-                        app:icon="@drawable/ic_baseline_film_roll_24"
+                        android:focusable="true"
                         android:nextFocusUp="@id/result_play_trailer_button"
                         android:nextFocusDown="@id/result_description"
-                        android:tag="@string/tv_no_focus_tag">
-                    </com.google.android.material.button.MaterialButton>
+                        android:tag="@string/tv_no_focus_tag"
+                        app:icon="@drawable/ic_baseline_film_roll_24"
+                        app:iconPadding="0dp" />
 
                     <TextView
                         android:id="@+id/result_play_trailer_text"
@@ -379,14 +379,13 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/result_bookmark_Button"
-                        android:focusable="true"
                         style="@style/ResultSmallButtonTV"
-                        app:iconPadding="0dp"
-                        app:icon="@drawable/outline_bookmark_add_24"
+                        android:focusable="true"
                         android:nextFocusUp="@id/result_bookmark_Button"
                         android:nextFocusDown="@id/result_description"
-                        android:tag="@string/tv_no_focus_tag">
-                    </com.google.android.material.button.MaterialButton>
+                        android:tag="@string/tv_no_focus_tag"
+                        app:icon="@drawable/outline_bookmark_add_24"
+                        app:iconPadding="0dp" />
 
                     <TextView
                         android:id="@+id/result_bookmark_text"
@@ -404,14 +403,13 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/result_favorite_Button"
-                        android:focusable="true"
                         style="@style/ResultSmallButtonTV"
-                        app:iconPadding="0dp"
-                        app:icon="@drawable/ic_baseline_favorite_border_24"
+                        android:focusable="true"
                         android:nextFocusUp="@id/result_favorite_Button"
                         android:nextFocusDown="@id/result_description"
-                        android:tag="@string/tv_no_focus_tag">
-                    </com.google.android.material.button.MaterialButton>
+                        android:tag="@string/tv_no_focus_tag"
+                        app:icon="@drawable/ic_baseline_favorite_border_24"
+                        app:iconPadding="0dp" />
 
                     <TextView
                         android:id="@+id/result_favorite_Text"
@@ -421,22 +419,21 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/result_subscribe"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="8dp"
-                    android:id="@+id/result_subscribe"
                     android:orientation="vertical">
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/result_subscribe_Button"
-                        android:focusable="true"
                         style="@style/ResultSmallButtonTV"
-                        app:iconPadding="0dp"
-                        app:icon="@drawable/baseline_notifications_none_24"
+                        android:focusable="true"
                         android:nextFocusUp="@id/result_subscribe_Button"
                         android:nextFocusDown="@id/result_description"
-                        android:tag="@string/tv_no_focus_tag">
-                    </com.google.android.material.button.MaterialButton>
+                        android:tag="@string/tv_no_focus_tag"
+                        app:icon="@drawable/baseline_notifications_none_24"
+                        app:iconPadding="0dp" />
 
                     <TextView
                         android:id="@+id/result_subscribe_text"
@@ -446,22 +443,21 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/result_search"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="8dp"
-                    android:id="@+id/result_search"
                     android:orientation="vertical">
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/result_search_Button"
-                        android:focusable="true"
                         style="@style/ResultSmallButtonTV"
-                        app:iconPadding="0dp"
-                        app:icon="@drawable/search_icon"
+                        android:focusable="true"
                         android:nextFocusUp="@id/result_search_Button"
                         android:nextFocusDown="@id/result_description"
-                        android:tag="@string/tv_no_focus_tag">
-                    </com.google.android.material.button.MaterialButton>
+                        android:tag="@string/tv_no_focus_tag"
+                        app:icon="@drawable/search_icon"
+                        app:iconPadding="0dp" />
 
                     <TextView
                         android:id="@+id/result_search_text"
@@ -471,25 +467,24 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/result_episodes_show"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="8dp"
-                    android:id="@+id/result_episodes_show"
+                    android:orientation="vertical"
                     android:visibility="gone"
-                    tools:visibility="visible"
-                    android:orientation="vertical">
+                    tools:visibility="visible">
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/result_episodes_show_button"
-                        android:focusable="true"
                         style="@style/ResultSmallButtonTV"
-                        app:iconPadding="0dp"
-                        app:icon="@drawable/ic_baseline_sort_24"
-                        android:nextFocusUp="@id/result_episodes_show_button"
+                        android:focusable="true"
                         android:nextFocusRight="@id/redirect_to_episodes"
+                        android:nextFocusUp="@id/result_episodes_show_button"
                         android:nextFocusDown="@id/result_description"
-                        android:tag="@string/tv_no_focus_tag">
-                    </com.google.android.material.button.MaterialButton>
+                        android:tag="@string/tv_no_focus_tag"
+                        app:icon="@drawable/ic_baseline_sort_24"
+                        app:iconPadding="0dp" />
 
                     <TextView
                         android:id="@+id/result_episodes_show_text"
@@ -502,9 +497,9 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
                 android:layout_marginTop="10dp"
-                android:baselineAligned="false">
+                android:baselineAligned="false"
+                android:orientation="horizontal">
 
                 <LinearLayout
                     android:id="@+id/right_layout"
@@ -526,14 +521,14 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/result_meta_site"
-                            android:layout_gravity="center_vertical"
                             style="@style/SmallWhiteButton"
+                            android:layout_gravity="center_vertical"
                             tools:text="Gogoanime" />
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/result_meta_content_rating"
-                            android:layout_gravity="center_vertical"
                             style="@style/SmallWhiteButton"
+                            android:layout_gravity="center_vertical"
                             android:focusable="false"
                             tools:text="PG-13" />
 
@@ -570,9 +565,9 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
                         android:layout_height="wrap_content"
                         android:ellipsize="end"
                         android:fadingEdgeLength="30dp"
+                        android:focusable="true"
                         android:foreground="@drawable/outline_drawable"
                         android:maxLines="7"
-                        android:focusable="true"
                         android:nextFocusUp="@id/result_play_parent"
                         android:nextFocusDown="@id/result_cast_items"
                         android:padding="5dp"
@@ -617,14 +612,14 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
                 android:textColor="?attr/textColor"
                 android:textSize="20sp"
                 android:textStyle="bold"
-                tools:visibility="visible"
-                android:visibility="gone" />
+                android:visibility="gone"
+                tools:visibility="visible" />
 
             <LinearLayout
                 android:id="@+id/result_recommendations_holder"
-                android:descendantFocusability="afterDescendants"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:descendantFocusability="afterDescendants"
                 android:orientation="horizontal"
                 android:paddingTop="10dp"
                 android:paddingBottom="10dp">
@@ -634,9 +629,9 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="10dp"
+                    android:descendantFocusability="afterDescendants"
                     android:nextFocusUp="@id/result_cast_items"
                     android:nextFocusDown="@id/result_recommendations_list"
-                    android:descendantFocusability="afterDescendants"
                     android:orientation="horizontal"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                     tools:itemCount="2"
@@ -1042,19 +1037,19 @@ https://developer.android.com/design/ui/tv/samples/jet-fit
                         android:layout_height="wrap_content"
                         android:orientation="vertical">
 
-                    <View
-                        android:id="@+id/redirect_to_episodes"
-                        android:layout_width="1dp"
-                        android:layout_height="1dp"
-                        android:focusable="true"
-                        android:focusableInTouchMode="true" />
+                        <View
+                            android:id="@+id/redirect_to_episodes"
+                            android:layout_width="1dp"
+                            android:layout_height="1dp"
+                            android:focusable="true"
+                            android:focusableInTouchMode="true" />
 
-                    <View
-                        android:id="@+id/redirect_to_play"
-                        android:layout_width="1dp"
-                        android:layout_height="1dp"
-                        android:focusable="true"
-                        android:focusableInTouchMode="true" />
+                        <View
+                            android:id="@+id/redirect_to_play"
+                            android:layout_width="1dp"
+                            android:layout_height="1dp"
+                            android:focusable="true"
+                            android:focusableInTouchMode="true" />
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>

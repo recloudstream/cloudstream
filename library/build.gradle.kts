@@ -1,5 +1,6 @@
 import com.codingfeline.buildkonfig.compiler.FieldSpec
-import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 plugins {
     kotlin("multiplatform")
@@ -8,37 +9,33 @@ plugins {
     id("com.codingfeline.buildkonfig")
 }
 
+val javaTarget = JvmTarget.fromTarget(libs.versions.jvmTarget.get())
+
 kotlin {
     version = "1.0.0"
     androidTarget()
     jvm()
 
-    @OptIn(ExperimentalKotlinGradlePluginApi::class)
     compilerOptions {
         freeCompilerArgs.add("-Xexpect-actual-classes")
     }
 
     sourceSets {
         commonMain.dependencies {
-            implementation("com.github.Blatzar:NiceHttp:0.4.11") // HTTP Lib
-            implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.1") /* JSON Parser
-            ^ Don't Bump Jackson above 2.13.1 , Crashes on Android TV's and FireSticks that have Min API
-            Level 25 or Less. */
-            implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")
-            implementation("me.xdrop:fuzzywuzzy:1.4.0") // Match extractors
-            implementation("org.mozilla:rhino:1.7.15") // run JavaScript
-            implementation("com.github.teamnewpipe:NewPipeExtractor:176da72")
+            implementation(libs.nicehttp) // HTTP Lib
+            implementation(libs.jackson.module.kotlin) // JSON Parser
+            implementation(libs.kotlinx.coroutines.core)
+            implementation(libs.fuzzywuzzy) // Match Extractors
+            implementation(libs.rhino) // Run JavaScript
+            implementation(libs.newpipeextractor)
         }
     }
 }
 
-repositories {
-    mavenLocal()
-    maven("https://jitpack.io")
-}
-
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-    kotlinOptions.jvmTarget = JavaVersion.VERSION_1_8.toString()
+tasks.withType<KotlinJvmCompile> {
+    compilerOptions {
+        jvmTarget.set(javaTarget)
+    }
 }
 
 buildkonfig {
@@ -57,22 +54,31 @@ buildkonfig {
 }
 
 android {
-    compileSdk = 34
+    compileSdk = libs.versions.compileSdk.get().toInt()
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
 
     defaultConfig {
-        minSdk = 21
-        targetSdk = 33
+        minSdk = libs.versions.minSdk.get().toInt()
     }
 
     // If this is the same com.lagradost.cloudstream3.R stops working
     namespace = "com.lagradost.api"
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.toVersion(javaTarget.target)
+        targetCompatibility = JavaVersion.toVersion(javaTarget.target)
+    }
+
+    @Suppress("UnstableApiUsage")
+    testOptions {
+        targetSdk = libs.versions.targetSdk.get().toInt()
+    }
+
+    lint {
+        targetSdk = libs.versions.targetSdk.get().toInt()
     }
 }
+
 publishing {
     publications {
         withType<MavenPublication> {

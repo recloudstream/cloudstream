@@ -22,7 +22,6 @@ import com.lagradost.cloudstream3.syncproviders.AccountManager
 import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.library.ListSorting
-import com.lagradost.cloudstream3.ui.result.UiImage
 import com.lagradost.cloudstream3.ui.result.VideoWatchState
 import com.lagradost.cloudstream3.utils.AppContextUtils.filterProviderByPreferredMedia
 import java.util.Calendar
@@ -133,10 +132,7 @@ object DataStoreHelper {
         @JsonProperty("lockPin")
         val lockPin: String? = null,
     ) {
-        val image: UiImage
-            get() = customImage?.let { UiImage.Image(it) } ?: UiImage.Drawable(
-                profileImages.getOrNull(defaultImageIndex) ?: profileImages.first()
-            )
+        val image get() = customImage?.let { UiImage.Image(it) } ?: profileImages.getOrNull(defaultImageIndex)?.let { UiImage.Drawable(it) } ?: UiImage.Drawable(profileImages.first())
     }
 
     const val TAG = "data_store_helper"

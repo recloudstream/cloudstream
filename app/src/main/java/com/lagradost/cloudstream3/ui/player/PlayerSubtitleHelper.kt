@@ -9,11 +9,8 @@ import androidx.media3.common.MimeTypes
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.ui.SubtitleView
 import com.lagradost.cloudstream3.SubtitleFile
-import com.lagradost.cloudstream3.ui.player.CustomDecoder.Companion.regexSubtitlesToRemoveBloat
-import com.lagradost.cloudstream3.ui.player.CustomDecoder.Companion.regexSubtitlesToRemoveCaptions
-import com.lagradost.cloudstream3.ui.player.CustomDecoder.Companion.uppercaseSubtitles
 import com.lagradost.cloudstream3.ui.subtitles.SaveCaptionStyle
-import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment.Companion.fromSaveToStyle
+import com.lagradost.cloudstream3.ui.subtitles.SubtitlesFragment.Companion.setSubtitleViewStyle
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
 
 enum class SubtitleStatus {
@@ -115,20 +112,15 @@ class PlayerSubtitleHelper {
     }
 
     fun setSubStyle(style: SaveCaptionStyle) {
-        regexSubtitlesToRemoveBloat = style.removeBloat
-        uppercaseSubtitles = style.upperCase
-        regexSubtitlesToRemoveCaptions = style.removeCaptions
-        subtitleView?.context?.let { ctx ->
-            subStyle = style
-            Log.i(TAG, "SET STYLE = $style")
-            subtitleView?.setStyle(ctx.fromSaveToStyle(style))
-            subtitleView?.translationY = -style.elevation.toPx.toFloat()
-            val size = style.fixedTextSize
-            if (size != null) {
-                subtitleView?.setFixedTextSize(TypedValue.COMPLEX_UNIT_SP, size)
-            } else {
-                subtitleView?.setUserDefaultTextSize()
-            }
+        subStyle = style
+        Log.i(TAG, "SET STYLE = $style")
+        setSubtitleViewStyle(subtitleView, style)
+        subtitleView?.translationY = -style.elevation.toPx.toFloat()
+        val size = style.fixedTextSize
+        if (size != null) {
+            subtitleView?.setFixedTextSize(TypedValue.COMPLEX_UNIT_SP, size)
+        } else {
+            subtitleView?.setUserDefaultTextSize()
         }
     }
 

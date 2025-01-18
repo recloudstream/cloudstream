@@ -1,10 +1,13 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. Material3 -->
     <style name="AppTheme" parent="Theme.Material3.Dark.NoActionBar">
         <item name="android:windowBackground">@drawable/splash_background</item>
         <item name="android:navigationBarColor">?attr/primaryBlackBackground</item>
         <item name="android:colorEdgeEffect">?attr/textColor</item>
 
+        <!-- Opt out of edgeToEdge enforcement in >= Android 15 -->
+        <!-- However this will be deprecated in future (ETA ~ 1.6 years) -->
+        <item name="android:windowOptOutEdgeToEdgeEnforcement" tools:targetApi="35">true</item>
         <!--<item name="android:navigationBarColor">@color/darkBackground</item>-->
         <item name="android:statusBarColor">?attr/iconGrayBackground</item>
 
@@ -97,6 +100,12 @@
         <item name="android:fontFamily">@font/google_sans</item>
         <item name="android:tag">@string/tv_no_focus_tag</item>
         <item name="chipMinTouchTargetSize">0dp</item>
+    </style>
+
+    <style name="RoundProgressbar">
+        <item name="indicatorTrackGapSize">0dp</item>
+        <item name="trackStopIndicatorSize">0dp</item>
+        <item name="trackColor">@color/color_primary_transparent</item>
     </style>
 
     <style name="ChipFilledSemiTransparent" parent="@style/ChipFilled">
@@ -392,7 +401,7 @@
         <!--    Needed for leanback fuckery    -->
         <item name="android:colorAccent">@color/colorPrimaryLavender</item>
     </style>
-    
+
     <style name="customRatingBar" parent="@style/Widget.AppCompat.RatingBar">
 
         <item name="android:progressDrawable">@drawable/abc_ratingbar_indicator_material</item>
@@ -513,6 +522,15 @@
 
     <style name="AlertDialogCustomTransparent" parent="Theme.AppCompat.Dialog.Alert">
         <item name="android:windowBackground">@color/transparent</item>
+    </style>
+
+    <style name="DialogFullscreen">
+        <item name="android:windowEnterAnimation">@anim/enter_anim</item>
+        <item name="android:windowExitAnimation">@anim/exit_anim</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
     </style>
 
     <style name="AlertDialogCustomBlack" parent="Theme.AppCompat.Dialog.Alert">

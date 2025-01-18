@@ -161,32 +161,6 @@
         <item>@string/show_title_key</item>
     </array>
 
-    <array name="episode_long_click_options">
-        <item>@string/episode_action_chromecast_episode</item>
-        <item>@string/episode_action_chromecast_mirror</item>
-        <item>@string/episode_action_play_in_app</item>
-        <item>@string/episode_action_play_in_format</item>
-        <item>@string/episode_action_play_in_browser</item>
-        <item>@string/episode_action_copy_link</item>
-        <item>@string/episode_action_auto_download</item>
-        <item>@string/episode_action_download_mirror</item>
-        <item>@string/episode_action_download_subtitle</item>
-        <item>@string/episode_action_reload_links</item>
-    </array>
-
-    <array name="episode_long_click_options_values">
-        <item>4</item>
-        <item>5</item>
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-        <item>9</item>
-        <item>6</item>
-        <item>7</item>
-        <item>13</item>
-        <item>8</item>
-    </array>
-
     <array name="app_layout">
         <item>@string/automatic</item>
         <item>@string/phone_layout</item>

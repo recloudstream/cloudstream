@@ -22,6 +22,8 @@
         <item>AdGuard</item>
         <item>DNS.WATCH</item>
         <item>Quad9</item>
+        <item>DNS.SB</item>
+        <item>Canadian Shield</item>
     </array>
     <array name="dns_pref_values">
         <item>0</item>
@@ -31,6 +33,8 @@
         <item>4</item>
         <item>5</item>
         <item>6</item>
+        <item>7</item>
+        <item>8</item>
     </array>
 
     <array name="apk_installer_pref">
@@ -48,24 +52,6 @@
         <item>@string/subtitles_filter_lang</item>
         <item>@string/all</item>
         <item>@string/nsfw</item>
-    </array>
-
-    <array name="player_pref_names">
-        <item>@string/player_settings_play_in_app</item>
-        <item>@string/player_settings_play_in_vlc</item>
-        <item>@string/player_settings_play_in_mpv</item>
-        <item>@string/player_settings_play_in_mpvytdl</item>
-        <item>@string/player_settings_play_in_web</item>
-        <item>@string/player_settings_play_in_browser</item>
-    </array>
-
-    <array name="player_pref_values">
-        <item>1</item>
-        <item>2</item>
-        <item>5</item>
-        <item>6</item>
-        <item>4</item>
-        <item>3</item>
     </array>
 
     <array name="limit_title_rez_pref_names">
@@ -226,32 +212,6 @@
         <item>@string/show_title_key</item>
     </array>
 
-    <array name="episode_long_click_options">
-        <item>@string/episode_action_chromecast_episode</item>
-        <item>@string/episode_action_chromecast_mirror</item>
-        <item>@string/episode_action_play_in_app</item>
-        <item>@string/episode_action_play_in_format</item>
-        <item>@string/episode_action_play_in_browser</item>
-        <item>@string/episode_action_copy_link</item>
-        <item>@string/episode_action_auto_download</item>
-        <item>@string/episode_action_download_mirror</item>
-        <item>@string/episode_action_download_subtitle</item>
-        <item>@string/episode_action_reload_links</item>
-    </array>
-
-    <array name="episode_long_click_options_values">
-        <item>4</item>
-        <item>5</item>
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-        <item>9</item>
-        <item>6</item>
-        <item>7</item>
-        <item>13</item>
-        <item>8</item>
-    </array>
-
     <array name="app_layout">
         <item>@string/automatic</item>
         <item>@string/phone_layout</item>
@@ -264,6 +224,17 @@
         <item>0</item>
         <item>1</item>
         <item>2</item>
+    </array>
+
+    <array name="confirm_exit">
+        <item>@string/automatic</item>
+        <item>@string/show</item>
+        <item>@string/dont_show</item>
+    </array>
+    <array name="confirm_exit_values">
+        <item>-1</item>
+        <item>0</item>
+        <item>1</item>
     </array>
 
     <string-array name="themes_overlay_names">

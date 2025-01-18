@@ -60,6 +60,10 @@ class DoodYtExtractor : DoodLaExtractor() {
     override var mainUrl = "https://dood.yt"
 }
 
+class DoodLiExtractor : DoodLaExtractor() {
+    override var mainUrl = "https://dood.li"
+}
+
 class Ds2play : DoodLaExtractor() {
     override var mainUrl = "https://ds2play.com"
 }
@@ -81,7 +85,8 @@ open class DoodLaExtractor : ExtractorApi() {
         subtitleCallback: (SubtitleFile) -> Unit,
         callback: (ExtractorLink) -> Unit
     ) {
-		val req = app.get(url)
+        val embedUrl = url.replace("/d/", "/e/")
+		val req = app.get(embedUrl)
         val host = getBaseUrl(req.url)
         val response0 = req.text
 	val md5 = host + (Regex("/pass_md5/[^']*").find(response0)?.value ?: return)

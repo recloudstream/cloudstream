@@ -18,7 +18,7 @@ import com.lagradost.cloudstream3.ui.download.button.DownloadStatusTell
 import com.lagradost.cloudstream3.utils.AppContextUtils.getNameFull
 import com.lagradost.cloudstream3.utils.DataStoreHelper.fixVisual
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getViewPos
-import com.lagradost.cloudstream3.utils.UIHelper.setImage
+import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
 import com.lagradost.cloudstream3.utils.VideoDownloadHelper
 
 const val DOWNLOAD_ACTION_PLAY_FILE = 0
@@ -108,7 +108,7 @@ class DownloadAdapter(
                 }
 
                 downloadHeaderPoster.apply {
-                    setImage(data.poster)
+                    loadImage(data.poster)
                     if (isMultiDeleteState) {
                         setOnClickListener {
                             toggleIsChecked(deleteCheckbox, data.id)

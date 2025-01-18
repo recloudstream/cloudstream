@@ -223,8 +223,6 @@
     <string name="episode_action_chromecast_mirror">Chromecast jako zrcadlo</string>
     <string name="episode_action_play_in_app">Přehrát v aplikace</string>
     <string name="episode_action_play_in_format">Přehrát ve %s</string>
-    <string name="episode_action_play_in_browser">Přehrát v prohlížeči</string>
-    <string name="episode_action_copy_link">Zkopírovat odkaz</string>
     <string name="episode_action_auto_download">Automaticky stáhnout</string>
     <string name="episode_action_download_mirror">Zrcadlo stahování</string>
     <string name="episode_action_reload_links">Obnovit odkazy</string>
@@ -377,7 +375,7 @@
     <string name="remove_site_pref">Odebrat web</string>
     <string name="error_invalid_data">Neplatné údaje</string>
     <string name="error">Chyba</string>
-    <string name="repository_name_hint">Název repozitáře</string>
+    <string name="repository_name_hint">Název repozitáře (volitelné)</string>
     <string name="plugin_loaded">Doplněk načten</string>
     <string name="setup_extensions_subtext">Stáhněte si seznam webů, které chcete používat</string>
     <string name="plugins_downloaded" formatted="true">Staženo: %d</string>
@@ -387,7 +385,7 @@
     <string name="safe_mode_title">Bezpečný režim povolen</string>
     <string name="extension_size">Velikost</string>
     <string name="extension_authors">Autoři</string>
-    <string name="repository_url_hint">Adresa URL repozitáře</string>
+    <string name="repository_url_hint">Adresa URL nebo krátký kód repozitáře</string>
     <string name="error_invalid_url">Neplatná adresa URL</string>
     <string name="automatic_plugin_download_summary">Automaticky instalovat všechny dosud nenainstalované doplňky z přidaných repozitářů.</string>
     <string name="others">Ostatní</string>
@@ -400,8 +398,6 @@
     <string name="view_public_repositories_button_short">Veřejný seznam</string>
     <string name="uppercase_all_subtitles">Velká písmena u všech titulků</string>
     <string name="hls_playlist">Playlist HLS</string>
-    <string name="player_settings_play_in_mpv">MPV</string>
-    <string name="player_settings_play_in_web">Webové vysílání videa</string>
     <string name="app_not_found_error">Aplikace nenalezena</string>
     <string name="skip_type_format" formatted="true">Přeskočit %s</string>
     <string name="skip_type_op">Úvod</string>
@@ -451,13 +447,11 @@
     <string name="extension_description">Popis</string>
     <string name="extension_status">Stav</string>
     <string name="extension_install_first">Nejprve nainstalujte rozšíření</string>
-    <string name="player_settings_play_in_vlc">VLC</string>
     <string name="skip_type_mixed_ed">Smíšený konec</string>
     <string name="extension_language">Jazyk</string>
     <string name="player_settings_play_in_app">Interní přehrávač</string>
     <string name="skip_type_recap">Rekapitulace</string>
     <string name="clear_history">Vymazat historii</string>
-    <string name="player_settings_play_in_browser">Webový prohlížeč</string>
     <string name="all_languages_preference">Všechny jazyky</string>
     <string name="skip_type_mixed_op">Smíšený úvod</string>
     <string name="skip_type_creddits">Poděkování</string>
@@ -645,7 +639,6 @@
     <string name="episode_upcoming_format" formatted="true">Vychází %s</string>
     <string name="next_season_episode_format" formatted="true">Epizoda %2$d ze série %1$d bude vydána za</string>
     <string name="episode_action_cast_mirror">Vysílat zrcadlení</string>
-    <string name="player_settings_play_in_fcast">Fcast</string>
     <string name="player_settings_select_cast_device">Vyberte zařízení k vysílání</string>
     <string name="cs3wiki">CloudStream Wiki</string>
     <string name="pref_category_security">Zabezpečení</string>
@@ -687,4 +680,20 @@
     <string name="delete_format" formatted="true">Odstranit (%1$d | %2$s)</string>
     <string name="preview_seekbar">Náhled v liště přehrávače</string>
     <string name="preview_seekbar_desc">Povolit náhled miniatur na liště přehrávače</string>
+    <string name="no_subtitles_loaded">Zatím nenačteny žádné titulky</string>
+    <string name="confirm_before_exiting_title">Potvrdit před ukončením</string>
+    <string name="confirm_before_exiting_desc">Zobrazit dialog před ukončením aplikace</string>
+    <string name="show">Zobrazit</string>
+    <string name="dont_show">Nezobrazovat</string>
+    <string name="backup_path_title">Umístění složky záloh</string>
+    <string name="custom">Vlastní</string>
+    <string name="torrent_info">Toto video je torrent, což znamená, že lze sledovat vaší aktivitu v něm.\nPřed pokračováním se ujistěte, že chápete, co to je torrentování.</string>
+    <string name="subs_edge_size">Velikost okraje</string>
+    <string name="audio_singluar">Zvuk</string>
+    <string name="podcast_singluar">Podcast</string>
+    <string name="encoding_error">Chyba kódování</string>
+    <string name="unsupported_error">Nepodporovaná chyba</string>
+    <string name="player_load_one_subtitle_online">Načíst první dostupné</string>
+    <string name="torrent_not_accepted">Není akceptovatelný torrent</string>
+    <string name="torrent_preferred_media">Povolte torrent v Nastavení/Poskytovatelé/Preferovaná média</string>
 </resources>

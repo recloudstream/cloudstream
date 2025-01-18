@@ -46,7 +46,7 @@ import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.syncproviders.SyncIdName
 import com.lagradost.cloudstream3.ui.AutofitRecyclerView
 import com.lagradost.cloudstream3.ui.quicksearch.QuickSearchFragment
-import com.lagradost.cloudstream3.ui.result.txt
+import com.lagradost.cloudstream3.utils.txt
 import com.lagradost.cloudstream3.ui.search.SEARCH_ACTION_LOAD
 import com.lagradost.cloudstream3.ui.search.SEARCH_ACTION_SHOW_METADATA
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
@@ -155,7 +155,7 @@ class LibraryFragment : Fragment() {
         binding?.sortFab?.setOnClickListener(sortChangeClickListener)
         binding?.librarySort?.setOnClickListener(sortChangeClickListener)
 
-        binding?.libraryRoot?.findViewById<TextView>(R.id.search_src_text)?.apply {
+        binding?.libraryRoot?.findViewById<TextView>(androidx.appcompat.R.id.search_src_text)?.apply {
             tag = "tv_no_focus_tag"
             //Expand the Appbar when search bar is focused, fixing scroll up issue
             setOnFocusChangeListener { _, _ ->
@@ -561,6 +561,7 @@ class LibraryFragment : Fragment() {
                     activity?.loadResult(
                         card.url,
                         apiName,
+                        card.name
                     )
                 }
 

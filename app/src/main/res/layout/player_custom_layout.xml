@@ -47,6 +47,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+
         <View
             android:id="@+id/shadow_overlay"
             android:layout_width="match_parent"
@@ -84,6 +85,8 @@
                 style="@style/SmallBlackButton"
                 android:text="@string/filler" />
         </FrameLayout>
+
+
         <!-- atm this is useless, however it might be used for PIP one day? -->
         <ImageView
             android:id="@+id/player_fullscreen"
@@ -168,52 +171,52 @@
                         app:layout_constraintRight_toRightOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />-->
 
-                <FrameLayout
+                <LinearLayout
                     android:id="@+id/player_go_back_holder"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="20dp"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:layout_margin="5dp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent">
 
                     <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="10dp"
                         android:id="@+id/player_go_back_root"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
                         android:orientation="vertical">
 
                         <ImageView
                             android:id="@+id/player_go_back"
-                            android:layout_width="30dp"
-                            android:layout_height="30dp"
+                            android:layout_width="70dp"
+                            android:layout_height="70dp"
                             android:layout_gravity="center"
-                            android:src="@drawable/ic_baseline_arrow_back_24"
-                            app:tint="@android:color/white"
                             android:background="@drawable/video_tap_button_always_white"
                             android:clickable="true"
                             android:contentDescription="@string/go_back_img_des"
                             android:focusable="true"
-                            android:nextFocusRight="@id/player_restart"
                             android:nextFocusLeft="@id/player_go_back"
-                            android:nextFocusDown="@id/player_pause_play"
+                            android:nextFocusRight="@id/player_restart"
                             android:nextFocusUp="@id/player_go_back"
-                            android:tag="@string/tv_no_focus_tag" />
+                            android:nextFocusDown="@id/player_pause_play"
+                            android:padding="20dp"
+                            android:src="@drawable/ic_baseline_arrow_back_24"
+                            android:tag="@string/tv_no_focus_tag"
+                            app:tint="@android:color/white" />
 
                         <TextView
                             android:id="@+id/player_go_back_text"
                             style="@style/ResultMarqueeButtonText"
                             android:text="@string/go_back_img_des"
-                            android:visibility="gone"/>
+                            android:visibility="gone" />
 
                     </LinearLayout>
 
                     <LinearLayout
+                        android:id="@+id/player_restart_root"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="40dp"
                         android:layout_marginEnd="10dp"
-                        android:id="@+id/player_restart_root"
                         android:orientation="vertical"
                         android:visibility="gone">
 
@@ -222,17 +225,17 @@
                             android:layout_width="30dp"
                             android:layout_height="30dp"
                             android:layout_gravity="center"
-                            android:src="@drawable/ic_baseline_replay_24"
-                            app:tint="@android:color/white"
                             android:background="@drawable/video_tap_button_always_white"
                             android:clickable="true"
                             android:contentDescription="@string/restart"
                             android:focusable="true"
-                            android:nextFocusRight="@id/player_go_forward"
                             android:nextFocusLeft="@id/player_go_back"
-                            android:nextFocusDown="@id/player_pause_play"
+                            android:nextFocusRight="@id/player_go_forward"
                             android:nextFocusUp="@id/player_restart"
-                            android:tag="@string/tv_no_focus_tag" />
+                            android:nextFocusDown="@id/player_pause_play"
+                            android:src="@drawable/ic_baseline_replay_24"
+                            android:tag="@string/tv_no_focus_tag"
+                            app:tint="@android:color/white" />
 
                         <TextView
                             android:id="@+id/player_restart_text"
@@ -242,11 +245,11 @@
                     </LinearLayout>
 
                     <LinearLayout
+                        android:id="@+id/player_go_forward_root"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="80dp"
                         android:layout_marginEnd="10dp"
-                        android:id="@+id/player_go_forward_root"
                         android:orientation="vertical"
                         android:visibility="gone">
 
@@ -255,17 +258,17 @@
                             android:layout_width="30dp"
                             android:layout_height="30dp"
                             android:layout_gravity="center"
-                            android:src="@drawable/ic_baseline_skip_next_rounded_24"
-                            app:tint="@android:color/white"
                             android:background="@drawable/video_tap_button_always_white"
                             android:clickable="true"
-                            android:nextFocusRight="@id/player_go_forward"
-                            android:nextFocusLeft="@id/player_restart"
-                            android:nextFocusDown="@id/player_pause_play"
-                            android:nextFocusUp="@id/player_go_forward"
                             android:contentDescription="@string/next_episode"
                             android:focusable="true"
-                            android:tag="@string/tv_no_focus_tag" />
+                            android:nextFocusLeft="@id/player_restart"
+                            android:nextFocusRight="@id/player_go_forward"
+                            android:nextFocusUp="@id/player_go_forward"
+                            android:nextFocusDown="@id/player_pause_play"
+                            android:src="@drawable/ic_baseline_skip_next_rounded_24"
+                            android:tag="@string/tv_no_focus_tag"
+                            app:tint="@android:color/white" />
 
                         <TextView
                             android:id="@+id/player_go_forward_text"
@@ -274,7 +277,7 @@
 
                     </LinearLayout>
 
-                </FrameLayout>
+                </LinearLayout>
 
 
             </FrameLayout>
@@ -297,6 +300,8 @@
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:visibility="visible" />
+
+
 
             <!-- This nested layout is necessary because of buffering and clicking-->
 
@@ -422,15 +427,94 @@
                         app:tint="@color/white"
                         tools:ignore="ContentDescription" />
                 </FrameLayout>
+
+                <LinearLayout
+                    android:id="@+id/download_both_header"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <FrameLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <ImageView
+                            android:id="@+id/download_header_toggle"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:layout_gravity="center_vertical|end"
+                            android:layout_marginEnd="60dp"
+                            android:background="@drawable/video_tap_button_always_white"
+                            android:padding="10dp"
+                            android:src="@drawable/baseline_downloading_24"
+                            app:tint="@color/white">
+
+                        </ImageView>
+
+                        <androidx.cardview.widget.CardView
+                            android:id="@+id/download_header"
+                            android:layout_width="200dp"
+                            android:layout_height="80dp"
+                            android:layout_gravity="end|center_vertical"
+                            android:layout_margin="10dp"
+                            android:elevation="10dp"
+                            app:cardBackgroundColor="@color/darkBar"
+                            app:cardCornerRadius="@dimen/rounded_image_radius">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_margin="10dp"
+                                android:gravity="end|center_vertical"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:id="@+id/download_header_toggle_text"
+                                    style="@style/ResultMarqueeButtonText"
+                                    android:layout_marginTop="5dp"
+                                    android:text="@string/torrent_singular"
+                                    android:visibility="gone" />
+
+                                <TextView
+                                    android:id="@+id/downloaded_progress_text"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:textColor="@color/white"
+                                    tools:text="10MB / 20MB" />
+
+                                <TextView
+                                    android:id="@+id/downloaded_progress_speed_text"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:textColor="@color/white"
+                                    tools:text="10MB/s - 12 seeders" />
+
+                                <com.google.android.material.progressindicator.LinearProgressIndicator
+                                    android:id="@+id/downloaded_progress"
+                                    style="@style/RoundProgressbar"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="5dp"
+                                    android:indeterminate="false"
+                                    android:indeterminateTint="?attr/colorPrimary"
+                                    android:progressBackgroundTint="?attr/colorPrimary"
+                                    android:progressTint="?attr/colorPrimary"
+                                    tools:progress="20" />
+
+                            </LinearLayout>
+                        </androidx.cardview.widget.CardView>
+                    </FrameLayout>
+
+                </LinearLayout>
             </androidx.constraintlayout.widget.ConstraintLayout>
+
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/skip_chapter_button"
                 style="@style/NiceButton"
                 android:layout_width="150dp"
                 android:layout_height="40dp"
-                android:layout_marginEnd="100dp"
                 android:layout_marginTop="60dp"
+                android:layout_marginEnd="100dp"
                 android:backgroundTint="@color/skipOpTransparent"
                 android:maxLines="1"
                 android:padding="10dp"
@@ -517,9 +601,9 @@
                     android:id="@+id/player_video_bar"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    tools:visibility="visible"
                     android:layoutDirection="ltr"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    tools:visibility="visible">
 
                     <TextView
                         android:id="@id/exo_position"
@@ -614,10 +698,10 @@
                         android:textColor="@android:color/white"
                         android:textSize="14sp"
                         android:textStyle="normal"
+                        android:visibility="gone"
                         app:layout_constraintBaseline_toBaselineOf="@id/exo_position"
                         app:layout_constraintEnd_toEndOf="parent"
-                        tools:text="-23:20"
-                        android:visibility="gone"/>
+                        tools:text="-23:20" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -820,6 +904,7 @@
                     android:progressDrawable="@drawable/progress_drawable_vertical" />
             </RelativeLayout>
         </LinearLayout>
+
 
         <!--
             <ImageView

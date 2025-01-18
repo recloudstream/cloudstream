@@ -1,31 +1,38 @@
 import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
-import org.jetbrains.dokka.gradle.DokkaTask
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.archivesName
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 import java.io.ByteArrayOutputStream
-import java.net.URL
 
 plugins {
     id("com.android.application")
-    id("com.google.devtools.ksp")
     id("kotlin-android")
     id("org.jetbrains.dokka")
 }
 
+val javaTarget = JvmTarget.fromTarget(libs.versions.jvmTarget.get())
 val tmpFilePath = System.getProperty("user.home") + "/work/_temp/keystore/"
 val prereleaseStoreFile: File? = File(tmpFilePath).listFiles()?.first()
 
-fun String.execute() = ByteArrayOutputStream().use { baot ->
-    if (project.exec {
-            workingDir = projectDir
-            commandLine = this@execute.split(Regex("\\s"))
-            standardOutput = baot
-        }.exitValue == 0)
-        String(baot.toByteArray()).trim()
-    else null
+fun String.execute(): String? {
+    val output = ByteArrayOutputStream()
+
+    val process = ProcessBuilder()
+        .command(this.split(" "))
+        .redirectOutput(ProcessBuilder.Redirect.PIPE)
+        .start()
+
+    val exitValue = process.inputStream.use { input ->
+        input.copyTo(output)
+        process.waitFor()
+    }
+
+    return if (exitValue == 0) {
+        output.toString().trim()
+    } else null
 }
 
 android {
+    @Suppress("UnstableApiUsage")
     testOptions {
         unitTests.isReturnDefaultValues = true
     }
@@ -33,13 +40,6 @@ android {
     viewBinding {
         enable = true
     }
-
-    /* disable this for now
-    externalNativeBuild {
-        cmake {
-            path("CMakeLists.txt")
-        }
-    }*/
 
     signingConfigs {
         if (prereleaseStoreFile != null) {
@@ -52,23 +52,21 @@ android {
         }
     }
 
-    compileSdk = 34
-    buildToolsVersion = "34.0.0"
+    compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
         applicationId = "com.lagradost.cloudstream3"
-        minSdk = 21
-        targetSdk = 33 /* Android 14 is Fu*ked
-        ^ https://developer.android.com/about/versions/14/behavior-changes-14#safer-dynamic-code-loading*/
+        minSdk = libs.versions.minSdk.get().toInt()
+        targetSdk = libs.versions.targetSdk.get().toInt()
         versionCode = 64
-        versionName = "4.4.0"
+        versionName = "4.4.2"
 
         resValue("string", "app_version", "${defaultConfig.versionName}${versionNameSuffix ?: ""}")
         resValue("string", "commit_hash", "git rev-parse --short HEAD".execute() ?: "")
         resValue("bool", "is_prerelease", "false")
 
         // Reads local.properties
-        val localProperties = gradleLocalProperties(rootDir)
+        val localProperties = gradleLocalProperties(rootDir, project.providers)
 
         buildConfigField(
             "long",
@@ -86,11 +84,6 @@ android {
             "\"" + (System.getenv("SIMKL_CLIENT_SECRET") ?: localProperties["simkl.secret"]) + "\""
         )
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-
-        ksp {
-            arg("room.schemaLocation", "$projectDir/schemas")
-            arg("exportSchema", "true")
-        }
     }
 
     buildTypes {
@@ -136,8 +129,8 @@ android {
 
     compileOptions {
         isCoreLibraryDesugaringEnabled = true
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.toVersion(javaTarget.target)
+        targetCompatibility = JavaVersion.toVersion(javaTarget.target)
     }
 
     lint {
@@ -152,89 +145,79 @@ android {
     namespace = "com.lagradost.cloudstream3"
 }
 
-repositories {
-    maven("https://jitpack.io")
-}
-
 dependencies {
     // Testing
-    testImplementation("junit:junit:4.13.2")
-    testImplementation("org.json:json:20240303")
-    androidTestImplementation("androidx.test:core")
-    implementation("androidx.test.ext:junit-ktx:1.2.1")
-    androidTestImplementation("androidx.test.ext:junit:1.2.1")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
+    testImplementation(libs.junit)
+    testImplementation(libs.json)
+    androidTestImplementation(libs.core)
+    implementation(libs.junit.ktx)
+    androidTestImplementation(libs.ext.junit)
+    androidTestImplementation(libs.espresso.core)
 
     // Android Core & Lifecycle
-    implementation("androidx.core:core-ktx:1.13.1")
-    implementation("androidx.appcompat:appcompat:1.7.0")
-    implementation("androidx.navigation:navigation-ui-ktx:2.7.7")
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.8.3")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.3")
-    implementation("androidx.navigation:navigation-fragment-ktx:2.7.7")
+    implementation(libs.core.ktx)
+    implementation(libs.appcompat)
+    implementation(libs.navigation.ui.ktx)
+    implementation(libs.lifecycle.livedata.ktx)
+    implementation(libs.lifecycle.viewmodel.ktx)
+    implementation(libs.navigation.fragment.ktx)
 
     // Design & UI
-    implementation("jp.wasabeef:glide-transformations:4.3.0")
-    implementation("androidx.preference:preference-ktx:1.2.1")
-    implementation("com.google.android.material:material:1.12.0")
-    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
-    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
+    implementation(libs.preference.ktx)
+    implementation(libs.material)
+    implementation(libs.constraintlayout)
+    implementation(libs.swiperefreshlayout)
 
-    // Glide Module
-    ksp("com.github.bumptech.glide:ksp:4.16.0")
-    implementation("com.github.bumptech.glide:glide:4.16.0")
-    implementation("com.github.bumptech.glide:okhttp3-integration:4.16.0")
-
-    // For KSP -> Official Annotation Processors are Not Yet Supported for KSP
-    ksp("dev.zacsweers.autoservice:auto-service-ksp:1.2.0")
-    implementation("com.google.guava:guava:33.2.1-android")
-    implementation("dev.zacsweers.autoservice:auto-service-ksp:1.2.0")
+    // Coil Image Loading
+    implementation(libs.coil)
+    implementation(libs.coil.network.okhttp)
 
     // Media 3 (ExoPlayer)
-    implementation("androidx.media3:media3-ui:1.4.0")
-    implementation("androidx.media3:media3-cast:1.4.0")
-    implementation("androidx.media3:media3-common:1.4.0")
-    implementation("androidx.media3:media3-session:1.4.0")
-    implementation("androidx.media3:media3-exoplayer:1.4.0")
-    implementation("com.google.android.mediahome:video:1.0.0")
-    implementation("androidx.media3:media3-exoplayer-hls:1.4.0")
-    implementation("androidx.media3:media3-exoplayer-dash:1.4.0")
-    implementation("androidx.media3:media3-datasource-okhttp:1.4.0")
+    implementation(libs.bundles.media3)
+    implementation(libs.video)
 
     // PlayBack
-    implementation("com.jaredrummler:colorpicker:1.1.0") // Subtitle Color Picker
-    implementation("com.github.recloudstream:media-ffmpeg:1.1.0") // Custom FF-MPEG Lib for Audio Codecs
-    implementation("com.github.teamnewpipe:NewPipeExtractor:176da72") /* For Trailers
-    ^ Update to Latest Commits if Trailers Misbehave, github.com/TeamNewPipe/NewPipeExtractor/commits/dev */
-    implementation("com.github.albfernandez:juniversalchardet:2.5.0") // Subtitle Decoding
+    implementation(libs.colorpicker) // Subtitle Color Picker
+    implementation(libs.newpipeextractor) // For Trailers
+    implementation(libs.juniversalchardet) // Subtitle Decoding
+
+    // FFmpeg Decoding
+    implementation(libs.bundles.nextlibMedia3)
 
     // Crash Reports (AcraApplication.kt)
-    implementation("ch.acra:acra-core:5.11.3")
-    implementation("ch.acra:acra-toast:5.11.3")
+    implementation(libs.acra.core)
+    implementation(libs.acra.toast)
 
     // UI Stuff
-    implementation("com.facebook.shimmer:shimmer:0.5.0") // Shimmering Effect (Loading Skeleton)
-    implementation("androidx.palette:palette-ktx:1.0.0") // Palette For Images -> Colors
-    implementation("androidx.tvprovider:tvprovider:1.0.0")
-    implementation("com.github.discord:OverlappingPanels:0.1.5") // Gestures
-    implementation("androidx.biometric:biometric:1.2.0-alpha05") // Fingerprint Authentication
-    implementation("com.github.rubensousa:previewseekbar-media3:1.1.1.0") // SeekBar Preview
-    implementation("io.github.g0dkar:qrcode-kotlin:4.2.0") // QR code for PIN Auth on TV
+    implementation(libs.shimmer) // Shimmering Effect (Loading Skeleton)
+    implementation(libs.palette.ktx) // Palette for Images -> Colors
+    implementation(libs.tvprovider)
+    implementation(libs.overlappingpanels) // Gestures
+    implementation(libs.biometric) // Fingerprint Authentication
+    implementation(libs.previewseekbar.media3) // SeekBar Preview
+    implementation(libs.qrcode.kotlin) // QR Code for PIN Auth on TV
 
     // Extensions & Other Libs
-    implementation("org.mozilla:rhino:1.7.15") // run JavaScript
-    implementation("me.xdrop:fuzzywuzzy:1.4.0") // Library/Ext Searching with Levenshtein Distance
-    implementation("com.github.LagradOst:SafeFile:0.0.6") // To Prevent the URI File Fu*kery
-    implementation("com.uwetrottmann.tmdb2:tmdb-java:2.11.0") // TMDB API v3 Wrapper Made with RetroFit
-    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs_nio:2.0.4") //nio flavor needed for NewPipeExtractor
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.1") /* JSON Parser
-    ^ Don't Bump Jackson above 2.13.1 , Crashes on Android TV's and FireSticks that have Min API
-    Level 25 or Less. */
+    implementation(libs.rhino) // Run JavaScript
+    implementation(libs.fuzzywuzzy) // Library/Ext Searching with Levenshtein Distance
+    implementation(libs.safefile) // To Prevent the URI File Fu*kery
+    implementation(libs.conscrypt.android) // To Fix SSL Fu*kery on Android 9
+    implementation(libs.tmdb.java) // TMDB API v3 Wrapper Made with RetroFit
+    coreLibraryDesugaring(libs.desugar.jdk.libs.nio) // NIO Flavor Needed for NewPipeExtractor
+    implementation(libs.jackson.module.kotlin) {
+        version {
+            strictly("2.13.1")
+        }
+        because("Don't Bump Jackson above 2.13.1, Crashes on Android TV's and FireSticks that have Min API Level 25 or Less.")
+    } // JSON Parser
+
+    // Torrent Support
+    implementation(libs.torrentserver.aniyomi)
 
     // Downloading & Networking
-    implementation("androidx.work:work-runtime:2.9.0")
-    implementation("androidx.work:work-runtime-ktx:2.9.0")
-    implementation("com.github.Blatzar:NiceHttp:0.4.11") // HTTP Lib
+    implementation(libs.work.runtime)
+    implementation(libs.work.runtime.ktx)
+    implementation(libs.nicehttp) // HTTP Lib
 
     implementation(project(":library") {
         // There does not seem to be a good way of getting the android flavor.
@@ -255,7 +238,7 @@ tasks.register<Jar>("androidSourcesJar") {
 
 tasks.register<Copy>("copyJar") {
     from(
-        "build/intermediates/compile_app_classes_jar/prereleaseDebug",
+        "build/intermediates/compile_app_classes_jar/prereleaseDebug/bundlePrereleaseDebugClassesToCompileJar",
         "../library/build/libs"
     )
     into("build/app-classes")
@@ -274,30 +257,12 @@ tasks.register<Jar>("makeJar") {
         zipTree("build/app-classes/library-jvm.jar")
     )
     destinationDirectory.set(layout.buildDirectory)
-    archivesName = "classes"
+    archiveBaseName = "classes"
 }
 
-tasks.withType<KotlinCompile> {
-    kotlinOptions {
-        jvmTarget = "1.8"
-        freeCompilerArgs = listOf("-Xjvm-default=all-compatibility")
-    }
-}
-
-tasks.withType<DokkaTask>().configureEach {
-    moduleName.set("Cloudstream")
-    dokkaSourceSets {
-        named("main") {
-            sourceLink {
-                // Unix based directory relative path to the root of the project (where you execute gradle respectively).
-                localDirectory.set(file("src/main/java"))
-
-                // URL showing where the source code can be accessed through the web browser
-                remoteUrl.set(URL("https://github.com/recloudstream/cloudstream/tree/master/app/src/main/java"))
-
-                // Suffix which is used to append the line number to the URL. Use #L for GitHub
-                remoteLineSuffix.set("#L")
-            }
-        }
+tasks.withType<KotlinJvmCompile> {
+    compilerOptions {
+        jvmTarget.set(javaTarget)
+        freeCompilerArgs.add("-Xjvm-default=all-compatibility")
     }
 }

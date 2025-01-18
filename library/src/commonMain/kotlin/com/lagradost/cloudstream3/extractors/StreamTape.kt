@@ -4,6 +4,7 @@ import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.Qualities
+import org.mozilla.javascript.Context
 
 class StreamTapeNet : StreamTape() {
     override var mainUrl = "https://streamtape.net"
@@ -13,7 +14,7 @@ class StreamTapeXyz : StreamTape() {
     override var mainUrl = "https://streamtape.xyz"
 }
 
-class ShaveTape : StreamTape(){
+class ShaveTape : StreamTape() {
     override var mainUrl = "https://shavetape.cash"
 }
 
@@ -22,14 +23,27 @@ open class StreamTape : ExtractorApi() {
     override var mainUrl = "https://streamtape.com"
     override val requiresReferer = false
 
-    private val linkRegex =
-        Regex("""'robotlink'\)\.innerHTML = '(.+?)'\+ \('(.+?)'\)""")
-
     override suspend fun getUrl(url: String, referer: String?): List<ExtractorLink>? {
         with(app.get(url)) {
-            linkRegex.find(this.text)?.let {
-                val extractedUrl =
-                    "https:${it.groups[1]!!.value + it.groups[2]!!.value.substring(3)}"
+            var result =
+                this.document.select("script").firstOrNull { it.html().contains("botlink').innerHTML") }
+                    ?.html()?.lines()?.firstOrNull{ it.contains("botlink').innerHTML") }?.let {
+                        val scriptContent =
+                            it.substringAfter(").innerHTML").replaceFirst("=", "var url =")
+                        val rhino = Context.enter()
+                        rhino.optimizationLevel = -1
+                        val scope = rhino.initStandardObjects()
+                        var result = ""
+                        try {
+                            rhino.evaluateString(scope, scriptContent, "url", 1, null)
+                            result = scope.get("url", scope).toString()
+                        }finally {
+                            rhino.close()
+                        }
+                        result
+                    }
+            if(!result.isNullOrEmpty()){
+                val extractedUrl = "https:${result}&stream=1"
                 return listOf(
                     ExtractorLink(
                         name,

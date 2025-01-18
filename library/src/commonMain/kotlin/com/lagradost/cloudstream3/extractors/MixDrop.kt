@@ -7,6 +7,10 @@ class MixDropBz : MixDrop(){
     override var mainUrl = "https://mixdrop.bz"
 }
 
+class MixDropAg : MixDrop(){
+    override var mainUrl = "https://mixdrop.ag"
+}
+
 class MixDropCh : MixDrop(){
     override var mainUrl = "https://mixdrop.ch"
 }
@@ -25,7 +29,7 @@ open class MixDrop : ExtractorApi() {
     }
 
     override suspend fun getUrl(url: String, referer: String?): List<ExtractorLink>? {
-        with(app.get(url)) {
+        with(app.get(url.replaceFirst("/f/", "/e/"))) {
             getAndUnpack(this.text).let { unpackedText ->
                 srcRegex.find(unpackedText)?.groupValues?.get(1)?.let { link ->
                     return listOf(

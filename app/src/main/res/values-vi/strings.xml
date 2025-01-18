@@ -66,8 +66,8 @@
     <string name="stream">Luồng mạng</string>
     <string name="error_loading_links_toast">Đã có lỗi xảy ra</string>
     <string name="download_storage_text">Bộ nhớ trong</string>
-    <string name="app_dubbed_text">Lồng Tiếng</string>
-    <string name="app_subbed_text">Phụ Đề</string>
+    <string name="app_dubbed_text">L.Tiếng</string>
+    <string name="app_subbed_text">P.Đề</string>
     <string name="popup_delete_file">Xóa Tệp</string>
     <string name="popup_play_file">Xem Tệp</string>
     <string name="popup_resume_download">Tiếp tục tải</string>
@@ -143,7 +143,7 @@
     <string name="backup_settings">Sao lưu dữ liệu</string>
     <string name="restore_success">Đã tải dữ liệu sao lưu</string>
     <string name="restore_failed_format" formatted="true">Không thể khôi phục dữ liệu từ %s</string>
-    <string name="backup_success">Khôi phục dữ liệu thành công</string>
+    <string name="backup_success">Sao lưu dữ liệu thành công</string>
     <string name="backup_failed">Thiếu quyền truy cập bộ nhớ, hãy thử lại.</string>
     <string name="backup_failed_error_format">Lỗi khi sao lưu %s</string>
     <string name="search">Tìm kiếm</string>
@@ -243,8 +243,6 @@
     <string name="episode_action_chromecast_mirror">Chiếu Chromecast</string>
     <string name="episode_action_play_in_app">Xem với trình phát mặc định</string>
     <string name="episode_action_play_in_format">Xem với trình phát %s</string>
-    <string name="episode_action_play_in_browser">Xem tại trình duyệt</string>
-    <string name="episode_action_copy_link">Sao chép liên kết</string>
     <string name="episode_action_auto_download">Tự động tải xuống</string>
     <string name="episode_action_download_mirror">Nguồn tải xuống</string>
     <string name="episode_action_reload_links">Lấy link mới nhất</string>
@@ -307,7 +305,7 @@
     <string name="example_username">Tài khoản</string>
     <string name="example_email">Email</string>
     <string name="example_ip">127.0.0.1</string>
-    <string name="example_site_name">Địa chỉ trang web­</string>
+    <string name="example_site_name">Tên mới</string>
     <string name="example_site_url">https://example.com</string>
     <string name="example_lang_name">Mã ngôn ngữ (vi)</string>
     <string name="login_format" formatted="true">%1$s %2$s</string>
@@ -402,8 +400,8 @@
     <string name="setup_done">Hoàn tất</string>
     <string name="extensions">Tiện ích mở rộng</string>
     <string name="add_repository">Thêm kho lưu trữ</string>
-    <string name="repository_name_hint">Tên kho lưu trữ</string>
-    <string name="repository_url_hint">Đường dẫn kho lưu trữ</string>
+    <string name="repository_name_hint">Tên kho lưu trữ (Tùy chọn)</string>
+    <string name="repository_url_hint">Đường dẫn kho lưu trữ hoặc Mã ngắn</string>
     <string name="plugin_loaded">Đã tải plugin</string>
     <string name="plugin_deleted">Plugin đã xoá</string>
     <string name="plugin_load_fail" formatted="true">Không tải được %s</string>
@@ -472,10 +470,6 @@
     <string name="extension_types">Hỗ trợ</string>
     <string name="extension_language">Ngôn ngữ</string>
     <string name="extension_install_first">Cài đặt tiện ích trước</string>
-    <string name="player_settings_play_in_vlc">VLC</string>
-    <string name="player_settings_play_in_mpv">MPV</string>
-    <string name="player_settings_play_in_web">Web Video Cast</string>
-    <string name="player_settings_play_in_browser">Trình duyệt web</string>
     <string name="app_not_found_error">Không thấy ứng dụng</string>
     <string name="all_languages_preference">Tất cả ngôn ngữ</string>
     <string name="skip_type_format" formatted="true">Tua %s</string>
@@ -671,9 +665,17 @@
 \n
 \n%s</string>
     <string name="delete_plugin">Xóa plugin</string>
-    <string name="player_settings_play_in_fcast">Fcast</string>
     <string name="sort_release_date_old">Ngày phát hành (Cũ đến mới)</string>
     <string name="hide_player_control_names">Ẩn tên các nút điều khiển</string>
     <string name="preview_seekbar_desc">Bật chế độ xem trước hình thu nhỏ trên seekbar</string>
     <string name="preview_seekbar">Xem trước Seekbar</string>
+    <string name="no_subtitles_loaded">Chưa tải phụ đề</string>
+    <string name="confirm_before_exiting_title">Xác nhận trước khi thoát</string>
+    <string name="confirm_before_exiting_desc">Hiện hộp thoại trước khi thoát ứng dụng</string>
+    <string name="dont_show">Không hiển thị</string>
+    <string name="show">Hiển thị</string>
+    <string name="backup_path_title">Vị trí thư mục sao lưu</string>
+    <string name="custom">Tuỳ chỉnh</string>
+    <string name="subs_edge_size">Kích thước cạnh</string>
+    <string name="torrent_info">Video này là Torrent, điều này có nghĩa là hoạt động video của bạn có thể được theo dõi.\nHãy đảm bảo rằng bạn hiểu về Torrent trước khi tiếp tục.</string>
 </resources>

@@ -107,4 +107,5 @@
     <string name="cast_format" formatted="true">Rolverdeling: %s</string>
     <string name="subscribe_tooltip">Nuwe episode notifikasie</string>
     <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
+    <string name="next_season_episode_format" formatted="true">"Season 000 Episode  000 will be released in"</string>
 </resources>

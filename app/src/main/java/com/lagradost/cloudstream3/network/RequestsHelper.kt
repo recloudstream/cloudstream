@@ -18,10 +18,15 @@ import javax.net.ssl.SSLSocketFactory
 import javax.net.ssl.TrustManager
 import javax.net.ssl.X509TrustManager
 
-fun Requests.initClient(context: Context): OkHttpClient {
+fun Requests.initClient(context: Context) {
+    this.baseClient = buildDefaultClient(context)
+}
+
+fun buildDefaultClient(context: Context): OkHttpClient {
 
     // see trust manager function below, this lib was used earlier
     // normalSafeApiCall { Security.insertProviderAt(Conscrypt.newProvider(), 1) }
+
     val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
     val dns = settingsManager.getInt(context.getString(R.string.dns_pref), 0)
 
@@ -30,6 +35,7 @@ fun Requests.initClient(context: Context): OkHttpClient {
         .sslSocketFactory(getUnsafeSSLSocketFactory(), TrustAllCerts())
         .hostnameVerifier { _, _ -> true }
         .connectionSpecs(listOf(ConnectionSpec.MODERN_TLS, ConnectionSpec.COMPATIBLE_TLS))
+    val baseClient = OkHttpClient.Builder()
         .followRedirects(true)
         .followSslRedirects(true)
         .cache(
@@ -47,7 +53,8 @@ fun Requests.initClient(context: Context): OkHttpClient {
         4 -> builder.addAdGuardDns()
         5 -> builder.addDNSWatchDns()
         6 -> builder.addQuad9Dns()
-    }
+    7 -> addDnsSbDns()
+                8 -> addCanadianShieldDns()}
 
     baseClient = builder.build()
     return baseClient

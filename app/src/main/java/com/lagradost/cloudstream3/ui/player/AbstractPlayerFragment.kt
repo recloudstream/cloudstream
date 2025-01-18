@@ -229,7 +229,9 @@ abstract class AbstractPlayerFragment(
                 }
                 val filter = IntentFilter()
                 filter.addAction(ACTION_MEDIA_CONTROL)
-                activity?.registerReceiver(pipReceiver, filter)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    activity?.registerReceiver(pipReceiver, filter, Context.RECEIVER_EXPORTED)
+                } else activity?.registerReceiver(pipReceiver, filter)
                 val isPlaying = player.getIsPlaying()
                 val isPlayingValue =
                     if (isPlaying) CSPlayerLoading.IsPlaying else CSPlayerLoading.IsPaused
@@ -289,23 +291,51 @@ abstract class AbstractPlayerFragment(
                 val msg = exception.message ?: ""
                 val errorName = exception.errorCodeName
                 when (val code = exception.errorCode) {
-                    PlaybackException.ERROR_CODE_IO_FILE_NOT_FOUND, PlaybackException.ERROR_CODE_PARSING_CONTAINER_UNSUPPORTED, PlaybackException.ERROR_CODE_IO_NO_PERMISSION, PlaybackException.ERROR_CODE_IO_UNSPECIFIED -> {
+                    PlaybackException.ERROR_CODE_IO_FILE_NOT_FOUND,
+                    PlaybackException.ERROR_CODE_PARSING_CONTAINER_UNSUPPORTED,
+                    PlaybackException.ERROR_CODE_IO_NO_PERMISSION,
+                    PlaybackException.ERROR_CODE_IO_UNSPECIFIED -> {
                         showToast(
                             "${ctx.getString(R.string.source_error)}\n$errorName ($code)\n$msg",
                             gotoNext = true
                         )
                     }
 
-                    PlaybackException.ERROR_CODE_REMOTE_ERROR, PlaybackException.ERROR_CODE_IO_BAD_HTTP_STATUS, PlaybackException.ERROR_CODE_TIMEOUT, PlaybackException.ERROR_CODE_IO_NETWORK_CONNECTION_FAILED, PlaybackException.ERROR_CODE_IO_INVALID_HTTP_CONTENT_TYPE -> {
+                    PlaybackException.ERROR_CODE_REMOTE_ERROR,
+                    PlaybackException.ERROR_CODE_IO_BAD_HTTP_STATUS,
+                    PlaybackException.ERROR_CODE_TIMEOUT,
+                    PlaybackException.ERROR_CODE_IO_NETWORK_CONNECTION_FAILED,
+                    PlaybackException.ERROR_CODE_IO_INVALID_HTTP_CONTENT_TYPE -> {
                         showToast(
                             "${ctx.getString(R.string.remote_error)}\n$errorName ($code)\n$msg",
                             gotoNext = true
                         )
                     }
 
-                    PlaybackException.ERROR_CODE_DECODING_FAILED, PlaybackErrorEvent.ERROR_AUDIO_TRACK_INIT_FAILED, PlaybackErrorEvent.ERROR_AUDIO_TRACK_OTHER, PlaybackException.ERROR_CODE_AUDIO_TRACK_WRITE_FAILED, PlaybackException.ERROR_CODE_DECODER_INIT_FAILED, PlaybackException.ERROR_CODE_DECODER_QUERY_FAILED -> {
+                    PlaybackErrorEvent.ERROR_AUDIO_TRACK_INIT_FAILED,
+                    PlaybackErrorEvent.ERROR_AUDIO_TRACK_OTHER,
+                    PlaybackException.ERROR_CODE_DECODING_FAILED,
+                    PlaybackException.ERROR_CODE_AUDIO_TRACK_WRITE_FAILED,
+                    PlaybackException.ERROR_CODE_DECODER_INIT_FAILED,
+                    PlaybackException.ERROR_CODE_DECODER_QUERY_FAILED -> {
                         showToast(
                             "${ctx.getString(R.string.render_error)}\n$errorName ($code)\n$msg",
+                            gotoNext = true
+                        )
+                    }
+
+                    PlaybackException.ERROR_CODE_DECODING_FORMAT_UNSUPPORTED,
+                    PlaybackException.ERROR_CODE_DECODING_FORMAT_EXCEEDS_CAPABILITIES -> {
+                        showToast(
+                            "${ctx.getString(R.string.unsupported_error)}\n$errorName ($code)\n$msg",
+                            gotoNext = true
+                        )
+                    }
+
+                    PlaybackException.ERROR_CODE_PARSING_CONTAINER_MALFORMED,
+                    PlaybackException.ERROR_CODE_PARSING_MANIFEST_MALFORMED -> {
+                        showToast(
+                            "${ctx.getString(R.string.encoding_error)}\n$errorName ($code)\n$msg",
                             gotoNext = true
                         )
                     }
@@ -340,6 +370,8 @@ abstract class AbstractPlayerFragment(
     private fun onSubStyleChanged(style: SaveCaptionStyle) {
         if (player is CS3IPlayer) {
             player.updateSubtitleStyle(style)
+            // Forcefully update the subtitle encoding in case the edge size is changed
+            player.seekTime(-1)
         }
     }
 
@@ -384,12 +416,20 @@ abstract class AbstractPlayerFragment(
     //    }
     //}
 
+    open fun onDownload(event : DownloadEvent) = Unit
+
     /** This receives the events from the player, if you want to append functionality you do it here,
      * do note that this only receives events for UI changes,
      * and returning early WONT stop it from changing in eg the player time or pause status */
     open fun mainCallback(event: PlayerEvent) {
-        Log.i(TAG, "Handle event: $event")
+        // we don't want to spam DownloadEvent
+        if(event !is DownloadEvent) {
+            Log.i(TAG, "Handle event: $event")
+        }
         when (event) {
+            is DownloadEvent -> {
+                onDownload(event)
+            }
             is ResizedEvent -> {
                 playerDimensionsLoaded(event.width, event.height)
             }
@@ -521,7 +561,7 @@ abstract class AbstractPlayerFragment(
                 }
             }
 
-            subView = playerView?.findViewById(R.id.exo_subtitles)
+            subView = playerView?.findViewById(androidx.media3.ui.R.id.exo_subtitles)
             subStyle = SubtitlesFragment.getCurrentSavedStyle()
             player.initSubtitles(subView, subtitleHolder, subStyle)
             (player.imageGenerator as? PreviewGenerator)?.params = ImageParams.new16by9(screenWidth)

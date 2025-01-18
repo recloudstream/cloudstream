@@ -6,6 +6,7 @@ import com.lagradost.cloudstream3.CommonActivity.activity
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.ui.player.PlayerSubtitleHelper.Companion.toSubtitleMimeType
 import com.lagradost.cloudstream3.utils.ExtractorLink
+import com.lagradost.cloudstream3.utils.ExtractorLinkType
 import com.lagradost.cloudstream3.utils.SubtitleUtils.cleanDisplayName
 import com.lagradost.cloudstream3.utils.SubtitleUtils.isMatchingSubtitle
 import com.lagradost.cloudstream3.utils.VideoDownloadManager.getDownloadFileInfoAndUpdateSettings
@@ -57,10 +58,11 @@ class DownloadFileGenerator(
 
     override suspend fun generateLinks(
         clearCache: Boolean,
-        type: LoadType,
+        sourceTypes: Set<ExtractorLinkType>,
         callback: (Pair<ExtractorLink?, ExtractorUri?>) -> Unit,
         subtitleCallback: (SubtitleData) -> Unit,
-        offset: Int
+        offset: Int,
+        isCasting: Boolean
     ): Boolean {
         val meta = episodes[currentIndex + offset]
 

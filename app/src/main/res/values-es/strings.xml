@@ -16,10 +16,10 @@
     <string name="batch_download_nothing_to_download_format" formatted="true">Todo %s ha sido descargado</string>
     <string name="plugins_not_downloaded" formatted="true">No descargado:%d</string>
     <string name="single_plugin_disabled" formatted="true">%s (Desactivado)</string>
-    <string name="repository_url_hint">URL del repositorio</string>
+    <string name="repository_url_hint">URL o código corto del repositorio</string>
     <string name="plugins_disabled" formatted="true">Desactivado:%d</string>
     <string name="add_repository">Agregar repositorio</string>
-    <string name="repository_name_hint">Nombre del repositorio</string>
+    <string name="repository_name_hint">Nombre del repositorio (opcional)</string>
     <string name="delete_repository_plugins">Esto también eliminará todos los plugins del repositorio</string>
     <string name="pref_filter_search_quality">Ocultar la calidad de video en los resultados de búsqueda</string>
     <string name="pref_category_player_layout">Diseño</string>
@@ -57,11 +57,7 @@
     <string name="double_tap_to_seek_amount_settings">Cantidad de búsquedas del reproductor (segundos)</string>
     <string name="use_system_brightness_settings_des">Use el brillo del sistema en el reproductor de la app en lugar de una superposición oscura</string>
     <string name="limit_title_rez">Resolución del reproductor de video</string>
-    <string name="player_settings_play_in_mpv">MPV</string>
     <string name="category_player">Reproductor</string>
-    <string name="player_settings_play_in_vlc">VLC</string>
-    <string name="player_settings_play_in_web">Web Video Cast</string>
-    <string name="player_settings_play_in_browser">Navegador Web</string>
     <string name="autoplay_next_settings_des">Iniciar el siguiente episodio cuando el actual termine</string>
     <string name="video_skip_op">Omitir Intro</string>
     <string name="skip_type_op">Apertura</string>
@@ -78,9 +74,7 @@
     <string name="episode_sync_settings">Actualizar progreso de lo visto</string>
     <string name="episode_action_chromecast_mirror">Duplicar en Chromecast</string>
     <string name="no_episodes_found">No se encontraron Episodios</string>
-    <string name="episode_action_play_in_browser">Reproducir en Navegador</string>
     <string name="episode_action_play_in_format">Reproducir en %s</string>
-    <string name="episode_action_copy_link">Copiar enlace</string>
     <string name="episode_action_auto_download">Descarga automática</string>
     <string name="episode_action_download_mirror">Descargar desde servidor alternativo</string>
     <string name="episode_action_reload_links">Recargar enlaces</string>
@@ -176,7 +170,7 @@
     <string name="subs_edge_type">Tipo de Borde</string>
     <string name="subs_subtitle_elevation">Elevación de Subtítulo</string>
     <string name="search_provider_text_providers">Buscar usando proveedores</string>
-    <string name="picture_in_picture_des">Continúa la reproducción en una imagen pequeña encima de otras aplicaciones</string>
+    <string name="picture_in_picture_des">Continuar la reproducción en un reproductor miniatura encima de otras aplicaciones</string>
     <string name="player_size_settings">Botón de cambio de tamaño del reproductor</string>
     <string name="player_size_settings_des">Eliminar bordes negros</string>
     <string name="subs_auto_select_language">Seleccionar idioma automáticamente</string>
@@ -443,7 +437,7 @@
     <string name="next">Siguiente</string>
     <string name="previous">Anterior</string>
     <string name="setup_done">Hecho</string>
-    <string name="plugin_loaded">Plugin Cargado</string>
+    <string name="plugin_loaded">Plugin cargado</string>
     <string name="is_adult">18+</string>
     <string name="batch_download_start_format" formatted="true">Comenzó la descarga de %1$d %2$s…</string>
     <string name="batch_download">Descarga por lotes</string>
@@ -455,7 +449,7 @@
     <string name="tracks">Pistas</string>
     <string name="audio_tracks">Pistas de audio</string>
     <string name="video_tracks">Pistas de video</string>
-    <string name="safe_mode_title">Modo seguro activado</string>
+    <string name="safe_mode_title">Modo seguro ACTIVADO</string>
     <string name="safe_mode_crash_info">Ver información de fallos</string>
     <string name="extension_rating" formatted="true">Puntaje:%s</string>
     <string name="extension_version">Versión</string>
@@ -512,7 +506,7 @@
     <string name="test_log">Registro</string>
     <string name="start">Empezar</string>
     <string name="test_passed">Aprobado</string>
-    <string name="category_provider_test">Verificar al proveedor</string>
+    <string name="category_provider_test">Verificar proveedores</string>
     <string name="restart">Reiniciar</string>
     <string name="subscription_list_name">Suscrito</string>
     <string name="subscription_new">Suscrito a %s</string>
@@ -621,7 +615,6 @@
     <string name="episode_upcoming_format" formatted="true">Próximamente en %s</string>
     <string name="next_season_episode_format" formatted="true">La temporada %1$d y el episodio %2$d se estrenarán en</string>
     <string name="player_settings_select_cast_device">Seleccionar el dispositivo para transmitir</string>
-    <string name="player_settings_play_in_fcast">Fcast</string>
     <string name="episode_action_cast_mirror">Espejo de transmisión</string>
     <string name="cs3wiki">Wiki de CloudStream</string>
     <string name="pref_category_security">Seguridad</string>
@@ -663,4 +656,18 @@
 \n%s</string>
     <string name="preview_seekbar_desc">Activar la previsualización para las miniaturas en la barra de búsqueda</string>
     <string name="preview_seekbar">Previsualización de Seekbar</string>
+    <string name="no_subtitles_loaded">Aún no hay subtítulos cargados</string>
+    <string name="confirm_before_exiting_desc">Mostrar el diálogo antes de salir de la aplicación</string>
+    <string name="show">Mostrar</string>
+    <string name="dont_show">No mostrar</string>
+    <string name="confirm_before_exiting_title">Confirmar antes de salir</string>
+    <string name="backup_path_title">Ubicación de la carpeta de respaldo</string>
+    <string name="custom">Personalizada</string>
+    <string name="torrent_info">Este video está en una red de torrents, lo que significa que se puede rastrear su uso.\nAsegúrese de comprender las redes de torrents antes de continuar.</string>
+    <string name="subs_edge_size">Tamaño del borde</string>
+    <string name="podcast_singluar">Podcast</string>
+    <string name="audio_singluar">Audio</string>
+    <string name="encoding_error">Error de codificación</string>
+    <string name="unsupported_error">Error no soportado</string>
+    <string name="player_load_one_subtitle_online">Cargar primero disponible</string>
 </resources>

@@ -1,5 +1,7 @@
 package com.lagradost.cloudstream3.ui.result
 
+import android.app.SearchManager
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,7 +12,9 @@ import com.lagradost.cloudstream3.ActorData
 import com.lagradost.cloudstream3.ActorRole
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.CastItemBinding
-import com.lagradost.cloudstream3.utils.UIHelper.setImage
+import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
+import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
+import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
 
 class ActorAdaptor(
     private var nextFocusUpId: Int? = null,
@@ -101,8 +105,23 @@ class ActorAdaptor(
                 callback(position)
             }
 
+            itemView.setOnLongClickListener {
+                if (isLayout(PHONE)) {
+                    Intent(Intent.ACTION_WEB_SEARCH).apply {
+                        putExtra(SearchManager.QUERY, actor.actor.name)
+                    }.also { intent ->
+                        itemView.context.packageManager?.let { pm ->
+                            if (intent.resolveActivity(pm) != null) {
+                                itemView.context.startActivity(intent)
+                            }
+                        }
+                    }
+                }
+                true
+            }
+
             binding.apply {
-                actorImage.setImage(mainImg)
+                actorImage.loadImage(mainImg)
 
                 actorName.text = actor.actor.name
                 actor.role?.let {
@@ -136,7 +155,9 @@ class ActorAdaptor(
                     voiceActorName.isVisible = false
                 } else {
                     voiceActorName.text = actor.voiceActor?.name
-                    voiceActorImageHolder.isVisible = voiceActorImage.setImage(vaImage)
+                    if (!vaImage.isNullOrEmpty())
+                        voiceActorImageHolder.isVisible = true
+                    voiceActorImage.loadImage(vaImage)
                 }
             }
         }

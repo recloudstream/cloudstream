@@ -30,15 +30,15 @@ import com.google.android.material.chip.ChipGroup
 import com.google.android.material.navigationrail.NavigationRailView
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
-import com.lagradost.cloudstream3.MainActivity.Companion.resumeApps
+import com.lagradost.cloudstream3.actions.OpenInAppAction
+import com.lagradost.cloudstream3.actions.VideoClickActionHolder
 import com.lagradost.cloudstream3.databinding.ToastBinding
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.ui.player.PlayerEventType
-import com.lagradost.cloudstream3.ui.result.ResultFragment
-import com.lagradost.cloudstream3.ui.result.UiText
+import com.lagradost.cloudstream3.utils.UiText
 import com.lagradost.cloudstream3.ui.settings.Globals.updateTv
 import com.lagradost.cloudstream3.utils.AppContextUtils.isRtl
-import com.lagradost.cloudstream3.utils.DataStoreHelper
+import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 import com.lagradost.cloudstream3.utils.Event
 import com.lagradost.cloudstream3.utils.UIHelper
 import com.lagradost.cloudstream3.utils.UIHelper.hasPIPPermission
@@ -204,6 +204,7 @@ object CommonActivity {
 
     fun init(act: Activity) {
         setActivityInstance(act)
+        ioSafe { Torrent.deleteAllFiles() }
 
         val componentActivity = activity as? ComponentActivity ?: return
 
@@ -218,20 +219,15 @@ object CommonActivity {
         componentActivity.updateTv()
         NewPipe.init(DownloaderTestImpl.getInstance())
 
-        for (resumeApp in resumeApps) {
-            resumeApp.launcher =
-                componentActivity.registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-                    val resultCode = result.resultCode
-                    val data = result.data
-                    if (resultCode == AppCompatActivity.RESULT_OK && data != null && resumeApp.position != null && resumeApp.duration != null) {
-                        val pos = resumeApp.getPosition(data)
-                        val dur = resumeApp.getDuration(data)
-                        if (dur > 0L && pos > 0L)
-                            DataStoreHelper.setViewPos(getKey(resumeApp.lastId), pos, dur)
-                        removeKey(resumeApp.lastId)
-                        ResultFragment.updateUI()
-                    }
-                }
+        MainActivity.activityResultLauncher = componentActivity.registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == AppCompatActivity.RESULT_OK) {
+                val actionUid = getKey<String>("last_click_action") ?: return@registerForActivityResult
+                Log.d(TAG, "Loading action $actionUid result handler")
+                val action = VideoClickActionHolder.getByUniqueId(actionUid) as? OpenInAppAction ?: return@registerForActivityResult
+                action.onResultSafe(act, result.data)
+                removeKey("last_click_action")
+                removeKey("last_opened_id")
+            }
         }
 
         // Ask for notification permissions on Android 13
@@ -499,11 +495,11 @@ object CommonActivity {
                 PlayerEventType.SeekBack
             }
 
-            KeyEvent.KEYCODE_MEDIA_NEXT, KeyEvent.KEYCODE_BUTTON_R1, KeyEvent.KEYCODE_N -> {
+            KeyEvent.KEYCODE_MEDIA_NEXT, KeyEvent.KEYCODE_BUTTON_R1, KeyEvent.KEYCODE_N, KeyEvent.KEYCODE_NUMPAD_2, KeyEvent.KEYCODE_CHANNEL_UP -> {
                 PlayerEventType.NextEpisode
             }
 
-            KeyEvent.KEYCODE_MEDIA_PREVIOUS, KeyEvent.KEYCODE_BUTTON_L1, KeyEvent.KEYCODE_B -> {
+            KeyEvent.KEYCODE_MEDIA_PREVIOUS, KeyEvent.KEYCODE_BUTTON_L1, KeyEvent.KEYCODE_B, KeyEvent.KEYCODE_NUMPAD_1, KeyEvent.KEYCODE_CHANNEL_DOWN -> {
                 PlayerEventType.PrevEpisode
             }
 
