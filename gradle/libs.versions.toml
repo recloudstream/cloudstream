@@ -1,7 +1,6 @@
 [versions]
 acraCore = "5.11.3"
 appcompat = "1.7.0"
-autoServiceKsp = "1.2.0"
 biometric = "1.2.0-alpha05"
 buildkonfigGradlePlugin = "0.15.2"
 coil = "3.0.4"
@@ -57,7 +56,6 @@ torrentserver-aniyomi = { module = "com.github.Diegopyl1209:torrentserver-aniyom
 acra-core = { module = "ch.acra:acra-core", version.ref = "acraCore" }
 acra-toast = { module = "ch.acra:acra-toast", version.ref = "acraCore" }
 appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
-auto-service-ksp = { module = "dev.zacsweers.autoservice:auto-service-ksp", version.ref = "autoServiceKsp" }
 biometric = { module = "androidx.biometric:biometric", version.ref = "biometric" }
 buildkonfig-gradle-plugin = { module = "com.codingfeline.buildkonfig:buildkonfig-gradle-plugin", version.ref = "buildkonfigGradlePlugin" }
 coil = { module = "io.coil-kt.coil3:coil", version.ref = "coil" }
