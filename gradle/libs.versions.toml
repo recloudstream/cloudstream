@@ -14,7 +14,6 @@ dokkaGradlePlugin = "2.0.0"
 espressoCore = "3.6.1"
 fuzzywuzzy = "1.4.0"
 gradle = "8.8.0"
-guava = "33.3.1-android"
 jacksonModuleKotlin = "2.13.1"
 json = "20240303"
 junit = "4.13.2"
@@ -74,7 +73,6 @@ espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref =
 ext-junit = { module = "androidx.test.ext:junit", version.ref = "junitVersion" }
 fuzzywuzzy = { module = "me.xdrop:fuzzywuzzy", version.ref = "fuzzywuzzy" }
 gradle = { module = "com.android.tools.build:gradle", version.ref = "gradle" }
-guava = { module = "com.google.guava:guava", version.ref = "guava" }
 jackson-module-kotlin = { module = "com.fasterxml.jackson.module:jackson-module-kotlin", version.ref = "jacksonModuleKotlin" }
 jetbrains-kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlinGradlePluginVersion" }
 json = { module = "org.json:json", version.ref = "json" }
