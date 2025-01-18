@@ -4,6 +4,7 @@ import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
+import com.lagradost.cloudstream3.utils.Qualities
 import com.lagradost.cloudstream3.utils.schemaStripRegex
 import org.schabi.newpipe.extractor.ServiceList
 import org.schabi.newpipe.extractor.services.youtube.extractors.YoutubeStreamExtractor
@@ -19,10 +20,11 @@ class YoutubeShortLinkExtractor : YoutubeExtractor() {
     }
 }
 
-class YoutubeMobileExtractor  : YoutubeExtractor() {
+class YoutubeMobileExtractor : YoutubeExtractor() {
     override val mainUrl = "https://m.youtube.com"
 }
-class YoutubeNoCookieExtractor  : YoutubeExtractor() {
+
+class YoutubeNoCookieExtractor : YoutubeExtractor() {
     override val mainUrl = "https://www.youtube-nocookie.com"
 }
 
@@ -30,11 +32,6 @@ open class YoutubeExtractor : ExtractorApi() {
     override val mainUrl = "https://www.youtube.com"
     override val requiresReferer = false
     override val name = "YouTube"
-
-    companion object {
-        private var ytVideos: MutableMap<String, List<VideoStream>> = mutableMapOf()
-        private var ytVideosSubtitles: MutableMap<String, List<SubtitlesStream>> = mutableMapOf()
-    }
 
     override fun getExtractorUrl(id: String): String {
         return "$mainUrl/watch?v=$id"
@@ -46,42 +43,28 @@ open class YoutubeExtractor : ExtractorApi() {
         subtitleCallback: (SubtitleFile) -> Unit,
         callback: (ExtractorLink) -> Unit
     ) {
-        if (ytVideos[url].isNullOrEmpty()) {
-            val link =
-                YoutubeStreamLinkHandlerFactory.getInstance().fromUrl(
-                    url.replace(
-                        schemaStripRegex, ""
-                    )
+        val link =
+            YoutubeStreamLinkHandlerFactory.getInstance().fromUrl(
+                url.replace(
+                    schemaStripRegex, ""
                 )
+            )
 
-            val s = object : YoutubeStreamExtractor(
-                ServiceList.YouTube,
-                link
-            ) {
+        val s = object : YoutubeStreamExtractor(
+            ServiceList.YouTube,
+            link
+        ) {}
 
-            }
-            s.fetchPage()
-            ytVideos[url] = s.videoStreams
-            ytVideosSubtitles[url] = try {
-                s.subtitlesDefault.filterNotNull()
-            } catch (e: Exception) {
-                logError(e)
-                emptyList()
-            }
-        }
-        ytVideos[url]?.mapNotNull {
-            if (it.isVideoOnly() || it.height <= 0) return@mapNotNull null
-
+        s.fetchPage()
+        callback(
             ExtractorLink(
                 this.name,
                 this.name,
-                it.content ?: return@mapNotNull null,
+                s.hlsUrl,
                 "",
-                it.height
+                Qualities.Unknown.value,
+                isM3u8 = true
             )
-        }?.forEach(callback)
-        ytVideosSubtitles[url]?.mapNotNull {
-            SubtitleFile(it.languageTag ?: return@mapNotNull null, it.content ?: return@mapNotNull null)
-        }?.forEach(subtitleCallback)
+        )
     }
 }
