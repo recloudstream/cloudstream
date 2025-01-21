@@ -1,4 +1,6 @@
 import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
+import org.jetbrains.dokka.gradle.engine.parameters.KotlinPlatform
+import org.jetbrains.dokka.gradle.engine.parameters.VisibilityModifier
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
@@ -265,5 +267,24 @@ tasks.withType<KotlinJvmCompile> {
     compilerOptions {
         jvmTarget.set(javaTarget)
         freeCompilerArgs.add("-Xjvm-default=all-compatibility")
+    }
+}
+
+dokka {
+    moduleName = "App"
+    dokkaSourceSets {
+        main {
+            analysisPlatform = KotlinPlatform.JVM
+            documentedVisibilities(
+                VisibilityModifier.Public,
+                VisibilityModifier.Protected
+            )
+
+            sourceLink {
+                localDirectory = file("..")
+                remoteUrl("https://github.com/recloudstream/cloudstream/tree/master")
+                remoteLineSuffix = "#L"
+            }
+        }
     }
 }
