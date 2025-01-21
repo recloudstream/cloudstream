@@ -4,12 +4,12 @@ import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
+import com.lagradost.cloudstream3.utils.Qualities
 import com.lagradost.cloudstream3.utils.schemaStripRegex
 import org.schabi.newpipe.extractor.ServiceList
 import org.schabi.newpipe.extractor.services.youtube.extractors.YoutubeStreamExtractor
 import org.schabi.newpipe.extractor.services.youtube.linkHandler.YoutubeStreamLinkHandlerFactory
 import org.schabi.newpipe.extractor.stream.SubtitlesStream
-import org.schabi.newpipe.extractor.stream.VideoStream
 
 class YoutubeShortLinkExtractor : YoutubeExtractor() {
     override val mainUrl = "https://youtu.be"
@@ -19,10 +19,11 @@ class YoutubeShortLinkExtractor : YoutubeExtractor() {
     }
 }
 
-class YoutubeMobileExtractor  : YoutubeExtractor() {
+class YoutubeMobileExtractor : YoutubeExtractor() {
     override val mainUrl = "https://m.youtube.com"
 }
-class YoutubeNoCookieExtractor  : YoutubeExtractor() {
+
+class YoutubeNoCookieExtractor : YoutubeExtractor() {
     override val mainUrl = "https://www.youtube-nocookie.com"
 }
 
@@ -32,7 +33,7 @@ open class YoutubeExtractor : ExtractorApi() {
     override val name = "YouTube"
 
     companion object {
-        private var ytVideos: MutableMap<String, List<VideoStream>> = mutableMapOf()
+        private var ytVideos: MutableMap<String, String> = mutableMapOf()
         private var ytVideosSubtitles: MutableMap<String, List<SubtitlesStream>> = mutableMapOf()
     }
 
@@ -61,7 +62,8 @@ open class YoutubeExtractor : ExtractorApi() {
 
             }
             s.fetchPage()
-            ytVideos[url] = s.videoStreams
+            ytVideos[url] = s.hlsUrl
+
             ytVideosSubtitles[url] = try {
                 s.subtitlesDefault.filterNotNull()
             } catch (e: Exception) {
@@ -69,19 +71,24 @@ open class YoutubeExtractor : ExtractorApi() {
                 emptyList()
             }
         }
-        ytVideos[url]?.mapNotNull {
-            if (it.isVideoOnly() || it.height <= 0) return@mapNotNull null
-
-            ExtractorLink(
-                this.name,
-                this.name,
-                it.content ?: return@mapNotNull null,
-                "",
-                it.height
+        ytVideos[url]?.let {
+            callback(
+                ExtractorLink(
+                    this.name,
+                    this.name,
+                    it,
+                    "",
+                    Qualities.Unknown.value,
+                    isM3u8 = true
+                )
             )
-        }?.forEach(callback)
+        }
+
         ytVideosSubtitles[url]?.mapNotNull {
-            SubtitleFile(it.languageTag ?: return@mapNotNull null, it.content ?: return@mapNotNull null)
+            SubtitleFile(
+                it.languageTag ?: return@mapNotNull null,
+                it.content ?: return@mapNotNull null
+            )
         }?.forEach(subtitleCallback)
     }
 }

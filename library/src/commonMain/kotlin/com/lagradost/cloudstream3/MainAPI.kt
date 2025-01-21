@@ -600,8 +600,8 @@ fun MainAPI.fixUrlNull(url: String?): String? {
 
 fun MainAPI.fixUrl(url: String): String {
     if (url.startsWith("http") ||
-        // Do not fix JSON objects when passed as urls.
-        url.startsWith("{\"")
+        // Do not fix JSON objects and arrays when passed as urls.
+        url.startsWith("{\"") || url.startsWith("[")
     ) {
         return url
     }
