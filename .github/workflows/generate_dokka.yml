@@ -40,7 +40,6 @@ jobs:
       - name: Clean old builds
         run: |
           cd $GITHUB_WORKSPACE/dokka/
-          rm -rf "./-cloudstream"
           rm -rf "./app"
           rm -rf "./library"
 
