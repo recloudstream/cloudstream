@@ -702,4 +702,6 @@
     <string name="encoding_error">خطأ في التكويد</string>
     <string name="unsupported_error">خطأ في الدعم</string>
     <string name="player_load_one_subtitle_online">تحميل أول ترجمة متاحة</string>
+    <string name="torrent_preferred_media">تفعيل التورنت من خلال الاعدادات/المصادر/المحتوى المفضل</string>
+    <string name="torrent_not_accepted">تورنت غير مقبول</string>
 </resources>
