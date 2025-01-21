@@ -1,6 +1,7 @@
 package com.lagradost.cloudstream3.extractors
 
 import com.lagradost.cloudstream3.SubtitleFile
+import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.Qualities
@@ -8,6 +9,7 @@ import com.lagradost.cloudstream3.utils.schemaStripRegex
 import org.schabi.newpipe.extractor.ServiceList
 import org.schabi.newpipe.extractor.services.youtube.extractors.YoutubeStreamExtractor
 import org.schabi.newpipe.extractor.services.youtube.linkHandler.YoutubeStreamLinkHandlerFactory
+import org.schabi.newpipe.extractor.stream.SubtitlesStream
 
 class YoutubeShortLinkExtractor : YoutubeExtractor() {
     override val mainUrl = "https://youtu.be"
@@ -32,7 +34,7 @@ open class YoutubeExtractor : ExtractorApi() {
 
     companion object {
         private var ytVideos: MutableMap<String, String> = mutableMapOf()
-//        private var ytVideosSubtitles: MutableMap<String, List<SubtitlesStream>> = mutableMapOf()
+        private var ytVideosSubtitles: MutableMap<String, List<SubtitlesStream>> = mutableMapOf()
     }
 
     override fun getExtractorUrl(id: String): String {
@@ -62,12 +64,12 @@ open class YoutubeExtractor : ExtractorApi() {
             s.fetchPage()
             ytVideos[url] = s.hlsUrl
 
-//            ytVideosSubtitles[url] = try {
-//                s.subtitlesDefault.filterNotNull()
-//            } catch (e: Exception) {
-//                logError(e)
-//                emptyList()
-//            }
+            ytVideosSubtitles[url] = try {
+                s.subtitlesDefault.filterNotNull()
+            } catch (e: Exception) {
+                logError(e)
+                emptyList()
+            }
         }
         ytVideos[url]?.let {
             callback(
@@ -82,11 +84,11 @@ open class YoutubeExtractor : ExtractorApi() {
             )
         }
 
-//        ytVideosSubtitles[url]?.mapNotNull {
-//            SubtitleFile(
-//                it.languageTag ?: return@mapNotNull null,
-//                it.content ?: return@mapNotNull null
-//            )
-//        }?.forEach(subtitleCallback)
+        ytVideosSubtitles[url]?.mapNotNull {
+            SubtitleFile(
+                it.languageTag ?: return@mapNotNull null,
+                it.content ?: return@mapNotNull null
+            )
+        }?.forEach(subtitleCallback)
     }
 }
