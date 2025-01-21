@@ -549,6 +549,16 @@ class CS3IPlayer : IPlayer {
 
         exoPlayer?.apply {
             playWhenReady = false
+
+            // This may look weird, however on some TV devices the audio does not stop playing
+            // so this may fix it?
+            try {
+                pause()
+            } catch (t : Throwable) {
+                // No documented exception, but just to be extra safe
+                logError(t)
+            }
+            
             stop()
             release()
         }
