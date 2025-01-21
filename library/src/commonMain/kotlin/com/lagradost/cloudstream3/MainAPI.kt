@@ -23,7 +23,7 @@ import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
 import kotlin.math.absoluteValue
 
-/** Api has not yet been published to stable, and will cause MethodNotFoundException on stable */
+/** Api has not yet been published to stable, and will cause `NoSuchMethodException` on stable */
 @MustBeDocumented // Same as java.lang.annotation.Documented
 @Retention(AnnotationRetention.SOURCE) // This is only an IDE hint, and will not be used in the runtime
 annotation class Prerelease
