@@ -668,4 +668,6 @@
     <string name="podcast_singluar">Podcast</string>
     <string name="encoding_error">Erro de codificação</string>
     <string name="unsupported_error">Erro não suportado</string>
+    <string name="torrent_preferred_media">Ativar torrent nas Configurações/Provedores/Mídia preferida</string>
+    <string name="torrent_not_accepted">Torrent não aceito</string>
 </resources>
