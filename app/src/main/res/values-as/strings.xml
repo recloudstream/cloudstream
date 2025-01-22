@@ -668,4 +668,6 @@
     <string name="podcast_singluar">প’ডকাষ্ট</string>
     <string name="encoding_error">এনকোডিং ত্ৰুটি</string>
     <string name="unsupported_error">সমৰ্থিত ত্ৰুটি</string>
+    <string name="torrent_not_accepted">গ্ৰহণ কৰা হোৱা নাই টৰেণ্ট</string>
+    <string name="torrent_preferred_media">সংহতিসমূহ/প্ৰদানকাৰী/পছন্দৰ মাধ্যমত টৰেণ্ট সামৰ্থবান কৰক</string>
 </resources>

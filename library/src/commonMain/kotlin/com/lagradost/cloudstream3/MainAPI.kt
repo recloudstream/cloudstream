@@ -23,6 +23,11 @@ import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
 import kotlin.math.absoluteValue
 
+/** Api has not yet been published to stable, and will cause `NoSuchMethodException` on stable */
+@MustBeDocumented // Same as java.lang.annotation.Documented
+@Retention(AnnotationRetention.SOURCE) // This is only an IDE hint, and will not be used in the runtime
+annotation class Prerelease
+
 /**
  * Defines the constant for the all languages preference, if this is set then it is
  * the equivalent of all languages being set
@@ -600,8 +605,8 @@ fun MainAPI.fixUrlNull(url: String?): String? {
 
 fun MainAPI.fixUrl(url: String): String {
     if (url.startsWith("http") ||
-        // Do not fix JSON objects when passed as urls.
-        url.startsWith("{\"")
+        // Do not fix JSON objects and arrays when passed as urls.
+        url.startsWith("{\"") || url.startsWith("[")
     ) {
         return url
     }
@@ -899,8 +904,43 @@ fun getQualityFromString(string: String?): SearchQuality? {
     }
 }
 
-/** Abstract interface of SearchResponse.
- * */
+
+/**
+ * For APIs using the mainUrl in the prefix for `MainAPI::load`,
+ * this function replaces the `scheme`, `host` and `port` from an old link to the new mainUrl.
+ *
+ * https://en.wikipedia.org/wiki/Uniform_Resource_Identifier
+ * ```text
+ *           userinfo       host      port
+ *           ┌──┴───┐ ┌──────┴──────┐ ┌┴─┐
+ *   https://john.doe@www.example.com:1234/forum/questions/?tag=networking&order=newest#:~:text=whatever
+ *   └─┬─┘   └─────────────┬─────────────┘└───────┬───────┘ └────────────┬────────────┘ └───────┬───────┘
+ *   scheme            authority                path                   query                 fragment
+ * ```
+ */
+@Prerelease
+fun MainAPI.updateUrl(url: String): String {
+    try {
+        val original = URI(url)
+        val updated = URI(mainUrl)
+
+        // URI(String scheme, String userInfo, String host, int port, String path, String query, String fragment)
+        return URI(
+            updated.scheme,
+            original.userInfo,
+            updated.host,
+            updated.port,
+            original.path,
+            original.query,
+            original.fragment
+        ).toString()
+    } catch (t: Throwable) {
+        logError(t)
+        return url
+    }
+}
+
+/** Abstract interface of SearchResponse. */
 interface SearchResponse {
     val name: String
     val url: String

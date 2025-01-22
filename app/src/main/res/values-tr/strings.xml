@@ -715,4 +715,6 @@
     <string name="player_load_one_subtitle_online">İlk kullanılabiliri yükle</string>
     <string name="audio_singluar">Ses</string>
     <string name="podcast_singluar">Podcast</string>
+    <string name="torrent_preferred_media">Ayarlar/Sağlayıcılar/Tercih edilen medya bölümünden torrenti etkinleştirin</string>
+    <string name="torrent_not_accepted">Torrent kabul edilmedi</string>
 </resources>

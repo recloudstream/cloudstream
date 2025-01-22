@@ -69,7 +69,7 @@
     <string name="search_provider_text_providers">Пребарувај користејќи провајдери</string>
     <string name="search_provider_text_types">Пребарувај користејќи типови</string>
     <string name="benene_count_text">%d крем банани дадени на девелоперите</string>
-    <string name="benene_count_text_none">Нема крем банани дадени</string>
+    <string name="benene_count_text_none">Нема дадени крем банани</string>
     <string name="subs_auto_select_language">Авто одбирање на јазик</string>
     <string name="subs_download_languages">Преземи јазици</string>
     <string name="subs_hold_to_reset_to_default">Држи за да се ресетираш на стандардно</string>
