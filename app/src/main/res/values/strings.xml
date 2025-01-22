@@ -823,8 +823,10 @@
     <string name="confirm_before_exiting_title">Confirm before exiting</string>
     <string name="confirm_before_exiting_desc">Show dialog before exiting the app</string>
     <string name="confirm_exit_key" translatable="false">confirm_exit_key</string>
+    <!--confirm exit dialog-->
     <string name="show">Show</string>
     <string name="dont_show">Don\'t Show</string>
     <string name="subs_edge_size">Edge Size</string>
-    <!--confirm exit dialog-->
+    <string name="torrent_preferred_media">Enable torrent in Settings/Providers/Preferred media</string>
+    <string name="torrent_not_accepted">Not accepted torrent</string>
 </resources>
