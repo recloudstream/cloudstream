@@ -549,6 +549,16 @@ class CS3IPlayer : IPlayer {
 
         exoPlayer?.apply {
             playWhenReady = false
+
+            // This may look weird, however on some TV devices the audio does not stop playing
+            // so this may fix it?
+            try {
+                pause()
+            } catch (t : Throwable) {
+                // No documented exception, but just to be extra safe
+                logError(t)
+            }
+            
             stop()
             release()
         }
@@ -1412,12 +1422,14 @@ class CS3IPlayer : IPlayer {
                     } ?: default
 
                     if (!currentPrefMedia.contains(TvType.Torrent.ordinal)) {
-                        event(ErrorEvent(ErrorLoadingException("Preferred media do not contain torrent")))
+                        val errorMessage = context.getString(R.string.torrent_preferred_media)
+                        event(ErrorEvent(ErrorLoadingException(errorMessage)))
                         return
                     }
 
                     if (Torrent.hasAcceptedTorrentForThisSession == false) {
-                        event(ErrorEvent(ErrorLoadingException("Not accepted torrent")))
+                        val errorMessage = context.getString(R.string.torrent_not_accepted)
+                        event(ErrorEvent(ErrorLoadingException(errorMessage)))
                         return
                     }
                     // load the initial UI, we require an exoPlayer to be alive

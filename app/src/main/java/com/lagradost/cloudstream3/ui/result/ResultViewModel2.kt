@@ -635,26 +635,10 @@ class ResultViewModel2 : ViewModel() {
         }
 
         private fun getFolder(currentType: TvType, titleName: String): String {
-            val sanitizedFileName = VideoDownloadManager.sanitizeFilename(titleName)
-            return when (currentType) {
-                TvType.Anime -> "Anime/$sanitizedFileName"
-                TvType.AnimeMovie -> "Movies"
-                TvType.AsianDrama -> "AsianDramas/$sanitizedFileName"
-                TvType.Audio -> "Audio"
-                TvType.AudioBook -> "AudioBooks"
-                TvType.Cartoon -> "Cartoons/$sanitizedFileName"
-                TvType.CustomMedia -> "Media"
-                TvType.Documentary -> "Documentaries"
-                TvType.Live -> "LiveStreams"
-                TvType.Movie -> "Movies"
-                TvType.Music -> "Music"
-                TvType.NSFW -> "NSFW"
-                TvType.OVA -> "OVAs"
-                TvType.Others -> "Others"
-                TvType.Podcast -> "Podcasts"
-                TvType.Torrent -> "Torrents"
-                TvType.TvSeries -> "TVSeries/$sanitizedFileName"
-            }
+            return if (currentType.isEpisodeBased()) {
+                val sanitizedFileName = VideoDownloadManager.sanitizeFilename(titleName)
+                "${currentType.getFolderPrefix()}/$sanitizedFileName"
+            } else currentType.getFolderPrefix()
         }
 
         private fun downloadSubtitle(
