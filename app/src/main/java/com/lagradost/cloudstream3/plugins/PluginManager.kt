@@ -450,21 +450,34 @@ object PluginManager {
 
         Log.d(TAG, "Files in '${LOCAL_PLUGINS_PATH}' folder: ${sortedPlugins?.size}")
 
+        // Use app-specific external files directory and copy the file there.
+        // We have to do this because on Android 14+, it otherwise gives SecurityException
+        // due to dex files and setReadOnly seems to have no effect unless it it here.
+        val pluginDirectory = File(context.getExternalFilesDir(null), "plugins")
+        if (!pluginDirectory.exists()) {
+            pluginDirectory.mkdirs() // Ensure the plugins directory exists
+        }
+
         sortedPlugins?.sortedBy { it.name }?.apmap { file ->
             try {
-                // Use app-specific external files directory and copy the file there.
-                // We have to do this because on Android 14+, it otherwise gives SecurityException
-                // due to dex files and setReadOnly seems to have no effect unless it it here.
-                val pluginDirectory = File(context.getExternalFilesDir(null), "plugins")
-                if (!pluginDirectory.exists()) {
-                    pluginDirectory.mkdirs() // Ensure the plugins directory exists
+                val destinationFile = File(pluginDirectory, file.name)
+
+                // Only copy the file if it has been modified (check file length and modification date)
+                if (!destinationFile.exists() ||
+                    destinationFile.length() != file.length() ||
+                    destinationFile.lastModified() != file.lastModified()) {
+
+                    // Copy the file to the app-specific plugin directory
+                    file.copyTo(destinationFile, overwrite = true)
+
+                    // After copying, set the destination file's modification time
+                    // to match the source file. We do this for performance so that we
+                    // can check the modification time and not make redundant writes.
+                    destinationFile.setLastModified(file.lastModified())
                 }
 
-                // Copy the file to the app-specific plugin directory
-                val pluginFile = file.copyTo(File(pluginDirectory, file.name), overwrite = true)
-
                 // Load the plugin after it has been copied
-                maybeLoadPlugin(context, pluginFile)
+                maybeLoadPlugin(context, destinationFile)
             } catch (t: Throwable) {
                 Log.e(TAG, "Failed to copy the file")
                 logError(t)
