@@ -875,15 +875,15 @@ object AppContextUtils {
             GoogleApiAvailability.getInstance()
                 .isGooglePlayServicesAvailable(applicationContext) == ConnectionResult.SUCCESS
 
-        val executor: Executor = Executors.newSingleThreadExecutor()
-
         try {
+            val executor: Executor = Executors.newSingleThreadExecutor()
             applicationContext?.let {
-                CastContext.getSharedInstance(it, executor)
+                val task = CastContext.getSharedInstance(it, executor)
+                task.result
             }
         } catch (e: Exception) {
             println(e)
-            // track non-fatal
+            // Track non-fatal
             return false
         }
 
