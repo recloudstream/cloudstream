@@ -829,4 +829,7 @@
     <string name="subs_edge_size">Edge Size</string>
     <string name="torrent_preferred_media">Enable torrent in Settings/Providers/Preferred media</string>
     <string name="torrent_not_accepted">Not accepted torrent</string>
+    <string name="software_decoding_key" translatable="false">software_decoding_key</string>
+    <string name="software_decoding">Software decoding</string>
+    <string name="software_decoding_desc">Software decoding enables the player to play video files not supported by your phone, but may cause laggy or unstable playback on high resolution</string>
 </resources>
