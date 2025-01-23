@@ -257,8 +257,9 @@ object CommonActivity {
                 try {
                     enterPictureInPictureMode(PictureInPictureParams.Builder().build())
                 } catch (e: Exception) {
-                    Log.e(TAG, "Failed to enter picture in picture mode.")
-                    logError(e)
+                    // Use fallback just in case
+                    @Suppress("DEPRECATION")
+                    enterPictureInPictureMode()
                 }
             } else {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
