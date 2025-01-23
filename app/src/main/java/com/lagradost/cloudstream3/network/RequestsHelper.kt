@@ -30,12 +30,11 @@ fun buildDefaultClient(context: Context): OkHttpClient {
     val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
     val dns = settingsManager.getInt(context.getString(R.string.dns_pref), 0)
 
-    val builder = OkHttpClient.Builder()
+    val baseClient = OkHttpClient.Builder()
         .ignoreAllSSLErrors()
         .sslSocketFactory(getUnsafeSSLSocketFactory(), TrustAllCerts())
         .hostnameVerifier { _, _ -> true }
         .connectionSpecs(listOf(ConnectionSpec.MODERN_TLS, ConnectionSpec.COMPATIBLE_TLS))
-    val baseClient = OkHttpClient.Builder()
         .followRedirects(true)
         .followSslRedirects(true)
         .cache(
@@ -47,17 +46,18 @@ fun buildDefaultClient(context: Context): OkHttpClient {
             )
         ).apply {
             when (dns) {
-                1 -> builder.addGoogleDns()
-                2 -> builder.addCloudFlareDns()
+                1 -> addGoogleDns()
+                2 -> addCloudFlareDns()
                 // 3 -> builder.addOpenDns()
-                4 -> builder.addAdGuardDns()
-                5 -> builder.addDNSWatchDns()
-                6 -> builder.addQuad9Dns()
+                4 -> addAdGuardDns()
+                5 -> addDNSWatchDns()
+                6 -> addQuad9Dns()
                 7 -> addDnsSbDns()
                 8 -> addCanadianShieldDns()
                 else -> {   }
             }
         }.build()
+
     return baseClient
 }
 
