@@ -550,7 +550,7 @@ class CS3IPlayer : IPlayer {
 
         exoPlayer?.apply {
             playWhenReady = false
-
+            
             // This may look weird, however on some TV devices the audio does not stop playing
             // so this may fix it?
             try {
@@ -559,7 +559,7 @@ class CS3IPlayer : IPlayer {
                 // No documented exception, but just to be extra safe
                 logError(t)
             }
-            
+
             stop()
             release()
         }
@@ -735,10 +735,22 @@ class CS3IPlayer : IPlayer {
                 ExoPlayer.Builder(context)
                     .setRenderersFactory { eventHandler, videoRendererEventListener, audioRendererEventListener, textRendererOutput, metadataRendererOutput ->
 
-                        NextRenderersFactory(context).apply {
-                            setEnableDecoderFallback(true)
-                            setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_ON)
-                        }.createRenderers(
+                        val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
+                        val softwareDecoding = settingsManager.getBoolean(
+                            context.getString(R.string.software_decoding_key),
+                            true
+                        )
+
+                        val factory = if (softwareDecoding) {
+                            NextRenderersFactory(context).apply {
+                                setEnableDecoderFallback(true)
+                                setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_ON)
+                            }
+                        } else {
+                            DefaultRenderersFactory(context)
+                        }
+
+                        factory.createRenderers(
                             eventHandler,
                             videoRendererEventListener,
                             audioRendererEventListener,
