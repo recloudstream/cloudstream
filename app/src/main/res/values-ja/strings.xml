@@ -414,4 +414,5 @@
     <string name="update_notification_failed">アプリの新しいバージョンをインストールできませんでした</string>
     <string name="backup_frequency">バックアップ頻度</string>
     <string name="picture_in_picture_des">他のアプリの上にミニプレイヤーで再生し続ける</string>
+    <string name="downloads_empty">現在ダウンロードはがありません。</string>
 </resources>

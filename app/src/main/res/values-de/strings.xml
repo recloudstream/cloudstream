@@ -663,4 +663,5 @@
     <string name="dont_show">Nicht anzeigen</string>
     <string name="subs_edge_size">Kantengröße</string>
     <string name="torrent_info">Dieses Video ist ein Torrent, das bedeutet, dass Ihre Videoaktivitäten nachverfolgt werden könen.\nStellen Sie sicher, dass Sie die Grundlagen von Torrents verstehen, bevor Sie fortfahren.</string>
+    <string name="audio_singluar">Ton</string>
 </resources>

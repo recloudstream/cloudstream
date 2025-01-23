@@ -6,8 +6,8 @@ import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.Qualities
+import com.lagradost.cloudstream3.utils.StringUtils.decodeUri
 import org.jsoup.nodes.Document
-import java.net.URLDecoder
 
 open class InternetArchive : ExtractorApi() {
     override val mainUrl = "https://archive.org"
@@ -16,8 +16,6 @@ open class InternetArchive : ExtractorApi() {
 
     companion object {
         private var archivedItems: MutableMap<String, Document> = mutableMapOf()
-
-        fun String.decodeUri(): String = URLDecoder.decode(this, "UTF-8")
     }
 
     override fun getExtractorUrl(id: String): String {
