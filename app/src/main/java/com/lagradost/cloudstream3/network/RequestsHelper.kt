@@ -61,7 +61,6 @@ fun buildDefaultClient(context: Context): OkHttpClient {
     return baseClient
 }
 
-// Trust is an expensive thing, Cheap people can't afford it, lol;
 /** So what happens in older android versions like 9 is that their network security provider is
  * not much robust, and some extensions store data in non protected cheap servers and urls, thus
  * the app rejects connection, We used google conscrypt provider lib earlier but its version 5.2.3
@@ -74,21 +73,17 @@ class TrustAllCerts : X509TrustManager {
     override fun checkClientTrusted(
         chain: Array<java.security.cert.X509Certificate>,
         authType: String
-    ) {
-        // Trust all client certificates
-    }
+    ) {}  // Trust all client certificates
 
     @SuppressLint("TrustAllX509TrustManager")
     override fun checkServerTrusted(
         chain: Array<java.security.cert.X509Certificate>,
         authType: String
-    ) {
-        // Trust all server certificates
-    }
+    ) {} // Trust all server certificates
 
     @SuppressLint("TrustAllX509TrustManager")
     override fun getAcceptedIssuers(): Array<java.security.cert.X509Certificate> {
-        return arrayOf()
+        return emptyArray()
     }
 }
 
@@ -104,14 +99,14 @@ fun getUnsafeSSLSocketFactory(): SSLSocketFactory {
     return sslContext.socketFactory
 }
 
-private val DEFAULT_HEADERS = hashMapOf("User-Agent" to USER_AGENT)
+private val DEFAULT_HEADERS = mapOf("User-Agent" to USER_AGENT)
 
 /**
  * Set headers > Set cookies > Default headers > Default Cookies
  */
 fun getHeaders(
-    headers: HashMap<String, String>,
-    cookie: HashMap<String, String>
+    headers: Map<String, String>,
+    cookie: Map<String, String>
 ): Headers {
     val cookieMap =
         if (cookie.isNotEmpty()) mapOf(

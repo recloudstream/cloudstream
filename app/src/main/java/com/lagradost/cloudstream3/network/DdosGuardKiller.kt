@@ -47,7 +47,7 @@ class DdosGuardKiller(private val alwaysBypass: Boolean) : Interceptor {
                     }
                 }
 
-        val headers = getHeaders(HashMap(request.headers.toMap()), HashMap(cookies + request.cookies))
+        val headers = getHeaders(request.headers.toMap(), cookies + request.cookies)
         return app.baseClient.newCall(
             request.newBuilder()
                 .headers(headers)
