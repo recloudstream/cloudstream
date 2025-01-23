@@ -45,18 +45,19 @@ fun buildDefaultClient(context: Context): OkHttpClient {
                 directory = File(context.cacheDir, "http_cache"),
                 maxSize = 50L * 1024L * 1024L // 50 MiB
             )
-        )
-    when (dns) {
-        1 -> builder.addGoogleDns()
-        2 -> builder.addCloudFlareDns()
-        // 3 -> builder.addOpenDns()
-        4 -> builder.addAdGuardDns()
-        5 -> builder.addDNSWatchDns()
-        6 -> builder.addQuad9Dns()
-    7 -> addDnsSbDns()
-                8 -> addCanadianShieldDns()}
-
-    baseClient = builder.build()
+        ).apply {
+            when (dns) {
+                1 -> builder.addGoogleDns()
+                2 -> builder.addCloudFlareDns()
+                // 3 -> builder.addOpenDns()
+                4 -> builder.addAdGuardDns()
+                5 -> builder.addDNSWatchDns()
+                6 -> builder.addQuad9Dns()
+                7 -> addDnsSbDns()
+                8 -> addCanadianShieldDns()
+                else -> {   }
+            }
+        }.build()
     return baseClient
 }
 
