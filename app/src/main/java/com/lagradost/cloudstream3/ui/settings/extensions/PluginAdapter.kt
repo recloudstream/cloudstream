@@ -86,7 +86,7 @@ class PluginAdapter(
         return PluginManager.getPluginsOnline().also { storedPlugins = it }
     }*/
 
-    // Clear glide image because setImageResource doesn't override
+    // Clear coil image because setImageResource doesn't override
     override fun onViewRecycled(holder: RecyclerView.ViewHolder) {
         if (holder is PluginViewHolder) {
             holder.binding.entryIcon.loadImage(R.drawable.ic_github_logo)

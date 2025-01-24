@@ -564,6 +564,7 @@
     <string name="player_loaded_subtitles" formatted="true">Loaded %s</string>
     <string name="player_load_subtitles">Load from file</string>
     <string name="player_load_subtitles_online">Load from Internet</string>
+    <string name="player_load_one_subtitle_online">Load first available</string>
     <string name="downloaded_file">Downloaded file</string>
     <string name="actor_main">Main</string>
     <string name="actor_supporting">Supporting</string>
@@ -822,9 +823,15 @@
     <string name="confirm_before_exiting_title">Confirm before exiting</string>
     <string name="confirm_before_exiting_desc">Show dialog before exiting the app</string>
     <string name="confirm_exit_key" translatable="false">confirm_exit_key</string>
+    <!--confirm exit dialog-->
     <string name="show">Show</string>
     <string name="dont_show">Don\'t Show</string>
     <string name="subs_edge_size">Edge Size</string>
+    <string name="torrent_preferred_media">Enable torrent in Settings/Providers/Preferred media</string>
+    <string name="torrent_not_accepted">Not accepted torrent</string>
+    <string name="software_decoding_key" translatable="false">software_decoding_key</string>
+    <string name="software_decoding">Software decoding</string>
+    <string name="software_decoding_desc">Software decoding enables the player to play video files not supported by your phone, but may cause laggy or unstable playback on high resolution</string>
     <string name="result_go_to_downloads">Go to Downloads</string>
     <string name="no_internet_connection">
         No internet connection.

@@ -155,7 +155,7 @@ class LibraryFragment : Fragment() {
         binding?.sortFab?.setOnClickListener(sortChangeClickListener)
         binding?.librarySort?.setOnClickListener(sortChangeClickListener)
 
-        binding?.libraryRoot?.findViewById<TextView>(R.id.search_src_text)?.apply {
+        binding?.libraryRoot?.findViewById<TextView>(androidx.appcompat.R.id.search_src_text)?.apply {
             tag = "tv_no_focus_tag"
             //Expand the Appbar when search bar is focused, fixing scroll up issue
             setOnFocusChangeListener { _, _ ->

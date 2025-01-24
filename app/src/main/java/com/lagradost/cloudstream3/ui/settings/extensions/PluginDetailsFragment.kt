@@ -150,7 +150,7 @@ class PluginDetailsFragment(val data: PluginViewData) : BottomSheetDialogFragmen
                 )
             } else {
                 upvote.imageTintList = ColorStateList.valueOf(
-                    context?.colorFromAttribute(R.attr.colorOnSurface) ?: R.color.white
+                    context?.colorFromAttribute(com.google.android.material.R.attr.colorOnSurface) ?: R.color.white
                 )
             }
         }
