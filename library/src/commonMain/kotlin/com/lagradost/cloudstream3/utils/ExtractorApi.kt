@@ -71,6 +71,7 @@ import com.lagradost.cloudstream3.extractors.GuardareStream
 import com.lagradost.cloudstream3.extractors.GoodstreamExtractor
 import com.lagradost.cloudstream3.extractors.Guccihide
 import com.lagradost.cloudstream3.extractors.Hxfile
+import com.lagradost.cloudstream3.extractors.InternetArchive
 import com.lagradost.cloudstream3.extractors.JWPlayer
 import com.lagradost.cloudstream3.extractors.Jawcloud
 import com.lagradost.cloudstream3.extractors.Jeniusplay
@@ -292,7 +293,7 @@ import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import kotlinx.coroutines.delay
 import me.xdrop.fuzzywuzzy.FuzzySearch
 import org.jsoup.Jsoup
-import java.net.URL
+import java.net.URI
 import java.util.UUID
 
 /**
@@ -389,7 +390,7 @@ enum class ExtractorLinkType {
 
 private fun inferTypeFromUrl(url: String): ExtractorLinkType {
     val path = try {
-        URL(url).path
+        URI(url).path
     } catch (_: Throwable) {
         // don't log magnet links as errors
         null
@@ -430,6 +431,21 @@ val WIDEVINE_UUID = UUID(-0x121074568629b532L, -0x5c37d8232ae2de13L)
  */
 val PLAYREADY_UUID = UUID(-0x65fb0f8667bfbd7aL, -0x546d19a41f77a06bL)
 
+/** Class holds extracted DRM media info to be passed to the player.
+ * @property source Name of the media source, appears on player layout.
+ * @property name Title of the media, appears on player layout.
+ * @property url Url string of media file
+ * @property referer Referer that will be used by network request.
+ * @property quality Quality of the media file
+ * @property headers Headers <String, String> map that will be used by network request.
+ * @property extractorData Used for getExtractorVerifierJob()
+ * @property type the type of the media, use [INFER_TYPE] if you want to auto infer the type from the url
+ * @property kid  Base64 value of The KID element (Key Id) contains the identifier of the key associated with a license.
+ * @property key Base64 value of Key to be used to decrypt the media file.
+ * @property uuid Drm UUID [WIDEVINE_UUID], [PLAYREADY_UUID], [CLEARKEY_UUID] (by default) .. etc
+ * @property kty Key type "oct" (octet sequence) by default
+ * @property keyRequestParameters Parameters that will used to request the key.
+ * */
 open class DrmExtractorLink private constructor(
     override val source: String,
     override val name: String,
@@ -482,6 +498,16 @@ open class DrmExtractorLink private constructor(
     )
 }
 
+/** Class holds extracted media info to be passed to the player.
+ * @property source Name of the media source, appears on player layout.
+ * @property name Title of the media, appears on player layout.
+ * @property url Url string of media file
+ * @property referer Referer that will be used by network request.
+ * @property quality Quality of the media file
+ * @property headers Headers <String, String> map that will be used by network request.
+ * @property extractorData Used for getExtractorVerifierJob()
+ * @property type Extracted link type (Video, M3u8, Dash, Torrent or Magnet)
+ * */
 open class ExtractorLink constructor(
     open val source: String,
     open val name: String,
@@ -1025,6 +1051,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     Ds2play(),
     Ds2video(),
     Filegram(),
+    InternetArchive(),
 
     )
 

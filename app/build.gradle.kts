@@ -1,6 +1,8 @@
 import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import java.io.ByteArrayOutputStream
+import org.jetbrains.dokka.gradle.engine.parameters.KotlinPlatform
+import org.jetbrains.dokka.gradle.engine.parameters.VisibilityModifier
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 plugins {
     id("com.android.application")
@@ -8,20 +10,32 @@ plugins {
     id("org.jetbrains.dokka")
 }
 
+val javaTarget = JvmTarget.fromTarget(libs.versions.jvmTarget.get())
 val tmpFilePath = System.getProperty("user.home") + "/work/_temp/keystore/"
 val prereleaseStoreFile: File? = File(tmpFilePath).listFiles()?.first()
 
-fun String.execute() = ByteArrayOutputStream().use { baot ->
-    if (project.exec {
-            workingDir = projectDir
-            commandLine = this@execute.split(Regex("\\s"))
-            standardOutput = baot
-        }.exitValue == 0)
-        String(baot.toByteArray()).trim()
-    else null
+fun getGitCommitHash(): String {
+    return try {
+        val headFile = file("${project.rootDir}/.git/HEAD")
+
+        // Read the commit hash from .git/HEAD
+        if (headFile.exists()) {
+            val headContent = headFile.readText().trim()
+            if (headContent.startsWith("ref:")) {
+                val refPath = headContent.substring(5) // e.g., refs/heads/main
+                val commitFile = file("${project.rootDir}/.git/$refPath")
+                if (commitFile.exists()) commitFile.readText().trim() else ""
+            } else headContent // If it's a detached HEAD (commit hash directly)
+        } else {
+            "" // If .git/HEAD doesn't exist
+        }.take(7) // Return the short commit hash
+    } catch (_: Throwable) {
+        "" // Just return an empty string if any exception occurs
+    }
 }
 
 android {
+    @Suppress("UnstableApiUsage")
     testOptions {
         unitTests.isReturnDefaultValues = true
     }
@@ -41,22 +55,21 @@ android {
         }
     }
 
-    compileSdk = 35
-    //  buildToolsVersion = "34.0.0"
+    compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
         applicationId = "com.lagradost.cloudstream3"
-        minSdk = 21
-        targetSdk = 35
+        minSdk = libs.versions.minSdk.get().toInt()
+        targetSdk = libs.versions.targetSdk.get().toInt()
         versionCode = 64
-        versionName = "4.4.2"
+        versionName = "4.5.0"
 
         resValue("string", "app_version", "${defaultConfig.versionName}${versionNameSuffix ?: ""}")
-        resValue("string", "commit_hash", "git rev-parse --short HEAD".execute() ?: "")
+        resValue("string", "commit_hash", getGitCommitHash())
         resValue("bool", "is_prerelease", "false")
 
         // Reads local.properties
-        val localProperties = gradleLocalProperties(rootDir)
+        val localProperties = gradleLocalProperties(rootDir, project.providers)
 
         buildConfigField(
             "long",
@@ -119,8 +132,8 @@ android {
 
     compileOptions {
         isCoreLibraryDesugaringEnabled = true
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.toVersion(javaTarget.target)
+        targetCompatibility = JavaVersion.toVersion(javaTarget.target)
     }
 
     lint {
@@ -168,13 +181,11 @@ dependencies {
 
     // PlayBack
     implementation(libs.colorpicker) // Subtitle Color Picker
-    //implementation(libs.media.ffmpeg) // Custom FF-MPEG Lib for Audio Codecs
-    implementation(libs.newpipeextractor) /* For Trailers
-    ^ Update to Latest Commits if Trailers Misbehave, github.com/TeamNewPipe/NewPipeExtractor/commits/dev */
+    implementation(libs.newpipeextractor) // For Trailers
     implementation(libs.juniversalchardet) // Subtitle Decoding
-    // ffmpeg decoding
-    implementation(libs.nextlib.media3ext)
-    implementation(libs.nextlib.mediainfo)
+
+    // FFmpeg Decoding
+    implementation(libs.bundles.nextlibMedia3)
 
     // Crash Reports (AcraApplication.kt)
     implementation(libs.acra.core)
@@ -182,28 +193,29 @@ dependencies {
 
     // UI Stuff
     implementation(libs.shimmer) // Shimmering Effect (Loading Skeleton)
-    implementation(libs.palette.ktx) // Palette For Images -> Colors
+    implementation(libs.palette.ktx) // Palette for Images -> Colors
     implementation(libs.tvprovider)
     implementation(libs.overlappingpanels) // Gestures
     implementation(libs.biometric) // Fingerprint Authentication
     implementation(libs.previewseekbar.media3) // SeekBar Preview
-    implementation(libs.qrcode.kotlin) // QR code for PIN Auth on TV
+    implementation(libs.qrcode.kotlin) // QR Code for PIN Auth on TV
 
     // Extensions & Other Libs
-    implementation(libs.rhino) // run JavaScript
+    implementation(libs.rhino) // Run JavaScript
+    implementation(libs.quickjs)
     implementation(libs.fuzzywuzzy) // Library/Ext Searching with Levenshtein Distance
     implementation(libs.safefile) // To Prevent the URI File Fu*kery
     implementation(libs.conscrypt.android) // To Fix SSL Fu*kery on Android 9
     implementation(libs.tmdb.java) // TMDB API v3 Wrapper Made with RetroFit
-    coreLibraryDesugaring(libs.desugar.jdk.libs.nio) //nio flavor needed for NewPipeExtractor
+    coreLibraryDesugaring(libs.desugar.jdk.libs.nio) // NIO Flavor Needed for NewPipeExtractor
     implementation(libs.jackson.module.kotlin) {
         version {
             strictly("2.13.1")
         }
-        because("Don't Bump Jackson above 2.13.1 , Crashes on Android TV's and FireSticks that have Min API Level 25 or Less.")
-    } //JSON Parser
+        because("Don't Bump Jackson above 2.13.1, Crashes on Android TV's and FireSticks that have Min API Level 25 or Less.")
+    } // JSON Parser
 
-    // torrent support
+    // Torrent Support
     implementation(libs.torrentserver.aniyomi)
 
     // Downloading & Networking
@@ -230,7 +242,7 @@ tasks.register<Jar>("androidSourcesJar") {
 
 tasks.register<Copy>("copyJar") {
     from(
-        "build/intermediates/compile_app_classes_jar/prereleaseDebug",
+        "build/intermediates/compile_app_classes_jar/prereleaseDebug/bundlePrereleaseDebugClassesToCompileJar",
         "../library/build/libs"
     )
     into("build/app-classes")
@@ -250,12 +262,30 @@ tasks.register<Jar>("makeJar") {
     )
     destinationDirectory.set(layout.buildDirectory)
     archiveBaseName = "classes"
-    //archiveName = "classes"
 }
 
-tasks.withType<KotlinCompile> {
-    kotlinOptions {
-        jvmTarget = "1.8"
-        freeCompilerArgs = listOf("-Xjvm-default=all-compatibility")
+tasks.withType<KotlinJvmCompile> {
+    compilerOptions {
+        jvmTarget.set(javaTarget)
+        freeCompilerArgs.add("-Xjvm-default=all-compatibility")
+    }
+}
+
+dokka {
+    moduleName = "App"
+    dokkaSourceSets {
+        main {
+            analysisPlatform = KotlinPlatform.JVM
+            documentedVisibilities(
+                VisibilityModifier.Public,
+                VisibilityModifier.Protected
+            )
+
+            sourceLink {
+                localDirectory = file("..")
+                remoteUrl("https://github.com/recloudstream/cloudstream/tree/master")
+                remoteLineSuffix = "#L"
+            }
+        }
     }
 }

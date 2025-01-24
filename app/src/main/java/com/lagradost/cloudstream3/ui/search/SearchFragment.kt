@@ -229,7 +229,7 @@ class SearchFragment : Fragment() {
                     SearchHelper.handleSearchClickCallback(callback)
                 }
 
-            searchRoot.findViewById<TextView>(R.id.search_src_text)?.tag = "tv_no_focus_tag"
+            searchRoot.findViewById<TextView>(androidx.appcompat.R.id.search_src_text)?.tag = "tv_no_focus_tag"
             searchAutofitResults.adapter = adapter
             searchLoadingBar.alpha = 0f
         }

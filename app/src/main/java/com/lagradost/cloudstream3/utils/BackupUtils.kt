@@ -307,7 +307,7 @@ object BackupUtils {
         return when {
             path.isNullOrBlank() -> getDefaultBackupDir(context)
             path.startsWith("content://") -> SafeFile.fromUri(context, path.toUri())
-            else -> SafeFile.fromFile(context, File(path))
+            else -> SafeFile.fromFilePath(context, path)
         }
     }
 }

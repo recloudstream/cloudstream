@@ -612,17 +612,18 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
     @SuppressLint("ApplySharedPref") // commit since the op needs to be synchronous
     private fun showConfirmExitDialog(settingsManager: SharedPreferences) {
         val confirmBeforeExit = settingsManager.getInt(getString(R.string.confirm_exit_key), -1)
+
         if (confirmBeforeExit == 1 || (confirmBeforeExit == -1 && isLayout(PHONE))) {
             finish()
             return
         }
-
+        
         val dialogView = layoutInflater.inflate(R.layout.confirm_exit_dialog, null)
         val dontShowAgainCheck: CheckBox = dialogView.findViewById(R.id.checkboxDontShowAgain)
         val builder: AlertDialog.Builder = AlertDialog.Builder(this)
         builder.setView(dialogView)
             .setTitle(R.string.confirm_exit_dialog)
-            .setNegativeButton(R.string.no) { _, _ -> /*NO-OP*/}
+            .setNegativeButton(R.string.no) { _, _ -> /*NO-OP*/ }
             .setPositiveButton(R.string.yes) { _, _ ->
                 if (dontShowAgainCheck.isChecked) {
                     settingsManager.edit().putInt(getString(R.string.confirm_exit_key), 1).commit()
@@ -1543,12 +1544,12 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
             }
 
             if (navDestination.matchDestination(R.id.navigation_home)) {
-                attachBackPressedCallback {
+                attachBackPressedCallback("MainActivity") {
                     showConfirmExitDialog(settingsManager)
                     window?.navigationBarColor = colorFromAttribute(R.attr.primaryGrayBackground)
                     updateLocale()
                 }
-            } else detachBackPressedCallback()
+            } else detachBackPressedCallback("MainActivity")
         }
 
         //val navController = findNavController(R.id.nav_host_fragment)

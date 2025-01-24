@@ -133,7 +133,7 @@ object M3u8Helper2 {
 
     private fun getParentLink(uri: String): String {
         val split = uri.split("/").toMutableList()
-        split.removeLast()
+        split.removeAt(split.lastIndex)
         return split.joinToString("/")
     }
 
