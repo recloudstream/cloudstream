@@ -164,14 +164,14 @@
     <string name="category_account">Hesaplar ve Güvenlik</string>
     <string name="category_updates">Güncellemeler ve Yedekleme</string>
     <string name="settings_info">Bilgi</string>
-    <string name="advanced_search">Gelişmiş Arama</string>
+    <string name="advanced_search">Gelişmiş arama</string>
     <string name="advanced_search_des">Arama sonuçlarını sağlayıcıya göre ayırır</string>
     <string name="bug_report_settings_off">Yalnızca çökmelerle ilgili verileri gönderir</string>
     <string name="bug_report_settings_on">Veri göndermez</string>
-    <string name="show_fillers_settings">Anime için filler bölümleri göster</string>
+    <string name="show_fillers_settings">Anime için dolgu bölümünü göster</string>
     <string name="show_trailers_settings">Fragmanları göster</string>
-    <string name="kitsu_settings">Kitsu\'dan posterleri göster</string>
-    <string name="pref_filter_search_quality">Seçilen video kalitelerini arama sonuçlarından gizle</string>
+    <string name="kitsu_settings">Kitsu posterlerini göster</string>
+    <string name="pref_filter_search_quality">Seçili video kalitesini arama sonuçlarında gizle</string>
     <string name="automatic_plugin_updates">Otomatik eklenti güncellemeleri</string>
     <string name="updates_settings">Uygulama güncellemelerini göster</string>
     <string name="updates_settings_des">Uygulama başlatıldıktan sonra güncellemeleri ara.</string>
@@ -194,7 +194,7 @@
     <string name="season_format">%1$s %2$d%3$s</string>
     <string name="no_season">Sezon yok</string>
     <string name="episode">Bölüm</string>
-    <string name="episodes">Bölümler</string>
+    <string name="episodes">Bölüm</string>
     <string name="episodes_range">%1$d-%2$d</string>
     <string name="episode_format" formatted="true">%1$d %2$s</string>
     <string name="season_short">S</string>
@@ -289,7 +289,7 @@
     <string name="video_ram_description">Çok yükseğe ayarlanırsa düşük belleğe sahip cihazlarda çökmelere neden olur (örn. Android TV).</string>
     <string name="video_disk_description">Çok yükseğe ayarlanırsa düşük depolama alanına sahip sistemlerde sorunlara neden olur (örn. Android TV).</string>
     <string name="dns_pref">HTTPS üzerinden DNS</string>
-    <string name="dns_pref_summary">İnternet Servis Sağlayıcısı (İSS) kısıtlamalarını aşmak için kullanışlıdır</string>
+    <string name="dns_pref_summary">İnernet servis sağlayıcı kısıtlamalarını aşmak için kullanışlıdır</string>
     <string name="add_site_pref">Siteyi klonla</string>
     <string name="remove_site_pref">Siteyi kaldır</string>
     <string name="add_site_summary">Mevcut bir sitenin farklı bir URL üstündeki kopyasını ekleyin</string>
@@ -303,8 +303,8 @@
     <string name="legal_notice_key" translatable="false">legal_notice_key</string>
     <string name="legal_notice_text" translatable="false">Any legal issues regarding the content on this application should be taken up with the actual file hosts and providers themselves as we are not affiliated with them. In case of copyright infringement, please directly contact the responsible parties or the streaming websites. The app is purely for educational and personal use. CloudStream 3 does not host any content on the app, and has no control over what media is put up or taken down. CloudStream 3 functions like any other search engine, such as Google. CloudStream 3 does not host, upload or manage any videos, films or content. It simply crawls, aggregates and displayes links in a convenient, user-friendly interface. It merely scrapes 3rd-party websites that are publicly accessable via any regular web browser. It is the responsibility of user to avoid any actions that might violate the laws governing his/her locality. Use CloudStream 3 at your own risk.</string>
     <string name="category_general">Genel</string>
-    <string name="random_button_settings">Rastgele İçerik</string>
-    <string name="random_button_settings_desc">Ana sayfada ve Kütüphanede rastgele düğmesini göster</string>
+    <string name="random_button_settings">Rastgele düğmesi</string>
+    <string name="random_button_settings_desc">Ana sayfa ve kütüphane üstünde rastgele düğmesini göster</string>
     <string name="provider_lang_settings">Uzantı dilleri</string>
     <string name="app_layout">Uygulama düzeni</string>
     <string name="preferred_media_settings">Tercih edilen medya</string>
@@ -360,8 +360,8 @@
     <string name="none">Yok</string>
     <string name="normal">Normal</string>
     <string name="all">Tümü</string>
-    <string name="max">Maksimum</string>
-    <string name="min">Minimum</string>
+    <string name="max">Azami</string>
+    <string name="min">Asgari</string>
     <string name="subtitles_none" translatable="false">@string/none</string>
     <string name="subtitles_outline">Dış hat</string>
     <string name="subtitles_depressed">Çökmüş</string>
@@ -434,7 +434,7 @@
     <string name="extensions">Eklentiler</string>
     <string name="add_repository">Depo ekle</string>
     <string name="repository_name_hint">Depo adı (İsteğe bağlı)</string>
-    <string name="repository_url_hint">Depo URL\'si veya Kısa Kod</string>
+    <string name="repository_url_hint">Depo URL veya Kısa Kodu</string>
     <string name="plugin_loaded">Eklenti Yüklendi</string>
     <string name="plugin_deleted">Eklenti Silindi</string>
     <string name="plugin_load_fail" formatted="true">%s yüklenemedi</string>
@@ -624,7 +624,7 @@
     <string name="rotate_video_desc">Ekran yönü için bir geçiş düğmesi göster</string>
     <string name="rotate_video_key">rotate_video_key</string>
     <string name="auto_rotate_video_key">auto_rotate_video_key</string>
-    <string name="auto_rotate_video">Otomatik döndürme</string>
+    <string name="auto_rotate_video">Otomatik döndür</string>
     <string name="rotate_video">Döndür</string>
     <string name="auto_rotate_video_desc">Video yönüne göre ekran yönünün otomatik olarak değişmesini sağla</string>
     <string name="links_reloaded_toast">Bağlantılar Yeniden Yüklendi</string>
@@ -634,8 +634,8 @@
     <string name="test_extensions">Tüm uzantıları test et</string>
     <string name="test_extensions_summary">Bu test geliştiriciler içindir ve herhangi bir uzantının çalışmasını doğrulamaz veya reddetmez.</string>
     <string name="subscribe_tooltip">Yeni bölüm bildirimi</string>
-    <string name="biometric_authentication_title">CloudStream\'in Kilidini aç</string>
-    <string name="biometric_setting">Biyometri ile Kilitle</string>
+    <string name="biometric_authentication_title">CloudStream kilidini aç</string>
+    <string name="biometric_setting">Biyometri ile kilitle</string>
     <string name="password_pin_authentication_title">Şifre/PIN Kimlik Doğrulama</string>
     <string name="biometric_unsupported">Biyometrik kimlik doğrulama bu cihazda desteklenmiyor</string>
     <string name="biometric_setting_summary">Parmak İzi, Yüz Kimliği, PIN, Desen ve Parola ile uygulamanın kilidini açın.</string>
@@ -710,4 +710,11 @@
     <string name="dont_show">Gizle</string>
     <string name="subs_edge_size">Köşe Boyutu</string>
     <string name="torrent_info">Bu video Torrent\'tir, bu video aktivitenizin takip edilebileceği anlamına gelir.\nDevam etmeden önce Torrentlemeyi iyi anladığınızdan emin olun.</string>
+    <string name="unsupported_error">Desteklenmeyen hata</string>
+    <string name="encoding_error">Kodlama hatası</string>
+    <string name="player_load_one_subtitle_online">İlk kullanılabiliri yükle</string>
+    <string name="audio_singluar">Ses</string>
+    <string name="podcast_singluar">Podcast</string>
+    <string name="torrent_preferred_media">Ayarlar/Sağlayıcılar/Tercih edilen medya bölümünden torrenti etkinleştirin</string>
+    <string name="torrent_not_accepted">Torrent kabul edilmedi</string>
 </resources>

@@ -214,7 +214,7 @@
     <string name="documentaries">Documentários</string>
     <string name="ova">OVA</string>
     <string name="asian_drama">Dramas Asiáticos</string>
-    <string name="livestreams">Transmissões em Direto</string>
+    <string name="livestreams">Transmissões ao vivo</string>
     <string name="others">Outros</string>
     <!--singular-->
     <string name="movies_singular">Filme</string>
@@ -225,7 +225,7 @@
     <string name="torrent_singular">Torrent</string>
     <string name="documentaries_singular">Documentário</string>
     <string name="asian_drama_singular">Drama Asiático</string>
-    <string name="live_singular">Transmissão em Direto</string>
+    <string name="live_singular">Transmissão ao vivo</string>
     <string name="source_error">Erro de fornecimento</string>
     <string name="remote_error">Erro remoto</string>
     <string name="render_error">Erro de renderização</string>
@@ -249,7 +249,7 @@
     <string name="video_lock">Bloquear</string>
     <string name="video_aspect_ratio_resize">Mudar Tamanho</string>
     <string name="video_source">Fonte</string>
-    <string name="video_skip_op">Pular OP</string>
+    <string name="video_skip_op">Pular Abertura</string>
     <string name="dont_show_again">Não mostrar de novo</string>
     <string name="skip_update">Pular essa Atualização</string>
     <string name="update">Atualizar</string>
@@ -687,4 +687,9 @@
     <string name="custom">Personalizado</string>
     <string name="subs_edge_size">Tamanho da borda</string>
     <string name="torrent_info">Este vídeo é um Torrent, o que significa que sua atividade de vídeo pode ser rastreada.\nCertifique-se de que você entendeu o que é Torrenting antes de continuar.</string>
+    <string name="encoding_error">Erro de codificação</string>
+    <string name="unsupported_error">Erro não suportado</string>
+    <string name="player_load_one_subtitle_online">Carregar primeiro disponível</string>
+    <string name="audio_singluar">Áudio</string>
+    <string name="podcast_singluar">Podcast</string>
 </resources>
