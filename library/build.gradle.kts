@@ -1,4 +1,6 @@
 import com.codingfeline.buildkonfig.compiler.FieldSpec
+import org.jetbrains.dokka.gradle.engine.parameters.KotlinPlatform
+import org.jetbrains.dokka.gradle.engine.parameters.VisibilityModifier
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
@@ -7,6 +9,7 @@ plugins {
     id("maven-publish")
     id("com.android.library")
     id("com.codingfeline.buildkonfig")
+    id("org.jetbrains.dokka")
 }
 
 val javaTarget = JvmTarget.fromTarget(libs.versions.jvmTarget.get())
@@ -83,6 +86,25 @@ publishing {
     publications {
         withType<MavenPublication> {
             groupId = "com.lagradost.api"
+        }
+    }
+}
+
+dokka {
+    moduleName = "Library"
+    dokkaSourceSets {
+        configureEach {
+            analysisPlatform = KotlinPlatform.AndroidJVM
+            documentedVisibilities(
+                VisibilityModifier.Public,
+                VisibilityModifier.Protected
+            )
+
+            sourceLink {
+                localDirectory = file("..")
+                remoteUrl("https://github.com/recloudstream/cloudstream/tree/master")
+                remoteLineSuffix = "#L"
+            }
         }
     }
 }

@@ -663,4 +663,11 @@
     <string name="subs_edge_size">Tamanho da borda</string>
     <string name="torrent_info">Este vídeo é um Torrent, o que significa que sua atividade de vídeo pode ser rastreada.\nCertifique-se de entender o Torrent antes de continuar.</string>
     <string name="custom">Personalizado</string>
+    <string name="player_load_one_subtitle_online">Carregar o primeiro disponível</string>
+    <string name="audio_singluar">Áudio</string>
+    <string name="podcast_singluar">Podcast</string>
+    <string name="encoding_error">Erro de codificação</string>
+    <string name="unsupported_error">Erro não suportado</string>
+    <string name="torrent_preferred_media">Ativar torrent nas Configurações/Provedores/Mídia preferida</string>
+    <string name="torrent_not_accepted">Torrent não aceito</string>
 </resources>
