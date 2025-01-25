@@ -462,7 +462,8 @@ object PluginManager {
             try {
                 val destinationFile = File(pluginDirectory, file.name)
 
-                // Only copy the file if it has been modified (check file length and modification date)
+                // Only copy the file if the destination file doesn't exist or if it
+                // has been modified (check file length and modification time).
                 if (!destinationFile.exists() ||
                     destinationFile.length() != file.length() ||
                     destinationFile.lastModified() != file.lastModified()) {
