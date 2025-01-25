@@ -20,6 +20,7 @@ import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.APIHolder.removePluginMapping
 import com.lagradost.cloudstream3.AcraApplication.Companion.getActivity
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
+import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.MainAPI.Companion.settingsForProvider
@@ -457,6 +458,9 @@ object PluginManager {
         if (!pluginDirectory.exists()) {
             pluginDirectory.mkdirs() // Ensure the plugins directory exists
         }
+
+        // Make sure all local plugins are fully refreshed.
+        removeKey(PLUGINS_KEY_LOCAL)
 
         sortedPlugins?.sortedBy { it.name }?.apmap { file ->
             try {
