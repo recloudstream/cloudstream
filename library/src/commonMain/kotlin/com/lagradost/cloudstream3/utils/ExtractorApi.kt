@@ -712,7 +712,10 @@ suspend fun loadExtractor(
 ): Boolean {
     val currentUrl = unshortenLinkSafe(url)
     val compareUrl = currentUrl.lowercase().replace(schemaStripRegex, "")
-    for (extractor in extractorApis) {
+
+    // Iterate in reverse order so the new registered ExtractorApi takes priority
+    for (index in extractorApis.lastIndex downTo 0) {
+        val extractor = extractorApis[index]
         if (compareUrl.startsWith(extractor.mainUrl.replace(schemaStripRegex, ""))) {
             extractor.getSafeUrl(currentUrl, referer, subtitleCallback, callback)
             return true
@@ -720,7 +723,8 @@ suspend fun loadExtractor(
     }
 
     // this is to match mirror domains - like example.com, example.net
-    for (extractor in extractorApis) {
+    for (index in extractorApis.lastIndex downTo 0) {
+        val extractor = extractorApis[index]
         if (FuzzySearch.partialRatio(
                 extractor.mainUrl,
                 currentUrl
