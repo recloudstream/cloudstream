@@ -20,6 +20,7 @@ import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.APIHolder.removePluginMapping
 import com.lagradost.cloudstream3.AcraApplication.Companion.getActivity
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
+import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.MainAPI.Companion.settingsForProvider
@@ -448,10 +449,44 @@ object PluginManager {
         val sortedPlugins = dir.listFiles()
         // Always sort plugins alphabetically for reproducible results
 
-        Log.d(TAG, "Files in '${LOCAL_PLUGINS_PATH}' folder: $sortedPlugins")
+        Log.d(TAG, "Files in '${LOCAL_PLUGINS_PATH}' folder: ${sortedPlugins?.size}")
+
+        // Use app-specific external files directory and copy the file there.
+        // We have to do this because on Android 14+, it otherwise gives SecurityException
+        // due to dex files and setReadOnly seems to have no effect unless it it here.
+        val pluginDirectory = File(context.getExternalFilesDir(null), "plugins")
+        if (!pluginDirectory.exists()) {
+            pluginDirectory.mkdirs() // Ensure the plugins directory exists
+        }
+
+        // Make sure all local plugins are fully refreshed.
+        removeKey(PLUGINS_KEY_LOCAL)
 
         sortedPlugins?.sortedBy { it.name }?.apmap { file ->
-            maybeLoadPlugin(context, file)
+            try {
+                val destinationFile = File(pluginDirectory, file.name)
+
+                // Only copy the file if the destination file doesn't exist or if it
+                // has been modified (check file length and modification time).
+                if (!destinationFile.exists() ||
+                    destinationFile.length() != file.length() ||
+                    destinationFile.lastModified() != file.lastModified()) {
+
+                    // Copy the file to the app-specific plugin directory
+                    file.copyTo(destinationFile, overwrite = true)
+
+                    // After copying, set the destination file's modification time
+                    // to match the source file. We do this for performance so that we
+                    // can check the modification time and not make redundant writes.
+                    destinationFile.setLastModified(file.lastModified())
+                }
+
+                // Load the plugin after it has been copied
+                maybeLoadPlugin(context, destinationFile)
+            } catch (t: Throwable) {
+                Log.e(TAG, "Failed to copy the file")
+                logError(t)
+            }
         }
 
         loadedLocalPlugins = true
@@ -483,11 +518,14 @@ object PluginManager {
         Log.i(TAG, "Loading plugin: $data")
 
         return try {
-            // in case of android 14 then
+            // In case of Android 14+ then
             try {
-                File(filePath).setReadOnly()
+                // Set the file as read-only and log if it fails
+                if (!file.setReadOnly()) {
+                    Log.e(TAG, "Failed to set read-only on plugin file: ${file.name}")
+                }
             } catch (t: Throwable) {
-                Log.e(TAG, "Failed to set dex as readonly")
+                Log.e(TAG, "Failed to set dex as read-only")
                 logError(t)
             }
 
