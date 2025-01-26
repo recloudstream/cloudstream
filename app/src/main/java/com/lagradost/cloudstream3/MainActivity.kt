@@ -613,6 +613,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
     private fun showConfirmExitDialog(settingsManager: SharedPreferences) {
         val confirmBeforeExit = settingsManager.getInt(getString(R.string.confirm_exit_key), -1)
 
+        // Exit Dialog is always shown on TV's and emulators.
         if (confirmBeforeExit == 1 || (confirmBeforeExit == -1 && isLayout(PHONE))) {
             finish()
             return
