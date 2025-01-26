@@ -811,6 +811,8 @@ class CS3IPlayer : IPlayer {
                             ).build()
                     )
 
+            // Don't load any sources if there are none.
+            if (mediaItemSlices.isEmpty()) return exoPlayerBuilder.build()
 
             val factory =
                 if (cacheFactory == null) DefaultMediaSourceFactory(context)
