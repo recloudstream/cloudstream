@@ -182,6 +182,7 @@ class ResultFragmentTv : Fragment() {
 
     override fun onResume() {
         activity?.let {
+            @Suppress("DEPRECATION")
             it.window?.navigationBarColor =
                 it.colorFromAttribute(R.attr.primaryBlackBackground)
         }

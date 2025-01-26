@@ -387,6 +387,7 @@ abstract class AbstractPlayerFragment(
             }
 
             // Necessary for multiple combined videos
+            @Suppress("DEPRECATION")
             playerView?.setShowMultiWindowTimeBar(true)
             playerView?.player = player
             playerView?.performClick()
