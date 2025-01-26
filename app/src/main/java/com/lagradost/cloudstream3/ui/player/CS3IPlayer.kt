@@ -48,6 +48,7 @@ import androidx.media3.exoplayer.drm.DefaultDrmSessionManager
 import androidx.media3.exoplayer.drm.FrameworkMediaDrm
 import androidx.media3.exoplayer.drm.LocalMediaDrmCallback
 import androidx.media3.exoplayer.source.ClippingMediaSource
+import androidx.media3.exoplayer.source.ConcatenatingMediaSource
 import androidx.media3.exoplayer.source.ConcatenatingMediaSource2
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 import androidx.media3.exoplayer.source.MergingMediaSource
@@ -838,17 +839,32 @@ class CS3IPlayer : IPlayer {
                     factory.createMediaSource(item.mediaItem)
                 }
             } else {
-                val source = ConcatenatingMediaSource2.Builder()
-                mediaItemSlices.map { item ->
-                    source.add(
-                        // The duration MUST be known for it to work properly, see https://github.com/google/ExoPlayer/issues/4727
-                        ClippingMediaSource(
-                            factory.createMediaSource(item.mediaItem),
-                            item.durationUs
+                try {
+                    val source = ConcatenatingMediaSource2.Builder()
+                    mediaItemSlices.map { item ->
+                        source.add(
+                            // The duration MUST be known for it to work properly, see https://github.com/google/ExoPlayer/issues/4727
+                            ClippingMediaSource(
+                                factory.createMediaSource(item.mediaItem),
+                                item.durationUs
+                            )
                         )
-                    )
+                    }
+                    source.build()
+                } catch(_: IllegalArgumentException) {
+                    @Suppress("DEPRECATION")
+                    val source = ConcatenatingMediaSource() // FIXME figure out why ConcatenatingMediaSource2 seems to fail with Torrents only
+                    mediaItemSlices.map { item ->
+                        source.addMediaSource(
+                            // The duration MUST be known for it to work properly, see https://github.com/google/ExoPlayer/issues/4727
+                            ClippingMediaSource(
+                                factory.createMediaSource(item.mediaItem),
+                                item.durationUs
+                            )
+                        )
+                    }
+                    source
                 }
-                source.build()
             }
 
             //println("PLAYBACK POS $playbackPosition")
