@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.ui.player
 
+import Torrent
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.DialogInterface
@@ -47,7 +48,7 @@ import androidx.media3.exoplayer.drm.DefaultDrmSessionManager
 import androidx.media3.exoplayer.drm.FrameworkMediaDrm
 import androidx.media3.exoplayer.drm.LocalMediaDrmCallback
 import androidx.media3.exoplayer.source.ClippingMediaSource
-import androidx.media3.exoplayer.source.ConcatenatingMediaSource
+import androidx.media3.exoplayer.source.ConcatenatingMediaSource2
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 import androidx.media3.exoplayer.source.MergingMediaSource
 import androidx.media3.exoplayer.source.SingleSampleMediaSource
@@ -766,6 +767,7 @@ class CS3IPlayer : IPlayer {
                                 ).apply {
                                     // Required to make the decoder work with old subtitles
                                     // Upgrade CustomSubtitleDecoderFactory when media3 supports it
+                                    @Suppress("DEPRECATION")
                                     experimentalSetLegacyDecodingEnabled(true)
                                 }.also { renderer ->
                                     this.currentTextRenderer = renderer
@@ -836,9 +838,9 @@ class CS3IPlayer : IPlayer {
                     factory.createMediaSource(item.mediaItem)
                 }
             } else {
-                val source = ConcatenatingMediaSource()
+                val source = ConcatenatingMediaSource2.Builder()
                 mediaItemSlices.map { item ->
-                    source.addMediaSource(
+                    source.add(
                         // The duration MUST be known for it to work properly, see https://github.com/google/ExoPlayer/issues/4727
                         ClippingMediaSource(
                             factory.createMediaSource(item.mediaItem),
@@ -846,7 +848,7 @@ class CS3IPlayer : IPlayer {
                         )
                     )
                 }
-                source
+                source.build()
             }
 
             //println("PLAYBACK POS $playbackPosition")

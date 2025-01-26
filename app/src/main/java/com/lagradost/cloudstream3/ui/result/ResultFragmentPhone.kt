@@ -295,6 +295,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
     override fun onResume() {
         afterPluginsLoadedEvent += ::reloadViewModel
         activity?.let {
+            @Suppress("DEPRECATION")
             it.window?.navigationBarColor =
                 it.colorFromAttribute(R.attr.primaryBlackBackground)
         }

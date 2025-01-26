@@ -26,25 +26,25 @@ class JsUnpacker(packedJS: String?) {
      * @return the javascript unpacked or null.
      */
     fun unpack(): String? {
-        val js = packedJS
+        val js = packedJS ?: return null
         try {
             var p =
                 Pattern.compile("""\}\s*\('(.*)',\s*(.*?),\s*(\d+),\s*'(.*?)'\.split\('\|'\)""", Pattern.DOTALL)
             var m = p.matcher(js)
             if (m.find() && m.groupCount() == 4) {
-                val payload = m.group(1).replace("\\'", "'")
+                val payload = m.group(1)?.replace("\\'", "'") ?: ""
                 val radixStr = m.group(2)
                 val countStr = m.group(3)
-                val symtab = m.group(4).split("\\|".toRegex()).toTypedArray()
+                val symtab = (m.group(4)?.split("\\|".toRegex()) ?: emptyList()).toTypedArray()
                 var radix = 36
                 var count = 0
                 try {
-                    radix = radixStr.toInt()
-                } catch (e: Exception) {
+                    radix = radixStr?.toIntOrNull() ?: radix
+                } catch (_: Exception) {
                 }
                 try {
-                    count = countStr.toInt()
-                } catch (e: Exception) {
+                    count = countStr?.toIntOrNull() ?: 0
+                } catch (_: Exception) {
                 }
                 if (symtab.size != count) {
                     throw Exception("Unknown p.a.c.k.e.r. encoding")
@@ -56,12 +56,12 @@ class JsUnpacker(packedJS: String?) {
                 var replaceOffset = 0
                 while (m.find()) {
                     val word = m.group(0)
-                    val x = unbase.unbase(word)
+                    val x = if (word == null) 0 else unbase.unbase(word)
                     var value: String? = null
                     if (x < symtab.size && x >= 0) {
                         value = symtab[x]
                     }
-                    if (value != null && value.isNotEmpty()) {
+                    if (!value.isNullOrEmpty() && !word.isNullOrEmpty()) {
                         decoded.replace(m.start() + replaceOffset, m.end() + replaceOffset, value)
                         replaceOffset += value.length - word.length
                     }
@@ -118,7 +118,7 @@ class JsUnpacker(packedJS: String?) {
     }
 
     /**
-     * @param  packedJS javascript P.A.C.K.E.R. coded.
+     * @param packedJS javascript P.A.C.K.E.R. coded.
      */
     init {
         this.packedJS = packedJS
