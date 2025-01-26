@@ -295,7 +295,7 @@ object UIHelper {
                             // Hide the nav bar and status bar
                             or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                             or View.SYSTEM_UI_FLAG_FULLSCREEN
-                    )
+                    ) // FIXME this should be replaced
           //}
     }
 
@@ -420,7 +420,7 @@ object UIHelper {
         } else {*/ /** WINDOW COMPAT IS BUGGY DUE TO FU*KED UP PLAYER AND TRAILERS **/
         @Suppress("DEPRECATION")
         window.decorView.systemUiVisibility =
-                (View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN)
+            (View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN) // FIXME this should be replaced
         //}
 
         changeStatusBarState(isLayout(EMULATOR))
