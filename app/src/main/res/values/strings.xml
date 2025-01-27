@@ -832,4 +832,7 @@
     <string name="software_decoding_key" translatable="false">software_decoding_key</string>
     <string name="software_decoding">Software decoding</string>
     <string name="software_decoding_desc">Software decoding enables the player to play video files not supported by your phone, but may cause laggy or unstable playback on high resolution</string>
+    <string name="update_plugins">Update Plugins</string>
+    <string name="update_plugins_manually">Update plugins manually!!</string>
+    <string name="manual_update_plugins_key" translatable="false">manual_update_plugins</string>
 </resources>

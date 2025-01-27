@@ -17,6 +17,7 @@ import com.lagradost.cloudstream3.databinding.LogcatBinding
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.network.initClient
+import com.lagradost.cloudstream3.plugins.PluginManager
 import com.lagradost.cloudstream3.services.BackupWorkManager
 import com.lagradost.cloudstream3.utils.txt
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
@@ -258,6 +259,19 @@ class SettingsUpdates : PreferenceFragmentCompat() {
                 (context ?: AcraApplication.context)?.let { ctx -> app.initClient(ctx) }
             }
             return@setOnPreferenceClickListener true
+        }
+
+        getPref(R.string.manual_update_plugins_key)?.setOnPreferenceClickListener {
+            val activity = activity ?: return@setOnPreferenceClickListener false // Safely handle null activity
+            try {
+                showToast("Updating extensions...", Toast.LENGTH_SHORT)
+                PluginManager.manuallyReloadAndUpdatePlugins(activity)
+            } catch (e: Throwable) { // Use Throwable to catch and handle all errors
+                // Show error toast using the utility method and re-throw the exception
+                showToast(R.string.backup_failed, Toast.LENGTH_LONG)
+                throw e
+            }
+            true // Return true for the listener
         }
     }
 
