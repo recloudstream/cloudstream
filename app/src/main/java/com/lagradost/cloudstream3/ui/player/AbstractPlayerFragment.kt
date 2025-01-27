@@ -55,6 +55,7 @@ import com.lagradost.cloudstream3.utils.EpisodeSkip
 import com.lagradost.cloudstream3.utils.UIHelper
 import com.lagradost.cloudstream3.utils.UIHelper.hideSystemUI
 import com.lagradost.cloudstream3.utils.UIHelper.popCurrentPage
+import java.net.SocketTimeoutException
 
 enum class PlayerResize(@StringRes val nameRes: Int) {
     Fit(R.string.resize_fit),
@@ -352,6 +353,13 @@ abstract class AbstractPlayerFragment(
             is InvalidFileException -> {
                 showToast(
                     "${ctx.getString(R.string.source_error)}\n${exception.message}",
+                    gotoNext = true
+                )
+            }
+
+            is SocketTimeoutException -> {
+                showToast(
+                    "${ctx.getString(R.string.remote_error)}\n${exception.message}",
                     gotoNext = true
                 )
             }
