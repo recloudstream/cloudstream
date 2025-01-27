@@ -748,8 +748,10 @@ object PluginManager {
                     it.validOnlineData(activity) // Ensure valid data
                 }
         }.flatten().distinctBy { it.onlineData.second.url }
+
         val updatedPlugins = mutableListOf<String>()
 
+        // Process updates
         allPlugins.apmap { pluginData ->
             if (pluginData.isDisabled) {
                 // Unload disabled plugins
@@ -759,7 +761,7 @@ object PluginManager {
                 // Ensure the existing plugin file is deleted before downloading the new version
                 val existingFile = File(pluginData.savedData.filePath)
                 if (existingFile.exists()) {
-                    existingFile.delete()  // Delete the existing file
+                    existingFile.delete() // Delete the existing file
                 }
 
                 downloadPlugin(
@@ -771,16 +773,23 @@ object PluginManager {
                 ).let { success ->
                     if (success) {
                         updatedPlugins.add(pluginData.onlineData.second.name)
-                        // Show toast after the plugin file is deleted and replaced
-                        showToast("Plugins have been successfully updated!", Toast.LENGTH_LONG)
                     }
                 }
             }
-        }
+        }.also {
+            // Show toast after all updates are completed
+            main {
+                if (updatedPlugins.isNotEmpty()) {
+                    val updatedCount = updatedPlugins.size
+                    showToast("Successfully updated $updatedCount plugin(s)!", Toast.LENGTH_LONG)
+                } else {
+                    showToast("No plugins were updated.", Toast.LENGTH_LONG)
+                }
 
-        main {
-            val uitext = txt(R.string.plugins_updated, updatedPlugins.size)
-            createNotification(activity, uitext, updatedPlugins)
+                // Create a notification with the update results
+                val uitext = txt(R.string.plugins_updated, updatedPlugins.size)
+                createNotification(activity, uitext, updatedPlugins)
+            }
         }
 
         loadedOnlinePlugins = true
