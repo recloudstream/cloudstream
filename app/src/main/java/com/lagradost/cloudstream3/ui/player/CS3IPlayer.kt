@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package com.lagradost.cloudstream3.ui.player
 
 import Torrent
@@ -1041,7 +1043,7 @@ class CS3IPlayer : IPlayer {
         Log.i(TAG, "loadExo")
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
         val maxVideoHeight = settingsManager.getInt(
-            context.getString(if (context.isUsingMobileData()) com.lagradost.cloudstream3.R.string.quality_pref_mobile_data_key else com.lagradost.cloudstream3.R.string.quality_pref_key),
+            context.getString(if (context.isUsingMobileData()) R.string.quality_pref_mobile_data_key else R.string.quality_pref_key),
             Int.MAX_VALUE
         )
 
@@ -1217,7 +1219,7 @@ class CS3IPlayer : IPlayer {
                             // Only play next episode if autoplay is on (default)
                             if (PreferenceManager.getDefaultSharedPreferences(context)
                                     ?.getBoolean(
-                                        context.getString(com.lagradost.cloudstream3.R.string.autoplay_next_key),
+                                        context.getString(R.string.autoplay_next_key),
                                         true
                                     ) == true
                             ) {
