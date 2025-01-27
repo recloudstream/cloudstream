@@ -359,10 +359,18 @@ abstract class AbstractPlayerFragment(
             }
 
             is SocketTimeoutException -> {
-                showToast(
-                    "${ctx.getString(R.string.remote_error)}\n${exception.message}",
-                    gotoNext = true
-                )
+                /**
+                 * Ensures this is run on the UI thread to prevent issues 
+                 * caused by SocketTimeoutException in torrents. Running 
+                 * on another thread can break player interactions or 
+                 * prevent switching to the next source.
+                 */
+                activity?.runOnUiThread {
+                    showToast(
+                        "${ctx.getString(R.string.remote_error)}\n${exception.message}",
+                        gotoNext = true
+                    )
+                }
             }
 
             else -> {
