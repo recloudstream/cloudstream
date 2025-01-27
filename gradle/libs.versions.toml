@@ -44,7 +44,7 @@ tvprovider = "1.0.0"
 video = "1.0.0"
 workRuntime = "2.10.0"
 workRuntimeKtx = "2.10.0"
-torrentserverAniyomi = "c18f58e51b"
+torrentserverAniyomi = "883c17942d"
 
 jvmTarget = "1.8"
 minSdk = "21"
@@ -52,7 +52,7 @@ compileSdk = "35"
 targetSdk = "35"
 
 [libraries]
-torrentserver-aniyomi = { module = "com.github.Diegopyl1209:torrentserver-aniyomi", version.ref = "torrentserverAniyomi" }
+torrentserver-aniyomi = { module = "com.github.recloudstream:torrentserver", version.ref = "torrentserverAniyomi" }
 acra-core = { module = "ch.acra:acra-core", version.ref = "acraCore" }
 acra-toast = { module = "ch.acra:acra-toast", version.ref = "acraCore" }
 appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
