@@ -1,3 +1,5 @@
+package com.lagradost.cloudstream3.ui.player
+
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.api.Log
 import com.lagradost.cloudstream3.CommonActivity
