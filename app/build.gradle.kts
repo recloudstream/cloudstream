@@ -216,7 +216,7 @@ dependencies {
     } // JSON Parser
 
     // Torrent Support
-    implementation(libs.torrentserver.aniyomi)
+    implementation(libs.torrentserver)
 
     // Downloading & Networking
     implementation(libs.work.runtime)
