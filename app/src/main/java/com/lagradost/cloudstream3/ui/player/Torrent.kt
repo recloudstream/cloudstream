@@ -1,3 +1,5 @@
+package com.lagradost.cloudstream3.ui.player
+
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.api.Log
 import com.lagradost.cloudstream3.CommonActivity
@@ -25,11 +27,13 @@ object Torrent {
         return File(defaultDirectory).deleteRecursively()
     }
 
-    private const val TORRENT_SERVER_URL =
-        "http://127.0.0.1:8090" // https://github.com/Diegopyl1209/torrentserver-aniyomi/blob/main/server.go#L23
+    private var TORRENT_SERVER_URL = "" // https://github.com/Diegopyl1209/torrentserver-aniyomi/blob/main/server.go#L23
 
     /** Returns true if the server is up */
     private suspend fun echo(): Boolean {
+        if(TORRENT_SERVER_URL.isEmpty()) {
+            return false
+        }
         return try {
             app.get(
                 "$TORRENT_SERVER_URL/echo",
@@ -47,6 +51,9 @@ object Torrent {
     /** Gracefully shutdown the server.
      * should not be used because I am unable to start it again, and the stopTorrentServer() crashes the app */
     suspend fun shutdown(): Boolean {
+        if(TORRENT_SERVER_URL.isEmpty()) {
+            return false
+        }
         return try {
             app.get(
                 "$TORRENT_SERVER_URL/shutdown",
@@ -60,6 +67,9 @@ object Torrent {
     /** Lists all torrents by the server */
     @Throws
     private suspend fun list(): Array<TorrentStatus> {
+        if(TORRENT_SERVER_URL.isEmpty()) {
+            throw ErrorLoadingException("Not initialized")
+        }
         return app.post(
             "$TORRENT_SERVER_URL/torrents",
             json = TorrentRequest(
@@ -72,6 +82,9 @@ object Torrent {
 
     /** Drops a single torrent, (I think) this means closing the stream. Returns returns if it is successful */
     private suspend fun drop(hash: String): Boolean {
+        if(TORRENT_SERVER_URL.isEmpty()) {
+            return false
+        }
         return try {
             return app.post(
                 "$TORRENT_SERVER_URL/torrents",
@@ -90,6 +103,9 @@ object Torrent {
 
     /** Removes a single torrent from the server registry */
     private suspend fun rem(hash: String): Boolean {
+        if(TORRENT_SERVER_URL.isEmpty()) {
+            return false
+        }
         return try {
             return app.post(
                 "$TORRENT_SERVER_URL/torrents",
@@ -147,6 +163,9 @@ object Torrent {
     suspend fun get(
         hash: String,
     ): TorrentStatus {
+        if(TORRENT_SERVER_URL.isEmpty()) {
+            throw ErrorLoadingException("Not initialized")
+        }
         return app.post(
             "$TORRENT_SERVER_URL/torrents",
             json = TorrentRequest(
@@ -161,6 +180,9 @@ object Torrent {
     /** Adds a torrent to the server, this is needed for us to get the hash for further modification, as well as start streaming it*/
     @Throws
     private suspend fun add(url: String): TorrentStatus {
+        if(TORRENT_SERVER_URL.isEmpty()) {
+            throw ErrorLoadingException("Not initialized")
+        }
         return app.post(
             "$TORRENT_SERVER_URL/torrents",
             json = TorrentRequest(
@@ -179,7 +201,11 @@ object Torrent {
         if (echo()) {
             return true
         }
-        TorrServer.startTorrentServer(dir)
+        val port = TorrServer.startTorrentServer(dir, 0)
+        if(port < 0) {
+            return false
+        }
+        TORRENT_SERVER_URL = "http://127.0.0.1:$port"
         TorrServer.addTrackers(trackers.joinToString(separator = ",\n"))
         return echo()
     }

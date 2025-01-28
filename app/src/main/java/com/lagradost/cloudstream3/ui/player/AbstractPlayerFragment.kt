@@ -55,6 +55,7 @@ import com.lagradost.cloudstream3.utils.EpisodeSkip
 import com.lagradost.cloudstream3.utils.UIHelper
 import com.lagradost.cloudstream3.utils.UIHelper.hideSystemUI
 import com.lagradost.cloudstream3.utils.UIHelper.popCurrentPage
+import java.net.SocketTimeoutException
 
 enum class PlayerResize(@StringRes val nameRes: Int) {
     Fit(R.string.resize_fit),
@@ -305,6 +306,7 @@ abstract class AbstractPlayerFragment(
                     PlaybackException.ERROR_CODE_IO_BAD_HTTP_STATUS,
                     PlaybackException.ERROR_CODE_TIMEOUT,
                     PlaybackException.ERROR_CODE_IO_NETWORK_CONNECTION_FAILED,
+                    PlaybackException.ERROR_CODE_IO_NETWORK_CONNECTION_TIMEOUT,
                     PlaybackException.ERROR_CODE_IO_INVALID_HTTP_CONTENT_TYPE -> {
                         showToast(
                             "${ctx.getString(R.string.remote_error)}\n$errorName ($code)\n$msg",
@@ -356,6 +358,21 @@ abstract class AbstractPlayerFragment(
                 )
             }
 
+            is SocketTimeoutException -> {
+                /**
+                 * Ensures this is run on the UI thread to prevent issues 
+                 * caused by SocketTimeoutException in torrents. Running 
+                 * on another thread can break player interactions or 
+                 * prevent switching to the next source.
+                 */
+                activity?.runOnUiThread {
+                    showToast(
+                        "${ctx.getString(R.string.remote_error)}\n${exception.message}",
+                        gotoNext = true
+                    )
+                }
+            }
+
             else -> {
                 exception.message?.let {
                     showToast(
@@ -387,6 +404,7 @@ abstract class AbstractPlayerFragment(
             }
 
             // Necessary for multiple combined videos
+            @Suppress("DEPRECATION")
             playerView?.setShowMultiWindowTimeBar(true)
             playerView?.player = player
             playerView?.performClick()

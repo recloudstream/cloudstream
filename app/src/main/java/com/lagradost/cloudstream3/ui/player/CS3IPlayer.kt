@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package com.lagradost.cloudstream3.ui.player
 
 import android.annotation.SuppressLint
@@ -48,6 +50,7 @@ import androidx.media3.exoplayer.drm.FrameworkMediaDrm
 import androidx.media3.exoplayer.drm.LocalMediaDrmCallback
 import androidx.media3.exoplayer.source.ClippingMediaSource
 import androidx.media3.exoplayer.source.ConcatenatingMediaSource
+import androidx.media3.exoplayer.source.ConcatenatingMediaSource2
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 import androidx.media3.exoplayer.source.MergingMediaSource
 import androidx.media3.exoplayer.source.SingleSampleMediaSource
@@ -766,6 +769,7 @@ class CS3IPlayer : IPlayer {
                                 ).apply {
                                     // Required to make the decoder work with old subtitles
                                     // Upgrade CustomSubtitleDecoderFactory when media3 supports it
+                                    @Suppress("DEPRECATION")
                                     experimentalSetLegacyDecodingEnabled(true)
                                 }.also { renderer ->
                                     this.currentTextRenderer = renderer
@@ -836,17 +840,32 @@ class CS3IPlayer : IPlayer {
                     factory.createMediaSource(item.mediaItem)
                 }
             } else {
-                val source = ConcatenatingMediaSource()
-                mediaItemSlices.map { item ->
-                    source.addMediaSource(
-                        // The duration MUST be known for it to work properly, see https://github.com/google/ExoPlayer/issues/4727
-                        ClippingMediaSource(
-                            factory.createMediaSource(item.mediaItem),
-                            item.durationUs
+                try {
+                    val source = ConcatenatingMediaSource2.Builder()
+                    mediaItemSlices.map { item ->
+                        source.add(
+                            // The duration MUST be known for it to work properly, see https://github.com/google/ExoPlayer/issues/4727
+                            ClippingMediaSource(
+                                factory.createMediaSource(item.mediaItem),
+                                item.durationUs
+                            )
                         )
-                    )
+                    }
+                    source.build()
+                } catch(_: IllegalArgumentException) {
+                    @Suppress("DEPRECATION")
+                    val source = ConcatenatingMediaSource() // FIXME figure out why ConcatenatingMediaSource2 seems to fail with Torrents only
+                    mediaItemSlices.map { item ->
+                        source.addMediaSource(
+                            // The duration MUST be known for it to work properly, see https://github.com/google/ExoPlayer/issues/4727
+                            ClippingMediaSource(
+                                factory.createMediaSource(item.mediaItem),
+                                item.durationUs
+                            )
+                        )
+                    }
+                    source
                 }
-                source
             }
 
             //println("PLAYBACK POS $playbackPosition")
@@ -1023,7 +1042,7 @@ class CS3IPlayer : IPlayer {
         Log.i(TAG, "loadExo")
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
         val maxVideoHeight = settingsManager.getInt(
-            context.getString(if (context.isUsingMobileData()) com.lagradost.cloudstream3.R.string.quality_pref_mobile_data_key else com.lagradost.cloudstream3.R.string.quality_pref_key),
+            context.getString(if (context.isUsingMobileData()) R.string.quality_pref_mobile_data_key else R.string.quality_pref_key),
             Int.MAX_VALUE
         )
 
@@ -1199,7 +1218,7 @@ class CS3IPlayer : IPlayer {
                             // Only play next episode if autoplay is on (default)
                             if (PreferenceManager.getDefaultSharedPreferences(context)
                                     ?.getBoolean(
-                                        context.getString(com.lagradost.cloudstream3.R.string.autoplay_next_key),
+                                        context.getString(R.string.autoplay_next_key),
                                         true
                                     ) == true
                             ) {
