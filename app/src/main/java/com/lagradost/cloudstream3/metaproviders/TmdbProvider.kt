@@ -54,6 +54,7 @@ open class TmdbProvider : MainAPI() {
     }
 
     private fun BaseTvShow.toSearchResponse(): TvSeriesSearchResponse {
+        @Suppress("DEPRECATION")
         return TvSeriesSearchResponse(
             this.name ?: this.original_name,
             getUrl(id, true),
@@ -71,6 +72,7 @@ open class TmdbProvider : MainAPI() {
     }
 
     private fun BaseMovie.toSearchResponse(): MovieSearchResponse {
+        @Suppress("DEPRECATION")
         return MovieSearchResponse(
             this.title ?: this.original_title,
             getUrl(id, false),
@@ -99,6 +101,7 @@ open class TmdbProvider : MainAPI() {
         val episodes = this.seasons?.filter { !disableSeasonZero || (it.season_number ?: 0) != 0 }
             ?.mapNotNull { season ->
                 season.episodes?.map { episode ->
+                    @Suppress("DEPRECATION")
                     Episode(
                         TmdbLink(
                             episode.external_ids?.imdb_id ?: this.external_ids?.imdb_id,
@@ -116,6 +119,7 @@ open class TmdbProvider : MainAPI() {
                         episode.air_date?.time,
                     )
                 } ?: (1..(season.episode_count ?: 1)).map { episodeNum ->
+                    @Suppress("DEPRECATION")
                     Episode(
                         episode = episodeNum,
                         data = TmdbLink(
@@ -242,6 +246,7 @@ open class TmdbProvider : MainAPI() {
             }
         )
 
+        @Suppress("DEPRECATION")
         return HomePageResponse(
             listOf(
 //                HomePageList("Popular Series", popularSeries),
