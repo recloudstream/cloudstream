@@ -31,7 +31,7 @@ open class StreamTape : ExtractorApi() {
                         val scriptContent =
                             it.substringAfter(").innerHTML").replaceFirst("=", "var url =")
                         val rhino = Context.enter()
-                        rhino.optimizationLevel = -1
+                        rhino.setInterpretedMode(true)
                         val scope = rhino.initStandardObjects()
                         var result = ""
                         try {

@@ -677,7 +677,7 @@ suspend fun getRhinoContext(): org.mozilla.javascript.Context {
     return Coroutines.mainWork {
         val rhino = org.mozilla.javascript.Context.enter()
         rhino.initSafeStandardObjects()
-        rhino.optimizationLevel = -1
+        rhino.setInterpretedMode(true)
         rhino
     }
 }

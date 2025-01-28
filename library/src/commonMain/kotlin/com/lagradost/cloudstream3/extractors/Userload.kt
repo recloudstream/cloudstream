@@ -37,7 +37,7 @@ open class Userload : ExtractorApi() {
     private fun evaluateMath(mathExpression : String): String {
         val rhino = Context.enter()
         rhino.initStandardObjects()
-        rhino.optimizationLevel = -1
+        rhino.setInterpretedMode(true)
         val scope: Scriptable = rhino.initStandardObjects()
         return try {
             rhino.evaluateString(scope, "eval($mathExpression)", "JavaScript", 1, null).toString()

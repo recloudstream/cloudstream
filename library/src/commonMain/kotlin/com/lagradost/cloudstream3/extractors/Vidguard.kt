@@ -90,7 +90,7 @@ open class Vidguardto : ExtractorApi() {
         val r = Runnable {
             val rhino = Context.enter()
             rhino.initSafeStandardObjects()
-            rhino.optimizationLevel = -1
+            rhino.setInterpretedMode(true)
             val scope: Scriptable = rhino.initSafeStandardObjects()
             scope.put("window", scope, scope)
             try {
