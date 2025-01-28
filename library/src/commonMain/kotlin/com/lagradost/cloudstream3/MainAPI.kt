@@ -1,3 +1,9 @@
+@file:Suppress(
+    "UNUSED",
+    "UnusedReceiverParameter",
+    "MemberVisibilityCanBePrivate"
+)
+
 package com.lagradost.cloudstream3
 
 import com.fasterxml.jackson.annotation.JsonProperty
@@ -48,8 +54,6 @@ object APIHolder {
         get() = System.currentTimeMillis() / 1000L
     val unixTimeMS: Long
         get() = System.currentTimeMillis()
-
-    private const val defProvider = 0
 
     // ConcurrentModificationException is possible!!!
     val allProviders = threadSafeListOf<MainAPI>()
@@ -728,6 +732,7 @@ enum class DubStatus(val id: Int) {
     Subbed(0),
 }
 
+@Suppress("UNUSED_PARAMETER")
 enum class TvType(value: Int?) {
     Movie(1),
     AnimeMovie(2),
@@ -751,16 +756,15 @@ enum class TvType(value: Int?) {
     Podcast(17),
 }
 
-public enum class AutoDownloadMode(val value: Int) {
+enum class AutoDownloadMode(val value: Int) {
     Disable(0),
     FilterByLang(1),
     All(2),
-    NsfwOnly(3)
-    ;
+    NsfwOnly(3);
 
     companion object {
         infix fun getEnum(value: Int): AutoDownloadMode? =
-            AutoDownloadMode.values().firstOrNull { it.value == value }
+            entries.firstOrNull { it.value == value }
     }
 }
 
@@ -837,6 +841,7 @@ data class HomePageList(
 /** enum class holds search quality.
  *
  * [Movie release types](https://en.wikipedia.org/wiki/Pirated_movie_release_types)**/
+@Suppress("UNUSED_PARAMETER")
 enum class SearchQuality(value: Int?) {
     Cam(1),
     CamRip(2),
@@ -1374,6 +1379,7 @@ interface LoadResponse {
         }
 
         /**better to call addTrailer with multiple trailers directly instead of calling this multiple times*/
+        @Suppress("RedundantSuspendModifier")
         suspend fun LoadResponse.addTrailer(
             trailerUrl: String?,
             referer: String? = null,
@@ -1413,6 +1419,7 @@ interface LoadResponse {
             trailers.addAll(newTrailers.map { TrailerData(listOf(it)) })
         }*/
 
+        @Suppress("RedundantSuspendModifier")
         suspend fun LoadResponse.addTrailer(
             trailerUrls: List<String>?,
             referer: String? = null,
@@ -1451,10 +1458,12 @@ interface LoadResponse {
             this.addSimklId(SimklSyncServices.Imdb, id)
         }
 
+        @Suppress("UNUSED_PARAMETER")
         fun LoadResponse.addTrackId(id: String?) {
             // TODO add trackt sync
         }
 
+        @Suppress("UNUSED_PARAMETER")
         fun LoadResponse.addkitsuId(id: String?) {
             // TODO add kitsu sync
         }
@@ -1487,10 +1496,10 @@ fun getDurationFromString(input: String?): Int? {
     Regex("(\\d+\\shr)|(\\d+\\shour)|(\\d+\\smin)|(\\d+\\ssec)").findAll(input).let { values ->
         var seconds = 0
         values.forEach {
-            val time_text = it.value
-            if (time_text.isNotBlank()) {
-                val time = time_text.filter { s -> s.isDigit() }.trim().toInt()
-                val scale = time_text.filter { s -> !s.isDigit() }.trim()
+            val timeText = it.value
+            if (timeText.isNotBlank()) {
+                val time = timeText.filter { s -> s.isDigit() }.trim().toInt()
+                val scale = timeText.filter { s -> !s.isDigit() }.trim()
                 //println("Scale: $scale")
                 val timeval = when (scale) {
                     "hr", "hour" -> time * 60 * 60
@@ -1516,9 +1525,9 @@ fun getDurationFromString(input: String?): Int? {
     }
     Regex("([0-9]*)m").find(cleanInput)?.groupValues?.let { values ->
         if (values.size == 2) {
-            val return_value = values[1].toIntOrNull()
-            if (return_value != null) {
-                return return_value
+            val returnValue = values[1].toIntOrNull()
+            if (returnValue != null) {
+                return returnValue
             }
         }
     }
