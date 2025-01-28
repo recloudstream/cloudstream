@@ -1,6 +1,5 @@
 package com.lagradost.cloudstream3.ui.player
 
-import Torrent
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.DialogInterface
