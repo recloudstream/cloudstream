@@ -43,6 +43,7 @@ class AccountSelectActivity : AppCompatActivity(), BiometricCallback {
         super.onCreate(savedInstanceState)
         loadThemes(this)
 
+        @Suppress("DEPRECATION")
         window.navigationBarColor = colorFromAttribute(R.attr.primaryBlackBackground)
 
         // Are we editing and coming from MainActivity?

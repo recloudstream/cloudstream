@@ -19,6 +19,7 @@ import com.lagradost.cloudstream3.mvvm.safeApiCall
 import com.lagradost.cloudstream3.utils.Coroutines.threadSafeListOf
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope.coroutineContext
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
@@ -132,6 +133,7 @@ class APIRepository(val api: MainAPI) {
         delay(delta)
     }
 
+    @OptIn(DelicateCoroutinesApi::class)
     suspend fun getMainPage(page: Int, nameIndex: Int? = null): Resource<List<HomePageResponse?>> {
         return safeApiCall {
             api.lastHomepageRequest = unixTimeMS

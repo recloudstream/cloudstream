@@ -35,6 +35,7 @@ import com.lagradost.cloudstream3.actions.VideoClickActionHolder
 import com.lagradost.cloudstream3.databinding.ToastBinding
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.ui.player.PlayerEventType
+import com.lagradost.cloudstream3.ui.player.Torrent
 import com.lagradost.cloudstream3.utils.UiText
 import com.lagradost.cloudstream3.ui.settings.Globals.updateTv
 import com.lagradost.cloudstream3.utils.AppContextUtils.isRtl
@@ -165,7 +166,8 @@ object CommonActivity {
             val toast = Toast(act)
             toast.duration = duration ?: Toast.LENGTH_SHORT
             toast.setGravity(Gravity.CENTER_HORIZONTAL or Gravity.BOTTOM, 0, 5.toPx)
-            toast.view = binding.root //fixme Find an alternative using default Toasts since custom toasts are deprecated and won't appear with api30 set as minSDK version.
+            @Suppress("DEPRECATION")
+            toast.view = binding.root // FIXME Find an alternative using default Toasts since custom toasts are deprecated and won't appear with api30 set as minSDK version.
             currentToast = toast
             toast.show()
 
@@ -193,7 +195,8 @@ object CommonActivity {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
             context.createConfigurationContext(config)
-        resources.updateConfiguration(config, resources.displayMetrics)
+        @Suppress("DEPRECATION")
+        resources.updateConfiguration(config, resources.displayMetrics) // FIXME this should be replaced
     }
 
     fun Context.updateLocale() {
@@ -255,10 +258,13 @@ object CommonActivity {
                 try {
                     enterPictureInPictureMode(PictureInPictureParams.Builder().build())
                 } catch (e: Exception) {
+                    // Use fallback just in case
+                    @Suppress("DEPRECATION")
                     enterPictureInPictureMode()
                 }
             } else {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    @Suppress("DEPRECATION")
                     enterPictureInPictureMode()
                 }
             }

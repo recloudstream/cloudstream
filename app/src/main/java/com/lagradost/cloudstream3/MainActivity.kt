@@ -613,11 +613,10 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
     @SuppressLint("ApplySharedPref") // commit since the op needs to be synchronous
     private fun showConfirmExitDialog(settingsManager: SharedPreferences) {
         val confirmBeforeExit = settingsManager.getInt(getString(R.string.confirm_exit_key), -1)
-        when (confirmBeforeExit) {
-            // AUTO - Confirm exit is shown only on TV or EMULATOR by default
-            -1 -> if (isLayout(PHONE)) finish()
-            1 -> finish() // DON'T SHOW
-            else -> { /* NO - OP : Continue */ }
+
+        if (confirmBeforeExit == 1 || (confirmBeforeExit == -1 && isLayout(PHONE))) {
+            finish()
+            return
         }
 
         val dialogView = layoutInflater.inflate(R.layout.confirm_exit_dialog, null)
@@ -1536,6 +1535,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
             if (navDestination.matchDestination(R.id.navigation_home)) {
                 attachBackPressedCallback("MainActivity") {
                     showConfirmExitDialog(settingsManager)
+                    @Suppress("DEPRECATION")
                     window?.navigationBarColor =
                         colorFromAttribute(R.attr.primaryGrayBackground)
                     updateLocale()
@@ -1786,6 +1786,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
             this,
             object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
+                    @Suppress("DEPRECATION")
                     window?.navigationBarColor = colorFromAttribute(R.attr.primaryGrayBackground)
                     updateLocale()
 
