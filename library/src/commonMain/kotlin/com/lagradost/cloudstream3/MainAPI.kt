@@ -1237,6 +1237,7 @@ data class TrailerData(
     val extractorUrl: String,
     val referer: String?,
     val raw: Boolean,
+    val headers: Map<String, String> = mapOf(),
     // var mirrors: List<ExtractorLink>,
     // var subtitles: List<SubtitleFile> = emptyList(),
 )
@@ -1418,6 +1419,17 @@ interface LoadResponse {
         fun LoadResponse.addTrailer(newTrailers: List<ExtractorLink>) {
             trailers.addAll(newTrailers.map { TrailerData(listOf(it)) })
         }*/
+
+        @Suppress("RedundantSuspendModifier")
+        suspend fun LoadResponse.addTrailer(
+            trailerUrl: String?,
+            referer: String? = null,
+            addRaw: Boolean = false,
+            headers: Map<String, String> = mapOf()
+        ) {
+            if (!isTrailersEnabled || trailerUrl.isNullOrBlank()) return
+            this.trailers.add(TrailerData(trailerUrl, referer, addRaw, headers))
+        }
 
         @Suppress("RedundantSuspendModifier")
         suspend fun LoadResponse.addTrailer(
