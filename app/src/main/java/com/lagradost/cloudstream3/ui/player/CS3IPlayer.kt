@@ -633,16 +633,17 @@ class CS3IPlayer : IPlayer {
         private fun createOnlineSource(link: ExtractorLink): HttpDataSource.Factory {
             val provider = getApiFromNameNull(link.source)
             val interceptor = provider?.getVideoInterceptor(link)
+            val userAgent = link.headers.getOrDefault("User-Agent", null)
 
             val source = if (interceptor == null) {
                 DefaultHttpDataSource.Factory() //TODO USE app.baseClient
-                    .setUserAgent(USER_AGENT)
+                    .setUserAgent(userAgent ?: USER_AGENT)
                     .setAllowCrossProtocolRedirects(true)   //https://stackoverflow.com/questions/69040127/error-code-io-bad-http-status-exoplayer-android
             } else {
                 val client = app.baseClient.newBuilder()
                     .addInterceptor(interceptor)
                     .build()
-                OkHttpDataSource.Factory(client).setUserAgent(USER_AGENT)
+                OkHttpDataSource.Factory(client).setUserAgent(userAgent ?: USER_AGENT)
             }
 
             // Do no include empty referer, if the provider wants those they can use the header map.
