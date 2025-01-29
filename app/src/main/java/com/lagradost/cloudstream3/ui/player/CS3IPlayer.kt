@@ -552,12 +552,12 @@ class CS3IPlayer : IPlayer {
 
         exoPlayer?.apply {
             playWhenReady = false
-            
+
             // This may look weird, however on some TV devices the audio does not stop playing
             // so this may fix it?
             try {
                 pause()
-            } catch (t : Throwable) {
+            } catch (t: Throwable) {
                 // No documented exception, but just to be extra safe
                 logError(t)
             }
@@ -855,9 +855,10 @@ class CS3IPlayer : IPlayer {
                         )
                     }
                     source.build()
-                } catch(_: IllegalArgumentException) {
+                } catch (_: IllegalArgumentException) {
                     @Suppress("DEPRECATION")
-                    val source = ConcatenatingMediaSource() // FIXME figure out why ConcatenatingMediaSource2 seems to fail with Torrents only
+                    val source =
+                        ConcatenatingMediaSource() // FIXME figure out why ConcatenatingMediaSource2 seems to fail with Torrents only
                     mediaItemSlices.map { item ->
                         source.addMediaSource(
                             // The duration MUST be known for it to work properly, see https://github.com/google/ExoPlayer/issues/4727
