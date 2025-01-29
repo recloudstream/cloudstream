@@ -633,7 +633,9 @@ class CS3IPlayer : IPlayer {
         private fun createOnlineSource(link: ExtractorLink): HttpDataSource.Factory {
             val provider = getApiFromNameNull(link.source)
             val interceptor = provider?.getVideoInterceptor(link)
-            val userAgent = link.headers.getOrDefault("User-Agent", null)
+            val userAgent = link.headers.entries.find {
+                it.key.equals("User-Agent", ignoreCase = true)
+            }?.value
 
             val source = if (interceptor == null) {
                 DefaultHttpDataSource.Factory() //TODO USE app.baseClient
