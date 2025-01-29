@@ -1420,6 +1420,7 @@ interface LoadResponse {
             trailers.addAll(newTrailers.map { TrailerData(listOf(it)) })
         }*/
 
+        @Prerelease
         @Suppress("RedundantSuspendModifier")
         suspend fun LoadResponse.addTrailer(
             trailerUrl: String?,
