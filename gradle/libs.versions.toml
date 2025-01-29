@@ -40,11 +40,11 @@ safefile = "0.0.8"
 shimmer = "0.5.0"
 swiperefreshlayout = "1.1.0"
 tmdbJava = "2.11.0"
+torrentserver = "883c17942d"
 tvprovider = "1.0.0"
 video = "1.0.0"
 workRuntime = "2.10.0"
 workRuntimeKtx = "2.10.0"
-torrentserverAniyomi = "883c17942d"
 
 jvmTarget = "1.8"
 minSdk = "21"
@@ -52,7 +52,6 @@ compileSdk = "35"
 targetSdk = "35"
 
 [libraries]
-torrentserver-aniyomi = { module = "com.github.recloudstream:torrentserver", version.ref = "torrentserverAniyomi" }
 acra-core = { module = "ch.acra:acra-core", version.ref = "acraCore" }
 acra-toast = { module = "ch.acra:acra-toast", version.ref = "acraCore" }
 appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
@@ -106,6 +105,7 @@ safefile = { module = "com.github.LagradOst:SafeFile", version.ref = "safefile" 
 shimmer = { module = "com.facebook.shimmer:shimmer", version.ref = "shimmer" }
 swiperefreshlayout = { module = "androidx.swiperefreshlayout:swiperefreshlayout", version.ref = "swiperefreshlayout" }
 tmdb-java = { module = "com.uwetrottmann.tmdb2:tmdb-java", version.ref = "tmdbJava" }
+torrentserver = { module = "com.github.recloudstream:torrentserver", version.ref = "torrentserver" }
 tvprovider = { module = "androidx.tvprovider:tvprovider", version.ref = "tvprovider" }
 video = { module = "com.google.android.mediahome:video", version.ref = "video" }
 work-runtime = { module = "androidx.work:work-runtime", version.ref = "workRuntime" }
