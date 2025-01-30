@@ -39,6 +39,7 @@ class ApkInstaller(private val service: PackageInstallerService) {
                 session.commit(intent)
                 true
             } catch (e: Exception) {
+                logError(e)
                 false
             }.also { delayedInstaller = null }
         }
@@ -107,12 +108,18 @@ class ApkInstaller(private val service: PackageInstallerService) {
                     inputStream.close()
                 }
 
+            // We must create an explicit intent or it will fail on Android 15+
+            val installIntent = Intent(service, PackageInstallerService::class.java).apply {
+                action = INSTALL_ACTION
+            }
 
-            val intentSender = PendingIntent.getBroadcast(
+            val intentSender = PendingIntent.getService(
                 service,
                 activeSession,
-                Intent(INSTALL_ACTION),
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) PendingIntent.FLAG_IMMUTABLE else 0,
+                installIntent,
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    PendingIntent.FLAG_MUTABLE
+                } else 0,
             ).intentSender
 
             // Use delayed installations on android 13 and only if "allow from unknown sources" is enabled
@@ -162,7 +169,11 @@ class ApkInstaller(private val service: PackageInstallerService) {
     fun unregisterInstallActionReceiver() {
         if (isReceiverRegistered) {
             Log.d(TAG, "Unregistering install action event receiver")
-            context?.unregisterReceiver(installActionReceiver)
+            try {
+                context?.unregisterReceiver(installActionReceiver)
+            } catch (e: Exception) {
+                logError(e)
+            }
             isReceiverRegistered = false
         }
     }
