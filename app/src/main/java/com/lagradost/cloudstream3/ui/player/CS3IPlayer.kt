@@ -552,12 +552,12 @@ class CS3IPlayer : IPlayer {
 
         exoPlayer?.apply {
             playWhenReady = false
-            
+
             // This may look weird, however on some TV devices the audio does not stop playing
             // so this may fix it?
             try {
                 pause()
-            } catch (t : Throwable) {
+            } catch (t: Throwable) {
                 // No documented exception, but just to be extra safe
                 logError(t)
             }
@@ -633,16 +633,19 @@ class CS3IPlayer : IPlayer {
         private fun createOnlineSource(link: ExtractorLink): HttpDataSource.Factory {
             val provider = getApiFromNameNull(link.source)
             val interceptor = provider?.getVideoInterceptor(link)
+            val userAgent = link.headers.entries.find {
+                it.key.equals("User-Agent", ignoreCase = true)
+            }?.value
 
             val source = if (interceptor == null) {
                 DefaultHttpDataSource.Factory() //TODO USE app.baseClient
-                    .setUserAgent(USER_AGENT)
+                    .setUserAgent(userAgent ?: USER_AGENT)
                     .setAllowCrossProtocolRedirects(true)   //https://stackoverflow.com/questions/69040127/error-code-io-bad-http-status-exoplayer-android
             } else {
                 val client = app.baseClient.newBuilder()
                     .addInterceptor(interceptor)
                     .build()
-                OkHttpDataSource.Factory(client).setUserAgent(USER_AGENT)
+                OkHttpDataSource.Factory(client).setUserAgent(userAgent ?: USER_AGENT)
             }
 
             // Do no include empty referer, if the provider wants those they can use the header map.
@@ -852,9 +855,10 @@ class CS3IPlayer : IPlayer {
                         )
                     }
                     source.build()
-                } catch(_: IllegalArgumentException) {
+                } catch (_: IllegalArgumentException) {
                     @Suppress("DEPRECATION")
-                    val source = ConcatenatingMediaSource() // FIXME figure out why ConcatenatingMediaSource2 seems to fail with Torrents only
+                    val source =
+                        ConcatenatingMediaSource() // FIXME figure out why ConcatenatingMediaSource2 seems to fail with Torrents only
                     mediaItemSlices.map { item ->
                         source.addMediaSource(
                             // The duration MUST be known for it to work properly, see https://github.com/google/ExoPlayer/issues/4727
