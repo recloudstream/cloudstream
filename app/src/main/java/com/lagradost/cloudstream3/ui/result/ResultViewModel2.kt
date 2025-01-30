@@ -2374,6 +2374,7 @@ class ResultViewModel2 : ViewModel() {
                                     trailerData.extractorUrl,
                                     trailerData.referer ?: "",
                                     Qualities.Unknown.value,
+                                    headers = trailerData.headers,
                                     type = INFER_TYPE
                                 )
                             ) to arrayListOf()

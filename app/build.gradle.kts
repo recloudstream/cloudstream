@@ -205,9 +205,14 @@ dependencies {
     implementation(libs.quickjs)
     implementation(libs.fuzzywuzzy) // Library/Ext Searching with Levenshtein Distance
     implementation(libs.safefile) // To Prevent the URI File Fu*kery
-    implementation(libs.conscrypt.android) // To Fix SSL Fu*kery on Android 9
     implementation(libs.tmdb.java) // TMDB API v3 Wrapper Made with RetroFit
     coreLibraryDesugaring(libs.desugar.jdk.libs.nio) // NIO Flavor Needed for NewPipeExtractor
+    implementation(libs.conscrypt.android) {
+        version {
+            strictly("2.5.2")
+        }
+        because("2.5.3 crashes everything for everyone.")
+    } // To Fix SSL Fu*kery on Android 9
     implementation(libs.jackson.module.kotlin) {
         version {
             strictly("2.13.1")
@@ -216,7 +221,7 @@ dependencies {
     } // JSON Parser
 
     // Torrent Support
-    implementation(libs.torrentserver.aniyomi)
+    implementation(libs.torrentserver)
 
     // Downloading & Networking
     implementation(libs.work.runtime)

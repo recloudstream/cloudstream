@@ -1237,6 +1237,7 @@ data class TrailerData(
     val extractorUrl: String,
     val referer: String?,
     val raw: Boolean,
+    val headers: Map<String, String> = mapOf(),
     // var mirrors: List<ExtractorLink>,
     // var subtitles: List<SubtitleFile> = emptyList(),
 )
@@ -1418,6 +1419,18 @@ interface LoadResponse {
         fun LoadResponse.addTrailer(newTrailers: List<ExtractorLink>) {
             trailers.addAll(newTrailers.map { TrailerData(listOf(it)) })
         }*/
+
+        @Prerelease
+        @Suppress("RedundantSuspendModifier")
+        suspend fun LoadResponse.addTrailer(
+            trailerUrl: String?,
+            referer: String? = null,
+            addRaw: Boolean = false,
+            headers: Map<String, String> = mapOf()
+        ) {
+            if (!isTrailersEnabled || trailerUrl.isNullOrBlank()) return
+            this.trailers.add(TrailerData(trailerUrl, referer, addRaw, headers))
+        }
 
         @Suppress("RedundantSuspendModifier")
         suspend fun LoadResponse.addTrailer(
@@ -1701,7 +1714,10 @@ constructor(
      * Remove this constructor after there is a new stable release and extensions are updated to support contentRating.
      */
     @Suppress("DEPRECATION")
-    @Deprecated("Use newTorrentLoadResponse method with contentRating included", level = DeprecationLevel.WARNING)
+    @Deprecated(
+        "Use newTorrentLoadResponse method with contentRating included",
+        level = DeprecationLevel.WARNING
+    )
     constructor(
         name: String,
         url: String,
@@ -1834,7 +1850,10 @@ constructor(
      * Remove this constructor after there is a new stable release and extensions are updated to support contentRating.
      */
     @Suppress("DEPRECATION")
-    @Deprecated("Use newAnimeLoadResponse method with contentRating included", level = DeprecationLevel.WARNING)
+    @Deprecated(
+        "Use newAnimeLoadResponse method with contentRating included",
+        level = DeprecationLevel.WARNING
+    )
     constructor(
         engName: String? = null,
         japName: String? = null,
@@ -1951,7 +1970,10 @@ constructor(
      * Remove this constructor after there is a new stable release and extensions are updated to support contentRating.
      */
     @Suppress("DEPRECATION")
-    @Deprecated("Use newLiveStreamLoadResponse method with contentRating included", level = DeprecationLevel.WARNING)
+    @Deprecated(
+        "Use newLiveStreamLoadResponse method with contentRating included",
+        level = DeprecationLevel.WARNING
+    )
     constructor(
         name: String,
         url: String,
@@ -2028,7 +2050,10 @@ constructor(
      * Remove this constructor after there is a new stable release and extensions are updated to support contentRating.
      */
     @Suppress("DEPRECATION")
-    @Deprecated("Use newMovieLoadResponse method with contentRating included", level = DeprecationLevel.WARNING)
+    @Deprecated(
+        "Use newMovieLoadResponse method with contentRating included",
+        level = DeprecationLevel.WARNING
+    )
     constructor(
         name: String,
         url: String,
@@ -2070,6 +2095,7 @@ suspend fun <T> MainAPI.newMovieLoadResponse(
         initializer = initializer
     )
     val dataUrl = data?.toJson() ?: ""
+
     @Suppress("DEPRECATION")
     val builder = MovieLoadResponse(
         name = name,
@@ -2269,7 +2295,10 @@ constructor(
      * Remove this constructor after there is a new stable release and extensions are updated to support contentRating.
      */
     @Suppress("DEPRECATION")
-    @Deprecated("Use newTvSeriesLoadResponse method with contentRating included", level = DeprecationLevel.WARNING)
+    @Deprecated(
+        "Use newTvSeriesLoadResponse method with contentRating included",
+        level = DeprecationLevel.WARNING
+    )
     constructor(
         name: String,
         url: String,
