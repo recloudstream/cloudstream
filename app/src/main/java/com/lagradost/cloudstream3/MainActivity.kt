@@ -616,6 +616,8 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         val confirmBeforeExit = settingsManager.getInt(getString(R.string.confirm_exit_key), -1)
 
         if (confirmBeforeExit == 1 || (confirmBeforeExit == -1 && isLayout(PHONE))) {
+            // finish() causes a bug on some TVs where player
+            // may keep playing after closing the app.
             if (isLayout(TV)) exitProcess(0) else finish()
             return
         }
@@ -630,7 +632,9 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                 if (dontShowAgainCheck.isChecked) {
                     settingsManager.edit().putInt(getString(R.string.confirm_exit_key), 1).commit()
                 }
-                finish()
+                // finish() causes a bug on some TVs where player
+                // may keep playing after closing the app.
+                if (isLayout(TV)) exitProcess(0) else finish()
             }
 
         builder.show().setDefaultFocus()
