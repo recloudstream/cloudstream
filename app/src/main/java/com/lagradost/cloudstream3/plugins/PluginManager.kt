@@ -172,15 +172,15 @@ object PluginManager {
     var currentlyLoading: String? = null
 
     // Maps filepath to plugin
-    val plugins: MutableMap<String, Plugin> =
-        LinkedHashMap<String, Plugin>()
+    val plugins: MutableMap<String, BasePlugin> =
+        LinkedHashMap<String, BasePlugin>()
 
     // Maps urls to plugin
-    val urlPlugins: MutableMap<String, Plugin> =
-        LinkedHashMap<String, Plugin>()
+    val urlPlugins: MutableMap<String, BasePlugin> =
+        LinkedHashMap<String, BasePlugin>()
 
-    private val classLoaders: MutableMap<PathClassLoader, Plugin> =
-        HashMap<PathClassLoader, Plugin>()
+    private val classLoaders: MutableMap<PathClassLoader, BasePlugin> =
+        HashMap<PathClassLoader, BasePlugin>()
 
     var loadedLocalPlugins = false
         private set
@@ -530,7 +530,7 @@ object PluginManager {
             }
 
             val loader = PathClassLoader(filePath, context.classLoader)
-            var manifest: Plugin.Manifest
+            var manifest: BasePlugin.Manifest
             loader.getResourceAsStream("manifest.json").use { stream ->
                 if (stream == null) {
                     Log.e(TAG, "Failed to load plugin  $fileName: No manifest found")
@@ -539,7 +539,7 @@ object PluginManager {
                 InputStreamReader(stream).use { reader ->
                     manifest = gson.fromJson(
                         reader,
-                        Plugin.Manifest::class.java
+                        BasePlugin.Manifest::class.java
                     )
                 }
             }
@@ -553,9 +553,9 @@ object PluginManager {
 
             @Suppress("UNCHECKED_CAST")
             val pluginClass: Class<*> =
-                loader.loadClass(manifest.pluginClassName) as Class<out Plugin?>
-            val pluginInstance: Plugin =
-                pluginClass.getDeclaredConstructor().newInstance() as Plugin
+                loader.loadClass(manifest.pluginClassName) as Class<out BasePlugin?>
+            val pluginInstance: BasePlugin =
+                pluginClass.getDeclaredConstructor().newInstance() as BasePlugin
 
             // Sets with the proper version
             setPluginData(data.copy(version = version))
@@ -575,7 +575,7 @@ object PluginManager {
                 addAssetPath.invoke(assets, file.absolutePath)
 
                 @Suppress("DEPRECATION")
-                pluginInstance.resources = Resources(
+                (pluginInstance as? Plugin)?.resources = Resources(
                     assets,
                     context.resources.displayMetrics,
                     context.resources.configuration
@@ -584,7 +584,11 @@ object PluginManager {
             plugins[filePath] = pluginInstance
             classLoaders[loader] = pluginInstance
             urlPlugins[data.url ?: filePath] = pluginInstance
-            pluginInstance.load(context)
+            if (pluginInstance is Plugin) {
+                pluginInstance.load(context)
+            } else {
+                pluginInstance.load()
+            }
             Log.i(TAG, "Loaded plugin ${data.internalName} successfully")
             currentlyLoading = null
             true
