@@ -262,16 +262,15 @@ class SettingsUpdates : PreferenceFragmentCompat() {
         }
 
         getPref(R.string.manual_update_plugins_key)?.setOnPreferenceClickListener {
-            val activity = activity ?: return@setOnPreferenceClickListener false // Safely handle null activity
             try {
                 showToast("Updating extensions...", Toast.LENGTH_SHORT)
-                PluginManager.manuallyReloadAndUpdatePlugins(activity)
+                PluginManager.manuallyReloadAndUpdatePlugins(requireActivity())
             } catch (e: Throwable) { // Use Throwable to catch and handle all errors
                 // Show error toast using the utility method and re-throw the exception
                 showToast(R.string.backup_failed, Toast.LENGTH_LONG)
                 throw e
             }
-            true // Return true for the listener
+            return@setOnPreferenceClickListener true // Return true for the listener
         }
     }
 
