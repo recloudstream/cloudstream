@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.utils
 
+import android.annotation.SuppressLint
 import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -55,6 +56,7 @@ class ApkInstaller(private val service: PackageInstallerService) {
     }
 
     private val installActionReceiver = object : BroadcastReceiver() {
+        @SuppressLint("UnsafeIntentLaunch")
         override fun onReceive(context: Context, intent: Intent) {
             when (intent.getIntExtra(
                 PackageInstaller.EXTRA_STATUS,
@@ -113,7 +115,7 @@ class ApkInstaller(private val service: PackageInstallerService) {
                 action = INSTALL_ACTION
             }
 
-            val intentSender = PendingIntent.getService(
+            val intentSender = PendingIntent.getBroadcast(
                 service,
                 activeSession,
                 installIntent,
