@@ -182,6 +182,7 @@ import java.net.URLDecoder
 import java.nio.charset.Charset
 import kotlin.math.abs
 import kotlin.math.absoluteValue
+import kotlin.system.exitProcess
 
 class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCallback {
     companion object {
@@ -615,7 +616,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         val confirmBeforeExit = settingsManager.getInt(getString(R.string.confirm_exit_key), -1)
 
         if (confirmBeforeExit == 1 || (confirmBeforeExit == -1 && isLayout(PHONE))) {
-            finish()
+            if (isLayout(TV)) exitProcess(0) else finish()
             return
         }
 
