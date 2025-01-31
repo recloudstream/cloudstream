@@ -114,7 +114,7 @@ class ApkInstaller(private val service: PackageInstallerService) {
             val installIntent = Intent(
                 service, PackageInstallerService::class.java
             ).apply { setAction(INSTALL_ACTION) }.takeIf {
-                Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE 
             } ?: Intent(INSTALL_ACTION)
 
             val installFlags = when {
