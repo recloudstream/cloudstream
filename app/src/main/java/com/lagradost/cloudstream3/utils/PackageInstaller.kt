@@ -111,11 +111,10 @@ class ApkInstaller(private val service: PackageInstallerService) {
                 }
 
             // We must create an explicit intent or it will fail on Android 15+
-            val installIntent = Intent(
-                service, PackageInstallerService::class.java
-            ).apply { setAction(INSTALL_ACTION) }.takeIf {
-                Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE 
-            } ?: Intent(INSTALL_ACTION)
+            val installIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) { 
+                Intent(service, PackageInstallerService::class.java)
+                    .setAction(INSTALL_ACTION) 
+            } else Intent(INSTALL_ACTION) 
 
             val installFlags = when {
                 Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE -> PendingIntent.FLAG_MUTABLE
