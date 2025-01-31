@@ -111,17 +111,19 @@ class ApkInstaller(private val service: PackageInstallerService) {
                 }
 
             // We must create an explicit intent or it will fail on Android 15+
-            val installIntent = Intent(service, PackageInstallerService::class.java).apply {
-                action = INSTALL_ACTION
+            val installIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) { 
+                Intent(service, PackageInstallerService::class.java)
+                    .setAction(INSTALL_ACTION) 
+            } else Intent(INSTALL_ACTION) 
+
+            val installFlags = when {
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE -> PendingIntent.FLAG_MUTABLE
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> PendingIntent.FLAG_IMMUTABLE
+                else -> 0
             }
 
             val intentSender = PendingIntent.getBroadcast(
-                service,
-                activeSession,
-                installIntent,
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                    PendingIntent.FLAG_MUTABLE
-                } else 0,
+                service, activeSession, installIntent, installFlags
             ).intentSender
 
             // Use delayed installations on android 13 and only if "allow from unknown sources" is enabled

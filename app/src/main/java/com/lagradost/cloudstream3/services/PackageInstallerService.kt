@@ -15,6 +15,7 @@ import com.lagradost.cloudstream3.MainActivity
 import com.lagradost.cloudstream3.MainActivity.Companion.deleteFileOnExit
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.app
+import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.utils.ApkInstaller
 import com.lagradost.cloudstream3.utils.AppContextUtils.createNotificationChannel
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
@@ -106,6 +107,7 @@ class PackageInstallerService : Service() {
             }
             return true
         } catch (e: Exception) {
+            logError(e)
             updateNotificationProgress(0f, ApkInstaller.InstallProgressStatus.Failed)
             return false
         }
