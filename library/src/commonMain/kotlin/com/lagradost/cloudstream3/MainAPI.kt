@@ -519,7 +519,7 @@ abstract class MainAPI {
         throw NotImplementedError()
     }
 
-    open val hasReviews: Boolean = true
+    open val hasReviews: Boolean = false
     open suspend fun loadReviews(
         url: String,
         page: Int,
@@ -527,6 +527,23 @@ abstract class MainAPI {
     ): List<UserReview> {
         throw NotImplementedError()
     }
+
+    /* open val hasReviews: Boolean = true
+    open suspend fun loadReviews(
+        url: String,
+        page: Int,
+        showSpoilers: Boolean = false
+    ): List<UserReview> {
+        return listOf(UserReview(
+            "test",
+            "test",
+            "test",
+            "test",
+            "https://avatars.githubusercontent.com/u/142361265?v=4",
+            10,
+            null
+        ))
+    } */
 
     // @WorkerThread
     open suspend fun search(query: String): List<SearchResponse>? {
@@ -957,14 +974,27 @@ fun MainAPI.updateUrl(url: String): String {
 @Prerelease
 @ConsistentCopyVisibility
 data class UserReview internal constructor(
-    val review: String? = null,
-    val reviewTitle: String? = null,
-    val username: String? = null,
-    val reviewDate: String? = null,
-    val avatarUrl: String? = null,
-    val rating: Int? = null,
-    val ratings: List<Pair<Int, String>>? = null,
-)
+    var review: String? = null,
+    var reviewTitle: String? = null,
+    var username: String? = null,
+    var reviewDate: String? = null,
+    var avatarUrl: String? = null,
+    var rating: Int? = null,
+    var ratings: List<Pair<Int, String>>? = null,
+) {
+    fun new(initializer: UserReview.() -> Unit = {}): UserReview {
+        return UserReview().apply {
+            review = this@UserReview.review
+            reviewTitle = this@UserReview.reviewTitle
+            username = this@UserReview.username
+            reviewDate = this@UserReview.reviewDate
+            avatarUrl = this@UserReview.avatarUrl
+            rating = this@UserReview.rating
+            ratings = this@UserReview.ratings
+            initializer()
+        }
+    }
+}
 
 @Prerelease
 fun MainAPI.newUserReview(
