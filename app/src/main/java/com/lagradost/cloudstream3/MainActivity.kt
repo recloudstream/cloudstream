@@ -102,7 +102,6 @@ import com.lagradost.cloudstream3.ui.APIRepository
 import com.lagradost.cloudstream3.ui.SyncWatchType
 import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.account.AccountHelper.showAccountSelectLinear
-import com.lagradost.cloudstream3.ui.account.AccountViewModel
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_NAVIGATE_TO
 import com.lagradost.cloudstream3.ui.home.HomeViewModel
 import com.lagradost.cloudstream3.ui.library.LibraryViewModel
@@ -182,6 +181,7 @@ import java.net.URLDecoder
 import java.nio.charset.Charset
 import kotlin.math.abs
 import kotlin.math.absoluteValue
+import kotlin.system.exitProcess
 
 class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCallback {
     companion object {
@@ -679,11 +679,10 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         if (currentTime - lastNavTime < 400) return false
         lastNavTime = currentTime
 
-        val currentDestinationId = navController.currentDestination?.id
         val destinationId = item.itemId
 
         // Check if we are already at the selected destination
-        if(currentDestinationId == destinationId) return false
+        if(navController.currentDestination?.id == destinationId) return false
 
         val builder = NavOptions.Builder().setLaunchSingleTop(true).setRestoreState(true)
             .setEnterAnim(R.anim.enter_anim)
@@ -697,10 +696,9 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                 saveState = true
             )
         }
-        val options = builder.build()
         return try {
-            navController.navigate(item.itemId, null, options)
-            navController.currentDestination?.matchDestination(item.itemId) == true
+            navController.navigate(destinationId, null, builder.build())
+            navController.currentDestination?.matchDestination(destinationId) == true
         } catch (e: IllegalArgumentException) {
             Log.e("NavigationError", "Failed to navigate: ${e.message}")
             false
