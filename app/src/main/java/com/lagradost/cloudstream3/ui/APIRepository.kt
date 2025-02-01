@@ -12,6 +12,7 @@ import com.lagradost.cloudstream3.MainPageRequest
 import com.lagradost.cloudstream3.SearchResponse
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.TvType
+import com.lagradost.cloudstream3.UserReview
 import com.lagradost.cloudstream3.fixUrl
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.logError
@@ -192,6 +193,16 @@ class APIRepository(val api: MainAPI) {
         } catch (throwable: Throwable) {
             logError(throwable)
             return false
+        }
+    }
+
+    suspend fun loadReviews(
+        url: String,
+        page: Int,
+        showSpoilers: Boolean = false
+    ): Resource<List<UserReview>> {
+        return safeApiCall {
+            api.loadReviews(url, page, showSpoilers)
         }
     }
 }

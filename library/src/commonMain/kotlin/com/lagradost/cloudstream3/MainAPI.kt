@@ -519,6 +519,15 @@ abstract class MainAPI {
         throw NotImplementedError()
     }
 
+    open val hasReviews: Boolean = true
+    open suspend fun loadReviews(
+        url: String,
+        page: Int,
+        showSpoilers: Boolean = false
+    ): List<UserReview> {
+        throw NotImplementedError()
+    }
+
     // @WorkerThread
     open suspend fun search(query: String): List<SearchResponse>? {
         throw NotImplementedError()
@@ -944,6 +953,23 @@ fun MainAPI.updateUrl(url: String): String {
         return url
     }
 }
+
+@Prerelease
+@ConsistentCopyVisibility
+data class UserReview internal constructor(
+    val review: String? = null,
+    val reviewTitle: String? = null,
+    val username: String? = null,
+    val reviewDate: String? = null,
+    val avatarUrl: String? = null,
+    val rating: Int? = null,
+    val ratings: List<Pair<Int, String>>? = null,
+)
+
+@Prerelease
+fun MainAPI.newUserReview(
+    initializer: UserReview.() -> Unit = {}
+): UserReview = UserReview().apply(initializer)
 
 /** Abstract interface of SearchResponse. */
 interface SearchResponse {
