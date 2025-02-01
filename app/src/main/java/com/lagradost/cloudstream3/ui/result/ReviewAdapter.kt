@@ -44,8 +44,9 @@ class ReviewAdapter :
                     val builder: AlertDialog.Builder = AlertDialog.Builder(localContext)
                     builder.setMessage(card.review)
                     val title = card.reviewTitle ?: card.username
-                    ?: if (card.rating != null) localContext.getString(R.string.overall_rating_format)
-                        .format("Overall ${(card.rating ?: 1) / 200}★") else null
+                    ?: if (card.rating != null) localContext.getString(
+                        R.string.overall_rating_format
+                    ).format("${card.rating}★") else null
                     if (title != null)
                         builder.setTitle(title)
                     builder.show()
@@ -74,7 +75,9 @@ class ReviewAdapter :
                             R.style.ChipReviewAlt
                         )
                         chip.setChipDrawable(chipDrawable)
-                        chip.text = "Overall ${rating / 200}★"
+                        chip.text = context.getString(
+                            R.string.overall_rating_format
+                        ).format("$rating★")
                         chip.isChecked = false
                         chip.isCheckable = false
                         chip.isFocusable = false
