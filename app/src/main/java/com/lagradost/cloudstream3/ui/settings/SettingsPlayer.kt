@@ -88,6 +88,24 @@ class SettingsPlayer : PreferenceFragmentCompat() {
             return@setOnPreferenceClickListener true
         }
 
+        getPref(R.string.software_decoding_key)?.setOnPreferenceClickListener {
+            val prefNames = resources.getStringArray(R.array.software_decoding_switch)
+            val prefValues = resources.getIntArray(R.array.software_decoding_switch_values)
+            val current = settingsManager.getInt(getString(R.string.software_decoding_key), -1)
+
+            activity?.showBottomDialog(
+                prefNames.toList(),
+                prefValues.indexOf(current),
+                getString(R.string.software_decoding),
+                true,
+                {}) {
+                settingsManager.edit()
+                    .putInt(getString(R.string.software_decoding_key), prefValues[it])
+                    .apply()
+            }
+            return@setOnPreferenceClickListener true
+        }
+
         getPref(R.string.prefer_limit_title_rez_key)?.setOnPreferenceClickListener {
             val prefNames = resources.getStringArray(R.array.limit_title_rez_pref_names)
             val prefValues = resources.getIntArray(R.array.limit_title_rez_pref_values)

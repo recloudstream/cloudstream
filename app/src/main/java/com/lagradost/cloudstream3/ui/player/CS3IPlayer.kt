@@ -71,6 +71,8 @@ import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.mvvm.debugAssert
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
+import com.lagradost.cloudstream3.ui.settings.Globals.TV
+import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
 import com.lagradost.cloudstream3.ui.subtitles.SaveCaptionStyle
 import com.lagradost.cloudstream3.utils.AppContextUtils.isUsingMobileData
 import com.lagradost.cloudstream3.utils.AppContextUtils.setDefaultFocus
@@ -739,12 +741,17 @@ class CS3IPlayer : IPlayer {
             val exoPlayerBuilder =
                 ExoPlayer.Builder(context)
                     .setRenderersFactory { eventHandler, videoRendererEventListener, audioRendererEventListener, textRendererOutput, metadataRendererOutput ->
-
                         val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
-                        val softwareDecoding = settingsManager.getBoolean(
-                            context.getString(R.string.software_decoding_key),
-                            true
-                        )
+                        val current = settingsManager.getInt(context.getString(R.string.software_decoding_key), -1)
+                        val softwareDecoding = when(current) {
+                            0 -> true // yes
+                            1 -> false // no
+                            // -1 = automatic
+                            else -> {
+                                // we do not want tv to have software decoding, because of crashes
+                                !isLayout(TV)
+                            }
+                        }
 
                         val factory = if (softwareDecoding) {
                             NextRenderersFactory(context).apply {

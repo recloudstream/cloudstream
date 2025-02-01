@@ -125,6 +125,9 @@ object Torrent {
 
     /** Removes all torrents from the server, and returns if it is successful */
     suspend fun clearAll(): Boolean {
+        if(TORRENT_SERVER_URL.isEmpty()) {
+            return true
+        }
         return try {
             val items = list()
             var allSuccess = true
