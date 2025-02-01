@@ -202,7 +202,12 @@ class APIRepository(val api: MainAPI) {
         showSpoilers: Boolean = false
     ): Resource<List<UserReview>> {
         return safeApiCall {
-            api.loadReviews(url, page, showSpoilers)
+            val response = api.loadReviews(url, page, showSpoilers)
+            val reviewsPerPage = 20
+            val totalReviews = response
+            val startIndex = (page - 1) * reviewsPerPage
+            val endIndex = startIndex + reviewsPerPage
+            totalReviews.subList(startIndex, minOf(endIndex, totalReviews.size))
         }
     }
 }
