@@ -534,15 +534,23 @@ abstract class MainAPI {
         page: Int,
         showSpoilers: Boolean = false
     ): List<UserReview> {
-        return listOf(UserReview(
-            "test",
-            "test",
-            "test",
-            "test",
-            "https://avatars.githubusercontent.com/u/142361265?v=4",
-            10,
-            null
-        ))
+        val reviews = mutableListOf<UserReview>()
+
+        for (i in 1..100) {
+            val review = newUserReview {
+                review = "Review content #$i"
+                reviewTitle = "Title #$i"
+                username = "User $i"
+                reviewDate = "2025-01-31"
+                avatarUrl =
+                    "https://avatars.githubusercontent.com/u/142361265?v=4"
+                rating = (1..10).random()
+                ratings = null
+            }
+            reviews.add(review)
+        }
+
+        return reviews
     } */
 
     // @WorkerThread
