@@ -514,12 +514,7 @@ class ResultViewModel2 : ViewModel() {
                 if (loadPage == 1) {
                     reviews.postValue(Resource.Loading())
                 }
-                val response = currentResponse ?: return@launch
-                val api =
-                    getApiFromNameNull(response.apiName) ?: APIHolder.getApiFromUrlNull(
-                        response.url
-                    ) ?: APIRepository.noneApi
-                val repo = APIRepository(api)
+                val repo = currentRepo ?: return@launch
                 when (val data = repo.loadReviews(url, loadPage, false)) {
                     is Resource.Success -> {
                         val moreReviews = data.value

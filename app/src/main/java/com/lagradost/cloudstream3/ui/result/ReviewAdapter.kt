@@ -88,7 +88,7 @@ class ReviewAdapter :
                         addView(chip)
                     }
 
-                    card.ratings?.forEach { (a, b) ->
+                    card.ratings?.forEach { (rating, type) ->
                         val chip = Chip(context)
                         val chipDrawable = ChipDrawable.createFromAttributes(
                             context,
@@ -97,7 +97,7 @@ class ReviewAdapter :
                             R.style.ChipReview
                         )
                         chip.setChipDrawable(chipDrawable)
-                        chip.text = "$b ${a / 200}★"
+                        chip.text = "$type $rating★"
                         chip.isChecked = false
                         chip.isCheckable = false
                         chip.isFocusable = false

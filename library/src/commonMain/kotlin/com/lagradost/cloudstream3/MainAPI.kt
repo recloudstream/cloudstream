@@ -519,16 +519,16 @@ abstract class MainAPI {
         throw NotImplementedError()
     }
 
-    open val hasReviews: Boolean = false
+    /*open val hasReviews: Boolean = false
     open suspend fun loadReviews(
         url: String,
         page: Int,
         showSpoilers: Boolean = false
     ): List<UserReview> {
         throw NotImplementedError()
-    }
+    }*/
 
-    /* open val hasReviews: Boolean = true
+    open val hasReviews: Boolean = true
     open suspend fun loadReviews(
         url: String,
         page: Int,
@@ -551,7 +551,7 @@ abstract class MainAPI {
         }
 
         return reviews
-    } */
+    }
 
     // @WorkerThread
     open suspend fun search(query: String): List<SearchResponse>? {
@@ -991,16 +991,7 @@ data class UserReview internal constructor(
     var ratings: List<Pair<Int, String>>? = null,
 ) {
     fun new(initializer: UserReview.() -> Unit = {}): UserReview {
-        return UserReview().apply {
-            review = this@UserReview.review
-            reviewTitle = this@UserReview.reviewTitle
-            username = this@UserReview.username
-            reviewDate = this@UserReview.reviewDate
-            avatarUrl = this@UserReview.avatarUrl
-            rating = this@UserReview.rating
-            ratings = this@UserReview.ratings
-            initializer()
-        }
+        return this@UserReview.apply(initializer)
     }
 }
 
