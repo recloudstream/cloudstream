@@ -396,6 +396,80 @@
                                     tools:text="121min" />
                             </com.lagradost.cloudstream3.widget.FlowLayout>
 
+                            <com.google.android.material.tabs.TabLayout
+                                android:id="@+id/result_tabs"
+                                style="@style/Theme.Widget.Tabs"
+                                android:layout_marginTop="10dp"
+                                android:layout_width="match_parent"
+                                android:layout_height="40dp"
+                                android:layout_gravity="bottom"
+                                android:background="@color/transparent"
+                                android:descendantFocusability="blocksDescendants"
+                                android:focusable="false"
+                                android:paddingHorizontal="5dp"
+                                app:layout_scrollFlags="noScroll"
+                                app:tabGravity="start"
+                                app:tabIndicator="@drawable/indicator_background"
+                                app:tabIndicatorColor="?attr/white"
+                                app:tabIndicatorGravity="center"
+                                app:tabIndicatorHeight="30dp"
+                                app:tabMode="scrollable"
+                                app:tabSelectedTextColor="?attr/primaryBlackBackground"
+                                app:tabTextAppearance="@style/TabNoCaps"
+                                app:tabTextColor="?attr/textColor" />
+
+
+                            <FrameLayout
+                                android:background="@drawable/white_card"
+                                android:visibility="gone"
+                                tools:visibility="gone"
+                                android:id="@+id/result_reviewsholder"
+                                android:orientation="vertical"
+                                android:minHeight="500dp"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent">
+
+                                <FrameLayout
+                                    android:id="@+id/resultview_reviews_loading"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_marginTop="10dp"
+                                    android:visibility="gone"
+                                    tools:visibility="visible">
+
+                                    <com.facebook.shimmer.ShimmerFrameLayout
+                                        android:id="@+id/resultview_reviews_loading_shimmer"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:layout_gravity="center"
+                                        android:orientation="vertical"
+                                        app:shimmer_auto_start="true"
+                                        app:shimmer_base_alpha="0.2"
+                                        app:shimmer_duration="@integer/loading_time"
+                                        app:shimmer_highlight_alpha="0.3">
+
+                                        <LinearLayout
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:orientation="vertical">
+
+                                            <include layout="@layout/loading_review" />
+
+                                            <include layout="@layout/loading_review" />
+
+                                            <include layout="@layout/loading_review" />
+
+                                        </LinearLayout>
+                                    </com.facebook.shimmer.ShimmerFrameLayout>
+                                </FrameLayout>
+
+                                <com.lagradost.cloudstream3.ui.ScrollableRecyclerView
+                                    android:id="@+id/result_reviews"
+                                    tools:listitem="@layout/result_review"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent" />
+                            </FrameLayout>
+
                             <!--
                             This has half margin and half padding to make TV focus on description look better.
                             The focus outline now settles between the poster and text.

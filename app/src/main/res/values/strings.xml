@@ -832,4 +832,8 @@
     <string name="software_decoding_key" translatable="false">software_decoding_key</string>
     <string name="software_decoding">Software decoding</string>
     <string name="software_decoding_desc">Software decoding enables the player to play video files not supported by your phone, but may cause laggy or unstable playback on high resolution</string>
+    <string name="details">Details</string>
+    <string name="reviews">Reviews</string>
+    <string name="user_image_avatar">Avatar</string>
+    <string name="overall_rating_format">Overall %s</string>
 </resources>

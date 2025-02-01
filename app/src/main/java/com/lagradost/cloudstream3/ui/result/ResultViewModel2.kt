@@ -83,6 +83,8 @@ import com.lagradost.cloudstream3.utils.DataStoreHelper.setVideoWatchState
 import com.lagradost.cloudstream3.utils.DataStoreHelper.updateSubscribedData
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import kotlinx.coroutines.*
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import java.util.concurrent.TimeUnit
 
 /** This starts at 1 */
@@ -485,6 +487,70 @@ class ResultViewModel2 : ViewModel() {
 
     private val _favoriteStatus: MutableLiveData<Boolean?> = MutableLiveData(null)
     val favoriteStatus: LiveData<Boolean?> = _favoriteStatus
+
+    val currentTabIndex: MutableLiveData<Int> by lazy {
+        MutableLiveData<Int>(0)
+    }
+
+    val currentTabPosition: MutableLiveData<Int> by lazy {
+        MutableLiveData<Int>(0)
+    }
+
+    val reviews: MutableLiveData<Resource<ArrayList<UserReview>>> by lazy {
+        MutableLiveData<Resource<ArrayList<UserReview>>>()
+    }
+    private var currentReviews: ArrayList<UserReview> = arrayListOf()
+
+    private val reviewPage: MutableLiveData<Int> by lazy {
+        MutableLiveData<Int>(0)
+    }
+
+    private val loadMoreReviewsMutex = Mutex()
+    private fun loadMoreReviews(url: String) {
+        viewModelScope.launch {
+            if (loadMoreReviewsMutex.isLocked) return@launch
+            loadMoreReviewsMutex.withLock {
+                val loadPage = (reviewPage.value ?: 0) + 1
+                if (loadPage == 1) {
+                    reviews.postValue(Resource.Loading())
+                }
+                val response = currentResponse ?: return@launch
+                val api =
+                    getApiFromNameNull(response.apiName) ?: APIHolder.getApiFromUrlNull(
+                        response.url
+                    ) ?: APIRepository.noneApi
+                val repo = APIRepository(api)
+                when (val data = repo.loadReviews(url, loadPage, false)) {
+                    is Resource.Success -> {
+                        val moreReviews = data.value
+                        currentReviews.addAll(moreReviews)
+
+                        reviews.postValue(Resource.Success(currentReviews))
+                        reviewPage.postValue(loadPage)
+                    }
+
+                    else -> {}
+                }
+            }
+        }
+    }
+
+    private val loadMutex = Mutex()
+    fun loadMoreReviews(verify: Boolean = true) = viewModelScope.launch {
+        loadMutex.withLock {
+            if (verify && currentTabIndex.value == 0) return@launch
+            loadMoreReviews(currentResponse?.url ?: return@launch)
+        }
+    }
+
+    fun switchTab(index: Int?, position: Int?) {
+        val newPos = index ?: return
+        currentTabPosition.postValue(position ?: return)
+        currentTabIndex.postValue(newPos)
+        if (newPos == 1 && currentReviews.isEmpty()) {
+            loadMoreReviews(verify = false)
+        }
+    }
 
     companion object {
         const val TAG = "RVM2"

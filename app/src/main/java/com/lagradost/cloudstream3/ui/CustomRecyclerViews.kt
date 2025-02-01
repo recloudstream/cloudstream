@@ -5,6 +5,7 @@ import android.util.AttributeSet
 import android.view.View
 import androidx.core.view.children
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlin.math.abs
 
@@ -189,5 +190,38 @@ class MaxRecyclerView(ctx: Context, attrs: AttributeSet) : RecyclerView(ctx, att
             child.updateMaxSize()
         }
         super.onChildAttachedToWindow(child)
+    }
+}
+
+class ScrollableRecyclerView(context: Context, attrs: AttributeSet?) :
+    RecyclerView(context, attrs) {
+
+    var loadMoreListener: () -> Unit = {}
+
+    override fun onScrollStateChanged(state: Int) {
+        super.onScrollStateChanged(state)
+
+        val lm = layoutManager as LinearLayoutManager
+        val totalItemCount = adapter?.itemCount
+        val lastVisibleItemPosition = lm.findLastVisibleItemPosition()
+        val visibleItemCount = childCount
+
+        if (totalItemCount != null) {
+            if (state == SCROLL_STATE_IDLE
+                && lastVisibleItemPosition == totalItemCount - 1
+                && visibleItemCount > 0) {
+                loadMoreListener()
+            }
+        }
+
+    }
+
+    override fun onScrolled(dx: Int, dy: Int) {
+        super.onScrolled(dx, dy)
+        if (dy > 0 && !canScrollVertically(1)) {
+            if (layoutManager is LinearLayoutManager && (layoutManager as LinearLayoutManager).findLastVisibleItemPosition() == (adapter?.itemCount ?: 0) - 1) {
+                loadMoreListener()
+            }
+        }
     }
 }

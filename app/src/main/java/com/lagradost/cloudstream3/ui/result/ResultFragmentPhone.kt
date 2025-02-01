@@ -22,6 +22,7 @@ import androidx.core.view.isVisible
 import androidx.core.widget.NestedScrollView
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.GridLayoutManager
 import com.discord.panels.OverlappingPanelsLayout
 import com.discord.panels.PanelState
 import com.discord.panels.PanelsChildGestureRegionObserver
@@ -29,6 +30,8 @@ import com.google.android.gms.cast.framework.CastButtonFactory
 import com.google.android.gms.cast.framework.CastContext
 import com.google.android.gms.cast.framework.CastState
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.tabs.TabLayout
+import com.lagradost.api.Log
 import com.lagradost.cloudstream3.APIHolder
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.DubStatus
@@ -41,6 +44,7 @@ import com.lagradost.cloudstream3.databinding.FragmentResultSwipeBinding
 import com.lagradost.cloudstream3.databinding.ResultRecommendationsBinding
 import com.lagradost.cloudstream3.databinding.ResultSyncBinding
 import com.lagradost.cloudstream3.mvvm.Resource
+import com.lagradost.cloudstream3.mvvm.debugException
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.mvvm.observe
@@ -731,6 +735,74 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                     }
 
                     populateChips(resultTag, d.tags)
+
+                    resultTabs.removeAllTabs()
+                    resultTabs.isVisible = false
+                    if (api?.hasReviews == true ) {
+                        resultTabs.isVisible = true
+                        resultTabs.addTab(resultTabs.newTab().setText(R.string.details).setId(0))
+                        resultTabs.addTab(
+                            resultTabs.newTab().setText(R.string.reviews).setId(1)
+                        )
+                    }
+
+                    val target = viewModel.currentTabIndex.value
+                    if (target != null) {
+                        resultTabs.getTabAt(target)?.let { new ->
+                            resultTabs.selectTab(new)
+                        }
+                    }
+
+                    val reviewAdapter = ReviewAdapter()
+
+                    resultReviews.adapter = reviewAdapter
+                    resultReviews.layoutManager = GridLayoutManager(context, 1)
+                    resultReviews.loadMoreListener = { viewModel.loadMoreReviews() }
+
+                    observe(viewModel.reviews) { reviews ->
+                        when (reviews) {
+                            is Resource.Success -> {
+                                resultviewReviewsLoading.isVisible = false
+                                resultviewReviewsLoadingShimmer.startShimmer()
+                                resultReviews.isVisible = true
+                                reviewAdapter.submitList(reviews.value.map { it.new() } )
+                            }
+
+                            is Resource.Loading -> {
+                                resultviewReviewsLoadingShimmer.stopShimmer()
+                                resultviewReviewsLoading.isVisible = true
+                                resultReviews.isVisible = false
+                            }
+
+                            is Resource.Failure -> {
+                                debugException { "This should never happened" }
+                            }
+                        }
+                    }
+
+                    resultTabs.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+                        override fun onTabSelected(tab: TabLayout.Tab?) {
+                            Log.i("ResultFragment", "addOnTabSelectedListener ${resultTabs.selectedTabPosition}")
+                            viewModel.switchTab(tab?.id, resultTabs.selectedTabPosition)
+                        }
+
+                        override fun onTabUnselected(tab: TabLayout.Tab?) {}
+
+                        override fun onTabReselected(tab: TabLayout.Tab?) {}
+                    })
+
+                    observe(viewModel.currentTabIndex) { pos ->
+                        binding.apply {
+                            resultCastItems.isVisible = 0 == pos
+                            resultDataHolder.isVisible = 0 == pos
+                            resultTagHolder.isVisible = 0 == pos
+                            resultTag.isVisible = 0 == pos
+                            resultDescription.isVisible = 0 == pos
+                            resultInfo.isVisible = 0 == pos
+                            binding?.resultBookmarkFab?.isVisible = 0 == pos
+                            resultReviewsholder.isVisible = 1 == pos
+                        }
+                    }
 
                     resultComingSoon.isVisible = d.comingSoon
                     resultDataHolder.isGone = d.comingSoon
