@@ -21,7 +21,7 @@ object SubtitleUtils {
         getFolder(context, relative, info.basePath)?.forEach { (name, uri) ->
             if (isMatchingSubtitle(name, display, cleanDisplay)) {
                 val subtitleFile = SafeFile.fromUri(context, uri)
-                if (subtitleFile == null || !subtitleFile.delete()) {
+                if (subtitleFile == null || subtitleFile.delete() != true) {
                     Log.e("SubtitleDeletion", "Failed to delete subtitle file: ${subtitleFile?.name()}")
                 }
             }

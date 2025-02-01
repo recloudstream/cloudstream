@@ -662,4 +662,15 @@
     <string name="show">Pokaż</string>
     <string name="confirm_before_exiting_title">Potwierdź przed wyjściem</string>
     <string name="dont_show">Nie pokazuj</string>
+    <string name="backup_path_title">Lokalizacja folderu kopii zapasowej</string>
+    <string name="custom">Własna</string>
+    <string name="torrent_info">Ten film jest torrentem, co oznacza, że Twoja aktywność wideo może być śledzona.\nUpewnij się, że rozumiesz czym są torrenty, zanim przejdziesz dalej.</string>
+    <string name="subs_edge_size">Rozmiar krawędzi</string>
+    <string name="podcast_singluar">Podcast</string>
+    <string name="audio_singluar">Audio</string>
+    <string name="unsupported_error">Nieobsługiwany błąd</string>
+    <string name="encoding_error">Błąd kodowania</string>
+    <string name="player_load_one_subtitle_online">Wczytaj pierwsze dostępne</string>
+    <string name="torrent_not_accepted">Niezaakceptowany torrent</string>
+    <string name="torrent_preferred_media">Włącz torrent w Ustawienia/Źródła/Preferowane multimedia</string>
 </resources>

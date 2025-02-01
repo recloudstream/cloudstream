@@ -53,8 +53,8 @@ class MyMiniControllerFragment : MiniControllerFragment() {
         // SEE https://github.com/dandar3/android-google-play-services-cast-framework/blob/master/res/layout/cast_mini_controller.xml
         try {
             val progressBar: ProgressBar? = view.findViewById(R.id.progressBar)
-            val containerAll: LinearLayout? = view.findViewById(R.id.container_all)
-            val containerCurrent: RelativeLayout? = view.findViewById(R.id.container_current)
+            val containerAll: LinearLayout? = view.findViewById(com.google.android.gms.cast.framework.R.id.container_all)
+            val containerCurrent: RelativeLayout? = view.findViewById(com.google.android.gms.cast.framework.R.id.container_current)
 
             context?.let { ctx ->
                 progressBar?.setBackgroundColor(

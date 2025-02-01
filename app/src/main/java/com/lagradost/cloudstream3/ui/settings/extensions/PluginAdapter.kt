@@ -86,7 +86,7 @@ class PluginAdapter(
         return PluginManager.getPluginsOnline().also { storedPlugins = it }
     }*/
 
-    // Clear glide image because setImageResource doesn't override
+    // Clear coil image because setImageResource doesn't override
     override fun onViewRecycled(holder: RecyclerView.ViewHolder) {
         if (holder is PluginViewHolder) {
             holder.binding.entryIcon.loadImage(R.drawable.ic_github_logo)
@@ -176,7 +176,8 @@ class PluginAdapter(
             if (data.isDownloaded) {
                 // On local plugins page the filepath is provided instead of url.
                 val plugin =
-                    PluginManager.urlPlugins[metadata.url] ?: PluginManager.plugins[metadata.url]
+                    (PluginManager.urlPlugins[metadata.url] ?: (PluginManager.plugins[metadata.url])) as? com.lagradost.cloudstream3.plugins.Plugin
+
                 if (plugin?.openSettings != null) {
                     binding.actionSettings.isVisible = true
                     binding.actionSettings.setOnClickListener {

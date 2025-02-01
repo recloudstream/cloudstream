@@ -346,7 +346,7 @@ object UIHelper {
                             // Hide the nav bar and status bar
                             or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                             or View.SYSTEM_UI_FLAG_FULLSCREEN
-                    )
+                    ) // FIXME this should be replaced
           //}
     }
 
@@ -430,8 +430,8 @@ object UIHelper {
         } else {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                 window.insetsController?.show(WindowInsets.Type.statusBars())
-
             } else {
+                @Suppress("DEPRECATION")
                 window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
             }
 
@@ -449,8 +449,9 @@ object UIHelper {
             WindowInsetsControllerCompat(window, View(this)).show(WindowInsetsCompat.Type.systemBars())
 
         } else {*/ /** WINDOW COMPAT IS BUGGY DUE TO FU*KED UP PLAYER AND TRAILERS **/
-            window.decorView.systemUiVisibility =
-                (View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN)
+        @Suppress("DEPRECATION")
+        window.decorView.systemUiVisibility =
+            (View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN) // FIXME this should be replaced
         //}
 
         changeStatusBarState(isLayout(EMULATOR))
@@ -472,7 +473,14 @@ object UIHelper {
     fun Context.hasPIPPermission(): Boolean {
         val appOps =
             getSystemService(Context.APP_OPS_SERVICE) as AppOpsManager
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            appOps.unsafeCheckOpNoThrow(
+                AppOpsManager.OPSTR_PICTURE_IN_PICTURE,
+                android.os.Process.myUid(),
+                packageName
+            ) == AppOpsManager.MODE_ALLOWED
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            @Suppress("DEPRECATION")
             appOps.checkOpNoThrow(
                 AppOpsManager.OPSTR_PICTURE_IN_PICTURE,
                 android.os.Process.myUid(),
@@ -517,7 +525,7 @@ object UIHelper {
         onMenuItemClick: MenuItem.() -> Unit,
     ): PopupMenu {
         val ctw = ContextThemeWrapper(context, R.style.PopupMenu)
-        val popup = PopupMenu(ctw, this, Gravity.NO_GRAVITY, R.attr.actionOverflowMenuStyle, 0)
+        val popup = PopupMenu(ctw, this, Gravity.NO_GRAVITY, androidx.appcompat.R.attr.actionOverflowMenuStyle, 0)
 
         items.forEach { (id, stringRes) ->
             popup.menu.add(0, id, 0, stringRes)
@@ -541,7 +549,7 @@ object UIHelper {
         onMenuItemClick: MenuItem.() -> Unit,
     ): PopupMenu {
         val ctw = ContextThemeWrapper(context, R.style.PopupMenu)
-        val popup = PopupMenu(ctw, this, Gravity.NO_GRAVITY, R.attr.actionOverflowMenuStyle, 0)
+        val popup = PopupMenu(ctw, this, Gravity.NO_GRAVITY, androidx.appcompat.R.attr.actionOverflowMenuStyle, 0)
 
         items.forEach { (id, string) ->
             popup.menu.add(0, id, 0, string)

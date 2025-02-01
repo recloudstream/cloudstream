@@ -102,6 +102,7 @@ import com.lagradost.cloudstream3.ui.APIRepository
 import com.lagradost.cloudstream3.ui.SyncWatchType
 import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.account.AccountHelper.showAccountSelectLinear
+import com.lagradost.cloudstream3.ui.account.AccountViewModel
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_NAVIGATE_TO
 import com.lagradost.cloudstream3.ui.home.HomeViewModel
 import com.lagradost.cloudstream3.ui.library.LibraryViewModel
@@ -612,8 +613,11 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
     @SuppressLint("ApplySharedPref") // commit since the op needs to be synchronous
     private fun showConfirmExitDialog(settingsManager: SharedPreferences) {
         val confirmBeforeExit = settingsManager.getInt(getString(R.string.confirm_exit_key), -1)
+
         if (confirmBeforeExit == 1 || (confirmBeforeExit == -1 && isLayout(PHONE))) {
-            finish()
+            // finish() causes a bug on some TVs where player
+            // may keep playing after closing the app.
+            if (isLayout(TV)) exitProcess(0) else finish()
             return
         }
 
@@ -622,12 +626,14 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         val builder: AlertDialog.Builder = AlertDialog.Builder(this)
         builder.setView(dialogView)
             .setTitle(R.string.confirm_exit_dialog)
-            .setNegativeButton(R.string.no) { _, _ -> /*NO-OP*/}
+            .setNegativeButton(R.string.no) { _, _ -> /*NO-OP*/ }
             .setPositiveButton(R.string.yes) { _, _ ->
                 if (dontShowAgainCheck.isChecked) {
                     settingsManager.edit().putInt(getString(R.string.confirm_exit_key), 1).commit()
                 }
-                finish()
+                // finish() causes a bug on some TVs where player
+                // may keep playing after closing the app.
+                if (isLayout(TV)) exitProcess(0) else finish()
             }
 
         builder.show().setDefaultFocus()
@@ -1543,12 +1549,14 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
             }
 
             if (navDestination.matchDestination(R.id.navigation_home)) {
-                attachBackPressedCallback {
+                attachBackPressedCallback("MainActivity") {
                     showConfirmExitDialog(settingsManager)
-                    window?.navigationBarColor = colorFromAttribute(R.attr.primaryGrayBackground)
+                    @Suppress("DEPRECATION")
+                    window?.navigationBarColor =
+                        colorFromAttribute(R.attr.primaryGrayBackground)
                     updateLocale()
                 }
-            } else detachBackPressedCallback()
+            } else detachBackPressedCallback("MainActivity")
         }
 
         //val navController = findNavController(R.id.nav_host_fragment)
@@ -1794,6 +1802,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
             this,
             object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
+                    @Suppress("DEPRECATION")
                     window?.navigationBarColor = colorFromAttribute(R.attr.primaryGrayBackground)
                     updateLocale()
 

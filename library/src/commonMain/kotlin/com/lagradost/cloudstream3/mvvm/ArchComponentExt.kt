@@ -10,6 +10,7 @@ import java.net.UnknownHostException
 import javax.net.ssl.SSLHandshakeException
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
+import kotlin.reflect.full.NoSuchPropertyException
 
 const val DEBUG_EXCEPTION = "THIS IS A DEBUG EXCEPTION!"
 const val DEBUG_PRINT = "DEBUG PRINT"
@@ -122,6 +123,14 @@ fun<T> throwAbleToResource(
     throwable: Throwable
 ): Resource<T> {
     return when (throwable) {
+        is NoSuchMethodException, is NoSuchFieldException, is NoSuchMethodError, is NoSuchFieldError, is NoSuchPropertyException -> {
+            Resource.Failure(
+                false,
+                null,
+                null,
+                "App or extension is outdated, update the app or try pre-release.\n${throwable.message}" // todo add exact version?
+            )
+        }
         is NullPointerException -> {
             for (line in throwable.stackTrace) {
                 if (line?.fileName?.endsWith("provider.kt", ignoreCase = true) == true) {

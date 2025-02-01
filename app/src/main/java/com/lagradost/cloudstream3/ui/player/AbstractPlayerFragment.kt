@@ -55,6 +55,7 @@ import com.lagradost.cloudstream3.utils.EpisodeSkip
 import com.lagradost.cloudstream3.utils.UIHelper
 import com.lagradost.cloudstream3.utils.UIHelper.hideSystemUI
 import com.lagradost.cloudstream3.utils.UIHelper.popCurrentPage
+import java.net.SocketTimeoutException
 
 enum class PlayerResize(@StringRes val nameRes: Int) {
     Fit(R.string.resize_fit),
@@ -291,23 +292,52 @@ abstract class AbstractPlayerFragment(
                 val msg = exception.message ?: ""
                 val errorName = exception.errorCodeName
                 when (val code = exception.errorCode) {
-                    PlaybackException.ERROR_CODE_IO_FILE_NOT_FOUND, PlaybackException.ERROR_CODE_PARSING_CONTAINER_UNSUPPORTED, PlaybackException.ERROR_CODE_IO_NO_PERMISSION, PlaybackException.ERROR_CODE_IO_UNSPECIFIED -> {
+                    PlaybackException.ERROR_CODE_IO_FILE_NOT_FOUND,
+                    PlaybackException.ERROR_CODE_PARSING_CONTAINER_UNSUPPORTED,
+                    PlaybackException.ERROR_CODE_IO_NO_PERMISSION,
+                    PlaybackException.ERROR_CODE_IO_UNSPECIFIED -> {
                         showToast(
                             "${ctx.getString(R.string.source_error)}\n$errorName ($code)\n$msg",
                             gotoNext = true
                         )
                     }
 
-                    PlaybackException.ERROR_CODE_REMOTE_ERROR, PlaybackException.ERROR_CODE_IO_BAD_HTTP_STATUS, PlaybackException.ERROR_CODE_TIMEOUT, PlaybackException.ERROR_CODE_IO_NETWORK_CONNECTION_FAILED, PlaybackException.ERROR_CODE_IO_INVALID_HTTP_CONTENT_TYPE -> {
+                    PlaybackException.ERROR_CODE_REMOTE_ERROR,
+                    PlaybackException.ERROR_CODE_IO_BAD_HTTP_STATUS,
+                    PlaybackException.ERROR_CODE_TIMEOUT,
+                    PlaybackException.ERROR_CODE_IO_NETWORK_CONNECTION_FAILED,
+                    PlaybackException.ERROR_CODE_IO_NETWORK_CONNECTION_TIMEOUT,
+                    PlaybackException.ERROR_CODE_IO_INVALID_HTTP_CONTENT_TYPE -> {
                         showToast(
                             "${ctx.getString(R.string.remote_error)}\n$errorName ($code)\n$msg",
                             gotoNext = true
                         )
                     }
 
-                    PlaybackException.ERROR_CODE_DECODING_FAILED, PlaybackErrorEvent.ERROR_AUDIO_TRACK_INIT_FAILED, PlaybackErrorEvent.ERROR_AUDIO_TRACK_OTHER, PlaybackException.ERROR_CODE_AUDIO_TRACK_WRITE_FAILED, PlaybackException.ERROR_CODE_DECODER_INIT_FAILED, PlaybackException.ERROR_CODE_DECODER_QUERY_FAILED -> {
+                    PlaybackErrorEvent.ERROR_AUDIO_TRACK_INIT_FAILED,
+                    PlaybackErrorEvent.ERROR_AUDIO_TRACK_OTHER,
+                    PlaybackException.ERROR_CODE_DECODING_FAILED,
+                    PlaybackException.ERROR_CODE_AUDIO_TRACK_WRITE_FAILED,
+                    PlaybackException.ERROR_CODE_DECODER_INIT_FAILED,
+                    PlaybackException.ERROR_CODE_DECODER_QUERY_FAILED -> {
                         showToast(
                             "${ctx.getString(R.string.render_error)}\n$errorName ($code)\n$msg",
+                            gotoNext = true
+                        )
+                    }
+
+                    PlaybackException.ERROR_CODE_DECODING_FORMAT_UNSUPPORTED,
+                    PlaybackException.ERROR_CODE_DECODING_FORMAT_EXCEEDS_CAPABILITIES -> {
+                        showToast(
+                            "${ctx.getString(R.string.unsupported_error)}\n$errorName ($code)\n$msg",
+                            gotoNext = true
+                        )
+                    }
+
+                    PlaybackException.ERROR_CODE_PARSING_CONTAINER_MALFORMED,
+                    PlaybackException.ERROR_CODE_PARSING_MANIFEST_MALFORMED -> {
+                        showToast(
+                            "${ctx.getString(R.string.encoding_error)}\n$errorName ($code)\n$msg",
                             gotoNext = true
                         )
                     }
@@ -326,6 +356,21 @@ abstract class AbstractPlayerFragment(
                     "${ctx.getString(R.string.source_error)}\n${exception.message}",
                     gotoNext = true
                 )
+            }
+
+            is SocketTimeoutException -> {
+                /**
+                 * Ensures this is run on the UI thread to prevent issues 
+                 * caused by SocketTimeoutException in torrents. Running 
+                 * on another thread can break player interactions or 
+                 * prevent switching to the next source.
+                 */
+                activity?.runOnUiThread {
+                    showToast(
+                        "${ctx.getString(R.string.remote_error)}\n${exception.message}",
+                        gotoNext = true
+                    )
+                }
             }
 
             else -> {
@@ -359,6 +404,7 @@ abstract class AbstractPlayerFragment(
             }
 
             // Necessary for multiple combined videos
+            @Suppress("DEPRECATION")
             playerView?.setShowMultiWindowTimeBar(true)
             playerView?.player = player
             playerView?.performClick()
@@ -533,7 +579,7 @@ abstract class AbstractPlayerFragment(
                 }
             }
 
-            subView = playerView?.findViewById(R.id.exo_subtitles)
+            subView = playerView?.findViewById(androidx.media3.ui.R.id.exo_subtitles)
             subStyle = SubtitlesFragment.getCurrentSavedStyle()
             player.initSubtitles(subView, subtitleHolder, subStyle)
             (player.imageGenerator as? PreviewGenerator)?.params = ImageParams.new16by9(screenWidth)

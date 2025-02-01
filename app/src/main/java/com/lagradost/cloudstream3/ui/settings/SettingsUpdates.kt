@@ -8,6 +8,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.lagradost.cloudstream3.AcraApplication
 import com.lagradost.cloudstream3.AutoDownloadMode
 import com.lagradost.cloudstream3.CommonActivity.showToast
@@ -18,7 +19,6 @@ import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.network.initClient
 import com.lagradost.cloudstream3.services.BackupWorkManager
-import com.lagradost.cloudstream3.utils.txt
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
 import com.lagradost.cloudstream3.ui.settings.SettingsFragment.Companion.getPref
@@ -37,7 +37,7 @@ import com.lagradost.cloudstream3.utils.UIHelper.clipboardHelper
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.utils.VideoDownloadManager
-import okhttp3.internal.closeQuietly
+import com.lagradost.cloudstream3.utils.txt
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.io.OutputStream
@@ -137,35 +137,30 @@ class SettingsUpdates : PreferenceFragmentCompat() {
         }
 
         getPref(R.string.show_logcat_key)?.setOnPreferenceClickListener { pref ->
-            val builder =
-                AlertDialog.Builder(pref.context, R.style.AlertDialogCustom)
+            val builder = AlertDialog.Builder(pref.context, R.style.AlertDialogCustom)
 
             val binding = LogcatBinding.inflate(layoutInflater, null, false)
             builder.setView(binding.root)
 
             val dialog = builder.create()
             dialog.show()
-            val log = StringBuilder()
-            try {
-                //https://developer.android.com/studio/command-line/logcat
-                val process = Runtime.getRuntime().exec("logcat -d")
-                val bufferedReader = BufferedReader(
-                    InputStreamReader(process.inputStream)
-                )
 
-                var line: String?
-                while (bufferedReader.readLine().also { line = it } != null) {
-                    log.append("${line}\n")
-                }
+            val logList = mutableListOf<String>()
+            try {
+                // https://developer.android.com/studio/command-line/logcat
+                val process = Runtime.getRuntime().exec("logcat -d")
+                val bufferedReader = BufferedReader(InputStreamReader(process.inputStream))
+                bufferedReader.lineSequence().forEach { logList.add(it) }
             } catch (e: Exception) {
                 logError(e) // kinda ironic
             }
 
-            val text = log.toString()
-            binding.text1.text = text
+            val adapter = LogcatAdapter(logList)
+            binding.logcatRecyclerView.layoutManager = LinearLayoutManager(pref.context)
+            binding.logcatRecyclerView.adapter = adapter
 
             binding.copyBtt.setOnClickListener {
-                clipboardHelper(txt("Logcat"), text)
+                clipboardHelper(txt("Logcat"), logList.joinToString("\n"))
                 dialog.dismissSafe(activity)
             }
 
@@ -179,19 +174,17 @@ class SettingsUpdates : PreferenceFragmentCompat() {
                 var fileStream: OutputStream? = null
                 try {
                     fileStream = VideoDownloadManager.setupStream(
-                            it.context,
-                            "logcat_${date}",
-                            null,
-                            "txt",
-                            false
-                        ).openNew()
-                    fileStream.writer().write(text)
+                        it.context,
+                        "logcat_${date}",
+                        null,
+                        "txt",
+                        false
+                    ).openNew()
+                    fileStream.writer().use { writer -> writer.write(logList.joinToString("\n")) }
                     dialog.dismissSafe(activity)
                 } catch (t: Throwable) {
                     logError(t)
                     showToast(t.message)
-                } finally {
-                    fileStream?.closeQuietly()
                 }
             }
 

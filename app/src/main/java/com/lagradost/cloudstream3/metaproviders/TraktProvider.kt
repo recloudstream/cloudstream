@@ -228,6 +228,7 @@ open class TraktProvider : MainAPI() {
                     ).toJson()
 
                     episodes.add(
+                        @Suppress("DEPRECATION")
                         Episode(
                             data = linkData.toJson(),
                             name = episode.title,

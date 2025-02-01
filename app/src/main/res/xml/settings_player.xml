@@ -9,16 +9,15 @@
         app:defaultValue="true"
         app:key="@string/episode_sync_enabled_key" />
 
-    <PreferenceCategory
-        android:title="@string/pref_category_defaults">
-<!--        <Preference-->
-<!--            android:icon="@drawable/ic_baseline_hd_24"-->
-<!--            android:key="@string/quality_pref_key"-->
-<!--            android:title="@string/watch_quality_pref" />-->
-<!--        <Preference-->
-<!--            android:icon="@drawable/ic_baseline_hd_24"-->
-<!--            android:key="@string/quality_pref_mobile_data_key"-->
-<!--            android:title="@string/watch_quality_pref_data" />-->
+    <PreferenceCategory android:title="@string/pref_category_defaults">
+        <!--        <Preference-->
+        <!--            android:icon="@drawable/ic_baseline_hd_24"-->
+        <!--            android:key="@string/quality_pref_key"-->
+        <!--            android:title="@string/watch_quality_pref" />-->
+        <!--        <Preference-->
+        <!--            android:icon="@drawable/ic_baseline_hd_24"-->
+        <!--            android:key="@string/quality_pref_mobile_data_key"-->
+        <!--            android:title="@string/watch_quality_pref_data" />-->
 
         <Preference
             android:icon="@drawable/netflix_play"
@@ -26,8 +25,7 @@
             android:title="@string/player_pref" />
     </PreferenceCategory>
 
-    <PreferenceCategory
-        android:title="@string/pref_category_player_layout">
+    <PreferenceCategory android:title="@string/pref_category_player_layout">
         <Preference
             android:icon="@drawable/ic_baseline_text_format_24"
             android:key="@string/prefer_limit_title_key"
@@ -38,15 +36,13 @@
             android:key="@string/prefer_limit_title_rez_key"
             android:title="@string/limit_title_rez" />
         <SwitchPreference
+            android:defaultValue="false"
             android:icon="@drawable/ic_baseline_text_format_24"
             android:key="@string/hide_player_control_names_key"
-            android:title="@string/hide_player_control_names"
-            android:defaultValue="false"
-            />
+            android:title="@string/hide_player_control_names" />
     </PreferenceCategory>
 
-    <PreferenceCategory
-        android:title="@string/pref_category_subtitles">
+    <PreferenceCategory android:title="@string/pref_category_subtitles">
         <Preference
             android:icon="@drawable/ic_outline_subtitles_24"
             android:key="@string/subtitle_settings_key"
@@ -60,8 +56,7 @@
     </PreferenceCategory>
 
 
-    <PreferenceCategory
-        android:title="@string/pref_category_player_features">
+    <PreferenceCategory android:title="@string/pref_category_player_features">
         <SwitchPreference
             android:icon="@drawable/ic_baseline_picture_in_picture_alt_24"
             android:summary="@string/picture_in_picture_des"
@@ -88,30 +83,36 @@
             app:key="@string/autoplay_next_key" />
         <SwitchPreference
             android:icon="@drawable/ic_baseline_skip_next_24"
+            android:summary="@string/enable_skip_op_from_database_des"
             android:title="@string/video_skip_op"
             app:defaultValue="true"
-            android:summary="@string/enable_skip_op_from_database_des"
             app:key="@string/enable_skip_op_from_database" />
         <SwitchPreference
             android:icon="@drawable/screen_rotation"
+            android:summary="@string/rotate_video_desc"
             android:title="@string/rotate_video"
             app:defaultValue="false"
-            android:summary="@string/rotate_video_desc"
             app:key="@string/rotate_video_key" />
         <SwitchPreference
             android:icon="@drawable/screen_rotation"
+            android:summary="@string/auto_rotate_video_desc"
             android:title="@string/auto_rotate_video"
             app:defaultValue="false"
-            android:summary="@string/auto_rotate_video_desc"
             app:key="@string/auto_rotate_video_key" />
         <SwitchPreference
             android:icon="@drawable/preview_seekbar_24"
+            android:summary="@string/preview_seekbar_desc"
             android:title="@string/preview_seekbar"
             app:defaultValue="true"
-            android:summary="@string/preview_seekbar_desc"
             app:key="@string/preview_seekbar_key" />
+        <SwitchPreference
+            android:icon="@drawable/ic_baseline_extension_24"
+            android:summary="@string/software_decoding_desc"
+            android:title="@string/software_decoding"
+            app:defaultValue="true"
+            app:key="@string/software_decoding_key" />
     </PreferenceCategory>
-    
+
     <PreferenceCategory
         android:title="@string/pref_category_gestures"
         app:key="@string/pref_category_gestures_key">
@@ -153,8 +154,7 @@
             app:showSeekBarValue="true" />
     </PreferenceCategory>
 
-    <PreferenceCategory
-        android:title="@string/pref_category_cache">
+    <PreferenceCategory android:title="@string/pref_category_cache">
         <Preference
             android:icon="@drawable/ic_baseline_storage_24"
             android:key="@string/video_buffer_disk_key"
@@ -179,13 +179,13 @@
             android:title="@string/video_buffer_clear_settings" />
     </PreferenceCategory>
     <PreferenceCategory
-        android:title="@string/pref_category_android_tv"
-        android:key="@string/pref_category_android_tv_key" >
+        android:key="@string/pref_category_android_tv_key"
+        android:title="@string/pref_category_android_tv">
         <SeekBarPreference
             android:defaultValue="10"
             android:max="60"
-            android:title="@string/android_tv_interface_on_seek_settings"
             android:summary="@string/android_tv_interface_on_seek_settings_summary"
+            android:title="@string/android_tv_interface_on_seek_settings"
             app:adjustable="true"
             app:defaultValue="30"
             app:icon="@drawable/go_forward_30"
@@ -196,8 +196,8 @@
         <SeekBarPreference
             android:defaultValue="10"
             android:max="60"
-            android:title="@string/android_tv_interface_off_seek_settings"
             android:summary="@string/android_tv_interface_off_seek_settings_summary"
+            android:title="@string/android_tv_interface_off_seek_settings"
             app:adjustable="true"
             app:defaultValue="10"
             app:icon="@drawable/go_forward_30"

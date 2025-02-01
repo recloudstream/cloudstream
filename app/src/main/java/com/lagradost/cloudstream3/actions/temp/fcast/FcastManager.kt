@@ -5,6 +5,7 @@ import android.net.nsd.NsdManager
 import android.net.nsd.NsdManager.ResolveListener
 import android.net.nsd.NsdServiceInfo
 import android.os.Build
+import android.os.ext.SdkExtensions
 import android.util.Log
 import com.lagradost.cloudstream3.utils.Coroutines.ioSafe
 
@@ -72,23 +73,52 @@ class FcastManager {
 
         override fun onServiceFound(serviceInfo: NsdServiceInfo?) {
             if (serviceInfo == null) return
-            nsdManager?.resolveService(serviceInfo, object : ResolveListener {
-                override fun onResolveFailed(serviceInfo: NsdServiceInfo?, errorCode: Int) {
-                }
 
-                override fun onServiceResolved(serviceInfo: NsdServiceInfo?) {
-                    if (serviceInfo == null) return
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && SdkExtensions.getExtensionVersion(
+                    Build.VERSION_CODES.TIRAMISU) >= 7) {
+                nsdManager?.registerServiceInfoCallback(serviceInfo,
+                    Runnable::run,
+                    object : NsdManager.ServiceInfoCallback {
+                        override fun onServiceInfoCallbackRegistrationFailed(errorCode: Int) {
+                            Log.e(tag, "Service registration failed: $errorCode")
+                        }
+                        override fun onServiceUpdated(serviceInfo: NsdServiceInfo) {
+                            Log.d(tag,
+                                "Service updated: ${serviceInfo.serviceName}," +
+                                        "Net: ${serviceInfo.hostAddresses.firstOrNull()?.hostAddress}"
+                            )
+                            synchronized(_currentDevices) {
+                                _currentDevices.removeIf { it.rawName == serviceInfo.serviceName }
+                                _currentDevices.add(PublicDeviceInfo(serviceInfo))
+                            }
+                        }
+                        override fun onServiceLost() {
+                            Log.d(tag, "Service lost: ${serviceInfo.serviceName},")
+                            synchronized(_currentDevices) {
+                                _currentDevices.removeIf { it.rawName == serviceInfo.serviceName }
+                            }
+                        }
+                        override fun onServiceInfoCallbackUnregistered() {}
+                    })
+            } else {
+                @Suppress("DEPRECATION")
+                nsdManager?.resolveService(serviceInfo, object : ResolveListener {
+                    override fun onResolveFailed(serviceInfo: NsdServiceInfo?, errorCode: Int) {}
 
-                    synchronized(_currentDevices) {
-                        _currentDevices.add(PublicDeviceInfo(serviceInfo))
+                    override fun onServiceResolved(serviceInfo: NsdServiceInfo?) {
+                        if (serviceInfo == null) return
+
+                        synchronized(_currentDevices) {
+                            _currentDevices.add(PublicDeviceInfo(serviceInfo))
+                        }
+
+                        Log.d(
+                            tag,
+                            "Service found: ${serviceInfo.serviceName}, Net: ${serviceInfo.host.hostAddress}"
+                        )
                     }
-
-                    Log.d(
-                        tag,
-                        "Service found: ${serviceInfo.serviceName}, Net: ${serviceInfo.host.hostAddress}"
-                    )
-                }
-            })
+                })
+            }
         }
 
         override fun onServiceLost(serviceInfo: NsdServiceInfo?) {
@@ -135,6 +165,15 @@ class FcastManager {
 
 class PublicDeviceInfo(serviceInfo: NsdServiceInfo) {
     val rawName: String = serviceInfo.serviceName
-    val host: String? = serviceInfo.host.hostAddress
+    val host: String? = if (
+        Build.VERSION.SDK_INT >= Build.VERSION_CODES.R &&
+        SdkExtensions.getExtensionVersion(
+            Build.VERSION_CODES.TIRAMISU) >= 7
+        ) {
+        serviceInfo.hostAddresses.firstOrNull()?.hostAddress
+    } else {
+        @Suppress("DEPRECATION")
+        serviceInfo.host.hostAddress
+    }
     val name = rawName.replace("-", " ") + host?.let { " $it" }
 }

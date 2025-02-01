@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package com.lagradost.cloudstream3.ui.player
 
 import android.annotation.SuppressLint
@@ -37,6 +39,7 @@ import androidx.media3.datasource.cache.LeastRecentlyUsedCacheEvictor
 import androidx.media3.datasource.cache.SimpleCache
 import androidx.media3.datasource.okhttp.OkHttpDataSource
 import androidx.media3.exoplayer.DefaultLoadControl
+import androidx.media3.exoplayer.DefaultRenderersFactory
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.Renderer.STATE_ENABLED
 import androidx.media3.exoplayer.Renderer.STATE_STARTED
@@ -47,6 +50,7 @@ import androidx.media3.exoplayer.drm.FrameworkMediaDrm
 import androidx.media3.exoplayer.drm.LocalMediaDrmCallback
 import androidx.media3.exoplayer.source.ClippingMediaSource
 import androidx.media3.exoplayer.source.ConcatenatingMediaSource
+import androidx.media3.exoplayer.source.ConcatenatingMediaSource2
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 import androidx.media3.exoplayer.source.MergingMediaSource
 import androidx.media3.exoplayer.source.SingleSampleMediaSource
@@ -80,7 +84,6 @@ import com.lagradost.cloudstream3.utils.ExtractorLinkPlayList
 import com.lagradost.cloudstream3.utils.ExtractorLinkType
 import com.lagradost.cloudstream3.utils.SubtitleHelper.fromTwoLettersToLanguage
 import io.github.anilbeesetti.nextlib.media3ext.ffdecoder.NextRenderersFactory
-import androidx.media3.exoplayer.DefaultRenderersFactory
 import kotlinx.coroutines.delay
 import java.io.File
 import java.util.UUID
@@ -549,6 +552,16 @@ class CS3IPlayer : IPlayer {
 
         exoPlayer?.apply {
             playWhenReady = false
+
+            // This may look weird, however on some TV devices the audio does not stop playing
+            // so this may fix it?
+            try {
+                pause()
+            } catch (t: Throwable) {
+                // No documented exception, but just to be extra safe
+                logError(t)
+            }
+
             stop()
             release()
         }
@@ -620,16 +633,19 @@ class CS3IPlayer : IPlayer {
         private fun createOnlineSource(link: ExtractorLink): HttpDataSource.Factory {
             val provider = getApiFromNameNull(link.source)
             val interceptor = provider?.getVideoInterceptor(link)
+            val userAgent = link.headers.entries.find {
+                it.key.equals("User-Agent", ignoreCase = true)
+            }?.value
 
             val source = if (interceptor == null) {
                 DefaultHttpDataSource.Factory() //TODO USE app.baseClient
-                    .setUserAgent(USER_AGENT)
+                    .setUserAgent(userAgent ?: USER_AGENT)
                     .setAllowCrossProtocolRedirects(true)   //https://stackoverflow.com/questions/69040127/error-code-io-bad-http-status-exoplayer-android
             } else {
                 val client = app.baseClient.newBuilder()
                     .addInterceptor(interceptor)
                     .build()
-                OkHttpDataSource.Factory(client).setUserAgent(USER_AGENT)
+                OkHttpDataSource.Factory(client).setUserAgent(userAgent ?: USER_AGENT)
             }
 
             // Do no include empty referer, if the provider wants those they can use the header map.
@@ -724,10 +740,22 @@ class CS3IPlayer : IPlayer {
                 ExoPlayer.Builder(context)
                     .setRenderersFactory { eventHandler, videoRendererEventListener, audioRendererEventListener, textRendererOutput, metadataRendererOutput ->
 
-                        NextRenderersFactory(context).apply {
-                            setEnableDecoderFallback(true)
-                            setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_ON)
-                        }.createRenderers(
+                        val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
+                        val softwareDecoding = settingsManager.getBoolean(
+                            context.getString(R.string.software_decoding_key),
+                            true
+                        )
+
+                        val factory = if (softwareDecoding) {
+                            NextRenderersFactory(context).apply {
+                                setEnableDecoderFallback(true)
+                                setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_ON)
+                            }
+                        } else {
+                            DefaultRenderersFactory(context)
+                        }
+
+                        factory.createRenderers(
                             eventHandler,
                             videoRendererEventListener,
                             audioRendererEventListener,
@@ -744,6 +772,7 @@ class CS3IPlayer : IPlayer {
                                 ).apply {
                                     // Required to make the decoder work with old subtitles
                                     // Upgrade CustomSubtitleDecoderFactory when media3 supports it
+                                    @Suppress("DEPRECATION")
                                     experimentalSetLegacyDecodingEnabled(true)
                                 }.also { renderer ->
                                     this.currentTextRenderer = renderer
@@ -814,17 +843,33 @@ class CS3IPlayer : IPlayer {
                     factory.createMediaSource(item.mediaItem)
                 }
             } else {
-                val source = ConcatenatingMediaSource()
-                mediaItemSlices.map { item ->
-                    source.addMediaSource(
-                        // The duration MUST be known for it to work properly, see https://github.com/google/ExoPlayer/issues/4727
-                        ClippingMediaSource(
-                            factory.createMediaSource(item.mediaItem),
-                            item.durationUs
+                try {
+                    val source = ConcatenatingMediaSource2.Builder()
+                    mediaItemSlices.map { item ->
+                        source.add(
+                            // The duration MUST be known for it to work properly, see https://github.com/google/ExoPlayer/issues/4727
+                            ClippingMediaSource(
+                                factory.createMediaSource(item.mediaItem),
+                                item.durationUs
+                            )
                         )
-                    )
+                    }
+                    source.build()
+                } catch (_: IllegalArgumentException) {
+                    @Suppress("DEPRECATION")
+                    val source =
+                        ConcatenatingMediaSource() // FIXME figure out why ConcatenatingMediaSource2 seems to fail with Torrents only
+                    mediaItemSlices.map { item ->
+                        source.addMediaSource(
+                            // The duration MUST be known for it to work properly, see https://github.com/google/ExoPlayer/issues/4727
+                            ClippingMediaSource(
+                                factory.createMediaSource(item.mediaItem),
+                                item.durationUs
+                            )
+                        )
+                    }
+                    source
                 }
-                source
             }
 
             //println("PLAYBACK POS $playbackPosition")
@@ -1001,7 +1046,7 @@ class CS3IPlayer : IPlayer {
         Log.i(TAG, "loadExo")
         val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
         val maxVideoHeight = settingsManager.getInt(
-            context.getString(if (context.isUsingMobileData()) com.lagradost.cloudstream3.R.string.quality_pref_mobile_data_key else com.lagradost.cloudstream3.R.string.quality_pref_key),
+            context.getString(if (context.isUsingMobileData()) R.string.quality_pref_mobile_data_key else R.string.quality_pref_key),
             Int.MAX_VALUE
         )
 
@@ -1177,7 +1222,7 @@ class CS3IPlayer : IPlayer {
                             // Only play next episode if autoplay is on (default)
                             if (PreferenceManager.getDefaultSharedPreferences(context)
                                     ?.getBoolean(
-                                        context.getString(com.lagradost.cloudstream3.R.string.autoplay_next_key),
+                                        context.getString(R.string.autoplay_next_key),
                                         true
                                     ) == true
                             ) {
@@ -1412,12 +1457,14 @@ class CS3IPlayer : IPlayer {
                     } ?: default
 
                     if (!currentPrefMedia.contains(TvType.Torrent.ordinal)) {
-                        event(ErrorEvent(ErrorLoadingException("Preferred media do not contain torrent")))
+                        val errorMessage = context.getString(R.string.torrent_preferred_media)
+                        event(ErrorEvent(ErrorLoadingException(errorMessage)))
                         return
                     }
 
                     if (Torrent.hasAcceptedTorrentForThisSession == false) {
-                        event(ErrorEvent(ErrorLoadingException("Not accepted torrent")))
+                        val errorMessage = context.getString(R.string.torrent_not_accepted)
+                        event(ErrorEvent(ErrorLoadingException(errorMessage)))
                         return
                     }
                     // load the initial UI, we require an exoPlayer to be alive

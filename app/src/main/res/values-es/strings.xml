@@ -170,7 +170,7 @@
     <string name="subs_edge_type">Tipo de Borde</string>
     <string name="subs_subtitle_elevation">Elevación de Subtítulo</string>
     <string name="search_provider_text_providers">Buscar usando proveedores</string>
-    <string name="picture_in_picture_des">Continúa la reproducción en una imagen pequeña encima de otras aplicaciones</string>
+    <string name="picture_in_picture_des">Continúa la reproducción en un reproductor en miniatura encima de otras aplicaciones</string>
     <string name="player_size_settings">Botón de cambio de tamaño del reproductor</string>
     <string name="player_size_settings_des">Eliminar bordes negros</string>
     <string name="subs_auto_select_language">Seleccionar idioma automáticamente</string>
@@ -449,7 +449,7 @@
     <string name="tracks">Pistas</string>
     <string name="audio_tracks">Pistas de audio</string>
     <string name="video_tracks">Pistas de video</string>
-    <string name="safe_mode_title">Modo seguro activado</string>
+    <string name="safe_mode_title">Modo seguro ACTIVADO</string>
     <string name="safe_mode_crash_info">Ver información de fallos</string>
     <string name="extension_rating" formatted="true">Puntaje:%s</string>
     <string name="extension_version">Versión</string>
@@ -506,7 +506,7 @@
     <string name="test_log">Registro</string>
     <string name="start">Empezar</string>
     <string name="test_passed">Aprobado</string>
-    <string name="category_provider_test">Verificar al proveedor</string>
+    <string name="category_provider_test">Verificar proveedores</string>
     <string name="restart">Reiniciar</string>
     <string name="subscription_list_name">Suscrito</string>
     <string name="subscription_new">Suscrito a %s</string>
@@ -661,4 +661,15 @@
     <string name="show">Mostrar</string>
     <string name="dont_show">No mostrar</string>
     <string name="confirm_before_exiting_title">Confirmar antes de salir</string>
+    <string name="backup_path_title">Ubicación de la carpeta de respaldo</string>
+    <string name="custom">Personalizada</string>
+    <string name="torrent_info">Este video está en una red de torrents, lo que significa que se puede rastrear su uso.\nAsegúrese de comprender las redes de torrents antes de continuar.</string>
+    <string name="subs_edge_size">Tamaño del borde</string>
+    <string name="podcast_singluar">Podcast</string>
+    <string name="audio_singluar">Audio</string>
+    <string name="encoding_error">Error de codificación</string>
+    <string name="unsupported_error">Error no soportado</string>
+    <string name="player_load_one_subtitle_online">Cargar primero disponible</string>
+    <string name="torrent_preferred_media">Habilitación torrent en Opciones/Proveedores/Medio preferido</string>
+    <string name="torrent_not_accepted">Torrent no aceptado</string>
 </resources>

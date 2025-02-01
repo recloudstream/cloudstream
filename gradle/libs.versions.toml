@@ -1,64 +1,60 @@
 [versions]
-acraCore = "5.11.3"
+acraCore = "5.12.0"
 appcompat = "1.7.0"
-autoServiceKsp = "1.2.0"
-biometric = "1.2.0-alpha05"
-buildkonfigGradlePlugin = "0.15.1"
+biometric = "1.4.0-alpha02"
+buildkonfigGradlePlugin = "0.15.2"
 coil = "3.0.4"
 colorpicker = "1.1.0"
 conscryptAndroid = "2.5.2"
 constraintlayout = "2.2.0"
 coreKtx = "1.15.0"
 desugar_jdk_libs_nio = "2.1.4"
-dokkaGradlePlugin = "1.9.10"
+dokkaGradlePlugin = "2.0.0"
 espressoCore = "3.6.1"
 fuzzywuzzy = "1.4.0"
-glide = "4.16.0"
-glideTransformations = "4.3.0"
-gradle = "8.2.2"
-guava = "33.3.1-android"
+gradle = "8.8.0"
 jacksonModuleKotlin = "2.13.1"
-json = "20240303"
+json = "20250107"
 junit = "4.13.2"
 junitKtx = "1.2.1"
 junitVersion = "1.2.1"
 juniversalchardet = "2.5.0"
-kotlinGradlePluginVersion = "2.1.0"
-kotlinxCoroutinesCore = "1.9.0"
+kotlinGradlePluginVersion = "2.1.10"
+kotlinxCoroutinesCore = "1.10.1"
 lifecycleLivedataKtx = "2.8.7"
 lifecycleViewmodelKtx = "2.8.7"
 material = "1.12.0"
 media3 = "1.5.1"
-mediaFfmpeg = "1.1.0"
 navigationFragmentKtx = "2.8.5"
 navigationUiKtx = "2.8.5"
-newpipeextractor = "v0.24.3"
-nextlibMedia3ext = "0.8.4"
-nextlibMediainfo = "0.8.4"
+newpipeextractor = "v0.24.4"
+nextlibMedia3 = "0.8.4"
 nicehttp = "0.4.11"
-okhttp3Integration = "4.16.0"
 overlappingpanels = "0.1.5"
 paletteKtx = "1.0.0"
 preferenceKtx = "1.2.1"
 previewseekbarMedia3 = "1.1.1.0"
 qrcodeKotlin = "4.2.0"
 rhino = "1.7.15"
-safefile = "0.0.6"
+safefile = "0.0.8"
 shimmer = "0.5.0"
 swiperefreshlayout = "1.1.0"
 tmdbJava = "2.11.0"
+torrentserver = "883c17942d"
 tvprovider = "1.0.0"
 video = "1.0.0"
 workRuntime = "2.10.0"
 workRuntimeKtx = "2.10.0"
-torrentserverAniyomi = "c18f58e51b"
+
+jvmTarget = "1.8"
+minSdk = "21"
+compileSdk = "35"
+targetSdk = "35"
 
 [libraries]
-torrentserver-aniyomi = { module = "com.github.Diegopyl1209:torrentserver-aniyomi", version.ref = "torrentserverAniyomi" }
 acra-core = { module = "ch.acra:acra-core", version.ref = "acraCore" }
 acra-toast = { module = "ch.acra:acra-toast", version.ref = "acraCore" }
 appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
-auto-service-ksp = { module = "dev.zacsweers.autoservice:auto-service-ksp", version.ref = "autoServiceKsp" }
 biometric = { module = "androidx.biometric:biometric", version.ref = "biometric" }
 buildkonfig-gradle-plugin = { module = "com.codingfeline.buildkonfig:buildkonfig-gradle-plugin", version.ref = "buildkonfigGradlePlugin" }
 coil = { module = "io.coil-kt.coil3:coil", version.ref = "coil" }
@@ -73,10 +69,7 @@ dokka-gradle-plugin = { module = "org.jetbrains.dokka:dokka-gradle-plugin", vers
 espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref = "espressoCore" }
 ext-junit = { module = "androidx.test.ext:junit", version.ref = "junitVersion" }
 fuzzywuzzy = { module = "me.xdrop:fuzzywuzzy", version.ref = "fuzzywuzzy" }
-glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
-glide-transformations = { module = "jp.wasabeef:glide-transformations", version.ref = "glideTransformations" }
 gradle = { module = "com.android.tools.build:gradle", version.ref = "gradle" }
-guava = { module = "com.google.guava:guava", version.ref = "guava" }
 jackson-module-kotlin = { module = "com.fasterxml.jackson.module:jackson-module-kotlin", version.ref = "jacksonModuleKotlin" }
 jetbrains-kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlinGradlePluginVersion" }
 json = { module = "org.json:json", version.ref = "json" }
@@ -87,7 +80,6 @@ kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-c
 lifecycle-livedata-ktx = { module = "androidx.lifecycle:lifecycle-livedata-ktx", version.ref = "lifecycleLivedataKtx" }
 lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "lifecycleViewmodelKtx" }
 material = { module = "com.google.android.material:material", version.ref = "material" }
-media-ffmpeg = { module = "com.github.recloudstream:media-ffmpeg", version.ref = "mediaFfmpeg" }
 media3-cast = { module = "androidx.media3:media3-cast", version.ref = "media3" }
 media3-common = { module = "androidx.media3:media3-common", version.ref = "media3" }
 media3-datasource-okhttp = { module = "androidx.media3:media3-datasource-okhttp", version.ref = "media3" }
@@ -99,20 +91,21 @@ media3-ui = { module = "androidx.media3:media3-ui", version.ref = "media3" }
 navigation-fragment-ktx = { module = "androidx.navigation:navigation-fragment-ktx", version.ref = "navigationFragmentKtx" }
 navigation-ui-ktx = { module = "androidx.navigation:navigation-ui-ktx", version.ref = "navigationUiKtx" }
 newpipeextractor = { module = "com.github.teamnewpipe:NewPipeExtractor", version.ref = "newpipeextractor" }
-nextlib-media3ext = { module = "com.github.anilbeesetti.nextlib:nextlib-media3ext", version.ref = "nextlibMedia3ext" }
-nextlib-mediainfo = { module = "com.github.anilbeesetti.nextlib:nextlib-mediainfo", version.ref = "nextlibMediainfo" }
+nextlib-media3ext = { module = "com.github.anilbeesetti.nextlib:nextlib-media3ext", version.ref = "nextlibMedia3" }
+nextlib-mediainfo = { module = "com.github.anilbeesetti.nextlib:nextlib-mediainfo", version.ref = "nextlibMedia3" }
 nicehttp = { module = "com.github.Blatzar:NiceHttp", version.ref = "nicehttp" }
-okhttp3-integration = { module = "com.github.bumptech.glide:okhttp3-integration", version.ref = "okhttp3Integration" }
 overlappingpanels = { module = "com.github.discord:OverlappingPanels", version.ref = "overlappingpanels" }
 palette-ktx = { module = "androidx.palette:palette-ktx", version.ref = "paletteKtx" }
 preference-ktx = { module = "androidx.preference:preference-ktx", version.ref = "preferenceKtx" }
 previewseekbar-media3 = { module = "com.github.rubensousa:previewseekbar-media3", version.ref = "previewseekbarMedia3" }
 qrcode-kotlin = { module = "io.github.g0dkar:qrcode-kotlin", version.ref = "qrcodeKotlin" }
 rhino = { module = "org.mozilla:rhino", version.ref = "rhino" }
+quickjs = { module = "app.cash.quickjs:quickjs-android", version = "0.9.2" }
 safefile = { module = "com.github.LagradOst:SafeFile", version.ref = "safefile" }
 shimmer = { module = "com.facebook.shimmer:shimmer", version.ref = "shimmer" }
 swiperefreshlayout = { module = "androidx.swiperefreshlayout:swiperefreshlayout", version.ref = "swiperefreshlayout" }
 tmdb-java = { module = "com.uwetrottmann.tmdb2:tmdb-java", version.ref = "tmdbJava" }
+torrentserver = { module = "com.github.recloudstream:torrentserver", version.ref = "torrentserver" }
 tvprovider = { module = "androidx.tvprovider:tvprovider", version.ref = "tvprovider" }
 video = { module = "com.google.android.mediahome:video", version.ref = "video" }
 work-runtime = { module = "androidx.work:work-runtime", version.ref = "workRuntime" }
@@ -122,3 +115,4 @@ work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "w
 
 [bundles]
 media3 = ["media3-cast", "media3-common", "media3-datasource-okhttp", "media3-exoplayer", "media3-exoplayer-dash", "media3-exoplayer-hls", "media3-session", "media3-ui"]
+nextlibMedia3 = ["nextlib-media3ext", "nextlib-mediainfo"]

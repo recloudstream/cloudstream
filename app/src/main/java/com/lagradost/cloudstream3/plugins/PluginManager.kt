@@ -20,6 +20,7 @@ import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.APIHolder.removePluginMapping
 import com.lagradost.cloudstream3.AcraApplication.Companion.getActivity
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
+import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.MainAPI.Companion.settingsForProvider
@@ -171,15 +172,15 @@ object PluginManager {
     var currentlyLoading: String? = null
 
     // Maps filepath to plugin
-    val plugins: MutableMap<String, Plugin> =
-        LinkedHashMap<String, Plugin>()
+    val plugins: MutableMap<String, BasePlugin> =
+        LinkedHashMap<String, BasePlugin>()
 
     // Maps urls to plugin
-    val urlPlugins: MutableMap<String, Plugin> =
-        LinkedHashMap<String, Plugin>()
+    val urlPlugins: MutableMap<String, BasePlugin> =
+        LinkedHashMap<String, BasePlugin>()
 
-    private val classLoaders: MutableMap<PathClassLoader, Plugin> =
-        HashMap<PathClassLoader, Plugin>()
+    private val classLoaders: MutableMap<PathClassLoader, BasePlugin> =
+        HashMap<PathClassLoader, BasePlugin>()
 
     var loadedLocalPlugins = false
         private set
@@ -448,10 +449,44 @@ object PluginManager {
         val sortedPlugins = dir.listFiles()
         // Always sort plugins alphabetically for reproducible results
 
-        Log.d(TAG, "Files in '${LOCAL_PLUGINS_PATH}' folder: $sortedPlugins")
+        Log.d(TAG, "Files in '${LOCAL_PLUGINS_PATH}' folder: ${sortedPlugins?.size}")
+
+        // Use app-specific external files directory and copy the file there.
+        // We have to do this because on Android 14+, it otherwise gives SecurityException
+        // due to dex files and setReadOnly seems to have no effect unless it it here.
+        val pluginDirectory = File(context.getExternalFilesDir(null), "plugins")
+        if (!pluginDirectory.exists()) {
+            pluginDirectory.mkdirs() // Ensure the plugins directory exists
+        }
+
+        // Make sure all local plugins are fully refreshed.
+        removeKey(PLUGINS_KEY_LOCAL)
 
         sortedPlugins?.sortedBy { it.name }?.apmap { file ->
-            maybeLoadPlugin(context, file)
+            try {
+                val destinationFile = File(pluginDirectory, file.name)
+
+                // Only copy the file if the destination file doesn't exist or if it
+                // has been modified (check file length and modification time).
+                if (!destinationFile.exists() ||
+                    destinationFile.length() != file.length() ||
+                    destinationFile.lastModified() != file.lastModified()) {
+
+                    // Copy the file to the app-specific plugin directory
+                    file.copyTo(destinationFile, overwrite = true)
+
+                    // After copying, set the destination file's modification time
+                    // to match the source file. We do this for performance so that we
+                    // can check the modification time and not make redundant writes.
+                    destinationFile.setLastModified(file.lastModified())
+                }
+
+                // Load the plugin after it has been copied
+                maybeLoadPlugin(context, destinationFile)
+            } catch (t: Throwable) {
+                Log.e(TAG, "Failed to copy the file")
+                logError(t)
+            }
         }
 
         loadedLocalPlugins = true
@@ -483,16 +518,19 @@ object PluginManager {
         Log.i(TAG, "Loading plugin: $data")
 
         return try {
-            // in case of android 14 then
+            // In case of Android 14+ then
             try {
-                File(filePath).setReadOnly()
+                // Set the file as read-only and log if it fails
+                if (!file.setReadOnly()) {
+                    Log.e(TAG, "Failed to set read-only on plugin file: ${file.name}")
+                }
             } catch (t: Throwable) {
-                Log.e(TAG, "Failed to set dex as readonly")
+                Log.e(TAG, "Failed to set dex as read-only")
                 logError(t)
             }
 
             val loader = PathClassLoader(filePath, context.classLoader)
-            var manifest: Plugin.Manifest
+            var manifest: BasePlugin.Manifest
             loader.getResourceAsStream("manifest.json").use { stream ->
                 if (stream == null) {
                     Log.e(TAG, "Failed to load plugin  $fileName: No manifest found")
@@ -501,7 +539,7 @@ object PluginManager {
                 InputStreamReader(stream).use { reader ->
                     manifest = gson.fromJson(
                         reader,
-                        Plugin.Manifest::class.java
+                        BasePlugin.Manifest::class.java
                     )
                 }
             }
@@ -515,9 +553,9 @@ object PluginManager {
 
             @Suppress("UNCHECKED_CAST")
             val pluginClass: Class<*> =
-                loader.loadClass(manifest.pluginClassName) as Class<out Plugin?>
-            val pluginInstance: Plugin =
-                pluginClass.getDeclaredConstructor().newInstance() as Plugin
+                loader.loadClass(manifest.pluginClassName) as Class<out BasePlugin?>
+            val pluginInstance: BasePlugin =
+                pluginClass.getDeclaredConstructor().newInstance() as BasePlugin
 
             // Sets with the proper version
             setPluginData(data.copy(version = version))
@@ -537,7 +575,7 @@ object PluginManager {
                 addAssetPath.invoke(assets, file.absolutePath)
 
                 @Suppress("DEPRECATION")
-                pluginInstance.resources = Resources(
+                (pluginInstance as? Plugin)?.resources = Resources(
                     assets,
                     context.resources.displayMetrics,
                     context.resources.configuration
@@ -546,7 +584,11 @@ object PluginManager {
             plugins[filePath] = pluginInstance
             classLoaders[loader] = pluginInstance
             urlPlugins[data.url ?: filePath] = pluginInstance
-            pluginInstance.load(context)
+            if (pluginInstance is Plugin) {
+                pluginInstance.load(context)
+            } else {
+                pluginInstance.load()
+            }
             Log.i(TAG, "Loaded plugin ${data.internalName} successfully")
             currentlyLoading = null
             true

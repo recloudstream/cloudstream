@@ -67,11 +67,22 @@ open class Filesim : ExtractorApi() {
     ) {
         val embedUrl = url.replace("/download/", "/e/")
         val response = app.get(embedUrl, referer = referer)
-        val script = if (!getPacked(response.text).isNullOrEmpty()) {
+        var script = if (!getPacked(response.text).isNullOrEmpty()) {
             getAndUnpack(response.text)
         } else {
             response.document.selectFirst("script:containsData(sources:)")?.data()
         }
+
+         //In my case packed function is not directly available in the first response, instead it is in iframe response
+        if(script == null){
+            val iframeUrl = Regex("""<iframe src="(.*?)"""").find(response.text,0)?.groupValues?.getOrNull(1)
+            if(iframeUrl != null){
+                val iframeResponse = app.get(iframeUrl,referer=null, headers = mapOf("Accept-Language" to "en-US,en;q=0.5"))
+                script = if (!getPacked(iframeResponse.text).isNullOrEmpty()) { getAndUnpack(iframeResponse.text) } else return
+            }
+            else return
+        }
+
         val m3u8 =
             Regex("file:\\s*\"(.*?m3u8.*?)\"").find(script ?: return)?.groupValues?.getOrNull(1)
         generateM3u8(
