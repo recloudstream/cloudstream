@@ -793,12 +793,8 @@ open class ResultFragmentPhone : FullScreenPlayer() {
 
                     observe(viewModel.currentTabIndex) { pos ->
                         binding.apply {
-                            resultCastItems.isVisible = 0 == pos
-                            resultDataHolder.isVisible = 0 == pos
-                            resultTagHolder.isVisible = 0 == pos
-                            resultTag.isVisible = 0 == pos
                             resultDescription.isVisible = 0 == pos
-                            resultInfo.isVisible = 0 == pos
+                            resultDetailsholder.isVisible = 0 == pos
                             binding?.resultBookmarkFab?.isVisible = 0 == pos
                             resultReviewsholder.isVisible = 1 == pos
                         }
