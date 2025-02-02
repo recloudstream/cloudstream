@@ -93,5 +93,16 @@
             android:id="@+id/review_body"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/spoiler_text"
+            android:text="@string/reveal_spoiler"
+            android:textColor="?attr/colorError"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:textStyle="bold"
+            android:visibility="gone" />
+
     </LinearLayout>
 </androidx.cardview.widget.CardView>

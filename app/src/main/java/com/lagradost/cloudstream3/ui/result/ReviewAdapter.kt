@@ -1,9 +1,9 @@
 package com.lagradost.cloudstream3.ui.result
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -44,6 +44,30 @@ class ReviewAdapter :
                     reviewText = reviewText.substring(0, 300) + "..."
                 }
 
+                reviewBody.text = reviewText
+                reviewTitle.text = card.reviewTitle ?: ""
+                reviewTitle.isVisible = reviewTitle.text != ""
+
+                if (card.isSpoiler) {
+                    var isSpoilerRevealed = false
+                    reviewBody.isVisible = false
+                    reviewTitle.isVisible = false
+                    spoilerText.isVisible = true
+                    spoilerText.setOnClickListener {
+                        isSpoilerRevealed = !isSpoilerRevealed
+
+                        if (isSpoilerRevealed) {
+                            reviewBody.isVisible = true
+                            reviewTitle.isVisible = true
+                            spoilerText.text = localContext.getString(R.string.hide_spoiler)
+                        } else {
+                            reviewBody.isVisible = false
+                            reviewTitle.isVisible = false
+                            spoilerText.text = localContext.getString(R.string.reveal_spoiler)
+                        }
+                    }
+                }
+
                 reviewBody.setOnClickListener {
                     val builder: AlertDialog.Builder = AlertDialog.Builder(localContext)
                     builder.setMessage(card.review)
@@ -55,10 +79,6 @@ class ReviewAdapter :
                         builder.setTitle(title)
                     builder.show()
                 }
-
-                reviewBody.text = reviewText
-                reviewTitle.text = card.reviewTitle ?: ""
-                reviewTitle.visibility = if (reviewTitle.text == "") View.GONE else View.VISIBLE
 
                 val reviewDate = card.reviewDate
                 if (reviewDate != null) {

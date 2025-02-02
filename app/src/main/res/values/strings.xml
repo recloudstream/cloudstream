@@ -836,4 +836,6 @@
     <string name="reviews">Reviews</string>
     <string name="user_image_avatar">Avatar</string>
     <string name="overall_rating_format">Overall %s</string>
+    <string name="hide_spoiler">Hide Spoiler</string>
+    <string name="reveal_spoiler">Reveal Spoiler</string>
 </resources>

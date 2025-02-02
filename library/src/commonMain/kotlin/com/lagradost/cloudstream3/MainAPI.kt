@@ -528,7 +528,7 @@ abstract class MainAPI {
     open suspend fun loadReviews(url: String, page: Int): List<UserReview> {
         val reviews = mutableListOf<UserReview>()
 
-        for (i in 1..100) {
+        for (i in 1..10) {
             val review = addUserReview {
                 review = "Review content #$i"
                 reviewTitle = "Title #$i"
