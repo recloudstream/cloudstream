@@ -14,6 +14,10 @@ import com.lagradost.cloudstream3.UserReview
 import com.lagradost.cloudstream3.databinding.ResultReviewBinding
 import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
+import java.text.DateFormat
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class ReviewAdapter :
     ListAdapter<UserReview, ReviewAdapter.ReviewAdapterHolder>(DiffCallback()) {
@@ -56,7 +60,14 @@ class ReviewAdapter :
                 reviewTitle.text = card.reviewTitle ?: ""
                 reviewTitle.visibility = if (reviewTitle.text == "") View.GONE else View.VISIBLE
 
-                reviewTime.text = card.reviewDate
+                val reviewDate = card.reviewDate
+                if (reviewDate != null) {
+                    reviewTime.text = SimpleDateFormat.getDateInstance(
+                        DateFormat.LONG,
+                        Locale.getDefault()
+                    ).format(Date(reviewDate))
+                }
+
                 reviewAuthor.text = card.username
 
                 reviewImage.loadImage(card.avatarUrl, card.avatarHeaders)
@@ -88,7 +99,7 @@ class ReviewAdapter :
                         addView(chip)
                     }
 
-                    card.ratings?.forEach { (rating, type) ->
+                    card.ratings?.forEach { (rating, category) ->
                         val chip = Chip(context)
                         val chipDrawable = ChipDrawable.createFromAttributes(
                             context,
@@ -97,7 +108,7 @@ class ReviewAdapter :
                             R.style.ChipReview
                         )
                         chip.setChipDrawable(chipDrawable)
-                        chip.text = "$type $rating★"
+                        chip.text = "$category $rating★"
                         chip.isChecked = false
                         chip.isCheckable = false
                         chip.isFocusable = false

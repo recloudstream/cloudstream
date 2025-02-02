@@ -541,14 +541,22 @@ abstract class MainAPI {
                 review = "Review content #$i"
                 reviewTitle = "Title #$i"
                 username = "User $i"
-                reviewDate = "2025-01-31"
                 avatarUrl =
                     "https://avatars.githubusercontent.com/u/142361265?v=4"
                 avatarHeaders = null
                 rating = if (kotlin.random.Random.nextBoolean()) {
                     (1..10).random()
                 } else String.format("%.1f", kotlin.random.Random.nextDouble(1.0, 10.0)).toFloat()
-                ratings = null
+
+                val rating = if (kotlin.random.Random.nextBoolean()) {
+                    (1..10).random()
+                } else String.format("%.1f", kotlin.random.Random.nextDouble(1.0, 10.0)).toFloat()
+
+                addRatingCategory(rating, "Testing1")
+                addRatingCategory(rating, "Testing2")
+                addRatingCategory(rating, "Testing3")
+                addRatingCategory(rating, "Testing4")
+                addDate("2025-01-31")
             }
             reviews.add(review)
         }
@@ -988,7 +996,7 @@ data class UserReview internal constructor(
     var review: String? = null,
     var reviewTitle: String? = null,
     var username: String? = null,
-    var reviewDate: String? = null,
+    var reviewDate: Long? = null,
     var avatarUrl: String? = null,
     var avatarHeaders: Map<String, String>? = null,
     var rating: Number? = null,
@@ -996,6 +1004,31 @@ data class UserReview internal constructor(
 ) {
     fun new(initializer: UserReview.() -> Unit = {}): UserReview {
         return this@UserReview.apply(initializer)
+    }
+
+    fun addDate(
+        date: String?,
+        format: String = "yyyy-MM-dd"
+    ) {
+        try {
+            this@UserReview.reviewDate =
+                SimpleDateFormat(format).parse(date ?: return)?.time
+        } catch (e: Exception) {
+            logError(e)
+        }
+    }
+
+    fun addDate(date: Date?) {
+        this@UserReview.reviewDate = date?.time
+    }
+
+    fun addRatingCategory(
+        rating: Number,
+        category: String
+    ) {
+        val updatedRatings = this@UserReview.ratings?.toMutableList() ?: mutableListOf()
+        updatedRatings.add(Pair(rating, category))
+        this@UserReview.ratings = updatedRatings
     }
 }
 
