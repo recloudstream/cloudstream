@@ -79,6 +79,7 @@ import com.lagradost.cloudstream3.utils.UIHelper.hideKeyboard
 import com.lagradost.cloudstream3.utils.UIHelper.popCurrentPage
 import com.lagradost.cloudstream3.utils.UIHelper.populateChips
 import com.lagradost.cloudstream3.utils.UIHelper.popupMenuNoIconsAndNoStringRes
+import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import com.lagradost.cloudstream3.utils.VideoDownloadHelper
 import com.lagradost.cloudstream3.utils.getImageFromDrawable
 import com.lagradost.cloudstream3.utils.setText
@@ -425,6 +426,10 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                     ) {
                         player.handleEvent(CSPlayerEvent.Pause)
                     }
+                }
+
+                if (viewModel.isInReviews()) {
+                    binding?.reviewsFab?.alpha = scrollY / 50.toPx.toFloat()
                 }
             })
         }
@@ -796,6 +801,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                             resultDescription.isVisible = 0 == pos
                             resultDetailsholder.isVisible = 0 == pos
                             binding?.resultBookmarkFab?.isVisible = 0 == pos
+                            binding?.reviewsFab?.isVisible = 1 == pos
                             resultReviewsholder.isVisible = 1 == pos
                         }
                     }
@@ -840,6 +846,11 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                         resultBookmarkFab.apply {
                             isVisible = true
                             extend()
+                        }
+
+                        reviewsFab.setOnClickListener {
+                            resultReviews.smoothScrollToPosition(0)
+                            resultScroll.smoothScrollTo(0, 0)
                         }
                     }
                 }

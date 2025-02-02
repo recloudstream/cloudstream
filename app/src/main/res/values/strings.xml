@@ -838,4 +838,5 @@
     <string name="overall_rating_format">Overall %s</string>
     <string name="hide_spoiler">Hide Spoiler</string>
     <string name="reveal_spoiler">Reveal Spoiler</string>
+    <string name="reviews_to_top">To top</string>
 </resources>

@@ -197,7 +197,8 @@ class ScrollableRecyclerView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null
 ) : RecyclerView(context, attrs) {
 
-    var loadMoreListener: () -> Unit = {}
+    var loadMoreListener: (() -> Unit)? = null
+    private var isLoading = false
 
     private val layoutManager
         get() = super.layoutManager as? LinearLayoutManager
@@ -205,26 +206,30 @@ class ScrollableRecyclerView @JvmOverloads constructor(
     override fun onScrollStateChanged(state: Int) {
         super.onScrollStateChanged(state)
 
+        if (isLoading) return
+
         val lm = layoutManager ?: return
         val totalItemCount = adapter?.itemCount ?: return
         val lastVisibleItemPosition = lm.findLastVisibleItemPosition()
 
-        if (state == SCROLL_STATE_IDLE && lastVisibleItemPosition == totalItemCount - 1) {
-            loadMoreListener()
+        if (state == SCROLL_STATE_IDLE && lastVisibleItemPosition >= totalItemCount - 1) {
+            isLoading = true
+            loadMoreListener?.invoke()
         }
     }
 
     override fun onScrolled(dx: Int, dy: Int) {
         super.onScrolled(dx, dy)
 
-        if (dy <= 0) return // Only trigger when scrolling down
+        if (dy <= 0 || isLoading) return // Only trigger when scrolling down and not already loading
 
         val lm = layoutManager ?: return
         val totalItemCount = adapter?.itemCount ?: 0
         val lastVisibleItemPosition = lm.findLastVisibleItemPosition()
 
-        if (lastVisibleItemPosition == totalItemCount - 1 && !canScrollVertically(1)) {
-            loadMoreListener()
+        if (lastVisibleItemPosition >= totalItemCount - 1) {
+            isLoading = true
+            loadMoreListener?.invoke()
         }
     }
 }

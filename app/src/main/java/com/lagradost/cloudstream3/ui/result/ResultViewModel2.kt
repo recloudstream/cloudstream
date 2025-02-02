@@ -547,6 +547,10 @@ class ResultViewModel2 : ViewModel() {
         }
     }
 
+    fun isInReviews(): Boolean {
+        return currentTabIndex.value == 1
+    }
+
     companion object {
         const val TAG = "RVM2"
         //private const val EPISODE_RANGE_SIZE = 20
