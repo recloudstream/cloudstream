@@ -59,7 +59,7 @@ class ReviewAdapter :
                 reviewTime.text = card.reviewDate
                 reviewAuthor.text = card.username
 
-                reviewImage.loadImage(card.avatarUrl)
+                reviewImage.loadImage(card.avatarUrl, card.avatarHeaders)
 
                 reviewTags.apply {
                     removeAllViews()

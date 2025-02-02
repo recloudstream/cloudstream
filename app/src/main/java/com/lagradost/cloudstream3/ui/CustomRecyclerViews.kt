@@ -21,7 +21,7 @@ class GrdLayoutManager(val context: Context, spanCount: Int) :
             val fromPos = getPosition(focused)
             val nextPos = getNextViewPos(fromPos, focusDirection)
             findViewByPosition(nextPos)
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             null
         }
     }
@@ -52,7 +52,7 @@ class GrdLayoutManager(val context: Context, spanCount: Int) :
             val fromPos = getPosition(focused)
             val nextPos = getNextViewPos(fromPos, direction)
             findViewByPosition(nextPos)
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             null
         }
     }
@@ -193,35 +193,38 @@ class MaxRecyclerView(ctx: Context, attrs: AttributeSet) : RecyclerView(ctx, att
     }
 }
 
-class ScrollableRecyclerView(context: Context, attrs: AttributeSet?) :
-    RecyclerView(context, attrs) {
+class ScrollableRecyclerView @JvmOverloads constructor(
+    context: Context, attrs: AttributeSet? = null
+) : RecyclerView(context, attrs) {
 
     var loadMoreListener: () -> Unit = {}
+
+    private val layoutManager
+        get() = super.layoutManager as? LinearLayoutManager
 
     override fun onScrollStateChanged(state: Int) {
         super.onScrollStateChanged(state)
 
-        val lm = layoutManager as LinearLayoutManager
-        val totalItemCount = adapter?.itemCount
+        val lm = layoutManager ?: return
+        val totalItemCount = adapter?.itemCount ?: return
         val lastVisibleItemPosition = lm.findLastVisibleItemPosition()
-        val visibleItemCount = childCount
 
-        if (totalItemCount != null) {
-            if (state == SCROLL_STATE_IDLE
-                && lastVisibleItemPosition == totalItemCount - 1
-                && visibleItemCount > 0) {
-                loadMoreListener()
-            }
+        if (state == SCROLL_STATE_IDLE && lastVisibleItemPosition == totalItemCount - 1) {
+            loadMoreListener()
         }
-
     }
 
     override fun onScrolled(dx: Int, dy: Int) {
         super.onScrolled(dx, dy)
-        if (dy > 0 && !canScrollVertically(1)) {
-            if (layoutManager is LinearLayoutManager && (layoutManager as LinearLayoutManager).findLastVisibleItemPosition() == (adapter?.itemCount ?: 0) - 1) {
-                loadMoreListener()
-            }
+
+        if (dy <= 0) return // Only trigger when scrolling down
+
+        val lm = layoutManager ?: return
+        val totalItemCount = adapter?.itemCount ?: 0
+        val lastVisibleItemPosition = lm.findLastVisibleItemPosition()
+
+        if (lastVisibleItemPosition == totalItemCount - 1 && !canScrollVertically(1)) {
+            loadMoreListener()
         }
     }
 }

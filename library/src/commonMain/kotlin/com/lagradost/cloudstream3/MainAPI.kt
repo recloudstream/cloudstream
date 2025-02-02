@@ -544,7 +544,10 @@ abstract class MainAPI {
                 reviewDate = "2025-01-31"
                 avatarUrl =
                     "https://avatars.githubusercontent.com/u/142361265?v=4"
-                rating = (1..10).random()
+                avatarHeaders = null
+                rating = if (kotlin.random.Random.nextBoolean()) {
+                    (1..10).random()
+                } else String.format("%.1f", kotlin.random.Random.nextDouble(1.0, 10.0)).toFloat()
                 ratings = null
             }
             reviews.add(review)
@@ -987,8 +990,9 @@ data class UserReview internal constructor(
     var username: String? = null,
     var reviewDate: String? = null,
     var avatarUrl: String? = null,
-    var rating: Int? = null,
-    var ratings: List<Pair<Int, String>>? = null,
+    var avatarHeaders: Map<String, String>? = null,
+    var rating: Number? = null,
+    var ratings: List<Pair<Number, String>>? = null,
 ) {
     fun new(initializer: UserReview.() -> Unit = {}): UserReview {
         return this@UserReview.apply(initializer)

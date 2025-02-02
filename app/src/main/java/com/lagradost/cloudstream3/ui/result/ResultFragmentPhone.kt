@@ -22,7 +22,6 @@ import androidx.core.view.isVisible
 import androidx.core.widget.NestedScrollView
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.GridLayoutManager
 import com.discord.panels.OverlappingPanelsLayout
 import com.discord.panels.PanelState
 import com.discord.panels.PanelsChildGestureRegionObserver
@@ -738,7 +737,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
 
                     resultTabs.removeAllTabs()
                     resultTabs.isVisible = false
-                    if (api?.hasReviews == true ) {
+                    if (api?.hasReviews == true) {
                         resultTabs.isVisible = true
                         resultTabs.addTab(resultTabs.newTab().setText(R.string.details).setId(0))
                         resultTabs.addTab(
@@ -756,8 +755,9 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                     val reviewAdapter = ReviewAdapter()
 
                     resultReviews.adapter = reviewAdapter
-                    resultReviews.layoutManager = GridLayoutManager(context, 1)
                     resultReviews.loadMoreListener = { viewModel.loadMoreReviews() }
+
+                    resultReviews.setLinearListLayout(isHorizontal = false)
 
                     observe(viewModel.reviews) { reviews ->
                         when (reviews) {
