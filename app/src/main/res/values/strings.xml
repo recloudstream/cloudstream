@@ -839,4 +839,6 @@
     <string name="hide_spoiler">Hide Spoiler</string>
     <string name="reveal_spoiler">Reveal Spoiler</string>
     <string name="reviews_to_top">To top</string>
+    <string name="positive_review">Positive</string>
+    <string name="negative_review">Negative</string>
 </resources>

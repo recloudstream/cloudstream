@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipDrawable
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.RatingFormat
 import com.lagradost.cloudstream3.UserReview
 import com.lagradost.cloudstream3.databinding.ResultReviewBinding
 import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
@@ -108,7 +109,18 @@ class ReviewAdapter :
                         chip.setChipDrawable(chipDrawable)
                         chip.text = context.getString(
                             R.string.overall_rating_format
-                        ).format("$rating★")
+                        ).format(
+                            when (card.ratingFormat) {
+                                RatingFormat.STAR -> "$rating★"
+                                RatingFormat.OUT_OF_10 -> "$rating/10"
+                                RatingFormat.OUT_OF_100 -> "$rating/100"
+                                RatingFormat.PERCENT -> "${rating.toInt()}%"
+                                RatingFormat.POSITIVE_NEGATIVE -> {
+                                    if (rating.toInt() > 0) localContext.getString(R.string.positive_review)
+                                    else localContext.getString(R.string.negative_review)
+                                }
+                            }
+                        )
                         chip.isChecked = false
                         chip.isCheckable = false
                         chip.isFocusable = false
@@ -128,7 +140,16 @@ class ReviewAdapter :
                             R.style.ChipReview
                         )
                         chip.setChipDrawable(chipDrawable)
-                        chip.text = "$category $rating★"
+                        chip.text = when (card.ratingFormat) {
+                            RatingFormat.STAR -> "$category $rating★"
+                            RatingFormat.OUT_OF_10 -> "$category $rating/10"
+                            RatingFormat.OUT_OF_100 -> "$category $rating/100"
+                            RatingFormat.PERCENT -> "$category ${rating.toInt()}%"
+                            RatingFormat.POSITIVE_NEGATIVE -> {
+                                if (rating.toInt() > 0) "$category ${localContext.getString(R.string.positive_review)}"
+                                else "$category ${localContext.getString(R.string.negative_review)}"
+                            }
+                        }
                         chip.isChecked = false
                         chip.isCheckable = false
                         chip.isFocusable = false

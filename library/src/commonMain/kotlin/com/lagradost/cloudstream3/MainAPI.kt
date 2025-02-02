@@ -544,6 +544,8 @@ abstract class MainAPI {
                     (1..10).random()
                 } else String.format("%.1f", kotlin.random.Random.nextDouble(1.0, 10.0)).toFloat()
 
+                ratingFormat = RatingFormat.STAR
+
                 isSpoiler = kotlin.random.Random.nextBoolean()
 
                 addRatingCategory(rating, "Testing1")
@@ -984,6 +986,47 @@ fun MainAPI.updateUrl(url: String): String {
     }
 }
 
+/**
+ * Enum class representing different rating formats.
+ *
+ * This enum defines various formats for representing ratings, including:
+ * - [STAR] for a star rating (e.g., ★)
+ * - [OUT_OF_10] for a rating out of 10 (e.g., 8/10)
+ * - [OUT_OF_100] for a rating out of 100 (e.g., 85/100)
+ * - [POSITIVE_NEGATIVE] for a binary positive or negative rating (e.g., Positive, Negative)
+ * - [PERCENT] for a percentage-based rating (e.g., 80%)
+ */
+@Prerelease
+enum class RatingFormat {
+    STAR,
+    OUT_OF_10,
+    OUT_OF_100,
+    POSITIVE_NEGATIVE,
+    PERCENT
+}
+
+/**
+ * Data class representing a user's review.
+ *
+ * This class contains details about a user's review, including their rating,
+ * review content, and metadata such as username, avatar, and date.
+ * It also supports different types of rating formats via the [ratingFormat] property.
+ *
+ * The constructor for this class can not be called directly, you must use [addUserReview].
+ *
+ * @param review The content of the review text.
+ * @param reviewTitle The title of the review.
+ * @param username The username of the reviewer.
+ * @param reviewDate The timestamp of when the review was submitted.
+ * @param avatarUrl The URL for the reviewer's avatar image.
+ * @param avatarHeaders The headers for the avatar URL.
+ * @param isSpoiler Whether the review contains spoilers.
+ * @param rating The overall rating of the review.
+ * @param ratings A list of additional ratings for specific categories (e.g., acting, story, etc.).
+ * @param ratingFormat The format used for displaying the rating (defaults to [RatingFormat.STAR]).
+ *
+ * @see addUserReview
+ */
 @Prerelease
 @ConsistentCopyVisibility
 data class UserReview internal constructor(
@@ -996,15 +1039,26 @@ data class UserReview internal constructor(
     var isSpoiler: Boolean = false,
     var rating: Number? = null,
     var ratings: List<Pair<Number, String>>? = null,
+    var ratingFormat: RatingFormat = RatingFormat.STAR,
 ) {
+    /**
+     * @param initializer A lambda function that will be applied to the [UserReview] object.
+     * @return The current [UserReview] instance.
+     *
+     * @internal extensions should not use this method, they should only use [addUserReview]
+     * @see addUserReview
+     */
     fun new(initializer: UserReview.() -> Unit = {}): UserReview {
         return this@UserReview.apply(initializer)
     }
 
-    fun addDate(
-        date: String?,
-        format: String = "yyyy-MM-dd"
-    ) {
+    /**
+     * Adds a review date to the [UserReview] object by parsing a string date.
+     *
+     * @param date The date string to parse.
+     * @param format The format of the date string (default is "yyyy-MM-dd").
+     */
+    fun addDate(date: String?, format: String = "yyyy-MM-dd") {
         try {
             this@UserReview.reviewDate =
                 SimpleDateFormat(format).parse(date ?: return)?.time
@@ -1013,20 +1067,39 @@ data class UserReview internal constructor(
         }
     }
 
+    /**
+     * Adds a review date to the [UserReview] object directly from a [Date] object.
+     *
+     * @param date The [Date] object to use for the review date.
+     */
     fun addDate(date: Date?) {
         this@UserReview.reviewDate = date?.time
     }
 
-    fun addRatingCategory(
-        rating: Number,
-        category: String
-    ) {
+    /**
+     * Adds a rating for a specific category to the [UserReview].
+     *
+     * @param rating The rating value for the category (e.g., a numeric rating).
+     * @param category The name of the category being rated (e.g., "Acting", "Story").
+     */
+    fun addRatingCategory(rating: Number, category: String) {
         val updatedRatings = this@UserReview.ratings?.toMutableList() ?: mutableListOf()
         updatedRatings.add(Pair(rating, category))
         this@UserReview.ratings = updatedRatings
     }
 }
 
+/**
+ * Extension function to add a new user review via the [MainAPI].
+ *
+ * This function creates a new instance of [UserReview] and allows for initialization
+ * of its properties through the provided [initializer] block.
+ *
+ * @param initializer A lambda function to apply to the new [UserReview] instance.
+ * @return A new [UserReview] object with the provided initializer applied.
+ *
+ * @see [UserReview] for more information on its properties and usage.
+ */
 @Prerelease
 fun MainAPI.addUserReview(
     initializer: UserReview.() -> Unit = {}
