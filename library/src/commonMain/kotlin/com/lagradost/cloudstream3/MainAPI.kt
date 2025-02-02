@@ -520,12 +520,12 @@ abstract class MainAPI {
     }
 
     /*open val hasReviews: Boolean = false
-    open suspend fun loadReviews(url: String, page: Int): List<UserReview> {
+    open suspend fun loadReviews(data: String, page: Int): List<UserReview> {
         throw NotImplementedError()
     }*/
 
     open val hasReviews: Boolean = true
-    open suspend fun loadReviews(url: String, page: Int): List<UserReview> {
+    open suspend fun loadReviews(data: String, page: Int): List<UserReview> {
         val reviews = mutableListOf<UserReview>()
 
         for (i in 1..10) {
@@ -1402,7 +1402,9 @@ data class TrailerData(
     // var subtitles: List<SubtitleFile> = emptyList(),
 )
 
-/** Abstract interface of LoadResponse responses
+/**
+ * Abstract interface of LoadResponse responses
+ *
  * @property name Title of the media, appears on result page.
  * @property url Url of the media.
  * @property apiName Plugin name, appears on result page.
@@ -1421,7 +1423,8 @@ data class TrailerData(
  * @property posterHeaders headers map used by network request to get the poster.
  * @property backgroundPosterUrl Url of the media background poster.
  * @property contentRating content rating of the media, appears on result page.
- * */
+ * @property reviewsData JSON reviews data or API URL for [MainAPI.loadReviews]; defaults to [url] if not provided.
+ */
 interface LoadResponse {
     var name: String
     var url: String
@@ -1442,6 +1445,7 @@ interface LoadResponse {
     var posterHeaders: Map<String, String>?
     var backgroundPosterUrl: String?
     var contentRating: String?
+    var reviewsData: String?
 
     companion object {
         var malIdPrefix = "" //malApi.idPrefix
@@ -1868,6 +1872,7 @@ constructor(
     override var posterHeaders: Map<String, String>? = null,
     override var backgroundPosterUrl: String? = null,
     override var contentRating: String? = null,
+    override var reviewsData: String? = null,
 ) : LoadResponse {
     /**
      * Secondary constructor for backwards compatibility without contentRating.
@@ -1979,6 +1984,7 @@ constructor(
     override var seasonNames: List<SeasonData>? = null,
     override var backgroundPosterUrl: String? = null,
     override var contentRating: String? = null,
+    override var reviewsData: String? = null,
 ) : LoadResponse, EpisodeResponse {
     override fun getLatestEpisodes(): Map<DubStatus, Int?> {
         return episodes.map { (status, episodes) ->
@@ -2124,6 +2130,7 @@ constructor(
     override var posterHeaders: Map<String, String>? = null,
     override var backgroundPosterUrl: String? = null,
     override var contentRating: String? = null,
+    override var reviewsData: String? = null,
 ) : LoadResponse {
     /**
      * Secondary constructor for backwards compatibility without contentRating.
@@ -2204,6 +2211,7 @@ constructor(
     override var posterHeaders: Map<String, String>? = null,
     override var backgroundPosterUrl: String? = null,
     override var contentRating: String? = null,
+    override var reviewsData: String? = null,
 ) : LoadResponse {
     /**
      * Secondary constructor for backwards compatibility without contentRating.
@@ -2427,6 +2435,7 @@ constructor(
     override var seasonNames: List<SeasonData>? = null,
     override var backgroundPosterUrl: String? = null,
     override var contentRating: String? = null,
+    override var reviewsData: String? = null,
 ) : LoadResponse, EpisodeResponse {
     override fun getLatestEpisodes(): Map<DubStatus, Int?> {
         val maxSeason =

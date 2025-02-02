@@ -196,9 +196,9 @@ class APIRepository(val api: MainAPI) {
         }
     }
 
-    suspend fun loadReviews(url: String, page: Int): Resource<List<UserReview>> {
+    suspend fun loadReviews(data: String, page: Int): Resource<List<UserReview>> {
         return safeApiCall {
-            api.loadReviews(url, page)
+            api.loadReviews(data, page)
         }
     }
 }

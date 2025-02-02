@@ -506,7 +506,7 @@ class ResultViewModel2 : ViewModel() {
     }
 
     private val loadMoreReviewsMutex = Mutex()
-    private fun loadMoreReviews(url: String) {
+    private fun loadMoreReviews(data: String) {
         viewModelScope.launch {
             if (loadMoreReviewsMutex.isLocked) return@launch
             loadMoreReviewsMutex.withLock {
@@ -515,9 +515,9 @@ class ResultViewModel2 : ViewModel() {
                     reviews.postValue(Resource.Loading())
                 }
                 val repo = currentRepo ?: return@launch
-                when (val data = repo.loadReviews(url, loadPage)) {
+                when (val response = repo.loadReviews(data, loadPage)) {
                     is Resource.Success -> {
-                        val moreReviews = data.value
+                        val moreReviews = response.value
                         currentReviews.addAll(moreReviews)
 
                         reviews.postValue(Resource.Success(currentReviews))
@@ -534,7 +534,10 @@ class ResultViewModel2 : ViewModel() {
     fun loadMoreReviews(verify: Boolean = true) = viewModelScope.launch {
         loadMutex.withLock {
             if (verify && currentTabIndex.value == 0) return@launch
-            loadMoreReviews(currentResponse?.url ?: return@launch)
+            loadMoreReviews(
+                currentResponse?.reviewsData ?:
+                currentResponse?.url ?: return@launch
+            )
         }
     }
 
