@@ -515,7 +515,7 @@ class ResultViewModel2 : ViewModel() {
                     reviews.postValue(Resource.Loading())
                 }
                 val repo = currentRepo ?: return@launch
-                when (val data = repo.loadReviews(url, loadPage, false)) {
+                when (val data = repo.loadReviews(url, loadPage)) {
                     is Resource.Success -> {
                         val moreReviews = data.value
                         currentReviews.addAll(moreReviews)

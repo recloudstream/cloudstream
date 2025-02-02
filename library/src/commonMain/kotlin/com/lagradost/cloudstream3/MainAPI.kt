@@ -520,24 +520,16 @@ abstract class MainAPI {
     }
 
     /*open val hasReviews: Boolean = false
-    open suspend fun loadReviews(
-        url: String,
-        page: Int,
-        showSpoilers: Boolean = false
-    ): List<UserReview> {
+    open suspend fun loadReviews(url: String, page: Int): List<UserReview> {
         throw NotImplementedError()
     }*/
 
     open val hasReviews: Boolean = true
-    open suspend fun loadReviews(
-        url: String,
-        page: Int,
-        showSpoilers: Boolean = false
-    ): List<UserReview> {
+    open suspend fun loadReviews(url: String, page: Int): List<UserReview> {
         val reviews = mutableListOf<UserReview>()
 
         for (i in 1..100) {
-            val review = newUserReview {
+            val review = addUserReview {
                 review = "Review content #$i"
                 reviewTitle = "Title #$i"
                 username = "User $i"
@@ -551,6 +543,8 @@ abstract class MainAPI {
                 val rating = if (kotlin.random.Random.nextBoolean()) {
                     (1..10).random()
                 } else String.format("%.1f", kotlin.random.Random.nextDouble(1.0, 10.0)).toFloat()
+
+                isSpoiler = kotlin.random.Random.nextBoolean()
 
                 addRatingCategory(rating, "Testing1")
                 addRatingCategory(rating, "Testing2")
@@ -999,6 +993,7 @@ data class UserReview internal constructor(
     var reviewDate: Long? = null,
     var avatarUrl: String? = null,
     var avatarHeaders: Map<String, String>? = null,
+    var isSpoiler: Boolean = false,
     var rating: Number? = null,
     var ratings: List<Pair<Number, String>>? = null,
 ) {
@@ -1033,7 +1028,7 @@ data class UserReview internal constructor(
 }
 
 @Prerelease
-fun MainAPI.newUserReview(
+fun MainAPI.addUserReview(
     initializer: UserReview.() -> Unit = {}
 ): UserReview = UserReview().apply(initializer)
 
