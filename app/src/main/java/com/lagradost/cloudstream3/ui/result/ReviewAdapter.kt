@@ -44,7 +44,7 @@ class ReviewAdapter :
             binding.apply {
                 setReviewText(card)
                 setReviewTitle(card)
-                handleSpoiler(card, context)
+                handleSpoiler(card)
                 setReviewDate(card)
                 setReviewAuthor(card)
                 loadReviewAvatar(card)
@@ -64,10 +64,7 @@ class ReviewAdapter :
             reviewTitle.isVisible = reviewTitle.text.isNotEmpty()
         }
 
-        private fun ResultReviewBinding.handleSpoiler(
-            card: UserReview,
-            context: Context
-        ) {
+        private fun ResultReviewBinding.handleSpoiler(card: UserReview) {
             if (card.isSpoiler) {
                 var isSpoilerRevealed = false
                 reviewBody.isVisible = false
@@ -78,11 +75,9 @@ class ReviewAdapter :
                     if (isSpoilerRevealed) {
                         reviewBody.isVisible = true
                         reviewTitle.isVisible = true
-                        spoilerText.text = context.getString(R.string.hide_spoiler)
                     } else {
                         reviewBody.isVisible = false
                         reviewTitle.isVisible = false
-                        spoilerText.text = context.getString(R.string.reveal_spoiler)
                     }
                 }
             }

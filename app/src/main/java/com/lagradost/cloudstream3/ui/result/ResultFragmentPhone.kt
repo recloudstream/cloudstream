@@ -789,6 +789,14 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                         override fun onTabSelected(tab: TabLayout.Tab?) {
                             Log.i("ResultFragment", "addOnTabSelectedListener ${resultTabs.selectedTabPosition}")
                             viewModel.switchTab(tab?.id, resultTabs.selectedTabPosition)
+
+                            tab?.id?.let { tabId ->
+                                val observer = PanelsChildGestureRegionObserver.Provider.get()
+                                when (tabId) {
+                                    0 -> observer.unregister(resultReviews)
+                                    1 -> observer.register(resultReviews)
+                                }
+                            }
                         }
 
                         override fun onTabUnselected(tab: TabLayout.Tab?) {}
