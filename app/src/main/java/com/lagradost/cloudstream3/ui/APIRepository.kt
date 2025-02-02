@@ -9,10 +9,10 @@ import com.lagradost.cloudstream3.LoadResponse
 import com.lagradost.cloudstream3.MainAPI
 import com.lagradost.cloudstream3.MainActivity.Companion.afterPluginsLoadedEvent
 import com.lagradost.cloudstream3.MainPageRequest
+import com.lagradost.cloudstream3.ReviewResponse
 import com.lagradost.cloudstream3.SearchResponse
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.TvType
-import com.lagradost.cloudstream3.UserReview
 import com.lagradost.cloudstream3.fixUrl
 import com.lagradost.cloudstream3.mvvm.Resource
 import com.lagradost.cloudstream3.mvvm.logError
@@ -196,7 +196,7 @@ class APIRepository(val api: MainAPI) {
         }
     }
 
-    suspend fun loadReviews(data: String, page: Int): Resource<List<UserReview>> {
+    suspend fun loadReviews(data: String, page: Int): Resource<List<ReviewResponse>> {
         return safeApiCall {
             api.loadReviews(data, page)
         }

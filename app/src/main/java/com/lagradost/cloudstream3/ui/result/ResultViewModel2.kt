@@ -14,6 +14,7 @@ import androidx.lifecycle.viewModelScope
 import com.lagradost.cloudstream3.*
 import com.lagradost.cloudstream3.APIHolder.apis
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
+import com.lagradost.cloudstream3.APIHolder.getApiFromUrlNull
 import com.lagradost.cloudstream3.APIHolder.unixTime
 import com.lagradost.cloudstream3.APIHolder.unixTimeMS
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
@@ -496,10 +497,10 @@ class ResultViewModel2 : ViewModel() {
         MutableLiveData<Int>(0)
     }
 
-    val reviews: MutableLiveData<Resource<ArrayList<UserReview>>> by lazy {
-        MutableLiveData<Resource<ArrayList<UserReview>>>()
+    val reviews: MutableLiveData<Resource<ArrayList<ReviewResponse>>> by lazy {
+        MutableLiveData<Resource<ArrayList<ReviewResponse>>>()
     }
-    private var currentReviews: ArrayList<UserReview> = arrayListOf()
+    private var currentReviews: ArrayList<ReviewResponse> = arrayListOf()
 
     private val reviewPage: MutableLiveData<Int> by lazy {
         MutableLiveData<Int>(0)
@@ -2529,6 +2530,7 @@ class ResultViewModel2 : ViewModel() {
         override var posterHeaders: Map<String, String>? = null,
         override var backgroundPosterUrl: String? = null,
         override var contentRating: String? = null,
+        override var reviewsData: String? = null,
         val id: Int?,
     ) : LoadResponse
 
@@ -2537,7 +2539,7 @@ class ResultViewModel2 : ViewModel() {
         _page.postValue(Resource.Loading(url))
         _episodes.postValue(Resource.Loading())
         val api =
-            APIHolder.getApiFromNameNull(searchResponse.apiName) ?: APIHolder.getApiFromUrlNull(
+            getApiFromNameNull(searchResponse.apiName) ?: getApiFromUrlNull(
                 searchResponse.url
             ) ?: APIRepository.noneApi
         val repo = APIRepository(api)
@@ -2588,7 +2590,7 @@ class ResultViewModel2 : ViewModel() {
             currentShowFillers = showFillers
 
             // set api
-            val api = APIHolder.getApiFromNameNull(apiName) ?: APIHolder.getApiFromUrlNull(url)
+            val api = getApiFromNameNull(apiName) ?: getApiFromUrlNull(url)
             if (api == null) {
                 _page.postValue(
                     Resource.Failure(

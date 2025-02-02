@@ -12,7 +12,7 @@ import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipDrawable
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.RatingFormat
-import com.lagradost.cloudstream3.UserReview
+import com.lagradost.cloudstream3.ReviewResponse
 import com.lagradost.cloudstream3.databinding.ResultReviewBinding
 import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
@@ -21,7 +21,7 @@ import java.util.Date
 import java.util.Locale
 
 class ReviewAdapter :
-    ListAdapter<UserReview, ReviewAdapter.ReviewAdapterHolder>(DiffCallback()) {
+    ListAdapter<ReviewResponse, ReviewAdapter.ReviewAdapterHolder>(DiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ReviewAdapterHolder {
         val binding =
@@ -38,7 +38,7 @@ class ReviewAdapter :
         private val binding: ResultReviewBinding
     ) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(card: UserReview) {
+        fun bind(card: ReviewResponse) {
             val context = binding.root.context ?: return
 
             binding.apply {
@@ -53,18 +53,18 @@ class ReviewAdapter :
             }
         }
 
-        private fun ResultReviewBinding.setReviewText(card: UserReview) {
+        private fun ResultReviewBinding.setReviewText(card: ReviewResponse) {
             reviewBody.text = card.review?.let {
                 if (it.length > 300) it.take(300) + "..." else it
             } ?: ""
         }
 
-        private fun ResultReviewBinding.setReviewTitle(card: UserReview) {
+        private fun ResultReviewBinding.setReviewTitle(card: ReviewResponse) {
             reviewTitle.text = card.reviewTitle ?: ""
             reviewTitle.isVisible = reviewTitle.text.isNotEmpty()
         }
 
-        private fun ResultReviewBinding.handleSpoiler(card: UserReview) {
+        private fun ResultReviewBinding.handleSpoiler(card: ReviewResponse) {
             if (card.isSpoiler) {
                 var isSpoilerRevealed = false
                 reviewBody.isVisible = false
@@ -83,7 +83,7 @@ class ReviewAdapter :
             }
         }
 
-        private fun ResultReviewBinding.setReviewDate(card: UserReview) {
+        private fun ResultReviewBinding.setReviewDate(card: ReviewResponse) {
             card.reviewDate?.let {
                 reviewTime.text = SimpleDateFormat.getDateInstance(
                     SimpleDateFormat.LONG,
@@ -92,16 +92,16 @@ class ReviewAdapter :
             }
         }
 
-        private fun ResultReviewBinding.setReviewAuthor(card: UserReview) {
+        private fun ResultReviewBinding.setReviewAuthor(card: ReviewResponse) {
             reviewAuthor.text = card.username
         }
 
-        private fun ResultReviewBinding.loadReviewAvatar(card: UserReview) {
+        private fun ResultReviewBinding.loadReviewAvatar(card: ReviewResponse) {
             reviewImage.loadImage(card.avatarUrl, card.avatarHeaders)
         }
 
         private fun ResultReviewBinding.setReviewTags(
-            card: UserReview,
+            card: ReviewResponse,
             context: Context
         ) {
             reviewTags.removeAllViews()
@@ -164,7 +164,7 @@ class ReviewAdapter :
         }
 
         private fun ResultReviewBinding.handleReviewClick(
-            card: UserReview,
+            card: ReviewResponse,
             context: Context
         ) {
             reviewBody.setOnClickListener {
@@ -181,15 +181,15 @@ class ReviewAdapter :
         }
     }
 
-    class DiffCallback : DiffUtil.ItemCallback<UserReview>() {
+    class DiffCallback : DiffUtil.ItemCallback<ReviewResponse>() {
         override fun areItemsTheSame(
-            oldItem: UserReview,
-            newItem: UserReview
+            oldItem: ReviewResponse,
+            newItem: ReviewResponse
         ): Boolean = oldItem == newItem
 
         override fun areContentsTheSame(
-            oldItem: UserReview,
-            newItem: UserReview
+            oldItem: ReviewResponse,
+            newItem: ReviewResponse
         ): Boolean = oldItem == newItem
     }
 }

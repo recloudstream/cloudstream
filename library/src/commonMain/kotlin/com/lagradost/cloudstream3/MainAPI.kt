@@ -520,16 +520,16 @@ abstract class MainAPI {
     }
 
     /*open val hasReviews: Boolean = false
-    open suspend fun loadReviews(data: String, page: Int): List<UserReview> {
+    open suspend fun loadReviews(data: String, page: Int): List<ReviewResponse> {
         throw NotImplementedError()
     }*/
 
     open val hasReviews: Boolean = true
-    open suspend fun loadReviews(data: String, page: Int): List<UserReview> {
-        val reviews = mutableListOf<UserReview>()
+    open suspend fun loadReviews(data: String, page: Int): List<ReviewResponse> {
+        val reviews = mutableListOf<ReviewResponse>()
 
         for (i in 1..10) {
-            val review = addUserReview {
+            val review = newReviewResponse {
                 review = "Review content #$i"
                 reviewTitle = "Title #$i"
                 username = "User $i"
@@ -1012,7 +1012,7 @@ enum class RatingFormat {
  * review content, and metadata such as username, avatar, and date.
  * It also supports different types of rating formats via the [ratingFormat] property.
  *
- * The constructor for this class can not be called directly, you must use [addUserReview].
+ * The constructor for this class can not be called directly, you must use [newReviewResponse].
  *
  * @param review The content of the review text.
  * @param reviewTitle The title of the review.
@@ -1025,11 +1025,11 @@ enum class RatingFormat {
  * @param ratings A list of additional ratings for specific categories (e.g., acting, story, etc.).
  * @param ratingFormat The format used for displaying the rating (defaults to [RatingFormat.STAR]).
  *
- * @see addUserReview
+ * @see newReviewResponse
  */
 @Prerelease
 @ConsistentCopyVisibility
-data class UserReview internal constructor(
+data class ReviewResponse internal constructor(
     var review: String? = null,
     var reviewTitle: String? = null,
     var username: String? = null,
@@ -1042,25 +1042,25 @@ data class UserReview internal constructor(
     var ratingFormat: RatingFormat = RatingFormat.STAR,
 ) {
     /**
-     * @param initializer A lambda function that will be applied to the [UserReview] object.
-     * @return The current [UserReview] instance.
+     * @param initializer A lambda function that will be applied to the [ReviewResponse] object.
+     * @return The current [ReviewResponse] instance.
      *
-     * @internal extensions should not use this method, they should only use [addUserReview]
-     * @see addUserReview
+     * @internal extensions should not use this method, they should only use [newReviewResponse]
+     * @see newReviewResponse
      */
-    fun new(initializer: UserReview.() -> Unit = {}): UserReview {
-        return this@UserReview.apply(initializer)
+    fun new(initializer: ReviewResponse.() -> Unit = {}): ReviewResponse {
+        return this@ReviewResponse.apply(initializer)
     }
 
     /**
-     * Adds a review date to the [UserReview] object by parsing a string date.
+     * Adds a review date to the [ReviewResponse] object by parsing a string date.
      *
      * @param date The date string to parse.
      * @param format The format of the date string (default is "yyyy-MM-dd").
      */
     fun addDate(date: String?, format: String = "yyyy-MM-dd") {
         try {
-            this@UserReview.reviewDate =
+            this@ReviewResponse.reviewDate =
                 SimpleDateFormat(format).parse(date ?: return)?.time
         } catch (e: Exception) {
             logError(e)
@@ -1068,42 +1068,42 @@ data class UserReview internal constructor(
     }
 
     /**
-     * Adds a review date to the [UserReview] object directly from a [Date] object.
+     * Adds a review date to the [ReviewResponse] object directly from a [Date] object.
      *
      * @param date The [Date] object to use for the review date.
      */
     fun addDate(date: Date?) {
-        this@UserReview.reviewDate = date?.time
+        this@ReviewResponse.reviewDate = date?.time
     }
 
     /**
-     * Adds a rating for a specific category to the [UserReview].
+     * Adds a rating for a specific category to the [ReviewResponse].
      *
      * @param rating The rating value for the category (e.g., a numeric rating).
      * @param category The name of the category being rated (e.g., "Acting", "Story").
      */
     fun addRatingCategory(rating: Number, category: String) {
-        val updatedRatings = this@UserReview.ratings?.toMutableList() ?: mutableListOf()
+        val updatedRatings = this@ReviewResponse.ratings?.toMutableList() ?: mutableListOf()
         updatedRatings.add(Pair(rating, category))
-        this@UserReview.ratings = updatedRatings
+        this@ReviewResponse.ratings = updatedRatings
     }
 }
 
 /**
  * Extension function to add a new user review via the [MainAPI].
  *
- * This function creates a new instance of [UserReview] and allows for initialization
+ * This function creates a new instance of [ReviewResponse] and allows for initialization
  * of its properties through the provided [initializer] block.
  *
- * @param initializer A lambda function to apply to the new [UserReview] instance.
- * @return A new [UserReview] object with the provided initializer applied.
+ * @param initializer A lambda function to apply to the new [ReviewResponse] instance.
+ * @return A new [ReviewResponse] object with the provided initializer applied.
  *
- * @see [UserReview] for more information on its properties and usage.
+ * @see [ReviewResponse] for more information on its properties and usage.
  */
 @Prerelease
-fun MainAPI.addUserReview(
-    initializer: UserReview.() -> Unit = {}
-): UserReview = UserReview().apply(initializer)
+fun MainAPI.newReviewResponse(
+    initializer: ReviewResponse.() -> Unit = {}
+): ReviewResponse = ReviewResponse().apply(initializer)
 
 /** Abstract interface of SearchResponse. */
 interface SearchResponse {
