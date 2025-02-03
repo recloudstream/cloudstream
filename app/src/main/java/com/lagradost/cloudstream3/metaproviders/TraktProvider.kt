@@ -201,7 +201,7 @@ open class TraktProvider : MainAPI() {
                 this.backgroundPosterUrl = getOriginalWidthImageUrl(backDropUrl)
                 this.contentRating = mediaDetails.certification
                 this.reviewsData =
-                    getApi("$traktApiUrl/$moviesOrShows/${mediaDetails?.ids?.slug}/comments/all")
+                    getApi("$traktApiUrl/$moviesOrShows/${mediaDetails?.ids?.slug}/comments/newest")
                 addTrailer(mediaDetails.trailer)
                 addImdbId(mediaDetails.ids?.imdb)
                 addTMDbId(mediaDetails.ids?.tmdb.toString())
