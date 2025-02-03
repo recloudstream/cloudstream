@@ -90,8 +90,9 @@
             android:layout_height="wrap_content"
             android:textStyle="bold"
             android:visibility="gone"
+            android:backgroundTint="@color/colorPrimaryGrey"
             android:drawableEnd="@drawable/quantum_ic_keyboard_arrow_down_white_36"
-            style="@style/BlackButton" />
+            style="@style/RegularButtonTV" />
 
         <TextView
             android:paddingTop="10dp"
