@@ -113,14 +113,18 @@ open class TraktProvider : MainAPI() {
 
     override suspend fun loadReviews(data: String, page: Int): List<ReviewResponse> {
         if (page > 1) return emptyList()
-        return parseJson<List<TraktReview>>(data).filter { it.review }.map {
-            newReviewResponse {
-                author = it.user?.username ?: "Unknown"
-                content = it.comment
-                rating = it.userRating
-                isSpoiler = it.spoiler
-                addDate(it.createdAt)
+        return try {
+            parseJson<List<TraktReview>>(data).filter { it.review == true }.map {
+                newReviewResponse {
+                    author = it.user?.username ?: "Unknown"
+                    content = it.comment
+                    rating = it.userRating
+                    isSpoiler = it.spoiler == true
+                    addDate(it.createdAt)
+                }
             }
+        } catch (_: Exception) {
+            emptyList<ReviewResponse>()
         }
     }
 
@@ -353,16 +357,16 @@ open class TraktProvider : MainAPI() {
     )
 
     data class TraktReview(
-        @JsonProperty("user") val user: TraktUser?,
-        @JsonProperty("comment") val comment: String,
-        @JsonProperty("review") val review: Boolean,
-        @JsonProperty("spoiler") val spoiler: Boolean,
-        @JsonProperty("user_rating") val userRating: Int?,
-        @JsonProperty("created_at") val createdAt: String
+        @JsonProperty("user") val user: TraktUser? = null,
+        @JsonProperty("comment") val comment: String? = null,
+        @JsonProperty("review") val review: Boolean? = null,
+        @JsonProperty("spoiler") val spoiler: Boolean? = null,
+        @JsonProperty("user_rating") val userRating: Int? = null,
+        @JsonProperty("created_at") val createdAt: String? = null
     )
 
     data class TraktUser(
-        @JsonProperty("username") val username: String?
+        @JsonProperty("username") val username: String? = null
     )
 
     data class MediaDetails(
