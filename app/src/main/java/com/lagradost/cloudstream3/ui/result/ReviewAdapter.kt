@@ -2,6 +2,7 @@ package com.lagradost.cloudstream3.ui.result
 
 import android.content.Context
 import android.view.LayoutInflater
+import android.view.View.TEXT_ALIGNMENT_CENTER
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isVisible
@@ -17,6 +18,7 @@ import com.lagradost.cloudstream3.databinding.ResultReviewBinding
 import com.lagradost.cloudstream3.utils.AppContextUtils.html
 import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
+import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -106,9 +108,10 @@ class ReviewAdapter :
             context: Context
         ) {
             reviewTags.removeAllViews()
+            val chips = mutableListOf<Chip>()
 
             card.rating?.let {
-                reviewTags.addChip(
+                val chip = createChip(
                     context,
                     context.getString(R.string.overall_rating_format).format(
                         it.formatRating(context, card.ratingFormat)
@@ -116,15 +119,53 @@ class ReviewAdapter :
                     R.style.ChipReviewAlt,
                     R.attr.primaryGrayBackground
                 )
+                reviewTags.addView(chip)
+                chips.add(chip)
             }
 
             card.ratings?.forEach { (rating, category) ->
-                reviewTags.addChip(
+                val chip = createChip(
                     context,
                     "$category ${rating.formatRating(context, card.ratingFormat)}",
                     R.style.ChipReview,
                     R.attr.textColor
                 )
+                reviewTags.addView(chip)
+                chips.add(chip)
+            }
+
+            // We want to make sure all chips are the same size
+            reviewTags.viewTreeObserver.addOnDrawListener {
+                val minWidth = 140.toPx
+                val maxWidth = chips.maxOfOrNull { it.width } ?: 0
+                if (minWidth < maxWidth) {
+                    chips.forEach { it.width = maxWidth }
+                }
+
+                // Continue
+                true
+            }
+        }
+
+        private fun createChip(
+            context: Context,
+            text: String,
+            style: Int,
+            textColor: Int
+        ): Chip {
+            val chipDrawable = ChipDrawable.createFromAttributes(context, null, 0, style)
+            return Chip(context).apply {
+                setText(text)
+                setChipDrawable(chipDrawable)
+                setTextColor(context.colorFromAttribute(textColor))
+
+                isChecked = false
+                isCheckable = false
+                isFocusable = false
+                isClickable = false
+
+                textAlignment = TEXT_ALIGNMENT_CENTER
+                minWidth = 140.toPx
             }
         }
 
@@ -143,25 +184,6 @@ class ReviewAdapter :
                     } else context.getString(R.string.negative_review)
                 }
             }
-        }
-
-        private fun ViewGroup.addChip(
-            context: Context,
-            text: String,
-            style: Int,
-            textColor: Int
-        ) {
-            val chipDrawable = ChipDrawable.createFromAttributes(context, null, 0, style)
-            val chip = Chip(context).apply {
-                setText(text)
-                setChipDrawable(chipDrawable)
-                isChecked = false
-                isCheckable = false
-                isFocusable = false
-                isClickable = false
-                setTextColor(context.colorFromAttribute(textColor))
-            }
-            addView(chip)
         }
 
         private fun ResultReviewBinding.handleReviewClick(
