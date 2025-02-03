@@ -770,6 +770,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                                 resultviewReviewsLoading.isVisible = false
                                 resultviewReviewsLoadingShimmer.startShimmer()
                                 resultReviews.isVisible = true
+                                resultNoReviews.isVisible = reviews.value.isEmpty()
                                 reviewAdapter.submitList(reviews.value.map { it.new() } )
                             }
 

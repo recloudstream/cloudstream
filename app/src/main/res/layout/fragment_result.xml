@@ -468,6 +468,18 @@
                                     tools:listitem="@layout/result_review"
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent" />
+
+                                <TextView
+                                    android:id="@+id/result_no_reviews"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="top|center"
+                                    android:layout_margin="30dp"
+                                    android:text="@string/no_reviews"
+                                    android:textSize="16sp"
+                                    android:gravity="center"
+                                    android:visibility="gone"
+                                    tools:visibility="visible" />
                             </FrameLayout>
 
                             <!--

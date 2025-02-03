@@ -841,4 +841,5 @@
     <string name="reviews_to_top">To top</string>
     <string name="positive_review">Positive</string>
     <string name="negative_review">Negative</string>
+    <string name="no_reviews">There are no reviews to display.</string>
 </resources>
