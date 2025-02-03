@@ -14,6 +14,7 @@ import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.RatingFormat
 import com.lagradost.cloudstream3.ReviewResponse
 import com.lagradost.cloudstream3.databinding.ResultReviewBinding
+import com.lagradost.cloudstream3.utils.AppContextUtils.html
 import com.lagradost.cloudstream3.utils.ImageLoader.loadImage
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
 import java.text.SimpleDateFormat
@@ -55,7 +56,7 @@ class ReviewAdapter :
 
         private fun ResultReviewBinding.setReviewText(card: ReviewResponse) {
             reviewBody.text = card.content?.let {
-                if (it.length > 300) it.take(300) + "..." else it
+                (if (it.length > 300) it.take(300) + "..." else it).html()
             } ?: ""
         }
 
@@ -169,7 +170,7 @@ class ReviewAdapter :
         ) {
             reviewBody.setOnClickListener {
                 val builder = AlertDialog.Builder(context).apply {
-                    setMessage(card.content)
+                    setMessage(card.content.html())
                     setTitle(card.title ?: card.author ?: card.rating?.let {
                         context.getString(R.string.overall_rating_format).format(
                             it.formatRating(context, card.ratingFormat)
