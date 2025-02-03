@@ -1042,17 +1042,6 @@ data class ReviewResponse internal constructor(
     var ratingFormat: RatingFormat = RatingFormat.STAR,
 ) {
     /**
-     * @param initializer A lambda function that will be applied to the [ReviewResponse] object.
-     * @return The current [ReviewResponse] instance.
-     *
-     * @internal extensions should not use this method, they should only use [newReviewResponse]
-     * @see newReviewResponse
-     */
-    fun new(initializer: ReviewResponse.() -> Unit = {}): ReviewResponse {
-        return this@ReviewResponse.apply(initializer)
-    }
-
-    /**
      * Adds a review date to the [ReviewResponse] object by parsing a string date.
      *
      * @param date The date string to parse.

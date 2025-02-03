@@ -771,7 +771,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                                 resultviewReviewsLoadingShimmer.startShimmer()
                                 resultReviews.isVisible = true
                                 resultNoReviews.isVisible = reviews.value.isEmpty()
-                                reviewAdapter.submitList(reviews.value.map { it.new() } )
+                                reviewAdapter.submitList(reviews.value)
                             }
 
                             is Resource.Loading -> {
@@ -781,7 +781,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                             }
 
                             is Resource.Failure -> {
-                                debugException { "This should never happened" }
+                                debugException { "This should never happen." }
                             }
                         }
                     }
@@ -812,6 +812,12 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                             binding?.resultBookmarkFab?.isVisible = 0 == pos
                             binding?.reviewsFab?.isVisible = 1 == pos
                             resultReviewsholder.isVisible = 1 == pos
+                        }
+                    }
+
+                    observe(viewModel.currentTabPosition) { pos ->
+                        if (resultTabs.selectedTabPosition != pos) {
+                            resultTabs.selectTab(resultTabs.getTabAt(pos))
                         }
                     }
 

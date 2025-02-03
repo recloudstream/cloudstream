@@ -112,11 +112,10 @@ open class TraktProvider : MainAPI() {
     }
 
     override suspend fun loadReviews(data: String, page: Int): List<ReviewResponse> {
-        if (page > 1) return emptyList()
         return try {
             parseJson<List<TraktReview>>(data).filter { it.review == true }.map {
                 newReviewResponse {
-                    author = it.user?.username ?: "Unknown"
+                    author = it.user?.username
                     content = it.comment
                     rating = it.userRating
                     isSpoiler = it.spoiler == true

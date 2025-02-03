@@ -211,7 +211,6 @@ open class TmdbProvider : MainAPI() {
     }
 
     override suspend fun loadReviews(data: String, page: Int): List<ReviewResponse> {
-        if (page > 1) return emptyList()
         val reviews = tryParseJson<List<Review>>(data)
         return reviews?.map { review ->
             newReviewResponse {

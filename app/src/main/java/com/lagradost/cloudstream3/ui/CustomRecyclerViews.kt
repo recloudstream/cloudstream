@@ -203,21 +203,6 @@ class ScrollableRecyclerView @JvmOverloads constructor(
     private val layoutManager
         get() = super.layoutManager as? LinearLayoutManager
 
-    override fun onScrollStateChanged(state: Int) {
-        super.onScrollStateChanged(state)
-
-        if (isLoading) return
-
-        val lm = layoutManager ?: return
-        val totalItemCount = adapter?.itemCount ?: return
-        val lastVisibleItemPosition = lm.findLastVisibleItemPosition()
-
-        if (state == SCROLL_STATE_IDLE && lastVisibleItemPosition >= totalItemCount - 1) {
-            isLoading = true
-            loadMoreListener?.invoke()
-        }
-    }
-
     override fun onScrolled(dx: Int, dy: Int) {
         super.onScrolled(dx, dy)
 

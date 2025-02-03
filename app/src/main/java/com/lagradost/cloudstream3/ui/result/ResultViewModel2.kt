@@ -534,10 +534,10 @@ class ResultViewModel2 : ViewModel() {
     private val loadMutex = Mutex()
     fun loadMoreReviews(verify: Boolean = true) = viewModelScope.launch {
         loadMutex.withLock {
+            if (!hasLoaded()) return@launch
             if (verify && currentTabIndex.value == 0) return@launch
             loadMoreReviews(
-                currentResponse?.reviewsData ?:
-                currentResponse?.url ?: return@launch
+                currentResponse?.reviewsData ?: currentResponse?.url ?: return@launch
             )
         }
     }
