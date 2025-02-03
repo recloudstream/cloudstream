@@ -530,9 +530,9 @@ abstract class MainAPI {
 
         for (i in 1..10) {
             val review = newReviewResponse {
-                review = "Review content #$i"
-                reviewTitle = "Title #$i"
-                username = "User $i"
+                content = "Review content #$i"
+                title = "Title #$i"
+                author = "Author $i"
                 avatarUrl =
                     "https://avatars.githubusercontent.com/u/142361265?v=4"
                 avatarHeaders = null
@@ -1014,10 +1014,10 @@ enum class RatingFormat {
  *
  * The constructor for this class can not be called directly, you must use [newReviewResponse].
  *
- * @param review The content of the review text.
- * @param reviewTitle The title of the review.
- * @param username The username of the reviewer.
- * @param reviewDate The timestamp of when the review was submitted.
+ * @param content The content of the review text.
+ * @param title The title of the review.
+ * @param author The author of the review.
+ * @param timestamp The timestamp of when the review was submitted.
  * @param avatarUrl The URL for the reviewer's avatar image.
  * @param avatarHeaders The headers for the avatar URL.
  * @param isSpoiler Whether the review contains spoilers.
@@ -1030,10 +1030,10 @@ enum class RatingFormat {
 @Prerelease
 @ConsistentCopyVisibility
 data class ReviewResponse internal constructor(
-    var review: String? = null,
-    var reviewTitle: String? = null,
-    var username: String? = null,
-    var reviewDate: Long? = null,
+    var content: String? = null,
+    var title: String? = null,
+    var author: String? = null,
+    var timestamp: Long? = null,
     var avatarUrl: String? = null,
     var avatarHeaders: Map<String, String>? = null,
     var isSpoiler: Boolean = false,
@@ -1060,7 +1060,7 @@ data class ReviewResponse internal constructor(
      */
     fun addDate(date: String?, format: String = "yyyy-MM-dd") {
         try {
-            this@ReviewResponse.reviewDate =
+            this@ReviewResponse.timestamp =
                 SimpleDateFormat(format).parse(date ?: return)?.time
         } catch (e: Exception) {
             logError(e)
@@ -1073,7 +1073,7 @@ data class ReviewResponse internal constructor(
      * @param date The [Date] object to use for the review date.
      */
     fun addDate(date: Date?) {
-        this@ReviewResponse.reviewDate = date?.time
+        this@ReviewResponse.timestamp = date?.time
     }
 
     /**

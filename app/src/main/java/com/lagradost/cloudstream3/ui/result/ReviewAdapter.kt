@@ -54,13 +54,13 @@ class ReviewAdapter :
         }
 
         private fun ResultReviewBinding.setReviewText(card: ReviewResponse) {
-            reviewBody.text = card.review?.let {
+            reviewBody.text = card.content?.let {
                 if (it.length > 300) it.take(300) + "..." else it
             } ?: ""
         }
 
         private fun ResultReviewBinding.setReviewTitle(card: ReviewResponse) {
-            reviewTitle.text = card.reviewTitle ?: ""
+            reviewTitle.text = card.title ?: ""
             reviewTitle.isVisible = reviewTitle.text.isNotEmpty()
         }
 
@@ -84,7 +84,7 @@ class ReviewAdapter :
         }
 
         private fun ResultReviewBinding.setReviewDate(card: ReviewResponse) {
-            card.reviewDate?.let {
+            card.timestamp?.let {
                 reviewTime.text = SimpleDateFormat.getDateInstance(
                     SimpleDateFormat.LONG,
                     Locale.getDefault()
@@ -93,7 +93,7 @@ class ReviewAdapter :
         }
 
         private fun ResultReviewBinding.setReviewAuthor(card: ReviewResponse) {
-            reviewAuthor.text = card.username
+            reviewAuthor.text = card.author
         }
 
         private fun ResultReviewBinding.loadReviewAvatar(card: ReviewResponse) {
@@ -169,8 +169,8 @@ class ReviewAdapter :
         ) {
             reviewBody.setOnClickListener {
                 val builder = AlertDialog.Builder(context).apply {
-                    setMessage(card.review)
-                    setTitle(card.reviewTitle ?: card.username ?: card.rating?.let {
+                    setMessage(card.content)
+                    setTitle(card.title ?: card.author ?: card.rating?.let {
                         context.getString(R.string.overall_rating_format).format(
                             it.formatRating(context, card.ratingFormat)
                         )
