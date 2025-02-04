@@ -120,6 +120,7 @@
             android:id="@+id/spoiler_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginStart="7dp"
             android:textOff="@string/reveal_spoiler"
             android:textOn="@string/hide_spoiler"
             android:textStyle="bold"
@@ -127,7 +128,7 @@
             android:backgroundTint="@color/colorPrimaryGrey"
             android:drawableEnd="@drawable/quantum_ic_keyboard_arrow_down_white_36"
             tools:visibility="visible"
-            style="@style/ResultSmallButtonTV" />
+            style="@style/RegularButtonTV" />
 
         <TextView
             android:id="@+id/review_title"
