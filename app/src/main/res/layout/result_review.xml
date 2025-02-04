@@ -3,91 +3,87 @@
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     android:backgroundTint="?attr/boxItemBackground"
-    app:cardCornerRadius="5dp"
-    android:layout_marginTop="2.5dp"
-    android:layout_marginBottom="2.5dp"
-    android:layout_height="wrap_content">
+    android:layout_marginVertical="4dp"
+    app:cardCornerRadius="8dp">
 
     <LinearLayout
-        android:padding="5dp"
-        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:orientation="vertical">
 
         <LinearLayout
-            android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:baselineAligned="false">
 
             <androidx.cardview.widget.CardView
-                android:layout_gravity="center_vertical|start"
                 android:layout_width="50dp"
-                app:cardCornerRadius="10000dp"
-                android:layout_height="50dp">
+                android:layout_height="50dp"
+                app:cardCornerRadius="25dp"
+                app:cardElevation="2dp">
 
                 <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:scaleType="centerCrop"
                     android:id="@+id/review_image"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
                     tools:src="@drawable/profile_bg_blue"
                     android:contentDescription="@string/user_image_avatar" />
             </androidx.cardview.widget.CardView>
 
             <LinearLayout
-                android:layout_margin="5dp"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:orientation="vertical"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_marginStart="10dp">
 
-                <LinearLayout
-                    android:orientation="horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/review_author"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="?attr/textColor"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    tools:text="Marajuu" />
 
-                    <TextView
-                        android:paddingStart="10dp"
-                        android:paddingEnd="10dp"
-                        android:id="@+id/review_author"
-                        android:textColor="?attr/textColor"
-                        android:layout_gravity="start"
-                        tools:text="Marajuu"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
-
-                    <TextView
-                        android:paddingEnd="10dp"
-                        android:paddingStart="10dp"
-                        android:textColor="?attr/grayTextColor"
-                        android:gravity="end"
-                        android:id="@+id/review_time"
-                        tools:text="2017-10-21 23:40:03"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
-                </LinearLayout>
-
-                <HorizontalScrollView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-                    <GridLayout
-                        android:id="@+id/review_tags"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:columnCount="2"
-                        android:rowCount="2"
-                        android:orientation="horizontal"
-                        app:chipSpacingVertical="-7dp" />
-                </HorizontalScrollView>
+                <TextView
+                    android:id="@+id/review_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="?attr/grayTextColor"
+                    android:textSize="12sp"
+                    tools:text="2017-10-21 23:40:03" />
             </LinearLayout>
         </LinearLayout>
 
-        <ToggleButton
-            android:id="@+id/spoiler_text"
-            android:textOff="@string/reveal_spoiler"
-            android:textOn="@string/hide_spoiler"
+        <HorizontalScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:scrollbars="none">
+            <GridLayout
+                android:id="@+id/review_tags"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:columnCount="3"
+                android:rowCount="2"
+                android:orientation="horizontal"
+                android:scrollbars="horizontal"
+                android:gravity="start"
+                app:chipSpacingVertical="-7dp" />
+        </HorizontalScrollView>
+
+        <ToggleButton
+            android:id="@+id/spoiler_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textOff="@string/reveal_spoiler"
+            android:textOn="@string/hide_spoiler"
             android:textStyle="bold"
             android:visibility="gone"
             android:backgroundTint="@color/colorPrimaryGrey"
@@ -95,22 +91,23 @@
             style="@style/RegularButtonTV" />
 
         <TextView
-            android:paddingTop="10dp"
-            android:paddingBottom="5dp"
-            tools:text="GOOD REVIEW"
-            android:textColor="?attr/textColor"
-            android:textStyle="bold"
             android:id="@+id/review_title"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:textColor="?attr/textColor"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:paddingTop="10dp"
+            android:paddingBottom="5dp"
+            tools:text="Test" />
 
         <TextView
-            android:paddingBottom="5dp"
-            android:textColor="?attr/textColor"
-            tools:text="Test"
-            android:id="@+id/review_body"
+            android:id="@+id/review_content"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
+            android:layout_height="wrap_content"
+            android:textColor="?attr/textColor"
+            android:textSize="14sp"
+            android:paddingBottom="10dp"
+            tools:text="Test" />
     </LinearLayout>
 </androidx.cardview.widget.CardView>

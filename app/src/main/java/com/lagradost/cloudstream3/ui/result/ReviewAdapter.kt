@@ -57,7 +57,7 @@ class ReviewAdapter :
         }
 
         private fun ResultReviewBinding.setReviewText(card: ReviewResponse) {
-            reviewBody.text = card.content?.let {
+            reviewContent.text = card.content?.let {
                 (if (it.length > 300) it.take(300) + "..." else it).html()
             } ?: ""
         }
@@ -70,16 +70,16 @@ class ReviewAdapter :
         private fun ResultReviewBinding.handleSpoiler(card: ReviewResponse) {
             if (card.isSpoiler) {
                 var isSpoilerRevealed = false
-                reviewBody.isVisible = false
+                reviewContent.isVisible = false
                 reviewTitle.isVisible = false
-                spoilerText.isVisible = true
-                spoilerText.setOnClickListener {
+                spoilerButton.isVisible = true
+                spoilerButton.setOnClickListener {
                     isSpoilerRevealed = !isSpoilerRevealed
                     if (isSpoilerRevealed) {
-                        reviewBody.isVisible = true
+                        reviewContent.isVisible = true
                         reviewTitle.isVisible = true
                     } else {
-                        reviewBody.isVisible = false
+                        reviewContent.isVisible = false
                         reviewTitle.isVisible = false
                     }
                 }
@@ -190,7 +190,7 @@ class ReviewAdapter :
             card: ReviewResponse,
             context: Context
         ) {
-            reviewBody.setOnClickListener {
+            reviewContent.setOnClickListener {
                 val builder = AlertDialog.Builder(context).apply {
                     setMessage(card.content.html())
                     setTitle(card.title ?: card.author ?: card.rating?.let {
