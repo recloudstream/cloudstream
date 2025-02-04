@@ -56,7 +56,7 @@
                         android:textColor="?attr/textColor"
                         android:textStyle="bold"
                         android:textSize="16sp"
-                        tools:text="Marajuu" />
+                        tools:text="Author" />
 
                     <TextView
                         android:id="@+id/review_time"
@@ -65,7 +65,7 @@
                         android:layout_below="@id/review_author"
                         android:textColor="?attr/grayTextColor"
                         android:textSize="12sp"
-                        tools:text="2017-10-21 23:40:03" />
+                        tools:text="January 1, 2025" />
 
                     <com.google.android.material.chip.Chip
                         android:id="@+id/review_tags_single"
@@ -126,26 +126,29 @@
             android:visibility="gone"
             android:backgroundTint="@color/colorPrimaryGrey"
             android:drawableEnd="@drawable/quantum_ic_keyboard_arrow_down_white_36"
+            tools:visibility="visible"
             style="@style/RegularButtonTV" />
 
         <TextView
             android:id="@+id/review_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
             android:textColor="?attr/textColor"
             android:textStyle="bold"
             android:textSize="18sp"
             android:paddingTop="10dp"
             android:paddingBottom="5dp"
-            tools:text="Test" />
+            tools:text="Title" />
 
         <TextView
             android:id="@+id/review_content"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
             android:textColor="?attr/textColor"
             android:textSize="14sp"
             android:paddingBottom="10dp"
-            tools:text="Test" />
+            tools:text="Content" />
     </LinearLayout>
 </androidx.cardview.widget.CardView>
