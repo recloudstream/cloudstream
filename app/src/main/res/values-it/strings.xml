@@ -463,7 +463,7 @@
     <string name="app_name">CloudStream</string>
     <string name="automatic_plugin_download">Scarica automaticamente i plugins</string>
     <string name="update_notification_failed">Impossibile installare la nuova versione dell\'app</string>
-    <string name="episode_sync_settings">Aggiorna progresso di avanzamento</string>
+    <string name="episode_sync_settings">Aggiorna progresso di visione</string>
     <string name="skip_type_mixed_op">Opening misto</string>
     <string name="update_notification_installing">Installazione aggiornamento dell\'app…</string>
     <string name="subtitles_remove_captions">Rimuovi le didascalie chiuse dai sottotitoli</string>
@@ -518,11 +518,11 @@
     <string name="empty_library_logged_in_message">Questo elenco è vuoto. Prova a passare a un altro.</string>
     <string name="safe_mode_file">File \"safe mode\" trovato!
 \nAll\'avvio non sarà caricata alcuna estensione finchè il file non verrà rimosso.</string>
-    <string name="android_tv_interface_off_seek_settings_summary">Quantità di ricerca usata quando il player è nascosto</string>
+    <string name="android_tv_interface_off_seek_settings_summary">Quantità di avanzamento usata quando il player è nascosto</string>
     <string name="pref_category_android_tv">TV Android</string>
-    <string name="android_tv_interface_on_seek_settings_summary">Quantità di ricerca usata quando il player è visibile</string>
-    <string name="android_tv_interface_on_seek_settings">Player visibile - Quantità di ricerca</string>
-    <string name="android_tv_interface_off_seek_settings">Player nascosto - Quantità di ricerca</string>
+    <string name="android_tv_interface_on_seek_settings_summary">Quantità di avanzamento usata quando il player è visibile</string>
+    <string name="android_tv_interface_on_seek_settings">Player visibile - Quantità di secondi da avanzare</string>
+    <string name="android_tv_interface_off_seek_settings">Player nascosto - Quantità di secondi da avanzare</string>
     <string name="test_log">Registro</string>
     <string name="start">Avvia</string>
     <string name="category_provider_test">Test del provider</string>
@@ -692,4 +692,6 @@
     <string name="player_load_one_subtitle_online">Carica il primo disponibile</string>
     <string name="torrent_not_accepted">Torrent non accettato</string>
     <string name="torrent_preferred_media">Abilita torrent in Impostazioni/Provider/Media preferiti</string>
+    <string name="software_decoding">Decodifica software</string>
+    <string name="software_decoding_desc">La decodifica software consente al lettore di riprodurre file video non supportati dal telefono, ma potrebbe causare una riproduzione lenta o instabile ad alta risoluzione</string>
 </resources>

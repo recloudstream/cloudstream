@@ -670,4 +670,6 @@
     <string name="unsupported_error">Erro não suportado</string>
     <string name="torrent_preferred_media">Ativar torrent nas Configurações/Provedores/Mídia preferida</string>
     <string name="torrent_not_accepted">Torrent não aceito</string>
+    <string name="software_decoding">Descodificação por software</string>
+    <string name="software_decoding_desc">Descodificação por software permite que o leitor reproduza ficheiros não suportados pelo seu dispositivo, mas pode resultar numa reprodução desfasada ou instável em altas resoluções</string>
 </resources>

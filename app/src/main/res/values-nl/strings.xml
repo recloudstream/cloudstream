@@ -605,4 +605,6 @@
     <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
     <string name="downloads_empty">Er zijn momenteel geen downloads beschikbaar.</string>
     <string name="toast_copied">Gekopieerd!</string>
+    <string name="dont_show">Verbergen</string>
+    <string name="show">Tonen</string>
 </resources>

@@ -692,4 +692,6 @@
     <string name="player_load_one_subtitle_online">Muat yang pertama tersedia</string>
     <string name="torrent_preferred_media">Aktifkan torrent di dalam Pengaturan/Penyedia/Media pilihan</string>
     <string name="torrent_not_accepted">Tidak menerima torrent</string>
+    <string name="software_decoding_desc">Dekode perangkat lunak memungkinkan pemutar memainkan berkas video yang tidak didukung perangkat Anda, tetapi dapat memperburuk performa atau pemutaran yang tidak stabil pada resolusi tinggi</string>
+    <string name="software_decoding">Dekode perangkat lunak</string>
 </resources>

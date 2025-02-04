@@ -429,7 +429,7 @@
     <string name="tracks">Thêm</string>
     <string name="audio_tracks">Âm thanh</string>
     <string name="video_tracks">Chất lượng Video</string>
-    <string name="apply_on_restart">Áp dụng khi khởi động lại.</string>
+    <string name="apply_on_restart">Áp dụng khi khởi động lại ứng dụng.</string>
     <string name="safe_mode_title">Chế độ an toàn được bật</string>
     <string name="safe_mode_description">Đã xảy ra sự cố và chúng tôi đã tự động tắt tất cả các tiện ích mở rộng, hãy tìm và xóa tiện ích mở rộng đang gây ra sự cố.</string>
     <string name="safe_mode_crash_info">Xem thông tin sự cố</string>
@@ -499,7 +499,7 @@
     <string name="empty_library_no_accounts_message">Thư viện của bạn đang trống :(
 \nĐăng nhập vào tài khoản thư viện hoặc thêm phim vào thư viện cục bộ.</string>
     <string name="open_with">Mở với</string>
-    <string name="provider_info_meta">Siêu dữ liệu không có sẵn, video sẽ không được tải nếu nó không tồn tại trên trang web.</string>
+    <string name="provider_info_meta">Thông tin dữ liệu không được cung cấp bởi trang web, video sẽ không tìm thấy link nếu nó không tồn tại trên trang web.</string>
     <string name="apk_installer_package_installer">PackageInstaller</string>
     <string name="sort">Sắp xếp</string>
     <string name="sort_rating_desc">Xếp hạng (Cao đến Thấp)</string>
@@ -553,7 +553,7 @@
     <string name="qualities">Các phẩm chất</string>
     <string name="already_voted">Bạn đã bình chọn</string>
     <string name="disable">Vô hiệu hoá</string>
-    <string name="no_repository_found_error">Không tìm thấy tiện ích, hãy kiểm tra URL và thử VPN</string>
+    <string name="no_repository_found_error">Không tìm thấy tiện ích, hãy kiểm tra URL và thử lại với VPN</string>
     <string name="no_plugins_found_error">Không tìm thấy plugin</string>
     <string name="unable_to_inflate">Không thể khởi tạo UI, đây là một LỖI LỚN và cần được báo cáo ngay lập tức tới %s</string>
     <string name="automatic_plugin_download_mode_title">Chọn chế độ để lọc plugin tải xuống</string>
@@ -619,7 +619,7 @@
     <string name="biometric_warning">Dữ liệu CloudStream của bạn hiện đã được sao lưu. Mặc dù khả năng xảy ra điều này là rất thấp nhưng tất cả các thiết bị đều có thể hoạt động khác nhau. Trong trường hợp hiếm gặp là bạn bị khóa truy cập ứng dụng, hãy xóa hoàn toàn dữ liệu ứng dụng và khôi phục từ bản sao lưu. Chúng tôi rất xin lỗi vì bất kỳ sự bất tiện nào phát sinh từ việc này.</string>
     <string name="biometric_setting_summary">Mở khóa ứng dụng bằng Vân tay, Khuôn mặt, PIN, Hình vẽ và Mật khẩu.</string>
     <string name="biometric_prompt_description">Màn hình bị đóng sau nhiều lần thử thất bại. Hãy khởi động lại ứng dụng.</string>
-    <string name="test_extensions_summary">Phần kiểm thử này chỉ dành cho nhà phát triển và không xác nhận hay từ chối việc hoạt động của nguồn phim.</string>
+    <string name="test_extensions_summary">Bài kiểm tra này chỉ dành cho các nhà phát triển và không xác nhận hay phủ nhận việc hoạt động của bất kỳ nguồn phim nào.</string>
     <string name="app_unrestricted_toast">Chế độ tiêu thụ pin của ứng dụng đã được đặt ở mức không giới hạn</string>
     <string name="custom_media_singluar">Phương tiện</string>
     <string name="repo_copy_label">Tên và URL kho lưu trữ</string>
@@ -678,4 +678,13 @@
     <string name="custom">Tuỳ chỉnh</string>
     <string name="subs_edge_size">Kích thước cạnh</string>
     <string name="torrent_info">Video này là Torrent, điều này có nghĩa là hoạt động video của bạn có thể được theo dõi.\nHãy đảm bảo rằng bạn hiểu về Torrent trước khi tiếp tục.</string>
+    <string name="encoding_error">Lỗi mã hóa</string>
+    <string name="software_decoding_desc">Bộ giải mã ứng dụng cho phép trình phát các tệp video không được điện thoại của bạn hỗ trợ nhưng có thể gây ra hiện tượng phát lại bị lag hoặc không ổn định ở độ phân giải cao</string>
+    <string name="software_decoding">Bộ giải mã ứng dụng</string>
+    <string name="torrent_not_accepted">Torrent không được chấp nhận</string>
+    <string name="torrent_preferred_media">Kích hoạt torrent trong Cài đặt/Nguồn phim/Thể loại ưu tiên</string>
+    <string name="player_load_one_subtitle_online">Tải phụ đề đầu tiên có sẵn</string>
+    <string name="audio_singluar">Âm thanh</string>
+    <string name="podcast_singluar">Podcast</string>
+    <string name="unsupported_error">Lỗi không được hỗ trợ</string>
 </resources>

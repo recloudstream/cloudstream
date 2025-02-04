@@ -717,4 +717,6 @@
     <string name="player_load_one_subtitle_online">加载第一个可用的字幕</string>
     <string name="torrent_preferred_media">在设置/提供者/首选媒体处开启 torrent</string>
     <string name="torrent_not_accepted">torrent 未被接受</string>
+    <string name="software_decoding">软件解码</string>
+    <string name="software_decoding_desc">软件解码让播放器能够播放你的手机所不支持的视频文件，但可能导致播放高分辨率视频时的延迟或不稳定</string>
 </resources>
