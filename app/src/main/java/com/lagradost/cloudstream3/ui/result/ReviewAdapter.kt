@@ -107,7 +107,31 @@ class ReviewAdapter :
             card: ReviewResponse,
             context: Context
         ) {
-            reviewTags.removeAllViews()
+            // When we don't have many tags we do this differently to make it look a bit nicer.
+            val rating = card.rating
+            val tagCount = (card.ratings?.count() ?: 0) + if (rating != null) 1 else 0
+            val view = when {
+                tagCount == 1 && rating != null -> {
+                    reviewTagsSingle.isVisible = true
+                    reviewTags.isVisible = false
+                    reviewTagsSingle.text = context.getString(R.string.overall_rating_format).format(
+                        rating.formatRating(context, card.ratingFormat)
+                    )
+                    return
+                }
+                tagCount == 3 -> {
+                    reviewTagsSmall.isVisible = true
+                    reviewTags.isVisible = false
+                    reviewTagsSmall
+                }
+                else -> {
+                    reviewTags.isVisible = true
+                    reviewTagsSmall.isVisible = false
+                    reviewTags
+                }
+            }
+
+            view.removeAllViews()
             val chips = mutableListOf<Chip>()
 
             card.rating?.let {
@@ -119,7 +143,7 @@ class ReviewAdapter :
                     R.style.ChipReviewAlt,
                     R.attr.primaryGrayBackground
                 )
-                reviewTags.addView(chip)
+                view.addView(chip)
                 chips.add(chip)
             }
 
@@ -130,20 +154,22 @@ class ReviewAdapter :
                     R.style.ChipReview,
                     R.attr.textColor
                 )
-                reviewTags.addView(chip)
+                view.addView(chip)
                 chips.add(chip)
             }
 
-            // We want to make sure all chips are the same size
-            reviewTags.viewTreeObserver.addOnDrawListener {
-                val minWidth = 140.toPx
-                val maxWidth = chips.maxOfOrNull { it.width } ?: 0
-                if (minWidth < maxWidth) {
-                    chips.forEach { it.width = maxWidth }
-                }
+            if (view == reviewTags) {
+                // We want to make sure all chips are the same size
+                reviewTags.viewTreeObserver.addOnDrawListener {
+                    val minWidth = 140.toPx
+                    val maxWidth = chips.maxOfOrNull { it.width } ?: 0
+                    if (minWidth < maxWidth) {
+                        chips.forEach { it.width = maxWidth }
+                    }
 
-                // Continue
-                true
+                    // Continue
+                    true
+                }
             }
         }
 

@@ -24,6 +24,7 @@
             <androidx.cardview.widget.CardView
                 android:layout_width="50dp"
                 android:layout_height="50dp"
+                android:layout_gravity="top"
                 app:cardCornerRadius="25dp"
                 app:cardElevation="2dp">
 
@@ -32,8 +33,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:scaleType="centerCrop"
-                    tools:src="@drawable/profile_bg_blue"
-                    android:contentDescription="@string/user_image_avatar" />
+                    android:contentDescription="@string/user_image_avatar"
+                    tools:src="@drawable/profile_bg_blue" />
             </androidx.cardview.widget.CardView>
 
             <LinearLayout
@@ -43,22 +44,57 @@
                 android:orientation="vertical"
                 android:layout_marginStart="10dp">
 
-                <TextView
-                    android:id="@+id/review_author"
+                <RelativeLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="?attr/textColor"
-                    android:textStyle="bold"
-                    android:textSize="16sp"
-                    tools:text="Marajuu" />
+                    android:layout_marginEnd="30dp">
 
-                <TextView
-                    android:id="@+id/review_time"
-                    android:layout_width="wrap_content"
+                    <TextView
+                        android:id="@+id/review_author"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="?attr/textColor"
+                        android:textStyle="bold"
+                        android:textSize="16sp"
+                        tools:text="Marajuu" />
+
+                    <TextView
+                        android:id="@+id/review_time"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/review_author"
+                        android:textColor="?attr/grayTextColor"
+                        android:textSize="12sp"
+                        tools:text="2017-10-21 23:40:03" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/review_tags_single"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentTop="true"
+                        android:layout_alignParentEnd="true"
+                        android:maxWidth="200dp"
+                        android:visibility="gone"
+                        style="@style/ChipReviewAlt" />
+                </RelativeLayout>
+
+                <HorizontalScrollView
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColor="?attr/grayTextColor"
-                    android:textSize="12sp"
-                    tools:text="2017-10-21 23:40:03" />
+                    android:layout_marginStart="-10dp"
+                    android:scrollbars="none">
+                    <GridLayout
+                        android:id="@+id/review_tags_small"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:columnCount="3"
+                        android:rowCount="1"
+                        android:orientation="horizontal"
+                        android:scrollbars="horizontal"
+                        android:gravity="start"
+                        android:visibility="gone"
+                        app:chipSpacingVertical="-7dp" />
+                </HorizontalScrollView>
             </LinearLayout>
         </LinearLayout>
 
