@@ -195,7 +195,7 @@ class SettingsGeneral : PreferenceFragmentCompat() {
             val ctx = context ?: return@setOnPreferenceClickListener false
 
             if (isAppRestricted(ctx)) {
-                showBatteryOptimizationDialog(ctx)
+                ctx.showBatteryOptimizationDialog()
             } else {
                 showToast(R.string.app_unrestricted_toast)
             }
