@@ -923,7 +923,6 @@ fun getQualityFromString(string: String?): SearchQuality? {
  *   scheme            authority                path                   query                 fragment
  * ```
  */
-@Prerelease
 fun MainAPI.updateUrl(url: String): String {
     try {
         val original = URI(url)
@@ -1420,7 +1419,6 @@ interface LoadResponse {
             trailers.addAll(newTrailers.map { TrailerData(listOf(it)) })
         }*/
 
-        @Prerelease
         @Suppress("RedundantSuspendModifier")
         suspend fun LoadResponse.addTrailer(
             trailerUrl: String?,
