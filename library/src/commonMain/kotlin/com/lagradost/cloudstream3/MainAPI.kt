@@ -1206,7 +1206,7 @@ constructor(
     override var id: Int? = null,
     override var quality: SearchQuality? = null,
     override var posterHeaders: Map<String, String>? = null,
-    val lang: String? = null,
+    var lang: String? = null,
 ) : SearchResponse
 
 /** Data class of [SearchResponse] interface for Tv series.
@@ -1221,8 +1221,8 @@ constructor(
     override var type: TvType? = null,
 
     override var posterUrl: String? = null,
-    val year: Int? = null,
-    val episodes: Int? = null,
+    var year: Int? = null,
+    var episodes: Int? = null,
     override var id: Int? = null,
     override var quality: SearchQuality? = null,
     override var posterHeaders: Map<String, String>? = null,

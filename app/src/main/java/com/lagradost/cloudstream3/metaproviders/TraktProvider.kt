@@ -25,6 +25,7 @@ import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.base64Decode
 import com.lagradost.cloudstream3.mainPageOf
 import com.lagradost.cloudstream3.mvvm.logError
+import com.lagradost.cloudstream3.newEpisode
 import com.lagradost.cloudstream3.newHomePageResponse
 import com.lagradost.cloudstream3.newMovieLoadResponse
 import com.lagradost.cloudstream3.newMovieSearchResponse
@@ -228,17 +229,15 @@ open class TraktProvider : MainAPI() {
                     ).toJson()
 
                     episodes.add(
-                        @Suppress("DEPRECATION")
-                        Episode(
-                            data = linkData.toJson(),
-                            name = episode.title,
-                            season = episode.season,
-                            episode = episode.number,
-                            posterUrl = fixPath(episode.images?.screenshot?.firstOrNull()),
-                            rating = episode.rating?.times(10)?.roundToInt(),
-                            description = episode.overview,
-                            runTime = episode.runtime
-                        ).apply {
+                        newEpisode(linkData.toJson()) {
+                            this.name = episode.title
+                            this.season = episode.season
+                            this.episode = episode.number
+                            this.description = episode.overview
+                            this.runTime = episode.runtime
+                            this.posterUrl = fixPath(episode.images?.screenshot?.firstOrNull())
+                            this.rating = episode.rating?.times(10)?.roundToInt()
+
                             this.addDate(episode.firstAired, "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
                             if (nextAir == null && this.date != null && this.date!! > unixTimeMS && this.season != 0) {
                                 nextAir = NextAiring(

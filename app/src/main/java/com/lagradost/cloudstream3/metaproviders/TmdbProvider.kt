@@ -1,17 +1,47 @@
 package com.lagradost.cloudstream3.metaproviders
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.lagradost.cloudstream3.*
+import com.lagradost.cloudstream3.Actor
+import com.lagradost.cloudstream3.ErrorLoadingException
+import com.lagradost.cloudstream3.HomePageList
+import com.lagradost.cloudstream3.HomePageResponse
+import com.lagradost.cloudstream3.LoadResponse
 import com.lagradost.cloudstream3.LoadResponse.Companion.addActors
 import com.lagradost.cloudstream3.LoadResponse.Companion.addImdbId
 import com.lagradost.cloudstream3.LoadResponse.Companion.addTrailer
+import com.lagradost.cloudstream3.MainAPI
+import com.lagradost.cloudstream3.MainPageRequest
+import com.lagradost.cloudstream3.MovieLoadResponse
+import com.lagradost.cloudstream3.MovieSearchResponse
+import com.lagradost.cloudstream3.ProviderType
+import com.lagradost.cloudstream3.SearchResponse
+import com.lagradost.cloudstream3.TvSeriesLoadResponse
+import com.lagradost.cloudstream3.TvSeriesSearchResponse
+import com.lagradost.cloudstream3.TvType
+import com.lagradost.cloudstream3.argamap
+import com.lagradost.cloudstream3.newEpisode
+import com.lagradost.cloudstream3.newHomePageResponse
+import com.lagradost.cloudstream3.newMovieLoadResponse
+import com.lagradost.cloudstream3.newMovieSearchResponse
+import com.lagradost.cloudstream3.newTvSeriesLoadResponse
+import com.lagradost.cloudstream3.newTvSeriesSearchResponse
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
 import com.uwetrottmann.tmdb2.Tmdb
-import com.uwetrottmann.tmdb2.entities.*
+import com.uwetrottmann.tmdb2.entities.AppendToResponse
+import com.uwetrottmann.tmdb2.entities.BaseMovie
+import com.uwetrottmann.tmdb2.entities.BaseTvShow
+import com.uwetrottmann.tmdb2.entities.CastMember
+import com.uwetrottmann.tmdb2.entities.ContentRating
+import com.uwetrottmann.tmdb2.entities.Movie
+import com.uwetrottmann.tmdb2.entities.ReleaseDate
+import com.uwetrottmann.tmdb2.entities.ReleaseDatesResult
+import com.uwetrottmann.tmdb2.entities.TvSeason
+import com.uwetrottmann.tmdb2.entities.TvShow
+import com.uwetrottmann.tmdb2.entities.Videos
 import com.uwetrottmann.tmdb2.enumerations.AppendToResponseItem
 import com.uwetrottmann.tmdb2.enumerations.VideoType
 import retrofit2.awaitResponse
-import java.util.*
+import java.util.Calendar
 
 /**
  * episode and season starting from 1
@@ -54,38 +84,37 @@ open class TmdbProvider : MainAPI() {
     }
 
     private fun BaseTvShow.toSearchResponse(): TvSeriesSearchResponse {
-        @Suppress("DEPRECATION")
-        return TvSeriesSearchResponse(
-            this.name ?: this.original_name,
-            getUrl(id, true),
-            apiName,
-            TvType.TvSeries,
-            getImageUrl(this.poster_path),
-            this.first_air_date?.let {
+        return newTvSeriesSearchResponse(
+            name = this.name ?: this.original_name,
+            url = getUrl(id, true),
+            type = TvType.TvSeries,
+            fix = false
+        ) {
+            this.id = this@toSearchResponse.id
+            this.posterUrl = getImageUrl(poster_path)
+            this.year = first_air_date?.let {
                 Calendar.getInstance().apply {
                     time = it
                 }.get(Calendar.YEAR)
-            },
-            null,
-            this.id
-        )
+            }
+        }
     }
 
     private fun BaseMovie.toSearchResponse(): MovieSearchResponse {
-        @Suppress("DEPRECATION")
-        return MovieSearchResponse(
-            this.title ?: this.original_title,
-            getUrl(id, false),
-            apiName,
-            TvType.TvSeries,
-            getImageUrl(this.poster_path),
-            this.release_date?.let {
+        return newMovieSearchResponse(
+            name = this.title ?: this.original_title,
+            url = getUrl(id, false),
+            type = TvType.Movie,
+            fix = false
+        ) {
+            this.id = this@toSearchResponse.id
+            this.posterUrl = getImageUrl(poster_path)
+            this.year = release_date?.let {
                 Calendar.getInstance().apply {
                     time = it
                 }.get(Calendar.YEAR)
-            },
-            this.id,
-        )
+            }
+        }
     }
 
     private fun List<CastMember?>?.toActors(): List<Pair<Actor, String?>>? {
@@ -101,36 +130,36 @@ open class TmdbProvider : MainAPI() {
         val episodes = this.seasons?.filter { !disableSeasonZero || (it.season_number ?: 0) != 0 }
             ?.mapNotNull { season ->
                 season.episodes?.map { episode ->
-                    @Suppress("DEPRECATION")
-                    Episode(
+                    newEpisode(
                         TmdbLink(
                             episode.external_ids?.imdb_id ?: this.external_ids?.imdb_id,
                             this.id,
                             episode.episode_number,
                             episode.season_number,
                             this.name ?: this.original_name,
-                        ).toJson(),
-                        episode.name,
-                        episode.season_number,
-                        episode.episode_number,
-                        getImageUrl(episode.still_path),
-                        episode.rating,
-                        episode.overview,
-                        episode.air_date?.time,
-                    )
+                        ).toJson()
+                    ) {
+                        this.name = episode.name
+                        this.season = episode.season_number
+                        this.episode = episode.episode_number
+                        this.rating = episode.rating
+                        this.description = episode.overview
+                        this.date = episode.air_date?.time
+                        this.posterUrl = getImageUrl(episode.still_path)
+                    }
                 } ?: (1..(season.episode_count ?: 1)).map { episodeNum ->
-                    @Suppress("DEPRECATION")
-                    Episode(
-                        episode = episodeNum,
-                        data = TmdbLink(
+                    newEpisode(
+                        TmdbLink(
                             this.external_ids?.imdb_id,
                             this.id,
                             episodeNum,
                             season.season_number,
                             this.name ?: this.original_name,
-                        ).toJson(),
-                        season = season.season_number
-                    )
+                        ).toJson()
+                    ) {
+                        this.episode = episodeNum
+                        this.season = season.season_number
+                    }
                 }
             }?.flatten() ?: listOf()
 
@@ -246,8 +275,7 @@ open class TmdbProvider : MainAPI() {
             }
         )
 
-        @Suppress("DEPRECATION")
-        return HomePageResponse(
+        return newHomePageResponse(
             listOf(
 //                HomePageList("Popular Series", popularSeries),
 //                HomePageList("Popular Movies", popularMovies),
@@ -373,9 +401,7 @@ open class TmdbProvider : MainAPI() {
                         val details = tmdb.tvService().tv(id, "en-US").awaitResponse().body()
                         loadFromImdb(it, details?.seasons ?: listOf())
                             ?: loadFromTmdb(id, details?.seasons ?: listOf())
-                    } else {
-                        fromImdb
-                    }
+                    } else fromImdb
 
                     result
                 }
