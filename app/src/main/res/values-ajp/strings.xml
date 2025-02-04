@@ -615,8 +615,7 @@
     <string name="music_singlar">موسيقى</string>
     <string name="audio_book_singular">أوديو بوك</string>
     <string name="custom_media_singluar">الميديا</string>
-    <string name="battery_dialog_message">ت تضمن عدم انقطاع التنزيلات والنوتيفيكايشنات للبرامج التلفزيونية يللي مشتركلها، الآپ \"كلود ستريم\" بده إذن ليمشي ب الباكگراوند. ازا كبست أوكي، رح تتوجه ع صفحة معلومات التطبيق. هونيك، نزال حتى توصل ل «استخدام بطارية التطبيق» \"App battery usage\" وحط استخدام البطارية ع «غير مقيد» \"Unrestricted\".
-\nملاحظة إنو هيدا الإذن ما بيعني إنو \"كلود ستريم 3\" رح تستنزف البطارية. ومش رح يشتغل الآپ بال باكگراوند إلّا عند الضرورة، متل لمّا تتلقا نوتيفيكايشن أو تنزل ڤيديو من الريپو الاصلي. فيك ترجع ترد هيدا الستنگ ب «الإعدادات العامة» \"General settings\"، إزا غيرت رأيك.</string>
+    <string name="battery_dialog_message">ت تضمن عدم انقطاع التنزيلات والنوتيفيكايشنات للبرامج التلفزيونية يللي مشتركلها، الآپ \"كلود ستريم\" بده إذن ليمشي ب الباكگراوند. ازا كبست أوكي، رح تتوجه ع صفحة معلومات التطبيق. هونيك، نزال حتى توصل ل «استخدام بطارية التطبيق» \"App battery usage\" وحط استخدام البطارية ع «غير مقيد» \"Unrestricted\". \nملاحظة إنو هيدا الإذن ما بيعني إنو \"كلود ستريم 3\" رح تستنزف البطارية. ومش رح يشتغل الآپ بال باكگراوند إلّا عند الضرورة، متل لمّا تتلقا نوتيفيكايشن أو تنزل ڤيديو من الريپو الاصلي. فيك ترجع ترد هيدا الستنگ ب «الإعدادات العامة» \"General settings\"، إزا غيرت رأيك.</string>
     <string name="reset_btn">ريسات</string>
     <string name="episode_upcoming_format" formatted="true">رح ينزل ب %s</string>
     <string name="next_season_episode_format" formatted="true">الحلقة ال %2$d من الجزء ال%1$d رح تنزل ب</string>
@@ -678,4 +677,6 @@
     <string name="player_load_one_subtitle_online">أفّي اللودينگ تلقائيًا</string>
     <string name="torrent_preferred_media">سماح ب إستعمال الـTorrent بال سَتِنگز/المصادر/المحتوى المفضل</string>
     <string name="torrent_not_accepted">تورنت مش مدعوم</string>
+    <string name="software_decoding_desc">السوفتوار ديكودينگ بخلي مشغل الڤيديو يمشّي أنواع فيلات ڤيديو م بيدعمها جهازك، بس هال شي معقول يخلي الڤيديو يعلق، خاصتًا إزا كانت الجودة عالية</string>
+    <string name="software_decoding">سوفتوار ديكودينگ</string>
 </resources>

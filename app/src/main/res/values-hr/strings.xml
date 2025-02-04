@@ -689,4 +689,14 @@
     <string name="subs_edge_size">Veličina ruba</string>
     <string name="custom">Prilagođeno</string>
     <string name="backup_path_title">Mjesto mape sigurnosnih kopija</string>
+    <string name="encoding_error">Pogreška u kodiranju</string>
+    <string name="unsupported_error">Nepodržana pogreška</string>
+    <string name="software_decoding">Dekodiranje softvera</string>
+    <string name="software_decoding_desc">Softversko dekodiranje omogućuje playeru reprodukciju video datoteka koje tvoj mobitel ne podržava, ali može uzrokovati kašnjenja ili nestabilnu reprodukciju pri visokoj rezoluciji</string>
+    <string name="torrent_info">Ovaj je video Torrent, što znači da se tvoja video aktivnost može pratiti.\nInformiraj se o korištenju Torrenta prije nego što nastaviš.</string>
+    <string name="torrent_not_accepted">Neprihvaćeni torrent</string>
+    <string name="player_load_one_subtitle_online">Učitaj prvi dostupni</string>
+    <string name="audio_singluar">Audio</string>
+    <string name="podcast_singluar">Podcast</string>
+    <string name="torrent_preferred_media">Aktiviraj torrent u Postavke/Pružatelji usluge/Preferirani mediji</string>
 </resources>

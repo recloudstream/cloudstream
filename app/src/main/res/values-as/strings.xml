@@ -670,4 +670,6 @@
     <string name="unsupported_error">সমৰ্থিত ত্ৰুটি</string>
     <string name="torrent_not_accepted">গ্ৰহণ কৰা হোৱা নাই টৰেণ্ট</string>
     <string name="torrent_preferred_media">সংহতিসমূহ/প্ৰদানকাৰী/পছন্দৰ মাধ্যমত টৰেণ্ট সামৰ্থবান কৰক</string>
+    <string name="software_decoding">চফ্টৱেৰ ডিকোডিং</string>
+    <string name="software_decoding_desc">চফ্টৱেৰ ডিকোডিঙে প্লেয়াৰক আপোনাৰ ফোন দ্বাৰা সমৰ্থিত নোহোৱা ভিডিঅ\' ফাইলসমূহ চলাবলৈ সামৰ্থবান কৰে, কিন্তু উচ্চ ৰিজ\'লিউচনত লেগি বা অস্থিৰ প্লেবেকৰ সৃষ্টি কৰিব পাৰে</string>
 </resources>
