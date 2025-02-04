@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View.TEXT_ALIGNMENT_CENTER
 import android.view.ViewGroup
+import android.widget.RelativeLayout
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
@@ -97,6 +98,12 @@ class ReviewAdapter :
 
         private fun ResultReviewBinding.setReviewAuthor(card: ReviewResponse) {
             reviewAuthor.text = card.author
+
+            if (card.timestamp == null) {
+                val params = reviewAuthor.layoutParams as? RelativeLayout.LayoutParams
+                params?.addRule(RelativeLayout.CENTER_VERTICAL, RelativeLayout.TRUE)
+                reviewAuthor.layoutParams = params
+            }
         }
 
         private fun ResultReviewBinding.loadReviewAvatar(card: ReviewResponse) {
@@ -114,20 +121,20 @@ class ReviewAdapter :
             val view = when {
                 tagCount == 1 && rating != null -> {
                     reviewTagsSingle.isVisible = true
-                    reviewTags.isVisible = false
+                    reviewTagsScroll.isVisible = false
                     reviewTagsSingle.text = context.getString(R.string.overall_rating_format).format(
                         rating.formatRating(context, card.ratingFormat)
                     )
                     return
                 }
-                tagCount <= 3 -> {
-                    reviewTagsSmall.isVisible = true
-                    reviewTags.isVisible = false
+                tagCount == 2 -> {
+                    reviewTagsSmallScroll.isVisible = true
+                    reviewTagsScroll.isVisible = false
                     reviewTagsSmall
                 }
                 else -> {
-                    reviewTags.isVisible = true
-                    reviewTagsSmall.isVisible = false
+                    reviewTagsScroll.isVisible = true
+                    reviewTagsSmallScroll.isVisible = false
                     reviewTags
                 }
             }

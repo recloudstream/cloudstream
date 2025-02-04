@@ -22,8 +22,8 @@
             android:baselineAligned="false">
 
             <androidx.cardview.widget.CardView
-                android:layout_width="50dp"
-                android:layout_height="50dp"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
                 android:layout_gravity="top"
                 app:cardCornerRadius="25dp"
                 app:cardElevation="2dp">
@@ -73,16 +73,21 @@
                         android:layout_height="wrap_content"
                         android:layout_alignParentTop="true"
                         android:layout_alignParentEnd="true"
+                        android:checked="false"
+                        android:checkable="false"
+                        android:clickable="false"
+                        android:focusable="false"
                         android:maxWidth="200dp"
                         android:visibility="gone"
                         style="@style/ChipReviewAlt" />
                 </RelativeLayout>
 
                 <HorizontalScrollView
+                    android:id="@+id/review_tags_small_scroll"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="-10dp"
-                    android:scrollbars="none">
+                    android:visibility="gone">
                     <GridLayout
                         android:id="@+id/review_tags_small"
                         android:layout_width="wrap_content"
@@ -90,18 +95,16 @@
                         android:columnCount="3"
                         android:rowCount="1"
                         android:orientation="horizontal"
-                        android:scrollbars="horizontal"
                         android:gravity="start"
-                        android:visibility="gone"
                         app:chipSpacingVertical="-7dp" />
                 </HorizontalScrollView>
             </LinearLayout>
         </LinearLayout>
 
         <HorizontalScrollView
+            android:id="@+id/review_tags_scroll"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:scrollbars="none">
+            android:layout_height="wrap_content">
             <GridLayout
                 android:id="@+id/review_tags"
                 android:layout_width="wrap_content"
@@ -109,7 +112,6 @@
                 android:columnCount="3"
                 android:rowCount="2"
                 android:orientation="horizontal"
-                android:scrollbars="horizontal"
                 android:gravity="start"
                 app:chipSpacingVertical="-7dp" />
         </HorizontalScrollView>
