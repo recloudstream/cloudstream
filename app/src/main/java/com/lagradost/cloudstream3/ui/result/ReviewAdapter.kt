@@ -100,7 +100,8 @@ class ReviewAdapter :
         }
 
         private fun ResultReviewBinding.loadReviewAvatar(card: ReviewResponse) {
-            reviewImage.loadImage(card.avatarUrl, card.avatarHeaders)
+            if (card.avatarUrl == null) return
+            reviewAvatar.loadImage(card.avatarUrl, card.avatarHeaders)
         }
 
         private fun ResultReviewBinding.setReviewTags(
@@ -119,7 +120,7 @@ class ReviewAdapter :
                     )
                     return
                 }
-                tagCount == 3 -> {
+                tagCount <= 3 -> {
                     reviewTagsSmall.isVisible = true
                     reviewTags.isVisible = false
                     reviewTagsSmall

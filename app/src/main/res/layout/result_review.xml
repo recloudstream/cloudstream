@@ -29,12 +29,12 @@
                 app:cardElevation="2dp">
 
                 <ImageView
-                    android:id="@+id/review_image"
+                    android:id="@+id/review_avatar"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:scaleType="centerCrop"
                     android:contentDescription="@string/user_image_avatar"
-                    tools:src="@drawable/profile_bg_blue" />
+                    android:src="@drawable/ic_baseline_avatar_24" />
             </androidx.cardview.widget.CardView>
 
             <LinearLayout
