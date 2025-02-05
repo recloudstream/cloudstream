@@ -5,6 +5,7 @@ import android.util.AttributeSet
 import android.view.View
 import androidx.core.view.children
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlin.math.abs
 
@@ -20,7 +21,7 @@ class GrdLayoutManager(val context: Context, spanCount: Int) :
             val fromPos = getPosition(focused)
             val nextPos = getNextViewPos(fromPos, focusDirection)
             findViewByPosition(nextPos)
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             null
         }
     }
@@ -51,7 +52,7 @@ class GrdLayoutManager(val context: Context, spanCount: Int) :
             val fromPos = getPosition(focused)
             val nextPos = getNextViewPos(fromPos, direction)
             findViewByPosition(nextPos)
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             null
         }
     }
@@ -189,5 +190,31 @@ class MaxRecyclerView(ctx: Context, attrs: AttributeSet) : RecyclerView(ctx, att
             child.updateMaxSize()
         }
         super.onChildAttachedToWindow(child)
+    }
+}
+
+class ScrollableRecyclerView @JvmOverloads constructor(
+    context: Context, attrs: AttributeSet? = null
+) : RecyclerView(context, attrs) {
+
+    var loadMoreListener: (() -> Unit)? = null
+    private var isLoading = false
+
+    private val layoutManager
+        get() = super.layoutManager as? LinearLayoutManager
+
+    override fun onScrolled(dx: Int, dy: Int) {
+        super.onScrolled(dx, dy)
+
+        if (dy <= 0 || isLoading) return // Only trigger when scrolling down and not already loading
+
+        val lm = layoutManager ?: return
+        val totalItemCount = adapter?.itemCount ?: 0
+        val lastVisibleItemPosition = lm.findLastVisibleItemPosition()
+
+        if (lastVisibleItemPosition >= totalItemCount - 1) {
+            isLoading = true
+            loadMoreListener?.invoke()
+        }
     }
 }

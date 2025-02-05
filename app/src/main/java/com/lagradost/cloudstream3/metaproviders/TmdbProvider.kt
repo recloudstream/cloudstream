@@ -26,6 +26,7 @@ import com.lagradost.cloudstream3.newMovieSearchResponse
 import com.lagradost.cloudstream3.newTvSeriesLoadResponse
 import com.lagradost.cloudstream3.newTvSeriesSearchResponse
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
+import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
 import com.uwetrottmann.tmdb2.Tmdb
 import com.uwetrottmann.tmdb2.entities.AppendToResponse
 import com.uwetrottmann.tmdb2.entities.BaseMovie
@@ -67,6 +68,7 @@ open class TmdbProvider : MainAPI() {
     open val disableSeasonZero = true
 
     override val hasMainPage = true
+    override val hasReviews = true
     override val providerType = ProviderType.MetaProvider
 
     // Fuck it, public private api key because github actions won't co-operate.
@@ -227,12 +229,24 @@ open class TmdbProvider : MainAPI() {
             rating = this@toLoadResponse.rating
             addTrailer(videos.toTrailers())
 
+            reviewsData = tmdb.moviesService().reviews(id, 1, "en-US").awaitResponse().body()?.results?.toJson()
+
             recommendations = (this@toLoadResponse.recommendations
                 ?: this@toLoadResponse.similar)?.results?.map { it.toSearchResponse() }
             addActors(credits?.cast?.toList().toActors())
 
             contentRating = fetchContentRating(id, "US")
         }
+    }
+
+    override suspend fun loadReviews(data: String, page: Int): List<ReviewResponse> {
+        val reviews = tryParseJson<List<Review>>(data)
+        return reviews?.map { review ->
+            newReviewResponse {
+                this@newReviewResponse.content = review.content
+                this@newReviewResponse.author = review.author
+            }
+        } ?: emptyList()
     }
 
     override suspend fun getMainPage(page: Int, request : MainPageRequest): HomePageResponse {
