@@ -8,10 +8,7 @@ import android.content.Context
 import android.content.pm.ActivityInfo
 import android.content.res.ColorStateList
 import android.content.res.Configuration
-import android.graphics.BlendMode
-import android.graphics.BlendModeColorFilter
 import android.graphics.Color
-import android.graphics.PorterDuff
 import android.media.AudioManager
 import android.media.audiofx.LoudnessEnhancer
 import android.os.Build
@@ -33,7 +30,6 @@ import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.LinearLayout
 import androidx.annotation.OptIn
-import androidx.core.content.ContextCompat
 import androidx.core.graphics.blue
 import androidx.core.graphics.green
 import androidx.core.graphics.red
@@ -60,8 +56,6 @@ import com.lagradost.cloudstream3.databinding.SubtitleOffsetBinding
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.ui.player.GeneratorPlayer.Companion.subsProvidersIsActive
 import com.lagradost.cloudstream3.ui.player.source_priority.QualityDataHelper
-import com.lagradost.cloudstream3.utils.setText
-import com.lagradost.cloudstream3.utils.txt
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
 import com.lagradost.cloudstream3.ui.settings.Globals.PHONE
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
@@ -79,6 +73,8 @@ import com.lagradost.cloudstream3.utils.UIHelper.showSystemUI
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
 import com.lagradost.cloudstream3.utils.UserPreferenceDelegate
 import com.lagradost.cloudstream3.utils.Vector2
+import com.lagradost.cloudstream3.utils.setText
+import com.lagradost.cloudstream3.utils.txt
 import kotlin.math.abs
 import kotlin.math.ceil
 import kotlin.math.max
@@ -225,7 +221,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
      * */
     private fun View.isValidTouch(rawX: Float, rawY: Float): Boolean {
         // NOTE: screenWidth is without the navbar width when 3button nav is turned on.
-        if(Build.VERSION.SDK_INT >= 30) {
+        if (Build.VERSION.SDK_INT >= 30) {
             // real = absolute dimen without any default deductions like navbar width
             val windowMetrics = (context?.getSystemService(Context.WINDOW_SERVICE) as? WindowManager)?.currentWindowMetrics
             val realScreenHeight = windowMetrics?.let { windowMetrics.bounds.bottom - windowMetrics.bounds.top } ?: screenHeight
@@ -233,9 +229,9 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
             val insets = rootWindowInsets.getInsetsIgnoringVisibility(WindowInsets.Type.systemBars())
             val isOutsideHeight = rawY < insets.top || rawY > (realScreenHeight - insets.bottom)
-            val isOutsideWidth = if(windowMetrics == null) {
+            val isOutsideWidth = if (windowMetrics == null) {
                 rawX < screenWidth
-            } else rawX < insets.left || rawX > (realScreenWidth - insets.right)
+            } else rawX < insets.left || rawX > realScreenWidth - insets.right
 
             return !(isOutsideWidth || isOutsideHeight)
         } else {
@@ -962,7 +958,8 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         }
     }
 
-    private var isAdjustingVolume: Boolean = false
+    private var isVolumeLocked: Boolean = false
+    private var hasShownVolumeToast: Boolean = false
 
     private var progressBarLeftHideRunnable: Runnable? = null
     private var progressBarRightHideRunnable: Runnable? = null
@@ -978,6 +975,8 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
+                    isVolumeLocked = currentRequestedVolume < 1.0f
+                    if (isVolumeLocked) hasShownVolumeToast = false
                     // validates if the touch is inside of the player area
                     isCurrentTouchValid = view.isValidTouch(currentTouch.x, currentTouch.y)
                     /*if (isCurrentTouchValid && player_episode_list?.isVisible == true) {
@@ -997,7 +996,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                             val maxVolume =
                                 audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
 
-                            if (currentRequestedVolume == 0.0f) {
+                            if (currentRequestedVolume == 0f || currentVolume < maxVolume) {
                                 currentRequestedVolume =
                                     currentVolume.toFloat() / maxVolume.toFloat()
                             }
@@ -1006,6 +1005,8 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                 }
 
                 MotionEvent.ACTION_UP -> {
+                    isVolumeLocked = currentRequestedVolume < 1.0f
+                    if (isVolumeLocked) hasShownVolumeToast = false
                     if (isCurrentTouchValid && !isLocked && isFullScreenPlayer) {
                         // seek time
                         if (swipeHorizontalEnabled && currentTouchAction == TouchAction.Time) {
@@ -1081,7 +1082,6 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
 
                     // reset variables
                     isCurrentTouchValid = false
-                    isAdjustingVolume = false
                     currentTouchStart = null
                     currentLastTouchAction = currentTouchAction
                     currentTouchAction = null
@@ -1212,7 +1212,6 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                                         verticalAddition = verticalAddition,
                                         volumeStep = 0f // Not used in motion events
                                     )
-                                    isAdjustingVolume = true
                                 }
 
                                 else -> Unit
@@ -1274,6 +1273,12 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                             KeyEvent.KEYCODE_VOLUME_DOWN,
                             KeyEvent.KEYCODE_VOLUME_UP -> {
                                 if (isLayout(PHONE or EMULATOR)) {
+                                    /**
+                                     * Some TVs do not support volume boosting, and overriding
+                                     * the volume buttons can be inconvenient for TV users.
+                                     * Since boosting volume is mainly useful on phones and emulators,
+                                     * we limit this feature to those devices.
+                                     */
                                     handleVolumeAdjustment(
                                         isVolumeUp = keyCode == KeyEvent.KEYCODE_VOLUME_UP,
                                         verticalAddition = 0f, // Not used for volume key events
@@ -1316,7 +1321,6 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         return false
     }
 
-    private var hasShownVolumeToast: Boolean = false
     private var loudnessEnhancer: LoudnessEnhancer? = null
 
     @OptIn(UnstableApi::class)
@@ -1352,7 +1356,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         var maxVolumePercentage = 200
         if (verticalAddition >= 0f) {
             val nextVolume = currentRequestedVolume + verticalAddition
-            if (isAdjustingVolume && currentRequestedVolume <= 1.0f && nextVolume >= 1.0f) {
+            if (isVolumeLocked && nextVolume >= 1.0f) {
                 if (!hasShownVolumeToast) {
                     showToast(R.string.slide_up_again_to_exceed_100)
                     hasShownVolumeToast = true
@@ -1405,30 +1409,6 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
                 }
             }
 
-            val level1Color = Color.WHITE
-            val level2Color = context?.let { ContextCompat.getColor(it, R.color.colorPrimaryOrange) }
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                level1ProgressBar.progressDrawable.colorFilter =
-                    BlendModeColorFilter(level1Color, BlendMode.SRC_IN)
-                level2ProgressBar.progressDrawable.colorFilter =
-                    level2Color?.let { BlendModeColorFilter(it, BlendMode.SRC_IN) }
-            } else {
-                @Suppress("DEPRECATION")
-                level1ProgressBar.progressDrawable.setColorFilter(
-                    level1Color,
-                    PorterDuff.Mode.SRC_IN
-                )
-
-                if (level2Color != null) {
-                    @Suppress("DEPRECATION")
-                    level2ProgressBar.progressDrawable.setColorFilter(
-                        level2Color,
-                        PorterDuff.Mode.SRC_IN
-                    )
-                }
-            }
-
             // Calculate the clamped index for the volume icon based on the requested volume
             val iconIndex = (currentRequestedVolume * (volumeIcons.size - 1))
                 .roundToInt()
@@ -1446,7 +1426,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
             // or after it drops below 100% and goes above again.
             // We only do this if the volume buttons are pressed as
             // we handle sliding a bit different.
-            if (!hasShownVolumeToast && isVolumeUp && currentVolume < maxVolume) {
+            if (!hasShownVolumeToast && isVolumeUp && currentRequestedVolume > 1.0f) {
                 showToast(R.string.volume_exceeded_100)
                 hasShownVolumeToast = true
             }
@@ -1463,6 +1443,9 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         } else {
             loudnessEnhancer?.release()
             loudnessEnhancer = null
+            if (volumeStep > 0f) {
+                hasShownVolumeToast = false
+            }
         }
     }
 
