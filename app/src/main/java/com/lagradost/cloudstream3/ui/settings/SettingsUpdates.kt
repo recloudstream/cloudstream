@@ -262,13 +262,9 @@ class SettingsUpdates : PreferenceFragmentCompat() {
         }
 
         getPref(R.string.manual_update_plugins_key)?.setOnPreferenceClickListener {
-            try {
+            ioSafe {
                 showToast("Updating extensions...", Toast.LENGTH_SHORT)
                 PluginManager.manuallyReloadAndUpdatePlugins(requireActivity())
-            } catch (e: Throwable) { // Use Throwable to catch and handle all errors
-                // Show error toast using the utility method and re-throw the exception
-                showToast(R.string.backup_failed, Toast.LENGTH_LONG)
-                throw e
             }
             return@setOnPreferenceClickListener true // Return true for the listener
         }
