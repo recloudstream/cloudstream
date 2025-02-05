@@ -263,8 +263,7 @@ class SettingsUpdates : PreferenceFragmentCompat() {
 
         getPref(R.string.manual_update_plugins_key)?.setOnPreferenceClickListener {
             ioSafe {
-                showToast("Updating extensions...", Toast.LENGTH_SHORT)
-                PluginManager.manuallyReloadAndUpdatePlugins(requireActivity())
+                PluginManager.manuallyReloadAndUpdatePlugins(activity ?: return@ioSafe)
             }
             return@setOnPreferenceClickListener true // Return true for the listener
         }
