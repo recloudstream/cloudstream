@@ -1470,8 +1470,8 @@ interface LoadResponse {
         }
 
         @Suppress("UNUSED_PARAMETER")
-        fun LoadResponse.addTrackId(id: String?) {
-            // TODO add trackt sync
+        fun LoadResponse.addTraktId(id: String?) {
+            // TODO add trakt sync
         }
 
         @Suppress("UNUSED_PARAMETER")
