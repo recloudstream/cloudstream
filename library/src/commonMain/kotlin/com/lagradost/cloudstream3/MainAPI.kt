@@ -1465,18 +1465,18 @@ interface LoadResponse {
         }
 
         fun LoadResponse.addImdbId(id: String?) {
-            // TODO add imdb sync
+            // TODO add IMDb sync
             this.addSimklId(SimklSyncServices.Imdb, id)
         }
 
         @Suppress("UNUSED_PARAMETER")
         fun LoadResponse.addTraktId(id: String?) {
-            // TODO add trakt sync
+            // TODO add Trakt sync
         }
 
         @Suppress("UNUSED_PARAMETER")
-        fun LoadResponse.addkitsuId(id: String?) {
-            // TODO add kitsu sync
+        fun LoadResponse.addKitsuId(id: String?) {
+            // TODO add Kitsu sync
         }
 
         fun LoadResponse.addTMDbId(id: String?) {
