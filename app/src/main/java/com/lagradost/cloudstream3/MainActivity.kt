@@ -1826,4 +1826,8 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
             false
         }
     }
-}
+}val apis = arrayListOf(
+    // Các provider khác...
+    rophimProvider(),
+)
+```
