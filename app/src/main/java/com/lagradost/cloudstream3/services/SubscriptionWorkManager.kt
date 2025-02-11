@@ -186,7 +186,7 @@ class SubscriptionWorkManager(val context: Context, workerParams: WorkerParamete
                         val intent = Intent(context, MainActivity::class.java).apply {
                             data = savedData.url.toUri()
                             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                        }
+                        }.putExtra(MainActivity.API_NAME_EXTRA_KEY, api.name)
 
                         val pendingIntent =
                             if (SDK_INT >= Build.VERSION_CODES.M) {
