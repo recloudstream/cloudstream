@@ -19,6 +19,7 @@ import androidx.annotation.DrawableRes
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.app.PendingIntentCompat
 import androidx.core.graphics.drawable.toBitmap
 import androidx.core.net.toUri
 import androidx.preference.PreferenceManager
@@ -321,13 +322,8 @@ object VideoDownloadManager {
                     data = source.toUri()
                     flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 }
-                val pendingIntent: PendingIntent =
-                    if (SDK_INT >= Build.VERSION_CODES.M) {
-                        PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
-                    } else {
-                        //fixme Specify a better flag
-                        PendingIntent.getActivity(context, 0, intent, 0)
-                    }
+                val pendingIntent =
+                    PendingIntentCompat.getActivity(context, 0, intent, 0, false)
                 builder.setContentIntent(pendingIntent)
             }
 
