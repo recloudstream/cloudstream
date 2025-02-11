@@ -87,6 +87,22 @@
         <item name="primaryGrayBackground">@color/amoledModeLight</item>
     </style>
 
+    <style name="ChipReviewAlt" parent="ChipFilled">
+        <item name="chipBackgroundColor">?attr/textColor</item>
+        <item name="textColor">?attr/primaryGrayBackground</item>
+        <item name="android:textColor">?attr/primaryGrayBackground</item>
+
+        <item name="android:textSize">12sp</item>
+    </style>
+
+    <style name="ChipReview" parent="ChipFilled">
+        <item name="chipBackgroundColor">?attr/primaryGrayBackground</item>
+        <item name="textColor">?attr/textColor</item>
+        <item name="android:textColor">?attr/textColor</item>
+
+        <item name="android:textSize">12sp</item>
+    </style>
+
     <style name="ChipFilled" parent="@style/Widget.Material3.Chip.Filter">
         <item name="chipBackgroundColor">@color/chip_color</item>
         <item name="chipStrokeColor">@color/white_transparent_toggle</item>
