@@ -193,6 +193,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         var lastError: String? = null
 
         private const val FILE_DELETE_KEY = "FILES_TO_DELETE_KEY"
+        const val API_NAME_EXTRA_KEY = "API_NAME_EXTRA_KEY"
 
         /**
          * Transient files to delete on application exit.
@@ -255,7 +256,8 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         fun handleAppIntentUrl(
             activity: FragmentActivity?,
             str: String?,
-            isWebview: Boolean
+            isWebview: Boolean,
+            extraArgs: Bundle? = null
         ): Boolean =
             with(activity) {
                 // TODO MUCH BETTER HANDLING
@@ -353,6 +355,16 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                             this.navigate(R.id.navigation_downloads)
                             return true
                         } else {
+                            val apiName = extraArgs?.getString(API_NAME_EXTRA_KEY)
+                                ?.takeIf { it.isNotBlank() }
+                            // if provided, try to match the api name instead of the api url
+                            // this is in order to also support providers that use JSON dataUrls
+                            // for example
+                            if (apiName != null) {
+                                loadResult(str, apiName, "")
+                                return true
+                            }
+
                             synchronized(apis) {
                                 for (api in apis) {
                                     if (str.startsWith(api.mainUrl)) {
@@ -667,7 +679,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         if (intent == null) return
         val str = intent.dataString
         loadCache()
-        handleAppIntentUrl(this, str, false)
+        handleAppIntentUrl(this, str, false, intent.extras)
     }
 
     private fun NavDestination.matchDestination(@IdRes destId: Int): Boolean =
