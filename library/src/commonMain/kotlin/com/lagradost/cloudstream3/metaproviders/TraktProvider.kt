@@ -1,9 +1,7 @@
 package com.lagradost.cloudstream3.metaproviders
 
-import android.net.Uri
 import com.fasterxml.jackson.annotation.JsonAlias
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.lagradost.cloudstream3.APIHolder
 import com.lagradost.cloudstream3.APIHolder.unixTimeMS
 import com.lagradost.cloudstream3.Actor
 import com.lagradost.cloudstream3.ActorData
@@ -33,6 +31,7 @@ import com.lagradost.cloudstream3.newTvSeriesLoadResponse
 import com.lagradost.cloudstream3.newTvSeriesSearchResponse
 import com.lagradost.cloudstream3.utils.AppUtils.parseJson
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
+import java.net.URI
 import java.text.SimpleDateFormat
 import java.util.Locale
 import kotlin.math.roundToInt
@@ -76,7 +75,7 @@ open class TraktProvider : MainAPI() {
 
         if (mediaType == TvType.Movie) {
             return newMovieSearchResponse(
-                name = media.title!!,
+                name = media.title ?: "",
                 url = Data(
                     type = mediaType,
                     mediaDetails = media,
@@ -87,7 +86,7 @@ open class TraktProvider : MainAPI() {
             }
         } else {
             return newTvSeriesSearchResponse(
-                name = media.title!!,
+                name = media.title ?: "",
                 url = Data(
                     type = mediaType,
                     mediaDetails = media,
@@ -319,7 +318,7 @@ open class TraktProvider : MainAPI() {
     private fun getWidthImageUrl(path: String?, width: String): String? {
         if (path == null) return null
         if (!path.contains("image.tmdb.org")) return fixPath(path)
-        val fileName = Uri.parse(path).lastPathSegment ?: return null
+        val fileName = URI(path).path?.substringAfterLast('/') ?: return null
         return "https://image.tmdb.org/t/p/${width}/${fileName}"
     }
 
