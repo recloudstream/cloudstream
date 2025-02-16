@@ -24,7 +24,6 @@ jobs:
         with:
           app_id: ${{ secrets.GH_APP_ID }}
           private_key: ${{ secrets.GH_APP_KEY }}
-          repository: "recloudstream/dokka"
       - name: Checkout
         uses: actions/checkout@master
         with:
