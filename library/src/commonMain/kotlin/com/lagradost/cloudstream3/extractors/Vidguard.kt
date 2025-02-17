@@ -126,10 +126,10 @@ open class Vidguardto : ExtractorApi() {
         return result
     }
 	
-	private fun getEmbedUrl(url: String): String {
-		return url.takeIf { it.contains("/d/") }
-            ?.replace("/d/", "/e/") ?: url
-	}
+    private fun getEmbedUrl(url: String): String {
+        return url.takeIf { it.contains("/d/") || it.contains("/v/") }
+            ?.replace("/d/", "/e/")?.replace("/v/", "/e/") ?: url
+    }
 
     data class SvgObject(
         val stream: String,
