@@ -707,4 +707,8 @@
     <string name="audio_singluar">音樂</string>
     <string name="encoding_error">編碼錯誤</string>
     <string name="unsupported_error">因為不支持造成的錯誤</string>
+    <string name="podcast_singluar">播客</string>
+    <string name="software_decoding">軟體解碼</string>
+    <string name="torrent_not_accepted">不接受的種子</string>
+    <string name="player_load_one_subtitle_online">載入第一個可用的</string>
 </resources>
