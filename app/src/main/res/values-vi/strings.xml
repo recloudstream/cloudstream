@@ -493,7 +493,7 @@
     <string name="library">Thư viện</string>
     <string name="browser">Trình duyệt</string>
     <string name="plugin_downloaded">Plugin đã tải</string>
-    <string name="apk_installer_legacy">Di sản</string>
+    <string name="apk_installer_legacy">Legacy</string>
     <string name="sort_updated_new">Đã cập nhật (Mới đến Cũ)</string>
     <string name="sort_updated_old">Đã cập nhật (Cũ đến Mới)</string>
     <string name="empty_library_no_accounts_message">Thư viện của bạn đang trống :(

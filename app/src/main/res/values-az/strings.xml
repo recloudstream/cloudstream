@@ -94,4 +94,24 @@
     <string name="subs_default_reset_toast">Standart dəyərlərə sıfırla</string>
     <string name="acra_report_toast">Üzr istəyirik, tətbiqdə xəta baş verdi. Gizli xəta hesabatı tərtibatçılara göndəriləcək</string>
     <string name="season">Sezon</string>
+    <string name="pause">Dayandır</string>
+    <string name="start">Başlat</string>
+    <string name="test_failed">Uğursuz oldu</string>
+    <string name="delete_message_multiple" formatted="true">Aşağıdakı faylları həmişəlik silmək istədiyinizə əminsinizmi?\n\n%s</string>
+    <string name="episodes_range">%1$d-%2$d</string>
+    <string name="season_short">S</string>
+    <string name="no_episodes_found">Bölümlər tapılmadı</string>
+    <string name="delete">Sil</string>
+    <string name="delete_file">Faylı sil</string>
+    <string name="delete_files">Faylları sil</string>
+    <string name="delete_format" formatted="true">Sil (%1$d | %2$s)</string>
+    <string name="cancel">Ləğv et</string>
+    <string name="test_passed">Uğurlu oldu</string>
+    <string name="test_warning">Xəbərdarlıq</string>
+    <string name="resume">Davam et</string>
+    <string name="go_back_30">-30</string>
+    <string name="go_forward_30">+30</string>
+    <string name="delete_message" formatted="true">%s həmişəlik silinəcək\nƏminsiniz?</string>
+    <string name="delete_message_series_episodes" formatted="true">%1$s içindəki aşağıdakı bölümləri həmişəlik silmək istədiyinizdən əminsinizmi?\n\n%2$s</string>
+    <string name="episode_format" formatted="true">%1$d%2$s</string>
 </resources>

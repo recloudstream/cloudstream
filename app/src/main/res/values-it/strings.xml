@@ -627,7 +627,7 @@
     <string name="battery_dialog_title">Disabilita ottimizzazione della batteria</string>
     <string name="app_info_intent_error">Impossibile aprire le informazioni sull\'app CloudStream.</string>
     <string name="custom_media_singluar">Media</string>
-    <string name="battery_dialog_message">Per garantire download e notifiche ininterrotti per i programmi TV sottoscritti, CloudStream necessita dell\'autorizzazione per l\'esecuzione in background. Premendo OK, verrai indirizzato alle informazioni sull\'app. Successivamente, scorri fino a \"Utilizzo della batteria\" e imposta l\'utilizzo della batteria su \"Senza restrizioni\". Tieni presente che questa autorizzazione non significa che CS3 scaricherà la batteria. Funzionerà in background solo quando necessario, ad esempio quando si ricevono notifiche o si scaricano video da estensioni ufficiali. Se scegli di annullare, puoi modificare questa impostazione più tardi in \"Impostazioni generali\".</string>
+    <string name="battery_dialog_message">Per garantire download e notifiche ininterrotti per le serie TV a cui si è abbonati, CloudStream necessita dell\'autorizzazione per funzionare in background. Premendo OK, verrà mostrata una finestra di dialogo di richiesta. Premi \"Consenti\".\n\nNota che questa autorizzazione non significa che CS3 scaricherà la batteria. Funzionerà in background solo quando necessario, ad esempio quando si ricevono notifiche o si scaricano video da estensioni ufficiali.</string>
     <string name="app_unrestricted_toast">L\'utilizzo della batteria dell\'app è già impostato su \"Senza restrizioni\"</string>
     <string name="music_singlar">Musica</string>
     <string name="audio_book_singular">Audiolibro</string>
