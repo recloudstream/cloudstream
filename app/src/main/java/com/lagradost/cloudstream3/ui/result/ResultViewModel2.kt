@@ -1823,25 +1823,40 @@ class ResultViewModel2 : ViewModel() {
             ep.copy(position = posDur?.position ?: 0, duration = posDur?.duration ?: 0)
         }
     }
+    private val _sortOrder: MutableLiveData<Boolean> = MutableLiveData(true) // true for ascending
+        val sortOrder: LiveData<Boolean> = _sortOrder
+
+        fun toggleSort() {
+            _sortOrder.value = !(_sortOrder.value ?: true)
+            reloadEpisodes()
+    }       
 
     private fun getEpisodes(indexer: EpisodeIndexer, range: EpisodeRange): List<ResultEpisode> {
         val startIndex = range.startIndex
         val length = range.length
-
+        val isAscending = _sortOrder.value ?: true
+    
         return currentEpisodes[indexer]
             ?.let { list ->
                 val start = minOf(list.size, startIndex)
                 val end = minOf(list.size, start + length)
                 list.subList(start, end).map {
-                    val posDur = getViewPos(it.id)
-                    val watchState =
+                        val posDur = getViewPos(it.id)
+                        val watchState = 
                         getVideoWatchState(it.id) ?: VideoWatchState.None
-                    it.copy(
-                        position = posDur?.position ?: 0,
-                        duration = posDur?.duration ?: 0,
-                        videoWatchState = watchState
-                    )
-                }
+                        it.copy(
+                            position = posDur?.position ?: 0,
+                            duration = posDur?.duration ?: 0,
+                            videoWatchState = watchState
+                        )
+                    }
+                    .let { episodes ->
+                        if (isAscending) {
+                            episodes.sortedBy { it.episode }
+                        } else {
+                            episodes.sortedByDescending { it.episode }
+                        }
+                    }
             }
             ?: emptyList()
     }

@@ -773,7 +773,7 @@
                                     android:visibility="gone"
                                     tools:text="50-100"
                                     tools:visibility="visible" />
-
+                                    
                                 <com.google.android.material.button.MaterialButton
                                     android:id="@+id/result_dub_select"
                                     style="@style/MultiSelectButton"
@@ -799,9 +799,24 @@
                                     android:paddingTop="10dp"
                                     android:paddingBottom="10dp"
                                     android:textColor="?attr/textColor"
+                                    android:layout_marginEnd="10dp"
                                     android:textSize="17sp"
                                     android:textStyle="normal"
                                     tools:text="8 Episodes" />
+
+                                <com.google.android.material.button.MaterialButton
+                                    android:id="@+id/result_sort_button"
+                                    style="@style/MultiSelectButton"
+                                    android:layout_gravity="center_vertical"
+                                    android:layout_marginStart="0dp"
+                                    android:nextFocusLeft="@id/result_dub_select"
+                                    android:nextFocusUp="@id/result_description"
+                                    android:nextFocusDown="@id/result_episodes"
+                                    android:paddingStart="10dp"
+                                    android:paddingEnd="5dp"
+                                    android:text="Sort"
+                                    android:visibility="gone"
+                                    tools:visibility="visible" /> 
                             </LinearLayout>
 
 

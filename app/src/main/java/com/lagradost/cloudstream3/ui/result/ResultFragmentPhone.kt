@@ -406,7 +406,19 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                     { downloadClickEvent ->
                         DownloadButtonSetup.handleDownloadClick(downloadClickEvent)
                     }
+                    
                 )
+                resultSortButton?.setOnClickListener {
+                    viewModel.toggleSort()
+                }
+                
+                viewModel.sortOrder.observe(viewLifecycleOwner) { isAscending ->
+                    resultSortButton?.text = if(isAscending) {
+                        "Sort ▲"
+                    } else {
+                        "Sort ▼" 
+                    }
+                }
 
 
             resultScroll.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { _, _, scrollY, _, oldScrollY ->
@@ -627,6 +639,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                 // no failure?
                 resultEpisodeLoading.isVisible = episodes is Resource.Loading
                 resultEpisodes.isVisible = episodes is Resource.Success
+                resultSortButton.isVisible = episodes is Resource.Success  
                 if (episodes is Resource.Success) {
                     (resultEpisodes.adapter as? EpisodeAdapter)?.updateList(episodes.value)
                 }
