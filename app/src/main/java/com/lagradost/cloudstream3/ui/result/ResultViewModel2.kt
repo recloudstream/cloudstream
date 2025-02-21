@@ -1832,15 +1832,7 @@ class ResultViewModel2 : ViewModel() {
             ep.copy(position = posDur?.position ?: 0, duration = posDur?.duration ?: 0)
         }
     }
-    fun toggleSort() {
-        val current = _currentSort.value 
-        _currentSort.value = if (current == EpisodeSortType.NUMBER_ASC) {
-            EpisodeSortType.NUMBER_DESC
-        } else {
-            EpisodeSortType.NUMBER_ASC
-        }
-        reloadEpisodes()
-    }
+    
     private fun getEpisodes(indexer: EpisodeIndexer, range: EpisodeRange): List<ResultEpisode> {
         val episodes = currentEpisodes[indexer]?.let { list ->
             val start = minOf(list.size, range.startIndex)
@@ -1861,7 +1853,15 @@ class ResultViewModel2 : ViewModel() {
 
     private val _currentSort = MutableLiveData(EpisodeSortType.NUMBER_ASC)
     val currentSort: LiveData<EpisodeSortType> = _currentSort
-    
+
+    fun toggleSort() {
+        _currentSort.value = when (_currentSort.value) {
+            EpisodeSortType.NUMBER_ASC -> EpisodeSortType.NUMBER_DESC
+            else -> EpisodeSortType.NUMBER_ASC
+        }
+        reloadEpisodes()
+    }
+
     fun setSort(type: EpisodeSortType) {
         _currentSort.value = type
         reloadEpisodes()
@@ -1873,7 +1873,6 @@ class ResultViewModel2 : ViewModel() {
             EpisodeSortType.NUMBER_DESC -> episodes.sortedByDescending { it.episode }
             EpisodeSortType.RATING_HIGH_LOW -> episodes.sortedByDescending { it.rating ?: 0 }
             EpisodeSortType.RATING_LOW_HIGH -> episodes.sortedBy { it.rating ?: 0 }
-            // For now let's just use episode numbers for date sorting since airDate isn't properly accessible
             EpisodeSortType.DATE_NEWEST -> episodes.sortedByDescending { it.episode }
             EpisodeSortType.DATE_OLDEST -> episodes.sortedBy { it.episode }
             null -> episodes

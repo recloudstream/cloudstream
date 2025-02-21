@@ -420,66 +420,74 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                     }
                     
                 )
-            resultSortButton?.setOnClickListener {
-                val episodes = (viewModel.episodes.value as? Resource.Success)?.value
-
-                val sortOptions = mutableListOf<Pair<String, EpisodeSortType>>()
-
-                // Episode number sorting is always available
-                sortOptions.add("Episode (Ascending)" to EpisodeSortType.NUMBER_ASC)
-                sortOptions.add("Episode (Descending)" to EpisodeSortType.NUMBER_DESC)
-
-                // Only add rating options if any episodes have ratings
-                if (shouldEnableSort(EpisodeSortType.RATING_HIGH_LOW, episodes)) {
-                    sortOptions.add("Rating (Highest)" to EpisodeSortType.RATING_HIGH_LOW)
-                    sortOptions.add("Rating (Lowest)" to EpisodeSortType.RATING_LOW_HIGH)
+                resultBinding?.resultSortButton?.setOnClickListener {
+                    val episodes = (viewModel.episodes.value as? Resource.Success)?.value
+                
+                    val sortOptions = mutableListOf<Pair<Int, EpisodeSortType>>().apply {
+                        // Episode number sorting is always available
+                        add(R.string.sort_episodes_number_asc to EpisodeSortType.NUMBER_ASC)
+                        add(R.string.sort_episodes_number_desc to EpisodeSortType.NUMBER_DESC)
+                
+                        // Only add rating options if any episodes have ratings
+                        if (shouldEnableSort(EpisodeSortType.RATING_HIGH_LOW, episodes)) {
+                            add(R.string.sort_episodes_rating_high_low to EpisodeSortType.RATING_HIGH_LOW)
+                            add(R.string.sort_episodes_rating_low_high to EpisodeSortType.RATING_LOW_HIGH)
+                        }
+                
+                        // Only add air date options if any episodes have air dates
+                        if (shouldEnableSort(EpisodeSortType.DATE_NEWEST, episodes)) {
+                            add(R.string.sort_episodes_date_newest to EpisodeSortType.DATE_NEWEST)
+                            add(R.string.sort_episodes_date_oldest to EpisodeSortType.DATE_OLDEST)
+                        }
+                    }
+                
+                    val items = sortOptions.map { getString(it.first) }
+                    val selectedIndex = listOf(sortOptions.indexOfFirst { it.second == viewModel.currentSort.value })
+                
+                    val inflater = LayoutInflater.from(requireContext())
+                    val binding = BottomSelectionDialogBinding.inflate(inflater)
+                
+                    val dialog = Dialog(requireContext())
+                    dialog.setContentView(binding.root)
+                
+                    requireActivity().showDialog(
+                        binding = binding,
+                        dialog = dialog,
+                        items = items,
+                        selectedIndex = selectedIndex,
+                        name = getString(R.string.sort_by),
+                        showApply = false,
+                        isMultiSelect = false,
+                        callback = { selectedIndices ->
+                            viewModel.setSort(sortOptions[selectedIndices.first()].second)
+                        },
+                        dismissCallback = { }
+                    )
+                
+                    dialog.show()
                 }
-
-                // Only add air date options if any episodes have air dates
-                if (shouldEnableSort(EpisodeSortType.DATE_NEWEST, episodes)) {
-                    sortOptions.add("Air Date (Newest)" to EpisodeSortType.DATE_NEWEST)
-                    sortOptions.add("Air Date (Oldest)" to EpisodeSortType.DATE_OLDEST)
-                }
-
-                val items = sortOptions.map { it.first }
-                val selectedIndex = listOf(sortOptions.indexOfFirst { it.second == viewModel.currentSort.value })
-
-                val inflater = LayoutInflater.from(requireContext()) // Ensure valid inflater
-                val binding = BottomSelectionDialogBinding.inflate(inflater)
-
-                val dialog = Dialog(requireContext())
-                dialog.setContentView(binding.root) // Important: Set the dialog content
-
-                requireActivity().showDialog(
-                    binding = binding,
-                    dialog = dialog,
-                    items = items,
-                    selectedIndex = selectedIndex,
-                    name = getString(R.string.sort_by),
-                    showApply = false,
-                    isMultiSelect = false,
-                    callback = { selectedIndices ->
-                        viewModel.setSort(sortOptions[selectedIndices.first()].second)
-                    },
-                    dismissCallback = { }
-                )
-
-                dialog.show() // Ensure it shows up after setup
-            }
                 
                 viewModel.currentSort.observe(viewLifecycleOwner) { sortType ->
                     val episodes = (viewModel.episodes.value as? Resource.Success)?.value
                     resultSortButton?.text = when(sortType) {
-                        EpisodeSortType.NUMBER_ASC -> "Episode ↑"
-                        EpisodeSortType.NUMBER_DESC -> "Episode ↓"
+                        EpisodeSortType.NUMBER_ASC -> getString(R.string.sort_button_episode_asc)
+                        EpisodeSortType.NUMBER_DESC -> getString(R.string.sort_button_episode_desc)
                         EpisodeSortType.RATING_HIGH_LOW -> 
-                            if (shouldEnableSort(EpisodeSortType.RATING_HIGH_LOW, episodes)) "Rating ↓" else "Episode ↑"
+                            if (shouldEnableSort(EpisodeSortType.RATING_HIGH_LOW, episodes)) 
+                                getString(R.string.sort_button_rating_high)
+                            else getString(R.string.sort_button_episode_asc)
                         EpisodeSortType.RATING_LOW_HIGH -> 
-                            if (shouldEnableSort(EpisodeSortType.RATING_LOW_HIGH, episodes)) "Rating ↑" else "Episode ↑"
+                            if (shouldEnableSort(EpisodeSortType.RATING_LOW_HIGH, episodes)) 
+                                getString(R.string.sort_button_rating_low)
+                            else getString(R.string.sort_button_episode_asc)
                         EpisodeSortType.DATE_NEWEST -> 
-                            if (shouldEnableSort(EpisodeSortType.DATE_NEWEST, episodes)) "Air Date ↓" else "Episode ↑"
+                            if (shouldEnableSort(EpisodeSortType.DATE_NEWEST, episodes)) 
+                                getString(R.string.sort_button_date_newest)
+                            else getString(R.string.sort_button_episode_asc)
                         EpisodeSortType.DATE_OLDEST -> 
-                            if (shouldEnableSort(EpisodeSortType.DATE_OLDEST, episodes)) "Air Date ↑" else "Episode ↑"
+                            if (shouldEnableSort(EpisodeSortType.DATE_OLDEST, episodes)) 
+                                getString(R.string.sort_button_date_oldest)
+                            else getString(R.string.sort_button_episode_asc)
                     }
                 }
 
