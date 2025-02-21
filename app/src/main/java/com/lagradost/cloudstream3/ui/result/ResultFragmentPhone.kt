@@ -36,6 +36,7 @@ import com.lagradost.cloudstream3.LoadResponse
 import com.lagradost.cloudstream3.MainActivity.Companion.afterPluginsLoadedEvent
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.SearchResponse
+import com.lagradost.cloudstream3.databinding.BottomSelectionDialogBinding
 import com.lagradost.cloudstream3.databinding.FragmentResultBinding
 import com.lagradost.cloudstream3.databinding.FragmentResultSwipeBinding
 import com.lagradost.cloudstream3.databinding.ResultRecommendationsBinding
@@ -419,36 +420,52 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                     }
                     
                 )
-                resultSortButton?.setOnClickListener {
-                    val episodes = (viewModel.episodes.value as? Resource.Success)?.value
-                    
-                    val sortOptions = mutableListOf<Pair<String, EpisodeSortType>>()
-                
-                    // Episode number sorting is always available
-                    sortOptions.add("Episode (Ascending)" to EpisodeSortType.NUMBER_ASC)
-                    sortOptions.add("Episode (Descending)" to EpisodeSortType.NUMBER_DESC)
-                    
-                    // Only add rating options if any episodes have ratings
-                    if (shouldEnableSort(EpisodeSortType.RATING_HIGH_LOW, episodes)) {
-                        sortOptions.add("Rating (Highest)" to EpisodeSortType.RATING_HIGH_LOW)
-                        sortOptions.add("Rating (Lowest)" to EpisodeSortType.RATING_LOW_HIGH)
-                    }
-                    
-                    // Only add air date options if any episodes have air dates
-                    if (shouldEnableSort(EpisodeSortType.DATE_NEWEST, episodes)) {
-                        sortOptions.add("Air Date (Newest)" to EpisodeSortType.DATE_NEWEST)
-                        sortOptions.add("Air Date (Oldest)" to EpisodeSortType.DATE_OLDEST)
-                    }
-                
-                    activity?.showDialog(
-                        sortOptions.map { it.first },
-                        sortOptions.indexOfFirst { it.second == viewModel.currentSort.value },
-                        getString(R.string.sort_by),
-                        false,
-                    ) { selectedIndex -> 
-                        viewModel.setSort(sortOptions[selectedIndex].second)
-                    }
+            resultSortButton?.setOnClickListener {
+                val episodes = (viewModel.episodes.value as? Resource.Success)?.value
+
+                val sortOptions = mutableListOf<Pair<String, EpisodeSortType>>()
+
+                // Episode number sorting is always available
+                sortOptions.add("Episode (Ascending)" to EpisodeSortType.NUMBER_ASC)
+                sortOptions.add("Episode (Descending)" to EpisodeSortType.NUMBER_DESC)
+
+                // Only add rating options if any episodes have ratings
+                if (shouldEnableSort(EpisodeSortType.RATING_HIGH_LOW, episodes)) {
+                    sortOptions.add("Rating (Highest)" to EpisodeSortType.RATING_HIGH_LOW)
+                    sortOptions.add("Rating (Lowest)" to EpisodeSortType.RATING_LOW_HIGH)
                 }
+
+                // Only add air date options if any episodes have air dates
+                if (shouldEnableSort(EpisodeSortType.DATE_NEWEST, episodes)) {
+                    sortOptions.add("Air Date (Newest)" to EpisodeSortType.DATE_NEWEST)
+                    sortOptions.add("Air Date (Oldest)" to EpisodeSortType.DATE_OLDEST)
+                }
+
+                val items = sortOptions.map { it.first }
+                val selectedIndex = listOf(sortOptions.indexOfFirst { it.second == viewModel.currentSort.value })
+
+                val inflater = LayoutInflater.from(requireContext()) // Ensure valid inflater
+                val binding = BottomSelectionDialogBinding.inflate(inflater)
+
+                val dialog = Dialog(requireContext())
+                dialog.setContentView(binding.root) // Important: Set the dialog content
+
+                requireActivity().showDialog(
+                    binding = binding,
+                    dialog = dialog,
+                    items = items,
+                    selectedIndex = selectedIndex,
+                    name = getString(R.string.sort_by),
+                    showApply = false,
+                    isMultiSelect = false,
+                    callback = { selectedIndices ->
+                        viewModel.setSort(sortOptions[selectedIndices.first()].second)
+                    },
+                    dismissCallback = { }
+                )
+
+                dialog.show() // Ensure it shows up after setup
+            }
                 
                 viewModel.currentSort.observe(viewLifecycleOwner) { sortType ->
                     val episodes = (viewModel.episodes.value as? Resource.Success)?.value
