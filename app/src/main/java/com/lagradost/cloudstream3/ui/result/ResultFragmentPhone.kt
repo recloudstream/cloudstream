@@ -314,6 +314,17 @@ open class ResultFragmentPhone : FullScreenPlayer() {
         viewModel.reloadEpisodes()
     }
 
+    private fun shouldEnableSort(type: EpisodeSortType, episodes: List<ResultEpisode>?): Boolean {
+        if (episodes == null) return false
+        return when(type) {
+            EpisodeSortType.NUMBER_ASC, EpisodeSortType.NUMBER_DESC -> true
+            EpisodeSortType.RATING_HIGH_LOW, EpisodeSortType.RATING_LOW_HIGH ->
+                episodes.any { it.rating != null }
+            EpisodeSortType.DATE_NEWEST, EpisodeSortType.DATE_OLDEST ->
+                episodes.any { it.airDate != null }
+        }
+    }
+
     @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -409,14 +420,49 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                     
                 )
                 resultSortButton?.setOnClickListener {
-                    viewModel.toggleSort()
+                    val episodes = (viewModel.episodes.value as? Resource.Success)?.value
+                    
+                    val sortOptions = mutableListOf<Pair<String, EpisodeSortType>>()
+                
+                    // Episode number sorting is always available
+                    sortOptions.add("Episode (Ascending)" to EpisodeSortType.NUMBER_ASC)
+                    sortOptions.add("Episode (Descending)" to EpisodeSortType.NUMBER_DESC)
+                    
+                    // Only add rating options if any episodes have ratings
+                    if (shouldEnableSort(EpisodeSortType.RATING_HIGH_LOW, episodes)) {
+                        sortOptions.add("Rating (Highest)" to EpisodeSortType.RATING_HIGH_LOW)
+                        sortOptions.add("Rating (Lowest)" to EpisodeSortType.RATING_LOW_HIGH)
+                    }
+                    
+                    // Only add air date options if any episodes have air dates
+                    if (shouldEnableSort(EpisodeSortType.DATE_NEWEST, episodes)) {
+                        sortOptions.add("Air Date (Newest)" to EpisodeSortType.DATE_NEWEST)
+                        sortOptions.add("Air Date (Oldest)" to EpisodeSortType.DATE_OLDEST)
+                    }
+                
+                    activity?.showDialog(
+                        sortOptions.map { it.first },
+                        sortOptions.indexOfFirst { it.second == viewModel.currentSort.value },
+                        getString(R.string.sort_by),
+                        false,
+                    ) { selectedIndex -> 
+                        viewModel.setSort(sortOptions[selectedIndex].second)
+                    }
                 }
                 
-                viewModel.sortOrder.observe(viewLifecycleOwner) { isAscending ->
-                    resultSortButton?.text = if(isAscending) {
-                        "Sort ▲"
-                    } else {
-                        "Sort ▼" 
+                viewModel.currentSort.observe(viewLifecycleOwner) { sortType ->
+                    val episodes = (viewModel.episodes.value as? Resource.Success)?.value
+                    resultSortButton?.text = when(sortType) {
+                        EpisodeSortType.NUMBER_ASC -> "Episode ↑"
+                        EpisodeSortType.NUMBER_DESC -> "Episode ↓"
+                        EpisodeSortType.RATING_HIGH_LOW -> 
+                            if (shouldEnableSort(EpisodeSortType.RATING_HIGH_LOW, episodes)) "Rating ↓" else "Episode ↑"
+                        EpisodeSortType.RATING_LOW_HIGH -> 
+                            if (shouldEnableSort(EpisodeSortType.RATING_LOW_HIGH, episodes)) "Rating ↑" else "Episode ↑"
+                        EpisodeSortType.DATE_NEWEST -> 
+                            if (shouldEnableSort(EpisodeSortType.DATE_NEWEST, episodes)) "Air Date ↓" else "Episode ↑"
+                        EpisodeSortType.DATE_OLDEST -> 
+                            if (shouldEnableSort(EpisodeSortType.DATE_OLDEST, episodes)) "Air Date ↑" else "Episode ↑"
                     }
                 }
 

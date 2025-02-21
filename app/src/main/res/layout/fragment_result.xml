@@ -798,17 +798,18 @@
                                     android:layout_gravity="center_vertical"
                                     android:paddingTop="10dp"
                                     android:paddingBottom="10dp"
-                                    android:textColor="?attr/textColor"
                                     android:layout_marginEnd="10dp"
+                                    android:textColor="?attr/textColor"
                                     android:textSize="17sp"
                                     android:textStyle="normal"
                                     tools:text="8 Episodes" />
 
-                                <com.google.android.material.button.MaterialButton
+                                    <com.google.android.material.button.MaterialButton
                                     android:id="@+id/result_sort_button"
                                     style="@style/MultiSelectButton"
                                     android:layout_gravity="center_vertical"
                                     android:layout_marginStart="0dp"
+                                    android:layout_marginEnd="10dp"
                                     android:nextFocusLeft="@id/result_dub_select"
                                     android:nextFocusUp="@id/result_description"
                                     android:nextFocusDown="@id/result_episodes"
