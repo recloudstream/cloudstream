@@ -25,7 +25,7 @@ class SubDlApi(index: Int) : InAppAuthAPIManager(index), AbstractSubApi {
     override val createAccountUrl = "https://subdl.com/panel/register"
 
     companion object {
-        const val APIURL = "https://api.subdl.com"
+        const val APIURL = "https://apiold.subdl.com"
         const val APIENDPOINT = "$APIURL/api/v1/subtitles"
         const val DOWNLOADENDPOINT = "https://dl.subdl.com"
         const val SUBDL_SUBTITLES_USER_KEY: String = "subdl_user"
