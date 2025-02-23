@@ -133,7 +133,7 @@
     <string name="subs_subtitle_languages">Felirat nyelve</string>
     <string name="provider_info_meta">A metaadatokat a webhely nem biztosítja, a videó betöltése sikertelen lesz, ha nem létezik a webhelyen.</string>
     <string name="subs_auto_select_language">Nyelv automatikus kiválasztása</string>
-    <string name="category_updates">Frissítések és biztonsági mentés</string>
+    <string name="category_updates">Frissítések és Biztonsági Mentés</string>
     <string name="advanced_search">Speciális keresés</string>
     <string name="show_fillers_settings">Filler epizódok mutatása animéknél</string>
     <string name="show_trailers_settings">Előzetesek megjelenítése</string>
@@ -186,7 +186,7 @@
     <string name="episode_action_auto_download">Automatikus letöltés</string>
     <string name="backup_success">Adatok eltárolva</string>
     <string name="backup_failed_error_format">Hiba a biztonsági mentés során %s</string>
-    <string name="category_account">Fiókok</string>
+    <string name="category_account">Fiókok és Biztonság</string>
     <string name="advanced_search_des">Szolgáltató szerint elkülönítve adja meg a keresési eredményeket</string>
     <string name="bug_report_settings_on">Nem küld adatokat</string>
     <string name="kitsu_settings">Poszterek megjelenítése Kitsu-ról</string>
@@ -587,4 +587,16 @@
     <string name="auto_rotate_video">Auto elforgatás</string>
     <string name="auto_rotate_video_desc">Az automatikus videó orientáció alapján való képernyő elforgatás bekapcsolása</string>
     <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
+    <string name="open_local_video">Helyi videó megnyitása</string>
+    <string name="repo_copy_label">Tárhely név és URL</string>
+    <string name="torrent_info">Ez a videó egy Torrent, ami azt jelenti, hogy a videótevékenységed nyomon követhető.\nGyőződj meg róla, hogy megérted a torrentezés működését, mielőtt folytatnád.</string>
+    <string name="episode_upcoming_format" formatted="true">Hamarosan érkezik a(z) %s</string>
+    <string name="toast_copied">Másolva!</string>
+    <string name="next_season_episode_format" formatted="true">A(z) %1$d. évad %2$d. epizódja megjelenik ekkor</string>
+    <string name="play_from_beginning_img_des">Lejátszás az elejétől</string>
+    <string name="downloads_empty">Jelenleg nincs letöltés.</string>
+    <string name="downloads_delete_select">Válassza ki a Törlendő Elemeket</string>
+    <string name="offline_file">Elérhető offline megtekintésre</string>
+    <string name="select_all">Mindet Kiválaszt</string>
+    <string name="deselect_all">Mindent Kijelölés Eltávolítása</string>
 </resources>

@@ -654,7 +654,7 @@
     <string name="music_singlar">Müzik</string>
     <string name="audio_book_singular">Sesli Kitap</string>
     <string name="custom_media_singluar">Medya</string>
-    <string name="battery_dialog_message">Abone olunan TV şovları için kesintisiz indirmeleri ve bildirimleri sağlamak için, CloudStream\'in arka planda çalışmasına izin vermeniz gerekmektedir. Tamam\'a basarak Uygulama bilgilerine yönlendirileceksiniz. Orada, 𝘼𝙥𝙥 𝙗𝙖𝙩𝙩𝙚𝙧𝙮 𝙪𝙨𝙖𝙜𝙚 (Uygulama pil kullanımı) kısmına gidip pil kullanımını 𝙐𝙣𝙧𝙚𝙨𝙩𝙧𝙞𝙘𝙩𝙚𝙙 (Sınırsız) olarak ayarlayın. Bu iznin CS3\'ün pilinizi hızlıca tüketeceği anlamına gelmediğini lütfen unutmayın. Sadece gerektiğinde, resmi eklentilerden bildirim almak veya videoları indirmek gibi durumlarda arka planda çalışacaktır. İptal etmeyi seçerseniz, bu ayarı daha sonra 𝙂𝙚𝙣𝙚𝙧𝙖𝙡 𝙎𝙚𝙩𝙩𝙞𝙣𝙜𝙨 (Genel Ayarlar) bölümünden ayarlayabilirsiniz.</string>
+    <string name="battery_dialog_message">Abone olunan TV programları için kesintisiz indirme ve bildirimler sağlamak için CloudStream\'in arka planda çalışma iznine ihtiyacı var. Tamam\'a basarak bir istek iletişim kutusu göreceksiniz. Lütfen \'İzin Ver\'e basın.\n\nLütfen unutmayın, bu izin CS3’ün pilinizi tüketeceği anlamına gelmez. Yalnızca gerektiğinde, örneğin bildirim alırken veya resmi uzantılardan video indirirken arka planda çalışır.</string>
     <string name="app_unrestricted_toast">Uygulama pil kullanımı zaten sınırsız olarak ayarlanmış</string>
     <string name="reset_btn">Sıfırla</string>
     <string name="episode_upcoming_format" formatted="true">%s içinde yaklaşıyor</string>
