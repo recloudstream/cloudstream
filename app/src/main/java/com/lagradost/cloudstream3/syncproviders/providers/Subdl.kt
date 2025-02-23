@@ -15,9 +15,6 @@ import com.lagradost.cloudstream3.subtitles.SubtitleResource
 import com.lagradost.cloudstream3.syncproviders.AuthAPI.LoginInfo
 import com.lagradost.cloudstream3.syncproviders.InAppAuthAPI
 import com.lagradost.cloudstream3.syncproviders.InAppAuthAPIManager
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-import java.net.URLEncoder
 
 class SubDlApi(index: Int) : InAppAuthAPIManager(index), AbstractSubApi {
     override val idPrefix = "subdl"
@@ -142,11 +139,9 @@ class SubDlApi(index: Int) : InAppAuthAPIManager(index), AbstractSubApi {
 
         val tokenResponse = app.post(
             url = "$APIURL/login",
-            data = mapOf(
+            json = mapOf(
                 "email" to useremail,
-                "password" to withContext(Dispatchers.IO) {
-                    URLEncoder.encode(password, "UTF-8")
-                }
+                "password" to password
             )
         ).parsedSafe<OAuthTokenResponse>()
 
