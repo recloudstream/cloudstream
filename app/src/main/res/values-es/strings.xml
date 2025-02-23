@@ -672,4 +672,6 @@
     <string name="player_load_one_subtitle_online">Cargar primero disponible</string>
     <string name="torrent_preferred_media">Habilitación torrent en Opciones/Proveedores/Medio preferido</string>
     <string name="torrent_not_accepted">Torrent no aceptado</string>
+    <string name="software_decoding">Software de decodificado</string>
+    <string name="software_decoding_desc">El software de decodificado permite que el reproductor reproduzca archivos de video no soportados por su teléfono, lo cual podría causar una reproducción lenta o inestable en alta resolución</string>
 </resources>
