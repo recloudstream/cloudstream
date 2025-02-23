@@ -22,7 +22,6 @@ jobs:
       with:
         app_id: ${{ secrets.GH_APP_ID }}
         private_key: ${{ secrets.GH_APP_KEY }}
-        repository: "recloudstream/cloudstream"
     - uses: actions/checkout@v4
       with:
         token: ${{ steps.generate_token.outputs.token }}
