@@ -15,6 +15,9 @@ import com.lagradost.cloudstream3.subtitles.SubtitleResource
 import com.lagradost.cloudstream3.syncproviders.AuthAPI.LoginInfo
 import com.lagradost.cloudstream3.syncproviders.InAppAuthAPI
 import com.lagradost.cloudstream3.syncproviders.InAppAuthAPIManager
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import java.net.URLEncoder
 
 class SubDlApi(index: Int) : InAppAuthAPIManager(index), AbstractSubApi {
     override val idPrefix = "subdl"
@@ -41,6 +44,7 @@ class SubDlApi(index: Int) : InAppAuthAPIManager(index), AbstractSubApi {
         removeAccountKeys()
         currentSession = getAuthKey()
     }
+
     override suspend fun login(data: InAppAuthAPI.LoginData): Boolean {
         val email = data.email ?: throw ErrorLoadingException("Requires Email")
         val password = data.password ?: throw ErrorLoadingException("Requires Password")
@@ -140,7 +144,9 @@ class SubDlApi(index: Int) : InAppAuthAPIManager(index), AbstractSubApi {
             url = "$APIURL/login",
             data = mapOf(
                 "email" to useremail,
-                "password" to password
+                "password" to withContext(Dispatchers.IO) {
+                    URLEncoder.encode(password, "UTF-8")
+                }
             )
         ).parsedSafe<OAuthTokenResponse>()
 
