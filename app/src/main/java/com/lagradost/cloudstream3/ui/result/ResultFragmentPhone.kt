@@ -2,6 +2,7 @@ package com.lagradost.cloudstream3.ui.result
 
 import android.annotation.SuppressLint
 import android.app.Dialog
+import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Rect
@@ -36,6 +37,7 @@ import com.lagradost.cloudstream3.LoadResponse
 import com.lagradost.cloudstream3.MainActivity.Companion.afterPluginsLoadedEvent
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.SearchResponse
+import com.lagradost.cloudstream3.databinding.BottomSelectionDialogBinding
 import com.lagradost.cloudstream3.databinding.FragmentResultBinding
 import com.lagradost.cloudstream3.databinding.FragmentResultSwipeBinding
 import com.lagradost.cloudstream3.databinding.ResultRecommendationsBinding
@@ -314,6 +316,32 @@ open class ResultFragmentPhone : FullScreenPlayer() {
         viewModel.reloadEpisodes()
     }
 
+    private fun shouldEnableSort(type: EpisodeSortType, episodes: List<ResultEpisode>?): Boolean {
+        if (episodes == null || episodes.isEmpty()) return false
+        return when(type) {
+            EpisodeSortType.NUMBER_ASC, EpisodeSortType.NUMBER_DESC -> true
+            EpisodeSortType.RATING_HIGH_LOW, EpisodeSortType.RATING_LOW_HIGH ->
+                episodes.any { it.rating != null }
+            EpisodeSortType.DATE_NEWEST, EpisodeSortType.DATE_OLDEST ->
+                episodes.any { it.airDate != null }
+        }
+    }
+
+private fun getSortButtonText(
+    context: Context,
+    sortType: EpisodeSortType,
+    items: List<ResultEpisode>?
+): String {
+    return when(sortType) {
+        EpisodeSortType.NUMBER_ASC -> context.getString(R.string.sort_button_episode, "↑")
+        EpisodeSortType.NUMBER_DESC -> context.getString(R.string.sort_button_episode, "↓")
+        EpisodeSortType.RATING_HIGH_LOW -> context.getString(R.string.sort_button_rating, "↓")
+        EpisodeSortType.RATING_LOW_HIGH -> context.getString(R.string.sort_button_rating, "↑")
+        EpisodeSortType.DATE_NEWEST -> context.getString(R.string.sort_button_date, "↓")
+        EpisodeSortType.DATE_OLDEST -> context.getString(R.string.sort_button_date, "↑")
+    }
+}
+
     @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -406,7 +434,65 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                     { downloadClickEvent ->
                         DownloadButtonSetup.handleDownloadClick(downloadClickEvent)
                     }
+                    
                 )
+                resultBinding?.resultSortButton?.setOnClickListener { view ->
+                    val episodes = (viewModel.episodes.value as? Resource.Success)?.value
+                    
+                    view.context?.let { context ->
+                        val sortOptions = mutableListOf<Pair<Int, EpisodeSortType>>().apply {
+                            // Episode number sorting is always available
+                            add(R.string.sort_episodes_number_asc to EpisodeSortType.NUMBER_ASC)
+                            add(R.string.sort_episodes_number_desc to EpisodeSortType.NUMBER_DESC)
+                    
+                            // Only add rating options if any episodes have ratings
+                            if (shouldEnableSort(EpisodeSortType.RATING_HIGH_LOW, episodes)) {
+                                add(R.string.sort_episodes_rating_high_low to EpisodeSortType.RATING_HIGH_LOW)
+                                add(R.string.sort_episodes_rating_low_high to EpisodeSortType.RATING_LOW_HIGH)
+                            }
+                    
+                            // Only add air date options if any episodes have air dates
+                            if (shouldEnableSort(EpisodeSortType.DATE_NEWEST, episodes)) {
+                                add(R.string.sort_episodes_date_newest to EpisodeSortType.DATE_NEWEST)
+                                add(R.string.sort_episodes_date_oldest to EpisodeSortType.DATE_OLDEST)
+                            }
+                        }
+                    
+                        val items = sortOptions.map { context.getString(it.first) }
+                        val selectedIndex = listOf(sortOptions.indexOfFirst { it.second == viewModel.currentSort.value })
+                    
+                        val binding = BottomSelectionDialogBinding.inflate(LayoutInflater.from(context))
+                        val dialog = Dialog(context, R.style.AlertDialogCustom)
+                        dialog.setContentView(binding.root)
+                    
+                        activity?.showDialog(
+                            binding = binding,
+                            dialog = dialog,
+                            items = items,
+                            selectedIndex = selectedIndex,
+                            name = context.getString(R.string.sort_by),
+                            showApply = false,
+                            isMultiSelect = false,
+                            callback = { selectedIndices ->
+                                viewModel.setSort(sortOptions[selectedIndices.first()].second)
+                            },
+                            dismissCallback = { }
+                        )
+                
+                        dialog.show()
+                    }
+                }
+                
+                viewModel.currentSort.observe(viewLifecycleOwner) { sortType ->
+                    context?.let { ctx ->
+                        val episodes = (viewModel.episodes.value as? Resource.Success)?.value
+                        resultSortButton?.text = getSortButtonText(
+                            context = ctx,
+                            sortType = sortType,
+                            items = episodes
+                        )
+                    }
+                }
 
 
             resultScroll.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { _, _, scrollY, _, oldScrollY ->
@@ -627,6 +713,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                 // no failure?
                 resultEpisodeLoading.isVisible = episodes is Resource.Loading
                 resultEpisodes.isVisible = episodes is Resource.Success
+                resultSortButton.isVisible = episodes is Resource.Success  
                 if (episodes is Resource.Success) {
                     (resultEpisodes.adapter as? EpisodeAdapter)?.updateList(episodes.value)
                 }
