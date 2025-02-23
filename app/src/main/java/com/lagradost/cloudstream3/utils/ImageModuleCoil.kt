@@ -3,7 +3,6 @@ package com.lagradost.cloudstream3.utils
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.net.Uri
-import android.os.Build.VERSION.SDK_INT
 import android.util.Log
 import android.widget.ImageView
 import androidx.annotation.DrawableRes
@@ -54,7 +53,7 @@ object ImageLoader {
                 DiskCache.Builder()
                     .directory(context.cacheDir.resolve("cs3_image_cache").toOkioPath())
                     .maxSizeBytes(256 * 1024 * 1024) // 256 MB
-                    .maxSizePercent(0.04) // Use 4% of the device's storage space for disk caching
+                    .maxSizePercent(0.04) // Use 4 % of the device's storage space for disk caching
                     .build()
             }
             .diskCachePolicy(CachePolicy.ENABLED)
