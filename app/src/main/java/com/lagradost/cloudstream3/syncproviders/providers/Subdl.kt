@@ -41,6 +41,7 @@ class SubDlApi(index: Int) : InAppAuthAPIManager(index), AbstractSubApi {
         removeAccountKeys()
         currentSession = getAuthKey()
     }
+
     override suspend fun login(data: InAppAuthAPI.LoginData): Boolean {
         val email = data.email ?: throw ErrorLoadingException("Requires Email")
         val password = data.password ?: throw ErrorLoadingException("Requires Password")
@@ -138,7 +139,7 @@ class SubDlApi(index: Int) : InAppAuthAPIManager(index), AbstractSubApi {
 
         val tokenResponse = app.post(
             url = "$APIURL/login",
-            data = mapOf(
+            json = mapOf(
                 "email" to useremail,
                 "password" to password
             )
