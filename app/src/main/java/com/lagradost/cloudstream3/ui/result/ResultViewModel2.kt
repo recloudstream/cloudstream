@@ -1873,8 +1873,8 @@ class ResultViewModel2 : ViewModel() {
             EpisodeSortType.NUMBER_DESC -> episodes.sortedByDescending { it.episode }
             EpisodeSortType.RATING_HIGH_LOW -> episodes.sortedByDescending { it.rating ?: 0 }
             EpisodeSortType.RATING_LOW_HIGH -> episodes.sortedBy { it.rating ?: 0 }
-            EpisodeSortType.DATE_NEWEST -> episodes.sortedByDescending { it.episode }
-            EpisodeSortType.DATE_OLDEST -> episodes.sortedBy { it.episode }
+            EpisodeSortType.DATE_NEWEST -> episodes.sortedByDescending { it.airDate }
+            EpisodeSortType.DATE_OLDEST -> episodes.sortedBy { it.airDate }
             null -> episodes
         }
     }

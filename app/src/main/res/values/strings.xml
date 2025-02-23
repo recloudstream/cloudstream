@@ -720,12 +720,9 @@
     <string name="sort_episodes_rating_low_high">Rating (Lowest)</string>
     <string name="sort_episodes_date_newest">Air Date (Newest)</string>
     <string name="sort_episodes_date_oldest">Air Date (Oldest)</string>
-    <string name="sort_button_episode_asc">Ep ↑</string>
-    <string name="sort_button_episode_desc">Ep ↓</string>
-    <string name="sort_button_rating_high">Rating ↓</string>
-    <string name="sort_button_rating_low">Rating ↑</string>
-    <string name="sort_button_date_newest">Date ↓</string>
-    <string name="sort_button_date_oldest">Date ↑</string>
+   <string name="sort_button_episode">Ep %s</string>
+    <string name="sort_button_rating">Rating %s</string>
+    <string name="sort_button_date">Date %s</string>
     <string name="select_library">Select Library</string>
     <string name="open_with">Open with</string>
     <string name="empty_library_no_accounts_message">Your library is empty :(
