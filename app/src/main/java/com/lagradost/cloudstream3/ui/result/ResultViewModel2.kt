@@ -145,6 +145,15 @@ enum class LibraryListType {
     SUBSCRIPTIONS
 }
 
+enum class EpisodeSortType {
+    NUMBER_ASC,
+    NUMBER_DESC,
+    RATING_HIGH_LOW,
+    RATING_LOW_HIGH,
+    DATE_NEWEST, 
+    DATE_OLDEST
+}
+
 fun txt(status: DubStatus?): UiText? {
     return txt(
         when (status) {
@@ -1823,27 +1832,51 @@ class ResultViewModel2 : ViewModel() {
             ep.copy(position = posDur?.position ?: 0, duration = posDur?.duration ?: 0)
         }
     }
-
+    
     private fun getEpisodes(indexer: EpisodeIndexer, range: EpisodeRange): List<ResultEpisode> {
-        val startIndex = range.startIndex
-        val length = range.length
-
-        return currentEpisodes[indexer]
-            ?.let { list ->
-                val start = minOf(list.size, startIndex)
-                val end = minOf(list.size, start + length)
-                list.subList(start, end).map {
-                    val posDur = getViewPos(it.id)
-                    val watchState =
-                        getVideoWatchState(it.id) ?: VideoWatchState.None
-                    it.copy(
-                        position = posDur?.position ?: 0,
-                        duration = posDur?.duration ?: 0,
-                        videoWatchState = watchState
-                    )
-                }
+        val episodes = currentEpisodes[indexer]?.let { list ->
+            val start = minOf(list.size, range.startIndex)
+            val end = minOf(list.size, start + range.length)
+            list.subList(start, end).map {
+                val posDur = getViewPos(it.id)
+                val watchState = getVideoWatchState(it.id) ?: VideoWatchState.None
+                it.copy(
+                    position = posDur?.position ?: 0,
+                    duration = posDur?.duration ?: 0,
+                    videoWatchState = watchState
+                )
             }
-            ?: emptyList()
+        } ?: emptyList()
+    
+        return getSortedEpisodes(episodes)
+    }
+
+    private val _currentSort = MutableLiveData(EpisodeSortType.NUMBER_ASC)
+    val currentSort: LiveData<EpisodeSortType> = _currentSort
+
+    fun toggleSort() {
+        _currentSort.value = when (_currentSort.value) {
+            EpisodeSortType.NUMBER_ASC -> EpisodeSortType.NUMBER_DESC
+            else -> EpisodeSortType.NUMBER_ASC
+        }
+        reloadEpisodes()
+    }
+
+    fun setSort(type: EpisodeSortType) {
+        _currentSort.value = type
+        reloadEpisodes()
+    }
+    
+    private fun getSortedEpisodes(episodes: List<ResultEpisode>): List<ResultEpisode> {
+        return when (_currentSort.value) {
+            EpisodeSortType.NUMBER_ASC -> episodes.sortedBy { it.episode }
+            EpisodeSortType.NUMBER_DESC -> episodes.sortedByDescending { it.episode }
+            EpisodeSortType.RATING_HIGH_LOW -> episodes.sortedByDescending { it.rating ?: 0 }
+            EpisodeSortType.RATING_LOW_HIGH -> episodes.sortedBy { it.rating ?: 0 }
+            EpisodeSortType.DATE_NEWEST -> episodes.sortedByDescending { it.airDate }
+            EpisodeSortType.DATE_OLDEST -> episodes.sortedBy { it.airDate }
+            null -> episodes
+        }
     }
 
     private fun postMovie() {
