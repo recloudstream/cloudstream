@@ -12,13 +12,13 @@ import android.view.View
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.LinearInterpolator
 import android.widget.FrameLayout
-import androidx.appcompat.app.AppCompatActivity
+import androidx.activity.ComponentActivity
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.view.isVisible
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.ActivityEasterEggMonkeBinding
 
-class EasterEggMonke : AppCompatActivity() {
+class EasterEggMonkeActivity : ComponentActivity() {
 
     lateinit var binding : ActivityEasterEggMonkeBinding
     override fun onCreate(savedInstanceState: Bundle?) {
