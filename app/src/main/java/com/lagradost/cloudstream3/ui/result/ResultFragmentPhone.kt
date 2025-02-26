@@ -255,6 +255,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
 
     var selectSeason: String? = null
     var selectEpisodeRange: String? = null
+    var selectSort: EpisodeSortType? = null
 
     private fun setUrl(url: String?) {
         if (url == null) {
@@ -459,7 +460,7 @@ private fun getSortButtonText(
                         }
                     
                         val items = sortOptions.map { context.getString(it.first) }
-                        val selectedIndex = listOf(sortOptions.indexOfFirst { it.second == viewModel.currentSort.value })
+                        val selectedIndex = listOf(sortOptions.indexOfFirst { it.second == selectSort ?: viewModel.currentSort.value })
                     
                         val binding = BottomSelectionDialogBinding.inflate(LayoutInflater.from(context))
                         val dialog = Dialog(context, R.style.AlertDialogCustom)
@@ -491,6 +492,7 @@ private fun getSortButtonText(
                             sortType = sortType,
                             items = episodes
                         )
+                        selectSort = sortType
                     }
                 }
 

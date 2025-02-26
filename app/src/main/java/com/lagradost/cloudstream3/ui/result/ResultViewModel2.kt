@@ -66,6 +66,7 @@ import com.lagradost.cloudstream3.utils.DataStoreHelper.getFavoritesData
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getLastWatched
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getResultEpisode
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getResultSeason
+import com.lagradost.cloudstream3.utils.DataStoreHelper.getResultSort
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getResultWatchState
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getSubscribedData
 import com.lagradost.cloudstream3.utils.DataStoreHelper.getVideoWatchState
@@ -77,6 +78,7 @@ import com.lagradost.cloudstream3.utils.DataStoreHelper.setDub
 import com.lagradost.cloudstream3.utils.DataStoreHelper.setFavoritesData
 import com.lagradost.cloudstream3.utils.DataStoreHelper.setResultEpisode
 import com.lagradost.cloudstream3.utils.DataStoreHelper.setResultSeason
+import com.lagradost.cloudstream3.utils.DataStoreHelper.setResultSort
 import com.lagradost.cloudstream3.utils.DataStoreHelper.setResultWatchState
 import com.lagradost.cloudstream3.utils.DataStoreHelper.setSubscribedData
 import com.lagradost.cloudstream3.utils.DataStoreHelper.setVideoWatchState
@@ -1862,8 +1864,13 @@ class ResultViewModel2 : ViewModel() {
         reloadEpisodes()
     }
 
-    fun setSort(type: EpisodeSortType) {
-        _currentSort.value = type
+    fun setSort(sortType: EpisodeSortType) {
+        _currentSort.postValue(sortType)
+        
+        currentId?.let { id ->
+            setResultSort(id, sortType as EpisodeSortType)
+        }
+        
         reloadEpisodes()
     }
     
@@ -2097,6 +2104,10 @@ class ResultViewModel2 : ViewModel() {
         updateFillers: Boolean
     ) {
         _episodes.postValue(Resource.Loading())
+        val savedSort = getResultSort(mainId)
+        if (savedSort != null) {
+            _currentSort.postValue(savedSort)
+        }
 
         if (updateFillers && loadResponse is AnimeLoadResponse) {
             updateFillers(loadResponse.name)

@@ -22,6 +22,7 @@ import com.lagradost.cloudstream3.syncproviders.AccountManager
 import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.library.ListSorting
+import com.lagradost.cloudstream3.ui.result.EpisodeSortType
 import com.lagradost.cloudstream3.ui.result.VideoWatchState
 import com.lagradost.cloudstream3.utils.AppContextUtils.filterProviderByPreferredMedia
 import java.util.Calendar
@@ -42,6 +43,7 @@ const val RESULT_RESUME_WATCHING_HAS_MIGRATED = "result_resume_watching_migrated
 const val RESULT_EPISODE = "result_episode"
 const val RESULT_SEASON = "result_season"
 const val RESULT_DUB = "result_dub"
+const val KEY_RESULT_SORT = "result_sort"
 
 
 class UserPreferenceDelegate<T : Any>(
@@ -587,6 +589,26 @@ object DataStoreHelper {
 
     fun setResultSeason(id: Int, value: Int?) {
         setKey("$currentAccount/$RESULT_SEASON", id.toString(), value)
+    }
+    fun getResultSort(id: Int): EpisodeSortType? {
+        val ordinal = getKey<Int>(KEY_RESULT_SORT, id.toString())
+        return if (ordinal != null) {
+            try {
+                EpisodeSortType.entries[ordinal]
+            } catch (e: Exception) {
+                null
+            }
+        } else {
+            null
+        }
+    }
+    
+    fun setResultSort(id: Int, sort: Any?) {
+        if (sort == null) {
+            removeKey(KEY_RESULT_SORT, id.toString())
+        } else if (sort is EpisodeSortType) {
+            setKey(KEY_RESULT_SORT, id.toString(), sort.ordinal)
+        }
     }
 
     fun getResultEpisode(id: Int): Int? {
