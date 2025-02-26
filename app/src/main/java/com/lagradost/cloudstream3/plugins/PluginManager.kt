@@ -725,70 +725,50 @@ object PluginManager {
     }
 
     fun manuallyReloadAndUpdatePlugins(activity: Activity) {
-        showToast("Starting plugin update process!", Toast.LENGTH_LONG)
+        showToast(activity.getString(R.string.starting_plugin_update_manually), Toast.LENGTH_LONG)
 
-        // Load all online plugins
         loadAllOnlinePlugins(activity)
         afterPluginsLoadedEvent.invoke(false)
 
-        val urls = (getKey<Array<RepositoryData>>(REPOSITORIES_KEY)
-            ?: emptyArray()) + PREBUILT_REPOSITORIES
-
+        val urls = (getKey<Array<RepositoryData>>(REPOSITORIES_KEY) ?: emptyArray()) + PREBUILT_REPOSITORIES
         val onlinePlugins = urls.toList().apmap {
             getRepoPlugins(it.url)?.toList() ?: emptyList()
         }.flatten().distinctBy { it.second.url }
 
-        // Collect all saved plugins and map them to the online plugins for updates
-        val allPlugins = getPluginsOnline().map { savedData ->
+        val allPlugins = getPluginsOnline().flatMap { savedData ->
             onlinePlugins
-                .filter { onlineData -> savedData.internalName == onlineData.second.internalName }
-                .map { onlineData ->
-                    OnlinePluginData(savedData, onlineData)
-                }.filter {
-                    it.validOnlineData(activity) // Ensure valid data
+                .filter { it.second.internalName == savedData.internalName }
+                .mapNotNull { onlineData ->
+                    OnlinePluginData(savedData, onlineData).takeIf { it.validOnlineData(activity) }
                 }
-        }.flatten().distinctBy { it.onlineData.second.url }
+        }.distinctBy { it.onlineData.second.url }
 
         val updatedPlugins = mutableListOf<String>()
 
-        // Process updates
         allPlugins.apmap { pluginData ->
             if (pluginData.isDisabled) {
-                // Unload disabled plugins
-                Log.d("PluginManager", "Unloading disabled plugin: ${pluginData.onlineData.second.name}")
+                Log.e("PluginManager", "Unloading disabled plugin: ${pluginData.onlineData.second.name}")
                 unloadPlugin(pluginData.savedData.filePath)
             } else {
-                // Ensure the existing plugin file is deleted before downloading the new version
                 val existingFile = File(pluginData.savedData.filePath)
-                if (existingFile.exists()) {
-                    existingFile.delete() // Delete the existing file
-                }
+                if (existingFile.exists()) existingFile.delete()
 
-                downloadPlugin(
-                    activity,
-                    pluginData.onlineData.second.url,
-                    pluginData.savedData.internalName,
-                    File(pluginData.savedData.filePath),
-                    true // Force overwrite
-                ).let { success ->
-                    if (success) {
-                        updatedPlugins.add(pluginData.onlineData.second.name)
-                    }
+                if (downloadPlugin(activity, pluginData.onlineData.second.url, pluginData.savedData.internalName, existingFile, true)) {
+                    updatedPlugins.add(pluginData.onlineData.second.name)
                 }
             }
         }.also {
-            // Show toast after all updates are completed
             main {
-                if (updatedPlugins.isNotEmpty()) {
-                    val updatedCount = updatedPlugins.size
-                    showToast("Successfully updated $updatedCount plugin(s)!", Toast.LENGTH_LONG)
+                val message = if (updatedPlugins.isNotEmpty()) {
+                    activity.getString(R.string.plugins_updated_manually, updatedPlugins.size)
                 } else {
-                    showToast("No plugins were updated.", Toast.LENGTH_LONG)
+                    activity.getString(R.string.no_plugins_updated_manually)
                 }
+                showToast(message, Toast.LENGTH_LONG)
 
-                // Create a notification with the update results
-                val uitext = txt(R.string.plugins_updated, updatedPlugins.size)
-                createNotification(activity, uitext, updatedPlugins)
+                val notificationText = UiText.StringResource(R.string.plugins_updated_manually, listOf(updatedPlugins.size))
+                createNotification(activity, notificationText, updatedPlugins)
+
             }
         }
 
