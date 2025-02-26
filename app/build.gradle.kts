@@ -220,7 +220,7 @@ dependencies {
     } // JSON Parser
 
     // Torrent Support
-    implementation(libs.torrentserver)
+    // implementation(libs.torrentserver)
 
     // Downloading & Networking
     implementation(libs.work.runtime)

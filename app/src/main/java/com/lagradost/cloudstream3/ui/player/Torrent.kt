@@ -8,6 +8,7 @@ import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.ExtractorLinkType
+import go.Seq
 import torrServer.TorrServer
 import java.io.File
 import java.net.ConnectException
@@ -201,6 +202,8 @@ object Torrent {
      * FYI this will throw a os.Exit(1) if port is taken and is not currently checked,
      * so if someone complains then add an extra check. */
     private suspend fun setup(dir: String): Boolean {
+        Seq.load()
+
         if (echo()) {
             return true
         }
