@@ -170,6 +170,7 @@ dependencies {
     implementation(libs.material)
     implementation(libs.constraintlayout)
     implementation(libs.swiperefreshlayout)
+    implementation("com.google.android.flexbox:flexbox:3.0.0")
 
     // Coil Image Loading
     implementation(libs.coil)
