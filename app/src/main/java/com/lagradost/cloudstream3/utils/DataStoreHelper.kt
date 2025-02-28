@@ -121,6 +121,12 @@ object DataStoreHelper {
     var playBackSpeed : Float by UserPreferenceDelegate("playback_speed", 1.0f)
     var resizeMode : Int by UserPreferenceDelegate("resize_mode", 0)
     var librarySortingMode : Int by UserPreferenceDelegate("library_sorting_mode", ListSorting.AlphabeticalA.ordinal)
+    private var _resultsSortingMode : Int by UserPreferenceDelegate("results_sorting_mode", EpisodeSortType.NUMBER_ASC.ordinal)
+    var resultsSortingMode : EpisodeSortType
+        get() = EpisodeSortType.entries.getOrNull(_resultsSortingMode) ?: EpisodeSortType.NUMBER_ASC
+        set(value) {
+            _resultsSortingMode = value.ordinal
+        }
 
     data class Account(
         @JsonProperty("keyIndex")
@@ -589,26 +595,6 @@ object DataStoreHelper {
 
     fun setResultSeason(id: Int, value: Int?) {
         setKey("$currentAccount/$RESULT_SEASON", id.toString(), value)
-    }
-    fun getResultSort(id: Int): EpisodeSortType? {
-        val ordinal = getKey<Int>(KEY_RESULT_SORT, id.toString())
-        return if (ordinal != null) {
-            try {
-                EpisodeSortType.entries[ordinal]
-            } catch (e: Exception) {
-                null
-            }
-        } else {
-            null
-        }
-    }
-    
-    fun setResultSort(id: Int, sort: Any?) {
-        if (sort == null) {
-            removeKey(KEY_RESULT_SORT, id.toString())
-        } else if (sort is EpisodeSortType) {
-            setKey(KEY_RESULT_SORT, id.toString(), sort.ordinal)
-        }
     }
 
     fun getResultEpisode(id: Int): Int? {
