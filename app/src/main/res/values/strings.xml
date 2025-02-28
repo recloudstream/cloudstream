@@ -839,4 +839,9 @@
     <string name="software_decoding_key" translatable="false">software_decoding_key2</string>
     <string name="software_decoding">Software decoding</string>
     <string name="software_decoding_desc">Software decoding enables the player to play video files not supported by your phone, but may cause laggy or unstable playback on high resolution</string>
+    <string name="result_go_to_downloads">Go to Downloads</string>
+    <string name="no_internet_connection">
+        No internet connection.
+        \n\nPlease connect to the internet and try again or watch your downloads while you are offline.
+    </string>
 </resources>
