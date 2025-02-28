@@ -714,6 +714,15 @@
     <string name="sort_updated_old">Updated (Old to New)</string>
     <string name="sort_alphabetical_a">Alphabetical (A to Z)</string>
     <string name="sort_alphabetical_z">Alphabetical (Z to A)</string>
+    <string name="sort_episodes_number_asc">Episode (Ascending)</string>
+    <string name="sort_episodes_number_desc">Episode (Descending)</string>
+    <string name="sort_episodes_rating_high_low">Rating (Highest)</string>
+    <string name="sort_episodes_rating_low_high">Rating (Lowest)</string>
+    <string name="sort_episodes_date_newest">Air Date (Newest)</string>
+    <string name="sort_episodes_date_oldest">Air Date (Oldest)</string>
+   <string name="sort_button_episode">Ep %s</string>
+    <string name="sort_button_rating">Rating %s</string>
+    <string name="sort_button_date">Date %s</string>
     <string name="select_library">Select Library</string>
     <string name="open_with">Open with</string>
     <string name="empty_library_no_accounts_message">Your library is empty :(

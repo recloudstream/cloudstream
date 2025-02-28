@@ -22,6 +22,7 @@ import com.lagradost.cloudstream3.syncproviders.AccountManager
 import com.lagradost.cloudstream3.syncproviders.SyncAPI
 import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.library.ListSorting
+import com.lagradost.cloudstream3.ui.result.EpisodeSortType
 import com.lagradost.cloudstream3.ui.result.VideoWatchState
 import com.lagradost.cloudstream3.utils.AppContextUtils.filterProviderByPreferredMedia
 import java.util.Calendar
@@ -42,6 +43,7 @@ const val RESULT_RESUME_WATCHING_HAS_MIGRATED = "result_resume_watching_migrated
 const val RESULT_EPISODE = "result_episode"
 const val RESULT_SEASON = "result_season"
 const val RESULT_DUB = "result_dub"
+const val KEY_RESULT_SORT = "result_sort"
 
 
 class UserPreferenceDelegate<T : Any>(
@@ -119,6 +121,12 @@ object DataStoreHelper {
     var playBackSpeed : Float by UserPreferenceDelegate("playback_speed", 1.0f)
     var resizeMode : Int by UserPreferenceDelegate("resize_mode", 0)
     var librarySortingMode : Int by UserPreferenceDelegate("library_sorting_mode", ListSorting.AlphabeticalA.ordinal)
+    private var _resultsSortingMode : Int by UserPreferenceDelegate("results_sorting_mode", EpisodeSortType.NUMBER_ASC.ordinal)
+    var resultsSortingMode : EpisodeSortType
+        get() = EpisodeSortType.entries.getOrNull(_resultsSortingMode) ?: EpisodeSortType.NUMBER_ASC
+        set(value) {
+            _resultsSortingMode = value.ordinal
+        }
 
     data class Account(
         @JsonProperty("keyIndex")
