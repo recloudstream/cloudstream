@@ -235,7 +235,7 @@ object UIHelper {
                     navHostFragment?.navController?.navigate(navigationId, args, navOptions)
                 }
             } catch (t: Throwable) {
-                logError(t, tag = tag)
+                logError(t)
             }
         }
     }
@@ -251,7 +251,7 @@ object UIHelper {
             Log.i(tag, "Navigating to Activity: ${activity.simpleName}")
             startActivity(intent)
         } catch (t: Throwable) {
-            logError(t, tag)
+            logError(t)
         }
     }
 
