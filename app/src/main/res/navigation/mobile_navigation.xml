@@ -661,4 +661,17 @@
         app:popEnterAnim="@anim/enter_anim"
         app:popExitAnim="@anim/exit_anim"
         tools:layout="@layout/fragment_setup_media" />
+
+    <activity
+        android:id="@+id/accountSelectActivity"
+        android:name="com.lagradost.cloudstream3.ui.account.AccountSelectActivity"
+        android:label="AccountSelectActivity"
+        tools:layout="@layout/activity_account_select" />
+
+    <activity
+        android:id="@+id/easterEggMonkeActivity"
+        android:name="com.lagradost.cloudstream3.ui.EasterEggMonkeActivity"
+        android:label="EasterEggMonkeActivity"
+        tools:layout="@layout/activity_easter_egg_monke" />
+
 </navigation>
