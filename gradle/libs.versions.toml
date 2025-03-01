@@ -11,7 +11,8 @@ coreKtx = "1.15.0"
 desugar_jdk_libs_nio = "2.1.4"
 dokkaGradlePlugin = "2.0.0"
 espressoCore = "3.6.1"
-fuzzywuzzy = "1.4.0"
+#fuzzywuzzy = "1.4.0"
+fuzzywuzzyKotlin = "1.0.0"
 gradle = "8.8.0"
 jacksonModuleKotlin = "2.13.1"
 json = "20250107"
@@ -68,7 +69,8 @@ desugar_jdk_libs_nio = { module = "com.android.tools:desugar_jdk_libs_nio", vers
 dokka-gradle-plugin = { module = "org.jetbrains.dokka:dokka-gradle-plugin", version.ref = "dokkaGradlePlugin" }
 espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref = "espressoCore" }
 ext-junit = { module = "androidx.test.ext:junit", version.ref = "junitVersion" }
-fuzzywuzzy = { module = "me.xdrop:fuzzywuzzy", version.ref = "fuzzywuzzy" }
+#fuzzywuzzy = { module = "me.xdrop:fuzzywuzzy", version.ref = "fuzzywuzzy" }
+fuzzywuzzy-kotlin = { module = "com.github.jens-muenker:fuzzywuzzy-kotlin", version.ref = "fuzzywuzzyKotlin" }
 gradle = { module = "com.android.tools.build:gradle", version.ref = "gradle" }
 jackson-module-kotlin = { module = "com.fasterxml.jackson.module:jackson-module-kotlin", version.ref = "jacksonModuleKotlin" }
 jetbrains-kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlinGradlePluginVersion" }
