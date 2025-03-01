@@ -1981,7 +1981,7 @@ class ResultViewModel2 : ViewModel() {
         range: EpisodeRange?,
         sorting: EpisodeSortType?
     ) {
-        if (range == null || indexer == null || sorting == null) {
+        if (range == null || indexer == null) {
             return
         }
 
@@ -2131,11 +2131,13 @@ class ResultViewModel2 : ViewModel() {
                 var sortIndex = sortOptions.indexOfFirst { it.second == sorting }
 
                 // correct the sorting order so if we have a selected that is not possible we just choose the default NUMBER_ASC
-                val correctedSorting = if (sortIndex == -1) {
-                    sortIndex = 0
-                    EpisodeSortType.NUMBER_ASC
-                } else {
-                    sorting
+                val correctedSorting: EpisodeSortType = when {
+                    sortIndex == -1 || sorting == null -> {
+                        EpisodeSortType.NUMBER_ASC.also {
+                            sortIndex = 0 // Reset index to match the default
+                        }
+                    }
+                    else -> sorting
                 }
 
                 currentSorting = correctedSorting
