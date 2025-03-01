@@ -184,7 +184,15 @@
         app:enterAnim="@anim/enter_anim"
         app:exitAnim="@anim/exit_anim"
         app:popEnterAnim="@anim/enter_anim"
-        app:popExitAnim="@anim/exit_anim" />
+        app:popExitAnim="@anim/exit_anim" >
+        <action
+            android:id="@+id/action_navigation_settings_general_to_easterEggMonkeFragment"
+            app:destination="@id/easterEggMonkeFragment"
+            app:enterAnim="@anim/go_right"
+            app:exitAnim="@anim/go_left"
+            app:popEnterAnim="@anim/go_right"
+            app:popExitAnim="@anim/go_left" />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_settings_extensions"
@@ -668,10 +676,9 @@
         android:label="AccountSelectActivity"
         tools:layout="@layout/activity_account_select" />
 
-    <activity
-        android:id="@+id/easterEggMonkeActivity"
-        android:name="com.lagradost.cloudstream3.ui.EasterEggMonkeActivity"
-        android:label="EasterEggMonkeActivity"
-        tools:layout="@layout/activity_easter_egg_monke" />
-
+    <fragment
+        android:id="@+id/easterEggMonkeFragment"
+        android:name="com.lagradost.cloudstream3.ui.EasterEggMonkeFragment"
+        tools:layout="@layout/fragment_easter_egg_monke"
+        android:label="EasterEggMonkeFragment" />
 </navigation>
