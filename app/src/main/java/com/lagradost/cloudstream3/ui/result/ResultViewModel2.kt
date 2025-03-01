@@ -1839,15 +1839,15 @@ class ResultViewModel2 : ViewModel() {
     }
 
     fun changeDubStatus(status: DubStatus) {
-        postEpisodeRange(currentIndex?.copy(dubStatus = status), currentRange, currentSorting)
+        postEpisodeRange(currentIndex?.copy(dubStatus = status), currentRange, currentSorting ?: DataStoreHelper.resultsSortingMode)
     }
 
     fun changeRange(range: EpisodeRange) {
-        postEpisodeRange(currentIndex, range, currentSorting)
+        postEpisodeRange(currentIndex, range, currentSorting ?: DataStoreHelper.resultsSortingMode)
     }
 
     fun changeSeason(season: Int) {
-        postEpisodeRange(currentIndex?.copy(season = season), currentRange, currentSorting)
+        postEpisodeRange(currentIndex?.copy(season = season), currentRange, currentSorting ?: DataStoreHelper.resultsSortingMode)
     }
 
     fun setSort(sortType: EpisodeSortType) {

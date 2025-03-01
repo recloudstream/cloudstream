@@ -662,7 +662,6 @@ open class ResultFragmentPhone : FullScreenPlayer() {
                 // no failure?
                 resultEpisodeLoading.isVisible = episodes is Resource.Loading
                 resultEpisodes.isVisible = episodes is Resource.Success
-                resultSortButton.isVisible = episodes is Resource.Success
                 if (episodes is Resource.Success) {
                     (resultEpisodes.adapter as? EpisodeAdapter)?.updateList(episodes.value)
                 }
