@@ -12,12 +12,14 @@ import android.view.ViewGroup
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.LinearInterpolator
 import android.widget.FrameLayout
-import androidx.appcompat.widget.AppCompatImageView
+import android.widget.ImageView
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.databinding.FragmentEasterEggMonkeBinding
+import com.lagradost.cloudstream3.utils.UIHelper.hideSystemUI
+import com.lagradost.cloudstream3.utils.UIHelper.showSystemUI
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
@@ -43,23 +45,23 @@ class EasterEggMonkeFragment : Fragment() {
         R.drawable.monke_drink,
         R.drawable.benene,
         R.drawable.ic_launcher_foreground,
-        R.drawable.cloud_2_gradient_beta,
         R.drawable.quick_novel_icon,
     )
 
-    private val activeMonkeys = mutableListOf<AppCompatImageView>()
+    private val activeMonkeys = mutableListOf<ImageView>()
     private var spawningJob: Job? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentEasterEggMonkeBinding.inflate(inflater, container, false)
+        _binding = FragmentEasterEggMonkeBinding.inflate(layoutInflater)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        activity?.hideSystemUI()
         spawningJob = lifecycleScope.launch {
             delay(1000)
             while (isActive) {
@@ -69,12 +71,8 @@ class EasterEggMonkeFragment : Fragment() {
         }
     }
 
-    @SuppressLint("ClickableViewAccessibility")
     private fun spawnMonkey() {
-        val containerW = binding.frame.width.toFloat()
-        val containerH = binding.frame.height.toFloat()
-
-        val newMonkey = AppCompatImageView(requireContext()).apply {
+        val newMonkey = ImageView(context ?: return).apply {
             setImageResource(monkeys.random())
             isVisible = true
         }
@@ -87,8 +85,8 @@ class EasterEggMonkeFragment : Fragment() {
         val monkeyW = newMonkey.measuredWidth * initialScale
         val monkeyH = newMonkey.measuredHeight * initialScale
 
-        newMonkey.x = Random.nextFloat() * (containerW - monkeyW)
-        newMonkey.y = Random.nextFloat() * (containerH - monkeyH)
+        newMonkey.x = Random.nextFloat() * (binding.frame.width.toFloat() - monkeyW)
+        newMonkey.y = Random.nextFloat() * (binding.frame.height.toFloat() - monkeyH)
 
         binding.frame.addView(newMonkey, FrameLayout.LayoutParams(
             FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT
@@ -103,12 +101,13 @@ class EasterEggMonkeFragment : Fragment() {
             start()
         }
 
+        @SuppressLint("ClickableViewAccessibility")
         newMonkey.setOnTouchListener { view, event -> handleTouch(view, event) }
 
         startFloatingAnimation(newMonkey)
     }
 
-    private fun startFloatingAnimation(monkey: AppCompatImageView) {
+    private fun startFloatingAnimation(monkey: ImageView) {
         val floatUpAnimator = ObjectAnimator.ofFloat(
             monkey, View.TRANSLATION_Y, monkey.y, -monkey.height.toFloat()
         ).apply {
@@ -118,7 +117,7 @@ class EasterEggMonkeFragment : Fragment() {
 
         floatUpAnimator.addListener(object : AnimatorListenerAdapter() {
             override fun onAnimationEnd(animation: Animator) {
-                // necessary check bcos binding becomes null but monkes are still moving until onDestroy()
+                // necessary check because binding becomes null but monkes are still moving until onDestroy()
                 if (_binding != null) {
                     binding.frame.removeView(monkey)
                     activeMonkeys.remove(monkey)
@@ -130,9 +129,8 @@ class EasterEggMonkeFragment : Fragment() {
         monkey.tag = floatUpAnimator
     }
 
-    @SuppressLint("ClickableViewAccessibility")
     private fun handleTouch(view: View, event: MotionEvent): Boolean {
-        val monkey = view as AppCompatImageView
+        val monkey = view as ImageView
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
                 (monkey.tag as? ObjectAnimator)?.pause()
@@ -140,6 +138,7 @@ class EasterEggMonkeFragment : Fragment() {
             }
 
             MotionEvent.ACTION_MOVE -> {
+                // Update both X and Y positions properly
                 monkey.x = event.rawX - monkey.width / 2
                 monkey.y = event.rawY - monkey.height / 2
 
@@ -154,7 +153,7 @@ class EasterEggMonkeFragment : Fragment() {
                 if (isTouchingEdge(monkey)) {
                     removeMonkey(monkey)
                 } else {
-                    (monkey.tag as? ObjectAnimator)?.resume()
+                    startFloatingAnimation(monkey)
                 }
                 return true
             }
@@ -162,12 +161,12 @@ class EasterEggMonkeFragment : Fragment() {
         return false
     }
 
-    private fun isTouchingEdge(monkey: AppCompatImageView): Boolean {
+    private fun isTouchingEdge(monkey: ImageView): Boolean {
         return monkey.x <= 0 || monkey.x + monkey.width >= binding.frame.width ||
                 monkey.y <= 0 || monkey.y + monkey.height >= binding.frame.height
     }
 
-    private fun removeMonkey(monkey: AppCompatImageView) {
+    private fun removeMonkey(monkey: ImageView) {
         // Fade out and remove the monkey
         ObjectAnimator.ofFloat(monkey, View.ALPHA, 1f, 0f).apply {
             duration = 300
@@ -183,6 +182,7 @@ class EasterEggMonkeFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        activity?.showSystemUI()
         spawningJob?.cancel()
         _binding = null
     }
