@@ -601,7 +601,7 @@ object PluginManager {
         } catch (e: Throwable) {
             Log.e(TAG, "Failed to load $file: ${Log.getStackTraceString(e)}")
             showToast(
-                context.getActivity(),
+                // context.getActivity(), // we are not always on the main thread
                 context.getString(R.string.plugin_load_fail).format(fileName),
                 Toast.LENGTH_LONG
             )
@@ -732,6 +732,60 @@ object PluginManager {
         } catch (e: Exception) {
             false
         }
+    }
+
+    fun manuallyReloadAndUpdatePlugins(activity: Activity) {
+        showToast(activity.getString(R.string.starting_plugin_update_manually), Toast.LENGTH_LONG)
+
+        loadAllOnlinePlugins(activity)
+        afterPluginsLoadedEvent.invoke(false)
+
+        val urls = (getKey<Array<RepositoryData>>(REPOSITORIES_KEY) ?: emptyArray()) + PREBUILT_REPOSITORIES
+        val onlinePlugins = urls.toList().apmap {
+            getRepoPlugins(it.url)?.toList() ?: emptyList()
+        }.flatten().distinctBy { it.second.url }
+
+        val allPlugins = getPluginsOnline().flatMap { savedData ->
+            onlinePlugins
+                .filter { it.second.internalName == savedData.internalName }
+                .mapNotNull { onlineData ->
+                    OnlinePluginData(savedData, onlineData).takeIf { it.validOnlineData(activity) }
+                }
+        }.distinctBy { it.onlineData.second.url }
+
+        val updatedPlugins = mutableListOf<String>()
+
+        allPlugins.apmap { pluginData ->
+            if (pluginData.isDisabled) {
+                Log.e("PluginManager", "Unloading disabled plugin: ${pluginData.onlineData.second.name}")
+                unloadPlugin(pluginData.savedData.filePath)
+            } else {
+                val existingFile = File(pluginData.savedData.filePath)
+                if (existingFile.exists()) existingFile.delete()
+
+                if (downloadPlugin(activity, pluginData.onlineData.second.url, pluginData.savedData.internalName, existingFile, true)) {
+                    updatedPlugins.add(pluginData.onlineData.second.name)
+                }
+            }
+        }.also {
+            main {
+                val message = if (updatedPlugins.isNotEmpty()) {
+                    activity.getString(R.string.plugins_updated_manually, updatedPlugins.size)
+                } else {
+                    activity.getString(R.string.no_plugins_updated_manually)
+                }
+                showToast(message, Toast.LENGTH_LONG)
+
+                val notificationText = UiText.StringResource(R.string.plugins_updated_manually, listOf(updatedPlugins.size))
+                createNotification(activity, notificationText, updatedPlugins)
+
+            }
+        }
+
+        loadedOnlinePlugins = true
+        afterPluginsLoadedEvent.invoke(false)
+
+        Log.i("PluginManager", "Plugin update done!")
     }
 
     private fun Context.createNotificationChannel() {
