@@ -164,6 +164,7 @@
             android:nextFocusUp="@id/subs_download_languages"
             android:nextFocusDown="@id/subtitles_remove_captions"
             android:text="@string/subtitles_remove_bloat"
+            app:trackTint="@color/toggle_selector"
             app:drawableEndCompat="@null" />
 
         <com.google.android.material.switchmaterial.SwitchMaterial
@@ -177,6 +178,7 @@
             android:nextFocusUp="@id/subtitles_remove_bloat"
             android:nextFocusDown="@id/subtitles_filter_sub_lang"
             android:text="@string/subtitles_remove_captions"
+            app:trackTint="@color/toggle_selector"
             app:drawableEndCompat="@null" />
 
         <com.google.android.material.switchmaterial.SwitchMaterial
@@ -190,6 +192,7 @@
             android:nextFocusUp="@id/subtitles_remove_captions"
             android:nextFocusDown="@id/subtitles_uppercase"
             android:text="@string/subtitles_filter_lang"
+            app:trackTint="@color/toggle_selector"
             app:drawableEndCompat="@null" />
 
         <com.google.android.material.switchmaterial.SwitchMaterial
@@ -203,6 +206,7 @@
             android:nextFocusUp="@id/subtitles_filter_sub_lang"
             android:nextFocusDown="@id/apply_btt"
             android:text="@string/uppercase_all_subtitles"
+            app:trackTint="@color/toggle_selector"
             app:drawableEndCompat="@null" />
 
         <TextView

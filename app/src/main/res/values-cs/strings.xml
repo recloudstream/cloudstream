@@ -696,4 +696,6 @@
     <string name="player_load_one_subtitle_online">Načíst první dostupné</string>
     <string name="torrent_not_accepted">Není akceptovatelný torrent</string>
     <string name="torrent_preferred_media">Povolte torrent v Nastavení/Poskytovatelé/Preferovaná média</string>
+    <string name="software_decoding">Softwarové dekódování</string>
+    <string name="software_decoding_desc">Softwarové dekódování umožňuje přehrávači přehrávat video soubory, které telefon nepodporuje, ale může způsobit zpoždění nebo nestabilní přehrávání ve vysokém rozlišení</string>
 </resources>

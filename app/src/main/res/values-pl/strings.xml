@@ -673,4 +673,6 @@
     <string name="player_load_one_subtitle_online">Wczytaj pierwsze dostępne</string>
     <string name="torrent_not_accepted">Niezaakceptowany torrent</string>
     <string name="torrent_preferred_media">Włącz torrent w Ustawienia/Źródła/Preferowane multimedia</string>
+    <string name="software_decoding">Dekodowanie programowe</string>
+    <string name="software_decoding_desc">Dekodowanie programowe umożliwia odtwarzaczowi odtwarzanie plików wideo, których Twój telefon nie obsługuje, ale może powodować opóźnienia lub niestabilność odtwarzania w wysokiej rozdzielczości</string>
 </resources>

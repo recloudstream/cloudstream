@@ -704,4 +704,6 @@
     <string name="player_load_one_subtitle_online">تحميل أول ترجمة متاحة</string>
     <string name="torrent_preferred_media">تفعيل التورنت من خلال الاعدادات/المصادر/المحتوى المفضل</string>
     <string name="torrent_not_accepted">تورنت غير مقبول</string>
+    <string name="software_decoding_desc">يمكّن فك تشفير البرمجي المشغل من تشغيل ملفات الفيديو التي لا يدعمها هاتفك، ولكنه قد يتسبب في بطء أو عدم استقرار التشغيل على الدقة العالية</string>
+    <string name="software_decoding">فك الترميز البرمجي</string>
 </resources>

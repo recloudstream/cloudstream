@@ -677,7 +677,7 @@ suspend fun getRhinoContext(): org.mozilla.javascript.Context {
     return Coroutines.mainWork {
         val rhino = org.mozilla.javascript.Context.enter()
         rhino.initSafeStandardObjects()
-        rhino.optimizationLevel = -1
+        rhino.setInterpretedMode(true)
         rhino
     }
 }
@@ -923,7 +923,6 @@ fun getQualityFromString(string: String?): SearchQuality? {
  *   scheme            authority                path                   query                 fragment
  * ```
  */
-@Prerelease
 fun MainAPI.updateUrl(url: String): String {
     try {
         val original = URI(url)
@@ -1206,7 +1205,7 @@ constructor(
     override var id: Int? = null,
     override var quality: SearchQuality? = null,
     override var posterHeaders: Map<String, String>? = null,
-    val lang: String? = null,
+    var lang: String? = null,
 ) : SearchResponse
 
 /** Data class of [SearchResponse] interface for Tv series.
@@ -1221,8 +1220,8 @@ constructor(
     override var type: TvType? = null,
 
     override var posterUrl: String? = null,
-    val year: Int? = null,
-    val episodes: Int? = null,
+    var year: Int? = null,
+    var episodes: Int? = null,
     override var id: Int? = null,
     override var quality: SearchQuality? = null,
     override var posterHeaders: Map<String, String>? = null,
@@ -1420,7 +1419,6 @@ interface LoadResponse {
             trailers.addAll(newTrailers.map { TrailerData(listOf(it)) })
         }*/
 
-        @Prerelease
         @Suppress("RedundantSuspendModifier")
         suspend fun LoadResponse.addTrailer(
             trailerUrl: String?,

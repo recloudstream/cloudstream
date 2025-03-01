@@ -194,7 +194,7 @@ class SettingsGeneral : PreferenceFragmentCompat() {
             val ctx = context ?: return@setOnPreferenceClickListener false
 
             if (isAppRestricted(ctx)) {
-                showBatteryOptimizationDialog(ctx)
+                ctx.showBatteryOptimizationDialog()
             } else {
                 showToast(R.string.app_unrestricted_toast)
             }
@@ -396,10 +396,8 @@ class SettingsGeneral : PreferenceFragmentCompat() {
                         settingsManager.edit().putInt(
                             getString(R.string.benene_count),
                             beneneCount
-                        )
-                            .apply()
-                        it.summary =
-                            getString(R.string.benene_count_text).format(beneneCount)
+                        ).apply()
+                        it.summary = getString(R.string.benene_count_text).format(beneneCount)
                     } catch (e: Exception) {
                         logError(e)
                     }

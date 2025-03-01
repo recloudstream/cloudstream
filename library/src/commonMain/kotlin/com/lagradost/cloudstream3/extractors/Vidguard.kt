@@ -90,7 +90,7 @@ open class Vidguardto : ExtractorApi() {
         val r = Runnable {
             val rhino = Context.enter()
             rhino.initSafeStandardObjects()
-            rhino.optimizationLevel = -1
+            rhino.setInterpretedMode(true)
             val scope: Scriptable = rhino.initSafeStandardObjects()
             scope.put("window", scope, scope)
             try {
@@ -126,10 +126,10 @@ open class Vidguardto : ExtractorApi() {
         return result
     }
 	
-	private fun getEmbedUrl(url: String): String {
-		return url.takeIf { it.contains("/d/") }
-            ?.replace("/d/", "/e/") ?: url
-	}
+    private fun getEmbedUrl(url: String): String {
+        return url.takeIf { it.contains("/d/") || it.contains("/v/") }
+            ?.replace("/d/", "/e/")?.replace("/v/", "/e/") ?: url
+    }
 
     data class SvgObject(
         val stream: String,

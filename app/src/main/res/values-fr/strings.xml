@@ -605,7 +605,7 @@
     <string name="clipboard_unknown_error">Erreur de copie, Veuillez copier le logcat et contacter le support de l\'application.</string>
     <string name="biometric_setting_summary">Déverrouiller l\'appli avec l\'empreinte digitale, l\'identification faciale, le code PIN, le motif et le mot de passe.</string>
     <string name="biometric_prompt_description">Après quelques tentatives infructueuses, le message se fermera. Redémarrez simplement l’application pour réessayer.</string>
-    <string name="battery_dialog_message">Pour garantir des téléchargements ininterrompus et des notifications pour les émissions de télévision auxquelles vous êtes abonné, CloudStream a besoin d\'une autorisation pour fonctionner en arrière-plan. En appuyant sur OK, vous serez dirigé vers App info. Faites défiler jusqu\'à 𝘼𝙥𝙥 𝙗𝙖𝙩𝙩𝙚𝙧𝙮 𝙪𝙨𝙖𝙜𝙚 et réglez l\'utilisation de la batterie sur 𝙐𝙣𝙧𝙚𝙨𝙩𝙧𝙞𝙘𝙩𝙚𝙙. Veuillez noter que cette autorisation ne signifie pas que CS3 épuisera votre batterie. Il ne fonctionnera en arrière-plan que lorsque cela sera nécessaire, par exemple lors de la réception de notifications ou du téléchargement de vidéos à partir d\'extensions officielles. Si vous choisissez d\'annuler, vous pouvez ajuster ce paramètre ultérieurement dans 𝙂𝙚𝙣𝙚𝙧𝙖𝙡 𝙎𝙚𝙩𝙩𝙞𝙣𝙜𝙨.</string>
+    <string name="battery_dialog_message">Pour garantir des téléchargements ininterrompus et des notifications pour les émissions de télévision auxquelles vous êtes abonné, CloudStream a besoin d\'une autorisation pour fonctionner en arrière-plan. En appuyant sur OK, vous serez dirigé vers informations de l\'application. Faites défiler jusqu\'à Utilisation de la batterie de l\'application et réglez l\'utilisation de la batterie sur non restreint . Veuillez noter que cette autorisation ne signifie pas que CS3 épuisera votre batterie. Il ne fonctionnera en arrière-plan que lorsque cela sera nécessaire, par exemple lors de la réception de notifications ou du téléchargement de vidéos à partir d\'extensions officielles. Si vous choisissez d\'annuler, vous pouvez ajuster ce paramètre ultérieurement dans paramètres générale.</string>
     <string name="app_unrestricted_toast">L\'utilisation de la batterie de l\'application est déjà réglée sur illimitée</string>
     <string name="unfavorite">Supprimer des favoris</string>
     <string name="custom_media_singluar">Média</string>
@@ -658,4 +658,11 @@
     <string name="confirm_before_exiting_title">Confirmer avant de quitter</string>
     <string name="unsupported_error">Erreur non supportée</string>
     <string name="encoding_error">Erreur d\'encodage</string>
+    <string name="software_decoding_desc">Le décodage logiciel permet au lecteur de lire des fichiers vidéo non pris en charge par votre téléphone, mais peut entraîner une lecture lente ou instable en haute résolution</string>
+    <string name="software_decoding">Décodage logiciel</string>
+    <string name="torrent_preferred_media">Activer les torrents dans Paramètres/Sources/Média préféré</string>
+    <string name="torrent_not_accepted">Torrent non accepté</string>
+    <string name="player_load_one_subtitle_online">Charger le premier disponible</string>
+    <string name="audio_singluar">Audio</string>
+    <string name="podcast_singluar">Podcast</string>
 </resources>

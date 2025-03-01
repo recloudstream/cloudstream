@@ -426,7 +426,7 @@
     <string name="help">Hjälp</string>
     <string name="qualities">Kvalitet</string>
     <string name="stream">Nätverksflöde</string>
-    <string name="repository_name_hint">Databasens namn</string>
+    <string name="repository_name_hint">Databasens namn (valfritt)</string>
     <string name="batch_download_nothing_to_download_format" formatted="true">All %s har redan laddats ner</string>
     <string name="download_all_plugins_from_repo">Varning: CloudStream 3 tar inget ansvar för att använda tredjepartstillägg och ger inget stöd för dem!</string>
     <string name="safe_mode_title">Felsäkert läge på</string>
@@ -434,7 +434,7 @@
     <string name="player_settings_play_in_app">Intern spelare</string>
     <string name="quality_cam_hd">Kamera HD</string>
     <string name="plugin_downloaded">Tillägg nedladdad</string>
-    <string name="repository_url_hint">Lager URL</string>
+    <string name="repository_url_hint">Lager URL eller Shortcode</string>
     <string name="batch_download_start_format" formatted="true">Börjat hämta %1$d %2$s…</string>
     <string name="bottom_title_settings">Affisch titel plats</string>
     <string name="player_loaded_subtitles" formatted="true">Laddat %s</string>
@@ -662,4 +662,16 @@
     <string name="show">Visa</string>
     <string name="backup_path_title">Säkerhetskopieringsmapp</string>
     <string name="confirm_before_exiting_desc">Visa dialogruta innan stängning av appen</string>
+    <string name="software_decoding_desc">Mjukvaruavkodning tillåter spelaren att spela upp videofiler som inte stöds av din enhet, men kan orsaka ostadig uppspelning vid hög upplösning</string>
+    <string name="audio_singluar">Ljud</string>
+    <string name="podcast_singluar">Podcast</string>
+    <string name="software_decoding">Mjukvaruavkodning</string>
+    <string name="torrent_not_accepted">Ogiltig torrent</string>
+    <string name="torrent_preferred_media">Aktivera torrent i Inställningar/Leverantörer/Föredragen media</string>
+    <string name="encoding_error">Avkodningsfel</string>
+    <string name="player_load_one_subtitle_online">Ladda in första möjliga</string>
+    <string name="dont_show">Dölj</string>
+    <string name="subs_edge_size">Kantstorlek</string>
+    <string name="custom">Egen</string>
+    <string name="unsupported_error">Stöds ej</string>
 </resources>

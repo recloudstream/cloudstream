@@ -717,4 +717,6 @@
     <string name="podcast_singluar">Podcast</string>
     <string name="torrent_preferred_media">Ayarlar/Sağlayıcılar/Tercih edilen medya bölümünden torrenti etkinleştirin</string>
     <string name="torrent_not_accepted">Torrent kabul edilmedi</string>
+    <string name="software_decoding">Yazılımsal çözücü</string>
+    <string name="software_decoding_desc">Yazılımsal kod çözücü, oynatıcının telefon tarafından desteklenmeyen video dosyalarını oynatmasını sağlar, ancak yüksek çözünürlükte gecikmeli veya dengesiz oynatmaya neden olabilir</string>
 </resources>

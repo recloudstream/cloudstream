@@ -102,7 +102,6 @@ import com.lagradost.cloudstream3.ui.APIRepository
 import com.lagradost.cloudstream3.ui.SyncWatchType
 import com.lagradost.cloudstream3.ui.WatchType
 import com.lagradost.cloudstream3.ui.account.AccountHelper.showAccountSelectLinear
-import com.lagradost.cloudstream3.ui.account.AccountViewModel
 import com.lagradost.cloudstream3.ui.download.DOWNLOAD_NAVIGATE_TO
 import com.lagradost.cloudstream3.ui.home.HomeViewModel
 import com.lagradost.cloudstream3.ui.library.LibraryViewModel
@@ -193,6 +192,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         var lastError: String? = null
 
         private const val FILE_DELETE_KEY = "FILES_TO_DELETE_KEY"
+        const val API_NAME_EXTRA_KEY = "API_NAME_EXTRA_KEY"
 
         /**
          * Transient files to delete on application exit.
@@ -255,7 +255,8 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         fun handleAppIntentUrl(
             activity: FragmentActivity?,
             str: String?,
-            isWebview: Boolean
+            isWebview: Boolean,
+            extraArgs: Bundle? = null
         ): Boolean =
             with(activity) {
                 // TODO MUCH BETTER HANDLING
@@ -353,6 +354,16 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                             this.navigate(R.id.navigation_downloads)
                             return true
                         } else {
+                            val apiName = extraArgs?.getString(API_NAME_EXTRA_KEY)
+                                ?.takeIf { it.isNotBlank() }
+                            // if provided, try to match the api name instead of the api url
+                            // this is in order to also support providers that use JSON dataUrls
+                            // for example
+                            if (apiName != null) {
+                                loadResult(str, apiName, "")
+                                return true
+                            }
+
                             synchronized(apis) {
                                 for (api in apis) {
                                     if (str.startsWith(api.mainUrl)) {
@@ -667,13 +678,24 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         if (intent == null) return
         val str = intent.dataString
         loadCache()
-        handleAppIntentUrl(this, str, false)
+        handleAppIntentUrl(this, str, false, intent.extras)
     }
 
     private fun NavDestination.matchDestination(@IdRes destId: Int): Boolean =
         hierarchy.any { it.id == destId }
 
+    private var lastNavTime = 0L
     private fun onNavDestinationSelected(item: MenuItem, navController: NavController): Boolean {
+        val currentTime = System.currentTimeMillis()
+        // safeDebounce: Check if a previous tap happened within the last 400ms
+        if (currentTime - lastNavTime < 400) return false
+        lastNavTime = currentTime
+
+        val destinationId = item.itemId
+
+        // Check if we are already at the selected destination
+        if(navController.currentDestination?.id == destinationId) return false
+
         val builder = NavOptions.Builder().setLaunchSingleTop(true).setRestoreState(true)
             .setEnterAnim(R.anim.enter_anim)
             .setExitAnim(R.anim.exit_anim)
@@ -686,11 +708,11 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                 saveState = true
             )
         }
-        val options = builder.build()
         return try {
-            navController.navigate(item.itemId, null, options)
-            navController.currentDestination?.matchDestination(item.itemId) == true
+            navController.navigate(destinationId, null, builder.build())
+            navController.currentDestination?.matchDestination(destinationId) == true
         } catch (e: IllegalArgumentException) {
+            Log.e("NavigationError", "Failed to navigate: ${e.message}")
             false
         }
     }
@@ -730,7 +752,6 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
     lateinit var viewModel: ResultViewModel2
     lateinit var syncViewModel: SyncViewModel
     private var libraryViewModel: LibraryViewModel? = null
-    private var accountViewModel: AccountViewModel? = null
 
     /** kinda dirty, however it signals that we should use the watch status as sync or not*/
     var isLocalList: Boolean = false

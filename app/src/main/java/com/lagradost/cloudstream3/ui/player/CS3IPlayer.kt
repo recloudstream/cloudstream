@@ -47,6 +47,7 @@ import androidx.media3.exoplayer.SeekParameters
 import androidx.media3.exoplayer.dash.DashMediaSource
 import androidx.media3.exoplayer.drm.DefaultDrmSessionManager
 import androidx.media3.exoplayer.drm.FrameworkMediaDrm
+import androidx.media3.exoplayer.drm.HttpMediaDrmCallback
 import androidx.media3.exoplayer.drm.LocalMediaDrmCallback
 import androidx.media3.exoplayer.source.ClippingMediaSource
 import androidx.media3.exoplayer.source.ConcatenatingMediaSource
@@ -82,6 +83,9 @@ import com.lagradost.cloudstream3.utils.DataStoreHelper.currentAccount
 import com.lagradost.cloudstream3.utils.DrmExtractorLink
 import com.lagradost.cloudstream3.utils.EpisodeSkip
 import com.lagradost.cloudstream3.utils.ExtractorLink
+import com.lagradost.cloudstream3.utils.CLEARKEY_UUID
+import com.lagradost.cloudstream3.utils.WIDEVINE_UUID
+import com.lagradost.cloudstream3.utils.PLAYREADY_UUID
 import com.lagradost.cloudstream3.utils.ExtractorLinkPlayList
 import com.lagradost.cloudstream3.utils.ExtractorLinkType
 import com.lagradost.cloudstream3.utils.SubtitleHelper.fromTwoLettersToLanguage
@@ -151,10 +155,11 @@ class CS3IPlayer : IPlayer {
     )
 
     data class DrmMetadata(
-        val kid: String,
-        val key: String,
+        val kid: String? = null,
+        val key: String? = null,
         val uuid: UUID,
-        val kty: String,
+        val kty: String? = null,
+        val licenseUrl: String? = null,
         val keyRequestParameters: HashMap<String, String>,
     )
 
@@ -178,7 +183,6 @@ class CS3IPlayer : IPlayer {
     }
 
     override fun releaseCallbacks() {
-        ioSafe { Torrent.clearAll() }
         eventHandler = null
     }
 
@@ -833,19 +837,55 @@ class CS3IPlayer : IPlayer {
                 val item = mediaItemSlices.first()
 
                 item.drm?.let { drm ->
-                    val drmCallback =
-                        LocalMediaDrmCallback("{\"keys\":[{\"kty\":\"${drm.kty}\",\"k\":\"${drm.key}\",\"kid\":\"${drm.kid}\"}],\"type\":\"temporary\"}".toByteArray())
-                    val manager = DefaultDrmSessionManager.Builder()
-                        .setPlayClearSamplesWithoutKeys(true)
-                        .setMultiSession(false)
-                        .setKeyRequestParameters(drm.keyRequestParameters)
-                        .setUuidAndExoMediaDrmProvider(drm.uuid, FrameworkMediaDrm.DEFAULT_PROVIDER)
-                        .build(drmCallback)
-                    val manifestDataSourceFactory = DefaultHttpDataSource.Factory()
+                    when (drm.uuid) {
+                        CLEARKEY_UUID -> {
+                            val client =
+                                OkHttpDataSource.Factory(app.baseClient).setUserAgent(USER_AGENT)
+                            val drmCallback =
+                                LocalMediaDrmCallback("{\"keys\":[{\"kty\":\"${drm.kty}\",\"k\":\"${drm.key}\",\"kid\":\"${drm.kid}\"}],\"type\":\"temporary\"}".toByteArray())
+                            val manager = DefaultDrmSessionManager.Builder()
+                                .setPlayClearSamplesWithoutKeys(true)
+                                .setMultiSession(false)
+                                .setKeyRequestParameters(drm.keyRequestParameters)
+                                .setUuidAndExoMediaDrmProvider(
+                                    drm.uuid,
+                                    FrameworkMediaDrm.DEFAULT_PROVIDER
+                                )
+                                .build(drmCallback)
 
-                    DashMediaSource.Factory(manifestDataSourceFactory)
-                        .setDrmSessionManagerProvider { manager }
-                        .createMediaSource(item.mediaItem)
+                            DashMediaSource.Factory(client)
+                                .setDrmSessionManagerProvider { manager }
+                                .createMediaSource(item.mediaItem)
+                        }
+
+                        WIDEVINE_UUID,
+                        PLAYREADY_UUID -> {
+                            val client =
+                                OkHttpDataSource.Factory(app.baseClient).setUserAgent(USER_AGENT)
+                            val drmCallback = HttpMediaDrmCallback(drm.licenseUrl, client)
+                            val manager = DefaultDrmSessionManager.Builder()
+                                .setPlayClearSamplesWithoutKeys(true)
+                                .setMultiSession(true)
+                                .setKeyRequestParameters(drm.keyRequestParameters)
+                                .setUuidAndExoMediaDrmProvider(
+                                    drm.uuid,
+                                    FrameworkMediaDrm.DEFAULT_PROVIDER
+                                )
+                                .build(drmCallback)
+
+                            DashMediaSource.Factory(client)
+                                .setDrmSessionManagerProvider { manager }
+                                .createMediaSource(item.mediaItem)
+                        }
+
+                        else -> {
+                            Log.e(
+                                TAG,
+                                "DRM Metadata class is not supported: ${drm::class.simpleName}"
+                            )
+                            null
+                        }
+                    }
                 } ?: run {
                     factory.createMediaSource(item.mediaItem)
                 }
@@ -1018,7 +1058,6 @@ class CS3IPlayer : IPlayer {
     // we want to push metadata when loading torrents, so we just set up a looper that loops until
     // the index changes, this way only 1 looper is active at a time, and modifying eventLooperIndex
     // will kill any active loopers
-    @Volatile
     private var eventLooperIndex = 0
     private fun torrentEventLooper(hash: String) = ioSafe {
         eventLooperIndex += 2
@@ -1553,6 +1592,7 @@ class CS3IPlayer : IPlayer {
                                 key = link.key,
                                 uuid = link.uuid,
                                 kty = link.kty,
+                                licenseUrl = link.licenseUrl,
                                 keyRequestParameters = link.keyRequestParameters
                             )
                         )

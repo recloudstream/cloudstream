@@ -694,11 +694,9 @@
     <string name="open_downloaded_repo">Open repository</string>
     <string name="battery_dialog_title">Disable Battery optimization</string>
     <string name="battery_dialog_message">To ensure uninterrupted downloads and notifications for subscribed
-        TV shows, CloudStream needs permission to run in background. By pressing "OK", you\'ll be directed to App info.
-        There, scroll to 𝘼𝙥𝙥 𝙗𝙖𝙩𝙩𝙚𝙧𝙮 𝙪𝙨𝙖𝙜𝙚 and set battery usage to 𝙐𝙣𝙧𝙚𝙨𝙩𝙧𝙞𝙘𝙩𝙚𝙙. Please note, this permission
-        does not mean CS3 will drain your battery. It will only operate in the background when necessary, such as
-        when receiving notifications or downloading videos from official extensions. If you choose to cancel,
-        you can adjust this setting later in 𝙂𝙚𝙣𝙚𝙧𝙖𝙡 𝙎𝙚𝙩𝙩𝙞𝙣𝙜𝙨.</string>
+        TV shows, CloudStream needs permission to run in background. By pressing "OK", you\'ll be shown a request dialog.
+        Please press \'Allow\'.\n\nPlease note, this permission does not mean CS3 will drain your battery. It will only operate in the background when necessary, such as
+        when receiving notifications or downloading videos from official extensions.</string>
     <string name="battery_optimisation_key" translatable="false">battery_optimisation</string>
     <string name="app_unrestricted_toast">App battery usage is already set to unrestricted</string>
     <string name="app_info_intent_error">Unable to open CloudStream\'s App info.</string>
@@ -716,6 +714,15 @@
     <string name="sort_updated_old">Updated (Old to New)</string>
     <string name="sort_alphabetical_a">Alphabetical (A to Z)</string>
     <string name="sort_alphabetical_z">Alphabetical (Z to A)</string>
+    <string name="sort_episodes_number_asc">Episode (Ascending)</string>
+    <string name="sort_episodes_number_desc">Episode (Descending)</string>
+    <string name="sort_episodes_rating_high_low">Rating (Highest)</string>
+    <string name="sort_episodes_rating_low_high">Rating (Lowest)</string>
+    <string name="sort_episodes_date_newest">Air Date (Newest)</string>
+    <string name="sort_episodes_date_oldest">Air Date (Oldest)</string>
+   <string name="sort_button_episode">Ep %s</string>
+    <string name="sort_button_rating">Rating %s</string>
+    <string name="sort_button_date">Date %s</string>
     <string name="select_library">Select Library</string>
     <string name="open_with">Open with</string>
     <string name="empty_library_no_accounts_message">Your library is empty :(
@@ -832,4 +839,11 @@
     <string name="software_decoding_key" translatable="false">software_decoding_key2</string>
     <string name="software_decoding">Software decoding</string>
     <string name="software_decoding_desc">Software decoding enables the player to play video files not supported by your phone, but may cause laggy or unstable playback on high resolution</string>
+    <string name="update_plugins">Update Plugins</string>
+    <!--Manual Update Button-->
+    <string name="update_plugins_manually">Update plugins manually!!</string>
+    <string name="manual_update_plugins_key" translatable="false">manual_update_plugins</string>
+    <string name="starting_plugin_update_manually">Starting plugin update process!</string>
+    <string name="plugins_updated_manually">Successfully updated %d plugin(s)!</string>
+    <string name="no_plugins_updated_manually">No plugins were updated.</string>
 </resources>

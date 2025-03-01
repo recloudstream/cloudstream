@@ -672,4 +672,6 @@
     <string name="player_load_one_subtitle_online">Завантажити перші доступні</string>
     <string name="torrent_preferred_media">Увімкніть торрент у Налаштуваннях/Постачальниках/Переважних носіях</string>
     <string name="torrent_not_accepted">Торрент не приймається</string>
+    <string name="software_decoding">Програмне декодування</string>
+    <string name="software_decoding_desc">Програмне декодування дозволяє програвачу відтворювати відеофайли, які не підтримуються вашим телефоном, але може призвести до затримки або нестабільного відтворення у високій роздільній здатності</string>
 </resources>

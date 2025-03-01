@@ -8,6 +8,7 @@ import android.app.Dialog
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.content.res.Resources
@@ -15,8 +16,6 @@ import android.graphics.Bitmap
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.os.TransactionTooLargeException
 import android.util.Log
 import android.view.Gravity
@@ -32,7 +31,6 @@ import android.widget.ListView
 import android.widget.Toast.LENGTH_LONG
 import androidx.annotation.AttrRes
 import androidx.annotation.ColorInt
-import androidx.annotation.IdRes
 import androidx.annotation.StyleRes
 import androidx.appcompat.view.ContextThemeWrapper
 import androidx.appcompat.view.menu.MenuBuilder
@@ -51,6 +49,7 @@ import androidx.core.view.marginTop
 import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
+import androidx.navigation.NavOptions
 import androidx.navigation.fragment.NavHostFragment
 import androidx.palette.graphics.Palette
 import androidx.preference.PreferenceManager
@@ -59,6 +58,7 @@ import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipDrawable
 import com.google.android.material.chip.ChipGroup
 import com.lagradost.cloudstream3.AcraApplication.Companion.context
+import com.lagradost.cloudstream3.CommonActivity
 import com.lagradost.cloudstream3.CommonActivity.activity
 import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.R
@@ -66,6 +66,9 @@ import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.ui.settings.Globals
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
 import com.lagradost.cloudstream3.ui.settings.Globals.isLayout
+import com.lagradost.cloudstream3.utils.Coroutines.main
+import com.lagradost.cloudstream3.utils.UIHelper.navigate
+import kotlinx.coroutines.delay
 import kotlin.math.roundToInt
 
 object UIHelper {
@@ -216,14 +219,62 @@ object UIHelper {
         }
     }
 
-    fun Activity?.navigate(@IdRes navigation: Int, arguments: Bundle? = null) {
-        try {
-            if (this is FragmentActivity) {
-                val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as? NavHostFragment?
-                navHostFragment?.navController?.navigate(navigation, arguments)
+    fun Activity?.navigate(
+        navigationId: Int,
+        args: Bundle? = null,
+        navOptions: NavOptions? = null // To control nav graph & manage back stack
+    ) {
+        val tag = "NavComponent"
+        if (this is FragmentActivity) {
+            try {
+                runOnUiThread {
+                    // Navigate using navigation ID
+                    val navHostFragment =
+                        supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as? NavHostFragment
+                    Log.i(tag, "Navigating to fragment: $navigationId")
+                    navHostFragment?.navController?.navigate(navigationId, args, navOptions)
+                }
+            } catch (t: Throwable) {
+                logError(t)
             }
+        }
+    }
+
+    // Open activities from an activity outside the nav graph
+    fun Context.openActivity(activity: Class<*>, args: Bundle? = null) {
+        val tag = "NavComponent"
+        try {
+            val intent = Intent(this, activity)
+            if (args != null) {
+                intent.putExtras(args)
+            }
+            Log.i(tag, "Navigating to Activity: ${activity.simpleName}")
+            startActivity(intent)
         } catch (t: Throwable) {
             logError(t)
+        }
+    }
+
+    fun FragmentActivity.popCurrentPage() {
+        // Use the main looper handler to post actions on the main thread
+        main {
+            // Post the back press action to the main thread handler to ensure it executes
+            // after any currently pending UI updates or fragment transactions.
+            if (!supportFragmentManager.isStateSaved) {
+                // Get the top fragment from the back stack
+                Log.d("popFragment", "Destroying Fragment")
+                // If the state is not saved, it's safe to perform the back press action.
+                onBackPressedDispatcher.onBackPressed()
+            } else {
+                // If the state is saved, retry the back press action after a slight delay.
+                // This gives the FragmentManager time to complete any ongoing state-saving
+                // operations or transactions, ensuring that we do not encounter an IllegalStateException.
+                delay(100)
+                if (!supportFragmentManager.isStateSaved) {
+                    Log.d("popFragment", "Destroying after delay")
+                    onBackPressedDispatcher.onBackPressed()
+                }
+            }
         }
     }
 
@@ -297,26 +348,6 @@ object UIHelper {
                             or View.SYSTEM_UI_FLAG_FULLSCREEN
                     ) // FIXME this should be replaced
           //}
-    }
-
-    fun FragmentActivity.popCurrentPage() {
-        // Post the back press action to the main thread handler to ensure it executes
-        // after any currently pending UI updates or fragment transactions.
-        Handler(Looper.getMainLooper()).post {
-            // Check if the FragmentManager state is saved. If it is, we cannot perform
-            // fragment transactions safely because the state may be inconsistent.
-            if (!supportFragmentManager.isStateSaved) {
-                // If the state is not saved, it's safe to perform the back press action.
-                this.onBackPressedDispatcher.onBackPressed()
-            } else {
-                // If the state is saved, retry the back press action after a slight delay.
-                // This gives the FragmentManager time to complete any ongoing state-saving
-                // operations or transactions, ensuring that we do not encounter an IllegalStateException.
-                Handler(Looper.getMainLooper()).postDelayed({
-                    this.onBackPressedDispatcher.onBackPressed()
-                }, 100)
-            }
-        }
     }
 
     fun Context.getStatusBarHeight(): Int {
