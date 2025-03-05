@@ -730,6 +730,8 @@ enum class DubStatus(val id: Int) {
     None(-1),
     Dubbed(1),
     Subbed(0),
+    SoftSub(2),
+    HardSub(3)
 }
 
 @Suppress("UNUSED_PARAMETER")

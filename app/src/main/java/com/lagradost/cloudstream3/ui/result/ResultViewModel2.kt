@@ -159,6 +159,8 @@ fun txt(status: DubStatus?): UiText? {
         when (status) {
             DubStatus.Dubbed -> R.string.app_dubbed_text
             DubStatus.Subbed -> R.string.app_subbed_text
+            DubStatus.SoftSub -> R.string.app_softsub_text
+            DubStatus.HardSub -> R.string.app_hardsub_text
             else -> null
         }
     )
