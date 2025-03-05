@@ -391,7 +391,7 @@ class SettingsGeneral : PreferenceFragmentCompat() {
                     try {
                         beneneCount++
                         if (beneneCount%20 == 0) {
-                            activity?.navigate(R.id.easterEggMonkeActivity)
+                            activity?.navigate(R.id.action_navigation_settings_general_to_easterEggMonkeFragment)
                         }
                         settingsManager.edit().putInt(
                             getString(R.string.benene_count),
