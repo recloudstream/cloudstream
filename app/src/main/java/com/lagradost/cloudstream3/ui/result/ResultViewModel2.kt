@@ -155,15 +155,19 @@ enum class EpisodeSortType {
 }
 
 fun txt(status: DubStatus?): UiText? {
-    return txt(
-        when (status) {
-            DubStatus.Dubbed -> R.string.app_dubbed_text
-            DubStatus.Subbed -> R.string.app_subbed_text
-            DubStatus.SoftSub -> R.string.app_softsub_text
-            DubStatus.HardSub -> R.string.app_hardsub_text
-            else -> null
+    return when (status) {
+        DubStatus.Dubbed -> txt(R.string.app_dubbed_text)
+        DubStatus.Subbed -> txt(R.string.app_subbed_text)
+        DubStatus.SoftSub -> txt(R.string.app_softsub_text)
+        DubStatus.HardSub -> txt(R.string.app_hardsub_text)
+        DubStatus.Custom -> {
+            val customText = status.tagName ?: "NoName"
+            txt(R.string.app_custom_text, customText)
         }
-    )
+
+        null -> null
+        else -> null
+    }
 }
 
 fun LoadResponse.toResultData(repo: APIRepository): ResultData {
@@ -1841,7 +1845,11 @@ class ResultViewModel2 : ViewModel() {
     }
 
     fun changeDubStatus(status: DubStatus) {
-        postEpisodeRange(currentIndex?.copy(dubStatus = status), currentRange, currentSorting ?: DataStoreHelper.resultsSortingMode)
+        postEpisodeRange(
+            currentIndex?.copy(dubStatus = status),
+            currentRange,
+            currentSorting ?: DataStoreHelper.resultsSortingMode
+        )
     }
 
     fun changeRange(range: EpisodeRange) {
@@ -1849,7 +1857,11 @@ class ResultViewModel2 : ViewModel() {
     }
 
     fun changeSeason(season: Int) {
-        postEpisodeRange(currentIndex?.copy(season = season), currentRange, currentSorting ?: DataStoreHelper.resultsSortingMode)
+        postEpisodeRange(
+            currentIndex?.copy(season = season),
+            currentRange,
+            currentSorting ?: DataStoreHelper.resultsSortingMode
+        )
     }
 
     fun setSort(sortType: EpisodeSortType) {

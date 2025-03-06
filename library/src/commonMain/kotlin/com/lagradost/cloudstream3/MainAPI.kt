@@ -13,18 +13,21 @@ import com.fasterxml.jackson.module.kotlin.kotlinModule
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.normalSafeApiCall
 import com.lagradost.cloudstream3.syncproviders.SyncIdName
-import com.lagradost.cloudstream3.utils.*
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
 import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
+import com.lagradost.cloudstream3.utils.Coroutines
 import com.lagradost.cloudstream3.utils.Coroutines.mainWork
 import com.lagradost.cloudstream3.utils.Coroutines.threadSafeListOf
+import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.nicehttp.RequestBodyTypes
 import okhttp3.Interceptor
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.net.URI
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
+import java.util.EnumSet
+import java.util.Locale
 import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
 import kotlin.math.absoluteValue
@@ -726,12 +729,24 @@ enum class ShowStatus {
     Ongoing,
 }
 
-enum class DubStatus(val id: Int) {
+enum class DubStatus(
+    val id: Int,
+    var tagName: String? = null,
+) {
     None(-1),
-    Dubbed(1),
     Subbed(0),
+    Dubbed(1),
     SoftSub(2),
-    HardSub(3)
+    HardSub(3),
+    Custom(-2, null);
+
+    companion object {
+        fun custom(tagName: String): DubStatus {
+            return Custom.apply {
+                this.tagName = tagName
+            }
+        }
+    }
 }
 
 @Suppress("UNUSED_PARAMETER")
