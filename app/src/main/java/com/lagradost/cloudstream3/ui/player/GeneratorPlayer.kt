@@ -27,6 +27,7 @@ import androidx.annotation.MainThread
 import androidx.annotation.OptIn
 import androidx.core.animation.addListener
 import androidx.core.app.NotificationCompat
+import androidx.core.app.PendingIntentCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
@@ -39,7 +40,6 @@ import androidx.media3.common.util.UnstableApi
 import androidx.media3.common.util.Util
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.PlayerNotificationManager
-import androidx.media3.ui.PlayerNotificationManager.ACTION_STOP
 import androidx.media3.ui.PlayerNotificationManager.EXTRA_INSTANCE_ID
 import androidx.media3.ui.PlayerNotificationManager.MediaDescriptionAdapter
 import androidx.preference.PreferenceManager
@@ -52,6 +52,7 @@ import com.lagradost.cloudstream3.LoadResponse.Companion.getAniListId
 import com.lagradost.cloudstream3.LoadResponse.Companion.getImdbId
 import com.lagradost.cloudstream3.LoadResponse.Companion.getMalId
 import com.lagradost.cloudstream3.LoadResponse.Companion.getTMDbId
+import com.lagradost.cloudstream3.MainActivity
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.amap
@@ -298,8 +299,8 @@ class GeneratorPlayer : FullScreenPlayer() {
                 }
 
                 override fun createCurrentContentIntent(player: Player): PendingIntent? {
-                    // When we click the notification, should we open the app?
-                    return null
+                    // Open the app without creating a new task to resume playback seamlessly
+                    return PendingIntentCompat.getActivity(context, 0, Intent(context, MainActivity::class.java), 0, false)
                 }
 
                 override fun getCurrentContentText(player: Player): CharSequence? {
