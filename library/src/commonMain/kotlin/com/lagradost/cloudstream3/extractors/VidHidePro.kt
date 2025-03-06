@@ -30,20 +30,6 @@ class VidHidePro6 : VidHidePro() {
     override val mainUrl = "https://vidhidepre.com"
 }
 
-class Lulustream1 : VidHidePro() {
-    override val name = "Lulustream"
-    override val mainUrl = "https://lulustream.com"
-}
-
-class Lulustream2 : VidHidePro() {
-    override val name = "Lulustream"
-    override val mainUrl = "https://luluvdo.com"
-}
-
-class Lulustream3 : VidHidePro() {
-    override val name = "Lulustream"
-    override val mainUrl = "https://kinoger.pw"
-}
 
 open class VidHidePro : ExtractorApi() {
     override val name = "VidHidePro"
