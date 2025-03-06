@@ -1,0 +1,73 @@
+name: Dokka
+
+# https://docs.github.com/en/actions/learn-github-actions/workflow-syntax-for-github-actions#concurrency
+concurrency: 
+  group: "dokka"
+  cancel-in-progress: true
+
+on:
+  push:
+    branches:
+      # choose your default branch
+      - master
+      - main
+    paths-ignore:
+      - '*.md'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate access token
+        id: generate_token
+        uses: tibdex/github-app-token@v2
+        with:
+          app_id: ${{ secrets.GH_APP_ID }}
+          private_key: ${{ secrets.GH_APP_KEY }}
+          repository: "recloudstream/dokka"
+      - name: Checkout
+        uses: actions/checkout@master
+        with:
+          path: "src"
+
+      - name: Checkout dokka
+        uses: actions/checkout@master
+        with:
+          repository: "recloudstream/dokka"
+          path: "dokka"
+          token: ${{ steps.generate_token.outputs.token }}
+      
+      - name: Clean old builds
+        run: |
+          cd $GITHUB_WORKSPACE/dokka/
+          rm -rf "./app"
+          rm -rf "./library"
+
+      - name: Setup JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: 17
+          distribution: 'adopt'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Generate Dokka
+        run: |
+          cd $GITHUB_WORKSPACE/src/
+          chmod +x gradlew
+          ./gradlew docs:dokkaGeneratePublicationHtml
+
+      - name: Copy Dokka
+        run: |
+          cp -r $GITHUB_WORKSPACE/src/docs/build/dokka/html/* $GITHUB_WORKSPACE/dokka/
+
+      - name: Push builds
+        run: |
+          cd $GITHUB_WORKSPACE/dokka
+          touch .nojekyll
+          git config --local user.email "111277985+recloudstream[bot]@users.noreply.github.com"
+          git config --local user.name "recloudstream[bot]"
+          git add .
+          git commit --amend -m "Generate dokka for recloudstream/cloudstream@${GITHUB_SHA}" || exit 0   # do not error if nothing to commit
+          git push --force
