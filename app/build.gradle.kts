@@ -267,6 +267,11 @@ tasks.register<Jar>("makeJar") {
     destinationDirectory.set(layout.buildDirectory)
     archiveBaseName = "classes"
 }
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
 
 tasks.withType<KotlinJvmCompile> {
     compilerOptions {

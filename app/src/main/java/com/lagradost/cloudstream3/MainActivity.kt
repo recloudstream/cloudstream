@@ -573,8 +573,11 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         }
     }
 
+    //==================================================================================================
+
     override fun onResume() {
         super.onResume()
+        // Existing code for plugin loading event
         afterPluginsLoadedEvent += ::onAllPluginsLoaded
         setActivityInstance(this)
         try {
@@ -584,7 +587,12 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
         } catch (e: Exception) {
             logError(e)
         }
+        // Add this line to check for updates when the app resumes
+        ioSafe {
+            runAutoUpdate(checkAutoUpdate = true)
+        }
     }
+//==================================================================================================
 
     override fun onPause() {
         super.onPause()
