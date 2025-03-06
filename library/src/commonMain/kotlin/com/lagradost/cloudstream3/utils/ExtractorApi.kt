@@ -113,7 +113,6 @@ import com.lagradost.cloudstream3.extractors.LayarKaca
 import com.lagradost.cloudstream3.extractors.Linkbox
 import com.lagradost.cloudstream3.extractors.Lulustream1
 import com.lagradost.cloudstream3.extractors.Lulustream2
-import com.lagradost.cloudstream3.extractors.Lulustream3
 import com.lagradost.cloudstream3.extractors.Luxubu
 import com.lagradost.cloudstream3.extractors.Lvturbo
 import com.lagradost.cloudstream3.extractors.MailRu
@@ -290,6 +289,7 @@ import com.lagradost.cloudstream3.extractors.ZplayerV2
 import com.lagradost.cloudstream3.extractors.Ztreamhub
 import com.lagradost.cloudstream3.extractors.VidStack
 import com.lagradost.cloudstream3.extractors.GDMirrorbot
+import com.lagradost.cloudstream3.extractors.LuluStream
 import com.lagradost.cloudstream3.mvvm.logError
 import kotlinx.coroutines.delay
 import me.xdrop.fuzzywuzzy.FuzzySearch
@@ -1005,9 +1005,9 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     VidHidePro4(),
     VidHidePro5(),
     VidHidePro6(),
+    LuluStream(),
     Lulustream1(),
     Lulustream2(),
-    Lulustream3(),
     StreamWishExtractor(),
     WishembedPro(),
     CdnwishCom(),
