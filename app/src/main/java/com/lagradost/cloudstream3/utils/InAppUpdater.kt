@@ -30,7 +30,7 @@ import java.io.File
 
 class InAppUpdater {
     companion object {
-        private const val GITHUB_USER_NAME = "ivagpt"
+        private const val GITHUB_USER_NAME = "recloudstream"
         private const val GITHUB_REPO = "cloudstream"
         private const val LOG_TAG = "InAppUpdater"
 
