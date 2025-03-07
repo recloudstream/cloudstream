@@ -4,6 +4,7 @@ import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.utils.*
 import com.lagradost.cloudstream3.utils.M3u8Helper.Companion.generateM3u8
+import org.json.JSONArray
 
 class Guccihide : Filesim() {
     override val name = "Guccihide"
@@ -101,4 +102,17 @@ open class Filesim : ExtractorApi() {
         ).forEach(callback)
     }
 
+     val tracksJson = Regex("tracks:\\s*\\[(.*?)]", RegexOption.DOT_MATCHES_ALL).find(script)?.groupValues?.getOrNull(1) ?: return
+     val tracksArray = JSONArray("[$tracksJson]")
+        for (i in 0 until tracksArray.length()) {
+            val track = tracksArray.getJSONObject(i)
+            if (track.optString("kind") == "captions") {
+                subtitleCallback(
+                    SubtitleFile(
+                        track.optString("label"),
+                        track.optString("file")
+                    )
+                )
+            }
+        }
 }
