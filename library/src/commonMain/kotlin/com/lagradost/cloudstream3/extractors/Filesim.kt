@@ -99,6 +99,23 @@ open class Filesim : ExtractorApi() {
             m3u8 ?: return,
             mainUrl
         ).forEach(callback)
+
+
+        // Extract subtitles
+        val tracksJson = Regex("tracks:\\s*\\[(.*?)]", RegexOption.DOT_MATCHES_ALL).find(script)?.groupValues?.getOrNull(1) ?: return
+        val tracksArray = JSONArray("[$tracksJson]")
+
+        for (i in 0 until tracksArray.length()) {
+            val track = tracksArray.getJSONObject(i)
+            if (track.optString("kind") == "captions") {
+                subtitleCallback(
+                    SubtitleFile(
+                        track.optString("label"),
+                        track.optString("file")
+                    )
+                )
+            }
+        }
     }
 
 }
