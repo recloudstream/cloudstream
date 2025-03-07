@@ -241,6 +241,7 @@ class HomeFragment : Fragment() {
             movies: Chip?,
             asian: Chip?,
             livestream: Chip?,
+            torrent: Chip?,
             nsfw: Chip?,
             others: Chip?,
         ): List<Pair<Chip?, List<TvType>>> {
@@ -253,6 +254,7 @@ class HomeFragment : Fragment() {
                 Pair(cartoons, listOf(TvType.Cartoon)),
                 Pair(docs, listOf(TvType.Documentary)),
                 Pair(livestream, listOf(TvType.Live)),
+                Pair(torrent, listOf(TvType.Torrent)),
                 Pair(nsfw, listOf(TvType.NSFW)),
                 Pair(others, listOf(TvType.Others)),
             )
@@ -266,6 +268,7 @@ class HomeFragment : Fragment() {
             header.homeSelectMovies,
             header.homeSelectAsian,
             header.homeSelectLivestreams,
+            header.homeSelectTorrents,
             header.homeSelectNsfw,
             header.homeSelectOthers
         )
