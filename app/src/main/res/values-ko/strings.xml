@@ -657,4 +657,6 @@
     <string name="sort_release_date_old">출시일 (오래된것부터 새로운것)</string>
     <string name="hide_player_control_names">플레이어 컨트롤 이름 숨기기</string>
     <string name="torrent_info">이 동영상은 토렌트이므로 동영상 활동이 추적될 수 있습니다.\n계속하기 전에 토렌트에 대해 충분히 이해했는지 확인하세요.</string>
+    <string name="audio_singluar">오디오</string>
+    <string name="podcast_singluar">팟캐스트</string>
 </resources>

@@ -47,7 +47,7 @@
     <string name="app_storage">برنامه</string>
     <string name="go_back_img_des">بازگشت</string>
     <string name="autoplay_next_settings_des">آغاز قسمت بعد پس از پایان قسمت فعلی</string>
-    <string name="home_change_provider_img_des">تغییر ارائه دهنده</string>
+    <string name="home_change_provider_img_des">تغییر ارائه‌دهنده</string>
     <string name="action_remove_watching">حذف</string>
     <string name="action_open_watching">اطلاعات بیشتر</string>
     <string name="torrent_plot">توضیحات</string>
@@ -139,7 +139,7 @@
     <string name="subs_font">قلم</string>
     <string name="subs_font_size">اندازه قلم</string>
     <string name="swipe_to_change_settings">برای تغییر تنظیمات بکشید</string>
-    <string name="swipe_to_change_settings_des">برای تغییر میزان روشنایی یا صدا در سمت چپ و راست به بالا یا پایین بکشید</string>
+    <string name="swipe_to_change_settings_des">برای تغییر میزان روشنایی یا صدا در گوشه چپ و راست به بالا یا پایین بکشید</string>
     <string name="automatic_plugin_updates">بروزرسانی خودکار افزونه</string>
     <string name="start">آغاز</string>
     <string name="app_language">زبان برنامه</string>
@@ -150,7 +150,7 @@
     <string name="anime_singular">انیمه</string>
     <string name="subs_outline_color">رنگ حاشیه متن</string>
     <string name="player_size_settings">دکمه تغییر‌اندازه پخش‌کننده</string>
-    <string name="speed_setting_summary">افزودن گزینه سرعت در پخش‌کننده</string>
+    <string name="speed_setting_summary">گزینه سرعت در پخش‌کننده را اضافه می‌کند</string>
     <string name="category_updates">بروزرسانی‌ و پشتیبانی</string>
     <string name="kitsu_settings">نمایش پوستر از طریق Kitsu</string>
     <string name="advanced_search">جستجوی پیشرفته</string>
@@ -162,10 +162,10 @@
     <string name="source_error">خطای منبع</string>
     <string name="test_log">گزارش</string>
     <string name="player_size_settings_des">حذف حاشیه سیاه</string>
-    <string name="player_subtitles_settings_des">تنظیمات زیرنویس پخش‌کننده</string>
+    <string name="player_subtitles_settings_des">تنظیمات زیرنویس‌های پخش‌کننده</string>
     <string name="category_account">حساب‌ها و امنیت</string>
-    <string name="show_log_cat">نمایش گزارش‌پیوسته 🐈</string>
-    <string name="copy_link_toast">پیوند در بریده‌دان رونویسی شد</string>
+    <string name="show_log_cat">نمایش Logcat 🐈</string>
+    <string name="copy_link_toast">پیوند در حافظه موقت کپی شد</string>
     <string name="no_links_found_toast">هیچ پیوندی یافت‌نشد</string>
     <string name="asian_drama_singular">درام آسیایی</string>
     <string name="automatic_plugin_download">بارگیری خودکار افزونه‌ها</string>
@@ -195,7 +195,7 @@
     <string name="vpn_torrent">این ارائه‌دهنده تورنتی است، استفاده از VPN توصیه می‌شود</string>
     <string name="restore_success">بارگزاری پرونده پشتیبانی‌</string>
     <string name="subs_subtitle_elevation">ارتفاع زیرنویس</string>
-    <string name="search_provider_text_providers">جستجو از طریق ارائه دهنده‌ها</string>
+    <string name="search_provider_text_providers">جستجو از طریق ارائه‌دهنده‌ها</string>
     <string name="backup_frequency">فرکانس پشتیبان‌گیری</string>
     <string name="swipe_to_seek_settings">برای جلورفتن بکشید</string>
     <string name="backup_success">داده ذخیره‌سازی شده</string>
@@ -211,7 +211,7 @@
     <string name="app_subbed_text">زیرنویس</string>
     <string name="home_info">درباره</string>
     <string name="search_provider_text_types">جستجو از طریق انواع</string>
-    <string name="backup_settings">پشتیبان‌گیری داده</string>
+    <string name="backup_settings">پشتیبانی‌گیری داده</string>
     <string name="restore_failed_format" formatted="true">مشکل در بازگردانی داده از پرونده %s</string>
     <string name="site">وبگاه</string>
     <string name="benene_des">انعام دادن</string>
@@ -222,19 +222,82 @@
     <string name="test_passed">متوقف‌شده</string>
     <string name="action_open_play">@string/home_play</string>
     <string name="open_local_video">باز کردن ویدیو محلی</string>
-    <string name="provider_info_meta">متاداده توسط سایت ارائه نشده، اگه در سایت وجود نداشته باشد احتمال خطا در بارگیری وجود دارد</string>
+    <string name="provider_info_meta">متاداده توسط سایت ارائه نشده، اگه در سایت وجود نداشته باشد بارگیری به مشکل می‌خورد .</string>
     <string name="type_on_hold">در انتظار</string>
     <string name="play_from_beginning_img_des">پخش از ابتدا</string>
-    <string name="downloads_empty">در حال حاضر دانلودی نیست</string>
+    <string name="downloads_empty">در حال حاضر دانلودی وجود ندارد.</string>
     <string name="next_season_episode_format" formatted="true">فصل %1$d قسمت %2$d پخش خواهد شد در</string>
     <string name="play_torrent_button">استریم تورنت</string>
     <string name="downloads_delete_select">انتخاب برای حذف</string>
     <string name="offline_file">در دسترس برای تماشای آفلاین</string>
     <string name="select_all">انتخاب همه</string>
     <string name="deselect_all">انتخاب نکردن همه</string>
-    <string name="benene_count_text">"%d Benenes به توسعه دهندگان داده  می‌شود"</string>
+    <string name="benene_count_text">%d Benenes به توسعه دهندگان داده می‌شود</string>
     <string name="benene_count_text_none">بدون Benenes</string>
     <string name="chromecast_subtitles_settings">زیرنویس Chromecast</string>
     <string name="torrent_info">این ویدیو یک تورنت است، این بدان معنی است که فعالیت ویدیویی شما قابل ردیابی است. \nقبل از ادامه، مطمئن شوید که تورنت را درک کرده اید.</string>
     <string name="picture_in_picture_des">پخش را در یک پخش کننده مینیاتوری در بالای برنامه های دیگر ادامه می دهد</string>
+    <string name="error_invalid_data">داده نامعتبر</string>
+    <string name="check_for_update">چک‌کردن به‌روزرسانی</string>
+    <string name="wifi">وای‌فای</string>
+    <string name="pref_category_player_features">قابلیت‌های پخش‌کننده</string>
+    <string name="remote_error">خطای ریموت</string>
+    <string name="watch_quality_pref_data">کیفیت تماشای برگزیده (برای دیتای گوشی)</string>
+    <string name="add_site_pref">مبدل‌سازی سایت</string>
+    <string name="nginx_url_pref">نشانی سرور NGINX</string>
+    <string name="provider_lang_settings">زبان‌های افزونه</string>
+    <string name="preferred_media_settings">محتوا برگزیده</string>
+    <string name="limit_title_rez">کیفیت پخش‌کننده ویدئو</string>
+    <string name="preferred_media_subtext">چه می‌خواهید تماشا کنید</string>
+    <string name="all_languages_preference">تمام زبان‌ها</string>
+    <string name="watch_quality_pref">کیفیت تماشای برگزیده (برای وای‌فای)</string>
+    <string name="mobile_data">دیتای گوشی</string>
+    <string name="torrent_preferred_media">تورنت را در تنظیمات/ارائه‌دهنده/محتوا برگزیده فعال کنید</string>
+    <string name="chromecast_subtitles_settings_des">تنظیمات زیرنویس‌های Chromecast</string>
+    <string name="error_invalid_url">نشانی نامعتبر</string>
+    <string name="category_provider_test">تست ارائه‌دهنده</string>
+    <string name="swipe_to_seek_settings_des">از گوشه به گوشه برای کنترل موقعیت خود در یک ویدئو بکشید</string>
+    <string name="extension_language">زبان</string>
+    <string name="app_not_found_error">برنامه پیدا نشد</string>
+    <string name="error">خطا</string>
+    <string name="pref_category_ui_features">قابلیت‌های</string>
+    <string name="category_providers">ارائه‌دهنده‌ها</string>
+    <string name="storage_error">خطای دانلود، دسترسی به حافظه را چک کنید</string>
+    <string name="resolution">کیفیت</string>
+    <string name="resolution_and_title">کیفیت و عنوان</string>
+    <string name="custom_media_singluar">محتوا</string>
+    <string name="double_tap_to_seek_amount_settings">مقدار جلورفتن پخش‌کننده</string>
+    <string name="no_repository_found_error">مخزن پیدا نشد، نشانی را چک کنید و فیلترشکن را امتحان کنید</string>
+    <string name="example_lang_name">کد زبان (انگلیسی)</string>
+    <string name="unexpected_error">خطا غیرمنتظره پخش‌کننده</string>
+    <string name="unsupported_error">خطای پشتیبانی‌نشده</string>
+    <string name="provider_languages_tip">تماشای ویدئوها در این زبان‌ها</string>
+    <string name="subtitles_filter_lang">فیلتر توسط زبان محتوا برگزیده</string>
+    <string name="player_pref">پخش‌کننده ویدئو برگزیده</string>
+    <string name="error_invalid_id">شناسه نامعتبر</string>
+    <string name="repository_url_hint">نشانی مخزن یا Shortcode</string>
+    <string name="open_downloaded_repo">بازکردن مخزن</string>
+    <string name="backup_path_title">مکان پوشه پشتیبانی</string>
+    <string name="clipboard_permission_error">خطا در دسترسی به حافظه موقت، لطفا دوباره تلاش کنید.</string>
+    <string name="repository_name_hint">نام مخزن (اختیاری)</string>
+    <string name="no_plugins_found_error">هیچ افزونه‌ای در مخزن پیدا نشد</string>
+    <string name="delete_repository">حذف مخزن</string>
+    <string name="backup_failed_error_format">خطا در پشتیبانی‌گیری %s</string>
+    <string name="backup_failed">دسترسی به حافظه فعال نیست. لطفا دوباره تلاش کنید.</string>
+    <string name="delete_files">حذف پرونده‌ها</string>
+    <string name="delete_format" formatted="true">حذف (%1$d | %2$s)</string>
+    <string name="add_repository">افزودن مخزن</string>
+    <string name="plugin_deleted">افزونه حذف شد</string>
+    <string name="restore_settings">بازیابی داده از پشتیبانی</string>
+    <string name="pref_category_bypass">دورزدن سرویس‌دهنده اینترنت</string>
+    <string name="pref_category_backup">پشتیبانی</string>
+    <string name="clipboard_unknown_error">خطا در کپی کردن، لطفا Logcat را کپی کنید و با پشتیبانی برنامه تماس بگیرید.</string>
+    <string name="add_site_summary">یک بدل از یک سایت موجود اضافه کنید، با یک نشانی متفاوت</string>
+    <string name="jsdelivr_proxy_summary">دورزدن نشانی‌های خام github توسط jsDelivr. ممکن است باعث تاخیر چند روزه به‌روزرسانی شود.</string>
+    <string name="dns_pref_summary">برای دورزدن سرویس‌دهنده اینترنت مفید است</string>
+    <string name="encoding_error">خطای رمزگذاری</string>
+    <string name="subtitles_encoding">رمزگذاری زیرنویس</string>
+    <string name="delete_plugin">حذف افزونه</string>
+    <string name="delete_repository_plugins">این همچنین تمام مخزن افزونه‌ها را پاک می‌کند</string>
+    <string name="referer">مرجع (اختیاری)</string>
 </resources>
