@@ -128,8 +128,8 @@ class SubscriptionWorkManager(val context: Context, workerParams: WorkerParamete
             updateProgress(max, progress, true)
 
             // We need all plugins loaded.
-            PluginManager.loadAllOnlinePlugins(context)
-            PluginManager.loadAllLocalPlugins(context, false)
+            PluginManager._DO_NOT_CALL_FROM_A_PLUGIN_loadAllOnlinePlugins(context)
+            PluginManager._DO_NOT_CALL_FROM_A_PLUGIN_loadAllLocalPlugins(context, false)
 
             subscriptions.apmap { savedData ->
                 try {

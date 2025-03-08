@@ -256,7 +256,7 @@ class SettingsUpdates : PreferenceFragmentCompat() {
 
         getPref(R.string.manual_update_plugins_key)?.setOnPreferenceClickListener {
             ioSafe {
-                PluginManager.manuallyReloadAndUpdatePlugins(activity ?: return@ioSafe)
+                PluginManager._DO_NOT_CALL_FROM_A_PLUGIN_manuallyReloadAndUpdatePlugins(activity ?: return@ioSafe)
             }
             return@setOnPreferenceClickListener true // Return true for the listener
         }

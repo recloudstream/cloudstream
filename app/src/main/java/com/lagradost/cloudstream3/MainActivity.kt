@@ -84,7 +84,7 @@ import com.lagradost.cloudstream3.mvvm.observe
 import com.lagradost.cloudstream3.mvvm.observeNullable
 import com.lagradost.cloudstream3.network.initClient
 import com.lagradost.cloudstream3.plugins.PluginManager
-import com.lagradost.cloudstream3.plugins.PluginManager.loadAllOnlinePlugins
+import com.lagradost.cloudstream3.plugins.PluginManager._DO_NOT_CALL_FROM_A_PLUGIN_loadAllOnlinePlugins
 import com.lagradost.cloudstream3.plugins.PluginManager.loadSinglePlugin
 import com.lagradost.cloudstream3.receivers.VideoDownloadRestartReceiver
 import com.lagradost.cloudstream3.services.SubscriptionWorkManager
@@ -301,7 +301,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                         // This specific intent is used for the gradle deployWithAdb
                         // https://github.com/recloudstream/gradle/blob/master/src/main/kotlin/com/lagradost/cloudstream3/gradle/tasks/DeployWithAdbTask.kt#L46
                         if (str == "$APP_STRING:") {
-                            PluginManager.hotReloadAllLocalPlugins(activity)
+                            PluginManager._DO_NOT_CALL_FROM_A_PLUGIN_hotReloadAllLocalPlugins(activity)
                         }
                     } else if (safeURI(str)?.scheme == APP_STRING_REPO) {
                         val url = str.replaceFirst(APP_STRING_REPO, "https")
@@ -1245,9 +1245,9 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                             true
                         )
                     ) {
-                        PluginManager.updateAllOnlinePluginsAndLoadThem(this@MainActivity)
+                        PluginManager._DO_NOT_CALL_FROM_A_PLUGIN_updateAllOnlinePluginsAndLoadThem(this@MainActivity)
                     } else {
-                        loadAllOnlinePlugins(this@MainActivity)
+                        _DO_NOT_CALL_FROM_A_PLUGIN_loadAllOnlinePlugins(this@MainActivity)
                     }
 
                     //Automatically download not existing plugins, using mode specified.
@@ -1258,7 +1258,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                         )
                     ) ?: AutoDownloadMode.Disable
                     if (autoDownloadPlugin != AutoDownloadMode.Disable) {
-                        PluginManager.downloadNotExistingPluginsAndLoad(
+                        PluginManager._DO_NOT_CALL_FROM_A_PLUGIN_downloadNotExistingPluginsAndLoad(
                             this@MainActivity,
                             autoDownloadPlugin
                         )
@@ -1266,7 +1266,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                 }
 
                 ioSafe {
-                    PluginManager.loadAllLocalPlugins(this@MainActivity, false)
+                    PluginManager._DO_NOT_CALL_FROM_A_PLUGIN_loadAllLocalPlugins(this@MainActivity, false)
                 }
             }
         } else {

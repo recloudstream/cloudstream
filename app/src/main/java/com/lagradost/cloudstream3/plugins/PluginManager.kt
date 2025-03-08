@@ -20,7 +20,6 @@ import androidx.fragment.app.FragmentActivity
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.APIHolder
 import com.lagradost.cloudstream3.APIHolder.removePluginMapping
-import com.lagradost.cloudstream3.AcraApplication.Companion.getActivity
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
@@ -255,10 +254,14 @@ object PluginManager {
      * 2. If disabled do nothing
      * 3. If outdated download and load the plugin
      * 4. Else load the plugin normally
-     **/
-    fun updateAllOnlinePluginsAndLoadThem(activity: Activity) {
+     *
+     * DO NOT USE THIS IN A PLUGIN! It may case an infinite recursive loop lagging or crashing everyone's devices.
+     * If you use it from a plugin, do not expect a stable jvmName, SO DO NOT USE IT!
+     */
+    @Suppress("FunctionName")
+    fun _DO_NOT_CALL_FROM_A_PLUGIN_updateAllOnlinePluginsAndLoadThem(activity: Activity) {
         // Load all plugins as fast as possible!
-        loadAllOnlinePlugins(activity)
+        _DO_NOT_CALL_FROM_A_PLUGIN_loadAllOnlinePlugins(activity)
         afterPluginsLoadedEvent.invoke(false)
 
         val urls = (getKey<Array<RepositoryData>>(REPOSITORIES_KEY)
@@ -324,8 +327,12 @@ object PluginManager {
      * 1. Gets all online data from online plugins repo
      * 2. Fetch all not downloaded plugins
      * 3. Download them and reload plugins
-     **/
-    fun downloadNotExistingPluginsAndLoad(activity: Activity, mode: AutoDownloadMode) {
+     *
+     * DO NOT USE THIS IN A PLUGIN! It may case an infinite recursive loop lagging or crashing everyone's devices.
+     * If you use it from a plugin, do not expect a stable jvmName, SO DO NOT USE IT!
+    */
+    @Suppress("FunctionName")
+    fun _DO_NOT_CALL_FROM_A_PLUGIN_downloadNotExistingPluginsAndLoad(activity: Activity, mode: AutoDownloadMode) {
         val newDownloadPlugins = mutableListOf<String>()
         val urls = (getKey<Array<RepositoryData>>(REPOSITORIES_KEY)
             ?: emptyArray()) + PREBUILT_REPOSITORIES
@@ -416,8 +423,12 @@ object PluginManager {
 
     /**
      * Use updateAllOnlinePluginsAndLoadThem
-     * */
-    fun loadAllOnlinePlugins(context: Context) {
+     *
+     * DO NOT USE THIS IN A PLUGIN! It may case an infinite recursive loop lagging or crashing everyone's devices.
+     * If you use it from a plugin, do not expect a stable jvmName, SO DO NOT USE IT!
+     */
+    @Suppress("FunctionName")
+    fun _DO_NOT_CALL_FROM_A_PLUGIN_loadAllOnlinePlugins(context: Context) {
         // Load all plugins as fast as possible!
         (getPluginsOnline()).toList().apmap { pluginData ->
             loadPlugin(
@@ -430,21 +441,29 @@ object PluginManager {
 
     /**
      * Reloads all local plugins and forces a page update, used for hot reloading with deployWithAdb
-     **/
-    fun hotReloadAllLocalPlugins(activity: FragmentActivity?) {
+     *
+     * DO NOT USE THIS IN A PLUGIN! It may case an infinite recursive loop lagging or crashing everyone's devices.
+     * If you use it from a plugin, do not expect a stable jvmName, SO DO NOT USE IT!
+    */
+    @Suppress("FunctionName")
+    fun _DO_NOT_CALL_FROM_A_PLUGIN_hotReloadAllLocalPlugins(activity: FragmentActivity?) {
         Log.d(TAG, "Reloading all local plugins!")
         if (activity == null) return
         getPluginsLocal().forEach {
             unloadPlugin(it.filePath)
         }
-        loadAllLocalPlugins(activity, true)
+        _DO_NOT_CALL_FROM_A_PLUGIN_loadAllLocalPlugins(activity, true)
     }
 
     /**
      * @param forceReload see afterPluginsLoadedEvent, basically a way to load all local plugins
      * and reload all pages even if they are previously valid
-     **/
-    fun loadAllLocalPlugins(context: Context, forceReload: Boolean) {
+     *
+     * DO NOT USE THIS IN A PLUGIN! It may case an infinite recursive loop lagging or crashing everyone's devices.
+     * If you use it from a plugin, do not expect a stable jvmName, SO DO NOT USE IT!
+     */
+    @Suppress("FunctionName")
+    fun _DO_NOT_CALL_FROM_A_PLUGIN_loadAllLocalPlugins(context: Context, forceReload: Boolean) {
         val dir = File(LOCAL_PLUGINS_PATH)
 
         if (!dir.exists()) {
@@ -734,10 +753,15 @@ object PluginManager {
         }
     }
 
-    fun manuallyReloadAndUpdatePlugins(activity: Activity) {
+    /**
+     * DO NOT USE THIS IN A PLUGIN! It may case an infinite recursive loop lagging or crashing everyone's devices.
+     * If you use it from a plugin, do not expect a stable jvmName, SO DO NOT USE IT!
+     */
+    @Suppress("FunctionName")
+    fun _DO_NOT_CALL_FROM_A_PLUGIN_manuallyReloadAndUpdatePlugins(activity: Activity) {
         showToast(activity.getString(R.string.starting_plugin_update_manually), Toast.LENGTH_LONG)
 
-        loadAllOnlinePlugins(activity)
+        _DO_NOT_CALL_FROM_A_PLUGIN_loadAllOnlinePlugins(activity)
         afterPluginsLoadedEvent.invoke(false)
 
         val urls = (getKey<Array<RepositoryData>>(REPOSITORIES_KEY) ?: emptyArray()) + PREBUILT_REPOSITORIES
