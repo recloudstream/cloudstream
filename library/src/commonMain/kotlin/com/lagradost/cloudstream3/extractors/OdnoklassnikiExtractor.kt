@@ -2,10 +2,15 @@
 
 package com.lagradost.cloudstream3.extractors
 
-import com.lagradost.api.Log
-import com.lagradost.cloudstream3.*
-import com.lagradost.cloudstream3.utils.*
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.lagradost.cloudstream3.ErrorLoadingException
+import com.lagradost.cloudstream3.SubtitleFile
+import com.lagradost.cloudstream3.USER_AGENT
+import com.lagradost.cloudstream3.app
+import com.lagradost.cloudstream3.utils.AppUtils
+import com.lagradost.cloudstream3.utils.ExtractorApi
+import com.lagradost.cloudstream3.utils.ExtractorLink
+import com.lagradost.cloudstream3.utils.getQualityFromName
 
 open class Odnoklassniki : ExtractorApi() {
     override val name            = "Odnoklassniki"
@@ -22,12 +27,12 @@ open class Odnoklassniki : ExtractorApi() {
             "Origin" to mainUrl,
             "User-Agent" to USER_AGENT,
         )
-
-        val videoReq  = app.get(url, headers=headers).text.replace("\\&quot;", "\"").replace("\\\\", "\\")
+        val embedUrl = url.replace("/video/","/videoembed/")
+        val videoReq  = app.get(embedUrl, headers=headers).text.replace("\\&quot;", "\"").replace("\\\\", "\\")
             .replace(Regex("\\\\u([0-9A-Fa-f]{4})")) { matchResult ->
                 Integer.parseInt(matchResult.groupValues[1], 16).toChar().toString()
             }
-        val videosStr = Regex("""\"videos\":(\[[^\]]*\])""").find(videoReq)?.groupValues?.get(1) ?: throw ErrorLoadingException("Video not found")
+        val videosStr = Regex(""""videos":(\[[^]]*])""").find(videoReq)?.groupValues?.get(1) ?: throw ErrorLoadingException("Video not found")
         val videos    = AppUtils.tryParseJson<List<OkRuVideo>>(videosStr) ?: throw ErrorLoadingException("Video not found")
 
         for (video in videos) {
