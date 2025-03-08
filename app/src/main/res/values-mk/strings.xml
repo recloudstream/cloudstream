@@ -596,7 +596,7 @@
     <string name="episode_upcoming_format" formatted="true">Претстои во %s</string>
     <string name="resume_remaining" formatted="true">%s
 \nпреостанати</string>
-    <string name="battery_dialog_message">За да обезбедеш непрекинато преземање и известувања за претплатените ТВ емисии, CloudStream треба дозвола за работа во позадина. Со притискање на OK, ќе бидеш пренасочен до Информации за апликацијата. Таму, скролувај до „Употреба на батеријата на апликацијата“ и постави ја употребата на батеријата на Неограничено. Имај предвид дека оваа дозвола не значи дека CS3 ќе ја троши батеријата. Ќе работи во позадина само кога е потребно, како при примање известувања или преземање видеа од официјалните екстензии. Ако одбереш „Откажи“, подоцна можеш да ја прилагодиш оваа поставка во Општи поставки.</string>
+    <string name="battery_dialog_message">За да се обезбедат непрекинати преземања и известувања за претплатените ТВ серии, CloudStream треба дозвола за работа во позадина. Со притискање на „ОК“, ќе ви биде прикажан дијалог за барање дозвола. Ве молиме, притиснете „Дозволи“.\n\nИмајте предвид дека оваа дозвола не значи дека CS3 ќе ја троши вашата батерија. Ќе работи во позадина само кога е потребно, како на пример при примање известувања или преземање видеа од официјални екстензии.</string>
     <string name="clipboard_permission_error">Грешка при пристапот до таблата со исечоци, обиди се повторно.</string>
     <string name="clipboard_unknown_error">Грешка при копирање, молам копирај го логот и контактирај ја поддршката на апликацијата.</string>
     <string name="audio_book_singular">Аудио книга</string>
@@ -648,4 +648,20 @@
     <string name="player_load_one_subtitle_online">Вчитај прво достапно</string>
     <string name="torrent_not_accepted">Не е прифатен torrent</string>
     <string name="torrent_preferred_media">Овозможи torrent во Поставки/Провајдери/Претпочитани медиуми</string>
+    <string name="software_decoding_desc">Софтверското декодирање му овозможува на плеерот да репродуцира видео фајлови што не се поддржани од вашиот телефон, но може да предизвика задоцнување или нестабилна репродукција при висока резолуција.</string>
+    <string name="software_decoding">Софтверско декодирање</string>
+    <string name="starting_plugin_update_manually">Започнување на процесот на ажурирање на приклучоци!</string>
+    <string name="update_plugins">Ажурирај приклучоци</string>
+    <string name="no_plugins_updated_manually">Ниту еден приклучок не е ажуриран.</string>
+    <string name="plugins_updated_manually">Успешно ажурирани %d приклучоци!</string>
+    <string name="sort_episodes_number_asc">Епизода (Растечки)</string>
+    <string name="sort_episodes_number_desc">Епизода (Опаѓачки)</string>
+    <string name="sort_episodes_rating_high_low">Рејтинг (Највисок)</string>
+    <string name="sort_episodes_rating_low_high">Рејтинг (Најнизок)</string>
+    <string name="sort_episodes_date_newest">Датум на емитување (Најнов)</string>
+    <string name="sort_episodes_date_oldest">Датум на емитување (Најстар)</string>
+    <string name="sort_button_episode">Еп %s</string>
+    <string name="sort_button_rating">Рејтинг %s</string>
+    <string name="sort_button_date">Датум %s</string>
+    <string name="update_plugins_manually">Ажурирај ги приклучоците рачно</string>
 </resources>
