@@ -1,11 +1,14 @@
 package com.lagradost.cloudstream3.ui.player
 
+import android.R.attr
 import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.app.Dialog
+import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
+import android.graphics.Bitmap
 import android.os.Build
 import android.os.Bundle
 import android.text.Spanned
@@ -23,6 +26,8 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.MainThread
 import androidx.annotation.OptIn
 import androidx.core.animation.addListener
+import androidx.core.app.NotificationCompat
+import androidx.core.app.PendingIntentCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
@@ -30,7 +35,13 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.Format.NO_VALUE
 import androidx.media3.common.MimeTypes
+import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
+import androidx.media3.common.util.Util
+import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.ui.PlayerNotificationManager
+import androidx.media3.ui.PlayerNotificationManager.EXTRA_INSTANCE_ID
+import androidx.media3.ui.PlayerNotificationManager.MediaDescriptionAdapter
 import androidx.preference.PreferenceManager
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
 import com.lagradost.cloudstream3.AcraApplication
@@ -41,6 +52,7 @@ import com.lagradost.cloudstream3.LoadResponse.Companion.getAniListId
 import com.lagradost.cloudstream3.LoadResponse.Companion.getImdbId
 import com.lagradost.cloudstream3.LoadResponse.Companion.getMalId
 import com.lagradost.cloudstream3.LoadResponse.Companion.getTMDbId
+import com.lagradost.cloudstream3.MainActivity
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.TvType
 import com.lagradost.cloudstream3.amap
@@ -94,18 +106,26 @@ import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.hideSystemUI
 import com.lagradost.cloudstream3.utils.UIHelper.popCurrentPage
 import com.lagradost.cloudstream3.utils.UIHelper.toPx
+import com.lagradost.cloudstream3.utils.VideoDownloadManager.getImageBitmapFromUrl
 import com.lagradost.cloudstream3.utils.setText
 import com.lagradost.cloudstream3.utils.txt
 import com.lagradost.safefile.SafeFile
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import java.io.Serializable
 import java.util.Calendar
 import kotlin.math.abs
 
+
+@UnstableApi
 class GeneratorPlayer : FullScreenPlayer() {
     companion object {
+        const val NOTIFICATION_ID = 2326
+        const val CHANNEL_ID = 7340
+        const val STOP_ACTION = "stopcs3"
+
         private var lastUsedGenerator: IGenerator? = null
         fun newInstance(generator: IGenerator, syncData: HashMap<String, String>? = null): Bundle {
             Log.i(TAG, "newInstance = $syncData")
@@ -225,6 +245,200 @@ class GeneratorPlayer : FullScreenPlayer() {
             currentVerifyLink = ioSafe {
                 if (link.extractorData != null) {
                     getApiFromNameNull(link.source)?.extractorVerifierJob(link.extractorData)
+                }
+            }
+        }
+    }
+
+    // https://github.com/androidx/media/blob/main/libraries/ui/src/main/java/androidx/media3/ui/PlayerNotificationManager.java#L1517
+    private fun createBroadcastIntent(
+        action: String,
+        context: Context,
+        instanceId: Int
+    ): PendingIntent {
+        val intent: Intent = Intent(action).setPackage(context.packageName)
+        intent.putExtra(EXTRA_INSTANCE_ID, instanceId)
+        val pendingFlags = if (Util.SDK_INT >= 23) {
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        } else {
+            PendingIntent.FLAG_UPDATE_CURRENT
+        }
+
+        return PendingIntent.getBroadcast(context, instanceId, intent, pendingFlags)
+    }
+
+    @OptIn(UnstableApi::class)
+    @UnstableApi
+    private var cachedPlayerNotificationManager: PlayerNotificationManager? = null
+
+    @OptIn(UnstableApi::class)
+    @UnstableApi
+    private fun getMediaNotification(context: Context): PlayerNotificationManager {
+        val cache = cachedPlayerNotificationManager
+        if (cache != null) return cache
+        return PlayerNotificationManager.Builder(
+            context,
+            NOTIFICATION_ID,
+            CHANNEL_ID.toString()
+        )
+            .setChannelNameResourceId(R.string.player_notification_channel_name)
+            .setChannelDescriptionResourceId(R.string.player_notification_channel_description)
+            .setMediaDescriptionAdapter(object : MediaDescriptionAdapter {
+                override fun getCurrentContentTitle(player: Player): CharSequence {
+                    return when (val meta = currentMeta) {
+                        is ResultEpisode -> {
+                            meta.headerName
+                        }
+
+                        is ExtractorUri -> {
+                            meta.headerName ?: meta.name
+                        }
+
+                        else -> null
+                    } ?: "Unknown"
+                }
+
+                override fun createCurrentContentIntent(player: Player): PendingIntent? {
+                    // Open the app without creating a new task to resume playback seamlessly
+                    return PendingIntentCompat.getActivity(context, 0, Intent(context, MainActivity::class.java), 0, false)
+                }
+
+                override fun getCurrentContentText(player: Player): CharSequence? {
+                    return when (val meta = currentMeta) {
+                        is ResultEpisode -> {
+                            meta.name
+                        }
+
+                        is ExtractorUri -> {
+                            if (meta.headerName == null) {
+                                null
+                            } else {
+                                meta.name
+                            }
+                        }
+
+                        else -> null
+                    }
+                }
+
+                override fun getCurrentLargeIcon(
+                    player: Player,
+                    callback: PlayerNotificationManager.BitmapCallback
+                ): Bitmap? {
+                    ioSafe {
+                        val url = when (val meta = currentMeta) {
+                            is ResultEpisode -> {
+                                meta.poster
+                            }
+
+                            else -> null
+                        }
+                        // if we have a poster url try with it first
+                        if (url != null) {
+                            val urlBitmap = context.getImageBitmapFromUrl(url)
+                            if (urlBitmap != null) {
+                                callback.onBitmap(urlBitmap)
+                                return@ioSafe
+                            }
+                        }
+
+                        // retry several times with a preview in case the preview generator is slow
+                        for (i in 0..10) {
+                            val preview = this@GeneratorPlayer.player.getPreview(0.5f)
+                            if (preview == null) {
+                                delay(1000L)
+                                continue
+                            }
+                            callback.onBitmap(
+                                preview
+                            )
+                            break
+                        }
+                    }
+
+                    // return null as we want to use the callback
+                    return null
+                }
+            }).setCustomActionReceiver(object : PlayerNotificationManager.CustomActionReceiver {
+                // we have to use a custom action for stop if we want to exit the player instead of just stopping playback
+                override fun createCustomActions(
+                    context: Context,
+                    instanceId: Int
+                ): MutableMap<String, NotificationCompat.Action> {
+                    return mutableMapOf(
+                        STOP_ACTION to NotificationCompat.Action(
+                            R.drawable.baseline_stop_24,
+                            context.getString(androidx.media3.ui.R.string.exo_controls_stop_description),
+                            createBroadcastIntent(STOP_ACTION, context, instanceId)
+                        )
+                    )
+                }
+
+                override fun getCustomActions(player: Player): MutableList<String> {
+                    return mutableListOf(STOP_ACTION)
+                }
+
+                override fun onCustomAction(player: Player, action: String, intent: Intent) {
+                    when (action) {
+                        STOP_ACTION -> {
+                            exitFullscreen()
+                            this@GeneratorPlayer.player.release()
+                            activity?.popCurrentPage()
+                        }
+                    }
+                }
+            })
+            .setPlayActionIconResourceId(R.drawable.ic_baseline_play_arrow_24)
+            .setPauseActionIconResourceId(R.drawable.netflix_pause)
+            .setSmallIconResourceId(R.drawable.baseline_headphones_24)
+            .setStopActionIconResourceId(R.drawable.baseline_stop_24)
+            .setRewindActionIconResourceId(R.drawable.go_back_30)
+            .setFastForwardActionIconResourceId(R.drawable.go_forward_30)
+            .setNextActionIconResourceId(R.drawable.ic_baseline_skip_next_24)
+            .setPreviousActionIconResourceId(R.drawable.baseline_skip_previous_24)
+            .build().apply {
+                setColorized(true) // Color
+                setUseChronometer(true) // Seekbar
+
+                // Don't show the prev episode button
+                setUsePreviousAction(false)
+                setUsePreviousActionInCompactView(false)
+
+                // Don't show the next episode button
+                setUseNextAction(false)
+                setUseNextActionInCompactView(false)
+
+                // Show the skip 30s in both modes
+                setUseFastForwardAction(true)
+                setUseFastForwardActionInCompactView(true)
+
+                // Only show rewind in expanded
+                setUseRewindAction(true)
+                setUseFastForwardActionInCompactView(false)
+
+                // Use custom stop action
+                setUseStopAction(false)
+            }
+            .also { cachedPlayerNotificationManager = it }
+    }
+
+    override fun playerUpdated(player: Any?) {
+        super.playerUpdated(player)
+
+        // Cancel the notification when released
+        if (player == null) {
+            cachedPlayerNotificationManager?.setPlayer(null)
+            cachedPlayerNotificationManager = null
+            return
+        }
+
+        // setup the notification when starting the player
+        if (player is ExoPlayer) {
+            val ctx = context ?: return
+            getMediaNotification(ctx).apply {
+                setPlayer(player)
+                mMediaSession?.platformToken?.let {
+                    setMediaSessionToken(it)
                 }
             }
         }
@@ -470,7 +684,8 @@ class GeneratorPlayer : FullScreenPlayer() {
         val currentTempMeta = getMetaData()
 
         // bruh idk why it is not correct
-        val color = ColorStateList.valueOf(context.colorFromAttribute(androidx.appcompat.R.attr.colorAccent))
+        val color =
+            ColorStateList.valueOf(context.colorFromAttribute(androidx.appcompat.R.attr.colorAccent))
         binding.searchLoadingBar.progressTintList = color
         binding.searchLoadingBar.indeterminateTintList = color
 

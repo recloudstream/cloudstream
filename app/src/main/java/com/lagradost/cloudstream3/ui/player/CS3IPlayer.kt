@@ -63,6 +63,7 @@ import androidx.preference.PreferenceManager
 import com.lagradost.cloudstream3.APIHolder.getApiFromNameNull
 import com.lagradost.cloudstream3.AcraApplication.Companion.getKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.setKey
+import com.lagradost.cloudstream3.CommonActivity.activity
 import com.lagradost.cloudstream3.ErrorLoadingException
 import com.lagradost.cloudstream3.MainActivity.Companion.deleteFileOnExit
 import com.lagradost.cloudstream3.R
@@ -143,6 +144,9 @@ class CS3IPlayer : IPlayer {
     private var playbackPosition: Long = 0
 
     private val subtitleHelper = PlayerSubtitleHelper()
+
+    /** If we want to play the audio only in the background when the app is not open */
+    private var isAudioOnlyBackground = false
 
     /**
      * This is a way to combine the MediaItem and its duration for the concatenating MediaSource.
@@ -577,6 +581,7 @@ class CS3IPlayer : IPlayer {
         //simpleCache?.release()
 
         exoPlayer = null
+        event(PlayerAttachedEvent(null))
         //simpleCache = null
     }
 
@@ -584,18 +589,23 @@ class CS3IPlayer : IPlayer {
         Log.i(TAG, "onStop")
 
         saveData()
-        handleEvent(CSPlayerEvent.Pause, PlayerEventSource.Player)
+        if (!isAudioOnlyBackground) {
+            handleEvent(CSPlayerEvent.Pause, PlayerEventSource.Player)
+        }
         //releasePlayer()
     }
 
     override fun onPause() {
         Log.i(TAG, "onPause")
         saveData()
-        handleEvent(CSPlayerEvent.Pause, PlayerEventSource.Player)
+        if (!isAudioOnlyBackground) {
+            handleEvent(CSPlayerEvent.Pause, PlayerEventSource.Player)
+        }
         //releasePlayer()
     }
 
     override fun onResume(context: Context) {
+        isAudioOnlyBackground = false
         if (exoPlayer == null)
             reloadPlayer(context)
     }
@@ -749,8 +759,11 @@ class CS3IPlayer : IPlayer {
                 ExoPlayer.Builder(context)
                     .setRenderersFactory { eventHandler, videoRendererEventListener, audioRendererEventListener, textRendererOutput, metadataRendererOutput ->
                         val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
-                        val current = settingsManager.getInt(context.getString(R.string.software_decoding_key), -1)
-                        val softwareDecoding = when(current) {
+                        val current = settingsManager.getInt(
+                            context.getString(R.string.software_decoding_key),
+                            -1
+                        )
+                        val softwareDecoding = when (current) {
                             0 -> true // yes
                             1 -> false // no
                             // -1 = automatic
@@ -1049,6 +1062,11 @@ class CS3IPlayer : IPlayer {
                             }
                             event(TimestampSkippedEvent(timestamp = lastTimeStamp, source = source))
                         }
+                    }
+
+                    CSPlayerEvent.PlayAsAudio -> {
+                        isAudioOnlyBackground = true
+                        activity?.moveTaskToBack(false)
                     }
                 }
             }

@@ -48,11 +48,19 @@ class PlayerPipHelper {
             actions.add(
                 getRemoteAction(
                     activity,
+                    R.drawable.baseline_headphones_24,
+                    R.string.audio_singluar,
+                    CSPlayerEvent.PlayAsAudio
+                )
+            )
+            /*actions.add(
+                getRemoteAction(
+                    activity,
                     R.drawable.go_back_30,
                     R.string.go_back_30,
                     CSPlayerEvent.SeekBack
                 )
-            )
+            )*/
 
             if (isPlaying) {
                 actions.add(
