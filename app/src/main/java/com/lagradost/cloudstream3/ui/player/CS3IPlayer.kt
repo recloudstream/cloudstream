@@ -556,6 +556,9 @@ class CS3IPlayer : IPlayer {
         if (saveTime)
             updatedTime()
 
+        currentTextRenderer = null
+        currentSubtitleDecoder = null
+
         exoPlayer?.apply {
             playWhenReady = false
 

@@ -247,7 +247,7 @@ class HomeFragment : Fragment() {
         ): List<Pair<Chip?, List<TvType>>> {
             // This list should be same order as home screen to aid navigation
             return listOf(
-                Pair(movies, listOf(TvType.Movie, TvType.Torrent)),
+                Pair(movies, listOf(TvType.Movie)),
                 Pair(tvs, listOf(TvType.TvSeries)),
                 Pair(anime, listOf(TvType.Anime, TvType.OVA, TvType.AnimeMovie)),
                 Pair(asian, listOf(TvType.AsianDrama)),
