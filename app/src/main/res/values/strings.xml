@@ -846,4 +846,12 @@
     <string name="starting_plugin_update_manually">Starting plugin update process!</string>
     <string name="plugins_updated_manually">Successfully updated %d plugin(s)!</string>
     <string name="no_plugins_updated_manually">No plugins were updated.</string>
+	<!-- Update Notifications -->
+    <string name="update_file_missing">Update file is missing.</string>
+    <string name="install_update">Install Update</string>
+    <string name="cancel_update">Cancel Update</string>
+    <string name="skip_this_update">Skip This Update</string>
+    <string name="update_available_notification_title">Update Available</string>
+    <string name="update_progress_percentage">%d%%</string>
+    <string name="update_available_notification_message">A new version of the app is available. Do you want to update now?</string>
 </resources>

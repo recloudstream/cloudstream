@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="CompilerConfiguration">
-    <bytecodeTargetLevel target="17" />
+    <bytecodeTargetLevel target="17">
+      <module name="CloudStream.docs" target="21" />
+      <module name="CloudStream.docs.main" target="21" />
+      <module name="CloudStream.docs.test" target="21" />
+      <module name="CloudStream.library" target="21" />
+    </bytecodeTargetLevel>
   </component>
 </project>
