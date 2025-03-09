@@ -639,9 +639,6 @@ class CS3IPlayer : IPlayer {
             }
 
         private var simpleCache: SimpleCache? = null
-
-        var requestSubtitleUpdate: (() -> Unit)? = null
-
         private fun createOnlineSource(headers: Map<String, String>): HttpDataSource.Factory {
             val source = OkHttpDataSource.Factory(app.baseClient).setUserAgent(USER_AGENT)
             return source.apply {
@@ -1136,8 +1133,6 @@ class CS3IPlayer : IPlayer {
                 subtitleOffset = currentSubtitleOffset,
                 maxVideoHeight = maxVideoHeight
             )
-
-            requestSubtitleUpdate = ::reloadSubs
 
             event(PlayerAttachedEvent(exoPlayer))
             exoPlayer?.prepare()

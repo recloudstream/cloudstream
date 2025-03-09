@@ -234,6 +234,7 @@ open class ResultFragmentPhone : FullScreenPlayer() {
 
         updateUIEvent -= ::updateUI
         binding = null
+        resultBinding?.resultScroll?.setOnClickListener(null)
         resultBinding = null
         syncBinding = null
         recommendationBinding = null

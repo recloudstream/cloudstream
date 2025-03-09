@@ -76,7 +76,7 @@ const val NEXT_WATCH_EPISODE_PERCENTAGE = 90
 const val UPDATE_SYNC_PROGRESS_PERCENTAGE = 80
 
 abstract class AbstractPlayerFragment(
-    val player: IPlayer = CS3IPlayer()
+    var player: IPlayer = CS3IPlayer()
 ) : Fragment() {
     var resizeMode: Int = 0
     var subStyle: SaveCaptionStyle? = null
@@ -385,11 +385,9 @@ abstract class AbstractPlayerFragment(
     }
 
     private fun onSubStyleChanged(style: SaveCaptionStyle) {
-        if (player is CS3IPlayer) {
-            player.updateSubtitleStyle(style)
-            // Forcefully update the subtitle encoding in case the edge size is changed
-            player.seekTime(-1)
-        }
+        player.updateSubtitleStyle(style)
+        // Forcefully update the subtitle encoding in case the edge size is changed
+        player.seekTime(-1)
     }
 
 
@@ -544,6 +542,7 @@ abstract class AbstractPlayerFragment(
             ),
         )
 
+        val player = player
         if (player is CS3IPlayer) {
             // preview bar
             val progressBar: PreviewTimeBar? = playerView?.findViewById(R.id.exo_progress)

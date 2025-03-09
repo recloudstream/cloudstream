@@ -441,6 +441,7 @@ open class FullScreenPlayer : AbstractPlayerFragment() {
         exitFullscreen()
         player.release()
         player.releaseCallbacks()
+        player = CS3IPlayer()
         super.onDestroy()
     }
 
