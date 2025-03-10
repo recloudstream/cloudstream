@@ -130,6 +130,10 @@ class CS3IPlayer : IPlayer {
     val imageGenerator = IPreviewGenerator.new()
 
     private val seekActionTime = 30000L
+    private val isMediaSeekable
+        get() = exoPlayer?.let {
+            it.isCommandAvailable(Player.COMMAND_GET_CURRENT_MEDIA_ITEM) && it.isCurrentMediaItemSeekable
+        } ?: false
 
     private var ignoreSSL: Boolean = true
     private var playBackSpeed: Float = 1.0f
@@ -986,13 +990,21 @@ class CS3IPlayer : IPlayer {
     }
 
     override fun seekTo(time: Long, source: PlayerEventSource) {
-        updatedTime(time, source)
-        exoPlayer?.seekTo(time)
+        if (isMediaSeekable) {
+            updatedTime(time, source)
+            exoPlayer?.seekTo(time)
+        } else {
+            Log.i(TAG, "Media is not seekable, we can not seek to $time")
+        }
     }
 
     private fun ExoPlayer.seekTime(time: Long, source: PlayerEventSource) {
-        updatedTime(currentPosition + time, source)
-        seekTo(currentPosition + time)
+        if (isMediaSeekable) {
+            updatedTime(currentPosition + time, source)
+            seekTo(currentPosition + time)
+        } else {
+            Log.i(TAG, "Media is not seekable, we can not seek to $time")
+        }
     }
 
     override fun handleEvent(event: CSPlayerEvent, source: PlayerEventSource) {
