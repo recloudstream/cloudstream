@@ -844,10 +844,13 @@ class CS3IPlayer : IPlayer {
                             ).build()
                     )
 
+            // Because "Java rules" the media3 team hates to do open classes so we have to copy paste the entire thing to add a custom extractor
+            // This includes the updated MKV extractor that enabled seeking in formats where the seek information is at the back of the file
+            val extractorFactor = UpdatedDefaultExtractorsFactory()
 
             val factory =
-                if (cacheFactory == null) DefaultMediaSourceFactory(context)
-                else DefaultMediaSourceFactory(cacheFactory)
+                if (cacheFactory == null) DefaultMediaSourceFactory(context, extractorFactor)
+                else DefaultMediaSourceFactory(cacheFactory, extractorFactor)
 
             // If there is only one item then treat it as normal, if multiple: concatenate the items.
             val videoMediaSource = if (mediaItemSlices.size == 1) {
