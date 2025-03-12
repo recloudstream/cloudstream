@@ -1332,7 +1332,7 @@ class ResultViewModel2 : ViewModel() {
             val context = AcraApplication.context
             postPopup(
                 text,
-                links.links.apmap {
+                links.links.amap {
                     val size =
                         it.getVideoSize()?.let { size -> " " + formatFileSize(context, size) } ?: ""
                     txt("${it.name} ${Qualities.getStringByInt(it.quality)}$size")
@@ -1711,11 +1711,11 @@ class ResultViewModel2 : ViewModel() {
                 syncData[k] = v
             }
 
-            argamap(
+            runAllAsync(
                 {
-                    if (this !is AnimeLoadResponse) return@argamap
+                    if (this !is AnimeLoadResponse) return@runAllAsync
                     // already exist, no need to run getTracker
-                    if (this.getAniListId() != null && this.getMalId() != null) return@argamap
+                    if (this.getAniListId() != null && this.getMalId() != null) return@runAllAsync
 
                     val res = APIHolder.getTracker(
                         listOfNotNull(
@@ -1744,7 +1744,7 @@ class ResultViewModel2 : ViewModel() {
                         }
                     ) {
                         // getTracker fucked up as it conflicts with current implementation
-                        return@argamap
+                        return@runAllAsync
                     }
 
                     // set all the new data, prioritise old correct data
@@ -1759,17 +1759,17 @@ class ResultViewModel2 : ViewModel() {
                     backgroundPosterUrl = backgroundPosterUrl ?: res?.cover
                 },
                 {
-                    if (meta == null) return@argamap
+                    if (meta == null) return@runAllAsync
                     addTrailer(meta.trailers)
                 }, {
-                    if (this !is AnimeLoadResponse) return@argamap
+                    if (this !is AnimeLoadResponse) return@runAllAsync
                     val map =
                         Kitsu.getEpisodesDetails(
                             getMalId(),
                             getAniListId(),
                             isResponseRequired = false
                         )
-                    if (map.isNullOrEmpty()) return@argamap
+                    if (map.isNullOrEmpty()) return@runAllAsync
                     updateEpisodes = DubStatus.entries.map { dubStatus ->
                         val current =
                             this.episodes[dubStatus]?.mapIndexed { index, episode ->

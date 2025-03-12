@@ -18,13 +18,13 @@ import com.lagradost.cloudstream3.SearchResponse
 import com.lagradost.cloudstream3.TvSeriesLoadResponse
 import com.lagradost.cloudstream3.TvSeriesSearchResponse
 import com.lagradost.cloudstream3.TvType
-import com.lagradost.cloudstream3.argamap
 import com.lagradost.cloudstream3.newEpisode
 import com.lagradost.cloudstream3.newHomePageResponse
 import com.lagradost.cloudstream3.newMovieLoadResponse
 import com.lagradost.cloudstream3.newMovieSearchResponse
 import com.lagradost.cloudstream3.newTvSeriesLoadResponse
 import com.lagradost.cloudstream3.newTvSeriesSearchResponse
+import com.lagradost.cloudstream3.runAllAsync
 import com.lagradost.cloudstream3.utils.AppUtils.toJson
 import com.uwetrottmann.tmdb2.Tmdb
 import com.uwetrottmann.tmdb2.entities.AppendToResponse
@@ -235,7 +235,7 @@ open class TmdbProvider : MainAPI() {
         }
     }
 
-    override suspend fun getMainPage(page: Int, request : MainPageRequest): HomePageResponse {
+    override suspend fun getMainPage(page: Int, request: MainPageRequest): HomePageResponse {
 
         // SAME AS DISCOVER IT SEEMS
 //        val popularSeries = tmdb.tvService().popular(1, "en-US").execute().body()?.results?.map {
@@ -251,7 +251,7 @@ open class TmdbProvider : MainAPI() {
         var discoverSeries: List<TvSeriesSearchResponse> = listOf()
         var topMovies: List<MovieSearchResponse> = listOf()
         var topSeries: List<TvSeriesSearchResponse> = listOf()
-        argamap(
+        runAllAsync(
             {
                 discoverMovies = tmdb.discoverMovie().build().awaitResponse().body()?.results?.map {
                     it.toSearchResponse()

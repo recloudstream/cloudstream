@@ -76,6 +76,7 @@ import com.lagradost.cloudstream3.extractors.FourCX
 import com.lagradost.cloudstream3.extractors.FourPichive
 import com.lagradost.cloudstream3.extractors.FourPlayRu
 import com.lagradost.cloudstream3.extractors.Fplayer
+import com.lagradost.cloudstream3.extractors.GDMirrorbot
 import com.lagradost.cloudstream3.extractors.GMPlayer
 import com.lagradost.cloudstream3.extractors.GamoVideo
 import com.lagradost.cloudstream3.extractors.Gdriveplayer
@@ -111,6 +112,7 @@ import com.lagradost.cloudstream3.extractors.Krakenfiles
 import com.lagradost.cloudstream3.extractors.Kswplayer
 import com.lagradost.cloudstream3.extractors.LayarKaca
 import com.lagradost.cloudstream3.extractors.Linkbox
+import com.lagradost.cloudstream3.extractors.LuluStream
 import com.lagradost.cloudstream3.extractors.Lulustream1
 import com.lagradost.cloudstream3.extractors.Lulustream2
 import com.lagradost.cloudstream3.extractors.Luxubu
@@ -240,6 +242,7 @@ import com.lagradost.cloudstream3.extractors.VidMoxy
 import com.lagradost.cloudstream3.extractors.VidSrcExtractor
 import com.lagradost.cloudstream3.extractors.VidSrcExtractor2
 import com.lagradost.cloudstream3.extractors.VidSrcTo
+import com.lagradost.cloudstream3.extractors.VidStack
 import com.lagradost.cloudstream3.extractors.VideoSeyred
 import com.lagradost.cloudstream3.extractors.VideoVard
 import com.lagradost.cloudstream3.extractors.VideovardSX
@@ -287,15 +290,15 @@ import com.lagradost.cloudstream3.extractors.Zorofile
 import com.lagradost.cloudstream3.extractors.Zplayer
 import com.lagradost.cloudstream3.extractors.ZplayerV2
 import com.lagradost.cloudstream3.extractors.Ztreamhub
-import com.lagradost.cloudstream3.extractors.VidStack
-import com.lagradost.cloudstream3.extractors.GDMirrorbot
-import com.lagradost.cloudstream3.extractors.LuluStream
 import com.lagradost.cloudstream3.mvvm.logError
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.ensureActive
 import me.xdrop.fuzzywuzzy.FuzzySearch
 import org.jsoup.Jsoup
 import java.net.URI
 import java.util.UUID
+import kotlin.coroutines.cancellation.CancellationException
 
 /**
  * For use in the ConcatenatingMediaSource.
@@ -707,12 +710,16 @@ suspend fun loadExtractor(
 /**
  * Tries to load the appropriate extractor based on link, returns true if any extractor is loaded.
  * */
+@Throws(CancellationException::class)
 suspend fun loadExtractor(
     url: String,
     referer: String? = null,
     subtitleCallback: (SubtitleFile) -> Unit,
     callback: (ExtractorLink) -> Unit
 ): Boolean {
+    // Ensure this coroutine has not timed out
+    coroutineScope { ensureActive() }
+
     val currentUrl = unshortenLinkSafe(url)
     val compareUrl = currentUrl.lowercase().replace(schemaStripRegex, "")
 
@@ -720,7 +727,15 @@ suspend fun loadExtractor(
     for (index in extractorApis.lastIndex downTo 0) {
         val extractor = extractorApis[index]
         if (compareUrl.startsWith(extractor.mainUrl.replace(schemaStripRegex, ""))) {
-            extractor.getSafeUrl(currentUrl, referer, subtitleCallback, callback)
+            try {
+                extractor.getUrl(currentUrl, referer, subtitleCallback, callback)
+            } catch (e : Exception) {
+                logError(e)
+                // Rethrow if we have timed out
+                if (e is CancellationException) {
+                    throw e
+                }
+            }
             return true
         }
     }
@@ -733,7 +748,15 @@ suspend fun loadExtractor(
                 currentUrl
             ) > 80
         ) {
-            extractor.getSafeUrl(currentUrl, referer, subtitleCallback, callback)
+            try {
+                extractor.getUrl(currentUrl, referer, subtitleCallback, callback)
+            } catch (e : Exception) {
+                logError(e)
+                // Rethrow if we have timed out
+                if (e is CancellationException) {
+                    throw e
+                }
+            }
             return true
         }
     }
@@ -1150,6 +1173,7 @@ abstract class ExtractorApi {
     //}
 
     // this is the new extractorapi, override to add subtitles and stuff
+    @Throws
     open suspend fun getUrl(
         url: String,
         referer: String? = null,
@@ -1175,6 +1199,7 @@ abstract class ExtractorApi {
     /**
      * Will throw errors, use getSafeUrl if you don't want to handle the exception yourself
      */
+    @Throws
     open suspend fun getUrl(url: String, referer: String? = null): List<ExtractorLink>? {
         return emptyList()
     }

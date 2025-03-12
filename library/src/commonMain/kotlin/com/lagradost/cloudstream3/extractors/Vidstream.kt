@@ -3,7 +3,7 @@ package com.lagradost.cloudstream3.extractors
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.amap
 import com.lagradost.cloudstream3.app
-import com.lagradost.cloudstream3.argamap
+import com.lagradost.cloudstream3.runAllAsync
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.INFER_TYPE
 import com.lagradost.cloudstream3.utils.extractorApis
@@ -36,7 +36,7 @@ class Vidstream(val mainUrl: String) {
         callback: (ExtractorLink) -> Unit,
     ): Boolean {
         val extractorUrl = getExtractorUrl(id)
-        argamap(
+        runAllAsync(
             {
                 normalApis.amap { api ->
                     val url = api.getExtractorUrl(id)

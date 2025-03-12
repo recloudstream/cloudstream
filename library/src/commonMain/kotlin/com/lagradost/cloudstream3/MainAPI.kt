@@ -484,6 +484,49 @@ abstract class MainAPI {
     open val hasQuickSearch = false
 
     /**
+     * The timeout on the `loadLinks` functions in milliseconds,
+     * By default this should be around a few minutes to prevent any unexpected recursive call/extraction to drain resources,
+     * however if you need very long extraction times, you can can request it by changing this variable.
+     *
+     * Note that this is only a hint, and may not get respected if you request something too long.
+     * */
+    @Prerelease
+    open val loadLinksTimeoutMs : Long? = null
+
+    /**
+     * The timeout on the `getMainPage` functions in milliseconds.
+     *
+     * Note that this is only a hint, and may not get respected if you request something too long.
+     * */
+    @Prerelease
+    open val getMainPageTimeoutMs : Long? = null
+
+    /**
+     * The timeout on the `search` functions in milliseconds.
+     *
+     * Note that this is only a hint, and may not get respected if you request something too long.
+     * */
+    @Prerelease
+    open val searchTimeoutMs : Long? = null
+
+    /**
+     * The timeout on the `quickSearch` functions in milliseconds.
+     *
+     * Note that this is only a hint, and may not get respected if you request something too long.
+     * */
+    @Prerelease
+    open val quickSearchTimeoutMs : Long? = null
+
+    /**
+     * The timeout on the `loadSearch` functions in milliseconds.
+     *
+     * Note that this is only a hint, and may not get respected if you request something too long.
+     * */
+    @Prerelease
+    open val loadTimeoutMs : Long? = null
+
+
+    /**
      * A set of which ids the provider can open with getLoadUrl()
      * If the set contains SyncIdName.Imdb then getLoadUrl() can be started with
      * an Imdb class which inherits from SyncId.
