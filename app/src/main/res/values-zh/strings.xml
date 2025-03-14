@@ -650,7 +650,7 @@
     <string name="app_info_intent_error">无法打开 CloudStream 的应用程序信息。</string>
     <string name="biometric_setting_summary">使用指纹、面部 ID、PIN 码、图案和密码解锁应用程序。</string>
     <string name="test_extensions_summary">此测试仅适用于开发人员，不会验证或否认任何扩展的工作。</string>
-    <string name="battery_dialog_message">为了确保订阅电视节目的不间断下载和通知，CloudStream 需要获得在后台运行的权限。 点击“确定”，您将被定向到“应用程序信息”。 在那里，滑动至 𝘼𝙥𝙥 𝙗𝙖𝙩𝙩𝙚𝙧𝙮 𝙪𝙨𝙖𝙜𝙚 并将电池用量设置为 𝙐𝙣𝙧𝙚𝙨𝙩𝙧𝙞𝙘𝙩𝙚𝙙。 请注意，此权限并不意味着 CS3 会耗尽您的电池。 它只会在必要时在后台运行，例如收到通知或从官方扩展下载视频时。 如果您选择取消，您可以稍后在 𝙂𝙚𝙣𝙚𝙧𝙖𝙡 𝙎𝙚𝙩𝙩𝙞𝙣𝙜𝙨 中调整此设置。</string>
+    <string name="battery_dialog_message">为了确保已订阅电视节目的不间断下载和通知，CloudStream 需要获得在后台运行的权限。 点击“确定”将显示请求对话框。请按下“允许”。\n\n请注意，此权限并不意味着 Cloudstream 3 会耗尽您的电池。 它只会在必要时在后台运行，例如接收通知或从官方扩展下载视频时。</string>
     <string name="biometric_warning">您的CloudStream数据现已备份。 尽管发生这种情况的可能性非常低，但不同设备的行为都会有所不同。 在极少数情况下，您可能会被锁定而无法访问该应用程序，请完全清除应用程序数据并从备份中恢复。 对于由此造成的任何不便，我们深表歉意。</string>
     <string name="repo_copy_label">存储库名称和 URL</string>
     <string name="clipboard_unknown_error">复制错误，请复制 logcat 并联系应用程序支持。</string>
@@ -719,4 +719,20 @@
     <string name="torrent_not_accepted">torrent 未被接受</string>
     <string name="software_decoding">软件解码</string>
     <string name="software_decoding_desc">软件解码让播放器能够播放你的手机所不支持的视频文件，但可能导致播放高分辨率视频时的延迟或不稳定</string>
+    <string name="sort_episodes_number_desc">集数（降序）</string>
+    <string name="sort_episodes_date_oldest">播放日期（最旧）</string>
+    <string name="sort_button_rating">得分 %s</string>
+    <string name="sort_button_date">日期 %s</string>
+    <string name="update_plugins">更新插件</string>
+    <string name="plugins_updated_manually">成功更新了 %d 个插件！</string>
+    <string name="no_plugins_updated_manually">没有插件被更新。</string>
+    <string name="update_plugins_manually">手动更新插件</string>
+    <string name="sort_episodes_number_asc">集数（升序）</string>
+    <string name="sort_episodes_date_newest">播出日期（最新）</string>
+    <string name="sort_episodes_rating_high_low">评分（最高）</string>
+    <string name="sort_episodes_rating_low_high">评分（最低）</string>
+    <string name="sort_button_episode">第 %s 集</string>
+    <string name="starting_plugin_update_manually">正在开始插件更新过程！</string>
+    <string name="player_notification_channel_description">控制后台播放的播放器通知</string>
+    <string name="player_notification_channel_name">播放器通知</string>
 </resources>

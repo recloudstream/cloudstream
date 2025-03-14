@@ -463,7 +463,7 @@
     <string name="pref_category_actions">Actions</string>
     <string name="pref_category_cache">Cache</string>
     <string name="pref_category_android_tv">Android TV</string>
-    <string name="pref_category_android_tv_key" translatable="false" >pref_category_android_tv_key</string>
+    <string name="pref_category_android_tv_key" translatable="false">pref_category_android_tv_key</string>
     <string name="pref_category_gestures">Gestures</string>
     <string name="pref_category_gestures_key" translatable="false">pref_category_gestures_key</string>
     <string name="pref_category_security">Security</string>
@@ -720,7 +720,7 @@
     <string name="sort_episodes_rating_low_high">Rating (Lowest)</string>
     <string name="sort_episodes_date_newest">Air Date (Newest)</string>
     <string name="sort_episodes_date_oldest">Air Date (Oldest)</string>
-   <string name="sort_button_episode">Ep %s</string>
+    <string name="sort_button_episode">Ep %s</string>
     <string name="sort_button_rating">Rating %s</string>
     <string name="sort_button_date">Date %s</string>
     <string name="select_library">Select Library</string>
@@ -841,7 +841,7 @@
     <string name="software_decoding_desc">Software decoding enables the player to play video files not supported by your phone, but may cause laggy or unstable playback on high resolution</string>
     <string name="update_plugins">Update Plugins</string>
     <!--Manual Update Button-->
-    <string name="update_plugins_manually">Update plugins manually!!</string>
+    <string name="update_plugins_manually">Update plugins manually</string>
     <string name="manual_update_plugins_key" translatable="false">manual_update_plugins</string>
     <string name="starting_plugin_update_manually">Starting plugin update process!</string>
     <string name="plugins_updated_manually">Successfully updated %d plugin(s)!</string>

@@ -605,7 +605,7 @@
     <string name="clipboard_permission_error">Помилка доступу до буфера обміну, спробуйте ще раз.</string>
     <string name="ok">Добре</string>
     <string name="battery_dialog_title">Вимкнути оптимізацію батареї</string>
-    <string name="battery_dialog_message">Щоб забезпечити безперебійне завантаження та повідомлення про підписані телепередачі, CloudStream потребує дозволу на роботу у фоновому режимі. Натиснувши \"Добре\", вас буде перенаправлено до інформації про застосунок. Там прокрутіть до \"Споживання батареї застосунком\" й встановіть використання батареї на \"Без обмежень\". Зверніть увагу, що цей дозвіл не означає, що CS3 розряджатиме вашу батарею. Він працюватиме у фоновому режимі лише за необхідності, наприклад, під час отримання повідомлень або завантаження відео з офіційних розширень. Якщо ви вирішите скасувати дозвіл, ви зможете змінити це налаштування пізніше в загальних налаштуваннях.</string>
+    <string name="battery_dialog_message">Щоб забезпечити безперебійне завантаження та повідомлення про підписані телепередачі, CloudStream потребує дозволу на роботу у фоновому режимі. Натиснувши «Добре», ви побачите діалогове вікно запиту. Натисніть «Дозволити».\n\nЗверніть увагу, що цей дозвіл не означає, що CS3 розряджатиме вашу батарею. Він працюватиме у фоновому режимі лише за необхідності, наприклад, під час отримання повідомлень або завантаження відео з офіційних розширень.</string>
     <string name="app_unrestricted_toast">Споживання батареї застосунком вже налаштовано на без обмежень</string>
     <string name="app_info_intent_error">Не вдається відкрити інформацію про застосунок CloudStream.</string>
     <string name="audio_book_singular">Аудіо книга</string>
@@ -674,4 +674,20 @@
     <string name="torrent_not_accepted">Торрент не приймається</string>
     <string name="software_decoding">Програмне декодування</string>
     <string name="software_decoding_desc">Програмне декодування дозволяє програвачу відтворювати відеофайли, які не підтримуються вашим телефоном, але може призвести до затримки або нестабільного відтворення у високій роздільній здатності</string>
+    <string name="sort_episodes_date_newest">Дата ефіру (найновіша)</string>
+    <string name="sort_episodes_number_asc">Епізод (за зростанням)</string>
+    <string name="sort_episodes_rating_low_high">Рейтинг (найнижчий)</string>
+    <string name="sort_button_rating">Рейтинг %s</string>
+    <string name="sort_episodes_number_desc">Епізод (за спаданням)</string>
+    <string name="sort_episodes_rating_high_low">Рейтинг (найвищий)</string>
+    <string name="sort_episodes_date_oldest">Дата ефіру (найстаріша)</string>
+    <string name="sort_button_episode">Єп %s</string>
+    <string name="sort_button_date">Дата %s</string>
+    <string name="update_plugins">Оновити плагіни</string>
+    <string name="plugins_updated_manually">Успішно оновлено %d плагін(ів)!</string>
+    <string name="update_plugins_manually">Оновіть плагіни вручну</string>
+    <string name="starting_plugin_update_manually">Початок процесу оновлення плагіна!</string>
+    <string name="no_plugins_updated_manually">Плагіни не оновлено.</string>
+    <string name="player_notification_channel_description">Сповіщення плеєра для керування відтворенням у фоновому режимі</string>
+    <string name="player_notification_channel_name">Сповіщення гравців</string>
 </resources>
