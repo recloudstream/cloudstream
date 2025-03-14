@@ -630,7 +630,7 @@
     <string name="test_warning">Warnung</string>
     <string name="device_pin_counter_text">Code läuft ab in %1$dm %2$ds</string>
     <string name="cs3wiki">CloudStream-Wiki</string>
-    <string name="battery_dialog_message">Um einen unterbrechungsfreien Download zu gewährleisten und Benachrichtigungen für abonnierte TV-Shows anzuzeigen, benötigt Cloudstream die Berechtigung, im Hintergrund ausgeführt zu werden. Beim klicken auf 𝙊𝙆, öffnet sich das Info-Fenster der App, scrolle hier zu 𝘼𝙠𝙠𝙪𝙣𝙪𝙩𝙯𝙪𝙣𝙜 𝙙𝙚𝙧 𝘼𝙥𝙥 und stelle den Akkuverbrauch auf 𝙐𝙣𝙚𝙞𝙣𝙜𝙚𝙨𝙘𝙝𝙧𝙖𝙚𝙣𝙠𝙩. Bitte beachte, dass dies nicht dazu führt, dass CS3 den Akku dauerhaft entlädt. Es läuft nur im Hintergrund, wenn es nötig ist, beispielsweise zum Empfang von Benachrichtigungen oder dem Download von Videos aus offiziellen Erweiterungen. Diese Einstellung kann später in den 𝘼𝙡𝙡𝙜𝙚𝙢𝙚𝙞𝙣𝙚𝙣 𝙀𝙞𝙣𝙨𝙩𝙚𝙡𝙡𝙪𝙣𝙜𝙚𝙣 angepasst werden.</string>
+    <string name="battery_dialog_message">Um einen unterbrechungsfreien Download zu gewährleisten und Benachrichtigungen für abonnierte TV-Shows anzuzeigen, benötigt Cloudstream die Berechtigung, im Hintergrund ausgeführt zu werden. Beim drücken auf 𝙊𝙆 wird ein Dialog angezeigt. Bitte drücke ‚Erlauben‘.\n Bitte beachte, dass dies nicht dazu führt, dass CS3 den Akku dauerhaft entlädt. Es läuft nur im Hintergrund, wenn es nötig ist, beispielsweise zum Empfang von Benachrichtigungen oder dem Download von Videos aus offiziellen Erweiterungen.</string>
     <string name="delete_files">Dateien löschen</string>
     <string name="delete_format" formatted="true">Löschen (%1$d | %2$s)</string>
     <string name="select_all">Alle auswählen</string>
@@ -664,4 +664,26 @@
     <string name="subs_edge_size">Kantengröße</string>
     <string name="torrent_info">Dieses Video ist ein Torrent, das bedeutet, dass Ihre Videoaktivitäten nachverfolgt werden könen.\nStellen Sie sicher, dass Sie die Grundlagen von Torrents verstehen, bevor Sie fortfahren.</string>
     <string name="audio_singluar">Ton</string>
+    <string name="sort_episodes_number_desc">Episode (Absteigend)</string>
+    <string name="sort_episodes_rating_high_low">Bewertung (Höchste)</string>
+    <string name="sort_episodes_rating_low_high">Bewertung (Niedrigste)</string>
+    <string name="sort_episodes_date_newest">Ausstrahlungsdatum (Letztes)</string>
+    <string name="sort_episodes_number_asc">Episode (Steigend)</string>
+    <string name="sort_episodes_date_oldest">Ausstrahlungsdatum (Erstes)</string>
+    <string name="sort_button_date">Datum %s</string>
+    <string name="torrent_preferred_media">Torrent in Eintellungen/Anbieter/Bevorzugte Medien aktivieren</string>
+    <string name="software_decoding_desc">Softwaredekodierung erlaubt es dem Player, Videodateien abzuspielen, die von deinem Gerät nicht unterstützt werden, könnte jedoch bei hoher Auflösung zu ruckelnder oder instabiler Wiedergabe führen</string>
+    <string name="torrent_not_accepted">Nicht akzeptierter Torrent</string>
+    <string name="update_plugins">Plugins aktualisieren</string>
+    <string name="plugins_updated_manually">%d Plugin(s) erfolgreich aktualisiert!</string>
+    <string name="update_plugins_manually">Plugins manuell aktualisieren</string>
+    <string name="podcast_singluar">Podcast</string>
+    <string name="unsupported_error">Nicht unterstützter Fehler</string>
+    <string name="encoding_error">Kodierungsfehler</string>
+    <string name="sort_button_episode">Ep %s</string>
+    <string name="sort_button_rating">Bewertung %s</string>
+    <string name="no_plugins_updated_manually">Keine Plugins wurden aktualisiert.</string>
+    <string name="software_decoding">Softwaredekodierung</string>
+    <string name="starting_plugin_update_manually">Plugin-Updateprozess wird gestartet!</string>
+    <string name="player_load_one_subtitle_online">Erste verfügbare laden</string>
 </resources>
