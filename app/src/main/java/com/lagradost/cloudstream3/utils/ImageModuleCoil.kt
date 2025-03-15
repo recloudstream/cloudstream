@@ -7,7 +7,6 @@ import android.util.Log
 import android.widget.ImageView
 import androidx.annotation.DrawableRes
 import coil3.EventListener
-import coil3.Extras
 import coil3.ImageLoader
 import coil3.PlatformContext
 import coil3.SingletonImageLoader
