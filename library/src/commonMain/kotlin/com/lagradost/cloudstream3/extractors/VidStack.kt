@@ -8,7 +8,7 @@ import javax.crypto.Cipher
 import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
 
-class VidStack : ExtractorApi() {
+open class VidStack : ExtractorApi() {
     override var name = "Vidstack"
     override var mainUrl = "https://vidstack.io"
     override val requiresReferer = true
