@@ -611,7 +611,7 @@
     <string name="ok">OK</string>
     <string name="custom_media_singluar">Multimedia</string>
     <string name="app_unrestricted_toast">Użycie baterii przez aplikację jest już ustawione na nieograniczone</string>
-    <string name="battery_dialog_message">Aby zapewnić nieprzerwane pobieranie i powiadomienia o subskrybowanych programach, CloudStream potrzebuje pozwolenia na działanie w tle. Naciskając OK, zostaniesz przekierowany do ustawień aplikacji. Tam przewiń do użycia baterii przez aplikację i ustaw je na nieograniczone. Pamiętaj, że to pozwolenie nie oznacza, że CS3 będzie zużywać baterię. Będzie działać w tle tylko wtedy, gdy będzie to konieczne, na przykład podczas odbierania powiadomień lub pobierania filmów z oficjalnych rozszerzeń. Jeśli zdecydujesz się anulować, możesz dostosować to ustawienie później w ustawieniach .</string>
+    <string name="battery_dialog_message">Aby zapewnić nieprzerwane pobieranie i powiadomienia o subskrybowanych programach, CloudStream potrzebuje pozwolenia na działanie w tle. Po naciśnięciu OK wyświetli się okno dialogowe. Naciśnij „Zezwól”.\n\nPamiętaj, że to pozwolenie nie oznacza, że CS3 będzie zużywać baterię. Będzie działać w tle tylko wtedy, gdy będzie to konieczne, na przykład podczas odbierania powiadomień lub pobierania filmów z oficjalnych rozszerzeń.</string>
     <string name="reset_btn">Resetuj</string>
     <string name="episode_upcoming_format" formatted="true">Nadchodzące w %s</string>
     <string name="next_season_episode_format" formatted="true">Odcinek %2$d sezonu %1$d wyjdzie za</string>
@@ -675,4 +675,20 @@
     <string name="torrent_preferred_media">Włącz torrent w Ustawienia/Źródła/Preferowane multimedia</string>
     <string name="software_decoding">Dekodowanie programowe</string>
     <string name="software_decoding_desc">Dekodowanie programowe umożliwia odtwarzaczowi odtwarzanie plików wideo, których Twój telefon nie obsługuje, ale może powodować opóźnienia lub niestabilność odtwarzania w wysokiej rozdzielczości</string>
+    <string name="sort_episodes_rating_low_high">Ocena (najniższa)</string>
+    <string name="sort_button_rating">Ocena %s</string>
+    <string name="sort_episodes_date_newest">Data emisji (najnowsza)</string>
+    <string name="sort_episodes_date_oldest">Data emisji (najstarsza)</string>
+    <string name="sort_button_episode">Odc. %s</string>
+    <string name="sort_button_date">Data %s</string>
+    <string name="sort_episodes_number_asc">Odcinek (rosnąco)</string>
+    <string name="sort_episodes_number_desc">Odcinek (malejąco)</string>
+    <string name="sort_episodes_rating_high_low">Ocena (najwyższa)</string>
+    <string name="update_plugins">Zaktualizuj wtyczki</string>
+    <string name="plugins_updated_manually">Pomyślnie zaktualizowano wtyczki: %d!</string>
+    <string name="no_plugins_updated_manually">Nie zaktualizowano żadnych wtyczek.</string>
+    <string name="update_plugins_manually">Zaktualizuj wtyczki ręcznie</string>
+    <string name="starting_plugin_update_manually">Rozpoczęcie procesu aktualizacji wtyczek!</string>
+    <string name="player_notification_channel_name">Powiadomienia odtwarzacza</string>
+    <string name="player_notification_channel_description">Powiadomienie odtwarzacza umożliwiające sterowanie odtwarzaniem w tle</string>
 </resources>
