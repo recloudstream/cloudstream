@@ -132,6 +132,7 @@
     <string name="type_plan_to_watch">Plan to Watch</string>
     <string name="type_none" translatable="false">@string/none</string>
     <string name="type_re_watching">Rewatching</string>
+    <string name="type_not_interested">Not Interested</string>
     <string name="play_movie_button">Play Movie</string>
     <string name="play_trailer_button">Play Trailer</string>
     <string name="play_livestream_button">Play Livestream</string>
