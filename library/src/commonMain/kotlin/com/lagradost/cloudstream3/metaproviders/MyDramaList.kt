@@ -452,15 +452,15 @@ open class MyDramaListDemo : MainAPI() {
     )
 
     data class LinkData(
-        val id: Long? = null,
-        val type: String? = null,
-        val season: Int? = null,
-        val episode: Int? = null,
-        val title: String? = null,
-        val year: Int? = null,
-        val orgTitle: String? = null,
-        val lastSeason: Int? = null,
-        val date: String? = null,
-        val airedDate: String? = null,
+        @JsonProperty("id") val id: Long? = null,
+        @JsonProperty("type") val type: String? = null,
+        @JsonProperty("season") val season: Int? = null,
+        @JsonProperty("episode") val episode: Int? = null,
+        @JsonProperty("title") val title: String? = null,
+        @JsonProperty("year") val year: Int? = null,
+        @JsonProperty("orgTitle") val orgTitle: String? = null,
+        @JsonProperty("lastSeason") val lastSeason: Int? = null,
+        @JsonProperty("date") val date: String? = null,
+        @JsonProperty("airedDate") val airedDate: String? = null,
     )
 }
