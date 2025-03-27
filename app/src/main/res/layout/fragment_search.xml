@@ -13,8 +13,21 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingBottom="10dp">
+        android:orientation="horizontal"
+        android:paddingBottom="10dp"
+        app:layout_scrollFlags="scroll|enterAlways">
+
+        <ImageView
+            android:id="@+id/voice_search"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_gravity="end|center_vertical"
+            android:layout_marginStart="10dp"
+            android:background="?selectableItemBackgroundBorderless"
+            android:contentDescription="@string/change_providers_img_des"
+            android:src="@drawable/ic_mic"
+            app:tint="?attr/textColor" />
+
 
         <FrameLayout
             android:layout_width="match_parent"
