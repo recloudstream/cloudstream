@@ -15,7 +15,6 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/navbar_width"
         android:orientation="horizontal"
-        android:paddingBottom="10dp"
         app:layout_scrollFlags="scroll|enterAlways">
 
         <ImageView

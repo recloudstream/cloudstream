@@ -113,7 +113,7 @@ class SearchFragment : Fragment() {
                 val matches = data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
                 if (!matches.isNullOrEmpty()) {
                     val recognizedText = matches[0]
-                    binding?.mainSearch?.setQuery(recognizedText, true) // Đặt vào ô tìm kiếm và kích hoạt search
+                    binding?.mainSearch?.setQuery(recognizedText, true)
                 }
             }
         }
