@@ -122,9 +122,10 @@ class UpdatedMatroskaExtractor internal constructor(
     // Cue related elements.
     private var seekForCues = false
     private var seekForSeekContent = false
+    private var visitedSeekHeads: HashSet<Long> = HashSet()
+    private var pendingSeekHeads: ArrayList<Long> = ArrayList()
     private var seekPositionAfterSeekingForHead = C.INDEX_UNSET.toLong()
     private var cuesContentPosition = C.INDEX_UNSET.toLong()
-    private var seekHeadContentPosition = C.INDEX_UNSET.toLong()
     private var seekPositionAfterBuildingCues = C.INDEX_UNSET.toLong()
     private var clusterTimecodeUs = C.TIME_UNSET
     private var cueTimesUs: androidx.media3.common.util.LongArray? = null
@@ -258,7 +259,7 @@ class UpdatedMatroskaExtractor internal constructor(
         var continueReading = true
         while (continueReading && !haveOutputSample) {
             continueReading = reader.read(input)
-            if (continueReading && maybeSeekForCues(seekPosition, input.position)) {
+            if (maybeSeekForCues(seekPosition, input.position)) {
                 return Extractor.RESULT_SEEK
             }
         }
@@ -339,7 +340,9 @@ class UpdatedMatroskaExtractor internal constructor(
                 if (seekForCuesEnabled && cuesContentPosition != C.INDEX_UNSET.toLong()) {
                     // We know where the Cues element is located. Seek to request it.
                     seekForCues = true
-                } else if (seekForCuesEnabled && seekHeadContentPosition != C.INDEX_UNSET.toLong()) {
+                } else if (seekForCuesEnabled && pendingSeekHeads.isNotEmpty()) {
+                    // We do not know where the cues are located, however we have seek-heads
+                    // we have not yet visited
                     seekForSeekContent = true
                 } else {
                     // We don't know where the Cues element is located. It's most likely omitted. Allow
@@ -382,15 +385,40 @@ class UpdatedMatroskaExtractor internal constructor(
                 }
             }
 
+            ID_SEGMENT -> {
+                // We only care if we have not already sent the seek map
+                if (!sentSeekMap) {
+                    // We have reached the end of the segment, however we can still decide how to handle
+                    // pending seek heads.
+                    //
+                    // This is treated as the end as "Multiple Segment elements not supported"
+                    if (pendingSeekHeads.isNotEmpty() && seekForCuesEnabled) {
+                        // We seek to the next seek point if we can seek and there is seek heads
+                        seekForSeekContent = true
+                    } else {
+                        // Otherwise, if we not found any cues nor any more seek heads then we mark
+                        // this as unseekable.
+                        extractorOutput!!.seekMap(Unseekable(durationUs))
+                        sentSeekMap = true
+                    }
+                }
+            }
+
             ID_SEEK -> {
                 if (seekEntryId == UNSET_ENTRY_ID || seekEntryPosition == C.INDEX_UNSET.toLong()) {
                     throw ParserException.createForMalformedContainer(
                         "Mandatory element SeekID or SeekPosition not found",  /* cause= */null
                     )
                 } else if (seekEntryId == ID_SEEK_HEAD) {
-                    seekHeadContentPosition = seekEntryPosition
+                    // We have a set here to prevent inf recursion, only if this seek head is non
+                    // visited we add it. VLC limits this to 10, but this should work equally as well.
+                    if (visitedSeekHeads.add(seekEntryPosition)) {
+                        pendingSeekHeads.add(seekEntryPosition)
+                    }
                 } else if (seekEntryId == ID_CUES) {
                     cuesContentPosition = seekEntryPosition
+                    // We are currently seeking from the seek-head, so we seek again to get to the cues
+                    // instead of waiting for the cluster
                     if (seekForCuesEnabled && seekPositionAfterSeekingForHead != C.INDEX_UNSET.toLong()) {
                         seekForCues = true
                     }
@@ -1474,10 +1502,23 @@ class UpdatedMatroskaExtractor internal constructor(
      * @return Whether the seek position was updated.
      */
     private fun maybeSeekForCues(seekPosition: PositionHolder, currentPosition: Long): Boolean {
+        // This seeks in a lazy manner, unlike VLC that seeks immediately when encountering a seek head
+        // This minimizes the amount of seeking done, but also does not seek if the cues element is
+        // already found, even if seek heads exits. This might be nice to change if we need other
+        // critical information from seek heads.
+        //
+        // The nature of each recursive query becomes to consume as much content as possible
+        // (until cues or end of segment). However this also means that we only need to seek
+        // back to the top once, instead seeking back in a stack like manner.
         if (seekForSeekContent) {
-            seekPositionAfterSeekingForHead = currentPosition
-            seekPosition.position = seekHeadContentPosition
+            Assertions.checkArgument(pendingSeekHeads.isNotEmpty(), "Illegal value of seekForSeekContent")
+            // The exact order does not really matter, but it is easiest to just do stack (FILO)
+            val next = pendingSeekHeads.removeAt(pendingSeekHeads.size - 1)
+            seekPosition.position = next
             seekForSeekContent = false
+            if (seekPositionAfterSeekingForHead == C.INDEX_UNSET.toLong()) {
+                seekPositionAfterSeekingForHead = currentPosition
+            }
             return true
         }
 
@@ -1496,7 +1537,7 @@ class UpdatedMatroskaExtractor internal constructor(
             return true
         }
 
-        // After we have seeked back from seekPositionAfterBuildingCues seek back again to the seekhead
+        // After we have seeked back from seekPositionAfterBuildingCues seek back again to the seek head
         if (sentSeekMap && seekPositionAfterSeekingForHead != C.INDEX_UNSET.toLong()) {
             seekPosition.position = seekPositionAfterSeekingForHead
             seekPositionAfterSeekingForHead = C.INDEX_UNSET.toLong()
