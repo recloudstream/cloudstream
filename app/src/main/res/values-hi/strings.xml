@@ -245,7 +245,7 @@
     <string name="show_trailers_settings">झलकी दिखाएं</string>
     <string name="others">अन्य</string>
     <string name="episode">प्रकरण</string>
-    <string name="use_system_brightness_settings_des">ऐप प्लेयर में अंधेरी परत की जगह सिस्टम की चमक का इस्तेमाल करें</string>
+    <string name="use_system_brightness_settings_des">ऐप प्लेयर में सिस्टम ब्राइटनेस इस्तेमाल करें काले ओवरले को छोड़कर</string>
     <string name="restore_success">बैकअप फाइल सहेज ली गई है</string>
     <string name="season">सत्र</string>
     <string name="season_format">%1$s %2$d%3$s</string>
@@ -263,7 +263,7 @@
     <string name="music_singlar">संगीत</string>
     <string name="torrent_info">यह वीडियो एक टॉरेंट है, इसका मतलब यह है कि आपकी वीडियो गतिविधि पर नजर रखी जा सकती है।\nजारी रखने से पहले सुनिश्चित करें कि आप टोरेंटिंग को समझते है।</string>
     <string name="double_tap_to_pause_settings_des">रोकने के लिए बीच में दो बार टैप करें</string>
-    <string name="episode_sync_settings">देखी हुई प्रगति नवीनतम बनाएं</string>
+    <string name="episode_sync_settings">देखा हुआ प्रोग्रेस अपडेट करें</string>
     <string name="restore_failed_format" formatted="true">फाइल %s से आंकड़ों को पुनर्स्थापित करने में विफल</string>
     <string name="backup_failed_error_format">%s के बैकअप करने में विफलता</string>
     <string name="delete_message_series_only" formatted="true">क्या आप वाकई निम्नलिखित श्रृंखला के सभी प्रकरण को स्थायी रूप से हटाना चाहते हैं?\n\n%s</string>
@@ -272,7 +272,7 @@
     <string name="go_back_30">-३०</string>
     <string name="other_singular">वीडियो</string>
     <string name="use_system_brightness_settings">सिस्टम की चमक का इस्तेमाल करें</string>
-    <string name="backup_settings">आंकड़ों की बैकअप</string>
+    <string name="backup_settings">डाटा काबैकअप</string>
     <string name="backup_frequency">बैकअप आवृत्ति</string>
     <string name="backup_failed">संग्रहण अनुमतियाँ अनुपलब्ध हैं। कृपया फिर से कोशिश करें।</string>
     <string name="category_account">खाते और सुरक्षा</string>
@@ -319,7 +319,7 @@
     <string name="pref_filter_search_quality">खोज परिणामों में चयनित वीडियो गुणवत्ता छुपाएं</string>
     <plurals name="episodes" translatable="false">
         <item quantity="one">प्रकरण</item>
-        <item quantity="other"/>
+        <item quantity="other"></item>
     </plurals>
     <string name="episodes_range">%1$d-%2$d</string>
     <string name="action_open_play">@string/home_play</string>

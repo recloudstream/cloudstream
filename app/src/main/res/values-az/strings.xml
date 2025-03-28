@@ -94,4 +94,56 @@
     <string name="subs_default_reset_toast">Standart dəyərlərə sıfırla</string>
     <string name="acra_report_toast">Üzr istəyirik, tətbiqdə xəta baş verdi. Gizli xəta hesabatı tərtibatçılara göndəriləcək</string>
     <string name="season">Sezon</string>
+    <string name="pause">Dayandır</string>
+    <string name="start">Başlat</string>
+    <string name="test_failed">Uğursuz oldu</string>
+    <string name="delete_message_multiple" formatted="true">Aşağıdakı faylları həmişəlik silmək istədiyinizə əminsinizmi?\n\n%s</string>
+    <string name="episodes_range">%1$d-%2$d</string>
+    <string name="season_short">S</string>
+    <string name="no_episodes_found">Bölümlər tapılmadı</string>
+    <string name="delete">Sil</string>
+    <string name="delete_file">Faylı sil</string>
+    <string name="delete_files">Faylları sil</string>
+    <string name="delete_format" formatted="true">Sil (%1$d | %2$s)</string>
+    <string name="cancel">Ləğv et</string>
+    <string name="test_passed">Uğurlu oldu</string>
+    <string name="test_warning">Xəbərdarlıq</string>
+    <string name="resume">Davam et</string>
+    <string name="go_back_30">-30</string>
+    <string name="go_forward_30">+30</string>
+    <string name="delete_message" formatted="true">%s həmişəlik silinəcək\nƏminsiniz?</string>
+    <string name="delete_message_series_episodes" formatted="true">%1$s içindəki aşağıdakı bölümləri həmişəlik silmək istədiyinizdən əminsinizmi?\n\n%2$s</string>
+    <string name="episode_format" formatted="true">%1$d%2$s</string>
+    <string name="ova">OVA</string>
+    <string name="movies_singular">Film</string>
+    <string name="documentaries">Sənədli filmlər</string>
+    <string name="torrent_singular">Torrent</string>
+    <string name="documentaries_singular">Sənədli film</string>
+    <string name="storage_error">Yükləmə xətası, yaddaş icazələrini yoxlayın</string>
+    <string name="custom_media_singluar">Media</string>
+    <string name="encoding_error">Kodlama xətası</string>
+    <string name="cartoons">Cizgi filmləri</string>
+    <string name="anime">Anime-lər</string>
+    <string name="torrent">Torrent-lər</string>
+    <string name="asian_drama">Asiya serialları (dramalar)</string>
+    <string name="livestreams">Canlı yayımlar</string>
+    <string name="nsfw">+18 məzmun</string>
+    <string name="others">Digərləri</string>
+    <string name="tv_series_singular">Seriallar</string>
+    <string name="cartoons_singular">Cizgi filmi</string>
+    <string name="anime_singular">Anime</string>
+    <string name="ova_singular">OVA</string>
+    <string name="asian_drama_singular">Asiya serialı (drama)</string>
+    <string name="live_singular">Canlı yayım</string>
+    <string name="nsfw_singular">+18 məzmun</string>
+    <string name="other_singular">Video</string>
+    <string name="music_singlar">Musiqi</string>
+    <string name="audio_book_singular">Səsli Kitab</string>
+    <string name="audio_singluar">Səs</string>
+    <string name="podcast_singluar">Podkast</string>
+    <string name="source_error">Mənbə xətası</string>
+    <string name="remote_error">Server xətası</string>
+    <string name="unsupported_error">Dəstəklənməyən xəta</string>
+    <string name="unexpected_error">Gözlənilməyən oynadıcı xətası</string>
+    <string name="episode_action_cast_mirror">Ekran yansıtma</string>
 </resources>
