@@ -17,7 +17,6 @@ import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.ListView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.isVisible
@@ -35,6 +34,7 @@ import com.lagradost.cloudstream3.AcraApplication.Companion.removeKey
 import com.lagradost.cloudstream3.AcraApplication.Companion.removeKeys
 import com.lagradost.cloudstream3.AllLanguagesName
 import com.lagradost.cloudstream3.AnimeSearchResponse
+import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.HomePageList
 import com.lagradost.cloudstream3.MainAPI
 import com.lagradost.cloudstream3.MainActivity
@@ -256,12 +256,12 @@ class SearchFragment : Fragment() {
         binding?.voiceSearch?.setOnClickListener { searchView ->
             searchView?.context?.let { ctx ->
                 if (!SpeechRecognizer.isRecognitionAvailable(ctx)) {
-                    Toast.makeText(requireContext(), "Speech recognition is not available", Toast.LENGTH_SHORT).show()
+                    showToast(ctx.getString(R.string.speech_recognition_unavailable))
                 } else {
                     val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
                         putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
                         putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
-                        putExtra(RecognizerIntent.EXTRA_PROMPT, "Begin Speaking...")
+                        putExtra(RecognizerIntent.EXTRA_PROMPT, ctx.getString(R.string.begin_speaking))
                     }
                     speechRecognizerLauncher.launch(intent)
                 }
