@@ -1,6 +1,7 @@
 package com.lagradost.cloudstream3.metaproviders
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.lagradost.api.BuildConfig
 import com.lagradost.cloudstream3.APIHolder.unixTimeMS
 import com.lagradost.cloudstream3.Actor
 import com.lagradost.cloudstream3.ActorData
@@ -44,7 +45,7 @@ open class MyDramaListDemo : MainAPI() {
 
     companion object {
         const val TAG = "MyDramaList"
-        const val API_KEY = "bac0925df628dce7841a1d4e8d474c2e63fb818b"
+        val API_KEY: String = BuildConfig.MDL_API_KEY
         const val API_HOST = "https://api.mydramalist.com/v1"
         const val SITE_HOST = "https://mydramalist.com"
         private val headerInterceptor = MyDramaListInterceptor()
@@ -151,27 +152,7 @@ open class MyDramaListDemo : MainAPI() {
                 type = TvType.Movie,
                 dataUrl = link.toJson(),
             ) {
-                this.name = title
                 this.type = TvType.Movie
-                this.posterUrl = images.poster
-                this.year = mediaYear
-                this.plot = synopsis
-                this.rating = mediaRating.times(1000).toInt()
-                this.tags = fixGenres()
-                this.duration = runtime.toInt()
-                this.recommendations =
-                    fetchRecommendations().map { it.toSearchResponse() }
-                this.actors = fetchCredits()
-                this.comingSoon = isUpcoming(released)
-                this.backgroundPosterUrl = images.poster
-                this.contentRating = fixCertification(certification)
-                addTrailer(
-                    fetchTrailer(),
-                    addRaw = true,
-                    headers = mapOf(
-                        "User-Agent" to "Dart/3.6 (dart:io)"
-                    )
-                )
             }
         } else {
             newTvSeriesLoadResponse(
@@ -180,29 +161,34 @@ open class MyDramaListDemo : MainAPI() {
                 type = TvType.TvSeries,
                 episodes = fetchEpisodes()
             ) {
-                this.name = title
+
                 this.type = TvType.AsianDrama
-                this.posterUrl = images.poster
-                this.year = mediaYear
-                this.plot = synopsis
                 this.showStatus = getStatus(status)
-                this.rating = mediaRating.times(1000).toInt()
-                this.tags = fixGenres()
-                this.duration = runtime.toInt()
-                this.recommendations = fetchRecommendations().map { it.toSearchResponse() }
-                this.actors = fetchCredits()
-                this.comingSoon = isUpcoming(airedStart)
-                this.backgroundPosterUrl = images.poster
-                this.contentRating = fixCertification(certification)
-                addTrailer(
-                    fetchTrailer(),
-                    addRaw = true,
-                    headers = mapOf(
-                        "User-Agent" to "Dart/3.6 (dart:io)"
-                    )
-                )
             }
-        }
+        }.applyMedia(this)
+    }
+
+    private suspend fun LoadResponse.applyMedia(media: Media): LoadResponse {
+        this.name = media.title
+        this.posterUrl = media.images.poster
+        this.year = media.mediaYear
+        this.plot = media.synopsis
+        this.rating = media.mediaRating.times(1000).toInt()
+        this.tags = media.fixGenres()
+        this.duration = media.runtime.toInt()
+        this.recommendations = media.fetchRecommendations().map { it.toSearchResponse() }
+        this.actors = media.fetchCredits()
+        this.comingSoon = isUpcoming(media.airedStart)
+        this.backgroundPosterUrl = media.images.poster
+        this.contentRating = fixCertification(media.certification)
+        addTrailer(
+            media.fetchTrailer(),
+            addRaw = true,
+            headers = mapOf(
+                "User-Agent" to "Dart/3.6 (dart:io)"
+            )
+        )
+        return this
     }
 
     private fun isUpcoming(dateString: String?): Boolean {
