@@ -255,7 +255,7 @@ class SearchFragment : Fragment() {
 
         binding?.voiceSearch?.setOnClickListener { searchView ->
             searchView?.context?.let { ctx ->
-                if (!SpeechRecognizer.isRecognitionAvailable(requireContext())) {
+                if (!SpeechRecognizer.isRecognitionAvailable(ctx)) {
                     Toast.makeText(requireContext(), "Speech recognition is not available", Toast.LENGTH_SHORT).show()
                 } else {
                     val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
