@@ -51,6 +51,7 @@ jobs:
         SIGNING_STORE_PASSWORD: ${{ steps.fetch_keystore.outputs.key_pwd }}
         SIMKL_CLIENT_ID: ${{ secrets.SIMKL_CLIENT_ID }}
         SIMKL_CLIENT_SECRET: ${{ secrets.SIMKL_CLIENT_SECRET }}
+        MDL_API_KEY: ${{ secrets.MDL_API_KEY }}
     - name: Create pre-release
       uses: "marvinpinto/action-automatic-releases@latest"
       with:
