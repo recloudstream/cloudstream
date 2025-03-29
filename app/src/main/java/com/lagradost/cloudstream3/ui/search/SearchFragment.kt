@@ -255,15 +255,20 @@ class SearchFragment : Fragment() {
 
         binding?.voiceSearch?.setOnClickListener { searchView ->
             searchView?.context?.let { ctx ->
-                if (!SpeechRecognizer.isRecognitionAvailable(ctx)) {
-                    showToast(ctx.getString(R.string.speech_recognition_unavailable))
-                } else {
-                    val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
-                        putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
-                        putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
-                        putExtra(RecognizerIntent.EXTRA_PROMPT, ctx.getString(R.string.begin_speaking))
+                try {
+                    if (!SpeechRecognizer.isRecognitionAvailable(ctx)) {
+                        showToast(R.string.speech_recognition_unavailable)
+                    } else {
+                        val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
+                            putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+                            putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
+                            putExtra(RecognizerIntent.EXTRA_PROMPT, ctx.getString(R.string.begin_speaking))
+                        }
+                        speechRecognizerLauncher.launch(intent)
                     }
-                    speechRecognizerLauncher.launch(intent)
+                } catch (_ : Throwable) {
+                    // launch may throw
+                    showToast(R.string.speech_recognition_unavailable)
                 }
             }
         }
