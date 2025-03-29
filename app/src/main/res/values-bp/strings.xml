@@ -195,7 +195,7 @@
     <string name="status_completed">Concluído</string>
     <string name="status">Estado</string>
     <string name="year">Ano</string>
-    <string name="rating">Nota</string>
+    <string name="rating">Avaliação</string>
     <string name="duration">Duração</string>
     <string name="site">Site</string>
     <string name="synopsis">Sinopse</string>
@@ -466,7 +466,7 @@
     <string name="library">Biblioteca</string>
     <string name="no">Não</string>
     <string name="tracks">Trilhas Sonoras</string>
-    <string name="sort_rating_asc">Votação (Baixa para Alta)</string>
+    <string name="sort_rating_asc">Avaliação (baixa para alta)</string>
     <string name="update_started">Atualização iniciada</string>
     <string name="nsfw_singular">Conteúdo +18</string>
     <string name="help">Ajuda</string>
@@ -474,7 +474,7 @@
     <string name="update_notification_failed">Não foi possível instalar a nova versão do aplicativo</string>
     <string name="apk_installer_package_installer">instalador de pacotes</string>
     <string name="sort_by">Organizar por</string>
-    <string name="sort_rating_desc">Votação (Alta para Baixa)</string>
+    <string name="sort_rating_desc">Avaliação (alta para baixa)</string>
     <string name="sort_alphabetical_z">Alfabética(Z =&gt; A)</string>
     <string name="qualities">Qualidade</string>
     <string name="profile_background_des">Perfil de plano de fundo</string>
@@ -515,7 +515,7 @@
     <string name="skip_type_format" formatted="true">Pula %s</string>
     <string name="skip_type_mixed_ed">Mistura terminada</string>
     <string name="safe_mode_title">Modo seguro ligado</string>
-    <string name="extension_rating" formatted="true">Ranquear: %s</string>
+    <string name="extension_rating" formatted="true">Avaliação: %s</string>
     <string name="extension_language">Linguagem</string>
     <string name="hls_playlist">Lista de reprodução HLS</string>
     <string name="skip_type_ed">Terminando</string>
@@ -625,7 +625,7 @@
     <string name="clipboard_permission_error">Erro ao acessar a área de transferência. Tente novamente.</string>
     <string name="repo_copy_label">Nome e URL do repositório</string>
     <string name="clipboard_unknown_error">Erro ao copiar. Copie o logcat e entre em contato com o suporte do aplicativo.</string>
-    <string name="battery_dialog_message">Para garantir downloads e notificações ininterruptos para programas de TV assinados, o CloudStream precisa de permissão para ser executado em segundo plano. Ao pressionar OK, você será direcionado para as informações do aplicativo. Lá, vá até Uso da bateria do aplicativo e defina o uso da bateria como Irrestrito. Observe que esta permissão não significa que o CS3 irá descarregar sua bateria. Ele só funcionará em segundo plano quando necessário, como ao receber notificações ou baixar vídeos de extensões oficiais. Se você optar por cancelar, poderá ajustar essa configuração posteriormente nas Configurações Gerais.</string>
+    <string name="battery_dialog_message">Para garantir downloads e notificações ininterruptos para programas de TV assinados, o CloudStream precisa de permissão para ser executado em segundo plano. Ao pressionar OK, você será direcionado para as informações do aplicativo. Lá, vá até Uso da bateria do aplicativo e defina o uso da bateria como Irrestrito.\n\nObserve que esta permissão não significa que o CS3 irá descarregar sua bateria. Ele só funcionará em segundo plano quando necessário, como ao receber notificações ou baixar vídeos de extensões oficiais.</string>
     <string name="ok">Ok</string>
     <string name="battery_dialog_title">Desativar otimização de bateria</string>
     <string name="app_unrestricted_toast">O uso da bateria do app já está definido como irrestrito</string>
@@ -692,4 +692,24 @@
     <string name="player_load_one_subtitle_online">Carregar primeiro disponível</string>
     <string name="audio_singluar">Áudio</string>
     <string name="podcast_singluar">Podcast</string>
+    <string name="software_decoding">Decodificação de software</string>
+    <string name="software_decoding_desc">A decodificação de software permite que o player reproduza arquivos de vídeo não compatíveis com o telefone, mas pode causar lentidão ou instabilidade na reprodução em alta resolução</string>
+    <string name="torrent_preferred_media">Habilitar torrent em Configurações/Provedores/Mídia preferida</string>
+    <string name="torrent_not_accepted">Torrent não aceito</string>
+    <string name="sort_episodes_number_asc">Episódio (Ascendente)</string>
+    <string name="sort_episodes_number_desc">Episódio (descendente)</string>
+    <string name="sort_episodes_rating_high_low">Avaliação (mais alta)</string>
+    <string name="sort_episodes_rating_low_high">Avaliação (mais baixa)</string>
+    <string name="sort_button_rating">Avaliação %s</string>
+    <string name="sort_episodes_date_newest">Data de exibição (mais recente)</string>
+    <string name="sort_episodes_date_oldest">Data de exibição (mais antiga)</string>
+    <string name="sort_button_episode">Ep %s</string>
+    <string name="sort_button_date">Data %s</string>
+    <string name="update_plugins">Atualizar plugins</string>
+    <string name="starting_plugin_update_manually">Iniciando o processo de atualização do plugin!</string>
+    <string name="plugins_updated_manually">Atualização bem-sucedida para %d plugin(s)!</string>
+    <string name="no_plugins_updated_manually">Nenhum plugin foi atualizado.</string>
+    <string name="update_plugins_manually">Atualizar plugins manualmente</string>
+    <string name="player_notification_channel_name">Notificações de reprodução</string>
+    <string name="player_notification_channel_description">Notificação do player para controlar a reprodução em segundo plano</string>
 </resources>

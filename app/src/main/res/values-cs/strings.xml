@@ -633,7 +633,7 @@
     <string name="music_singlar">Hudba</string>
     <string name="custom_media_singluar">Média</string>
     <string name="battery_dialog_title">Zakažte optimalizace baterie</string>
-    <string name="battery_dialog_message">Aby bylo zajištěno nepřetržité stahování a upozornění na odebírané seriály, potřebuje aplikace CloudStream povolení ke spuštění na pozadí. Stisknutím tlačítka OK budete přesměrováni na informace o aplikaci. Tam přejděte na položku Využití baterie aplikací a nastavte možnost Využití baterie na hodnotu Neomezené. Upozorňujeme, že toto povolení neznamená, že CS3 bude vybíjet baterii. Na pozadí bude pracovat pouze v případě potřeby, například při přijímání oznámení nebo stahování videí z oficiálních rozšíření. Pokud se rozhodnete toto nastavení zrušit, můžete jej později upravit v Obecných nastaveních.</string>
+    <string name="battery_dialog_message">Aby bylo zajištěno nepřetržité stahování a upozornění na odebírané seriály, potřebuje aplikace CloudStream povolení ke spuštění na pozadí. Po stisknutí tlačítka OK se vám zobrazí dialog se žádostí. Stiskněte prosím „Povolit“.\n\nUpozorňujeme, že toto oprávnění neznamená, že CS3 bude vybíjet baterii. Na pozadí bude pracovat pouze v případě potřeby, například při přijímání oznámení nebo stahování videí z oficiálních rozšíření.</string>
     <string name="audio_book_singular">Audiokniha</string>
     <string name="reset_btn">Resetovat</string>
     <string name="episode_upcoming_format" formatted="true">Vychází %s</string>
@@ -698,4 +698,20 @@
     <string name="torrent_preferred_media">Povolte torrent v Nastavení/Poskytovatelé/Preferovaná média</string>
     <string name="software_decoding">Softwarové dekódování</string>
     <string name="software_decoding_desc">Softwarové dekódování umožňuje přehrávači přehrávat video soubory, které telefon nepodporuje, ale může způsobit zpoždění nebo nestabilní přehrávání ve vysokém rozlišení</string>
+    <string name="sort_episodes_rating_high_low">Hodnocení (nejvyšší)</string>
+    <string name="sort_episodes_date_newest">Datum vysílání (nejnovější)</string>
+    <string name="sort_episodes_date_oldest">Datum vysílání (nejstarší)</string>
+    <string name="sort_button_rating">Hodnocení %s</string>
+    <string name="sort_button_date">Datum %s</string>
+    <string name="update_plugins">Aktualizovat doplňky</string>
+    <string name="starting_plugin_update_manually">Spouštím proces aktualizace doplňků!</string>
+    <string name="no_plugins_updated_manually">Nebyly aktualizovány žádné doplňky.</string>
+    <string name="sort_button_episode">Ep %s</string>
+    <string name="plugins_updated_manually">Úspěšně aktualizováno %d doplňků!</string>
+    <string name="sort_episodes_number_desc">Epizoda (sestupně)</string>
+    <string name="sort_episodes_rating_low_high">Hodnocení (nejnižší)</string>
+    <string name="update_plugins_manually">Ručně aktualizovat doplňky</string>
+    <string name="sort_episodes_number_asc">Epizoda (vzestupně)</string>
+    <string name="player_notification_channel_name">Oznámení přehrávače</string>
+    <string name="player_notification_channel_description">Oznámení přehrávače pro ovládání přehrávání na pozadí</string>
 </resources>

@@ -108,4 +108,19 @@
     <string name="subscribe_tooltip">Nuwe episode notifikasie</string>
     <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
     <string name="next_season_episode_format" formatted="true">"Season 000 Episode  000 will be released in"</string>
+    <string name="free_storage">Gratis</string>
+    <string name="use">Gebruik</string>
+    <string name="delete">Wis Uit</string>
+    <string name="cancel">Kanselleer</string>
+    <string name="actor_background">Agtergrond</string>
+    <string name="previous">Vorige</string>
+    <string name="settings_info">Inligting</string>
+    <string name="edit">Wysig</string>
+    <string name="season">Seisoen</string>
+    <string name="select_all">Kies Alles</string>
+    <string name="downloads_delete_select">Kies items om te verwyder</string>
+    <string name="duplicate_replace">Vervang</string>
+    <string name="pin_error_length">PIN moet 4 karakters bevat</string>
+    <string name="pin_error_incorrect">Verkeerde PIN. Probeer weer.</string>
+    <string name="category_providers">Verskaffers</string>
 </resources>

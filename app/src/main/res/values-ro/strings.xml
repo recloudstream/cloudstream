@@ -636,4 +636,10 @@
     <string name="episode_action_cast_mirror">Cast mirror</string>
     <string name="hide_player_control_names_key" translatable="false">hide_player_control_names_key</string>
     <string name="play_from_beginning_img_des">Redă de la început</string>
+    <string name="downloads_empty">Nu există descărcări.</string>
+    <string name="downloads_delete_select">Selectionati elementele de sters</string>
+    <string name="select_all">Selectionati totul</string>
+    <string name="deselect_all">Deselectionati totul</string>
+    <string name="torrent_info">Acest video este un Torrent, ceea ce înseamnă că activitatea dumneavoastră video poate fi urmărită.\n Asigurați-vă că înțelegeți Torrentul înainte să continuați.</string>
+    <string name="offline_file">Disponibil pentru vizionare offline</string>
 </resources>

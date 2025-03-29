@@ -630,7 +630,7 @@
     <string name="music_singlar">Musik</string>
     <string name="audio_book_singular">Buku Audio</string>
     <string name="custom_media_singluar">Media</string>
-    <string name="battery_dialog_message">Untuk memastikan unduhan dan pemberitahuan tanpa gangguan untuk acara TV berlangganan, CloudStream memerlukan izin untuk berjalan di latar belakang. Dengan menekan OK, Anda akan diarahkan ke Info aplikasi. Di sana, gulir ke Penggunaan baterai aplikasi dan atur penggunaan baterai ke Tidak Terbatas. Harap dicatat, izin ini tidak berarti CS3 akan menguras baterai Anda. Ini hanya akan beroperasi di latar belakang ketika diperlukan, seperti ketika menerima pemberitahuan atau mengunduh video dari ekstensi resmi. Jika Anda memilih untuk membatalkannya, Anda dapat menyesuaikan pengaturan ini nanti di Pengaturan Umum.</string>
+    <string name="battery_dialog_message">Untuk memastikan unduhan dan pemberitahuan tanpa gangguan untuk acara TV berlangganan, CloudStream memerlukan izin untuk berjalan di latar belakang. Dengan menekan OK, Anda akan diperlihatkan dialog permintaan. Silakan tekan ‘Izinkan’.\n\nHarap dicatat, izin ini tidak berarti CS3 akan menguras baterai Anda. Aplikasi ini hanya akan beroperasi di latar belakang jika diperlukan, misalnya saat menerima notifikasi atau mengunduh video dari ekstensi resmi.</string>
     <string name="reset_btn">Mengatur ulang</string>
     <string name="next_season_episode_format" formatted="true">Musim %1$d Episode %2$d akan dirilis pada</string>
     <string name="episode_upcoming_format" formatted="true">Akan datang di %s</string>
@@ -694,4 +694,19 @@
     <string name="torrent_not_accepted">Tidak menerima torrent</string>
     <string name="software_decoding_desc">Dekode perangkat lunak memungkinkan pemutar memainkan berkas video yang tidak didukung perangkat Anda, tetapi dapat memperburuk performa atau pemutaran yang tidak stabil pada resolusi tinggi</string>
     <string name="software_decoding">Dekode perangkat lunak</string>
+    <string name="sort_episodes_rating_low_high">Rating (terendah)</string>
+    <string name="sort_button_date">Tanggal %s</string>
+    <string name="sort_episodes_number_asc">Episode (Naik)</string>
+    <string name="sort_episodes_number_desc">Episode (Menurun)</string>
+    <string name="sort_episodes_rating_high_low">Rating (terbesar)</string>
+    <string name="sort_episodes_date_newest">Tanggal Tayang (Terbaru)</string>
+    <string name="sort_episodes_date_oldest">Tanggal Tayang (Paling Lama)</string>
+    <string name="sort_button_episode">Ep %s</string>
+    <string name="sort_button_rating">Rating %s</string>
+    <string name="update_plugins">Pembaruan Plugin²</string>
+    <string name="starting_plugin_update_manually">Mulai proses pembaruan plugin!</string>
+    <string name="plugins_updated_manually">Berhasil mengapdate %d plugin²(s)!</string>
+    <string name="update_plugins_manually">Pembaruan Plugin² manual</string>
+    <string name="no_plugins_updated_manually">Tidak ada plugin² yang perlu pembaruan.</string>
+    <string name="player_notification_channel_description">Pemberitahuan pemutar untuk mengontrol pemutaran dari latar belakang</string>
 </resources>
