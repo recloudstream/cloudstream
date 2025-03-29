@@ -160,10 +160,9 @@ dependencies {
     // Android Core & Lifecycle
     implementation(libs.core.ktx)
     implementation(libs.appcompat)
-    implementation(libs.navigation.ui.ktx)
+    implementation(libs.bundles.navigationKtx)
     implementation(libs.lifecycle.livedata.ktx)
     implementation(libs.lifecycle.viewmodel.ktx)
-    implementation(libs.navigation.fragment.ktx)
 
     // Design & UI
     implementation(libs.preference.ktx)
