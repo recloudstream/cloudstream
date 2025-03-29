@@ -95,6 +95,7 @@ class DownloadFileGenerator(
                 subtitleCallback(
                     SubtitleData(
                         realName.ifBlank { ctx.getString(R.string.default_subtitles) },
+                        "",
                         uri.toString(),
                         SubtitleOrigin.DOWNLOADED_FILE,
                         name.toSubtitleMimeType(),

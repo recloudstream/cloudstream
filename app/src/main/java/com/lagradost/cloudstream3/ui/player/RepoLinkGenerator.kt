@@ -6,6 +6,7 @@ import com.lagradost.cloudstream3.APIHolder.unixTime
 import com.lagradost.cloudstream3.LoadResponse
 import com.lagradost.cloudstream3.ui.APIRepository
 import com.lagradost.cloudstream3.ui.result.ResultEpisode
+import com.lagradost.cloudstream3.utils.AppContextUtils.html
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.ExtractorLinkType
 import kotlin.math.max
@@ -130,15 +131,17 @@ class RepoLinkGenerator(
                     currentSubsUrls.add(correctFile.url)
 
                     // this part makes sure that all names are unique for UX
-                    var name = correctFile.name
-                    var count = 0
+                    val fixedName = correctFile.name.html().toString().trim()
+
+                    var name = fixedName
+                    var count = 1
                     while (currentSubsNames.contains(name)) {
                         count++
-                        name = "${correctFile.name} $count"
+                        name = SubtitleData.constructName(fixedName, "$count")
                     }
 
                     currentSubsNames.add(name)
-                    val updatedFile = correctFile.copy(name = name)
+                    val updatedFile = correctFile.copy(originalName = fixedName, nameSuffix = "$count")
 
                     if (!currentSubsCache.contains(updatedFile)) {
                         subtitleCallback(updatedFile)

@@ -1,6 +1,5 @@
 package com.lagradost.cloudstream3.ui.player
 
-import android.R.attr
 import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.app.Dialog
@@ -300,7 +299,13 @@ class GeneratorPlayer : FullScreenPlayer() {
 
                 override fun createCurrentContentIntent(player: Player): PendingIntent? {
                     // Open the app without creating a new task to resume playback seamlessly
-                    return PendingIntentCompat.getActivity(context, 0, Intent(context, MainActivity::class.java), 0, false)
+                    return PendingIntentCompat.getActivity(
+                        context,
+                        0,
+                        Intent(context, MainActivity::class.java),
+                        0,
+                        false
+                    )
                 }
 
                 override fun getCurrentContentText(player: Player): CharSequence? {
@@ -786,7 +791,8 @@ class GeneratorPlayer : FullScreenPlayer() {
 
         binding.searchFilter.setOnClickListener { view ->
             val lang639_1 = languages.map { it.ISO_639_1 }
-            activity?.showDialog(languages.map { it.languageName },
+            activity?.showDialog(
+                languages.map { it.languageName },
                 lang639_1.indexOf(currentLanguageTwoLetters),
                 view?.context?.getString(R.string.subs_subtitle_languages)
                     ?: return@setOnClickListener,
@@ -805,7 +811,11 @@ class GeneratorPlayer : FullScreenPlayer() {
                             is Resource.Success -> {
                                 val subtitles = apiResource.value.getSubtitles().map { resource ->
                                     SubtitleData(
-                                        name = resource.name ?: getName(currentSubtitle, true),
+                                        originalName = resource.name ?: getName(
+                                            currentSubtitle,
+                                            true
+                                        ),
+                                        nameSuffix = "",
                                         url = resource.url,
                                         origin = resource.origin,
                                         mimeType = resource.url.toSubtitleMimeType(),
@@ -916,6 +926,7 @@ class GeneratorPlayer : FullScreenPlayer() {
 
                 val subtitleData = SubtitleData(
                     name,
+                    "",
                     uri.toString(),
                     SubtitleOrigin.DOWNLOADED_FILE,
                     name.toSubtitleMimeType(),
@@ -987,12 +998,13 @@ class GeneratorPlayer : FullScreenPlayer() {
 
                     val subtitles = subtitleResources.getSubtitles().map { resource ->
                         SubtitleData(
-                            name = resource.name ?: getName(subtitleEntry, true),
+                            originalName = resource.name ?: getName(subtitleEntry, true),
+                            nameSuffix = "",
                             url = resource.url,
                             origin = resource.origin,
                             mimeType = resource.url.toSubtitleMimeType(),
                             headers = subtitleEntry.headers,
-                            languageCode = subtitleEntry.lang
+                            languageCode = subtitleEntry.lang,
                         )
                     }
 
@@ -1032,6 +1044,7 @@ class GeneratorPlayer : FullScreenPlayer() {
                 sourceDialog.show()
                 val providerList = binding.sortProviders
                 val subtitleList = binding.sortSubtitles
+                val subtitleOptionList = binding.sortSubtitlesOptions
 
                 val loadFromFileFooter: TextView =
                     layoutInflater.inflate(R.layout.sort_bottom_footer_add_choice, null) as TextView
@@ -1149,22 +1162,63 @@ class GeneratorPlayer : FullScreenPlayer() {
                     selectSourceDialog = null
                 }
 
-                val subtitleIndexStart = currentSubtitles.indexOf(currentSelectedSubtitles) + 1
-                var subtitleIndex = subtitleIndexStart
 
                 val subsArrayAdapter =
                     ArrayAdapter<Spanned>(ctx, R.layout.sort_bottom_single_choice)
                 subsArrayAdapter.add(ctx.getString(R.string.no_subtitles).html())
-                subsArrayAdapter.addAll(currentSubtitles.map { it.name.html() })
+
+                val subtitlesGrouped =
+                    currentSubtitles.groupBy { it.originalName }.map { (key, value) ->
+                        key to value.sortedBy { it.nameSuffix.toIntOrNull() ?: 0 }
+                    }.toMap()
+
+                val subtitles = subtitlesGrouped.map { it.key.html() }
+
+                val subtitleGroupIndexStart =
+                    subtitlesGrouped.keys.indexOf(currentSelectedSubtitles?.originalName) + 1
+                var subtitleGroupIndex = subtitleGroupIndexStart
+
+                val subtitleOptionIndexStart =
+                    subtitlesGrouped[currentSelectedSubtitles?.originalName]?.indexOfFirst { it.nameSuffix == currentSelectedSubtitles?.nameSuffix } ?: 0
+                var subtitleOptionIndex = subtitleOptionIndexStart
+
+                subsArrayAdapter.addAll(subtitles)
 
                 subtitleList.adapter = subsArrayAdapter
                 subtitleList.choiceMode = AbsListView.CHOICE_MODE_SINGLE
 
-                subtitleList.setSelection(subtitleIndex)
-                subtitleList.setItemChecked(subtitleIndex, true)
+                subtitleList.setSelection(subtitleGroupIndex)
+                subtitleList.setItemChecked(subtitleGroupIndex, true)
+
+                val subsOptionsArrayAdapter =
+                    ArrayAdapter<Spanned>(ctx, R.layout.sort_bottom_single_choice)
+
+                subtitleOptionList.adapter = subsOptionsArrayAdapter
+                subtitleOptionList.choiceMode = AbsListView.CHOICE_MODE_SINGLE
+
+                fun updateSubtitleOptionList() {
+                    subsOptionsArrayAdapter.clear()
+
+                    val subtitleOptions =
+                        subtitlesGrouped.entries.toList()
+                            .getOrNull(subtitleGroupIndex-1)?.value?.map { it.nameSuffix.html() }
+                            ?: emptyList()
+
+                    // Show nothing if there is nothing to select
+                    val shouldHide = subtitleOptions.size < 2
+                    subtitleOptionList.isGone = shouldHide // Make it easier to click
+                    if (shouldHide) return
+
+                    subsOptionsArrayAdapter.addAll(subtitleOptions)
+
+                    subtitleOptionList.setSelection(subtitleOptionIndex)
+                    subtitleOptionList.setItemChecked(subtitleOptionIndex, true)
+                }
+
+                updateSubtitleOptionList()
 
                 subtitleList.setOnItemClickListener { _, _, which, _ ->
-                    if (which > currentSubtitles.size) {
+                    if (which > subtitlesGrouped.size) {
                         // Since android TV is funky the setOnItemClickListener will be triggered
                         // instead of setOnClickListener when selecting. To override this we programmatically
                         // click the view when selecting an item outside the list.
@@ -1175,8 +1229,27 @@ class GeneratorPlayer : FullScreenPlayer() {
                         val child = subtitleList.adapter.getView(which, null, subtitleList)
                         child?.performClick()
                     } else {
-                        subtitleIndex = which
+                        if (subtitleGroupIndex != which) {
+                            subtitleGroupIndex = which
+                            subtitleOptionIndex =
+                                if (subtitleGroupIndex == subtitleGroupIndexStart) {
+                                    subtitleOptionIndexStart
+                                } else {
+                                    0
+                                }
+                        }
                         subtitleList.setItemChecked(which, true)
+                        updateSubtitleOptionList()
+                    }
+                }
+
+                subtitleOptionList.setOnItemClickListener { _, _, which, _ ->
+                    if (which > subtitlesGrouped.size) {
+                        val child = subtitleOptionList.adapter.getView(which, null, subtitleList)
+                        child?.performClick()
+                    } else {
+                        subtitleOptionIndex = which
+                        subtitleOptionList.setItemChecked(which, true)
                     }
                 }
 
@@ -1234,7 +1307,8 @@ class GeneratorPlayer : FullScreenPlayer() {
                     sourceDialog.dismissSafe(activity)
 
                     val index = prefValues.indexOf(currentPrefMedia)
-                    activity?.showDialog(prefNames.toList(),
+                    activity?.showDialog(
+                        prefNames.toList(),
                         if (index == -1) 0 else index,
                         ctx.getString(R.string.subtitles_encoding),
                         true,
@@ -1253,11 +1327,13 @@ class GeneratorPlayer : FullScreenPlayer() {
                     if (sourceIndex != startSource) {
                         init = true
                     }
-                    if (subtitleIndex != subtitleIndexStart) {
-                        init = init || if (subtitleIndex <= 0) {
+                    if (subtitleGroupIndex != subtitleGroupIndexStart || subtitleOptionIndex != subtitleOptionIndexStart) {
+                        init = init || if (subtitleGroupIndex <= 0) {
                             noSubtitles()
                         } else {
-                            currentSubtitles.getOrNull(subtitleIndex - 1)?.let {
+                            subtitlesGrouped.entries.toList()[subtitleGroupIndex - 1].value.getOrNull(
+                                subtitleOptionIndex
+                            )?.let {
                                 setSubtitles(it)
                             } ?: false
                         }
