@@ -1,7 +1,7 @@
 [versions]
 acraCore = "5.12.0"
 appcompat = "1.7.0"
-biometric = "1.4.0-alpha02"
+biometric = "1.4.0-alpha03"
 buildkonfigGradlePlugin = "0.15.2"
 coil = "3.1.0"
 colorpicker = "1.1.0"
@@ -25,8 +25,7 @@ lifecycleLivedataKtx = "2.8.7"
 lifecycleViewmodelKtx = "2.8.7"
 material = "1.12.0"
 media3 = "1.6.0"
-navigationFragmentKtx = "2.8.8"
-navigationUiKtx = "2.8.8"
+navigationKtx = "2.8.9"
 newpipeextractor = "v0.24.4"
 nextlibMedia3 = "0.8.4"
 nicehttp = "0.4.12"
@@ -88,8 +87,8 @@ media3-exoplayer-dash = { module = "androidx.media3:media3-exoplayer-dash", vers
 media3-exoplayer-hls = { module = "androidx.media3:media3-exoplayer-hls", version.ref = "media3" }
 media3-session = { module = "androidx.media3:media3-session", version.ref = "media3" }
 media3-ui = { module = "androidx.media3:media3-ui", version.ref = "media3" }
-navigation-fragment-ktx = { module = "androidx.navigation:navigation-fragment-ktx", version.ref = "navigationFragmentKtx" }
-navigation-ui-ktx = { module = "androidx.navigation:navigation-ui-ktx", version.ref = "navigationUiKtx" }
+navigation-fragment-ktx = { module = "androidx.navigation:navigation-fragment-ktx", version.ref = "navigationKtx" }
+navigation-ui-ktx = { module = "androidx.navigation:navigation-ui-ktx", version.ref = "navigationKtx" }
 newpipeextractor = { module = "com.github.teamnewpipe:NewPipeExtractor", version.ref = "newpipeextractor" }
 nextlib-media3ext = { module = "com.github.anilbeesetti.nextlib:nextlib-media3ext", version.ref = "nextlibMedia3" }
 nextlib-mediainfo = { module = "com.github.anilbeesetti.nextlib:nextlib-mediainfo", version.ref = "nextlibMedia3" }
@@ -116,3 +115,4 @@ work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "w
 [bundles]
 media3 = ["media3-cast", "media3-common", "media3-datasource-okhttp", "media3-exoplayer", "media3-exoplayer-dash", "media3-exoplayer-hls", "media3-session", "media3-ui"]
 nextlibMedia3 = ["nextlib-media3ext", "nextlib-mediainfo"]
+navigationKtx = ["navigation-ui-ktx", "navigation-fragment-ktx"]
