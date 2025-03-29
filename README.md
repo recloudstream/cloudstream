@@ -13,7 +13,7 @@
   + [Bugs Reports:](#bug_report)
   + [Enhancement:](#enhancment)
 + [Extension Development:](#extensions)
-+ [Languauge Support:](#languages)
++ [Language Support:](#languages)
 + [Further Sources](#contact_and_sources)
 
 
