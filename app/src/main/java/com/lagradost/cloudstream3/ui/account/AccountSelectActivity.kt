@@ -3,7 +3,7 @@ package com.lagradost.cloudstream3.ui.account
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
-import androidx.activity.ComponentActivity
+import androidx.fragment.app.FragmentActivity
 import androidx.activity.viewModels
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.GridLayoutManager
@@ -34,7 +34,7 @@ import com.lagradost.cloudstream3.utils.DataStoreHelper.setAccount
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
 import com.lagradost.cloudstream3.utils.UIHelper.openActivity
 
-class AccountSelectActivity : ComponentActivity(), BiometricCallback {
+class AccountSelectActivity : FragmentActivity(), BiometricCallback {
 
     val accountViewModel: AccountViewModel by viewModels()
 
