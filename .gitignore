@@ -47,3 +47,7 @@ typings/
 .env
 .env.test
 .env.production
+
+# IntelliJ IDEA specific
+/shelf/
+/workspace.xml
