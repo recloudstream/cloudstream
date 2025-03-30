@@ -300,7 +300,13 @@ class GeneratorPlayer : FullScreenPlayer() {
 
                 override fun createCurrentContentIntent(player: Player): PendingIntent? {
                     // Open the app without creating a new task to resume playback seamlessly
-                    return PendingIntentCompat.getActivity(context, 0, Intent(context, MainActivity::class.java), 0, false)
+                    return PendingIntentCompat.getActivity(
+                        context,
+                        0,
+                        Intent(context, MainActivity::class.java),
+                        0,
+                        false
+                    )
                 }
 
                 override fun getCurrentContentText(player: Player): CharSequence? {
@@ -1348,10 +1354,17 @@ class GeneratorPlayer : FullScreenPlayer() {
 
                 val audioArrayAdapter =
                     ArrayAdapter<String>(ctx, R.layout.sort_bottom_single_choice)
-//                audioArrayAdapter.add(ctx.getString(R.string.no_subtitles))
+                
                 audioArrayAdapter.addAll(currentAudioTracks.mapIndexed { index, format ->
-                    format.label ?: format.language?.let { fromTwoLettersToLanguage(it) }
-                    ?: index.toString()
+                    when {
+                        format.label != null && format.language != null ->
+                            "${format.label} - [${fromTwoLettersToLanguage(format.language) ?: format.language}]"
+
+                        else -> format.label
+                            ?: format.language?.let { fromTwoLettersToLanguage(it) }
+                            ?: format.language
+                            ?: index.toString()
+                    }
                 })
 
                 audioList.adapter = audioArrayAdapter
