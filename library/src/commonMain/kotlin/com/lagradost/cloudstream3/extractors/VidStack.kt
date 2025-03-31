@@ -4,6 +4,7 @@ import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.Qualities
+import com.lagradost.cloudstream3.utils.newExtractorLink
 import javax.crypto.Cipher
 import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
@@ -20,14 +21,15 @@ open class VidStack : ExtractorApi() {
         val decryptedText = AesHelper.decryptAES(encoded, "kiemtienmua911ca", "0123456789abcdef")
         val m3u8=Regex("\"source\":\"(.*?)\"").find(decryptedText)?.groupValues?.get(1)?.replace("\\/","/") ?:""
         return listOf(
-            ExtractorLink(
+            newExtractorLink(
                 this.name,
                 this.name,
                 m3u8,
-                url,
-                Qualities.Unknown.value,
-                isM3u8 = true
-            )
+            ) {
+                this.referer = url
+                this.quality = Qualities.Unknown.value
+                this.isM3u8 = true
+            }
         )
     }
 }

@@ -19,17 +19,18 @@ open class Blogger : ExtractorApi() {
                         .substringBefore("]")
                     tryParseJson<List<ResponseSource>>("[$data]")?.map {
                         sources.add(
-                            ExtractorLink(
+                            newExtractorLink(
                                 name,
                                 name,
                                 it.play_url,
-                                referer = "https://www.youtube.com/",
-                                quality = when (it.format_id) {
+                            ) {
+                                this.referer = "https://www.youtube.com/"
+                                this.quality = when (it.format_id) {
                                     18 -> 360
                                     22 -> 720
                                     else -> Qualities.Unknown.value
                                 }
-                            )
+                            }
                         )
                     }
                 }

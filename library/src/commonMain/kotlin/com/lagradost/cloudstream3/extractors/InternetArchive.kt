@@ -7,6 +7,7 @@ import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.Qualities
 import com.lagradost.cloudstream3.utils.StringUtils.decodeUri
+import com.lagradost.cloudstream3.utils.newExtractorLink
 import org.jsoup.nodes.Document
 
 open class InternetArchive : ExtractorApi() {
@@ -98,13 +99,13 @@ open class InternetArchive : ExtractorApi() {
                     "$fileNameCleaned ($fileExtension)"
                 } else this.name
                 callback(
-                    ExtractorLink(
+                    newExtractorLink(
                         this.name,
                         name,
-                        mediaUrl,
-                        "",
-                        quality
-                    )
+                        mediaUrl
+                    ) {
+                        this.quality = quality
+                    }
                 )
             }
         }

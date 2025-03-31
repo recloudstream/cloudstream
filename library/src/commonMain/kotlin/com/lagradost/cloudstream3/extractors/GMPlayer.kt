@@ -4,6 +4,7 @@ import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.Qualities
+import com.lagradost.cloudstream3.utils.newExtractorLink
 
 open class GMPlayer : ExtractorApi() {
     override val name = "GM Player"
@@ -26,15 +27,16 @@ open class GMPlayer : ExtractorApi() {
         ).parsed<GmResponse>().videoSource ?: return null
 
         return listOf(
-            ExtractorLink(
+            newExtractorLink(
                 this.name,
                 this.name,
                 m3u8,
-                ref,
-                Qualities.Unknown.value,
-                headers = mapOf("accept" to "*/*"),
-                isM3u8 = true
-            )
+            ) {
+                this.referer = ref
+                this.quality = Qualities.Unknown.value
+                this.headers = mapOf("accept" to "*/*")
+                this.isM3u8 = true
+            }
         )
     }
 

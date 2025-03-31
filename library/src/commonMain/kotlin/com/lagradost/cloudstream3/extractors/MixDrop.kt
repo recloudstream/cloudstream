@@ -33,13 +33,14 @@ open class MixDrop : ExtractorApi() {
             getAndUnpack(this.text).let { unpackedText ->
                 srcRegex.find(unpackedText)?.groupValues?.get(1)?.let { link ->
                     return listOf(
-                        ExtractorLink(
+                        newExtractorLink(
                             name,
                             name,
                             httpsify(link),
-                            url,
-                            Qualities.Unknown.value,
-                        )
+                        ) {
+                            this.referer = url
+                            this.quality = Qualities.Unknown.value
+                        }
                     )
                 }
             }

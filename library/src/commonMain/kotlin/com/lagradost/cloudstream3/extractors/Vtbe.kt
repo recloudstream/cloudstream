@@ -23,14 +23,15 @@ open class Vtbe : ExtractorApi() {
             JsUnpacker(extractedpack).unpack()?.let { unPacked ->
                 Regex("sources:\\[\\{file:\"(.*?)\"").find(unPacked)?.groupValues?.get(1)?.let { link ->
                     return listOf(
-                        ExtractorLink(
+                        newExtractorLink(
                             this.name,
                             this.name,
                             link,
-                            referer ?: "",
-                            Qualities.Unknown.value,
-                            URI(link).path.endsWith(".m3u8")
-                        )
+                        ) {
+                            this.referer = referer ?: ""
+                            this.quality = Qualities.Unknown.value
+                            this.isM3u8 = URI(link).path.endsWith(".m3u8")
+                        }
                     )
                 }
             }

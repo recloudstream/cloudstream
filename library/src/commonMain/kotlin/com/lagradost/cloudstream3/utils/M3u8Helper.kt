@@ -53,15 +53,16 @@ object M3u8Helper2 {
             ), null
         )
             .map { stream ->
-                ExtractorLink(
+                newExtractorLink(
                     source,
                     name = name,
                     stream.streamUrl,
-                    referer,
-                    stream.quality ?: Qualities.Unknown.value,
-                    true,
-                    stream.headers,
-                )
+                ) {
+                    this.referer = referer
+                    this.quality = stream.quality ?: Qualities.Unknown.value
+                    this.isM3u8 = true
+                    this.headers = stream.headers
+                }
             }
     }
 

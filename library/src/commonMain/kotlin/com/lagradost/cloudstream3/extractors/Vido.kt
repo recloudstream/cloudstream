@@ -4,6 +4,7 @@ import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.Qualities
 import com.lagradost.cloudstream3.utils.getAndUnpack
+import com.lagradost.cloudstream3.utils.newExtractorLink
 
 class Vido : ExtractorApi() {
     override var name = "Vido"
@@ -18,14 +19,15 @@ class Vido : ExtractorApi() {
             //val quality = unpackedText.lowercase().substringAfter(" height=").substringBefore(" ").toIntOrNull()
             srcRegex.find(this.text)?.groupValues?.get(1)?.let { link ->
                 return listOf(
-                    ExtractorLink(
+                    newExtractorLink(
                         name,
                         name,
                         link,
-                        url,
-                        Qualities.Unknown.value,
-                        true,
-                    )
+                    ) {
+                        this.referer = url
+                        this.quality = Qualities.Unknown.value
+                        this.isM3u8 = true
+                    }
                 )
             }
         }

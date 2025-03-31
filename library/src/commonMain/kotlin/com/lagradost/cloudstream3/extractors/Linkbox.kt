@@ -6,6 +6,7 @@ import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.getQualityFromName
+import com.lagradost.cloudstream3.utils.newExtractorLink
 
 open class Linkbox : ExtractorApi() {
     override val name = "Linkbox"
@@ -23,13 +24,14 @@ open class Linkbox : ExtractorApi() {
         app.get("$mainUrl/api/file/detail?itemId=$id", referer = url)
             .parsedSafe<Responses>()?.data?.itemInfo?.resolutionList?.map { link ->
                 callback.invoke(
-                    ExtractorLink(
+                    newExtractorLink(
                         name,
                         name,
                         link.url ?: return@map null,
-                        url,
-                        getQualityFromName(link.resolution)
-                    )
+                    ) {
+                        this.referer = url
+                        this.quality = getQualityFromName(link.resolution)
+                    }
                 )
             }
     }

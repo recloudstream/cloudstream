@@ -5,6 +5,7 @@ import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.Qualities
 import com.lagradost.cloudstream3.utils.loadExtractor
+import com.lagradost.cloudstream3.utils.newExtractorLink
 
 class VstreamhubHelper {
     companion object {
@@ -28,14 +29,15 @@ class VstreamhubHelper {
                             val linkUrl =
                                 aa.substring(startString.length + 1, aa.indexOf("\",")).trim()
                             //Log.i(baseName, "Result => (linkUrl) ${linkUrl}")
-                            val exlink = ExtractorLink(
+                            val exlink = newExtractorLink(
                                 name = "$baseName m3u8",
                                 source = baseName,
                                 url = linkUrl,
-                                quality = Qualities.Unknown.value,
-                                referer = url,
-                                isM3u8 = true
-                            )
+                            ) {
+                                this.quality = Qualities.Unknown.value
+                                this.referer = url
+                                this.isM3u8 = true
+                            }
                             callback.invoke(exlink)
                         }
                         if (innerText.contains("playerInstance")) {

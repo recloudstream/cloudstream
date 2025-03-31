@@ -2484,15 +2484,16 @@ class ResultViewModel2 : ViewModel() {
                                 { links.add(it) }) && trailerData.raw
                         ) {
                             arrayListOf(
-                                ExtractorLink(
+                                newExtractorLink(
                                     "",
                                     "Trailer",
                                     trailerData.extractorUrl,
-                                    trailerData.referer ?: "",
-                                    Qualities.Unknown.value,
-                                    headers = trailerData.headers,
                                     type = INFER_TYPE
-                                )
+                                ) {
+                                    this.referer = trailerData.referer ?: ""
+                                    this.quality = Qualities.Unknown.value
+                                    this.headers = trailerData.headers
+                                }
                             ) to arrayListOf()
                         } else {
                             links to subs

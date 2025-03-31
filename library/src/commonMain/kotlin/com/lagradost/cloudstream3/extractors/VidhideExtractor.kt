@@ -5,6 +5,7 @@ import com.lagradost.cloudstream3.network.WebViewResolver
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.Qualities
+import com.lagradost.cloudstream3.utils.newExtractorLink
 
 open class VidhideExtractor : ExtractorApi() {
     override var name = "VidHide"
@@ -20,14 +21,15 @@ open class VidhideExtractor : ExtractorApi() {
         val sources = mutableListOf<ExtractorLink>()
         if (response.url.contains("m3u8"))
             sources.add(
-                ExtractorLink(
+                newExtractorLink(
                     source = name,
                     name = name,
                     url = response.url,
-                    referer = referer ?: "$mainUrl/",
-                    quality = Qualities.Unknown.value,
-                    isM3u8 = true
-                )
+                ) {
+                    this.referer = referer ?: "$mainUrl/"
+                    this.quality = Qualities.Unknown.value
+                    this.isM3u8 = true
+                }
             )
         return sources
     }

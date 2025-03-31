@@ -9,6 +9,7 @@ import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.INFER_TYPE
 import com.lagradost.cloudstream3.utils.Qualities
+import com.lagradost.cloudstream3.utils.newExtractorLink
 import java.security.MessageDigest
 
 
@@ -106,15 +107,15 @@ open class Chillx : ExtractorApi() {
                 "user-agent" to USER_AGENT,
             )
         callback.invoke(
-            ExtractorLink(
-                name,
-                name,
-                m3u8,
-                mainUrl,
-                Qualities.P1080.value,
-                INFER_TYPE,
-                headers = header
-            )
+            newExtractorLink(
+                source = name,
+                name = name,
+                url = m3u8,
+            ) {
+                this.referer = mainUrl
+                this.quality = Qualities.P1080.value
+                this.headers = header
+            }
         )
 
         val subtitles = extractSrtSubtitles(decoded)

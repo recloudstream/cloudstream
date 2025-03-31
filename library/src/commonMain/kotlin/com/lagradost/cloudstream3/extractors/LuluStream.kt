@@ -6,6 +6,7 @@ import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.utils.INFER_TYPE
 import com.lagradost.cloudstream3.utils.Qualities
+import com.lagradost.cloudstream3.utils.newExtractorLink
 
 class Lulustream1 : LuluStream() {
     override val name = "Lulustream"
@@ -43,14 +44,14 @@ open class LuluStream : ExtractorApi() {
             ?.let { script ->
                 Regex("file:\"(.*)\"").find(script)?.groupValues?.get(1)?.let { link ->
                     callback(
-                        ExtractorLink(
+                        newExtractorLink(
                             name,
                             name,
                             link,
-                            mainUrl,
-                            Qualities.P1080.value,
-                            type = INFER_TYPE
-                        )
+                        ) {
+                            this.referer = mainUrl
+                            this.quality = Qualities.P1080.value
+                        }
                     )
                 }
             }

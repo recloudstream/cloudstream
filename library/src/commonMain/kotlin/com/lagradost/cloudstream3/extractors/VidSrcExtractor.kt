@@ -7,6 +7,7 @@ import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.Qualities
 import com.lagradost.cloudstream3.utils.loadExtractor
+import com.lagradost.cloudstream3.utils.newExtractorLink
 import java.util.Base64
 
 class VidSrcExtractor2 : VidSrcExtractor() {
@@ -46,14 +47,15 @@ open class VidSrcExtractor : ExtractorApi() {
                         decodeUrl(encodedElement.attr("id"), encodedElement.text()) ?: return@amap
 
                 callback.invoke(
-                        ExtractorLink(
+                        newExtractorLink(
                                 this.name,
                                 this.name,
-                                decodedUrl,
-                                apiUrl,
-                                Qualities.Unknown.value,
-                                isM3u8 = true
-                        )
+                                decodedUrl
+                        ) {
+                            this.referer = apiUrl
+                            this.quality = Qualities.Unknown.value
+                            this.isM3u8 = true
+                        }
                 )
             } else {
                 loadExtractor(res.url, url, subtitleCallback, callback)

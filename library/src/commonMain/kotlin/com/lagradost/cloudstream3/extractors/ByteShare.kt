@@ -10,12 +10,10 @@ open class ByteShare : ExtractorApi() {
     override suspend fun getUrl(url: String, referer: String?): List<ExtractorLink> {
         val sources = mutableListOf<ExtractorLink>()
         sources.add(
-            ExtractorLink(
-                name,
-                name,
-                url.replace("/embed/", "/download/"),
-                "",
-                Qualities.Unknown.value,
+            newExtractorLink(
+                source = name,
+                name = name,
+                url = url.replace("/embed/", "/download/"),
             )
         )
         return sources

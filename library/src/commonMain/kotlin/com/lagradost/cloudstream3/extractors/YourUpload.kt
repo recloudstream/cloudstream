@@ -6,6 +6,7 @@ import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.getQualityFromName
+import com.lagradost.cloudstream3.utils.newExtractorLink
 
 open class YourUpload: ExtractorApi() {
     override val name = "Yourupload"
@@ -26,13 +27,14 @@ open class YourUpload: ExtractorApi() {
                         }}"
                     )
                     sources.add(
-                        ExtractorLink(
+                        newExtractorLink(
                             source = name,
                             name = name,
                             url = link!!.file,
-                            referer = url,
-                            quality = getQualityFromName(quality)
-                        )
+                        ) {
+                            this.referer = url
+                            this.quality = getQualityFromName(quality)
+                        }
                     )
                 }
             }

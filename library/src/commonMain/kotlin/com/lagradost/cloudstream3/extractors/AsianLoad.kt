@@ -5,6 +5,7 @@ import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.M3u8Helper
 import com.lagradost.cloudstream3.utils.getQualityFromName
+import com.lagradost.cloudstream3.utils.newExtractorLink
 import java.net.URI
 
 open class AsianLoad : ExtractorApi() {
@@ -30,13 +31,14 @@ open class AsianLoad : ExtractorApi() {
                     }
                 } else if (extractedUrl.endsWith(".mp4")) {
                     extractedLinksList.add(
-                        ExtractorLink(
-                            name,
-                            name,
-                            extractedUrl,
-                            url.replace(" ", "%20"),
-                            getQualityFromName(sourceMatch.groupValues[2]),
-                        )
+                        newExtractorLink(
+                            source = name,
+                            name = name,
+                            url = extractedUrl,
+                        ) {
+                            this.referer = url.replace(" ", "%20")
+                            this.quality = getQualityFromName(sourceMatch.groupValues[2])
+                        }
                     )
                 }
             }

@@ -14,14 +14,14 @@ open class EPlayExtractor : ExtractorApi() {
         val response = app.get(url).document
         val trueUrl = response.select("source").attr("src")
         return listOf(
-                ExtractorLink(
+                newExtractorLink(
                         this.name,
                         this.name,
                         trueUrl,
-                        mainUrl,
-                        getQualityFromName(""), // this needs to be auto
-                        false
-                )
+                ) {
+                    this.referer = mainUrl
+                    this.quality = getQualityFromName("") // this needs to be auto
+                }
         )
     }
 }

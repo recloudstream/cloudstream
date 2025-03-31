@@ -5,6 +5,7 @@ import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.Qualities
 import com.lagradost.cloudstream3.utils.getAndUnpack
+import com.lagradost.cloudstream3.utils.newExtractorLink
 
 open class Mp4Upload : ExtractorApi() {
     override var name = "Mp4Upload"
@@ -24,24 +25,26 @@ open class Mp4Upload : ExtractorApi() {
             unpackedText.lowercase().substringAfter(" height=").substringBefore(" ").toIntOrNull()
         srcRegex.find(unpackedText)?.groupValues?.get(1)?.let { link ->
             return listOf(
-                ExtractorLink(
+                newExtractorLink(
                     name,
                     name,
                     link,
-                    url,
-                    quality ?: Qualities.Unknown.value,
-                )
+                ) {
+                    this.referer = url
+                    this.quality = quality ?: Qualities.Unknown.value
+                }
             )
         }
         srcRegex2.find(unpackedText)?.groupValues?.get(1)?.let { link ->
             return listOf(
-                ExtractorLink(
+                newExtractorLink(
                     name,
                     name,
                     link,
-                    url,
-                    quality ?: Qualities.Unknown.value,
-                )
+                ) {
+                    this.referer = url
+                    this.quality = quality ?: Qualities.Unknown.value
+                }
             )
         }
         return null

@@ -6,6 +6,7 @@ import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.Qualities
+import com.lagradost.cloudstream3.utils.newExtractorLink
 
 open class Gofile : ExtractorApi() {
     override val name = "Gofile"
@@ -27,16 +28,16 @@ open class Gofile : ExtractorApi() {
         app.get("$mainApi/getContent?contentId=$id&token=$token&wt=$websiteToken")
             .parsedSafe<Source>()?.data?.contents?.forEach {
                 callback.invoke(
-                    ExtractorLink(
+                    newExtractorLink(
                         this.name,
                         this.name,
                         it.value["link"] ?: return,
-                        "",
-                        getQuality(it.value["name"]),
-                        headers = mapOf(
+                    ) {
+                        this.quality = getQuality(it.value["name"])
+                        this.headers = mapOf(
                             "Cookie" to "accountToken=$token"
                         )
-                    )
+                    }
                 )
             }
 
