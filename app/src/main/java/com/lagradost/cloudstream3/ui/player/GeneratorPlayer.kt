@@ -28,6 +28,7 @@ import androidx.core.animation.addListener
 import androidx.core.app.NotificationCompat
 import androidx.core.app.PendingIntentCompat
 import androidx.core.content.ContextCompat
+import androidx.core.text.toSpanned
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
@@ -1201,7 +1202,16 @@ class GeneratorPlayer : FullScreenPlayer() {
 
                     val subtitleOptions =
                         subtitlesGrouped.entries.toList()
-                            .getOrNull(subtitleGroupIndex-1)?.value?.map { it.nameSuffix.html() }
+                            .getOrNull(subtitleGroupIndex-1)?.value?.map { subtitle ->
+                                val nameSuffix = subtitle.nameSuffix.html()
+                                nameSuffix.ifBlank {
+                                    when (subtitle.origin) {
+                                        SubtitleOrigin.URL -> txt(R.string.subtitles_from_online)
+                                        SubtitleOrigin.DOWNLOADED_FILE -> txt(R.string.downloaded)
+                                        SubtitleOrigin.EMBEDDED_IN_VIDEO -> txt(R.string.subtitles_from_embedded)
+                                    }.asString(ctx).toSpanned()
+                                }
+                            }
                             ?: emptyList()
 
                     // Show nothing if there is nothing to select

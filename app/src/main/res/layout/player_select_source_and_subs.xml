@@ -179,7 +179,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_rowWeight="1"
-                    android:layout_weight="2"
+                    android:layout_weight="1"
                     android:background="?attr/primaryBlackBackground"
                     android:listSelector="@drawable/outline_drawable_forced"
                     android:nextFocusLeft="@id/sort_subtitles"
