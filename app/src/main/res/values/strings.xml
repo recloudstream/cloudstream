@@ -850,4 +850,6 @@
     <string name="no_plugins_updated_manually">No plugins were updated.</string>
     <string name="player_notification_channel_name">Player notifications</string>
     <string name="player_notification_channel_description">The player notification for controlling the playback from the background</string>
+    <string name="subtitles_from_embedded">Embedded</string>
+    <string name="subtitles_from_online">Online</string>
 </resources>
