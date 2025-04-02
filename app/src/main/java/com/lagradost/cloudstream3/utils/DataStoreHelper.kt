@@ -14,6 +14,7 @@ import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.DubStatus
 import com.lagradost.cloudstream3.EpisodeResponse
 import com.lagradost.cloudstream3.MainActivity
+import com.lagradost.cloudstream3.NextAiring
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.SearchQuality
 import com.lagradost.cloudstream3.SearchResponse
@@ -261,6 +262,7 @@ object DataStoreHelper {
         override val plot: String? = null,
         override val rating: Int? = null,
         override val tags: List<String>? = null,
+        @JsonProperty("lastSeenNextAiring") val lastSeenNextAiring: NextAiring? = null,
     ) : LibrarySearchResponse(id, latestUpdatedTime, name, url, apiName, type, posterUrl, year, syncData, quality, posterHeaders, plot,rating,tags) {
         fun toLibraryItem(): SyncAPI.LibraryItem? {
             return SyncAPI.LibraryItem(
@@ -495,7 +497,8 @@ object DataStoreHelper {
         if (id == null || data == null || episodeResponse == null) return
         val newData = data.copy(
             latestUpdatedTime = unixTimeMS,
-            lastSeenEpisodeCount = episodeResponse.getLatestEpisodes()
+            lastSeenEpisodeCount = episodeResponse.getLatestEpisodes(),
+            lastSeenNextAiring = episodeResponse.nextAiring,
         )
         setKey("$currentAccount/$RESULT_SUBSCRIBED_STATE_DATA", id.toString(), newData)
     }

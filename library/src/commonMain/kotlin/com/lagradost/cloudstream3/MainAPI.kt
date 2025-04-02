@@ -1662,9 +1662,9 @@ fun TvType.getFolderPrefix(): String {
  * @param season Season number of next airing episode (Optional).
  * */
 data class NextAiring(
-    val episode: Int,
-    val unixTime: Long,
-    val season: Int? = null,
+    @JsonProperty("episode") val episode: Int,
+    @JsonProperty("unixTime") val unixTime: Long,
+    @JsonProperty("season") val season: Int? = null,
 ) {
     /**
      * Secondary constructor for backwards compatibility without season.
