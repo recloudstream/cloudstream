@@ -30,7 +30,6 @@ open class Vtbe : ExtractorApi() {
                         ) {
                             this.referer = referer ?: ""
                             this.quality = Qualities.Unknown.value
-                            this.isM3u8 = URI(link).path.endsWith(".m3u8")
                         }
                     )
                 }

@@ -3,6 +3,7 @@ package com.lagradost.cloudstream3.extractors
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
+import com.lagradost.cloudstream3.utils.ExtractorLinkType
 import com.lagradost.cloudstream3.utils.Qualities
 import com.lagradost.cloudstream3.utils.newExtractorLink
 import javax.crypto.Cipher
@@ -22,13 +23,13 @@ open class VidStack : ExtractorApi() {
         val m3u8=Regex("\"source\":\"(.*?)\"").find(decryptedText)?.groupValues?.get(1)?.replace("\\/","/") ?:""
         return listOf(
             newExtractorLink(
-                this.name,
-                this.name,
-                m3u8,
+                source = this.name,
+                name = this.name,
+                url = m3u8,
+                type = ExtractorLinkType.M3U8
             ) {
                 this.referer = url
                 this.quality = Qualities.Unknown.value
-                this.isM3u8 = true
             }
         )
     }

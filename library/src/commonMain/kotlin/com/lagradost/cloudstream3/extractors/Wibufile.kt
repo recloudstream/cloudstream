@@ -27,7 +27,6 @@ open class Wibufile : ExtractorApi() {
                 name,
                 name,
                 video ?: return,
-                type = INFER_TYPE
             ) {
                 this.referer = "$mainUrl/"
                 this.quality = Qualities.Unknown.value

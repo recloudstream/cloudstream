@@ -4,6 +4,7 @@ import com.lagradost.api.Log
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
+import com.lagradost.cloudstream3.utils.ExtractorLinkType
 import com.lagradost.cloudstream3.utils.Qualities
 import com.lagradost.cloudstream3.utils.newExtractorLink
 
@@ -27,8 +28,8 @@ open class AStreamHub : ExtractorApi() {
                             name = name,
                             source = name,
                             url = m3link,
+                            type = ExtractorLinkType.M3U8
                         ) {
-                            this.isM3u8 = true
                             this.quality = Qualities.Unknown.value
                             this.referer = referer ?: url
                         }

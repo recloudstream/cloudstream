@@ -3,6 +3,7 @@ package com.lagradost.cloudstream3.extractors
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
+import com.lagradost.cloudstream3.utils.ExtractorLinkType
 import com.lagradost.cloudstream3.utils.Qualities
 import com.lagradost.cloudstream3.utils.getQualityFromName
 import com.lagradost.cloudstream3.utils.newExtractorLink
@@ -31,13 +32,13 @@ open class MultiQuality : ExtractorApi() {
                         m3u8Regex.findAll(this.text).forEach { match ->
                             extractedLinksList.add(
                                 newExtractorLink(
-                                    name,
+                                    source = name,
                                     name = name,
-                                    urlRegex.find(this.url)!!.groupValues[1] + match.groupValues[0],
+                                    url = urlRegex.find(this.url)!!.groupValues[1] + match.groupValues[0],
+                                    type = ExtractorLinkType.M3U8
                                 ) {
                                     this.referer = url
                                     this.quality = getQualityFromName(match.groupValues[1])
-                                    this.isM3u8 = true
                                 }
                             )
                         }

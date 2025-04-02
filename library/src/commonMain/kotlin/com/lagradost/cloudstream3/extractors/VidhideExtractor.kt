@@ -4,6 +4,7 @@ import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.network.WebViewResolver
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
+import com.lagradost.cloudstream3.utils.ExtractorLinkType
 import com.lagradost.cloudstream3.utils.Qualities
 import com.lagradost.cloudstream3.utils.newExtractorLink
 
@@ -25,10 +26,10 @@ open class VidhideExtractor : ExtractorApi() {
                     source = name,
                     name = name,
                     url = response.url,
+                    type = ExtractorLinkType.M3U8
                 ) {
                     this.referer = referer ?: "$mainUrl/"
                     this.quality = Qualities.Unknown.value
-                    this.isM3u8 = true
                 }
             )
         return sources

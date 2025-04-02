@@ -41,10 +41,10 @@ open class ContentX : ExtractorApi() {
                 source  = this.name,
                 name    = this.name,
                 url     = m3uLink,
+                type = ExtractorLinkType.M3U8
             ) {
                 this.referer = url
                 this.quality = Qualities.Unknown.value
-                this.isM3u8  = true
             }
         )
 
@@ -59,10 +59,10 @@ open class ContentX : ExtractorApi() {
                     source  = "${this.name} Türkçe Dublaj",
                     name    = "${this.name} Türkçe Dublaj",
                     url     = dublajLink,
+                    type = ExtractorLinkType.M3U8
                 ) {
                     this.referer = url
                     this.quality = Qualities.Unknown.value
-                    this.isM3u8  = true
                 }
             )
         }

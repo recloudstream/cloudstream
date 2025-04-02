@@ -521,13 +521,11 @@ open class DrmExtractorLink private constructor(
         url: String,
         referer: String? = null,
         quality: Int? = null,
-        isM3u8: Boolean? = false,
         /** the type of the media, use INFER_TYPE if you want to auto infer the type from the url */
         type: ExtractorLinkType? = INFER_TYPE,
         headers: Map<String, String> = mapOf(),
         /** Used for getExtractorVerifierJob() */
         extractorData: String? = null,
-        isDash: Boolean? = false,
         kid: String? = null,
         key: String? = null,
         uuid: UUID = CLEARKEY_UUID,
@@ -542,10 +540,7 @@ open class DrmExtractorLink private constructor(
         quality = quality ?: Qualities.Unknown.value,
         headers = headers,
         extractorData = extractorData,
-        type = type
-            ?: if (isDash == true) ExtractorLinkType.DASH else if (isM3u8 == true) ExtractorLinkType.M3U8 else inferTypeFromUrl(
-                url
-            ),
+        type = type ?: inferTypeFromUrl(url),
         kid = kid,
         key = key,
         uuid = uuid,
@@ -611,8 +606,8 @@ open class ExtractorLink constructor(
     open var extractorData: String? = null,
     open var type: ExtractorLinkType,
 ) : IDownloadableMinimum {
-    var isM3u8: Boolean = false
-    var isDash: Boolean = false
+    val isM3u8: Boolean get() = type == ExtractorLinkType.M3U8
+    val isDash: Boolean get() = type == ExtractorLinkType.DASH
 
     // Cached video size
     private var videoSize: Long? = null
@@ -651,13 +646,11 @@ open class ExtractorLink constructor(
         url: String,
         referer: String? = null,
         quality: Int? = null,
-        isM3u8: Boolean? = false,
         /** the type of the media, use INFER_TYPE if you want to auto infer the type from the url */
         type: ExtractorLinkType? = INFER_TYPE,
         headers: Map<String, String> = mapOf(),
         /** Used for getExtractorVerifierJob() */
         extractorData: String? = null,
-        isDash: Boolean? = false,
     ) : this(
         source = source,
         name = name,
@@ -666,10 +659,7 @@ open class ExtractorLink constructor(
         quality = quality ?: Qualities.Unknown.value,
         headers = headers,
         extractorData = extractorData,
-        type = type
-            ?: if (isDash == true) ExtractorLinkType.DASH else if (isM3u8 == true) ExtractorLinkType.M3U8 else inferTypeFromUrl(
-                url
-            )
+        type = type ?: inferTypeFromUrl(url)
     )
 
     @Deprecated("Use newExtractorLink", level = DeprecationLevel.ERROR)

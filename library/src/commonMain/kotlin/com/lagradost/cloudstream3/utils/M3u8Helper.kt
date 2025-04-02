@@ -57,10 +57,10 @@ object M3u8Helper2 {
                     source,
                     name = name,
                     stream.streamUrl,
+                    type = ExtractorLinkType.M3U8
                 ) {
                     this.referer = referer
                     this.quality = stream.quality ?: Qualities.Unknown.value
-                    this.isM3u8 = true
                     this.headers = stream.headers
                 }
             }

@@ -3,6 +3,7 @@ package com.lagradost.cloudstream3.extractors
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
+import com.lagradost.cloudstream3.utils.ExtractorLinkType
 import com.lagradost.cloudstream3.utils.Qualities
 import com.lagradost.cloudstream3.utils.newExtractorLink
 
@@ -29,10 +30,10 @@ open class EmturbovidExtractor : ExtractorApi() {
                     source = name,
                     name = name,
                     url = m3u8Url,
+                    type = ExtractorLinkType.M3U8
                 ) {
                     this.referer = "$mainUrl/"
                     this.quality = Qualities.Unknown.value
-                    this.isM3u8 = true
                 }
             )
         }

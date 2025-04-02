@@ -65,10 +65,10 @@ open class PlayLtXyz: ExtractorApi() {
                                 source = name,
                                 name = name,
                                 url = linkUrl,
+                                type = ExtractorLinkType.M3U8
                             ) {
                                 this.referer = url
                                 this.quality = Qualities.Unknown.value
-                                this.isM3u8 = true
                             }
                         )
                     }

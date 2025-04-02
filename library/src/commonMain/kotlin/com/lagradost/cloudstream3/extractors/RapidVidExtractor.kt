@@ -50,10 +50,10 @@ open class RapidVid : ExtractorApi() {
                 source  = this.name,
                 name    = this.name,
                 url     = decoded,
+                type    = ExtractorLinkType.M3U8
             ) {
                 this.referer = extRef
                 this.quality = Qualities.Unknown.value
-                this.isM3u8  = true
             }
         )
     }
