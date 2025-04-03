@@ -1327,16 +1327,18 @@ class ResultViewModel2 : ViewModel() {
         isCasting: Boolean = false,
         callback: (Pair<LinkLoadingResult, Int>) -> Unit
     ) {
+        // TODO Add skip loading here
         loadLinks(result, isVisible = true, sourceTypes, isCasting = isCasting) { links ->
             // Could not find a better way to do this
-            val context = AcraApplication.context
+            //val context = AcraApplication.context
             postPopup(
                 text,
-                links.links.amap {
-                    val size =
-                        it.getVideoSize()?.let { size -> " " + formatFileSize(context, size) } ?: ""
-                    txt("${it.name} ${Qualities.getStringByInt(it.quality)}$size")
-                }) {
+                links.links.map { txt("${it.name} ${Qualities.getStringByInt(it.quality)}") }
+                /*.amap {
+                val size =
+                    it.getVideoSize()?.let { size -> " " + formatFileSize(context, size) } ?: ""
+                txt("${it.name} ${Qualities.getStringByInt(it.quality)}$size")
+                }*/) {
                 callback.invoke(links to (it ?: return@postPopup))
             }
         }
