@@ -157,13 +157,11 @@ class SubscriptionWorkManager(val context: Context, workerParams: WorkerParamete
                     val latestEpisodes = response.getLatestEpisodes()
                     val latestPreferredEpisode = latestEpisodes[dubPreference]
                     val nextAiring = response.nextAiring
-                    val lastSeenNextAiring = savedData.lastSeenNextAiring
 
-                    if (nextAiring != null || lastSeenNextAiring != null) {
+                    if (nextAiring != null) {
                         EpisodeAlertManager.scheduleEpisodeAlert(
                             subscribedData = savedData,
                             nextAiring = nextAiring,
-                            lastSeenNextAiring = lastSeenNextAiring,
                             episodeResponse = response,
                             apiName = api.name,
                             context = applicationContext,
@@ -331,7 +329,6 @@ class EpisodeAlertManager {
         fun scheduleEpisodeAlert(
             subscribedData: DataStoreHelper.SubscribedData,
             nextAiring: NextAiring?,
-            lastSeenNextAiring: NextAiring?,
             episodeResponse: EpisodeResponse?,
             apiName: String,
             context: Context
@@ -348,39 +345,19 @@ class EpisodeAlertManager {
                 }
 
                 nextAiring.unixTime > now -> {
-                    val episodeKey = "${nextAiring.season}_${nextAiring.episode}"
+                    val episodeKey = "${nextAiring.season ?: ""}_${nextAiring.episode}"
                     val uniqueWorkName = "${apiName}_${subscribedData.id}_$episodeKey"
                     val delay = nextAiring.unixTime - now
 
-                    val existingAiring = lastSeenNextAiring?.takeIf {
-                        it.episode == nextAiring.episode && it.season == nextAiring.season
-                    }
-
-                    if (existingAiring != null) {
-                        if (existingAiring.unixTime != nextAiring.unixTime) {
-                            // Cancel if next airing time changes and schedule with new time
-                            WorkManager.getInstance(context)
-                                .cancelUniqueWork(uniqueWorkName)
-
-                            enqueueEpisodeAlertWorker(
-                                subscribedData = subscribedData,
-                                nextAiring = nextAiring,
-                                apiName = apiName,
-                                uniqueWorkName = uniqueWorkName,
-                                delay = delay,
-                                context = context,
-                            )
-                        }
-                    } else {
-                        enqueueEpisodeAlertWorker(
-                            subscribedData = subscribedData,
-                            nextAiring = nextAiring,
-                            apiName = apiName,
-                            uniqueWorkName = uniqueWorkName,
-                            delay = delay,
-                            context = context,
-                        )
-                    }
+                    // Work manager's replace policy will take care of rescheduling if the air time changes
+                    enqueueEpisodeAlertWorker(
+                        subscribedData = subscribedData,
+                        nextAiring = nextAiring,
+                        apiName = apiName,
+                        uniqueWorkName = uniqueWorkName,
+                        delay = delay,
+                        context = context,
+                    )
 
                     DataStoreHelper.updateSubscribedData(
                         subscribedData.id,
