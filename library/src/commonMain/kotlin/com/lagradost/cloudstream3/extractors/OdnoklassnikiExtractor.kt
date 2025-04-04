@@ -10,7 +10,9 @@ import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.utils.AppUtils
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
+import com.lagradost.cloudstream3.utils.ExtractorLinkType
 import com.lagradost.cloudstream3.utils.getQualityFromName
+import com.lagradost.cloudstream3.utils.newExtractorLink
 
 open class Odnoklassniki : ExtractorApi() {
     override val name            = "Odnoklassniki"
@@ -50,15 +52,16 @@ open class Odnoklassniki : ExtractorApi() {
                 .replace("ULTRA",  "4k")
 
             callback.invoke(
-                ExtractorLink(
+                newExtractorLink(
                     source  = this.name,
                     name    = this.name,
                     url     = videoUrl,
-                    referer = "$mainUrl/",
-                    quality = getQualityFromName(quality),
-                    headers = headers,
-                    isM3u8  = false,
-                )
+                    type    = ExtractorLinkType.M3U8
+                ) {
+                    this.referer = "$mainUrl/"
+                    this.quality = getQualityFromName(quality)
+                    this.headers = headers
+                }
             )
         }
     }

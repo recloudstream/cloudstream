@@ -5,8 +5,10 @@ import com.lagradost.cloudstream3.amap
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
+import com.lagradost.cloudstream3.utils.ExtractorLinkType
 import com.lagradost.cloudstream3.utils.Qualities
 import com.lagradost.cloudstream3.utils.loadExtractor
+import com.lagradost.cloudstream3.utils.newExtractorLink
 import java.util.Base64
 
 class VidSrcExtractor2 : VidSrcExtractor() {
@@ -20,40 +22,41 @@ open class VidSrcExtractor : ExtractorApi() {
     override val requiresReferer = false
 
     override suspend fun getUrl(
-            url: String,
-            referer: String?,
-            subtitleCallback: (SubtitleFile) -> Unit,
-            callback: (ExtractorLink) -> Unit
+        url: String,
+        referer: String?,
+        subtitleCallback: (SubtitleFile) -> Unit,
+        callback: (ExtractorLink) -> Unit
     ) {
         val iframedoc = app.get(url).document
 
         val srcrcpList =
-                iframedoc.select("div.serversList > div.server").mapNotNull {
-                    val datahash = it.attr("data-hash") ?: return@mapNotNull null
-                    val rcpLink = "$apiUrl/rcp/$datahash"
-                    val rcpRes = app.get(rcpLink, referer = apiUrl).text
-                    val srcrcpLink =
-                            Regex("src:\\s*'(.*)',").find(rcpRes)?.destructured?.component1()
-                                    ?: return@mapNotNull null
-                    "https:$srcrcpLink"
-                }
+            iframedoc.select("div.serversList > div.server").mapNotNull {
+                val datahash = it.attr("data-hash") ?: return@mapNotNull null
+                val rcpLink = "$apiUrl/rcp/$datahash"
+                val rcpRes = app.get(rcpLink, referer = apiUrl).text
+                val srcrcpLink =
+                    Regex("src:\\s*'(.*)',").find(rcpRes)?.destructured?.component1()
+                        ?: return@mapNotNull null
+                "https:$srcrcpLink"
+            }
 
         srcrcpList.amap { server ->
             val res = app.get(server, referer = apiUrl)
             if (res.url.contains("/prorcp")) {
                 val encodedElement = res.document.select("div#reporting_content+div")
                 val decodedUrl =
-                        decodeUrl(encodedElement.attr("id"), encodedElement.text()) ?: return@amap
+                    decodeUrl(encodedElement.attr("id"), encodedElement.text()) ?: return@amap
 
                 callback.invoke(
-                        ExtractorLink(
-                                this.name,
-                                this.name,
-                                decodedUrl,
-                                apiUrl,
-                                Qualities.Unknown.value,
-                                isM3u8 = true
-                        )
+                    newExtractorLink(
+                        source = this.name,
+                        name = this.name,
+                        url = decodedUrl,
+                        type = ExtractorLinkType.M3U8
+                    ) {
+                        this.referer = apiUrl
+                        this.quality = Qualities.Unknown.value
+                    }
                 )
             } else {
                 loadExtractor(res.url, url, subtitleCallback, callback)
@@ -107,15 +110,15 @@ open class VidSrcExtractor : ExtractorApi() {
     private fun IGLImMhWrI(a: String): String {
         val b = a.reversed()
         val c =
-                b
-                        .map {
-                            when (it) {
-                                in 'a'..'m', in 'A'..'M' -> it + 13
-                                in 'n'..'z', in 'N'..'Z' -> it - 13
-                                else -> it
-                            }
-                        }
-                        .joinToString("")
+            b
+                .map {
+                    when (it) {
+                        in 'a'..'m', in 'A'..'M' -> it + 13
+                        in 'n'..'z', in 'N'..'Z' -> it - 13
+                        else -> it
+                    }
+                }
+                .joinToString("")
         val d = c.reversed()
         return String(Base64.getDecoder().decode(d))
     }
@@ -158,60 +161,60 @@ open class VidSrcExtractor : ExtractorApi() {
 
     private fun nZlUnj2VSo(a: String): String {
         val b =
-                mapOf(
-                        'x' to 'a',
-                        'y' to 'b',
-                        'z' to 'c',
-                        'a' to 'd',
-                        'b' to 'e',
-                        'c' to 'f',
-                        'd' to 'g',
-                        'e' to 'h',
-                        'f' to 'i',
-                        'g' to 'j',
-                        'h' to 'k',
-                        'i' to 'l',
-                        'j' to 'm',
-                        'k' to 'n',
-                        'l' to 'o',
-                        'm' to 'p',
-                        'n' to 'q',
-                        'o' to 'r',
-                        'p' to 's',
-                        'q' to 't',
-                        'r' to 'u',
-                        's' to 'v',
-                        't' to 'w',
-                        'u' to 'x',
-                        'v' to 'y',
-                        'w' to 'z',
-                        'X' to 'A',
-                        'Y' to 'B',
-                        'Z' to 'C',
-                        'A' to 'D',
-                        'B' to 'E',
-                        'C' to 'F',
-                        'D' to 'G',
-                        'E' to 'H',
-                        'F' to 'I',
-                        'G' to 'J',
-                        'H' to 'K',
-                        'I' to 'L',
-                        'J' to 'M',
-                        'K' to 'N',
-                        'L' to 'O',
-                        'M' to 'P',
-                        'N' to 'Q',
-                        'O' to 'R',
-                        'P' to 'S',
-                        'Q' to 'T',
-                        'R' to 'U',
-                        'S' to 'V',
-                        'T' to 'W',
-                        'U' to 'X',
-                        'V' to 'Y',
-                        'W' to 'Z'
-                )
+            mapOf(
+                'x' to 'a',
+                'y' to 'b',
+                'z' to 'c',
+                'a' to 'd',
+                'b' to 'e',
+                'c' to 'f',
+                'd' to 'g',
+                'e' to 'h',
+                'f' to 'i',
+                'g' to 'j',
+                'h' to 'k',
+                'i' to 'l',
+                'j' to 'm',
+                'k' to 'n',
+                'l' to 'o',
+                'm' to 'p',
+                'n' to 'q',
+                'o' to 'r',
+                'p' to 's',
+                'q' to 't',
+                'r' to 'u',
+                's' to 'v',
+                't' to 'w',
+                'u' to 'x',
+                'v' to 'y',
+                'w' to 'z',
+                'X' to 'A',
+                'Y' to 'B',
+                'Z' to 'C',
+                'A' to 'D',
+                'B' to 'E',
+                'C' to 'F',
+                'D' to 'G',
+                'E' to 'H',
+                'F' to 'I',
+                'G' to 'J',
+                'H' to 'K',
+                'I' to 'L',
+                'J' to 'M',
+                'K' to 'N',
+                'L' to 'O',
+                'M' to 'P',
+                'N' to 'Q',
+                'O' to 'R',
+                'P' to 'S',
+                'Q' to 'T',
+                'R' to 'U',
+                'S' to 'V',
+                'T' to 'W',
+                'U' to 'X',
+                'V' to 'Y',
+                'W' to 'Z'
+            )
         return a.map { b[it] ?: it }.joinToString("")
     }
 

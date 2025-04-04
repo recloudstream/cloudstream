@@ -8,6 +8,7 @@ import com.lagradost.cloudstream3.utils.ExtractorLinkType
 import com.lagradost.cloudstream3.utils.INFER_TYPE
 import com.lagradost.cloudstream3.utils.Qualities
 import com.lagradost.cloudstream3.utils.loadExtractor
+import com.lagradost.cloudstream3.utils.newExtractorLink
 import com.lagradost.cloudstream3.utils.unshortenLinkSafe
 
 data class ExtractorUri(
@@ -36,7 +37,7 @@ data class BasicLink(
 class LinkGenerator(
     private val links: List<BasicLink>,
     private val extract: Boolean = true,
-    private val referer: String? = null,
+    private val refererUrl: String? = null,
     private val isM3u8: Boolean? = null
 ) : IGenerator {
     override val hasCache = false
@@ -77,7 +78,7 @@ class LinkGenerator(
         isCasting: Boolean
     ): Boolean {
         links.amap { link ->
-            if (!extract || !loadExtractor(link.url, referer, {
+            if (!extract || !loadExtractor(link.url, refererUrl, {
                     subtitleCallback(PlayerSubtitleHelper.getSubtitleData(it))
                 }) {
                     callback(it to null)
@@ -85,14 +86,15 @@ class LinkGenerator(
 
                 // if don't extract or if no extractor found simply return the link
                 callback(
-                    ExtractorLink(
+                    newExtractorLink(
                         "",
                         link.name ?: link.url,
                         unshortenLinkSafe(link.url), // unshorten because it might be a raw link
-                        referer ?: "",
-                        Qualities.Unknown.value,
                         type = INFER_TYPE,
-                    ) to null
+                    ) {
+                        this.referer = refererUrl ?: ""
+                        this.quality = Qualities.Unknown.value
+                    } to null
                 )
             }
         }

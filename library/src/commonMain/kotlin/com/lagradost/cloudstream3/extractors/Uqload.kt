@@ -22,13 +22,13 @@ open class Uqload : ExtractorApi() {
         with(app.get(url)) {  // raised error ERROR_CODE_PARSING_CONTAINER_UNSUPPORTED (3003) is due to the response: "error_nofile"
             srcRegex.find(this.text)?.groupValues?.get(1)?.replace("\"", "")?.let { link ->
                 return listOf(
-                    ExtractorLink(
+                    newExtractorLink(
                         name,
                         name,
-                        link,
-                        url,
-                        Qualities.Unknown.value,
-                    )
+                        link
+                    ) {
+                        this.referer = url
+                    }
                 )
             }
         }

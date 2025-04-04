@@ -17,13 +17,14 @@ open class GamoVideo : ExtractorApi() {
             .firstOrNull { it.html().contains("sources:") }!!.html().substringAfter("file: \"")
             .substringBefore("\",").let {
             listOf(
-                ExtractorLink(
+                newExtractorLink(
                     name,
                     name,
                     it,
-                    url,
-                    Qualities.Unknown.value,
-                )
+                ) {
+                    this.referer = url
+                    this.quality = Qualities.Unknown.value
+                }
             )
         }
     }

@@ -49,12 +49,13 @@ open class Hxfile : ExtractorApi() {
                         getAndUnpack(script.data()).substringAfter("sources:[").substringBefore("]")
                     tryParseJson<List<ResponseSource>>("[$data]")?.map {
                         sources.add(
-                            ExtractorLink(
+                            newExtractorLink(
                                 name,
                                 name,
                                 it.file,
-                                referer = mainUrl,
-                                quality = when {
+                            ) {
+                                this.referer = mainUrl
+                                this.quality = when {
                                     url.contains("hxfile.co") -> getQualityFromName(
                                         Regex("\\d\\.(.*?).mp4").find(
                                             document.select("title").text()
@@ -62,24 +63,25 @@ open class Hxfile : ExtractorApi() {
                                     )
                                     else -> getQualityFromName(it.label)
                                 }
-                            )
+                            }
                         )
                     }
                 } else if (script.data().contains("\"sources\":[")) {
                     val data = script.data().substringAfter("\"sources\":[").substringBefore("]")
                     tryParseJson<List<ResponseSource>>("[$data]")?.map {
                         sources.add(
-                            ExtractorLink(
+                            newExtractorLink(
                                 name,
                                 name,
                                 it.file,
-                                referer = mainUrl,
-                                quality = when {
+                            ) {
+                                this.referer = mainUrl
+                                this.quality = when {
                                     it.label?.contains("HD") == true -> Qualities.P720.value
                                     it.label?.contains("SD") == true -> Qualities.P480.value
                                     else -> getQualityFromName(it.label)
                                 }
-                            )
+                            }
                         )
                     }
                 }

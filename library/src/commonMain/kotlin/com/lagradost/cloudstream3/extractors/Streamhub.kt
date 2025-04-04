@@ -3,8 +3,11 @@ package com.lagradost.cloudstream3.extractors
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
+import com.lagradost.cloudstream3.utils.ExtractorLinkType
+import com.lagradost.cloudstream3.utils.INFER_TYPE
 import com.lagradost.cloudstream3.utils.JsUnpacker
 import com.lagradost.cloudstream3.utils.Qualities
+import com.lagradost.cloudstream3.utils.newExtractorLink
 import java.net.URI
 
 open class Streamhub : ExtractorApi() {
@@ -22,13 +25,10 @@ open class Streamhub : ExtractorApi() {
             JsUnpacker("eval$jsEval").unpack()?.let { unPacked ->
                 Regex("sources:\\[\\{src:\"(.*?)\"").find(unPacked)?.groupValues?.get(1)?.let { link ->
                     return listOf(
-                        ExtractorLink(
-                            this.name,
+                        newExtractorLink(
+                            source = this.name,
                             this.name,
                             link,
-                            referer ?: "",
-                            Qualities.Unknown.value,
-                            URI(link).path.endsWith(".m3u8")
                         )
                     )
                 }

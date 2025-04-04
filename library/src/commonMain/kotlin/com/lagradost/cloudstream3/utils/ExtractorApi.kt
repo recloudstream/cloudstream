@@ -325,12 +325,12 @@ data class ExtractorLinkPlayList(
     override val source: String,
     override val name: String,
     val playlist: List<PlayListItem>,
-    override val referer: String,
-    override val quality: Int,
-    override val headers: Map<String, String> = mapOf(),
+    override var referer: String,
+    override var quality: Int,
+    override var headers: Map<String, String> = mapOf(),
     /** Used for getExtractorVerifierJob() */
-    override val extractorData: String? = null,
-    override val type: ExtractorLinkType,
+    override var extractorData: String? = null,
+    override var type: ExtractorLinkType,
 ) : ExtractorLink(
     source = source,
     name = name,
@@ -435,6 +435,50 @@ val WIDEVINE_UUID = UUID(-0x121074568629b532L, -0x5c37d8232ae2de13L)
  */
 val PLAYREADY_UUID = UUID(-0x65fb0f8667bfbd7aL, -0x546d19a41f77a06bL)
 
+suspend fun newExtractorLink(
+    source: String,
+    name: String,
+    url: String,
+    type: ExtractorLinkType? = null,
+    initializer: suspend ExtractorLink.() -> Unit = { }
+): ExtractorLink {
+
+    @Suppress("DEPRECATION_ERROR")
+    val builder =
+        ExtractorLink(
+            source = source,
+            name = name,
+            url = url,
+            type = type ?: INFER_TYPE
+        )
+
+    builder.initializer()
+    return builder
+}
+
+suspend fun newDrmExtractorLink(
+    source: String,
+    name: String,
+    url: String,
+    type: ExtractorLinkType? = null,
+    uuid: UUID,
+    initializer: suspend DrmExtractorLink.() -> Unit = { }
+): DrmExtractorLink {
+
+    @Suppress("DEPRECATION_ERROR")
+    val builder =
+        DrmExtractorLink(
+            source = source,
+            name = name,
+            url = url,
+            uuid = uuid,
+            type = type ?: INFER_TYPE
+        )
+
+    builder.initializer()
+    return builder
+}
+
 /** Class holds extracted DRM media info to be passed to the player.
  * @property source Name of the media source, appears on player layout.
  * @property name Title of the media, appears on player layout.
@@ -450,16 +494,17 @@ val PLAYREADY_UUID = UUID(-0x65fb0f8667bfbd7aL, -0x546d19a41f77a06bL)
  * @property kty Key type "oct" (octet sequence) by default
  * @property keyRequestParameters Parameters that will used to request the key.
  * */
+@Suppress("DEPRECATION_ERROR")
 open class DrmExtractorLink private constructor(
     override val source: String,
     override val name: String,
     override val url: String,
-    override val referer: String,
-    override val quality: Int,
-    override val headers: Map<String, String> = mapOf(),
+    override var referer: String,
+    override var quality: Int,
+    override var headers: Map<String, String> = mapOf(),
     /** Used for getExtractorVerifierJob() */
-    override val extractorData: String? = null,
-    override val type: ExtractorLinkType,
+    override var extractorData: String? = null,
+    override var type: ExtractorLinkType,
     open var kid: String? = null,
     open var key: String? = null,
     open var uuid: UUID,
@@ -469,6 +514,42 @@ open class DrmExtractorLink private constructor(
 ) : ExtractorLink(
     source, name, url, referer, quality, type, headers, extractorData
 ) {
+    @Deprecated("Use newDrmExtractorLink", level = DeprecationLevel.ERROR)
+    constructor(
+        source: String,
+        name: String,
+        url: String,
+        referer: String? = null,
+        quality: Int? = null,
+        /** the type of the media, use INFER_TYPE if you want to auto infer the type from the url */
+        type: ExtractorLinkType? = INFER_TYPE,
+        headers: Map<String, String> = mapOf(),
+        /** Used for getExtractorVerifierJob() */
+        extractorData: String? = null,
+        kid: String? = null,
+        key: String? = null,
+        uuid: UUID = CLEARKEY_UUID,
+        kty: String? = "oct",
+        keyRequestParameters: HashMap<String, String> = hashMapOf(),
+        licenseUrl: String? = null,
+    ) : this(
+        source = source,
+        name = name,
+        url = url,
+        referer = referer ?: "",
+        quality = quality ?: Qualities.Unknown.value,
+        headers = headers,
+        extractorData = extractorData,
+        type = type ?: inferTypeFromUrl(url),
+        kid = kid,
+        key = key,
+        uuid = uuid,
+        keyRequestParameters = keyRequestParameters,
+        kty = kty,
+        licenseUrl = licenseUrl,
+    )
+
+    @Deprecated("Use newDrmExtractorLink", level = DeprecationLevel.ERROR)
     constructor(
         source: String,
         name: String,
@@ -518,12 +599,12 @@ open class ExtractorLink constructor(
     open val source: String,
     open val name: String,
     override val url: String,
-    override val referer: String,
-    open val quality: Int,
-    override val headers: Map<String, String> = mapOf(),
+    override var referer: String,
+    open var quality: Int,
+    override var headers: Map<String, String> = mapOf(),
     /** Used for getExtractorVerifierJob() */
-    open val extractorData: String? = null,
-    open val type: ExtractorLinkType,
+    open var extractorData: String? = null,
+    open var type: ExtractorLinkType,
 ) : IDownloadableMinimum {
     val isM3u8: Boolean get() = type == ExtractorLinkType.M3U8
     val isDash: Boolean get() = type == ExtractorLinkType.DASH
@@ -558,6 +639,30 @@ open class ExtractorLink constructor(
         return headers
     }
 
+    @Deprecated("Use newExtractorLink", level = DeprecationLevel.ERROR)
+    constructor(
+        source: String,
+        name: String,
+        url: String,
+        referer: String? = null,
+        quality: Int? = null,
+        /** the type of the media, use INFER_TYPE if you want to auto infer the type from the url */
+        type: ExtractorLinkType? = INFER_TYPE,
+        headers: Map<String, String> = mapOf(),
+        /** Used for getExtractorVerifierJob() */
+        extractorData: String? = null,
+    ) : this(
+        source = source,
+        name = name,
+        url = url,
+        referer = referer ?: "",
+        quality = quality ?: Qualities.Unknown.value,
+        headers = headers,
+        extractorData = extractorData,
+        type = type ?: inferTypeFromUrl(url)
+    )
+
+    @Deprecated("Use newExtractorLink", level = DeprecationLevel.ERROR)
     constructor(
         source: String,
         name: String,
@@ -584,6 +689,8 @@ open class ExtractorLink constructor(
      * Old constructor without isDash, allows for backwards compatibility with extensions.
      * Should be removed after all extensions have updated their cloudstream.jar
      **/
+    @Suppress("DEPRECATION_ERROR")
+    @Deprecated("Use newExtractorLink", level = DeprecationLevel.ERROR)
     constructor(
         source: String,
         name: String,
@@ -596,6 +703,7 @@ open class ExtractorLink constructor(
         extractorData: String? = null
     ) : this(source, name, url, referer, quality, isM3u8, headers, extractorData, false)
 
+    @Deprecated("Use newExtractorLink", level = DeprecationLevel.ERROR)
     constructor(
         source: String,
         name: String,
@@ -729,7 +837,7 @@ suspend fun loadExtractor(
         if (compareUrl.startsWith(extractor.mainUrl.replace(schemaStripRegex, ""))) {
             try {
                 extractor.getUrl(currentUrl, referer, subtitleCallback, callback)
-            } catch (e : Exception) {
+            } catch (e: Exception) {
                 logError(e)
                 // Rethrow if we have timed out
                 if (e is CancellationException) {
@@ -750,7 +858,7 @@ suspend fun loadExtractor(
         ) {
             try {
                 extractor.getUrl(currentUrl, referer, subtitleCallback, callback)
-            } catch (e : Exception) {
+            } catch (e: Exception) {
                 logError(e)
                 // Rethrow if we have timed out
                 if (e is CancellationException) {
@@ -1084,7 +1192,7 @@ val extractorApis: MutableList<ExtractorApi> = arrayListOf(
     InternetArchive(),
     VidStack(),
     GDMirrorbot(),
-    )
+)
 
 
 fun getExtractorApiFromName(name: String): ExtractorApi {

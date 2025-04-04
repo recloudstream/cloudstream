@@ -2,8 +2,10 @@ package com.lagradost.cloudstream3.extractors
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
+import com.lagradost.cloudstream3.utils.ExtractorLinkType
 import com.lagradost.cloudstream3.utils.Qualities
 import com.lagradost.cloudstream3.utils.getAndUnpack
+import com.lagradost.cloudstream3.utils.newExtractorLink
 
 class Vido : ExtractorApi() {
     override var name = "Vido"
@@ -18,14 +20,15 @@ class Vido : ExtractorApi() {
             //val quality = unpackedText.lowercase().substringAfter(" height=").substringBefore(" ").toIntOrNull()
             srcRegex.find(this.text)?.groupValues?.get(1)?.let { link ->
                 return listOf(
-                    ExtractorLink(
-                        name,
-                        name,
-                        link,
-                        url,
-                        Qualities.Unknown.value,
-                        true,
-                    )
+                    newExtractorLink(
+                        source = name,
+                        name = name,
+                        url = link,
+                        type = ExtractorLinkType.M3U8
+                    ) {
+                        this.referer = url
+                        this.quality = Qualities.Unknown.value
+                    }
                 )
             }
         }

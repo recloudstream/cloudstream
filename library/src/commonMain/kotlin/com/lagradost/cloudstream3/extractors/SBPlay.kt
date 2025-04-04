@@ -7,6 +7,7 @@ import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.Qualities
 import com.lagradost.cloudstream3.utils.getPostForm
+import com.lagradost.cloudstream3.utils.newExtractorLink
 import org.jsoup.Jsoup
 
 //class SBPlay1 : SBPlay() {
@@ -39,20 +40,25 @@ open class SBPlay : ExtractorApi() {
                     val hash = it.groupValues[3]
                     val href = "https://sbplay.one/dl?op=download_orig&id=$id&mode=$mode&hash=$hash"
                     val hrefResponse = app.get(href).text
-                    app.post("https://sbplay.one/?op=notifications&open=&_=$unixTimeMS", referer = href)
+                    app.post(
+                        "https://sbplay.one/?op=notifications&open=&_=$unixTimeMS",
+                        referer = href
+                    )
                     val hrefDocument = Jsoup.parse(hrefResponse)
                     val hrefSpan = hrefDocument.selectFirst("span > a")
                     if (hrefSpan == null) {
                         getPostForm(href, hrefResponse)?.let { form ->
                             val postDocument = Jsoup.parse(form)
-                            val downloadBtn = postDocument.selectFirst("a.downloadbtn")?.attr("href")
+                            val downloadBtn =
+                                postDocument.selectFirst("a.downloadbtn")?.attr("href")
                             if (downloadBtn.isNullOrEmpty()) {
                                 val hrefSpan2 = postDocument.selectFirst("span > a")?.attr("href")
                                 if (hrefSpan2?.startsWith("https://") == true) {
                                     links.add(
-                                        ExtractorLink(
-                                            this.name, name,
-                                            hrefSpan2, "", Qualities.Unknown.value, false
+                                        newExtractorLink(
+                                            this.name,
+                                            name,
+                                            hrefSpan2
                                         )
                                     )
                                 } else {
@@ -60,20 +66,23 @@ open class SBPlay : ExtractorApi() {
                                 }
                             } else {
                                 links.add(
-                                    ExtractorLink(
+                                    newExtractorLink(
                                         this.name,
                                         name,
-                                        downloadBtn,
-                                        "",
-                                        Qualities.Unknown.value,
-                                        false
+                                        downloadBtn
                                     )
                                 )
                             }
                         }
                     } else {
                         val link = hrefSpan.attr("href")
-                        links.add(ExtractorLink(this.name, name, link, "", Qualities.Unknown.value, false))
+                        links.add(
+                            newExtractorLink(
+                                this.name,
+                                name,
+                                link
+                            )
+                        )
                     }
                 }
             } catch (e: Exception) {

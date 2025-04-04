@@ -7,6 +7,7 @@ import com.lagradost.cloudstream3.utils.AppUtils
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.Qualities
+import com.lagradost.cloudstream3.utils.newExtractorLink
 
 open class Uservideo : ExtractorApi() {
     override val name: String = "Uservideo"
@@ -30,13 +31,14 @@ open class Uservideo : ExtractorApi() {
 
         sources?.map { source ->
             callback.invoke(
-                ExtractorLink(
+                newExtractorLink(
                     name,
                     name,
-                    source.src ?: return@map null,
-                    url,
-                    quality ?: Qualities.Unknown.value,
-                )
+                    source.src ?: return@map null
+                ) {
+                    this.referer = url
+                    this.quality = quality ?: Qualities.Unknown.value
+                }
             )
         }
 
