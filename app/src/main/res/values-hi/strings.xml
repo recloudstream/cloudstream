@@ -319,7 +319,7 @@
     <string name="pref_filter_search_quality">खोज परिणामों में चयनित वीडियो गुणवत्ता छुपाएं</string>
     <plurals name="episodes" translatable="false">
         <item quantity="one">प्रकरण</item>
-        <item quantity="other"></item>
+        <item quantity="other"/>
     </plurals>
     <string name="episodes_range">%1$d-%2$d</string>
     <string name="action_open_play">@string/home_play</string>
