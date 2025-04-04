@@ -636,7 +636,7 @@
     <string name="biometric_setting_summary">Otključaj aplikaciju pomoću otiska prsta, ID-a lica, PIN-a, uzorka i lozinke.</string>
     <string name="episode_upcoming_format" formatted="true">Sljedeća u %s</string>
     <string name="clipboard_unknown_error">Pogreška pri kopiranju. Kopirajte zapisnik i kontaktirajte podršku aplikacije.</string>
-    <string name="battery_dialog_message">Kako bi se osigurala neometana preuzimanja i obavijesti za pretplaćene TV emisije, CloudStream treba dopuštenje za rad u pozadini. Pritiskom gumba „U redu” bit ćete preusmjereni na informacije o aplikaciji. Tamo odaberite „Korištenje baterije aplikacije” i postavite potrošnju baterije na „Neograničeno”. Imajte na umu da ovo dopuštenje ne znači da će CS3 isprazniti vašu bateriju. Radit će u pozadini samo kada je potrebno, kao što je primanje obavijesti ili preuzimanje videa sa službenih proširenja. Ako odlučite otkazati, ovu postavku možete prilagoditi kasnije u „Opće postavke”.</string>
+    <string name="battery_dialog_message">Da biste osigurali neprekinuta preuzimanja i obavijesti za pretplaćene TV emisije, CloudStream treba dopuštenje za rad u pozadini. Pritiskom na \"U redu\" prikazat će vam se dijaloški okvir s zahtjevom. Molimo vas da pritisnete \"Dopusti\".  \n\nNapominjemo da ovo dopuštenje ne znači da će CS3 trošiti vašu bateriju. Aplikacija će raditi u pozadini samo kada je to potrebno, primjerice prilikom primanja obavijesti ili preuzimanja videozapisa iz službenih proširenja.</string>
     <string name="biometric_warning">Vaši CloudStream podaci su sada spremljeni u sigurnosnu kopiju. Iako je vjerojatnost mala, neki se uređaji mogu ponašati drugačije. Ako izgubite pristup aplikaciji, potpuno izbrišite podatke aplikacije i obnovite ih pomoću sigurnosne kopije. Ispričavamo se zbog mogućih neugodnosti.</string>
     <string name="next_season_episode_format" formatted="true">Sezona %1$d epizoda %2$d izlazi</string>
     <string name="episode_action_cast_mirror">Cast mirror</string>
@@ -699,4 +699,20 @@
     <string name="audio_singluar">Audio</string>
     <string name="podcast_singluar">Podcast</string>
     <string name="torrent_preferred_media">Aktiviraj torrent u Postavke/Pružatelji usluge/Preferirani mediji</string>
+    <string name="sort_episodes_number_asc">Epizoda (Uzlazno)</string>
+    <string name="sort_episodes_number_desc">Epizoda (Silazno)</string>
+    <string name="sort_episodes_rating_high_low">Ocjena (Najviša)</string>
+    <string name="sort_episodes_rating_low_high">Ocjena (Najniža)</string>
+    <string name="sort_episodes_date_newest">Datum emitiranja (Najnovije)</string>
+    <string name="sort_episodes_date_oldest">Datum emitiranja (Najstarije)</string>
+    <string name="sort_button_episode">Ep %s</string>
+    <string name="sort_button_rating">Ocjena %s</string>
+    <string name="sort_button_date">Datum %s</string>
+    <string name="update_plugins">Ažuriraj dodatke</string>
+    <string name="no_plugins_updated_manually">Nijedan dodatak nije ažuriran.</string>
+    <string name="update_plugins_manually">Ažuriraj podatke ručno</string>
+    <string name="starting_plugin_update_manually">Pokreće se postupak ažuriranja dodataka!</string>
+    <string name="player_notification_channel_name">Obavijesti reproduktora</string>
+    <string name="plugins_updated_manually">Uspješno ažuriran(o) %d dodatak(a)!</string>
+    <string name="player_notification_channel_description">Obavijest reproduktora za upravljanje reprodukcijom iz pozadine</string>
 </resources>

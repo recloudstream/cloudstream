@@ -483,8 +483,8 @@
     <string name="sort">Ordenar</string>
     <string name="sort_rating_desc">Valoración (más a menos)</string>
     <string name="sort_rating_asc">Valoración (menos a más)</string>
-    <string name="sort_updated_new">Actualizado (nuevo a viejo)</string>
-    <string name="sort_updated_old">Actualizado (viejo a nuevo)</string>
+    <string name="sort_updated_new">Actualizado (nuevo a antiguo)</string>
+    <string name="sort_updated_old">Actualizado (antiguo a nuevo)</string>
     <string name="sort_alphabetical_a">Alfabéticamente (A a Z)</string>
     <string name="browser">Navegador</string>
     <string name="library">Biblioteca</string>
@@ -610,7 +610,7 @@
     <string name="app_info_intent_error">No se puede abrir la información de la aplicación CloudStream.</string>
     <string name="custom_media_singluar">Media</string>
     <string name="audio_book_singular">Audiolibro</string>
-    <string name="battery_dialog_message">Para garantizar descargas y notificaciones ininterrumpidas para programas de televisión suscritos, CloudStream necesita permiso para ejecutarse en segundo plano. Al presionar OK, se le dirigirá a información de la aplicación. Allí, desplácese hasta 𝙐𝙨𝙤 𝙙𝙚 𝙡𝙖 𝙗𝙖𝙩𝙚𝙧í𝙖 𝙙𝙚 𝙡𝙖 𝙖𝙥𝙡𝙞𝙘𝙖𝙘𝙞ó𝙣 y establezca el uso de la batería en 𝙎𝙞𝙣 𝙧𝙚𝙨𝙩𝙧𝙞𝙘𝙘𝙞𝙤𝙣𝙚𝙨. Tenga en cuenta que este permiso no significa que CS3 agotará su batería. Solo funcionará en segundo plano cuando sea necesario, como cuando reciba notificaciones o descargue videos de extensiones oficiales. Si decide cancelar, puede ajustar esta configuración más adelante en 𝙡𝙤𝙨 𝙖𝙟𝙪𝙨𝙩𝙚𝙨 𝙜𝙚𝙣𝙚𝙧𝙖𝙡𝙚𝙨.</string>
+    <string name="battery_dialog_message">Para garantizar descargas y notificaciones ininterrumpidas para programas de televisión suscritos, CloudStream necesita permiso para ejecutarse en segundo plano. Al presionar Aceptar, se le dirigirá a información de la aplicación. Presione «Permitir».\n\nTenga en cuenta que este permiso no significa que CS3 agotará su batería. Solo funcionará en segundo plano cuando sea necesario, como cuando reciba notificaciones o descargue vídeos desde extensiones oficiales.</string>
     <string name="reset_btn">Reset</string>
     <string name="episode_upcoming_format" formatted="true">Próximamente en %s</string>
     <string name="next_season_episode_format" formatted="true">La temporada %1$d y el episodio %2$d se estrenarán en</string>
@@ -672,4 +672,26 @@
     <string name="player_load_one_subtitle_online">Cargar primero disponible</string>
     <string name="torrent_preferred_media">Habilitación torrent en Opciones/Proveedores/Medio preferido</string>
     <string name="torrent_not_accepted">Torrent no aceptado</string>
+    <string name="software_decoding">Software de decodificado</string>
+    <string name="software_decoding_desc">El software de decodificado permite que el reproductor reproduzca archivos de video no soportados por su teléfono, lo cual podría causar una reproducción lenta o inestable en alta resolución</string>
+    <string name="player_notification_channel_description">La notificación del jugador para controlar el juego desde el segundo plano</string>
+    <string name="sort_episodes_rating_high_low">Puntuación (Más alta)</string>
+    <string name="sort_episodes_number_desc">Episodio (Descendente)</string>
+    <string name="sort_episodes_rating_low_high">Puntuación (Más baja)</string>
+    <string name="sort_episodes_date_newest">Fecha aérea (más nueva)</string>
+    <string name="starting_plugin_update_manually">Inicio de actualización de complemento.</string>
+    <string name="update_plugins_manually">Actualizar complementos manualmente</string>
+    <string name="player_notification_channel_name">Notificaciones del reproductor</string>
+    <string name="update_plugins">Actualizar complementos</string>
+    <string name="sort_episodes_date_oldest">Fecha aérea (más antigua)</string>
+    <string name="sort_button_rating">Puntuar %s</string>
+    <string name="plugins_updated_manually">%d complemento(s) actualizados correctamente.</string>
+    <string name="no_plugins_updated_manually">Ningún complemento fue actualizado.</string>
+    <string name="sort_episodes_number_asc">Episodio (Ascendente)</string>
+    <string name="speech_recognition_unavailable">Reconocimiento de habla no disponible</string>
+    <string name="begin_speaking">Comenzar a hablar…</string>
+    <string name="sort_button_episode">Ep %s</string>
+    <string name="sort_button_date">Fecha %s</string>
+    <string name="subtitles_from_embedded">Integrado</string>
+    <string name="subtitles_from_online">En línea</string>
 </resources>
