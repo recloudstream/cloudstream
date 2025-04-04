@@ -376,7 +376,7 @@
     <string name="subtitle_offset_extra_hint_before_format">Використовуйте це, якщо субтитри з’являються із запізненням на %d мс</string>
     <string name="player_loaded_subtitles" formatted="true">Завантажено %s</string>
     <string name="actor_supporting">Другорядний</string>
-    <string name="actor_background">Фон</string>
+    <string name="actor_background">Тло</string>
     <string name="quality_blueray">Blu-ray</string>
     <string name="subtitles_remove_captions">Видаляти закриті титри з субтитрів</string>
     <string name="quality_dvd">DVD</string>
@@ -535,7 +535,7 @@
     <string name="use">Використовувати</string>
     <string name="edit">Редагувати</string>
     <string name="qualities">Якості</string>
-    <string name="profile_background_des">Фон профілю</string>
+    <string name="profile_background_des">Тло профілю</string>
     <string name="unable_to_inflate">Не вдалося створити UI коректно, це ВАЖЛИВА ПОМИЛКА, про яку слід негайно повідомити %s</string>
     <string name="automatic_plugin_download_mode_title">Оберіть режим для фільтрації завантаження плагінів</string>
     <string name="disable">Вимкнути</string>
@@ -605,7 +605,7 @@
     <string name="clipboard_permission_error">Помилка доступу до буфера обміну, спробуйте ще раз.</string>
     <string name="ok">Добре</string>
     <string name="battery_dialog_title">Вимкнути оптимізацію батареї</string>
-    <string name="battery_dialog_message">Щоб забезпечити безперебійне завантаження та повідомлення про підписані телепередачі, CloudStream потребує дозволу на роботу у фоновому режимі. Натиснувши \"Добре\", вас буде перенаправлено до інформації про застосунок. Там прокрутіть до \"Споживання батареї застосунком\" й встановіть використання батареї на \"Без обмежень\". Зверніть увагу, що цей дозвіл не означає, що CS3 розряджатиме вашу батарею. Він працюватиме у фоновому режимі лише за необхідності, наприклад, під час отримання повідомлень або завантаження відео з офіційних розширень. Якщо ви вирішите скасувати дозвіл, ви зможете змінити це налаштування пізніше в загальних налаштуваннях.</string>
+    <string name="battery_dialog_message">Щоби забезпечити безперебійне завантаження та сповіщення про підписані телепередачі, CloudStream потребує дозволу на роботу у фоновому режимі. Натиснувши «Добре», ви побачите діалогове вікно запиту. Натисніть «Дозволити».\n\nЗверніть увагу, що цей дозвіл не означає, що CS3 розряджатиме вашу батарею. Він працюватиме у фоновому режимі лише за необхідності, наприклад, під час отримання сповіщень або завантаження відео з офіційних розширень.</string>
     <string name="app_unrestricted_toast">Споживання батареї застосунком вже налаштовано на без обмежень</string>
     <string name="app_info_intent_error">Не вдається відкрити інформацію про застосунок CloudStream.</string>
     <string name="audio_book_singular">Аудіо книга</string>
@@ -640,9 +640,7 @@
     <string name="select_all">Обрати все</string>
     <string name="deselect_all">Скасувати вибір</string>
     <string name="delete_format" formatted="true">Видалити (%1$d | %2$s)</string>
-    <string name="delete_message_series_episodes" formatted="true">Ви впевнені, що хочете назавжди видалити наступні епізоди \"%1$s\"?
-\n
-\n%2$s</string>
+    <string name="delete_message_series_episodes" formatted="true">Ви впевнені, що хочете назавжди видалити наступні епізоди «%1$s»? \n \n%2$s</string>
     <string name="delete_message_series_section" formatted="true">Ви також назавжди видалите всі епізоди в наступному серіалі:
 \n
 \n%s</string>
@@ -663,15 +661,35 @@
     <string name="dont_show">Не показувати</string>
     <string name="backup_path_title">Розташування теки резервної копії</string>
     <string name="custom">Власний</string>
-    <string name="torrent_info">Це відео є торрентом, це означає, що ваша активність у відео може бути відстежена.\nПереконайтеся, що ви розумієте, що таке торрент, перш ніж продовжити.</string>
+    <string name="torrent_info">Це відео є торентом, це означає, що ваша активність у відео може бути відстежена.\nПереконайтеся, що ви розумієте, що таке торент, перш ніж продовжити.</string>
     <string name="subs_edge_size">Розмір кромки</string>
     <string name="audio_singluar">Аудіо</string>
     <string name="podcast_singluar">Подкаст</string>
     <string name="unsupported_error">Непідтримувана помилка</string>
     <string name="encoding_error">Помилка кодування</string>
     <string name="player_load_one_subtitle_online">Завантажити перші доступні</string>
-    <string name="torrent_preferred_media">Увімкніть торрент у Налаштуваннях/Постачальниках/Переважних носіях</string>
-    <string name="torrent_not_accepted">Торрент не приймається</string>
+    <string name="torrent_preferred_media">Увімкніть торент у Налаштування/Постачальники/Бажані медіа</string>
+    <string name="torrent_not_accepted">Торент не прийнято</string>
     <string name="software_decoding">Програмне декодування</string>
-    <string name="software_decoding_desc">Програмне декодування дозволяє програвачу відтворювати відеофайли, які не підтримуються вашим телефоном, але може призвести до затримки або нестабільного відтворення у високій роздільній здатності</string>
+    <string name="software_decoding_desc">Програмне декодування дозволяє плеєру відтворювати відеофайли, які не підтримуються вашим телефоном, але може призвести до затримки або нестабільного відтворення у високій роздільній здатності</string>
+    <string name="sort_episodes_date_newest">Датою виходу (найновіша)</string>
+    <string name="sort_episodes_number_asc">Епізодом (за зростанням)</string>
+    <string name="sort_episodes_rating_low_high">Рейтингом (найнижчий)</string>
+    <string name="sort_button_rating">Рейтинг %s</string>
+    <string name="sort_episodes_number_desc">Епізодом (за спаданням)</string>
+    <string name="sort_episodes_rating_high_low">Рейтингом (найвищий)</string>
+    <string name="sort_episodes_date_oldest">Датою виходу (найстаріша)</string>
+    <string name="sort_button_episode">Еп. %s</string>
+    <string name="sort_button_date">Дата %s</string>
+    <string name="update_plugins">Оновити плагіни</string>
+    <string name="plugins_updated_manually">Успішно оновлено %d плагін(ів)!</string>
+    <string name="update_plugins_manually">Оновити плагіни вручну</string>
+    <string name="starting_plugin_update_manually">Початок процесу оновлення плагіна!</string>
+    <string name="no_plugins_updated_manually">Не було оновлено жодного плагіна.</string>
+    <string name="player_notification_channel_description">Сповіщення плеєра для керування відтворенням у фоновому режимі</string>
+    <string name="player_notification_channel_name">Сповіщення плеєра</string>
+    <string name="speech_recognition_unavailable">Розпізнавання мови недоступне</string>
+    <string name="begin_speaking">Почніть говорити…</string>
+    <string name="subtitles_from_embedded">Вбудований</string>
+    <string name="subtitles_from_online">Онлайн</string>
 </resources>
