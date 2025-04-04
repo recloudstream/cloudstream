@@ -101,6 +101,7 @@ import com.lagradost.cloudstream3.utils.Qualities
 import com.lagradost.cloudstream3.utils.SingleSelectionHelper.showDialog
 import com.lagradost.cloudstream3.utils.SubtitleHelper.fromTwoLettersToLanguage
 import com.lagradost.cloudstream3.utils.SubtitleHelper.languages
+import com.lagradost.cloudstream3.utils.UIHelper.clipboardHelper
 import com.lagradost.cloudstream3.utils.UIHelper.colorFromAttribute
 import com.lagradost.cloudstream3.utils.UIHelper.dismissSafe
 import com.lagradost.cloudstream3.utils.UIHelper.hideSystemUI
@@ -1152,6 +1153,15 @@ class GeneratorPlayer : FullScreenPlayer() {
                         providerList.setOnItemClickListener { _, _, which, _ ->
                             sourceIndex = which
                             providerList.setItemChecked(which, true)
+                        }
+
+                        providerList.setOnItemLongClickListener { _, _, position, _ ->
+                            sortedUrls.getOrNull(position)?.first?.url?.let {
+                                clipboardHelper(txt(R.string.video_source),
+                                    it
+                                )
+                            }
+                            true
                         }
                     }
                 }
