@@ -62,7 +62,7 @@ buildkonfig {
         buildConfigField(
             FieldSpec.Type.STRING,
             "MDL_API_KEY",
-            "\"" + (System.getenv("MDL_API_KEY") ?: localProperties["mdl.key"]) + "\""
+            "\"" + (System.getenv("MDL_API_KEY")?.removeSurrounding("\"") ?: localProperties["mdl.key"]?.toString()?.removeSurrounding("\"")) + "\""
         )
     }
 }
