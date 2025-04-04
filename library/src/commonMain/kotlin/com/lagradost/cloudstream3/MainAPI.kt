@@ -490,7 +490,6 @@ abstract class MainAPI {
      *
      * Note that this is only a hint, and may not get respected if you request something too long.
      * */
-    @Prerelease
     open val loadLinksTimeoutMs : Long? = null
 
     /**
@@ -498,7 +497,6 @@ abstract class MainAPI {
      *
      * Note that this is only a hint, and may not get respected if you request something too long.
      * */
-    @Prerelease
     open val getMainPageTimeoutMs : Long? = null
 
     /**
@@ -506,7 +504,6 @@ abstract class MainAPI {
      *
      * Note that this is only a hint, and may not get respected if you request something too long.
      * */
-    @Prerelease
     open val searchTimeoutMs : Long? = null
 
     /**
@@ -514,7 +511,6 @@ abstract class MainAPI {
      *
      * Note that this is only a hint, and may not get respected if you request something too long.
      * */
-    @Prerelease
     open val quickSearchTimeoutMs : Long? = null
 
     /**
@@ -522,7 +518,6 @@ abstract class MainAPI {
      *
      * Note that this is only a hint, and may not get respected if you request something too long.
      * */
-    @Prerelease
     open val loadTimeoutMs : Long? = null
 
 
