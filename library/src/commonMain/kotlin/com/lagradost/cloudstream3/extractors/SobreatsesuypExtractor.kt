@@ -34,14 +34,13 @@ open class Sobreatsesuyp : ExtractorApi() {
             val videoData = app.post("${mainUrl}/playlist/${item.file.substring(1)}.txt", referer = extRef).text
 
             callback.invoke(
-                ExtractorLink(
+                newExtractorLink(
                     source  = this.name,
                     name    = "${this.name} - ${item.title}",
                     url     = videoData,
-                    referer = extRef,
-                    quality = Qualities.Unknown.value,
-                    type    = INFER_TYPE
-                )
+                ) {
+                    this.referer = extRef
+                }
             )
         }
     }

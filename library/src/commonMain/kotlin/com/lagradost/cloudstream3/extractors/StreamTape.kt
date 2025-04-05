@@ -4,6 +4,7 @@ import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.Qualities
+import com.lagradost.cloudstream3.utils.newExtractorLink
 import org.mozilla.javascript.Context
 
 class StreamTapeNet : StreamTape() {
@@ -45,13 +46,14 @@ open class StreamTape : ExtractorApi() {
             if(!result.isNullOrEmpty()){
                 val extractedUrl = "https:${result}&stream=1"
                 return listOf(
-                    ExtractorLink(
+                    newExtractorLink(
                         name,
                         name,
                         extractedUrl,
-                        url,
-                        Qualities.Unknown.value,
-                    )
+                    ) {
+                        this.referer = url
+                        this.quality = Qualities.Unknown.value
+                    }
                 )
             }
         }

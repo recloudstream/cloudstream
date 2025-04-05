@@ -33,7 +33,7 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 
 //Reference: https://mydramalist.github.io/MDL-API/
-open class MyDramaListDemo : MainAPI() {
+abstract class MyDramaListAPI : MainAPI() {
     override var name = "MyDramaList"
     override val hasMainPage = true
     override val providerType = ProviderType.MetaProvider

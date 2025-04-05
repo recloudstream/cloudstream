@@ -6,6 +6,7 @@ import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.getQualityFromName
+import com.lagradost.cloudstream3.utils.newExtractorLink
 
 open class Vicloud : ExtractorApi() {
     override val name: String = "Vicloud"
@@ -27,13 +28,14 @@ open class Vicloud : ExtractorApi() {
             referer = url
         ).parsedSafe<Responses>()?.sources?.map { source ->
             callback.invoke(
-                ExtractorLink(
+                newExtractorLink(
                     name,
                     name,
                     source.file ?: return@map null,
-                    url,
-                    getQualityFromName(source.label),
-                )
+                ) {
+                    this.referer = url
+                    this.quality = getQualityFromName(source.label)
+                }
             )
         }
 

@@ -103,7 +103,6 @@ fun <R> argamap(
  * Runs all different functions at the same time and awaits for all to be finished, then returns
  * a list of all those items or null if they fail. However Unit is often used.
  */
-@Prerelease
 @Throws(CancellationException::class)
 suspend fun <R> runAllAsync(
     vararg transforms: suspend () -> R,

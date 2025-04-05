@@ -352,7 +352,7 @@ class DownloadFragment : Fragment() {
                         LinkGenerator(
                             listOf(BasicLink(url)),
                             extract = true,
-                            referer = referer,
+                            refererUrl = referer,
                             isM3u8 = binding.hlsSwitch.isChecked
                         )
                     )

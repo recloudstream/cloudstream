@@ -8,6 +8,7 @@ import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.INFER_TYPE
 import com.lagradost.cloudstream3.utils.Qualities
+import com.lagradost.cloudstream3.utils.newExtractorLink
 import org.mozilla.javascript.Context
 import org.mozilla.javascript.NativeJSON
 import org.mozilla.javascript.NativeObject
@@ -45,14 +46,13 @@ open class Vidguardto : ExtractorApi() {
             val watchlink = sigDecode(jsonStr2.stream)
 
             callback.invoke(
-                ExtractorLink(
+                newExtractorLink(
                     this.name,
                     name,
                     watchlink,
-                    this.mainUrl,
-                    Qualities.Unknown.value,
-                    INFER_TYPE
-                )
+                ) {
+                    this.referer = mainUrl
+                }
             )
         }
     }

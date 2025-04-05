@@ -6,6 +6,7 @@ import com.lagradost.cloudstream3.utils.AppUtils.tryParseJson
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.getQualityFromName
+import com.lagradost.cloudstream3.utils.newExtractorLink
 
 
 open class Solidfiles : ExtractorApi() {
@@ -22,13 +23,14 @@ open class Solidfiles : ExtractorApi() {
                     val source = tryParseJson<ResponseSource>("{$data}")
                     val quality = Regex("\\d{3,4}p").find(source!!.nodeName)?.groupValues?.get(0)
                     sources.add(
-                        ExtractorLink(
+                        newExtractorLink(
                             name,
                             name,
                             source.streamUrl,
-                            referer = url,
-                            quality = getQualityFromName(quality)
-                        )
+                        ) {
+                            this.referer = url
+                            this.quality = getQualityFromName(quality)
+                        }
                     )
                 }
             }

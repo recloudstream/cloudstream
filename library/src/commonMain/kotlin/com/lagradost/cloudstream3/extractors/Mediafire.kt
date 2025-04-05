@@ -6,6 +6,7 @@ import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.INFER_TYPE
 import com.lagradost.cloudstream3.utils.Qualities
+import com.lagradost.cloudstream3.utils.newExtractorLink
 
 open class Mediafire : ExtractorApi() {
     override val name = "Mediafire"
@@ -23,14 +24,13 @@ open class Mediafire : ExtractorApi() {
         val video = res.selectFirst("a#downloadButton")?.attr("href")
 
         callback.invoke(
-            ExtractorLink(
+            newExtractorLink(
                 this.name,
                 this.name,
-                video ?: return,
-                "",
-                getQuality(title),
-                INFER_TYPE
-            )
+                video ?: return
+            ) {
+                this.quality = getQuality(title)
+            }
         )
 
     }

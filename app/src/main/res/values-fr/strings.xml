@@ -262,7 +262,7 @@
     <string name="autoplay_next_settings_des">Démarrer l\'épisode suivant lorsque l\'épisode en cours se termine</string>
     <string name="double_tap_to_seek_settings">Double tape pour chercher</string>
     <string name="double_tap_to_pause_settings">Double tape pour mettre en pause</string>
-    <string name="double_tap_to_seek_amount_settings">Temps de recherche du lecteur vidéo (secondes)</string>
+    <string name="double_tap_to_seek_amount_settings">Temps de recherche du lecteur vidéo (Secondes)</string>
     <string name="double_tap_to_seek_settings_des">Tapez deux fois sur le côté droit ou gauche pour aller en avant ou en arrière</string>
     <string name="double_tap_to_pause_settings_des">Tapez deux fois au milieu pour mettre en pause</string>
     <string name="use_system_brightness_settings">Utiliser la luminosité du système</string>
@@ -515,7 +515,7 @@
     <string name="test_failed">Échec</string>
     <string name="android_tv_interface_off_seek_settings_summary">Le temps de recherche utilisé lorsque le lecteur est invisible</string>
     <string name="subscription_in_progress_notification">Mise à jour des programmes auxquels vous êtes abonné(e)</string>
-    <string name="jsdelivr_proxy_summary">Contourne le blocage de GitHub en utilisant jsDelivr. Les mises à jour peuvent être retardées de quelques jours.</string>
+    <string name="jsdelivr_proxy_summary">Contourne le blocage de GitHub en utilisant jsDelivr. Cela peut retarder les mises à jour de quelques jours.</string>
     <string name="android_tv_interface_on_seek_settings_summary">Le temps de recherche utilisé lorsque le lecteur vidéo est visible</string>
     <string name="android_tv_interface_on_seek_settings">Lecteur Visible - Temps de recherche</string>
     <string name="android_tv_interface_off_seek_settings">Lecteur Invisible - Temps de recherche</string>
@@ -605,7 +605,7 @@
     <string name="clipboard_unknown_error">Erreur de copie, Veuillez copier le logcat et contacter le support de l\'application.</string>
     <string name="biometric_setting_summary">Déverrouiller l\'appli avec l\'empreinte digitale, l\'identification faciale, le code PIN, le motif et le mot de passe.</string>
     <string name="biometric_prompt_description">Après quelques tentatives infructueuses, le message se fermera. Redémarrez simplement l’application pour réessayer.</string>
-    <string name="battery_dialog_message">Pour garantir des téléchargements ininterrompus et des notifications pour les émissions de télévision auxquelles vous êtes abonné, CloudStream a besoin d\'une autorisation pour fonctionner en arrière-plan. En appuyant sur OK, vous serez dirigé vers informations de l\'application. Faites défiler jusqu\'à Utilisation de la batterie de l\'application et réglez l\'utilisation de la batterie sur non restreint . Veuillez noter que cette autorisation ne signifie pas que CS3 épuisera votre batterie. Il ne fonctionnera en arrière-plan que lorsque cela sera nécessaire, par exemple lors de la réception de notifications ou du téléchargement de vidéos à partir d\'extensions officielles. Si vous choisissez d\'annuler, vous pouvez ajuster ce paramètre ultérieurement dans paramètres générale.</string>
+    <string name="battery_dialog_message">Pour garantir des téléchargements ininterrompus et des notifications pour les émissions de télévision auxquelles vous êtes abonné, CloudStream a besoin d\'une autorisation pour fonctionner en arrière-plan. En appuyant sur OK, une boite de dialogue sera affiché. Appuyé sur \'autoriser\'.\n\nVeuillez noter que cette autorisation ne signifie pas que CS3 épuisera votre batterie. Il ne fonctionnera en arrière-plan que lorsque cela sera nécessaire, par exemple lors de la réception de notifications ou du téléchargement de vidéos à partir d\'extensions officielles.</string>
     <string name="app_unrestricted_toast">L\'utilisation de la batterie de l\'application est déjà réglée sur illimitée</string>
     <string name="unfavorite">Supprimer des favoris</string>
     <string name="custom_media_singluar">Média</string>
@@ -665,4 +665,20 @@
     <string name="player_load_one_subtitle_online">Charger le premier disponible</string>
     <string name="audio_singluar">Audio</string>
     <string name="podcast_singluar">Podcast</string>
+    <string name="sort_button_episode">Ép %s</string>
+    <string name="sort_button_rating">Note %s</string>
+    <string name="sort_button_date">Date %s</string>
+    <string name="update_plugins">Mettre à jour les plugins</string>
+    <string name="plugins_updated_manually">%d plugin(s) mis à jour avec succès !</string>
+    <string name="no_plugins_updated_manually">Aucun plugin n\'a été mis à jour.</string>
+    <string name="sort_episodes_rating_high_low">Note (Plus Haute)</string>
+    <string name="update_plugins_manually">Mettre à jour les plugins manuellement</string>
+    <string name="sort_episodes_number_desc">Épisode (Ordre Descendant)</string>
+    <string name="sort_episodes_number_asc">Épisode (Ordre Ascendant)</string>
+    <string name="sort_episodes_date_oldest">Date (Plus Ancien)</string>
+    <string name="player_notification_channel_name">Notifications du lecteur</string>
+    <string name="player_notification_channel_description">La notification du lecteur pour contrôler la lecture en arrière-plan</string>
+    <string name="sort_episodes_date_newest">Date (Plus Récent)</string>
+    <string name="sort_episodes_rating_low_high">Note (Plus Basse)</string>
+    <string name="starting_plugin_update_manually">Processus de mise à jour à commencer !</string>
 </resources>

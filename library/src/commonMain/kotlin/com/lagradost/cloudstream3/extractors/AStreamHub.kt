@@ -4,7 +4,9 @@ import com.lagradost.api.Log
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
+import com.lagradost.cloudstream3.utils.ExtractorLinkType
 import com.lagradost.cloudstream3.utils.Qualities
+import com.lagradost.cloudstream3.utils.newExtractorLink
 
 open class AStreamHub : ExtractorApi() {
     override val name = "AStreamHub"
@@ -22,14 +24,15 @@ open class AStreamHub : ExtractorApi() {
                 Log.i("Dev", "m3link => $m3link")
                 if (m3link.isNotBlank()) {
                     sources.add(
-                        ExtractorLink(
+                        newExtractorLink(
                             name = name,
                             source = name,
                             url = m3link,
-                            isM3u8 = true,
-                            quality = Qualities.Unknown.value,
-                            referer = referer ?: url
-                        )
+                            type = ExtractorLinkType.M3U8
+                        ) {
+                            this.quality = Qualities.Unknown.value
+                            this.referer = referer ?: url
+                        }
                     )
                 }
             }

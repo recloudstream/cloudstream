@@ -4,6 +4,9 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.utils.ExtractorApi
 import com.lagradost.cloudstream3.utils.ExtractorLink
+import com.lagradost.cloudstream3.utils.ExtractorLinkType
+import com.lagradost.cloudstream3.utils.INFER_TYPE
+import com.lagradost.cloudstream3.utils.newExtractorLink
 import com.lagradost.cloudstream3.utils.Qualities
 import com.lagradost.nicehttp.RequestBodyTypes
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -45,15 +48,21 @@ open class Slmaxed : ExtractorApi() {
         ).parsed<JsonResponse>()
         return json.result?.mapNotNull {
             it.value.let { result ->
-                ExtractorLink(
+                newExtractorLink(
                     this.name,
                     this.name,
                     result.file ?: return@mapNotNull null,
-                    url,
-                    result.label?.replace("p", "", ignoreCase = true)?.trim()?.toIntOrNull()
-                        ?: Qualities.Unknown.value,
-                    isM3u8 = result.type?.contains("hls", ignoreCase = true) == true
-                )
+                    type = if (result.type?.contains(
+                            "hls",
+                            ignoreCase = true
+                        ) == true
+                    ) ExtractorLinkType.M3U8 else INFER_TYPE
+                ) {
+                    this.referer = url
+                    this.quality =
+                        result.label?.replace("p", "", ignoreCase = true)?.trim()?.toIntOrNull()
+                            ?: Qualities.Unknown.value
+                }
             }
         }
     }

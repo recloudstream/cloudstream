@@ -37,14 +37,15 @@ open class ContentX : ExtractorApi() {
         val m3uLink    = vidExtract.replace("\\", "")
 
         callback.invoke(
-            ExtractorLink(
+            newExtractorLink(
                 source  = this.name,
                 name    = this.name,
                 url     = m3uLink,
-                referer = url,
-                quality = Qualities.Unknown.value,
-                isM3u8  = true
-            )
+                type = ExtractorLinkType.M3U8
+            ) {
+                this.referer = url
+                this.quality = Qualities.Unknown.value
+            }
         )
 
         val iDublaj = Regex(""",\"([^']+)\",\"Türkçe""").find(iSource)!!.groups[1]?.value
@@ -54,14 +55,15 @@ open class ContentX : ExtractorApi() {
             val dublajLink    = dublajExtract.replace("\\", "")
 
             callback.invoke(
-                ExtractorLink(
+                newExtractorLink(
                     source  = "${this.name} Türkçe Dublaj",
                     name    = "${this.name} Türkçe Dublaj",
                     url     = dublajLink,
-                    referer = url,
-                    quality = Qualities.Unknown.value,
-                    isM3u8  = true
-                )
+                    type = ExtractorLinkType.M3U8
+                ) {
+                    this.referer = url
+                    this.quality = Qualities.Unknown.value
+                }
             )
         }
     }

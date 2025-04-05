@@ -674,4 +674,6 @@
     <string name="subs_edge_size">Kantstorlek</string>
     <string name="custom">Egen</string>
     <string name="unsupported_error">Stöds ej</string>
+    <string name="sort_episodes_number_asc">Avsnitt (Stigande)</string>
+    <string name="sort_episodes_number_desc">Avsnitt (Fallande)</string>
 </resources>
